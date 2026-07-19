@@ -9,9 +9,10 @@ take priority over coverage.
 
 ## Status
 
-The repository is being bootstrapped. No endorsement data or voter recommendation has been
-published yet. See [PROJECT.md](PROJECT.md) for the product specification and
-[DECISIONS.md](DECISIONS.md) for the launch contract.
+The authoritative August 2026 Seattle ballot inventory is implemented and validated. No
+endorsement data or voter recommendation has been published yet. See [PROJECT.md](PROJECT.md)
+for the product specification, [DECISIONS.md](DECISIONS.md) for the launch contract, and
+[docs/BALLOT_INVENTORY.md](docs/BALLOT_INVENTORY.md) for inventory scope and reproduction.
 
 ## Development
 
@@ -25,6 +26,7 @@ Install the locked environment and run the checks:
 ```bash
 uv sync --frozen
 uv run election-guide --help
+uv run election-guide inventory validate
 uv run ruff format --check .
 uv run ruff check .
 uv run pyright

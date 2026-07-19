@@ -16,6 +16,7 @@ dist/
 data/raw/
 data/snapshots/
 data/imports/
+tmp/
 
 # Local query indexes and browser artifacts.
 *.db

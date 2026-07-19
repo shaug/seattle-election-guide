@@ -1,0 +1,50 @@
+election:
+  id: fixture-primary
+  name: Fixture Primary
+  election_type: primary
+  election_date: 2026-08-04
+  state: WA
+  official_url: https://example.test/election
+  source_ids: [sample-ballot]
+sources:
+  - input_key: candidates
+    reference: {id: candidates, authority: Elections, url: https://example.test/candidates.csv, media_type: text/csv, retrieved_at: 2026-07-19T00:00:00Z, sha256: 8644faa4890942ba2044917198b52756ded304ba6566cf7d8eb0066a6d90580d, description: Fixture candidates, storage_reference: tests/fixtures/inventory/candidates.csv, redistribution_note: Test fixture}
+  - input_key: pco_democrats
+    reference: {id: pco-democrats, authority: Elections, url: https://example.test/pco-democrats.csv, media_type: text/csv, retrieved_at: 2026-07-19T00:00:00Z, sha256: cbf6eed16a62ab7ae010b7a2a2a74a14d9ac28e3b951168c99585dd6b3eb31ae, description: Fixture Democratic PCO candidates, storage_reference: tests/fixtures/inventory/pco-democrats.csv, redistribution_note: Test fixture}
+  - input_key: pco_republicans
+    reference: {id: pco-republicans, authority: Elections, url: https://example.test/pco-republicans.csv, media_type: text/csv, retrieved_at: 2026-07-19T00:00:00Z, sha256: 273aaf1b931defb35516f099f9778783fcc9621e2af1027ab86dc5a2f9e6bd28, description: Fixture Republican PCO candidates, storage_reference: tests/fixtures/inventory/pco-republicans.csv, redistribution_note: Test fixture}
+  - input_key: precinct_crosswalk
+    reference: {id: precinct-crosswalk, authority: Elections, url: https://example.test/precincts.csv, media_type: text/csv, retrieved_at: 2026-07-19T00:00:00Z, sha256: 09676df871c6f29abe8f2fc75931a020a02a3cedd76448e49834913b0a26cb65, description: Fixture precinct crosswalk, storage_reference: tests/fixtures/inventory/precinct-crosswalk.csv, redistribution_note: Test fixture}
+  - reference: {id: sample-ballot, authority: Elections, url: https://example.test/sample.pdf, media_type: application/pdf, retrieved_at: 2026-07-19T00:00:00Z, sha256: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, description: Fixture sample ballot, storage_reference: manifest-only, redistribution_note: Test fixture}
+jurisdictions:
+  - id: city-of-seattle
+    name: City of Seattle
+    kind: city
+    parent_id: null
+    aliases: [Seattle]
+    seattle_applicability: {relationship: citywide, explanation: Fixture target., source_ids: [sample-ballot]}
+    source_ids: [sample-ballot]
+candidate_input_key: candidates
+precinct_crosswalk_input_key: precinct_crosswalk
+precinct_crosswalk_source_id: precinct-crosswalk
+race_selectors:
+  - id: municipal-court-5
+    source_jurisdiction: CITY OF SEATTLE
+    source_office: Municipal Court Judge Position No. 5
+    jurisdiction_id: city-of-seattle
+    district: Citywide
+    office: Municipal Court Judge
+    position: Position 5
+    display_name: Municipal Court Judge — Position 5
+    aliases: [Municipal Court Judge Position No. 5]
+    source_ids: [candidates, sample-ballot]
+sample_ballot_pages: {municipal-court-5: 1}
+measures: []
+pco_imports:
+  - {input_key: pco_democrats, source_id: pco-democrats, precinct_prefix: "SEA ", expected_races: 1, expected_choices: 2, party_label: Democratic, publication_eligible: false, evidence_source_ids: [precinct-crosswalk, sample-ballot]}
+  - {input_key: pco_republicans, source_id: pco-republicans, precinct_prefix: "SEA ", expected_races: 0, expected_choices: 0, party_label: Republican, publication_eligible: false, evidence_source_ids: [precinct-crosswalk, sample-ballot]}
+selection_method:
+  target: Fixture Seattle ballot
+  rule: Include city races and SEA precincts.
+  exclusions: [Non-Seattle precincts.]
+  source_ids: [candidates, pco-democrats, pco-republicans, precinct-crosswalk, sample-ballot]
