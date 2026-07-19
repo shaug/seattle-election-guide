@@ -1,0 +1,6 @@
+configuration_id: wa-2026-primary-default-sources
+frozen_at: null
+notes:
+  - Sources must be preregistered before consensus scoring begins.
+  - An empty registry must fail any attempt to publish consensus results.
+sources: []

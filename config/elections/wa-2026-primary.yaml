@@ -1,0 +1,13 @@
+id: wa-2026-primary
+name: 2026 Washington August Primary
+election_type: primary
+election_date: 2026-08-04
+state: WA
+jurisdictions:
+  - city-of-seattle
+official_election_url: https://www.sos.wa.gov/elections/voters/helpful-information/current-election-information
+ballot_data_sources:
+  - authority: King County Elections
+    url: https://kingcounty.gov/en/dept/elections/election-information/2026
+    scope: Complete King County ballot; requires Seattle jurisdiction filtering
+status: inventory_pending
