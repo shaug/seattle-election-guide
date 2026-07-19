@@ -1,0 +1,21 @@
+id: unweighted-progressive-v1
+allocation: exact_equal_split
+comparison_source_ids:
+  - seattle-times-editorial-board
+minimum_explicit_sources: 2
+grades:
+  - grade: A+
+    minimum_share: 0.90
+    minimum_explicit_sources: 4
+  - grade: A
+    minimum_share: 0.75
+  - grade: B
+    minimum_share: 0.60
+  - grade: C
+    minimum_share: 0.45
+  - grade: D
+    minimum_share: 0.00
+tie_precedes_grade: true
+insufficient_precedes_ordinary_grade: true
+missing_coverage_enters_denominator: false
+no_endorsement_enters_denominator: false

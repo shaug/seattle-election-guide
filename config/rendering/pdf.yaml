@@ -1,0 +1,7 @@
+id: seattle-letter-v1
+page_size: Letter
+orientation: portrait
+concise_page_count: 2
+render_engine: chromium
+require_selectable_text: true
+require_accessible_metadata: true
