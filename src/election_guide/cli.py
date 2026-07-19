@@ -6,11 +6,14 @@ from typing import Annotated
 import typer
 
 from election_guide import __version__
+from election_guide.inventory.importer import import_inventory, read_inventory, write_inventory
 
 app = typer.Typer(
     help="Build and audit the Seattle election endorsement consensus guide.",
     no_args_is_help=True,
 )
+inventory_app = typer.Typer(help="Import and validate the official Seattle ballot inventory.")
+app.add_typer(inventory_app, name="inventory")
 
 
 @app.command()
@@ -47,3 +50,52 @@ def doctor(
             typer.echo(f"missing: {path}", err=True)
         raise typer.Exit(code=1)
     typer.echo("foundation: ok")
+
+
+@inventory_app.command("import")
+def inventory_import(
+    config: Annotated[Path, typer.Option(exists=True, dir_okay=False, readable=True)],
+    candidates: Annotated[Path, typer.Option(exists=True, dir_okay=False, readable=True)],
+    pco_democrats: Annotated[Path, typer.Option(exists=True, dir_okay=False, readable=True)],
+    pco_republicans: Annotated[Path, typer.Option(exists=True, dir_okay=False, readable=True)],
+    output: Annotated[Path, typer.Option(dir_okay=False)] = Path(
+        "data/normalized/wa-2026-primary-inventory.json"
+    ),
+) -> None:
+    """Import captured King County files after verifying their hashes."""
+    try:
+        inventory = import_inventory(
+            config,
+            {
+                "candidates": candidates,
+                "pco_democrats": pco_democrats,
+                "pco_republicans": pco_republicans,
+            },
+        )
+        write_inventory(inventory, output)
+    except ValueError as error:
+        typer.echo(f"inventory import failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    typer.echo(
+        f"inventory: {len(inventory.races)} races, "
+        f"{sum(len(race.choices) for race in inventory.races)} choices -> {output}"
+    )
+
+
+@inventory_app.command("validate")
+def inventory_validate(
+    inventory_path: Annotated[
+        Path,
+        typer.Argument(exists=True, dir_okay=False, readable=True),
+    ] = Path("data/normalized/wa-2026-primary-inventory.json"),
+) -> None:
+    """Validate canonical IDs, provenance, hierarchy, and race membership."""
+    try:
+        inventory = read_inventory(inventory_path)
+    except ValueError as error:
+        typer.echo(f"inventory invalid: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    typer.echo(
+        f"inventory: valid ({len(inventory.races)} races, "
+        f"{sum(len(race.choices) for race in inventory.races)} choices)"
+    )

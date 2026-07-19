@@ -1,0 +1,4858 @@
+{
+  "coverage_checks": [
+    {
+      "matched_choices": 82,
+      "matched_races": 31,
+      "rule": "exact configured jurisdiction and office selectors",
+      "source_id": "king-county-candidates"
+    },
+    {
+      "matched_choices": 79,
+      "matched_races": 38,
+      "rule": "precinct begins with 'SEA '",
+      "source_id": "king-county-pco-democrats"
+    },
+    {
+      "matched_choices": 0,
+      "matched_races": 0,
+      "rule": "precinct begins with 'SEA '",
+      "source_id": "king-county-pco-republicans"
+    }
+  ],
+  "election": {
+    "election_date": "2026-08-04",
+    "election_type": "primary",
+    "id": "wa-2026-primary",
+    "name": "2026 Washington August Primary",
+    "official_url": "https://www.sos.wa.gov/elections/voters/helpful-information/current-election-information",
+    "source_ids": [
+      "king-county-sample-ballot"
+    ],
+    "state": "WA"
+  },
+  "jurisdictions": [
+    {
+      "aliases": [
+        "Seattle"
+      ],
+      "id": "city-of-seattle",
+      "kind": "city",
+      "name": "City of Seattle",
+      "parent_id": "king-county",
+      "seattle_applicability": {
+        "explanation": "The target ballot geography is the City of Seattle.",
+        "relationship": "citywide",
+        "source_ids": [
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "CONGRESSIONAL DISTRICT 7",
+        "CD 7"
+      ],
+      "id": "congressional-district-7",
+      "kind": "congressional_district",
+      "name": "Congressional District 7",
+      "parent_id": "washington-state",
+      "seattle_applicability": {
+        "explanation": "The official map places most of Seattle in Congressional District 7.",
+        "relationship": "intersects_city",
+        "source_ids": [
+          "king-county-congressional-map"
+        ]
+      },
+      "source_ids": [
+        "king-county-congressional-map"
+      ]
+    },
+    {
+      "aliases": [
+        "CONGRESSIONAL DISTRICT 9",
+        "CD 9"
+      ],
+      "id": "congressional-district-9",
+      "kind": "congressional_district",
+      "name": "Congressional District 9",
+      "parent_id": "washington-state",
+      "seattle_applicability": {
+        "explanation": "The official map places part of southeast Seattle in Congressional District 9.",
+        "relationship": "intersects_city",
+        "source_ids": [
+          "king-county-congressional-map"
+        ]
+      },
+      "source_ids": [
+        "king-county-congressional-map"
+      ]
+    },
+    {
+      "aliases": [
+        "COUNTY COUNCIL DISTRICT NO. 2",
+        "KCC 2"
+      ],
+      "id": "county-council-district-2",
+      "kind": "county_council_district",
+      "name": "Metropolitan King County Council District 2",
+      "parent_id": "king-county",
+      "seattle_applicability": {
+        "explanation": "The official map places part of Seattle in County Council District 2.",
+        "relationship": "intersects_city",
+        "source_ids": [
+          "king-county-council-map"
+        ]
+      },
+      "source_ids": [
+        "king-county-council-map"
+      ]
+    },
+    {
+      "aliases": [
+        "COUNTY COUNCIL DISTRICT NO. 4",
+        "KCC 4"
+      ],
+      "id": "county-council-district-4",
+      "kind": "county_council_district",
+      "name": "Metropolitan King County Council District 4",
+      "parent_id": "king-county",
+      "seattle_applicability": {
+        "explanation": "The official map places part of Seattle in County Council District 4; it has no August primary contest.",
+        "relationship": "intersects_city",
+        "source_ids": [
+          "king-county-council-map"
+        ]
+      },
+      "source_ids": [
+        "king-county-council-map"
+      ]
+    },
+    {
+      "aliases": [
+        "COUNTY COUNCIL DISTRICT NO. 8",
+        "KCC 8"
+      ],
+      "id": "county-council-district-8",
+      "kind": "county_council_district",
+      "name": "Metropolitan King County Council District 8",
+      "parent_id": "king-county",
+      "seattle_applicability": {
+        "explanation": "The official map places part of Seattle in County Council District 8.",
+        "relationship": "intersects_city",
+        "source_ids": [
+          "king-county-council-map"
+        ]
+      },
+      "source_ids": [
+        "king-county-council-map"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "king-county",
+      "kind": "county",
+      "name": "King County",
+      "parent_id": "washington-state",
+      "seattle_applicability": {
+        "explanation": "The City of Seattle is within King County.",
+        "relationship": "contains_city",
+        "source_ids": [
+          "king-county-council-map"
+        ]
+      },
+      "source_ids": [
+        "king-county-council-map"
+      ]
+    },
+    {
+      "aliases": [
+        "LEGISLATIVE DISTRICT 11",
+        "LD 11"
+      ],
+      "id": "legislative-district-11",
+      "kind": "legislative_district",
+      "name": "Legislative District 11",
+      "parent_id": "washington-state",
+      "seattle_applicability": {
+        "explanation": "The official map places part of southeast Seattle in Legislative District 11.",
+        "relationship": "intersects_city",
+        "source_ids": [
+          "king-county-legislative-map"
+        ]
+      },
+      "source_ids": [
+        "king-county-legislative-map"
+      ]
+    },
+    {
+      "aliases": [
+        "LEGISLATIVE DISTRICT 32",
+        "LD 32"
+      ],
+      "id": "legislative-district-32",
+      "kind": "legislative_district",
+      "name": "Legislative District 32",
+      "parent_id": "washington-state",
+      "seattle_applicability": {
+        "explanation": "The official map places part of northwest Seattle in Legislative District 32.",
+        "relationship": "intersects_city",
+        "source_ids": [
+          "king-county-legislative-map"
+        ]
+      },
+      "source_ids": [
+        "king-county-legislative-map"
+      ]
+    },
+    {
+      "aliases": [
+        "LEGISLATIVE DISTRICT 34",
+        "LD 34"
+      ],
+      "id": "legislative-district-34",
+      "kind": "legislative_district",
+      "name": "Legislative District 34",
+      "parent_id": "washington-state",
+      "seattle_applicability": {
+        "explanation": "The official map places part of southwest Seattle in Legislative District 34.",
+        "relationship": "intersects_city",
+        "source_ids": [
+          "king-county-legislative-map"
+        ]
+      },
+      "source_ids": [
+        "king-county-legislative-map"
+      ]
+    },
+    {
+      "aliases": [
+        "LEGISLATIVE DISTRICT 36",
+        "LD 36"
+      ],
+      "id": "legislative-district-36",
+      "kind": "legislative_district",
+      "name": "Legislative District 36",
+      "parent_id": "washington-state",
+      "seattle_applicability": {
+        "explanation": "The official map places part of northwest Seattle in Legislative District 36.",
+        "relationship": "intersects_city",
+        "source_ids": [
+          "king-county-legislative-map"
+        ]
+      },
+      "source_ids": [
+        "king-county-legislative-map"
+      ]
+    },
+    {
+      "aliases": [
+        "LEGISLATIVE DISTRICT 37",
+        "LD 37"
+      ],
+      "id": "legislative-district-37",
+      "kind": "legislative_district",
+      "name": "Legislative District 37",
+      "parent_id": "washington-state",
+      "seattle_applicability": {
+        "explanation": "The official map places part of southeast Seattle in Legislative District 37.",
+        "relationship": "intersects_city",
+        "source_ids": [
+          "king-county-legislative-map"
+        ]
+      },
+      "source_ids": [
+        "king-county-legislative-map"
+      ]
+    },
+    {
+      "aliases": [
+        "LEGISLATIVE DISTRICT 43",
+        "LD 43"
+      ],
+      "id": "legislative-district-43",
+      "kind": "legislative_district",
+      "name": "Legislative District 43",
+      "parent_id": "washington-state",
+      "seattle_applicability": {
+        "explanation": "The official map places part of central Seattle in Legislative District 43.",
+        "relationship": "intersects_city",
+        "source_ids": [
+          "king-county-legislative-map"
+        ]
+      },
+      "source_ids": [
+        "king-county-legislative-map"
+      ]
+    },
+    {
+      "aliases": [
+        "LEGISLATIVE DISTRICT 46",
+        "LD 46"
+      ],
+      "id": "legislative-district-46",
+      "kind": "legislative_district",
+      "name": "Legislative District 46",
+      "parent_id": "washington-state",
+      "seattle_applicability": {
+        "explanation": "The official map places part of north Seattle in Legislative District 46.",
+        "relationship": "intersects_city",
+        "source_ids": [
+          "king-county-legislative-map"
+        ]
+      },
+      "source_ids": [
+        "king-county-legislative-map"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-34-1247",
+      "kind": "precinct",
+      "name": "SEA 34-1247",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-34-1466",
+      "kind": "precinct",
+      "name": "SEA 34-1466",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-34-1487",
+      "kind": "precinct",
+      "name": "SEA 34-1487",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-36-1345",
+      "kind": "precinct",
+      "name": "SEA 36-1345",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-36-1743",
+      "kind": "precinct",
+      "name": "SEA 36-1743",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-36-2166",
+      "kind": "precinct",
+      "name": "SEA 36-2166",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-36-2170",
+      "kind": "precinct",
+      "name": "SEA 36-2170",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-37-1555",
+      "kind": "precinct",
+      "name": "SEA 37-1555",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-37-1608",
+      "kind": "precinct",
+      "name": "SEA 37-1608",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-37-1617",
+      "kind": "precinct",
+      "name": "SEA 37-1617",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-37-1636",
+      "kind": "precinct",
+      "name": "SEA 37-1636",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-37-1838",
+      "kind": "precinct",
+      "name": "SEA 37-1838",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-37-1871",
+      "kind": "precinct",
+      "name": "SEA 37-1871",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-37-1882",
+      "kind": "precinct",
+      "name": "SEA 37-1882",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-37-1898",
+      "kind": "precinct",
+      "name": "SEA 37-1898",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-37-1900",
+      "kind": "precinct",
+      "name": "SEA 37-1900",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-37-1919",
+      "kind": "precinct",
+      "name": "SEA 37-1919",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-37-1938",
+      "kind": "precinct",
+      "name": "SEA 37-1938",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-37-3729",
+      "kind": "precinct",
+      "name": "SEA 37-3729",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-37-3802",
+      "kind": "precinct",
+      "name": "SEA 37-3802",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-43-1359",
+      "kind": "precinct",
+      "name": "SEA 43-1359",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-43-1373",
+      "kind": "precinct",
+      "name": "SEA 43-1373",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-43-1851",
+      "kind": "precinct",
+      "name": "SEA 43-1851",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-43-1859",
+      "kind": "precinct",
+      "name": "SEA 43-1859",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-43-1860",
+      "kind": "precinct",
+      "name": "SEA 43-1860",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-43-1870",
+      "kind": "precinct",
+      "name": "SEA 43-1870",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-43-1976",
+      "kind": "precinct",
+      "name": "SEA 43-1976",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-43-1993",
+      "kind": "precinct",
+      "name": "SEA 43-1993",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-43-2040",
+      "kind": "precinct",
+      "name": "SEA 43-2040",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-43-2542",
+      "kind": "precinct",
+      "name": "SEA 43-2542",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-46-1271",
+      "kind": "precinct",
+      "name": "SEA 46-1271",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-46-1403",
+      "kind": "precinct",
+      "name": "SEA 46-1403",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-46-2252",
+      "kind": "precinct",
+      "name": "SEA 46-2252",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-46-2295",
+      "kind": "precinct",
+      "name": "SEA 46-2295",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-46-2314",
+      "kind": "precinct",
+      "name": "SEA 46-2314",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-46-2323",
+      "kind": "precinct",
+      "name": "SEA 46-2323",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-46-2361",
+      "kind": "precinct",
+      "name": "SEA 46-2361",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "precinct-sea-46-3262",
+      "kind": "precinct",
+      "name": "SEA 46-3262",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "King County Elections uses the 'SEA ' prefix for Seattle voter precincts.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-pco-democrats",
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "SEATTLE CITY COUNCIL DISTRICT 5",
+        "Seattle Council District 5"
+      ],
+      "id": "seattle-city-council-district-5",
+      "kind": "city_council_district",
+      "name": "Seattle City Council District 5",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "City Council District 5 is wholly within Seattle.",
+        "relationship": "within_city",
+        "source_ids": [
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Washington",
+        "WA"
+      ],
+      "id": "washington-state",
+      "kind": "state",
+      "name": "State of Washington",
+      "parent_id": null,
+      "seattle_applicability": {
+        "explanation": "Seattle voters participate in statewide contests.",
+        "relationship": "contains_city",
+        "source_ids": [
+          "king-county-sample-ballot"
+        ]
+      },
+      "source_ids": [
+        "king-county-sample-ballot"
+      ]
+    }
+  ],
+  "races": [
+    {
+      "aliases": [
+        "KING COUNTY Assessor"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Dominique M Scarimbolo",
+          "id": "king-county-assessor--dominique-m-scarimbolo",
+          "official_name": "Dominique M Scarimbolo",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "king-county-assessor",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Christopher Roberts",
+          "id": "king-county-assessor--christopher-roberts",
+          "official_name": "Christopher Roberts",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "king-county-assessor",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 3,
+          "choice_type": "candidate",
+          "display_name": "Rob Foxcurran",
+          "id": "king-county-assessor--rob-foxcurran",
+          "official_name": "Rob Foxcurran",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "king-county-assessor",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 4,
+          "choice_type": "candidate",
+          "display_name": "Al Dams",
+          "id": "king-county-assessor--al-dams",
+          "official_name": "Al Dams",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "king-county-assessor",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "King County Assessor",
+      "district": "Countywide",
+      "election_id": "wa-2026-primary",
+      "id": "king-county-assessor",
+      "jurisdiction_id": "king-county",
+      "office": "Assessor",
+      "position": null,
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "king-county-candidates",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Metropolitan King County Council District No. 2"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Miriam Mboya",
+          "id": "king-county-council-2--miriam-mboya",
+          "official_name": "Miriam Mboya",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "king-county-council-2",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot",
+            "king-county-council-map"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Toshiko Grace Hasegawa",
+          "id": "king-county-council-2--toshiko-grace-hasegawa",
+          "official_name": "Toshiko Grace Hasegawa",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "king-county-council-2",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot",
+            "king-county-council-map"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 3,
+          "choice_type": "candidate",
+          "display_name": "Rebecca Saldaña",
+          "id": "king-county-council-2--rebecca-salda-a",
+          "official_name": "Rebecca Saldaña",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "king-county-council-2",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot",
+            "king-county-council-map"
+          ]
+        }
+      ],
+      "display_name": "Metropolitan King County Council — District 2",
+      "district": "Metropolitan King County Council District 2",
+      "election_id": "wa-2026-primary",
+      "id": "king-county-council-2",
+      "jurisdiction_id": "county-council-district-2",
+      "office": "Metropolitan King County Councilmember",
+      "position": "District 2",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "king-county-candidates",
+        "king-county-sample-ballot",
+        "king-county-council-map"
+      ]
+    },
+    {
+      "aliases": [
+        "Metropolitan King County Council District No. 8"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Mia Jacobson",
+          "id": "king-county-council-8--mia-jacobson",
+          "official_name": "Mia Jacobson",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "king-county-council-8",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot",
+            "king-county-council-map"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Teresa Mosqueda",
+          "id": "king-county-council-8--teresa-mosqueda",
+          "official_name": "Teresa Mosqueda",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "king-county-council-8",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot",
+            "king-county-council-map"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 3,
+          "choice_type": "candidate",
+          "display_name": "Nick Duda",
+          "id": "king-county-council-8--nick-duda",
+          "official_name": "Nick Duda",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "king-county-council-8",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot",
+            "king-county-council-map"
+          ]
+        }
+      ],
+      "display_name": "Metropolitan King County Council — District 8",
+      "district": "Metropolitan King County Council District 8",
+      "election_id": "wa-2026-primary",
+      "id": "king-county-council-8",
+      "jurisdiction_id": "county-council-district-8",
+      "office": "Metropolitan King County Councilmember",
+      "position": "District 8",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "king-county-candidates",
+        "king-county-sample-ballot",
+        "king-county-council-map"
+      ]
+    },
+    {
+      "aliases": [
+        "State Representative Pos. 1"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Ashley Fedan",
+          "id": "ld-11-state-representative-1--ashley-fedan",
+          "official_name": "Ashley Fedan",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-11-state-representative-1",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Christian Rombough",
+          "id": "ld-11-state-representative-1--christian-rombough",
+          "official_name": "Christian Rombough",
+          "party_preference": "(Prefers Republican Party)",
+          "race_id": "ld-11-state-representative-1",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 3,
+          "choice_type": "candidate",
+          "display_name": "David Hackney",
+          "id": "ld-11-state-representative-1--david-hackney",
+          "official_name": "David Hackney",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-11-state-representative-1",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 11 State Representative — Position 1",
+      "district": "Legislative District 11",
+      "election_id": "wa-2026-primary",
+      "id": "ld-11-state-representative-1",
+      "jurisdiction_id": "legislative-district-11",
+      "office": "State Representative",
+      "position": "Position 1",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "king-county-candidates",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "State Representative Pos. 2"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Steve Bergquist",
+          "id": "ld-11-state-representative-2--steve-bergquist",
+          "official_name": "Steve Bergquist",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-11-state-representative-2",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 11 State Representative — Position 2",
+      "district": "Legislative District 11",
+      "election_id": "wa-2026-primary",
+      "id": "ld-11-state-representative-2",
+      "jurisdiction_id": "legislative-district-11",
+      "office": "State Representative",
+      "position": "Position 2",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "king-county-candidates",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "State Representative Pos. 1"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Jenna Nand",
+          "id": "ld-32-state-representative-1--jenna-nand",
+          "official_name": "Jenna Nand",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-32-state-representative-1",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Will Chen",
+          "id": "ld-32-state-representative-1--will-chen",
+          "official_name": "Will Chen",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-32-state-representative-1",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 3,
+          "choice_type": "candidate",
+          "display_name": "Keith Scully",
+          "id": "ld-32-state-representative-1--keith-scully",
+          "official_name": "Keith Scully",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-32-state-representative-1",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 4,
+          "choice_type": "candidate",
+          "display_name": "Danica Noble",
+          "id": "ld-32-state-representative-1--danica-noble",
+          "official_name": "Danica Noble",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-32-state-representative-1",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 5,
+          "choice_type": "candidate",
+          "display_name": "Lisa Rezac",
+          "id": "ld-32-state-representative-1--lisa-rezac",
+          "official_name": "Lisa Rezac",
+          "party_preference": "(Prefers Republican Party)",
+          "race_id": "ld-32-state-representative-1",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 6,
+          "choice_type": "candidate",
+          "display_name": "Chris Bloomquist",
+          "id": "ld-32-state-representative-1--chris-bloomquist",
+          "official_name": "Chris Bloomquist",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-32-state-representative-1",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 32 State Representative — Position 1",
+      "district": "Legislative District 32",
+      "election_id": "wa-2026-primary",
+      "id": "ld-32-state-representative-1",
+      "jurisdiction_id": "legislative-district-32",
+      "office": "State Representative",
+      "position": "Position 1",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "king-county-candidates",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "State Representative Pos. 2"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Lauren Davis",
+          "id": "ld-32-state-representative-2--lauren-davis",
+          "official_name": "Lauren Davis",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-32-state-representative-2",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Imraan Siddiqi",
+          "id": "ld-32-state-representative-2--imraan-siddiqi",
+          "official_name": "Imraan Siddiqi",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-32-state-representative-2",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 32 State Representative — Position 2",
+      "district": "Legislative District 32",
+      "election_id": "wa-2026-primary",
+      "id": "ld-32-state-representative-2",
+      "jurisdiction_id": "legislative-district-32",
+      "office": "State Representative",
+      "position": "Position 2",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "king-county-candidates",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "State Senator"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Cindy Ryu",
+          "id": "ld-32-state-senator--cindy-ryu",
+          "official_name": "Cindy Ryu",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-32-state-senator",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Ira McBee",
+          "id": "ld-32-state-senator--ira-mcbee",
+          "official_name": "Ira McBee",
+          "party_preference": "(Prefers Republican Party)",
+          "race_id": "ld-32-state-senator",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 3,
+          "choice_type": "candidate",
+          "display_name": "Jesse Salomon",
+          "id": "ld-32-state-senator--jesse-salomon",
+          "official_name": "Jesse Salomon",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-32-state-senator",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 32 State Senator",
+      "district": "Legislative District 32",
+      "election_id": "wa-2026-primary",
+      "id": "ld-32-state-senator",
+      "jurisdiction_id": "legislative-district-32",
+      "office": "State Senator",
+      "position": null,
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "king-county-candidates",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "State Representative Pos. 1"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Brianna K. Thomas",
+          "id": "ld-34-state-representative-1--brianna-k-thomas",
+          "official_name": "Brianna K. Thomas",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-34-state-representative-1",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 34 State Representative — Position 1",
+      "district": "Legislative District 34",
+      "election_id": "wa-2026-primary",
+      "id": "ld-34-state-representative-1",
+      "jurisdiction_id": "legislative-district-34",
+      "office": "State Representative",
+      "position": "Position 1",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "king-county-candidates",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "State Representative Pos. 2"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Joe Fitzgibbon",
+          "id": "ld-34-state-representative-2--joe-fitzgibbon",
+          "official_name": "Joe Fitzgibbon",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-34-state-representative-2",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Mary Anito",
+          "id": "ld-34-state-representative-2--mary-anito",
+          "official_name": "Mary Anito",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-34-state-representative-2",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 34 State Representative — Position 2",
+      "district": "Legislative District 34",
+      "election_id": "wa-2026-primary",
+      "id": "ld-34-state-representative-2",
+      "jurisdiction_id": "legislative-district-34",
+      "office": "State Representative",
+      "position": "Position 2",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "king-county-candidates",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "State Senator"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Emily Alvarado",
+          "id": "ld-34-state-senator--emily-alvarado",
+          "official_name": "Emily Alvarado",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-34-state-senator",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 34 State Senator",
+      "district": "Legislative District 34",
+      "election_id": "wa-2026-primary",
+      "id": "ld-34-state-senator",
+      "jurisdiction_id": "legislative-district-34",
+      "office": "State Senator",
+      "position": null,
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "king-county-candidates",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "State Representative Pos. 1"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Julia Grant Reed",
+          "id": "ld-36-state-representative-1--julia-grant-reed",
+          "official_name": "Julia Grant Reed",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-36-state-representative-1",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 36 State Representative — Position 1",
+      "district": "Legislative District 36",
+      "election_id": "wa-2026-primary",
+      "id": "ld-36-state-representative-1",
+      "jurisdiction_id": "legislative-district-36",
+      "office": "State Representative",
+      "position": "Position 1",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "king-county-candidates",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "State Representative Pos. 2"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Liz Berry",
+          "id": "ld-36-state-representative-2--liz-berry",
+          "official_name": "Liz Berry",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-36-state-representative-2",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 36 State Representative — Position 2",
+      "district": "Legislative District 36",
+      "election_id": "wa-2026-primary",
+      "id": "ld-36-state-representative-2",
+      "jurisdiction_id": "legislative-district-36",
+      "office": "State Representative",
+      "position": "Position 2",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "king-county-candidates",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "State Senator"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Noel C. Frame",
+          "id": "ld-36-state-senator--noel-c-frame",
+          "official_name": "Noel C. Frame",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-36-state-senator",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Jillian England",
+          "id": "ld-36-state-senator--jillian-england",
+          "official_name": "Jillian England",
+          "party_preference": "(Prefers Republican Party)",
+          "race_id": "ld-36-state-senator",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 36 State Senator",
+      "district": "Legislative District 36",
+      "election_id": "wa-2026-primary",
+      "id": "ld-36-state-senator",
+      "jurisdiction_id": "legislative-district-36",
+      "office": "State Senator",
+      "position": null,
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "king-county-candidates",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "State Representative Pos. 1"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Sharon Tomiko Santos",
+          "id": "ld-37-state-representative-1--sharon-tomiko-santos",
+          "official_name": "Sharon Tomiko Santos",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-37-state-representative-1",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Kelabe Tewolde",
+          "id": "ld-37-state-representative-1--kelabe-tewolde",
+          "official_name": "Kelabe Tewolde",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-37-state-representative-1",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 37 State Representative — Position 1",
+      "district": "Legislative District 37",
+      "election_id": "wa-2026-primary",
+      "id": "ld-37-state-representative-1",
+      "jurisdiction_id": "legislative-district-37",
+      "office": "State Representative",
+      "position": "Position 1",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "king-county-candidates",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "State Representative Pos. 2"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Jaelynn Scott",
+          "id": "ld-37-state-representative-2--jaelynn-scott",
+          "official_name": "Jaelynn Scott",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-37-state-representative-2",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Evon McCorkle",
+          "id": "ld-37-state-representative-2--evon-mccorkle",
+          "official_name": "Evon McCorkle",
+          "party_preference": "(Prefers Independent Party)",
+          "race_id": "ld-37-state-representative-2",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 37 State Representative — Position 2",
+      "district": "Legislative District 37",
+      "election_id": "wa-2026-primary",
+      "id": "ld-37-state-representative-2",
+      "jurisdiction_id": "legislative-district-37",
+      "office": "State Representative",
+      "position": "Position 2",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "king-county-candidates",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "State Senator"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Chipalo Street",
+          "id": "ld-37-state-senator--chipalo-street",
+          "official_name": "Chipalo Street",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-37-state-senator",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 3,
+          "choice_type": "candidate",
+          "display_name": "Tatiana Brown",
+          "id": "ld-37-state-senator--tatiana-brown",
+          "official_name": "Tatiana Brown",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-37-state-senator",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 37 State Senator",
+      "district": "Legislative District 37",
+      "election_id": "wa-2026-primary",
+      "id": "ld-37-state-senator",
+      "jurisdiction_id": "legislative-district-37",
+      "office": "State Senator",
+      "position": null,
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "king-county-candidates",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "State Representative Pos. 1"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Nicole Macri",
+          "id": "ld-43-state-representative-1--nicole-macri",
+          "official_name": "Nicole Macri",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-43-state-representative-1",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Alby Clendennin",
+          "id": "ld-43-state-representative-1--alby-clendennin",
+          "official_name": "Alby Clendennin",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-43-state-representative-1",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 43 State Representative — Position 1",
+      "district": "Legislative District 43",
+      "election_id": "wa-2026-primary",
+      "id": "ld-43-state-representative-1",
+      "jurisdiction_id": "legislative-district-43",
+      "office": "State Representative",
+      "position": "Position 1",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "king-county-candidates",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "State Representative Pos. 2"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Shaun Scott",
+          "id": "ld-43-state-representative-2--shaun-scott",
+          "official_name": "Shaun Scott",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-43-state-representative-2",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 43 State Representative — Position 2",
+      "district": "Legislative District 43",
+      "election_id": "wa-2026-primary",
+      "id": "ld-43-state-representative-2",
+      "jurisdiction_id": "legislative-district-43",
+      "office": "State Representative",
+      "position": "Position 2",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "king-county-candidates",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "State Senator"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Hannah Sabio-Howell",
+          "id": "ld-43-state-senator--hannah-sabio-howell",
+          "official_name": "Hannah Sabio-Howell",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-43-state-senator",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Heather-Marie Wilson",
+          "id": "ld-43-state-senator--heather-marie-wilson",
+          "official_name": "Heather-Marie Wilson",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "ld-43-state-senator",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 3,
+          "choice_type": "candidate",
+          "display_name": "Jamie Pedersen",
+          "id": "ld-43-state-senator--jamie-pedersen",
+          "official_name": "Jamie Pedersen",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-43-state-senator",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 43 State Senator",
+      "district": "Legislative District 43",
+      "election_id": "wa-2026-primary",
+      "id": "ld-43-state-senator",
+      "jurisdiction_id": "legislative-district-43",
+      "office": "State Senator",
+      "position": null,
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "king-county-candidates",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "State Representative Pos. 1"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Gerry Pollet",
+          "id": "ld-46-state-representative-1--gerry-pollet",
+          "official_name": "Gerry Pollet",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-46-state-representative-1",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Ron Davis",
+          "id": "ld-46-state-representative-1--ron-davis",
+          "official_name": "Ron Davis",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-46-state-representative-1",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 3,
+          "choice_type": "candidate",
+          "display_name": "Will Dreher",
+          "id": "ld-46-state-representative-1--will-dreher",
+          "official_name": "Will Dreher",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-46-state-representative-1",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 46 State Representative — Position 1",
+      "district": "Legislative District 46",
+      "election_id": "wa-2026-primary",
+      "id": "ld-46-state-representative-1",
+      "jurisdiction_id": "legislative-district-46",
+      "office": "State Representative",
+      "position": "Position 1",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "king-county-candidates",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "State Representative Pos. 2"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Darya Farivar",
+          "id": "ld-46-state-representative-2--darya-farivar",
+          "official_name": "Darya Farivar",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-46-state-representative-2",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Rodney 'Star' Thornley",
+          "id": "ld-46-state-representative-2--rodney-star-thornley",
+          "official_name": "Rodney 'Star' Thornley",
+          "party_preference": "(Prefers Independent Party)",
+          "race_id": "ld-46-state-representative-2",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 46 State Representative — Position 2",
+      "district": "Legislative District 46",
+      "election_id": "wa-2026-primary",
+      "id": "ld-46-state-representative-2",
+      "jurisdiction_id": "legislative-district-46",
+      "office": "State Representative",
+      "position": "Position 2",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "king-county-candidates",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "State Senator"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Javier Valdez",
+          "id": "ld-46-state-senator--javier-valdez",
+          "official_name": "Javier Valdez",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-46-state-senator",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Sandra Stephens",
+          "id": "ld-46-state-senator--sandra-stephens",
+          "official_name": "Sandra Stephens",
+          "party_preference": "(Prefers Republican Party)",
+          "race_id": "ld-46-state-senator",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 46 State Senator",
+      "district": "Legislative District 46",
+      "election_id": "wa-2026-primary",
+      "id": "ld-46-state-senator",
+      "jurisdiction_id": "legislative-district-46",
+      "office": "State Senator",
+      "position": null,
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "king-county-candidates",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Leslie S Harris",
+          "id": "pco-democratic-sea-34-1247--leslie-s-harris",
+          "official_name": "Leslie S Harris",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-34-1247",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Hudayfa Ismail",
+          "id": "pco-democratic-sea-34-1247--hudayfa-ismail",
+          "official_name": "Hudayfa Ismail",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-34-1247",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 34-1247 Democratic Precinct Committee Officer",
+      "district": "Legislative District 34; SEA 34-1247",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-34-1247",
+      "jurisdiction_id": "precinct-sea-34-1247",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Patrick McKee",
+          "id": "pco-democratic-sea-34-1466--patrick-mckee",
+          "official_name": "Patrick McKee",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-34-1466",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Nicole Frickle",
+          "id": "pco-democratic-sea-34-1466--nicole-frickle",
+          "official_name": "Nicole Frickle",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-34-1466",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 34-1466 Democratic Precinct Committee Officer",
+      "district": "Legislative District 34; SEA 34-1466",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-34-1466",
+      "jurisdiction_id": "precinct-sea-34-1466",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Jesse Scott-Kandoll",
+          "id": "pco-democratic-sea-34-1487--jesse-scott-kandoll",
+          "official_name": "Jesse Scott-Kandoll",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-34-1487",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Helen Sernett",
+          "id": "pco-democratic-sea-34-1487--helen-sernett",
+          "official_name": "Helen Sernett",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-34-1487",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 34-1487 Democratic Precinct Committee Officer",
+      "district": "Legislative District 34; SEA 34-1487",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-34-1487",
+      "jurisdiction_id": "precinct-sea-34-1487",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Joanna Grist",
+          "id": "pco-democratic-sea-36-1345--joanna-grist",
+          "official_name": "Joanna Grist",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-36-1345",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "James Apa",
+          "id": "pco-democratic-sea-36-1345--james-apa",
+          "official_name": "James Apa",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-36-1345",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 36-1345 Democratic Precinct Committee Officer",
+      "district": "Legislative District 36; SEA 36-1345",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-36-1345",
+      "jurisdiction_id": "precinct-sea-36-1345",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Claire Ramos",
+          "id": "pco-democratic-sea-36-1743--claire-ramos",
+          "official_name": "Claire Ramos",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-36-1743",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Laura Marie Rivera",
+          "id": "pco-democratic-sea-36-1743--laura-marie-rivera",
+          "official_name": "Laura Marie Rivera",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-36-1743",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 36-1743 Democratic Precinct Committee Officer",
+      "district": "Legislative District 36; SEA 36-1743",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-36-1743",
+      "jurisdiction_id": "precinct-sea-36-1743",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Etan Berkowitz",
+          "id": "pco-democratic-sea-36-2166--etan-berkowitz",
+          "official_name": "Etan Berkowitz",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-36-2166",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Brad Nelson",
+          "id": "pco-democratic-sea-36-2166--brad-nelson",
+          "official_name": "Brad Nelson",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-36-2166",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 36-2166 Democratic Precinct Committee Officer",
+      "district": "Legislative District 36; SEA 36-2166",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-36-2166",
+      "jurisdiction_id": "precinct-sea-36-2166",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Sue Moser",
+          "id": "pco-democratic-sea-36-2170--sue-moser",
+          "official_name": "Sue Moser",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-36-2170",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Kiana Scott",
+          "id": "pco-democratic-sea-36-2170--kiana-scott",
+          "official_name": "Kiana Scott",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-36-2170",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 36-2170 Democratic Precinct Committee Officer",
+      "district": "Legislative District 36; SEA 36-2170",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-36-2170",
+      "jurisdiction_id": "precinct-sea-36-2170",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Kendall Oehler",
+          "id": "pco-democratic-sea-37-1555--kendall-oehler",
+          "official_name": "Kendall Oehler",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-37-1555",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Greg Thiessen",
+          "id": "pco-democratic-sea-37-1555--greg-thiessen",
+          "official_name": "Greg Thiessen",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-37-1555",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 37-1555 Democratic Precinct Committee Officer",
+      "district": "Legislative District 37; SEA 37-1555",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-37-1555",
+      "jurisdiction_id": "precinct-sea-37-1555",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Joe Harrington",
+          "id": "pco-democratic-sea-37-1608--joe-harrington",
+          "official_name": "Joe Harrington",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-37-1608",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "E. Bailey Medilo",
+          "id": "pco-democratic-sea-37-1608--e-bailey-medilo",
+          "official_name": "E. Bailey Medilo",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-37-1608",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 3,
+          "choice_type": "candidate",
+          "display_name": "Melissa Falcone",
+          "id": "pco-democratic-sea-37-1608--melissa-falcone",
+          "official_name": "Melissa Falcone",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-37-1608",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 37-1608 Democratic Precinct Committee Officer",
+      "district": "Legislative District 37; SEA 37-1608",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-37-1608",
+      "jurisdiction_id": "precinct-sea-37-1608",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Scott Winn",
+          "id": "pco-democratic-sea-37-1617--scott-winn",
+          "official_name": "Scott Winn",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-37-1617",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Carla McLean",
+          "id": "pco-democratic-sea-37-1617--carla-mclean",
+          "official_name": "Carla McLean",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-37-1617",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 37-1617 Democratic Precinct Committee Officer",
+      "district": "Legislative District 37; SEA 37-1617",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-37-1617",
+      "jurisdiction_id": "precinct-sea-37-1617",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Daniel Escapa",
+          "id": "pco-democratic-sea-37-1636--daniel-escapa",
+          "official_name": "Daniel Escapa",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-37-1636",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Chukundi Salisbury Sr",
+          "id": "pco-democratic-sea-37-1636--chukundi-salisbury-sr",
+          "official_name": "Chukundi Salisbury Sr",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-37-1636",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 37-1636 Democratic Precinct Committee Officer",
+      "district": "Legislative District 37; SEA 37-1636",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-37-1636",
+      "jurisdiction_id": "precinct-sea-37-1636",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Bridgette Maryman",
+          "id": "pco-democratic-sea-37-1838--bridgette-maryman",
+          "official_name": "Bridgette Maryman",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-37-1838",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Jamie Fackler",
+          "id": "pco-democratic-sea-37-1838--jamie-fackler",
+          "official_name": "Jamie Fackler",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-37-1838",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 37-1838 Democratic Precinct Committee Officer",
+      "district": "Legislative District 37; SEA 37-1838",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-37-1838",
+      "jurisdiction_id": "precinct-sea-37-1838",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "April Vian",
+          "id": "pco-democratic-sea-37-1871--april-vian",
+          "official_name": "April Vian",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-37-1871",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Beth Brunton",
+          "id": "pco-democratic-sea-37-1871--beth-brunton",
+          "official_name": "Beth Brunton",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-37-1871",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 37-1871 Democratic Precinct Committee Officer",
+      "district": "Legislative District 37; SEA 37-1871",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-37-1871",
+      "jurisdiction_id": "precinct-sea-37-1871",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Jennifer Parada",
+          "id": "pco-democratic-sea-37-1882--jennifer-parada",
+          "official_name": "Jennifer Parada",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-37-1882",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Casey Smith",
+          "id": "pco-democratic-sea-37-1882--casey-smith",
+          "official_name": "Casey Smith",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-37-1882",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 37-1882 Democratic Precinct Committee Officer",
+      "district": "Legislative District 37; SEA 37-1882",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-37-1882",
+      "jurisdiction_id": "precinct-sea-37-1882",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Robert Stephens Jr",
+          "id": "pco-democratic-sea-37-1898--robert-stephens-jr",
+          "official_name": "Robert Stephens Jr",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-37-1898",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Carla Curio",
+          "id": "pco-democratic-sea-37-1898--carla-curio",
+          "official_name": "Carla Curio",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-37-1898",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 37-1898 Democratic Precinct Committee Officer",
+      "district": "Legislative District 37; SEA 37-1898",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-37-1898",
+      "jurisdiction_id": "precinct-sea-37-1898",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Megan Riel-Mehan",
+          "id": "pco-democratic-sea-37-1900--megan-riel-mehan",
+          "official_name": "Megan Riel-Mehan",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-37-1900",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Heather Hess",
+          "id": "pco-democratic-sea-37-1900--heather-hess",
+          "official_name": "Heather Hess",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-37-1900",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 37-1900 Democratic Precinct Committee Officer",
+      "district": "Legislative District 37; SEA 37-1900",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-37-1900",
+      "jurisdiction_id": "precinct-sea-37-1900",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Maya Cutforth",
+          "id": "pco-democratic-sea-37-1919--maya-cutforth",
+          "official_name": "Maya Cutforth",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-37-1919",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Kirky Hanson",
+          "id": "pco-democratic-sea-37-1919--kirky-hanson",
+          "official_name": "Kirky Hanson",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-37-1919",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 37-1919 Democratic Precinct Committee Officer",
+      "district": "Legislative District 37; SEA 37-1919",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-37-1919",
+      "jurisdiction_id": "precinct-sea-37-1919",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Ian Mosher",
+          "id": "pco-democratic-sea-37-1938--ian-mosher",
+          "official_name": "Ian Mosher",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-37-1938",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Marietta Zintak",
+          "id": "pco-democratic-sea-37-1938--marietta-zintak",
+          "official_name": "Marietta Zintak",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-37-1938",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 37-1938 Democratic Precinct Committee Officer",
+      "district": "Legislative District 37; SEA 37-1938",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-37-1938",
+      "jurisdiction_id": "precinct-sea-37-1938",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Chio Saeteurn",
+          "id": "pco-democratic-sea-37-3729--chio-saeteurn",
+          "official_name": "Chio Saeteurn",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-37-3729",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Eric Buley",
+          "id": "pco-democratic-sea-37-3729--eric-buley",
+          "official_name": "Eric Buley",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-37-3729",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 3,
+          "choice_type": "candidate",
+          "display_name": "Suresh Chanmugam",
+          "id": "pco-democratic-sea-37-3729--suresh-chanmugam",
+          "official_name": "Suresh Chanmugam",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-37-3729",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 37-3729 Democratic Precinct Committee Officer",
+      "district": "Legislative District 37; SEA 37-3729",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-37-3729",
+      "jurisdiction_id": "precinct-sea-37-3729",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Fernando Medina Corey",
+          "id": "pco-democratic-sea-37-3802--fernando-medina-corey",
+          "official_name": "Fernando Medina Corey",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-37-3802",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Brandon Heechan Gim",
+          "id": "pco-democratic-sea-37-3802--brandon-heechan-gim",
+          "official_name": "Brandon Heechan Gim",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-37-3802",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 37-3802 Democratic Precinct Committee Officer",
+      "district": "Legislative District 37; SEA 37-3802",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-37-3802",
+      "jurisdiction_id": "precinct-sea-37-3802",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Tim Gould",
+          "id": "pco-democratic-sea-43-1359--tim-gould",
+          "official_name": "Tim Gould",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-43-1359",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Linda J Clifton",
+          "id": "pco-democratic-sea-43-1359--linda-j-clifton",
+          "official_name": "Linda J Clifton",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-43-1359",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 43-1359 Democratic Precinct Committee Officer",
+      "district": "Legislative District 43; SEA 43-1359",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-43-1359",
+      "jurisdiction_id": "precinct-sea-43-1359",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Carl Slater",
+          "id": "pco-democratic-sea-43-1373--carl-slater",
+          "official_name": "Carl Slater",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-43-1373",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Aaron Wheeler",
+          "id": "pco-democratic-sea-43-1373--aaron-wheeler",
+          "official_name": "Aaron Wheeler",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-43-1373",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 43-1373 Democratic Precinct Committee Officer",
+      "district": "Legislative District 43; SEA 43-1373",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-43-1373",
+      "jurisdiction_id": "precinct-sea-43-1373",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Daniel Heppner",
+          "id": "pco-democratic-sea-43-1851--daniel-heppner",
+          "official_name": "Daniel Heppner",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-43-1851",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Bryce Kolton",
+          "id": "pco-democratic-sea-43-1851--bryce-kolton",
+          "official_name": "Bryce Kolton",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-43-1851",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 43-1851 Democratic Precinct Committee Officer",
+      "district": "Legislative District 43; SEA 43-1851",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-43-1851",
+      "jurisdiction_id": "precinct-sea-43-1851",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Adora Blue",
+          "id": "pco-democratic-sea-43-1859--adora-blue",
+          "official_name": "Adora Blue",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-43-1859",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Erik Wren",
+          "id": "pco-democratic-sea-43-1859--erik-wren",
+          "official_name": "Erik Wren",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-43-1859",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 3,
+          "choice_type": "candidate",
+          "display_name": "Aaron McCloud",
+          "id": "pco-democratic-sea-43-1859--aaron-mccloud",
+          "official_name": "Aaron McCloud",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-43-1859",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 43-1859 Democratic Precinct Committee Officer",
+      "district": "Legislative District 43; SEA 43-1859",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-43-1859",
+      "jurisdiction_id": "precinct-sea-43-1859",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Emeka Alozie",
+          "id": "pco-democratic-sea-43-1860--emeka-alozie",
+          "official_name": "Emeka Alozie",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-43-1860",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Leonard Harrison Jerome",
+          "id": "pco-democratic-sea-43-1860--leonard-harrison-jerome",
+          "official_name": "Leonard Harrison Jerome",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-43-1860",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 43-1860 Democratic Precinct Committee Officer",
+      "district": "Legislative District 43; SEA 43-1860",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-43-1860",
+      "jurisdiction_id": "precinct-sea-43-1860",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Sean Butterfield",
+          "id": "pco-democratic-sea-43-1870--sean-butterfield",
+          "official_name": "Sean Butterfield",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-43-1870",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Jase Pickering",
+          "id": "pco-democratic-sea-43-1870--jase-pickering",
+          "official_name": "Jase Pickering",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-43-1870",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 43-1870 Democratic Precinct Committee Officer",
+      "district": "Legislative District 43; SEA 43-1870",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-43-1870",
+      "jurisdiction_id": "precinct-sea-43-1870",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Amy Madden",
+          "id": "pco-democratic-sea-43-1976--amy-madden",
+          "official_name": "Amy Madden",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-43-1976",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Matthew Epshtein",
+          "id": "pco-democratic-sea-43-1976--matthew-epshtein",
+          "official_name": "Matthew Epshtein",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-43-1976",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 43-1976 Democratic Precinct Committee Officer",
+      "district": "Legislative District 43; SEA 43-1976",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-43-1976",
+      "jurisdiction_id": "precinct-sea-43-1976",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Bob Mahon",
+          "id": "pco-democratic-sea-43-1993--bob-mahon",
+          "official_name": "Bob Mahon",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-43-1993",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Anne Purcell",
+          "id": "pco-democratic-sea-43-1993--anne-purcell",
+          "official_name": "Anne Purcell",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-43-1993",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 43-1993 Democratic Precinct Committee Officer",
+      "district": "Legislative District 43; SEA 43-1993",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-43-1993",
+      "jurisdiction_id": "precinct-sea-43-1993",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Jeremy Erdman",
+          "id": "pco-democratic-sea-43-2040--jeremy-erdman",
+          "official_name": "Jeremy Erdman",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-43-2040",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Seth May",
+          "id": "pco-democratic-sea-43-2040--seth-may",
+          "official_name": "Seth May",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-43-2040",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 43-2040 Democratic Precinct Committee Officer",
+      "district": "Legislative District 43; SEA 43-2040",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-43-2040",
+      "jurisdiction_id": "precinct-sea-43-2040",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Paul Lee",
+          "id": "pco-democratic-sea-43-2542--paul-lee",
+          "official_name": "Paul Lee",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-43-2542",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Aspen Coyle",
+          "id": "pco-democratic-sea-43-2542--aspen-coyle",
+          "official_name": "Aspen Coyle",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-43-2542",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 43-2542 Democratic Precinct Committee Officer",
+      "district": "Legislative District 43; SEA 43-2542",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-43-2542",
+      "jurisdiction_id": "precinct-sea-43-2542",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Chanpreet Singh",
+          "id": "pco-democratic-sea-46-1271--chanpreet-singh",
+          "official_name": "Chanpreet Singh",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-46-1271",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Grant Peltier",
+          "id": "pco-democratic-sea-46-1271--grant-peltier",
+          "official_name": "Grant Peltier",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-46-1271",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 46-1271 Democratic Precinct Committee Officer",
+      "district": "Legislative District 46; SEA 46-1271",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-46-1271",
+      "jurisdiction_id": "precinct-sea-46-1271",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Stephen Paolini",
+          "id": "pco-democratic-sea-46-1403--stephen-paolini",
+          "official_name": "Stephen Paolini",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-46-1403",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Brandon Monson",
+          "id": "pco-democratic-sea-46-1403--brandon-monson",
+          "official_name": "Brandon Monson",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-46-1403",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 46-1403 Democratic Precinct Committee Officer",
+      "district": "Legislative District 46; SEA 46-1403",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-46-1403",
+      "jurisdiction_id": "precinct-sea-46-1403",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Paul Nacamuli",
+          "id": "pco-democratic-sea-46-2252--paul-nacamuli",
+          "official_name": "Paul Nacamuli",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-46-2252",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Frank Field",
+          "id": "pco-democratic-sea-46-2252--frank-field",
+          "official_name": "Frank Field",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-46-2252",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 46-2252 Democratic Precinct Committee Officer",
+      "district": "Legislative District 46; SEA 46-2252",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-46-2252",
+      "jurisdiction_id": "precinct-sea-46-2252",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "David Lichter",
+          "id": "pco-democratic-sea-46-2295--david-lichter",
+          "official_name": "David Lichter",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-46-2295",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Sharon London",
+          "id": "pco-democratic-sea-46-2295--sharon-london",
+          "official_name": "Sharon London",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-46-2295",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 46-2295 Democratic Precinct Committee Officer",
+      "district": "Legislative District 46; SEA 46-2295",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-46-2295",
+      "jurisdiction_id": "precinct-sea-46-2295",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Sylvia Haven",
+          "id": "pco-democratic-sea-46-2314--sylvia-haven",
+          "official_name": "Sylvia Haven",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-46-2314",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Nancy Lichter",
+          "id": "pco-democratic-sea-46-2314--nancy-lichter",
+          "official_name": "Nancy Lichter",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-46-2314",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 46-2314 Democratic Precinct Committee Officer",
+      "district": "Legislative District 46; SEA 46-2314",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-46-2314",
+      "jurisdiction_id": "precinct-sea-46-2314",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Ed Freeman",
+          "id": "pco-democratic-sea-46-2323--ed-freeman",
+          "official_name": "Ed Freeman",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-46-2323",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Matt Weatherford",
+          "id": "pco-democratic-sea-46-2323--matt-weatherford",
+          "official_name": "Matt Weatherford",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-46-2323",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 46-2323 Democratic Precinct Committee Officer",
+      "district": "Legislative District 46; SEA 46-2323",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-46-2323",
+      "jurisdiction_id": "precinct-sea-46-2323",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Hunter Brown",
+          "id": "pco-democratic-sea-46-2361--hunter-brown",
+          "official_name": "Hunter Brown",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-46-2361",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Lisa Rivera",
+          "id": "pco-democratic-sea-46-2361--lisa-rivera",
+          "official_name": "Lisa Rivera",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-46-2361",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 46-2361 Democratic Precinct Committee Officer",
+      "district": "Legislative District 46; SEA 46-2361",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-46-2361",
+      "jurisdiction_id": "precinct-sea-46-2361",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Precinct Committee Officer - Democratic"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Tara Gallagher",
+          "id": "pco-democratic-sea-46-3262--tara-gallagher",
+          "official_name": "Tara Gallagher",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-46-3262",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "John Luethe",
+          "id": "pco-democratic-sea-46-3262--john-luethe",
+          "official_name": "John Luethe",
+          "party_preference": "Democratic",
+          "race_id": "pco-democratic-sea-46-3262",
+          "source_ids": [
+            "king-county-pco-democrats",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "SEA 46-3262 Democratic Precinct Committee Officer",
+      "district": "Legislative District 46; SEA 46-3262",
+      "election_id": "wa-2026-primary",
+      "id": "pco-democratic-sea-46-3262",
+      "jurisdiction_id": "precinct-sea-46-3262",
+      "office": "Precinct Committee Officer",
+      "position": "Democratic",
+      "publication_eligible": false,
+      "race_type": "party_office",
+      "source_ids": [
+        "king-county-pco-democrats",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Council District No. 5"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Dimitri Georgakopoulos",
+          "id": "seattle-city-council-5--dimitri-georgakopoulos",
+          "official_name": "Dimitri Georgakopoulos",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "seattle-city-council-5",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Silas James",
+          "id": "seattle-city-council-5--silas-james",
+          "official_name": "Silas James",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "seattle-city-council-5",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 3,
+          "choice_type": "candidate",
+          "display_name": "Julie Kang",
+          "id": "seattle-city-council-5--julie-kang",
+          "official_name": "Julie Kang",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "seattle-city-council-5",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 4,
+          "choice_type": "candidate",
+          "display_name": "Nilu Jenks",
+          "id": "seattle-city-council-5--nilu-jenks",
+          "official_name": "Nilu Jenks",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "seattle-city-council-5",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "Seattle City Council — District 5",
+      "district": "Seattle City Council District 5",
+      "election_id": "wa-2026-primary",
+      "id": "seattle-city-council-5",
+      "jurisdiction_id": "seattle-city-council-district-5",
+      "office": "City Councilmember",
+      "position": "District 5 — unexpired 1-year term",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "king-county-candidates",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Municipal Court Judge Position No. 5"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Lindsay Calkins",
+          "id": "seattle-municipal-court-judge-5--lindsay-calkins",
+          "official_name": "Lindsay Calkins",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "seattle-municipal-court-judge-5",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Garmon Newsom",
+          "id": "seattle-municipal-court-judge-5--garmon-newsom",
+          "official_name": "Garmon Newsom",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "seattle-municipal-court-judge-5",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 3,
+          "choice_type": "candidate",
+          "display_name": "Gabe Rothstein",
+          "id": "seattle-municipal-court-judge-5--gabe-rothstein",
+          "official_name": "Gabe Rothstein",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "seattle-municipal-court-judge-5",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "Seattle Municipal Court Judge — Position 5",
+      "district": "Citywide",
+      "election_id": "wa-2026-primary",
+      "id": "seattle-municipal-court-judge-5",
+      "jurisdiction_id": "city-of-seattle",
+      "office": "Municipal Court Judge",
+      "position": "Position 5",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "king-county-candidates",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "City of Seattle Proposition No. 1",
+        "Property Tax Levy for Seattle Public Library"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "ballot_option",
+          "display_name": "Yes",
+          "id": "seattle-proposition-1-library-levy--yes",
+          "official_name": "Yes",
+          "party_preference": null,
+          "race_id": "seattle-proposition-1-library-levy",
+          "source_ids": [
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "ballot_option",
+          "display_name": "No",
+          "id": "seattle-proposition-1-library-levy--no",
+          "official_name": "No",
+          "party_preference": null,
+          "race_id": "seattle-proposition-1-library-levy",
+          "source_ids": [
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "Seattle Proposition 1 — Property Tax Levy for Seattle Public Library",
+      "district": "Citywide",
+      "election_id": "wa-2026-primary",
+      "id": "seattle-proposition-1-library-levy",
+      "jurisdiction_id": "city-of-seattle",
+      "office": "Ballot measure",
+      "position": "Proposition 1",
+      "publication_eligible": true,
+      "race_type": "measure",
+      "source_ids": [
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Justice Position #01"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Colleen Melody",
+          "id": "supreme-court-justice-1--colleen-melody",
+          "official_name": "Colleen Melody",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "supreme-court-justice-1",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 3,
+          "choice_type": "candidate",
+          "display_name": "Laura Christensen Colberg",
+          "id": "supreme-court-justice-1--laura-christensen-colberg",
+          "official_name": "Laura Christensen Colberg",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "supreme-court-justice-1",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 4,
+          "choice_type": "candidate",
+          "display_name": "Scott Edwards",
+          "id": "supreme-court-justice-1--scott-edwards",
+          "official_name": "Scott Edwards",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "supreme-court-justice-1",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "Washington Supreme Court Justice — Position 1",
+      "district": "Statewide",
+      "election_id": "wa-2026-primary",
+      "id": "supreme-court-justice-1",
+      "jurisdiction_id": "washington-state",
+      "office": "Supreme Court Justice",
+      "position": "Position 1 — unexpired 2-year term",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "king-county-candidates",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Justice Position #03"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Jaime Michelle Hawk",
+          "id": "supreme-court-justice-3--jaime-michelle-hawk",
+          "official_name": "Jaime Michelle Hawk",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "supreme-court-justice-3",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "David Stevens",
+          "id": "supreme-court-justice-3--david-stevens",
+          "official_name": "David Stevens",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "supreme-court-justice-3",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 3,
+          "choice_type": "candidate",
+          "display_name": "Mike Diaz",
+          "id": "supreme-court-justice-3--mike-diaz",
+          "official_name": "Mike Diaz",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "supreme-court-justice-3",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "Washington Supreme Court Justice — Position 3",
+      "district": "Statewide",
+      "election_id": "wa-2026-primary",
+      "id": "supreme-court-justice-3",
+      "jurisdiction_id": "washington-state",
+      "office": "Supreme Court Justice",
+      "position": "Position 3",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "king-county-candidates",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Justice Position #05"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Greg Miller",
+          "id": "supreme-court-justice-5--greg-miller",
+          "official_name": "Greg Miller",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "supreme-court-justice-5",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Theo Angelis",
+          "id": "supreme-court-justice-5--theo-angelis",
+          "official_name": "Theo Angelis",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "supreme-court-justice-5",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 3,
+          "choice_type": "candidate",
+          "display_name": "Dave Larson",
+          "id": "supreme-court-justice-5--dave-larson",
+          "official_name": "Dave Larson",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "supreme-court-justice-5",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 4,
+          "choice_type": "candidate",
+          "display_name": "Sharonda Amamilo",
+          "id": "supreme-court-justice-5--sharonda-amamilo",
+          "official_name": "Sharonda Amamilo",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "supreme-court-justice-5",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "Washington Supreme Court Justice — Position 5",
+      "district": "Statewide",
+      "election_id": "wa-2026-primary",
+      "id": "supreme-court-justice-5",
+      "jurisdiction_id": "washington-state",
+      "office": "Supreme Court Justice",
+      "position": "Position 5 — unexpired 2-year term",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "king-county-candidates",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "Justice Position #07"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "David R Shelvey",
+          "id": "supreme-court-justice-7--david-r-shelvey",
+          "official_name": "David R Shelvey",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "supreme-court-justice-7",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Debra L. Stephens",
+          "id": "supreme-court-justice-7--debra-l-stephens",
+          "official_name": "Debra L. Stephens",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "supreme-court-justice-7",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 3,
+          "choice_type": "candidate",
+          "display_name": "Karim A. Merchant",
+          "id": "supreme-court-justice-7--karim-a-merchant",
+          "official_name": "Karim A. Merchant",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "supreme-court-justice-7",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 4,
+          "choice_type": "candidate",
+          "display_name": "Todd A. Bloom",
+          "id": "supreme-court-justice-7--todd-a-bloom",
+          "official_name": "Todd A. Bloom",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "supreme-court-justice-7",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "Washington Supreme Court Justice — Position 7",
+      "district": "Statewide",
+      "election_id": "wa-2026-primary",
+      "id": "supreme-court-justice-7",
+      "jurisdiction_id": "washington-state",
+      "office": "Supreme Court Justice",
+      "position": "Position 7",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "king-county-candidates",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "CONGRESSIONAL DISTRICT 7 U.S. Representative"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "David W. Blomstrom",
+          "id": "us-house-7--david-w-blomstrom",
+          "official_name": "David W. Blomstrom",
+          "party_preference": "(Prefers Fifth Republic Party)",
+          "race_id": "us-house-7",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Pramila Jayapal",
+          "id": "us-house-7--pramila-jayapal",
+          "official_name": "Pramila Jayapal",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "us-house-7",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 3,
+          "choice_type": "candidate",
+          "display_name": "Nirav Sheth",
+          "id": "us-house-7--nirav-sheth",
+          "official_name": "Nirav Sheth",
+          "party_preference": "(Prefers Republican Party)",
+          "race_id": "us-house-7",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 4,
+          "choice_type": "candidate",
+          "display_name": "Gwen Kirkland",
+          "id": "us-house-7--gwen-kirkland",
+          "official_name": "Gwen Kirkland",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "us-house-7",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "U.S. Representative — Congressional District 7",
+      "district": "Congressional District 7",
+      "election_id": "wa-2026-primary",
+      "id": "us-house-7",
+      "jurisdiction_id": "congressional-district-7",
+      "office": "U.S. Representative",
+      "position": null,
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "king-county-candidates",
+        "king-county-sample-ballot"
+      ]
+    },
+    {
+      "aliases": [
+        "CONGRESSIONAL DISTRICT 9 U.S. Representative"
+      ],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Jacob Perasso",
+          "id": "us-house-9--jacob-perasso",
+          "official_name": "Jacob Perasso",
+          "party_preference": "(Prefers Socialist Workers Party)",
+          "race_id": "us-house-9",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Kshama Sawant",
+          "id": "us-house-9--kshama-sawant",
+          "official_name": "Kshama Sawant",
+          "party_preference": "(Prefers Independent Party)",
+          "race_id": "us-house-9",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 3,
+          "choice_type": "candidate",
+          "display_name": "Melissa Chaudhry",
+          "id": "us-house-9--melissa-chaudhry",
+          "official_name": "Melissa Chaudhry",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "us-house-9",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 4,
+          "choice_type": "candidate",
+          "display_name": "Doug Basler",
+          "id": "us-house-9--doug-basler",
+          "official_name": "Doug Basler",
+          "party_preference": "(Prefers Republican Party)",
+          "race_id": "us-house-9",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 5,
+          "choice_type": "candidate",
+          "display_name": "Adam Smith",
+          "id": "us-house-9--adam-smith",
+          "official_name": "Adam Smith",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "us-house-9",
+          "source_ids": [
+            "king-county-candidates",
+            "king-county-sample-ballot"
+          ]
+        }
+      ],
+      "display_name": "U.S. Representative — Congressional District 9",
+      "district": "Congressional District 9",
+      "election_id": "wa-2026-primary",
+      "id": "us-house-9",
+      "jurisdiction_id": "congressional-district-9",
+      "office": "U.S. Representative",
+      "position": null,
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "king-county-candidates",
+        "king-county-sample-ballot"
+      ]
+    }
+  ],
+  "schema_version": "1.0",
+  "selection_method": {
+    "exclusions": [
+      "Exclude districts that do not intersect Seattle.",
+      "Exclude County Council District 4 because the official primary files contain no contest for it.",
+      "Exclude the Northeast District Court contest because that electoral district does not intersect Seattle.",
+      "Do not derive the ballot universe from endorsement publications."
+    ],
+    "rule": "Start with King County Elections' official primary candidate, PCO, and composite sample ballot files. Include statewide and countywide contests; exact candidate-file jurisdictions whose official current district maps intersect Seattle; City of Seattle contests and measures; and PCO contests whose official precinct name begins with \"SEA \".",
+    "source_ids": [
+      "king-county-candidates",
+      "king-county-pco-democrats",
+      "king-county-pco-republicans",
+      "king-county-sample-ballot",
+      "king-county-congressional-map",
+      "king-county-legislative-map",
+      "king-county-council-map",
+      "king-county-district-court-map"
+    ],
+    "target": "City of Seattle August 4, 2026 primary ballots"
+  },
+  "sources": [
+    {
+      "authority": "King County Elections",
+      "description": "Official 2026 primary candidate list in ballot order.",
+      "id": "king-county-candidates",
+      "media_type": "text/csv",
+      "retrieved_at": "2026-07-19T21:15:00Z",
+      "sha256": "e9b4f2317fe1fd87cbb1acc74c821437a1a585cc4ffe53478c37842809f11467",
+      "url": "https://aqua.kingcounty.gov/elections/candidatefiling/2026/2026-primary-candidates.csv"
+    },
+    {
+      "authority": "King County Elections",
+      "description": "Official contested Democratic precinct committee officer list.",
+      "id": "king-county-pco-democrats",
+      "media_type": "text/csv",
+      "retrieved_at": "2026-07-19T21:15:00Z",
+      "sha256": "62b37ac130a60dd96e69dbb7b98020f7569b7b41a40e5bebfbe83072838b629d",
+      "url": "https://aqua.kingcounty.gov/elections/candidatefiling/2026/2026-primary-pco-dems.csv"
+    },
+    {
+      "authority": "King County Elections",
+      "description": "Official contested Republican precinct committee officer list.",
+      "id": "king-county-pco-republicans",
+      "media_type": "text/csv",
+      "retrieved_at": "2026-07-19T21:15:00Z",
+      "sha256": "93ceb7f9e75c944f1fc702186706362165bcf3509242348ff9d7a9cf5fd699ef",
+      "url": "https://aqua.kingcounty.gov/elections/candidatefiling/2026/2026-primary-pco-reps.csv"
+    },
+    {
+      "authority": "King County Elections",
+      "description": "Official composite sample ballot for every August 2026 King County contest.",
+      "id": "king-county-sample-ballot",
+      "media_type": "application/pdf",
+      "retrieved_at": "2026-07-19T21:15:00Z",
+      "sha256": "b6e5e1f5d968c662aa6ed7ec79578eb49397df232902e006a77f312b460dcfe3",
+      "url": "https://cdn.kingcounty.gov/-/media/king-county/depts/elections/current-election/2026/08/sample-ballot.pdf?hash=1A614903E20D4D6E848504BAC8779347&rev=d4a0897bda4841978a750afb32c4f153"
+    },
+    {
+      "authority": "King County Elections GIS",
+      "description": "Official current congressional district boundaries with city geography.",
+      "id": "king-county-congressional-map",
+      "media_type": "application/pdf",
+      "retrieved_at": "2026-07-19T21:15:00Z",
+      "sha256": "42a5f2b5a804ef9e79b6cd63b7004a61144edcf06b9dbb2791d6710999023bb8",
+      "url": "https://cdn.kingcounty.gov/-/media/king-county/depts/elections/maps/current-maps/composite-maps/cong-composite.pdf?hash=5DB9FB468F2B06C866DD13B0A90A4599&rev=7798c8ebc6864592a67fa24818b2d96c"
+    },
+    {
+      "authority": "King County Elections GIS",
+      "description": "Official current legislative district boundaries with city geography.",
+      "id": "king-county-legislative-map",
+      "media_type": "application/pdf",
+      "retrieved_at": "2026-07-19T21:15:00Z",
+      "sha256": "a74dcf2b954dcb7598a8fb06a308b19fe8a3ad139096e62c00dc8e62ffb5091b",
+      "url": "https://cdn.kingcounty.gov/-/media/king-county/depts/elections/maps/current-maps/leg-maps/leg-composite.pdf?hash=0725DEE92CD50CAA3FF0995B35DFCAC4&rev=37c302c4cb1640e28d6b8c8675e62237"
+    },
+    {
+      "authority": "King County Elections GIS",
+      "description": "Official current Metropolitan King County Council district boundaries.",
+      "id": "king-county-council-map",
+      "media_type": "application/pdf",
+      "retrieved_at": "2026-07-19T21:15:00Z",
+      "sha256": "cbbcd16001333c4cfc329f9fbfe462f196d9fe8c25289b20b4feac1349ae456a",
+      "url": "https://cdn.kingcounty.gov/-/media/king-county/depts/elections/maps/current-maps/kcc-maps/kc-composite.pdf?hash=47F8BA9454A89DEC48C037672FC1E533&rev=19c791a7d360429fbbf5da35a0f73bea"
+    },
+    {
+      "authority": "King County Elections GIS",
+      "description": "Official current King County District Court electoral boundaries.",
+      "id": "king-county-district-court-map",
+      "media_type": "application/pdf",
+      "retrieved_at": "2026-07-19T21:15:00Z",
+      "sha256": "20d72f0930a97ceb511d36f2bb019c27d7ad85b335101b604a9d6100943ac114",
+      "url": "https://cdn.kingcounty.gov/-/media/king-county/depts/elections/maps/current-maps/composite-maps/district-court-composite.pdf?hash=5805B79F1A0497916BB2B55A9F4E2C4F&rev=982fee3d6bac424ba56a33566da77b39"
+    }
+  ]
+}

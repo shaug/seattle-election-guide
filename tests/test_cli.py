@@ -11,6 +11,7 @@ def test_help_lists_foundational_commands() -> None:
 
     assert result.exit_code == 0
     assert "doctor" in result.stdout
+    assert "inventory" in result.stdout
     assert "version" in result.stdout
 
 

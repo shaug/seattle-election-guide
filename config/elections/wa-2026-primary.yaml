@@ -8,6 +8,8 @@ jurisdictions:
 official_election_url: https://www.sos.wa.gov/elections/voters/helpful-information/current-election-information
 ballot_data_sources:
   - authority: King County Elections
-    url: https://kingcounty.gov/en/dept/elections/election-information/2026
+    url: https://kingcounty.gov/en/dept/elections/election-information/2026/august-primary
     scope: Complete King County ballot; requires Seattle jurisdiction filtering
-status: inventory_pending
+inventory_config: config/elections/wa-2026-primary-inventory.yaml
+inventory_path: data/normalized/wa-2026-primary-inventory.json
+status: inventory_complete

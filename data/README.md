@@ -12,3 +12,8 @@ The data pipeline will use these logical areas:
 
 Directories are created by the relevant pipeline commands rather than committed empty. Public
 records must not embed third-party material that the project lacks permission to redistribute.
+
+The current canonical election inventory is
+`normalized/wa-2026-primary-inventory.json`. Its source manifest records the official URLs and
+content hashes, while raw King County CSV files remain local because they contain contact and
+mailing fields that are not needed by the guide.
