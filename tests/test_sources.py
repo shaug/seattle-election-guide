@@ -26,10 +26,24 @@ def test_committed_source_panel_is_frozen_and_complete() -> None:
         "comparison": 1,
         "excluded": 5,
     }
+    assert Counter(source.discovery.status for source in registry.sources) == {
+        "published": 32,
+        "not_found": 4,
+        "access_restricted": 3,
+        "not_an_endorsement_publisher": 3,
+    }
     assert all(source.discovery.status for source in registry.sources)
     assert all(source.panel_reason for source in registry.sources)
     assert any(source.discovery.status == "published" for source in registry.sources)
     assert any(source.panel_role == "excluded" for source in registry.sources)
+
+    wea = next(
+        source for source in registry.sources if source.id == "washington-education-association"
+    )
+    assert wea.discovery.status == "published"
+    assert wea.discovery.canonical_url == (
+        "https://www.washingtonea.org/advocacy/wea-pac/2026-endorsements/"
+    )
 
 
 def test_legislative_district_sources_only_count_in_their_district() -> None:
@@ -74,6 +88,8 @@ def test_committed_discovery_report_matches_registry() -> None:
     committed = (PROJECT_ROOT / "docs" / "SOURCE_DISCOVERY.md").read_text(encoding="utf-8")
 
     assert committed == render_discovery_report(registry)
+    protec17_line = next(line for line in committed.splitlines() if line.startswith("| PROTEC17 "))
+    assert "updated 2026-07-16" in protec17_line
 
 
 def test_registry_rejects_duplicate_publisher_as_consensus_source() -> None:
@@ -129,6 +145,103 @@ def test_registry_rejects_unrecorded_redirect() -> None:
 
     with pytest.raises(ValidationError, match="changed canonical_url requires a redirect_chain"):
         SourceRegistry.model_validate(payload)
+
+
+def test_registry_rejects_source_access_after_research_cutoff() -> None:
+    payload = _registry_payload()
+    payload["sources"][0]["discovery"]["checked_at"] = "2026-07-20T00:00:00Z"
+
+    with pytest.raises(ValidationError, match="checked after the research cutoff"):
+        SourceRegistry.model_validate(payload)
+
+
+@pytest.mark.parametrize("field", ["published_at", "updated_at"])
+def test_registry_rejects_publication_metadata_after_access(field: str) -> None:
+    payload = _registry_payload()
+    payload["sources"][0]["discovery"][field] = "2026-07-20"
+
+    with pytest.raises(ValidationError, match="date cannot be after discovery access date"):
+        SourceRegistry.model_validate(payload)
+
+
+def test_registry_rejects_update_before_publication() -> None:
+    payload = _registry_payload()
+    payload["sources"][0]["discovery"]["updated_at"] = "2026-06-01"
+
+    with pytest.raises(ValidationError, match="update date cannot be before publication date"):
+        SourceRegistry.model_validate(payload)
+
+
+def test_registry_requires_timezone_aware_timestamps() -> None:
+    payload = _registry_payload()
+    payload["research_cutoff"] = "2026-07-19T23:05:54"
+
+    with pytest.raises(ValidationError):
+        SourceRegistry.model_validate(payload)
+
+
+def test_registry_rejects_consensus_non_endorsement_publisher() -> None:
+    payload = _registry_payload()
+    source = payload["sources"][0]
+    source["discovery"]["status"] = "not_an_endorsement_publisher"
+    source["discovery"].pop("published_at", None)
+    source["discovery"].pop("updated_at", None)
+
+    with pytest.raises(ValidationError, match="must be excluded from the panel"):
+        SourceRegistry.model_validate(payload)
+
+
+@pytest.mark.parametrize("value", ["not a URL", "javascript:alert(1)"])
+def test_registry_rejects_non_http_official_urls(value: str) -> None:
+    payload = _registry_payload()
+    payload["sources"][0]["organization_url"] = value
+    payload["sources"][0]["discovery"]["requested_url"] = value
+    payload["sources"][0]["discovery"]["canonical_url"] = value
+
+    with pytest.raises(ValidationError):
+        SourceRegistry.model_validate(payload)
+
+
+def test_registry_rejects_credentials_in_official_urls() -> None:
+    payload = _registry_payload()
+    payload["sources"][0]["discovery"]["requested_url"] = (
+        "https://admin:secret@example.com/endorsements"
+    )
+
+    with pytest.raises(ValidationError, match="official URLs cannot contain credentials"):
+        SourceRegistry.model_validate(payload)
+
+
+@pytest.mark.parametrize("value", ["", "   ", "not-a-media-type"])
+def test_registry_rejects_invalid_media_types(value: str) -> None:
+    payload = _registry_payload()
+    payload["sources"][0]["discovery"]["media_type"] = value
+
+    with pytest.raises(ValidationError, match="media_type must be a nonempty MIME type"):
+        SourceRegistry.model_validate(payload)
+
+
+def test_registry_rejects_duplicate_source_overlap_group() -> None:
+    payload = _registry_payload()
+    source = next(
+        source for source in payload["sources"] if source["id"] == "progressive-voters-guide"
+    )
+    source["overlap_group_ids"].append("fuse-publications")
+
+    with pytest.raises(ValidationError, match="repeats an overlap group"):
+        SourceRegistry.model_validate(payload)
+
+
+def test_registry_file_rejects_duplicate_yaml_keys(tmp_path: Path) -> None:
+    text = REGISTRY_PATH.read_text(encoding="utf-8")
+    path = tmp_path / "duplicate.yaml"
+    path.write_text(
+        text.replace('schema_version: "1.0"', 'schema_version: "1.0"\nschema_version: "1.0"', 1),
+        encoding="utf-8",
+    )
+
+    with pytest.raises(ValueError, match="duplicate mapping key 'schema_version'"):
+        read_source_registry(path)
 
 
 def _registry_payload() -> dict[str, Any]:

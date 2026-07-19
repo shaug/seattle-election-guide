@@ -23,7 +23,8 @@ def render_discovery_report(registry: SourceRegistry) -> str:
         "# 2026 Primary Source Discovery Report",
         "",
         f"Panel `{registry.id}` was frozen at `{registry.frozen_at.isoformat()}` before scoring. "
-        f"The research cutoff and common access time is `{registry.research_cutoff.isoformat()}`.",
+        f"The research cutoff is `{registry.research_cutoff.isoformat()}`; individual access "
+        "times are recorded in the machine-readable registry.",
         "",
         (
             f"The preregistration contains **{len(registry.sources)} proposed sources**: "
@@ -44,8 +45,8 @@ def render_discovery_report(registry: SourceRegistry) -> str:
         "",
         "## Discovery inventory",
         "",
-        "| Organization | Category | Panel | Discovery | Official record | Publication date | "
-        "Media | Eligibility |",
+        "| Organization | Category | Panel | Discovery | Official record | "
+        "Publication / update date | Media | Eligibility |",
         "| --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
     for source in registry.sources:
@@ -121,6 +122,8 @@ def render_discovery_report(registry: SourceRegistry) -> str:
 def _publication_date(source: Source) -> str:
     discovery = source.discovery
     if discovery.published_at is None:
+        if discovery.updated_at is not None:
+            return f"updated {discovery.updated_at.isoformat()}"
         return "—"
     value = discovery.published_at.isoformat()
     if discovery.updated_at is not None:

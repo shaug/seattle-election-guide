@@ -1,8 +1,8 @@
 schema_version: "1.0"
 id: wa-2026-primary-default-sources
 election_id: wa-2026-primary
-frozen_at: 2026-07-19T23:05:54Z
-research_cutoff: 2026-07-19T23:05:54Z
+frozen_at: 2026-07-19T23:38:50Z
+research_cutoff: 2026-07-19T23:38:50Z
 notes:
   - This registry was frozen before consensus scoring or result inspection.
   - Published means an official 2026 publication was located; it does not imply complete ballot coverage.
@@ -42,11 +42,12 @@ sources:
       rationale: Use only for Seattle-ballot races for which the organization publishes a decision.
     discovery:
       status: published
-      checked_at: 2026-07-19T23:05:54Z
+      checked_at: 2026-07-19T23:38:50Z
       requested_url: https://www.theurbanist.org/2026-primary-election-endorsements/
       canonical_url: https://www.theurbanist.org/2026-primary-election-endorsements/
       media_type: text/html
       published_at: 2026-07-16
+      updated_at: 2026-07-17
       evidence_locator: Page title, byline, publication date, and Endorsements Cheat Sheet.
       notes: Official endorsement page loaded directly with HTTP 200.
 
@@ -184,12 +185,14 @@ sources:
       rationale: County organization may count once in any Seattle-ballot race it explicitly addresses.
     discovery:
       status: published
-      checked_at: 2026-07-19T23:05:54Z
+      checked_at: 2026-07-19T23:38:50Z
       requested_url: https://www.kcdems.org/our-party/e/2026-endorsements/
       canonical_url: https://www.kcdems.org/our-party/e/2026-endorsements/
       media_type: text/html
+      published_at: 2026-01-31
+      updated_at: 2026-07-07
       evidence_locator: 2026 Endorsements page, Primary and General election section.
-      notes: Official endorsement page loaded directly with HTTP 200; it is maintained as a growing list and shows no single publication date.
+      notes: Official endorsement page loaded directly with HTTP 200; structured metadata records its original publication and latest update dates.
     overlap_group_ids:
       - democratic-party-network
 
@@ -279,11 +282,12 @@ sources:
       rationale: DECISIONS limits an LD organization to races specific to its own district.
     discovery:
       status: published
-      checked_at: 2026-07-19T23:05:54Z
+      checked_at: 2026-07-19T23:38:50Z
       requested_url: https://36th.org/endorsements-2026/
       canonical_url: https://36th.org/endorsements-2026/
       media_type: text/html
       published_at: 2026-05-17
+      updated_at: 2026-07-15
       evidence_locator: 2026 Elections Endorsements page and office tables.
       notes: Official endorsement page loaded directly with HTTP 200.
     overlap_group_ids:
@@ -303,8 +307,10 @@ sources:
       rationale: DECISIONS limits an LD organization to races specific to its own district.
     discovery:
       status: not_found
-      checked_at: 2026-07-19T23:05:54Z
+      checked_at: 2026-07-19T23:38:50Z
       requested_url: https://37dems.org/
+      canonical_url: https://37dems.org/
+      media_type: text/html
       evidence_locator: Official site root and official-site endorsement search.
       notes: The official site loaded with HTTP 200, but no official consolidated 2026 endorsement publication was located; third-party lists were rejected as evidence.
     overlap_group_ids:
@@ -370,8 +376,10 @@ sources:
       rationale: Count only explicit official decisions matched to Seattle-ballot races.
     discovery:
       status: not_found
-      checked_at: 2026-07-19T23:05:54Z
+      checked_at: 2026-07-19T23:38:50Z
       requested_url: https://www.stonewalldemocrats.us/washington
+      canonical_url: https://www.stonewalldemocrats.us/washington
+      media_type: text/html
       evidence_locator: Official Washington chapter page and official-site endorsement search.
       notes: The official chapter page loaded with HTTP 200, but no official consolidated 2026 endorsement page was located; reporting and candidate sites were rejected as evidence.
     overlap_group_ids:
@@ -432,8 +440,10 @@ sources:
       rationale: Retained to document resolution of the conditional proposal and affiliated ownership.
     discovery:
       status: not_an_endorsement_publisher
-      checked_at: 2026-07-19T23:05:54Z
+      checked_at: 2026-07-19T23:38:50Z
       requested_url: https://cascade.org/who-we-are/about-us
+      canonical_url: https://cascade.org/who-we-are/about-us
+      media_type: text/html
       evidence_locator: About Us organizational history and official merger description.
       notes: Official materials state that Cascade is the affiliated 501(c)(3) and Washington Bikes is the 501(c)(4) candidate-endorsement arm.
     overlap_group_ids:
@@ -470,8 +480,10 @@ sources:
       rationale: Excluded before scoring under the preregistered conditional rule.
     discovery:
       status: not_found
-      checked_at: 2026-07-19T23:05:54Z
+      checked_at: 2026-07-19T23:38:50Z
       requested_url: https://transportationchoices.org/
+      canonical_url: https://transportationchoices.org/
+      media_type: text/html
       evidence_locator: Official site root, 2026 news archive, and official-site endorsement search.
       notes: Official pages loaded with HTTP 200, but no 2026 candidate or ballot endorsement publication was located.
 
@@ -487,9 +499,10 @@ sources:
       rationale: Excluded before scoring rather than treating policy advocacy as candidate endorsement.
     discovery:
       status: not_an_endorsement_publisher
-      checked_at: 2026-07-19T23:05:54Z
+      checked_at: 2026-07-19T23:38:50Z
       requested_url: https://disabilityrightswa.org/program/disability-mobility-initiative/
       canonical_url: https://disabilityrightswa.org/
+      media_type: text/html
       redirect_chain:
         - https://disabilityrightswa.org/program/disability-mobility-initiative/
         - https://disabilityrightswa.org/
@@ -544,9 +557,10 @@ sources:
       rationale: Excluded before scoring under the preregistered conditional rule.
     discovery:
       status: not_an_endorsement_publisher
-      checked_at: 2026-07-19T23:05:54Z
+      checked_at: 2026-07-19T23:38:50Z
       requested_url: https://climatesolutions.org/
       canonical_url: https://www.climatesolutions.org/
+      media_type: text/html
       redirect_chain:
         - https://climatesolutions.org/
         - https://www.climatesolutions.org/
@@ -586,12 +600,13 @@ sources:
       rationale: Count the council once where it publishes a decision, while disclosing affiliate overlap.
     discovery:
       status: published
-      checked_at: 2026-07-19T23:05:54Z
+      checked_at: 2026-07-19T23:38:50Z
       requested_url: https://www.mlklabor.org/endorsements/
       canonical_url: https://www.mlklabor.org/endorsements/
       media_type: text/html
+      updated_at: 2026-06-18
       evidence_locator: 2026 Endorsements heading and jurisdiction lists.
-      notes: Official endorsement page loaded directly with HTTP 200; the page metadata date is stale, so no publication date is recorded.
+      notes: Official endorsement page loaded directly with HTTP 200; its 2019 publication date is stale, while structured metadata records a 2026 update.
     overlap_group_ids:
       - organized-labor-network
 
@@ -651,12 +666,14 @@ sources:
       rationale: Count the local once where it publishes a Seattle-ballot decision.
     discovery:
       status: published
-      checked_at: 2026-07-19T23:05:54Z
+      checked_at: 2026-07-19T23:38:50Z
       requested_url: https://www.seiu925.org/2026endorsements/
       canonical_url: https://www.seiu925.org/2026endorsements/
       media_type: text/html
+      published_at: 2026-06-29
+      updated_at: 2026-06-30
       evidence_locator: SEIU 925 Endorsements 2026 page and candidate sections.
-      notes: Official endorsement page loaded directly with HTTP 200; no page-level publication date is shown.
+      notes: Official endorsement page loaded directly with HTTP 200; structured metadata records publication and update dates.
     overlap_group_ids:
       - organized-labor-network
 
@@ -708,16 +725,19 @@ sources:
     organization_url: https://www.washingtonea.org/
     geographic_kind: general
     panel_role: consensus
-    panel_reason: Named education-labor source retained conditionally where an official current endorsement is available.
+    panel_reason: Named education-labor source with an official 2026 endorsement page.
     eligibility:
       kind: all_seattle_ballot_races
       rationale: Count only explicit official decisions, not candidate claims or guide partner data.
     discovery:
-      status: not_found
-      checked_at: 2026-07-19T23:05:54Z
-      requested_url: https://www.washingtonea.org/
-      evidence_locator: Official site root and official-domain 2026 endorsement search.
-      notes: Official site loaded with HTTP 200, but no public official 2026 endorsement publication was located; candidate and third-party pages were rejected.
+      status: published
+      checked_at: 2026-07-19T23:38:50Z
+      requested_url: https://www.washingtonea.org/advocacy/wea-pac/2026-endorsements/
+      canonical_url: https://www.washingtonea.org/advocacy/wea-pac/2026-endorsements/
+      media_type: text/html
+      updated_at: 2026-07-13
+      evidence_locator: Official 2026 Endorsements page, endorsement tables, and official sitemap last-modified date.
+      notes: Official endorsement page loaded directly with HTTP 200; the official sitemap shows it was updated before the panel freeze.
     overlap_group_ids:
       - organized-labor-network
 
@@ -778,6 +798,8 @@ sources:
       status: not_found
       checked_at: 2026-07-19T23:05:54Z
       requested_url: https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates/elections/washington-candidate-endorsements
+      canonical_url: https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates/elections/washington-candidate-endorsements
+      media_type: text/html
       evidence_locator: Official Washington Candidate Endorsements page.
       notes: The official regional page accessible during research still identified its displayed Washington slate as 2025; direct unattended access later returned HTTP 403.
 
@@ -793,12 +815,13 @@ sources:
       rationale: Count the organization once where it publishes a Seattle-ballot decision.
     discovery:
       status: published
-      checked_at: 2026-07-19T23:05:54Z
+      checked_at: 2026-07-19T23:38:50Z
       requested_url: https://oavotes.org/our-work/endorsements/2026-endorsements/
       canonical_url: https://oavotes.org/our-work/endorsements/2026-endorsements/
       media_type: text/html
+      updated_at: 2026-05-27
       evidence_locator: 2026 Endorsements page and organization-authored candidate sections.
-      notes: Official endorsement page loaded directly with HTTP 200; no page-level publication date is shown.
+      notes: Official endorsement page loaded directly with HTTP 200; structured metadata records its 2026 update date.
 
   - id: alliance-for-gun-responsibility
     name: Alliance for Gun Responsibility Victory Fund
@@ -812,12 +835,13 @@ sources:
       rationale: Count the organization once where it publishes a Seattle-ballot decision.
     discovery:
       status: published
-      checked_at: 2026-07-19T23:05:54Z
+      checked_at: 2026-07-19T23:38:50Z
       requested_url: https://gunresponsibility.org/2026-endorsements/
       canonical_url: https://gunresponsibility.org/2026-endorsements/
       media_type: text/html
+      published_at: 2026-06-23
       evidence_locator: 2026 Endorsements page and endorsement-process introduction.
-      notes: Official endorsement page loaded directly with HTTP 200; no page-level publication date is shown.
+      notes: Official endorsement page loaded directly with HTTP 200; structured metadata records its publication date.
 
   - id: washington-housing-alliance
     name: Washington Housing Alliance

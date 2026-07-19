@@ -2,19 +2,46 @@
 
 from collections import Counter
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import yaml
 from pydantic import ValidationError
+from yaml.constructor import ConstructorError
+from yaml.nodes import MappingNode, ScalarNode
 
 from election_guide.inventory.models import Inventory
 from election_guide.sources.models import SourceRegistry
 
 
+class _UniqueKeyLoader(yaml.SafeLoader):
+    """Load safe YAML while rejecting policy fields that silently overwrite each other."""
+
+    def construct_mapping(self, node: MappingNode, deep: bool = False) -> dict[Any, Any]:
+        keys: set[str] = set()
+        for key_node, _ in node.value:
+            if not isinstance(key_node, ScalarNode):
+                raise ConstructorError(
+                    "while constructing a mapping",
+                    node.start_mark,
+                    "mapping keys must be scalar values",
+                    key_node.start_mark,
+                )
+            key = key_node.value
+            if key in keys:
+                raise ConstructorError(
+                    "while constructing a mapping",
+                    node.start_mark,
+                    f"duplicate mapping key {key!r}",
+                    key_node.start_mark,
+                )
+            keys.add(key)
+        return cast(dict[Any, Any], super().construct_mapping(node, deep=deep))
+
+
 def read_source_registry(path: Path) -> SourceRegistry:
     """Load a YAML source registry and expose validation as a stable value error."""
     try:
-        raw: Any = yaml.safe_load(path.read_text(encoding="utf-8"))
+        raw: Any = yaml.load(path.read_text(encoding="utf-8"), Loader=_UniqueKeyLoader)
         return SourceRegistry.model_validate(raw)
     except (OSError, yaml.YAMLError, ValidationError) as error:
         raise ValueError(str(error)) from error

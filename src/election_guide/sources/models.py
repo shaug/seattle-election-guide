@@ -2,10 +2,23 @@
 
 from __future__ import annotations
 
-from datetime import date, datetime
+import re
+from datetime import date
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import (
+    AnyHttpUrl,
+    AwareDatetime,
+    BaseModel,
+    ConfigDict,
+    Field,
+    TypeAdapter,
+    ValidationError,
+    field_validator,
+    model_validator,
+)
+
+HTTP_URL_ADAPTER = TypeAdapter(AnyHttpUrl)
 
 
 class SourceModel(BaseModel):
@@ -31,7 +44,7 @@ class Eligibility(SourceModel):
 
 class Discovery(SourceModel):
     status: Literal["published", "not_found", "not_an_endorsement_publisher", "access_restricted"]
-    checked_at: datetime
+    checked_at: AwareDatetime
     requested_url: str
     canonical_url: str | None = None
     redirect_chain: list[str] = Field(default_factory=list)
@@ -41,15 +54,51 @@ class Discovery(SourceModel):
     evidence_locator: str = Field(min_length=1)
     notes: str = Field(min_length=1)
 
+    @field_validator("requested_url", "canonical_url")
+    @classmethod
+    def validate_url(cls, value: str | None) -> str | None:
+        return None if value is None else _validated_http_url(value)
+
+    @field_validator("redirect_chain")
+    @classmethod
+    def validate_redirect_urls(cls, value: list[str]) -> list[str]:
+        return [_validated_http_url(url) for url in value]
+
+    @field_validator("media_type")
+    @classmethod
+    def validate_media_type(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        normalized = value.strip()
+        if not re.fullmatch(
+            r"[A-Za-z0-9!#$&^_.+-]+/[A-Za-z0-9!#$&^_.+-]+(?:\s*;\s*[^;=\s]+=[^;]+)*",
+            normalized,
+        ):
+            raise ValueError("media_type must be a nonempty MIME type")
+        return normalized
+
     @model_validator(mode="after")
     def validate_publication_metadata(self) -> Discovery:
-        if self.status == "published":
+        if self.status != "access_restricted":
             if self.canonical_url is None:
-                raise ValueError("published discovery requires canonical_url")
+                raise ValueError("nonrestricted discovery requires canonical_url")
             if self.media_type is None:
-                raise ValueError("published discovery requires media_type")
-        elif self.published_at is not None or self.updated_at is not None:
+                raise ValueError("nonrestricted discovery requires media_type")
+        if self.status != "published" and (
+            self.published_at is not None or self.updated_at is not None
+        ):
             raise ValueError("only published discoveries may carry publication dates")
+        checked_date = self.checked_at.date()
+        if self.published_at is not None and self.published_at > checked_date:
+            raise ValueError("publication date cannot be after discovery access date")
+        if self.updated_at is not None and self.updated_at > checked_date:
+            raise ValueError("update date cannot be after discovery access date")
+        if (
+            self.published_at is not None
+            and self.updated_at is not None
+            and self.updated_at < self.published_at
+        ):
+            raise ValueError("update date cannot be before publication date")
         if self.redirect_chain:
             if len(self.redirect_chain) < 2:
                 raise ValueError("redirect_chain must include requested and canonical URLs")
@@ -83,6 +132,11 @@ class Source(SourceModel):
     publisher_id: str | None = None
     overlap_group_ids: list[str] = Field(default_factory=list)
 
+    @field_validator("organization_url")
+    @classmethod
+    def validate_organization_url(cls, value: str) -> str:
+        return _validated_http_url(value)
+
     @model_validator(mode="after")
     def validate_role(self) -> Source:
         if self.panel_role == "excluded" and self.eligibility.kind != "none":
@@ -93,8 +147,17 @@ class Source(SourceModel):
             raise ValueError(f"comparison source {self.id!r} must use comparison category")
         if self.panel_role != "comparison" and self.category == "comparison":
             raise ValueError(f"comparison category source {self.id!r} must be comparison-only")
+        if (
+            self.discovery.status == "not_an_endorsement_publisher"
+            and self.panel_role != "excluded"
+        ):
+            raise ValueError(
+                f"non-endorsement publisher {self.id!r} must be excluded from the panel"
+            )
         if self.publisher_id is not None and self.panel_role != "excluded":
             raise ValueError(f"publication {self.id!r} with a publisher must be excluded")
+        if len(self.overlap_group_ids) != len(set(self.overlap_group_ids)):
+            raise ValueError(f"source {self.id!r} repeats an overlap group")
         if self.geographic_kind == "legislative_district":
             if self.eligibility.kind != "jurisdictions_only":
                 raise ValueError(
@@ -109,6 +172,16 @@ class Source(SourceModel):
         return self
 
 
+def _validated_http_url(value: str) -> str:
+    try:
+        url = HTTP_URL_ADAPTER.validate_python(value)
+    except ValidationError as error:
+        raise ValueError("must be an absolute HTTP(S) URL") from error
+    if url.username is not None or url.password is not None:
+        raise ValueError("official URLs cannot contain credentials")
+    return str(url)
+
+
 class OverlapGroup(SourceModel):
     id: str = Field(pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
     label: str = Field(min_length=1)
@@ -120,8 +193,8 @@ class SourceRegistry(SourceModel):
     schema_version: Literal["1.0"] = "1.0"
     id: str
     election_id: str
-    frozen_at: datetime
-    research_cutoff: datetime
+    frozen_at: AwareDatetime
+    research_cutoff: AwareDatetime
     notes: list[str]
     sources: list[Source] = Field(min_length=1)
     overlap_groups: list[OverlapGroup]
@@ -143,6 +216,8 @@ class SourceRegistry(SourceModel):
             raise ValueError("registry must contain exactly one comparison source")
 
         for source in self.sources:
+            if source.discovery.checked_at > self.research_cutoff:
+                raise ValueError(f"source {source.id!r} was checked after the research cutoff")
             if source.publisher_id is not None:
                 if source.publisher_id not in known_sources:
                     raise ValueError(
