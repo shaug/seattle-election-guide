@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import cast
 
 import yaml
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from election_guide.inventory.models import (
     BallotChoice,
@@ -32,6 +32,7 @@ class ImportModel(BaseModel):
 
 class InputSource(ImportModel):
     input_key: str | None = None
+    extract_filename: str | None = None
     reference: SourceReference
 
 
@@ -66,6 +67,7 @@ class Measure(ImportModel):
     aliases: list[str]
     publication_eligible: bool = True
     source_ids: list[str]
+    evidence_locator: str
     choices: list[MeasureChoice]
 
 
@@ -85,10 +87,72 @@ class ImportConfiguration(ImportModel):
     sources: list[InputSource]
     jurisdictions: list[Jurisdiction]
     candidate_input_key: str
+    precinct_crosswalk_input_key: str
+    precinct_crosswalk_source_id: str
     race_selectors: list[RaceSelector]
+    sample_ballot_pages: dict[str, int]
     measures: list[Measure]
     pco_imports: list[PcoImport]
     selection_method: SelectionMethod
+
+    @model_validator(mode="after")
+    def validate_input_bindings(self) -> ImportConfiguration:
+        keyed_sources = [source for source in self.sources if source.input_key is not None]
+        input_keys = [source.input_key for source in keyed_sources]
+        if len(input_keys) != len(set(input_keys)):
+            raise ValueError("input source keys must be unique")
+        source_ids = [source.reference.id for source in self.sources]
+        if len(source_ids) != len(set(source_ids)):
+            raise ValueError("source ids must be unique")
+
+        source_by_input = {
+            source.input_key: source.reference for source in keyed_sources if source.input_key
+        }
+        candidate_source = source_by_input.get(self.candidate_input_key)
+        if candidate_source is None:
+            raise ValueError(f"candidate input {self.candidate_input_key!r} has no source")
+        crosswalk_source = source_by_input.get(self.precinct_crosswalk_input_key)
+        if crosswalk_source is None:
+            raise ValueError(
+                f"precinct crosswalk input {self.precinct_crosswalk_input_key!r} has no source"
+            )
+        if crosswalk_source.id != self.precinct_crosswalk_source_id:
+            raise ValueError(
+                f"precinct crosswalk input {self.precinct_crosswalk_input_key!r} is bound to "
+                f"{crosswalk_source.id!r}, not {self.precinct_crosswalk_source_id!r}"
+            )
+
+        selector_keys = [
+            (selector.source_jurisdiction, selector.source_office)
+            for selector in self.race_selectors
+        ]
+        if len(selector_keys) != len(set(selector_keys)):
+            raise ValueError("race selectors must use unique source jurisdiction and office pairs")
+        selector_ids = {selector.id for selector in self.race_selectors}
+        if set(self.sample_ballot_pages) != selector_ids:
+            raise ValueError("sample ballot page keys must exactly match race selector ids")
+        if any(page < 1 for page in self.sample_ballot_pages.values()):
+            raise ValueError("sample ballot pages must be positive")
+        for selector in self.race_selectors:
+            if candidate_source.id not in selector.source_ids:
+                raise ValueError(
+                    f"selector {selector.id!r} must cite candidate source {candidate_source.id!r}"
+                )
+
+        for pco in self.pco_imports:
+            source = source_by_input.get(pco.input_key)
+            if source is None:
+                raise ValueError(f"PCO input {pco.input_key!r} has no source")
+            if source.id != pco.source_id:
+                raise ValueError(
+                    f"PCO input {pco.input_key!r} is bound to {source.id!r}, not {pco.source_id!r}"
+                )
+            if self.precinct_crosswalk_source_id not in pco.evidence_source_ids:
+                raise ValueError(
+                    f"PCO input {pco.input_key!r} must cite precinct crosswalk "
+                    f"{self.precinct_crosswalk_source_id!r}"
+                )
+        return self
 
 
 CANDIDATE_COLUMNS = {
@@ -99,6 +163,30 @@ CANDIDATE_COLUMNS = {
     "Ballot Order",
 }
 PCO_COLUMNS = {"Leg District", "Precinct", "Office & Party", "Candidate", "Ballot Order"}
+PRECINCT_COLUMNS = {"PrecinctName", "CityName", "SeattleCouncilDistrict"}
+SAFE_COLUMNS_BY_INPUT = {
+    "candidates": [
+        "Jurisdiction Name",
+        "Office",
+        "Candidate",
+        "Party Preference",
+        "Ballot Order",
+    ],
+    "pco_democrats": [
+        "Leg District",
+        "Precinct",
+        "Office & Party",
+        "Candidate",
+        "Ballot Order",
+    ],
+    "pco_republicans": [
+        "Leg District",
+        "Precinct",
+        "Office & Party",
+        "Candidate",
+        "Ballot Order",
+    ],
+}
 
 
 def import_inventory(config_path: Path, inputs: dict[str, Path]) -> Inventory:
@@ -113,16 +201,19 @@ def import_inventory(config_path: Path, inputs: dict[str, Path]) -> Inventory:
     for input_key, source in source_by_input.items():
         if input_key not in inputs:
             raise ValueError(f"missing input file for {input_key!r}")
+        expected_hash = source.storage_sha256 or source.sha256
         actual_hash = _sha256(inputs[input_key])
-        if actual_hash != source.sha256:
+        if actual_hash != expected_hash:
             raise ValueError(
-                f"{input_key!r} SHA-256 mismatch: expected {source.sha256}, got {actual_hash}"
+                f"{input_key!r} SHA-256 mismatch: expected {expected_hash}, got {actual_hash}"
             )
 
     candidate_source = source_by_input.get(config.candidate_input_key)
     if candidate_source is None:
         raise ValueError(f"candidate input {config.candidate_input_key!r} has no source")
     candidate_rows = _read_csv(inputs[config.candidate_input_key], CANDIDATE_COLUMNS)
+    precinct_rows = _read_csv(inputs[config.precinct_crosswalk_input_key], PRECINCT_COLUMNS)
+    seattle_precincts = _validated_seattle_precincts(precinct_rows)
 
     races: list[Race] = []
     for selector in config.race_selectors:
@@ -137,7 +228,14 @@ def import_inventory(config_path: Path, inputs: dict[str, Path]) -> Inventory:
                 f"selector {selector.id!r} matched no candidate rows "
                 f"for {selector.source_jurisdiction!r} / {selector.source_office!r}"
             )
-        races.append(_candidate_race(config.election.id, selector, matched))
+        races.append(
+            _candidate_race(
+                config.election.id,
+                selector,
+                matched,
+                config.sample_ballot_pages[selector.id],
+            )
+        )
 
     jurisdictions = list(config.jurisdictions)
     coverage_checks = [
@@ -154,7 +252,9 @@ def import_inventory(config_path: Path, inputs: dict[str, Path]) -> Inventory:
 
     for pco in config.pco_imports:
         pco_rows = _read_csv(inputs[pco.input_key], PCO_COLUMNS)
-        new_jurisdictions, pco_races = _pco_races(config.election.id, pco, pco_rows)
+        new_jurisdictions, pco_races = _pco_races(
+            config.election.id, pco, pco_rows, seattle_precincts
+        )
         if len(pco_races) != pco.expected_races:
             raise ValueError(
                 f"{pco.input_key!r} matched {len(pco_races)} PCO races; "
@@ -171,7 +271,7 @@ def import_inventory(config_path: Path, inputs: dict[str, Path]) -> Inventory:
         coverage_checks.append(
             CoverageCheck(
                 source_id=pco.source_id,
-                rule=f"precinct begins with {pco.precinct_prefix!r}",
+                rule="precinct appears in the official City of Seattle crosswalk",
                 matched_races=len(pco_races),
                 matched_choices=choice_count,
             )
@@ -201,6 +301,39 @@ def read_inventory(path: Path) -> Inventory:
     return Inventory.model_validate_json(path.read_text(encoding="utf-8"))
 
 
+def extract_public_inputs(
+    config_path: Path, raw_inputs: dict[str, Path], output_dir: Path
+) -> list[Path]:
+    """Create deterministic, privacy-stripped CSVs from hash-verified official files."""
+    raw_config = yaml.safe_load(config_path.read_text(encoding="utf-8"))
+    config = ImportConfiguration.model_validate(raw_config)
+    source_by_input = {
+        source.input_key: source for source in config.sources if source.input_key is not None
+    }
+    outputs: list[Path] = []
+    output_dir.mkdir(parents=True, exist_ok=True)
+    for input_key, columns in SAFE_COLUMNS_BY_INPUT.items():
+        source = source_by_input.get(input_key)
+        if source is None or input_key not in raw_inputs:
+            raise ValueError(f"missing configured raw input {input_key!r}")
+        if source.extract_filename is None:
+            raise ValueError(f"input {input_key!r} has no extract filename")
+        actual_hash = _sha256(raw_inputs[input_key])
+        if actual_hash != source.reference.sha256:
+            raise ValueError(
+                f"raw {input_key!r} SHA-256 mismatch: expected "
+                f"{source.reference.sha256}, got {actual_hash}"
+            )
+        rows = _read_csv(raw_inputs[input_key], set(columns))
+        output_path = output_dir / source.extract_filename
+        with output_path.open("w", encoding="utf-8", newline="") as handle:
+            writer = csv.DictWriter(handle, fieldnames=columns, lineterminator="\n")
+            writer.writeheader()
+            writer.writerows({column: row[column] for column in columns} for row in rows)
+        outputs.append(output_path)
+    return outputs
+
+
 def _read_csv(path: Path, required_columns: set[str]) -> list[dict[str, str]]:
     with path.open(encoding="utf-8-sig", newline="") as handle:
         reader = csv.DictReader(handle)
@@ -214,7 +347,30 @@ def _read_csv(path: Path, required_columns: set[str]) -> list[dict[str, str]]:
         ]
 
 
-def _candidate_race(election_id: str, selector: RaceSelector, rows: list[dict[str, str]]) -> Race:
+def _validated_seattle_precincts(rows: list[dict[str, str]]) -> set[str]:
+    assignments: dict[str, tuple[str, str]] = {}
+    for row in rows:
+        precinct = row["PrecinctName"]
+        assignment = (row["CityName"], row["SeattleCouncilDistrict"])
+        if precinct in assignments:
+            raise ValueError(
+                f"precinct crosswalk repeats {precinct!r}: "
+                f"{assignments[precinct]!r} and {assignment!r}"
+            )
+        assignments[precinct] = assignment
+    return {
+        precinct
+        for precinct, (city, council_district) in assignments.items()
+        if city == "Seattle" and council_district
+    }
+
+
+def _candidate_race(
+    election_id: str,
+    selector: RaceSelector,
+    rows: list[dict[str, str]],
+    sample_ballot_page: int,
+) -> Race:
     choices = [
         BallotChoice(
             id=f"{selector.id}--{_slug(row['Candidate'])}",
@@ -226,6 +382,12 @@ def _candidate_race(election_id: str, selector: RaceSelector, rows: list[dict[st
             ballot_order=int(row["Ballot Order"]),
             party_preference=row["Party Preference"] or None,
             source_ids=selector.source_ids,
+            evidence_locator=(
+                f"candidate CSV row: Jurisdiction Name={selector.source_jurisdiction!r}, "
+                f"Office={selector.source_office!r}, Candidate={row['Candidate']!r}, "
+                f"Ballot Order={row['Ballot Order']!r}; composite sample ballot page "
+                f"{sample_ballot_page}"
+            ),
         )
         for row in rows
     ]
@@ -242,6 +404,11 @@ def _candidate_race(election_id: str, selector: RaceSelector, rows: list[dict[st
         aliases=selector.aliases,
         publication_eligible=selector.publication_eligible,
         source_ids=selector.source_ids,
+        evidence_locator=(
+            f"candidate CSV: Jurisdiction Name={selector.source_jurisdiction!r}, "
+            f"Office={selector.source_office!r}; composite sample ballot page "
+            f"{sample_ballot_page}"
+        ),
         choices=choices,
     )
 
@@ -259,6 +426,7 @@ def _measure_race(election_id: str, measure: Measure) -> Race:
         aliases=measure.aliases,
         publication_eligible=measure.publication_eligible,
         source_ids=measure.source_ids,
+        evidence_locator=measure.evidence_locator,
         choices=[
             BallotChoice(
                 id=f"{measure.id}--{_slug(choice.official_name)}",
@@ -269,6 +437,9 @@ def _measure_race(election_id: str, measure: Measure) -> Race:
                 aliases=choice.aliases,
                 ballot_order=choice.ballot_order,
                 source_ids=measure.source_ids,
+                evidence_locator=(
+                    f"{measure.evidence_locator}; ballot option={choice.official_name!r}"
+                ),
             )
             for choice in measure.choices
         ],
@@ -276,9 +447,19 @@ def _measure_race(election_id: str, measure: Measure) -> Race:
 
 
 def _pco_races(
-    election_id: str, config: PcoImport, rows: list[dict[str, str]]
+    election_id: str,
+    config: PcoImport,
+    rows: list[dict[str, str]],
+    seattle_precincts: set[str],
 ) -> tuple[list[Jurisdiction], list[Race]]:
-    selected = [row for row in rows if row["Precinct"].startswith(config.precinct_prefix)]
+    prefixed = [row for row in rows if row["Precinct"].startswith(config.precinct_prefix)]
+    unknown_precincts = sorted({row["Precinct"] for row in prefixed} - seattle_precincts)
+    if unknown_precincts:
+        raise ValueError(
+            "PCO rows use precincts absent from the official Seattle crosswalk: "
+            f"{unknown_precincts}"
+        )
+    selected = [row for row in rows if row["Precinct"] in seattle_precincts]
     groups: dict[tuple[str, str, str], list[dict[str, str]]] = defaultdict(list)
     for row in selected:
         groups[(row["Leg District"], row["Precinct"], row["Office & Party"])].append(row)
@@ -299,8 +480,8 @@ def _pco_races(
                 seattle_applicability=SeattleApplicability(
                     relationship="within_city",
                     explanation=(
-                        f"King County Elections uses the {config.precinct_prefix!r} prefix for "
-                        "Seattle voter precincts."
+                        f"The official King County precinct crosswalk maps {precinct!r} "
+                        "to the City of Seattle."
                     ),
                     source_ids=source_ids,
                 ),
@@ -318,6 +499,12 @@ def _pco_races(
                 ballot_order=int(row["Ballot Order"]),
                 party_preference=config.party_label,
                 source_ids=source_ids,
+                evidence_locator=(
+                    f"PCO CSV row: Precinct={precinct!r}, "
+                    f"Office & Party={source_office!r}, Candidate={row['Candidate']!r}, "
+                    f"Ballot Order={row['Ballot Order']!r}; precinct crosswalk: "
+                    f"PrecinctName={precinct!r}, CityName='Seattle'"
+                ),
             )
             for row in candidates
         ]
@@ -335,6 +522,11 @@ def _pco_races(
                 aliases=[source_office],
                 publication_eligible=config.publication_eligible,
                 source_ids=source_ids,
+                evidence_locator=(
+                    f"PCO CSV: Precinct={precinct!r}, Office & Party={source_office!r}; "
+                    f"precinct crosswalk: PrecinctName={precinct!r}, CityName='Seattle'; "
+                    "composite sample ballot pages 8-12"
+                ),
                 choices=choices,
             )
         )

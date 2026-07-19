@@ -23,7 +23,8 @@ A contest is included when it is:
 2. assigned to a congressional, legislative, or County Council district that the official
    current King County map shows intersecting Seattle;
 3. a City of Seattle or Seattle City Council District 5 contest or measure; or
-4. a PCO contest whose official precinct name begins with `SEA `.
+4. a PCO contest whose exact precinct is mapped to Seattle in King County's official current
+   precinct crosswalk.
 
 The intersecting major districts are:
 
@@ -38,30 +39,29 @@ canonical records cite the exact official files and maps supporting these decisi
 
 ## Reproduce the import
 
-Download the three official CSV inputs to a local directory. The repository does not publish
-them because the source files contain candidate contact and mailing fields that the canonical
-inventory does not need.
+The repository retains privacy-stripped, hash-pinned extracts containing only the official
+fields consumed by the importer. It also retains a Seattle-only extract of King County's
+official precinct crosswalk. These files contain no candidate contact, mailing, or submission
+fields, so a fresh checkout can reproduce the canonical inventory after upstream files change.
+The crosswalk extract contains official `PrecinctName` rows with a nonblank
+`SeattleCouncilDistrict`, joined to the workbook's `CityCodeKey` entry `SEA = Seattle`.
 
 ```bash
-curl --fail --location --output candidates.csv \
-  https://aqua.kingcounty.gov/elections/candidatefiling/2026/2026-primary-candidates.csv
-curl --fail --location --output pco-democrats.csv \
-  https://aqua.kingcounty.gov/elections/candidatefiling/2026/2026-primary-pco-dems.csv
-curl --fail --location --output pco-republicans.csv \
-  https://aqua.kingcounty.gov/elections/candidatefiling/2026/2026-primary-pco-reps.csv
-
 uv run election-guide inventory import \
   --config config/elections/wa-2026-primary-inventory.yaml \
-  --candidates candidates.csv \
-  --pco-democrats pco-democrats.csv \
-  --pco-republicans pco-republicans.csv
+  --candidates data/extracted/official/king-county-2026-primary-candidates.csv \
+  --pco-democrats data/extracted/official/king-county-2026-primary-pco-democrats.csv \
+  --pco-republicans data/extracted/official/king-county-2026-primary-pco-republicans.csv \
+  --precinct-crosswalk \
+    data/extracted/official/king-county-2026-seattle-precinct-crosswalk.csv
 uv run election-guide inventory validate \
   data/normalized/wa-2026-primary-inventory.json
 ```
 
-The importer rejects inputs whose SHA-256 hash differs from the captured source manifest. A
-source refresh therefore requires a reviewed configuration and data diff, not an unnoticed
-live-data change.
+The source manifest records both each official raw artifact hash and each retained safe-input
+hash. `inventory extract` verifies the raw King County candidate and PCO CSV hashes before
+removing unused personal and contact columns. A source refresh requires a reviewed manifest,
+safe-input, and canonical-data diff rather than an unnoticed live-data change.
 
 ## Canonical guarantees
 
@@ -71,9 +71,14 @@ Validation rejects:
 - references to missing sources, jurisdictions, parents, or elections;
 - jurisdiction cycles;
 - a candidate or ballot option attached to a different race;
+- duplicate source selectors that would import one official contest as two canonical races;
+- a PCO precinct absent from the official Seattle crosswalk;
+- a candidate race with ballot options, a measure with candidates, or an empty race;
 - duplicate ballot order within one race; and
-- source files whose contents differ from the recorded hash.
+- source files whose contents differ from the recorded hash; and
+- coverage counts that do not reconcile to records citing the checked source.
 
 Every election, jurisdiction, race, candidate, and ballot option cites at least one official
 source. Race records keep district, office, position, display name, and official display aliases
-as separate fields so later endorsement matching does not depend on lossy string parsing.
+as separate fields so later endorsement matching does not depend on lossy string parsing. Race
+and ballot-choice records also retain exact CSV selectors and sample-ballot page locators.

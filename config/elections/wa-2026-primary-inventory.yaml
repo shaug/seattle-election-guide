@@ -10,6 +10,7 @@ election:
 
 sources:
   - input_key: candidates
+    extract_filename: king-county-2026-primary-candidates.csv
     reference:
       id: king-county-candidates
       authority: King County Elections
@@ -17,8 +18,12 @@ sources:
       media_type: text/csv
       retrieved_at: 2026-07-19T21:15:00Z
       sha256: e9b4f2317fe1fd87cbb1acc74c821437a1a585cc4ffe53478c37842809f11467
+      storage_sha256: 9004b32055dfd51fd336d4f22f3220b5a2769881275972855d11570707c27136
       description: Official 2026 primary candidate list in ballot order.
+      storage_reference: data/extracted/official/king-county-2026-primary-candidates.csv
+      redistribution_note: Privacy-stripped extract; contact and mailing columns omitted.
   - input_key: pco_democrats
+    extract_filename: king-county-2026-primary-pco-democrats.csv
     reference:
       id: king-county-pco-democrats
       authority: King County Elections
@@ -26,8 +31,12 @@ sources:
       media_type: text/csv
       retrieved_at: 2026-07-19T21:15:00Z
       sha256: 62b37ac130a60dd96e69dbb7b98020f7569b7b41a40e5bebfbe83072838b629d
+      storage_sha256: 99588b8b144a42c297520f53591dba823b86d8aa30eb4a37cfa8592d635d4c16
       description: Official contested Democratic precinct committee officer list.
+      storage_reference: data/extracted/official/king-county-2026-primary-pco-democrats.csv
+      redistribution_note: Privacy-stripped extract; contact, mailing, and submission fields omitted.
   - input_key: pco_republicans
+    extract_filename: king-county-2026-primary-pco-republicans.csv
     reference:
       id: king-county-pco-republicans
       authority: King County Elections
@@ -35,7 +44,24 @@ sources:
       media_type: text/csv
       retrieved_at: 2026-07-19T21:15:00Z
       sha256: 93ceb7f9e75c944f1fc702186706362165bcf3509242348ff9d7a9cf5fd699ef
+      storage_sha256: e8387a1856e6ba0a059b6071afdc985a2033ad846536e4470140ed578d281f01
       description: Official contested Republican precinct committee officer list.
+      storage_reference: data/extracted/official/king-county-2026-primary-pco-republicans.csv
+      redistribution_note: Privacy-stripped extract; contact, mailing, and submission fields omitted.
+  - input_key: precinct_crosswalk
+    reference:
+      id: king-county-precinct-crosswalk
+      authority: King County Elections
+      url: "https://cdn.kingcounty.gov/-/media/king-county/depts/elections/maps/precinctlistwithmajorpoliticaldistricts_20260306.xlsx?hash=54E1B32FA50D506C2CF1ECBB0208CF6C&rev=255b40da7bae4dcdba4b5d6f706a599c"
+      media_type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+      retrieved_at: 2026-07-19T21:55:00Z
+      sha256: 60aeee8d973abac22d725793b09ffc6b2ba1cec9653d19ee6c0ca86b129c6e2a
+      storage_sha256: 3b6a14d4fd022d9b90c851296163485e1addbc8cfa0106b5c090698205963313
+      description: Official current precinct list with city and major political districts.
+      storage_reference: data/extracted/official/king-county-2026-seattle-precinct-crosswalk.csv
+      redistribution_note: >-
+        Seattle-only extract: PrecinctName rows with a SeattleCouncilDistrict, joined to
+        CityCodeKey where SEA means Seattle; other workbook rows and formatting omitted.
   - reference:
       id: king-county-sample-ballot
       authority: King County Elections
@@ -44,6 +70,8 @@ sources:
       retrieved_at: 2026-07-19T21:15:00Z
       sha256: b6e5e1f5d968c662aa6ed7ec79578eb49397df232902e006a77f312b460dcfe3
       description: Official composite sample ballot for every August 2026 King County contest.
+      storage_reference: manifest-only; retrieve from the official URL and verify SHA-256
+      redistribution_note: Official PDF is not redistributed in the repository.
   - reference:
       id: king-county-congressional-map
       authority: King County Elections GIS
@@ -52,6 +80,8 @@ sources:
       retrieved_at: 2026-07-19T21:15:00Z
       sha256: 42a5f2b5a804ef9e79b6cd63b7004a61144edcf06b9dbb2791d6710999023bb8
       description: Official current congressional district boundaries with city geography.
+      storage_reference: manifest-only; retrieve from the official URL and verify SHA-256
+      redistribution_note: Official PDF is not redistributed in the repository.
   - reference:
       id: king-county-legislative-map
       authority: King County Elections GIS
@@ -60,6 +90,8 @@ sources:
       retrieved_at: 2026-07-19T21:15:00Z
       sha256: a74dcf2b954dcb7598a8fb06a308b19fe8a3ad139096e62c00dc8e62ffb5091b
       description: Official current legislative district boundaries with city geography.
+      storage_reference: manifest-only; retrieve from the official URL and verify SHA-256
+      redistribution_note: Official PDF is not redistributed in the repository.
   - reference:
       id: king-county-council-map
       authority: King County Elections GIS
@@ -68,6 +100,8 @@ sources:
       retrieved_at: 2026-07-19T21:15:00Z
       sha256: cbbcd16001333c4cfc329f9fbfe462f196d9fe8c25289b20b4feac1349ae456a
       description: Official current Metropolitan King County Council district boundaries.
+      storage_reference: manifest-only; retrieve from the official URL and verify SHA-256
+      redistribution_note: Official PDF is not redistributed in the repository.
   - reference:
       id: king-county-district-court-map
       authority: King County Elections GIS
@@ -76,6 +110,8 @@ sources:
       retrieved_at: 2026-07-19T21:15:00Z
       sha256: 20d72f0930a97ceb511d36f2bb019c27d7ad85b335101b604a9d6100943ac114
       description: Official current King County District Court electoral boundaries.
+      storage_reference: manifest-only; retrieve from the official URL and verify SHA-256
+      redistribution_note: Official PDF is not redistributed in the repository.
 
 jurisdictions:
   - &state
@@ -223,6 +259,8 @@ jurisdictions:
     source_ids: [king-county-legislative-map]
 
 candidate_input_key: candidates
+precinct_crosswalk_input_key: precinct_crosswalk
+precinct_crosswalk_source_id: king-county-precinct-crosswalk
 race_selectors:
   - {id: us-house-7, source_jurisdiction: CONGRESSIONAL DISTRICT 7, source_office: U.S. Representative, jurisdiction_id: congressional-district-7, district: Congressional District 7, office: U.S. Representative, position: null, display_name: U.S. Representative — Congressional District 7, aliases: [CONGRESSIONAL DISTRICT 7 U.S. Representative], source_ids: [king-county-candidates, king-county-sample-ballot]}
   - {id: us-house-9, source_jurisdiction: CONGRESSIONAL DISTRICT 9, source_office: U.S. Representative, jurisdiction_id: congressional-district-9, district: Congressional District 9, office: U.S. Representative, position: null, display_name: U.S. Representative — Congressional District 9, aliases: [CONGRESSIONAL DISTRICT 9 U.S. Representative], source_ids: [king-county-candidates, king-county-sample-ballot]}
@@ -256,6 +294,39 @@ race_selectors:
   - {id: seattle-city-council-5, source_jurisdiction: SEATTLE CITY COUNCIL DISTRICT 5, source_office: Council District No. 5, jurisdiction_id: seattle-city-council-district-5, district: Seattle City Council District 5, office: City Councilmember, position: District 5 — unexpired 1-year term, display_name: Seattle City Council — District 5, aliases: [Council District No. 5], source_ids: [king-county-candidates, king-county-sample-ballot]}
   - {id: seattle-municipal-court-judge-5, source_jurisdiction: CITY OF SEATTLE, source_office: Municipal Court Judge Position No. 5, jurisdiction_id: city-of-seattle, district: Citywide, office: Municipal Court Judge, position: Position 5, display_name: Seattle Municipal Court Judge — Position 5, aliases: [Municipal Court Judge Position No. 5], source_ids: [king-county-candidates, king-county-sample-ballot]}
 
+sample_ballot_pages:
+  us-house-7: 1
+  us-house-9: 2
+  ld-11-state-representative-1: 2
+  ld-11-state-representative-2: 2
+  ld-32-state-senator: 3
+  ld-32-state-representative-1: 3
+  ld-32-state-representative-2: 3
+  ld-34-state-senator: 3
+  ld-34-state-representative-1: 3
+  ld-34-state-representative-2: 3
+  ld-36-state-senator: 3
+  ld-36-state-representative-1: 3
+  ld-36-state-representative-2: 3
+  ld-37-state-senator: 3
+  ld-37-state-representative-1: 3
+  ld-37-state-representative-2: 3
+  ld-43-state-senator: 4
+  ld-43-state-representative-1: 4
+  ld-43-state-representative-2: 4
+  ld-46-state-senator: 4
+  ld-46-state-representative-1: 4
+  ld-46-state-representative-2: 4
+  king-county-assessor: 5
+  king-county-council-2: 5
+  king-county-council-8: 5
+  supreme-court-justice-1: 5
+  supreme-court-justice-3: 5
+  supreme-court-justice-5: 5
+  supreme-court-justice-7: 5
+  seattle-city-council-5: 6
+  seattle-municipal-court-judge-5: 6
+
 measures:
   - id: seattle-proposition-1-library-levy
     jurisdiction_id: city-of-seattle
@@ -265,6 +336,7 @@ measures:
     display_name: Seattle Proposition 1 — Property Tax Levy for Seattle Public Library
     aliases: [City of Seattle Proposition No. 1, Property Tax Levy for Seattle Public Library]
     source_ids: [king-county-sample-ballot]
+    evidence_locator: composite sample ballot page 6, City of Seattle Proposition No. 1
     choices:
       - {official_name: "Yes", display_name: "Yes", aliases: [], ballot_order: 1}
       - {official_name: "No", display_name: "No", aliases: [], ballot_order: 2}
@@ -277,7 +349,7 @@ pco_imports:
     expected_choices: 79
     party_label: Democratic
     publication_eligible: false
-    evidence_source_ids: [king-county-sample-ballot]
+    evidence_source_ids: [king-county-precinct-crosswalk, king-county-sample-ballot]
   - input_key: pco_republicans
     source_id: king-county-pco-republicans
     precinct_prefix: "SEA "
@@ -285,7 +357,7 @@ pco_imports:
     expected_choices: 0
     party_label: Republican
     publication_eligible: false
-    evidence_source_ids: [king-county-sample-ballot]
+    evidence_source_ids: [king-county-precinct-crosswalk, king-county-sample-ballot]
 
 selection_method:
   target: City of Seattle August 4, 2026 primary ballots
@@ -293,7 +365,8 @@ selection_method:
     Start with King County Elections' official primary candidate, PCO, and composite sample
     ballot files. Include statewide and countywide contests; exact candidate-file jurisdictions
     whose official current district maps intersect Seattle; City of Seattle contests and
-    measures; and PCO contests whose official precinct name begins with "SEA ".
+    measures; and PCO contests whose exact precinct appears as Seattle in the official current
+    precinct crosswalk.
   exclusions:
     - Exclude districts that do not intersect Seattle.
     - Exclude County Council District 4 because the official primary files contain no contest for it.
@@ -303,6 +376,7 @@ selection_method:
     - king-county-candidates
     - king-county-pco-democrats
     - king-county-pco-republicans
+    - king-county-precinct-crosswalk
     - king-county-sample-ballot
     - king-county-congressional-map
     - king-county-legislative-map

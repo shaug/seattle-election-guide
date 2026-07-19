@@ -21,7 +21,10 @@ class SourceReference(InventoryModel):
     media_type: str
     retrieved_at: datetime
     sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    storage_sha256: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
     description: str
+    storage_reference: str = Field(min_length=1)
+    redistribution_note: str = Field(min_length=1)
 
 
 class Election(InventoryModel):
@@ -69,6 +72,7 @@ class BallotChoice(InventoryModel):
     ballot_order: int
     party_preference: str | None = None
     source_ids: list[str]
+    evidence_locator: str = Field(min_length=1)
 
 
 class Race(InventoryModel):
@@ -83,14 +87,15 @@ class Race(InventoryModel):
     aliases: list[str]
     publication_eligible: bool
     source_ids: list[str]
+    evidence_locator: str = Field(min_length=1)
     choices: list[BallotChoice]
 
 
 class CoverageCheck(InventoryModel):
     source_id: str
     rule: str
-    matched_races: int
-    matched_choices: int
+    matched_races: int = Field(ge=0)
+    matched_choices: int = Field(ge=0)
 
 
 class SelectionMethod(InventoryModel):
@@ -155,6 +160,8 @@ class Inventory(InventoryModel):
                     f"race {race.id!r} has unknown jurisdiction {race.jurisdiction_id!r}"
                 )
             _require_sources("race", race.id, race.source_ids, source_ids)
+            if not race.choices:
+                raise ValueError(f"race {race.id!r} must contain at least one ballot choice")
             ballot_orders: set[int] = set()
             for choice in race.choices:
                 if choice.id in choice_ids:
@@ -166,12 +173,41 @@ class Inventory(InventoryModel):
                     )
                 if choice.ballot_order in ballot_orders:
                     raise ValueError(f"race {race.id!r} repeats ballot order {choice.ballot_order}")
+                if choice.ballot_order < 1:
+                    raise ValueError(
+                        f"choice {choice.id!r} has non-positive ballot order {choice.ballot_order}"
+                    )
+                expected_choice_type = (
+                    "ballot_option" if race.race_type == "measure" else "candidate"
+                )
+                if choice.choice_type != expected_choice_type:
+                    raise ValueError(
+                        f"race {race.id!r} requires {expected_choice_type!r} choices, "
+                        f"not {choice.choice_type!r}"
+                    )
                 ballot_orders.add(choice.ballot_order)
                 _require_sources("ballot choice", choice.id, choice.source_ids, source_ids)
 
         for check in self.coverage_checks:
             if check.source_id not in source_ids:
                 raise ValueError(f"coverage check has unknown source {check.source_id!r}")
+            actual_races = [race for race in self.races if check.source_id in race.source_ids]
+            actual_choices = [
+                choice
+                for race in self.races
+                for choice in race.choices
+                if check.source_id in choice.source_ids
+            ]
+            if check.matched_races != len(actual_races):
+                raise ValueError(
+                    f"coverage check for {check.source_id!r} reports {check.matched_races} races, "
+                    f"but {len(actual_races)} cite that source"
+                )
+            if check.matched_choices != len(actual_choices):
+                raise ValueError(
+                    f"coverage check for {check.source_id!r} reports {check.matched_choices} "
+                    f"choices, but {len(actual_choices)} cite that source"
+                )
         if not race_ids:
             raise ValueError("inventory must contain at least one race")
         return self

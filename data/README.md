@@ -17,3 +17,7 @@ The current canonical election inventory is
 `normalized/wa-2026-primary-inventory.json`. Its source manifest records the official URLs and
 content hashes, while raw King County CSV files remain local because they contain contact and
 mailing fields that are not needed by the guide.
+
+`extracted/official/` contains deterministic, privacy-stripped build inputs. Their manifests
+retain the hashes of both the official raw artifacts and the safe extracts, allowing CI and a
+fresh checkout to reproduce the canonical inventory without publishing unused personal fields.

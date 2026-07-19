@@ -29,3 +29,5 @@ jobs:
         run: uv run pyright
       - name: Test
         run: uv run pytest
+      - name: Validate canonical election inventory
+        run: uv run election-guide inventory validate data/normalized/wa-2026-primary-inventory.json
