@@ -9,10 +9,13 @@ take priority over coverage.
 
 ## Status
 
-The authoritative August 2026 Seattle ballot inventory is implemented and validated. No
-endorsement data or voter recommendation has been published yet. See [PROJECT.md](PROJECT.md)
-for the product specification, [DECISIONS.md](DECISIONS.md) for the launch contract, and
-[docs/BALLOT_INVENTORY.md](docs/BALLOT_INVENTORY.md) for inventory scope and reproduction.
+The authoritative August 2026 Seattle ballot inventory is implemented and validated. The
+default source panel is frozen before scoring, with 42 proposed organizations assigned explicit
+discovery and panel statuses. No endorsement claims or voter recommendation has been published
+yet. See [PROJECT.md](PROJECT.md) for the product specification, [DECISIONS.md](DECISIONS.md)
+for the launch contract, [docs/BALLOT_INVENTORY.md](docs/BALLOT_INVENTORY.md) for inventory
+scope and reproduction, and [docs/SOURCE_DISCOVERY.md](docs/SOURCE_DISCOVERY.md) for the source
+panel and live 2026 discovery results.
 
 ## Development
 
@@ -27,6 +30,8 @@ Install the locked environment and run the checks:
 uv sync --frozen
 uv run election-guide --help
 uv run election-guide inventory validate
+uv run election-guide sources validate
+uv run election-guide sources report
 uv run ruff format --check .
 uv run ruff check .
 uv run pyright

@@ -12,13 +12,17 @@ from election_guide.inventory.importer import (
     read_inventory,
     write_inventory,
 )
+from election_guide.sources.registry import read_source_registry, validate_registry_inventory
+from election_guide.sources.report import render_discovery_report
 
 app = typer.Typer(
     help="Build and audit the Seattle election endorsement consensus guide.",
     no_args_is_help=True,
 )
 inventory_app = typer.Typer(help="Import and validate the official Seattle ballot inventory.")
+sources_app = typer.Typer(help="Inspect and validate the frozen endorsement-source panel.")
 app.add_typer(inventory_app, name="inventory")
+app.add_typer(sources_app, name="sources")
 
 
 @app.command()
@@ -48,6 +52,7 @@ def doctor(
         Path("DECISIONS.md"),
         Path("config/elections/wa-2026-primary.yaml"),
         Path("config/scoring/default.yaml"),
+        Path("config/sources/default.yaml"),
     )
     missing = [path for path in required_paths if not (root / path).is_file()]
     if missing:
@@ -55,6 +60,61 @@ def doctor(
             typer.echo(f"missing: {path}", err=True)
         raise typer.Exit(code=1)
     typer.echo("foundation: ok")
+
+
+@sources_app.command("validate")
+def sources_validate(
+    registry_path: Annotated[
+        Path,
+        typer.Argument(exists=True, dir_okay=False, readable=True),
+    ] = Path("config/sources/default.yaml"),
+    inventory_path: Annotated[
+        Path,
+        typer.Option(exists=True, dir_okay=False, readable=True),
+    ] = Path("data/normalized/wa-2026-primary-inventory.json"),
+) -> None:
+    """Validate panel roles, discovery state, eligibility, and overlap metadata."""
+    try:
+        registry = read_source_registry(registry_path)
+        inventory = read_inventory(inventory_path)
+        validate_registry_inventory(registry, inventory)
+    except ValueError as error:
+        typer.echo(f"source registry invalid: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    role_counts = {
+        role: sum(source.panel_role == role for source in registry.sources)
+        for role in ("consensus", "comparison", "excluded")
+    }
+    typer.echo(
+        f"source registry: valid ({len(registry.sources)} proposed; "
+        f"{role_counts['consensus']} consensus, {role_counts['comparison']} comparison, "
+        f"{role_counts['excluded']} excluded)"
+    )
+
+
+@sources_app.command("report")
+def sources_report(
+    registry_path: Annotated[
+        Path,
+        typer.Option(exists=True, dir_okay=False, readable=True),
+    ] = Path("config/sources/default.yaml"),
+    output: Annotated[Path, typer.Option(dir_okay=False)] = Path("docs/SOURCE_DISCOVERY.md"),
+    inventory_path: Annotated[
+        Path,
+        typer.Option(exists=True, dir_okay=False, readable=True),
+    ] = Path("data/normalized/wa-2026-primary-inventory.json"),
+) -> None:
+    """Render the human-readable discovery report from the frozen registry."""
+    try:
+        registry = read_source_registry(registry_path)
+        inventory = read_inventory(inventory_path)
+        validate_registry_inventory(registry, inventory)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(render_discovery_report(registry), encoding="utf-8")
+    except (OSError, ValueError) as error:
+        typer.echo(f"source report failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    typer.echo(f"source report: {len(registry.sources)} proposed sources -> {output}")
 
 
 @inventory_app.command("import")

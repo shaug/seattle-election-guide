@@ -33,6 +33,11 @@ manifests must still permit authorized reviewers to verify integrity.
 Collection must not bypass authentication, paywalls, robots controls, or other access controls.
 An inaccessible source receives an explicit status and may enter the manual review path.
 
+Source discovery uses four preregistration states: `published`, `not_found`,
+`not_an_endorsement_publisher`, and `access_restricted`. These describe publication discovery,
+not a source's decision in any race. In particular, `not_found` must never be normalized as an
+explicit no-endorsement claim.
+
 ## Changes and history
 
 Never overwrite historical captures. A refresh creates a new capture and a semantic diff.
