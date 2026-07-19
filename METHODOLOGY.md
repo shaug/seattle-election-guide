@@ -23,3 +23,8 @@ quality or electoral success. Exact ballot contents vary by voter address.
 
 The final methodology will enumerate the frozen source panel, eligibility rules, grade
 thresholds, overlap warnings, review status, limitations, and build version.
+
+The launch panel is now preregistered in
+[`config/sources/default.yaml`](config/sources/default.yaml), and its human-readable discovery
+report is [`docs/SOURCE_DISCOVERY.md`](docs/SOURCE_DISCOVERY.md). Later collection and scoring
+work must consume that freeze without adding or removing sources based on observed consensus.
