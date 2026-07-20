@@ -9,7 +9,8 @@ plus a longer detailed PDF instead of shrinking or clipping text.
 Seattle Times comparisons use one outlined, softly tinted result chip beneath the consensus choice.
 Bold `Times agrees` or `Times differs` status text is separated from the lighter choice by a centered
 dot; a restrained neutral `Times · not covered` chip means the captured guide has no Times
-endorsement. Badge contents are vertically centered and color is never the only status signal.
+endorsement. Badge contents use a small optical correction so the visible glyphs, rather than
+merely their CSS line boxes, appear vertically centered. Color is never the only status signal.
 The canonical comparison status and legacy badge label remain available in audit exports.
 
 The concise PDF uses a scan-first, two-column briefing layout. Print typography is sans serif,
@@ -17,13 +18,17 @@ candidate or choice names carry the strongest row emphasis, alternating race bac
 adjacent choices, and each race forms a three-line unit: office; choice with a fixed-width,
 right-filled consensus meter; then the Times comparison and explicitly endorsing source count
 aligned beneath the fields they explain. Shared meter widths make shares comparable down each
-column. Fine meter outlines, soft empty tracks, and vertically centered tabular percentages keep
+column. Fine meter outlines, soft empty tracks, and optically centered tabular percentages keep
 the quantitative encoding legible without dominating the choice. Section bars and flex-distributed
 race rows use the available page height instead of
 shrinking into the top of the sheet. The explicit midpoint split repeats a continued section bar
 when a category crosses columns.
 Page two groups methodology into independent column panels so short sections do not force unrelated
 content into dense or oversized shared rows.
+
+The concise and responsive editions use Trebuchet MS where it is available, with Liberation Sans
+and the generic sans-serif as portable fallbacks. Arial is not used, and no licensed font file is
+redistributed.
 
 ## Requirements
 

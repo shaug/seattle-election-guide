@@ -253,10 +253,11 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert html.count('class="print-race-column"') == 2
     assert "State Legislature — continued" in html
     assert ".print-race:nth-of-type(even) { background: #f2f6f8; }" in html
-    assert "font: 800 20pt/.95 Arial, Helvetica, sans-serif" in html
+    assert '--sans: "Trebuchet MS", "Liberation Sans", sans-serif' in html
+    assert "font: 800 20pt/.95 var(--sans)" in html
     assert '<div class="print-guide">' in html
     assert '<div class="print-guide" aria-hidden="true">' not in html
-    assert "font: 800 8.9pt/1 Arial, Helvetica, sans-serif" in html
+    assert "font: 800 8.9pt/1 var(--sans)" in html
     assert "--print-meter-width: 1.65in" in html
     assert "grid-template-columns: minmax(0, 1fr) var(--print-meter-width)" in html
     assert "linear-gradient(to left, var(--teal) 0 var(--meter-fill)" in html
@@ -409,6 +410,12 @@ def test_pdf_comparison_validation_requires_compound_chip_and_rejects_legacy_bad
         1,
     )
     assert _missing_pdf_race_values([race], wrapped_header_text, value_fn) == []
+    joined_glyph_run_text = expected_text.replace(
+        race.race_label,
+        race.race_label.replace(" ", "", 1),
+        1,
+    )
+    assert _missing_pdf_race_values([race], joined_glyph_run_text, value_fn) == []
 
     for suffix in ("body", " body", "-body"):
         prefix_collision_text = expected_text.replace(chip_label, f"{chip_label}{suffix}", 1)

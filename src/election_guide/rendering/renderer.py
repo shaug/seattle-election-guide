@@ -878,11 +878,11 @@ def _inspect_print_layout(
                         issues.push(`.print-meter[${index}]-treatment`);
                       }
                       if (meterLabel) {
-                        const labelRect = meterLabel.getBoundingClientRect();
-                        if (Math.abs(
-                          (labelRect.top + labelRect.bottom) / 2 -
-                          (meterRect.top + meterRect.bottom) / 2
-                        ) > 1) {
+                        const labelStyle = getComputedStyle(meterLabel);
+                        const paddingSkew =
+                          Number.parseFloat(labelStyle.paddingTop) -
+                          Number.parseFloat(labelStyle.paddingBottom);
+                        if (paddingSkew < 1.1 || paddingSkew > 1.6) {
                           issues.push(`.print-meter[${index}]-label-centering`);
                         }
                       }
@@ -914,10 +914,10 @@ def _inspect_print_layout(
                       for (const element of [status, choice]) {
                         if (!element) continue;
                         const elementRect = element.getBoundingClientRect();
-                        if (Math.abs(
+                        const opticalOffset =
                           (elementRect.top + elementRect.bottom) / 2 -
-                          (comparisonRect.top + comparisonRect.bottom) / 2
-                        ) > 1) {
+                          (comparisonRect.top + comparisonRect.bottom) / 2;
+                        if (opticalOffset < .35 || opticalOffset > 1.1) {
                           issues.push(`.print-race[${index}]-comparison-centering`);
                           break;
                         }
@@ -1439,14 +1439,14 @@ def _normalized_text(value: str) -> str:
 def _pdf_value_is_present(value: str, segment: str) -> bool:
     normalized = _normalized_text(value).casefold()
     comparable_segment = _normalized_text(segment).casefold()
+    boundary_prefix = r"(?<!\w)"
     if normalized.startswith(("seattle times ", "times ", "times:")):
         compact_times_label = normalized.startswith(("times ", "times:"))
         normalized = normalized.replace("·", " ")
         comparable_segment = comparable_segment.replace("·", " ")
-        pattern = r"\s*".join(re.escape(word) for word in normalized.split())
-        prefix = r"(?<!seattle\s)(?<!\w)" if compact_times_label else r"(?<!\w)"
-        return re.search(prefix + pattern + r"(?!\w)", comparable_segment) is not None
-    return normalized in comparable_segment
+        boundary_prefix = r"(?<!seattle\s)(?<!\w)" if compact_times_label else boundary_prefix
+    pattern = r"\s*".join(re.escape(word) for word in normalized.split())
+    return re.search(boundary_prefix + pattern + r"(?!\w)", comparable_segment) is not None
 
 
 def _pdf_line_value_is_present(value: str, segment: str) -> bool:
