@@ -5,6 +5,7 @@ import importlib
 import json
 import os
 import re
+import subprocess
 import tempfile
 from collections.abc import Generator
 from contextlib import contextmanager
@@ -56,7 +57,9 @@ from election_guide.normalization.records import (
     write_review_decision,
     write_review_item,
 )
+from election_guide.publication import build_publication_bundle, write_publication_bundle
 from election_guide.scoring import (
+    ConsensusReport,
     PublicationBlockedError,
     read_scoring_configuration,
     score_dataset,
@@ -75,11 +78,13 @@ evidence_app = typer.Typer(help="Capture, verify, and manually transcribe source
 manual_app = typer.Typer(help="Validate and import structured manual transcriptions.")
 normalize_app = typer.Typer(help="Match and validate canonical endorsement records.")
 review_app = typer.Typer(help="Inspect and resolve ambiguous normalization records.")
+export_app = typer.Typer(help="Generate canonical machine-readable publication artifacts.")
 app.add_typer(inventory_app, name="inventory")
 app.add_typer(sources_app, name="sources")
 app.add_typer(evidence_app, name="evidence")
 app.add_typer(normalize_app, name="normalize")
 app.add_typer(review_app, name="review")
+app.add_typer(export_app, name="export")
 evidence_app.add_typer(manual_app, name="manual")
 
 
@@ -169,6 +174,56 @@ def score(
         typer.echo(f"scoring failed: {error}", err=True)
         raise typer.Exit(code=1) from error
     typer.echo(f"consensus: {output_path} ({len(report.races)} races)")
+
+
+@export_app.command("build")
+def export_build(
+    dataset_path: Annotated[
+        Path,
+        typer.Option(exists=True, dir_okay=False, readable=True),
+    ] = Path("data/normalized/canonical-dataset.json"),
+    consensus_path: Annotated[
+        Path,
+        typer.Option(exists=True, dir_okay=False, readable=True),
+    ] = Path("data/normalized/consensus.json"),
+    output_dir: Annotated[
+        Path,
+        typer.Option(file_okay=False),
+    ] = Path("build"),
+    snapshot_root: Annotated[
+        Path,
+        typer.Option(file_okay=False, readable=True),
+    ] = Path("data/snapshots"),
+    git_commit: Annotated[
+        str | None,
+        typer.Option(help="Code revision recorded in the build manifest."),
+    ] = None,
+) -> None:
+    """Generate deterministic exports and the shared publication view model."""
+    try:
+        dataset = CanonicalDataset.model_validate(read_json(dataset_path))
+        consensus = ConsensusReport.model_validate(
+            read_json(consensus_path),
+            context={"canonical_dataset": dataset},
+        )
+        bundle = build_publication_bundle(
+            dataset,
+            consensus,
+            git_commit=git_commit or _git_commit(),
+            snapshot_root=snapshot_root,
+        )
+        outputs = write_publication_bundle(bundle, output_dir)
+    except (
+        OSError,
+        UnicodeError,
+        json.JSONDecodeError,
+        subprocess.SubprocessError,
+        ValidationError,
+        ValueError,
+    ) as error:
+        typer.echo(f"publication export failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    typer.echo(f"publication exports: {output_dir} ({len(outputs)} artifacts)")
 
 
 @evidence_app.command("capture")
@@ -773,6 +828,22 @@ def _score_timestamp(value: str | None) -> datetime:
         return datetime.fromtimestamp(seconds, tz=UTC)
     except (ValueError, OverflowError, OSError) as error:
         raise ValueError("SOURCE_DATE_EPOCH must be a supported integer Unix timestamp") from error
+
+
+def _git_commit() -> str:
+    environment_commit = os.environ.get("GITHUB_SHA")
+    if environment_commit:
+        return environment_commit
+    result = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    commit = result.stdout.strip()
+    if not commit:
+        raise ValueError("git returned an empty revision")
+    return commit
 
 
 def _write_generated_json(path: Path, value: object) -> None:
