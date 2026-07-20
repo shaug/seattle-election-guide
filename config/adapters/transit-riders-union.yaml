@@ -1,0 +1,25 @@
+schema_version: "1.0"
+source_id: transit-riders-union
+adapter_kind: static_html
+extractor_version: 1.0.0
+complete: true
+decision_pattern: '(?m)^[^:\n]+:\s*[^\n]+$'
+rules:
+  - race_id: ld-32-state-representative-1
+    pattern: >-
+      32nd Legislative District \(Washington State House\):\s*Danica Noble
+    candidate_ids: [ld-32-state-representative-1--danica-noble]
+    evidence_locator: Endorsement list item for the 32nd Legislative District.
+  - race_id: king-county-council-2
+    pattern: >-
+      King County Council District 2:\s*Toshiko Grace Hasegawa and Rebecca Saldaña
+    status: dual_endorsement
+    candidate_ids:
+      - king-county-council-2--toshiko-grace-hasegawa
+      - king-county-council-2--rebecca-salda-a
+    evidence_locator: Endorsement list item for King County Council District 2.
+  - race_id: seattle-city-council-5
+    pattern: >-
+      Seattle City Council District 5:\s*Nilu Jenks
+    candidate_ids: [seattle-city-council-5--nilu-jenks]
+    evidence_locator: Endorsement list item for Seattle City Council District 5.

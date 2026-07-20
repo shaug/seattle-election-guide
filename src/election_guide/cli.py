@@ -17,6 +17,9 @@ import typer
 from pydantic import ValidationError
 
 from election_guide import __version__
+from election_guide.collection import read_adapter_spec, refresh_source, validate_adapter
+from election_guide.collection.http import fetch_http
+from election_guide.collection.refresh import RefreshOrderError, record_refresh_failure
 from election_guide.evidence.manual import (
     import_manual_draft,
     read_manual_draft,
@@ -87,6 +90,7 @@ review_app = typer.Typer(help="Inspect and resolve ambiguous normalization recor
 export_app = typer.Typer(help="Generate canonical machine-readable publication artifacts.")
 render_app = typer.Typer(help="Render and validate the responsive HTML and concise PDF guide.")
 release_app = typer.Typer(help="Compile, audit, and package a versioned public release.")
+collect_app = typer.Typer(help="Refresh source-specific endorsement adapters.")
 app.add_typer(inventory_app, name="inventory")
 app.add_typer(sources_app, name="sources")
 app.add_typer(evidence_app, name="evidence")
@@ -95,7 +99,149 @@ app.add_typer(review_app, name="review")
 app.add_typer(export_app, name="export")
 app.add_typer(render_app, name="render")
 app.add_typer(release_app, name="release")
+app.add_typer(collect_app, name="collect")
 evidence_app.add_typer(manual_app, name="manual")
+
+
+@collect_app.command("refresh")
+def collect_refresh(
+    adapter_path: Annotated[Path, typer.Argument(exists=True, dir_okay=False, readable=True)],
+    checked_at: Annotated[str, typer.Option(help="Deterministic ISO 8601 refresh time.")],
+    input_path: Annotated[
+        Path | None,
+        typer.Option(exists=True, dir_okay=False, readable=True, help="Offline artifact."),
+    ] = None,
+    live: Annotated[
+        bool, typer.Option(help="Fetch the registered public URL; never enabled implicitly.")
+    ] = False,
+    media_type: Annotated[str | None, typer.Option(help="Required for offline artifacts.")] = None,
+    title: Annotated[str | None, typer.Option()] = None,
+    ocr_text_path: Annotated[
+        Path | None, typer.Option(exists=True, dir_okay=False, readable=True)
+    ] = None,
+    ocr_confidence: Annotated[str | None, typer.Option()] = None,
+    inventory_path: Annotated[
+        Path, typer.Option(exists=True, dir_okay=False, readable=True)
+    ] = Path("data/normalized/wa-2026-primary-inventory.json"),
+    registry_path: Annotated[Path, typer.Option(exists=True, dir_okay=False, readable=True)] = Path(
+        "config/sources/default.yaml"
+    ),
+    storage_root: Annotated[Path, typer.Option(file_okay=False)] = Path("data/snapshots"),
+    manifest_dir: Annotated[Path, typer.Option(file_okay=False)] = Path("data/manifests/evidence"),
+    extraction_dir: Annotated[Path, typer.Option(file_okay=False)] = Path(
+        "data/collection/extractions"
+    ),
+    refresh_dir: Annotated[Path, typer.Option(file_okay=False)] = Path("data/collection/refreshes"),
+) -> None:
+    """Create an immutable capture and semantic diff, or record an explicit failure."""
+    timestamp: datetime | None = None
+    spec = None
+    try:
+        if live == (input_path is not None):
+            raise ValueError("choose exactly one of --live or --input-path")
+        timestamp = _parse_aware_datetime(checked_at)
+        spec = read_adapter_spec(adapter_path)
+        inventory = read_inventory(inventory_path)
+        registry = read_source_registry(registry_path)
+        validate_registry_inventory(registry, inventory)
+        validate_adapter(spec, inventory, registry)
+        source = next(item for item in registry.sources if item.id == spec.source_id)
+        if live and spec.adapter_kind == "dynamic_html":
+            raise ValueError(
+                "dynamic HTML live refresh requires a reviewed final-DOM artifact via --input-path"
+            )
+
+        temporary_path: Path | None = None
+        if live:
+            artifact = fetch_http(source.discovery.requested_url)
+            with tempfile.NamedTemporaryFile(prefix="election-guide-", delete=False) as temporary:
+                temporary.write(artifact.content)
+                temporary.flush()
+            temporary_path = Path(temporary.name)
+            selected_path = temporary_path
+            selected_media_type = artifact.media_type
+            canonical_url = artifact.canonical_url
+            redirect_chain = artifact.redirect_chain
+            http_status = artifact.status
+        else:
+            if input_path is None or media_type is None:
+                raise ValueError("offline refresh requires --input-path and --media-type")
+            selected_path = input_path
+            selected_media_type = media_type
+            canonical_url = source.discovery.canonical_url or source.discovery.requested_url
+            redirect_chain = []
+            http_status = None
+
+        try:
+            request = CaptureRequest.model_validate(
+                {
+                    "source_id": spec.source_id,
+                    "requested_url": (source.discovery.requested_url if live else canonical_url),
+                    "canonical_url": canonical_url,
+                    "redirect_chain": redirect_chain,
+                    "retrieved_at": timestamp,
+                    "http_status": http_status,
+                    "media_type": selected_media_type,
+                    "title": title or source.name,
+                    "published_at": source.discovery.published_at,
+                    "updated_at": source.discovery.updated_at,
+                    "browser_required": spec.adapter_kind == "dynamic_html",
+                    "redistribution": "restricted",
+                    "redistribution_note": (
+                        "Raw source retained locally for audit; not redistributed."
+                    ),
+                    "capture_method": {
+                        "static_html": "static_html",
+                        "dynamic_html": "browser",
+                        "pdf": "pdf",
+                        "image": "image",
+                    }[spec.adapter_kind]
+                    if live
+                    else "manual_upload",
+                }
+            )
+            event = refresh_source(
+                spec,
+                request,
+                selected_path,
+                storage_root=storage_root,
+                manifest_dir=manifest_dir,
+                extraction_dir=extraction_dir,
+                refresh_dir=refresh_dir,
+                ocr_text=(
+                    ocr_text_path.read_text(encoding="utf-8") if ocr_text_path is not None else None
+                ),
+                ocr_confidence=ocr_confidence,
+            )
+        finally:
+            if temporary_path is not None:
+                temporary_path.unlink(missing_ok=True)
+    except (OSError, UnicodeError, json.JSONDecodeError, ValidationError, ValueError) as error:
+        if isinstance(error, RefreshOrderError):
+            typer.echo(f"source refresh failed: {error}", err=True)
+        elif spec is not None and timestamp is not None:
+            try:
+                event = record_refresh_failure(
+                    spec.source_id,
+                    timestamp,
+                    str(error),
+                    refresh_dir,
+                    extraction_dir=extraction_dir,
+                )
+            except RefreshOrderError as order_error:
+                typer.echo(
+                    f"source refresh failed: {error}; failure event not appended: {order_error}",
+                    err=True,
+                )
+            else:
+                typer.echo(f"source refresh failed: {event.id}: {event.error}", err=True)
+        else:
+            typer.echo(f"source refresh failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    typer.echo(f"source refresh: {event.status} ({event.id}, {len(event.diff)} semantic changes)")
+    if event.status == "failed":
+        typer.echo(f"source refresh error: {event.error}", err=True)
+        raise typer.Exit(code=1)
 
 
 @release_app.command("compile")
