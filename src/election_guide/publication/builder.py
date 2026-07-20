@@ -602,7 +602,7 @@ def _methodology(dataset: CanonicalDataset, consensus: ConsensusReport) -> Publi
                 "legislative contests. Their shared party network remains disclosed."
             ),
             "The Seattle Times is a separate comparison, never an extra progressive vote.",
-            "Category representation and category candidate support are reported separately.",
+            "Category representation and category support remain available in audit exports.",
         ],
         limitations=[
             "This guide aggregates endorsements; it is not independent candidate vetting.",

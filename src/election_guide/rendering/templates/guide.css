@@ -77,7 +77,7 @@ summary { cursor: pointer; color: #075d75; font-weight: 800; }
   .race-card { min-width: 0; }
   .race-card-head > div { min-width: 0; }
   .race-card-head { flex-direction: column; align-items: stretch; }
-  .consensus-lockup { align-items: flex-start; text-align: left; }
+  .consensus-lockup { flex-basis: auto; align-items: flex-start; text-align: left; }
   .comparison em { width: 100%; margin-left: 0; }
   .insufficient-note { overflow-wrap: anywhere; }
 }
@@ -95,7 +95,7 @@ summary { cursor: pointer; color: #075d75; font-weight: 800; }
   .print-header h1 { margin: 0; font: 700 17pt/1 Georgia, serif; }
   .print-header-meta { text-align: right; color: #3e4c59; font-size: 6.5pt; line-height: 1.35; }
   .print-intro { margin: .04in 0 .06in; color: #364152; font-size: 6.3pt; line-height: 1.15; }
-  .print-races { height: 9.42in; column-count: 2; column-gap: .14in; column-fill: auto; }
+  .print-races { height: 9.42in; column-count: 2; column-gap: .14in; column-fill: balance; }
   .print-section-title { break-after: avoid; margin: .025in 0 .015in; padding: .025in .045in; background: var(--navy); color: white; font-size: 6.8pt; line-height: 1; letter-spacing: .07em; text-transform: uppercase; }
   .print-race { break-inside: avoid; margin: 0 0 .022in; padding: .035in .045in .04in; border: .5px solid #b8c2cc; border-left: 2px solid var(--blue); background: white; }
   .print-race-title { overflow: hidden; color: #52606d; font-size: 6.1pt; font-weight: 800; line-height: 1; text-overflow: ellipsis; text-transform: uppercase; white-space: nowrap; }
