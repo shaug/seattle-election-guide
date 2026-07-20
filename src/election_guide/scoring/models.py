@@ -171,6 +171,28 @@ class CategoryConsensus(ScoreModel):
         return self
 
 
+class OverlapGroupConsensus(ScoreModel):
+    group_id: str = Field(pattern=ID_PATTERN)
+    label: str = Field(min_length=1)
+    description: str = Field(min_length=1)
+    relationship: Literal["possible_overlap"] = "possible_overlap"
+    eligible_source_ids: list[str] = Field(min_length=2)
+    covered_source_ids: list[str]
+    explicit_source_ids: list[str]
+
+    @model_validator(mode="after")
+    def validate_members(self) -> OverlapGroupConsensus:
+        lists = (self.eligible_source_ids, self.covered_source_ids, self.explicit_source_ids)
+        if any(items != sorted(set(items)) for items in lists):
+            raise ValueError("overlap group source IDs must be unique and sorted")
+        eligible = set(self.eligible_source_ids)
+        covered = set(self.covered_source_ids)
+        explicit = set(self.explicit_source_ids)
+        if not explicit <= covered <= eligible:
+            raise ValueError("overlap group source scopes must nest within eligibility")
+        return self
+
+
 class ComparisonResult(ScoreModel):
     source_id: str = Field(pattern=ID_PATTERN)
     status: ComparisonStatus
@@ -209,6 +231,7 @@ class RaceConsensus(ScoreModel):
     is_tied: bool = Field(strict=True)
     notable_alternatives: list[CandidateStanding]
     category_breakdown: list[CategoryConsensus]
+    overlap_groups: list[OverlapGroupConsensus]
     comparison_results: list[ComparisonResult]
     warnings: list[ScoreWarning]
     computed_at: AwareDatetime
@@ -250,6 +273,15 @@ class RaceConsensus(ScoreModel):
             raise ValueError("category coverage must match the category breakdown")
         if len({item.category for item in self.category_breakdown}) != len(self.category_breakdown):
             raise ValueError("category breakdown contains duplicates")
+        if [item.group_id for item in self.overlap_groups] != sorted(
+            {item.group_id for item in self.overlap_groups}
+        ):
+            raise ValueError("overlap groups must be unique and sorted")
+        expected_overlap_sources = sorted(
+            {source_id for group in self.overlap_groups for source_id in group.eligible_source_ids}
+        )
+        if self.overlap_source_ids != expected_overlap_sources:
+            raise ValueError("overlap source IDs must match possible overlap groups")
         if len({item.source_id for item in self.comparison_results}) != len(
             self.comparison_results
         ):
@@ -392,7 +424,7 @@ class RaceConsensus(ScoreModel):
 
 
 class ConsensusReport(ScoreModel):
-    schema_version: Literal["1.0"] = "1.0"
+    schema_version: Literal["1.1"] = "1.1"
     election_id: str = Field(pattern=ID_PATTERN)
     configuration_id: str = Field(pattern=ID_PATTERN)
     scoring_configuration: ScoringConfiguration

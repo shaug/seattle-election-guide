@@ -41,6 +41,12 @@ class PublicationSource(PublicationModel):
     evidence_url: str
     overlap_group_ids: list[str]
 
+    @model_validator(mode="after")
+    def validate_overlap_groups(self) -> PublicationSource:
+        if self.overlap_group_ids != sorted(set(self.overlap_group_ids)):
+            raise ValueError("publication source overlap group IDs must be unique and sorted")
+        return self
+
 
 class SourceCell(PublicationModel):
     source_id: str
@@ -138,6 +144,47 @@ class PublicationAlternative(PublicationModel):
         return self
 
 
+class PublicationCategoryCandidateSupport(PublicationModel):
+    candidate_id: str = Field(min_length=1)
+    candidate_label: str = Field(min_length=1)
+    support_points: str
+
+    @model_validator(mode="after")
+    def validate_support(self) -> PublicationCategoryCandidateSupport:
+        if _fraction(self.support_points, "category candidate support") <= 0:
+            raise ValueError("category candidate support must be positive")
+        return self
+
+
+class PublicationCategoryAnalysis(PublicationModel):
+    category: str = Field(min_length=1)
+    label: str = Field(min_length=1)
+    eligible_source_count: int = Field(ge=0, strict=True)
+    source_coverage_count: int = Field(ge=0, strict=True)
+    explicit_endorsement_count: int = Field(ge=0, strict=True)
+    candidate_support: list[PublicationCategoryCandidateSupport]
+
+    @model_validator(mode="after")
+    def validate_analysis(self) -> PublicationCategoryAnalysis:
+        if self.source_coverage_count > self.eligible_source_count:
+            raise ValueError("category coverage cannot exceed eligible sources")
+        if self.explicit_endorsement_count > self.source_coverage_count:
+            raise ValueError("category explicit endorsements cannot exceed coverage")
+        candidate_ids = [item.candidate_id for item in self.candidate_support]
+        if candidate_ids != sorted(set(candidate_ids)):
+            raise ValueError("category candidate support must be unique and sorted")
+        total_support = sum(
+            (
+                _fraction(item.support_points, "category candidate support")
+                for item in self.candidate_support
+            ),
+            Fraction(),
+        )
+        if total_support != self.explicit_endorsement_count:
+            raise ValueError("category candidate support must sum to explicit endorsements")
+        return self
+
+
 class PublicationRace(PublicationModel):
     id: str
     section_id: str
@@ -162,6 +209,7 @@ class PublicationRace(PublicationModel):
     category_coverage_count: int = Field(ge=0, strict=True)
     no_endorsement_count: int = Field(ge=0, strict=True)
     missing_source_count: int = Field(ge=0, strict=True)
+    category_breakdown: list[PublicationCategoryAnalysis]
     alternatives: list[PublicationAlternative]
     comparisons: list[PublicationComparison]
     warning_codes: list[str]
@@ -226,6 +274,29 @@ class PublicationRace(PublicationModel):
             raise ValueError("source coverage counts do not reconcile")
         if self.missing_source_count != self.eligible_source_count - self.source_coverage_count:
             raise ValueError("missing and eligible source counts do not reconcile")
+        categories = [item.category for item in self.category_breakdown]
+        if categories != sorted(set(categories)):
+            raise ValueError("race category breakdown must be unique and sorted")
+        if (
+            sum(item.eligible_source_count for item in self.category_breakdown)
+            != self.eligible_source_count
+        ):
+            raise ValueError("category eligibility must reconcile to the race")
+        if (
+            sum(item.source_coverage_count for item in self.category_breakdown)
+            != self.source_coverage_count
+        ):
+            raise ValueError("category coverage must reconcile to the race")
+        if (
+            sum(item.explicit_endorsement_count for item in self.category_breakdown)
+            != self.explicit_endorsement_count
+        ):
+            raise ValueError("category explicit endorsements must reconcile to the race")
+        if (
+            sum(item.source_coverage_count > 0 for item in self.category_breakdown)
+            != self.category_coverage_count
+        ):
+            raise ValueError("represented category count must reconcile to the race")
         if self.winner_share is None:
             if self.support_leader_candidate_ids:
                 raise ValueError("support leaders require an exact winner share")
@@ -260,10 +331,27 @@ class SourceCategoryGroup(PublicationModel):
     source_ids: list[str]
 
 
+class SourceOverlapGroup(PublicationModel):
+    id: str = Field(pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+    label: str = Field(min_length=1)
+    description: str = Field(min_length=1)
+    relationship: Literal["possible_overlap"] = "possible_overlap"
+    source_ids: list[str] = Field(min_length=2)
+
+    @model_validator(mode="after")
+    def validate_sources(self) -> SourceOverlapGroup:
+        if self.source_ids != sorted(set(self.source_ids)):
+            raise ValueError("overlap group source IDs must be unique and sorted")
+        return self
+
+
 class PublicationMethodology(PublicationModel):
     process_steps: list[str]
     grade_legend: list[GradeLegendItem]
     source_categories: list[SourceCategoryGroup]
+    source_overlap_groups: list[SourceOverlapGroup]
+    default_aggregation_view: Literal["source_level"] = "source_level"
+    deduplicated_view: Literal["not_computed"] = "not_computed"
     interpretation_notes: list[str]
     limitations: list[str]
     verification_instructions: str
@@ -283,7 +371,7 @@ class PublicationMetadata(PublicationModel):
 
 
 class PublicationViewModel(PublicationModel):
-    schema_version: Literal["1.0"] = "1.0"
+    schema_version: Literal["1.1"] = "1.1"
     metadata: PublicationMetadata
     sources: list[PublicationSource]
     sections: list[PublicationSection]
@@ -303,6 +391,27 @@ class PublicationViewModel(PublicationModel):
             source.id for source in self.sources if source.panel_role == "comparison"
         ]
         source_by_id = {source.id: source for source in self.sources}
+        category_labels = {
+            category.category: category.label for category in self.methodology.source_categories
+        }
+        overlap_groups = self.methodology.source_overlap_groups
+        if [group.id for group in overlap_groups] != sorted({group.id for group in overlap_groups}):
+            raise ValueError("methodology overlap groups must be unique and sorted")
+        declared_overlap_members: dict[str, set[str]] = {}
+        for source in self.sources:
+            for group_id in source.overlap_group_ids:
+                declared_overlap_members.setdefault(group_id, set()).add(source.id)
+        expected_overlap_members = declared_overlap_members
+        actual_overlap_members = {group.id: set(group.source_ids) for group in overlap_groups}
+        if actual_overlap_members != expected_overlap_members:
+            raise ValueError("methodology overlap groups must match active source metadata")
+        for group in overlap_groups:
+            unknown_source_ids = set(group.source_ids) - set(source_ids)
+            if unknown_source_ids:
+                raise ValueError(
+                    "methodology overlap group contains unknown sources: "
+                    f"{sorted(unknown_source_ids)}"
+                )
         for section in self.sections:
             for race in section.races:
                 if race.section_id != section.id or race.section_label != section.label:
@@ -343,6 +452,57 @@ class PublicationViewModel(PublicationModel):
                     raise ValueError("missing source count does not match source cells")
                 if race.category_coverage_count != len(represented_categories):
                     raise ValueError("category coverage count does not match source cells")
+                candidate_labels: dict[str, str] = {}
+                eligible_by_category: dict[str, int] = {}
+                covered_by_category: dict[str, int] = {}
+                explicit_by_category: dict[str, int] = {}
+                support_by_category: dict[str, dict[str, Fraction]] = {}
+                for cell in eligible_cells:
+                    category = source_by_id[cell.source_id].category
+                    eligible_by_category[category] = eligible_by_category.get(category, 0) + 1
+                    if cell.state in {"endorsement", "multi_endorsement", "no_endorsement"}:
+                        covered_by_category[category] = covered_by_category.get(category, 0) + 1
+                    if cell.state in {"endorsement", "multi_endorsement"}:
+                        explicit_by_category[category] = explicit_by_category.get(category, 0) + 1
+                        support = support_by_category.setdefault(category, {})
+                        for candidate_id, label in zip(
+                            cell.candidate_ids, cell.candidate_labels, strict=True
+                        ):
+                            previous_label = candidate_labels.setdefault(candidate_id, label)
+                            if previous_label != label:
+                                raise ValueError("candidate labels conflict across source cells")
+                            support[candidate_id] = support.get(
+                                candidate_id, Fraction()
+                            ) + _fraction(cell.allocation[candidate_id], "cell allocation")
+                actual_categories = {item.category: item for item in race.category_breakdown}
+                if set(actual_categories) != set(eligible_by_category):
+                    raise ValueError("race category breakdown does not match eligible source cells")
+                for category, eligible_count in eligible_by_category.items():
+                    actual = actual_categories[category]
+                    if actual.label != category_labels.get(category):
+                        raise ValueError("race category label does not match methodology")
+                    actual_support = {
+                        item.candidate_id: _fraction(
+                            item.support_points, "category candidate support"
+                        )
+                        for item in actual.candidate_support
+                    }
+                    actual_labels = {
+                        item.candidate_id: item.candidate_label for item in actual.candidate_support
+                    }
+                    if (
+                        actual.eligible_source_count != eligible_count
+                        or actual.source_coverage_count != covered_by_category.get(category, 0)
+                        or actual.explicit_endorsement_count
+                        != explicit_by_category.get(category, 0)
+                        or actual_support != support_by_category.get(category, {})
+                        or actual_labels
+                        != {
+                            candidate_id: candidate_labels[candidate_id]
+                            for candidate_id in support_by_category.get(category, {})
+                        }
+                    ):
+                        raise ValueError("race category analysis does not match source cells")
         if self.metadata.source_count != len(self.sources):
             raise ValueError("metadata source count does not match the view model")
         if self.metadata.published_race_count != len(races):

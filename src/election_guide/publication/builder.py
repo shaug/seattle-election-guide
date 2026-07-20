@@ -33,6 +33,8 @@ from election_guide.publication.models import (
     GradeLegendItem,
     ProvenanceManifest,
     PublicationAlternative,
+    PublicationCategoryAnalysis,
+    PublicationCategoryCandidateSupport,
     PublicationComparison,
     PublicationMetadata,
     PublicationMethodology,
@@ -42,6 +44,7 @@ from election_guide.publication.models import (
     PublicationViewModel,
     SourceCategoryGroup,
     SourceCell,
+    SourceOverlapGroup,
     ValidationCheck,
     ValidationReport,
 )
@@ -251,6 +254,12 @@ def _build_view_model(
     active_sources = [
         source for source in dataset.source_registry.sources if source.panel_role != "excluded"
     ]
+    active_source_ids = {source.id for source in active_sources}
+    published_overlap_group_ids = {
+        group.id
+        for group in dataset.source_registry.overlap_groups
+        if len(set(group.member_ids) & active_source_ids) > 1
+    }
     sources = [
         PublicationSource(
             id=source.id,
@@ -259,7 +268,7 @@ def _build_view_model(
             panel_role=cast(Literal["consensus", "comparison"], source.panel_role),
             organization_url=source.organization_url,
             evidence_url=source.discovery.canonical_url or source.discovery.requested_url,
-            overlap_group_ids=source.overlap_group_ids,
+            overlap_group_ids=sorted(set(source.overlap_group_ids) & published_overlap_group_ids),
         )
         for source in active_sources
     ]
@@ -341,6 +350,24 @@ def _build_view_model(
             category_coverage_count=result.category_coverage_count,
             no_endorsement_count=result.no_endorsement_count,
             missing_source_count=result.missing_source_count,
+            category_breakdown=[
+                PublicationCategoryAnalysis(
+                    category=item.category,
+                    label=CATEGORY_LABELS[item.category],
+                    eligible_source_count=item.eligible_source_count,
+                    source_coverage_count=item.source_coverage_count,
+                    explicit_endorsement_count=item.explicit_endorsement_count,
+                    candidate_support=[
+                        PublicationCategoryCandidateSupport(
+                            candidate_id=candidate_id,
+                            candidate_label=choices[candidate_id],
+                            support_points=str(points),
+                        )
+                        for candidate_id, points in sorted(item.candidate_support.items())
+                    ],
+                )
+                for item in result.category_breakdown
+            ],
             alternatives=[
                 PublicationAlternative(
                     candidate_id=item.candidate_id,
@@ -463,6 +490,7 @@ def _methodology(dataset: CanonicalDataset, consensus: ConsensusReport) -> Publi
     active_sources = [
         source for source in dataset.source_registry.sources if source.panel_role != "excluded"
     ]
+    active_source_ids = {source.id for source in active_sources}
     categories = sorted({source.category for source in active_sources})
     return PublicationMethodology(
         process_steps=[
@@ -495,14 +523,34 @@ def _methodology(dataset: CanonicalDataset, consensus: ConsensusReport) -> Publi
             )
             for category in categories
         ],
+        source_overlap_groups=[
+            SourceOverlapGroup(
+                id=group.id,
+                label=group.label,
+                description=group.description,
+                relationship="possible_overlap",
+                source_ids=sorted(
+                    source_id for source_id in group.member_ids if source_id in active_source_ids
+                ),
+            )
+            for group in sorted(dataset.source_registry.overlap_groups, key=lambda item: item.id)
+            if len(set(group.member_ids) & active_source_ids) > 1
+        ],
+        default_aggregation_view="source_level",
+        deduplicated_view="not_computed",
         interpretation_notes=[
             "Agreement is measured only among explicitly endorsing eligible sources.",
             "No endorsement and missing coverage remain visible but do not enter the denominator.",
             "The Seattle Times is a separate comparison, never an extra progressive vote.",
+            "Category representation and category candidate support are reported separately.",
         ],
         limitations=[
             "This guide aggregates endorsements; it is not independent candidate vetting.",
             "Some organizations have disclosed overlap, but raw source totals are preserved.",
+            (
+                "Possible overlap is not deduplicated because the registry does not establish "
+                "statistical dependence or a shared decision process."
+            ),
             "Organizations may update endorsements after the captured evidence date.",
             "The exact ballot available to a voter depends on their registration address.",
         ],

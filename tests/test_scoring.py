@@ -259,6 +259,51 @@ def test_coverage_warnings_and_comparison_are_separate_from_consensus(tmp_path: 
     assert result.warnings[-1].source_ids == sorted([COMPARISON_SOURCE_ID, CONSENSUS_SOURCE_IDS[4]])
 
 
+def test_categories_and_possible_overlap_remain_separate_disclosures(tmp_path: Path) -> None:
+    candidates = _candidate_ids()
+    overlapping = (CONSENSUS_SOURCE_IDS[0], CONSENSUS_SOURCE_IDS[1])
+    independent = CONSENSUS_SOURCE_IDS[2]
+    result = _race_result(
+        _dataset(
+            tmp_path,
+            [
+                (overlapping[0], "endorsed", candidates[:1]),
+                (overlapping[1], "endorsed", candidates[:1]),
+                (independent, "endorsed", candidates[1:2]),
+            ],
+            overlap_group_source_ids=overlapping,
+        )
+    )
+
+    assert result.candidate_support == {
+        candidates[0]: Fraction(2),
+        candidates[1]: Fraction(1),
+    }
+    category = next(
+        item for item in result.category_breakdown if item.category == "progressive_general"
+    )
+    assert category.eligible_source_count == len(CONSENSUS_SOURCE_IDS)
+    assert category.source_coverage_count == 3
+    assert category.explicit_endorsement_count == 3
+    assert category.candidate_support == result.candidate_support
+    assert result.overlap_source_ids == sorted(overlapping)
+    assert [group.model_dump(mode="json") for group in result.overlap_groups] == [
+        {
+            "group_id": "fixture-possible-overlap",
+            "label": "Fixture possible overlap",
+            "description": "The relationship may overlap, but independent decisions are unknown.",
+            "relationship": "possible_overlap",
+            "eligible_source_ids": sorted(overlapping),
+            "covered_source_ids": sorted(overlapping),
+            "explicit_source_ids": sorted(overlapping),
+        }
+    ]
+    assert independent not in result.overlap_source_ids
+    assert next(
+        warning for warning in result.warnings if warning.code == "source_overlap"
+    ).source_ids == sorted(overlapping)
+
+
 def test_geographic_eligibility_changes_only_the_registered_district(tmp_path: Path) -> None:
     inventory = read_inventory(PROJECT_ROOT / "data/normalized/wa-2026-primary-inventory.json")
     registry = read_source_registry(PROJECT_ROOT / "config/sources/default.yaml")
@@ -599,9 +644,26 @@ def _dataset(
     allocation_overrides: dict[str, dict[str, str]] | None = None,
     unresolved_severity: Literal["high", "medium", "low"] | None = None,
     unresolved_race_id: str = RACE_ID,
+    overlap_group_source_ids: tuple[str, str] | None = None,
 ) -> CanonicalDataset:
     inventory = read_inventory(PROJECT_ROOT / "data/normalized/wa-2026-primary-inventory.json")
     registry = _source_registry()
+    if overlap_group_source_ids is not None:
+        registry_payload = registry.model_dump(mode="json")
+        for source in registry_payload["sources"]:
+            if source["id"] in overlap_group_source_ids:
+                source["overlap_group_ids"] = ["fixture-possible-overlap"]
+        registry_payload["overlap_groups"] = [
+            {
+                "id": "fixture-possible-overlap",
+                "label": "Fixture possible overlap",
+                "description": (
+                    "The relationship may overlap, but independent decisions are unknown."
+                ),
+                "member_ids": list(overlap_group_source_ids),
+            }
+        ]
+        registry = SourceRegistry.model_validate(registry_payload)
     race = next(item for item in inventory.races if item.id == RACE_ID)
     choice_by_id = {choice.id: choice for choice in race.choices}
     captures: list[CaptureManifest] = []

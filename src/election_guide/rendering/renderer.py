@@ -27,7 +27,11 @@ from websocket import (  # pyright: ignore[reportUnknownVariableType]
     create_connection,  # pyright: ignore[reportUnknownVariableType]
 )
 
-from election_guide.publication.models import PublicationRace, PublicationViewModel
+from election_guide.publication.models import (
+    PublicationCategoryAnalysis,
+    PublicationRace,
+    PublicationViewModel,
+)
 from election_guide.rendering.models import (
     RenderCheck,
     RenderedPage,
@@ -1242,6 +1246,7 @@ def _html_semantic_values(race: PublicationRace) -> dict[str, list[str]]:
         "grade": [race.grade],
         "share": ["N/A" if race.percentage_whole is None else race.percentage_label],
         "support": [race.support_summary],
+        "category-analysis": [_category_analysis_text(race)],
         "alternatives": (
             [
                 "Alternatives: "
@@ -1313,6 +1318,11 @@ def _detailed_pdf_race_values(race: PublicationRace) -> list[str]:
         race.support_summary,
         *(
             value
+            for category in race.category_breakdown
+            for value in _category_analysis_values(category)
+        ),
+        *(
+            value
             for alternative in race.alternatives
             for value in (alternative.candidate_label, alternative.percentage_label)
         ),
@@ -1322,6 +1332,44 @@ def _detailed_pdf_race_values(race: PublicationRace) -> list[str]:
             for value in (comparison.badge_label, *comparison.candidate_labels)
         ),
         *race.warning_messages,
+    ]
+
+
+def _category_analysis_text(race: PublicationRace) -> str:
+    parts = ["Category representation and support"]
+    for category in race.category_breakdown:
+        analysis = (
+            f"{category.label} — {category.source_coverage_count}/"
+            f"{category.eligible_source_count} sources covered; "
+            f"{category.explicit_endorsement_count} explicit."
+        )
+        if category.candidate_support:
+            support = "; ".join(
+                f"{item.candidate_label} {item.support_points} "
+                f"point{'s' if item.support_points != '1' else ''}"
+                for item in category.candidate_support
+            )
+            analysis += f" Support: {support}."
+        else:
+            analysis += " No explicit candidate support."
+        parts.append(analysis)
+    return " ".join(parts)
+
+
+def _category_analysis_values(analysis: PublicationCategoryAnalysis) -> list[str]:
+    return [
+        analysis.label,
+        f"{analysis.source_coverage_count}/{analysis.eligible_source_count} sources covered",
+        f"{analysis.explicit_endorsement_count} explicit",
+        *(
+            value
+            for item in analysis.candidate_support
+            for value in (
+                item.candidate_label,
+                f"{item.support_points} point{'s' if item.support_points != '1' else ''}",
+            )
+        ),
+        *([] if analysis.candidate_support else ["No explicit candidate support"]),
     ]
 
 

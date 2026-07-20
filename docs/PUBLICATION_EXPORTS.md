@@ -38,12 +38,19 @@ JSON uses canonical sorted serialization and exact rational strings such as `"3/
 registry and inventory order, explicit field order, UTF-8, and Unix newlines. Identical inputs,
 build timestamp, and Git revision therefore produce identical bytes.
 
+`publication_view_model.json` uses schema `1.1`; this version adds required per-race category
+analysis and methodology overlap metadata rather than changing the `1.0` wire shape in place.
+
 ## Shared view model
 
 HTML and PDF consumers must read `publication_view_model.json`; neither consumer may calculate
 winners, grades, percentages, coverage, comparisons, or warnings independently. The model
 includes preformatted recommendation, percentage, support, alternatives, comparison badges,
-methodology, grade legend, limitations, build identity, and ordered source cells.
+per-race category representation and candidate support, methodology, grade legend, limitations,
+build identity, and ordered source cells. Methodology also publishes source categories and
+possible-overlap groups. It identifies `source_level` as the default aggregation view and
+`not_computed` as the deduplicated-view status, so a consumer cannot silently substitute coalition
+grouping for raw source-level consensus.
 
 An `Insufficient` race retains its measured support leader for audit, but has no recommendation
 candidate and displays `Insufficient coverage`. This prevents a renderer from turning one source's

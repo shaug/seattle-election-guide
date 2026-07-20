@@ -25,6 +25,7 @@ from election_guide.scoring.models import (
     CategoryConsensus,
     ComparisonResult,
     ConsensusReport,
+    OverlapGroupConsensus,
     RaceConsensus,
     ScoreWarning,
     ScoringConfiguration,
@@ -234,6 +235,12 @@ def _score_race(
         }
     )
     overlap_source_ids = _overlap_sources(eligible_sources, dataset)
+    overlap_groups = _overlap_groups(
+        eligible_sources,
+        covered_source_ids,
+        {item.source_id for item in explicit},
+        dataset,
+    )
     high_review_item_ids = sorted(item.id for item in race_high)
     warnings = _warnings(
         configuration,
@@ -277,6 +284,7 @@ def _score_race(
         is_tied=is_tied,
         notable_alternatives=alternatives,
         category_breakdown=categories,
+        overlap_groups=overlap_groups,
         comparison_results=comparisons,
         warnings=warnings,
         computed_at=computed_at,
@@ -435,6 +443,32 @@ def _overlap_sources(eligible_sources: list[Source], dataset: CanonicalDataset) 
         if len(members) > 1:
             overlapping.update(members)
     return sorted(overlapping)
+
+
+def _overlap_groups(
+    eligible_sources: list[Source],
+    covered_source_ids: set[str],
+    explicit_source_ids: set[str],
+    dataset: CanonicalDataset,
+) -> list[OverlapGroupConsensus]:
+    eligible_ids = {source.id for source in eligible_sources}
+    results: list[OverlapGroupConsensus] = []
+    for group in sorted(dataset.source_registry.overlap_groups, key=lambda item: item.id):
+        members = sorted(eligible_ids & set(group.member_ids))
+        if len(members) < 2:
+            continue
+        results.append(
+            OverlapGroupConsensus(
+                group_id=group.id,
+                label=group.label,
+                description=group.description,
+                relationship="possible_overlap",
+                eligible_source_ids=members,
+                covered_source_ids=sorted(covered_source_ids & set(members)),
+                explicit_source_ids=sorted(explicit_source_ids & set(members)),
+            )
+        )
+    return results
 
 
 def _review_race_ids(item: ReviewItem) -> set[str]:

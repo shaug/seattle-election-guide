@@ -210,6 +210,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "View source evidence" in html
     assert "Seattle Times" in html
     assert "Coverage note:" in html
+    assert "Category representation and support" in html
     assert 'class="methodology-panel screen-grade-legend"' in html
     assert 'class="methodology-panel screen-source-categories"' in html
     assert 'class="methodology-panel screen-audit-metadata"' in html
@@ -524,6 +525,35 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     )
     assert not semantic_check.passed
 
+    category = race_with_alternative.category_breakdown[0]
+    category_marker = (
+        f"<b>{category.label}</b> — {category.source_coverage_count}/"
+        f"{category.eligible_source_count}"
+    )
+    category_html = tmp_path / "wrong-category-analysis.html"
+    canonical_html = rendered.html_path.read_text(encoding="utf-8")
+    assert category_marker in canonical_html
+    category_html.write_text(
+        canonical_html.replace(
+            category_marker,
+            f"<b>{category.label}</b> — 999/999",
+            1,
+        ),
+        encoding="utf-8",
+    )
+    category_report = validate_rendered_guide(
+        view_model,
+        read_rendering_configuration(RENDERING_CONFIG),
+        category_html,
+        rendered.pdf_path,
+        rendered.page_images,
+        rendered.screenshots,
+    )
+    category_check = next(
+        check for check in category_report.checks if check.id == "html-display-values"
+    )
+    assert not category_check.passed
+
     recommendation_element = (
         f'<h3 data-display-role="recommendation">{race_with_alternative.recommendation_label}</h3>'
     )
@@ -685,6 +715,7 @@ def _dense_view_model(view_model: PublicationViewModel) -> PublicationViewModel:
         "eligible_source_count": example.eligible_source_count,
         "source_coverage_count": example.source_coverage_count,
         "category_coverage_count": example.category_coverage_count,
+        "category_breakdown": example.category_breakdown,
         "no_endorsement_count": example.no_endorsement_count,
         "missing_source_count": example.missing_source_count,
         "alternatives": example.alternatives,
