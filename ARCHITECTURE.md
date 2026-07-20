@@ -52,7 +52,8 @@ Raw captures are addressed by content hash and governed by `SOURCE_POLICY.md`.
   an immutable review item rather than a guessed selection. Endorsement allocations use exact
   rational values.
 - **Scoring:** exact allocations, configured eligibility, coverage signals, ties, grades, and a
-  separate Seattle Times comparison.
+  separate Seattle Times comparison. A standard score build rejects unresolved high-severity
+  review work; an explicitly allowed exceptional build carries machine-readable warnings.
 - **Rendering:** Jinja templates build one view model for responsive HTML and Chromium PDF.
 - **Validation:** structural, provenance, scoring, semantic-render, and visual checks block
   publication on serious errors.
@@ -67,7 +68,8 @@ the responsibility of issue #10.
 
 ## Determinism
 
-Normalized and review records use content-derived identifiers and canonical serialization.
+Normalized, review, and consensus records use exact rational values and canonical serialization.
 Append-only records are stored separately so concurrent reviews do not rewrite shared history.
-Build timestamps are inputs. Manifests hash configuration, snapshots, normalized data, and
+Build timestamps are explicit inputs. The consensus input hash covers the complete canonical
+dataset and scoring policy. Manifests hash configuration, snapshots, normalized data, and
 published outputs. Tests must not depend on live websites.
