@@ -58,6 +58,7 @@ from election_guide.normalization.records import (
     write_review_item,
 )
 from election_guide.publication import build_publication_bundle, write_publication_bundle
+from election_guide.rendering import build_rendered_guide
 from election_guide.scoring import (
     ConsensusReport,
     PublicationBlockedError,
@@ -79,12 +80,14 @@ manual_app = typer.Typer(help="Validate and import structured manual transcripti
 normalize_app = typer.Typer(help="Match and validate canonical endorsement records.")
 review_app = typer.Typer(help="Inspect and resolve ambiguous normalization records.")
 export_app = typer.Typer(help="Generate canonical machine-readable publication artifacts.")
+render_app = typer.Typer(help="Render and validate the responsive HTML and concise PDF guide.")
 app.add_typer(inventory_app, name="inventory")
 app.add_typer(sources_app, name="sources")
 app.add_typer(evidence_app, name="evidence")
 app.add_typer(normalize_app, name="normalize")
 app.add_typer(review_app, name="review")
 app.add_typer(export_app, name="export")
+app.add_typer(render_app, name="render")
 evidence_app.add_typer(manual_app, name="manual")
 
 
@@ -224,6 +227,58 @@ def export_build(
         typer.echo(f"publication export failed: {error}", err=True)
         raise typer.Exit(code=1) from error
     typer.echo(f"publication exports: {output_dir} ({len(outputs)} artifacts)")
+
+
+@render_app.command("build")
+def render_build(
+    view_model_path: Annotated[
+        Path,
+        typer.Option(exists=True, dir_okay=False, readable=True),
+    ] = Path("build/publication_view_model.json"),
+    config_path: Annotated[
+        Path,
+        typer.Option(exists=True, dir_okay=False, readable=True),
+    ] = Path("config/rendering/pdf.yaml"),
+    output_dir: Annotated[
+        Path,
+        typer.Option(file_okay=False),
+    ] = Path("output/rendered"),
+    chrome_path: Annotated[
+        Path | None,
+        typer.Option(exists=True, dir_okay=False, readable=True),
+    ] = None,
+    pdftoppm_path: Annotated[
+        Path | None,
+        typer.Option(exists=True, dir_okay=False, readable=True),
+    ] = None,
+) -> None:
+    """Build responsive HTML, a two-page PDF, and rendered visual checks."""
+    try:
+        rendered = build_rendered_guide(
+            view_model_path,
+            config_path,
+            output_dir,
+            chrome_path=chrome_path,
+            pdftoppm_path=pdftoppm_path,
+        )
+    except (
+        OSError,
+        UnicodeError,
+        json.JSONDecodeError,
+        subprocess.SubprocessError,
+        ValidationError,
+        ValueError,
+    ) as error:
+        typer.echo(f"guide rendering failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    outputs = f"{rendered.html_path} and {rendered.pdf_path}"
+    if rendered.detailed_pdf_path is not None:
+        outputs = f"{outputs}, with detailed fallback {rendered.detailed_pdf_path}"
+    typer.echo(
+        f"rendered guide: {outputs} "
+        f"({rendered.validation_report.edition}, "
+        f"{rendered.validation_report.page_count} concise pages)"
+    )
 
 
 @evidence_app.command("capture")

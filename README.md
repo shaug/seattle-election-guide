@@ -16,7 +16,9 @@ unavailable-source records, structured manual transcription, deterministic race-
 normalization, and append-only ambiguity review are implemented. No endorsement claim or voter
 recommendation has been published yet. Exact deterministic consensus scoring, coverage signals,
 grade and tie handling, comparison-only Seattle Times results, and the unresolved-review
-publication gate are also implemented. See [PROJECT.md](PROJECT.md) for the
+publication gate are also implemented. Responsive HTML and the two-page US Letter guide now render
+from the shared publication view model with semantic, viewport, PDF, and page-image validation.
+See [PROJECT.md](PROJECT.md) for the
 product specification, [DECISIONS.md](DECISIONS.md) for the launch contract,
 [docs/BALLOT_INVENTORY.md](docs/BALLOT_INVENTORY.md) for inventory scope and reproduction,
 [docs/SOURCE_DISCOVERY.md](docs/SOURCE_DISCOVERY.md) for the source panel,
@@ -24,7 +26,8 @@ product specification, [DECISIONS.md](DECISIONS.md) for the launch contract,
 [docs/NORMALIZATION.md](docs/NORMALIZATION.md) for matching and review,
 [docs/SCORING.md](docs/SCORING.md) for consensus semantics, and
 [docs/PUBLICATION_EXPORTS.md](docs/PUBLICATION_EXPORTS.md) for canonical exports and the shared
-publication view model. Deterministic JSON and CSV exports, provenance and build manifests, the
+publication view model, and [docs/RENDERING.md](docs/RENDERING.md) for HTML/PDF generation and
+visual inspection. Deterministic JSON and CSV exports, provenance and build manifests, the
 complete source matrix, and the single renderer-facing view model are implemented.
 
 ## Development
@@ -33,6 +36,8 @@ Requirements:
 
 - Python 3.12 or newer
 - [uv](https://docs.astral.sh/uv/)
+- Chrome or Chromium
+- Poppler's `pdftoppm`
 
 Install the locked environment and run the checks:
 
@@ -48,6 +53,7 @@ uv run election-guide normalize --help
 uv run election-guide review --help
 uv run election-guide score --help
 uv run election-guide export build --help
+uv run election-guide render build --help
 uv run ruff format --check .
 uv run ruff check .
 uv run pyright

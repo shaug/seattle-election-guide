@@ -1,0 +1,177 @@
+:root {
+  --navy: #102a43;
+  --blue: #176b87;
+  --teal: #087f73;
+  --amber: #d99000;
+  --red: #9f2d25;
+  --ink: #17212b;
+  --muted: #52606d;
+  --line: #cbd2d9;
+  --paper: #fbfaf6;
+  --white: #ffffff;
+}
+
+* { box-sizing: border-box; }
+html { color: var(--ink); background: #edf1f4; font-family: Arial, Helvetica, sans-serif; }
+body { margin: 0; line-height: 1.45; }
+a { color: #075d75; text-underline-offset: .15em; }
+.skip-link { position: absolute; left: 1rem; top: -5rem; z-index: 10; background: var(--white); padding: .7rem; }
+.skip-link:focus { top: 1rem; }
+.screen-guide { width: 100%; max-width: 76rem; margin: 0 auto; background: var(--paper); min-height: 100vh; }
+.hero { color: var(--white); background: var(--navy); padding: clamp(2rem, 6vw, 5rem); border-bottom: .55rem solid var(--teal); }
+.hero-kicker, .eyebrow { color: #9ee7df; font-size: .78rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+.hero h1 { max-width: 13ch; margin: .35rem 0 .75rem; font-family: Georgia, serif; font-size: clamp(2.5rem, 7vw, 5.2rem); line-height: .95; }
+.hero-deck { max-width: 46rem; font-size: clamp(1rem, 2vw, 1.35rem); }
+.hero-meta { display: flex; flex-wrap: wrap; gap: .55rem 1.2rem; margin-top: 1.7rem; font-size: .82rem; color: #d7e6ef; }
+.hero-meta span + span { border-left: 1px solid #7794a8; padding-left: 1.2rem; }
+.screen-controls { position: sticky; top: 0; z-index: 5; display: grid; grid-template-columns: auto minmax(12rem, 22rem) 1fr; align-items: center; gap: .8rem; padding: .75rem clamp(1rem, 4vw, 3rem); background: rgba(255,255,255,.96); border-bottom: 1px solid var(--line); }
+.screen-controls label { font-weight: 800; }
+.screen-controls select { width: 100%; min-width: 0; min-height: 2.7rem; padding: .45rem .7rem; border: 1px solid #829ab1; border-radius: .3rem; background: var(--white); font: inherit; }
+.screen-controls p { justify-self: end; margin: 0; color: var(--muted); }
+.screen-sections { min-width: 0; padding: 1rem clamp(1rem, 4vw, 3rem) 4rem; }
+.screen-section { margin: 2.5rem 0 4rem; }
+.section-heading p { margin: 0; color: var(--teal); font-size: .72rem; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; }
+.section-heading h2 { margin: .1rem 0 1rem; font: 700 clamp(1.7rem, 4vw, 2.6rem)/1 Georgia, serif; }
+.race-grid { min-width: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.race-card { display: flex; flex-direction: column; gap: .6rem; padding: 1.15rem; background: var(--white); border: 1px solid #d9e2ec; border-top: .3rem solid var(--blue); box-shadow: 0 .2rem .8rem rgba(16,42,67,.08); }
+.race-card[hidden], .screen-section[hidden] { display: none; }
+.race-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
+.race-office { margin: 0 0 .2rem; overflow-wrap: anywhere; color: var(--muted); font-size: .78rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+.race-card h3 { margin: 0; font: 700 1.35rem/1.15 Georgia, serif; }
+.score-lockup { display: grid; grid-template-columns: auto auto; align-items: center; gap: .35rem; flex: 0 0 auto; }
+.score-lockup strong { font-size: 1.1rem; font-variant-numeric: tabular-nums; }
+.grade { display: inline-flex; min-width: 2.25rem; min-height: 2rem; align-items: center; justify-content: center; padding: .2rem .45rem; border-radius: .25rem; background: #59636e; color: var(--white); font-size: .78rem; font-weight: 900; }
+.grade-a-plus { background: #185c37; }
+.grade-a { background: #087f73; }
+.grade-b { background: #2364a3; }
+.grade-c { background: #e0a100; color: #182026; }
+.grade-d { background: #9f2d25; }
+.grade-tied { background: #6246a8; }
+.grade-insufficient { background: #5b6570; }
+.consensus-meter { height: .48rem; overflow: hidden; border-radius: 1rem; background: #d9e2ec; }
+.consensus-meter span { display: block; height: 100%; background: var(--teal); }
+.support-line, .alternative { margin: 0; color: #364152; font-size: .85rem; }
+.comparison { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; margin: 0; padding: .4rem .55rem; border-left: .25rem solid #7b8794; background: #f2f4f7; font-size: .76rem; }
+.comparison span { font-weight: 700; }
+.comparison strong { padding: .12rem .35rem; border-radius: .2rem; background: #5b6570; color: var(--white); font-size: .68rem; letter-spacing: .04em; }
+.comparison em { margin-left: auto; font-style: normal; font-weight: 700; }
+.comparison-agrees { border-color: var(--teal); }
+.comparison-agrees strong { background: var(--teal); }
+.comparison-differs { border-color: var(--amber); }
+.comparison-differs strong { background: #a45f00; }
+.warning { padding: .55rem .65rem; border-left: .25rem solid var(--red); background: #fff1ef; color: #72231e; font-size: .78rem; }
+details { margin-top: auto; border-top: 1px solid var(--line); padding-top: .65rem; }
+summary { cursor: pointer; color: #075d75; font-weight: 800; }
+.source-table-wrap { overflow-x: auto; margin-top: .7rem; }
+.source-table { width: 100%; border-collapse: collapse; font-size: .72rem; }
+.source-table th, .source-table td { padding: .45rem; text-align: left; vertical-align: top; border-bottom: 1px solid #e4e7eb; }
+.source-table td:nth-child(2) { text-transform: capitalize; }
+.source-table small { display: block; color: var(--muted); }
+.methodology-screen { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem 3rem; padding: 3rem clamp(1rem, 4vw, 3rem) 5rem; background: var(--navy); color: var(--white); }
+.methodology-panel { min-width: 0; }
+.methodology-screen h2 { font: 700 2.2rem/1 Georgia, serif; }
+.methodology-screen h3 { color: #9ee7df; }
+.process-list { padding-left: 1.3rem; }
+.process-list li { padding: .35rem 0; }
+.print-guide { display: none; }
+
+@media (max-width: 720px) {
+  .hero-meta span + span { border-left: 0; padding-left: 0; }
+  .screen-controls { grid-template-columns: 1fr; position: static; }
+  .screen-controls p { justify-self: start; }
+  .race-grid, .methodology-screen { grid-template-columns: 1fr; }
+  .race-card { min-width: 0; }
+  .race-card-head > div { min-width: 0; }
+  .race-card-head { flex-direction: column; align-items: stretch; }
+  .score-lockup { align-self: flex-start; }
+  .comparison em { width: 100%; margin-left: 0; }
+  .warning { overflow-wrap: anywhere; }
+}
+
+@page { size: Letter portrait; margin: .28in .3in; }
+
+@media print {
+  html, body { width: 8.5in; margin: 0; background: white; color: #111820; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .skip-link, .screen-guide, script { display: none !important; }
+  .print-guide { display: block; font-family: Arial, Helvetica, sans-serif; }
+  .print-page { position: relative; width: 7.9in; height: 10.44in; overflow: hidden; }
+  .print-page-two { break-before: page; page-break-before: always; }
+  .print-header { display: flex; justify-content: space-between; align-items: flex-end; height: .5in; border-bottom: 2px solid var(--navy); }
+  .print-header p { margin: 0; color: var(--teal); font-size: 6.6pt; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+  .print-header h1 { margin: 0; font: 700 17pt/1 Georgia, serif; }
+  .print-header-meta { text-align: right; color: #3e4c59; font-size: 6.5pt; line-height: 1.35; }
+  .print-intro { margin: .04in 0 .06in; color: #364152; font-size: 6.3pt; line-height: 1.15; }
+  .print-races { height: 9.42in; column-count: 2; column-gap: .14in; column-fill: auto; }
+  .print-section-title { break-after: avoid; margin: .025in 0 .015in; padding: .025in .045in; background: var(--navy); color: white; font-size: 6.8pt; line-height: 1; letter-spacing: .07em; text-transform: uppercase; }
+  .print-race { break-inside: avoid; margin: 0 0 .022in; padding: .035in .045in .04in; border: .5px solid #b8c2cc; border-left: 2px solid var(--blue); background: white; }
+  .print-race-title { overflow: hidden; color: #52606d; font-size: 6.1pt; font-weight: 800; line-height: 1; text-overflow: ellipsis; text-transform: uppercase; white-space: nowrap; }
+  .print-race-result { display: grid; grid-template-columns: 1fr auto auto; align-items: baseline; gap: .035in; margin-top: .012in; }
+  .print-race-result > strong { overflow: hidden; font: 700 7.6pt/1 Georgia, serif; text-overflow: ellipsis; white-space: nowrap; }
+  .print-grade { min-width: .25in; padding: .01in .025in; border-radius: .025in; color: white; font-size: 6pt; line-height: 1.2; text-align: center; }
+  .print-race-result b { font-size: 6.7pt; font-variant-numeric: tabular-nums; }
+  .print-meter { height: .018in; margin-top: .012in; background: #d9e2ec; }
+  .print-meter span { display: block; height: 100%; background: var(--teal); }
+  .print-race-context { display: flex; justify-content: space-between; gap: .035in; overflow: hidden; margin-top: .01in; color: #364152; font-size: 6pt; line-height: 1; white-space: nowrap; }
+  .print-race-context span { overflow: hidden; text-overflow: ellipsis; }
+  .print-race-context span:last-child { flex-shrink: 0; }
+  .print-compact-warning, .compact-method-note { display: none; }
+  .print-race-notes { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .02in; margin-top: .008in; color: #364152; font-size: 6pt; line-height: 1.08; }
+  .print-race-notes span { min-width: 0; }
+  .print-race-notes span:last-child { flex-shrink: 0; color: #812b25; font-weight: 800; }
+  .print-page footer { position: absolute; bottom: 0; left: 0; right: 0; padding-top: .035in; border-top: .5px solid #9fb3c8; color: #52606d; font-size: 6pt; }
+  .method-header { display: grid; grid-template-columns: 1fr auto; align-items: end; height: .72in; border-bottom: 3px solid var(--teal); }
+  .method-header p { grid-column: 1 / -1; margin: 0; color: var(--teal); font-size: 7pt; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+  .method-header h1 { margin: 0; font: 700 20pt/1 Georgia, serif; }
+  .method-header div { max-width: 2.5in; padding-bottom: .02in; color: #52606d; font-size: 6pt; text-align: right; }
+  .process-flow { display: grid; grid-template-columns: repeat(6, 1fr); gap: .04in; margin: .12in 0; }
+  .process-flow div { position: relative; min-height: .62in; padding: .06in; background: #e8f5f3; border-top: 2px solid var(--teal); }
+  .process-flow div + div::before { position: absolute; left: -.07in; top: .22in; content: ">"; color: var(--teal); font-weight: 900; }
+  .process-flow span { display: block; color: var(--teal); font-size: 6pt; font-weight: 900; }
+  .process-flow strong { display: block; margin-top: .03in; font-size: 6pt; line-height: 1.15; }
+  .method-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: .1in; height: 6.7in; }
+  .method-grid section { padding: .09in; border: .5px solid #b8c2cc; background: #fbfaf6; }
+  .method-grid h2 { margin: 0 0 .06in; color: var(--navy); font: 700 11pt/1 Georgia, serif; }
+  .method-grid p { margin: .04in 0; font-size: 7pt; line-height: 1.3; }
+  .grade-legend { display: grid; grid-template-columns: 1fr 1fr; gap: .035in; }
+  .grade-legend > div { display: grid; grid-template-columns: .38in 1fr; align-items: center; gap: .04in; }
+  .grade-legend .grade { min-height: .24in; min-width: .35in; padding: .02in; font-size: 6pt; }
+  .grade-legend p { margin: 0; }
+  .category-row { display: flex; justify-content: space-between; gap: .05in; padding: .04in 0; border-bottom: .5px solid #d9e2ec; font-size: 7pt; }
+  .category-row span { color: #52606d; }
+  .times-key { margin-top: .09in; padding: .075in; background: #fff3d6; border-left: 2px solid #b56a00; font-size: 6.5pt; line-height: 1.25; }
+  .print-metadata { display: grid; grid-template-columns: repeat(4, 1fr); gap: .04in; margin-top: .1in; padding: .08in; background: var(--navy); color: white; }
+  .print-metadata div { min-width: 0; }
+  .print-metadata span { display: block; color: #b8e6e1; font-size: 6pt; text-transform: uppercase; }
+  .print-metadata strong { display: block; overflow: hidden; font-size: 6pt; text-overflow: ellipsis; white-space: nowrap; }
+  .print-metadata a { color: white; }
+
+  html.compact-edition .print-race-notes { display: none; }
+  html.compact-edition .print-support { display: none; }
+  html.compact-edition .print-compact-warning { display: inline; flex-shrink: 0; color: #812b25; font-size: 6pt; }
+  html.compact-edition .concise-method-detail { display: none; }
+  html.compact-edition .compact-method-note { display: block; }
+
+  html.detailed-edition, html.detailed-edition body { width: auto; }
+  html.detailed-edition .print-guide { display: none !important; }
+  html.detailed-edition .screen-guide { display: block !important; max-width: none; min-height: 0; background: white; }
+  html.detailed-edition .skip-link, html.detailed-edition .screen-controls { display: none !important; }
+  html.detailed-edition .hero { padding: .3in; border-bottom-width: .08in; }
+  html.detailed-edition .hero h1 { margin: .05in 0; font-size: 26pt; }
+  html.detailed-edition .hero-deck { margin: .05in 0; font-size: 10pt; }
+  html.detailed-edition .hero-meta { margin-top: .1in; font-size: 8pt; }
+  html.detailed-edition .screen-sections { padding: .1in 0; }
+  html.detailed-edition .screen-section { margin: .12in 0 .2in; }
+  html.detailed-edition .section-heading h2 { margin: 0 0 .08in; font-size: 18pt; }
+  html.detailed-edition .race-grid { grid-template-columns: 1fr; gap: .08in; }
+  html.detailed-edition .race-card { break-inside: avoid; gap: .06in; padding: .12in; box-shadow: none; }
+  html.detailed-edition .race-card h3 { font-size: 13pt; }
+  html.detailed-edition .race-office, html.detailed-edition .support-line,
+  html.detailed-edition .alternative, html.detailed-edition .comparison,
+  html.detailed-edition .warning { font-size: 8pt; }
+  html.detailed-edition details { display: none; }
+  html.detailed-edition .methodology-screen { display: grid !important; grid-template-columns: 1fr 1fr; gap: .12in; padding: .2in; background: white; color: var(--ink); }
+  html.detailed-edition .methodology-panel { break-inside: avoid; padding: .12in; border: .5px solid var(--line); }
+  html.detailed-edition .methodology-screen h2 { font-size: 18pt; }
+  html.detailed-edition .methodology-screen h3 { color: var(--navy); }
+  html.detailed-edition .methodology-screen p, html.detailed-edition .methodology-screen li { font-size: 8pt; }
+}

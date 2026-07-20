@@ -5,3 +5,14 @@ concise_page_count: 2
 render_engine: chromium
 require_selectable_text: true
 require_accessible_metadata: true
+title: Seattle 2026 Primary Endorsement Consensus Guide
+author: Seattle Election Guide contributors
+subject: Auditable Seattle ballot endorsement consensus and source comparison
+project_url: https://github.com/shaug/seattle-election-guide
+html_filename: seattle-2026-primary-guide.html
+pdf_filename: Seattle_2026_Primary_Endorsement_Guide.pdf
+detailed_pdf_filename: Seattle_2026_Primary_Endorsement_Guide_Detailed.pdf
+desktop_width: 1440
+mobile_width: 390
+screenshot_height: 1200
+minimum_print_font_points: 6.0

@@ -1,0 +1,1418 @@
+"""Render one publication view model to responsive HTML and Chromium PDF."""
+
+from __future__ import annotations
+
+import base64
+import json
+import os
+import re
+import shutil
+import subprocess
+import tempfile
+import time
+from collections.abc import Callable
+from dataclasses import dataclass
+from datetime import UTC
+from html.parser import HTMLParser
+from pathlib import Path
+from typing import Any, cast
+from urllib.parse import urlsplit
+
+from jinja2 import Environment, FileSystemLoader, StrictUndefined
+from PIL import Image, ImageChops
+from pypdf import PdfReader, PdfWriter
+from websocket import (  # pyright: ignore[reportUnknownVariableType]
+    WebSocket,
+    WebSocketException,
+    create_connection,  # pyright: ignore[reportUnknownVariableType]
+)
+
+from election_guide.publication.models import PublicationRace, PublicationViewModel
+from election_guide.rendering.models import (
+    RenderCheck,
+    RenderedPage,
+    RenderingConfiguration,
+    RenderingValidationReport,
+)
+from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
+
+TEMPLATE_DIR = Path(__file__).parent / "templates"
+LETTER_WIDTH_POINTS = 612.0
+LETTER_HEIGHT_POINTS = 792.0
+
+
+@dataclass(frozen=True)
+class RenderedGuide:
+    html_path: Path
+    pdf_path: Path
+    validation_path: Path
+    page_images: list[Path]
+    screenshots: list[Path]
+    validation_report: RenderingValidationReport
+    detailed_pdf_path: Path | None
+    detailed_page_images: list[Path]
+
+
+class PrintLayoutError(ValueError):
+    """The configured two-page print layout cannot contain its full content."""
+
+
+def read_rendering_configuration(path: Path) -> RenderingConfiguration:
+    """Read the strict Chromium rendering contract."""
+    return RenderingConfiguration.model_validate(read_yaml(path))
+
+
+def render_html_document(
+    view_model: PublicationViewModel,
+    configuration: RenderingConfiguration,
+) -> str:
+    """Render the one HTML document shared by screen and print presentation."""
+    environment = Environment(
+        loader=FileSystemLoader(TEMPLATE_DIR),
+        autoescape=True,
+        undefined=StrictUndefined,
+        trim_blocks=True,
+        lstrip_blocks=True,
+    )
+    template = environment.get_template("guide.html.j2")
+    stylesheet = (TEMPLATE_DIR / "guide.css").read_text(encoding="utf-8")
+    source_by_id = {source.id: source for source in view_model.sources}
+    rendered_urls = [
+        configuration.project_url,
+        *(
+            cell.evidence_url
+            for section in view_model.sections
+            for race in section.races
+            for cell in race.source_cells
+            if cell.evidence_url is not None
+        ),
+    ]
+    for url in rendered_urls:
+        _require_web_url(url)
+    return template.render(
+        guide=view_model,
+        config=configuration,
+        stylesheet=stylesheet,
+        source_by_id=source_by_id,
+        filter_options=_filter_options(view_model),
+        concise_warning_labels=_concise_warning_labels,
+    )
+
+
+def _filter_options(view_model: PublicationViewModel) -> list[str]:
+    section_labels = {section.label for section in view_model.sections}
+    return sorted(
+        {
+            token
+            for section in view_model.sections
+            for race in section.races
+            for token in race.filter_tokens
+            if token not in section_labels and (" " in token or token.endswith("wide"))
+        }
+    )
+
+
+def _require_web_url(value: str) -> None:
+    if any(character.isspace() or ord(character) < 32 for character in value):
+        raise ValueError(f"rendered link is not a safe HTTP(S) URL: {value!r}")
+    try:
+        parsed = urlsplit(value)
+        port = parsed.port
+    except ValueError as error:
+        raise ValueError(f"rendered link is not a safe HTTP(S) URL: {value!r}") from error
+    if (
+        parsed.scheme not in {"http", "https"}
+        or parsed.hostname is None
+        or parsed.username is not None
+        or parsed.password is not None
+        or (port is not None and not 1 <= port <= 65535)
+    ):
+        raise ValueError(f"rendered link is not a safe HTTP(S) URL: {value!r}")
+
+
+def _concise_warning_labels(race: PublicationRace) -> list[str]:
+    codes = set(race.warning_codes)
+    labels: list[str] = []
+    grouped = {
+        "low_coverage",
+        "missing_coverage",
+        "low_category_coverage",
+    }
+    if codes & grouped:
+        labels.append("LOW COVERAGE")
+        codes -= grouped
+    known = {
+        "no_endorsement": "NO ENDORSEMENT",
+        "pending_review": "REVIEW PENDING",
+        "unresolved_high_severity": "HIGH-SEVERITY REVIEW",
+        "low_confidence": "LOW CONFIDENCE",
+    }
+    for code in race.warning_codes:
+        if code in codes:
+            labels.append(known.get(code, code.replace("_", " ").upper()))
+            codes.remove(code)
+    return labels
+
+
+def build_rendered_guide(
+    view_model_path: Path,
+    configuration_path: Path,
+    output_dir: Path,
+    *,
+    chrome_path: Path | None = None,
+    pdftoppm_path: Path | None = None,
+) -> RenderedGuide:
+    """Build and validate a complete HTML/PDF rendering generation."""
+    view_model = PublicationViewModel.model_validate(read_json(view_model_path))
+    configuration = read_rendering_configuration(configuration_path)
+    resolved_chrome = chrome_path or find_chrome()
+    resolved_pdftoppm = pdftoppm_path or find_pdftoppm()
+    output_dir.parent.mkdir(parents=True, exist_ok=True)
+    if output_dir.is_symlink():
+        raise ValueError("render output path cannot be a symbolic link")
+    if output_dir.exists() and any(output_dir.iterdir()):
+        raise ValueError("render output directory must be absent or empty")
+    stage: Path | None = Path(
+        tempfile.mkdtemp(prefix=f".{output_dir.name}.render-", dir=output_dir.parent)
+    )
+    try:
+        assert stage is not None
+        html_path = stage / configuration.html_filename
+        pdf_dir = stage / "pdf"
+        pdf_path = pdf_dir / configuration.pdf_filename
+        page_dir = pdf_dir / "pages"
+        detailed_pdf_path: Path | None = None
+        detailed_page_images: list[Path] = []
+        screenshot_dir = stage / "screenshots"
+        pdf_dir.mkdir()
+        page_dir.mkdir()
+        screenshot_dir.mkdir()
+        html_path.write_text(
+            render_html_document(view_model, configuration),
+            encoding="utf-8",
+            newline="\n",
+        )
+        fallback = False
+        try:
+            _validate_print_layout(
+                html_path,
+                resolved_chrome,
+                minimum_font_points=configuration.minimum_print_font_points,
+            )
+        except PrintLayoutError:
+            fallback = True
+            _validate_print_layout(
+                html_path,
+                resolved_chrome,
+                edition="compact",
+                minimum_font_points=configuration.minimum_print_font_points,
+            )
+            _validate_print_layout(
+                html_path,
+                resolved_chrome,
+                edition="detailed",
+                minimum_font_points=configuration.minimum_print_font_points,
+            )
+        _render_pdf(html_path, pdf_path, resolved_chrome, edition="compact" if fallback else None)
+        _set_pdf_metadata(pdf_path, view_model, configuration)
+        page_images = _render_pdf_pages(pdf_path, page_dir, resolved_pdftoppm)
+        if fallback:
+            detailed_pdf_path = pdf_dir / configuration.detailed_pdf_filename
+            detailed_page_dir = pdf_dir / "detailed-pages"
+            detailed_page_dir.mkdir()
+            _render_pdf(html_path, detailed_pdf_path, resolved_chrome, edition="detailed")
+            _set_pdf_metadata(
+                detailed_pdf_path,
+                view_model,
+                configuration,
+                title=f"{configuration.title} - Detailed Edition",
+            )
+            detailed_page_images = _render_pdf_pages(
+                detailed_pdf_path, detailed_page_dir, resolved_pdftoppm
+            )
+        expected_race_count = sum(len(section.races) for section in view_model.sections)
+        screenshots = [
+            _render_screenshot(
+                html_path,
+                screenshot_dir / "desktop.png",
+                resolved_chrome,
+                width=configuration.desktop_width,
+                height=configuration.screenshot_height,
+                expected_race_count=expected_race_count,
+            ),
+            _render_screenshot(
+                html_path,
+                screenshot_dir / "mobile.png",
+                resolved_chrome,
+                width=configuration.mobile_width,
+                height=configuration.screenshot_height,
+                expected_race_count=expected_race_count,
+            ),
+        ]
+        validation_report = validate_rendered_guide(
+            view_model,
+            configuration,
+            html_path,
+            pdf_path,
+            page_images,
+            screenshots,
+            detailed_pdf_path=detailed_pdf_path,
+            detailed_page_images=detailed_page_images,
+        )
+        validation_path = stage / "rendering_validation_report.json"
+        validation_path.write_bytes(canonical_json_bytes(validation_report.model_dump(mode="json")))
+        if not validation_report.passed:
+            failed = "; ".join(
+                f"{check.id}: {check.message}"
+                for check in validation_report.checks
+                if not check.passed
+            )
+            raise ValueError(f"rendered guide validation failed: {failed}")
+        _set_public_modes(stage)
+        if output_dir.exists():
+            output_dir.rmdir()
+        os.replace(stage, output_dir)
+        stage = None
+    finally:
+        if stage is not None and stage.exists():
+            shutil.rmtree(stage, ignore_errors=True)
+    final_pages = [output_dir / "pdf/pages" / path.name for path in page_images]
+    final_screenshots = [output_dir / "screenshots" / path.name for path in screenshots]
+    final_detailed_pages = [
+        output_dir / "pdf/detailed-pages" / path.name for path in detailed_page_images
+    ]
+    return RenderedGuide(
+        html_path=output_dir / configuration.html_filename,
+        pdf_path=output_dir / "pdf" / configuration.pdf_filename,
+        validation_path=output_dir / "rendering_validation_report.json",
+        page_images=final_pages,
+        screenshots=final_screenshots,
+        validation_report=validation_report,
+        detailed_pdf_path=(
+            output_dir / "pdf" / configuration.detailed_pdf_filename if fallback else None
+        ),
+        detailed_page_images=final_detailed_pages,
+    )
+
+
+def validate_rendered_guide(
+    view_model: PublicationViewModel,
+    configuration: RenderingConfiguration,
+    html_path: Path,
+    pdf_path: Path,
+    page_images: list[Path],
+    screenshots: list[Path],
+    *,
+    detailed_pdf_path: Path | None = None,
+    detailed_page_images: list[Path] | None = None,
+) -> RenderingValidationReport:
+    """Validate semantic parity, PDF structure, and rendered image safety."""
+    detailed_page_images = detailed_page_images or []
+    html = html_path.read_text(encoding="utf-8")
+    parser = _GuideHTMLParser()
+    parser.feed(html)
+    expected_races = [race for section in view_model.sections for race in section.races]
+    expected_race_ids = [race.id for race in expected_races]
+    mismatched_html_roles: list[str] = []
+    for race in expected_races:
+        for role, expected_values in _html_semantic_values(race).items():
+            observed_values = [
+                _normalized_text(" ".join(parts))
+                for parts in parser.display_text.get((race.id, role), [])
+            ]
+            normalized_expected = [_normalized_text(value) for value in expected_values]
+            if observed_values != normalized_expected:
+                mismatched_html_roles.append(f"{race.id}/{role}")
+    source_by_id = {source.id: source for source in view_model.sources}
+    missing_evidence_rows: list[str] = []
+    for race in expected_races:
+        for cell in race.source_cells:
+            key = (race.id, cell.source_id)
+            expected_row = _normalized_text(
+                " ".join(
+                    [
+                        source_by_id[cell.source_id].name,
+                        cell.state.replace("_", " "),
+                        " / ".join(cell.candidate_labels) if cell.candidate_labels else "None",
+                        (
+                            " ".join(
+                                value
+                                for value in ("Original evidence", cell.evidence_locator)
+                                if value is not None
+                            )
+                            if cell.evidence_url is not None
+                            else "Not available"
+                        ),
+                    ]
+                )
+            )
+            observed_rows = [
+                _normalized_text(" ".join(parts)) for parts in parser.source_cell_text.get(key, [])
+            ]
+            if observed_rows != [expected_row]:
+                missing_evidence_rows.append(f"{race.id}/{cell.source_id}: row values")
+            expected_links: set[str] = (
+                {cell.evidence_url} if cell.evidence_url is not None else set()
+            )
+            if parser.source_cell_links.get(key, []) != [expected_links]:
+                missing_evidence_rows.append(f"{race.id}/{cell.source_id}: evidence links")
+    expected_html_links = {
+        "#guide-races",
+        configuration.project_url,
+        *(
+            cell.evidence_url
+            for race in expected_races
+            for cell in race.source_cells
+            if cell.evidence_url is not None
+        ),
+    }
+    if parser.links != expected_html_links:
+        missing_evidence_rows.append("document: unexpected or missing links")
+
+    reader = PdfReader(pdf_path)
+    pdf_texts = [page.extract_text() or "" for page in reader.pages]
+    pdf_text = _normalized_text(" ".join(pdf_texts))
+    comparable_pdf_text = pdf_text.casefold()
+    primary_value_fn = (
+        _pdf_race_core_values if detailed_pdf_path is not None else _pdf_race_display_values
+    )
+    missing_pdf_values = _missing_pdf_race_values(expected_races, pdf_text, primary_value_fn)
+    global_pdf_values = [
+        *(section.label for section in view_model.sections),
+        f"{view_model.metadata.published_race_count} races",
+        f"{view_model.metadata.source_count} sources",
+        *(
+            f"{len(category.source_ids)} sources"
+            for category in view_model.methodology.source_categories
+        ),
+    ]
+    missing_pdf_values.extend(
+        value
+        for value in global_pdf_values
+        if _normalized_text(value).casefold() not in comparable_pdf_text
+    )
+    pages_are_letter = _pages_are_letter(reader)
+    link_count = _pdf_link_count(reader)
+    metadata = reader.metadata
+    metadata_present = bool(
+        metadata
+        and metadata.title == configuration.title
+        and metadata.author == configuration.author
+        and metadata.subject == configuration.subject
+    )
+    page_records = [
+        _inspect_page_image(index, path).model_copy(
+            update={"image_path": Path("pdf/pages") / path.name}
+        )
+        for index, path in enumerate(page_images, 1)
+    ]
+    images_nonblank = all(page.ink_fraction > 0.005 for page in page_records)
+    safe_edges = all(page.edge_ink_fraction < 0.002 for page in page_records)
+    detailed_reader = PdfReader(detailed_pdf_path) if detailed_pdf_path is not None else None
+    detailed_texts = (
+        [page.extract_text() or "" for page in detailed_reader.pages]
+        if detailed_reader is not None
+        else []
+    )
+    detailed_text = _normalized_text(" ".join(detailed_texts))
+    missing_detailed_values: list[str] = []
+    if detailed_reader is not None:
+        missing_detailed_values = _missing_pdf_race_values(
+            expected_races, detailed_text, _detailed_pdf_race_values
+        )
+        missing_detailed_values.extend(
+            value
+            for value in (
+                *view_model.methodology.interpretation_notes,
+                *view_model.methodology.limitations,
+                view_model.methodology.verification_instructions,
+            )
+            if _normalized_text(value).casefold() not in detailed_text.casefold()
+        )
+    detailed_records = [
+        _inspect_page_image(index, path).model_copy(
+            update={"image_path": Path("pdf/detailed-pages") / path.name}
+        )
+        for index, path in enumerate(detailed_page_images, 1)
+    ]
+    detailed_metadata = detailed_reader.metadata if detailed_reader is not None else None
+    detailed_valid = detailed_reader is None or (
+        len(detailed_reader.pages) > configuration.concise_page_count
+        and _pages_are_letter(detailed_reader)
+        and all(len(_normalized_text(text)) > 100 for text in detailed_texts)
+        and not missing_detailed_values
+        and bool(
+            detailed_metadata
+            and detailed_metadata.title == f"{configuration.title} - Detailed Edition"
+            and detailed_metadata.author == configuration.author
+            and detailed_metadata.subject == configuration.subject
+        )
+        and len(detailed_records) == len(detailed_reader.pages)
+        and all(record.ink_fraction > 0.005 for record in detailed_records)
+        and all(record.edge_ink_fraction < 0.002 for record in detailed_records)
+    )
+    detail_pair_valid = (detailed_reader is None and not detailed_records) or (
+        detailed_reader is not None and bool(detailed_records)
+    )
+    screenshot_sizes: list[tuple[int, int]] = []
+    screenshot_ink: list[float] = []
+    for path in screenshots:
+        with Image.open(path) as image:
+            screenshot_sizes.append(image.size)
+        screenshot_ink.append(_image_ink_fraction(path))
+    responsive_sizes = screenshot_sizes == [
+        (configuration.desktop_width, configuration.screenshot_height),
+        (configuration.mobile_width, configuration.screenshot_height),
+    ] and all(fraction > 0.005 for fraction in screenshot_ink)
+    checks = [
+        RenderCheck(
+            id="html-race-topology",
+            passed=parser.race_ids == expected_race_ids,
+            message="Responsive HTML contains every expected race exactly once in canonical order.",
+        ),
+        RenderCheck(
+            id="html-display-values",
+            passed=not mismatched_html_roles,
+            message=(
+                "Responsive HTML exposes exactly one canonical value in every semantic field."
+                if not mismatched_html_roles
+                else f"HTML semantic fields differ: {', '.join(mismatched_html_roles[:5])}"
+            ),
+        ),
+        RenderCheck(
+            id="html-source-evidence",
+            passed=not missing_evidence_rows,
+            message=(
+                "Every source row contains its own state, choice, locator, and evidence link."
+                if not missing_evidence_rows
+                else f"HTML source rows are incomplete: {', '.join(missing_evidence_rows[:5])}"
+            ),
+        ),
+        RenderCheck(
+            id="pdf-page-count",
+            passed=len(reader.pages) == configuration.concise_page_count,
+            message="Concise PDF has exactly two pages.",
+        ),
+        RenderCheck(
+            id="pdf-letter-size",
+            passed=pages_are_letter,
+            message="Every PDF page uses US Letter portrait dimensions.",
+        ),
+        RenderCheck(
+            id="pdf-selectable-text",
+            passed=all(len(_normalized_text(text)) > 100 for text in pdf_texts),
+            message="Every PDF page contains substantial selectable text.",
+        ),
+        RenderCheck(
+            id="pdf-display-values",
+            passed=not missing_pdf_values,
+            message=(
+                "PDF text contains every canonical race, recommendation, grade, share, and count."
+                if not missing_pdf_values
+                else f"PDF text is missing canonical values: {', '.join(missing_pdf_values[:5])}"
+            ),
+        ),
+        RenderCheck(
+            id="pdf-metadata",
+            passed=metadata_present,
+            message="PDF includes the configured title, author, and subject metadata.",
+        ),
+        RenderCheck(
+            id="pdf-links",
+            passed=link_count > 0,
+            message="PDF contains at least one embedded URI link.",
+        ),
+        RenderCheck(
+            id="rendered-pages",
+            passed=len(page_records) == configuration.concise_page_count and images_nonblank,
+            message="Every expected PDF page renders to a nonblank PNG.",
+        ),
+        RenderCheck(
+            id="safe-print-edges",
+            passed=safe_edges,
+            message="Rendered content does not touch the outer page safety edge.",
+        ),
+        RenderCheck(
+            id="detailed-fallback",
+            passed=detail_pair_valid and detailed_valid,
+            message=(
+                "Overflow content is preserved in a selectable, visually safe detailed edition."
+                if detailed_reader is not None
+                else "The complete guide fits the normal concise edition without a fallback."
+            ),
+        ),
+        RenderCheck(
+            id="responsive-viewports",
+            passed=responsive_sizes,
+            message="HTML renders nonblank content at the configured desktop and mobile viewports.",
+        ),
+    ]
+    return RenderingValidationReport(
+        passed=all(check.passed for check in checks),
+        page_count=len(reader.pages),
+        pdf_text_length=len(pdf_text) + len(detailed_text),
+        link_count=link_count + (_pdf_link_count(detailed_reader) if detailed_reader else 0),
+        edition="concise_plus_detailed" if detailed_reader else "concise",
+        detailed_page_count=len(detailed_reader.pages) if detailed_reader else 0,
+        checks=checks,
+        pages=page_records,
+        detailed_pages=detailed_records,
+    )
+
+
+def find_chrome() -> Path:
+    """Resolve a supported local Chrome or Chromium executable."""
+    environment_path = os.environ.get("CHROME_PATH")
+    candidates = [
+        Path(environment_path) if environment_path else None,
+        Path("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"),
+        Path("/usr/bin/google-chrome"),
+        Path("/usr/bin/google-chrome-stable"),
+        Path("/usr/bin/chromium"),
+        Path("/usr/bin/chromium-browser"),
+    ]
+    for candidate in candidates:
+        if candidate is not None and candidate.is_file() and os.access(candidate, os.X_OK):
+            return candidate
+    for command in ("google-chrome", "chromium", "chromium-browser"):
+        resolved = shutil.which(command)
+        if resolved:
+            return Path(resolved)
+    raise ValueError("Chrome or Chromium is required; set CHROME_PATH to its executable")
+
+
+def find_pdftoppm() -> Path:
+    """Resolve Poppler PDF rendering for visual inspection."""
+    environment_path = os.environ.get("PDFTOPPM_PATH")
+    if environment_path:
+        candidate = Path(environment_path)
+        if candidate.is_file() and os.access(candidate, os.X_OK):
+            return candidate
+    resolved = shutil.which("pdftoppm")
+    if resolved:
+        return Path(resolved)
+    raise ValueError("pdftoppm is required for rendered-page inspection")
+
+
+def _render_pdf(
+    html_path: Path,
+    pdf_path: Path,
+    chrome_path: Path,
+    *,
+    edition: str | None = None,
+) -> None:
+    profile = Path(tempfile.mkdtemp(prefix="election-guide-chrome-"))
+    try:
+        _run_chrome(
+            [
+                str(chrome_path),
+                "--headless=new",
+                "--disable-gpu",
+                "--disable-dev-shm-usage",
+                "--disable-background-networking",
+                "--disable-component-update",
+                "--disable-extensions",
+                "--hide-scrollbars",
+                "--no-first-run",
+                "--allow-file-access-from-files",
+                "--no-pdf-header-footer",
+                f"--user-data-dir={profile}",
+                f"--print-to-pdf={pdf_path}",
+                _edition_url(html_path, edition),
+            ],
+            pdf_path,
+            "PDF rendering",
+        )
+    finally:
+        shutil.rmtree(profile, ignore_errors=True)
+
+
+def _edition_url(html_path: Path, edition: str | None) -> str:
+    url = html_path.resolve().as_uri()
+    return f"{url}?edition={edition}" if edition is not None else url
+
+
+def _validate_print_layout(
+    html_path: Path,
+    chrome_path: Path,
+    *,
+    minimum_font_points: float,
+    edition: str | None = None,
+) -> None:
+    profile = Path(tempfile.mkdtemp(prefix="election-guide-chrome-"))
+    try:
+        with tempfile.TemporaryFile(mode="w+t", encoding="utf-8") as errors:
+            process = subprocess.Popen(
+                [
+                    str(chrome_path),
+                    "--headless=new",
+                    "--disable-gpu",
+                    "--disable-dev-shm-usage",
+                    "--disable-background-networking",
+                    "--disable-component-update",
+                    "--disable-extensions",
+                    "--no-first-run",
+                    "--allow-file-access-from-files",
+                    f"--user-data-dir={profile}",
+                    "--remote-debugging-port=0",
+                    "about:blank",
+                ],
+                stdout=subprocess.DEVNULL,
+                stderr=errors,
+            )
+            try:
+                issues = _inspect_print_layout(
+                    process,
+                    profile,
+                    _edition_url(html_path, edition),
+                    minimum_font_points=minimum_font_points,
+                    detailed=edition == "detailed",
+                )
+                if issues:
+                    raise PrintLayoutError(
+                        f"print layout clips or overlaps content: {', '.join(issues)}"
+                    )
+            except PrintLayoutError:
+                raise
+            except (OSError, ValueError, TimeoutError, WebSocketException) as error:
+                errors.seek(0)
+                detail = errors.read().strip()
+                suffix = f": {detail}" if detail else ""
+                raise ValueError(
+                    f"Chromium print layout validation failed: {error}{suffix}"
+                ) from error
+            finally:
+                _terminate_process(process)
+    finally:
+        shutil.rmtree(profile, ignore_errors=True)
+
+
+def _inspect_print_layout(
+    process: subprocess.Popen[bytes],
+    profile: Path,
+    url: str,
+    *,
+    minimum_font_points: float,
+    detailed: bool,
+) -> list[str]:
+    port, browser_path = _wait_for_devtools_endpoint(process, profile)
+    websocket = create_connection(
+        f"ws://127.0.0.1:{port}{browser_path}",
+        timeout=30,
+        suppress_origin=True,
+        http_no_proxy=["127.0.0.1"],
+    )
+    try:
+        cdp = _CdpSocket(websocket)
+        target = cdp.command("Target.createTarget", {"url": "about:blank"})
+        target_id = cast(str, target["targetId"])
+        attached = cdp.command("Target.attachToTarget", {"targetId": target_id, "flatten": True})
+        session_id = cast(str, attached["sessionId"])
+        cdp.command(
+            "Emulation.setDeviceMetricsOverride",
+            {
+                "width": 816,
+                "height": 1056,
+                "deviceScaleFactor": 1,
+                "mobile": False,
+            },
+            session_id=session_id,
+        )
+        cdp.command("Emulation.setEmulatedMedia", {"media": "print"}, session_id=session_id)
+        cdp.command("Page.enable", session_id=session_id)
+        cdp.command("Page.navigate", {"url": url}, session_id=session_id)
+        cdp.wait_event("Page.loadEventFired", session_id=session_id)
+        inspected = cdp.command(
+            "Runtime.evaluate",
+            {
+                "expression": """
+                JSON.stringify((() => {
+                  const issues = [];
+                  const detailed = __DETAILED__;
+                  const selectors = detailed ? [
+                    '.screen-guide', '.race-card h3', '.support-line', '.alternative',
+                    '.comparison', '.warning', '.methodology-panel'
+                  ] : [
+                    '.print-races', '.method-grid section', '.print-race-title',
+                    '.print-race-result > strong', '.print-race-context span',
+                    '.print-race-notes span', '.print-metadata strong'
+                  ];
+                  for (const selector of selectors) {
+                    const elements = [...document.querySelectorAll(selector)];
+                    for (const [index, element] of elements.entries()) {
+                      if (element.scrollWidth > element.clientWidth + 1 ||
+                          element.scrollHeight > element.clientHeight + 1) {
+                        issues.push(`${selector}[${index}]`);
+                      }
+                    }
+                  }
+                  const visibleRoot = document.querySelector(
+                    detailed ? '.screen-guide' : '.print-guide'
+                  );
+                  if (!visibleRoot || getComputedStyle(visibleRoot).display === 'none' ||
+                      visibleRoot.getBoundingClientRect().height < 1) {
+                    issues.push('visible-print-root');
+                  }
+                  const minimumPixels = __MINIMUM_POINTS__ * 96 / 72;
+                  if (visibleRoot) {
+                    const visibleElements = [...visibleRoot.querySelectorAll('*')];
+                    for (const [index, element] of visibleElements.entries()) {
+                      const ownText = [...element.childNodes]
+                        .filter(node => node.nodeType === Node.TEXT_NODE)
+                        .map(node => node.textContent.trim()).join(' ');
+                      const style = getComputedStyle(element);
+                      if (ownText && style.display !== 'none' && style.visibility !== 'hidden' &&
+                          Number.parseFloat(style.fontSize) + .05 < minimumPixels) {
+                        issues.push(`font-below-minimum[${index}]`);
+                      }
+                    }
+                  }
+                  if (detailed) return issues;
+                  const methodGrid = document.querySelector('.method-grid');
+                  const metadata = document.querySelector('.print-metadata');
+                  if (methodGrid) {
+                    const gridRect = methodGrid.getBoundingClientRect();
+                    for (const [index, section] of
+                         [...methodGrid.querySelectorAll('section')].entries()) {
+                      const sectionRect = section.getBoundingClientRect();
+                      const childBottom = Math.max(
+                        ...[...section.children].map(
+                          child => child.getBoundingClientRect().bottom
+                        )
+                      );
+                      if (sectionRect.bottom > gridRect.bottom + 1 ||
+                          childBottom > sectionRect.bottom + 1) {
+                        issues.push(`.method-grid section[${index}]-bounds`);
+                      }
+                    }
+                    if (metadata && gridRect.bottom >
+                        metadata.getBoundingClientRect().top + 1) {
+                      issues.push('.method-grid-metadata-overlap');
+                    }
+                  }
+                  const pages = [...document.querySelectorAll('.print-page')];
+                  for (const [index, page] of pages.entries()) {
+                    const footer = page.querySelector('footer');
+                    const selector = index === 0 ? '.print-races' : '.print-metadata';
+                    const content = page.querySelector(selector);
+                    if (footer && content && content.getBoundingClientRect().bottom >
+                        footer.getBoundingClientRect().top + 1) {
+                      issues.push(`.print-page[${index}]-footer-overlap`);
+                    }
+                  }
+                  return issues;
+                })())
+                """.replace("__DETAILED__", str(detailed).lower()).replace(
+                    "__MINIMUM_POINTS__", str(minimum_font_points)
+                ),
+                "returnByValue": True,
+            },
+            session_id=session_id,
+        )
+        result = cast(dict[str, Any], inspected["result"])
+        value = cast(object, json.loads(cast(str, result["value"])))
+        if not isinstance(value, list):
+            raise ValueError("Chrome returned invalid print layout measurements")
+        items = cast(list[object], value)
+        if not all(isinstance(item, str) for item in items):
+            raise ValueError("Chrome returned invalid print layout measurements")
+        return cast(list[str], items)
+    finally:
+        websocket.close()
+
+
+def _render_screenshot(
+    html_path: Path,
+    output_path: Path,
+    chrome_path: Path,
+    *,
+    width: int,
+    height: int,
+    expected_race_count: int,
+) -> Path:
+    profile = Path(tempfile.mkdtemp(prefix="election-guide-chrome-"))
+    try:
+        with tempfile.TemporaryFile(mode="w+t", encoding="utf-8") as errors:
+            process = subprocess.Popen(
+                [
+                    str(chrome_path),
+                    "--headless=new",
+                    "--disable-gpu",
+                    "--disable-dev-shm-usage",
+                    "--disable-background-networking",
+                    "--disable-component-update",
+                    "--disable-extensions",
+                    "--hide-scrollbars",
+                    "--no-first-run",
+                    "--allow-file-access-from-files",
+                    f"--user-data-dir={profile}",
+                    "--remote-debugging-port=0",
+                    "about:blank",
+                ],
+                stdout=subprocess.DEVNULL,
+                stderr=errors,
+            )
+            try:
+                _capture_emulated_viewport(
+                    process,
+                    profile,
+                    html_path.resolve().as_uri(),
+                    output_path,
+                    width=width,
+                    height=height,
+                    expected_race_count=expected_race_count,
+                )
+            except (OSError, ValueError, TimeoutError, WebSocketException) as error:
+                errors.seek(0)
+                detail = errors.read().strip()
+                suffix = f": {detail}" if detail else ""
+                raise ValueError(f"Chromium screenshot failed: {error}{suffix}") from error
+            finally:
+                _terminate_process(process)
+    finally:
+        shutil.rmtree(profile, ignore_errors=True)
+    return output_path
+
+
+def _capture_emulated_viewport(
+    process: subprocess.Popen[bytes],
+    profile: Path,
+    url: str,
+    output_path: Path,
+    *,
+    width: int,
+    height: int,
+    expected_race_count: int,
+) -> None:
+    """Capture an exact CSS viewport through Chrome DevTools Protocol.
+
+    Chrome enforces a 500-pixel minimum window width on macOS. Device emulation
+    avoids silently cropping a wider layout when a narrower mobile screenshot is
+    requested and uses the same path on Linux CI.
+    """
+    port, browser_path = _wait_for_devtools_endpoint(process, profile)
+    websocket = create_connection(
+        f"ws://127.0.0.1:{port}{browser_path}",
+        timeout=30,
+        suppress_origin=True,
+        http_no_proxy=["127.0.0.1"],
+    )
+    try:
+        cdp = _CdpSocket(websocket)
+        target = cdp.command("Target.createTarget", {"url": "about:blank"})
+        target_id = cast(str, target["targetId"])
+        attached = cdp.command("Target.attachToTarget", {"targetId": target_id, "flatten": True})
+        session_id = cast(str, attached["sessionId"])
+        cdp.command(
+            "Emulation.setDeviceMetricsOverride",
+            {
+                "width": width,
+                "height": height,
+                "deviceScaleFactor": 1,
+                "mobile": False,
+                "screenWidth": width,
+                "screenHeight": height,
+            },
+            session_id=session_id,
+        )
+        cdp.command("Page.enable", session_id=session_id)
+        cdp.command("Page.navigate", {"url": url}, session_id=session_id)
+        cdp.wait_event("Page.loadEventFired", session_id=session_id)
+        evaluated = cdp.command(
+            "Runtime.evaluate",
+            {
+                "expression": (
+                    "JSON.stringify((() => {"
+                    "const guide=document.querySelector('.screen-guide');"
+                    "const filter=document.querySelector('#race-filter');"
+                    "const cards=[...document.querySelectorAll('[data-publication-race-id]')]"
+                    ".filter(card=>getComputedStyle(card).display!=='none'&&"
+                    "card.getBoundingClientRect().width>0&&card.getBoundingClientRect().height>0);"
+                    "return {innerWidth:window.innerWidth,innerHeight:window.innerHeight,"
+                    "scrollWidth:document.documentElement.scrollWidth,"
+                    "guideVisible:Boolean(guide&&getComputedStyle(guide).display!=='none'&&"
+                    "guide.getBoundingClientRect().width>0&&guide.getBoundingClientRect().height>0),"
+                    "filterVisible:Boolean(filter&&getComputedStyle(filter).display!=='none'&&"
+                    "filter.getBoundingClientRect().width>0&&filter.getBoundingClientRect().height>0),"
+                    "visibleRaceCount:cards.length};})())"
+                ),
+                "returnByValue": True,
+            },
+            session_id=session_id,
+        )
+        result = cast(dict[str, Any], evaluated["result"])
+        metrics = cast(dict[str, object], json.loads(cast(str, result["value"])))
+        expected_metrics: dict[str, object] = {
+            "innerWidth": width,
+            "innerHeight": height,
+            "scrollWidth": width,
+            "guideVisible": True,
+            "filterVisible": True,
+            "visibleRaceCount": expected_race_count,
+        }
+        if metrics != expected_metrics:
+            raise ValueError(f"responsive layout overflowed its viewport: {metrics}")
+        captured = cdp.command(
+            "Page.captureScreenshot",
+            {"format": "png", "fromSurface": True, "captureBeyondViewport": False},
+            session_id=session_id,
+        )
+        encoded = cast(str, captured["data"])
+        output_path.write_bytes(base64.b64decode(encoded, validate=True))
+        if _image_ink_fraction(output_path) <= 0.005:
+            raise ValueError("responsive screenshot is blank")
+    finally:
+        websocket.close()
+
+
+def _wait_for_devtools_endpoint(process: subprocess.Popen[bytes], profile: Path) -> tuple[int, str]:
+    endpoint = profile / "DevToolsActivePort"
+    deadline = time.monotonic() + 15
+    while time.monotonic() < deadline:
+        if process.poll() is not None:
+            raise ValueError("Chrome exited before exposing its DevTools endpoint")
+        if endpoint.is_file():
+            parts = endpoint.read_text(encoding="utf-8").splitlines()
+            if len(parts) >= 2:
+                return int(parts[0]), parts[1]
+        time.sleep(0.05)
+    raise TimeoutError("Chrome did not expose its DevTools endpoint")
+
+
+class _CdpSocket:
+    """Minimal request/response client for Chrome's DevTools WebSocket."""
+
+    def __init__(self, websocket: WebSocket) -> None:
+        self._websocket = websocket
+        self._pending: list[dict[str, Any]] = []
+        self._next_id = 1
+
+    def command(
+        self,
+        method: str,
+        params: dict[str, Any] | None = None,
+        *,
+        session_id: str | None = None,
+    ) -> dict[str, Any]:
+        request_id = self._next_id
+        self._next_id += 1
+        request: dict[str, Any] = {"id": request_id, "method": method}
+        if params is not None:
+            request["params"] = params
+        if session_id is not None:
+            request["sessionId"] = session_id
+        self._websocket.send(json.dumps(request, separators=(",", ":")))
+        response = self._next_matching(lambda message: message.get("id") == request_id)
+        if "error" in response:
+            raise ValueError(f"CDP {method} failed: {response['error']}")
+        return cast(dict[str, Any], response.get("result", {}))
+
+    def wait_event(self, method: str, *, session_id: str) -> None:
+        self._next_matching(
+            lambda message: (
+                message.get("method") == method and message.get("sessionId") == session_id
+            )
+        )
+
+    def _next_matching(self, predicate: Callable[[dict[str, Any]], bool]) -> dict[str, Any]:
+        for index, message in enumerate(self._pending):
+            if predicate(message):
+                return self._pending.pop(index)
+        while True:
+            message = self._read_message()
+            if predicate(message):
+                return message
+            self._pending.append(message)
+
+    def _read_message(self) -> dict[str, Any]:
+        raw = self._websocket.recv()
+        if not isinstance(raw, str):
+            raise ValueError("Chrome returned a non-text DevTools message")
+        value = json.loads(raw)
+        if not isinstance(value, dict):
+            raise ValueError("Chrome returned a non-object DevTools message")
+        return cast(dict[str, Any], value)
+
+
+def _terminate_process(process: subprocess.Popen[bytes]) -> None:
+    if process.poll() is not None:
+        return
+    process.terminate()
+    try:
+        process.wait(timeout=5)
+    except subprocess.TimeoutExpired:
+        process.kill()
+        process.wait(timeout=5)
+
+
+def _run_chrome(command: list[str], expected_output: Path, label: str) -> None:
+    """Wait for a stable browser artifact even when a platform Chrome process lingers."""
+    with tempfile.TemporaryFile(mode="w+t", encoding="utf-8") as errors:
+        process = subprocess.Popen(
+            command,
+            stdout=subprocess.DEVNULL,
+            stderr=errors,
+            text=True,
+        )
+        deadline = time.monotonic() + 60
+        stable_since: float | None = None
+        previous_size = -1
+        complete = False
+        while time.monotonic() < deadline:
+            returncode = process.poll()
+            if expected_output.is_file():
+                size = expected_output.stat().st_size
+                if size > 0 and size == previous_size:
+                    stable_since = stable_since or time.monotonic()
+                    if time.monotonic() - stable_since >= 0.5:
+                        complete = True
+                        break
+                else:
+                    previous_size = size
+                    stable_since = None
+            if returncode is not None:
+                complete = expected_output.is_file() and expected_output.stat().st_size > 0
+                break
+            time.sleep(0.1)
+        if process.poll() is None:
+            process.terminate()
+            try:
+                process.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                process.kill()
+                process.wait(timeout=5)
+        if not complete:
+            errors.seek(0)
+            detail = errors.read().strip()
+            raise ValueError(f"Chromium {label} failed: {detail or 'no artifact was produced'}")
+
+
+def _set_pdf_metadata(
+    pdf_path: Path,
+    view_model: PublicationViewModel,
+    configuration: RenderingConfiguration,
+    *,
+    title: str | None = None,
+) -> None:
+    reader = PdfReader(pdf_path)
+    writer = PdfWriter(clone_from=reader)
+    generated = view_model.metadata.generated_at.astimezone(UTC)
+    pdf_date = generated.strftime("D:%Y%m%d%H%M%S+00'00'")
+    writer.add_metadata(
+        {
+            "/Title": title or configuration.title,
+            "/Author": configuration.author,
+            "/Subject": configuration.subject,
+            "/Keywords": "Seattle election endorsements voter guide",
+            "/CreationDate": pdf_date,
+            "/ModDate": pdf_date,
+        }
+    )
+    temporary = pdf_path.with_suffix(".metadata.pdf")
+    try:
+        with temporary.open("wb") as output:
+            writer.write(output)
+            output.flush()
+            os.fsync(output.fileno())
+        os.replace(temporary, pdf_path)
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
+def _render_pdf_pages(pdf_path: Path, output_dir: Path, pdftoppm_path: Path) -> list[Path]:
+    prefix = output_dir / "page"
+    result = subprocess.run(
+        [str(pdftoppm_path), "-png", "-r", "144", str(pdf_path), str(prefix)],
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    if result.returncode != 0:
+        raise ValueError(f"PDF page rendering failed: {result.stderr.strip()}")
+    pages = sorted(output_dir.glob("page-*.png"), key=_rendered_page_number)
+    if not pages:
+        raise ValueError("PDF page rendering produced no images")
+    return pages
+
+
+def _rendered_page_number(path: Path) -> int:
+    match = re.fullmatch(r"page-(\d+)\.png", path.name)
+    if match is None:
+        raise ValueError(f"PDF page rendering produced an unexpected filename: {path.name}")
+    return int(match.group(1))
+
+
+def _inspect_page_image(page_number: int, path: Path) -> RenderedPage:
+    with Image.open(path) as opened:
+        image = opened.convert("RGB")
+        width, height = image.size
+        background = Image.new("RGB", image.size, image.getpixel((0, 0)))
+        difference = ImageChops.difference(image, background).convert("L")
+        histogram = difference.histogram()
+        changed = sum(histogram[8:])
+        ink_fraction = changed / (width * height)
+        edge_width = max(2, round(min(width, height) * 0.006))
+        gray = image.convert("L")
+        edge_strips = [
+            gray.crop((0, 0, width, edge_width)),
+            gray.crop((0, height - edge_width, width, height)),
+            gray.crop((0, edge_width, edge_width, height - edge_width)),
+            gray.crop((width - edge_width, edge_width, width, height - edge_width)),
+        ]
+        edge_ink = sum(sum(strip.histogram()[:220]) for strip in edge_strips)
+        edge_pixel_count = sum(strip.width * strip.height for strip in edge_strips)
+        edge_fraction = edge_ink / edge_pixel_count
+    return RenderedPage(
+        page_number=page_number,
+        image_path=path,
+        width=width,
+        height=height,
+        ink_fraction=ink_fraction,
+        edge_ink_fraction=edge_fraction,
+    )
+
+
+def _image_ink_fraction(path: Path) -> float:
+    with Image.open(path) as opened:
+        image = opened.convert("RGB")
+        background = Image.new("RGB", image.size, image.getpixel((0, 0)))
+        histogram = ImageChops.difference(image, background).convert("L").histogram()
+        return sum(histogram[8:]) / (image.width * image.height)
+
+
+def _pdf_link_count(reader: PdfReader) -> int:
+    count = 0
+    for page in reader.pages:
+        annotations = page.get("/Annots", [])
+        for annotation_reference in annotations:
+            annotation = annotation_reference.get_object()
+            action = annotation.get("/A")
+            if action is not None and action.get("/URI"):
+                count += 1
+    return count
+
+
+def _normalized_text(value: str) -> str:
+    return re.sub(r"\s+", " ", value).strip()
+
+
+def _html_semantic_values(race: PublicationRace) -> dict[str, list[str]]:
+    return {
+        "race-label": [race.race_label],
+        "recommendation": [race.recommendation_label],
+        "grade": [race.grade],
+        "share": ["N/A" if race.percentage_whole is None else race.percentage_label],
+        "support": [race.support_summary],
+        "alternatives": (
+            [
+                "Alternatives: "
+                + "; ".join(
+                    f"{item.candidate_label}, {item.percentage_label}" for item in race.alternatives
+                )
+            ]
+            if race.alternatives
+            else []
+        ),
+        "comparison": [
+            " ".join(
+                [
+                    "Seattle Times",
+                    comparison.badge_label,
+                    " / ".join(comparison.candidate_labels),
+                ]
+            ).strip()
+            for comparison in race.comparisons
+        ],
+        "warnings": (
+            ["Coverage note: " + " ".join(race.warning_messages)] if race.warning_messages else []
+        ),
+    }
+
+
+def _pdf_race_display_values(race: PublicationRace) -> list[str]:
+    return [
+        race.race_label,
+        race.recommendation_label,
+        race.grade,
+        "N/A" if race.percentage_whole is None else race.percentage_label,
+        race.support_summary,
+        *(
+            value
+            for alternative in race.alternatives
+            for value in (alternative.candidate_label, alternative.percentage_label)
+        ),
+        *(
+            value
+            for comparison in race.comparisons
+            for value in (comparison.badge_label, *comparison.candidate_labels)
+        ),
+        *_concise_warning_labels(race),
+    ]
+
+
+def _pdf_race_core_values(race: PublicationRace) -> list[str]:
+    return [
+        race.race_label,
+        race.recommendation_label,
+        race.grade,
+        "N/A" if race.percentage_whole is None else race.percentage_label,
+        *(
+            value
+            for comparison in race.comparisons
+            for value in (comparison.badge_label, *comparison.candidate_labels)
+        ),
+        *(_concise_warning_labels(race)[:1]),
+    ]
+
+
+def _detailed_pdf_race_values(race: PublicationRace) -> list[str]:
+    return [
+        race.race_label,
+        race.recommendation_label,
+        race.grade,
+        "N/A" if race.percentage_whole is None else race.percentage_label,
+        race.support_summary,
+        *(
+            value
+            for alternative in race.alternatives
+            for value in (alternative.candidate_label, alternative.percentage_label)
+        ),
+        *(
+            value
+            for comparison in race.comparisons
+            for value in (comparison.badge_label, *comparison.candidate_labels)
+        ),
+        *race.warning_messages,
+    ]
+
+
+def _missing_pdf_race_values(
+    races: list[PublicationRace],
+    pdf_text: str,
+    value_fn: Callable[[PublicationRace], list[str]],
+) -> list[str]:
+    comparable = _normalized_text(pdf_text).casefold()
+    positions: list[int | None] = []
+    cursor = 0
+    for race in races:
+        label = _normalized_text(race.race_label).casefold()
+        position = comparable.find(label, cursor)
+        positions.append(None if position < 0 else position)
+        if position >= 0:
+            cursor = position + len(label)
+    missing: list[str] = []
+    for index, race in enumerate(races):
+        position = positions[index]
+        if position is None:
+            missing.append(f"{race.id}: {race.race_label}")
+            continue
+        later = [item for item in positions[index + 1 :] if item is not None]
+        segment = comparable[position : later[0] if later else len(comparable)]
+        share = "N/A" if race.percentage_whole is None else race.percentage_label
+        ordered_header = [
+            race.race_label,
+            race.recommendation_label,
+            race.grade,
+            share,
+        ]
+        if value_fn is not _pdf_race_core_values:
+            ordered_header.append(race.support_summary)
+        header_pattern = r"\s+".join(
+            re.escape(_normalized_text(value).casefold()) for value in ordered_header[:3]
+        )
+        header_pattern += r"\s*" + re.escape(_normalized_text(ordered_header[3]).casefold())
+        if len(ordered_header) == 5:
+            header_pattern += r"\s+" + re.escape(_normalized_text(ordered_header[4]).casefold())
+        if re.match(header_pattern, segment) is None:
+            missing.append(f"{race.id}: ordered race result header")
+        missing.extend(
+            f"{race.id}: {value}"
+            for value in value_fn(race)
+            if _normalized_text(value).casefold() not in segment
+        )
+    return missing
+
+
+def _pages_are_letter(reader: PdfReader) -> bool:
+    return all(
+        abs(float(page.mediabox.width) - LETTER_WIDTH_POINTS) < 1
+        and abs(float(page.mediabox.height) - LETTER_HEIGHT_POINTS) < 1
+        for page in reader.pages
+    )
+
+
+def _set_public_modes(root: Path) -> None:
+    root.chmod(0o755)
+    for path in root.rglob("*"):
+        path.chmod(0o755 if path.is_dir() else 0o644)
+
+
+class _GuideHTMLParser(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.race_ids: list[str] = []
+        self.race_text: dict[str, list[str]] = {}
+        self.links: set[str] = set()
+        self.source_cell_text: dict[tuple[str, str], list[list[str]]] = {}
+        self.source_cell_links: dict[tuple[str, str], list[set[str]]] = {}
+        self.display_text: dict[tuple[str, str], list[list[str]]] = {}
+        self._text_parts: list[str] = []
+        self._current_race_id: str | None = None
+        self._current_source_key: tuple[tuple[str, str], int] | None = None
+        self._current_display_role: tuple[tuple[str, str], int] | None = None
+        self._display_role_tag: str | None = None
+
+    @property
+    def text(self) -> str:
+        return " ".join(self._text_parts)
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        attributes = dict(attrs)
+        race_id = attributes.get("data-publication-race-id")
+        if race_id is not None:
+            self.race_ids.append(race_id)
+            self.race_text[race_id] = []
+            self._current_race_id = race_id
+        source_id = attributes.get("data-source-id")
+        if tag == "tr" and source_id is not None and self._current_race_id is not None:
+            key = (self._current_race_id, source_id)
+            rows = self.source_cell_text.setdefault(key, [])
+            links = self.source_cell_links.setdefault(key, [])
+            rows.append([])
+            links.append(set())
+            self._current_source_key = (key, len(rows) - 1)
+        display_role = attributes.get("data-display-role")
+        if display_role is not None and self._current_race_id is not None:
+            key = (self._current_race_id, display_role)
+            occurrences = self.display_text.setdefault(key, [])
+            occurrences.append([])
+            self._current_display_role = (key, len(occurrences) - 1)
+            self._display_role_tag = tag
+        href = attributes.get("href")
+        if tag == "a" and href is not None:
+            self.links.add(href)
+            if self._current_source_key is not None:
+                key, index = self._current_source_key
+                self.source_cell_links[key][index].add(href)
+
+    def handle_data(self, data: str) -> None:
+        if data.strip():
+            self._text_parts.append(data)
+            if self._current_race_id is not None:
+                self.race_text[self._current_race_id].append(data)
+            if self._current_source_key is not None:
+                key, index = self._current_source_key
+                self.source_cell_text[key][index].append(data)
+            if self._current_display_role is not None:
+                key, index = self._current_display_role
+                self.display_text[key][index].append(data)
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag == "tr":
+            self._current_source_key = None
+        if tag == self._display_role_tag:
+            self._current_display_role = None
+            self._display_role_tag = None
+        if tag == "article":
+            self._current_race_id = None

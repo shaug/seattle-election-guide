@@ -30,6 +30,7 @@ def test_help_lists_foundational_commands() -> None:
     assert "inventory" in result.stdout
     assert "normalize" in result.stdout
     assert "review" in result.stdout
+    assert "render" in result.stdout
     assert "sources" in result.stdout
     assert "version" in result.stdout
 
