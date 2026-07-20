@@ -104,11 +104,12 @@ def render_discovery_report(registry: SourceRegistry) -> str:
             "",
             "## Frozen eligibility rule",
             "",
-            "The seven Seattle-overlapping legislative-district organizations count in the "
-            "default consensus only for races specific to their own district. Their broader "
-            "endorsements may be retained for audit or category analysis but cannot add party "
-            "votes to statewide, countywide, congressional, citywide, municipal-court, ballot-"
-            "measure, or precinct races. The Seattle Times remains comparison-only.",
+            "The seven Seattle-overlapping legislative-district organizations count wherever "
+            "they publish an explicit decision for a race on a Seattle ballot, including "
+            "federal, statewide, judicial, countywide, citywide, municipal-court, and ballot-"
+            "measure races. They cannot contribute to another district's legislative contests. "
+            "Their shared Democratic Party network remains disclosed rather than suppressing "
+            "valid support. The Seattle Times remains comparison-only.",
             "",
             "The complete machine-readable record—including requested and canonical URLs, "
             "publication and update dates when available, access times, media types, redirect "
@@ -135,6 +136,8 @@ def _publication_date(source: Source) -> str:
 def _eligibility(source: Source) -> str:
     if source.eligibility.kind == "all_seattle_ballot_races":
         return "Seattle-ballot races"
+    if source.eligibility.kind == "seattle_ballot_races_except_other_legislative_districts":
+        return "Seattle-ballot races except other legislative districts"
     if source.eligibility.kind == "jurisdictions_only":
         return ", ".join(source.eligibility.jurisdiction_ids)
     return "None"

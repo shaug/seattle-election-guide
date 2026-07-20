@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 143869,
+  "canonical_url": "https://32democrats.org/2026-endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "d3d6480080bf319f5d36de75675ed2d9bf18ff5a8b77cf78f6f32359c62fed4c",
+  "http_status": 200,
+  "id": "capture-32nd-district-democrats-20260720T140034Z-f0f6fd2886de",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full official page retained locally for verification; only a short transcript is permitted in the release.",
+  "requested_url": "https://32democrats.org/2026-endorsements/",
+  "retrieved_at": "2026-07-20T14:00:34Z",
+  "schema_version": "1.0",
+  "source_id": "32nd-district-democrats",
+  "storage_reference": "sha256/d3/d3d6480080bf319f5d36de75675ed2d9bf18ff5a8b77cf78f6f32359c62fed4c",
+  "storage_scope": "local_only",
+  "title": "2026 Forum & Endorsements",
+  "updated_at": null
+}

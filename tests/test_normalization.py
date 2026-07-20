@@ -133,9 +133,47 @@ def test_extractor_flags_and_cardinality_contradictions_enter_review() -> None:
 def test_source_scoped_matching_excludes_ineligible_races() -> None:
     inventory = read_inventory(PROJECT_ROOT / "data/normalized/wa-2026-primary-inventory.json")
     registry = read_source_registry(PROJECT_ROOT / "config/sources/default.yaml")
+    raw_race_text = "Legislative District 34 State Senator"
+    eligible_claim = _claim(
+        source_id="34th-district-democrats",
+        raw_race_text=raw_race_text,
+        raw_candidate_text=None,
+        raw_status_text="No endorsement",
+    )
+    ineligible_claim = _claim(
+        source_id="32nd-district-democrats",
+        raw_race_text=raw_race_text,
+        raw_candidate_text=None,
+        raw_status_text="No endorsement",
+    )
+
+    eligible_outcome = match_claim(
+        eligible_claim,
+        inventory,
+        created_at=NOW,
+        source_registry=registry,
+    )
+    ineligible_outcome = match_claim(
+        ineligible_claim,
+        inventory,
+        created_at=NOW,
+        source_registry=registry,
+    )
+
+    assert eligible_outcome.race_match.status == "matched"
+    assert eligible_outcome.race_match.selected_id == "ld-34-state-senator"
+    assert ineligible_outcome.race_match.status == "matched"
+    assert ineligible_outcome.race_match.selected_id == "ld-34-state-senator"
+    assert ineligible_outcome.review_item is not None
+    assert ineligible_outcome.review_item.reason == "race_ineligible"
+
+
+def test_source_scoped_matching_uses_ld_context_for_generic_office_labels() -> None:
+    inventory = read_inventory(PROJECT_ROOT / "data/normalized/wa-2026-primary-inventory.json")
+    registry = read_source_registry(PROJECT_ROOT / "config/sources/default.yaml")
     claim = _claim(
-        source_id="37th-district-democrats",
-        raw_race_text="King County Assessor",
+        source_id="32nd-district-democrats",
+        raw_race_text="State Representative Pos. 1",
         raw_candidate_text=None,
         raw_status_text="No endorsement",
     )
@@ -147,9 +185,9 @@ def test_source_scoped_matching_excludes_ineligible_races() -> None:
         source_registry=registry,
     )
 
-    assert outcome.race_match.status == "unmatched"
-    assert outcome.review_item is not None
-    assert outcome.review_item.reason == "race_unmatched"
+    assert outcome.race_match.status == "matched"
+    assert outcome.race_match.selected_id == "ld-32-state-representative-1"
+    assert outcome.review_item is None
 
 
 @pytest.mark.parametrize(

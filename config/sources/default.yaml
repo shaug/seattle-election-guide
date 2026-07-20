@@ -1,8 +1,8 @@
 schema_version: "1.0"
 id: wa-2026-primary-default-sources
 election_id: wa-2026-primary
-frozen_at: 2026-07-20T14:00:00Z
-research_cutoff: 2026-07-20T14:00:00Z
+frozen_at: 2026-07-20T14:05:00Z
+research_cutoff: 2026-07-20T14:05:00Z
 notes:
   - This registry was refreshed and re-frozen after the time-bounded source-completeness pass, before recompiling consensus scores.
   - Published means an official 2026 publication was located; it does not imply complete ballot coverage.
@@ -204,13 +204,13 @@ sources:
     panel_role: consensus
     panel_reason: Seattle precinct inventory includes LD 11, so the otherwise-generic proposal for all Seattle-overlapping LD organizations resolves to this source.
     eligibility:
-      kind: jurisdictions_only
+      kind: seattle_ballot_races_except_other_legislative_districts
       jurisdiction_ids:
         - legislative-district-11
-      rationale: DECISIONS limits an LD organization to races specific to its own district.
+      rationale: Count explicit decisions in every Seattle-ballot race except legislative contests assigned to another district.
     discovery:
       status: published
-      checked_at: 2026-07-19T23:05:54Z
+      checked_at: 2026-07-20T14:00:34Z
       requested_url: https://www.11thlddems.org/2026/05/results-of-our-2026-may-endorsements-meeting/
       canonical_url: https://www.11thlddems.org/2026/05/results-of-our-2026-may-endorsements-meeting/
       media_type: text/html
@@ -228,13 +228,13 @@ sources:
     panel_role: consensus
     panel_reason: Named LD source and confirmed Seattle-overlapping jurisdiction in the ballot inventory.
     eligibility:
-      kind: jurisdictions_only
+      kind: seattle_ballot_races_except_other_legislative_districts
       jurisdiction_ids:
         - legislative-district-32
-      rationale: DECISIONS limits an LD organization to races specific to its own district.
+      rationale: Count explicit decisions in every Seattle-ballot race except legislative contests assigned to another district.
     discovery:
       status: published
-      checked_at: 2026-07-19T23:05:54Z
+      checked_at: 2026-07-20T14:00:34Z
       requested_url: https://32democrats.org/2026-endorsements/
       canonical_url: https://32democrats.org/2026-endorsements/
       media_type: text/html
@@ -251,13 +251,13 @@ sources:
     panel_role: consensus
     panel_reason: Named LD source and confirmed Seattle-overlapping jurisdiction in the ballot inventory.
     eligibility:
-      kind: jurisdictions_only
+      kind: seattle_ballot_races_except_other_legislative_districts
       jurisdiction_ids:
         - legislative-district-34
-      rationale: DECISIONS limits an LD organization to races specific to its own district.
+      rationale: Count explicit decisions in every Seattle-ballot race except legislative contests assigned to another district.
     discovery:
       status: published
-      checked_at: 2026-07-19T23:05:54Z
+      checked_at: 2026-07-20T14:00:34Z
       requested_url: https://34dems.org/2026-endorsements/
       canonical_url: https://34dems.org/2026-endorsements/
       media_type: text/html
@@ -276,13 +276,13 @@ sources:
     panel_role: consensus
     panel_reason: Named LD source and confirmed Seattle-overlapping jurisdiction in the ballot inventory.
     eligibility:
-      kind: jurisdictions_only
+      kind: seattle_ballot_races_except_other_legislative_districts
       jurisdiction_ids:
         - legislative-district-36
-      rationale: DECISIONS limits an LD organization to races specific to its own district.
+      rationale: Count explicit decisions in every Seattle-ballot race except legislative contests assigned to another district.
     discovery:
       status: published
-      checked_at: 2026-07-19T23:38:50Z
+      checked_at: 2026-07-20T14:00:34Z
       requested_url: https://36th.org/endorsements-2026/
       canonical_url: https://36th.org/endorsements-2026/
       media_type: text/html
@@ -301,18 +301,18 @@ sources:
     panel_role: consensus
     panel_reason: Named LD source with an official 2026 primary endorsement roster and confirmed Seattle-overlapping jurisdiction in the ballot inventory.
     eligibility:
-      kind: jurisdictions_only
+      kind: seattle_ballot_races_except_other_legislative_districts
       jurisdiction_ids:
         - legislative-district-37
-      rationale: DECISIONS limits an LD organization to races specific to its own district.
+      rationale: Count explicit decisions in every Seattle-ballot race except legislative contests assigned to another district.
     discovery:
       status: published
-      checked_at: 2026-07-20T13:50:28Z
+      checked_at: 2026-07-20T14:00:34Z
       requested_url: https://37dems.org/
       canonical_url: https://37dems.org/
       media_type: text/html
       evidence_locator: Homepage, 37th LD Democrats 2026 Primary Election Candidate Endorsements section.
-      notes: The official homepage publishes a consolidated 2026 primary endorsement roster; only LD37-specific races are eligible under the frozen source contract.
+      notes: The official homepage publishes a consolidated 2026 primary endorsement roster spanning legislative, federal, judicial, county, and municipal races.
     overlap_group_ids:
       - democratic-party-network
 
@@ -324,13 +324,13 @@ sources:
     panel_role: consensus
     panel_reason: Named LD source and confirmed Seattle-overlapping jurisdiction in the ballot inventory.
     eligibility:
-      kind: jurisdictions_only
+      kind: seattle_ballot_races_except_other_legislative_districts
       jurisdiction_ids:
         - legislative-district-43
-      rationale: DECISIONS limits an LD organization to races specific to its own district.
+      rationale: Count explicit decisions in every Seattle-ballot race except legislative contests assigned to another district.
     discovery:
       status: published
-      checked_at: 2026-07-19T23:05:54Z
+      checked_at: 2026-07-20T14:00:34Z
       requested_url: https://43rddemocrats.org/endorsements/2026
       canonical_url: https://43rddemocrats.org/endorsements/2026
       media_type: text/html
@@ -348,13 +348,13 @@ sources:
     panel_role: consensus
     panel_reason: Named LD source and confirmed Seattle-overlapping jurisdiction in the ballot inventory.
     eligibility:
-      kind: jurisdictions_only
+      kind: seattle_ballot_races_except_other_legislative_districts
       jurisdiction_ids:
         - legislative-district-46
-      rationale: DECISIONS limits an LD organization to races specific to its own district.
+      rationale: Count explicit decisions in every Seattle-ballot race except legislative contests assigned to another district.
     discovery:
       status: published
-      checked_at: 2026-07-19T23:05:54Z
+      checked_at: 2026-07-20T14:00:34Z
       requested_url: https://www.46dems.org/2026_endorsements
       canonical_url: https://www.46dems.org/2026_endorsements
       media_type: text/html
@@ -922,7 +922,7 @@ overlap_groups:
 
   - id: democratic-party-network
     label: Democratic Party organizational network
-    description: State, county, district, and constituency organizations share a party network; LD sources are additionally fenced to their own district races.
+    description: State, county, district, and constituency organizations share a party network. Each LD source counts independently on broader Seattle-ballot races it explicitly covers, but only its own district's legislative contests.
     member_ids:
       - washington-state-democrats
       - king-county-democrats

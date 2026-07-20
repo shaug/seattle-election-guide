@@ -1,0 +1,122 @@
+{
+  "captured_at": "2026-07-20T14:00:34Z",
+  "decisions": [
+    {
+      "candidate_ids": [
+        "us-house-7--pramila-jayapal"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "us-house-7",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [],
+      "evidence_excerpt": "No Consensus Achieved.",
+      "evidence_locator": null,
+      "race_id": "us-house-9",
+      "status": "no_endorsement"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-1--colleen-melody"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "supreme-court-justice-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-3--mike-diaz"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "supreme-court-justice-3",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-5--sharonda-amamilo"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "supreme-court-justice-5",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-7--debra-l-stephens"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "supreme-court-justice-7",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "king-county-assessor--rob-foxcurran"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "king-county-assessor",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "king-county-council-2--rebecca-salda-a"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "king-county-council-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "king-county-council-8--teresa-mosqueda"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "king-county-council-8",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-senator--chipalo-street"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "ld-37-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-representative-1--sharon-tomiko-santos"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "ld-37-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-representative-2--jaelynn-scott"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "ld-37-state-representative-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "seattle-municipal-court-judge-5--gabe-rothstein"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "seattle-municipal-court-judge-5",
+      "status": "endorsed"
+    }
+  ],
+  "evidence_locator": "Official homepage, 2026 primary candidate endorsements section.",
+  "source_id": "37th-district-democrats"
+}

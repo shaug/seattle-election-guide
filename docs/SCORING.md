@@ -20,9 +20,11 @@ not-published, not-covered, unverified, and ambiguous states increment `missing_
 also contribute no points.
 
 Source eligibility comes from the frozen registry. General consensus sources apply to all
-publication-eligible Seattle-ballot races. A legislative-district organization applies only to
-races in its registered district. Comparison and excluded sources never enter the default
-denominator.
+publication-eligible Seattle-ballot races. Each legislative-district organization counts as an
+independent source in federal, statewide, judicial, countywide, citywide, and other non-legislative
+races where it publishes an explicit decision. It applies to legislative contests only in its own
+registered district. The shared Democratic Party network is disclosed rather than deduplicated.
+Comparison and excluded sources never enter the default denominator.
 
 ## Grades and ties
 

@@ -91,10 +91,21 @@ def match_claim(
 ) -> ClaimMatchOutcome:
     """Match a claim or produce a high-severity review item for uncertainty."""
     eligible_ids = eligible_race_ids(claim.source_id, inventory, source_registry)
-    race_match = match_race(claim.raw_race_text, inventory, eligible_race_ids=eligible_ids)
+    race_match = match_race(claim.raw_race_text, inventory)
+    if race_match.status == "ambiguous":
+        scoped_match = match_race(
+            claim.raw_race_text,
+            inventory,
+            eligible_race_ids=eligible_ids,
+        )
+        if scoped_match.status == "matched":
+            race_match = scoped_match
     if race_match.status != "matched":
         reason = "race_ambiguous" if race_match.status == "ambiguous" else "race_unmatched"
         review = _review_item(claim, created_at, reason, race_match=race_match)
+        return ClaimMatchOutcome(race_match, None, None, review)
+    if race_match.selected_id not in eligible_ids:
+        review = _review_item(claim, created_at, "race_ineligible", race_match=race_match)
         return ClaimMatchOutcome(race_match, None, None, review)
 
     status = classify_endorsement_status(claim.raw_status_text)
@@ -228,15 +239,14 @@ def eligible_race_ids(
     source = next((item for item in source_registry.sources if item.id == source_id), None)
     if source is None:
         raise ValueError(f"unknown source {source_id!r}")
-    if source.eligibility.kind == "none":
-        return set()
-    if source.eligibility.kind == "all_seattle_ballot_races":
-        return {race.id for race in inventory.races if race.publication_eligible}
-    jurisdictions = set(source.eligibility.jurisdiction_ids)
+    jurisdiction_by_id = {jurisdiction.id: jurisdiction for jurisdiction in inventory.jurisdictions}
     return {
         race.id
         for race in inventory.races
-        if race.publication_eligible and race.jurisdiction_id in jurisdictions
+        if source.eligibility.permits_race(
+            race,
+            jurisdiction_by_id[race.jurisdiction_id],
+        )
     }
 
 

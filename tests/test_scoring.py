@@ -304,7 +304,9 @@ def test_categories_and_possible_overlap_remain_separate_disclosures(tmp_path: P
     ).source_ids == sorted(overlapping)
 
 
-def test_geographic_eligibility_changes_only_the_registered_district(tmp_path: Path) -> None:
+def test_ld_sources_count_broad_races_but_not_other_legislative_districts(
+    tmp_path: Path,
+) -> None:
     inventory = read_inventory(PROJECT_ROOT / "data/normalized/wa-2026-primary-inventory.json")
     registry = read_source_registry(PROJECT_ROOT / "config/sources/default.yaml")
     dataset = CanonicalDataset(
@@ -317,16 +319,11 @@ def test_geographic_eligibility_changes_only_the_registered_district(tmp_path: P
     report = score_dataset(dataset, _configuration(), computed_at=NOW)
     by_race = {result.race_id: result for result in report.races}
 
-    assert by_race["ld-11-state-representative-1"].eligible_source_count == (
-        by_race[RACE_ID].eligible_source_count + 1
-    )
-    assert by_race["ld-32-state-representative-1"].eligible_source_count == (
-        by_race[RACE_ID].eligible_source_count + 1
-    )
-    assert (
-        by_race["king-county-council-2"].eligible_source_count
-        == by_race[RACE_ID].eligible_source_count
-    )
+    broad_count = by_race[RACE_ID].eligible_source_count
+    assert by_race["us-house-7"].eligible_source_count == broad_count
+    assert by_race["king-county-council-2"].eligible_source_count == broad_count
+    assert by_race["ld-11-state-representative-1"].eligible_source_count == broad_count - 6
+    assert by_race["ld-32-state-representative-1"].eligible_source_count == broad_count - 6
 
 
 def test_pending_review_warns_and_high_severity_blocks_publication(tmp_path: Path) -> None:

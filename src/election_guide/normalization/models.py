@@ -31,6 +31,7 @@ from election_guide.normalization.semantics import (
 from election_guide.normalization.text import normalize_match_text
 from election_guide.serialization import canonical_json_bytes
 from election_guide.sources.models import SourceRegistry
+from election_guide.sources.registry import validate_registry_inventory
 
 ID_PATTERN = r"^[a-z0-9]+(?:-[a-z0-9]+)*$"
 RECORD_ID_PATTERN = r"^[a-z]+-[0-9a-f]{16}$"
@@ -116,6 +117,7 @@ class ReviewItem(CanonicalModel):
     reason: Literal[
         "race_unmatched",
         "race_ambiguous",
+        "race_ineligible",
         "candidate_unmatched",
         "candidate_ambiguous",
         "extraction_requires_review",
@@ -140,7 +142,12 @@ class ReviewItem(CanonicalModel):
             "candidate_unmatched": "unmatched",
             "candidate_ambiguous": "ambiguous",
         }.get(self.reason)
-        if self.reason.startswith("race_"):
+        if self.reason == "race_ineligible":
+            if self.race_match is None or self.race_match.status != "matched":
+                raise ValueError("race_ineligible requires a matched race result")
+            if self.candidate_match is not None:
+                raise ValueError("race_ineligible cannot carry a candidate result")
+        elif self.reason.startswith("race_"):
             if self.race_match is None or self.race_match.status != expected_status:
                 raise ValueError(f"{self.reason} requires a matching race result")
             if self.candidate_match is not None:
@@ -323,7 +330,15 @@ class CanonicalDataset(CanonicalModel):
     def validate_references(self) -> CanonicalDataset:
         if self.source_registry.election_id != self.inventory.election.id:
             raise ValueError("source registry and inventory target different elections")
+        validate_registry_inventory(
+            self.source_registry,
+            self.inventory,
+            require_all_districts=False,
+        )
         race_by_id = {race.id: race for race in self.inventory.races}
+        jurisdiction_by_id = {
+            jurisdiction.id: jurisdiction for jurisdiction in self.inventory.jurisdictions
+        }
         source_by_id = {source.id: source for source in self.source_registry.sources}
         capture_by_id = _unique_records(self.captures, "capture")
         base_claim_by_id = _unique_records(self.claims, "claim")
@@ -428,9 +443,9 @@ class CanonicalDataset(CanonicalModel):
             source = source_by_id.get(endorsement.source_id)
             if source is None:
                 raise ValueError(f"endorsement {endorsement.id!r} references unknown source")
-            if source.eligibility.kind == "none" or (
-                source.eligibility.kind == "jurisdictions_only"
-                and race.jurisdiction_id not in source.eligibility.jurisdiction_ids
+            if not source.eligibility.permits_race(
+                race,
+                jurisdiction_by_id[race.jurisdiction_id],
             ):
                 raise ValueError(
                     f"endorsement {endorsement.id!r} is outside its source eligibility"
@@ -648,9 +663,9 @@ class CanonicalDataset(CanonicalModel):
                         f"review decision {decision.id!r} requires an unavailable capture"
                     )
                 source = source_by_id[claim.source_id]
-                if source.eligibility.kind == "none" or (
-                    source.eligibility.kind == "jurisdictions_only"
-                    and resolution_race.jurisdiction_id not in source.eligibility.jurisdiction_ids
+                if not source.eligibility.permits_race(
+                    resolution_race,
+                    jurisdiction_by_id[resolution_race.jurisdiction_id],
                 ):
                     raise ValueError(
                         f"review decision {decision.id!r} resolves outside source eligibility"

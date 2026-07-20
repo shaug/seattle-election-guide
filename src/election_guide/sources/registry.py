@@ -21,7 +21,12 @@ def read_source_registry(path: Path) -> SourceRegistry:
         raise ValueError(str(error)) from error
 
 
-def validate_registry_inventory(registry: SourceRegistry, inventory: Inventory) -> None:
+def validate_registry_inventory(
+    registry: SourceRegistry,
+    inventory: Inventory,
+    *,
+    require_all_districts: bool = True,
+) -> None:
     """Require district eligibility to match the authoritative Seattle inventory."""
     if registry.election_id != inventory.election.id:
         raise ValueError(
@@ -52,5 +57,5 @@ def validate_registry_inventory(registry: SourceRegistry, inventory: Inventory) 
             f"source registry references unknown legislative districts: {sorted(unknown)}"
         )
     missing = known_districts - referenced_district_set
-    if missing:
+    if require_all_districts and missing:
         raise ValueError(f"source registry omits Seattle legislative districts: {sorted(missing)}")

@@ -1,0 +1,116 @@
+{
+  "captured_at": "2026-07-20T14:00:34Z",
+  "decisions": [
+    {
+      "candidate_ids": [
+        "us-house-7--pramila-jayapal"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "us-house-7",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-1--colleen-melody"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "supreme-court-justice-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-3--jaime-michelle-hawk",
+        "supreme-court-justice-3--mike-diaz"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "supreme-court-justice-3",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-5--theo-angelis"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "supreme-court-justice-5",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-7--debra-l-stephens"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "supreme-court-justice-7",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "king-county-assessor--christopher-roberts"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "king-county-assessor",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-32-state-senator--cindy-ryu"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "ld-32-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [],
+      "evidence_excerpt": "The 32nd has not endorsed in the primary for this race.",
+      "evidence_locator": null,
+      "race_id": "ld-32-state-representative-1",
+      "status": "no_endorsement"
+    },
+    {
+      "candidate_ids": [
+        "ld-32-state-representative-2--lauren-davis"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "ld-32-state-representative-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "seattle-city-council-5--julie-kang",
+        "seattle-city-council-5--nilu-jenks"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "seattle-city-council-5",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "seattle-municipal-court-judge-5--gabe-rothstein",
+        "seattle-municipal-court-judge-5--garmon-newsom"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "seattle-municipal-court-judge-5",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "seattle-proposition-1-library-levy--yes"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "seattle-proposition-1-library-levy",
+      "status": "endorsed"
+    }
+  ],
+  "evidence_locator": "Official 2026 endorsements page, federal, state, county, city, and ballot-measure sections.",
+  "source_id": "32nd-district-democrats"
+}

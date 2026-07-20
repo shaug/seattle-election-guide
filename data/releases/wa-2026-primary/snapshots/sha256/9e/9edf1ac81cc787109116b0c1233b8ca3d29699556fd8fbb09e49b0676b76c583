@@ -1,0 +1,113 @@
+{
+  "captured_at": "2026-07-20T14:00:34Z",
+  "decisions": [
+    {
+      "candidate_ids": [
+        "us-house-7--pramila-jayapal"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "us-house-7",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-1--colleen-melody"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "supreme-court-justice-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-3--jaime-michelle-hawk"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "supreme-court-justice-3",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-5--theo-angelis"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "supreme-court-justice-5",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "king-county-assessor--christopher-roberts"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "king-county-assessor",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "king-county-council-2--rebecca-salda-a"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "king-county-council-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-46-state-senator--javier-valdez"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "ld-46-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [],
+      "evidence_excerpt": "Legislative District 46 State Representative Position 1: No candidate received 60%.",
+      "evidence_locator": null,
+      "race_id": "ld-46-state-representative-1",
+      "status": "no_endorsement"
+    },
+    {
+      "candidate_ids": [
+        "ld-46-state-representative-2--darya-farivar"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "ld-46-state-representative-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "seattle-city-council-5--nilu-jenks"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "seattle-city-council-5",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "seattle-municipal-court-judge-5--gabe-rothstein"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "seattle-municipal-court-judge-5",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "seattle-proposition-1-library-levy--yes"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "seattle-proposition-1-library-levy",
+      "status": "endorsed"
+    }
+  ],
+  "evidence_locator": "Official 2026 endorsements page, federal, legislative, city, county, judicial, and levy sections.",
+  "source_id": "46th-district-democrats"
+}

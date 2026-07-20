@@ -99,7 +99,12 @@ def test_release_compiler_builds_permitted_provenance_and_resolves_multi_pick(
 
 def test_release_compiler_rejects_decisions_outside_source_eligibility(tmp_path: Path) -> None:
     ledger = _ledger_payload()
-    ledger["sources"][0]["source_id"] = "32nd-district-democrats"
+    source = ledger["sources"][0]
+    source["source_id"] = "32nd-district-democrats"
+    source["captured_at"] = "2026-07-20T14:00:34Z"
+    source["decisions"][0]["race_id"] = "ld-11-state-representative-1"
+    source["decisions"][0]["candidate_ids"] = ["ld-11-state-representative-1--david-hackney"]
+    ledger["data_as_of"] = "2026-07-20T14:05:00Z"
     ledger_path = tmp_path / "invalid.yaml"
     ledger_path.write_text(yaml.safe_dump(ledger, sort_keys=False), encoding="utf-8")
 

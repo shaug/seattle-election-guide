@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 30596,
+  "canonical_url": "https://www.46dems.org/2026_endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "913058711bcd5c13ea0ef0ed8d7a0b1e260c90ed400cbd0524501eabc10be741",
+  "http_status": 200,
+  "id": "capture-46th-district-democrats-20260720T140034Z-79cd1ae71524",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full official page retained locally for verification; only a short transcript is permitted in the release.",
+  "requested_url": "https://www.46dems.org/2026_endorsements",
+  "retrieved_at": "2026-07-20T14:00:34Z",
+  "schema_version": "1.0",
+  "source_id": "46th-district-democrats",
+  "storage_reference": "sha256/91/913058711bcd5c13ea0ef0ed8d7a0b1e260c90ed400cbd0524501eabc10be741",
+  "storage_scope": "local_only",
+  "title": "2026 Endorsements - 46Dems.org",
+  "updated_at": null
+}

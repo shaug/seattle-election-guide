@@ -25,10 +25,10 @@ request before viewing consensus results, so methodology cannot be tuned to an o
 
 - An eligible source is active, preregistered for the default panel, relevant to the election,
   and geographically applicable to the race.
-- Legislative-district organizations participate in the default consensus only for races
-  specific to their own district. Their broader endorsements remain available in audit data
-  and category analysis but do not multiply party influence in statewide, countywide, or
-  citywide results.
+- Legislative-district organizations participate in the default consensus wherever they publish
+  an explicit decision for a race on a Seattle ballot, including federal, statewide, judicial,
+  countywide, and citywide races. They may contribute to legislative contests only in their own
+  district; party-network overlap remains disclosed rather than suppressing valid support.
 - Each eligible, explicitly endorsing source contributes exactly one total point per race.
 - Seattle Times editorial-board endorsements are comparison-only by default.
 - Coalition overlap is recorded and disclosed. It is not converted into a speculative
