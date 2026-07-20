@@ -390,7 +390,10 @@ def validate_rendered_guide(
     global_pdf_values = [
         *(section.label for section in view_model.sections),
         f"{view_model.metadata.published_race_count} races",
-        f"{view_model.metadata.source_count} sources",
+        (
+            f"{view_model.metadata.captured_source_count}/"
+            f"{view_model.metadata.source_count} sources represented"
+        ),
         *(
             f"{len(category.source_ids)} sources"
             for category in view_model.methodology.source_categories

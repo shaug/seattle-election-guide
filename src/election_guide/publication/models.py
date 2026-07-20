@@ -365,9 +365,17 @@ class PublicationMetadata(PublicationModel):
     data_version: str
     git_commit: str = Field(min_length=1)
     source_count: int = Field(ge=0, strict=True)
+    captured_source_count: int = Field(ge=0, strict=True)
+    unavailable_source_count: int = Field(ge=0, strict=True)
     race_count: int = Field(ge=0, strict=True)
     published_race_count: int = Field(ge=0, strict=True)
     unresolved_review_count: int = Field(ge=0, strict=True)
+
+    @model_validator(mode="after")
+    def validate_source_counts(self) -> PublicationMetadata:
+        if self.captured_source_count + self.unavailable_source_count != self.source_count:
+            raise ValueError("captured and unavailable source counts must equal active sources")
+        return self
 
 
 class PublicationViewModel(PublicationModel):

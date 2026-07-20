@@ -209,6 +209,8 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "JSON.parse(card.dataset.filterTokens)" in html
     assert "View source evidence" in html
     assert "Seattle Times" in html
+    assert f"{view_model.metadata.captured_source_count} represented sources" in html
+    assert f"{view_model.metadata.unavailable_source_count} unavailable" in html
     assert "Coverage note:" in html
     assert "Category representation and support" in html
     assert 'class="methodology-panel screen-grade-legend"' in html
