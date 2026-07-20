@@ -69,6 +69,17 @@
             </div>
             {% endif %}
             <p class="support-line" data-display-role="support">{{ race.support_summary }}</p>
+            <div class="category-analysis" data-display-role="category-analysis">
+              <strong>Category representation and support</strong>
+              {% for category in race.category_breakdown %}
+              <p><b>{{ category.label }}</b> — {{ category.source_coverage_count }}/{{ category.eligible_source_count }}
+                sources covered; {{ category.explicit_endorsement_count }} explicit.
+                {% if category.candidate_support %}Support:
+                  {% for item in category.candidate_support %}{{ item.candidate_label }}
+                    {{ item.support_points }} point{% if item.support_points != '1' %}s{% endif %}{% if not loop.last %}; {% endif %}{% endfor %}.
+                {% else %}No explicit candidate support.{% endif %}</p>
+              {% endfor %}
+            </div>
             {% for comparison in race.comparisons %}
             <p class="comparison comparison-{{ comparison.status }}" data-display-role="comparison">
               <span>Seattle Times</span>
@@ -136,6 +147,11 @@
         <h3>Source categories</h3>
         {% for category in guide.methodology.source_categories %}<p><strong>{{ category.label }}</strong>
           - {{ category.source_ids | length }} sources</p>{% endfor %}
+        <h3>Possible overlap groups</h3>
+        {% if guide.methodology.source_overlap_groups %}
+          {% for group in guide.methodology.source_overlap_groups %}<p><strong>{{ group.label }}</strong>
+            — {{ group.source_ids | length }} sources. {{ group.description }}</p>{% endfor %}
+        {% else %}<p>No possible overlap groups span multiple active sources.</p>{% endif %}
       </section>
       <section class="methodology-panel screen-audit-metadata">
         <h3>Build and audit details</h3>
@@ -225,6 +241,12 @@
           <div class="category-row"><strong>{{ category.label }}</strong>
             <span>{{ category.source_ids | length }} sources</span></div>
           {% endfor %}
+          <h3>Possible overlap groups</h3>
+          {% if guide.methodology.source_overlap_groups %}
+            {% for group in guide.methodology.source_overlap_groups %}
+            <p><strong>{{ group.label }}</strong> — {{ group.source_ids | length }} sources.</p>
+            {% endfor %}
+          {% else %}<p>No possible overlap groups span multiple active sources.</p>{% endif %}
         </section>
         <section>
           <h2>Interpretation</h2>

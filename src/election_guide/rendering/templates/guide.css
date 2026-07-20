@@ -51,6 +51,9 @@ a { color: #075d75; text-underline-offset: .15em; }
 .consensus-meter { height: .48rem; overflow: hidden; border-radius: 1rem; background: #d9e2ec; }
 .consensus-meter span { display: block; height: 100%; background: var(--teal); }
 .support-line, .alternative { margin: 0; color: #364152; font-size: .85rem; }
+.category-analysis { padding: .55rem .65rem; border: 1px solid #d9e2ec; background: #f7f9fb; font-size: .74rem; }
+.category-analysis > strong { color: var(--navy); }
+.category-analysis p { margin: .3rem 0 0; color: #364152; }
 .comparison { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; margin: 0; padding: .4rem .55rem; border-left: .25rem solid #7b8794; background: #f2f4f7; font-size: .76rem; }
 .comparison span { font-weight: 700; }
 .comparison strong { padding: .12rem .35rem; border-radius: .2rem; background: #5b6570; color: var(--white); font-size: .68rem; letter-spacing: .04em; }

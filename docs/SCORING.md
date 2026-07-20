@@ -38,8 +38,16 @@ Each race reports eligible, resolved, explicit, no-endorsement, missing, categor
 pending-review counts. Structured warnings expose low source or category coverage, missing and
 no-endorsement decisions, confidence concerns, disclosed source overlap, and unresolved review
 work. Confidence warnings cover every displayed decision, including no-endorsement coverage
-signals and comparison-only decisions. Overlap remains a disclosure; it never silently changes
-source weights.
+signals and comparison-only decisions. The category breakdown keeps representation counts
+(`eligible_source_count`, `source_coverage_count`, and `explicit_endorsement_count`) separate from
+candidate support points. A category with more sources therefore remains visibly more represented;
+the output does not present categories as independent samples or equally weighted blocs.
+
+Possible overlap groups report the registered relationship and the eligible, covered, and explicit
+members for each race. These are disclosures, not statistical estimates of dependence. The default
+view remains the raw, unweighted source-level consensus, and overlap never silently changes source
+weights. No deduplicated view is computed because a possible relationship alone does not establish
+a shared endorsement decision. Any future deduplicated view must be optional and explicitly labeled.
 
 The Seattle Times is read from the same canonical records but reported separately. Its result is
 `agrees`, `differs`, `no_endorsement`, or `not_covered` when a progressive winner exists. If it
@@ -76,3 +84,6 @@ its inventory, so a coherently truncated report cannot establish its own publica
 then reruns scoring from the effective records and compares the complete canonical result. An
 internally consistent false winner, altered comparison, missing warning, or backdated build cannot
 validate merely by rewriting its public hashes.
+
+Consensus report schema `1.1` adds per-race possible-overlap group details. It is intentionally a
+new wire version because a `1.0` consumer cannot validate those required fields.

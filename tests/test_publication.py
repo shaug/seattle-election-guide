@@ -184,6 +184,87 @@ def test_bundle_is_deterministic_reconstructable_and_complete(tmp_path: Path) ->
         PublicationViewModel.model_validate(mutated.model_dump(mode="json"))
 
 
+def test_methodology_publishes_possible_overlap_without_deduplicating(tmp_path: Path) -> None:
+    candidates = _candidate_ids()
+    overlapping = (CONSENSUS_SOURCE_IDS[0], CONSENSUS_SOURCE_IDS[1])
+    dataset = _dataset(
+        tmp_path / "fixture",
+        [
+            (overlapping[0], "endorsed", candidates[:1]),
+            (overlapping[1], "endorsed", candidates[:1]),
+            (CONSENSUS_SOURCE_IDS[2], "endorsed", candidates[1:2]),
+        ],
+        overlap_group_source_ids=overlapping,
+    )
+    snapshot_root = _snapshot_store(tmp_path, dataset)
+    report = score_dataset(dataset, _configuration(), computed_at=NOW)
+    bundle = build_publication_bundle(
+        dataset,
+        report,
+        git_commit="abc123",
+        snapshot_root=snapshot_root,
+    )
+
+    methodology = bundle.view_model.methodology
+    assert bundle.view_model.schema_version == "1.1"
+    assert methodology.default_aggregation_view == "source_level"
+    assert methodology.deduplicated_view == "not_computed"
+    assert [group.model_dump(mode="json") for group in methodology.source_overlap_groups] == [
+        {
+            "id": "fixture-possible-overlap",
+            "label": "Fixture possible overlap",
+            "description": "The relationship may overlap, but independent decisions are unknown.",
+            "relationship": "possible_overlap",
+            "source_ids": sorted(overlapping),
+        }
+    ]
+    race = next(
+        item
+        for section in bundle.view_model.sections
+        for item in section.races
+        if item.id == RACE_ID
+    )
+    assert race.winner_share == "2/3"
+    assert race.explicit_endorsement_count == 3
+    progressive = next(
+        item for item in race.category_breakdown if item.category == "progressive_general"
+    )
+    assert progressive.source_coverage_count == 3
+    assert progressive.eligible_source_count == len(CONSENSUS_SOURCE_IDS)
+    assert {item.candidate_id: item.support_points for item in progressive.candidate_support} == {
+        candidates[0]: "2",
+        candidates[1]: "1",
+    }
+    assert [item.candidate_id for item in progressive.candidate_support] == sorted(candidates[:2])
+
+    mutated = bundle.view_model.model_copy(deep=True)
+    mutated.methodology.source_overlap_groups = []
+    with pytest.raises(ValidationError, match="must match active source metadata"):
+        PublicationViewModel.model_validate(mutated.model_dump(mode="json"))
+
+    mutated = bundle.view_model.model_copy(deep=True)
+    mutated_source = mutated.sources[2]
+    mutated_source.overlap_group_ids = sorted(
+        {*mutated_source.overlap_group_ids, "fabricated-group"}
+    )
+    with pytest.raises(ValidationError, match="must match active source metadata"):
+        PublicationViewModel.model_validate(mutated.model_dump(mode="json"))
+
+    mutated = bundle.view_model.model_copy(deep=True)
+    mutated_race = next(
+        item for section in mutated.sections for item in section.races if item.id == RACE_ID
+    )
+    mutated_category = next(
+        item for item in mutated_race.category_breakdown if item.category == "progressive_general"
+    )
+    mutated_support = next(
+        item for item in mutated_category.candidate_support if item.candidate_id == candidates[0]
+    )
+    mutated_support.support_points = "1"
+    with pytest.raises(ValidationError, match="category candidate support"):
+        PublicationViewModel.model_validate(mutated.model_dump(mode="json"))
+
+
 def test_writer_and_cli_emit_the_same_canonical_bundle(tmp_path: Path) -> None:
     dataset = _publication_dataset(tmp_path / "fixture")
     snapshot_root = _snapshot_store(tmp_path, dataset)
