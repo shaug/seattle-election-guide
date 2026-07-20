@@ -1476,10 +1476,10 @@ def _pdf_value_is_present(value: str, segment: str) -> bool:
         normalized = normalized.replace("·", " ")
         comparable_segment = comparable_segment.replace("·", " ")
         pattern = r"\s*".join(re.escape(word) for word in normalized.split())
-        prefix = r"(?<!seattle\s)(?<!\w)" if compact_times_label else r"(?<!\w)"
+        prefix = r"(?<!seattle\s)(?<!\S)" if compact_times_label else r"(?<!\S)"
         return re.search(prefix + pattern + r"(?=\s|$)", comparable_segment) is not None
     return (
-        re.search(r"(?<!\w)" + re.escape(normalized) + r"(?=\s|$)", comparable_segment) is not None
+        re.search(r"(?<!\S)" + re.escape(normalized) + r"(?=\s|$)", comparable_segment) is not None
     )
 
 
