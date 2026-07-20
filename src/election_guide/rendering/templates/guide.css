@@ -38,22 +38,11 @@ a { color: #075d75; text-underline-offset: .15em; }
 .race-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
 .race-office { margin: 0 0 .2rem; overflow-wrap: anywhere; color: var(--muted); font-size: .78rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
 .race-card h3 { margin: 0; font: 700 1.35rem/1.15 Georgia, serif; }
-.score-lockup { display: grid; grid-template-columns: auto auto; align-items: center; gap: .35rem; flex: 0 0 auto; }
-.score-lockup strong { font-size: 1.1rem; font-variant-numeric: tabular-nums; }
-.grade { display: inline-flex; min-width: 2.25rem; min-height: 2rem; align-items: center; justify-content: center; padding: .2rem .45rem; border-radius: .25rem; background: #59636e; color: var(--white); font-size: .78rem; font-weight: 900; }
-.grade-a-plus { background: #185c37; }
-.grade-a { background: #087f73; }
-.grade-b { background: #2364a3; }
-.grade-c { background: #e0a100; color: #182026; }
-.grade-d { background: #9f2d25; }
-.grade-tied { background: #6246a8; }
-.grade-insufficient { background: #5b6570; }
+.consensus-lockup { display: flex; flex: 0 0 8.25rem; flex-direction: column; align-items: flex-end; color: var(--muted); font-size: .68rem; line-height: 1.15; text-align: right; }
+.consensus-lockup strong { color: var(--navy); font-size: 1.55rem; font-variant-numeric: tabular-nums; }
 .consensus-meter { height: .48rem; overflow: hidden; border-radius: 1rem; background: #d9e2ec; }
 .consensus-meter span { display: block; height: 100%; background: var(--teal); }
-.support-line, .alternative { margin: 0; color: #364152; font-size: .85rem; }
-.category-analysis { padding: .55rem .65rem; border: 1px solid #d9e2ec; background: #f7f9fb; font-size: .74rem; }
-.category-analysis > strong { color: var(--navy); }
-.category-analysis p { margin: .3rem 0 0; color: #364152; }
+.support-line { margin: 0; color: #364152; font-size: .85rem; }
 .comparison { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; margin: 0; padding: .4rem .55rem; border-left: .25rem solid #7b8794; background: #f2f4f7; font-size: .76rem; }
 .comparison span { font-weight: 700; }
 .comparison strong { padding: .12rem .35rem; border-radius: .2rem; background: #5b6570; color: var(--white); font-size: .68rem; letter-spacing: .04em; }
@@ -62,14 +51,16 @@ a { color: #075d75; text-underline-offset: .15em; }
 .comparison-agrees strong { background: var(--teal); }
 .comparison-differs { border-color: var(--amber); }
 .comparison-differs strong { background: #a45f00; }
-.warning { padding: .55rem .65rem; border-left: .25rem solid var(--red); background: #fff1ef; color: #72231e; font-size: .78rem; }
+.insufficient-note { padding: .55rem .65rem; border-left: .25rem solid var(--red); background: #fff1ef; color: #72231e; font-size: .78rem; }
 details { margin-top: auto; border-top: 1px solid var(--line); padding-top: .65rem; }
 summary { cursor: pointer; color: #075d75; font-weight: 800; }
-.source-table-wrap { overflow-x: auto; margin-top: .7rem; }
-.source-table { width: 100%; border-collapse: collapse; font-size: .72rem; }
-.source-table th, .source-table td { padding: .45rem; text-align: left; vertical-align: top; border-bottom: 1px solid #e4e7eb; }
-.source-table td:nth-child(2) { text-transform: capitalize; }
-.source-table small { display: block; color: var(--muted); }
+.endorsement-groups { display: grid; gap: .7rem; margin-top: .7rem; }
+.endorsement-group { padding: .65rem; background: #f7f9fb; border: 1px solid #d9e2ec; }
+.endorsement-group h4 { display: flex; justify-content: space-between; gap: .5rem; margin: 0 0 .35rem; color: var(--navy); font-size: .86rem; }
+.endorsement-group h4 span { flex: 0 0 auto; color: var(--muted); font-size: .68rem; font-weight: 400; }
+.endorsement-group ul { display: flex; flex-wrap: wrap; gap: .3rem .8rem; margin: 0; padding: 0; list-style: none; font-size: .76rem; }
+.endorsement-group li { display: flex; align-items: center; gap: .3rem; }
+.co-endorsement { padding: .08rem .25rem; border-radius: .2rem; background: #e6e0f6; color: #4d3684; font-size: .58rem; font-weight: 800; letter-spacing: .03em; text-transform: uppercase; }
 .methodology-screen { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem 3rem; padding: 3rem clamp(1rem, 4vw, 3rem) 5rem; background: var(--navy); color: var(--white); }
 .methodology-panel { min-width: 0; }
 .methodology-screen h2 { font: 700 2.2rem/1 Georgia, serif; }
@@ -86,9 +77,9 @@ summary { cursor: pointer; color: #075d75; font-weight: 800; }
   .race-card { min-width: 0; }
   .race-card-head > div { min-width: 0; }
   .race-card-head { flex-direction: column; align-items: stretch; }
-  .score-lockup { align-self: flex-start; }
+  .consensus-lockup { flex-basis: auto; align-items: flex-start; text-align: left; }
   .comparison em { width: 100%; margin-left: 0; }
-  .warning { overflow-wrap: anywhere; }
+  .insufficient-note { overflow-wrap: anywhere; }
 }
 
 @page { size: Letter portrait; margin: .28in .3in; }
@@ -104,13 +95,12 @@ summary { cursor: pointer; color: #075d75; font-weight: 800; }
   .print-header h1 { margin: 0; font: 700 17pt/1 Georgia, serif; }
   .print-header-meta { text-align: right; color: #3e4c59; font-size: 6.5pt; line-height: 1.35; }
   .print-intro { margin: .04in 0 .06in; color: #364152; font-size: 6.3pt; line-height: 1.15; }
-  .print-races { height: 9.42in; column-count: 2; column-gap: .14in; column-fill: auto; }
+  .print-races { height: 9.42in; column-count: 2; column-gap: .14in; column-fill: balance; }
   .print-section-title { break-after: avoid; margin: .025in 0 .015in; padding: .025in .045in; background: var(--navy); color: white; font-size: 6.8pt; line-height: 1; letter-spacing: .07em; text-transform: uppercase; }
   .print-race { break-inside: avoid; margin: 0 0 .022in; padding: .035in .045in .04in; border: .5px solid #b8c2cc; border-left: 2px solid var(--blue); background: white; }
   .print-race-title { overflow: hidden; color: #52606d; font-size: 6.1pt; font-weight: 800; line-height: 1; text-overflow: ellipsis; text-transform: uppercase; white-space: nowrap; }
-  .print-race-result { display: grid; grid-template-columns: 1fr auto auto; align-items: baseline; gap: .035in; margin-top: .012in; }
+  .print-race-result { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: .035in; margin-top: .012in; }
   .print-race-result > strong { overflow: hidden; font: 700 7.6pt/1 Georgia, serif; text-overflow: ellipsis; white-space: nowrap; }
-  .print-grade { min-width: .25in; padding: .01in .025in; border-radius: .025in; color: white; font-size: 6pt; line-height: 1.2; text-align: center; }
   .print-race-result b { font-size: 6.7pt; font-variant-numeric: tabular-nums; }
   .print-meter { height: .018in; margin-top: .012in; background: #d9e2ec; }
   .print-meter span { display: block; height: 100%; background: var(--teal); }
@@ -136,10 +126,6 @@ summary { cursor: pointer; color: #075d75; font-weight: 800; }
   .method-grid section { padding: .09in; border: .5px solid #b8c2cc; background: #fbfaf6; }
   .method-grid h2 { margin: 0 0 .06in; color: var(--navy); font: 700 11pt/1 Georgia, serif; }
   .method-grid p { margin: .04in 0; font-size: 7pt; line-height: 1.3; }
-  .grade-legend { display: grid; grid-template-columns: 1fr 1fr; gap: .035in; }
-  .grade-legend > div { display: grid; grid-template-columns: .38in 1fr; align-items: center; gap: .04in; }
-  .grade-legend .grade { min-height: .24in; min-width: .35in; padding: .02in; font-size: 6pt; }
-  .grade-legend p { margin: 0; }
   .category-row { display: flex; justify-content: space-between; gap: .05in; padding: .04in 0; border-bottom: .5px solid #d9e2ec; font-size: 7pt; }
   .category-row span { color: #52606d; }
   .ld-source-rule { margin-top: .05in !important; padding: .05in; border-left: 2px solid var(--teal); background: #e8f5f3; font-size: 6.5pt !important; line-height: 1.25 !important; }
@@ -171,8 +157,7 @@ summary { cursor: pointer; color: #075d75; font-weight: 800; }
   html.detailed-edition .race-card { break-inside: avoid; gap: .06in; padding: .12in; box-shadow: none; }
   html.detailed-edition .race-card h3 { font-size: 13pt; }
   html.detailed-edition .race-office, html.detailed-edition .support-line,
-  html.detailed-edition .alternative, html.detailed-edition .comparison,
-  html.detailed-edition .warning { font-size: 8pt; }
+  html.detailed-edition .comparison, html.detailed-edition .insufficient-note { font-size: 8pt; }
   html.detailed-edition details { display: none; }
   html.detailed-edition .methodology-screen { display: grid !important; grid-template-columns: 1fr 1fr; gap: .12in; padding: .2in; background: white; color: var(--ink); }
   html.detailed-edition .methodology-panel { break-inside: avoid; padding: .12in; border: .5px solid var(--line); }

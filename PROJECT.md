@@ -1091,26 +1091,25 @@ Each race block should include:
 
 - race label;
 - recommended candidate or ballot choice;
-- consensus grade;
-- consensus percentage;
+- consensus percentage, labeled as agreement among explicitly endorsing sources;
 - visual consensus bar;
-- support evidence such as `8 of 10 endorsing sources`;
+- explicit-source count such as `Based on 8 explicitly endorsing sources`;
 - Seattle Times badge and candidate;
-- notable alternative, when meaningful;
-- no-endorsement or low-coverage warning.
+- candidate-first affirmative endorsement details with direct evidence links;
+- an insufficient-evidence warning only when too few sources explicitly endorse.
 
 Recommended visual pattern:
 
 ```text
 LD 43 — STATE SENATE
 
-HANNAH SABIO-HOWELL                           A   75%
+HANNAH SABIO-HOWELL              75% consensus among endorsers
 ██████████████████░░░░░░
 
-3 of 4 progressive sources
+Based on 3 explicitly endorsing sources
 
 Seattle Times  DIFFERENT: Jamie Pedersen
-Alternative: Jamie Pedersen, 25%
+View endorsements: Hannah — The Urbanist, Sierra Club, ...
 ```
 
 Use compact cards or clearly separated rows.
@@ -1132,20 +1131,11 @@ Display the Seattle Times candidate or position within or adjacent to the chip.
 
 Do not redundantly place `AGREES` and `DIFFERS` in a separate text column.
 
-## 16.4 Grade system
+## 16.4 Consensus presentation
 
-Use a consistent high-contrast palette.
-
-Suggested accessible approach:
-
-- A+ — dark green background, white text;
-- A — teal background, white text;
-- B — medium blue background, white text;
-- C — amber background, near-black text;
-- D — dark red background, white text;
-- Insufficient — gray background, near-black or white depending on contrast.
-
-Verify contrast programmatically against WCAG AA where practical.
+Do not display letter grades in voter-facing HTML or PDF. A lower consensus share means endorsing
+sources are divided; it is not a judgment that a candidate is average or poor. Pair every share
+with the number of explicitly endorsing sources and label insufficient evidence directly.
 
 ## 16.5 Typography
 
@@ -1203,9 +1193,10 @@ Compute progressive consensus
 Compare separately with Seattle Times
 ```
 
-### Grade legend
+### How to read consensus
 
-Clearly show all grade thresholds.
+Explain that the percentage is the leading choice's share of exact endorsement points among
+explicitly endorsing sources, and that it measures agreement rather than candidate quality.
 
 ### Source categories
 

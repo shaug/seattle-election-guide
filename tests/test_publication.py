@@ -88,6 +88,25 @@ def test_bundle_is_deterministic_reconstructable_and_complete(tmp_path: Path) ->
         for race in section.races
         for cell in race.source_cells
     )
+    candidates = _candidate_ids()
+    assert [group.candidate_id for group in target.endorsement_groups] == candidates[:2]
+    assert [
+        (endorser.source_id, endorser.co_endorsement)
+        for endorser in target.endorsement_groups[0].endorsers
+    ] == [
+        (CONSENSUS_SOURCE_IDS[1], False),
+        (CONSENSUS_SOURCE_IDS[2], True),
+    ]
+    assert [
+        (endorser.source_id, endorser.co_endorsement)
+        for endorser in target.endorsement_groups[1].endorsers
+    ] == [(CONSENSUS_SOURCE_IDS[2], True)]
+    assert all(
+        endorser.source_id != COMPARISON_SOURCE_ID
+        for group in target.endorsement_groups
+        for endorser in group.endorsers
+    )
+    assert target.support_summary == "Based on 2 explicitly endorsing sources"
 
     summary_rows = _csv_rows(first.artifacts["race_summary.csv"])
     summary = next(row for row in summary_rows if row["race_id"] == RACE_ID)
@@ -169,6 +188,35 @@ def test_bundle_is_deterministic_reconstructable_and_complete(tmp_path: Path) ->
     mutated_target = next(
         race for section in mutated.sections for race in section.races if race.id == RACE_ID
     )
+    mutated_target.endorsement_groups[0].endorsers[0].source_name = "Fabricated source"
+    with pytest.raises(ValidationError, match="affirmative source cells"):
+        PublicationViewModel.model_validate(mutated.model_dump(mode="json"))
+
+    mutated = first.view_model.model_copy(deep=True)
+    mutated_target = next(
+        race for section in mutated.sections for race in section.races if race.id == RACE_ID
+    )
+    group = mutated_target.endorsement_groups[0]
+    endorser = group.endorsers[0]
+    cell = next(
+        cell for cell in mutated_target.source_cells if cell.source_id == endorser.source_id
+    )
+    cell.evidence_url = "https://example.com/coordinated-fabrication"
+    endorser.evidence_url = cell.evidence_url
+    internally_consistent = PublicationViewModel.model_validate(mutated.model_dump(mode="json"))
+    canonical_check = next(
+        check
+        for check in publication_builder._validate_publication(  # pyright: ignore[reportPrivateUsage]
+            dataset, report, internally_consistent
+        )
+        if check.id == "canonical-evidence"
+    )
+    assert not canonical_check.passed
+
+    mutated = first.view_model.model_copy(deep=True)
+    mutated_target = next(
+        race for section in mutated.sections for race in section.races if race.id == RACE_ID
+    )
     endorsement = next(
         cell
         for cell in mutated_target.source_cells
@@ -206,7 +254,7 @@ def test_methodology_publishes_possible_overlap_without_deduplicating(tmp_path: 
     )
 
     methodology = bundle.view_model.methodology
-    assert bundle.view_model.schema_version == "1.1"
+    assert bundle.view_model.schema_version == "1.2"
     assert methodology.default_aggregation_view == "source_level"
     assert methodology.deduplicated_view == "not_computed"
     assert [group.model_dump(mode="json") for group in methodology.source_overlap_groups] == [
@@ -369,7 +417,7 @@ def test_insufficient_support_leader_is_not_a_recommendation(tmp_path: Path) -> 
     assert target.grade == "Insufficient"
     assert target.support_leader_candidate_ids == candidates[:1]
     assert target.recommendation_candidate_ids == []
-    assert target.recommendation_label == "Insufficient coverage"
+    assert target.recommendation_label == "Too few endorsements"
 
 
 def test_no_endorsement_cell_counts_toward_category_coverage(tmp_path: Path) -> None:

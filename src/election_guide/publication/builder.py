@@ -35,7 +35,9 @@ from election_guide.publication.models import (
     PublicationAlternative,
     PublicationCategoryAnalysis,
     PublicationCategoryCandidateSupport,
+    PublicationChoiceEndorsements,
     PublicationComparison,
+    PublicationEndorser,
     PublicationMetadata,
     PublicationMethodology,
     PublicationRace,
@@ -331,7 +333,7 @@ def _build_view_model(
             recommendation_candidate_ids=recommendation_ids,
             recommendation_candidate_labels=recommendation_labels,
             recommendation_label=(
-                "Insufficient coverage"
+                "Too few endorsements"
                 if not has_recommendation
                 else "No consensus"
                 if not recommendation_labels
@@ -343,16 +345,14 @@ def _build_view_model(
             winner_share=None if result.winner_share is None else str(result.winner_share),
             percentage_label=("—" if percentage_whole is None else f"{percentage_whole}%"),
             percentage_whole=percentage_whole,
-            support_summary=(
-                f"{result.explicit_endorsement_count} of {result.eligible_source_count} "
-                "eligible sources explicitly endorse"
-            ),
+            support_summary=_support_summary(result.explicit_endorsement_count),
             explicit_endorsement_count=result.explicit_endorsement_count,
             eligible_source_count=result.eligible_source_count,
             source_coverage_count=result.source_coverage_count,
             category_coverage_count=result.category_coverage_count,
             no_endorsement_count=result.no_endorsement_count,
             missing_source_count=result.missing_source_count,
+            endorsement_groups=_endorsement_groups(cells, sources),
             category_breakdown=[
                 PublicationCategoryAnalysis(
                     category=item.category,
@@ -477,6 +477,56 @@ def _source_cell(
     )
 
 
+def _support_summary(explicit_endorsement_count: int) -> str:
+    noun = "source" if explicit_endorsement_count == 1 else "sources"
+    return f"Based on {explicit_endorsement_count} explicitly endorsing {noun}"
+
+
+def _endorsement_groups(
+    cells: list[SourceCell], sources: list[PublicationSource] | list[Source]
+) -> list[PublicationChoiceEndorsements]:
+    source_by_id = {source.id: source for source in sources}
+    support: dict[str, Fraction] = {}
+    labels: dict[str, str] = {}
+    endorsers: dict[str, list[PublicationEndorser]] = {}
+    for cell in cells:
+        source = source_by_id[cell.source_id]
+        if source.panel_role != "consensus" or cell.state not in {
+            "endorsement",
+            "multi_endorsement",
+        }:
+            continue
+        if cell.evidence_url is None or cell.evidence_locator is None:
+            raise ValueError("affirmative endorsement cells require evidence")
+        for candidate_id, candidate_label in zip(
+            cell.candidate_ids, cell.candidate_labels, strict=True
+        ):
+            labels[candidate_id] = candidate_label
+            support[candidate_id] = support.get(candidate_id, Fraction()) + Fraction(
+                cell.allocation[candidate_id]
+            )
+            endorsers.setdefault(candidate_id, []).append(
+                PublicationEndorser(
+                    source_id=cell.source_id,
+                    source_name=source.name,
+                    evidence_url=cell.evidence_url,
+                    evidence_locator=cell.evidence_locator,
+                    co_endorsement=cell.state == "multi_endorsement",
+                    confidence_warning=cell.confidence_warning,
+                )
+            )
+    return [
+        PublicationChoiceEndorsements(
+            candidate_id=candidate_id,
+            candidate_label=labels[candidate_id],
+            support_points=str(support[candidate_id]),
+            source_count=len(endorsers[candidate_id]),
+            endorsers=endorsers[candidate_id],
+        )
+        for candidate_id in sorted(support, key=lambda item: (-support[item], item))
+    ]
+
+
 def _methodology(dataset: CanonicalDataset, consensus: ConsensusReport) -> PublicationMethodology:
     grade_legend: list[GradeLegendItem] = []
     for rule in consensus.scoring_configuration.grades:
@@ -552,7 +602,7 @@ def _methodology(dataset: CanonicalDataset, consensus: ConsensusReport) -> Publi
                 "legislative contests. Their shared party network remains disclosed."
             ),
             "The Seattle Times is a separate comparison, never an extra progressive vote.",
-            "Category representation and category candidate support are reported separately.",
+            "Category representation and category support remain available in audit exports.",
         ],
         limitations=[
             "This guide aggregates endorsements; it is not independent candidate vetting.",
@@ -580,9 +630,10 @@ def _validate_publication(
     view_by_id = {race.id: race for race in view_races}
     consensus_by_id = {race.race_id: race for race in consensus.races}
     inventory_by_id = {race.id: race for race in dataset.inventory.races}
-    active_source_ids = [
-        source.id for source in dataset.source_registry.sources if source.panel_role != "excluded"
+    active_sources = [
+        source for source in dataset.source_registry.sources if source.panel_role != "excluded"
     ]
+    active_source_ids = [source.id for source in active_sources]
     captured_source_ids = {
         capture.source_id for capture in dataset.captures if capture.source_id in active_source_ids
     }
@@ -593,6 +644,37 @@ def _validate_publication(
     cell_sources_match = all(
         [cell.source_id for cell in race.source_cells] == active_source_ids for race in view_races
     )
+    effective = dataset.effective_records()
+    endorsements = {
+        (item.source_id, item.race_id): item
+        for item in (
+            cast(NormalizedEndorsement, effective[record.id]) for record in dataset.endorsements
+        )
+    }
+    claims = {item.id: cast(ExtractedClaim, effective[item.id]) for item in dataset.claims}
+    capture_by_id = {capture.id: capture for capture in dataset.captures}
+    canonical_evidence_match = True
+    for view_race in view_races:
+        inventory_race = inventory_by_id[view_race.id]
+        choices = {choice.id: choice.display_name for choice in inventory_race.choices}
+        expected_cells = [
+            _source_cell(
+                source,
+                inventory_race,
+                endorsements.get((source.id, inventory_race.id)),
+                claims,
+                capture_by_id,
+                choices,
+                dataset,
+            )
+            for source in active_sources
+        ]
+        if (
+            view_race.source_cells != expected_cells
+            or view_race.endorsement_groups != _endorsement_groups(expected_cells, active_sources)
+        ):
+            canonical_evidence_match = False
+            break
     metadata_match = (
         view_model.metadata.election_id == dataset.inventory.election.id
         and view_model.metadata.election_name == dataset.inventory.election.name
@@ -633,6 +715,13 @@ def _validate_publication(
             message="Every race contains one ordered cell for every active source.",
         ),
         ValidationCheck(
+            id="canonical-evidence",
+            passed=canonical_evidence_match,
+            message=(
+                "Source cells and candidate endorsement groups match canonical records exactly."
+            ),
+        ),
+        ValidationCheck(
             id="publication-metadata",
             passed=metadata_match,
             message="Publication metadata matches canonical election and consensus inputs.",
@@ -647,7 +736,7 @@ def _view_race_matches(view: PublicationRace, result: RaceConsensus, race: Race)
     leader_labels = [choices[candidate_id] for candidate_id in result.winner_candidate_ids]
     recommendation_labels = [choices[candidate_id] for candidate_id in expected_recommendation]
     expected_recommendation_label = (
-        "Insufficient coverage"
+        "Too few endorsements"
         if result.grade == "Insufficient"
         else "No consensus"
         if not recommendation_labels
@@ -670,11 +759,7 @@ def _view_race_matches(view: PublicationRace, result: RaceConsensus, race: Race)
         and view.winner_share == (None if result.winner_share is None else str(result.winner_share))
         and view.percentage_whole == percentage_whole
         and view.percentage_label == ("—" if percentage_whole is None else f"{percentage_whole}%")
-        and view.support_summary
-        == (
-            f"{result.explicit_endorsement_count} of {result.eligible_source_count} "
-            "eligible sources explicitly endorse"
-        )
+        and view.support_summary == _support_summary(result.explicit_endorsement_count)
         and view.explicit_endorsement_count == result.explicit_endorsement_count
         and view.eligible_source_count == result.eligible_source_count
         and view.source_coverage_count == result.source_coverage_count
