@@ -84,6 +84,7 @@ summary { cursor: pointer; color: #075d75; font-weight: 800; }
 @page { size: Letter portrait; margin: .28in .3in; }
 
 @media print {
+  :root { --print-meter-width: 1.65in; }
   html, body { width: 8.5in; margin: 0; background: white; color: #111820; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
   .skip-link, .screen-guide, script { display: none !important; }
   .print-guide { display: block; font-family: Arial, Helvetica, sans-serif; }
@@ -101,17 +102,17 @@ summary { cursor: pointer; color: #075d75; font-weight: 800; }
   .print-race { display: flex; min-height: 0; flex: 1 1 0; flex-direction: column; justify-content: center; break-inside: avoid; margin: 0; padding: .035in .065in .04in; border: .5px solid #c9d5dd; border-top: 0; border-left: 2px solid var(--blue); background: white; }
   .print-race:nth-of-type(even) { background: #f2f6f8; }
   .print-race-title { color: #44596a; font-size: 6.35pt; font-weight: 800; line-height: 1.05; text-transform: uppercase; }
-  .print-race-result { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: .05in; margin-top: .02in; }
+  .print-race-result { display: grid; grid-template-columns: minmax(0, 1fr) var(--print-meter-width); align-items: center; gap: .06in; margin-top: .022in; }
   .print-race-result > strong { min-width: 0; color: var(--navy); font: 800 8.9pt/1 Arial, Helvetica, sans-serif; }
-  .print-race-result b { font-size: 7pt; font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .print-meter { height: .026in; margin-top: .018in; overflow: hidden; border-radius: .03in; background: #dce5ea; }
-  .print-meter span { display: block; height: 100%; background: var(--teal); }
-  .print-race-context { display: flex; justify-content: space-between; gap: .045in; overflow: hidden; margin-top: .018in; color: #52606d; font-size: 6.35pt; line-height: 1.1; white-space: nowrap; }
-  .print-race-context span { overflow: hidden; text-overflow: ellipsis; }
-  .print-race-context span:last-child { flex-shrink: 0; }
-  .print-comparison { display: inline-flex; align-items: center; justify-content: flex-end; gap: .025in; min-width: 0; }
-  .print-comparison > span { font-weight: 700; }
-  .print-times-pick { max-width: 1.45in; overflow: hidden; padding: .008in .04in; border-radius: .06in; background: #65737f; color: white; font-size: 6.1pt; line-height: 1; text-align: right; text-overflow: ellipsis; white-space: normal; overflow-wrap: anywhere; }
+  .print-meter { width: var(--print-meter-width); height: .14in; overflow: hidden; border-radius: .07in; background: linear-gradient(to left, var(--teal) 0 var(--meter-fill), #dce5ea var(--meter-fill) 100%); }
+  .print-meter-label { display: block; padding-right: .045in; color: white; font-size: 7pt; font-variant-numeric: tabular-nums; line-height: .14in; text-align: right; white-space: nowrap; }
+  .print-meter-na { background: #dce5ea; }
+  .print-meter-na .print-meter-label { color: #44596a; }
+  .print-race-context { display: grid; grid-template-columns: minmax(0, 1fr) var(--print-meter-width); align-items: center; gap: .06in; margin-top: .02in; color: #52606d; font-size: 6.1pt; line-height: 1.05; }
+  .print-comparison { display: block; min-width: 0; }
+  .print-support { min-width: 0; text-align: right; white-space: nowrap; }
+  .print-support-compact { display: none; }
+  .print-times-pick { display: inline-block; max-width: 100%; padding: .014in .045in; border-radius: .07in; background: #65737f; color: white; font-size: 6.1pt; line-height: 1.05; overflow-wrap: anywhere; }
   .print-times-pick-agrees { background: var(--teal); }
   .print-times-pick-differs { background: #a45f00; }
   .print-times-pick-not_covered { background: #5b6570; }
@@ -148,10 +149,13 @@ summary { cursor: pointer; color: #075d75; font-weight: 800; }
   .print-metadata a { color: white; }
 
   html.compact-edition .print-race-notes { display: none; }
-  html.compact-edition .print-support { display: none; }
-  html.compact-edition .print-race-context { justify-content: flex-end; }
+  html.compact-edition { --print-meter-width: 1.25in; }
+  html.compact-edition .print-race-result > strong { font-size: 8.1pt; }
+  html.compact-edition .print-support-full { display: none; }
+  html.compact-edition .print-support-compact { display: block; }
+  html.compact-edition .print-race-context { grid-template-columns: minmax(0, 1fr) var(--print-meter-width); }
   html.compact-edition .print-comparison { max-width: 100%; }
-  html.compact-edition .print-times-pick { max-width: 2.55in; }
+  html.compact-edition .print-times-pick { max-width: 100%; }
   html.compact-edition .print-compact-warning { display: inline; flex-shrink: 0; color: #812b25; font-size: 6pt; }
   html.compact-edition .concise-method-detail { display: none; }
   html.compact-edition .compact-method-note { display: block; }

@@ -1117,21 +1117,24 @@ Use compact cards or clearly separated rows.
 Optimize for a voter scanning the page while filling out a ballot.
 
 Use both columns for the full available cheat-sheet height. Favor a clean sans-serif hierarchy,
-generous but space-aware row padding, differentiated adjacent rows, and consensus tracks that are
-easy to compare vertically. Do not compress the race list into the upper portion of the page while
-leaving a large unused region above the footer.
+generous but space-aware row padding, differentiated adjacent rows, and fixed-width consensus
+tracks that are easy to compare vertically. Keep each race to three visual lines: office; choice
+with a right-filled percentage meter; and the Times comparison with the explicitly endorsing source
+count aligned beneath the fields they explain. Do not compress the race list into the upper portion
+of the page while leaving a large unused region above the footer.
 
 ## 16.3 Seattle Times comparison chips
 
 Use background color and text together. Never rely on color alone.
 
-Display the Seattle Times candidate or position as the chip itself:
+Display one concise Seattle Times comparison chip beneath the consensus choice:
 
-- green or teal candidate chip — agrees with the consensus choice;
-- amber or brown candidate chip — endorses a different choice;
-- `NOT COVERED` neutral chip — no Seattle Times endorsement for the race or measure.
+- green or teal `Times agrees: <choice>` chip — agrees with the consensus choice;
+- amber or brown `Times differs: <choice>` chip — endorses a different choice;
+- neutral `Times: not covered` chip — no Seattle Times endorsement for the race or measure.
 
-Right-align the chip and do not add redundant `AGREES`, `DIFFERENT PICK`, or `NO PICK` text.
+Keep the chip directly beneath the consensus choice. Do not add separate `Seattle Times`, `AGREES`,
+`DIFFERENT PICK`, or `NO PICK` labels.
 
 ## 16.4 Consensus presentation
 

@@ -160,15 +160,21 @@
       <div class="print-race-title">{{ race.race_label }}</div>
       <div class="print-race-result">
         <strong>{{ race.recommendation_label }}</strong>
-        <b>{% if race.percentage_whole is none %}N/A{% else %}{{ race.percentage_label }} consensus{% endif %}</b>
+        {% if race.percentage_whole is none %}
+        <div class="print-meter print-meter-na"><b class="print-meter-label">N/A</b></div>
+        {% else %}
+        <div class="print-meter" style="--meter-fill: {{ race.percentage_whole }}%">
+          <b class="print-meter-label">{{ race.percentage_label }}</b>
+        </div>
+        {% endif %}
       </div>
-      {% if race.percentage_whole is not none %}<div class="print-meter">
-        <span style="width: {{ race.percentage_whole }}%"></span></div>{% endif %}
       {% set print_warnings = concise_warning_labels(race) %}
-      <div class="print-race-context"><span class="print-support">{{ race.support_summary }}</span>
+      <div class="print-race-context">
         {% for comparison in race.comparisons %}<span class="print-comparison">
-          <span>Seattle Times</span><b class="print-times-pick print-times-pick-{{ comparison.voter_tone }}">{{ comparison.voter_label }}</b>
+          <b class="print-times-pick print-times-pick-{{ comparison.voter_tone }}">{{ comparison.print_label }}</b>
         </span>{% endfor %}
+        <span class="print-support print-support-full">{{ race.support_summary }}</span>
+        <span class="print-support print-support-compact">{{ race.explicit_endorsement_count }} endorsers</span>
         {% if print_warnings %}<b class="print-compact-warning">{{ print_warnings[0] }}</b>{% endif %}
       </div>
       {% if print_warnings %}
@@ -242,8 +248,9 @@
               {% for note in guide.methodology.interpretation_notes %}<p>{{ note }}</p>{% endfor %}
             </div>
             <p class="compact-method-note">Full interpretation notes are in the detailed edition.</p>
-            <div class="times-key"><b>Seattle Times comparison:</b> a green candidate chip means
-              the same choice; amber means a different choice; NOT COVERED means no endorsement.</div>
+            <div class="times-key"><b>Seattle Times comparison:</b> green “Times agrees” chips
+              show the same choice; amber “Times differs” chips show another choice; a neutral
+              “Times: not covered” chip means the captured guide has no Times endorsement.</div>
           </section>
         </div>
         <div class="method-column">

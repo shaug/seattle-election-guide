@@ -854,6 +854,60 @@ def _inspect_print_layout(
                       issues.push('.print-race-column-balance');
                     }
                   }
+                  const meters = [...document.querySelectorAll('.print-meter')];
+                  if (meters.length) {
+                    const expectedWidth = meters[0].getBoundingClientRect().width;
+                    for (const [index, meter] of meters.entries()) {
+                      const meterRect = meter.getBoundingClientRect();
+                      const result = meter.closest('.print-race-result');
+                      const context = result?.nextElementSibling?.classList.contains(
+                        'print-race-context'
+                      ) ? result.nextElementSibling : null;
+                      const support = context?.querySelector('.print-support');
+                      if (Math.abs(meterRect.width - expectedWidth) > 1) {
+                        issues.push(`.print-meter[${index}]-width`);
+                      }
+                      if (support && getComputedStyle(support).display !== 'none' && Math.abs(
+                        support.getBoundingClientRect().right - meterRect.right
+                      ) > 1) {
+                        issues.push(`.print-meter[${index}]-support-alignment`);
+                      }
+                    }
+                  }
+                  for (const [index, race] of
+                       [...document.querySelectorAll('.print-race')].entries()) {
+                    for (const [selector, element] of [
+                      ['result', race.querySelector('.print-race-result > strong')],
+                      ['comparison', race.querySelector('.print-times-pick')]
+                    ]) {
+                      if (!element) continue;
+                      const style = getComputedStyle(element);
+                      const lineHeight = Number.parseFloat(style.lineHeight);
+                      const contentHeight = element.getBoundingClientRect().height -
+                        Number.parseFloat(style.paddingTop) -
+                        Number.parseFloat(style.paddingBottom);
+                      if (contentHeight > lineHeight * 1.5) {
+                        issues.push(`.print-race[${index}]-${selector}-wrap`);
+                      }
+                    }
+                    for (const [selector, element] of [
+                      ['result', race.querySelector('.print-race-result > strong')],
+                      ['comparison', race.querySelector('.print-times-pick')],
+                      ['support', [...race.querySelectorAll('.print-support')].find(
+                        item => getComputedStyle(item).display !== 'none'
+                      )]
+                    ]) {
+                      if (!element || getComputedStyle(element).display === 'none') continue;
+                      const range = document.createRange();
+                      range.selectNodeContents(element);
+                      const textRect = range.getBoundingClientRect();
+                      const elementRect = element.getBoundingClientRect();
+                      if (textRect.left < elementRect.left - 1 ||
+                          textRect.right > elementRect.right + 1) {
+                        issues.push(`.print-race[${index}]-${selector}-bounds`);
+                      }
+                    }
+                  }
                   const pages = [...document.querySelectorAll('.print-page')];
                   for (const [index, page] of pages.entries()) {
                     const footer = page.querySelector('footer');
@@ -1337,19 +1391,9 @@ def _normalized_text(value: str) -> str:
 
 def _pdf_value_is_present(value: str, segment: str) -> bool:
     normalized = _normalized_text(value).casefold()
-    if normalized.startswith("seattle times "):
-        words = normalized.split()
-        pattern = r"\s*".join(re.escape(word) for word in words)
-        voter_label = normalized.removeprefix("seattle times ")
-        not_covered_label = "not covered"
-        if voter_label != not_covered_label and not_covered_label.startswith(voter_label):
-            sentinel_continuation = not_covered_label[len(voter_label) :].lstrip()
-            pattern += (
-                r"(?!"
-                + r"\s*".join(re.escape(word) for word in sentinel_continuation.split())
-                + ")"
-            )
-        return re.search(pattern, segment) is not None
+    if normalized.startswith(("seattle times ", "times ", "times:")):
+        pattern = r"\s*".join(re.escape(word) for word in normalized.split())
+        return re.search(r"(?<!\w)" + pattern + r"(?!\w)", segment) is not None
     return normalized in segment
 
 
@@ -1376,17 +1420,19 @@ def _pdf_race_display_values(race: PublicationRace) -> list[str]:
         race.recommendation_label,
         "N/A" if race.percentage_whole is None else race.percentage_label,
         race.support_summary,
-        *(f"Seattle Times {comparison.voter_label}" for comparison in race.comparisons),
+        *(f"{comparison.print_label} {race.support_summary}" for comparison in race.comparisons),
         *_concise_warning_labels(race),
     ]
 
 
 def _pdf_race_core_values(race: PublicationRace) -> list[str]:
+    compact_support = f"{race.explicit_endorsement_count} endorsers"
     return [
         race.race_label,
         race.recommendation_label,
         "N/A" if race.percentage_whole is None else race.percentage_label,
-        *(f"Seattle Times {comparison.voter_label}" for comparison in race.comparisons),
+        compact_support,
+        *(f"{comparison.print_label} {compact_support}" for comparison in race.comparisons),
         *(_concise_warning_labels(race)[:1]),
     ]
 

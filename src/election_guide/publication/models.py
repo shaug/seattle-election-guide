@@ -170,6 +170,18 @@ class PublicationComparison(PublicationModel):
         return "neutral"
 
     @property
+    def print_label(self) -> str:
+        if self.status == "agrees":
+            return f"Times agrees: {self.voter_label}"
+        if self.status == "differs":
+            return f"Times differs: {self.voter_label}"
+        if self.status == "no_consensus":
+            return f"Times: {self.voter_label}"
+        if self.status == "no_endorsement":
+            return "Times: not covered"
+        return "Times: not covered"
+
+    @property
     def voter_accessible_label(self) -> str:
         if self.status == "agrees":
             return f"Seattle Times agrees with consensus: {self.voter_label}"

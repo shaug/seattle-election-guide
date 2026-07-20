@@ -49,22 +49,22 @@ PROJECT_ROOT = Path(__file__).parent.parent
 RENDERING_CONFIG = PROJECT_ROOT / "config/rendering/pdf.yaml"
 DARWIN_VISUAL_BASELINES = {
     "pdf-page-1": [
-        0.173,
-        0.166,
-        0.131,
-        0.084,
+        0.190,
+        0.190,
+        0.140,
+        0.105,
+        0.154,
+        0.153,
+        0.193,
+        0.136,
+        0.149,
+        0.144,
+        0.190,
+        0.137,
+        0.089,
+        0.094,
         0.122,
-        0.120,
-        0.169,
-        0.101,
-        0.119,
-        0.111,
-        0.169,
-        0.097,
-        0.071,
-        0.073,
-        0.103,
-        0.069,
+        0.085,
     ],
     "pdf-page-2": [
         0.085,
@@ -123,22 +123,22 @@ DARWIN_VISUAL_BASELINES = {
 }
 LINUX_VISUAL_BASELINES = {
     "pdf-page-1": [
-        0.171,
-        0.166,
-        0.128,
-        0.082,
-        0.118,
-        0.119,
-        0.165,
-        0.101,
-        0.115,
-        0.108,
-        0.166,
-        0.097,
-        0.068,
-        0.072,
+        0.188,
+        0.190,
+        0.137,
         0.103,
-        0.069,
+        0.150,
+        0.152,
+        0.189,
+        0.136,
+        0.145,
+        0.141,
+        0.187,
+        0.137,
+        0.086,
+        0.093,
+        0.122,
+        0.085,
     ],
     "pdf-page-2": [
         0.081,
@@ -240,6 +240,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
         assert f'aria-label="{comparison.voter_accessible_label}"' in html
         assert f"<strong>{comparison.voter_label}</strong>" in html
         assert (f"print-times-pick print-times-pick-{comparison.voter_tone}") in html
+        assert f">{comparison.print_label}</b>" in html
     assert ".comparison strong { max-width: 72%; margin-left: auto;" in html
     assert html.count('class="method-column"') == 2
     assert ".print-races { display: grid; grid-template-columns: 1fr 1fr;" in html
@@ -250,6 +251,10 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert '<div class="print-guide">' in html
     assert '<div class="print-guide" aria-hidden="true">' not in html
     assert "font: 800 8.9pt/1 Arial, Helvetica, sans-serif" in html
+    assert "--print-meter-width: 1.65in" in html
+    assert "grid-template-columns: minmax(0, 1fr) var(--print-meter-width)" in html
+    assert "linear-gradient(to left, var(--teal) 0 var(--meter-fill)" in html
+    assert 'style="--meter-fill: ' in html
 
 
 def test_rendering_configuration_rejects_contract_drift() -> None:
@@ -376,22 +381,42 @@ def test_pdf_comparison_validation_requires_compound_chip_and_rejects_legacy_bad
     )
     race.comparisons = [comparison]
     expected_text = " ".join(value_fn(race))
-    compound = f"Seattle Times {comparison.voter_label}"
+    chip_label = (
+        f"Seattle Times {comparison.voter_label}"
+        if value_fn is _detailed_pdf_race_values
+        else comparison.print_label
+    )
+    support_label = (
+        race.support_summary
+        if value_fn is _pdf_race_display_values
+        else f"{race.explicit_endorsement_count} endorsers"
+    )
+    compound = (
+        chip_label if value_fn is _detailed_pdf_race_values else f"{chip_label} {support_label}"
+    )
 
     assert _missing_pdf_race_values([race], expected_text, value_fn) == []
 
-    wrong_chip_text = expected_text.replace(compound, "Seattle Times Wrong pick", 1)
+    collision_suffixes = (
+        ("body",) if value_fn is _detailed_pdf_race_values else ("body", " body", "-body")
+    )
+    for suffix in collision_suffixes:
+        prefix_collision_text = expected_text.replace(chip_label, f"{chip_label}{suffix}", 1)
+        prefix_collision_missing = _missing_pdf_race_values([race], prefix_collision_text, value_fn)
+        assert f"{race.id}: {compound}" in prefix_collision_missing
+
+    wrong_chip_text = expected_text.replace(chip_label, "Times differs: Wrong pick", 1)
     wrong_chip_missing = _missing_pdf_race_values([race], wrong_chip_text, value_fn)
     assert f"{race.id}: {compound}" in wrong_chip_missing
 
     if comparison.voter_label == "No":
-        not_covered_text = expected_text.replace(compound, "Seattle Times NOT COVERED", 1)
+        not_covered_text = expected_text.replace(chip_label, "Times: not covered", 1)
         not_covered_missing = _missing_pdf_race_values([race], not_covered_text, value_fn)
         assert f"{race.id}: {compound}" in not_covered_missing
 
     if badge_label != "NOT COVERED":
         legacy_text = expected_text.replace(
-            compound,
+            chip_label,
             f"Seattle Times {badge_label} {comparison.voter_label}",
             1,
         )
@@ -771,8 +796,9 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     comparison = race_for_masking.comparisons[0]
     comparison_element = (
         f'<b class="print-times-pick print-times-pick-{comparison.voter_tone}">'
-        f"{comparison.voter_label}</b>"
+        f"{comparison.print_label}</b>"
     )
+    assert comparison_element in masked_html_text
     masked_html_text = masked_html_text.replace(
         comparison_element,
         comparison_element.replace("</b>", f" / {race_for_masking.recommendation_label}</b>"),
@@ -848,13 +874,47 @@ def test_long_comparison_choice_is_not_truncated(tmp_path: Path) -> None:
     view_model = _visual_view_model(_view_model(tmp_path / "fixture"))
     race = next(race for section in view_model.sections for race in section.races)
     long_label = "Alexandria Ocasio-Cortez-Washington"
+    candidate_id = race.recommendation_candidate_ids[0]
+    race.support_leader_candidate_labels = [
+        long_label if item == candidate_id else label
+        for item, label in zip(
+            race.support_leader_candidate_ids,
+            race.support_leader_candidate_labels,
+            strict=True,
+        )
+    ]
+    race.support_leader_label = " / ".join(race.support_leader_candidate_labels)
+    race.recommendation_candidate_labels = [
+        long_label if item == candidate_id else label
+        for item, label in zip(
+            race.recommendation_candidate_ids,
+            race.recommendation_candidate_labels,
+            strict=True,
+        )
+    ]
+    race.recommendation_label = " / ".join(race.recommendation_candidate_labels)
+    for group in race.endorsement_groups:
+        if group.candidate_id == candidate_id:
+            group.candidate_label = long_label
+    for alternative in race.alternatives:
+        if alternative.candidate_id == candidate_id:
+            alternative.candidate_label = long_label
+    for category in race.category_breakdown:
+        for support in category.candidate_support:
+            if support.candidate_id == candidate_id:
+                support.candidate_label = long_label
+    for cell in race.source_cells:
+        cell.candidate_labels = [
+            long_label if item == candidate_id else label
+            for item, label in zip(cell.candidate_ids, cell.candidate_labels, strict=True)
+        ]
     race.comparisons = [
         PublicationComparison.model_validate(
             {
                 "source_id": race.comparisons[0].source_id,
-                "status": "differs",
-                "badge_label": "DIFFERENT PICK",
-                "candidate_ids": ["alexandria-ocasio-cortez-washington"],
+                "status": "agrees",
+                "badge_label": "AGREES",
+                "candidate_ids": [candidate_id],
                 "candidate_labels": [long_label],
             }
         )
@@ -870,10 +930,43 @@ def test_long_comparison_choice_is_not_truncated(tmp_path: Path) -> None:
     )
 
     assert rendered.validation_report.passed
+    assert rendered.validation_report.edition == "concise_plus_detailed"
+    assert rendered.detailed_pdf_path is not None
     pdf_text = " ".join(
         " ".join((page.extract_text() or "").split()) for page in PdfReader(rendered.pdf_path).pages
     )
     assert long_label in pdf_text
+    assert f"{race.explicit_endorsement_count} endorsers" in pdf_text
+
+    compact_support = (
+        '<span class="print-support print-support-compact">'
+        f"{race.explicit_endorsement_count} endorsers</span>"
+    )
+    rendered_html = rendered.html_path.read_text(encoding="utf-8")
+    assert compact_support in rendered_html
+    wrong_count_html = tmp_path / "wrong-compact-count.html"
+    wrong_count_html.write_text(
+        rendered_html.replace(
+            compact_support, compact_support.replace("endorsers", "99 endorsers"), 1
+        ),
+        encoding="utf-8",
+    )
+    wrong_count_pdf = tmp_path / "wrong-compact-count.pdf"
+    _render_pdf(wrong_count_html, wrong_count_pdf, find_chrome(), edition="compact")
+    wrong_count_report = validate_rendered_guide(
+        view_model,
+        read_rendering_configuration(RENDERING_CONFIG),
+        rendered.html_path,
+        wrong_count_pdf,
+        rendered.page_images,
+        rendered.screenshots,
+        detailed_pdf_path=rendered.detailed_pdf_path,
+        detailed_page_images=rendered.detailed_page_images,
+    )
+    wrong_count_check = next(
+        check for check in wrong_count_report.checks if check.id == "pdf-display-values"
+    )
+    assert not wrong_count_check.passed
 
 
 def test_detailed_pdf_trims_only_rendered_trailing_blank_pages(tmp_path: Path) -> None:
