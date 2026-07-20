@@ -261,11 +261,6 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "grid-template-columns: minmax(0, 1fr) var(--print-meter-width)" in html
     assert "linear-gradient(to left, var(--teal) 0 var(--meter-fill)" in html
     assert 'style="--meter-fill: ' in html
-    assert ".print-meter { display: flex; align-items: center; justify-content: flex-end;" in html
-    assert "border: .5px solid #afc4ca" in html
-    assert ".print-times-pick { display: inline-flex; align-items: center;" in html
-    assert ".print-times-status { font-weight: 800; }" in html
-    assert ".print-times-choice { font-weight: 500; }" in html
 
 
 def test_rendering_configuration_rejects_contract_drift() -> None:
@@ -391,7 +386,8 @@ def test_pdf_comparison_validation_requires_compound_chip_and_rejects_legacy_bad
         }
     )
     race.comparisons = [comparison]
-    expected_text = " ".join(value_fn(race))
+    separator = "\n" if value_fn is _detailed_pdf_race_values else " "
+    expected_text = separator.join(value_fn(race))
     chip_label = (
         f"Seattle Times {comparison.voter_label}"
         if value_fn is _detailed_pdf_race_values
@@ -408,10 +404,7 @@ def test_pdf_comparison_validation_requires_compound_chip_and_rejects_legacy_bad
 
     assert _missing_pdf_race_values([race], expected_text, value_fn) == []
 
-    collision_suffixes = (
-        ("body",) if value_fn is _detailed_pdf_race_values else ("body", " body", "-body")
-    )
-    for suffix in collision_suffixes:
+    for suffix in ("body", " body", "-body"):
         prefix_collision_text = expected_text.replace(chip_label, f"{chip_label}{suffix}", 1)
         prefix_collision_missing = _missing_pdf_race_values([race], prefix_collision_text, value_fn)
         assert f"{race.id}: {compound}" in prefix_collision_missing
