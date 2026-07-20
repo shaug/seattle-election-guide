@@ -388,8 +388,8 @@ def validate_rendered_guide(
 
     reader = PdfReader(pdf_path)
     pdf_texts = [page.extract_text() or "" for page in reader.pages]
-    pdf_text = _normalized_text(" ".join(pdf_texts))
-    comparable_pdf_text = pdf_text.casefold()
+    pdf_text = "\n".join(pdf_texts)
+    comparable_pdf_text = _normalized_text(pdf_text).casefold()
     primary_value_fn = (
         _pdf_race_core_values if detailed_pdf_path is not None else _pdf_race_display_values
     )
@@ -447,7 +447,7 @@ def validate_rendered_guide(
         if detailed_reader is not None
         else []
     )
-    detailed_text = _normalized_text(" ".join(detailed_texts))
+    detailed_text = "\n".join(detailed_texts)
     missing_detailed_values: list[str] = []
     if detailed_reader is not None:
         missing_detailed_values = _missing_pdf_race_values(
@@ -460,7 +460,7 @@ def validate_rendered_guide(
                 *view_model.methodology.limitations,
                 view_model.methodology.verification_instructions,
             )
-            if _normalized_text(value).casefold() not in detailed_text.casefold()
+            if _normalized_text(value).casefold() not in _normalized_text(detailed_text).casefold()
         )
     detailed_records = [
         _inspect_page_image(index, path).model_copy(
@@ -859,6 +859,8 @@ def _inspect_print_layout(
                     const expectedWidth = meters[0].getBoundingClientRect().width;
                     for (const [index, meter] of meters.entries()) {
                       const meterRect = meter.getBoundingClientRect();
+                      const meterStyle = getComputedStyle(meter);
+                      const meterLabel = meter.querySelector('.print-meter-label');
                       const result = meter.closest('.print-race-result');
                       const context = result?.nextElementSibling?.classList.contains(
                         'print-race-context'
@@ -866,6 +868,23 @@ def _inspect_print_layout(
                       const support = context?.querySelector('.print-support');
                       if (Math.abs(meterRect.width - expectedWidth) > 1) {
                         issues.push(`.print-meter[${index}]-width`);
+                      }
+                      if (meterStyle.display !== 'flex' ||
+                          meterStyle.alignItems !== 'center' ||
+                          meterStyle.justifyContent !== 'flex-end' ||
+                          Number.parseFloat(meterStyle.borderTopWidth) < .4 ||
+                          (!meter.classList.contains('print-meter-na') &&
+                           meterStyle.backgroundImage === 'none')) {
+                        issues.push(`.print-meter[${index}]-treatment`);
+                      }
+                      if (meterLabel) {
+                        const labelRect = meterLabel.getBoundingClientRect();
+                        if (Math.abs(
+                          (labelRect.top + labelRect.bottom) / 2 -
+                          (meterRect.top + meterRect.bottom) / 2
+                        ) > 1) {
+                          issues.push(`.print-meter[${index}]-label-centering`);
+                        }
                       }
                       if (support && getComputedStyle(support).display !== 'none' && Math.abs(
                         support.getBoundingClientRect().right - meterRect.right
@@ -876,9 +895,37 @@ def _inspect_print_layout(
                   }
                   for (const [index, race] of
                        [...document.querySelectorAll('.print-race')].entries()) {
+                    const comparison = race.querySelector('.print-times-pick');
+                    if (comparison) {
+                      const comparisonStyle = getComputedStyle(comparison);
+                      const status = comparison.querySelector('.print-times-status');
+                      const choice = comparison.querySelector('.print-times-choice');
+                      if (comparisonStyle.display !== 'inline-flex' ||
+                          comparisonStyle.alignItems !== 'center' ||
+                          Number.parseFloat(comparisonStyle.borderTopWidth) < .9) {
+                        issues.push(`.print-race[${index}]-comparison-treatment`);
+                      }
+                      if (status && choice &&
+                          Number.parseInt(getComputedStyle(status).fontWeight) <=
+                          Number.parseInt(getComputedStyle(choice).fontWeight)) {
+                        issues.push(`.print-race[${index}]-comparison-hierarchy`);
+                      }
+                      const comparisonRect = comparison.getBoundingClientRect();
+                      for (const element of [status, choice]) {
+                        if (!element) continue;
+                        const elementRect = element.getBoundingClientRect();
+                        if (Math.abs(
+                          (elementRect.top + elementRect.bottom) / 2 -
+                          (comparisonRect.top + comparisonRect.bottom) / 2
+                        ) > 1) {
+                          issues.push(`.print-race[${index}]-comparison-centering`);
+                          break;
+                        }
+                      }
+                    }
                     for (const [selector, element] of [
                       ['result', race.querySelector('.print-race-result > strong')],
-                      ['comparison', race.querySelector('.print-times-pick')]
+                      ['comparison', comparison]
                     ]) {
                       if (!element) continue;
                       const style = getComputedStyle(element);
@@ -1391,10 +1438,20 @@ def _normalized_text(value: str) -> str:
 
 def _pdf_value_is_present(value: str, segment: str) -> bool:
     normalized = _normalized_text(value).casefold()
+    comparable_segment = _normalized_text(segment).casefold()
     if normalized.startswith(("seattle times ", "times ", "times:")):
+        compact_times_label = normalized.startswith(("times ", "times:"))
+        normalized = normalized.replace("·", " ")
+        comparable_segment = comparable_segment.replace("·", " ")
         pattern = r"\s*".join(re.escape(word) for word in normalized.split())
-        return re.search(r"(?<!\w)" + pattern + r"(?!\w)", segment) is not None
-    return normalized in segment
+        prefix = r"(?<!seattle\s)(?<!\w)" if compact_times_label else r"(?<!\w)"
+        return re.search(prefix + pattern + r"(?!\w)", comparable_segment) is not None
+    return normalized in comparable_segment
+
+
+def _pdf_line_value_is_present(value: str, segment: str) -> bool:
+    normalized = _normalized_text(value).casefold()
+    return any(_normalized_text(line).casefold() == normalized for line in segment.splitlines())
 
 
 def _html_semantic_values(race: PublicationRace) -> dict[str, list[str]]:
@@ -1457,15 +1514,18 @@ def _missing_pdf_race_values(
     pdf_text: str,
     value_fn: Callable[[PublicationRace], list[str]],
 ) -> list[str]:
-    comparable = _normalized_text(pdf_text).casefold()
+    comparable = pdf_text.casefold()
     positions: list[int | None] = []
     cursor = 0
     for race in races:
-        label = _normalized_text(race.race_label).casefold()
-        position = comparable.find(label, cursor)
-        positions.append(None if position < 0 else position)
-        if position >= 0:
-            cursor = position + len(label)
+        label_pattern = r"\s*".join(
+            re.escape(word) for word in _normalized_text(race.race_label).casefold().split()
+        )
+        match = re.search(label_pattern, comparable[cursor:])
+        position = None if match is None else cursor + match.start()
+        positions.append(position)
+        if match is not None:
+            cursor += match.end()
     missing: list[str] = []
     for index, race in enumerate(races):
         position = positions[index]
@@ -1475,16 +1535,23 @@ def _missing_pdf_race_values(
         later = [item for item in positions[index + 1 :] if item is not None]
         segment = comparable[position : later[0] if later else len(comparable)]
         header_pattern = r"\s+".join(
-            re.escape(_normalized_text(value).casefold())
+            r"\s*".join(re.escape(word) for word in _normalized_text(value).casefold().split())
             for value in (race.race_label, race.recommendation_label)
         )
         if re.match(header_pattern, segment) is None:
             missing.append(f"{race.id}: ordered race result header")
-        missing.extend(
-            f"{race.id}: {value}"
-            for value in value_fn(race)
-            if not _pdf_value_is_present(value, segment)
-        )
+        for value in value_fn(race):
+            line_bound_detailed_comparison = (
+                value_fn is _detailed_pdf_race_values
+                and _normalized_text(value).casefold().startswith("seattle times ")
+            )
+            present = (
+                _pdf_line_value_is_present(value, segment)
+                if line_bound_detailed_comparison
+                else _pdf_value_is_present(value, segment)
+            )
+            if not present:
+                missing.append(f"{race.id}: {value}")
         legacy_badges = {
             comparison.badge_label
             for comparison in race.comparisons

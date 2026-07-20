@@ -1123,15 +1123,22 @@ with a right-filled percentage meter; and the Times comparison with the explicit
 count aligned beneath the fields they explain. Do not compress the race list into the upper portion
 of the page while leaving a large unused region above the footer.
 
+Give fixed-width percentage meters a fine outline, a soft empty track, a restrained teal fill, and a
+vertically centered tabular percentage label. The meter should reinforce the number without becoming
+the dominant visual element in the row.
+
 ## 16.3 Seattle Times comparison chips
 
 Use background color and text together. Never rely on color alone.
 
-Display one concise Seattle Times comparison chip beneath the consensus choice:
+Display one concise Seattle Times comparison chip beneath the consensus choice. Use an outlined,
+lightly tinted pill with vertically centered contents and typographic hierarchy:
 
-- green or teal `Times agrees: <choice>` chip — agrees with the consensus choice;
-- amber or brown `Times differs: <choice>` chip — endorses a different choice;
-- neutral `Times: not covered` chip — no Seattle Times endorsement for the race or measure.
+- green or teal `Times agrees · <choice>` chip — agrees with the consensus choice;
+- amber or brown `Times differs · <choice>` chip — endorses a different choice;
+- neutral `Times · not covered` chip — no Seattle Times endorsement for the race or measure.
+
+Make the status phrase bold, the choice lighter, and the centered-dot separator visually quiet.
 
 Keep the chip directly beneath the consensus choice. Do not add separate `Seattle Times`, `AGREES`,
 `DIFFERENT PICK`, or `NO PICK` labels.

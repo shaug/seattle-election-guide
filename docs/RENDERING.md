@@ -6,9 +6,10 @@ they do not recompute consensus or presentation labels. Print text has a configu
 If the complete content cannot fit at that floor, the renderer emits a compact two-page summary
 plus a longer detailed PDF instead of shrinking or clipping text.
 
-Seattle Times comparisons use one result chip beneath the consensus choice: green `Times agrees`
-text names the same choice, amber `Times differs` text names a different pick, and a neutral
-`Times: not covered` chip means no endorsement.
+Seattle Times comparisons use one outlined, softly tinted result chip beneath the consensus choice.
+Bold `Times agrees` or `Times differs` status text is separated from the lighter choice by a centered
+dot; a restrained neutral `Times · not covered` chip means the captured guide has no Times
+endorsement. Badge contents are vertically centered and color is never the only status signal.
 The canonical comparison status and legacy badge label remain available in audit exports.
 
 The concise PDF uses a scan-first, two-column briefing layout. Print typography is sans serif,
@@ -16,7 +17,9 @@ candidate or choice names carry the strongest row emphasis, alternating race bac
 adjacent choices, and each race forms a three-line unit: office; choice with a fixed-width,
 right-filled consensus meter; then the Times comparison and explicitly endorsing source count
 aligned beneath the fields they explain. Shared meter widths make shares comparable down each
-column. Section bars and flex-distributed race rows use the available page height instead of
+column. Fine meter outlines, soft empty tracks, and vertically centered tabular percentages keep
+the quantitative encoding legible without dominating the choice. Section bars and flex-distributed
+race rows use the available page height instead of
 shrinking into the top of the sheet. The explicit midpoint split repeats a continued section bar
 when a category crosses columns.
 Page two groups methodology into independent column panels so short sections do not force unrelated
