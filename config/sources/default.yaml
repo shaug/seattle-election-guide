@@ -1,8 +1,8 @@
 schema_version: "1.0"
 id: wa-2026-primary-default-sources
 election_id: wa-2026-primary
-frozen_at: 2026-07-20T10:00:00Z
-research_cutoff: 2026-07-20T10:00:00Z
+frozen_at: 2026-07-20T14:00:00Z
+research_cutoff: 2026-07-20T14:00:00Z
 notes:
   - This registry was refreshed and re-frozen after the time-bounded source-completeness pass, before recompiling consensus scores.
   - Published means an official 2026 publication was located; it does not imply complete ballot coverage.
@@ -299,20 +299,20 @@ sources:
     organization_url: https://37dems.org/
     geographic_kind: legislative_district
     panel_role: consensus
-    panel_reason: Named LD source and confirmed Seattle-overlapping jurisdiction in the ballot inventory; retained despite the current publication gap.
+    panel_reason: Named LD source with an official 2026 primary endorsement roster and confirmed Seattle-overlapping jurisdiction in the ballot inventory.
     eligibility:
       kind: jurisdictions_only
       jurisdiction_ids:
         - legislative-district-37
       rationale: DECISIONS limits an LD organization to races specific to its own district.
     discovery:
-      status: not_found
-      checked_at: 2026-07-20T10:00:00Z
+      status: published
+      checked_at: 2026-07-20T13:50:28Z
       requested_url: https://37dems.org/
       canonical_url: https://37dems.org/
       media_type: text/html
-      evidence_locator: Official site root and official-site endorsement search.
-      notes: The official site loaded with HTTP 200, but no official consolidated 2026 endorsement publication was located; third-party lists were rejected as evidence.
+      evidence_locator: Homepage, 37th LD Democrats 2026 Primary Election Candidate Endorsements section.
+      notes: The official homepage publishes a consolidated 2026 primary endorsement roster; only LD37-specific races are eligible under the frozen source contract.
     overlap_group_ids:
       - democratic-party-network
 
@@ -376,12 +376,12 @@ sources:
       rationale: Count only explicit official decisions matched to Seattle-ballot races.
     discovery:
       status: not_found
-      checked_at: 2026-07-20T10:00:00Z
+      checked_at: 2026-07-20T13:50:28Z
       requested_url: https://www.stonewalldemocrats.us/washington
       canonical_url: https://www.stonewalldemocrats.us/washington
       media_type: text/html
       evidence_locator: Official Washington chapter page and official-site endorsement search.
-      notes: The official chapter page loaded with HTTP 200, but no official consolidated 2026 endorsement page was located; reporting and candidate sites were rejected as evidence.
+      notes: The official Washington chapter page loaded with HTTP 200, but no official consolidated 2026 endorsement page was located. The supplied stonewalldems.org roster belongs to a Los Angeles, California club and was rejected as evidence for this Washington source.
     overlap_group_ids:
       - democratic-party-network
 
@@ -534,16 +534,18 @@ sources:
     organization_url: https://www.sierraclub.org/washington
     geographic_kind: general
     panel_role: consensus
-    panel_reason: Named environmental publisher retained despite an unresolved official-site access gap.
+    panel_reason: Named environmental publisher with an official Washington chapter 2026 primary endorsement page.
     eligibility:
       kind: all_seattle_ballot_races
       rationale: Any claim requires a manually verifiable official chapter publication.
     discovery:
-      status: access_restricted
-      checked_at: 2026-07-20T10:00:00Z
-      requested_url: https://www.sierraclub.org/washington
-      evidence_locator: Official Washington chapter URL and official-domain 2026 endorsement search.
-      notes: Official-site access remains restricted and a fresh official-domain search found no Washington chapter 2026 endorsement publication; historical and third-party pages were rejected.
+      status: published
+      checked_at: 2026-07-20T13:50:28Z
+      requested_url: https://www.sierraclub.org/washington/2026-primary-endorsements
+      canonical_url: https://www.sierraclub.org/washington/2026-primary-endorsements
+      media_type: text/html
+      evidence_locator: Official 2026 Primary Endorsements page, federal, legislative, and Supreme Court sections.
+      notes: The official page is available in a browser and publishes a statewide 2026 primary roster; unattended HTTP requests enter a redirect loop, so the retained evidence is a browser capture.
 
   - id: climate-solutions
     name: Climate Solutions

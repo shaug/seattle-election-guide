@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 95140,
+  "canonical_url": "https://37dems.org/",
+  "capture_method": "static_html",
+  "content_sha256": "e5dcad994df16f783d1844fdbc58a8f694f07a45c5fdffc2db32a97cbbddba5f",
+  "http_status": 200,
+  "id": "capture-37th-district-democrats-20260720T135028Z-1e555a954f39",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full official page retained locally for verification; only a short transcript is permitted in the release.",
+  "requested_url": "https://37dems.org/",
+  "retrieved_at": "2026-07-20T13:50:28Z",
+  "schema_version": "1.0",
+  "source_id": "37th-district-democrats",
+  "storage_reference": "sha256/e5/e5dcad994df16f783d1844fdbc58a8f694f07a45c5fdffc2db32a97cbbddba5f",
+  "storage_scope": "local_only",
+  "title": "37th LD Democrats 2026 Primary Election Candidate Endorsements",
+  "updated_at": null
+}

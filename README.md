@@ -14,9 +14,9 @@ default source panel is frozen before scoring, with 42 proposed organizations as
 discovery and panel statuses. Content-addressed local evidence capture, integrity verification,
 unavailable-source records, structured manual transcription, deterministic race-scoped
 normalization, append-only ambiguity review, and immutable source-adapter refreshes are implemented.
-No recommendation is treated as complete coverage. The audited primary ledger contains 383
-decisions from 32 represented official source publications; release status explicitly lists the
-five remaining active sources with access or discovery constraints. Exact deterministic consensus
+No recommendation is treated as complete coverage. The audited primary ledger contains 403
+decisions from 34 represented official source publications; release status explicitly lists the
+three remaining active sources with access or discovery constraints. Exact deterministic consensus
 scoring, coverage signals,
 grade and tie handling, comparison-only Seattle Times results, and the unresolved-review
 publication gate are also implemented. Responsive HTML and the two-page US Letter guide now render

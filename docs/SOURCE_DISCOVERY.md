@@ -1,8 +1,8 @@
 # 2026 Primary Source Discovery Report
 
-Panel `wa-2026-primary-default-sources` was frozen at `2026-07-20T10:00:00+00:00` before scoring. The research cutoff is `2026-07-20T10:00:00+00:00`; individual access times are recorded in the machine-readable registry.
+Panel `wa-2026-primary-default-sources` was frozen at `2026-07-20T14:00:00+00:00` before scoring. The research cutoff is `2026-07-20T14:00:00+00:00`; individual access times are recorded in the machine-readable registry.
 
-The preregistration contains **42 proposed sources**: **36 consensus**, **1 comparison**, and **5 excluded**. Discovery found **33 official 2026 publications**, **4 publication gaps**, **2 access-restricted sources**, and **3 conditional organizations that do not publish endorsements**.
+The preregistration contains **42 proposed sources**: **36 consensus**, **1 comparison**, and **5 excluded**. Discovery found **35 official 2026 publications**, **3 publication gaps**, **1 access-restricted source**, and **3 conditional organizations that do not publish endorsements**.
 
 Search results were discovery leads only. Every link below is an official organization URL; no search snippet or third-party list is endorsement evidence. `not_found` means no official 2026 publication was located, not that the organization made an explicit no-endorsement decision.
 
@@ -23,7 +23,7 @@ Search results were discovery leads only. Every link below is an official organi
 | 32nd Legislative District Democrats | Democratic Party | consensus | published | [official page](https://32democrats.org/2026-endorsements/) | — | text/html | legislative-district-32 |
 | 34th Legislative District Democrats | Democratic Party | consensus | published | [official page](https://34dems.org/2026-endorsements/) | 2026-05-18 (updated 2026-06-14) | text/html | legislative-district-34 |
 | 36th Legislative District Democrats | Democratic Party | consensus | published | [official page](https://36th.org/endorsements-2026/) | 2026-05-17 (updated 2026-07-15) | text/html | legislative-district-36 |
-| 37th Legislative District Democrats | Democratic Party | consensus | not_found | [official page](https://37dems.org/) | — | text/html | legislative-district-37 |
+| 37th Legislative District Democrats | Democratic Party | consensus | published | [official page](https://37dems.org/) | — | text/html | legislative-district-37 |
 | 43rd Legislative District Democrats | Democratic Party | consensus | published | [official page](https://43rddemocrats.org/endorsements/2026) | 2026-06-16 | text/html | legislative-district-43 |
 | 46th Legislative District Democrats | Democratic Party | consensus | published | [official page](https://www.46dems.org/2026_endorsements) | 2026-05-18 | text/html | legislative-district-46 |
 | Washington State Stonewall Democrats | Democratic Party | consensus | not_found | [official page](https://www.stonewalldemocrats.us/washington) | — | text/html | Seattle-ballot races |
@@ -34,7 +34,7 @@ Search results were discovery leads only. Every link below is an official organi
 | Transportation Choices Coalition | Transportation/urbanism | excluded | not_found | [official page](https://transportationchoices.org/) | — | text/html | None |
 | Disability Mobility Initiative at Disability Rights Washington | Transportation/urbanism | excluded | not_an_endorsement_publisher | [official page](https://disabilityrightswa.org/) | — | text/html | None |
 | Washington Conservation Action | Environmental | consensus | published | [official page](https://waconservationaction.org/our-work/areas-of-work/endorsements/) | — | text/html | Seattle-ballot races |
-| Sierra Club Washington State Chapter | Environmental | consensus | access_restricted | [official page](https://www.sierraclub.org/washington) | — | — | Seattle-ballot races |
+| Sierra Club Washington State Chapter | Environmental | consensus | published | [official page](https://www.sierraclub.org/washington/2026-primary-endorsements) | — | text/html | Seattle-ballot races |
 | Climate Solutions | Environmental | excluded | not_an_endorsement_publisher | [official page](https://www.climatesolutions.org/) | — | text/html | None |
 | Environment and Climate Caucus of the Washington State Democratic Party | Environmental | consensus | not_found | [official page](https://eccwa.org/wp/endorsements/) | — | text/html | Seattle-ballot races |
 | MLK Labor | Labor | consensus | published | [official page](https://www.mlklabor.org/endorsements/) | updated 2026-06-18 | text/html | Seattle-ballot races |
@@ -68,7 +68,7 @@ Search results were discovery leads only. Every link below is an official organi
 - **32nd Legislative District Democrats — consensus.** Named LD source and confirmed Seattle-overlapping jurisdiction in the ballot inventory.
 - **34th Legislative District Democrats — consensus.** Named LD source and confirmed Seattle-overlapping jurisdiction in the ballot inventory.
 - **36th Legislative District Democrats — consensus.** Named LD source and confirmed Seattle-overlapping jurisdiction in the ballot inventory.
-- **37th Legislative District Democrats — consensus.** Named LD source and confirmed Seattle-overlapping jurisdiction in the ballot inventory; retained despite the current publication gap.
+- **37th Legislative District Democrats — consensus.** Named LD source with an official 2026 primary endorsement roster and confirmed Seattle-overlapping jurisdiction in the ballot inventory.
 - **43rd Legislative District Democrats — consensus.** Named LD source and confirmed Seattle-overlapping jurisdiction in the ballot inventory.
 - **46th Legislative District Democrats — consensus.** Named LD source and confirmed Seattle-overlapping jurisdiction in the ballot inventory.
 - **Washington State Stonewall Democrats — consensus.** Explicitly proposed LGBTQ and Democratic constituency source with a confirmed active official chapter page.
@@ -79,7 +79,7 @@ Search results were discovery leads only. Every link below is an official organi
 - **Transportation Choices Coalition — excluded.** The conditional proposal applies only if the organization endorses; no official candidate endorsement publication was found.
 - **Disability Mobility Initiative at Disability Rights Washington — excluded.** The proposed disability-mobility source is an advocacy program, but no official election endorsement publication was found.
 - **Washington Conservation Action — consensus.** Named environmental source with an official 2026 endorsement page.
-- **Sierra Club Washington State Chapter — consensus.** Named environmental publisher retained despite an unresolved official-site access gap.
+- **Sierra Club Washington State Chapter — consensus.** Named environmental publisher with an official Washington chapter 2026 primary endorsement page.
 - **Climate Solutions — excluded.** The conditional proposal applies only if the organization endorses; no official election endorsement program or publication was found.
 - **Environment and Climate Caucus of the Washington State Democratic Party — consensus.** Concrete environmental-justice and Democratic constituency publisher discovered while resolving the proposed open categories.
 - **MLK Labor — consensus.** Named King County labor council with an official current endorsement page.
@@ -101,12 +101,10 @@ Search results were discovery leads only. Every link below is an official organi
 ## Gaps and conditional exclusions
 
 - **Washington State Democratic Party — access_restricted.** Direct unattended access remains blocked and a fresh official-domain search found no 2026 endorsement roster; candidate and third-party lists were not substituted for a party publication.
-- **37th Legislative District Democrats — not_found.** The official site loaded with HTTP 200, but no official consolidated 2026 endorsement publication was located; third-party lists were rejected as evidence.
-- **Washington State Stonewall Democrats — not_found.** The official chapter page loaded with HTTP 200, but no official consolidated 2026 endorsement page was located; reporting and candidate sites were rejected as evidence.
+- **Washington State Stonewall Democrats — not_found.** The official Washington chapter page loaded with HTTP 200, but no official consolidated 2026 endorsement page was located. The supplied stonewalldems.org roster belongs to a Los Angeles, California club and was rejected as evidence for this Washington source.
 - **Cascade Bicycle Club — not_an_endorsement_publisher.** Official materials state that Cascade is the affiliated 501(c)(3) and Washington Bikes is the 501(c)(4) candidate-endorsement arm.
 - **Transportation Choices Coalition — not_found.** Official pages loaded with HTTP 200, but no 2026 candidate or ballot endorsement publication was located.
 - **Disability Mobility Initiative at Disability Rights Washington — not_an_endorsement_publisher.** The requested legacy program URL redirected to the organization root; official materials concern advocacy and voter access, not candidate recommendations.
-- **Sierra Club Washington State Chapter — access_restricted.** Official-site access remains restricted and a fresh official-domain search found no Washington chapter 2026 endorsement publication; historical and third-party pages were rejected.
 - **Climate Solutions — not_an_endorsement_publisher.** Official site loaded after one redirect; no candidate endorsement publication or electoral program was located.
 - **Environment and Climate Caucus of the Washington State Democratic Party — not_found.** The official page documents the 2026 endorsement process and voting dates but publishes no candidate decisions; no separate 2026 endorsed-candidate roster was located.
 

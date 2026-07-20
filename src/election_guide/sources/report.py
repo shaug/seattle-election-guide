@@ -33,7 +33,8 @@ def render_discovery_report(registry: SourceRegistry) -> str:
             f"and **{role_counts['excluded']} excluded**. Discovery found "
             f"**{status_counts['published']} official 2026 publications**, "
             f"**{status_counts['not_found']} publication gaps**, "
-            f"**{status_counts['access_restricted']} access-restricted sources**, and "
+            f"**{status_counts['access_restricted']} access-restricted "
+            f"source{'s' if status_counts['access_restricted'] != 1 else ''}**, and "
             f"**{status_counts['not_an_endorsement_publisher']} conditional organizations "
             "that do not publish endorsements**."
         ),

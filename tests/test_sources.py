@@ -27,9 +27,9 @@ def test_committed_source_panel_is_frozen_and_complete() -> None:
         "excluded": 5,
     }
     assert Counter(source.discovery.status for source in registry.sources) == {
-        "published": 33,
-        "not_found": 4,
-        "access_restricted": 2,
+        "published": 35,
+        "not_found": 3,
+        "access_restricted": 1,
         "not_an_endorsement_publisher": 3,
     }
     assert all(source.discovery.status for source in registry.sources)
@@ -44,6 +44,15 @@ def test_committed_source_panel_is_frozen_and_complete() -> None:
     assert wea.discovery.canonical_url == (
         "https://www.washingtonea.org/advocacy/wea-pac/2026-endorsements/"
     )
+    assert (
+        next(
+            source for source in registry.sources if source.id == "37th-district-democrats"
+        ).discovery.status
+        == "published"
+    )
+    assert next(
+        source for source in registry.sources if source.id == "sierra-club-washington"
+    ).discovery.canonical_url == ("https://www.sierraclub.org/washington/2026-primary-endorsements")
 
 
 def test_legislative_district_sources_only_count_in_their_district() -> None:
@@ -88,6 +97,7 @@ def test_committed_discovery_report_matches_registry() -> None:
     committed = (PROJECT_ROOT / "docs" / "SOURCE_DISCOVERY.md").read_text(encoding="utf-8")
 
     assert committed == render_discovery_report(registry)
+    assert "**1 access-restricted source**" in committed
     protec17_line = next(line for line in committed.splitlines() if line.startswith("| PROTEC17 "))
     assert "updated 2026-07-16" in protec17_line
 
@@ -132,7 +142,7 @@ def test_registry_rejects_unpaired_overlap_metadata() -> None:
 
 def test_registry_rejects_discovery_after_panel_freeze() -> None:
     payload = _registry_payload()
-    payload["research_cutoff"] = "2026-07-20T11:00:00Z"
+    payload["research_cutoff"] = "2026-07-20T15:00:00Z"
 
     with pytest.raises(ValidationError, match="research cutoff cannot be after panel freeze"):
         SourceRegistry.model_validate(payload)
@@ -149,7 +159,7 @@ def test_registry_rejects_unrecorded_redirect() -> None:
 
 def test_registry_rejects_source_access_after_research_cutoff() -> None:
     payload = _registry_payload()
-    payload["sources"][0]["discovery"]["checked_at"] = "2026-07-20T11:00:00Z"
+    payload["sources"][0]["discovery"]["checked_at"] = "2026-07-20T15:00:00Z"
 
     with pytest.raises(ValidationError, match="checked after the research cutoff"):
         SourceRegistry.model_validate(payload)

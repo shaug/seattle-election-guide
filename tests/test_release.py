@@ -28,7 +28,7 @@ INVENTORY = PROJECT_ROOT / "data/normalized/wa-2026-primary-inventory.json"
 REGISTRY = PROJECT_ROOT / "config/sources/default.yaml"
 SCORING = PROJECT_ROOT / "config/scoring/default.yaml"
 RENDERING = PROJECT_ROOT / "config/rendering/pdf.yaml"
-GENERATED_AT = datetime(2026, 7, 20, 12, tzinfo=UTC)
+GENERATED_AT = datetime(2026, 7, 20, 14, 30, tzinfo=UTC)
 
 
 def test_release_compiler_builds_permitted_provenance_and_resolves_multi_pick(

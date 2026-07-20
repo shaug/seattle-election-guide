@@ -1,6 +1,6 @@
 schema_version: "1.0"
 election_id: wa-2026-primary
-data_as_of: 2026-07-20T12:00:00Z
+data_as_of: 2026-07-20T14:00:00Z
 reviewer: shaug
 review_note: >-
   AI-assisted research located and persisted each available publication, then manually
@@ -229,6 +229,17 @@ sources:
       - race_id: ld-36-state-representative-2
         candidate_ids: [ld-36-state-representative-2--liz-berry]
 
+  - source_id: 37th-district-democrats
+    captured_at: 2026-07-20T13:50:28Z
+    evidence_locator: Official homepage, 2026 primary candidate endorsements section.
+    decisions:
+      - race_id: ld-37-state-senator
+        candidate_ids: [ld-37-state-senator--chipalo-street]
+      - race_id: ld-37-state-representative-1
+        candidate_ids: [ld-37-state-representative-1--sharon-tomiko-santos]
+      - race_id: ld-37-state-representative-2
+        candidate_ids: [ld-37-state-representative-2--jaelynn-scott]
+
   - source_id: 43rd-district-democrats
     captured_at: 2026-07-20T01:08:00Z
     evidence_locator: Official 2026 endorsements page, Legislative District 43 table.
@@ -313,6 +324,45 @@ sources:
         candidate_ids: [ld-46-state-representative-1--gerry-pollet]
       - race_id: ld-46-state-representative-2
         candidate_ids: [ld-46-state-representative-2--darya-farivar]
+
+  - source_id: sierra-club-washington
+    captured_at: 2026-07-20T13:50:28Z
+    evidence_locator: Official 2026 primary endorsements page, federal, legislative, and Supreme Court sections.
+    decisions:
+      - race_id: us-house-7
+        candidate_ids: [us-house-7--pramila-jayapal]
+      - race_id: us-house-9
+        candidate_ids: [us-house-9--adam-smith]
+      - race_id: ld-11-state-representative-2
+        candidate_ids: [ld-11-state-representative-2--steve-bergquist]
+      - race_id: ld-32-state-representative-1
+        candidate_ids: [ld-32-state-representative-1--keith-scully]
+      - race_id: ld-34-state-senator
+        candidate_ids: [ld-34-state-senator--emily-alvarado]
+      - race_id: ld-34-state-representative-2
+        candidate_ids: [ld-34-state-representative-2--joe-fitzgibbon]
+      - race_id: ld-36-state-senator
+        candidate_ids: [ld-36-state-senator--noel-c-frame]
+      - race_id: ld-36-state-representative-1
+        candidate_ids: [ld-36-state-representative-1--julia-grant-reed]
+      - race_id: ld-36-state-representative-2
+        candidate_ids: [ld-36-state-representative-2--liz-berry]
+      - race_id: ld-43-state-senator
+        candidate_ids: [ld-43-state-senator--jamie-pedersen]
+      - race_id: ld-43-state-representative-1
+        candidate_ids: [ld-43-state-representative-1--nicole-macri]
+      - race_id: ld-46-state-senator
+        candidate_ids: [ld-46-state-senator--javier-valdez]
+      - race_id: ld-46-state-representative-1
+        candidate_ids: [ld-46-state-representative-1--gerry-pollet]
+      - race_id: ld-46-state-representative-2
+        candidate_ids: [ld-46-state-representative-2--darya-farivar]
+      - race_id: supreme-court-justice-1
+        candidate_ids: [supreme-court-justice-1--colleen-melody]
+      - race_id: supreme-court-justice-5
+        candidate_ids: [supreme-court-justice-5--theo-angelis]
+      - race_id: supreme-court-justice-7
+        candidate_ids: [supreme-court-justice-7--debra-l-stephens]
 
   - source_id: mlk-labor
     captured_at: 2026-07-20T01:13:00Z
