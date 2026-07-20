@@ -23,6 +23,7 @@ publication gate are also implemented. Responsive HTML and the two-page US Lette
 from the shared publication view model with semantic, viewport, PDF, and page-image validation.
 See [PROJECT.md](PROJECT.md) for the
 product specification, [DECISIONS.md](DECISIONS.md) for the launch contract,
+[docs/ELECTION_INITIALIZATION.md](docs/ELECTION_INITIALIZATION.md) for starting future elections,
 [docs/BALLOT_INVENTORY.md](docs/BALLOT_INVENTORY.md) for inventory scope and reproduction,
 [docs/SOURCE_DISCOVERY.md](docs/SOURCE_DISCOVERY.md) for the source panel,
 [docs/EVIDENCE_CAPTURE.md](docs/EVIDENCE_CAPTURE.md) for evidence handling,
@@ -49,6 +50,8 @@ Install the locked environment and run the checks:
 ```bash
 uv sync --frozen
 uv run election-guide --help
+uv run election-guide election init --help
+uv run election-guide inventory import-initialized --help
 uv run election-guide inventory validate
 uv run election-guide sources validate
 uv run election-guide sources report

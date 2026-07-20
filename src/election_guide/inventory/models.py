@@ -47,14 +47,18 @@ class Jurisdiction(InventoryModel):
     id: str
     name: str
     kind: Literal[
+        "country",
         "state",
         "county",
         "city",
         "congressional_district",
         "legislative_district",
+        "judicial_district",
+        "council_district",
         "county_council_district",
         "city_council_district",
         "precinct",
+        "ballot_style",
     ]
     parent_id: str | None
     aliases: list[str]
@@ -106,7 +110,7 @@ class SelectionMethod(InventoryModel):
 
 
 class Inventory(InventoryModel):
-    schema_version: Literal["1.0"] = "1.0"
+    schema_version: Literal["1.0", "1.1"] = "1.0"
     election: Election
     sources: list[SourceReference]
     jurisdictions: list[Jurisdiction]
@@ -116,6 +120,17 @@ class Inventory(InventoryModel):
 
     @model_validator(mode="after")
     def validate_references(self) -> Inventory:
+        future_kinds = {
+            "country",
+            "judicial_district",
+            "council_district",
+            "ballot_style",
+        }
+        if (
+            any(jurisdiction.kind in future_kinds for jurisdiction in self.jurisdictions)
+            and self.schema_version != "1.1"
+        ):
+            raise ValueError("future jurisdiction kinds require inventory schema 1.1")
         source_ids = _unique_ids(self.sources, "source")
         jurisdiction_ids = _unique_ids(self.jurisdictions, "jurisdiction")
         race_ids = _unique_ids(self.races, "race")

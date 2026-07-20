@@ -1,0 +1,5 @@
+race_id,choice_id,choice_type,official_name,display_name,aliases,ballot_order,party_preference,evidence_locator
+seattle-city-attorney,alexis-example,candidate,Alexis Example,Alexis Example,,1,,Fixture ballot row 1
+seattle-city-attorney,bailey-sample,candidate,Bailey Sample,Bailey Sample,,2,,Fixture ballot row 2
+seattle-mayor,morgan-example,candidate,Morgan Example,Morgan Example,,1,,Fixture ballot row 3
+seattle-mayor,riley-sample,candidate,Riley Sample,Riley Sample,,2,,Fixture ballot row 4

@@ -25,6 +25,7 @@ def test_help_lists_foundational_commands() -> None:
 
     assert result.exit_code == 0
     assert "doctor" in result.stdout
+    assert "election" in result.stdout
     assert "collect" in result.stdout
     assert "evidence" in result.stdout
     assert "export" in result.stdout

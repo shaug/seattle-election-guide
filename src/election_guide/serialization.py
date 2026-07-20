@@ -63,6 +63,12 @@ def read_yaml(path: Path) -> Any:
 def read_json(path: Path) -> Any:
     """Read JSON without accepting duplicate object keys."""
 
+    return parse_json_bytes(path.read_bytes())
+
+
+def parse_json_bytes(content: bytes) -> Any:
+    """Parse UTF-8 JSON bytes without accepting duplicate object keys."""
+
     def unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
         result: dict[str, Any] = {}
         for key, value in pairs:
@@ -71,7 +77,7 @@ def read_json(path: Path) -> Any:
             result[key] = value
         return result
 
-    return json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=unique_object)
+    return json.loads(content.decode("utf-8"), object_pairs_hook=unique_object)
 
 
 def canonical_json_bytes(value: Any) -> bytes:
