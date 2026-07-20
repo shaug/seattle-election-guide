@@ -25,6 +25,7 @@ def test_help_lists_foundational_commands() -> None:
 
     assert result.exit_code == 0
     assert "doctor" in result.stdout
+    assert "collect" in result.stdout
     assert "evidence" in result.stdout
     assert "export" in result.stdout
     assert "inventory" in result.stdout
@@ -115,6 +116,44 @@ def test_evidence_capture_and_verify_commands(tmp_path: Path) -> None:
     )
     assert verified.exit_code == 0, verified.output
     assert "evidence: valid" in verified.stdout
+
+
+def test_collect_refresh_runs_offline_and_reuses_unchanged_content(tmp_path: Path) -> None:
+    source = tmp_path / "transit-riders-union.html"
+    source.write_bytes(Path("tests/fixtures/collection/transit-riders-union.html").read_bytes())
+    common = [
+        "config/adapters/transit-riders-union.yaml",
+        "--input-path",
+        str(source),
+        "--media-type",
+        "text/html",
+        "--storage-root",
+        str(tmp_path / "snapshots"),
+        "--manifest-dir",
+        str(tmp_path / "manifests"),
+        "--extraction-dir",
+        str(tmp_path / "extractions"),
+        "--refresh-dir",
+        str(tmp_path / "refreshes"),
+    ]
+
+    created = runner.invoke(
+        app, ["collect", "refresh", *common, "--checked-at", "2026-07-20T07:00:00Z"]
+    )
+    unchanged = runner.invoke(
+        app, ["collect", "refresh", *common, "--checked-at", "2026-07-20T07:01:00Z"]
+    )
+
+    assert created.exit_code == 0, created.output
+    assert "source refresh: created" in created.stdout
+    assert "3 semantic changes" in created.stdout
+    assert unchanged.exit_code == 0, unchanged.output
+    assert "source refresh: unchanged" in unchanged.stdout
+    assert len(list((tmp_path / "manifests").glob("*.json"))) == 1
+    assert len(list((tmp_path / "extractions").glob("*.json"))) == 1
+    manifest = json.loads(next((tmp_path / "manifests").glob("*.json")).read_text())
+    assert manifest["capture_method"] == "manual_upload"
+    assert manifest["http_status"] is None
 
 
 def test_evidence_unavailable_command_writes_metadata_only_manifest(tmp_path: Path) -> None:
