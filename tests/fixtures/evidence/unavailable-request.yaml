@@ -1,0 +1,13 @@
+schema_version: "1.0"
+source_id: seattle-times-editorial-board
+requested_url: https://www.seattletimes.com/opinion/editorials/
+canonical_url: https://www.seattletimes.com/opinion/editorials/
+retrieved_at: 2026-07-19T12:00:00Z
+http_status: 403
+media_type: text/html
+title: null
+capture_method: unavailable
+browser_required: false
+redistribution: restricted
+redistribution_note: No page content was retained or redistributed.
+unavailable_reason: The official page denied unattended access; no access control was bypassed.

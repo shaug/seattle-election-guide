@@ -12,6 +12,8 @@ The data pipeline will use these logical areas:
 
 Directories are created by the relevant pipeline commands rather than committed empty. Public
 records must not embed third-party material that the project lacks permission to redistribute.
+`manifests/README.md` is retained to document the tracked-manifest boundary. Evidence capture
+writes local bytes beneath `snapshots/sha256/` and metadata beneath `manifests/evidence/`.
 
 The current canonical election inventory is
 `normalized/wa-2026-primary-inventory.json`. Its source manifest records the official URLs and
