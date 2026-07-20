@@ -294,18 +294,25 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
         assert mobile.size == (390, 1200)
     assert S_IMODE((tmp_path / "rendered").stat().st_mode) == 0o755
     assert S_IMODE(rendered.html_path.stat().st_mode) == 0o644
-    for label, path in zip(
-        APPROVED_VISUAL_BASELINES,
-        [*rendered.page_images, *rendered.screenshots],
-        strict=True,
-    ):
-        observed = _coarse_visual_signature(path)
+    artifact_paths = dict(
+        zip(
+            APPROVED_VISUAL_BASELINES,
+            [*rendered.page_images, *rendered.screenshots],
+            strict=True,
+        )
+    )
+    observed_signatures = {
+        label: _coarse_visual_signature(path) for label, path in artifact_paths.items()
+    }
+    for label, observed in observed_signatures.items():
         expected = APPROVED_VISUAL_BASELINES[label]
         assert (
             sum(abs(left - right) for left, right in zip(observed, expected, strict=True)) / 16
             < 0.04
-        )
-        assert max(abs(left - right) for left, right in zip(observed, expected, strict=True)) < 0.12
+        ), f"{label}: observed signatures {observed_signatures}"
+        assert (
+            max(abs(left - right) for left, right in zip(observed, expected, strict=True)) < 0.12
+        ), f"{label}: observed signatures {observed_signatures}"
 
     blank_screenshots: list[Path] = []
     for index, screenshot in enumerate(rendered.screenshots):
