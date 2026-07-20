@@ -8,7 +8,7 @@ import re
 import tempfile
 from collections.abc import Generator
 from contextlib import contextmanager
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Annotated, Any, cast
 
@@ -55,6 +55,11 @@ from election_guide.normalization.records import (
     write_record,
     write_review_decision,
     write_review_item,
+)
+from election_guide.scoring import (
+    PublicationBlockedError,
+    read_scoring_configuration,
+    score_dataset,
 )
 from election_guide.serialization import canonical_json_bytes, read_json
 from election_guide.sources.registry import read_source_registry, validate_registry_inventory
@@ -113,6 +118,57 @@ def doctor(
             typer.echo(f"missing: {path}", err=True)
         raise typer.Exit(code=1)
     typer.echo("foundation: ok")
+
+
+@app.command("score")
+def score(
+    dataset_path: Annotated[
+        Path,
+        typer.Option(exists=True, dir_okay=False, readable=True),
+    ] = Path("data/normalized/canonical-dataset.json"),
+    config: Annotated[
+        str,
+        typer.Option(help="Scoring configuration name or YAML path."),
+    ] = "default",
+    output_path: Annotated[
+        Path,
+        typer.Option(dir_okay=False),
+    ] = Path("data/normalized/consensus.json"),
+    computed_at: Annotated[
+        str | None,
+        typer.Option(help="Deterministic ISO 8601 build timestamp."),
+    ] = None,
+    allow_unresolved: Annotated[
+        bool,
+        typer.Option(help="Publish with a visible warning despite high-severity review work."),
+    ] = False,
+) -> None:
+    """Compute exact consensus results from a canonical dataset."""
+    try:
+        timestamp = _score_timestamp(computed_at)
+        configuration_path = (
+            Path("config/scoring/default.yaml") if config == "default" else Path(config)
+        )
+        configuration = read_scoring_configuration(configuration_path)
+        dataset = CanonicalDataset.model_validate(read_json(dataset_path))
+        report = score_dataset(
+            dataset,
+            configuration,
+            computed_at=timestamp,
+            allow_unresolved=allow_unresolved,
+        )
+        _write_generated_json(output_path, report.model_dump(mode="json"))
+    except (
+        OSError,
+        UnicodeError,
+        json.JSONDecodeError,
+        ValidationError,
+        PublicationBlockedError,
+        ValueError,
+    ) as error:
+        typer.echo(f"scoring failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    typer.echo(f"consensus: {output_path} ({len(report.races)} races)")
 
 
 @evidence_app.command("capture")
@@ -704,6 +760,35 @@ def _parse_aware_datetime(value: str) -> datetime:
     if parsed.tzinfo is None or parsed.utcoffset() is None:
         raise ValueError("timestamp must include a UTC offset")
     return parsed
+
+
+def _score_timestamp(value: str | None) -> datetime:
+    if value is not None:
+        return _parse_aware_datetime(value)
+    epoch = os.environ.get("SOURCE_DATE_EPOCH")
+    if epoch is None:
+        raise ValueError("scoring requires --computed-at or SOURCE_DATE_EPOCH")
+    try:
+        seconds = int(epoch)
+        return datetime.fromtimestamp(seconds, tz=UTC)
+    except (ValueError, OverflowError, OSError) as error:
+        raise ValueError("SOURCE_DATE_EPOCH must be a supported integer Unix timestamp") from error
+
+
+def _write_generated_json(path: Path, value: object) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary_path: Path | None = None
+    try:
+        with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as temporary:
+            temporary_path = Path(temporary.name)
+            temporary.write(canonical_json_bytes(value))
+            temporary.flush()
+            os.fsync(temporary.fileno())
+        os.replace(temporary_path, path)
+        temporary_path = None
+    finally:
+        if temporary_path is not None:
+            temporary_path.unlink(missing_ok=True)
 
 
 def _parse_json_value(value: str) -> Any:

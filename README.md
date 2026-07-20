@@ -14,12 +14,15 @@ default source panel is frozen before scoring, with 42 proposed organizations as
 discovery and panel statuses. Content-addressed local evidence capture, integrity verification,
 unavailable-source records, structured manual transcription, deterministic race-scoped
 normalization, and append-only ambiguity review are implemented. No endorsement claim or voter
-recommendation has been published yet. See [PROJECT.md](PROJECT.md) for the
+recommendation has been published yet. Exact deterministic consensus scoring, coverage signals,
+grade and tie handling, comparison-only Seattle Times results, and the unresolved-review
+publication gate are also implemented. See [PROJECT.md](PROJECT.md) for the
 product specification, [DECISIONS.md](DECISIONS.md) for the launch contract,
 [docs/BALLOT_INVENTORY.md](docs/BALLOT_INVENTORY.md) for inventory scope and reproduction,
 [docs/SOURCE_DISCOVERY.md](docs/SOURCE_DISCOVERY.md) for the source panel,
 [docs/EVIDENCE_CAPTURE.md](docs/EVIDENCE_CAPTURE.md) for evidence handling, and
-[docs/NORMALIZATION.md](docs/NORMALIZATION.md) for matching and review.
+[docs/NORMALIZATION.md](docs/NORMALIZATION.md) for matching and review, and
+[docs/SCORING.md](docs/SCORING.md) for consensus semantics.
 
 ## Development
 
@@ -40,6 +43,7 @@ uv run election-guide evidence --help
 uv run election-guide evidence verify --help
 uv run election-guide normalize --help
 uv run election-guide review --help
+uv run election-guide score --help
 uv run ruff format --check .
 uv run ruff check .
 uv run pyright

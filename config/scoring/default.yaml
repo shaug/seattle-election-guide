@@ -5,16 +5,16 @@ comparison_source_ids:
 minimum_explicit_sources: 2
 grades:
   - grade: A+
-    minimum_share: 0.90
+    minimum_share: "9/10"
     minimum_explicit_sources: 4
   - grade: A
-    minimum_share: 0.75
+    minimum_share: "3/4"
   - grade: B
-    minimum_share: 0.60
+    minimum_share: "3/5"
   - grade: C
-    minimum_share: 0.45
+    minimum_share: "9/20"
   - grade: D
-    minimum_share: 0.00
+    minimum_share: "0"
 tie_precedes_grade: true
 insufficient_precedes_ordinary_grade: true
 missing_coverage_enters_denominator: false
