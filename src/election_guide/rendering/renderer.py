@@ -308,6 +308,16 @@ def validate_rendered_guide(
             normalized_expected = [_normalized_text(value) for value in expected_values]
             if observed_values != normalized_expected:
                 mismatched_html_roles.append(f"{race.id}/{role}")
+        comparison_key = (race.id, "comparison")
+        expected_accessible_names = [
+            comparison.voter_accessible_label for comparison in race.comparisons
+        ]
+        if parser.display_accessible_names.get(comparison_key, []) != expected_accessible_names:
+            mismatched_html_roles.append(f"{race.id}/comparison-accessible-name")
+        if parser.display_element_roles.get(comparison_key, []) != [
+            "group" for _ in race.comparisons
+        ]:
+            mismatched_html_roles.append(f"{race.id}/comparison-accessible-role")
     missing_evidence_rows: list[str] = []
     for race in expected_races:
         for group in race.endorsement_groups:
@@ -1260,6 +1270,24 @@ def _normalized_text(value: str) -> str:
     return re.sub(r"\s+", " ", value).strip()
 
 
+def _pdf_value_is_present(value: str, segment: str) -> bool:
+    normalized = _normalized_text(value).casefold()
+    if normalized.startswith("seattle times "):
+        words = normalized.split()
+        pattern = r"\s*".join(re.escape(word) for word in words)
+        voter_label = normalized.removeprefix("seattle times ")
+        not_covered_label = "not covered"
+        if voter_label != not_covered_label and not_covered_label.startswith(voter_label):
+            sentinel_continuation = not_covered_label[len(voter_label) :].lstrip()
+            pattern += (
+                r"(?!"
+                + r"\s*".join(re.escape(word) for word in sentinel_continuation.split())
+                + ")"
+            )
+        return re.search(pattern, segment) is not None
+    return normalized in segment
+
+
 def _html_semantic_values(race: PublicationRace) -> dict[str, list[str]]:
     return {
         "race-label": [race.race_label],
@@ -1283,7 +1311,7 @@ def _pdf_race_display_values(race: PublicationRace) -> list[str]:
         race.recommendation_label,
         "N/A" if race.percentage_whole is None else race.percentage_label,
         race.support_summary,
-        *(value for comparison in race.comparisons for value in (comparison.voter_label,)),
+        *(f"Seattle Times {comparison.voter_label}" for comparison in race.comparisons),
         *_concise_warning_labels(race),
     ]
 
@@ -1293,7 +1321,7 @@ def _pdf_race_core_values(race: PublicationRace) -> list[str]:
         race.race_label,
         race.recommendation_label,
         "N/A" if race.percentage_whole is None else race.percentage_label,
-        *(value for comparison in race.comparisons for value in (comparison.voter_label,)),
+        *(f"Seattle Times {comparison.voter_label}" for comparison in race.comparisons),
         *(_concise_warning_labels(race)[:1]),
     ]
 
@@ -1304,7 +1332,7 @@ def _detailed_pdf_race_values(race: PublicationRace) -> list[str]:
         race.recommendation_label,
         "N/A" if race.percentage_whole is None else race.percentage_label,
         race.support_summary,
-        *(value for comparison in race.comparisons for value in (comparison.voter_label,)),
+        *(f"Seattle Times {comparison.voter_label}" for comparison in race.comparisons),
         *(
             ["Too few explicit endorsements to assess consensus reliably."]
             if race.grade == "Insufficient"
@@ -1344,7 +1372,22 @@ def _missing_pdf_race_values(
         missing.extend(
             f"{race.id}: {value}"
             for value in value_fn(race)
-            if _normalized_text(value).casefold() not in segment
+            if not _pdf_value_is_present(value, segment)
+        )
+        legacy_badges = {
+            comparison.badge_label
+            for comparison in race.comparisons
+            if comparison.badge_label != "NOT COVERED"
+        }
+        missing.extend(
+            f"{race.id}: legacy Seattle Times badge {badge}"
+            for badge in sorted(legacy_badges)
+            if re.search(
+                r"seattle\s*times\s*"
+                + r"\s*".join(re.escape(word) for word in badge.casefold().split()),
+                segment,
+            )
+            is not None
         )
     return missing
 
@@ -1373,6 +1416,8 @@ class _GuideHTMLParser(HTMLParser):
         self.endorsement_links: dict[tuple[str, str, str], list[set[str]]] = {}
         self.endorsement_group_text: dict[tuple[str, str], list[list[str]]] = {}
         self.display_text: dict[tuple[str, str], list[list[str]]] = {}
+        self.display_accessible_names: dict[tuple[str, str], list[str | None]] = {}
+        self.display_element_roles: dict[tuple[str, str], list[str | None]] = {}
         self._text_parts: list[str] = []
         self._current_race_id: str | None = None
         self._current_endorsement_key: tuple[tuple[str, str, str], int] | None = None
@@ -1421,6 +1466,8 @@ class _GuideHTMLParser(HTMLParser):
             key = (self._current_race_id, display_role)
             occurrences = self.display_text.setdefault(key, [])
             occurrences.append([])
+            self.display_accessible_names.setdefault(key, []).append(attributes.get("aria-label"))
+            self.display_element_roles.setdefault(key, []).append(attributes.get("role"))
             self._current_display_role = (key, len(occurrences) - 1)
             self._display_role_tag = tag
         href = attributes.get("href")

@@ -237,18 +237,54 @@ def test_bundle_is_deterministic_reconstructable_and_complete(tmp_path: Path) ->
 
 
 @pytest.mark.parametrize(
-    ("status", "badge_label", "candidate_labels", "voter_label", "voter_tone"),
+    (
+        "status",
+        "badge_label",
+        "candidate_labels",
+        "voter_label",
+        "voter_tone",
+        "accessible_label",
+    ),
     [
-        ("agrees", "AGREES", ["Candidate A"], "Candidate A", "agrees"),
-        ("differs", "DIFFERENT PICK", ["Candidate B"], "Candidate B", "differs"),
-        ("no_endorsement", "NO PICK", [], "NOT COVERED", "not_covered"),
-        ("not_covered", "NOT COVERED", [], "NOT COVERED", "not_covered"),
+        (
+            "agrees",
+            "AGREES",
+            ["Candidate A"],
+            "Candidate A",
+            "agrees",
+            "Seattle Times agrees with consensus: Candidate A",
+        ),
+        (
+            "differs",
+            "DIFFERENT PICK",
+            ["Candidate B"],
+            "Candidate B",
+            "differs",
+            "Seattle Times endorses a different choice: Candidate B",
+        ),
+        (
+            "no_endorsement",
+            "NO PICK",
+            [],
+            "NOT COVERED",
+            "not_covered",
+            "Seattle Times made no endorsement",
+        ),
+        (
+            "not_covered",
+            "NOT COVERED",
+            [],
+            "NOT COVERED",
+            "not_covered",
+            "Seattle Times: not covered",
+        ),
         (
             "no_consensus",
             "NO PROGRESSIVE CONSENSUS",
             ["Candidate C"],
             "Candidate C",
             "neutral",
+            "Seattle Times endorses Candidate C; progressive sources have no consensus",
         ),
     ],
 )
@@ -258,6 +294,7 @@ def test_comparison_has_concise_voter_presentation(
     candidate_labels: list[str],
     voter_label: str,
     voter_tone: str,
+    accessible_label: str,
 ) -> None:
     comparison = PublicationComparison.model_validate(
         {
@@ -271,7 +308,7 @@ def test_comparison_has_concise_voter_presentation(
 
     assert comparison.voter_label == voter_label
     assert comparison.voter_tone == voter_tone
-    assert comparison.voter_accessible_label.startswith("Seattle Times")
+    assert comparison.voter_accessible_label == accessible_label
 
 
 def test_methodology_publishes_possible_overlap_without_deduplicating(tmp_path: Path) -> None:

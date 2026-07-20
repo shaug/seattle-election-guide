@@ -179,6 +179,8 @@ class PublicationComparison(PublicationModel):
             return (
                 f"Seattle Times endorses {self.voter_label}; progressive sources have no consensus"
             )
+        if self.status == "no_endorsement":
+            return "Seattle Times made no endorsement"
         return "Seattle Times: not covered"
 
 

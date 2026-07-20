@@ -71,7 +71,7 @@
             {% endif %}
             <p class="support-line" data-display-role="support">{{ race.support_summary }}</p>
             {% for comparison in race.comparisons %}
-            <p class="comparison comparison-{{ comparison.voter_tone }}"
+            <p class="comparison comparison-{{ comparison.voter_tone }}" role="group"
               aria-label="{{ comparison.voter_accessible_label }}" data-display-role="comparison">
               <span>Seattle Times</span>
               <strong>{{ comparison.voter_label }}</strong>

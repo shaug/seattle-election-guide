@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sys
+from collections.abc import Callable
 from pathlib import Path
 from stat import S_IMODE
 from typing import cast
@@ -12,7 +13,11 @@ from pypdf import PdfReader, PdfWriter
 from pypdf.generic import NameObject, TextStringObject
 
 from election_guide.publication import build_publication_bundle
-from election_guide.publication.models import PublicationViewModel
+from election_guide.publication.models import (
+    PublicationComparison,
+    PublicationRace,
+    PublicationViewModel,
+)
 from election_guide.rendering import (
     build_rendered_guide,
     read_rendering_configuration,
@@ -21,7 +26,9 @@ from election_guide.rendering import (
 )
 from election_guide.rendering.models import RenderingValidationReport
 from election_guide.rendering.renderer import (
+    _detailed_pdf_race_values,  # pyright: ignore[reportPrivateUsage]
     _missing_pdf_race_values,  # pyright: ignore[reportPrivateUsage]
+    _pdf_race_core_values,  # pyright: ignore[reportPrivateUsage]
     _pdf_race_display_values,  # pyright: ignore[reportPrivateUsage]
     _render_pdf,  # pyright: ignore[reportPrivateUsage]
     _trim_trailing_blank_pages,  # pyright: ignore[reportPrivateUsage]
@@ -229,6 +236,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     comparisons = [comparison for race in races for comparison in race.comparisons]
     for comparison in comparisons:
         assert f"comparison-{comparison.voter_tone}" in html
+        assert f'class="comparison comparison-{comparison.voter_tone}" role="group"' in html
         assert f'aria-label="{comparison.voter_accessible_label}"' in html
         assert f"<strong>{comparison.voter_label}</strong>" in html
         assert (f"print-times-pick print-times-pick-{comparison.voter_tone}") in html
@@ -312,6 +320,75 @@ def test_pdf_result_header_cannot_be_masked_by_comparison_text(tmp_path: Path) -
     missing = _missing_pdf_race_values([race], misleading_text, _pdf_race_display_values)
 
     assert f"{race.id}: ordered race result header" in missing
+
+
+@pytest.mark.parametrize(
+    "value_fn",
+    (_pdf_race_display_values, _pdf_race_core_values, _detailed_pdf_race_values),
+)
+@pytest.mark.parametrize(
+    ("status", "badge_label", "candidate_labels"),
+    (
+        ("agrees", "AGREES", ["Candidate A"]),
+        ("differs", "DIFFERENT PICK", ["No"]),
+        ("no_endorsement", "NO PICK", []),
+        ("not_covered", "NOT COVERED", []),
+    ),
+)
+def test_pdf_comparison_validation_requires_compound_chip_and_rejects_legacy_badges(
+    tmp_path: Path,
+    value_fn: Callable[[PublicationRace], list[str]],
+    status: str,
+    badge_label: str,
+    candidate_labels: list[str],
+) -> None:
+    race = next(
+        race
+        for section in _view_model(tmp_path).sections
+        for race in section.races
+        if race.recommendation_candidate_labels
+    ).model_copy(deep=True)
+    rendered_candidate_labels = (
+        race.recommendation_candidate_labels if status == "agrees" else candidate_labels
+    )
+    rendered_candidate_ids = (
+        race.recommendation_candidate_ids
+        if status == "agrees"
+        else [f"comparison-candidate-{index}" for index, _ in enumerate(rendered_candidate_labels)]
+    )
+    comparison = PublicationComparison.model_validate(
+        {
+            "source_id": race.comparisons[0].source_id,
+            "status": status,
+            "badge_label": badge_label,
+            "candidate_ids": rendered_candidate_ids,
+            "candidate_labels": rendered_candidate_labels,
+        }
+    )
+    race.comparisons = [comparison]
+    expected_text = " ".join(value_fn(race))
+    compound = f"Seattle Times {comparison.voter_label}"
+
+    assert _missing_pdf_race_values([race], expected_text, value_fn) == []
+
+    wrong_chip_text = expected_text.replace(compound, "Seattle Times Wrong pick", 1)
+    wrong_chip_missing = _missing_pdf_race_values([race], wrong_chip_text, value_fn)
+    assert f"{race.id}: {compound}" in wrong_chip_missing
+
+    if comparison.voter_label == "No":
+        not_covered_text = expected_text.replace(compound, "Seattle Times NOT COVERED", 1)
+        not_covered_missing = _missing_pdf_race_values([race], not_covered_text, value_fn)
+        assert f"{race.id}: {compound}" in not_covered_missing
+
+    if badge_label != "NOT COVERED":
+        legacy_text = expected_text.replace(
+            compound,
+            f"Seattle Times {badge_label} {comparison.voter_label}",
+            1,
+        )
+        legacy_missing = _missing_pdf_race_values([race], legacy_text, value_fn)
+        assert f"{race.id}: {compound}" in legacy_missing
+        assert f"{race.id}: legacy Seattle Times badge {badge_label}" in legacy_missing
 
 
 def test_nonempty_render_destination_is_preserved(tmp_path: Path) -> None:
@@ -628,6 +705,39 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
             check for check in conflicting_report.checks if check.id == "html-display-values"
         )
         assert not conflicting_check.passed
+
+    accessible_race = next(race for race in races if race.comparisons)
+    accessible_comparison = accessible_race.comparisons[0]
+    accessible_html = rendered.html_path.read_text(encoding="utf-8")
+    for index, (original, replacement) in enumerate(
+        (
+            (
+                f'aria-label="{accessible_comparison.voter_accessible_label}"',
+                'aria-label="Seattle Times comparison"',
+            ),
+            ('role="group"', 'role="presentation"'),
+        )
+    ):
+        assert original in accessible_html
+        broken_accessibility_html = tmp_path / f"broken-comparison-accessibility-{index}.html"
+        broken_accessibility_html.write_text(
+            accessible_html.replace(original, replacement, 1),
+            encoding="utf-8",
+        )
+        broken_accessibility_report = validate_rendered_guide(
+            view_model,
+            read_rendering_configuration(RENDERING_CONFIG),
+            broken_accessibility_html,
+            rendered.pdf_path,
+            rendered.page_images,
+            rendered.screenshots,
+        )
+        broken_accessibility_check = next(
+            check
+            for check in broken_accessibility_report.checks
+            if check.id == "html-display-values"
+        )
+        assert not broken_accessibility_check.passed
 
     race_for_masking = next(race for race in races if race.recommendation_candidate_labels)
     masked_pdf_html = tmp_path / "masked-pdf.html"
