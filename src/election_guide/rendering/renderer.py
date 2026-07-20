@@ -1267,14 +1267,7 @@ def _html_semantic_values(race: PublicationRace) -> dict[str, list[str]]:
         "share": ["N/A" if race.percentage_whole is None else race.percentage_label],
         "support": [race.support_summary],
         "comparison": [
-            " ".join(
-                [
-                    "Seattle Times",
-                    comparison.badge_label,
-                    " / ".join(comparison.candidate_labels),
-                ]
-            ).strip()
-            for comparison in race.comparisons
+            f"Seattle Times {comparison.voter_label}" for comparison in race.comparisons
         ],
         "insufficient-warning": (
             ["Too few explicit endorsements to assess consensus reliably."]
@@ -1290,11 +1283,7 @@ def _pdf_race_display_values(race: PublicationRace) -> list[str]:
         race.recommendation_label,
         "N/A" if race.percentage_whole is None else race.percentage_label,
         race.support_summary,
-        *(
-            value
-            for comparison in race.comparisons
-            for value in (comparison.badge_label, *comparison.candidate_labels)
-        ),
+        *(value for comparison in race.comparisons for value in (comparison.voter_label,)),
         *_concise_warning_labels(race),
     ]
 
@@ -1304,11 +1293,7 @@ def _pdf_race_core_values(race: PublicationRace) -> list[str]:
         race.race_label,
         race.recommendation_label,
         "N/A" if race.percentage_whole is None else race.percentage_label,
-        *(
-            value
-            for comparison in race.comparisons
-            for value in (comparison.badge_label, *comparison.candidate_labels)
-        ),
+        *(value for comparison in race.comparisons for value in (comparison.voter_label,)),
         *(_concise_warning_labels(race)[:1]),
     ]
 
@@ -1319,11 +1304,7 @@ def _detailed_pdf_race_values(race: PublicationRace) -> list[str]:
         race.recommendation_label,
         "N/A" if race.percentage_whole is None else race.percentage_label,
         race.support_summary,
-        *(
-            value
-            for comparison in race.comparisons
-            for value in (comparison.badge_label, *comparison.candidate_labels)
-        ),
+        *(value for comparison in race.comparisons for value in (comparison.voter_label,)),
         *(
             ["Too few explicit endorsements to assess consensus reliably."]
             if race.grade == "Insufficient"

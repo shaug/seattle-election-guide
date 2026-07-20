@@ -6,6 +6,10 @@ they do not recompute consensus or presentation labels. Print text has a configu
 If the complete content cannot fit at that floor, the renderer emits a compact two-page summary
 plus a longer detailed PDF instead of shrinking or clipping text.
 
+Seattle Times comparisons use one right-aligned result chip: a green candidate or choice agrees
+with the consensus, amber identifies a different pick, and `NOT COVERED` means no endorsement.
+The canonical comparison status and legacy badge label remain available in audit exports.
+
 ## Requirements
 
 - Chrome or Chromium. Set `CHROME_PATH` or pass `--chrome-path` when it is not discoverable.

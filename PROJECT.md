@@ -1116,20 +1116,17 @@ Use compact cards or clearly separated rows.
 
 Optimize for a voter scanning the page while filling out a ballot.
 
-## 16.3 Seattle Times badges
+## 16.3 Seattle Times comparison chips
 
 Use background color and text together. Never rely on color alone.
 
-States:
+Display the Seattle Times candidate or position as the chip itself:
 
-- `AGREES` — green or teal chip;
-- `DIFFERENT PICK` — amber or orange chip;
-- `NO PICK` — neutral gray chip;
-- `NOT COVERED` — very light neutral chip.
+- green or teal candidate chip — agrees with the consensus choice;
+- amber or brown candidate chip — endorses a different choice;
+- `NOT COVERED` neutral chip — no Seattle Times endorsement for the race or measure.
 
-Display the Seattle Times candidate or position within or adjacent to the chip.
-
-Do not redundantly place `AGREES` and `DIFFERS` in a separate text column.
+Right-align the chip and do not add redundant `AGREES`, `DIFFERENT PICK`, or `NO PICK` text.
 
 ## 16.4 Consensus presentation
 

@@ -213,6 +213,9 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "View endorsements" in html
     assert "Consensus among endorsers" in html
     assert "Seattle Times" in html
+    assert ">AGREES<" not in html
+    assert ">DIFFERENT PICK<" not in html
+    assert ">NO PICK<" not in html
     assert f"{view_model.metadata.captured_source_count} represented sources" in html
     assert f"{view_model.metadata.unavailable_source_count} unavailable" in html
     assert "Coverage note:" not in html
@@ -223,6 +226,13 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert 'class="methodology-panel screen-audit-metadata"' in html
     assert 'class="methodology-panel screen-verification"' in html
     assert configuration.project_url in html
+    comparisons = [comparison for race in races for comparison in race.comparisons]
+    for comparison in comparisons:
+        assert f"comparison-{comparison.voter_tone}" in html
+        assert f'aria-label="{comparison.voter_accessible_label}"' in html
+        assert f"<strong>{comparison.voter_label}</strong>" in html
+        assert (f"print-times-pick print-times-pick-{comparison.voter_tone}") in html
+    assert ".comparison strong { max-width: 72%; margin-left: auto;" in html
 
 
 def test_rendering_configuration_rejects_contract_drift() -> None:
@@ -278,7 +288,7 @@ def test_html_rejects_non_web_evidence_links(tmp_path: Path) -> None:
         render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG))
 
 
-def test_pdf_result_header_cannot_be_masked_by_agreeing_comparison(tmp_path: Path) -> None:
+def test_pdf_result_header_cannot_be_masked_by_comparison_text(tmp_path: Path) -> None:
     race = next(
         race
         for section in _view_model(tmp_path).sections
@@ -290,10 +300,10 @@ def test_pdf_result_header_cannot_be_masked_by_agreeing_comparison(tmp_path: Pat
         (
             race.race_label,
             "Wrong recommendation",
-            race.grade,
             share,
             race.support_summary,
-            "Seattle Times AGREES",
+            "Seattle Times",
+            race.comparisons[0].voter_label,
             race.recommendation_label,
             *race.warning_messages,
         )
@@ -619,17 +629,21 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
         )
         assert not conflicting_check.passed
 
+    race_for_masking = next(race for race in races if race.recommendation_candidate_labels)
     masked_pdf_html = tmp_path / "masked-pdf.html"
     masked_html_text = rendered.html_path.read_text(encoding="utf-8").replace(
-        f"<strong>{race_with_alternative.recommendation_label}</strong>",
+        f"<strong>{race_for_masking.recommendation_label}</strong>",
         "<strong>Wrong recommendation</strong>",
         1,
     )
-    comparison = race_with_alternative.comparisons[0]
-    assert comparison.candidate_labels
+    comparison = race_for_masking.comparisons[0]
+    comparison_element = (
+        f'<b class="print-times-pick print-times-pick-{comparison.voter_tone}">'
+        f"{comparison.voter_label}</b>"
+    )
     masked_html_text = masked_html_text.replace(
-        (f"<b>Times: {comparison.badge_label}</b>\n {' / '.join(comparison.candidate_labels)}"),
-        f"<b>Times: AGREES</b>\n {race_with_alternative.recommendation_label}",
+        comparison_element,
+        comparison_element.replace("</b>", f" / {race_for_masking.recommendation_label}</b>"),
         1,
     )
     masked_pdf_html.write_text(masked_html_text, encoding="utf-8")

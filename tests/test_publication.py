@@ -26,7 +26,11 @@ from election_guide.normalization.records import (
 from election_guide.publication import build_publication_bundle, write_publication_bundle
 from election_guide.publication import builder as publication_builder
 from election_guide.publication.builder import ARTIFACT_NAMES
-from election_guide.publication.models import PublicationViewModel, SourceCell
+from election_guide.publication.models import (
+    PublicationComparison,
+    PublicationViewModel,
+    SourceCell,
+)
 from election_guide.scoring import score_dataset
 from election_guide.serialization import canonical_json_bytes
 from tests.test_scoring import (
@@ -230,6 +234,44 @@ def test_bundle_is_deterministic_reconstructable_and_complete(tmp_path: Path) ->
     endorsement.evidence_locator = None
     with pytest.raises(ValidationError, match="explicit endorsement count"):
         PublicationViewModel.model_validate(mutated.model_dump(mode="json"))
+
+
+@pytest.mark.parametrize(
+    ("status", "badge_label", "candidate_labels", "voter_label", "voter_tone"),
+    [
+        ("agrees", "AGREES", ["Candidate A"], "Candidate A", "agrees"),
+        ("differs", "DIFFERENT PICK", ["Candidate B"], "Candidate B", "differs"),
+        ("no_endorsement", "NO PICK", [], "NOT COVERED", "not_covered"),
+        ("not_covered", "NOT COVERED", [], "NOT COVERED", "not_covered"),
+        (
+            "no_consensus",
+            "NO PROGRESSIVE CONSENSUS",
+            ["Candidate C"],
+            "Candidate C",
+            "neutral",
+        ),
+    ],
+)
+def test_comparison_has_concise_voter_presentation(
+    status: str,
+    badge_label: str,
+    candidate_labels: list[str],
+    voter_label: str,
+    voter_tone: str,
+) -> None:
+    comparison = PublicationComparison.model_validate(
+        {
+            "source_id": COMPARISON_SOURCE_ID,
+            "status": status,
+            "badge_label": badge_label,
+            "candidate_ids": [f"candidate-{index}" for index, _ in enumerate(candidate_labels)],
+            "candidate_labels": candidate_labels,
+        }
+    )
+
+    assert comparison.voter_label == voter_label
+    assert comparison.voter_tone == voter_tone
+    assert comparison.voter_accessible_label.startswith("Seattle Times")
 
 
 def test_methodology_publishes_possible_overlap_without_deduplicating(tmp_path: Path) -> None:

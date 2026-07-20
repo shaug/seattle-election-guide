@@ -45,12 +45,12 @@ a { color: #075d75; text-underline-offset: .15em; }
 .support-line { margin: 0; color: #364152; font-size: .85rem; }
 .comparison { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; margin: 0; padding: .4rem .55rem; border-left: .25rem solid #7b8794; background: #f2f4f7; font-size: .76rem; }
 .comparison span { font-weight: 700; }
-.comparison strong { padding: .12rem .35rem; border-radius: .2rem; background: #5b6570; color: var(--white); font-size: .68rem; letter-spacing: .04em; }
-.comparison em { margin-left: auto; font-style: normal; font-weight: 700; }
+.comparison strong { max-width: 72%; margin-left: auto; padding: .16rem .4rem; border-radius: .2rem; background: #5b6570; color: var(--white); font-size: .7rem; line-height: 1.2; text-align: right; overflow-wrap: anywhere; }
 .comparison-agrees { border-color: var(--teal); }
 .comparison-agrees strong { background: var(--teal); }
 .comparison-differs { border-color: var(--amber); }
 .comparison-differs strong { background: #a45f00; }
+.comparison-not_covered strong { background: #5b6570; }
 .insufficient-note { padding: .55rem .65rem; border-left: .25rem solid var(--red); background: #fff1ef; color: #72231e; font-size: .78rem; }
 details { margin-top: auto; border-top: 1px solid var(--line); padding-top: .65rem; }
 summary { cursor: pointer; color: #075d75; font-weight: 800; }
@@ -78,7 +78,6 @@ summary { cursor: pointer; color: #075d75; font-weight: 800; }
   .race-card-head > div { min-width: 0; }
   .race-card-head { flex-direction: column; align-items: stretch; }
   .consensus-lockup { flex-basis: auto; align-items: flex-start; text-align: left; }
-  .comparison em { width: 100%; margin-left: 0; }
   .insufficient-note { overflow-wrap: anywhere; }
 }
 
@@ -107,6 +106,12 @@ summary { cursor: pointer; color: #075d75; font-weight: 800; }
   .print-race-context { display: flex; justify-content: space-between; gap: .035in; overflow: hidden; margin-top: .01in; color: #364152; font-size: 6pt; line-height: 1; white-space: nowrap; }
   .print-race-context span { overflow: hidden; text-overflow: ellipsis; }
   .print-race-context span:last-child { flex-shrink: 0; }
+  .print-comparison { display: inline-flex; align-items: center; justify-content: flex-end; gap: .025in; min-width: 0; }
+  .print-comparison > span { font-weight: 700; }
+  .print-times-pick { max-width: 1.35in; overflow: hidden; padding: 0 .025in; border-radius: .02in; background: #5b6570; color: white; font-size: 6pt; line-height: 1; text-align: right; text-overflow: ellipsis; }
+  .print-times-pick-agrees { background: var(--teal); }
+  .print-times-pick-differs { background: #a45f00; }
+  .print-times-pick-not_covered { background: #5b6570; }
   .print-compact-warning, .compact-method-note { display: none; }
   .print-race-notes { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .02in; margin-top: .008in; color: #364152; font-size: 6pt; line-height: 1.08; }
   .print-race-notes span { min-width: 0; }

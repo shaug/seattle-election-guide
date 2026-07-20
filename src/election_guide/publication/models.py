@@ -153,6 +153,34 @@ class PublicationComparison(PublicationModel):
             raise ValueError("comparison badge does not match its status")
         return self
 
+    @property
+    def voter_label(self) -> str:
+        if self.candidate_labels:
+            return " / ".join(self.candidate_labels)
+        return "NOT COVERED"
+
+    @property
+    def voter_tone(self) -> Literal["agrees", "differs", "not_covered", "neutral"]:
+        if self.status == "agrees":
+            return "agrees"
+        if self.status == "differs":
+            return "differs"
+        if self.status in {"no_endorsement", "not_covered"}:
+            return "not_covered"
+        return "neutral"
+
+    @property
+    def voter_accessible_label(self) -> str:
+        if self.status == "agrees":
+            return f"Seattle Times agrees with consensus: {self.voter_label}"
+        if self.status == "differs":
+            return f"Seattle Times endorses a different choice: {self.voter_label}"
+        if self.status == "no_consensus":
+            return (
+                f"Seattle Times endorses {self.voter_label}; progressive sources have no consensus"
+            )
+        return "Seattle Times: not covered"
+
 
 class PublicationAlternative(PublicationModel):
     candidate_id: str

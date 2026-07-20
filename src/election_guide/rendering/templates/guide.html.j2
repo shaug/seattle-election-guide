@@ -71,10 +71,10 @@
             {% endif %}
             <p class="support-line" data-display-role="support">{{ race.support_summary }}</p>
             {% for comparison in race.comparisons %}
-            <p class="comparison comparison-{{ comparison.status }}" data-display-role="comparison">
+            <p class="comparison comparison-{{ comparison.voter_tone }}"
+              aria-label="{{ comparison.voter_accessible_label }}" data-display-role="comparison">
               <span>Seattle Times</span>
-              <strong>{{ comparison.badge_label }}</strong>
-              {% if comparison.candidate_labels %}<em>{{ comparison.candidate_labels | join(' / ') }}</em>{% endif %}
+              <strong>{{ comparison.voter_label }}</strong>
             </p>
             {% endfor %}
             {% if race.grade == 'Insufficient' %}
@@ -180,8 +180,9 @@
               <span style="width: {{ race.percentage_whole }}%"></span></div>{% endif %}
             {% set print_warnings = concise_warning_labels(race) %}
             <div class="print-race-context"><span class="print-support">{{ race.support_summary }}</span>
-              {% for comparison in race.comparisons %}<span class="print-comparison"><b>Times: {{ comparison.badge_label }}</b>
-                {% if comparison.candidate_labels %} {{ comparison.candidate_labels | join(' / ') }}{% endif %}</span>{% endfor %}
+              {% for comparison in race.comparisons %}<span class="print-comparison">
+                <span>Seattle Times</span><b class="print-times-pick print-times-pick-{{ comparison.voter_tone }}">{{ comparison.voter_label }}</b>
+              </span>{% endfor %}
               {% if print_warnings %}<b class="print-compact-warning">{{ print_warnings[0] }}</b>{% endif %}
             </div>
             {% if print_warnings %}
@@ -237,8 +238,8 @@
             {% for note in guide.methodology.interpretation_notes %}<p>{{ note }}</p>{% endfor %}
           </div>
           <p class="compact-method-note">Full interpretation notes are in the detailed edition.</p>
-          <div class="times-key"><b>Seattle Times badges:</b> AGREES, DIFFERENT PICK, NO PICK,
-            NOT COVERED, or NO PROGRESSIVE CONSENSUS. Text always accompanies color.</div>
+          <div class="times-key"><b>Seattle Times comparison:</b> a green candidate chip means
+            the same choice; amber means a different choice; NOT COVERED means no endorsement.</div>
         </section>
         <section>
           <h2>Limitations</h2>
