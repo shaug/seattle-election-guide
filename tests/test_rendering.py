@@ -49,40 +49,40 @@ PROJECT_ROOT = Path(__file__).parent.parent
 RENDERING_CONFIG = PROJECT_ROOT / "config/rendering/pdf.yaml"
 DARWIN_VISUAL_BASELINES = {
     "pdf-page-1": [
-        0.139,
-        0.125,
-        0.063,
-        0.039,
-        0.090,
-        0.076,
+        0.173,
+        0.166,
+        0.131,
+        0.084,
         0.122,
-        0.068,
-        0.086,
-        0.072,
-        0.116,
+        0.120,
+        0.169,
+        0.101,
+        0.119,
+        0.111,
+        0.169,
+        0.097,
+        0.071,
+        0.073,
+        0.103,
         0.069,
-        0.038,
-        0.037,
-        0.069,
-        0.043,
     ],
     "pdf-page-2": [
-        0.094,
-        0.081,
-        0.054,
+        0.085,
+        0.060,
+        0.058,
         0.029,
-        0.050,
-        0.035,
-        0.041,
-        0.020,
-        0.089,
-        0.092,
-        0.089,
-        0.051,
-        0.122,
-        0.137,
-        0.135,
-        0.084,
+        0.073,
+        0.061,
+        0.090,
+        0.034,
+        0.000,
+        0.000,
+        0.000,
+        0.000,
+        0.246,
+        0.288,
+        0.289,
+        0.174,
     ],
     "desktop": [
         0.519,
@@ -91,72 +91,72 @@ DARWIN_VISUAL_BASELINES = {
         0.593,
         0.357,
         0.482,
-        0.498,
+        0.497,
         0.366,
-        0.094,
-        0.065,
-        0.082,
-        0.058,
-        0.075,
-        0.060,
-        0.050,
-        0.047,
+        0.085,
+        0.059,
+        0.072,
+        0.052,
+        0.084,
+        0.068,
+        0.069,
+        0.046,
     ],
     "mobile": [
         0.723,
         0.692,
-        0.745,
-        0.816,
-        0.238,
-        0.216,
-        0.197,
-        0.200,
-        0.120,
-        0.122,
-        0.082,
-        0.034,
-        0.105,
-        0.089,
-        0.058,
-        0.026,
+        0.752,
+        0.818,
+        0.293,
+        0.277,
+        0.269,
+        0.276,
+        0.106,
+        0.088,
+        0.097,
+        0.047,
+        0.086,
+        0.088,
+        0.093,
+        0.044,
     ],
 }
 LINUX_VISUAL_BASELINES = {
     "pdf-page-1": [
-        0.133,
-        0.119,
-        0.058,
-        0.038,
+        0.171,
+        0.166,
+        0.128,
         0.082,
-        0.075,
-        0.114,
+        0.118,
+        0.119,
+        0.165,
+        0.101,
+        0.115,
+        0.108,
+        0.166,
+        0.097,
         0.068,
-        0.078,
-        0.071,
-        0.110,
-        0.068,
-        0.034,
-        0.037,
-        0.065,
-        0.043,
+        0.072,
+        0.103,
+        0.069,
     ],
     "pdf-page-2": [
-        0.090,
-        0.073,
-        0.052,
+        0.081,
+        0.059,
+        0.056,
         0.029,
-        0.047,
-        0.035,
-        0.038,
-        0.020,
-        0.088,
-        0.092,
+        0.073,
+        0.059,
         0.086,
-        0.051,
-        0.122,
-        0.137,
-        0.135,
-        0.084,
+        0.034,
+        0.000,
+        0.000,
+        0.000,
+        0.000,
+        0.246,
+        0.289,
+        0.289,
+        0.174,
     ],
     "desktop": [
         0.525,
@@ -165,34 +165,34 @@ LINUX_VISUAL_BASELINES = {
         0.593,
         0.478,
         0.692,
-        0.712,
+        0.710,
         0.514,
-        0.073,
+        0.071,
         0.046,
-        0.056,
-        0.050,
-        0.072,
-        0.050,
-        0.054,
+        0.059,
         0.043,
+        0.071,
+        0.052,
+        0.046,
+        0.050,
     ],
     "mobile": [
         0.740,
         0.725,
-        0.784,
-        0.825,
-        0.234,
-        0.213,
-        0.197,
-        0.200,
-        0.116,
-        0.110,
-        0.072,
-        0.034,
-        0.101,
+        0.788,
+        0.827,
+        0.292,
+        0.281,
+        0.269,
+        0.276,
+        0.099,
+        0.077,
+        0.090,
+        0.042,
         0.081,
-        0.047,
-        0.026,
+        0.081,
+        0.086,
+        0.041,
     ],
 }
 APPROVED_VISUAL_BASELINES_BY_PLATFORM = {
@@ -241,6 +241,15 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
         assert f"<strong>{comparison.voter_label}</strong>" in html
         assert (f"print-times-pick print-times-pick-{comparison.voter_tone}") in html
     assert ".comparison strong { max-width: 72%; margin-left: auto;" in html
+    assert html.count('class="method-column"') == 2
+    assert ".print-races { display: grid; grid-template-columns: 1fr 1fr;" in html
+    assert html.count('class="print-race-column"') == 2
+    assert "State Legislature — continued" in html
+    assert ".print-race:nth-of-type(even) { background: #f2f6f8; }" in html
+    assert "font: 800 20pt/.95 Arial, Helvetica, sans-serif" in html
+    assert '<div class="print-guide">' in html
+    assert '<div class="print-guide" aria-hidden="true">' not in html
+    assert "font: 800 8.9pt/1 Arial, Helvetica, sans-serif" in html
 
 
 def test_rendering_configuration_rejects_contract_drift() -> None:
@@ -407,7 +416,7 @@ def test_nonempty_render_destination_is_preserved(tmp_path: Path) -> None:
 
 
 def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path: Path) -> None:
-    view_model = _view_model(tmp_path / "fixture")
+    view_model = _visual_view_model(_view_model(tmp_path / "fixture"))
     view_model_path = tmp_path / "publication_view_model.json"
     view_model_path.write_bytes(canonical_json_bytes(view_model.model_dump(mode="json")))
 
@@ -425,6 +434,10 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     assert len(rendered.screenshots) == 2
     report = RenderingValidationReport.model_validate(read_json(rendered.validation_path))
     assert report == rendered.validation_report
+    tagged_structure_check = next(
+        check for check in report.checks if check.id == "pdf-tagged-structure"
+    )
+    assert tagged_structure_check.passed
     vacuous = report.model_dump(mode="json")
     vacuous.update(
         {
@@ -741,9 +754,18 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
 
     race_for_masking = next(race for race in races if race.recommendation_candidate_labels)
     masked_pdf_html = tmp_path / "masked-pdf.html"
-    masked_html_text = rendered.html_path.read_text(encoding="utf-8").replace(
-        f"<strong>{race_for_masking.recommendation_label}</strong>",
-        "<strong>Wrong recommendation</strong>",
+    print_result_element = (
+        '<div class="print-race-result">\n'
+        f"        <strong>{race_for_masking.recommendation_label}</strong>"
+    )
+    rendered_html_text = rendered.html_path.read_text(encoding="utf-8")
+    assert print_result_element in rendered_html_text
+    masked_html_text = rendered_html_text.replace(
+        print_result_element,
+        print_result_element.replace(
+            f"<strong>{race_for_masking.recommendation_label}</strong>",
+            "<strong>Wrong recommendation</strong>",
+        ),
         1,
     )
     comparison = race_for_masking.comparisons[0]
@@ -820,6 +842,38 @@ def test_dense_concise_content_still_fits_two_pages(tmp_path: Path) -> None:
     assert rendered.detailed_pdf_path is None
     assert rendered.validation_report.detailed_page_count == 0
     assert rendered.detailed_page_images == []
+
+
+def test_long_comparison_choice_is_not_truncated(tmp_path: Path) -> None:
+    view_model = _visual_view_model(_view_model(tmp_path / "fixture"))
+    race = next(race for section in view_model.sections for race in section.races)
+    long_label = "Alexandria Ocasio-Cortez-Washington"
+    race.comparisons = [
+        PublicationComparison.model_validate(
+            {
+                "source_id": race.comparisons[0].source_id,
+                "status": "differs",
+                "badge_label": "DIFFERENT PICK",
+                "candidate_ids": ["alexandria-ocasio-cortez-washington"],
+                "candidate_labels": [long_label],
+            }
+        )
+    ]
+    view_model = PublicationViewModel.model_validate(view_model.model_dump(mode="json"))
+    view_model_path = tmp_path / "publication_view_model.json"
+    view_model_path.write_bytes(canonical_json_bytes(view_model.model_dump(mode="json")))
+
+    rendered = build_rendered_guide(
+        view_model_path,
+        RENDERING_CONFIG,
+        tmp_path / "rendered",
+    )
+
+    assert rendered.validation_report.passed
+    pdf_text = " ".join(
+        " ".join((page.extract_text() or "").split()) for page in PdfReader(rendered.pdf_path).pages
+    )
+    assert long_label in pdf_text
 
 
 def test_detailed_pdf_trims_only_rendered_trailing_blank_pages(tmp_path: Path) -> None:
@@ -918,6 +972,46 @@ def _dense_view_model(view_model: PublicationViewModel) -> PublicationViewModel:
     return PublicationViewModel.model_validate(
         view_model.model_copy(update={"sections": sections}).model_dump(mode="json")
     )
+
+
+def _visual_view_model(view_model: PublicationViewModel) -> PublicationViewModel:
+    visual = _dense_view_model(view_model)
+    races = [race for section in visual.sections for race in section.races]
+    source_id = races[0].comparisons[0].source_id
+    races[0].comparisons = [
+        PublicationComparison.model_validate(
+            {
+                "source_id": source_id,
+                "status": "agrees",
+                "badge_label": "AGREES",
+                "candidate_ids": races[0].recommendation_candidate_ids,
+                "candidate_labels": races[0].recommendation_candidate_labels,
+            }
+        )
+    ]
+    races[1].comparisons = [
+        PublicationComparison.model_validate(
+            {
+                "source_id": source_id,
+                "status": "differs",
+                "badge_label": "DIFFERENT PICK",
+                "candidate_ids": ["toshiko-grace-hasegawa"],
+                "candidate_labels": ["Toshiko Grace Hasegawa"],
+            }
+        )
+    ]
+    races[2].comparisons = [
+        PublicationComparison.model_validate(
+            {
+                "source_id": source_id,
+                "status": "not_covered",
+                "badge_label": "NOT COVERED",
+                "candidate_ids": [],
+                "candidate_labels": [],
+            }
+        )
+    ]
+    return PublicationViewModel.model_validate(visual.model_dump(mode="json"))
 
 
 def _coarse_visual_signature(path: Path) -> list[float]:
