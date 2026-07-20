@@ -389,6 +389,10 @@ def test_pdf_comparison_validation_requires_compound_chip_and_rejects_legacy_bad
 
     assert _missing_pdf_race_values([race], expected_text, value_fn) == []
 
+    prefix_collision_text = expected_text.replace(compound, f"{compound}body", 1)
+    prefix_collision_missing = _missing_pdf_race_values([race], prefix_collision_text, value_fn)
+    assert f"{race.id}: {compound}" in prefix_collision_missing
+
     wrong_chip_text = expected_text.replace(compound, "Times differs: Wrong pick", 1)
     wrong_chip_missing = _missing_pdf_race_values([race], wrong_chip_text, value_fn)
     assert f"{race.id}: {compound}" in wrong_chip_missing
@@ -858,13 +862,47 @@ def test_long_comparison_choice_is_not_truncated(tmp_path: Path) -> None:
     view_model = _visual_view_model(_view_model(tmp_path / "fixture"))
     race = next(race for section in view_model.sections for race in section.races)
     long_label = "Alexandria Ocasio-Cortez-Washington"
+    candidate_id = race.recommendation_candidate_ids[0]
+    race.support_leader_candidate_labels = [
+        long_label if item == candidate_id else label
+        for item, label in zip(
+            race.support_leader_candidate_ids,
+            race.support_leader_candidate_labels,
+            strict=True,
+        )
+    ]
+    race.support_leader_label = " / ".join(race.support_leader_candidate_labels)
+    race.recommendation_candidate_labels = [
+        long_label if item == candidate_id else label
+        for item, label in zip(
+            race.recommendation_candidate_ids,
+            race.recommendation_candidate_labels,
+            strict=True,
+        )
+    ]
+    race.recommendation_label = " / ".join(race.recommendation_candidate_labels)
+    for group in race.endorsement_groups:
+        if group.candidate_id == candidate_id:
+            group.candidate_label = long_label
+    for alternative in race.alternatives:
+        if alternative.candidate_id == candidate_id:
+            alternative.candidate_label = long_label
+    for category in race.category_breakdown:
+        for support in category.candidate_support:
+            if support.candidate_id == candidate_id:
+                support.candidate_label = long_label
+    for cell in race.source_cells:
+        cell.candidate_labels = [
+            long_label if item == candidate_id else label
+            for item, label in zip(cell.candidate_ids, cell.candidate_labels, strict=True)
+        ]
     race.comparisons = [
         PublicationComparison.model_validate(
             {
                 "source_id": race.comparisons[0].source_id,
-                "status": "differs",
-                "badge_label": "DIFFERENT PICK",
-                "candidate_ids": ["alexandria-ocasio-cortez-washington"],
+                "status": "agrees",
+                "badge_label": "AGREES",
+                "candidate_ids": [candidate_id],
                 "candidate_labels": [long_label],
             }
         )
@@ -880,10 +918,12 @@ def test_long_comparison_choice_is_not_truncated(tmp_path: Path) -> None:
     )
 
     assert rendered.validation_report.passed
+    assert rendered.validation_report.edition == "concise_plus_detailed"
     pdf_text = " ".join(
         " ".join((page.extract_text() or "").split()) for page in PdfReader(rendered.pdf_path).pages
     )
     assert long_label in pdf_text
+    assert f"{race.explicit_endorsement_count} endorsers" in pdf_text
 
 
 def test_detailed_pdf_trims_only_rendered_trailing_blank_pages(tmp_path: Path) -> None:

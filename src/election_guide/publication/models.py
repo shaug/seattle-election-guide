@@ -178,7 +178,7 @@ class PublicationComparison(PublicationModel):
         if self.status == "no_consensus":
             return f"Times: {self.voter_label}"
         if self.status == "no_endorsement":
-            return "Times: no endorsement"
+            return "Times: not covered"
         return "Times: not covered"
 
     @property

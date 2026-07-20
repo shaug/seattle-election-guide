@@ -173,7 +173,8 @@
         {% for comparison in race.comparisons %}<span class="print-comparison">
           <b class="print-times-pick print-times-pick-{{ comparison.voter_tone }}">{{ comparison.print_label }}</b>
         </span>{% endfor %}
-        <span class="print-support">{{ race.support_summary }}</span>
+        <span class="print-support print-support-full">{{ race.support_summary }}</span>
+        <span class="print-support print-support-compact">{{ race.explicit_endorsement_count }} endorsers</span>
         {% if print_warnings %}<b class="print-compact-warning">{{ print_warnings[0] }}</b>{% endif %}
       </div>
       {% if print_warnings %}
@@ -249,7 +250,7 @@
             <p class="compact-method-note">Full interpretation notes are in the detailed edition.</p>
             <div class="times-key"><b>Seattle Times comparison:</b> green “Times agrees” chips
               show the same choice; amber “Times differs” chips show another choice; a neutral
-              “Times: not covered” chip means no endorsement.</div>
+              “Times: not covered” chip means the captured guide has no Times endorsement.</div>
           </section>
         </div>
         <div class="method-column">

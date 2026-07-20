@@ -111,6 +111,7 @@ summary { cursor: pointer; color: #075d75; font-weight: 800; }
   .print-race-context { display: grid; grid-template-columns: minmax(0, 1fr) var(--print-meter-width); align-items: center; gap: .06in; margin-top: .02in; color: #52606d; font-size: 6.1pt; line-height: 1.05; }
   .print-comparison { display: block; min-width: 0; }
   .print-support { min-width: 0; text-align: right; white-space: nowrap; }
+  .print-support-compact { display: none; }
   .print-times-pick { display: inline-block; max-width: 100%; padding: .014in .045in; border-radius: .07in; background: #65737f; color: white; font-size: 6.1pt; line-height: 1.05; overflow-wrap: anywhere; }
   .print-times-pick-agrees { background: var(--teal); }
   .print-times-pick-differs { background: #a45f00; }
@@ -148,8 +149,11 @@ summary { cursor: pointer; color: #075d75; font-weight: 800; }
   .print-metadata a { color: white; }
 
   html.compact-edition .print-race-notes { display: none; }
-  html.compact-edition .print-support { display: none; }
-  html.compact-edition .print-race-context { grid-template-columns: 1fr; }
+  html.compact-edition { --print-meter-width: 1.25in; }
+  html.compact-edition .print-race-result > strong { font-size: 8.1pt; }
+  html.compact-edition .print-support-full { display: none; }
+  html.compact-edition .print-support-compact { display: block; }
+  html.compact-edition .print-race-context { grid-template-columns: minmax(0, 1fr) var(--print-meter-width); }
   html.compact-edition .print-comparison { max-width: 100%; }
   html.compact-edition .print-times-pick { max-width: 100%; }
   html.compact-edition .print-compact-warning { display: inline; flex-shrink: 0; color: #812b25; font-size: 6pt; }

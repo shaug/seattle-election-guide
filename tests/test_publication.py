@@ -271,7 +271,7 @@ def test_bundle_is_deterministic_reconstructable_and_complete(tmp_path: Path) ->
             [],
             "NOT COVERED",
             "not_covered",
-            "Times: no endorsement",
+            "Times: not covered",
             "Seattle Times made no endorsement",
         ),
         (
