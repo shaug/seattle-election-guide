@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 1099,
+  "canonical_url": "https://www.washingtonbus.org/endorsements",
+  "capture_method": "manual_upload",
+  "content_sha256": "b8b052d46c20c7ee7eef0c0d33eb714f5be5e43ccc3a7af7daf4b498134323b0",
+  "http_status": null,
+  "id": "capture-washington-bus-20260720T110000Z-8b71ce42d231",
+  "media_type": "application/json",
+  "published_at": "2026-06-25",
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://www.washingtonbus.org/endorsements",
+  "retrieved_at": "2026-07-20T11:00:00Z",
+  "schema_version": "1.0",
+  "source_id": "washington-bus",
+  "storage_reference": "sha256/b8/b8b052d46c20c7ee7eef0c0d33eb714f5be5e43ccc3a7af7daf4b498134323b0",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: The Washington Bus",
+  "updated_at": null
+}

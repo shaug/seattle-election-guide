@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 126607,
+  "canonical_url": "https://www.islandssounder.com/2026/07/15/planned-parenthood-advocacy-organizations-in-washington-announce-supreme-court-endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "31b6f49333f6d491eb39e977357b3ee503db27f964b4058f99503ea749fc5252",
+  "http_status": 200,
+  "id": "capture-planned-parenthood-alliance-advocates-20260720T110900Z-7082b531e600",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party publication retained locally for audit and review only.",
+  "requested_url": "https://www.islandssounder.com/2026/07/15/planned-parenthood-advocacy-organizations-in-washington-announce-supreme-court-endorsements/",
+  "retrieved_at": "2026-07-20T11:09:00Z",
+  "schema_version": "1.0",
+  "source_id": "planned-parenthood-alliance-advocates",
+  "storage_reference": "sha256/31/31b6f49333f6d491eb39e977357b3ee503db27f964b4058f99503ea749fc5252",
+  "storage_scope": "local_only",
+  "title": "Planned Parenthood advocacy organizations announce Supreme Court endorsements",
+  "updated_at": null
+}

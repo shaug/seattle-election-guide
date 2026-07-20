@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 163543,
+  "canonical_url": "https://www.11thlddems.org/2026/05/results-of-our-2026-may-endorsements-meeting/",
+  "capture_method": "static_html",
+  "content_sha256": "0bd9e00fae4a62ab2c465271ea80205c71f3d9f178e987fc1d2df20aa0ba1829",
+  "http_status": 200,
+  "id": "capture-11th-district-democrats-20260720T110200Z-e2abfb806561",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party publication retained locally for audit and review only.",
+  "requested_url": "https://www.11thlddems.org/2026/05/results-of-our-2026-may-endorsements-meeting/",
+  "retrieved_at": "2026-07-20T11:02:00Z",
+  "schema_version": "1.0",
+  "source_id": "11th-district-democrats",
+  "storage_reference": "sha256/0b/0bd9e00fae4a62ab2c465271ea80205c71f3d9f178e987fc1d2df20aa0ba1829",
+  "storage_scope": "local_only",
+  "title": "Results of Our 2026 May Endorsements Meeting",
+  "updated_at": null
+}

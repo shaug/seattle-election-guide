@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 617133,
+  "canonical_url": "https://www.washingtonbus.org/endorsements",
+  "capture_method": "image",
+  "content_sha256": "773d3738d3c4a0e112960b73fcd49cd9f120374f0b39bb37e29177d554ef90a2",
+  "http_status": 200,
+  "id": "capture-washington-bus-20260720T110005Z-d15067dd4224",
+  "media_type": "image/png",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party publication retained locally for audit and review only.",
+  "requested_url": "https://www.washingtonbus.org/endorsements",
+  "retrieved_at": "2026-07-20T11:00:05Z",
+  "schema_version": "1.0",
+  "source_id": "washington-bus",
+  "storage_reference": "sha256/77/773d3738d3c4a0e112960b73fcd49cd9f120374f0b39bb37e29177d554ef90a2",
+  "storage_scope": "local_only",
+  "title": "The Washington Bus endorsement card 5",
+  "updated_at": null
+}

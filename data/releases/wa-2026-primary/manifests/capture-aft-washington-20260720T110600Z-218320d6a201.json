@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 5300,
+  "canonical_url": "https://www.aftwa.org/endorsements-and-elections/our-2026-primary-legislative-endorsements",
+  "capture_method": "manual_upload",
+  "content_sha256": "8c02f3b0acd59ceacbb9c3eaabb1bf0df768d4847eadba104b3aaedb7735018d",
+  "http_status": null,
+  "id": "capture-aft-washington-20260720T110600Z-218320d6a201",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://www.aftwa.org/endorsements-and-elections/our-2026-primary-legislative-endorsements",
+  "retrieved_at": "2026-07-20T11:06:00Z",
+  "schema_version": "1.0",
+  "source_id": "aft-washington",
+  "storage_reference": "sha256/8c/8c02f3b0acd59ceacbb9c3eaabb1bf0df768d4847eadba104b3aaedb7735018d",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: AFT Washington",
+  "updated_at": null
+}

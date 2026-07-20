@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 343451,
+  "canonical_url": "https://www.stonewalldemocrats.us/washington",
+  "capture_method": "static_html",
+  "content_sha256": "c0d32922f910af78b189999f040509f4610e9f08c137f6519a6bf1789ed29087",
+  "http_status": 200,
+  "id": "capture-washington-stonewall-democrats-20260720T100002Z-5d82b590efca",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Current official page retained locally to document that no 2026 candidate roster was published at the research cutoff.",
+  "requested_url": "https://www.stonewalldemocrats.us/washington",
+  "retrieved_at": "2026-07-20T10:00:02Z",
+  "schema_version": "1.0",
+  "source_id": "washington-stonewall-democrats",
+  "storage_reference": "sha256/c0/c0d32922f910af78b189999f040509f4610e9f08c137f6519a6bf1789ed29087",
+  "storage_scope": "local_only",
+  "title": "Washington State Stonewall Democrats chapter page",
+  "updated_at": null
+}

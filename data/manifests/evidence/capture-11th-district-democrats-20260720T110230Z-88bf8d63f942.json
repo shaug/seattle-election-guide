@@ -1,0 +1,26 @@
+{
+  "availability": "captured",
+  "browser_required": true,
+  "byte_length": 211907,
+  "canonical_url": "https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=d0dbab092b",
+  "capture_method": "browser",
+  "content_sha256": "0af95809494336300512955043e4636a16299bd2f2467db17aa244c815aaa9f6",
+  "http_status": 200,
+  "id": "capture-11th-district-democrats-20260720T110230Z-88bf8d63f942",
+  "media_type": "image/jpeg",
+  "published_at": null,
+  "redirect_chain": [
+    "https://eepurl.com/M_hQMPvvWT",
+    "https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=d0dbab092b"
+  ],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party publication retained locally for audit and review only.",
+  "requested_url": "https://eepurl.com/M_hQMPvvWT",
+  "retrieved_at": "2026-07-20T11:02:30Z",
+  "schema_version": "1.0",
+  "source_id": "11th-district-democrats",
+  "storage_reference": "sha256/0a/0af95809494336300512955043e4636a16299bd2f2467db17aa244c815aaa9f6",
+  "storage_scope": "local_only",
+  "title": "Results of Our 2026 May Endorsements Meeting newsletter",
+  "updated_at": null
+}

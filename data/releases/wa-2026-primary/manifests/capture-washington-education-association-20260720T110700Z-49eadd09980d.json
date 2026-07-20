@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 2957,
+  "canonical_url": "https://www.washingtonea.org/advocacy/wea-pac/2026-endorsements/",
+  "capture_method": "manual_upload",
+  "content_sha256": "9f1ec393377f764cb43f9dcf2a9967017aba2d6bcdf73860f37106fecdd2b26f",
+  "http_status": null,
+  "id": "capture-washington-education-association-20260720T110700Z-49eadd09980d",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://www.washingtonea.org/advocacy/wea-pac/2026-endorsements/",
+  "retrieved_at": "2026-07-20T11:07:00Z",
+  "schema_version": "1.0",
+  "source_id": "washington-education-association",
+  "storage_reference": "sha256/9f/9f1ec393377f764cb43f9dcf2a9967017aba2d6bcdf73860f37106fecdd2b26f",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: Washington Education Association",
+  "updated_at": "2026-07-13"
+}

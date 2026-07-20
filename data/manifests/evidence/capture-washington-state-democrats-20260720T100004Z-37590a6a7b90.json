@@ -1,0 +1,20 @@
+{
+  "availability": "unavailable",
+  "browser_required": true,
+  "canonical_url": null,
+  "capture_method": "unavailable",
+  "http_status": 403,
+  "id": "capture-washington-state-democrats-20260720T100004Z-37590a6a7b90",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "No third-party candidate list was substituted for an official party publication.",
+  "requested_url": "https://wadems.org/",
+  "retrieved_at": "2026-07-20T10:00:04Z",
+  "schema_version": "1.0",
+  "source_id": "washington-state-democrats",
+  "title": "Washington State Democratic Party official site",
+  "unavailable_reason": "Official site returned HTTP 403 and no official 2026 endorsement publication was located through accessible official-domain search results.",
+  "updated_at": null
+}

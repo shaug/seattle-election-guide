@@ -1,8 +1,8 @@
 # 2026 Primary Source Discovery Report
 
-Panel `wa-2026-primary-default-sources` was frozen at `2026-07-19T23:38:50+00:00` before scoring. The research cutoff is `2026-07-19T23:38:50+00:00`; individual access times are recorded in the machine-readable registry.
+Panel `wa-2026-primary-default-sources` was frozen at `2026-07-20T10:00:00+00:00` before scoring. The research cutoff is `2026-07-20T10:00:00+00:00`; individual access times are recorded in the machine-readable registry.
 
-The preregistration contains **42 proposed sources**: **36 consensus**, **1 comparison**, and **5 excluded**. Discovery found **32 official 2026 publications**, **4 publication gaps**, **3 access-restricted sources**, and **3 conditional organizations that do not publish endorsements**.
+The preregistration contains **42 proposed sources**: **36 consensus**, **1 comparison**, and **5 excluded**. Discovery found **33 official 2026 publications**, **4 publication gaps**, **2 access-restricted sources**, and **3 conditional organizations that do not publish endorsements**.
 
 Search results were discovery leads only. Every link below is an official organization URL; no search snippet or third-party list is endorsement evidence. `not_found` means no official 2026 publication was located, not that the organization made an explicit no-endorsement decision.
 
@@ -36,22 +36,22 @@ Search results were discovery leads only. Every link below is an official organi
 | Washington Conservation Action | Environmental | consensus | published | [official page](https://waconservationaction.org/our-work/areas-of-work/endorsements/) | — | text/html | Seattle-ballot races |
 | Sierra Club Washington State Chapter | Environmental | consensus | access_restricted | [official page](https://www.sierraclub.org/washington) | — | — | Seattle-ballot races |
 | Climate Solutions | Environmental | excluded | not_an_endorsement_publisher | [official page](https://www.climatesolutions.org/) | — | text/html | None |
-| Environment and Climate Caucus of the Washington State Democratic Party | Environmental | consensus | published | [official page](https://eccwa.org/wp/endorsements/) | — | text/html | Seattle-ballot races |
+| Environment and Climate Caucus of the Washington State Democratic Party | Environmental | consensus | not_found | [official page](https://eccwa.org/wp/endorsements/) | — | text/html | Seattle-ballot races |
 | MLK Labor | Labor | consensus | published | [official page](https://www.mlklabor.org/endorsements/) | updated 2026-06-18 | text/html | Seattle-ballot races |
 | Washington State Labor Council, AFL-CIO | Labor | consensus | published | [official page](https://wslc.org/wp-content/uploads/2026/05/2026-WSLC-election-endorsements.pdf) | 2026-05-16 | application/pdf | Seattle-ballot races |
 | SEIU 775 | Labor | consensus | published | [official page](https://seiu775.org/2026endorsements/) | 2026-07-02 | text/html | Seattle-ballot races |
 | SEIU 925 | Labor | consensus | published | [official page](https://www.seiu925.org/2026endorsements/) | 2026-06-29 (updated 2026-06-30) | text/html | Seattle-ballot races |
 | UFCW 3000 | Labor | consensus | published | [official page](https://ufcw3000.org/endorsements) | — | text/html | Seattle-ballot races |
-| AFT Washington | Labor | consensus | published | [official page](https://www.aftwa.org/endorsements-and-elections) | — | text/html | Seattle-ballot races |
+| AFT Washington | Labor | consensus | published | [official page](https://www.aftwa.org/endorsements-and-elections/our-2026-primary-legislative-endorsements) | — | text/html | Seattle-ballot races |
 | Washington Education Association | Labor | consensus | published | [official page](https://www.washingtonea.org/advocacy/wea-pac/2026-endorsements/) | updated 2026-07-13 | text/html | Seattle-ballot races |
 | Washington State Building and Construction Trades Council | Labor | consensus | published | [official page](https://www.wabuildingtrades.org/candidates.html) | — | text/html | Seattle-ballot races |
 | PROTEC17 | Labor | consensus | published | [official page](https://www.protec17.org/endorsements/) | updated 2026-07-16 | text/html | Seattle-ballot races |
-| Planned Parenthood Alliance Advocates | Rights/representation | consensus | not_found | [official page](https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates/elections/washington-candidate-endorsements) | — | text/html | Seattle-ballot races |
+| Planned Parenthood Alliance Advocates | Rights/representation | consensus | published | [official page](https://www.islandssounder.com/2026/07/15/planned-parenthood-advocacy-organizations-in-washington-announce-supreme-court-endorsements/) | 2026-07-15 | text/html | Seattle-ballot races |
 | OneAmerica Votes | Rights/representation | consensus | published | [official page](https://oavotes.org/our-work/endorsements/2026-endorsements/) | updated 2026-05-27 | text/html | Seattle-ballot races |
 | Alliance for Gun Responsibility Victory Fund | Rights/representation | consensus | published | [official page](https://gunresponsibility.org/2026-endorsements/) | 2026-06-23 | text/html | Seattle-ballot races |
 | Washington Housing Alliance | Rights/representation | consensus | published | [official page](https://www.wahousingalliance.org/endorsements) | — | text/html | Seattle-ballot races |
 | National Women's Political Caucus of Washington | Rights/representation | consensus | published | [official page](https://www.nwpcwa.org/endorsements_2026) | — | text/html | Seattle-ballot races |
-| The Seattle Times Editorial Board | Comparison | comparison | access_restricted | [official page](https://www.seattletimes.com/opinion/editorials/) | — | — | Seattle-ballot races |
+| The Seattle Times Editorial Board | Comparison | comparison | published | [official page](https://www.seattletimes.com/opinion/editorials/seattle-times-endorsements-aug-4-2026-primary/) | 2026-07-16 (updated 2026-07-16) | text/html | Seattle-ballot races |
 
 ## Panel decisions
 
@@ -91,7 +91,7 @@ Search results were discovery leads only. Every link below is an official organi
 - **Washington Education Association — consensus.** Named education-labor source with an official 2026 endorsement page.
 - **Washington State Building and Construction Trades Council — consensus.** Concrete publishing building-trades source resolved from the proposed building-trades category.
 - **PROTEC17 — consensus.** Concrete major public-sector union with current Seattle and King County endorsements, resolving the proposed other-major-unions category.
-- **Planned Parenthood Alliance Advocates — consensus.** Named reproductive-rights publisher retained despite its official Washington page still showing the prior cycle.
+- **Planned Parenthood Alliance Advocates — consensus.** Named reproductive-rights publisher with an organization-authored 2026 Washington Supreme Court endorsement announcement.
 - **OneAmerica Votes — consensus.** Named immigrant-rights publisher with an official 2026 endorsement page.
 - **Alliance for Gun Responsibility Victory Fund — consensus.** Named issue organization with an official 2026 endorsement page.
 - **Washington Housing Alliance — consensus.** Current official successor branding for the proposed Washington Housing Alliance Action Fund source, with a 2026 endorsement page.
@@ -100,16 +100,15 @@ Search results were discovery leads only. Every link below is an official organi
 
 ## Gaps and conditional exclusions
 
-- **Washington State Democratic Party — access_restricted.** Direct unattended access returned HTTP 403 and no official 2026 endorsement publication was located through accessible official pages.
+- **Washington State Democratic Party — access_restricted.** Direct unattended access remains blocked and a fresh official-domain search found no 2026 endorsement roster; candidate and third-party lists were not substituted for a party publication.
 - **37th Legislative District Democrats — not_found.** The official site loaded with HTTP 200, but no official consolidated 2026 endorsement publication was located; third-party lists were rejected as evidence.
 - **Washington State Stonewall Democrats — not_found.** The official chapter page loaded with HTTP 200, but no official consolidated 2026 endorsement page was located; reporting and candidate sites were rejected as evidence.
 - **Cascade Bicycle Club — not_an_endorsement_publisher.** Official materials state that Cascade is the affiliated 501(c)(3) and Washington Bikes is the 501(c)(4) candidate-endorsement arm.
 - **Transportation Choices Coalition — not_found.** Official pages loaded with HTTP 200, but no 2026 candidate or ballot endorsement publication was located.
 - **Disability Mobility Initiative at Disability Rights Washington — not_an_endorsement_publisher.** The requested legacy program URL redirected to the organization root; official materials concern advocacy and voter access, not candidate recommendations.
-- **Sierra Club Washington State Chapter — access_restricted.** Automated access entered a redirect loop and the search pass found no official Washington chapter 2026 endorsement publication; historical and third-party pages were rejected.
+- **Sierra Club Washington State Chapter — access_restricted.** Official-site access remains restricted and a fresh official-domain search found no Washington chapter 2026 endorsement publication; historical and third-party pages were rejected.
 - **Climate Solutions — not_an_endorsement_publisher.** Official site loaded after one redirect; no candidate endorsement publication or electoral program was located.
-- **Planned Parenthood Alliance Advocates — not_found.** The official regional page accessible during research still identified its displayed Washington slate as 2025; direct unattended access later returned HTTP 403.
-- **The Seattle Times Editorial Board — access_restricted.** Direct unattended access returned HTTP 403 and no official 2026 primary endorsement index was located; manual review remains required and no search snippet is evidence.
+- **Environment and Climate Caucus of the Washington State Democratic Party — not_found.** The official page documents the 2026 endorsement process and voting dates but publishes no candidate decisions; no separate 2026 endorsed-candidate roster was located.
 
 ## Redirects observed
 

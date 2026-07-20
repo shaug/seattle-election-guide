@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": true,
+  "byte_length": 885518,
+  "canonical_url": "https://www.seattletimes.com/opinion/editorials/seattle-times-endorsements-aug-4-2026-primary/",
+  "capture_method": "browser",
+  "content_sha256": "df3cea4e92343d5e01db76629fd4dd3c8a18b93dc8a5b1354ecbcee257bc967b",
+  "http_status": 200,
+  "id": "capture-seattle-times-editorial-board-20260720T111400Z-2d1d2148bb92",
+  "media_type": "image/jpeg",
+  "published_at": "2026-07-16",
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party publication retained locally for audit and review only.",
+  "requested_url": "https://www.seattletimes.com/opinion/editorials/seattle-times-endorsements-aug-4-2026-primary/",
+  "retrieved_at": "2026-07-20T11:14:00Z",
+  "schema_version": "1.0",
+  "source_id": "seattle-times-editorial-board",
+  "storage_reference": "sha256/df/df3cea4e92343d5e01db76629fd4dd3c8a18b93dc8a5b1354ecbcee257bc967b",
+  "storage_scope": "local_only",
+  "title": "Seattle Times editorial board endorsements: Aug. 4, 2026, primary",
+  "updated_at": "2026-07-16"
+}

@@ -1,0 +1,20 @@
+{
+  "availability": "unavailable",
+  "browser_required": true,
+  "canonical_url": null,
+  "capture_method": "unavailable",
+  "http_status": null,
+  "id": "capture-sierra-club-washington-20260720T100005Z-f88de5051f66",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Historical and third-party endorsement lists were not substituted for a current official chapter publication.",
+  "requested_url": "https://www.sierraclub.org/washington",
+  "retrieved_at": "2026-07-20T10:00:05Z",
+  "schema_version": "1.0",
+  "source_id": "sierra-club-washington",
+  "title": "Sierra Club Washington State Chapter",
+  "unavailable_reason": "Official chapter access remained restricted and no official Washington chapter 2026 endorsement publication was located through official-domain search results.",
+  "updated_at": null
+}

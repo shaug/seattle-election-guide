@@ -27,9 +27,9 @@ def test_committed_source_panel_is_frozen_and_complete() -> None:
         "excluded": 5,
     }
     assert Counter(source.discovery.status for source in registry.sources) == {
-        "published": 32,
+        "published": 33,
         "not_found": 4,
-        "access_restricted": 3,
+        "access_restricted": 2,
         "not_an_endorsement_publisher": 3,
     }
     assert all(source.discovery.status for source in registry.sources)
@@ -132,7 +132,7 @@ def test_registry_rejects_unpaired_overlap_metadata() -> None:
 
 def test_registry_rejects_discovery_after_panel_freeze() -> None:
     payload = _registry_payload()
-    payload["research_cutoff"] = "2026-07-20T00:00:00Z"
+    payload["research_cutoff"] = "2026-07-20T11:00:00Z"
 
     with pytest.raises(ValidationError, match="research cutoff cannot be after panel freeze"):
         SourceRegistry.model_validate(payload)
@@ -149,7 +149,7 @@ def test_registry_rejects_unrecorded_redirect() -> None:
 
 def test_registry_rejects_source_access_after_research_cutoff() -> None:
     payload = _registry_payload()
-    payload["sources"][0]["discovery"]["checked_at"] = "2026-07-20T00:00:00Z"
+    payload["sources"][0]["discovery"]["checked_at"] = "2026-07-20T11:00:00Z"
 
     with pytest.raises(ValidationError, match="checked after the research cutoff"):
         SourceRegistry.model_validate(payload)

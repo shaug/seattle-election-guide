@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 150147,
+  "canonical_url": "https://ufcw3000.org/endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "ef90b0f0a2800f70d216286332c8d2f93bd32a83e0b479b683a348df3407754b",
+  "http_status": 200,
+  "id": "capture-ufcw-3000-20260720T110500Z-99f410ff1801",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party publication retained locally for audit and review only.",
+  "requested_url": "https://ufcw3000.org/endorsements",
+  "retrieved_at": "2026-07-20T11:05:00Z",
+  "schema_version": "1.0",
+  "source_id": "ufcw-3000",
+  "storage_reference": "sha256/ef/ef90b0f0a2800f70d216286332c8d2f93bd32a83e0b479b683a348df3407754b",
+  "storage_scope": "local_only",
+  "title": "UFCW 3000 endorsements",
+  "updated_at": null
+}

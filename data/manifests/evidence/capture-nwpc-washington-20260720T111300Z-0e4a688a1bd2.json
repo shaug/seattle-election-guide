@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 195196,
+  "canonical_url": "https://www.nwpcwa.org/endorsements_2026",
+  "capture_method": "static_html",
+  "content_sha256": "ca0efd097138c3feade9ce8102689fcb3c9d1f0bd9c75624492e8d6dd2f294d0",
+  "http_status": 200,
+  "id": "capture-nwpc-washington-20260720T111300Z-0e4a688a1bd2",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party publication retained locally for audit and review only.",
+  "requested_url": "https://www.nwpcwa.org/endorsements_2026",
+  "retrieved_at": "2026-07-20T11:13:00Z",
+  "schema_version": "1.0",
+  "source_id": "nwpc-washington",
+  "storage_reference": "sha256/ca/ca0efd097138c3feade9ce8102689fcb3c9d1f0bd9c75624492e8d6dd2f294d0",
+  "storage_scope": "local_only",
+  "title": "NWPC Washington 2026 endorsements",
+  "updated_at": null
+}

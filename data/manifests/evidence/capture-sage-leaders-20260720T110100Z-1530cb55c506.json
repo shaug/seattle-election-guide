@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 147771,
+  "canonical_url": "https://www.sageleaders.org/2026-endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "4394e20421a80884bff6c432274e45f44ef790bfa37c60d457adbb0d7182bd79",
+  "http_status": 200,
+  "id": "capture-sage-leaders-20260720T110100Z-1530cb55c506",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party publication retained locally for audit and review only.",
+  "requested_url": "https://www.sageleaders.org/2026-endorsements",
+  "retrieved_at": "2026-07-20T11:01:00Z",
+  "schema_version": "1.0",
+  "source_id": "sage-leaders",
+  "storage_reference": "sha256/43/4394e20421a80884bff6c432274e45f44ef790bfa37c60d457adbb0d7182bd79",
+  "storage_scope": "local_only",
+  "title": "Sage Leaders 2026 endorsements",
+  "updated_at": null
+}

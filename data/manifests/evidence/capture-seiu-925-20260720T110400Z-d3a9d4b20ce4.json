@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 89984,
+  "canonical_url": "https://www.seiu925.org/2026endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "4c93bb31632b9f2f817e6236b5a23a62318791d9e4e2ca2f0fc2d1ad0697a824",
+  "http_status": 200,
+  "id": "capture-seiu-925-20260720T110400Z-d3a9d4b20ce4",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party publication retained locally for audit and review only.",
+  "requested_url": "https://www.seiu925.org/2026endorsements/",
+  "retrieved_at": "2026-07-20T11:04:00Z",
+  "schema_version": "1.0",
+  "source_id": "seiu-925",
+  "storage_reference": "sha256/4c/4c93bb31632b9f2f817e6236b5a23a62318791d9e4e2ca2f0fc2d1ad0697a824",
+  "storage_scope": "local_only",
+  "title": "SEIU 925 2026 endorsements",
+  "updated_at": null
+}
