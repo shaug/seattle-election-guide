@@ -241,6 +241,11 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
         assert f"<strong>{comparison.voter_label}</strong>" in html
         assert (f"print-times-pick print-times-pick-{comparison.voter_tone}") in html
     assert ".comparison strong { max-width: 72%; margin-left: auto;" in html
+    assert html.count('class="method-column"') == 2
+    assert ".print-races { height: 9.32in; column-count: 2;" in html
+    assert ".print-race:nth-of-type(even) { background: #f2f6f8; }" in html
+    assert "font: 800 20pt/.95 Arial, Helvetica, sans-serif" in html
+    assert "font: 800 8.6pt/1 Arial, Helvetica, sans-serif" in html
 
 
 def test_rendering_configuration_rejects_contract_drift() -> None:
@@ -407,7 +412,7 @@ def test_nonempty_render_destination_is_preserved(tmp_path: Path) -> None:
 
 
 def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path: Path) -> None:
-    view_model = _view_model(tmp_path / "fixture")
+    view_model = _dense_view_model(_view_model(tmp_path / "fixture"))
     view_model_path = tmp_path / "publication_view_model.json"
     view_model_path.write_bytes(canonical_json_bytes(view_model.model_dump(mode="json")))
 

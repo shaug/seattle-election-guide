@@ -1116,6 +1116,11 @@ Use compact cards or clearly separated rows.
 
 Optimize for a voter scanning the page while filling out a ballot.
 
+Use both columns for the full available cheat-sheet height. Favor a clean sans-serif hierarchy,
+generous but space-aware row padding, differentiated adjacent rows, and consensus tracks that are
+easy to compare vertically. Do not compress the race list into the upper portion of the page while
+leaving a large unused region above the footer.
+
 ## 16.3 Seattle Times comparison chips
 
 Use background color and text together. Never rely on color alone.
@@ -1141,6 +1146,7 @@ Use a professional, restrained typographic system.
 Requirements:
 
 - strong distinction among title, section, race, recommendation, and metadata;
+- sans-serif type throughout the concise print edition;
 - no dense wall of uniformly sized text;
 - no illegibly small URLs;
 - tabular numerals where useful;

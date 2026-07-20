@@ -209,45 +209,49 @@
         {% endfor %}
       </div>
       <div class="method-grid">
-        <section>
-          <h2>How to read consensus</h2>
-          <p>The percentage is the leading choice's share of exact endorsement points among
-            sources that explicitly endorsed in that race.</p>
-          <p>The source count gives the sample-size context. A divided result means lower
-            agreement among endorsers, not a lower-quality candidate.</p>
-        </section>
-        <section>
-          <h2>Source categories</h2>
-          {% for category in guide.methodology.source_categories %}
-          <div class="category-row"><strong>{{ category.label }}</strong>
-            <span>{{ category.source_ids | length }} sources</span></div>
-          {% endfor %}
-          <h3>Possible overlap groups</h3>
-          {% if guide.methodology.source_overlap_groups %}
-            {% for group in guide.methodology.source_overlap_groups %}
-            <p><strong>{{ group.label }}</strong> — {{ group.source_ids | length }} sources.</p>
+        <div class="method-column">
+          <section>
+            <h2>How to read consensus</h2>
+            <p>The percentage is the leading choice's share of exact endorsement points among
+              sources that explicitly endorsed in that race.</p>
+            <p>The source count gives the sample-size context. A divided result means lower
+              agreement among endorsers, not a lower-quality candidate.</p>
+          </section>
+          <section>
+            <h2>Interpretation</h2>
+            <div class="concise-method-detail">
+              {% for note in guide.methodology.interpretation_notes %}<p>{{ note }}</p>{% endfor %}
+            </div>
+            <p class="compact-method-note">Full interpretation notes are in the detailed edition.</p>
+            <div class="times-key"><b>Seattle Times comparison:</b> a green candidate chip means
+              the same choice; amber means a different choice; NOT COVERED means no endorsement.</div>
+          </section>
+        </div>
+        <div class="method-column">
+          <section>
+            <h2>Source categories</h2>
+            {% for category in guide.methodology.source_categories %}
+            <div class="category-row"><strong>{{ category.label }}</strong>
+              <span>{{ category.source_ids | length }} sources</span></div>
             {% endfor %}
-          {% else %}<p>No possible overlap groups span multiple active sources.</p>{% endif %}
-          <p class="ld-source-rule"><strong>LD source rule:</strong> Seven LD organizations each
-            count as one independent source on broader Seattle-ballot races they endorse;
-            legislative contests count only for their own district.</p>
-        </section>
-        <section>
-          <h2>Interpretation</h2>
-          <div class="concise-method-detail">
-            {% for note in guide.methodology.interpretation_notes %}<p>{{ note }}</p>{% endfor %}
-          </div>
-          <p class="compact-method-note">Full interpretation notes are in the detailed edition.</p>
-          <div class="times-key"><b>Seattle Times comparison:</b> a green candidate chip means
-            the same choice; amber means a different choice; NOT COVERED means no endorsement.</div>
-        </section>
-        <section>
-          <h2>Limitations</h2>
-          <div class="concise-method-detail">
-            {% for limitation in guide.methodology.limitations %}<p>{{ limitation }}</p>{% endfor %}
-          </div>
-          <p class="compact-method-note">Full limitations are in the detailed edition.</p>
-        </section>
+            <h3>Possible overlap groups</h3>
+            {% if guide.methodology.source_overlap_groups %}
+              {% for group in guide.methodology.source_overlap_groups %}
+              <p><strong>{{ group.label }}</strong> — {{ group.source_ids | length }} sources.</p>
+              {% endfor %}
+            {% else %}<p>No possible overlap groups span multiple active sources.</p>{% endif %}
+            <p class="ld-source-rule"><strong>LD source rule:</strong> Seven LD organizations each
+              count as one independent source on broader Seattle-ballot races they endorse;
+              legislative contests count only for their own district.</p>
+          </section>
+          <section>
+            <h2>Limitations</h2>
+            <div class="concise-method-detail">
+              {% for limitation in guide.methodology.limitations %}<p>{{ limitation }}</p>{% endfor %}
+            </div>
+            <p class="compact-method-note">Full limitations are in the detailed edition.</p>
+          </section>
+        </div>
       </div>
       <div class="print-metadata">
         <div><span>Election</span><strong>{{ guide.metadata.election_date }}</strong></div>
