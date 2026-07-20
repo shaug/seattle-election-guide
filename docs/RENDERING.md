@@ -75,5 +75,7 @@ image checks catch structural regressions but do not replace human inspection of
 hierarchy, contrast, and legibility.
 
 Browser and font rasterization can vary across operating-system and Chrome versions. Canonical
-values and PDF metadata are deterministic inputs; the coarse visual baseline therefore uses
-explicit tolerances, while human review remains required for every meaningful design change.
+values and PDF metadata are deterministic inputs; macOS and Linux therefore have separately
+approved coarse visual signatures under the same tight tolerance. Independent blank-image,
+dimension, overflow, and safe-edge checks remain strict. Human review remains required for every
+meaningful design change.

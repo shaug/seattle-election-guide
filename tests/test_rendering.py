@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 from stat import S_IMODE
 from typing import cast
@@ -37,7 +38,7 @@ from tests.test_scoring import (
 
 PROJECT_ROOT = Path(__file__).parent.parent
 RENDERING_CONFIG = PROJECT_ROOT / "config/rendering/pdf.yaml"
-APPROVED_VISUAL_BASELINES = {
+DARWIN_VISUAL_BASELINES = {
     "pdf-page-1": [
         0.139,
         0.125,
@@ -110,6 +111,84 @@ APPROVED_VISUAL_BASELINES = {
         0.058,
         0.026,
     ],
+}
+LINUX_VISUAL_BASELINES = {
+    "pdf-page-1": [
+        0.133,
+        0.119,
+        0.058,
+        0.038,
+        0.082,
+        0.075,
+        0.114,
+        0.068,
+        0.078,
+        0.071,
+        0.110,
+        0.068,
+        0.034,
+        0.037,
+        0.065,
+        0.043,
+    ],
+    "pdf-page-2": [
+        0.090,
+        0.073,
+        0.052,
+        0.029,
+        0.047,
+        0.035,
+        0.038,
+        0.020,
+        0.088,
+        0.092,
+        0.086,
+        0.051,
+        0.122,
+        0.137,
+        0.135,
+        0.084,
+    ],
+    "desktop": [
+        0.525,
+        0.757,
+        0.837,
+        0.593,
+        0.478,
+        0.692,
+        0.712,
+        0.514,
+        0.073,
+        0.046,
+        0.056,
+        0.050,
+        0.072,
+        0.050,
+        0.054,
+        0.043,
+    ],
+    "mobile": [
+        0.740,
+        0.725,
+        0.784,
+        0.825,
+        0.234,
+        0.213,
+        0.197,
+        0.200,
+        0.116,
+        0.110,
+        0.072,
+        0.034,
+        0.101,
+        0.081,
+        0.047,
+        0.026,
+    ],
+}
+APPROVED_VISUAL_BASELINES_BY_PLATFORM = {
+    "darwin": DARWIN_VISUAL_BASELINES,
+    "linux": LINUX_VISUAL_BASELINES,
 }
 
 
@@ -294,9 +373,10 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
         assert mobile.size == (390, 1200)
     assert S_IMODE((tmp_path / "rendered").stat().st_mode) == 0o755
     assert S_IMODE(rendered.html_path.stat().st_mode) == 0o644
+    approved_baselines = APPROVED_VISUAL_BASELINES_BY_PLATFORM[sys.platform]
     artifact_paths = dict(
         zip(
-            APPROVED_VISUAL_BASELINES,
+            approved_baselines,
             [*rendered.page_images, *rendered.screenshots],
             strict=True,
         )
@@ -305,7 +385,7 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
         label: _coarse_visual_signature(path) for label, path in artifact_paths.items()
     }
     for label, observed in observed_signatures.items():
-        expected = APPROVED_VISUAL_BASELINES[label]
+        expected = approved_baselines[label]
         assert (
             sum(abs(left - right) for left, right in zip(observed, expected, strict=True)) / 16
             < 0.04
