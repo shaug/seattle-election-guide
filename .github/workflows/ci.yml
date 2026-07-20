@@ -37,3 +37,24 @@ jobs:
         run: uv run pytest
       - name: Validate canonical election inventory
         run: uv run election-guide inventory validate data/normalized/wa-2026-primary-inventory.json
+      - name: Verify reproducible primary release inputs
+        run: uv run election-guide release verify data/releases/wa-2026-primary/source-decisions.yaml
+      - name: Build and verify deterministic primary release
+        run: |
+          uv run election-guide release build data/releases/wa-2026-primary/source-decisions.yaml \
+            --release-version ci \
+            --generated-at 2026-07-20T02:00:00Z \
+            --output-dir dist/ci-release-a
+          uv run election-guide release build data/releases/wa-2026-primary/source-decisions.yaml \
+            --release-version ci \
+            --generated-at 2026-07-20T02:00:00Z \
+            --output-dir dist/ci-release-b
+          cmp \
+            dist/ci-release-a/seattle-election-guide-ci.zip \
+            dist/ci-release-b/seattle-election-guide-ci.zip
+          unzip -t dist/ci-release-a/seattle-election-guide-ci.zip
+          unzip -Z1 dist/ci-release-a/seattle-election-guide-ci.zip \
+            | grep -Fx 'seattle-election-guide/validation/rendering/rendering_validation_report.json'
+          unzip -Z1 dist/ci-release-a/seattle-election-guide-ci.zip \
+            | grep -Fx 'seattle-election-guide/validation/rendering/pdf/pages/page-1.png'
+          test "$(stat -c '%a' dist/ci-release-a)" = 755

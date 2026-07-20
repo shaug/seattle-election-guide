@@ -56,6 +56,8 @@ class RenderingConfiguration(RenderingModel):
     def validate_required_features(self) -> RenderingConfiguration:
         if not self.require_selectable_text or not self.require_accessible_metadata:
             raise ValueError("rendering requirements must remain enabled")
+        if self.pdf_filename == self.detailed_pdf_filename:
+            raise ValueError("concise and detailed PDF filenames must be distinct")
         return self
 
 

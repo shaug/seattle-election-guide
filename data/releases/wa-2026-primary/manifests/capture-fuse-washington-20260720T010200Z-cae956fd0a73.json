@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 620,
+  "canonical_url": "https://www.fusewashington.org/news/blog/fuses-2026-primary-election-endorsements",
+  "capture_method": "manual_upload",
+  "content_sha256": "67ca9e80bb9b89783c9e4901776deee7546b2654d7ec02b91eb09f6651154f8e",
+  "http_status": null,
+  "id": "capture-fuse-washington-20260720T010200Z-cae956fd0a73",
+  "media_type": "application/json",
+  "published_at": "2026-03-24",
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://www.fusewashington.org/news/blog/fuses-2026-primary-election-endorsements",
+  "retrieved_at": "2026-07-20T01:02:00Z",
+  "schema_version": "1.0",
+  "source_id": "fuse-washington",
+  "storage_reference": "sha256/67/67ca9e80bb9b89783c9e4901776deee7546b2654d7ec02b91eb09f6651154f8e",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: Fuse Washington",
+  "updated_at": "2026-06-03"
+}

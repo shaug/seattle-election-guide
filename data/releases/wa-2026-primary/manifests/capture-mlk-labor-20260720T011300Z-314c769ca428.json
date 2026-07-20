@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 882,
+  "canonical_url": "https://www.mlklabor.org/endorsements/",
+  "capture_method": "manual_upload",
+  "content_sha256": "88ca0e70d7c9de1f57eb648c35d31a1e719408d044ed243c48aa639b529aa9b9",
+  "http_status": null,
+  "id": "capture-mlk-labor-20260720T011300Z-314c769ca428",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://www.mlklabor.org/endorsements/",
+  "retrieved_at": "2026-07-20T01:13:00Z",
+  "schema_version": "1.0",
+  "source_id": "mlk-labor",
+  "storage_reference": "sha256/88/88ca0e70d7c9de1f57eb648c35d31a1e719408d044ed243c48aa639b529aa9b9",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: MLK Labor",
+  "updated_at": "2026-06-18"
+}

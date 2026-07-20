@@ -58,6 +58,11 @@ from election_guide.normalization.records import (
     write_review_item,
 )
 from election_guide.publication import build_publication_bundle, write_publication_bundle
+from election_guide.release import (
+    build_release,
+    compile_release_dataset,
+    verify_release_compilation,
+)
 from election_guide.rendering import build_rendered_guide
 from election_guide.scoring import (
     ConsensusReport,
@@ -81,6 +86,7 @@ normalize_app = typer.Typer(help="Match and validate canonical endorsement recor
 review_app = typer.Typer(help="Inspect and resolve ambiguous normalization records.")
 export_app = typer.Typer(help="Generate canonical machine-readable publication artifacts.")
 render_app = typer.Typer(help="Render and validate the responsive HTML and concise PDF guide.")
+release_app = typer.Typer(help="Compile, audit, and package a versioned public release.")
 app.add_typer(inventory_app, name="inventory")
 app.add_typer(sources_app, name="sources")
 app.add_typer(evidence_app, name="evidence")
@@ -88,7 +94,155 @@ app.add_typer(normalize_app, name="normalize")
 app.add_typer(review_app, name="review")
 app.add_typer(export_app, name="export")
 app.add_typer(render_app, name="render")
+app.add_typer(release_app, name="release")
 evidence_app.add_typer(manual_app, name="manual")
+
+
+@release_app.command("compile")
+def release_compile(
+    ledger_path: Annotated[Path, typer.Argument(exists=True, dir_okay=False, readable=True)],
+    inventory_path: Annotated[
+        Path, typer.Option(exists=True, dir_okay=False, readable=True)
+    ] = Path("data/normalized/wa-2026-primary-inventory.json"),
+    registry_path: Annotated[Path, typer.Option(exists=True, dir_okay=False, readable=True)] = Path(
+        "config/sources/default.yaml"
+    ),
+    output_path: Annotated[Path, typer.Option(dir_okay=False)] = Path(
+        "data/normalized/canonical-dataset.json"
+    ),
+    snapshot_root: Annotated[Path, typer.Option(file_okay=False)] = Path(
+        "data/releases/wa-2026-primary/snapshots"
+    ),
+    manifest_dir: Annotated[Path, typer.Option(file_okay=False)] = Path(
+        "data/releases/wa-2026-primary/manifests"
+    ),
+) -> None:
+    """Compile audited source decisions into permitted snapshots and canonical data."""
+    try:
+        dataset = compile_release_dataset(
+            ledger_path,
+            inventory_path,
+            registry_path,
+            output_path,
+            snapshot_root,
+            manifest_dir,
+        )
+    except (OSError, ValidationError, ValueError) as error:
+        typer.echo(f"release compilation failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    typer.echo(
+        f"release dataset: {output_path} "
+        f"({len(dataset.captures)} sources, {len(dataset.endorsements)} decisions)"
+    )
+
+
+@release_app.command("build")
+def release_build(
+    ledger_path: Annotated[Path, typer.Argument(exists=True, dir_okay=False, readable=True)],
+    release_version: Annotated[str, typer.Option()],
+    generated_at: Annotated[str, typer.Option(help="Deterministic ISO 8601 build timestamp.")],
+    inventory_path: Annotated[
+        Path, typer.Option(exists=True, dir_okay=False, readable=True)
+    ] = Path("data/normalized/wa-2026-primary-inventory.json"),
+    registry_path: Annotated[Path, typer.Option(exists=True, dir_okay=False, readable=True)] = Path(
+        "config/sources/default.yaml"
+    ),
+    dataset_path: Annotated[Path, typer.Option(exists=True, dir_okay=False, readable=True)] = Path(
+        "data/normalized/canonical-dataset.json"
+    ),
+    scoring_config_path: Annotated[
+        Path, typer.Option(exists=True, dir_okay=False, readable=True)
+    ] = Path("config/scoring/default.yaml"),
+    rendering_config_path: Annotated[
+        Path, typer.Option(exists=True, dir_okay=False, readable=True)
+    ] = Path("config/rendering/pdf.yaml"),
+    snapshot_root: Annotated[Path, typer.Option(file_okay=False, readable=True)] = Path(
+        "data/releases/wa-2026-primary/snapshots"
+    ),
+    manifest_dir: Annotated[Path, typer.Option(exists=True, file_okay=False, readable=True)] = Path(
+        "data/releases/wa-2026-primary/manifests"
+    ),
+    output_dir: Annotated[Path, typer.Option(file_okay=False)] = Path("dist/primary-release"),
+    git_commit: Annotated[
+        str | None, typer.Option(help="Code revision recorded in release manifests.")
+    ] = None,
+    chrome_path: Annotated[
+        Path | None, typer.Option(exists=True, dir_okay=False, readable=True)
+    ] = None,
+    pdftoppm_path: Annotated[
+        Path | None, typer.Option(exists=True, dir_okay=False, readable=True)
+    ] = None,
+) -> None:
+    """Run scoring, export, rendering, final audit, and deterministic packaging."""
+    try:
+        result = build_release(
+            ledger_path=ledger_path,
+            inventory_path=inventory_path,
+            registry_path=registry_path,
+            dataset_path=dataset_path,
+            scoring_config_path=scoring_config_path,
+            rendering_config_path=rendering_config_path,
+            snapshot_root=snapshot_root,
+            manifest_dir=manifest_dir,
+            output_dir=output_dir,
+            release_version=release_version,
+            generated_at=_parse_aware_datetime(generated_at),
+            git_commit=git_commit or _git_commit(),
+            chrome_path=chrome_path,
+            pdftoppm_path=pdftoppm_path,
+        )
+    except (
+        OSError,
+        UnicodeError,
+        json.JSONDecodeError,
+        subprocess.SubprocessError,
+        ValidationError,
+        ValueError,
+    ) as error:
+        typer.echo(f"release build failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    typer.echo(
+        f"release: {result.archive_path} "
+        f"({result.status.displayed_endorsement_count} source decisions)"
+    )
+
+
+@release_app.command("verify")
+def release_verify(
+    ledger_path: Annotated[Path, typer.Argument(exists=True, dir_okay=False, readable=True)],
+    inventory_path: Annotated[
+        Path, typer.Option(exists=True, dir_okay=False, readable=True)
+    ] = Path("data/normalized/wa-2026-primary-inventory.json"),
+    registry_path: Annotated[Path, typer.Option(exists=True, dir_okay=False, readable=True)] = Path(
+        "config/sources/default.yaml"
+    ),
+    dataset_path: Annotated[Path, typer.Option(exists=True, dir_okay=False, readable=True)] = Path(
+        "data/normalized/canonical-dataset.json"
+    ),
+    snapshot_root: Annotated[
+        Path, typer.Option(exists=True, file_okay=False, readable=True)
+    ] = Path("data/releases/wa-2026-primary/snapshots"),
+    manifest_dir: Annotated[Path, typer.Option(exists=True, file_okay=False, readable=True)] = Path(
+        "data/releases/wa-2026-primary/manifests"
+    ),
+) -> None:
+    """Recompile and byte-compare every tracked canonical release input."""
+    try:
+        dataset = verify_release_compilation(
+            ledger_path,
+            inventory_path,
+            registry_path,
+            dataset_path,
+            snapshot_root,
+            manifest_dir,
+        )
+    except (OSError, ValidationError, ValueError) as error:
+        typer.echo(f"release verification failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    typer.echo(
+        f"release inputs: reproducible "
+        f"({len(dataset.captures)} sources, {len(dataset.endorsements)} decisions)"
+    )
 
 
 @app.command()

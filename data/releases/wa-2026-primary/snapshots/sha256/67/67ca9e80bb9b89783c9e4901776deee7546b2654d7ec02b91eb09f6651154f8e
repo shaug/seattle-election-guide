@@ -1,0 +1,25 @@
+{
+  "captured_at": "2026-07-20T01:02:00Z",
+  "decisions": [
+    {
+      "candidate_ids": [
+        "us-house-7--pramila-jayapal"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "us-house-7",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "king-county-council-8--teresa-mosqueda"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "king-county-council-8",
+      "status": "endorsed"
+    }
+  ],
+  "evidence_locator": "Official 2026 primary endorsements page, candidate heading.",
+  "source_id": "fuse-washington"
+}

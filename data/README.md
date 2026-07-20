@@ -10,6 +10,7 @@ The data pipeline will use these logical areas:
 - `normalized/`: canonical, diffable records.
 - `manifests/`: snapshot, provenance, validation, and build hashes.
 - `published/`: release inputs; bundled outputs are attached to GitHub Releases.
+- `releases/`: reviewed source-decision ledgers and their reproducible permitted snapshots.
 
 Directories are created by the relevant pipeline commands rather than committed empty. Public
 records must not embed third-party material that the project lacks permission to redistribute.
@@ -30,8 +31,20 @@ content ID except queue items and terminal decisions, whose filenames use the cl
 item IDs respectively to enforce one atomic slot. Existing history is never replaced. See the
 [normalization guide](../docs/NORMALIZATION.md) for the matching, review, and override commands.
 
+The primary release ledger is `releases/wa-2026-primary/source-decisions.yaml`. Compilation turns
+each source entry into a content-addressed JSON snapshot under that release's `snapshots/`
+directory and a public capture manifest under `manifests/`, then writes
+`normalized/canonical-dataset.json`. These snapshots contain reviewed structured transcriptions
+and optional short source excerpts only; they do not claim to be copies of the source pages.
+Each ledger `captured_at` value is the actual time the reviewer checked that official publication,
+and manual-extract manifests intentionally omit an HTTP status because compilation does not make
+an HTTP request. Ignored full-page captures are never copied into the tracked tree.
+`election-guide release verify` recompiles all three generated areas in temporary storage and
+requires exact path and byte equality.
+
 `election-guide export build` writes the complete release bundle to `build/` by default. The
 bundle contains canonical consensus and view-model JSON, race and source CSVs, the full
 source-by-race matrix, unresolved review records, validation output, and provenance/build
 manifests. Generated release artifacts are not hand-edited; see the
 [publication export guide](../docs/PUBLICATION_EXPORTS.md) for their contract and hash boundaries.
+The [release guide](../docs/RELEASE.md) documents final audit, packaging, and publication.
