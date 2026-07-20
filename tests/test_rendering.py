@@ -381,30 +381,42 @@ def test_pdf_comparison_validation_requires_compound_chip_and_rejects_legacy_bad
     )
     race.comparisons = [comparison]
     expected_text = " ".join(value_fn(race))
-    compound = (
+    chip_label = (
         f"Seattle Times {comparison.voter_label}"
         if value_fn is _detailed_pdf_race_values
         else comparison.print_label
     )
+    support_label = (
+        race.support_summary
+        if value_fn is _pdf_race_display_values
+        else f"{race.explicit_endorsement_count} endorsers"
+    )
+    compound = (
+        chip_label if value_fn is _detailed_pdf_race_values else f"{chip_label} {support_label}"
+    )
 
     assert _missing_pdf_race_values([race], expected_text, value_fn) == []
 
-    prefix_collision_text = expected_text.replace(compound, f"{compound}body", 1)
-    prefix_collision_missing = _missing_pdf_race_values([race], prefix_collision_text, value_fn)
-    assert f"{race.id}: {compound}" in prefix_collision_missing
+    collision_suffixes = (
+        ("body",) if value_fn is _detailed_pdf_race_values else ("body", " body", "-body")
+    )
+    for suffix in collision_suffixes:
+        prefix_collision_text = expected_text.replace(chip_label, f"{chip_label}{suffix}", 1)
+        prefix_collision_missing = _missing_pdf_race_values([race], prefix_collision_text, value_fn)
+        assert f"{race.id}: {compound}" in prefix_collision_missing
 
-    wrong_chip_text = expected_text.replace(compound, "Times differs: Wrong pick", 1)
+    wrong_chip_text = expected_text.replace(chip_label, "Times differs: Wrong pick", 1)
     wrong_chip_missing = _missing_pdf_race_values([race], wrong_chip_text, value_fn)
     assert f"{race.id}: {compound}" in wrong_chip_missing
 
     if comparison.voter_label == "No":
-        not_covered_text = expected_text.replace(compound, "Times: not covered", 1)
+        not_covered_text = expected_text.replace(chip_label, "Times: not covered", 1)
         not_covered_missing = _missing_pdf_race_values([race], not_covered_text, value_fn)
         assert f"{race.id}: {compound}" in not_covered_missing
 
     if badge_label != "NOT COVERED":
         legacy_text = expected_text.replace(
-            compound,
+            chip_label,
             f"Seattle Times {badge_label} {comparison.voter_label}",
             1,
         )
@@ -919,11 +931,42 @@ def test_long_comparison_choice_is_not_truncated(tmp_path: Path) -> None:
 
     assert rendered.validation_report.passed
     assert rendered.validation_report.edition == "concise_plus_detailed"
+    assert rendered.detailed_pdf_path is not None
     pdf_text = " ".join(
         " ".join((page.extract_text() or "").split()) for page in PdfReader(rendered.pdf_path).pages
     )
     assert long_label in pdf_text
     assert f"{race.explicit_endorsement_count} endorsers" in pdf_text
+
+    compact_support = (
+        '<span class="print-support print-support-compact">'
+        f"{race.explicit_endorsement_count} endorsers</span>"
+    )
+    rendered_html = rendered.html_path.read_text(encoding="utf-8")
+    assert compact_support in rendered_html
+    wrong_count_html = tmp_path / "wrong-compact-count.html"
+    wrong_count_html.write_text(
+        rendered_html.replace(
+            compact_support, compact_support.replace("endorsers", "99 endorsers"), 1
+        ),
+        encoding="utf-8",
+    )
+    wrong_count_pdf = tmp_path / "wrong-compact-count.pdf"
+    _render_pdf(wrong_count_html, wrong_count_pdf, find_chrome(), edition="compact")
+    wrong_count_report = validate_rendered_guide(
+        view_model,
+        read_rendering_configuration(RENDERING_CONFIG),
+        rendered.html_path,
+        wrong_count_pdf,
+        rendered.page_images,
+        rendered.screenshots,
+        detailed_pdf_path=rendered.detailed_pdf_path,
+        detailed_page_images=rendered.detailed_page_images,
+    )
+    wrong_count_check = next(
+        check for check in wrong_count_report.checks if check.id == "pdf-display-values"
+    )
+    assert not wrong_count_check.passed
 
 
 def test_detailed_pdf_trims_only_rendered_trailing_blank_pages(tmp_path: Path) -> None:

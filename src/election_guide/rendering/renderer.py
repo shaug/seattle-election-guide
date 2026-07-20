@@ -1420,17 +1420,19 @@ def _pdf_race_display_values(race: PublicationRace) -> list[str]:
         race.recommendation_label,
         "N/A" if race.percentage_whole is None else race.percentage_label,
         race.support_summary,
-        *(comparison.print_label for comparison in race.comparisons),
+        *(f"{comparison.print_label} {race.support_summary}" for comparison in race.comparisons),
         *_concise_warning_labels(race),
     ]
 
 
 def _pdf_race_core_values(race: PublicationRace) -> list[str]:
+    compact_support = f"{race.explicit_endorsement_count} endorsers"
     return [
         race.race_label,
         race.recommendation_label,
         "N/A" if race.percentage_whole is None else race.percentage_label,
-        *(comparison.print_label for comparison in race.comparisons),
+        compact_support,
+        *(f"{comparison.print_label} {compact_support}" for comparison in race.comparisons),
         *(_concise_warning_labels(race)[:1]),
     ]
 
