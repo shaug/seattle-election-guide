@@ -1,0 +1,68 @@
+schema_version: "1.0"
+election:
+  id: wa-2027-seattle-general
+  name: Fixture 2027 Seattle Municipal General Election
+  election_type: general
+  election_scope: municipal
+  election_date: 2027-11-02
+  state: WA
+  state_jurisdiction_id: washington-state
+  official_url: https://example.test/elections/wa-2027-seattle-general
+  target_jurisdiction_ids:
+    - city-of-seattle
+source_panel:
+  id: wa-2027-seattle-general-sources
+  version: "1.0"
+  path: config/sources/wa-2027-seattle-general.yaml
+scoring_policy:
+  id: unweighted-progressive
+  version: "2.0"
+  path: config/scoring/unweighted-progressive-2.yaml
+jurisdictions:
+  - id: washington-state
+    name: State of Washington
+    kind: state
+    state_code: WA
+    parent_id: null
+    aliases:
+      - WA
+      - Washington
+    seattle_relationship: contains_city
+    seattle_explanation: Seattle voters are within Washington State.
+  - id: king-county
+    name: King County
+    kind: county
+    parent_id: washington-state
+    aliases: []
+    seattle_relationship: contains_city
+    seattle_explanation: Seattle is within King County.
+  - id: city-of-seattle
+    name: City of Seattle
+    kind: city
+    parent_id: king-county
+    aliases:
+      - Seattle
+    seattle_relationship: citywide
+    seattle_explanation: This is the target municipal jurisdiction.
+races:
+  - id: seattle-mayor
+    jurisdiction_id: city-of-seattle
+    race_type: candidate
+    district: City of Seattle
+    office: Mayor
+    position: null
+    display_name: Seattle Mayor
+    aliases:
+      - Mayor of Seattle
+      - Seattle Mayor
+    publication_eligible: true
+  - id: seattle-city-attorney
+    jurisdiction_id: city-of-seattle
+    race_type: candidate
+    district: City of Seattle
+    office: City Attorney
+    position: null
+    display_name: Seattle City Attorney
+    aliases:
+      - City Attorney
+    publication_eligible: true

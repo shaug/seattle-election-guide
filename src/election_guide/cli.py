@@ -32,11 +32,16 @@ from election_guide.evidence.storage import (
     record_unavailable,
     verify_capture,
 )
+from election_guide.initialization import initialize_election, read_election_configuration
 from election_guide.inventory.importer import (
     extract_public_inputs,
     import_inventory,
     read_inventory,
     write_inventory,
+)
+from election_guide.inventory.initialized import (
+    import_initialized_inventory,
+    write_initialized_inventory,
 )
 from election_guide.normalization.matching import normalize_claim
 from election_guide.normalization.models import (
@@ -82,6 +87,7 @@ app = typer.Typer(
     no_args_is_help=True,
 )
 inventory_app = typer.Typer(help="Import and validate the official Seattle ballot inventory.")
+election_app = typer.Typer(help="Initialize and validate configuration for an election.")
 sources_app = typer.Typer(help="Inspect and validate the frozen endorsement-source panel.")
 evidence_app = typer.Typer(help="Capture, verify, and manually transcribe source evidence.")
 manual_app = typer.Typer(help="Validate and import structured manual transcriptions.")
@@ -92,6 +98,7 @@ render_app = typer.Typer(help="Render and validate the responsive HTML and conci
 release_app = typer.Typer(help="Compile, audit, and package a versioned public release.")
 collect_app = typer.Typer(help="Refresh source-specific endorsement adapters.")
 app.add_typer(inventory_app, name="inventory")
+app.add_typer(election_app, name="election")
 app.add_typer(sources_app, name="sources")
 app.add_typer(evidence_app, name="evidence")
 app.add_typer(normalize_app, name="normalize")
@@ -101,6 +108,42 @@ app.add_typer(render_app, name="render")
 app.add_typer(release_app, name="release")
 app.add_typer(collect_app, name="collect")
 evidence_app.add_typer(manual_app, name="manual")
+
+
+@election_app.command("init")
+def election_init(
+    seed_path: Annotated[Path, typer.Argument(exists=True, dir_okay=False, readable=True)],
+    output_path: Annotated[Path, typer.Option("--output", dir_okay=False)],
+) -> None:
+    """Create deterministic election configuration from an offline seed."""
+    try:
+        configuration, created = initialize_election(seed_path, output_path)
+    except (OSError, ValueError) as error:
+        typer.echo(f"election initialization failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    status = "created" if created else "unchanged"
+    typer.echo(
+        f"election configuration: {status} ({configuration.election.id}; "
+        f"{len(configuration.jurisdictions)} jurisdictions, "
+        f"{len(configuration.races)} declared races) -> {output_path}"
+    )
+
+
+@election_app.command("validate")
+def election_validate(
+    configuration_path: Annotated[Path, typer.Argument(exists=True, dir_okay=False, readable=True)],
+) -> None:
+    """Validate an initialized election configuration."""
+    try:
+        configuration = read_election_configuration(configuration_path)
+    except ValueError as error:
+        typer.echo(f"election configuration invalid: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    typer.echo(
+        f"election configuration: valid ({configuration.election.id}; "
+        f"source panel {configuration.source_panel.id}@{configuration.source_panel.version}; "
+        f"scoring {configuration.scoring_policy.id}@{configuration.scoring_policy.version})"
+    )
 
 
 @collect_app.command("refresh")
@@ -817,6 +860,37 @@ def inventory_import(
     typer.echo(
         f"inventory: {len(inventory.races)} races, "
         f"{sum(len(race.choices) for race in inventory.races)} choices -> {output}"
+    )
+
+
+@inventory_app.command("import-initialized")
+def inventory_import_initialized(
+    configuration_path: Annotated[Path, typer.Argument(exists=True, dir_okay=False, readable=True)],
+    manifest_path: Annotated[
+        Path, typer.Option("--manifest", exists=True, dir_okay=False, readable=True)
+    ],
+    ballot_path: Annotated[
+        Path, typer.Option("--ballot-choices", exists=True, dir_okay=False, readable=True)
+    ],
+    output: Annotated[Path, typer.Option(dir_okay=False)] = Path(
+        "data/normalized/initialized-election-inventory.json"
+    ),
+) -> None:
+    """Materialize initialized IDs from hash-verified canonical offline ballot rows."""
+    try:
+        inventory = import_initialized_inventory(
+            configuration_path,
+            manifest_path,
+            ballot_path,
+        )
+        created = write_initialized_inventory(inventory, output)
+    except (OSError, UnicodeError, ValueError) as error:
+        typer.echo(f"initialized inventory import failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    status = "created" if created else "unchanged"
+    typer.echo(
+        f"initialized inventory: {status} ({len(inventory.races)} races, "
+        f"{sum(len(race.choices) for race in inventory.races)} choices) -> {output}"
     )
 
 

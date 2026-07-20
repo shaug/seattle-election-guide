@@ -1,0 +1,24 @@
+schema_version: "1.0"
+election_id: wa-2027-seattle-general
+adapter_id: canonical-ballot-csv
+adapter_version: "1.0"
+configuration_source:
+  id: fixture-2027-municipal-configuration
+  authority: Fixture Election Authority
+  url: https://example.test/elections/wa-2027-seattle-general/configuration.json
+  media_type: application/json
+  retrieved_at: 2027-10-01T12:00:00Z
+  sha256: c448b7088079726301a96652b00906351f9787cf7fba62c83c6326565b8c06fc
+  description: Synthetic authoritative topology and race declarations for the future fixture.
+  storage_reference: build/initialization/wa-2027-seattle-general.json
+  redistribution_note: Original synthetic test data.
+ballot_source:
+  id: fixture-2027-municipal-ballot
+  authority: Fixture Election Authority
+  url: https://example.test/elections/wa-2027-seattle-general/ballot.csv
+  media_type: text/csv
+  retrieved_at: 2027-10-01T12:00:00Z
+  sha256: fb9fec2b5b41ad9f8bdf48add2a75109f82798c93d19a949a774af3953264eee
+  description: Synthetic canonical ballot rows for the future-election fixture.
+  storage_reference: tests/fixtures/initialization/wa-2027-seattle-general-ballot.csv
+  redistribution_note: Original synthetic test data.
