@@ -385,6 +385,15 @@ def test_pdf_result_header_cannot_be_masked_by_comparison_text(tmp_path: Path) -
     assert f"{race.id}: ordered race result header" in prefix_corrupted_missing
     assert f"{race.id}: Yes" in prefix_corrupted_missing
 
+    percentage_race = race.model_copy(update={"percentage_label": "100%", "percentage_whole": 100})
+    suffixed_percentage_text = " ".join(_pdf_race_display_values(percentage_race)).replace(
+        "100%", "100%%", 1
+    )
+    suffixed_percentage_missing = _missing_pdf_race_values(
+        [percentage_race], suffixed_percentage_text, _pdf_race_display_values
+    )
+    assert f"{race.id}: 100%" in suffixed_percentage_missing
+
 
 @pytest.mark.parametrize(
     "value_fn",

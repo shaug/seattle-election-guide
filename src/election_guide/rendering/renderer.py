@@ -1477,8 +1477,10 @@ def _pdf_value_is_present(value: str, segment: str) -> bool:
         comparable_segment = comparable_segment.replace("·", " ")
         pattern = r"\s*".join(re.escape(word) for word in normalized.split())
         prefix = r"(?<!seattle\s)(?<!\w)" if compact_times_label else r"(?<!\w)"
-        return re.search(prefix + pattern + r"(?!\w)", comparable_segment) is not None
-    return re.search(r"(?<!\w)" + re.escape(normalized) + r"(?!\w)", comparable_segment) is not None
+        return re.search(prefix + pattern + r"(?=\s|$)", comparable_segment) is not None
+    return (
+        re.search(r"(?<!\w)" + re.escape(normalized) + r"(?=\s|$)", comparable_segment) is not None
+    )
 
 
 def _pdf_line_value_is_present(value: str, segment: str) -> bool:
@@ -1570,7 +1572,7 @@ def _missing_pdf_race_values(
             r"\s*".join(re.escape(word) for word in _normalized_text(value).casefold().split())
             for value in (race.race_label, race.recommendation_label)
         )
-        if re.match(header_pattern + r"(?!\w)", segment) is None:
+        if re.match(header_pattern + r"(?=\s|$)", segment) is None:
             missing.append(f"{race.id}: ordered race result header")
         for value in value_fn(race):
             line_bound_detailed_comparison = (
