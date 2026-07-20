@@ -20,7 +20,7 @@
       <div class="hero-meta" aria-label="Guide metadata">
         <span>Election {{ guide.metadata.election_date }}</span>
         <span>{{ guide.metadata.published_race_count }} races</span>
-        <span>{{ guide.metadata.source_count }} active sources</span>
+        <span>{{ guide.metadata.captured_source_count }} represented sources · {{ guide.metadata.unavailable_source_count }} unavailable</span>
         <span>Data {{ guide.metadata.data_version }}</span>
       </div>
     </header>
@@ -157,7 +157,7 @@
         <h3>Build and audit details</h3>
         <p>Election {{ guide.metadata.election_date }} | Generated {{ guide.metadata.generated_at.isoformat() }}</p>
         <p>Data {{ guide.metadata.data_version }} | Code {{ guide.metadata.git_commit[:12] }}</p>
-        <p>{{ guide.metadata.source_count }} sources | {{ guide.metadata.published_race_count }} races |
+        <p>{{ guide.metadata.captured_source_count }} represented / {{ guide.metadata.source_count }} active sources | {{ guide.metadata.published_race_count }} races |
           {{ guide.metadata.unresolved_review_count }} unresolved reviews</p>
         <p><a href="{{ config.project_url }}">Project source and audit files</a></p>
       </section>
@@ -176,7 +176,7 @@
           <h1>Endorsement consensus</h1>
         </div>
         <div class="print-header-meta">{{ guide.metadata.election_date }}<br>
-          {{ guide.metadata.published_race_count }} races | {{ guide.metadata.source_count }} sources</div>
+          {{ guide.metadata.published_race_count }} races | {{ guide.metadata.captured_source_count }}/{{ guide.metadata.source_count }} sources represented</div>
       </header>
       <p class="print-intro">Progressive-source consensus. Seattle Times choices are comparison only.
         Low coverage is labeled; no recommendation is made from insufficient evidence.</p>
@@ -270,7 +270,8 @@
         <div><span>Generated</span><strong>{{ guide.metadata.generated_at.isoformat() }}</strong></div>
         <div><span>Data version</span><strong>{{ guide.metadata.data_version }}</strong></div>
         <div><span>Code</span><strong>{{ guide.metadata.git_commit[:12] }}</strong></div>
-        <div><span>Active sources</span><strong>{{ guide.metadata.source_count }}</strong></div>
+        <div><span>Represented sources</span><strong>{{ guide.metadata.captured_source_count }}</strong></div>
+        <div><span>Unavailable sources</span><strong>{{ guide.metadata.unavailable_source_count }}</strong></div>
         <div><span>Published races</span><strong>{{ guide.metadata.published_race_count }}</strong></div>
         <div><span>Unresolved reviews</span><strong>{{ guide.metadata.unresolved_review_count }}</strong></div>
         <div><span>Project</span><strong><a href="{{ config.project_url }}">Source and audit files</a></strong></div>

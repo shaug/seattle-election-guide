@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 744,
+  "canonical_url": "https://www.11thlddems.org/2026/05/results-of-our-2026-may-endorsements-meeting/",
+  "capture_method": "manual_upload",
+  "content_sha256": "60f04622398e942cc4db998e74280274fa98e2c4272aea1c4e9f3b2b287b38e7",
+  "http_status": null,
+  "id": "capture-11th-district-democrats-20260720T110200Z-c13e8d7ec7be",
+  "media_type": "application/json",
+  "published_at": "2026-05-17",
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://www.11thlddems.org/2026/05/results-of-our-2026-may-endorsements-meeting/",
+  "retrieved_at": "2026-07-20T11:02:00Z",
+  "schema_version": "1.0",
+  "source_id": "11th-district-democrats",
+  "storage_reference": "sha256/60/60f04622398e942cc4db998e74280274fa98e2c4272aea1c4e9f3b2b287b38e7",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: 11th Legislative District Democrats",
+  "updated_at": null
+}

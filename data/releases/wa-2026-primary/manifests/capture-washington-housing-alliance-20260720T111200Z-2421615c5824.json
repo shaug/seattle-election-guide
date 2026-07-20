@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 4755,
+  "canonical_url": "https://www.wahousingalliance.org/endorsements",
+  "capture_method": "manual_upload",
+  "content_sha256": "2bc06185039ecb1086d2d1fe9a198f6d415bfa6af95156668563c542d9ec97c2",
+  "http_status": null,
+  "id": "capture-washington-housing-alliance-20260720T111200Z-2421615c5824",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://www.wahousingalliance.org/endorsements",
+  "retrieved_at": "2026-07-20T11:12:00Z",
+  "schema_version": "1.0",
+  "source_id": "washington-housing-alliance",
+  "storage_reference": "sha256/2b/2bc06185039ecb1086d2d1fe9a198f6d415bfa6af95156668563c542d9ec97c2",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: Washington Housing Alliance",
+  "updated_at": null
+}

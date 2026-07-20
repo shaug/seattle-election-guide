@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 226874,
+  "canonical_url": "https://wabikes.org/wp-content/uploads/2026/07/2026-primary-endorsements-table1-rotated.jpg",
+  "capture_method": "image",
+  "content_sha256": "aa9cd7d7b0a62517af644bc2a34006a048e0c37652f609f77b4f5f3888d7e30e",
+  "http_status": 200,
+  "id": "capture-washington-bikes-20260720T110330Z-79a2ba4aac70",
+  "media_type": "image/jpeg",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party publication retained locally for audit and review only.",
+  "requested_url": "https://wabikes.org/wp-content/uploads/2026/07/2026-primary-endorsements-table1-rotated.jpg",
+  "retrieved_at": "2026-07-20T11:03:30Z",
+  "schema_version": "1.0",
+  "source_id": "washington-bikes",
+  "storage_reference": "sha256/aa/aa9cd7d7b0a62517af644bc2a34006a048e0c37652f609f77b4f5f3888d7e30e",
+  "storage_scope": "local_only",
+  "title": "Washington Bikes 2026 primary endorsement chart",
+  "updated_at": null
+}

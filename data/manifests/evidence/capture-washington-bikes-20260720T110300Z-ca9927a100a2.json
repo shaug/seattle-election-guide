@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 44138,
+  "canonical_url": "https://wabikes.org/index.php/2026/07/16/wa-bikes-2026-primary-endorsements-for-better-biking/",
+  "capture_method": "static_html",
+  "content_sha256": "176fddb25bafe17bc3f8e324c9f909dc9385b01544d5172750311f20c3dd0dd6",
+  "http_status": 200,
+  "id": "capture-washington-bikes-20260720T110300Z-ca9927a100a2",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party publication retained locally for audit and review only.",
+  "requested_url": "https://wabikes.org/index.php/2026/07/16/wa-bikes-2026-primary-endorsements-for-better-biking/",
+  "retrieved_at": "2026-07-20T11:03:00Z",
+  "schema_version": "1.0",
+  "source_id": "washington-bikes",
+  "storage_reference": "sha256/17/176fddb25bafe17bc3f8e324c9f909dc9385b01544d5172750311f20c3dd0dd6",
+  "storage_scope": "local_only",
+  "title": "WA Bikes 2026 Primary Endorsements for Better Biking",
+  "updated_at": null
+}

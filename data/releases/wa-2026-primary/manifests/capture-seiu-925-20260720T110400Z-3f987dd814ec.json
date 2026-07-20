@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 6633,
+  "canonical_url": "https://www.seiu925.org/2026endorsements/",
+  "capture_method": "manual_upload",
+  "content_sha256": "df70389a0a2a3e3575769929fcff5e54627bbfc7782c453a1764ca2e339d1b79",
+  "http_status": null,
+  "id": "capture-seiu-925-20260720T110400Z-3f987dd814ec",
+  "media_type": "application/json",
+  "published_at": "2026-06-29",
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://www.seiu925.org/2026endorsements/",
+  "retrieved_at": "2026-07-20T11:04:00Z",
+  "schema_version": "1.0",
+  "source_id": "seiu-925",
+  "storage_reference": "sha256/df/df70389a0a2a3e3575769929fcff5e54627bbfc7782c453a1764ca2e339d1b79",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: SEIU 925",
+  "updated_at": "2026-06-30"
+}

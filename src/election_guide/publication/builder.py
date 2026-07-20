@@ -255,6 +255,9 @@ def _build_view_model(
         source for source in dataset.source_registry.sources if source.panel_role != "excluded"
     ]
     active_source_ids = {source.id for source in active_sources}
+    captured_source_ids = {
+        capture.source_id for capture in dataset.captures if capture.source_id in active_source_ids
+    }
     published_overlap_group_ids = {
         group.id
         for group in dataset.source_registry.overlap_groups
@@ -407,6 +410,8 @@ def _build_view_model(
             data_version=consensus.input_hash[:12],
             git_commit=git_commit,
             source_count=len(active_sources),
+            captured_source_count=len(captured_source_ids),
+            unavailable_source_count=len(active_source_ids - captured_source_ids),
             race_count=len(dataset.inventory.races),
             published_race_count=len(consensus.races),
             unresolved_review_count=len(unresolved),
@@ -573,6 +578,9 @@ def _validate_publication(
     active_source_ids = [
         source.id for source in dataset.source_registry.sources if source.panel_role != "excluded"
     ]
+    captured_source_ids = {
+        capture.source_id for capture in dataset.captures if capture.source_id in active_source_ids
+    }
     values_match = all(
         _view_race_matches(view_by_id[race_id], result, inventory_by_id[race_id])
         for race_id, result in consensus_by_id.items()
@@ -588,6 +596,9 @@ def _validate_publication(
         and view_model.metadata.generated_at == consensus.computed_at
         and view_model.metadata.data_version == consensus.input_hash[:12]
         and view_model.metadata.source_count == len(active_source_ids)
+        and view_model.metadata.captured_source_count == len(captured_source_ids)
+        and view_model.metadata.unavailable_source_count
+        == len(active_source_ids) - len(captured_source_ids)
         and view_model.metadata.race_count == len(dataset.inventory.races)
         and view_model.metadata.published_race_count == len(consensus.races)
     )

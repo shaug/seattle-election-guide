@@ -1,0 +1,26 @@
+{
+  "captured_at": "2026-07-20T11:02:00Z",
+  "decisions": [
+    {
+      "candidate_ids": [
+        "ld-11-state-representative-1--david-hackney",
+        "ld-11-state-representative-1--ashley-fedan"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "ld-11-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-11-state-representative-2--steve-bergquist"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "ld-11-state-representative-2",
+      "status": "endorsed"
+    }
+  ],
+  "evidence_locator": "Official May endorsement-results post and linked organization newsletter.",
+  "source_id": "11th-district-democrats"
+}
