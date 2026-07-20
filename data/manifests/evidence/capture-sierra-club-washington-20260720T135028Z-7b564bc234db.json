@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": true,
+  "byte_length": 298673,
+  "canonical_url": "https://www.sierraclub.org/washington/2026-primary-endorsements",
+  "capture_method": "browser",
+  "content_sha256": "a4abdf9f08ea49e672a32daaffccd00f453a038300ded8f35396a357ed2474b3",
+  "http_status": 200,
+  "id": "capture-sierra-club-washington-20260720T135028Z-7b564bc234db",
+  "media_type": "image/jpeg",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full official page screenshot retained locally for verification; only a short transcript is permitted in the release.",
+  "requested_url": "https://www.sierraclub.org/washington/2026-primary-endorsements",
+  "retrieved_at": "2026-07-20T13:50:28Z",
+  "schema_version": "1.0",
+  "source_id": "sierra-club-washington",
+  "storage_reference": "sha256/a4/a4abdf9f08ea49e672a32daaffccd00f453a038300ded8f35396a357ed2474b3",
+  "storage_scope": "local_only",
+  "title": "2026 Primary Endorsements | Sierra Club",
+  "updated_at": null
+}

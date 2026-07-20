@@ -8,6 +8,9 @@ import yaml
 from pydantic import ValidationError
 
 from election_guide.inventory.importer import read_inventory
+from election_guide.normalization.models import CanonicalDataset
+from election_guide.normalization.records import new_normalized_endorsement
+from election_guide.serialization import read_json
 from election_guide.sources.models import SourceRegistry
 from election_guide.sources.registry import read_source_registry, validate_registry_inventory
 from election_guide.sources.report import render_discovery_report
@@ -27,9 +30,9 @@ def test_committed_source_panel_is_frozen_and_complete() -> None:
         "excluded": 5,
     }
     assert Counter(source.discovery.status for source in registry.sources) == {
-        "published": 33,
-        "not_found": 4,
-        "access_restricted": 2,
+        "published": 35,
+        "not_found": 3,
+        "access_restricted": 1,
         "not_an_endorsement_publisher": 3,
     }
     assert all(source.discovery.status for source in registry.sources)
@@ -44,10 +47,23 @@ def test_committed_source_panel_is_frozen_and_complete() -> None:
     assert wea.discovery.canonical_url == (
         "https://www.washingtonea.org/advocacy/wea-pac/2026-endorsements/"
     )
+    assert (
+        next(
+            source for source in registry.sources if source.id == "37th-district-democrats"
+        ).discovery.status
+        == "published"
+    )
+    assert next(
+        source for source in registry.sources if source.id == "sierra-club-washington"
+    ).discovery.canonical_url == ("https://www.sierraclub.org/washington/2026-primary-endorsements")
 
 
-def test_legislative_district_sources_only_count_in_their_district() -> None:
+def test_legislative_district_sources_count_broad_races_but_not_other_districts() -> None:
     registry = read_source_registry(REGISTRY_PATH)
+    inventory = read_inventory(
+        PROJECT_ROOT / "data" / "normalized" / "wa-2026-primary-inventory.json"
+    )
+    jurisdiction_by_id = {jurisdiction.id: jurisdiction for jurisdiction in inventory.jurisdictions}
     district_sources = [
         source for source in registry.sources if source.geographic_kind == "legislative_district"
     ]
@@ -63,8 +79,87 @@ def test_legislative_district_sources_only_count_in_their_district() -> None:
     }
     for source in district_sources:
         assert source.panel_role == "consensus"
-        assert source.eligibility.kind == "jurisdictions_only"
+        assert source.eligibility.kind == "seattle_ballot_races_except_other_legislative_districts"
         assert len(source.eligibility.jurisdiction_ids) == 1
+        assert source.eligibility.permits_jurisdiction(jurisdiction_by_id["washington-state"])
+        assert source.eligibility.permits_jurisdiction(jurisdiction_by_id["king-county"])
+        assert source.eligibility.permits_jurisdiction(
+            jurisdiction_by_id[source.eligibility.jurisdiction_ids[0]]
+        )
+
+        other_district = next(
+            jurisdiction
+            for jurisdiction in inventory.jurisdictions
+            if jurisdiction.kind == "legislative_district"
+            and jurisdiction.id not in source.eligibility.jurisdiction_ids
+        )
+        assert not source.eligibility.permits_jurisdiction(other_district)
+
+
+def test_ld_eligibility_uses_authoritative_kind_not_id_prefix() -> None:
+    registry = read_source_registry(REGISTRY_PATH)
+    inventory = read_inventory(
+        PROJECT_ROOT / "data" / "normalized" / "wa-2026-primary-inventory.json"
+    )
+    source = next(item for item in registry.sources if item.id == "37th-district-democrats")
+    district = next(
+        jurisdiction
+        for jurisdiction in inventory.jurisdictions
+        if jurisdiction.kind == "legislative_district"
+    )
+    own_district = district.model_copy(update={"id": "district-alpha"})
+    other_district = district.model_copy(update={"id": "district-beta"})
+    eligibility = source.eligibility.model_copy(update={"jurisdiction_ids": [own_district.id]})
+
+    assert eligibility.permits_jurisdiction(own_district)
+    assert not eligibility.permits_jurisdiction(other_district)
+
+
+def test_canonical_dataset_rejects_unknown_ld_eligibility() -> None:
+    payload = read_json(PROJECT_ROOT / "data" / "normalized" / "canonical-dataset.json")
+    source = next(
+        item
+        for item in payload["source_registry"]["sources"]
+        if item["id"] == "37th-district-democrats"
+    )
+    source["eligibility"]["jurisdiction_ids"] = ["district-alpha"]
+
+    with pytest.raises(ValidationError, match="unknown legislative districts"):
+        CanonicalDataset.model_validate(payload)
+
+
+def test_canonical_dataset_rejects_publication_ineligible_ld_decision() -> None:
+    dataset = CanonicalDataset.model_validate(
+        read_json(PROJECT_ROOT / "data" / "normalized" / "canonical-dataset.json")
+    )
+    endorsement = next(
+        item for item in dataset.endorsements if item.source_id == "37th-district-democrats"
+    )
+    candidate_id = "pco-democratic-sea-34-1247--leslie-s-harris"
+    fields = endorsement.model_dump(mode="json", exclude={"id"})
+    fields.update(
+        {
+            "race_id": "pco-democratic-sea-34-1247",
+            "candidate_ids": [candidate_id],
+            "allocation": {candidate_id: "1"},
+        }
+    )
+    invalid_endorsement = new_normalized_endorsement(**fields)
+    endorsements = [
+        invalid_endorsement if item.id == endorsement.id else item for item in dataset.endorsements
+    ]
+
+    with pytest.raises(ValidationError, match="outside its source eligibility"):
+        CanonicalDataset(
+            inventory=dataset.inventory,
+            source_registry=dataset.source_registry,
+            captures=dataset.captures,
+            claims=dataset.claims,
+            endorsements=endorsements,
+            review_items=dataset.review_items,
+            review_decisions=dataset.review_decisions,
+            overrides=dataset.overrides,
+        )
 
 
 def test_source_districts_match_the_authoritative_inventory() -> None:
@@ -88,6 +183,7 @@ def test_committed_discovery_report_matches_registry() -> None:
     committed = (PROJECT_ROOT / "docs" / "SOURCE_DISCOVERY.md").read_text(encoding="utf-8")
 
     assert committed == render_discovery_report(registry)
+    assert "**1 access-restricted source**" in committed
     protec17_line = next(line for line in committed.splitlines() if line.startswith("| PROTEC17 "))
     assert "updated 2026-07-16" in protec17_line
 
@@ -117,7 +213,7 @@ def test_registry_rejects_broad_legislative_district_eligibility() -> None:
         "rationale": "invalid broad eligibility",
     }
 
-    with pytest.raises(ValidationError, match="must use jurisdictions_only"):
+    with pytest.raises(ValidationError, match="must include Seattle-ballot races"):
         SourceRegistry.model_validate(payload)
 
 
@@ -132,7 +228,7 @@ def test_registry_rejects_unpaired_overlap_metadata() -> None:
 
 def test_registry_rejects_discovery_after_panel_freeze() -> None:
     payload = _registry_payload()
-    payload["research_cutoff"] = "2026-07-20T11:00:00Z"
+    payload["research_cutoff"] = "2026-07-20T15:00:00Z"
 
     with pytest.raises(ValidationError, match="research cutoff cannot be after panel freeze"):
         SourceRegistry.model_validate(payload)
@@ -149,7 +245,7 @@ def test_registry_rejects_unrecorded_redirect() -> None:
 
 def test_registry_rejects_source_access_after_research_cutoff() -> None:
     payload = _registry_payload()
-    payload["sources"][0]["discovery"]["checked_at"] = "2026-07-20T11:00:00Z"
+    payload["sources"][0]["discovery"]["checked_at"] = "2026-07-20T15:00:00Z"
 
     with pytest.raises(ValidationError, match="checked after the research cutoff"):
         SourceRegistry.model_validate(payload)

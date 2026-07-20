@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 4147,
+  "canonical_url": "https://www.sierraclub.org/washington/2026-primary-endorsements",
+  "capture_method": "manual_upload",
+  "content_sha256": "0d7828e8c82bb17e9fcddf620974676602f37081608e4dac91aecb7998e1c7fd",
+  "http_status": null,
+  "id": "capture-sierra-club-washington-20260720T135028Z-0e856a26b5d6",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://www.sierraclub.org/washington/2026-primary-endorsements",
+  "retrieved_at": "2026-07-20T13:50:28Z",
+  "schema_version": "1.0",
+  "source_id": "sierra-club-washington",
+  "storage_reference": "sha256/0d/0d7828e8c82bb17e9fcddf620974676602f37081608e4dac91aecb7998e1c7fd",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: Sierra Club Washington State Chapter",
+  "updated_at": null
+}

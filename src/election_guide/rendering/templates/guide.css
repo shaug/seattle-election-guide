@@ -122,6 +122,7 @@ summary { cursor: pointer; color: #075d75; font-weight: 800; }
   .print-race-notes span { min-width: 0; }
   .print-race-notes span:last-child { flex-shrink: 0; color: #812b25; font-weight: 800; }
   .print-page footer { position: absolute; bottom: 0; left: 0; right: 0; padding-top: .035in; border-top: .5px solid #9fb3c8; color: #52606d; font-size: 6pt; }
+  .print-page-one footer { left: .12in; }
   .method-header { display: grid; grid-template-columns: 1fr auto; align-items: end; height: .72in; border-bottom: 3px solid var(--teal); }
   .method-header p { grid-column: 1 / -1; margin: 0; color: var(--teal); font-size: 7pt; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
   .method-header h1 { margin: 0; font: 700 20pt/1 Georgia, serif; }
@@ -141,6 +142,7 @@ summary { cursor: pointer; color: #075d75; font-weight: 800; }
   .grade-legend p { margin: 0; }
   .category-row { display: flex; justify-content: space-between; gap: .05in; padding: .04in 0; border-bottom: .5px solid #d9e2ec; font-size: 7pt; }
   .category-row span { color: #52606d; }
+  .ld-source-rule { margin-top: .05in !important; padding: .05in; border-left: 2px solid var(--teal); background: #e8f5f3; font-size: 6.5pt !important; line-height: 1.25 !important; }
   .times-key { margin-top: .09in; padding: .075in; background: #fff3d6; border-left: 2px solid #b56a00; font-size: 6.5pt; line-height: 1.25; }
   .print-metadata { display: grid; grid-template-columns: repeat(4, 1fr); gap: .04in; margin-top: .1in; padding: .08in; background: var(--navy); color: white; }
   .print-metadata div { min-width: 0; }

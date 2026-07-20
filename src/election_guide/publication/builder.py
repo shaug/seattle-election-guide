@@ -546,6 +546,11 @@ def _methodology(dataset: CanonicalDataset, consensus: ConsensusReport) -> Publi
         interpretation_notes=[
             "Agreement is measured only among explicitly endorsing eligible sources.",
             "No endorsement and missing coverage remain visible but do not enter the denominator.",
+            (
+                "Each legislative-district organization counts independently on broader "
+                "Seattle-ballot races it explicitly covers, but only on its own district's "
+                "legislative contests. Their shared party network remains disclosed."
+            ),
             "The Seattle Times is a separate comparison, never an extra progressive vote.",
             "Category representation and category candidate support are reported separately.",
         ],

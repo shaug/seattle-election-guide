@@ -14,6 +14,7 @@ from pydantic import (
     model_validator,
 )
 
+from election_guide.inventory.models import Jurisdiction, Race
 from election_guide.validation import validated_http_url, validated_media_type
 
 
@@ -24,18 +25,42 @@ class SourceModel(BaseModel):
 
 
 class Eligibility(SourceModel):
-    kind: Literal["all_seattle_ballot_races", "jurisdictions_only", "none"]
+    kind: Literal[
+        "all_seattle_ballot_races",
+        "seattle_ballot_races_except_other_legislative_districts",
+        "jurisdictions_only",
+        "none",
+    ]
     jurisdiction_ids: list[str] = Field(default_factory=list)
     rationale: str = Field(min_length=1)
 
     @model_validator(mode="after")
     def validate_scope(self) -> Eligibility:
-        if self.kind == "jurisdictions_only":
+        if self.kind in {
+            "jurisdictions_only",
+            "seattle_ballot_races_except_other_legislative_districts",
+        }:
             if not self.jurisdiction_ids:
-                raise ValueError("jurisdictions_only eligibility requires jurisdiction_ids")
+                raise ValueError(f"{self.kind} eligibility requires jurisdiction_ids")
         elif self.jurisdiction_ids:
             raise ValueError(f"{self.kind} eligibility cannot list jurisdiction_ids")
         return self
+
+    def permits_jurisdiction(self, jurisdiction: Jurisdiction) -> bool:
+        """Return whether this source may contribute to a race in the jurisdiction."""
+        if self.kind == "none":
+            return False
+        if self.kind == "all_seattle_ballot_races":
+            return True
+        if self.kind == "jurisdictions_only":
+            return jurisdiction.id in self.jurisdiction_ids
+        return (
+            jurisdiction.kind != "legislative_district" or jurisdiction.id in self.jurisdiction_ids
+        )
+
+    def permits_race(self, race: Race, jurisdiction: Jurisdiction) -> bool:
+        """Return whether this source may contribute to a publishable ballot race."""
+        return race.publication_eligible and self.permits_jurisdiction(jurisdiction)
 
 
 class Discovery(SourceModel):
@@ -152,16 +177,20 @@ class Source(SourceModel):
         if len(self.overlap_group_ids) != len(set(self.overlap_group_ids)):
             raise ValueError(f"source {self.id!r} repeats an overlap group")
         if self.geographic_kind == "legislative_district":
-            if self.eligibility.kind != "jurisdictions_only":
+            if self.eligibility.kind != "seattle_ballot_races_except_other_legislative_districts":
                 raise ValueError(
-                    f"legislative-district source {self.id!r} must use jurisdictions_only"
+                    f"legislative-district source {self.id!r} must include Seattle-ballot "
+                    "races while excluding other legislative districts"
                 )
             if len(self.eligibility.jurisdiction_ids) != 1:
                 raise ValueError(
                     f"legislative-district source {self.id!r} must name exactly one district"
                 )
-        elif self.eligibility.kind == "jurisdictions_only":
-            raise ValueError(f"general source {self.id!r} cannot use district-only eligibility")
+        elif self.eligibility.kind in {
+            "jurisdictions_only",
+            "seattle_ballot_races_except_other_legislative_districts",
+        }:
+            raise ValueError(f"general source {self.id!r} cannot use district-scoped eligibility")
         return self
 
 
@@ -208,18 +237,6 @@ class SourceRegistry(SourceModel):
                     )
                 if source.publisher_id == source.id:
                     raise ValueError(f"source {source.id!r} cannot publish itself")
-            if source.eligibility.kind == "jurisdictions_only":
-                invalid = [
-                    item
-                    for item in source.eligibility.jurisdiction_ids
-                    if not item.startswith("legislative-district-")
-                ]
-                if invalid:
-                    raise ValueError(
-                        f"district source {source.id!r} has non-legislative "
-                        f"jurisdictions: {invalid}"
-                    )
-
         group_ids = [group.id for group in self.overlap_groups]
         if len(group_ids) != len(set(group_ids)):
             raise ValueError("duplicate overlap group id")
