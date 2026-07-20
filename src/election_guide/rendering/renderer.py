@@ -767,6 +767,11 @@ def _inspect_print_layout(
         cdp.command("Page.enable", session_id=session_id)
         cdp.command("Page.navigate", {"url": url}, session_id=session_id)
         cdp.wait_event("Page.loadEventFired", session_id=session_id)
+        cdp.command(
+            "Runtime.evaluate",
+            {"expression": "document.fonts.ready", "awaitPromise": True},
+            session_id=session_id,
+        )
         inspected = cdp.command(
             "Runtime.evaluate",
             {
@@ -774,6 +779,10 @@ def _inspect_print_layout(
                 JSON.stringify((() => {
                   const issues = [];
                   const detailed = __DETAILED__;
+                  if (!CSS.supports('text-box-trim', 'trim-both') ||
+                      !CSS.supports('text-box-edge', 'cap alphabetic')) {
+                    issues.push('optical-text-box-trim-support');
+                  }
                   const measurementCanvas = document.createElement('canvas');
                   const measurementContext = measurementCanvas.getContext('2d');
                   const inkBounds = element => {
@@ -819,7 +828,7 @@ def _inspect_print_layout(
                     '.comparison', '.warning', '.methodology-panel'
                   ] : [
                     '.print-races', '.method-grid section', '.print-race-title',
-                    '.print-race-result > strong', '.print-race-context span',
+                    '.print-race-result > strong', '.print-race-context > span',
                     '.print-times-pick', '.print-race-notes span', '.print-metadata strong'
                   ];
                   for (const selector of selectors) {
@@ -921,7 +930,9 @@ def _inspect_print_layout(
                         const meterText = meterLabel.querySelector('.print-meter-text');
                         const imbalance = meterText ? inkImbalance(meter, [meterText]) : null;
                         if (imbalance === null || Math.abs(imbalance) > 1) {
-                          issues.push(`.print-meter[${index}]-label-centering`);
+                          const detail = imbalance === null ? 'unmeasurable' :
+                            `${imbalance.toFixed(2)}px`;
+                          issues.push(`.print-meter[${index}]-label-centering(${detail})`);
                         }
                       }
                       if (support && getComputedStyle(support).display !== 'none' && Math.abs(
@@ -952,7 +963,9 @@ def _inspect_print_layout(
                       const comparisonText = [status, separator, choice].filter(Boolean);
                       const imbalance = inkImbalance(comparison, comparisonText);
                       if (imbalance === null || Math.abs(imbalance) > 1.2) {
-                        issues.push(`.print-race[${index}]-comparison-centering`);
+                        const detail = imbalance === null ? 'unmeasurable' :
+                          `${imbalance.toFixed(2)}px`;
+                        issues.push(`.print-race[${index}]-comparison-centering(${detail})`);
                       }
                     }
                     for (const [selector, element] of [

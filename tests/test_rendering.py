@@ -255,7 +255,9 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert html.count('class="print-race-column"') == 2
     assert "State Legislature — continued" in html
     assert ".print-race:nth-of-type(even) { background: #f2f6f8; }" in html
-    assert '--print-sans: "Trebuchet MS", "Liberation Sans", sans-serif' in html
+    assert '--print-sans: Helvetica, "Liberation Sans", sans-serif' in html
+    assert "text-box-trim: trim-both" in html
+    assert "text-box-edge: cap alphabetic" in html
     assert "font: 800 20pt/.95 var(--print-sans)" in html
     assert '<div class="print-guide">' in html
     assert '<div class="print-guide" aria-hidden="true">' not in html
@@ -303,6 +305,7 @@ def test_print_layout_rejects_visibly_uncentered_control_text(tmp_path: Path) ->
 @media print {
   .print-guide { font-family: Arial, Helvetica, sans-serif; }
   .print-meter-label { padding: 0 .05in 0 0; }
+  .print-meter-text, .print-times-pick > span { position: relative; top: -3px; }
 }
 </style>
 </head>

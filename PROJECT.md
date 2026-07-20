@@ -1164,13 +1164,15 @@ Requirements:
 - no orphaned section labels;
 - no awkward text wrapping in candidate names.
 
-For print, prefer Trebuchet MS with a portable open-source fallback over Arial so the guide feels
-contemporary without bundling or redistributing a licensed font file. Keep this choice scoped to
-the PDF so it does not alter the responsive guide's typography.
+For print, prefer Helvetica with Liberation Sans as the portable open-source fallback. Use optical
+text-box trimming so pill and meter labels remain centered despite platform
+font-metric differences. Keep this choice scoped to the PDF so it does not alter the responsive
+guide's typography.
 
 Use only redistributable system or open-source fonts.
 
-Do not include font files in the published bundle unless licensing and redistribution are explicitly addressed.
+Do not include font files in the published bundle unless licensing and redistribution are
+explicitly addressed.
 
 ## 16.6 Color
 

@@ -26,9 +26,11 @@ when a category crosses columns.
 Page two groups methodology into independent column panels so short sections do not force unrelated
 content into dense or oversized shared rows.
 
-The concise and detailed print editions use Trebuchet MS where it is available, with Liberation
-Sans and the generic sans-serif as portable fallbacks. Arial is not used in the PDF, no licensed
-font file is redistributed, and the responsive guide's typography is unchanged.
+The concise and detailed print editions use Helvetica where available, with Liberation Sans and
+the generic sans-serif as portable fallbacks. Chromium's optical text-box
+trimming removes excess leading before pill and meter labels are centered, keeping the treatment
+balanced across those fonts. Arial is not used in the PDF, no font file is redistributed, and the
+responsive guide's typography is unchanged.
 
 ## Requirements
 
