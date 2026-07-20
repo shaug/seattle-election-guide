@@ -1535,7 +1535,7 @@ def _missing_pdf_race_values(
         later = [item for item in positions[index + 1 :] if item is not None]
         segment = comparable[position : later[0] if later else len(comparable)]
         header_pattern = r"\s+".join(
-            re.escape(_normalized_text(value).casefold())
+            r"\s*".join(re.escape(word) for word in _normalized_text(value).casefold().split())
             for value in (race.race_label, race.recommendation_label)
         )
         if re.match(header_pattern, segment) is None:

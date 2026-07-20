@@ -403,6 +403,12 @@ def test_pdf_comparison_validation_requires_compound_chip_and_rejects_legacy_bad
     )
 
     assert _missing_pdf_race_values([race], expected_text, value_fn) == []
+    wrapped_header_text = expected_text.replace(
+        race.race_label,
+        race.race_label.replace(" ", "\n", 1),
+        1,
+    )
+    assert _missing_pdf_race_values([race], wrapped_header_text, value_fn) == []
 
     for suffix in ("body", " body", "-body"):
         prefix_collision_text = expected_text.replace(chip_label, f"{chip_label}{suffix}", 1)
