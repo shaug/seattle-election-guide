@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="{{ config.author }}">
+  <meta name="description" content="{{ config.subject }}">
+  <title>{{ config.title }}</title>
+  <style>{{ stylesheet | safe }}</style>
+</head>
+<body>
+  <a class="skip-link" href="#guide-races">Skip to recommendations</a>
+
+  <main class="screen-guide">
+    <header class="hero">
+      <div class="hero-kicker">Seattle 2026 Primary</div>
+      <h1>Endorsement consensus guide</h1>
+      <p class="hero-deck">A source-transparent view of progressive endorsements, with the
+        Seattle Times shown separately for comparison.</p>
+      <div class="hero-meta" aria-label="Guide metadata">
+        <span>Election {{ guide.metadata.election_date }}</span>
+        <span>{{ guide.metadata.published_race_count }} races</span>
+        <span>{{ guide.metadata.source_count }} active sources</span>
+        <span>Data {{ guide.metadata.data_version }}</span>
+      </div>
+    </header>
+
+    <section class="screen-controls" aria-label="Race filters">
+      <label for="race-filter">Show races</label>
+      <select id="race-filter">
+        <option value="all">All Seattle ballot races</option>
+        <optgroup label="Ballot sections">
+        {% for section in guide.sections %}
+        <option value="{{ section.id }}">{{ section.label }}</option>
+        {% endfor %}
+        </optgroup>
+        <optgroup label="Districts and jurisdictions">
+        {% for option in filter_options %}<option value="{{ option }}">{{ option }}</option>{% endfor %}
+        </optgroup>
+      </select>
+      <p id="filter-status" role="status" aria-live="polite"></p>
+    </section>
+
+    <div id="guide-races" class="screen-sections">
+      {% for section in guide.sections %}
+      <section class="screen-section" data-filter-section="{{ section.id }}">
+        <div class="section-heading">
+          <p>Ballot section</p>
+          <h2>{{ section.label }}</h2>
+        </div>
+        <div class="race-grid">
+          {% for race in section.races %}
+          <article class="race-card" data-publication-race-id="{{ race.id }}"
+            data-filter-tokens='{{ race.filter_tokens | tojson }}'>
+            <div class="race-card-head">
+              <div>
+                <p class="race-office" data-display-role="race-label">{{ race.race_label }}</p>
+                <h3 data-display-role="recommendation">{{ race.recommendation_label }}</h3>
+              </div>
+              <div class="score-lockup" aria-label="Grade {{ race.grade }}, {{ race.percentage_label }}">
+                <span class="grade grade-{{ race.grade | replace('+', '-plus') | lower }}"
+                  data-display-role="grade">{{ race.grade }}</span>
+                <strong data-display-role="share">{% if race.percentage_whole is none %}N/A{% else %}{{ race.percentage_label }}{% endif %}</strong>
+              </div>
+            </div>
+            {% if race.percentage_whole is not none %}
+            <div class="consensus-meter" role="img" aria-label="Consensus share {{ race.percentage_label }}">
+              <span style="width: {{ race.percentage_whole }}%"></span>
+            </div>
+            {% endif %}
+            <p class="support-line" data-display-role="support">{{ race.support_summary }}</p>
+            {% for comparison in race.comparisons %}
+            <p class="comparison comparison-{{ comparison.status }}" data-display-role="comparison">
+              <span>Seattle Times</span>
+              <strong>{{ comparison.badge_label }}</strong>
+              {% if comparison.candidate_labels %}<em>{{ comparison.candidate_labels | join(' / ') }}</em>{% endif %}
+            </p>
+            {% endfor %}
+            {% if race.alternatives %}
+            <p class="alternative" data-display-role="alternatives">Alternatives:
+              {% for alternative in race.alternatives %}{{ alternative.candidate_label }},
+                {{ alternative.percentage_label }}{% if not loop.last %}; {% endif %}{% endfor %}</p>
+            {% endif %}
+            {% if race.warning_messages %}
+            <div class="warning" role="note" data-display-role="warnings"><strong>Coverage note:</strong>
+              {{ race.warning_messages | join(' ') }}</div>
+            {% endif %}
+            <details>
+              <summary>View source evidence</summary>
+              <div class="source-table-wrap">
+                <table class="source-table">
+                  <thead><tr><th>Source</th><th>State</th><th>Choice</th><th>Evidence</th></tr></thead>
+                  <tbody>
+                  {% for cell in race.source_cells %}
+                    {% set source = source_by_id[cell.source_id] %}
+                    <tr class="source-state-{{ cell.state }}" data-source-id="{{ cell.source_id }}">
+                      <th scope="row">{{ source.name }}</th>
+                      <td>{{ cell.state | replace('_', ' ') }}</td>
+                      <td>{% if cell.candidate_labels %}{{ cell.candidate_labels | join(' / ') }}{% else %}None{% endif %}</td>
+                      <td>{% if cell.evidence_url %}<a href="{{ cell.evidence_url }}">Original evidence</a>
+                        {% if cell.evidence_locator %}<small>{{ cell.evidence_locator }}</small>{% endif %}
+                        {% else %}Not available{% endif %}</td>
+                    </tr>
+                  {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </details>
+          </article>
+          {% endfor %}
+        </div>
+      </section>
+      {% endfor %}
+    </div>
+
+    <section class="methodology-screen" id="methodology">
+      <section class="methodology-panel">
+        <p class="eyebrow">Methodology</p>
+        <h2>How the consensus works</h2>
+        <ol class="process-list">
+          {% for step in guide.methodology.process_steps %}<li>{{ step }}</li>{% endfor %}
+        </ol>
+      </section>
+      <section class="methodology-panel">
+        <h3>Read this guide carefully</h3>
+        {% for note in guide.methodology.interpretation_notes %}<p>{{ note }}</p>{% endfor %}
+        {% for limitation in guide.methodology.limitations %}<p>{{ limitation }}</p>{% endfor %}
+      </section>
+      <section class="methodology-panel screen-grade-legend">
+        <h3>Grade thresholds</h3>
+        {% for item in guide.methodology.grade_legend %}<p><span
+          class="grade grade-{{ item.grade | replace('+', '-plus') | lower }}">{{ item.grade }}</span>
+          {{ item.rule }}</p>{% endfor %}
+      </section>
+      <section class="methodology-panel screen-source-categories">
+        <h3>Source categories</h3>
+        {% for category in guide.methodology.source_categories %}<p><strong>{{ category.label }}</strong>
+          - {{ category.source_ids | length }} sources</p>{% endfor %}
+      </section>
+      <section class="methodology-panel screen-audit-metadata">
+        <h3>Build and audit details</h3>
+        <p>Election {{ guide.metadata.election_date }} | Generated {{ guide.metadata.generated_at.isoformat() }}</p>
+        <p>Data {{ guide.metadata.data_version }} | Code {{ guide.metadata.git_commit[:12] }}</p>
+        <p>{{ guide.metadata.source_count }} sources | {{ guide.metadata.published_race_count }} races |
+          {{ guide.metadata.unresolved_review_count }} unresolved reviews</p>
+        <p><a href="{{ config.project_url }}">Project source and audit files</a></p>
+      </section>
+      <section class="methodology-panel screen-verification">
+        <h3>Verify the guide</h3>
+        <p>{{ guide.methodology.verification_instructions }}</p>
+      </section>
+    </section>
+  </main>
+
+  <div class="print-guide" aria-hidden="true">
+    <section class="print-page print-page-one">
+      <header class="print-header">
+        <div>
+          <p>Seattle 2026 Primary</p>
+          <h1>Endorsement consensus</h1>
+        </div>
+        <div class="print-header-meta">{{ guide.metadata.election_date }}<br>
+          {{ guide.metadata.published_race_count }} races | {{ guide.metadata.source_count }} sources</div>
+      </header>
+      <p class="print-intro">Progressive-source consensus. Seattle Times choices are comparison only.
+        Low coverage is labeled; no recommendation is made from insufficient evidence.</p>
+      <div class="print-races">
+        {% for section in guide.sections %}
+        <h2 class="print-section-title">{{ section.label }}</h2>
+          {% for race in section.races %}
+          <article class="print-race">
+            <div class="print-race-title">{{ race.race_label }}</div>
+            <div class="print-race-result">
+              <strong>{{ race.recommendation_label }}</strong>
+              <span class="print-grade grade-{{ race.grade | replace('+', '-plus') | lower }}">{{ race.grade }}</span>
+              <b>{% if race.percentage_whole is none %}N/A{% else %}{{ race.percentage_label }}{% endif %}</b>
+            </div>
+            {% if race.percentage_whole is not none %}<div class="print-meter">
+              <span style="width: {{ race.percentage_whole }}%"></span></div>{% endif %}
+            {% set print_warnings = concise_warning_labels(race) %}
+            <div class="print-race-context"><span class="print-support">{{ race.support_summary }}</span>
+              {% for comparison in race.comparisons %}<span class="print-comparison"><b>Times: {{ comparison.badge_label }}</b>
+                {% if comparison.candidate_labels %} {{ comparison.candidate_labels | join(' / ') }}{% endif %}</span>{% endfor %}
+              {% if print_warnings %}<b class="print-compact-warning">{{ print_warnings[0] }}</b>{% endif %}
+            </div>
+            {% if race.alternatives or print_warnings %}
+            <div class="print-race-notes">
+              {% if race.alternatives %}<span>Alt:
+                {% for alternative in race.alternatives %}{{ alternative.candidate_label }}
+                  {{ alternative.percentage_label }}{% if not loop.last %}; {% endif %}{% endfor %}</span>{% endif %}
+              {% if print_warnings %}<span>{{ print_warnings | join(' / ') }}</span>{% endif %}
+            </div>{% endif %}
+          </article>
+          {% endfor %}
+        {% endfor %}
+      </div>
+      <footer>Verify details and evidence in the responsive guide at
+        <a href="{{ config.project_url }}">{{ config.project_url }}</a></footer>
+    </section>
+
+    <section class="print-page print-page-two">
+      <header class="method-header">
+        <p>Methodology and sources</p>
+        <h1>How to read this guide</h1>
+        <div>This is endorsement aggregation, not independent candidate vetting.</div>
+      </header>
+      <div class="process-flow">
+        {% for step in guide.methodology.process_steps %}
+        <div><span>{{ loop.index }}</span><strong>{{ step }}</strong></div>
+        {% endfor %}
+      </div>
+      <div class="method-grid">
+        <section>
+          <h2>Grade legend</h2>
+          <div class="grade-legend">
+            {% for item in guide.methodology.grade_legend %}
+            <div><span class="grade grade-{{ item.grade | replace('+', '-plus') | lower }}">{{ item.grade }}</span>
+              <p>{{ item.rule }}</p></div>
+            {% endfor %}
+          </div>
+        </section>
+        <section>
+          <h2>Source categories</h2>
+          {% for category in guide.methodology.source_categories %}
+          <div class="category-row"><strong>{{ category.label }}</strong>
+            <span>{{ category.source_ids | length }} sources</span></div>
+          {% endfor %}
+        </section>
+        <section>
+          <h2>Interpretation</h2>
+          <div class="concise-method-detail">
+            {% for note in guide.methodology.interpretation_notes %}<p>{{ note }}</p>{% endfor %}
+          </div>
+          <p class="compact-method-note">Full interpretation notes are in the detailed edition.</p>
+          <div class="times-key"><b>Seattle Times badges:</b> AGREES, DIFFERENT PICK, NO PICK,
+            NOT COVERED, or NO PROGRESSIVE CONSENSUS. Text always accompanies color.</div>
+        </section>
+        <section>
+          <h2>Limitations</h2>
+          <div class="concise-method-detail">
+            {% for limitation in guide.methodology.limitations %}<p>{{ limitation }}</p>{% endfor %}
+          </div>
+          <p class="compact-method-note">Full limitations are in the detailed edition.</p>
+        </section>
+      </div>
+      <div class="print-metadata">
+        <div><span>Election</span><strong>{{ guide.metadata.election_date }}</strong></div>
+        <div><span>Generated</span><strong>{{ guide.metadata.generated_at.isoformat() }}</strong></div>
+        <div><span>Data version</span><strong>{{ guide.metadata.data_version }}</strong></div>
+        <div><span>Code</span><strong>{{ guide.metadata.git_commit[:12] }}</strong></div>
+        <div><span>Active sources</span><strong>{{ guide.metadata.source_count }}</strong></div>
+        <div><span>Published races</span><strong>{{ guide.metadata.published_race_count }}</strong></div>
+        <div><span>Unresolved reviews</span><strong>{{ guide.metadata.unresolved_review_count }}</strong></div>
+        <div><span>Project</span><strong><a href="{{ config.project_url }}">Source and audit files</a></strong></div>
+      </div>
+      <footer>{{ guide.methodology.verification_instructions }}</footer>
+    </section>
+  </div>
+
+  <script>
+  (() => {
+    const edition = new URLSearchParams(window.location.search).get('edition');
+    if (edition === 'compact' || edition === 'detailed') {
+      document.documentElement.classList.add(`${edition}-edition`);
+    }
+    const select = document.querySelector('#race-filter');
+    const status = document.querySelector('#filter-status');
+    const cards = [...document.querySelectorAll('[data-publication-race-id]')];
+    const sections = [...document.querySelectorAll('[data-filter-section]')];
+    const applyFilter = () => {
+      const token = select.value;
+      let visible = 0;
+      cards.forEach((card) => {
+        const matches = token === 'all' || JSON.parse(card.dataset.filterTokens).includes(token);
+        card.hidden = !matches;
+        if (matches) visible += 1;
+      });
+      sections.forEach((section) => {
+        section.hidden = ![...section.querySelectorAll('[data-publication-race-id]')]
+          .some((card) => !card.hidden);
+      });
+      status.textContent = `${visible} races shown`;
+    };
+    select.addEventListener('change', applyFilter);
+    applyFilter();
+  })();
+  </script>
+</body>
+</html>

@@ -57,18 +57,21 @@ Raw captures are addressed by content hash and governed by `SOURCE_POLICY.md`.
 - **Publication exports:** one validated builder derives canonical JSON and CSV exports,
   provenance and build manifests, and a presentation-neutral view model from canonical data and
   the authoritative consensus report.
-- **Rendering:** responsive HTML and Chromium PDF consume the same publication view model and do
-  not independently calculate scoring or display semantics.
+- **Rendering:** one autoescaped Jinja document and stylesheet consume the strict publication view
+  model. Screen CSS supplies responsive filtering and source evidence; print CSS supplies the
+  concise US Letter edition. Content that cannot fit at the configured font floor uses a compact
+  two-page plus detailed-edition fallback. Chromium renders both, while Pypdf normalizes document
+  metadata and Poppler produces page images for inspection. Renderers do not independently
+  calculate scoring or display semantics.
 - **Validation:** structural, provenance, scoring, semantic-render, and visual checks block
   publication on serious errors.
 
 ## Dependency strategy
 
-The initial package deliberately includes only CLI, validation, and test dependencies. HTTP,
-browser, PDF, and rendering dependencies are added with the issue that first uses them. This
-keeps the bootstrap reviewable and avoids choosing adapters before discovery evidence exists.
-Issue #4 therefore ingests already obtained local artifacts; automated network fetching remains
-the responsibility of issue #10.
+Dependencies are added with the issue that first uses them. The rendering layer therefore carries
+Jinja, Pillow, Pypdf, and a small Chrome DevTools client; Chrome/Chromium and Poppler remain explicit
+system requirements. Issue #4 ingests already obtained local artifacts, while automated network
+fetching remains the responsibility of issue #10.
 
 ## Determinism
 
@@ -76,4 +79,6 @@ Normalized, review, and consensus records use exact rational values and canonica
 Append-only records are stored separately so concurrent reviews do not rewrite shared history.
 Build timestamps are explicit inputs. The consensus input hash covers the complete canonical
 dataset and scoring policy. Manifests hash configuration, snapshots, normalized data, and
-published outputs. Tests must not depend on live websites.
+published outputs. PDF metadata is derived from the publication timestamp. Browser checks use an
+emulated CSS viewport so mobile validation is identical on macOS and Linux, and reject horizontal
+overflow before capturing screenshots. Tests must not depend on live websites.
