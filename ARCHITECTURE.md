@@ -31,9 +31,9 @@ single publication view model
 
 ## Authoritative data
 
-Diffable YAML and JSONL files are the authoritative project records. SQLite may be generated as
-a query index, but it is not the only copy of canonical data. Raw captures are addressed by
-content hash and governed by `SOURCE_POLICY.md`.
+Diffable YAML, canonical JSON records, and assembled JSONL files are the authoritative project
+records. SQLite may be generated as a query index, but it is not the only copy of canonical data.
+Raw captures are addressed by content hash and governed by `SOURCE_POLICY.md`.
 
 ## Components
 
@@ -48,7 +48,9 @@ content hash and governed by `SOURCE_POLICY.md`.
 - **Review:** manual transcriptions, approvals, and overrides are append-only data with author,
   reason, evidence locator, capture identity, and review status.
 - **Normalization:** race and candidate matching is constrained to the authoritative election
-  inventory.
+  inventory. Exact and normalized aliases precede race-scoped fuzzy matching; ambiguity produces
+  an immutable review item rather than a guessed selection. Endorsement allocations use exact
+  rational values.
 - **Scoring:** exact allocations, configured eligibility, coverage signals, ties, grades, and a
   separate Seattle Times comparison.
 - **Rendering:** Jinja templates build one view model for responsive HTML and Chromium PDF.
@@ -65,6 +67,7 @@ the responsibility of issue #10.
 
 ## Determinism
 
-Normalized records use stable identifiers and canonical serialization. Build timestamps are
-inputs. Manifests hash configuration, snapshots, normalized data, and published outputs. Tests
-must not depend on live websites.
+Normalized and review records use content-derived identifiers and canonical serialization.
+Append-only records are stored separately so concurrent reviews do not rewrite shared history.
+Build timestamps are inputs. Manifests hash configuration, snapshots, normalized data, and
+published outputs. Tests must not depend on live websites.
