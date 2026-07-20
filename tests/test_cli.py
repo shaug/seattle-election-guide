@@ -112,8 +112,6 @@ def test_evidence_unavailable_command_writes_metadata_only_manifest(tmp_path: Pa
             "seattle-times-editorial-board",
             "--requested-url",
             "https://www.seattletimes.com/opinion/editorials/",
-            "--canonical-url",
-            "https://www.seattletimes.com/opinion/editorials/",
             "--retrieved-at",
             "2026-07-19T12:00:00Z",
             "--http-status",
@@ -132,4 +130,5 @@ def test_evidence_unavailable_command_writes_metadata_only_manifest(tmp_path: Pa
     assert result.exit_code == 0, result.output
     payload = next(manifest_dir.glob("*.json")).read_text(encoding="utf-8")
     assert '"availability": "unavailable"' in payload
+    assert '"canonical_url": null' in payload
     assert "content_sha256" not in payload

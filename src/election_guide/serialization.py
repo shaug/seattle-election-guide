@@ -1,6 +1,7 @@
 """Strict serialization helpers for authoritative project records."""
 
 import json
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any, cast
 
@@ -13,7 +14,7 @@ class UniqueKeyLoader(yaml.SafeLoader):
     """Load safe YAML while rejecting fields that silently overwrite each other."""
 
     def construct_mapping(self, node: MappingNode, deep: bool = False) -> dict[Any, Any]:
-        keys: set[str] = set()
+        keys: set[Any] = set()
         for key_node, _ in node.value:
             if not isinstance(key_node, ScalarNode):
                 raise ConstructorError(
@@ -22,7 +23,27 @@ class UniqueKeyLoader(yaml.SafeLoader):
                     "mapping keys must be scalar values",
                     key_node.start_mark,
                 )
-            key = key_node.value
+            if key_node.tag == "tag:yaml.org,2002:merge" or key_node.value == "<<":
+                raise ConstructorError(
+                    "while constructing a mapping",
+                    node.start_mark,
+                    "YAML merge keys are not allowed",
+                    key_node.start_mark,
+                )
+            construct_object = cast(
+                Callable[[ScalarNode, bool], Any],
+                self.construct_object,  # pyright: ignore[reportUnknownMemberType]
+            )
+            key = construct_object(key_node, False)
+            try:
+                hash(key)
+            except TypeError as error:
+                raise ConstructorError(
+                    "while constructing a mapping",
+                    node.start_mark,
+                    "mapping keys must be hashable scalar values",
+                    key_node.start_mark,
+                ) from error
             if key in keys:
                 raise ConstructorError(
                     "while constructing a mapping",

@@ -134,10 +134,10 @@ def evidence_capture(
 def evidence_unavailable(
     source_id: Annotated[str, typer.Option()],
     requested_url: Annotated[str, typer.Option()],
-    canonical_url: Annotated[str, typer.Option()],
     retrieved_at: Annotated[str, typer.Option()],
     unavailable_reason: Annotated[str, typer.Option()],
     redistribution_note: Annotated[str, typer.Option()],
+    canonical_url: Annotated[str | None, typer.Option()] = None,
     http_status: Annotated[int | None, typer.Option()] = None,
     media_type: Annotated[str | None, typer.Option()] = None,
     title: Annotated[str | None, typer.Option()] = None,

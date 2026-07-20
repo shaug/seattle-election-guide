@@ -21,6 +21,7 @@ from election_guide.evidence.storage import (
     write_immutable_record,
 )
 from election_guide.serialization import canonical_json_bytes, read_yaml
+from election_guide.validation import media_type_essence
 
 
 def read_manual_draft(path: Path) -> ManualEntryDraft:
@@ -40,6 +41,11 @@ def validate_manual_draft(
     """Cross-check a manual entry against immutable captured evidence."""
     manifest_path = manifest_dir / f"{draft.capture_id}.json"
     manifest = read_capture_manifest(manifest_path)
+    if manifest.id != draft.capture_id:
+        raise ValueError(
+            f"manual entry capture ID {draft.capture_id!r} does not match manifest "
+            f"identity {manifest.id!r}"
+        )
     if isinstance(manifest, UnavailableManifest):
         raise ValueError("manual transcription requires captured evidence, not unavailable status")
     if manifest.source_id != draft.source_id:
@@ -47,16 +53,19 @@ def validate_manual_draft(
             f"manual entry source {draft.source_id!r} does not match capture "
             f"source {manifest.source_id!r}"
         )
+    if draft.entered_at < manifest.retrieved_at:
+        raise ValueError("manual entry cannot predate its evidence capture")
     verify_capture(manifest, storage_root)
     media_type = manifest.media_type
     if media_type is None:
         raise ValueError("captured evidence is missing its validated media type")
-    if draft.evidence_type in {"screenshot", "image"} and not media_type.startswith("image/"):
+    essence = media_type_essence(media_type)
+    if draft.evidence_type in {"screenshot", "image"} and not essence.startswith("image/"):
         raise ValueError(f"{draft.evidence_type} manual evidence requires an image capture")
-    if draft.evidence_type == "pdf" and media_type != "application/pdf":
+    if draft.evidence_type == "pdf" and essence != "application/pdf":
         raise ValueError("pdf manual evidence requires a PDF capture")
     if draft.evidence_type == "scanned_material" and not (
-        media_type.startswith("image/") or media_type == "application/pdf"
+        essence.startswith("image/") or essence == "application/pdf"
     ):
         raise ValueError("scanned manual evidence requires an image or PDF capture")
     fingerprint = hashlib.sha256(canonical_json_bytes(draft.model_dump(mode="json"))).hexdigest()

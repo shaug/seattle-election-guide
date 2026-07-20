@@ -27,6 +27,9 @@ notes, and short excerpts needed for verification. Do not commit complete third-
 paywalled articles, browser profiles, credentials, personal data, or captures whose
 redistribution rights are unclear.
 
+Public provenance URLs must not contain authentication credentials, signed-access parameters, or
+tokens. Record a clean official URL and keep credential-bearing retrieval details outside Git.
+
 Restricted captures may be stored locally or in a separately controlled evidence store. Their
 manifests must still permit authorized reviewers to verify integrity.
 

@@ -22,6 +22,9 @@ absolute local path.
 
 Restricted and paywalled artifacts use `redistribution: restricted`. Their manifests remain
 auditable in Git, while their bytes remain in the ignored local store or another controlled store.
+The command rejects a restricted storage root that is inside the repository but not Git-ignored,
+as well as an uncommitted restricted input left at an unignored repository path. Keep temporary
+inputs under the ignored `tmp/` directory or outside the checkout.
 
 ## Capture an artifact
 
@@ -29,10 +32,10 @@ The caller supplies metadata from the retrieval because this command does not pe
 access:
 
 ```bash
-uv run election-guide evidence capture local-page.html \
+uv run election-guide evidence capture tmp/local-page.html \
   --source-id the-stranger \
-  --requested-url https://example.org/endorsements \
-  --canonical-url https://example.org/endorsements \
+  --requested-url https://www.thestranger.com/endorsements/the-strangers-2026-primary-election-endorsements/ \
+  --canonical-url https://www.thestranger.com/endorsements/the-strangers-2026-primary-election-endorsements/ \
   --retrieved-at 2026-07-19T12:00:00Z \
   --http-status 200 \
   --media-type text/html \
@@ -47,8 +50,9 @@ methods require a successful HTTP status. Browser captures must explicitly recor
 `--browser-required`. A changed canonical URL requires one or more `--redirect-url` options that
 begin with the requested URL and end with the canonical URL.
 
-Re-running an identical capture is idempotent. Reusing its derived capture ID with different
-metadata fails instead of overwriting history.
+Re-running an identical capture is idempotent. The capture ID binds the full public provenance
+record and content identity; changing metadata or taking another capture creates a distinct
+immutable history record, even when the content bytes are unchanged.
 
 ## Record an unavailable source
 
@@ -69,6 +73,8 @@ uv run election-guide evidence unavailable \
 
 An unavailable manifest has no content hash, byte length, or storage reference. Verification
 validates the record without pretending an artifact exists.
+`--canonical-url` is optional for this command because access-restricted discovery may not reach a
+canonical publication URL.
 
 ## Verify integrity
 
@@ -84,7 +90,9 @@ the SHA-256 and byte length. Missing or modified evidence fails loudly.
 Manual drafts are strict YAML. They cannot be silently mixed with parser output because every
 record carries `entry_method: manual`, a reviewer, evidence type, evidence locator, transcription,
 and explicit review status. Completed reviews also require a second reviewer field, timestamp,
-and note.
+and note. All public prose fields are bounded, and the tracked transcription is a short
+verification excerpt limited to 4,000 characters; complete copyrighted or paywalled text remains
+only in the restricted capture.
 
 ```yaml
 schema_version: "1.0"
