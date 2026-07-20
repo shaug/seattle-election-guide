@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 4155,
+  "canonical_url": "https://waconservationaction.org/our-work/areas-of-work/endorsements/",
+  "capture_method": "manual_upload",
+  "content_sha256": "84e59a07ab95202b7f837daa9133731c6be19bb9d63d8bbdee8ec9c319094806",
+  "http_status": null,
+  "id": "capture-washington-conservation-action-20260720T011200Z-c11efec48165",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://waconservationaction.org/our-work/areas-of-work/endorsements/",
+  "retrieved_at": "2026-07-20T01:12:00Z",
+  "schema_version": "1.0",
+  "source_id": "washington-conservation-action",
+  "storage_reference": "sha256/84/84e59a07ab95202b7f837daa9133731c6be19bb9d63d8bbdee8ec9c319094806",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: Washington Conservation Action",
+  "updated_at": null
+}

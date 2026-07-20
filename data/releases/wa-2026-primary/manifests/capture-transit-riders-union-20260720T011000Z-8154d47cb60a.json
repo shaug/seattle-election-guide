@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 951,
+  "canonical_url": "https://transitriders.org/2026-primary-election-endorsements/",
+  "capture_method": "manual_upload",
+  "content_sha256": "b86ad577f0d9b1a6d849ce9e23acdfcc4f2b6c49ca84520621f5c1a1e5f3ea1c",
+  "http_status": null,
+  "id": "capture-transit-riders-union-20260720T011000Z-8154d47cb60a",
+  "media_type": "application/json",
+  "published_at": "2026-05-30",
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://transitriders.org/2026-primary-election-endorsements/",
+  "retrieved_at": "2026-07-20T01:10:00Z",
+  "schema_version": "1.0",
+  "source_id": "transit-riders-union",
+  "storage_reference": "sha256/b8/b86ad577f0d9b1a6d849ce9e23acdfcc4f2b6c49ca84520621f5c1a1e5f3ea1c",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: Transit Riders Union",
+  "updated_at": "2026-06-16"
+}

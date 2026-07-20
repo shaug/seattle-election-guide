@@ -221,14 +221,20 @@ def build_rendered_guide(
             detailed_page_dir = pdf_dir / "detailed-pages"
             detailed_page_dir.mkdir()
             _render_pdf(html_path, detailed_pdf_path, resolved_chrome, edition="detailed")
+            detailed_page_images = _render_pdf_pages(
+                detailed_pdf_path, detailed_page_dir, resolved_pdftoppm
+            )
+            if _trim_trailing_blank_pages(detailed_pdf_path, detailed_page_images):
+                shutil.rmtree(detailed_page_dir)
+                detailed_page_dir.mkdir()
+                detailed_page_images = _render_pdf_pages(
+                    detailed_pdf_path, detailed_page_dir, resolved_pdftoppm
+                )
             _set_pdf_metadata(
                 detailed_pdf_path,
                 view_model,
                 configuration,
                 title=f"{configuration.title} - Detailed Edition",
-            )
-            detailed_page_images = _render_pdf_pages(
-                detailed_pdf_path, detailed_page_dir, resolved_pdftoppm
             )
         expected_race_count = sum(len(section.races) for section in view_model.sections)
         screenshots = [
@@ -1141,6 +1147,38 @@ def _rendered_page_number(path: Path) -> int:
     if match is None:
         raise ValueError(f"PDF page rendering produced an unexpected filename: {path.name}")
     return int(match.group(1))
+
+
+def _trim_trailing_blank_pages(pdf_path: Path, page_images: list[Path]) -> int:
+    """Remove Chromium-only trailing pages only when pixels and PDF semantics are blank."""
+    reader = PdfReader(pdf_path)
+    if len(page_images) != len(reader.pages):
+        raise ValueError("detailed PDF page images do not match its page count")
+    trailing_blank_count = 0
+    for page_image, page in zip(reversed(page_images), reversed(reader.pages), strict=True):
+        if _image_ink_fraction(page_image) > 0.005:
+            break
+        if (page.extract_text() or "").strip() or page.get("/Annots"):
+            break
+        trailing_blank_count += 1
+    if not trailing_blank_count:
+        return 0
+    retained_count = len(reader.pages) - trailing_blank_count
+    if retained_count <= 0:
+        raise ValueError("detailed PDF contains no nonblank pages")
+    writer = PdfWriter()
+    for page in reader.pages[:retained_count]:
+        writer.add_page(page)
+    temporary = pdf_path.with_suffix(".trimmed.pdf")
+    try:
+        with temporary.open("wb") as output:
+            writer.write(output)
+            output.flush()
+            os.fsync(output.fileno())
+        os.replace(temporary, pdf_path)
+    finally:
+        temporary.unlink(missing_ok=True)
+    return trailing_blank_count
 
 
 def _inspect_page_image(page_number: int, path: Path) -> RenderedPage:

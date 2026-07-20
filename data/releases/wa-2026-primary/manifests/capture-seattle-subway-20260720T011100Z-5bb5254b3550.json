@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 656,
+  "canonical_url": "https://www.seattlesubway.org/election-endorsements/",
+  "capture_method": "manual_upload",
+  "content_sha256": "165768b6f9a4560d82a630b3e01df5607c3e3d590d74cceb8ebcf9fe4e9dccf5",
+  "http_status": null,
+  "id": "capture-seattle-subway-20260720T011100Z-5bb5254b3550",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://www.seattlesubway.org/election-endorsements/",
+  "retrieved_at": "2026-07-20T01:11:00Z",
+  "schema_version": "1.0",
+  "source_id": "seattle-subway",
+  "storage_reference": "sha256/16/165768b6f9a4560d82a630b3e01df5607c3e3d590d74cceb8ebcf9fe4e9dccf5",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: Seattle Subway",
+  "updated_at": null
+}

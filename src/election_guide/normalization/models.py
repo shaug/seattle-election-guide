@@ -52,7 +52,7 @@ class ExtractedClaim(CanonicalModel):
     raw_candidate_text: str | None = Field(default=None, max_length=1_000)
     raw_status_text: str = Field(min_length=1, max_length=500)
     raw_notes: str | None = Field(default=None, max_length=4_000)
-    evidence_excerpt: str = Field(min_length=1, max_length=4_000)
+    evidence_excerpt: str | None = Field(default=None, min_length=1, max_length=4_000)
     evidence_locator: str = Field(min_length=1, max_length=1_000)
     extractor: str = Field(min_length=1, max_length=200)
     extractor_version: str = Field(min_length=1, max_length=100)
@@ -128,7 +128,7 @@ class ReviewItem(CanonicalModel):
     raw_race_text: str = Field(min_length=1, max_length=1_000)
     raw_candidate_text: str | None = Field(default=None, max_length=1_000)
     raw_status_text: str = Field(min_length=1, max_length=500)
-    evidence_excerpt: str = Field(min_length=1, max_length=4_000)
+    evidence_excerpt: str | None = Field(default=None, min_length=1, max_length=4_000)
     evidence_locator: str = Field(min_length=1, max_length=1_000)
     created_at: AwareDatetime
 

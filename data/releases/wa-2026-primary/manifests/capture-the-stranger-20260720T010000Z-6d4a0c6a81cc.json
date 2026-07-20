@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 5524,
+  "canonical_url": "https://www.thestranger.com/endorsements/the-strangers-2026-primary-election-endorsements/",
+  "capture_method": "manual_upload",
+  "content_sha256": "48db1da62108aa06ba0b8e8ef11a9ae3ad1b0a86f41cd8ebaec8b4ff5f5fe3f8",
+  "http_status": null,
+  "id": "capture-the-stranger-20260720T010000Z-6d4a0c6a81cc",
+  "media_type": "application/json",
+  "published_at": "2026-07-02",
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://www.thestranger.com/endorsements/the-strangers-2026-primary-election-endorsements/",
+  "retrieved_at": "2026-07-20T01:00:00Z",
+  "schema_version": "1.0",
+  "source_id": "the-stranger",
+  "storage_reference": "sha256/48/48db1da62108aa06ba0b8e8ef11a9ae3ad1b0a86f41cd8ebaec8b4ff5f5fe3f8",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: The Stranger Election Control Board",
+  "updated_at": "2026-07-07"
+}

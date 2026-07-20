@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 5768,
+  "canonical_url": "https://www.theurbanist.org/2026-primary-election-endorsements/",
+  "capture_method": "manual_upload",
+  "content_sha256": "c9649870e0378a72de887673e9fac2030ce782fa3306c774757c7e50cdc46da1",
+  "http_status": null,
+  "id": "capture-the-urbanist-20260720T010100Z-686361b6f802",
+  "media_type": "application/json",
+  "published_at": "2026-07-16",
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://www.theurbanist.org/2026-primary-election-endorsements/",
+  "retrieved_at": "2026-07-20T01:01:00Z",
+  "schema_version": "1.0",
+  "source_id": "the-urbanist",
+  "storage_reference": "sha256/c9/c9649870e0378a72de887673e9fac2030ce782fa3306c774757c7e50cdc46da1",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: The Urbanist Elections Committee",
+  "updated_at": "2026-07-17"
+}

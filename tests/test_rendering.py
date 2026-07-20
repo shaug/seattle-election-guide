@@ -8,7 +8,7 @@ from typing import cast
 import pytest
 from PIL import Image
 from pydantic import ValidationError
-from pypdf import PdfReader
+from pypdf import PdfReader, PdfWriter
 
 from election_guide.publication import build_publication_bundle
 from election_guide.publication.models import PublicationViewModel
@@ -23,6 +23,7 @@ from election_guide.rendering.renderer import (
     _missing_pdf_race_values,  # pyright: ignore[reportPrivateUsage]
     _pdf_race_display_values,  # pyright: ignore[reportPrivateUsage]
     _render_pdf,  # pyright: ignore[reportPrivateUsage]
+    _trim_trailing_blank_pages,  # pyright: ignore[reportPrivateUsage]
     find_chrome,
 )
 from election_guide.scoring import score_dataset
@@ -234,6 +235,11 @@ def test_rendering_configuration_rejects_contract_drift() -> None:
     coerced["require_selectable_text"] = 1
     with pytest.raises(ValidationError):
         type(configuration).model_validate(coerced)
+
+    aliased_pdfs = configuration.model_dump(mode="json")
+    aliased_pdfs["detailed_pdf_filename"] = aliased_pdfs["pdf_filename"]
+    with pytest.raises(ValidationError, match="must be distinct"):
+        type(configuration).model_validate(aliased_pdfs)
 
 
 def test_html_escapes_publication_text_and_filter_attributes(tmp_path: Path) -> None:
@@ -600,6 +606,44 @@ def test_dense_concise_content_still_fits_two_pages(tmp_path: Path) -> None:
     assert [page.page_number for page in rendered.validation_report.detailed_pages] == list(
         range(1, rendered.validation_report.detailed_page_count + 1)
     )
+
+
+def test_detailed_pdf_trims_only_rendered_trailing_blank_pages(tmp_path: Path) -> None:
+    pdf_path = tmp_path / "detailed.pdf"
+    writer = PdfWriter()
+    for _ in range(3):
+        writer.add_blank_page(width=612, height=792)
+    with pdf_path.open("wb") as output:
+        writer.write(output)
+
+    page_images = [tmp_path / f"page-{number}.png" for number in range(1, 4)]
+    for path in page_images[:2]:
+        image = Image.new("RGB", (200, 260), "white")
+        for x in range(20, 180):
+            for y in range(20, 40):
+                image.putpixel((x, y), (0, 0, 0))
+        image.save(path)
+    Image.new("RGB", (200, 260), "white").save(page_images[2])
+
+    assert _trim_trailing_blank_pages(pdf_path, page_images) == 1
+    assert len(PdfReader(pdf_path).pages) == 2
+
+
+def test_detailed_pdf_preserves_sparse_page_with_extractable_text(tmp_path: Path) -> None:
+    pdf_path = tmp_path / "detailed.pdf"
+    writer = PdfWriter()
+    writer.add_blank_page(width=612, height=792)
+    writer.append(PROJECT_ROOT / "tests/fixtures/evidence/endorsements.pdf")
+    with pdf_path.open("wb") as output:
+        writer.write(output)
+
+    page_images = [tmp_path / f"page-{number}.png" for number in range(1, 3)]
+    for path in page_images:
+        Image.new("RGB", (200, 260), "white").save(path)
+
+    assert PdfReader(pdf_path).pages[-1].extract_text()
+    assert _trim_trailing_blank_pages(pdf_path, page_images) == 0
+    assert len(PdfReader(pdf_path).pages) == 2
 
 
 def test_overflowing_methodology_uses_detailed_fallback(tmp_path: Path) -> None:

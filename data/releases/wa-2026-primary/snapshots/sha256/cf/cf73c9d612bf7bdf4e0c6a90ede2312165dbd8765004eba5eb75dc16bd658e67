@@ -1,0 +1,34 @@
+{
+  "captured_at": "2026-07-20T01:06:00Z",
+  "decisions": [
+    {
+      "candidate_ids": [
+        "ld-34-state-senator--emily-alvarado"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "ld-34-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-34-state-representative-1--brianna-k-thomas"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "ld-34-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-34-state-representative-2--joe-fitzgibbon"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "ld-34-state-representative-2",
+      "status": "endorsed"
+    }
+  ],
+  "evidence_locator": "Official 2026 endorsements page, Legislative District 34 entries.",
+  "source_id": "34th-district-democrats"
+}

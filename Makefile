@@ -1,4 +1,4 @@
-.PHONY: sync format check test
+.PHONY: sync format check test release-verify
 
 sync:
 	uv sync --frozen
@@ -14,6 +14,10 @@ check:
 	uv run pytest
 	uv run election-guide inventory validate data/normalized/wa-2026-primary-inventory.json
 	uv run election-guide sources validate config/sources/default.yaml
+	uv run election-guide release verify data/releases/wa-2026-primary/source-decisions.yaml
 
 test:
 	uv run pytest
+
+release-verify:
+	uv run election-guide release verify data/releases/wa-2026-primary/source-decisions.yaml
