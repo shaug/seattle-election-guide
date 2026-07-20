@@ -13,7 +13,9 @@ The canonical comparison status and legacy badge label remain available in audit
 The concise PDF uses a scan-first, two-column briefing layout. Print typography is sans serif,
 candidate or choice names carry the strongest row emphasis, alternating race backgrounds separate
 adjacent choices, and full-width consensus tracks make shares comparable down each column. Section
-bars and race rows use the available page height instead of shrinking into the top of the sheet.
+bars and flex-distributed race rows use the available page height instead of shrinking into the top
+of the sheet. The explicit midpoint split repeats a continued section bar when a category crosses
+columns.
 Page two groups methodology into independent column panels so short sections do not force unrelated
 content into dense or oversized shared rows.
 
@@ -70,14 +72,14 @@ The generation fails unless:
 - the configured desktop and mobile captures use their exact CSS viewport dimensions without
   horizontal overflow, expose every race and the filter controls, and contain visible pixels;
 - the PDF has exactly two nonblank US Letter pages with selectable text, URI links, and configured
-  title, author, and subject metadata;
+  title, author, and subject metadata, plus document, heading, article, and paragraph structure tags;
 - a normal concise PDF contains every published race display value; when overflow invokes the
   fallback, the compact PDF retains the race, recommendation, consensus share, explicit-source
   count, Seattle Times comparison, and insufficient-evidence warning while the detailed PDF
   retains the complete voter-facing values and methodology;
 - Chrome print-layout measurements find no text below the configured font floor, clipped card text,
-  overflowing methodology panel, or footer overlap, and Poppler page images do not touch the outer
-  safety edge;
+  underfilled or imbalanced race columns, overflowing methodology panel, or footer overlap, and
+  Poppler page images do not touch the outer safety edge;
 - an approved coarse perceptual baseline catches wholesale hierarchy, palette, or layout changes
   while tolerating minor browser and font-rasterization differences.
 

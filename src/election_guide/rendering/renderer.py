@@ -22,6 +22,7 @@ from urllib.parse import urlsplit
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 from PIL import Image, ImageChops
 from pypdf import PdfReader, PdfWriter
+from pypdf.generic import ArrayObject, DictionaryObject, IndirectObject
 from websocket import (  # pyright: ignore[reportUnknownVariableType]
     WebSocket,
     WebSocketException,
@@ -401,7 +402,7 @@ def validate_rendered_guide(
             f"{view_model.metadata.source_count} sources represented"
         ),
         *(
-            f"{len(category.source_ids)} sources"
+            (f"{len(category.source_ids)} source{'s' if len(category.source_ids) != 1 else ''}")
             for category in view_model.methodology.source_categories
         ),
     ]
@@ -424,6 +425,14 @@ def validate_rendered_guide(
         and metadata.author == configuration.author
         and metadata.subject == configuration.subject
     )
+    structure_types = _pdf_structure_types(reader)
+    tagged_structure_present = {
+        "/Document",
+        "/H1",
+        "/H2",
+        "/Art",
+        "/P",
+    }.issubset(structure_types)
     page_records = [
         _inspect_page_image(index, path).model_copy(
             update={"image_path": Path("pdf/pages") / path.name}
@@ -547,6 +556,11 @@ def validate_rendered_guide(
             id="pdf-metadata",
             passed=metadata_present,
             message="PDF includes the configured title, author, and subject metadata.",
+        ),
+        RenderCheck(
+            id="pdf-tagged-structure",
+            passed=tagged_structure_present,
+            message="PDF preserves document, heading, article, and paragraph structure tags.",
         ),
         RenderCheck(
             id="pdf-links",
@@ -766,7 +780,7 @@ def _inspect_print_layout(
                   ] : [
                     '.print-races', '.method-grid section', '.print-race-title',
                     '.print-race-result > strong', '.print-race-context span',
-                    '.print-race-notes span', '.print-metadata strong'
+                    '.print-times-pick', '.print-race-notes span', '.print-metadata strong'
                   ];
                   for (const selector of selectors) {
                     const elements = [...document.querySelectorAll(selector)];
@@ -819,6 +833,25 @@ def _inspect_print_layout(
                     if (metadata && gridRect.bottom >
                         metadata.getBoundingClientRect().top + 1) {
                       issues.push('.method-grid-metadata-overlap');
+                    }
+                  }
+                  const raceColumns = [...document.querySelectorAll('.print-race-column')];
+                  if (raceColumns.length !== 2) {
+                    issues.push('.print-race-columns');
+                  } else {
+                    const columnBottoms = raceColumns.map((column, index) => {
+                      const columnRect = column.getBoundingClientRect();
+                      const lastItem = column.lastElementChild;
+                      if (!lastItem ||
+                          Math.abs(
+                            lastItem.getBoundingClientRect().bottom - columnRect.bottom
+                          ) > 2) {
+                        issues.push(`.print-race-column[${index}]-underfill`);
+                      }
+                      return columnRect.bottom;
+                    });
+                    if (Math.abs(columnBottoms[0] - columnBottoms[1]) > 2) {
+                      issues.push('.print-race-column-balance');
                     }
                   }
                   const pages = [...document.querySelectorAll('.print-page')];
@@ -1255,6 +1288,38 @@ def _pdf_links(reader: PdfReader) -> list[str]:
             if uri is not None:
                 links.append(str(uri))
     return links
+
+
+def _pdf_structure_types(reader: PdfReader) -> set[str]:
+    root = reader.trailer.get("/Root")
+    if isinstance(root, IndirectObject):
+        root = root.get_object()
+    if not isinstance(root, DictionaryObject):
+        return set()
+    structure_root = root.get("/StructTreeRoot")
+    if structure_root is None:
+        return set()
+
+    structure_types: set[str] = set()
+
+    def visit(item: object) -> None:
+        if isinstance(item, IndirectObject):
+            item = item.get_object()
+        if isinstance(item, ArrayObject):
+            for child in item:
+                visit(child)
+            return
+        if not isinstance(item, DictionaryObject):
+            return
+        role = item.get("/S")
+        if role is not None:
+            structure_types.add(str(role))
+        children = item.get("/K")
+        if children is not None:
+            visit(children)
+
+    visit(structure_root)
+    return structure_types
 
 
 def _web_urls_are_safe(urls: list[str]) -> bool:

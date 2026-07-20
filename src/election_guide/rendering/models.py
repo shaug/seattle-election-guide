@@ -19,6 +19,7 @@ REQUIRED_RENDER_CHECK_IDS = frozenset(
         "pdf-selectable-text",
         "pdf-display-values",
         "pdf-metadata",
+        "pdf-tagged-structure",
         "pdf-links",
         "rendered-pages",
         "safe-print-edges",

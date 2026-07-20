@@ -154,7 +154,29 @@
     </section>
   </main>
 
-  <div class="print-guide" aria-hidden="true">
+  <div class="print-guide">
+    {% macro print_race(race) %}
+    <article class="print-race">
+      <div class="print-race-title">{{ race.race_label }}</div>
+      <div class="print-race-result">
+        <strong>{{ race.recommendation_label }}</strong>
+        <b>{% if race.percentage_whole is none %}N/A{% else %}{{ race.percentage_label }} consensus{% endif %}</b>
+      </div>
+      {% if race.percentage_whole is not none %}<div class="print-meter">
+        <span style="width: {{ race.percentage_whole }}%"></span></div>{% endif %}
+      {% set print_warnings = concise_warning_labels(race) %}
+      <div class="print-race-context"><span class="print-support">{{ race.support_summary }}</span>
+        {% for comparison in race.comparisons %}<span class="print-comparison">
+          <span>Seattle Times</span><b class="print-times-pick print-times-pick-{{ comparison.voter_tone }}">{{ comparison.voter_label }}</b>
+        </span>{% endfor %}
+        {% if print_warnings %}<b class="print-compact-warning">{{ print_warnings[0] }}</b>{% endif %}
+      </div>
+      {% if print_warnings %}
+      <div class="print-race-notes">
+        <span>{{ print_warnings | join(' / ') }}</span>
+      </div>{% endif %}
+    </article>
+    {% endmacro %}
     <section class="print-page print-page-one">
       <header class="print-header">
         <div>
@@ -167,30 +189,27 @@
       <p class="print-intro">Progressive-source consensus. Seattle Times choices are comparison only.
         Too few explicit endorsements are labeled; no recommendation is made from insufficient evidence.</p>
       <div class="print-races">
-        {% for section in guide.sections %}
-        <h2 class="print-section-title">{{ section.label }}</h2>
-          {% for race in section.races %}
-          <article class="print-race">
-            <div class="print-race-title">{{ race.race_label }}</div>
-            <div class="print-race-result">
-              <strong>{{ race.recommendation_label }}</strong>
-              <b>{% if race.percentage_whole is none %}N/A{% else %}{{ race.percentage_label }} consensus{% endif %}</b>
-            </div>
-            {% if race.percentage_whole is not none %}<div class="print-meter">
-              <span style="width: {{ race.percentage_whole }}%"></span></div>{% endif %}
-            {% set print_warnings = concise_warning_labels(race) %}
-            <div class="print-race-context"><span class="print-support">{{ race.support_summary }}</span>
-              {% for comparison in race.comparisons %}<span class="print-comparison">
-                <span>Seattle Times</span><b class="print-times-pick print-times-pick-{{ comparison.voter_tone }}">{{ comparison.voter_label }}</b>
-              </span>{% endfor %}
-              {% if print_warnings %}<b class="print-compact-warning">{{ print_warnings[0] }}</b>{% endif %}
-            </div>
-            {% if print_warnings %}
-            <div class="print-race-notes">
-              <span>{{ print_warnings | join(' / ') }}</span>
-            </div>{% endif %}
-          </article>
+        {% set print_midpoint = (guide.metadata.published_race_count + 1) // 2 %}
+        {% for print_column in range(2) %}
+        {% set print_start = 0 if print_column == 0 else print_midpoint %}
+        {% set print_end = print_midpoint if print_column == 0 else guide.metadata.published_race_count %}
+        {% set print_position = namespace(value=0) %}
+        {% set displayed_section = namespace(id='') %}
+        <div class="print-race-column">
+          {% for section in guide.sections %}
+          {% set section_first = print_position.value %}
+            {% for race in section.races %}
+              {% if print_position.value >= print_start and print_position.value < print_end %}
+                {% if displayed_section.id != section.id %}
+                <h2 class="print-section-title">{{ section.label }}{% if print_position.value > section_first %} — continued{% endif %}</h2>
+                {% set displayed_section.id = section.id %}
+                {% endif %}
+                {{ print_race(race) }}
+              {% endif %}
+              {% set print_position.value = print_position.value + 1 %}
+            {% endfor %}
           {% endfor %}
+        </div>
         {% endfor %}
       </div>
       <footer>Verify details and evidence in the responsive guide at
@@ -232,7 +251,7 @@
             <h2>Source categories</h2>
             {% for category in guide.methodology.source_categories %}
             <div class="category-row"><strong>{{ category.label }}</strong>
-              <span>{{ category.source_ids | length }} sources</span></div>
+              <span>{{ category.source_ids | length }} source{% if category.source_ids | length != 1 %}s{% endif %}</span></div>
             {% endfor %}
             <h3>Possible overlap groups</h3>
             {% if guide.methodology.source_overlap_groups %}
