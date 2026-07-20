@@ -375,6 +375,16 @@ def test_pdf_result_header_cannot_be_masked_by_comparison_text(tmp_path: Path) -
 
     assert f"{race.id}: ordered race result header" in missing
 
+    short_choice_race = race.model_copy(update={"recommendation_label": "Yes"})
+    prefix_corrupted_text = " ".join(_pdf_race_display_values(short_choice_race)).replace(
+        "Yes", "Yesterday", 1
+    )
+    prefix_corrupted_missing = _missing_pdf_race_values(
+        [short_choice_race], prefix_corrupted_text, _pdf_race_display_values
+    )
+    assert f"{race.id}: ordered race result header" in prefix_corrupted_missing
+    assert f"{race.id}: Yes" in prefix_corrupted_missing
+
 
 @pytest.mark.parametrize(
     "value_fn",
