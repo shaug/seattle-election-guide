@@ -29,3 +29,9 @@ Normalization records use content-derived IDs and canonical JSON. Record filenam
 content ID except queue items and terminal decisions, whose filenames use the claim and review
 item IDs respectively to enforce one atomic slot. Existing history is never replaced. See the
 [normalization guide](../docs/NORMALIZATION.md) for the matching, review, and override commands.
+
+`election-guide export build` writes the complete release bundle to `build/` by default. The
+bundle contains canonical consensus and view-model JSON, race and source CSVs, the full
+source-by-race matrix, unresolved review records, validation output, and provenance/build
+manifests. Generated release artifacts are not hand-edited; see the
+[publication export guide](../docs/PUBLICATION_EXPORTS.md) for their contract and hash boundaries.

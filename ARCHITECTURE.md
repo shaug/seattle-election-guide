@@ -54,7 +54,11 @@ Raw captures are addressed by content hash and governed by `SOURCE_POLICY.md`.
 - **Scoring:** exact allocations, configured eligibility, coverage signals, ties, grades, and a
   separate Seattle Times comparison. A standard score build rejects unresolved high-severity
   review work; an explicitly allowed exceptional build carries machine-readable warnings.
-- **Rendering:** Jinja templates build one view model for responsive HTML and Chromium PDF.
+- **Publication exports:** one validated builder derives canonical JSON and CSV exports,
+  provenance and build manifests, and a presentation-neutral view model from canonical data and
+  the authoritative consensus report.
+- **Rendering:** responsive HTML and Chromium PDF consume the same publication view model and do
+  not independently calculate scoring or display semantics.
 - **Validation:** structural, provenance, scoring, semantic-render, and visual checks block
   publication on serious errors.
 

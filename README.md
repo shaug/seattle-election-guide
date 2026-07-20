@@ -21,8 +21,11 @@ product specification, [DECISIONS.md](DECISIONS.md) for the launch contract,
 [docs/BALLOT_INVENTORY.md](docs/BALLOT_INVENTORY.md) for inventory scope and reproduction,
 [docs/SOURCE_DISCOVERY.md](docs/SOURCE_DISCOVERY.md) for the source panel,
 [docs/EVIDENCE_CAPTURE.md](docs/EVIDENCE_CAPTURE.md) for evidence handling, and
-[docs/NORMALIZATION.md](docs/NORMALIZATION.md) for matching and review, and
-[docs/SCORING.md](docs/SCORING.md) for consensus semantics.
+[docs/NORMALIZATION.md](docs/NORMALIZATION.md) for matching and review,
+[docs/SCORING.md](docs/SCORING.md) for consensus semantics, and
+[docs/PUBLICATION_EXPORTS.md](docs/PUBLICATION_EXPORTS.md) for canonical exports and the shared
+publication view model. Deterministic JSON and CSV exports, provenance and build manifests, the
+complete source matrix, and the single renderer-facing view model are implemented.
 
 ## Development
 
@@ -44,6 +47,7 @@ uv run election-guide evidence verify --help
 uv run election-guide normalize --help
 uv run election-guide review --help
 uv run election-guide score --help
+uv run election-guide export build --help
 uv run ruff format --check .
 uv run ruff check .
 uv run pyright
