@@ -1,0 +1,13 @@
+schema_version: "1.0"
+entry_method: manual
+source_id: the-stranger
+capture_id: capture-the-stranger-20260719T120000Z-000000000000
+evidence_type: screenshot
+evidence_locator: Image text beneath the 2026 Primary Endorsements heading.
+transcription: Fixture Candidate — Seattle City Council District 5
+reviewer: fixture-reviewer
+entered_at: 2026-07-19T12:05:00Z
+review_status: verified
+reviewed_by: fixture-verifier
+reviewed_at: 2026-07-19T12:10:00Z
+review_note: Compared the transcription character-for-character with the fixture image.

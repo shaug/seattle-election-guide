@@ -2,23 +2,19 @@
 
 from __future__ import annotations
 
-import re
 from datetime import date
 from typing import Literal
 
 from pydantic import (
-    AnyHttpUrl,
     AwareDatetime,
     BaseModel,
     ConfigDict,
     Field,
-    TypeAdapter,
-    ValidationError,
     field_validator,
     model_validator,
 )
 
-HTTP_URL_ADAPTER = TypeAdapter(AnyHttpUrl)
+from election_guide.validation import validated_http_url, validated_media_type
 
 
 class SourceModel(BaseModel):
@@ -57,25 +53,22 @@ class Discovery(SourceModel):
     @field_validator("requested_url", "canonical_url")
     @classmethod
     def validate_url(cls, value: str | None) -> str | None:
-        return None if value is None else _validated_http_url(value)
+        return None if value is None else validated_http_url(value)
 
     @field_validator("redirect_chain")
     @classmethod
     def validate_redirect_urls(cls, value: list[str]) -> list[str]:
-        return [_validated_http_url(url) for url in value]
+        return [validated_http_url(url) for url in value]
 
     @field_validator("media_type")
     @classmethod
     def validate_media_type(cls, value: str | None) -> str | None:
         if value is None:
             return None
-        normalized = value.strip()
-        if not re.fullmatch(
-            r"[A-Za-z0-9!#$&^_.+-]+/[A-Za-z0-9!#$&^_.+-]+(?:\s*;\s*[^;=\s]+=[^;]+)*",
-            normalized,
-        ):
-            raise ValueError("media_type must be a nonempty MIME type")
-        return normalized
+        try:
+            return validated_media_type(value)
+        except ValueError as error:
+            raise ValueError("media_type must be a nonempty MIME type") from error
 
     @model_validator(mode="after")
     def validate_publication_metadata(self) -> Discovery:
@@ -135,7 +128,7 @@ class Source(SourceModel):
     @field_validator("organization_url")
     @classmethod
     def validate_organization_url(cls, value: str) -> str:
-        return _validated_http_url(value)
+        return validated_http_url(value)
 
     @model_validator(mode="after")
     def validate_role(self) -> Source:
@@ -170,16 +163,6 @@ class Source(SourceModel):
         elif self.eligibility.kind == "jurisdictions_only":
             raise ValueError(f"general source {self.id!r} cannot use district-only eligibility")
         return self
-
-
-def _validated_http_url(value: str) -> str:
-    try:
-        url = HTTP_URL_ADAPTER.validate_python(value)
-    except ValidationError as error:
-        raise ValueError("must be an absolute HTTP(S) URL") from error
-    if url.username is not None or url.password is not None:
-        raise ValueError("official URLs cannot contain credentials")
-    return str(url)
 
 
 class OverlapGroup(SourceModel):

@@ -40,9 +40,13 @@ content hash and governed by `SOURCE_POLICY.md`.
 - **Configuration:** elections, jurisdictions, sources, scoring, and rendering policy.
 - **Collection:** HTTPX for static content and Playwright only when browser rendering is
   necessary. Collection never runs as an implicit part of publication.
+- **Evidence storage:** Locally obtained artifacts are stored by SHA-256 outside Git. Immutable
+  JSON manifests preserve retrieval metadata and redistribution constraints; unavailable sources
+  remain explicit metadata-only records.
 - **Extraction:** source-specific adapters produce evidence-linked claims without deciding
   ambiguous matches silently.
-- **Review:** approvals and overrides are append-only data with author, reason, and evidence.
+- **Review:** manual transcriptions, approvals, and overrides are append-only data with author,
+  reason, evidence locator, capture identity, and review status.
 - **Normalization:** race and candidate matching is constrained to the authoritative election
   inventory.
 - **Scoring:** exact allocations, configured eligibility, coverage signals, ties, grades, and a
@@ -56,6 +60,8 @@ content hash and governed by `SOURCE_POLICY.md`.
 The initial package deliberately includes only CLI, validation, and test dependencies. HTTP,
 browser, PDF, and rendering dependencies are added with the issue that first uses them. This
 keeps the bootstrap reviewable and avoids choosing adapters before discovery evidence exists.
+Issue #4 therefore ingests already obtained local artifacts; automated network fetching remains
+the responsibility of issue #10.
 
 ## Determinism
 

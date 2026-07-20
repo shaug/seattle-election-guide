@@ -27,8 +27,17 @@ notes, and short excerpts needed for verification. Do not commit complete third-
 paywalled articles, browser profiles, credentials, personal data, or captures whose
 redistribution rights are unclear.
 
+Public provenance URLs must not contain authentication credentials, signed-access parameters, or
+tokens. Record a clean official URL and keep credential-bearing retrieval details outside Git.
+
 Restricted captures may be stored locally or in a separately controlled evidence store. Their
 manifests must still permit authorized reviewers to verify integrity.
+
+The default implementation stores artifact bytes by SHA-256 beneath the Git-ignored
+`data/snapshots/` directory and writes metadata-only manifests beneath
+`data/manifests/evidence/`. Manifests use relative content addresses rather than machine-specific
+absolute paths. Manual transcriptions are stored separately under `data/review/manual/` and must
+reference a verified capture.
 
 Collection must not bypass authentication, paywalls, robots controls, or other access controls.
 An inaccessible source receives an explicit status and may enter the manual review path.
