@@ -196,6 +196,27 @@ def test_bundle_is_deterministic_reconstructable_and_complete(tmp_path: Path) ->
     mutated_target = next(
         race for section in mutated.sections for race in section.races if race.id == RACE_ID
     )
+    group = mutated_target.endorsement_groups[0]
+    endorser = group.endorsers[0]
+    cell = next(
+        cell for cell in mutated_target.source_cells if cell.source_id == endorser.source_id
+    )
+    cell.evidence_url = "https://example.com/coordinated-fabrication"
+    endorser.evidence_url = cell.evidence_url
+    internally_consistent = PublicationViewModel.model_validate(mutated.model_dump(mode="json"))
+    canonical_check = next(
+        check
+        for check in publication_builder._validate_publication(  # pyright: ignore[reportPrivateUsage]
+            dataset, report, internally_consistent
+        )
+        if check.id == "canonical-evidence"
+    )
+    assert not canonical_check.passed
+
+    mutated = first.view_model.model_copy(deep=True)
+    mutated_target = next(
+        race for section in mutated.sections for race in section.races if race.id == RACE_ID
+    )
     endorsement = next(
         cell
         for cell in mutated_target.source_cells

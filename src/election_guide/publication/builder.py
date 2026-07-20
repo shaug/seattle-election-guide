@@ -483,7 +483,7 @@ def _support_summary(explicit_endorsement_count: int) -> str:
 
 
 def _endorsement_groups(
-    cells: list[SourceCell], sources: list[PublicationSource]
+    cells: list[SourceCell], sources: list[PublicationSource] | list[Source]
 ) -> list[PublicationChoiceEndorsements]:
     source_by_id = {source.id: source for source in sources}
     support: dict[str, Fraction] = {}
@@ -630,9 +630,10 @@ def _validate_publication(
     view_by_id = {race.id: race for race in view_races}
     consensus_by_id = {race.race_id: race for race in consensus.races}
     inventory_by_id = {race.id: race for race in dataset.inventory.races}
-    active_source_ids = [
-        source.id for source in dataset.source_registry.sources if source.panel_role != "excluded"
+    active_sources = [
+        source for source in dataset.source_registry.sources if source.panel_role != "excluded"
     ]
+    active_source_ids = [source.id for source in active_sources]
     captured_source_ids = {
         capture.source_id for capture in dataset.captures if capture.source_id in active_source_ids
     }
@@ -643,6 +644,37 @@ def _validate_publication(
     cell_sources_match = all(
         [cell.source_id for cell in race.source_cells] == active_source_ids for race in view_races
     )
+    effective = dataset.effective_records()
+    endorsements = {
+        (item.source_id, item.race_id): item
+        for item in (
+            cast(NormalizedEndorsement, effective[record.id]) for record in dataset.endorsements
+        )
+    }
+    claims = {item.id: cast(ExtractedClaim, effective[item.id]) for item in dataset.claims}
+    capture_by_id = {capture.id: capture for capture in dataset.captures}
+    canonical_evidence_match = True
+    for view_race in view_races:
+        inventory_race = inventory_by_id[view_race.id]
+        choices = {choice.id: choice.display_name for choice in inventory_race.choices}
+        expected_cells = [
+            _source_cell(
+                source,
+                inventory_race,
+                endorsements.get((source.id, inventory_race.id)),
+                claims,
+                capture_by_id,
+                choices,
+                dataset,
+            )
+            for source in active_sources
+        ]
+        if (
+            view_race.source_cells != expected_cells
+            or view_race.endorsement_groups != _endorsement_groups(expected_cells, active_sources)
+        ):
+            canonical_evidence_match = False
+            break
     metadata_match = (
         view_model.metadata.election_id == dataset.inventory.election.id
         and view_model.metadata.election_name == dataset.inventory.election.name
@@ -681,6 +713,13 @@ def _validate_publication(
             id="source-matrix",
             passed=cell_sources_match,
             message="Every race contains one ordered cell for every active source.",
+        ),
+        ValidationCheck(
+            id="canonical-evidence",
+            passed=canonical_evidence_match,
+            message=(
+                "Source cells and candidate endorsement groups match canonical records exactly."
+            ),
         ),
         ValidationCheck(
             id="publication-metadata",

@@ -10,6 +10,7 @@ import shutil
 import subprocess
 import tempfile
 import time
+from collections import Counter
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC
@@ -310,6 +311,35 @@ def validate_rendered_guide(
     missing_evidence_rows: list[str] = []
     for race in expected_races:
         for group in race.endorsement_groups:
+            group_key = (race.id, group.candidate_id)
+            expected_group = _normalized_text(
+                " ".join(
+                    [
+                        group.candidate_label,
+                        (
+                            f"{group.source_count} endorsing source"
+                            f"{'s' if group.source_count != 1 else ''}"
+                        ),
+                        *(
+                            " ".join(
+                                [
+                                    endorser.source_name,
+                                    "Co-endorsement" if endorser.co_endorsement else "",
+                                ]
+                            )
+                            for endorser in group.endorsers
+                        ),
+                    ]
+                )
+            )
+            observed_groups = [
+                _normalized_text(" ".join(parts))
+                for parts in parser.endorsement_group_text.get(group_key, [])
+            ]
+            if observed_groups != [expected_group]:
+                missing_evidence_rows.append(
+                    f"{race.id}/{group.candidate_id}: group heading or rows"
+                )
             for endorser in group.endorsers:
                 key = (race.id, group.candidate_id, endorser.source_id)
                 expected_row = _normalized_text(
@@ -371,7 +401,12 @@ def validate_rendered_guide(
         if _normalized_text(value).casefold() not in comparable_pdf_text
     )
     pages_are_letter = _pages_are_letter(reader)
-    link_count = _pdf_link_count(reader)
+    pdf_links = _pdf_links(reader)
+    expected_pdf_links = [configuration.project_url, configuration.project_url]
+    pdf_links_valid = _web_urls_are_safe(pdf_links) and Counter(pdf_links) == Counter(
+        expected_pdf_links
+    )
+    link_count = len(pdf_links)
     metadata = reader.metadata
     metadata_present = bool(
         metadata
@@ -415,6 +450,11 @@ def validate_rendered_guide(
         for index, path in enumerate(detailed_page_images, 1)
     ]
     detailed_metadata = detailed_reader.metadata if detailed_reader is not None else None
+    detailed_links = _pdf_links(detailed_reader) if detailed_reader is not None else []
+    detailed_links_valid = detailed_reader is None or (
+        _web_urls_are_safe(detailed_links)
+        and Counter(detailed_links) == Counter([configuration.project_url])
+    )
     detailed_valid = detailed_reader is None or (
         len(detailed_reader.pages) > configuration.concise_page_count
         and _pages_are_letter(detailed_reader)
@@ -429,6 +469,7 @@ def validate_rendered_guide(
         and len(detailed_records) == len(detailed_reader.pages)
         and all(record.ink_fraction > 0.005 for record in detailed_records)
         and all(record.edge_ink_fraction < 0.002 for record in detailed_records)
+        and detailed_links_valid
     )
     detail_pair_valid = (detailed_reader is None and not detailed_records) or (
         detailed_reader is not None and bool(detailed_records)
@@ -499,8 +540,8 @@ def validate_rendered_guide(
         ),
         RenderCheck(
             id="pdf-links",
-            passed=link_count > 0,
-            message="PDF contains at least one embedded URI link.",
+            passed=pdf_links_valid,
+            message="PDF contains exactly the expected safe project links.",
         ),
         RenderCheck(
             id="rendered-pages",
@@ -531,7 +572,7 @@ def validate_rendered_guide(
         passed=all(check.passed for check in checks),
         page_count=len(reader.pages),
         pdf_text_length=len(pdf_text) + len(detailed_text),
-        link_count=link_count + (_pdf_link_count(detailed_reader) if detailed_reader else 0),
+        link_count=link_count + len(detailed_links),
         edition="concise_plus_detailed" if detailed_reader else "concise",
         detailed_page_count=len(detailed_reader.pages) if detailed_reader else 0,
         checks=checks,
@@ -1193,16 +1234,26 @@ def _image_ink_fraction(path: Path) -> float:
         return sum(histogram[8:]) / (image.width * image.height)
 
 
-def _pdf_link_count(reader: PdfReader) -> int:
-    count = 0
+def _pdf_links(reader: PdfReader) -> list[str]:
+    links: list[str] = []
     for page in reader.pages:
         annotations = page.get("/Annots", [])
         for annotation_reference in annotations:
             annotation = annotation_reference.get_object()
             action = annotation.get("/A")
-            if action is not None and action.get("/URI"):
-                count += 1
-    return count
+            uri = action.get("/URI") if action is not None else None
+            if uri is not None:
+                links.append(str(uri))
+    return links
+
+
+def _web_urls_are_safe(urls: list[str]) -> bool:
+    try:
+        for url in urls:
+            _require_web_url(url)
+    except ValueError:
+        return False
+    return True
 
 
 def _normalized_text(value: str) -> str:
@@ -1339,10 +1390,12 @@ class _GuideHTMLParser(HTMLParser):
         self.links: set[str] = set()
         self.endorsement_text: dict[tuple[str, str, str], list[list[str]]] = {}
         self.endorsement_links: dict[tuple[str, str, str], list[set[str]]] = {}
+        self.endorsement_group_text: dict[tuple[str, str], list[list[str]]] = {}
         self.display_text: dict[tuple[str, str], list[list[str]]] = {}
         self._text_parts: list[str] = []
         self._current_race_id: str | None = None
         self._current_endorsement_key: tuple[tuple[str, str, str], int] | None = None
+        self._current_endorsement_group_key: tuple[tuple[str, str], int] | None = None
         self._current_display_role: tuple[tuple[str, str], int] | None = None
         self._display_role_tag: str | None = None
 
@@ -1359,6 +1412,17 @@ class _GuideHTMLParser(HTMLParser):
             self._current_race_id = race_id
         source_id = attributes.get("data-source-id")
         candidate_id = attributes.get("data-candidate-id")
+        classes = set((attributes.get("class") or "").split())
+        if (
+            tag == "section"
+            and "endorsement-group" in classes
+            and candidate_id is not None
+            and self._current_race_id is not None
+        ):
+            key = (self._current_race_id, candidate_id)
+            groups = self.endorsement_group_text.setdefault(key, [])
+            groups.append([])
+            self._current_endorsement_group_key = (key, len(groups) - 1)
         if (
             tag == "li"
             and source_id is not None
@@ -1393,6 +1457,9 @@ class _GuideHTMLParser(HTMLParser):
             if self._current_endorsement_key is not None:
                 key, index = self._current_endorsement_key
                 self.endorsement_text[key][index].append(data)
+            if self._current_endorsement_group_key is not None:
+                key, index = self._current_endorsement_group_key
+                self.endorsement_group_text[key][index].append(data)
             if self._current_display_role is not None:
                 key, index = self._current_display_role
                 self.display_text[key][index].append(data)
@@ -1400,6 +1467,8 @@ class _GuideHTMLParser(HTMLParser):
     def handle_endtag(self, tag: str) -> None:
         if tag == "li":
             self._current_endorsement_key = None
+        if tag == "section" and self._current_endorsement_group_key is not None:
+            self._current_endorsement_group_key = None
         if tag == self._display_role_tag:
             self._current_display_role = None
             self._display_role_tag = None

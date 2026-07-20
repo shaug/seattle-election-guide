@@ -51,10 +51,12 @@
         <div class="race-grid">
           {% for race in section.races %}
           <article class="race-card" data-publication-race-id="{{ race.id }}"
+            aria-labelledby="race-label-{{ race.id }}"
             data-filter-tokens='{{ race.filter_tokens | tojson }}'>
             <div class="race-card-head">
               <div>
-                <p class="race-office" data-display-role="race-label">{{ race.race_label }}</p>
+                <p class="race-office" id="race-label-{{ race.id }}"
+                  data-display-role="race-label">{{ race.race_label }}</p>
                 <h3 data-display-role="recommendation">{{ race.recommendation_label }}</h3>
               </div>
               <div class="consensus-lockup" aria-label="Consensus among endorsers: {% if race.percentage_whole is none %}not available{% else %}{{ race.percentage_label }}{% endif %}">
@@ -81,7 +83,7 @@
             {% endif %}
             {% if race.endorsement_groups %}
             <details>
-              <summary>View endorsements</summary>
+              <summary aria-label="View endorsements for {{ race.race_label }}">View endorsements</summary>
               <div class="endorsement-groups">
                 {% for group in race.endorsement_groups %}
                 <section class="endorsement-group" data-candidate-id="{{ group.candidate_id }}">

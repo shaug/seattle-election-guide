@@ -9,6 +9,7 @@ import pytest
 from PIL import Image
 from pydantic import ValidationError
 from pypdf import PdfReader, PdfWriter
+from pypdf.generic import NameObject, TextStringObject
 
 from election_guide.publication import build_publication_bundle
 from election_guide.publication.models import PublicationViewModel
@@ -205,6 +206,8 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "@media print" in html
     assert "@media (max-width: 720px)" in html
     assert 'id="race-filter"' in html
+    assert 'aria-labelledby="race-label-' in html
+    assert 'aria-label="View endorsements for ' in html
     assert '<option value="Legislative District 43">Legislative District 43</option>' in html
     assert "JSON.parse(card.dataset.filterTokens)" in html
     assert "View endorsements" in html
@@ -556,6 +559,35 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     )
     assert not endorsement_check.passed
 
+    group_heading = (
+        f"<h4>{group.candidate_label}\n"
+        f"                    <span>{group.source_count} endorsing "
+        f"source{'s' if group.source_count != 1 else ''}</span>"
+    )
+    assert group_heading in canonical_html
+    for index, wrong_heading in enumerate(
+        (
+            group_heading.replace(group.candidate_label, "Wrong candidate", 1),
+            group_heading.replace(str(group.source_count), "999", 1),
+        )
+    ):
+        wrong_group_html = tmp_path / f"wrong-endorsement-group-{index}.html"
+        wrong_group_html.write_text(
+            canonical_html.replace(group_heading, wrong_heading, 1), encoding="utf-8"
+        )
+        wrong_group_report = validate_rendered_guide(
+            view_model,
+            read_rendering_configuration(RENDERING_CONFIG),
+            wrong_group_html,
+            rendered.pdf_path,
+            rendered.page_images,
+            rendered.screenshots,
+        )
+        wrong_group_check = next(
+            check for check in wrong_group_report.checks if check.id == "html-source-evidence"
+        )
+        assert not wrong_group_check.passed
+
     recommendation_element = (
         f'<h3 data-display-role="recommendation">{race_with_alternative.recommendation_label}</h3>'
     )
@@ -615,6 +647,36 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
         check for check in masked_pdf_report.checks if check.id == "pdf-display-values"
     )
     assert not masked_pdf_check.passed
+
+    malicious_link_pdf = tmp_path / "malicious-link.pdf"
+    writer = PdfWriter()
+    writer.clone_document_from_reader(PdfReader(rendered.pdf_path))
+    replaced_link = False
+    for page in writer.pages:
+        for annotation_reference in page.get("/Annots", []):
+            annotation = annotation_reference.get_object()
+            action = annotation.get("/A")
+            if action is not None and action.get("/URI"):
+                action[NameObject("/URI")] = TextStringObject("https://evil.example/phish")
+                replaced_link = True
+                break
+        if replaced_link:
+            break
+    assert replaced_link
+    with malicious_link_pdf.open("wb") as output:
+        writer.write(output)
+    malicious_link_report = validate_rendered_guide(
+        view_model,
+        read_rendering_configuration(RENDERING_CONFIG),
+        rendered.html_path,
+        malicious_link_pdf,
+        rendered.page_images,
+        rendered.screenshots,
+    )
+    pdf_link_check = next(
+        check for check in malicious_link_report.checks if check.id == "pdf-links"
+    )
+    assert not pdf_link_check.passed
 
 
 def test_dense_concise_content_still_fits_two_pages(tmp_path: Path) -> None:
