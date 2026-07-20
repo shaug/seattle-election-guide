@@ -774,6 +774,46 @@ def _inspect_print_layout(
                 JSON.stringify((() => {
                   const issues = [];
                   const detailed = __DETAILED__;
+                  const measurementCanvas = document.createElement('canvas');
+                  const measurementContext = measurementCanvas.getContext('2d');
+                  const inkBounds = element => {
+                    if (!measurementContext) return null;
+                    const style = getComputedStyle(element);
+                    measurementContext.font = [
+                      style.fontStyle,
+                      style.fontWeight,
+                      style.fontSize,
+                      style.fontFamily
+                    ].join(' ');
+                    const text = [...element.childNodes]
+                      .filter(node => node.nodeType === Node.TEXT_NODE)
+                      .map(node => node.textContent).join('');
+                    const metrics = measurementContext.measureText(text);
+                    const marker = document.createElement('i');
+                    marker.style.cssText = [
+                      'display:inline-block', 'width:0', 'height:0', 'overflow:hidden',
+                      'margin:0', 'padding:0', 'border:0', 'vertical-align:baseline'
+                    ].join(';');
+                    element.append(marker);
+                    const baseline = marker.getBoundingClientRect().top;
+                    marker.remove();
+                    if (!Number.isFinite(metrics.actualBoundingBoxAscent) ||
+                        !Number.isFinite(metrics.actualBoundingBoxDescent)) return null;
+                    return {
+                      top: baseline - metrics.actualBoundingBoxAscent,
+                      bottom: baseline + metrics.actualBoundingBoxDescent
+                    };
+                  };
+                  const inkImbalance = (container, elements) => {
+                    const bounds = elements.map(inkBounds);
+                    if (bounds.some(bound => bound === null)) return null;
+                    const containerRect = container.getBoundingClientRect();
+                    const inkTop = Math.min(...bounds.map(bound => bound.top));
+                    const inkBottom = Math.max(...bounds.map(bound => bound.bottom));
+                    const topGap = inkTop - containerRect.top;
+                    const bottomGap = containerRect.bottom - inkBottom;
+                    return topGap - bottomGap;
+                  };
                   const selectors = detailed ? [
                     '.screen-guide', '.race-card h3', '.support-line', '.alternative',
                     '.comparison', '.warning', '.methodology-panel'
@@ -878,11 +918,9 @@ def _inspect_print_layout(
                         issues.push(`.print-meter[${index}]-treatment`);
                       }
                       if (meterLabel) {
-                        const labelStyle = getComputedStyle(meterLabel);
-                        const paddingSkew =
-                          Number.parseFloat(labelStyle.paddingTop) -
-                          Number.parseFloat(labelStyle.paddingBottom);
-                        if (paddingSkew < 1.1 || paddingSkew > 1.6) {
+                        const meterText = meterLabel.querySelector('.print-meter-text');
+                        const imbalance = meterText ? inkImbalance(meter, [meterText]) : null;
+                        if (imbalance === null || Math.abs(imbalance) > 1) {
                           issues.push(`.print-meter[${index}]-label-centering`);
                         }
                       }
@@ -910,17 +948,11 @@ def _inspect_print_layout(
                           Number.parseInt(getComputedStyle(choice).fontWeight)) {
                         issues.push(`.print-race[${index}]-comparison-hierarchy`);
                       }
-                      const comparisonRect = comparison.getBoundingClientRect();
-                      for (const element of [status, choice]) {
-                        if (!element) continue;
-                        const elementRect = element.getBoundingClientRect();
-                        const opticalOffset =
-                          (elementRect.top + elementRect.bottom) / 2 -
-                          (comparisonRect.top + comparisonRect.bottom) / 2;
-                        if (opticalOffset < .35 || opticalOffset > 1.1) {
-                          issues.push(`.print-race[${index}]-comparison-centering`);
-                          break;
-                        }
+                      const separator = comparison.querySelector('.print-times-separator');
+                      const comparisonText = [status, separator, choice].filter(Boolean);
+                      const imbalance = inkImbalance(comparison, comparisonText);
+                      if (imbalance === null || Math.abs(imbalance) > 1.2) {
+                        issues.push(`.print-race[${index}]-comparison-centering`);
                       }
                     }
                     for (const [selector, element] of [
@@ -1439,14 +1471,14 @@ def _normalized_text(value: str) -> str:
 def _pdf_value_is_present(value: str, segment: str) -> bool:
     normalized = _normalized_text(value).casefold()
     comparable_segment = _normalized_text(segment).casefold()
-    boundary_prefix = r"(?<!\w)"
     if normalized.startswith(("seattle times ", "times ", "times:")):
         compact_times_label = normalized.startswith(("times ", "times:"))
         normalized = normalized.replace("·", " ")
         comparable_segment = comparable_segment.replace("·", " ")
-        boundary_prefix = r"(?<!seattle\s)(?<!\w)" if compact_times_label else boundary_prefix
-    pattern = r"\s*".join(re.escape(word) for word in normalized.split())
-    return re.search(boundary_prefix + pattern + r"(?!\w)", comparable_segment) is not None
+        pattern = r"\s*".join(re.escape(word) for word in normalized.split())
+        prefix = r"(?<!seattle\s)(?<!\w)" if compact_times_label else r"(?<!\w)"
+        return re.search(prefix + pattern + r"(?!\w)", comparable_segment) is not None
+    return normalized in comparable_segment
 
 
 def _pdf_line_value_is_present(value: str, segment: str) -> bool:

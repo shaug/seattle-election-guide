@@ -1164,8 +1164,9 @@ Requirements:
 - no orphaned section labels;
 - no awkward text wrapping in candidate names.
 
-Prefer Trebuchet MS with a portable open-source fallback over Arial so the guide feels contemporary
-without bundling or redistributing a licensed font file.
+For print, prefer Trebuchet MS with a portable open-source fallback over Arial so the guide feels
+contemporary without bundling or redistributing a licensed font file. Keep this choice scoped to
+the PDF so it does not alter the responsive guide's typography.
 
 Use only redistributable system or open-source fonts.
 
