@@ -1392,8 +1392,12 @@ def _normalized_text(value: str) -> str:
 def _pdf_value_is_present(value: str, segment: str) -> bool:
     normalized = _normalized_text(value).casefold()
     if normalized.startswith(("seattle times ", "times ", "times:")):
+        compact_times_label = normalized.startswith(("times ", "times:"))
+        normalized = normalized.replace("·", " ")
+        segment = segment.replace("·", " ")
         pattern = r"\s*".join(re.escape(word) for word in normalized.split())
-        return re.search(r"(?<!\w)" + pattern + r"(?!\w)", segment) is not None
+        prefix = r"(?<!seattle\s)(?<!\w)" if compact_times_label else r"(?<!\w)"
+        return re.search(prefix + pattern + r"(?!\w)", segment) is not None
     return normalized in segment
 
 

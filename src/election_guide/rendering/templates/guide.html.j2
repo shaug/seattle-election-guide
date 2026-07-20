@@ -171,7 +171,7 @@
       {% set print_warnings = concise_warning_labels(race) %}
       <div class="print-race-context">
         {% for comparison in race.comparisons %}<span class="print-comparison">
-          <b class="print-times-pick print-times-pick-{{ comparison.voter_tone }}">{{ comparison.print_label }}</b>
+          <b class="print-times-pick print-times-pick-{{ comparison.voter_tone }}"><span class="print-times-status">{{ comparison.print_status_label }}</span><span class="print-times-separator"> · </span><span class="print-times-choice">{{ comparison.print_choice_label }}</span></b>
         </span>{% endfor %}
         <span class="print-support print-support-full">{{ race.support_summary }}</span>
         <span class="print-support print-support-compact">{{ race.explicit_endorsement_count }} endorsers</span>
@@ -248,9 +248,9 @@
               {% for note in guide.methodology.interpretation_notes %}<p>{{ note }}</p>{% endfor %}
             </div>
             <p class="compact-method-note">Full interpretation notes are in the detailed edition.</p>
-            <div class="times-key"><b>Seattle Times comparison:</b> green “Times agrees” chips
-              show the same choice; amber “Times differs” chips show another choice; a neutral
-              “Times: not covered” chip means the captured guide has no Times endorsement.</div>
+            <div class="times-key"><b>Seattle Times comparison:</b> green “Times agrees · choice”
+              chips show the same choice; amber “Times differs · choice” chips show another choice;
+              a neutral “Times · not covered” chip means the captured guide has no Times endorsement.</div>
           </section>
         </div>
         <div class="method-column">

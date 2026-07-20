@@ -49,30 +49,30 @@ PROJECT_ROOT = Path(__file__).parent.parent
 RENDERING_CONFIG = PROJECT_ROOT / "config/rendering/pdf.yaml"
 DARWIN_VISUAL_BASELINES = {
     "pdf-page-1": [
-        0.190,
-        0.190,
-        0.140,
+        0.169,
+        0.186,
+        0.123,
         0.105,
-        0.154,
-        0.153,
-        0.193,
-        0.136,
-        0.149,
-        0.144,
-        0.190,
+        0.110,
+        0.145,
+        0.156,
+        0.133,
+        0.111,
+        0.140,
+        0.156,
         0.137,
+        0.064,
         0.089,
-        0.094,
-        0.122,
-        0.085,
+        0.097,
+        0.084,
     ],
     "pdf-page-2": [
         0.085,
         0.060,
         0.058,
         0.029,
-        0.073,
-        0.061,
+        0.084,
+        0.067,
         0.090,
         0.034,
         0.000,
@@ -123,30 +123,30 @@ DARWIN_VISUAL_BASELINES = {
 }
 LINUX_VISUAL_BASELINES = {
     "pdf-page-1": [
-        0.188,
-        0.190,
-        0.137,
+        0.167,
+        0.186,
+        0.120,
         0.103,
-        0.150,
+        0.106,
+        0.144,
         0.152,
-        0.189,
-        0.136,
-        0.145,
-        0.141,
-        0.187,
+        0.133,
+        0.107,
         0.137,
-        0.086,
-        0.093,
-        0.122,
-        0.085,
+        0.153,
+        0.137,
+        0.061,
+        0.088,
+        0.097,
+        0.084,
     ],
     "pdf-page-2": [
         0.081,
         0.059,
         0.056,
         0.029,
-        0.073,
-        0.059,
+        0.084,
+        0.065,
         0.086,
         0.034,
         0.000,
@@ -240,7 +240,13 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
         assert f'aria-label="{comparison.voter_accessible_label}"' in html
         assert f"<strong>{comparison.voter_label}</strong>" in html
         assert (f"print-times-pick print-times-pick-{comparison.voter_tone}") in html
-        assert f">{comparison.print_label}</b>" in html
+        assert (
+            f'>{comparison.print_status_label}</span><span class="print-times-separator"> · '
+            in html
+        )
+        assert (
+            f'<span class="print-times-choice">{comparison.print_choice_label}</span></b>' in html
+        )
     assert ".comparison strong { max-width: 72%; margin-left: auto;" in html
     assert html.count('class="method-column"') == 2
     assert ".print-races { display: grid; grid-template-columns: 1fr 1fr;" in html
@@ -255,6 +261,11 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "grid-template-columns: minmax(0, 1fr) var(--print-meter-width)" in html
     assert "linear-gradient(to left, var(--teal) 0 var(--meter-fill)" in html
     assert 'style="--meter-fill: ' in html
+    assert ".print-meter { display: flex; align-items: center; justify-content: flex-end;" in html
+    assert "border: .5px solid #afc4ca" in html
+    assert ".print-times-pick { display: inline-flex; align-items: center;" in html
+    assert ".print-times-status { font-weight: 800; }" in html
+    assert ".print-times-choice { font-weight: 500; }" in html
 
 
 def test_rendering_configuration_rejects_contract_drift() -> None:
@@ -796,7 +807,9 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     comparison = race_for_masking.comparisons[0]
     comparison_element = (
         f'<b class="print-times-pick print-times-pick-{comparison.voter_tone}">'
-        f"{comparison.print_label}</b>"
+        f'<span class="print-times-status">{comparison.print_status_label}</span>'
+        '<span class="print-times-separator"> · </span>'
+        f'<span class="print-times-choice">{comparison.print_choice_label}</span></b>'
     )
     assert comparison_element in masked_html_text
     masked_html_text = masked_html_text.replace(

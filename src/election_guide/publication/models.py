@@ -171,15 +171,21 @@ class PublicationComparison(PublicationModel):
 
     @property
     def print_label(self) -> str:
+        return f"{self.print_status_label} · {self.print_choice_label}"
+
+    @property
+    def print_status_label(self) -> str:
         if self.status == "agrees":
-            return f"Times agrees: {self.voter_label}"
+            return "Times agrees"
         if self.status == "differs":
-            return f"Times differs: {self.voter_label}"
-        if self.status == "no_consensus":
-            return f"Times: {self.voter_label}"
-        if self.status == "no_endorsement":
-            return "Times: not covered"
-        return "Times: not covered"
+            return "Times differs"
+        return "Times"
+
+    @property
+    def print_choice_label(self) -> str:
+        if self.candidate_labels:
+            return self.voter_label
+        return "not covered"
 
     @property
     def voter_accessible_label(self) -> str:

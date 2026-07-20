@@ -244,6 +244,8 @@ def test_bundle_is_deterministic_reconstructable_and_complete(tmp_path: Path) ->
         "voter_label",
         "voter_tone",
         "print_label",
+        "print_status_label",
+        "print_choice_label",
         "accessible_label",
     ),
     [
@@ -253,7 +255,9 @@ def test_bundle_is_deterministic_reconstructable_and_complete(tmp_path: Path) ->
             ["Candidate A"],
             "Candidate A",
             "agrees",
-            "Times agrees: Candidate A",
+            "Times agrees · Candidate A",
+            "Times agrees",
+            "Candidate A",
             "Seattle Times agrees with consensus: Candidate A",
         ),
         (
@@ -262,7 +266,9 @@ def test_bundle_is_deterministic_reconstructable_and_complete(tmp_path: Path) ->
             ["Candidate B"],
             "Candidate B",
             "differs",
-            "Times differs: Candidate B",
+            "Times differs · Candidate B",
+            "Times differs",
+            "Candidate B",
             "Seattle Times endorses a different choice: Candidate B",
         ),
         (
@@ -271,7 +277,9 @@ def test_bundle_is_deterministic_reconstructable_and_complete(tmp_path: Path) ->
             [],
             "NOT COVERED",
             "not_covered",
-            "Times: not covered",
+            "Times · not covered",
+            "Times",
+            "not covered",
             "Seattle Times made no endorsement",
         ),
         (
@@ -280,7 +288,9 @@ def test_bundle_is_deterministic_reconstructable_and_complete(tmp_path: Path) ->
             [],
             "NOT COVERED",
             "not_covered",
-            "Times: not covered",
+            "Times · not covered",
+            "Times",
+            "not covered",
             "Seattle Times: not covered",
         ),
         (
@@ -289,7 +299,9 @@ def test_bundle_is_deterministic_reconstructable_and_complete(tmp_path: Path) ->
             ["Candidate C"],
             "Candidate C",
             "neutral",
-            "Times: Candidate C",
+            "Times · Candidate C",
+            "Times",
+            "Candidate C",
             "Seattle Times endorses Candidate C; progressive sources have no consensus",
         ),
     ],
@@ -301,6 +313,8 @@ def test_comparison_has_concise_voter_presentation(
     voter_label: str,
     voter_tone: str,
     print_label: str,
+    print_status_label: str,
+    print_choice_label: str,
     accessible_label: str,
 ) -> None:
     comparison = PublicationComparison.model_validate(
@@ -316,6 +330,8 @@ def test_comparison_has_concise_voter_presentation(
     assert comparison.voter_label == voter_label
     assert comparison.voter_tone == voter_tone
     assert comparison.print_label == print_label
+    assert comparison.print_status_label == print_status_label
+    assert comparison.print_choice_label == print_choice_label
     assert comparison.voter_accessible_label == accessible_label
 
 
