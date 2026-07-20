@@ -54,15 +54,16 @@ output/rendered/
 
 The generation fails unless:
 
-- responsive HTML contains every canonical race in order and every display value; each source row
-  independently contains its expected state, choice, locator, and available evidence link;
+- responsive HTML contains every canonical race in order and every display value; each affirmative
+  endorser appears under every endorsed candidate or choice with its own evidence link;
 - the configured desktop and mobile captures use their exact CSS viewport dimensions without
   horizontal overflow, expose every race and the filter controls, and contain visible pixels;
 - the PDF has exactly two nonblank US Letter pages with selectable text, URI links, and configured
   title, author, and subject metadata;
 - a normal concise PDF contains every published race display value; when overflow invokes the
-  fallback, the compact PDF retains the race, recommendation, grade, share, and warning summary
-  while the detailed PDF retains the complete values and methodology;
+  fallback, the compact PDF retains the race, recommendation, consensus share, explicit-source
+  count, Seattle Times comparison, and insufficient-evidence warning while the detailed PDF
+  retains the complete voter-facing values and methodology;
 - Chrome print-layout measurements find no text below the configured font floor, clipped card text,
   overflowing methodology panel, or footer overlap, and Poppler page images do not touch the outer
   safety edge;

@@ -27,11 +27,7 @@ from websocket import (  # pyright: ignore[reportUnknownVariableType]
     create_connection,  # pyright: ignore[reportUnknownVariableType]
 )
 
-from election_guide.publication.models import (
-    PublicationCategoryAnalysis,
-    PublicationRace,
-    PublicationViewModel,
-)
+from election_guide.publication.models import PublicationRace, PublicationViewModel
 from election_guide.rendering.models import (
     RenderCheck,
     RenderedPage,
@@ -80,15 +76,14 @@ def render_html_document(
     )
     template = environment.get_template("guide.html.j2")
     stylesheet = (TEMPLATE_DIR / "guide.css").read_text(encoding="utf-8")
-    source_by_id = {source.id: source for source in view_model.sources}
     rendered_urls = [
         configuration.project_url,
         *(
-            cell.evidence_url
+            endorser.evidence_url
             for section in view_model.sections
             for race in section.races
-            for cell in race.source_cells
-            if cell.evidence_url is not None
+            for group in race.endorsement_groups
+            for endorser in group.endorsers
         ),
     ]
     for url in rendered_urls:
@@ -97,7 +92,6 @@ def render_html_document(
         guide=view_model,
         config=configuration,
         stylesheet=stylesheet,
-        source_by_id=source_by_id,
         filter_options=_filter_options(view_model),
         concise_warning_labels=_concise_warning_labels,
     )
@@ -135,27 +129,7 @@ def _require_web_url(value: str) -> None:
 
 
 def _concise_warning_labels(race: PublicationRace) -> list[str]:
-    codes = set(race.warning_codes)
-    labels: list[str] = []
-    grouped = {
-        "low_coverage",
-        "missing_coverage",
-        "low_category_coverage",
-    }
-    if codes & grouped:
-        labels.append("LOW COVERAGE")
-        codes -= grouped
-    known = {
-        "no_endorsement": "NO ENDORSEMENT",
-        "pending_review": "REVIEW PENDING",
-        "unresolved_high_severity": "HIGH-SEVERITY REVIEW",
-        "low_confidence": "LOW CONFIDENCE",
-    }
-    for code in race.warning_codes:
-        if code in codes:
-            labels.append(known.get(code, code.replace("_", " ").upper()))
-            codes.remove(code)
-    return labels
+    return ["TOO FEW ENDORSEMENTS"] if race.grade == "Insufficient" else []
 
 
 def build_rendered_guide(
@@ -333,47 +307,39 @@ def validate_rendered_guide(
             normalized_expected = [_normalized_text(value) for value in expected_values]
             if observed_values != normalized_expected:
                 mismatched_html_roles.append(f"{race.id}/{role}")
-    source_by_id = {source.id: source for source in view_model.sources}
     missing_evidence_rows: list[str] = []
     for race in expected_races:
-        for cell in race.source_cells:
-            key = (race.id, cell.source_id)
-            expected_row = _normalized_text(
-                " ".join(
-                    [
-                        source_by_id[cell.source_id].name,
-                        cell.state.replace("_", " "),
-                        " / ".join(cell.candidate_labels) if cell.candidate_labels else "None",
-                        (
-                            " ".join(
-                                value
-                                for value in ("Original evidence", cell.evidence_locator)
-                                if value is not None
-                            )
-                            if cell.evidence_url is not None
-                            else "Not available"
-                        ),
-                    ]
+        for group in race.endorsement_groups:
+            for endorser in group.endorsers:
+                key = (race.id, group.candidate_id, endorser.source_id)
+                expected_row = _normalized_text(
+                    " ".join(
+                        [
+                            endorser.source_name,
+                            "Co-endorsement" if endorser.co_endorsement else "",
+                        ]
+                    )
                 )
-            )
-            observed_rows = [
-                _normalized_text(" ".join(parts)) for parts in parser.source_cell_text.get(key, [])
-            ]
-            if observed_rows != [expected_row]:
-                missing_evidence_rows.append(f"{race.id}/{cell.source_id}: row values")
-            expected_links: set[str] = (
-                {cell.evidence_url} if cell.evidence_url is not None else set()
-            )
-            if parser.source_cell_links.get(key, []) != [expected_links]:
-                missing_evidence_rows.append(f"{race.id}/{cell.source_id}: evidence links")
+                observed_rows = [
+                    _normalized_text(" ".join(parts))
+                    for parts in parser.endorsement_text.get(key, [])
+                ]
+                if observed_rows != [expected_row]:
+                    missing_evidence_rows.append(
+                        f"{race.id}/{group.candidate_id}/{endorser.source_id}: row values"
+                    )
+                if parser.endorsement_links.get(key, []) != [{endorser.evidence_url}]:
+                    missing_evidence_rows.append(
+                        f"{race.id}/{group.candidate_id}/{endorser.source_id}: evidence links"
+                    )
     expected_html_links = {
         "#guide-races",
         configuration.project_url,
         *(
-            cell.evidence_url
+            endorser.evidence_url
             for race in expected_races
-            for cell in race.source_cells
-            if cell.evidence_url is not None
+            for group in race.endorsement_groups
+            for endorser in group.endorsers
         ),
     }
     if parser.links != expected_html_links:
@@ -496,9 +462,9 @@ def validate_rendered_guide(
             id="html-source-evidence",
             passed=not missing_evidence_rows,
             message=(
-                "Every source row contains its own state, choice, locator, and evidence link."
+                "Every affirmative endorser appears under its choice with its evidence link."
                 if not missing_evidence_rows
-                else f"HTML source rows are incomplete: {', '.join(missing_evidence_rows[:5])}"
+                else f"HTML endorsement rows are incomplete: {', '.join(missing_evidence_rows[:5])}"
             ),
         ),
         RenderCheck(
@@ -520,7 +486,8 @@ def validate_rendered_guide(
             id="pdf-display-values",
             passed=not missing_pdf_values,
             message=(
-                "PDF text contains every canonical race, recommendation, grade, share, and count."
+                "PDF text contains every canonical race, recommendation, "
+                "consensus share, and count."
                 if not missing_pdf_values
                 else f"PDF text is missing canonical values: {', '.join(missing_pdf_values[:5])}"
             ),
@@ -1246,20 +1213,8 @@ def _html_semantic_values(race: PublicationRace) -> dict[str, list[str]]:
     return {
         "race-label": [race.race_label],
         "recommendation": [race.recommendation_label],
-        "grade": [race.grade],
         "share": ["N/A" if race.percentage_whole is None else race.percentage_label],
         "support": [race.support_summary],
-        "category-analysis": [_category_analysis_text(race)],
-        "alternatives": (
-            [
-                "Alternatives: "
-                + "; ".join(
-                    f"{item.candidate_label}, {item.percentage_label}" for item in race.alternatives
-                )
-            ]
-            if race.alternatives
-            else []
-        ),
         "comparison": [
             " ".join(
                 [
@@ -1270,8 +1225,10 @@ def _html_semantic_values(race: PublicationRace) -> dict[str, list[str]]:
             ).strip()
             for comparison in race.comparisons
         ],
-        "warnings": (
-            ["Coverage note: " + " ".join(race.warning_messages)] if race.warning_messages else []
+        "insufficient-warning": (
+            ["Too few explicit endorsements to assess consensus reliably."]
+            if race.grade == "Insufficient"
+            else []
         ),
     }
 
@@ -1280,14 +1237,8 @@ def _pdf_race_display_values(race: PublicationRace) -> list[str]:
     return [
         race.race_label,
         race.recommendation_label,
-        race.grade,
         "N/A" if race.percentage_whole is None else race.percentage_label,
         race.support_summary,
-        *(
-            value
-            for alternative in race.alternatives
-            for value in (alternative.candidate_label, alternative.percentage_label)
-        ),
         *(
             value
             for comparison in race.comparisons
@@ -1301,7 +1252,6 @@ def _pdf_race_core_values(race: PublicationRace) -> list[str]:
     return [
         race.race_label,
         race.recommendation_label,
-        race.grade,
         "N/A" if race.percentage_whole is None else race.percentage_label,
         *(
             value
@@ -1316,63 +1266,18 @@ def _detailed_pdf_race_values(race: PublicationRace) -> list[str]:
     return [
         race.race_label,
         race.recommendation_label,
-        race.grade,
         "N/A" if race.percentage_whole is None else race.percentage_label,
         race.support_summary,
-        *(
-            value
-            for category in race.category_breakdown
-            for value in _category_analysis_values(category)
-        ),
-        *(
-            value
-            for alternative in race.alternatives
-            for value in (alternative.candidate_label, alternative.percentage_label)
-        ),
         *(
             value
             for comparison in race.comparisons
             for value in (comparison.badge_label, *comparison.candidate_labels)
         ),
-        *race.warning_messages,
-    ]
-
-
-def _category_analysis_text(race: PublicationRace) -> str:
-    parts = ["Category representation and support"]
-    for category in race.category_breakdown:
-        analysis = (
-            f"{category.label} — {category.source_coverage_count}/"
-            f"{category.eligible_source_count} sources covered; "
-            f"{category.explicit_endorsement_count} explicit."
-        )
-        if category.candidate_support:
-            support = "; ".join(
-                f"{item.candidate_label} {item.support_points} "
-                f"point{'s' if item.support_points != '1' else ''}"
-                for item in category.candidate_support
-            )
-            analysis += f" Support: {support}."
-        else:
-            analysis += " No explicit candidate support."
-        parts.append(analysis)
-    return " ".join(parts)
-
-
-def _category_analysis_values(analysis: PublicationCategoryAnalysis) -> list[str]:
-    return [
-        analysis.label,
-        f"{analysis.source_coverage_count}/{analysis.eligible_source_count} sources covered",
-        f"{analysis.explicit_endorsement_count} explicit",
         *(
-            value
-            for item in analysis.candidate_support
-            for value in (
-                item.candidate_label,
-                f"{item.support_points} point{'s' if item.support_points != '1' else ''}",
-            )
+            ["Too few explicit endorsements to assess consensus reliably."]
+            if race.grade == "Insufficient"
+            else []
         ),
-        *([] if analysis.candidate_support else ["No explicit candidate support"]),
     ]
 
 
@@ -1398,21 +1303,10 @@ def _missing_pdf_race_values(
             continue
         later = [item for item in positions[index + 1 :] if item is not None]
         segment = comparable[position : later[0] if later else len(comparable)]
-        share = "N/A" if race.percentage_whole is None else race.percentage_label
-        ordered_header = [
-            race.race_label,
-            race.recommendation_label,
-            race.grade,
-            share,
-        ]
-        if value_fn is not _pdf_race_core_values:
-            ordered_header.append(race.support_summary)
         header_pattern = r"\s+".join(
-            re.escape(_normalized_text(value).casefold()) for value in ordered_header[:3]
+            re.escape(_normalized_text(value).casefold())
+            for value in (race.race_label, race.recommendation_label)
         )
-        header_pattern += r"\s*" + re.escape(_normalized_text(ordered_header[3]).casefold())
-        if len(ordered_header) == 5:
-            header_pattern += r"\s+" + re.escape(_normalized_text(ordered_header[4]).casefold())
         if re.match(header_pattern, segment) is None:
             missing.append(f"{race.id}: ordered race result header")
         missing.extend(
@@ -1443,12 +1337,12 @@ class _GuideHTMLParser(HTMLParser):
         self.race_ids: list[str] = []
         self.race_text: dict[str, list[str]] = {}
         self.links: set[str] = set()
-        self.source_cell_text: dict[tuple[str, str], list[list[str]]] = {}
-        self.source_cell_links: dict[tuple[str, str], list[set[str]]] = {}
+        self.endorsement_text: dict[tuple[str, str, str], list[list[str]]] = {}
+        self.endorsement_links: dict[tuple[str, str, str], list[set[str]]] = {}
         self.display_text: dict[tuple[str, str], list[list[str]]] = {}
         self._text_parts: list[str] = []
         self._current_race_id: str | None = None
-        self._current_source_key: tuple[tuple[str, str], int] | None = None
+        self._current_endorsement_key: tuple[tuple[str, str, str], int] | None = None
         self._current_display_role: tuple[tuple[str, str], int] | None = None
         self._display_role_tag: str | None = None
 
@@ -1464,13 +1358,19 @@ class _GuideHTMLParser(HTMLParser):
             self.race_text[race_id] = []
             self._current_race_id = race_id
         source_id = attributes.get("data-source-id")
-        if tag == "tr" and source_id is not None and self._current_race_id is not None:
-            key = (self._current_race_id, source_id)
-            rows = self.source_cell_text.setdefault(key, [])
-            links = self.source_cell_links.setdefault(key, [])
+        candidate_id = attributes.get("data-candidate-id")
+        if (
+            tag == "li"
+            and source_id is not None
+            and candidate_id is not None
+            and self._current_race_id is not None
+        ):
+            key = (self._current_race_id, candidate_id, source_id)
+            rows = self.endorsement_text.setdefault(key, [])
+            links = self.endorsement_links.setdefault(key, [])
             rows.append([])
             links.append(set())
-            self._current_source_key = (key, len(rows) - 1)
+            self._current_endorsement_key = (key, len(rows) - 1)
         display_role = attributes.get("data-display-role")
         if display_role is not None and self._current_race_id is not None:
             key = (self._current_race_id, display_role)
@@ -1481,25 +1381,25 @@ class _GuideHTMLParser(HTMLParser):
         href = attributes.get("href")
         if tag == "a" and href is not None:
             self.links.add(href)
-            if self._current_source_key is not None:
-                key, index = self._current_source_key
-                self.source_cell_links[key][index].add(href)
+            if self._current_endorsement_key is not None:
+                key, index = self._current_endorsement_key
+                self.endorsement_links[key][index].add(href)
 
     def handle_data(self, data: str) -> None:
         if data.strip():
             self._text_parts.append(data)
             if self._current_race_id is not None:
                 self.race_text[self._current_race_id].append(data)
-            if self._current_source_key is not None:
-                key, index = self._current_source_key
-                self.source_cell_text[key][index].append(data)
+            if self._current_endorsement_key is not None:
+                key, index = self._current_endorsement_key
+                self.endorsement_text[key][index].append(data)
             if self._current_display_role is not None:
                 key, index = self._current_display_role
                 self.display_text[key][index].append(data)
 
     def handle_endtag(self, tag: str) -> None:
-        if tag == "tr":
-            self._current_source_key = None
+        if tag == "li":
+            self._current_endorsement_key = None
         if tag == self._display_role_tag:
             self._current_display_role = None
             self._display_role_tag = None

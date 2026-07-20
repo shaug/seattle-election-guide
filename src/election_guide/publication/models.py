@@ -103,6 +103,34 @@ class SourceCell(PublicationModel):
         return self
 
 
+class PublicationEndorser(PublicationModel):
+    source_id: str = Field(min_length=1)
+    source_name: str = Field(min_length=1)
+    evidence_url: str = Field(min_length=1)
+    evidence_locator: str = Field(min_length=1)
+    co_endorsement: bool = Field(strict=True)
+    confidence_warning: bool = Field(strict=True)
+
+
+class PublicationChoiceEndorsements(PublicationModel):
+    candidate_id: str = Field(min_length=1)
+    candidate_label: str = Field(min_length=1)
+    support_points: str
+    source_count: int = Field(ge=1, strict=True)
+    endorsers: list[PublicationEndorser] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def validate_endorsements(self) -> PublicationChoiceEndorsements:
+        if _fraction(self.support_points, "choice support") <= 0:
+            raise ValueError("choice support must be positive")
+        source_ids = [item.source_id for item in self.endorsers]
+        if len(set(source_ids)) != len(source_ids):
+            raise ValueError("choice endorsers must be unique")
+        if self.source_count != len(self.endorsers):
+            raise ValueError("choice source count must match endorsers")
+        return self
+
+
 class PublicationComparison(PublicationModel):
     source_id: str
     status: ComparisonStatus
@@ -209,6 +237,7 @@ class PublicationRace(PublicationModel):
     category_coverage_count: int = Field(ge=0, strict=True)
     no_endorsement_count: int = Field(ge=0, strict=True)
     missing_source_count: int = Field(ge=0, strict=True)
+    endorsement_groups: list[PublicationChoiceEndorsements]
     category_breakdown: list[PublicationCategoryAnalysis]
     alternatives: list[PublicationAlternative]
     comparisons: list[PublicationComparison]
@@ -236,7 +265,7 @@ class PublicationRace(PublicationModel):
                 raise ValueError("insufficient coverage cannot have multiple support leaders")
             if self.recommendation_candidate_ids or self.recommendation_candidate_labels:
                 raise ValueError("insufficient coverage cannot carry a recommendation")
-            if self.recommendation_label != "Insufficient coverage":
+            if self.recommendation_label != "Too few endorsements":
                 raise ValueError("insufficient recommendation label is invalid")
         else:
             if self.grade == "TIED" and len(self.support_leader_candidate_ids) < 2:
@@ -379,7 +408,7 @@ class PublicationMetadata(PublicationModel):
 
 
 class PublicationViewModel(PublicationModel):
-    schema_version: Literal["1.1"] = "1.1"
+    schema_version: Literal["1.2"] = "1.2"
     metadata: PublicationMetadata
     sources: list[PublicationSource]
     sections: list[PublicationSection]
@@ -460,6 +489,62 @@ class PublicationViewModel(PublicationModel):
                     raise ValueError("missing source count does not match source cells")
                 if race.category_coverage_count != len(represented_categories):
                     raise ValueError("category coverage count does not match source cells")
+                support_by_candidate: dict[str, Fraction] = {}
+                cells_by_candidate: dict[str, list[SourceCell]] = {}
+                labels_by_candidate: dict[str, str] = {}
+                for cell in explicit_cells:
+                    for candidate_id, candidate_label in zip(
+                        cell.candidate_ids, cell.candidate_labels, strict=True
+                    ):
+                        previous_label = labels_by_candidate.setdefault(
+                            candidate_id, candidate_label
+                        )
+                        if previous_label != candidate_label:
+                            raise ValueError("candidate labels conflict across source cells")
+                        support_by_candidate[candidate_id] = support_by_candidate.get(
+                            candidate_id, Fraction()
+                        ) + _fraction(cell.allocation[candidate_id], "cell allocation")
+                        cells_by_candidate.setdefault(candidate_id, []).append(cell)
+                expected_group_ids = sorted(
+                    support_by_candidate,
+                    key=lambda candidate_id: (-support_by_candidate[candidate_id], candidate_id),
+                )
+                if [group.candidate_id for group in race.endorsement_groups] != expected_group_ids:
+                    raise ValueError("race endorsement groups must match affirmative support order")
+                for group in race.endorsement_groups:
+                    expected_cells = cells_by_candidate[group.candidate_id]
+                    expected_endorsers = [
+                        (
+                            cell.source_id,
+                            source_by_id[cell.source_id].name,
+                            cell.evidence_url,
+                            cell.evidence_locator,
+                            cell.state == "multi_endorsement",
+                            cell.confidence_warning,
+                        )
+                        for cell in expected_cells
+                    ]
+                    actual_endorsers = [
+                        (
+                            endorser.source_id,
+                            endorser.source_name,
+                            endorser.evidence_url,
+                            endorser.evidence_locator,
+                            endorser.co_endorsement,
+                            endorser.confidence_warning,
+                        )
+                        for endorser in group.endorsers
+                    ]
+                    if (
+                        group.candidate_label != labels_by_candidate[group.candidate_id]
+                        or _fraction(group.support_points, "choice support")
+                        != support_by_candidate[group.candidate_id]
+                        or group.source_count != len(expected_cells)
+                        or actual_endorsers != expected_endorsers
+                    ):
+                        raise ValueError(
+                            "race endorsement groups must match affirmative source cells"
+                        )
                 candidate_labels: dict[str, str] = {}
                 eligible_by_category: dict[str, int] = {}
                 covered_by_category: dict[str, int] = {}

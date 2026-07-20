@@ -17,10 +17,10 @@ normalization, append-only ambiguity review, and immutable source-adapter refres
 No recommendation is treated as complete coverage. The audited primary ledger contains 464
 decisions from 34 represented official source publications; release status explicitly lists the
 three remaining active sources with access or discovery constraints. Exact deterministic consensus
-scoring, coverage signals,
-grade and tie handling, comparison-only Seattle Times results, and the unresolved-review
-publication gate are also implemented. Responsive HTML and the two-page US Letter guide now render
-from the shared publication view model with semantic, viewport, PDF, and page-image validation.
+scoring, coverage signals, audit-only grade and tie handling, comparison-only Seattle Times
+results, and the unresolved-review publication gate are also implemented. Responsive HTML and the
+two-page US Letter guide now present candidate-centric endorsement consensus without voter-facing
+letter grades, while retaining the complete source matrix and scoring artifacts for audit.
 See [PROJECT.md](PROJECT.md) for the
 product specification, [DECISIONS.md](DECISIONS.md) for the launch contract,
 [docs/ELECTION_INITIALIZATION.md](docs/ELECTION_INITIALIZATION.md) for starting future elections,

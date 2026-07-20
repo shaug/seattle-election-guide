@@ -57,9 +57,8 @@
                 <p class="race-office" data-display-role="race-label">{{ race.race_label }}</p>
                 <h3 data-display-role="recommendation">{{ race.recommendation_label }}</h3>
               </div>
-              <div class="score-lockup" aria-label="Grade {{ race.grade }}, {{ race.percentage_label }}">
-                <span class="grade grade-{{ race.grade | replace('+', '-plus') | lower }}"
-                  data-display-role="grade">{{ race.grade }}</span>
+              <div class="consensus-lockup" aria-label="Consensus among endorsers: {% if race.percentage_whole is none %}not available{% else %}{{ race.percentage_label }}{% endif %}">
+                <span>Consensus among endorsers</span>
                 <strong data-display-role="share">{% if race.percentage_whole is none %}N/A{% else %}{{ race.percentage_label }}{% endif %}</strong>
               </div>
             </div>
@@ -69,17 +68,6 @@
             </div>
             {% endif %}
             <p class="support-line" data-display-role="support">{{ race.support_summary }}</p>
-            <div class="category-analysis" data-display-role="category-analysis">
-              <strong>Category representation and support</strong>
-              {% for category in race.category_breakdown %}
-              <p><b>{{ category.label }}</b> — {{ category.source_coverage_count }}/{{ category.eligible_source_count }}
-                sources covered; {{ category.explicit_endorsement_count }} explicit.
-                {% if category.candidate_support %}Support:
-                  {% for item in category.candidate_support %}{{ item.candidate_label }}
-                    {{ item.support_points }} point{% if item.support_points != '1' %}s{% endif %}{% if not loop.last %}; {% endif %}{% endfor %}.
-                {% else %}No explicit candidate support.{% endif %}</p>
-              {% endfor %}
-            </div>
             {% for comparison in race.comparisons %}
             <p class="comparison comparison-{{ comparison.status }}" data-display-role="comparison">
               <span>Seattle Times</span>
@@ -87,36 +75,31 @@
               {% if comparison.candidate_labels %}<em>{{ comparison.candidate_labels | join(' / ') }}</em>{% endif %}
             </p>
             {% endfor %}
-            {% if race.alternatives %}
-            <p class="alternative" data-display-role="alternatives">Alternatives:
-              {% for alternative in race.alternatives %}{{ alternative.candidate_label }},
-                {{ alternative.percentage_label }}{% if not loop.last %}; {% endif %}{% endfor %}</p>
+            {% if race.grade == 'Insufficient' %}
+            <div class="insufficient-note" role="note" data-display-role="insufficient-warning">
+              Too few explicit endorsements to assess consensus reliably.</div>
             {% endif %}
-            {% if race.warning_messages %}
-            <div class="warning" role="note" data-display-role="warnings"><strong>Coverage note:</strong>
-              {{ race.warning_messages | join(' ') }}</div>
-            {% endif %}
+            {% if race.endorsement_groups %}
             <details>
-              <summary>View source evidence</summary>
-              <div class="source-table-wrap">
-                <table class="source-table">
-                  <thead><tr><th>Source</th><th>State</th><th>Choice</th><th>Evidence</th></tr></thead>
-                  <tbody>
-                  {% for cell in race.source_cells %}
-                    {% set source = source_by_id[cell.source_id] %}
-                    <tr class="source-state-{{ cell.state }}" data-source-id="{{ cell.source_id }}">
-                      <th scope="row">{{ source.name }}</th>
-                      <td>{{ cell.state | replace('_', ' ') }}</td>
-                      <td>{% if cell.candidate_labels %}{{ cell.candidate_labels | join(' / ') }}{% else %}None{% endif %}</td>
-                      <td>{% if cell.evidence_url %}<a href="{{ cell.evidence_url }}">Original evidence</a>
-                        {% if cell.evidence_locator %}<small>{{ cell.evidence_locator }}</small>{% endif %}
-                        {% else %}Not available{% endif %}</td>
-                    </tr>
-                  {% endfor %}
-                  </tbody>
-                </table>
+              <summary>View endorsements</summary>
+              <div class="endorsement-groups">
+                {% for group in race.endorsement_groups %}
+                <section class="endorsement-group" data-candidate-id="{{ group.candidate_id }}">
+                  <h4>{{ group.candidate_label }}
+                    <span>{{ group.source_count }} endorsing source{% if group.source_count != 1 %}s{% endif %}</span></h4>
+                  <ul>
+                    {% for endorser in group.endorsers %}
+                    <li data-candidate-id="{{ group.candidate_id }}" data-source-id="{{ endorser.source_id }}">
+                      <a href="{{ endorser.evidence_url }}">{{ endorser.source_name }}</a>
+                      {% if endorser.co_endorsement %}<span class="co-endorsement">Co-endorsement</span>{% endif %}
+                    </li>
+                    {% endfor %}
+                  </ul>
+                </section>
+                {% endfor %}
               </div>
             </details>
+            {% endif %}
           </article>
           {% endfor %}
         </div>
@@ -137,11 +120,12 @@
         {% for note in guide.methodology.interpretation_notes %}<p>{{ note }}</p>{% endfor %}
         {% for limitation in guide.methodology.limitations %}<p>{{ limitation }}</p>{% endfor %}
       </section>
-      <section class="methodology-panel screen-grade-legend">
-        <h3>Grade thresholds</h3>
-        {% for item in guide.methodology.grade_legend %}<p><span
-          class="grade grade-{{ item.grade | replace('+', '-plus') | lower }}">{{ item.grade }}</span>
-          {{ item.rule }}</p>{% endfor %}
+      <section class="methodology-panel screen-consensus-key">
+        <h3>How to read consensus</h3>
+        <p>The percentage is the leading choice's share of endorsement points among sources
+          that explicitly endorsed in that race.</p>
+        <p>The source count shows how much evidence is behind that percentage. Consensus
+          measures agreement among endorsers, not candidate quality.</p>
       </section>
       <section class="methodology-panel screen-source-categories">
         <h3>Source categories</h3>
@@ -188,8 +172,7 @@
             <div class="print-race-title">{{ race.race_label }}</div>
             <div class="print-race-result">
               <strong>{{ race.recommendation_label }}</strong>
-              <span class="print-grade grade-{{ race.grade | replace('+', '-plus') | lower }}">{{ race.grade }}</span>
-              <b>{% if race.percentage_whole is none %}N/A{% else %}{{ race.percentage_label }}{% endif %}</b>
+              <b>{% if race.percentage_whole is none %}N/A{% else %}{{ race.percentage_label }} consensus{% endif %}</b>
             </div>
             {% if race.percentage_whole is not none %}<div class="print-meter">
               <span style="width: {{ race.percentage_whole }}%"></span></div>{% endif %}
@@ -199,12 +182,9 @@
                 {% if comparison.candidate_labels %} {{ comparison.candidate_labels | join(' / ') }}{% endif %}</span>{% endfor %}
               {% if print_warnings %}<b class="print-compact-warning">{{ print_warnings[0] }}</b>{% endif %}
             </div>
-            {% if race.alternatives or print_warnings %}
+            {% if print_warnings %}
             <div class="print-race-notes">
-              {% if race.alternatives %}<span>Alt:
-                {% for alternative in race.alternatives %}{{ alternative.candidate_label }}
-                  {{ alternative.percentage_label }}{% if not loop.last %}; {% endif %}{% endfor %}</span>{% endif %}
-              {% if print_warnings %}<span>{{ print_warnings | join(' / ') }}</span>{% endif %}
+              <span>{{ print_warnings | join(' / ') }}</span>
             </div>{% endif %}
           </article>
           {% endfor %}
@@ -227,13 +207,11 @@
       </div>
       <div class="method-grid">
         <section>
-          <h2>Grade legend</h2>
-          <div class="grade-legend">
-            {% for item in guide.methodology.grade_legend %}
-            <div><span class="grade grade-{{ item.grade | replace('+', '-plus') | lower }}">{{ item.grade }}</span>
-              <p>{{ item.rule }}</p></div>
-            {% endfor %}
-          </div>
+          <h2>How to read consensus</h2>
+          <p>The percentage is the leading choice's share of exact endorsement points among
+            sources that explicitly endorsed in that race.</p>
+          <p>The source count gives the sample-size context. A divided result means lower
+            agreement among endorsers, not a lower-quality candidate.</p>
         </section>
         <section>
           <h2>Source categories</h2>

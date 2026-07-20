@@ -207,13 +207,15 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert 'id="race-filter"' in html
     assert '<option value="Legislative District 43">Legislative District 43</option>' in html
     assert "JSON.parse(card.dataset.filterTokens)" in html
-    assert "View source evidence" in html
+    assert "View endorsements" in html
+    assert "Consensus among endorsers" in html
     assert "Seattle Times" in html
     assert f"{view_model.metadata.captured_source_count} represented sources" in html
     assert f"{view_model.metadata.unavailable_source_count} unavailable" in html
-    assert "Coverage note:" in html
-    assert "Category representation and support" in html
-    assert 'class="methodology-panel screen-grade-legend"' in html
+    assert "Coverage note:" not in html
+    assert "Category representation and support" not in html
+    assert 'data-display-role="grade"' not in html
+    assert 'class="methodology-panel screen-consensus-key"' in html
     assert 'class="methodology-panel screen-source-categories"' in html
     assert 'class="methodology-panel screen-audit-metadata"' in html
     assert 'class="methodology-panel screen-verification"' in html
@@ -260,14 +262,14 @@ def test_html_escapes_publication_text_and_filter_attributes(tmp_path: Path) -> 
 
 def test_html_rejects_non_web_evidence_links(tmp_path: Path) -> None:
     view_model = _view_model(tmp_path)
-    cell = next(
-        cell
+    endorser = next(
+        endorser
         for section in view_model.sections
         for race in section.races
-        for cell in race.source_cells
-        if cell.evidence_url is not None
+        for group in race.endorsement_groups
+        for endorser in group.endorsers
     )
-    cell.evidence_url = "javascript:alert(document.cookie)"
+    endorser.evidence_url = "javascript:alert(document.cookie)"
 
     with pytest.raises(ValueError, match=r"safe HTTP\(S\) URL"):
         render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG))
@@ -425,10 +427,10 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
 
     races = [race for section in view_model.sections for race in section.races]
     evidence_urls = [
-        cell.evidence_url
+        endorser.evidence_url
         for race in races
-        for cell in race.source_cells
-        if cell.evidence_url is not None
+        for group in race.endorsement_groups
+        for endorser in group.endorsers
     ]
     assert len(evidence_urls) >= 2
     mutated_html = tmp_path / "mutated.html"
@@ -454,8 +456,8 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     unexpected_link_html = tmp_path / "unexpected-link.html"
     unexpected_link_html.write_text(
         rendered.html_path.read_text(encoding="utf-8").replace(
-            "Not available",
-            'Not available <a href="https://evil.example/phish">More evidence</a>',
+            "</body>",
+            '<a href="https://evil.example/phish">More evidence</a></body>',
             1,
         ),
         encoding="utf-8",
@@ -474,11 +476,11 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     assert not unexpected_link_check.passed
 
     canonical_html = rendered.html_path.read_text(encoding="utf-8")
-    row_start = canonical_html.index('<tr class="source-state-')
-    row_end = canonical_html.index("</tr>", row_start) + len("</tr>")
+    row_start = canonical_html.index("<li data-candidate-id=")
+    row_end = canonical_html.index("</li>", row_start) + len("</li>")
     canonical_row = canonical_html[row_start:row_end]
     malicious_duplicate = canonical_row.replace(
-        "</tr>", '<td><a href="https://evil.example/phish">Wrong evidence</a></td></tr>'
+        "</li>", '<a href="https://evil.example/phish">Wrong evidence</a></li>'
     )
     duplicate_row_html = tmp_path / "duplicate-source-row.html"
     duplicate_row_html.write_text(
@@ -527,34 +529,32 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     )
     assert not semantic_check.passed
 
-    category = race_with_alternative.category_breakdown[0]
-    category_marker = (
-        f"<b>{category.label}</b> — {category.source_coverage_count}/"
-        f"{category.eligible_source_count}"
-    )
-    category_html = tmp_path / "wrong-category-analysis.html"
+    group = race_with_alternative.endorsement_groups[0]
+    endorser = group.endorsers[0]
+    endorser_marker = f'<a href="{endorser.evidence_url}">{endorser.source_name}</a>'
+    endorsement_html = tmp_path / "wrong-endorsement-source.html"
     canonical_html = rendered.html_path.read_text(encoding="utf-8")
-    assert category_marker in canonical_html
-    category_html.write_text(
+    assert endorser_marker in canonical_html
+    endorsement_html.write_text(
         canonical_html.replace(
-            category_marker,
-            f"<b>{category.label}</b> — 999/999",
+            endorser_marker,
+            f'<a href="{endorser.evidence_url}">Wrong organization</a>',
             1,
         ),
         encoding="utf-8",
     )
-    category_report = validate_rendered_guide(
+    endorsement_report = validate_rendered_guide(
         view_model,
         read_rendering_configuration(RENDERING_CONFIG),
-        category_html,
+        endorsement_html,
         rendered.pdf_path,
         rendered.page_images,
         rendered.screenshots,
     )
-    category_check = next(
-        check for check in category_report.checks if check.id == "html-display-values"
+    endorsement_check = next(
+        check for check in endorsement_report.checks if check.id == "html-source-evidence"
     )
-    assert not category_check.passed
+    assert not endorsement_check.passed
 
     recommendation_element = (
         f'<h3 data-display-role="recommendation">{race_with_alternative.recommendation_label}</h3>'
@@ -630,14 +630,10 @@ def test_dense_concise_content_still_fits_two_pages(tmp_path: Path) -> None:
 
     assert rendered.validation_report.passed
     assert rendered.validation_report.page_count == 2
-    assert rendered.validation_report.edition == "concise_plus_detailed"
-    assert rendered.detailed_pdf_path is not None
-    assert rendered.validation_report.detailed_page_count > 2
-    assert len(rendered.detailed_page_images) == rendered.validation_report.detailed_page_count
-    assert rendered.validation_report.detailed_page_count >= 10
-    assert [page.page_number for page in rendered.validation_report.detailed_pages] == list(
-        range(1, rendered.validation_report.detailed_page_count + 1)
-    )
+    assert rendered.validation_report.edition == "concise"
+    assert rendered.detailed_pdf_path is None
+    assert rendered.validation_report.detailed_page_count == 0
+    assert rendered.detailed_page_images == []
 
 
 def test_detailed_pdf_trims_only_rendered_trailing_blank_pages(tmp_path: Path) -> None:
@@ -720,6 +716,7 @@ def _dense_view_model(view_model: PublicationViewModel) -> PublicationViewModel:
         "category_breakdown": example.category_breakdown,
         "no_endorsement_count": example.no_endorsement_count,
         "missing_source_count": example.missing_source_count,
+        "endorsement_groups": example.endorsement_groups,
         "alternatives": example.alternatives,
         "comparisons": example.comparisons,
         "warning_codes": example.warning_codes,
