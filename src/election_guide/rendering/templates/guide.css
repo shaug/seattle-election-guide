@@ -72,12 +72,26 @@ a { color: #075d75; text-underline-offset: .15em; }
 .guide-notes > summary::-webkit-details-marker { display: none; }
 .guide-notes > summary span:last-child { color: #9ee7df; font-size: 1.25rem; line-height: 1; transition: transform .18s ease; }
 .guide-notes[open] > summary span:last-child { transform: rotate(45deg); }
-.methodology-screen { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem 3rem; padding: 2rem clamp(1rem, 4vw, 3rem) 3rem; border-top: 1px solid #526f83; background: #0b2238; color: var(--white); }
+.methodology-screen { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem 2.25rem; padding: 1.75rem clamp(1rem, 4vw, 3rem) 2rem; border-top: 1px solid #526f83; background: #0b2238; color: var(--white); }
 .methodology-panel { min-width: 0; }
-.methodology-screen h2 { font: 700 2.2rem/1 Georgia, serif; }
-.methodology-screen h3 { color: #9ee7df; }
-.process-list { padding-left: 1.3rem; }
-.process-list li { padding: .35rem 0; }
+.methodology-screen h3 { margin: 0 0 .5rem; color: #9ee7df; }
+.methodology-screen p { margin: .45rem 0; color: #d7e6ef; font-size: .86rem; }
+.methodology-overlap { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 2rem; padding-top: 1rem; border-top: 1px solid #526f83; }
+.methodology-overlap h3 { grid-column: 1 / -1; }
+.screen-source-directory { padding: 1.75rem clamp(1rem, 4vw, 3rem) 2.5rem; border-top: 1px solid #526f83; background: #f7f9fb; color: var(--ink); }
+.screen-source-heading { display: grid; grid-template-columns: minmax(0, 1fr) minmax(16rem, 1fr); align-items: end; gap: 1rem 3rem; margin-bottom: 1.25rem; }
+.screen-source-heading h2 { margin: .15rem 0 0; color: var(--navy); font-size: 1.7rem; line-height: 1.05; }
+.screen-source-heading > p { justify-self: end; max-width: 38rem; margin: 0; color: var(--muted); font-size: .8rem; text-align: right; }
+.screen-source-columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 1rem 1.5rem; }
+.screen-source-category { min-width: 0; border: 1px solid #d9e2ec; border-top: .22rem solid var(--teal); background: var(--white); }
+.screen-source-category h3 { margin: 0; padding: .65rem .75rem .55rem; color: var(--teal); font-size: .74rem; letter-spacing: .08em; line-height: 1.15; text-transform: uppercase; }
+.screen-source-directory .source-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: .75rem; min-height: 2.5rem; padding: .5rem .75rem; border-top: 1px solid #e0e7ed; }
+.screen-source-directory .source-row a { min-width: 0; color: var(--navy); font-size: .8rem; font-weight: 700; overflow-wrap: anywhere; }
+.screen-source-directory .source-row span { color: #176554; font-size: .72rem; font-variant-numeric: tabular-nums; font-weight: 800; white-space: nowrap; }
+.screen-source-directory .source-row-comparison { background: #fff6e8; }
+.screen-source-directory .source-row-comparison span { color: #8a4b00; }
+.screen-footer-meta { display: flex; justify-content: space-between; gap: 1rem; padding: .7rem clamp(1rem, 4vw, 3rem); border-top: 1px solid #526f83; color: #9fb3c8; font-size: .68rem; }
+.screen-footer-meta a { color: #9ee7df; font-weight: 800; white-space: nowrap; }
 .print-guide { display: none; }
 
 @media (max-width: 720px) {
@@ -86,8 +100,13 @@ a { color: #075d75; text-underline-offset: .15em; }
   .hero-meta { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: .8rem 0 0; border-top: 1px solid #7794a8; border-left: 0; text-align: left; }
   .screen-controls { grid-template-columns: 1fr; position: static; }
   .screen-controls p { justify-self: start; }
-  .race-grid, .methodology-screen, .footer-summary { grid-template-columns: 1fr; }
+  .race-grid, .methodology-screen, .footer-summary, .screen-source-columns, .screen-source-heading { grid-template-columns: 1fr; }
   .footer-summary { gap: .8rem; }
+  .methodology-overlap { display: block; }
+  .screen-source-heading > p { justify-self: start; text-align: left; }
+  .screen-source-directory .source-row { grid-template-columns: minmax(0, 1fr); gap: .15rem; }
+  .screen-source-directory .source-row span { white-space: normal; }
+  .screen-footer-meta { flex-direction: column; }
   .race-card { min-width: 0; }
   .screen-race-result, .screen-race-context { grid-template-columns: minmax(0, 1fr) 8.75rem; gap: .6rem; }
   .screen-meter { width: 8.75rem; }

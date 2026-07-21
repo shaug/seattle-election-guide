@@ -10,7 +10,6 @@ import shutil
 import subprocess
 import tempfile
 import time
-from collections import Counter
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC
@@ -29,7 +28,11 @@ from websocket import (  # pyright: ignore[reportUnknownVariableType]
     create_connection,  # pyright: ignore[reportUnknownVariableType]
 )
 
-from election_guide.publication.models import PublicationRace, PublicationViewModel
+from election_guide.publication.models import (
+    PublicationRace,
+    PublicationSource,
+    PublicationViewModel,
+)
 from election_guide.rendering.models import (
     RenderCheck,
     RenderedPage,
@@ -413,20 +416,27 @@ def validate_rendered_guide(
     if set(parser.publication_source_text) != expected_source_ids:
         missing_evidence_rows.append("document: unexpected or missing publication source rows")
     for source in view_model.sources:
-        role_label = "Times comparison" if source.panel_role == "comparison" else "Consensus"
-        expected_row = _normalized_text(f"{source.name} {role_label}")
+        expected_rows = [
+            _normalized_text(f"{source.name} {_source_participation_label(source)}"),
+            _normalized_text(f"{source.name} {_source_participation_label(source, compact=True)}"),
+        ]
         observed_rows = [
             _normalized_text(" ".join(parts))
             for parts in parser.publication_source_text.get(source.id, [])
         ]
         expected_classes = {"source-row", f"source-row-{source.panel_role}"}
         if (
-            observed_rows != [expected_row]
-            or parser.publication_source_links.get(source.id, []) != [[source.evidence_url]]
-            or parser.publication_source_categories.get(source.id, []) != [source.category]
-            or parser.publication_source_heading_categories.get(source.id, []) != [source.category]
-            or parser.publication_source_roles.get(source.id, []) != [source.panel_role]
-            or parser.publication_source_classes.get(source.id, []) != [expected_classes]
+            observed_rows != expected_rows
+            or parser.publication_source_links.get(source.id, [])
+            != [[source.evidence_url], [source.evidence_url]]
+            or parser.publication_source_categories.get(source.id, [])
+            != [source.category, source.category]
+            or parser.publication_source_heading_categories.get(source.id, [])
+            != [source.category, source.category]
+            or parser.publication_source_roles.get(source.id, [])
+            != [source.panel_role, source.panel_role]
+            or parser.publication_source_classes.get(source.id, [])
+            != [expected_classes, expected_classes]
             or source.category not in source_categories
         ):
             missing_evidence_rows.append(f"{source.id}: publication source row values")
@@ -435,8 +445,10 @@ def validate_rendered_guide(
     pdf_texts = [page.extract_text() or "" for page in reader.pages]
     pdf_text = "\n".join(pdf_texts)
     comparable_pdf_text = _normalized_text(pdf_text).casefold()
-    source_page_text = (
-        reader.pages[1].extract_text(extraction_mode="layout") if len(reader.pages) > 1 else ""
+    source_page_lines = (
+        (reader.pages[1].extract_text(extraction_mode="layout") or "").splitlines()
+        if len(reader.pages) > 1
+        else []
     )
     primary_value_fn = (
         _pdf_race_core_values if detailed_pdf_path is not None else _pdf_race_display_values
@@ -450,10 +462,7 @@ def validate_rendered_guide(
     global_pdf_values = [
         *(section.label for section in view_model.sections),
         f"{view_model.metadata.published_race_count} races",
-        (
-            f"{view_model.metadata.captured_source_count}/"
-            f"{view_model.metadata.source_count} sources represented"
-        ),
+        f"{view_model.metadata.source_count} sources",
         f"{consensus_source_count} consensus",
         f"{comparison_source_count} Times comparison",
         *(category.label for category in view_model.methodology.source_categories),
@@ -464,24 +473,17 @@ def validate_rendered_guide(
         f"Built {view_model.metadata.generated_at.date().isoformat()}",
         f"Data {view_model.metadata.data_version}",
         f"Code {view_model.metadata.git_commit[:12]}",
-        f"{view_model.metadata.unavailable_source_count} unavailable",
-        f"{view_model.metadata.unresolved_review_count} reviews",
     ]
     missing_pdf_values.extend(
         value
         for value in global_pdf_values
         if _normalized_text(value).casefold() not in comparable_pdf_text
     )
-    missing_pdf_values.extend(
-        f"{source.name} / "
-        f"{'Times comparison' if source.panel_role == 'comparison' else 'Consensus'}"
-        for source in view_model.sources
-        if not _pdf_source_row_is_present(
-            source.name,
-            "Times comparison" if source.panel_role == "comparison" else "Consensus",
-            source_page_text,
-        )
-    )
+    expected_source_participation = [
+        _source_participation_label(source, compact=True) for source in view_model.sources
+    ]
+    if _pdf_source_participation_labels(source_page_lines) != expected_source_participation:
+        missing_pdf_values.append("ordered source participation rows")
     pdf_identity_text = _pdf_text_runs(reader.pages[0]).casefold()
     missing_pdf_values.extend(
         value
@@ -540,15 +542,6 @@ def validate_rendered_guide(
         missing_detailed_values = _missing_pdf_race_values(
             expected_races, detailed_text, _detailed_pdf_race_values
         )
-        missing_detailed_values.extend(
-            value
-            for value in (
-                *view_model.methodology.interpretation_notes,
-                *view_model.methodology.limitations,
-                view_model.methodology.verification_instructions,
-            )
-            if _normalized_text(value).casefold() not in _normalized_text(detailed_text).casefold()
-        )
         detailed_identity_text = _pdf_text_runs(detailed_reader.pages[0]).casefold()
         missing_detailed_values.extend(
             value
@@ -563,9 +556,12 @@ def validate_rendered_guide(
     ]
     detailed_metadata = detailed_reader.metadata if detailed_reader is not None else None
     detailed_links = _pdf_links(detailed_reader) if detailed_reader is not None else []
+    expected_detailed_links = {
+        configuration.project_url,
+        *(source.evidence_url for source in view_model.sources),
+    }
     detailed_links_valid = detailed_reader is None or (
-        _web_urls_are_safe(detailed_links)
-        and Counter(detailed_links) == Counter([configuration.project_url])
+        _web_urls_are_safe(detailed_links) and set(detailed_links) == expected_detailed_links
     )
     detailed_valid = detailed_reader is None or (
         len(detailed_reader.pages) > configuration.concise_page_count
@@ -1314,21 +1310,23 @@ def _capture_emulated_viewport(
                     "height:[part.clientHeight,part.scrollHeight]})),"
                     "metersRightAligned:meters.every(meter=>Math.abs(meter.getBoundingClientRect().right-"
                     "meter.parentElement.getBoundingClientRect().right)<1),"
-                    "disclosure:(()=>{"
-                    "const details=document.querySelector('.guide-notes');"
-                    "const summary=details?.querySelector('summary');"
-                    "const panel=details?.querySelector('.methodology-screen');"
-                    "const visible=()=>Boolean(details?.open&&panel&&"
+                    "disclosures:[...document.querySelectorAll('.guide-notes')].map(details=>{"
+                    "const summary=details.querySelector('summary');"
+                    "const panel=details.querySelector("
+                    "'.methodology-screen,.screen-source-directory');"
+                    "const visible=()=>Boolean(details.open&&panel&&"
                     "getComputedStyle(panel).display!=='none'&&"
                     "panel.getBoundingClientRect().height>0);"
-                    "const initialOpen=Boolean(details?.open);"
+                    "const initialOpen=details.open;"
                     "const initialVisible=visible();"
                     "summary?.click();"
-                    "const toggledOpen=Boolean(details?.open);"
+                    "const toggledOpen=details.open;"
                     "const toggledVisible=visible();"
+                    "const panelOverflow=Boolean(panel&&(panel.scrollWidth>panel.clientWidth+1||"
+                    "document.documentElement.scrollWidth>window.innerWidth+1));"
                     "summary?.click();"
-                    "return {initialOpen,initialVisible,toggledOpen,toggledVisible,"
-                    "restoredClosed:details?.open===false};})()};})())"
+                    "return {id:details.id,initialOpen,initialVisible,toggledOpen,toggledVisible,"
+                    "panelOverflow,restoredClosed:details.open===false};})};})())"
                 ),
                 "returnByValue": True,
             },
@@ -1345,13 +1343,18 @@ def _capture_emulated_viewport(
             "visibleRaceCount": expected_race_count,
             "cardOverflow": [],
             "metersRightAligned": True,
-            "disclosure": {
-                "initialOpen": False,
-                "initialVisible": False,
-                "toggledOpen": True,
-                "toggledVisible": True,
-                "restoredClosed": True,
-            },
+            "disclosures": [
+                {
+                    "id": disclosure_id,
+                    "initialOpen": False,
+                    "initialVisible": False,
+                    "toggledOpen": True,
+                    "toggledVisible": True,
+                    "panelOverflow": False,
+                    "restoredClosed": True,
+                }
+                for disclosure_id in ("methodology", "sources")
+            ],
         }
         if metrics != expected_metrics:
             raise ValueError(f"responsive layout overflowed its viewport: {metrics}")
@@ -1761,17 +1764,27 @@ def _pdf_value_is_present(value: str, segment: str) -> bool:
     )
 
 
-def _pdf_source_row_is_present(name: str, role: str, segment: str) -> bool:
-    """Match a source row even when the right-hand role interrupts a wrapped name."""
-    name_parts = _normalized_text(name).split()
-    role_parts = _normalized_text(role).split()
-    for insertion_point in range(len(name_parts) + 1):
-        candidate = " ".join(
-            [*name_parts[:insertion_point], *role_parts, *name_parts[insertion_point:]]
-        )
-        if _pdf_value_is_present(candidate, segment):
-            return True
-    return False
+def _source_participation_label(source: PublicationSource, *, compact: bool = False) -> str:
+    if compact:
+        if source.panel_role == "comparison":
+            return f"{source.endorsement_count} picks · {source.split_endorsement_count} split"
+        return f"{source.endorsement_count} · {source.split_endorsement_count} split"
+    noun = "picks" if source.panel_role == "comparison" else "endorsements"
+    return f"{source.endorsement_count} {noun} · {source.split_endorsement_count} split"
+
+
+def _pdf_source_participation_labels(lines: list[str]) -> list[str]:
+    """Read participation labels in PDF DOM order: left column, then right column."""
+    if not lines:
+        return []
+    midpoint = max(len(line) for line in lines) // 2
+    pattern = re.compile(r"\d+(?:\s+picks)?\s*·\s*\d+\s+split")
+    columns: tuple[list[tuple[int, str]], list[tuple[int, str]]] = ([], [])
+    for line_number, line in enumerate(lines):
+        for match in pattern.finditer(line):
+            column = 0 if match.start() < midpoint else 1
+            columns[column].append((line_number, _normalized_text(match.group())))
+    return [label for column in columns for _, label in sorted(column)]
 
 
 def _html_semantic_values(race: PublicationRace) -> dict[str, list[str]]:

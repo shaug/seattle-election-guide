@@ -33,6 +33,7 @@ from election_guide.rendering.renderer import (
     _missing_pdf_race_values,  # pyright: ignore[reportPrivateUsage]
     _pdf_race_core_values,  # pyright: ignore[reportPrivateUsage]
     _pdf_race_display_values,  # pyright: ignore[reportPrivateUsage]
+    _pdf_source_participation_labels,  # pyright: ignore[reportPrivateUsage]
     _render_pdf,  # pyright: ignore[reportPrivateUsage]
     _render_pdf_pages,  # pyright: ignore[reportPrivateUsage]
     _render_screenshot,  # pyright: ignore[reportPrivateUsage]
@@ -111,22 +112,22 @@ DARWIN_VISUAL_BASELINES = {
         0.052,
     ],
     "mobile": [
-        0.703,
-        0.712,
-        0.715,
-        0.800,
-        0.089,
-        0.059,
-        0.034,
-        0.026,
-        0.089,
-        0.093,
-        0.101,
-        0.046,
-        0.080,
-        0.073,
-        0.080,
-        0.037,
+        0.621,
+        0.609,
+        0.613,
+        0.692,
+        0.095,
+        0.086,
+        0.042,
+        0.042,
+        0.127,
+        0.149,
+        0.065,
+        0.078,
+        0.106,
+        0.135,
+        0.076,
+        0.050,
     ],
 }
 LINUX_VISUAL_BASELINES = {
@@ -233,18 +234,18 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert ">AGREES<" not in html
     assert ">DIFFERENT PICK<" not in html
     assert ">NO PICK<" not in html
-    assert f"{view_model.metadata.captured_source_count} represented sources" in html
-    assert f"{view_model.metadata.unavailable_source_count} unavailable" in html
+    assert f"{view_model.metadata.captured_source_count} represented sources" not in html
+    assert f"{view_model.metadata.unresolved_review_count} unresolved reviews" not in html
     assert "Coverage note:" not in html
     assert "Category representation and support" not in html
     assert 'data-display-role="grade"' not in html
     assert 'class="methodology-panel screen-consensus-key"' in html
-    assert 'class="methodology-panel screen-source-categories"' in html
-    assert 'class="methodology-panel screen-audit-metadata"' in html
-    assert 'class="methodology-panel screen-verification"' in html
     assert 'class="guide-notes" id="methodology"' in html
-    assert "Methodology, sources, and verification" in html
-    assert "document.querySelector('.guide-notes')?.setAttribute('open', '')" in html
+    assert 'class="guide-notes" id="sources"' in html
+    assert "How the consensus works" not in html
+    assert "Verify the guide" not in html
+    assert "Build and audit details" not in html
+    assert "document.querySelectorAll('.guide-notes').forEach" in html
     assert configuration.project_url in html
     comparisons = [comparison for race in races for comparison in race.comparisons]
     for comparison in comparisons:
@@ -268,18 +269,34 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert ".comparison-status { font-weight: 800; }" in html
     assert ".comparison-choice { min-width: 0; font-weight: 500; }" in html
     assert ".comparison-agrees { border-color: #83bfae; background: #edf8f4;" in html
-    assert html.count('data-publication-source-id="') == len(view_model.sources)
+    assert html.count('data-publication-source-id="') == 2 * len(view_model.sources)
     assert html.count('class="source-column"') == 2
     for source in view_model.sources:
-        assert f'data-publication-source-id="{source.id}"' in html
-        assert f'data-source-category="{source.category}"' in html
-        assert f'data-source-role="{source.panel_role}"' in html
-        assert f'<a href="{source.evidence_url}">{source.name}</a>' in html
-        assert f"source-row-{source.panel_role}" in html
+        assert html.count(f'data-publication-source-id="{source.id}"') == 2
+        assert html.count(f'data-source-role="{source.panel_role}"') >= 2
+        assert html.count(f'<a href="{source.evidence_url}">{source.name}</a>') >= 2
+        noun = "picks" if source.panel_role == "comparison" else "endorsements"
+        screen_participation = (
+            f"{source.endorsement_count} {noun} · {source.split_endorsement_count} split"
+        )
+        print_noun = " picks" if source.panel_role == "comparison" else ""
+        print_participation = (
+            f"{source.endorsement_count}{print_noun} · {source.split_endorsement_count} split"
+        )
+        marker = f'data-publication-source-id="{source.id}"'
+        cursor = 0
+        for participation in (screen_participation, print_participation):
+            row_start = html.index(marker, cursor)
+            row_end = html.index("</div>", row_start)
+            assert participation in html[row_start:row_end]
+            cursor = row_end
     assert "Read the meter" in html
     assert "Read the Times pill" in html
     assert "Overlap and limitations" in html
     assert "Verify before voting" in html
+    assert "Counts cover the" in html
+    assert "zero means the source currently contributes no picks" in html
+    assert ".screen-source-columns { display: grid;" in html
     assert ".source-columns { display: grid;" in html
     assert "grid-template-columns: 1fr 1fr;" in html
     assert ".source-row { display: grid;" in html
@@ -731,6 +748,10 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     assert "august 2026 primary" in concise_text.casefold()
     assert "Seattle Progressive Endorsement Guide" in concise_text
     assert all(source.name in concise_text for source in view_model.sources)
+    times_source = next(
+        source for source in view_model.sources if source.panel_role == "comparison"
+    )
+    assert f"{times_source.endorsement_count} picks" in concise_text
     assert report.link_count == len(view_model.sources) + 2
     assert all(len(page.extract_text() or "") > 100 for page in reader.pages)
     with Image.open(rendered.page_images[0]) as page:
@@ -920,16 +941,16 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     assert second_source_link in canonical_html
     swapped_source_links_html = tmp_path / "swapped-publication-source-links.html"
     swapped_source_links_html.write_text(
-        canonical_html.replace(first_source_link, "__FIRST_SOURCE_LINK__", 1)
+        canonical_html.replace(first_source_link, "__FIRST_SOURCE_LINK__", 2)
         .replace(
             second_source_link,
             f'<a href="{first_source.evidence_url}">{second_source.name}</a>',
-            1,
+            2,
         )
         .replace(
             "__FIRST_SOURCE_LINK__",
             f'<a href="{second_source.evidence_url}">{first_source.name}</a>',
-            1,
+            2,
         ),
         encoding="utf-8",
     )
@@ -951,11 +972,8 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     )
     source_role_marker = (
         f'data-publication-source-id="{consensus_source.id}"\n'
-        f'                  data-source-category="{consensus_source.category}"\n'
-        '                  data-source-role="consensus">'
-        f'\n                  <a href="{consensus_source.evidence_url}">'
-        f"{consensus_source.name}</a>\n"
-        "                  <span>Consensus</span>"
+        f'      data-source-category="{consensus_source.category}"\n'
+        '      data-source-role="consensus"'
     )
     assert source_role_marker in canonical_html
     wrong_source_role_html = tmp_path / "wrong-publication-source-role.html"
@@ -964,9 +982,7 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
             source_role_marker,
             source_role_marker.replace(
                 'data-source-role="consensus"', 'data-source-role="comparison"'
-            )
-            .replace("source-row-consensus", "source-row-comparison")
-            .replace("<span>Consensus</span>", "<span>Times comparison</span>"),
+            ),
             1,
         ),
         encoding="utf-8",
@@ -1280,16 +1296,16 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
 
     swapped_source_names_html = tmp_path / "swapped-publication-source-names.html"
     swapped_source_names_html.write_text(
-        canonical_html.replace(first_source_link, "__FIRST_SOURCE_LINK__", 1)
+        canonical_html.replace(first_source_link, "__FIRST_SOURCE_LINK__", 2)
         .replace(
             second_source_link,
             f'<a href="{second_source.evidence_url}">{first_source.name}</a>',
-            1,
+            2,
         )
         .replace(
             "__FIRST_SOURCE_LINK__",
             f'<a href="{first_source.evidence_url}">{second_source.name}</a>',
-            1,
+            2,
         ),
         encoding="utf-8",
     )
@@ -1308,20 +1324,97 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     )
     assert not swapped_source_names_check.passed
 
-    wrong_source_role_pdf = tmp_path / "wrong-publication-source-role.pdf"
-    _render_pdf(wrong_source_role_html, wrong_source_role_pdf, find_chrome())
-    wrong_source_role_pdf_report = validate_rendered_guide(
+    counted_source = next(
+        source for source in view_model.sources if source.split_endorsement_count > 0
+    )
+    assert (
+        sum(
+            source.endorsement_count == counted_source.endorsement_count
+            and source.split_endorsement_count == counted_source.split_endorsement_count
+            for source in view_model.sources
+        )
+        == 1
+    )
+    print_source_marker = f'data-publication-source-id="{counted_source.id}"'
+    print_source_start = canonical_html.index(
+        print_source_marker, canonical_html.index(print_source_marker) + 1
+    )
+    print_count_start = canonical_html.index("<span>", print_source_start)
+    print_count_end = canonical_html.index("</span>", print_count_start) + len("</span>")
+    wrong_source_count_html = tmp_path / "wrong-publication-source-count.html"
+    wrong_source_count_html.write_text(
+        canonical_html[:print_count_start]
+        + "<span>999 · 999 split</span>"
+        + canonical_html[print_count_end:],
+        encoding="utf-8",
+    )
+    wrong_source_count_pdf = tmp_path / "wrong-publication-source-count.pdf"
+    _render_pdf(wrong_source_count_html, wrong_source_count_pdf, find_chrome())
+    wrong_source_count_pdf_report = validate_rendered_guide(
         view_model,
         read_rendering_configuration(RENDERING_CONFIG),
         rendered.html_path,
-        wrong_source_role_pdf,
+        wrong_source_count_pdf,
         rendered.page_images,
         rendered.screenshots,
     )
-    wrong_source_role_pdf_check = next(
-        check for check in wrong_source_role_pdf_report.checks if check.id == "pdf-display-values"
+    wrong_source_count_pdf_check = next(
+        check for check in wrong_source_count_pdf_report.checks if check.id == "pdf-display-values"
     )
-    assert not wrong_source_role_pdf_check.passed
+    assert not wrong_source_count_pdf_check.passed
+
+    first_count_source = next(
+        source for source in view_model.sources if source.panel_role == "consensus"
+    )
+    second_count_source = next(
+        source
+        for source in view_model.sources
+        if source.panel_role == "consensus"
+        and (
+            source.endorsement_count,
+            source.split_endorsement_count,
+        )
+        != (
+            first_count_source.endorsement_count,
+            first_count_source.split_endorsement_count,
+        )
+    )
+
+    def print_count_span(source_id: str) -> tuple[int, int]:
+        marker = f'data-publication-source-id="{source_id}"'
+        row_start = canonical_html.index(marker, canonical_html.index(marker) + 1)
+        count_start = canonical_html.index("<span>", row_start)
+        count_end = canonical_html.index("</span>", count_start) + len("</span>")
+        return count_start, count_end
+
+    first_start, first_end = print_count_span(first_count_source.id)
+    second_start, second_end = print_count_span(second_count_source.id)
+    assert first_start < second_start
+    first_count = canonical_html[first_start:first_end]
+    second_count = canonical_html[second_start:second_end]
+    swapped_source_counts_html = tmp_path / "swapped-publication-source-counts.html"
+    swapped_source_counts_html.write_text(
+        canonical_html[:first_start]
+        + second_count
+        + canonical_html[first_end:second_start]
+        + first_count
+        + canonical_html[second_end:],
+        encoding="utf-8",
+    )
+    swapped_source_counts_pdf = tmp_path / "swapped-publication-source-counts.pdf"
+    _render_pdf(swapped_source_counts_html, swapped_source_counts_pdf, find_chrome())
+    swapped_source_counts_report = validate_rendered_guide(
+        view_model,
+        read_rendering_configuration(RENDERING_CONFIG),
+        rendered.html_path,
+        swapped_source_counts_pdf,
+        rendered.page_images,
+        rendered.screenshots,
+    )
+    swapped_source_counts_check = next(
+        check for check in swapped_source_counts_report.checks if check.id == "pdf-display-values"
+    )
+    assert not swapped_source_counts_check.passed
 
     metadata_marker = (
         f"Data {view_model.metadata.data_version} · Code {view_model.metadata.git_commit[:12]}"
@@ -1330,7 +1423,7 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     assert metadata_marker in rendered_html_text
     wrong_metadata_html = tmp_path / "wrong-publication-metadata.html"
     wrong_metadata_html.write_text(
-        rendered_html_text.replace(metadata_marker, "Data WRONG-VERSION · Code wrong-commit", 1),
+        rendered_html_text.replace(metadata_marker, "Data WRONG-VERSION · Code wrong-commit", 2),
         encoding="utf-8",
     )
     wrong_metadata_pdf = tmp_path / "wrong-publication-metadata.pdf"
@@ -1518,7 +1611,7 @@ def test_overflowing_screen_methodology_does_not_bloat_concise_pdf(tmp_path: Pat
     assert rendered.validation_report.passed
     assert rendered.validation_report.edition == "concise"
     assert rendered.detailed_pdf_path is None
-    assert "This canonical interpretation sentence" in rendered.html_path.read_text(
+    assert "This canonical interpretation sentence" not in rendered.html_path.read_text(
         encoding="utf-8"
     )
     concise_text = " ".join(
@@ -1543,6 +1636,24 @@ def test_responsive_tablet_layout_and_methodology_disclosure(tmp_path: Path) -> 
         height=1200,
         expected_race_count=sum(len(section.races) for section in view_model.sections),
     )
+
+
+def test_pdf_source_participation_order_survives_wrapped_source_names() -> None:
+    lines = [
+        "    First source name                       2 · 0 split           Third source",
+        "                                                    "
+        "                name wraps       5 · 1 split",
+        "    Environment and Climate Caucus of the",
+        "    Washington State Democratic Party      0 · 0 split           "
+        "Times source        15 picks · 0 split",
+    ]
+
+    assert _pdf_source_participation_labels(lines) == [
+        "2 · 0 split",
+        "0 · 0 split",
+        "5 · 1 split",
+        "15 picks · 0 split",
+    ]
 
 
 def test_pdf_identity_validation_rejects_concatenated_print_title(tmp_path: Path) -> None:
@@ -1621,8 +1732,29 @@ def _dense_view_model(view_model: PublicationViewModel) -> PublicationViewModel:
         )
         for section in view_model.sections
     ]
+    source_cells = [
+        cell for section in sections for race in section.races for cell in race.source_cells
+    ]
+    sources = [
+        source.model_copy(
+            update={
+                "endorsement_count": sum(
+                    cell.source_id == source.id
+                    and cell.state in {"endorsement", "multi_endorsement"}
+                    for cell in source_cells
+                ),
+                "split_endorsement_count": sum(
+                    cell.source_id == source.id and cell.state == "multi_endorsement"
+                    for cell in source_cells
+                ),
+            }
+        )
+        for source in view_model.sources
+    ]
     return PublicationViewModel.model_validate(
-        view_model.model_copy(update={"sections": sections}).model_dump(mode="json")
+        view_model.model_copy(update={"sections": sections, "sources": sources}).model_dump(
+            mode="json"
+        )
     )
 
 
@@ -1643,6 +1775,8 @@ def _visual_view_model(view_model: PublicationViewModel) -> PublicationViewModel
                 "name": f"Regional Progressive Coalition and Community Action Network {index:02d}",
                 "organization_url": f"https://example.com/visual-source-{index:02d}",
                 "evidence_url": f"https://example.com/visual-source-{index:02d}/endorsements",
+                "endorsement_count": 0,
+                "split_endorsement_count": 0,
             }
         )
         for index in range(1, 32)
