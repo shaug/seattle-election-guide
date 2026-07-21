@@ -96,6 +96,8 @@ def render_html_document(
         stylesheet=stylesheet,
         filter_options=_filter_options(view_model),
         concise_warning_labels=_concise_warning_labels,
+        screen_share_accessible_label=_screen_share_accessible_label,
+        screen_support_summary=_screen_support_summary,
     )
 
 
@@ -132,6 +134,16 @@ def _require_web_url(value: str) -> None:
 
 def _concise_warning_labels(race: PublicationRace) -> list[str]:
     return ["TOO FEW ENDORSEMENTS"] if race.grade == "Insufficient" else []
+
+
+def _screen_support_summary(race: PublicationRace) -> str:
+    noun = "source" if race.explicit_endorsement_count == 1 else "sources"
+    return f"Based on {race.explicit_endorsement_count} endorsing {noun}"
+
+
+def _screen_share_accessible_label(race: PublicationRace) -> str:
+    share = "not available" if race.percentage_whole is None else race.percentage_label
+    return f"Consensus among explicitly endorsing sources: {share}"
 
 
 def build_rendered_guide(
@@ -319,6 +331,13 @@ def validate_rendered_guide(
             "group" for _ in race.comparisons
         ]:
             mismatched_html_roles.append(f"{race.id}/comparison-accessible-role")
+        share_key = (race.id, "share")
+        if parser.display_accessible_names.get(share_key, []) != [
+            _screen_share_accessible_label(race)
+        ]:
+            mismatched_html_roles.append(f"{race.id}/share-accessible-name")
+        if parser.display_element_roles.get(share_key, []) != ["img"]:
+            mismatched_html_roles.append(f"{race.id}/share-accessible-role")
     missing_evidence_rows: list[str] = []
     for race in expected_races:
         for group in race.endorsement_groups:
@@ -1170,6 +1189,9 @@ def _capture_emulated_viewport(
                     "const cards=[...document.querySelectorAll('[data-publication-race-id]')]"
                     ".filter(card=>getComputedStyle(card).display!=='none'&&"
                     "card.getBoundingClientRect().width>0&&card.getBoundingClientRect().height>0);"
+                    "const cardParts=cards.flatMap(card=>[...card.querySelectorAll("
+                    "'.screen-race-result,.screen-race-context,.screen-meter,.comparison')]);"
+                    "const meters=[...document.querySelectorAll('.screen-meter')];"
                     "return {innerWidth:window.innerWidth,innerHeight:window.innerHeight,"
                     "scrollWidth:document.documentElement.scrollWidth,"
                     "guideVisible:Boolean(guide&&getComputedStyle(guide).display!=='none'&&"
@@ -1177,6 +1199,14 @@ def _capture_emulated_viewport(
                     "filterVisible:Boolean(filter&&getComputedStyle(filter).display!=='none'&&"
                     "filter.getBoundingClientRect().width>0&&filter.getBoundingClientRect().height>0),"
                     "visibleRaceCount:cards.length,"
+                    "cardOverflow:cardParts.filter(part=>part.scrollWidth>part.clientWidth+1||"
+                    "(!part.matches('.screen-race-result,.screen-race-context')&&"
+                    "part.scrollHeight>part.clientHeight+1)).map(part=>({"
+                    "race:part.closest('[data-publication-race-id]')?.dataset.publicationRaceId,"
+                    "className:part.className,width:[part.clientWidth,part.scrollWidth],"
+                    "height:[part.clientHeight,part.scrollHeight]})),"
+                    "metersRightAligned:meters.every(meter=>Math.abs(meter.getBoundingClientRect().right-"
+                    "meter.parentElement.getBoundingClientRect().right)<1),"
                     "disclosure:(()=>{"
                     "const details=document.querySelector('.guide-notes');"
                     "const summary=details?.querySelector('summary');"
@@ -1206,6 +1236,8 @@ def _capture_emulated_viewport(
             "guideVisible": True,
             "filterVisible": True,
             "visibleRaceCount": expected_race_count,
+            "cardOverflow": [],
+            "metersRightAligned": True,
             "disclosure": {
                 "initialOpen": False,
                 "initialVisible": False,
@@ -1561,20 +1593,13 @@ def _pdf_value_is_present(value: str, segment: str) -> bool:
     )
 
 
-def _pdf_line_value_is_present(value: str, segment: str) -> bool:
-    normalized = _normalized_text(value).casefold()
-    return any(_normalized_text(line).casefold() == normalized for line in segment.splitlines())
-
-
 def _html_semantic_values(race: PublicationRace) -> dict[str, list[str]]:
     return {
         "race-label": [race.race_label],
         "recommendation": [race.recommendation_label],
         "share": ["N/A" if race.percentage_whole is None else race.percentage_label],
-        "support": [race.support_summary],
-        "comparison": [
-            f"Seattle Times {comparison.voter_label}" for comparison in race.comparisons
-        ],
+        "support": [_screen_support_summary(race)],
+        "comparison": [comparison.print_label for comparison in race.comparisons],
         "insufficient-warning": (
             ["Too few explicit endorsements to assess consensus reliably."]
             if race.grade == "Insufficient"
@@ -1607,12 +1632,13 @@ def _pdf_race_core_values(race: PublicationRace) -> list[str]:
 
 
 def _detailed_pdf_race_values(race: PublicationRace) -> list[str]:
+    screen_support = _screen_support_summary(race)
     return [
         race.race_label,
         race.recommendation_label,
         "N/A" if race.percentage_whole is None else race.percentage_label,
-        race.support_summary,
-        *(f"Seattle Times {comparison.voter_label}" for comparison in race.comparisons),
+        screen_support,
+        *(f"{comparison.print_label} {screen_support}" for comparison in race.comparisons),
         *(
             ["Too few explicit endorsements to assess consensus reliably."]
             if race.grade == "Insufficient"
@@ -1653,16 +1679,7 @@ def _missing_pdf_race_values(
         if re.match(header_pattern + r"(?=\s|$)", segment) is None:
             missing.append(f"{race.id}: ordered race result header")
         for value in value_fn(race):
-            line_bound_detailed_comparison = (
-                value_fn is _detailed_pdf_race_values
-                and _normalized_text(value).casefold().startswith("seattle times ")
-            )
-            present = (
-                _pdf_line_value_is_present(value, segment)
-                if line_bound_detailed_comparison
-                else _pdf_value_is_present(value, segment)
-            )
-            if not present:
+            if not _pdf_value_is_present(value, segment):
                 missing.append(f"{race.id}: {value}")
         legacy_badges = {
             comparison.badge_label
