@@ -362,7 +362,9 @@
       }
     };
     window.addEventListener('beforeprint', calibratePrintInk);
-    printMedia.addEventListener('change', calibratePrintInk);
+    printMedia.addEventListener('change', (event) => {
+      if (event.matches) requestAnimationFrame(calibratePrintInk);
+    });
     calibratePrintInk();
     const select = document.querySelector('#race-filter');
     const status = document.querySelector('#filter-status');
