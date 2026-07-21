@@ -33,7 +33,8 @@ product specification, [DECISIONS.md](DECISIONS.md) for the launch contract,
 [docs/PUBLICATION_EXPORTS.md](docs/PUBLICATION_EXPORTS.md) for canonical exports and the shared
 publication view model, and [docs/RENDERING.md](docs/RENDERING.md) for HTML/PDF generation and
 visual inspection. [docs/RELEASE.md](docs/RELEASE.md) documents final audit and versioned GitHub
-Release publication. Deterministic JSON and CSV exports, provenance and build manifests, the
+Release publication, and [docs/HOSTING.md](docs/HOSTING.md) documents automatic Cloudflare Pages
+deployment with Wrangler. Deterministic JSON and CSV exports, provenance and build manifests, the
 complete source matrix, and the single renderer-facing view model are implemented.
 
 ## Development
@@ -44,6 +45,7 @@ Requirements:
 - [uv](https://docs.astral.sh/uv/)
 - Chrome or Chromium
 - Poppler's `pdftoppm`
+- Node.js 24 and npm for local Cloudflare Pages preview or deployment
 
 Install the locked environment and run the checks:
 
@@ -65,6 +67,7 @@ uv run election-guide export build --help
 uv run election-guide render build --help
 uv run election-guide release verify data/releases/wa-2026-primary/source-decisions.yaml
 uv run election-guide release build --help
+uv run election-guide hosting stage --help
 uv run ruff format --check .
 uv run ruff check .
 uv run pyright
