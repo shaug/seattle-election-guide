@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 7682,
+  "canonical_url": "https://www.facebook.com/stonewallwa/posts/1450344363801898/",
+  "capture_method": "manual_upload",
+  "content_sha256": "8ef8618dcb88b3a398e077d30cb7968bff1b3a0b893a17ff9b48b462a3bde124",
+  "http_status": null,
+  "id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+  "media_type": "application/json",
+  "published_at": "2026-07-06",
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://www.facebook.com/stonewallwa/posts/1450344363801898/",
+  "retrieved_at": "2026-07-21T15:40:21Z",
+  "schema_version": "1.0",
+  "source_id": "washington-stonewall-democrats",
+  "storage_reference": "sha256/8e/8ef8618dcb88b3a398e077d30cb7968bff1b3a0b893a17ff9b48b462a3bde124",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: Washington State Stonewall Democrats",
+  "updated_at": null
+}

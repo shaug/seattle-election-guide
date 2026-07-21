@@ -64,6 +64,7 @@ class ReleaseDecision(ReleaseModel):
 class ReleaseSourceExtract(ReleaseModel):
     source_id: str = Field(pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
     captured_at: AwareDatetime
+    reviewed_at: AwareDatetime
     evidence_locator: str = Field(min_length=1, max_length=1_000)
     decisions: list[ReleaseDecision] = Field(min_length=1)
 
@@ -77,6 +78,8 @@ class ReleaseSourceExtract(ReleaseModel):
 
     @model_validator(mode="after")
     def validate_unique_races(self) -> ReleaseSourceExtract:
+        if self.reviewed_at < self.captured_at:
+            raise ValueError("source review timestamp cannot predate its extract")
         race_ids = [decision.race_id for decision in self.decisions]
         if len(race_ids) != len(set(race_ids)):
             raise ValueError(f"release source {self.source_id!r} repeats a race")
@@ -106,6 +109,8 @@ class ReleaseLedger(ReleaseModel):
             raise ValueError("release ledger repeats a source")
         if any(source.captured_at > self.data_as_of for source in self.sources):
             raise ValueError("release data timestamp cannot predate a source extract")
+        if any(source.reviewed_at > self.data_as_of for source in self.sources):
+            raise ValueError("release data timestamp cannot predate a source review")
         return self
 
 

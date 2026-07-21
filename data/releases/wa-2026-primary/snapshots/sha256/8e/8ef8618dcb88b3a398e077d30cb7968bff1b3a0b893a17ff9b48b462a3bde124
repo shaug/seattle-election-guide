@@ -1,0 +1,207 @@
+{
+  "captured_at": "2026-07-21T15:40:21Z",
+  "decisions": [
+    {
+      "candidate_ids": [
+        "us-house-7--pramila-jayapal"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 1; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-dbfc508a99d5.",
+      "race_id": "us-house-7",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "us-house-9--adam-smith"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 1; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-dbfc508a99d5.",
+      "race_id": "us-house-9",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-1--colleen-melody"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 2; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-780874a27470.",
+      "race_id": "supreme-court-justice-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-3--jaime-michelle-hawk",
+        "supreme-court-justice-3--mike-diaz"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 2; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-780874a27470.",
+      "race_id": "supreme-court-justice-3",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-5--theo-angelis"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 2; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-780874a27470.",
+      "race_id": "supreme-court-justice-5",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "seattle-municipal-court-judge-5--gabe-rothstein"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 2; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-780874a27470.",
+      "race_id": "seattle-municipal-court-judge-5",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "king-county-council-2--rebecca-salda-a"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 3; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-3b7407801410.",
+      "race_id": "king-county-council-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "king-county-assessor--christopher-roberts"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 3; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-3b7407801410.",
+      "race_id": "king-county-assessor",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "seattle-city-council-5--nilu-jenks"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 3; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-3b7407801410.",
+      "race_id": "seattle-city-council-5",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-32-state-senator--cindy-ryu"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 4; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-80d8944642be.",
+      "race_id": "ld-32-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-senator--chipalo-street"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 4; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-80d8944642be.",
+      "race_id": "ld-37-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-43-state-senator--jamie-pedersen",
+        "ld-43-state-senator--hannah-sabio-howell"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 4; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-80d8944642be.",
+      "race_id": "ld-43-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-46-state-senator--javier-valdez"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 5; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-9ad584ac7a91.",
+      "race_id": "ld-46-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-11-state-representative-1--ashley-fedan"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 6; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-4ad76b40d509.",
+      "race_id": "ld-11-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-32-state-representative-2--imraan-siddiqi"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 9; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-35d4a81e006f.",
+      "race_id": "ld-32-state-representative-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-34-state-representative-1--brianna-k-thomas"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 10; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-9f058cc2b11e.",
+      "race_id": "ld-34-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-34-state-representative-2--joe-fitzgibbon"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 10; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-9f058cc2b11e.",
+      "race_id": "ld-34-state-representative-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-representative-1--kelabe-tewolde"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 10; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-9f058cc2b11e.",
+      "race_id": "ld-37-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-representative-2--jaelynn-scott"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 10; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-9f058cc2b11e.",
+      "race_id": "ld-37-state-representative-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-43-state-representative-1--nicole-macri"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 11; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-6576d2c76e20.",
+      "race_id": "ld-43-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-46-state-representative-1--ron-davis"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 12; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-cf475b198f0a.",
+      "race_id": "ld-46-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-46-state-representative-2--darya-farivar"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 12; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-cf475b198f0a.",
+      "race_id": "ld-46-state-representative-2",
+      "status": "endorsed"
+    }
+  ],
+  "evidence_locator": "Official Facebook post, twelve-image 2026 primary endorsement gallery.",
+  "source_id": "washington-stonewall-democrats"
+}

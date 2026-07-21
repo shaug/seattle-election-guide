@@ -28,7 +28,7 @@ INVENTORY = PROJECT_ROOT / "data/normalized/wa-2026-primary-inventory.json"
 REGISTRY = PROJECT_ROOT / "config/sources/default.yaml"
 SCORING = PROJECT_ROOT / "config/scoring/default.yaml"
 RENDERING = PROJECT_ROOT / "config/rendering/pdf.yaml"
-GENERATED_AT = datetime(2026, 7, 20, 14, 30, tzinfo=UTC)
+GENERATED_AT = datetime(2026, 7, 21, 16, 0, tzinfo=UTC)
 
 
 def test_release_compiler_builds_permitted_provenance_and_resolves_multi_pick(
@@ -64,6 +64,9 @@ def test_release_compiler_builds_permitted_provenance_and_resolves_multi_pick(
     assert len(list(snapshots.glob("sha256/*/*"))) == 2
     assert len(list(manifests.glob("*.json"))) == 2
     assert len(first.endorsements) == 2
+    assert {endorsement.reviewed_at for endorsement in first.endorsements} == {
+        datetime(2026, 7, 20, 9, 30, tzinfo=UTC)
+    }
     assert (
         next(claim for claim in first.claims if claim.source_id == "the-stranger").evidence_excerpt
         is None
@@ -97,11 +100,41 @@ def test_release_compiler_builds_permitted_provenance_and_resolves_multi_pick(
         )
 
 
+def test_release_compiler_preserves_review_history_when_data_cutoff_advances(
+    tmp_path: Path,
+) -> None:
+    ledger_payload = _ledger_payload()
+    ledger = tmp_path / "release-ledger.yaml"
+    ledger.write_text(yaml.safe_dump(ledger_payload, sort_keys=False), encoding="utf-8")
+    first = compile_release_dataset(
+        ledger,
+        INVENTORY,
+        REGISTRY,
+        tmp_path / "dataset.json",
+        tmp_path / "snapshots",
+        tmp_path / "manifests",
+    )
+
+    ledger_payload["data_as_of"] = "2026-07-21T10:00:00Z"
+    ledger.write_text(yaml.safe_dump(ledger_payload, sort_keys=False), encoding="utf-8")
+    second = compile_release_dataset(
+        ledger,
+        INVENTORY,
+        REGISTRY,
+        tmp_path / "dataset.json",
+        tmp_path / "snapshots",
+        tmp_path / "manifests",
+    )
+
+    assert second == first
+
+
 def test_release_compiler_rejects_decisions_outside_source_eligibility(tmp_path: Path) -> None:
     ledger = _ledger_payload()
     source = ledger["sources"][0]
     source["source_id"] = "32nd-district-democrats"
     source["captured_at"] = "2026-07-20T14:00:34Z"
+    source["reviewed_at"] = "2026-07-20T14:05:00Z"
     source["decisions"][0]["race_id"] = "ld-11-state-representative-1"
     source["decisions"][0]["candidate_ids"] = ["ld-11-state-representative-1--david-hackney"]
     ledger["data_as_of"] = "2026-07-20T14:05:00Z"
@@ -547,6 +580,7 @@ def _ledger_payload() -> dict[str, Any]:
             {
                 "source_id": "the-stranger",
                 "captured_at": "2026-07-20T09:00:00Z",
+                "reviewed_at": "2026-07-20T09:30:00Z",
                 "evidence_locator": "Official guide, named race entry.",
                 "decisions": [
                     {
@@ -559,6 +593,7 @@ def _ledger_payload() -> dict[str, Any]:
             {
                 "source_id": "king-county-democrats",
                 "captured_at": "2026-07-20T09:05:00Z",
+                "reviewed_at": "2026-07-20T09:30:00Z",
                 "evidence_locator": "Official endorsements, named office entry.",
                 "decisions": [
                     {

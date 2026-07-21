@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": true,
+  "byte_length": 130528,
+  "canonical_url": "https://www.facebook.com/photo/?fbid=1450343267135341&set=pcb.1450344363801898",
+  "capture_method": "browser",
+  "content_sha256": "58cf012090b41fa4229b808c7a1afb9af14527a389bea68694b5e81c6fef2d53",
+  "http_status": 200,
+  "id": "capture-washington-stonewall-democrats-20260721T154021Z-dbfc508a99d5",
+  "media_type": "image/jpeg",
+  "published_at": "2026-07-06",
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official endorsement graphic retained locally for audit; tracked factual transcription may be redistributed.",
+  "requested_url": "https://www.facebook.com/photo/?fbid=1450343267135341&set=pcb.1450344363801898",
+  "retrieved_at": "2026-07-21T15:40:21Z",
+  "schema_version": "1.0",
+  "source_id": "washington-stonewall-democrats",
+  "storage_reference": "sha256/58/58cf012090b41fa4229b808c7a1afb9af14527a389bea68694b5e81c6fef2d53",
+  "storage_scope": "local_only",
+  "title": "Washington State Stonewall Democrats 2026 Primary: Congressional endorsements",
+  "updated_at": null
+}
