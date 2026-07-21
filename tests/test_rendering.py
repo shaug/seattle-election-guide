@@ -256,8 +256,8 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "State Legislature — continued" in html
     assert ".print-race:nth-of-type(even) { background: #f2f6f8; }" in html
     assert '--print-sans: Helvetica, "Liberation Sans", sans-serif' in html
-    assert "text-box-trim: trim-both" in html
-    assert "text-box-edge: cap alphabetic" in html
+    assert "const centerPrintInk = () =>" in html
+    assert "document.fonts.ready.then(centerPrintInk)" in html
     assert "font: 800 20pt/.95 var(--print-sans)" in html
     assert '<div class="print-guide">' in html
     assert '<div class="print-guide" aria-hidden="true">' not in html
@@ -308,6 +308,7 @@ def test_print_layout_rejects_visibly_uncentered_control_text(tmp_path: Path) ->
   .print-meter-text, .print-times-pick > span { position: relative; top: -3px; }
 }
 </style>
+<script>window.__disablePrintInkCentering = true;</script>
 </head>
 """,
             1,

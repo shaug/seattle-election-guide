@@ -779,10 +779,6 @@ def _inspect_print_layout(
                 JSON.stringify((() => {
                   const issues = [];
                   const detailed = __DETAILED__;
-                  if (!CSS.supports('text-box-trim', 'trim-both') ||
-                      !CSS.supports('text-box-edge', 'cap alphabetic')) {
-                    issues.push('optical-text-box-trim-support');
-                  }
                   const measurementCanvas = document.createElement('canvas');
                   const measurementContext = measurementCanvas.getContext('2d');
                   const inkBounds = element => {

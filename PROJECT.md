@@ -1164,10 +1164,10 @@ Requirements:
 - no orphaned section labels;
 - no awkward text wrapping in candidate names.
 
-For print, prefer Helvetica with Liberation Sans as the portable open-source fallback. Use optical
-text-box trimming so pill and meter labels remain centered despite platform
-font-metric differences. Keep this choice scoped to the PDF so it does not alter the responsive
-guide's typography.
+For print, prefer Helvetica with Liberation Sans as the portable open-source fallback. Measure
+visible glyph bounds before printing and apply a small per-label optical offset so pill and meter
+labels remain centered despite platform font-metric differences. Keep this choice scoped to the
+PDF so it does not alter the responsive guide's typography.
 
 Use only redistributable system or open-source fonts.
 

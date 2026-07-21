@@ -27,10 +27,10 @@ Page two groups methodology into independent column panels so short sections do 
 content into dense or oversized shared rows.
 
 The concise and detailed print editions use Helvetica where available, with Liberation Sans and
-the generic sans-serif as portable fallbacks. Chromium's optical text-box
-trimming removes excess leading before pill and meter labels are centered, keeping the treatment
-balanced across those fonts. Arial is not used in the PDF, no font file is redistributed, and the
-responsive guide's typography is unchanged.
+the generic sans-serif as portable fallbacks. Before printing, the document measures the visible
+glyph bounds and applies the small per-label offset required to balance top and bottom whitespace.
+Arial is not used in the PDF, no font file is redistributed, and the responsive guide's typography
+is unchanged.
 
 ## Requirements
 
