@@ -386,6 +386,9 @@
         const label = meter.querySelector('.print-meter-label');
         if (text && label) center(meter, [text], label);
       });
+      document.querySelectorAll('.print-times-pick').forEach((pill) => {
+        center(pill, [...pill.querySelectorAll(':scope > span')]);
+      });
       document.documentElement.dataset.printInkCentered = 'true';
     };
     const printMedia = window.matchMedia('print');

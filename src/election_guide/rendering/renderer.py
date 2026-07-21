@@ -1097,9 +1097,11 @@ def _inspect_print_layout(
                       const choice = comparison.querySelector('.print-times-choice');
                       if (comparisonStyle.display !== 'inline-flex' ||
                           comparisonStyle.alignItems !== 'center' ||
-                          Math.abs(Number.parseFloat(comparisonStyle.paddingTop) - .96) > .15 ||
+                          Math.abs(
+                            Number.parseFloat(comparisonStyle.paddingTop) +
+                            Number.parseFloat(comparisonStyle.paddingBottom) - 2.88
+                          ) > .2 ||
                           Math.abs(Number.parseFloat(comparisonStyle.paddingRight) - 4.8) > .15 ||
-                          Math.abs(Number.parseFloat(comparisonStyle.paddingBottom)) > .1 ||
                           Math.abs(Number.parseFloat(comparisonStyle.paddingLeft) - 4.8) > .15 ||
                           Math.abs(comparison.getBoundingClientRect().height - 14.4) > .5 ||
                           borderWidths.some(width => Math.abs(width - 1) > .1)) {
