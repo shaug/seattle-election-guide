@@ -21,7 +21,7 @@ from urllib.parse import urlsplit
 
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 from PIL import Image, ImageChops
-from pypdf import PdfReader, PdfWriter
+from pypdf import PageObject, PdfReader, PdfWriter
 from pypdf.generic import ArrayObject, DictionaryObject, IndirectObject
 from websocket import (  # pyright: ignore[reportUnknownVariableType]
     WebSocket,
@@ -394,6 +394,7 @@ def validate_rendered_guide(
         _pdf_race_core_values if detailed_pdf_path is not None else _pdf_race_display_values
     )
     missing_pdf_values = _missing_pdf_race_values(expected_races, pdf_text, primary_value_fn)
+    identity_values = ["August 2026 Primary", configuration.title]
     global_pdf_values = [
         *(section.label for section in view_model.sections),
         f"{view_model.metadata.published_race_count} races",
@@ -410,6 +411,12 @@ def validate_rendered_guide(
         value
         for value in global_pdf_values
         if _normalized_text(value).casefold() not in comparable_pdf_text
+    )
+    pdf_identity_text = _pdf_text_runs(reader.pages[0]).casefold()
+    missing_pdf_values.extend(
+        value
+        for value in identity_values
+        if _normalized_text(value).casefold() not in pdf_identity_text
     )
     pages_are_letter = _pages_are_letter(reader)
     pdf_links = _pdf_links(reader)
@@ -461,6 +468,12 @@ def validate_rendered_guide(
                 view_model.methodology.verification_instructions,
             )
             if _normalized_text(value).casefold() not in _normalized_text(detailed_text).casefold()
+        )
+        detailed_identity_text = _pdf_text_runs(detailed_reader.pages[0]).casefold()
+        missing_detailed_values.extend(
+            value
+            for value in identity_values
+            if _normalized_text(value).casefold() not in detailed_identity_text
         )
     detailed_records = [
         _inspect_page_image(index, path).model_copy(
@@ -581,7 +594,12 @@ def validate_rendered_guide(
             id="detailed-fallback",
             passed=detail_pair_valid and detailed_valid,
             message=(
-                "Overflow content is preserved in a selectable, visually safe detailed edition."
+                (
+                    "Overflow content is preserved in a selectable, visually safe detailed edition."
+                    if detailed_valid
+                    else "Detailed edition validation failed; missing values: "
+                    + ", ".join(missing_detailed_values[:5])
+                )
                 if detailed_reader is not None
                 else "The complete guide fits the normal concise edition without a fallback."
             ),
@@ -1158,7 +1176,22 @@ def _capture_emulated_viewport(
                     "guide.getBoundingClientRect().width>0&&guide.getBoundingClientRect().height>0),"
                     "filterVisible:Boolean(filter&&getComputedStyle(filter).display!=='none'&&"
                     "filter.getBoundingClientRect().width>0&&filter.getBoundingClientRect().height>0),"
-                    "visibleRaceCount:cards.length};})())"
+                    "visibleRaceCount:cards.length,"
+                    "disclosure:(()=>{"
+                    "const details=document.querySelector('.guide-notes');"
+                    "const summary=details?.querySelector('summary');"
+                    "const panel=details?.querySelector('.methodology-screen');"
+                    "const visible=()=>Boolean(details?.open&&panel&&"
+                    "getComputedStyle(panel).display!=='none'&&"
+                    "panel.getBoundingClientRect().height>0);"
+                    "const initialOpen=Boolean(details?.open);"
+                    "const initialVisible=visible();"
+                    "summary?.click();"
+                    "const toggledOpen=Boolean(details?.open);"
+                    "const toggledVisible=visible();"
+                    "summary?.click();"
+                    "return {initialOpen,initialVisible,toggledOpen,toggledVisible,"
+                    "restoredClosed:details?.open===false};})()};})())"
                 ),
                 "returnByValue": True,
             },
@@ -1173,6 +1206,13 @@ def _capture_emulated_viewport(
             "guideVisible": True,
             "filterVisible": True,
             "visibleRaceCount": expected_race_count,
+            "disclosure": {
+                "initialOpen": False,
+                "initialVisible": False,
+                "toggledOpen": True,
+                "toggledVisible": True,
+                "restoredClosed": True,
+            },
         }
         if metrics != expected_metrics:
             raise ValueError(f"responsive layout overflowed its viewport: {metrics}")
@@ -1493,6 +1533,17 @@ def _web_urls_are_safe(urls: list[str]) -> bool:
 
 def _normalized_text(value: str) -> str:
     return re.sub(r"\s+", " ", value).strip()
+
+
+def _pdf_text_runs(page: PageObject) -> str:
+    runs: list[str] = []
+
+    def collect(text: str, *_: object) -> None:
+        if text.strip():
+            runs.append(text)
+
+    page.extract_text(visitor_text=collect)
+    return _normalized_text(" ".join(runs))
 
 
 def _pdf_value_is_present(value: str, segment: str) -> bool:

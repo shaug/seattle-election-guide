@@ -13,10 +13,12 @@
 
   <main class="screen-guide">
     <header class="hero">
-      <div class="hero-kicker">Seattle 2026 Primary</div>
-      <h1>Endorsement consensus guide</h1>
-      <p class="hero-deck">A source-transparent view of progressive endorsements, with the
-        Seattle Times shown separately for comparison.</p>
+      <div class="hero-copy">
+        <div class="hero-kicker">August 2026 Primary</div>
+        <h1>Seattle Progressive Endorsement Guide</h1>
+        <p class="hero-deck">Progressive endorsement agreement at a glance, with the
+          Seattle Times shown separately for comparison.</p>
+      </div>
       <div class="hero-meta" aria-label="Guide metadata">
         <span>Election {{ guide.metadata.election_date }}</span>
         <span>{{ guide.metadata.published_race_count }} races</span>
@@ -109,7 +111,19 @@
       {% endfor %}
     </div>
 
-    <section class="methodology-screen" id="methodology">
+    <footer class="screen-footer">
+      <div class="footer-summary">
+        <div>
+          <p class="eyebrow">About this guide</p>
+          <h2>Agreement, not a candidate grade.</h2>
+        </div>
+        <p>Percentages show agreement among sources that explicitly endorsed in each race.
+          The Seattle Times is a separate comparison signal.</p>
+        <a href="{{ config.project_url }}">Source and audit files</a>
+      </div>
+      <details class="guide-notes" id="methodology">
+        <summary><span>Methodology, sources, and verification</span><span aria-hidden="true">+</span></summary>
+        <div class="methodology-screen">
       <section class="methodology-panel">
         <p class="eyebrow">Methodology</p>
         <h2>How the consensus works</h2>
@@ -151,7 +165,9 @@
         <h3>Verify the guide</h3>
         <p>{{ guide.methodology.verification_instructions }}</p>
       </section>
-    </section>
+        </div>
+      </details>
+    </footer>
   </main>
 
   <div class="print-guide">
@@ -186,8 +202,8 @@
     <section class="print-page print-page-one">
       <header class="print-header">
         <div>
-          <p>Seattle 2026 Primary</p>
-          <h1>Endorsement consensus</h1>
+          <p data-document-role="print-election-label">August 2026 Primary</p>
+          <h1 data-document-role="print-title">Seattle Progressive Endorsement Guide</h1>
         </div>
         <div class="print-header-meta">{{ guide.metadata.election_date }}<br>
           {{ guide.metadata.published_race_count }} races | {{ guide.metadata.captured_source_count }}/{{ guide.metadata.source_count }} sources represented</div>
@@ -299,6 +315,9 @@
     const edition = new URLSearchParams(window.location.search).get('edition');
     if (edition === 'compact' || edition === 'detailed') {
       document.documentElement.classList.add(`${edition}-edition`);
+    }
+    if (edition === 'detailed') {
+      document.querySelector('.guide-notes')?.setAttribute('open', '');
     }
     const centerPrintInk = () => {
       if (window.__disablePrintInkCentering) return;

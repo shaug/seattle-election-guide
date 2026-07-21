@@ -32,9 +32,13 @@ from election_guide.rendering.renderer import (
     _pdf_race_core_values,  # pyright: ignore[reportPrivateUsage]
     _pdf_race_display_values,  # pyright: ignore[reportPrivateUsage]
     _render_pdf,  # pyright: ignore[reportPrivateUsage]
+    _render_pdf_pages,  # pyright: ignore[reportPrivateUsage]
+    _render_screenshot,  # pyright: ignore[reportPrivateUsage]
+    _set_pdf_metadata,  # pyright: ignore[reportPrivateUsage]
     _trim_trailing_blank_pages,  # pyright: ignore[reportPrivateUsage]
     _validate_print_layout,  # pyright: ignore[reportPrivateUsage]
     find_chrome,
+    find_pdftoppm,
 )
 from election_guide.scoring import score_dataset
 from election_guide.serialization import canonical_json_bytes, read_json
@@ -51,21 +55,21 @@ PROJECT_ROOT = Path(__file__).parent.parent
 RENDERING_CONFIG = PROJECT_ROOT / "config/rendering/pdf.yaml"
 DARWIN_VISUAL_BASELINES = {
     "pdf-page-1": [
-        0.169,
-        0.186,
-        0.123,
-        0.105,
-        0.110,
-        0.145,
-        0.156,
+        0.171,
+        0.196,
+        0.124,
+        0.106,
+        0.112,
+        0.146,
+        0.157,
         0.133,
-        0.111,
+        0.114,
         0.140,
-        0.156,
+        0.159,
         0.137,
         0.064,
         0.089,
-        0.097,
+        0.099,
         0.084,
     ],
     "pdf-page-2": [
@@ -87,59 +91,59 @@ DARWIN_VISUAL_BASELINES = {
         0.174,
     ],
     "desktop": [
-        0.519,
-        0.695,
-        0.784,
-        0.593,
-        0.357,
-        0.482,
-        0.497,
-        0.366,
+        0.455,
+        0.669,
+        0.688,
+        0.514,
+        0.080,
+        0.051,
+        0.065,
+        0.042,
+        0.077,
+        0.065,
+        0.051,
+        0.054,
         0.085,
-        0.059,
-        0.072,
-        0.052,
-        0.084,
         0.068,
-        0.069,
-        0.046,
+        0.103,
+        0.052,
     ],
     "mobile": [
-        0.723,
-        0.692,
-        0.752,
-        0.818,
-        0.293,
-        0.277,
-        0.269,
-        0.276,
-        0.106,
-        0.088,
-        0.097,
-        0.047,
-        0.086,
-        0.088,
+        0.703,
+        0.712,
+        0.715,
+        0.800,
+        0.089,
+        0.059,
+        0.034,
+        0.026,
+        0.089,
         0.093,
-        0.044,
+        0.101,
+        0.046,
+        0.080,
+        0.073,
+        0.080,
+        0.037,
     ],
 }
 LINUX_VISUAL_BASELINES = {
     "pdf-page-1": [
-        0.167,
-        0.186,
-        0.120,
-        0.103,
-        0.106,
-        0.144,
-        0.152,
-        0.133,
-        0.107,
-        0.137,
+        0.173,
+        0.196,
+        0.121,
+        0.104,
+        0.108,
+        0.145,
         0.153,
+        0.133,
+        0.110,
+        0.137,
+        0.156,
         0.137,
         0.061,
         0.088,
-        0.097,
+        0.099,
         0.084,
     ],
     "pdf-page-2": [
@@ -161,40 +165,40 @@ LINUX_VISUAL_BASELINES = {
         0.174,
     ],
     "desktop": [
-        0.525,
-        0.757,
-        0.837,
-        0.593,
-        0.478,
-        0.692,
-        0.710,
+        0.461,
+        0.731,
+        0.741,
         0.514,
-        0.071,
-        0.046,
-        0.059,
-        0.043,
-        0.071,
+        0.201,
+        0.261,
+        0.278,
+        0.190,
+        0.063,
         0.052,
-        0.046,
-        0.050,
+        0.038,
+        0.045,
+        0.072,
+        0.052,
+        0.080,
+        0.056,
     ],
     "mobile": [
-        0.740,
-        0.725,
-        0.788,
-        0.827,
-        0.292,
-        0.281,
-        0.269,
-        0.276,
-        0.099,
-        0.077,
-        0.090,
-        0.042,
-        0.081,
-        0.081,
-        0.086,
+        0.720,
+        0.745,
+        0.751,
+        0.809,
+        0.088,
+        0.063,
+        0.034,
+        0.026,
+        0.082,
+        0.082,
+        0.094,
         0.041,
+        0.075,
+        0.066,
+        0.073,
+        0.034,
     ],
 }
 APPROVED_VISUAL_BASELINES_BY_PLATFORM = {
@@ -222,6 +226,8 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "View endorsements" in html
     assert "Consensus among endorsers" in html
     assert "Seattle Times" in html
+    assert "August 2026 Primary" in html
+    assert "Seattle Progressive Endorsement Guide" in html
     assert ">AGREES<" not in html
     assert ">DIFFERENT PICK<" not in html
     assert ">NO PICK<" not in html
@@ -234,6 +240,9 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert 'class="methodology-panel screen-source-categories"' in html
     assert 'class="methodology-panel screen-audit-metadata"' in html
     assert 'class="methodology-panel screen-verification"' in html
+    assert 'class="guide-notes" id="methodology"' in html
+    assert "Methodology, sources, and verification" in html
+    assert "document.querySelector('.guide-notes')?.setAttribute('open', '')" in html
     assert configuration.project_url in html
     comparisons = [comparison for race in races for comparison in race.comparisons]
     for comparison in comparisons:
@@ -259,7 +268,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "const centerPrintInk = () =>" in html
     assert "window.addEventListener('beforeprint', calibratePrintInk)" in html
     assert "requestAnimationFrame(() => requestAnimationFrame(calibratePrintInk))" in html
-    assert "font: 800 20pt/.95 var(--print-sans)" in html
+    assert "font: 800 17pt/.95 var(--print-sans)" in html
     assert '<div class="print-guide">' in html
     assert '<div class="print-guide" aria-hidden="true">' not in html
     assert "font: 800 8.9pt/1 var(--print-sans)" in html
@@ -586,7 +595,10 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     reader = PdfReader(rendered.pdf_path)
     assert len(reader.pages) == 2
     assert reader.metadata is not None
-    assert reader.metadata.title == "Seattle 2026 Primary Endorsement Consensus Guide"
+    assert reader.metadata.title == "Seattle Progressive Endorsement Guide"
+    concise_text = " ".join(page.extract_text() or "" for page in reader.pages)
+    assert "august 2026 primary" in concise_text.casefold()
+    assert "Seattle Progressive Endorsement Guide" in concise_text
     assert all(len(page.extract_text() or "") > 100 for page in reader.pages)
     with Image.open(rendered.page_images[0]) as page:
         assert page.size == (1224, 1584)
@@ -1111,6 +1123,69 @@ def test_overflowing_methodology_uses_detailed_fallback(tmp_path: Path) -> None:
         page.extract_text() or "" for page in PdfReader(rendered.detailed_pdf_path).pages
     )
     assert "This canonical interpretation sentence" in detailed_text
+    assert "august 2026 primary" in detailed_text.casefold()
+    assert "Seattle Progressive" in detailed_text
+    assert "Endorsement Guide" in detailed_text
+    assert "How the consensus works" in detailed_text
+
+
+def test_responsive_tablet_layout_and_methodology_disclosure(tmp_path: Path) -> None:
+    view_model = _view_model(tmp_path / "fixture")
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+
+    _render_screenshot(
+        html_path,
+        tmp_path / "tablet.png",
+        find_chrome(),
+        width=768,
+        height=1200,
+        expected_race_count=sum(len(section.races) for section in view_model.sections),
+    )
+
+
+def test_pdf_identity_validation_rejects_concatenated_print_title(tmp_path: Path) -> None:
+    view_model = _view_model(tmp_path / "fixture")
+    configuration = read_rendering_configuration(RENDERING_CONFIG)
+    html_path = tmp_path / "guide.html"
+    html = render_html_document(view_model, configuration)
+    html_path.write_text(
+        html.replace(
+            '<h1 data-document-role="print-title">Seattle Progressive Endorsement Guide</h1>',
+            '<h1 data-document-role="print-title">SeattleProgressiveEndorsementGuide</h1>',
+            1,
+        ),
+        encoding="utf-8",
+    )
+    pdf_path = tmp_path / "guide.pdf"
+    _render_pdf(html_path, pdf_path, find_chrome())
+    _set_pdf_metadata(pdf_path, view_model, configuration)
+    page_dir = tmp_path / "pages"
+    page_dir.mkdir()
+    page_images = _render_pdf_pages(pdf_path, page_dir, find_pdftoppm())
+    screenshots: list[Path] = []
+    for name, width in (("desktop", configuration.desktop_width), ("mobile", 390)):
+        screenshot = Image.new("RGB", (width, configuration.screenshot_height), "white")
+        screenshot.paste("black", (0, 0, width, 100))
+        screenshot_path = tmp_path / f"{name}.png"
+        screenshot.save(screenshot_path)
+        screenshots.append(screenshot_path)
+
+    report = validate_rendered_guide(
+        view_model,
+        configuration,
+        html_path,
+        pdf_path,
+        page_images,
+        screenshots,
+    )
+
+    identity_check = next(check for check in report.checks if check.id == "pdf-display-values")
+    assert not identity_check.passed
+    assert "Seattle Progressive Endorsement Guide" in identity_check.message
 
 
 def _dense_view_model(view_model: PublicationViewModel) -> PublicationViewModel:
