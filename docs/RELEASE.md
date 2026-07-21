@@ -101,3 +101,9 @@ gh release create 2026-primary.1 \
 
 After upload, download the asset into a temporary directory, compare its SHA-256 with the local
 archive, and confirm the release tag targets the recorded mainline commit.
+
+## Website publication
+
+The validated HTML and PDF are also staged and deployed to Cloudflare Pages from `main`. See
+[HOSTING.md](HOSTING.md) for the Wrangler configuration, safety gates, one-time credentials,
+custom-domain setup, local preview, and automatic deployment workflow.

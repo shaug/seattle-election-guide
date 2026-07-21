@@ -1,0 +1,13 @@
+{
+  "name": "seattle-election-guide-hosting",
+  "private": true,
+  "scripts": {
+    "pages:create": "wrangler pages project create seattle-elections --production-branch=main",
+    "pages:deploy": "wrangler pages deploy --branch=main",
+    "pages:dev": "wrangler pages dev",
+    "pages:version": "wrangler --version"
+  },
+  "devDependencies": {
+    "wrangler": "4.113.0"
+  }
+}

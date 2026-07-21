@@ -32,6 +32,7 @@ from election_guide.evidence.storage import (
     record_unavailable,
     verify_capture,
 )
+from election_guide.hosting import stage_pages_site
 from election_guide.initialization import initialize_election, read_election_configuration
 from election_guide.inventory.importer import (
     extract_public_inputs,
@@ -97,6 +98,7 @@ export_app = typer.Typer(help="Generate canonical machine-readable publication a
 render_app = typer.Typer(help="Render and validate the responsive HTML and concise PDF guide.")
 release_app = typer.Typer(help="Compile, audit, and package a versioned public release.")
 collect_app = typer.Typer(help="Refresh source-specific endorsement adapters.")
+hosting_app = typer.Typer(help="Stage validated release artifacts for static hosting.")
 app.add_typer(inventory_app, name="inventory")
 app.add_typer(election_app, name="election")
 app.add_typer(sources_app, name="sources")
@@ -107,7 +109,33 @@ app.add_typer(export_app, name="export")
 app.add_typer(render_app, name="render")
 app.add_typer(release_app, name="release")
 app.add_typer(collect_app, name="collect")
+app.add_typer(hosting_app, name="hosting")
 evidence_app.add_typer(manual_app, name="manual")
+
+
+@hosting_app.command("stage")
+def hosting_stage(
+    bundle_dir: Annotated[Path, typer.Argument(exists=True, file_okay=False, readable=True)],
+    output_dir: Annotated[Path, typer.Option(file_okay=False)] = Path("dist/cloudflare-site"),
+    expected_git_commit: Annotated[
+        str | None,
+        typer.Option(help="Reject a release not built from this exact Git revision."),
+    ] = None,
+) -> None:
+    """Verify and atomically stage an audited release for Cloudflare Pages."""
+    try:
+        result = stage_pages_site(
+            bundle_dir,
+            output_dir,
+            expected_git_commit=expected_git_commit,
+        )
+    except (OSError, UnicodeError, json.JSONDecodeError, ValidationError, ValueError) as error:
+        typer.echo(f"hosting stage failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    typer.echo(
+        f"Pages site: {result.output_dir} "
+        f"({result.release_version}; {1 + len(result.pdf_paths)} guide files)"
+    )
 
 
 @election_app.command("init")
