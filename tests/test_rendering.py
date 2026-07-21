@@ -238,6 +238,12 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "Seattle Times" in html
     assert "August 2026 Primary" in html
     assert "Seattle Progressive Endorsement Guide" in html
+    assert f'href="{configuration.pdf_filename}">Printable PDF</a>' in html
+    assert 'href="mailto:seattle-elections@dobravoda.dev">Feedback?</a>' in html
+    assert 'class="footer-actions" aria-label="Guide links"' in html
+    screen_footer_start = html.index('<footer class="screen-footer">')
+    screen_footer_end = html.index("</footer>", screen_footer_start)
+    assert html[screen_footer_start:screen_footer_end].count(configuration.project_url) == 1
     assert ">AGREES<" not in html
     assert ">DIFFERENT PICK<" not in html
     assert ">NO PICK<" not in html

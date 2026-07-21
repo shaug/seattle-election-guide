@@ -398,6 +398,8 @@ def validate_rendered_guide(
                     )
     expected_html_links = {
         "#guide-races",
+        configuration.pdf_filename,
+        "mailto:seattle-elections@dobravoda.dev",
         configuration.project_url,
         *(source.evidence_url for source in view_model.sources),
         *(
@@ -593,7 +595,6 @@ def validate_rendered_guide(
     detailed_metadata = detailed_reader.metadata if detailed_reader is not None else None
     detailed_links = _pdf_links(detailed_reader) if detailed_reader is not None else []
     expected_detailed_links = {
-        configuration.project_url,
         *(source.evidence_url for source in view_model.sources),
     }
     detailed_links_valid = detailed_reader is None or (
