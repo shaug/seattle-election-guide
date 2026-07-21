@@ -4,14 +4,12 @@ from __future__ import annotations
 
 import hashlib
 import os
-import re
 import shutil
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TypedDict, cast
 
-from election_guide.release.models import ReleaseStatus
+from election_guide.release.models import ReleaseManifest, ReleaseStatus
 from election_guide.serialization import canonical_json_bytes, read_json
 
 PAGES_HEADERS = """/*
@@ -40,13 +38,6 @@ class StagedPagesSite:
     pdf_paths: tuple[Path, ...]
 
 
-class _ReleaseManifest(TypedDict):
-    schema_version: str
-    release_version: str
-    generated_at: str
-    artifact_hashes: dict[str, str]
-
-
 def stage_pages_site(
     bundle_dir: Path,
     output_dir: Path,
@@ -65,12 +56,12 @@ def stage_pages_site(
             f"expected {expected_git_commit}, found {status.git_commit}"
         )
 
-    manifest = _read_release_manifest(bundle_dir / "release-manifest.json")
-    if manifest["release_version"] != status.release_version:
+    manifest = ReleaseManifest.model_validate(read_json(bundle_dir / "release-manifest.json"))
+    if manifest.release_version != status.release_version:
         raise ValueError("release manifest and release status versions differ")
-    if manifest["generated_at"] != status.generated_at.isoformat():
+    if manifest.generated_at != status.generated_at:
         raise ValueError("release manifest and release status timestamps differ")
-    artifact_hashes = manifest["artifact_hashes"]
+    artifact_hashes = manifest.artifact_hashes
     expected_artifacts = set(status.included_artifacts) - {"release-manifest.json"}
     if set(artifact_hashes) != expected_artifacts:
         raise ValueError("release manifest does not cover the complete release artifact set")
@@ -115,38 +106,6 @@ def stage_pages_site(
         html_path=output_dir / "index.html",
         pdf_paths=tuple(output_dir / source.name for source in pdf_sources),
     )
-
-
-def _read_release_manifest(path: Path) -> _ReleaseManifest:
-    raw_payload = read_json(path)
-    if not isinstance(raw_payload, dict):
-        raise ValueError("release manifest must be a JSON object")
-    payload = cast(dict[str, object], raw_payload)
-    required = {"schema_version", "release_version", "generated_at", "artifact_hashes"}
-    if set(payload) != required or payload.get("schema_version") != "1.0":
-        raise ValueError("release manifest has an unsupported structure")
-    if not isinstance(payload.get("release_version"), str):
-        raise ValueError("release manifest version must be a string")
-    if not isinstance(payload.get("generated_at"), str):
-        raise ValueError("release manifest timestamp must be a string")
-    raw_hashes = payload.get("artifact_hashes")
-    if not isinstance(raw_hashes, dict) or not raw_hashes:
-        raise ValueError("release manifest artifact hashes must be a non-empty object")
-    hashes: dict[str, str] = {}
-    for relative, digest in cast(dict[object, object], raw_hashes).items():
-        if (
-            not isinstance(relative, str)
-            or not isinstance(digest, str)
-            or re.fullmatch(r"[0-9a-f]{64}", digest) is None
-        ):
-            raise ValueError("release manifest contains an invalid artifact hash")
-        hashes[relative] = digest
-    return {
-        "schema_version": "1.0",
-        "release_version": cast(str, payload["release_version"]),
-        "generated_at": cast(str, payload["generated_at"]),
-        "artifact_hashes": hashes,
-    }
 
 
 def _verify_artifact_hashes(bundle_dir: Path, artifact_hashes: dict[str, str]) -> None:

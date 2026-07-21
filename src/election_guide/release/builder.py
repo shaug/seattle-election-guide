@@ -20,6 +20,7 @@ from election_guide.publication import build_publication_bundle, write_publicati
 from election_guide.release.compiler import read_release_ledger, verify_release_compilation
 from election_guide.release.models import (
     RaceCoverageStatus,
+    ReleaseManifest,
     ReleaseStatus,
     SourceAccessStatus,
 )
@@ -160,13 +161,14 @@ def build_release(
             _release_notes(status, dataset.inventory.election.name),
             encoding="utf-8",
         )
-        manifest = {
-            "schema_version": "1.0",
-            "release_version": release_version,
-            "generated_at": generated_at.isoformat(),
-            "artifact_hashes": _artifact_hashes(stage_bundle),
-        }
-        (stage_bundle / "release-manifest.json").write_bytes(canonical_json_bytes(manifest))
+        manifest = ReleaseManifest(
+            release_version=release_version,
+            generated_at=generated_at,
+            artifact_hashes=_artifact_hashes(stage_bundle),
+        )
+        (stage_bundle / "release-manifest.json").write_bytes(
+            canonical_json_bytes(manifest.model_dump(mode="json"))
+        )
 
         archive_name = f"seattle-election-guide-{release_version}.zip"
         archive_path = stage / archive_name

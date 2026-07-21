@@ -2,10 +2,20 @@
 
 from __future__ import annotations
 
+import re
+from datetime import datetime
 from pathlib import PurePosixPath
 from typing import Literal
 
-from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import (
+    AwareDatetime,
+    BaseModel,
+    ConfigDict,
+    Field,
+    field_serializer,
+    field_validator,
+    model_validator,
+)
 
 REQUIRED_VALIDATION_REPORTS = frozenset({"publication", "rendering"})
 REQUIRED_RELEASE_ARTIFACTS = frozenset(
@@ -31,6 +41,33 @@ REQUIRED_RELEASE_ARTIFACTS = frozenset(
 
 class ReleaseModel(BaseModel):
     model_config = ConfigDict(extra="forbid")
+
+
+class ReleaseManifest(ReleaseModel):
+    schema_version: Literal["1.0"] = "1.0"
+    release_version: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
+    generated_at: AwareDatetime
+    artifact_hashes: dict[str, str] = Field(min_length=1)
+
+    @field_serializer("generated_at")
+    def serialize_generated_at(self, value: datetime) -> str:
+        return value.isoformat()
+
+    @field_validator("artifact_hashes")
+    @classmethod
+    def validate_artifact_hashes(cls, value: dict[str, str]) -> dict[str, str]:
+        invalid_paths = [
+            path
+            for path in value
+            if PurePosixPath(path).is_absolute()
+            or ".." in PurePosixPath(path).parts
+            or path != PurePosixPath(path).as_posix()
+        ]
+        if invalid_paths:
+            raise ValueError(f"release manifest contains invalid artifact paths: {invalid_paths}")
+        if any(re.fullmatch(r"[0-9a-f]{64}", digest) is None for digest in value.values()):
+            raise ValueError("release manifest contains an invalid artifact hash")
+        return value
 
 
 class ReleaseDecision(ReleaseModel):
