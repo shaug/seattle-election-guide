@@ -777,7 +777,10 @@ def _inspect_print_layout(
             {
                 "expression": (
                     "new Promise(resolve => requestAnimationFrame("
-                    "() => requestAnimationFrame(resolve)))"
+                    "() => requestAnimationFrame(() => {"
+                    "window.dispatchEvent(new Event('beforeprint'));"
+                    "requestAnimationFrame(resolve);"
+                    "})))"
                 ),
                 "awaitPromise": True,
             },

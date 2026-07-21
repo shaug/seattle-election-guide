@@ -363,7 +363,9 @@
     };
     window.addEventListener('beforeprint', calibratePrintInk);
     printMedia.addEventListener('change', (event) => {
-      if (event.matches) requestAnimationFrame(calibratePrintInk);
+      if (event.matches) {
+        requestAnimationFrame(() => requestAnimationFrame(calibratePrintInk));
+      }
     });
     calibratePrintInk();
     const select = document.querySelector('#race-filter');

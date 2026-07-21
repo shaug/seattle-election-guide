@@ -258,7 +258,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert '--print-sans: Helvetica, "Liberation Sans", sans-serif' in html
     assert "const centerPrintInk = () =>" in html
     assert "window.addEventListener('beforeprint', calibratePrintInk)" in html
-    assert "if (event.matches) requestAnimationFrame(calibratePrintInk)" in html
+    assert "requestAnimationFrame(() => requestAnimationFrame(calibratePrintInk))" in html
     assert "font: 800 20pt/.95 var(--print-sans)" in html
     assert '<div class="print-guide">' in html
     assert '<div class="print-guide" aria-hidden="true">' not in html
