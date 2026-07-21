@@ -42,6 +42,9 @@ class PublicationSource(PublicationModel):
     overlap_group_ids: list[str]
     endorsement_count: int = Field(ge=0, strict=True)
     split_endorsement_count: int = Field(ge=0, strict=True)
+    contribution_status: Literal["contributing", "coverage_gap"]
+    coverage_gap_status: Literal["not_found", "access_restricted"] | None = None
+    coverage_gap_note: str | None = None
 
     @model_validator(mode="after")
     def validate_overlap_groups(self) -> PublicationSource:
@@ -49,6 +52,13 @@ class PublicationSource(PublicationModel):
             raise ValueError("publication source overlap group IDs must be unique and sorted")
         if self.split_endorsement_count > self.endorsement_count:
             raise ValueError("split endorsement count cannot exceed endorsement count")
+        if self.contribution_status == "coverage_gap":
+            if self.coverage_gap_status is None or not self.coverage_gap_note:
+                raise ValueError("coverage-gap sources require a discovery status and note")
+            if self.endorsement_count != 0 or self.split_endorsement_count != 0:
+                raise ValueError("coverage-gap sources cannot carry participation counts")
+        elif self.coverage_gap_status is not None or self.coverage_gap_note is not None:
+            raise ValueError("contributing sources cannot carry coverage-gap details")
         return self
 
 
@@ -448,6 +458,8 @@ class PublicationMetadata(PublicationModel):
     source_count: int = Field(ge=0, strict=True)
     captured_source_count: int = Field(ge=0, strict=True)
     unavailable_source_count: int = Field(ge=0, strict=True)
+    contributing_source_count: int = Field(ge=0, strict=True)
+    coverage_gap_count: int = Field(ge=0, strict=True)
     race_count: int = Field(ge=0, strict=True)
     published_race_count: int = Field(ge=0, strict=True)
     unresolved_review_count: int = Field(ge=0, strict=True)
@@ -456,11 +468,13 @@ class PublicationMetadata(PublicationModel):
     def validate_source_counts(self) -> PublicationMetadata:
         if self.captured_source_count + self.unavailable_source_count != self.source_count:
             raise ValueError("captured and unavailable source counts must equal active sources")
+        if self.contributing_source_count + self.coverage_gap_count != self.source_count:
+            raise ValueError("contributing and coverage-gap counts must equal active sources")
         return self
 
 
 class PublicationViewModel(PublicationModel):
-    schema_version: Literal["1.3"] = "1.3"
+    schema_version: Literal["1.4"] = "1.4"
     metadata: PublicationMetadata
     sources: list[PublicationSource]
     sections: list[PublicationSection]
@@ -671,8 +685,19 @@ class PublicationViewModel(PublicationModel):
                 or source.split_endorsement_count != expected_split_counts[source.id]
             ):
                 raise ValueError("source participation counts do not match published source cells")
+        contributing_source_count = sum(
+            source.contribution_status == "contributing" for source in self.sources
+        )
+        coverage_gap_count = sum(
+            source.contribution_status == "coverage_gap" for source in self.sources
+        )
         if self.metadata.source_count != len(self.sources):
             raise ValueError("metadata source count does not match the view model")
+        if (
+            self.metadata.contributing_source_count != contributing_source_count
+            or self.metadata.coverage_gap_count != coverage_gap_count
+        ):
+            raise ValueError("metadata contribution counts do not match publication sources")
         if self.metadata.published_race_count != len(races):
             raise ValueError("metadata published race count does not match the view model")
         if self.metadata.race_count < self.metadata.published_race_count:

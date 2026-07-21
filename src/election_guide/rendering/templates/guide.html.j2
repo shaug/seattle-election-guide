@@ -21,6 +21,17 @@
       <span>{{ source_participation(source, compact) }}</span>
     </div>
   {%- endmacro %}
+  {% macro coverage_gap_row(source, compact=false) -%}
+    <section class="coverage-gap-row"
+      data-coverage-gap-source-id="{{ source.id }}"
+      data-coverage-gap-status="{{ source.coverage_gap_status }}">
+      <div><a href="{{ source.evidence_url }}">{{ source.name }}</a>
+        <strong>{% if source.coverage_gap_status == 'access_restricted' %}Official results inaccessible{% else %}No published results found{% endif %}</strong></div>
+      {% if not compact %}<p>{{ source.coverage_gap_note }}</p>{% endif %}
+    </section>
+  {%- endmacro %}
+  {% set contributing_sources = guide.sources | selectattr('contribution_status', 'equalto', 'contributing') | list %}
+  {% set coverage_gap_sources = guide.sources | selectattr('contribution_status', 'equalto', 'coverage_gap') | list %}
   <a class="skip-link" href="#guide-races">Skip to recommendations</a>
 
   <main class="screen-guide">
@@ -168,23 +179,33 @@
         </div>
       </details>
       <details class="guide-notes" id="sources">
-        <summary><span>Sources ({{ guide.metadata.source_count }})</span><span aria-hidden="true">+</span></summary>
+        <summary><span>Sources ({{ guide.metadata.contributing_source_count }})</span><span aria-hidden="true">+</span></summary>
         <div class="screen-source-directory">
           <div class="screen-source-heading">
-            <div><p class="eyebrow">Evidence directory</p><h2>Sources in this guide</h2></div>
+            <div><p class="eyebrow">Evidence directory</p><h2>Sources contributing to this guide</h2></div>
             <p>Counts cover the {{ guide.metadata.published_race_count }} races shown. Split is the
-              multi-candidate subset; zero means the source currently contributes no picks.</p>
+              multi-candidate subset.</p>
           </div>
           <div class="screen-source-columns">
             {% for category in guide.methodology.source_categories %}
             <section class="screen-source-category">
               <h3 data-source-category="{{ category.category }}">{{ category.label }}</h3>
-              {% for source in guide.sources if source.category == category.category %}
+              {% for source in contributing_sources if source.category == category.category %}
                 {{ source_row(source) }}
               {% endfor %}
             </section>
             {% endfor %}
           </div>
+          {% if coverage_gap_sources %}
+          <section class="screen-coverage-gaps">
+            <div><p class="eyebrow">Research status</p><h2>Coverage gaps ({{ guide.metadata.coverage_gap_count }})</h2>
+              <p>These organizations were investigated, but no usable published endorsement list
+                was available. They do not contribute to consensus scores.</p></div>
+            <div class="coverage-gap-columns">
+              {% for source in coverage_gap_sources %}{{ coverage_gap_row(source) }}{% endfor %}
+            </div>
+          </section>
+          {% endif %}
         </div>
       </details>
       <div class="screen-footer-meta">
@@ -266,7 +287,8 @@
       <header class="method-header">
         <p>Methodology and sources</p>
         <h1>How to read this guide</h1>
-        <div>{{ guide.metadata.source_count }} sources · participation across displayed races</div>
+        <div>{{ guide.metadata.contributing_source_count }} contributing sources ·
+          {{ guide.metadata.coverage_gap_count }} coverage gaps</div>
       </header>
       <div class="page-two-content">
         <div class="method-summary">
@@ -293,19 +315,19 @@
 
         <section class="source-panel">
           <div class="source-panel-heading">
-            <div><p>Evidence directory</p><h2>Sources in this guide</h2></div>
-            <span>{{ guide.sources | selectattr('panel_role', 'equalto', 'consensus') | list | length }} consensus ·
-              {{ guide.sources | selectattr('panel_role', 'equalto', 'comparison') | list | length }} Times comparison<br>
+            <div><p>Evidence directory</p><h2>Sources contributing to this guide</h2></div>
+            <span>{{ contributing_sources | selectattr('panel_role', 'equalto', 'consensus') | list | length }} consensus ·
+              {{ contributing_sources | selectattr('panel_role', 'equalto', 'comparison') | list | length }} Times comparison<br>
               Counts: endorsements/picks · split subset</span>
           </div>
-          {% set source_midpoint = (guide.sources | length + 1) // 2 %}
+          {% set source_midpoint = (contributing_sources | length + 1) // 2 %}
           <div class="source-columns">
             {% for source_column in range(2) %}
             {% set source_start = 0 if source_column == 0 else source_midpoint %}
-            {% set source_end = source_midpoint if source_column == 0 else guide.sources | length %}
+            {% set source_end = source_midpoint if source_column == 0 else contributing_sources | length %}
             {% set displayed_category = namespace(id='') %}
             <div class="source-column">
-              {% for source in guide.sources[source_start:source_end] %}
+              {% for source in contributing_sources[source_start:source_end] %}
                 {% if displayed_category.id != source.category %}
                 {% set category = guide.methodology.source_categories | selectattr('category', 'equalto', source.category) | first %}
                 <h3 data-source-category="{{ source.category }}">{{ category.label }}</h3>
@@ -316,6 +338,14 @@
             </div>
             {% endfor %}
           </div>
+          {% if coverage_gap_sources %}
+          <section class="print-coverage-gaps">
+            <div class="print-coverage-gap-heading"><h3>Coverage gaps</h3><span>Investigated; not counted in consensus</span></div>
+            <div class="coverage-gap-columns">
+              {% for source in coverage_gap_sources %}{{ coverage_gap_row(source, true) }}{% endfor %}
+            </div>
+          </section>
+          {% endif %}
         </section>
 
         <div class="method-notes">

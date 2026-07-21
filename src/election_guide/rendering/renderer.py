@@ -412,10 +412,16 @@ def validate_rendered_guide(
     source_categories = {
         category.category: category.label for category in view_model.methodology.source_categories
     }
-    expected_source_ids = {source.id for source in view_model.sources}
+    contributing_sources = [
+        source for source in view_model.sources if source.contribution_status == "contributing"
+    ]
+    coverage_gap_sources = [
+        source for source in view_model.sources if source.contribution_status == "coverage_gap"
+    ]
+    expected_source_ids = {source.id for source in contributing_sources}
     if set(parser.publication_source_text) != expected_source_ids:
         missing_evidence_rows.append("document: unexpected or missing publication source rows")
-    for source in view_model.sources:
+    for source in contributing_sources:
         expected_rows = [
             _normalized_text(f"{source.name} {_source_participation_label(source)}"),
             _normalized_text(f"{source.name} {_source_participation_label(source, compact=True)}"),
@@ -440,6 +446,29 @@ def validate_rendered_guide(
             or source.category not in source_categories
         ):
             missing_evidence_rows.append(f"{source.id}: publication source row values")
+    expected_coverage_gap_ids = {source.id for source in coverage_gap_sources}
+    if set(parser.coverage_gap_text) != expected_coverage_gap_ids:
+        missing_evidence_rows.append("document: unexpected or missing coverage-gap rows")
+    for source in coverage_gap_sources:
+        status_label = _coverage_gap_status_label(source)
+        expected_rows = [
+            _normalized_text(f"{source.name} {status_label} {source.coverage_gap_note}"),
+            _normalized_text(f"{source.name} {status_label}"),
+        ]
+        observed_rows = [
+            _normalized_text(" ".join(parts))
+            for parts in parser.coverage_gap_text.get(source.id, [])
+        ]
+        if (
+            observed_rows != expected_rows
+            or parser.coverage_gap_links.get(source.id, [])
+            != [[source.evidence_url], [source.evidence_url]]
+            or parser.coverage_gap_statuses.get(source.id, [])
+            != [source.coverage_gap_status, source.coverage_gap_status]
+            or parser.coverage_gap_classes.get(source.id, [])
+            != [{"coverage-gap-row"}, {"coverage-gap-row"}]
+        ):
+            missing_evidence_rows.append(f"{source.id}: coverage-gap row values")
 
     reader = PdfReader(pdf_path)
     pdf_texts = [page.extract_text() or "" for page in reader.pages]
@@ -455,14 +484,17 @@ def validate_rendered_guide(
     )
     missing_pdf_values = _missing_pdf_race_values(expected_races, pdf_text, primary_value_fn)
     identity_values = ["August 2026 Primary", configuration.title]
-    consensus_source_count = sum(source.panel_role == "consensus" for source in view_model.sources)
+    consensus_source_count = sum(
+        source.panel_role == "consensus" for source in contributing_sources
+    )
     comparison_source_count = sum(
-        source.panel_role == "comparison" for source in view_model.sources
+        source.panel_role == "comparison" for source in contributing_sources
     )
     global_pdf_values = [
         *(section.label for section in view_model.sections),
         f"{view_model.metadata.published_race_count} races",
-        f"{view_model.metadata.source_count} sources",
+        f"{view_model.metadata.contributing_source_count} contributing sources",
+        f"{view_model.metadata.coverage_gap_count} coverage gaps",
         f"{consensus_source_count} consensus",
         f"{comparison_source_count} Times comparison",
         *(category.label for category in view_model.methodology.source_categories),
@@ -473,6 +505,8 @@ def validate_rendered_guide(
         f"Built {view_model.metadata.generated_at.date().isoformat()}",
         f"Data {view_model.metadata.data_version}",
         f"Code {view_model.metadata.git_commit[:12]}",
+        *(source.name for source in coverage_gap_sources),
+        *(_coverage_gap_status_label(source) for source in coverage_gap_sources),
     ]
     missing_pdf_values.extend(
         value
@@ -480,7 +514,7 @@ def validate_rendered_guide(
         if _normalized_text(value).casefold() not in comparable_pdf_text
     )
     expected_source_participation = [
-        _source_participation_label(source, compact=True) for source in view_model.sources
+        _source_participation_label(source, compact=True) for source in contributing_sources
     ]
     if _pdf_source_participation_labels(source_page_lines) != expected_source_participation:
         missing_pdf_values.append("ordered source participation rows")
@@ -495,11 +529,13 @@ def validate_rendered_guide(
     pdf_link_rows = _pdf_link_rows(reader)
     expected_pdf_links = [
         configuration.project_url,
-        *(source.evidence_url for source in view_model.sources),
+        *(source.evidence_url for source in contributing_sources),
+        *(source.evidence_url for source in coverage_gap_sources),
         configuration.project_url,
     ]
     expected_source_link_rows = [
-        (source.evidence_url, _normalized_text(source.name)) for source in view_model.sources
+        (source.evidence_url, _normalized_text(source.name))
+        for source in [*contributing_sources, *coverage_gap_sources]
     ]
     pdf_links_valid = (
         _web_urls_are_safe(pdf_links)
@@ -968,6 +1004,7 @@ def _inspect_print_layout(
                     '.comparison', '.warning', '.methodology-panel'
                   ] : [
                     '.print-races', '.method-summary article', '.source-panel', '.source-row',
+                    '.coverage-gap-row',
                     '.method-notes article', '.page-two-footer span', '.print-race-title',
                     '.print-race-result > strong', '.print-race-context > span',
                     '.print-times-pick', '.print-race-notes span'
@@ -1773,6 +1810,14 @@ def _source_participation_label(source: PublicationSource, *, compact: bool = Fa
     return f"{source.endorsement_count} {noun} · {source.split_endorsement_count} split"
 
 
+def _coverage_gap_status_label(source: PublicationSource) -> str:
+    if source.coverage_gap_status == "access_restricted":
+        return "Official results inaccessible"
+    if source.coverage_gap_status == "not_found":
+        return "No published results found"
+    raise ValueError(f"source {source.id!r} is missing a coverage-gap status")
+
+
 def _pdf_source_participation_labels(lines: list[str]) -> list[str]:
     """Read participation labels in PDF DOM order: left column, then right column."""
     if not lines:
@@ -1925,6 +1970,10 @@ class _GuideHTMLParser(HTMLParser):
         self.publication_source_heading_categories: dict[str, list[str | None]] = {}
         self.publication_source_roles: dict[str, list[str | None]] = {}
         self.publication_source_classes: dict[str, list[set[str]]] = {}
+        self.coverage_gap_text: dict[str, list[list[str]]] = {}
+        self.coverage_gap_links: dict[str, list[list[str]]] = {}
+        self.coverage_gap_statuses: dict[str, list[str | None]] = {}
+        self.coverage_gap_classes: dict[str, list[set[str]]] = {}
         self._text_parts: list[str] = []
         self._current_race_id: str | None = None
         self._current_endorsement_key: tuple[tuple[str, str, str], int] | None = None
@@ -1932,6 +1981,7 @@ class _GuideHTMLParser(HTMLParser):
         self._current_display_role: tuple[tuple[str, str], int] | None = None
         self._display_role_tag: str | None = None
         self._current_publication_source: tuple[str, int] | None = None
+        self._current_coverage_gap: tuple[str, int] | None = None
         self._current_source_category: str | None = None
 
     @property
@@ -1968,6 +2018,17 @@ class _GuideHTMLParser(HTMLParser):
             )
             self.publication_source_classes.setdefault(publication_source_id, []).append(classes)
             self._current_publication_source = (publication_source_id, len(rows) - 1)
+        coverage_gap_source_id = attributes.get("data-coverage-gap-source-id")
+        if coverage_gap_source_id is not None:
+            rows = self.coverage_gap_text.setdefault(coverage_gap_source_id, [])
+            links = self.coverage_gap_links.setdefault(coverage_gap_source_id, [])
+            rows.append([])
+            links.append([])
+            self.coverage_gap_statuses.setdefault(coverage_gap_source_id, []).append(
+                attributes.get("data-coverage-gap-status")
+            )
+            self.coverage_gap_classes.setdefault(coverage_gap_source_id, []).append(classes)
+            self._current_coverage_gap = (coverage_gap_source_id, len(rows) - 1)
         if (
             tag == "section"
             and "endorsement-group" in classes
@@ -2005,6 +2066,9 @@ class _GuideHTMLParser(HTMLParser):
             if self._current_publication_source is not None:
                 source_key, source_index = self._current_publication_source
                 self.publication_source_links[source_key][source_index].append(href)
+            if self._current_coverage_gap is not None:
+                source_key, source_index = self._current_coverage_gap
+                self.coverage_gap_links[source_key][source_index].append(href)
             if self._current_endorsement_key is not None:
                 key, index = self._current_endorsement_key
                 self.endorsement_links[key][index].add(href)
@@ -2026,6 +2090,9 @@ class _GuideHTMLParser(HTMLParser):
             if self._current_publication_source is not None:
                 source_key, source_index = self._current_publication_source
                 self.publication_source_text[source_key][source_index].append(data)
+            if self._current_coverage_gap is not None:
+                source_key, source_index = self._current_coverage_gap
+                self.coverage_gap_text[source_key][source_index].append(data)
 
     def handle_endtag(self, tag: str) -> None:
         if tag == "li":
@@ -2034,6 +2101,8 @@ class _GuideHTMLParser(HTMLParser):
             self._current_publication_source = None
         if tag == "section" and self._current_endorsement_group_key is not None:
             self._current_endorsement_group_key = None
+        if tag == "section" and self._current_coverage_gap is not None:
+            self._current_coverage_gap = None
         if tag == self._display_role_tag:
             self._current_display_role = None
             self._display_role_tag = None

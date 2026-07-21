@@ -90,6 +90,15 @@ a { color: #075d75; text-underline-offset: .15em; }
 .screen-source-directory .source-row span { color: #176554; font-size: .72rem; font-variant-numeric: tabular-nums; font-weight: 800; white-space: nowrap; }
 .screen-source-directory .source-row-comparison { background: #fff6e8; }
 .screen-source-directory .source-row-comparison span { color: #8a4b00; }
+.screen-coverage-gaps { display: grid; grid-template-columns: minmax(14rem, .7fr) minmax(0, 1.3fr); gap: 1rem 2rem; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid #cbd2d9; }
+.screen-coverage-gaps h2 { margin: .15rem 0 .35rem; color: var(--navy); font-size: 1.35rem; }
+.screen-coverage-gaps > div > p:last-child { margin: 0; color: var(--muted); font-size: .8rem; }
+.coverage-gap-columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem; }
+.coverage-gap-row { min-width: 0; padding: .7rem .8rem; border: 1px solid #d9e2ec; border-left: .22rem solid #829ab1; background: var(--white); }
+.coverage-gap-row div { display: flex; min-width: 0; flex-wrap: wrap; justify-content: space-between; gap: .25rem .75rem; }
+.coverage-gap-row a { min-width: 0; color: var(--navy); font-size: .8rem; font-weight: 700; overflow-wrap: anywhere; }
+.coverage-gap-row strong { color: #52606d; font-size: .68rem; white-space: nowrap; }
+.coverage-gap-row p { margin: .35rem 0 0; color: var(--muted); font-size: .72rem; line-height: 1.35; }
 .screen-footer-meta { display: flex; justify-content: space-between; gap: 1rem; padding: .7rem clamp(1rem, 4vw, 3rem); border-top: 1px solid #526f83; color: #9fb3c8; font-size: .68rem; }
 .screen-footer-meta a { color: #9ee7df; font-weight: 800; white-space: nowrap; }
 .print-guide { display: none; }
@@ -100,7 +109,7 @@ a { color: #075d75; text-underline-offset: .15em; }
   .hero-meta { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: .8rem 0 0; border-top: 1px solid #7794a8; border-left: 0; text-align: left; }
   .screen-controls { grid-template-columns: 1fr; position: static; }
   .screen-controls p { justify-self: start; }
-  .race-grid, .methodology-screen, .footer-summary, .screen-source-columns, .screen-source-heading { grid-template-columns: 1fr; }
+  .race-grid, .methodology-screen, .footer-summary, .screen-source-columns, .screen-source-heading, .screen-coverage-gaps, .coverage-gap-columns { grid-template-columns: 1fr; }
   .footer-summary { gap: .8rem; }
   .methodology-overlap { display: block; }
   .screen-source-heading > p { justify-self: start; text-align: left; }
@@ -188,6 +197,15 @@ a { color: #075d75; text-underline-offset: .15em; }
   .source-row span { color: #176554; font-size: 6pt; font-weight: 800; white-space: nowrap; }
   .source-row-comparison { border-left-color: #b56a00; background: #fff6e8; }
   .source-row-comparison span { color: #8a4b00; }
+  .print-coverage-gaps { margin-top: .055in; padding-top: .04in; border-top: 1px solid #c9d5dd; }
+  .print-coverage-gap-heading { display: flex; align-items: baseline; justify-content: space-between; gap: .1in; margin-bottom: .025in; }
+  .print-coverage-gap-heading h3 { margin: 0; color: var(--navy); font: 800 7pt/1 var(--print-sans); text-transform: uppercase; }
+  .print-coverage-gap-heading span { color: #52606d; font-size: 6pt; }
+  .print-coverage-gaps .coverage-gap-columns { display: grid; grid-template-columns: 1fr 1fr; gap: .07in; }
+  .print-coverage-gaps .coverage-gap-row { min-width: 0; padding: .035in .045in; border: .5px solid #c9d5dd; border-left: 2px solid #829ab1; background: #f7f9fb; }
+  .print-coverage-gaps .coverage-gap-row div { display: flex; align-items: baseline; justify-content: space-between; gap: .05in; }
+  .print-coverage-gaps .coverage-gap-row a { min-width: 0; color: var(--navy); font-size: 6pt; font-weight: 700; overflow-wrap: anywhere; }
+  .print-coverage-gaps .coverage-gap-row strong { flex: 0 0 auto; color: #52606d; font-size: 6pt; font-weight: 700; }
   .method-notes { display: grid; grid-template-columns: 1.15fr .85fr; gap: .07in; margin-top: .075in; }
   .method-notes article:first-child { border-left: 2.5px solid var(--teal); }
   .method-notes article:last-child { border-left: 2.5px solid var(--blue); }
