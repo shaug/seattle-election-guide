@@ -212,6 +212,13 @@ APPROVED_VISUAL_BASELINES_BY_PLATFORM = {
 
 def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path: Path) -> None:
     view_model = _view_model(tmp_path)
+    gap_source = next(source for source in view_model.sources if source.endorsement_count == 0)
+    gap_source.contribution_status = "coverage_gap"
+    gap_source.coverage_gap_status = "not_found"
+    gap_source.coverage_gap_note = "The official site did not publish endorsement results."
+    view_model.metadata.contributing_source_count -= 1
+    view_model.metadata.coverage_gap_count += 1
+    view_model = PublicationViewModel.model_validate(view_model.model_dump(mode="json"))
     configuration = read_rendering_configuration(RENDERING_CONFIG)
 
     html = render_html_document(view_model, configuration)
@@ -269,9 +276,16 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert ".comparison-status { font-weight: 800; }" in html
     assert ".comparison-choice { min-width: 0; font-weight: 500; }" in html
     assert ".comparison-agrees { border-color: #83bfae; background: #edf8f4;" in html
-    assert html.count('data-publication-source-id="') == 2 * len(view_model.sources)
+    contributing_sources = [
+        source for source in view_model.sources if source.contribution_status == "contributing"
+    ]
+    coverage_gap_sources = [
+        source for source in view_model.sources if source.contribution_status == "coverage_gap"
+    ]
+    assert html.count('data-publication-source-id="') == 2 * len(contributing_sources)
+    assert html.count('data-coverage-gap-source-id="') == 2 * len(coverage_gap_sources)
     assert html.count('class="source-column"') == 2
-    for source in view_model.sources:
+    for source in contributing_sources:
         assert html.count(f'data-publication-source-id="{source.id}"') == 2
         assert html.count(f'data-source-role="{source.panel_role}"') >= 2
         assert html.count(f'<a href="{source.evidence_url}">{source.name}</a>') >= 2
@@ -295,7 +309,21 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "Overlap and limitations" in html
     assert "Verify before voting" in html
     assert "Counts cover the" in html
-    assert "zero means the source currently contributes no picks" in html
+    for source in coverage_gap_sources:
+        assert html.count(f'data-coverage-gap-source-id="{source.id}"') == 2
+        assert html.count(f'<a href="{source.evidence_url}">{source.name}</a>') == 2
+        assert source.coverage_gap_note is not None
+        assert source.coverage_gap_note in html
+        status_label = (
+            "Official results inaccessible"
+            if source.coverage_gap_status == "access_restricted"
+            else "No published results found"
+        )
+        assert html.count(status_label) >= 2
+    assert f"Sources ({view_model.metadata.contributing_source_count})" in html
+    assert f"Coverage gaps ({view_model.metadata.coverage_gap_count})" in html
+    assert "They do not contribute to consensus scores" in html
+    assert "zero means the source currently contributes no picks" not in html
     assert ".screen-source-columns { display: grid;" in html
     assert ".source-columns { display: grid;" in html
     assert "grid-template-columns: 1fr 1fr;" in html
@@ -1643,14 +1671,14 @@ def test_pdf_source_participation_order_survives_wrapped_source_names() -> None:
         "    First source name                       2 · 0 split           Third source",
         "                                                    "
         "                name wraps       5 · 1 split",
-        "    Environment and Climate Caucus of the",
-        "    Washington State Democratic Party      0 · 0 split           "
+        "    Regional Progressive Coalition and Community",
+        "    Action Network                          7 · 0 split           "
         "Times source        15 picks · 0 split",
     ]
 
     assert _pdf_source_participation_labels(lines) == [
         "2 · 0 split",
-        "0 · 0 split",
+        "7 · 0 split",
         "5 · 1 split",
         "15 picks · 0 split",
     ]
@@ -1808,6 +1836,7 @@ def _visual_view_model(view_model: PublicationViewModel) -> PublicationViewModel
             race.source_cells[comparison_source_index:comparison_source_index] = additional_cells
     visual.metadata.source_count += len(additional_sources)
     visual.metadata.captured_source_count += len(additional_sources)
+    visual.metadata.contributing_source_count += len(additional_sources)
     races = [race for section in visual.sections for race in section.races]
     source_id = races[0].comparisons[0].source_id
     races[0].comparisons = [

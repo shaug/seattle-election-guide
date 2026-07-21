@@ -62,6 +62,11 @@ report records `concise_plus_detailed` and the detailed page count when that fal
 The rendering destination must be absent or empty. The renderer stages the complete generation
 beside that destination and publishes it only after every validation passes.
 
+The source directory includes only sources with usable published endorsement decisions. Active
+organizations whose official results were not found or could not be accessed appear separately as
+coverage gaps, with their official links and research status. They remain in the publication view
+model and audit exports but are not presented as contributing sources.
+
 ```text
 output/rendered/
 ├── seattle-2026-primary-guide.html

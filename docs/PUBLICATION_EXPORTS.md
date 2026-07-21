@@ -38,9 +38,10 @@ JSON uses canonical sorted serialization and exact rational strings such as `"3/
 registry and inventory order, explicit field order, UTF-8, and Unix newlines. Identical inputs,
 build timestamp, and Git revision therefore produce identical bytes.
 
-`publication_view_model.json` uses schema `1.3`; this version adds required per-source
-participation counts while retaining the `1.2` candidate-centric affirmative endorsement groups,
-category analysis, and overlap metadata for audit.
+`publication_view_model.json` uses schema `1.4`; this version distinguishes sources contributing
+usable endorsement decisions from researched coverage gaps while retaining the `1.3` per-source
+participation counts, candidate-centric affirmative endorsement groups, category analysis, and
+overlap metadata for audit.
 
 ## Shared view model
 
@@ -60,6 +61,12 @@ subset in `multi_endorsement`. Counts include only races published in the guide.
 comparison uses the same affirmative-decision derivation but is labeled as picks, because it never
 enters the progressive consensus. Source-category membership and category order are also validated
 against the publication source registry.
+
+Every active source also has a presentation status. `contributing` sources appear in the guide's
+source directory. A `coverage_gap` remains in the audit registry and source matrix but appears in
+a separate voter-facing section with its official URL, discovery status, and research note. This
+distinguishes missing or inaccessible published results from an explicit decision not to endorse;
+it does not change eligibility or scoring.
 
 An `Insufficient` race retains its measured support leader for audit, but has no recommendation
 candidate and displays `Too few endorsements`. This prevents a renderer from turning one source's

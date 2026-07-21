@@ -381,7 +381,15 @@ def test_methodology_publishes_possible_overlap_without_deduplicating(tmp_path: 
     )
 
     methodology = bundle.view_model.methodology
-    assert bundle.view_model.schema_version == "1.3"
+    assert bundle.view_model.schema_version == "1.4"
+    coverage_gaps = [
+        source
+        for source in bundle.view_model.sources
+        if source.contribution_status == "coverage_gap"
+    ]
+    assert bundle.view_model.metadata.contributing_source_count == len(bundle.view_model.sources)
+    assert bundle.view_model.metadata.coverage_gap_count == 0
+    assert coverage_gaps == []
     assert methodology.default_aggregation_view == "source_level"
     assert methodology.deduplicated_view == "not_computed"
     assert [category.category for category in methodology.source_categories] == list(
@@ -418,6 +426,27 @@ def test_methodology_publishes_possible_overlap_without_deduplicating(tmp_path: 
     mutated = bundle.view_model.model_copy(deep=True)
     mutated.methodology.source_overlap_groups = []
     with pytest.raises(ValidationError, match="must match active source metadata"):
+        PublicationViewModel.model_validate(mutated.model_dump(mode="json"))
+
+    mutated = bundle.view_model.model_copy(deep=True)
+    mutated_gap = next(source for source in mutated.sources if source.endorsement_count == 0)
+    mutated_gap.contribution_status = "coverage_gap"
+    mutated_gap.coverage_gap_status = "not_found"
+    mutated_gap.coverage_gap_note = "No published endorsement results were located."
+    mutated.metadata.contributing_source_count -= 1
+    mutated.metadata.coverage_gap_count += 1
+    validated_gap = PublicationViewModel.model_validate(mutated.model_dump(mode="json"))
+    assert validated_gap.metadata.coverage_gap_count == 1
+
+    mutated.metadata.coverage_gap_count = 0
+    mutated.metadata.contributing_source_count = mutated.metadata.source_count
+    with pytest.raises(ValidationError, match="contribution counts do not match"):
+        PublicationViewModel.model_validate(mutated.model_dump(mode="json"))
+
+    mutated.metadata.contributing_source_count -= 1
+    mutated.metadata.coverage_gap_count += 1
+    mutated_gap.coverage_gap_note = None
+    with pytest.raises(ValidationError, match="require a discovery status and note"):
         PublicationViewModel.model_validate(mutated.model_dump(mode="json"))
 
     mutated = bundle.view_model.model_copy(deep=True)

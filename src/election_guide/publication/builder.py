@@ -409,9 +409,25 @@ def _build_view_model(
                 cell.source_id == source.id and cell.state == "multi_endorsement"
                 for cell in published_cells
             ),
+            contribution_status=(
+                "coverage_gap"
+                if source.discovery.status in {"not_found", "access_restricted"}
+                else "contributing"
+            ),
+            coverage_gap_status=(
+                cast(Literal["not_found", "access_restricted"], source.discovery.status)
+                if source.discovery.status in {"not_found", "access_restricted"}
+                else None
+            ),
+            coverage_gap_note=(
+                source.discovery.notes
+                if source.discovery.status in {"not_found", "access_restricted"}
+                else None
+            ),
         )
         for source in active_sources
     ]
+    coverage_gap_count = sum(source.contribution_status == "coverage_gap" for source in sources)
     return PublicationViewModel(
         metadata=PublicationMetadata(
             election_id=dataset.inventory.election.id,
@@ -423,6 +439,8 @@ def _build_view_model(
             source_count=len(active_sources),
             captured_source_count=len(captured_source_ids),
             unavailable_source_count=len(active_source_ids - captured_source_ids),
+            contributing_source_count=len(sources) - coverage_gap_count,
+            coverage_gap_count=coverage_gap_count,
             race_count=len(dataset.inventory.races),
             published_race_count=len(consensus.races),
             unresolved_review_count=len(unresolved),
@@ -697,6 +715,10 @@ def _validate_publication(
         and view_model.metadata.captured_source_count == len(captured_source_ids)
         and view_model.metadata.unavailable_source_count
         == len(active_source_ids) - len(captured_source_ids)
+        and view_model.metadata.contributing_source_count
+        == sum(source.contribution_status == "contributing" for source in view_model.sources)
+        and view_model.metadata.coverage_gap_count
+        == sum(source.contribution_status == "coverage_gap" for source in view_model.sources)
         and view_model.metadata.race_count == len(dataset.inventory.races)
         and view_model.metadata.published_race_count == len(consensus.races)
     )
