@@ -479,15 +479,11 @@ def validate_rendered_guide(
         for value in global_pdf_values
         if _normalized_text(value).casefold() not in comparable_pdf_text
     )
-    missing_pdf_values.extend(
-        f"{source.name} / {_source_participation_label(source, compact=True)}"
-        for source in view_model.sources
-        if not _pdf_source_row_is_present(
-            source.name,
-            _source_participation_label(source, compact=True),
-            source_page_lines,
-        )
-    )
+    expected_source_participation = [
+        _source_participation_label(source, compact=True) for source in view_model.sources
+    ]
+    if _pdf_source_participation_labels(source_page_lines) != expected_source_participation:
+        missing_pdf_values.append("ordered source participation rows")
     pdf_identity_text = _pdf_text_runs(reader.pages[0]).casefold()
     missing_pdf_values.extend(
         value
@@ -1777,16 +1773,18 @@ def _source_participation_label(source: PublicationSource, *, compact: bool = Fa
     return f"{source.endorsement_count} {noun} · {source.split_endorsement_count} split"
 
 
-def _pdf_source_row_is_present(name: str, participation: str, lines: list[str]) -> bool:
-    """Bind a source name to its participation value in one PDF layout row and column."""
-    normalized_name = _normalized_text(name).casefold()
-    normalized_participation = _normalized_text(participation).casefold()
-    name_pattern = r"\s+".join(re.escape(word) for word in normalized_name.split())
-    participation_pattern = r"\s+".join(
-        re.escape(word) for word in normalized_participation.split()
-    )
-    pattern = re.compile(r"(?:^|\s{2,})" + name_pattern + r"\s{1,100}" + participation_pattern)
-    return any(pattern.search(line.casefold()) is not None for line in lines)
+def _pdf_source_participation_labels(lines: list[str]) -> list[str]:
+    """Read participation labels in PDF DOM order: left column, then right column."""
+    if not lines:
+        return []
+    midpoint = max(len(line) for line in lines) // 2
+    pattern = re.compile(r"\d+(?:\s+picks)?\s*·\s*\d+\s+split")
+    columns: tuple[list[tuple[int, str]], list[tuple[int, str]]] = ([], [])
+    for line_number, line in enumerate(lines):
+        for match in pattern.finditer(line):
+            column = 0 if match.start() < midpoint else 1
+            columns[column].append((line_number, _normalized_text(match.group())))
+    return [label for column in columns for _, label in sorted(column)]
 
 
 def _html_semantic_values(race: PublicationRace) -> dict[str, list[str]]:

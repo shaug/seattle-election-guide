@@ -33,7 +33,7 @@ from election_guide.rendering.renderer import (
     _missing_pdf_race_values,  # pyright: ignore[reportPrivateUsage]
     _pdf_race_core_values,  # pyright: ignore[reportPrivateUsage]
     _pdf_race_display_values,  # pyright: ignore[reportPrivateUsage]
-    _pdf_source_row_is_present,  # pyright: ignore[reportPrivateUsage]
+    _pdf_source_participation_labels,  # pyright: ignore[reportPrivateUsage]
     _render_pdf,  # pyright: ignore[reportPrivateUsage]
     _render_pdf_pages,  # pyright: ignore[reportPrivateUsage]
     _render_screenshot,  # pyright: ignore[reportPrivateUsage]
@@ -1638,18 +1638,22 @@ def test_responsive_tablet_layout_and_methodology_disclosure(tmp_path: Path) -> 
     )
 
 
-def test_pdf_source_row_match_does_not_use_a_longer_source_name_suffix() -> None:
+def test_pdf_source_participation_order_survives_wrapped_source_names() -> None:
     lines = [
-        "    Washington State Democratic Party                       999 · 999 split",
-        "    Environment and Climate Caucus of the Washington State Democratic Party  0 · 0 split",
+        "    First source name                       2 · 0 split           Third source",
+        "                                                    "
+        "                name wraps       5 · 1 split",
+        "    Environment and Climate Caucus of the",
+        "    Washington State Democratic Party      0 · 0 split           "
+        "Times source        15 picks · 0 split",
     ]
 
-    assert not _pdf_source_row_is_present("Washington State Democratic Party", "0 · 0 split", lines)
-    assert _pdf_source_row_is_present(
-        "Environment and Climate Caucus of the Washington State Democratic Party",
+    assert _pdf_source_participation_labels(lines) == [
+        "2 · 0 split",
         "0 · 0 split",
-        lines,
-    )
+        "5 · 1 split",
+        "15 picks · 0 split",
+    ]
 
 
 def test_pdf_identity_validation_rejects_concatenated_print_title(tmp_path: Path) -> None:
