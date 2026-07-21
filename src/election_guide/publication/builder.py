@@ -265,18 +265,6 @@ def _build_view_model(
         for group in dataset.source_registry.overlap_groups
         if len(set(group.member_ids) & active_source_ids) > 1
     }
-    sources = [
-        PublicationSource(
-            id=source.id,
-            name=source.name,
-            category=source.category,
-            panel_role=cast(Literal["consensus", "comparison"], source.panel_role),
-            organization_url=source.organization_url,
-            evidence_url=source.discovery.canonical_url or source.discovery.requested_url,
-            overlap_group_ids=sorted(set(source.overlap_group_ids) & published_overlap_group_ids),
-        )
-        for source in active_sources
-    ]
     result_by_race = {result.race_id: result for result in consensus.races}
     effective_endorsements = [
         cast(NormalizedEndorsement, effective[item.id]) for item in dataset.endorsements
@@ -352,7 +340,7 @@ def _build_view_model(
             category_coverage_count=result.category_coverage_count,
             no_endorsement_count=result.no_endorsement_count,
             missing_source_count=result.missing_source_count,
-            endorsement_groups=_endorsement_groups(cells, sources),
+            endorsement_groups=_endorsement_groups(cells, active_sources),
             category_breakdown=[
                 PublicationCategoryAnalysis(
                     category=item.category,
@@ -400,6 +388,29 @@ def _build_view_model(
         PublicationSection(id=section_id, label=label, races=section_races[section_id])
         for section_id, label in SECTION_ORDER
         if section_races[section_id]
+    ]
+    published_cells = [
+        cell for section in sections for race in section.races for cell in race.source_cells
+    ]
+    sources = [
+        PublicationSource(
+            id=source.id,
+            name=source.name,
+            category=source.category,
+            panel_role=cast(Literal["consensus", "comparison"], source.panel_role),
+            organization_url=source.organization_url,
+            evidence_url=source.discovery.canonical_url or source.discovery.requested_url,
+            overlap_group_ids=sorted(set(source.overlap_group_ids) & published_overlap_group_ids),
+            endorsement_count=sum(
+                cell.source_id == source.id and cell.state in {"endorsement", "multi_endorsement"}
+                for cell in published_cells
+            ),
+            split_endorsement_count=sum(
+                cell.source_id == source.id and cell.state == "multi_endorsement"
+                for cell in published_cells
+            ),
+        )
+        for source in active_sources
     ]
     return PublicationViewModel(
         metadata=PublicationMetadata(
@@ -546,7 +557,7 @@ def _methodology(dataset: CanonicalDataset, consensus: ConsensusReport) -> Publi
         source for source in dataset.source_registry.sources if source.panel_role != "excluded"
     ]
     active_source_ids = {source.id for source in active_sources}
-    categories = sorted({source.category for source in active_sources})
+    categories = list(dict.fromkeys(source.category for source in active_sources))
     return PublicationMethodology(
         process_steps=[
             "Collect official endorsements",

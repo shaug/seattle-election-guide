@@ -38,9 +38,9 @@ JSON uses canonical sorted serialization and exact rational strings such as `"3/
 registry and inventory order, explicit field order, UTF-8, and Unix newlines. Identical inputs,
 build timestamp, and Git revision therefore produce identical bytes.
 
-`publication_view_model.json` uses schema `1.2`; this version adds required candidate-centric
-affirmative endorsement groups while retaining the `1.1` category analysis and overlap metadata
-for audit.
+`publication_view_model.json` uses schema `1.3`; this version adds required per-source
+participation counts while retaining the `1.2` candidate-centric affirmative endorsement groups,
+category analysis, and overlap metadata for audit.
 
 ## Shared view model
 
@@ -53,6 +53,13 @@ cells. Voter-facing HTML and PDF use the consensus share and source count rather
 the audit grade. Methodology also publishes source categories and possible-overlap groups. It
 identifies `source_level` as the default aggregation view and `not_computed` as the deduplicated-view
 status, so a consumer cannot silently substitute coalition grouping for raw source-level consensus.
+
+Every active source includes `endorsement_count` and `split_endorsement_count`. The first counts
+published races where its effective cell is `endorsement` or `multi_endorsement`; the second is the
+subset in `multi_endorsement`. Counts include only races published in the guide. The Seattle Times
+comparison uses the same affirmative-decision derivation but is labeled as picks, because it never
+enters the progressive consensus. Source-category membership and category order are also validated
+against the publication source registry.
 
 An `Insufficient` race retains its measured support leader for audit, but has no recommendation
 candidate and displays `Too few endorsements`. This prevents a renderer from turning one source's

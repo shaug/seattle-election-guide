@@ -40,11 +40,15 @@ class PublicationSource(PublicationModel):
     organization_url: str
     evidence_url: str
     overlap_group_ids: list[str]
+    endorsement_count: int = Field(ge=0, strict=True)
+    split_endorsement_count: int = Field(ge=0, strict=True)
 
     @model_validator(mode="after")
     def validate_overlap_groups(self) -> PublicationSource:
         if self.overlap_group_ids != sorted(set(self.overlap_group_ids)):
             raise ValueError("publication source overlap group IDs must be unique and sorted")
+        if self.split_endorsement_count > self.endorsement_count:
+            raise ValueError("split endorsement count cannot exceed endorsement count")
         return self
 
 
@@ -456,7 +460,7 @@ class PublicationMetadata(PublicationModel):
 
 
 class PublicationViewModel(PublicationModel):
-    schema_version: Literal["1.2"] = "1.2"
+    schema_version: Literal["1.3"] = "1.3"
     metadata: PublicationMetadata
     sources: list[PublicationSource]
     sections: list[PublicationSection]
@@ -479,7 +483,19 @@ class PublicationViewModel(PublicationModel):
         category_labels = {
             category.category: category.label for category in self.methodology.source_categories
         }
+        expected_category_order = list(dict.fromkeys(source.category for source in self.sources))
+        if [category.category for category in self.methodology.source_categories] != (
+            expected_category_order
+        ):
+            raise ValueError("methodology source categories must follow publication source order")
+        for category in self.methodology.source_categories:
+            if category.source_ids != [
+                source.id for source in self.sources if source.category == category.category
+            ]:
+                raise ValueError("methodology source categories must match publication sources")
         overlap_groups = self.methodology.source_overlap_groups
+        expected_endorsement_counts = {source.id: 0 for source in self.sources}
+        expected_split_counts = {source.id: 0 for source in self.sources}
         if [group.id for group in overlap_groups] != sorted({group.id for group in overlap_groups}):
             raise ValueError("methodology overlap groups must be unique and sorted")
         declared_overlap_members: dict[str, set[str]] = {}
@@ -505,6 +521,11 @@ class PublicationViewModel(PublicationModel):
                     raise ValueError("race source cells must match the ordered source registry")
                 if [item.source_id for item in race.comparisons] != ordered_comparison_ids:
                     raise ValueError("race comparisons must match the ordered comparison sources")
+                for cell in race.source_cells:
+                    if cell.state in {"endorsement", "multi_endorsement"}:
+                        expected_endorsement_counts[cell.source_id] += 1
+                    if cell.state == "multi_endorsement":
+                        expected_split_counts[cell.source_id] += 1
                 consensus_cells = [
                     cell
                     for cell in race.source_cells
@@ -644,6 +665,12 @@ class PublicationViewModel(PublicationModel):
                         }
                     ):
                         raise ValueError("race category analysis does not match source cells")
+        for source in self.sources:
+            if (
+                source.endorsement_count != expected_endorsement_counts[source.id]
+                or source.split_endorsement_count != expected_split_counts[source.id]
+            ):
+                raise ValueError("source participation counts do not match published source cells")
         if self.metadata.source_count != len(self.sources):
             raise ValueError("metadata source count does not match the view model")
         if self.metadata.published_race_count != len(races):

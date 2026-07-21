@@ -9,6 +9,18 @@
   <style>{{ stylesheet | safe }}</style>
 </head>
 <body>
+  {% macro source_participation(source, compact=false) -%}
+    {% if compact %}{{ source.endorsement_count }}{% if source.panel_role == 'comparison' %} picks{% endif %} · {{ source.split_endorsement_count }} split{% else %}{% if source.panel_role == 'comparison' %}{{ source.endorsement_count }} picks{% else %}{{ source.endorsement_count }} endorsements{% endif %} · {{ source.split_endorsement_count }} split{% endif %}
+  {%- endmacro %}
+  {% macro source_row(source, compact=false) -%}
+    <div class="source-row source-row-{{ source.panel_role }}"
+      data-publication-source-id="{{ source.id }}"
+      data-source-category="{{ source.category }}"
+      data-source-role="{{ source.panel_role }}">
+      <a href="{{ source.evidence_url }}">{{ source.name }}</a>
+      <span>{{ source_participation(source, compact) }}</span>
+    </div>
+  {%- endmacro %}
   <a class="skip-link" href="#guide-races">Skip to recommendations</a>
 
   <main class="screen-guide">
@@ -22,8 +34,6 @@
       <div class="hero-meta" aria-label="Guide metadata">
         <span>Election {{ guide.metadata.election_date }}</span>
         <span>{{ guide.metadata.published_race_count }} races</span>
-        <span>{{ guide.metadata.captured_source_count }} represented sources · {{ guide.metadata.unavailable_source_count }} unavailable</span>
-        <span>Data {{ guide.metadata.data_version }}</span>
       </div>
     </header>
 
@@ -126,51 +136,61 @@
         <a href="{{ config.project_url }}">Source and audit files</a>
       </div>
       <details class="guide-notes" id="methodology">
-        <summary><span>Methodology, sources, and verification</span><span aria-hidden="true">+</span></summary>
+        <summary><span>Methodology</span><span aria-hidden="true">+</span></summary>
         <div class="methodology-screen">
-      <section class="methodology-panel">
-        <p class="eyebrow">Methodology</p>
-        <h2>How the consensus works</h2>
-        <ol class="process-list">
-          {% for step in guide.methodology.process_steps %}<li>{{ step }}</li>{% endfor %}
-        </ol>
-      </section>
-      <section class="methodology-panel">
-        <h3>Read this guide carefully</h3>
-        {% for note in guide.methodology.interpretation_notes %}<p>{{ note }}</p>{% endfor %}
-        {% for limitation in guide.methodology.limitations %}<p>{{ limitation }}</p>{% endfor %}
-      </section>
       <section class="methodology-panel screen-consensus-key">
-        <h3>How to read consensus</h3>
+        <h3>Agreement, not a grade</h3>
         <p>The percentage is the leading choice's share of endorsement points among sources
           that explicitly endorsed in that race.</p>
-        <p>The source count shows how much evidence is behind that percentage. Consensus
-          measures agreement among endorsers, not candidate quality.</p>
+        <p>The source count is the sample behind the percentage. Neither number rates candidate quality.</p>
       </section>
-      <section class="methodology-panel screen-source-categories">
-        <h3>Source categories</h3>
-        {% for category in guide.methodology.source_categories %}<p><strong>{{ category.label }}</strong>
-          - {{ category.source_ids | length }} sources</p>{% endfor %}
-        <h3>Possible overlap groups</h3>
+      <section class="methodology-panel">
+        <h3>What enters the count</h3>
+        <p>Each organization has equal weight. Multi-candidate endorsements split one point;
+          no endorsement and missing coverage do not enter the percentage.</p>
+        <p>Legislative-district groups count on broader races they cover, but only their own
+          district's legislative contests.</p>
+      </section>
+      <section class="methodology-panel">
+        <h3>The Times is separate</h3>
+        <p>Seattle Times choices are shown only for comparison and never add a vote to the
+          progressive consensus.</p>
+        <p>This guide aggregates endorsements; it is not independent candidate vetting.</p>
+      </section>
+      <section class="methodology-panel methodology-overlap">
+        <h3>Related organizations</h3>
         {% if guide.methodology.source_overlap_groups %}
           {% for group in guide.methodology.source_overlap_groups %}<p><strong>{{ group.label }}</strong>
-            — {{ group.source_ids | length }} sources. {{ group.description }}</p>{% endfor %}
+            — {{ group.source_ids | length }} sources. These relationships are disclosed, not deduplicated.</p>{% endfor %}
         {% else %}<p>No possible overlap groups span multiple active sources.</p>{% endif %}
-      </section>
-      <section class="methodology-panel screen-audit-metadata">
-        <h3>Build and audit details</h3>
-        <p>Election {{ guide.metadata.election_date }} | Generated {{ guide.metadata.generated_at.isoformat() }}</p>
-        <p>Data {{ guide.metadata.data_version }} | Code {{ guide.metadata.git_commit[:12] }}</p>
-        <p>{{ guide.metadata.captured_source_count }} represented / {{ guide.metadata.source_count }} active sources | {{ guide.metadata.published_race_count }} races |
-          {{ guide.metadata.unresolved_review_count }} unresolved reviews</p>
-        <p><a href="{{ config.project_url }}">Project source and audit files</a></p>
-      </section>
-      <section class="methodology-panel screen-verification">
-        <h3>Verify the guide</h3>
-        <p>{{ guide.methodology.verification_instructions }}</p>
+        <p>Organizations may update endorsements after capture, and a voter's exact ballot depends on registration address.</p>
       </section>
         </div>
       </details>
+      <details class="guide-notes" id="sources">
+        <summary><span>Sources ({{ guide.metadata.source_count }})</span><span aria-hidden="true">+</span></summary>
+        <div class="screen-source-directory">
+          <div class="screen-source-heading">
+            <div><p class="eyebrow">Evidence directory</p><h2>Sources in this guide</h2></div>
+            <p>Counts cover the {{ guide.metadata.published_race_count }} races shown. Split is the
+              multi-candidate subset; zero means the source currently contributes no picks.</p>
+          </div>
+          <div class="screen-source-columns">
+            {% for category in guide.methodology.source_categories %}
+            <section class="screen-source-category">
+              <h3 data-source-category="{{ category.category }}">{{ category.label }}</h3>
+              {% for source in guide.sources if source.category == category.category %}
+                {{ source_row(source) }}
+              {% endfor %}
+            </section>
+            {% endfor %}
+          </div>
+        </div>
+      </details>
+      <div class="screen-footer-meta">
+        <span>Election {{ guide.metadata.election_date }} · Built {{ guide.metadata.generated_at.date().isoformat() }} · Data {{ guide.metadata.data_version }} · Code {{ guide.metadata.git_commit[:12] }}</span>
+        <a href="{{ config.project_url }}">Source and audit files</a>
+      </div>
     </footer>
   </main>
 
@@ -210,7 +230,7 @@
           <h1 data-document-role="print-title">Seattle Progressive Endorsement Guide</h1>
         </div>
         <div class="print-header-meta">{{ guide.metadata.election_date }}<br>
-          {{ guide.metadata.published_race_count }} races | {{ guide.metadata.captured_source_count }}/{{ guide.metadata.source_count }} sources represented</div>
+          {{ guide.metadata.published_race_count }} races · source details on page 2</div>
       </header>
       <p class="print-intro">Progressive-source consensus. Seattle Times choices are comparison only.
         Too few explicit endorsements are labeled; no recommendation is made from insufficient evidence.</p>
@@ -246,7 +266,7 @@
       <header class="method-header">
         <p>Methodology and sources</p>
         <h1>How to read this guide</h1>
-        <div>{{ guide.metadata.source_count }} active sources · linked to source evidence</div>
+        <div>{{ guide.metadata.source_count }} sources · participation across displayed races</div>
       </header>
       <div class="page-two-content">
         <div class="method-summary">
@@ -275,7 +295,8 @@
           <div class="source-panel-heading">
             <div><p>Evidence directory</p><h2>Sources in this guide</h2></div>
             <span>{{ guide.sources | selectattr('panel_role', 'equalto', 'consensus') | list | length }} consensus ·
-              {{ guide.sources | selectattr('panel_role', 'equalto', 'comparison') | list | length }} Times comparison</span>
+              {{ guide.sources | selectattr('panel_role', 'equalto', 'comparison') | list | length }} Times comparison<br>
+              Counts: endorsements/picks · split subset</span>
           </div>
           {% set source_midpoint = (guide.sources | length + 1) // 2 %}
           <div class="source-columns">
@@ -290,13 +311,7 @@
                 <h3 data-source-category="{{ source.category }}">{{ category.label }}</h3>
                 {% set displayed_category.id = source.category %}
                 {% endif %}
-                <div class="source-row source-row-{{ source.panel_role }}"
-                  data-publication-source-id="{{ source.id }}"
-                  data-source-category="{{ source.category }}"
-                  data-source-role="{{ source.panel_role }}">
-                  <a href="{{ source.evidence_url }}">{{ source.name }}</a>
-                  <span>{% if source.panel_role == 'comparison' %}Times comparison{% else %}Consensus{% endif %}</span>
-                </div>
+                {{ source_row(source, true) }}
               {% endfor %}
             </div>
             {% endfor %}
@@ -322,8 +337,7 @@
       </div>
       <footer class="page-two-footer">
         <span>Election {{ guide.metadata.election_date }} · Built {{ guide.metadata.generated_at.date().isoformat() }} · Data {{ guide.metadata.data_version }} · Code {{ guide.metadata.git_commit[:12] }}</span>
-        <span>{{ guide.metadata.captured_source_count }}/{{ guide.metadata.source_count }} sources · {{ guide.metadata.unavailable_source_count }} unavailable · {{ guide.metadata.published_race_count }} races · {{ guide.metadata.unresolved_review_count }} reviews ·
-          <a href="{{ config.project_url }}">Source and audit files</a></span>
+        <span>{{ guide.metadata.published_race_count }} races · <a href="{{ config.project_url }}">Source and audit files</a></span>
       </footer>
     </section>
   </div>
@@ -335,7 +349,7 @@
       document.documentElement.classList.add(`${edition}-edition`);
     }
     if (edition === 'detailed') {
-      document.querySelector('.guide-notes')?.setAttribute('open', '');
+      document.querySelectorAll('.guide-notes').forEach(details => details.setAttribute('open', ''));
     }
     const centerPrintInk = () => {
       if (window.__disablePrintInkCentering) return;

@@ -111,6 +111,20 @@ def test_bundle_is_deterministic_reconstructable_and_complete(tmp_path: Path) ->
         for endorser in group.endorsers
     )
     assert target.support_summary == "Based on 2 explicitly endorsing sources"
+    for source in first.view_model.sources:
+        source_cells = [
+            cell
+            for section in first.view_model.sections
+            for race in section.races
+            for cell in race.source_cells
+            if cell.source_id == source.id
+        ]
+        assert source.endorsement_count == sum(
+            cell.state in {"endorsement", "multi_endorsement"} for cell in source_cells
+        )
+        assert source.split_endorsement_count == sum(
+            cell.state == "multi_endorsement" for cell in source_cells
+        )
 
     summary_rows = _csv_rows(first.artifacts["race_summary.csv"])
     summary = next(row for row in summary_rows if row["race_id"] == RACE_ID)
@@ -127,6 +141,16 @@ def test_bundle_is_deterministic_reconstructable_and_complete(tmp_path: Path) ->
         first.provenance_manifest.consensus_output_hash
         == hashlib.sha256(first.artifacts["consensus.json"]).hexdigest()
     )
+
+    mutated = first.view_model.model_copy(deep=True)
+    mutated.sources[0].endorsement_count += 1
+    with pytest.raises(ValidationError, match="source participation counts"):
+        PublicationViewModel.model_validate(mutated.model_dump(mode="json"))
+
+    mutated = first.view_model.model_copy(deep=True)
+    mutated.methodology.source_categories[0].source_ids = []
+    with pytest.raises(ValidationError, match="source categories must match"):
+        PublicationViewModel.model_validate(mutated.model_dump(mode="json"))
 
     mutated = first.view_model.model_copy(deep=True)
     mutated_target = next(
@@ -357,9 +381,12 @@ def test_methodology_publishes_possible_overlap_without_deduplicating(tmp_path: 
     )
 
     methodology = bundle.view_model.methodology
-    assert bundle.view_model.schema_version == "1.2"
+    assert bundle.view_model.schema_version == "1.3"
     assert methodology.default_aggregation_view == "source_level"
     assert methodology.deduplicated_view == "not_computed"
+    assert [category.category for category in methodology.source_categories] == list(
+        dict.fromkeys(source.category for source in bundle.view_model.sources)
+    )
     assert [group.model_dump(mode="json") for group in methodology.source_overlap_groups] == [
         {
             "id": "fixture-possible-overlap",
