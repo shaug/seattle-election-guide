@@ -80,6 +80,7 @@ def render_html_document(
     stylesheet = (TEMPLATE_DIR / "guide.css").read_text(encoding="utf-8")
     rendered_urls = [
         configuration.project_url,
+        *(source.evidence_url for source in view_model.sources),
         *(
             endorser.evidence_url
             for section in view_model.sections
@@ -395,6 +396,7 @@ def validate_rendered_guide(
     expected_html_links = {
         "#guide-races",
         configuration.project_url,
+        *(source.evidence_url for source in view_model.sources),
         *(
             endorser.evidence_url
             for race in expected_races
@@ -404,16 +406,47 @@ def validate_rendered_guide(
     }
     if parser.links != expected_html_links:
         missing_evidence_rows.append("document: unexpected or missing links")
+    source_categories = {
+        category.category: category.label for category in view_model.methodology.source_categories
+    }
+    expected_source_ids = {source.id for source in view_model.sources}
+    if set(parser.publication_source_text) != expected_source_ids:
+        missing_evidence_rows.append("document: unexpected or missing publication source rows")
+    for source in view_model.sources:
+        role_label = "Times comparison" if source.panel_role == "comparison" else "Consensus"
+        expected_row = _normalized_text(f"{source.name} {role_label}")
+        observed_rows = [
+            _normalized_text(" ".join(parts))
+            for parts in parser.publication_source_text.get(source.id, [])
+        ]
+        expected_classes = {"source-row", f"source-row-{source.panel_role}"}
+        if (
+            observed_rows != [expected_row]
+            or parser.publication_source_links.get(source.id, []) != [[source.evidence_url]]
+            or parser.publication_source_categories.get(source.id, []) != [source.category]
+            or parser.publication_source_heading_categories.get(source.id, []) != [source.category]
+            or parser.publication_source_roles.get(source.id, []) != [source.panel_role]
+            or parser.publication_source_classes.get(source.id, []) != [expected_classes]
+            or source.category not in source_categories
+        ):
+            missing_evidence_rows.append(f"{source.id}: publication source row values")
 
     reader = PdfReader(pdf_path)
     pdf_texts = [page.extract_text() or "" for page in reader.pages]
     pdf_text = "\n".join(pdf_texts)
     comparable_pdf_text = _normalized_text(pdf_text).casefold()
+    source_page_text = (
+        reader.pages[1].extract_text(extraction_mode="layout") if len(reader.pages) > 1 else ""
+    )
     primary_value_fn = (
         _pdf_race_core_values if detailed_pdf_path is not None else _pdf_race_display_values
     )
     missing_pdf_values = _missing_pdf_race_values(expected_races, pdf_text, primary_value_fn)
     identity_values = ["August 2026 Primary", configuration.title]
+    consensus_source_count = sum(source.panel_role == "consensus" for source in view_model.sources)
+    comparison_source_count = sum(
+        source.panel_role == "comparison" for source in view_model.sources
+    )
     global_pdf_values = [
         *(section.label for section in view_model.sections),
         f"{view_model.metadata.published_race_count} races",
@@ -421,15 +454,33 @@ def validate_rendered_guide(
             f"{view_model.metadata.captured_source_count}/"
             f"{view_model.metadata.source_count} sources represented"
         ),
-        *(
-            (f"{len(category.source_ids)} source{'s' if len(category.source_ids) != 1 else ''}")
-            for category in view_model.methodology.source_categories
-        ),
+        f"{consensus_source_count} consensus",
+        f"{comparison_source_count} Times comparison",
+        *(category.label for category in view_model.methodology.source_categories),
+        "Overlap and limitations",
+        "Verify before voting",
+        view_model.methodology.verification_instructions,
+        f"Election {view_model.metadata.election_date}",
+        f"Built {view_model.metadata.generated_at.date().isoformat()}",
+        f"Data {view_model.metadata.data_version}",
+        f"Code {view_model.metadata.git_commit[:12]}",
+        f"{view_model.metadata.unavailable_source_count} unavailable",
+        f"{view_model.metadata.unresolved_review_count} reviews",
     ]
     missing_pdf_values.extend(
         value
         for value in global_pdf_values
         if _normalized_text(value).casefold() not in comparable_pdf_text
+    )
+    missing_pdf_values.extend(
+        f"{source.name} / "
+        f"{'Times comparison' if source.panel_role == 'comparison' else 'Consensus'}"
+        for source in view_model.sources
+        if not _pdf_source_row_is_present(
+            source.name,
+            "Times comparison" if source.panel_role == "comparison" else "Consensus",
+            source_page_text,
+        )
     )
     pdf_identity_text = _pdf_text_runs(reader.pages[0]).casefold()
     missing_pdf_values.extend(
@@ -439,9 +490,19 @@ def validate_rendered_guide(
     )
     pages_are_letter = _pages_are_letter(reader)
     pdf_links = _pdf_links(reader)
-    expected_pdf_links = [configuration.project_url, configuration.project_url]
-    pdf_links_valid = _web_urls_are_safe(pdf_links) and Counter(pdf_links) == Counter(
-        expected_pdf_links
+    pdf_link_rows = _pdf_link_rows(reader)
+    expected_pdf_links = [
+        configuration.project_url,
+        *(source.evidence_url for source in view_model.sources),
+        configuration.project_url,
+    ]
+    expected_source_link_rows = [
+        (source.evidence_url, _normalized_text(source.name)) for source in view_model.sources
+    ]
+    pdf_links_valid = (
+        _web_urls_are_safe(pdf_links)
+        and pdf_links == expected_pdf_links
+        and pdf_link_rows[1:-1] == expected_source_link_rows
     )
     link_count = len(pdf_links)
     metadata = reader.metadata
@@ -878,9 +939,10 @@ def _inspect_print_layout(
                     '.screen-guide', '.race-card h3', '.support-line', '.alternative',
                     '.comparison', '.warning', '.methodology-panel'
                   ] : [
-                    '.print-races', '.method-grid section', '.print-race-title',
+                    '.print-races', '.method-summary article', '.source-panel', '.source-row',
+                    '.method-notes article', '.page-two-footer span', '.print-race-title',
                     '.print-race-result > strong', '.print-race-context > span',
-                    '.print-times-pick', '.print-race-notes span', '.print-metadata strong'
+                    '.print-times-pick', '.print-race-notes span'
                   ];
                   for (const selector of selectors) {
                     const elements = [...document.querySelectorAll(selector)];
@@ -913,26 +975,21 @@ def _inspect_print_layout(
                     }
                   }
                   if (detailed) return issues;
-                  const methodGrid = document.querySelector('.method-grid');
-                  const metadata = document.querySelector('.print-metadata');
-                  if (methodGrid) {
-                    const gridRect = methodGrid.getBoundingClientRect();
-                    for (const [index, section] of
-                         [...methodGrid.querySelectorAll('section')].entries()) {
-                      const sectionRect = section.getBoundingClientRect();
-                      const childBottom = Math.max(
-                        ...[...section.children].map(
-                          child => child.getBoundingClientRect().bottom
-                        )
-                      );
-                      if (sectionRect.bottom > gridRect.bottom + 1 ||
-                          childBottom > sectionRect.bottom + 1) {
-                        issues.push(`.method-grid section[${index}]-bounds`);
-                      }
+                  const sourcePanel = document.querySelector('.source-panel');
+                  const methodNotes = document.querySelector('.method-notes');
+                  const sourceColumns = [...document.querySelectorAll('.source-column')];
+                  if (!sourcePanel || !methodNotes || sourceColumns.length !== 2) {
+                    issues.push('.source-directory-structure');
+                  } else {
+                    if (sourcePanel.getBoundingClientRect().bottom >
+                        methodNotes.getBoundingClientRect().top + 1) {
+                      issues.push('.source-panel-notes-overlap');
                     }
-                    if (metadata && gridRect.bottom >
-                        metadata.getBoundingClientRect().top + 1) {
-                      issues.push('.method-grid-metadata-overlap');
+                    const sourceCounts = sourceColumns.map(
+                      column => column.querySelectorAll('.source-row').length
+                    );
+                    if (Math.abs(sourceCounts[0] - sourceCounts[1]) > 1) {
+                      issues.push('.source-column-balance');
                     }
                   }
                   const raceColumns = [...document.querySelectorAll('.print-race-column')];
@@ -1054,11 +1111,16 @@ def _inspect_print_layout(
                   const pages = [...document.querySelectorAll('.print-page')];
                   for (const [index, page] of pages.entries()) {
                     const footer = page.querySelector('footer');
-                    const selector = index === 0 ? '.print-races' : '.print-metadata';
+                    const selector = index === 0 ? '.print-races' : '.page-two-content';
                     const content = page.querySelector(selector);
                     if (footer && content && content.getBoundingClientRect().bottom >
                         footer.getBoundingClientRect().top + 1) {
                       issues.push(`.print-page[${index}]-footer-overlap`);
+                    }
+                    if (index === 1 && footer && content &&
+                        footer.getBoundingClientRect().top -
+                        content.getBoundingClientRect().bottom > 24) {
+                      issues.push('.print-page[1]-underfill');
                     }
                   }
                   return issues;
@@ -1522,6 +1584,67 @@ def _pdf_links(reader: PdfReader) -> list[str]:
     return links
 
 
+def _pdf_link_rows(reader: PdfReader) -> list[tuple[str, str]]:
+    """Return each linked URI with the visible text inside its annotation rectangle."""
+    link_rows: list[tuple[str, str]] = []
+    for page in reader.pages:
+        annotations: list[tuple[str, tuple[float, float, float, float]]] = []
+        for annotation_reference in page.get("/Annots", []):
+            annotation = annotation_reference.get_object()
+            action = annotation.get("/A")
+            uri = action.get("/URI") if action is not None else None
+            rectangle = annotation.get("/Rect")
+            if uri is not None and rectangle is not None:
+                annotations.append(
+                    (
+                        str(uri),
+                        (
+                            float(rectangle[0]),
+                            float(rectangle[1]),
+                            float(rectangle[2]),
+                            float(rectangle[3]),
+                        ),
+                    )
+                )
+
+        text_runs = _pdf_positioned_text_runs(page)
+        for uri, (left, bottom, right, top) in annotations:
+            visible_text = " ".join(
+                text
+                for x, y, text in text_runs
+                if left - 1 <= x <= right + 1 and bottom - 2 <= y <= top + 2
+            )
+            link_rows.append((uri, _normalized_text(visible_text)))
+    return link_rows
+
+
+def _pdf_positioned_text_runs(page: PageObject) -> list[tuple[float, float, str]]:
+    text_runs: list[tuple[float, float, str]] = []
+
+    def collect(
+        text: str,
+        current_transform: list[float],
+        text_transform: list[float],
+        *_: object,
+    ) -> None:
+        if not text.strip():
+            return
+        x = (
+            text_transform[4] * current_transform[0]
+            + text_transform[5] * current_transform[2]
+            + current_transform[4]
+        )
+        y = (
+            text_transform[4] * current_transform[1]
+            + text_transform[5] * current_transform[3]
+            + current_transform[5]
+        )
+        text_runs.append((x, y, text))
+
+    page.extract_text(visitor_text=collect)
+    return text_runs
+
+
 def _pdf_structure_types(reader: PdfReader) -> set[str]:
     root = reader.trailer.get("/Root")
     if isinstance(root, IndirectObject):
@@ -1591,6 +1714,19 @@ def _pdf_value_is_present(value: str, segment: str) -> bool:
     return (
         re.search(r"(?<!\S)" + re.escape(normalized) + r"(?=\s|$)", comparable_segment) is not None
     )
+
+
+def _pdf_source_row_is_present(name: str, role: str, segment: str) -> bool:
+    """Match a source row even when the right-hand role interrupts a wrapped name."""
+    name_parts = _normalized_text(name).split()
+    role_parts = _normalized_text(role).split()
+    for insertion_point in range(len(name_parts) + 1):
+        candidate = " ".join(
+            [*name_parts[:insertion_point], *role_parts, *name_parts[insertion_point:]]
+        )
+        if _pdf_value_is_present(candidate, segment):
+            return True
+    return False
 
 
 def _html_semantic_values(race: PublicationRace) -> dict[str, list[str]]:
@@ -1725,12 +1861,20 @@ class _GuideHTMLParser(HTMLParser):
         self.display_text: dict[tuple[str, str], list[list[str]]] = {}
         self.display_accessible_names: dict[tuple[str, str], list[str | None]] = {}
         self.display_element_roles: dict[tuple[str, str], list[str | None]] = {}
+        self.publication_source_text: dict[str, list[list[str]]] = {}
+        self.publication_source_links: dict[str, list[list[str]]] = {}
+        self.publication_source_categories: dict[str, list[str | None]] = {}
+        self.publication_source_heading_categories: dict[str, list[str | None]] = {}
+        self.publication_source_roles: dict[str, list[str | None]] = {}
+        self.publication_source_classes: dict[str, list[set[str]]] = {}
         self._text_parts: list[str] = []
         self._current_race_id: str | None = None
         self._current_endorsement_key: tuple[tuple[str, str, str], int] | None = None
         self._current_endorsement_group_key: tuple[tuple[str, str], int] | None = None
         self._current_display_role: tuple[tuple[str, str], int] | None = None
         self._display_role_tag: str | None = None
+        self._current_publication_source: tuple[str, int] | None = None
+        self._current_source_category: str | None = None
 
     @property
     def text(self) -> str:
@@ -1746,6 +1890,26 @@ class _GuideHTMLParser(HTMLParser):
         source_id = attributes.get("data-source-id")
         candidate_id = attributes.get("data-candidate-id")
         classes = set((attributes.get("class") or "").split())
+        heading_category = attributes.get("data-source-category")
+        if tag == "h3" and heading_category is not None:
+            self._current_source_category = heading_category
+        publication_source_id = attributes.get("data-publication-source-id")
+        if publication_source_id is not None:
+            rows = self.publication_source_text.setdefault(publication_source_id, [])
+            links = self.publication_source_links.setdefault(publication_source_id, [])
+            rows.append([])
+            links.append([])
+            self.publication_source_categories.setdefault(publication_source_id, []).append(
+                attributes.get("data-source-category")
+            )
+            self.publication_source_heading_categories.setdefault(publication_source_id, []).append(
+                self._current_source_category
+            )
+            self.publication_source_roles.setdefault(publication_source_id, []).append(
+                attributes.get("data-source-role")
+            )
+            self.publication_source_classes.setdefault(publication_source_id, []).append(classes)
+            self._current_publication_source = (publication_source_id, len(rows) - 1)
         if (
             tag == "section"
             and "endorsement-group" in classes
@@ -1780,6 +1944,9 @@ class _GuideHTMLParser(HTMLParser):
         href = attributes.get("href")
         if tag == "a" and href is not None:
             self.links.add(href)
+            if self._current_publication_source is not None:
+                source_key, source_index = self._current_publication_source
+                self.publication_source_links[source_key][source_index].append(href)
             if self._current_endorsement_key is not None:
                 key, index = self._current_endorsement_key
                 self.endorsement_links[key][index].add(href)
@@ -1798,10 +1965,15 @@ class _GuideHTMLParser(HTMLParser):
             if self._current_display_role is not None:
                 key, index = self._current_display_role
                 self.display_text[key][index].append(data)
+            if self._current_publication_source is not None:
+                source_key, source_index = self._current_publication_source
+                self.publication_source_text[source_key][source_index].append(data)
 
     def handle_endtag(self, tag: str) -> None:
         if tag == "li":
             self._current_endorsement_key = None
+        if tag == "div" and self._current_publication_source is not None:
+            self._current_publication_source = None
         if tag == "section" and self._current_endorsement_group_key is not None:
             self._current_endorsement_group_key = None
         if tag == self._display_role_tag:
