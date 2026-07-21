@@ -328,17 +328,21 @@
       const center = (container, elements, paddingTarget = container) => {
         paddingTarget.style.removeProperty('padding-top');
         paddingTarget.style.removeProperty('padding-bottom');
-        const bounds = elements.map(inkBounds);
-        const containerRect = container.getBoundingClientRect();
-        const inkTop = Math.min(...bounds.map((bound) => bound.top));
-        const inkBottom = Math.max(...bounds.map((bound) => bound.bottom));
-        const imbalance = (inkTop - containerRect.top) - (containerRect.bottom - inkBottom);
-        const offset = -imbalance / 2;
-        const style = getComputedStyle(paddingTarget);
-        paddingTarget.style.paddingTop =
-          `${(Number.parseFloat(style.paddingTop) + offset).toFixed(3)}px`;
-        paddingTarget.style.paddingBottom =
-          `${(Number.parseFloat(style.paddingBottom) - offset).toFixed(3)}px`;
+        for (let attempt = 0; attempt < 4; attempt += 1) {
+          const bounds = elements.map(inkBounds);
+          const containerRect = container.getBoundingClientRect();
+          const inkTop = Math.min(...bounds.map((bound) => bound.top));
+          const inkBottom = Math.max(...bounds.map((bound) => bound.bottom));
+          const imbalance = (inkTop - containerRect.top) -
+            (containerRect.bottom - inkBottom);
+          if (Math.abs(imbalance) < .05) break;
+          const offset = -imbalance / 2;
+          const style = getComputedStyle(paddingTarget);
+          paddingTarget.style.paddingTop =
+            `${(Number.parseFloat(style.paddingTop) + offset).toFixed(3)}px`;
+          paddingTarget.style.paddingBottom =
+            `${(Number.parseFloat(style.paddingBottom) - offset).toFixed(3)}px`;
+        }
       };
       document.querySelectorAll('.print-meter').forEach((meter) => {
         const text = meter.querySelector('.print-meter-text');
