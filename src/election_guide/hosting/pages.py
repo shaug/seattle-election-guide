@@ -18,12 +18,6 @@ PAGES_HEADERS = """/*
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Permissions-Policy: camera=(), geolocation=(), microphone=()
-
-https://:project.pages.dev/*
-  X-Robots-Tag: noindex
-
-https://:deployment.:project.pages.dev/*
-  X-Robots-Tag: noindex
 """
 
 

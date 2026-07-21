@@ -33,7 +33,10 @@ def test_stage_pages_site_publishes_only_verified_public_assets(tmp_path: Path) 
     assert (output / "index.html").read_bytes() == b"<!doctype html><title>Guide</title>\n"
     assert (output / "Seattle_Primary_Guide.pdf").read_bytes() == b"%PDF-1.7\n"
     assert not (output / "stale.txt").exists()
-    assert "X-Frame-Options: DENY" in (output / "_headers").read_text(encoding="utf-8")
+    headers = (output / "_headers").read_text(encoding="utf-8")
+    assert "X-Frame-Options: DENY" in headers
+    assert "X-Robots-Tag" not in headers
+    assert "noindex" not in headers
     assert (output / "release-status.json").is_file()
     deployment = json.loads((output / "deployment-manifest.json").read_text(encoding="utf-8"))
     assert deployment["release_version"] == "test.1"

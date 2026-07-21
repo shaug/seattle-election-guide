@@ -144,7 +144,11 @@
         </div>
         <p>Percentages show agreement among sources that explicitly endorsed in each race.
           The Seattle Times is a separate comparison signal.</p>
-        <a href="{{ config.project_url }}">Source and audit files</a>
+        <nav class="footer-actions" aria-label="Guide links">
+          <a href="{{ config.pdf_filename }}">Printable PDF</a>
+          <a href="mailto:seattle-elections@dobravoda.dev">Feedback?</a>
+          <a href="{{ config.project_url }}">Source and audit files</a>
+        </nav>
       </div>
       <details class="guide-notes" id="methodology">
         <summary><span>Methodology</span><span aria-hidden="true">+</span></summary>
@@ -210,7 +214,7 @@
       </details>
       <div class="screen-footer-meta">
         <span>Election {{ guide.metadata.election_date }} · Built {{ guide.metadata.generated_at.date().isoformat() }} · Data {{ guide.metadata.data_version }} · Code {{ guide.metadata.git_commit[:12] }}</span>
-        <a href="{{ config.project_url }}">Source and audit files</a>
+        <a class="detailed-footer-audit" href="{{ config.project_url }}">Source and audit files</a>
       </div>
     </footer>
   </main>

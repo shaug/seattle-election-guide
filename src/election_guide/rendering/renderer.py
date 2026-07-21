@@ -398,6 +398,8 @@ def validate_rendered_guide(
                     )
     expected_html_links = {
         "#guide-races",
+        configuration.pdf_filename,
+        "mailto:seattle-elections@dobravoda.dev",
         configuration.project_url,
         *(source.evidence_url for source in view_model.sources),
         *(

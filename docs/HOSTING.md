@@ -62,7 +62,8 @@ atomically replaces `dist/cloudflare-site/` with:
 - `index.html`, copied byte-for-byte from the validated responsive guide;
 - the concise PDF and, when present, the detailed PDF;
 - `release-status.json` and a deployment manifest for machine-readable verification; and
-- `_headers` with browser-security, revalidation, and preview-indexing policy.
+- `_headers` with browser-security and revalidation policy. The public guide is indexable by
+  search engines on both its custom domain and Cloudflare Pages hostnames.
 
 Preview the staged directory with Wrangler:
 

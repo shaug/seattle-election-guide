@@ -67,6 +67,7 @@ a { color: #075d75; text-underline-offset: .15em; }
 .footer-summary h2 { margin: .15rem 0 0; font-size: 1.25rem; line-height: 1.1; }
 .footer-summary p { margin: 0; color: #d7e6ef; font-size: .86rem; }
 .footer-summary a { color: #9ee7df; font-size: .82rem; font-weight: 800; white-space: nowrap; }
+.footer-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .45rem 1rem; }
 .guide-notes { margin: 0; border-top: 1px solid #526f83; }
 .guide-notes > summary { display: flex; justify-content: space-between; align-items: center; padding: .85rem clamp(1rem, 4vw, 3rem); color: #d7e6ef; cursor: pointer; font-size: .8rem; font-weight: 800; list-style: none; }
 .guide-notes > summary::-webkit-details-marker { display: none; }
@@ -101,6 +102,7 @@ a { color: #075d75; text-underline-offset: .15em; }
 .coverage-gap-row p { margin: .35rem 0 0; color: var(--muted); font-size: .72rem; line-height: 1.35; }
 .screen-footer-meta { display: flex; justify-content: space-between; gap: 1rem; padding: .7rem clamp(1rem, 4vw, 3rem); border-top: 1px solid #526f83; color: #9fb3c8; font-size: .68rem; }
 .screen-footer-meta a { color: #9ee7df; font-weight: 800; white-space: nowrap; }
+.detailed-footer-audit { display: none; }
 .print-guide { display: none; }
 
 @media (max-width: 720px) {
@@ -111,6 +113,7 @@ a { color: #075d75; text-underline-offset: .15em; }
   .screen-controls p { justify-self: start; }
   .race-grid, .methodology-screen, .footer-summary, .screen-source-columns, .screen-source-heading, .screen-coverage-gaps, .coverage-gap-columns { grid-template-columns: 1fr; }
   .footer-summary { gap: .8rem; }
+  .footer-actions { justify-content: flex-start; }
   .methodology-overlap { display: block; }
   .screen-source-heading > p { justify-self: start; text-align: left; }
   .screen-source-directory .source-row { grid-template-columns: minmax(0, 1fr); gap: .15rem; }
@@ -244,6 +247,7 @@ a { color: #075d75; text-underline-offset: .15em; }
   html.detailed-edition .race-card details, html.detailed-edition .guide-notes > summary,
   html.detailed-edition .footer-summary { display: none; }
   html.detailed-edition .screen-footer { background: white; color: var(--ink); }
+  html.detailed-edition .detailed-footer-audit { display: inline; }
   html.detailed-edition .methodology-screen { display: grid !important; grid-template-columns: 1fr 1fr; gap: .12in; padding: .2in; background: white; color: var(--ink); }
   html.detailed-edition .methodology-panel { break-inside: avoid; padding: .12in; border: .5px solid var(--line); }
   html.detailed-edition .methodology-screen h2 { font-size: 18pt; }
