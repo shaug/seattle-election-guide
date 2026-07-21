@@ -55,30 +55,34 @@
           <article class="race-card" data-publication-race-id="{{ race.id }}"
             aria-labelledby="race-label-{{ race.id }}"
             data-filter-tokens='{{ race.filter_tokens | tojson }}'>
-            <div class="race-card-head">
-              <div>
-                <p class="race-office" id="race-label-{{ race.id }}"
-                  data-display-role="race-label">{{ race.race_label }}</p>
-                <h3 data-display-role="recommendation">{{ race.recommendation_label }}</h3>
+            <p class="race-office" id="race-label-{{ race.id }}"
+              data-display-role="race-label">{{ race.race_label }}</p>
+            <div class="screen-race-result">
+              <h3 data-display-role="recommendation">{{ race.recommendation_label }}</h3>
+              {% if race.percentage_whole is none %}
+              <div class="screen-meter screen-meter-na" role="img" data-display-role="share"
+                aria-label="{{ screen_share_accessible_label(race) }}">
+                <strong>N/A</strong>
               </div>
-              <div class="consensus-lockup" aria-label="Consensus among endorsers: {% if race.percentage_whole is none %}not available{% else %}{{ race.percentage_label }}{% endif %}">
-                <span>Consensus among endorsers</span>
-                <strong data-display-role="share">{% if race.percentage_whole is none %}N/A{% else %}{{ race.percentage_label }}{% endif %}</strong>
+              {% else %}
+              <div class="screen-meter" style="--meter-fill: {{ race.percentage_whole }}%"
+                role="img" data-display-role="share"
+                aria-label="{{ screen_share_accessible_label(race) }}">
+                <strong>{{ race.percentage_label }}</strong>
               </div>
+              {% endif %}
             </div>
-            {% if race.percentage_whole is not none %}
-            <div class="consensus-meter" role="img" aria-label="Consensus share {{ race.percentage_label }}">
-              <span style="width: {{ race.percentage_whole }}%"></span>
+            <div class="screen-race-context">
+              <div class="screen-comparisons">
+                {% for comparison in race.comparisons %}
+                <p class="comparison comparison-{{ comparison.voter_tone }}" role="group"
+                  aria-label="{{ comparison.voter_accessible_label }}" data-display-role="comparison">
+                  <strong class="comparison-status">{{ comparison.print_status_label }}</strong><span class="comparison-separator"> · </span><span class="comparison-choice">{{ comparison.print_choice_label }}</span>
+                </p>
+                {% endfor %}
+              </div>
+              <p class="support-line" data-display-role="support">{{ screen_support_summary(race) }}</p>
             </div>
-            {% endif %}
-            <p class="support-line" data-display-role="support">{{ race.support_summary }}</p>
-            {% for comparison in race.comparisons %}
-            <p class="comparison comparison-{{ comparison.voter_tone }}" role="group"
-              aria-label="{{ comparison.voter_accessible_label }}" data-display-role="comparison">
-              <span>Seattle Times</span>
-              <strong>{{ comparison.voter_label }}</strong>
-            </p>
-            {% endfor %}
             {% if race.grade == 'Insufficient' %}
             <div class="insufficient-note" role="note" data-display-role="insufficient-warning">
               Too few explicit endorsements to assess consensus reliably.</div>

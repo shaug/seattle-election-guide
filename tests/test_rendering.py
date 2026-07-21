@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import sys
 from collections.abc import Callable
+from fractions import Fraction
 from pathlib import Path
 from stat import S_IMODE
 from typing import cast
@@ -224,7 +225,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert '<option value="Legislative District 43">Legislative District 43</option>' in html
     assert "JSON.parse(card.dataset.filterTokens)" in html
     assert "View endorsements" in html
-    assert "Consensus among endorsers" in html
+    assert "Consensus among explicitly endorsing sources" in html
     assert "Seattle Times" in html
     assert "August 2026 Primary" in html
     assert "Seattle Progressive Endorsement Guide" in html
@@ -249,7 +250,8 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
         assert f"comparison-{comparison.voter_tone}" in html
         assert f'class="comparison comparison-{comparison.voter_tone}" role="group"' in html
         assert f'aria-label="{comparison.voter_accessible_label}"' in html
-        assert f"<strong>{comparison.voter_label}</strong>" in html
+        assert f'<strong class="comparison-status">{comparison.print_status_label}</strong>' in html
+        assert f'<span class="comparison-choice">{comparison.print_choice_label}</span>' in html
         assert (f"print-times-pick print-times-pick-{comparison.voter_tone}") in html
         assert (
             f'>{comparison.print_status_label}</span><span class="print-times-separator"> · '
@@ -258,7 +260,13 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
         assert (
             f'<span class="print-times-choice">{comparison.print_choice_label}</span></b>' in html
         )
-    assert ".comparison strong { max-width: 72%; margin-left: auto;" in html
+    assert ".screen-race-result, .screen-race-context { display: grid;" in html
+    assert "grid-template-columns: minmax(0, 1fr) 11rem" in html
+    assert ".screen-meter { display: flex;" in html
+    assert "linear-gradient(to left, var(--teal) 0 var(--meter-fill)" in html
+    assert ".comparison-status { font-weight: 800; }" in html
+    assert ".comparison-choice { min-width: 0; font-weight: 500; }" in html
+    assert ".comparison-agrees { border-color: #83bfae; background: #edf8f4;" in html
     assert html.count('class="method-column"') == 2
     assert ".print-races { display: grid; grid-template-columns: 1fr 1fr;" in html
     assert html.count('class="print-race-column"') == 2
@@ -463,19 +471,18 @@ def test_pdf_comparison_validation_requires_compound_chip_and_rejects_legacy_bad
     race.comparisons = [comparison]
     separator = "\n" if value_fn is _detailed_pdf_race_values else " "
     expected_text = separator.join(value_fn(race))
-    chip_label = (
-        f"Seattle Times {comparison.voter_label}"
-        if value_fn is _detailed_pdf_race_values
-        else comparison.print_label
-    )
+    chip_label = comparison.print_label
     support_label = (
         race.support_summary
         if value_fn is _pdf_race_display_values
-        else f"{race.explicit_endorsement_count} endorsers"
+        else (
+            f"Based on {race.explicit_endorsement_count} endorsing "
+            f"{'source' if race.explicit_endorsement_count == 1 else 'sources'}"
+            if value_fn is _detailed_pdf_race_values
+            else f"{race.explicit_endorsement_count} endorsers"
+        )
     )
-    compound = (
-        chip_label if value_fn is _detailed_pdf_race_values else f"{chip_label} {support_label}"
-    )
+    compound = f"{chip_label} {support_label}"
 
     assert _missing_pdf_race_values([race], expected_text, value_fn) == []
     wrapped_header_text = expected_text.replace(
@@ -543,6 +550,12 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
         RENDERING_CONFIG,
         tmp_path / "rendered",
     )
+
+    rendered_html = rendered.html_path.read_text(encoding="utf-8")
+    for percentage in (53, 64, 70, 100):
+        assert f'style="--meter-fill: {percentage}%"' in rendered_html
+    for tone in ("agrees", "differs", "not_covered"):
+        assert f"comparison-{tone}" in rendered_html
 
     assert rendered.validation_report.passed
     assert rendered.validation_report.edition == "concise"
@@ -872,6 +885,92 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
             if check.id == "html-display-values"
         )
         assert not broken_accessibility_check.passed
+
+    share_label = (
+        f"Consensus among explicitly endorsing sources: {accessible_race.percentage_label}"
+    )
+    for index, (original, replacement) in enumerate(
+        (
+            (f'aria-label="{share_label}"', 'aria-label="Consensus among endorsers: 100%"'),
+            ('role="img"', 'role="presentation"'),
+        )
+    ):
+        assert original in accessible_html
+        broken_share_html = tmp_path / f"broken-share-accessibility-{index}.html"
+        broken_share_html.write_text(
+            accessible_html.replace(original, replacement, 1),
+            encoding="utf-8",
+        )
+        broken_share_report = validate_rendered_guide(
+            view_model,
+            read_rendering_configuration(RENDERING_CONFIG),
+            broken_share_html,
+            rendered.pdf_path,
+            rendered.page_images,
+            rendered.screenshots,
+        )
+        broken_share_check = next(
+            check for check in broken_share_report.checks if check.id == "html-display-values"
+        )
+        assert not broken_share_check.passed
+
+    unavailable_view_model = view_model.model_copy(deep=True)
+    unavailable_race = unavailable_view_model.sections[0].races[0]
+    unavailable_race.support_leader_candidate_ids = []
+    unavailable_race.support_leader_candidate_labels = []
+    unavailable_race.support_leader_label = "No leader"
+    unavailable_race.recommendation_candidate_ids = []
+    unavailable_race.recommendation_candidate_labels = []
+    unavailable_race.recommendation_label = "Too few endorsements"
+    unavailable_race.grade = "Insufficient"
+    unavailable_race.winner_share = None
+    unavailable_race.percentage_label = "—"
+    unavailable_race.percentage_whole = None
+    unavailable_view_model = PublicationViewModel.model_validate(
+        unavailable_view_model.model_dump(mode="json")
+    )
+    unavailable_html_text = render_html_document(
+        unavailable_view_model, read_rendering_configuration(RENDERING_CONFIG)
+    )
+    unavailable_html = tmp_path / "unavailable-share.html"
+    unavailable_html.write_text(unavailable_html_text, encoding="utf-8")
+    unavailable_report = validate_rendered_guide(
+        unavailable_view_model,
+        read_rendering_configuration(RENDERING_CONFIG),
+        unavailable_html,
+        rendered.pdf_path,
+        rendered.page_images,
+        rendered.screenshots,
+    )
+    unavailable_html_check = next(
+        check for check in unavailable_report.checks if check.id == "html-display-values"
+    )
+    assert unavailable_html_check.passed
+    unavailable_label = "Consensus among explicitly endorsing sources: not available"
+    for index, (original, replacement) in enumerate(
+        (
+            (f'aria-label="{unavailable_label}"', 'aria-label="Consensus among endorsers: 0%"'),
+            ('role="img"', 'role="presentation"'),
+        )
+    ):
+        assert original in unavailable_html_text
+        broken_unavailable_html = tmp_path / f"broken-unavailable-accessibility-{index}.html"
+        broken_unavailable_html.write_text(
+            unavailable_html_text.replace(original, replacement, 1),
+            encoding="utf-8",
+        )
+        broken_unavailable_report = validate_rendered_guide(
+            unavailable_view_model,
+            read_rendering_configuration(RENDERING_CONFIG),
+            broken_unavailable_html,
+            rendered.pdf_path,
+            rendered.page_images,
+            rendered.screenshots,
+        )
+        broken_unavailable_check = next(
+            check for check in broken_unavailable_report.checks if check.id == "html-display-values"
+        )
+        assert not broken_unavailable_check.passed
 
     race_for_masking = next(race for race in races if race.recommendation_candidate_labels)
     masked_pdf_html = tmp_path / "masked-pdf.html"
@@ -1265,6 +1364,10 @@ def _visual_view_model(view_model: PublicationViewModel) -> PublicationViewModel
             }
         )
     ]
+    for race, percentage in zip(races[:4], (53, 64, 70, 100), strict=True):
+        race.winner_share = str(Fraction(percentage, 100))
+        race.percentage_label = f"{percentage}%"
+        race.percentage_whole = percentage
     return PublicationViewModel.model_validate(visual.model_dump(mode="json"))
 
 
