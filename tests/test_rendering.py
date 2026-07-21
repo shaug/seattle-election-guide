@@ -339,7 +339,7 @@ def test_print_layout_rejects_visibly_uncentered_control_text(tmp_path: Path) ->
 @media print {
   .print-guide { font-family: Arial, Helvetica, sans-serif; }
   .print-meter-label { padding: 0 .05in 0 0; }
-  .print-meter-text, .print-times-pick > span { position: relative; top: -3px; }
+  .print-meter-text, .print-times-pick > span { position: relative; top: -3px; transform: none; }
 }
 </style>
 <script>window.__disablePrintInkCentering = true;</script>
@@ -351,6 +351,86 @@ def test_print_layout_rejects_visibly_uncentered_control_text(tmp_path: Path) ->
     )
 
     with pytest.raises(PrintLayoutError, match=r"(label|comparison)-centering"):
+        _validate_print_layout(
+            html_path,
+            find_chrome(),
+            minimum_font_points=read_rendering_configuration(
+                RENDERING_CONFIG
+            ).minimum_print_font_points,
+        )
+
+
+@pytest.mark.parametrize(
+    ("injected_markup", "expected_issue"),
+    [
+        (
+            """
+<style>@media print { .print-times-pick { height: .18in !important; } }</style>
+""",
+            "comparison-treatment",
+        ),
+        (
+            """
+<style>@media print { .print-times-pick { border-width: 2px !important; } }</style>
+""",
+            "comparison-treatment",
+        ),
+        (
+            """
+<script>
+let printPillOffset = false;
+window.addEventListener('beforeprint', () => {
+  const pillText = document.querySelector('.print-times-pick > span');
+  if (pillText) {
+    pillText.style.position = 'relative';
+    pillText.style.top = printPillOffset ? '0px' : '1px';
+  }
+  printPillOffset = !printPillOffset;
+});
+</script>
+""",
+            "print-ink-calibration-repeatability",
+        ),
+        (
+            """
+<script>
+let printMeterOffset = false;
+window.addEventListener('beforeprint', () => {
+  const label = document.querySelector('.print-meter-label');
+  if (label) label.style.paddingTop = printMeterOffset ? '0px' : '2px';
+  printMeterOffset = !printMeterOffset;
+});
+</script>
+""",
+            "print-ink-calibration-repeatability",
+        ),
+        (
+            """
+<script>
+let printPillInset = false;
+window.addEventListener('beforeprint', () => {
+  const pill = document.querySelector('.print-times-pick');
+  if (pill) pill.style.paddingLeft = printPillInset ? '5px' : '10px';
+  printPillInset = !printPillInset;
+});
+</script>
+""",
+            "print-ink-calibration-repeatability",
+        ),
+    ],
+)
+def test_print_layout_rejects_unstable_pill_geometry(
+    tmp_path: Path, injected_markup: str, expected_issue: str
+) -> None:
+    view_model = _view_model(tmp_path / "fixture")
+    html_path = tmp_path / "unstable-pill.html"
+    html = render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG))
+    html_path.write_text(
+        html.replace("</body>", f"{injected_markup}</body>", 1),
+        encoding="utf-8",
+    )
+
+    with pytest.raises(PrintLayoutError, match=expected_issue):
         _validate_print_layout(
             html_path,
             find_chrome(),
