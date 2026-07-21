@@ -876,8 +876,36 @@ def _inspect_print_layout(
                 "expression": (
                     "new Promise(resolve => requestAnimationFrame("
                     "() => requestAnimationFrame(() => {"
+                    "const signature = () => JSON.stringify("
+                    "[...document.querySelectorAll('.print-meter, .print-times-pick')]"
+                    ".map(element => {"
+                    "const rect = element.getBoundingClientRect();"
+                    "const style = getComputedStyle(element);"
+                    "const paddingTarget = element.querySelector('.print-meter-label') || element;"
+                    "const paddingStyle = getComputedStyle(paddingTarget);"
+                    "const children = element.classList.contains('print-meter') ? "
+                    "[element.querySelector('.print-meter-text')].filter(Boolean) : "
+                    "[...element.querySelectorAll(':scope > span')];"
+                    "return [rect.left.toFixed(3), rect.top.toFixed(3),"
+                    "rect.right.toFixed(3), rect.bottom.toFixed(3),"
+                    "rect.width.toFixed(3), rect.height.toFixed(3),"
+                    "style.borderTopWidth, style.borderRightWidth,"
+                    "style.borderBottomWidth, style.borderLeftWidth,"
+                    "paddingStyle.paddingTop, paddingStyle.paddingRight,"
+                    "paddingStyle.paddingBottom, paddingStyle.paddingLeft,"
+                    "...children.flatMap(child => {"
+                    "const childRect = child.getBoundingClientRect();"
+                    "return [childRect.left.toFixed(3), childRect.top.toFixed(3),"
+                    "childRect.right.toFixed(3), childRect.bottom.toFixed(3),"
+                    "childRect.width.toFixed(3), childRect.height.toFixed(3)]; })];"
+                    "}));"
                     "window.dispatchEvent(new Event('beforeprint'));"
-                    "requestAnimationFrame(resolve);"
+                    "requestAnimationFrame(() => { const first = signature();"
+                    "window.dispatchEvent(new Event('beforeprint'));"
+                    "requestAnimationFrame(() => {"
+                    "document.documentElement.dataset.printTransitionStable = "
+                    "String(first === signature()); resolve(); });"
+                    "});"
                     "})))"
                 ),
                 "awaitPromise": True,
@@ -894,6 +922,10 @@ def _inspect_print_layout(
                   if (!detailed &&
                       document.documentElement.dataset.printInkCentered !== 'true') {
                     issues.push('print-ink-calibration');
+                  }
+                  if (!detailed &&
+                      document.documentElement.dataset.printTransitionStable !== 'true') {
+                    issues.push('print-ink-calibration-repeatability');
                   }
                   const measurementCanvas = document.createElement('canvas');
                   const measurementContext = measurementCanvas.getContext('2d');
@@ -1055,11 +1087,22 @@ def _inspect_print_layout(
                     const comparison = race.querySelector('.print-times-pick');
                     if (comparison) {
                       const comparisonStyle = getComputedStyle(comparison);
+                      const borderWidths = [
+                        comparisonStyle.borderTopWidth,
+                        comparisonStyle.borderRightWidth,
+                        comparisonStyle.borderBottomWidth,
+                        comparisonStyle.borderLeftWidth,
+                      ].map(Number.parseFloat);
                       const status = comparison.querySelector('.print-times-status');
                       const choice = comparison.querySelector('.print-times-choice');
                       if (comparisonStyle.display !== 'inline-flex' ||
                           comparisonStyle.alignItems !== 'center' ||
-                          Number.parseFloat(comparisonStyle.borderTopWidth) < .9) {
+                          Math.abs(Number.parseFloat(comparisonStyle.paddingTop) - .96) > .15 ||
+                          Math.abs(Number.parseFloat(comparisonStyle.paddingRight) - 4.8) > .15 ||
+                          Math.abs(Number.parseFloat(comparisonStyle.paddingBottom)) > .1 ||
+                          Math.abs(Number.parseFloat(comparisonStyle.paddingLeft) - 4.8) > .15 ||
+                          Math.abs(comparison.getBoundingClientRect().height - 14.4) > .5 ||
+                          borderWidths.some(width => Math.abs(width - 1) > .1)) {
                         issues.push(`.print-race[${index}]-comparison-treatment`);
                       }
                       if (status && choice &&
@@ -1083,10 +1126,9 @@ def _inspect_print_layout(
                       if (!element) continue;
                       const style = getComputedStyle(element);
                       const lineHeight = Number.parseFloat(style.lineHeight);
-                      const contentHeight = element.getBoundingClientRect().height -
-                        Number.parseFloat(style.paddingTop) -
-                        Number.parseFloat(style.paddingBottom);
-                      if (contentHeight > lineHeight * 1.5) {
+                      const range = document.createRange();
+                      range.selectNodeContents(element);
+                      if (range.getBoundingClientRect().height > lineHeight * 1.5) {
                         issues.push(`.print-race[${index}]-${selector}-wrap`);
                       }
                     }
@@ -1105,6 +1147,11 @@ def _inspect_print_layout(
                       if (textRect.left < elementRect.left - 1 ||
                           textRect.right > elementRect.right + 1) {
                         issues.push(`.print-race[${index}]-${selector}-bounds`);
+                      }
+                      if (selector === 'comparison' &&
+                          (textRect.top < elementRect.top - 1 ||
+                           textRect.bottom > elementRect.bottom + 1)) {
+                        issues.push(`.print-race[${index}]-comparison-vertical-bounds`);
                       }
                     }
                   }
