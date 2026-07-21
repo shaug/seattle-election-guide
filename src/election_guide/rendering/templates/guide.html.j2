@@ -161,10 +161,10 @@
       <div class="print-race-result">
         <strong>{{ race.recommendation_label }}</strong>
         {% if race.percentage_whole is none %}
-        <div class="print-meter print-meter-na"><b class="print-meter-label">N/A</b></div>
+        <div class="print-meter print-meter-na"><b class="print-meter-label"><span class="print-meter-text">N/A</span></b></div>
         {% else %}
         <div class="print-meter" style="--meter-fill: {{ race.percentage_whole }}%">
-          <b class="print-meter-label">{{ race.percentage_label }}</b>
+          <b class="print-meter-label"><span class="print-meter-text">{{ race.percentage_label }}</span></b>
         </div>
         {% endif %}
       </div>
@@ -300,6 +300,78 @@
     if (edition === 'compact' || edition === 'detailed') {
       document.documentElement.classList.add(`${edition}-edition`);
     }
+    const centerPrintInk = () => {
+      if (window.__disablePrintInkCentering) return;
+      const printGuide = document.querySelector('.print-guide');
+      if (!printGuide || getComputedStyle(printGuide).display === 'none') return;
+      const context = document.createElement('canvas').getContext('2d');
+      if (!context) return;
+      const inkBounds = (element) => {
+        const style = getComputedStyle(element);
+        context.font = [style.fontStyle, style.fontWeight, style.fontSize, style.fontFamily]
+          .join(' ');
+        const text = [...element.childNodes]
+          .filter((node) => node.nodeType === Node.TEXT_NODE)
+          .map((node) => node.textContent).join('');
+        const metrics = context.measureText(text);
+        const marker = document.createElement('i');
+        marker.style.cssText = 'display:inline-block;width:0;height:0;overflow:hidden;'
+          + 'margin:0;padding:0;border:0;vertical-align:baseline';
+        element.append(marker);
+        const baseline = marker.getBoundingClientRect().top;
+        marker.remove();
+        return {
+          top: baseline - metrics.actualBoundingBoxAscent,
+          bottom: baseline + metrics.actualBoundingBoxDescent,
+        };
+      };
+      const center = (container, elements, paddingTarget = container) => {
+        paddingTarget.style.removeProperty('padding-top');
+        paddingTarget.style.removeProperty('padding-bottom');
+        for (let attempt = 0; attempt < 4; attempt += 1) {
+          const bounds = elements.map(inkBounds);
+          const containerRect = container.getBoundingClientRect();
+          const inkTop = Math.min(...bounds.map((bound) => bound.top));
+          const inkBottom = Math.max(...bounds.map((bound) => bound.bottom));
+          const imbalance = (inkTop - containerRect.top) -
+            (containerRect.bottom - inkBottom);
+          if (Math.abs(imbalance) < .05) break;
+          const offset = -imbalance / 2;
+          const style = getComputedStyle(paddingTarget);
+          paddingTarget.style.paddingTop =
+            `${(Number.parseFloat(style.paddingTop) + offset).toFixed(3)}px`;
+          paddingTarget.style.paddingBottom =
+            `${(Number.parseFloat(style.paddingBottom) - offset).toFixed(3)}px`;
+        }
+      };
+      document.querySelectorAll('.print-meter').forEach((meter) => {
+        const text = meter.querySelector('.print-meter-text');
+        const label = meter.querySelector('.print-meter-label');
+        if (text && label) center(meter, [text], label);
+      });
+      document.querySelectorAll('.print-times-pick').forEach((pill) => {
+        center(pill, [...pill.querySelectorAll(':scope > span')]);
+      });
+      document.documentElement.dataset.printInkCentered = 'true';
+    };
+    const printMedia = window.matchMedia('print');
+    const calibratePrintInk = () => {
+      if (!printMedia.matches) return;
+      if (document.fonts.status === 'loaded') {
+        centerPrintInk();
+      } else {
+        document.fonts.ready.then(() => {
+          if (printMedia.matches) centerPrintInk();
+        });
+      }
+    };
+    window.addEventListener('beforeprint', calibratePrintInk);
+    printMedia.addEventListener('change', (event) => {
+      if (event.matches) {
+        requestAnimationFrame(() => requestAnimationFrame(calibratePrintInk));
+      }
+    });
+    calibratePrintInk();
     const select = document.querySelector('#race-filter');
     const status = document.querySelector('#filter-status');
     const cards = [...document.querySelectorAll('[data-publication-race-id]')];

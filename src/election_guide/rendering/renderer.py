@@ -763,10 +763,29 @@ def _inspect_print_layout(
             },
             session_id=session_id,
         )
-        cdp.command("Emulation.setEmulatedMedia", {"media": "print"}, session_id=session_id)
         cdp.command("Page.enable", session_id=session_id)
         cdp.command("Page.navigate", {"url": url}, session_id=session_id)
         cdp.wait_event("Page.loadEventFired", session_id=session_id)
+        cdp.command(
+            "Runtime.evaluate",
+            {"expression": "document.fonts.ready", "awaitPromise": True},
+            session_id=session_id,
+        )
+        cdp.command("Emulation.setEmulatedMedia", {"media": "print"}, session_id=session_id)
+        cdp.command(
+            "Runtime.evaluate",
+            {
+                "expression": (
+                    "new Promise(resolve => requestAnimationFrame("
+                    "() => requestAnimationFrame(() => {"
+                    "window.dispatchEvent(new Event('beforeprint'));"
+                    "requestAnimationFrame(resolve);"
+                    "})))"
+                ),
+                "awaitPromise": True,
+            },
+            session_id=session_id,
+        )
         inspected = cdp.command(
             "Runtime.evaluate",
             {
@@ -774,12 +793,56 @@ def _inspect_print_layout(
                 JSON.stringify((() => {
                   const issues = [];
                   const detailed = __DETAILED__;
+                  if (!detailed &&
+                      document.documentElement.dataset.printInkCentered !== 'true') {
+                    issues.push('print-ink-calibration');
+                  }
+                  const measurementCanvas = document.createElement('canvas');
+                  const measurementContext = measurementCanvas.getContext('2d');
+                  const inkBounds = element => {
+                    if (!measurementContext) return null;
+                    const style = getComputedStyle(element);
+                    measurementContext.font = [
+                      style.fontStyle,
+                      style.fontWeight,
+                      style.fontSize,
+                      style.fontFamily
+                    ].join(' ');
+                    const text = [...element.childNodes]
+                      .filter(node => node.nodeType === Node.TEXT_NODE)
+                      .map(node => node.textContent).join('');
+                    const metrics = measurementContext.measureText(text);
+                    const marker = document.createElement('i');
+                    marker.style.cssText = [
+                      'display:inline-block', 'width:0', 'height:0', 'overflow:hidden',
+                      'margin:0', 'padding:0', 'border:0', 'vertical-align:baseline'
+                    ].join(';');
+                    element.append(marker);
+                    const baseline = marker.getBoundingClientRect().top;
+                    marker.remove();
+                    if (!Number.isFinite(metrics.actualBoundingBoxAscent) ||
+                        !Number.isFinite(metrics.actualBoundingBoxDescent)) return null;
+                    return {
+                      top: baseline - metrics.actualBoundingBoxAscent,
+                      bottom: baseline + metrics.actualBoundingBoxDescent
+                    };
+                  };
+                  const inkImbalance = (container, elements) => {
+                    const bounds = elements.map(inkBounds);
+                    if (bounds.some(bound => bound === null)) return null;
+                    const containerRect = container.getBoundingClientRect();
+                    const inkTop = Math.min(...bounds.map(bound => bound.top));
+                    const inkBottom = Math.max(...bounds.map(bound => bound.bottom));
+                    const topGap = inkTop - containerRect.top;
+                    const bottomGap = containerRect.bottom - inkBottom;
+                    return topGap - bottomGap;
+                  };
                   const selectors = detailed ? [
                     '.screen-guide', '.race-card h3', '.support-line', '.alternative',
                     '.comparison', '.warning', '.methodology-panel'
                   ] : [
                     '.print-races', '.method-grid section', '.print-race-title',
-                    '.print-race-result > strong', '.print-race-context span',
+                    '.print-race-result > strong', '.print-race-context > span',
                     '.print-times-pick', '.print-race-notes span', '.print-metadata strong'
                   ];
                   for (const selector of selectors) {
@@ -878,12 +941,12 @@ def _inspect_print_layout(
                         issues.push(`.print-meter[${index}]-treatment`);
                       }
                       if (meterLabel) {
-                        const labelRect = meterLabel.getBoundingClientRect();
-                        if (Math.abs(
-                          (labelRect.top + labelRect.bottom) / 2 -
-                          (meterRect.top + meterRect.bottom) / 2
-                        ) > 1) {
-                          issues.push(`.print-meter[${index}]-label-centering`);
+                        const meterText = meterLabel.querySelector('.print-meter-text');
+                        const imbalance = meterText ? inkImbalance(meter, [meterText]) : null;
+                        if (imbalance === null || Math.abs(imbalance) > 1) {
+                          const detail = imbalance === null ? 'unmeasurable' :
+                            `${imbalance.toFixed(2)}px`;
+                          issues.push(`.print-meter[${index}]-label-centering(${detail})`);
                         }
                       }
                       if (support && getComputedStyle(support).display !== 'none' && Math.abs(
@@ -910,17 +973,13 @@ def _inspect_print_layout(
                           Number.parseInt(getComputedStyle(choice).fontWeight)) {
                         issues.push(`.print-race[${index}]-comparison-hierarchy`);
                       }
-                      const comparisonRect = comparison.getBoundingClientRect();
-                      for (const element of [status, choice]) {
-                        if (!element) continue;
-                        const elementRect = element.getBoundingClientRect();
-                        if (Math.abs(
-                          (elementRect.top + elementRect.bottom) / 2 -
-                          (comparisonRect.top + comparisonRect.bottom) / 2
-                        ) > 1) {
-                          issues.push(`.print-race[${index}]-comparison-centering`);
-                          break;
-                        }
+                      const separator = comparison.querySelector('.print-times-separator');
+                      const comparisonText = [status, separator, choice].filter(Boolean);
+                      const imbalance = inkImbalance(comparison, comparisonText);
+                      if (imbalance === null || Math.abs(imbalance) > 1.2) {
+                        const detail = imbalance === null ? 'unmeasurable' :
+                          `${imbalance.toFixed(2)}px`;
+                        issues.push(`.print-race[${index}]-comparison-centering(${detail})`);
                       }
                     }
                     for (const [selector, element] of [
@@ -1444,9 +1503,11 @@ def _pdf_value_is_present(value: str, segment: str) -> bool:
         normalized = normalized.replace("·", " ")
         comparable_segment = comparable_segment.replace("·", " ")
         pattern = r"\s*".join(re.escape(word) for word in normalized.split())
-        prefix = r"(?<!seattle\s)(?<!\w)" if compact_times_label else r"(?<!\w)"
-        return re.search(prefix + pattern + r"(?!\w)", comparable_segment) is not None
-    return normalized in comparable_segment
+        prefix = r"(?<!seattle\s)(?<!\S)" if compact_times_label else r"(?<!\S)"
+        return re.search(prefix + pattern + r"(?=\s|$)", comparable_segment) is not None
+    return (
+        re.search(r"(?<!\S)" + re.escape(normalized) + r"(?=\s|$)", comparable_segment) is not None
+    )
 
 
 def _pdf_line_value_is_present(value: str, segment: str) -> bool:
@@ -1538,7 +1599,7 @@ def _missing_pdf_race_values(
             r"\s*".join(re.escape(word) for word in _normalized_text(value).casefold().split())
             for value in (race.race_label, race.recommendation_label)
         )
-        if re.match(header_pattern, segment) is None:
+        if re.match(header_pattern + r"(?=\s|$)", segment) is None:
             missing.append(f"{race.id}: ordered race result header")
         for value in value_fn(race):
             line_bound_detailed_comparison = (

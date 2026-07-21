@@ -26,12 +26,14 @@ from election_guide.rendering import (
 )
 from election_guide.rendering.models import RenderingValidationReport
 from election_guide.rendering.renderer import (
+    PrintLayoutError,
     _detailed_pdf_race_values,  # pyright: ignore[reportPrivateUsage]
     _missing_pdf_race_values,  # pyright: ignore[reportPrivateUsage]
     _pdf_race_core_values,  # pyright: ignore[reportPrivateUsage]
     _pdf_race_display_values,  # pyright: ignore[reportPrivateUsage]
     _render_pdf,  # pyright: ignore[reportPrivateUsage]
     _trim_trailing_blank_pages,  # pyright: ignore[reportPrivateUsage]
+    _validate_print_layout,  # pyright: ignore[reportPrivateUsage]
     find_chrome,
 )
 from election_guide.scoring import score_dataset
@@ -253,10 +255,14 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert html.count('class="print-race-column"') == 2
     assert "State Legislature — continued" in html
     assert ".print-race:nth-of-type(even) { background: #f2f6f8; }" in html
-    assert "font: 800 20pt/.95 Arial, Helvetica, sans-serif" in html
+    assert '--print-sans: Helvetica, "Liberation Sans", sans-serif' in html
+    assert "const centerPrintInk = () =>" in html
+    assert "window.addEventListener('beforeprint', calibratePrintInk)" in html
+    assert "requestAnimationFrame(() => requestAnimationFrame(calibratePrintInk))" in html
+    assert "font: 800 20pt/.95 var(--print-sans)" in html
     assert '<div class="print-guide">' in html
     assert '<div class="print-guide" aria-hidden="true">' not in html
-    assert "font: 800 8.9pt/1 Arial, Helvetica, sans-serif" in html
+    assert "font: 800 8.9pt/1 var(--print-sans)" in html
     assert "--print-meter-width: 1.65in" in html
     assert "grid-template-columns: minmax(0, 1fr) var(--print-meter-width)" in html
     assert "linear-gradient(to left, var(--teal) 0 var(--meter-fill)" in html
@@ -286,6 +292,39 @@ def test_rendering_configuration_rejects_contract_drift() -> None:
     aliased_pdfs["detailed_pdf_filename"] = aliased_pdfs["pdf_filename"]
     with pytest.raises(ValidationError, match="must be distinct"):
         type(configuration).model_validate(aliased_pdfs)
+
+
+def test_print_layout_rejects_visibly_uncentered_control_text(tmp_path: Path) -> None:
+    view_model = _view_model(tmp_path / "fixture")
+    html_path = tmp_path / "uncentered.html"
+    html = render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG))
+    html_path.write_text(
+        html.replace(
+            "</head>",
+            """
+<style>
+@media print {
+  .print-guide { font-family: Arial, Helvetica, sans-serif; }
+  .print-meter-label { padding: 0 .05in 0 0; }
+  .print-meter-text, .print-times-pick > span { position: relative; top: -3px; }
+}
+</style>
+<script>window.__disablePrintInkCentering = true;</script>
+</head>
+""",
+            1,
+        ),
+        encoding="utf-8",
+    )
+
+    with pytest.raises(PrintLayoutError, match=r"(label|comparison)-centering"):
+        _validate_print_layout(
+            html_path,
+            find_chrome(),
+            minimum_font_points=read_rendering_configuration(
+                RENDERING_CONFIG
+            ).minimum_print_font_points,
+        )
 
 
 def test_html_escapes_publication_text_and_filter_attributes(tmp_path: Path) -> None:
@@ -340,6 +379,33 @@ def test_pdf_result_header_cannot_be_masked_by_comparison_text(tmp_path: Path) -
     missing = _missing_pdf_race_values([race], misleading_text, _pdf_race_display_values)
 
     assert f"{race.id}: ordered race result header" in missing
+
+    short_choice_race = race.model_copy(update={"recommendation_label": "Yes"})
+    prefix_corrupted_text = " ".join(_pdf_race_display_values(short_choice_race)).replace(
+        "Yes", "Yesterday", 1
+    )
+    prefix_corrupted_missing = _missing_pdf_race_values(
+        [short_choice_race], prefix_corrupted_text, _pdf_race_display_values
+    )
+    assert f"{race.id}: ordered race result header" in prefix_corrupted_missing
+    assert f"{race.id}: Yes" in prefix_corrupted_missing
+
+    percentage_race = race.model_copy(update={"percentage_label": "100%", "percentage_whole": 100})
+    suffixed_percentage_text = " ".join(_pdf_race_display_values(percentage_race)).replace(
+        "100%", "100%%", 1
+    )
+    suffixed_percentage_missing = _missing_pdf_race_values(
+        [percentage_race], suffixed_percentage_text, _pdf_race_display_values
+    )
+    assert f"{race.id}: 100%" in suffixed_percentage_missing
+
+    prefixed_percentage_text = " ".join(_pdf_race_display_values(percentage_race)).replace(
+        "100%", "!100%", 1
+    )
+    prefixed_percentage_missing = _missing_pdf_race_values(
+        [percentage_race], prefixed_percentage_text, _pdf_race_display_values
+    )
+    assert f"{race.id}: 100%" in prefixed_percentage_missing
 
 
 @pytest.mark.parametrize(
@@ -409,6 +475,14 @@ def test_pdf_comparison_validation_requires_compound_chip_and_rejects_legacy_bad
         1,
     )
     assert _missing_pdf_race_values([race], wrapped_header_text, value_fn) == []
+    joined_value_text = expected_text.replace(
+        race.race_label,
+        race.race_label.replace(" ", "", 1),
+        1,
+    )
+    assert f"{race.id}: {race.race_label}" in _missing_pdf_race_values(
+        [race], joined_value_text, value_fn
+    )
 
     for suffix in ("body", " body", "-body"):
         prefix_collision_text = expected_text.replace(chip_label, f"{chip_label}{suffix}", 1)
