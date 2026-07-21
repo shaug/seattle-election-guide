@@ -1,8 +1,8 @@
 # 2026 Primary Source Discovery Report
 
-Panel `wa-2026-primary-default-sources` was frozen at `2026-07-20T14:05:00+00:00` before scoring. The research cutoff is `2026-07-20T14:05:00+00:00`; individual access times are recorded in the machine-readable registry.
+Panel `wa-2026-primary-default-sources` was frozen at `2026-07-21T15:40:21+00:00` before scoring. The research cutoff is `2026-07-21T15:40:21+00:00`; individual access times are recorded in the machine-readable registry.
 
-The preregistration contains **42 proposed sources**: **36 consensus**, **1 comparison**, and **5 excluded**. Discovery found **35 official 2026 publications**, **3 publication gaps**, **1 access-restricted source**, and **3 conditional organizations that do not publish endorsements**.
+The preregistration contains **42 proposed sources**: **36 consensus**, **1 comparison**, and **5 excluded**. Discovery found **36 official 2026 publications**, **2 publication gaps**, **1 access-restricted source**, and **3 conditional organizations that do not publish endorsements**.
 
 Search results were discovery leads only. Every link below is an official organization URL; no search snippet or third-party list is endorsement evidence. `not_found` means no official 2026 publication was located, not that the organization made an explicit no-endorsement decision.
 
@@ -26,7 +26,7 @@ Search results were discovery leads only. Every link below is an official organi
 | 37th Legislative District Democrats | Democratic Party | consensus | published | [official page](https://37dems.org/) | — | text/html | Seattle-ballot races except other legislative districts |
 | 43rd Legislative District Democrats | Democratic Party | consensus | published | [official page](https://43rddemocrats.org/endorsements/2026) | 2026-06-16 | text/html | Seattle-ballot races except other legislative districts |
 | 46th Legislative District Democrats | Democratic Party | consensus | published | [official page](https://www.46dems.org/2026_endorsements) | 2026-05-18 | text/html | Seattle-ballot races except other legislative districts |
-| Washington State Stonewall Democrats | Democratic Party | consensus | not_found | [official page](https://www.stonewalldemocrats.us/washington) | — | text/html | Seattle-ballot races |
+| Washington State Stonewall Democrats | Democratic Party | consensus | published | [official page](https://www.facebook.com/stonewallwa/posts/1450344363801898/) | 2026-07-06 | image/jpeg | Seattle-ballot races |
 | Transit Riders Union | Transportation/urbanism | consensus | published | [official page](https://transitriders.org/2026-primary-election-endorsements/) | 2026-05-30 (updated 2026-06-16) | text/html | Seattle-ballot races |
 | Washington Bikes | Transportation/urbanism | consensus | published | [official page](https://wabikes.org/index.php/2026/07/16/wa-bikes-2026-primary-endorsements-for-better-biking/) | 2026-07-16 | text/html | Seattle-ballot races |
 | Cascade Bicycle Club | Transportation/urbanism | excluded | not_an_endorsement_publisher | [official page](https://cascade.org/who-we-are/about-us) | — | text/html | None |
@@ -101,7 +101,6 @@ Search results were discovery leads only. Every link below is an official organi
 ## Gaps and conditional exclusions
 
 - **Washington State Democratic Party — access_restricted.** Direct unattended access remains blocked and a fresh official-domain search found no 2026 endorsement roster; candidate and third-party lists were not substituted for a party publication.
-- **Washington State Stonewall Democrats — not_found.** The official Washington chapter page loaded with HTTP 200, but no official consolidated 2026 endorsement page was located. The supplied stonewalldems.org roster belongs to a Los Angeles, California club and was rejected as evidence for this Washington source.
 - **Cascade Bicycle Club — not_an_endorsement_publisher.** Official materials state that Cascade is the affiliated 501(c)(3) and Washington Bikes is the 501(c)(4) candidate-endorsement arm.
 - **Transportation Choices Coalition — not_found.** Official pages loaded with HTTP 200, but no 2026 candidate or ballot endorsement publication was located.
 - **Disability Mobility Initiative at Disability Rights Washington — not_an_endorsement_publisher.** The requested legacy program URL redirected to the organization root; official materials concern advocacy and voter access, not candidate recommendations.

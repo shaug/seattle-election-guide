@@ -256,6 +256,29 @@
     {
       "availability": "captured",
       "browser_required": false,
+      "byte_length": 7682,
+      "canonical_url": "https://www.facebook.com/stonewallwa/posts/1450344363801898/",
+      "capture_method": "manual_upload",
+      "content_sha256": "8ef8618dcb88b3a398e077d30cb7968bff1b3a0b893a17ff9b48b462a3bde124",
+      "http_status": null,
+      "id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "media_type": "application/json",
+      "published_at": "2026-07-06",
+      "redirect_chain": [],
+      "redistribution": "permitted",
+      "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+      "requested_url": "https://www.facebook.com/stonewallwa/posts/1450344363801898/",
+      "retrieved_at": "2026-07-21T15:40:21Z",
+      "schema_version": "1.0",
+      "source_id": "washington-stonewall-democrats",
+      "storage_reference": "sha256/8e/8ef8618dcb88b3a398e077d30cb7968bff1b3a0b893a17ff9b48b462a3bde124",
+      "storage_scope": "local_only",
+      "title": "Permitted 2026 endorsement decision extract: Washington State Stonewall Democrats",
+      "updated_at": null
+    },
+    {
+      "availability": "captured",
+      "browser_required": false,
       "byte_length": 951,
       "canonical_url": "https://transitriders.org/2026-primary-election-endorsements/",
       "capture_method": "manual_upload",
@@ -3093,6 +3116,336 @@
       "raw_status_text": "endorsed",
       "requires_review": false,
       "source_id": "46th-district-democrats"
+    },
+    {
+      "capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 1; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-dbfc508a99d5.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-9a2bdbefd0fe3f98",
+      "raw_candidate_text": "Pramila Jayapal",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "U.S. Representative — Congressional District 7",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-stonewall-democrats"
+    },
+    {
+      "capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 1; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-dbfc508a99d5.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-d43bb6b1952282b6",
+      "raw_candidate_text": "Adam Smith",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "U.S. Representative — Congressional District 9",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-stonewall-democrats"
+    },
+    {
+      "capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 2; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-780874a27470.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-7b8dd7e978d76665",
+      "raw_candidate_text": "Colleen Melody",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Washington Supreme Court Justice — Position 1",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-stonewall-democrats"
+    },
+    {
+      "capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 2; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-780874a27470.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-d22973f74e9b0d5c",
+      "raw_candidate_text": "Jaime Michelle Hawk and Mike Diaz",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Washington Supreme Court Justice — Position 3",
+      "raw_status_text": "dual endorsement",
+      "requires_review": true,
+      "source_id": "washington-stonewall-democrats"
+    },
+    {
+      "capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 2; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-780874a27470.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-4c627a5de6497a95",
+      "raw_candidate_text": "Theo Angelis",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Washington Supreme Court Justice — Position 5",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-stonewall-democrats"
+    },
+    {
+      "capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 2; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-780874a27470.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-f4ee385defc6cf3b",
+      "raw_candidate_text": "Gabe Rothstein",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Seattle Municipal Court Judge — Position 5",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-stonewall-democrats"
+    },
+    {
+      "capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 3; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-3b7407801410.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-20fca895be20cd95",
+      "raw_candidate_text": "Rebecca Saldaña",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Metropolitan King County Council — District 2",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-stonewall-democrats"
+    },
+    {
+      "capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 3; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-3b7407801410.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-bdb6ef00fe414db5",
+      "raw_candidate_text": "Christopher Roberts",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "King County Assessor",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-stonewall-democrats"
+    },
+    {
+      "capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 3; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-3b7407801410.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-fb0e1b391af4d473",
+      "raw_candidate_text": "Nilu Jenks",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Seattle City Council — District 5",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-stonewall-democrats"
+    },
+    {
+      "capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 4; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-80d8944642be.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-8e6208d8dc8da385",
+      "raw_candidate_text": "Cindy Ryu",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Legislative District 32 State Senator",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-stonewall-democrats"
+    },
+    {
+      "capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 4; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-80d8944642be.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-05cd7afdefae35aa",
+      "raw_candidate_text": "Chipalo Street",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Legislative District 37 State Senator",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-stonewall-democrats"
+    },
+    {
+      "capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 4; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-80d8944642be.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-6d9f61d1e7d4d87f",
+      "raw_candidate_text": "Jamie Pedersen and Hannah Sabio-Howell",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Legislative District 43 State Senator",
+      "raw_status_text": "dual endorsement",
+      "requires_review": true,
+      "source_id": "washington-stonewall-democrats"
+    },
+    {
+      "capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 5; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-9ad584ac7a91.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-52d01b95483f0cf3",
+      "raw_candidate_text": "Javier Valdez",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Legislative District 46 State Senator",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-stonewall-democrats"
+    },
+    {
+      "capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 6; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-4ad76b40d509.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-61366ad5b5c04a3f",
+      "raw_candidate_text": "Ashley Fedan",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Legislative District 11 State Representative — Position 1",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-stonewall-democrats"
+    },
+    {
+      "capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 9; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-35d4a81e006f.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-2a6ab1d3fe53155e",
+      "raw_candidate_text": "Imraan Siddiqi",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Legislative District 32 State Representative — Position 2",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-stonewall-democrats"
+    },
+    {
+      "capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 10; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-9f058cc2b11e.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-af18340622e4e5e1",
+      "raw_candidate_text": "Brianna K. Thomas",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Legislative District 34 State Representative — Position 1",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-stonewall-democrats"
+    },
+    {
+      "capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 10; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-9f058cc2b11e.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-f47071afa7384697",
+      "raw_candidate_text": "Joe Fitzgibbon",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Legislative District 34 State Representative — Position 2",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-stonewall-democrats"
+    },
+    {
+      "capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 10; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-9f058cc2b11e.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-34b58cdc45d6f758",
+      "raw_candidate_text": "Kelabe Tewolde",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Legislative District 37 State Representative — Position 1",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-stonewall-democrats"
+    },
+    {
+      "capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 10; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-9f058cc2b11e.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-2e36f9c473beae4f",
+      "raw_candidate_text": "Jaelynn Scott",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Legislative District 37 State Representative — Position 2",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-stonewall-democrats"
+    },
+    {
+      "capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 11; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-6576d2c76e20.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-bd1b8de89cf513e2",
+      "raw_candidate_text": "Nicole Macri",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Legislative District 43 State Representative — Position 1",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-stonewall-democrats"
+    },
+    {
+      "capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 12; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-cf475b198f0a.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-e0f7dcfec7ef3863",
+      "raw_candidate_text": "Ron Davis",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Legislative District 46 State Representative — Position 1",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-stonewall-democrats"
+    },
+    {
+      "capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 12; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-cf475b198f0a.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-7e5354c26a6b7022",
+      "raw_candidate_text": "Darya Farivar",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Legislative District 46 State Representative — Position 2",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-stonewall-democrats"
     },
     {
       "capture_id": "capture-transit-riders-union-20260720T011000Z-8154d47cb60a",
@@ -11112,6 +11465,494 @@
       "reviewer": "shaug",
       "source_capture_id": "capture-46th-district-democrats-20260720T140034Z-7278dc4e3052",
       "source_id": "46th-district-democrats",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "us-house-7--pramila-jayapal": "1"
+      },
+      "candidate_ids": [
+        "us-house-7--pramila-jayapal"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-9a2bdbefd0fe3f98",
+      "id": "endorsement-28a8fe9daec6b454",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-06",
+      "race_id": "us-house-7",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-21T15:40:21Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "source_id": "washington-stonewall-democrats",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "us-house-9--adam-smith": "1"
+      },
+      "candidate_ids": [
+        "us-house-9--adam-smith"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-d43bb6b1952282b6",
+      "id": "endorsement-8a873e392a3444d8",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-06",
+      "race_id": "us-house-9",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-21T15:40:21Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "source_id": "washington-stonewall-democrats",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "supreme-court-justice-1--colleen-melody": "1"
+      },
+      "candidate_ids": [
+        "supreme-court-justice-1--colleen-melody"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-7b8dd7e978d76665",
+      "id": "endorsement-b036c31b490d7ec4",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-06",
+      "race_id": "supreme-court-justice-1",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-21T15:40:21Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "source_id": "washington-stonewall-democrats",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "supreme-court-justice-3--jaime-michelle-hawk": "1/2",
+        "supreme-court-justice-3--mike-diaz": "1/2"
+      },
+      "candidate_ids": [
+        "supreme-court-justice-3--jaime-michelle-hawk",
+        "supreme-court-justice-3--mike-diaz"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-d22973f74e9b0d5c",
+      "id": "endorsement-2eaf484e6c683e74",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-06",
+      "race_id": "supreme-court-justice-3",
+      "review_item_id": "review-733fbc2b85f5788a",
+      "reviewed_at": "2026-07-21T15:40:21Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "source_id": "washington-stonewall-democrats",
+      "status": "dual_endorsement"
+    },
+    {
+      "allocation": {
+        "supreme-court-justice-5--theo-angelis": "1"
+      },
+      "candidate_ids": [
+        "supreme-court-justice-5--theo-angelis"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-4c627a5de6497a95",
+      "id": "endorsement-ee6a7778ec38cc83",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-06",
+      "race_id": "supreme-court-justice-5",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-21T15:40:21Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "source_id": "washington-stonewall-democrats",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "seattle-municipal-court-judge-5--gabe-rothstein": "1"
+      },
+      "candidate_ids": [
+        "seattle-municipal-court-judge-5--gabe-rothstein"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-f4ee385defc6cf3b",
+      "id": "endorsement-eec325a6e2f59152",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-06",
+      "race_id": "seattle-municipal-court-judge-5",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-21T15:40:21Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "source_id": "washington-stonewall-democrats",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "king-county-council-2--rebecca-salda-a": "1"
+      },
+      "candidate_ids": [
+        "king-county-council-2--rebecca-salda-a"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-20fca895be20cd95",
+      "id": "endorsement-8e0f2a076a572c28",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-06",
+      "race_id": "king-county-council-2",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-21T15:40:21Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "source_id": "washington-stonewall-democrats",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "king-county-assessor--christopher-roberts": "1"
+      },
+      "candidate_ids": [
+        "king-county-assessor--christopher-roberts"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-bdb6ef00fe414db5",
+      "id": "endorsement-a6cfe1cc2993a0bd",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-06",
+      "race_id": "king-county-assessor",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-21T15:40:21Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "source_id": "washington-stonewall-democrats",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "seattle-city-council-5--nilu-jenks": "1"
+      },
+      "candidate_ids": [
+        "seattle-city-council-5--nilu-jenks"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-fb0e1b391af4d473",
+      "id": "endorsement-6f9376ac24682508",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-06",
+      "race_id": "seattle-city-council-5",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-21T15:40:21Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "source_id": "washington-stonewall-democrats",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-32-state-senator--cindy-ryu": "1"
+      },
+      "candidate_ids": [
+        "ld-32-state-senator--cindy-ryu"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-8e6208d8dc8da385",
+      "id": "endorsement-751334fbc0fd9efe",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-06",
+      "race_id": "ld-32-state-senator",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-21T15:40:21Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "source_id": "washington-stonewall-democrats",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-37-state-senator--chipalo-street": "1"
+      },
+      "candidate_ids": [
+        "ld-37-state-senator--chipalo-street"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-05cd7afdefae35aa",
+      "id": "endorsement-fdad068c5d5cfbc5",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-06",
+      "race_id": "ld-37-state-senator",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-21T15:40:21Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "source_id": "washington-stonewall-democrats",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-43-state-senator--hannah-sabio-howell": "1/2",
+        "ld-43-state-senator--jamie-pedersen": "1/2"
+      },
+      "candidate_ids": [
+        "ld-43-state-senator--jamie-pedersen",
+        "ld-43-state-senator--hannah-sabio-howell"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-6d9f61d1e7d4d87f",
+      "id": "endorsement-615af6558c0065c3",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-06",
+      "race_id": "ld-43-state-senator",
+      "review_item_id": "review-0a06a8b9cf843c90",
+      "reviewed_at": "2026-07-21T15:40:21Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "source_id": "washington-stonewall-democrats",
+      "status": "dual_endorsement"
+    },
+    {
+      "allocation": {
+        "ld-46-state-senator--javier-valdez": "1"
+      },
+      "candidate_ids": [
+        "ld-46-state-senator--javier-valdez"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-52d01b95483f0cf3",
+      "id": "endorsement-dc55cd380783bba9",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-06",
+      "race_id": "ld-46-state-senator",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-21T15:40:21Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "source_id": "washington-stonewall-democrats",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-11-state-representative-1--ashley-fedan": "1"
+      },
+      "candidate_ids": [
+        "ld-11-state-representative-1--ashley-fedan"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-61366ad5b5c04a3f",
+      "id": "endorsement-c977ce5af3d39823",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-06",
+      "race_id": "ld-11-state-representative-1",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-21T15:40:21Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "source_id": "washington-stonewall-democrats",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-32-state-representative-2--imraan-siddiqi": "1"
+      },
+      "candidate_ids": [
+        "ld-32-state-representative-2--imraan-siddiqi"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-2a6ab1d3fe53155e",
+      "id": "endorsement-05aaa948ea6419a4",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-06",
+      "race_id": "ld-32-state-representative-2",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-21T15:40:21Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "source_id": "washington-stonewall-democrats",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-34-state-representative-1--brianna-k-thomas": "1"
+      },
+      "candidate_ids": [
+        "ld-34-state-representative-1--brianna-k-thomas"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-af18340622e4e5e1",
+      "id": "endorsement-c709ab24ec741a54",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-06",
+      "race_id": "ld-34-state-representative-1",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-21T15:40:21Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "source_id": "washington-stonewall-democrats",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-34-state-representative-2--joe-fitzgibbon": "1"
+      },
+      "candidate_ids": [
+        "ld-34-state-representative-2--joe-fitzgibbon"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-f47071afa7384697",
+      "id": "endorsement-e8170a0ee01bd975",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-06",
+      "race_id": "ld-34-state-representative-2",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-21T15:40:21Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "source_id": "washington-stonewall-democrats",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-37-state-representative-1--kelabe-tewolde": "1"
+      },
+      "candidate_ids": [
+        "ld-37-state-representative-1--kelabe-tewolde"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-34b58cdc45d6f758",
+      "id": "endorsement-c6cad4714912993c",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-06",
+      "race_id": "ld-37-state-representative-1",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-21T15:40:21Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "source_id": "washington-stonewall-democrats",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-37-state-representative-2--jaelynn-scott": "1"
+      },
+      "candidate_ids": [
+        "ld-37-state-representative-2--jaelynn-scott"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-2e36f9c473beae4f",
+      "id": "endorsement-946e49fca5068955",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-06",
+      "race_id": "ld-37-state-representative-2",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-21T15:40:21Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "source_id": "washington-stonewall-democrats",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-43-state-representative-1--nicole-macri": "1"
+      },
+      "candidate_ids": [
+        "ld-43-state-representative-1--nicole-macri"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-bd1b8de89cf513e2",
+      "id": "endorsement-ca85d6003c7f6ef4",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-06",
+      "race_id": "ld-43-state-representative-1",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-21T15:40:21Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "source_id": "washington-stonewall-democrats",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-46-state-representative-1--ron-davis": "1"
+      },
+      "candidate_ids": [
+        "ld-46-state-representative-1--ron-davis"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-e0f7dcfec7ef3863",
+      "id": "endorsement-c05f1a49206d5eef",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-06",
+      "race_id": "ld-46-state-representative-1",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-21T15:40:21Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "source_id": "washington-stonewall-democrats",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-46-state-representative-2--darya-farivar": "1"
+      },
+      "candidate_ids": [
+        "ld-46-state-representative-2--darya-farivar"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-7e5354c26a6b7022",
+      "id": "endorsement-6b8ec11d1a766578",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-06",
+      "race_id": "ld-46-state-representative-2",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-21T15:40:21Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "source_id": "washington-stonewall-democrats",
       "status": "endorsed"
     },
     {
@@ -23465,6 +24306,48 @@
     {
       "action": "approve",
       "author": "shaug",
+      "created_at": "2026-07-21T15:40:21Z",
+      "evidence": "Gallery image 2; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-780874a27470.",
+      "id": "decision-813485ef01baa4b2",
+      "reason": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "resolution": {
+        "allocation": {
+          "supreme-court-justice-3--jaime-michelle-hawk": "1/2",
+          "supreme-court-justice-3--mike-diaz": "1/2"
+        },
+        "candidate_ids": [
+          "supreme-court-justice-3--jaime-michelle-hawk",
+          "supreme-court-justice-3--mike-diaz"
+        ],
+        "race_id": "supreme-court-justice-3",
+        "status": "dual_endorsement"
+      },
+      "review_item_id": "review-733fbc2b85f5788a"
+    },
+    {
+      "action": "approve",
+      "author": "shaug",
+      "created_at": "2026-07-21T15:40:21Z",
+      "evidence": "Gallery image 4; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-80d8944642be.",
+      "id": "decision-31ab0e2e94d9088a",
+      "reason": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "resolution": {
+        "allocation": {
+          "ld-43-state-senator--hannah-sabio-howell": "1/2",
+          "ld-43-state-senator--jamie-pedersen": "1/2"
+        },
+        "candidate_ids": [
+          "ld-43-state-senator--jamie-pedersen",
+          "ld-43-state-senator--hannah-sabio-howell"
+        ],
+        "race_id": "ld-43-state-senator",
+        "status": "dual_endorsement"
+      },
+      "review_item_id": "review-0a06a8b9cf843c90"
+    },
+    {
+      "action": "approve",
+      "author": "shaug",
       "created_at": "2026-07-20T14:05:00Z",
       "evidence": "Official 2026 primary endorsements page, three-item endorsement list.",
       "id": "decision-af2a2d8b8c252cd2",
@@ -24060,6 +24943,60 @@
     },
     {
       "candidate_match": null,
+      "capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "claim_id": "claim-d22973f74e9b0d5c",
+      "created_at": "2026-07-21T15:40:21Z",
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 2; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-780874a27470.",
+      "id": "review-733fbc2b85f5788a",
+      "race_match": {
+        "candidates": [
+          {
+            "label": "Washington Supreme Court Justice — Position 3",
+            "match_kind": "exact",
+            "record_id": "supreme-court-justice-3",
+            "score": "1"
+          }
+        ],
+        "selected_id": "supreme-court-justice-3",
+        "status": "matched"
+      },
+      "raw_candidate_text": "Jaime Michelle Hawk and Mike Diaz",
+      "raw_race_text": "Washington Supreme Court Justice — Position 3",
+      "raw_status_text": "dual endorsement",
+      "reason": "extraction_requires_review",
+      "severity": "high",
+      "summary": "Verified multi-candidate decision from the permitted extract."
+    },
+    {
+      "candidate_match": null,
+      "capture_id": "capture-washington-stonewall-democrats-20260721T154021Z-08dcab17e36a",
+      "claim_id": "claim-6d9f61d1e7d4d87f",
+      "created_at": "2026-07-21T15:40:21Z",
+      "evidence_excerpt": null,
+      "evidence_locator": "Gallery image 4; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-80d8944642be.",
+      "id": "review-0a06a8b9cf843c90",
+      "race_match": {
+        "candidates": [
+          {
+            "label": "Legislative District 43 State Senator",
+            "match_kind": "exact",
+            "record_id": "ld-43-state-senator",
+            "score": "1"
+          }
+        ],
+        "selected_id": "ld-43-state-senator",
+        "status": "matched"
+      },
+      "raw_candidate_text": "Jamie Pedersen and Hannah Sabio-Howell",
+      "raw_race_text": "Legislative District 43 State Senator",
+      "raw_status_text": "dual endorsement",
+      "reason": "extraction_requires_review",
+      "severity": "high",
+      "summary": "Verified multi-candidate decision from the permitted extract."
+    },
+    {
+      "candidate_match": null,
       "capture_id": "capture-transit-riders-union-20260720T011000Z-8154d47cb60a",
       "claim_id": "claim-02a1a3410efcd23e",
       "created_at": "2026-07-20T01:10:00Z",
@@ -24548,10 +25485,10 @@
   "schema_version": "1.0",
   "source_registry": {
     "election_id": "wa-2026-primary",
-    "frozen_at": "2026-07-20T14:05:00Z",
+    "frozen_at": "2026-07-21T15:40:21Z",
     "id": "wa-2026-primary-default-sources",
     "notes": [
-      "This registry was refreshed and re-frozen after the time-bounded source-completeness pass, before recompiling consensus scores.",
+      "This registry was refreshed and re-frozen after capturing the Washington State Stonewall Democrats image gallery, before recompiling consensus scores.",
       "Published means an official 2026 publication was located; it does not imply complete ballot coverage.",
       "Not found is distinct from an explicit no-endorsement decision by an organization.",
       "Search results were used only to locate official pages and are not endorsement evidence."
@@ -24610,7 +25547,7 @@
         ]
       }
     ],
-    "research_cutoff": "2026-07-20T14:05:00Z",
+    "research_cutoff": "2026-07-21T15:40:21Z",
     "schema_version": "1.0",
     "sources": [
       {
@@ -25100,15 +26037,15 @@
       {
         "category": "democratic_party",
         "discovery": {
-          "canonical_url": "https://www.stonewalldemocrats.us/washington",
-          "checked_at": "2026-07-20T13:50:28Z",
-          "evidence_locator": "Official Washington chapter page and official-site endorsement search.",
-          "media_type": "text/html",
-          "notes": "The official Washington chapter page loaded with HTTP 200, but no official consolidated 2026 endorsement page was located. The supplied stonewalldems.org roster belongs to a Los Angeles, California club and was rejected as evidence for this Washington source.",
-          "published_at": null,
+          "canonical_url": "https://www.facebook.com/stonewallwa/posts/1450344363801898/",
+          "checked_at": "2026-07-21T15:40:21Z",
+          "evidence_locator": "Official Facebook post containing a twelve-image 2026 primary endorsement gallery.",
+          "media_type": "image/jpeg",
+          "notes": "All twelve unique graphics were captured and the complete statewide slate was manually transcribed. Facebook's +8 overlay includes its covered thumbnail; gallery navigation returned to the first image after twelve unique photo IDs. Seattle-ballot decisions are matched to the frozen official inventory.",
+          "published_at": "2026-07-06",
           "redirect_chain": [],
-          "requested_url": "https://www.stonewalldemocrats.us/washington",
-          "status": "not_found",
+          "requested_url": "https://www.facebook.com/stonewallwa/posts/1450344363801898/",
+          "status": "published",
           "updated_at": null
         },
         "eligibility": {

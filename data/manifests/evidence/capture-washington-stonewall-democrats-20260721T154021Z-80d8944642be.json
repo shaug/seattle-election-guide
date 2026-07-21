@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": true,
+  "byte_length": 125043,
+  "canonical_url": "https://www.facebook.com/photo/?fbid=1450745557095112&set=pcb.1450344363801898",
+  "capture_method": "browser",
+  "content_sha256": "ead081b39a53ebc8a2d165ed94d4ea39d0cc246700ba14f44da9d023f7012c50",
+  "http_status": 200,
+  "id": "capture-washington-stonewall-democrats-20260721T154021Z-80d8944642be",
+  "media_type": "image/jpeg",
+  "published_at": "2026-07-06",
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Official endorsement graphic retained locally for audit; tracked factual transcription may be redistributed.",
+  "requested_url": "https://www.facebook.com/photo/?fbid=1450745557095112&set=pcb.1450344363801898",
+  "retrieved_at": "2026-07-21T15:40:21Z",
+  "schema_version": "1.0",
+  "source_id": "washington-stonewall-democrats",
+  "storage_reference": "sha256/ea/ead081b39a53ebc8a2d165ed94d4ea39d0cc246700ba14f44da9d023f7012c50",
+  "storage_scope": "local_only",
+  "title": "Washington State Stonewall Democrats 2026 Primary: State Senate endorsements, part 1",
+  "updated_at": null
+}

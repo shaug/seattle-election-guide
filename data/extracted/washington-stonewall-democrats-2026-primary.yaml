@@ -1,0 +1,157 @@
+schema_version: "1.0"
+source_id: washington-stonewall-democrats
+source_post_url: https://www.facebook.com/stonewallwa/posts/1450344363801898/
+published_at: 2026-07-06
+retrieved_at: 2026-07-21T15:40:21Z
+entry_method: manual_image_transcription
+reviewer: shaug
+notes: >-
+  Complete factual transcription of the twelve-image endorsement gallery. Candidate names and
+  office labels preserve the graphics' wording; Seattle-ballot mappings use the frozen official
+  ballot inventory in the reviewed release ledger.
+gallery_audit:
+  attachment_overlay_text: 8 remaining items
+  unique_photo_count: 12
+  count_interpretation: >-
+    Facebook's overlay count includes the thumbnail underneath the overlay: four unobscured
+    thumbnails plus eight overlay-counted items equals twelve unique photos.
+  navigation_cycle_check: >-
+    Advancing from photo 1451333713702963 returned to the first gallery photo,
+    1450343267135341, after all twelve unique photo IDs had been visited.
+evidence:
+  - image: 1
+    capture_id: capture-washington-stonewall-democrats-20260721T154021Z-dbfc508a99d5
+    title: Congressional endorsements
+  - image: 2
+    capture_id: capture-washington-stonewall-democrats-20260721T154021Z-780874a27470
+    title: Judicial and State Supreme Court endorsements
+  - image: 3
+    capture_id: capture-washington-stonewall-democrats-20260721T154021Z-3b7407801410
+    title: Municipal and county endorsements
+  - image: 4
+    capture_id: capture-washington-stonewall-democrats-20260721T154021Z-80d8944642be
+    title: State Senate endorsements, part 1
+  - image: 5
+    capture_id: capture-washington-stonewall-democrats-20260721T154021Z-9ad584ac7a91
+    title: State Senate endorsements, part 2
+  - image: 6
+    capture_id: capture-washington-stonewall-democrats-20260721T154021Z-4ad76b40d509
+    title: State Representative endorsements, page 1 of 6
+  - image: 7
+    capture_id: capture-washington-stonewall-democrats-20260721T154021Z-e571ee0cc660
+    title: State Representative endorsements, page 2 of 6
+  - image: 8
+    capture_id: capture-washington-stonewall-democrats-20260721T154021Z-d78a11fefcab
+    title: State Representative endorsements, page 3 of 6
+  - image: 9
+    capture_id: capture-washington-stonewall-democrats-20260721T154021Z-35d4a81e006f
+    title: State Representative endorsements, page 4 of 6
+  - image: 10
+    capture_id: capture-washington-stonewall-democrats-20260721T154021Z-9f058cc2b11e
+    title: State Representative endorsements, page 5 of 6
+  - image: 11
+    capture_id: capture-washington-stonewall-democrats-20260721T154021Z-6576d2c76e20
+    title: State Representative endorsements, page 6 of 6
+  - image: 12
+    capture_id: capture-washington-stonewall-democrats-20260721T154021Z-cf475b198f0a
+    title: State Representative supplemental endorsements
+endorsements:
+  congressional:
+    - {district: 1, candidate: Suzanne DelBene, evidence_image: 1}
+    - {district: 2, candidate: Rick Larsen, evidence_image: 1}
+    - {district: 3, candidate: Brent Hennrich, evidence_image: 1}
+    - {district: 4, candidate: John Duresky, evidence_image: 1}
+    - {district: 5, candidate: Carmela Conroy, evidence_image: 1}
+    - {district: 6, candidate: Emily Randall, evidence_image: 1}
+    - {district: 7, candidate: Pramila Jayapal, evidence_image: 1}
+    - {district: 8, candidate: Kim Schrier, evidence_image: 1}
+    - {district: 9, candidate: Adam Smith, evidence_image: 1}
+    - {district: 10, candidate: Marilyn Strickland, evidence_image: 1}
+  judicial:
+    - {office: Washington Supreme Court, position: 1, candidates: [Colleen Melody], evidence_image: 2}
+    - {office: Washington Supreme Court, position: 3, candidates: [Jaime Michelle Hawk, Mike Diaz], evidence_image: 2}
+    - {office: Washington Supreme Court, position: 4, candidates: [Ian Birk], evidence_image: 2}
+    - {office: Washington Supreme Court, position: 5, candidates: [Theo Angelis], evidence_image: 2}
+    - {office: Seattle Municipal Court, position: 5, candidates: [Gabriel Rothstein], evidence_image: 2}
+  municipal_and_county:
+    - {office: Clark County Council, district: 1, candidate: Lukas Bardue, evidence_image: 3}
+    - {office: Clark County Auditor, candidate: Ty Stober, evidence_image: 3}
+    - {office: King County Council, district: 2, candidate: Rebecca Saldaña, evidence_image: 3}
+    - {office: King County Assessor, candidate: Chris Roberts, evidence_image: 3}
+    - {office: Island County Commissioner, district: 3, candidate: Satin Arnett, evidence_image: 3}
+    - {office: Seattle City Council, district: 5, candidate: Nilu Jenks, evidence_image: 3}
+  state_senate:
+    - {district: 21, candidates: [Marko Liias], evidence_image: 4}
+    - {district: 30, candidates: [Claire Wilson], evidence_image: 4}
+    - {district: 32, candidates: [Cindy Ryu], evidence_image: 4}
+    - {district: 35, candidates: [Carolina Mejia], evidence_image: 4}
+    - {district: 37, candidates: [Chipalo Street], evidence_image: 4}
+    - {district: 42, candidates: [Michael Shepard], evidence_image: 4}
+    - {district: 43, candidates: [Jamie Pedersen, Hannah Sabio-Howell], evidence_image: 4}
+    - {district: 47, candidates: [Claudia Kauffman], evidence_image: 4}
+    - {district: 48, candidates: [Vandana Slatter], evidence_image: 4}
+    - {district: 29, candidates: [Sharlett Mena], evidence_image: 5}
+    - {district: 38, candidates: [June Robinson], evidence_image: 5}
+    - {district: 46, candidates: [Javier Valdez], evidence_image: 5}
+  state_representative:
+    - {district: 1, position: 2, candidate: Jenne Alderks, evidence_image: 6}
+    - {district: 2, position: 2, candidate: Angela Taylor, evidence_image: 6}
+    - {district: 3, position: 2, candidate: Luc Jasmin III, evidence_image: 6}
+    - {district: 4, position: 2, candidate: Robert Tupper, evidence_image: 6}
+    - {district: 6, position: 2, candidate: Julia Payne, evidence_image: 6}
+    - {district: 9, position: 2, candidate: Karina Wallace, evidence_image: 6}
+    - {district: 10, position: 1, candidate: Clyde Shavers, evidence_image: 6}
+    - {district: 10, position: 2, candidate: Dave Paul, evidence_image: 6}
+    - {district: 11, position: 1, candidate: Ashley Fedan, evidence_image: 6}
+    - {district: 12, position: 1, candidate: Stacy Willoughby, evidence_image: 6}
+    - {district: 12, position: 2, candidate: Maggie Adams, evidence_image: 7}
+    - {district: 13, position: 1, candidate: Juan Garcia, evidence_image: 7}
+    - {district: 14, position: 1, candidate: Chelsea Dimas, evidence_image: 7}
+    - {district: 16, position: 1, candidate: Kyle Palmer, evidence_image: 7}
+    - {district: 16, position: 2, candidate: Derek Sarley, evidence_image: 7}
+    - {district: 17, position: 1, candidate: Ben Christly, evidence_image: 7}
+    - {district: 17, position: 2, candidate: Diana Perez, evidence_image: 7}
+    - {district: 18, position: 1, candidate: Randi Knott, evidence_image: 7}
+    - {district: 19, position: 2, candidate: Kevin Moynihan, evidence_image: 7}
+    - {district: 20, position: 2, candidate: Evan Jones, evidence_image: 8}
+    - {district: 21, position: 1, candidate: Strom Peterson, evidence_image: 8}
+    - {district: 21, position: 2, candidate: Lillian Ortiz-Self, evidence_image: 8}
+    - {district: 22, position: 1, candidate: Beth Doglio, evidence_image: 8}
+    - {district: 22, position: 2, candidate: Jamie Keenan-deVargas, evidence_image: 8}
+    - {district: 23, position: 1, candidate: Tarra Simmons, evidence_image: 8}
+    - {district: 23, position: 2, candidate: Greg Nance, evidence_image: 8}
+    - {district: 24, position: 2, candidate: Kaylee Kuehn, evidence_image: 8}
+    - {district: 25, position: 1, candidate: David Berg, evidence_image: 8}
+    - {district: 25, position: 2, candidate: Jenn Marie Strickling, evidence_image: 9}
+    - {district: 27, position: 1, candidate: Laurie Jinkins, evidence_image: 9}
+    - {district: 27, position: 2, candidate: Jake Fey, evidence_image: 9}
+    - {district: 28, position: 1, candidate: Mari Leavitt, evidence_image: 9}
+    - {district: 29, position: 2, candidate: Patrick Stickney, evidence_image: 9}
+    - {district: 30, position: 1, candidate: Jamila Taylor, evidence_image: 9}
+    - {district: 31, position: 1, candidate: Stephen Szczurko-Walton, evidence_image: 9}
+    - {district: 31, position: 2, candidate: John Bielka, evidence_image: 9}
+    - {district: 32, position: 2, candidate: Imraan Siddiqi, evidence_image: 9}
+    - {district: 33, position: 2, candidate: Mia Gregerson, evidence_image: 10}
+    - {district: 34, position: 1, candidate: Brianna Thomas, evidence_image: 10}
+    - {district: 34, position: 2, candidate: Joe Fitzgibbon, evidence_image: 10}
+    - {district: 35, position: 1, candidate: Jim Pierson, evidence_image: 10}
+    - {district: 37, position: 1, candidate: Kelabe Tewolde, evidence_image: 10}
+    - {district: 37, position: 2, candidate: Jaelynn Scott, evidence_image: 10}
+    - {district: 39, position: 1, candidate: Kathryn Lewandowsky, evidence_image: 10}
+    - {district: 39, position: 2, candidate: Ida Keeley, evidence_image: 10}
+    - {district: 40, position: 1, candidate: Debra Lekanoff, evidence_image: 11}
+    - {district: 41, position: 1, candidate: Janice Zahn, evidence_image: 11}
+    - {district: 41, position: 2, candidate: My-Linh Thai, evidence_image: 11}
+    - {district: 43, position: 1, candidate: Nicole Macri, evidence_image: 11}
+    - {district: 44, position: 1, candidate: Brandy Donaghy, evidence_image: 11}
+    - {district: 45, position: 2, candidate: Vanessa Kritzer, evidence_image: 11}
+    - {district: 48, position: 2, candidate: Jessica Forsythe, evidence_image: 11}
+    - {district: 49, position: 1, candidate: Mike Pond, evidence_image: 11}
+    - {district: 5, position: 2, candidate: Zach Hall, evidence_image: 12}
+    - {district: 26, position: 1, candidate: Adison Richards, evidence_image: 12}
+    - {district: 26, position: 2, candidate: Renee Hernandez Greenfield, evidence_image: 12}
+    - {district: 29, position: 1, candidate: Krista Perez, evidence_image: 12}
+    - {district: 38, position: 2, candidate: Julio Cortes, evidence_image: 12}
+    - {district: 46, position: 1, candidate: Ron Davis, evidence_image: 12}
+    - {district: 46, position: 2, candidate: Darya Farivar, evidence_image: 12}
+    - {district: 47, position: 1, candidate: Debra Entenman, evidence_image: 12}

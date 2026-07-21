@@ -79,7 +79,9 @@ def compile_release_dataset(
 
         for source_extract in ledger.sources:
             source = source_by_id[source_extract.source_id]
-            snapshot_payload = canonical_json_bytes(source_extract.model_dump(mode="json"))
+            snapshot_payload = canonical_json_bytes(
+                source_extract.model_dump(mode="json", exclude={"reviewed_at"})
+            )
             snapshot_input = stage / f"{source.id}.json"
             snapshot_input.write_bytes(snapshot_payload)
             discovery = source.discovery
@@ -110,6 +112,7 @@ def compile_release_dataset(
             )
             capture = read_capture_manifest(manifest_path)
             captures.append(capture)
+            reviewed_at = source_extract.reviewed_at
 
             for decision in source_extract.decisions:
                 race = race_by_id[decision.race_id]
@@ -176,7 +179,7 @@ def compile_release_dataset(
                         author=ledger.reviewer,
                         reason=ledger.review_note,
                         evidence=evidence_locator,
-                        created_at=ledger.data_as_of,
+                        created_at=reviewed_at,
                         resolution={
                             "race_id": race.id,
                             "status": status,
@@ -202,7 +205,7 @@ def compile_release_dataset(
                         normalization_confidence=Fraction(1),
                         manually_verified=True,
                         reviewer=ledger.reviewer,
-                        reviewed_at=ledger.data_as_of,
+                        reviewed_at=reviewed_at,
                         review_item_id=review_item_id,
                         notes=ledger.review_note,
                     )

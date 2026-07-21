@@ -47,7 +47,7 @@ from election_guide.sources.models import SourceRegistry
 from election_guide.sources.registry import read_source_registry
 
 PROJECT_ROOT = Path(__file__).parent.parent
-NOW = datetime(2026, 7, 20, 14, 30, tzinfo=UTC)
+NOW = datetime(2026, 7, 21, 16, 0, tzinfo=UTC)
 RACE_ID = "king-county-assessor"
 CONSENSUS_SOURCE_IDS = [
     "the-stranger",
