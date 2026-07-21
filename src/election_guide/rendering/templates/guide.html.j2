@@ -302,6 +302,8 @@
     }
     const centerPrintInk = () => {
       if (window.__disablePrintInkCentering) return;
+      const printGuide = document.querySelector('.print-guide');
+      if (!printGuide || getComputedStyle(printGuide).display === 'none') return;
       const context = document.createElement('canvas').getContext('2d');
       if (!context) return;
       const inkBounds = (element) => {
@@ -324,6 +326,8 @@
         };
       };
       const center = (container, elements, paddingTarget = container) => {
+        paddingTarget.style.removeProperty('padding-top');
+        paddingTarget.style.removeProperty('padding-bottom');
         const bounds = elements.map(inkBounds);
         const containerRect = container.getBoundingClientRect();
         const inkTop = Math.min(...bounds.map((bound) => bound.top));
@@ -344,8 +348,22 @@
       document.querySelectorAll('.print-times-pick').forEach((pill) => {
         center(pill, [...pill.querySelectorAll(':scope > span')]);
       });
+      document.documentElement.dataset.printInkCentered = 'true';
     };
-    document.fonts.ready.then(centerPrintInk);
+    const printMedia = window.matchMedia('print');
+    const calibratePrintInk = () => {
+      if (!printMedia.matches) return;
+      if (document.fonts.status === 'loaded') {
+        centerPrintInk();
+      } else {
+        document.fonts.ready.then(() => {
+          if (printMedia.matches) centerPrintInk();
+        });
+      }
+    };
+    window.addEventListener('beforeprint', calibratePrintInk);
+    printMedia.addEventListener('change', calibratePrintInk);
+    calibratePrintInk();
     const select = document.querySelector('#race-filter');
     const status = document.querySelector('#filter-status');
     const cards = [...document.querySelectorAll('[data-publication-race-id]')];

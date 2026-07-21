@@ -257,7 +257,8 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert ".print-race:nth-of-type(even) { background: #f2f6f8; }" in html
     assert '--print-sans: Helvetica, "Liberation Sans", sans-serif' in html
     assert "const centerPrintInk = () =>" in html
-    assert "document.fonts.ready.then(centerPrintInk)" in html
+    assert "window.addEventListener('beforeprint', calibratePrintInk)" in html
+    assert "printMedia.addEventListener('change', calibratePrintInk)" in html
     assert "font: 800 20pt/.95 var(--print-sans)" in html
     assert '<div class="print-guide">' in html
     assert '<div class="print-guide" aria-hidden="true">' not in html

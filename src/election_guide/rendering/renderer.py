@@ -763,13 +763,24 @@ def _inspect_print_layout(
             },
             session_id=session_id,
         )
-        cdp.command("Emulation.setEmulatedMedia", {"media": "print"}, session_id=session_id)
         cdp.command("Page.enable", session_id=session_id)
         cdp.command("Page.navigate", {"url": url}, session_id=session_id)
         cdp.wait_event("Page.loadEventFired", session_id=session_id)
         cdp.command(
             "Runtime.evaluate",
             {"expression": "document.fonts.ready", "awaitPromise": True},
+            session_id=session_id,
+        )
+        cdp.command("Emulation.setEmulatedMedia", {"media": "print"}, session_id=session_id)
+        cdp.command(
+            "Runtime.evaluate",
+            {
+                "expression": (
+                    "new Promise(resolve => requestAnimationFrame("
+                    "() => requestAnimationFrame(resolve)))"
+                ),
+                "awaitPromise": True,
+            },
             session_id=session_id,
         )
         inspected = cdp.command(
@@ -779,6 +790,10 @@ def _inspect_print_layout(
                 JSON.stringify((() => {
                   const issues = [];
                   const detailed = __DETAILED__;
+                  if (!detailed &&
+                      document.documentElement.dataset.printInkCentered !== 'true') {
+                    issues.push('print-ink-calibration');
+                  }
                   const measurementCanvas = document.createElement('canvas');
                   const measurementContext = measurementCanvas.getContext('2d');
                   const inkBounds = element => {
