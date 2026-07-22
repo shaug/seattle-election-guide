@@ -35,18 +35,28 @@ Actions variable `CLOUDFLARE_PAGES_ENABLED` with the exact value `true`. Run the
 manually on `main` for the first upload. After that, every push to `main` builds, validates, stages,
 and publishes automatically. Pull requests never receive the Cloudflare secrets and never deploy.
 
-## Custom domain
+## Custom domains
 
-In the Pages project, add `seattle-elections.dobravoda.dev` under **Custom domains** before changing
-DNS. Because Namecheap remains the authoritative DNS provider, add this record there after Pages
-accepts the hostname:
+The canonical public hostname is `seattleelections.guide`. Add it to the Pages project under
+**Custom domains** and manage its apex DNS through Cloudflare. The staged Pages worker permanently
+redirects these legacy hostnames to the canonical hostname while preserving the request path and
+query string:
+
+- `seattle-elections.dobravoda.dev`;
+- `seattle-elections.guide`.
+
+Every legacy hostname must be associated with the Pages project so Cloudflare can terminate HTTPS
+before the worker redirects the request. For `seattle-elections.dobravoda.dev`, Namecheap remains
+the authoritative DNS provider and publishes this record after Pages accepts the hostname:
 
 | Type | Host | Value |
 | --- | --- | --- |
 | CNAME | `seattle-elections` | `seattle-elections.pages.dev` |
 
-Do not create only the CNAME: Cloudflare requires the hostname to be associated with the Pages
-project first. Certificate issuance and DNS propagation may take time.
+The apex `seattle-elections.guide` domain must use Cloudflare nameservers before it can be attached
+to Pages. A registrar URL-forwarding record is not sufficient because it does not provide the TLS
+endpoint required before an HTTPS redirect can run. Certificate issuance and DNS propagation may
+take time after either hostname is attached or repointed.
 
 ## Local staging and preview
 
