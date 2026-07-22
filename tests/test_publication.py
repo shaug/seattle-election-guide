@@ -43,6 +43,41 @@ from tests.test_scoring import (
     _dataset,  # pyright: ignore[reportPrivateUsage]
 )
 
+PROJECT_ROOT = Path(__file__).parents[1]
+
+
+def test_primary_publication_sections_follow_ballot_order_and_authority() -> None:
+    dataset = CanonicalDataset.model_validate(
+        json.loads(
+            (PROJECT_ROOT / "data/normalized/canonical-dataset.json").read_text(encoding="utf-8")
+        )
+    )
+    jurisdictions = {
+        jurisdiction.id: jurisdiction for jurisdiction in dataset.inventory.jurisdictions
+    }
+    grouped: dict[str, list[str]] = {
+        section_id: [] for section_id, _ in publication_builder.SECTION_ORDER
+    }
+
+    for race in dataset.inventory.races:
+        if not race.publication_eligible:
+            continue
+        section_id, _ = publication_builder._section(  # pyright: ignore[reportPrivateUsage]
+            race, jurisdictions[race.jurisdiction_id].kind
+        )
+        grouped[section_id].append(race.id)
+
+    assert [
+        label for section_id, label in publication_builder.SECTION_ORDER if grouped[section_id]
+    ] == ["Federal", "State", "County", "State Supreme Court", "City"]
+    assert "seattle-municipal-court-judge-5" in grouped["city"]
+    assert {
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+    } == set(grouped["state-supreme-court"])
+
 
 def test_bundle_is_deterministic_reconstructable_and_complete(tmp_path: Path) -> None:
     dataset = _publication_dataset(tmp_path)

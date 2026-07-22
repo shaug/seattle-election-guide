@@ -339,7 +339,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert 'class="print-metadata"' not in html
     assert ".print-races { display: grid; grid-template-columns: 1fr 1fr;" in html
     assert html.count('class="print-race-column"') == 2
-    assert "State Legislature — continued" in html
+    assert "State — continued" in html
     assert ".print-race:nth-of-type(even) { background: #f2f6f8; }" in html
     assert '--print-sans: Helvetica, "Liberation Sans", sans-serif' in html
     assert "const centerPrintInk = () =>" in html
