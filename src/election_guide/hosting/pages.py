@@ -20,6 +20,28 @@ PAGES_HEADERS = """/*
   Permissions-Policy: camera=(), geolocation=(), microphone=()
 """
 
+PAGES_WORKER = """const CANONICAL_HOST = "seattleelections.guide";
+const LEGACY_HOSTS = new Set([
+  "seattle-elections.dobravoda.dev",
+  "seattle-elections.guide",
+]);
+
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+
+    if (LEGACY_HOSTS.has(url.hostname)) {
+      url.protocol = "https:";
+      url.hostname = CANONICAL_HOST;
+      url.port = "";
+      return Response.redirect(url.toString(), 301);
+    }
+
+    return env.ASSETS.fetch(request);
+  },
+};
+"""
+
 
 @dataclass(frozen=True)
 class StagedPagesSite:
@@ -78,6 +100,7 @@ def stage_pages_site(
             staged_pdfs.append(target)
         shutil.copy2(bundle_dir / "release-status.json", stage / "release-status.json")
         (stage / "_headers").write_text(PAGES_HEADERS, encoding="utf-8")
+        (stage / "_worker.js").write_text(PAGES_WORKER, encoding="utf-8")
         deployment_manifest = {
             "schema_version": "1.0",
             "release_version": status.release_version,

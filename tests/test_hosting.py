@@ -37,6 +37,12 @@ def test_stage_pages_site_publishes_only_verified_public_assets(tmp_path: Path) 
     assert "X-Frame-Options: DENY" in headers
     assert "X-Robots-Tag" not in headers
     assert "noindex" not in headers
+    worker = (output / "_worker.js").read_text(encoding="utf-8")
+    assert 'const CANONICAL_HOST = "seattleelections.guide";' in worker
+    assert '"seattle-elections.dobravoda.dev"' in worker
+    assert '"seattle-elections.guide"' in worker
+    assert "return Response.redirect(url.toString(), 301);" in worker
+    assert "return env.ASSETS.fetch(request);" in worker
     assert (output / "release-status.json").is_file()
     deployment = json.loads((output / "deployment-manifest.json").read_text(encoding="utf-8"))
     assert deployment["release_version"] == "test.1"
@@ -44,6 +50,7 @@ def test_stage_pages_site_publishes_only_verified_public_assets(tmp_path: Path) 
     assert set(deployment["assets"]) == {
         "Seattle_Primary_Guide.pdf",
         "_headers",
+        "_worker.js",
         "index.html",
         "release-status.json",
     }
