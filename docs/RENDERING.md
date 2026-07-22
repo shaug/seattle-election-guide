@@ -26,6 +26,10 @@ when a category crosses columns.
 Page two groups methodology into independent column panels so short sections do not force unrelated
 content into dense or oversized shared rows.
 
+Races follow the ballot's section order: Federal, State, County, State Supreme Court, then City.
+The grouping follows the office's governing jurisdiction, so Seattle Municipal Court appears under
+City while Washington Supreme Court positions appear under State Supreme Court.
+
 The concise and detailed print editions use Helvetica where available, with Liberation Sans and
 the generic sans-serif as portable fallbacks. Before printing, the document measures the visible
 glyph bounds and applies the small per-label offset required to balance top and bottom whitespace.

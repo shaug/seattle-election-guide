@@ -79,11 +79,10 @@ CATEGORY_LABELS = {
 
 SECTION_ORDER = (
     ("federal", "Federal"),
-    ("statewide", "Statewide"),
-    ("state-legislature", "State Legislature"),
-    ("king-county", "King County"),
-    ("judicial", "Judicial"),
-    ("seattle", "Seattle"),
+    ("state", "State"),
+    ("county", "County"),
+    ("state-supreme-court", "State Supreme Court"),
+    ("city", "City"),
     ("other", "Other"),
 )
 
@@ -1037,18 +1036,16 @@ def _normalized_hash(dataset: CanonicalDataset, effective: dict[str, BaseModel])
 
 def _section(race: Race, jurisdiction_kind: str) -> tuple[str, str]:
     office = race.office.casefold()
-    if "judge" in office or "justice" in office or "court" in office:
-        return "judicial", "Judicial"
-    if jurisdiction_kind == "congressional_district":
+    if jurisdiction_kind == "congressional_district" or office.startswith("u.s. "):
         return "federal", "Federal"
-    if jurisdiction_kind == "state":
-        return "statewide", "Statewide"
-    if jurisdiction_kind == "legislative_district":
-        return "state-legislature", "State Legislature"
+    if jurisdiction_kind == "state" and "supreme court" in office:
+        return "state-supreme-court", "State Supreme Court"
+    if jurisdiction_kind in {"state", "legislative_district"}:
+        return "state", "State"
     if jurisdiction_kind in {"county", "county_council_district"}:
-        return "king-county", "King County"
+        return "county", "County"
     if jurisdiction_kind in {"city", "city_council_district"}:
-        return "seattle", "Seattle"
+        return "city", "City"
     return "other", "Other"
 
 
