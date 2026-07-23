@@ -41,7 +41,9 @@ build timestamp, and Git revision therefore produce identical bytes.
 `publication_view_model.json` uses schema `1.6`; this version retains the `1.5` distinction between
 sources contributing usable endorsement decisions and researched coverage gaps, and adds public
 capture, publication, update, title, and redistribution metadata to evidence-linked source cells.
-It also retains per-source participation counts, candidate-centric affirmative endorsement groups,
+Those fields support audit exports and traceability; the voter-facing race panel intentionally centers
+source, decision, agreement, and evidence link rather than displaying the full metadata record. The
+model also retains per-source participation counts, candidate-centric affirmative endorsement groups,
 category analysis, and overlap metadata for audit.
 
 ## Shared view model

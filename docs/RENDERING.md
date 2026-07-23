@@ -13,13 +13,25 @@ endorsement. Badge contents use a small optical correction so the visible glyphs
 merely their CSS line boxes, appear vertically centered. Color is never the only status signal.
 The canonical comparison status and legacy badge label remain available in audit exports.
 
-Each responsive race card has a stable `#race-<canonical-race-id>` fragment, a copy-link action, and
-an on-demand modal source audit. The audit groups the race's ordered source cells by canonical category,
-labels Seattle Times as comparison-only, and preserves endorsement, multi-endorsement, no-endorsement,
-missing, unavailable, unverified, and not-applicable states without changing the recommendation-first
-collapsed card. Evidence-linked cells show the original evidence link plus public capture and publication
-metadata; restricted artifacts and storage references are never rendered. Direct fragments and browser
-back/forward state open or close the matching modal, and focus returns to the invoking action on close.
+Each responsive race card uses its core recommendation area—office, recommended choice, consensus meter,
+and comparison context—as one keyboard-focusable link to a stable `#race-<canonical-race-id>` fragment.
+The panel eyebrow names both the election and the content type (`August 2026 Primary · Endorsements`) so a
+shared fragment remains self-orienting.
+The link opens a voter-facing panel organized first by endorsed candidate or choice, with sections ranked by
+endorsing-source count. The leading section
+contains the consensus meter and exact agreeing-source ratio so the panel does not repeat the leading
+choice in a separate summary block. Each source row pairs the organization name with its registered
+category badge; multi-candidate endorsements appear once in every candidate section they support. An
+affirmative Seattle Times decision appears inside the candidate section it selected, with a visible
+`Comparison only` badge and restrained row treatment; it does not affect the section's endorsing-source
+count or consensus meter. Non-affirmative Times decisions follow their canonical no-endorsement,
+verification, or missing-coverage outcome. Explicit non-endorsements and decisions that need verification
+follow the candidate sections. Split, tied, and verification rows retain the text needed to understand
+the distinct decision. Sources that did not cover the race are placed last in a collapsed section.
+Evidence-linked decisions make the whole source row clickable; capture and publication metadata remain
+in the public view model and audit exports instead of competing with the decision itself. The panel's
+`Share link` action copies the stable fragment. Direct fragments and browser back/forward state open or
+close the matching panel, and focus returns to the race card's recommendation link on close.
 
 The concise PDF uses a scan-first, two-column briefing layout. Print typography is sans serif,
 candidate or choice names carry the strongest row emphasis, alternating race backgrounds separate
@@ -99,8 +111,10 @@ The generation fails unless:
 
 - responsive HTML contains every canonical race in order and every display value; each affirmative
   endorser appears under every endorsed candidate or choice with its own evidence link;
-- every race-detail view contains every canonical source cell exactly once, in its canonical category,
-  with the exact state, public evidence metadata, and evidence link when one exists;
+- every race-detail view contains every canonical source decision in the correct voter-facing outcome
+  section, with affirmative multi-candidate decisions repeated once per selected candidate, comparison
+  decisions visibly marked without entering consensus counts, and the exact state and evidence link when
+  one exists;
 - desktop and mobile browser checks exercise copied permalinks, direct fragments, back/forward restoration,
   close-button and Escape behavior, focus placement/return, dialog naming, and viewport containment;
 - the configured desktop and mobile captures use their exact CSS viewport dimensions without

@@ -29,15 +29,21 @@ from election_guide.rendering import (
 from election_guide.rendering.models import RenderingValidationReport
 from election_guide.rendering.renderer import (
     PrintLayoutError,
+    _comparison_candidate_cells,  # pyright: ignore[reportPrivateUsage]
     _detailed_pdf_race_values,  # pyright: ignore[reportPrivateUsage]
     _missing_pdf_race_values,  # pyright: ignore[reportPrivateUsage]
     _pdf_race_core_values,  # pyright: ignore[reportPrivateUsage]
     _pdf_race_display_values,  # pyright: ignore[reportPrivateUsage]
     _pdf_source_participation_labels,  # pyright: ignore[reportPrivateUsage]
+    _race_detail_accessible_summary,  # pyright: ignore[reportPrivateUsage]
+    _race_detail_candidate_choices,  # pyright: ignore[reportPrivateUsage]
+    _race_detail_support_summary,  # pyright: ignore[reportPrivateUsage]
     _render_pdf,  # pyright: ignore[reportPrivateUsage]
     _render_pdf_pages,  # pyright: ignore[reportPrivateUsage]
     _render_screenshot,  # pyright: ignore[reportPrivateUsage]
     _set_pdf_metadata,  # pyright: ignore[reportPrivateUsage]
+    _source_cell_detail_label,  # pyright: ignore[reportPrivateUsage]
+    _source_cell_group,  # pyright: ignore[reportPrivateUsage]
     _trim_trailing_blank_pages,  # pyright: ignore[reportPrivateUsage]
     _validate_print_layout,  # pyright: ignore[reportPrivateUsage]
     find_chrome,
@@ -224,33 +230,129 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     html = render_html_document(view_model, configuration)
 
     races = [race for section in view_model.sections for race in section.races]
+    source_by_id = {source.id: source for source in view_model.sources}
+    category_label_by_key = {
+        category.category: category.label for category in view_model.methodology.source_categories
+    }
     assert html.count('data-publication-race-id="') == len(races)
     assert all(f'data-publication-race-id="{race.id}"' in html for race in races)
     assert "@media print" in html
     assert "@media (max-width: 720px)" in html
     assert 'id="race-filter"' in html
     assert 'aria-labelledby="race-label-' in html
-    assert 'aria-label="View endorsements for ' in html
+    assert html.count('<a class="race-card-primary"') == len(races)
+    assert html.count('aria-label="View endorsements for ') == len(races)
     assert '<option value="Legislative District 43">Legislative District 43</option>' in html
     assert "JSON.parse(card.dataset.filterTokens)" in html
-    assert "View endorsements" in html
+    assert "> View endorsements" not in html
     assert html.count('<dialog class="race-detail-dialog"') == len(races)
+    assert html.count("August 2026 Primary · Endorsements") == len(races)
     assert html.count('data-copy-race-link="') == len(races)
+    assert html.count(">Share link</button>") == len(races)
+    assert "Source details" not in html
+    assert "Open source evidence" not in html
+    assert "Race source audit" not in html
     for race in races:
         assert f'id="race-{race.id}"' in html
-        assert f'href="#race-{race.id}" data-race-detail-link' in html
+        assert html.count(f'href="#race-{race.id}" data-race-detail-link') == 1
+        trigger_start = html.index(f'<a class="race-card-primary" href="#race-{race.id}"')
+        trigger_end = html.index("</a>", trigger_start)
+        trigger_html = html[trigger_start:trigger_end]
+        assert f'id="race-label-{race.id}"' in trigger_html
+        assert 'data-display-role="recommendation"' in trigger_html
+        assert 'data-display-role="share"' in trigger_html
+        assert 'data-display-role="comparison"' in trigger_html
+        assert 'data-display-role="support"' in trigger_html
         dialog_start = html.index(f'id="race-detail-{race.id}"')
+        assert trigger_end < dialog_start
         dialog_end = html.index("</dialog>", dialog_start)
         dialog_html = html[dialog_start:dialog_end]
-        assert dialog_html.count('data-race-detail-source-id="') == len(race.source_cells)
+        assert (
+            f'aria-labelledby="race-detail-election-{race.id} race-detail-title-{race.id}"'
+            in dialog_html
+        )
+        assert f'id="race-detail-election-{race.id}"' in dialog_html
+        assert "race-detail-overview" not in dialog_html
+        assert "race-detail-category-groups" not in dialog_html
+        assert "data-race-detail-category=" not in dialog_html
+        assert f'id="copy-race-status-{race.id}"' in dialog_html
+        assert 'role="status"' in dialog_html
+        assert 'aria-live="polite" data-copy-race-status' in dialog_html
+        assert f'aria-describedby="copy-race-status-{race.id}"' in dialog_html
+        assert race.recommendation_label in dialog_html
+        assert _race_detail_accessible_summary(race) in dialog_html
+        assert _race_detail_support_summary(race) in dialog_html
+        candidate_choices = _race_detail_candidate_choices(race, source_by_id)
+        candidate_positions = [
+            dialog_html.index(f'data-race-detail-candidate-id="{candidate_id}"')
+            for candidate_id, _candidate_label, _endorsement_group in candidate_choices
+        ]
+        assert candidate_positions == sorted(candidate_positions)
+        source_counts = [
+            endorsement_group.source_count if endorsement_group is not None else 0
+            for _candidate_id, _candidate_label, endorsement_group in candidate_choices
+        ]
+        assert source_counts == sorted(source_counts, reverse=True)
+        for candidate_id, candidate_label, endorsement_group in candidate_choices:
+            assert candidate_label in dialog_html
+            contributing_count = (
+                endorsement_group.source_count if endorsement_group is not None else 0
+            )
+            comparison_count = len(_comparison_candidate_cells(race, source_by_id, candidate_id))
+            assert (
+                dialog_html.count(f'data-endorsed-candidate-id="{candidate_id}"')
+                == contributing_count + comparison_count
+            )
+        expected_row_count = sum(
+            len(cell.candidate_ids)
+            if _source_cell_group(cell, race, source_by_id[cell.source_id]) == "candidate"
+            else 1
+            for cell in race.source_cells
+        )
+        assert dialog_html.count('data-race-detail-source-id="') == expected_row_count
+        assert dialog_html.count('data-source-group="') == expected_row_count
+        assert dialog_html.count('class="race-detail-category-badge') == expected_row_count
+        for state in ("not_covered", "not_applicable"):
+            missing_count = sum(
+                _source_cell_group(cell, race, source_by_id[cell.source_id]) == state
+                for cell in race.source_cells
+            )
+            if not missing_count:
+                continue
+            noun = "source" if missing_count == 1 else "sources"
+            if state == "not_covered":
+                summary = f"{missing_count} {noun} did not cover this race"
+            else:
+                verb = "was" if missing_count == 1 else "were"
+                summary = f"{missing_count} {noun} {verb} outside this district"
+            assert summary in dialog_html
         for cell in race.source_cells:
-            assert dialog_html.count(f'data-race-detail-source-id="{cell.source_id}"') == 1
+            group = _source_cell_group(cell, race, source_by_id[cell.source_id])
+            expected_occurrences = len(cell.candidate_ids) if group == "candidate" else 1
+            assert (
+                dialog_html.count(f'data-race-detail-source-id="{cell.source_id}"')
+                == expected_occurrences
+            )
             assert f'data-source-state="{cell.state}"' in dialog_html
-    assert "Multi-candidate endorsement:" in html
-    assert "No endorsement or declined to endorse" in html
-    assert "Unverified, ambiguous, or pending review" in html
-    assert "Seattle Times · comparison only" in html
-    assert "Restricted capture; original link only" in html
+            source = source_by_id[cell.source_id]
+            if source.panel_role == "comparison":
+                assert "Comparison only" in dialog_html
+            else:
+                assert category_label_by_key[source.category] in dialog_html
+            detail_label = _source_cell_detail_label(cell, race, group)
+            if detail_label is not None:
+                assert detail_label in dialog_html
+            if cell.evidence_url is not None:
+                assert f'href="{cell.evidence_url}"' in dialog_html
+    assert "No endorsement" in html
+    assert "Made no endorsement" not in html
+    assert "Needs verification" in html
+    assert "Comparison only" in html
+    assert "Seattle Times comparison" not in html
+    assert 'data-race-detail-group="comparison"' not in html
+    assert "race-detail-source-row-comparison" in html
+    assert "See which groups line up with the leading choice" not in html
+    assert "race-detail-description-" not in html
     assert "history.pushState({ ...state, raceDetail: link.hash }" in html
     assert "history.back()" in html
     assert "target.showModal()" in html
@@ -575,14 +677,14 @@ def test_html_escapes_publication_text_and_filter_attributes(tmp_path: Path) -> 
 
 def test_html_rejects_non_web_evidence_links(tmp_path: Path) -> None:
     view_model = _view_model(tmp_path)
-    endorser = next(
-        endorser
+    endorsement_cell = next(
+        cell
         for section in view_model.sections
         for race in section.races
-        for group in race.endorsement_groups
-        for endorser in group.endorsers
+        for cell in race.source_cells
+        if cell.state in {"endorsement", "multi_endorsement"}
     )
-    endorser.evidence_url = "javascript:alert(document.cookie)"
+    endorsement_cell.evidence_url = "javascript:alert(document.cookie)"
 
     with pytest.raises(ValueError, match=r"safe HTTP\(S\) URL"):
         render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG))
@@ -960,7 +1062,18 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     assert not unexpected_link_check.passed
 
     canonical_html = rendered.html_path.read_text(encoding="utf-8")
-    row_start = canonical_html.index("<li data-candidate-id=")
+    detail_race, detail_cell = next(
+        (race, cell)
+        for race in races
+        for cell in race.source_cells
+        if cell.evidence_url is not None
+    )
+    detail_source = next(
+        source for source in view_model.sources if source.id == detail_cell.source_id
+    )
+    row_marker = f'<li data-race-detail-source-id="{detail_cell.source_id}"'
+    race_start = canonical_html.index(f'id="race-detail-{detail_race.id}"')
+    row_start = canonical_html.index(row_marker, race_start)
     row_end = canonical_html.index("</li>", row_start) + len("</li>")
     canonical_row = canonical_html[row_start:row_end]
     malicious_duplicate = canonical_row.replace(
@@ -1013,18 +1126,13 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     )
     assert not semantic_check.passed
 
-    group = race_with_alternative.endorsement_groups[0]
-    endorser = group.endorsers[0]
-    endorser_marker = f'<a href="{endorser.evidence_url}">{endorser.source_name}</a>'
+    wrong_detail_row = canonical_row.replace(
+        f"<strong>{detail_source.name}</strong>", "<strong>Wrong organization</strong>", 1
+    )
+    assert wrong_detail_row != canonical_row
     endorsement_html = tmp_path / "wrong-endorsement-source.html"
-    canonical_html = rendered.html_path.read_text(encoding="utf-8")
-    assert endorser_marker in canonical_html
     endorsement_html.write_text(
-        canonical_html.replace(
-            endorser_marker,
-            f'<a href="{endorser.evidence_url}">Wrong organization</a>',
-            1,
-        ),
+        canonical_html.replace(canonical_row, wrong_detail_row, 1),
         encoding="utf-8",
     )
     endorsement_report = validate_rendered_guide(
@@ -1131,34 +1239,41 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     )
     assert not extra_source_row_check.passed
 
-    group_heading = (
-        f"<h4>{group.candidate_label}\n"
-        f"                    <span>{group.source_count} endorsing "
-        f"source{'s' if group.source_count != 1 else ''}</span>"
+    source_group = next(
+        group
+        for group in (
+            "leader",
+            "alternative",
+            "no_endorsement",
+            "comparison",
+            "unverified",
+            "not_covered",
+        )
+        if f'data-source-group="{group}"' in canonical_row
     )
-    assert group_heading in canonical_html
-    for index, wrong_heading in enumerate(
-        (
-            group_heading.replace(group.candidate_label, "Wrong candidate", 1),
-            group_heading.replace(str(group.source_count), "999", 1),
-        )
-    ):
-        wrong_group_html = tmp_path / f"wrong-endorsement-group-{index}.html"
-        wrong_group_html.write_text(
-            canonical_html.replace(group_heading, wrong_heading, 1), encoding="utf-8"
-        )
-        wrong_group_report = validate_rendered_guide(
-            view_model,
-            read_rendering_configuration(RENDERING_CONFIG),
-            wrong_group_html,
-            rendered.pdf_path,
-            rendered.page_images,
-            rendered.screenshots,
-        )
-        wrong_group_check = next(
-            check for check in wrong_group_report.checks if check.id == "html-source-evidence"
-        )
-        assert not wrong_group_check.passed
+    wrong_group_html = tmp_path / "wrong-source-group.html"
+    wrong_group_html.write_text(
+        canonical_html.replace(
+            canonical_row,
+            canonical_row.replace(
+                f'data-source-group="{source_group}"', 'data-source-group="wrong"', 1
+            ),
+            1,
+        ),
+        encoding="utf-8",
+    )
+    wrong_group_report = validate_rendered_guide(
+        view_model,
+        read_rendering_configuration(RENDERING_CONFIG),
+        wrong_group_html,
+        rendered.pdf_path,
+        rendered.page_images,
+        rendered.screenshots,
+    )
+    wrong_group_check = next(
+        check for check in wrong_group_report.checks if check.id == "html-source-evidence"
+    )
+    assert not wrong_group_check.passed
 
     recommendation_element = (
         f'<h3 data-display-role="recommendation">{race_with_alternative.recommendation_label}</h3>'

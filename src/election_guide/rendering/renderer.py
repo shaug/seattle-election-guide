@@ -29,6 +29,7 @@ from websocket import (  # pyright: ignore[reportUnknownVariableType]
 )
 
 from election_guide.publication.models import (
+    PublicationChoiceEndorsements,
     PublicationRace,
     PublicationSource,
     PublicationViewModel,
@@ -86,13 +87,6 @@ def render_html_document(
         configuration.project_url,
         *(source.evidence_url for source in view_model.sources),
         *(
-            endorser.evidence_url
-            for section in view_model.sections
-            for race in section.races
-            for group in race.endorsement_groups
-            for endorser in group.endorsers
-        ),
-        *(
             cell.evidence_url
             for section in view_model.sections
             for race in section.races
@@ -102,17 +96,35 @@ def render_html_document(
     ]
     for url in rendered_urls:
         _require_web_url(url)
+    source_by_id = {source.id: source for source in view_model.sources}
+    source_category_label_by_key = {
+        category.category: category.label for category in view_model.methodology.source_categories
+    }
+    source_cells_by_race_id = {
+        race.id: {cell.source_id: cell for cell in race.source_cells}
+        for section in view_model.sections
+        for race in section.races
+    }
     return template.render(
         guide=view_model,
         config=configuration,
         stylesheet=stylesheet,
         filter_options=_filter_options(view_model),
-        source_by_id={source.id: source for source in view_model.sources},
+        source_by_id=source_by_id,
+        source_category_label_by_key=source_category_label_by_key,
+        source_cells_by_race_id=source_cells_by_race_id,
         concise_warning_labels=_concise_warning_labels,
         screen_share_accessible_label=_screen_share_accessible_label,
         screen_support_summary=_screen_support_summary,
-        source_cell_status_label=_source_cell_status_label,
-        source_cell_metadata_labels=_source_cell_metadata_labels,
+        race_detail_candidate_choices=_race_detail_candidate_choices,
+        comparison_candidate_cells=_comparison_candidate_cells,
+        race_detail_accessible_summary=_race_detail_accessible_summary,
+        race_detail_support_summary=_race_detail_support_summary,
+        source_cell_group=_source_cell_group,
+        source_cell_group_count=_source_cell_group_count,
+        source_cell_group_label=_source_cell_group_label,
+        source_cell_detail_label=_source_cell_detail_label,
+        source_cell_group_keys=("no_endorsement", "unverified"),
     )
 
 
@@ -156,36 +168,147 @@ def _screen_support_summary(race: PublicationRace) -> str:
     return f"Based on {race.explicit_endorsement_count} endorsing {noun}"
 
 
+def _candidate_endorsement_groups(
+    race: PublicationRace,
+) -> list[PublicationChoiceEndorsements]:
+    leaders = set(race.support_leader_candidate_ids)
+    return sorted(
+        race.endorsement_groups,
+        key=lambda group: (
+            -group.source_count,
+            group.candidate_id not in leaders,
+            group.candidate_label.casefold(),
+            group.candidate_id,
+        ),
+    )
+
+
+def _comparison_candidate_cells(
+    race: PublicationRace,
+    sources: dict[str, PublicationSource],
+    candidate_id: str,
+) -> list[SourceCell]:
+    return [
+        cell
+        for cell in race.source_cells
+        if sources[cell.source_id].panel_role == "comparison"
+        and cell.state in {"endorsement", "multi_endorsement"}
+        and candidate_id in cell.candidate_ids
+    ]
+
+
+def _race_detail_candidate_choices(
+    race: PublicationRace,
+    sources: dict[str, PublicationSource],
+) -> list[tuple[str, str, PublicationChoiceEndorsements | None]]:
+    endorsement_groups = _candidate_endorsement_groups(race)
+    choices: list[tuple[str, str, PublicationChoiceEndorsements | None]] = [
+        (group.candidate_id, group.candidate_label, group) for group in endorsement_groups
+    ]
+    contributing_candidate_ids = {group.candidate_id for group in endorsement_groups}
+    comparison_only_labels: dict[str, str] = {}
+    for cell in race.source_cells:
+        if sources[cell.source_id].panel_role != "comparison" or cell.state not in {
+            "endorsement",
+            "multi_endorsement",
+        }:
+            continue
+        for candidate_id, candidate_label in zip(
+            cell.candidate_ids, cell.candidate_labels, strict=True
+        ):
+            if candidate_id not in contributing_candidate_ids:
+                comparison_only_labels[candidate_id] = candidate_label
+    choices.extend(
+        (candidate_id, candidate_label, None)
+        for candidate_id, candidate_label in sorted(
+            comparison_only_labels.items(),
+            key=lambda item: (item[1].casefold(), item[0]),
+        )
+    )
+    return choices
+
+
+def _race_detail_support_summary(race: PublicationRace) -> str:
+    if len(race.recommendation_candidate_ids) != 1:
+        return _screen_support_summary(race)
+    leader_id = race.recommendation_candidate_ids[0]
+    leader_count = next(
+        group.source_count for group in race.endorsement_groups if group.candidate_id == leader_id
+    )
+    noun = "source" if race.explicit_endorsement_count == 1 else "sources"
+    verb = "agrees" if race.explicit_endorsement_count == 1 else "agree"
+    return f"{leader_count} of {race.explicit_endorsement_count} endorsing {noun} {verb}"
+
+
+def _race_detail_accessible_summary(race: PublicationRace) -> str:
+    share = "Consensus unavailable" if race.percentage_whole is None else race.percentage_label
+    return f"{race.recommendation_label}. {share}. {_race_detail_support_summary(race)}."
+
+
 def _screen_share_accessible_label(race: PublicationRace) -> str:
     share = "not available" if race.percentage_whole is None else race.percentage_label
     return f"Consensus among explicitly endorsing sources: {share}"
 
 
+def _source_cell_group(
+    cell: SourceCell,
+    race: PublicationRace,
+    source: PublicationSource,
+) -> str:
+    del race
+    if cell.state in {"not_covered", "not_applicable"}:
+        return cell.state
+    if cell.state in {"unavailable", "unverified"}:
+        return "unverified"
+    if cell.state == "no_endorsement":
+        return "no_endorsement"
+    return "candidate"
+
+
+def _source_cell_group_count(
+    race: PublicationRace,
+    sources: dict[str, PublicationSource],
+    group: str,
+) -> int:
+    return sum(
+        _source_cell_group(cell, race, sources[cell.source_id]) == group
+        for cell in race.source_cells
+    )
+
+
+def _source_cell_group_label(race: PublicationRace, group: str) -> str:
+    del race
+    return {
+        "no_endorsement": "No endorsement",
+        "unverified": "Needs verification",
+        "not_covered": "Did not cover this race",
+        "not_applicable": "Outside this source's district",
+    }[group]
+
+
+def _source_cell_detail_label(
+    cell: SourceCell,
+    race: PublicationRace,
+    group: str,
+) -> str | None:
+    if group in {"candidate", "no_endorsement", "not_covered", "not_applicable"}:
+        return None
+    del race
+    return _source_cell_status_label(cell)
+
+
 def _source_cell_status_label(cell: SourceCell) -> str:
     if cell.state == "endorsement":
-        return f"Endorsed: {cell.candidate_labels[0]}"
+        return f"Endorsed {cell.candidate_labels[0]}"
     if cell.state == "multi_endorsement":
-        return f"Multi-candidate endorsement: {' / '.join(cell.candidate_labels)}"
+        return f"Endorsed {' and '.join(cell.candidate_labels)}"
     return {
-        "no_endorsement": "No endorsement or declined to endorse",
-        "not_covered": "Not covered",
-        "unavailable": "Unavailable",
-        "unverified": "Unverified, ambiguous, or pending review",
-        "not_applicable": "Not applicable",
+        "no_endorsement": "No endorsement",
+        "not_covered": "Did not cover this race",
+        "unavailable": "Endorsement unavailable",
+        "unverified": "Could not verify an endorsement",
+        "not_applicable": "Outside this source's district",
     }[cell.state]
-
-
-def _source_cell_metadata_labels(cell: SourceCell) -> list[str]:
-    labels: list[str] = []
-    if cell.published_at is not None:
-        labels.append(f"Published {cell.published_at.isoformat()}")
-    if cell.updated_at is not None and cell.updated_at != cell.published_at:
-        labels.append(f"Updated {cell.updated_at.isoformat()}")
-    if cell.captured_at is not None:
-        labels.append(f"Captured {cell.captured_at.date().isoformat()}")
-    if cell.redistribution == "restricted":
-        labels.append("Restricted capture; original link only")
-    return labels
 
 
 def build_rendered_guide(
@@ -385,93 +508,77 @@ def validate_rendered_guide(
             mismatched_html_roles.append(f"{race.id}/share-accessible-role")
     missing_evidence_rows: list[str] = []
     source_by_id = {source.id: source for source in view_model.sources}
+    category_label_by_key = {
+        category.category: category.label for category in view_model.methodology.source_categories
+    }
     expected_detail_keys = {
         (race.id, cell.source_id) for race in expected_races for cell in race.source_cells
     }
     if set(parser.race_detail_text) != expected_detail_keys:
         missing_evidence_rows.append("document: unexpected or missing race-detail source rows")
     for race in expected_races:
+        candidate_choices = _race_detail_candidate_choices(race, source_by_id)
         for cell in race.source_cells:
             key = (race.id, cell.source_id)
             source = source_by_id[cell.source_id]
-            expected_parts = [source.name, _source_cell_status_label(cell)]
-            if cell.evidence_title is not None:
-                expected_parts.append(cell.evidence_title)
-            if cell.evidence_locator is not None:
-                expected_parts.append(f"Evidence: {cell.evidence_locator}")
-            expected_parts.extend(_source_cell_metadata_labels(cell))
-            if cell.confidence_warning:
-                expected_parts.append("Review recommended")
-            if cell.evidence_url is not None:
-                expected_parts.append("Open source evidence")
-            observed_rows = [
-                _normalized_text(" ".join(parts)) for parts in parser.race_detail_text.get(key, [])
-            ]
+            expected_group = _source_cell_group(cell, race, source)
             expected_links: set[str] = (
                 {cell.evidence_url} if cell.evidence_url is not None else set()
             )
+            if expected_group == "candidate":
+                expected_candidate_ids: list[str | None] = [
+                    candidate_id
+                    for candidate_id, _candidate_label, _endorsement_group in candidate_choices
+                    if candidate_id in cell.candidate_ids
+                ]
+                expected_parts = [
+                    source.name,
+                    (
+                        "Comparison only"
+                        if source.panel_role == "comparison"
+                        else category_label_by_key[source.category]
+                    ),
+                ]
+            else:
+                expected_candidate_ids = [None]
+                expected_parts = [
+                    source.name,
+                    (
+                        "Comparison only"
+                        if source.panel_role == "comparison"
+                        else category_label_by_key[source.category]
+                    ),
+                ]
+                detail_label = _source_cell_detail_label(cell, race, expected_group)
+                if detail_label is not None:
+                    expected_parts.append(detail_label)
+            expected_rows = [
+                _normalized_text(" ".join(expected_parts)) for _ in expected_candidate_ids
+            ]
+            expected_links_list = [expected_links for _ in expected_candidate_ids]
+            expected_states = [cell.state for _ in expected_candidate_ids]
+            expected_categories = [source.category for _ in expected_candidate_ids]
+            expected_groups = [expected_group for _ in expected_candidate_ids]
+            expected_row_class = {"race-detail-source-row"}
+            if source.panel_role == "comparison":
+                expected_row_class.add("race-detail-source-row-comparison")
+            expected_row_classes = [expected_row_class for _ in expected_candidate_ids]
+            observed_rows = [
+                _normalized_text(" ".join(parts)) for parts in parser.race_detail_text.get(key, [])
+            ]
             if (
-                observed_rows != [_normalized_text(" ".join(expected_parts))]
-                or parser.race_detail_links.get(key, []) != [expected_links]
-                or parser.race_detail_states.get(key, []) != [cell.state]
-                or parser.race_detail_categories.get(key, []) != [source.category]
+                observed_rows != expected_rows
+                or parser.race_detail_links.get(key, []) != expected_links_list
+                or parser.race_detail_states.get(key, []) != expected_states
+                or parser.race_detail_categories.get(key, []) != expected_categories
+                or parser.race_detail_groups.get(key, []) != expected_groups
+                or parser.race_detail_candidate_ids.get(key, []) != expected_candidate_ids
+                or parser.race_detail_row_classes.get(key, []) != expected_row_classes
             ):
                 missing_evidence_rows.append(
-                    f"{race.id}/{cell.source_id}: race-detail state, metadata, or evidence"
+                    f"{race.id}/{cell.source_id}: race-detail group, state, candidate, "
+                    "class, or evidence"
                 )
-    for race in expected_races:
-        for group in race.endorsement_groups:
-            group_key = (race.id, group.candidate_id)
-            expected_group = _normalized_text(
-                " ".join(
-                    [
-                        group.candidate_label,
-                        (
-                            f"{group.source_count} endorsing source"
-                            f"{'s' if group.source_count != 1 else ''}"
-                        ),
-                        *(
-                            " ".join(
-                                [
-                                    endorser.source_name,
-                                    "Co-endorsement" if endorser.co_endorsement else "",
-                                ]
-                            )
-                            for endorser in group.endorsers
-                        ),
-                    ]
-                )
-            )
-            observed_groups = [
-                _normalized_text(" ".join(parts))
-                for parts in parser.endorsement_group_text.get(group_key, [])
-            ]
-            if observed_groups != [expected_group]:
-                missing_evidence_rows.append(
-                    f"{race.id}/{group.candidate_id}: group heading or rows"
-                )
-            for endorser in group.endorsers:
-                key = (race.id, group.candidate_id, endorser.source_id)
-                expected_row = _normalized_text(
-                    " ".join(
-                        [
-                            endorser.source_name,
-                            "Co-endorsement" if endorser.co_endorsement else "",
-                        ]
-                    )
-                )
-                observed_rows = [
-                    _normalized_text(" ".join(parts))
-                    for parts in parser.endorsement_text.get(key, [])
-                ]
-                if observed_rows != [expected_row]:
-                    missing_evidence_rows.append(
-                        f"{race.id}/{group.candidate_id}/{endorser.source_id}: row values"
-                    )
-                if parser.endorsement_links.get(key, []) != [{endorser.evidence_url}]:
-                    missing_evidence_rows.append(
-                        f"{race.id}/{group.candidate_id}/{endorser.source_id}: evidence links"
-                    )
     expected_html_links = {
         "#guide-races",
         configuration.pdf_filename,
@@ -484,12 +591,6 @@ def validate_rendered_guide(
             for race in expected_races
             for cell in race.source_cells
             if cell.evidence_url is not None
-        ),
-        *(
-            endorser.evidence_url
-            for race in expected_races
-            for group in race.endorsement_groups
-            for endorser in group.endorsers
         ),
     }
     canonical_url = f"{configuration.public_site_url}/e/{view_model.metadata.election_id}/"
@@ -1493,38 +1594,69 @@ def _capture_emulated_viewport(
                     "const dialogs=[...document.querySelectorAll('[data-race-detail-dialog]')];"
                     "const firstCard=cards[0];"
                     "const firstLink=firstCard?.querySelector('[data-race-detail-link]');"
+                    "const coreRecommendationsLinked=cards.every(card=>{"
+                    "const link=card.querySelector("
+                    "':scope > .race-card-primary[data-race-detail-link]');"
+                    "return Boolean(link&&['.race-office','.screen-race-result',"
+                    "'.screen-race-context'].every(selector=>link.querySelector(selector))&&"
+                    "!link.textContent?.includes('View endorsements'));});"
                     "const copyButton=firstCard?.querySelector('[data-copy-race-link]');"
                     "const firstDialog=firstCard?.querySelector('[data-race-detail-dialog]');"
                     "const closeButton=firstDialog?.querySelector('[data-close-race-detail]');"
                     "let copiedValue='';"
                     "Object.defineProperty(navigator,'clipboard',{configurable:true,value:{"
                     "writeText:async value=>{copiedValue=value;}}});"
-                    "copyButton?.click();"
-                    "await pause();"
                     "const firstHash=firstLink?.hash||'';"
-                    "const copyStatus=document.querySelector('#copy-status')?.textContent||'';"
                     "firstCard.hidden=true;"
                     "history.replaceState(null,'',firstHash);"
                     "window.dispatchEvent(new PopStateEvent('popstate',{state:null}));"
                     "await pause();"
                     "const directRect=firstDialog?.getBoundingClientRect();"
+                    "const comparisonRow=firstDialog?.querySelector("
+                    "'.race-detail-source-row-comparison');"
+                    "const comparisonBadge=comparisonRow?.querySelector("
+                    "'.race-detail-comparison-badge');"
+                    "const comparisonStyle=comparisonRow?getComputedStyle(comparisonRow):null;"
+                    "const comparisonBadgeRect=comparisonBadge?.getBoundingClientRect();"
+                    "const comparisonBadgeStyle=comparisonBadge?"
+                    "getComputedStyle(comparisonBadge):null;"
                     "const direct={open:Boolean(firstDialog?.open),"
                     "hash:window.location.hash===firstHash,"
                     "focused:document.activeElement===closeButton,"
                     "filterReset:filter?.value==='all'&&firstCard.hidden===false,"
                     "labelled:Boolean(firstDialog?.getAttribute('aria-labelledby')&&"
-                    "document.getElementById(firstDialog.getAttribute('aria-labelledby'))),"
+                    "firstDialog.getAttribute('aria-labelledby').split(/\\s+/).every("
+                    "id=>document.getElementById(id))),"
                     "described:Boolean(firstDialog?.getAttribute('aria-describedby')&&"
                     "document.getElementById(firstDialog.getAttribute('aria-describedby'))),"
-                    "sourceRows:firstDialog?.querySelectorAll('[data-race-detail-source-id]').length||0,"
+                    "sourceRows:new Set(Array.from(firstDialog?.querySelectorAll("
+                    "'[data-race-detail-source-id]')||[],row=>row.dataset.raceDetailSourceId)).size,"
+                    "comparisonStyled:Boolean(comparisonRow&&comparisonStyle&&"
+                    "comparisonStyle.backgroundColor!=='rgba(0, 0, 0, 0)'&&"
+                    "comparisonStyle.boxShadow!=='none'),"
+                    "comparisonBadgeVisible:Boolean(comparisonBadge&&comparisonBadgeStyle&&"
+                    "comparisonBadge.textContent?.trim()==='Comparison only'&&"
+                    "comparisonBadgeStyle.display!=='none'&&"
+                    "comparisonBadgeStyle.visibility==='visible'&&"
+                    "Number(comparisonBadgeStyle.opacity)>0&&comparisonBadgeRect&&"
+                    "comparisonBadgeRect.width>0&&comparisonBadgeRect.height>0),"
                     "inViewport:Boolean(directRect&&directRect.left>=0&&directRect.top>=0&&"
                     "directRect.right<=window.innerWidth&&directRect.bottom<=window.innerHeight),"
                     "noOverflow:Boolean(firstDialog&&firstDialog.scrollWidth<=firstDialog.clientWidth+1)};"
+                    "copyButton?.click();"
+                    "await pause();"
+                    "const copyStatus=firstDialog?.querySelector('[data-copy-race-status]');"
+                    "const copyFeedback=copyStatus?.textContent||'';"
+                    "const copyDescription=copyButton?.getAttribute('aria-describedby')||'';"
+                    "const copy={copied:copiedValue.endsWith(firstHash),"
+                    "announced:copyFeedback.startsWith('Link copied'),"
+                    "inDialog:Boolean(copyStatus&&firstDialog?.contains(copyStatus)),"
+                    "described:copyDescription===copyStatus?.id};"
                     "closeButton?.click();"
                     "await pause();"
                     "const directClosed={closed:firstDialog?.open===false,"
                     "hashCleared:window.location.hash==='',focused:document.activeElement===firstLink};"
-                    "firstLink?.click();"
+                    "firstLink?.querySelector('[data-display-role=recommendation]')?.click();"
                     "await pause();"
                     "const ownedOpened=Boolean(firstDialog?.open&&"
                     "window.location.hash===firstHash&&"
@@ -1544,9 +1676,9 @@ def _capture_emulated_viewport(
                     "height:[part.clientHeight,part.scrollHeight]})),"
                     "metersRightAligned:meters.every(meter=>Math.abs(meter.getBoundingClientRect().right-"
                     "meter.parentElement.getBoundingClientRect().right)<1),"
+                    "coreRecommendationsLinked,"
                     "disclosures,dialogCount:dialogs.length,"
-                    "copy:{copied:copiedValue.endsWith(firstHash),"
-                    "announced:copyStatus.startsWith('Link copied')},"
+                    "copy,"
                     "direct,directClosed,ownedOpened};})()))()"
                 ),
                 "returnByValue": True,
@@ -1634,6 +1766,7 @@ def _capture_emulated_viewport(
             "visibleRaceCount": expected_race_count,
             "cardOverflow": [],
             "metersRightAligned": True,
+            "coreRecommendationsLinked": True,
             "disclosures": [
                 {
                     "id": disclosure_id,
@@ -1647,7 +1780,7 @@ def _capture_emulated_viewport(
                 for disclosure_id in ("methodology", "sources")
             ],
             "dialogCount": expected_race_count,
-            "copy": {"copied": True, "announced": True},
+            "copy": {"copied": True, "announced": True, "inDialog": True, "described": True},
             "direct": {
                 "open": True,
                 "hash": True,
@@ -1656,6 +1789,8 @@ def _capture_emulated_viewport(
                 "labelled": True,
                 "described": True,
                 "sourceRows": expected_source_count,
+                "comparisonStyled": True,
+                "comparisonBadgeVisible": True,
                 "inViewport": True,
                 "noOverflow": True,
             },
@@ -2230,9 +2365,6 @@ class _GuideHTMLParser(HTMLParser):
         self.race_ids: list[str] = []
         self.race_text: dict[str, list[str]] = {}
         self.links: set[str] = set()
-        self.endorsement_text: dict[tuple[str, str, str], list[list[str]]] = {}
-        self.endorsement_links: dict[tuple[str, str, str], list[set[str]]] = {}
-        self.endorsement_group_text: dict[tuple[str, str], list[list[str]]] = {}
         self.display_text: dict[tuple[str, str], list[list[str]]] = {}
         self.display_accessible_names: dict[tuple[str, str], list[str | None]] = {}
         self.display_element_roles: dict[tuple[str, str], list[str | None]] = {}
@@ -2250,10 +2382,11 @@ class _GuideHTMLParser(HTMLParser):
         self.race_detail_links: dict[tuple[str, str], list[set[str]]] = {}
         self.race_detail_states: dict[tuple[str, str], list[str | None]] = {}
         self.race_detail_categories: dict[tuple[str, str], list[str | None]] = {}
+        self.race_detail_groups: dict[tuple[str, str], list[str | None]] = {}
+        self.race_detail_candidate_ids: dict[tuple[str, str], list[str | None]] = {}
+        self.race_detail_row_classes: dict[tuple[str, str], list[set[str]]] = {}
         self._text_parts: list[str] = []
         self._current_race_id: str | None = None
-        self._current_endorsement_key: tuple[tuple[str, str, str], int] | None = None
-        self._current_endorsement_group_key: tuple[tuple[str, str], int] | None = None
         self._current_display_role: tuple[tuple[str, str], int] | None = None
         self._display_role_tag: str | None = None
         self._current_publication_source: tuple[str, int] | None = None
@@ -2282,17 +2415,25 @@ class _GuideHTMLParser(HTMLParser):
             detail_links = self.race_detail_links.setdefault(detail_key, [])
             detail_rows.append([])
             detail_links.append(set())
+            self.race_detail_row_classes.setdefault(detail_key, []).append(set())
             self.race_detail_states.setdefault(detail_key, []).append(
                 attributes.get("data-source-state")
             )
             self.race_detail_categories.setdefault(detail_key, []).append(
                 attributes.get("data-source-category")
             )
+            self.race_detail_groups.setdefault(detail_key, []).append(
+                attributes.get("data-source-group")
+            )
+            self.race_detail_candidate_ids.setdefault(detail_key, []).append(
+                attributes.get("data-endorsed-candidate-id")
+            )
             self._current_race_detail = (detail_key, len(detail_rows) - 1)
             self._race_detail_depth = 1
-        source_id = attributes.get("data-source-id")
-        candidate_id = attributes.get("data-candidate-id")
         classes = set((attributes.get("class") or "").split())
+        if "race-detail-source-row" in classes and self._current_race_detail is not None:
+            detail_key, row_index = self._current_race_detail
+            self.race_detail_row_classes[detail_key][row_index] = classes
         heading_category = attributes.get("data-source-category")
         if tag == "h3" and heading_category is not None:
             self._current_source_category = heading_category
@@ -2324,28 +2465,6 @@ class _GuideHTMLParser(HTMLParser):
             )
             self.coverage_gap_classes.setdefault(coverage_gap_source_id, []).append(classes)
             self._current_coverage_gap = (coverage_gap_source_id, len(rows) - 1)
-        if (
-            tag == "section"
-            and "endorsement-group" in classes
-            and candidate_id is not None
-            and self._current_race_id is not None
-        ):
-            key = (self._current_race_id, candidate_id)
-            groups = self.endorsement_group_text.setdefault(key, [])
-            groups.append([])
-            self._current_endorsement_group_key = (key, len(groups) - 1)
-        if (
-            tag == "li"
-            and source_id is not None
-            and candidate_id is not None
-            and self._current_race_id is not None
-        ):
-            key = (self._current_race_id, candidate_id, source_id)
-            rows = self.endorsement_text.setdefault(key, [])
-            links = self.endorsement_links.setdefault(key, [])
-            rows.append([])
-            links.append(set())
-            self._current_endorsement_key = (key, len(rows) - 1)
         display_role = attributes.get("data-display-role")
         if display_role is not None and self._current_race_id is not None:
             key = (self._current_race_id, display_role)
@@ -2364,9 +2483,6 @@ class _GuideHTMLParser(HTMLParser):
             if self._current_coverage_gap is not None:
                 source_key, source_index = self._current_coverage_gap
                 self.coverage_gap_links[source_key][source_index].append(href)
-            if self._current_endorsement_key is not None:
-                key, index = self._current_endorsement_key
-                self.endorsement_links[key][index].add(href)
             if self._current_race_detail is not None:
                 detail_key, detail_index = self._current_race_detail
                 self.race_detail_links[detail_key][detail_index].add(href)
@@ -2376,12 +2492,6 @@ class _GuideHTMLParser(HTMLParser):
             self._text_parts.append(data)
             if self._current_race_id is not None:
                 self.race_text[self._current_race_id].append(data)
-            if self._current_endorsement_key is not None:
-                key, index = self._current_endorsement_key
-                self.endorsement_text[key][index].append(data)
-            if self._current_endorsement_group_key is not None:
-                key, index = self._current_endorsement_group_key
-                self.endorsement_group_text[key][index].append(data)
             if self._current_display_role is not None:
                 key, index = self._current_display_role
                 self.display_text[key][index].append(data)
@@ -2400,12 +2510,8 @@ class _GuideHTMLParser(HTMLParser):
             self._race_detail_depth -= 1
             if self._race_detail_depth == 0:
                 self._current_race_detail = None
-        if tag == "li":
-            self._current_endorsement_key = None
         if tag == "div" and self._current_publication_source is not None:
             self._current_publication_source = None
-        if tag == "section" and self._current_endorsement_group_key is not None:
-            self._current_endorsement_group_key = None
         if tag == "section" and self._current_coverage_gap is not None:
             self._current_coverage_gap = None
         if tag == self._display_role_tag:

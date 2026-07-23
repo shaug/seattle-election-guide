@@ -36,6 +36,97 @@
       {% if not compact %}<p>{{ source.coverage_gap_note }}</p>{% endif %}
     </section>
   {%- endmacro %}
+  {% macro race_detail_source_badge(source) -%}
+    {% if source.panel_role == 'comparison' %}
+    <span class="race-detail-category-badge race-detail-comparison-badge">Comparison only</span>
+    {% else %}
+    <span class="race-detail-category-badge">{{ source_category_label_by_key[source.category] }}</span>
+    {% endif %}
+  {%- endmacro %}
+  {% macro race_detail_source_rows(race, group_key) -%}
+    <ul class="race-detail-source-list">
+      {% for cell in race.source_cells %}
+      {% set source = source_by_id[cell.source_id] %}
+      {% if source_cell_group(cell, race, source) == group_key %}
+      {% set detail_label = source_cell_detail_label(cell, race, group_key) %}
+      <li data-race-detail-source-id="{{ cell.source_id }}"
+        data-source-category="{{ source.category }}" data-source-state="{{ cell.state }}"
+        data-source-role="{{ source.panel_role }}" data-source-group="{{ group_key }}">
+        {% if cell.evidence_url %}<a class="race-detail-source-row{% if source.panel_role == 'comparison' %} race-detail-source-row-comparison{% endif %}" href="{{ cell.evidence_url }}">
+        {% else %}<div class="race-detail-source-row{% if source.panel_role == 'comparison' %} race-detail-source-row-comparison{% endif %}">
+        {% endif %}
+          <strong>{{ source.name }}</strong>
+          <div class="race-detail-source-meta">
+            {{ race_detail_source_badge(source) }}
+            {% if detail_label %}<span class="race-detail-source-status">{{ detail_label }}</span>{% endif %}
+          </div>
+        {% if cell.evidence_url %}</a>{% else %}</div>{% endif %}
+      </li>
+      {% endif %}
+      {% endfor %}
+    </ul>
+  {%- endmacro %}
+  {% macro race_detail_candidate_sections(race) -%}
+    {% for candidate_id, candidate_label, endorsement_group in race_detail_candidate_choices(race, source_by_id) %}
+    {% set is_leader = candidate_id in race.support_leader_candidate_ids %}
+    {% set source_count = endorsement_group.source_count if endorsement_group is not none else 0 %}
+    <section class="race-detail-candidate{% if is_leader %} race-detail-candidate-leader{% endif %}"
+      data-race-detail-candidate-id="{{ candidate_id }}">
+      <div class="race-detail-candidate-heading">
+        <div class="race-detail-candidate-title">
+          {% if is_leader %}<p>{% if race.support_leader_candidate_ids | length > 1 %}Tied for lead{% else %}Leading choice{% endif %}</p>{% endif %}
+          <h4>{{ candidate_label }}</h4>
+        </div>
+        <div class="race-detail-candidate-metrics">
+          <span>{% if is_leader and race.recommendation_candidate_ids | length == 1 %}{{ source_count }} of {{ race.explicit_endorsement_count }} endorsing sources{% else %}{{ source_count }} endorsing source{% if source_count != 1 %}s{% endif %}{% endif %}</span>
+          {% if is_leader %}
+            {% if race.percentage_whole is none %}
+            <div class="race-detail-meter race-detail-meter-na" role="img"
+              aria-label="{{ screen_share_accessible_label(race) }}"><strong>N/A</strong></div>
+            {% else %}
+            <div class="race-detail-meter" style="--meter-fill: {{ race.percentage_whole }}%"
+              role="img" aria-label="{{ screen_share_accessible_label(race) }}">
+              <strong>{{ race.percentage_label }}</strong>
+            </div>
+            {% endif %}
+          {% endif %}
+        </div>
+      </div>
+      <ul class="race-detail-source-list">
+        {% if endorsement_group is not none %}
+        {% for endorser in endorsement_group.endorsers %}
+        {% set source = source_by_id[endorser.source_id] %}
+        {% set cell = source_cells_by_race_id[race.id][endorser.source_id] %}
+        <li data-race-detail-source-id="{{ endorser.source_id }}"
+          data-source-category="{{ source.category }}" data-source-state="{{ cell.state }}"
+          data-source-role="{{ source.panel_role }}" data-source-group="candidate"
+          data-endorsed-candidate-id="{{ candidate_id }}">
+          <a class="race-detail-source-row" href="{{ endorser.evidence_url }}">
+            <strong>{{ endorser.source_name }}</strong>
+            <div class="race-detail-source-meta">{{ race_detail_source_badge(source) }}</div>
+          </a>
+        </li>
+        {% endfor %}
+        {% endif %}
+        {% for cell in comparison_candidate_cells(race, source_by_id, candidate_id) %}
+        {% set source = source_by_id[cell.source_id] %}
+        <li data-race-detail-source-id="{{ cell.source_id }}"
+          data-source-category="{{ source.category }}" data-source-state="{{ cell.state }}"
+          data-source-role="{{ source.panel_role }}" data-source-group="candidate"
+          data-endorsed-candidate-id="{{ candidate_id }}">
+          {% if cell.evidence_url %}<a class="race-detail-source-row race-detail-source-row-comparison" href="{{ cell.evidence_url }}">
+          {% else %}<div class="race-detail-source-row race-detail-source-row-comparison">
+          {% endif %}
+            <strong>{{ source.name }}</strong>
+            <div class="race-detail-source-meta">{{ race_detail_source_badge(source) }}</div>
+          {% if cell.evidence_url %}</a>{% else %}</div>{% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+    </section>
+    {% endfor %}
+  {%- endmacro %}
+  {% set election_display_label = 'August 2026 Primary' %}
   {% set contributing_sources = guide.sources | selectattr('contribution_status', 'equalto', 'contributing') | list %}
   {% set coverage_gap_sources = guide.sources | selectattr('contribution_status', 'equalto', 'coverage_gap') | list %}
   <a class="skip-link" href="#guide-races">Skip to recommendations</a>
@@ -43,7 +134,7 @@
   <main class="screen-guide">
     <header class="hero">
       <div class="hero-copy">
-        <div class="hero-kicker">August 2026 Primary</div>
+        <div class="hero-kicker">{{ election_display_label }}</div>
         <h1>Seattle Progressive Endorsement Guide</h1>
         <p class="hero-deck">Progressive endorsement agreement at a glance, with the
           Seattle Times shown separately for comparison.</p>
@@ -83,108 +174,87 @@
             data-publication-race-id="{{ race.id }}"
             aria-labelledby="race-label-{{ race.id }}"
             data-filter-tokens='{{ race.filter_tokens | tojson }}'>
-            <p class="race-office" id="race-label-{{ race.id }}"
-              data-display-role="race-label">{{ race.race_label }}</p>
-            <div class="screen-race-result">
-              <h3 data-display-role="recommendation">{{ race.recommendation_label }}</h3>
-              {% if race.percentage_whole is none %}
-              <div class="screen-meter screen-meter-na" role="img" data-display-role="share"
-                aria-label="{{ screen_share_accessible_label(race) }}">
-                <strong>N/A</strong>
+            <a class="race-card-primary" href="#race-{{ race.id }}" data-race-detail-link
+              aria-label="View endorsements for {{ race.race_label }}"
+              aria-haspopup="dialog" aria-controls="race-detail-{{ race.id }}">
+              <p class="race-office" id="race-label-{{ race.id }}"
+                data-display-role="race-label">{{ race.race_label }}</p>
+              <div class="screen-race-result">
+                <h3 data-display-role="recommendation">{{ race.recommendation_label }}</h3>
+                {% if race.percentage_whole is none %}
+                <div class="screen-meter screen-meter-na" role="img" data-display-role="share"
+                  aria-label="{{ screen_share_accessible_label(race) }}">
+                  <strong>N/A</strong>
+                </div>
+                {% else %}
+                <div class="screen-meter" style="--meter-fill: {{ race.percentage_whole }}%"
+                  role="img" data-display-role="share"
+                  aria-label="{{ screen_share_accessible_label(race) }}">
+                  <strong>{{ race.percentage_label }}</strong>
+                </div>
+                {% endif %}
               </div>
-              {% else %}
-              <div class="screen-meter" style="--meter-fill: {{ race.percentage_whole }}%"
-                role="img" data-display-role="share"
-                aria-label="{{ screen_share_accessible_label(race) }}">
-                <strong>{{ race.percentage_label }}</strong>
+              <div class="screen-race-context">
+                <div class="screen-comparisons">
+                  {% for comparison in race.comparisons %}
+                  <p class="comparison comparison-{{ comparison.voter_tone }}" role="group"
+                    aria-label="{{ comparison.voter_accessible_label }}" data-display-role="comparison">
+                    <strong class="comparison-status">{{ comparison.print_status_label }}</strong><span class="comparison-separator"> · </span><span class="comparison-choice">{{ comparison.print_choice_label }}</span>
+                  </p>
+                  {% endfor %}
+                </div>
+                <p class="support-line" data-display-role="support">{{ screen_support_summary(race) }}</p>
               </div>
-              {% endif %}
-            </div>
-            <div class="screen-race-context">
-              <div class="screen-comparisons">
-                {% for comparison in race.comparisons %}
-                <p class="comparison comparison-{{ comparison.voter_tone }}" role="group"
-                  aria-label="{{ comparison.voter_accessible_label }}" data-display-role="comparison">
-                  <strong class="comparison-status">{{ comparison.print_status_label }}</strong><span class="comparison-separator"> · </span><span class="comparison-choice">{{ comparison.print_choice_label }}</span>
-                </p>
-                {% endfor %}
-              </div>
-              <p class="support-line" data-display-role="support">{{ screen_support_summary(race) }}</p>
-            </div>
+            </a>
             {% if race.grade == 'Insufficient' %}
             <div class="insufficient-note" role="note" data-display-role="insufficient-warning">
               Too few explicit endorsements to assess consensus reliably.</div>
             {% endif %}
-            {% if race.endorsement_groups %}
-            <details>
-              <summary aria-label="View endorsements for {{ race.race_label }}">View endorsements</summary>
-              <div class="endorsement-groups">
-                {% for group in race.endorsement_groups %}
-                <section class="endorsement-group" data-candidate-id="{{ group.candidate_id }}">
-                  <h4>{{ group.candidate_label }}
-                    <span>{{ group.source_count }} endorsing source{% if group.source_count != 1 %}s{% endif %}</span></h4>
-                  <ul>
-                    {% for endorser in group.endorsers %}
-                    <li data-candidate-id="{{ group.candidate_id }}" data-source-id="{{ endorser.source_id }}">
-                      <a href="{{ endorser.evidence_url }}">{{ endorser.source_name }}</a>
-                      {% if endorser.co_endorsement %}<span class="co-endorsement">Co-endorsement</span>{% endif %}
-                    </li>
-                    {% endfor %}
-                  </ul>
-                </section>
-                {% endfor %}
-              </div>
-            </details>
-            {% endif %}
-            <div class="race-actions" aria-label="Actions for {{ race.race_label }}">
-              <a href="#race-{{ race.id }}" data-race-detail-link
-                aria-haspopup="dialog" aria-controls="race-detail-{{ race.id }}">Source details</a>
-              <button type="button" data-copy-race-link="race-{{ race.id }}"
-                aria-label="Copy link to {{ race.race_label }}">Copy link</button>
-            </div>
             <dialog class="race-detail-dialog" id="race-detail-{{ race.id }}"
               data-race-detail-dialog data-race-id="{{ race.id }}"
-              aria-labelledby="race-detail-title-{{ race.id }}"
-              aria-describedby="race-detail-description-{{ race.id }}">
+              aria-labelledby="race-detail-election-{{ race.id }} race-detail-title-{{ race.id }}"
+              aria-describedby="race-detail-summary-{{ race.id }}">
               <div class="race-detail-header">
                 <div>
-                  <p>Race source audit</p>
+                  <p id="race-detail-election-{{ race.id }}">{{ election_display_label }} · Endorsements</p>
                   <h3 id="race-detail-title-{{ race.id }}">{{ race.race_label }}</h3>
-                  <p id="race-detail-description-{{ race.id }}">Every active source is shown once.
-                    Missing coverage is distinct from an explicit decision not to endorse.</p>
+                  <p id="race-detail-summary-{{ race.id }}" class="visually-hidden">{{ race_detail_accessible_summary(race) }}</p>
                 </div>
-                <button type="button" data-close-race-detail
-                  aria-label="Close source details for {{ race.race_label }}">Close</button>
+                <div class="race-detail-actions">
+                  <button type="button" data-copy-race-link="race-{{ race.id }}"
+                    aria-label="Copy a share link to {{ race.race_label }}"
+                    aria-describedby="copy-race-status-{{ race.id }}">Share link</button>
+                  <button type="button" data-close-race-detail
+                    aria-label="Close endorsements for {{ race.race_label }}">Close</button>
+                </div>
+                <p id="copy-race-status-{{ race.id }}" class="visually-hidden" role="status"
+                  aria-live="polite" data-copy-race-status></p>
               </div>
-              <div class="race-detail-categories">
-                {% for category in guide.methodology.source_categories %}
-                <section class="race-detail-category" data-race-detail-category="{{ category.category }}">
-                  <h4>{{ category.label }}
-                    {% if category.category == 'comparison' %}<span>Seattle Times · comparison only</span>{% endif %}
-                  </h4>
-                  <ul>
-                    {% for cell in race.source_cells if source_by_id[cell.source_id].category == category.category %}
-                    {% set source = source_by_id[cell.source_id] %}
-                    <li data-race-detail-source-id="{{ cell.source_id }}"
-                      data-source-category="{{ source.category }}" data-source-state="{{ cell.state }}">
-                      <div class="race-detail-source-heading">
-                        <strong>{{ source.name }}</strong>
-                        <span>{{ source_cell_status_label(cell) }}</span>
-                      </div>
-                      {% if cell.evidence_title %}<p>{{ cell.evidence_title }}</p>{% endif %}
-                      {% if cell.evidence_locator %}<p>Evidence: {{ cell.evidence_locator }}</p>{% endif %}
-                      {% set metadata_labels = source_cell_metadata_labels(cell) %}
-                      {% if metadata_labels or cell.confidence_warning %}
-                      <ul class="race-detail-metadata" aria-label="Evidence metadata">
-                        {% for label in metadata_labels %}<li>{{ label }}</li>{% endfor %}
-                        {% if cell.confidence_warning %}<li>Review recommended</li>{% endif %}
-                      </ul>
-                      {% endif %}
-                      {% if cell.evidence_url %}<a href="{{ cell.evidence_url }}">Open source evidence</a>{% endif %}
-                    </li>
-                    {% endfor %}
-                  </ul>
-                </section>
+              <div class="race-detail-body">
+                <div class="race-detail-outcomes">
+                  {{ race_detail_candidate_sections(race) }}
+                  {% for group_key in source_cell_group_keys %}
+                  {% set group_count = source_cell_group_count(race, source_by_id, group_key) %}
+                  {% if group_count %}
+                  <section class="race-detail-outcome race-detail-outcome-{{ group_key }}"
+                    data-race-detail-group="{{ group_key }}">
+                    <div class="race-detail-outcome-heading">
+                      <h4>{{ source_cell_group_label(race, group_key) }}</h4>
+                      <span>{{ group_count }} source{% if group_count != 1 %}s{% endif %}</span>
+                    </div>
+                    {{ race_detail_source_rows(race, group_key) }}
+                  </section>
+                  {% endif %}
+                  {% endfor %}
+                </div>
+                {% for group_key in ('not_covered', 'not_applicable') %}
+                {% set missing_count = source_cell_group_count(race, source_by_id, group_key) %}
+                {% if missing_count %}
+                <details class="race-detail-missing">
+                  <summary>{{ missing_count }} source{% if missing_count != 1 %}s{% endif %} {% if group_key == 'not_covered' %}did not cover this race{% else %}{% if missing_count == 1 %}was{% else %}were{% endif %} outside this district{% endif %}</summary>
+                  {{ race_detail_source_rows(race, group_key) }}
+                </details>
+                {% endif %}
                 {% endfor %}
               </div>
             </dialog>
@@ -194,7 +264,6 @@
       </section>
       {% endfor %}
     </div>
-    <p id="copy-status" class="visually-hidden" role="status" aria-live="polite"></p>
 
     <footer class="screen-footer">
       <div class="footer-summary">
@@ -312,7 +381,7 @@
     <section class="print-page print-page-one">
       <header class="print-header">
         <div>
-          <p data-document-role="print-election-label">August 2026 Primary</p>
+          <p data-document-role="print-election-label">{{ election_display_label }}</p>
           <h1 data-document-role="print-title">Seattle Progressive Endorsement Guide</h1>
         </div>
         <div class="print-header-meta">{{ guide.metadata.election_date }}<br>
@@ -549,7 +618,6 @@
     applyFilter();
 
     const dialogs = [...document.querySelectorAll('[data-race-detail-dialog]')];
-    const copyStatus = document.querySelector('#copy-status');
     let lastTrigger = null;
     const fragmentId = () => {
       try {
@@ -620,6 +688,8 @@
     });
     document.querySelectorAll('[data-copy-race-link]').forEach((button) => {
       button.addEventListener('click', async () => {
+        const originalLabel = button.dataset.originalLabel || button.textContent;
+        button.dataset.originalLabel = originalLabel;
         const link = new URL(window.location.href);
         link.hash = button.dataset.copyRaceLink;
         const value = link.toString();
@@ -639,10 +709,17 @@
           }
           const raceLabel = button.closest('[data-publication-race-id]')
             ?.querySelector('[data-display-role="race-label"]')?.textContent?.trim();
-          copyStatus.textContent = `Link copied for ${raceLabel || 'this race'}`;
+          const copyStatus = button.closest('[data-race-detail-dialog]')
+            ?.querySelector('[data-copy-race-status]');
+          if (copyStatus) copyStatus.textContent = `Link copied for ${raceLabel || 'this race'}`;
+          button.textContent = 'Link copied';
         } catch {
-          copyStatus.textContent = `Copy failed. Link: ${value}`;
+          const copyStatus = button.closest('[data-race-detail-dialog]')
+            ?.querySelector('[data-copy-race-status]');
+          if (copyStatus) copyStatus.textContent = `Copy failed. Link: ${value}`;
+          button.textContent = 'Copy failed';
         }
+        window.setTimeout(() => { button.textContent = originalLabel; }, 1800);
         button.focus();
       });
     });
