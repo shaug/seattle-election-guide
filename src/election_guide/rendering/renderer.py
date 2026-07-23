@@ -32,6 +32,7 @@ from election_guide.publication.models import (
     PublicationRace,
     PublicationSource,
     PublicationViewModel,
+    SourceCell,
 )
 from election_guide.rendering.models import (
     RenderCheck,
@@ -99,9 +100,12 @@ def render_html_document(
         config=configuration,
         stylesheet=stylesheet,
         filter_options=_filter_options(view_model),
+        source_by_id={source.id: source for source in view_model.sources},
         concise_warning_labels=_concise_warning_labels,
         screen_share_accessible_label=_screen_share_accessible_label,
         screen_support_summary=_screen_support_summary,
+        source_cell_status_label=_source_cell_status_label,
+        source_cell_metadata_labels=_source_cell_metadata_labels,
     )
 
 
@@ -148,6 +152,33 @@ def _screen_support_summary(race: PublicationRace) -> str:
 def _screen_share_accessible_label(race: PublicationRace) -> str:
     share = "not available" if race.percentage_whole is None else race.percentage_label
     return f"Consensus among explicitly endorsing sources: {share}"
+
+
+def _source_cell_status_label(cell: SourceCell) -> str:
+    if cell.state == "endorsement":
+        return f"Endorsed: {cell.candidate_labels[0]}"
+    if cell.state == "multi_endorsement":
+        return f"Multi-candidate endorsement: {' / '.join(cell.candidate_labels)}"
+    return {
+        "no_endorsement": "No endorsement or declined to endorse",
+        "not_covered": "Not covered",
+        "unavailable": "Unavailable",
+        "unverified": "Unverified, ambiguous, or pending review",
+        "not_applicable": "Not applicable",
+    }[cell.state]
+
+
+def _source_cell_metadata_labels(cell: SourceCell) -> list[str]:
+    labels: list[str] = []
+    if cell.published_at is not None:
+        labels.append(f"Published {cell.published_at.isoformat()}")
+    if cell.updated_at is not None and cell.updated_at != cell.published_at:
+        labels.append(f"Updated {cell.updated_at.isoformat()}")
+    if cell.captured_at is not None:
+        labels.append(f"Captured {cell.captured_at.date().isoformat()}")
+    if cell.redistribution == "restricted":
+        labels.append("Restricted capture; original link only")
+    return labels
 
 
 def build_rendered_guide(
@@ -233,6 +264,7 @@ def build_rendered_guide(
                 title=f"{configuration.title} - Detailed Edition",
             )
         expected_race_count = sum(len(section.races) for section in view_model.sections)
+        expected_source_count = len(view_model.sources)
         screenshots = [
             _render_screenshot(
                 html_path,
@@ -241,6 +273,7 @@ def build_rendered_guide(
                 width=configuration.desktop_width,
                 height=configuration.screenshot_height,
                 expected_race_count=expected_race_count,
+                expected_source_count=expected_source_count,
             ),
             _render_screenshot(
                 html_path,
@@ -249,6 +282,7 @@ def build_rendered_guide(
                 width=configuration.mobile_width,
                 height=configuration.screenshot_height,
                 expected_race_count=expected_race_count,
+                expected_source_count=expected_source_count,
             ),
         ]
         validation_report = validate_rendered_guide(
@@ -343,6 +377,41 @@ def validate_rendered_guide(
         if parser.display_element_roles.get(share_key, []) != ["img"]:
             mismatched_html_roles.append(f"{race.id}/share-accessible-role")
     missing_evidence_rows: list[str] = []
+    source_by_id = {source.id: source for source in view_model.sources}
+    expected_detail_keys = {
+        (race.id, cell.source_id) for race in expected_races for cell in race.source_cells
+    }
+    if set(parser.race_detail_text) != expected_detail_keys:
+        missing_evidence_rows.append("document: unexpected or missing race-detail source rows")
+    for race in expected_races:
+        for cell in race.source_cells:
+            key = (race.id, cell.source_id)
+            source = source_by_id[cell.source_id]
+            expected_parts = [source.name, _source_cell_status_label(cell)]
+            if cell.evidence_title is not None:
+                expected_parts.append(cell.evidence_title)
+            if cell.evidence_locator is not None:
+                expected_parts.append(f"Evidence: {cell.evidence_locator}")
+            expected_parts.extend(_source_cell_metadata_labels(cell))
+            if cell.confidence_warning:
+                expected_parts.append("Review recommended")
+            if cell.evidence_url is not None:
+                expected_parts.append("Open source evidence")
+            observed_rows = [
+                _normalized_text(" ".join(parts)) for parts in parser.race_detail_text.get(key, [])
+            ]
+            expected_links: set[str] = (
+                {cell.evidence_url} if cell.evidence_url is not None else set()
+            )
+            if (
+                observed_rows != [_normalized_text(" ".join(expected_parts))]
+                or parser.race_detail_links.get(key, []) != [expected_links]
+                or parser.race_detail_states.get(key, []) != [cell.state]
+                or parser.race_detail_categories.get(key, []) != [source.category]
+            ):
+                missing_evidence_rows.append(
+                    f"{race.id}/{cell.source_id}: race-detail state, metadata, or evidence"
+                )
     for race in expected_races:
         for group in race.endorsement_groups:
             group_key = (race.id, group.candidate_id)
@@ -401,7 +470,14 @@ def validate_rendered_guide(
         configuration.pdf_filename,
         "mailto:seattle-elections@dobravoda.dev",
         configuration.project_url,
+        *(f"#race-{race.id}" for race in expected_races),
         *(source.evidence_url for source in view_model.sources),
+        *(
+            cell.evidence_url
+            for race in expected_races
+            for cell in race.source_cells
+            if cell.evidence_url is not None
+        ),
         *(
             endorser.evidence_url
             for race in expected_races
@@ -664,9 +740,13 @@ def validate_rendered_guide(
             id="html-source-evidence",
             passed=not missing_evidence_rows,
             message=(
-                "Every affirmative endorser appears under its choice with its evidence link."
+                "Every race-detail source cell appears exactly once with canonical state "
+                "and evidence."
                 if not missing_evidence_rows
-                else f"HTML endorsement rows are incomplete: {', '.join(missing_evidence_rows[:5])}"
+                else (
+                    "HTML source-detail rows are incomplete: "
+                    f"{', '.join(missing_evidence_rows[:5])}"
+                )
             ),
         ),
         RenderCheck(
@@ -1279,6 +1359,7 @@ def _render_screenshot(
     width: int,
     height: int,
     expected_race_count: int,
+    expected_source_count: int,
 ) -> Path:
     profile = Path(tempfile.mkdtemp(prefix="election-guide-chrome-"))
     try:
@@ -1311,6 +1392,7 @@ def _render_screenshot(
                     width=width,
                     height=height,
                     expected_race_count=expected_race_count,
+                    expected_source_count=expected_source_count,
                 )
             except (OSError, ValueError, TimeoutError, WebSocketException) as error:
                 errors.seek(0)
@@ -1333,6 +1415,7 @@ def _capture_emulated_viewport(
     width: int,
     height: int,
     expected_race_count: int,
+    expected_source_count: int,
 ) -> None:
     """Capture an exact CSS viewport through Chrome DevTools Protocol.
 
@@ -1372,7 +1455,8 @@ def _capture_emulated_viewport(
             "Runtime.evaluate",
             {
                 "expression": (
-                    "JSON.stringify((() => {"
+                    "(async()=>JSON.stringify(await (async()=>{"
+                    "const pause=()=>new Promise(resolve=>setTimeout(resolve,120));"
                     "const guide=document.querySelector('.screen-guide');"
                     "const filter=document.querySelector('#race-filter');"
                     "const cards=[...document.querySelectorAll('[data-publication-race-id]')]"
@@ -1381,22 +1465,8 @@ def _capture_emulated_viewport(
                     "const cardParts=cards.flatMap(card=>[...card.querySelectorAll("
                     "'.screen-race-result,.screen-race-context,.screen-meter,.comparison')]);"
                     "const meters=[...document.querySelectorAll('.screen-meter')];"
-                    "return {innerWidth:window.innerWidth,innerHeight:window.innerHeight,"
-                    "scrollWidth:document.documentElement.scrollWidth,"
-                    "guideVisible:Boolean(guide&&getComputedStyle(guide).display!=='none'&&"
-                    "guide.getBoundingClientRect().width>0&&guide.getBoundingClientRect().height>0),"
-                    "filterVisible:Boolean(filter&&getComputedStyle(filter).display!=='none'&&"
-                    "filter.getBoundingClientRect().width>0&&filter.getBoundingClientRect().height>0),"
-                    "visibleRaceCount:cards.length,"
-                    "cardOverflow:cardParts.filter(part=>part.scrollWidth>part.clientWidth+1||"
-                    "(!part.matches('.screen-race-result,.screen-race-context')&&"
-                    "part.scrollHeight>part.clientHeight+1)).map(part=>({"
-                    "race:part.closest('[data-publication-race-id]')?.dataset.publicationRaceId,"
-                    "className:part.className,width:[part.clientWidth,part.scrollWidth],"
-                    "height:[part.clientHeight,part.scrollHeight]})),"
-                    "metersRightAligned:meters.every(meter=>Math.abs(meter.getBoundingClientRect().right-"
-                    "meter.parentElement.getBoundingClientRect().right)<1),"
-                    "disclosures:[...document.querySelectorAll('.guide-notes')].map(details=>{"
+                    "const disclosures=["
+                    "...document.querySelectorAll('.guide-notes')].map(details=>{"
                     "const summary=details.querySelector('summary');"
                     "const panel=details.querySelector("
                     "'.methodology-screen,.screen-source-directory');"
@@ -1412,13 +1482,92 @@ def _capture_emulated_viewport(
                     "document.documentElement.scrollWidth>window.innerWidth+1));"
                     "summary?.click();"
                     "return {id:details.id,initialOpen,initialVisible,toggledOpen,toggledVisible,"
-                    "panelOverflow,restoredClosed:details.open===false};})};})())"
+                    "panelOverflow,restoredClosed:details.open===false};});"
+                    "const dialogs=[...document.querySelectorAll('[data-race-detail-dialog]')];"
+                    "const firstCard=cards[0];"
+                    "const firstLink=firstCard?.querySelector('[data-race-detail-link]');"
+                    "const copyButton=firstCard?.querySelector('[data-copy-race-link]');"
+                    "const firstDialog=firstCard?.querySelector('[data-race-detail-dialog]');"
+                    "const closeButton=firstDialog?.querySelector('[data-close-race-detail]');"
+                    "let copiedValue='';"
+                    "Object.defineProperty(navigator,'clipboard',{configurable:true,value:{"
+                    "writeText:async value=>{copiedValue=value;}}});"
+                    "copyButton?.click();"
+                    "await pause();"
+                    "const firstHash=firstLink?.hash||'';"
+                    "const copyStatus=document.querySelector('#copy-status')?.textContent||'';"
+                    "firstCard.hidden=true;"
+                    "history.replaceState(null,'',firstHash);"
+                    "window.dispatchEvent(new PopStateEvent('popstate',{state:null}));"
+                    "await pause();"
+                    "const directRect=firstDialog?.getBoundingClientRect();"
+                    "const direct={open:Boolean(firstDialog?.open),"
+                    "hash:window.location.hash===firstHash,"
+                    "focused:document.activeElement===closeButton,"
+                    "filterReset:filter?.value==='all'&&firstCard.hidden===false,"
+                    "labelled:Boolean(firstDialog?.getAttribute('aria-labelledby')&&"
+                    "document.getElementById(firstDialog.getAttribute('aria-labelledby'))),"
+                    "described:Boolean(firstDialog?.getAttribute('aria-describedby')&&"
+                    "document.getElementById(firstDialog.getAttribute('aria-describedby'))),"
+                    "sourceRows:firstDialog?.querySelectorAll('[data-race-detail-source-id]').length||0,"
+                    "inViewport:Boolean(directRect&&directRect.left>=0&&directRect.top>=0&&"
+                    "directRect.right<=window.innerWidth&&directRect.bottom<=window.innerHeight),"
+                    "noOverflow:Boolean(firstDialog&&firstDialog.scrollWidth<=firstDialog.clientWidth+1)};"
+                    "closeButton?.click();"
+                    "await pause();"
+                    "const directClosed={closed:firstDialog?.open===false,"
+                    "hashCleared:window.location.hash==='',focused:document.activeElement===firstLink};"
+                    "firstLink?.click();"
+                    "await pause();"
+                    "const ownedOpened=Boolean(firstDialog?.open&&"
+                    "window.location.hash===firstHash&&"
+                    "document.activeElement===closeButton);"
+                    "history.replaceState(null,'',window.location.pathname+window.location.search);"
+                    "window.dispatchEvent(new PopStateEvent('popstate',{state:null}));"
+                    "await pause();"
+                    "const ownedClosed=Boolean(firstDialog?.open===false&&"
+                    "window.location.hash===''&&"
+                    "document.activeElement===firstLink);"
+                    "history.replaceState({raceDetail:firstHash},'',firstHash);"
+                    "window.dispatchEvent(new PopStateEvent('popstate',{state:history.state}));"
+                    "await pause();"
+                    "const forwardOpened=Boolean(firstDialog?.open&&"
+                    "window.location.hash===firstHash&&"
+                    "document.activeElement===closeButton);"
+                    "history.replaceState(null,'',firstHash);"
+                    "firstDialog?.dispatchEvent(new Event('cancel',{cancelable:true}));"
+                    "await pause();"
+                    "const escapeClosed=Boolean(firstDialog?.open===false&&"
+                    "window.location.hash===''&&"
+                    "document.activeElement===firstLink);"
+                    "return {innerWidth:window.innerWidth,innerHeight:window.innerHeight,"
+                    "scrollWidth:document.documentElement.scrollWidth,"
+                    "guideVisible:Boolean(guide&&getComputedStyle(guide).display!=='none'&&"
+                    "guide.getBoundingClientRect().width>0&&guide.getBoundingClientRect().height>0),"
+                    "filterVisible:Boolean(filter&&getComputedStyle(filter).display!=='none'&&"
+                    "filter.getBoundingClientRect().width>0&&filter.getBoundingClientRect().height>0),"
+                    "visibleRaceCount:cards.length,"
+                    "cardOverflow:cardParts.filter(part=>part.scrollWidth>part.clientWidth+1||"
+                    "(!part.matches('.screen-race-result,.screen-race-context')&&"
+                    "part.scrollHeight>part.clientHeight+1)).map(part=>({"
+                    "race:part.closest('[data-publication-race-id]')?.dataset.publicationRaceId,"
+                    "className:part.className,width:[part.clientWidth,part.scrollWidth],"
+                    "height:[part.clientHeight,part.scrollHeight]})),"
+                    "metersRightAligned:meters.every(meter=>Math.abs(meter.getBoundingClientRect().right-"
+                    "meter.parentElement.getBoundingClientRect().right)<1),"
+                    "disclosures,dialogCount:dialogs.length,"
+                    "copy:{copied:copiedValue.endsWith(firstHash),"
+                    "announced:copyStatus.startsWith('Link copied')},"
+                    "direct,directClosed,ownedOpened,ownedClosed,forwardOpened,escapeClosed};})()))()"
                 ),
                 "returnByValue": True,
+                "awaitPromise": True,
             },
             session_id=session_id,
         )
         result = cast(dict[str, Any], evaluated["result"])
+        if "value" not in result:
+            raise ValueError(f"responsive interaction validation failed: {evaluated}")
         metrics = cast(dict[str, object], json.loads(cast(str, result["value"])))
         expected_metrics: dict[str, object] = {
             "innerWidth": width,
@@ -1441,6 +1590,24 @@ def _capture_emulated_viewport(
                 }
                 for disclosure_id in ("methodology", "sources")
             ],
+            "dialogCount": expected_race_count,
+            "copy": {"copied": True, "announced": True},
+            "direct": {
+                "open": True,
+                "hash": True,
+                "focused": True,
+                "filterReset": True,
+                "labelled": True,
+                "described": True,
+                "sourceRows": expected_source_count,
+                "inViewport": True,
+                "noOverflow": True,
+            },
+            "directClosed": {"closed": True, "hashCleared": True, "focused": True},
+            "ownedOpened": True,
+            "ownedClosed": True,
+            "forwardOpened": True,
+            "escapeClosed": True,
         }
         if metrics != expected_metrics:
             raise ValueError(f"responsive layout overflowed its viewport: {metrics}")
@@ -2023,6 +2190,10 @@ class _GuideHTMLParser(HTMLParser):
         self.coverage_gap_links: dict[str, list[list[str]]] = {}
         self.coverage_gap_statuses: dict[str, list[str | None]] = {}
         self.coverage_gap_classes: dict[str, list[set[str]]] = {}
+        self.race_detail_text: dict[tuple[str, str], list[list[str]]] = {}
+        self.race_detail_links: dict[tuple[str, str], list[set[str]]] = {}
+        self.race_detail_states: dict[tuple[str, str], list[str | None]] = {}
+        self.race_detail_categories: dict[tuple[str, str], list[str | None]] = {}
         self._text_parts: list[str] = []
         self._current_race_id: str | None = None
         self._current_endorsement_key: tuple[tuple[str, str, str], int] | None = None
@@ -2032,6 +2203,8 @@ class _GuideHTMLParser(HTMLParser):
         self._current_publication_source: tuple[str, int] | None = None
         self._current_coverage_gap: tuple[str, int] | None = None
         self._current_source_category: str | None = None
+        self._current_race_detail: tuple[tuple[str, str], int] | None = None
+        self._race_detail_depth = 0
 
     @property
     def text(self) -> str:
@@ -2039,11 +2212,28 @@ class _GuideHTMLParser(HTMLParser):
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         attributes = dict(attrs)
+        if self._current_race_detail is not None:
+            self._race_detail_depth += 1
         race_id = attributes.get("data-publication-race-id")
         if race_id is not None:
             self.race_ids.append(race_id)
             self.race_text[race_id] = []
             self._current_race_id = race_id
+        detail_source_id = attributes.get("data-race-detail-source-id")
+        if detail_source_id is not None and self._current_race_id is not None:
+            detail_key = (self._current_race_id, detail_source_id)
+            detail_rows = self.race_detail_text.setdefault(detail_key, [])
+            detail_links = self.race_detail_links.setdefault(detail_key, [])
+            detail_rows.append([])
+            detail_links.append(set())
+            self.race_detail_states.setdefault(detail_key, []).append(
+                attributes.get("data-source-state")
+            )
+            self.race_detail_categories.setdefault(detail_key, []).append(
+                attributes.get("data-source-category")
+            )
+            self._current_race_detail = (detail_key, len(detail_rows) - 1)
+            self._race_detail_depth = 1
         source_id = attributes.get("data-source-id")
         candidate_id = attributes.get("data-candidate-id")
         classes = set((attributes.get("class") or "").split())
@@ -2121,6 +2311,9 @@ class _GuideHTMLParser(HTMLParser):
             if self._current_endorsement_key is not None:
                 key, index = self._current_endorsement_key
                 self.endorsement_links[key][index].add(href)
+            if self._current_race_detail is not None:
+                detail_key, detail_index = self._current_race_detail
+                self.race_detail_links[detail_key][detail_index].add(href)
 
     def handle_data(self, data: str) -> None:
         if data.strip():
@@ -2142,8 +2335,15 @@ class _GuideHTMLParser(HTMLParser):
             if self._current_coverage_gap is not None:
                 source_key, source_index = self._current_coverage_gap
                 self.coverage_gap_text[source_key][source_index].append(data)
+            if self._current_race_detail is not None:
+                detail_key, detail_index = self._current_race_detail
+                self.race_detail_text[detail_key][detail_index].append(data)
 
     def handle_endtag(self, tag: str) -> None:
+        if self._current_race_detail is not None:
+            self._race_detail_depth -= 1
+            if self._race_detail_depth == 0:
+                self._current_race_detail = None
         if tag == "li":
             self._current_endorsement_key = None
         if tag == "div" and self._current_publication_source is not None:

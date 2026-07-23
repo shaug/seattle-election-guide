@@ -38,10 +38,11 @@ JSON uses canonical sorted serialization and exact rational strings such as `"3/
 registry and inventory order, explicit field order, UTF-8, and Unix newlines. Identical inputs,
 build timestamp, and Git revision therefore produce identical bytes.
 
-`publication_view_model.json` uses schema `1.4`; this version distinguishes sources contributing
-usable endorsement decisions from researched coverage gaps while retaining the `1.3` per-source
-participation counts, candidate-centric affirmative endorsement groups, category analysis, and
-overlap metadata for audit.
+`publication_view_model.json` uses schema `1.6`; this version retains the `1.5` distinction between
+sources contributing usable endorsement decisions and researched coverage gaps, and adds public
+capture, publication, update, title, and redistribution metadata to evidence-linked source cells.
+It also retains per-source participation counts, candidate-centric affirmative endorsement groups,
+category analysis, and overlap metadata for audit.
 
 ## Shared view model
 
@@ -87,9 +88,10 @@ Each source cell has one explicit state:
 - `unverified`: the normalized decision still requires review.
 - `not_applicable`: the race is outside the source's registered geography.
 
-Candidate IDs, exact allocations, evidence URLs, evidence locators, and confidence warnings stay
-attached to the cell. This makes displayed values and states traceable without inspecting a
-renderer.
+Candidate IDs, exact allocations, evidence URLs, evidence locators, public capture titles, capture and
+publication dates, redistribution status, and confidence warnings stay attached to the cell. Storage
+references and restricted artifacts do not enter the public model. This makes displayed values and
+states traceable without inspecting a renderer.
 
 ## Hash boundaries
 

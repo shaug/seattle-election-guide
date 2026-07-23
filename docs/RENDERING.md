@@ -13,6 +13,14 @@ endorsement. Badge contents use a small optical correction so the visible glyphs
 merely their CSS line boxes, appear vertically centered. Color is never the only status signal.
 The canonical comparison status and legacy badge label remain available in audit exports.
 
+Each responsive race card has a stable `#race-<canonical-race-id>` fragment, a copy-link action, and
+an on-demand modal source audit. The audit groups the race's ordered source cells by canonical category,
+labels Seattle Times as comparison-only, and preserves endorsement, multi-endorsement, no-endorsement,
+missing, unavailable, unverified, and not-applicable states without changing the recommendation-first
+collapsed card. Evidence-linked cells show the original evidence link plus public capture and publication
+metadata; restricted artifacts and storage references are never rendered. Direct fragments and browser
+back/forward state open or close the matching modal, and focus returns to the invoking action on close.
+
 The concise PDF uses a scan-first, two-column briefing layout. Print typography is sans serif,
 candidate or choice names carry the strongest row emphasis, alternating race backgrounds separate
 adjacent choices, and each race forms a three-line unit: office; choice with a fixed-width,
@@ -91,6 +99,10 @@ The generation fails unless:
 
 - responsive HTML contains every canonical race in order and every display value; each affirmative
   endorser appears under every endorsed candidate or choice with its own evidence link;
+- every race-detail view contains every canonical source cell exactly once, in its canonical category,
+  with the exact state, public evidence metadata, and evidence link when one exists;
+- desktop and mobile browser checks exercise copied permalinks, direct fragments, back/forward restoration,
+  close-button and Escape behavior, focus placement/return, dialog naming, and viewport containment;
 - the configured desktop and mobile captures use their exact CSS viewport dimensions without
   horizontal overflow, expose every race and the filter controls, and contain visible pixels;
 - the PDF has exactly two nonblank US Letter pages with selectable text, URI links, and configured

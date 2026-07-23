@@ -121,6 +121,15 @@ def test_bundle_is_deterministic_reconstructable_and_complete(tmp_path: Path) ->
         CONSENSUS_SOURCE_IDS[4]: "unavailable",
         COMPARISON_SOURCE_ID: "endorsement",
     }
+    evidence_cells = [cell for cell in target.source_cells if cell.evidence_url is not None]
+    assert evidence_cells
+    assert all(cell.captured_at is not None for cell in evidence_cells)
+    assert all(cell.redistribution in {"permitted", "restricted"} for cell in evidence_cells)
+    endorsed_cell = next(cell for cell in evidence_cells if cell.state == "endorsement")
+    assert endorsed_cell.evidence_title is not None
+    assert endorsed_cell.evidence_title.startswith("Fixture for ")
+    assert endorsed_cell.published_at is not None
+    assert endorsed_cell.published_at.isoformat() == "2026-07-02"
     assert any(
         cell.state == "not_covered"
         for section in first.view_model.sections
@@ -291,6 +300,11 @@ def test_bundle_is_deterministic_reconstructable_and_complete(tmp_path: Path) ->
     endorsement.allocation = {}
     endorsement.evidence_url = None
     endorsement.evidence_locator = None
+    endorsement.evidence_title = None
+    endorsement.captured_at = None
+    endorsement.published_at = None
+    endorsement.updated_at = None
+    endorsement.redistribution = None
     with pytest.raises(ValidationError, match="explicit endorsement count"):
         PublicationViewModel.model_validate(mutated.model_dump(mode="json"))
 
@@ -416,7 +430,7 @@ def test_methodology_publishes_possible_overlap_without_deduplicating(tmp_path: 
     )
 
     methodology = bundle.view_model.methodology
-    assert bundle.view_model.schema_version == "1.5"
+    assert bundle.view_model.schema_version == "1.6"
     assert bundle.view_model.metadata.source_panel_id == dataset.source_registry.id
     assert len(bundle.view_model.metadata.source_panel_hash) == 64
     coverage_gaps = [
@@ -780,6 +794,17 @@ def test_source_cells_enforce_exact_state_semantics() -> None:
             allocation={},
             evidence_url=None,
             evidence_locator=None,
+            confidence_warning=False,
+        )
+    with pytest.raises(ValidationError, match="capture metadata"):
+        SourceCell(
+            source_id="fixture-source",
+            state="endorsement",
+            candidate_ids=["one"],
+            candidate_labels=["One"],
+            allocation={"one": "1"},
+            evidence_url="https://example.com/evidence",
+            evidence_locator="Fixture line 1",
             confidence_warning=False,
         )
 

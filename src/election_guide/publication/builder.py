@@ -501,6 +501,11 @@ def _source_cell(
         },
         evidence_url=canonical_url or requested_url,
         evidence_locator=claim.evidence_locator,
+        evidence_title=capture.title,
+        captured_at=capture.retrieved_at,
+        published_at=capture.published_at,
+        updated_at=capture.updated_at,
+        redistribution=capture.redistribution,
         confidence_warning=(
             endorsement.normalization_confidence < 1
             or claim.extraction_confidence < 1

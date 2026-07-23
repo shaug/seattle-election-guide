@@ -16,6 +16,7 @@
 html { color: var(--ink); background: #edf1f4; font-family: var(--screen-sans); }
 body { margin: 0; line-height: 1.45; }
 a { color: #075d75; text-underline-offset: .15em; }
+.visually-hidden { position: absolute !important; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .skip-link { position: absolute; left: 1rem; top: -5rem; z-index: 10; background: var(--white); padding: .7rem; }
 .skip-link:focus { top: 1rem; }
 .screen-guide { width: 100%; max-width: 76rem; margin: 0 auto; background: var(--paper); min-height: 100vh; }
@@ -62,6 +63,35 @@ a { color: #075d75; text-underline-offset: .15em; }
 .endorsement-group ul { display: flex; flex-wrap: wrap; gap: .3rem .8rem; margin: 0; padding: 0; list-style: none; font-size: .76rem; }
 .endorsement-group li { display: flex; align-items: center; gap: .3rem; }
 .co-endorsement { padding: .08rem .25rem; border-radius: .2rem; background: #e6e0f6; color: #4d3684; font-size: .58rem; font-weight: 800; letter-spacing: .03em; text-transform: uppercase; }
+.race-actions { display: flex; align-items: center; gap: .5rem 1rem; margin-top: .15rem; padding-top: .6rem; border-top: 1px solid var(--line); font-size: .76rem; font-weight: 800; }
+.race-actions a, .race-actions button { min-height: 2.25rem; padding: .4rem .1rem; }
+.race-actions button, .race-detail-header button { border: 0; background: transparent; color: #075d75; cursor: pointer; font: inherit; font-weight: 800; text-decoration: underline; text-underline-offset: .15em; }
+.race-actions :focus-visible, .race-detail-dialog :focus-visible { outline: .2rem solid #f0a928; outline-offset: .15rem; }
+.race-detail-dialog { width: min(66rem, calc(100vw - 2rem)); max-height: calc(100vh - 2rem); padding: 0; overflow: auto; border: 1px solid #829ab1; border-radius: .45rem; background: var(--paper); color: var(--ink); box-shadow: 0 1rem 3rem rgba(16,42,67,.35); }
+.race-detail-dialog::backdrop { background: rgba(9, 30, 48, .68); }
+.race-detail-header { position: sticky; top: 0; z-index: 1; display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; padding: 1rem 1.15rem; border-bottom: 1px solid var(--line); background: var(--navy); color: var(--white); }
+.race-detail-header > div { min-width: 0; }
+.race-detail-header p { margin: 0; color: #d7e6ef; font-size: .78rem; }
+.race-detail-header > div > p:first-child { color: #9ee7df; font-size: .68rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+.race-card .race-detail-header h3 { margin: .15rem 0 .25rem; color: var(--white); font-size: 1.35rem; }
+.race-detail-header button { flex: 0 0 auto; min-height: 2.5rem; padding: .45rem; color: #9ee7df; }
+.race-detail-categories { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; padding: 1rem; }
+.race-detail-category { min-width: 0; border: 1px solid #d9e2ec; border-top: .25rem solid var(--teal); background: var(--white); }
+.race-detail-category[data-race-detail-category="comparison"] { grid-column: 1 / -1; border-top-color: var(--amber); background: #fffaf1; }
+.race-detail-category h4 { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .3rem .75rem; margin: 0; padding: .65rem .75rem; color: var(--teal); font-size: .74rem; letter-spacing: .06em; text-transform: uppercase; }
+.race-detail-category h4 span { color: #8a4b00; font-size: .66rem; letter-spacing: 0; text-transform: none; }
+.race-detail-category > ul { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
+.race-detail-category > ul > li { min-width: 0; padding: .65rem .75rem; border-top: 1px solid #e0e7ed; border-left: .2rem solid #9fb3c8; }
+.race-detail-category > ul > li[data-source-state="endorsement"], .race-detail-category > ul > li[data-source-state="multi_endorsement"] { border-left-color: var(--teal); }
+.race-detail-category > ul > li[data-source-state="no_endorsement"] { border-left-color: var(--amber); }
+.race-detail-category > ul > li[data-source-state="unavailable"], .race-detail-category > ul > li[data-source-state="unverified"] { border-left-color: var(--red); }
+.race-detail-source-heading { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .25rem .75rem; }
+.race-detail-source-heading strong { flex: 1 1 12rem; min-width: 0; color: var(--navy); font-size: .82rem; overflow-wrap: anywhere; }
+.race-detail-source-heading span { flex: 1 1 14rem; color: #364152; font-size: .72rem; font-weight: 800; text-align: right; }
+.race-detail-category p { margin: .35rem 0 0; color: var(--muted); font-size: .7rem; overflow-wrap: anywhere; }
+.race-detail-category > ul > li > a { display: inline-block; margin-top: .4rem; font-size: .72rem; font-weight: 800; }
+.race-detail-metadata { display: flex; flex-wrap: wrap; gap: .2rem .75rem; margin: .35rem 0 0; padding: 0; color: var(--muted); font-size: .66rem; list-style: none; }
+.race-detail-metadata li + li::before { content: "·"; margin-right: .75rem; }
 .screen-footer { background: var(--navy); color: var(--white); }
 .footer-summary { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr) auto; align-items: center; gap: 1.25rem 2.5rem; padding: 1.4rem clamp(1rem, 4vw, 3rem); }
 .footer-summary h2 { margin: .15rem 0 0; font-size: 1.25rem; line-height: 1.1; }
@@ -126,6 +156,13 @@ a { color: #075d75; text-underline-offset: .15em; }
   .screen-meter { width: 8.75rem; }
   .comparison { padding-right: .55rem; padding-left: .55rem; }
   .insufficient-note { overflow-wrap: anywhere; }
+  .race-actions { flex-wrap: wrap; }
+  .race-detail-dialog { width: calc(100vw - 1rem); max-height: calc(100vh - 1rem); }
+  .race-detail-header { padding: .8rem; }
+  .race-detail-categories { grid-template-columns: 1fr; padding: .65rem; }
+  .race-detail-category[data-race-detail-category="comparison"] { grid-column: auto; }
+  .race-detail-source-heading { grid-template-columns: 1fr; }
+  .race-detail-source-heading span { text-align: left; }
 }
 
 @page { size: Letter portrait; margin: .28in .3in; }

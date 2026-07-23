@@ -79,7 +79,8 @@
         </div>
         <div class="race-grid">
           {% for race in section.races %}
-          <article class="race-card" data-publication-race-id="{{ race.id }}"
+          <article class="race-card" id="race-{{ race.id }}"
+            data-publication-race-id="{{ race.id }}"
             aria-labelledby="race-label-{{ race.id }}"
             data-filter-tokens='{{ race.filter_tokens | tojson }}'>
             <p class="race-office" id="race-label-{{ race.id }}"
@@ -135,12 +136,65 @@
               </div>
             </details>
             {% endif %}
+            <div class="race-actions" aria-label="Actions for {{ race.race_label }}">
+              <a href="#race-{{ race.id }}" data-race-detail-link
+                aria-haspopup="dialog" aria-controls="race-detail-{{ race.id }}">Source details</a>
+              <button type="button" data-copy-race-link="race-{{ race.id }}"
+                aria-label="Copy link to {{ race.race_label }}">Copy link</button>
+            </div>
+            <dialog class="race-detail-dialog" id="race-detail-{{ race.id }}"
+              data-race-detail-dialog data-race-id="{{ race.id }}"
+              aria-labelledby="race-detail-title-{{ race.id }}"
+              aria-describedby="race-detail-description-{{ race.id }}">
+              <div class="race-detail-header">
+                <div>
+                  <p>Race source audit</p>
+                  <h3 id="race-detail-title-{{ race.id }}">{{ race.race_label }}</h3>
+                  <p id="race-detail-description-{{ race.id }}">Every active source is shown once.
+                    Missing coverage is distinct from an explicit decision not to endorse.</p>
+                </div>
+                <button type="button" data-close-race-detail
+                  aria-label="Close source details for {{ race.race_label }}">Close</button>
+              </div>
+              <div class="race-detail-categories">
+                {% for category in guide.methodology.source_categories %}
+                <section class="race-detail-category" data-race-detail-category="{{ category.category }}">
+                  <h4>{{ category.label }}
+                    {% if category.category == 'comparison' %}<span>Seattle Times · comparison only</span>{% endif %}
+                  </h4>
+                  <ul>
+                    {% for cell in race.source_cells if source_by_id[cell.source_id].category == category.category %}
+                    {% set source = source_by_id[cell.source_id] %}
+                    <li data-race-detail-source-id="{{ cell.source_id }}"
+                      data-source-category="{{ source.category }}" data-source-state="{{ cell.state }}">
+                      <div class="race-detail-source-heading">
+                        <strong>{{ source.name }}</strong>
+                        <span>{{ source_cell_status_label(cell) }}</span>
+                      </div>
+                      {% if cell.evidence_title %}<p>{{ cell.evidence_title }}</p>{% endif %}
+                      {% if cell.evidence_locator %}<p>Evidence: {{ cell.evidence_locator }}</p>{% endif %}
+                      {% set metadata_labels = source_cell_metadata_labels(cell) %}
+                      {% if metadata_labels or cell.confidence_warning %}
+                      <ul class="race-detail-metadata" aria-label="Evidence metadata">
+                        {% for label in metadata_labels %}<li>{{ label }}</li>{% endfor %}
+                        {% if cell.confidence_warning %}<li>Review recommended</li>{% endif %}
+                      </ul>
+                      {% endif %}
+                      {% if cell.evidence_url %}<a href="{{ cell.evidence_url }}">Open source evidence</a>{% endif %}
+                    </li>
+                    {% endfor %}
+                  </ul>
+                </section>
+                {% endfor %}
+              </div>
+            </dialog>
           </article>
           {% endfor %}
         </div>
       </section>
       {% endfor %}
     </div>
+    <p id="copy-status" class="visually-hidden" role="status" aria-live="polite"></p>
 
     <footer class="screen-footer">
       <div class="footer-summary">
@@ -493,6 +547,106 @@
     };
     select.addEventListener('change', applyFilter);
     applyFilter();
+
+    const dialogs = [...document.querySelectorAll('[data-race-detail-dialog]')];
+    const copyStatus = document.querySelector('#copy-status');
+    let lastTrigger = null;
+    const fragmentId = () => {
+      try {
+        return decodeURIComponent(window.location.hash.slice(1));
+      } catch {
+        return '';
+      }
+    };
+    const openerFor = (dialog) => {
+      const card = dialog.closest('[data-publication-race-id]');
+      if (lastTrigger && lastTrigger.closest('[data-publication-race-id]') === card) {
+        return lastTrigger;
+      }
+      return card?.querySelector('[data-race-detail-link]');
+    };
+    const syncRaceDetail = ({ restoreFocus = false } = {}) => {
+      const card = document.getElementById(fragmentId());
+      const target = card?.matches('[data-publication-race-id]')
+        ? card.querySelector('[data-race-detail-dialog]') : null;
+      dialogs.forEach((dialog) => {
+        if (dialog !== target && dialog.open) dialog.close();
+      });
+      if (target) {
+        if (card.hidden) {
+          select.value = 'all';
+          applyFilter();
+        }
+        if (!target.open) target.showModal();
+        target.querySelector('[data-close-race-detail]')?.focus();
+        return;
+      }
+      if (restoreFocus && lastTrigger) lastTrigger.focus();
+    };
+    const requestClose = (dialog) => {
+      const card = dialog.closest('[data-publication-race-id]');
+      const fragment = card ? `#${card.id}` : '';
+      if (fragment && window.location.hash === fragment && history.state?.raceDetail === fragment) {
+        history.back();
+        return;
+      }
+      history.replaceState(history.state, '', `${window.location.pathname}${window.location.search}`);
+      if (dialog.open) dialog.close();
+      openerFor(dialog)?.focus();
+    };
+    document.querySelectorAll('[data-race-detail-link]').forEach((link) => {
+      link.addEventListener('click', (event) => {
+        event.preventDefault();
+        lastTrigger = link;
+        const state = history.state && typeof history.state === 'object' ? history.state : {};
+        history.pushState({ ...state, raceDetail: link.hash }, '', link.hash);
+        syncRaceDetail();
+      });
+    });
+    dialogs.forEach((dialog) => {
+      dialog.querySelector('[data-close-race-detail]')?.addEventListener('click', () => {
+        requestClose(dialog);
+      });
+      dialog.addEventListener('cancel', (event) => {
+        event.preventDefault();
+        requestClose(dialog);
+      });
+    });
+    window.addEventListener('popstate', () => {
+      syncRaceDetail({ restoreFocus: !window.location.hash });
+    });
+    window.addEventListener('hashchange', () => {
+      syncRaceDetail({ restoreFocus: !window.location.hash });
+    });
+    document.querySelectorAll('[data-copy-race-link]').forEach((button) => {
+      button.addEventListener('click', async () => {
+        const link = new URL(window.location.href);
+        link.hash = button.dataset.copyRaceLink;
+        const value = link.toString();
+        try {
+          if (navigator.clipboard?.writeText) {
+            await navigator.clipboard.writeText(value);
+          } else {
+            const field = document.createElement('textarea');
+            field.value = value;
+            field.setAttribute('readonly', '');
+            field.className = 'visually-hidden';
+            document.body.append(field);
+            field.select();
+            const copied = document.execCommand('copy');
+            field.remove();
+            if (!copied) throw new Error('Copy command was unavailable');
+          }
+          const raceLabel = button.closest('[data-publication-race-id]')
+            ?.querySelector('[data-display-role="race-label"]')?.textContent?.trim();
+          copyStatus.textContent = `Link copied for ${raceLabel || 'this race'}`;
+        } catch {
+          copyStatus.textContent = `Copy failed. Link: ${value}`;
+        }
+        button.focus();
+      });
+    });
+    syncRaceDetail();
   })();
   </script>
 </body>

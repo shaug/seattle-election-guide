@@ -234,6 +234,30 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert '<option value="Legislative District 43">Legislative District 43</option>' in html
     assert "JSON.parse(card.dataset.filterTokens)" in html
     assert "View endorsements" in html
+    assert html.count('<dialog class="race-detail-dialog"') == len(races)
+    assert html.count('data-copy-race-link="') == len(races)
+    for race in races:
+        assert f'id="race-{race.id}"' in html
+        assert f'href="#race-{race.id}" data-race-detail-link' in html
+        dialog_start = html.index(f'id="race-detail-{race.id}"')
+        dialog_end = html.index("</dialog>", dialog_start)
+        dialog_html = html[dialog_start:dialog_end]
+        assert dialog_html.count('data-race-detail-source-id="') == len(race.source_cells)
+        for cell in race.source_cells:
+            assert dialog_html.count(f'data-race-detail-source-id="{cell.source_id}"') == 1
+            assert f'data-source-state="{cell.state}"' in dialog_html
+    assert "Multi-candidate endorsement:" in html
+    assert "No endorsement or declined to endorse" in html
+    assert "Unverified, ambiguous, or pending review" in html
+    assert "Seattle Times · comparison only" in html
+    assert "Restricted capture; original link only" in html
+    assert "history.pushState({ ...state, raceDetail: link.hash }" in html
+    assert "history.back()" in html
+    assert "target.showModal()" in html
+    assert "dialog.addEventListener('cancel'" in html
+    assert "window.addEventListener('popstate'" in html
+    assert "window.addEventListener('hashchange'" in html
+    assert "navigator.clipboard?.writeText" in html
     assert "Consensus among explicitly endorsing sources" in html
     assert "Seattle Times" in html
     assert "August 2026 Primary" in html
@@ -1704,6 +1728,7 @@ def test_responsive_tablet_layout_and_methodology_disclosure(tmp_path: Path) -> 
         width=768,
         height=1200,
         expected_race_count=sum(len(section.races) for section in view_model.sections),
+        expected_source_count=len(view_model.sources),
     )
 
 

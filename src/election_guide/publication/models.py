@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import date
 from fractions import Fraction
 from typing import Literal
 
@@ -70,6 +71,11 @@ class SourceCell(PublicationModel):
     allocation: dict[str, str]
     evidence_url: str | None
     evidence_locator: str | None
+    evidence_title: str | None = None
+    captured_at: AwareDatetime | None = None
+    published_at: date | None = None
+    updated_at: date | None = None
+    redistribution: Literal["permitted", "restricted"] | None = None
     confidence_warning: bool = Field(strict=True)
 
     @model_validator(mode="after")
@@ -114,6 +120,25 @@ class SourceCell(PublicationModel):
             and self.evidence_url is None
         ):
             raise ValueError(f"{self.state} cell requires evidence")
+        evidence_metadata = (
+            self.evidence_title,
+            self.captured_at,
+            self.published_at,
+            self.updated_at,
+            self.redistribution,
+        )
+        if self.evidence_url is None and any(value is not None for value in evidence_metadata):
+            raise ValueError("cell evidence metadata requires an evidence link")
+        if self.evidence_url is not None and (
+            self.captured_at is None or self.redistribution is None
+        ):
+            raise ValueError("evidence-linked cells require capture metadata")
+        if (
+            self.published_at is not None
+            and self.updated_at is not None
+            and self.updated_at < self.published_at
+        ):
+            raise ValueError("cell update date cannot precede publication date")
         return self
 
 
@@ -477,7 +502,7 @@ class PublicationMetadata(PublicationModel):
 
 
 class PublicationViewModel(PublicationModel):
-    schema_version: Literal["1.5"] = "1.5"
+    schema_version: Literal["1.6"] = "1.6"
     metadata: PublicationMetadata
     sources: list[PublicationSource]
     sections: list[PublicationSection]
