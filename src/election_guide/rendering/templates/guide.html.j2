@@ -325,20 +325,29 @@
               {{ contributing_sources | selectattr('panel_role', 'equalto', 'comparison') | list | length }} Times comparison<br>
               Counts: endorsements/picks · split subset</span>
           </div>
-          {% set source_midpoint = (contributing_sources | length + 1) // 2 %}
+          {% set source_categories = guide.methodology.source_categories %}
+          {% set source_category_split = namespace(index=1, count=0, difference=contributing_sources | length) %}
+          {% for category in source_categories %}
+            {% set category_count = contributing_sources | selectattr('category', 'equalto', category.category) | list | length %}
+            {% set source_category_split.count = source_category_split.count + category_count %}
+            {% set difference = (contributing_sources | length - (2 * source_category_split.count)) | abs %}
+            {% if not loop.last and difference < source_category_split.difference %}
+              {% set source_category_split.index = loop.index %}
+              {% set source_category_split.difference = difference %}
+            {% endif %}
+          {% endfor %}
           <div class="source-columns">
             {% for source_column in range(2) %}
-            {% set source_start = 0 if source_column == 0 else source_midpoint %}
-            {% set source_end = source_midpoint if source_column == 0 else contributing_sources | length %}
-            {% set displayed_category = namespace(id='') %}
-            <div class="source-column">
-              {% for source in contributing_sources[source_start:source_end] %}
-                {% if displayed_category.id != source.category %}
-                {% set category = guide.methodology.source_categories | selectattr('category', 'equalto', source.category) | first %}
-                <h3 data-source-category="{{ source.category }}">{{ category.label }}</h3>
-                {% set displayed_category.id = source.category %}
-                {% endif %}
-                {{ source_row(source, true) }}
+            {% set category_start = 0 if source_column == 0 else source_category_split.index %}
+            {% set category_end = source_category_split.index if source_column == 0 else source_categories | length %}
+            <div class="source-column" data-source-column="{{ source_column + 1 }}">
+              {% for category in source_categories[category_start:category_end] %}
+              <section class="source-category-group" data-source-category-group="{{ category.category }}">
+                <h3 data-source-category="{{ category.category }}">{{ category.label }}</h3>
+                {% for source in contributing_sources if source.category == category.category %}
+                  {{ source_row(source, true) }}
+                {% endfor %}
+              </section>
               {% endfor %}
             </div>
             {% endfor %}

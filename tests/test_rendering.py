@@ -339,6 +339,27 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert ".source-columns { display: grid;" in html
     assert "grid-template-columns: 1fr 1fr;" in html
     assert ".source-row { display: grid;" in html
+    category_group_markers = [
+        f'data-source-category-group="{category.category}"'
+        for category in view_model.methodology.source_categories
+    ]
+    assert all(html.count(marker) == 1 for marker in category_group_markers)
+    assert [html.index(marker) for marker in category_group_markers] == sorted(
+        html.index(marker) for marker in category_group_markers
+    )
+    assert category_group_markers[-1] == 'data-source-category-group="comparison"'
+    print_contributing_sources = [
+        source
+        for category in view_model.methodology.source_categories
+        for source in contributing_sources
+        if source.category == category.category
+    ]
+    print_source_positions = [
+        html.rindex(f'data-publication-source-id="{source.id}"')
+        for source in print_contributing_sources
+    ]
+    assert print_source_positions == sorted(print_source_positions)
+    assert "source_midpoint" not in html
     assert 'class="print-metadata"' not in html
     assert ".print-races { display: grid; grid-template-columns: 1fr 1fr;" in html
     assert html.count('class="print-race-column"') == 2
