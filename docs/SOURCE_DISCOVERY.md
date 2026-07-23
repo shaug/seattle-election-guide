@@ -1,8 +1,8 @@
 # 2026 Primary Source Discovery Report
 
-Panel `wa-2026-primary-default-sources-v2` was frozen at `2026-07-23T15:40:00+00:00` before scoring. The research cutoff is `2026-07-23T15:40:00+00:00`; individual access times are recorded in the machine-readable registry.
+Panel `wa-2026-primary-default-sources-v2` was frozen at `2026-07-23T17:10:00+00:00` before scoring. The research cutoff is `2026-07-23T17:10:00+00:00`; individual access times are recorded in the machine-readable registry.
 
-The preregistration contains **48 proposed sources**: **42 consensus**, **1 comparison**, and **5 excluded**. Discovery found **41 official 2026 publications**, **2 publication gaps**, **2 access-restricted sources**, and **3 conditional organizations that do not publish endorsements**.
+The preregistration contains **48 proposed sources**: **42 consensus**, **1 comparison**, and **5 excluded**. Discovery found **42 official 2026 publications**, **2 publication gaps**, **1 access-restricted source**, and **3 conditional organizations that do not publish endorsements**.
 
 Search results were discovery leads only. Every link below is an official organization URL; no search snippet or third-party list is endorsement evidence. `not_found` means no official 2026 publication was located, not that the organization made an explicit no-endorsement decision.
 
@@ -16,7 +16,7 @@ Search results were discovery leads only. Every link below is an official organi
 | Fuse Washington | Progressive/general | consensus | published | [official page](https://www.fusewashington.org/news/blog/fuses-2026-primary-election-endorsements) | 2026-03-24 (updated 2026-06-03) | text/html | Seattle-ballot races |
 | Seattle Democratic Socialists of America | Progressive/general | consensus | published | [official page](https://seattledsa.org/event/jaelynn-scott-37ld-campaign-kick-off-canvass/) | — | text/html | Seattle-ballot races |
 | Tech 4 Housing | Transportation/urbanism | consensus | published | [official page](https://bsky.app/profile/tech4housing.org) | — | text/html | Seattle-ballot races |
-| Tech 4 Taxes | Progressive/general | consensus | access_restricted | [official page](https://tech4taxes.org/endorsements) | — | — | Seattle-ballot races |
+| Tech 4 Taxes | Progressive/general | consensus | published | [official page](https://tech4taxes.org/endorsements) | — | text/html | Seattle-ballot races |
 | Washington for Peace and Justice | Rights/representation | consensus | published | [official page](https://www.instagram.com/p/Dax5yPUlKYO/) | 2026-07-14 | text/html | Seattle-ballot races |
 | Washington Community Action Network | Progressive/general | consensus | published | [official page](https://www.washingtoncan.org/endorsements) | — | text/html | Seattle-ballot races |
 | Seattle Gay News Editorial Board | Rights/representation | consensus | published | [official page](https://www.sgn.org/) | 2026-07-20 (updated 2026-07-21) | text/html | Seattle-ballot races |
@@ -112,7 +112,6 @@ Search results were discovery leads only. Every link below is an official organi
 
 ## Gaps and conditional exclusions
 
-- **Tech 4 Taxes — access_restricted.** Search-result text was retained only as a discovery lead and no decisions were inferred from it; the official Bluesky feed did not reproduce the candidate list.
 - **Washington State Democratic Party — access_restricted.** Direct unattended access remains blocked and a fresh official-domain search found no 2026 endorsement roster; candidate and third-party lists were not substituted for a party publication.
 - **Cascade Bicycle Club — not_an_endorsement_publisher.** Official materials state that Cascade is the affiliated 501(c)(3) and Washington Bikes is the 501(c)(4) candidate-endorsement arm.
 - **Transportation Choices Coalition — not_found.** Official pages loaded with HTTP 200, but no 2026 candidate or ballot endorsement publication was located.

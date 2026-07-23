@@ -1,0 +1,62 @@
+{
+  "captured_at": "2026-07-23T17:04:45Z",
+  "decisions": [
+    {
+      "candidate_ids": [
+        "king-county-council-2--toshiko-grace-hasegawa",
+        "king-county-council-2--rebecca-salda-a"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Tech 4 Taxes 2026 primary endorsement; source-specific capture names both candidates.",
+      "race_id": "king-county-council-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-32-state-representative-1--danica-noble"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Tech 4 Taxes 2026 primary endorsement; source-specific capture.",
+      "race_id": "ld-32-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-representative-2--jaelynn-scott"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Tech 4 Taxes 2026 primary endorsement; source-specific capture.",
+      "race_id": "ld-37-state-representative-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-43-state-senator--hannah-sabio-howell"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Tech 4 Taxes 2026 primary endorsement; source-specific capture.",
+      "race_id": "ld-43-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-46-state-representative-1--ron-davis"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Tech 4 Taxes 2026 primary endorsement; source-specific capture.",
+      "race_id": "ld-46-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "seattle-city-council-5--nilu-jenks"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": "Tech 4 Taxes 2026 primary endorsement; source-specific capture.",
+      "race_id": "seattle-city-council-5",
+      "status": "endorsed"
+    }
+  ],
+  "evidence_locator": "Tech 4 Taxes official endorsement index at https://tech4taxes.org/endorsements; candidate list internally recovered from Blue Voter Guide's organization-specific August 4, 2026 primary capture while the origin timed out.",
+  "source_id": "tech-4-taxes"
+}

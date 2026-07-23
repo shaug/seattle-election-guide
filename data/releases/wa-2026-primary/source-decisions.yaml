@@ -1,6 +1,6 @@
 schema_version: "1.0"
 election_id: wa-2026-primary
-data_as_of: 2026-07-23T15:40:00Z
+data_as_of: 2026-07-23T17:10:00Z
 reviewer: shaug
 review_note: >-
   AI-assisted research located and persisted each available publication, then manually
@@ -1258,6 +1258,29 @@ sources:
         candidate_ids: [ld-46-state-representative-1--ron-davis]
         evidence_locator: Official Bluesky post 3mmcsx6zbwc2i, published 2026-05-20 UTC.
 
+  - source_id: tech-4-taxes
+    captured_at: 2026-07-23T17:04:45Z
+    reviewed_at: 2026-07-23T17:10:00Z
+    evidence_locator: Tech 4 Taxes official endorsement index at https://tech4taxes.org/endorsements; candidate list internally recovered from Blue Voter Guide's organization-specific August 4, 2026 primary capture while the origin timed out.
+    decisions:
+      - race_id: king-county-council-2
+        candidate_ids: [king-county-council-2--toshiko-grace-hasegawa, king-county-council-2--rebecca-salda-a]
+        evidence_locator: Tech 4 Taxes 2026 primary endorsement; source-specific capture names both candidates.
+      - race_id: ld-32-state-representative-1
+        candidate_ids: [ld-32-state-representative-1--danica-noble]
+        evidence_locator: Tech 4 Taxes 2026 primary endorsement; source-specific capture.
+      - race_id: ld-37-state-representative-2
+        candidate_ids: [ld-37-state-representative-2--jaelynn-scott]
+        evidence_locator: Tech 4 Taxes 2026 primary endorsement; source-specific capture.
+      - race_id: ld-43-state-senator
+        candidate_ids: [ld-43-state-senator--hannah-sabio-howell]
+        evidence_locator: Tech 4 Taxes 2026 primary endorsement; source-specific capture.
+      - race_id: ld-46-state-representative-1
+        candidate_ids: [ld-46-state-representative-1--ron-davis]
+        evidence_locator: Tech 4 Taxes 2026 primary endorsement; source-specific capture.
+      - race_id: seattle-city-council-5
+        candidate_ids: [seattle-city-council-5--nilu-jenks]
+        evidence_locator: Tech 4 Taxes 2026 primary endorsement; source-specific capture.
   - source_id: washington-for-peace-and-justice
     captured_at: 2026-07-23T15:33:14Z
     reviewed_at: 2026-07-23T15:40:00Z

@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 2189,
+  "canonical_url": "https://tech4taxes.org/endorsements",
+  "capture_method": "manual_upload",
+  "content_sha256": "ba5b35ceb6f3a57ca2650f8a80f0db76eceaab4d51b54e372f594b719cb36a74",
+  "http_status": null,
+  "id": "capture-tech-4-taxes-20260723T170445Z-c1d047f9feaa",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://tech4taxes.org/endorsements",
+  "retrieved_at": "2026-07-23T17:04:45Z",
+  "schema_version": "1.0",
+  "source_id": "tech-4-taxes",
+  "storage_reference": "sha256/ba/ba5b35ceb6f3a57ca2650f8a80f0db76eceaab4d51b54e372f594b719cb36a74",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: Tech 4 Taxes",
+  "updated_at": null
+}

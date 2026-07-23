@@ -31,9 +31,9 @@ def test_committed_source_panel_is_frozen_and_complete() -> None:
         "excluded": 5,
     }
     assert Counter(source.discovery.status for source in registry.sources) == {
-        "published": 41,
+        "published": 42,
         "not_found": 2,
-        "access_restricted": 2,
+        "access_restricted": 1,
         "not_an_endorsement_publisher": 3,
     }
     assert all(source.discovery.status for source in registry.sources)
@@ -115,6 +115,41 @@ def test_w4pj_carousel_transcription_preserves_source_semantics() -> None:
     assert len(endorsements) == 19
     assert {item.race_id for item in endorsements} == expected_race_ids
     assert sum(item.status == "dual_endorsement" for item in endorsements) == 2
+
+
+def test_tech4taxes_capture_keeps_official_source_provenance() -> None:
+    registry = read_source_registry(REGISTRY_PATH)
+    source = next(item for item in registry.sources if item.id == "tech-4-taxes")
+    assert source.discovery.status == "published"
+    assert source.discovery.canonical_url == "https://tech4taxes.org/endorsements"
+    assert source.discovery.evidence_locator is not None
+    assert "Blue Voter Guide" in source.discovery.evidence_locator
+    assert "Seven candidates across six races" in source.discovery.notes
+
+    ledger = yaml.safe_load(LEDGER_PATH.read_text(encoding="utf-8"))
+    entry = next(item for item in ledger["sources"] if item["source_id"] == "tech-4-taxes")
+    decisions = entry["decisions"]
+    expected_race_ids = {
+        "king-county-council-2",
+        "ld-32-state-representative-1",
+        "ld-37-state-representative-2",
+        "ld-43-state-senator",
+        "ld-46-state-representative-1",
+        "seattle-city-council-5",
+    }
+    assert {decision["race_id"] for decision in decisions} == expected_race_ids
+    assert len(decisions) == 6
+    assert sum(len(decision["candidate_ids"]) for decision in decisions) == 7
+    assert sum(len(decision["candidate_ids"]) > 1 for decision in decisions) == 1
+    assert all(decision.get("evidence_locator") for decision in decisions)
+
+    dataset = CanonicalDataset.model_validate(
+        read_json(PROJECT_ROOT / "data" / "normalized" / "canonical-dataset.json")
+    )
+    endorsements = [item for item in dataset.endorsements if item.source_id == "tech-4-taxes"]
+    assert len(endorsements) == 6
+    assert {item.race_id for item in endorsements} == expected_race_ids
+    assert sum(item.status == "dual_endorsement" for item in endorsements) == 1
 
 
 def test_legislative_district_sources_count_broad_races_but_not_other_districts() -> None:
@@ -242,7 +277,7 @@ def test_committed_discovery_report_matches_registry() -> None:
     committed = (PROJECT_ROOT / "docs" / "SOURCE_DISCOVERY.md").read_text(encoding="utf-8")
 
     assert committed == render_discovery_report(registry)
-    assert "**2 access-restricted sources**" in committed
+    assert "**1 access-restricted source**" in committed
     protec17_line = next(line for line in committed.splitlines() if line.startswith("| PROTEC17 "))
     assert "updated 2026-07-16" in protec17_line
 
@@ -287,7 +322,7 @@ def test_registry_rejects_unpaired_overlap_metadata() -> None:
 
 def test_registry_rejects_discovery_after_panel_freeze() -> None:
     payload = _registry_payload()
-    payload["research_cutoff"] = "2026-07-23T15:41:00Z"
+    payload["research_cutoff"] = "2026-07-23T17:11:00Z"
 
     with pytest.raises(ValidationError, match="research cutoff cannot be after panel freeze"):
         SourceRegistry.model_validate(payload)
@@ -304,7 +339,7 @@ def test_registry_rejects_unrecorded_redirect() -> None:
 
 def test_registry_rejects_source_access_after_research_cutoff() -> None:
     payload = _registry_payload()
-    payload["sources"][0]["discovery"]["checked_at"] = "2026-07-23T15:41:00Z"
+    payload["sources"][0]["discovery"]["checked_at"] = "2026-07-23T17:11:00Z"
 
     with pytest.raises(ValidationError, match="checked after the research cutoff"):
         SourceRegistry.model_validate(payload)

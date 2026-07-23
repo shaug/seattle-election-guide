@@ -51,7 +51,7 @@ from election_guide.sources.models import SourceRegistry
 from election_guide.sources.registry import read_source_registry
 
 PROJECT_ROOT = Path(__file__).parent.parent
-NOW = datetime(2026, 7, 23, 15, 45, tzinfo=UTC)
+NOW = datetime(2026, 7, 23, 17, 15, tzinfo=UTC)
 RACE_ID = "king-county-assessor"
 CONSENSUS_SOURCE_IDS = [
     "the-stranger",
@@ -657,7 +657,7 @@ def test_committed_source_panel_impact_matches_current_scoring() -> None:
     current = score_dataset(
         dataset,
         _configuration(),
-        computed_at=datetime(2026, 7, 23, 15, 40, tzinfo=UTC),
+        computed_at=datetime(2026, 7, 23, 17, 10, tzinfo=UTC),
     )
     impact = ConsensusImpactReport.model_validate(
         read_json(PROJECT_ROOT / "data/releases/wa-2026-primary/source-panel-impact.json")
@@ -674,6 +674,10 @@ def test_committed_source_panel_impact_matches_current_scoring() -> None:
         change for change in impact.changes if change.race_id == "supreme-court-justice-3"
     )
     assert {"winner_candidate_ids", "grade", "is_tied"} <= set(supreme_court_3.changed_fields)
+    ld46_position_1 = next(
+        change for change in impact.changes if change.race_id == "ld-46-state-representative-1"
+    )
+    assert "grade" in ld46_position_1.changed_fields
 
 
 def _race_result(dataset: CanonicalDataset) -> RaceConsensus:

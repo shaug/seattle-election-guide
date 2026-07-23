@@ -44,11 +44,11 @@ jobs:
         run: |
           uv run election-guide release build data/releases/wa-2026-primary/source-decisions.yaml \
               --release-version 2026-primary.2 \
-              --generated-at 2026-07-23T15:45:00Z \
+              --generated-at 2026-07-23T17:15:00Z \
             --output-dir dist/ci-release-a
           uv run election-guide release build data/releases/wa-2026-primary/source-decisions.yaml \
               --release-version 2026-primary.2 \
-              --generated-at 2026-07-23T15:45:00Z \
+              --generated-at 2026-07-23T17:15:00Z \
             --output-dir dist/ci-release-b
           cmp \
             dist/ci-release-a/seattle-election-guide-2026-primary.2.zip \

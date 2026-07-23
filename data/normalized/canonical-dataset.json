@@ -854,6 +854,29 @@
     {
       "availability": "captured",
       "browser_required": false,
+      "byte_length": 2189,
+      "canonical_url": "https://tech4taxes.org/endorsements",
+      "capture_method": "manual_upload",
+      "content_sha256": "ba5b35ceb6f3a57ca2650f8a80f0db76eceaab4d51b54e372f594b719cb36a74",
+      "http_status": null,
+      "id": "capture-tech-4-taxes-20260723T170445Z-c1d047f9feaa",
+      "media_type": "application/json",
+      "published_at": null,
+      "redirect_chain": [],
+      "redistribution": "permitted",
+      "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+      "requested_url": "https://tech4taxes.org/endorsements",
+      "retrieved_at": "2026-07-23T17:04:45Z",
+      "schema_version": "1.0",
+      "source_id": "tech-4-taxes",
+      "storage_reference": "sha256/ba/ba5b35ceb6f3a57ca2650f8a80f0db76eceaab4d51b54e372f594b719cb36a74",
+      "storage_scope": "local_only",
+      "title": "Permitted 2026 endorsement decision extract: Tech 4 Taxes",
+      "updated_at": null
+    },
+    {
+      "availability": "captured",
+      "browser_required": false,
       "byte_length": 5737,
       "canonical_url": "https://www.instagram.com/p/Dax5yPUlKYO/",
       "capture_method": "manual_upload",
@@ -8286,6 +8309,96 @@
       "raw_status_text": "endorsed",
       "requires_review": false,
       "source_id": "tech-4-housing"
+    },
+    {
+      "capture_id": "capture-tech-4-taxes-20260723T170445Z-c1d047f9feaa",
+      "evidence_excerpt": null,
+      "evidence_locator": "Tech 4 Taxes 2026 primary endorsement; source-specific capture names both candidates.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-85944e634f89383f",
+      "raw_candidate_text": "Toshiko Grace Hasegawa and Rebecca Saldaña",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Metropolitan King County Council — District 2",
+      "raw_status_text": "dual endorsement",
+      "requires_review": true,
+      "source_id": "tech-4-taxes"
+    },
+    {
+      "capture_id": "capture-tech-4-taxes-20260723T170445Z-c1d047f9feaa",
+      "evidence_excerpt": null,
+      "evidence_locator": "Tech 4 Taxes 2026 primary endorsement; source-specific capture.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-4bf1b57eab09cb3d",
+      "raw_candidate_text": "Danica Noble",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Legislative District 32 State Representative — Position 1",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "tech-4-taxes"
+    },
+    {
+      "capture_id": "capture-tech-4-taxes-20260723T170445Z-c1d047f9feaa",
+      "evidence_excerpt": null,
+      "evidence_locator": "Tech 4 Taxes 2026 primary endorsement; source-specific capture.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-d0831c12e218f19a",
+      "raw_candidate_text": "Jaelynn Scott",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Legislative District 37 State Representative — Position 2",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "tech-4-taxes"
+    },
+    {
+      "capture_id": "capture-tech-4-taxes-20260723T170445Z-c1d047f9feaa",
+      "evidence_excerpt": null,
+      "evidence_locator": "Tech 4 Taxes 2026 primary endorsement; source-specific capture.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-83719cdd2ef7b9bf",
+      "raw_candidate_text": "Hannah Sabio-Howell",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Legislative District 43 State Senator",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "tech-4-taxes"
+    },
+    {
+      "capture_id": "capture-tech-4-taxes-20260723T170445Z-c1d047f9feaa",
+      "evidence_excerpt": null,
+      "evidence_locator": "Tech 4 Taxes 2026 primary endorsement; source-specific capture.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-aff55ae37033415e",
+      "raw_candidate_text": "Ron Davis",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Legislative District 46 State Representative — Position 1",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "tech-4-taxes"
+    },
+    {
+      "capture_id": "capture-tech-4-taxes-20260723T170445Z-c1d047f9feaa",
+      "evidence_excerpt": null,
+      "evidence_locator": "Tech 4 Taxes 2026 primary endorsement; source-specific capture.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-7379fdc0406bd5e5",
+      "raw_candidate_text": "Nilu Jenks",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Seattle City Council — District 5",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "tech-4-taxes"
     },
     {
       "capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
@@ -19473,6 +19586,140 @@
     },
     {
       "allocation": {
+        "king-county-council-2--rebecca-salda-a": "1/2",
+        "king-county-council-2--toshiko-grace-hasegawa": "1/2"
+      },
+      "candidate_ids": [
+        "king-county-council-2--toshiko-grace-hasegawa",
+        "king-county-council-2--rebecca-salda-a"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-85944e634f89383f",
+      "id": "endorsement-21b59c98fb552508",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": null,
+      "race_id": "king-county-council-2",
+      "review_item_id": "review-8cdd0f0202d8dd3a",
+      "reviewed_at": "2026-07-23T17:10:00Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-tech-4-taxes-20260723T170445Z-c1d047f9feaa",
+      "source_id": "tech-4-taxes",
+      "status": "dual_endorsement"
+    },
+    {
+      "allocation": {
+        "ld-32-state-representative-1--danica-noble": "1"
+      },
+      "candidate_ids": [
+        "ld-32-state-representative-1--danica-noble"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-4bf1b57eab09cb3d",
+      "id": "endorsement-89bf3e8f7bf3d3dc",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": null,
+      "race_id": "ld-32-state-representative-1",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-23T17:10:00Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-tech-4-taxes-20260723T170445Z-c1d047f9feaa",
+      "source_id": "tech-4-taxes",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-37-state-representative-2--jaelynn-scott": "1"
+      },
+      "candidate_ids": [
+        "ld-37-state-representative-2--jaelynn-scott"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-d0831c12e218f19a",
+      "id": "endorsement-43a18ffe13099192",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": null,
+      "race_id": "ld-37-state-representative-2",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-23T17:10:00Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-tech-4-taxes-20260723T170445Z-c1d047f9feaa",
+      "source_id": "tech-4-taxes",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-43-state-senator--hannah-sabio-howell": "1"
+      },
+      "candidate_ids": [
+        "ld-43-state-senator--hannah-sabio-howell"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-83719cdd2ef7b9bf",
+      "id": "endorsement-9d9e9a21eb021eec",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": null,
+      "race_id": "ld-43-state-senator",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-23T17:10:00Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-tech-4-taxes-20260723T170445Z-c1d047f9feaa",
+      "source_id": "tech-4-taxes",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-46-state-representative-1--ron-davis": "1"
+      },
+      "candidate_ids": [
+        "ld-46-state-representative-1--ron-davis"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-aff55ae37033415e",
+      "id": "endorsement-9955a0a359b56c07",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": null,
+      "race_id": "ld-46-state-representative-1",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-23T17:10:00Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-tech-4-taxes-20260723T170445Z-c1d047f9feaa",
+      "source_id": "tech-4-taxes",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "seattle-city-council-5--nilu-jenks": "1"
+      },
+      "candidate_ids": [
+        "seattle-city-council-5--nilu-jenks"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-7379fdc0406bd5e5",
+      "id": "endorsement-355bf81100284e60",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": null,
+      "race_id": "seattle-city-council-5",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-23T17:10:00Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-tech-4-taxes-20260723T170445Z-c1d047f9feaa",
+      "source_id": "tech-4-taxes",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
         "us-house-7--pramila-jayapal": "1"
       },
       "candidate_ids": [
@@ -25918,6 +26165,27 @@
     {
       "action": "approve",
       "author": "shaug",
+      "created_at": "2026-07-23T17:10:00Z",
+      "evidence": "Tech 4 Taxes 2026 primary endorsement; source-specific capture names both candidates.",
+      "id": "decision-6c3646943b9bc1aa",
+      "reason": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "resolution": {
+        "allocation": {
+          "king-county-council-2--rebecca-salda-a": "1/2",
+          "king-county-council-2--toshiko-grace-hasegawa": "1/2"
+        },
+        "candidate_ids": [
+          "king-county-council-2--toshiko-grace-hasegawa",
+          "king-county-council-2--rebecca-salda-a"
+        ],
+        "race_id": "king-county-council-2",
+        "status": "dual_endorsement"
+      },
+      "review_item_id": "review-8cdd0f0202d8dd3a"
+    },
+    {
+      "action": "approve",
+      "author": "shaug",
       "created_at": "2026-07-23T15:40:00Z",
       "evidence": "Carousel slide 3, green check-mark recommendation naming both candidates.",
       "id": "decision-725710eabd5f1b47",
@@ -26717,6 +26985,33 @@
     },
     {
       "candidate_match": null,
+      "capture_id": "capture-tech-4-taxes-20260723T170445Z-c1d047f9feaa",
+      "claim_id": "claim-85944e634f89383f",
+      "created_at": "2026-07-23T17:04:45Z",
+      "evidence_excerpt": null,
+      "evidence_locator": "Tech 4 Taxes 2026 primary endorsement; source-specific capture names both candidates.",
+      "id": "review-8cdd0f0202d8dd3a",
+      "race_match": {
+        "candidates": [
+          {
+            "label": "Metropolitan King County Council — District 2",
+            "match_kind": "exact",
+            "record_id": "king-county-council-2",
+            "score": "1"
+          }
+        ],
+        "selected_id": "king-county-council-2",
+        "status": "matched"
+      },
+      "raw_candidate_text": "Toshiko Grace Hasegawa and Rebecca Saldaña",
+      "raw_race_text": "Metropolitan King County Council — District 2",
+      "raw_status_text": "dual endorsement",
+      "reason": "extraction_requires_review",
+      "severity": "high",
+      "summary": "Verified multi-candidate decision from the permitted extract."
+    },
+    {
+      "candidate_match": null,
       "capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
       "claim_id": "claim-921fd4dc11deb444",
       "created_at": "2026-07-23T15:33:14Z",
@@ -26773,14 +27068,14 @@
   "schema_version": "1.0",
   "source_registry": {
     "election_id": "wa-2026-primary",
-    "frozen_at": "2026-07-23T15:40:00Z",
+    "frozen_at": "2026-07-23T17:10:00Z",
     "id": "wa-2026-primary-default-sources-v2",
     "notes": [
       "Version 2 expands the panel after the issue 61 audit; version 1 remains reconstructable at git commit 9faceeaaf7fe13c7f4d9c5c206db192ecd563321.",
-      "Five newly evaluated publishers have usable official 2026 decisions; one additional legitimate publisher remains an explicit access-restricted coverage gap.",
+      "Six newly evaluated publishers have usable 2026 decisions; Tech 4 Taxes remains attributed to its official site while an organization-specific aggregator capture supplies the temporary retrieval path.",
       "Published means an official 2026 publication was located; it does not imply complete ballot coverage.",
       "Not found is distinct from an explicit no-endorsement decision by an organization.",
-      "Search results were used only to locate official pages and are not endorsement evidence."
+      "Aggregators are normally discovery-only; the temporary Tech 4 Taxes capture exception is documented without changing the named publisher or official source URL."
     ],
     "overlap_groups": [
       {
@@ -26836,7 +27131,7 @@
         ]
       }
     ],
-    "research_cutoff": "2026-07-23T15:40:00Z",
+    "research_cutoff": "2026-07-23T17:10:00Z",
     "schema_version": "1.0",
     "sources": [
       {
@@ -27014,21 +27309,21 @@
       {
         "category": "progressive_general",
         "discovery": {
-          "canonical_url": null,
-          "checked_at": "2026-07-23T12:30:00Z",
-          "evidence_locator": "Official endorsement URL and site-owned page metadata; repeated direct origin, browser, and IPv4 requests timed out.",
-          "media_type": null,
-          "notes": "Search-result text was retained only as a discovery lead and no decisions were inferred from it; the official Bluesky feed did not reproduce the candidate list.",
+          "canonical_url": "https://tech4taxes.org/endorsements",
+          "checked_at": "2026-07-23T17:04:45Z",
+          "evidence_locator": "Tech 4 Taxes' official endorsement index is the source provenance; Blue Voter Guide's organization-specific 2026 primary page was used as the temporary internal capture path while the origin timed out.",
+          "media_type": "text/html",
+          "notes": "The capture displayed eight Tech 4 Taxes candidate endorsements for the August 4, 2026 primary. Seven candidates across six races match the authoritative Seattle inventory; Noel Frame's LD-36 Senate endorsement is outside that inventory and was not transcribed.",
           "published_at": null,
           "redirect_chain": [],
           "requested_url": "https://tech4taxes.org/endorsements",
-          "status": "access_restricted",
+          "status": "published",
           "updated_at": null
         },
         "eligibility": {
           "jurisdiction_ids": [],
           "kind": "all_seattle_ballot_races",
-          "rationale": "Include verified decisions only after the official endorsement artifact can be retrieved directly."
+          "rationale": "Include the organization's 2026 primary decisions recovered from a source-specific preserved capture while the official endorsement index is temporarily unavailable."
         },
         "geographic_kind": "general",
         "id": "tech-4-taxes",
