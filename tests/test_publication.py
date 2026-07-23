@@ -429,9 +429,12 @@ def test_methodology_publishes_possible_overlap_without_deduplicating(tmp_path: 
     assert coverage_gaps == []
     assert methodology.default_aggregation_view == "source_level"
     assert methodology.deduplicated_view == "not_computed"
-    assert [category.category for category in methodology.source_categories] == list(
+    expected_categories = list(
         dict.fromkeys(source.category for source in bundle.view_model.sources)
     )
+    expected_categories.sort(key=lambda category: category == "comparison")
+    assert [category.category for category in methodology.source_categories] == expected_categories
+    assert methodology.source_categories[-1].category == "comparison"
     assert [group.model_dump(mode="json") for group in methodology.source_overlap_groups] == [
         {
             "id": "fixture-possible-overlap",

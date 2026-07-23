@@ -579,6 +579,7 @@ def _methodology(dataset: CanonicalDataset, consensus: ConsensusReport) -> Publi
     ]
     active_source_ids = {source.id for source in active_sources}
     categories = list(dict.fromkeys(source.category for source in active_sources))
+    categories.sort(key=lambda category: category == "comparison")
     return PublicationMethodology(
         process_steps=[
             "Collect official endorsements",

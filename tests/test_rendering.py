@@ -332,7 +332,10 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert f"Coverage gaps ({view_model.metadata.coverage_gap_count})" in html
     assert "They do not contribute to consensus scores" in html
     assert "zero means the source currently contributes no picks" not in html
-    assert ".screen-source-columns { display: grid;" in html
+    assert ".screen-source-columns { column-count: 2;" in html
+    assert ".screen-source-category { display: inline-block;" in html
+    assert "break-inside: avoid;" in html
+    assert ".screen-source-columns { column-count: 1; }" in html
     assert ".source-columns { display: grid;" in html
     assert "grid-template-columns: 1fr 1fr;" in html
     assert ".source-row { display: grid;" in html

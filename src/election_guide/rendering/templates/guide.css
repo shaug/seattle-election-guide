@@ -83,8 +83,8 @@ a { color: #075d75; text-underline-offset: .15em; }
 .screen-source-heading { display: grid; grid-template-columns: minmax(0, 1fr) minmax(16rem, 1fr); align-items: end; gap: 1rem 3rem; margin-bottom: 1.25rem; }
 .screen-source-heading h2 { margin: .15rem 0 0; color: var(--navy); font-size: 1.7rem; line-height: 1.05; }
 .screen-source-heading > p { justify-self: end; max-width: 38rem; margin: 0; color: var(--muted); font-size: .8rem; text-align: right; }
-.screen-source-columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 1rem 1.5rem; }
-.screen-source-category { min-width: 0; border: 1px solid #d9e2ec; border-top: .22rem solid var(--teal); background: var(--white); }
+.screen-source-columns { column-count: 2; column-gap: 1.5rem; }
+.screen-source-category { display: inline-block; width: 100%; min-width: 0; margin: 0 0 1rem; break-inside: avoid; border: 1px solid #d9e2ec; border-top: .22rem solid var(--teal); background: var(--white); vertical-align: top; }
 .screen-source-category h3 { margin: 0; padding: .65rem .75rem .55rem; color: var(--teal); font-size: .74rem; letter-spacing: .08em; line-height: 1.15; text-transform: uppercase; }
 .screen-source-directory .source-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: .75rem; min-height: 2.5rem; padding: .5rem .75rem; border-top: 1px solid #e0e7ed; }
 .screen-source-directory .source-row a { min-width: 0; color: var(--navy); font-size: .8rem; font-weight: 700; overflow-wrap: anywhere; }
@@ -112,7 +112,8 @@ a { color: #075d75; text-underline-offset: .15em; }
   .hero-meta { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: .8rem 0 0; border-top: 1px solid #7794a8; border-left: 0; text-align: left; }
   .screen-controls { grid-template-columns: 1fr; position: static; }
   .screen-controls p { justify-self: start; }
-  .race-grid, .methodology-screen, .footer-summary, .screen-source-columns, .screen-source-heading, .screen-coverage-gaps, .coverage-gap-columns { grid-template-columns: 1fr; }
+  .race-grid, .methodology-screen, .footer-summary, .screen-source-heading, .screen-coverage-gaps, .coverage-gap-columns { grid-template-columns: 1fr; }
+  .screen-source-columns { column-count: 1; }
   .footer-summary { gap: .8rem; }
   .footer-actions { justify-content: flex-start; }
   .methodology-overlap { display: block; }
