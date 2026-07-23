@@ -1,8 +1,8 @@
 # 2026 Primary Source Discovery Report
 
-Panel `wa-2026-primary-default-sources` was frozen at `2026-07-21T15:40:21+00:00` before scoring. The research cutoff is `2026-07-21T15:40:21+00:00`; individual access times are recorded in the machine-readable registry.
+Panel `wa-2026-primary-default-sources-v2` was frozen at `2026-07-23T13:01:14+00:00` before scoring. The research cutoff is `2026-07-23T13:01:14+00:00`; individual access times are recorded in the machine-readable registry.
 
-The preregistration contains **42 proposed sources**: **36 consensus**, **1 comparison**, and **5 excluded**. Discovery found **36 official 2026 publications**, **2 publication gaps**, **1 access-restricted source**, and **3 conditional organizations that do not publish endorsements**.
+The preregistration contains **48 proposed sources**: **42 consensus**, **1 comparison**, and **5 excluded**. Discovery found **40 official 2026 publications**, **2 publication gaps**, **3 access-restricted sources**, and **3 conditional organizations that do not publish endorsements**.
 
 Search results were discovery leads only. Every link below is an official organization URL; no search snippet or third-party list is endorsement evidence. `not_found` means no official 2026 publication was located, not that the organization made an explicit no-endorsement decision.
 
@@ -14,6 +14,12 @@ Search results were discovery leads only. Every link below is an official organi
 | The Urbanist Elections Committee | Progressive/general | consensus | published | [official page](https://www.theurbanist.org/2026-primary-election-endorsements/) | 2026-07-16 (updated 2026-07-17) | text/html | Seattle-ballot races |
 | Progressive Voters Guide | Progressive/general | excluded | published | [official page](https://www.progressivevotersguide.com/washington/2026/primary/sample) | — | text/html | None |
 | Fuse Washington | Progressive/general | consensus | published | [official page](https://www.fusewashington.org/news/blog/fuses-2026-primary-election-endorsements) | 2026-03-24 (updated 2026-06-03) | text/html | Seattle-ballot races |
+| Seattle Democratic Socialists of America | Progressive/general | consensus | published | [official page](https://seattledsa.org/event/jaelynn-scott-37ld-campaign-kick-off-canvass/) | — | text/html | Seattle-ballot races |
+| Tech 4 Housing | Transportation/urbanism | consensus | published | [official page](https://bsky.app/profile/tech4housing.org) | — | text/html | Seattle-ballot races |
+| Tech 4 Taxes | Progressive/general | consensus | access_restricted | [official page](https://tech4taxes.org/endorsements) | — | — | Seattle-ballot races |
+| Washington for Peace and Justice | Rights/representation | consensus | access_restricted | [official page](https://www.instagram.com/wa4pj/) | — | — | Seattle-ballot races |
+| Washington Community Action Network | Progressive/general | consensus | published | [official page](https://www.washingtoncan.org/endorsements) | — | text/html | Seattle-ballot races |
+| Seattle Gay News Editorial Board | Rights/representation | consensus | published | [official page](https://www.sgn.org/) | 2026-07-20 (updated 2026-07-21) | text/html | Seattle-ballot races |
 | Washington Working Families Party | Progressive/general | consensus | published | [official page](https://workingfamilies.org/state/washington/) | — | text/html | Seattle-ballot races |
 | The Washington Bus | Progressive/general | consensus | published | [official page](https://www.washingtonbus.org/endorsements) | 2026-06-25 | text/html | Seattle-ballot races |
 | Sage Leaders | Progressive/general | consensus | published | [official page](https://www.sageleaders.org/2026-endorsements) | — | text/html | Seattle-ballot races |
@@ -59,6 +65,12 @@ Search results were discovery leads only. Every link below is an official organi
 - **The Urbanist Elections Committee — consensus.** Named progressive editorial source with an official 2026 primary endorsement page.
 - **Progressive Voters Guide — excluded.** The guide is a Fuse Washington publication, not an independent source organization; counting it would duplicate its publisher and compiled partners.
 - **Fuse Washington — consensus.** Named general progressive organization with its own official 2026 endorsement decisions.
+- **Seattle Democratic Socialists of America — consensus.** Separately governed membership organization with a documented endorsement process and an official 2026 candidate endorsement.
+- **Tech 4 Housing — consensus.** Separately governed housing advocacy organization with official 2026 candidate endorsement posts.
+- **Tech 4 Taxes — consensus.** Separately governed progressive-tax advocacy organization with an official 2025-2026 candidate endorsement index.
+- **Washington for Peace and Justice — consensus.** Separately governed Palestinian-led Washington advocacy organization investigated as a possible 2026 voter-guide publisher.
+- **Washington Community Action Network — consensus.** Separately governed statewide membership organization with an official 2026 endorsement page.
+- **Seattle Gay News Editorial Board — consensus.** Independent LGBTQ+ editorial publisher with official 2026 primary endorsement articles.
 - **Washington Working Families Party — consensus.** Named progressive political organization with a current official Washington candidate roster.
 - **The Washington Bus — consensus.** Concrete youth and general-purpose progressive publisher discovered while resolving the proposed constituency-source category.
 - **Sage Leaders — consensus.** Concrete racial-justice and representation publisher discovered while resolving the proposed issue-organization categories.
@@ -100,6 +112,8 @@ Search results were discovery leads only. Every link below is an official organi
 
 ## Gaps and conditional exclusions
 
+- **Tech 4 Taxes — access_restricted.** Search-result text was retained only as a discovery lead and no decisions were inferred from it; the official Bluesky feed did not reproduce the candidate list.
+- **Washington for Peace and Justice — access_restricted.** The guide indication and all third-party voter-guide text were treated only as discovery leads and no decisions were inferred.
 - **Washington State Democratic Party — access_restricted.** Direct unattended access remains blocked and a fresh official-domain search found no 2026 endorsement roster; candidate and third-party lists were not substituted for a party publication.
 - **Cascade Bicycle Club — not_an_endorsement_publisher.** Official materials state that Cascade is the affiliated 501(c)(3) and Washington Bikes is the 501(c)(4) candidate-endorsement arm.
 - **Transportation Choices Coalition — not_found.** Official pages loaded with HTTP 200, but no 2026 candidate or ballot endorsement publication was located.

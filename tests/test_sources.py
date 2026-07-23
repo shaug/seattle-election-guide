@@ -23,16 +23,16 @@ def test_committed_source_panel_is_frozen_and_complete() -> None:
     registry = read_source_registry(REGISTRY_PATH)
 
     assert registry.research_cutoff <= registry.frozen_at
-    assert len(registry.sources) == 42
+    assert len(registry.sources) == 48
     assert Counter(source.panel_role for source in registry.sources) == {
-        "consensus": 36,
+        "consensus": 42,
         "comparison": 1,
         "excluded": 5,
     }
     assert Counter(source.discovery.status for source in registry.sources) == {
-        "published": 36,
+        "published": 40,
         "not_found": 2,
-        "access_restricted": 1,
+        "access_restricted": 3,
         "not_an_endorsement_publisher": 3,
     }
     assert all(source.discovery.status for source in registry.sources)
@@ -183,7 +183,7 @@ def test_committed_discovery_report_matches_registry() -> None:
     committed = (PROJECT_ROOT / "docs" / "SOURCE_DISCOVERY.md").read_text(encoding="utf-8")
 
     assert committed == render_discovery_report(registry)
-    assert "**1 access-restricted source**" in committed
+    assert "**3 access-restricted sources**" in committed
     protec17_line = next(line for line in committed.splitlines() if line.startswith("| PROTEC17 "))
     assert "updated 2026-07-16" in protec17_line
 
@@ -228,7 +228,7 @@ def test_registry_rejects_unpaired_overlap_metadata() -> None:
 
 def test_registry_rejects_discovery_after_panel_freeze() -> None:
     payload = _registry_payload()
-    payload["research_cutoff"] = "2026-07-21T16:00:00Z"
+    payload["research_cutoff"] = "2026-07-23T13:02:00Z"
 
     with pytest.raises(ValidationError, match="research cutoff cannot be after panel freeze"):
         SourceRegistry.model_validate(payload)
@@ -245,7 +245,7 @@ def test_registry_rejects_unrecorded_redirect() -> None:
 
 def test_registry_rejects_source_access_after_research_cutoff() -> None:
     payload = _registry_payload()
-    payload["sources"][0]["discovery"]["checked_at"] = "2026-07-21T16:00:00Z"
+    payload["sources"][0]["discovery"]["checked_at"] = "2026-07-23T13:02:00Z"
 
     with pytest.raises(ValidationError, match="checked after the research cutoff"):
         SourceRegistry.model_validate(payload)

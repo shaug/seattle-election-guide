@@ -44,8 +44,10 @@ class ReleaseModel(BaseModel):
 
 
 class ReleaseManifest(ReleaseModel):
-    schema_version: Literal["1.0"] = "1.0"
+    schema_version: Literal["1.1"] = "1.1"
     release_version: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
+    source_panel_id: str
+    source_panel_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
     generated_at: AwareDatetime
     artifact_hashes: dict[str, str] = Field(min_length=1)
 
@@ -167,9 +169,11 @@ class RaceCoverageStatus(ReleaseModel):
 
 
 class ReleaseStatus(ReleaseModel):
-    schema_version: Literal["1.0"] = "1.0"
+    schema_version: Literal["1.1"] = "1.1"
     release_version: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
     election_id: str
+    source_panel_id: str
+    source_panel_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
     data_as_of: AwareDatetime
     generated_at: AwareDatetime
     git_commit: str = Field(pattern=r"^[0-9a-f]{40}$")

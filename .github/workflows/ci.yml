@@ -43,20 +43,20 @@ jobs:
       - name: Build and verify deterministic primary release
         run: |
           uv run election-guide release build data/releases/wa-2026-primary/source-decisions.yaml \
-            --release-version ci \
-            --generated-at 2026-07-21T16:00:00Z \
+              --release-version 2026-primary.2 \
+              --generated-at 2026-07-23T13:15:00Z \
             --output-dir dist/ci-release-a
           uv run election-guide release build data/releases/wa-2026-primary/source-decisions.yaml \
-            --release-version ci \
-            --generated-at 2026-07-21T16:00:00Z \
+              --release-version 2026-primary.2 \
+              --generated-at 2026-07-23T13:15:00Z \
             --output-dir dist/ci-release-b
           cmp \
-            dist/ci-release-a/seattle-election-guide-ci.zip \
-            dist/ci-release-b/seattle-election-guide-ci.zip
-          unzip -t dist/ci-release-a/seattle-election-guide-ci.zip
-          unzip -Z1 dist/ci-release-a/seattle-election-guide-ci.zip \
+            dist/ci-release-a/seattle-election-guide-2026-primary.2.zip \
+            dist/ci-release-b/seattle-election-guide-2026-primary.2.zip
+          unzip -t dist/ci-release-a/seattle-election-guide-2026-primary.2.zip
+          unzip -Z1 dist/ci-release-a/seattle-election-guide-2026-primary.2.zip \
             | grep -Fx 'seattle-election-guide/validation/rendering/rendering_validation_report.json'
-          unzip -Z1 dist/ci-release-a/seattle-election-guide-ci.zip \
+          unzip -Z1 dist/ci-release-a/seattle-election-guide-2026-primary.2.zip \
             | grep -Fx 'seattle-election-guide/validation/rendering/pdf/pages/page-1.png'
           test "$(stat -c '%a' dist/ci-release-a)" = 755
       - name: Stage verified Cloudflare Pages site

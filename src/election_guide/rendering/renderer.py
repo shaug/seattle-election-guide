@@ -507,6 +507,8 @@ def validate_rendered_guide(
         f"Built {view_model.metadata.generated_at.date().isoformat()}",
         f"Data {view_model.metadata.data_version}",
         f"Code {view_model.metadata.git_commit[:12]}",
+        f"Panel {view_model.metadata.source_panel_version}",
+        view_model.metadata.source_panel_hash[:12],
         *(source.name for source in coverage_gap_sources),
         *(_coverage_gap_status_label(source) for source in coverage_gap_sources),
     ]

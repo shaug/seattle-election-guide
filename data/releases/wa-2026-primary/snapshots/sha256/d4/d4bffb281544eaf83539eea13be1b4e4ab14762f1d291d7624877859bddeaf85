@@ -1,0 +1,16 @@
+{
+  "captured_at": "2026-07-23T12:40:00Z",
+  "decisions": [
+    {
+      "candidate_ids": [
+        "ld-37-state-representative-2--jaelynn-scott"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "ld-37-state-representative-2",
+      "status": "endorsed"
+    }
+  ],
+  "evidence_locator": "Official May 2, 2026 campaign event page identifying the chapter's newly endorsed 37th LD candidate.",
+  "source_id": "seattle-democratic-socialists"
+}

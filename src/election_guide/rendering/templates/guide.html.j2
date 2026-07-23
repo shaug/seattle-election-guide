@@ -213,7 +213,8 @@
         </div>
       </details>
       <div class="screen-footer-meta">
-        <span>Election {{ guide.metadata.election_date }} · Built {{ guide.metadata.generated_at.date().isoformat() }} · Data {{ guide.metadata.data_version }} · Code {{ guide.metadata.git_commit[:12] }}</span>
+        <span>Election {{ guide.metadata.election_date }} · Built {{ guide.metadata.generated_at.date().isoformat() }} · Data {{ guide.metadata.data_version }} · Code {{ guide.metadata.git_commit[:12] }}<br>
+          Panel {{ guide.metadata.source_panel_id }} · {{ guide.metadata.source_panel_hash }}</span>
         <a class="detailed-footer-audit" href="{{ config.project_url }}">Source and audit files</a>
       </div>
     </footer>
@@ -371,7 +372,7 @@
       </div>
       <footer class="page-two-footer">
         <span>Election {{ guide.metadata.election_date }} · Built {{ guide.metadata.generated_at.date().isoformat() }} · Data {{ guide.metadata.data_version }} · Code {{ guide.metadata.git_commit[:12] }}</span>
-        <span>{{ guide.metadata.published_race_count }} races · <a href="{{ config.project_url }}">Source and audit files</a></span>
+        <span>Panel {{ guide.metadata.source_panel_version }} · {{ guide.metadata.source_panel_hash[:12] }} · {{ guide.metadata.published_race_count }} races · <a href="{{ config.project_url }}">Source and audit files</a></span>
       </footer>
     </section>
   </div>

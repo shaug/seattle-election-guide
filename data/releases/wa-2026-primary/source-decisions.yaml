@@ -1,6 +1,6 @@
 schema_version: "1.0"
 election_id: wa-2026-primary
-data_as_of: 2026-07-21T15:40:21Z
+data_as_of: 2026-07-23T13:01:14Z
 reviewer: shaug
 review_note: >-
   AI-assisted research located and persisted each available publication, then manually
@@ -1231,3 +1231,51 @@ sources:
         candidate_ids: [seattle-municipal-court-judge-5--garmon-newsom]
       - race_id: seattle-proposition-1-library-levy
         candidate_ids: [seattle-proposition-1-library-levy--no]
+
+  - source_id: seattle-democratic-socialists
+    captured_at: 2026-07-23T12:40:00Z
+    reviewed_at: 2026-07-23T13:00:00Z
+    evidence_locator: Official May 2, 2026 campaign event page identifying the chapter's newly endorsed 37th LD candidate.
+    decisions:
+      - race_id: ld-37-state-representative-2
+        candidate_ids: [ld-37-state-representative-2--jaelynn-scott]
+
+  - source_id: tech-4-housing
+    captured_at: 2026-07-23T12:42:00Z
+    reviewed_at: 2026-07-23T13:00:00Z
+    evidence_locator: Official Bluesky posts 3mpkb7wcjok2z and 3mmcsx6zbwc2i, retrieved through the public Bluesky API.
+    decisions:
+      - race_id: king-county-council-2
+        candidate_ids: [king-county-council-2--rebecca-salda-a]
+        evidence_locator: Official Bluesky post 3mpkb7wcjok2z, published 2026-07-01 UTC.
+      - race_id: ld-37-state-representative-1
+        candidate_ids: [ld-37-state-representative-1--kelabe-tewolde]
+        evidence_locator: Official Bluesky post 3mpkb7wcjok2z, published 2026-07-01 UTC.
+      - race_id: ld-37-state-representative-2
+        candidate_ids: [ld-37-state-representative-2--jaelynn-scott]
+        evidence_locator: Official Bluesky post 3mpkb7wcjok2z, published 2026-07-01 UTC.
+      - race_id: ld-46-state-representative-1
+        candidate_ids: [ld-46-state-representative-1--ron-davis]
+        evidence_locator: Official Bluesky post 3mmcsx6zbwc2i, published 2026-05-20 UTC.
+
+  - source_id: washington-community-action-network
+    captured_at: 2026-07-23T12:44:00Z
+    reviewed_at: 2026-07-23T13:00:00Z
+    evidence_locator: Official 2026 Midterm Election endorsement section and its candidate links.
+    decisions:
+      - race_id: king-county-council-2
+        candidate_ids: [king-county-council-2--rebecca-salda-a]
+      - race_id: king-county-council-8
+        candidate_ids: [king-county-council-8--teresa-mosqueda]
+
+  - source_id: seattle-gay-news
+    captured_at: 2026-07-23T12:46:00Z
+    reviewed_at: 2026-07-23T13:00:00Z
+    evidence_locator: Official SGN Editorial Board endorsement articles 168513, 168554, and 168558.
+    decisions:
+      - race_id: us-house-9
+        candidate_ids: [us-house-9--kshama-sawant]
+      - race_id: ld-37-state-representative-1
+        candidate_ids: [ld-37-state-representative-1--kelabe-tewolde]
+      - race_id: seattle-city-council-5
+        candidate_ids: [seattle-city-council-5--nilu-jenks]

@@ -101,6 +101,7 @@ a { color: #075d75; text-underline-offset: .15em; }
 .coverage-gap-row strong { color: #52606d; font-size: .68rem; white-space: nowrap; }
 .coverage-gap-row p { margin: .35rem 0 0; color: var(--muted); font-size: .72rem; line-height: 1.35; }
 .screen-footer-meta { display: flex; justify-content: space-between; gap: 1rem; padding: .7rem clamp(1rem, 4vw, 3rem); border-top: 1px solid #526f83; color: #9fb3c8; font-size: .68rem; }
+.screen-footer-meta span { min-width: 0; overflow-wrap: anywhere; }
 .screen-footer-meta a { color: #9ee7df; font-weight: 800; white-space: nowrap; }
 .detailed-footer-audit { display: none; }
 .print-guide { display: none; }

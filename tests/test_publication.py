@@ -416,7 +416,9 @@ def test_methodology_publishes_possible_overlap_without_deduplicating(tmp_path: 
     )
 
     methodology = bundle.view_model.methodology
-    assert bundle.view_model.schema_version == "1.4"
+    assert bundle.view_model.schema_version == "1.5"
+    assert bundle.view_model.metadata.source_panel_id == dataset.source_registry.id
+    assert len(bundle.view_model.metadata.source_panel_hash) == 64
     coverage_gaps = [
         source
         for source in bundle.view_model.sources

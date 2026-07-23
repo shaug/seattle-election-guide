@@ -804,6 +804,98 @@
       "storage_scope": "local_only",
       "title": "Permitted 2026 endorsement decision extract: The Seattle Times Editorial Board",
       "updated_at": "2026-07-16"
+    },
+    {
+      "availability": "captured",
+      "browser_required": false,
+      "byte_length": 480,
+      "canonical_url": "https://seattledsa.org/event/jaelynn-scott-37ld-campaign-kick-off-canvass/",
+      "capture_method": "manual_upload",
+      "content_sha256": "d4bffb281544eaf83539eea13be1b4e4ab14762f1d291d7624877859bddeaf85",
+      "http_status": null,
+      "id": "capture-seattle-democratic-socialists-20260723T124000Z-9dc02ea4020c",
+      "media_type": "application/json",
+      "published_at": null,
+      "redirect_chain": [],
+      "redistribution": "permitted",
+      "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+      "requested_url": "https://seattledsa.org/event/jaelynn-scott-37ld-campaign-kick-off-canvass/",
+      "retrieved_at": "2026-07-23T12:40:00Z",
+      "schema_version": "1.0",
+      "source_id": "seattle-democratic-socialists",
+      "storage_reference": "sha256/d4/d4bffb281544eaf83539eea13be1b4e4ab14762f1d291d7624877859bddeaf85",
+      "storage_scope": "local_only",
+      "title": "Permitted 2026 endorsement decision extract: Seattle Democratic Socialists of America",
+      "updated_at": null
+    },
+    {
+      "availability": "captured",
+      "browser_required": false,
+      "byte_length": 1410,
+      "canonical_url": "https://bsky.app/profile/tech4housing.org",
+      "capture_method": "manual_upload",
+      "content_sha256": "9c4b3d5e682bf1522026d1495d66895aafa6cbcc198cd1a59d62f89b22499322",
+      "http_status": null,
+      "id": "capture-tech-4-housing-20260723T124200Z-e4e38c0f02eb",
+      "media_type": "application/json",
+      "published_at": null,
+      "redirect_chain": [],
+      "redistribution": "permitted",
+      "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+      "requested_url": "https://bsky.app/profile/tech4housing.org",
+      "retrieved_at": "2026-07-23T12:42:00Z",
+      "schema_version": "1.0",
+      "source_id": "tech-4-housing",
+      "storage_reference": "sha256/9c/9c4b3d5e682bf1522026d1495d66895aafa6cbcc198cd1a59d62f89b22499322",
+      "storage_scope": "local_only",
+      "title": "Permitted 2026 endorsement decision extract: Tech 4 Housing",
+      "updated_at": null
+    },
+    {
+      "availability": "captured",
+      "browser_required": false,
+      "byte_length": 678,
+      "canonical_url": "https://www.washingtoncan.org/endorsements",
+      "capture_method": "manual_upload",
+      "content_sha256": "1d82e82618244eb03284c6bb047dd01f704d3987a92277586c1a3d8fd8945f14",
+      "http_status": null,
+      "id": "capture-washington-community-action-network-20260723T124400Z-cc0785ef23ad",
+      "media_type": "application/json",
+      "published_at": null,
+      "redirect_chain": [],
+      "redistribution": "permitted",
+      "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+      "requested_url": "https://www.washingtoncan.org/endorsements",
+      "retrieved_at": "2026-07-23T12:44:00Z",
+      "schema_version": "1.0",
+      "source_id": "washington-community-action-network",
+      "storage_reference": "sha256/1d/1d82e82618244eb03284c6bb047dd01f704d3987a92277586c1a3d8fd8945f14",
+      "storage_scope": "local_only",
+      "title": "Permitted 2026 endorsement decision extract: Washington Community Action Network",
+      "updated_at": null
+    },
+    {
+      "availability": "captured",
+      "browser_required": false,
+      "byte_length": 876,
+      "canonical_url": "https://www.sgn.org/",
+      "capture_method": "manual_upload",
+      "content_sha256": "d87394fcde1d6245c8edd5985f021b0c7fb808e27218104665f889154bb33e98",
+      "http_status": null,
+      "id": "capture-seattle-gay-news-20260723T124600Z-eea5a200d5e4",
+      "media_type": "application/json",
+      "published_at": "2026-07-20",
+      "redirect_chain": [],
+      "redistribution": "permitted",
+      "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+      "requested_url": "https://www.sgn.org/",
+      "retrieved_at": "2026-07-23T12:46:00Z",
+      "schema_version": "1.0",
+      "source_id": "seattle-gay-news",
+      "storage_reference": "sha256/d8/d87394fcde1d6245c8edd5985f021b0c7fb808e27218104665f889154bb33e98",
+      "storage_scope": "local_only",
+      "title": "Permitted 2026 endorsement decision extract: Seattle Gay News Editorial Board",
+      "updated_at": "2026-07-21"
     }
   ],
   "claims": [
@@ -8096,6 +8188,156 @@
       "raw_status_text": "endorsed",
       "requires_review": false,
       "source_id": "seattle-times-editorial-board"
+    },
+    {
+      "capture_id": "capture-seattle-democratic-socialists-20260723T124000Z-9dc02ea4020c",
+      "evidence_excerpt": null,
+      "evidence_locator": "Official May 2, 2026 campaign event page identifying the chapter's newly endorsed 37th LD candidate.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-fa9350ab1a3d27a5",
+      "raw_candidate_text": "Jaelynn Scott",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Legislative District 37 State Representative — Position 2",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "seattle-democratic-socialists"
+    },
+    {
+      "capture_id": "capture-tech-4-housing-20260723T124200Z-e4e38c0f02eb",
+      "evidence_excerpt": null,
+      "evidence_locator": "Official Bluesky post 3mpkb7wcjok2z, published 2026-07-01 UTC.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-329b9b198a69f176",
+      "raw_candidate_text": "Rebecca Saldaña",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Metropolitan King County Council — District 2",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "tech-4-housing"
+    },
+    {
+      "capture_id": "capture-tech-4-housing-20260723T124200Z-e4e38c0f02eb",
+      "evidence_excerpt": null,
+      "evidence_locator": "Official Bluesky post 3mpkb7wcjok2z, published 2026-07-01 UTC.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-9d5bf93f67b807da",
+      "raw_candidate_text": "Kelabe Tewolde",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Legislative District 37 State Representative — Position 1",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "tech-4-housing"
+    },
+    {
+      "capture_id": "capture-tech-4-housing-20260723T124200Z-e4e38c0f02eb",
+      "evidence_excerpt": null,
+      "evidence_locator": "Official Bluesky post 3mpkb7wcjok2z, published 2026-07-01 UTC.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-bfaac6733707fe92",
+      "raw_candidate_text": "Jaelynn Scott",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Legislative District 37 State Representative — Position 2",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "tech-4-housing"
+    },
+    {
+      "capture_id": "capture-tech-4-housing-20260723T124200Z-e4e38c0f02eb",
+      "evidence_excerpt": null,
+      "evidence_locator": "Official Bluesky post 3mmcsx6zbwc2i, published 2026-05-20 UTC.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-4e878e28e2d70ee0",
+      "raw_candidate_text": "Ron Davis",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Legislative District 46 State Representative — Position 1",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "tech-4-housing"
+    },
+    {
+      "capture_id": "capture-washington-community-action-network-20260723T124400Z-cc0785ef23ad",
+      "evidence_excerpt": null,
+      "evidence_locator": "Official 2026 Midterm Election endorsement section and its candidate links.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-83979e92d30f9f54",
+      "raw_candidate_text": "Rebecca Saldaña",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Metropolitan King County Council — District 2",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-community-action-network"
+    },
+    {
+      "capture_id": "capture-washington-community-action-network-20260723T124400Z-cc0785ef23ad",
+      "evidence_excerpt": null,
+      "evidence_locator": "Official 2026 Midterm Election endorsement section and its candidate links.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-290b9ad3b287d8f3",
+      "raw_candidate_text": "Teresa Mosqueda",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Metropolitan King County Council — District 8",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-community-action-network"
+    },
+    {
+      "capture_id": "capture-seattle-gay-news-20260723T124600Z-eea5a200d5e4",
+      "evidence_excerpt": null,
+      "evidence_locator": "Official SGN Editorial Board endorsement articles 168513, 168554, and 168558.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-6f0a5ff8d7aae28e",
+      "raw_candidate_text": "Kshama Sawant",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "U.S. Representative — Congressional District 9",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "seattle-gay-news"
+    },
+    {
+      "capture_id": "capture-seattle-gay-news-20260723T124600Z-eea5a200d5e4",
+      "evidence_excerpt": null,
+      "evidence_locator": "Official SGN Editorial Board endorsement articles 168513, 168554, and 168558.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-2e05c0430ae169ee",
+      "raw_candidate_text": "Kelabe Tewolde",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Legislative District 37 State Representative — Position 1",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "seattle-gay-news"
+    },
+    {
+      "capture_id": "capture-seattle-gay-news-20260723T124600Z-eea5a200d5e4",
+      "evidence_excerpt": null,
+      "evidence_locator": "Official SGN Editorial Board endorsement articles 168513, 168554, and 168558.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-5beb66a23434fda1",
+      "raw_candidate_text": "Nilu Jenks",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Seattle City Council — District 5",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "seattle-gay-news"
     }
   ],
   "endorsements": [
@@ -18810,6 +19052,226 @@
       "source_capture_id": "capture-seattle-times-editorial-board-20260720T111400Z-abfaa4711902",
       "source_id": "seattle-times-editorial-board",
       "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-37-state-representative-2--jaelynn-scott": "1"
+      },
+      "candidate_ids": [
+        "ld-37-state-representative-2--jaelynn-scott"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-fa9350ab1a3d27a5",
+      "id": "endorsement-4259e37166a0f145",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": null,
+      "race_id": "ld-37-state-representative-2",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-23T13:00:00Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-seattle-democratic-socialists-20260723T124000Z-9dc02ea4020c",
+      "source_id": "seattle-democratic-socialists",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "king-county-council-2--rebecca-salda-a": "1"
+      },
+      "candidate_ids": [
+        "king-county-council-2--rebecca-salda-a"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-329b9b198a69f176",
+      "id": "endorsement-1929de60146990e9",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": null,
+      "race_id": "king-county-council-2",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-23T13:00:00Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-tech-4-housing-20260723T124200Z-e4e38c0f02eb",
+      "source_id": "tech-4-housing",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-37-state-representative-1--kelabe-tewolde": "1"
+      },
+      "candidate_ids": [
+        "ld-37-state-representative-1--kelabe-tewolde"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-9d5bf93f67b807da",
+      "id": "endorsement-03500846fd54791e",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": null,
+      "race_id": "ld-37-state-representative-1",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-23T13:00:00Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-tech-4-housing-20260723T124200Z-e4e38c0f02eb",
+      "source_id": "tech-4-housing",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-37-state-representative-2--jaelynn-scott": "1"
+      },
+      "candidate_ids": [
+        "ld-37-state-representative-2--jaelynn-scott"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-bfaac6733707fe92",
+      "id": "endorsement-41b3328da5ab32b6",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": null,
+      "race_id": "ld-37-state-representative-2",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-23T13:00:00Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-tech-4-housing-20260723T124200Z-e4e38c0f02eb",
+      "source_id": "tech-4-housing",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-46-state-representative-1--ron-davis": "1"
+      },
+      "candidate_ids": [
+        "ld-46-state-representative-1--ron-davis"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-4e878e28e2d70ee0",
+      "id": "endorsement-6834127f4fa3574d",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": null,
+      "race_id": "ld-46-state-representative-1",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-23T13:00:00Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-tech-4-housing-20260723T124200Z-e4e38c0f02eb",
+      "source_id": "tech-4-housing",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "king-county-council-2--rebecca-salda-a": "1"
+      },
+      "candidate_ids": [
+        "king-county-council-2--rebecca-salda-a"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-83979e92d30f9f54",
+      "id": "endorsement-9abfe5781ab497dc",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": null,
+      "race_id": "king-county-council-2",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-23T13:00:00Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-community-action-network-20260723T124400Z-cc0785ef23ad",
+      "source_id": "washington-community-action-network",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "king-county-council-8--teresa-mosqueda": "1"
+      },
+      "candidate_ids": [
+        "king-county-council-8--teresa-mosqueda"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-290b9ad3b287d8f3",
+      "id": "endorsement-589d9bd5ce38774f",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": null,
+      "race_id": "king-county-council-8",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-23T13:00:00Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-community-action-network-20260723T124400Z-cc0785ef23ad",
+      "source_id": "washington-community-action-network",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "us-house-9--kshama-sawant": "1"
+      },
+      "candidate_ids": [
+        "us-house-9--kshama-sawant"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-6f0a5ff8d7aae28e",
+      "id": "endorsement-a750b8f0d914cb1a",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-20",
+      "race_id": "us-house-9",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-23T13:00:00Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-seattle-gay-news-20260723T124600Z-eea5a200d5e4",
+      "source_id": "seattle-gay-news",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-37-state-representative-1--kelabe-tewolde": "1"
+      },
+      "candidate_ids": [
+        "ld-37-state-representative-1--kelabe-tewolde"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-2e05c0430ae169ee",
+      "id": "endorsement-1027bac6e22eeaa9",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-20",
+      "race_id": "ld-37-state-representative-1",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-23T13:00:00Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-seattle-gay-news-20260723T124600Z-eea5a200d5e4",
+      "source_id": "seattle-gay-news",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "seattle-city-council-5--nilu-jenks": "1"
+      },
+      "candidate_ids": [
+        "seattle-city-council-5--nilu-jenks"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-5beb66a23434fda1",
+      "id": "endorsement-81035b85374c3d4e",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-20",
+      "race_id": "seattle-city-council-5",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-23T13:00:00Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-seattle-gay-news-20260723T124600Z-eea5a200d5e4",
+      "source_id": "seattle-gay-news",
+      "status": "endorsed"
     }
   ],
   "inventory": {
@@ -25485,10 +25947,11 @@
   "schema_version": "1.0",
   "source_registry": {
     "election_id": "wa-2026-primary",
-    "frozen_at": "2026-07-21T15:40:21Z",
-    "id": "wa-2026-primary-default-sources",
+    "frozen_at": "2026-07-23T13:01:14Z",
+    "id": "wa-2026-primary-default-sources-v2",
     "notes": [
-      "This registry was refreshed and re-frozen after capturing the Washington State Stonewall Democrats image gallery, before recompiling consensus scores.",
+      "Version 2 expands the panel after the issue 61 audit; version 1 remains reconstructable at git commit 9faceeaaf7fe13c7f4d9c5c206db192ecd563321.",
+      "Four newly evaluated publishers have usable official 2026 decisions; two additional legitimate publishers remain explicit access-restricted coverage gaps.",
       "Published means an official 2026 publication was located; it does not imply complete ballot coverage.",
       "Not found is distinct from an explicit no-endorsement decision by an organization.",
       "Search results were used only to locate official pages and are not endorsement evidence."
@@ -25547,7 +26010,7 @@
         ]
       }
     ],
-    "research_cutoff": "2026-07-21T15:40:21Z",
+    "research_cutoff": "2026-07-23T13:01:14Z",
     "schema_version": "1.0",
     "sources": [
       {
@@ -25663,6 +26126,174 @@
           "fuse-publications"
         ],
         "panel_reason": "Named general progressive organization with its own official 2026 endorsement decisions.",
+        "panel_role": "consensus",
+        "publisher_id": null
+      },
+      {
+        "category": "progressive_general",
+        "discovery": {
+          "canonical_url": "https://seattledsa.org/event/jaelynn-scott-37ld-campaign-kick-off-canvass/",
+          "checked_at": "2026-07-23T12:30:00Z",
+          "evidence_locator": "Official May 2026 campaign event page identifying Jaelynn Scott as the chapter's newly endorsed candidate.",
+          "media_type": "text/html",
+          "notes": "The official endorsement procedure confirms that the chapter's membership controls endorsements; the current site search located one usable 2026 decision.",
+          "published_at": null,
+          "redirect_chain": [],
+          "requested_url": "https://seattledsa.org/event/jaelynn-scott-37ld-campaign-kick-off-canvass/",
+          "status": "published",
+          "updated_at": null
+        },
+        "eligibility": {
+          "jurisdiction_ids": [],
+          "kind": "all_seattle_ballot_races",
+          "rationale": "Use only decisions the chapter publishes for races in the authoritative Seattle ballot inventory."
+        },
+        "geographic_kind": "general",
+        "id": "seattle-democratic-socialists",
+        "name": "Seattle Democratic Socialists of America",
+        "organization_url": "https://seattledsa.org/",
+        "overlap_group_ids": [],
+        "panel_reason": "Separately governed membership organization with a documented endorsement process and an official 2026 candidate endorsement.",
+        "panel_role": "consensus",
+        "publisher_id": null
+      },
+      {
+        "category": "transportation_urbanism",
+        "discovery": {
+          "canonical_url": "https://bsky.app/profile/tech4housing.org",
+          "checked_at": "2026-07-23T12:30:00Z",
+          "evidence_locator": "Official Bluesky post 3mpkb7wcjok2z plus post 3mmcsx6zbwc2i, read through the public Bluesky API.",
+          "media_type": "text/html",
+          "notes": "The official account supplies four usable 2026 decisions; event promotion without endorsement language was not transcribed.",
+          "published_at": null,
+          "redirect_chain": [],
+          "requested_url": "https://bsky.app/profile/tech4housing.org",
+          "status": "published",
+          "updated_at": null
+        },
+        "eligibility": {
+          "jurisdiction_ids": [],
+          "kind": "all_seattle_ballot_races",
+          "rationale": "Use only decisions published by the organization's official account and matched to the Seattle ballot inventory."
+        },
+        "geographic_kind": "general",
+        "id": "tech-4-housing",
+        "name": "Tech 4 Housing",
+        "organization_url": "https://www.tech4housing.org/",
+        "overlap_group_ids": [],
+        "panel_reason": "Separately governed housing advocacy organization with official 2026 candidate endorsement posts.",
+        "panel_role": "consensus",
+        "publisher_id": null
+      },
+      {
+        "category": "progressive_general",
+        "discovery": {
+          "canonical_url": null,
+          "checked_at": "2026-07-23T12:30:00Z",
+          "evidence_locator": "Official endorsement URL and site-owned page metadata; repeated direct origin, browser, and IPv4 requests timed out.",
+          "media_type": null,
+          "notes": "Search-result text was retained only as a discovery lead and no decisions were inferred from it; the official Bluesky feed did not reproduce the candidate list.",
+          "published_at": null,
+          "redirect_chain": [],
+          "requested_url": "https://tech4taxes.org/endorsements",
+          "status": "access_restricted",
+          "updated_at": null
+        },
+        "eligibility": {
+          "jurisdiction_ids": [],
+          "kind": "all_seattle_ballot_races",
+          "rationale": "Include verified decisions only after the official endorsement artifact can be retrieved directly."
+        },
+        "geographic_kind": "general",
+        "id": "tech-4-taxes",
+        "name": "Tech 4 Taxes",
+        "organization_url": "https://tech4taxes.org/",
+        "overlap_group_ids": [],
+        "panel_reason": "Separately governed progressive-tax advocacy organization with an official 2025-2026 candidate endorsement index.",
+        "panel_role": "consensus",
+        "publisher_id": null
+      },
+      {
+        "category": "rights_representation",
+        "discovery": {
+          "canonical_url": null,
+          "checked_at": "2026-07-23T12:30:00Z",
+          "evidence_locator": "Official organization site and linked Instagram account; search results indicated a 2026 guide, but the account could not be loaded without an authenticated Instagram session.",
+          "media_type": null,
+          "notes": "The guide indication and all third-party voter-guide text were treated only as discovery leads and no decisions were inferred.",
+          "published_at": null,
+          "redirect_chain": [],
+          "requested_url": "https://www.instagram.com/wa4pj/",
+          "status": "access_restricted",
+          "updated_at": null
+        },
+        "eligibility": {
+          "jurisdiction_ids": [],
+          "kind": "all_seattle_ballot_races",
+          "rationale": "Include verified decisions only after the organization-owned voter-guide artifact can be retrieved directly."
+        },
+        "geographic_kind": "general",
+        "id": "washington-for-peace-and-justice",
+        "name": "Washington for Peace and Justice",
+        "organization_url": "https://www.wa4pj.com/",
+        "overlap_group_ids": [],
+        "panel_reason": "Separately governed Palestinian-led Washington advocacy organization investigated as a possible 2026 voter-guide publisher.",
+        "panel_role": "consensus",
+        "publisher_id": null
+      },
+      {
+        "category": "progressive_general",
+        "discovery": {
+          "canonical_url": "https://www.washingtoncan.org/endorsements",
+          "checked_at": "2026-07-23T12:30:00Z",
+          "evidence_locator": "Official 2026 Midterm Election section naming two King County Council candidates.",
+          "media_type": "text/html",
+          "notes": "The page describes the Leadership Council's candidate interview and endorsement process.",
+          "published_at": null,
+          "redirect_chain": [],
+          "requested_url": "https://www.washingtoncan.org/endorsements",
+          "status": "published",
+          "updated_at": null
+        },
+        "eligibility": {
+          "jurisdiction_ids": [],
+          "kind": "all_seattle_ballot_races",
+          "rationale": "Use only official endorsements matched to the authoritative Seattle ballot inventory."
+        },
+        "geographic_kind": "general",
+        "id": "washington-community-action-network",
+        "name": "Washington Community Action Network",
+        "organization_url": "https://www.washingtoncan.org/",
+        "overlap_group_ids": [],
+        "panel_reason": "Separately governed statewide membership organization with an official 2026 endorsement page.",
+        "panel_role": "consensus",
+        "publisher_id": null
+      },
+      {
+        "category": "rights_representation",
+        "discovery": {
+          "canonical_url": "https://www.sgn.org/",
+          "checked_at": "2026-07-23T12:30:00Z",
+          "evidence_locator": "Official homepage and endorsement articles 168513, 168554, and 168558.",
+          "media_type": "text/html",
+          "notes": "The three current endorsement articles loaded directly with HTTP 200 and identify the SGN Editorial Board as the publisher.",
+          "published_at": "2026-07-20",
+          "redirect_chain": [],
+          "requested_url": "https://www.sgn.org/",
+          "status": "published",
+          "updated_at": "2026-07-21"
+        },
+        "eligibility": {
+          "jurisdiction_ids": [],
+          "kind": "all_seattle_ballot_races",
+          "rationale": "Use only editorial-board endorsements matched to the authoritative Seattle ballot inventory."
+        },
+        "geographic_kind": "general",
+        "id": "seattle-gay-news",
+        "name": "Seattle Gay News Editorial Board",
+        "organization_url": "https://www.sgn.org/",
+        "overlap_group_ids": [],
+        "panel_reason": "Independent LGBTQ+ editorial publisher with official 2026 primary endorsement articles.",
         "panel_role": "consensus",
         "publisher_id": null
       },

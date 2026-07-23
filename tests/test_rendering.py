@@ -723,6 +723,8 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     )
 
     rendered_html = rendered.html_path.read_text(encoding="utf-8")
+    assert view_model.metadata.source_panel_id in rendered_html
+    assert view_model.metadata.source_panel_hash in rendered_html
     for percentage in (53, 64, 70, 100):
         assert f'style="--meter-fill: {percentage}%"' in rendered_html
     for tone in ("agrees", "differs", "not_covered"):
@@ -784,6 +786,10 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     assert "august 2026 primary" in concise_text.casefold()
     assert "Seattle Progressive Endorsement Guide" in concise_text
     assert all(source.name in concise_text for source in view_model.sources)
+    assert (
+        f"Panel {view_model.metadata.source_panel_version} · "
+        f"{view_model.metadata.source_panel_hash[:12]}"
+    ) in concise_text
     times_source = next(
         source for source in view_model.sources if source.panel_role == "comparison"
     )

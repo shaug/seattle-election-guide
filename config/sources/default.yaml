@@ -1,10 +1,11 @@
 schema_version: "1.0"
-id: wa-2026-primary-default-sources
+id: wa-2026-primary-default-sources-v2
 election_id: wa-2026-primary
-frozen_at: 2026-07-21T15:40:21Z
-research_cutoff: 2026-07-21T15:40:21Z
+frozen_at: 2026-07-23T13:01:14Z
+research_cutoff: 2026-07-23T13:01:14Z
 notes:
-  - This registry was refreshed and re-frozen after capturing the Washington State Stonewall Democrats image gallery, before recompiling consensus scores.
+  - Version 2 expands the panel after the issue 61 audit; version 1 remains reconstructable at git commit 9faceeaaf7fe13c7f4d9c5c206db192ecd563321.
+  - Four newly evaluated publishers have usable official 2026 decisions; two additional legitimate publishers remain explicit access-restricted coverage gaps.
   - Published means an official 2026 publication was located; it does not imply complete ballot coverage.
   - Not found is distinct from an explicit no-endorsement decision by an organization.
   - Search results were used only to locate official pages and are not endorsement evidence.
@@ -95,6 +96,118 @@ sources:
       notes: Official endorsement page loaded directly with HTTP 200.
     overlap_group_ids:
       - fuse-publications
+
+  - id: seattle-democratic-socialists
+    name: Seattle Democratic Socialists of America
+    category: progressive_general
+    organization_url: https://seattledsa.org/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Separately governed membership organization with a documented endorsement process and an official 2026 candidate endorsement.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Use only decisions the chapter publishes for races in the authoritative Seattle ballot inventory.
+    discovery:
+      status: published
+      checked_at: 2026-07-23T12:30:00Z
+      requested_url: https://seattledsa.org/event/jaelynn-scott-37ld-campaign-kick-off-canvass/
+      canonical_url: https://seattledsa.org/event/jaelynn-scott-37ld-campaign-kick-off-canvass/
+      media_type: text/html
+      evidence_locator: Official May 2026 campaign event page identifying Jaelynn Scott as the chapter's newly endorsed candidate.
+      notes: The official endorsement procedure confirms that the chapter's membership controls endorsements; the current site search located one usable 2026 decision.
+
+  - id: tech-4-housing
+    name: Tech 4 Housing
+    category: transportation_urbanism
+    organization_url: https://www.tech4housing.org/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Separately governed housing advocacy organization with official 2026 candidate endorsement posts.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Use only decisions published by the organization's official account and matched to the Seattle ballot inventory.
+    discovery:
+      status: published
+      checked_at: 2026-07-23T12:30:00Z
+      requested_url: https://bsky.app/profile/tech4housing.org
+      canonical_url: https://bsky.app/profile/tech4housing.org
+      media_type: text/html
+      evidence_locator: Official Bluesky post 3mpkb7wcjok2z plus post 3mmcsx6zbwc2i, read through the public Bluesky API.
+      notes: The official account supplies four usable 2026 decisions; event promotion without endorsement language was not transcribed.
+
+  - id: tech-4-taxes
+    name: Tech 4 Taxes
+    category: progressive_general
+    organization_url: https://tech4taxes.org/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Separately governed progressive-tax advocacy organization with an official 2025-2026 candidate endorsement index.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Include verified decisions only after the official endorsement artifact can be retrieved directly.
+    discovery:
+      status: access_restricted
+      checked_at: 2026-07-23T12:30:00Z
+      requested_url: https://tech4taxes.org/endorsements
+      evidence_locator: Official endorsement URL and site-owned page metadata; repeated direct origin, browser, and IPv4 requests timed out.
+      notes: Search-result text was retained only as a discovery lead and no decisions were inferred from it; the official Bluesky feed did not reproduce the candidate list.
+
+  - id: washington-for-peace-and-justice
+    name: Washington for Peace and Justice
+    category: rights_representation
+    organization_url: https://www.wa4pj.com/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Separately governed Palestinian-led Washington advocacy organization investigated as a possible 2026 voter-guide publisher.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Include verified decisions only after the organization-owned voter-guide artifact can be retrieved directly.
+    discovery:
+      status: access_restricted
+      checked_at: 2026-07-23T12:30:00Z
+      requested_url: https://www.instagram.com/wa4pj/
+      evidence_locator: Official organization site and linked Instagram account; search results indicated a 2026 guide, but the account could not be loaded without an authenticated Instagram session.
+      notes: The guide indication and all third-party voter-guide text were treated only as discovery leads and no decisions were inferred.
+
+  - id: washington-community-action-network
+    name: Washington Community Action Network
+    category: progressive_general
+    organization_url: https://www.washingtoncan.org/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Separately governed statewide membership organization with an official 2026 endorsement page.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Use only official endorsements matched to the authoritative Seattle ballot inventory.
+    discovery:
+      status: published
+      checked_at: 2026-07-23T12:30:00Z
+      requested_url: https://www.washingtoncan.org/endorsements
+      canonical_url: https://www.washingtoncan.org/endorsements
+      media_type: text/html
+      evidence_locator: Official 2026 Midterm Election section naming two King County Council candidates.
+      notes: The page describes the Leadership Council's candidate interview and endorsement process.
+
+  - id: seattle-gay-news
+    name: Seattle Gay News Editorial Board
+    category: rights_representation
+    organization_url: https://www.sgn.org/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Independent LGBTQ+ editorial publisher with official 2026 primary endorsement articles.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Use only editorial-board endorsements matched to the authoritative Seattle ballot inventory.
+    discovery:
+      status: published
+      checked_at: 2026-07-23T12:30:00Z
+      requested_url: https://www.sgn.org/
+      canonical_url: https://www.sgn.org/
+      media_type: text/html
+      published_at: 2026-07-20
+      updated_at: 2026-07-21
+      evidence_locator: Official homepage and endorsement articles 168513, 168554, and 168558.
+      notes: The three current endorsement articles loaded directly with HTTP 200 and identify the SGN Editorial Board as the publisher.
 
   - id: washington-working-families-party
     name: Washington Working Families Party

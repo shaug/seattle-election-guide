@@ -1,0 +1,5212 @@
+{
+  "after": {
+    "computed_at": "2026-07-23T13:01:14Z",
+    "configuration_id": "unweighted-progressive-v1",
+    "dataset_hash": "b9bfaf4a00bebbeef661dde2e6144342aa78762d3abb74ca99a0029d059ca363",
+    "election_id": "wa-2026-primary",
+    "input_hash": "8a1c582f8ea16b90f73b252e7687f27ea7604468286b2728728186486011c2c1",
+    "publication_scope_hash": "43f7068c9cb92ccc25821a70bd3ddd027b49211414b103decde4fd150ebba069",
+    "races": [
+      {
+        "category_coverage_count": 3,
+        "eligible_source_count": 42,
+        "explicit_endorsement_count": 13,
+        "grade": "C",
+        "is_tied": false,
+        "missing_source_count": 29,
+        "race_id": "king-county-assessor",
+        "source_coverage_count": 13,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "29 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "aft-washington",
+              "alliance-for-gun-responsibility",
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "nwpc-washington",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "sage-leaders",
+              "seattle-democratic-socialists",
+              "seattle-gay-news",
+              "seattle-subway",
+              "seiu-775",
+              "seiu-925",
+              "sierra-club-washington",
+              "tech-4-housing",
+              "tech-4-taxes",
+              "transit-riders-union",
+              "washington-bikes",
+              "washington-bus",
+              "washington-community-action-network",
+              "washington-conservation-action",
+              "washington-education-association",
+              "washington-for-peace-and-justice",
+              "washington-housing-alliance",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 3 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "low_confidence",
+            "message": "One or more scored endorsements carry a confidence warning.",
+            "review_item_ids": [],
+            "source_ids": [
+              "36th-district-democrats"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "32nd-district-democrats",
+              "34th-district-democrats",
+              "36th-district-democrats",
+              "37th-district-democrats",
+              "43rd-district-democrats",
+              "46th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "king-county-assessor--rob-foxcurran"
+        ],
+        "winner_share": "15/26",
+        "winner_support_points": "15/2"
+      },
+      {
+        "category_coverage_count": 6,
+        "eligible_source_count": 42,
+        "explicit_endorsement_count": 22,
+        "grade": "A",
+        "is_tied": false,
+        "missing_source_count": 20,
+        "race_id": "king-county-council-2",
+        "source_coverage_count": 22,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "20 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "32nd-district-democrats",
+              "34th-district-democrats",
+              "36th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "sage-leaders",
+              "seattle-democratic-socialists",
+              "seattle-gay-news",
+              "seattle-subway",
+              "sierra-club-washington",
+              "tech-4-taxes",
+              "washington-education-association",
+              "washington-for-peace-and-justice",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_confidence",
+            "message": "One or more scored endorsements carry a confidence warning.",
+            "review_item_ids": [],
+            "source_ids": [
+              "alliance-for-gun-responsibility",
+              "nwpc-washington",
+              "transit-riders-union"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "32nd-district-democrats",
+              "34th-district-democrats",
+              "36th-district-democrats",
+              "37th-district-democrats",
+              "43rd-district-democrats",
+              "46th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "king-county-council-2--rebecca-salda-a"
+        ],
+        "winner_share": "39/44",
+        "winner_support_points": "39/2"
+      },
+      {
+        "category_coverage_count": 6,
+        "eligible_source_count": 42,
+        "explicit_endorsement_count": 22,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 20,
+        "race_id": "king-county-council-8",
+        "source_coverage_count": 22,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "20 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "32nd-district-democrats",
+              "36th-district-democrats",
+              "46th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "planned-parenthood-alliance-advocates",
+              "sage-leaders",
+              "seattle-democratic-socialists",
+              "seattle-gay-news",
+              "seiu-775",
+              "sierra-club-washington",
+              "tech-4-housing",
+              "tech-4-taxes",
+              "transit-riders-union",
+              "washington-bus",
+              "washington-education-association",
+              "washington-for-peace-and-justice",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "32nd-district-democrats",
+              "34th-district-democrats",
+              "36th-district-democrats",
+              "37th-district-democrats",
+              "43rd-district-democrats",
+              "46th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "king-county-council-8--teresa-mosqueda"
+        ],
+        "winner_share": "1",
+        "winner_support_points": "22"
+      },
+      {
+        "category_coverage_count": 4,
+        "eligible_source_count": 36,
+        "explicit_endorsement_count": 11,
+        "grade": "B",
+        "is_tied": false,
+        "missing_source_count": 24,
+        "race_id": "ld-11-state-representative-1",
+        "source_coverage_count": 12,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "24 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "sage-leaders",
+              "seattle-democratic-socialists",
+              "seattle-gay-news",
+              "seattle-subway",
+              "sierra-club-washington",
+              "tech-4-housing",
+              "tech-4-taxes",
+              "transit-riders-union",
+              "washington-bikes",
+              "washington-bus",
+              "washington-community-action-network",
+              "washington-conservation-action",
+              "washington-education-association",
+              "washington-for-peace-and-justice",
+              "washington-housing-alliance",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 4 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "no_endorsement",
+            "message": "1 eligible sources explicitly endorse no one.",
+            "review_item_ids": [],
+            "source_ids": [
+              "the-urbanist"
+            ]
+          },
+          {
+            "code": "low_confidence",
+            "message": "One or more scored endorsements carry a confidence warning.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "king-county-democrats"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-11-state-representative-1--david-hackney"
+        ],
+        "winner_share": "7/11",
+        "winner_support_points": "7"
+      },
+      {
+        "category_coverage_count": 4,
+        "eligible_source_count": 36,
+        "explicit_endorsement_count": 8,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 28,
+        "race_id": "ld-11-state-representative-2",
+        "source_coverage_count": 8,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "28 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "alliance-for-gun-responsibility",
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "nwpc-washington",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "sage-leaders",
+              "seattle-democratic-socialists",
+              "seattle-gay-news",
+              "seattle-subway",
+              "tech-4-housing",
+              "tech-4-taxes",
+              "the-stranger",
+              "the-urbanist",
+              "transit-riders-union",
+              "ufcw-3000",
+              "washington-bikes",
+              "washington-bus",
+              "washington-community-action-network",
+              "washington-conservation-action",
+              "washington-education-association",
+              "washington-for-peace-and-justice",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-stonewall-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 4 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-11-state-representative-2--steve-bergquist"
+        ],
+        "winner_share": "1",
+        "winner_support_points": "8"
+      },
+      {
+        "category_coverage_count": 6,
+        "eligible_source_count": 36,
+        "explicit_endorsement_count": 11,
+        "grade": "B",
+        "is_tied": false,
+        "missing_source_count": 24,
+        "race_id": "ld-32-state-representative-1",
+        "source_coverage_count": 12,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "24 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "king-county-democrats",
+              "mlk-labor",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "sage-leaders",
+              "seattle-democratic-socialists",
+              "seattle-gay-news",
+              "seattle-subway",
+              "seiu-775",
+              "seiu-925",
+              "tech-4-housing",
+              "tech-4-taxes",
+              "washington-bikes",
+              "washington-bus",
+              "washington-community-action-network",
+              "washington-conservation-action",
+              "washington-for-peace-and-justice",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-stonewall-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "no_endorsement",
+            "message": "1 eligible sources explicitly endorse no one.",
+            "review_item_ids": [],
+            "source_ids": [
+              "32nd-district-democrats"
+            ]
+          },
+          {
+            "code": "low_confidence",
+            "message": "One or more scored endorsements carry a confidence warning.",
+            "review_item_ids": [],
+            "source_ids": [
+              "nwpc-washington",
+              "washington-housing-alliance"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "32nd-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-32-state-representative-1--danica-noble"
+        ],
+        "winner_share": "7/11",
+        "winner_support_points": "7"
+      },
+      {
+        "category_coverage_count": 4,
+        "eligible_source_count": 36,
+        "explicit_endorsement_count": 17,
+        "grade": "B",
+        "is_tied": false,
+        "missing_source_count": 19,
+        "race_id": "ld-32-state-representative-2",
+        "source_coverage_count": 17,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "19 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "seattle-democratic-socialists",
+              "seattle-gay-news",
+              "seattle-subway",
+              "sierra-club-washington",
+              "tech-4-housing",
+              "tech-4-taxes",
+              "transit-riders-union",
+              "washington-bikes",
+              "washington-bus",
+              "washington-community-action-network",
+              "washington-conservation-action",
+              "washington-for-peace-and-justice",
+              "washington-state-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 4 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "low_confidence",
+            "message": "One or more scored endorsements carry a confidence warning.",
+            "review_item_ids": [],
+            "source_ids": [
+              "aft-washington",
+              "ufcw-3000",
+              "washington-housing-alliance"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "32nd-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-32-state-representative-2--lauren-davis"
+        ],
+        "winner_share": "21/34",
+        "winner_support_points": "21/2"
+      },
+      {
+        "category_coverage_count": 4,
+        "eligible_source_count": 36,
+        "explicit_endorsement_count": 15,
+        "grade": "B",
+        "is_tied": false,
+        "missing_source_count": 21,
+        "race_id": "ld-32-state-senator",
+        "source_coverage_count": 15,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "21 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "seattle-democratic-socialists",
+              "seattle-gay-news",
+              "seattle-subway",
+              "seiu-775",
+              "sierra-club-washington",
+              "tech-4-housing",
+              "tech-4-taxes",
+              "transit-riders-union",
+              "washington-bikes",
+              "washington-bus",
+              "washington-community-action-network",
+              "washington-conservation-action",
+              "washington-for-peace-and-justice",
+              "washington-state-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 4 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "low_confidence",
+            "message": "One or more scored endorsements carry a confidence warning.",
+            "review_item_ids": [],
+            "source_ids": [
+              "alliance-for-gun-responsibility"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "32nd-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-32-state-senator--cindy-ryu"
+        ],
+        "winner_share": "7/10",
+        "winner_support_points": "21/2"
+      },
+      {
+        "category_coverage_count": 3,
+        "eligible_source_count": 36,
+        "explicit_endorsement_count": 8,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 28,
+        "race_id": "ld-34-state-representative-1",
+        "source_coverage_count": 8,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "28 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "alliance-for-gun-responsibility",
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "king-county-democrats",
+              "mlk-labor",
+              "nwpc-washington",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "sage-leaders",
+              "seattle-democratic-socialists",
+              "seattle-gay-news",
+              "seattle-subway",
+              "sierra-club-washington",
+              "tech-4-housing",
+              "tech-4-taxes",
+              "the-stranger",
+              "the-urbanist",
+              "transit-riders-union",
+              "washington-bikes",
+              "washington-bus",
+              "washington-community-action-network",
+              "washington-conservation-action",
+              "washington-education-association",
+              "washington-for-peace-and-justice",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 3 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "34th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-34-state-representative-1--brianna-k-thomas"
+        ],
+        "winner_share": "1",
+        "winner_support_points": "8"
+      },
+      {
+        "category_coverage_count": 6,
+        "eligible_source_count": 36,
+        "explicit_endorsement_count": 18,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 18,
+        "race_id": "ld-34-state-representative-2",
+        "source_coverage_count": 18,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "18 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "sage-leaders",
+              "seattle-democratic-socialists",
+              "seattle-gay-news",
+              "seattle-subway",
+              "tech-4-housing",
+              "tech-4-taxes",
+              "transit-riders-union",
+              "washington-bus",
+              "washington-community-action-network",
+              "washington-for-peace-and-justice",
+              "washington-state-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "34th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-34-state-representative-2--joe-fitzgibbon"
+        ],
+        "winner_share": "17/18",
+        "winner_support_points": "17"
+      },
+      {
+        "category_coverage_count": 6,
+        "eligible_source_count": 36,
+        "explicit_endorsement_count": 15,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 21,
+        "race_id": "ld-34-state-senator",
+        "source_coverage_count": 15,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "21 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "nwpc-washington",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "seattle-democratic-socialists",
+              "seattle-gay-news",
+              "seattle-subway",
+              "tech-4-housing",
+              "tech-4-taxes",
+              "the-stranger",
+              "the-urbanist",
+              "transit-riders-union",
+              "washington-bus",
+              "washington-community-action-network",
+              "washington-education-association",
+              "washington-for-peace-and-justice",
+              "washington-state-democrats",
+              "washington-stonewall-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "34th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-34-state-senator--emily-alvarado"
+        ],
+        "winner_share": "1",
+        "winner_support_points": "15"
+      },
+      {
+        "category_coverage_count": 6,
+        "eligible_source_count": 36,
+        "explicit_endorsement_count": 17,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 19,
+        "race_id": "ld-36-state-representative-1",
+        "source_coverage_count": 17,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "19 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "seattle-democratic-socialists",
+              "seattle-gay-news",
+              "seattle-subway",
+              "tech-4-housing",
+              "tech-4-taxes",
+              "the-stranger",
+              "transit-riders-union",
+              "washington-bus",
+              "washington-community-action-network",
+              "washington-education-association",
+              "washington-for-peace-and-justice",
+              "washington-state-democrats",
+              "washington-stonewall-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "36th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-36-state-representative-1--julia-grant-reed"
+        ],
+        "winner_share": "1",
+        "winner_support_points": "17"
+      },
+      {
+        "category_coverage_count": 5,
+        "eligible_source_count": 36,
+        "explicit_endorsement_count": 13,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 23,
+        "race_id": "ld-36-state-representative-2",
+        "source_coverage_count": 13,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "23 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "king-county-democrats",
+              "mlk-labor",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "sage-leaders",
+              "seattle-democratic-socialists",
+              "seattle-gay-news",
+              "seattle-subway",
+              "tech-4-housing",
+              "tech-4-taxes",
+              "the-stranger",
+              "the-urbanist",
+              "transit-riders-union",
+              "washington-bus",
+              "washington-community-action-network",
+              "washington-education-association",
+              "washington-for-peace-and-justice",
+              "washington-state-democrats",
+              "washington-stonewall-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 5 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "36th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-36-state-representative-2--liz-berry"
+        ],
+        "winner_share": "1",
+        "winner_support_points": "13"
+      },
+      {
+        "category_coverage_count": 4,
+        "eligible_source_count": 36,
+        "explicit_endorsement_count": 10,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 26,
+        "race_id": "ld-36-state-senator",
+        "source_coverage_count": 10,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "26 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "king-county-democrats",
+              "mlk-labor",
+              "nwpc-washington",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "sage-leaders",
+              "seattle-democratic-socialists",
+              "seattle-gay-news",
+              "seattle-subway",
+              "tech-4-housing",
+              "tech-4-taxes",
+              "the-stranger",
+              "the-urbanist",
+              "transit-riders-union",
+              "washington-bikes",
+              "washington-bus",
+              "washington-community-action-network",
+              "washington-education-association",
+              "washington-for-peace-and-justice",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-stonewall-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 4 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "36th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-36-state-senator--noel-c-frame"
+        ],
+        "winner_share": "1",
+        "winner_support_points": "10"
+      },
+      {
+        "category_coverage_count": 5,
+        "eligible_source_count": 36,
+        "explicit_endorsement_count": 12,
+        "grade": "TIED",
+        "is_tied": true,
+        "missing_source_count": 24,
+        "race_id": "ld-37-state-representative-1",
+        "source_coverage_count": 12,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "24 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "king-county-democrats",
+              "mlk-labor",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "seattle-democratic-socialists",
+              "seattle-subway",
+              "seiu-775",
+              "sierra-club-washington",
+              "tech-4-taxes",
+              "transit-riders-union",
+              "ufcw-3000",
+              "washington-bikes",
+              "washington-bus",
+              "washington-community-action-network",
+              "washington-conservation-action",
+              "washington-education-association",
+              "washington-for-peace-and-justice",
+              "washington-housing-alliance",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 5 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "37th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-37-state-representative-1--sharon-tomiko-santos",
+          "ld-37-state-representative-1--kelabe-tewolde"
+        ],
+        "winner_share": "1/2",
+        "winner_support_points": "6"
+      },
+      {
+        "category_coverage_count": 6,
+        "eligible_source_count": 36,
+        "explicit_endorsement_count": 18,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 18,
+        "race_id": "ld-37-state-representative-2",
+        "source_coverage_count": 18,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "18 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "seattle-gay-news",
+              "seattle-subway",
+              "sierra-club-washington",
+              "tech-4-taxes",
+              "transit-riders-union",
+              "washington-bikes",
+              "washington-bus",
+              "washington-community-action-network",
+              "washington-education-association",
+              "washington-for-peace-and-justice",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "37th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-37-state-representative-2--jaelynn-scott"
+        ],
+        "winner_share": "1",
+        "winner_support_points": "18"
+      },
+      {
+        "category_coverage_count": 5,
+        "eligible_source_count": 36,
+        "explicit_endorsement_count": 15,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 20,
+        "race_id": "ld-37-state-senator",
+        "source_coverage_count": 16,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "20 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "nwpc-washington",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "seattle-democratic-socialists",
+              "seattle-gay-news",
+              "seattle-subway",
+              "sierra-club-washington",
+              "tech-4-housing",
+              "tech-4-taxes",
+              "transit-riders-union",
+              "washington-bikes",
+              "washington-community-action-network",
+              "washington-education-association",
+              "washington-for-peace-and-justice",
+              "washington-state-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 5 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "no_endorsement",
+            "message": "1 eligible sources explicitly endorse no one.",
+            "review_item_ids": [],
+            "source_ids": [
+              "the-urbanist"
+            ]
+          },
+          {
+            "code": "low_confidence",
+            "message": "One or more scored endorsements carry a confidence warning.",
+            "review_item_ids": [],
+            "source_ids": [
+              "sage-leaders"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "37th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-37-state-senator--chipalo-street"
+        ],
+        "winner_share": "9/10",
+        "winner_support_points": "27/2"
+      },
+      {
+        "category_coverage_count": 6,
+        "eligible_source_count": 36,
+        "explicit_endorsement_count": 16,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 20,
+        "race_id": "ld-43-state-representative-1",
+        "source_coverage_count": 16,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "20 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "sage-leaders",
+              "seattle-democratic-socialists",
+              "seattle-gay-news",
+              "seattle-subway",
+              "tech-4-housing",
+              "tech-4-taxes",
+              "transit-riders-union",
+              "washington-bus",
+              "washington-community-action-network",
+              "washington-education-association",
+              "washington-for-peace-and-justice",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "43rd-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-43-state-representative-1--nicole-macri"
+        ],
+        "winner_share": "1",
+        "winner_support_points": "16"
+      },
+      {
+        "category_coverage_count": 4,
+        "eligible_source_count": 36,
+        "explicit_endorsement_count": 8,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 28,
+        "race_id": "ld-43-state-representative-2",
+        "source_coverage_count": 8,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "28 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "alliance-for-gun-responsibility",
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "king-county-democrats",
+              "mlk-labor",
+              "nwpc-washington",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "sage-leaders",
+              "seattle-democratic-socialists",
+              "seattle-gay-news",
+              "seattle-subway",
+              "sierra-club-washington",
+              "tech-4-housing",
+              "tech-4-taxes",
+              "the-stranger",
+              "the-urbanist",
+              "transit-riders-union",
+              "washington-bikes",
+              "washington-bus",
+              "washington-community-action-network",
+              "washington-conservation-action",
+              "washington-education-association",
+              "washington-for-peace-and-justice",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-stonewall-democrats"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 4 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "43rd-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-43-state-representative-2--shaun-scott"
+        ],
+        "winner_share": "1",
+        "winner_support_points": "8"
+      },
+      {
+        "category_coverage_count": 6,
+        "eligible_source_count": 36,
+        "explicit_endorsement_count": 21,
+        "grade": "B",
+        "is_tied": false,
+        "missing_source_count": 15,
+        "race_id": "ld-43-state-senator",
+        "source_coverage_count": 21,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "15 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "seattle-democratic-socialists",
+              "seattle-gay-news",
+              "seattle-subway",
+              "tech-4-housing",
+              "tech-4-taxes",
+              "transit-riders-union",
+              "washington-community-action-network",
+              "washington-for-peace-and-justice",
+              "washington-state-democrats"
+            ]
+          },
+          {
+            "code": "low_confidence",
+            "message": "One or more scored endorsements carry a confidence warning.",
+            "review_item_ids": [],
+            "source_ids": [
+              "aft-washington",
+              "washington-stonewall-democrats"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "43rd-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-43-state-senator--jamie-pedersen"
+        ],
+        "winner_share": "13/21",
+        "winner_support_points": "13"
+      },
+      {
+        "category_coverage_count": 6,
+        "eligible_source_count": 36,
+        "explicit_endorsement_count": 15,
+        "grade": "B",
+        "is_tied": false,
+        "missing_source_count": 20,
+        "race_id": "ld-46-state-representative-1",
+        "source_coverage_count": 16,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "20 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "king-county-democrats",
+              "mlk-labor",
+              "nwpc-washington",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "sage-leaders",
+              "seattle-democratic-socialists",
+              "seattle-gay-news",
+              "tech-4-taxes",
+              "transit-riders-union",
+              "washington-bus",
+              "washington-community-action-network",
+              "washington-for-peace-and-justice",
+              "washington-housing-alliance",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "no_endorsement",
+            "message": "1 eligible sources explicitly endorse no one.",
+            "review_item_ids": [],
+            "source_ids": [
+              "46th-district-democrats"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "46th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-46-state-representative-1--gerry-pollet"
+        ],
+        "winner_share": "3/5",
+        "winner_support_points": "9"
+      },
+      {
+        "category_coverage_count": 6,
+        "eligible_source_count": 36,
+        "explicit_endorsement_count": 17,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 19,
+        "race_id": "ld-46-state-representative-2",
+        "source_coverage_count": 17,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "19 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "sage-leaders",
+              "seattle-democratic-socialists",
+              "seattle-gay-news",
+              "seattle-subway",
+              "tech-4-housing",
+              "tech-4-taxes",
+              "the-stranger",
+              "transit-riders-union",
+              "washington-bus",
+              "washington-community-action-network",
+              "washington-education-association",
+              "washington-for-peace-and-justice",
+              "washington-state-building-trades",
+              "washington-state-democrats"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "46th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-46-state-representative-2--darya-farivar"
+        ],
+        "winner_share": "1",
+        "winner_support_points": "17"
+      },
+      {
+        "category_coverage_count": 6,
+        "eligible_source_count": 36,
+        "explicit_endorsement_count": 15,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 21,
+        "race_id": "ld-46-state-senator",
+        "source_coverage_count": 15,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "21 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "nwpc-washington",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "sage-leaders",
+              "seattle-democratic-socialists",
+              "seattle-gay-news",
+              "seattle-subway",
+              "tech-4-housing",
+              "tech-4-taxes",
+              "the-stranger",
+              "transit-riders-union",
+              "washington-bus",
+              "washington-community-action-network",
+              "washington-education-association",
+              "washington-for-peace-and-justice",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "46th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-46-state-senator--javier-valdez"
+        ],
+        "winner_share": "1",
+        "winner_support_points": "15"
+      },
+      {
+        "category_coverage_count": 6,
+        "eligible_source_count": 42,
+        "explicit_endorsement_count": 21,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 21,
+        "race_id": "seattle-city-council-5",
+        "source_coverage_count": 21,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "21 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "34th-district-democrats",
+              "37th-district-democrats",
+              "43rd-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "planned-parenthood-alliance-advocates",
+              "seattle-democratic-socialists",
+              "seattle-subway",
+              "sierra-club-washington",
+              "tech-4-housing",
+              "tech-4-taxes",
+              "washington-community-action-network",
+              "washington-education-association",
+              "washington-for-peace-and-justice",
+              "washington-housing-alliance",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council"
+            ]
+          },
+          {
+            "code": "low_confidence",
+            "message": "One or more scored endorsements carry a confidence warning.",
+            "review_item_ids": [],
+            "source_ids": [
+              "32nd-district-democrats",
+              "nwpc-washington",
+              "seiu-925"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "32nd-district-democrats",
+              "34th-district-democrats",
+              "36th-district-democrats",
+              "37th-district-democrats",
+              "43rd-district-democrats",
+              "46th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "seattle-city-council-5--nilu-jenks"
+        ],
+        "winner_share": "13/14",
+        "winner_support_points": "39/2"
+      },
+      {
+        "category_coverage_count": 3,
+        "eligible_source_count": 42,
+        "explicit_endorsement_count": 9,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 33,
+        "race_id": "seattle-municipal-court-judge-5",
+        "source_coverage_count": 9,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "33 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "36th-district-democrats",
+              "aft-washington",
+              "alliance-for-gun-responsibility",
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "nwpc-washington",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "sage-leaders",
+              "seattle-democratic-socialists",
+              "seattle-gay-news",
+              "seattle-subway",
+              "seiu-775",
+              "sierra-club-washington",
+              "tech-4-housing",
+              "tech-4-taxes",
+              "the-urbanist",
+              "transit-riders-union",
+              "ufcw-3000",
+              "washington-bikes",
+              "washington-bus",
+              "washington-community-action-network",
+              "washington-conservation-action",
+              "washington-education-association",
+              "washington-for-peace-and-justice",
+              "washington-housing-alliance",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 3 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "low_confidence",
+            "message": "One or more scored endorsements carry a confidence warning.",
+            "review_item_ids": [],
+            "source_ids": [
+              "32nd-district-democrats"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "32nd-district-democrats",
+              "34th-district-democrats",
+              "36th-district-democrats",
+              "37th-district-democrats",
+              "43rd-district-democrats",
+              "46th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "seattle-municipal-court-judge-5--gabe-rothstein"
+        ],
+        "winner_share": "17/18",
+        "winner_support_points": "17/2"
+      },
+      {
+        "category_coverage_count": 3,
+        "eligible_source_count": 42,
+        "explicit_endorsement_count": 9,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 33,
+        "race_id": "seattle-proposition-1-library-levy",
+        "source_coverage_count": 9,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "33 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "37th-district-democrats",
+              "aft-washington",
+              "alliance-for-gun-responsibility",
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "nwpc-washington",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "sage-leaders",
+              "seattle-democratic-socialists",
+              "seattle-gay-news",
+              "seattle-subway",
+              "seiu-775",
+              "seiu-925",
+              "sierra-club-washington",
+              "tech-4-housing",
+              "tech-4-taxes",
+              "transit-riders-union",
+              "ufcw-3000",
+              "washington-bikes",
+              "washington-bus",
+              "washington-community-action-network",
+              "washington-conservation-action",
+              "washington-education-association",
+              "washington-for-peace-and-justice",
+              "washington-housing-alliance",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 3 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "32nd-district-democrats",
+              "34th-district-democrats",
+              "36th-district-democrats",
+              "37th-district-democrats",
+              "43rd-district-democrats",
+              "46th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "seattle-proposition-1-library-levy--yes"
+        ],
+        "winner_share": "1",
+        "winner_support_points": "9"
+      },
+      {
+        "category_coverage_count": 5,
+        "eligible_source_count": 42,
+        "explicit_endorsement_count": 19,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 23,
+        "race_id": "supreme-court-justice-1",
+        "source_coverage_count": 19,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "23 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "aft-washington",
+              "alliance-for-gun-responsibility",
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "oneamerica-votes",
+              "protec17",
+              "sage-leaders",
+              "seattle-democratic-socialists",
+              "seattle-gay-news",
+              "seattle-subway",
+              "tech-4-housing",
+              "tech-4-taxes",
+              "transit-riders-union",
+              "washington-bikes",
+              "washington-bus",
+              "washington-community-action-network",
+              "washington-for-peace-and-justice",
+              "washington-housing-alliance",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 5 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "32nd-district-democrats",
+              "34th-district-democrats",
+              "36th-district-democrats",
+              "37th-district-democrats",
+              "43rd-district-democrats",
+              "46th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "supreme-court-justice-1--colleen-melody"
+        ],
+        "winner_share": "1",
+        "winner_support_points": "19"
+      },
+      {
+        "category_coverage_count": 5,
+        "eligible_source_count": 42,
+        "explicit_endorsement_count": 18,
+        "grade": "C",
+        "is_tied": false,
+        "missing_source_count": 24,
+        "race_id": "supreme-court-justice-3",
+        "source_coverage_count": 18,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "24 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "aft-washington",
+              "alliance-for-gun-responsibility",
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "oneamerica-votes",
+              "protec17",
+              "sage-leaders",
+              "seattle-democratic-socialists",
+              "seattle-gay-news",
+              "seattle-subway",
+              "sierra-club-washington",
+              "tech-4-housing",
+              "tech-4-taxes",
+              "transit-riders-union",
+              "ufcw-3000",
+              "washington-bikes",
+              "washington-bus",
+              "washington-community-action-network",
+              "washington-for-peace-and-justice",
+              "washington-housing-alliance",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 5 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "low_confidence",
+            "message": "One or more scored endorsements carry a confidence warning.",
+            "review_item_ids": [],
+            "source_ids": [
+              "32nd-district-democrats",
+              "36th-district-democrats",
+              "43rd-district-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "32nd-district-democrats",
+              "34th-district-democrats",
+              "36th-district-democrats",
+              "37th-district-democrats",
+              "43rd-district-democrats",
+              "46th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "supreme-court-justice-3--mike-diaz"
+        ],
+        "winner_share": "19/36",
+        "winner_support_points": "19/2"
+      },
+      {
+        "category_coverage_count": 5,
+        "eligible_source_count": 42,
+        "explicit_endorsement_count": 19,
+        "grade": "B",
+        "is_tied": false,
+        "missing_source_count": 23,
+        "race_id": "supreme-court-justice-5",
+        "source_coverage_count": 19,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "23 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "aft-washington",
+              "alliance-for-gun-responsibility",
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "oneamerica-votes",
+              "protec17",
+              "sage-leaders",
+              "seattle-democratic-socialists",
+              "seattle-gay-news",
+              "seattle-subway",
+              "tech-4-housing",
+              "tech-4-taxes",
+              "transit-riders-union",
+              "ufcw-3000",
+              "washington-bikes",
+              "washington-bus",
+              "washington-community-action-network",
+              "washington-conservation-action",
+              "washington-for-peace-and-justice",
+              "washington-housing-alliance",
+              "washington-state-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 5 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "low_confidence",
+            "message": "One or more scored endorsements carry a confidence warning.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "36th-district-democrats",
+              "seiu-925",
+              "washington-state-labor-council"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "32nd-district-democrats",
+              "34th-district-democrats",
+              "36th-district-democrats",
+              "37th-district-democrats",
+              "43rd-district-democrats",
+              "46th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "supreme-court-justice-5--theo-angelis"
+        ],
+        "winner_share": "12/19",
+        "winner_support_points": "12"
+      },
+      {
+        "category_coverage_count": 5,
+        "eligible_source_count": 42,
+        "explicit_endorsement_count": 12,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 29,
+        "race_id": "supreme-court-justice-7",
+        "source_coverage_count": 13,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "29 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "46th-district-democrats",
+              "aft-washington",
+              "alliance-for-gun-responsibility",
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "sage-leaders",
+              "seattle-democratic-socialists",
+              "seattle-gay-news",
+              "seattle-subway",
+              "seiu-775",
+              "tech-4-housing",
+              "tech-4-taxes",
+              "transit-riders-union",
+              "ufcw-3000",
+              "washington-bikes",
+              "washington-bus",
+              "washington-community-action-network",
+              "washington-conservation-action",
+              "washington-for-peace-and-justice",
+              "washington-housing-alliance",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-stonewall-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 5 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "no_endorsement",
+            "message": "1 eligible sources explicitly endorse no one.",
+            "review_item_ids": [],
+            "source_ids": [
+              "the-urbanist"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "32nd-district-democrats",
+              "34th-district-democrats",
+              "36th-district-democrats",
+              "37th-district-democrats",
+              "43rd-district-democrats",
+              "46th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "supreme-court-justice-7--debra-l-stephens"
+        ],
+        "winner_share": "1",
+        "winner_support_points": "12"
+      },
+      {
+        "category_coverage_count": 5,
+        "eligible_source_count": 42,
+        "explicit_endorsement_count": 18,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 23,
+        "race_id": "us-house-7",
+        "source_coverage_count": 19,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "23 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "mlk-labor",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "sage-leaders",
+              "seattle-democratic-socialists",
+              "seattle-gay-news",
+              "seattle-subway",
+              "seiu-925",
+              "tech-4-housing",
+              "tech-4-taxes",
+              "transit-riders-union",
+              "ufcw-3000",
+              "washington-bikes",
+              "washington-bus",
+              "washington-community-action-network",
+              "washington-conservation-action",
+              "washington-for-peace-and-justice",
+              "washington-housing-alliance",
+              "washington-state-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 5 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "no_endorsement",
+            "message": "1 eligible sources explicitly endorse no one.",
+            "review_item_ids": [],
+            "source_ids": [
+              "the-urbanist"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "32nd-district-democrats",
+              "34th-district-democrats",
+              "36th-district-democrats",
+              "37th-district-democrats",
+              "43rd-district-democrats",
+              "46th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "us-house-7--pramila-jayapal"
+        ],
+        "winner_share": "1",
+        "winner_support_points": "18"
+      },
+      {
+        "category_coverage_count": 5,
+        "eligible_source_count": 42,
+        "explicit_endorsement_count": 10,
+        "grade": "A",
+        "is_tied": false,
+        "missing_source_count": 29,
+        "race_id": "us-house-9",
+        "source_coverage_count": 13,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "29 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "32nd-district-democrats",
+              "34th-district-democrats",
+              "36th-district-democrats",
+              "46th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "nwpc-washington",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "sage-leaders",
+              "seattle-democratic-socialists",
+              "seattle-subway",
+              "seiu-925",
+              "tech-4-housing",
+              "tech-4-taxes",
+              "transit-riders-union",
+              "ufcw-3000",
+              "washington-bikes",
+              "washington-bus",
+              "washington-community-action-network",
+              "washington-conservation-action",
+              "washington-for-peace-and-justice",
+              "washington-housing-alliance",
+              "washington-state-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 5 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "no_endorsement",
+            "message": "3 eligible sources explicitly endorse no one.",
+            "review_item_ids": [],
+            "source_ids": [
+              "37th-district-democrats",
+              "43rd-district-democrats",
+              "the-urbanist"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "32nd-district-democrats",
+              "34th-district-democrats",
+              "36th-district-democrats",
+              "37th-district-democrats",
+              "43rd-district-democrats",
+              "46th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "us-house-9--adam-smith"
+        ],
+        "winner_share": "4/5",
+        "winner_support_points": "8"
+      }
+    ]
+  },
+  "before": {
+    "computed_at": "2026-07-21T15:40:21Z",
+    "configuration_id": "unweighted-progressive-v1",
+    "dataset_hash": "02eb2895ca0afa3f1226675d42e5a35bcef9191a60fcc0b2a90ccc9818b7cd27",
+    "election_id": "wa-2026-primary",
+    "input_hash": "dc0f1192ccf4cd424c714778ddf984ca0dbb3206b528e1b5851e07c70cda26c3",
+    "publication_scope_hash": "43f7068c9cb92ccc25821a70bd3ddd027b49211414b103decde4fd150ebba069",
+    "races": [
+      {
+        "category_coverage_count": 3,
+        "eligible_source_count": 36,
+        "explicit_endorsement_count": 13,
+        "grade": "C",
+        "is_tied": false,
+        "missing_source_count": 23,
+        "race_id": "king-county-assessor",
+        "source_coverage_count": 13,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "23 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "aft-washington",
+              "alliance-for-gun-responsibility",
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "nwpc-washington",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "sage-leaders",
+              "seattle-subway",
+              "seiu-775",
+              "seiu-925",
+              "sierra-club-washington",
+              "transit-riders-union",
+              "washington-bikes",
+              "washington-bus",
+              "washington-conservation-action",
+              "washington-education-association",
+              "washington-housing-alliance",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 3 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "low_confidence",
+            "message": "One or more scored endorsements carry a confidence warning.",
+            "review_item_ids": [],
+            "source_ids": [
+              "36th-district-democrats"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "32nd-district-democrats",
+              "34th-district-democrats",
+              "36th-district-democrats",
+              "37th-district-democrats",
+              "43rd-district-democrats",
+              "46th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "king-county-assessor--rob-foxcurran"
+        ],
+        "winner_share": "15/26",
+        "winner_support_points": "15/2"
+      },
+      {
+        "category_coverage_count": 6,
+        "eligible_source_count": 36,
+        "explicit_endorsement_count": 20,
+        "grade": "A",
+        "is_tied": false,
+        "missing_source_count": 16,
+        "race_id": "king-county-council-2",
+        "source_coverage_count": 20,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "16 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "32nd-district-democrats",
+              "34th-district-democrats",
+              "36th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "sage-leaders",
+              "seattle-subway",
+              "sierra-club-washington",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_confidence",
+            "message": "One or more scored endorsements carry a confidence warning.",
+            "review_item_ids": [],
+            "source_ids": [
+              "alliance-for-gun-responsibility",
+              "nwpc-washington",
+              "transit-riders-union"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "32nd-district-democrats",
+              "34th-district-democrats",
+              "36th-district-democrats",
+              "37th-district-democrats",
+              "43rd-district-democrats",
+              "46th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "king-county-council-2--rebecca-salda-a"
+        ],
+        "winner_share": "7/8",
+        "winner_support_points": "35/2"
+      },
+      {
+        "category_coverage_count": 6,
+        "eligible_source_count": 36,
+        "explicit_endorsement_count": 21,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 15,
+        "race_id": "king-county-council-8",
+        "source_coverage_count": 21,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "15 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "32nd-district-democrats",
+              "36th-district-democrats",
+              "46th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "planned-parenthood-alliance-advocates",
+              "sage-leaders",
+              "seiu-775",
+              "sierra-club-washington",
+              "transit-riders-union",
+              "washington-bus",
+              "washington-education-association",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "32nd-district-democrats",
+              "34th-district-democrats",
+              "36th-district-democrats",
+              "37th-district-democrats",
+              "43rd-district-democrats",
+              "46th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "king-county-council-8--teresa-mosqueda"
+        ],
+        "winner_share": "1",
+        "winner_support_points": "21"
+      },
+      {
+        "category_coverage_count": 4,
+        "eligible_source_count": 30,
+        "explicit_endorsement_count": 11,
+        "grade": "B",
+        "is_tied": false,
+        "missing_source_count": 18,
+        "race_id": "ld-11-state-representative-1",
+        "source_coverage_count": 12,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "18 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "sage-leaders",
+              "seattle-subway",
+              "sierra-club-washington",
+              "transit-riders-union",
+              "washington-bikes",
+              "washington-bus",
+              "washington-conservation-action",
+              "washington-education-association",
+              "washington-housing-alliance",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 4 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "no_endorsement",
+            "message": "1 eligible sources explicitly endorse no one.",
+            "review_item_ids": [],
+            "source_ids": [
+              "the-urbanist"
+            ]
+          },
+          {
+            "code": "low_confidence",
+            "message": "One or more scored endorsements carry a confidence warning.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "king-county-democrats"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-11-state-representative-1--david-hackney"
+        ],
+        "winner_share": "7/11",
+        "winner_support_points": "7"
+      },
+      {
+        "category_coverage_count": 4,
+        "eligible_source_count": 30,
+        "explicit_endorsement_count": 8,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 22,
+        "race_id": "ld-11-state-representative-2",
+        "source_coverage_count": 8,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "22 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "alliance-for-gun-responsibility",
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "nwpc-washington",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "sage-leaders",
+              "seattle-subway",
+              "the-stranger",
+              "the-urbanist",
+              "transit-riders-union",
+              "ufcw-3000",
+              "washington-bikes",
+              "washington-bus",
+              "washington-conservation-action",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-stonewall-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 4 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-11-state-representative-2--steve-bergquist"
+        ],
+        "winner_share": "1",
+        "winner_support_points": "8"
+      },
+      {
+        "category_coverage_count": 6,
+        "eligible_source_count": 30,
+        "explicit_endorsement_count": 11,
+        "grade": "B",
+        "is_tied": false,
+        "missing_source_count": 18,
+        "race_id": "ld-32-state-representative-1",
+        "source_coverage_count": 12,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "18 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "king-county-democrats",
+              "mlk-labor",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "sage-leaders",
+              "seattle-subway",
+              "seiu-775",
+              "seiu-925",
+              "washington-bikes",
+              "washington-bus",
+              "washington-conservation-action",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-stonewall-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "no_endorsement",
+            "message": "1 eligible sources explicitly endorse no one.",
+            "review_item_ids": [],
+            "source_ids": [
+              "32nd-district-democrats"
+            ]
+          },
+          {
+            "code": "low_confidence",
+            "message": "One or more scored endorsements carry a confidence warning.",
+            "review_item_ids": [],
+            "source_ids": [
+              "nwpc-washington",
+              "washington-housing-alliance"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "32nd-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-32-state-representative-1--danica-noble"
+        ],
+        "winner_share": "7/11",
+        "winner_support_points": "7"
+      },
+      {
+        "category_coverage_count": 4,
+        "eligible_source_count": 30,
+        "explicit_endorsement_count": 17,
+        "grade": "B",
+        "is_tied": false,
+        "missing_source_count": 13,
+        "race_id": "ld-32-state-representative-2",
+        "source_coverage_count": 17,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "13 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "seattle-subway",
+              "sierra-club-washington",
+              "transit-riders-union",
+              "washington-bikes",
+              "washington-bus",
+              "washington-conservation-action",
+              "washington-state-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 4 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "low_confidence",
+            "message": "One or more scored endorsements carry a confidence warning.",
+            "review_item_ids": [],
+            "source_ids": [
+              "aft-washington",
+              "ufcw-3000",
+              "washington-housing-alliance"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "32nd-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-32-state-representative-2--lauren-davis"
+        ],
+        "winner_share": "21/34",
+        "winner_support_points": "21/2"
+      },
+      {
+        "category_coverage_count": 4,
+        "eligible_source_count": 30,
+        "explicit_endorsement_count": 15,
+        "grade": "B",
+        "is_tied": false,
+        "missing_source_count": 15,
+        "race_id": "ld-32-state-senator",
+        "source_coverage_count": 15,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "15 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "seattle-subway",
+              "seiu-775",
+              "sierra-club-washington",
+              "transit-riders-union",
+              "washington-bikes",
+              "washington-bus",
+              "washington-conservation-action",
+              "washington-state-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 4 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "low_confidence",
+            "message": "One or more scored endorsements carry a confidence warning.",
+            "review_item_ids": [],
+            "source_ids": [
+              "alliance-for-gun-responsibility"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "32nd-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-32-state-senator--cindy-ryu"
+        ],
+        "winner_share": "7/10",
+        "winner_support_points": "21/2"
+      },
+      {
+        "category_coverage_count": 3,
+        "eligible_source_count": 30,
+        "explicit_endorsement_count": 8,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 22,
+        "race_id": "ld-34-state-representative-1",
+        "source_coverage_count": 8,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "22 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "alliance-for-gun-responsibility",
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "king-county-democrats",
+              "mlk-labor",
+              "nwpc-washington",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "sage-leaders",
+              "seattle-subway",
+              "sierra-club-washington",
+              "the-stranger",
+              "the-urbanist",
+              "transit-riders-union",
+              "washington-bikes",
+              "washington-bus",
+              "washington-conservation-action",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 3 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "34th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-34-state-representative-1--brianna-k-thomas"
+        ],
+        "winner_share": "1",
+        "winner_support_points": "8"
+      },
+      {
+        "category_coverage_count": 6,
+        "eligible_source_count": 30,
+        "explicit_endorsement_count": 18,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 12,
+        "race_id": "ld-34-state-representative-2",
+        "source_coverage_count": 18,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "12 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "sage-leaders",
+              "seattle-subway",
+              "transit-riders-union",
+              "washington-bus",
+              "washington-state-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "34th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-34-state-representative-2--joe-fitzgibbon"
+        ],
+        "winner_share": "17/18",
+        "winner_support_points": "17"
+      },
+      {
+        "category_coverage_count": 6,
+        "eligible_source_count": 30,
+        "explicit_endorsement_count": 15,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 15,
+        "race_id": "ld-34-state-senator",
+        "source_coverage_count": 15,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "15 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "nwpc-washington",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "seattle-subway",
+              "the-stranger",
+              "the-urbanist",
+              "transit-riders-union",
+              "washington-bus",
+              "washington-education-association",
+              "washington-state-democrats",
+              "washington-stonewall-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "34th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-34-state-senator--emily-alvarado"
+        ],
+        "winner_share": "1",
+        "winner_support_points": "15"
+      },
+      {
+        "category_coverage_count": 6,
+        "eligible_source_count": 30,
+        "explicit_endorsement_count": 17,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 13,
+        "race_id": "ld-36-state-representative-1",
+        "source_coverage_count": 17,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "13 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "seattle-subway",
+              "the-stranger",
+              "transit-riders-union",
+              "washington-bus",
+              "washington-education-association",
+              "washington-state-democrats",
+              "washington-stonewall-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "36th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-36-state-representative-1--julia-grant-reed"
+        ],
+        "winner_share": "1",
+        "winner_support_points": "17"
+      },
+      {
+        "category_coverage_count": 5,
+        "eligible_source_count": 30,
+        "explicit_endorsement_count": 13,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 17,
+        "race_id": "ld-36-state-representative-2",
+        "source_coverage_count": 13,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "17 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "king-county-democrats",
+              "mlk-labor",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "sage-leaders",
+              "seattle-subway",
+              "the-stranger",
+              "the-urbanist",
+              "transit-riders-union",
+              "washington-bus",
+              "washington-education-association",
+              "washington-state-democrats",
+              "washington-stonewall-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 5 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "36th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-36-state-representative-2--liz-berry"
+        ],
+        "winner_share": "1",
+        "winner_support_points": "13"
+      },
+      {
+        "category_coverage_count": 4,
+        "eligible_source_count": 30,
+        "explicit_endorsement_count": 10,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 20,
+        "race_id": "ld-36-state-senator",
+        "source_coverage_count": 10,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "20 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "king-county-democrats",
+              "mlk-labor",
+              "nwpc-washington",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "sage-leaders",
+              "seattle-subway",
+              "the-stranger",
+              "the-urbanist",
+              "transit-riders-union",
+              "washington-bikes",
+              "washington-bus",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-stonewall-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 4 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "36th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-36-state-senator--noel-c-frame"
+        ],
+        "winner_share": "1",
+        "winner_support_points": "10"
+      },
+      {
+        "category_coverage_count": 4,
+        "eligible_source_count": 30,
+        "explicit_endorsement_count": 10,
+        "grade": "B",
+        "is_tied": false,
+        "missing_source_count": 20,
+        "race_id": "ld-37-state-representative-1",
+        "source_coverage_count": 10,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "20 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "king-county-democrats",
+              "mlk-labor",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "seattle-subway",
+              "seiu-775",
+              "sierra-club-washington",
+              "transit-riders-union",
+              "ufcw-3000",
+              "washington-bikes",
+              "washington-bus",
+              "washington-conservation-action",
+              "washington-education-association",
+              "washington-housing-alliance",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 4 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "37th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-37-state-representative-1--sharon-tomiko-santos"
+        ],
+        "winner_share": "3/5",
+        "winner_support_points": "6"
+      },
+      {
+        "category_coverage_count": 5,
+        "eligible_source_count": 30,
+        "explicit_endorsement_count": 16,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 14,
+        "race_id": "ld-37-state-representative-2",
+        "source_coverage_count": 16,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "14 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "seattle-subway",
+              "sierra-club-washington",
+              "transit-riders-union",
+              "washington-bikes",
+              "washington-bus",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 5 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "37th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-37-state-representative-2--jaelynn-scott"
+        ],
+        "winner_share": "1",
+        "winner_support_points": "16"
+      },
+      {
+        "category_coverage_count": 5,
+        "eligible_source_count": 30,
+        "explicit_endorsement_count": 15,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 14,
+        "race_id": "ld-37-state-senator",
+        "source_coverage_count": 16,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "14 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "nwpc-washington",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "seattle-subway",
+              "sierra-club-washington",
+              "transit-riders-union",
+              "washington-bikes",
+              "washington-education-association",
+              "washington-state-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 5 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "no_endorsement",
+            "message": "1 eligible sources explicitly endorse no one.",
+            "review_item_ids": [],
+            "source_ids": [
+              "the-urbanist"
+            ]
+          },
+          {
+            "code": "low_confidence",
+            "message": "One or more scored endorsements carry a confidence warning.",
+            "review_item_ids": [],
+            "source_ids": [
+              "sage-leaders"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "37th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-37-state-senator--chipalo-street"
+        ],
+        "winner_share": "9/10",
+        "winner_support_points": "27/2"
+      },
+      {
+        "category_coverage_count": 6,
+        "eligible_source_count": 30,
+        "explicit_endorsement_count": 16,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 14,
+        "race_id": "ld-43-state-representative-1",
+        "source_coverage_count": 16,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "14 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "sage-leaders",
+              "seattle-subway",
+              "transit-riders-union",
+              "washington-bus",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "43rd-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-43-state-representative-1--nicole-macri"
+        ],
+        "winner_share": "1",
+        "winner_support_points": "16"
+      },
+      {
+        "category_coverage_count": 4,
+        "eligible_source_count": 30,
+        "explicit_endorsement_count": 8,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 22,
+        "race_id": "ld-43-state-representative-2",
+        "source_coverage_count": 8,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "22 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "alliance-for-gun-responsibility",
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "king-county-democrats",
+              "mlk-labor",
+              "nwpc-washington",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "sage-leaders",
+              "seattle-subway",
+              "sierra-club-washington",
+              "the-stranger",
+              "the-urbanist",
+              "transit-riders-union",
+              "washington-bikes",
+              "washington-bus",
+              "washington-conservation-action",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-stonewall-democrats"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 4 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "43rd-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-43-state-representative-2--shaun-scott"
+        ],
+        "winner_share": "1",
+        "winner_support_points": "8"
+      },
+      {
+        "category_coverage_count": 6,
+        "eligible_source_count": 30,
+        "explicit_endorsement_count": 21,
+        "grade": "B",
+        "is_tied": false,
+        "missing_source_count": 9,
+        "race_id": "ld-43-state-senator",
+        "source_coverage_count": 21,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "9 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "seattle-subway",
+              "transit-riders-union",
+              "washington-state-democrats"
+            ]
+          },
+          {
+            "code": "low_confidence",
+            "message": "One or more scored endorsements carry a confidence warning.",
+            "review_item_ids": [],
+            "source_ids": [
+              "aft-washington",
+              "washington-stonewall-democrats"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "43rd-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-43-state-senator--jamie-pedersen"
+        ],
+        "winner_share": "13/21",
+        "winner_support_points": "13"
+      },
+      {
+        "category_coverage_count": 6,
+        "eligible_source_count": 30,
+        "explicit_endorsement_count": 14,
+        "grade": "B",
+        "is_tied": false,
+        "missing_source_count": 15,
+        "race_id": "ld-46-state-representative-1",
+        "source_coverage_count": 15,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "15 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "king-county-democrats",
+              "mlk-labor",
+              "nwpc-washington",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "sage-leaders",
+              "transit-riders-union",
+              "washington-bus",
+              "washington-housing-alliance",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "no_endorsement",
+            "message": "1 eligible sources explicitly endorse no one.",
+            "review_item_ids": [],
+            "source_ids": [
+              "46th-district-democrats"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "46th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-46-state-representative-1--gerry-pollet"
+        ],
+        "winner_share": "9/14",
+        "winner_support_points": "9"
+      },
+      {
+        "category_coverage_count": 6,
+        "eligible_source_count": 30,
+        "explicit_endorsement_count": 17,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 13,
+        "race_id": "ld-46-state-representative-2",
+        "source_coverage_count": 17,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "13 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "sage-leaders",
+              "seattle-subway",
+              "the-stranger",
+              "transit-riders-union",
+              "washington-bus",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "46th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-46-state-representative-2--darya-farivar"
+        ],
+        "winner_share": "1",
+        "winner_support_points": "17"
+      },
+      {
+        "category_coverage_count": 6,
+        "eligible_source_count": 30,
+        "explicit_endorsement_count": 15,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 15,
+        "race_id": "ld-46-state-senator",
+        "source_coverage_count": 15,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "15 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "nwpc-washington",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "sage-leaders",
+              "seattle-subway",
+              "the-stranger",
+              "transit-riders-union",
+              "washington-bus",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "46th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "ld-46-state-senator--javier-valdez"
+        ],
+        "winner_share": "1",
+        "winner_support_points": "15"
+      },
+      {
+        "category_coverage_count": 6,
+        "eligible_source_count": 36,
+        "explicit_endorsement_count": 20,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 16,
+        "race_id": "seattle-city-council-5",
+        "source_coverage_count": 20,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "16 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "34th-district-democrats",
+              "37th-district-democrats",
+              "43rd-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "planned-parenthood-alliance-advocates",
+              "seattle-subway",
+              "sierra-club-washington",
+              "washington-education-association",
+              "washington-housing-alliance",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council"
+            ]
+          },
+          {
+            "code": "low_confidence",
+            "message": "One or more scored endorsements carry a confidence warning.",
+            "review_item_ids": [],
+            "source_ids": [
+              "32nd-district-democrats",
+              "nwpc-washington",
+              "seiu-925"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "32nd-district-democrats",
+              "34th-district-democrats",
+              "36th-district-democrats",
+              "37th-district-democrats",
+              "43rd-district-democrats",
+              "46th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "seattle-city-council-5--nilu-jenks"
+        ],
+        "winner_share": "37/40",
+        "winner_support_points": "37/2"
+      },
+      {
+        "category_coverage_count": 3,
+        "eligible_source_count": 36,
+        "explicit_endorsement_count": 9,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 27,
+        "race_id": "seattle-municipal-court-judge-5",
+        "source_coverage_count": 9,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "27 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "36th-district-democrats",
+              "aft-washington",
+              "alliance-for-gun-responsibility",
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "nwpc-washington",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "sage-leaders",
+              "seattle-subway",
+              "seiu-775",
+              "sierra-club-washington",
+              "the-urbanist",
+              "transit-riders-union",
+              "ufcw-3000",
+              "washington-bikes",
+              "washington-bus",
+              "washington-conservation-action",
+              "washington-education-association",
+              "washington-housing-alliance",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 3 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "low_confidence",
+            "message": "One or more scored endorsements carry a confidence warning.",
+            "review_item_ids": [],
+            "source_ids": [
+              "32nd-district-democrats"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "32nd-district-democrats",
+              "34th-district-democrats",
+              "36th-district-democrats",
+              "37th-district-democrats",
+              "43rd-district-democrats",
+              "46th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "seattle-municipal-court-judge-5--gabe-rothstein"
+        ],
+        "winner_share": "17/18",
+        "winner_support_points": "17/2"
+      },
+      {
+        "category_coverage_count": 3,
+        "eligible_source_count": 36,
+        "explicit_endorsement_count": 9,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 27,
+        "race_id": "seattle-proposition-1-library-levy",
+        "source_coverage_count": 9,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "27 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "37th-district-democrats",
+              "aft-washington",
+              "alliance-for-gun-responsibility",
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "nwpc-washington",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "sage-leaders",
+              "seattle-subway",
+              "seiu-775",
+              "seiu-925",
+              "sierra-club-washington",
+              "transit-riders-union",
+              "ufcw-3000",
+              "washington-bikes",
+              "washington-bus",
+              "washington-conservation-action",
+              "washington-education-association",
+              "washington-housing-alliance",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 3 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "32nd-district-democrats",
+              "34th-district-democrats",
+              "36th-district-democrats",
+              "37th-district-democrats",
+              "43rd-district-democrats",
+              "46th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "seattle-proposition-1-library-levy--yes"
+        ],
+        "winner_share": "1",
+        "winner_support_points": "9"
+      },
+      {
+        "category_coverage_count": 5,
+        "eligible_source_count": 36,
+        "explicit_endorsement_count": 19,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 17,
+        "race_id": "supreme-court-justice-1",
+        "source_coverage_count": 19,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "17 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "aft-washington",
+              "alliance-for-gun-responsibility",
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "oneamerica-votes",
+              "protec17",
+              "sage-leaders",
+              "seattle-subway",
+              "transit-riders-union",
+              "washington-bikes",
+              "washington-bus",
+              "washington-housing-alliance",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 5 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "32nd-district-democrats",
+              "34th-district-democrats",
+              "36th-district-democrats",
+              "37th-district-democrats",
+              "43rd-district-democrats",
+              "46th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "supreme-court-justice-1--colleen-melody"
+        ],
+        "winner_share": "1",
+        "winner_support_points": "19"
+      },
+      {
+        "category_coverage_count": 5,
+        "eligible_source_count": 36,
+        "explicit_endorsement_count": 18,
+        "grade": "C",
+        "is_tied": false,
+        "missing_source_count": 18,
+        "race_id": "supreme-court-justice-3",
+        "source_coverage_count": 18,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "18 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "aft-washington",
+              "alliance-for-gun-responsibility",
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "oneamerica-votes",
+              "protec17",
+              "sage-leaders",
+              "seattle-subway",
+              "sierra-club-washington",
+              "transit-riders-union",
+              "ufcw-3000",
+              "washington-bikes",
+              "washington-bus",
+              "washington-housing-alliance",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 5 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "low_confidence",
+            "message": "One or more scored endorsements carry a confidence warning.",
+            "review_item_ids": [],
+            "source_ids": [
+              "32nd-district-democrats",
+              "36th-district-democrats",
+              "43rd-district-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "32nd-district-democrats",
+              "34th-district-democrats",
+              "36th-district-democrats",
+              "37th-district-democrats",
+              "43rd-district-democrats",
+              "46th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "supreme-court-justice-3--mike-diaz"
+        ],
+        "winner_share": "19/36",
+        "winner_support_points": "19/2"
+      },
+      {
+        "category_coverage_count": 5,
+        "eligible_source_count": 36,
+        "explicit_endorsement_count": 19,
+        "grade": "B",
+        "is_tied": false,
+        "missing_source_count": 17,
+        "race_id": "supreme-court-justice-5",
+        "source_coverage_count": 19,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "17 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "aft-washington",
+              "alliance-for-gun-responsibility",
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "oneamerica-votes",
+              "protec17",
+              "sage-leaders",
+              "seattle-subway",
+              "transit-riders-union",
+              "ufcw-3000",
+              "washington-bikes",
+              "washington-bus",
+              "washington-conservation-action",
+              "washington-housing-alliance",
+              "washington-state-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 5 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "low_confidence",
+            "message": "One or more scored endorsements carry a confidence warning.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "36th-district-democrats",
+              "seiu-925",
+              "washington-state-labor-council"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "32nd-district-democrats",
+              "34th-district-democrats",
+              "36th-district-democrats",
+              "37th-district-democrats",
+              "43rd-district-democrats",
+              "46th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "supreme-court-justice-5--theo-angelis"
+        ],
+        "winner_share": "12/19",
+        "winner_support_points": "12"
+      },
+      {
+        "category_coverage_count": 5,
+        "eligible_source_count": 36,
+        "explicit_endorsement_count": 12,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 23,
+        "race_id": "supreme-court-justice-7",
+        "source_coverage_count": 13,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "23 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "46th-district-democrats",
+              "aft-washington",
+              "alliance-for-gun-responsibility",
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "sage-leaders",
+              "seattle-subway",
+              "seiu-775",
+              "transit-riders-union",
+              "ufcw-3000",
+              "washington-bikes",
+              "washington-bus",
+              "washington-conservation-action",
+              "washington-housing-alliance",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-stonewall-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 5 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "no_endorsement",
+            "message": "1 eligible sources explicitly endorse no one.",
+            "review_item_ids": [],
+            "source_ids": [
+              "the-urbanist"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "32nd-district-democrats",
+              "34th-district-democrats",
+              "36th-district-democrats",
+              "37th-district-democrats",
+              "43rd-district-democrats",
+              "46th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "supreme-court-justice-7--debra-l-stephens"
+        ],
+        "winner_share": "1",
+        "winner_support_points": "12"
+      },
+      {
+        "category_coverage_count": 5,
+        "eligible_source_count": 36,
+        "explicit_endorsement_count": 18,
+        "grade": "A+",
+        "is_tied": false,
+        "missing_source_count": 17,
+        "race_id": "us-house-7",
+        "source_coverage_count": 19,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "17 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "mlk-labor",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "sage-leaders",
+              "seattle-subway",
+              "seiu-925",
+              "transit-riders-union",
+              "ufcw-3000",
+              "washington-bikes",
+              "washington-bus",
+              "washington-conservation-action",
+              "washington-housing-alliance",
+              "washington-state-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 5 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "no_endorsement",
+            "message": "1 eligible sources explicitly endorse no one.",
+            "review_item_ids": [],
+            "source_ids": [
+              "the-urbanist"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "32nd-district-democrats",
+              "34th-district-democrats",
+              "36th-district-democrats",
+              "37th-district-democrats",
+              "43rd-district-democrats",
+              "46th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "us-house-7--pramila-jayapal"
+        ],
+        "winner_share": "1",
+        "winner_support_points": "18"
+      },
+      {
+        "category_coverage_count": 5,
+        "eligible_source_count": 36,
+        "explicit_endorsement_count": 9,
+        "grade": "A",
+        "is_tied": false,
+        "missing_source_count": 24,
+        "race_id": "us-house-9",
+        "source_coverage_count": 12,
+        "warnings": [
+          {
+            "code": "missing_coverage",
+            "message": "24 eligible sources lack a resolved decision.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "32nd-district-democrats",
+              "34th-district-democrats",
+              "36th-district-democrats",
+              "46th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "fuse-washington",
+              "mlk-labor",
+              "nwpc-washington",
+              "oneamerica-votes",
+              "planned-parenthood-alliance-advocates",
+              "protec17",
+              "sage-leaders",
+              "seattle-subway",
+              "seiu-925",
+              "transit-riders-union",
+              "ufcw-3000",
+              "washington-bikes",
+              "washington-bus",
+              "washington-conservation-action",
+              "washington-housing-alliance",
+              "washington-state-democrats",
+              "washington-working-families-party"
+            ]
+          },
+          {
+            "code": "low_category_coverage",
+            "message": "Resolved decisions cover 5 of 6 eligible source categories.",
+            "review_item_ids": [],
+            "source_ids": []
+          },
+          {
+            "code": "no_endorsement",
+            "message": "3 eligible sources explicitly endorse no one.",
+            "review_item_ids": [],
+            "source_ids": [
+              "37th-district-democrats",
+              "43rd-district-democrats",
+              "the-urbanist"
+            ]
+          },
+          {
+            "code": "source_overlap",
+            "message": "Eligible sources have disclosed organizational overlap.",
+            "review_item_ids": [],
+            "source_ids": [
+              "11th-district-democrats",
+              "32nd-district-democrats",
+              "34th-district-democrats",
+              "36th-district-democrats",
+              "37th-district-democrats",
+              "43rd-district-democrats",
+              "46th-district-democrats",
+              "aft-washington",
+              "environmental-climate-caucus-wa-democrats",
+              "king-county-democrats",
+              "mlk-labor",
+              "protec17",
+              "seiu-775",
+              "seiu-925",
+              "ufcw-3000",
+              "washington-education-association",
+              "washington-state-building-trades",
+              "washington-state-democrats",
+              "washington-state-labor-council",
+              "washington-stonewall-democrats"
+            ]
+          }
+        ],
+        "winner_candidate_ids": [
+          "us-house-9--adam-smith"
+        ],
+        "winner_share": "8/9",
+        "winner_support_points": "8"
+      }
+    ]
+  },
+  "changes": [
+    {
+      "changed_fields": [
+        "eligible_source_count",
+        "missing_source_count",
+        "warnings"
+      ],
+      "race_id": "king-county-assessor"
+    },
+    {
+      "changed_fields": [
+        "eligible_source_count",
+        "explicit_endorsement_count",
+        "missing_source_count",
+        "source_coverage_count",
+        "warnings",
+        "winner_share",
+        "winner_support_points"
+      ],
+      "race_id": "king-county-council-2"
+    },
+    {
+      "changed_fields": [
+        "eligible_source_count",
+        "explicit_endorsement_count",
+        "missing_source_count",
+        "source_coverage_count",
+        "warnings",
+        "winner_support_points"
+      ],
+      "race_id": "king-county-council-8"
+    },
+    {
+      "changed_fields": [
+        "eligible_source_count",
+        "missing_source_count",
+        "warnings"
+      ],
+      "race_id": "ld-11-state-representative-1"
+    },
+    {
+      "changed_fields": [
+        "eligible_source_count",
+        "missing_source_count",
+        "warnings"
+      ],
+      "race_id": "ld-11-state-representative-2"
+    },
+    {
+      "changed_fields": [
+        "eligible_source_count",
+        "missing_source_count",
+        "warnings"
+      ],
+      "race_id": "ld-32-state-representative-1"
+    },
+    {
+      "changed_fields": [
+        "eligible_source_count",
+        "missing_source_count",
+        "warnings"
+      ],
+      "race_id": "ld-32-state-representative-2"
+    },
+    {
+      "changed_fields": [
+        "eligible_source_count",
+        "missing_source_count",
+        "warnings"
+      ],
+      "race_id": "ld-32-state-senator"
+    },
+    {
+      "changed_fields": [
+        "eligible_source_count",
+        "missing_source_count",
+        "warnings"
+      ],
+      "race_id": "ld-34-state-representative-1"
+    },
+    {
+      "changed_fields": [
+        "eligible_source_count",
+        "missing_source_count",
+        "warnings"
+      ],
+      "race_id": "ld-34-state-representative-2"
+    },
+    {
+      "changed_fields": [
+        "eligible_source_count",
+        "missing_source_count",
+        "warnings"
+      ],
+      "race_id": "ld-34-state-senator"
+    },
+    {
+      "changed_fields": [
+        "eligible_source_count",
+        "missing_source_count",
+        "warnings"
+      ],
+      "race_id": "ld-36-state-representative-1"
+    },
+    {
+      "changed_fields": [
+        "eligible_source_count",
+        "missing_source_count",
+        "warnings"
+      ],
+      "race_id": "ld-36-state-representative-2"
+    },
+    {
+      "changed_fields": [
+        "eligible_source_count",
+        "missing_source_count",
+        "warnings"
+      ],
+      "race_id": "ld-36-state-senator"
+    },
+    {
+      "changed_fields": [
+        "category_coverage_count",
+        "eligible_source_count",
+        "explicit_endorsement_count",
+        "grade",
+        "is_tied",
+        "missing_source_count",
+        "source_coverage_count",
+        "warnings",
+        "winner_candidate_ids",
+        "winner_share"
+      ],
+      "race_id": "ld-37-state-representative-1"
+    },
+    {
+      "changed_fields": [
+        "category_coverage_count",
+        "eligible_source_count",
+        "explicit_endorsement_count",
+        "missing_source_count",
+        "source_coverage_count",
+        "warnings",
+        "winner_support_points"
+      ],
+      "race_id": "ld-37-state-representative-2"
+    },
+    {
+      "changed_fields": [
+        "eligible_source_count",
+        "missing_source_count",
+        "warnings"
+      ],
+      "race_id": "ld-37-state-senator"
+    },
+    {
+      "changed_fields": [
+        "eligible_source_count",
+        "missing_source_count",
+        "warnings"
+      ],
+      "race_id": "ld-43-state-representative-1"
+    },
+    {
+      "changed_fields": [
+        "eligible_source_count",
+        "missing_source_count",
+        "warnings"
+      ],
+      "race_id": "ld-43-state-representative-2"
+    },
+    {
+      "changed_fields": [
+        "eligible_source_count",
+        "missing_source_count",
+        "warnings"
+      ],
+      "race_id": "ld-43-state-senator"
+    },
+    {
+      "changed_fields": [
+        "eligible_source_count",
+        "explicit_endorsement_count",
+        "missing_source_count",
+        "source_coverage_count",
+        "warnings",
+        "winner_share"
+      ],
+      "race_id": "ld-46-state-representative-1"
+    },
+    {
+      "changed_fields": [
+        "eligible_source_count",
+        "missing_source_count",
+        "warnings"
+      ],
+      "race_id": "ld-46-state-representative-2"
+    },
+    {
+      "changed_fields": [
+        "eligible_source_count",
+        "missing_source_count",
+        "warnings"
+      ],
+      "race_id": "ld-46-state-senator"
+    },
+    {
+      "changed_fields": [
+        "eligible_source_count",
+        "explicit_endorsement_count",
+        "missing_source_count",
+        "source_coverage_count",
+        "warnings",
+        "winner_share",
+        "winner_support_points"
+      ],
+      "race_id": "seattle-city-council-5"
+    },
+    {
+      "changed_fields": [
+        "eligible_source_count",
+        "missing_source_count",
+        "warnings"
+      ],
+      "race_id": "seattle-municipal-court-judge-5"
+    },
+    {
+      "changed_fields": [
+        "eligible_source_count",
+        "missing_source_count",
+        "warnings"
+      ],
+      "race_id": "seattle-proposition-1-library-levy"
+    },
+    {
+      "changed_fields": [
+        "eligible_source_count",
+        "missing_source_count",
+        "warnings"
+      ],
+      "race_id": "supreme-court-justice-1"
+    },
+    {
+      "changed_fields": [
+        "eligible_source_count",
+        "missing_source_count",
+        "warnings"
+      ],
+      "race_id": "supreme-court-justice-3"
+    },
+    {
+      "changed_fields": [
+        "eligible_source_count",
+        "missing_source_count",
+        "warnings"
+      ],
+      "race_id": "supreme-court-justice-5"
+    },
+    {
+      "changed_fields": [
+        "eligible_source_count",
+        "missing_source_count",
+        "warnings"
+      ],
+      "race_id": "supreme-court-justice-7"
+    },
+    {
+      "changed_fields": [
+        "eligible_source_count",
+        "missing_source_count",
+        "warnings"
+      ],
+      "race_id": "us-house-7"
+    },
+    {
+      "changed_fields": [
+        "eligible_source_count",
+        "explicit_endorsement_count",
+        "missing_source_count",
+        "source_coverage_count",
+        "warnings",
+        "winner_share"
+      ],
+      "race_id": "us-house-9"
+    }
+  ],
+  "schema_version": "1.0"
+}

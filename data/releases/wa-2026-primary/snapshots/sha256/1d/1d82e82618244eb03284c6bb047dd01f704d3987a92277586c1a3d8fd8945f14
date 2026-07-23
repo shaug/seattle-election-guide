@@ -1,0 +1,25 @@
+{
+  "captured_at": "2026-07-23T12:44:00Z",
+  "decisions": [
+    {
+      "candidate_ids": [
+        "king-county-council-2--rebecca-salda-a"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "king-county-council-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "king-county-council-8--teresa-mosqueda"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "king-county-council-8",
+      "status": "endorsed"
+    }
+  ],
+  "evidence_locator": "Official 2026 Midterm Election endorsement section and its candidate links.",
+  "source_id": "washington-community-action-network"
+}
