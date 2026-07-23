@@ -92,6 +92,13 @@ def render_html_document(
             for group in race.endorsement_groups
             for endorser in group.endorsers
         ),
+        *(
+            cell.evidence_url
+            for section in view_model.sections
+            for race in section.races
+            for cell in race.source_cells
+            if cell.evidence_url is not None
+        ),
     ]
     for url in rendered_urls:
         _require_web_url(url)
@@ -1522,24 +1529,6 @@ def _capture_emulated_viewport(
                     "const ownedOpened=Boolean(firstDialog?.open&&"
                     "window.location.hash===firstHash&&"
                     "document.activeElement===closeButton);"
-                    "history.replaceState(null,'',window.location.pathname+window.location.search);"
-                    "window.dispatchEvent(new PopStateEvent('popstate',{state:null}));"
-                    "await pause();"
-                    "const ownedClosed=Boolean(firstDialog?.open===false&&"
-                    "window.location.hash===''&&"
-                    "document.activeElement===firstLink);"
-                    "history.replaceState({raceDetail:firstHash},'',firstHash);"
-                    "window.dispatchEvent(new PopStateEvent('popstate',{state:history.state}));"
-                    "await pause();"
-                    "const forwardOpened=Boolean(firstDialog?.open&&"
-                    "window.location.hash===firstHash&&"
-                    "document.activeElement===closeButton);"
-                    "history.replaceState(null,'',firstHash);"
-                    "firstDialog?.dispatchEvent(new Event('cancel',{cancelable:true}));"
-                    "await pause();"
-                    "const escapeClosed=Boolean(firstDialog?.open===false&&"
-                    "window.location.hash===''&&"
-                    "document.activeElement===firstLink);"
                     "return {innerWidth:window.innerWidth,innerHeight:window.innerHeight,"
                     "scrollWidth:document.documentElement.scrollWidth,"
                     "guideVisible:Boolean(guide&&getComputedStyle(guide).display!=='none'&&"
@@ -1558,7 +1547,7 @@ def _capture_emulated_viewport(
                     "disclosures,dialogCount:dialogs.length,"
                     "copy:{copied:copiedValue.endsWith(firstHash),"
                     "announced:copyStatus.startsWith('Link copied')},"
-                    "direct,directClosed,ownedOpened,ownedClosed,forwardOpened,escapeClosed};})()))()"
+                    "direct,directClosed,ownedOpened};})()))()"
                 ),
                 "returnByValue": True,
                 "awaitPromise": True,
@@ -1569,6 +1558,73 @@ def _capture_emulated_viewport(
         if "value" not in result:
             raise ValueError(f"responsive interaction validation failed: {evaluated}")
         metrics = cast(dict[str, object], json.loads(cast(str, result["value"])))
+        cdp.command(
+            "Runtime.evaluate",
+            {
+                "expression": (
+                    "setTimeout(()=>document.querySelector("
+                    "'[data-race-detail-dialog][open] [data-close-race-detail]')?.click(),0);"
+                    "true"
+                ),
+                "returnByValue": True,
+            },
+            session_id=session_id,
+        )
+        time.sleep(0.25)
+        traversed_back = cdp.command(
+            "Runtime.evaluate",
+            {
+                "expression": (
+                    "JSON.stringify((()=>{"
+                    "const dialog=document.querySelector('[data-race-detail-dialog]');"
+                    "const card=dialog?.closest('[data-publication-race-id]');"
+                    "const link=card?.querySelector('[data-race-detail-link]');"
+                    "return {ownedClosed:Boolean(dialog?.open===false&&"
+                    "window.location.hash===''&&document.activeElement===link)};})())"
+                ),
+                "returnByValue": True,
+            },
+            session_id=session_id,
+        )
+        back_result = cast(dict[str, Any], traversed_back["result"])
+        if "value" not in back_result:
+            raise ValueError(f"back navigation validation failed: {traversed_back}")
+        metrics.update(cast(dict[str, object], json.loads(cast(str, back_result["value"]))))
+        cdp.command(
+            "Runtime.evaluate",
+            {"expression": "setTimeout(()=>history.forward(),0);true", "returnByValue": True},
+            session_id=session_id,
+        )
+        time.sleep(0.25)
+        traversed_forward = cdp.command(
+            "Runtime.evaluate",
+            {
+                "expression": (
+                    "(async()=>{"
+                    "const pause=()=>new Promise(resolve=>setTimeout(resolve,120));"
+                    "const dialog=document.querySelector('[data-race-detail-dialog]');"
+                    "const card=dialog?.closest('[data-publication-race-id]');"
+                    "const link=card?.querySelector('[data-race-detail-link]');"
+                    "const close=dialog?.querySelector('[data-close-race-detail]');"
+                    "const firstHash=link?.hash||'';"
+                    "const forwardOpened=Boolean(dialog?.open&&"
+                    "window.location.hash===firstHash&&document.activeElement===close);"
+                    "history.replaceState(null,'',firstHash);"
+                    "dialog?.dispatchEvent(new Event('cancel',{cancelable:true}));"
+                    "await pause();"
+                    "return JSON.stringify({forwardOpened,escapeClosed:Boolean("
+                    "dialog?.open===false&&window.location.hash===''&&"
+                    "document.activeElement===link)});})()"
+                ),
+                "returnByValue": True,
+                "awaitPromise": True,
+            },
+            session_id=session_id,
+        )
+        forward_result = cast(dict[str, Any], traversed_forward["result"])
+        if "value" not in forward_result:
+            raise ValueError(f"forward navigation validation failed: {traversed_forward}")
+        metrics.update(cast(dict[str, object], json.loads(cast(str, forward_result["value"]))))
         expected_metrics: dict[str, object] = {
             "innerWidth": width,
             "innerHeight": height,

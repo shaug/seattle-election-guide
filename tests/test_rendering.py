@@ -593,6 +593,19 @@ def test_html_rejects_non_web_evidence_links(tmp_path: Path) -> None:
     with pytest.raises(ValueError, match=r"safe HTTP\(S\) URL"):
         render_html_document(source_view_model, read_rendering_configuration(RENDERING_CONFIG))
 
+    cell_view_model = _view_model(tmp_path / "cell")
+    cell = next(
+        cell
+        for section in cell_view_model.sections
+        for race in section.races
+        for cell in race.source_cells
+        if cell.state in {"no_endorsement", "unavailable", "unverified"}
+    )
+    cell.evidence_url = "javascript:alert(document.cookie)"
+
+    with pytest.raises(ValueError, match=r"safe HTTP\(S\) URL"):
+        render_html_document(cell_view_model, read_rendering_configuration(RENDERING_CONFIG))
+
 
 def test_pdf_result_header_cannot_be_masked_by_comparison_text(tmp_path: Path) -> None:
     race = next(
