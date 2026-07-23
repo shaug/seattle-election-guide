@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 5737,
+  "canonical_url": "https://www.instagram.com/p/Dax5yPUlKYO/",
+  "capture_method": "manual_upload",
+  "content_sha256": "240c28ec1f4c041c1dc0cb99aeca06f4169a92ee65e9d6405fd60998b2129450",
+  "http_status": null,
+  "id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+  "media_type": "application/json",
+  "published_at": "2026-07-14",
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://www.instagram.com/p/Dax5yPUlKYO/",
+  "retrieved_at": "2026-07-23T15:33:14Z",
+  "schema_version": "1.0",
+  "source_id": "washington-for-peace-and-justice",
+  "storage_reference": "sha256/24/240c28ec1f4c041c1dc0cb99aeca06f4169a92ee65e9d6405fd60998b2129450",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: Washington for Peace and Justice",
+  "updated_at": null
+}

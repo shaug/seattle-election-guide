@@ -9,16 +9,16 @@ take priority over coverage.
 
 ## Status
 
-The authoritative August 2026 Seattle ballot inventory is implemented and validated. The
-  default source panel is frozen before scoring, with 48 proposed organizations assigned explicit
-discovery and panel statuses. Content-addressed local evidence capture, integrity verification,
-unavailable-source records, structured manual transcription, deterministic race-scoped
-normalization, append-only ambiguity review, and immutable source-adapter refreshes are implemented.
-  No recommendation is treated as complete coverage. The audited primary ledger contains 496
-  decisions from 39 represented official source publications; release status explicitly lists the
-  five remaining active sources with access or discovery constraints. Exact deterministic consensus
-scoring, coverage signals, audit-only grade and tie handling, comparison-only Seattle Times
-results, and the unresolved-review publication gate are also implemented. Responsive HTML and the
+The authoritative August 2026 Seattle ballot inventory is implemented and validated. The default
+source panel is frozen before scoring, with 48 proposed organizations assigned explicit discovery and
+panel statuses. Content-addressed local evidence capture, integrity verification, unavailable-source
+records, structured manual transcription, deterministic race-scoped normalization, append-only
+ambiguity review, and immutable source-adapter refreshes are implemented. No recommendation is
+treated as complete coverage. The audited primary ledger contains 515 decisions from 40 represented
+official source publications; release status explicitly lists the three remaining active sources with
+access or discovery constraints. Exact deterministic consensus scoring, coverage signals, audit-only
+grade and tie handling, comparison-only Seattle Times results, and the unresolved-review publication
+gate are also implemented. Responsive HTML and the
 two-page US Letter guide now present candidate-centric endorsement consensus without voter-facing
 letter grades, while retaining the complete source matrix and scoring artifacts for audit.
 See [PROJECT.md](PROJECT.md) for the

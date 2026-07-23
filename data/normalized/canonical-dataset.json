@@ -854,6 +854,29 @@
     {
       "availability": "captured",
       "browser_required": false,
+      "byte_length": 5737,
+      "canonical_url": "https://www.instagram.com/p/Dax5yPUlKYO/",
+      "capture_method": "manual_upload",
+      "content_sha256": "240c28ec1f4c041c1dc0cb99aeca06f4169a92ee65e9d6405fd60998b2129450",
+      "http_status": null,
+      "id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "media_type": "application/json",
+      "published_at": "2026-07-14",
+      "redirect_chain": [],
+      "redistribution": "permitted",
+      "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+      "requested_url": "https://www.instagram.com/p/Dax5yPUlKYO/",
+      "retrieved_at": "2026-07-23T15:33:14Z",
+      "schema_version": "1.0",
+      "source_id": "washington-for-peace-and-justice",
+      "storage_reference": "sha256/24/240c28ec1f4c041c1dc0cb99aeca06f4169a92ee65e9d6405fd60998b2129450",
+      "storage_scope": "local_only",
+      "title": "Permitted 2026 endorsement decision extract: Washington for Peace and Justice",
+      "updated_at": null
+    },
+    {
+      "availability": "captured",
+      "browser_required": false,
       "byte_length": 678,
       "canonical_url": "https://www.washingtoncan.org/endorsements",
       "capture_method": "manual_upload",
@@ -8263,6 +8286,291 @@
       "raw_status_text": "endorsed",
       "requires_review": false,
       "source_id": "tech-4-housing"
+    },
+    {
+      "capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 3, green check-mark recommendation.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-f69516b485b78916",
+      "raw_candidate_text": "Pramila Jayapal",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "U.S. Representative — Congressional District 7",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-for-peace-and-justice"
+    },
+    {
+      "capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 3, green check-mark recommendation naming both candidates.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-921fd4dc11deb444",
+      "raw_candidate_text": "Melissa Chaudhry and Kshama Sawant",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "U.S. Representative — Congressional District 9",
+      "raw_status_text": "dual endorsement",
+      "requires_review": true,
+      "source_id": "washington-for-peace-and-justice"
+    },
+    {
+      "capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 3, green check-mark recommendation.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-31ddab6853144804",
+      "raw_candidate_text": "Jaime Michelle Hawk",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Washington Supreme Court Justice — Position 3",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-for-peace-and-justice"
+    },
+    {
+      "capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 3, green check-mark recommendation.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-b407612a5439d51d",
+      "raw_candidate_text": "Theo Angelis",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Washington Supreme Court Justice — Position 5",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-for-peace-and-justice"
+    },
+    {
+      "capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 4, green check-mark recommendation.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-07455ea0177f02ed",
+      "raw_candidate_text": "Rebecca Saldaña",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Metropolitan King County Council — District 2",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-for-peace-and-justice"
+    },
+    {
+      "capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 4, green check-mark recommendation.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-ead84837d1ecf7ad",
+      "raw_candidate_text": "Teresa Mosqueda",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Metropolitan King County Council — District 8",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-for-peace-and-justice"
+    },
+    {
+      "capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 4, green check-mark recommendation.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-11a40520b8885dce",
+      "raw_candidate_text": "Nilu Jenks",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Seattle City Council — District 5",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-for-peace-and-justice"
+    },
+    {
+      "capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 6, green check-mark recommendation.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-f084b285b1505dcd",
+      "raw_candidate_text": "Imraan Siddiqi",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Legislative District 32 State Representative — Position 2",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-for-peace-and-justice"
+    },
+    {
+      "capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 6, green check-mark recommendation.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-481d7be4f1794464",
+      "raw_candidate_text": "Cindy Ryu",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Legislative District 32 State Senator",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-for-peace-and-justice"
+    },
+    {
+      "capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 6, green check-mark recommendation.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-717f7d6457d4c9e3",
+      "raw_candidate_text": "Joe Fitzgibbon",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Legislative District 34 State Representative — Position 2",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-for-peace-and-justice"
+    },
+    {
+      "capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 6, green check-mark recommendation.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-7c0343cee886ffa6",
+      "raw_candidate_text": "Emily Alvarado",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Legislative District 34 State Senator",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-for-peace-and-justice"
+    },
+    {
+      "capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 6, green check-mark recommendation.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-573266f9a6fc9ce1",
+      "raw_candidate_text": "Liz Berry",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Legislative District 36 State Representative — Position 2",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-for-peace-and-justice"
+    },
+    {
+      "capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slides 6 and 7, green check-mark recommendation naming both candidates.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-9c24785a65d87136",
+      "raw_candidate_text": "Kelabe Tewolde and Sharon Tomiko Santos",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Legislative District 37 State Representative — Position 1",
+      "raw_status_text": "dual endorsement",
+      "requires_review": true,
+      "source_id": "washington-for-peace-and-justice"
+    },
+    {
+      "capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 6, green check-mark recommendation.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-8e2adfcb6dad5c3c",
+      "raw_candidate_text": "Jaelynn Scott",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Legislative District 37 State Representative — Position 2",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-for-peace-and-justice"
+    },
+    {
+      "capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 7, green check-mark recommendation.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-59862521bb78fe89",
+      "raw_candidate_text": "Chipalo Street",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Legislative District 37 State Senator",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-for-peace-and-justice"
+    },
+    {
+      "capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 7, green check-mark recommendation.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-0e968f377c8f239b",
+      "raw_candidate_text": "Nicole Macri",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Legislative District 43 State Representative — Position 1",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-for-peace-and-justice"
+    },
+    {
+      "capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 7, green check-mark recommendation.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-8698b00326430b35",
+      "raw_candidate_text": "Shaun Scott",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Legislative District 43 State Representative — Position 2",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-for-peace-and-justice"
+    },
+    {
+      "capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 7, green check-mark recommendation.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-e1acd7380ad875a2",
+      "raw_candidate_text": "Hannah Sabio-Howell",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Legislative District 43 State Senator",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-for-peace-and-justice"
+    },
+    {
+      "capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 7, green check-mark recommendation.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-11d977cee1dfdd0d",
+      "raw_candidate_text": "Darya Farivar",
+      "raw_notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "raw_race_text": "Legislative District 46 State Representative — Position 2",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "washington-for-peace-and-justice"
     },
     {
       "capture_id": "capture-washington-community-action-network-20260723T124400Z-cc0785ef23ad",
@@ -19165,6 +19473,428 @@
     },
     {
       "allocation": {
+        "us-house-7--pramila-jayapal": "1"
+      },
+      "candidate_ids": [
+        "us-house-7--pramila-jayapal"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-f69516b485b78916",
+      "id": "endorsement-d15f79e0a982e884",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-14",
+      "race_id": "us-house-7",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-23T15:40:00Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "source_id": "washington-for-peace-and-justice",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "us-house-9--kshama-sawant": "1/2",
+        "us-house-9--melissa-chaudhry": "1/2"
+      },
+      "candidate_ids": [
+        "us-house-9--melissa-chaudhry",
+        "us-house-9--kshama-sawant"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-921fd4dc11deb444",
+      "id": "endorsement-6537480a5b49bf04",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-14",
+      "race_id": "us-house-9",
+      "review_item_id": "review-83e5d7180b65dd8c",
+      "reviewed_at": "2026-07-23T15:40:00Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "source_id": "washington-for-peace-and-justice",
+      "status": "dual_endorsement"
+    },
+    {
+      "allocation": {
+        "supreme-court-justice-3--jaime-michelle-hawk": "1"
+      },
+      "candidate_ids": [
+        "supreme-court-justice-3--jaime-michelle-hawk"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-31ddab6853144804",
+      "id": "endorsement-33fa28ae82b01331",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-14",
+      "race_id": "supreme-court-justice-3",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-23T15:40:00Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "source_id": "washington-for-peace-and-justice",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "supreme-court-justice-5--theo-angelis": "1"
+      },
+      "candidate_ids": [
+        "supreme-court-justice-5--theo-angelis"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-b407612a5439d51d",
+      "id": "endorsement-bc5119093f9fb18b",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-14",
+      "race_id": "supreme-court-justice-5",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-23T15:40:00Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "source_id": "washington-for-peace-and-justice",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "king-county-council-2--rebecca-salda-a": "1"
+      },
+      "candidate_ids": [
+        "king-county-council-2--rebecca-salda-a"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-07455ea0177f02ed",
+      "id": "endorsement-4199ca14e7c8f7d3",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-14",
+      "race_id": "king-county-council-2",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-23T15:40:00Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "source_id": "washington-for-peace-and-justice",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "king-county-council-8--teresa-mosqueda": "1"
+      },
+      "candidate_ids": [
+        "king-county-council-8--teresa-mosqueda"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-ead84837d1ecf7ad",
+      "id": "endorsement-ec09805425cbaac7",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-14",
+      "race_id": "king-county-council-8",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-23T15:40:00Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "source_id": "washington-for-peace-and-justice",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "seattle-city-council-5--nilu-jenks": "1"
+      },
+      "candidate_ids": [
+        "seattle-city-council-5--nilu-jenks"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-11a40520b8885dce",
+      "id": "endorsement-ada7fc637b9e4fac",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-14",
+      "race_id": "seattle-city-council-5",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-23T15:40:00Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "source_id": "washington-for-peace-and-justice",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-32-state-representative-2--imraan-siddiqi": "1"
+      },
+      "candidate_ids": [
+        "ld-32-state-representative-2--imraan-siddiqi"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-f084b285b1505dcd",
+      "id": "endorsement-b71c5f96a6f10fcf",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-14",
+      "race_id": "ld-32-state-representative-2",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-23T15:40:00Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "source_id": "washington-for-peace-and-justice",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-32-state-senator--cindy-ryu": "1"
+      },
+      "candidate_ids": [
+        "ld-32-state-senator--cindy-ryu"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-481d7be4f1794464",
+      "id": "endorsement-09c89fd6f4bc01f2",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-14",
+      "race_id": "ld-32-state-senator",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-23T15:40:00Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "source_id": "washington-for-peace-and-justice",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-34-state-representative-2--joe-fitzgibbon": "1"
+      },
+      "candidate_ids": [
+        "ld-34-state-representative-2--joe-fitzgibbon"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-717f7d6457d4c9e3",
+      "id": "endorsement-ef9e702068692afa",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-14",
+      "race_id": "ld-34-state-representative-2",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-23T15:40:00Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "source_id": "washington-for-peace-and-justice",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-34-state-senator--emily-alvarado": "1"
+      },
+      "candidate_ids": [
+        "ld-34-state-senator--emily-alvarado"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-7c0343cee886ffa6",
+      "id": "endorsement-195d3cfda0a2e4d7",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-14",
+      "race_id": "ld-34-state-senator",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-23T15:40:00Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "source_id": "washington-for-peace-and-justice",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-36-state-representative-2--liz-berry": "1"
+      },
+      "candidate_ids": [
+        "ld-36-state-representative-2--liz-berry"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-573266f9a6fc9ce1",
+      "id": "endorsement-ea8793318b30fc47",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-14",
+      "race_id": "ld-36-state-representative-2",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-23T15:40:00Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "source_id": "washington-for-peace-and-justice",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-37-state-representative-1--kelabe-tewolde": "1/2",
+        "ld-37-state-representative-1--sharon-tomiko-santos": "1/2"
+      },
+      "candidate_ids": [
+        "ld-37-state-representative-1--kelabe-tewolde",
+        "ld-37-state-representative-1--sharon-tomiko-santos"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-9c24785a65d87136",
+      "id": "endorsement-01618cf3447191b5",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-14",
+      "race_id": "ld-37-state-representative-1",
+      "review_item_id": "review-0898c061beb5229b",
+      "reviewed_at": "2026-07-23T15:40:00Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "source_id": "washington-for-peace-and-justice",
+      "status": "dual_endorsement"
+    },
+    {
+      "allocation": {
+        "ld-37-state-representative-2--jaelynn-scott": "1"
+      },
+      "candidate_ids": [
+        "ld-37-state-representative-2--jaelynn-scott"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-8e2adfcb6dad5c3c",
+      "id": "endorsement-6afbb4dd03bd8849",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-14",
+      "race_id": "ld-37-state-representative-2",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-23T15:40:00Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "source_id": "washington-for-peace-and-justice",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-37-state-senator--chipalo-street": "1"
+      },
+      "candidate_ids": [
+        "ld-37-state-senator--chipalo-street"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-59862521bb78fe89",
+      "id": "endorsement-993fa155ff07da14",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-14",
+      "race_id": "ld-37-state-senator",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-23T15:40:00Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "source_id": "washington-for-peace-and-justice",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-43-state-representative-1--nicole-macri": "1"
+      },
+      "candidate_ids": [
+        "ld-43-state-representative-1--nicole-macri"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-0e968f377c8f239b",
+      "id": "endorsement-c962a57573d972dd",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-14",
+      "race_id": "ld-43-state-representative-1",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-23T15:40:00Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "source_id": "washington-for-peace-and-justice",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-43-state-representative-2--shaun-scott": "1"
+      },
+      "candidate_ids": [
+        "ld-43-state-representative-2--shaun-scott"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-8698b00326430b35",
+      "id": "endorsement-c95d5d20cad4cfe7",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-14",
+      "race_id": "ld-43-state-representative-2",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-23T15:40:00Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "source_id": "washington-for-peace-and-justice",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-43-state-senator--hannah-sabio-howell": "1"
+      },
+      "candidate_ids": [
+        "ld-43-state-senator--hannah-sabio-howell"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-e1acd7380ad875a2",
+      "id": "endorsement-75e605c6bbb71e2e",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-14",
+      "race_id": "ld-43-state-senator",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-23T15:40:00Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "source_id": "washington-for-peace-and-justice",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-46-state-representative-2--darya-farivar": "1"
+      },
+      "candidate_ids": [
+        "ld-46-state-representative-2--darya-farivar"
+      ],
+      "election_id": "wa-2026-primary",
+      "extracted_claim_id": "claim-11d977cee1dfdd0d",
+      "id": "endorsement-1932eafb729d166c",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "published_at": "2026-07-14",
+      "race_id": "ld-46-state-representative-2",
+      "review_item_id": null,
+      "reviewed_at": "2026-07-23T15:40:00Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "source_id": "washington-for-peace-and-justice",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
         "king-county-council-2--rebecca-salda-a": "1"
       },
       "candidate_ids": [
@@ -25184,6 +25914,48 @@
         "status": "dual_endorsement"
       },
       "review_item_id": "review-41f572b5b5e57c90"
+    },
+    {
+      "action": "approve",
+      "author": "shaug",
+      "created_at": "2026-07-23T15:40:00Z",
+      "evidence": "Carousel slide 3, green check-mark recommendation naming both candidates.",
+      "id": "decision-725710eabd5f1b47",
+      "reason": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "resolution": {
+        "allocation": {
+          "us-house-9--kshama-sawant": "1/2",
+          "us-house-9--melissa-chaudhry": "1/2"
+        },
+        "candidate_ids": [
+          "us-house-9--melissa-chaudhry",
+          "us-house-9--kshama-sawant"
+        ],
+        "race_id": "us-house-9",
+        "status": "dual_endorsement"
+      },
+      "review_item_id": "review-83e5d7180b65dd8c"
+    },
+    {
+      "action": "approve",
+      "author": "shaug",
+      "created_at": "2026-07-23T15:40:00Z",
+      "evidence": "Carousel slides 6 and 7, green check-mark recommendation naming both candidates.",
+      "id": "decision-687372bc7198801f",
+      "reason": "AI-assisted research located and persisted each available publication, then manually transcribed named decisions. Candidate and race identifiers were checked against the frozen King County inventory; unavailable sources remain explicit and contribute no decisions.",
+      "resolution": {
+        "allocation": {
+          "ld-37-state-representative-1--kelabe-tewolde": "1/2",
+          "ld-37-state-representative-1--sharon-tomiko-santos": "1/2"
+        },
+        "candidate_ids": [
+          "ld-37-state-representative-1--kelabe-tewolde",
+          "ld-37-state-representative-1--sharon-tomiko-santos"
+        ],
+        "race_id": "ld-37-state-representative-1",
+        "status": "dual_endorsement"
+      },
+      "review_item_id": "review-0898c061beb5229b"
     }
   ],
   "review_items": [
@@ -25942,16 +26714,70 @@
       "reason": "extraction_requires_review",
       "severity": "high",
       "summary": "Verified multi-candidate decision from the permitted extract."
+    },
+    {
+      "candidate_match": null,
+      "capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "claim_id": "claim-921fd4dc11deb444",
+      "created_at": "2026-07-23T15:33:14Z",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slide 3, green check-mark recommendation naming both candidates.",
+      "id": "review-83e5d7180b65dd8c",
+      "race_match": {
+        "candidates": [
+          {
+            "label": "U.S. Representative — Congressional District 9",
+            "match_kind": "exact",
+            "record_id": "us-house-9",
+            "score": "1"
+          }
+        ],
+        "selected_id": "us-house-9",
+        "status": "matched"
+      },
+      "raw_candidate_text": "Melissa Chaudhry and Kshama Sawant",
+      "raw_race_text": "U.S. Representative — Congressional District 9",
+      "raw_status_text": "dual endorsement",
+      "reason": "extraction_requires_review",
+      "severity": "high",
+      "summary": "Verified multi-candidate decision from the permitted extract."
+    },
+    {
+      "candidate_match": null,
+      "capture_id": "capture-washington-for-peace-and-justice-20260723T153314Z-ad9a1e3c434f",
+      "claim_id": "claim-9c24785a65d87136",
+      "created_at": "2026-07-23T15:33:14Z",
+      "evidence_excerpt": null,
+      "evidence_locator": "Carousel slides 6 and 7, green check-mark recommendation naming both candidates.",
+      "id": "review-0898c061beb5229b",
+      "race_match": {
+        "candidates": [
+          {
+            "label": "Legislative District 37 State Representative — Position 1",
+            "match_kind": "exact",
+            "record_id": "ld-37-state-representative-1",
+            "score": "1"
+          }
+        ],
+        "selected_id": "ld-37-state-representative-1",
+        "status": "matched"
+      },
+      "raw_candidate_text": "Kelabe Tewolde and Sharon Tomiko Santos",
+      "raw_race_text": "Legislative District 37 State Representative — Position 1",
+      "raw_status_text": "dual endorsement",
+      "reason": "extraction_requires_review",
+      "severity": "high",
+      "summary": "Verified multi-candidate decision from the permitted extract."
     }
   ],
   "schema_version": "1.0",
   "source_registry": {
     "election_id": "wa-2026-primary",
-    "frozen_at": "2026-07-23T13:01:14Z",
+    "frozen_at": "2026-07-23T15:40:00Z",
     "id": "wa-2026-primary-default-sources-v2",
     "notes": [
       "Version 2 expands the panel after the issue 61 audit; version 1 remains reconstructable at git commit 9faceeaaf7fe13c7f4d9c5c206db192ecd563321.",
-      "Four newly evaluated publishers have usable official 2026 decisions; two additional legitimate publishers remain explicit access-restricted coverage gaps.",
+      "Five newly evaluated publishers have usable official 2026 decisions; one additional legitimate publisher remains an explicit access-restricted coverage gap.",
       "Published means an official 2026 publication was located; it does not imply complete ballot coverage.",
       "Not found is distinct from an explicit no-endorsement decision by an organization.",
       "Search results were used only to locate official pages and are not endorsement evidence."
@@ -26010,7 +26836,7 @@
         ]
       }
     ],
-    "research_cutoff": "2026-07-23T13:01:14Z",
+    "research_cutoff": "2026-07-23T15:40:00Z",
     "schema_version": "1.0",
     "sources": [
       {
@@ -26216,28 +27042,28 @@
       {
         "category": "rights_representation",
         "discovery": {
-          "canonical_url": null,
-          "checked_at": "2026-07-23T12:30:00Z",
-          "evidence_locator": "Official organization site and linked Instagram account; search results indicated a 2026 guide, but the account could not be loaded without an authenticated Instagram session.",
-          "media_type": null,
-          "notes": "The guide indication and all third-party voter-guide text were treated only as discovery leads and no decisions were inferred.",
-          "published_at": null,
+          "canonical_url": "https://www.instagram.com/p/Dax5yPUlKYO/",
+          "checked_at": "2026-07-23T15:33:14Z",
+          "evidence_locator": "Official organization site links @wa4pj; the account's eight-slide Primary Voters' Guide 2026 carousel is post Dax5yPUlKYO.",
+          "media_type": "text/html",
+          "notes": "All eight slides were manually reviewed from supplied screen captures. Only green check-mark vote-for recommendations matching the Seattle ballot inventory were transcribed; gray and red entries were preserved as non-contributing semantics.",
+          "published_at": "2026-07-14",
           "redirect_chain": [],
-          "requested_url": "https://www.instagram.com/wa4pj/",
-          "status": "access_restricted",
+          "requested_url": "https://www.instagram.com/p/Dax5yPUlKYO/",
+          "status": "published",
           "updated_at": null
         },
         "eligibility": {
           "jurisdiction_ids": [],
           "kind": "all_seattle_ballot_races",
-          "rationale": "Include verified decisions only after the organization-owned voter-guide artifact can be retrieved directly."
+          "rationale": "Include green check-mark recommendations from the official 2026 guide; gray and leave-blank entries do not contribute."
         },
         "geographic_kind": "general",
         "id": "washington-for-peace-and-justice",
         "name": "Washington for Peace and Justice",
         "organization_url": "https://www.wa4pj.com/",
         "overlap_group_ids": [],
-        "panel_reason": "Separately governed Palestinian-led Washington advocacy organization investigated as a possible 2026 voter-guide publisher.",
+        "panel_reason": "Separately governed Palestinian-led Washington advocacy organization publishing an official 2026 primary voter guide.",
         "panel_role": "consensus",
         "publisher_id": null
       },

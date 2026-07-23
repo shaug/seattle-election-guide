@@ -1,11 +1,11 @@
 schema_version: "1.0"
 id: wa-2026-primary-default-sources-v2
 election_id: wa-2026-primary
-frozen_at: 2026-07-23T13:01:14Z
-research_cutoff: 2026-07-23T13:01:14Z
+frozen_at: 2026-07-23T15:40:00Z
+research_cutoff: 2026-07-23T15:40:00Z
 notes:
   - Version 2 expands the panel after the issue 61 audit; version 1 remains reconstructable at git commit 9faceeaaf7fe13c7f4d9c5c206db192ecd563321.
-  - Four newly evaluated publishers have usable official 2026 decisions; two additional legitimate publishers remain explicit access-restricted coverage gaps.
+  - Five newly evaluated publishers have usable official 2026 decisions; one additional legitimate publisher remains an explicit access-restricted coverage gap.
   - Published means an official 2026 publication was located; it does not imply complete ballot coverage.
   - Not found is distinct from an explicit no-endorsement decision by an organization.
   - Search results were used only to locate official pages and are not endorsement evidence.
@@ -158,16 +158,19 @@ sources:
     organization_url: https://www.wa4pj.com/
     geographic_kind: general
     panel_role: consensus
-    panel_reason: Separately governed Palestinian-led Washington advocacy organization investigated as a possible 2026 voter-guide publisher.
+    panel_reason: Separately governed Palestinian-led Washington advocacy organization publishing an official 2026 primary voter guide.
     eligibility:
       kind: all_seattle_ballot_races
-      rationale: Include verified decisions only after the organization-owned voter-guide artifact can be retrieved directly.
+      rationale: Include green check-mark recommendations from the official 2026 guide; gray and leave-blank entries do not contribute.
     discovery:
-      status: access_restricted
-      checked_at: 2026-07-23T12:30:00Z
-      requested_url: https://www.instagram.com/wa4pj/
-      evidence_locator: Official organization site and linked Instagram account; search results indicated a 2026 guide, but the account could not be loaded without an authenticated Instagram session.
-      notes: The guide indication and all third-party voter-guide text were treated only as discovery leads and no decisions were inferred.
+      status: published
+      checked_at: 2026-07-23T15:33:14Z
+      published_at: 2026-07-14T00:00:00Z
+      requested_url: https://www.instagram.com/p/Dax5yPUlKYO/
+      canonical_url: https://www.instagram.com/p/Dax5yPUlKYO/
+      media_type: text/html
+      evidence_locator: Official organization site links @wa4pj; the account's eight-slide Primary Voters' Guide 2026 carousel is post Dax5yPUlKYO.
+      notes: All eight slides were manually reviewed from supplied screen captures. Only green check-mark vote-for recommendations matching the Seattle ballot inventory were transcribed; gray and red entries were preserved as non-contributing semantics.
 
   - id: washington-community-action-network
     name: Washington Community Action Network

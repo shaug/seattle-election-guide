@@ -54,7 +54,7 @@ Use a stable version, build timestamp, and Git revision:
 uv run election-guide release build \
   data/releases/wa-2026-primary/source-decisions.yaml \
     --release-version 2026-primary.2 \
-    --generated-at 2026-07-23T13:15:00Z \
+    --generated-at 2026-07-23T15:45:00Z \
   --git-commit "$(git rev-parse HEAD)"
 ```
 

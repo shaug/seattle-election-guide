@@ -1,10 +1,10 @@
 {
   "after": {
-    "computed_at": "2026-07-23T13:01:14Z",
+    "computed_at": "2026-07-23T15:40:00Z",
     "configuration_id": "unweighted-progressive-v1",
-    "dataset_hash": "b9bfaf4a00bebbeef661dde2e6144342aa78762d3abb74ca99a0029d059ca363",
+    "dataset_hash": "dc16dd862e382a412bf9d09973a6d82ad79bb3d1dbaaae534f1c16f18d4c2593",
     "election_id": "wa-2026-primary",
-    "input_hash": "8a1c582f8ea16b90f73b252e7687f27ea7604468286b2728728186486011c2c1",
+    "input_hash": "403b983acee06377c1350752bbc009491114612906a4c27ac91b2aae1d797979",
     "publication_scope_hash": "43f7068c9cb92ccc25821a70bd3ddd027b49211414b103decde4fd150ebba069",
     "races": [
       {
@@ -104,16 +104,16 @@
       {
         "category_coverage_count": 6,
         "eligible_source_count": 42,
-        "explicit_endorsement_count": 22,
+        "explicit_endorsement_count": 23,
         "grade": "A",
         "is_tied": false,
-        "missing_source_count": 20,
+        "missing_source_count": 19,
         "race_id": "king-county-council-2",
-        "source_coverage_count": 22,
+        "source_coverage_count": 23,
         "warnings": [
           {
             "code": "missing_coverage",
-            "message": "20 eligible sources lack a resolved decision.",
+            "message": "19 eligible sources lack a resolved decision.",
             "review_item_ids": [],
             "source_ids": [
               "32nd-district-democrats",
@@ -131,7 +131,6 @@
               "sierra-club-washington",
               "tech-4-taxes",
               "washington-education-association",
-              "washington-for-peace-and-justice",
               "washington-state-building-trades",
               "washington-state-democrats",
               "washington-state-labor-council",
@@ -179,22 +178,22 @@
         "winner_candidate_ids": [
           "king-county-council-2--rebecca-salda-a"
         ],
-        "winner_share": "39/44",
-        "winner_support_points": "39/2"
+        "winner_share": "41/46",
+        "winner_support_points": "41/2"
       },
       {
         "category_coverage_count": 6,
         "eligible_source_count": 42,
-        "explicit_endorsement_count": 22,
+        "explicit_endorsement_count": 23,
         "grade": "A+",
         "is_tied": false,
-        "missing_source_count": 20,
+        "missing_source_count": 19,
         "race_id": "king-county-council-8",
-        "source_coverage_count": 22,
+        "source_coverage_count": 23,
         "warnings": [
           {
             "code": "missing_coverage",
-            "message": "20 eligible sources lack a resolved decision.",
+            "message": "19 eligible sources lack a resolved decision.",
             "review_item_ids": [],
             "source_ids": [
               "32nd-district-democrats",
@@ -213,7 +212,6 @@
               "transit-riders-union",
               "washington-bus",
               "washington-education-association",
-              "washington-for-peace-and-justice",
               "washington-state-democrats",
               "washington-state-labor-council",
               "washington-stonewall-democrats"
@@ -251,7 +249,7 @@
           "king-county-council-8--teresa-mosqueda"
         ],
         "winner_share": "1",
-        "winner_support_points": "22"
+        "winner_support_points": "23"
       },
       {
         "category_coverage_count": 4,
@@ -513,16 +511,16 @@
       {
         "category_coverage_count": 4,
         "eligible_source_count": 36,
-        "explicit_endorsement_count": 17,
-        "grade": "B",
+        "explicit_endorsement_count": 18,
+        "grade": "C",
         "is_tied": false,
-        "missing_source_count": 19,
+        "missing_source_count": 18,
         "race_id": "ld-32-state-representative-2",
-        "source_coverage_count": 17,
+        "source_coverage_count": 18,
         "warnings": [
           {
             "code": "missing_coverage",
-            "message": "19 eligible sources lack a resolved decision.",
+            "message": "18 eligible sources lack a resolved decision.",
             "review_item_ids": [],
             "source_ids": [
               "environmental-climate-caucus-wa-democrats",
@@ -541,7 +539,6 @@
               "washington-bus",
               "washington-community-action-network",
               "washington-conservation-action",
-              "washington-for-peace-and-justice",
               "washington-state-democrats",
               "washington-working-families-party"
             ]
@@ -587,22 +584,22 @@
         "winner_candidate_ids": [
           "ld-32-state-representative-2--lauren-davis"
         ],
-        "winner_share": "21/34",
+        "winner_share": "7/12",
         "winner_support_points": "21/2"
       },
       {
         "category_coverage_count": 4,
         "eligible_source_count": 36,
-        "explicit_endorsement_count": 15,
+        "explicit_endorsement_count": 16,
         "grade": "B",
         "is_tied": false,
-        "missing_source_count": 21,
+        "missing_source_count": 20,
         "race_id": "ld-32-state-senator",
-        "source_coverage_count": 15,
+        "source_coverage_count": 16,
         "warnings": [
           {
             "code": "missing_coverage",
-            "message": "21 eligible sources lack a resolved decision.",
+            "message": "20 eligible sources lack a resolved decision.",
             "review_item_ids": [],
             "source_ids": [
               "environmental-climate-caucus-wa-democrats",
@@ -623,7 +620,6 @@
               "washington-bus",
               "washington-community-action-network",
               "washington-conservation-action",
-              "washington-for-peace-and-justice",
               "washington-state-democrats",
               "washington-working-families-party"
             ]
@@ -667,8 +663,8 @@
         "winner_candidate_ids": [
           "ld-32-state-senator--cindy-ryu"
         ],
-        "winner_share": "7/10",
-        "winner_support_points": "21/2"
+        "winner_share": "23/32",
+        "winner_support_points": "23/2"
       },
       {
         "category_coverage_count": 3,
@@ -752,16 +748,16 @@
       {
         "category_coverage_count": 6,
         "eligible_source_count": 36,
-        "explicit_endorsement_count": 18,
+        "explicit_endorsement_count": 19,
         "grade": "A+",
         "is_tied": false,
-        "missing_source_count": 18,
+        "missing_source_count": 17,
         "race_id": "ld-34-state-representative-2",
-        "source_coverage_count": 18,
+        "source_coverage_count": 19,
         "warnings": [
           {
             "code": "missing_coverage",
-            "message": "18 eligible sources lack a resolved decision.",
+            "message": "17 eligible sources lack a resolved decision.",
             "review_item_ids": [],
             "source_ids": [
               "environmental-climate-caucus-wa-democrats",
@@ -779,7 +775,6 @@
               "transit-riders-union",
               "washington-bus",
               "washington-community-action-network",
-              "washington-for-peace-and-justice",
               "washington-state-democrats",
               "washington-working-families-party"
             ]
@@ -809,22 +804,22 @@
         "winner_candidate_ids": [
           "ld-34-state-representative-2--joe-fitzgibbon"
         ],
-        "winner_share": "17/18",
-        "winner_support_points": "17"
+        "winner_share": "18/19",
+        "winner_support_points": "18"
       },
       {
         "category_coverage_count": 6,
         "eligible_source_count": 36,
-        "explicit_endorsement_count": 15,
+        "explicit_endorsement_count": 16,
         "grade": "A+",
         "is_tied": false,
-        "missing_source_count": 21,
+        "missing_source_count": 20,
         "race_id": "ld-34-state-senator",
-        "source_coverage_count": 15,
+        "source_coverage_count": 16,
         "warnings": [
           {
             "code": "missing_coverage",
-            "message": "21 eligible sources lack a resolved decision.",
+            "message": "20 eligible sources lack a resolved decision.",
             "review_item_ids": [],
             "source_ids": [
               "environmental-climate-caucus-wa-democrats",
@@ -844,7 +839,6 @@
               "washington-bus",
               "washington-community-action-network",
               "washington-education-association",
-              "washington-for-peace-and-justice",
               "washington-state-democrats",
               "washington-stonewall-democrats",
               "washington-working-families-party"
@@ -876,7 +870,7 @@
           "ld-34-state-senator--emily-alvarado"
         ],
         "winner_share": "1",
-        "winner_support_points": "15"
+        "winner_support_points": "16"
       },
       {
         "category_coverage_count": 6,
@@ -945,16 +939,16 @@
       {
         "category_coverage_count": 5,
         "eligible_source_count": 36,
-        "explicit_endorsement_count": 13,
+        "explicit_endorsement_count": 14,
         "grade": "A+",
         "is_tied": false,
-        "missing_source_count": 23,
+        "missing_source_count": 22,
         "race_id": "ld-36-state-representative-2",
-        "source_coverage_count": 13,
+        "source_coverage_count": 14,
         "warnings": [
           {
             "code": "missing_coverage",
-            "message": "23 eligible sources lack a resolved decision.",
+            "message": "22 eligible sources lack a resolved decision.",
             "review_item_ids": [],
             "source_ids": [
               "environmental-climate-caucus-wa-democrats",
@@ -976,7 +970,6 @@
               "washington-bus",
               "washington-community-action-network",
               "washington-education-association",
-              "washington-for-peace-and-justice",
               "washington-state-democrats",
               "washington-stonewall-democrats",
               "washington-working-families-party"
@@ -1014,7 +1007,7 @@
           "ld-36-state-representative-2--liz-berry"
         ],
         "winner_share": "1",
-        "winner_support_points": "13"
+        "winner_support_points": "14"
       },
       {
         "category_coverage_count": 4,
@@ -1096,16 +1089,16 @@
       {
         "category_coverage_count": 5,
         "eligible_source_count": 36,
-        "explicit_endorsement_count": 12,
+        "explicit_endorsement_count": 13,
         "grade": "TIED",
         "is_tied": true,
-        "missing_source_count": 24,
+        "missing_source_count": 23,
         "race_id": "ld-37-state-representative-1",
-        "source_coverage_count": 12,
+        "source_coverage_count": 13,
         "warnings": [
           {
             "code": "missing_coverage",
-            "message": "24 eligible sources lack a resolved decision.",
+            "message": "23 eligible sources lack a resolved decision.",
             "review_item_ids": [],
             "source_ids": [
               "environmental-climate-caucus-wa-democrats",
@@ -1127,7 +1120,6 @@
               "washington-community-action-network",
               "washington-conservation-action",
               "washington-education-association",
-              "washington-for-peace-and-justice",
               "washington-housing-alliance",
               "washington-state-building-trades",
               "washington-state-democrats",
@@ -1139,6 +1131,14 @@
             "message": "Resolved decisions cover 5 of 6 eligible source categories.",
             "review_item_ids": [],
             "source_ids": []
+          },
+          {
+            "code": "low_confidence",
+            "message": "One or more scored endorsements carry a confidence warning.",
+            "review_item_ids": [],
+            "source_ids": [
+              "washington-for-peace-and-justice"
+            ]
           },
           {
             "code": "source_overlap",
@@ -1167,21 +1167,21 @@
           "ld-37-state-representative-1--kelabe-tewolde"
         ],
         "winner_share": "1/2",
-        "winner_support_points": "6"
+        "winner_support_points": "13/2"
       },
       {
         "category_coverage_count": 6,
         "eligible_source_count": 36,
-        "explicit_endorsement_count": 18,
+        "explicit_endorsement_count": 19,
         "grade": "A+",
         "is_tied": false,
-        "missing_source_count": 18,
+        "missing_source_count": 17,
         "race_id": "ld-37-state-representative-2",
-        "source_coverage_count": 18,
+        "source_coverage_count": 19,
         "warnings": [
           {
             "code": "missing_coverage",
-            "message": "18 eligible sources lack a resolved decision.",
+            "message": "17 eligible sources lack a resolved decision.",
             "review_item_ids": [],
             "source_ids": [
               "environmental-climate-caucus-wa-democrats",
@@ -1198,7 +1198,6 @@
               "washington-bus",
               "washington-community-action-network",
               "washington-education-association",
-              "washington-for-peace-and-justice",
               "washington-state-building-trades",
               "washington-state-democrats",
               "washington-working-families-party"
@@ -1230,21 +1229,21 @@
           "ld-37-state-representative-2--jaelynn-scott"
         ],
         "winner_share": "1",
-        "winner_support_points": "18"
+        "winner_support_points": "19"
       },
       {
         "category_coverage_count": 5,
         "eligible_source_count": 36,
-        "explicit_endorsement_count": 15,
+        "explicit_endorsement_count": 16,
         "grade": "A+",
         "is_tied": false,
-        "missing_source_count": 20,
+        "missing_source_count": 19,
         "race_id": "ld-37-state-senator",
-        "source_coverage_count": 16,
+        "source_coverage_count": 17,
         "warnings": [
           {
             "code": "missing_coverage",
-            "message": "20 eligible sources lack a resolved decision.",
+            "message": "19 eligible sources lack a resolved decision.",
             "review_item_ids": [],
             "source_ids": [
               "environmental-climate-caucus-wa-democrats",
@@ -1264,7 +1263,6 @@
               "washington-bikes",
               "washington-community-action-network",
               "washington-education-association",
-              "washington-for-peace-and-justice",
               "washington-state-democrats",
               "washington-working-families-party"
             ]
@@ -1316,22 +1314,22 @@
         "winner_candidate_ids": [
           "ld-37-state-senator--chipalo-street"
         ],
-        "winner_share": "9/10",
-        "winner_support_points": "27/2"
+        "winner_share": "29/32",
+        "winner_support_points": "29/2"
       },
       {
         "category_coverage_count": 6,
         "eligible_source_count": 36,
-        "explicit_endorsement_count": 16,
+        "explicit_endorsement_count": 17,
         "grade": "A+",
         "is_tied": false,
-        "missing_source_count": 20,
+        "missing_source_count": 19,
         "race_id": "ld-43-state-representative-1",
-        "source_coverage_count": 16,
+        "source_coverage_count": 17,
         "warnings": [
           {
             "code": "missing_coverage",
-            "message": "20 eligible sources lack a resolved decision.",
+            "message": "19 eligible sources lack a resolved decision.",
             "review_item_ids": [],
             "source_ids": [
               "environmental-climate-caucus-wa-democrats",
@@ -1350,7 +1348,6 @@
               "washington-bus",
               "washington-community-action-network",
               "washington-education-association",
-              "washington-for-peace-and-justice",
               "washington-state-building-trades",
               "washington-state-democrats",
               "washington-working-families-party"
@@ -1382,21 +1379,21 @@
           "ld-43-state-representative-1--nicole-macri"
         ],
         "winner_share": "1",
-        "winner_support_points": "16"
+        "winner_support_points": "17"
       },
       {
         "category_coverage_count": 4,
         "eligible_source_count": 36,
-        "explicit_endorsement_count": 8,
+        "explicit_endorsement_count": 9,
         "grade": "A+",
         "is_tied": false,
-        "missing_source_count": 28,
+        "missing_source_count": 27,
         "race_id": "ld-43-state-representative-2",
-        "source_coverage_count": 8,
+        "source_coverage_count": 9,
         "warnings": [
           {
             "code": "missing_coverage",
-            "message": "28 eligible sources lack a resolved decision.",
+            "message": "27 eligible sources lack a resolved decision.",
             "review_item_ids": [],
             "source_ids": [
               "alliance-for-gun-responsibility",
@@ -1423,7 +1420,6 @@
               "washington-community-action-network",
               "washington-conservation-action",
               "washington-education-association",
-              "washington-for-peace-and-justice",
               "washington-state-building-trades",
               "washington-state-democrats",
               "washington-stonewall-democrats"
@@ -1461,21 +1457,21 @@
           "ld-43-state-representative-2--shaun-scott"
         ],
         "winner_share": "1",
-        "winner_support_points": "8"
+        "winner_support_points": "9"
       },
       {
         "category_coverage_count": 6,
         "eligible_source_count": 36,
-        "explicit_endorsement_count": 21,
-        "grade": "B",
+        "explicit_endorsement_count": 22,
+        "grade": "C",
         "is_tied": false,
-        "missing_source_count": 15,
+        "missing_source_count": 14,
         "race_id": "ld-43-state-senator",
-        "source_coverage_count": 21,
+        "source_coverage_count": 22,
         "warnings": [
           {
             "code": "missing_coverage",
-            "message": "15 eligible sources lack a resolved decision.",
+            "message": "14 eligible sources lack a resolved decision.",
             "review_item_ids": [],
             "source_ids": [
               "environmental-climate-caucus-wa-democrats",
@@ -1491,7 +1487,6 @@
               "tech-4-taxes",
               "transit-riders-union",
               "washington-community-action-network",
-              "washington-for-peace-and-justice",
               "washington-state-democrats"
             ]
           },
@@ -1529,7 +1524,7 @@
         "winner_candidate_ids": [
           "ld-43-state-senator--jamie-pedersen"
         ],
-        "winner_share": "13/21",
+        "winner_share": "13/22",
         "winner_support_points": "13"
       },
       {
@@ -1608,16 +1603,16 @@
       {
         "category_coverage_count": 6,
         "eligible_source_count": 36,
-        "explicit_endorsement_count": 17,
+        "explicit_endorsement_count": 18,
         "grade": "A+",
         "is_tied": false,
-        "missing_source_count": 19,
+        "missing_source_count": 18,
         "race_id": "ld-46-state-representative-2",
-        "source_coverage_count": 17,
+        "source_coverage_count": 18,
         "warnings": [
           {
             "code": "missing_coverage",
-            "message": "19 eligible sources lack a resolved decision.",
+            "message": "18 eligible sources lack a resolved decision.",
             "review_item_ids": [],
             "source_ids": [
               "environmental-climate-caucus-wa-democrats",
@@ -1636,7 +1631,6 @@
               "washington-bus",
               "washington-community-action-network",
               "washington-education-association",
-              "washington-for-peace-and-justice",
               "washington-state-building-trades",
               "washington-state-democrats"
             ]
@@ -1667,7 +1661,7 @@
           "ld-46-state-representative-2--darya-farivar"
         ],
         "winner_share": "1",
-        "winner_support_points": "17"
+        "winner_support_points": "18"
       },
       {
         "category_coverage_count": 6,
@@ -1738,16 +1732,16 @@
       {
         "category_coverage_count": 6,
         "eligible_source_count": 42,
-        "explicit_endorsement_count": 21,
+        "explicit_endorsement_count": 22,
         "grade": "A+",
         "is_tied": false,
-        "missing_source_count": 21,
+        "missing_source_count": 20,
         "race_id": "seattle-city-council-5",
-        "source_coverage_count": 21,
+        "source_coverage_count": 22,
         "warnings": [
           {
             "code": "missing_coverage",
-            "message": "21 eligible sources lack a resolved decision.",
+            "message": "20 eligible sources lack a resolved decision.",
             "review_item_ids": [],
             "source_ids": [
               "11th-district-democrats",
@@ -1766,7 +1760,6 @@
               "tech-4-taxes",
               "washington-community-action-network",
               "washington-education-association",
-              "washington-for-peace-and-justice",
               "washington-housing-alliance",
               "washington-state-building-trades",
               "washington-state-democrats",
@@ -1814,8 +1807,8 @@
         "winner_candidate_ids": [
           "seattle-city-council-5--nilu-jenks"
         ],
-        "winner_share": "13/14",
-        "winner_support_points": "39/2"
+        "winner_share": "41/44",
+        "winner_support_points": "41/2"
       },
       {
         "category_coverage_count": 3,
@@ -2088,16 +2081,16 @@
       {
         "category_coverage_count": 5,
         "eligible_source_count": 42,
-        "explicit_endorsement_count": 18,
-        "grade": "C",
-        "is_tied": false,
-        "missing_source_count": 24,
+        "explicit_endorsement_count": 19,
+        "grade": "TIED",
+        "is_tied": true,
+        "missing_source_count": 23,
         "race_id": "supreme-court-justice-3",
-        "source_coverage_count": 18,
+        "source_coverage_count": 19,
         "warnings": [
           {
             "code": "missing_coverage",
-            "message": "24 eligible sources lack a resolved decision.",
+            "message": "23 eligible sources lack a resolved decision.",
             "review_item_ids": [],
             "source_ids": [
               "aft-washington",
@@ -2119,7 +2112,6 @@
               "washington-bikes",
               "washington-bus",
               "washington-community-action-network",
-              "washington-for-peace-and-justice",
               "washington-housing-alliance",
               "washington-state-building-trades",
               "washington-state-democrats",
@@ -2173,24 +2165,25 @@
           }
         ],
         "winner_candidate_ids": [
+          "supreme-court-justice-3--jaime-michelle-hawk",
           "supreme-court-justice-3--mike-diaz"
         ],
-        "winner_share": "19/36",
+        "winner_share": "1/2",
         "winner_support_points": "19/2"
       },
       {
         "category_coverage_count": 5,
         "eligible_source_count": 42,
-        "explicit_endorsement_count": 19,
+        "explicit_endorsement_count": 20,
         "grade": "B",
         "is_tied": false,
-        "missing_source_count": 23,
+        "missing_source_count": 22,
         "race_id": "supreme-court-justice-5",
-        "source_coverage_count": 19,
+        "source_coverage_count": 20,
         "warnings": [
           {
             "code": "missing_coverage",
-            "message": "23 eligible sources lack a resolved decision.",
+            "message": "22 eligible sources lack a resolved decision.",
             "review_item_ids": [],
             "source_ids": [
               "aft-washington",
@@ -2212,7 +2205,6 @@
               "washington-bus",
               "washington-community-action-network",
               "washington-conservation-action",
-              "washington-for-peace-and-justice",
               "washington-housing-alliance",
               "washington-state-democrats",
               "washington-working-families-party"
@@ -2266,8 +2258,8 @@
         "winner_candidate_ids": [
           "supreme-court-justice-5--theo-angelis"
         ],
-        "winner_share": "12/19",
-        "winner_support_points": "12"
+        "winner_share": "13/20",
+        "winner_support_points": "13"
       },
       {
         "category_coverage_count": 5,
@@ -2366,16 +2358,16 @@
       {
         "category_coverage_count": 5,
         "eligible_source_count": 42,
-        "explicit_endorsement_count": 18,
+        "explicit_endorsement_count": 19,
         "grade": "A+",
         "is_tied": false,
-        "missing_source_count": 23,
+        "missing_source_count": 22,
         "race_id": "us-house-7",
-        "source_coverage_count": 19,
+        "source_coverage_count": 20,
         "warnings": [
           {
             "code": "missing_coverage",
-            "message": "23 eligible sources lack a resolved decision.",
+            "message": "22 eligible sources lack a resolved decision.",
             "review_item_ids": [],
             "source_ids": [
               "11th-district-democrats",
@@ -2397,7 +2389,6 @@
               "washington-bus",
               "washington-community-action-network",
               "washington-conservation-action",
-              "washington-for-peace-and-justice",
               "washington-housing-alliance",
               "washington-state-democrats",
               "washington-working-families-party"
@@ -2449,21 +2440,21 @@
           "us-house-7--pramila-jayapal"
         ],
         "winner_share": "1",
-        "winner_support_points": "18"
+        "winner_support_points": "19"
       },
       {
         "category_coverage_count": 5,
         "eligible_source_count": 42,
-        "explicit_endorsement_count": 10,
-        "grade": "A",
+        "explicit_endorsement_count": 11,
+        "grade": "B",
         "is_tied": false,
-        "missing_source_count": 29,
+        "missing_source_count": 28,
         "race_id": "us-house-9",
-        "source_coverage_count": 13,
+        "source_coverage_count": 14,
         "warnings": [
           {
             "code": "missing_coverage",
-            "message": "29 eligible sources lack a resolved decision.",
+            "message": "28 eligible sources lack a resolved decision.",
             "review_item_ids": [],
             "source_ids": [
               "11th-district-democrats",
@@ -2491,7 +2482,6 @@
               "washington-bus",
               "washington-community-action-network",
               "washington-conservation-action",
-              "washington-for-peace-and-justice",
               "washington-housing-alliance",
               "washington-state-democrats",
               "washington-working-families-party"
@@ -2511,6 +2501,14 @@
               "37th-district-democrats",
               "43rd-district-democrats",
               "the-urbanist"
+            ]
+          },
+          {
+            "code": "low_confidence",
+            "message": "One or more scored endorsements carry a confidence warning.",
+            "review_item_ids": [],
+            "source_ids": [
+              "washington-for-peace-and-justice"
             ]
           },
           {
@@ -2544,7 +2542,7 @@
         "winner_candidate_ids": [
           "us-house-9--adam-smith"
         ],
-        "winner_share": "4/5",
+        "winner_share": "8/11",
         "winner_support_points": "8"
       }
     ]
@@ -4981,16 +4979,24 @@
     {
       "changed_fields": [
         "eligible_source_count",
+        "explicit_endorsement_count",
+        "grade",
         "missing_source_count",
-        "warnings"
+        "source_coverage_count",
+        "warnings",
+        "winner_share"
       ],
       "race_id": "ld-32-state-representative-2"
     },
     {
       "changed_fields": [
         "eligible_source_count",
+        "explicit_endorsement_count",
         "missing_source_count",
-        "warnings"
+        "source_coverage_count",
+        "warnings",
+        "winner_share",
+        "winner_support_points"
       ],
       "race_id": "ld-32-state-senator"
     },
@@ -5005,16 +5011,23 @@
     {
       "changed_fields": [
         "eligible_source_count",
+        "explicit_endorsement_count",
         "missing_source_count",
-        "warnings"
+        "source_coverage_count",
+        "warnings",
+        "winner_share",
+        "winner_support_points"
       ],
       "race_id": "ld-34-state-representative-2"
     },
     {
       "changed_fields": [
         "eligible_source_count",
+        "explicit_endorsement_count",
         "missing_source_count",
-        "warnings"
+        "source_coverage_count",
+        "warnings",
+        "winner_support_points"
       ],
       "race_id": "ld-34-state-senator"
     },
@@ -5029,8 +5042,11 @@
     {
       "changed_fields": [
         "eligible_source_count",
+        "explicit_endorsement_count",
         "missing_source_count",
-        "warnings"
+        "source_coverage_count",
+        "warnings",
+        "winner_support_points"
       ],
       "race_id": "ld-36-state-representative-2"
     },
@@ -5053,7 +5069,8 @@
         "source_coverage_count",
         "warnings",
         "winner_candidate_ids",
-        "winner_share"
+        "winner_share",
+        "winner_support_points"
       ],
       "race_id": "ld-37-state-representative-1"
     },
@@ -5072,32 +5089,46 @@
     {
       "changed_fields": [
         "eligible_source_count",
+        "explicit_endorsement_count",
         "missing_source_count",
-        "warnings"
+        "source_coverage_count",
+        "warnings",
+        "winner_share",
+        "winner_support_points"
       ],
       "race_id": "ld-37-state-senator"
     },
     {
       "changed_fields": [
         "eligible_source_count",
+        "explicit_endorsement_count",
         "missing_source_count",
-        "warnings"
+        "source_coverage_count",
+        "warnings",
+        "winner_support_points"
       ],
       "race_id": "ld-43-state-representative-1"
     },
     {
       "changed_fields": [
         "eligible_source_count",
+        "explicit_endorsement_count",
         "missing_source_count",
-        "warnings"
+        "source_coverage_count",
+        "warnings",
+        "winner_support_points"
       ],
       "race_id": "ld-43-state-representative-2"
     },
     {
       "changed_fields": [
         "eligible_source_count",
+        "explicit_endorsement_count",
+        "grade",
         "missing_source_count",
-        "warnings"
+        "source_coverage_count",
+        "warnings",
+        "winner_share"
       ],
       "race_id": "ld-43-state-senator"
     },
@@ -5115,8 +5146,11 @@
     {
       "changed_fields": [
         "eligible_source_count",
+        "explicit_endorsement_count",
         "missing_source_count",
-        "warnings"
+        "source_coverage_count",
+        "warnings",
+        "winner_support_points"
       ],
       "race_id": "ld-46-state-representative-2"
     },
@@ -5167,16 +5201,26 @@
     {
       "changed_fields": [
         "eligible_source_count",
+        "explicit_endorsement_count",
+        "grade",
+        "is_tied",
         "missing_source_count",
-        "warnings"
+        "source_coverage_count",
+        "warnings",
+        "winner_candidate_ids",
+        "winner_share"
       ],
       "race_id": "supreme-court-justice-3"
     },
     {
       "changed_fields": [
         "eligible_source_count",
+        "explicit_endorsement_count",
         "missing_source_count",
-        "warnings"
+        "source_coverage_count",
+        "warnings",
+        "winner_share",
+        "winner_support_points"
       ],
       "race_id": "supreme-court-justice-5"
     },
@@ -5191,8 +5235,11 @@
     {
       "changed_fields": [
         "eligible_source_count",
+        "explicit_endorsement_count",
         "missing_source_count",
-        "warnings"
+        "source_coverage_count",
+        "warnings",
+        "winner_support_points"
       ],
       "race_id": "us-house-7"
     },
@@ -5200,6 +5247,7 @@
       "changed_fields": [
         "eligible_source_count",
         "explicit_endorsement_count",
+        "grade",
         "missing_source_count",
         "source_coverage_count",
         "warnings",

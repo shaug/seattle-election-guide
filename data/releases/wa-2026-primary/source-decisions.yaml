@@ -1,6 +1,6 @@
 schema_version: "1.0"
 election_id: wa-2026-primary
-data_as_of: 2026-07-23T13:01:14Z
+data_as_of: 2026-07-23T15:40:00Z
 reviewer: shaug
 review_note: >-
   AI-assisted research located and persisted each available publication, then manually
@@ -1257,6 +1257,69 @@ sources:
       - race_id: ld-46-state-representative-1
         candidate_ids: [ld-46-state-representative-1--ron-davis]
         evidence_locator: Official Bluesky post 3mmcsx6zbwc2i, published 2026-05-20 UTC.
+
+  - source_id: washington-for-peace-and-justice
+    captured_at: 2026-07-23T15:33:14Z
+    reviewed_at: 2026-07-23T15:40:00Z
+    evidence_locator: Official Instagram carousel Dax5yPUlKYO, Primary Voters' Guide 2026, slides 3 through 7; the official organization site links the @wa4pj account.
+    decisions:
+      - race_id: us-house-7
+        candidate_ids: [us-house-7--pramila-jayapal]
+        evidence_locator: Carousel slide 3, green check-mark recommendation.
+      - race_id: us-house-9
+        candidate_ids: [us-house-9--melissa-chaudhry, us-house-9--kshama-sawant]
+        evidence_locator: Carousel slide 3, green check-mark recommendation naming both candidates.
+      - race_id: supreme-court-justice-3
+        candidate_ids: [supreme-court-justice-3--jaime-michelle-hawk]
+        evidence_locator: Carousel slide 3, green check-mark recommendation.
+      - race_id: supreme-court-justice-5
+        candidate_ids: [supreme-court-justice-5--theo-angelis]
+        evidence_locator: Carousel slide 3, green check-mark recommendation.
+      - race_id: king-county-council-2
+        candidate_ids: [king-county-council-2--rebecca-salda-a]
+        evidence_locator: Carousel slide 4, green check-mark recommendation.
+      - race_id: king-county-council-8
+        candidate_ids: [king-county-council-8--teresa-mosqueda]
+        evidence_locator: Carousel slide 4, green check-mark recommendation.
+      - race_id: seattle-city-council-5
+        candidate_ids: [seattle-city-council-5--nilu-jenks]
+        evidence_locator: Carousel slide 4, green check-mark recommendation.
+      - race_id: ld-32-state-representative-2
+        candidate_ids: [ld-32-state-representative-2--imraan-siddiqi]
+        evidence_locator: Carousel slide 6, green check-mark recommendation.
+      - race_id: ld-32-state-senator
+        candidate_ids: [ld-32-state-senator--cindy-ryu]
+        evidence_locator: Carousel slide 6, green check-mark recommendation.
+      - race_id: ld-34-state-representative-2
+        candidate_ids: [ld-34-state-representative-2--joe-fitzgibbon]
+        evidence_locator: Carousel slide 6, green check-mark recommendation.
+      - race_id: ld-34-state-senator
+        candidate_ids: [ld-34-state-senator--emily-alvarado]
+        evidence_locator: Carousel slide 6, green check-mark recommendation.
+      - race_id: ld-36-state-representative-2
+        candidate_ids: [ld-36-state-representative-2--liz-berry]
+        evidence_locator: Carousel slide 6, green check-mark recommendation.
+      - race_id: ld-37-state-representative-1
+        candidate_ids: [ld-37-state-representative-1--kelabe-tewolde, ld-37-state-representative-1--sharon-tomiko-santos]
+        evidence_locator: Carousel slides 6 and 7, green check-mark recommendation naming both candidates.
+      - race_id: ld-37-state-representative-2
+        candidate_ids: [ld-37-state-representative-2--jaelynn-scott]
+        evidence_locator: Carousel slide 6, green check-mark recommendation.
+      - race_id: ld-37-state-senator
+        candidate_ids: [ld-37-state-senator--chipalo-street]
+        evidence_locator: Carousel slide 7, green check-mark recommendation.
+      - race_id: ld-43-state-representative-1
+        candidate_ids: [ld-43-state-representative-1--nicole-macri]
+        evidence_locator: Carousel slide 7, green check-mark recommendation.
+      - race_id: ld-43-state-representative-2
+        candidate_ids: [ld-43-state-representative-2--shaun-scott]
+        evidence_locator: Carousel slide 7, green check-mark recommendation.
+      - race_id: ld-43-state-senator
+        candidate_ids: [ld-43-state-senator--hannah-sabio-howell]
+        evidence_locator: Carousel slide 7, green check-mark recommendation.
+      - race_id: ld-46-state-representative-2
+        candidate_ids: [ld-46-state-representative-2--darya-farivar]
+        evidence_locator: Carousel slide 7, green check-mark recommendation.
 
   - source_id: washington-community-action-network
     captured_at: 2026-07-23T12:44:00Z
