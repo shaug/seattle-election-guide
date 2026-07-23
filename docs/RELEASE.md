@@ -53,8 +53,8 @@ Use a stable version, build timestamp, and Git revision:
 ```bash
 uv run election-guide release build \
   data/releases/wa-2026-primary/source-decisions.yaml \
-  --release-version 2026-primary.1 \
-  --generated-at 2026-07-21T16:00:00Z \
+    --release-version 2026-primary.2 \
+    --generated-at 2026-07-23T17:15:00Z \
   --git-commit "$(git rev-parse HEAD)"
 ```
 
@@ -83,7 +83,7 @@ Inspect both concise PDF pages, every detailed PDF page, desktop and mobile scre
 machine validation reports, and `RELEASE_NOTES.md`. Test the archive before publication:
 
 ```bash
-unzip -t dist/primary-release/seattle-election-guide-2026-primary.1.zip
+unzip -t dist/primary-release/seattle-election-guide-2026-primary.2.zip
 ```
 
 ## GitHub Release
@@ -92,9 +92,9 @@ Create the GitHub Release only from the merged mainline revision whose hash appe
 Use the bundled notes and attach the one versioned ZIP:
 
 ```bash
-gh release create 2026-primary.1 \
-  dist/primary-release/seattle-election-guide-2026-primary.1.zip \
-  --title "Seattle 2026 primary endorsement guide — 2026-primary.1" \
+gh release create 2026-primary.2 \
+  dist/primary-release/seattle-election-guide-2026-primary.2.zip \
+  --title "Seattle 2026 primary endorsement guide — 2026-primary.2" \
   --notes-file dist/primary-release/bundle/RELEASE_NOTES.md \
   --target "$(git rev-parse HEAD)"
 ```

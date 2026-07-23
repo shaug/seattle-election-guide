@@ -332,10 +332,34 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert f"Coverage gaps ({view_model.metadata.coverage_gap_count})" in html
     assert "They do not contribute to consensus scores" in html
     assert "zero means the source currently contributes no picks" not in html
-    assert ".screen-source-columns { display: grid;" in html
+    assert ".screen-source-columns { column-count: 2;" in html
+    assert ".screen-source-category { display: inline-block;" in html
+    assert "break-inside: avoid;" in html
+    assert ".screen-source-columns { column-count: 1; }" in html
     assert ".source-columns { display: grid;" in html
     assert "grid-template-columns: 1fr 1fr;" in html
     assert ".source-row { display: grid;" in html
+    category_group_markers = [
+        f'data-source-category-group="{category.category}"'
+        for category in view_model.methodology.source_categories
+    ]
+    assert all(html.count(marker) == 1 for marker in category_group_markers)
+    assert [html.index(marker) for marker in category_group_markers] == sorted(
+        html.index(marker) for marker in category_group_markers
+    )
+    assert category_group_markers[-1] == 'data-source-category-group="comparison"'
+    print_contributing_sources = [
+        source
+        for category in view_model.methodology.source_categories
+        for source in contributing_sources
+        if source.category == category.category
+    ]
+    print_source_positions = [
+        html.rindex(f'data-publication-source-id="{source.id}"')
+        for source in print_contributing_sources
+    ]
+    assert print_source_positions == sorted(print_source_positions)
+    assert "source_midpoint" not in html
     assert 'class="print-metadata"' not in html
     assert ".print-races { display: grid; grid-template-columns: 1fr 1fr;" in html
     assert html.count('class="print-race-column"') == 2
@@ -723,6 +747,8 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     )
 
     rendered_html = rendered.html_path.read_text(encoding="utf-8")
+    assert view_model.metadata.source_panel_id in rendered_html
+    assert view_model.metadata.source_panel_hash in rendered_html
     for percentage in (53, 64, 70, 100):
         assert f'style="--meter-fill: {percentage}%"' in rendered_html
     for tone in ("agrees", "differs", "not_covered"):
@@ -784,6 +810,10 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     assert "august 2026 primary" in concise_text.casefold()
     assert "Seattle Progressive Endorsement Guide" in concise_text
     assert all(source.name in concise_text for source in view_model.sources)
+    assert (
+        f"Panel {view_model.metadata.source_panel_version} · "
+        f"{view_model.metadata.source_panel_hash[:12]}"
+    ) in concise_text
     times_source = next(
         source for source in view_model.sources if source.panel_role == "comparison"
     )

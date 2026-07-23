@@ -416,7 +416,9 @@ def test_methodology_publishes_possible_overlap_without_deduplicating(tmp_path: 
     )
 
     methodology = bundle.view_model.methodology
-    assert bundle.view_model.schema_version == "1.4"
+    assert bundle.view_model.schema_version == "1.5"
+    assert bundle.view_model.metadata.source_panel_id == dataset.source_registry.id
+    assert len(bundle.view_model.metadata.source_panel_hash) == 64
     coverage_gaps = [
         source
         for source in bundle.view_model.sources
@@ -427,9 +429,12 @@ def test_methodology_publishes_possible_overlap_without_deduplicating(tmp_path: 
     assert coverage_gaps == []
     assert methodology.default_aggregation_view == "source_level"
     assert methodology.deduplicated_view == "not_computed"
-    assert [category.category for category in methodology.source_categories] == list(
+    expected_categories = list(
         dict.fromkeys(source.category for source in bundle.view_model.sources)
     )
+    expected_categories.sort(key=lambda category: category == "comparison")
+    assert [category.category for category in methodology.source_categories] == expected_categories
+    assert methodology.source_categories[-1].category == "comparison"
     assert [group.model_dump(mode="json") for group in methodology.source_overlap_groups] == [
         {
             "id": "fixture-possible-overlap",

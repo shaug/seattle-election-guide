@@ -28,7 +28,7 @@ INVENTORY = PROJECT_ROOT / "data/normalized/wa-2026-primary-inventory.json"
 REGISTRY = PROJECT_ROOT / "config/sources/default.yaml"
 SCORING = PROJECT_ROOT / "config/scoring/default.yaml"
 RENDERING = PROJECT_ROOT / "config/rendering/pdf.yaml"
-GENERATED_AT = datetime(2026, 7, 21, 16, 0, tzinfo=UTC)
+GENERATED_AT = datetime(2026, 7, 23, 17, 15, tzinfo=UTC)
 
 
 def test_release_compiler_builds_permitted_provenance_and_resolves_multi_pick(
@@ -463,6 +463,8 @@ def test_release_status_rejects_vacuous_or_inconsistent_audit_claims(
     valid = {
         "release_version": "test",
         "election_id": "wa-2026-primary",
+        "source_panel_id": "test-panel-v2",
+        "source_panel_hash": "b" * 64,
         "data_as_of": datetime(2026, 7, 20, 10, tzinfo=UTC),
         "generated_at": GENERATED_AT,
         "git_commit": "a" * 40,
@@ -501,6 +503,8 @@ def test_release_status_accepts_configured_concise_only_guide_artifacts() -> Non
         {
             "release_version": "test",
             "election_id": "wa-2026-primary",
+            "source_panel_id": "test-panel-v2",
+            "source_panel_hash": "b" * 64,
             "data_as_of": datetime(2026, 7, 20, 10, tzinfo=UTC),
             "generated_at": GENERATED_AT,
             "git_commit": "a" * 40,

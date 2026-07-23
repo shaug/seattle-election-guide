@@ -32,9 +32,13 @@ from election_guide.normalization.records import (
 )
 from election_guide.normalization.semantics import EndorsementStatus
 from election_guide.scoring import (
+    ConsensusImpactReport,
     PublicationBlockedError,
+    compare_consensus_snapshots,
     read_scoring_configuration,
     score_dataset,
+    summarize_consensus,
+    summarize_consensus_payload,
 )
 from election_guide.scoring.models import (
     ConsensusReport,
@@ -47,7 +51,7 @@ from election_guide.sources.models import SourceRegistry
 from election_guide.sources.registry import read_source_registry
 
 PROJECT_ROOT = Path(__file__).parent.parent
-NOW = datetime(2026, 7, 21, 16, 0, tzinfo=UTC)
+NOW = datetime(2026, 7, 23, 17, 15, tzinfo=UTC)
 RACE_ID = "king-county-assessor"
 CONSENSUS_SOURCE_IDS = [
     "the-stranger",
@@ -600,6 +604,80 @@ def test_score_cli_writes_valid_canonical_report(tmp_path: Path) -> None:
     )
     assert epoch_result.exit_code == 0, epoch_result.output
     assert output_path.read_bytes() == epoch_output.read_bytes()
+
+
+def test_score_comparison_cli_is_deterministic_and_complete(tmp_path: Path) -> None:
+    candidates = _candidate_ids()
+    before_dataset = _dataset(
+        tmp_path / "before",
+        [
+            (CONSENSUS_SOURCE_IDS[0], "endorsed", candidates[:1]),
+            (CONSENSUS_SOURCE_IDS[1], "endorsed", candidates[:1]),
+        ],
+    )
+    after_dataset = _dataset(
+        tmp_path / "after",
+        [
+            (CONSENSUS_SOURCE_IDS[0], "endorsed", candidates[:1]),
+            (CONSENSUS_SOURCE_IDS[1], "endorsed", candidates[1:2]),
+        ],
+    )
+    before = score_dataset(before_dataset, _configuration(), computed_at=NOW)
+    after = score_dataset(after_dataset, _configuration(), computed_at=NOW)
+    before_path = tmp_path / "before.json"
+    after_path = tmp_path / "after.json"
+    output_path = tmp_path / "impact.json"
+    before_path.write_bytes(canonical_json_bytes(before.model_dump(mode="json")))
+    after_path.write_bytes(canonical_json_bytes(after.model_dump(mode="json")))
+
+    result = CliRunner().invoke(
+        app,
+        [
+            "compare-scores",
+            str(before_path),
+            str(after_path),
+            "--output-path",
+            str(output_path),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    impact = ConsensusImpactReport.model_validate(read_json(output_path))
+    assert impact.before == summarize_consensus_payload(read_json(before_path))
+    assert impact.after == summarize_consensus(after)
+    assert impact == compare_consensus_snapshots(impact.before, impact.after)
+    race_change = next(change for change in impact.changes if change.race_id == RACE_ID)
+    assert {"grade", "is_tied", "winner_candidate_ids"} <= set(race_change.changed_fields)
+
+
+def test_committed_source_panel_impact_matches_current_scoring() -> None:
+    dataset = CanonicalDataset.model_validate(
+        read_json(PROJECT_ROOT / "data/normalized/canonical-dataset.json")
+    )
+    current = score_dataset(
+        dataset,
+        _configuration(),
+        computed_at=datetime(2026, 7, 23, 17, 10, tzinfo=UTC),
+    )
+    impact = ConsensusImpactReport.model_validate(
+        read_json(PROJECT_ROOT / "data/releases/wa-2026-primary/source-panel-impact.json")
+    )
+
+    current_snapshot = summarize_consensus(current)
+    assert impact.after == current_snapshot
+    assert impact == compare_consensus_snapshots(impact.before, current_snapshot)
+    ld37_position_2 = next(
+        change for change in impact.changes if change.race_id == "ld-37-state-representative-2"
+    )
+    assert "warnings" in ld37_position_2.changed_fields
+    supreme_court_3 = next(
+        change for change in impact.changes if change.race_id == "supreme-court-justice-3"
+    )
+    assert {"winner_candidate_ids", "grade", "is_tied"} <= set(supreme_court_3.changed_fields)
+    ld46_position_1 = next(
+        change for change in impact.changes if change.race_id == "ld-46-state-representative-1"
+    )
+    assert "grade" in ld46_position_1.changed_fields
 
 
 def _race_result(dataset: CanonicalDataset) -> RaceConsensus:

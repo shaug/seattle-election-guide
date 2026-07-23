@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 1410,
+  "canonical_url": "https://bsky.app/profile/tech4housing.org",
+  "capture_method": "manual_upload",
+  "content_sha256": "9c4b3d5e682bf1522026d1495d66895aafa6cbcc198cd1a59d62f89b22499322",
+  "http_status": null,
+  "id": "capture-tech-4-housing-20260723T124200Z-e4e38c0f02eb",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://bsky.app/profile/tech4housing.org",
+  "retrieved_at": "2026-07-23T12:42:00Z",
+  "schema_version": "1.0",
+  "source_id": "tech-4-housing",
+  "storage_reference": "sha256/9c/9c4b3d5e682bf1522026d1495d66895aafa6cbcc198cd1a59d62f89b22499322",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: Tech 4 Housing",
+  "updated_at": null
+}

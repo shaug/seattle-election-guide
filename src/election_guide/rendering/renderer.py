@@ -417,6 +417,12 @@ def validate_rendered_guide(
     contributing_sources = [
         source for source in view_model.sources if source.contribution_status == "contributing"
     ]
+    print_contributing_sources = [
+        source
+        for category in view_model.methodology.source_categories
+        for source in contributing_sources
+        if source.category == category.category
+    ]
     coverage_gap_sources = [
         source for source in view_model.sources if source.contribution_status == "coverage_gap"
     ]
@@ -507,6 +513,8 @@ def validate_rendered_guide(
         f"Built {view_model.metadata.generated_at.date().isoformat()}",
         f"Data {view_model.metadata.data_version}",
         f"Code {view_model.metadata.git_commit[:12]}",
+        f"Panel {view_model.metadata.source_panel_version}",
+        view_model.metadata.source_panel_hash[:12],
         *(source.name for source in coverage_gap_sources),
         *(_coverage_gap_status_label(source) for source in coverage_gap_sources),
     ]
@@ -516,7 +524,7 @@ def validate_rendered_guide(
         if _normalized_text(value).casefold() not in comparable_pdf_text
     )
     expected_source_participation = [
-        _source_participation_label(source, compact=True) for source in contributing_sources
+        _source_participation_label(source, compact=True) for source in print_contributing_sources
     ]
     if _pdf_source_participation_labels(source_page_lines) != expected_source_participation:
         missing_pdf_values.append("ordered source participation rows")
@@ -531,13 +539,13 @@ def validate_rendered_guide(
     pdf_link_rows = _pdf_link_rows(reader)
     expected_pdf_links = [
         configuration.project_url,
-        *(source.evidence_url for source in contributing_sources),
+        *(source.evidence_url for source in print_contributing_sources),
         *(source.evidence_url for source in coverage_gap_sources),
         configuration.project_url,
     ]
     expected_source_link_rows = [
         (source.evidence_url, _normalized_text(source.name))
-        for source in [*contributing_sources, *coverage_gap_sources]
+        for source in [*print_contributing_sources, *coverage_gap_sources]
     ]
     pdf_links_valid = (
         _web_urls_are_safe(pdf_links)
@@ -1045,18 +1053,50 @@ def _inspect_print_layout(
                   const sourcePanel = document.querySelector('.source-panel');
                   const methodNotes = document.querySelector('.method-notes');
                   const sourceColumns = [...document.querySelectorAll('.source-column')];
-                  if (!sourcePanel || !methodNotes || sourceColumns.length !== 2) {
+                  const sourceGroups = [...document.querySelectorAll('.source-category-group')];
+                  if (!sourcePanel || !methodNotes || sourceColumns.length !== 2 ||
+                      sourceGroups.length < 2) {
                     issues.push('.source-directory-structure');
                   } else {
                     if (sourcePanel.getBoundingClientRect().bottom >
                         methodNotes.getBoundingClientRect().top + 1) {
                       issues.push('.source-panel-notes-overlap');
                     }
+                    const columnCategories = sourceColumns.map(column =>
+                      [...column.querySelectorAll('.source-category-group')].map(
+                        group => group.dataset.sourceCategoryGroup
+                      )
+                    );
+                    const categoryOrder = columnCategories.flat();
+                    if (categoryOrder.some(category => !category) ||
+                        new Set(categoryOrder).size !== categoryOrder.length ||
+                        categoryOrder.length !== sourceGroups.length) {
+                      issues.push('.source-category-containment');
+                    }
                     const sourceCounts = sourceColumns.map(
                       column => column.querySelectorAll('.source-row').length
                     );
-                    if (Math.abs(sourceCounts[0] - sourceCounts[1]) > 1) {
+                    const categoryCounts = sourceGroups.map(
+                      group => group.querySelectorAll('.source-row').length
+                    );
+                    const totalSourceCount = categoryCounts.reduce(
+                      (total, count) => total + count, 0
+                    );
+                    let prefixCount = 0;
+                    let optimalDifference = Number.POSITIVE_INFINITY;
+                    for (let index = 0; index < categoryCounts.length - 1; index += 1) {
+                      prefixCount += categoryCounts[index];
+                      optimalDifference = Math.min(
+                        optimalDifference,
+                        Math.abs(totalSourceCount - (2 * prefixCount))
+                      );
+                    }
+                    if (Math.abs(sourceCounts[0] - sourceCounts[1]) !== optimalDifference) {
                       issues.push('.source-column-balance');
+                    }
+                    if (sourcePanel.querySelector('.source-row-comparison') &&
+                        categoryOrder[categoryOrder.length - 1] !== 'comparison') {
+                      issues.push('.source-comparison-order');
                     }
                   }
                   const raceColumns = [...document.querySelectorAll('.print-race-column')];

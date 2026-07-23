@@ -53,6 +53,7 @@ from election_guide.publication.models import (
 from election_guide.scoring.models import ConsensusReport, RaceConsensus
 from election_guide.serialization import canonical_json_bytes
 from election_guide.sources.models import Source
+from election_guide.sources.registry import source_registry_hash
 
 ARTIFACT_NAMES = (
     "consensus.json",
@@ -434,6 +435,9 @@ def _build_view_model(
             election_date=dataset.inventory.election.election_date.isoformat(),
             generated_at=consensus.computed_at,
             data_version=consensus.input_hash[:12],
+            source_panel_id=dataset.source_registry.id,
+            source_panel_version=dataset.source_registry.id.rsplit("-", maxsplit=1)[-1],
+            source_panel_hash=source_registry_hash(dataset.source_registry),
             git_commit=git_commit,
             source_count=len(active_sources),
             captured_source_count=len(captured_source_ids),
@@ -575,6 +579,7 @@ def _methodology(dataset: CanonicalDataset, consensus: ConsensusReport) -> Publi
     ]
     active_source_ids = {source.id for source in active_sources}
     categories = list(dict.fromkeys(source.category for source in active_sources))
+    categories.sort(key=lambda category: category == "comparison")
     return PublicationMethodology(
         process_steps=[
             "Collect official endorsements",

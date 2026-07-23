@@ -50,6 +50,8 @@ class StagedPagesSite:
     output_dir: Path
     release_version: str
     git_commit: str
+    source_panel_id: str
+    source_panel_hash: str
     html_path: Path
     pdf_paths: tuple[Path, ...]
 
@@ -77,6 +79,11 @@ def stage_pages_site(
         raise ValueError("release manifest and release status versions differ")
     if manifest.generated_at != status.generated_at:
         raise ValueError("release manifest and release status timestamps differ")
+    if (
+        manifest.source_panel_id != status.source_panel_id
+        or manifest.source_panel_hash != status.source_panel_hash
+    ):
+        raise ValueError("release manifest and release status source panels differ")
     artifact_hashes = manifest.artifact_hashes
     expected_artifacts = set(status.included_artifacts) - {"release-manifest.json"}
     if set(artifact_hashes) != expected_artifacts:
@@ -105,6 +112,8 @@ def stage_pages_site(
             "schema_version": "1.0",
             "release_version": status.release_version,
             "git_commit": status.git_commit,
+            "source_panel_id": status.source_panel_id,
+            "source_panel_hash": status.source_panel_hash,
             "data_as_of": status.data_as_of.isoformat(),
             "generated_at": status.generated_at.isoformat(),
             "assets": _artifact_hashes(stage),
@@ -120,6 +129,8 @@ def stage_pages_site(
         output_dir=output_dir,
         release_version=status.release_version,
         git_commit=status.git_commit,
+        source_panel_id=status.source_panel_id,
+        source_panel_hash=status.source_panel_hash,
         html_path=output_dir / "index.html",
         pdf_paths=tuple(output_dir / source.name for source in pdf_sources),
     )

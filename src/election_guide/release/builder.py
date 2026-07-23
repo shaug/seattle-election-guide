@@ -27,6 +27,7 @@ from election_guide.release.models import (
 from election_guide.rendering import build_rendered_guide
 from election_guide.scoring import ConsensusReport, read_scoring_configuration, score_dataset
 from election_guide.serialization import canonical_json_bytes
+from election_guide.sources.registry import source_registry_hash
 
 
 @dataclass(frozen=True)
@@ -163,6 +164,8 @@ def build_release(
         )
         manifest = ReleaseManifest(
             release_version=release_version,
+            source_panel_id=dataset.source_registry.id,
+            source_panel_hash=source_registry_hash(dataset.source_registry),
             generated_at=generated_at,
             artifact_hashes=_artifact_hashes(stage_bundle),
         )
@@ -246,6 +249,8 @@ def _release_status(
     return ReleaseStatus(
         release_version=release_version,
         election_id=dataset.inventory.election.id,
+        source_panel_id=dataset.source_registry.id,
+        source_panel_hash=source_registry_hash(dataset.source_registry),
         data_as_of=data_as_of,
         generated_at=generated_at,
         git_commit=git_commit,
@@ -291,6 +296,8 @@ CSV, review, validation, provenance, build, and release manifests.
 - Data as of: {status.data_as_of.isoformat()}
 - Built at: {status.generated_at.isoformat()}
 - Code revision: `{status.git_commit}`
+- Source panel: `{status.source_panel_id}`
+- Source panel hash: `{status.source_panel_hash}`
 - Reviewed source extracts: {status.captured_source_count} of {status.source_count} active sources
 - Displayed source decisions: {status.displayed_endorsement_count}
 - Unresolved review items: {status.unresolved_review_count}

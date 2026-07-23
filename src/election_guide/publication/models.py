@@ -454,6 +454,9 @@ class PublicationMetadata(PublicationModel):
     election_date: str
     generated_at: AwareDatetime
     data_version: str
+    source_panel_id: str
+    source_panel_version: str
+    source_panel_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
     git_commit: str = Field(min_length=1)
     source_count: int = Field(ge=0, strict=True)
     captured_source_count: int = Field(ge=0, strict=True)
@@ -474,7 +477,7 @@ class PublicationMetadata(PublicationModel):
 
 
 class PublicationViewModel(PublicationModel):
-    schema_version: Literal["1.4"] = "1.4"
+    schema_version: Literal["1.5"] = "1.5"
     metadata: PublicationMetadata
     sources: list[PublicationSource]
     sections: list[PublicationSection]

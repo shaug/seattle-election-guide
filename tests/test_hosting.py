@@ -16,6 +16,7 @@ from election_guide.release.models import REQUIRED_RELEASE_ARTIFACTS, ReleaseSta
 from election_guide.serialization import canonical_json_bytes
 
 COMMIT = "a" * 40
+PANEL_HASH = "b" * 64
 PROJECT_ROOT = Path(__file__).parents[1]
 
 
@@ -30,6 +31,8 @@ def test_stage_pages_site_publishes_only_verified_public_assets(tmp_path: Path) 
     assert result.output_dir == output
     assert result.release_version == "test.1"
     assert result.git_commit == COMMIT
+    assert result.source_panel_id == "test-panel-v2"
+    assert result.source_panel_hash == PANEL_HASH
     assert (output / "index.html").read_bytes() == b"<!doctype html><title>Guide</title>\n"
     assert (output / "Seattle_Primary_Guide.pdf").read_bytes() == b"%PDF-1.7\n"
     assert not (output / "stale.txt").exists()
@@ -47,6 +50,8 @@ def test_stage_pages_site_publishes_only_verified_public_assets(tmp_path: Path) 
     deployment = json.loads((output / "deployment-manifest.json").read_text(encoding="utf-8"))
     assert deployment["release_version"] == "test.1"
     assert deployment["git_commit"] == COMMIT
+    assert deployment["source_panel_id"] == "test-panel-v2"
+    assert deployment["source_panel_hash"] == PANEL_HASH
     assert set(deployment["assets"]) == {
         "Seattle_Primary_Guide.pdf",
         "_headers",
@@ -156,6 +161,8 @@ def _write_release_bundle(tmp_path: Path) -> Path:
         {
             "release_version": "test.1",
             "election_id": "test-election",
+            "source_panel_id": "test-panel-v2",
+            "source_panel_hash": PANEL_HASH,
             "data_as_of": "2026-07-20T12:00:00Z",
             "generated_at": "2026-07-21T12:00:00Z",
             "git_commit": COMMIT,
@@ -187,8 +194,10 @@ def _write_release_bundle(tmp_path: Path) -> Path:
     (bundle / "release-manifest.json").write_bytes(
         canonical_json_bytes(
             {
-                "schema_version": "1.0",
+                "schema_version": "1.1",
                 "release_version": status.release_version,
+                "source_panel_id": status.source_panel_id,
+                "source_panel_hash": status.source_panel_hash,
                 "generated_at": status.generated_at.isoformat(),
                 "artifact_hashes": hashes,
             }

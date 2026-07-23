@@ -76,8 +76,10 @@ from election_guide.rendering import build_rendered_guide
 from election_guide.scoring import (
     ConsensusReport,
     PublicationBlockedError,
+    compare_consensus_snapshots,
     read_scoring_configuration,
     score_dataset,
+    summarize_consensus_payload,
 )
 from election_guide.serialization import canonical_json_bytes, read_json
 from election_guide.sources.registry import read_source_registry, validate_registry_inventory
@@ -548,6 +550,27 @@ def score(
         typer.echo(f"scoring failed: {error}", err=True)
         raise typer.Exit(code=1) from error
     typer.echo(f"consensus: {output_path} ({len(report.races)} races)")
+
+
+@app.command("compare-scores")
+def compare_scores(
+    before_path: Annotated[Path, typer.Argument(exists=True, dir_okay=False, readable=True)],
+    after_path: Annotated[Path, typer.Argument(exists=True, dir_okay=False, readable=True)],
+    output_path: Annotated[
+        Path,
+        typer.Option(dir_okay=False),
+    ] = Path("data/releases/wa-2026-primary/source-panel-impact.json"),
+) -> None:
+    """Write a deterministic source-panel scoring impact report."""
+    try:
+        before = summarize_consensus_payload(read_json(before_path))
+        after = summarize_consensus_payload(read_json(after_path))
+        report = compare_consensus_snapshots(before, after)
+        _write_generated_json(output_path, report.model_dump(mode="json"))
+    except (OSError, UnicodeError, json.JSONDecodeError, ValidationError, ValueError) as error:
+        typer.echo(f"score comparison failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    typer.echo(f"score impact: {output_path} ({len(report.changes)} changed races)")
 
 
 @export_app.command("build")
