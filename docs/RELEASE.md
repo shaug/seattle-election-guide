@@ -104,6 +104,7 @@ archive, and confirm the release tag targets the recorded mainline commit.
 
 ## Website publication
 
-The validated HTML and PDF are also staged and deployed to Cloudflare Pages from `main`. See
-[HOSTING.md](HOSTING.md) for the Wrangler configuration, safety gates, one-time credentials,
-custom-domain setup, local preview, and automatic deployment workflow.
+The validated HTML and PDF are also resolved through the repository-owned site manifest and staged
+under the election-scoped `/e/<election-id>/` path for deployment from `main`. See
+[HOSTING.md](HOSTING.md) for the archive manifest, route contract, Wrangler configuration, safety
+gates, one-time credentials, local preview, and automatic deployment workflow.

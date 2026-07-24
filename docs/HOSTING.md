@@ -1,9 +1,10 @@
 # Cloudflare Pages hosting
 
-The public guide is a Direct Upload Cloudflare Pages project named `seattle-elections`. GitHub
-Actions builds and validates the complete release, stages only the public guide assets, and then
-uses the repository-pinned Wrangler version to upload that exact artifact. Cloudflare does not run
-the Python/PDF build itself.
+The public archive is a Direct Upload Cloudflare Pages project named `seattle-elections`. GitHub
+Actions builds and validates the current release, resolves every release declared in
+`config/hosting/site.yaml`, composes the complete archive, and then uses the repository-pinned
+Wrangler version to upload that exact artifact. Cloudflare does not run the Python/PDF build
+itself.
 
 ## One-time setup
 
@@ -46,8 +47,9 @@ query string:
 - `seattle-elections.guide`.
 
 Every legacy hostname must be associated with the Pages project so Cloudflare can terminate HTTPS
-before the worker redirects the request. For `seattle-elections.dobravoda.dev`, Namecheap remains
-the authoritative DNS provider and publishes this record after Pages accepts the hostname:
+before the worker redirects the request. The redirect retains the complete election-scoped path and
+query string. For `seattle-elections.dobravoda.dev`, Namecheap remains the authoritative DNS
+provider and publishes this record after Pages accepts the hostname:
 
 | Type | Host | Value |
 | --- | --- | --- |
@@ -58,6 +60,29 @@ to Pages. A registrar URL-forwarding record is not sufficient because it does no
 endpoint required before an HTTPS redirect can run. Certificate issuance and DNS propagation may
 take time after either hostname is attached or repointed.
 
+## Archive manifest and routes
+
+`config/hosting/site.yaml` is the versioned source of truth for the site. Its ordered election list
+declares the current election first and binds every public election ID to a logical bundle ID,
+release version, and source-panel identity/hash. Optional Git commit, release-manifest hash, and
+complete bundle hash fields can pin older immutable inputs more tightly. The staging command
+resolves each logical bundle ID to a local verified release bundle; it never infers the current
+election from dates, filenames, directory order, or an earlier deployment.
+
+The public route contract is:
+
+- `/` returns a temporary `307` redirect to the manifest-declared current election;
+- `/e/` is an index of every declared guide, with the current election listed first;
+- `/e/<election-id>/` serves that election's HTML, PDFs, release status, and release manifest;
+- `/e/<election-id>` redirects to the trailing-slash form; and
+- unknown elections, assets, and other paths return a real `404` with `noindex`.
+
+The generated Pages worker uses an exact staged-asset allowlist before consulting the Pages asset
+binding. This prevents Cloudflare's document fallback from turning a historical-looking unknown URL
+into the current guide. The archive and known election pages remain indexable. Rendered guides set
+their canonical and Open Graph URL to `https://seattleelections.guide/e/<election-id>/`; relative
+PDF links therefore remain scoped to the same election.
+
 ## Local staging and preview
 
 Build the audited release as described in [RELEASE.md](RELEASE.md), then stage it:
@@ -66,14 +91,35 @@ Build the audited release as described in [RELEASE.md](RELEASE.md), then stage i
 make hosting-stage
 ```
 
-Staging verifies the release status, every release-manifest hash, and the exact Git revision. It
-atomically replaces `dist/cloudflare-site/` with:
+The Make target resolves the current manifest bundle as
+`wa-2026-primary-2026-primary.2=dist/primary-release/bundle`. When another election is added, prepare
+each declared bundle and pass one `--bundle BUNDLE_ID=PATH` option for each. Staging verifies all
+declared identities, each release status, every release-manifest artifact hash, and the current
+bundle's exact Git revision before it changes the existing output. It then atomically replaces
+`dist/cloudflare-site/` with:
 
-- `index.html`, copied byte-for-byte from the validated responsive guide;
-- the concise PDF and, when present, the detailed PDF;
-- `release-status.json` and a deployment manifest for machine-readable verification; and
+- `e/index.html`, generated from the manifest;
+- each guide at `e/<election-id>/index.html`, copied byte-for-byte from its validated release;
+- each election's concise/detailed PDFs, `release-status.json`, and `release-manifest.json`;
+- a site-wide deployment manifest recording every verified release and staged asset hash; and
 - `_headers` with browser-security and revalidation policy. The public guide is indexable by
   search engines on both its custom domain and Cloudflare Pages hostnames.
+
+`hosting stage` verifies the completed tree before the atomic swap. The same integrity gate can be
+run independently, and CI runs it once before artifact upload and again after the deploy job
+downloads the artifact:
+
+```bash
+uv run election-guide hosting verify \
+  config/hosting/site.yaml \
+  dist/cloudflare-site \
+  --expected-git-commit "$(git rev-parse HEAD)"
+```
+
+Verification validates the deployment-manifest schema and election identities, binds each staged
+release status/manifest to its declaration, requires the exact declared asset set, and recomputes
+every asset hash. `deployment-manifest.json` is the documented sole exclusion from its own asset
+hash map.
 
 Preview the staged directory with Wrangler:
 
@@ -87,10 +133,11 @@ that passed the full mainline release checks.
 
 ## Deployment gate
 
-The `deploy` job depends on the complete CI `check` job. CI builds the deterministic release twice,
-compares the archives, validates the archive and rendered output, stages the first validated build,
-and uploads the staged directory as a short-lived GitHub Actions artifact. Only then can the
-production job download and upload it with Wrangler. Concurrent production uploads are serialized.
+The `deploy` job depends on the complete CI `check` job. CI builds the deterministic current release
+twice, compares the archives, validates the archive and rendered output, resolves all
+manifest-declared bundles, stages the complete site, and uploads the staged directory as a
+short-lived GitHub Actions artifact. Only then can the production job download and upload it with
+Wrangler. Concurrent production uploads are serialized.
 
 To stop automatic publication without changing code, set `CLOUDFLARE_PAGES_ENABLED` to any value
 other than `true` or delete the variable.
