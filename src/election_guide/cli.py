@@ -117,26 +117,43 @@ evidence_app.add_typer(manual_app, name="manual")
 
 @hosting_app.command("stage")
 def hosting_stage(
-    bundle_dir: Annotated[Path, typer.Argument(exists=True, file_okay=False, readable=True)],
+    site_manifest: Annotated[Path, typer.Argument(exists=True, dir_okay=False, readable=True)],
+    bundles: Annotated[
+        list[str],
+        typer.Option(
+            "--bundle",
+            help="Resolve one manifest bundle ID as BUNDLE_ID=PATH. Repeat for every election.",
+        ),
+    ],
     output_dir: Annotated[Path, typer.Option(file_okay=False)] = Path("dist/cloudflare-site"),
     expected_git_commit: Annotated[
         str | None,
-        typer.Option(help="Reject a release not built from this exact Git revision."),
+        typer.Option(help="Reject a current-election release not built from this Git revision."),
     ] = None,
 ) -> None:
-    """Verify and atomically stage an audited release for Cloudflare Pages."""
+    """Verify and atomically compose the complete public election archive."""
     try:
+        bundle_dirs: dict[str, Path] = {}
+        for assignment in bundles:
+            bundle_id, separator, path = assignment.partition("=")
+            if not separator or not bundle_id or not path:
+                raise ValueError("bundle assignments must use BUNDLE_ID=PATH")
+            if bundle_id in bundle_dirs:
+                raise ValueError(f"bundle assignment repeats ID {bundle_id!r}")
+            bundle_dirs[bundle_id] = Path(path)
         result = stage_pages_site(
-            bundle_dir,
+            site_manifest,
+            bundle_dirs,
             output_dir,
-            expected_git_commit=expected_git_commit,
+            expected_current_git_commit=expected_git_commit,
         )
     except (OSError, UnicodeError, json.JSONDecodeError, ValidationError, ValueError) as error:
         typer.echo(f"hosting stage failed: {error}", err=True)
         raise typer.Exit(code=1) from error
     typer.echo(
         f"Pages site: {result.output_dir} "
-        f"({result.release_version}; {1 + len(result.pdf_paths)} guide files)"
+        f"({len(result.election_paths)} elections; current {result.current_election_id} "
+        f"{result.release_version})"
     )
 
 

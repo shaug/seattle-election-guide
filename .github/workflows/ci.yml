@@ -61,11 +61,13 @@ jobs:
           test "$(stat -c '%a' dist/ci-release-a)" = 755
       - name: Stage verified Cloudflare Pages site
         run: |
-          uv run election-guide hosting stage dist/ci-release-a/bundle \
+          uv run election-guide hosting stage config/hosting/site.yaml \
+            --bundle wa-2026-primary-2026-primary.2=dist/ci-release-a/bundle \
             --expected-git-commit "$GITHUB_SHA" \
             --output-dir dist/cloudflare-site
-          test -f dist/cloudflare-site/index.html
-          test -f dist/cloudflare-site/Seattle_2026_Primary_Endorsement_Guide.pdf
+          test -f dist/cloudflare-site/e/index.html
+          test -f dist/cloudflare-site/e/wa-2026-primary/index.html
+          test -f dist/cloudflare-site/e/wa-2026-primary/Seattle_2026_Primary_Endorsement_Guide.pdf
       - name: Upload Cloudflare Pages site
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v4

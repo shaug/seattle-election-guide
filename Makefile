@@ -23,7 +23,8 @@ release-verify:
 	uv run election-guide release verify data/releases/wa-2026-primary/source-decisions.yaml
 
 hosting-stage:
-	uv run election-guide hosting stage dist/primary-release/bundle \
+	uv run election-guide hosting stage config/hosting/site.yaml \
+		--bundle wa-2026-primary-2026-primary.2=dist/primary-release/bundle \
 		--expected-git-commit "$$(git rev-parse HEAD)"
 
 hosting-serve: hosting-stage
