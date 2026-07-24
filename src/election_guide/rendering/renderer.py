@@ -409,6 +409,13 @@ def validate_rendered_guide(
             for endorser in group.endorsers
         ),
     }
+    canonical_url = f"{configuration.public_site_url}/e/{view_model.metadata.election_id}/"
+    required_site_metadata = {
+        f'<link rel="canonical" href="{canonical_url}">',
+        f'<meta property="og:url" content="{canonical_url}">',
+    }
+    if not required_site_metadata.issubset({line.strip() for line in html.splitlines()}):
+        missing_evidence_rows.append("document: missing election-scoped canonical metadata")
     if parser.links != expected_html_links:
         missing_evidence_rows.append("document: unexpected or missing links")
     source_categories = {

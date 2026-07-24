@@ -238,6 +238,9 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "Seattle Times" in html
     assert "August 2026 Primary" in html
     assert "Seattle Progressive Endorsement Guide" in html
+    canonical_url = f"{configuration.public_site_url}/e/{view_model.metadata.election_id}/"
+    assert f'<link rel="canonical" href="{canonical_url}">' in html
+    assert f'<meta property="og:url" content="{canonical_url}">' in html
     assert f'href="{configuration.pdf_filename}">Printable PDF</a>' in html
     assert 'href="mailto:seattle-elections@dobravoda.dev">Feedback?</a>' in html
     assert 'class="footer-actions" aria-label="Guide links"' in html

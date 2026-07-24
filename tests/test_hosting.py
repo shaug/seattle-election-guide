@@ -1,90 +1,309 @@
-"""Cloudflare Pages staging tests."""
+"""Cloudflare Pages archive composition and routing tests."""
 
 from __future__ import annotations
 
 import hashlib
 import json
+import shutil
+import subprocess
 from pathlib import Path
+from typing import cast
 
 import pytest
 import yaml
 from typer.testing import CliRunner
 
 from election_guide.cli import app
-from election_guide.hosting import stage_pages_site
+from election_guide.hosting import (
+    stage_pages_site,
+    verify_staged_pages_site,
+)
 from election_guide.release.models import REQUIRED_RELEASE_ARTIFACTS, ReleaseStatus
 from election_guide.serialization import canonical_json_bytes
 
 COMMIT = "a" * 40
+OLDER_COMMIT = "c" * 40
 PANEL_HASH = "b" * 64
 PROJECT_ROOT = Path(__file__).parents[1]
+CURRENT_ID = "wa-2026-primary"
+OLDER_ID = "wa-2025-general"
+CURRENT_BUNDLE_ID = "wa-2026-primary-release"
+OLDER_BUNDLE_ID = "wa-2025-general-release"
 
 
-def test_stage_pages_site_publishes_only_verified_public_assets(tmp_path: Path) -> None:
-    bundle = _write_release_bundle(tmp_path)
+def test_stage_pages_site_composes_verified_election_archive(tmp_path: Path) -> None:
+    current, older = _write_archive_bundles(
+        tmp_path,
+        current_html=b"<!doctype html><title>Current guide</title>\n",
+        older_html=b"<!doctype html><title>Older guide</title>\n",
+    )
+    manifest = _write_site_manifest(tmp_path, current_first=True)
     output = tmp_path / "site"
     output.mkdir()
     (output / "stale.txt").write_text("old deployment", encoding="utf-8")
 
-    result = stage_pages_site(bundle, output, expected_git_commit=COMMIT)
+    result = stage_pages_site(
+        manifest,
+        {
+            CURRENT_BUNDLE_ID: current,
+            OLDER_BUNDLE_ID: older,
+        },
+        output,
+        expected_current_git_commit=COMMIT,
+    )
 
     assert result.output_dir == output
-    assert result.release_version == "test.1"
+    assert result.current_election_id == CURRENT_ID
+    assert result.release_version == "primary.2"
     assert result.git_commit == COMMIT
-    assert result.source_panel_id == "test-panel-v2"
-    assert result.source_panel_hash == PANEL_HASH
-    assert (output / "index.html").read_bytes() == b"<!doctype html><title>Guide</title>\n"
-    assert (output / "Seattle_Primary_Guide.pdf").read_bytes() == b"%PDF-1.7\n"
+    assert result.html_path == output / "e" / CURRENT_ID / "index.html"
+    assert result.pdf_paths == (output / "e" / CURRENT_ID / "Current_Guide.pdf",)
+    assert result.election_paths == (
+        output / "e" / CURRENT_ID,
+        output / "e" / OLDER_ID,
+    )
     assert not (output / "stale.txt").exists()
+    assert not (output / "index.html").exists()
+    assert result.html_path.read_bytes() == b"<!doctype html><title>Current guide</title>\n"
+    assert (output / "e" / OLDER_ID / "index.html").read_bytes() == (
+        b"<!doctype html><title>Older guide</title>\n"
+    )
+    assert (output / "e" / CURRENT_ID / "Current_Guide.pdf").read_bytes() == b"%PDF-1.7\n"
+    assert (output / "e" / CURRENT_ID / "release-status.json").is_file()
+    assert (output / "e" / CURRENT_ID / "release-manifest.json").is_file()
+
+    archive = (output / "e" / "index.html").read_text(encoding="utf-8")
+    assert archive.index(CURRENT_ID) < archive.index(OLDER_ID)
+    assert f'href="/e/{CURRENT_ID}/"' in archive
+    assert "current" in archive
+    assert '<link rel="canonical" href="https://seattleelections.guide/e/">' in archive
+    assert "noindex" not in archive
+
     headers = (output / "_headers").read_text(encoding="utf-8")
     assert "X-Frame-Options: DENY" in headers
     assert "X-Robots-Tag" not in headers
-    assert "noindex" not in headers
     worker = (output / "_worker.js").read_text(encoding="utf-8")
     assert 'const CANONICAL_HOST = "seattleelections.guide";' in worker
-    assert '"seattle-elections.dobravoda.dev"' in worker
-    assert '"seattle-elections.guide"' in worker
-    assert "return Response.redirect(url.toString(), 301);" in worker
-    assert "return env.ASSETS.fetch(request);" in worker
-    assert (output / "release-status.json").is_file()
+    assert "return redirectPath(url, CURRENT_ELECTION_PATH, 307);" in worker
+    assert 'return new Response("Not found\\n"' in worker
+
     deployment = json.loads((output / "deployment-manifest.json").read_text(encoding="utf-8"))
-    assert deployment["release_version"] == "test.1"
-    assert deployment["git_commit"] == COMMIT
-    assert deployment["source_panel_id"] == "test-panel-v2"
-    assert deployment["source_panel_hash"] == PANEL_HASH
-    assert set(deployment["assets"]) == {
-        "Seattle_Primary_Guide.pdf",
+    assert deployment["schema_version"] == "2.0"
+    assert deployment["current_election_id"] == CURRENT_ID
+    assert [election["election_id"] for election in deployment["elections"]] == [
+        CURRENT_ID,
+        OLDER_ID,
+    ]
+    assert set(deployment["assets"]) >= {
         "_headers",
         "_worker.js",
-        "index.html",
-        "release-status.json",
+        f"e/{CURRENT_ID}/index.html",
+        f"e/{CURRENT_ID}/Current_Guide.pdf",
+        f"e/{OLDER_ID}/index.html",
+        "e/index.html",
     }
 
 
-def test_stage_pages_site_rejects_tampered_release_without_replacing_output(
-    tmp_path: Path,
-) -> None:
-    bundle = _write_release_bundle(tmp_path)
+def test_changing_current_election_preserves_historical_election_bytes(tmp_path: Path) -> None:
+    current, older = _write_archive_bundles(
+        tmp_path,
+        current_html=b"new election bytes\n",
+        older_html=b"historical bytes stay fixed\n",
+    )
+    assignments = {CURRENT_BUNDLE_ID: current, OLDER_BUNDLE_ID: older}
+    first_manifest = _write_site_manifest(tmp_path / "first", current_first=False)
+    second_manifest = _write_site_manifest(tmp_path / "second", current_first=True)
+
+    first_output = tmp_path / "first-site"
+    second_output = tmp_path / "second-site"
+    stage_pages_site(first_manifest, assignments, first_output)
+    before = _tree_bytes(first_output / "e" / OLDER_ID)
+    stage_pages_site(second_manifest, assignments, second_output)
+    after = _tree_bytes(second_output / "e" / OLDER_ID)
+
+    assert before == after
+    first_redirect = _run_worker(
+        first_output / "_worker.js",
+        ["https://seattleelections.guide/?deployment=first"],
+    )[0]
+    second_redirect = _run_worker(
+        second_output / "_worker.js",
+        ["https://seattleelections.guide/?deployment=second"],
+    )[0]
+    assert first_redirect == {
+        "status": 307,
+        "location": f"https://seattleelections.guide/e/{OLDER_ID}/?deployment=first",
+        "robots": None,
+        "body": "",
+    }
+    assert second_redirect == {
+        "status": 307,
+        "location": f"https://seattleelections.guide/e/{CURRENT_ID}/?deployment=second",
+        "robots": None,
+        "body": "",
+    }
+
+
+def test_generated_worker_enforces_route_contract(tmp_path: Path) -> None:
+    current, older = _write_archive_bundles(tmp_path)
+    output = tmp_path / "site"
+    stage_pages_site(
+        _write_site_manifest(tmp_path, current_first=True),
+        {CURRENT_BUNDLE_ID: current, OLDER_BUNDLE_ID: older},
+        output,
+    )
+
+    worker_path = output / "_worker.js"
+    urls = [
+        "https://seattleelections.guide/?from=root",
+        "https://seattleelections.guide/e",
+        "https://seattleelections.guide/e/",
+        f"https://seattleelections.guide/e/{CURRENT_ID}",
+        f"https://seattleelections.guide/e/{CURRENT_ID}/",
+        f"https://seattleelections.guide/e/{CURRENT_ID}/Current_Guide.pdf",
+        "https://seattleelections.guide/e/not-an-election/",
+        f"https://seattleelections.guide/e/{CURRENT_ID}/missing.pdf",
+        f"https://seattle-elections.guide/e/{OLDER_ID}/?source=legacy",
+    ]
+    results = _run_worker(worker_path, urls)
+
+    assert results[0]["status"] == 307
+    assert results[0]["location"] == (f"https://seattleelections.guide/e/{CURRENT_ID}/?from=root")
+    assert results[1]["status"] == 308
+    assert results[1]["location"] == "https://seattleelections.guide/e/"
+    assert results[2] == {
+        "status": 200,
+        "location": None,
+        "robots": None,
+        "body": "asset:/e/",
+    }
+    assert results[3]["status"] == 308
+    assert results[3]["location"] == f"https://seattleelections.guide/e/{CURRENT_ID}/"
+    assert results[4]["body"] == f"asset:/e/{CURRENT_ID}/"
+    assert results[5]["body"] == f"asset:/e/{CURRENT_ID}/Current_Guide.pdf"
+    assert results[6]["status"] == 404
+    assert results[6]["robots"] == "noindex"
+    assert results[7]["status"] == 404
+    assert results[8]["status"] == 301
+    assert results[8]["location"] == (f"https://seattleelections.guide/e/{OLDER_ID}/?source=legacy")
+
+
+def test_bundle_drift_does_not_replace_existing_output(tmp_path: Path) -> None:
+    current, older = _write_archive_bundles(tmp_path)
     output = tmp_path / "site"
     output.mkdir()
     (output / "sentinel.txt").write_text("keep", encoding="utf-8")
-    (bundle / "guide/guide.html").write_text("tampered", encoding="utf-8")
+    (current / "guide/guide.html").write_text("tampered", encoding="utf-8")
 
     with pytest.raises(ValueError, match=r"artifact hash mismatch: guide/guide\.html"):
-        stage_pages_site(bundle, output, expected_git_commit=COMMIT)
+        stage_pages_site(
+            _write_site_manifest(tmp_path, current_first=True),
+            {CURRENT_BUNDLE_ID: current, OLDER_BUNDLE_ID: older},
+            output,
+        )
 
     assert (output / "sentinel.txt").read_text(encoding="utf-8") == "keep"
+    assert not (output / "e").exists()
 
 
-def test_stage_pages_site_rejects_release_from_another_revision(tmp_path: Path) -> None:
-    bundle = _write_release_bundle(tmp_path)
+def test_verify_staged_site_rejects_tamper_deletion_and_unexpected_assets(
+    tmp_path: Path,
+) -> None:
+    current, older = _write_archive_bundles(
+        tmp_path,
+        detailed_pdf_filename="Current_Detailed_Guide.pdf",
+    )
+    manifest = _write_site_manifest(tmp_path, current_first=True)
+    output = tmp_path / "site"
+    stage_pages_site(
+        manifest,
+        {CURRENT_BUNDLE_ID: current, OLDER_BUNDLE_ID: older},
+        output,
+    )
 
-    with pytest.raises(ValueError, match="built from a different Git commit"):
-        stage_pages_site(bundle, tmp_path / "site", expected_git_commit="b" * 40)
+    verified = verify_staged_pages_site(
+        output,
+        manifest,
+        expected_current_git_commit=COMMIT,
+    )
+    assert verified.current_election_id == CURRENT_ID
+    assert len(verified.assets) == 12
+
+    tampered = tmp_path / "tampered"
+    shutil.copytree(output, tampered)
+    (tampered / "e" / CURRENT_ID / "index.html").write_text("changed\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="asset hash mismatch"):
+        verify_staged_pages_site(tampered, manifest)
+
+    missing = tmp_path / "missing"
+    shutil.copytree(output, missing)
+    (missing / "e" / CURRENT_ID / "Current_Guide.pdf").unlink()
+    with pytest.raises(ValueError, match=r"missing=.*Current_Guide\.pdf"):
+        verify_staged_pages_site(missing, manifest)
+
+    for pdf_filename in ("Current_Guide.pdf", "Current_Detailed_Guide.pdf"):
+        consistent_omission = tmp_path / f"omitted-{pdf_filename}"
+        shutil.copytree(output, consistent_omission)
+        (consistent_omission / "e" / CURRENT_ID / pdf_filename).unlink()
+        deployment_path = consistent_omission / "deployment-manifest.json"
+        deployment = json.loads(deployment_path.read_text(encoding="utf-8"))
+        del deployment["assets"][f"e/{CURRENT_ID}/{pdf_filename}"]
+        deployment_path.write_bytes(canonical_json_bytes(deployment))
+        with pytest.raises(ValueError, match="missing required public archive assets"):
+            verify_staged_pages_site(consistent_omission, manifest)
+
+    unexpected = tmp_path / "unexpected"
+    shutil.copytree(output, unexpected)
+    (unexpected / "extra.txt").write_text("not declared\n", encoding="utf-8")
+    with pytest.raises(ValueError, match=r"unexpected=.*extra\.txt"):
+        verify_staged_pages_site(unexpected, manifest)
 
 
-def test_hosting_stage_cli_reports_a_staged_site(tmp_path: Path) -> None:
-    bundle = _write_release_bundle(tmp_path)
+def test_site_manifest_rejects_duplicate_elections_and_path_traversal(tmp_path: Path) -> None:
+    invalid_elections = [
+        _manifest_election(CURRENT_ID, CURRENT_BUNDLE_ID, "primary.2"),
+        _manifest_election(CURRENT_ID, OLDER_BUNDLE_ID, "primary.2"),
+    ]
+    invalid = {
+        "schema_version": "1.0",
+        "canonical_origin": "https://seattleelections.guide",
+        "current_election_id": CURRENT_ID,
+        "elections": invalid_elections,
+    }
+    duplicate_path = tmp_path / "duplicate.yaml"
+    duplicate_path.write_text(yaml.safe_dump(invalid, sort_keys=False), encoding="utf-8")
+    output = tmp_path / "site"
+
+    with pytest.raises(ValueError, match="repeats an election ID"):
+        stage_pages_site(duplicate_path, {}, output)
+    assert not output.exists()
+
+    invalid_elections[1]["election_id"] = "../escape"
+    traversal_path = tmp_path / "traversal.yaml"
+    traversal_path.write_text(yaml.safe_dump(invalid, sort_keys=False), encoding="utf-8")
+    with pytest.raises(ValueError, match="string_pattern_mismatch"):
+        stage_pages_site(traversal_path, {}, output)
+    assert not output.exists()
+
+
+def test_stage_rejects_missing_bundle_and_wrong_current_revision(tmp_path: Path) -> None:
+    current, older = _write_archive_bundles(tmp_path)
+    manifest = _write_site_manifest(tmp_path, current_first=True)
+
+    with pytest.raises(ValueError, match=r"missing=.*wa-2025-general-release"):
+        stage_pages_site(manifest, {CURRENT_BUNDLE_ID: current}, tmp_path / "missing")
+    with pytest.raises(ValueError, match="current release bundle was built from"):
+        stage_pages_site(
+            manifest,
+            {CURRENT_BUNDLE_ID: current, OLDER_BUNDLE_ID: older},
+            tmp_path / "wrong-revision",
+            expected_current_git_commit="d" * 40,
+        )
+
+
+def test_hosting_stage_cli_reports_composed_site(tmp_path: Path) -> None:
+    current, older = _write_archive_bundles(tmp_path)
+    manifest = _write_site_manifest(tmp_path, current_first=True)
     output = tmp_path / "site"
 
     result = CliRunner().invoke(
@@ -92,7 +311,11 @@ def test_hosting_stage_cli_reports_a_staged_site(tmp_path: Path) -> None:
         [
             "hosting",
             "stage",
-            str(bundle),
+            str(manifest),
+            "--bundle",
+            f"{CURRENT_BUNDLE_ID}={current}",
+            "--bundle",
+            f"{OLDER_BUNDLE_ID}={older}",
             "--output-dir",
             str(output),
             "--expected-git-commit",
@@ -102,7 +325,22 @@ def test_hosting_stage_cli_reports_a_staged_site(tmp_path: Path) -> None:
 
     assert result.exit_code == 0, result.output
     assert f"Pages site: {output}" in result.output
-    assert (output / "index.html").is_file()
+    assert f"2 elections; current {CURRENT_ID} primary.2" in result.output
+    assert (output / "e" / CURRENT_ID / "index.html").is_file()
+
+    verify_result = CliRunner().invoke(
+        app,
+        [
+            "hosting",
+            "verify",
+            str(manifest),
+            str(output),
+            "--expected-git-commit",
+            COMMIT,
+        ],
+    )
+    assert verify_result.exit_code == 0, verify_result.output
+    assert f"current {CURRENT_ID}; 11 assets" in verify_result.output
 
 
 def test_wrangler_and_workflow_keep_deployment_pinned_and_gated() -> None:
@@ -130,42 +368,166 @@ def test_wrangler_and_workflow_keep_deployment_pinned_and_gated() -> None:
     }
     check_steps = workflow["jobs"]["check"]["steps"]
     assert not any("secrets" in json.dumps(step) for step in check_steps)
-
-
-def _write_release_bundle(tmp_path: Path) -> Path:
-    bundle = tmp_path / "bundle"
-    html_relative = "guide/guide.html"
-    pdf_relative = "guide/Seattle_Primary_Guide.pdf"
-    included = sorted(
-        REQUIRED_RELEASE_ARTIFACTS
-        | {
-            html_relative,
-            pdf_relative,
-            "validation/rendering/pdf/pages/page-1.png",
-            "validation/rendering/screenshots/desktop.png",
-        }
+    stage_step = next(
+        step for step in check_steps if step.get("name") == "Stage verified Cloudflare Pages site"
     )
+    assert "config/hosting/site.yaml" in stage_step["run"]
+    assert "--bundle wa-2026-primary-2026-primary.2=" in stage_step["run"]
+    assert "hosting verify" in stage_step["run"]
+    deploy_steps = deploy["steps"]
+    verify_step = next(
+        step for step in deploy_steps if step.get("name") == "Verify downloaded Pages site"
+    )
+    assert "hosting verify" in verify_step["run"]
+    assert "--expected-git-commit=" in verify_step["run"]
+
+
+def _run_worker(worker_path: Path, urls: list[str]) -> list[dict[str, object]]:
+    script = """
+(async () => {
+const fs = require("node:fs");
+const workerSource = fs.readFileSync(process.argv[1], "utf8");
+const moduleUrl = `data:text/javascript;base64,${Buffer.from(workerSource).toString("base64")}`;
+const worker = (await import(moduleUrl)).default;
+const env = {
+  ASSETS: {
+    fetch(request) {
+      return new Response(`asset:${new URL(request.url).pathname}`, {status: 200});
+    },
+  },
+};
+const urls = JSON.parse(process.argv[2]);
+const results = [];
+for (const url of urls) {
+  const response = await worker.fetch(new Request(url), env);
+  results.push({
+    status: response.status,
+    location: response.headers.get("location"),
+    robots: response.headers.get("x-robots-tag"),
+    body: await response.text(),
+  });
+}
+process.stdout.write(JSON.stringify(results));
+})();
+"""
+    completed = subprocess.run(
+        ["node", "-e", script, str(worker_path), json.dumps(urls)],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    return cast(list[dict[str, object]], json.loads(completed.stdout))
+
+
+def _write_site_manifest(root: Path, *, current_first: bool) -> Path:
+    root.mkdir(parents=True, exist_ok=True)
+    current = _manifest_election(CURRENT_ID, CURRENT_BUNDLE_ID, "primary.2")
+    older = _manifest_election(OLDER_ID, OLDER_BUNDLE_ID, "general.1")
+    elections = [current, older] if current_first else [older, current]
+    manifest = {
+        "schema_version": "1.0",
+        "canonical_origin": "https://seattleelections.guide",
+        "current_election_id": elections[0]["election_id"],
+        "elections": elections,
+    }
+    path = root / "site.yaml"
+    path.write_text(yaml.safe_dump(manifest, sort_keys=False), encoding="utf-8")
+    return path
+
+
+def _manifest_election(
+    election_id: str,
+    bundle_id: str,
+    release_version: str,
+) -> dict[str, str]:
+    return {
+        "election_id": election_id,
+        "name": election_id.replace("-", " ").title(),
+        "bundle_id": bundle_id,
+        "release_version": release_version,
+        "source_panel_id": "test-panel-v2",
+        "source_panel_hash": PANEL_HASH,
+    }
+
+
+def _write_archive_bundles(
+    root: Path,
+    *,
+    current_html: bytes = b"current\n",
+    older_html: bytes = b"older\n",
+    detailed_pdf_filename: str | None = None,
+) -> tuple[Path, Path]:
+    current = _write_release_bundle(
+        root / "current",
+        election_id=CURRENT_ID,
+        release_version="primary.2",
+        git_commit=COMMIT,
+        html=current_html,
+        pdf_filename="Current_Guide.pdf",
+        detailed_pdf_filename=detailed_pdf_filename,
+    )
+    older = _write_release_bundle(
+        root / "older",
+        election_id=OLDER_ID,
+        release_version="general.1",
+        git_commit=OLDER_COMMIT,
+        html=older_html,
+        pdf_filename="Older_Guide.pdf",
+    )
+    return current, older
+
+
+def _write_release_bundle(
+    root: Path,
+    *,
+    election_id: str,
+    release_version: str,
+    git_commit: str,
+    html: bytes,
+    pdf_filename: str,
+    detailed_pdf_filename: str | None = None,
+) -> Path:
+    bundle = root / "bundle"
+    html_relative = "guide/guide.html"
+    pdf_relative = f"guide/{pdf_filename}"
+    detailed_pdf_relative = (
+        f"guide/{detailed_pdf_filename}" if detailed_pdf_filename is not None else None
+    )
+    public_artifacts = {
+        html_relative,
+        pdf_relative,
+        "validation/rendering/pdf/pages/page-1.png",
+        "validation/rendering/screenshots/desktop.png",
+    }
+    if detailed_pdf_relative is not None:
+        public_artifacts.update(
+            {
+                detailed_pdf_relative,
+                "validation/rendering/pdf/detailed-pages/page-1.png",
+            }
+        )
+    included = sorted(REQUIRED_RELEASE_ARTIFACTS | public_artifacts)
     for relative in included:
         if relative in {"release-manifest.json", "release-status.json"}:
             continue
         path = bundle / relative
         path.parent.mkdir(parents=True, exist_ok=True)
         if relative == html_relative:
-            path.write_bytes(b"<!doctype html><title>Guide</title>\n")
-        elif relative == pdf_relative:
+            path.write_bytes(html)
+        elif relative in {pdf_relative, detailed_pdf_relative}:
             path.write_bytes(b"%PDF-1.7\n")
         else:
             path.write_text(f"fixture for {relative}\n", encoding="utf-8")
 
     status = ReleaseStatus.model_validate(
         {
-            "release_version": "test.1",
-            "election_id": "test-election",
+            "release_version": release_version,
+            "election_id": election_id,
             "source_panel_id": "test-panel-v2",
             "source_panel_hash": PANEL_HASH,
             "data_as_of": "2026-07-20T12:00:00Z",
             "generated_at": "2026-07-21T12:00:00Z",
-            "git_commit": COMMIT,
+            "git_commit": git_commit,
             "source_count": 1,
             "captured_source_count": 1,
             "displayed_endorsement_count": 1,
@@ -175,10 +537,12 @@ def _write_release_bundle(tmp_path: Path) -> Path:
             "source_access_failures": [],
             "incomplete_races": [],
             "validation_reports": {"publication": True, "rendering": True},
-            "rendering_edition": "concise",
+            "rendering_edition": (
+                "concise_plus_detailed" if detailed_pdf_relative is not None else "concise"
+            ),
             "guide_html_artifact": html_relative,
             "guide_pdf_artifact": pdf_relative,
-            "detailed_guide_pdf_artifact": None,
+            "detailed_guide_pdf_artifact": detailed_pdf_relative,
             "included_artifacts": included,
             "warnings": [],
         }
@@ -204,3 +568,11 @@ def _write_release_bundle(tmp_path: Path) -> Path:
         )
     )
     return bundle
+
+
+def _tree_bytes(root: Path) -> dict[str, bytes]:
+    return {
+        path.relative_to(root).as_posix(): path.read_bytes()
+        for path in sorted(root.rglob("*"))
+        if path.is_file()
+    }

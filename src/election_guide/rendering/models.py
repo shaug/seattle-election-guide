@@ -45,6 +45,7 @@ class RenderingConfiguration(RenderingModel):
     author: MetadataText
     subject: MetadataText
     project_url: str = Field(pattern=r"^https://")
+    public_site_url: str = Field(pattern=r"^https://[^/]+$")
     html_filename: str = Field(pattern=r"^[A-Za-z0-9_.-]+\.html$")
     pdf_filename: str = Field(pattern=r"^[A-Za-z0-9_.-]+\.pdf$")
     detailed_pdf_filename: str = Field(pattern=r"^[A-Za-z0-9_.-]+\.pdf$")
