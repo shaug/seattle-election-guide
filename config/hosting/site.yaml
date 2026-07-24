@@ -1,0 +1,10 @@
+schema_version: "1.0"
+canonical_origin: https://seattleelections.guide
+current_election_id: wa-2026-primary
+elections:
+  - election_id: wa-2026-primary
+    name: August 4, 2026 Washington primary
+    bundle_id: wa-2026-primary-2026-primary.2
+    release_version: 2026-primary.2
+    source_panel_id: wa-2026-primary-default-sources-v2
+    source_panel_hash: f07b6aaa1474419ed8e93d1435b9aed96801ba0bb0cca217c5a6c123e9b7a1c0
