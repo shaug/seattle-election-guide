@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import shutil
 import subprocess
 from pathlib import Path
 from typing import cast
@@ -13,7 +14,10 @@ import yaml
 from typer.testing import CliRunner
 
 from election_guide.cli import app
-from election_guide.hosting import stage_pages_site
+from election_guide.hosting import (
+    stage_pages_site,
+    verify_staged_pages_site,
+)
 from election_guide.release.models import REQUIRED_RELEASE_ARTIFACTS, ReleaseStatus
 from election_guide.serialization import canonical_json_bytes
 
@@ -254,6 +258,72 @@ def test_bundle_drift_does_not_replace_existing_output(tmp_path: Path) -> None:
     assert not (output / "e").exists()
 
 
+def test_verify_staged_site_rejects_tamper_deletion_and_unexpected_assets(
+    tmp_path: Path,
+) -> None:
+    current = _write_release_bundle(
+        tmp_path / "current",
+        election_id=CURRENT_ID,
+        release_version="primary.2",
+        git_commit=COMMIT,
+        html=b"current\n",
+        pdf_filename="Current_Guide.pdf",
+        detailed_pdf_filename="Current_Detailed_Guide.pdf",
+    )
+    older = _write_release_bundle(
+        tmp_path / "older",
+        election_id=OLDER_ID,
+        release_version="general.1",
+        git_commit=OLDER_COMMIT,
+        html=b"older\n",
+        pdf_filename="Older_Guide.pdf",
+    )
+    manifest = _write_site_manifest(tmp_path, current_first=True)
+    output = tmp_path / "site"
+    stage_pages_site(
+        manifest,
+        {CURRENT_BUNDLE_ID: current, OLDER_BUNDLE_ID: older},
+        output,
+    )
+
+    verified = verify_staged_pages_site(
+        output,
+        manifest,
+        expected_current_git_commit=COMMIT,
+    )
+    assert verified.current_election_id == CURRENT_ID
+    assert len(verified.assets) == 12
+
+    tampered = tmp_path / "tampered"
+    shutil.copytree(output, tampered)
+    (tampered / "e" / CURRENT_ID / "index.html").write_text("changed\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="asset hash mismatch"):
+        verify_staged_pages_site(tampered, manifest)
+
+    missing = tmp_path / "missing"
+    shutil.copytree(output, missing)
+    (missing / "e" / CURRENT_ID / "Current_Guide.pdf").unlink()
+    with pytest.raises(ValueError, match=r"missing=.*Current_Guide\.pdf"):
+        verify_staged_pages_site(missing, manifest)
+
+    for pdf_filename in ("Current_Guide.pdf", "Current_Detailed_Guide.pdf"):
+        consistent_omission = tmp_path / f"omitted-{pdf_filename}"
+        shutil.copytree(output, consistent_omission)
+        (consistent_omission / "e" / CURRENT_ID / pdf_filename).unlink()
+        deployment_path = consistent_omission / "deployment-manifest.json"
+        deployment = json.loads(deployment_path.read_text(encoding="utf-8"))
+        del deployment["assets"][f"e/{CURRENT_ID}/{pdf_filename}"]
+        deployment_path.write_bytes(canonical_json_bytes(deployment))
+        with pytest.raises(ValueError, match="missing required public archive assets"):
+            verify_staged_pages_site(consistent_omission, manifest)
+
+    unexpected = tmp_path / "unexpected"
+    shutil.copytree(output, unexpected)
+    (unexpected / "extra.txt").write_text("not declared\n", encoding="utf-8")
+    with pytest.raises(ValueError, match=r"unexpected=.*extra\.txt"):
+        verify_staged_pages_site(unexpected, manifest)
+
+
 def test_site_manifest_rejects_duplicate_elections_and_path_traversal(tmp_path: Path) -> None:
     invalid_elections = [
         _manifest_election(CURRENT_ID, CURRENT_BUNDLE_ID, "primary.2"),
@@ -353,6 +423,20 @@ def test_hosting_stage_cli_reports_composed_site(tmp_path: Path) -> None:
     assert f"2 elections; current {CURRENT_ID} primary.2" in result.output
     assert (output / "e" / CURRENT_ID / "index.html").is_file()
 
+    verify_result = CliRunner().invoke(
+        app,
+        [
+            "hosting",
+            "verify",
+            str(manifest),
+            str(output),
+            "--expected-git-commit",
+            COMMIT,
+        ],
+    )
+    assert verify_result.exit_code == 0, verify_result.output
+    assert f"current {CURRENT_ID}; 11 assets" in verify_result.output
+
 
 def test_wrangler_and_workflow_keep_deployment_pinned_and_gated() -> None:
     wrangler = json.loads((PROJECT_ROOT / "wrangler.jsonc").read_text(encoding="utf-8"))
@@ -384,6 +468,13 @@ def test_wrangler_and_workflow_keep_deployment_pinned_and_gated() -> None:
     )
     assert "config/hosting/site.yaml" in stage_step["run"]
     assert "--bundle wa-2026-primary-2026-primary.2=" in stage_step["run"]
+    assert "hosting verify" in stage_step["run"]
+    deploy_steps = deploy["steps"]
+    verify_step = next(
+        step for step in deploy_steps if step.get("name") == "Verify downloaded Pages site"
+    )
+    assert "hosting verify" in verify_step["run"]
+    assert "--expected-git-commit=" in verify_step["run"]
 
 
 def _run_worker(worker_path: Path, urls: list[str]) -> list[dict[str, object]]:
@@ -462,19 +553,28 @@ def _write_release_bundle(
     git_commit: str,
     html: bytes,
     pdf_filename: str,
+    detailed_pdf_filename: str | None = None,
 ) -> Path:
     bundle = root / "bundle"
     html_relative = "guide/guide.html"
     pdf_relative = f"guide/{pdf_filename}"
-    included = sorted(
-        REQUIRED_RELEASE_ARTIFACTS
-        | {
-            html_relative,
-            pdf_relative,
-            "validation/rendering/pdf/pages/page-1.png",
-            "validation/rendering/screenshots/desktop.png",
-        }
+    detailed_pdf_relative = (
+        f"guide/{detailed_pdf_filename}" if detailed_pdf_filename is not None else None
     )
+    public_artifacts = {
+        html_relative,
+        pdf_relative,
+        "validation/rendering/pdf/pages/page-1.png",
+        "validation/rendering/screenshots/desktop.png",
+    }
+    if detailed_pdf_relative is not None:
+        public_artifacts.update(
+            {
+                detailed_pdf_relative,
+                "validation/rendering/pdf/detailed-pages/page-1.png",
+            }
+        )
+    included = sorted(REQUIRED_RELEASE_ARTIFACTS | public_artifacts)
     for relative in included:
         if relative in {"release-manifest.json", "release-status.json"}:
             continue
@@ -482,7 +582,7 @@ def _write_release_bundle(
         path.parent.mkdir(parents=True, exist_ok=True)
         if relative == html_relative:
             path.write_bytes(html)
-        elif relative == pdf_relative:
+        elif relative in {pdf_relative, detailed_pdf_relative}:
             path.write_bytes(b"%PDF-1.7\n")
         else:
             path.write_text(f"fixture for {relative}\n", encoding="utf-8")
@@ -505,10 +605,12 @@ def _write_release_bundle(
             "source_access_failures": [],
             "incomplete_races": [],
             "validation_reports": {"publication": True, "rendering": True},
-            "rendering_edition": "concise",
+            "rendering_edition": (
+                "concise_plus_detailed" if detailed_pdf_relative is not None else "concise"
+            ),
             "guide_html_artifact": html_relative,
             "guide_pdf_artifact": pdf_relative,
-            "detailed_guide_pdf_artifact": None,
+            "detailed_guide_pdf_artifact": detailed_pdf_relative,
             "included_artifacts": included,
             "warnings": [],
         }

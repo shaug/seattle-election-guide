@@ -32,7 +32,7 @@ from election_guide.evidence.storage import (
     record_unavailable,
     verify_capture,
 )
-from election_guide.hosting import stage_pages_site
+from election_guide.hosting import stage_pages_site, verify_staged_pages_site
 from election_guide.initialization import initialize_election, read_election_configuration
 from election_guide.inventory.importer import (
     extract_public_inputs,
@@ -154,6 +154,31 @@ def hosting_stage(
         f"Pages site: {result.output_dir} "
         f"({len(result.election_paths)} elections; current {result.current_election_id} "
         f"{result.release_version})"
+    )
+
+
+@hosting_app.command("verify")
+def hosting_verify(
+    site_manifest: Annotated[Path, typer.Argument(exists=True, dir_okay=False, readable=True)],
+    site_dir: Annotated[Path, typer.Argument(exists=True, file_okay=False, readable=True)],
+    expected_git_commit: Annotated[
+        str | None,
+        typer.Option(help="Reject a current-election release not built from this Git revision."),
+    ] = None,
+) -> None:
+    """Verify a completed Pages artifact against its deployment manifest."""
+    try:
+        result = verify_staged_pages_site(
+            site_dir,
+            site_manifest,
+            expected_current_git_commit=expected_git_commit,
+        )
+    except (OSError, UnicodeError, json.JSONDecodeError, ValidationError, ValueError) as error:
+        typer.echo(f"hosting verify failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    typer.echo(
+        f"Pages site: verified ({len(result.elections)} elections; "
+        f"current {result.current_election_id}; {len(result.assets)} assets)"
     )
 
 

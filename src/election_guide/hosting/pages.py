@@ -12,7 +12,11 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
 
-from election_guide.hosting.models import PublishedElection, SiteManifest
+from election_guide.hosting.models import (
+    DeploymentManifest,
+    PublishedElection,
+    SiteManifest,
+)
 from election_guide.release.models import ReleaseManifest, ReleaseStatus
 from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
 
@@ -56,6 +60,23 @@ class _VerifiedBundle:
 def read_site_manifest(path: Path) -> SiteManifest:
     """Read a repository-owned archive manifest without accepting silent YAML overrides."""
     return SiteManifest.model_validate(read_yaml(path))
+
+
+def verify_staged_pages_site(
+    site_dir: Path,
+    site_manifest_path: Path,
+    *,
+    expected_current_git_commit: str | None = None,
+) -> DeploymentManifest:
+    """Verify a completed Pages artifact against its repository-owned source of truth."""
+    site_dir = site_dir.resolve()
+    if not site_dir.is_dir():
+        raise ValueError(f"staged Pages directory does not exist: {site_dir}")
+    return _verify_staged_pages_site(
+        site_dir,
+        read_site_manifest(site_manifest_path.resolve()),
+        expected_current_git_commit=expected_current_git_commit,
+    )
 
 
 def stage_pages_site(
@@ -124,6 +145,11 @@ def stage_pages_site(
             "assets": _artifact_hashes(stage),
         }
         (stage / "deployment-manifest.json").write_bytes(canonical_json_bytes(deployment_manifest))
+        _verify_staged_pages_site(
+            stage,
+            site_manifest,
+            expected_current_git_commit=expected_current_git_commit,
+        )
         _replace_output(stage, output_dir)
         stage = Path()
     finally:
@@ -147,6 +173,101 @@ def stage_pages_site(
             output_dir / "e" / bundle.declaration.election_id for bundle in verified
         ),
     )
+
+
+def _verify_staged_pages_site(
+    site_dir: Path,
+    site_manifest: SiteManifest,
+    *,
+    expected_current_git_commit: str | None,
+) -> DeploymentManifest:
+    deployment = DeploymentManifest.model_validate(read_json(site_dir / "deployment-manifest.json"))
+    if deployment.canonical_origin != site_manifest.canonical_origin:
+        raise ValueError("deployment manifest canonical origin differs from site manifest")
+    if deployment.current_election_id != site_manifest.current_election_id:
+        raise ValueError("deployment manifest current election differs from site manifest")
+    if len(deployment.elections) != len(site_manifest.elections):
+        raise ValueError("deployment manifest election count differs from site manifest")
+
+    required_assets = {"_headers", "_worker.js", "e/index.html"}
+    for declared, deployed in zip(site_manifest.elections, deployment.elections, strict=True):
+        expected_values = {
+            "election ID": (declared.election_id, deployed.election_id),
+            "bundle ID": (declared.bundle_id, deployed.bundle_id),
+            "release version": (declared.release_version, deployed.release_version),
+            "source panel ID": (declared.source_panel_id, deployed.source_panel_id),
+            "source panel hash": (declared.source_panel_hash, deployed.source_panel_hash),
+        }
+        for label, (declared_value, deployed_value) in expected_values.items():
+            if declared_value != deployed_value:
+                raise ValueError(f"deployment manifest {label} differs from site manifest")
+        if declared.git_commit is not None and declared.git_commit != deployed.git_commit:
+            raise ValueError("deployment manifest Git commit differs from site manifest")
+        if (
+            declared.release_manifest_sha256 is not None
+            and declared.release_manifest_sha256 != deployed.release_manifest_sha256
+        ):
+            raise ValueError("deployment manifest release-manifest hash differs from site manifest")
+
+        election_root = site_dir / "e" / declared.election_id
+        status = ReleaseStatus.model_validate(read_json(election_root / "release-status.json"))
+        if (
+            status.election_id != deployed.election_id
+            or status.release_version != deployed.release_version
+            or status.git_commit != deployed.git_commit
+            or status.source_panel_id != deployed.source_panel_id
+            or status.source_panel_hash != deployed.source_panel_hash
+        ):
+            raise ValueError(f"staged release status differs for election {declared.election_id!r}")
+        if _sha256(election_root / "release-manifest.json") != deployed.release_manifest_sha256:
+            raise ValueError(
+                f"staged release manifest differs for election {declared.election_id!r}"
+            )
+        required_assets.update(
+            {
+                f"e/{declared.election_id}/index.html",
+                f"e/{declared.election_id}/release-status.json",
+                f"e/{declared.election_id}/release-manifest.json",
+                *(
+                    f"e/{declared.election_id}/{Path(relative).name}"
+                    for relative in _guide_pdf_artifacts(status)
+                ),
+            }
+        )
+
+    current = next(
+        election
+        for election in deployment.elections
+        if election.election_id == deployment.current_election_id
+    )
+    if (
+        expected_current_git_commit is not None
+        and current.git_commit != expected_current_git_commit
+    ):
+        raise ValueError(
+            "deployed current release was built from a different Git commit: "
+            f"expected {expected_current_git_commit}, found {current.git_commit}"
+        )
+
+    actual_assets = _artifact_hashes(site_dir, exclude={"deployment-manifest.json"})
+    if set(actual_assets) != set(deployment.assets):
+        missing = sorted(set(deployment.assets) - set(actual_assets))
+        unexpected = sorted(set(actual_assets) - set(deployment.assets))
+        raise ValueError(
+            f"staged Pages assets differ from deployment manifest; "
+            f"missing={missing}, unexpected={unexpected}"
+        )
+    mismatched = sorted(
+        path
+        for path, expected_hash in deployment.assets.items()
+        if actual_assets[path] != expected_hash
+    )
+    if mismatched:
+        raise ValueError(f"staged Pages asset hash mismatch: {mismatched}")
+
+    if not required_assets.issubset(deployment.assets):
+        raise ValueError("deployment manifest is missing required public archive assets")
+    return deployment
 
 
 def _validate_bundle_assignments(
@@ -374,11 +495,12 @@ def _bundle_hash(root: Path) -> str:
     return digest.hexdigest()
 
 
-def _artifact_hashes(root: Path) -> dict[str, str]:
+def _artifact_hashes(root: Path, *, exclude: set[str] | None = None) -> dict[str, str]:
+    excluded = exclude or set()
     return {
         path.relative_to(root).as_posix(): _sha256(path)
         for path in sorted(root.rglob("*"))
-        if path.is_file()
+        if path.is_file() and path.relative_to(root).as_posix() not in excluded
     }
 
 

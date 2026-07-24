@@ -68,6 +68,10 @@ jobs:
           test -f dist/cloudflare-site/e/index.html
           test -f dist/cloudflare-site/e/wa-2026-primary/index.html
           test -f dist/cloudflare-site/e/wa-2026-primary/Seattle_2026_Primary_Endorsement_Guide.pdf
+          uv run election-guide hosting verify \
+            config/hosting/site.yaml \
+            dist/cloudflare-site \
+            --expected-git-commit "$GITHUB_SHA"
       - name: Upload Cloudflare Pages site
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v4
@@ -97,6 +101,13 @@ jobs:
       cancel-in-progress: false
     steps:
       - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Install Python
+        run: uv python install 3.12
+      - name: Install locked Python dependencies
+        run: uv sync --frozen
       - uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -110,6 +121,12 @@ jobs:
         with:
           name: cloudflare-site
           path: dist/cloudflare-site
+      - name: Verify downloaded Pages site
+        run: >-
+          uv run election-guide hosting verify
+          config/hosting/site.yaml
+          dist/cloudflare-site
+          --expected-git-commit="$GITHUB_SHA"
       - name: Deploy production site
         run: >-
           npm run pages:deploy --
