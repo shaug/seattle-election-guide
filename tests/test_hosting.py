@@ -32,21 +32,10 @@ OLDER_BUNDLE_ID = "wa-2025-general-release"
 
 
 def test_stage_pages_site_composes_verified_election_archive(tmp_path: Path) -> None:
-    current = _write_release_bundle(
-        tmp_path / "current",
-        election_id=CURRENT_ID,
-        release_version="primary.2",
-        git_commit=COMMIT,
-        html=b"<!doctype html><title>Current guide</title>\n",
-        pdf_filename="Current_Guide.pdf",
-    )
-    older = _write_release_bundle(
-        tmp_path / "older",
-        election_id=OLDER_ID,
-        release_version="general.1",
-        git_commit=OLDER_COMMIT,
-        html=b"<!doctype html><title>Older guide</title>\n",
-        pdf_filename="Older_Guide.pdf",
+    current, older = _write_archive_bundles(
+        tmp_path,
+        current_html=b"<!doctype html><title>Current guide</title>\n",
+        older_html=b"<!doctype html><title>Older guide</title>\n",
     )
     manifest = _write_site_manifest(tmp_path, current_first=True)
     output = tmp_path / "site"
@@ -116,21 +105,10 @@ def test_stage_pages_site_composes_verified_election_archive(tmp_path: Path) -> 
 
 
 def test_changing_current_election_preserves_historical_election_bytes(tmp_path: Path) -> None:
-    current = _write_release_bundle(
-        tmp_path / "current",
-        election_id=CURRENT_ID,
-        release_version="primary.2",
-        git_commit=COMMIT,
-        html=b"new election bytes\n",
-        pdf_filename="Current_Guide.pdf",
-    )
-    older = _write_release_bundle(
-        tmp_path / "older",
-        election_id=OLDER_ID,
-        release_version="general.1",
-        git_commit=OLDER_COMMIT,
-        html=b"historical bytes stay fixed\n",
-        pdf_filename="Older_Guide.pdf",
+    current, older = _write_archive_bundles(
+        tmp_path,
+        current_html=b"new election bytes\n",
+        older_html=b"historical bytes stay fixed\n",
     )
     assignments = {CURRENT_BUNDLE_ID: current, OLDER_BUNDLE_ID: older}
     first_manifest = _write_site_manifest(tmp_path / "first", current_first=False)
@@ -167,22 +145,7 @@ def test_changing_current_election_preserves_historical_election_bytes(tmp_path:
 
 
 def test_generated_worker_enforces_route_contract(tmp_path: Path) -> None:
-    current = _write_release_bundle(
-        tmp_path / "current",
-        election_id=CURRENT_ID,
-        release_version="primary.2",
-        git_commit=COMMIT,
-        html=b"current\n",
-        pdf_filename="Current_Guide.pdf",
-    )
-    older = _write_release_bundle(
-        tmp_path / "older",
-        election_id=OLDER_ID,
-        release_version="general.1",
-        git_commit=OLDER_COMMIT,
-        html=b"older\n",
-        pdf_filename="Older_Guide.pdf",
-    )
+    current, older = _write_archive_bundles(tmp_path)
     output = tmp_path / "site"
     stage_pages_site(
         _write_site_manifest(tmp_path, current_first=True),
@@ -226,22 +189,7 @@ def test_generated_worker_enforces_route_contract(tmp_path: Path) -> None:
 
 
 def test_bundle_drift_does_not_replace_existing_output(tmp_path: Path) -> None:
-    current = _write_release_bundle(
-        tmp_path / "current",
-        election_id=CURRENT_ID,
-        release_version="primary.2",
-        git_commit=COMMIT,
-        html=b"current\n",
-        pdf_filename="Current_Guide.pdf",
-    )
-    older = _write_release_bundle(
-        tmp_path / "older",
-        election_id=OLDER_ID,
-        release_version="general.1",
-        git_commit=OLDER_COMMIT,
-        html=b"older\n",
-        pdf_filename="Older_Guide.pdf",
-    )
+    current, older = _write_archive_bundles(tmp_path)
     output = tmp_path / "site"
     output.mkdir()
     (output / "sentinel.txt").write_text("keep", encoding="utf-8")
@@ -261,22 +209,9 @@ def test_bundle_drift_does_not_replace_existing_output(tmp_path: Path) -> None:
 def test_verify_staged_site_rejects_tamper_deletion_and_unexpected_assets(
     tmp_path: Path,
 ) -> None:
-    current = _write_release_bundle(
-        tmp_path / "current",
-        election_id=CURRENT_ID,
-        release_version="primary.2",
-        git_commit=COMMIT,
-        html=b"current\n",
-        pdf_filename="Current_Guide.pdf",
+    current, older = _write_archive_bundles(
+        tmp_path,
         detailed_pdf_filename="Current_Detailed_Guide.pdf",
-    )
-    older = _write_release_bundle(
-        tmp_path / "older",
-        election_id=OLDER_ID,
-        release_version="general.1",
-        git_commit=OLDER_COMMIT,
-        html=b"older\n",
-        pdf_filename="Older_Guide.pdf",
     )
     manifest = _write_site_manifest(tmp_path, current_first=True)
     output = tmp_path / "site"
@@ -352,22 +287,7 @@ def test_site_manifest_rejects_duplicate_elections_and_path_traversal(tmp_path: 
 
 
 def test_stage_rejects_missing_bundle_and_wrong_current_revision(tmp_path: Path) -> None:
-    current = _write_release_bundle(
-        tmp_path / "current",
-        election_id=CURRENT_ID,
-        release_version="primary.2",
-        git_commit=COMMIT,
-        html=b"current\n",
-        pdf_filename="Current_Guide.pdf",
-    )
-    older = _write_release_bundle(
-        tmp_path / "older",
-        election_id=OLDER_ID,
-        release_version="general.1",
-        git_commit=OLDER_COMMIT,
-        html=b"older\n",
-        pdf_filename="Older_Guide.pdf",
-    )
+    current, older = _write_archive_bundles(tmp_path)
     manifest = _write_site_manifest(tmp_path, current_first=True)
 
     with pytest.raises(ValueError, match=r"missing=.*wa-2025-general-release"):
@@ -382,22 +302,7 @@ def test_stage_rejects_missing_bundle_and_wrong_current_revision(tmp_path: Path)
 
 
 def test_hosting_stage_cli_reports_composed_site(tmp_path: Path) -> None:
-    current = _write_release_bundle(
-        tmp_path / "current",
-        election_id=CURRENT_ID,
-        release_version="primary.2",
-        git_commit=COMMIT,
-        html=b"current\n",
-        pdf_filename="Current_Guide.pdf",
-    )
-    older = _write_release_bundle(
-        tmp_path / "older",
-        election_id=OLDER_ID,
-        release_version="general.1",
-        git_commit=OLDER_COMMIT,
-        html=b"older\n",
-        pdf_filename="Older_Guide.pdf",
-    )
+    current, older = _write_archive_bundles(tmp_path)
     manifest = _write_site_manifest(tmp_path, current_first=True)
     output = tmp_path / "site"
 
@@ -543,6 +448,33 @@ def _manifest_election(
         "source_panel_id": "test-panel-v2",
         "source_panel_hash": PANEL_HASH,
     }
+
+
+def _write_archive_bundles(
+    root: Path,
+    *,
+    current_html: bytes = b"current\n",
+    older_html: bytes = b"older\n",
+    detailed_pdf_filename: str | None = None,
+) -> tuple[Path, Path]:
+    current = _write_release_bundle(
+        root / "current",
+        election_id=CURRENT_ID,
+        release_version="primary.2",
+        git_commit=COMMIT,
+        html=current_html,
+        pdf_filename="Current_Guide.pdf",
+        detailed_pdf_filename=detailed_pdf_filename,
+    )
+    older = _write_release_bundle(
+        root / "older",
+        election_id=OLDER_ID,
+        release_version="general.1",
+        git_commit=OLDER_COMMIT,
+        html=older_html,
+        pdf_filename="Older_Guide.pdf",
+    )
+    return current, older
 
 
 def _write_release_bundle(
