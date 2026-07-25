@@ -1570,6 +1570,10 @@ def _capture_emulated_viewport(
                     "const cardParts=cards.flatMap(card=>[...card.querySelectorAll("
                     "'.screen-race-result,.screen-race-context,.screen-meter,.comparison')]);"
                     "const meters=[...document.querySelectorAll('.screen-meter')];"
+                    "const meterAligned=(meter,direction,textAlign)=>{"
+                    "const label=meter.querySelector('strong');const style=getComputedStyle(meter);"
+                    "return style.getPropertyValue('--meter-direction').trim()===direction&&"
+                    "Boolean(label&&getComputedStyle(label).textAlign===textAlign);};"
                     "const compactInput=viewInputs.find(input=>input.value==='compact');"
                     "const fullInput=viewInputs.find(input=>input.value==='full');"
                     "const scopedOption=[...filter.options].find(option=>option.value!=='all');"
@@ -1602,6 +1606,9 @@ def _capture_emulated_viewport(
                     "urlFilter:controlQuery.get('filter')===scopedOption?.value,"
                     "denseColumns:compactColumns===expectedCompactColumns,"
                     "noOverflow:document.documentElement.scrollWidth<=window.innerWidth+1,"
+                    "compactMetersLeftAligned:compactCards.every(card=>{"
+                    "const meter=card.querySelector('.screen-meter');"
+                    "return Boolean(meter&&meterAligned(meter,'to right','left'));}),"
                     "comparisonsHidden:compactCards.every(card=>{"
                     "const comparisons=card.querySelector('.screen-comparisons');"
                     "return Boolean(comparisons&&"
@@ -1611,6 +1618,8 @@ def _capture_emulated_viewport(
                     "await pause();controls.reset="
                     "document.documentElement.dataset.ballotView==='full'&&"
                     "filter.value==='all'&&!contestedFilter?.checked&&window.location.search==='';"
+                    "controls.fullMetersRightAligned=meters.every(meter=>"
+                    "meterAligned(meter,'to left','right'));"
                     "controls.statusAllGrouped=status?.children.length===3&&"
                     "status.lastElementChild?.textContent==='· All Seattle ballot races'&&"
                     "getComputedStyle(status.lastElementChild).whiteSpace==='nowrap';"
@@ -1822,9 +1831,11 @@ def _capture_emulated_viewport(
                 "urlFilter": True,
                 "denseColumns": True,
                 "noOverflow": True,
+                "compactMetersLeftAligned": True,
                 "comparisonsHidden": True,
                 "reset": True,
                 "statusAllGrouped": True,
+                "fullMetersRightAligned": True,
             },
             "disclosures": [
                 {

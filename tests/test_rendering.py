@@ -439,8 +439,16 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
         )
     assert ".screen-race-result, .screen-race-context { display: grid;" in html
     assert "grid-template-columns: minmax(0, 1fr) 11rem" in html
-    assert ".screen-meter { display: flex;" in html
-    assert "linear-gradient(to left, var(--teal) 0 var(--meter-fill)" in html
+    assert (
+        ".screen-meter { --meter-direction: to left; --meter-text-align: right; display: flex;"
+        in html
+    )
+    assert "linear-gradient(var(--meter-direction), var(--teal) 0 var(--meter-fill)" in html
+    assert (
+        "html.compact-ballot-mode .screen-meter { --meter-direction: to right; "
+        "--meter-text-align: left;" in html
+    )
+    assert "text-align: var(--meter-text-align);" in html
     assert ".comparison-status { font-weight: 800; }" in html
     assert ".comparison-choice { min-width: 0; font-weight: 500; }" in html
     assert ".comparison-agrees { border-color: #83bfae; background: #edf8f4;" in html
