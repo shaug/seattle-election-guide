@@ -65,6 +65,24 @@
       {% endfor %}
     </ul>
   {%- endmacro %}
+  {% macro race_detail_candidate_source_row(race, cell, candidate_id) -%}
+    {% set source = source_by_id[cell.source_id] %}
+    {% set detail_label = source_cell_detail_label(cell, race, 'candidate') %}
+    <li data-race-detail-source-id="{{ cell.source_id }}"
+      data-source-category="{{ source.category }}" data-source-state="{{ cell.state }}"
+      data-source-role="{{ source.panel_role }}" data-source-group="candidate"
+      data-endorsed-candidate-id="{{ candidate_id }}">
+      {% if cell.evidence_url %}<a class="race-detail-source-row{% if source.panel_role == 'comparison' %} race-detail-source-row-comparison{% endif %}" href="{{ cell.evidence_url }}">
+      {% else %}<div class="race-detail-source-row{% if source.panel_role == 'comparison' %} race-detail-source-row-comparison{% endif %}">
+      {% endif %}
+        <strong>{{ source.name }}</strong>
+        <div class="race-detail-source-meta">
+          {{ race_detail_source_badge(source) }}
+          {% if detail_label %}<span class="race-detail-source-status">{{ detail_label }}</span>{% endif %}
+        </div>
+      {% if cell.evidence_url %}</a>{% else %}</div>{% endif %}
+    </li>
+  {%- endmacro %}
   {% macro race_detail_candidate_sections(race) -%}
     {% for candidate_id, candidate_label, endorsement_group in race_detail_candidate_choices(race, source_by_id) %}
     {% set is_leader = candidate_id in race.support_leader_candidate_ids %}
@@ -94,40 +112,12 @@
       <ul class="race-detail-source-list">
         {% if endorsement_group is not none %}
         {% for endorser in endorsement_group.endorsers %}
-        {% set source = source_by_id[endorser.source_id] %}
         {% set cell = source_cells_by_race_id[race.id][endorser.source_id] %}
-        <li data-race-detail-source-id="{{ endorser.source_id }}"
-          data-source-category="{{ source.category }}" data-source-state="{{ cell.state }}"
-          data-source-role="{{ source.panel_role }}" data-source-group="candidate"
-          data-endorsed-candidate-id="{{ candidate_id }}">
-          <a class="race-detail-source-row" href="{{ endorser.evidence_url }}">
-            <strong>{{ endorser.source_name }}</strong>
-            {% set detail_label = source_cell_detail_label(cell, race, 'candidate') %}
-            <div class="race-detail-source-meta">
-              {{ race_detail_source_badge(source) }}
-              {% if detail_label %}<span class="race-detail-source-status">{{ detail_label }}</span>{% endif %}
-            </div>
-          </a>
-        </li>
+        {{ race_detail_candidate_source_row(race, cell, candidate_id) }}
         {% endfor %}
         {% endif %}
         {% for cell in comparison_candidate_cells(race, source_by_id, candidate_id) %}
-        {% set source = source_by_id[cell.source_id] %}
-        <li data-race-detail-source-id="{{ cell.source_id }}"
-          data-source-category="{{ source.category }}" data-source-state="{{ cell.state }}"
-          data-source-role="{{ source.panel_role }}" data-source-group="candidate"
-          data-endorsed-candidate-id="{{ candidate_id }}">
-          {% if cell.evidence_url %}<a class="race-detail-source-row race-detail-source-row-comparison" href="{{ cell.evidence_url }}">
-          {% else %}<div class="race-detail-source-row race-detail-source-row-comparison">
-          {% endif %}
-            <strong>{{ source.name }}</strong>
-            {% set detail_label = source_cell_detail_label(cell, race, 'candidate') %}
-            <div class="race-detail-source-meta">
-              {{ race_detail_source_badge(source) }}
-              {% if detail_label %}<span class="race-detail-source-status">{{ detail_label }}</span>{% endif %}
-            </div>
-          {% if cell.evidence_url %}</a>{% else %}</div>{% endif %}
-        </li>
+        {{ race_detail_candidate_source_row(race, cell, candidate_id) }}
         {% endfor %}
       </ul>
     </section>
