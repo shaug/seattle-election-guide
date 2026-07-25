@@ -1556,12 +1556,51 @@ def _capture_emulated_viewport(
                     "const pause=()=>new Promise(resolve=>setTimeout(resolve,120));"
                     "const guide=document.querySelector('.screen-guide');"
                     "const filter=document.querySelector('#race-filter');"
+                    "const contestedFilter=document.querySelector('#contested-filter');"
+                    "const viewInputs=[...document.querySelectorAll('input[name=ballot-view]')];"
                     "const cards=[...document.querySelectorAll('[data-publication-race-id]')]"
                     ".filter(card=>getComputedStyle(card).display!=='none'&&"
                     "card.getBoundingClientRect().width>0&&card.getBoundingClientRect().height>0);"
                     "const cardParts=cards.flatMap(card=>[...card.querySelectorAll("
                     "'.screen-race-result,.screen-race-context,.screen-meter,.comparison')]);"
                     "const meters=[...document.querySelectorAll('.screen-meter')];"
+                    "const compactInput=viewInputs.find(input=>input.value==='compact');"
+                    "const fullInput=viewInputs.find(input=>input.value==='full');"
+                    "const scopedOption=[...filter.options].find(option=>option.value!=='all');"
+                    "if(scopedOption){filter.value=scopedOption.value;"
+                    "filter.dispatchEvent(new Event('change',{bubbles:true}));}"
+                    "compactInput?.click();contestedFilter?.click();await pause();"
+                    "const compactCards=cards.filter(card=>!card.hidden);"
+                    "const expectedCompactCards=cards.filter(card=>"
+                    "(!scopedOption||JSON.parse(card.dataset.filterTokens).includes(scopedOption.value))&&"
+                    "card.dataset.contested==='true');"
+                    "const compactGrid=[...document.querySelectorAll('.race-grid')].find(grid=>"
+                    "!grid.closest('[hidden]'));"
+                    "const compactColumns=compactGrid?getComputedStyle(compactGrid)"
+                    ".gridTemplateColumns.split(/\\s+/).length:0;"
+                    "const expectedCompactColumns=window.innerWidth<=720?1:"
+                    "window.innerWidth<=1050?3:4;"
+                    "const controlQuery=new URLSearchParams(window.location.search);"
+                    "const controls={"
+                    "compact:document.documentElement.dataset.ballotView==='compact',"
+                    "scopePreserved:Boolean(scopedOption&&filter.value===scopedOption.value),"
+                    "contested:Boolean(contestedFilter?.checked),"
+                    "countMatches:compactCards.length===expectedCompactCards.length,"
+                    "urlView:controlQuery.get('view')==='compact',"
+                    "urlRaces:controlQuery.get('races')==='contested',"
+                    "urlFilter:controlQuery.get('filter')===scopedOption?.value,"
+                    "denseColumns:compactColumns===expectedCompactColumns,"
+                    "noOverflow:document.documentElement.scrollWidth<=window.innerWidth+1,"
+                    "detailsVisible:compactCards.every(card=>{const detail=card.querySelector("
+                    "'.compact-detail-link');const style=detail?getComputedStyle(detail):null;"
+                    "return Boolean(detail&&"
+                    "detail.textContent?.trim()==='Full race detail'&&style&&"
+                    "style.display!=='none');})};"
+                    "fullInput?.click();if(contestedFilter?.checked)contestedFilter.click();"
+                    "filter.value='all';filter.dispatchEvent(new Event('change',{bubbles:true}));"
+                    "await pause();controls.reset="
+                    "document.documentElement.dataset.ballotView==='full'&&"
+                    "filter.value==='all'&&!contestedFilter?.checked&&window.location.search==='';"
                     "const disclosures=["
                     "...document.querySelectorAll('.guide-notes')].map(details=>{"
                     "const summary=details.querySelector('summary');"
@@ -1668,7 +1707,7 @@ def _capture_emulated_viewport(
                     "height:[part.clientHeight,part.scrollHeight]})),"
                     "metersRightAligned:meters.every(meter=>Math.abs(meter.getBoundingClientRect().right-"
                     "meter.parentElement.getBoundingClientRect().right)<1),"
-                    "coreRecommendationsLinked,"
+                    "coreRecommendationsLinked,controls,"
                     "disclosures,dialogCount:dialogs.length,"
                     "copy,"
                     "direct,directClosed,ownedOpened};})()))()"
@@ -1759,6 +1798,19 @@ def _capture_emulated_viewport(
             "cardOverflow": [],
             "metersRightAligned": True,
             "coreRecommendationsLinked": True,
+            "controls": {
+                "compact": True,
+                "scopePreserved": True,
+                "contested": True,
+                "countMatches": True,
+                "urlView": True,
+                "urlRaces": True,
+                "urlFilter": True,
+                "denseColumns": True,
+                "noOverflow": True,
+                "detailsVisible": True,
+                "reset": True,
+            },
             "disclosures": [
                 {
                     "id": disclosure_id,
