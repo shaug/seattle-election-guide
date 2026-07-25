@@ -222,6 +222,11 @@
             <div class="insufficient-note" role="note" data-display-role="insufficient-warning">
               Too few explicit endorsements to assess consensus reliably.</div>
             {% endif %}
+            {% for warning_code, warning_label in source_sensitive_warnings(race) %}
+            <div class="source-sensitive-note" role="note"
+              data-display-role="source-sensitive-warning" data-warning-code="{{ warning_code }}">
+              {{ warning_label }}</div>
+            {% endfor %}
             <dialog class="race-detail-dialog" id="race-detail-{{ race.id }}"
               data-race-detail-dialog data-race-id="{{ race.id }}"
               aria-labelledby="race-detail-election-{{ race.id }} race-detail-title-{{ race.id }}"

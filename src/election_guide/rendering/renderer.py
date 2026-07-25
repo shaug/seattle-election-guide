@@ -46,6 +46,10 @@ from election_guide.serialization import canonical_json_bytes, read_json, read_y
 TEMPLATE_DIR = Path(__file__).parent / "templates"
 LETTER_WIDTH_POINTS = 612.0
 LETTER_HEIGHT_POINTS = 792.0
+SOURCE_SENSITIVE_WARNING_LABELS = {
+    "low_confidence": "Source caveat: one or more endorsements carry a confidence warning.",
+    "source_overlap": "Source caveat: eligible sources have disclosed organizational overlap.",
+}
 
 
 @dataclass(frozen=True)
@@ -114,6 +118,7 @@ def render_html_document(
         source_category_label_by_key=source_category_label_by_key,
         source_cells_by_race_id=source_cells_by_race_id,
         concise_warning_labels=_concise_warning_labels,
+        source_sensitive_warnings=_source_sensitive_warnings,
         screen_share_accessible_label=_screen_share_accessible_label,
         screen_support_summary=_screen_support_summary,
         race_detail_candidate_choices=_race_detail_candidate_choices,
@@ -161,6 +166,14 @@ def _require_web_url(value: str) -> None:
 
 def _concise_warning_labels(race: PublicationRace) -> list[str]:
     return ["TOO FEW ENDORSEMENTS"] if race.grade == "Insufficient" else []
+
+
+def _source_sensitive_warnings(race: PublicationRace) -> list[tuple[str, str]]:
+    return [
+        (code, SOURCE_SENSITIVE_WARNING_LABELS[code])
+        for code in race.warning_codes
+        if code in SOURCE_SENSITIVE_WARNING_LABELS
+    ]
 
 
 def _screen_support_summary(race: PublicationRace) -> str:
@@ -1562,15 +1575,24 @@ def _capture_emulated_viewport(
                     ".filter(card=>getComputedStyle(card).display!=='none'&&"
                     "card.getBoundingClientRect().width>0&&card.getBoundingClientRect().height>0);"
                     "const cardParts=cards.flatMap(card=>[...card.querySelectorAll("
-                    "'.screen-race-result,.screen-race-context,.screen-meter,.comparison')]);"
+                    "'.screen-race-result,.screen-race-context,.screen-meter,.comparison,"
+                    "[data-display-role=source-sensitive-warning]')]);"
                     "const meters=[...document.querySelectorAll('.screen-meter')];"
                     "const compactInput=viewInputs.find(input=>input.value==='compact');"
                     "const fullInput=viewInputs.find(input=>input.value==='full');"
-                    "const scopedOption=[...filter.options].find(option=>option.value!=='all');"
+                    "const sourceWarningCard=cards.find(card=>card.dataset.contested==='true'&&"
+                    "card.querySelector('[data-display-role=source-sensitive-warning]'));"
+                    "const sourceWarningTokens=sourceWarningCard?"
+                    "JSON.parse(sourceWarningCard.dataset.filterTokens):[];"
+                    "const scopedOption=[...filter.options].find(option=>option.value!=='all'&&"
+                    "sourceWarningTokens.includes(option.value))||"
+                    "[...filter.options].find(option=>option.value!=='all');"
                     "if(scopedOption){filter.value=scopedOption.value;"
                     "filter.dispatchEvent(new Event('change',{bubbles:true}));}"
                     "compactInput?.click();contestedFilter?.click();await pause();"
                     "const compactCards=cards.filter(card=>!card.hidden);"
+                    "const compactSourceWarnings=compactCards.flatMap(card=>[..."
+                    "card.querySelectorAll('[data-display-role=source-sensitive-warning]')]);"
                     "const expectedCompactCards=cards.filter(card=>"
                     "(!scopedOption||JSON.parse(card.dataset.filterTokens).includes(scopedOption.value))&&"
                     "card.dataset.contested==='true');"
@@ -1595,7 +1617,12 @@ def _capture_emulated_viewport(
                     "'.compact-detail-link');const style=detail?getComputedStyle(detail):null;"
                     "return Boolean(detail&&"
                     "detail.textContent?.trim()==='Full race detail'&&style&&"
-                    "style.display!=='none');})};"
+                    "style.display!=='none');}),"
+                    "sourceWarningsVisible:compactSourceWarnings.length>0&&"
+                    "compactSourceWarnings.every(note=>{const rect=note.getBoundingClientRect();"
+                    "return note.getAttribute('role')==='note'&&"
+                    "['low_confidence','source_overlap'].includes(note.dataset.warningCode)&&"
+                    "getComputedStyle(note).display!=='none'&&rect.width>0&&rect.height>0;})};"
                     "fullInput?.click();if(contestedFilter?.checked)contestedFilter.click();"
                     "filter.value='all';filter.dispatchEvent(new Event('change',{bubbles:true}));"
                     "await pause();controls.reset="
@@ -1809,6 +1836,7 @@ def _capture_emulated_viewport(
                 "denseColumns": True,
                 "noOverflow": True,
                 "detailsVisible": True,
+                "sourceWarningsVisible": True,
                 "reset": True,
             },
             "disclosures": [

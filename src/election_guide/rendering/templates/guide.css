@@ -67,6 +67,7 @@ a { color: #075d75; text-underline-offset: .15em; }
 .comparison-differs { border-color: #d9a15d; background: #fff6e8; color: #8a4b00; }
 .comparison-not_covered { border-color: #b8c5cc; background: #f5f8f9; color: #53636d; }
 .insufficient-note { padding: .55rem .65rem; border-left: .25rem solid var(--red); background: #fff1ef; color: #72231e; font-size: .78rem; }
+.source-sensitive-note { display: none; padding: .55rem .65rem; border-left: .25rem solid #c47a1d; background: #fff8e8; color: #6f4500; font-size: .78rem; }
 .compact-detail-link { display: none; }
 html.compact-ballot-mode .screen-sections { padding-top: .65rem; padding-bottom: 2.5rem; }
 html.compact-ballot-mode .screen-section { margin: 1.5rem 0 2.5rem; }
@@ -83,7 +84,9 @@ html.compact-ballot-mode .screen-meter strong { padding-right: .55rem; font-size
 html.compact-ballot-mode .screen-comparisons { gap: .22rem; }
 html.compact-ballot-mode .comparison { min-height: 1.55rem; padding: .2rem .48rem .16rem; font-size: .68rem; }
 html.compact-ballot-mode .support-line { margin-top: 0; font-size: .68rem; text-align: left; }
-html.compact-ballot-mode .insufficient-note { padding: .38rem .48rem; font-size: .68rem; line-height: 1.25; }
+html.compact-ballot-mode .insufficient-note,
+html.compact-ballot-mode .source-sensitive-note { padding: .38rem .48rem; font-size: .68rem; line-height: 1.25; }
+html.compact-ballot-mode .source-sensitive-note { display: block; }
 html.compact-ballot-mode .compact-detail-link { display: inline; width: max-content; max-width: 100%; color: #075d75; font-size: .68rem; font-weight: 800; text-decoration: underline; text-underline-offset: .15em; }
 .race-card-primary { display: grid; min-width: 0; gap: .55rem; margin: -.35rem; padding: .35rem; border-radius: .3rem; color: inherit; cursor: pointer; text-decoration: none; transition: background-color .15s ease, box-shadow .15s ease; }
 .race-card-primary:hover { background: #f3f9f8; box-shadow: inset 0 0 0 1px #c0d8d4; }
