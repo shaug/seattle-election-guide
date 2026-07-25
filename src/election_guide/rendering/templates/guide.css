@@ -32,15 +32,12 @@ a { color: #075d75; text-underline-offset: .15em; }
 .view-setting { min-width: 0; margin: 0; padding: 0; border: 0; }
 .view-setting legend { margin-bottom: .2rem; padding: 0; }
 .segmented-control { display: flex; min-width: 0; min-height: 2.7rem; overflow: hidden; border: 1px solid #829ab1; border-radius: .3rem; background: var(--white); }
-.segmented-control label { display: flex; min-width: 0; align-items: stretch; color: var(--ink); cursor: pointer; }
+.segmented-control label { display: flex; min-width: 0; flex: 1 1 0; align-items: stretch; color: var(--ink); cursor: pointer; }
 .segmented-control label + label { border-left: 1px solid #829ab1; }
 .segmented-control input { position: absolute; opacity: 0; }
-.segmented-control span { display: flex; min-width: 0; align-items: center; padding: .45rem .7rem; white-space: nowrap; }
+.segmented-control span { display: flex; width: 100%; min-width: 0; align-items: center; justify-content: center; padding: .45rem .7rem; white-space: nowrap; }
 .segmented-control input:checked + span { background: var(--navy); color: var(--white); }
 .segmented-control input:focus-visible + span { outline: .2rem solid #f0a928; outline-offset: -.2rem; }
-.contested-control { display: flex; min-height: 2.7rem; align-items: center; gap: .5rem; padding: .45rem .7rem; border: 1px solid #829ab1; border-radius: .3rem; background: var(--white); cursor: pointer; }
-.contested-control input { width: 1.05rem; height: 1.05rem; flex: 0 0 auto; margin: 0; accent-color: var(--teal); }
-.contested-control span { white-space: nowrap; }
 .screen-controls p { align-self: center; justify-self: end; margin: 0; color: var(--muted); font-size: .72rem; text-align: right; }
 .screen-sections { min-width: 0; padding: 1rem clamp(1rem, 4vw, 3rem) 4rem; }
 .screen-section { margin: 2.5rem 0 4rem; }
@@ -188,9 +185,7 @@ a.race-detail-source-row:hover strong { text-decoration: underline; text-underli
   .hero-meta { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: .8rem 0 0; border-top: 1px solid #7794a8; border-left: 0; text-align: left; }
   .screen-controls { grid-template-columns: 1fr; position: static; }
   .screen-controls p { grid-column: auto; justify-self: start; text-align: left; }
-  .view-setting, .contested-control { width: 100%; }
-  .segmented-control label { flex: 1 1 0; }
-  .segmented-control span { width: 100%; justify-content: center; }
+  .view-setting { width: 100%; }
   html.compact-ballot-mode .race-grid { grid-template-columns: 1fr; }
   .screen-controls p { justify-self: start; }
   .race-grid, .methodology-screen, .footer-summary, .screen-source-heading, .screen-coverage-gaps, .coverage-gap-columns { grid-template-columns: 1fr; }

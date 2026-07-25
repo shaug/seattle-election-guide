@@ -118,22 +118,22 @@ DARWIN_VISUAL_BASELINES = {
         0.052,
     ],
     "mobile": [
-        0.621,
+        0.614,
         0.609,
-        0.613,
-        0.692,
-        0.095,
-        0.086,
-        0.042,
-        0.042,
-        0.127,
-        0.149,
-        0.065,
-        0.078,
-        0.106,
-        0.135,
+        0.616,
+        0.693,
+        0.233,
+        0.254,
+        0.029,
+        0.021,
+        0.142,
+        0.145,
         0.076,
-        0.050,
+        0.082,
+        0.114,
+        0.111,
+        0.058,
+        0.058,
     ],
 }
 LINUX_VISUAL_BASELINES = {
@@ -192,22 +192,22 @@ LINUX_VISUAL_BASELINES = {
         0.052,
     ],
     "mobile": [
-        0.633,
         0.626,
-        0.631,
-        0.695,
-        0.089,
-        0.069,
+        0.626,
+        0.634,
+        0.696,
+        0.227,
+        0.237,
+        0.028,
+        0.027,
+        0.120,
+        0.103,
+        0.074,
+        0.092,
+        0.092,
+        0.052,
         0.041,
-        0.048,
-        0.105,
-        0.107,
-        0.063,
-        0.088,
-        0.084,
-        0.076,
-        0.059,
-        0.063,
+        0.071,
     ],
 }
 APPROVED_VISUAL_BASELINES_BY_PLATFORM = {
@@ -239,9 +239,17 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "@media print" in html
     assert "@media (max-width: 720px)" in html
     assert 'id="race-filter"' in html
-    assert 'input type="radio" name="ballot-view" value="full" checked' in html
-    assert 'input type="radio" name="ballot-view" value="compact"' in html
-    assert 'id="contested-filter"' in html
+    assert 'input type="radio" name="ballot-view" value="full" checked><span>Full</span>' in html
+    assert 'input type="radio" name="ballot-view" value="compact"><span>Compact</span>' in html
+    assert (
+        'input type="radio" name="race-set" value="complete" id="complete-filter" checked'
+        "><span>Complete</span>" in html
+    )
+    assert (
+        'input type="radio" name="race-set" value="contested" id="contested-filter"'
+        "><span>Contested</span>" in html
+    )
+    assert "contested-control" not in html
     assert html.count('data-contested="') == len(races)
     assert "Full race detail" not in html
     assert 'aria-labelledby="race-label-' in html

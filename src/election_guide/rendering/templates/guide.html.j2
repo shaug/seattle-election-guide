@@ -160,14 +160,17 @@
       <fieldset class="view-setting">
         <legend>View</legend>
         <div class="segmented-control">
-          <label><input type="radio" name="ballot-view" value="full" checked><span>Full guide</span></label>
-          <label><input type="radio" name="ballot-view" value="compact"><span>Compact ballot</span></label>
+          <label><input type="radio" name="ballot-view" value="full" checked><span>Full</span></label>
+          <label><input type="radio" name="ballot-view" value="compact"><span>Compact</span></label>
         </div>
       </fieldset>
-      <label class="contested-control" for="contested-filter">
-        <input type="checkbox" id="contested-filter">
-        <span>Contested races only</span>
-      </label>
+      <fieldset class="view-setting">
+        <legend>Races</legend>
+        <div class="segmented-control">
+          <label><input type="radio" name="race-set" value="complete" id="complete-filter" checked><span>Complete</span></label>
+          <label><input type="radio" name="race-set" value="contested" id="contested-filter"><span>Contested</span></label>
+        </div>
+      </fieldset>
       <p id="filter-status" role="status" aria-live="polite"></p>
     </section>
 
@@ -610,21 +613,25 @@
     calibratePrintInk();
 
     const select = document.querySelector('#race-filter');
-    const contestedFilter = document.querySelector('#contested-filter');
+    const completeFilter = document.querySelector('#complete-filter');
     const viewInputs = [...document.querySelectorAll('input[name="ballot-view"]')];
+    const raceSetInputs = [...document.querySelectorAll('input[name="race-set"]')];
     const status = document.querySelector('#filter-status');
     const cards = [...document.querySelectorAll('[data-publication-race-id]')];
     const sections = [...document.querySelectorAll('[data-filter-section]')];
     const filterValues = new Set([...select.options].map((option) => option.value));
     const selectedView = () => viewInputs.find((input) => input.checked)?.value === 'compact'
       ? 'compact' : 'full';
+    const selectedRaceSet = () => raceSetInputs.find((input) => input.checked)?.value === 'contested'
+      ? 'contested' : 'complete';
     const syncControlsFromUrl = () => {
       const query = new URLSearchParams(window.location.search);
       const requestedFilter = query.get('filter');
       select.value = requestedFilter && filterValues.has(requestedFilter) ? requestedFilter : 'all';
       const requestedView = query.get('view') === 'compact' ? 'compact' : 'full';
       viewInputs.forEach((input) => { input.checked = input.value === requestedView; });
-      contestedFilter.checked = query.get('races') === 'contested';
+      const requestedRaceSet = query.get('races') === 'contested' ? 'contested' : 'complete';
+      raceSetInputs.forEach((input) => { input.checked = input.value === requestedRaceSet; });
     };
     const writeControlState = () => {
       const url = new URL(window.location.href);
@@ -632,7 +639,7 @@
       else url.searchParams.set('filter', select.value);
       if (selectedView() === 'compact') url.searchParams.set('view', 'compact');
       else url.searchParams.delete('view');
-      if (contestedFilter.checked) url.searchParams.set('races', 'contested');
+      if (selectedRaceSet() === 'contested') url.searchParams.set('races', 'contested');
       else url.searchParams.delete('races');
       history.replaceState(
         history.state,
@@ -642,7 +649,7 @@
     };
     const applyFilter = ({ syncUrl = true } = {}) => {
       const token = select.value;
-      const contestedOnly = contestedFilter.checked;
+      const contestedOnly = selectedRaceSet() === 'contested';
       const compact = selectedView() === 'compact';
       let visible = 0;
       document.documentElement.classList.toggle('compact-ballot-mode', compact);
@@ -661,13 +668,13 @@
       const raceNoun = contestedOnly
         ? (visible === 1 ? 'contested race' : 'contested races')
         : (visible === 1 ? 'race' : 'races');
-      const viewLabel = compact ? 'Compact ballot' : 'Full guide';
+      const viewLabel = compact ? 'Compact' : 'Full';
       const scopeLabel = select.selectedOptions[0]?.textContent.trim() || 'All Seattle ballot races';
       status.textContent = `${visible} ${raceNoun} shown · ${viewLabel} · ${scopeLabel}`;
       if (syncUrl) writeControlState();
     };
     select.addEventListener('change', () => applyFilter());
-    contestedFilter.addEventListener('change', () => applyFilter());
+    raceSetInputs.forEach((input) => input.addEventListener('change', () => applyFilter()));
     viewInputs.forEach((input) => input.addEventListener('change', () => applyFilter()));
     syncControlsFromUrl();
     applyFilter({ syncUrl: false });
@@ -698,7 +705,7 @@
       if (target) {
         if (card.hidden) {
           select.value = 'all';
-          contestedFilter.checked = false;
+          completeFilter.checked = true;
           applyFilter();
         }
         if (!target.open) target.showModal();

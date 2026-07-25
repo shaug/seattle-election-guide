@@ -1556,8 +1556,11 @@ def _capture_emulated_viewport(
                     "const pause=()=>new Promise(resolve=>setTimeout(resolve,120));"
                     "const guide=document.querySelector('.screen-guide');"
                     "const filter=document.querySelector('#race-filter');"
+                    "const completeFilter=document.querySelector('#complete-filter');"
                     "const contestedFilter=document.querySelector('#contested-filter');"
                     "const viewInputs=[...document.querySelectorAll('input[name=ballot-view]')];"
+                    "const binarySelectors=[...document.querySelectorAll("
+                    "'.view-setting .segmented-control')];"
                     "const cards=[...document.querySelectorAll('[data-publication-race-id]')]"
                     ".filter(card=>getComputedStyle(card).display!=='none'&&"
                     "card.getBoundingClientRect().width>0&&card.getBoundingClientRect().height>0);"
@@ -1585,6 +1588,9 @@ def _capture_emulated_viewport(
                     "compact:document.documentElement.dataset.ballotView==='compact',"
                     "scopePreserved:Boolean(scopedOption&&filter.value===scopedOption.value),"
                     "contested:Boolean(contestedFilter?.checked),"
+                    "pairedSelectors:binarySelectors.length===2&&binarySelectors.every(control=>{"
+                    "const inputs=[...control.querySelectorAll('input[type=radio]')];"
+                    "return inputs.length===2&&inputs.filter(input=>input.checked).length===1;}),"
                     "countMatches:compactCards.length===expectedCompactCards.length,"
                     "urlView:controlQuery.get('view')==='compact',"
                     "urlRaces:controlQuery.get('races')==='contested',"
@@ -1595,7 +1601,7 @@ def _capture_emulated_viewport(
                     "const comparisons=card.querySelector('.screen-comparisons');"
                     "return Boolean(comparisons&&"
                     "getComputedStyle(comparisons).display==='none');})};"
-                    "fullInput?.click();if(contestedFilter?.checked)contestedFilter.click();"
+                    "fullInput?.click();completeFilter?.click();"
                     "filter.value='all';filter.dispatchEvent(new Event('change',{bubbles:true}));"
                     "await pause();controls.reset="
                     "document.documentElement.dataset.ballotView==='full'&&"
@@ -1801,6 +1807,7 @@ def _capture_emulated_viewport(
                 "compact": True,
                 "scopePreserved": True,
                 "contested": True,
+                "pairedSelectors": True,
                 "countMatches": True,
                 "urlView": True,
                 "urlRaces": True,
