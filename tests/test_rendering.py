@@ -265,13 +265,6 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "syncControlsFromUrl();" in html
     assert "html.compact-ballot-mode .race-grid { grid-template-columns: repeat(4" in html
     assert "html.compact-ballot-mode .race-grid { grid-template-columns: 1fr; }" in html
-    assert ".screen-meter { --meter-fill-direction: to left;" in html
-    assert "--meter-label-alignment: right;" in html
-    assert "linear-gradient(var(--meter-fill-direction), var(--teal)" in html
-    assert (
-        "html.compact-ballot-mode .screen-meter { --meter-fill-direction: to right; "
-        "--meter-label-alignment: left;" in html
-    )
     assert "> View endorsements" not in html
     assert "html.compact-ballot-mode .screen-comparisons { display: none; }" in html
     assert html.count('<dialog class="race-detail-dialog"') == len(races)
@@ -446,8 +439,8 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
         )
     assert ".screen-race-result, .screen-race-context { display: grid;" in html
     assert "grid-template-columns: minmax(0, 1fr) 11rem" in html
-    assert "display: flex; align-items: center; justify-content: flex-end;" in html
-    assert "linear-gradient(var(--meter-fill-direction), var(--teal) 0 var(--meter-fill)" in html
+    assert ".screen-meter { display: flex;" in html
+    assert "linear-gradient(to left, var(--teal) 0 var(--meter-fill)" in html
     assert ".comparison-status { font-weight: 800; }" in html
     assert ".comparison-choice { min-width: 0; font-weight: 500; }" in html
     assert ".comparison-agrees { border-color: #83bfae; background: #edf8f4;" in html
