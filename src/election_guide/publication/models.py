@@ -503,7 +503,7 @@ class PublicationMetadata(PublicationModel):
 
 
 class PublicationViewModel(PublicationModel):
-    schema_version: Literal["1.6"] = "1.6"
+    schema_version: Literal["1.7"] = "1.7"
     metadata: PublicationMetadata
     sources: list[PublicationSource]
     sections: list[PublicationSection]

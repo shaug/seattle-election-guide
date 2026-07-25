@@ -38,9 +38,9 @@ JSON uses canonical sorted serialization and exact rational strings such as `"3/
 registry and inventory order, explicit field order, UTF-8, and Unix newlines. Identical inputs,
 build timestamp, and Git revision therefore produce identical bytes.
 
-`publication_view_model.json` uses schema `1.6`; this version retains the `1.5` distinction between
-sources contributing usable endorsement decisions and researched coverage gaps, and adds public
-capture, publication, update, title, and redistribution metadata to evidence-linked source cells.
+`publication_view_model.json` uses schema `1.7`; this version retains the `1.6` public capture,
+publication, update, title, and redistribution metadata on evidence-linked source cells and adds the
+authoritative-inventory-derived `is_contested` race field.
 Those fields support audit exports and traceability; the voter-facing race panel intentionally centers
 source, decision, agreement, and evidence link rather than displaying the full metadata record. The
 model also retains per-source participation counts, candidate-centric affirmative endorsement groups,
