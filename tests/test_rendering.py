@@ -243,7 +243,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert 'input type="radio" name="ballot-view" value="compact"' in html
     assert 'id="contested-filter"' in html
     assert html.count('data-contested="') == len(races)
-    assert html.count(">Full race detail</span>") == len(races)
+    assert "Full race detail" not in html
     assert 'aria-labelledby="race-label-' in html
     assert html.count('<a class="race-card-primary"') == len(races)
     assert html.count('aria-label="View endorsements for ') == len(races)
@@ -258,16 +258,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "html.compact-ballot-mode .race-grid { grid-template-columns: repeat(4" in html
     assert "html.compact-ballot-mode .race-grid { grid-template-columns: 1fr; }" in html
     assert "> View endorsements" not in html
-    source_sensitive_labels = {
-        "low_confidence": "Source caveat: one or more endorsements carry a confidence warning.",
-        "source_overlap": "Source caveat: eligible sources have disclosed organizational overlap.",
-    }
-    source_sensitive_count = sum(
-        code in source_sensitive_labels for race in races for code in race.warning_codes
-    )
-    assert source_sensitive_count > 0
-    assert html.count('data-display-role="source-sensitive-warning"') == source_sensitive_count
-    assert "html.compact-ballot-mode .source-sensitive-note { display: block; }" in html
+    assert "html.compact-ballot-mode .screen-comparisons { display: none; }" in html
     assert html.count('<dialog class="race-detail-dialog"') == len(races)
     assert html.count("August 2026 Primary · Endorsements") == len(races)
     assert html.count('data-copy-race-link="') == len(races)
@@ -289,12 +280,6 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
         assert 'data-display-role="comparison"' in trigger_html
         assert 'data-display-role="support"' in trigger_html
         dialog_start = html.index(f'id="race-detail-{race.id}"')
-        card_html = html[trigger_start:dialog_start]
-        for code in race.warning_codes:
-            if code in source_sensitive_labels:
-                assert 'class="source-sensitive-note" role="note"' in card_html
-                assert f'data-warning-code="{code}"' in card_html
-                assert source_sensitive_labels[code] in card_html
         assert trigger_end < dialog_start
         dialog_end = html.index("</dialog>", dialog_start)
         dialog_html = html[dialog_start:dialog_end]

@@ -216,17 +216,11 @@
                 </div>
                 <p class="support-line" data-display-role="support">{{ screen_support_summary(race) }}</p>
               </div>
-              <span class="compact-detail-link" aria-hidden="true">Full race detail</span>
             </a>
             {% if race.grade == 'Insufficient' %}
             <div class="insufficient-note" role="note" data-display-role="insufficient-warning">
               Too few explicit endorsements to assess consensus reliably.</div>
             {% endif %}
-            {% for warning_code, warning_label in source_sensitive_warnings(race) %}
-            <div class="source-sensitive-note" role="note"
-              data-display-role="source-sensitive-warning" data-warning-code="{{ warning_code }}">
-              {{ warning_label }}</div>
-            {% endfor %}
             <dialog class="race-detail-dialog" id="race-detail-{{ race.id }}"
               data-race-detail-dialog data-race-id="{{ race.id }}"
               aria-labelledby="race-detail-election-{{ race.id }} race-detail-title-{{ race.id }}"
