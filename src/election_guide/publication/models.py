@@ -306,6 +306,7 @@ class PublicationRace(PublicationModel):
     section_label: str
     jurisdiction_id: str
     race_label: str
+    is_contested: bool
     filter_tokens: list[str]
     support_leader_candidate_ids: list[str]
     support_leader_candidate_labels: list[str]
@@ -502,7 +503,7 @@ class PublicationMetadata(PublicationModel):
 
 
 class PublicationViewModel(PublicationModel):
-    schema_version: Literal["1.6"] = "1.6"
+    schema_version: Literal["1.7"] = "1.7"
     metadata: PublicationMetadata
     sources: list[PublicationSource]
     sections: list[PublicationSection]

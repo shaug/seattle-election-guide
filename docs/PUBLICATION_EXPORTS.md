@@ -38,9 +38,9 @@ JSON uses canonical sorted serialization and exact rational strings such as `"3/
 registry and inventory order, explicit field order, UTF-8, and Unix newlines. Identical inputs,
 build timestamp, and Git revision therefore produce identical bytes.
 
-`publication_view_model.json` uses schema `1.6`; this version retains the `1.5` distinction between
-sources contributing usable endorsement decisions and researched coverage gaps, and adds public
-capture, publication, update, title, and redistribution metadata to evidence-linked source cells.
+`publication_view_model.json` uses schema `1.7`; this version retains the `1.6` public capture,
+publication, update, title, and redistribution metadata on evidence-linked source cells and adds the
+authoritative-inventory-derived `is_contested` race field.
 Those fields support audit exports and traceability; the voter-facing race panel intentionally centers
 source, decision, agreement, and evidence link rather than displaying the full metadata record. The
 model also retains per-source participation counts, candidate-centric affirmative endorsement groups,
@@ -57,6 +57,8 @@ cells. Voter-facing HTML and PDF use the consensus share and source count rather
 the audit grade. Methodology also publishes source categories and possible-overlap groups. It
 identifies `source_level` as the default aggregation view and `not_computed` as the deduplicated-view
 status, so a consumer cannot silently substitute coalition grouping for raw source-level consensus.
+Each published race also carries `is_contested`, derived solely from whether the authoritative ballot
+inventory contains more than one official choice. Endorsement coverage never influences that flag.
 
 Every active source includes `endorsement_count` and `split_endorsement_count`. The first counts
 published races where its effective cell is `endorsement` or `multi_endorsement`; the second is the

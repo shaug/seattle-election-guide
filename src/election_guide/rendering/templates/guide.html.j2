@@ -142,19 +142,35 @@
       </div>
     </header>
 
-    <section class="screen-controls" aria-label="Race filters">
-      <label for="race-filter">Show races</label>
-      <select id="race-filter">
-        <option value="all">All Seattle ballot races</option>
-        <optgroup label="Ballot sections">
-        {% for section in guide.sections %}
-        <option value="{{ section.id }}">{{ section.label }}</option>
-        {% endfor %}
-        </optgroup>
-        <optgroup label="Districts and jurisdictions">
-        {% for option in filter_options %}<option value="{{ option }}">{{ option }}</option>{% endfor %}
-        </optgroup>
-      </select>
+    <section class="screen-controls" aria-label="Guide view and race filters">
+      <div class="race-filter-control">
+        <label for="race-filter">Show races</label>
+        <select id="race-filter">
+          <option value="all">All Seattle ballot races</option>
+          <optgroup label="Ballot sections">
+          {% for section in guide.sections %}
+          <option value="{{ section.id }}">{{ section.label }}</option>
+          {% endfor %}
+          </optgroup>
+          <optgroup label="Districts and jurisdictions">
+          {% for option in filter_options %}<option value="{{ option }}">{{ option }}</option>{% endfor %}
+          </optgroup>
+        </select>
+      </div>
+      <fieldset class="view-setting">
+        <legend>View</legend>
+        <div class="segmented-control">
+          <label><input type="radio" name="ballot-view" value="full" checked><span>Full</span></label>
+          <label><input type="radio" name="ballot-view" value="compact"><span>Compact</span></label>
+        </div>
+      </fieldset>
+      <fieldset class="view-setting">
+        <legend>Races</legend>
+        <div class="segmented-control">
+          <label><input type="radio" name="race-set" value="complete" id="complete-filter" checked><span>Complete</span></label>
+          <label><input type="radio" name="race-set" value="contested" id="contested-filter"><span>Contested</span></label>
+        </div>
+      </fieldset>
       <p id="filter-status" role="status" aria-live="polite"></p>
     </section>
 
@@ -169,6 +185,7 @@
           {% for race in section.races %}
           <article class="race-card" id="race-{{ race.id }}"
             data-publication-race-id="{{ race.id }}"
+            data-contested="{{ 'true' if race.is_contested else 'false' }}"
             aria-labelledby="race-label-{{ race.id }}"
             data-filter-tokens='{{ race.filter_tokens | tojson }}'>
             <a class="race-card-primary" href="#race-{{ race.id }}" data-race-detail-link
@@ -514,7 +531,8 @@
 
   <script>
   (() => {
-    const edition = new URLSearchParams(window.location.search).get('edition');
+    const initialQuery = new URLSearchParams(window.location.search);
+    const edition = initialQuery.get('edition');
     if (edition === 'compact' || edition === 'detailed') {
       document.documentElement.classList.add(`${edition}-edition`);
     }
@@ -593,15 +611,53 @@
       }
     });
     calibratePrintInk();
+
     const select = document.querySelector('#race-filter');
+    const completeFilter = document.querySelector('#complete-filter');
+    const viewInputs = [...document.querySelectorAll('input[name="ballot-view"]')];
+    const raceSetInputs = [...document.querySelectorAll('input[name="race-set"]')];
     const status = document.querySelector('#filter-status');
     const cards = [...document.querySelectorAll('[data-publication-race-id]')];
     const sections = [...document.querySelectorAll('[data-filter-section]')];
-    const applyFilter = () => {
+    const filterValues = new Set([...select.options].map((option) => option.value));
+    const selectedView = () => viewInputs.find((input) => input.checked)?.value === 'compact'
+      ? 'compact' : 'full';
+    const selectedRaceSet = () => raceSetInputs.find((input) => input.checked)?.value === 'contested'
+      ? 'contested' : 'complete';
+    const syncControlsFromUrl = () => {
+      const query = new URLSearchParams(window.location.search);
+      const requestedFilter = query.get('filter');
+      select.value = requestedFilter && filterValues.has(requestedFilter) ? requestedFilter : 'all';
+      const requestedView = query.get('view') === 'compact' ? 'compact' : 'full';
+      viewInputs.forEach((input) => { input.checked = input.value === requestedView; });
+      const requestedRaceSet = query.get('races') === 'contested' ? 'contested' : 'complete';
+      raceSetInputs.forEach((input) => { input.checked = input.value === requestedRaceSet; });
+    };
+    const writeControlState = () => {
+      const url = new URL(window.location.href);
+      if (select.value === 'all') url.searchParams.delete('filter');
+      else url.searchParams.set('filter', select.value);
+      if (selectedView() === 'compact') url.searchParams.set('view', 'compact');
+      else url.searchParams.delete('view');
+      if (selectedRaceSet() === 'contested') url.searchParams.set('races', 'contested');
+      else url.searchParams.delete('races');
+      history.replaceState(
+        history.state,
+        '',
+        `${url.pathname}${url.search}${url.hash}`,
+      );
+    };
+    const applyFilter = ({ syncUrl = true } = {}) => {
       const token = select.value;
+      const contestedOnly = selectedRaceSet() === 'contested';
+      const compact = selectedView() === 'compact';
       let visible = 0;
+      document.documentElement.classList.toggle('compact-ballot-mode', compact);
+      document.documentElement.dataset.ballotView = compact ? 'compact' : 'full';
       cards.forEach((card) => {
-        const matches = token === 'all' || JSON.parse(card.dataset.filterTokens).includes(token);
+        const matchesScope = token === 'all' || JSON.parse(card.dataset.filterTokens).includes(token);
+        const matchesContest = !contestedOnly || card.dataset.contested === 'true';
+        const matches = matchesScope && matchesContest;
         card.hidden = !matches;
         if (matches) visible += 1;
       });
@@ -609,10 +665,25 @@
         section.hidden = ![...section.querySelectorAll('[data-publication-race-id]')]
           .some((card) => !card.hidden);
       });
-      status.textContent = `${visible} races shown`;
+      const raceNoun = contestedOnly
+        ? (visible === 1 ? 'contested race' : 'contested races')
+        : (visible === 1 ? 'race' : 'races');
+      const viewLabel = compact ? 'Compact' : 'Full';
+      const scopeLabel = select.selectedOptions[0]?.textContent.trim() || 'All Seattle ballot races';
+      const statusParts = [`${visible} ${raceNoun} shown`, viewLabel, scopeLabel];
+      status.replaceChildren(...statusParts.map((part, index) => {
+        const chunk = document.createElement('span');
+        chunk.className = 'filter-status-part';
+        chunk.textContent = index === 0 ? part : `· ${part}`;
+        return chunk;
+      }));
+      if (syncUrl) writeControlState();
     };
-    select.addEventListener('change', applyFilter);
-    applyFilter();
+    select.addEventListener('change', () => applyFilter());
+    raceSetInputs.forEach((input) => input.addEventListener('change', () => applyFilter()));
+    viewInputs.forEach((input) => input.addEventListener('change', () => applyFilter()));
+    syncControlsFromUrl();
+    applyFilter({ syncUrl: false });
 
     const dialogs = [...document.querySelectorAll('[data-race-detail-dialog]')];
     let lastTrigger = null;
@@ -640,6 +711,7 @@
       if (target) {
         if (card.hidden) {
           select.value = 'all';
+          completeFilter.checked = true;
           applyFilter();
         }
         if (!target.open) target.showModal();
@@ -678,6 +750,8 @@
       });
     });
     window.addEventListener('popstate', () => {
+      syncControlsFromUrl();
+      applyFilter({ syncUrl: false });
       syncRaceDetail({ restoreFocus: !window.location.hash });
     });
     window.addEventListener('hashchange', () => {

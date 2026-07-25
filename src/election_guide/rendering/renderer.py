@@ -1556,12 +1556,73 @@ def _capture_emulated_viewport(
                     "const pause=()=>new Promise(resolve=>setTimeout(resolve,120));"
                     "const guide=document.querySelector('.screen-guide');"
                     "const filter=document.querySelector('#race-filter');"
+                    "const status=document.querySelector('#filter-status');"
+                    "const completeFilter=document.querySelector('#complete-filter');"
+                    "const contestedFilter=document.querySelector('#contested-filter');"
+                    "const viewInputs=[...document.querySelectorAll('input[name=ballot-view]')];"
+                    "const binarySelectors=[...document.querySelectorAll("
+                    "'.view-setting .segmented-control')];"
+                    "const selectorWidths=binarySelectors.map(control=>"
+                    "control.getBoundingClientRect().width);"
                     "const cards=[...document.querySelectorAll('[data-publication-race-id]')]"
                     ".filter(card=>getComputedStyle(card).display!=='none'&&"
                     "card.getBoundingClientRect().width>0&&card.getBoundingClientRect().height>0);"
                     "const cardParts=cards.flatMap(card=>[...card.querySelectorAll("
                     "'.screen-race-result,.screen-race-context,.screen-meter,.comparison')]);"
                     "const meters=[...document.querySelectorAll('.screen-meter')];"
+                    "const meterAligned=(meter,direction,textAlign)=>{"
+                    "const label=meter.querySelector('strong');const style=getComputedStyle(meter);"
+                    "return style.getPropertyValue('--meter-direction').trim()===direction&&"
+                    "Boolean(label&&getComputedStyle(label).textAlign===textAlign);};"
+                    "const compactInput=viewInputs.find(input=>input.value==='compact');"
+                    "const fullInput=viewInputs.find(input=>input.value==='full');"
+                    "const scopedOption=[...filter.options].find(option=>option.value!=='all');"
+                    "if(scopedOption){filter.value=scopedOption.value;"
+                    "filter.dispatchEvent(new Event('change',{bubbles:true}));}"
+                    "compactInput?.click();contestedFilter?.click();await pause();"
+                    "const compactCards=cards.filter(card=>!card.hidden);"
+                    "const expectedCompactCards=cards.filter(card=>"
+                    "(!scopedOption||JSON.parse(card.dataset.filterTokens).includes(scopedOption.value))&&"
+                    "card.dataset.contested==='true');"
+                    "const compactGrid=[...document.querySelectorAll('.race-grid')].find(grid=>"
+                    "!grid.closest('[hidden]'));"
+                    "const compactColumns=compactGrid?getComputedStyle(compactGrid)"
+                    ".gridTemplateColumns.split(/\\s+/).length:0;"
+                    "const expectedCompactColumns=window.innerWidth<=720?1:"
+                    "window.innerWidth<=1050?3:4;"
+                    "const controlQuery=new URLSearchParams(window.location.search);"
+                    "const controls={"
+                    "compact:document.documentElement.dataset.ballotView==='compact',"
+                    "scopePreserved:Boolean(scopedOption&&filter.value===scopedOption.value),"
+                    "contested:Boolean(contestedFilter?.checked),"
+                    "pairedSelectors:binarySelectors.length===2&&"
+                    "Math.abs(selectorWidths[0]-selectorWidths[1])<=1&&"
+                    "binarySelectors.every(control=>{"
+                    "const inputs=[...control.querySelectorAll('input[type=radio]')];"
+                    "return inputs.length===2&&inputs.filter(input=>input.checked).length===1;}),"
+                    "countMatches:compactCards.length===expectedCompactCards.length,"
+                    "urlView:controlQuery.get('view')==='compact',"
+                    "urlRaces:controlQuery.get('races')==='contested',"
+                    "urlFilter:controlQuery.get('filter')===scopedOption?.value,"
+                    "denseColumns:compactColumns===expectedCompactColumns,"
+                    "noOverflow:document.documentElement.scrollWidth<=window.innerWidth+1,"
+                    "compactMetersLeftAligned:compactCards.every(card=>{"
+                    "const meter=card.querySelector('.screen-meter');"
+                    "return Boolean(meter&&meterAligned(meter,'to right','left'));}),"
+                    "comparisonsHidden:compactCards.every(card=>{"
+                    "const comparisons=card.querySelector('.screen-comparisons');"
+                    "return Boolean(comparisons&&"
+                    "getComputedStyle(comparisons).display==='none');})};"
+                    "fullInput?.click();completeFilter?.click();"
+                    "filter.value='all';filter.dispatchEvent(new Event('change',{bubbles:true}));"
+                    "await pause();controls.reset="
+                    "document.documentElement.dataset.ballotView==='full'&&"
+                    "filter.value==='all'&&!contestedFilter?.checked&&window.location.search==='';"
+                    "controls.fullMetersRightAligned=meters.every(meter=>"
+                    "meterAligned(meter,'to left','right'));"
+                    "controls.statusAllGrouped=status?.children.length===3&&"
+                    "status.lastElementChild?.textContent==='· All Seattle ballot races'&&"
+                    "getComputedStyle(status.lastElementChild).whiteSpace==='nowrap';"
                     "const disclosures=["
                     "...document.querySelectorAll('.guide-notes')].map(details=>{"
                     "const summary=details.querySelector('summary');"
@@ -1668,7 +1729,7 @@ def _capture_emulated_viewport(
                     "height:[part.clientHeight,part.scrollHeight]})),"
                     "metersRightAligned:meters.every(meter=>Math.abs(meter.getBoundingClientRect().right-"
                     "meter.parentElement.getBoundingClientRect().right)<1),"
-                    "coreRecommendationsLinked,"
+                    "coreRecommendationsLinked,controls,"
                     "disclosures,dialogCount:dialogs.length,"
                     "copy,"
                     "direct,directClosed,ownedOpened};})()))()"
@@ -1759,6 +1820,23 @@ def _capture_emulated_viewport(
             "cardOverflow": [],
             "metersRightAligned": True,
             "coreRecommendationsLinked": True,
+            "controls": {
+                "compact": True,
+                "scopePreserved": True,
+                "contested": True,
+                "pairedSelectors": True,
+                "countMatches": True,
+                "urlView": True,
+                "urlRaces": True,
+                "urlFilter": True,
+                "denseColumns": True,
+                "noOverflow": True,
+                "compactMetersLeftAligned": True,
+                "comparisonsHidden": True,
+                "reset": True,
+                "statusAllGrouped": True,
+                "fullMetersRightAligned": True,
+            },
             "disclosures": [
                 {
                     "id": disclosure_id,
