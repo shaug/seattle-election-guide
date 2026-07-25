@@ -96,7 +96,7 @@ a.race-detail-source-row-comparison:hover { background: #edf3f5; }
 a.race-detail-source-row:hover strong { text-decoration: underline; text-underline-offset: .15em; }
 .race-detail-source-row strong { min-width: 0; color: var(--navy); font-size: .8rem; overflow-wrap: anywhere; }
 .race-detail-source-meta { display: flex; min-width: 0; align-items: center; justify-content: flex-end; gap: .3rem; }
-.race-detail-category-badge { display: inline-flex; align-items: center; max-width: 14rem; padding: .14rem .42rem; border: 1px solid #c7d3dc; border-radius: 1rem; background: #f3f6f8; color: #526f83; font-size: .59rem; font-weight: 800; line-height: 1.25; text-align: center; }
+.race-detail-category-badge, .race-detail-comparison-badge { display: inline-flex; align-items: center; max-width: 14rem; padding: .14rem .42rem; border: 1px solid #c7d3dc; border-radius: 1rem; background: #f3f6f8; color: #526f83; font-size: .59rem; font-weight: 800; line-height: 1.25; text-align: center; }
 .race-detail-comparison-badge { border-color: #9bb1bf; background: #e8f0f3; color: #36576b; }
 .race-detail-source-status { color: #364152; font-size: .68rem; font-weight: 700; text-align: right; }
 .race-detail-missing { margin-top: .75rem; border-top: 1px solid var(--line); padding-top: .65rem; }

@@ -312,6 +312,12 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
         assert dialog_html.count('data-race-detail-source-id="') == expected_row_count
         assert dialog_html.count('data-source-group="') == expected_row_count
         assert dialog_html.count('class="race-detail-category-badge') == expected_row_count
+        expected_co_endorsement_rows = sum(
+            len(cell.candidate_ids)
+            for cell in race.source_cells
+            if cell.state == "multi_endorsement"
+        )
+        assert dialog_html.count(">Co-endorsed</span>") == expected_co_endorsement_rows
         for state in ("not_covered", "not_applicable"):
             missing_count = sum(
                 _source_cell_group(cell, race, source_by_id[cell.source_id]) == state
@@ -335,10 +341,9 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
             )
             assert f'data-source-state="{cell.state}"' in dialog_html
             source = source_by_id[cell.source_id]
+            assert category_label_by_key[source.category] in dialog_html
             if source.panel_role == "comparison":
                 assert "Comparison only" in dialog_html
-            else:
-                assert category_label_by_key[source.category] in dialog_html
             detail_label = _source_cell_detail_label(cell, race, group)
             if detail_label is not None:
                 assert detail_label in dialog_html

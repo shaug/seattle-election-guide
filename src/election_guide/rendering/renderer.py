@@ -291,7 +291,9 @@ def _source_cell_detail_label(
     race: PublicationRace,
     group: str,
 ) -> str | None:
-    if group in {"candidate", "no_endorsement", "not_covered", "not_applicable"}:
+    if group == "candidate":
+        return "Co-endorsed" if cell.state == "multi_endorsement" else None
+    if group in {"no_endorsement", "not_covered", "not_applicable"}:
         return None
     del race
     return _source_cell_status_label(cell)
@@ -531,27 +533,14 @@ def validate_rendered_guide(
                     for candidate_id, _candidate_label, _endorsement_group in candidate_choices
                     if candidate_id in cell.candidate_ids
                 ]
-                expected_parts = [
-                    source.name,
-                    (
-                        "Comparison only"
-                        if source.panel_role == "comparison"
-                        else category_label_by_key[source.category]
-                    ),
-                ]
             else:
                 expected_candidate_ids = [None]
-                expected_parts = [
-                    source.name,
-                    (
-                        "Comparison only"
-                        if source.panel_role == "comparison"
-                        else category_label_by_key[source.category]
-                    ),
-                ]
-                detail_label = _source_cell_detail_label(cell, race, expected_group)
-                if detail_label is not None:
-                    expected_parts.append(detail_label)
+            expected_parts = [source.name, category_label_by_key[source.category]]
+            if source.panel_role == "comparison":
+                expected_parts.append("Comparison only")
+            detail_label = _source_cell_detail_label(cell, race, expected_group)
+            if detail_label is not None:
+                expected_parts.append(detail_label)
             expected_rows = [
                 _normalized_text(" ".join(expected_parts)) for _ in expected_candidate_ids
             ]

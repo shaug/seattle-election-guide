@@ -37,10 +37,9 @@
     </section>
   {%- endmacro %}
   {% macro race_detail_source_badge(source) -%}
-    {% if source.panel_role == 'comparison' %}
-    <span class="race-detail-category-badge race-detail-comparison-badge">Comparison only</span>
-    {% else %}
     <span class="race-detail-category-badge">{{ source_category_label_by_key[source.category] }}</span>
+    {% if source.panel_role == 'comparison' %}
+    <span class="race-detail-comparison-badge">Comparison only</span>
     {% endif %}
   {%- endmacro %}
   {% macro race_detail_source_rows(race, group_key) -%}
@@ -103,7 +102,11 @@
           data-endorsed-candidate-id="{{ candidate_id }}">
           <a class="race-detail-source-row" href="{{ endorser.evidence_url }}">
             <strong>{{ endorser.source_name }}</strong>
-            <div class="race-detail-source-meta">{{ race_detail_source_badge(source) }}</div>
+            {% set detail_label = source_cell_detail_label(cell, race, 'candidate') %}
+            <div class="race-detail-source-meta">
+              {{ race_detail_source_badge(source) }}
+              {% if detail_label %}<span class="race-detail-source-status">{{ detail_label }}</span>{% endif %}
+            </div>
           </a>
         </li>
         {% endfor %}
@@ -118,7 +121,11 @@
           {% else %}<div class="race-detail-source-row race-detail-source-row-comparison">
           {% endif %}
             <strong>{{ source.name }}</strong>
-            <div class="race-detail-source-meta">{{ race_detail_source_badge(source) }}</div>
+            {% set detail_label = source_cell_detail_label(cell, race, 'candidate') %}
+            <div class="race-detail-source-meta">
+              {{ race_detail_source_badge(source) }}
+              {% if detail_label %}<span class="race-detail-source-status">{{ detail_label }}</span>{% endif %}
+            </div>
           {% if cell.evidence_url %}</a>{% else %}</div>{% endif %}
         </li>
         {% endfor %}
