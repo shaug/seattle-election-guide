@@ -25,7 +25,7 @@ a { color: #075d75; text-underline-offset: .15em; }
 .hero h1 { max-width: 25ch; margin: .25rem 0 .45rem; font-size: clamp(2rem, 4.2vw, 3.4rem); line-height: .98; letter-spacing: -.035em; }
 .hero-deck { max-width: 48rem; margin: 0; color: #d7e6ef; font-size: clamp(.94rem, 1.5vw, 1.08rem); }
 .hero-meta { display: grid; gap: .24rem; min-width: 13rem; padding-left: 1.25rem; border-left: 1px solid #7794a8; color: #d7e6ef; font-size: .76rem; text-align: right; }
-.screen-controls { position: sticky; top: 0; z-index: 5; display: grid; grid-template-columns: minmax(15rem, 1.1fr) auto auto minmax(10rem, .7fr); align-items: end; gap: .65rem 1rem; padding: .65rem clamp(1rem, 4vw, 3rem); background: rgba(255,255,255,.96); border-bottom: 1px solid var(--line); }
+.screen-controls { position: sticky; top: 0; z-index: 5; display: grid; grid-template-columns: minmax(15rem, 1.1fr) repeat(2, minmax(12rem, .85fr)) minmax(10rem, .7fr); align-items: end; gap: .65rem 1rem; padding: .65rem clamp(1rem, 4vw, 3rem); background: rgba(255,255,255,.96); border-bottom: 1px solid var(--line); }
 .race-filter-control { display: grid; min-width: 0; gap: .2rem; }
 .screen-controls label, .screen-controls legend { color: var(--navy); font-size: .72rem; font-weight: 800; }
 .screen-controls select { width: 100%; min-width: 0; min-height: 2.7rem; padding: .45rem .7rem; border: 1px solid #829ab1; border-radius: .3rem; background: var(--white); color: var(--ink); font: inherit; }
@@ -174,7 +174,7 @@ a.race-detail-source-row:hover strong { text-decoration: underline; text-underli
 .print-guide { display: none; }
 
 @media (max-width: 1050px) {
-  .screen-controls { grid-template-columns: minmax(15rem, 1fr) auto auto; }
+  .screen-controls { grid-template-columns: minmax(15rem, 1fr) repeat(2, minmax(12rem, 1fr)); }
   .screen-controls p { grid-column: 1 / -1; justify-self: start; text-align: left; }
   html.compact-ballot-mode .race-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
