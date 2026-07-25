@@ -1648,7 +1648,10 @@ def _capture_emulated_viewport(
                     "const copyStatus=firstDialog?.querySelector('[data-copy-race-status]');"
                     "const copyFeedback=copyStatus?.textContent||'';"
                     "const copyDescription=copyButton?.getAttribute('aria-describedby')||'';"
+                    "const copiedLink=copiedValue?new URL(copiedValue):null;"
                     "const copy={copied:copiedValue.endsWith(firstHash),"
+                    "pathPreserved:copiedLink?.pathname===window.location.pathname,"
+                    "queryPreserved:copiedLink?.search===window.location.search,"
                     "announced:copyFeedback.startsWith('Link copied'),"
                     "inDialog:Boolean(copyStatus&&firstDialog?.contains(copyStatus)),"
                     "described:copyDescription===copyStatus?.id};"
@@ -1780,7 +1783,14 @@ def _capture_emulated_viewport(
                 for disclosure_id in ("methodology", "sources")
             ],
             "dialogCount": expected_race_count,
-            "copy": {"copied": True, "announced": True, "inDialog": True, "described": True},
+            "copy": {
+                "copied": True,
+                "pathPreserved": True,
+                "queryPreserved": True,
+                "announced": True,
+                "inDialog": True,
+                "described": True,
+            },
             "direct": {
                 "open": True,
                 "hash": True,

@@ -360,6 +360,8 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "window.addEventListener('popstate'" in html
     assert "window.addEventListener('hashchange'" in html
     assert "navigator.clipboard?.writeText" in html
+    assert "const link = new URL(window.location.href);" in html
+    assert "link.hash = button.dataset.copyRaceLink;" in html
     assert "Consensus among explicitly endorsing sources" in html
     assert "Seattle Times" in html
     assert "August 2026 Primary" in html
