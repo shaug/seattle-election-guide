@@ -670,7 +670,13 @@
         : (visible === 1 ? 'race' : 'races');
       const viewLabel = compact ? 'Compact' : 'Full';
       const scopeLabel = select.selectedOptions[0]?.textContent.trim() || 'All Seattle ballot races';
-      status.textContent = `${visible} ${raceNoun} shown · ${viewLabel} · ${scopeLabel}`;
+      const statusParts = [`${visible} ${raceNoun} shown`, viewLabel, scopeLabel];
+      status.replaceChildren(...statusParts.map((part, index) => {
+        const chunk = document.createElement('span');
+        chunk.className = 'filter-status-part';
+        chunk.textContent = index === 0 ? part : `· ${part}`;
+        return chunk;
+      }));
       if (syncUrl) writeControlState();
     };
     select.addEventListener('change', () => applyFilter());

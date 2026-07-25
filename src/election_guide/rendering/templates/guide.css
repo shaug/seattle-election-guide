@@ -38,7 +38,8 @@ a { color: #075d75; text-underline-offset: .15em; }
 .segmented-control span { display: flex; width: 100%; min-width: 0; align-items: center; justify-content: center; padding: .45rem .7rem; white-space: nowrap; }
 .segmented-control input:checked + span { background: var(--navy); color: var(--white); }
 .segmented-control input:focus-visible + span { outline: .2rem solid #f0a928; outline-offset: -.2rem; }
-.screen-controls p { align-self: center; justify-self: end; margin: 0; color: var(--muted); font-size: .72rem; text-align: right; }
+.screen-controls p { display: flex; flex-wrap: wrap; align-self: center; justify-content: flex-end; justify-self: end; gap: .15rem .35rem; margin: 0; color: var(--muted); font-size: .72rem; text-align: right; }
+.filter-status-part { white-space: nowrap; }
 .screen-sections { min-width: 0; padding: 1rem clamp(1rem, 4vw, 3rem) 4rem; }
 .screen-section { margin: 2.5rem 0 4rem; }
 .section-heading p { margin: 0; color: var(--teal); font-size: .72rem; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; }
@@ -175,7 +176,7 @@ a.race-detail-source-row:hover strong { text-decoration: underline; text-underli
 
 @media (max-width: 1050px) {
   .screen-controls { grid-template-columns: minmax(15rem, 1fr) repeat(2, minmax(12rem, 1fr)); }
-  .screen-controls p { grid-column: 1 / -1; justify-self: start; text-align: left; }
+  .screen-controls p { grid-column: 1 / -1; justify-content: flex-start; justify-self: start; text-align: left; }
   html.compact-ballot-mode .race-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
@@ -184,10 +185,9 @@ a.race-detail-source-row:hover strong { text-decoration: underline; text-underli
   .hero h1 { max-width: 18ch; }
   .hero-meta { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: .8rem 0 0; border-top: 1px solid #7794a8; border-left: 0; text-align: left; }
   .screen-controls { grid-template-columns: 1fr; position: static; }
-  .screen-controls p { grid-column: auto; justify-self: start; text-align: left; }
+  .screen-controls p { grid-column: auto; justify-content: flex-start; justify-self: start; text-align: left; }
   .view-setting { width: 100%; }
   html.compact-ballot-mode .race-grid { grid-template-columns: 1fr; }
-  .screen-controls p { justify-self: start; }
   .race-grid, .methodology-screen, .footer-summary, .screen-source-heading, .screen-coverage-gaps, .coverage-gap-columns { grid-template-columns: 1fr; }
   .screen-source-columns { column-count: 1; }
   .footer-summary { gap: .8rem; }

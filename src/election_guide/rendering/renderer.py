@@ -1556,6 +1556,7 @@ def _capture_emulated_viewport(
                     "const pause=()=>new Promise(resolve=>setTimeout(resolve,120));"
                     "const guide=document.querySelector('.screen-guide');"
                     "const filter=document.querySelector('#race-filter');"
+                    "const status=document.querySelector('#filter-status');"
                     "const completeFilter=document.querySelector('#complete-filter');"
                     "const contestedFilter=document.querySelector('#contested-filter');"
                     "const viewInputs=[...document.querySelectorAll('input[name=ballot-view]')];"
@@ -1610,6 +1611,9 @@ def _capture_emulated_viewport(
                     "await pause();controls.reset="
                     "document.documentElement.dataset.ballotView==='full'&&"
                     "filter.value==='all'&&!contestedFilter?.checked&&window.location.search==='';"
+                    "controls.statusAllGrouped=status?.children.length===3&&"
+                    "status.lastElementChild?.textContent==='· All Seattle ballot races'&&"
+                    "getComputedStyle(status.lastElementChild).whiteSpace==='nowrap';"
                     "const disclosures=["
                     "...document.querySelectorAll('.guide-notes')].map(details=>{"
                     "const summary=details.querySelector('summary');"
@@ -1820,6 +1824,7 @@ def _capture_emulated_viewport(
                 "noOverflow": True,
                 "comparisonsHidden": True,
                 "reset": True,
+                "statusAllGrouped": True,
             },
             "disclosures": [
                 {
