@@ -106,6 +106,19 @@ def test_bundle_is_deterministic_reconstructable_and_complete(tmp_path: Path) ->
         == first.view_model
     )
 
+    published_contested = {
+        race.id: race.is_contested
+        for section in first.view_model.sections
+        for race in section.races
+    }
+    expected_contested = {
+        race.id: len(race.choices) > 1
+        for race in dataset.inventory.races
+        if race.publication_eligible
+    }
+    assert published_contested == expected_contested
+    assert any(published_contested.values())
+    assert not all(published_contested.values())
     target = next(
         race
         for section in first.view_model.sections

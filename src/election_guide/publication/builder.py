@@ -307,6 +307,7 @@ def _build_view_model(
             section_label=section_label,
             jurisdiction_id=race.jurisdiction_id,
             race_label=race.display_name,
+            is_contested=len(race.choices) > 1,
             filter_tokens=sorted(
                 {
                     section_id,
@@ -789,6 +790,7 @@ def _view_race_matches(view: PublicationRace, result: RaceConsensus, race: Race)
     percentage_whole = _percentage_whole(result.winner_share)
     return (
         view.race_label == race.display_name
+        and view.is_contested == (len(race.choices) > 1)
         and view.jurisdiction_id == race.jurisdiction_id
         and view.support_leader_candidate_ids == result.winner_candidate_ids
         and view.support_leader_candidate_labels == leader_labels

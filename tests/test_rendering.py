@@ -239,11 +239,24 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "@media print" in html
     assert "@media (max-width: 720px)" in html
     assert 'id="race-filter"' in html
+    assert 'input type="radio" name="ballot-view" value="full" checked' in html
+    assert 'input type="radio" name="ballot-view" value="compact"' in html
+    assert 'id="contested-filter"' in html
+    assert html.count('data-contested="') == len(races)
+    assert html.count(">Full race detail</span>") == len(races)
     assert 'aria-labelledby="race-label-' in html
     assert html.count('<a class="race-card-primary"') == len(races)
     assert html.count('aria-label="View endorsements for ') == len(races)
     assert '<option value="Legislative District 43">Legislative District 43</option>' in html
     assert "JSON.parse(card.dataset.filterTokens)" in html
+    assert "card.dataset.contested === 'true'" in html
+    assert "matchesScope && matchesContest" in html
+    assert "url.searchParams.set('view', 'compact')" in html
+    assert "url.searchParams.set('races', 'contested')" in html
+    assert "url.searchParams.set('filter', select.value)" in html
+    assert "syncControlsFromUrl();" in html
+    assert "html.compact-ballot-mode .race-grid { grid-template-columns: repeat(4" in html
+    assert "html.compact-ballot-mode .race-grid { grid-template-columns: 1fr; }" in html
     assert "> View endorsements" not in html
     assert html.count('<dialog class="race-detail-dialog"') == len(races)
     assert html.count("August 2026 Primary · Endorsements") == len(races)
@@ -259,6 +272,8 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
         trigger_end = html.index("</a>", trigger_start)
         trigger_html = html[trigger_start:trigger_end]
         assert f'id="race-label-{race.id}"' in trigger_html
+        contested_value = "true" if race.is_contested else "false"
+        assert f'data-contested="{contested_value}"' in html[trigger_start - 300 : trigger_start]
         assert 'data-display-role="recommendation"' in trigger_html
         assert 'data-display-role="share"' in trigger_html
         assert 'data-display-role="comparison"' in trigger_html
