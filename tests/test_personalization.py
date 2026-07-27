@@ -13,6 +13,8 @@ from pydantic import ValidationError
 from election_guide.normalization.models import CanonicalDataset
 from election_guide.publication.builder import build_publication_bundle
 from election_guide.publication.lens_parity import (
+    FIXTURE_COMMIT,
+    FIXTURE_COMPUTED_AT,
     LENS_PARITY_SELECTIONS,
     build_parity_fixture,
     restricted_dataset,
@@ -294,7 +296,7 @@ def test_committed_lens_parity_fixture_matches_a_fresh_generation() -> None:
     )
     dataset = CanonicalDataset.model_validate(read_json(DATASET_PATH))
     configuration = read_scoring_configuration(SCORING_CONFIG_PATH)
-    computed_at = datetime(2026, 7, 23, 17, 15, tzinfo=UTC)
+    computed_at = datetime.fromisoformat(FIXTURE_COMPUTED_AT)
     consensus = score_dataset(
         dataset,
         configuration,
@@ -302,7 +304,7 @@ def test_committed_lens_parity_fixture_matches_a_fresh_generation() -> None:
         allow_unresolved=True,
     )
     bundle = build_publication_bundle(
-        dataset, consensus, git_commit="0" * 40, snapshot_root=SNAPSHOT_ROOT
+        dataset, consensus, git_commit=FIXTURE_COMMIT, snapshot_root=SNAPSHOT_ROOT
     )
 
     regenerated = build_parity_fixture(

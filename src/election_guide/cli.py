@@ -68,6 +68,8 @@ from election_guide.normalization.records import (
 )
 from election_guide.publication import build_publication_bundle, write_publication_bundle
 from election_guide.publication.lens_parity import (
+    FIXTURE_COMMIT,
+    FIXTURE_COMPUTED_AT,
     LENS_PARITY_SELECTIONS,
     build_parity_fixture,
 )
@@ -111,11 +113,6 @@ render_app = typer.Typer(help="Render and validate the responsive HTML and conci
 release_app = typer.Typer(help="Compile, audit, and package a versioned public release.")
 collect_app = typer.Typer(help="Refresh source-specific endorsement adapters.")
 hosting_app = typer.Typer(help="Stage validated release artifacts for static hosting.")
-
-# The parity fixture records only the lens contract, so the build commit is fixed
-# to keep regeneration byte-identical across checkouts.
-_PARITY_FIXTURE_COMMIT = "0" * 40
-_PARITY_FIXTURE_COMPUTED_AT = "2026-07-23T17:15:00Z"
 app.add_typer(inventory_app, name="inventory")
 app.add_typer(election_app, name="election")
 app.add_typer(sources_app, name="sources")
@@ -696,8 +693,8 @@ def export_lens_parity(
     ] = Path("data/releases/wa-2026-primary/snapshots"),
     computed_at: Annotated[
         str,
-        typer.Option(help="Fixed scoring timestamp so regeneration is byte-identical."),
-    ] = _PARITY_FIXTURE_COMPUTED_AT,
+        typer.Option(help="Scoring timestamp; must not predate the newest scoring input."),
+    ] = FIXTURE_COMPUTED_AT,
     output: Annotated[Path, typer.Option(dir_okay=False)] = Path(
         "tests/js/fixtures/lens-parity.json"
     ),
@@ -716,7 +713,7 @@ def export_lens_parity(
         bundle = build_publication_bundle(
             dataset,
             consensus,
-            git_commit=_PARITY_FIXTURE_COMMIT,
+            git_commit=FIXTURE_COMMIT,
             snapshot_root=snapshot_root,
         )
         fixture = build_parity_fixture(

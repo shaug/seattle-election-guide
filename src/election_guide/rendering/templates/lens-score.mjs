@@ -208,17 +208,15 @@ export function scoreRace(race, effectiveCodes, personalization) {
   const winnerShare = maximum === null || total.isZero() ? null : maximum.divide(total);
 
   const standings = [...support.entries()]
+    .sort(([leftId, leftPoints], [rightId, rightPoints]) => {
+      const bySupport = rightPoints.compare(leftPoints);
+      return bySupport !== 0 ? bySupport : leftId.localeCompare(rightId);
+    })
     .map(([candidateId, points]) => ({
       candidateId,
       supportPoints: points.toString(),
       share: total.isZero() ? null : points.divide(total).toString(),
-    }))
-    .sort((left, right) => {
-      const bySupport = Rational.parse(right.supportPoints).compare(
-        Rational.parse(left.supportPoints),
-      );
-      return bySupport !== 0 ? bySupport : left.candidateId.localeCompare(right.candidateId);
-    });
+    }));
 
   return {
     raceId: race.race_id,

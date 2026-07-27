@@ -17,9 +17,16 @@ from pydantic import BaseModel, ConfigDict
 from election_guide.normalization.models import CanonicalDataset
 from election_guide.publication.models import PublicationViewModel
 from election_guide.scoring import score_dataset
-from election_guide.scoring.models import ScoringConfiguration
+from election_guide.scoring.models import RaceConsensus, ScoringConfiguration
 
 FIXTURE_SCHEMA_VERSION = "1.0"
+
+# The fixture records only the lens contract, so neither the build commit nor the
+# scoring timestamp reaches it. Both exist to satisfy required arguments: a
+# placeholder commit for build_publication_bundle, and a timestamp that must not
+# predate the newest scoring input or score_dataset refuses to run.
+FIXTURE_COMMIT = "0" * 40
+FIXTURE_COMPUTED_AT = "2026-07-23T17:15:00Z"
 
 
 class ParitySelection(BaseModel):
@@ -65,8 +72,8 @@ def _effective_source_ids(
     return {selectable[code].id for code in codes if code in selectable and code not in comparison}
 
 
-def _race_expectation(race: object) -> dict[str, object]:
-    payload = race.model_dump(mode="json")  # type: ignore[attr-defined]
+def _race_expectation(race: RaceConsensus) -> dict[str, object]:
+    payload = race.model_dump(mode="json")
     return {
         "race_id": payload["race_id"],
         "grade": payload["grade"],
