@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import sys
 from collections.abc import Callable
 from fractions import Fraction
@@ -53,6 +54,9 @@ from election_guide.rendering.renderer import (
 )
 from election_guide.scoring import score_dataset
 from election_guide.serialization import canonical_json_bytes, read_json
+from tests.test_personalization import (
+    _bundle as _production_bundle,  # pyright: ignore[reportPrivateUsage]
+)
 from tests.test_publication import (
     _publication_dataset,  # pyright: ignore[reportPrivateUsage]
     _snapshot_store,  # pyright: ignore[reportPrivateUsage]
@@ -379,7 +383,14 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "Made no endorsement" not in html
     assert "Needs verification" in html
     assert "Comparison only" in html
-    assert "Seattle Times comparison" not in html
+    # The phrase belongs to the customize option (issue 79) and must not leak back
+    # into the source panel or the race-detail rows, which say "Comparison only".
+    customize_dialog = html.split('<dialog class="customize-dialog"')[1].split("</dialog>")[0]
+    assert "Show Seattle Times comparison" in customize_dialog
+    rendered_content = re.sub(r"<script\b.*?</script>", "", html, flags=re.S).replace(
+        customize_dialog, ""
+    )
+    assert "Seattle Times comparison" not in rendered_content
     assert 'data-race-detail-group="comparison"' not in html
     assert "race-detail-source-row-comparison" in html
     assert "See which groups line up with the leading choice" not in html
@@ -2187,3 +2198,125 @@ def _revalidated(view_model: PublicationViewModel) -> PublicationViewModel:
     return PublicationViewModel.model_validate(
         reprojected_personalization(rebuilt).model_dump(mode="json")
     )
+
+
+def _customize_html(tmp_path: Path) -> str:
+    """Render the reference guide the way the other rendering tests do."""
+    return render_html_document(
+        _view_model(tmp_path), read_rendering_configuration(RENDERING_CONFIG)
+    )
+
+
+def test_customize_shell_hides_the_times_comparison_by_default(tmp_path: Path) -> None:
+    """Issue 79: the default responsive load carries no Times pill or decision."""
+    html = _customize_html(tmp_path)
+    stylesheet = html.split("<style>")[1].split("</style>")[0]
+
+    # Hidden in CSS rather than in script, so the default holds before and without JS.
+    assert "html:not(.show-times):not(.detailed-edition) .screen-comparisons" in stylesheet
+    # The wrapper is hidden, not the inner row, so no bordered list item is stranded.
+    assert '.race-detail-source-list > li[data-source-role="comparison"]' in stylesheet
+    assert ".show-times" not in html.split("<style>")[0]
+
+    # Hiding a grid item must not reflow its sibling out of the column it occupies.
+    assert ".screen-race-context .support-line { grid-column: 2; }" in stylesheet
+
+    # A heading may never claim more sources than the state actually lists.
+    detail = html.split('data-race-detail-group="no_endorsement"')[1].split("</section>")[0]
+    assert "data-times-hidden" in detail and "data-times-only" in detail
+    assert "html.show-times [data-times-hidden]" in stylesheet
+
+
+def test_customize_shell_exposes_one_action_and_keeps_controls_in_the_dialog(
+    tmp_path: Path,
+) -> None:
+    html = _customize_html(tmp_path)
+    controls = html.split('<section class="screen-controls"')[1].split("</section>")[0]
+
+    assert controls.count("<button") == 1
+    assert "data-customize-open" in controls
+    assert 'aria-haspopup="dialog"' in controls
+
+    dialog = html.split('<dialog class="customize-dialog"')[1].split("</dialog>")[0]
+    assert "data-customize-times" in dialog
+    assert 'aria-labelledby="customize-title"' in dialog
+    # Source selection stays out until the policy is enabled (issue 80 owns it).
+    assert "data-customize-source" not in html
+    assert "data-customize-category" not in html
+
+
+def test_customize_shell_encodes_state_through_the_published_codec(tmp_path: Path) -> None:
+    html = _customize_html(tmp_path)
+    codec = (
+        Path(__file__).parent.parent / "src/election_guide/rendering/templates/lens-url.mjs"
+    ).read_text(encoding="utf-8")
+
+    # The page inlines the codec verbatim rather than restating its rules.
+    assert "export function encodeLensFragment" in codec
+    assert codec.strip() in html
+    assert 'id="lens-bindings"' in html
+    assert "encodeLensFragment(" in html
+    assert "decodeLensFragment(" in html
+
+
+def test_customize_shell_leaves_the_print_comparison_untouched(tmp_path: Path) -> None:
+    html = _customize_html(tmp_path)
+    stylesheet = html.split("<style>")[1].split("</style>")[0]
+    print_block = stylesheet.split("@media print {")[1]
+
+    # The fixed PDF always carries the comparison; only the opener is screen-only.
+    assert ".customize-control, .customize-dialog { display: none; }" in print_block
+    assert "show-times" not in print_block
+    assert "print-times-pick" in stylesheet
+    assert "Read the Times pill" in html
+
+
+def test_customize_shell_describes_the_times_as_optional(tmp_path: Path) -> None:
+    html = _customize_html(tmp_path)
+    hero = html.split('<p class="hero-deck">')[1].split("</p>")[0]
+
+    assert "optional comparison" in hero
+    assert "Customize" in hero
+    assert "The Times is separate and optional" in html
+    assert "hidden by default on screen" in html
+
+
+def _candidate_section(html: str, candidate_id: str) -> str:
+    match = re.search(
+        rf'<section class="race-detail-candidate[^"]*"\s+'
+        rf'data-race-detail-candidate-id="{re.escape(candidate_id)}"[^>]*>',
+        html,
+    )
+    assert match is not None, f"no rendered section for {candidate_id!r}"
+    return match.group(0)
+
+
+def test_customize_shell_hides_a_comparison_only_candidate_by_default() -> None:
+    """Issue 79: a candidate only the Seattle Times picked must not leak by default."""
+    view_model = _production_bundle().view_model
+    html = render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG))
+    source_by_id = {source.id: source for source in view_model.sources}
+
+    group_by_candidate_id = {
+        candidate_id: endorsement_group
+        for section in view_model.sections
+        for race in section.races
+        for candidate_id, _label, endorsement_group in _race_detail_candidate_choices(
+            race, source_by_id
+        )
+    }
+    comparison_only_candidate_ids = {
+        candidate_id for candidate_id, group in group_by_candidate_id.items() if group is None
+    }
+    # The production panel has at least one candidate only the comparison source
+    # picked; confirm the assertions below are not vacuous.
+    assert len(comparison_only_candidate_ids) > 0
+
+    for candidate_id in comparison_only_candidate_ids:
+        assert "data-times-only" in _candidate_section(html, candidate_id)
+
+    # A candidate with a real consensus endorser must not carry the marker.
+    contributing_id = next(
+        candidate_id for candidate_id, group in group_by_candidate_id.items() if group is not None
+    )
+    assert "data-times-only" not in _candidate_section(html, contributing_id)

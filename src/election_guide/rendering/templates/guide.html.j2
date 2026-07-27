@@ -42,6 +42,12 @@
     <span class="race-detail-comparison-badge">Comparison only</span>
     {% endif %}
   {%- endmacro %}
+  {% macro source_count_phrase(count, group_key=none) -%}
+    {{ count }} source{% if count != 1 %}s{% endif %}{% if group_key == 'not_covered' %} did not cover this race{% elif group_key == 'not_applicable' %} {% if count == 1 %}was{% else %}were{% endif %} outside this district{% endif %}
+  {%- endmacro %}
+  {% macro times_source_counts(shown, total, group_key=none) -%}
+    <span data-times-hidden>{{ source_count_phrase(shown, group_key) }}</span><span data-times-only>{{ source_count_phrase(total, group_key) }}</span>
+  {%- endmacro %}
   {% macro race_detail_source_rows(race, group_key) -%}
     <ul class="race-detail-source-list">
       {% for cell in race.source_cells %}
@@ -87,8 +93,12 @@
     {% for candidate_id, candidate_label, endorsement_group in race_detail_candidate_choices(race, source_by_id) %}
     {% set is_leader = candidate_id in race.support_leader_candidate_ids %}
     {% set source_count = endorsement_group.source_count if endorsement_group is not none else 0 %}
+    {# A candidate only the comparison source picked has nothing to show by
+       default: hiding it here, rather than only its rows, keeps the whole
+       "0 endorsing sources" card out of the state this ticket makes default. #}
     <section class="race-detail-candidate{% if is_leader %} race-detail-candidate-leader{% endif %}"
-      data-race-detail-candidate-id="{{ candidate_id }}">
+      data-race-detail-candidate-id="{{ candidate_id }}"
+      {% if endorsement_group is none %}data-times-only{% endif %}>
       <div class="race-detail-candidate-heading">
         <div class="race-detail-candidate-title">
           {% if is_leader %}<p>{% if race.support_leader_candidate_ids | length > 1 %}Tied for lead{% else %}Leading choice{% endif %}</p>{% endif %}
@@ -133,8 +143,9 @@
       <div class="hero-copy">
         <div class="hero-kicker">{{ election_display_label }}</div>
         <h1>Seattle Progressive Endorsement Guide</h1>
-        <p class="hero-deck">Progressive endorsement agreement at a glance, with the
-          Seattle Times shown separately for comparison.</p>
+        <p class="hero-deck">Progressive endorsement agreement at a glance. The Seattle
+          Times is an optional comparison you can turn on under
+          <b>Customize</b>.</p>
       </div>
       <div class="hero-meta" aria-label="Guide metadata">
         <span>Election {{ guide.metadata.election_date }}</span>
@@ -171,8 +182,35 @@
           <label><input type="radio" name="race-set" value="contested" id="contested-filter"><span>Contested</span></label>
         </div>
       </fieldset>
+      <div class="customize-control">
+        <button type="button" class="customize-open" data-customize-open
+          aria-haspopup="dialog">Customize</button>
+      </div>
       <p id="filter-status" role="status" aria-live="polite"></p>
     </section>
+
+    <dialog class="customize-dialog" data-customize-dialog
+      aria-labelledby="customize-title">
+      <form method="dialog" class="customize-form">
+        <div class="customize-header">
+          <h2 id="customize-title">Customize this guide</h2>
+          <button type="button" class="customize-close" data-customize-close
+            aria-label="Close customize">Done</button>
+        </div>
+        <p class="customize-note">The audited consensus is the published baseline. It is
+          computed from the progressive source panel with every source weighted equally.</p>
+        <fieldset class="customize-group">
+          <legend>Seattle Times</legend>
+          <label class="customize-check">
+            <input type="checkbox" data-customize-times>
+            <span>Show Seattle Times comparison</span>
+          </label>
+          <p class="customize-hint">The Times is a comparison signal only. Showing it never
+            changes a recommendation, a count, or an agreement score.</p>
+        </fieldset>
+        <p class="customize-status" role="status" aria-live="polite" data-customize-status></p>
+      </form>
+    </dialog>
 
     <div id="guide-races" class="screen-sections">
       {% for section in guide.sections %}
@@ -249,12 +287,13 @@
                   {{ race_detail_candidate_sections(race) }}
                   {% for group_key in source_cell_group_keys %}
                   {% set group_count = source_cell_group_count(race, source_by_id, group_key) %}
+                  {% set shown_count = source_cell_group_count(race, source_by_id, group_key, include_comparison=False) %}
                   {% if group_count %}
                   <section class="race-detail-outcome race-detail-outcome-{{ group_key }}"
                     data-race-detail-group="{{ group_key }}">
                     <div class="race-detail-outcome-heading">
                       <h4>{{ source_cell_group_label(race, group_key) }}</h4>
-                      <span>{{ group_count }} source{% if group_count != 1 %}s{% endif %}</span>
+                      <span>{{ times_source_counts(shown_count, group_count) }}</span>
                     </div>
                     {{ race_detail_source_rows(race, group_key) }}
                   </section>
@@ -263,9 +302,10 @@
                 </div>
                 {% for group_key in ('not_covered', 'not_applicable') %}
                 {% set missing_count = source_cell_group_count(race, source_by_id, group_key) %}
+                {% set shown_missing = source_cell_group_count(race, source_by_id, group_key, include_comparison=False) %}
                 {% if missing_count %}
                 <details class="race-detail-missing">
-                  <summary>{{ missing_count }} source{% if missing_count != 1 %}s{% endif %} {% if group_key == 'not_covered' %}did not cover this race{% else %}{% if missing_count == 1 %}was{% else %}were{% endif %} outside this district{% endif %}</summary>
+                  <summary>{{ times_source_counts(shown_missing, missing_count, group_key) }}</summary>
                   {{ race_detail_source_rows(race, group_key) }}
                 </details>
                 {% endif %}
@@ -310,9 +350,11 @@
           district's legislative contests.</p>
       </section>
       <section class="methodology-panel">
-        <h3>The Times is separate</h3>
-        <p>Seattle Times choices are shown only for comparison and never add a vote to the
-          progressive consensus.</p>
+        <h3>The Times is separate and optional</h3>
+        <p>Seattle Times choices are hidden by default on screen and can be shown under
+          <b>Customize</b>. They are comparison only and never add a vote to the progressive
+          consensus, so turning them on changes nothing that is scored.</p>
+        <p>The printable guide always includes the comparison.</p>
         <p>This guide aggregates endorsements; it is not independent candidate vetting.</p>
       </section>
       <section class="methodology-panel methodology-overlap">
@@ -529,6 +571,124 @@
     </section>
   </div>
 
+
+  <script type="application/json" id="lens-bindings">{{ {
+    "panel_id": guide.metadata.source_panel_id,
+    "panel_hash": guide.metadata.source_panel_hash,
+    "data_version": guide.metadata.data_version,
+    "scoring": {"configuration_id": guide.personalization.scoring.configuration_id},
+    "policy": {
+      "maximum_url_characters": guide.personalization.policy.maximum_url_characters
+    }
+  } | tojson }}</script>
+  <script type="module">
+{{ lens_url_script | safe }}
+
+  // Page glue for the customize shell. The codec above is inlined verbatim from
+  // its module, so the shipped page and the Node tests share one implementation.
+  const bindings = JSON.parse(document.querySelector('#lens-bindings').textContent);
+
+  // Only the audited/Times half of the contract is live while personalization is
+  // disabled, so no source or category is selectable here yet. A shared link that
+  // carries a selection therefore decodes as malformed and falls back to audited,
+  // which is the intended behavior until the policy is enabled.
+  const context = lensContext(
+    { ...bindings, categories: [], sources: [] },
+    bindings.data_version,
+  );
+
+  const root = document.documentElement;
+  const dialog = document.querySelector('[data-customize-dialog]');
+  const opener = document.querySelector('[data-customize-open]');
+  const timesInput = document.querySelector('[data-customize-times]');
+  const statusLine = document.querySelector('[data-customize-status]');
+  // The one place that decides which decode statuses carry live lens state, so
+  // a future status (issue 78 adds cross-version migration) has one call site
+  // to update rather than several that must be kept in agreement by hand.
+  const lensState = () => {
+    const decoded = decodeLensFragment(window.location.hash, context);
+    return decoded.status === 'valid' || decoded.status === 'stale_version'
+      ? decoded.state
+      : null;
+  };
+  const raceTarget = () => {
+    const decoded = decodeLensFragment(window.location.hash, context);
+    if (decoded.status === 'legacy') return decoded.raceTarget;
+    return lensState()?.raceTarget ?? null;
+  };
+
+  const applyTimes = (showTimes) => {
+    root.classList.toggle('show-times', showTimes);
+    if (timesInput) timesInput.checked = showTimes;
+    if (statusLine) {
+      statusLine.textContent = showTimes
+        ? 'Seattle Times comparison shown. Recommendations are unchanged.'
+        : '';
+    }
+  };
+
+  /**
+   * Write the state through the codec.
+   *
+   * The audited baseline with the comparison hidden is the published default, so
+   * it is represented by the absence of a lens fragment: a default guide keeps
+   * the clean URLs and plain race permalinks it has always had.
+   */
+  const writeTimesState = (showTimes) => {
+    const target = raceTarget();
+    if (!showTimes) {
+      const fragment = target ? `#${target}` : '';
+      history.replaceState(
+        history.state,
+        '',
+        `${window.location.pathname}${window.location.search}${fragment}`,
+      );
+      return;
+    }
+    const encoded = encodeLensFragment(
+      { mode: 'a', showTimes: true, raceTarget: target },
+      context,
+    );
+    if (encoded.status !== 'ok') return;
+    history.replaceState(
+      history.state,
+      '',
+      `${window.location.pathname}${window.location.search}#${encoded.fragment}`,
+    );
+  };
+
+  const readTimesFromUrl = () => Boolean(lensState()?.showTimes);
+
+  applyTimes(readTimesFromUrl());
+
+  // The native modal gives focus containment, Escape, and the backdrop for free,
+  // matching how the race-detail dialogs already work.
+  opener?.addEventListener('click', () => {
+    dialog?.showModal();
+    timesInput?.focus();
+  });
+  const closeCustomize = () => {
+    if (dialog?.open) dialog.close();
+    opener?.focus();
+  };
+  dialog?.querySelector('[data-customize-close]')?.addEventListener('click', closeCustomize);
+  dialog?.addEventListener('cancel', (event) => {
+    event.preventDefault();
+    closeCustomize();
+  });
+  dialog?.addEventListener('close', () => opener?.focus());
+  timesInput?.addEventListener('change', () => {
+    applyTimes(timesInput.checked);
+    writeTimesState(timesInput.checked);
+  });
+  // Only a fragment the codec recognizes carries Times state. The skip link and
+  // any other plain anchor also fire hashchange, and treating those as `times=0`
+  // would silently switch the comparison back off.
+  window.addEventListener('hashchange', () => {
+    const state = lensState();
+    if (state) applyTimes(state.showTimes);
+  });
+  </script>
   <script>
   (() => {
     const initialQuery = new URLSearchParams(window.location.search);
@@ -689,7 +849,11 @@
     let lastTrigger = null;
     const fragmentId = () => {
       try {
-        return decodeURIComponent(window.location.hash.slice(1));
+        const raw = decodeURIComponent(window.location.hash.slice(1));
+        // A lens fragment carries its race target in `race`. Only the element to
+        // scroll to is extracted here; the codec module owns validating lens state.
+        if (raw.includes('=')) return new URLSearchParams(raw).get('race') ?? '';
+        return raw;
       } catch {
         return '';
       }

@@ -78,6 +78,27 @@ html.compact-ballot-mode .screen-race-context { grid-template-columns: minmax(0,
 html.compact-ballot-mode .screen-meter { --meter-direction: to right; --meter-text-align: left; width: 100%; height: 1.6rem; }
 html.compact-ballot-mode .screen-meter strong { padding-right: .55rem; padding-left: .55rem; font-size: .84rem; }
 html.compact-ballot-mode .screen-comparisons { display: none; }
+
+/* The Times comparison is opt-in on screen. Hiding it in CSS rather than in
+   script keeps the default correct before, and without, JavaScript. Print is
+   unaffected: the fixed PDF always carries the comparison. */
+/* The detailed edition is an explicitly requested complete rendering, not the
+   default load, so it keeps the comparison visible and no published content
+   becomes unreachable. The comparison row is hidden through its list-item
+   wrapper, so no stranded divider or empty grid row is left behind. */
+html:not(.show-times):not(.detailed-edition) .screen-comparisons,
+html:not(.show-times):not(.detailed-edition)
+  .race-detail-source-list > li[data-source-role="comparison"],
+html:not(.show-times):not(.detailed-edition) [data-times-only] { display: none; }
+html.show-times [data-times-hidden],
+html.detailed-edition [data-times-hidden] { display: none; }
+
+/* .screen-race-context is a two-column grid whose first item is the comparison.
+   Removing that item would reflow the support line into the flexible track and
+   leave the fixed track empty, so pin it to the column it already occupies.
+   Compact mode collapses the grid to one column and is excluded. */
+html:not(.show-times):not(.detailed-edition):not(.compact-ballot-mode)
+  .screen-race-context .support-line { grid-column: 2; }
 html.compact-ballot-mode .support-line { margin-top: 0; font-size: .68rem; text-align: left; }
 html.compact-ballot-mode .insufficient-note { padding: .38rem .48rem; font-size: .68rem; line-height: 1.25; }
 .race-card-primary { display: grid; min-width: 0; gap: .55rem; margin: -.35rem; padding: .35rem; border-radius: .3rem; color: inherit; cursor: pointer; text-decoration: none; transition: background-color .15s ease, box-shadow .15s ease; }
@@ -85,6 +106,24 @@ html.compact-ballot-mode .insufficient-note { padding: .38rem .48rem; font-size:
 .race-card-primary:focus-visible, .race-detail-dialog :focus-visible { outline: .2rem solid #f0a928; outline-offset: .15rem; }
 .race-detail-dialog { width: min(54rem, calc(100vw - 2rem)); max-height: calc(100vh - 2rem); padding: 0; overflow: auto; border: 1px solid #829ab1; border-radius: .45rem; background: var(--paper); color: var(--ink); box-shadow: 0 1rem 3rem rgba(16,42,67,.35); }
 .race-detail-dialog::backdrop { background: rgba(9, 30, 48, .68); }
+
+.customize-control { display: flex; align-items: flex-end; }
+.customize-open { padding: .4rem .85rem; border: 1px solid #829ab1; border-radius: .3rem; background: var(--paper); color: var(--ink); font: inherit; font-weight: 600; cursor: pointer; }
+.customize-open:hover { background: #eef3f6; }
+.customize-open:focus-visible { outline: .2rem solid #f0a928; outline-offset: .15rem; }
+.customize-dialog { width: min(34rem, calc(100vw - 2rem)); max-height: calc(100vh - 2rem); padding: 0; overflow: auto; border: 1px solid #829ab1; border-radius: .45rem; background: var(--paper); color: var(--ink); box-shadow: 0 1rem 3rem rgba(16,42,67,.35); }
+.customize-dialog::backdrop { background: rgba(9, 30, 48, .68); }
+.customize-dialog :focus-visible { outline: .2rem solid #f0a928; outline-offset: .15rem; }
+.customize-form { display: flex; flex-direction: column; gap: 1rem; margin: 0; padding: 1.1rem 1.25rem 1.25rem; }
+.customize-header { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
+.customize-header h2 { margin: 0; font-size: 1.15rem; }
+.customize-close { padding: .3rem .7rem; border: 1px solid #829ab1; border-radius: .3rem; background: var(--paper); color: var(--ink); font: inherit; cursor: pointer; }
+.customize-note, .customize-hint { margin: 0; color: #46596a; font-size: .85rem; }
+.customize-group { margin: 0; padding: .85rem 1rem; border: 1px solid #cfdae1; border-radius: .35rem; }
+.customize-group legend { padding: 0 .35rem; font-weight: 700; }
+.customize-check { display: flex; align-items: center; gap: .5rem; margin-bottom: .45rem; font-weight: 600; }
+.customize-status:empty { display: none; }
+.customize-status { margin: 0; font-size: .85rem; font-weight: 600; }
 .race-detail-header { position: sticky; top: 0; z-index: 1; display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem 2rem; padding: 1rem 1.15rem; border-bottom: 1px solid #526f83; background: var(--navy); color: var(--white); }
 .race-detail-header > div:first-child { min-width: 0; }
 .race-detail-header p { max-width: 40rem; margin: 0; color: #d7e6ef; font-size: .78rem; }
@@ -218,6 +257,7 @@ a.race-detail-source-row:hover strong { text-decoration: underline; text-underli
 @page { size: Letter portrait; margin: .28in .3in; }
 
 @media print {
+  .customize-control, .customize-dialog { display: none; }
   :root { --print-meter-width: 1.65in; --print-sans: Helvetica, "Liberation Sans", sans-serif; }
   html, body { width: 8.5in; margin: 0; background: white; color: #111820; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
   .skip-link, .screen-guide, script { display: none !important; }
