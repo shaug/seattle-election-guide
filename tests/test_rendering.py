@@ -3,7 +3,6 @@ from __future__ import annotations
 import re
 import sys
 from collections.abc import Callable
-from datetime import UTC, datetime
 from fractions import Fraction
 from pathlib import Path
 from stat import S_IMODE
@@ -15,7 +14,6 @@ from pydantic import ValidationError
 from pypdf import PdfReader, PdfWriter
 from pypdf.generic import NameObject, TextStringObject
 
-from election_guide.normalization.models import CanonicalDataset
 from election_guide.publication import build_publication_bundle
 from election_guide.publication.builder import reprojected_personalization
 from election_guide.publication.models import (
@@ -54,8 +52,11 @@ from election_guide.rendering.renderer import (
     find_chrome,
     find_pdftoppm,
 )
-from election_guide.scoring import read_scoring_configuration, score_dataset
+from election_guide.scoring import score_dataset
 from election_guide.serialization import canonical_json_bytes, read_json
+from tests.test_personalization import (
+    _bundle as _production_bundle,  # pyright: ignore[reportPrivateUsage]
+)
 from tests.test_publication import (
     _publication_dataset,  # pyright: ignore[reportPrivateUsage]
     _snapshot_store,  # pyright: ignore[reportPrivateUsage]
@@ -2280,62 +2281,42 @@ def test_customize_shell_describes_the_times_as_optional(tmp_path: Path) -> None
     assert "hidden by default on screen" in html
 
 
+def _candidate_section(html: str, candidate_id: str) -> str:
+    match = re.search(
+        rf'<section class="race-detail-candidate[^"]*"\s+'
+        rf'data-race-detail-candidate-id="{re.escape(candidate_id)}"[^>]*>',
+        html,
+    )
+    assert match is not None, f"no rendered section for {candidate_id!r}"
+    return match.group(0)
+
+
 def test_customize_shell_hides_a_comparison_only_candidate_by_default() -> None:
     """Issue 79: a candidate only the Seattle Times picked must not leak by default."""
-    dataset = CanonicalDataset.model_validate(
-        read_json(PROJECT_ROOT / "data/normalized/canonical-dataset.json")
-    )
-    configuration = read_scoring_configuration(PROJECT_ROOT / "config/scoring/default.yaml")
-    computed_at = datetime(2026, 7, 23, 17, 15, tzinfo=UTC)
-    consensus = score_dataset(
-        dataset, configuration, computed_at=computed_at, allow_unresolved=True
-    )
-    bundle = build_publication_bundle(
-        dataset,
-        consensus,
-        git_commit="0" * 40,
-        snapshot_root=PROJECT_ROOT / "data/releases/wa-2026-primary/snapshots",
-    )
-    view_model = bundle.view_model
+    view_model = _production_bundle().view_model
     html = render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG))
     source_by_id = {source.id: source for source in view_model.sources}
 
-    comparison_only_candidate_ids = {
-        candidate_id
+    group_by_candidate_id = {
+        candidate_id: endorsement_group
         for section in view_model.sections
         for race in section.races
         for candidate_id, _label, endorsement_group in _race_detail_candidate_choices(
             race, source_by_id
         )
-        if endorsement_group is None
+    }
+    comparison_only_candidate_ids = {
+        candidate_id for candidate_id, group in group_by_candidate_id.items() if group is None
     }
     # The production panel has at least one candidate only the comparison source
     # picked; confirm the assertions below are not vacuous.
     assert len(comparison_only_candidate_ids) > 0
 
     for candidate_id in comparison_only_candidate_ids:
-        section = re.search(
-            rf'<section class="race-detail-candidate[^"]*"\s+'
-            rf'data-race-detail-candidate-id="{re.escape(candidate_id)}"[^>]*>',
-            html,
-        )
-        assert section is not None
-        assert "data-times-only" in section.group(0)
+        assert "data-times-only" in _candidate_section(html, candidate_id)
 
     # A candidate with a real consensus endorser must not carry the marker.
     contributing_id = next(
-        candidate_id
-        for section in view_model.sections
-        for race in section.races
-        for candidate_id, _label, endorsement_group in _race_detail_candidate_choices(
-            race, source_by_id
-        )
-        if endorsement_group is not None
+        candidate_id for candidate_id, group in group_by_candidate_id.items() if group is not None
     )
-    contributing_section = re.search(
-        rf'<section class="race-detail-candidate[^"]*"\s+'
-        rf'data-race-detail-candidate-id="{re.escape(contributing_id)}"[^>]*>',
-        html,
-    )
-    assert contributing_section is not None
-    assert "data-times-only" not in contributing_section.group(0)
+    assert "data-times-only" not in _candidate_section(html, contributing_id)
