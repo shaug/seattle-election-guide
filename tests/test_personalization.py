@@ -28,6 +28,7 @@ from election_guide.sources.catalog import (
     appended_panel_snapshot,
     read_panel_snapshot_catalog,
 )
+from election_guide.sources.models import RetiredCode
 from election_guide.sources.panel import build_panel_snapshot
 from election_guide.sources.registry import read_source_registry
 
@@ -40,8 +41,9 @@ SCORING_CONFIG_PATH = PROJECT_ROOT / "config" / "scoring" / "default.yaml"
 NOW = datetime(2026, 7, 23, 17, 10, tzinfo=UTC)
 
 
-def _bundle() -> Any:
-    dataset = CanonicalDataset.model_validate(read_json(DATASET_PATH))
+def _bundle(dataset: CanonicalDataset | None = None) -> Any:
+    if dataset is None:
+        dataset = CanonicalDataset.model_validate(read_json(DATASET_PATH))
     consensus = score_dataset(
         dataset, read_scoring_configuration(SCORING_CONFIG_PATH), computed_at=NOW
     )
@@ -341,3 +343,72 @@ def test_restricting_the_panel_cannot_promote_a_nonconsensus_source() -> None:
 
     for source in restricted.source_registry.sources:
         assert source.panel_role == original[source.id]
+
+
+def _retired_source_code(dataset: CanonicalDataset) -> tuple[CanonicalDataset, str]:
+    """Retire one currently-unused four-character code and return the mutated dataset."""
+    registry = dataset.source_registry
+    retired_code = "zret"
+    tombstone = RetiredCode(
+        code=retired_code,
+        kind="source",
+        former_id="a-retired-source",
+        retired_in_panel=registry.id,
+        reason="Publication discontinued.",
+    )
+    mutated_registry = registry.model_copy(
+        update={"retired_codes": [*registry.retired_codes, tombstone]}
+    )
+    return dataset.model_copy(update={"source_registry": mutated_registry}), retired_code
+
+
+def test_retired_codes_are_published_for_client_migration() -> None:
+    dataset, retired_code = _retired_source_code(
+        CanonicalDataset.model_validate(read_json(DATASET_PATH))
+    )
+    bundle = _bundle(dataset)
+
+    tombstones = bundle.view_model.personalization.retired_codes
+    assert len(tombstones) == 1
+    assert tombstones[0].code == retired_code
+    assert tombstones[0].kind == "source"
+    assert tombstones[0].former_id == "a-retired-source"
+
+    # A retired code cannot also be live; the contract's own validator would
+    # catch a code reused after being retired.
+    live_codes = {source.code for source in bundle.view_model.personalization.sources} | {
+        category.code for category in bundle.view_model.personalization.categories
+    }
+    assert retired_code not in live_codes
+
+
+def test_publication_rejects_duplicate_retired_codes() -> None:
+    payload = _view_model_payload()
+    payload["personalization"]["retired_codes"] = [
+        {"code": "zret", "kind": "source", "former_id": "a", "reason": "r"},
+        {"code": "zret", "kind": "source", "former_id": "b", "reason": "r"},
+    ]
+
+    with pytest.raises(ValidationError, match="retired codes must be unique"):
+        PublicationViewModel.model_validate(payload)
+
+
+def test_publication_rejects_a_retired_code_still_in_live_use() -> None:
+    payload = _view_model_payload()
+    live_source_code = payload["personalization"]["sources"][0]["code"]
+    payload["personalization"]["retired_codes"] = [
+        {"code": live_source_code, "kind": "source", "former_id": "a", "reason": "r"},
+    ]
+
+    with pytest.raises(ValidationError, match="are still live"):
+        PublicationViewModel.model_validate(payload)
+
+
+def test_publication_rejects_a_retired_code_whose_family_contradicts_its_kind() -> None:
+    payload = _view_model_payload()
+    payload["personalization"]["retired_codes"] = [
+        {"code": "zret", "kind": "category", "former_id": "a", "reason": "r"},
+    ]
+
+    with pytest.raises(ValidationError, match="must start with 'G'"):
+        PublicationViewModel.model_validate(payload)
