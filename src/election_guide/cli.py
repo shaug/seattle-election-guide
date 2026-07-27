@@ -67,6 +67,12 @@ from election_guide.normalization.records import (
     write_review_item,
 )
 from election_guide.publication import build_publication_bundle, write_publication_bundle
+from election_guide.publication.lens_parity import (
+    FIXTURE_COMMIT,
+    FIXTURE_COMPUTED_AT,
+    LENS_PARITY_SELECTIONS,
+    build_parity_fixture,
+)
 from election_guide.release import (
     build_release,
     compile_release_dataset,
@@ -669,6 +675,69 @@ def export_build(
         typer.echo(f"publication export failed: {error}", err=True)
         raise typer.Exit(code=1) from error
     typer.echo(f"publication exports: {output_dir} ({len(outputs)} artifacts)")
+
+
+@export_app.command("lens-parity")
+def export_lens_parity(
+    dataset_path: Annotated[
+        Path,
+        typer.Option(exists=True, dir_okay=False, readable=True),
+    ] = Path("data/normalized/canonical-dataset.json"),
+    scoring_config_path: Annotated[
+        Path,
+        typer.Option(exists=True, dir_okay=False, readable=True),
+    ] = Path("config/scoring/default.yaml"),
+    snapshot_root: Annotated[
+        Path,
+        typer.Option(file_okay=False, readable=True),
+    ] = Path("data/releases/wa-2026-primary/snapshots"),
+    computed_at: Annotated[
+        str,
+        typer.Option(help="Scoring timestamp; must not predate the newest scoring input."),
+    ] = FIXTURE_COMPUTED_AT,
+    output: Annotated[Path, typer.Option(dir_okay=False)] = Path(
+        "tests/js/fixtures/lens-parity.json"
+    ),
+) -> None:
+    """Generate the client-lens parity fixture from the audited scoring engine."""
+    try:
+        timestamp = _score_timestamp(computed_at)
+        dataset = CanonicalDataset.model_validate(read_json(dataset_path))
+        configuration = read_scoring_configuration(scoring_config_path)
+        consensus = score_dataset(
+            dataset,
+            configuration,
+            computed_at=timestamp,
+            allow_unresolved=True,
+        )
+        bundle = build_publication_bundle(
+            dataset,
+            consensus,
+            git_commit=FIXTURE_COMMIT,
+            snapshot_root=snapshot_root,
+        )
+        fixture = build_parity_fixture(
+            dataset,
+            configuration,
+            bundle.view_model,
+            LENS_PARITY_SELECTIONS,
+            computed_at=timestamp,
+        )
+        _write_generated_json(output, fixture)
+    except (
+        OSError,
+        UnicodeError,
+        json.JSONDecodeError,
+        ValidationError,
+        PublicationBlockedError,
+        ValueError,
+    ) as error:
+        typer.echo(f"lens parity fixture failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    typer.echo(
+        f"lens parity fixture: {output} "
+        f"({len(LENS_PARITY_SELECTIONS)} selections x {len(consensus.races)} races)"
+    )
 
 
 @render_app.command("build")
