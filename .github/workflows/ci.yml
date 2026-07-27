@@ -18,6 +18,9 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
       - name: Install Python
         run: uv python install 3.12
       - name: Install locked dependencies
@@ -36,6 +39,8 @@ jobs:
         run: uv run pyright
       - name: Test
         run: uv run pytest
+      - name: Test the fragment codec
+        run: make check-js
       - name: Validate canonical election inventory
         run: uv run election-guide inventory validate data/normalized/wa-2026-primary-inventory.json
       - name: Verify reproducible primary release inputs
