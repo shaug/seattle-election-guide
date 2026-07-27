@@ -8,6 +8,7 @@ from typing import Literal
 
 from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, model_validator
 
+from election_guide.publication.personalization import PersonalizationContract
 from election_guide.scoring.models import ComparisonStatus, Grade
 
 HASH_PATTERN = r"^[0-9a-f]{64}$"
@@ -503,11 +504,12 @@ class PublicationMetadata(PublicationModel):
 
 
 class PublicationViewModel(PublicationModel):
-    schema_version: Literal["1.7"] = "1.7"
+    schema_version: Literal["1.8"] = "1.8"
     metadata: PublicationMetadata
     sources: list[PublicationSource]
     sections: list[PublicationSection]
     methodology: PublicationMethodology
+    personalization: PersonalizationContract
 
     @model_validator(mode="after")
     def validate_topology(self) -> PublicationViewModel:
@@ -731,6 +733,65 @@ class PublicationViewModel(PublicationModel):
             raise ValueError("metadata published race count does not match the view model")
         if self.metadata.race_count < self.metadata.published_race_count:
             raise ValueError("metadata race count cannot be below the published count")
+        return self
+
+    @model_validator(mode="after")
+    def validate_personalization(self) -> PublicationViewModel:
+        """Bind the lens payload to the audited display model it must reproduce."""
+        personalization = self.personalization
+        if personalization.panel_id != self.metadata.source_panel_id:
+            raise ValueError("personalization panel id must match publication metadata")
+        if personalization.panel_hash != self.metadata.source_panel_hash:
+            raise ValueError("personalization panel hash must match publication metadata")
+        if personalization.panel_version != self.metadata.source_panel_version:
+            raise ValueError("personalization panel version must match publication metadata")
+        if [source.id for source in personalization.sources] != [
+            source.id for source in self.sources
+        ]:
+            raise ValueError("personalization sources must match the publication source order")
+        for published, lens in zip(self.sources, personalization.sources, strict=True):
+            if lens.panel_role != published.panel_role:
+                raise ValueError(f"personalization source {lens.id!r} panel role must match")
+            if lens.reporting_category_id != published.category:
+                raise ValueError(
+                    f"personalization source {lens.id!r} reporting category must match"
+                )
+            if lens.overlap_group_ids != published.overlap_group_ids:
+                raise ValueError(f"personalization source {lens.id!r} overlap groups must match")
+        races = [race for section in self.sections for race in section.races]
+        if [race.race_id for race in personalization.races] != [race.id for race in races]:
+            raise ValueError("personalization races must match the publication race order")
+        for published_race, lens_race in zip(races, personalization.races, strict=True):
+            scored = {
+                cell.source_id: cell
+                for cell in published_race.source_cells
+                if cell.state != "not_applicable"
+            }
+            code_by_source = {source.id: source.code for source in personalization.sources}
+            if lens_race.eligible_source_codes != sorted(
+                code_by_source[source_id] for source_id in scored
+            ):
+                raise ValueError(
+                    f"personalization race {lens_race.race_id!r} eligibility must match its cells"
+                )
+            lens_cells = {cell.source_code: cell for cell in lens_race.cells}
+            for source_id, cell in scored.items():
+                lens_cell = lens_cells[code_by_source[source_id]]
+                if lens_cell.state != cell.state:
+                    raise ValueError(
+                        f"personalization cell {lens_cell.source_code!r} state must match "
+                        f"race {lens_race.race_id!r}"
+                    )
+                if lens_cell.allocation != cell.allocation:
+                    raise ValueError(
+                        f"personalization cell {lens_cell.source_code!r} allocation must match "
+                        f"race {lens_race.race_id!r}"
+                    )
+                if lens_cell.confidence_warning != cell.confidence_warning:
+                    raise ValueError(
+                        f"personalization cell {lens_cell.source_code!r} confidence must match "
+                        f"race {lens_race.race_id!r}"
+                    )
         return self
 
 
