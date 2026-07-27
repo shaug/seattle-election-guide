@@ -201,7 +201,7 @@ def test_publication_rejects_a_category_reserved_letter_in_a_source_code() -> No
     payload = _view_model_payload()
     payload["personalization"]["sources"][0]["code"] = "Gstr"
 
-    with pytest.raises(ValidationError, match="category-reserved letter"):
+    with pytest.raises(ValidationError, match="category-reserved"):
         PublicationViewModel.model_validate(payload)
 
 

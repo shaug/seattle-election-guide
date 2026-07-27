@@ -14,11 +14,15 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from election_guide.sources.models import (
+    CATEGORY_CODE_PATTERN,
+    SOURCE_CODE_PATTERN,
+    validated_source_code,
+)
+
 PERSONALIZATION_SCHEMA_VERSION = "1.0"
 URL_SCHEMA_VERSION = "1"
 MAXIMUM_URL_CHARACTERS = 2000
-SOURCE_CODE_PATTERN = r"^[0-9A-Za-z]{4}$"
-CATEGORY_CODE_PATTERN = r"^G[0-9A-Za-z]{3}$"
 LensCellState = Literal[
     "endorsement",
     "multi_endorsement",
@@ -103,8 +107,7 @@ class PersonalizationSource(PersonalizationModel):
 
     @model_validator(mode="after")
     def validate_source(self) -> PersonalizationSource:
-        if "G" in self.code or "g" in self.code:
-            raise ValueError(f"source code {self.code!r} uses a category-reserved letter")
+        validated_source_code(self.code)
         if self.selection_category_ids != sorted(set(self.selection_category_ids)):
             raise ValueError(f"source {self.id!r} categories must be unique and sorted")
         if self.reporting_category_id not in self.selection_category_ids:

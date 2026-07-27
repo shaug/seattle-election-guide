@@ -24,7 +24,7 @@ TRANSPORT_CODE_PATTERN = r"^[0-9A-Za-z]{4}$"
 RESERVED_CATEGORY_INITIALS = frozenset({"G", "g"})
 
 
-def _validated_source_code(value: str) -> str:
+def validated_source_code(value: str) -> str:
     """Keep `G` and `g` reserved for categories anywhere in a source code."""
     reserved = RESERVED_CATEGORY_INITIALS & set(value)
     if reserved:
@@ -168,7 +168,7 @@ class RetiredCode(SourceModel):
             if not self.code.startswith("G"):
                 raise ValueError(f"retired category code {self.code!r} must start with 'G'")
         else:
-            _validated_source_code(self.code)
+            validated_source_code(self.code)
         return self
 
 
@@ -195,7 +195,7 @@ class Source(SourceModel):
     @field_validator("code")
     @classmethod
     def validate_code(cls, value: str) -> str:
-        return _validated_source_code(value)
+        return validated_source_code(value)
 
     @field_validator("selection_category_ids")
     @classmethod
