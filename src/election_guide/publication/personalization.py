@@ -194,6 +194,8 @@ class PersonalizationScoring(PersonalizationModel):
         ]
         if any(left <= right for left, right in pairwise(shares)):
             raise ValueError("published grade thresholds must be strictly descending")
+        if not self.tie_precedes_grade or not self.insufficient_precedes_ordinary_grade:
+            raise ValueError("published resolution order must match the audited scoring policy")
         if self.missing_coverage_enters_denominator or self.no_endorsement_enters_denominator:
             raise ValueError("published denominators must match the audited scoring policy")
         return self

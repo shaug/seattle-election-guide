@@ -161,6 +161,22 @@ def test_publication_rejects_a_stale_personalization_allocation() -> None:
         PublicationViewModel.model_validate(payload)
 
 
+def test_publication_rejects_a_scoring_identity_that_reorders_tie_resolution() -> None:
+    payload = _view_model_payload()
+    payload["personalization"]["scoring"]["tie_precedes_grade"] = False
+
+    with pytest.raises(ValidationError, match="resolution order must match"):
+        PublicationViewModel.model_validate(payload)
+
+
+def test_publication_rejects_a_scoring_identity_that_demotes_insufficient_coverage() -> None:
+    payload = _view_model_payload()
+    payload["personalization"]["scoring"]["insufficient_precedes_ordinary_grade"] = False
+
+    with pytest.raises(ValidationError, match="resolution order must match"):
+        PublicationViewModel.model_validate(payload)
+
+
 def test_publication_rejects_an_incomplete_personalization_race() -> None:
     payload = _view_model_payload()
     race = payload["personalization"]["races"][0]
