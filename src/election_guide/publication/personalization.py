@@ -18,6 +18,7 @@ from election_guide.sources.models import (
     CATEGORY_CODE_PATTERN,
     SOURCE_CODE_PATTERN,
     TRANSPORT_CODE_PATTERN,
+    validated_retired_code,
     validated_source_code,
 )
 
@@ -92,11 +93,7 @@ class PersonalizationRetiredCode(PersonalizationModel):
 
     @model_validator(mode="after")
     def validate_code_family(self) -> PersonalizationRetiredCode:
-        if self.kind == "category":
-            if not self.code.startswith("G"):
-                raise ValueError(f"retired category code {self.code!r} must start with 'G'")
-        else:
-            validated_source_code(self.code)
+        validated_retired_code(self.code, self.kind)
         return self
 
 

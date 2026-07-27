@@ -32,6 +32,21 @@ def validated_source_code(value: str) -> str:
     return value
 
 
+def validated_retired_code(code: str, kind: str) -> str:
+    """Enforce the same code-family rule a tombstone's kind implies, everywhere.
+
+    Shared by the registry's own RetiredCode and by the published
+    personalization contract's tombstone, so a family/kind mismatch is
+    rejected identically wherever a tombstone is validated.
+    """
+    if kind == "category":
+        if not code.startswith("G"):
+            raise ValueError(f"retired category code {code!r} must start with 'G'")
+    else:
+        validated_source_code(code)
+    return code
+
+
 class SourceModel(BaseModel):
     """Reject undeclared fields so policy drift fails loudly."""
 
@@ -164,11 +179,7 @@ class RetiredCode(SourceModel):
 
     @model_validator(mode="after")
     def validate_code_family(self) -> RetiredCode:
-        if self.kind == "category":
-            if not self.code.startswith("G"):
-                raise ValueError(f"retired category code {self.code!r} must start with 'G'")
-        else:
-            validated_source_code(self.code)
+        validated_retired_code(self.code, self.kind)
         return self
 
 

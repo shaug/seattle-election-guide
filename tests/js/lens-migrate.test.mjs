@@ -49,9 +49,11 @@ const ORIGIN_SNAPSHOT = {
 const CURRENT_PERSONALIZATION = {
   policy: { comparison_source_codes: ['stim'] },
   categories: [
-    // Labor kept 'strn' and gained 'urbn' (reclassified in, per below), and
-    // lost 'zdrp' (a source dropped without a tombstone).
-    { id: 'labor', code: 'Glab', label: 'Labor', selectable: true, member_source_codes: ['strn', 'urbn'] },
+    // Labor kept 'strn', gained a genuinely new selectable source 'newp',
+    // and lost 'zdrp' (a source dropped without a tombstone). A comparison
+    // source can never be a member of a selectable category, so the
+    // reclassified 'urbn' case below is exercised only as a direct pick.
+    { id: 'labor', code: 'Glab', label: 'Labor', selectable: true, member_source_codes: ['newp', 'strn'] },
     // Urbanism was retired outright: the category itself is gone.
     // Environmental's only member (zret) was retired, leaving it empty.
     { id: 'environmental', code: 'Genv', label: 'Environmental', selectable: true, member_source_codes: [] },
@@ -59,6 +61,7 @@ const CURRENT_PERSONALIZATION = {
   ],
   sources: [
     { id: 'the-stranger', code: 'strn', panel_role: 'consensus', selectable: true },
+    { id: 'a-new-outlet', code: 'newp', panel_role: 'consensus', selectable: true },
     // the-urbanist's code now names a comparison-only source: reclassified.
     { id: 'the-urbanist', code: 'urbn', panel_role: 'comparison', selectable: false },
     { id: 'seattle-times-editorial-board', code: 'stim', panel_role: 'comparison', selectable: false },
@@ -146,7 +149,11 @@ test('an unknown category rejects the whole migration and is distinguished from 
   assert.equal(result.report.categories[0].status, 'unknown');
 });
 
-test('a category that became nonselectable is unresolved, not silently dropped', () => {
+test('an identified but nonselectable category is unresolved: a publishable one is necessarily empty', () => {
+  // Gcmp is identified (found by code) but PersonalizationCategory.validate_members
+  // forbids a nonselectable category from publishing any members, so this case
+  // cannot be distinguished from an emptied selectable category by a
+  // publishable payload; both correctly reject as 'unresolved'.
   const result = migrateLensState(
     staleDecode({ state: { categoryCodes: ['Gcmp'] } }),
     CURRENT_PERSONALIZATION,
@@ -300,21 +307,42 @@ test('a surviving category reports which current members are new, given origin h
   assert.equal(result.status, 'migrated');
   const category = result.report.categories.find((item) => item.code === 'Glab');
   assert.equal(category.status, 'current');
-  assert.deepEqual(category.addedMemberCodes, ['urbn']);
+  assert.deepEqual(category.addedMemberCodes, ['newp']);
   assert.deepEqual(category.removedMemberCodes, ['zdrp']);
 });
 
-test('a surviving category reports no membership change without origin history', () => {
+test('a surviving category omits the membership diff without origin history', () => {
+  // Absence means "not compared", not "unchanged": field presence tracks
+  // report.historyAvailable alone.
   const result = migrateLensState(
     staleDecode({ state: { categoryCodes: ['Glab'] } }),
     CURRENT_PERSONALIZATION,
     null,
   );
 
+  assert.equal(result.report.historyAvailable, false);
   const category = result.report.categories[0];
   assert.equal(category.status, 'current');
   assert.equal('addedMemberCodes' in category, false);
   assert.equal('removedMemberCodes' in category, false);
+});
+
+test('a category absent from a matched origin snapshot reports every current member as added', () => {
+  const originWithoutLabor = {
+    ...ORIGIN_SNAPSHOT,
+    categories: ORIGIN_SNAPSHOT.categories.filter((item) => item.code !== 'Glab'),
+  };
+  const result = migrateLensState(
+    staleDecode({ state: { categoryCodes: ['Glab'] } }),
+    CURRENT_PERSONALIZATION,
+    originWithoutLabor,
+  );
+
+  assert.equal(result.status, 'migrated');
+  const category = result.report.categories[0];
+  assert.equal(category.status, 'current');
+  assert.deepEqual(category.addedMemberCodes, ['newp', 'strn']);
+  assert.deepEqual(category.removedMemberCodes, []);
 });
 
 test('a category emptied of every member is unresolved rather than a silent empty selection', () => {
@@ -335,17 +363,23 @@ test('a category emptied of every member is unresolved rather than a silent empt
 
 test('a multi-code migrated selection is sorted regardless of input order', () => {
   const result = migrateLensState(
-    staleDecode({ state: { sourceCodes: ['strn', 'zzzz', 'zdrp'] } }),
+    staleDecode({ state: { sourceCodes: ['zdrp', 'zzzz', 'strn', 'newp'] } }),
     CURRENT_PERSONALIZATION,
     ORIGIN_SNAPSHOT,
   );
 
   assert.equal(result.status, 'migrated');
-  assert.deepEqual(result.selection.sourceCodes, ['strn']);
+  // Two surviving codes supplied out of order must come back sorted.
+  assert.deepEqual(result.selection.sourceCodes, ['newp', 'strn']);
   const statuses = Object.fromEntries(
     result.report.sources.map((item) => [item.code, item.status]),
   );
-  assert.deepEqual(statuses, { strn: 'current', zdrp: 'removed', zzzz: 'unknown' });
+  assert.deepEqual(statuses, {
+    zdrp: 'removed',
+    zzzz: 'unknown',
+    strn: 'current',
+    newp: 'current',
+  });
 });
 
 test('the module has no DOM, network, or sibling-lens dependency', () => {

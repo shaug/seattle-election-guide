@@ -32,14 +32,19 @@ function resolveCategoryToken(code, personalization, originSnapshot) {
   const current = personalization.categories.find((item) => item.code === code);
   if (current !== undefined && current.selectable && current.member_source_codes.length > 0) {
     const result = { code, status: 'current' };
-    const origin = originSnapshot?.categories.find((item) => item.code === code);
-    if (origin !== undefined) {
-      const originMembers = new Set(origin.member_source_codes);
+    if (originSnapshot !== null) {
+      // A category absent from the origin snapshot is treated as having had
+      // no members there, so field presence tracks history availability
+      // alone: every current member of a newly-introduced category is
+      // correctly reported as added, never silently omitted.
+      const origin = originSnapshot.categories.find((item) => item.code === code);
+      const originMemberCodes = origin?.member_source_codes ?? [];
+      const originMembers = new Set(originMemberCodes);
       const currentMembers = new Set(current.member_source_codes);
       result.addedMemberCodes = current.member_source_codes
         .filter((member) => !originMembers.has(member))
         .sort();
-      result.removedMemberCodes = origin.member_source_codes
+      result.removedMemberCodes = originMemberCodes
         .filter((member) => !currentMembers.has(member))
         .sort();
     }
