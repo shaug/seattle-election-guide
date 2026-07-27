@@ -135,7 +135,7 @@
         <h1>Seattle Progressive Endorsement Guide</h1>
         <p class="hero-deck">Progressive endorsement agreement at a glance. The Seattle
           Times is an optional comparison you can turn on under
-          <b class="hero-deck-action">Customize</b>.</p>
+          <b>Customize</b>.</p>
       </div>
       <div class="hero-meta" aria-label="Guide metadata">
         <span>Election {{ guide.metadata.election_date }}</span>
@@ -277,12 +277,13 @@
                   {{ race_detail_candidate_sections(race) }}
                   {% for group_key in source_cell_group_keys %}
                   {% set group_count = source_cell_group_count(race, source_by_id, group_key) %}
+                  {% set shown_count = source_cell_group_count(race, source_by_id, group_key, include_comparison=False) %}
                   {% if group_count %}
                   <section class="race-detail-outcome race-detail-outcome-{{ group_key }}"
                     data-race-detail-group="{{ group_key }}">
                     <div class="race-detail-outcome-heading">
                       <h4>{{ source_cell_group_label(race, group_key) }}</h4>
-                      <span>{{ group_count }} source{% if group_count != 1 %}s{% endif %}</span>
+                      <span><span data-times-hidden>{{ shown_count }} source{% if shown_count != 1 %}s{% endif %}</span><span data-times-only>{{ group_count }} source{% if group_count != 1 %}s{% endif %}</span></span>
                     </div>
                     {{ race_detail_source_rows(race, group_key) }}
                   </section>
@@ -291,9 +292,10 @@
                 </div>
                 {% for group_key in ('not_covered', 'not_applicable') %}
                 {% set missing_count = source_cell_group_count(race, source_by_id, group_key) %}
+                {% set shown_missing = source_cell_group_count(race, source_by_id, group_key, include_comparison=False) %}
                 {% if missing_count %}
                 <details class="race-detail-missing">
-                  <summary>{{ missing_count }} source{% if missing_count != 1 %}s{% endif %} {% if group_key == 'not_covered' %}did not cover this race{% else %}{% if missing_count == 1 %}was{% else %}were{% endif %} outside this district{% endif %}</summary>
+                  <summary><span data-times-hidden>{{ shown_missing }} source{% if shown_missing != 1 %}s{% endif %} {% if group_key == 'not_covered' %}did not cover this race{% else %}{% if shown_missing == 1 %}was{% else %}were{% endif %} outside this district{% endif %}</span><span data-times-only>{{ missing_count }} source{% if missing_count != 1 %}s{% endif %} {% if group_key == 'not_covered' %}did not cover this race{% else %}{% if missing_count == 1 %}was{% else %}were{% endif %} outside this district{% endif %}</span></summary>
                   {{ race_detail_source_rows(race, group_key) }}
                 </details>
                 {% endif %}
@@ -566,9 +568,7 @@
     "data_version": guide.metadata.data_version,
     "scoring": {"configuration_id": guide.personalization.scoring.configuration_id},
     "policy": {
-      "maximum_url_characters": guide.personalization.policy.maximum_url_characters,
-      "comparison_source_codes": guide.personalization.policy.comparison_source_codes,
-      "enabled": guide.personalization.policy.enabled
+      "maximum_url_characters": guide.personalization.policy.maximum_url_characters
     }
   } | tojson }}</script>
   <script type="module">
@@ -603,7 +603,6 @@
 
   const applyTimes = (showTimes) => {
     root.classList.toggle('show-times', showTimes);
-    root.dataset.timesComparison = showTimes ? 'shown' : 'hidden';
     if (timesInput) timesInput.checked = showTimes;
     if (statusLine) {
       statusLine.textContent = showTimes
@@ -670,7 +669,15 @@
     applyTimes(timesInput.checked);
     writeTimesState(timesInput.checked);
   });
-  window.addEventListener('hashchange', () => applyTimes(readTimesFromUrl()));
+  // Only a fragment the codec recognizes carries Times state. The skip link and
+  // any other plain anchor also fire hashchange, and treating those as `times=0`
+  // would silently switch the comparison back off.
+  window.addEventListener('hashchange', () => {
+    const decoded = decodeLensFragment(window.location.hash, context);
+    if (decoded.status === 'valid' || decoded.status === 'stale_version') {
+      applyTimes(decoded.state.showTimes);
+    }
+  });
   </script>
   <script>
   (() => {

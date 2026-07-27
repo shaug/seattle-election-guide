@@ -84,10 +84,21 @@ html.compact-ballot-mode .screen-comparisons { display: none; }
    unaffected: the fixed PDF always carries the comparison. */
 /* The detailed edition is an explicitly requested complete rendering, not the
    default load, so it keeps the comparison visible and no published content
-   becomes unreachable. */
+   becomes unreachable. The comparison row is hidden through its list-item
+   wrapper, so no stranded divider or empty grid row is left behind. */
 html:not(.show-times):not(.detailed-edition) .screen-comparisons,
-html:not(.show-times):not(.detailed-edition) .race-detail-source-row-comparison,
+html:not(.show-times):not(.detailed-edition)
+  .race-detail-source-list > li[data-source-role="comparison"],
 html:not(.show-times):not(.detailed-edition) [data-times-only] { display: none; }
+html.show-times [data-times-hidden],
+html.detailed-edition [data-times-hidden] { display: none; }
+
+/* .screen-race-context is a two-column grid whose first item is the comparison.
+   Removing that item would reflow the support line into the flexible track and
+   leave the fixed track empty, so pin it to the column it already occupies.
+   Compact mode collapses the grid to one column and is excluded. */
+html:not(.show-times):not(.detailed-edition):not(.compact-ballot-mode)
+  .screen-race-context .support-line { grid-column: 2; }
 html.compact-ballot-mode .support-line { margin-top: 0; font-size: .68rem; text-align: left; }
 html.compact-ballot-mode .insufficient-note { padding: .38rem .48rem; font-size: .68rem; line-height: 1.25; }
 .race-card-primary { display: grid; min-width: 0; gap: .55rem; margin: -.35rem; padding: .35rem; border-radius: .3rem; color: inherit; cursor: pointer; text-decoration: none; transition: background-color .15s ease, box-shadow .15s ease; }

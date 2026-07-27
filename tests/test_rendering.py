@@ -2211,11 +2211,17 @@ def test_customize_shell_hides_the_times_comparison_by_default(tmp_path: Path) -
 
     # Hidden in CSS rather than in script, so the default holds before and without JS.
     assert "html:not(.show-times):not(.detailed-edition) .screen-comparisons" in stylesheet
-    assert (
-        "html:not(.show-times):not(.detailed-edition) .race-detail-source-row-comparison"
-        in stylesheet
-    )
+    # The wrapper is hidden, not the inner row, so no bordered list item is stranded.
+    assert '.race-detail-source-list > li[data-source-role="comparison"]' in stylesheet
     assert ".show-times" not in html.split("<style>")[0]
+
+    # Hiding a grid item must not reflow its sibling out of the column it occupies.
+    assert ".screen-race-context .support-line { grid-column: 2; }" in stylesheet
+
+    # A heading may never claim more sources than the state actually lists.
+    detail = html.split('data-race-detail-group="no_endorsement"')[1].split("</section>")[0]
+    assert "data-times-hidden" in detail and "data-times-only" in detail
+    assert "html.show-times [data-times-hidden]" in stylesheet
 
 
 def test_customize_shell_exposes_one_action_and_keeps_controls_in_the_dialog(

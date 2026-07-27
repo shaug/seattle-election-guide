@@ -273,9 +273,17 @@ def _source_cell_group_count(
     race: PublicationRace,
     sources: dict[str, PublicationSource],
     group: str,
+    *,
+    include_comparison: bool = True,
 ) -> int:
+    """Count the cells in one group, optionally excluding the comparison source.
+
+    The responsive guide hides the comparison by default, so a heading rendered
+    for that state must count only the rows it actually shows.
+    """
     return sum(
         _source_cell_group(cell, race, sources[cell.source_id]) == group
+        and (include_comparison or sources[cell.source_id].panel_role != "comparison")
         for cell in race.source_cells
     )
 
@@ -1584,9 +1592,31 @@ def _capture_emulated_viewport(
                     "const controlCount=document.querySelectorAll("
                     "'.screen-controls button,.screen-controls select,.screen-controls input')"
                     ".length;"
+                    "const wrappers=()=>[...document.querySelectorAll("
+                    "'.race-detail-source-list>li[data-source-role=\"comparison\"]')];"
+                    "const supportAligned=()=>[...document.querySelectorAll("
+                    "'.screen-race-context')].filter(context=>context.offsetParent).every("
+                    "context=>{const support=context.querySelector('.support-line');"
+                    "const meter=context.closest('[data-publication-race-id]')"
+                    "?.querySelector('.screen-meter');"
+                    "if(!support||!meter)return true;"
+                    "return Math.abs(support.getBoundingClientRect().right-"
+                    "meter.getBoundingClientRect().right)<=1;});"
+                    "const countsAgree=()=>[...document.querySelectorAll("
+                    "'.race-detail-source-list')].every(list=>{"
+                    "const heading=list.previousElementSibling||list.parentElement"
+                    "?.previousElementSibling;"
+                    "const shown=[...list.children].filter(item=>"
+                    "getComputedStyle(item).display!=='none').length;"
+                    "const text=(list.closest('details')?.querySelector('summary')||heading)"
+                    "?.innerText||'';"
+                    "const claimed=Number((text.match(/(\\d+)\\s+source/)||[])[1]);"
+                    "return !Number.isFinite(claimed)||claimed===shown;});"
                     "const hidden={"
                     "pills:pills().length>0&&pills().every(item=>!shownOnScreen(item)),"
-                    "rows:rows().length>0&&rows().every(item=>!displayed(item)),"
+                    "rows:rows().length>0&&rows().every(item=>!item.getClientRects().length),"
+                    "wrappers:wrappers().length>0&&wrappers().every(item=>!displayed(item)),"
+                    "supportAligned:supportAligned(),"
                     "unchecked:timesInput?.checked===false,"
                     "noRootClass:!root.classList.contains('show-times'),"
                     "cleanHash:window.location.hash===''};"
@@ -1606,13 +1636,21 @@ def _capture_emulated_viewport(
                     "lensFragment:window.location.hash.includes('lens=1')&&"
                     "window.location.hash.includes('times=1')&&"
                     "window.location.hash.includes('mode=a'),"
+                    "wrappers:wrappers().every(item=>displayed(item)),"
                     "scoringUnchanged:scored()===before};"
+                    "document.querySelector('.skip-link')?.click();await pause();"
+                    "const afterAnchor={stillShown:root.classList.contains('show-times')&&"
+                    "timesInput?.checked===true,anchorHash:window.location.hash==="
+                    "'#guide-races'};"
+                    "history.replaceState(history.state,'',window.location.pathname+"
+                    "window.location.search);"
+                    "window.scrollTo(0,0);"
                     "timesInput?.click();await pause();"
                     "const restored={rootClass:!root.classList.contains('show-times'),"
                     "cleanHash:window.location.hash==='',scoringUnchanged:scored()===before};"
                     "dialog?.dispatchEvent(new Event('cancel',{cancelable:true}));await pause();"
-                    "return JSON.stringify({hidden,opened,escaped,revealed,restored,"
-                    "controlCount});})()"
+                    "return JSON.stringify({hidden,opened,escaped,revealed,afterAnchor,"
+                    "restored,countsAgree:countsAgree(),controlCount});})()"
                 ),
                 "returnByValue": True,
                 "awaitPromise": True,
@@ -1629,6 +1667,8 @@ def _capture_emulated_viewport(
             "hidden": {
                 "pills": True,
                 "rows": True,
+                "wrappers": True,
+                "supportAligned": True,
                 "unchecked": True,
                 "noRootClass": True,
                 "cleanHash": True,
@@ -1640,9 +1680,12 @@ def _capture_emulated_viewport(
                 "pills": True,
                 "rows": True,
                 "lensFragment": True,
+                "wrappers": True,
                 "scoringUnchanged": True,
             },
+            "afterAnchor": {"stillShown": True, "anchorHash": True},
             "restored": {"rootClass": True, "cleanHash": True, "scoringUnchanged": True},
+            "countsAgree": True,
             "controlCount": EXPECTED_SCREEN_CONTROL_COUNT,
         }
         if customize_metrics != expected_customize:
