@@ -124,6 +124,24 @@ html.compact-ballot-mode .insufficient-note { padding: .38rem .48rem; font-size:
 .customize-check { display: flex; align-items: center; gap: .5rem; margin-bottom: .45rem; font-weight: 600; }
 .customize-status:empty { display: none; }
 .customize-status { margin: 0; font-size: .85rem; font-weight: 600; }
+
+.customize-mode .customize-check { display: inline-flex; margin-right: 1rem; }
+.customize-category-list { display: flex; flex-wrap: wrap; gap: 0 1rem; margin-bottom: .6rem; }
+.customize-source-list { display: flex; flex-direction: column; gap: 0; margin: 0 0 .6rem; padding: 0; max-height: 16rem; overflow-y: auto; border: 1px solid #e0e7ed; border-radius: .3rem; list-style: none; }
+.customize-source-list li { display: flex; align-items: center; justify-content: space-between; gap: .5rem; padding: .35rem .6rem; }
+.customize-source-list li + li { border-top: 1px solid #e0e7ed; }
+.customize-source-list .customize-check { margin-bottom: 0; }
+.customize-source-badges { font-size: .75rem; font-weight: 600; color: #46596a; white-space: nowrap; }
+.customize-counts { margin: 0; font-size: .85rem; font-weight: 600; }
+.customize-version { margin: 0; color: #46596a; font-size: .78rem; }
+.customize-actions { display: flex; gap: .6rem; }
+.customize-copy, .customize-reset { padding: .35rem .75rem; border: 1px solid #829ab1; border-radius: .3rem; background: var(--paper); color: var(--ink); font: inherit; font-weight: 600; cursor: pointer; }
+.customize-copy:hover, .customize-reset:hover { background: #eef3f6; }
+.customize-copy-status:empty { display: none; }
+.customize-copy-status { margin: 0; font-size: .8rem; font-weight: 600; }
+
+.lens-banner { position: sticky; top: 0; z-index: 5; margin: 0; padding: .5rem 1rem; background: #102a43; color: #fff; font-weight: 600; font-size: .9rem; text-align: center; }
+.lens-banner[hidden] { display: none; }
 .race-detail-header { position: sticky; top: 0; z-index: 1; display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem 2rem; padding: 1rem 1.15rem; border-bottom: 1px solid #526f83; background: var(--navy); color: var(--white); }
 .race-detail-header > div:first-child { min-width: 0; }
 .race-detail-header p { max-width: 40rem; margin: 0; color: #d7e6ef; font-size: .78rem; }
@@ -257,7 +275,7 @@ a.race-detail-source-row:hover strong { text-decoration: underline; text-underli
 @page { size: Letter portrait; margin: .28in .3in; }
 
 @media print {
-  .customize-control, .customize-dialog { display: none; }
+  .customize-control, .customize-dialog, .lens-banner { display: none; }
   :root { --print-meter-width: 1.65in; --print-sans: Helvetica, "Liberation Sans", sans-serif; }
   html, body { width: 8.5in; margin: 0; background: white; color: #111820; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
   .skip-link, .screen-guide, script { display: none !important; }
