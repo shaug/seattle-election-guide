@@ -17,6 +17,20 @@ from pydantic import (
 from election_guide.inventory.models import Jurisdiction, Race
 from election_guide.validation import validated_http_url, validated_media_type
 
+CATEGORY_ID_PATTERN = r"^[a-z0-9]+(?:_[a-z0-9]+)*$"
+CATEGORY_CODE_PATTERN = r"^G[0-9A-Za-z]{3}$"
+SOURCE_CODE_PATTERN = r"^[0-9A-Za-z]{4}$"
+TRANSPORT_CODE_PATTERN = r"^[0-9A-Za-z]{4}$"
+RESERVED_CATEGORY_INITIALS = frozenset({"G", "g"})
+
+
+def _validated_source_code(value: str) -> str:
+    """Keep `G` and `g` reserved for categories anywhere in a source code."""
+    reserved = RESERVED_CATEGORY_INITIALS & set(value)
+    if reserved:
+        raise ValueError(f"source code {value!r} uses category-reserved {sorted(reserved)}")
+    return value
+
 
 class SourceModel(BaseModel):
     """Reject undeclared fields so policy drift fails loudly."""
@@ -129,18 +143,41 @@ class Discovery(SourceModel):
         return self
 
 
+class SourceCategory(SourceModel):
+    """A selection grouping with a stable semantic id and immutable transport code."""
+
+    id: str = Field(pattern=CATEGORY_ID_PATTERN)
+    code: str = Field(pattern=CATEGORY_CODE_PATTERN)
+    label: str = Field(min_length=1)
+    selectable: bool
+    description: str = Field(min_length=1)
+
+
+class RetiredCode(SourceModel):
+    """A tombstone that keeps a withdrawn transport code permanently unusable."""
+
+    code: str = Field(pattern=TRANSPORT_CODE_PATTERN)
+    kind: Literal["source", "category"]
+    former_id: str = Field(min_length=1)
+    retired_in_panel: str = Field(min_length=1)
+    reason: str = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def validate_code_family(self) -> RetiredCode:
+        if self.kind == "category":
+            if not self.code.startswith("G"):
+                raise ValueError(f"retired category code {self.code!r} must start with 'G'")
+        else:
+            _validated_source_code(self.code)
+        return self
+
+
 class Source(SourceModel):
     id: str = Field(pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+    code: str = Field(pattern=SOURCE_CODE_PATTERN)
     name: str = Field(min_length=1)
-    category: Literal[
-        "progressive_general",
-        "democratic_party",
-        "transportation_urbanism",
-        "environmental",
-        "labor",
-        "rights_representation",
-        "comparison",
-    ]
+    reporting_category_id: str = Field(pattern=CATEGORY_ID_PATTERN)
+    selection_category_ids: list[str] = Field(min_length=1)
     organization_url: str
     geographic_kind: Literal["general", "legislative_district"]
     panel_role: Literal["consensus", "comparison", "excluded"]
@@ -155,15 +192,41 @@ class Source(SourceModel):
     def validate_organization_url(cls, value: str) -> str:
         return validated_http_url(value)
 
+    @field_validator("code")
+    @classmethod
+    def validate_code(cls, value: str) -> str:
+        return _validated_source_code(value)
+
+    @field_validator("selection_category_ids")
+    @classmethod
+    def normalize_selection_categories(cls, value: list[str]) -> list[str]:
+        """Accept several categories in any order as one sorted, deduplicated set."""
+        return sorted(set(value))
+
+    @property
+    def is_selectable(self) -> bool:
+        """Only panel sources that contribute to the progressive score may be selected."""
+        return self.panel_role == "consensus"
+
     @model_validator(mode="after")
     def validate_role(self) -> Source:
         if self.panel_role == "excluded" and self.eligibility.kind != "none":
             raise ValueError(f"excluded source {self.id!r} must have no eligibility")
         if self.panel_role != "excluded" and self.eligibility.kind == "none":
             raise ValueError(f"active source {self.id!r} must define eligibility")
-        if self.panel_role == "comparison" and self.category != "comparison":
-            raise ValueError(f"comparison source {self.id!r} must use comparison category")
-        if self.panel_role != "comparison" and self.category == "comparison":
+        if self.reporting_category_id not in self.selection_category_ids:
+            raise ValueError(
+                f"source {self.id!r} reporting category {self.reporting_category_id!r} "
+                "must also be a selection category"
+            )
+        if self.panel_role == "comparison":
+            if self.reporting_category_id != "comparison":
+                raise ValueError(f"comparison source {self.id!r} must use comparison category")
+            if self.selection_category_ids != ["comparison"]:
+                raise ValueError(
+                    f"comparison source {self.id!r} cannot join another selection category"
+                )
+        elif "comparison" in self.selection_category_ids:
             raise ValueError(f"comparison category source {self.id!r} must be comparison-only")
         if (
             self.discovery.status == "not_an_endorsement_publisher"
@@ -202,14 +265,81 @@ class OverlapGroup(SourceModel):
 
 
 class SourceRegistry(SourceModel):
-    schema_version: Literal["1.0"] = "1.0"
+    schema_version: Literal["1.1"] = "1.1"
     id: str
     election_id: str
     frozen_at: AwareDatetime
     research_cutoff: AwareDatetime
     notes: list[str]
+    categories: list[SourceCategory] = Field(min_length=1)
+    retired_codes: list[RetiredCode] = Field(default_factory=list[RetiredCode])
     sources: list[Source] = Field(min_length=1)
     overlap_groups: list[OverlapGroup]
+
+    def category_by_id(self, category_id: str) -> SourceCategory:
+        """Resolve a validated semantic category id to its catalog entry."""
+        return next(category for category in self.categories if category.id == category_id)
+
+    def selectable_source_codes(self, category_id: str) -> list[str]:
+        """Return the current selectable members of a category in transport order."""
+        if not self.category_by_id(category_id).selectable:
+            return []
+        return sorted(
+            source.code
+            for source in self.sources
+            if source.is_selectable and category_id in source.selection_category_ids
+        )
+
+    @model_validator(mode="after")
+    def validate_identities(self) -> SourceRegistry:
+        category_ids = [category.id for category in self.categories]
+        if len(category_ids) != len(set(category_ids)):
+            raise ValueError("duplicate category id")
+        known_categories = set(category_ids)
+
+        in_use: dict[str, str] = {}
+        for category in self.categories:
+            in_use[category.code] = f"category {category.id!r}"
+        for source in self.sources:
+            if source.code in in_use:
+                raise ValueError(f"source {source.id!r} reuses code {source.code!r}")
+            in_use[source.code] = f"source {source.id!r}"
+
+        confusable: dict[str, str] = {}
+        for code, owner in in_use.items():
+            previous = confusable.setdefault(code.casefold(), owner)
+            if previous != owner:
+                raise ValueError(f"{owner} uses a code confusable with {previous}")
+
+        for retired in self.retired_codes:
+            if retired.code in in_use:
+                raise ValueError(
+                    f"retired code {retired.code!r} was reissued to {in_use[retired.code]}"
+                )
+            owner = confusable.get(retired.code.casefold())
+            if owner is not None:
+                raise ValueError(
+                    f"retired code {retired.code!r} is confusable with the code of {owner}"
+                )
+        retired_codes = [retired.code for retired in self.retired_codes]
+        if len(retired_codes) != len(set(retired_codes)):
+            raise ValueError("duplicate retired code")
+
+        for source in self.sources:
+            unknown = set(source.selection_category_ids) - known_categories
+            if unknown:
+                raise ValueError(f"source {source.id!r} has unknown categories: {sorted(unknown)}")
+            if source.reporting_category_id not in known_categories:
+                raise ValueError(
+                    f"source {source.id!r} has unknown reporting category "
+                    f"{source.reporting_category_id!r}"
+                )
+            if source.is_selectable and not any(
+                self.category_by_id(category_id).selectable
+                for category_id in source.selection_category_ids
+            ):
+                raise ValueError(f"consensus source {source.id!r} needs a selectable category")
+        return self
 
     @model_validator(mode="after")
     def validate_registry(self) -> SourceRegistry:

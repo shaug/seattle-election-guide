@@ -212,9 +212,11 @@ def _score_race(
     ]
     categories = _category_breakdown(eligible_sources, endorsement_by_source, race)
     represented_categories = {
-        source.category for source in eligible_sources if source.id in covered_source_ids
+        source.reporting_category_id
+        for source in eligible_sources
+        if source.id in covered_source_ids
     }
-    eligible_categories = {source.category for source in eligible_sources}
+    eligible_categories = {source.reporting_category_id for source in eligible_sources}
     race_pending = [item for item in unresolved if race.id in relevant_review_races[item.id]]
     race_high = [item for item in unresolved_high if race.id in relevant_review_races[item.id]]
     displayed_endorsements = [
@@ -297,10 +299,12 @@ def _category_breakdown(
     endorsement_by_source: dict[str, NormalizedEndorsement],
     race: Race,
 ) -> list[CategoryConsensus]:
-    categories = sorted({source.category for source in eligible_sources})
+    categories = sorted({source.reporting_category_id for source in eligible_sources})
     results: list[CategoryConsensus] = []
     for category in categories:
-        sources = [source for source in eligible_sources if source.category == category]
+        sources = [
+            source for source in eligible_sources if source.reporting_category_id == category
+        ]
         endorsements = [
             endorsement_by_source[source.id]
             for source in sources

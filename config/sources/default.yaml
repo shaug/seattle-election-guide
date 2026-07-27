@@ -1,18 +1,60 @@
-schema_version: "1.0"
-id: wa-2026-primary-default-sources-v2
+schema_version: "1.1"
+id: wa-2026-primary-default-sources-v3
 election_id: wa-2026-primary
 frozen_at: 2026-07-23T17:10:00Z
 research_cutoff: 2026-07-23T17:10:00Z
 notes:
+  - Version 3 adds immutable transport codes and many-to-many selection categories for issue 75; no source, eligibility, discovery, or reporting placement changed, so canonical scoring is identical to version 2.
   - Version 2 expands the panel after the issue 61 audit; version 1 remains reconstructable at git commit 9faceeaaf7fe13c7f4d9c5c206db192ecd563321.
   - Six newly evaluated publishers have usable 2026 decisions; Tech 4 Taxes remains attributed to its official site while an organization-specific aggregator capture supplies the temporary retrieval path.
   - Published means an official 2026 publication was located; it does not imply complete ballot coverage.
   - Not found is distinct from an explicit no-endorsement decision by an organization.
   - Aggregators are normally discovery-only; the temporary Tech 4 Taxes capture exception is documented without changing the named publisher or official source URL.
+  - Transport codes are permanent. Retiring one requires a retired_codes tombstone; codes are never reissued and never differ only by letter case.
+  - Selection categories were reviewed source by source. A second category is recorded only where the organization's own identity names it, so the two Democratic Party caucuses join their issue category while every other source keeps its single reporting placement.
+categories:
+  - id: progressive_general
+    code: Ggen
+    label: Progressive editorial and general
+    selectable: true
+    description: Progressive editorial boards and general-purpose progressive organizations.
+  - id: democratic_party
+    code: Gdem
+    label: Democratic Party
+    selectable: true
+    description: Democratic Party organizations, including legislative-district and caucus bodies.
+  - id: transportation_urbanism
+    code: Gurb
+    label: Transportation and urbanism
+    selectable: true
+    description: Transit, housing density, and active-transportation organizations.
+  - id: environmental
+    code: Genv
+    label: Environment
+    selectable: true
+    description: Conservation and climate organizations.
+  - id: labor
+    code: Glab
+    label: Labor
+    selectable: true
+    description: Unions and labor councils.
+  - id: rights_representation
+    code: Grgt
+    label: Rights and representation
+    selectable: true
+    description: Civil-rights, reproductive-rights, immigrant, disability, and representation organizations.
+  - id: comparison
+    code: Gcmp
+    label: Centrist comparison
+    selectable: false
+    description: Comparison-only placement. Comparison sources never enter the progressive score and can never be selected.
+retired_codes: []
 sources:
   - id: the-stranger
     name: The Stranger Election Control Board
-    category: progressive_general
+    code: strn
+    reporting_category_id: progressive_general
+    selection_category_ids: [progressive_general]
     organization_url: https://www.thestranger.com/
     geographic_kind: general
     panel_role: consensus
@@ -33,7 +75,9 @@ sources:
 
   - id: the-urbanist
     name: The Urbanist Elections Committee
-    category: progressive_general
+    code: urbn
+    reporting_category_id: progressive_general
+    selection_category_ids: [progressive_general]
     organization_url: https://www.theurbanist.org/
     geographic_kind: general
     panel_role: consensus
@@ -54,7 +98,9 @@ sources:
 
   - id: progressive-voters-guide
     name: Progressive Voters Guide
-    category: progressive_general
+    code: pvot
+    reporting_category_id: progressive_general
+    selection_category_ids: [progressive_general]
     organization_url: https://www.progressivevotersguide.com/washington/
     geographic_kind: general
     panel_role: excluded
@@ -76,7 +122,9 @@ sources:
 
   - id: fuse-washington
     name: Fuse Washington
-    category: progressive_general
+    code: fuse
+    reporting_category_id: progressive_general
+    selection_category_ids: [progressive_general]
     organization_url: https://www.fusewashington.org/
     geographic_kind: general
     panel_role: consensus
@@ -99,7 +147,9 @@ sources:
 
   - id: seattle-democratic-socialists
     name: Seattle Democratic Socialists of America
-    category: progressive_general
+    code: sdsa
+    reporting_category_id: progressive_general
+    selection_category_ids: [progressive_general]
     organization_url: https://seattledsa.org/
     geographic_kind: general
     panel_role: consensus
@@ -118,7 +168,9 @@ sources:
 
   - id: tech-4-housing
     name: Tech 4 Housing
-    category: transportation_urbanism
+    code: t4ho
+    reporting_category_id: transportation_urbanism
+    selection_category_ids: [transportation_urbanism]
     organization_url: https://www.tech4housing.org/
     geographic_kind: general
     panel_role: consensus
@@ -137,7 +189,9 @@ sources:
 
   - id: tech-4-taxes
     name: Tech 4 Taxes
-    category: progressive_general
+    code: t4tx
+    reporting_category_id: progressive_general
+    selection_category_ids: [progressive_general]
     organization_url: https://tech4taxes.org/
     geographic_kind: general
     panel_role: consensus
@@ -156,7 +210,9 @@ sources:
 
   - id: washington-for-peace-and-justice
     name: Washington for Peace and Justice
-    category: rights_representation
+    code: wpaj
+    reporting_category_id: rights_representation
+    selection_category_ids: [rights_representation]
     organization_url: https://www.wa4pj.com/
     geographic_kind: general
     panel_role: consensus
@@ -176,7 +232,9 @@ sources:
 
   - id: washington-community-action-network
     name: Washington Community Action Network
-    category: progressive_general
+    code: wcan
+    reporting_category_id: progressive_general
+    selection_category_ids: [progressive_general]
     organization_url: https://www.washingtoncan.org/
     geographic_kind: general
     panel_role: consensus
@@ -195,7 +253,9 @@ sources:
 
   - id: seattle-gay-news
     name: Seattle Gay News Editorial Board
-    category: rights_representation
+    code: snws
+    reporting_category_id: rights_representation
+    selection_category_ids: [rights_representation]
     organization_url: https://www.sgn.org/
     geographic_kind: general
     panel_role: consensus
@@ -216,7 +276,9 @@ sources:
 
   - id: washington-working-families-party
     name: Washington Working Families Party
-    category: progressive_general
+    code: wwfp
+    reporting_category_id: progressive_general
+    selection_category_ids: [progressive_general]
     organization_url: https://workingfamilies.org/state/washington/
     geographic_kind: general
     panel_role: consensus
@@ -235,7 +297,9 @@ sources:
 
   - id: washington-bus
     name: The Washington Bus
-    category: progressive_general
+    code: wbus
+    reporting_category_id: progressive_general
+    selection_category_ids: [progressive_general]
     organization_url: https://www.washingtonbus.org/
     geographic_kind: general
     panel_role: consensus
@@ -255,7 +319,9 @@ sources:
 
   - id: sage-leaders
     name: Sage Leaders
-    category: progressive_general
+    code: sldr
+    reporting_category_id: progressive_general
+    selection_category_ids: [progressive_general]
     organization_url: https://www.sageleaders.org/
     geographic_kind: general
     panel_role: consensus
@@ -274,7 +340,9 @@ sources:
 
   - id: washington-state-democrats
     name: Washington State Democratic Party
-    category: democratic_party
+    code: wsdm
+    reporting_category_id: democratic_party
+    selection_category_ids: [democratic_party]
     organization_url: https://wadems.org/
     geographic_kind: general
     panel_role: consensus
@@ -293,7 +361,9 @@ sources:
 
   - id: king-county-democrats
     name: King County Democrats
-    category: democratic_party
+    code: kcdm
+    reporting_category_id: democratic_party
+    selection_category_ids: [democratic_party]
     organization_url: https://www.kcdems.org/
     geographic_kind: general
     panel_role: consensus
@@ -316,7 +386,9 @@ sources:
 
   - id: 11th-district-democrats
     name: 11th Legislative District Democrats
-    category: democratic_party
+    code: ld11
+    reporting_category_id: democratic_party
+    selection_category_ids: [democratic_party]
     organization_url: https://www.11thlddems.org/
     geographic_kind: legislative_district
     panel_role: consensus
@@ -340,7 +412,9 @@ sources:
 
   - id: 32nd-district-democrats
     name: 32nd Legislative District Democrats
-    category: democratic_party
+    code: ld32
+    reporting_category_id: democratic_party
+    selection_category_ids: [democratic_party]
     organization_url: https://32democrats.org/
     geographic_kind: legislative_district
     panel_role: consensus
@@ -363,7 +437,9 @@ sources:
 
   - id: 34th-district-democrats
     name: 34th Legislative District Democrats
-    category: democratic_party
+    code: ld34
+    reporting_category_id: democratic_party
+    selection_category_ids: [democratic_party]
     organization_url: https://34dems.org/
     geographic_kind: legislative_district
     panel_role: consensus
@@ -388,7 +464,9 @@ sources:
 
   - id: 36th-district-democrats
     name: 36th Legislative District Democrats
-    category: democratic_party
+    code: ld36
+    reporting_category_id: democratic_party
+    selection_category_ids: [democratic_party]
     organization_url: https://36th.org/
     geographic_kind: legislative_district
     panel_role: consensus
@@ -413,7 +491,9 @@ sources:
 
   - id: 37th-district-democrats
     name: 37th Legislative District Democrats
-    category: democratic_party
+    code: ld37
+    reporting_category_id: democratic_party
+    selection_category_ids: [democratic_party]
     organization_url: https://37dems.org/
     geographic_kind: legislative_district
     panel_role: consensus
@@ -436,7 +516,9 @@ sources:
 
   - id: 43rd-district-democrats
     name: 43rd Legislative District Democrats
-    category: democratic_party
+    code: ld43
+    reporting_category_id: democratic_party
+    selection_category_ids: [democratic_party]
     organization_url: https://43rddemocrats.org/
     geographic_kind: legislative_district
     panel_role: consensus
@@ -460,7 +542,9 @@ sources:
 
   - id: 46th-district-democrats
     name: 46th Legislative District Democrats
-    category: democratic_party
+    code: ld46
+    reporting_category_id: democratic_party
+    selection_category_ids: [democratic_party]
     organization_url: https://www.46dems.org/
     geographic_kind: legislative_district
     panel_role: consensus
@@ -484,7 +568,9 @@ sources:
 
   - id: washington-stonewall-democrats
     name: Washington State Stonewall Democrats
-    category: democratic_party
+    code: wsto
+    reporting_category_id: democratic_party
+    selection_category_ids: [democratic_party, rights_representation]
     organization_url: https://www.stonewalldemocrats.us/washington
     geographic_kind: general
     panel_role: consensus
@@ -506,7 +592,9 @@ sources:
 
   - id: transit-riders-union
     name: Transit Riders Union
-    category: transportation_urbanism
+    code: trun
+    reporting_category_id: transportation_urbanism
+    selection_category_ids: [transportation_urbanism]
     organization_url: https://transitriders.org/
     geographic_kind: general
     panel_role: consensus
@@ -527,7 +615,9 @@ sources:
 
   - id: washington-bikes
     name: Washington Bikes
-    category: transportation_urbanism
+    code: wbik
+    reporting_category_id: transportation_urbanism
+    selection_category_ids: [transportation_urbanism]
     organization_url: https://wabikes.org/
     geographic_kind: general
     panel_role: consensus
@@ -549,7 +639,9 @@ sources:
 
   - id: cascade-bicycle-club
     name: Cascade Bicycle Club
-    category: transportation_urbanism
+    code: cbcl
+    reporting_category_id: transportation_urbanism
+    selection_category_ids: [transportation_urbanism]
     organization_url: https://cascade.org/
     geographic_kind: general
     panel_role: excluded
@@ -570,7 +662,9 @@ sources:
 
   - id: seattle-subway
     name: Seattle Subway
-    category: transportation_urbanism
+    code: ssub
+    reporting_category_id: transportation_urbanism
+    selection_category_ids: [transportation_urbanism]
     organization_url: https://www.seattlesubway.org/
     geographic_kind: general
     panel_role: consensus
@@ -589,7 +683,9 @@ sources:
 
   - id: transportation-choices-coalition
     name: Transportation Choices Coalition
-    category: transportation_urbanism
+    code: tcco
+    reporting_category_id: transportation_urbanism
+    selection_category_ids: [transportation_urbanism]
     organization_url: https://transportationchoices.org/
     geographic_kind: general
     panel_role: excluded
@@ -608,7 +704,9 @@ sources:
 
   - id: disability-mobility-initiative
     name: Disability Mobility Initiative at Disability Rights Washington
-    category: transportation_urbanism
+    code: dmob
+    reporting_category_id: transportation_urbanism
+    selection_category_ids: [transportation_urbanism]
     organization_url: https://disabilityrightswa.org/
     geographic_kind: general
     panel_role: excluded
@@ -630,7 +728,9 @@ sources:
 
   - id: washington-conservation-action
     name: Washington Conservation Action
-    category: environmental
+    code: wcac
+    reporting_category_id: environmental
+    selection_category_ids: [environmental]
     organization_url: https://waconservationaction.org/
     geographic_kind: general
     panel_role: consensus
@@ -649,7 +749,9 @@ sources:
 
   - id: sierra-club-washington
     name: Sierra Club Washington State Chapter
-    category: environmental
+    code: sicl
+    reporting_category_id: environmental
+    selection_category_ids: [environmental]
     organization_url: https://www.sierraclub.org/washington
     geographic_kind: general
     panel_role: consensus
@@ -668,7 +770,9 @@ sources:
 
   - id: climate-solutions
     name: Climate Solutions
-    category: environmental
+    code: clsl
+    reporting_category_id: environmental
+    selection_category_ids: [environmental]
     organization_url: https://www.climatesolutions.org/
     geographic_kind: general
     panel_role: excluded
@@ -690,7 +794,9 @@ sources:
 
   - id: environmental-climate-caucus-wa-democrats
     name: Environment and Climate Caucus of the Washington State Democratic Party
-    category: environmental
+    code: eccd
+    reporting_category_id: environmental
+    selection_category_ids: [democratic_party, environmental]
     organization_url: https://eccwa.org/
     geographic_kind: general
     panel_role: consensus
@@ -711,7 +817,9 @@ sources:
 
   - id: mlk-labor
     name: MLK Labor
-    category: labor
+    code: mlkl
+    reporting_category_id: labor
+    selection_category_ids: [labor]
     organization_url: https://www.mlklabor.org/
     geographic_kind: general
     panel_role: consensus
@@ -733,7 +841,9 @@ sources:
 
   - id: washington-state-labor-council
     name: Washington State Labor Council, AFL-CIO
-    category: labor
+    code: wslc
+    reporting_category_id: labor
+    selection_category_ids: [labor]
     organization_url: https://wslc.org/
     geographic_kind: general
     panel_role: consensus
@@ -755,7 +865,9 @@ sources:
 
   - id: seiu-775
     name: SEIU 775
-    category: labor
+    code: s775
+    reporting_category_id: labor
+    selection_category_ids: [labor]
     organization_url: https://seiu775.org/
     geographic_kind: general
     panel_role: consensus
@@ -777,7 +889,9 @@ sources:
 
   - id: seiu-925
     name: SEIU 925
-    category: labor
+    code: s925
+    reporting_category_id: labor
+    selection_category_ids: [labor]
     organization_url: https://www.seiu925.org/
     geographic_kind: general
     panel_role: consensus
@@ -800,7 +914,9 @@ sources:
 
   - id: ufcw-3000
     name: UFCW 3000
-    category: labor
+    code: ufcw
+    reporting_category_id: labor
+    selection_category_ids: [labor]
     organization_url: https://ufcw3000.org/
     geographic_kind: general
     panel_role: consensus
@@ -821,7 +937,9 @@ sources:
 
   - id: aft-washington
     name: AFT Washington
-    category: labor
+    code: aftw
+    reporting_category_id: labor
+    selection_category_ids: [labor]
     organization_url: https://www.aftwa.org/
     geographic_kind: general
     panel_role: consensus
@@ -842,7 +960,9 @@ sources:
 
   - id: washington-education-association
     name: Washington Education Association
-    category: labor
+    code: weas
+    reporting_category_id: labor
+    selection_category_ids: [labor]
     organization_url: https://www.washingtonea.org/
     geographic_kind: general
     panel_role: consensus
@@ -864,7 +984,9 @@ sources:
 
   - id: washington-state-building-trades
     name: Washington State Building and Construction Trades Council
-    category: labor
+    code: wsbt
+    reporting_category_id: labor
+    selection_category_ids: [labor]
     organization_url: https://www.wabuildingtrades.org/
     geographic_kind: general
     panel_role: consensus
@@ -885,7 +1007,9 @@ sources:
 
   - id: protec17
     name: PROTEC17
-    category: labor
+    code: pr17
+    reporting_category_id: labor
+    selection_category_ids: [labor]
     organization_url: https://www.protec17.org/
     geographic_kind: general
     panel_role: consensus
@@ -907,7 +1031,9 @@ sources:
 
   - id: planned-parenthood-alliance-advocates
     name: Planned Parenthood Alliance Advocates
-    category: rights_representation
+    code: ppaa
+    reporting_category_id: rights_representation
+    selection_category_ids: [rights_representation]
     organization_url: https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates
     geographic_kind: general
     panel_role: consensus
@@ -927,7 +1053,9 @@ sources:
 
   - id: oneamerica-votes
     name: OneAmerica Votes
-    category: rights_representation
+    code: oamv
+    reporting_category_id: rights_representation
+    selection_category_ids: [rights_representation]
     organization_url: https://oavotes.org/
     geographic_kind: general
     panel_role: consensus
@@ -947,7 +1075,9 @@ sources:
 
   - id: alliance-for-gun-responsibility
     name: Alliance for Gun Responsibility Victory Fund
-    category: rights_representation
+    code: alrs
+    reporting_category_id: rights_representation
+    selection_category_ids: [rights_representation]
     organization_url: https://gunresponsibility.org/
     geographic_kind: general
     panel_role: consensus
@@ -967,7 +1097,9 @@ sources:
 
   - id: washington-housing-alliance
     name: Washington Housing Alliance
-    category: rights_representation
+    code: whal
+    reporting_category_id: rights_representation
+    selection_category_ids: [rights_representation]
     organization_url: https://www.wahousingalliance.org/
     geographic_kind: general
     panel_role: consensus
@@ -986,7 +1118,9 @@ sources:
 
   - id: nwpc-washington
     name: National Women's Political Caucus of Washington
-    category: rights_representation
+    code: nwpc
+    reporting_category_id: rights_representation
+    selection_category_ids: [rights_representation]
     organization_url: https://www.nwpcwa.org/
     geographic_kind: general
     panel_role: consensus
@@ -1005,7 +1139,9 @@ sources:
 
   - id: seattle-times-editorial-board
     name: The Seattle Times Editorial Board
-    category: comparison
+    code: stim
+    reporting_category_id: comparison
+    selection_category_ids: [comparison]
     organization_url: https://www.seattletimes.com/opinion/editorials/
     geographic_kind: general
     panel_role: comparison

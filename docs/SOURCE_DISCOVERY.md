@@ -1,6 +1,6 @@
 # 2026 Primary Source Discovery Report
 
-Panel `wa-2026-primary-default-sources-v2` was frozen at `2026-07-23T17:10:00+00:00` before scoring. The research cutoff is `2026-07-23T17:10:00+00:00`; individual access times are recorded in the machine-readable registry.
+Panel `wa-2026-primary-default-sources-v3` was frozen at `2026-07-23T17:10:00+00:00` before scoring. The research cutoff is `2026-07-23T17:10:00+00:00`; individual access times are recorded in the machine-readable registry.
 
 The preregistration contains **48 proposed sources**: **42 consensus**, **1 comparison**, and **5 excluded**. Discovery found **42 official 2026 publications**, **2 publication gaps**, **1 access-restricted source**, and **3 conditional organizations that do not publish endorsements**.
 
