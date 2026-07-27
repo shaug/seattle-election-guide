@@ -53,6 +53,7 @@ from election_guide.publication.models import (
 from election_guide.scoring.models import ConsensusReport, RaceConsensus
 from election_guide.serialization import canonical_json_bytes
 from election_guide.sources.models import Source
+from election_guide.sources.panel import panel_version
 from election_guide.sources.registry import source_registry_hash
 
 ARTIFACT_NAMES = (
@@ -430,7 +431,7 @@ def _build_view_model(
             generated_at=consensus.computed_at,
             data_version=consensus.input_hash[:12],
             source_panel_id=dataset.source_registry.id,
-            source_panel_version=dataset.source_registry.id.rsplit("-", maxsplit=1)[-1],
+            source_panel_version=panel_version(dataset.source_registry.id),
             source_panel_hash=source_registry_hash(dataset.source_registry),
             git_commit=git_commit,
             source_count=len(active_sources),
