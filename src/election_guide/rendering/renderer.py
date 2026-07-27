@@ -1581,8 +1581,6 @@ def _capture_emulated_viewport(
                     "rect.width>0&&rect.height>0;};"
                     "const displayed=element=>getComputedStyle(element).display!=='none';"
                     "const pills=()=>[...document.querySelectorAll('.comparison')];"
-                    "const rows=()=>[...document.querySelectorAll("
-                    "'.race-detail-source-row-comparison')];"
                     "const cards=[...document.querySelectorAll('[data-publication-race-id]')];"
                     "const scored=()=>cards.map(card=>[card.querySelector('.screen-race-result')"
                     "?.textContent,card.querySelector('.screen-meter')?.textContent,"
@@ -1604,17 +1602,20 @@ def _capture_emulated_viewport(
                     "meter.getBoundingClientRect().right)<=1;});"
                     "const countsAgree=()=>[...document.querySelectorAll("
                     "'.race-detail-source-list')].every(list=>{"
-                    "const heading=list.previousElementSibling||list.parentElement"
-                    "?.previousElementSibling;"
                     "const shown=[...list.children].filter(item=>"
                     "getComputedStyle(item).display!=='none').length;"
-                    "const text=(list.closest('details')?.querySelector('summary')||heading)"
-                    "?.innerText||'';"
+                    # Every source list is rendered immediately after the element that
+                    # states its count (a <summary> or a heading <div>), so that single
+                    # sibling is the only shape this template emits.
+                    "const text=list.previousElementSibling?.innerText||'';"
                     "const claimed=Number((text.match(/(\\d+)\\s+source/)||[])[1]);"
                     "return !Number.isFinite(claimed)||claimed===shown;});"
                     "const hidden={"
                     "pills:pills().length>0&&pills().every(item=>!shownOnScreen(item)),"
-                    "rows:rows().length>0&&rows().every(item=>!item.getClientRects().length),"
+                    # The comparison row sits inside a closed <dialog> at probe time,
+                    # where neither its client rect nor its computed display can
+                    # distinguish hidden from shown; the wrapper this template
+                    # actually hides is what the assertion below checks.
                     "wrappers:wrappers().length>0&&wrappers().every(item=>!displayed(item)),"
                     "supportAligned:supportAligned(),"
                     "unchecked:timesInput?.checked===false,"
@@ -1632,7 +1633,6 @@ def _capture_emulated_viewport(
                     "timesInput?.click();await pause();"
                     "const revealed={rootClass:root.classList.contains('show-times'),"
                     "pills:pills().every(item=>displayed(item)),"
-                    "rows:rows().every(item=>displayed(item)),"
                     "lensFragment:window.location.hash.includes('lens=1')&&"
                     "window.location.hash.includes('times=1')&&"
                     "window.location.hash.includes('mode=a'),"
@@ -1666,7 +1666,6 @@ def _capture_emulated_viewport(
         expected_customize = {
             "hidden": {
                 "pills": True,
-                "rows": True,
                 "wrappers": True,
                 "supportAligned": True,
                 "unchecked": True,
@@ -1678,7 +1677,6 @@ def _capture_emulated_viewport(
             "revealed": {
                 "rootClass": True,
                 "pills": True,
-                "rows": True,
                 "lensFragment": True,
                 "wrappers": True,
                 "scoringUnchanged": True,

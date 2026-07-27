@@ -42,6 +42,12 @@
     <span class="race-detail-comparison-badge">Comparison only</span>
     {% endif %}
   {%- endmacro %}
+  {% macro source_count_phrase(count, group_key=none) -%}
+    {{ count }} source{% if count != 1 %}s{% endif %}{% if group_key == 'not_covered' %} did not cover this race{% elif group_key == 'not_applicable' %} {% if count == 1 %}was{% else %}were{% endif %} outside this district{% endif %}
+  {%- endmacro %}
+  {% macro times_source_counts(shown, total, group_key=none) -%}
+    <span data-times-hidden>{{ source_count_phrase(shown, group_key) }}</span><span data-times-only>{{ source_count_phrase(total, group_key) }}</span>
+  {%- endmacro %}
   {% macro race_detail_source_rows(race, group_key) -%}
     <ul class="race-detail-source-list">
       {% for cell in race.source_cells %}
@@ -87,8 +93,12 @@
     {% for candidate_id, candidate_label, endorsement_group in race_detail_candidate_choices(race, source_by_id) %}
     {% set is_leader = candidate_id in race.support_leader_candidate_ids %}
     {% set source_count = endorsement_group.source_count if endorsement_group is not none else 0 %}
+    {# A candidate only the comparison source picked has nothing to show by
+       default: hiding it here, rather than only its rows, keeps the whole
+       "0 endorsing sources" card out of the state this ticket makes default. #}
     <section class="race-detail-candidate{% if is_leader %} race-detail-candidate-leader{% endif %}"
-      data-race-detail-candidate-id="{{ candidate_id }}">
+      data-race-detail-candidate-id="{{ candidate_id }}"
+      {% if endorsement_group is none %}data-times-only{% endif %}>
       <div class="race-detail-candidate-heading">
         <div class="race-detail-candidate-title">
           {% if is_leader %}<p>{% if race.support_leader_candidate_ids | length > 1 %}Tied for lead{% else %}Leading choice{% endif %}</p>{% endif %}
@@ -283,7 +293,7 @@
                     data-race-detail-group="{{ group_key }}">
                     <div class="race-detail-outcome-heading">
                       <h4>{{ source_cell_group_label(race, group_key) }}</h4>
-                      <span><span data-times-hidden>{{ shown_count }} source{% if shown_count != 1 %}s{% endif %}</span><span data-times-only>{{ group_count }} source{% if group_count != 1 %}s{% endif %}</span></span>
+                      <span>{{ times_source_counts(shown_count, group_count) }}</span>
                     </div>
                     {{ race_detail_source_rows(race, group_key) }}
                   </section>
@@ -295,7 +305,7 @@
                 {% set shown_missing = source_cell_group_count(race, source_by_id, group_key, include_comparison=False) %}
                 {% if missing_count %}
                 <details class="race-detail-missing">
-                  <summary><span data-times-hidden>{{ shown_missing }} source{% if shown_missing != 1 %}s{% endif %} {% if group_key == 'not_covered' %}did not cover this race{% else %}{% if shown_missing == 1 %}was{% else %}were{% endif %} outside this district{% endif %}</span><span data-times-only>{{ missing_count }} source{% if missing_count != 1 %}s{% endif %} {% if group_key == 'not_covered' %}did not cover this race{% else %}{% if missing_count == 1 %}was{% else %}were{% endif %} outside this district{% endif %}</span></summary>
+                  <summary>{{ times_source_counts(shown_missing, missing_count, group_key) }}</summary>
                   {{ race_detail_source_rows(race, group_key) }}
                 </details>
                 {% endif %}
@@ -592,13 +602,19 @@
   const opener = document.querySelector('[data-customize-open]');
   const timesInput = document.querySelector('[data-customize-times]');
   const statusLine = document.querySelector('[data-customize-status]');
+  // The one place that decides which decode statuses carry live lens state, so
+  // a future status (issue 78 adds cross-version migration) has one call site
+  // to update rather than several that must be kept in agreement by hand.
+  const lensState = () => {
+    const decoded = decodeLensFragment(window.location.hash, context);
+    return decoded.status === 'valid' || decoded.status === 'stale_version'
+      ? decoded.state
+      : null;
+  };
   const raceTarget = () => {
     const decoded = decodeLensFragment(window.location.hash, context);
     if (decoded.status === 'legacy') return decoded.raceTarget;
-    if (decoded.status === 'valid' || decoded.status === 'stale_version') {
-      return decoded.state.raceTarget;
-    }
-    return null;
+    return lensState()?.raceTarget ?? null;
   };
 
   const applyTimes = (showTimes) => {
@@ -641,11 +657,7 @@
     );
   };
 
-  const readTimesFromUrl = () => {
-    const decoded = decodeLensFragment(window.location.hash, context);
-    return (decoded.status === 'valid' || decoded.status === 'stale_version')
-      && decoded.state.showTimes;
-  };
+  const readTimesFromUrl = () => Boolean(lensState()?.showTimes);
 
   applyTimes(readTimesFromUrl());
 
@@ -673,10 +685,8 @@
   // any other plain anchor also fire hashchange, and treating those as `times=0`
   // would silently switch the comparison back off.
   window.addEventListener('hashchange', () => {
-    const decoded = decodeLensFragment(window.location.hash, context);
-    if (decoded.status === 'valid' || decoded.status === 'stale_version') {
-      applyTimes(decoded.state.showTimes);
-    }
+    const state = lensState();
+    if (state) applyTimes(state.showTimes);
   });
   </script>
   <script>
