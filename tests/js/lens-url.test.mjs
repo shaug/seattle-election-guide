@@ -289,6 +289,52 @@ test('a link written against another panel decodes as stale rather than valid', 
   assert.deepEqual(decoded.state.sourceCodes, ['strn'], 'intent is preserved for migration');
 });
 
+test('a cross-version link stays stale when its codes no longer exist', () => {
+  const fragment = encoded({
+    mode: 's',
+    categoryCodes: ['Glab'],
+    sourceCodes: ['strn', 'urbn'],
+    showTimes: true,
+  });
+  const successor = context({
+    panel_id: 'wa-2026-primary-default-sources-v4',
+    sources: personalization().sources.filter((item) => item.code !== 'urbn'),
+  });
+  const decoded = decodeLensFragment(fragment, successor);
+
+  assert.equal(decoded.status, 'stale_version', 'a retired code must not look like garbage');
+  assert.equal(decoded.binding.panelId, 'wa-2026-primary-default-sources-v3');
+  assert.deepEqual(decoded.state.categoryCodes, ['Glab']);
+  assert.deepEqual(decoded.state.sourceCodes, ['strn', 'urbn'], 'original intent survives for #78');
+  assert.equal(decoded.state.showTimes, true);
+});
+
+test('a cross-version link stays stale when a code became nonselectable', () => {
+  const fragment = encoded({ mode: 's', sourceCodes: ['strn', 'urbn'] });
+  const successor = context({
+    panel_id: 'wa-2026-primary-default-sources-v4',
+    sources: personalization().sources.map((item) =>
+      item.code === 'urbn' ? { ...item, selectable: false } : item,
+    ),
+  });
+  const decoded = decodeLensFragment(fragment, successor);
+
+  assert.equal(decoded.status, 'stale_version');
+  assert.deepEqual(decoded.state.sourceCodes, ['strn', 'urbn']);
+});
+
+test('a cross-version link keeps structural validation', () => {
+  const successor = context({ panel_id: 'wa-2026-primary-default-sources-v4' });
+  const decoded = decodeLensFragment(
+    'lens=1&mode=s&panel=wa-2026-primary-default-sources-v3&ph=6cd4acaa0c5e' +
+      '&data=d119ee3107bb&scoring=wa-2026-primary-equal-weight&sel=strnurb&times=0',
+    successor,
+  );
+
+  assert.equal(decoded.status, 'malformed', 'a ragged selection is malformed at any version');
+  assert.equal(decoded.reason, 'ragged_selection');
+});
+
 test('a link written against other published data or scoring decodes as stale', () => {
   const fragment = encoded({ mode: 'a', showTimes: false });
 

@@ -121,26 +121,13 @@ export function decodeLensFragment(fragment, context) {
     return invalid('ragged_selection', { length: selection.length });
   }
 
-  const categoryCodes = [];
-  const sourceCodes = [];
-  const seen = new Set();
+  const tokens = [];
   for (let index = 0; index < selection.length; index += TOKEN_LENGTH) {
     const token = selection.slice(index, index + TOKEN_LENGTH);
-    const classified = classifyToken(token, context);
-    if (!classified.ok) return invalid(classified.reason, { token: classified.token });
-    if (seen.has(token)) continue;
-    seen.add(token);
-    (classified.kind === 'category' ? categoryCodes : sourceCodes).push(token);
+    if (!TOKEN_PATTERN.test(token)) return invalid('malformed_token', { token });
+    if (!tokens.includes(token)) tokens.push(token);
   }
 
-  const raceTarget = parameters.get('race');
-  const state = {
-    mode,
-    categoryCodes: [...categoryCodes].sort(),
-    sourceCodes: [...sourceCodes].sort(),
-    showTimes: times === '1',
-    raceTarget: raceTarget === null || raceTarget === '' ? null : raceTarget,
-  };
   const binding = {
     panelId: parameters.get('panel'),
     panelHashPrefix: parameters.get('ph'),
@@ -151,14 +138,45 @@ export function decodeLensFragment(fragment, context) {
     if (value === null || value === '') return invalid('missing_binding', { parameter: key });
   }
 
+  const raceTarget = parameters.get('race');
+  const common = {
+    mode,
+    showTimes: times === '1',
+    raceTarget: raceTarget === null || raceTarget === '' ? null : raceTarget,
+  };
+
+  // Resolve the version before consulting the current panel. A link written
+  // against another published version is stale even when its codes no longer
+  // exist here, and #78 needs its binding and original tokens to migrate it.
   const currentVersion =
     binding.panelId === context.panelId &&
     binding.panelHashPrefix === context.panelHashPrefix &&
     binding.dataVersion === context.dataVersion &&
     binding.scoringId === context.scoringId;
-  return currentVersion
-    ? { status: 'valid', state, binding }
-    : { status: 'stale_version', state, binding };
+  if (!currentVersion) {
+    return {
+      status: 'stale_version',
+      state: {
+        ...common,
+        categoryCodes: tokens.filter(isCategoryToken).sort(),
+        sourceCodes: tokens.filter((token) => !isCategoryToken(token)).sort(),
+      },
+      binding,
+    };
+  }
+
+  const categoryCodes = [];
+  const sourceCodes = [];
+  for (const token of tokens) {
+    const classified = classifyToken(token, context);
+    if (!classified.ok) return invalid(classified.reason, { token: classified.token });
+    (classified.kind === 'category' ? categoryCodes : sourceCodes).push(token);
+  }
+  return {
+    status: 'valid',
+    state: { ...common, categoryCodes: categoryCodes.sort(), sourceCodes: sourceCodes.sort() },
+    binding,
+  };
 }
 
 /**
