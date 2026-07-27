@@ -39,9 +39,12 @@ function isCategoryToken(token) {
   return token.startsWith(CATEGORY_PREFIX);
 }
 
-/** Categories sort before sources; each group sorts by code. */
-function canonicalTokens(categoryCodes, sourceCodes) {
-  return [...[...categoryCodes].sort(), ...[...sourceCodes].sort()];
+/** The one canonical form: split on the reserved prefix, sort within each group. */
+function partitionTokens(tokens) {
+  return {
+    categoryCodes: tokens.filter(isCategoryToken).sort(),
+    sourceCodes: tokens.filter((token) => !isCategoryToken(token)).sort(),
+  };
 }
 
 function classifyToken(token, context) {
@@ -56,7 +59,7 @@ function classifyToken(token, context) {
     if (!category.selectable) {
       return { ok: false, reason: 'forbidden_token', token };
     }
-    return { ok: true, kind: 'category', token };
+    return { ok: true, token };
   }
   const source = context.sources.get(token);
   if (source === undefined) {
@@ -65,7 +68,7 @@ function classifyToken(token, context) {
   if (!source.selectable) {
     return { ok: false, reason: 'forbidden_token', token };
   }
-  return { ok: true, kind: 'source', token };
+  return { ok: true, token };
 }
 
 /** Distinguish a wrong-case near miss from a genuinely unknown token. */
@@ -154,29 +157,14 @@ export function decodeLensFragment(fragment, context) {
     binding.dataVersion === context.dataVersion &&
     binding.scoringId === context.scoringId;
   if (!currentVersion) {
-    return {
-      status: 'stale_version',
-      state: {
-        ...common,
-        categoryCodes: tokens.filter(isCategoryToken).sort(),
-        sourceCodes: tokens.filter((token) => !isCategoryToken(token)).sort(),
-      },
-      binding,
-    };
+    return { status: 'stale_version', state: { ...common, ...partitionTokens(tokens) }, binding };
   }
 
-  const categoryCodes = [];
-  const sourceCodes = [];
   for (const token of tokens) {
     const classified = classifyToken(token, context);
     if (!classified.ok) return invalid(classified.reason, { token: classified.token });
-    (classified.kind === 'category' ? categoryCodes : sourceCodes).push(token);
   }
-  return {
-    status: 'valid',
-    state: { ...common, categoryCodes: categoryCodes.sort(), sourceCodes: sourceCodes.sort() },
-    binding,
-  };
+  return { status: 'valid', state: { ...common, ...partitionTokens(tokens) }, binding };
 }
 
 /**
@@ -187,18 +175,16 @@ export function decodeLensFragment(fragment, context) {
  */
 export function encodeLensFragment(state, context) {
   const mode = state.mode === 's' ? 's' : 'a';
-  const categoryCodes = [];
-  const sourceCodes = [];
-  const seen = new Set();
-  for (const token of mode === 's' ? [...(state.categoryCodes ?? []), ...(state.sourceCodes ?? [])] : []) {
+  const tokens = [];
+  const requested = mode === 's' ? [...(state.categoryCodes ?? []), ...(state.sourceCodes ?? [])] : [];
+  for (const token of requested) {
     const classified = classifyToken(token, context);
     if (!classified.ok) {
       return { status: 'rejected', reason: classified.reason, token: classified.token };
     }
-    if (seen.has(token)) continue;
-    seen.add(token);
-    (classified.kind === 'category' ? categoryCodes : sourceCodes).push(token);
+    if (!tokens.includes(token)) tokens.push(token);
   }
+  const { categoryCodes, sourceCodes } = partitionTokens(tokens);
 
   const parameters = new URLSearchParams();
   parameters.set('lens', LENS_SCHEMA_VERSION);
@@ -207,7 +193,7 @@ export function encodeLensFragment(state, context) {
   parameters.set('ph', context.panelHashPrefix);
   parameters.set('data', context.dataVersion);
   parameters.set('scoring', context.scoringId);
-  const selection = canonicalTokens(categoryCodes, sourceCodes).join('');
+  const selection = [...categoryCodes, ...sourceCodes].join('');
   if (selection !== '') parameters.set('sel', selection);
   parameters.set('times', state.showTimes ? '1' : '0');
   if (state.raceTarget) parameters.set('race', state.raceTarget);
