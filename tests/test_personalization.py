@@ -1,6 +1,7 @@
 """The published personalization contract and the panel-snapshot catalog."""
 
 import copy
+import json
 from datetime import UTC, datetime
 from fractions import Fraction
 from pathlib import Path
@@ -11,6 +12,11 @@ from pydantic import ValidationError
 
 from election_guide.normalization.models import CanonicalDataset
 from election_guide.publication.builder import build_publication_bundle
+from election_guide.publication.lens_parity import (
+    LENS_PARITY_SELECTIONS,
+    build_parity_fixture,
+    restricted_dataset,
+)
 from election_guide.publication.models import PublicationViewModel
 from election_guide.scoring import read_scoring_configuration
 from election_guide.scoring.engine import score_dataset
@@ -277,3 +283,59 @@ def test_catalog_rejects_a_duplicated_panel_id() -> None:
 
     with pytest.raises(ValidationError, match="repeats a panel id"):
         PanelSnapshotCatalog.model_validate(payload)
+
+
+def test_committed_lens_parity_fixture_matches_a_fresh_generation() -> None:
+    """The client parity fixture must never drift from the audited engine."""
+    committed = json.loads(
+        (PROJECT_ROOT / "tests" / "js" / "fixtures" / "lens-parity.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    dataset = CanonicalDataset.model_validate(read_json(DATASET_PATH))
+    configuration = read_scoring_configuration(SCORING_CONFIG_PATH)
+    computed_at = datetime(2026, 7, 23, 17, 15, tzinfo=UTC)
+    consensus = score_dataset(
+        dataset,
+        configuration,
+        computed_at=computed_at,
+        allow_unresolved=True,
+    )
+    bundle = build_publication_bundle(
+        dataset, consensus, git_commit="0" * 40, snapshot_root=SNAPSHOT_ROOT
+    )
+
+    regenerated = build_parity_fixture(
+        dataset,
+        configuration,
+        bundle.view_model,
+        LENS_PARITY_SELECTIONS,
+        computed_at=computed_at,
+    )
+
+    assert json.loads(json.dumps(regenerated)) == committed
+
+
+def test_lens_parity_selections_cover_every_named_acceptance_case() -> None:
+    names = {selection.name for selection in LENS_PARITY_SELECTIONS}
+    assert {
+        "empty",
+        "single-source",
+        "two-sources-split",
+        "category-overlap-union",
+        "category-plus-member",
+        "wrong-district",
+        "comparison-refused",
+        "full-panel",
+    } <= names
+
+
+def test_restricting_the_panel_cannot_promote_a_nonconsensus_source() -> None:
+    """The parity oracle must never widen the panel it is asked to narrow."""
+    dataset = CanonicalDataset.model_validate(read_json(DATASET_PATH))
+    original = {source.id: source.panel_role for source in dataset.source_registry.sources}
+
+    restricted = restricted_dataset(dataset, set(original))
+
+    for source in restricted.source_registry.sources:
+        assert source.panel_role == original[source.id]
