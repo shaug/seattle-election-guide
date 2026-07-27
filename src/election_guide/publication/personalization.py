@@ -22,7 +22,8 @@ from election_guide.sources.models import (
 
 PERSONALIZATION_SCHEMA_VERSION = "1.0"
 URL_SCHEMA_VERSION = "1"
-MAXIMUM_URL_CHARACTERS = 2000
+MAXIMUM_URL_CHARACTERS = 4096
+"""The sharing-size target issue 83 fixes for the fragment codec."""
 LensCellState = Literal[
     "endorsement",
     "multi_endorsement",

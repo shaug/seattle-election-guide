@@ -1,4 +1,4 @@
-.PHONY: sync format check test release-verify hosting-stage hosting-serve hosting-deploy
+.PHONY: sync format check check-js test release-verify hosting-stage hosting-serve hosting-deploy
 
 sync:
 	uv sync --frozen
@@ -15,6 +15,10 @@ check:
 	uv run election-guide inventory validate data/normalized/wa-2026-primary-inventory.json
 	uv run election-guide sources validate config/sources/default.yaml
 	uv run election-guide release verify data/releases/wa-2026-primary/source-decisions.yaml
+	$(MAKE) check-js
+
+check-js:
+	node --test 'tests/js/**/*.test.mjs'
 
 test:
 	uv run pytest

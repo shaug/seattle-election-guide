@@ -56,7 +56,7 @@ def test_release_policy_keeps_personalization_disabled_and_audited_by_default() 
     assert policy.weighting == "equal"
     assert policy.url_schema_version == "1"
     assert policy.comparison_hidden_by_default is True
-    assert policy.maximum_url_characters == 2000
+    assert policy.maximum_url_characters == 4096
 
 
 def test_payload_identifies_and_excludes_comparison_sources() -> None:
