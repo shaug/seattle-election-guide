@@ -50,10 +50,21 @@ from election_guide.publication.models import (
     ValidationCheck,
     ValidationReport,
 )
+from election_guide.publication.personalization import (
+    MAXIMUM_URL_CHARACTERS,
+    PersonalizationCategory,
+    PersonalizationCell,
+    PersonalizationContract,
+    PersonalizationGrade,
+    PersonalizationPolicy,
+    PersonalizationRace,
+    PersonalizationScoring,
+    PersonalizationSource,
+)
 from election_guide.scoring.models import ConsensusReport, RaceConsensus
 from election_guide.serialization import canonical_json_bytes
 from election_guide.sources.models import Source
-from election_guide.sources.panel import panel_version
+from election_guide.sources.panel import build_panel_snapshot, panel_version
 from election_guide.sources.registry import source_registry_hash
 
 ARTIFACT_NAMES = (
@@ -446,6 +457,125 @@ def _build_view_model(
         sources=sources,
         sections=sections,
         methodology=_methodology(dataset, consensus),
+        personalization=_personalization(dataset, consensus, sources, sections),
+    )
+
+
+def _personalization(
+    dataset: CanonicalDataset,
+    consensus: ConsensusReport,
+    sources: list[PublicationSource],
+    sections: list[PublicationSection],
+) -> PersonalizationContract:
+    """Publish the disabled lens payload alongside the audited display model."""
+    snapshot = build_panel_snapshot(dataset.source_registry)
+    snapshot_source_by_id = {item.id: item for item in snapshot.sources}
+    overlap_groups_by_id = {source.id: source.overlap_group_ids for source in sources}
+    scoring = consensus.scoring_configuration
+    return PersonalizationContract(
+        policy=PersonalizationPolicy(
+            enabled=False,
+            modes=["audited", "sources"],
+            minimum_explicit_sources=scoring.minimum_explicit_sources,
+            comparison_source_codes=sorted(
+                snapshot_source_by_id[source.id].code
+                for source in sources
+                if source.panel_role == "comparison"
+            ),
+            comparison_hidden_by_default=True,
+            maximum_url_characters=MAXIMUM_URL_CHARACTERS,
+        ),
+        panel_id=snapshot.panel_id,
+        panel_version=snapshot.panel_version,
+        panel_hash=snapshot.panel_hash,
+        scoring=PersonalizationScoring(
+            configuration_id=scoring.id,
+            allocation=scoring.allocation,
+            minimum_explicit_sources=scoring.minimum_explicit_sources,
+            grades=[
+                PersonalizationGrade(
+                    grade=rule.grade,
+                    minimum_share=str(rule.minimum_share),
+                    minimum_explicit_sources=rule.minimum_explicit_sources,
+                )
+                for rule in scoring.grades
+            ],
+            tie_precedes_grade=scoring.tie_precedes_grade,
+            insufficient_precedes_ordinary_grade=scoring.insufficient_precedes_ordinary_grade,
+            missing_coverage_enters_denominator=scoring.missing_coverage_enters_denominator,
+            no_endorsement_enters_denominator=scoring.no_endorsement_enters_denominator,
+        ),
+        categories=[
+            PersonalizationCategory(
+                id=category.id,
+                code=category.code,
+                label=category.label,
+                selectable=category.selectable,
+                member_source_codes=category.member_source_codes,
+            )
+            for category in snapshot.categories
+        ],
+        sources=[
+            PersonalizationSource(
+                id=source.id,
+                code=snapshot_source_by_id[source.id].code,
+                panel_role=source.panel_role,
+                selectable=snapshot_source_by_id[source.id].selectable,
+                reporting_category_id=snapshot_source_by_id[source.id].reporting_category_id,
+                selection_category_ids=snapshot_source_by_id[source.id].selection_category_ids,
+                overlap_group_ids=overlap_groups_by_id[source.id],
+            )
+            for source in sources
+        ],
+        races=personalization_races(
+            sections, {source.id: source.code for source in snapshot.sources}
+        ),
+    )
+
+
+def personalization_races(
+    sections: list[PublicationSection], code_by_source_id: dict[str, str]
+) -> list[PersonalizationRace]:
+    """Project the audited display cells into the compact lens race payload.
+
+    The lens payload restates eligibility and exact allocations against transport
+    codes, so it must be reprojected whenever the display model changes.
+    """
+    return [
+        PersonalizationRace(
+            race_id=race.id,
+            eligible_source_codes=sorted(
+                code_by_source_id[cell.source_id]
+                for cell in race.source_cells
+                if cell.state != "not_applicable"
+            ),
+            cells=sorted(
+                (
+                    PersonalizationCell(
+                        source_code=code_by_source_id[cell.source_id],
+                        state=cell.state,
+                        allocation=dict(sorted(cell.allocation.items())),
+                        confidence_warning=cell.confidence_warning,
+                    )
+                    for cell in race.source_cells
+                    if cell.state != "not_applicable"
+                ),
+                key=lambda cell: cell.source_code,
+            ),
+        )
+        for section in sections
+        for race in section.races
+    ]
+
+
+def reprojected_personalization(view_model: PublicationViewModel) -> PublicationViewModel:
+    """Return the view model with its lens race payload rebuilt from current cells."""
+    contract = view_model.personalization
+    races = personalization_races(
+        view_model.sections, {source.id: source.code for source in contract.sources}
+    )
+    return view_model.model_copy(
+        update={"personalization": contract.model_copy(update={"races": races})}
     )
 
 

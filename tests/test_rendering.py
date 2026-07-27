@@ -14,12 +14,14 @@ from pypdf import PdfReader, PdfWriter
 from pypdf.generic import NameObject, TextStringObject
 
 from election_guide.publication import build_publication_bundle
+from election_guide.publication.builder import reprojected_personalization
 from election_guide.publication.models import (
     PublicationComparison,
     PublicationRace,
     PublicationViewModel,
     SourceCell,
 )
+from election_guide.publication.personalization import PersonalizationSource
 from election_guide.rendering import (
     build_rendered_guide,
     read_rendering_configuration,
@@ -224,7 +226,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     gap_source.coverage_gap_note = "The official site did not publish endorsement results."
     view_model.metadata.contributing_source_count -= 1
     view_model.metadata.coverage_gap_count += 1
-    view_model = PublicationViewModel.model_validate(view_model.model_dump(mode="json"))
+    view_model = _revalidated(view_model)
     configuration = read_rendering_configuration(RENDERING_CONFIG)
 
     html = render_html_document(view_model, configuration)
@@ -1418,9 +1420,7 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     unavailable_race.winner_share = None
     unavailable_race.percentage_label = "—"
     unavailable_race.percentage_whole = None
-    unavailable_view_model = PublicationViewModel.model_validate(
-        unavailable_view_model.model_dump(mode="json")
-    )
+    unavailable_view_model = _revalidated(unavailable_view_model)
     unavailable_html_text = render_html_document(
         unavailable_view_model, read_rendering_configuration(RENDERING_CONFIG)
     )
@@ -1770,7 +1770,7 @@ def test_long_comparison_choice_is_not_truncated(tmp_path: Path) -> None:
             }
         )
     ]
-    view_model = PublicationViewModel.model_validate(view_model.model_dump(mode="json"))
+    view_model = _revalidated(view_model)
     view_model_path = tmp_path / "publication_view_model.json"
     view_model_path.write_bytes(canonical_json_bytes(view_model.model_dump(mode="json")))
 
@@ -2012,11 +2012,7 @@ def _dense_view_model(view_model: PublicationViewModel) -> PublicationViewModel:
         )
         for source in view_model.sources
     ]
-    return PublicationViewModel.model_validate(
-        view_model.model_copy(update={"sections": sections, "sources": sources}).model_dump(
-            mode="json"
-        )
-    )
+    return _revalidated(view_model.model_copy(update={"sections": sections, "sources": sources}))
 
 
 def _visual_view_model(view_model: PublicationViewModel) -> PublicationViewModel:
@@ -2109,7 +2105,7 @@ def _visual_view_model(view_model: PublicationViewModel) -> PublicationViewModel
         race.winner_share = str(Fraction(percentage, 100))
         race.percentage_label = f"{percentage}%"
         race.percentage_whole = percentage
-    return PublicationViewModel.model_validate(visual.model_dump(mode="json"))
+    return _revalidated(visual)
 
 
 def _coarse_visual_signature(path: Path) -> list[float]:
@@ -2140,3 +2136,54 @@ def _view_model(root: Path) -> PublicationViewModel:
         git_commit="render-fixture",
         snapshot_root=snapshot_root,
     ).view_model
+
+
+def _revalidated(view_model: PublicationViewModel) -> PublicationViewModel:
+    """Revalidate a hand-built display model with a coherent lens payload.
+
+    Layout fixtures synthesize extra panel sources, so this mints transport
+    codes for them and reprojects the derived lens records before validating.
+    """
+    contract = view_model.personalization
+    lens_by_id = {source.id: source for source in contract.sources}
+    lens_sources: list[PersonalizationSource] = []
+    for index, source in enumerate(view_model.sources):
+        existing = lens_by_id.get(source.id)
+        if existing is not None:
+            lens_sources.append(existing)
+            continue
+        lens_sources.append(
+            PersonalizationSource(
+                id=source.id,
+                code=f"x{index:03d}",
+                panel_role=source.panel_role,
+                selectable=source.panel_role == "consensus",
+                reporting_category_id=source.category,
+                selection_category_ids=[source.category],
+                overlap_group_ids=source.overlap_group_ids,
+            )
+        )
+    categories = [
+        category.model_copy(
+            update={
+                "member_source_codes": sorted(
+                    source.code
+                    for source in lens_sources
+                    if source.selectable and category.id in source.selection_category_ids
+                )
+                if category.selectable
+                else []
+            }
+        )
+        for category in contract.categories
+    ]
+    rebuilt = view_model.model_copy(
+        update={
+            "personalization": contract.model_copy(
+                update={"sources": lens_sources, "categories": categories}
+            )
+        }
+    )
+    return PublicationViewModel.model_validate(
+        reprojected_personalization(rebuilt).model_dump(mode="json")
+    )

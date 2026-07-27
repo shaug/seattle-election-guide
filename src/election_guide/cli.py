@@ -82,6 +82,12 @@ from election_guide.scoring import (
     summarize_consensus_payload,
 )
 from election_guide.serialization import canonical_json_bytes, read_json
+from election_guide.sources.catalog import (
+    PanelSnapshotCatalog,
+    appended_panel_snapshot,
+    read_panel_snapshot_catalog,
+)
+from election_guide.sources.panel import build_panel_snapshot
 from election_guide.sources.registry import read_source_registry, validate_registry_inventory
 from election_guide.sources.report import render_discovery_report
 
@@ -896,6 +902,34 @@ def sources_validate(
         f"source registry: valid ({len(registry.sources)} proposed; "
         f"{role_counts['consensus']} consensus, {role_counts['comparison']} comparison, "
         f"{role_counts['excluded']} excluded)"
+    )
+
+
+@sources_app.command("snapshot")
+def sources_snapshot(
+    registry_path: Annotated[
+        Path,
+        typer.Argument(exists=True, dir_okay=False, readable=True),
+    ] = Path("config/sources/default.yaml"),
+    catalog_path: Annotated[Path, typer.Option(dir_okay=False)] = Path(
+        "data/releases/wa-2026-primary/panel-snapshots.json"
+    ),
+) -> None:
+    """Append the current panel snapshot to the append-only migration catalog."""
+    try:
+        registry = read_source_registry(registry_path)
+        snapshot = build_panel_snapshot(registry)
+        if catalog_path.exists():
+            catalog = appended_panel_snapshot(read_panel_snapshot_catalog(catalog_path), snapshot)
+        else:
+            catalog = PanelSnapshotCatalog(election_id=registry.election_id, snapshots=[snapshot])
+        _write_generated_json(catalog_path, catalog.model_dump(mode="json"))
+    except (OSError, UnicodeError, ValidationError, ValueError) as error:
+        typer.echo(f"panel snapshot failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    typer.echo(
+        f"panel snapshots: {catalog_path} "
+        f"({len(catalog.snapshots)} published; current {snapshot.panel_id})"
     )
 
 
