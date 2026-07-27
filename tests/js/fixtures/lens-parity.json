@@ -16868,6 +16868,7 @@
         "race_id": "seattle-proposition-1-library-levy"
       }
     ],
+    "retired_codes": [],
     "schema_version": "1.0",
     "scoring": {
       "allocation": "exact_equal_split",

@@ -17,6 +17,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 from election_guide.sources.models import (
     CATEGORY_CODE_PATTERN,
     SOURCE_CODE_PATTERN,
+    TRANSPORT_CODE_PATTERN,
     validated_source_code,
 )
 
@@ -74,6 +75,20 @@ class PersonalizationPolicy(PersonalizationModel):
         if not self.comparison_hidden_by_default:
             raise ValueError("comparison sources must stay hidden by default")
         return self
+
+
+class PersonalizationRetiredCode(PersonalizationModel):
+    """A tombstone a client migration resolver uses to identify a withdrawn code.
+
+    The registry accumulates every retirement across every panel a lens has
+    ever been enabled for, so the current release's list is sufficient to
+    resolve a code retired in any earlier panel version.
+    """
+
+    code: str = Field(pattern=TRANSPORT_CODE_PATTERN)
+    kind: Literal["source", "category"]
+    former_id: str = Field(min_length=1)
+    reason: str = Field(min_length=1)
 
 
 class PersonalizationCategory(PersonalizationModel):
@@ -216,6 +231,9 @@ class PersonalizationContract(PersonalizationModel):
     scoring: PersonalizationScoring
     categories: list[PersonalizationCategory] = Field(min_length=1)
     sources: list[PersonalizationSource] = Field(min_length=1)
+    retired_codes: list[PersonalizationRetiredCode] = Field(
+        default_factory=list[PersonalizationRetiredCode]
+    )
     races: list[PersonalizationRace] = Field(min_length=1)
 
     @model_validator(mode="after")
@@ -233,6 +251,14 @@ class PersonalizationContract(PersonalizationModel):
             raise ValueError("personalization source codes must be unique")
         source_by_code = {source.code: source for source in self.sources}
         selectable_codes = {source.code for source in self.sources if source.selectable}
+
+        retired_codes = [retired.code for retired in self.retired_codes]
+        if len(set(retired_codes)) != len(retired_codes):
+            raise ValueError("personalization retired codes must be unique")
+        live_codes = set(category_codes) | set(source_codes)
+        reused = live_codes & set(retired_codes)
+        if reused:
+            raise ValueError(f"retired codes {sorted(reused)} are still live")
 
         for source in self.sources:
             unknown = set(source.selection_category_ids) - known_categories

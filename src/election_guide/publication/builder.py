@@ -58,6 +58,7 @@ from election_guide.publication.personalization import (
     PersonalizationGrade,
     PersonalizationPolicy,
     PersonalizationRace,
+    PersonalizationRetiredCode,
     PersonalizationScoring,
     PersonalizationSource,
 )
@@ -526,6 +527,15 @@ def _personalization(
                 overlap_group_ids=overlap_groups_by_id[source.id],
             )
             for source in sources
+        ],
+        retired_codes=[
+            PersonalizationRetiredCode(
+                code=retired.code,
+                kind=retired.kind,
+                former_id=retired.former_id,
+                reason=retired.reason,
+            )
+            for retired in dataset.source_registry.retired_codes
         ],
         races=personalization_races(
             sections, {source.id: source.code for source in snapshot.sources}
