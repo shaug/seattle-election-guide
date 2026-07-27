@@ -51,7 +51,12 @@ The machine-readable
 [`source-panel-impact.json`](../data/releases/wa-2026-primary/source-panel-impact.json)
 is generated from the validated before/after consensus reports. It contains every race's exact
 winner, support share and points, grade/tie state, coverage counts, and complete warning records;
-its SHA-256 is `36c726654f8b0d4aa8b5a90971c4eb9ebeac31db6a410732f9523685b8515979`.
+its SHA-256 is `76fc1d967a16f266144ca5ee8196b93f571f106c3441a5c7885bac2ef0634361`.
+
+Issue 75 versioned the panel to v3 for transport identities. Regenerating this artifact against the
+v3 inputs moved only the `after` dataset and input hashes; every recorded race outcome, coverage
+count, and warning is identical, and the frozen `before` snapshot is unchanged. The artifact hashed
+to `36c726654f8b0d4aa8b5a90971c4eb9ebeac31db6a410732f9523685b8515979` under panel v2.
 
 The six-source expansion adds 35 decision records across 21 publication races. Tech 4 Taxes contributes
 six race decisions covering seven candidates, and Washington for Peace and Justice contributes 19 race

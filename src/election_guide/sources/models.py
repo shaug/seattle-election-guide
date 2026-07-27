@@ -299,6 +299,8 @@ class SourceRegistry(SourceModel):
 
         in_use: dict[str, str] = {}
         for category in self.categories:
+            if category.code in in_use:
+                raise ValueError(f"category {category.id!r} reuses code {category.code!r}")
             in_use[category.code] = f"category {category.id!r}"
         for source in self.sources:
             if source.code in in_use:

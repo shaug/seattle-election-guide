@@ -606,6 +606,22 @@ def test_registry_rejects_duplicate_source_code() -> None:
         SourceRegistry.model_validate(payload)
 
 
+def test_registry_rejects_duplicate_category_code() -> None:
+    payload = _registry_payload()
+    payload["categories"].append(
+        {
+            "id": "mutual_aid",
+            "code": payload["categories"][0]["code"],
+            "label": "Mutual aid",
+            "selectable": True,
+            "description": "Duplicate transport code.",
+        }
+    )
+
+    with pytest.raises(ValidationError, match="reuses code"):
+        SourceRegistry.model_validate(payload)
+
+
 def test_registry_rejects_case_confusable_source_code() -> None:
     payload = _registry_payload()
     payload["sources"][1]["code"] = payload["sources"][0]["code"].upper()
