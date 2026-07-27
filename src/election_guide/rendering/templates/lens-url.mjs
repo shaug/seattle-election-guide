@@ -51,21 +51,12 @@ function classifyToken(token, context) {
   if (!TOKEN_PATTERN.test(token)) {
     return { ok: false, reason: 'malformed_token', token };
   }
-  if (isCategoryToken(token)) {
-    const category = context.categories.get(token);
-    if (category === undefined) {
-      return { ok: false, reason: confusableReason(token, context.categories), token };
-    }
-    if (!category.selectable) {
-      return { ok: false, reason: 'forbidden_token', token };
-    }
-    return { ok: true, token };
+  const known = isCategoryToken(token) ? context.categories : context.sources;
+  const entry = known.get(token);
+  if (entry === undefined) {
+    return { ok: false, reason: confusableReason(token, known), token };
   }
-  const source = context.sources.get(token);
-  if (source === undefined) {
-    return { ok: false, reason: confusableReason(token, context.sources), token };
-  }
-  if (!source.selectable) {
+  if (!entry.selectable) {
     return { ok: false, reason: 'forbidden_token', token };
   }
   return { ok: true, token };
