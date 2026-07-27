@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import sys
 from collections.abc import Callable
 from fractions import Fraction
@@ -379,7 +380,14 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "Made no endorsement" not in html
     assert "Needs verification" in html
     assert "Comparison only" in html
-    assert "Seattle Times comparison" not in html
+    # The phrase belongs to the customize option (issue 79) and must not leak back
+    # into the source panel or the race-detail rows, which say "Comparison only".
+    customize_dialog = html.split('<dialog class="customize-dialog"')[1].split("</dialog>")[0]
+    assert "Show Seattle Times comparison" in customize_dialog
+    rendered_content = re.sub(r"<script\b.*?</script>", "", html, flags=re.S).replace(
+        customize_dialog, ""
+    )
+    assert "Seattle Times comparison" not in rendered_content
     assert 'data-race-detail-group="comparison"' not in html
     assert "race-detail-source-row-comparison" in html
     assert "See which groups line up with the leading choice" not in html
@@ -2187,3 +2195,78 @@ def _revalidated(view_model: PublicationViewModel) -> PublicationViewModel:
     return PublicationViewModel.model_validate(
         reprojected_personalization(rebuilt).model_dump(mode="json")
     )
+
+
+def _customize_html(tmp_path: Path) -> str:
+    """Render the reference guide the way the other rendering tests do."""
+    return render_html_document(
+        _view_model(tmp_path), read_rendering_configuration(RENDERING_CONFIG)
+    )
+
+
+def test_customize_shell_hides_the_times_comparison_by_default(tmp_path: Path) -> None:
+    """Issue 79: the default responsive load carries no Times pill or decision."""
+    html = _customize_html(tmp_path)
+    stylesheet = html.split("<style>")[1].split("</style>")[0]
+
+    # Hidden in CSS rather than in script, so the default holds before and without JS.
+    assert "html:not(.show-times):not(.detailed-edition) .screen-comparisons" in stylesheet
+    assert (
+        "html:not(.show-times):not(.detailed-edition) .race-detail-source-row-comparison"
+        in stylesheet
+    )
+    assert ".show-times" not in html.split("<style>")[0]
+
+
+def test_customize_shell_exposes_one_action_and_keeps_controls_in_the_dialog(
+    tmp_path: Path,
+) -> None:
+    html = _customize_html(tmp_path)
+    controls = html.split('<section class="screen-controls"')[1].split("</section>")[0]
+
+    assert controls.count("<button") == 1
+    assert "data-customize-open" in controls
+    assert 'aria-haspopup="dialog"' in controls
+
+    dialog = html.split('<dialog class="customize-dialog"')[1].split("</dialog>")[0]
+    assert "data-customize-times" in dialog
+    assert 'aria-labelledby="customize-title"' in dialog
+    # Source selection stays out until the policy is enabled (issue 80 owns it).
+    assert "data-customize-source" not in html
+    assert "data-customize-category" not in html
+
+
+def test_customize_shell_encodes_state_through_the_published_codec(tmp_path: Path) -> None:
+    html = _customize_html(tmp_path)
+    codec = (
+        Path(__file__).parent.parent / "src/election_guide/rendering/templates/lens-url.mjs"
+    ).read_text(encoding="utf-8")
+
+    # The page inlines the codec verbatim rather than restating its rules.
+    assert "export function encodeLensFragment" in codec
+    assert codec.strip() in html
+    assert 'id="lens-bindings"' in html
+    assert "encodeLensFragment(" in html
+    assert "decodeLensFragment(" in html
+
+
+def test_customize_shell_leaves_the_print_comparison_untouched(tmp_path: Path) -> None:
+    html = _customize_html(tmp_path)
+    stylesheet = html.split("<style>")[1].split("</style>")[0]
+    print_block = stylesheet.split("@media print {")[1]
+
+    # The fixed PDF always carries the comparison; only the opener is screen-only.
+    assert ".customize-control, .customize-dialog { display: none; }" in print_block
+    assert "show-times" not in print_block
+    assert "print-times-pick" in stylesheet
+    assert "Read the Times pill" in html
+
+
+def test_customize_shell_describes_the_times_as_optional(tmp_path: Path) -> None:
+    html = _customize_html(tmp_path)
+    hero = html.split('<p class="hero-deck">')[1].split("</p>")[0]
+
+    assert "optional comparison" in hero
+    assert "Customize" in hero
+    assert "The Times is separate and optional" in html
+    assert "hidden by default on screen" in html

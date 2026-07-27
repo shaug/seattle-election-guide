@@ -83,6 +83,9 @@ def render_html_document(
     )
     template = environment.get_template("guide.html.j2")
     stylesheet = (TEMPLATE_DIR / "guide.css").read_text(encoding="utf-8")
+    # The fragment codec ships from its single source; the page inlines it verbatim
+    # inside a module script so the guide stays one self-contained file.
+    lens_url_script = (TEMPLATE_DIR / "lens-url.mjs").read_text(encoding="utf-8")
     rendered_urls = [
         configuration.project_url,
         *(source.evidence_url for source in view_model.sources),
@@ -109,6 +112,7 @@ def render_html_document(
         guide=view_model,
         config=configuration,
         stylesheet=stylesheet,
+        lens_url_script=lens_url_script,
         filter_options=_filter_options(view_model),
         source_by_id=source_by_id,
         source_category_label_by_key=source_category_label_by_key,
@@ -1448,6 +1452,11 @@ def _inspect_print_layout(
         websocket.close()
 
 
+# The screen controls are one select, four radios, and the single Customize button
+# that issue 79 introduces. Personalization controls live inside its dialog, not here.
+EXPECTED_SCREEN_CONTROL_COUNT = 6
+
+
 def _render_screenshot(
     html_path: Path,
     output_path: Path,
@@ -1548,6 +1557,110 @@ def _capture_emulated_viewport(
         cdp.command("Page.enable", session_id=session_id)
         cdp.command("Page.navigate", {"url": url}, session_id=session_id)
         cdp.wait_event("Page.loadEventFired", session_id=session_id)
+        customize_probe = cdp.command(
+            "Runtime.evaluate",
+            {
+                "expression": (
+                    "(async()=>{"
+                    "const pause=()=>new Promise(resolve=>setTimeout(resolve,120));"
+                    "const root=document.documentElement;"
+                    "const opener=document.querySelector('[data-customize-open]');"
+                    "const dialog=document.querySelector('[data-customize-dialog]');"
+                    "const timesInput=document.querySelector('[data-customize-times]');"
+                    "const shownOnScreen=element=>{const style=getComputedStyle(element);"
+                    "const rect=element.getBoundingClientRect();"
+                    "return style.display!=='none'&&style.visibility==='visible'&&"
+                    "rect.width>0&&rect.height>0;};"
+                    "const displayed=element=>getComputedStyle(element).display!=='none';"
+                    "const pills=()=>[...document.querySelectorAll('.comparison')];"
+                    "const rows=()=>[...document.querySelectorAll("
+                    "'.race-detail-source-row-comparison')];"
+                    "const cards=[...document.querySelectorAll('[data-publication-race-id]')];"
+                    "const scored=()=>cards.map(card=>[card.querySelector('.screen-race-result')"
+                    "?.textContent,card.querySelector('.screen-meter')?.textContent,"
+                    "card.querySelector('.screen-race-context')?.textContent].join('|')"
+                    ".replace(/\\s+/g,' ').trim()).join('||');"
+                    "const before=scored();"
+                    "const controlCount=document.querySelectorAll("
+                    "'.screen-controls button,.screen-controls select,.screen-controls input')"
+                    ".length;"
+                    "const hidden={"
+                    "pills:pills().length>0&&pills().every(item=>!shownOnScreen(item)),"
+                    "rows:rows().length>0&&rows().every(item=>!displayed(item)),"
+                    "unchecked:timesInput?.checked===false,"
+                    "noRootClass:!root.classList.contains('show-times'),"
+                    "cleanHash:window.location.hash===''};"
+                    "opener?.click();await pause();"
+                    "const opened={open:Boolean(dialog?.open),"
+                    "focusInside:Boolean(dialog?.contains(document.activeElement)),"
+                    "labelled:Boolean(dialog?.getAttribute('aria-labelledby')&&"
+                    "document.getElementById(dialog.getAttribute('aria-labelledby')))};"
+                    "dialog?.dispatchEvent(new Event('cancel',{cancelable:true}));await pause();"
+                    "const escaped={closed:dialog?.open===false,"
+                    "focusReturned:document.activeElement===opener};"
+                    "opener?.click();await pause();"
+                    "timesInput?.click();await pause();"
+                    "const revealed={rootClass:root.classList.contains('show-times'),"
+                    "pills:pills().every(item=>displayed(item)),"
+                    "rows:rows().every(item=>displayed(item)),"
+                    "lensFragment:window.location.hash.includes('lens=1')&&"
+                    "window.location.hash.includes('times=1')&&"
+                    "window.location.hash.includes('mode=a'),"
+                    "scoringUnchanged:scored()===before};"
+                    "timesInput?.click();await pause();"
+                    "const restored={rootClass:!root.classList.contains('show-times'),"
+                    "cleanHash:window.location.hash==='',scoringUnchanged:scored()===before};"
+                    "dialog?.dispatchEvent(new Event('cancel',{cancelable:true}));await pause();"
+                    "return JSON.stringify({hidden,opened,escaped,revealed,restored,"
+                    "controlCount});})()"
+                ),
+                "returnByValue": True,
+                "awaitPromise": True,
+            },
+            session_id=session_id,
+        )
+        customize_result = cast(dict[str, Any], customize_probe["result"])
+        if "value" not in customize_result:
+            raise ValueError(f"customize validation failed: {customize_probe}")
+        customize_metrics = cast(
+            dict[str, object], json.loads(cast(str, customize_result["value"]))
+        )
+        expected_customize = {
+            "hidden": {
+                "pills": True,
+                "rows": True,
+                "unchecked": True,
+                "noRootClass": True,
+                "cleanHash": True,
+            },
+            "opened": {"open": True, "focusInside": True, "labelled": True},
+            "escaped": {"closed": True, "focusReturned": True},
+            "revealed": {
+                "rootClass": True,
+                "pills": True,
+                "rows": True,
+                "lensFragment": True,
+                "scoringUnchanged": True,
+            },
+            "restored": {"rootClass": True, "cleanHash": True, "scoringUnchanged": True},
+            "controlCount": EXPECTED_SCREEN_CONTROL_COUNT,
+        }
+        if customize_metrics != expected_customize:
+            raise ValueError(f"customize comparison validation failed: {customize_metrics}")
+        # Leave the comparison shown so the checks below still exercise its markup.
+        cdp.command(
+            "Runtime.evaluate",
+            {
+                "expression": (
+                    "document.documentElement.classList.add('show-times');"
+                    "const input=document.querySelector('[data-customize-times]');"
+                    "if(input)input.checked=true;true"
+                ),
+                "returnByValue": True,
+            },
+            session_id=session_id,
+        )
+        time.sleep(0.2)
         evaluated = cdp.command(
             "Runtime.evaluate",
             {
