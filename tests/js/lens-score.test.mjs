@@ -122,15 +122,49 @@ test('the Seattle Times cannot contribute even when selected', () => {
     assert.equal(resolved.sourceCodes.includes(code), false);
     assert.equal(resolved.ignoredCodes.includes(code), true);
   }
+});
 
-  // Even if a caller forces the code past resolution, no cell can be counted.
-  const race = personalization.races.find((item) =>
-    item.cells.some((cell) => comparisonCodes.includes(cell.source_code)),
+test('a forced comparison code cannot be scored in any race that publishes one', () => {
+  const comparisonCodes = personalization.policy.comparison_source_codes;
+
+  // The payload really does publish scorable comparison cells, so this is the
+  // path that matters: a caller assembling codes without resolveSelection.
+  const scorable = personalization.races.filter((race) =>
+    race.cells.some(
+      (cell) =>
+        comparisonCodes.includes(cell.source_code) &&
+        ['endorsement', 'multi_endorsement'].includes(cell.state),
+    ),
   );
-  if (race !== undefined) {
+  assert.ok(scorable.length > 0, 'the comparison source must publish at least one endorsement');
+
+  for (const race of scorable) {
     const forced = scoreRace(race, comparisonCodes, personalization);
-    assert.equal(forced.explicitCount, 0, 'a comparison cell must never be scored');
+
+    assert.equal(forced.explicitCount, 0, `${race.race_id}: a comparison cell was scored`);
+    assert.equal(forced.eligibleCount, 0, `${race.race_id}: a comparison cell entered eligibility`);
+    assert.equal(forced.coveredCount, 0, `${race.race_id}: a comparison cell entered coverage`);
+    assert.deepEqual(forced.standings, [], `${race.race_id}: comparison support appeared`);
+    assert.equal(forced.winnerShare, null);
     assert.equal(forced.grade, 'Insufficient');
+  }
+});
+
+test('forcing the comparison code alongside real sources changes nothing', () => {
+  const comparisonCodes = personalization.policy.comparison_source_codes;
+  const audited = fixture.cases.find((item) => item.name === 'full-panel');
+  const clean = scoreSelection(personalization, audited.selection);
+  const forced = clean.sourceCodes.concat(comparisonCodes);
+
+  for (const race of personalization.races) {
+    const withTimes = scoreRace(race, forced, personalization);
+    const without = scoreRace(race, clean.sourceCodes, personalization);
+
+    assert.deepEqual(
+      withTimes,
+      without,
+      `${race.race_id}: the comparison source altered a personalized result`,
+    );
   }
 });
 

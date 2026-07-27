@@ -85,6 +85,30 @@ function isCategoryCode(code) {
 }
 
 /**
+ * The single owner of who may enter a personalized score.
+ *
+ * Read from the published payload rather than from a caller's argument, so
+ * every entry point is closed over the panel roles the publication declares.
+ * A comparison source is displayed but never scored, and a source the panel
+ * does not publish as selectable can never be selected back in.
+ */
+function panelAdmission(personalization) {
+  const forbidden = new Set(personalization.policy.comparison_source_codes);
+  return {
+    sources: new Map(
+      personalization.sources
+        .filter((item) => item.selectable && !forbidden.has(item.code))
+        .map((item) => [item.code, item]),
+    ),
+    categories: new Map(
+      personalization.categories
+        .filter((item) => item.selectable)
+        .map((item) => [item.code, item]),
+    ),
+  };
+}
+
+/**
  * Resolve the effective source codes for a selection.
  *
  * Direct selections and selected-category memberships combine as a set union,
@@ -94,18 +118,12 @@ function isCategoryCode(code) {
  * what keeps the comparison source out of every personalized score.
  */
 export function resolveSelection(selection, personalization) {
-  const selectableSources = new Map(
-    personalization.sources.filter((item) => item.selectable).map((item) => [item.code, item]),
-  );
-  const selectableCategories = new Map(
-    personalization.categories.filter((item) => item.selectable).map((item) => [item.code, item]),
-  );
-  const forbidden = new Set(personalization.policy.comparison_source_codes);
+  const { sources: admissible, categories: selectableCategories } = panelAdmission(personalization);
 
   const effective = new Set();
   const ignored = [];
   const admit = (code) => {
-    if (!selectableSources.has(code) || forbidden.has(code)) {
+    if (!admissible.has(code)) {
       ignored.push(code);
       return;
     }
@@ -153,7 +171,11 @@ function gradeFor(scoring, explicitCount, winnerShare, isTied) {
  * another district's races even when the caller selects it.
  */
 export function scoreRace(race, effectiveCodes, personalization) {
-  const selected = new Set(effectiveCodes);
+  // Admission is re-derived from the payload here rather than trusted from the
+  // argument: the published cells include the comparison source, so a caller
+  // that assembles codes without resolveSelection must not be able to score it.
+  const admissible = panelAdmission(personalization).sources;
+  const selected = new Set([...effectiveCodes].filter((code) => admissible.has(code)));
   const cells = race.cells.filter((cell) => selected.has(cell.source_code));
 
   const explicit = cells.filter((cell) => SCORED_STATES.has(cell.state));
