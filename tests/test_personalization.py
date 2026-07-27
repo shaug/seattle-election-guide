@@ -41,8 +41,9 @@ SCORING_CONFIG_PATH = PROJECT_ROOT / "config" / "scoring" / "default.yaml"
 NOW = datetime(2026, 7, 23, 17, 10, tzinfo=UTC)
 
 
-def _bundle() -> Any:
-    dataset = CanonicalDataset.model_validate(read_json(DATASET_PATH))
+def _bundle(dataset: CanonicalDataset | None = None) -> Any:
+    if dataset is None:
+        dataset = CanonicalDataset.model_validate(read_json(DATASET_PATH))
     consensus = score_dataset(
         dataset, read_scoring_configuration(SCORING_CONFIG_PATH), computed_at=NOW
     )
@@ -365,12 +366,7 @@ def test_retired_codes_are_published_for_client_migration() -> None:
     dataset, retired_code = _retired_source_code(
         CanonicalDataset.model_validate(read_json(DATASET_PATH))
     )
-    consensus = score_dataset(
-        dataset, read_scoring_configuration(SCORING_CONFIG_PATH), computed_at=NOW
-    )
-    bundle = build_publication_bundle(
-        dataset, consensus, git_commit="0" * 40, snapshot_root=SNAPSHOT_ROOT
-    )
+    bundle = _bundle(dataset)
 
     tombstones = bundle.view_model.personalization.retired_codes
     assert len(tombstones) == 1

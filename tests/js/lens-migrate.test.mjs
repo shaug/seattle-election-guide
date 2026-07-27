@@ -12,6 +12,12 @@ import { migrateLensState } from '../../src/election_guide/rendering/templates/l
  * ever published one panel version, so a hand-built history is the only way
  * to exercise this module at all.
  */
+// The registry admits exactly one comparison-role source per panel
+// (SourceRegistry.validate_registry), so a legal successive-panel pair must
+// keep that count invariant across versions. v1's sole comparison source is
+// 'stim'; the panel's comparison slot passes to 'urbn' by v2, so 'stim'
+// simply falls out of the published sources list (an "excluded" source is
+// never published, matching how excluded-role sources work today).
 const ORIGIN_SNAPSHOT = {
   panel_id: 'wa-2026-primary-default-sources-v1',
   panel_version: 'v1',
@@ -37,17 +43,19 @@ const ORIGIN_SNAPSHOT = {
       selectable: true,
       member_source_codes: ['zret'],
     },
+    { id: 'comparison', code: 'Gcmp', label: 'Comparison', selectable: false, member_source_codes: [] },
   ],
   sources: [
     { id: 'the-stranger', code: 'strn', name: 'The Stranger', panel_role: 'consensus' },
     { id: 'the-urbanist', code: 'urbn', name: 'The Urbanist', panel_role: 'consensus' },
     { id: 'a-retired-outlet', code: 'zret', name: 'A Retired Outlet', panel_role: 'consensus' },
     { id: 'a-dropped-outlet', code: 'zdrp', name: 'A Dropped Outlet', panel_role: 'consensus' },
+    { id: 'seattle-times-editorial-board', code: 'stim', name: 'The Seattle Times', panel_role: 'comparison' },
   ],
 };
 
 const CURRENT_PERSONALIZATION = {
-  policy: { comparison_source_codes: ['stim'] },
+  policy: { comparison_source_codes: ['urbn'] },
   categories: [
     // Labor kept 'strn', gained a genuinely new selectable source 'newp',
     // and lost 'zdrp' (a source dropped without a tombstone). A comparison
@@ -62,9 +70,10 @@ const CURRENT_PERSONALIZATION = {
   sources: [
     { id: 'the-stranger', code: 'strn', panel_role: 'consensus', selectable: true },
     { id: 'a-new-outlet', code: 'newp', panel_role: 'consensus', selectable: true },
-    // the-urbanist's code now names a comparison-only source: reclassified.
+    // the-urbanist's code now names the panel's one comparison source: this
+    // and 'stim' falling out of the sources list together keep the
+    // exactly-one-comparison-source invariant true in both panel versions.
     { id: 'the-urbanist', code: 'urbn', panel_role: 'comparison', selectable: false },
-    { id: 'seattle-times-editorial-board', code: 'stim', panel_role: 'comparison', selectable: false },
   ],
   retired_codes: [
     {
