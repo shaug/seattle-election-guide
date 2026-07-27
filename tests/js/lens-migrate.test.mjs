@@ -16,13 +16,26 @@ const ORIGIN_SNAPSHOT = {
   panel_id: 'wa-2026-primary-default-sources-v1',
   panel_version: 'v1',
   categories: [
-    { id: 'labor', code: 'Glab', label: 'Labor', selectable: true, member_source_codes: ['strn'] },
+    {
+      id: 'labor',
+      code: 'Glab',
+      label: 'Labor',
+      selectable: true,
+      member_source_codes: ['strn', 'zdrp'],
+    },
     {
       id: 'urbanism',
       code: 'Gurb',
       label: 'Urbanism',
       selectable: true,
       member_source_codes: ['urbn'],
+    },
+    {
+      id: 'environmental',
+      code: 'Genv',
+      label: 'Environmental',
+      selectable: true,
+      member_source_codes: ['zret'],
     },
   ],
   sources: [
@@ -36,8 +49,12 @@ const ORIGIN_SNAPSHOT = {
 const CURRENT_PERSONALIZATION = {
   policy: { comparison_source_codes: ['stim'] },
   categories: [
-    { id: 'labor', code: 'Glab', label: 'Labor', selectable: true, member_source_codes: ['strn'] },
+    // Labor kept 'strn' and gained 'urbn' (reclassified in, per below), and
+    // lost 'zdrp' (a source dropped without a tombstone).
+    { id: 'labor', code: 'Glab', label: 'Labor', selectable: true, member_source_codes: ['strn', 'urbn'] },
     // Urbanism was retired outright: the category itself is gone.
+    // Environmental's only member (zret) was retired, leaving it empty.
+    { id: 'environmental', code: 'Genv', label: 'Environmental', selectable: true, member_source_codes: [] },
     { id: 'comparison', code: 'Gcmp', label: 'Comparison', selectable: false, member_source_codes: [] },
   ],
   sources: [
@@ -271,6 +288,64 @@ test('many-to-many category and direct selection both resolve independently', ()
   assert.equal(result.status, 'migrated');
   assert.deepEqual(result.selection.categoryCodes, ['Glab']);
   assert.deepEqual(result.selection.sourceCodes, ['strn']);
+});
+
+test('a surviving category reports which current members are new, given origin history', () => {
+  const result = migrateLensState(
+    staleDecode({ state: { categoryCodes: ['Glab'] } }),
+    CURRENT_PERSONALIZATION,
+    ORIGIN_SNAPSHOT,
+  );
+
+  assert.equal(result.status, 'migrated');
+  const category = result.report.categories.find((item) => item.code === 'Glab');
+  assert.equal(category.status, 'current');
+  assert.deepEqual(category.addedMemberCodes, ['urbn']);
+  assert.deepEqual(category.removedMemberCodes, ['zdrp']);
+});
+
+test('a surviving category reports no membership change without origin history', () => {
+  const result = migrateLensState(
+    staleDecode({ state: { categoryCodes: ['Glab'] } }),
+    CURRENT_PERSONALIZATION,
+    null,
+  );
+
+  const category = result.report.categories[0];
+  assert.equal(category.status, 'current');
+  assert.equal('addedMemberCodes' in category, false);
+  assert.equal('removedMemberCodes' in category, false);
+});
+
+test('a category emptied of every member is unresolved rather than a silent empty selection', () => {
+  // Genv is still selectable in the current panel, but its only member (zret)
+  // was retired, so it can no longer stand for anything. This must reject
+  // even with no origin history available, since it needs none to detect.
+  const result = migrateLensState(
+    staleDecode({ state: { categoryCodes: ['Genv'] } }),
+    CURRENT_PERSONALIZATION,
+    null,
+  );
+
+  assert.equal(result.status, 'rejected');
+  assert.equal(result.reason, 'unresolvable_category');
+  assert.equal(result.category, 'Genv');
+  assert.equal(result.report.categories[0].status, 'unresolved');
+});
+
+test('a multi-code migrated selection is sorted regardless of input order', () => {
+  const result = migrateLensState(
+    staleDecode({ state: { sourceCodes: ['strn', 'zzzz', 'zdrp'] } }),
+    CURRENT_PERSONALIZATION,
+    ORIGIN_SNAPSHOT,
+  );
+
+  assert.equal(result.status, 'migrated');
+  assert.deepEqual(result.selection.sourceCodes, ['strn']);
+  const statuses = Object.fromEntries(
+    result.report.sources.map((item) => [item.code, item.status]),
+  );
+  assert.deepEqual(statuses, { strn: 'current', zdrp: 'removed', zzzz: 'unknown' });
 });
 
 test('the module has no DOM, network, or sibling-lens dependency', () => {

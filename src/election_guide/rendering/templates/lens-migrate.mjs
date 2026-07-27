@@ -12,12 +12,6 @@
 // one migration result. Wiring it into a page, encoding the result back into
 // a shareable link, and scoring it are each owned elsewhere.
 
-const CATEGORY_PREFIX = 'G';
-
-function isCategoryCode(code) {
-  return code.startsWith(CATEGORY_PREFIX);
-}
-
 function retiredEntry(personalization, kind, code) {
   return personalization.retired_codes.find((item) => item.kind === kind && item.code === code);
 }
@@ -25,20 +19,42 @@ function retiredEntry(personalization, kind, code) {
 /**
  * Resolve one category token against the current panel.
  *
- * Any outcome other than a currently selectable category is unresolvable: the
- * category's old meaning cannot be safely re-expressed as "these current
- * members", so the caller must reject the whole migration rather than guess.
+ * Any outcome other than a currently selectable category with at least one
+ * current member is unresolvable: the category's old meaning cannot be
+ * safely re-expressed as "these current members" when there are none, or
+ * when we cannot identify it at all, so the caller must reject the whole
+ * migration rather than guess. When origin history is available the
+ * resolved entry also reports which current members are new and which
+ * origin members are gone, so a caller can disclose the change rather than
+ * silently broadening or narrowing what an equal-weighted selection meant.
  */
-function resolveCategoryToken(code, personalization) {
+function resolveCategoryToken(code, personalization, originSnapshot) {
   const current = personalization.categories.find((item) => item.code === code);
-  if (current !== undefined && current.selectable) {
-    return { code, status: 'current' };
+  if (current !== undefined && current.selectable && current.member_source_codes.length > 0) {
+    const result = { code, status: 'current' };
+    const origin = originSnapshot?.categories.find((item) => item.code === code);
+    if (origin !== undefined) {
+      const originMembers = new Set(origin.member_source_codes);
+      const currentMembers = new Set(current.member_source_codes);
+      result.addedMemberCodes = current.member_source_codes
+        .filter((member) => !originMembers.has(member))
+        .sort();
+      result.removedMemberCodes = origin.member_source_codes
+        .filter((member) => !currentMembers.has(member))
+        .sort();
+    }
+    return result;
   }
   const retired = retiredEntry(personalization, 'category', code);
   if (retired !== undefined) {
     return { code, status: 'retired', formerId: retired.former_id, reason: retired.reason };
   }
-  return { code, status: current === undefined ? 'unknown' : 'unresolved' };
+  if (current !== undefined) {
+    // Selectable but empty, or found and not selectable: identified, but it
+    // can no longer stand for the selection it once represented.
+    return { code, status: 'unresolved' };
+  }
+  return { code, status: 'unknown' };
 }
 
 /**
@@ -73,11 +89,12 @@ function resolveSourceToken(code, personalization, originSnapshot) {
  *
  * `originSnapshot`, if supplied, must be the panel snapshot named by the
  * stale link's own binding (mismatched or absent snapshots are treated the
- * same as not having one): it refines the source report by distinguishing a
- * source that existed at the origin panel and was quietly dropped from one
- * that was never real, but nothing in this module requires it to migrate
- * correctly, since the current panel's cumulative retired-code tombstones
- * already resolve every prior retirement on their own.
+ * same as not having one): it refines the report by distinguishing a source
+ * that existed at the origin panel and was quietly dropped from one that was
+ * never real, and by naming which current category members are new and
+ * which origin members are gone. Nothing in this module requires it to
+ * migrate correctly, since the current panel's cumulative retired-code
+ * tombstones already resolve every prior retirement on their own.
  */
 export function migrateLensState(staleDecode, personalization, originSnapshot = null) {
   const { state, binding } = staleDecode;
@@ -85,7 +102,7 @@ export function migrateLensState(staleDecode, personalization, originSnapshot = 
     originSnapshot !== null && originSnapshot.panel_id === binding.panelId ? originSnapshot : null;
 
   const categoryResults = state.categoryCodes.map((code) =>
-    resolveCategoryToken(code, personalization),
+    resolveCategoryToken(code, personalization, origin),
   );
   const unresolvedCategory = categoryResults.find((result) => result.status !== 'current');
   const sourceResults = state.sourceCodes.map((code) =>

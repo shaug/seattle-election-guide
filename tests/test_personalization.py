@@ -406,3 +406,13 @@ def test_publication_rejects_a_retired_code_still_in_live_use() -> None:
 
     with pytest.raises(ValidationError, match="are still live"):
         PublicationViewModel.model_validate(payload)
+
+
+def test_publication_rejects_a_retired_code_whose_family_contradicts_its_kind() -> None:
+    payload = _view_model_payload()
+    payload["personalization"]["retired_codes"] = [
+        {"code": "zret", "kind": "category", "former_id": "a", "reason": "r"},
+    ]
+
+    with pytest.raises(ValidationError, match="must start with 'G'"):
+        PublicationViewModel.model_validate(payload)

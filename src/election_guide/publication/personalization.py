@@ -90,6 +90,15 @@ class PersonalizationRetiredCode(PersonalizationModel):
     former_id: str = Field(min_length=1)
     reason: str = Field(min_length=1)
 
+    @model_validator(mode="after")
+    def validate_code_family(self) -> PersonalizationRetiredCode:
+        if self.kind == "category":
+            if not self.code.startswith("G"):
+                raise ValueError(f"retired category code {self.code!r} must start with 'G'")
+        else:
+            validated_source_code(self.code)
+        return self
+
 
 class PersonalizationCategory(PersonalizationModel):
     """A selectable grouping resolved against current panel membership."""
