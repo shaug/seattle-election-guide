@@ -658,7 +658,8 @@ def test_no_endorsement_cell_counts_toward_category_coverage(tmp_path: Path) -> 
     registry_payload = base.source_registry.model_dump(mode="json")
     for source in registry_payload["sources"]:
         if source["id"] == CONSENSUS_SOURCE_IDS[3]:
-            source["category"] = "labor"
+            source["reporting_category_id"] = "labor"
+            source["selection_category_ids"] = ["labor"]
     registry = type(base.source_registry).model_validate(registry_payload)
     dataset = CanonicalDataset(
         inventory=base.inventory,

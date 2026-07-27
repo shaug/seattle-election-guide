@@ -53,6 +53,7 @@ from election_guide.publication.models import (
 from election_guide.scoring.models import ConsensusReport, RaceConsensus
 from election_guide.serialization import canonical_json_bytes
 from election_guide.sources.models import Source
+from election_guide.sources.panel import panel_version
 from election_guide.sources.registry import source_registry_hash
 
 ARTIFACT_NAMES = (
@@ -67,16 +68,6 @@ ARTIFACT_NAMES = (
     "provenance_manifest.json",
     "build_manifest.json",
 )
-
-CATEGORY_LABELS = {
-    "progressive_general": "Progressive editorial and general",
-    "democratic_party": "Democratic Party",
-    "transportation_urbanism": "Transportation and urbanism",
-    "environmental": "Environment",
-    "labor": "Labor",
-    "rights_representation": "Rights and representation",
-    "comparison": "Centrist comparison",
-}
 
 SECTION_ORDER = (
     ("federal", "Federal"),
@@ -256,6 +247,9 @@ def _build_view_model(
     active_sources = [
         source for source in dataset.source_registry.sources if source.panel_role != "excluded"
     ]
+    category_labels = {
+        category.id: category.label for category in dataset.source_registry.categories
+    }
     active_source_ids = {source.id for source in active_sources}
     captured_source_ids = {
         capture.source_id for capture in dataset.captures if capture.source_id in active_source_ids
@@ -345,7 +339,7 @@ def _build_view_model(
             category_breakdown=[
                 PublicationCategoryAnalysis(
                     category=item.category,
-                    label=CATEGORY_LABELS[item.category],
+                    label=category_labels[item.category],
                     eligible_source_count=item.eligible_source_count,
                     source_coverage_count=item.source_coverage_count,
                     explicit_endorsement_count=item.explicit_endorsement_count,
@@ -397,7 +391,7 @@ def _build_view_model(
         PublicationSource(
             id=source.id,
             name=source.name,
-            category=source.category,
+            category=source.reporting_category_id,
             panel_role=cast(Literal["consensus", "comparison"], source.panel_role),
             organization_url=source.organization_url,
             evidence_url=source.discovery.canonical_url or source.discovery.requested_url,
@@ -437,7 +431,7 @@ def _build_view_model(
             generated_at=consensus.computed_at,
             data_version=consensus.input_hash[:12],
             source_panel_id=dataset.source_registry.id,
-            source_panel_version=dataset.source_registry.id.rsplit("-", maxsplit=1)[-1],
+            source_panel_version=panel_version(dataset.source_registry.id),
             source_panel_hash=source_registry_hash(dataset.source_registry),
             git_commit=git_commit,
             source_count=len(active_sources),
@@ -584,7 +578,10 @@ def _methodology(dataset: CanonicalDataset, consensus: ConsensusReport) -> Publi
         source for source in dataset.source_registry.sources if source.panel_role != "excluded"
     ]
     active_source_ids = {source.id for source in active_sources}
-    categories = list(dict.fromkeys(source.category for source in active_sources))
+    category_labels = {
+        category.id: category.label for category in dataset.source_registry.categories
+    }
+    categories = list(dict.fromkeys(source.reporting_category_id for source in active_sources))
     categories.sort(key=lambda category: category == "comparison")
     return PublicationMethodology(
         process_steps=[
@@ -612,8 +609,12 @@ def _methodology(dataset: CanonicalDataset, consensus: ConsensusReport) -> Publi
         source_categories=[
             SourceCategoryGroup(
                 category=category,
-                label=CATEGORY_LABELS[category],
-                source_ids=[source.id for source in active_sources if source.category == category],
+                label=category_labels[category],
+                source_ids=[
+                    source.id
+                    for source in active_sources
+                    if source.reporting_category_id == category
+                ],
             )
             for category in categories
         ],
@@ -944,7 +945,7 @@ def _source_csv(dataset: CanonicalDataset) -> bytes:
         {
             "source_id": source.id,
             "name": source.name,
-            "category": source.category,
+            "category": source.reporting_category_id,
             "panel_role": source.panel_role,
             "panel_reason": source.panel_reason,
             "organization_url": source.organization_url,

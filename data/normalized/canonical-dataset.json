@@ -27067,15 +27067,69 @@
   ],
   "schema_version": "1.0",
   "source_registry": {
+    "categories": [
+      {
+        "code": "Ggen",
+        "description": "Progressive editorial boards and general-purpose progressive organizations.",
+        "id": "progressive_general",
+        "label": "Progressive editorial and general",
+        "selectable": true
+      },
+      {
+        "code": "Gdem",
+        "description": "Democratic Party organizations, including legislative-district and caucus bodies.",
+        "id": "democratic_party",
+        "label": "Democratic Party",
+        "selectable": true
+      },
+      {
+        "code": "Gurb",
+        "description": "Transit, housing density, and active-transportation organizations.",
+        "id": "transportation_urbanism",
+        "label": "Transportation and urbanism",
+        "selectable": true
+      },
+      {
+        "code": "Genv",
+        "description": "Conservation and climate organizations.",
+        "id": "environmental",
+        "label": "Environment",
+        "selectable": true
+      },
+      {
+        "code": "Glab",
+        "description": "Unions and labor councils.",
+        "id": "labor",
+        "label": "Labor",
+        "selectable": true
+      },
+      {
+        "code": "Grgt",
+        "description": "Civil-rights, reproductive-rights, immigrant, disability, and representation organizations.",
+        "id": "rights_representation",
+        "label": "Rights and representation",
+        "selectable": true
+      },
+      {
+        "code": "Gcmp",
+        "description": "Comparison-only placement. Comparison sources never enter the progressive score and can never be selected.",
+        "id": "comparison",
+        "label": "Centrist comparison",
+        "selectable": false
+      }
+    ],
     "election_id": "wa-2026-primary",
     "frozen_at": "2026-07-23T17:10:00Z",
-    "id": "wa-2026-primary-default-sources-v2",
+    "id": "wa-2026-primary-default-sources-v3",
     "notes": [
+      "Version 3 adds immutable transport codes and many-to-many selection categories for issue 75; no source, eligibility, discovery, or reporting placement changed, so canonical scoring is identical to version 2.",
       "Version 2 expands the panel after the issue 61 audit; version 1 remains reconstructable at git commit 9faceeaaf7fe13c7f4d9c5c206db192ecd563321.",
       "Six newly evaluated publishers have usable 2026 decisions; Tech 4 Taxes remains attributed to its official site while an organization-specific aggregator capture supplies the temporary retrieval path.",
       "Published means an official 2026 publication was located; it does not imply complete ballot coverage.",
       "Not found is distinct from an explicit no-endorsement decision by an organization.",
-      "Aggregators are normally discovery-only; the temporary Tech 4 Taxes capture exception is documented without changing the named publisher or official source URL."
+      "Aggregators are normally discovery-only; the temporary Tech 4 Taxes capture exception is documented without changing the named publisher or official source URL.",
+      "Transport codes are permanent. Retiring one requires a retired_codes tombstone; codes are never reissued and never differ only by letter case.",
+      "Selection categories were reviewed source by source. A second category is recorded only where the organization's own identity names it, so the two Democratic Party caucuses join their issue category while every other source keeps its single reporting placement."
     ],
     "overlap_groups": [
       {
@@ -27132,10 +27186,11 @@
       }
     ],
     "research_cutoff": "2026-07-23T17:10:00Z",
-    "schema_version": "1.0",
+    "retired_codes": [],
+    "schema_version": "1.1",
     "sources": [
       {
-        "category": "progressive_general",
+        "code": "strn",
         "discovery": {
           "canonical_url": "https://www.thestranger.com/endorsements/the-strangers-2026-primary-election-endorsements/",
           "checked_at": "2026-07-19T23:05:54Z",
@@ -27160,10 +27215,14 @@
         "overlap_group_ids": [],
         "panel_reason": "Named progressive editorial source with an official Seattle-wide 2026 primary guide.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "progressive_general",
+        "selection_category_ids": [
+          "progressive_general"
+        ]
       },
       {
-        "category": "progressive_general",
+        "code": "urbn",
         "discovery": {
           "canonical_url": "https://www.theurbanist.org/2026-primary-election-endorsements/",
           "checked_at": "2026-07-19T23:38:50Z",
@@ -27188,10 +27247,14 @@
         "overlap_group_ids": [],
         "panel_reason": "Named progressive editorial source with an official 2026 primary endorsement page.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "progressive_general",
+        "selection_category_ids": [
+          "progressive_general"
+        ]
       },
       {
-        "category": "progressive_general",
+        "code": "pvot",
         "discovery": {
           "canonical_url": "https://www.progressivevotersguide.com/washington/2026/primary/sample",
           "checked_at": "2026-07-19T23:05:54Z",
@@ -27218,10 +27281,14 @@
         ],
         "panel_reason": "The guide is a Fuse Washington publication, not an independent source organization; counting it would duplicate its publisher and compiled partners.",
         "panel_role": "excluded",
-        "publisher_id": "fuse-washington"
+        "publisher_id": "fuse-washington",
+        "reporting_category_id": "progressive_general",
+        "selection_category_ids": [
+          "progressive_general"
+        ]
       },
       {
-        "category": "progressive_general",
+        "code": "fuse",
         "discovery": {
           "canonical_url": "https://www.fusewashington.org/news/blog/fuses-2026-primary-election-endorsements",
           "checked_at": "2026-07-19T23:05:54Z",
@@ -27248,10 +27315,14 @@
         ],
         "panel_reason": "Named general progressive organization with its own official 2026 endorsement decisions.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "progressive_general",
+        "selection_category_ids": [
+          "progressive_general"
+        ]
       },
       {
-        "category": "progressive_general",
+        "code": "sdsa",
         "discovery": {
           "canonical_url": "https://seattledsa.org/event/jaelynn-scott-37ld-campaign-kick-off-canvass/",
           "checked_at": "2026-07-23T12:30:00Z",
@@ -27276,10 +27347,14 @@
         "overlap_group_ids": [],
         "panel_reason": "Separately governed membership organization with a documented endorsement process and an official 2026 candidate endorsement.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "progressive_general",
+        "selection_category_ids": [
+          "progressive_general"
+        ]
       },
       {
-        "category": "transportation_urbanism",
+        "code": "t4ho",
         "discovery": {
           "canonical_url": "https://bsky.app/profile/tech4housing.org",
           "checked_at": "2026-07-23T12:30:00Z",
@@ -27304,10 +27379,14 @@
         "overlap_group_ids": [],
         "panel_reason": "Separately governed housing advocacy organization with official 2026 candidate endorsement posts.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "transportation_urbanism",
+        "selection_category_ids": [
+          "transportation_urbanism"
+        ]
       },
       {
-        "category": "progressive_general",
+        "code": "t4tx",
         "discovery": {
           "canonical_url": "https://tech4taxes.org/endorsements",
           "checked_at": "2026-07-23T17:04:45Z",
@@ -27332,10 +27411,14 @@
         "overlap_group_ids": [],
         "panel_reason": "Separately governed progressive-tax advocacy organization with an official 2025-2026 candidate endorsement index.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "progressive_general",
+        "selection_category_ids": [
+          "progressive_general"
+        ]
       },
       {
-        "category": "rights_representation",
+        "code": "wpaj",
         "discovery": {
           "canonical_url": "https://www.instagram.com/p/Dax5yPUlKYO/",
           "checked_at": "2026-07-23T15:33:14Z",
@@ -27360,10 +27443,14 @@
         "overlap_group_ids": [],
         "panel_reason": "Separately governed Palestinian-led Washington advocacy organization publishing an official 2026 primary voter guide.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "rights_representation",
+        "selection_category_ids": [
+          "rights_representation"
+        ]
       },
       {
-        "category": "progressive_general",
+        "code": "wcan",
         "discovery": {
           "canonical_url": "https://www.washingtoncan.org/endorsements",
           "checked_at": "2026-07-23T12:30:00Z",
@@ -27388,10 +27475,14 @@
         "overlap_group_ids": [],
         "panel_reason": "Separately governed statewide membership organization with an official 2026 endorsement page.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "progressive_general",
+        "selection_category_ids": [
+          "progressive_general"
+        ]
       },
       {
-        "category": "rights_representation",
+        "code": "snws",
         "discovery": {
           "canonical_url": "https://www.sgn.org/",
           "checked_at": "2026-07-23T12:30:00Z",
@@ -27416,10 +27507,14 @@
         "overlap_group_ids": [],
         "panel_reason": "Independent LGBTQ+ editorial publisher with official 2026 primary endorsement articles.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "rights_representation",
+        "selection_category_ids": [
+          "rights_representation"
+        ]
       },
       {
-        "category": "progressive_general",
+        "code": "wwfp",
         "discovery": {
           "canonical_url": "https://workingfamilies.org/state/washington/",
           "checked_at": "2026-07-19T23:05:54Z",
@@ -27444,10 +27539,14 @@
         "overlap_group_ids": [],
         "panel_reason": "Named progressive political organization with a current official Washington candidate roster.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "progressive_general",
+        "selection_category_ids": [
+          "progressive_general"
+        ]
       },
       {
-        "category": "progressive_general",
+        "code": "wbus",
         "discovery": {
           "canonical_url": "https://www.washingtonbus.org/endorsements",
           "checked_at": "2026-07-19T23:05:54Z",
@@ -27472,10 +27571,14 @@
         "overlap_group_ids": [],
         "panel_reason": "Concrete youth and general-purpose progressive publisher discovered while resolving the proposed constituency-source category.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "progressive_general",
+        "selection_category_ids": [
+          "progressive_general"
+        ]
       },
       {
-        "category": "progressive_general",
+        "code": "sldr",
         "discovery": {
           "canonical_url": "https://www.sageleaders.org/2026-endorsements",
           "checked_at": "2026-07-19T23:05:54Z",
@@ -27500,10 +27603,14 @@
         "overlap_group_ids": [],
         "panel_reason": "Concrete racial-justice and representation publisher discovered while resolving the proposed issue-organization categories.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "progressive_general",
+        "selection_category_ids": [
+          "progressive_general"
+        ]
       },
       {
-        "category": "democratic_party",
+        "code": "wsdm",
         "discovery": {
           "canonical_url": null,
           "checked_at": "2026-07-20T10:00:00Z",
@@ -27530,10 +27637,14 @@
         ],
         "panel_reason": "Named party source retained conditionally where an official endorsement decision is published.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "democratic_party",
+        "selection_category_ids": [
+          "democratic_party"
+        ]
       },
       {
-        "category": "democratic_party",
+        "code": "kcdm",
         "discovery": {
           "canonical_url": "https://www.kcdems.org/our-party/e/2026-endorsements/",
           "checked_at": "2026-07-19T23:38:50Z",
@@ -27560,10 +27671,14 @@
         ],
         "panel_reason": "Named county party organization with an official 2026 endorsement page.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "democratic_party",
+        "selection_category_ids": [
+          "democratic_party"
+        ]
       },
       {
-        "category": "democratic_party",
+        "code": "ld11",
         "discovery": {
           "canonical_url": "https://www.11thlddems.org/2026/05/results-of-our-2026-may-endorsements-meeting/",
           "checked_at": "2026-07-20T14:00:34Z",
@@ -27592,10 +27707,14 @@
         ],
         "panel_reason": "Seattle precinct inventory includes LD 11, so the otherwise-generic proposal for all Seattle-overlapping LD organizations resolves to this source.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "democratic_party",
+        "selection_category_ids": [
+          "democratic_party"
+        ]
       },
       {
-        "category": "democratic_party",
+        "code": "ld32",
         "discovery": {
           "canonical_url": "https://32democrats.org/2026-endorsements/",
           "checked_at": "2026-07-20T14:00:34Z",
@@ -27624,10 +27743,14 @@
         ],
         "panel_reason": "Named LD source and confirmed Seattle-overlapping jurisdiction in the ballot inventory.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "democratic_party",
+        "selection_category_ids": [
+          "democratic_party"
+        ]
       },
       {
-        "category": "democratic_party",
+        "code": "ld34",
         "discovery": {
           "canonical_url": "https://34dems.org/2026-endorsements/",
           "checked_at": "2026-07-20T14:00:34Z",
@@ -27656,10 +27779,14 @@
         ],
         "panel_reason": "Named LD source and confirmed Seattle-overlapping jurisdiction in the ballot inventory.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "democratic_party",
+        "selection_category_ids": [
+          "democratic_party"
+        ]
       },
       {
-        "category": "democratic_party",
+        "code": "ld36",
         "discovery": {
           "canonical_url": "https://36th.org/endorsements-2026/",
           "checked_at": "2026-07-20T14:00:34Z",
@@ -27688,10 +27815,14 @@
         ],
         "panel_reason": "Named LD source and confirmed Seattle-overlapping jurisdiction in the ballot inventory.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "democratic_party",
+        "selection_category_ids": [
+          "democratic_party"
+        ]
       },
       {
-        "category": "democratic_party",
+        "code": "ld37",
         "discovery": {
           "canonical_url": "https://37dems.org/",
           "checked_at": "2026-07-20T14:00:34Z",
@@ -27720,10 +27851,14 @@
         ],
         "panel_reason": "Named LD source with an official 2026 primary endorsement roster and confirmed Seattle-overlapping jurisdiction in the ballot inventory.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "democratic_party",
+        "selection_category_ids": [
+          "democratic_party"
+        ]
       },
       {
-        "category": "democratic_party",
+        "code": "ld43",
         "discovery": {
           "canonical_url": "https://43rddemocrats.org/endorsements/2026",
           "checked_at": "2026-07-20T14:00:34Z",
@@ -27752,10 +27887,14 @@
         ],
         "panel_reason": "Named LD source and confirmed Seattle-overlapping jurisdiction in the ballot inventory.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "democratic_party",
+        "selection_category_ids": [
+          "democratic_party"
+        ]
       },
       {
-        "category": "democratic_party",
+        "code": "ld46",
         "discovery": {
           "canonical_url": "https://www.46dems.org/2026_endorsements",
           "checked_at": "2026-07-20T14:00:34Z",
@@ -27784,10 +27923,14 @@
         ],
         "panel_reason": "Named LD source and confirmed Seattle-overlapping jurisdiction in the ballot inventory.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "democratic_party",
+        "selection_category_ids": [
+          "democratic_party"
+        ]
       },
       {
-        "category": "democratic_party",
+        "code": "wsto",
         "discovery": {
           "canonical_url": "https://www.facebook.com/stonewallwa/posts/1450344363801898/",
           "checked_at": "2026-07-21T15:40:21Z",
@@ -27814,10 +27957,15 @@
         ],
         "panel_reason": "Explicitly proposed LGBTQ and Democratic constituency source with a confirmed active official chapter page.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "democratic_party",
+        "selection_category_ids": [
+          "democratic_party",
+          "rights_representation"
+        ]
       },
       {
-        "category": "transportation_urbanism",
+        "code": "trun",
         "discovery": {
           "canonical_url": "https://transitriders.org/2026-primary-election-endorsements/",
           "checked_at": "2026-07-19T23:05:54Z",
@@ -27842,10 +27990,14 @@
         "overlap_group_ids": [],
         "panel_reason": "Named transportation organization with an official 2026 primary endorsement publication.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "transportation_urbanism",
+        "selection_category_ids": [
+          "transportation_urbanism"
+        ]
       },
       {
-        "category": "transportation_urbanism",
+        "code": "wbik",
         "discovery": {
           "canonical_url": "https://wabikes.org/index.php/2026/07/16/wa-bikes-2026-primary-endorsements-for-better-biking/",
           "checked_at": "2026-07-19T23:05:54Z",
@@ -27872,10 +28024,14 @@
         ],
         "panel_reason": "Named transportation source and the affiliated 501(c)(4) expressly responsible for candidate endorsements.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "transportation_urbanism",
+        "selection_category_ids": [
+          "transportation_urbanism"
+        ]
       },
       {
-        "category": "transportation_urbanism",
+        "code": "cbcl",
         "discovery": {
           "canonical_url": "https://cascade.org/who-we-are/about-us",
           "checked_at": "2026-07-19T23:38:50Z",
@@ -27902,10 +28058,14 @@
         ],
         "panel_reason": "The conditional source does not independently endorse; its affiliated 501(c)(4), Washington Bikes, is the named candidate-endorsement arm.",
         "panel_role": "excluded",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "transportation_urbanism",
+        "selection_category_ids": [
+          "transportation_urbanism"
+        ]
       },
       {
-        "category": "transportation_urbanism",
+        "code": "ssub",
         "discovery": {
           "canonical_url": "https://www.seattlesubway.org/election-endorsements/",
           "checked_at": "2026-07-19T23:05:54Z",
@@ -27930,10 +28090,14 @@
         "overlap_group_ids": [],
         "panel_reason": "Named transportation organization with a current official 2026 endorsement roster.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "transportation_urbanism",
+        "selection_category_ids": [
+          "transportation_urbanism"
+        ]
       },
       {
-        "category": "transportation_urbanism",
+        "code": "tcco",
         "discovery": {
           "canonical_url": "https://transportationchoices.org/",
           "checked_at": "2026-07-19T23:38:50Z",
@@ -27958,10 +28122,14 @@
         "overlap_group_ids": [],
         "panel_reason": "The conditional proposal applies only if the organization endorses; no official candidate endorsement publication was found.",
         "panel_role": "excluded",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "transportation_urbanism",
+        "selection_category_ids": [
+          "transportation_urbanism"
+        ]
       },
       {
-        "category": "transportation_urbanism",
+        "code": "dmob",
         "discovery": {
           "canonical_url": "https://disabilityrightswa.org/",
           "checked_at": "2026-07-19T23:38:50Z",
@@ -27989,10 +28157,14 @@
         "overlap_group_ids": [],
         "panel_reason": "The proposed disability-mobility source is an advocacy program, but no official election endorsement publication was found.",
         "panel_role": "excluded",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "transportation_urbanism",
+        "selection_category_ids": [
+          "transportation_urbanism"
+        ]
       },
       {
-        "category": "environmental",
+        "code": "wcac",
         "discovery": {
           "canonical_url": "https://waconservationaction.org/our-work/areas-of-work/endorsements/",
           "checked_at": "2026-07-19T23:05:54Z",
@@ -28017,10 +28189,14 @@
         "overlap_group_ids": [],
         "panel_reason": "Named environmental source with an official 2026 endorsement page.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "environmental",
+        "selection_category_ids": [
+          "environmental"
+        ]
       },
       {
-        "category": "environmental",
+        "code": "sicl",
         "discovery": {
           "canonical_url": "https://www.sierraclub.org/washington/2026-primary-endorsements",
           "checked_at": "2026-07-20T13:50:28Z",
@@ -28045,10 +28221,14 @@
         "overlap_group_ids": [],
         "panel_reason": "Named environmental publisher with an official Washington chapter 2026 primary endorsement page.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "environmental",
+        "selection_category_ids": [
+          "environmental"
+        ]
       },
       {
-        "category": "environmental",
+        "code": "clsl",
         "discovery": {
           "canonical_url": "https://www.climatesolutions.org/",
           "checked_at": "2026-07-19T23:38:50Z",
@@ -28076,10 +28256,14 @@
         "overlap_group_ids": [],
         "panel_reason": "The conditional proposal applies only if the organization endorses; no official election endorsement program or publication was found.",
         "panel_role": "excluded",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "environmental",
+        "selection_category_ids": [
+          "environmental"
+        ]
       },
       {
-        "category": "environmental",
+        "code": "eccd",
         "discovery": {
           "canonical_url": "https://eccwa.org/wp/endorsements/",
           "checked_at": "2026-07-20T10:00:00Z",
@@ -28106,10 +28290,15 @@
         ],
         "panel_reason": "Concrete environmental-justice and Democratic constituency publisher discovered while resolving the proposed open categories.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "environmental",
+        "selection_category_ids": [
+          "democratic_party",
+          "environmental"
+        ]
       },
       {
-        "category": "labor",
+        "code": "mlkl",
         "discovery": {
           "canonical_url": "https://www.mlklabor.org/endorsements/",
           "checked_at": "2026-07-19T23:38:50Z",
@@ -28136,10 +28325,14 @@
         ],
         "panel_reason": "Named King County labor council with an official current endorsement page.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "labor",
+        "selection_category_ids": [
+          "labor"
+        ]
       },
       {
-        "category": "labor",
+        "code": "wslc",
         "discovery": {
           "canonical_url": "https://wslc.org/wp-content/uploads/2026/05/2026-WSLC-election-endorsements.pdf",
           "checked_at": "2026-07-19T23:05:54Z",
@@ -28166,10 +28359,14 @@
         ],
         "panel_reason": "Named statewide labor council with an official 2026 COPE publication.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "labor",
+        "selection_category_ids": [
+          "labor"
+        ]
       },
       {
-        "category": "labor",
+        "code": "s775",
         "discovery": {
           "canonical_url": "https://seiu775.org/2026endorsements/",
           "checked_at": "2026-07-19T23:05:54Z",
@@ -28196,10 +28393,14 @@
         ],
         "panel_reason": "Concrete publishing SEIU local resolved from the proposed SEIU-locals category.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "labor",
+        "selection_category_ids": [
+          "labor"
+        ]
       },
       {
-        "category": "labor",
+        "code": "s925",
         "discovery": {
           "canonical_url": "https://www.seiu925.org/2026endorsements/",
           "checked_at": "2026-07-19T23:38:50Z",
@@ -28226,10 +28427,14 @@
         ],
         "panel_reason": "Concrete publishing SEIU local resolved from the proposed SEIU-locals category.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "labor",
+        "selection_category_ids": [
+          "labor"
+        ]
       },
       {
-        "category": "labor",
+        "code": "ufcw",
         "discovery": {
           "canonical_url": "https://ufcw3000.org/endorsements",
           "checked_at": "2026-07-19T23:05:54Z",
@@ -28256,10 +28461,14 @@
         ],
         "panel_reason": "Named labor source with an official current endorsement page.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "labor",
+        "selection_category_ids": [
+          "labor"
+        ]
       },
       {
-        "category": "labor",
+        "code": "aftw",
         "discovery": {
           "canonical_url": "https://www.aftwa.org/endorsements-and-elections/our-2026-primary-legislative-endorsements",
           "checked_at": "2026-07-20T10:00:00Z",
@@ -28286,10 +28495,14 @@
         ],
         "panel_reason": "Named education-labor source with an official 2026 primary endorsement page.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "labor",
+        "selection_category_ids": [
+          "labor"
+        ]
       },
       {
-        "category": "labor",
+        "code": "weas",
         "discovery": {
           "canonical_url": "https://www.washingtonea.org/advocacy/wea-pac/2026-endorsements/",
           "checked_at": "2026-07-19T23:38:50Z",
@@ -28316,10 +28529,14 @@
         ],
         "panel_reason": "Named education-labor source with an official 2026 endorsement page.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "labor",
+        "selection_category_ids": [
+          "labor"
+        ]
       },
       {
-        "category": "labor",
+        "code": "wsbt",
         "discovery": {
           "canonical_url": "https://www.wabuildingtrades.org/candidates.html",
           "checked_at": "2026-07-19T23:05:54Z",
@@ -28346,10 +28563,14 @@
         ],
         "panel_reason": "Concrete publishing building-trades source resolved from the proposed building-trades category.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "labor",
+        "selection_category_ids": [
+          "labor"
+        ]
       },
       {
-        "category": "labor",
+        "code": "pr17",
         "discovery": {
           "canonical_url": "https://www.protec17.org/endorsements/",
           "checked_at": "2026-07-19T23:05:54Z",
@@ -28376,10 +28597,14 @@
         ],
         "panel_reason": "Concrete major public-sector union with current Seattle and King County endorsements, resolving the proposed other-major-unions category.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "labor",
+        "selection_category_ids": [
+          "labor"
+        ]
       },
       {
-        "category": "rights_representation",
+        "code": "ppaa",
         "discovery": {
           "canonical_url": "https://www.islandssounder.com/2026/07/15/planned-parenthood-advocacy-organizations-in-washington-announce-supreme-court-endorsements/",
           "checked_at": "2026-07-20T10:00:00Z",
@@ -28404,10 +28629,14 @@
         "overlap_group_ids": [],
         "panel_reason": "Named reproductive-rights publisher with an organization-authored 2026 Washington Supreme Court endorsement announcement.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "rights_representation",
+        "selection_category_ids": [
+          "rights_representation"
+        ]
       },
       {
-        "category": "rights_representation",
+        "code": "oamv",
         "discovery": {
           "canonical_url": "https://oavotes.org/our-work/endorsements/2026-endorsements/",
           "checked_at": "2026-07-19T23:38:50Z",
@@ -28432,10 +28661,14 @@
         "overlap_group_ids": [],
         "panel_reason": "Named immigrant-rights publisher with an official 2026 endorsement page.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "rights_representation",
+        "selection_category_ids": [
+          "rights_representation"
+        ]
       },
       {
-        "category": "rights_representation",
+        "code": "alrs",
         "discovery": {
           "canonical_url": "https://gunresponsibility.org/2026-endorsements/",
           "checked_at": "2026-07-19T23:38:50Z",
@@ -28460,10 +28693,14 @@
         "overlap_group_ids": [],
         "panel_reason": "Named issue organization with an official 2026 endorsement page.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "rights_representation",
+        "selection_category_ids": [
+          "rights_representation"
+        ]
       },
       {
-        "category": "rights_representation",
+        "code": "whal",
         "discovery": {
           "canonical_url": "https://www.wahousingalliance.org/endorsements",
           "checked_at": "2026-07-19T23:05:54Z",
@@ -28488,10 +28725,14 @@
         "overlap_group_ids": [],
         "panel_reason": "Current official successor branding for the proposed Washington Housing Alliance Action Fund source, with a 2026 endorsement page.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "rights_representation",
+        "selection_category_ids": [
+          "rights_representation"
+        ]
       },
       {
-        "category": "rights_representation",
+        "code": "nwpc",
         "discovery": {
           "canonical_url": "https://www.nwpcwa.org/endorsements_2026",
           "checked_at": "2026-07-19T23:05:54Z",
@@ -28516,10 +28757,14 @@
         "overlap_group_ids": [],
         "panel_reason": "Named representation and reproductive-rights organization with an official 2026 endorsement page.",
         "panel_role": "consensus",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "rights_representation",
+        "selection_category_ids": [
+          "rights_representation"
+        ]
       },
       {
-        "category": "comparison",
+        "code": "stim",
         "discovery": {
           "canonical_url": "https://www.seattletimes.com/opinion/editorials/seattle-times-endorsements-aug-4-2026-primary/",
           "checked_at": "2026-07-20T10:00:00Z",
@@ -28544,7 +28789,11 @@
         "overlap_group_ids": [],
         "panel_reason": "DECISIONS requires Seattle Times recommendations to remain separate from the progressive consensus.",
         "panel_role": "comparison",
-        "publisher_id": null
+        "publisher_id": null,
+        "reporting_category_id": "comparison",
+        "selection_category_ids": [
+          "comparison"
+        ]
       }
     ]
   }

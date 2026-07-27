@@ -59,7 +59,7 @@ def render_discovery_report(registry: SourceRegistry) -> str:
             + " | ".join(
                 (
                     _escape(source.name),
-                    CATEGORY_LABELS[source.category],
+                    CATEGORY_LABELS[source.reporting_category_id],
                     source.panel_role,
                     discovery.status,
                     f"[official page]({record_url})",

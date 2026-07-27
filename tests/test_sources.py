@@ -12,7 +12,12 @@ from election_guide.normalization.models import CanonicalDataset
 from election_guide.normalization.records import new_normalized_endorsement
 from election_guide.serialization import read_json
 from election_guide.sources.models import SourceRegistry
-from election_guide.sources.registry import read_source_registry, validate_registry_inventory
+from election_guide.sources.panel import build_panel_snapshot
+from election_guide.sources.registry import (
+    read_source_registry,
+    source_registry_hash,
+    validate_registry_inventory,
+)
 from election_guide.sources.report import render_discovery_report
 
 PROJECT_ROOT = Path(__file__).parent.parent
@@ -426,12 +431,295 @@ def test_registry_file_rejects_duplicate_yaml_keys(tmp_path: Path) -> None:
     text = REGISTRY_PATH.read_text(encoding="utf-8")
     path = tmp_path / "duplicate.yaml"
     path.write_text(
-        text.replace('schema_version: "1.0"', 'schema_version: "1.0"\nschema_version: "1.0"', 1),
+        text.replace('schema_version: "1.1"', 'schema_version: "1.1"\nschema_version: "1.1"', 1),
         encoding="utf-8",
     )
 
     with pytest.raises(ValueError, match="duplicate mapping key 'schema_version'"):
         read_source_registry(path)
+
+
+EXPECTED_SOURCE_CODES = {
+    "the-stranger": "strn",
+    "the-urbanist": "urbn",
+    "progressive-voters-guide": "pvot",
+    "fuse-washington": "fuse",
+    "seattle-democratic-socialists": "sdsa",
+    "tech-4-housing": "t4ho",
+    "tech-4-taxes": "t4tx",
+    "washington-for-peace-and-justice": "wpaj",
+    "washington-community-action-network": "wcan",
+    "seattle-gay-news": "snws",
+    "washington-working-families-party": "wwfp",
+    "washington-bus": "wbus",
+    "sage-leaders": "sldr",
+    "washington-state-democrats": "wsdm",
+    "king-county-democrats": "kcdm",
+    "11th-district-democrats": "ld11",
+    "32nd-district-democrats": "ld32",
+    "34th-district-democrats": "ld34",
+    "36th-district-democrats": "ld36",
+    "37th-district-democrats": "ld37",
+    "43rd-district-democrats": "ld43",
+    "46th-district-democrats": "ld46",
+    "washington-stonewall-democrats": "wsto",
+    "transit-riders-union": "trun",
+    "washington-bikes": "wbik",
+    "cascade-bicycle-club": "cbcl",
+    "seattle-subway": "ssub",
+    "transportation-choices-coalition": "tcco",
+    "disability-mobility-initiative": "dmob",
+    "washington-conservation-action": "wcac",
+    "sierra-club-washington": "sicl",
+    "climate-solutions": "clsl",
+    "environmental-climate-caucus-wa-democrats": "eccd",
+    "mlk-labor": "mlkl",
+    "washington-state-labor-council": "wslc",
+    "seiu-775": "s775",
+    "seiu-925": "s925",
+    "ufcw-3000": "ufcw",
+    "aft-washington": "aftw",
+    "washington-education-association": "weas",
+    "washington-state-building-trades": "wsbt",
+    "protec17": "pr17",
+    "planned-parenthood-alliance-advocates": "ppaa",
+    "oneamerica-votes": "oamv",
+    "alliance-for-gun-responsibility": "alrs",
+    "washington-housing-alliance": "whal",
+    "nwpc-washington": "nwpc",
+    "seattle-times-editorial-board": "stim",
+}
+
+
+def test_committed_source_codes_are_immutable_and_reserve_category_letters() -> None:
+    registry = read_source_registry(REGISTRY_PATH)
+
+    assert {source.id: source.code for source in registry.sources} == EXPECTED_SOURCE_CODES
+    codes = [source.code for source in registry.sources]
+    assert len(codes) == len(set(codes))
+    assert len(codes) == len({code.casefold() for code in codes})
+    for code in codes:
+        assert len(code) == 4
+        assert code.isascii() and code.isalnum()
+        assert "G" not in code and "g" not in code
+
+
+def test_category_catalog_publishes_selectable_transport_identities() -> None:
+    registry = read_source_registry(REGISTRY_PATH)
+
+    assert {category.id: category.code for category in registry.categories} == {
+        "progressive_general": "Ggen",
+        "democratic_party": "Gdem",
+        "transportation_urbanism": "Gurb",
+        "environmental": "Genv",
+        "labor": "Glab",
+        "rights_representation": "Grgt",
+        "comparison": "Gcmp",
+    }
+    assert all(category.code.startswith("G") for category in registry.categories)
+    assert not registry.category_by_id("comparison").selectable
+    assert all(
+        category.selectable for category in registry.categories if category.id != "comparison"
+    )
+
+
+def test_every_consensus_source_carries_a_selectable_reporting_placement() -> None:
+    registry = read_source_registry(REGISTRY_PATH)
+
+    for source in registry.sources:
+        assert source.reporting_category_id in source.selection_category_ids
+        if source.panel_role == "consensus":
+            assert any(
+                registry.category_by_id(category_id).selectable
+                for category_id in source.selection_category_ids
+            )
+
+
+def test_declared_second_categories_keep_their_reporting_placement() -> None:
+    registry = read_source_registry(REGISTRY_PATH)
+    multi = {
+        source.id: source.selection_category_ids
+        for source in registry.sources
+        if len(source.selection_category_ids) > 1
+    }
+
+    assert multi == {
+        "washington-stonewall-democrats": ["democratic_party", "rights_representation"],
+        "environmental-climate-caucus-wa-democrats": ["democratic_party", "environmental"],
+    }
+    stonewall = next(
+        source for source in registry.sources if source.id == "washington-stonewall-democrats"
+    )
+    caucus = next(
+        source
+        for source in registry.sources
+        if source.id == "environmental-climate-caucus-wa-democrats"
+    )
+    assert stonewall.reporting_category_id == "democratic_party"
+    assert caucus.reporting_category_id == "environmental"
+
+
+def test_comparison_and_excluded_sources_cannot_become_selectable_through_metadata() -> None:
+    registry = read_source_registry(REGISTRY_PATH)
+    times = next(
+        source for source in registry.sources if source.id == "seattle-times-editorial-board"
+    )
+    excluded = next(
+        source for source in registry.sources if source.id == "progressive-voters-guide"
+    )
+
+    assert not times.is_selectable
+    assert not excluded.is_selectable
+    assert registry.selectable_source_codes("comparison") == []
+    assert excluded.reporting_category_id == "progressive_general"
+    assert excluded.code not in registry.selectable_source_codes("progressive_general")
+    assert {source.code for source in registry.sources if source.is_selectable} == {
+        source.code for source in registry.sources if source.panel_role == "consensus"
+    }
+
+
+def test_selection_categories_are_accepted_sorted_and_deduplicated() -> None:
+    payload = _registry_payload()
+    source = next(item for item in payload["sources"] if item["id"] == "mlk-labor")
+    source["selection_category_ids"] = ["rights_representation", "labor", "labor"]
+
+    registry = SourceRegistry.model_validate(payload)
+
+    assert next(
+        item for item in registry.sources if item.id == "mlk-labor"
+    ).selection_category_ids == ["labor", "rights_representation"]
+
+
+def test_registry_rejects_source_code_using_reserved_category_letter() -> None:
+    payload = _registry_payload()
+    payload["sources"][0]["code"] = "Gstr"
+
+    with pytest.raises(ValidationError, match="uses category-reserved"):
+        SourceRegistry.model_validate(payload)
+
+
+def test_registry_rejects_duplicate_source_code() -> None:
+    payload = _registry_payload()
+    payload["sources"][1]["code"] = payload["sources"][0]["code"]
+
+    with pytest.raises(ValidationError, match="reuses code"):
+        SourceRegistry.model_validate(payload)
+
+
+def test_registry_rejects_duplicate_category_code() -> None:
+    payload = _registry_payload()
+    payload["categories"].append(
+        {
+            "id": "mutual_aid",
+            "code": payload["categories"][0]["code"],
+            "label": "Mutual aid",
+            "selectable": True,
+            "description": "Duplicate transport code.",
+        }
+    )
+
+    with pytest.raises(ValidationError, match="reuses code"):
+        SourceRegistry.model_validate(payload)
+
+
+def test_registry_rejects_case_confusable_source_code() -> None:
+    payload = _registry_payload()
+    payload["sources"][1]["code"] = payload["sources"][0]["code"].upper()
+
+    with pytest.raises(ValidationError, match="confusable"):
+        SourceRegistry.model_validate(payload)
+
+
+def test_registry_rejects_reissued_retired_code() -> None:
+    payload = _registry_payload()
+    payload["retired_codes"] = [
+        {
+            "code": payload["sources"][0]["code"],
+            "kind": "source",
+            "former_id": "retired-organization",
+            "retired_in_panel": "wa-2026-primary-default-sources-v3",
+            "reason": "Withdrawn before publication.",
+        }
+    ]
+
+    with pytest.raises(ValidationError, match="was reissued to"):
+        SourceRegistry.model_validate(payload)
+
+
+def test_registry_rejects_retired_code_confusable_with_an_active_code() -> None:
+    payload = _registry_payload()
+    payload["retired_codes"] = [
+        {
+            "code": payload["sources"][0]["code"].upper(),
+            "kind": "source",
+            "former_id": "retired-organization",
+            "retired_in_panel": "wa-2026-primary-default-sources-v3",
+            "reason": "Withdrawn before publication.",
+        }
+    ]
+
+    with pytest.raises(ValidationError, match="confusable with the code of"):
+        SourceRegistry.model_validate(payload)
+
+
+def test_registry_rejects_unknown_selection_category() -> None:
+    payload = _registry_payload()
+    payload["sources"][0]["selection_category_ids"] = ["progressive_general", "mutual_aid"]
+
+    with pytest.raises(ValidationError, match="unknown categories"):
+        SourceRegistry.model_validate(payload)
+
+
+def test_registry_rejects_reporting_category_outside_selection_categories() -> None:
+    payload = _registry_payload()
+    source = next(item for item in payload["sources"] if item["id"] == "mlk-labor")
+    source["selection_category_ids"] = ["rights_representation"]
+
+    with pytest.raises(ValidationError, match="must also be a selection category"):
+        SourceRegistry.model_validate(payload)
+
+
+def test_registry_rejects_selectable_category_on_the_comparison_source() -> None:
+    payload = _registry_payload()
+    times = next(
+        item for item in payload["sources"] if item["id"] == "seattle-times-editorial-board"
+    )
+    times["selection_category_ids"] = ["comparison", "progressive_general"]
+
+    with pytest.raises(ValidationError, match="cannot join another selection category"):
+        SourceRegistry.model_validate(payload)
+
+
+def test_panel_snapshot_publishes_the_downstream_identity_contract() -> None:
+    registry = read_source_registry(REGISTRY_PATH)
+
+    snapshot = build_panel_snapshot(registry)
+
+    assert snapshot == build_panel_snapshot(registry)
+    assert snapshot.panel_id == registry.id
+    assert snapshot.panel_version == "v3"
+    assert snapshot.panel_hash == source_registry_hash(registry)
+    assert [item.code for item in snapshot.categories] == [
+        category.code for category in registry.categories
+    ]
+    assert {item.code for item in snapshot.sources} == set(EXPECTED_SOURCE_CODES.values())
+    labor = next(item for item in snapshot.categories if item.id == "labor")
+    assert labor.member_source_codes == sorted(labor.member_source_codes)
+    assert "mlkl" in labor.member_source_codes
+    assert next(item for item in snapshot.categories if item.id == "comparison").selectable is False
+
+
+def test_panel_snapshot_category_membership_follows_current_sources() -> None:
+    payload = _registry_payload()
+    source = next(item for item in payload["sources"] if item["id"] == "transit-riders-union")
+    source["selection_category_ids"] = ["labor", "transportation_urbanism"]
+
+    snapshot = build_panel_snapshot(SourceRegistry.model_validate(payload))
+
+    labor = next(item for item in snapshot.categories if item.id == "labor")
+    assert "trun" in labor.member_source_codes
+    transit = next(item for item in snapshot.sources if item.code == "trun")
+    assert transit.reporting_category_id == "transportation_urbanism"
 
 
 def _registry_payload() -> dict[str, Any]:
