@@ -56,10 +56,10 @@ def _view_model_payload() -> dict[str, Any]:
     return copy.deepcopy(_bundle().view_model.model_dump(mode="json"))
 
 
-def test_release_policy_keeps_personalization_disabled_and_audited_by_default() -> None:
+def test_release_policy_enables_personalization_and_defaults_to_audited() -> None:
     policy = _bundle().view_model.personalization.policy
 
-    assert policy.enabled is False
+    assert policy.enabled is True
     assert policy.default_mode == "audited"
     assert policy.modes == ["audited", "sources"]
     assert policy.selection_combination == "additive_union"
