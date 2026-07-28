@@ -18,6 +18,7 @@ from election_guide.hosting.models import (
     SiteManifest,
 )
 from election_guide.release.models import ReleaseManifest, ReleaseStatus
+from election_guide.rendering.renderer import TEMPLATE_DIR
 from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
 
 PAGES_HEADERS = """/*
@@ -423,9 +424,6 @@ def _archive_html(site_manifest: SiteManifest) -> str:
 """
 
 
-_TEMPLATES_DIR = Path(__file__).parents[1] / "rendering" / "templates"
-
-
 def _about_html(site_manifest: SiteManifest) -> str:
     current = next(
         election
@@ -437,8 +435,8 @@ def _about_html(site_manifest: SiteManifest) -> str:
     # Shared verbatim with the rendered guide (src/election_guide/rendering/
     # renderer.py) so the design tokens, accessibility utilities, and the
     # share/copy-link fallback policy have exactly one implementation each.
-    base_css = (_TEMPLATES_DIR / "base.css").read_text(encoding="utf-8")
-    share_link_script = (_TEMPLATES_DIR / "share-link.mjs").read_text(encoding="utf-8")
+    base_css = (TEMPLATE_DIR / "base.css").read_text(encoding="utf-8")
+    share_link_script = (TEMPLATE_DIR / "share-link.mjs").read_text(encoding="utf-8")
     description = (
         "How this guide aggregates organizational endorsements, why the source panel is "
         "versioned, how to verify a result, and how to report a correction."
