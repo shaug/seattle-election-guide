@@ -938,6 +938,18 @@ def test_nonempty_render_destination_is_preserved(tmp_path: Path) -> None:
     assert marker.read_text(encoding="utf-8") == "owned by another generation"
 
 
+def _recommendation_tag_pattern(label: str) -> re.Pattern[str]:
+    """Match a rendered recommendation `<h3>` around its exact label text.
+
+    The opening tag may carry an additional `data-lens-hidden` attribute when
+    the personalization policy is enabled, so match it with `[^>]*` rather
+    than assuming a bare tag.
+    """
+    return re.compile(
+        r'(<h3 data-display-role="recommendation"[^>]*>)' + re.escape(label) + r"(</h3>)"
+    )
+
+
 def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path: Path) -> None:
     view_model = _visual_view_model(_view_model(tmp_path / "fixture"))
     view_model_path = tmp_path / "publication_view_model.json"
@@ -1159,13 +1171,7 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     assert not duplicate_row_check.passed
 
     race_with_alternative = next(race for race in races if race.alternatives)
-    # The opening tag may carry an additional `data-lens-hidden` attribute when the
-    # personalization policy is enabled, so match it rather than assuming no attributes.
-    recommendation_pattern = re.compile(
-        r'(<h3 data-display-role="recommendation"[^>]*>)'
-        + re.escape(race_with_alternative.recommendation_label)
-        + r"(</h3>)"
-    )
+    recommendation_pattern = _recommendation_tag_pattern(race_with_alternative.recommendation_label)
     replacement_label = race_with_alternative.alternatives[0].candidate_label
     wrong_recommendation_html = tmp_path / "wrong-recommendation.html"
     wrong_recommendation_html.write_text(
@@ -1338,14 +1344,9 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     )
     assert not wrong_group_check.passed
 
-    # Match the actual rendered opening tag rather than assuming no attributes: it may
-    # carry an additional `data-lens-hidden` attribute when the policy is enabled.
-    recommendation_match = re.search(
-        r'<h3 data-display-role="recommendation"[^>]*>'
-        + re.escape(race_with_alternative.recommendation_label)
-        + r"</h3>",
-        rendered.html_path.read_text(encoding="utf-8"),
-    )
+    recommendation_match = _recommendation_tag_pattern(
+        race_with_alternative.recommendation_label
+    ).search(rendered.html_path.read_text(encoding="utf-8"))
     assert recommendation_match is not None
     recommendation_element = recommendation_match.group(0)
     for index, replacement in enumerate(
@@ -2340,18 +2341,19 @@ def test_customize_shell_hides_a_comparison_only_candidate_by_default() -> None:
     assert "data-times-only" not in _candidate_section(html, contributing_id)
 
 
-def _personalization_enabled_view_model(tmp_path: Path) -> PublicationViewModel:
-    """The customize fixture with the lens policy enabled, for issue 80's UI."""
+def _personalization_view_model(tmp_path: Path, *, enabled: bool) -> PublicationViewModel:
+    """The customize fixture with the lens policy forced to `enabled`."""
     view_model = _view_model(tmp_path)
-    enabled_policy = view_model.personalization.policy.model_copy(update={"enabled": True})
+    policy = view_model.personalization.policy.model_copy(update={"enabled": enabled})
     view_model = view_model.model_copy(
-        update={
-            "personalization": view_model.personalization.model_copy(
-                update={"policy": enabled_policy}
-            )
-        }
+        update={"personalization": view_model.personalization.model_copy(update={"policy": policy})}
     )
     return _revalidated(view_model)
+
+
+def _personalization_enabled_view_model(tmp_path: Path) -> PublicationViewModel:
+    """The customize fixture with the lens policy enabled, for issue 80's UI."""
+    return _personalization_view_model(tmp_path, enabled=True)
 
 
 def _personalization_disabled_view_model(tmp_path: Path) -> PublicationViewModel:
@@ -2361,16 +2363,7 @@ def _personalization_disabled_view_model(tmp_path: Path) -> PublicationViewModel
     path stays covered in case a future release ever needs to turn it back
     off.
     """
-    view_model = _view_model(tmp_path)
-    disabled_policy = view_model.personalization.policy.model_copy(update={"enabled": False})
-    view_model = view_model.model_copy(
-        update={
-            "personalization": view_model.personalization.model_copy(
-                update={"policy": disabled_policy}
-            )
-        }
-    )
-    return _revalidated(view_model)
+    return _personalization_view_model(tmp_path, enabled=False)
 
 
 def _evaluate_in_chrome(
