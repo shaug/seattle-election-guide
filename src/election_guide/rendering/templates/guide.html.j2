@@ -671,8 +671,14 @@
     "policy": {
       "maximum_url_characters": guide.personalization.policy.maximum_url_characters
     },
-    "categories": (lens_personalization.categories if guide.personalization.policy.enabled else []),
-    "sources": (lens_personalization.sources if guide.personalization.policy.enabled else [])
+    "categories": (
+      lens_personalization.categories if guide.personalization.policy.enabled
+      else (lens_personalization.categories | selectattr('panel_role', 'equalto', 'comparison') | list)
+    ),
+    "sources": (
+      lens_personalization.sources if guide.personalization.policy.enabled
+      else (lens_personalization.sources | selectattr('panel_role', 'equalto', 'comparison') | list)
+    )
   } | tojson }}</script>
   {% if guide.personalization.policy.enabled %}
   <script type="application/json" id="lens-personalization">{{ lens_personalization | tojson }}</script>
@@ -702,10 +708,13 @@
     else if (result === 'failed') shareGuideStatus.textContent = `Copy failed. Link: ${value}`;
   });
 
-  // Categories and sources are empty while personalization is disabled, so no
-  // source or category is selectable here yet. A shared link that carries a
-  // selection therefore decodes as malformed and falls back to audited, which
-  // is the intended behavior until the policy is enabled.
+  // Tallying categories and sources are empty while personalization is
+  // disabled, so no tallying selection is possible here yet: a shared link
+  // that carries one decodes as malformed and falls back to audited, which is
+  // the intended behavior until the policy is enabled. The comparison
+  // source/category stay present either way (issue 96), since showing the
+  // comparison predates and is independent of the newer personalization
+  // policy.
   const context = lensContext(bindings, bindings.data_version);
   // A comparison source's own selected state is the only Times visibility
   // signal the fragment carries (issue 96): resolve its code(s) once here so
@@ -1163,7 +1172,19 @@
     lensNotice.hidden = false;
     lensNotice.textContent = initialLensOutcome.notice;
   }
+  if (initialLensOutcome.state === null && initialLensOutcome.notice) {
+    // A malformed or unmigratable link falls back to the audited consensus;
+    // clear it from the address bar so a reload or copy reproduces that
+    // resolved state instead of failing the same way again.
+    history.replaceState(history.state, '', `${window.location.pathname}${window.location.search}`);
+  }
   applyMode(initialLensOutcome.state);
+  {% else %}
+  // A malformed lens fragment must not linger in the address bar even though
+  // nothing here reads its selection; a reload or copy must not reproduce it.
+  if (decodeLensFragment(window.location.hash, context).status === 'malformed') {
+    history.replaceState(history.state, '', `${window.location.pathname}${window.location.search}`);
+  }
   {% endif %}
 
   // The native modal gives focus containment, Escape, and the backdrop for free,
