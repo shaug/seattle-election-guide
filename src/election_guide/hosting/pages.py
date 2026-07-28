@@ -469,12 +469,11 @@ def _about_html(site_manifest: SiteManifest) -> str:
       padding: 1.25rem clamp(1rem, 4vw, 2.5rem); border-bottom: .4rem solid var(--teal);
     }}
     .page-header p {{
-      margin: 0; font-size: .78rem; font-weight: 800;
+      min-width: 0; margin: 0; font-size: .78rem; font-weight: 800;
       letter-spacing: .1em; text-transform: uppercase;
     }}
-    .page-header nav a {{
-      color: #9ee7df; font-weight: 800; font-size: .85rem; white-space: nowrap;
-    }}
+    .page-header nav {{ min-width: 0; }}
+    .page-header nav a {{ color: #9ee7df; font-weight: 800; font-size: .85rem; }}
     main {{ padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 3rem; }}
     main h1 {{
       margin: 0 0 .35rem; color: var(--navy);
