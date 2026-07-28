@@ -910,7 +910,16 @@
    * this race actually diverges, so an unchanged race stays free of
    * redundant audited detail.
    */
-  const renderRaceLens = (raceId, card, personalizedByRaceId, resolvedSourceCodes) => {
+  const coveredCellStates = new Set(['endorsement', 'multi_endorsement', 'no_endorsement']);
+
+  const renderRaceLens = (
+    raceId,
+    card,
+    personalizedByRaceId,
+    resolvedSourceCodes,
+    checkedCategories,
+    directSources,
+  ) => {
     const personalized = personalizedByRaceId.get(raceId);
     const audited = auditedByRaceId.get(raceId);
     if (!personalized || !audited) return;
@@ -964,16 +973,15 @@
     const sourcesEl = card.querySelector('[data-lens-detail-sources]');
     if (sourcesEl) {
       const race = raceDataById.get(raceId);
-      const checkedCategories = new Set(checkedCategoryCodes());
-      const directSources = new Set(checkedSourceCodes());
       // "Contributing" means this race actually has a cell to show for the
       // source: eligible, selected, and covered (an explicit endorsement or
       // an on-record no-pick), the same states lens-score.mjs's own coverage
       // set counts. A selected-but-not-covered source has nothing to list.
-      const coveredStates = new Set(['endorsement', 'multi_endorsement', 'no_endorsement']);
       sourcesEl.replaceChildren(
         ...(race?.cells ?? [])
-          .filter((cell) => resolvedSourceCodes.includes(cell.source_code) && coveredStates.has(cell.state))
+          .filter(
+            (cell) => resolvedSourceCodes.includes(cell.source_code) && coveredCellStates.has(cell.state),
+          )
           .map((cell) => {
             const item = document.createElement('li');
             const reasons = inclusionReasons(cell.source_code, checkedCategories, directSources);
@@ -998,9 +1006,11 @@
       if (lensBanner) lensBanner.hidden = true;
       return null;
     }
+    const checkedCategories = new Set(checkedCategoryCodes());
+    const directSources = new Set(checkedSourceCodes());
     const selection = {
-      categoryCodes: checkedCategoryCodes(),
-      sourceCodes: checkedSourceCodes(),
+      categoryCodes: [...checkedCategories],
+      sourceCodes: [...directSources],
     };
     const results = scoreSelection(personalization, selection);
     if (lensBanner) {
@@ -1011,7 +1021,14 @@
     }
     const personalizedByRaceId = new Map(results.races.map((race) => [race.raceId, race]));
     raceCards.forEach((card, raceId) => {
-      renderRaceLens(raceId, card, personalizedByRaceId, results.sourceCodes);
+      renderRaceLens(
+        raceId,
+        card,
+        personalizedByRaceId,
+        results.sourceCodes,
+        checkedCategories,
+        directSources,
+      );
     });
     return results;
   };
