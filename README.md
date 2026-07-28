@@ -22,7 +22,9 @@ gate are also implemented. Responsive HTML and the
 two-page US Letter guide now present candidate-centric endorsement consensus without voter-facing
 letter grades, while retaining the complete source matrix and scoring artifacts for audit. Public
 guides are composed into a manifest-backed archive under stable `/e/<election-id>/` routes; the
-bare domain temporarily redirects to the explicitly declared current election.
+bare domain temporarily redirects to the explicitly declared current election. A site-wide
+`/about/` page explains the methodology, source-panel versioning, and correction path in plain
+language for voters, with reciprocal navigation to and from every guide.
 See [PROJECT.md](PROJECT.md) for the
 product specification, [DECISIONS.md](DECISIONS.md) for the launch contract,
 [docs/ELECTION_INITIALIZATION.md](docs/ELECTION_INITIALIZATION.md) for starting future elections,

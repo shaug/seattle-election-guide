@@ -79,6 +79,15 @@ def test_stage_pages_site_composes_verified_election_archive(tmp_path: Path) -> 
     assert '<link rel="canonical" href="https://seattleelections.guide/e/">' in archive
     assert "noindex" not in archive
 
+    about = (output / "about" / "index.html").read_text(encoding="utf-8")
+    assert '<link rel="canonical" href="https://seattleelections.guide/about/">' in about
+    assert '<meta property="og:url" content="https://seattleelections.guide/about/">' in about
+    assert '<meta name="twitter:card" content="summary">' in about
+    assert f'href="/e/{CURRENT_ID}/"' in about
+    assert "mailto:seattle-elections@dobravoda.dev" in about
+    assert "not an official voter pamphlet" in about
+    assert "not affiliated with any campaign" in about
+
     headers = (output / "_headers").read_text(encoding="utf-8")
     assert "X-Frame-Options: DENY" in headers
     assert "X-Robots-Tag" not in headers
@@ -101,6 +110,7 @@ def test_stage_pages_site_composes_verified_election_archive(tmp_path: Path) -> 
         f"e/{CURRENT_ID}/Current_Guide.pdf",
         f"e/{OLDER_ID}/index.html",
         "e/index.html",
+        "about/index.html",
     }
 
 
@@ -164,6 +174,8 @@ def test_generated_worker_enforces_route_contract(tmp_path: Path) -> None:
         "https://seattleelections.guide/e/not-an-election/",
         f"https://seattleelections.guide/e/{CURRENT_ID}/missing.pdf",
         f"https://seattle-elections.guide/e/{OLDER_ID}/?source=legacy",
+        "https://seattleelections.guide/about?ref=footer",
+        "https://seattleelections.guide/about/",
     ]
     results = _run_worker(worker_path, urls)
 
@@ -186,6 +198,14 @@ def test_generated_worker_enforces_route_contract(tmp_path: Path) -> None:
     assert results[7]["status"] == 404
     assert results[8]["status"] == 301
     assert results[8]["location"] == (f"https://seattleelections.guide/e/{OLDER_ID}/?source=legacy")
+    assert results[9]["status"] == 308
+    assert results[9]["location"] == "https://seattleelections.guide/about/?ref=footer"
+    assert results[10] == {
+        "status": 200,
+        "location": None,
+        "robots": None,
+        "body": "asset:/about/",
+    }
 
 
 def test_bundle_drift_does_not_replace_existing_output(tmp_path: Path) -> None:
@@ -227,7 +247,7 @@ def test_verify_staged_site_rejects_tamper_deletion_and_unexpected_assets(
         expected_current_git_commit=COMMIT,
     )
     assert verified.current_election_id == CURRENT_ID
-    assert len(verified.assets) == 12
+    assert len(verified.assets) == 13
 
     tampered = tmp_path / "tampered"
     shutil.copytree(output, tampered)
@@ -340,7 +360,7 @@ def test_hosting_stage_cli_reports_composed_site(tmp_path: Path) -> None:
         ],
     )
     assert verify_result.exit_code == 0, verify_result.output
-    assert f"current {CURRENT_ID}; 11 assets" in verify_result.output
+    assert f"current {CURRENT_ID}; 12 assets" in verify_result.output
 
 
 def test_wrangler_and_workflow_keep_deployment_pinned_and_gated() -> None:

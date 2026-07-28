@@ -600,6 +600,7 @@ def validate_rendered_guide(
         "#guide-races",
         configuration.pdf_filename,
         "mailto:seattle-elections@dobravoda.dev",
+        "/about/",
         configuration.project_url,
         *(f"#race-{race.id}" for race in expected_races),
         *(source.evidence_url for source in view_model.sources),

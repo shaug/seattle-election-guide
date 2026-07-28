@@ -33,6 +33,10 @@ LEGACY_HOSTS = (
     "seattle-elections.guide",
 )
 
+# The public About/FAQ page is site-wide rather than per-release, so it links to
+# the source repository directly rather than through any per-election config.
+PROJECT_URL = "https://github.com/shaug/seattle-election-guide"
+
 
 @dataclass(frozen=True)
 class StagedPagesSite:
@@ -120,6 +124,11 @@ def stage_pages_site(
         archive_path.write_text(_archive_html(site_manifest), encoding="utf-8")
         public_paths.update({"/e/", "/e/index.html"})
 
+        about_path = stage / "about" / "index.html"
+        about_path.parent.mkdir(parents=True)
+        about_path.write_text(_about_html(site_manifest), encoding="utf-8")
+        public_paths.update({"/about/", "/about/index.html"})
+
         (stage / "_headers").write_text(PAGES_HEADERS, encoding="utf-8")
         public_paths.add("/deployment-manifest.json")
         (stage / "_worker.js").write_text(
@@ -189,7 +198,7 @@ def _verify_staged_pages_site(
     if len(deployment.elections) != len(site_manifest.elections):
         raise ValueError("deployment manifest election count differs from site manifest")
 
-    required_assets = {"_headers", "_worker.js", "e/index.html"}
+    required_assets = {"_headers", "_worker.js", "e/index.html", "about/index.html"}
     for declared, deployed in zip(site_manifest.elections, deployment.elections, strict=True):
         expected_values = {
             "election ID": (declared.election_id, deployed.election_id),
@@ -414,6 +423,233 @@ def _archive_html(site_manifest: SiteManifest) -> str:
 """
 
 
+def _about_html(site_manifest: SiteManifest) -> str:
+    current = next(
+        election
+        for election in site_manifest.elections
+        if election.election_id == site_manifest.current_election_id
+    )
+    current_path = f"/e/{current.election_id}/"
+    canonical_url = f"{site_manifest.canonical_origin}/about/"
+    description = (
+        "How this guide aggregates organizational endorsements, why the source panel is "
+        "versioned, how to verify a result, and how to report a correction."
+    )
+    escaped_description = html.escape(description, quote=True)
+    escaped_canonical = html.escape(canonical_url, quote=True)
+    escaped_current_path = html.escape(current_path, quote=True)
+    escaped_election_name = html.escape(current.name)
+    return f"""<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="{escaped_description}">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="About the Seattle election guide">
+  <meta property="og:description" content="{escaped_description}">
+  <meta property="og:url" content="{escaped_canonical}">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="About the Seattle election guide">
+  <meta name="twitter:description" content="{escaped_description}">
+  <link rel="canonical" href="{escaped_canonical}">
+  <title>About &amp; FAQ &mdash; Seattle election guide</title>
+  <style>
+    :root {{
+      --navy: #102a43; --teal: #087f73; --ink: #17212b;
+      --muted: #52606d; --paper: #fbfaf6; --white: #fff;
+    }}
+    * {{ box-sizing: border-box; }}
+    html {{
+      color: var(--ink); background: #edf1f4;
+      font-family: "Avenir Next", Avenir, "Helvetica Neue", Helvetica, sans-serif;
+    }}
+    body {{ margin: 0; line-height: 1.5; }}
+    a {{ color: #075d75; }}
+    .visually-hidden {{
+      position: absolute !important; width: 1px; height: 1px; margin: -1px;
+      padding: 0; overflow: hidden; clip: rect(0 0 0 0);
+      white-space: nowrap; border: 0;
+    }}
+    .skip-link {{
+      position: absolute; left: 1rem; top: -5rem; z-index: 10;
+      background: var(--white); padding: .7rem;
+    }}
+    .skip-link:focus {{ top: 1rem; }}
+    .page {{ max-width: 46rem; margin: 0 auto; background: var(--paper); min-height: 100vh; }}
+    .page-header {{
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+      gap: .75rem 1.5rem; color: var(--white); background: var(--navy);
+      padding: 1.25rem clamp(1rem, 4vw, 2.5rem); border-bottom: .4rem solid var(--teal);
+    }}
+    .page-header p {{
+      margin: 0; font-size: .78rem; font-weight: 800;
+      letter-spacing: .1em; text-transform: uppercase;
+    }}
+    .page-header nav a {{
+      color: #9ee7df; font-weight: 800; font-size: .85rem; white-space: nowrap;
+    }}
+    main {{ padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 3rem; }}
+    main h1 {{
+      margin: 0 0 .35rem; color: var(--navy);
+      font: 800 clamp(1.8rem, 4vw, 2.6rem)/1.05 Georgia, serif;
+    }}
+    main > p.lede {{ margin: 0 0 2rem; color: var(--muted); max-width: 46ch; }}
+    section {{ margin: 0 0 2rem; }}
+    section h2 {{ color: var(--navy); font-size: 1.25rem; margin: 0 0 .5rem; }}
+    section p {{ margin: 0 0 .75rem; }}
+    section p:last-child {{ margin-bottom: 0; }}
+    .actions {{ display: flex; flex-wrap: wrap; gap: .6rem 1rem; align-items: center; }}
+    .share-button {{
+      padding: .45rem .9rem; border: 1px solid #829ab1; border-radius: .3rem;
+      background: var(--white); color: var(--ink);
+      font: inherit; font-weight: 700; cursor: pointer;
+    }}
+    .share-button:hover {{ background: #eef3f6; }}
+    .share-button:focus-visible {{ outline: .2rem solid #f0a928; outline-offset: .15rem; }}
+    .page-footer {{
+      border-top: 1px solid #cbd2d9; padding: 1.25rem clamp(1rem, 4vw, 2.5rem) 2rem;
+      color: var(--muted); font-size: .85rem;
+    }}
+    .page-footer a {{ font-weight: 700; }}
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#about-main">Skip to content</a>
+  <div class="page">
+    <header class="page-header">
+      <p>Seattle election guide</p>
+      <nav aria-label="Guide links">
+        <a href="{escaped_current_path}">Back to the {escaped_election_name} guide</a>
+      </nav>
+    </header>
+    <main id="about-main">
+      <h1>About this guide, and how to check our work</h1>
+      <p class="lede">{html.escape(description)}</p>
+
+      <section aria-labelledby="what-this-is">
+        <h2 id="what-this-is">What this guide is &mdash; and is not</h2>
+        <p>This site aggregates endorsements that progressive and left-of-center organizations have
+          already published. It is not an official voter pamphlet, it does not independently vet any
+          candidate, and it does not predict who will win. A high agreement percentage means many of
+          the organizations we track agree with each other, not that we do.</p>
+      </section>
+
+      <section aria-labelledby="how-the-numbers-work">
+        <h2 id="how-the-numbers-work">How the numbers work</h2>
+        <p>Each organization gets one point per race. If it endorses more than one candidate, that
+          point splits evenly among them unless the organization states its own split. Silence, "no
+          endorsement," and races an organization simply did not cover are shown as counts but
+          never count toward a candidate's share, so a small sample never looks more decisive than
+          it is.</p>
+        <p>The Seattle Times is shown separately, as a comparison, and is off by default: it never
+          adds to the progressive consensus above, no matter how you choose to view the guide.</p>
+      </section>
+
+      <section aria-labelledby="why-ballot-varies">
+        <h2 id="why-ballot-varies">Why your ballot may look different</h2>
+        <p>Exact ballot contents vary by voter registration address. This guide covers the races on
+          the ballot inventory built for this election; some races shown here may not appear on your
+          own ballot, and your ballot may include a race this guide does not cover.</p>
+      </section>
+
+      <section aria-labelledby="source-panel">
+        <h2 id="source-panel">The source panel is versioned, not frozen forever</h2>
+        <p>The set of organizations tracked for a given guide is preregistered and locked before
+          scoring begins, so results can't be adjusted after the fact to fit an outcome. When
+          legitimate new evidence turns up &mdash; a source we missed, or one that was misclassified
+          &mdash; it is added to a later, explicitly versioned panel rather than silently
+          rewriting this one. Every guide states its exact panel ID and hash in its footer, so a
+          later revision is always visible, never hidden.</p>
+      </section>
+
+      <section aria-labelledby="verify-it">
+        <h2 id="verify-it">Verify it yourself</h2>
+        <p>Every guide records a data version, a source-panel ID and hash, and the exact code
+          revision that built it, in its footer. Each source row links directly to the
+          organization's own endorsement page or document, so any displayed result can be checked
+          against the original evidence.</p>
+        <p><a href="{escaped_current_path}release-status.json">Current release status</a> and
+          <a href="{escaped_current_path}release-manifest.json">release manifest</a> are public JSON
+          files for the current guide. The complete decision ledger, source metadata, and validation
+          reports for every release are published in the
+          <a href="{PROJECT_URL}">project's source repository</a>, alongside the code that produced
+          them.</p>
+      </section>
+
+      <section aria-labelledby="report-a-correction">
+        <h2 id="report-a-correction">Report a correction or suggest a source</h2>
+        <p>Found a stale or wrong endorsement, or know an organization we should be tracking?
+          Email <a href="mailto:seattle-elections@dobravoda.dev">seattle-elections@dobravoda.dev</a>
+          &mdash; no GitHub account needed. If you already use GitHub, you are also welcome to
+          open an issue directly against the source repository below.</p>
+      </section>
+
+      <section aria-labelledby="who-maintains-this">
+        <h2 id="who-maintains-this">Who maintains this</h2>
+        <p>This is an independent, volunteer-run project, not affiliated with any campaign,
+          party, or any organization it tracks. Its code and methodology are public at
+          <a href="{PROJECT_URL}">{PROJECT_URL.removeprefix("https://")}</a>.</p>
+      </section>
+
+      <div class="actions">
+        <button type="button" class="share-button" data-share-about>Share this page</button>
+        <p class="visually-hidden" role="status" aria-live="polite" data-share-about-status></p>
+      </div>
+    </main>
+    <footer class="page-footer">
+      <nav aria-label="Guide links">
+        <a href="{escaped_current_path}">{escaped_election_name} guide</a> &middot;
+        <a href="/e/">All published guides</a>
+      </nav>
+    </footer>
+  </div>
+  <script>
+    (function () {{
+      var button = document.querySelector('[data-share-about]');
+      var status = document.querySelector('[data-share-about-status]');
+      if (!button) return;
+      function legacyCopy(url) {{
+        var field = document.createElement('textarea');
+        field.value = url;
+        field.setAttribute('readonly', '');
+        field.className = 'visually-hidden';
+        document.body.appendChild(field);
+        field.select();
+        var copied = false;
+        try {{ copied = document.execCommand('copy'); }} catch (error) {{ copied = false; }}
+        field.remove();
+        if (status) status.textContent = copied ? 'Link copied.' : ('Copy failed. Link: ' + url);
+      }}
+      function copyFallback(url) {{
+        if (navigator.clipboard && navigator.clipboard.writeText) {{
+          navigator.clipboard.writeText(url).then(function () {{
+            if (status) status.textContent = 'Link copied.';
+          }}, function () {{
+            legacyCopy(url);
+          }});
+          return;
+        }}
+        legacyCopy(url);
+      }}
+      button.addEventListener('click', function () {{
+        var url = window.location.href;
+        if (navigator.share) {{
+          navigator.share({{ title: document.title, url: url }}).catch(function (error) {{
+            if (error && error.name === 'AbortError') return;
+            copyFallback(url);
+          }});
+          return;
+        }}
+        copyFallback(url);
+      }});
+    }})();
+  </script>
+</body>
+</html>
+"""
+
+
 def _pages_worker(site_manifest: SiteManifest, public_paths: set[str]) -> str:
     current_path = f"/e/{site_manifest.current_election_id}/"
     election_roots = [f"/e/{election.election_id}/" for election in site_manifest.elections]
@@ -454,6 +690,9 @@ export default {{
     }}
     if (url.pathname === "/e") {{
       return redirectPath(url, "/e/", 308);
+    }}
+    if (url.pathname === "/about") {{
+      return redirectPath(url, "/about/", 308);
     }}
     for (const root of ELECTION_ROOTS) {{
       if (url.pathname === root.slice(0, -1)) {{

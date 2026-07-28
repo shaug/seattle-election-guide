@@ -420,12 +420,20 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     canonical_url = f"{configuration.public_site_url}/e/{view_model.metadata.election_id}/"
     assert f'<link rel="canonical" href="{canonical_url}">' in html
     assert f'<meta property="og:url" content="{canonical_url}">' in html
+    assert '<meta name="twitter:card" content="summary">' in html
+    assert f'<meta name="twitter:title" content="{configuration.title}">' in html
+    assert f'<meta name="twitter:description" content="{configuration.subject}">' in html
     assert f'href="{configuration.pdf_filename}">Printable PDF</a>' in html
     assert 'href="mailto:seattle-elections@dobravoda.dev">Feedback?</a>' in html
+    assert 'href="/about/">About &amp; FAQ</a>' in html
     assert 'class="footer-actions" aria-label="Guide links"' in html
     footer_actions_start = html.index('<nav class="footer-actions"')
     footer_actions_end = html.index("</nav>", footer_actions_start)
-    assert html[footer_actions_start:footer_actions_end].count(configuration.project_url) == 1
+    footer_actions_html = html[footer_actions_start:footer_actions_end]
+    assert footer_actions_html.count(configuration.project_url) == 1
+    assert 'class="footer-share" data-share-guide' in footer_actions_html
+    assert "navigator.share" in html
+    assert "shareOrCopyLink" in html
     assert ".detailed-footer-audit { display: none; }" in html
     assert "html.detailed-edition .detailed-footer-audit { display: inline; }" in html
     assert ">AGREES<" not in html

@@ -74,7 +74,11 @@ The public route contract is:
 - `/` returns a temporary `307` redirect to the manifest-declared current election;
 - `/e/` is an index of every declared guide, with the current election listed first;
 - `/e/<election-id>/` serves that election's HTML, PDFs, release status, and release manifest;
-- `/e/<election-id>` redirects to the trailing-slash form; and
+- `/e/<election-id>` redirects to the trailing-slash form;
+- `/about/` is a site-wide, hand-authored About/FAQ page explaining the methodology, source-panel
+  versioning, and how to report a correction, with reciprocal navigation to the current guide;
+  every rendered guide links back to it from its footer;
+- `/about` redirects to the trailing-slash form; and
 - unknown elections, assets, and other paths return a real `404` with `noindex`.
 
 The generated Pages worker uses an exact staged-asset allowlist before consulting the Pages asset
@@ -101,6 +105,7 @@ bundle's exact Git revision before it changes the existing output. It then atomi
 - `e/index.html`, generated from the manifest;
 - each guide at `e/<election-id>/index.html`, copied byte-for-byte from its validated release;
 - each election's concise/detailed PDFs, `release-status.json`, and `release-manifest.json`;
+- `about/index.html`, the site-wide About/FAQ page, generated from the manifest;
 - a site-wide deployment manifest recording every verified release and staged asset hash; and
 - `_headers` with browser-security and revalidation policy. The public guide is indexable by
   search engines on both its custom domain and Cloudflare Pages hostnames.
