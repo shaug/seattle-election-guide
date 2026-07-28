@@ -635,7 +635,9 @@ def _about_html(site_manifest: SiteManifest) -> str:
       button.addEventListener('click', function () {{
         var url = window.location.href;
         if (navigator.share) {{
-          navigator.share({{ title: document.title, url: url }}).catch(function (error) {{
+          navigator.share({{ title: document.title, url: url }}).then(function () {{
+            if (status) status.textContent = 'Share menu opened.';
+          }}, function (error) {{
             if (error && error.name === 'AbortError') return;
             copyFallback(url);
           }});
