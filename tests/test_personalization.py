@@ -281,6 +281,19 @@ def test_committed_panel_snapshot_catalog_publishes_the_current_panel() -> None:
     assert catalog.snapshots[-1] == snapshot
 
 
+def test_historical_panel_snapshots_keep_their_own_comparison_role() -> None:
+    """A schema field added with a default (issue 95's `panel_role`) must not
+    silently misattribute a historical snapshot's actual comparison category as
+    tallying merely because that snapshot predates the field."""
+    catalog = read_panel_snapshot_catalog(CATALOG_PATH)
+
+    for snapshot in catalog.snapshots:
+        comparison = next(item for item in snapshot.categories if item.id == "comparison")
+        assert comparison.panel_role == "comparison", (
+            f"panel {snapshot.panel_id!r} misrecords its comparison category as tallying"
+        )
+
+
 def test_appending_the_current_panel_again_is_a_deterministic_no_op() -> None:
     catalog = read_panel_snapshot_catalog(CATALOG_PATH)
     snapshot = build_panel_snapshot(read_source_registry(REGISTRY_PATH))

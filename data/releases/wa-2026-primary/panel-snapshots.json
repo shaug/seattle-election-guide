@@ -107,7 +107,7 @@
           "id": "comparison",
           "label": "Centrist comparison",
           "member_source_codes": [],
-          "panel_role": "tallying",
+          "panel_role": "comparison",
           "selectable": false
         }
       ],
