@@ -184,9 +184,9 @@ LENS_PARITY_SELECTIONS: list[ParitySelection] = [
         note="Unknown codes are ignored rather than scored.",
     ),
     ParitySelection(
-        name="nonselectable-category",
+        name="comparison-category-selected",
         category_codes=["Gcmp"],
-        note="The comparison category is not selectable.",
+        note="Selecting the comparison category can never enter the tally.",
     ),
     ParitySelection(
         name="full-panel",

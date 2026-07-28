@@ -28,7 +28,10 @@ from election_guide.publication.models import (
     PublicationViewModel,
     SourceCell,
 )
-from election_guide.publication.personalization import PersonalizationSource
+from election_guide.publication.personalization import (
+    PersonalizationCategory,
+    PersonalizationSource,
+)
 from election_guide.rendering import (
     build_rendered_guide,
     read_rendering_configuration,
@@ -2195,7 +2198,7 @@ def _revalidated(view_model: PublicationViewModel) -> PublicationViewModel:
                 id=source.id,
                 code=f"x{index:03d}",
                 panel_role=source.panel_role,
-                selectable=source.panel_role == "consensus",
+                selectable=True,
                 reporting_category_id=source.category,
                 selection_category_ids=[source.category],
                 overlap_group_ids=source.overlap_group_ids,
@@ -2534,16 +2537,26 @@ def _evaluate_in_chrome(
         shutil.rmtree(profile, ignore_errors=True)
 
 
+def _customize_selectable(item: PersonalizationCategory | PersonalizationSource) -> bool:
+    """Whether item is selectable in the current customize modal.
+
+    The comparison category/source are selectable in the payload (issue 95) so
+    a future rebuild of this section can render them, but this modal predates
+    that rebuild (issue 97) and must keep excluding them until it does.
+    """
+    return item.selectable and item.panel_role != "comparison"
+
+
 def _with_multi_category_source(view_model: PublicationViewModel) -> PublicationViewModel:
     """Give one selectable source a second selection category, for issue 80's
     "a multi-category source appears once and exposes every inclusion reason"
     acceptance criterion. The small rendering fixture has no such source."""
     contract = view_model.personalization
-    target = next(source for source in contract.sources if source.selectable)
+    target = next(source for source in contract.sources if _customize_selectable(source))
     second_category = next(
         category
         for category in contract.categories
-        if category.selectable and category.id != target.reporting_category_id
+        if _customize_selectable(category) and category.id != target.reporting_category_id
     )
     sources = [
         source.model_copy(
@@ -2620,8 +2633,8 @@ def test_personalization_ui_renders_every_selectable_category_and_source(tmp_pat
     html = render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG))
     contract = view_model.personalization
 
-    selectable_categories = [item for item in contract.categories if item.selectable]
-    selectable_sources = [item for item in contract.sources if item.selectable]
+    selectable_categories = [item for item in contract.categories if _customize_selectable(item)]
+    selectable_sources = [item for item in contract.sources if _customize_selectable(item)]
     assert len(selectable_categories) > 0
     assert len(selectable_sources) > 0
 
@@ -2629,10 +2642,12 @@ def test_personalization_ui_renders_every_selectable_category_and_source(tmp_pat
         assert f'data-customize-category="{category.code}"' in html
     for source in selectable_sources:
         assert f'data-customize-source="{source.code}"' in html
-    # The comparison source/category are identified but never selectable.
+    # The comparison source/category are selectable in the payload (issue 95) so a
+    # future rebuild of this section can render them, but this modal predates that
+    # rebuild and must keep excluding them until it does.
     assert 'data-customize-category="Gcmp"' not in html
     for source in contract.sources:
-        if not source.selectable:
+        if not _customize_selectable(source):
             assert f'data-customize-source="{source.code}"' not in html
 
     bindings = json.loads(html.split('id="lens-bindings">')[1].split("</script>")[0])
@@ -2676,10 +2691,10 @@ def test_personalization_initial_my_sources_matches_audited_consensus(tmp_path: 
         encoding="utf-8",
     )
     selectable_source_count = sum(
-        1 for source in view_model.personalization.sources if source.selectable
+        1 for source in view_model.personalization.sources if _customize_selectable(source)
     )
     selectable_category_count = sum(
-        1 for category in view_model.personalization.categories if category.selectable
+        1 for category in view_model.personalization.categories if _customize_selectable(category)
     )
     result = _evaluate_in_chrome(
         html_path,
@@ -3308,7 +3323,9 @@ def test_personalization_stale_link_migrates_with_a_persistent_notice(tmp_path: 
     view_model = _personalization_enabled_view_model(tmp_path)
     contract = view_model.personalization
     category = next(
-        item for item in contract.categories if item.selectable and item.member_source_codes
+        item
+        for item in contract.categories
+        if _customize_selectable(item) and item.member_source_codes
     )
     fragment = _lens_fragment(
         view_model,

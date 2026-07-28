@@ -165,6 +165,7 @@ class SourceCategory(SourceModel):
     code: str = Field(pattern=CATEGORY_CODE_PATTERN)
     label: str = Field(min_length=1)
     selectable: bool
+    panel_role: Literal["tallying", "comparison"] = "tallying"
     description: str = Field(min_length=1)
 
 
@@ -216,8 +217,14 @@ class Source(SourceModel):
 
     @property
     def is_selectable(self) -> bool:
-        """Only panel sources that contribute to the progressive score may be selected."""
-        return self.panel_role == "consensus"
+        """A comparison source is selectable for display; only "excluded" never is.
+
+        Selectability governs whether a source may be checked on or off in the
+        personalized lens. It no longer implies eligibility to score: a
+        comparison source is selectable so its visibility can be toggled, but
+        `panel_role` keeps it out of every tally regardless of selection.
+        """
+        return self.panel_role != "excluded"
 
     @model_validator(mode="after")
     def validate_role(self) -> Source:
@@ -352,6 +359,17 @@ class SourceRegistry(SourceModel):
                 for category_id in source.selection_category_ids
             ):
                 raise ValueError(f"consensus source {source.id!r} needs a selectable category")
+            for category_id in source.selection_category_ids:
+                category_role = self.category_by_id(category_id).panel_role
+                if source.panel_role == "comparison" and category_role != "comparison":
+                    raise ValueError(
+                        f"comparison source {source.id!r} cannot join tallying category "
+                        f"{category_id!r}"
+                    )
+                if source.panel_role != "comparison" and category_role == "comparison":
+                    raise ValueError(
+                        f"source {source.id!r} cannot join comparison category {category_id!r}"
+                    )
         return self
 
     @model_validator(mode="after")
