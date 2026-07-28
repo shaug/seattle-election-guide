@@ -86,10 +86,13 @@ def render_html_document(
     # The fragment codec ships from its single source; the page inlines it verbatim
     # inside a module script so the guide stays one self-contained file.
     lens_url_script = (TEMPLATE_DIR / "lens-url.mjs").read_text(encoding="utf-8")
-    # The scoring engine is only ever needed once a lens release enables the
-    # policy; the template inlines it only inside that gate, so a disabled
-    # release's page is unaffected.
+    # The scoring engine, migration resolver, and divergence comparison are
+    # only ever needed once a lens release enables the policy; the template
+    # inlines each only inside that gate, so a disabled release's page is
+    # unaffected.
     lens_score_script = (TEMPLATE_DIR / "lens-score.mjs").read_text(encoding="utf-8")
+    lens_migrate_script = (TEMPLATE_DIR / "lens-migrate.mjs").read_text(encoding="utf-8")
+    lens_divergence_script = (TEMPLATE_DIR / "lens-divergence.mjs").read_text(encoding="utf-8")
     rendered_urls = [
         configuration.project_url,
         *(source.evidence_url for source in view_model.sources),
@@ -123,6 +126,8 @@ def render_html_document(
         stylesheet=stylesheet,
         lens_url_script=lens_url_script,
         lens_score_script=lens_score_script,
+        lens_migrate_script=lens_migrate_script,
+        lens_divergence_script=lens_divergence_script,
         lens_personalization=lens_personalization,
         filter_options=_filter_options(view_model),
         source_by_id=source_by_id,

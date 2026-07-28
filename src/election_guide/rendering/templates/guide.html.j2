@@ -267,6 +267,7 @@
     </dialog>
     {% if guide.personalization.policy.enabled %}
     <p class="lens-banner" data-lens-banner hidden role="status" aria-live="polite"></p>
+    <p class="lens-notice" data-lens-notice hidden role="status" aria-live="polite"></p>
     {% endif %}
 
     <div id="guide-races" class="screen-sections">
@@ -287,19 +288,29 @@
               aria-label="View endorsements for {{ race.race_label }}"
               aria-haspopup="dialog" aria-controls="race-detail-{{ race.id }}">
               <p class="race-office" id="race-label-{{ race.id }}"
-                data-display-role="race-label">{{ race.race_label }}</p>
+                data-display-role="race-label">{{ race.race_label }}
+                {% if guide.personalization.policy.enabled %}<span class="lens-card-badge" data-lens-only data-lens-card-badge>My sources</span>{% endif %}
+              </p>
               <div class="screen-race-result">
-                <h3 data-display-role="recommendation">{{ race.recommendation_label }}</h3>
+                <h3 data-display-role="recommendation"{% if guide.personalization.policy.enabled %} data-lens-hidden{% endif %}>{{ race.recommendation_label }}</h3>
+                {% if guide.personalization.policy.enabled %}
+                <h3 class="lens-value" data-lens-only data-lens-recommendation></h3>
+                {% endif %}
                 {% if race.percentage_whole is none %}
                 <div class="screen-meter screen-meter-na" role="img" data-display-role="share"
-                  aria-label="{{ screen_share_accessible_label(race) }}">
+                  aria-label="{{ screen_share_accessible_label(race) }}"{% if guide.personalization.policy.enabled %} data-lens-hidden{% endif %}>
                   <strong>N/A</strong>
                 </div>
                 {% else %}
                 <div class="screen-meter" style="--meter-fill: {{ race.percentage_whole }}%"
                   role="img" data-display-role="share"
-                  aria-label="{{ screen_share_accessible_label(race) }}">
+                  aria-label="{{ screen_share_accessible_label(race) }}"{% if guide.personalization.policy.enabled %} data-lens-hidden{% endif %}>
                   <strong>{{ race.percentage_label }}</strong>
+                </div>
+                {% endif %}
+                {% if guide.personalization.policy.enabled %}
+                <div class="screen-meter" data-lens-only data-lens-share role="img">
+                  <strong data-lens-share-text></strong>
                 </div>
                 {% endif %}
               </div>
@@ -312,12 +323,20 @@
                   </p>
                   {% endfor %}
                 </div>
-                <p class="support-line" data-display-role="support">{{ screen_support_summary(race) }}</p>
+                <p class="support-line" data-display-role="support"{% if guide.personalization.policy.enabled %} data-lens-hidden{% endif %}>{{ screen_support_summary(race) }}</p>
+                {% if guide.personalization.policy.enabled %}
+                <p class="support-line lens-value" data-lens-only data-lens-support></p>
+                {% endif %}
               </div>
             </a>
             {% if race.grade == 'Insufficient' %}
-            <div class="insufficient-note" role="note" data-display-role="insufficient-warning">
+            <div class="insufficient-note" role="note" data-display-role="insufficient-warning"{% if guide.personalization.policy.enabled %} data-lens-hidden{% endif %}>
               Too few explicit endorsements to assess consensus reliably.</div>
+            {% endif %}
+            {% if guide.personalization.policy.enabled %}
+            <div class="insufficient-note" data-lens-only data-lens-insufficient hidden>
+              Too few explicit endorsements to assess consensus reliably in My sources.</div>
+            <p class="lens-comparison" data-lens-only data-lens-comparison hidden></p>
             {% endif %}
             <dialog class="race-detail-dialog" id="race-detail-{{ race.id }}"
               data-race-detail-dialog data-race-id="{{ race.id }}"
@@ -340,6 +359,14 @@
                   aria-live="polite" data-copy-race-status></p>
               </div>
               <div class="race-detail-body">
+                {% if guide.personalization.policy.enabled %}
+                <section class="race-detail-lens" data-lens-only data-race-detail-lens>
+                  <h4>My sources</h4>
+                  <p data-lens-detail-summary></p>
+                  <p class="lens-comparison" data-lens-only data-lens-detail-audited hidden></p>
+                  <ul class="lens-detail-sources" data-lens-detail-sources></ul>
+                </section>
+                {% endif %}
                 <div class="race-detail-outcomes">
                   {{ race_detail_candidate_sections(race) }}
                   {% for group_key in source_cell_group_keys %}
@@ -647,6 +674,8 @@
 {{ lens_url_script | safe }}
   {% if guide.personalization.policy.enabled %}
 {{ lens_score_script | safe }}
+{{ lens_migrate_script | safe }}
+{{ lens_divergence_script | safe }}
   {% endif %}
 
   // Page glue for the customize shell. The codec (and, once enabled, the
@@ -676,19 +705,64 @@
   const copyStatusLine = document.querySelector('[data-customize-copy-status]');
   const resetButton = document.querySelector('[data-customize-reset]');
   const lensBanner = document.querySelector('[data-lens-banner]');
+  const lensNotice = document.querySelector('[data-lens-notice]');
   const categoryCodeById = new Map(personalization.categories.map((item) => [item.id, item.code]));
   const categoryLabelByCode = new Map(personalization.categories.map((item) => [item.code, item.label]));
   {% endif %}
 
-  // The one place that decides which decode statuses carry live lens state, so
-  // a future status (issue 78's cross-version migration) has one call site to
-  // update rather than several that must be kept in agreement by hand.
+  {% if guide.personalization.policy.enabled %}
+  /**
+   * Resolve one decoded fragment to live lens state plus a persistent
+   * explanation, when one is warranted.
+   *
+   * A same-version link needs neither migration nor an explanation. A
+   * `stale_version` link is resolved through issue 78's migration resolver,
+   * with no origin snapshot: nothing about correct resolution depends on one
+   * (a surviving code always names the same source or category it always
+   * did), it only refines "removed" versus "unknown" reporting this guide
+   * does not surface. A migration that must reject falls back to audited.
+   * Every other non-lens status (`absent`, `legacy`, or an ordinary in-page
+   * anchor the codec does not recognize, such as the skip link) carries no
+   * lens explanation at all, so clicking around the page never manufactures
+   * one.
+   */
+  const lensOutcome = (fragment) => {
+    const decoded = decodeLensFragment(fragment, context);
+    if (decoded.status === 'valid') return { state: decoded.state, notice: null };
+    if (decoded.status === 'stale_version') {
+      const migration = migrateLensState(decoded, personalization, null);
+      if (migration.status === 'migrated') {
+        return {
+          state: migration.selection,
+          notice: 'This link was written for an earlier published data version. '
+            + 'It was migrated to the current panel, so results may differ from the original link.',
+        };
+      }
+      return {
+        state: null,
+        notice: 'This link could not be migrated to the current published panel '
+          + `(category ${migration.category} is no longer available), so it shows the audited consensus.`,
+      };
+    }
+    if (decoded.status === 'absent' || decoded.status === 'legacy') return { state: null, notice: null };
+    if (decoded.reason === 'unrecognized_fragment') return { state: null, notice: null };
+    return {
+      state: null,
+      notice: 'This link could not be read, so it shows the audited consensus.',
+    };
+  };
+  const lensState = () => lensOutcome(window.location.hash).state;
+  {% else %}
+  // The one place that decides which decode statuses carry live lens state.
+  // Personalization is disabled here, so there is nothing yet to migrate a
+  // stale-version link's selection into; only its Times flag is honored.
   const lensState = () => {
     const decoded = decodeLensFragment(window.location.hash, context);
     return decoded.status === 'valid' || decoded.status === 'stale_version'
       ? decoded.state
       : null;
   };
+  {% endif %}
   const raceTarget = () => {
     const decoded = decodeLensFragment(window.location.hash, context);
     if (decoded.status === 'legacy') return decoded.raceTarget;
@@ -714,6 +788,24 @@
     sourceInputs.filter((input) => input.checked).map((input) => input.dataset.customizeSource).sort();
 
   /**
+   * Every reason one source counts toward the current selection: "Direct"
+   * when it is checked itself, plus the label of every checked category it
+   * belongs to. Shared by the Customize source list's own badges and the
+   * race detail panel's contributing-sources list, so the two can never
+   * describe the same source differently.
+   */
+  const inclusionReasons = (sourceCode, checkedCategories, directSources) => {
+    const source = personalization.sources.find((item) => item.code === sourceCode);
+    const viaCategories = (source?.selection_category_ids ?? [])
+      .map((id) => categoryCodeById.get(id))
+      .filter((code) => checkedCategories.has(code));
+    return [
+      ...(directSources.has(sourceCode) ? ['Direct'] : []),
+      ...viaCategories.map((code) => categoryLabelByCode.get(code)),
+    ];
+  };
+
+  /**
    * Render every source row's inclusion reason and the summary counts.
    *
    * A source is "effective" when it is either checked directly or reached
@@ -732,21 +824,11 @@
     let effectiveCount = 0;
     sourceInputs.forEach((input) => {
       const sourceCode = input.dataset.customizeSource;
-      const source = personalization.sources.find((item) => item.code === sourceCode);
-      const viaCategories = (source?.selection_category_ids ?? [])
-        .map((id) => categoryCodeById.get(id))
-        .filter((code) => checkedCategories.has(code));
-      const isDirect = directSources.has(sourceCode);
-      const isEffective = isDirect || viaCategories.length > 0;
-      if (isEffective) effectiveCount += 1;
+      const reasons = inclusionReasons(sourceCode, checkedCategories, directSources);
+      if (reasons.length > 0) effectiveCount += 1;
       const row = input.closest('[data-customize-source-row]');
       const badges = row?.querySelector('[data-customize-source-badges]');
-      if (!badges) return;
-      const reasons = [
-        ...(isDirect ? ['Direct'] : []),
-        ...viaCategories.map((code) => categoryLabelByCode.get(code)),
-      ];
-      badges.textContent = reasons.join(' · ');
+      if (badges) badges.textContent = reasons.join(' · ');
     });
     if (countsLine) {
       countsLine.textContent =
@@ -756,20 +838,179 @@
   };
 
   /**
-   * Feed the normalized selection into the pure scoring engine and update the
-   * active-lens banner. Per-race presentation is owned elsewhere (issue 81);
-   * this only computes and announces the result.
+   * Per-race presentation data the lens payload does not carry: candidate
+   * display labels and source display names. Both already exist in the
+   * server-rendered, audited-only DOM (the race detail dialog's candidate
+   * headings and the Customize source list), so this reads them once rather
+   * than publishing a second copy through the lens payload.
+   */
+  const raceCards = new Map(
+    [...document.querySelectorAll('[data-publication-race-id]')].map((card) => [
+      card.dataset.publicationRaceId,
+      card,
+    ]),
+  );
+  const candidateLabelsByRaceId = new Map(
+    [...raceCards.entries()].map(([raceId, card]) => [
+      raceId,
+      new Map(
+        [...card.querySelectorAll('[data-race-detail-candidate-id]')].map((section) => [
+          section.dataset.raceDetailCandidateId,
+          section.querySelector('.race-detail-candidate-title h4')?.textContent
+            ?? section.dataset.raceDetailCandidateId,
+        ]),
+      ),
+    ]),
+  );
+  const sourceNameByCode = new Map(
+    sourceInputs.map((input) => [
+      input.dataset.customizeSource,
+      input.closest('label')?.querySelector('span')?.textContent ?? input.dataset.customizeSource,
+    ]),
+  );
+  const raceDataById = new Map(personalization.races.map((race) => [race.race_id, race]));
+
+  // The full selectable panel with no direct picks reproduces the published
+  // audited consensus exactly (lens-score.mjs's own tested contract), so
+  // scoring it once gives every card a structured baseline to diff against
+  // instead of a second, independently maintained copy of the audited
+  // values.
+  const auditedByRaceId = new Map(
+    scoreSelection(personalization, {
+      categoryCodes: personalization.categories.filter((item) => item.selectable).map((item) => item.code),
+      sourceCodes: [],
+    }).races.map((race) => [race.raceId, race]),
+  );
+
+  const percentageLabel = (shareString) => {
+    if (shareString === null) return 'N/A';
+    const share = Rational.parse(shareString);
+    const scaledNumerator = share.numerator * 100n;
+    const scaledDenominator = share.denominator;
+    const whole = (scaledNumerator * 2n + scaledDenominator) / (2n * scaledDenominator);
+    return `${whole}%`;
+  };
+  const shareAccessibleLabel = (shareString) =>
+    `Consensus among explicitly endorsing sources: ${percentageLabel(shareString)}`;
+  const recommendationLabel = (scored, labels) => {
+    if (scored.grade === 'Insufficient') return 'Too few endorsements';
+    if (scored.isTied) return scored.winnerIds.map((id) => labels.get(id) ?? id).join(' / ');
+    return (scored.winnerId !== null ? labels.get(scored.winnerId) : null) ?? 'No consensus';
+  };
+  const supportSummary = (scored) =>
+    `Based on ${scored.explicitCount} endorsing ${scored.explicitCount === 1 ? 'source' : 'sources'}`;
+  const compactAuditedSummary = (audited, labels) =>
+    `Audited consensus: ${recommendationLabel(audited, labels)} · ${percentageLabel(audited.winnerShare)}`;
+
+  /**
+   * Apply one race's personalized result to its card and detail dialog: the
+   * personalized recommendation, share, source count, and insufficient-
+   * evidence state always render while My sources is active; the compact
+   * audited comparison and the detail panel's audited line render only when
+   * this race actually diverges, so an unchanged race stays free of
+   * redundant audited detail.
+   */
+  const coveredCellStates = new Set(['endorsement', 'multi_endorsement', 'no_endorsement']);
+
+  const renderRaceLens = (
+    raceId,
+    card,
+    personalizedByRaceId,
+    resolvedSourceCodes,
+    checkedCategories,
+    directSources,
+  ) => {
+    const personalized = personalizedByRaceId.get(raceId);
+    const audited = auditedByRaceId.get(raceId);
+    if (!personalized || !audited) return;
+    const labels = candidateLabelsByRaceId.get(raceId) ?? new Map();
+    const divergence = compareRaceResults(audited, personalized);
+
+    const recommendationEl = card.querySelector('[data-lens-recommendation]');
+    if (recommendationEl) recommendationEl.textContent = recommendationLabel(personalized, labels);
+    const shareEl = card.querySelector('[data-lens-share-text]');
+    if (shareEl) shareEl.textContent = percentageLabel(personalized.winnerShare);
+    const shareMeter = card.querySelector('[data-lens-share]');
+    if (shareMeter) {
+      shareMeter.classList.toggle('screen-meter-na', personalized.winnerShare === null);
+      shareMeter.style.setProperty(
+        '--meter-fill',
+        personalized.winnerShare === null ? '0%' : percentageLabel(personalized.winnerShare),
+      );
+      shareMeter.setAttribute('aria-label', shareAccessibleLabel(personalized.winnerShare));
+    }
+    const supportEl = card.querySelector('[data-lens-support]');
+    if (supportEl) supportEl.textContent = supportSummary(personalized);
+    const insufficientEl = card.querySelector('[data-lens-insufficient]');
+    if (insufficientEl) insufficientEl.hidden = personalized.grade !== 'Insufficient';
+    const comparisonEl = card.querySelector('[data-lens-comparison]');
+    if (comparisonEl) {
+      comparisonEl.hidden = !divergence.anyChanged;
+      if (divergence.anyChanged) comparisonEl.textContent = compactAuditedSummary(audited, labels);
+    }
+
+    // Race detail: complete personalized values, the audited comparison when
+    // divergent, and every contributing source with its inclusion reason.
+    const summaryEl = card.querySelector('[data-lens-detail-summary]');
+    if (summaryEl) {
+      const flags = [
+        personalized.isTied ? 'Tied' : null,
+        personalized.grade === 'Insufficient' ? 'Insufficient evidence' : null,
+        personalized.confidenceWarningCodes.length > 0 ? 'Confidence warning' : null,
+      ].filter((flag) => flag !== null);
+      summaryEl.textContent = [
+        recommendationLabel(personalized, labels),
+        percentageLabel(personalized.winnerShare),
+        supportSummary(personalized),
+        ...flags,
+      ].join(' · ');
+    }
+    const auditedDetailEl = card.querySelector('[data-lens-detail-audited]');
+    if (auditedDetailEl) {
+      auditedDetailEl.hidden = !divergence.anyChanged;
+      if (divergence.anyChanged) auditedDetailEl.textContent = compactAuditedSummary(audited, labels);
+    }
+    const sourcesEl = card.querySelector('[data-lens-detail-sources]');
+    if (sourcesEl) {
+      const race = raceDataById.get(raceId);
+      // "Contributing" means this race actually has a cell to show for the
+      // source: eligible, selected, and covered (an explicit endorsement or
+      // an on-record no-pick), the same states lens-score.mjs's own coverage
+      // set counts. A selected-but-not-covered source has nothing to list.
+      sourcesEl.replaceChildren(
+        ...(race?.cells ?? [])
+          .filter(
+            (cell) => resolvedSourceCodes.includes(cell.source_code) && coveredCellStates.has(cell.state),
+          )
+          .map((cell) => {
+            const item = document.createElement('li');
+            const reasons = inclusionReasons(cell.source_code, checkedCategories, directSources);
+            const name = sourceNameByCode.get(cell.source_code) ?? cell.source_code;
+            item.textContent = reasons.length > 0 ? `${name} — ${reasons.join(' · ')}` : name;
+            return item;
+          }),
+      );
+    }
+  };
+
+  /**
+   * Feed the normalized selection into the pure scoring engine, update the
+   * active-lens banner, and render every race card and detail dialog's
+   * personalized presentation (issue 81).
    */
   const recomputePersonalizedResults = () => {
     const mode = currentMode();
     personalizePanel?.toggleAttribute('hidden', mode !== 's');
+    root.classList.toggle('lens-personalized', mode === 's');
     if (mode !== 's') {
       if (lensBanner) lensBanner.hidden = true;
       return null;
     }
+    const checkedCategories = new Set(checkedCategoryCodes());
+    const directSources = new Set(checkedSourceCodes());
     const selection = {
-      categoryCodes: checkedCategoryCodes(),
-      sourceCodes: checkedSourceCodes(),
+      categoryCodes: [...checkedCategories],
+      sourceCodes: [...directSources],
     };
     const results = scoreSelection(personalization, selection);
     if (lensBanner) {
@@ -778,10 +1019,27 @@
         `Personalized lens active — ${results.sourceCodes.length} of `
         + `${personalization.sources.filter((item) => item.selectable).length} sources included.`;
     }
+    const personalizedByRaceId = new Map(results.races.map((race) => [race.raceId, race]));
+    raceCards.forEach((card, raceId) => {
+      renderRaceLens(
+        raceId,
+        card,
+        personalizedByRaceId,
+        results.sourceCodes,
+        checkedCategories,
+        directSources,
+      );
+    });
     return results;
   };
 
   const onSelectionChanged = () => {
+    // Any explicit customization supersedes whatever a shared link's own
+    // migration or invalid-link explanation was about.
+    if (lensNotice) {
+      lensNotice.hidden = true;
+      lensNotice.textContent = '';
+    }
     renderSelectionState();
     recomputePersonalizedResults();
     writeLensState();
@@ -868,7 +1126,17 @@
 
   applyTimes(Boolean(lensState()?.showTimes));
   {% if guide.personalization.policy.enabled %}
-  applyMode(lensState());
+  // Computed once, from the page's initial location: a persistent migration
+  // or invalid-link explanation describes how this load resolved a shared
+  // link, not an ongoing in-page navigation, so later hashchange events
+  // (including the skip link, which the codec deliberately does not
+  // recognize as lens-shaped) never manufacture or overwrite it.
+  const initialLensOutcome = lensOutcome(window.location.hash);
+  if (lensNotice && initialLensOutcome.notice) {
+    lensNotice.hidden = false;
+    lensNotice.textContent = initialLensOutcome.notice;
+  }
+  applyMode(initialLensOutcome.state);
   {% endif %}
 
   // The native modal gives focus containment, Escape, and the backdrop for free,

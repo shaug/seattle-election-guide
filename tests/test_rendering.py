@@ -11,6 +11,7 @@ from fractions import Fraction
 from pathlib import Path
 from stat import S_IMODE
 from typing import Any, cast
+from urllib.parse import urlencode
 
 import pytest
 from PIL import Image
@@ -2273,7 +2274,10 @@ def test_customize_shell_leaves_the_print_comparison_untouched(tmp_path: Path) -
     print_block = stylesheet.split("@media print {")[1]
 
     # The fixed PDF always carries the comparison; only the opener is screen-only.
-    assert ".customize-control, .customize-dialog, .lens-banner { display: none; }" in print_block
+    assert (
+        ".customize-control, .customize-dialog, .lens-banner, .lens-notice { display: none; }"
+        in print_block
+    )
     assert "show-times" not in print_block
     assert "print-times-pick" in stylesheet
     assert "Read the Times pill" in html
@@ -2476,8 +2480,15 @@ def _with_multi_category_source(view_model: PublicationViewModel) -> Publication
 
 
 def test_personalization_is_invisible_while_the_policy_is_disabled(tmp_path: Path) -> None:
-    """Issue 80: no selection UI, no mode toggle, no full payload, while disabled."""
+    """Issue 80/81: no selection UI, no mode toggle, no per-race lens
+    presentation, and no full payload, while disabled.
+
+    The stylesheet carries `[data-lens-only]`/`[data-lens-hidden]` selectors
+    unconditionally (an unused selector is harmless with no matching markup),
+    so, like the existing show-times check, this looks only at the body.
+    """
     html = _customize_html(tmp_path)
+    body = html.split("</style>", 1)[1]
 
     for marker in (
         "data-customize-mode",
@@ -2485,9 +2496,22 @@ def test_personalization_is_invisible_while_the_policy_is_disabled(tmp_path: Pat
         "data-customize-source",
         "data-customize-personalize",
         "data-lens-banner",
+        "data-lens-notice",
+        "data-lens-only",
+        "data-lens-hidden",
+        "data-lens-card-badge",
+        "data-lens-recommendation",
+        "data-lens-share",
+        "data-lens-support",
+        "data-lens-insufficient",
+        "data-lens-comparison",
+        "data-race-detail-lens",
+        "data-lens-detail-summary",
+        "data-lens-detail-audited",
+        "data-lens-detail-sources",
         'id="lens-personalization"',
     ):
-        assert marker not in html
+        assert marker not in body
 
     bindings = json.loads(html.split('id="lens-bindings">')[1].split("</script>")[0])
     assert bindings["categories"] == []
@@ -3010,3 +3034,376 @@ def test_personalization_shared_link_restores_the_same_version_selection(tmp_pat
     assert result["bannerHidden"] is False
     assert "Personalized lens active" in result["bannerText"]
     assert result["search"] == "?edition=compact"
+
+
+# Issue 81: per-race personalized presentation and audited divergence.
+
+
+def test_personalization_full_panel_selection_shows_no_divergent_comparison(tmp_path: Path) -> None:
+    """Issue 81 acceptance criterion: an unchanged race stays free of
+    redundant audited detail. Entering My sources with every category
+    selected (the mode's own default) reproduces the audited consensus for
+    every race exactly (issue 77's tested contract), so no card's compact
+    audited comparison may appear, and every card is still labeled.
+    """
+    view_model = _personalization_enabled_view_model(tmp_path)
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          document.querySelector('[data-customize-open]').click();
+          const modeSources = document.querySelector('[data-customize-mode][value="sources"]');
+          modeSources.click();
+          modeSources.dispatchEvent(new Event('change', { bubbles: true }));
+          const cards = [...document.querySelectorAll('.race-card')];
+          const anyComparisonShown = cards.some(
+            (card) => card.querySelector('[data-lens-comparison]')?.hidden === false,
+          );
+          const badgesPresent = cards.every(
+            (card) => card.querySelector('[data-lens-card-badge]') !== null,
+          );
+          const firstCard = cards[0];
+          return JSON.stringify({
+            cardCount: cards.length,
+            anyComparisonShown,
+            badgesPresent,
+            recommendationMatches: firstCard.querySelector('[data-lens-recommendation]').textContent
+              === firstCard.querySelector('[data-display-role="recommendation"]').textContent,
+            supportMatches: firstCard.querySelector('[data-lens-support]').textContent
+              === firstCard.querySelector('[data-display-role="support"]').textContent,
+          });
+        })()
+        """,
+    )
+    assert result["cardCount"] > 0
+    assert result["anyComparisonShown"] is False
+    assert result["badgesPresent"] is True
+    assert result["recommendationMatches"] is True
+    assert result["supportMatches"] is True
+
+
+def test_personalization_divergent_race_discloses_a_compact_comparison_and_full_detail(
+    tmp_path: Path,
+) -> None:
+    """Issue 81 acceptance criteria: every defined divergence dimension is
+    detected from structured values, a divergent card shows a compact
+    audited comparison, and the race detail panel discloses complete
+    audited/personalized values, contributing sources, and inclusion
+    reasons. Narrowing the real production panel to one category is
+    virtually certain to push some races below the minimum-explicit-sources
+    threshold, diverging their recommendation state from the full panel
+    this mode starts with.
+    """
+    view_model = _production_bundle().view_model
+    enabled_policy = view_model.personalization.policy.model_copy(update={"enabled": True})
+    view_model = view_model.model_copy(
+        update={
+            "personalization": view_model.personalization.model_copy(
+                update={"policy": enabled_policy}
+            )
+        }
+    )
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          document.querySelector('[data-customize-open]').click();
+          const modeSources = document.querySelector('[data-customize-mode][value="sources"]');
+          modeSources.click();
+          modeSources.dispatchEvent(new Event('change', { bubbles: true }));
+          document.querySelectorAll('[data-customize-category]').forEach((input) => {
+            input.checked = false;
+          });
+          const category = document.querySelector('[data-customize-category]');
+          category.checked = true;
+          category.dispatchEvent(new Event('change', { bubbles: true }));
+          const cards = [...document.querySelectorAll('.race-card')];
+          const divergent = cards.find(
+            (card) => card.querySelector('[data-lens-comparison]')?.hidden === false,
+          );
+          const unchanged = cards.find(
+            (card) => card.querySelector('[data-lens-comparison]')?.hidden === true,
+          );
+          let detail = null;
+          if (divergent) {
+            divergent.querySelector('[data-race-detail-link]').click();
+            await new Promise((resolve) => setTimeout(resolve, 50));
+            const dialog = divergent.querySelector('[data-race-detail-dialog]');
+            detail = {
+              summary: dialog.querySelector('[data-lens-detail-summary]').textContent,
+              auditedHidden: dialog.querySelector('[data-lens-detail-audited]').hidden,
+              auditedText: dialog.querySelector('[data-lens-detail-audited]').textContent,
+              sourceRowCount: dialog.querySelectorAll('[data-lens-detail-sources] li').length,
+            };
+          }
+          return JSON.stringify({
+            hasDivergent: divergent !== undefined,
+            hasUnchanged: unchanged !== undefined,
+            divergentBadge: divergent?.querySelector('[data-lens-card-badge]')?.textContent,
+            divergentComparisonText: divergent
+              ?.querySelector('[data-lens-comparison]')?.textContent,
+            unchangedComparisonHidden: unchanged?.querySelector('[data-lens-comparison]')?.hidden,
+            detail,
+          });
+        })()
+        """,
+    )
+    assert result["hasDivergent"] is True, (
+        "expected at least one production race to diverge from the full-panel audited baseline"
+    )
+    assert result["divergentBadge"].strip() == "My sources"
+    assert "Audited consensus:" in result["divergentComparisonText"]
+    assert result["detail"]["auditedHidden"] is False
+    assert "Audited consensus:" in result["detail"]["auditedText"]
+    assert result["detail"]["sourceRowCount"] >= 0
+    if result["hasUnchanged"]:
+        assert result["unchangedComparisonHidden"] is True
+
+
+def _lens_fragment(
+    view_model: PublicationViewModel,
+    *,
+    mode: str,
+    category_codes: tuple[str, ...] = (),
+    source_codes: tuple[str, ...] = (),
+    times: bool = False,
+    data_version: str | None = None,
+    scoring_id: str | None = None,
+) -> str:
+    """Hand-encode a lens fragment in the exact parameter shape lens-url.mjs
+    reads.
+
+    Used only to construct a shared link the codec would never itself
+    produce (a cross-version or malformed one), since there is no Python
+    binding to call the JS codec directly.
+    """
+    contract = view_model.personalization
+    selection = "".join(sorted({*category_codes, *source_codes}))
+    params = {
+        "lens": "1",
+        "mode": mode,
+        "panel": contract.panel_id,
+        "ph": contract.panel_hash[:12],
+        "data": data_version if data_version is not None else view_model.metadata.data_version,
+        "scoring": scoring_id if scoring_id is not None else contract.scoring.configuration_id,
+        "times": "1" if times else "0",
+    }
+    if selection:
+        params["sel"] = selection
+    return urlencode(params)
+
+
+def test_personalization_stale_link_migrates_with_a_persistent_notice(tmp_path: Path) -> None:
+    """Issue 81 acceptance criteria: a cross-version link that still
+    resolves against the current panel is migrated, its migrated selection
+    is applied, and a persistent explanation discloses the migration.
+    """
+    view_model = _personalization_enabled_view_model(tmp_path)
+    contract = view_model.personalization
+    category = next(
+        item for item in contract.categories if item.selectable and item.member_source_codes
+    )
+    fragment = _lens_fragment(
+        view_model,
+        mode="s",
+        category_codes=(category.code,),
+        data_version="a-retired-data-version",
+    )
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        JSON.stringify({
+          noticeHidden: document.querySelector('[data-lens-notice]').hidden,
+          noticeText: document.querySelector('[data-lens-notice]').textContent,
+          sourcesChecked: document.querySelector('[data-customize-mode][value="sources"]').checked,
+          categoryChecked: [...document.querySelectorAll('[data-customize-category]')]
+            .filter((input) => input.checked)
+            .map((input) => input.dataset.customizeCategory),
+        })
+        """,
+        initial_url=f"{html_path.resolve().as_uri()}#{fragment}",
+    )
+    assert result["noticeHidden"] is False
+    assert "migrated" in result["noticeText"]
+    assert result["sourcesChecked"] is True
+    assert result["categoryChecked"] == [category.code]
+
+
+def test_personalization_unresolvable_link_falls_back_to_audited_with_a_persistent_notice(
+    tmp_path: Path,
+) -> None:
+    """Issue 81 acceptance criterion: a cross-version link whose category can
+    no longer be resolved falls back to the audited consensus rather than a
+    partial personalized score, with a persistent explanation.
+    """
+    view_model = _personalization_enabled_view_model(tmp_path)
+    fragment = _lens_fragment(
+        view_model,
+        mode="s",
+        category_codes=("Gzzz",),
+        data_version="a-retired-data-version",
+    )
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        JSON.stringify({
+          noticeHidden: document.querySelector('[data-lens-notice]').hidden,
+          noticeText: document.querySelector('[data-lens-notice]').textContent,
+          audited: document.querySelector('[data-customize-mode][value="audited"]').checked,
+        })
+        """,
+        initial_url=f"{html_path.resolve().as_uri()}#{fragment}",
+    )
+    assert result["noticeHidden"] is False
+    assert "could not be migrated" in result["noticeText"]
+    assert result["audited"] is True
+
+
+def test_personalization_malformed_link_falls_back_to_audited_with_a_persistent_notice(
+    tmp_path: Path,
+) -> None:
+    """Issue 81 acceptance criterion: an invalid link (an unknown token in an
+    otherwise current-version fragment here) falls back to audited with a
+    persistent explanation.
+    """
+    view_model = _personalization_enabled_view_model(tmp_path)
+    fragment = _lens_fragment(view_model, mode="s", category_codes=("Gzzz",))
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        JSON.stringify({
+          noticeHidden: document.querySelector('[data-lens-notice]').hidden,
+          noticeText: document.querySelector('[data-lens-notice]').textContent,
+          audited: document.querySelector('[data-customize-mode][value="audited"]').checked,
+        })
+        """,
+        initial_url=f"{html_path.resolve().as_uri()}#{fragment}",
+    )
+    assert result["noticeHidden"] is False
+    assert "could not be read" in result["noticeText"]
+    assert result["audited"] is True
+
+
+def test_personalization_ordinary_anchor_navigation_never_shows_a_lens_notice(
+    tmp_path: Path,
+) -> None:
+    """The skip link decodes to the same `unrecognized_fragment` malformed
+    status a corrupted lens link could, but a plain in-page anchor must
+    never be mistaken for one: it must never show a lens notice.
+    """
+    view_model = _personalization_enabled_view_model(tmp_path)
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          document.querySelector('.skip-link').click();
+          await new Promise((resolve) => setTimeout(resolve, 30));
+          return JSON.stringify({
+            noticeHidden: document.querySelector('[data-lens-notice]').hidden,
+            hash: window.location.hash,
+          });
+        })()
+        """,
+    )
+    assert result["hash"] == "#guide-races"
+    assert result["noticeHidden"] is True
+
+
+def test_personalization_notice_clears_on_the_next_explicit_change(tmp_path: Path) -> None:
+    """A persistent link explanation must not survive the reader's own next
+    explicit customization, the same convention the copy-status line uses.
+    """
+    view_model = _personalization_enabled_view_model(tmp_path)
+    fragment = _lens_fragment(view_model, mode="s", category_codes=("Gzzz",))
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          const before = document.querySelector('[data-lens-notice]').hidden;
+          document.querySelector('[data-customize-open]').click();
+          document.querySelector('[data-customize-reset]').click();
+          return JSON.stringify({
+            before,
+            afterHidden: document.querySelector('[data-lens-notice]').hidden,
+          });
+        })()
+        """,
+        initial_url=f"{html_path.resolve().as_uri()}#{fragment}",
+    )
+    assert result["before"] is False
+    assert result["afterHidden"] is True
+
+
+def test_personalization_times_comparison_stays_independent_of_the_lens(tmp_path: Path) -> None:
+    """Issue 81 acceptance criterion: the Seattle Times comparison remains
+    visually and computationally independent of the personalized lens.
+    Showing it must not change the personalized recommendation text, and
+    entering My sources must not implicitly reveal it.
+    """
+    view_model = _personalization_enabled_view_model(tmp_path)
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          document.querySelector('[data-customize-open]').click();
+          const modeSources = document.querySelector('[data-customize-mode][value="sources"]');
+          modeSources.click();
+          modeSources.dispatchEvent(new Event('change', { bubbles: true }));
+          const timesShownAfterSources = document.documentElement.classList.contains('show-times');
+          const firstCard = document.querySelector('.race-card');
+          const before = firstCard.querySelector('[data-lens-recommendation]').textContent;
+          document.querySelector('[data-customize-times]').click();
+          document.querySelector('[data-customize-times]')
+            .dispatchEvent(new Event('change', { bubbles: true }));
+          const after = firstCard.querySelector('[data-lens-recommendation]').textContent;
+          return JSON.stringify({
+            timesShownAfterSources,
+            timesShownAfterToggle: document.documentElement.classList.contains('show-times'),
+            recommendationUnchanged: before === after,
+          });
+        })()
+        """,
+    )
+    assert result["timesShownAfterSources"] is False
+    assert result["timesShownAfterToggle"] is True
+    assert result["recommendationUnchanged"] is True
