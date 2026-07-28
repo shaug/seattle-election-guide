@@ -1603,7 +1603,7 @@ def _capture_emulated_viewport(
         cdp.command("Page.enable", session_id=session_id)
         cdp.command("Page.navigate", {"url": url}, session_id=session_id)
         cdp.wait_event("Page.loadEventFired", session_id=session_id)
-        customize_probe = cdp.command(
+        sources_tree_probe = cdp.command(
             "Runtime.evaluate",
             {
                 "expression": (
@@ -1691,13 +1691,13 @@ def _capture_emulated_viewport(
             },
             session_id=session_id,
         )
-        customize_result = cast(dict[str, Any], customize_probe["result"])
-        if "value" not in customize_result:
-            raise ValueError(f"customize validation failed: {customize_probe}")
-        customize_metrics = cast(
-            dict[str, object], json.loads(cast(str, customize_result["value"]))
+        sources_tree_result = cast(dict[str, Any], sources_tree_probe["result"])
+        if "value" not in sources_tree_result:
+            raise ValueError(f"sources tree validation failed: {sources_tree_probe}")
+        sources_tree_metrics = cast(
+            dict[str, object], json.loads(cast(str, sources_tree_result["value"]))
         )
-        expected_customize = {
+        expected_sources_tree = {
             "hidden": {
                 "pills": True,
                 "wrappers": True,
@@ -1718,8 +1718,8 @@ def _capture_emulated_viewport(
             "countsAgree": True,
             "controlCount": EXPECTED_SCREEN_CONTROL_COUNT,
         }
-        if customize_metrics != expected_customize:
-            raise ValueError(f"customize comparison validation failed: {customize_metrics}")
+        if sources_tree_metrics != expected_sources_tree:
+            raise ValueError(f"sources tree comparison validation failed: {sources_tree_metrics}")
         # Leave the comparison shown so the checks below still exercise its markup.
         cdp.command(
             "Runtime.evaluate",

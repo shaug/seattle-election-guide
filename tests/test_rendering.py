@@ -2237,16 +2237,16 @@ def _revalidated(view_model: PublicationViewModel) -> PublicationViewModel:
     )
 
 
-def _customize_html(tmp_path: Path) -> str:
+def _sources_tree_html(tmp_path: Path) -> str:
     """Render the reference guide the way the other rendering tests do."""
     return render_html_document(
         _view_model(tmp_path), read_rendering_configuration(RENDERING_CONFIG)
     )
 
 
-def test_customize_shell_hides_the_times_comparison_by_default(tmp_path: Path) -> None:
+def test_sources_tree_shell_hides_the_times_comparison_by_default(tmp_path: Path) -> None:
     """Issue 79: the default responsive load carries no Times pill or decision."""
-    html = _customize_html(tmp_path)
+    html = _sources_tree_html(tmp_path)
     stylesheet = html.split("<style>")[1].split("</style>")[0]
 
     # Hidden in CSS rather than in script, so the default holds before and without JS.
@@ -2264,13 +2264,13 @@ def test_customize_shell_hides_the_times_comparison_by_default(tmp_path: Path) -
     assert "html.show-times [data-times-hidden]" in stylesheet
 
 
-def test_customize_shell_exposes_no_dialog_and_keeps_controls_in_the_merged_section(
+def test_sources_tree_shell_exposes_no_dialog_and_keeps_controls_in_the_merged_section(
     tmp_path: Path,
 ) -> None:
     """Issue 97: the Customize dialog no longer exists anywhere in the page;
     the merged sources tree is reached by expanding the page-anchored
     disclosure like every other guide-notes section, not a modal opener."""
-    html = _customize_html(tmp_path)
+    html = _sources_tree_html(tmp_path)
     controls = html.split('<section class="screen-controls"')[1].split("</section>")[0]
 
     assert controls.count("<button") == 0
@@ -2283,8 +2283,8 @@ def test_customize_shell_exposes_no_dialog_and_keeps_controls_in_the_merged_sect
     assert "data-sources-comparison-status" in sources_section
 
 
-def test_customize_shell_encodes_state_through_the_published_codec(tmp_path: Path) -> None:
-    html = _customize_html(tmp_path)
+def test_sources_tree_shell_encodes_state_through_the_published_codec(tmp_path: Path) -> None:
+    html = _sources_tree_html(tmp_path)
     codec = (
         Path(__file__).parent.parent / "src/election_guide/rendering/templates/lens-url.mjs"
     ).read_text(encoding="utf-8")
@@ -2297,8 +2297,8 @@ def test_customize_shell_encodes_state_through_the_published_codec(tmp_path: Pat
     assert "decodeLensFragment(" in html
 
 
-def test_customize_shell_leaves_the_print_comparison_untouched(tmp_path: Path) -> None:
-    html = _customize_html(tmp_path)
+def test_sources_tree_shell_leaves_the_print_comparison_untouched(tmp_path: Path) -> None:
+    html = _sources_tree_html(tmp_path)
     stylesheet = html.split("<style>")[1].split("</style>")[0]
     print_block = stylesheet.split("@media print {")[1]
 
@@ -2313,8 +2313,8 @@ def test_customize_shell_leaves_the_print_comparison_untouched(tmp_path: Path) -
     assert "Read the Times pill" in html
 
 
-def test_customize_shell_describes_the_times_as_optional(tmp_path: Path) -> None:
-    html = _customize_html(tmp_path)
+def test_sources_tree_shell_describes_the_times_as_optional(tmp_path: Path) -> None:
+    html = _sources_tree_html(tmp_path)
     hero = html.split('<p class="hero-deck">')[1].split("</p>")[0]
 
     assert "optional comparison" in hero
@@ -2330,7 +2330,7 @@ def test_footer_share_button_uses_web_share_then_falls_back_to_copy(tmp_path: Pa
     sheet clobber the status line with a spurious failure message.
     """
     html_path = tmp_path / "guide.html"
-    html_path.write_text(_customize_html(tmp_path), encoding="utf-8")
+    html_path.write_text(_sources_tree_html(tmp_path), encoding="utf-8")
     result = _evaluate_in_chrome(
         html_path,
         """
@@ -2403,7 +2403,7 @@ def _candidate_section(html: str, candidate_id: str) -> str:
     return match.group(0)
 
 
-def test_customize_shell_hides_a_comparison_only_candidate_by_default() -> None:
+def test_sources_tree_shell_hides_a_comparison_only_candidate_by_default() -> None:
     """Issue 79: a candidate only the Seattle Times picked must not leak by default."""
     view_model = _production_bundle().view_model
     html = render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG))
