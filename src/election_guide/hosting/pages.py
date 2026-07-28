@@ -423,6 +423,9 @@ def _archive_html(site_manifest: SiteManifest) -> str:
 """
 
 
+_TEMPLATES_DIR = Path(__file__).parents[1] / "rendering" / "templates"
+
+
 def _about_html(site_manifest: SiteManifest) -> str:
     current = next(
         election
@@ -431,6 +434,11 @@ def _about_html(site_manifest: SiteManifest) -> str:
     )
     current_path = f"/e/{current.election_id}/"
     canonical_url = f"{site_manifest.canonical_origin}/about/"
+    # Shared verbatim with the rendered guide (src/election_guide/rendering/
+    # renderer.py) so the design tokens, accessibility utilities, and the
+    # share/copy-link fallback policy have exactly one implementation each.
+    base_css = (_TEMPLATES_DIR / "base.css").read_text(encoding="utf-8")
+    share_link_script = (_TEMPLATES_DIR / "share-link.mjs").read_text(encoding="utf-8")
     description = (
         "How this guide aggregates organizational endorsements, why the source panel is "
         "versioned, how to verify a result, and how to report a correction."
@@ -455,27 +463,7 @@ def _about_html(site_manifest: SiteManifest) -> str:
   <link rel="canonical" href="{escaped_canonical}">
   <title>About &amp; FAQ &mdash; Seattle election guide</title>
   <style>
-    :root {{
-      --navy: #102a43; --teal: #087f73; --ink: #17212b;
-      --muted: #52606d; --paper: #fbfaf6; --white: #fff;
-    }}
-    * {{ box-sizing: border-box; }}
-    html {{
-      color: var(--ink); background: #edf1f4;
-      font-family: "Avenir Next", Avenir, "Helvetica Neue", Helvetica, sans-serif;
-    }}
-    body {{ margin: 0; line-height: 1.5; }}
-    a {{ color: #075d75; }}
-    .visually-hidden {{
-      position: absolute !important; width: 1px; height: 1px; margin: -1px;
-      padding: 0; overflow: hidden; clip: rect(0 0 0 0);
-      white-space: nowrap; border: 0;
-    }}
-    .skip-link {{
-      position: absolute; left: 1rem; top: -5rem; z-index: 10;
-      background: var(--white); padding: .7rem;
-    }}
-    .skip-link:focus {{ top: 1rem; }}
+    {base_css}
     .page {{ max-width: 46rem; margin: 0 auto; background: var(--paper); min-height: 100vh; }}
     .page-header {{
       display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
@@ -604,48 +592,18 @@ def _about_html(site_manifest: SiteManifest) -> str:
       </nav>
     </footer>
   </div>
-  <script>
-    (function () {{
-      var button = document.querySelector('[data-share-about]');
-      var status = document.querySelector('[data-share-about-status]');
-      if (!button) return;
-      function legacyCopy(url) {{
-        var field = document.createElement('textarea');
-        field.value = url;
-        field.setAttribute('readonly', '');
-        field.className = 'visually-hidden';
-        document.body.appendChild(field);
-        field.select();
-        var copied = false;
-        try {{ copied = document.execCommand('copy'); }} catch (error) {{ copied = false; }}
-        field.remove();
-        if (status) status.textContent = copied ? 'Link copied.' : ('Copy failed. Link: ' + url);
-      }}
-      function copyFallback(url) {{
-        if (navigator.clipboard && navigator.clipboard.writeText) {{
-          navigator.clipboard.writeText(url).then(function () {{
-            if (status) status.textContent = 'Link copied.';
-          }}, function () {{
-            legacyCopy(url);
-          }});
-          return;
-        }}
-        legacyCopy(url);
-      }}
-      button.addEventListener('click', function () {{
-        var url = window.location.href;
-        if (navigator.share) {{
-          navigator.share({{ title: document.title, url: url }}).then(function () {{
-            if (status) status.textContent = 'Share menu opened.';
-          }}, function (error) {{
-            if (error && error.name === 'AbortError') return;
-            copyFallback(url);
-          }});
-          return;
-        }}
-        copyFallback(url);
-      }});
-    }})();
+  <script type="module">
+{share_link_script}
+    const shareButton = document.querySelector('[data-share-about]');
+    const shareStatus = document.querySelector('[data-share-about-status]');
+    shareButton?.addEventListener('click', async () => {{
+      const value = window.location.href;
+      const result = await shareOrCopyLink(value, document.title);
+      if (!shareStatus) return;
+      if (result === 'copied') shareStatus.textContent = 'Link copied.';
+      else if (result === 'shared') shareStatus.textContent = 'Share menu opened.';
+      else if (result === 'failed') shareStatus.textContent = `Copy failed. Link: ${{value}}`;
+    }});
   </script>
 </body>
 </html>

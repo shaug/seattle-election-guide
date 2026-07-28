@@ -677,6 +677,7 @@
   <script type="application/json" id="lens-personalization">{{ lens_personalization | tojson }}</script>
   {% endif %}
   <script type="module">
+{{ share_link_script | safe }}
 {{ lens_url_script | safe }}
   {% if guide.personalization.policy.enabled %}
 {{ lens_score_script | safe }}
@@ -689,37 +690,6 @@
   // page and the Node tests share one implementation.
   const bindings = JSON.parse(document.querySelector('#lens-bindings').textContent);
 
-  // Native share sheet when available, falling back to the same clipboard/
-  // execCommand pattern the copy-link buttons below use. A cancelled share
-  // sheet (AbortError) is not a failure and leaves the status line untouched.
-  async function shareOrCopyLink(url, title) {
-    if (navigator.share) {
-      try {
-        await navigator.share({ title, url });
-        return 'shared';
-      } catch (error) {
-        if (error?.name === 'AbortError') return 'cancelled';
-      }
-    }
-    try {
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(url);
-      } else {
-        const field = document.createElement('textarea');
-        field.value = url;
-        field.setAttribute('readonly', '');
-        field.className = 'visually-hidden';
-        document.body.append(field);
-        field.select();
-        const copied = document.execCommand('copy');
-        field.remove();
-        if (!copied) throw new Error('Copy command was unavailable');
-      }
-      return 'copied';
-    } catch {
-      return 'failed';
-    }
-  }
   const shareGuideButton = document.querySelector('[data-share-guide]');
   const shareGuideStatus = document.querySelector('[data-share-guide-status]');
   shareGuideButton?.addEventListener('click', async () => {

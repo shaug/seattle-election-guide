@@ -1,24 +1,3 @@
-:root {
-  --navy: #102a43;
-  --blue: #176b87;
-  --teal: #087f73;
-  --amber: #d99000;
-  --red: #9f2d25;
-  --ink: #17212b;
-  --muted: #52606d;
-  --line: #cbd2d9;
-  --paper: #fbfaf6;
-  --white: #ffffff;
-  --screen-sans: "Avenir Next", Avenir, "Helvetica Neue", Helvetica, sans-serif;
-}
-
-* { box-sizing: border-box; }
-html { color: var(--ink); background: #edf1f4; font-family: var(--screen-sans); }
-body { margin: 0; line-height: 1.45; }
-a { color: #075d75; text-underline-offset: .15em; }
-.visually-hidden { position: absolute !important; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
-.skip-link { position: absolute; left: 1rem; top: -5rem; z-index: 10; background: var(--white); padding: .7rem; }
-.skip-link:focus { top: 1rem; }
 .screen-guide { width: 100%; max-width: 76rem; margin: 0 auto; background: var(--paper); min-height: 100vh; }
 .hero { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 1.5rem 3rem; color: var(--white); background: var(--navy); padding: clamp(1.35rem, 3vw, 2.25rem) clamp(1rem, 4vw, 3rem); border-bottom: .4rem solid var(--teal); }
 .hero-kicker, .eyebrow { color: #9ee7df; font-size: .78rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
