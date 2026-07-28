@@ -104,6 +104,7 @@ class PersonalizationCategory(PersonalizationModel):
     code: str = Field(pattern=CATEGORY_CODE_PATTERN)
     label: str = Field(min_length=1)
     selectable: bool = Field(strict=True)
+    panel_role: Literal["tallying", "comparison"] = "tallying"
     member_source_codes: list[str]
 
     @model_validator(mode="after")
@@ -136,8 +137,8 @@ class PersonalizationSource(PersonalizationModel):
             raise ValueError(f"source {self.id!r} reporting category must be a selection category")
         if self.overlap_group_ids != sorted(set(self.overlap_group_ids)):
             raise ValueError(f"source {self.id!r} overlap groups must be unique and sorted")
-        if self.selectable != (self.panel_role == "consensus"):
-            raise ValueError(f"source {self.id!r} selectability must follow its panel role")
+        if not self.selectable:
+            raise ValueError(f"published source {self.id!r} must be selectable")
         return self
 
 
@@ -285,8 +286,22 @@ class PersonalizationContract(PersonalizationModel):
         )
         if self.policy.comparison_source_codes != comparison_codes:
             raise ValueError("policy comparison codes must match the published comparison sources")
-        if selectable_codes & set(comparison_codes):
-            raise ValueError("comparison sources cannot be selectable")
+        if not set(comparison_codes) <= selectable_codes:
+            raise ValueError("comparison sources must be selectable for display")
+        comparison_category_ids = {
+            category.id for category in self.categories if category.panel_role == "comparison"
+        }
+        for source in self.sources:
+            joined_comparison_categories = comparison_category_ids & set(
+                source.selection_category_ids
+            )
+            if source.panel_role == "comparison":
+                if joined_comparison_categories != comparison_category_ids:
+                    raise ValueError(
+                        f"comparison source {source.id!r} must join every comparison category"
+                    )
+            elif joined_comparison_categories:
+                raise ValueError(f"source {source.id!r} cannot join a comparison category")
         if self.policy.minimum_explicit_sources != self.scoring.minimum_explicit_sources:
             raise ValueError("policy and scoring must agree on the explicit-source threshold")
 

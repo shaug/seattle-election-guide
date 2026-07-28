@@ -72,13 +72,18 @@ def test_release_policy_enables_personalization_and_defaults_to_audited() -> Non
 def test_payload_identifies_and_excludes_comparison_sources() -> None:
     contract = _bundle().view_model.personalization
     times = next(source for source in contract.sources if source.panel_role == "comparison")
+    comparison_category = next(item for item in contract.categories if item.id == "comparison")
 
     assert contract.policy.comparison_source_codes == [times.code]
-    assert times.selectable is False
-    assert times.code not in {
-        code for category in contract.categories for code in category.member_source_codes
-    }
-    assert next(item for item in contract.categories if item.id == "comparison").selectable is False
+    assert times.selectable is True
+    assert comparison_category.panel_role == "comparison"
+    assert comparison_category.selectable is True
+    assert comparison_category.member_source_codes == [times.code]
+    assert all(
+        category.panel_role == "tallying"
+        for category in contract.categories
+        if category.id != "comparison"
+    )
 
 
 def test_payload_reconstructs_eligibility_and_exact_allocations() -> None:
@@ -196,14 +201,57 @@ def test_publication_rejects_an_incomplete_personalization_race() -> None:
         PublicationViewModel.model_validate(payload)
 
 
-def test_publication_rejects_a_selectable_comparison_source() -> None:
+def test_publication_rejects_a_nonselectable_comparison_source() -> None:
     payload = _view_model_payload()
     times = next(
         item for item in payload["personalization"]["sources"] if item["panel_role"] == "comparison"
     )
-    times["selectable"] = True
+    times["selectable"] = False
 
-    with pytest.raises(ValidationError, match="selectability must follow its panel role"):
+    with pytest.raises(ValidationError, match="must be selectable"):
+        PublicationViewModel.model_validate(payload)
+
+
+def test_publication_rejects_a_comparison_source_missing_a_comparison_category() -> None:
+    payload = _view_model_payload()
+    comparison_category = next(
+        item
+        for item in payload["personalization"]["categories"]
+        if item["panel_role"] == "comparison"
+    )
+    # A second comparison-role category that no comparison source actually joins:
+    # the published comparison source must join every published comparison category.
+    second_comparison_category: dict[str, Any] = {
+        **comparison_category,
+        "id": "comparison_secondary",
+        "code": "Gcm2",
+        "selectable": False,
+        "member_source_codes": [],
+    }
+    payload["personalization"]["categories"].append(second_comparison_category)
+
+    with pytest.raises(ValidationError, match="must join every comparison category"):
+        PublicationViewModel.model_validate(payload)
+
+
+def test_publication_rejects_a_consensus_source_joining_a_comparison_category() -> None:
+    payload = _view_model_payload()
+    comparison_category = next(
+        item
+        for item in payload["personalization"]["categories"]
+        if item["panel_role"] == "comparison"
+    )
+    consensus_source = next(
+        item for item in payload["personalization"]["sources"] if item["panel_role"] == "consensus"
+    )
+    consensus_source["selection_category_ids"] = sorted(
+        [*consensus_source["selection_category_ids"], comparison_category["id"]]
+    )
+    comparison_category["member_source_codes"] = sorted(
+        [*comparison_category["member_source_codes"], consensus_source["code"]]
+    )
+
+    with pytest.raises(ValidationError, match="cannot join a comparison category"):
         PublicationViewModel.model_validate(payload)
 
 
@@ -249,13 +297,21 @@ def test_catalog_refuses_to_rewrite_a_published_panel() -> None:
         appended_panel_snapshot(catalog, edited)
 
 
+def _next_panel_version(panel_id: str) -> tuple[str, str]:
+    """Derive a not-yet-published successor panel id/version from a live one."""
+    stem, _, version = panel_id.rpartition("-v")
+    successor_version = f"v{int(version) + 1}"
+    return f"{stem}-{successor_version}", successor_version
+
+
 def test_catalog_appends_a_new_panel_version() -> None:
     catalog = read_panel_snapshot_catalog(CATALOG_PATH)
     published = catalog.snapshots[-1]
+    successor_id, successor_version = _next_panel_version(published.panel_id)
     successor = published.model_copy(
         update={
-            "panel_id": "wa-2026-primary-default-sources-v4",
-            "panel_version": "v4",
+            "panel_id": successor_id,
+            "panel_version": successor_version,
             "panel_hash": "b" * 64,
         }
     )
@@ -263,7 +319,7 @@ def test_catalog_appends_a_new_panel_version() -> None:
     appended = appended_panel_snapshot(catalog, successor)
 
     assert [item.panel_id for item in appended.snapshots] == [
-        published.panel_id,
+        *(item.panel_id for item in catalog.snapshots),
         successor.panel_id,
     ]
     assert appended.snapshot_for(published.panel_id) == published
@@ -272,8 +328,9 @@ def test_catalog_appends_a_new_panel_version() -> None:
 def test_catalog_rejects_a_repeated_panel_hash() -> None:
     catalog = read_panel_snapshot_catalog(CATALOG_PATH)
     published = catalog.snapshots[-1]
+    successor_id, successor_version = _next_panel_version(published.panel_id)
     collision = published.model_copy(
-        update={"panel_id": "wa-2026-primary-default-sources-v4", "panel_version": "v4"}
+        update={"panel_id": successor_id, "panel_version": successor_version}
     )
 
     with pytest.raises(ValueError, match="duplicates the hash"):

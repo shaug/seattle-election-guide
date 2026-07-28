@@ -2,9 +2,9 @@
   "after": {
     "computed_at": "2026-07-23T17:10:00Z",
     "configuration_id": "unweighted-progressive-v1",
-    "dataset_hash": "b0f7518499d33c03a7fa373b4450544a564dd899b585fe70a4514cff81f7d4e2",
+    "dataset_hash": "fc7b03709b6df927fe7d0e05f777442ff454f650ce2798468e79d5221df6d8ca",
     "election_id": "wa-2026-primary",
-    "input_hash": "d119ee3107bbcfb1180317cb0f1e6975a1b536aabf46147d9e3e166a92b0f740",
+    "input_hash": "746f83dbe09f21d235a18ccc88fbef8f80d92d7aaf873e79e915fdd4d8b6e7ae",
     "publication_scope_hash": "43f7068c9cb92ccc25821a70bd3ddd027b49211414b103decde4fd150ebba069",
     "races": [
       {

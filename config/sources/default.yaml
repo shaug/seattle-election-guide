@@ -1,9 +1,10 @@
 schema_version: "1.1"
-id: wa-2026-primary-default-sources-v3
+id: wa-2026-primary-default-sources-v4
 election_id: wa-2026-primary
 frozen_at: 2026-07-23T17:10:00Z
 research_cutoff: 2026-07-23T17:10:00Z
 notes:
+  - Version 4 marks the comparison category selectable and tags it panel_role comparison for issue 95; no source, eligibility, discovery, or reporting placement changed, so canonical scoring is identical to version 3.
   - Version 3 adds immutable transport codes and many-to-many selection categories for issue 75; no source, eligibility, discovery, or reporting placement changed, so canonical scoring is identical to version 2.
   - Version 2 expands the panel after the issue 61 audit; version 1 remains reconstructable at git commit 9faceeaaf7fe13c7f4d9c5c206db192ecd563321.
   - Six newly evaluated publishers have usable 2026 decisions; Tech 4 Taxes remains attributed to its official site while an organization-specific aggregator capture supplies the temporary retrieval path.
@@ -46,8 +47,9 @@ categories:
   - id: comparison
     code: Gcmp
     label: Centrist comparison
-    selectable: false
-    description: Comparison-only placement. Comparison sources never enter the progressive score and can never be selected.
+    selectable: true
+    panel_role: comparison
+    description: Comparison-only placement. Comparison sources may be selected for display but never enter the progressive score.
 retired_codes: []
 sources:
   - id: the-stranger

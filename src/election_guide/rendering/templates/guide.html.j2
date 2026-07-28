@@ -230,7 +230,7 @@
           <fieldset class="customize-group">
             <legend>Categories</legend>
             <div class="customize-category-list" data-customize-categories>
-              {% for category in guide.personalization.categories if category.selectable %}
+              {% for category in guide.personalization.categories if category.selectable and category.panel_role != 'comparison' %}
               <label class="customize-check">
                 <input type="checkbox" data-customize-category="{{ category.code }}">
                 <span>{{ category.label }}</span>
@@ -241,7 +241,7 @@
           <fieldset class="customize-group">
             <legend>Sources</legend>
             <ul class="customize-source-list" data-customize-source-list>
-              {% for source in guide.personalization.sources | selectattr('selectable') | sort(attribute='id') %}
+              {% for source in guide.personalization.sources | selectattr('selectable') | rejectattr('panel_role', 'equalto', 'comparison') | sort(attribute='id') %}
               <li data-customize-source-row="{{ source.code }}">
                 <label class="customize-check">
                   <input type="checkbox" data-customize-source="{{ source.code }}">
@@ -1036,7 +1036,7 @@
       lensBanner.hidden = false;
       lensBanner.textContent =
         `Personalized lens active — ${results.sourceCodes.length} of `
-        + `${personalization.sources.filter((item) => item.selectable).length} sources included.`;
+        + `${personalization.sources.filter((item) => item.selectable && item.panel_role !== 'comparison').length} sources included.`;
     }
     const personalizedByRaceId = new Map(results.races.map((race) => [race.raceId, race]));
     raceCards.forEach((card, raceId) => {

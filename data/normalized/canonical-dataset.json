@@ -27073,6 +27073,7 @@
         "description": "Progressive editorial boards and general-purpose progressive organizations.",
         "id": "progressive_general",
         "label": "Progressive editorial and general",
+        "panel_role": "tallying",
         "selectable": true
       },
       {
@@ -27080,6 +27081,7 @@
         "description": "Democratic Party organizations, including legislative-district and caucus bodies.",
         "id": "democratic_party",
         "label": "Democratic Party",
+        "panel_role": "tallying",
         "selectable": true
       },
       {
@@ -27087,6 +27089,7 @@
         "description": "Transit, housing density, and active-transportation organizations.",
         "id": "transportation_urbanism",
         "label": "Transportation and urbanism",
+        "panel_role": "tallying",
         "selectable": true
       },
       {
@@ -27094,6 +27097,7 @@
         "description": "Conservation and climate organizations.",
         "id": "environmental",
         "label": "Environment",
+        "panel_role": "tallying",
         "selectable": true
       },
       {
@@ -27101,6 +27105,7 @@
         "description": "Unions and labor councils.",
         "id": "labor",
         "label": "Labor",
+        "panel_role": "tallying",
         "selectable": true
       },
       {
@@ -27108,20 +27113,23 @@
         "description": "Civil-rights, reproductive-rights, immigrant, disability, and representation organizations.",
         "id": "rights_representation",
         "label": "Rights and representation",
+        "panel_role": "tallying",
         "selectable": true
       },
       {
         "code": "Gcmp",
-        "description": "Comparison-only placement. Comparison sources never enter the progressive score and can never be selected.",
+        "description": "Comparison-only placement. Comparison sources may be selected for display but never enter the progressive score.",
         "id": "comparison",
         "label": "Centrist comparison",
-        "selectable": false
+        "panel_role": "comparison",
+        "selectable": true
       }
     ],
     "election_id": "wa-2026-primary",
     "frozen_at": "2026-07-23T17:10:00Z",
-    "id": "wa-2026-primary-default-sources-v3",
+    "id": "wa-2026-primary-default-sources-v4",
     "notes": [
+      "Version 4 marks the comparison category selectable and tags it panel_role comparison for issue 95; no source, eligibility, discovery, or reporting placement changed, so canonical scoring is identical to version 3.",
       "Version 3 adds immutable transport codes and many-to-many selection categories for issue 75; no source, eligibility, discovery, or reporting placement changed, so canonical scoring is identical to version 2.",
       "Version 2 expands the panel after the issue 61 audit; version 1 remains reconstructable at git commit 9faceeaaf7fe13c7f4d9c5c206db192ecd563321.",
       "Six newly evaluated publishers have usable 2026 decisions; Tech 4 Taxes remains attributed to its official site while an organization-specific aggregator capture supplies the temporary retrieval path.",

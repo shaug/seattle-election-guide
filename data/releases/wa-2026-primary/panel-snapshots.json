@@ -19,6 +19,7 @@
             "wcan",
             "wwfp"
           ],
+          "panel_role": "tallying",
           "selectable": true
         },
         {
@@ -38,6 +39,7 @@
             "wsdm",
             "wsto"
           ],
+          "panel_role": "tallying",
           "selectable": true
         },
         {
@@ -50,6 +52,7 @@
             "trun",
             "wbik"
           ],
+          "panel_role": "tallying",
           "selectable": true
         },
         {
@@ -61,6 +64,7 @@
             "sicl",
             "wcac"
           ],
+          "panel_role": "tallying",
           "selectable": true
         },
         {
@@ -78,6 +82,7 @@
             "wsbt",
             "wslc"
           ],
+          "panel_role": "tallying",
           "selectable": true
         },
         {
@@ -94,6 +99,7 @@
             "wpaj",
             "wsto"
           ],
+          "panel_role": "tallying",
           "selectable": true
         },
         {
@@ -101,6 +107,7 @@
           "id": "comparison",
           "label": "Centrist comparison",
           "member_source_codes": [],
+          "panel_role": "tallying",
           "selectable": false
         }
       ],
@@ -635,6 +642,654 @@
           "panel_role": "comparison",
           "reporting_category_id": "comparison",
           "selectable": false,
+          "selection_category_ids": [
+            "comparison"
+          ]
+        }
+      ]
+    },
+    {
+      "categories": [
+        {
+          "code": "Ggen",
+          "id": "progressive_general",
+          "label": "Progressive editorial and general",
+          "member_source_codes": [
+            "fuse",
+            "sdsa",
+            "sldr",
+            "strn",
+            "t4tx",
+            "urbn",
+            "wbus",
+            "wcan",
+            "wwfp"
+          ],
+          "panel_role": "tallying",
+          "selectable": true
+        },
+        {
+          "code": "Gdem",
+          "id": "democratic_party",
+          "label": "Democratic Party",
+          "member_source_codes": [
+            "eccd",
+            "kcdm",
+            "ld11",
+            "ld32",
+            "ld34",
+            "ld36",
+            "ld37",
+            "ld43",
+            "ld46",
+            "wsdm",
+            "wsto"
+          ],
+          "panel_role": "tallying",
+          "selectable": true
+        },
+        {
+          "code": "Gurb",
+          "id": "transportation_urbanism",
+          "label": "Transportation and urbanism",
+          "member_source_codes": [
+            "ssub",
+            "t4ho",
+            "trun",
+            "wbik"
+          ],
+          "panel_role": "tallying",
+          "selectable": true
+        },
+        {
+          "code": "Genv",
+          "id": "environmental",
+          "label": "Environment",
+          "member_source_codes": [
+            "eccd",
+            "sicl",
+            "wcac"
+          ],
+          "panel_role": "tallying",
+          "selectable": true
+        },
+        {
+          "code": "Glab",
+          "id": "labor",
+          "label": "Labor",
+          "member_source_codes": [
+            "aftw",
+            "mlkl",
+            "pr17",
+            "s775",
+            "s925",
+            "ufcw",
+            "weas",
+            "wsbt",
+            "wslc"
+          ],
+          "panel_role": "tallying",
+          "selectable": true
+        },
+        {
+          "code": "Grgt",
+          "id": "rights_representation",
+          "label": "Rights and representation",
+          "member_source_codes": [
+            "alrs",
+            "nwpc",
+            "oamv",
+            "ppaa",
+            "snws",
+            "whal",
+            "wpaj",
+            "wsto"
+          ],
+          "panel_role": "tallying",
+          "selectable": true
+        },
+        {
+          "code": "Gcmp",
+          "id": "comparison",
+          "label": "Centrist comparison",
+          "member_source_codes": [
+            "stim"
+          ],
+          "panel_role": "comparison",
+          "selectable": true
+        }
+      ],
+      "panel_hash": "389a978b149da9afdb919fdb9dfd1d4d3fbecc290d3b1cd41da3e3fd363de0b5",
+      "panel_id": "wa-2026-primary-default-sources-v4",
+      "panel_version": "v4",
+      "schema_version": "1.0",
+      "sources": [
+        {
+          "code": "strn",
+          "id": "the-stranger",
+          "name": "The Stranger Election Control Board",
+          "panel_role": "consensus",
+          "reporting_category_id": "progressive_general",
+          "selectable": true,
+          "selection_category_ids": [
+            "progressive_general"
+          ]
+        },
+        {
+          "code": "urbn",
+          "id": "the-urbanist",
+          "name": "The Urbanist Elections Committee",
+          "panel_role": "consensus",
+          "reporting_category_id": "progressive_general",
+          "selectable": true,
+          "selection_category_ids": [
+            "progressive_general"
+          ]
+        },
+        {
+          "code": "pvot",
+          "id": "progressive-voters-guide",
+          "name": "Progressive Voters Guide",
+          "panel_role": "excluded",
+          "reporting_category_id": "progressive_general",
+          "selectable": false,
+          "selection_category_ids": [
+            "progressive_general"
+          ]
+        },
+        {
+          "code": "fuse",
+          "id": "fuse-washington",
+          "name": "Fuse Washington",
+          "panel_role": "consensus",
+          "reporting_category_id": "progressive_general",
+          "selectable": true,
+          "selection_category_ids": [
+            "progressive_general"
+          ]
+        },
+        {
+          "code": "sdsa",
+          "id": "seattle-democratic-socialists",
+          "name": "Seattle Democratic Socialists of America",
+          "panel_role": "consensus",
+          "reporting_category_id": "progressive_general",
+          "selectable": true,
+          "selection_category_ids": [
+            "progressive_general"
+          ]
+        },
+        {
+          "code": "t4ho",
+          "id": "tech-4-housing",
+          "name": "Tech 4 Housing",
+          "panel_role": "consensus",
+          "reporting_category_id": "transportation_urbanism",
+          "selectable": true,
+          "selection_category_ids": [
+            "transportation_urbanism"
+          ]
+        },
+        {
+          "code": "t4tx",
+          "id": "tech-4-taxes",
+          "name": "Tech 4 Taxes",
+          "panel_role": "consensus",
+          "reporting_category_id": "progressive_general",
+          "selectable": true,
+          "selection_category_ids": [
+            "progressive_general"
+          ]
+        },
+        {
+          "code": "wpaj",
+          "id": "washington-for-peace-and-justice",
+          "name": "Washington for Peace and Justice",
+          "panel_role": "consensus",
+          "reporting_category_id": "rights_representation",
+          "selectable": true,
+          "selection_category_ids": [
+            "rights_representation"
+          ]
+        },
+        {
+          "code": "wcan",
+          "id": "washington-community-action-network",
+          "name": "Washington Community Action Network",
+          "panel_role": "consensus",
+          "reporting_category_id": "progressive_general",
+          "selectable": true,
+          "selection_category_ids": [
+            "progressive_general"
+          ]
+        },
+        {
+          "code": "snws",
+          "id": "seattle-gay-news",
+          "name": "Seattle Gay News Editorial Board",
+          "panel_role": "consensus",
+          "reporting_category_id": "rights_representation",
+          "selectable": true,
+          "selection_category_ids": [
+            "rights_representation"
+          ]
+        },
+        {
+          "code": "wwfp",
+          "id": "washington-working-families-party",
+          "name": "Washington Working Families Party",
+          "panel_role": "consensus",
+          "reporting_category_id": "progressive_general",
+          "selectable": true,
+          "selection_category_ids": [
+            "progressive_general"
+          ]
+        },
+        {
+          "code": "wbus",
+          "id": "washington-bus",
+          "name": "The Washington Bus",
+          "panel_role": "consensus",
+          "reporting_category_id": "progressive_general",
+          "selectable": true,
+          "selection_category_ids": [
+            "progressive_general"
+          ]
+        },
+        {
+          "code": "sldr",
+          "id": "sage-leaders",
+          "name": "Sage Leaders",
+          "panel_role": "consensus",
+          "reporting_category_id": "progressive_general",
+          "selectable": true,
+          "selection_category_ids": [
+            "progressive_general"
+          ]
+        },
+        {
+          "code": "wsdm",
+          "id": "washington-state-democrats",
+          "name": "Washington State Democratic Party",
+          "panel_role": "consensus",
+          "reporting_category_id": "democratic_party",
+          "selectable": true,
+          "selection_category_ids": [
+            "democratic_party"
+          ]
+        },
+        {
+          "code": "kcdm",
+          "id": "king-county-democrats",
+          "name": "King County Democrats",
+          "panel_role": "consensus",
+          "reporting_category_id": "democratic_party",
+          "selectable": true,
+          "selection_category_ids": [
+            "democratic_party"
+          ]
+        },
+        {
+          "code": "ld11",
+          "id": "11th-district-democrats",
+          "name": "11th Legislative District Democrats",
+          "panel_role": "consensus",
+          "reporting_category_id": "democratic_party",
+          "selectable": true,
+          "selection_category_ids": [
+            "democratic_party"
+          ]
+        },
+        {
+          "code": "ld32",
+          "id": "32nd-district-democrats",
+          "name": "32nd Legislative District Democrats",
+          "panel_role": "consensus",
+          "reporting_category_id": "democratic_party",
+          "selectable": true,
+          "selection_category_ids": [
+            "democratic_party"
+          ]
+        },
+        {
+          "code": "ld34",
+          "id": "34th-district-democrats",
+          "name": "34th Legislative District Democrats",
+          "panel_role": "consensus",
+          "reporting_category_id": "democratic_party",
+          "selectable": true,
+          "selection_category_ids": [
+            "democratic_party"
+          ]
+        },
+        {
+          "code": "ld36",
+          "id": "36th-district-democrats",
+          "name": "36th Legislative District Democrats",
+          "panel_role": "consensus",
+          "reporting_category_id": "democratic_party",
+          "selectable": true,
+          "selection_category_ids": [
+            "democratic_party"
+          ]
+        },
+        {
+          "code": "ld37",
+          "id": "37th-district-democrats",
+          "name": "37th Legislative District Democrats",
+          "panel_role": "consensus",
+          "reporting_category_id": "democratic_party",
+          "selectable": true,
+          "selection_category_ids": [
+            "democratic_party"
+          ]
+        },
+        {
+          "code": "ld43",
+          "id": "43rd-district-democrats",
+          "name": "43rd Legislative District Democrats",
+          "panel_role": "consensus",
+          "reporting_category_id": "democratic_party",
+          "selectable": true,
+          "selection_category_ids": [
+            "democratic_party"
+          ]
+        },
+        {
+          "code": "ld46",
+          "id": "46th-district-democrats",
+          "name": "46th Legislative District Democrats",
+          "panel_role": "consensus",
+          "reporting_category_id": "democratic_party",
+          "selectable": true,
+          "selection_category_ids": [
+            "democratic_party"
+          ]
+        },
+        {
+          "code": "wsto",
+          "id": "washington-stonewall-democrats",
+          "name": "Washington State Stonewall Democrats",
+          "panel_role": "consensus",
+          "reporting_category_id": "democratic_party",
+          "selectable": true,
+          "selection_category_ids": [
+            "democratic_party",
+            "rights_representation"
+          ]
+        },
+        {
+          "code": "trun",
+          "id": "transit-riders-union",
+          "name": "Transit Riders Union",
+          "panel_role": "consensus",
+          "reporting_category_id": "transportation_urbanism",
+          "selectable": true,
+          "selection_category_ids": [
+            "transportation_urbanism"
+          ]
+        },
+        {
+          "code": "wbik",
+          "id": "washington-bikes",
+          "name": "Washington Bikes",
+          "panel_role": "consensus",
+          "reporting_category_id": "transportation_urbanism",
+          "selectable": true,
+          "selection_category_ids": [
+            "transportation_urbanism"
+          ]
+        },
+        {
+          "code": "cbcl",
+          "id": "cascade-bicycle-club",
+          "name": "Cascade Bicycle Club",
+          "panel_role": "excluded",
+          "reporting_category_id": "transportation_urbanism",
+          "selectable": false,
+          "selection_category_ids": [
+            "transportation_urbanism"
+          ]
+        },
+        {
+          "code": "ssub",
+          "id": "seattle-subway",
+          "name": "Seattle Subway",
+          "panel_role": "consensus",
+          "reporting_category_id": "transportation_urbanism",
+          "selectable": true,
+          "selection_category_ids": [
+            "transportation_urbanism"
+          ]
+        },
+        {
+          "code": "tcco",
+          "id": "transportation-choices-coalition",
+          "name": "Transportation Choices Coalition",
+          "panel_role": "excluded",
+          "reporting_category_id": "transportation_urbanism",
+          "selectable": false,
+          "selection_category_ids": [
+            "transportation_urbanism"
+          ]
+        },
+        {
+          "code": "dmob",
+          "id": "disability-mobility-initiative",
+          "name": "Disability Mobility Initiative at Disability Rights Washington",
+          "panel_role": "excluded",
+          "reporting_category_id": "transportation_urbanism",
+          "selectable": false,
+          "selection_category_ids": [
+            "transportation_urbanism"
+          ]
+        },
+        {
+          "code": "wcac",
+          "id": "washington-conservation-action",
+          "name": "Washington Conservation Action",
+          "panel_role": "consensus",
+          "reporting_category_id": "environmental",
+          "selectable": true,
+          "selection_category_ids": [
+            "environmental"
+          ]
+        },
+        {
+          "code": "sicl",
+          "id": "sierra-club-washington",
+          "name": "Sierra Club Washington State Chapter",
+          "panel_role": "consensus",
+          "reporting_category_id": "environmental",
+          "selectable": true,
+          "selection_category_ids": [
+            "environmental"
+          ]
+        },
+        {
+          "code": "clsl",
+          "id": "climate-solutions",
+          "name": "Climate Solutions",
+          "panel_role": "excluded",
+          "reporting_category_id": "environmental",
+          "selectable": false,
+          "selection_category_ids": [
+            "environmental"
+          ]
+        },
+        {
+          "code": "eccd",
+          "id": "environmental-climate-caucus-wa-democrats",
+          "name": "Environment and Climate Caucus of the Washington State Democratic Party",
+          "panel_role": "consensus",
+          "reporting_category_id": "environmental",
+          "selectable": true,
+          "selection_category_ids": [
+            "democratic_party",
+            "environmental"
+          ]
+        },
+        {
+          "code": "mlkl",
+          "id": "mlk-labor",
+          "name": "MLK Labor",
+          "panel_role": "consensus",
+          "reporting_category_id": "labor",
+          "selectable": true,
+          "selection_category_ids": [
+            "labor"
+          ]
+        },
+        {
+          "code": "wslc",
+          "id": "washington-state-labor-council",
+          "name": "Washington State Labor Council, AFL-CIO",
+          "panel_role": "consensus",
+          "reporting_category_id": "labor",
+          "selectable": true,
+          "selection_category_ids": [
+            "labor"
+          ]
+        },
+        {
+          "code": "s775",
+          "id": "seiu-775",
+          "name": "SEIU 775",
+          "panel_role": "consensus",
+          "reporting_category_id": "labor",
+          "selectable": true,
+          "selection_category_ids": [
+            "labor"
+          ]
+        },
+        {
+          "code": "s925",
+          "id": "seiu-925",
+          "name": "SEIU 925",
+          "panel_role": "consensus",
+          "reporting_category_id": "labor",
+          "selectable": true,
+          "selection_category_ids": [
+            "labor"
+          ]
+        },
+        {
+          "code": "ufcw",
+          "id": "ufcw-3000",
+          "name": "UFCW 3000",
+          "panel_role": "consensus",
+          "reporting_category_id": "labor",
+          "selectable": true,
+          "selection_category_ids": [
+            "labor"
+          ]
+        },
+        {
+          "code": "aftw",
+          "id": "aft-washington",
+          "name": "AFT Washington",
+          "panel_role": "consensus",
+          "reporting_category_id": "labor",
+          "selectable": true,
+          "selection_category_ids": [
+            "labor"
+          ]
+        },
+        {
+          "code": "weas",
+          "id": "washington-education-association",
+          "name": "Washington Education Association",
+          "panel_role": "consensus",
+          "reporting_category_id": "labor",
+          "selectable": true,
+          "selection_category_ids": [
+            "labor"
+          ]
+        },
+        {
+          "code": "wsbt",
+          "id": "washington-state-building-trades",
+          "name": "Washington State Building and Construction Trades Council",
+          "panel_role": "consensus",
+          "reporting_category_id": "labor",
+          "selectable": true,
+          "selection_category_ids": [
+            "labor"
+          ]
+        },
+        {
+          "code": "pr17",
+          "id": "protec17",
+          "name": "PROTEC17",
+          "panel_role": "consensus",
+          "reporting_category_id": "labor",
+          "selectable": true,
+          "selection_category_ids": [
+            "labor"
+          ]
+        },
+        {
+          "code": "ppaa",
+          "id": "planned-parenthood-alliance-advocates",
+          "name": "Planned Parenthood Alliance Advocates",
+          "panel_role": "consensus",
+          "reporting_category_id": "rights_representation",
+          "selectable": true,
+          "selection_category_ids": [
+            "rights_representation"
+          ]
+        },
+        {
+          "code": "oamv",
+          "id": "oneamerica-votes",
+          "name": "OneAmerica Votes",
+          "panel_role": "consensus",
+          "reporting_category_id": "rights_representation",
+          "selectable": true,
+          "selection_category_ids": [
+            "rights_representation"
+          ]
+        },
+        {
+          "code": "alrs",
+          "id": "alliance-for-gun-responsibility",
+          "name": "Alliance for Gun Responsibility Victory Fund",
+          "panel_role": "consensus",
+          "reporting_category_id": "rights_representation",
+          "selectable": true,
+          "selection_category_ids": [
+            "rights_representation"
+          ]
+        },
+        {
+          "code": "whal",
+          "id": "washington-housing-alliance",
+          "name": "Washington Housing Alliance",
+          "panel_role": "consensus",
+          "reporting_category_id": "rights_representation",
+          "selectable": true,
+          "selection_category_ids": [
+            "rights_representation"
+          ]
+        },
+        {
+          "code": "nwpc",
+          "id": "nwpc-washington",
+          "name": "National Women's Political Caucus of Washington",
+          "panel_role": "consensus",
+          "reporting_category_id": "rights_representation",
+          "selectable": true,
+          "selection_category_ids": [
+            "rights_representation"
+          ]
+        },
+        {
+          "code": "stim",
+          "id": "seattle-times-editorial-board",
+          "name": "The Seattle Times Editorial Board",
+          "panel_role": "comparison",
+          "reporting_category_id": "comparison",
+          "selectable": true,
           "selection_category_ids": [
             "comparison"
           ]

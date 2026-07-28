@@ -517,9 +517,13 @@ def test_category_catalog_publishes_selectable_transport_identities() -> None:
         "comparison": "Gcmp",
     }
     assert all(category.code.startswith("G") for category in registry.categories)
-    assert not registry.category_by_id("comparison").selectable
+    assert registry.category_by_id("comparison").selectable
+    assert registry.category_by_id("comparison").panel_role == "comparison"
+    assert all(category.selectable for category in registry.categories)
     assert all(
-        category.selectable for category in registry.categories if category.id != "comparison"
+        category.panel_role == "tallying"
+        for category in registry.categories
+        if category.id != "comparison"
     )
 
 
@@ -559,7 +563,7 @@ def test_declared_second_categories_keep_their_reporting_placement() -> None:
     assert caucus.reporting_category_id == "environmental"
 
 
-def test_comparison_and_excluded_sources_cannot_become_selectable_through_metadata() -> None:
+def test_comparison_sources_are_selectable_but_excluded_sources_are_not() -> None:
     registry = read_source_registry(REGISTRY_PATH)
     times = next(
         source for source in registry.sources if source.id == "seattle-times-editorial-board"
@@ -568,13 +572,13 @@ def test_comparison_and_excluded_sources_cannot_become_selectable_through_metada
         source for source in registry.sources if source.id == "progressive-voters-guide"
     )
 
-    assert not times.is_selectable
+    assert times.is_selectable
     assert not excluded.is_selectable
-    assert registry.selectable_source_codes("comparison") == []
+    assert registry.selectable_source_codes("comparison") == [times.code]
     assert excluded.reporting_category_id == "progressive_general"
     assert excluded.code not in registry.selectable_source_codes("progressive_general")
     assert {source.code for source in registry.sources if source.is_selectable} == {
-        source.code for source in registry.sources if source.panel_role == "consensus"
+        source.code for source in registry.sources if source.panel_role != "excluded"
     }
 
 
@@ -697,7 +701,7 @@ def test_panel_snapshot_publishes_the_downstream_identity_contract() -> None:
 
     assert snapshot == build_panel_snapshot(registry)
     assert snapshot.panel_id == registry.id
-    assert snapshot.panel_version == "v3"
+    assert snapshot.panel_version == "v4"
     assert snapshot.panel_hash == source_registry_hash(registry)
     assert [item.code for item in snapshot.categories] == [
         category.code for category in registry.categories
@@ -706,7 +710,10 @@ def test_panel_snapshot_publishes_the_downstream_identity_contract() -> None:
     labor = next(item for item in snapshot.categories if item.id == "labor")
     assert labor.member_source_codes == sorted(labor.member_source_codes)
     assert "mlkl" in labor.member_source_codes
-    assert next(item for item in snapshot.categories if item.id == "comparison").selectable is False
+    comparison = next(item for item in snapshot.categories if item.id == "comparison")
+    assert comparison.selectable is True
+    assert comparison.panel_role == "comparison"
+    assert comparison.member_source_codes == ["stim"]
 
 
 def test_panel_snapshot_category_membership_follows_current_sources() -> None:

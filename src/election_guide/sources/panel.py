@@ -15,6 +15,7 @@ class PanelCategorySnapshot(SourceModel):
     code: str
     label: str
     selectable: bool
+    panel_role: Literal["tallying", "comparison"] = "tallying"
     member_source_codes: list[str]
 
 
@@ -56,6 +57,7 @@ def build_panel_snapshot(registry: SourceRegistry) -> PanelSnapshot:
                 code=category.code,
                 label=category.label,
                 selectable=category.selectable,
+                panel_role=category.panel_role,
                 member_source_codes=registry.selectable_source_codes(category.id),
             )
             for category in registry.categories

@@ -512,6 +512,7 @@ def _personalization(
                 code=category.code,
                 label=category.label,
                 selectable=category.selectable,
+                panel_role=category.panel_role,
                 member_source_codes=category.member_source_codes,
             )
             for category in snapshot.categories

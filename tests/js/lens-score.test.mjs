@@ -229,14 +229,38 @@ test('an ineligible district source cannot reach another district race', () => {
   }
 });
 
-test('an unknown or nonselectable code is ignored rather than scored', () => {
+test('an unknown category or source code is ignored rather than scored', () => {
   const resolved = resolveSelection(
-    { categoryCodes: ['Gzzz', 'Gcmp'], sourceCodes: ['zzzz', 'Glab'] },
+    { categoryCodes: ['Gzzz'], sourceCodes: ['zzzz', 'Glab'] },
     personalization,
   );
 
   assert.deepEqual(resolved.sourceCodes, []);
-  assert.deepEqual(resolved.ignoredCodes, ['Gcmp', 'Glab', 'Gzzz', 'zzzz']);
+  assert.deepEqual(resolved.ignoredCodes, ['Glab', 'Gzzz', 'zzzz']);
+});
+
+test('selecting the comparison category admits its display but never its tally', () => {
+  const scenario = fixture.cases.find((item) => item.name === 'comparison-category-selected');
+  const comparisonCategory = personalization.categories.find((item) => item.panel_role === 'comparison');
+  assert.ok(comparisonCategory.selectable, 'the comparison category must be selectable for display');
+  assert.ok(comparisonCategory.member_source_codes.length > 0);
+
+  const resolved = resolveSelection({ categoryCodes: [comparisonCategory.code] }, personalization);
+
+  assert.deepEqual(resolved.sourceCodes, [], 'a comparison category member can never enter the tally');
+  for (const code of comparisonCategory.member_source_codes) {
+    assert.ok(resolved.ignoredCodes.includes(code));
+  }
+
+  const scored = scoreSelection(personalization, { categoryCodes: [comparisonCategory.code] });
+  for (const race of scored.races) {
+    assert.equal(race.explicitCount, 0, `${race.raceId}: a comparison cell was scored`);
+    assert.equal(race.grade, 'Insufficient');
+  }
+  const byRaceId = new Map(scenario.races.map((item) => [item.race_id, item]));
+  for (const race of scored.races) {
+    assert.equal(race.grade, byRaceId.get(race.raceId).grade, `${race.raceId}: diverged from the audited oracle`);
+  }
 });
 
 test('shares are exact rationals, never floating point', () => {

@@ -5554,8 +5554,8 @@
     },
     {
       "effective_source_codes": [],
-      "name": "nonselectable-category",
-      "note": "The comparison category is not selectable.",
+      "name": "comparison-category-selected",
+      "note": "Selecting the comparison category can never enter the tally.",
       "races": [
         {
           "candidate_support": {},
@@ -6690,6 +6690,7 @@
           "wcan",
           "wwfp"
         ],
+        "panel_role": "tallying",
         "selectable": true
       },
       {
@@ -6709,6 +6710,7 @@
           "wsdm",
           "wsto"
         ],
+        "panel_role": "tallying",
         "selectable": true
       },
       {
@@ -6721,6 +6723,7 @@
           "trun",
           "wbik"
         ],
+        "panel_role": "tallying",
         "selectable": true
       },
       {
@@ -6732,6 +6735,7 @@
           "sicl",
           "wcac"
         ],
+        "panel_role": "tallying",
         "selectable": true
       },
       {
@@ -6749,6 +6753,7 @@
           "wsbt",
           "wslc"
         ],
+        "panel_role": "tallying",
         "selectable": true
       },
       {
@@ -6765,19 +6770,23 @@
           "wpaj",
           "wsto"
         ],
+        "panel_role": "tallying",
         "selectable": true
       },
       {
         "code": "Gcmp",
         "id": "comparison",
         "label": "Centrist comparison",
-        "member_source_codes": [],
-        "selectable": false
+        "member_source_codes": [
+          "stim"
+        ],
+        "panel_role": "comparison",
+        "selectable": true
       }
     ],
-    "panel_hash": "6cd4acaa0c5e4ed0b5ddd0134d7de2af5a54c2085e7ad463f9b575b8e6dcb43f",
-    "panel_id": "wa-2026-primary-default-sources-v3",
-    "panel_version": "v3",
+    "panel_hash": "389a978b149da9afdb919fdb9dfd1d4d3fbecc290d3b1cd41da3e3fd363de0b5",
+    "panel_id": "wa-2026-primary-default-sources-v4",
+    "panel_version": "v4",
     "policy": {
       "comparison_hidden_by_default": true,
       "comparison_source_codes": [
@@ -17417,7 +17426,7 @@
         "overlap_group_ids": [],
         "panel_role": "comparison",
         "reporting_category_id": "comparison",
-        "selectable": false,
+        "selectable": true,
         "selection_category_ids": [
           "comparison"
         ]
