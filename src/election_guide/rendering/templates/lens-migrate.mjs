@@ -137,7 +137,6 @@ export function migrateLensState(staleDecode, personalization, originSnapshot = 
         .filter((result) => result.status === 'current')
         .map((result) => result.code)
         .sort(),
-      showTimes: state.showTimes,
       raceTarget: state.raceTarget,
     },
     report,

@@ -93,7 +93,6 @@ function staleDecode(overrides = {}) {
       mode: 's',
       categoryCodes: [],
       sourceCodes: [],
-      showTimes: false,
       raceTarget: null,
       ...overrides.state,
     },
@@ -264,7 +263,7 @@ test('an origin snapshot naming a different panel is treated as absent', () => {
 
 test('an empty audited-mode selection migrates trivially', () => {
   const result = migrateLensState(
-    staleDecode({ state: { mode: 'a', categoryCodes: [], sourceCodes: [], showTimes: true } }),
+    staleDecode({ state: { mode: 'a', categoryCodes: [], sourceCodes: [] } }),
     CURRENT_PERSONALIZATION,
     ORIGIN_SNAPSHOT,
   );
@@ -274,20 +273,34 @@ test('an empty audited-mode selection migrates trivially', () => {
     mode: 'a',
     categoryCodes: [],
     sourceCodes: [],
-    showTimes: true,
     raceTarget: null,
   });
 });
 
-test('the migrated selection preserves the race target and Times flag', () => {
+test('the migrated selection preserves the race target', () => {
   const result = migrateLensState(
-    staleDecode({ state: { sourceCodes: ['strn'], showTimes: true, raceTarget: 'us-house-7' } }),
+    staleDecode({ state: { sourceCodes: ['strn'], raceTarget: 'us-house-7' } }),
     CURRENT_PERSONALIZATION,
     ORIGIN_SNAPSHOT,
   );
 
-  assert.equal(result.selection.showTimes, true);
   assert.equal(result.selection.raceTarget, 'us-house-7');
+});
+
+test('a stale comparison-source selection (the old Times flag) migrates like any other source', () => {
+  const result = migrateLensState(
+    staleDecode({ state: { mode: 'a', sourceCodes: ['stim'] } }),
+    CURRENT_PERSONALIZATION,
+    ORIGIN_SNAPSHOT,
+  );
+
+  assert.equal(result.status, 'migrated');
+  // 'stim' fell out of the published sources list between these two panel
+  // versions (the fixture's comparison slot passed to 'urbn'), so it no
+  // longer resolves; a source narrows the migrated selection rather than
+  // rejecting the whole link, so audited mode is still representable.
+  assert.deepEqual(result.selection.sourceCodes, []);
+  assert.equal(result.report.sources[0].status, 'removed');
 });
 
 test('many-to-many category and direct selection both resolve independently', () => {

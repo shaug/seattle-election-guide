@@ -3288,7 +3288,6 @@ def _lens_fragment(
     mode: str,
     category_codes: tuple[str, ...] = (),
     source_codes: tuple[str, ...] = (),
-    times: bool = False,
     data_version: str | None = None,
     scoring_id: str | None = None,
 ) -> str:
@@ -3302,13 +3301,12 @@ def _lens_fragment(
     contract = view_model.personalization
     selection = "".join(sorted({*category_codes, *source_codes}))
     params = {
-        "lens": "1",
+        "lens": "2",
         "mode": mode,
         "panel": contract.panel_id,
         "ph": contract.panel_hash[:12],
         "data": data_version if data_version is not None else view_model.metadata.data_version,
         "scoring": scoring_id if scoring_id is not None else contract.scoring.configuration_id,
-        "times": "1" if times else "0",
     }
     if selection:
         params["sel"] = selection

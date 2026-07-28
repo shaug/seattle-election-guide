@@ -6,7 +6,7 @@
 // Category membership is resolved at scoring time so a category link follows
 // current membership.
 
-export const LENS_SCHEMA_VERSION = '1';
+export const LENS_SCHEMA_VERSION = '2';
 export const TOKEN_LENGTH = 4;
 export const LEGACY_RACE_PREFIX = 'race-';
 
@@ -71,6 +71,12 @@ function confusableReason(token, known) {
   return 'unknown_token';
 }
 
+/** Whether a known token names a comparison-role category or source. */
+function isComparisonToken(token, context) {
+  const known = isCategoryToken(token) ? context.categories : context.sources;
+  return known.get(token)?.panel_role === 'comparison';
+}
+
 function invalid(reason, detail) {
   return { status: 'malformed', reason, ...detail };
 }
@@ -106,11 +112,7 @@ export function decodeLensFragment(fragment, context) {
   const mode = parameters.get('mode');
   if (mode !== 'a' && mode !== 's') return invalid('unknown_mode', { mode });
 
-  const times = parameters.get('times');
-  if (times !== '0' && times !== '1') return invalid('unknown_times', { times });
-
   const selection = parameters.get('sel') ?? '';
-  if (mode === 'a' && selection !== '') return invalid('audited_mode_carries_selection');
   if (selection.length % TOKEN_LENGTH !== 0) {
     return invalid('ragged_selection', { length: selection.length });
   }
@@ -135,7 +137,6 @@ export function decodeLensFragment(fragment, context) {
   const raceTarget = parameters.get('race');
   const common = {
     mode,
-    showTimes: times === '1',
     raceTarget: raceTarget === null || raceTarget === '' ? null : raceTarget,
   };
 
@@ -155,6 +156,16 @@ export function decodeLensFragment(fragment, context) {
     const classified = classifyToken(token, context);
     if (!classified.ok) return invalid(classified.reason, { token: classified.token });
   }
+  // Audited mode never restricts scoring (there is nothing to restrict), so a
+  // comparison token — display-only and never scored — may still ride along
+  // to represent "show this comparison source." Any other token would imply a
+  // restricted audited score, which does not exist.
+  if (mode === 'a') {
+    const nonComparison = tokens.find((token) => !isComparisonToken(token, context));
+    if (nonComparison !== undefined) {
+      return invalid('audited_mode_carries_selection', { token: nonComparison });
+    }
+  }
   return { status: 'valid', state: { ...common, ...partitionTokens(tokens) }, binding };
 }
 
@@ -167,11 +178,14 @@ export function decodeLensFragment(fragment, context) {
 export function encodeLensFragment(state, context) {
   const mode = state.mode === 's' ? 's' : 'a';
   const tokens = [];
-  const requested = mode === 's' ? [...(state.categoryCodes ?? []), ...(state.sourceCodes ?? [])] : [];
+  const requested = [...(state.categoryCodes ?? []), ...(state.sourceCodes ?? [])];
   for (const token of requested) {
     const classified = classifyToken(token, context);
     if (!classified.ok) {
       return { status: 'rejected', reason: classified.reason, token: classified.token };
+    }
+    if (mode === 'a' && !isComparisonToken(token, context)) {
+      return { status: 'rejected', reason: 'audited_mode_carries_selection', token };
     }
     if (!tokens.includes(token)) tokens.push(token);
   }
@@ -186,7 +200,6 @@ export function encodeLensFragment(state, context) {
   parameters.set('scoring', context.scoringId);
   const selection = [...categoryCodes, ...sourceCodes].join('');
   if (selection !== '') parameters.set('sel', selection);
-  parameters.set('times', state.showTimes ? '1' : '0');
   if (state.raceTarget) parameters.set('race', state.raceTarget);
 
   const fragment = parameters.toString();
