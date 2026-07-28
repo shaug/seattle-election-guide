@@ -6784,7 +6784,7 @@
         "stim"
       ],
       "default_mode": "audited",
-      "enabled": false,
+      "enabled": true,
       "maximum_url_characters": 4096,
       "minimum_explicit_sources": 2,
       "modes": [

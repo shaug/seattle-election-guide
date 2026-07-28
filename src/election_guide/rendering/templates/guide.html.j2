@@ -290,8 +290,9 @@
             <a class="race-card-primary" href="#race-{{ race.id }}" data-race-detail-link
               aria-label="View endorsements for {{ race.race_label }}"
               aria-haspopup="dialog" aria-controls="race-detail-{{ race.id }}">
-              <p class="race-office" id="race-label-{{ race.id }}"
-                data-display-role="race-label">{{ race.race_label }}
+              <p class="race-office">
+                <span id="race-label-{{ race.id }}"
+                  data-display-role="race-label">{{ race.race_label }}</span>
                 {% if guide.personalization.policy.enabled %}<span class="lens-card-badge" data-lens-only data-lens-card-badge>My sources</span>{% endif %}
               </p>
               <div class="screen-race-result">

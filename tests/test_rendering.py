@@ -946,6 +946,18 @@ def test_nonempty_render_destination_is_preserved(tmp_path: Path) -> None:
     assert marker.read_text(encoding="utf-8") == "owned by another generation"
 
 
+def _recommendation_tag_pattern(label: str) -> re.Pattern[str]:
+    """Match a rendered recommendation `<h3>` around its exact label text.
+
+    The opening tag may carry an additional `data-lens-hidden` attribute when
+    the personalization policy is enabled, so match it with `[^>]*` rather
+    than assuming a bare tag.
+    """
+    return re.compile(
+        r'(<h3 data-display-role="recommendation"[^>]*>)' + re.escape(label) + r"(</h3>)"
+    )
+
+
 def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path: Path) -> None:
     view_model = _visual_view_model(_view_model(tmp_path / "fixture"))
     view_model_path = tmp_path / "publication_view_model.json"
@@ -1167,18 +1179,14 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     assert not duplicate_row_check.passed
 
     race_with_alternative = next(race for race in races if race.alternatives)
+    recommendation_pattern = _recommendation_tag_pattern(race_with_alternative.recommendation_label)
+    replacement_label = race_with_alternative.alternatives[0].candidate_label
     wrong_recommendation_html = tmp_path / "wrong-recommendation.html"
     wrong_recommendation_html.write_text(
-        rendered.html_path.read_text(encoding="utf-8").replace(
-            (
-                '<h3 data-display-role="recommendation">'
-                f"{race_with_alternative.recommendation_label}</h3>"
-            ),
-            (
-                '<h3 data-display-role="recommendation">'
-                f"{race_with_alternative.alternatives[0].candidate_label}</h3>"
-            ),
-            1,
+        recommendation_pattern.sub(
+            lambda match: f"{match.group(1)}{replacement_label}{match.group(2)}",
+            rendered.html_path.read_text(encoding="utf-8"),
+            count=1,
         ),
         encoding="utf-8",
     )
@@ -1344,9 +1352,11 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     )
     assert not wrong_group_check.passed
 
-    recommendation_element = (
-        f'<h3 data-display-role="recommendation">{race_with_alternative.recommendation_label}</h3>'
-    )
+    recommendation_match = _recommendation_tag_pattern(
+        race_with_alternative.recommendation_label
+    ).search(rendered.html_path.read_text(encoding="utf-8"))
+    assert recommendation_match is not None
+    recommendation_element = recommendation_match.group(0)
     for index, replacement in enumerate(
         (
             recommendation_element.replace(
@@ -2257,9 +2267,6 @@ def test_customize_shell_exposes_one_action_and_keeps_controls_in_the_dialog(
     dialog = html.split('<dialog class="customize-dialog"')[1].split("</dialog>")[0]
     assert "data-customize-times" in dialog
     assert 'aria-labelledby="customize-title"' in dialog
-    # Source selection stays out until the policy is enabled (issue 80 owns it).
-    assert "data-customize-source" not in html
-    assert "data-customize-category" not in html
 
 
 def test_customize_shell_encodes_state_through_the_published_codec(tmp_path: Path) -> None:
@@ -2412,18 +2419,29 @@ def test_customize_shell_hides_a_comparison_only_candidate_by_default() -> None:
     assert "data-times-only" not in _candidate_section(html, contributing_id)
 
 
-def _personalization_enabled_view_model(tmp_path: Path) -> PublicationViewModel:
-    """The customize fixture with the lens policy enabled, for issue 80's UI."""
+def _personalization_view_model(tmp_path: Path, *, enabled: bool) -> PublicationViewModel:
+    """The customize fixture with the lens policy forced to `enabled`."""
     view_model = _view_model(tmp_path)
-    enabled_policy = view_model.personalization.policy.model_copy(update={"enabled": True})
+    policy = view_model.personalization.policy.model_copy(update={"enabled": enabled})
     view_model = view_model.model_copy(
-        update={
-            "personalization": view_model.personalization.model_copy(
-                update={"policy": enabled_policy}
-            )
-        }
+        update={"personalization": view_model.personalization.model_copy(update={"policy": policy})}
     )
     return _revalidated(view_model)
+
+
+def _personalization_enabled_view_model(tmp_path: Path) -> PublicationViewModel:
+    """The customize fixture with the lens policy enabled, for issue 80's UI."""
+    return _personalization_view_model(tmp_path, enabled=True)
+
+
+def _personalization_disabled_view_model(tmp_path: Path) -> PublicationViewModel:
+    """The customize fixture with the lens policy disabled.
+
+    The release policy defaults to enabled (issue 82), but the disabled code
+    path stays covered in case a future release ever needs to turn it back
+    off.
+    """
+    return _personalization_view_model(tmp_path, enabled=False)
 
 
 def _evaluate_in_chrome(
@@ -2565,7 +2583,8 @@ def test_personalization_is_invisible_while_the_policy_is_disabled(tmp_path: Pat
     unconditionally (an unused selector is harmless with no matching markup),
     so, like the existing show-times check, this looks only at the body.
     """
-    html = _customize_html(tmp_path)
+    view_model = _personalization_disabled_view_model(tmp_path)
+    html = render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG))
     body = html.split("</style>", 1)[1]
 
     for marker in (
