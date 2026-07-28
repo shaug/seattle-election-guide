@@ -2678,6 +2678,28 @@ def test_personalization_times_toggle_persists_a_url_while_the_policy_is_disable
     assert result["hiddenHash"] == ""
 
 
+def test_personalization_ordinary_anchor_survives_initial_load_while_disabled(
+    tmp_path: Path,
+) -> None:
+    """An initial load carrying a plain in-page anchor (e.g. the skip link's
+    target) decodes the same way a malformed lens fragment would, but must
+    survive untouched even while the personalization policy is disabled,
+    matching the enabled branch's own exclusion for this exact case.
+    """
+    view_model = _personalization_disabled_view_model(tmp_path)
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    result = _evaluate_in_chrome(
+        html_path,
+        "JSON.stringify({ hash: window.location.hash })",
+        initial_url=f"{html_path.resolve().as_uri()}#guide-races",
+    )
+    assert result["hash"] == "#guide-races"
+
+
 def test_personalization_ui_renders_every_selectable_category_and_source(tmp_path: Path) -> None:
     view_model = _personalization_enabled_view_model(tmp_path)
     html = render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG))

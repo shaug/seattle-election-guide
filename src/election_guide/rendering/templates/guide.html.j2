@@ -1182,8 +1182,14 @@
   {% else %}
   // A malformed lens fragment must not linger in the address bar even though
   // nothing here reads its selection; a reload or copy must not reproduce it.
-  if (decodeLensFragment(window.location.hash, context).status === 'malformed') {
-    history.replaceState(history.state, '', `${window.location.pathname}${window.location.search}`);
+  // An ordinary in-page anchor (the skip link, a plain "#id") decodes the
+  // same way but must survive untouched, matching the enabled branch's own
+  // lensOutcome() exclusion for this exact reason.
+  {
+    const initialDecoded = decodeLensFragment(window.location.hash, context);
+    if (initialDecoded.status === 'malformed' && initialDecoded.reason !== 'unrecognized_fragment') {
+      history.replaceState(history.state, '', `${window.location.pathname}${window.location.search}`);
+    }
   }
   {% endif %}
 
