@@ -468,14 +468,14 @@ def _personalization(
     sources: list[PublicationSource],
     sections: list[PublicationSection],
 ) -> PersonalizationContract:
-    """Publish the disabled lens payload alongside the audited display model."""
+    """Publish the enabled lens payload alongside the audited display model."""
     snapshot = build_panel_snapshot(dataset.source_registry)
     snapshot_source_by_id = {item.id: item for item in snapshot.sources}
     overlap_groups_by_id = {source.id: source.overlap_group_ids for source in sources}
     scoring = consensus.scoring_configuration
     return PersonalizationContract(
         policy=PersonalizationPolicy(
-            enabled=False,
+            enabled=True,
             modes=["audited", "sources"],
             minimum_explicit_sources=scoring.minimum_explicit_sources,
             comparison_source_codes=sorted(

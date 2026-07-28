@@ -2,8 +2,8 @@
 
 The audited consensus stays the published baseline. This contract exposes the
 inputs a client needs to recompute an equal-weight score over a chosen subset of
-the panel without reading evidence, and it is disabled until a lens release
-turns it on.
+the panel without reading evidence. The release policy controls whether the
+client lens is active; see `builder._personalization` for the current setting.
 """
 
 from __future__ import annotations
