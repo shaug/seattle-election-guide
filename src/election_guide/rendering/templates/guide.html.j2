@@ -753,7 +753,6 @@
         `${directSources.size} direct · ${checkedCategories.size} categories · `
         + `${effectiveCount} sources included`;
     }
-    return effectiveCount;
   };
 
   /**
@@ -798,11 +797,13 @@
     });
   };
 
-  const applyMode = (mode, selection) => {
+  /** Restore mode and, in sources mode, the selection a decoded state carries. */
+  const applyMode = (selection) => {
+    const mode = selection?.mode ?? 'a';
     modeInputs.forEach((input) => {
       input.checked = (input.value === 'sources') === (mode === 's');
     });
-    if (mode === 's' && selection) {
+    if (mode === 's') {
       const categoryCodes = new Set(selection.categoryCodes ?? []);
       const sourceCodes = new Set(selection.sourceCodes ?? []);
       categoryInputs.forEach((input) => {
@@ -815,6 +816,13 @@
     renderSelectionState();
     recomputePersonalizedResults();
   };
+  {% else %}
+  // Personalization is disabled, so the whole lens is always audited with no
+  // selection; writeLensState needs these to stay one unconditional program
+  // rather than two Jinja-rendered variants of the same function.
+  const currentMode = () => 'a';
+  const checkedCategoryCodes = () => [];
+  const checkedSourceCodes = () => [];
   {% endif %}
 
   /**
@@ -830,12 +838,8 @@
   const writeLensState = () => {
     const target = raceTarget();
     const showTimes = timesInput?.checked ?? false;
-    {% if guide.personalization.policy.enabled %}
     const mode = currentMode();
     if (mode === 'a' && !showTimes) {
-    {% else %}
-    if (!showTimes) {
-    {% endif %}
       const fragment = target ? `#${target}` : '';
       history.replaceState(
         history.state,
@@ -846,13 +850,9 @@
     }
     const encoded = encodeLensFragment(
       {
-        {% if guide.personalization.policy.enabled %}
         mode,
         categoryCodes: mode === 's' ? checkedCategoryCodes() : [],
         sourceCodes: mode === 's' ? checkedSourceCodes() : [],
-        {% else %}
-        mode: 'a',
-        {% endif %}
         showTimes,
         raceTarget: target,
       },
@@ -868,7 +868,7 @@
 
   applyTimes(Boolean(lensState()?.showTimes));
   {% if guide.personalization.policy.enabled %}
-  applyMode(lensState()?.mode ?? 'a', lensState());
+  applyMode(lensState());
   {% endif %}
 
   // The native modal gives focus containment, Escape, and the backdrop for free,
@@ -900,9 +900,7 @@
         // personalized result equals the audited consensus exactly.
         selectEveryCategory();
       }
-      renderSelectionState();
-      recomputePersonalizedResults();
-      writeLensState();
+      onSelectionChanged();
     });
   });
   categoryInputs.forEach((input) => input.addEventListener('change', onSelectionChanged));
@@ -944,9 +942,7 @@
       input.checked = false;
     });
     applyTimes(false);
-    renderSelectionState();
-    recomputePersonalizedResults();
-    writeLensState();
+    onSelectionChanged();
   });
   {% endif %}
   // Only a fragment the codec recognizes carries Times state. The skip link and
@@ -957,7 +953,7 @@
     if (!state) return;
     applyTimes(state.showTimes);
     {% if guide.personalization.policy.enabled %}
-    applyMode(state.mode, state);
+    applyMode(state);
     {% endif %}
   });
   </script>

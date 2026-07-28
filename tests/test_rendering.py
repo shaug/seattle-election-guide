@@ -2349,13 +2349,17 @@ def _evaluate_in_chrome(
     expression: str,
     *,
     mobile_width: int | None = None,
+    initial_url: str | None = None,
 ) -> dict[str, Any]:
     """Load one local file in headless Chrome and return one JSON object result.
 
     A minimal harness for the personalization flow: unlike _render_screenshot's
     responsive-interaction probe, this only needs one page load and one script
     evaluation, so it does not share that function's screenshot-capture
-    machinery. Pass mobile_width to emulate a narrow CSS viewport first.
+    machinery. Pass mobile_width to emulate a narrow CSS viewport first. Pass
+    initial_url to navigate to an already-encoded shared link (query string
+    and/or fragment) instead of the bare file, to exercise a load-time restore
+    rather than an in-page transition.
     """
     chrome_path = find_chrome()
     profile = Path(tempfile.mkdtemp(prefix="election-guide-chrome-"))
@@ -2408,7 +2412,9 @@ def _evaluate_in_chrome(
                         session_id=session_id,
                     )
                 cdp.command(
-                    "Page.navigate", {"url": html_path.resolve().as_uri()}, session_id=session_id
+                    "Page.navigate",
+                    {"url": initial_url or html_path.resolve().as_uri()},
+                    session_id=session_id,
                 )
                 cdp.wait_event("Page.loadEventFired", session_id=session_id)
                 evaluated = cdp.command(
@@ -2835,7 +2841,17 @@ def test_personalization_copy_status_clears_on_the_next_change(tmp_path: Path) -
 
 
 def test_personalization_history_back_and_forward_restore_selection(tmp_path: Path) -> None:
-    """Issue 80 scope: back and forward behavior."""
+    """Issue 80 scope: back and forward behavior.
+
+    A plain back() to a history entry that was last written by the very same
+    live DOM state proves nothing about applyMode: the checkboxes would look
+    "restored" even if the restore code never ran. This test forces a genuine
+    divergence — after the entry we will return to has already recorded a
+    category-based selection, it switches to a different, direct-source
+    selection before pushing the race-detail entry, so back() must actually
+    reach into the earlier entry's fragment and re-check different boxes than
+    whatever is currently checked.
+    """
     view_model = _personalization_enabled_view_model(tmp_path)
     html_path = tmp_path / "guide.html"
     html_path.write_text(
@@ -2852,23 +2868,145 @@ def test_personalization_history_back_and_forward_restore_selection(tmp_path: Pa
           modeSources.click();
           modeSources.dispatchEvent(new Event('change', { bubbles: true }));
           await pause();
+          // Entering sources mode selects every category by default; this is
+          // the selection the later back() must restore. Capture it, then
+          // immediately push a new history entry (the race-detail permalink,
+          // matching how the rest of the guide already navigates) so this
+          // selection is frozen onto the entry we will later return to,
+          // before anything has a chance to replaceState over it.
           const afterEnter = window.location.hash;
-          // A race-detail permalink push, matching how the rest of the guide
-          // already navigates; this must not disturb the active selection.
+          const categoryInputsSnapshot = [
+            ...document.querySelectorAll('[data-customize-category]'),
+          ];
+          const categoryCodesAfterEnter = categoryInputsSnapshot
+            .filter((input) => input.checked)
+            .map((input) => input.dataset.customizeCategory)
+            .sort();
           const link = document.querySelector('[data-race-detail-link]');
           link.click();
           await pause();
+          // Now, on the new entry, diverge to a direct-source selection.
+          // writeLensState only ever replaceState()s, so this overwrites only
+          // the new entry's own fragment, leaving the earlier entry's
+          // category-based fragment untouched underneath it.
+          document.querySelectorAll('[data-customize-category]').forEach((input) => {
+            input.checked = false;
+          });
+          const source = document.querySelector('[data-customize-source]');
+          source.checked = true;
+          source.dispatchEvent(new Event('change', { bubbles: true }));
+          await pause();
+          const sourceCodesBeforeBack = [...document.querySelectorAll('[data-customize-source]')]
+            .filter((input) => input.checked)
+            .map((input) => input.dataset.customizeSource)
+            .sort();
           history.back();
           await pause();
           const audited = document.querySelector('[data-customize-mode][value="audited"]').checked;
           const restored = window.location.hash === afterEnter;
+          const categoryCodesAfterBack = [...document.querySelectorAll('[data-customize-category]')]
+            .filter((input) => input.checked)
+            .map((input) => input.dataset.customizeCategory)
+            .sort();
+          const sourceCodesAfterBack = [...document.querySelectorAll('[data-customize-source]')]
+            .filter((input) => input.checked)
+            .map((input) => input.dataset.customizeSource)
+            .sort();
           history.forward();
           await pause();
           const dialogOpen = document.querySelector('[data-race-detail-dialog][open]') !== null;
-          return JSON.stringify({ afterEnter, restored, audited, dialogOpen });
+          return JSON.stringify({
+            afterEnter,
+            restored,
+            audited,
+            dialogOpen,
+            categoryCodesAfterEnter,
+            sourceCodesBeforeBack,
+            categoryCodesAfterBack,
+            sourceCodesAfterBack,
+          });
         })()
         """,
     )
     assert "mode=s" in result["afterEnter"]
+    assert result["categoryCodesAfterEnter"] != []
+    # Confirms the divergence actually happened before back(): a direct source
+    # was checked in place of the categories.
+    assert result["sourceCodesBeforeBack"] != []
     assert result["restored"] is True
     assert result["audited"] is False
+    # back() must reinstate the category-based selection recorded in the
+    # earlier entry, not leave the direct-source selection in place.
+    assert result["categoryCodesAfterBack"] == result["categoryCodesAfterEnter"]
+    assert result["sourceCodesAfterBack"] == []
+    assert result["dialogOpen"] is True
+
+
+def test_personalization_shared_link_restores_the_same_version_selection(tmp_path: Path) -> None:
+    """Issue 80 scope: a link that already encodes a personalized selection
+    must restore that exact selection on load, complementing the
+    back/forward test above by exercising the initial-load restore path
+    (applyMode(lensState()) at script start) rather than the hashchange path.
+    """
+    view_model = _personalization_enabled_view_model(tmp_path)
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    capture = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          document.querySelector('[data-customize-open]').click();
+          const modeSources = document.querySelector('[data-customize-mode][value="sources"]');
+          modeSources.click();
+          modeSources.dispatchEvent(new Event('change', { bubbles: true }));
+          // Diverge from the "select every category" default this mode starts
+          // with, so the captured link encodes one specific, checkable
+          // category rather than the whole set.
+          document.querySelectorAll('[data-customize-category]').forEach((input) => {
+            input.checked = false;
+          });
+          const category = document.querySelector('[data-customize-category]');
+          category.checked = true;
+          category.dispatchEvent(new Event('change', { bubbles: true }));
+          return JSON.stringify({
+            href: window.location.href,
+            categoryCode: category.dataset.customizeCategory,
+          });
+        })()
+        """,
+    )
+    base, _, fragment = capture["href"].partition("#")
+    shared_url = f"{base}?edition=compact#{fragment}"
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        JSON.stringify({
+          audited: document.querySelector('[data-customize-mode][value="audited"]').checked,
+          sources: document.querySelector('[data-customize-mode][value="sources"]').checked,
+          categoryCodes: [...document.querySelectorAll('[data-customize-category]')]
+            .filter((input) => input.checked)
+            .map((input) => input.dataset.customizeCategory)
+            .sort(),
+          sourceCodes: [...document.querySelectorAll('[data-customize-source]')]
+            .filter((input) => input.checked)
+            .map((input) => input.dataset.customizeSource)
+            .sort(),
+          counts: document.querySelector('[data-customize-counts]').textContent,
+          bannerHidden: document.querySelector('[data-lens-banner]').hidden,
+          bannerText: document.querySelector('[data-lens-banner]').textContent,
+          search: window.location.search,
+        })
+        """,
+        initial_url=shared_url,
+    )
+    assert result["audited"] is False
+    assert result["sources"] is True
+    assert result["categoryCodes"] == [capture["categoryCode"]]
+    assert result["sourceCodes"] == []
+    assert "1 categories" in result["counts"]
+    assert result["bannerHidden"] is False
+    assert "Personalized lens active" in result["bannerText"]
+    assert result["search"] == "?edition=compact"
