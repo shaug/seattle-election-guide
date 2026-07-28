@@ -223,29 +223,33 @@
             audited consensus over only the categories and sources you choose. Selecting every
             category reproduces the audited result exactly.</p>
         </fieldset>
-        <fieldset class="customize-group customize-personalize" data-customize-personalize hidden>
-          <legend>Categories</legend>
-          <div class="customize-category-list" data-customize-categories>
-            {% for category in guide.personalization.categories if category.selectable %}
-            <label class="customize-check">
-              <input type="checkbox" data-customize-category="{{ category.code }}">
-              <span>{{ category.label }}</span>
-            </label>
-            {% endfor %}
-          </div>
-          <legend>Sources</legend>
-          <ul class="customize-source-list" data-customize-source-list>
-            {% for source in guide.personalization.sources | selectattr('selectable') | sort(attribute='id') %}
-            <li data-customize-source-row="{{ source.code }}">
+        <div class="customize-personalize" data-customize-personalize hidden>
+          <fieldset class="customize-group">
+            <legend>Categories</legend>
+            <div class="customize-category-list" data-customize-categories>
+              {% for category in guide.personalization.categories if category.selectable %}
               <label class="customize-check">
-                <input type="checkbox" data-customize-source="{{ source.code }}">
-                <span>{{ source_by_id[source.id].name }}</span>
+                <input type="checkbox" data-customize-category="{{ category.code }}">
+                <span>{{ category.label }}</span>
               </label>
-              <span class="customize-source-badges" data-customize-source-badges></span>
-            </li>
-            {% endfor %}
-          </ul>
-          <p class="customize-counts" role="status" aria-live="polite" data-customize-counts></p>
+              {% endfor %}
+            </div>
+          </fieldset>
+          <fieldset class="customize-group">
+            <legend>Sources</legend>
+            <ul class="customize-source-list" data-customize-source-list>
+              {% for source in guide.personalization.sources | selectattr('selectable') | sort(attribute='id') %}
+              <li data-customize-source-row="{{ source.code }}">
+                <label class="customize-check">
+                  <input type="checkbox" data-customize-source="{{ source.code }}">
+                  <span>{{ source_by_id[source.id].name }}</span>
+                </label>
+                <span class="customize-source-badges" data-customize-source-badges></span>
+              </li>
+              {% endfor %}
+            </ul>
+            <p class="customize-counts" role="status" aria-live="polite" data-customize-counts></p>
+          </fieldset>
           <p class="customize-version">Panel {{ guide.personalization.panel_version }} ·
             {{ guide.personalization.panel_hash[:12] }} · Data {{ guide.metadata.data_version }}.
             Equal weight: each selected source counts once regardless of category overlap, and a
@@ -256,7 +260,7 @@
           </div>
           <p class="customize-copy-status" role="status" aria-live="polite"
             data-customize-copy-status></p>
-        </fieldset>
+        </div>
         {% endif %}
         <p class="customize-status" role="status" aria-live="polite" data-customize-status></p>
       </form>
@@ -719,6 +723,10 @@
    * it included (and visibly explained) through the category.
    */
   const renderSelectionState = () => {
+    // Every path that can change what a copied link would encode - a
+    // checkbox, a mode switch, reset, or restoring history - runs through
+    // here, so this is the one place the stale copy status is cleared.
+    if (copyStatusLine) copyStatusLine.textContent = '';
     const checkedCategories = new Set(checkedCategoryCodes());
     const directSources = new Set(checkedSourceCodes());
     let effectiveCount = 0;
@@ -900,6 +908,11 @@
   categoryInputs.forEach((input) => input.addEventListener('change', onSelectionChanged));
   sourceInputs.forEach((input) => input.addEventListener('change', onSelectionChanged));
   copyButton?.addEventListener('click', async () => {
+    // The address bar can hold a fragment writeLensState never wrote (a plain
+    // anchor navigation the codec doesn't recognize resets nothing but also
+    // rewrites nothing), so force the current state into the URL first
+    // rather than copying whatever happens to be there.
+    writeLensState();
     const value = window.location.href;
     try {
       if (navigator.clipboard?.writeText) {

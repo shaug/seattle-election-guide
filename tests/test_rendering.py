@@ -2344,13 +2344,18 @@ def _personalization_enabled_view_model(tmp_path: Path) -> PublicationViewModel:
     return _revalidated(view_model)
 
 
-def _evaluate_in_chrome(html_path: Path, expression: str) -> dict[str, Any]:
+def _evaluate_in_chrome(
+    html_path: Path,
+    expression: str,
+    *,
+    mobile_width: int | None = None,
+) -> dict[str, Any]:
     """Load one local file in headless Chrome and return one JSON object result.
 
     A minimal harness for the personalization flow: unlike _render_screenshot's
     responsive-interaction probe, this only needs one page load and one script
-    evaluation, so it does not share that function's viewport-emulation and
-    screenshot-capture machinery.
+    evaluation, so it does not share that function's screenshot-capture
+    machinery. Pass mobile_width to emulate a narrow CSS viewport first.
     """
     chrome_path = find_chrome()
     profile = Path(tempfile.mkdtemp(prefix="election-guide-chrome-"))
@@ -2391,6 +2396,17 @@ def _evaluate_in_chrome(html_path: Path, expression: str) -> dict[str, Any]:
                 )
                 session_id = cast(str, attached["sessionId"])
                 cdp.command("Page.enable", session_id=session_id)
+                if mobile_width is not None:
+                    cdp.command(
+                        "Emulation.setDeviceMetricsOverride",
+                        {
+                            "width": mobile_width,
+                            "height": 780,
+                            "deviceScaleFactor": 1,
+                            "mobile": True,
+                        },
+                        session_id=session_id,
+                    )
                 cdp.command(
                     "Page.navigate", {"url": html_path.resolve().as_uri()}, session_id=session_id
                 )
@@ -2495,6 +2511,22 @@ def test_personalization_ui_renders_every_selectable_category_and_source(tmp_pat
     bindings = json.loads(html.split('id="lens-bindings">')[1].split("</script>")[0])
     assert len(bindings["categories"]) == len(contract.categories)
     assert len(bindings["sources"]) == len(contract.sources)
+
+    # Categories and Sources are two sibling fieldsets, each with its own
+    # legend: a fieldset accepts only one legend, and the source checklist
+    # must have its own accessible group name rather than inheriting
+    # "Categories" from a legend that belongs to a different group.
+    personalize_panel = html.split("data-customize-personalize")[1].split(
+        '<p class="customize-status"'
+    )[0]
+    assert personalize_panel.count("<fieldset") == 2
+    category_fieldset = personalize_panel.split("<fieldset")[1]
+    assert category_fieldset.count("<legend>") == 1
+    assert "Categories" in category_fieldset
+    source_fieldset = personalize_panel.split("<fieldset")[2]
+    assert source_fieldset.count("<legend>") == 1
+    assert "Sources" in source_fieldset
+    assert "data-customize-source-list" in source_fieldset
 
 
 def test_personalization_initial_my_sources_matches_audited_consensus(tmp_path: Path) -> None:
@@ -2667,3 +2699,176 @@ def test_personalization_reset_restores_audited_state_and_preserves_filters(
     assert result["bannerHidden"] is True
     assert result["hash"] == ""
     assert result["search"] == "?view=compact"
+
+
+def test_personalization_dialog_does_not_overflow_a_mobile_viewport(tmp_path: Path) -> None:
+    """Issue 80 Validation: mobile checks.
+
+    The small rendering fixture's few short source names and single-category
+    memberships never produce badge or row text long enough to overflow a
+    360px dialog even without the fix, which would make this test vacuous;
+    the real production panel's 42 sources, longer names, and overlapping
+    categories are what actually exercise the narrow layout.
+    """
+    view_model = _production_bundle().view_model
+    enabled_policy = view_model.personalization.policy.model_copy(update={"enabled": True})
+    view_model = view_model.model_copy(
+        update={
+            "personalization": view_model.personalization.model_copy(
+                update={"policy": enabled_policy}
+            )
+        }
+    )
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          document.querySelector('[data-customize-open]').click();
+          const modeSources = document.querySelector('[data-customize-mode][value="sources"]');
+          modeSources.click();
+          modeSources.dispatchEvent(new Event('change', { bubbles: true }));
+          const dialog = document.querySelector('[data-customize-dialog]');
+          return JSON.stringify({
+            clientWidth: dialog.clientWidth,
+            scrollWidth: dialog.scrollWidth,
+          });
+        })()
+        """,
+        mobile_width=360,
+    )
+    assert result["scrollWidth"] <= result["clientWidth"]
+
+
+def test_personalization_copy_link_encodes_the_current_state_not_a_stale_href(
+    tmp_path: Path,
+) -> None:
+    """Issue 80 scope: copy-link must reproduce the displayed state exactly,
+    even after an in-page anchor navigation the codec does not recognize."""
+    view_model = _personalization_enabled_view_model(tmp_path)
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          // Headless Chrome over file:// has no clipboard permission to
+          // grant or deny, so navigator.clipboard.writeText never settles;
+          // stub it so the test exercises the status-line logic
+          // deterministically rather than real OS clipboard behavior.
+          Object.defineProperty(navigator, 'clipboard', {
+            value: { writeText: async () => {} },
+            configurable: true,
+          });
+          document.querySelector('[data-customize-open]').click();
+          const modeSources = document.querySelector('[data-customize-mode][value="sources"]');
+          modeSources.click();
+          modeSources.dispatchEvent(new Event('change', { bubbles: true }));
+          // The dialog is a native modal: the rest of the page is inert while
+          // it is open, so close it before the anchor can be clicked at all.
+          document.querySelector('[data-customize-close]').click();
+          // A plain anchor navigation the codec does not recognize: this must
+          // not be mistaken for the copy target.
+          document.querySelector('.skip-link').click();
+          const hashAfterAnchor = window.location.hash;
+          document.querySelector('[data-customize-open]').click();
+          // showModal() needs a tick before headless Chrome treats the
+          // dialog's own contents as interactive again.
+          await new Promise((resolve) => setTimeout(resolve, 50));
+          document.querySelector('[data-customize-copy]').click();
+          await new Promise((resolve) => setTimeout(resolve, 50));
+          return JSON.stringify({
+            hashAfterAnchor,
+            copyStatus: document.querySelector('[data-customize-copy-status]').textContent,
+            finalHash: window.location.hash,
+          });
+        })()
+        """,
+    )
+    assert result["hashAfterAnchor"] == "#guide-races"
+    assert result["copyStatus"] == "Link copied."
+    assert "mode=s" in result["finalHash"]
+    assert "sel=" in result["finalHash"]
+
+
+def test_personalization_copy_status_clears_on_the_next_change(tmp_path: Path) -> None:
+    view_model = _personalization_enabled_view_model(tmp_path)
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          // Headless Chrome over file:// has no clipboard permission to
+          // grant or deny, so navigator.clipboard.writeText never settles;
+          // stub it so the test exercises the status-line logic
+          // deterministically rather than real OS clipboard behavior.
+          Object.defineProperty(navigator, 'clipboard', {
+            value: { writeText: async () => {} },
+            configurable: true,
+          });
+          document.querySelector('[data-customize-open]').click();
+          const modeSources = document.querySelector('[data-customize-mode][value="sources"]');
+          modeSources.click();
+          modeSources.dispatchEvent(new Event('change', { bubbles: true }));
+          document.querySelector('[data-customize-copy]').click();
+          await new Promise((resolve) => setTimeout(resolve, 50));
+          const afterCopy = document.querySelector('[data-customize-copy-status]').textContent;
+          document.querySelector('[data-customize-reset]').click();
+          const afterReset = document.querySelector('[data-customize-copy-status]').textContent;
+          return JSON.stringify({ afterCopy, afterReset });
+        })()
+        """,
+    )
+    assert result["afterCopy"] != ""
+    assert result["afterReset"] == ""
+
+
+def test_personalization_history_back_and_forward_restore_selection(tmp_path: Path) -> None:
+    """Issue 80 scope: back and forward behavior."""
+    view_model = _personalization_enabled_view_model(tmp_path)
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          const pause = () => new Promise((resolve) => setTimeout(resolve, 60));
+          document.querySelector('[data-customize-open]').click();
+          const modeSources = document.querySelector('[data-customize-mode][value="sources"]');
+          modeSources.click();
+          modeSources.dispatchEvent(new Event('change', { bubbles: true }));
+          await pause();
+          const afterEnter = window.location.hash;
+          // A race-detail permalink push, matching how the rest of the guide
+          // already navigates; this must not disturb the active selection.
+          const link = document.querySelector('[data-race-detail-link]');
+          link.click();
+          await pause();
+          history.back();
+          await pause();
+          const audited = document.querySelector('[data-customize-mode][value="audited"]').checked;
+          const restored = window.location.hash === afterEnter;
+          history.forward();
+          await pause();
+          const dialogOpen = document.querySelector('[data-race-detail-dialog][open]') !== null;
+          return JSON.stringify({ afterEnter, restored, audited, dialogOpen });
+        })()
+        """,
+    )
+    assert "mode=s" in result["afterEnter"]
+    assert result["restored"] is True
+    assert result["audited"] is False
