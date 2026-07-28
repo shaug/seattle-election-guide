@@ -15,20 +15,20 @@ const PANEL_HASH = '6cd4acaa0c5e4ed0b5ddd0134d7de2af5a54c2085e7ad463f9b575b8e6dc
 /** A published payload shaped like the committed personalization contract. */
 function personalization(overrides = {}) {
   return {
-    panel_id: 'wa-2026-primary-default-sources-v3',
+    panel_id: 'wa-2026-primary-default-sources-v4',
     panel_hash: PANEL_HASH,
     scoring: { configuration_id: 'wa-2026-primary-equal-weight' },
     policy: { maximum_url_characters: 4096 },
     categories: [
-      { id: 'labor', code: 'Glab', selectable: true },
-      { id: 'environmental', code: 'Genv', selectable: true },
-      { id: 'comparison', code: 'Gcmp', selectable: false },
+      { id: 'labor', code: 'Glab', selectable: true, panel_role: 'tallying' },
+      { id: 'environmental', code: 'Genv', selectable: true, panel_role: 'tallying' },
+      { id: 'comparison', code: 'Gcmp', selectable: true, panel_role: 'comparison' },
     ],
     sources: [
-      { id: 'the-stranger', code: 'strn', selectable: true },
-      { id: 'the-urbanist', code: 'urbn', selectable: true },
-      { id: 'mlk-labor', code: 'mlkl', selectable: true },
-      { id: 'seattle-times-editorial-board', code: 'stim', selectable: false },
+      { id: 'the-stranger', code: 'strn', selectable: true, panel_role: 'consensus' },
+      { id: 'the-urbanist', code: 'urbn', selectable: true, panel_role: 'consensus' },
+      { id: 'mlk-labor', code: 'mlkl', selectable: true, panel_role: 'consensus' },
+      { id: 'seattle-times-editorial-board', code: 'stim', selectable: true, panel_role: 'comparison' },
     ],
     ...overrides,
   };
@@ -48,41 +48,40 @@ test('the published policy governs the sharing-size limit', () => {
   assert.equal(context().maximumUrlCharacters, 4096);
 });
 
-test('an audited state with the Times shown is representable', () => {
-  const fragment = encoded({ mode: 'a', showTimes: true });
+test('an audited state with the comparison source selected is representable', () => {
+  const fragment = encoded({ mode: 'a', sourceCodes: ['stim'] });
   const decoded = decodeLensFragment(fragment, context());
 
   assert.equal(decoded.status, 'valid');
   assert.equal(decoded.state.mode, 'a');
-  assert.equal(decoded.state.showTimes, true);
   assert.deepEqual(decoded.state.categoryCodes, []);
-  assert.deepEqual(decoded.state.sourceCodes, []);
+  assert.deepEqual(decoded.state.sourceCodes, ['stim']);
 });
 
-test('a personalized state is representable with and without the Times', () => {
-  for (const showTimes of [true, false]) {
-    const state = { mode: 's', categoryCodes: ['Glab'], sourceCodes: ['strn'], showTimes };
+test('a personalized state is representable with and without the comparison source', () => {
+  for (const withComparison of [true, false]) {
+    const sourceCodes = withComparison ? ['strn', 'stim'] : ['strn'];
+    const state = { mode: 's', categoryCodes: ['Glab'], sourceCodes };
     const decoded = decodeLensFragment(encoded(state), context());
 
     assert.equal(decoded.status, 'valid');
     assert.equal(decoded.state.mode, 's');
-    assert.equal(decoded.state.showTimes, showTimes);
     assert.deepEqual(decoded.state.categoryCodes, ['Glab']);
-    assert.deepEqual(decoded.state.sourceCodes, ['strn']);
+    assert.deepEqual(decoded.state.sourceCodes, [...sourceCodes].sort());
   }
 });
 
-test('the fragment records the schema, mode, version bindings, and Times flag', () => {
-  const fragment = encoded({ mode: 's', sourceCodes: ['strn'], showTimes: false });
+test('the fragment records the schema, mode, and version bindings', () => {
+  const fragment = encoded({ mode: 's', sourceCodes: ['strn'] });
   const parameters = new URLSearchParams(fragment);
 
   assert.equal(parameters.get('lens'), LENS_SCHEMA_VERSION);
   assert.equal(parameters.get('mode'), 's');
-  assert.equal(parameters.get('panel'), 'wa-2026-primary-default-sources-v3');
+  assert.equal(parameters.get('panel'), 'wa-2026-primary-default-sources-v4');
   assert.equal(parameters.get('ph'), PANEL_HASH.slice(0, 12));
   assert.equal(parameters.get('data'), 'd119ee3107bb');
   assert.equal(parameters.get('scoring'), 'wa-2026-primary-equal-weight');
-  assert.equal(parameters.get('times'), '0');
+  assert.equal(parameters.get('times'), null, 'the standalone Times flag no longer exists');
   assert.equal(parameters.get('sel'), 'strn');
 });
 
@@ -90,8 +89,7 @@ test('same-version encoding is canonical and lossless', () => {
   const state = {
     mode: 's',
     categoryCodes: ['Glab', 'Genv'],
-    sourceCodes: ['urbn', 'strn'],
-    showTimes: true,
+    sourceCodes: ['urbn', 'strn', 'stim'],
     raceTarget: 'us-house-7',
   };
   const fragment = encoded(state);
@@ -101,8 +99,7 @@ test('same-version encoding is canonical and lossless', () => {
   assert.deepEqual(decoded.state, {
     mode: 's',
     categoryCodes: ['Genv', 'Glab'],
-    sourceCodes: ['strn', 'urbn'],
-    showTimes: true,
+    sourceCodes: ['stim', 'strn', 'urbn'],
     raceTarget: 'us-house-7',
   });
   assert.equal(encoded(decoded.state), fragment);
@@ -113,7 +110,6 @@ test('category tokens are ordered before source tokens regardless of input order
     mode: 's',
     categoryCodes: ['Glab'],
     sourceCodes: ['strn', 'mlkl'],
-    showTimes: false,
   });
 
   assert.equal(new URLSearchParams(fragment).get('sel'), 'Glabmlklstrn');
@@ -125,7 +121,6 @@ test('exact duplicates are removed while direct and category intent is preserved
       mode: 's',
       categoryCodes: ['Glab', 'Glab'],
       sourceCodes: ['mlkl', 'mlkl', 'strn'],
-      showTimes: false,
     }),
     context(),
   );
@@ -137,7 +132,7 @@ test('exact duplicates are removed while direct and category intent is preserved
 
 test('a category selection is not expanded into its members', () => {
   const decoded = decodeLensFragment(
-    encoded({ mode: 's', categoryCodes: ['Glab'], showTimes: false }),
+    encoded({ mode: 's', categoryCodes: ['Glab'] }),
     context(),
   );
 
@@ -153,7 +148,7 @@ test('empty, individual-only, category-only, and mixed selections round-trip', (
     { categoryCodes: ['Glab'], sourceCodes: ['strn'] },
   ];
   for (const selection of selections) {
-    const state = { mode: 's', ...selection, showTimes: false };
+    const state = { mode: 's', ...selection };
     const decoded = decodeLensFragment(encoded(state), context());
 
     assert.equal(decoded.status, 'valid');
@@ -174,8 +169,8 @@ test('sel is parsed in four-character chunks', () => {
 
 test('a ragged selection cannot be scored', () => {
   const decoded = decodeLensFragment(
-    'lens=1&mode=s&panel=wa-2026-primary-default-sources-v3&ph=6cd4acaa0c5e' +
-      '&data=d119ee3107bb&scoring=wa-2026-primary-equal-weight&sel=strnurb&times=0',
+    'lens=2&mode=s&panel=wa-2026-primary-default-sources-v4&ph=6cd4acaa0c5e' +
+      '&data=d119ee3107bb&scoring=wa-2026-primary-equal-weight&sel=strnurb',
     context(),
   );
 
@@ -184,7 +179,7 @@ test('a ragged selection cannot be scored', () => {
 });
 
 test('an unknown token cannot be scored', () => {
-  const decoded = decodeLensFragment(encoded({ mode: 's' }).replace('times=0', 'sel=zzzz&times=0'), context());
+  const decoded = decodeLensFragment(`${encoded({ mode: 's' })}&sel=zzzz`, context());
 
   assert.equal(decoded.status, 'malformed');
   assert.equal(decoded.reason, 'unknown_token');
@@ -192,33 +187,64 @@ test('an unknown token cannot be scored', () => {
 });
 
 test('a case-confusable token is rejected rather than silently matched', () => {
-  const decoded = decodeLensFragment(
-    encoded({ mode: 's' }).replace('times=0', 'sel=STRN&times=0'),
-    context(),
-  );
+  const decoded = decodeLensFragment(`${encoded({ mode: 's' })}&sel=STRN`, context());
 
   assert.equal(decoded.status, 'malformed');
   assert.equal(decoded.reason, 'case_confusable_token');
   assert.equal(decoded.token, 'STRN');
 });
 
-test('the comparison source cannot be selected', () => {
-  const decoded = decodeLensFragment(
-    encoded({ mode: 's' }).replace('times=0', 'sel=stim&times=0'),
-    context(),
-  );
+test('the comparison source can be selected in sources mode', () => {
+  const decoded = decodeLensFragment(`${encoded({ mode: 's' })}&sel=stim`, context());
 
-  assert.equal(decoded.status, 'malformed');
-  assert.equal(decoded.reason, 'forbidden_token');
+  assert.equal(decoded.status, 'valid');
+  assert.deepEqual(decoded.state.sourceCodes, ['stim']);
 
-  const rejected = encodeLensFragment({ mode: 's', sourceCodes: ['stim'] }, context());
-  assert.equal(rejected.status, 'rejected');
-  assert.equal(rejected.reason, 'forbidden_token');
+  const encodedState = encodeLensFragment({ mode: 's', sourceCodes: ['stim'] }, context());
+  assert.equal(encodedState.status, 'ok');
+});
+
+test('the comparison source may ride along in audited mode, but an ordinary source may not', () => {
+  const shown = decodeLensFragment(`${encoded({ mode: 'a' })}&sel=stim`, context());
+  assert.equal(shown.status, 'valid');
+  assert.deepEqual(shown.state.sourceCodes, ['stim']);
+
+  const rejected = decodeLensFragment(`${encoded({ mode: 'a' })}&sel=strn`, context());
+  assert.equal(rejected.status, 'malformed');
+  assert.equal(rejected.reason, 'audited_mode_carries_selection');
+  assert.equal(rejected.token, 'strn');
+
+  const encodeRejected = encodeLensFragment({ mode: 'a', sourceCodes: ['strn'] }, context());
+  assert.equal(encodeRejected.status, 'rejected');
+  assert.equal(encodeRejected.reason, 'audited_mode_carries_selection');
+
+  const encodeAllowed = encodeLensFragment({ mode: 'a', sourceCodes: ['stim'] }, context());
+  assert.equal(encodeAllowed.status, 'ok');
 });
 
 test('a nonselectable category cannot be selected', () => {
-  const rejected = encodeLensFragment({ mode: 's', categoryCodes: ['Gcmp'] }, context());
+  const inactive = context({
+    categories: [...personalization().categories, { id: 'inactive', code: 'Gzzq', selectable: false, panel_role: 'tallying' }],
+  });
 
+  const rejected = encodeLensFragment({ mode: 's', categoryCodes: ['Gzzq'] }, inactive);
+  assert.equal(rejected.status, 'rejected');
+  assert.equal(rejected.reason, 'forbidden_token');
+
+  const decoded = decodeLensFragment(`${encoded({ mode: 's' }, inactive)}&sel=Gzzq`, inactive);
+  assert.equal(decoded.status, 'malformed');
+  assert.equal(decoded.reason, 'forbidden_token');
+});
+
+test('an excluded source cannot be selected', () => {
+  const withExcluded = context({
+    sources: [
+      ...personalization().sources,
+      { id: 'excluded-outlet', code: 'excl', selectable: false, panel_role: 'excluded' },
+    ],
+  });
+
+  const rejected = encodeLensFragment({ mode: 's', sourceCodes: ['excl'] }, withExcluded);
   assert.equal(rejected.status, 'rejected');
   assert.equal(rejected.reason, 'forbidden_token');
 });
@@ -236,19 +262,18 @@ test('an oversized fragment cannot be scored', () => {
   assert.equal(decoded.reason, 'oversized');
 });
 
-test('audited mode may not carry a selection', () => {
-  const decoded = decodeLensFragment(
-    'lens=1&mode=a&panel=wa-2026-primary-default-sources-v3&ph=6cd4acaa0c5e' +
-      '&data=d119ee3107bb&scoring=wa-2026-primary-equal-weight&sel=strn&times=0',
-    context(),
-  );
+test('an unsupported schema version cannot be scored', () => {
+  const decoded = decodeLensFragment(encoded({ mode: 'a' }).replace('lens=2', 'lens=3'), context());
 
   assert.equal(decoded.status, 'malformed');
-  assert.equal(decoded.reason, 'audited_mode_carries_selection');
+  assert.equal(decoded.reason, 'unsupported_schema');
 });
 
-test('an unsupported schema version cannot be scored', () => {
-  const decoded = decodeLensFragment(encoded({ mode: 'a' }).replace('lens=1', 'lens=2'), context());
+test('a fragment written under the prior (Times-flag) schema fails to decode', () => {
+  const legacyStyleFragment =
+    'lens=1&mode=a&panel=wa-2026-primary-default-sources-v4&ph=6cd4acaa0c5e' +
+    '&data=d119ee3107bb&scoring=wa-2026-primary-equal-weight&times=1';
+  const decoded = decodeLensFragment(legacyStyleFragment, context());
 
   assert.equal(decoded.status, 'malformed');
   assert.equal(decoded.reason, 'unsupported_schema');
@@ -280,12 +305,12 @@ test('a repeated parameter cannot be scored', () => {
 });
 
 test('a link written against another panel decodes as stale rather than valid', () => {
-  const fragment = encoded({ mode: 's', sourceCodes: ['strn'], showTimes: false });
-  const successor = context({ panel_id: 'wa-2026-primary-default-sources-v4' });
+  const fragment = encoded({ mode: 's', sourceCodes: ['strn'] });
+  const successor = context({ panel_id: 'wa-2026-primary-default-sources-v5' });
   const decoded = decodeLensFragment(fragment, successor);
 
   assert.equal(decoded.status, 'stale_version');
-  assert.equal(decoded.binding.panelId, 'wa-2026-primary-default-sources-v3');
+  assert.equal(decoded.binding.panelId, 'wa-2026-primary-default-sources-v4');
   assert.deepEqual(decoded.state.sourceCodes, ['strn'], 'intent is preserved for migration');
 });
 
@@ -294,25 +319,23 @@ test('a cross-version link stays stale when its codes no longer exist', () => {
     mode: 's',
     categoryCodes: ['Glab'],
     sourceCodes: ['strn', 'urbn'],
-    showTimes: true,
   });
   const successor = context({
-    panel_id: 'wa-2026-primary-default-sources-v4',
+    panel_id: 'wa-2026-primary-default-sources-v5',
     sources: personalization().sources.filter((item) => item.code !== 'urbn'),
   });
   const decoded = decodeLensFragment(fragment, successor);
 
   assert.equal(decoded.status, 'stale_version', 'a retired code must not look like garbage');
-  assert.equal(decoded.binding.panelId, 'wa-2026-primary-default-sources-v3');
+  assert.equal(decoded.binding.panelId, 'wa-2026-primary-default-sources-v4');
   assert.deepEqual(decoded.state.categoryCodes, ['Glab']);
   assert.deepEqual(decoded.state.sourceCodes, ['strn', 'urbn'], 'original intent survives for #78');
-  assert.equal(decoded.state.showTimes, true);
 });
 
 test('a cross-version link stays stale when a code became nonselectable', () => {
   const fragment = encoded({ mode: 's', sourceCodes: ['strn', 'urbn'] });
   const successor = context({
-    panel_id: 'wa-2026-primary-default-sources-v4',
+    panel_id: 'wa-2026-primary-default-sources-v5',
     sources: personalization().sources.map((item) =>
       item.code === 'urbn' ? { ...item, selectable: false } : item,
     ),
@@ -324,10 +347,10 @@ test('a cross-version link stays stale when a code became nonselectable', () => 
 });
 
 test('a cross-version link keeps structural validation', () => {
-  const successor = context({ panel_id: 'wa-2026-primary-default-sources-v4' });
+  const successor = context({ panel_id: 'wa-2026-primary-default-sources-v5' });
   const decoded = decodeLensFragment(
-    'lens=1&mode=s&panel=wa-2026-primary-default-sources-v3&ph=6cd4acaa0c5e' +
-      '&data=d119ee3107bb&scoring=wa-2026-primary-equal-weight&sel=strnurb&times=0',
+    'lens=2&mode=s&panel=wa-2026-primary-default-sources-v4&ph=6cd4acaa0c5e' +
+      '&data=d119ee3107bb&scoring=wa-2026-primary-equal-weight&sel=strnurb',
     successor,
   );
 
@@ -336,7 +359,7 @@ test('a cross-version link keeps structural validation', () => {
 });
 
 test('a link written against other published data or scoring decodes as stale', () => {
-  const fragment = encoded({ mode: 'a', showTimes: false });
+  const fragment = encoded({ mode: 'a' });
 
   assert.equal(
     decodeLensFragment(fragment, lensContext(personalization(), 'aaaaaaaaaaaa')).status,
@@ -434,7 +457,6 @@ test('the committed panel snapshot round-trips through the codec', () => {
     mode: 's',
     categoryCodes: selectableCategories.map((item) => item.code),
     sourceCodes: selectableSources.map((item) => item.code),
-    showTimes: false,
   };
   const result = encodeLensFragment(state, ctx);
   assert.equal(result.status, 'ok', 'the whole selectable panel must fit the sharing target');

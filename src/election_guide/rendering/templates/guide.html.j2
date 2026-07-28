@@ -671,8 +671,14 @@
     "policy": {
       "maximum_url_characters": guide.personalization.policy.maximum_url_characters
     },
-    "categories": (lens_personalization.categories if guide.personalization.policy.enabled else []),
-    "sources": (lens_personalization.sources if guide.personalization.policy.enabled else [])
+    "categories": (
+      lens_personalization.categories if guide.personalization.policy.enabled
+      else (lens_personalization.categories | selectattr('panel_role', 'equalto', 'comparison') | list)
+    ),
+    "sources": (
+      lens_personalization.sources if guide.personalization.policy.enabled
+      else (lens_personalization.sources | selectattr('panel_role', 'equalto', 'comparison') | list)
+    )
   } | tojson }}</script>
   {% if guide.personalization.policy.enabled %}
   <script type="application/json" id="lens-personalization">{{ lens_personalization | tojson }}</script>
@@ -702,11 +708,22 @@
     else if (result === 'failed') shareGuideStatus.textContent = `Copy failed. Link: ${value}`;
   });
 
-  // Categories and sources are empty while personalization is disabled, so no
-  // source or category is selectable here yet. A shared link that carries a
-  // selection therefore decodes as malformed and falls back to audited, which
-  // is the intended behavior until the policy is enabled.
+  // Tallying categories and sources are empty while personalization is
+  // disabled, so no tallying selection is possible here yet: a shared link
+  // that carries one decodes as malformed and falls back to audited, which is
+  // the intended behavior until the policy is enabled. The comparison
+  // source/category stay present either way (issue 96), since showing the
+  // comparison predates and is independent of the newer personalization
+  // policy.
   const context = lensContext(bindings, bindings.data_version);
+  // A comparison source's own selected state is the only Times visibility
+  // signal the fragment carries (issue 96): resolve its code(s) once here so
+  // the checkbox can be read from and written into the ordinary source
+  // selection instead of a parallel flag.
+  const comparisonSourceCodes = new Set(
+    bindings.sources.filter((item) => item.panel_role === 'comparison').map((item) => item.code),
+  );
+  const timesShown = (state) => (state?.sourceCodes ?? []).some((code) => comparisonSourceCodes.has(code));
 
   const root = document.documentElement;
   const dialog = document.querySelector('[data-customize-dialog]');
@@ -1114,9 +1131,10 @@
    */
   const writeLensState = () => {
     const target = raceTarget();
-    const showTimes = timesInput?.checked ?? false;
+    const timesSourceCodes = timesInput?.checked ? [...comparisonSourceCodes] : [];
     const mode = currentMode();
-    if (mode === 'a' && !showTimes) {
+    const sourceCodes = mode === 's' ? [...checkedSourceCodes(), ...timesSourceCodes] : timesSourceCodes;
+    if (mode === 'a' && sourceCodes.length === 0) {
       const fragment = target ? `#${target}` : '';
       history.replaceState(
         history.state,
@@ -1129,8 +1147,7 @@
       {
         mode,
         categoryCodes: mode === 's' ? checkedCategoryCodes() : [],
-        sourceCodes: mode === 's' ? checkedSourceCodes() : [],
-        showTimes,
+        sourceCodes,
         raceTarget: target,
       },
       context,
@@ -1143,7 +1160,7 @@
     );
   };
 
-  applyTimes(Boolean(lensState()?.showTimes));
+  applyTimes(timesShown(lensState()));
   {% if guide.personalization.policy.enabled %}
   // Computed once, from the page's initial location: a persistent migration
   // or invalid-link explanation describes how this load resolved a shared
@@ -1155,7 +1172,25 @@
     lensNotice.hidden = false;
     lensNotice.textContent = initialLensOutcome.notice;
   }
+  if (initialLensOutcome.state === null && initialLensOutcome.notice) {
+    // A malformed or unmigratable link falls back to the audited consensus;
+    // clear it from the address bar so a reload or copy reproduces that
+    // resolved state instead of failing the same way again.
+    history.replaceState(history.state, '', `${window.location.pathname}${window.location.search}`);
+  }
   applyMode(initialLensOutcome.state);
+  {% else %}
+  // A malformed lens fragment must not linger in the address bar even though
+  // nothing here reads its selection; a reload or copy must not reproduce it.
+  // An ordinary in-page anchor (the skip link, a plain "#id") decodes the
+  // same way but must survive untouched, matching the enabled branch's own
+  // lensOutcome() exclusion for this exact reason.
+  {
+    const initialDecoded = decodeLensFragment(window.location.hash, context);
+    if (initialDecoded.status === 'malformed' && initialDecoded.reason !== 'unrecognized_fragment') {
+      history.replaceState(history.state, '', `${window.location.pathname}${window.location.search}`);
+    }
+  }
   {% endif %}
 
   // The native modal gives focus containment, Escape, and the backdrop for free,
@@ -1233,12 +1268,12 @@
   });
   {% endif %}
   // Only a fragment the codec recognizes carries Times state. The skip link and
-  // any other plain anchor also fire hashchange, and treating those as `times=0`
-  // would silently switch the comparison back off.
+  // any other plain anchor also fire hashchange, and treating those as "no
+  // comparison source selected" would silently switch the comparison back off.
   window.addEventListener('hashchange', () => {
     const state = lensState();
     if (!state) return;
-    applyTimes(state.showTimes);
+    applyTimes(timesShown(state));
     {% if guide.personalization.policy.enabled %}
     applyMode(state);
     {% endif %}

@@ -2623,9 +2623,81 @@ def test_personalization_is_invisible_while_the_policy_is_disabled(tmp_path: Pat
     ):
         assert marker not in body
 
+    # Every tallying category/source is absent, so nothing is selectable for
+    # scoring here yet. The comparison category/source stay present (issue
+    # 96): showing the comparison predates and is independent of this policy,
+    # so the codec must still be able to classify its own token while disabled.
     bindings = json.loads(html.split('id="lens-bindings">')[1].split("</script>")[0])
-    assert bindings["categories"] == []
-    assert bindings["sources"] == []
+    assert [item["panel_role"] for item in bindings["categories"]] == ["comparison"]
+    assert [item["panel_role"] for item in bindings["sources"]] == ["comparison"]
+
+
+def test_personalization_times_toggle_persists_a_url_while_the_policy_is_disabled(
+    tmp_path: Path,
+) -> None:
+    """Issue 96: the Times checkbox is independent of the newer
+    personalization policy and must keep writing/reading its state through
+    the ordinary selection mechanism even while that policy is disabled,
+    rather than silently failing or clearing an existing fragment.
+    """
+    view_model = _personalization_disabled_view_model(tmp_path)
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          const pause = () => new Promise((resolve) => setTimeout(resolve, 60));
+          const timesInput = document.querySelector('[data-customize-times]');
+          timesInput.click();
+          timesInput.dispatchEvent(new Event('change', { bubbles: true }));
+          await pause();
+          const shownHash = window.location.hash;
+          const shownClass = document.documentElement.classList.contains('show-times');
+          timesInput.click();
+          timesInput.dispatchEvent(new Event('change', { bubbles: true }));
+          await pause();
+          return JSON.stringify({
+            shownHash,
+            shownClass,
+            hiddenHash: window.location.hash,
+            hiddenClass: document.documentElement.classList.contains('show-times'),
+          });
+        })()
+        """,
+    )
+    assert result["shownClass"] is True
+    assert result["shownHash"] != "", (
+        "the shown state must persist to the URL, not be silently dropped"
+    )
+    assert "sel=" in result["shownHash"]
+    assert result["hiddenClass"] is False
+    assert result["hiddenHash"] == ""
+
+
+def test_personalization_ordinary_anchor_survives_initial_load_while_disabled(
+    tmp_path: Path,
+) -> None:
+    """An initial load carrying a plain in-page anchor (e.g. the skip link's
+    target) decodes the same way a malformed lens fragment would, but must
+    survive untouched even while the personalization policy is disabled,
+    matching the enabled branch's own exclusion for this exact case.
+    """
+    view_model = _personalization_disabled_view_model(tmp_path)
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    result = _evaluate_in_chrome(
+        html_path,
+        "JSON.stringify({ hash: window.location.hash })",
+        initial_url=f"{html_path.resolve().as_uri()}#guide-races",
+    )
+    assert result["hash"] == "#guide-races"
 
 
 def test_personalization_ui_renders_every_selectable_category_and_source(tmp_path: Path) -> None:
@@ -3288,7 +3360,6 @@ def _lens_fragment(
     mode: str,
     category_codes: tuple[str, ...] = (),
     source_codes: tuple[str, ...] = (),
-    times: bool = False,
     data_version: str | None = None,
     scoring_id: str | None = None,
 ) -> str:
@@ -3302,13 +3373,12 @@ def _lens_fragment(
     contract = view_model.personalization
     selection = "".join(sorted({*category_codes, *source_codes}))
     params = {
-        "lens": "1",
+        "lens": "2",
         "mode": mode,
         "panel": contract.panel_id,
         "ph": contract.panel_hash[:12],
         "data": data_version if data_version is not None else view_model.metadata.data_version,
         "scoring": scoring_id if scoring_id is not None else contract.scoring.configuration_id,
-        "times": "1" if times else "0",
     }
     if selection:
         params["sel"] = selection
@@ -3414,6 +3484,7 @@ def test_personalization_malformed_link_falls_back_to_audited_with_a_persistent_
           noticeHidden: document.querySelector('[data-lens-notice]').hidden,
           noticeText: document.querySelector('[data-lens-notice]').textContent,
           audited: document.querySelector('[data-customize-mode][value="audited"]').checked,
+          hash: window.location.hash,
         })
         """,
         initial_url=f"{html_path.resolve().as_uri()}#{fragment}",
@@ -3421,6 +3492,39 @@ def test_personalization_malformed_link_falls_back_to_audited_with_a_persistent_
     assert result["noticeHidden"] is False
     assert "could not be read" in result["noticeText"]
     assert result["audited"] is True
+    # Issue 96 acceptance criterion: a link that must not be scored falls back
+    # to a clean base URL rather than leaving the stale fragment in place.
+    assert result["hash"] == ""
+
+
+def test_personalization_prior_schema_link_falls_back_to_a_clean_base_url(
+    tmp_path: Path,
+) -> None:
+    """Issue 96 acceptance criterion: a fragment written under the prior
+    (Times-flag) schema version fails to decode under the new version and
+    results in a clean base URL, not a stale or confusing address bar.
+    """
+    view_model = _personalization_enabled_view_model(tmp_path)
+    fragment = _lens_fragment(view_model, mode="a").replace("lens=2", "lens=1") + "&times=1"
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        JSON.stringify({
+          noticeHidden: document.querySelector('[data-lens-notice]').hidden,
+          hash: window.location.hash,
+          timesChecked: document.querySelector('[data-customize-times]').checked,
+        })
+        """,
+        initial_url=f"{html_path.resolve().as_uri()}#{fragment}",
+    )
+    assert result["noticeHidden"] is False
+    assert result["hash"] == ""
+    assert result["timesChecked"] is False
 
 
 def test_personalization_ordinary_anchor_navigation_never_shows_a_lens_notice(

@@ -1659,8 +1659,11 @@ def _capture_emulated_viewport(
                     "timesInput?.click();await pause();"
                     "const revealed={rootClass:root.classList.contains('show-times'),"
                     "pills:pills().every(item=>displayed(item)),"
-                    "lensFragment:window.location.hash.includes('lens=1')&&"
-                    "window.location.hash.includes('times=1')&&"
+                    # Issue 96: the comparison source's own selected state (a `sel`
+                    # token) is now the only Times visibility signal; there is no
+                    # standalone flag left to assert on.
+                    "lensFragment:window.location.hash.includes('lens=2')&&"
+                    "window.location.hash.includes('sel=')&&"
                     "window.location.hash.includes('mode=a'),"
                     "wrappers:wrappers().every(item=>displayed(item)),"
                     "scoringUnchanged:scored()===before};"
