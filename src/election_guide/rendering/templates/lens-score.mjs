@@ -10,7 +10,10 @@
 
 const SCORED_STATES = new Set(['endorsement', 'multi_endorsement']);
 const NO_ENDORSEMENT_STATE = 'no_endorsement';
-const CATEGORY_PREFIX = 'G';
+// Named distinctly from lens-url.mjs's own copy of this constant: the guide
+// inlines both modules verbatim into one script scope, so their internal,
+// unexported names must not collide.
+const SCORE_CATEGORY_PREFIX = 'G';
 
 /** An exact rational. BigInt throughout so no share is ever approximated. */
 export class Rational {
@@ -81,7 +84,7 @@ function gcd(left, right) {
 }
 
 function isCategoryCode(code) {
-  return code.startsWith(CATEGORY_PREFIX);
+  return code.startsWith(SCORE_CATEGORY_PREFIX);
 }
 
 /**

@@ -1,18 +1,23 @@
 from __future__ import annotations
 
+import json
 import re
+import shutil
+import subprocess
 import sys
+import tempfile
 from collections.abc import Callable
 from fractions import Fraction
 from pathlib import Path
 from stat import S_IMODE
-from typing import cast
+from typing import Any, cast
 
 import pytest
 from PIL import Image
 from pydantic import ValidationError
 from pypdf import PdfReader, PdfWriter
 from pypdf.generic import NameObject, TextStringObject
+from websocket import create_connection  # pyright: ignore[reportUnknownVariableType]
 
 from election_guide.publication import build_publication_bundle
 from election_guide.publication.builder import reprojected_personalization
@@ -32,6 +37,7 @@ from election_guide.rendering import (
 from election_guide.rendering.models import RenderingValidationReport
 from election_guide.rendering.renderer import (
     PrintLayoutError,
+    _CdpSocket,  # pyright: ignore[reportPrivateUsage]
     _comparison_candidate_cells,  # pyright: ignore[reportPrivateUsage]
     _detailed_pdf_race_values,  # pyright: ignore[reportPrivateUsage]
     _missing_pdf_race_values,  # pyright: ignore[reportPrivateUsage]
@@ -47,8 +53,10 @@ from election_guide.rendering.renderer import (
     _set_pdf_metadata,  # pyright: ignore[reportPrivateUsage]
     _source_cell_detail_label,  # pyright: ignore[reportPrivateUsage]
     _source_cell_group,  # pyright: ignore[reportPrivateUsage]
+    _terminate_process,  # pyright: ignore[reportPrivateUsage]
     _trim_trailing_blank_pages,  # pyright: ignore[reportPrivateUsage]
     _validate_print_layout,  # pyright: ignore[reportPrivateUsage]
+    _wait_for_devtools_endpoint,  # pyright: ignore[reportPrivateUsage]
     find_chrome,
     find_pdftoppm,
 )
@@ -2265,7 +2273,7 @@ def test_customize_shell_leaves_the_print_comparison_untouched(tmp_path: Path) -
     print_block = stylesheet.split("@media print {")[1]
 
     # The fixed PDF always carries the comparison; only the opener is screen-only.
-    assert ".customize-control, .customize-dialog { display: none; }" in print_block
+    assert ".customize-control, .customize-dialog, .lens-banner { display: none; }" in print_block
     assert "show-times" not in print_block
     assert "print-times-pick" in stylesheet
     assert "Read the Times pill" in html
@@ -2320,3 +2328,685 @@ def test_customize_shell_hides_a_comparison_only_candidate_by_default() -> None:
         candidate_id for candidate_id, group in group_by_candidate_id.items() if group is not None
     )
     assert "data-times-only" not in _candidate_section(html, contributing_id)
+
+
+def _personalization_enabled_view_model(tmp_path: Path) -> PublicationViewModel:
+    """The customize fixture with the lens policy enabled, for issue 80's UI."""
+    view_model = _view_model(tmp_path)
+    enabled_policy = view_model.personalization.policy.model_copy(update={"enabled": True})
+    view_model = view_model.model_copy(
+        update={
+            "personalization": view_model.personalization.model_copy(
+                update={"policy": enabled_policy}
+            )
+        }
+    )
+    return _revalidated(view_model)
+
+
+def _evaluate_in_chrome(
+    html_path: Path,
+    expression: str,
+    *,
+    mobile_width: int | None = None,
+    initial_url: str | None = None,
+) -> dict[str, Any]:
+    """Load one local file in headless Chrome and return one JSON object result.
+
+    A minimal harness for the personalization flow: unlike _render_screenshot's
+    responsive-interaction probe, this only needs one page load and one script
+    evaluation, so it does not share that function's screenshot-capture
+    machinery. Pass mobile_width to emulate a narrow CSS viewport first. Pass
+    initial_url to navigate to an already-encoded shared link (query string
+    and/or fragment) instead of the bare file, to exercise a load-time restore
+    rather than an in-page transition.
+    """
+    chrome_path = find_chrome()
+    profile = Path(tempfile.mkdtemp(prefix="election-guide-chrome-"))
+    try:
+        process = subprocess.Popen(
+            [
+                str(chrome_path),
+                "--headless=new",
+                "--disable-gpu",
+                "--disable-dev-shm-usage",
+                "--disable-background-networking",
+                "--disable-component-update",
+                "--disable-extensions",
+                "--hide-scrollbars",
+                "--no-first-run",
+                "--allow-file-access-from-files",
+                f"--user-data-dir={profile}",
+                "--remote-debugging-port=0",
+                "about:blank",
+            ],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        try:
+            port, browser_path = _wait_for_devtools_endpoint(process, profile)
+            websocket = create_connection(
+                f"ws://127.0.0.1:{port}{browser_path}",
+                timeout=30,
+                suppress_origin=True,
+                http_no_proxy=["127.0.0.1"],
+            )
+            try:
+                cdp = _CdpSocket(websocket)
+                target = cdp.command("Target.createTarget", {"url": "about:blank"})
+                target_id = cast(str, target["targetId"])
+                attached = cdp.command(
+                    "Target.attachToTarget", {"targetId": target_id, "flatten": True}
+                )
+                session_id = cast(str, attached["sessionId"])
+                cdp.command("Page.enable", session_id=session_id)
+                if mobile_width is not None:
+                    cdp.command(
+                        "Emulation.setDeviceMetricsOverride",
+                        {
+                            "width": mobile_width,
+                            "height": 780,
+                            "deviceScaleFactor": 1,
+                            "mobile": True,
+                        },
+                        session_id=session_id,
+                    )
+                cdp.command(
+                    "Page.navigate",
+                    {"url": initial_url or html_path.resolve().as_uri()},
+                    session_id=session_id,
+                )
+                cdp.wait_event("Page.loadEventFired", session_id=session_id)
+                evaluated = cdp.command(
+                    "Runtime.evaluate",
+                    {"expression": expression, "returnByValue": True, "awaitPromise": True},
+                    session_id=session_id,
+                )
+                result = cast(dict[str, object], evaluated["result"])
+                if "value" not in result:
+                    raise ValueError(f"personalization evaluation failed: {evaluated}")
+                return cast(dict[str, Any], json.loads(cast(str, result["value"])))
+            finally:
+                websocket.close()
+        finally:
+            _terminate_process(process)
+    finally:
+        shutil.rmtree(profile, ignore_errors=True)
+
+
+def _with_multi_category_source(view_model: PublicationViewModel) -> PublicationViewModel:
+    """Give one selectable source a second selection category, for issue 80's
+    "a multi-category source appears once and exposes every inclusion reason"
+    acceptance criterion. The small rendering fixture has no such source."""
+    contract = view_model.personalization
+    target = next(source for source in contract.sources if source.selectable)
+    second_category = next(
+        category
+        for category in contract.categories
+        if category.selectable and category.id != target.reporting_category_id
+    )
+    sources = [
+        source.model_copy(
+            update={
+                "selection_category_ids": sorted(
+                    {*source.selection_category_ids, second_category.id}
+                )
+            }
+        )
+        if source.id == target.id
+        else source
+        for source in contract.sources
+    ]
+    categories = [
+        category.model_copy(
+            update={"member_source_codes": sorted({*category.member_source_codes, target.code})}
+        )
+        if category.id == second_category.id
+        else category
+        for category in contract.categories
+    ]
+    mutated = view_model.model_copy(
+        update={
+            "personalization": contract.model_copy(
+                update={"sources": sources, "categories": categories}
+            )
+        }
+    )
+    return PublicationViewModel.model_validate(mutated.model_dump(mode="json"))
+
+
+def test_personalization_is_invisible_while_the_policy_is_disabled(tmp_path: Path) -> None:
+    """Issue 80: no selection UI, no mode toggle, no full payload, while disabled."""
+    html = _customize_html(tmp_path)
+
+    for marker in (
+        "data-customize-mode",
+        "data-customize-category",
+        "data-customize-source",
+        "data-customize-personalize",
+        "data-lens-banner",
+        'id="lens-personalization"',
+    ):
+        assert marker not in html
+
+    bindings = json.loads(html.split('id="lens-bindings">')[1].split("</script>")[0])
+    assert bindings["categories"] == []
+    assert bindings["sources"] == []
+
+
+def test_personalization_ui_renders_every_selectable_category_and_source(tmp_path: Path) -> None:
+    view_model = _personalization_enabled_view_model(tmp_path)
+    html = render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG))
+    contract = view_model.personalization
+
+    selectable_categories = [item for item in contract.categories if item.selectable]
+    selectable_sources = [item for item in contract.sources if item.selectable]
+    assert len(selectable_categories) > 0
+    assert len(selectable_sources) > 0
+
+    for category in selectable_categories:
+        assert f'data-customize-category="{category.code}"' in html
+    for source in selectable_sources:
+        assert f'data-customize-source="{source.code}"' in html
+    # The comparison source/category are identified but never selectable.
+    assert 'data-customize-category="Gcmp"' not in html
+    for source in contract.sources:
+        if not source.selectable:
+            assert f'data-customize-source="{source.code}"' not in html
+
+    bindings = json.loads(html.split('id="lens-bindings">')[1].split("</script>")[0])
+    assert len(bindings["categories"]) == len(contract.categories)
+    assert len(bindings["sources"]) == len(contract.sources)
+
+    # Categories and Sources are two sibling fieldsets, each with its own
+    # legend: a fieldset accepts only one legend, and the source checklist
+    # must have its own accessible group name rather than inheriting
+    # "Categories" from a legend that belongs to a different group.
+    personalize_panel = html.split("data-customize-personalize")[1].split(
+        '<p class="customize-status"'
+    )[0]
+    assert personalize_panel.count("<fieldset") == 2
+    category_fieldset = personalize_panel.split("<fieldset")[1]
+    assert category_fieldset.count("<legend>") == 1
+    assert "Categories" in category_fieldset
+    source_fieldset = personalize_panel.split("<fieldset")[2]
+    assert source_fieldset.count("<legend>") == 1
+    assert "Sources" in source_fieldset
+    assert "data-customize-source-list" in source_fieldset
+
+
+def test_personalization_initial_my_sources_matches_audited_consensus(tmp_path: Path) -> None:
+    """Issue 80 acceptance criterion: initial My sources results equal audited.
+
+    Module-scoped bindings inside the page's own `<script type="module">` are
+    not reachable from an injected Runtime.evaluate expression (they are not
+    global), so this observes the page's own computed DOM/banner output
+    rather than calling scoreSelection from outside it. The claim that
+    scoring the full selectable panel reproduces the audited consensus
+    exactly is lens-score.mjs's own tested contract (issue 77,
+    "the full selectable panel reproduces the audited published consensus");
+    this test proves only that entering My sources reaches that full-panel
+    selection, which is the part issue 80 owns.
+    """
+    view_model = _personalization_enabled_view_model(tmp_path)
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    selectable_source_count = sum(
+        1 for source in view_model.personalization.sources if source.selectable
+    )
+    selectable_category_count = sum(
+        1 for category in view_model.personalization.categories if category.selectable
+    )
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          document.querySelector('[data-customize-open]').click();
+          const modeSources = document.querySelector('[data-customize-mode][value="sources"]');
+          modeSources.click();
+          modeSources.dispatchEvent(new Event('change', { bubbles: true }));
+          const categoryInputs = [...document.querySelectorAll('[data-customize-category]')];
+          const allChecked = categoryInputs.every((input) => input.checked);
+          const noDirect = [...document.querySelectorAll('[data-customize-source]')]
+            .every((input) => !input.checked);
+          return JSON.stringify({
+            allChecked,
+            noDirect,
+            counts: document.querySelector('[data-customize-counts]').textContent,
+            banner: document.querySelector('[data-lens-banner]').textContent,
+          });
+        })()
+        """,
+    )
+    assert result["allChecked"] is True
+    assert result["noDirect"] is True
+    # Every source belongs to at least one selectable category (issue 75's own
+    # registry invariant), so selecting every category reaches the full panel.
+    assert result["counts"] == (
+        f"0 direct · {selectable_category_count} categories · "
+        f"{selectable_source_count} sources included"
+    )
+    assert f"{selectable_source_count} of {selectable_source_count} sources" in result["banner"]
+
+
+def test_personalization_multi_category_source_appears_once_with_every_reason(
+    tmp_path: Path,
+) -> None:
+    """Issue 80 acceptance criteria: a multi-category source counts once and
+    exposes every inclusion reason; removing its direct pick keeps it included
+    through a still-checked category."""
+    view_model = _with_multi_category_source(_personalization_enabled_view_model(tmp_path))
+    contract = view_model.personalization
+    target = next(source for source in contract.sources if len(source.selection_category_ids) > 1)
+    other_category_id = next(
+        cid for cid in target.selection_category_ids if cid != target.reporting_category_id
+    )
+    other_category_code = next(
+        category.code for category in contract.categories if category.id == other_category_id
+    )
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    result = _evaluate_in_chrome(
+        html_path,
+        f"""
+        (async () => {{
+          document.querySelector('[data-customize-open]').click();
+          document.querySelectorAll('[data-customize-category]').forEach((input) => {{
+            input.checked = false;
+          }});
+          const category = document.querySelector(
+            '[data-customize-category="{other_category_code}"]',
+          );
+          category.checked = true;
+          category.dispatchEvent(new Event('change', {{ bubbles: true }}));
+          const sourceInput = document.querySelector('[data-customize-source="{target.code}"]');
+          sourceInput.checked = true;
+          sourceInput.dispatchEvent(new Event('change', {{ bubbles: true }}));
+          const row = sourceInput.closest('[data-customize-source-row]');
+          const withDirect = {{
+            badges: row.querySelector('[data-customize-source-badges]').textContent,
+            counts: document.querySelector('[data-customize-counts]').textContent,
+          }};
+          // Remove the direct pick; the category is still checked.
+          sourceInput.checked = false;
+          sourceInput.dispatchEvent(new Event('change', {{ bubbles: true }}));
+          const withoutDirect = {{
+            badges: row.querySelector('[data-customize-source-badges]').textContent,
+            checked: sourceInput.checked,
+          }};
+          return JSON.stringify({{ withDirect, withoutDirect }});
+        }})()
+        """,
+    )
+    assert "Direct" in result["withDirect"]["badges"]
+    assert (
+        other_category_code not in result["withDirect"]["badges"]
+    )  # codes aren't shown, labels are
+    assert "1 direct" in result["withDirect"]["counts"]
+    assert "Direct" not in result["withoutDirect"]["badges"]
+    assert result["withoutDirect"]["badges"] != ""  # still explained by the category alone
+    assert result["withoutDirect"]["checked"] is False
+
+
+def test_personalization_reset_restores_audited_state_and_preserves_filters(
+    tmp_path: Path,
+) -> None:
+    """Issue 80 acceptance criterion: reset restores audited mode, clears
+    selections, hides Times, and preserves query filters."""
+    view_model = _personalization_enabled_view_model(tmp_path)
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    query_url = f"{html_path.resolve().as_uri()}?view=compact"
+    result = _evaluate_in_chrome(
+        html_path,
+        f"""
+        (async () => {{
+          history.replaceState(null, '', '{query_url}');
+          document.querySelector('[data-customize-open]').click();
+          const modeSources = document.querySelector('[data-customize-mode][value="sources"]');
+          modeSources.click();
+          modeSources.dispatchEvent(new Event('change', {{ bubbles: true }}));
+          document.querySelector('[data-customize-times]').click();
+          document.querySelector('[data-customize-times]')
+            .dispatchEvent(new Event('change', {{ bubbles: true }}));
+          document.querySelector('[data-customize-reset]').click();
+          const audited = document.querySelector('[data-customize-mode][value="audited"]').checked;
+          const anyCategoryChecked = [...document.querySelectorAll('[data-customize-category]')]
+            .some((input) => input.checked);
+          const anySourceChecked = [...document.querySelectorAll('[data-customize-source]')]
+            .some((input) => input.checked);
+          const timesShown = document.documentElement.classList.contains('show-times');
+          const banner = document.querySelector('[data-lens-banner]');
+          return JSON.stringify({{
+            audited,
+            anyCategoryChecked,
+            anySourceChecked,
+            timesShown,
+            bannerHidden: banner.hidden,
+            hash: window.location.hash,
+            search: window.location.search,
+          }});
+        }})()
+        """,
+    )
+    assert result["audited"] is True
+    assert result["anyCategoryChecked"] is False
+    assert result["anySourceChecked"] is False
+    assert result["timesShown"] is False
+    assert result["bannerHidden"] is True
+    assert result["hash"] == ""
+    assert result["search"] == "?view=compact"
+
+
+def test_personalization_dialog_does_not_overflow_a_mobile_viewport(tmp_path: Path) -> None:
+    """Issue 80 Validation: mobile checks.
+
+    The small rendering fixture's few short source names and single-category
+    memberships never produce badge or row text long enough to overflow a
+    360px dialog even without the fix, which would make this test vacuous;
+    the real production panel's 42 sources, longer names, and overlapping
+    categories are what actually exercise the narrow layout.
+    """
+    view_model = _production_bundle().view_model
+    enabled_policy = view_model.personalization.policy.model_copy(update={"enabled": True})
+    view_model = view_model.model_copy(
+        update={
+            "personalization": view_model.personalization.model_copy(
+                update={"policy": enabled_policy}
+            )
+        }
+    )
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          document.querySelector('[data-customize-open]').click();
+          const modeSources = document.querySelector('[data-customize-mode][value="sources"]');
+          modeSources.click();
+          modeSources.dispatchEvent(new Event('change', { bubbles: true }));
+          const dialog = document.querySelector('[data-customize-dialog]');
+          return JSON.stringify({
+            clientWidth: dialog.clientWidth,
+            scrollWidth: dialog.scrollWidth,
+          });
+        })()
+        """,
+        mobile_width=360,
+    )
+    assert result["scrollWidth"] <= result["clientWidth"]
+
+
+def test_personalization_copy_link_encodes_the_current_state_not_a_stale_href(
+    tmp_path: Path,
+) -> None:
+    """Issue 80 scope: copy-link must reproduce the displayed state exactly,
+    even after an in-page anchor navigation the codec does not recognize."""
+    view_model = _personalization_enabled_view_model(tmp_path)
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          // Headless Chrome over file:// has no clipboard permission to
+          // grant or deny, so navigator.clipboard.writeText never settles;
+          // stub it so the test exercises the status-line logic
+          // deterministically rather than real OS clipboard behavior.
+          Object.defineProperty(navigator, 'clipboard', {
+            value: { writeText: async () => {} },
+            configurable: true,
+          });
+          document.querySelector('[data-customize-open]').click();
+          const modeSources = document.querySelector('[data-customize-mode][value="sources"]');
+          modeSources.click();
+          modeSources.dispatchEvent(new Event('change', { bubbles: true }));
+          // The dialog is a native modal: the rest of the page is inert while
+          // it is open, so close it before the anchor can be clicked at all.
+          document.querySelector('[data-customize-close]').click();
+          // A plain anchor navigation the codec does not recognize: this must
+          // not be mistaken for the copy target.
+          document.querySelector('.skip-link').click();
+          const hashAfterAnchor = window.location.hash;
+          document.querySelector('[data-customize-open]').click();
+          // showModal() needs a tick before headless Chrome treats the
+          // dialog's own contents as interactive again.
+          await new Promise((resolve) => setTimeout(resolve, 50));
+          document.querySelector('[data-customize-copy]').click();
+          await new Promise((resolve) => setTimeout(resolve, 50));
+          return JSON.stringify({
+            hashAfterAnchor,
+            copyStatus: document.querySelector('[data-customize-copy-status]').textContent,
+            finalHash: window.location.hash,
+          });
+        })()
+        """,
+    )
+    assert result["hashAfterAnchor"] == "#guide-races"
+    assert result["copyStatus"] == "Link copied."
+    assert "mode=s" in result["finalHash"]
+    assert "sel=" in result["finalHash"]
+
+
+def test_personalization_copy_status_clears_on_the_next_change(tmp_path: Path) -> None:
+    view_model = _personalization_enabled_view_model(tmp_path)
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          // Headless Chrome over file:// has no clipboard permission to
+          // grant or deny, so navigator.clipboard.writeText never settles;
+          // stub it so the test exercises the status-line logic
+          // deterministically rather than real OS clipboard behavior.
+          Object.defineProperty(navigator, 'clipboard', {
+            value: { writeText: async () => {} },
+            configurable: true,
+          });
+          document.querySelector('[data-customize-open]').click();
+          const modeSources = document.querySelector('[data-customize-mode][value="sources"]');
+          modeSources.click();
+          modeSources.dispatchEvent(new Event('change', { bubbles: true }));
+          document.querySelector('[data-customize-copy]').click();
+          await new Promise((resolve) => setTimeout(resolve, 50));
+          const afterCopy = document.querySelector('[data-customize-copy-status]').textContent;
+          document.querySelector('[data-customize-reset]').click();
+          const afterReset = document.querySelector('[data-customize-copy-status]').textContent;
+          return JSON.stringify({ afterCopy, afterReset });
+        })()
+        """,
+    )
+    assert result["afterCopy"] != ""
+    assert result["afterReset"] == ""
+
+
+def test_personalization_history_back_and_forward_restore_selection(tmp_path: Path) -> None:
+    """Issue 80 scope: back and forward behavior.
+
+    A plain back() to a history entry that was last written by the very same
+    live DOM state proves nothing about applyMode: the checkboxes would look
+    "restored" even if the restore code never ran. This test forces a genuine
+    divergence — after the entry we will return to has already recorded a
+    category-based selection, it switches to a different, direct-source
+    selection before pushing the race-detail entry, so back() must actually
+    reach into the earlier entry's fragment and re-check different boxes than
+    whatever is currently checked.
+    """
+    view_model = _personalization_enabled_view_model(tmp_path)
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          const pause = () => new Promise((resolve) => setTimeout(resolve, 60));
+          document.querySelector('[data-customize-open]').click();
+          const modeSources = document.querySelector('[data-customize-mode][value="sources"]');
+          modeSources.click();
+          modeSources.dispatchEvent(new Event('change', { bubbles: true }));
+          await pause();
+          // Entering sources mode selects every category by default; this is
+          // the selection the later back() must restore. Capture it, then
+          // immediately push a new history entry (the race-detail permalink,
+          // matching how the rest of the guide already navigates) so this
+          // selection is frozen onto the entry we will later return to,
+          // before anything has a chance to replaceState over it.
+          const afterEnter = window.location.hash;
+          const categoryInputsSnapshot = [
+            ...document.querySelectorAll('[data-customize-category]'),
+          ];
+          const categoryCodesAfterEnter = categoryInputsSnapshot
+            .filter((input) => input.checked)
+            .map((input) => input.dataset.customizeCategory)
+            .sort();
+          const link = document.querySelector('[data-race-detail-link]');
+          link.click();
+          await pause();
+          // Now, on the new entry, diverge to a direct-source selection.
+          // writeLensState only ever replaceState()s, so this overwrites only
+          // the new entry's own fragment, leaving the earlier entry's
+          // category-based fragment untouched underneath it.
+          document.querySelectorAll('[data-customize-category]').forEach((input) => {
+            input.checked = false;
+          });
+          const source = document.querySelector('[data-customize-source]');
+          source.checked = true;
+          source.dispatchEvent(new Event('change', { bubbles: true }));
+          await pause();
+          const sourceCodesBeforeBack = [...document.querySelectorAll('[data-customize-source]')]
+            .filter((input) => input.checked)
+            .map((input) => input.dataset.customizeSource)
+            .sort();
+          history.back();
+          await pause();
+          const audited = document.querySelector('[data-customize-mode][value="audited"]').checked;
+          const restored = window.location.hash === afterEnter;
+          const categoryCodesAfterBack = [...document.querySelectorAll('[data-customize-category]')]
+            .filter((input) => input.checked)
+            .map((input) => input.dataset.customizeCategory)
+            .sort();
+          const sourceCodesAfterBack = [...document.querySelectorAll('[data-customize-source]')]
+            .filter((input) => input.checked)
+            .map((input) => input.dataset.customizeSource)
+            .sort();
+          history.forward();
+          await pause();
+          const dialogOpen = document.querySelector('[data-race-detail-dialog][open]') !== null;
+          return JSON.stringify({
+            afterEnter,
+            restored,
+            audited,
+            dialogOpen,
+            categoryCodesAfterEnter,
+            sourceCodesBeforeBack,
+            categoryCodesAfterBack,
+            sourceCodesAfterBack,
+          });
+        })()
+        """,
+    )
+    assert "mode=s" in result["afterEnter"]
+    assert result["categoryCodesAfterEnter"] != []
+    # Confirms the divergence actually happened before back(): a direct source
+    # was checked in place of the categories.
+    assert result["sourceCodesBeforeBack"] != []
+    assert result["restored"] is True
+    assert result["audited"] is False
+    # back() must reinstate the category-based selection recorded in the
+    # earlier entry, not leave the direct-source selection in place.
+    assert result["categoryCodesAfterBack"] == result["categoryCodesAfterEnter"]
+    assert result["sourceCodesAfterBack"] == []
+    assert result["dialogOpen"] is True
+
+
+def test_personalization_shared_link_restores_the_same_version_selection(tmp_path: Path) -> None:
+    """Issue 80 scope: a link that already encodes a personalized selection
+    must restore that exact selection on load, complementing the
+    back/forward test above by exercising the initial-load restore path
+    (applyMode(lensState()) at script start) rather than the hashchange path.
+    """
+    view_model = _personalization_enabled_view_model(tmp_path)
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    capture = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          document.querySelector('[data-customize-open]').click();
+          const modeSources = document.querySelector('[data-customize-mode][value="sources"]');
+          modeSources.click();
+          modeSources.dispatchEvent(new Event('change', { bubbles: true }));
+          // Diverge from the "select every category" default this mode starts
+          // with, so the captured link encodes one specific, checkable
+          // category rather than the whole set.
+          document.querySelectorAll('[data-customize-category]').forEach((input) => {
+            input.checked = false;
+          });
+          const category = document.querySelector('[data-customize-category]');
+          category.checked = true;
+          category.dispatchEvent(new Event('change', { bubbles: true }));
+          return JSON.stringify({
+            href: window.location.href,
+            categoryCode: category.dataset.customizeCategory,
+          });
+        })()
+        """,
+    )
+    base, _, fragment = capture["href"].partition("#")
+    shared_url = f"{base}?edition=compact#{fragment}"
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        JSON.stringify({
+          audited: document.querySelector('[data-customize-mode][value="audited"]').checked,
+          sources: document.querySelector('[data-customize-mode][value="sources"]').checked,
+          categoryCodes: [...document.querySelectorAll('[data-customize-category]')]
+            .filter((input) => input.checked)
+            .map((input) => input.dataset.customizeCategory)
+            .sort(),
+          sourceCodes: [...document.querySelectorAll('[data-customize-source]')]
+            .filter((input) => input.checked)
+            .map((input) => input.dataset.customizeSource)
+            .sort(),
+          counts: document.querySelector('[data-customize-counts]').textContent,
+          bannerHidden: document.querySelector('[data-lens-banner]').hidden,
+          bannerText: document.querySelector('[data-lens-banner]').textContent,
+          search: window.location.search,
+        })
+        """,
+        initial_url=shared_url,
+    )
+    assert result["audited"] is False
+    assert result["sources"] is True
+    assert result["categoryCodes"] == [capture["categoryCode"]]
+    assert result["sourceCodes"] == []
+    assert "1 categories" in result["counts"]
+    assert result["bannerHidden"] is False
+    assert "Personalized lens active" in result["bannerText"]
+    assert result["search"] == "?edition=compact"
