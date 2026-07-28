@@ -420,12 +420,20 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     canonical_url = f"{configuration.public_site_url}/e/{view_model.metadata.election_id}/"
     assert f'<link rel="canonical" href="{canonical_url}">' in html
     assert f'<meta property="og:url" content="{canonical_url}">' in html
+    assert '<meta name="twitter:card" content="summary">' in html
+    assert f'<meta name="twitter:title" content="{configuration.title}">' in html
+    assert f'<meta name="twitter:description" content="{configuration.subject}">' in html
     assert f'href="{configuration.pdf_filename}">Printable PDF</a>' in html
     assert 'href="mailto:seattle-elections@dobravoda.dev">Feedback?</a>' in html
+    assert 'href="/about/">About &amp; FAQ</a>' in html
     assert 'class="footer-actions" aria-label="Guide links"' in html
     footer_actions_start = html.index('<nav class="footer-actions"')
     footer_actions_end = html.index("</nav>", footer_actions_start)
-    assert html[footer_actions_start:footer_actions_end].count(configuration.project_url) == 1
+    footer_actions_html = html[footer_actions_start:footer_actions_end]
+    assert footer_actions_html.count(configuration.project_url) == 1
+    assert 'class="footer-share" data-share-guide' in footer_actions_html
+    assert "navigator.share" in html
+    assert "shareOrCopyLink" in html
     assert ".detailed-footer-audit { display: none; }" in html
     assert "html.detailed-edition .detailed-footer-audit { display: inline; }" in html
     assert ">AGREES<" not in html
@@ -2298,6 +2306,76 @@ def test_customize_shell_describes_the_times_as_optional(tmp_path: Path) -> None
     assert "Customize" in hero
     assert "The Times is separate and optional" in html
     assert "hidden by default on screen" in html
+
+
+def test_footer_share_button_uses_web_share_then_falls_back_to_copy(tmp_path: Path) -> None:
+    """Issue 66: the share action must degrade cleanly when the Web Share API,
+
+    then the Clipboard API, are unavailable, without letting a declined share
+    sheet clobber the status line with a spurious failure message.
+    """
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(_customize_html(tmp_path), encoding="utf-8")
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          const pause = () => new Promise((resolve) => setTimeout(resolve, 50));
+          const button = document.querySelector('[data-share-guide]');
+          const status = document.querySelector('[data-share-guide-status]');
+
+          Object.defineProperty(navigator, 'share', {
+            value: (details) => Promise.resolve(details),
+            configurable: true,
+          });
+          button.click();
+          await pause();
+          const afterShare = status.textContent;
+
+          status.textContent = 'SENTINEL';
+          Object.defineProperty(navigator, 'share', {
+            value: () => Promise.reject(
+              Object.assign(new Error('cancelled'), { name: 'AbortError' })
+            ),
+            configurable: true,
+          });
+          button.click();
+          await pause();
+          const afterCancelledShare = status.textContent;
+
+          Object.defineProperty(navigator, 'share', { value: undefined, configurable: true });
+          Object.defineProperty(navigator, 'clipboard', {
+            value: { writeText: async () => {} },
+            configurable: true,
+          });
+          button.click();
+          await pause();
+          const afterClipboardCopy = status.textContent;
+
+          // Headless Chrome over file:// has no clipboard permission or
+          // focus/selection context to grant real execCommand('copy') either,
+          // so stub it the same way the existing copy-link buttons already
+          // do, to exercise the fallback branch deterministically.
+          Object.defineProperty(navigator, 'clipboard', { value: undefined, configurable: true });
+          document.execCommand = () => true;
+          button.click();
+          await pause();
+          const afterExecCommandCopy = status.textContent;
+
+          return JSON.stringify({
+            afterShare,
+            afterCancelledShare,
+            afterClipboardCopy,
+            afterExecCommandCopy,
+          });
+        })()
+        """,
+    )
+    assert result["afterShare"] == "Share menu opened."
+    # A declined share sheet is not a failure and must not overwrite the status line.
+    assert result["afterCancelledShare"] == "SENTINEL"
+    assert result["afterClipboardCopy"] == "Link copied."
+    assert result["afterExecCommandCopy"] == "Link copied."
 
 
 def _candidate_section(html: str, candidate_id: str) -> str:

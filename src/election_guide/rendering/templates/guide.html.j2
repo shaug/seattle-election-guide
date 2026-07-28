@@ -10,6 +10,9 @@
   <meta property="og:title" content="{{ config.title }}">
   <meta property="og:description" content="{{ config.subject }}">
   <meta property="og:url" content="{{ canonical_url }}">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="{{ config.title }}">
+  <meta name="twitter:description" content="{{ config.subject }}">
   <link rel="canonical" href="{{ canonical_url }}">
   <title>{{ config.title }}</title>
   <style>{{ stylesheet | safe }}</style>
@@ -415,7 +418,10 @@
         <nav class="footer-actions" aria-label="Guide links">
           <a href="{{ config.pdf_filename }}">Printable PDF</a>
           <a href="mailto:seattle-elections@dobravoda.dev">Feedback?</a>
+          <a href="/about/">About &amp; FAQ</a>
           <a href="{{ config.project_url }}">Source and audit files</a>
+          <button type="button" class="footer-share" data-share-guide>Share this guide</button>
+          <p class="visually-hidden" role="status" aria-live="polite" data-share-guide-status></p>
         </nav>
       </div>
       <details class="guide-notes" id="methodology">
@@ -672,6 +678,7 @@
   <script type="application/json" id="lens-personalization">{{ lens_personalization | tojson }}</script>
   {% endif %}
   <script type="module">
+{{ share_link_script | safe }}
 {{ lens_url_script | safe }}
   {% if guide.personalization.policy.enabled %}
 {{ lens_score_script | safe }}
@@ -683,6 +690,17 @@
   // scoring engine) above is inlined verbatim from its module, so the shipped
   // page and the Node tests share one implementation.
   const bindings = JSON.parse(document.querySelector('#lens-bindings').textContent);
+
+  const shareGuideButton = document.querySelector('[data-share-guide]');
+  const shareGuideStatus = document.querySelector('[data-share-guide-status]');
+  shareGuideButton?.addEventListener('click', async () => {
+    const value = window.location.href;
+    const result = await shareOrCopyLink(value, document.title);
+    if (!shareGuideStatus) return;
+    if (result === 'copied') shareGuideStatus.textContent = 'Link copied.';
+    else if (result === 'shared') shareGuideStatus.textContent = 'Share menu opened.';
+    else if (result === 'failed') shareGuideStatus.textContent = `Copy failed. Link: ${value}`;
+  });
 
   // Categories and sources are empty while personalization is disabled, so no
   // source or category is selectable here yet. A shared link that carries a

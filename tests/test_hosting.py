@@ -18,8 +18,11 @@ from election_guide.hosting import (
     stage_pages_site,
     verify_staged_pages_site,
 )
+from election_guide.hosting.models import PublishedElection, SiteManifest
+from election_guide.hosting.pages import _about_html  # pyright: ignore[reportPrivateUsage]
 from election_guide.release.models import REQUIRED_RELEASE_ARTIFACTS, ReleaseStatus
 from election_guide.serialization import canonical_json_bytes
+from tests.test_rendering import _evaluate_in_chrome  # pyright: ignore[reportPrivateUsage]
 
 COMMIT = "a" * 40
 OLDER_COMMIT = "c" * 40
@@ -79,6 +82,15 @@ def test_stage_pages_site_composes_verified_election_archive(tmp_path: Path) -> 
     assert '<link rel="canonical" href="https://seattleelections.guide/e/">' in archive
     assert "noindex" not in archive
 
+    about = (output / "about" / "index.html").read_text(encoding="utf-8")
+    assert '<link rel="canonical" href="https://seattleelections.guide/about/">' in about
+    assert '<meta property="og:url" content="https://seattleelections.guide/about/">' in about
+    assert '<meta name="twitter:card" content="summary">' in about
+    assert f'href="/e/{CURRENT_ID}/"' in about
+    assert "mailto:seattle-elections@dobravoda.dev" in about
+    assert "not an official voter pamphlet" in about
+    assert "not affiliated with any campaign" in about
+
     headers = (output / "_headers").read_text(encoding="utf-8")
     assert "X-Frame-Options: DENY" in headers
     assert "X-Robots-Tag" not in headers
@@ -101,6 +113,7 @@ def test_stage_pages_site_composes_verified_election_archive(tmp_path: Path) -> 
         f"e/{CURRENT_ID}/Current_Guide.pdf",
         f"e/{OLDER_ID}/index.html",
         "e/index.html",
+        "about/index.html",
     }
 
 
@@ -164,6 +177,8 @@ def test_generated_worker_enforces_route_contract(tmp_path: Path) -> None:
         "https://seattleelections.guide/e/not-an-election/",
         f"https://seattleelections.guide/e/{CURRENT_ID}/missing.pdf",
         f"https://seattle-elections.guide/e/{OLDER_ID}/?source=legacy",
+        "https://seattleelections.guide/about?ref=footer",
+        "https://seattleelections.guide/about/",
     ]
     results = _run_worker(worker_path, urls)
 
@@ -186,6 +201,14 @@ def test_generated_worker_enforces_route_contract(tmp_path: Path) -> None:
     assert results[7]["status"] == 404
     assert results[8]["status"] == 301
     assert results[8]["location"] == (f"https://seattleelections.guide/e/{OLDER_ID}/?source=legacy")
+    assert results[9]["status"] == 308
+    assert results[9]["location"] == "https://seattleelections.guide/about/?ref=footer"
+    assert results[10] == {
+        "status": 200,
+        "location": None,
+        "robots": None,
+        "body": "asset:/about/",
+    }
 
 
 def test_bundle_drift_does_not_replace_existing_output(tmp_path: Path) -> None:
@@ -227,7 +250,7 @@ def test_verify_staged_site_rejects_tamper_deletion_and_unexpected_assets(
         expected_current_git_commit=COMMIT,
     )
     assert verified.current_election_id == CURRENT_ID
-    assert len(verified.assets) == 12
+    assert len(verified.assets) == 13
 
     tampered = tmp_path / "tampered"
     shutil.copytree(output, tampered)
@@ -340,7 +363,86 @@ def test_hosting_stage_cli_reports_composed_site(tmp_path: Path) -> None:
         ],
     )
     assert verify_result.exit_code == 0, verify_result.output
-    assert f"current {CURRENT_ID}; 11 assets" in verify_result.output
+    assert f"current {CURRENT_ID}; 12 assets" in verify_result.output
+
+
+def test_about_page_share_button_uses_web_share_then_falls_back_to_copy(
+    tmp_path: Path,
+) -> None:
+    """Issue 66: the About page's share action degrades cleanly like the guide's."""
+    manifest = SiteManifest(
+        canonical_origin="https://seattleelections.guide",
+        current_election_id=CURRENT_ID,
+        elections=[
+            PublishedElection(
+                election_id=CURRENT_ID,
+                name="August 2026 Primary",
+                bundle_id=CURRENT_BUNDLE_ID,
+                release_version="primary.2",
+                source_panel_id="test-panel-v2",
+                source_panel_hash=PANEL_HASH,
+            ),
+        ],
+    )
+    html_path = tmp_path / "about.html"
+    html_path.write_text(_about_html(manifest), encoding="utf-8")
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          const pause = () => new Promise((resolve) => setTimeout(resolve, 50));
+          const button = document.querySelector('[data-share-about]');
+          const status = document.querySelector('[data-share-about-status]');
+
+          Object.defineProperty(navigator, 'share', {
+            value: (details) => Promise.resolve(details),
+            configurable: true,
+          });
+          button.click();
+          await pause();
+          const afterShare = status.textContent;
+
+          status.textContent = 'SENTINEL';
+          Object.defineProperty(navigator, 'share', {
+            value: () => Promise.reject(
+              Object.assign(new Error('cancelled'), { name: 'AbortError' })
+            ),
+            configurable: true,
+          });
+          button.click();
+          await pause();
+          const afterCancelledShare = status.textContent;
+
+          Object.defineProperty(navigator, 'share', { value: undefined, configurable: true });
+          Object.defineProperty(navigator, 'clipboard', {
+            value: { writeText: async () => {} },
+            configurable: true,
+          });
+          button.click();
+          await pause();
+          const afterClipboardCopy = status.textContent;
+
+          // See the equivalent guide-footer test for why execCommand is stubbed
+          // rather than exercised for real under headless Chrome.
+          Object.defineProperty(navigator, 'clipboard', { value: undefined, configurable: true });
+          document.execCommand = () => true;
+          button.click();
+          await pause();
+          const afterExecCommandCopy = status.textContent;
+
+          return JSON.stringify({
+            afterShare,
+            afterCancelledShare,
+            afterClipboardCopy,
+            afterExecCommandCopy,
+          });
+        })()
+        """,
+    )
+    assert result["afterShare"] == "Share menu opened."
+    assert result["afterCancelledShare"] == "SENTINEL"
+    assert result["afterClipboardCopy"] == "Link copied."
+    assert result["afterExecCommandCopy"] == "Link copied."
 
 
 def test_wrangler_and_workflow_keep_deployment_pinned_and_gated() -> None:

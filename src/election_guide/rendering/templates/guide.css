@@ -1,24 +1,3 @@
-:root {
-  --navy: #102a43;
-  --blue: #176b87;
-  --teal: #087f73;
-  --amber: #d99000;
-  --red: #9f2d25;
-  --ink: #17212b;
-  --muted: #52606d;
-  --line: #cbd2d9;
-  --paper: #fbfaf6;
-  --white: #ffffff;
-  --screen-sans: "Avenir Next", Avenir, "Helvetica Neue", Helvetica, sans-serif;
-}
-
-* { box-sizing: border-box; }
-html { color: var(--ink); background: #edf1f4; font-family: var(--screen-sans); }
-body { margin: 0; line-height: 1.45; }
-a { color: #075d75; text-underline-offset: .15em; }
-.visually-hidden { position: absolute !important; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
-.skip-link { position: absolute; left: 1rem; top: -5rem; z-index: 10; background: var(--white); padding: .7rem; }
-.skip-link:focus { top: 1rem; }
 .screen-guide { width: 100%; max-width: 76rem; margin: 0 auto; background: var(--paper); min-height: 100vh; }
 .hero { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 1.5rem 3rem; color: var(--white); background: var(--navy); padding: clamp(1.35rem, 3vw, 2.25rem) clamp(1rem, 4vw, 3rem); border-bottom: .4rem solid var(--teal); }
 .hero-kicker, .eyebrow { color: #9ee7df; font-size: .78rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
@@ -213,6 +192,9 @@ a.race-detail-source-row:hover strong { text-decoration: underline; text-underli
 .footer-summary p { margin: 0; color: #d7e6ef; font-size: .86rem; }
 .footer-summary a { color: #9ee7df; font-size: .82rem; font-weight: 800; white-space: nowrap; }
 .footer-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .45rem 1rem; }
+.footer-share { padding: 0; border: 0; background: none; color: #9ee7df; font: inherit; font-size: .82rem; font-weight: 800; white-space: nowrap; cursor: pointer; }
+.footer-share:hover { text-decoration: underline; text-underline-offset: .15em; }
+.footer-share:focus-visible { outline: .2rem solid #f0a928; outline-offset: .15rem; }
 .guide-notes { margin: 0; border-top: 1px solid #526f83; }
 .guide-notes > summary { display: flex; justify-content: space-between; align-items: center; padding: .85rem clamp(1rem, 4vw, 3rem); color: #d7e6ef; cursor: pointer; font-size: .8rem; font-weight: 800; list-style: none; }
 .guide-notes > summary::-webkit-details-marker { display: none; }
