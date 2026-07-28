@@ -118,6 +118,16 @@ def render_html_document(
     source_category_label_by_key = {
         category.category: category.label for category in view_model.methodology.source_categories
     }
+    # The merged sources tree (issue 97) renders each category's members from
+    # the personalization contract's own transport codes, so it needs a code
+    # -> identity lookup distinct from source_by_id's id keying, plus category
+    # labels for a multi-category source's "also in" tag.
+    personalization_source_by_code = {
+        source.code: source for source in view_model.personalization.sources
+    }
+    category_label_by_id = {
+        category.id: category.label for category in view_model.personalization.categories
+    }
     source_cells_by_race_id = {
         race.id: {cell.source_id: cell for cell in race.source_cells}
         for section in view_model.sections
@@ -141,6 +151,8 @@ def render_html_document(
         filter_options=_filter_options(view_model),
         source_by_id=source_by_id,
         source_category_label_by_key=source_category_label_by_key,
+        personalization_source_by_code=personalization_source_by_code,
+        category_label_by_id=category_label_by_id,
         source_cells_by_race_id=source_cells_by_race_id,
         concise_warning_labels=_concise_warning_labels,
         screen_share_accessible_label=_screen_share_accessible_label,
@@ -648,8 +660,12 @@ def validate_rendered_guide(
     if set(parser.publication_source_text) != expected_source_ids:
         missing_evidence_rows.append("document: unexpected or missing publication source rows")
     for source in contributing_sources:
+        # Issue 97 removed the screen evidence directory's own use of this
+        # macro (the merged sources tree renders its own inline checkbox
+        # markup instead), so each contributing source now carries exactly
+        # one `data-publication-source-id` row: print's own compact-labeled
+        # source panel, unaffected by that rewrite.
         expected_rows = [
-            _normalized_text(f"{source.name} {_source_participation_label(source)}"),
             _normalized_text(f"{source.name} {_source_participation_label(source, compact=True)}"),
         ]
         observed_rows = [
@@ -659,16 +675,11 @@ def validate_rendered_guide(
         expected_classes = {"source-row", f"source-row-{source.panel_role}"}
         if (
             observed_rows != expected_rows
-            or parser.publication_source_links.get(source.id, [])
-            != [[source.evidence_url], [source.evidence_url]]
-            or parser.publication_source_categories.get(source.id, [])
-            != [source.category, source.category]
-            or parser.publication_source_heading_categories.get(source.id, [])
-            != [source.category, source.category]
-            or parser.publication_source_roles.get(source.id, [])
-            != [source.panel_role, source.panel_role]
-            or parser.publication_source_classes.get(source.id, [])
-            != [expected_classes, expected_classes]
+            or parser.publication_source_links.get(source.id, []) != [[source.evidence_url]]
+            or parser.publication_source_categories.get(source.id, []) != [source.category]
+            or parser.publication_source_heading_categories.get(source.id, []) != [source.category]
+            or parser.publication_source_roles.get(source.id, []) != [source.panel_role]
+            or parser.publication_source_classes.get(source.id, []) != [expected_classes]
             or source.category not in source_categories
         ):
             missing_evidence_rows.append(f"{source.id}: publication source row values")
@@ -1486,9 +1497,10 @@ def _inspect_print_layout(
         websocket.close()
 
 
-# The screen controls are one select, four radios, and the single Customize button
-# that issue 79 introduces. Personalization controls live inside its dialog, not here.
-EXPECTED_SCREEN_CONTROL_COUNT = 6
+# The screen controls are one select and four radios. Issue 97 merged the
+# personalization controls into the page-anchored sources tree, so there is
+# no longer a Customize button here.
+EXPECTED_SCREEN_CONTROL_COUNT = 5
 
 
 def _render_screenshot(
@@ -1598,9 +1610,15 @@ def _capture_emulated_viewport(
                     "(async()=>{"
                     "const pause=()=>new Promise(resolve=>setTimeout(resolve,120));"
                     "const root=document.documentElement;"
-                    "const opener=document.querySelector('[data-customize-open]');"
-                    "const dialog=document.querySelector('[data-customize-dialog]');"
-                    "const timesInput=document.querySelector('[data-customize-times]');"
+                    # Issue 97 merged the personalization controls into the
+                    # page-anchored sources tree; there is no dialog to open, so
+                    # the comparison checkbox must be reached directly (opening
+                    # its disclosure first, since a closed <details> renders
+                    # nothing inside it).
+                    "const sourcesDetails=document.getElementById('sources');"
+                    "if(sourcesDetails)sourcesDetails.open=true;"
+                    "const comparisonInput=document.querySelector("
+                    "'.sources-category-comparison [data-sources-source]');"
                     "const shownOnScreen=element=>{const style=getComputedStyle(element);"
                     "const rect=element.getBoundingClientRect();"
                     "return style.display!=='none'&&style.visibility==='visible'&&"
@@ -1638,47 +1656,34 @@ def _capture_emulated_viewport(
                     "return !Number.isFinite(claimed)||claimed===shown;});"
                     "const hidden={"
                     "pills:pills().length>0&&pills().every(item=>!shownOnScreen(item)),"
-                    # The comparison row sits inside a closed <dialog> at probe time,
-                    # where neither its client rect nor its computed display can
-                    # distinguish hidden from shown; the wrapper this template
-                    # actually hides is what the assertion below checks.
                     "wrappers:wrappers().length>0&&wrappers().every(item=>!displayed(item)),"
                     "supportAligned:supportAligned(),"
-                    "unchecked:timesInput?.checked===false,"
+                    "unchecked:comparisonInput?.checked===false,"
                     "noRootClass:!root.classList.contains('show-times'),"
                     "cleanHash:window.location.hash===''};"
-                    "opener?.click();await pause();"
-                    "const opened={open:Boolean(dialog?.open),"
-                    "focusInside:Boolean(dialog?.contains(document.activeElement)),"
-                    "labelled:Boolean(dialog?.getAttribute('aria-labelledby')&&"
-                    "document.getElementById(dialog.getAttribute('aria-labelledby')))};"
-                    "dialog?.dispatchEvent(new Event('cancel',{cancelable:true}));await pause();"
-                    "const escaped={closed:dialog?.open===false,"
-                    "focusReturned:document.activeElement===opener};"
-                    "opener?.click();await pause();"
-                    "timesInput?.click();await pause();"
+                    "comparisonInput?.click();await pause();"
                     "const revealed={rootClass:root.classList.contains('show-times'),"
                     "pills:pills().every(item=>displayed(item)),"
-                    # Issue 96: the comparison source's own selected state (a `sel`
-                    # token) is now the only Times visibility signal; there is no
-                    # standalone flag left to assert on.
+                    # Issue 97: writeLensState always encodes mode 's' now (every
+                    # source has its own persistent checkbox everywhere it
+                    # appears), so a comparison-only selection is no exception.
                     "lensFragment:window.location.hash.includes('lens=2')&&"
                     "window.location.hash.includes('sel=')&&"
-                    "window.location.hash.includes('mode=a'),"
+                    "window.location.hash.includes('mode=s'),"
                     "wrappers:wrappers().every(item=>displayed(item)),"
                     "scoringUnchanged:scored()===before};"
                     "document.querySelector('.skip-link')?.click();await pause();"
                     "const afterAnchor={stillShown:root.classList.contains('show-times')&&"
-                    "timesInput?.checked===true,anchorHash:window.location.hash==="
+                    "comparisonInput?.checked===true,anchorHash:window.location.hash==="
                     "'#guide-races'};"
                     "history.replaceState(history.state,'',window.location.pathname+"
                     "window.location.search);"
                     "window.scrollTo(0,0);"
-                    "timesInput?.click();await pause();"
+                    "comparisonInput?.click();await pause();"
                     "const restored={rootClass:!root.classList.contains('show-times'),"
                     "cleanHash:window.location.hash==='',scoringUnchanged:scored()===before};"
-                    "dialog?.dispatchEvent(new Event('cancel',{cancelable:true}));await pause();"
-                    "return JSON.stringify({hidden,opened,escaped,revealed,afterAnchor,"
+                    "if(sourcesDetails)sourcesDetails.open=false;"
+                    "return JSON.stringify({hidden,revealed,afterAnchor,"
                     "restored,countsAgree:countsAgree(),controlCount});})()"
                 ),
                 "returnByValue": True,
@@ -1701,8 +1706,6 @@ def _capture_emulated_viewport(
                 "noRootClass": True,
                 "cleanHash": True,
             },
-            "opened": {"open": True, "focusInside": True, "labelled": True},
-            "escaped": {"closed": True, "focusReturned": True},
             "revealed": {
                 "rootClass": True,
                 "pills": True,
@@ -1723,7 +1726,8 @@ def _capture_emulated_viewport(
             {
                 "expression": (
                     "document.documentElement.classList.add('show-times');"
-                    "const input=document.querySelector('[data-customize-times]');"
+                    "const input=document.querySelector("
+                    "'.sources-category-comparison [data-sources-source]');"
                     "if(input)input.checked=true;true"
                 ),
                 "returnByValue": True,
@@ -1811,7 +1815,7 @@ def _capture_emulated_viewport(
                     "...document.querySelectorAll('.guide-notes')].map(details=>{"
                     "const summary=details.querySelector('summary');"
                     "const panel=details.querySelector("
-                    "'.methodology-screen,.screen-source-directory');"
+                    "'.methodology-screen,.sources-tree');"
                     "const visible=()=>Boolean(details.open&&panel&&"
                     "getComputedStyle(panel).display!=='none'&&"
                     "panel.getBoundingClientRect().height>0);"
