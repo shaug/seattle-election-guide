@@ -409,9 +409,14 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
             )
             assert f'data-source-state="{cell.state}"' in dialog_html
             source = source_by_id[cell.source_id]
-            assert category_label_by_key[source.category] in dialog_html
+            # A comparison source's one badge is its "Comparison only" role;
+            # its category label no longer repeats next to it (issue 115,
+            # item G29).
             if source.panel_role == "comparison":
                 assert "Comparison only" in dialog_html
+                assert category_label_by_key[source.category] not in dialog_html
+            else:
+                assert category_label_by_key[source.category] in dialog_html
             detail_label = _source_cell_detail_label(cell, race, group)
             if detail_label is not None:
                 assert detail_label in dialog_html
@@ -529,7 +534,11 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
         # source panel, and once in the detailed-edition-only source directory
         # that keeps that overflow PDF's evidence links complete.
         assert html.count(f'<a href="{source.evidence_url}">{source.name}</a>') == 2
-        print_noun = " picks" if source.panel_role == "comparison" else ""
+        print_noun = (
+            (" pick" if source.endorsement_count == 1 else " picks")
+            if source.panel_role == "comparison"
+            else ""
+        )
         print_participation = (
             f"{source.endorsement_count}{print_noun} · {source.split_endorsement_count} split"
         )
