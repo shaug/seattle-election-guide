@@ -3,8 +3,10 @@
 .hero-kicker, .eyebrow { color: #9ee7df; font-size: .78rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
 .hero h1 { max-width: 25ch; margin: .25rem 0 .45rem; font-size: clamp(2rem, 4.2vw, 3.4rem); line-height: .98; letter-spacing: -.035em; }
 .hero-deck { max-width: 48rem; margin: 0; color: #d7e6ef; font-size: clamp(.94rem, 1.5vw, 1.08rem); }
+.hero-deck a, .methodology-screen a { color: #9ee7df; font-weight: 800; }
 .hero-meta { display: grid; gap: .24rem; min-width: 13rem; padding-left: 1.25rem; border-left: 1px solid #7794a8; color: #d7e6ef; font-size: .76rem; text-align: right; }
-.screen-controls { position: sticky; top: 0; z-index: 5; display: grid; grid-template-columns: minmax(15rem, 1.1fr) repeat(2, minmax(12rem, .85fr)) minmax(10rem, .7fr); align-items: end; gap: .65rem 1rem; padding: .65rem clamp(1rem, 4vw, 3rem); background: rgba(255,255,255,.96); border-bottom: 1px solid var(--line); }
+.sticky-header { position: sticky; top: 0; z-index: 5; }
+.screen-controls { display: grid; grid-template-columns: minmax(15rem, 1.1fr) repeat(2, minmax(12rem, .85fr)) minmax(10rem, .7fr); align-items: end; gap: .65rem 1rem; padding: .65rem clamp(1rem, 4vw, 3rem); background: rgba(255,255,255,.96); border-bottom: 1px solid var(--line); }
 .race-filter-control { display: grid; min-width: 0; gap: .2rem; }
 .screen-controls label, .screen-controls legend { color: var(--navy); font-size: .72rem; font-weight: 800; }
 .screen-controls select { width: 100%; min-width: 0; min-height: 2.7rem; padding: .45rem .7rem; border: 1px solid #829ab1; border-radius: .3rem; background: var(--white); color: var(--ink); font: inherit; }
@@ -86,9 +88,9 @@ html.compact-ballot-mode .insufficient-note { padding: .38rem .48rem; font-size:
 .race-detail-dialog { width: min(54rem, calc(100vw - 2rem)); max-height: calc(100vh - 2rem); padding: 0; overflow: auto; border: 1px solid #829ab1; border-radius: .45rem; background: var(--paper); color: var(--ink); box-shadow: 0 1rem 3rem rgba(16,42,67,.35); }
 .race-detail-dialog::backdrop { background: rgba(9, 30, 48, .68); }
 
-.lens-banner { position: sticky; top: 0; z-index: 5; margin: 0; padding: .5rem 1rem; background: #102a43; color: #fff; font-weight: 600; font-size: .9rem; text-align: center; }
+.lens-banner { margin: 0; padding: .5rem 1rem; background: #102a43; color: #fff; font-weight: 600; font-size: .9rem; text-align: center; }
 .lens-banner[hidden] { display: none; }
-.lens-notice { position: sticky; top: 0; z-index: 5; margin: 0; padding: .5rem 1rem; border-bottom: 1px solid #b8c5cc; background: #eef5f8; color: #2b4a5e; font-weight: 600; font-size: .85rem; text-align: center; }
+.lens-notice { margin: 0; padding: .5rem 1rem; border-bottom: 1px solid #b8c5cc; background: #eef5f8; color: #2b4a5e; font-weight: 600; font-size: .85rem; text-align: center; }
 .lens-notice[hidden] { display: none; }
 
 /* Per-race personalized presentation (issue 81). A card is either showing
@@ -219,7 +221,8 @@ a.race-detail-source-row:hover strong { text-decoration: underline; text-underli
   .hero { grid-template-columns: 1fr; gap: 1rem; }
   .hero h1 { max-width: 18ch; }
   .hero-meta { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: .8rem 0 0; border-top: 1px solid #7794a8; border-left: 0; text-align: left; }
-  .screen-controls { grid-template-columns: 1fr; position: static; }
+  .sticky-header { position: static; }
+  .screen-controls { grid-template-columns: 1fr; }
   .screen-controls p { grid-column: auto; justify-content: flex-start; justify-self: start; text-align: left; }
   .view-setting { width: 100%; }
   html.compact-ballot-mode .race-grid { grid-template-columns: 1fr; }
@@ -387,5 +390,6 @@ a.race-detail-source-row:hover strong { text-decoration: underline; text-underli
   html.detailed-edition .methodology-panel { break-inside: avoid; padding: .12in; border: .5px solid var(--line); }
   html.detailed-edition .methodology-screen h2 { font-size: 18pt; }
   html.detailed-edition .methodology-screen h3 { color: var(--navy); }
+  html.detailed-edition .methodology-screen a { color: var(--navy); }
   html.detailed-edition .methodology-screen p, html.detailed-edition .methodology-screen li { font-size: 8pt; }
 }

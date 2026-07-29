@@ -180,9 +180,8 @@
       <div class="hero-copy">
         <div class="hero-kicker">{{ election_display_label }}</div>
         <h1>Seattle Progressive Elections Guide</h1>
-        <p class="hero-deck">Progressive endorsement agreement at a glance. The Seattle
-          Times is an optional comparison you can turn on under
-          <b>Sources</b>.</p>
+        <p class="hero-deck">Progressive endorsement agreement at a glance. An optional comparison
+          source is available under <a href="#sources">Sources</a>.</p>
       </div>
       <div class="hero-meta" aria-label="Guide metadata">
         <span>Election {{ guide.metadata.election_date }}</span>
@@ -190,42 +189,44 @@
       </div>
     </header>
 
-    <section class="screen-controls" aria-label="Guide view and race filters">
-      <div class="race-filter-control">
-        <label for="race-filter">Show races</label>
-        <select id="race-filter">
-          <option value="all">All Seattle ballot races</option>
-          <optgroup label="Ballot sections">
-          {% for section in guide.sections %}
-          <option value="{{ section.id }}">{{ section.label }}</option>
-          {% endfor %}
-          </optgroup>
-          <optgroup label="Districts and jurisdictions">
-          {% for option in filter_options %}<option value="{{ option }}">{{ option }}</option>{% endfor %}
-          </optgroup>
-        </select>
-      </div>
-      <fieldset class="view-setting">
-        <legend>View</legend>
-        <div class="segmented-control">
-          <label><input type="radio" name="ballot-view" value="full" checked><span>Full</span></label>
-          <label><input type="radio" name="ballot-view" value="compact"><span>Compact</span></label>
+    <div class="sticky-header">
+      <section class="screen-controls" aria-label="Guide view and race filters">
+        <div class="race-filter-control">
+          <label for="race-filter">Show races</label>
+          <select id="race-filter">
+            <option value="all">All Seattle ballot races</option>
+            <optgroup label="Ballot sections">
+            {% for section in guide.sections %}
+            <option value="{{ section.id }}">{{ section.label }}</option>
+            {% endfor %}
+            </optgroup>
+            <optgroup label="Districts and jurisdictions">
+            {% for option in filter_options %}<option value="{{ option }}">{{ option }}</option>{% endfor %}
+            </optgroup>
+          </select>
         </div>
-      </fieldset>
-      <fieldset class="view-setting">
-        <legend>Races</legend>
-        <div class="segmented-control">
-          <label><input type="radio" name="race-set" value="complete" id="complete-filter" checked><span>Complete</span></label>
-          <label><input type="radio" name="race-set" value="contested" id="contested-filter"><span>Contested</span></label>
-        </div>
-      </fieldset>
-      <p id="filter-status" role="status" aria-live="polite"></p>
-    </section>
+        <fieldset class="view-setting">
+          <legend>View</legend>
+          <div class="segmented-control">
+            <label><input type="radio" name="ballot-view" value="full" checked><span>Full</span></label>
+            <label><input type="radio" name="ballot-view" value="compact"><span>Compact</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="view-setting">
+          <legend>Races</legend>
+          <div class="segmented-control">
+            <label><input type="radio" name="race-set" value="complete" id="complete-filter" checked><span>Complete</span></label>
+            <label><input type="radio" name="race-set" value="contested" id="contested-filter"><span>Contested</span></label>
+          </div>
+        </fieldset>
+        <p id="filter-status" role="status" aria-live="polite"></p>
+      </section>
 
-    {% if guide.personalization.policy.enabled %}
-    <p class="lens-banner" data-lens-banner hidden role="status" aria-live="polite"></p>
-    <p class="lens-notice" data-lens-notice hidden role="status" aria-live="polite"></p>
-    {% endif %}
+      {% if guide.personalization.policy.enabled %}
+      <p class="lens-banner" data-lens-banner hidden role="status" aria-live="polite"></p>
+      <p class="lens-notice" data-lens-notice hidden role="status" aria-live="polite"></p>
+      {% endif %}
+    </div>
 
     <div id="guide-races" class="screen-sections">
       {% for section in guide.sections %}
@@ -397,7 +398,7 @@
       <section class="methodology-panel">
         <h3>The Times is separate and optional</h3>
         <p>Seattle Times choices are hidden by default on screen and can be shown under
-          <b>Sources</b>. They are comparison only and never add a vote to the progressive
+          <a href="#sources">Sources</a>. They are comparison only and never add a vote to the progressive
           consensus, so turning them on changes nothing that is scored.</p>
         <p>The printable guide always includes the comparison.</p>
         <p>This guide aggregates endorsements; it is not independent candidate vetting.</p>
@@ -421,6 +422,11 @@
               multi-candidate subset. Every source starts checked to match the audited consensus;
               uncheck any to see how your own picks compare.</p>
           </div>
+          {% if guide.personalization.policy.enabled %}
+          <div class="sources-actions">
+            <button type="button" class="sources-reset" data-sources-reset hidden>Reset to defaults</button>
+          </div>
+          {% endif %}
           <p class="sources-comparison-status" data-sources-comparison-status role="status" aria-live="polite"></p>
           <div class="sources-columns">
             {% for category in guide.personalization.categories if category.selectable and category.panel_role != 'comparison' %}
@@ -472,9 +478,6 @@
           {% endif %}
 
           {% if guide.personalization.policy.enabled %}
-          <div class="sources-actions">
-            <button type="button" class="sources-reset" data-sources-reset>Reset to defaults</button>
-          </div>
           <p class="sources-version">Panel {{ guide.personalization.panel_version }} ·
             {{ guide.personalization.panel_hash[:12] }} · Data {{ guide.metadata.data_version }}.
             Equal weight: each checked source counts once regardless of category overlap, and a
@@ -1037,8 +1040,7 @@
     if (lensBanner) {
       lensBanner.hidden = false;
       lensBanner.textContent =
-        `Personalized lens active — ${results.sourceCodes.length} of `
-        + `${tallyingSourceCodes.length} sources included.`;
+        `Viewing ${results.sourceCodes.length} of ${tallyingSourceCodes.length} sources.`;
     }
     const personalizedByRaceId = new Map(results.races.map((race) => [race.raceId, race]));
     raceCards.forEach((card, raceId) => {
@@ -1055,6 +1057,7 @@
     {% if guide.personalization.policy.enabled %}
     updateCategoryToggleStates();
     recomputePersonalizedResults();
+    if (resetButton) resetButton.hidden = isDefaultSelection();
     {% endif %}
     applyComparisonVisibility();
   };

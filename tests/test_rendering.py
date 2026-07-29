@@ -2313,14 +2313,21 @@ def test_sources_tree_shell_leaves_the_print_comparison_untouched(tmp_path: Path
     assert "Read the Times pill" in html
 
 
-def test_sources_tree_shell_describes_the_times_as_optional(tmp_path: Path) -> None:
+def test_sources_tree_shell_describes_a_generic_optional_comparison(tmp_path: Path) -> None:
+    """Issue 103: the hero byline must not name a specific comparison source
+    (the schema allows more than one in the future), but the dedicated
+    methodology-panel note about the Times specifically is unaffected. Both
+    now link to the sources section rather than only naming it in bold."""
     html = _sources_tree_html(tmp_path)
     hero = html.split('<p class="hero-deck">')[1].split("</p>")[0]
 
     assert "optional comparison" in hero
-    assert "Sources" in hero
+    assert "Times" not in hero
+    assert 'href="#sources"' in hero
     assert "The Times is separate and optional" in html
-    assert "hidden by default on screen" in html
+    methodology_note = html.split("The Times is separate and optional")[1].split("</p>")[0]
+    assert "hidden by default on screen" in methodology_note
+    assert 'href="#sources"' in methodology_note
 
 
 def test_footer_share_button_uses_web_share_then_falls_back_to_copy(tmp_path: Path) -> None:
@@ -2949,6 +2956,88 @@ def test_personalization_reset_restores_audited_state_and_preserves_filters(
     assert result["search"] == "?view=compact"
 
 
+def test_personalization_reset_button_is_positioned_before_the_columns_and_hides_by_default(
+    tmp_path: Path,
+) -> None:
+    """Issue 103 acceptance criterion: "Reset to defaults" sits at the top of
+    the sources section, directly under its own heading/intro, not after the
+    categories/comparison/coverage-gaps content — and it only appears once
+    the live selection has diverged from the default, disappearing again
+    once it's restored.
+    """
+    view_model = _personalization_enabled_view_model(tmp_path)
+    html = render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG))
+    sources_section = html.split('id="sources"')[1].split("</details>")[0]
+
+    assert sources_section.index("sources-actions") < sources_section.index("sources-columns")
+    assert sources_section.index("sources-actions") < sources_section.index(
+        "sources-category-comparison"
+    )
+    reset_row = sources_section.split("sources-actions")[1].split("</div>")[0]
+    assert "hidden" in reset_row
+
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(html, encoding="utf-8")
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          const resetButton = document.querySelector('[data-sources-reset]');
+          const initiallyHidden = resetButton.hidden;
+          const tallyingInput = document.querySelector('[data-sources-source]');
+          tallyingInput.checked = false;
+          tallyingInput.dispatchEvent(new Event('change', { bubbles: true }));
+          const shownAfterChange = !resetButton.hidden;
+          resetButton.click();
+          const hiddenAfterReset = resetButton.hidden;
+          return JSON.stringify({ initiallyHidden, shownAfterChange, hiddenAfterReset });
+        })()
+        """,
+    )
+    assert result["initiallyHidden"] is True
+    assert result["shownAfterChange"] is True
+    assert result["hiddenAfterReset"] is True
+
+
+def test_personalization_reactive_banner_appends_below_the_controls_not_over_them(
+    tmp_path: Path,
+) -> None:
+    """Issue 103 acceptance criterion: with a non-default selection active,
+    the reactive banner must stack below the sticky filter controls rather
+    than covering them. Both were independently `position: sticky; top: 0`,
+    which made them compete for the same stuck position; they must now share
+    one sticky ancestor so normal document flow keeps them stacked.
+    """
+    view_model = _personalization_enabled_view_model(tmp_path)
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          const tallyingInput = document.querySelector('[data-sources-source]');
+          tallyingInput.checked = false;
+          tallyingInput.dispatchEvent(new Event('change', { bubbles: true }));
+          window.scrollTo(0, 2000);
+          await new Promise((resolve) => setTimeout(resolve, 60));
+          const controls = document.querySelector('.screen-controls');
+          const banner = document.querySelector('[data-lens-banner]');
+          const controlsRect = controls.getBoundingClientRect();
+          const bannerRect = banner.getBoundingClientRect();
+          return JSON.stringify({
+            bannerHidden: banner.hidden,
+            bannerBelowControls: bannerRect.top >= controlsRect.bottom - 1,
+          });
+        })()
+        """,
+    )
+    assert result["bannerHidden"] is False
+    assert result["bannerBelowControls"] is True
+
+
 def test_personalization_sources_tree_does_not_overflow_a_mobile_viewport(
     tmp_path: Path,
 ) -> None:
@@ -3137,7 +3226,7 @@ def test_personalization_shared_link_restores_the_same_version_selection(tmp_pat
     )
     assert result["sourceCodes"] == expected_codes
     assert result["bannerHidden"] is False
-    assert "Personalized lens active" in result["bannerText"]
+    assert "Viewing" in result["bannerText"]
     assert result["search"] == "?edition=compact"
 
 
