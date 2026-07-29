@@ -39,6 +39,40 @@
       {% if not compact %}<p>{{ source.coverage_gap_note }}</p>{% endif %}
     </section>
   {%- endmacro %}
+  {% macro sources_member_row(category, member_code) -%}
+    {% set psource = personalization_source_by_code[member_code] %}
+    {% set pub_source = source_by_id[psource.id] %}
+    {# The comparison category's own row never starts checked and is always
+       interactive (issue 96/97: showing the comparison predates and is
+       independent of the personalization policy), unlike an ordinary
+       tallying category's row. #}
+    {% set is_comparison = category.panel_role == 'comparison' %}
+    {# A source with zero endorsements this cycle (a coverage gap) has
+       nothing an interactive checkbox could ever toggle into a score, so it
+       stays out of this tree entirely and appears only in the coverage-gaps
+       section below, matching the prior evidence directory's own
+       "contributing" filter. #}
+    {% if pub_source.contribution_status == 'contributing' %}
+    {% set other_category_ids = psource.selection_category_ids | reject('equalto', category.id) | list %}
+    <div class="sources-row" data-sources-source-row="{{ member_code }}">
+      {% if is_comparison or guide.personalization.policy.enabled %}
+      <label class="sources-check">
+        <input type="checkbox" data-sources-source="{{ member_code }}"
+          data-sources-category-member="{{ category.code }}"{% if not is_comparison %} checked{% endif %}>
+        <a href="{{ pub_source.evidence_url }}">{{ pub_source.name }}</a>
+      </label>
+      {% else %}
+      <a class="sources-source-link" href="{{ pub_source.evidence_url }}">{{ pub_source.name }}</a>
+      {% endif %}
+      <span class="sources-count">{{ source_participation(pub_source) }}</span>
+      {% if other_category_ids %}
+      <span class="sources-also-in">also in:
+        {%- for other_id in other_category_ids %} {{ category_label_by_id[other_id] }}{% if not loop.last %},{% endif %}{% endfor -%}
+      </span>
+      {% endif %}
+    </div>
+    {% endif %}
+  {%- endmacro %}
   {% macro race_detail_source_badge(source) -%}
     <span class="race-detail-category-badge">{{ source_category_label_by_key[source.category] }}</span>
     {% if source.panel_role == 'comparison' %}
@@ -148,7 +182,7 @@
         <h1>Seattle Progressive Endorsement Guide</h1>
         <p class="hero-deck">Progressive endorsement agreement at a glance. The Seattle
           Times is an optional comparison you can turn on under
-          <b>Customize</b>.</p>
+          <b>Sources</b>.</p>
       </div>
       <div class="hero-meta" aria-label="Guide metadata">
         <span>Election {{ guide.metadata.election_date }}</span>
@@ -185,89 +219,9 @@
           <label><input type="radio" name="race-set" value="contested" id="contested-filter"><span>Contested</span></label>
         </div>
       </fieldset>
-      <div class="customize-control">
-        <button type="button" class="customize-open" data-customize-open
-          aria-haspopup="dialog">Customize</button>
-      </div>
       <p id="filter-status" role="status" aria-live="polite"></p>
     </section>
 
-    <dialog class="customize-dialog" data-customize-dialog
-      aria-labelledby="customize-title">
-      <form method="dialog" class="customize-form">
-        <div class="customize-header">
-          <h2 id="customize-title">Customize this guide</h2>
-          <button type="button" class="customize-close" data-customize-close
-            aria-label="Close customize">Done</button>
-        </div>
-        <p class="customize-note">The audited consensus is the published baseline. It is
-          computed from the progressive source panel with every source weighted equally.</p>
-        <fieldset class="customize-group">
-          <legend>Seattle Times</legend>
-          <label class="customize-check">
-            <input type="checkbox" data-customize-times>
-            <span>Show Seattle Times comparison</span>
-          </label>
-          <p class="customize-hint">The Times is a comparison signal only. Showing it never
-            changes a recommendation, a count, or an agreement score.</p>
-        </fieldset>
-        {% if guide.personalization.policy.enabled %}
-        <fieldset class="customize-group customize-mode">
-          <legend>Lens</legend>
-          <label class="customize-check">
-            <input type="radio" name="lens-mode" value="audited" data-customize-mode checked>
-            <span>Audited consensus</span>
-          </label>
-          <label class="customize-check">
-            <input type="radio" name="lens-mode" value="sources" data-customize-mode>
-            <span>My sources</span>
-          </label>
-          <p class="customize-hint">My sources recomputes the same equal-weight formula as the
-            audited consensus over only the categories and sources you choose. Selecting every
-            category reproduces the audited result exactly.</p>
-        </fieldset>
-        <div class="customize-personalize" data-customize-personalize hidden>
-          <fieldset class="customize-group">
-            <legend>Categories</legend>
-            <div class="customize-category-list" data-customize-categories>
-              {% for category in guide.personalization.categories if category.selectable and category.panel_role != 'comparison' %}
-              <label class="customize-check">
-                <input type="checkbox" data-customize-category="{{ category.code }}">
-                <span>{{ category.label }}</span>
-              </label>
-              {% endfor %}
-            </div>
-          </fieldset>
-          <fieldset class="customize-group">
-            <legend>Sources</legend>
-            <ul class="customize-source-list" data-customize-source-list>
-              {% for source in guide.personalization.sources | selectattr('selectable') | rejectattr('panel_role', 'equalto', 'comparison') | sort(attribute='id') %}
-              <li data-customize-source-row="{{ source.code }}">
-                <label class="customize-check">
-                  <input type="checkbox" data-customize-source="{{ source.code }}">
-                  <span>{{ source_by_id[source.id].name }}</span>
-                </label>
-                <span class="customize-source-badges" data-customize-source-badges></span>
-              </li>
-              {% endfor %}
-            </ul>
-            <p class="customize-counts" role="status" aria-live="polite" data-customize-counts></p>
-          </fieldset>
-          <p class="customize-version">Panel {{ guide.personalization.panel_version }} ·
-            {{ guide.personalization.panel_hash[:12] }} · Data {{ guide.metadata.data_version }}.
-            Equal weight: each selected source counts once regardless of category overlap, and a
-            source's vote splits evenly across every candidate it names.</p>
-          <div class="customize-actions">
-            <button type="button" class="customize-copy" data-customize-copy>Copy link</button>
-            <button type="button" class="customize-reset" data-customize-reset>Reset to audited</button>
-          </div>
-          <p class="customize-copy-status" role="status" aria-live="polite"
-            data-customize-copy-status></p>
-        </div>
-        {% endif %}
-        <p class="customize-status" role="status" aria-live="polite" data-customize-status></p>
-      </form>
-    </dialog>
     {% if guide.personalization.policy.enabled %}
     <p class="lens-banner" data-lens-banner hidden role="status" aria-live="polite"></p>
     <p class="lens-notice" data-lens-notice hidden role="status" aria-live="polite"></p>
@@ -443,7 +397,7 @@
       <section class="methodology-panel">
         <h3>The Times is separate and optional</h3>
         <p>Seattle Times choices are hidden by default on screen and can be shown under
-          <b>Customize</b>. They are comparison only and never add a vote to the progressive
+          <b>Sources</b>. They are comparison only and never add a vote to the progressive
           consensus, so turning them on changes nothing that is scored.</p>
         <p>The printable guide always includes the comparison.</p>
         <p>This guide aggregates endorsements; it is not independent candidate vetting.</p>
@@ -458,24 +412,54 @@
       </section>
         </div>
       </details>
-      <details class="guide-notes" id="sources">
+      <details class="guide-notes merged-sources" id="sources">
         <summary><span>Sources ({{ guide.metadata.contributing_source_count }})</span><span aria-hidden="true">+</span></summary>
-        <div class="screen-source-directory">
-          <div class="screen-source-heading">
-            <div><p class="eyebrow">Evidence directory</p><h2>Sources contributing to this guide</h2></div>
+        <div class="sources-tree">
+          <div class="sources-heading">
+            <div><p class="eyebrow">Evidence &amp; customization</p><h2>Sources contributing to this guide</h2></div>
             <p>Counts cover the {{ guide.metadata.published_race_count }} races shown. Split is the
-              multi-candidate subset.</p>
+              multi-candidate subset. Every source starts checked to match the audited consensus;
+              uncheck any to see how your own picks compare.</p>
           </div>
-          <div class="screen-source-columns">
-            {% for category in guide.methodology.source_categories %}
-            <section class="screen-source-category">
-              <h3 data-source-category="{{ category.category }}">{{ category.label }}</h3>
-              {% for source in contributing_sources if source.category == category.category %}
-                {{ source_row(source) }}
+          <p class="sources-comparison-status" data-sources-comparison-status role="status" aria-live="polite"></p>
+          <div class="sources-columns">
+            {% for category in guide.personalization.categories if category.selectable and category.panel_role != 'comparison' %}
+            <section class="sources-category" data-sources-category="{{ category.code }}">
+              <h3>
+                {% if guide.personalization.policy.enabled %}
+                <label class="sources-check sources-category-check">
+                  <input type="checkbox" data-sources-category-toggle="{{ category.code }}" checked>
+                  <span>{{ category.label }}</span>
+                </label>
+                {% else %}
+                <span>{{ category.label }}</span>
+                {% endif %}
+              </h3>
+              {% for member_code in category.member_source_codes %}
+                {{ sources_member_row(category, member_code) }}
               {% endfor %}
             </section>
             {% endfor %}
           </div>
+
+          {% set comparison_category = guide.personalization.categories | selectattr('panel_role', 'equalto', 'comparison') | first %}
+          {% if comparison_category %}
+          <section class="sources-category sources-category-comparison" data-sources-category="{{ comparison_category.code }}">
+            <p class="sources-comparison-note">Comparison only. The Times is a comparison signal
+              only: selecting it here never changes a recommendation, a count, or an agreement
+              score, and it is never counted toward the tally above.</p>
+            <h3>
+              <label class="sources-check sources-category-check">
+                <input type="checkbox" data-sources-category-toggle="{{ comparison_category.code }}">
+                <span>{{ comparison_category.label }}</span>
+              </label>
+            </h3>
+            {% for member_code in comparison_category.member_source_codes %}
+              {{ sources_member_row(comparison_category, member_code) }}
+            {% endfor %}
+          </section>
+          {% endif %}
+
           {% if coverage_gap_sources %}
           <section class="screen-coverage-gaps">
             <div><p class="eyebrow">Research status</p><h2>Coverage gaps ({{ guide.metadata.coverage_gap_count }})</h2>
@@ -485,6 +469,17 @@
               {% for source in coverage_gap_sources %}{{ coverage_gap_row(source) }}{% endfor %}
             </div>
           </section>
+          {% endif %}
+
+          {% if guide.personalization.policy.enabled %}
+          <div class="sources-actions">
+            <button type="button" class="sources-reset" data-sources-reset>Reset to defaults</button>
+          </div>
+          <p class="sources-version">Panel {{ guide.personalization.panel_version }} ·
+            {{ guide.personalization.panel_hash[:12] }} · Data {{ guide.metadata.data_version }}.
+            Equal weight: each checked source counts once regardless of category overlap, and a
+            source's vote splits evenly across every candidate it names. Every change updates the
+            page address live, so the address bar is always the shareable link.</p>
           {% endif %}
         </div>
       </details>
@@ -692,7 +687,7 @@
 {{ lens_divergence_script | safe }}
   {% endif %}
 
-  // Page glue for the customize shell. The codec (and, once enabled, the
+  // Page glue for the merged sources tree. The codec (and, once enabled, the
   // scoring engine) above is inlined verbatim from its module, so the shipped
   // page and the Node tests share one implementation.
   const bindings = JSON.parse(document.querySelector('#lens-bindings').textContent);
@@ -712,39 +707,57 @@
   // disabled, so no tallying selection is possible here yet: a shared link
   // that carries one decodes as malformed and falls back to audited, which is
   // the intended behavior until the policy is enabled. The comparison
-  // source/category stay present either way (issue 96), since showing the
+  // source/category stay present either way (issue 96/97), since showing the
   // comparison predates and is independent of the newer personalization
   // policy.
   const context = lensContext(bindings, bindings.data_version);
-  // A comparison source's own selected state is the only Times visibility
-  // signal the fragment carries (issue 96): resolve its code(s) once here so
-  // the checkbox can be read from and written into the ordinary source
-  // selection instead of a parallel flag.
   const comparisonSourceCodes = new Set(
     bindings.sources.filter((item) => item.panel_role === 'comparison').map((item) => item.code),
   );
-  const timesShown = (state) => (state?.sourceCodes ?? []).some((code) => comparisonSourceCodes.has(code));
+  const categoryMemberCodesByCode = new Map(
+    bindings.categories.map((item) => [item.code, item.member_source_codes]),
+  );
 
   const root = document.documentElement;
-  const dialog = document.querySelector('[data-customize-dialog]');
-  const opener = document.querySelector('[data-customize-open]');
-  const timesInput = document.querySelector('[data-customize-times]');
-  const statusLine = document.querySelector('[data-customize-status]');
-  {% if guide.personalization.policy.enabled %}
-  const personalization = JSON.parse(document.querySelector('#lens-personalization').textContent);
-  const modeInputs = [...document.querySelectorAll('[data-customize-mode]')];
-  const personalizePanel = document.querySelector('[data-customize-personalize]');
-  const categoryInputs = [...document.querySelectorAll('[data-customize-category]')];
-  const sourceInputs = [...document.querySelectorAll('[data-customize-source]')];
-  const countsLine = document.querySelector('[data-customize-counts]');
-  const copyButton = document.querySelector('[data-customize-copy]');
-  const copyStatusLine = document.querySelector('[data-customize-copy-status]');
-  const resetButton = document.querySelector('[data-customize-reset]');
-  const lensBanner = document.querySelector('[data-lens-banner]');
   const lensNotice = document.querySelector('[data-lens-notice]');
-  const categoryCodeById = new Map(personalization.categories.map((item) => [item.id, item.code]));
-  const categoryLabelByCode = new Map(personalization.categories.map((item) => [item.code, item.label]));
-  {% endif %}
+  const comparisonStatusLine = document.querySelector('[data-sources-comparison-status]');
+  const clearLensNotice = () => {
+    if (lensNotice) {
+      lensNotice.hidden = true;
+      lensNotice.textContent = '';
+    }
+  };
+
+  /**
+   * Every rendered checkbox for one source code. A multi-category source
+   * repeats its own checkbox once per category it belongs to (issue 97), and
+   * the comparison source's checkbox always exists regardless of the
+   * personalization policy (issue 96); every copy of a code must always
+   * agree, so a change to any one syncs every other.
+   */
+  const sourceInputsByCode = new Map();
+  document.querySelectorAll('[data-sources-source]').forEach((input) => {
+    const code = input.dataset.sourcesSource;
+    if (!sourceInputsByCode.has(code)) sourceInputsByCode.set(code, []);
+    sourceInputsByCode.get(code).push(input);
+  });
+  const isCodeChecked = (code) => sourceInputsByCode.get(code)?.[0]?.checked ?? false;
+  const syncSourceCode = (code, checked) => {
+    for (const input of sourceInputsByCode.get(code) ?? []) input.checked = checked;
+  };
+  const checkedComparisonSourceCodes = () => [...comparisonSourceCodes].filter(isCodeChecked).sort();
+
+  /** The Times pill's own display toggle predates and is independent of the
+   * personalization policy (issue 96), so this always runs regardless. */
+  const applyComparisonVisibility = () => {
+    const shown = checkedComparisonSourceCodes().length > 0;
+    root.classList.toggle('show-times', shown);
+    if (comparisonStatusLine) {
+      comparisonStatusLine.textContent = shown
+        ? 'Seattle Times comparison shown. Recommendations are unchanged.'
+        : '';
+    }
+  };
 
   {% if guide.personalization.policy.enabled %}
   /**
@@ -805,80 +818,63 @@
     return lensState()?.raceTarget ?? null;
   };
 
-  const applyTimes = (showTimes) => {
-    root.classList.toggle('show-times', showTimes);
-    if (timesInput) timesInput.checked = showTimes;
-    if (statusLine) {
-      statusLine.textContent = showTimes
-        ? 'Seattle Times comparison shown. Recommendations are unchanged.'
-        : '';
-    }
-  };
-
   {% if guide.personalization.policy.enabled %}
-  const currentMode = () =>
-    modeInputs.find((input) => input.checked)?.value === 'sources' ? 's' : 'a';
-  const checkedCategoryCodes = () =>
-    categoryInputs.filter((input) => input.checked).map((input) => input.dataset.customizeCategory).sort();
-  const checkedSourceCodes = () =>
-    sourceInputs.filter((input) => input.checked).map((input) => input.dataset.customizeSource).sort();
+  const personalization = JSON.parse(document.querySelector('#lens-personalization').textContent);
+  const categoryToggleInputs = [...document.querySelectorAll('[data-sources-category-toggle]')];
+  const membersOfCategory = (categoryCode) => [
+    ...document.querySelectorAll(
+      `[data-sources-source][data-sources-category-member="${categoryCode}"]`,
+    ),
+  ];
+  const lensBanner = document.querySelector('[data-lens-banner]');
+  const resetButton = document.querySelector('[data-sources-reset]');
+  const tallyingSourceCodes = [...sourceInputsByCode.keys()].filter(
+    (code) => !comparisonSourceCodes.has(code),
+  );
+  const checkedTallyingSourceCodes = () => tallyingSourceCodes.filter(isCodeChecked).sort();
+  const allCheckedSourceCodes = () => [...sourceInputsByCode.keys()].filter(isCodeChecked).sort();
 
   /**
-   * Every reason one source counts toward the current selection: "Direct"
-   * when it is checked itself, plus the label of every checked category it
-   * belongs to. Shared by the Customize source list's own badges and the
-   * race detail panel's contributing-sources list, so the two can never
-   * describe the same source differently.
+   * Whether the tallying (scored) selection alone matches the full panel.
+   * The Times comparison never tallies (issue 96/97), so whether it is
+   * shown must never flip a race between its audited and personalized
+   * presentation — only a tallying change can do that.
    */
-  const inclusionReasons = (sourceCode, checkedCategories, directSources) => {
-    const source = personalization.sources.find((item) => item.code === sourceCode);
-    const viaCategories = (source?.selection_category_ids ?? [])
-      .map((id) => categoryCodeById.get(id))
-      .filter((code) => checkedCategories.has(code));
-    return [
-      ...(directSources.has(sourceCode) ? ['Direct'] : []),
-      ...viaCategories.map((code) => categoryLabelByCode.get(code)),
-    ];
-  };
+  const isDefaultTallyingSelection = () =>
+    checkedTallyingSourceCodes().length === tallyingSourceCodes.length;
 
   /**
-   * Render every source row's inclusion reason and the summary counts.
-   *
-   * A source is "effective" when it is either checked directly or reached
-   * through a checked category; the badge names every reason, so a
-   * multi-category source that overlaps a checked category and is also
-   * checked directly shows both, and removing the direct check alone leaves
-   * it included (and visibly explained) through the category.
+   * The audited default: every tallying source checked, no comparison source
+   * checked. Represented by the absence of a lens fragment (issue 97's own
+   * "every checkbox starts checked" design), so the reset action and a link
+   * naming nothing both reach exactly this same state. Comparison state
+   * counts here (unlike isDefaultTallyingSelection above) because showing it
+   * must still survive a reload or a shared link.
    */
-  const renderSelectionState = () => {
-    // Every path that can change what a copied link would encode - a
-    // checkbox, a mode switch, reset, or restoring history - runs through
-    // here, so this is the one place the stale copy status is cleared.
-    if (copyStatusLine) copyStatusLine.textContent = '';
-    const checkedCategories = new Set(checkedCategoryCodes());
-    const directSources = new Set(checkedSourceCodes());
-    let effectiveCount = 0;
-    sourceInputs.forEach((input) => {
-      const sourceCode = input.dataset.customizeSource;
-      const reasons = inclusionReasons(sourceCode, checkedCategories, directSources);
-      if (reasons.length > 0) effectiveCount += 1;
-      const row = input.closest('[data-customize-source-row]');
-      const badges = row?.querySelector('[data-customize-source-badges]');
-      if (badges) badges.textContent = reasons.join(' · ');
+  const isDefaultSelection = () =>
+    isDefaultTallyingSelection() && checkedComparisonSourceCodes().length === 0;
+
+  /** Reflect whether every, some, or no member of a category is checked onto
+   * that category's own header checkbox: checked, indeterminate, or clear. */
+  const updateCategoryToggleStates = () => {
+    categoryToggleInputs.forEach((toggle) => {
+      const categoryCode = toggle.dataset.sourcesCategoryToggle;
+      const members = membersOfCategory(categoryCode);
+      const checkedCount = members.filter((member) => member.checked).length;
+      // An empty category is vacuously "fully checked": zero members can
+      // never disagree with the checked default, so it must not flip the
+      // header checkbox off just because it currently has nothing to list.
+      toggle.checked = checkedCount === members.length;
+      toggle.indeterminate = checkedCount > 0 && checkedCount < members.length;
     });
-    if (countsLine) {
-      countsLine.textContent =
-        `${directSources.size} direct · ${checkedCategories.size} categories · `
-        + `${effectiveCount} sources included`;
-    }
   };
 
   /**
    * Per-race presentation data the lens payload does not carry: candidate
    * display labels and source display names. Both already exist in the
    * server-rendered, audited-only DOM (the race detail dialog's candidate
-   * headings and the Customize source list), so this reads them once rather
-   * than publishing a second copy through the lens payload.
+   * headings and the sources tree's own rows), so this reads them once
+   * rather than publishing a second copy through the lens payload.
    */
   const raceCards = new Map(
     [...document.querySelectorAll('[data-publication-race-id]')].map((card) => [
@@ -899,9 +895,9 @@
     ]),
   );
   const sourceNameByCode = new Map(
-    sourceInputs.map((input) => [
-      input.dataset.customizeSource,
-      input.closest('label')?.querySelector('span')?.textContent ?? input.dataset.customizeSource,
+    [...sourceInputsByCode.entries()].map(([code, inputs]) => [
+      code,
+      inputs[0]?.closest('[data-sources-source-row]')?.querySelector('a')?.textContent ?? code,
     ]),
   );
   const raceDataById = new Map(personalization.races.map((race) => [race.race_id, race]));
@@ -948,14 +944,7 @@
    */
   const coveredCellStates = new Set(['endorsement', 'multi_endorsement', 'no_endorsement']);
 
-  const renderRaceLens = (
-    raceId,
-    card,
-    personalizedByRaceId,
-    resolvedSourceCodes,
-    checkedCategories,
-    directSources,
-  ) => {
+  const renderRaceLens = (raceId, card, personalizedByRaceId, resolvedSourceCodes) => {
     const personalized = personalizedByRaceId.get(raceId);
     const audited = auditedByRaceId.get(raceId);
     if (!personalized || !audited) return;
@@ -986,7 +975,7 @@
     }
 
     // Race detail: complete personalized values, the audited comparison when
-    // divergent, and every contributing source with its inclusion reason.
+    // divergent, and every contributing source.
     const summaryEl = card.querySelector('[data-lens-detail-summary]');
     if (summaryEl) {
       const flags = [
@@ -1020,9 +1009,7 @@
           )
           .map((cell) => {
             const item = document.createElement('li');
-            const reasons = inclusionReasons(cell.source_code, checkedCategories, directSources);
-            const name = sourceNameByCode.get(cell.source_code) ?? cell.source_code;
-            item.textContent = reasons.length > 0 ? `${name} — ${reasons.join(' · ')}` : name;
+            item.textContent = sourceNameByCode.get(cell.source_code) ?? cell.source_code;
             return item;
           }),
       );
@@ -1030,94 +1017,64 @@
   };
 
   /**
-   * Feed the normalized selection into the pure scoring engine, update the
-   * active-lens banner, and render every race card and detail dialog's
-   * personalized presentation (issue 81).
+   * Feed the checked tallying selection into the pure scoring engine, update
+   * the reactive banner, and render every race card and detail dialog's
+   * personalized presentation (issue 81), but only once it actually diverges
+   * from the audited default (issue 97: no separate audited/sources mode
+   * toggle — every checkbox starts checked, so the default reproduces the
+   * audited consensus by construction and the banner/personalized rendering
+   * activate only on an explicit change).
    */
   const recomputePersonalizedResults = () => {
-    const mode = currentMode();
-    personalizePanel?.toggleAttribute('hidden', mode !== 's');
-    root.classList.toggle('lens-personalized', mode === 's');
-    if (mode !== 's') {
+    const personalized = !isDefaultTallyingSelection();
+    root.classList.toggle('lens-personalized', personalized);
+    if (!personalized) {
       if (lensBanner) lensBanner.hidden = true;
       return null;
     }
-    const checkedCategories = new Set(checkedCategoryCodes());
-    const directSources = new Set(checkedSourceCodes());
-    const selection = {
-      categoryCodes: [...checkedCategories],
-      sourceCodes: [...directSources],
-    };
-    const results = scoreSelection(personalization, selection);
+    const tallyingCodes = checkedTallyingSourceCodes();
+    const results = scoreSelection(personalization, { categoryCodes: [], sourceCodes: tallyingCodes });
     if (lensBanner) {
       lensBanner.hidden = false;
       lensBanner.textContent =
         `Personalized lens active — ${results.sourceCodes.length} of `
-        + `${personalization.sources.filter((item) => item.selectable && item.panel_role !== 'comparison').length} sources included.`;
+        + `${tallyingSourceCodes.length} sources included.`;
     }
     const personalizedByRaceId = new Map(results.races.map((race) => [race.raceId, race]));
     raceCards.forEach((card, raceId) => {
-      renderRaceLens(
-        raceId,
-        card,
-        personalizedByRaceId,
-        results.sourceCodes,
-        checkedCategories,
-        directSources,
-      );
+      renderRaceLens(raceId, card, personalizedByRaceId, results.sourceCodes);
     });
     return results;
   };
-
-  const onSelectionChanged = () => {
-    // Any explicit customization supersedes whatever a shared link's own
-    // migration or invalid-link explanation was about.
-    if (lensNotice) {
-      lensNotice.hidden = true;
-      lensNotice.textContent = '';
-    }
-    renderSelectionState();
-    recomputePersonalizedResults();
-    writeLensState();
-  };
-
-  /** Every selectable category, and no direct source: reproduces audited exactly. */
-  const selectEveryCategory = () => {
-    categoryInputs.forEach((input) => {
-      input.checked = true;
-    });
-    sourceInputs.forEach((input) => {
-      input.checked = false;
-    });
-  };
-
-  /** Restore mode and, in sources mode, the selection a decoded state carries. */
-  const applyMode = (selection) => {
-    const mode = selection?.mode ?? 'a';
-    modeInputs.forEach((input) => {
-      input.checked = (input.value === 'sources') === (mode === 's');
-    });
-    if (mode === 's') {
-      const categoryCodes = new Set(selection.categoryCodes ?? []);
-      const sourceCodes = new Set(selection.sourceCodes ?? []);
-      categoryInputs.forEach((input) => {
-        input.checked = categoryCodes.has(input.dataset.customizeCategory);
-      });
-      sourceInputs.forEach((input) => {
-        input.checked = sourceCodes.has(input.dataset.customizeSource);
-      });
-    }
-    renderSelectionState();
-    recomputePersonalizedResults();
-  };
-  {% else %}
-  // Personalization is disabled, so the whole lens is always audited with no
-  // selection; writeLensState needs these to stay one unconditional program
-  // rather than two Jinja-rendered variants of the same function.
-  const currentMode = () => 'a';
-  const checkedCategoryCodes = () => [];
-  const checkedSourceCodes = () => [];
   {% endif %}
+
+  /** Every path that can change what the address bar encodes — a checkbox, a
+   * category toggle, or reset — runs through here. */
+  const refreshSelectionUi = () => {
+    clearLensNotice();
+    {% if guide.personalization.policy.enabled %}
+    updateCategoryToggleStates();
+    recomputePersonalizedResults();
+    {% endif %}
+    applyComparisonVisibility();
+  };
+
+  /**
+   * Apply a decoded (or migrated) selection to every checkbox: a category
+   * code expands to its current member codes (backward compatible with a
+   * link shared before issue 97's per-source checkboxes existed), unioned
+   * with any directly named source codes. Anything else stays unchecked.
+   */
+  const applySelection = (selection) => {
+    const categoryMemberCodes = (selection?.categoryCodes ?? []).flatMap(
+      (code) => categoryMemberCodesByCode.get(code) ?? [],
+    );
+    const effectiveCodes = new Set([...categoryMemberCodes, ...(selection?.sourceCodes ?? [])]);
+    for (const code of sourceInputsByCode.keys()) {
+      syncSourceCode(code, effectiveCodes.has(code));
+    }
+    refreshSelectionUi();
+  };
 
   /**
    * Write the whole lens state (Times, and once enabled, mode and selection)
@@ -1129,12 +1086,24 @@
    * fragment: a default guide keeps the clean URLs and plain race permalinks
    * it has always had.
    */
+  /**
+   * Write the whole lens state through the codec in one place, so every
+   * source checkbox's change and the URL never race. The audited default —
+   * every tallying source checked, no comparison source checked — is the
+   * published default, so it is represented by the absence of a lens
+   * fragment: a default guide keeps the clean URLs and plain race permalinks
+   * it has always had.
+   */
   const writeLensState = () => {
     const target = raceTarget();
-    const timesSourceCodes = timesInput?.checked ? [...comparisonSourceCodes] : [];
-    const mode = currentMode();
-    const sourceCodes = mode === 's' ? [...checkedSourceCodes(), ...timesSourceCodes] : timesSourceCodes;
-    if (mode === 'a' && sourceCodes.length === 0) {
+    {% if guide.personalization.policy.enabled %}
+    const sourceCodes = allCheckedSourceCodes();
+    const isDefault = isDefaultSelection();
+    {% else %}
+    const sourceCodes = checkedComparisonSourceCodes();
+    const isDefault = sourceCodes.length === 0;
+    {% endif %}
+    if (isDefault) {
       const fragment = target ? `#${target}` : '';
       history.replaceState(
         history.state,
@@ -1143,15 +1112,7 @@
       );
       return;
     }
-    const encoded = encodeLensFragment(
-      {
-        mode,
-        categoryCodes: mode === 's' ? checkedCategoryCodes() : [],
-        sourceCodes,
-        raceTarget: target,
-      },
-      context,
-    );
+    const encoded = encodeLensFragment({ mode: 's', categoryCodes: [], sourceCodes, raceTarget: target }, context);
     if (encoded.status !== 'ok') return;
     history.replaceState(
       history.state,
@@ -1160,7 +1121,6 @@
     );
   };
 
-  applyTimes(timesShown(lensState()));
   {% if guide.personalization.policy.enabled %}
   // Computed once, from the page's initial location: a persistent migration
   // or invalid-link explanation describes how this load resolved a shared
@@ -1168,6 +1128,16 @@
   // (including the skip link, which the codec deliberately does not
   // recognize as lens-shaped) never manufacture or overwrite it.
   const initialLensOutcome = lensOutcome(window.location.hash);
+  // applySelection() (via refreshSelectionUi()) unconditionally clears any
+  // existing notice, so the state must be applied before the notice text
+  // below is set, not after — otherwise this very notice would erase itself
+  // on the same load that produced it.
+  if (initialLensOutcome.state !== null) {
+    applySelection(initialLensOutcome.state);
+  } else {
+    updateCategoryToggleStates();
+    recomputePersonalizedResults();
+  }
   if (lensNotice && initialLensOutcome.notice) {
     lensNotice.hidden = false;
     lensNotice.textContent = initialLensOutcome.notice;
@@ -1178,7 +1148,6 @@
     // resolved state instead of failing the same way again.
     history.replaceState(history.state, '', `${window.location.pathname}${window.location.search}`);
   }
-  applyMode(initialLensOutcome.state);
   {% else %}
   // A malformed lens fragment must not linger in the address bar even though
   // nothing here reads its selection; a reload or copy must not reproduce it.
@@ -1191,92 +1160,43 @@
       history.replaceState(history.state, '', `${window.location.pathname}${window.location.search}`);
     }
   }
+  const initialDisabledState = lensState();
+  if (initialDisabledState !== null) applySelection(initialDisabledState);
   {% endif %}
+  applyComparisonVisibility();
 
-  // The native modal gives focus containment, Escape, and the backdrop for free,
-  // matching how the race-detail dialogs already work.
-  opener?.addEventListener('click', () => {
-    dialog?.showModal();
-    timesInput?.focus();
-  });
-  const closeCustomize = () => {
-    if (dialog?.open) dialog.close();
-    opener?.focus();
-  };
-  dialog?.querySelector('[data-customize-close]')?.addEventListener('click', closeCustomize);
-  dialog?.addEventListener('cancel', (event) => {
-    event.preventDefault();
-    closeCustomize();
-  });
-  dialog?.addEventListener('close', () => opener?.focus());
-  timesInput?.addEventListener('change', () => {
-    applyTimes(timesInput.checked);
-    writeLensState();
+  document.querySelectorAll('[data-sources-source]').forEach((input) => {
+    input.addEventListener('change', () => {
+      syncSourceCode(input.dataset.sourcesSource, input.checked);
+      refreshSelectionUi();
+      writeLensState();
+    });
   });
   {% if guide.personalization.policy.enabled %}
-  modeInputs.forEach((input) => {
-    input.addEventListener('change', () => {
-      const mode = currentMode();
-      if (mode === 's' && !checkedCategoryCodes().length && !checkedSourceCodes().length) {
-        // First entry to My sources: every category, no direct picks, so the
-        // personalized result equals the audited consensus exactly.
-        selectEveryCategory();
-      }
-      onSelectionChanged();
+  categoryToggleInputs.forEach((toggle) => {
+    toggle.addEventListener('change', () => {
+      const categoryCode = toggle.dataset.sourcesCategoryToggle;
+      const members = membersOfCategory(categoryCode);
+      members.forEach((member) => syncSourceCode(member.dataset.sourcesSource, toggle.checked));
+      refreshSelectionUi();
+      writeLensState();
     });
-  });
-  categoryInputs.forEach((input) => input.addEventListener('change', onSelectionChanged));
-  sourceInputs.forEach((input) => input.addEventListener('change', onSelectionChanged));
-  copyButton?.addEventListener('click', async () => {
-    // The address bar can hold a fragment writeLensState never wrote (a plain
-    // anchor navigation the codec doesn't recognize resets nothing but also
-    // rewrites nothing), so force the current state into the URL first
-    // rather than copying whatever happens to be there.
-    writeLensState();
-    const value = window.location.href;
-    try {
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(value);
-      } else {
-        const field = document.createElement('textarea');
-        field.value = value;
-        field.setAttribute('readonly', '');
-        field.className = 'visually-hidden';
-        document.body.append(field);
-        field.select();
-        const copied = document.execCommand('copy');
-        field.remove();
-        if (!copied) throw new Error('Copy command was unavailable');
-      }
-      if (copyStatusLine) copyStatusLine.textContent = 'Link copied.';
-    } catch {
-      if (copyStatusLine) copyStatusLine.textContent = `Copy failed. Link: ${value}`;
-    }
   });
   resetButton?.addEventListener('click', () => {
-    modeInputs.forEach((input) => {
-      input.checked = input.value === 'audited';
-    });
-    categoryInputs.forEach((input) => {
-      input.checked = false;
-    });
-    sourceInputs.forEach((input) => {
-      input.checked = false;
-    });
-    applyTimes(false);
-    onSelectionChanged();
+    for (const code of tallyingSourceCodes) syncSourceCode(code, true);
+    for (const code of comparisonSourceCodes) syncSourceCode(code, false);
+    refreshSelectionUi();
+    writeLensState();
   });
   {% endif %}
-  // Only a fragment the codec recognizes carries Times state. The skip link and
-  // any other plain anchor also fire hashchange, and treating those as "no
-  // comparison source selected" would silently switch the comparison back off.
+  // A plain in-page anchor (the skip link) also fires hashchange; the codec's
+  // own absent/legacy/unrecognized_fragment classification already excludes
+  // that case (lensState/lensOutcome return null), so this only ever reacts
+  // to a genuine lens link.
   window.addEventListener('hashchange', () => {
     const state = lensState();
     if (!state) return;
-    applyTimes(timesShown(state));
-    {% if guide.personalization.policy.enabled %}
-    applyMode(state);
-    {% endif %}
+    applySelection(state);
   });
   </script>
   <script>

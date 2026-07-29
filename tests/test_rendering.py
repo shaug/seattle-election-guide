@@ -395,14 +395,15 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "Made no endorsement" not in html
     assert "Needs verification" in html
     assert "Comparison only" in html
-    # The phrase belongs to the customize option (issue 79) and must not leak back
-    # into the source panel or the race-detail rows, which say "Comparison only".
-    customize_dialog = html.split('<dialog class="customize-dialog"')[1].split("</dialog>")[0]
-    assert "Show Seattle Times comparison" in customize_dialog
+    # The phrase belongs to the merged sources tree's comparison-only category
+    # note (issue 97) and must not leak back into the race-detail rows, which
+    # say "Comparison only".
+    comparison_category_html = html.split('sources-category-comparison"')[1].split("</section>")[0]
+    assert "never counted toward the tally" in comparison_category_html
     rendered_content = re.sub(r"<script\b.*?</script>", "", html, flags=re.S).replace(
-        customize_dialog, ""
+        comparison_category_html, ""
     )
-    assert "Seattle Times comparison" not in rendered_content
+    assert "never counted toward the tally" not in rendered_content
     assert 'data-race-detail-group="comparison"' not in html
     assert "race-detail-source-row-comparison" in html
     assert "See which groups line up with the leading choice" not in html
@@ -449,7 +450,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert 'data-display-role="grade"' not in html
     assert 'class="methodology-panel screen-consensus-key"' in html
     assert 'class="guide-notes" id="methodology"' in html
-    assert 'class="guide-notes" id="sources"' in html
+    assert 'class="guide-notes merged-sources" id="sources"' in html
     assert "How the consensus works" not in html
     assert "Verify the guide" not in html
     assert "Build and audit details" not in html
@@ -491,12 +492,18 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     coverage_gap_sources = [
         source for source in view_model.sources if source.contribution_status == "coverage_gap"
     ]
-    assert html.count('data-publication-source-id="') == 2 * len(contributing_sources)
+    # The print copy is the only place issue 97's merged sources tree leaves the
+    # macro-rendered source_row markup (data-publication-source-id) untouched;
+    # the screen tree renders its own data-sources-source-row instead.
+    assert html.count('data-publication-source-id="') == len(contributing_sources)
     assert html.count('data-coverage-gap-source-id="') == 2 * len(coverage_gap_sources)
     assert html.count('class="source-column"') == 2
     for source in contributing_sources:
-        assert html.count(f'data-publication-source-id="{source.id}"') == 2
-        assert html.count(f'data-source-role="{source.panel_role}"') >= 2
+        assert html.count(f'data-publication-source-id="{source.id}"') == 1
+        assert html.count(f'data-source-role="{source.panel_role}"') >= 1
+        # A multi-category source renders fully under every category it
+        # belongs to (issue 97), so its evidence link may appear more than
+        # once on screen in addition to the print copy.
         assert html.count(f'<a href="{source.evidence_url}">{source.name}</a>') >= 2
         noun = "picks" if source.panel_role == "comparison" else "endorsements"
         screen_participation = (
@@ -506,13 +513,11 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
         print_participation = (
             f"{source.endorsement_count}{print_noun} · {source.split_endorsement_count} split"
         )
+        assert screen_participation in html
         marker = f'data-publication-source-id="{source.id}"'
-        cursor = 0
-        for participation in (screen_participation, print_participation):
-            row_start = html.index(marker, cursor)
-            row_end = html.index("</div>", row_start)
-            assert participation in html[row_start:row_end]
-            cursor = row_end
+        row_start = html.index(marker)
+        row_end = html.index("</div>", row_start)
+        assert print_participation in html[row_start:row_end]
     assert "Read the meter" in html
     assert "Read the Times pill" in html
     assert "Overlap and limitations" in html
@@ -533,10 +538,10 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert f"Coverage gaps ({view_model.metadata.coverage_gap_count})" in html
     assert "They do not contribute to consensus scores" in html
     assert "zero means the source currently contributes no picks" not in html
-    assert ".screen-source-columns { column-count: 2;" in html
-    assert ".screen-source-category { display: inline-block;" in html
+    assert ".sources-columns { column-count: 2;" in html
+    assert ".sources-category { display: inline-block;" in html
     assert "break-inside: avoid;" in html
-    assert ".screen-source-columns { column-count: 1; }" in html
+    assert ".sources-columns { column-count: 1; }" in html
     assert ".source-columns { display: grid;" in html
     assert "grid-template-columns: 1fr 1fr;" in html
     assert ".source-row { display: grid;" in html
@@ -1636,10 +1641,12 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
         )
         == 1
     )
+    # Issue 97 removed the screen evidence directory's own use of the
+    # source_row macro (the merged sources tree renders its own inline
+    # checkbox markup instead), so each source now carries exactly one
+    # `data-publication-source-id` row: print's own.
     print_source_marker = f'data-publication-source-id="{counted_source.id}"'
-    print_source_start = canonical_html.index(
-        print_source_marker, canonical_html.index(print_source_marker) + 1
-    )
+    print_source_start = canonical_html.index(print_source_marker)
     print_count_start = canonical_html.index("<span>", print_source_start)
     print_count_end = canonical_html.index("</span>", print_count_start) + len("</span>")
     wrong_source_count_html = tmp_path / "wrong-publication-source-count.html"
@@ -1683,7 +1690,7 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
 
     def print_count_span(source_id: str) -> tuple[int, int]:
         marker = f'data-publication-source-id="{source_id}"'
-        row_start = canonical_html.index(marker, canonical_html.index(marker) + 1)
+        row_start = canonical_html.index(marker)
         count_start = canonical_html.index("<span>", row_start)
         count_end = canonical_html.index("</span>", count_start) + len("</span>")
         return count_start, count_end
@@ -2230,16 +2237,16 @@ def _revalidated(view_model: PublicationViewModel) -> PublicationViewModel:
     )
 
 
-def _customize_html(tmp_path: Path) -> str:
+def _sources_tree_html(tmp_path: Path) -> str:
     """Render the reference guide the way the other rendering tests do."""
     return render_html_document(
         _view_model(tmp_path), read_rendering_configuration(RENDERING_CONFIG)
     )
 
 
-def test_customize_shell_hides_the_times_comparison_by_default(tmp_path: Path) -> None:
+def test_sources_tree_shell_hides_the_times_comparison_by_default(tmp_path: Path) -> None:
     """Issue 79: the default responsive load carries no Times pill or decision."""
-    html = _customize_html(tmp_path)
+    html = _sources_tree_html(tmp_path)
     stylesheet = html.split("<style>")[1].split("</style>")[0]
 
     # Hidden in CSS rather than in script, so the default holds before and without JS.
@@ -2257,23 +2264,27 @@ def test_customize_shell_hides_the_times_comparison_by_default(tmp_path: Path) -
     assert "html.show-times [data-times-hidden]" in stylesheet
 
 
-def test_customize_shell_exposes_one_action_and_keeps_controls_in_the_dialog(
+def test_sources_tree_shell_exposes_no_dialog_and_keeps_controls_in_the_merged_section(
     tmp_path: Path,
 ) -> None:
-    html = _customize_html(tmp_path)
+    """Issue 97: the Customize dialog no longer exists anywhere in the page;
+    the merged sources tree is reached by expanding the page-anchored
+    disclosure like every other guide-notes section, not a modal opener."""
+    html = _sources_tree_html(tmp_path)
     controls = html.split('<section class="screen-controls"')[1].split("</section>")[0]
 
-    assert controls.count("<button") == 1
-    assert "data-customize-open" in controls
-    assert 'aria-haspopup="dialog"' in controls
+    assert controls.count("<button") == 0
+    assert "data-customize-open" not in html
+    assert "customize-dialog" not in html
+    assert "<dialog" in html  # the race-detail dialogs are unaffected
 
-    dialog = html.split('<dialog class="customize-dialog"')[1].split("</dialog>")[0]
-    assert "data-customize-times" in dialog
-    assert 'aria-labelledby="customize-title"' in dialog
+    sources_section = html.split('id="sources"')[1].split("</details>")[0]
+    assert "data-sources-source" in sources_section
+    assert "data-sources-comparison-status" in sources_section
 
 
-def test_customize_shell_encodes_state_through_the_published_codec(tmp_path: Path) -> None:
-    html = _customize_html(tmp_path)
+def test_sources_tree_shell_encodes_state_through_the_published_codec(tmp_path: Path) -> None:
+    html = _sources_tree_html(tmp_path)
     codec = (
         Path(__file__).parent.parent / "src/election_guide/rendering/templates/lens-url.mjs"
     ).read_text(encoding="utf-8")
@@ -2286,27 +2297,28 @@ def test_customize_shell_encodes_state_through_the_published_codec(tmp_path: Pat
     assert "decodeLensFragment(" in html
 
 
-def test_customize_shell_leaves_the_print_comparison_untouched(tmp_path: Path) -> None:
-    html = _customize_html(tmp_path)
+def test_sources_tree_shell_leaves_the_print_comparison_untouched(tmp_path: Path) -> None:
+    html = _sources_tree_html(tmp_path)
     stylesheet = html.split("<style>")[1].split("</style>")[0]
     print_block = stylesheet.split("@media print {")[1]
 
-    # The fixed PDF always carries the comparison; only the opener is screen-only.
-    assert (
-        ".customize-control, .customize-dialog, .lens-banner, .lens-notice { display: none; }"
-        in print_block
-    )
+    # The fixed PDF always carries the comparison; only the banner/notice are
+    # screen-only, and the merged sources tree's own checkboxes/actions are
+    # suppressed in print the same way the old Customize dialog was (issue 97).
+    assert ".lens-banner, .lens-notice { display: none; }" in print_block
+    assert '.merged-sources input[type="checkbox"]' in print_block
+    assert ".sources-actions" in print_block
     assert "show-times" not in print_block
     assert "print-times-pick" in stylesheet
     assert "Read the Times pill" in html
 
 
-def test_customize_shell_describes_the_times_as_optional(tmp_path: Path) -> None:
-    html = _customize_html(tmp_path)
+def test_sources_tree_shell_describes_the_times_as_optional(tmp_path: Path) -> None:
+    html = _sources_tree_html(tmp_path)
     hero = html.split('<p class="hero-deck">')[1].split("</p>")[0]
 
     assert "optional comparison" in hero
-    assert "Customize" in hero
+    assert "Sources" in hero
     assert "The Times is separate and optional" in html
     assert "hidden by default on screen" in html
 
@@ -2318,7 +2330,7 @@ def test_footer_share_button_uses_web_share_then_falls_back_to_copy(tmp_path: Pa
     sheet clobber the status line with a spurious failure message.
     """
     html_path = tmp_path / "guide.html"
-    html_path.write_text(_customize_html(tmp_path), encoding="utf-8")
+    html_path.write_text(_sources_tree_html(tmp_path), encoding="utf-8")
     result = _evaluate_in_chrome(
         html_path,
         """
@@ -2391,7 +2403,7 @@ def _candidate_section(html: str, candidate_id: str) -> str:
     return match.group(0)
 
 
-def test_customize_shell_hides_a_comparison_only_candidate_by_default() -> None:
+def test_sources_tree_shell_hides_a_comparison_only_candidate_by_default() -> None:
     """Issue 79: a candidate only the Seattle Times picked must not leak by default."""
     view_model = _production_bundle().view_model
     html = render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG))
@@ -2537,13 +2549,12 @@ def _evaluate_in_chrome(
         shutil.rmtree(profile, ignore_errors=True)
 
 
-def _customize_selectable(item: PersonalizationCategory | PersonalizationSource) -> bool:
-    """Whether item is selectable in the current customize modal.
-
-    The comparison category/source are selectable in the payload (issue 95) so
-    a future rebuild of this section can render them, but this modal predates
-    that rebuild (issue 97) and must keep excluding them until it does.
-    """
+def _tallying_selectable(item: PersonalizationCategory | PersonalizationSource) -> bool:
+    """Whether item is a selectable, tallying (non-comparison) category or
+    source. The merged sources tree (issue 97) also renders the comparison
+    category/source with their own checkbox, so this helper is for tests that
+    specifically want a tallying-only item (e.g. moving a source between two
+    tallying categories) rather than "everything the tree renders"."""
     return item.selectable and item.panel_role != "comparison"
 
 
@@ -2552,11 +2563,11 @@ def _with_multi_category_source(view_model: PublicationViewModel) -> Publication
     "a multi-category source appears once and exposes every inclusion reason"
     acceptance criterion. The small rendering fixture has no such source."""
     contract = view_model.personalization
-    target = next(source for source in contract.sources if _customize_selectable(source))
+    target = next(source for source in contract.sources if _tallying_selectable(source))
     second_category = next(
         category
         for category in contract.categories
-        if _customize_selectable(category) and category.id != target.reporting_category_id
+        if _tallying_selectable(category) and category.id != target.reporting_category_id
     )
     sources = [
         source.model_copy(
@@ -2589,24 +2600,29 @@ def _with_multi_category_source(view_model: PublicationViewModel) -> Publication
 
 
 def test_personalization_is_invisible_while_the_policy_is_disabled(tmp_path: Path) -> None:
-    """Issue 80/81: no selection UI, no mode toggle, no per-race lens
-    presentation, and no full payload, while disabled.
+    """Issue 80/81: no tallying selection UI, no reset action, and no per-race
+    lens presentation, while disabled. The comparison category/source's own
+    checkbox stays present regardless (issue 96/97): showing the comparison
+    predates and is independent of this policy.
 
     The stylesheet carries `[data-lens-only]`/`[data-lens-hidden]` selectors
     unconditionally (an unused selector is harmless with no matching markup),
     so, like the existing show-times check, this looks only at the body.
+
+    `data-lens-notice` is deliberately excluded from the marker list: the
+    `<p data-lens-notice>` element itself is still policy-gated, but the
+    module script's `clearLensNotice()` helper is an unconditional no-op
+    utility (called from the always-present `refreshSelectionUi()`) whose
+    `querySelector('[data-lens-notice]')` call leaves that literal string in
+    the page's JS regardless of policy state.
     """
     view_model = _personalization_disabled_view_model(tmp_path)
     html = render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG))
     body = html.split("</style>", 1)[1]
 
     for marker in (
-        "data-customize-mode",
-        "data-customize-category",
-        "data-customize-source",
-        "data-customize-personalize",
+        "data-sources-reset",
         "data-lens-banner",
-        "data-lens-notice",
         "data-lens-only",
         "data-lens-hidden",
         "data-lens-card-badge",
@@ -2623,10 +2639,14 @@ def test_personalization_is_invisible_while_the_policy_is_disabled(tmp_path: Pat
     ):
         assert marker not in body
 
-    # Every tallying category/source is absent, so nothing is selectable for
-    # scoring here yet. The comparison category/source stay present (issue
-    # 96): showing the comparison predates and is independent of this policy,
-    # so the codec must still be able to classify its own token while disabled.
+    # The comparison category/source stay present and checkable (issue 96/97):
+    # showing the comparison predates and is independent of this policy, so
+    # the codec must still be able to classify its own token while disabled.
+    # Its own category-toggle checkbox is the only one that exists, since
+    # every tallying category is absent while the policy is disabled.
+    assert 'data-sources-source="' in body
+    assert 'data-sources-category-toggle="Gcmp"' in body
+    assert body.count("data-sources-category-toggle") == 1
     bindings = json.loads(html.split('id="lens-bindings">')[1].split("</script>")[0])
     assert [item["panel_role"] for item in bindings["categories"]] == ["comparison"]
     assert [item["panel_role"] for item in bindings["sources"]] == ["comparison"]
@@ -2651,13 +2671,13 @@ def test_personalization_times_toggle_persists_a_url_while_the_policy_is_disable
         """
         (async () => {
           const pause = () => new Promise((resolve) => setTimeout(resolve, 60));
-          const timesInput = document.querySelector('[data-customize-times]');
-          timesInput.click();
+          const timesInput = document.querySelector('[data-sources-source]');
+          timesInput.checked = true;
           timesInput.dispatchEvent(new Event('change', { bubbles: true }));
           await pause();
           const shownHash = window.location.hash;
           const shownClass = document.documentElement.classList.contains('show-times');
-          timesInput.click();
+          timesInput.checked = false;
           timesInput.dispatchEvent(new Event('change', { bubbles: true }));
           await pause();
           return JSON.stringify({
@@ -2701,50 +2721,60 @@ def test_personalization_ordinary_anchor_survives_initial_load_while_disabled(
 
 
 def test_personalization_ui_renders_every_selectable_category_and_source(tmp_path: Path) -> None:
+    """Issue 97: every selectable tallying category/source gets its own
+    checkbox in the merged tree, each nested under its own category section
+    with the category's own label — and the comparison category/source
+    render too, since showing the comparison predates and is independent of
+    the tallying selection tree (issue 96/97)."""
     view_model = _personalization_enabled_view_model(tmp_path)
     html = render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG))
     contract = view_model.personalization
 
-    selectable_categories = [item for item in contract.categories if _customize_selectable(item)]
-    selectable_sources = [item for item in contract.sources if _customize_selectable(item)]
+    selectable_categories = [item for item in contract.categories if _tallying_selectable(item)]
+    selectable_sources = [item for item in contract.sources if _tallying_selectable(item)]
     assert len(selectable_categories) > 0
     assert len(selectable_sources) > 0
 
     for category in selectable_categories:
-        assert f'data-customize-category="{category.code}"' in html
+        assert f'data-sources-category="{category.code}"' in html
+        assert f'data-sources-category-toggle="{category.code}"' in html
+        category_html = html.split(f'data-sources-category="{category.code}"')[1].split(
+            "</section>"
+        )[0]
+        assert category.label in category_html
+        for member_code in category.member_source_codes:
+            assert f'data-sources-source="{member_code}"' in category_html
     for source in selectable_sources:
-        assert f'data-customize-source="{source.code}"' in html
-    # The comparison source/category are selectable in the payload (issue 95) so a
-    # future rebuild of this section can render them, but this modal predates that
-    # rebuild and must keep excluding them until it does.
-    assert 'data-customize-category="Gcmp"' not in html
+        assert f'data-sources-source="{source.code}"' in html
+
+    comparison_category = next(
+        category for category in contract.categories if category.panel_role == "comparison"
+    )
+    comparison_source = next(
+        source for source in contract.sources if source.panel_role == "comparison"
+    )
+    assert f'data-sources-category="{comparison_category.code}"' in html
+    assert f'data-sources-category-toggle="{comparison_category.code}"' in html
+    assert f'data-sources-source="{comparison_source.code}"' in html
+
+    for category in contract.categories:
+        if not category.selectable:
+            assert f'data-sources-category="{category.code}"' not in html
     for source in contract.sources:
-        if not _customize_selectable(source):
-            assert f'data-customize-source="{source.code}"' not in html
+        if not source.selectable:
+            assert f'data-sources-source="{source.code}"' not in html
 
     bindings = json.loads(html.split('id="lens-bindings">')[1].split("</script>")[0])
     assert len(bindings["categories"]) == len(contract.categories)
     assert len(bindings["sources"]) == len(contract.sources)
 
-    # Categories and Sources are two sibling fieldsets, each with its own
-    # legend: a fieldset accepts only one legend, and the source checklist
-    # must have its own accessible group name rather than inheriting
-    # "Categories" from a legend that belongs to a different group.
-    personalize_panel = html.split("data-customize-personalize")[1].split(
-        '<p class="customize-status"'
-    )[0]
-    assert personalize_panel.count("<fieldset") == 2
-    category_fieldset = personalize_panel.split("<fieldset")[1]
-    assert category_fieldset.count("<legend>") == 1
-    assert "Categories" in category_fieldset
-    source_fieldset = personalize_panel.split("<fieldset")[2]
-    assert source_fieldset.count("<legend>") == 1
-    assert "Sources" in source_fieldset
-    assert "data-customize-source-list" in source_fieldset
-
 
 def test_personalization_initial_my_sources_matches_audited_consensus(tmp_path: Path) -> None:
-    """Issue 80 acceptance criterion: initial My sources results equal audited.
+    """Issue 80/97 acceptance criterion: the initial selection already equals
+    the audited consensus. Issue 97 removed the audited/my-sources mode
+    switch entirely, so there is no longer a mode to enter — every tallying
+    checkbox already starts checked and no comparison checkbox starts
+    checked, which is by definition the default (non-personalized) selection.
 
     Module-scoped bindings inside the page's own `<script type="module">` are
     not reachable from an injected Runtime.evaluate expression (they are not
@@ -2753,8 +2783,8 @@ def test_personalization_initial_my_sources_matches_audited_consensus(tmp_path: 
     scoring the full selectable panel reproduces the audited consensus
     exactly is lens-score.mjs's own tested contract (issue 77,
     "the full selectable panel reproduces the audited published consensus");
-    this test proves only that entering My sources reaches that full-panel
-    selection, which is the part issue 80 owns.
+    this test proves only that the page's initial render already reaches that
+    full-panel selection, which is the part issue 80/97 own.
     """
     view_model = _personalization_enabled_view_model(tmp_path)
     html_path = tmp_path / "guide.html"
@@ -2763,115 +2793,119 @@ def test_personalization_initial_my_sources_matches_audited_consensus(tmp_path: 
         encoding="utf-8",
     )
     selectable_source_count = sum(
-        1 for source in view_model.personalization.sources if _customize_selectable(source)
+        1 for source in view_model.personalization.sources if _tallying_selectable(source)
     )
-    selectable_category_count = sum(
-        1 for category in view_model.personalization.categories if _customize_selectable(category)
+    comparison_category_code = next(
+        category.code
+        for category in view_model.personalization.categories
+        if category.panel_role == "comparison"
     )
     result = _evaluate_in_chrome(
         html_path,
-        """
-        (async () => {
-          document.querySelector('[data-customize-open]').click();
-          const modeSources = document.querySelector('[data-customize-mode][value="sources"]');
-          modeSources.click();
-          modeSources.dispatchEvent(new Event('change', { bubbles: true }));
-          const categoryInputs = [...document.querySelectorAll('[data-customize-category]')];
-          const allChecked = categoryInputs.every((input) => input.checked);
-          const noDirect = [...document.querySelectorAll('[data-customize-source]')]
-            .every((input) => !input.checked);
-          return JSON.stringify({
-            allChecked,
-            noDirect,
-            counts: document.querySelector('[data-customize-counts]').textContent,
-            banner: document.querySelector('[data-lens-banner]').textContent,
-          });
-        })()
+        f"""
+        (async () => {{
+          const comparisonInputs = [...document.querySelectorAll(
+            '[data-sources-category="{comparison_category_code}"] [data-sources-source]'
+          )];
+          const tallyingInputs = [...document.querySelectorAll('[data-sources-source]')]
+            .filter((input) => !comparisonInputs.includes(input));
+          const allTallyingChecked = tallyingInputs.every((input) => input.checked);
+          const noComparisonChecked = comparisonInputs.every((input) => !input.checked);
+          const banner = document.querySelector('[data-lens-banner]');
+          return JSON.stringify({{
+            allTallyingChecked,
+            noComparisonChecked,
+            tallyingCount: new Set(tallyingInputs.map((input) => input.dataset.sourcesSource)).size,
+            bannerHidden: banner.hidden,
+          }});
+        }})()
         """,
     )
-    assert result["allChecked"] is True
-    assert result["noDirect"] is True
-    # Every source belongs to at least one selectable category (issue 75's own
-    # registry invariant), so selecting every category reaches the full panel.
-    assert result["counts"] == (
-        f"0 direct · {selectable_category_count} categories · "
-        f"{selectable_source_count} sources included"
-    )
-    assert f"{selectable_source_count} of {selectable_source_count} sources" in result["banner"]
+    assert result["allTallyingChecked"] is True
+    assert result["noComparisonChecked"] is True
+    assert result["tallyingCount"] == selectable_source_count
+    assert result["bannerHidden"] is True
 
 
-def test_personalization_multi_category_source_appears_once_with_every_reason(
+def test_personalization_multi_category_source_appears_in_each_category_and_stays_synced(
     tmp_path: Path,
 ) -> None:
-    """Issue 80 acceptance criteria: a multi-category source counts once and
-    exposes every inclusion reason; removing its direct pick keeps it included
-    through a still-checked category."""
+    """Issue 97 acceptance criterion: a source in more than one category
+    renders its own checkbox once per category (not once total with dynamic
+    inclusion-reason badges, which issue 97 removed in favor of a static
+    "also in: <label>" tag) — and every copy of that code stays in sync,
+    since checking or unchecking any one of them is the same action as
+    checking or unchecking that source everywhere."""
     view_model = _with_multi_category_source(_personalization_enabled_view_model(tmp_path))
     contract = view_model.personalization
     target = next(source for source in contract.sources if len(source.selection_category_ids) > 1)
     other_category_id = next(
         cid for cid in target.selection_category_ids if cid != target.reporting_category_id
     )
-    other_category_code = next(
-        category.code for category in contract.categories if category.id == other_category_id
+    other_category = next(
+        category for category in contract.categories if category.id == other_category_id
     )
+    reporting_category = next(
+        category for category in contract.categories if category.id == target.reporting_category_id
+    )
+    html = render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG))
     html_path = tmp_path / "guide.html"
-    html_path.write_text(
-        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
-        encoding="utf-8",
-    )
+    html_path.write_text(html, encoding="utf-8")
+
+    assert html.count(f'data-sources-source="{target.code}"') == 2
+    reporting_category_html = html.split(f'data-sources-category="{reporting_category.code}"')[
+        1
+    ].split("</section>")[0]
+    other_category_html = html.split(f'data-sources-category="{other_category.code}"')[1].split(
+        "</section>"
+    )[0]
+    assert f'data-sources-source="{target.code}"' in reporting_category_html
+    assert f'data-sources-source="{target.code}"' in other_category_html
+    assert other_category.label in reporting_category_html.split("also in:")[1]
+    assert reporting_category.label in other_category_html.split("also in:")[1]
+
     result = _evaluate_in_chrome(
         html_path,
         f"""
         (async () => {{
-          document.querySelector('[data-customize-open]').click();
-          document.querySelectorAll('[data-customize-category]').forEach((input) => {{
-            input.checked = false;
-          }});
-          const category = document.querySelector(
-            '[data-customize-category="{other_category_code}"]',
-          );
-          category.checked = true;
-          category.dispatchEvent(new Event('change', {{ bubbles: true }}));
-          const sourceInput = document.querySelector('[data-customize-source="{target.code}"]');
-          sourceInput.checked = true;
-          sourceInput.dispatchEvent(new Event('change', {{ bubbles: true }}));
-          const row = sourceInput.closest('[data-customize-source-row]');
-          const withDirect = {{
-            badges: row.querySelector('[data-customize-source-badges]').textContent,
-            counts: document.querySelector('[data-customize-counts]').textContent,
-          }};
-          // Remove the direct pick; the category is still checked.
-          sourceInput.checked = false;
-          sourceInput.dispatchEvent(new Event('change', {{ bubbles: true }}));
-          const withoutDirect = {{
-            badges: row.querySelector('[data-customize-source-badges]').textContent,
-            checked: sourceInput.checked,
-          }};
-          return JSON.stringify({{ withDirect, withoutDirect }});
+          const inputs = [...document.querySelectorAll('[data-sources-source="{target.code}"]')];
+          const initial = inputs.map((input) => input.checked);
+          inputs[0].checked = false;
+          inputs[0].dispatchEvent(new Event('change', {{ bubbles: true }}));
+          const afterUncheckFirst = inputs.map((input) => input.checked);
+          inputs[1].checked = true;
+          inputs[1].dispatchEvent(new Event('change', {{ bubbles: true }}));
+          const afterRecheckSecond = inputs.map((input) => input.checked);
+          return JSON.stringify({{ initial, afterUncheckFirst, afterRecheckSecond }});
         }})()
         """,
     )
-    assert "Direct" in result["withDirect"]["badges"]
-    assert (
-        other_category_code not in result["withDirect"]["badges"]
-    )  # codes aren't shown, labels are
-    assert "1 direct" in result["withDirect"]["counts"]
-    assert "Direct" not in result["withoutDirect"]["badges"]
-    assert result["withoutDirect"]["badges"] != ""  # still explained by the category alone
-    assert result["withoutDirect"]["checked"] is False
+    # Every copy of a multi-category source's checkbox stays in sync: toggling
+    # any one of them is the same action as toggling that source everywhere.
+    assert result["initial"] == [True, True]
+    assert result["afterUncheckFirst"] == [False, False]
+    assert result["afterRecheckSecond"] == [True, True]
 
 
 def test_personalization_reset_restores_audited_state_and_preserves_filters(
     tmp_path: Path,
 ) -> None:
-    """Issue 80 acceptance criterion: reset restores audited mode, clears
-    selections, hides Times, and preserves query filters."""
+    """Issue 80/97 acceptance criterion: reset restores every tallying
+    checkbox to checked, every comparison checkbox to unchecked, hides the
+    lens banner and the Times pill, clears the URL fragment, and preserves
+    query filters — issue 97 removed the audited/my-sources mode, so this
+    verifies the checkbox/banner/fragment outcome directly rather than a
+    mode radio."""
     view_model = _personalization_enabled_view_model(tmp_path)
     html_path = tmp_path / "guide.html"
     html_path.write_text(
         render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
         encoding="utf-8",
+    )
+    comparison_category_code = next(
+        category.code
+        for category in view_model.personalization.categories
+        if category.panel_role == "comparison"
     )
     query_url = f"{html_path.resolve().as_uri()}?view=compact"
     result = _evaluate_in_chrome(
@@ -2879,25 +2913,26 @@ def test_personalization_reset_restores_audited_state_and_preserves_filters(
         f"""
         (async () => {{
           history.replaceState(null, '', '{query_url}');
-          document.querySelector('[data-customize-open]').click();
-          const modeSources = document.querySelector('[data-customize-mode][value="sources"]');
-          modeSources.click();
-          modeSources.dispatchEvent(new Event('change', {{ bubbles: true }}));
-          document.querySelector('[data-customize-times]').click();
-          document.querySelector('[data-customize-times]')
-            .dispatchEvent(new Event('change', {{ bubbles: true }}));
-          document.querySelector('[data-customize-reset]').click();
-          const audited = document.querySelector('[data-customize-mode][value="audited"]').checked;
-          const anyCategoryChecked = [...document.querySelectorAll('[data-customize-category]')]
-            .some((input) => input.checked);
-          const anySourceChecked = [...document.querySelectorAll('[data-customize-source]')]
+          const tallyingSelector =
+            '[data-sources-source]:not([data-sources-category-member="{comparison_category_code}"])';
+          const comparisonSelector =
+            '[data-sources-category-member="{comparison_category_code}"]';
+          const tallyingInput = document.querySelector(tallyingSelector);
+          tallyingInput.checked = false;
+          tallyingInput.dispatchEvent(new Event('change', {{ bubbles: true }}));
+          const comparisonInput = document.querySelector(comparisonSelector);
+          comparisonInput.checked = true;
+          comparisonInput.dispatchEvent(new Event('change', {{ bubbles: true }}));
+          document.querySelector('[data-sources-reset]').click();
+          const anyTallyingUnchecked = [...document.querySelectorAll(tallyingSelector)]
+            .some((input) => !input.checked);
+          const anyComparisonChecked = [...document.querySelectorAll(comparisonSelector)]
             .some((input) => input.checked);
           const timesShown = document.documentElement.classList.contains('show-times');
           const banner = document.querySelector('[data-lens-banner]');
           return JSON.stringify({{
-            audited,
-            anyCategoryChecked,
-            anySourceChecked,
+            anyTallyingUnchecked,
+            anyComparisonChecked,
             timesShown,
             bannerHidden: banner.hidden,
             hash: window.location.hash,
@@ -2906,21 +2941,26 @@ def test_personalization_reset_restores_audited_state_and_preserves_filters(
         }})()
         """,
     )
-    assert result["audited"] is True
-    assert result["anyCategoryChecked"] is False
-    assert result["anySourceChecked"] is False
+    assert result["anyTallyingUnchecked"] is False
+    assert result["anyComparisonChecked"] is False
     assert result["timesShown"] is False
     assert result["bannerHidden"] is True
     assert result["hash"] == ""
     assert result["search"] == "?view=compact"
 
 
-def test_personalization_dialog_does_not_overflow_a_mobile_viewport(tmp_path: Path) -> None:
-    """Issue 80 Validation: mobile checks.
+def test_personalization_sources_tree_does_not_overflow_a_mobile_viewport(
+    tmp_path: Path,
+) -> None:
+    """Issue 80/97 validation: mobile checks.
+
+    Issue 97 folded the dialog into the page-anchored `<details id="sources">`
+    disclosure, so the narrow-viewport overflow check now targets that
+    section instead of the removed dialog.
 
     The small rendering fixture's few short source names and single-category
-    memberships never produce badge or row text long enough to overflow a
-    360px dialog even without the fix, which would make this test vacuous;
+    memberships never produce row or "also in" text long enough to overflow a
+    360px viewport even without the fix, which would make this test vacuous;
     the real production panel's 42 sources, longer names, and overlapping
     categories are what actually exercise the narrow layout.
     """
@@ -2942,14 +2982,11 @@ def test_personalization_dialog_does_not_overflow_a_mobile_viewport(tmp_path: Pa
         html_path,
         """
         (async () => {
-          document.querySelector('[data-customize-open]').click();
-          const modeSources = document.querySelector('[data-customize-mode][value="sources"]');
-          modeSources.click();
-          modeSources.dispatchEvent(new Event('change', { bubbles: true }));
-          const dialog = document.querySelector('[data-customize-dialog]');
+          document.getElementById('sources').open = true;
+          const tree = document.querySelector('.sources-tree');
           return JSON.stringify({
-            clientWidth: dialog.clientWidth,
-            scrollWidth: dialog.scrollWidth,
+            clientWidth: tree.clientWidth,
+            scrollWidth: tree.scrollWidth,
           });
         })()
         """,
@@ -2958,107 +2995,18 @@ def test_personalization_dialog_does_not_overflow_a_mobile_viewport(tmp_path: Pa
     assert result["scrollWidth"] <= result["clientWidth"]
 
 
-def test_personalization_copy_link_encodes_the_current_state_not_a_stale_href(
-    tmp_path: Path,
-) -> None:
-    """Issue 80 scope: copy-link must reproduce the displayed state exactly,
-    even after an in-page anchor navigation the codec does not recognize."""
-    view_model = _personalization_enabled_view_model(tmp_path)
-    html_path = tmp_path / "guide.html"
-    html_path.write_text(
-        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
-        encoding="utf-8",
-    )
-    result = _evaluate_in_chrome(
-        html_path,
-        """
-        (async () => {
-          // Headless Chrome over file:// has no clipboard permission to
-          // grant or deny, so navigator.clipboard.writeText never settles;
-          // stub it so the test exercises the status-line logic
-          // deterministically rather than real OS clipboard behavior.
-          Object.defineProperty(navigator, 'clipboard', {
-            value: { writeText: async () => {} },
-            configurable: true,
-          });
-          document.querySelector('[data-customize-open]').click();
-          const modeSources = document.querySelector('[data-customize-mode][value="sources"]');
-          modeSources.click();
-          modeSources.dispatchEvent(new Event('change', { bubbles: true }));
-          // The dialog is a native modal: the rest of the page is inert while
-          // it is open, so close it before the anchor can be clicked at all.
-          document.querySelector('[data-customize-close]').click();
-          // A plain anchor navigation the codec does not recognize: this must
-          // not be mistaken for the copy target.
-          document.querySelector('.skip-link').click();
-          const hashAfterAnchor = window.location.hash;
-          document.querySelector('[data-customize-open]').click();
-          // showModal() needs a tick before headless Chrome treats the
-          // dialog's own contents as interactive again.
-          await new Promise((resolve) => setTimeout(resolve, 50));
-          document.querySelector('[data-customize-copy]').click();
-          await new Promise((resolve) => setTimeout(resolve, 50));
-          return JSON.stringify({
-            hashAfterAnchor,
-            copyStatus: document.querySelector('[data-customize-copy-status]').textContent,
-            finalHash: window.location.hash,
-          });
-        })()
-        """,
-    )
-    assert result["hashAfterAnchor"] == "#guide-races"
-    assert result["copyStatus"] == "Link copied."
-    assert "mode=s" in result["finalHash"]
-    assert "sel=" in result["finalHash"]
-
-
-def test_personalization_copy_status_clears_on_the_next_change(tmp_path: Path) -> None:
-    view_model = _personalization_enabled_view_model(tmp_path)
-    html_path = tmp_path / "guide.html"
-    html_path.write_text(
-        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
-        encoding="utf-8",
-    )
-    result = _evaluate_in_chrome(
-        html_path,
-        """
-        (async () => {
-          // Headless Chrome over file:// has no clipboard permission to
-          // grant or deny, so navigator.clipboard.writeText never settles;
-          // stub it so the test exercises the status-line logic
-          // deterministically rather than real OS clipboard behavior.
-          Object.defineProperty(navigator, 'clipboard', {
-            value: { writeText: async () => {} },
-            configurable: true,
-          });
-          document.querySelector('[data-customize-open]').click();
-          const modeSources = document.querySelector('[data-customize-mode][value="sources"]');
-          modeSources.click();
-          modeSources.dispatchEvent(new Event('change', { bubbles: true }));
-          document.querySelector('[data-customize-copy]').click();
-          await new Promise((resolve) => setTimeout(resolve, 50));
-          const afterCopy = document.querySelector('[data-customize-copy-status]').textContent;
-          document.querySelector('[data-customize-reset]').click();
-          const afterReset = document.querySelector('[data-customize-copy-status]').textContent;
-          return JSON.stringify({ afterCopy, afterReset });
-        })()
-        """,
-    )
-    assert result["afterCopy"] != ""
-    assert result["afterReset"] == ""
-
-
 def test_personalization_history_back_and_forward_restore_selection(tmp_path: Path) -> None:
-    """Issue 80 scope: back and forward behavior.
+    """Issue 80/97 scope: back and forward behavior.
 
     A plain back() to a history entry that was last written by the very same
-    live DOM state proves nothing about applyMode: the checkboxes would look
-    "restored" even if the restore code never ran. This test forces a genuine
-    divergence — after the entry we will return to has already recorded a
-    category-based selection, it switches to a different, direct-source
-    selection before pushing the race-detail entry, so back() must actually
-    reach into the earlier entry's fragment and re-check different boxes than
-    whatever is currently checked.
+    live DOM state proves nothing about applySelection: the checkboxes would
+    look "restored" even if the restore code never ran. This test forces a
+    genuine divergence — after the entry we will return to has already
+    recorded one selection, it switches to a different selection before
+    pushing the race-detail entry, so back() must actually reach into the
+    earlier entry's fragment and re-check different boxes than whatever is
+    currently checked. Issue 97 removed the category/direct-source mode
+    distinction, so this now tracks checked source codes directly.
     """
     view_model = _personalization_enabled_view_model(tmp_path)
     html_path = tmp_path / "guide.html"
@@ -3071,90 +3019,76 @@ def test_personalization_history_back_and_forward_restore_selection(tmp_path: Pa
         """
         (async () => {
           const pause = () => new Promise((resolve) => setTimeout(resolve, 60));
-          document.querySelector('[data-customize-open]').click();
-          const modeSources = document.querySelector('[data-customize-mode][value="sources"]');
-          modeSources.click();
-          modeSources.dispatchEvent(new Event('change', { bubbles: true }));
+          const sourceInputs = [...document.querySelectorAll('[data-sources-source]')];
+          const codesOf = () => [...new Set(
+            sourceInputs.filter((input) => input.checked)
+              .map((input) => input.dataset.sourcesSource),
+          )].sort();
+
+          // Diverge from the default (all-checked) selection so this entry's
+          // fragment records something meaningful for back() to restore.
+          sourceInputs[0].checked = false;
+          sourceInputs[0].dispatchEvent(new Event('change', { bubbles: true }));
           await pause();
-          // Entering sources mode selects every category by default; this is
-          // the selection the later back() must restore. Capture it, then
-          // immediately push a new history entry (the race-detail permalink,
-          // matching how the rest of the guide already navigates) so this
-          // selection is frozen onto the entry we will later return to,
-          // before anything has a chance to replaceState over it.
-          const afterEnter = window.location.hash;
-          const categoryInputsSnapshot = [
-            ...document.querySelectorAll('[data-customize-category]'),
-          ];
-          const categoryCodesAfterEnter = categoryInputsSnapshot
-            .filter((input) => input.checked)
-            .map((input) => input.dataset.customizeCategory)
-            .sort();
+          const afterFirstChange = window.location.hash;
+          const codesAfterFirstChange = codesOf();
+
           const link = document.querySelector('[data-race-detail-link]');
           link.click();
           await pause();
-          // Now, on the new entry, diverge to a direct-source selection.
+
+          // Now, on the new entry, diverge to a different selection.
           // writeLensState only ever replaceState()s, so this overwrites only
           // the new entry's own fragment, leaving the earlier entry's
-          // category-based fragment untouched underneath it.
-          document.querySelectorAll('[data-customize-category]').forEach((input) => {
-            input.checked = false;
-          });
-          const source = document.querySelector('[data-customize-source]');
-          source.checked = true;
-          source.dispatchEvent(new Event('change', { bubbles: true }));
+          // fragment untouched underneath it.
+          sourceInputs.forEach((input) => { input.checked = true; });
+          sourceInputs[1].checked = false;
+          sourceInputs[1].dispatchEvent(new Event('change', { bubbles: true }));
           await pause();
-          const sourceCodesBeforeBack = [...document.querySelectorAll('[data-customize-source]')]
-            .filter((input) => input.checked)
-            .map((input) => input.dataset.customizeSource)
-            .sort();
+          const codesBeforeBack = codesOf();
+
           history.back();
           await pause();
-          const audited = document.querySelector('[data-customize-mode][value="audited"]').checked;
-          const restored = window.location.hash === afterEnter;
-          const categoryCodesAfterBack = [...document.querySelectorAll('[data-customize-category]')]
-            .filter((input) => input.checked)
-            .map((input) => input.dataset.customizeCategory)
-            .sort();
-          const sourceCodesAfterBack = [...document.querySelectorAll('[data-customize-source]')]
-            .filter((input) => input.checked)
-            .map((input) => input.dataset.customizeSource)
-            .sort();
+          const restored = window.location.hash === afterFirstChange;
+          const codesAfterBack = codesOf();
+
           history.forward();
           await pause();
           const dialogOpen = document.querySelector('[data-race-detail-dialog][open]') !== null;
+          const codesAfterForward = codesOf();
+
           return JSON.stringify({
-            afterEnter,
+            afterFirstChange,
             restored,
-            audited,
             dialogOpen,
-            categoryCodesAfterEnter,
-            sourceCodesBeforeBack,
-            categoryCodesAfterBack,
-            sourceCodesAfterBack,
+            codesAfterFirstChange,
+            codesBeforeBack,
+            codesAfterBack,
+            codesAfterForward,
           });
         })()
         """,
     )
-    assert "mode=s" in result["afterEnter"]
-    assert result["categoryCodesAfterEnter"] != []
-    # Confirms the divergence actually happened before back(): a direct source
-    # was checked in place of the categories.
-    assert result["sourceCodesBeforeBack"] != []
+    assert "mode=s" in result["afterFirstChange"]
+    assert result["codesAfterFirstChange"] != []
+    # Confirms the divergence actually happened before back(): a different
+    # source is unchecked on the new entry than on the earlier one.
+    assert result["codesBeforeBack"] != result["codesAfterFirstChange"]
     assert result["restored"] is True
-    assert result["audited"] is False
-    # back() must reinstate the category-based selection recorded in the
-    # earlier entry, not leave the direct-source selection in place.
-    assert result["categoryCodesAfterBack"] == result["categoryCodesAfterEnter"]
-    assert result["sourceCodesAfterBack"] == []
+    # back() must reinstate the earlier entry's own selection, not leave the
+    # later entry's selection in place.
+    assert result["codesAfterBack"] == result["codesAfterFirstChange"]
     assert result["dialogOpen"] is True
+    # forward() must reinstate the later entry's own selection in turn.
+    assert result["codesAfterForward"] == result["codesBeforeBack"]
 
 
 def test_personalization_shared_link_restores_the_same_version_selection(tmp_path: Path) -> None:
-    """Issue 80 scope: a link that already encodes a personalized selection
-    must restore that exact selection on load, complementing the
+    """Issue 80/97 scope: a link that already encodes a personalized
+    selection must restore that exact selection on load, complementing the
     back/forward test above by exercising the initial-load restore path
-    (applyMode(lensState()) at script start) rather than the hashchange path.
+    (applySelection(lensState()) at script start) rather than the
+    hashchange path.
     """
     view_model = _personalization_enabled_view_model(tmp_path)
     html_path = tmp_path / "guide.html"
@@ -3166,22 +3100,14 @@ def test_personalization_shared_link_restores_the_same_version_selection(tmp_pat
         html_path,
         """
         (async () => {
-          document.querySelector('[data-customize-open]').click();
-          const modeSources = document.querySelector('[data-customize-mode][value="sources"]');
-          modeSources.click();
-          modeSources.dispatchEvent(new Event('change', { bubbles: true }));
-          // Diverge from the "select every category" default this mode starts
-          // with, so the captured link encodes one specific, checkable
-          // category rather than the whole set.
-          document.querySelectorAll('[data-customize-category]').forEach((input) => {
-            input.checked = false;
-          });
-          const category = document.querySelector('[data-customize-category]');
-          category.checked = true;
-          category.dispatchEvent(new Event('change', { bubbles: true }));
+          // Diverge from the all-checked default so the captured link
+          // encodes one specific, checkable source rather than the full set.
+          const target = document.querySelector('[data-sources-source]');
+          target.checked = false;
+          target.dispatchEvent(new Event('change', { bubbles: true }));
           return JSON.stringify({
             href: window.location.href,
-            categoryCode: category.dataset.customizeCategory,
+            sourceCode: target.dataset.sourcesSource,
           });
         })()
         """,
@@ -3192,17 +3118,11 @@ def test_personalization_shared_link_restores_the_same_version_selection(tmp_pat
         html_path,
         """
         JSON.stringify({
-          audited: document.querySelector('[data-customize-mode][value="audited"]').checked,
-          sources: document.querySelector('[data-customize-mode][value="sources"]').checked,
-          categoryCodes: [...document.querySelectorAll('[data-customize-category]')]
-            .filter((input) => input.checked)
-            .map((input) => input.dataset.customizeCategory)
-            .sort(),
-          sourceCodes: [...document.querySelectorAll('[data-customize-source]')]
-            .filter((input) => input.checked)
-            .map((input) => input.dataset.customizeSource)
-            .sort(),
-          counts: document.querySelector('[data-customize-counts]').textContent,
+          sourceCodes: [...new Set(
+            [...document.querySelectorAll('[data-sources-source]')]
+              .filter((input) => input.checked)
+              .map((input) => input.dataset.sourcesSource),
+          )].sort(),
           bannerHidden: document.querySelector('[data-lens-banner]').hidden,
           bannerText: document.querySelector('[data-lens-banner]').textContent,
           search: window.location.search,
@@ -3210,11 +3130,12 @@ def test_personalization_shared_link_restores_the_same_version_selection(tmp_pat
         """,
         initial_url=shared_url,
     )
-    assert result["audited"] is False
-    assert result["sources"] is True
-    assert result["categoryCodes"] == [capture["categoryCode"]]
-    assert result["sourceCodes"] == []
-    assert "1 categories" in result["counts"]
+    expected_codes = sorted(
+        source.code
+        for source in view_model.personalization.sources
+        if _tallying_selectable(source) and source.code != capture["sourceCode"]
+    )
+    assert result["sourceCodes"] == expected_codes
     assert result["bannerHidden"] is False
     assert "Personalized lens active" in result["bannerText"]
     assert result["search"] == "?edition=compact"
@@ -3224,11 +3145,16 @@ def test_personalization_shared_link_restores_the_same_version_selection(tmp_pat
 
 
 def test_personalization_full_panel_selection_shows_no_divergent_comparison(tmp_path: Path) -> None:
-    """Issue 81 acceptance criterion: an unchanged race stays free of
-    redundant audited detail. Entering My sources with every category
-    selected (the mode's own default) reproduces the audited consensus for
-    every race exactly (issue 77's tested contract), so no card's compact
-    audited comparison may appear, and every card is still labeled.
+    """Issue 81/97 acceptance criterion: an unchanged race stays free of
+    redundant audited detail. Issue 97 derives "personalized" from whether
+    the live selection differs from the full default panel
+    (`isDefaultSelection()`), so the full selectable panel — every tallying
+    checkbox checked, no comparison checkbox checked — is simply the page's
+    own initial state and is never itself flagged personalized: those values
+    would be numerically identical to audited by construction (issue 77's
+    tested contract), so a distinct personalized label would add nothing.
+    This verifies that plain, single audited detail is what actually shows
+    on that initial state, not a duplicated or divergent comparison.
     """
     view_model = _personalization_enabled_view_model(tmp_path)
     html_path = tmp_path / "guide.html"
@@ -3240,48 +3166,40 @@ def test_personalization_full_panel_selection_shows_no_divergent_comparison(tmp_
         html_path,
         """
         (async () => {
-          document.querySelector('[data-customize-open]').click();
-          const modeSources = document.querySelector('[data-customize-mode][value="sources"]');
-          modeSources.click();
-          modeSources.dispatchEvent(new Event('change', { bubbles: true }));
           const cards = [...document.querySelectorAll('.race-card')];
+          const personalized = document.documentElement.classList.contains('lens-personalized');
           const anyComparisonShown = cards.some(
             (card) => card.querySelector('[data-lens-comparison]')?.hidden === false,
-          );
-          const badgesPresent = cards.every(
-            (card) => card.querySelector('[data-lens-card-badge]') !== null,
           );
           const firstCard = cards[0];
           return JSON.stringify({
             cardCount: cards.length,
+            personalized,
             anyComparisonShown,
-            badgesPresent,
-            recommendationMatches: firstCard.querySelector('[data-lens-recommendation]').textContent
-              === firstCard.querySelector('[data-display-role="recommendation"]').textContent,
-            supportMatches: firstCard.querySelector('[data-lens-support]').textContent
-              === firstCard.querySelector('[data-display-role="support"]').textContent,
+            recommendationText: firstCard
+              .querySelector('[data-display-role="recommendation"]').textContent,
           });
         })()
         """,
     )
     assert result["cardCount"] > 0
+    assert result["personalized"] is False
     assert result["anyComparisonShown"] is False
-    assert result["badgesPresent"] is True
-    assert result["recommendationMatches"] is True
-    assert result["supportMatches"] is True
+    assert result["recommendationText"] != ""
 
 
 def test_personalization_divergent_race_discloses_a_compact_comparison_and_full_detail(
     tmp_path: Path,
 ) -> None:
-    """Issue 81 acceptance criteria: every defined divergence dimension is
+    """Issue 81/97 acceptance criteria: every defined divergence dimension is
     detected from structured values, a divergent card shows a compact
     audited comparison, and the race detail panel discloses complete
     audited/personalized values, contributing sources, and inclusion
-    reasons. Narrowing the real production panel to one category is
-    virtually certain to push some races below the minimum-explicit-sources
-    threshold, diverging their recommendation state from the full panel
-    this mode starts with.
+    reasons. Narrowing the real production panel to one category (by
+    unchecking every other tallying category's header toggle, which bulk
+    -unchecks its members) is virtually certain to push some races below
+    the minimum-explicit-sources threshold, diverging their recommendation
+    state from the full default panel.
     """
     view_model = _production_bundle().view_model
     enabled_policy = view_model.personalization.policy.model_copy(update={"enabled": True})
@@ -3301,16 +3219,12 @@ def test_personalization_divergent_race_discloses_a_compact_comparison_and_full_
         html_path,
         """
         (async () => {
-          document.querySelector('[data-customize-open]').click();
-          const modeSources = document.querySelector('[data-customize-mode][value="sources"]');
-          modeSources.click();
-          modeSources.dispatchEvent(new Event('change', { bubbles: true }));
-          document.querySelectorAll('[data-customize-category]').forEach((input) => {
+          const categoryToggles = [...document.querySelectorAll('[data-sources-category-toggle]')]
+            .filter((input) => !input.closest('.sources-category-comparison'));
+          categoryToggles.slice(1).forEach((input) => {
             input.checked = false;
+            input.dispatchEvent(new Event('change', { bubbles: true }));
           });
-          const category = document.querySelector('[data-customize-category]');
-          category.checked = true;
-          category.dispatchEvent(new Event('change', { bubbles: true }));
           const cards = [...document.querySelectorAll('.race-card')];
           const divergent = cards.find(
             (card) => card.querySelector('[data-lens-comparison]')?.hidden === false,
@@ -3386,16 +3300,19 @@ def _lens_fragment(
 
 
 def test_personalization_stale_link_migrates_with_a_persistent_notice(tmp_path: Path) -> None:
-    """Issue 81 acceptance criteria: a cross-version link that still
+    """Issue 81/97 acceptance criteria: a cross-version link that still
     resolves against the current panel is migrated, its migrated selection
-    is applied, and a persistent explanation discloses the migration.
+    is applied, and a persistent explanation discloses the migration. Issue
+    97 still reads a legacy categoryCodes-shaped fragment for backward
+    compatibility even though it never writes one anymore, expanding it to
+    that category's own member source checkboxes on load.
     """
     view_model = _personalization_enabled_view_model(tmp_path)
     contract = view_model.personalization
     category = next(
         item
         for item in contract.categories
-        if _customize_selectable(item) and item.member_source_codes
+        if _tallying_selectable(item) and item.member_source_codes
     )
     fragment = _lens_fragment(
         view_model,
@@ -3414,26 +3331,27 @@ def test_personalization_stale_link_migrates_with_a_persistent_notice(tmp_path: 
         JSON.stringify({
           noticeHidden: document.querySelector('[data-lens-notice]').hidden,
           noticeText: document.querySelector('[data-lens-notice]').textContent,
-          sourcesChecked: document.querySelector('[data-customize-mode][value="sources"]').checked,
-          categoryChecked: [...document.querySelectorAll('[data-customize-category]')]
-            .filter((input) => input.checked)
-            .map((input) => input.dataset.customizeCategory),
+          checkedSourceCodes: [...new Set(
+            [...document.querySelectorAll('[data-sources-source]')]
+              .filter((input) => input.checked)
+              .map((input) => input.dataset.sourcesSource),
+          )].sort(),
         })
         """,
         initial_url=f"{html_path.resolve().as_uri()}#{fragment}",
     )
     assert result["noticeHidden"] is False
     assert "migrated" in result["noticeText"]
-    assert result["sourcesChecked"] is True
-    assert result["categoryChecked"] == [category.code]
+    assert result["checkedSourceCodes"] == sorted(category.member_source_codes)
 
 
 def test_personalization_unresolvable_link_falls_back_to_audited_with_a_persistent_notice(
     tmp_path: Path,
 ) -> None:
-    """Issue 81 acceptance criterion: a cross-version link whose category can
-    no longer be resolved falls back to the audited consensus rather than a
-    partial personalized score, with a persistent explanation.
+    """Issue 81/97 acceptance criterion: a cross-version link whose category
+    can no longer be resolved falls back to the audited consensus (the
+    default full-panel selection) rather than a partial personalized score,
+    with a persistent explanation.
     """
     view_model = _personalization_enabled_view_model(tmp_path)
     fragment = _lens_fragment(
@@ -3453,22 +3371,22 @@ def test_personalization_unresolvable_link_falls_back_to_audited_with_a_persiste
         JSON.stringify({
           noticeHidden: document.querySelector('[data-lens-notice]').hidden,
           noticeText: document.querySelector('[data-lens-notice]').textContent,
-          audited: document.querySelector('[data-customize-mode][value="audited"]').checked,
+          personalized: document.documentElement.classList.contains('lens-personalized'),
         })
         """,
         initial_url=f"{html_path.resolve().as_uri()}#{fragment}",
     )
     assert result["noticeHidden"] is False
     assert "could not be migrated" in result["noticeText"]
-    assert result["audited"] is True
+    assert result["personalized"] is False
 
 
 def test_personalization_malformed_link_falls_back_to_audited_with_a_persistent_notice(
     tmp_path: Path,
 ) -> None:
-    """Issue 81 acceptance criterion: an invalid link (an unknown token in an
-    otherwise current-version fragment here) falls back to audited with a
-    persistent explanation.
+    """Issue 81/97 acceptance criterion: an invalid link (an unknown token in
+    an otherwise current-version fragment here) falls back to audited (the
+    default full-panel selection) with a persistent explanation.
     """
     view_model = _personalization_enabled_view_model(tmp_path)
     fragment = _lens_fragment(view_model, mode="s", category_codes=("Gzzz",))
@@ -3483,7 +3401,7 @@ def test_personalization_malformed_link_falls_back_to_audited_with_a_persistent_
         JSON.stringify({
           noticeHidden: document.querySelector('[data-lens-notice]').hidden,
           noticeText: document.querySelector('[data-lens-notice]').textContent,
-          audited: document.querySelector('[data-customize-mode][value="audited"]').checked,
+          personalized: document.documentElement.classList.contains('lens-personalized'),
           hash: window.location.hash,
         })
         """,
@@ -3491,7 +3409,7 @@ def test_personalization_malformed_link_falls_back_to_audited_with_a_persistent_
     )
     assert result["noticeHidden"] is False
     assert "could not be read" in result["noticeText"]
-    assert result["audited"] is True
+    assert result["personalized"] is False
     # Issue 96 acceptance criterion: a link that must not be scored falls back
     # to a clean base URL rather than leaving the stale fragment in place.
     assert result["hash"] == ""
@@ -3505,6 +3423,11 @@ def test_personalization_prior_schema_link_falls_back_to_a_clean_base_url(
     results in a clean base URL, not a stale or confusing address bar.
     """
     view_model = _personalization_enabled_view_model(tmp_path)
+    comparison_category_code = next(
+        category.code
+        for category in view_model.personalization.categories
+        if category.panel_role == "comparison"
+    )
     fragment = _lens_fragment(view_model, mode="a").replace("lens=2", "lens=1") + "&times=1"
     html_path = tmp_path / "guide.html"
     html_path.write_text(
@@ -3513,18 +3436,20 @@ def test_personalization_prior_schema_link_falls_back_to_a_clean_base_url(
     )
     result = _evaluate_in_chrome(
         html_path,
-        """
-        JSON.stringify({
+        f"""
+        JSON.stringify({{
           noticeHidden: document.querySelector('[data-lens-notice]').hidden,
           hash: window.location.hash,
-          timesChecked: document.querySelector('[data-customize-times]').checked,
-        })
+          comparisonChecked: document.querySelector(
+            '[data-sources-category-member="{comparison_category_code}"]',
+          ).checked,
+        }})
         """,
         initial_url=f"{html_path.resolve().as_uri()}#{fragment}",
     )
     assert result["noticeHidden"] is False
     assert result["hash"] == ""
-    assert result["timesChecked"] is False
+    assert result["comparisonChecked"] is False
 
 
 def test_personalization_ordinary_anchor_navigation_never_shows_a_lens_notice(
@@ -3573,8 +3498,7 @@ def test_personalization_notice_clears_on_the_next_explicit_change(tmp_path: Pat
         """
         (async () => {
           const before = document.querySelector('[data-lens-notice]').hidden;
-          document.querySelector('[data-customize-open]').click();
-          document.querySelector('[data-customize-reset]').click();
+          document.querySelector('[data-sources-reset]').click();
           return JSON.stringify({
             before,
             afterHidden: document.querySelector('[data-lens-notice]').hidden,
@@ -3588,12 +3512,17 @@ def test_personalization_notice_clears_on_the_next_explicit_change(tmp_path: Pat
 
 
 def test_personalization_times_comparison_stays_independent_of_the_lens(tmp_path: Path) -> None:
-    """Issue 81 acceptance criterion: the Seattle Times comparison remains
+    """Issue 81/97 acceptance criterion: the Seattle Times comparison remains
     visually and computationally independent of the personalized lens.
     Showing it must not change the personalized recommendation text, and
-    entering My sources must not implicitly reveal it.
+    personalizing the selection must not implicitly reveal it.
     """
     view_model = _personalization_enabled_view_model(tmp_path)
+    comparison_category_code = next(
+        category.code
+        for category in view_model.personalization.categories
+        if category.panel_role == "comparison"
+    )
     html_path = tmp_path / "guide.html"
     html_path.write_text(
         render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
@@ -3601,27 +3530,33 @@ def test_personalization_times_comparison_stays_independent_of_the_lens(tmp_path
     )
     result = _evaluate_in_chrome(
         html_path,
-        """
-        (async () => {
-          document.querySelector('[data-customize-open]').click();
-          const modeSources = document.querySelector('[data-customize-mode][value="sources"]');
-          modeSources.click();
-          modeSources.dispatchEvent(new Event('change', { bubbles: true }));
-          const timesShownAfterSources = document.documentElement.classList.contains('show-times');
+        f"""
+        (async () => {{
+          // Diverge from the default so the lens actually personalizes and
+          // populates [data-lens-recommendation] for the check below.
+          const tallyingInput = document.querySelector(
+            '[data-sources-source]:not([data-sources-category-member="{comparison_category_code}"])',
+          );
+          tallyingInput.checked = false;
+          tallyingInput.dispatchEvent(new Event('change', {{ bubbles: true }}));
+          const timesShownAfterPersonalizing =
+            document.documentElement.classList.contains('show-times');
           const firstCard = document.querySelector('.race-card');
           const before = firstCard.querySelector('[data-lens-recommendation]').textContent;
-          document.querySelector('[data-customize-times]').click();
-          document.querySelector('[data-customize-times]')
-            .dispatchEvent(new Event('change', { bubbles: true }));
+          const comparisonInput = document.querySelector(
+            '[data-sources-category-member="{comparison_category_code}"]',
+          );
+          comparisonInput.checked = true;
+          comparisonInput.dispatchEvent(new Event('change', {{ bubbles: true }}));
           const after = firstCard.querySelector('[data-lens-recommendation]').textContent;
-          return JSON.stringify({
-            timesShownAfterSources,
+          return JSON.stringify({{
+            timesShownAfterPersonalizing,
             timesShownAfterToggle: document.documentElement.classList.contains('show-times'),
             recommendationUnchanged: before === after,
-          });
-        })()
+          }});
+        }})()
         """,
     )
-    assert result["timesShownAfterSources"] is False
+    assert result["timesShownAfterPersonalizing"] is False
     assert result["timesShownAfterToggle"] is True
     assert result["recommendationUnchanged"] is True
