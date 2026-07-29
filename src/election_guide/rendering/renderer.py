@@ -1270,7 +1270,7 @@ def _inspect_print_layout(
                   };
                   const selectors = detailed ? [
                     '.screen-guide', '.race-card h3', '.support-line', '.alternative',
-                    '.comparison', '.warning', '.methodology-panel'
+                    '.comparison', '.warning'
                   ] : [
                     '.print-races', '.method-summary article', '.source-panel', '.source-row',
                     '.coverage-gap-row',
@@ -1841,7 +1841,7 @@ def _capture_emulated_viewport(
                     "...document.querySelectorAll('.guide-notes')].map(details=>{"
                     "const summary=details.querySelector('summary');"
                     "const panel=details.querySelector("
-                    "'.methodology-screen,.sources-tree');"
+                    "'.sources-tree');"
                     "const visible=()=>Boolean(details.open&&panel&&"
                     "getComputedStyle(panel).display!=='none'&&"
                     "panel.getBoundingClientRect().height>0);"
@@ -2061,7 +2061,7 @@ def _capture_emulated_viewport(
                     "panelOverflow": False,
                     "restoredClosed": True,
                 }
-                for disclosure_id in ("methodology", "sources")
+                for disclosure_id in ("sources",)
             ],
             "dialogCount": expected_race_count,
             "copy": {

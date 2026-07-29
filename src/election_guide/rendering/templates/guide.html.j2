@@ -379,40 +379,6 @@
           <p class="visually-hidden" role="status" aria-live="polite" data-share-guide-status></p>
         </nav>
       </div>
-      <details class="guide-notes" id="methodology">
-        <summary><span>Methodology</span><span aria-hidden="true">+</span></summary>
-        <div class="methodology-screen">
-      <section class="methodology-panel screen-consensus-key">
-        <h3>Agreement, not a grade</h3>
-        <p>The percentage is the leading choice's share of endorsement points among sources
-          that explicitly endorsed in that race.</p>
-        <p>The source count is the sample behind the percentage. Neither number rates candidate quality.</p>
-      </section>
-      <section class="methodology-panel">
-        <h3>What enters the count</h3>
-        <p>Each organization has equal weight. Multi-candidate endorsements split one point;
-          no endorsement and missing coverage do not enter the percentage.</p>
-        <p>Legislative-district groups count on broader races they cover, but only their own
-          district's legislative contests.</p>
-      </section>
-      <section class="methodology-panel">
-        <h3>The Times is separate and optional</h3>
-        <p>Seattle Times choices are hidden by default on screen and can be shown under
-          <a href="#sources">Sources</a>. They are comparison only and never add a vote to the progressive
-          consensus, so turning them on changes nothing that is scored.</p>
-        <p>The printable guide always includes the comparison.</p>
-        <p>This guide aggregates endorsements; it is not independent candidate vetting.</p>
-      </section>
-      <section class="methodology-panel methodology-overlap">
-        <h3>Related organizations</h3>
-        {% if guide.methodology.source_overlap_groups %}
-          {% for group in guide.methodology.source_overlap_groups %}<p><strong>{{ group.label }}</strong>
-            — {{ group.source_ids | length }} sources. These relationships are disclosed, not deduplicated.</p>{% endfor %}
-        {% else %}<p>No possible overlap groups span multiple active sources.</p>{% endif %}
-        <p>Organizations may update endorsements after capture, and a voter's exact ballot depends on registration address.</p>
-      </section>
-        </div>
-      </details>
       <details class="guide-notes merged-sources" id="sources">
         <summary><span>Sources ({{ guide.metadata.contributing_source_count }})</span><span aria-hidden="true">+</span></summary>
         <div class="sources-tree">
