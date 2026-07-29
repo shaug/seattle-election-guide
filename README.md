@@ -1,4 +1,4 @@
-# Seattle Election Endorsement Consensus Guide
+# Seattle Progressive Elections Guide
 
 An auditable publishing pipeline for comparing endorsements in elections that appear on
 Seattle ballots. The immediate release target is the August 4, 2026 Washington primary.

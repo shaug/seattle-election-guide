@@ -420,7 +420,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "Consensus among explicitly endorsing sources" in html
     assert "Seattle Times" in html
     assert "August 2026 Primary" in html
-    assert "Seattle Progressive Endorsement Guide" in html
+    assert "Seattle Progressive Elections Guide" in html
     canonical_url = f"{configuration.public_site_url}/e/{view_model.metadata.election_id}/"
     assert f'<link rel="canonical" href="{canonical_url}">' in html
     assert f'<meta property="og:url" content="{canonical_url}">' in html
@@ -1036,10 +1036,10 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     reader = PdfReader(rendered.pdf_path)
     assert len(reader.pages) == 2
     assert reader.metadata is not None
-    assert reader.metadata.title == "Seattle Progressive Endorsement Guide"
+    assert reader.metadata.title == "Seattle Progressive Elections Guide"
     concise_text = " ".join(page.extract_text() or "" for page in reader.pages)
     assert "august 2026 primary" in concise_text.casefold()
-    assert "Seattle Progressive Endorsement Guide" in concise_text
+    assert "Seattle Progressive Elections Guide" in concise_text
     assert all(source.name in concise_text for source in view_model.sources)
     assert (
         f"Panel {view_model.metadata.source_panel_version} · "
@@ -1972,8 +1972,8 @@ def test_pdf_identity_validation_rejects_concatenated_print_title(tmp_path: Path
     html = render_html_document(view_model, configuration)
     html_path.write_text(
         html.replace(
-            '<h1 data-document-role="print-title">Seattle Progressive Endorsement Guide</h1>',
-            '<h1 data-document-role="print-title">SeattleProgressiveEndorsementGuide</h1>',
+            '<h1 data-document-role="print-title">Seattle Progressive Elections Guide</h1>',
+            '<h1 data-document-role="print-title">SeattleProgressiveElectionsGuide</h1>',
             1,
         ),
         encoding="utf-8",
@@ -2003,7 +2003,7 @@ def test_pdf_identity_validation_rejects_concatenated_print_title(tmp_path: Path
 
     identity_check = next(check for check in report.checks if check.id == "pdf-display-values")
     assert not identity_check.passed
-    assert "Seattle Progressive Endorsement Guide" in identity_check.message
+    assert "Seattle Progressive Elections Guide" in identity_check.message
 
 
 def _dense_view_model(view_model: PublicationViewModel) -> PublicationViewModel:
