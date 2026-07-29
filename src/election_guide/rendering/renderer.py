@@ -2644,10 +2644,7 @@ def _detailed_pdf_race_values(race: PublicationRace) -> list[str]:
         race.recommendation_label,
         "N/A" if race.percentage_whole is None else race.percentage_label,
         screen_support,
-        # The card's context stack puts the support line above the comparison
-        # signal bars (issue 115, item G24), so the detailed edition prints
-        # them in that order.
-        *(f"{screen_support} {comparison.print_label}" for comparison in race.comparisons),
+        *(f"{comparison.print_label} {screen_support}" for comparison in race.comparisons),
         *(
             ["Too few explicit endorsements to assess consensus reliably."]
             if race.grade == "Insufficient"

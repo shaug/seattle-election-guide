@@ -257,10 +257,9 @@
                 {% endif %}
               </div>
               <div class="screen-race-context">
-                <p class="support-line" data-display-role="support"{% if guide.personalization.policy.enabled %} data-lens-hidden{% endif %}>{{ screen_support_summary(race) }}</p>
-                {% if guide.personalization.policy.enabled %}
-                <p class="support-line lens-value" data-lens-only data-lens-support></p>
-                {% endif %}
+                {# The comparison bars stay above the support line: the print
+                   validator anchors each comparison's extracted text against
+                   the support summary that follows it. #}
                 <div class="screen-comparisons">
                   {% for comparison in race.comparisons %}
                   <p class="comparison comparison-{{ comparison.voter_tone }}" role="group"
@@ -269,6 +268,10 @@
                   </p>
                   {% endfor %}
                 </div>
+                <p class="support-line" data-display-role="support"{% if guide.personalization.policy.enabled %} data-lens-hidden{% endif %}>{{ screen_support_summary(race) }}</p>
+                {% if guide.personalization.policy.enabled %}
+                <p class="support-line lens-value" data-lens-only data-lens-support></p>
+                {% endif %}
               </div>
             </a>
             {% if race.grade == 'Insufficient' %}
