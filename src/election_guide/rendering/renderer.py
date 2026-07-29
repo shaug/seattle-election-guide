@@ -619,6 +619,7 @@ def validate_rendered_guide(
                 )
     expected_html_links = {
         "#guide-races",
+        "#sources",
         configuration.pdf_filename,
         "mailto:seattle-elections@dobravoda.dev",
         "/about/",
