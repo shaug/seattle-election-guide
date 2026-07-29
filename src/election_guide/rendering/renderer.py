@@ -644,7 +644,7 @@ def validate_rendered_guide(
                 )
     expected_html_links = {
         "#guide-races",
-        "#sources",
+        f"{configuration.public_site_url}/e/{view_model.metadata.election_id}/sources/",
         configuration.pdf_filename,
         "mailto:seattle-elections@dobravoda.dev",
         "/about/",
@@ -859,6 +859,7 @@ def validate_rendered_guide(
     detailed_links = _pdf_links(detailed_reader) if detailed_reader is not None else []
     expected_detailed_links = {
         configuration.project_url,
+        f"{configuration.public_site_url}/e/{view_model.metadata.election_id}/sources/",
         *(source.evidence_url for source in view_model.sources),
     }
     detailed_links_valid = detailed_reader is None or (
@@ -1629,6 +1630,11 @@ def _capture_emulated_viewport(
         cdp.command("Page.enable", session_id=session_id)
         cdp.command("Page.navigate", {"url": url}, session_id=session_id)
         cdp.wait_event("Page.loadEventFired", session_id=session_id)
+        # Issue 108: the guide has no interactive selection controls left, so
+        # the comparison source can only ever become "checked" the way a real
+        # reader reaches that state — arriving with a URL fragment naming it
+        # (returned from the dedicated sources page's own Save action), not by
+        # clicking a checkbox that no longer exists.
         sources_tree_probe = cdp.command(
             "Runtime.evaluate",
             {
@@ -1636,15 +1642,28 @@ def _capture_emulated_viewport(
                     "(async()=>{"
                     "const pause=()=>new Promise(resolve=>setTimeout(resolve,120));"
                     "const root=document.documentElement;"
-                    # Issue 97 merged the personalization controls into the
-                    # page-anchored sources tree; there is no dialog to open, so
-                    # the comparison checkbox must be reached directly (opening
-                    # its disclosure first, since a closed <details> renders
-                    # nothing inside it).
-                    "const sourcesDetails=document.getElementById('sources');"
-                    "if(sourcesDetails)sourcesDetails.open=true;"
-                    "const comparisonInput=document.querySelector("
-                    "'.sources-category-comparison [data-sources-source]');"
+                    "const bindings=JSON.parse("
+                    "document.querySelector('#lens-bindings').textContent);"
+                    "const comparisonSource=bindings.sources.find("
+                    "item=>item.panel_role==='comparison');"
+                    # A real "check just the comparison box" interaction keeps
+                    # every tallying source checked too — a fragment naming
+                    # only the comparison code would also uncheck every
+                    # tallying source (issue 97's own applySelection contract:
+                    # every code not named is unchecked), which is not the
+                    # scenario this probe means to exercise.
+                    "const tallyingCodes=bindings.sources.filter("
+                    "item=>item.panel_role!=='comparison').map(item=>item.code);"
+                    "const selectedCodes=comparisonSource"
+                    "?[...tallyingCodes,comparisonSource.code].sort():tallyingCodes;"
+                    "const params=new URLSearchParams();"
+                    "params.set('lens','2');params.set('mode','s');"
+                    "params.set('panel',bindings.panel_id);"
+                    "params.set('ph',bindings.panel_hash.slice(0,12));"
+                    "params.set('data',bindings.data_version);"
+                    "params.set('scoring',bindings.scoring.configuration_id);"
+                    "params.set('sel',selectedCodes.join(''));"
+                    "const comparisonFragment=params.toString();"
                     "const shownOnScreen=element=>{const style=getComputedStyle(element);"
                     "const rect=element.getBoundingClientRect();"
                     "return style.display!=='none'&&style.visibility==='visible'&&"
@@ -1670,7 +1689,18 @@ def _capture_emulated_viewport(
                     "if(!support||!meter)return true;"
                     "return Math.abs(support.getBoundingClientRect().right-"
                     "meter.getBoundingClientRect().right)<=1;});"
-                    "const countsAgree=()=>[...document.querySelectorAll("
+                    # A closed <dialog> has no layout box, so a descendant's
+                    # innerText cannot reliably resolve CSS visibility (e.g.
+                    # the show-times-dependent data-times-hidden/-only pair)
+                    # while its dialog stays closed; briefly opening every
+                    # closed dialog (a plain property set, not showModal(),
+                    # so multiple can be open at once with no modal conflict)
+                    # gives each one a real layout pass before reading text.
+                    "const countsAgree=()=>{"
+                    "const dialogs=[...document.querySelectorAll('[data-race-detail-dialog]')];"
+                    "const wasClosed=dialogs.filter(dialog=>!dialog.open);"
+                    "wasClosed.forEach(dialog=>{dialog.open=true;});"
+                    "const result=[...document.querySelectorAll("
                     "'.race-detail-source-list')].every(list=>{"
                     "const shown=[...list.children].filter(item=>"
                     "getComputedStyle(item).display!=='none').length;"
@@ -1680,37 +1710,31 @@ def _capture_emulated_viewport(
                     "const text=list.previousElementSibling?.innerText||'';"
                     "const claimed=Number((text.match(/(\\d+)\\s+source/)||[])[1]);"
                     "return !Number.isFinite(claimed)||claimed===shown;});"
+                    "wasClosed.forEach(dialog=>{dialog.open=false;});"
+                    "return result;};"
                     "const hidden={"
                     "pills:pills().length>0&&pills().every(item=>!shownOnScreen(item)),"
                     "wrappers:wrappers().length>0&&wrappers().every(item=>!displayed(item)),"
                     "supportAligned:supportAligned(),"
-                    "unchecked:comparisonInput?.checked===false,"
                     "noRootClass:!root.classList.contains('show-times'),"
                     "cleanHash:window.location.hash===''};"
-                    "comparisonInput?.click();await pause();"
+                    # A real hash assignment (not history.replaceState) fires a
+                    # native hashchange event, matching how a reader actually
+                    # reaches this state: returning from the sources page's own
+                    # Save redirect, never an in-page control.
+                    "window.location.hash=comparisonFragment;await pause();"
                     "const revealed={rootClass:root.classList.contains('show-times'),"
                     "pills:pills().every(item=>displayed(item)),"
-                    # Issue 97: writeLensState always encodes mode 's' now (every
-                    # source has its own persistent checkbox everywhere it
-                    # appears), so a comparison-only selection is no exception.
                     "lensFragment:window.location.hash.includes('lens=2')&&"
                     "window.location.hash.includes('sel=')&&"
                     "window.location.hash.includes('mode=s'),"
                     "wrappers:wrappers().every(item=>displayed(item)),"
                     "scoringUnchanged:scored()===before};"
                     "document.querySelector('.skip-link')?.click();await pause();"
-                    "const afterAnchor={stillShown:root.classList.contains('show-times')&&"
-                    "comparisonInput?.checked===true,anchorHash:window.location.hash==="
-                    "'#guide-races'};"
-                    "history.replaceState(history.state,'',window.location.pathname+"
-                    "window.location.search);"
-                    "window.scrollTo(0,0);"
-                    "comparisonInput?.click();await pause();"
-                    "const restored={rootClass:!root.classList.contains('show-times'),"
-                    "cleanHash:window.location.hash==='',scoringUnchanged:scored()===before};"
-                    "if(sourcesDetails)sourcesDetails.open=false;"
+                    "const afterAnchor={stillShown:root.classList.contains('show-times'),"
+                    "anchorHash:window.location.hash==='#guide-races'};"
                     "return JSON.stringify({hidden,revealed,afterAnchor,"
-                    "restored,countsAgree:countsAgree(),controlCount});})()"
+                    "countsAgree:countsAgree(),controlCount,before});})()"
                 ),
                 "returnByValue": True,
                 "awaitPromise": True,
@@ -1728,7 +1752,6 @@ def _capture_emulated_viewport(
                 "pills": True,
                 "wrappers": True,
                 "supportAligned": True,
-                "unchecked": True,
                 "noRootClass": True,
                 "cleanHash": True,
             },
@@ -1740,22 +1763,54 @@ def _capture_emulated_viewport(
                 "scoringUnchanged": True,
             },
             "afterAnchor": {"stillShown": True, "anchorHash": True},
-            "restored": {"rootClass": True, "cleanHash": True, "scoringUnchanged": True},
             "countsAgree": True,
             "controlCount": EXPECTED_SCREEN_CONTROL_COUNT,
+            "before": sources_tree_metrics.get("before"),
         }
         if sources_tree_metrics != expected_sources_tree:
             raise ValueError(f"sources tree comparison validation failed: {sources_tree_metrics}")
+        before_scores = cast(str, sources_tree_metrics["before"])
+
+        # A fresh navigation, matching how a reader actually leaves this state
+        # (Cancel/Reset on the dedicated sources page, or a plain reload) —
+        # never same-page hash clearing, which the codec deliberately leaves
+        # inert once a lens fragment is already applied (issue 108: the guide
+        # has nothing left that clears its own selection in place).
+        cdp.command("Page.navigate", {"url": url}, session_id=session_id)
+        cdp.wait_event("Page.loadEventFired", session_id=session_id)
+        restored_probe = cdp.command(
+            "Runtime.evaluate",
+            {
+                "expression": (
+                    "(()=>{"
+                    "const cards=[...document.querySelectorAll('[data-publication-race-id]')];"
+                    "const scored=()=>cards.map(card=>[card.querySelector('.screen-race-result')"
+                    "?.textContent,card.querySelector('.screen-meter')?.textContent,"
+                    "card.querySelector('.screen-race-context')?.textContent].join('|')"
+                    ".replace(/\\s+/g,' ').trim()).join('||');"
+                    "return JSON.stringify({"
+                    "rootClass:!document.documentElement.classList.contains('show-times'),"
+                    "cleanHash:window.location.hash==='',"
+                    f"scoringUnchanged:scored()==={json.dumps(before_scores)}}});"
+                    "})()"
+                ),
+                "returnByValue": True,
+            },
+            session_id=session_id,
+        )
+        restored_result = cast(dict[str, Any], restored_probe["result"])
+        if "value" not in restored_result:
+            raise ValueError(f"sources tree restoration validation failed: {restored_probe}")
+        restored_metrics = cast(dict[str, object], json.loads(cast(str, restored_result["value"])))
+        expected_restored = {"rootClass": True, "cleanHash": True, "scoringUnchanged": True}
+        if restored_metrics != expected_restored:
+            raise ValueError(f"sources tree restoration validation failed: {restored_metrics}")
+
         # Leave the comparison shown so the checks below still exercise its markup.
         cdp.command(
             "Runtime.evaluate",
             {
-                "expression": (
-                    "document.documentElement.classList.add('show-times');"
-                    "const input=document.querySelector("
-                    "'.sources-category-comparison [data-sources-source]');"
-                    "if(input)input.checked=true;true"
-                ),
+                "expression": "document.documentElement.classList.add('show-times');true",
                 "returnByValue": True,
             },
             session_id=session_id,
@@ -1837,24 +1892,11 @@ def _capture_emulated_viewport(
                     "controls.statusAllGrouped=status?.children.length===3&&"
                     "status.lastElementChild?.textContent==='· All Seattle ballot races'&&"
                     "getComputedStyle(status.lastElementChild).whiteSpace==='nowrap';"
-                    "const disclosures=["
-                    "...document.querySelectorAll('.guide-notes')].map(details=>{"
-                    "const summary=details.querySelector('summary');"
-                    "const panel=details.querySelector("
-                    "'.sources-tree');"
-                    "const visible=()=>Boolean(details.open&&panel&&"
-                    "getComputedStyle(panel).display!=='none'&&"
-                    "panel.getBoundingClientRect().height>0);"
-                    "const initialOpen=details.open;"
-                    "const initialVisible=visible();"
-                    "summary?.click();"
-                    "const toggledOpen=details.open;"
-                    "const toggledVisible=visible();"
-                    "const panelOverflow=Boolean(panel&&(panel.scrollWidth>panel.clientWidth+1||"
-                    "document.documentElement.scrollWidth>window.innerWidth+1));"
-                    "summary?.click();"
-                    "return {id:details.id,initialOpen,initialVisible,toggledOpen,toggledVisible,"
-                    "panelOverflow,restoredClosed:details.open===false};});"
+                    # Issue 108: the guide has no page-anchored <details>
+                    # disclosures left (both the methodology and sources
+                    # accordions are gone), so there is nothing left to toggle
+                    # or measure here.
+                    "const disclosures=[];"
                     "const dialogs=[...document.querySelectorAll('[data-race-detail-dialog]')];"
                     "const firstCard=cards[0];"
                     "const firstLink=firstCard?.querySelector('[data-race-detail-link]');"
@@ -2051,18 +2093,7 @@ def _capture_emulated_viewport(
                 "statusAllGrouped": True,
                 "fullMetersRightAligned": True,
             },
-            "disclosures": [
-                {
-                    "id": disclosure_id,
-                    "initialOpen": False,
-                    "initialVisible": False,
-                    "toggledOpen": True,
-                    "toggledVisible": True,
-                    "panelOverflow": False,
-                    "restoredClosed": True,
-                }
-                for disclosure_id in ("sources",)
-            ],
+            "disclosures": [],
             "dialogCount": expected_race_count,
             "copy": {
                 "copied": True,

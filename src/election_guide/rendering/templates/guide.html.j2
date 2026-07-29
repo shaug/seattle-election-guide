@@ -6,6 +6,7 @@
   <meta name="author" content="{{ config.author }}">
   <meta name="description" content="{{ config.subject }}">
   {% set canonical_url = config.public_site_url ~ '/e/' ~ guide.metadata.election_id ~ '/' %}
+  {% set sources_page_url = config.public_site_url ~ '/e/' ~ guide.metadata.election_id ~ '/sources/' %}
   <meta property="og:type" content="website">
   <meta property="og:title" content="{{ config.title }}">
   <meta property="og:description" content="{{ config.subject }}">
@@ -38,40 +39,6 @@
         <strong>{% if source.coverage_gap_status == 'access_restricted' %}Official results inaccessible{% else %}No published results found{% endif %}</strong></div>
       {% if not compact %}<p>{{ source.coverage_gap_note }}</p>{% endif %}
     </section>
-  {%- endmacro %}
-  {% macro sources_member_row(category, member_code) -%}
-    {% set psource = personalization_source_by_code[member_code] %}
-    {% set pub_source = source_by_id[psource.id] %}
-    {# The comparison category's own row never starts checked and is always
-       interactive (issue 96/97: showing the comparison predates and is
-       independent of the personalization policy), unlike an ordinary
-       tallying category's row. #}
-    {% set is_comparison = category.panel_role == 'comparison' %}
-    {# A source with zero endorsements this cycle (a coverage gap) has
-       nothing an interactive checkbox could ever toggle into a score, so it
-       stays out of this tree entirely and appears only in the coverage-gaps
-       section below, matching the prior evidence directory's own
-       "contributing" filter. #}
-    {% if pub_source.contribution_status == 'contributing' %}
-    {% set other_category_ids = psource.selection_category_ids | reject('equalto', category.id) | list %}
-    <div class="sources-row" data-sources-source-row="{{ member_code }}">
-      {% if is_comparison or guide.personalization.policy.enabled %}
-      <label class="sources-check">
-        <input type="checkbox" data-sources-source="{{ member_code }}"
-          data-sources-category-member="{{ category.code }}"{% if not is_comparison %} checked{% endif %}>
-        <a href="{{ pub_source.evidence_url }}">{{ pub_source.name }}</a>
-      </label>
-      {% else %}
-      <a class="sources-source-link" href="{{ pub_source.evidence_url }}">{{ pub_source.name }}</a>
-      {% endif %}
-      <span class="sources-count">{{ source_participation(pub_source) }}</span>
-      {% if other_category_ids %}
-      <span class="sources-also-in">also in:
-        {%- for other_id in other_category_ids %} {{ category_label_by_id[other_id] }}{% if not loop.last %},{% endif %}{% endfor -%}
-      </span>
-      {% endif %}
-    </div>
-    {% endif %}
   {%- endmacro %}
   {% macro race_detail_source_badge(source) -%}
     <span class="race-detail-category-badge">{{ source_category_label_by_key[source.category] }}</span>
@@ -181,7 +148,7 @@
         <div class="hero-kicker">{{ election_display_label }}</div>
         <h1>Seattle Progressive Elections Guide</h1>
         <p class="hero-deck">Progressive endorsement agreement at a glance. An optional comparison
-          source is available under <a href="#sources">Sources</a>.</p>
+          source is available under <a href="{{ sources_page_url }}" data-sources-link>Sources</a>.</p>
       </div>
       <div class="hero-meta" aria-label="Guide metadata">
         <span>Election {{ guide.metadata.election_date }}</span>
@@ -379,79 +346,45 @@
           <p class="visually-hidden" role="status" aria-live="polite" data-share-guide-status></p>
         </nav>
       </div>
-      <details class="guide-notes merged-sources" id="sources">
-        <summary><span>Sources ({{ guide.metadata.contributing_source_count }})</span><span aria-hidden="true">+</span></summary>
-        <div class="sources-tree">
-          <div class="sources-heading">
-            <div><p class="eyebrow">Evidence &amp; customization</p><h2>Sources contributing to this guide</h2></div>
-            <p>Counts cover the {{ guide.metadata.published_race_count }} races shown. Split is the
-              multi-candidate subset. Every source starts checked to match the audited consensus;
-              uncheck any to see how your own picks compare.</p>
-          </div>
-          {% if guide.personalization.policy.enabled %}
-          <div class="sources-actions">
-            <button type="button" class="sources-reset" data-sources-reset hidden>Reset to defaults</button>
-          </div>
-          {% endif %}
-          <p class="sources-comparison-status" data-sources-comparison-status role="status" aria-live="polite"></p>
-          <div class="sources-columns">
-            {% for category in guide.personalization.categories if category.selectable and category.panel_role != 'comparison' %}
-            <section class="sources-category" data-sources-category="{{ category.code }}">
-              <h3>
-                {% if guide.personalization.policy.enabled %}
-                <label class="sources-check sources-category-check">
-                  <input type="checkbox" data-sources-category-toggle="{{ category.code }}" checked>
-                  <span>{{ category.label }}</span>
-                </label>
-                {% else %}
-                <span>{{ category.label }}</span>
-                {% endif %}
-              </h3>
-              {% for member_code in category.member_source_codes %}
-                {{ sources_member_row(category, member_code) }}
-              {% endfor %}
-            </section>
-            {% endfor %}
-          </div>
-
-          {% set comparison_category = guide.personalization.categories | selectattr('panel_role', 'equalto', 'comparison') | first %}
-          {% if comparison_category %}
-          <section class="sources-category sources-category-comparison" data-sources-category="{{ comparison_category.code }}">
-            <p class="sources-comparison-note">Comparison only. The Times is a comparison signal
-              only: selecting it here never changes a recommendation, a count, or an agreement
-              score, and it is never counted toward the tally above.</p>
-            <h3>
-              <label class="sources-check sources-category-check">
-                <input type="checkbox" data-sources-category-toggle="{{ comparison_category.code }}">
-                <span>{{ comparison_category.label }}</span>
-              </label>
-            </h3>
-            {% for member_code in comparison_category.member_source_codes %}
-              {{ sources_member_row(comparison_category, member_code) }}
-            {% endfor %}
-          </section>
-          {% endif %}
-
-          {% if coverage_gap_sources %}
-          <section class="screen-coverage-gaps">
-            <div><p class="eyebrow">Research status</p><h2>Coverage gaps ({{ guide.metadata.coverage_gap_count }})</h2>
-              <p>These organizations were investigated, but no usable published endorsement list
-                was available. They do not contribute to consensus scores.</p></div>
-            <div class="coverage-gap-columns">
-              {% for source in coverage_gap_sources %}{{ coverage_gap_row(source) }}{% endfor %}
-            </div>
-          </section>
-          {% endif %}
-
-          {% if guide.personalization.policy.enabled %}
-          <p class="sources-version">Panel {{ guide.personalization.panel_version }} ·
-            {{ guide.personalization.panel_hash[:12] }} · Data {{ guide.metadata.data_version }}.
-            Equal weight: each checked source counts once regardless of category overlap, and a
-            source's vote splits evenly across every candidate it names. Every change updates the
-            page address live, so the address bar is always the shareable link.</p>
-          {% endif %}
+      <div class="sources-summary">
+        <p class="sources-comparison-status" data-sources-comparison-status role="status" aria-live="polite"></p>
+        {% if guide.personalization.policy.enabled %}
+        <p class="sources-summary-count" data-sources-summary-count hidden></p>
+        {% endif %}
+        <p class="sources-summary-link">
+          <a href="{{ sources_page_url }}" data-sources-link>Customize your sources</a>
+        </p>
+      </div>
+      <section class="detailed-source-directory">
+        {#
+          Issue 108 removed the screen sources tree, whose forced-open
+          <details> element was how the detailed/overflow PDF edition (a
+          fallback render used when content doesn't fit the normal two-page
+          print layout) surfaced every source's evidence link; the normal
+          print page's own source panel is hidden in that edition. This
+          plain, non-interactive list restores that coverage without reusing
+          the print panel's data-publication-source-id/data-coverage-gap-
+          source-id rows, which existing validation expects to appear
+          exactly once per source.
+        #}
+        <h2>Sources contributing to this guide</h2>
+        {% for category in guide.methodology.source_categories %}
+        <div>
+          <h3>{{ category.label }}</h3>
+          {% for source in contributing_sources if source.category == category.category %}
+          <p><a href="{{ source.evidence_url }}">{{ source.name }}</a></p>
+          {% endfor %}
         </div>
-      </details>
+        {% endfor %}
+        {% if coverage_gap_sources %}
+        <div>
+          <h3>Coverage gaps</h3>
+          {% for source in coverage_gap_sources %}
+          <p><a href="{{ source.evidence_url }}">{{ source.name }}</a></p>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </section>
       <div class="screen-footer-meta">
         <span>Election {{ guide.metadata.election_date }} · Built {{ guide.metadata.generated_at.date().isoformat() }} · Data {{ guide.metadata.data_version }} · Code {{ guide.metadata.git_commit[:12] }}<br>
           Panel {{ guide.metadata.source_panel_id }} · {{ guide.metadata.source_panel_hash }}</span>
@@ -627,6 +560,22 @@
   </div>
 
 
+  {% set bindings_sources = namespace(items=[]) %}
+  {% for s in (
+    lens_personalization.sources if guide.personalization.policy.enabled
+    else (lens_personalization.sources | selectattr('panel_role', 'equalto', 'comparison') | list)
+  ) %}
+    {% set _ = bindings_sources.items.append({
+      "id": s.id,
+      "code": s.code,
+      "panel_role": s.panel_role,
+      "selectable": s.selectable,
+      "reporting_category_id": s.reporting_category_id,
+      "selection_category_ids": s.selection_category_ids,
+      "overlap_group_ids": s.overlap_group_ids,
+      "name": source_by_id[s.id].name
+    }) %}
+  {% endfor %}
   <script type="application/json" id="lens-bindings">{{ {
     "panel_id": guide.metadata.source_panel_id,
     "panel_hash": guide.metadata.source_panel_hash,
@@ -639,10 +588,7 @@
       lens_personalization.categories if guide.personalization.policy.enabled
       else (lens_personalization.categories | selectattr('panel_role', 'equalto', 'comparison') | list)
     ),
-    "sources": (
-      lens_personalization.sources if guide.personalization.policy.enabled
-      else (lens_personalization.sources | selectattr('panel_role', 'equalto', 'comparison') | list)
-    )
+    "sources": bindings_sources.items
   } | tojson }}</script>
   {% if guide.personalization.policy.enabled %}
   <script type="application/json" id="lens-personalization">{{ lens_personalization | tojson }}</script>
@@ -690,6 +636,8 @@
   const root = document.documentElement;
   const lensNotice = document.querySelector('[data-lens-notice]');
   const comparisonStatusLine = document.querySelector('[data-sources-comparison-status]');
+  const sourcesLinks = [...document.querySelectorAll('[data-sources-link]')];
+  const sourcesPagePath = {{ sources_page_url | tojson }};
   const clearLensNotice = () => {
     if (lensNotice) {
       lensNotice.hidden = true;
@@ -698,22 +646,17 @@
   };
 
   /**
-   * Every rendered checkbox for one source code. A multi-category source
-   * repeats its own checkbox once per category it belongs to (issue 97), and
-   * the comparison source's checkbox always exists regardless of the
-   * personalization policy (issue 96); every copy of a code must always
-   * agree, so a change to any one syncs every other.
+   * Which sources currently count (issue 108): the guide has no interactive
+   * selection UI of its own anymore — a reader edits their selection on the
+   * dedicated sources page and returns with a new URL — so this is tracked
+   * directly rather than read off checkbox state. "Checked" here just means
+   * "named by the incoming lens fragment."
    */
-  const sourceInputsByCode = new Map();
-  document.querySelectorAll('[data-sources-source]').forEach((input) => {
-    const code = input.dataset.sourcesSource;
-    if (!sourceInputsByCode.has(code)) sourceInputsByCode.set(code, []);
-    sourceInputsByCode.get(code).push(input);
-  });
-  const isCodeChecked = (code) => sourceInputsByCode.get(code)?.[0]?.checked ?? false;
-  const syncSourceCode = (code, checked) => {
-    for (const input of sourceInputsByCode.get(code) ?? []) input.checked = checked;
-  };
+  let checkedCodes = new Set(
+    bindings.sources.filter((item) => item.panel_role !== 'comparison').map((item) => item.code),
+  );
+  const isCodeChecked = (code) => checkedCodes.has(code);
+  const setCheckedCodes = (codes) => { checkedCodes = new Set(codes); };
   const checkedComparisonSourceCodes = () => [...comparisonSourceCodes].filter(isCodeChecked).sort();
 
   /** The Times pill's own display toggle predates and is independent of the
@@ -787,21 +730,39 @@
     return lensState()?.raceTarget ?? null;
   };
 
+  /**
+   * The fragment that names the reader's current selection, in the exact
+   * shape the guide used to write to its own address bar. Issue 108: now
+   * used only to carry that selection over to the dedicated sources page,
+   * since the guide itself no longer has anything that changes it.
+   */
+  const currentLensFragment = () => {
+    const target = raceTarget();
+    {% if guide.personalization.policy.enabled %}
+    const sourceCodes = allCheckedSourceCodes();
+    const isDefault = isDefaultSelection();
+    {% else %}
+    const sourceCodes = checkedComparisonSourceCodes();
+    const isDefault = sourceCodes.length === 0;
+    {% endif %}
+    if (isDefault) return target ? `#${target}` : '';
+    const encoded = encodeLensFragment({ mode: 's', categoryCodes: [], sourceCodes, raceTarget: target }, context);
+    return encoded.status === 'ok' ? `#${encoded.fragment}` : '';
+  };
+  const updateSourcesLinks = () => {
+    const target = `${sourcesPagePath}${currentLensFragment()}`;
+    sourcesLinks.forEach((link) => { link.href = target; });
+  };
+
   {% if guide.personalization.policy.enabled %}
   const personalization = JSON.parse(document.querySelector('#lens-personalization').textContent);
-  const categoryToggleInputs = [...document.querySelectorAll('[data-sources-category-toggle]')];
-  const membersOfCategory = (categoryCode) => [
-    ...document.querySelectorAll(
-      `[data-sources-source][data-sources-category-member="${categoryCode}"]`,
-    ),
-  ];
   const lensBanner = document.querySelector('[data-lens-banner]');
-  const resetButton = document.querySelector('[data-sources-reset]');
-  const tallyingSourceCodes = [...sourceInputsByCode.keys()].filter(
-    (code) => !comparisonSourceCodes.has(code),
-  );
+  const sourcesSummaryCount = document.querySelector('[data-sources-summary-count]');
+  const tallyingSourceCodes = bindings.sources
+    .filter((item) => item.panel_role !== 'comparison')
+    .map((item) => item.code);
   const checkedTallyingSourceCodes = () => tallyingSourceCodes.filter(isCodeChecked).sort();
-  const allCheckedSourceCodes = () => [...sourceInputsByCode.keys()].filter(isCodeChecked).sort();
+  const allCheckedSourceCodes = () => bindings.sources.map((item) => item.code).filter(isCodeChecked).sort();
 
   /**
    * Whether the tallying (scored) selection alone matches the full panel.
@@ -815,35 +776,20 @@
   /**
    * The audited default: every tallying source checked, no comparison source
    * checked. Represented by the absence of a lens fragment (issue 97's own
-   * "every checkbox starts checked" design), so the reset action and a link
-   * naming nothing both reach exactly this same state. Comparison state
-   * counts here (unlike isDefaultTallyingSelection above) because showing it
-   * must still survive a reload or a shared link.
+   * "every checkbox starts checked" design), so a link naming nothing reaches
+   * exactly this same state. Comparison state counts here (unlike
+   * isDefaultTallyingSelection above) because showing it must still survive a
+   * reload or a shared link.
    */
   const isDefaultSelection = () =>
     isDefaultTallyingSelection() && checkedComparisonSourceCodes().length === 0;
 
-  /** Reflect whether every, some, or no member of a category is checked onto
-   * that category's own header checkbox: checked, indeterminate, or clear. */
-  const updateCategoryToggleStates = () => {
-    categoryToggleInputs.forEach((toggle) => {
-      const categoryCode = toggle.dataset.sourcesCategoryToggle;
-      const members = membersOfCategory(categoryCode);
-      const checkedCount = members.filter((member) => member.checked).length;
-      // An empty category is vacuously "fully checked": zero members can
-      // never disagree with the checked default, so it must not flip the
-      // header checkbox off just because it currently has nothing to list.
-      toggle.checked = checkedCount === members.length;
-      toggle.indeterminate = checkedCount > 0 && checkedCount < members.length;
-    });
-  };
-
   /**
    * Per-race presentation data the lens payload does not carry: candidate
-   * display labels and source display names. Both already exist in the
-   * server-rendered, audited-only DOM (the race detail dialog's candidate
-   * headings and the sources tree's own rows), so this reads them once
-   * rather than publishing a second copy through the lens payload.
+   * display labels and source display names. Candidate labels already exist
+   * in the server-rendered, audited-only DOM (the race detail dialog's
+   * candidate headings); source names come from the lens bindings payload
+   * (issue 108: the guide no longer has a sources tree DOM to read them from).
    */
   const raceCards = new Map(
     [...document.querySelectorAll('[data-publication-race-id]')].map((card) => [
@@ -863,12 +809,7 @@
       ),
     ]),
   );
-  const sourceNameByCode = new Map(
-    [...sourceInputsByCode.entries()].map(([code, inputs]) => [
-      code,
-      inputs[0]?.closest('[data-sources-source-row]')?.querySelector('a')?.textContent ?? code,
-    ]),
-  );
+  const sourceNameByCode = new Map(bindings.sources.map((item) => [item.code, item.name]));
   const raceDataById = new Map(personalization.races.map((race) => [race.race_id, race]));
 
   // The full selectable panel with no direct picks reproduces the published
@@ -995,13 +936,17 @@
    * activate only on an explicit change).
    */
   const recomputePersonalizedResults = () => {
+    const tallyingCodes = checkedTallyingSourceCodes();
+    if (sourcesSummaryCount) {
+      sourcesSummaryCount.hidden = false;
+      sourcesSummaryCount.textContent = `Viewing ${tallyingCodes.length} of ${tallyingSourceCodes.length} sources.`;
+    }
     const personalized = !isDefaultTallyingSelection();
     root.classList.toggle('lens-personalized', personalized);
     if (!personalized) {
       if (lensBanner) lensBanner.hidden = true;
       return null;
     }
-    const tallyingCodes = checkedTallyingSourceCodes();
     const results = scoreSelection(personalization, { categoryCodes: [], sourceCodes: tallyingCodes });
     if (lensBanner) {
       lensBanner.hidden = false;
@@ -1016,78 +961,30 @@
   };
   {% endif %}
 
-  /** Every path that can change what the address bar encodes — a checkbox, a
-   * category toggle, or reset — runs through here. */
+  /** Every path that can change the reader's selection — applying a decoded
+   * fragment on load or on hashchange — runs through here. */
   const refreshSelectionUi = () => {
     clearLensNotice();
     {% if guide.personalization.policy.enabled %}
-    updateCategoryToggleStates();
     recomputePersonalizedResults();
-    if (resetButton) resetButton.hidden = isDefaultSelection();
     {% endif %}
     applyComparisonVisibility();
+    updateSourcesLinks();
   };
 
   /**
-   * Apply a decoded (or migrated) selection to every checkbox: a category
-   * code expands to its current member codes (backward compatible with a
-   * link shared before issue 97's per-source checkboxes existed), unioned
-   * with any directly named source codes. Anything else stays unchecked.
+   * Apply a decoded (or migrated) selection: a category code expands to its
+   * current member codes (backward compatible with a link shared before
+   * issue 97's per-source selection existed), unioned with any directly
+   * named source codes. Anything else is unchecked.
    */
   const applySelection = (selection) => {
     const categoryMemberCodes = (selection?.categoryCodes ?? []).flatMap(
       (code) => categoryMemberCodesByCode.get(code) ?? [],
     );
     const effectiveCodes = new Set([...categoryMemberCodes, ...(selection?.sourceCodes ?? [])]);
-    for (const code of sourceInputsByCode.keys()) {
-      syncSourceCode(code, effectiveCodes.has(code));
-    }
+    setCheckedCodes(bindings.sources.map((item) => item.code).filter((code) => effectiveCodes.has(code)));
     refreshSelectionUi();
-  };
-
-  /**
-   * Write the whole lens state (Times, and once enabled, mode and selection)
-   * through the codec in one place, so the two concerns never race on the
-   * same URL fragment.
-   *
-   * The audited baseline with the comparison hidden and no selection is the
-   * published default, so it is represented by the absence of a lens
-   * fragment: a default guide keeps the clean URLs and plain race permalinks
-   * it has always had.
-   */
-  /**
-   * Write the whole lens state through the codec in one place, so every
-   * source checkbox's change and the URL never race. The audited default —
-   * every tallying source checked, no comparison source checked — is the
-   * published default, so it is represented by the absence of a lens
-   * fragment: a default guide keeps the clean URLs and plain race permalinks
-   * it has always had.
-   */
-  const writeLensState = () => {
-    const target = raceTarget();
-    {% if guide.personalization.policy.enabled %}
-    const sourceCodes = allCheckedSourceCodes();
-    const isDefault = isDefaultSelection();
-    {% else %}
-    const sourceCodes = checkedComparisonSourceCodes();
-    const isDefault = sourceCodes.length === 0;
-    {% endif %}
-    if (isDefault) {
-      const fragment = target ? `#${target}` : '';
-      history.replaceState(
-        history.state,
-        '',
-        `${window.location.pathname}${window.location.search}${fragment}`,
-      );
-      return;
-    }
-    const encoded = encodeLensFragment({ mode: 's', categoryCodes: [], sourceCodes, raceTarget: target }, context);
-    if (encoded.status !== 'ok') return;
-    history.replaceState(
-      history.state,
-      '',
-      `${window.location.pathname}${window.location.search}#${encoded.fragment}`,
-    );
   };
 
   {% if guide.personalization.policy.enabled %}
@@ -1104,7 +1001,6 @@
   if (initialLensOutcome.state !== null) {
     applySelection(initialLensOutcome.state);
   } else {
-    updateCategoryToggleStates();
     recomputePersonalizedResults();
   }
   if (lensNotice && initialLensOutcome.notice) {
@@ -1133,36 +1029,15 @@
   if (initialDisabledState !== null) applySelection(initialDisabledState);
   {% endif %}
   applyComparisonVisibility();
+  updateSourcesLinks();
 
-  document.querySelectorAll('[data-sources-source]').forEach((input) => {
-    input.addEventListener('change', () => {
-      syncSourceCode(input.dataset.sourcesSource, input.checked);
-      refreshSelectionUi();
-      writeLensState();
-    });
-  });
-  {% if guide.personalization.policy.enabled %}
-  categoryToggleInputs.forEach((toggle) => {
-    toggle.addEventListener('change', () => {
-      const categoryCode = toggle.dataset.sourcesCategoryToggle;
-      const members = membersOfCategory(categoryCode);
-      members.forEach((member) => syncSourceCode(member.dataset.sourcesSource, toggle.checked));
-      refreshSelectionUi();
-      writeLensState();
-    });
-  });
-  resetButton?.addEventListener('click', () => {
-    for (const code of tallyingSourceCodes) syncSourceCode(code, true);
-    for (const code of comparisonSourceCodes) syncSourceCode(code, false);
-    refreshSelectionUi();
-    writeLensState();
-  });
-  {% endif %}
-  // A plain in-page anchor (the skip link) also fires hashchange; the codec's
-  // own absent/legacy/unrecognized_fragment classification already excludes
-  // that case (lensState/lensOutcome return null), so this only ever reacts
-  // to a genuine lens link.
+  // A plain in-page anchor (the skip link) also fires hashchange, and so does
+  // opening or closing a race-detail dialog; the Sources link's target always
+  // needs the current race target regardless, but only a genuine lens-shaped
+  // change (lensState/lensOutcome return null otherwise) also re-applies a
+  // selection.
   window.addEventListener('hashchange', () => {
+    updateSourcesLinks();
     const state = lensState();
     if (!state) return;
     applySelection(state);
@@ -1174,9 +1049,6 @@
     const edition = initialQuery.get('edition');
     if (edition === 'compact' || edition === 'detailed') {
       document.documentElement.classList.add(`${edition}-edition`);
-    }
-    if (edition === 'detailed') {
-      document.querySelectorAll('.guide-notes').forEach(details => details.setAttribute('open', ''));
     }
     const centerPrintInk = () => {
       if (window.__disablePrintInkCentering) return;
