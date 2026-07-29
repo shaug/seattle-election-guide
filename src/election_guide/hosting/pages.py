@@ -17,8 +17,9 @@ from election_guide.hosting.models import (
     PublishedElection,
     SiteManifest,
 )
+from election_guide.publication.models import PublicationViewModel
 from election_guide.release.models import ReleaseManifest, ReleaseStatus
-from election_guide.rendering.renderer import TEMPLATE_DIR
+from election_guide.rendering.renderer import TEMPLATE_DIR, render_sources_document
 from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
 
 PAGES_HEADERS = """/*
@@ -52,6 +53,7 @@ class StagedPagesSite:
     html_path: Path
     pdf_paths: tuple[Path, ...]
     election_paths: tuple[Path, ...]
+    sources_path: Path
 
 
 @dataclass(frozen=True)
@@ -120,7 +122,7 @@ def stage_pages_site(
     output_dir.parent.mkdir(parents=True, exist_ok=True)
     stage = Path(tempfile.mkdtemp(prefix=f".{output_dir.name}.staging-", dir=output_dir.parent))
     try:
-        public_paths = _stage_verified_bundles(stage, verified)
+        public_paths = _stage_verified_bundles(stage, verified, site_manifest.canonical_origin)
         archive_path = stage / "e" / "index.html"
         archive_path.write_text(_archive_html(site_manifest), encoding="utf-8")
         public_paths.update({"/e/", "/e/index.html"})
@@ -182,6 +184,7 @@ def stage_pages_site(
         election_paths=tuple(
             output_dir / "e" / bundle.declaration.election_id for bundle in verified
         ),
+        sources_path=current_root / "sources" / "index.html",
     )
 
 
@@ -238,6 +241,7 @@ def _verify_staged_pages_site(
                 f"e/{declared.election_id}/index.html",
                 f"e/{declared.election_id}/release-status.json",
                 f"e/{declared.election_id}/release-manifest.json",
+                f"e/{declared.election_id}/sources/index.html",
                 *(
                     f"e/{declared.election_id}/{Path(relative).name}"
                     for relative in _guide_pdf_artifacts(status)
@@ -343,7 +347,11 @@ def _verify_bundle(declaration: PublishedElection, bundle_dir: Path) -> _Verifie
     return _VerifiedBundle(declaration, bundle_dir, status, manifest)
 
 
-def _stage_verified_bundles(stage: Path, bundles: list[_VerifiedBundle]) -> set[str]:
+def _stage_verified_bundles(
+    stage: Path,
+    bundles: list[_VerifiedBundle],
+    canonical_origin: str,
+) -> set[str]:
     public_paths: set[str] = set()
     for bundle in bundles:
         election_root = stage / "e" / bundle.declaration.election_id
@@ -369,10 +377,30 @@ def _stage_verified_bundles(stage: Path, bundles: list[_VerifiedBundle]) -> set[
             election_root / "release-manifest.json",
         )
 
+        sources_dir = election_root / "sources"
+        sources_dir.mkdir()
+        (sources_dir / "index.html").write_text(
+            _sources_html(bundle.directory, canonical_origin), encoding="utf-8"
+        )
+
         root_path = f"/e/{bundle.declaration.election_id}/"
         public_paths.update({root_path, f"{root_path}index.html"})
+        public_paths.update({f"{root_path}sources/", f"{root_path}sources/index.html"})
         public_paths.update(f"{root_path}{name}" for name in names)
     return public_paths
+
+
+def _sources_html(bundle_directory: Path, canonical_origin: str) -> str:
+    """Render the per-election sources/customization page (issue 107).
+
+    Mirrors `_about_html`'s pattern of a page-generator function invoked
+    during staging, but per election rather than site-wide, and consuming the
+    same `PublicationViewModel` the guide itself already renders from.
+    """
+    view_model = PublicationViewModel.model_validate(
+        read_json(bundle_directory / "data/publication_view_model.json")
+    )
+    return render_sources_document(view_model, public_site_url=canonical_origin)
 
 
 def _guide_pdf_artifacts(status: ReleaseStatus) -> tuple[str, ...]:

@@ -20,9 +20,16 @@ from election_guide.hosting import (
 )
 from election_guide.hosting.models import PublishedElection, SiteManifest
 from election_guide.hosting.pages import _about_html  # pyright: ignore[reportPrivateUsage]
+from election_guide.publication.models import PublicationViewModel
 from election_guide.release.models import REQUIRED_RELEASE_ARTIFACTS, ReleaseStatus
+from election_guide.rendering.renderer import render_sources_document
 from election_guide.serialization import canonical_json_bytes
-from tests.test_rendering import _evaluate_in_chrome  # pyright: ignore[reportPrivateUsage]
+from tests.test_rendering import (  # pyright: ignore[reportPrivateUsage]
+    _evaluate_in_chrome,  # pyright: ignore[reportPrivateUsage]
+    _lens_fragment,  # pyright: ignore[reportPrivateUsage]
+    _personalization_enabled_view_model,  # pyright: ignore[reportPrivateUsage]
+    _tallying_selectable,  # pyright: ignore[reportPrivateUsage]
+)
 
 COMMIT = "a" * 40
 OLDER_COMMIT = "c" * 40
@@ -250,7 +257,7 @@ def test_verify_staged_site_rejects_tamper_deletion_and_unexpected_assets(
         expected_current_git_commit=COMMIT,
     )
     assert verified.current_election_id == CURRENT_ID
-    assert len(verified.assets) == 13
+    assert len(verified.assets) == 15
 
     tampered = tmp_path / "tampered"
     shutil.copytree(output, tampered)
@@ -363,7 +370,7 @@ def test_hosting_stage_cli_reports_composed_site(tmp_path: Path) -> None:
         ],
     )
     assert verify_result.exit_code == 0, verify_result.output
-    assert f"current {CURRENT_ID}; 12 assets" in verify_result.output
+    assert f"current {CURRENT_ID}; 14 assets" in verify_result.output
 
 
 def test_about_page_share_button_uses_web_share_then_falls_back_to_copy(
@@ -443,6 +450,223 @@ def test_about_page_share_button_uses_web_share_then_falls_back_to_copy(
     assert result["afterCancelledShare"] == "SENTINEL"
     assert result["afterClipboardCopy"] == "Link copied."
     assert result["afterExecCommandCopy"] == "Link copied."
+
+
+def _selectable_tallying_codes(view_model: PublicationViewModel) -> list[str]:
+    return sorted(
+        {
+            code
+            for category in view_model.personalization.categories
+            if _tallying_selectable(category)
+            for code in category.member_source_codes
+        }
+    )
+
+
+def _selectable_comparison_codes(view_model: PublicationViewModel) -> list[str]:
+    return sorted(
+        {
+            code
+            for category in view_model.personalization.categories
+            if category.selectable and category.panel_role == "comparison"
+            for code in category.member_source_codes
+        }
+    )
+
+
+def test_sources_page_renders_every_category_and_source_like_the_guide_tree(
+    tmp_path: Path,
+) -> None:
+    """Issue 107: the standalone page is the new home for the guide's own
+    merged sources tree, not a redesign of it, so every selectable category
+    and source must render with the same content and structure."""
+    view_model = _personalization_enabled_view_model(tmp_path)
+    html = render_sources_document(view_model, public_site_url="https://seattleelections.guide")
+
+    for category in view_model.personalization.categories:
+        if not category.selectable:
+            continue
+        assert f'data-sources-category="{category.code}"' in html
+        for member_code in category.member_source_codes:
+            assert f'data-sources-source="{member_code}"' in html
+            assert f'data-sources-category-member="{category.code}"' in html
+
+    assert "sources-category-comparison" in html
+    assert "sources-comparison-note" in html
+    tallying_codes = _selectable_tallying_codes(view_model)
+    comparison_codes = _selectable_comparison_codes(view_model)
+    assert tallying_codes, "fixture must exercise at least one tallying source"
+    assert comparison_codes, "fixture must exercise the comparison source"
+
+    # Every tallying source starts checked (the audited default); the
+    # comparison source never starts checked (issue 96/97).
+    for row in html.split('<div class="sources-row"')[1:]:
+        row_head = row.split(">", 1)[0]
+        if any(f'data-sources-source="{code}"' in row for code in comparison_codes):
+            assert "checked" not in row_head
+        elif any(f'data-sources-source="{code}"' in row for code in tallying_codes):
+            assert "checked" in row
+
+    assert '<link rel="canonical" href="https://seattleelections.guide/e/' in html
+    assert f"/e/{view_model.metadata.election_id}/sources/" in html
+    assert "data-sources-save" in html
+    assert "data-sources-cancel" in html
+    assert "data-sources-page-reset" in html
+
+
+def test_sources_page_loading_with_a_fragment_checks_exactly_its_sources(
+    tmp_path: Path,
+) -> None:
+    """Acceptance criterion: loading the page with a fragment shows exactly
+    the sources that fragment encodes as checked."""
+    view_model = _personalization_enabled_view_model(tmp_path)
+    tallying_codes = _selectable_tallying_codes(view_model)
+    chosen = tallying_codes[0]
+    fragment = _lens_fragment(view_model, mode="s", source_codes=(chosen,))
+
+    html_path = tmp_path / "sources.html"
+    html_path.write_text(
+        render_sources_document(view_model, public_site_url="https://seattleelections.guide"),
+        encoding="utf-8",
+    )
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (() => {
+          const codes = new Set();
+          document.querySelectorAll('[data-sources-source]').forEach((input) => {
+            if (input.checked) codes.add(input.dataset.sourcesSource);
+          });
+          return JSON.stringify({
+            checked: [...codes].sort(),
+            count: document.querySelector('[data-sources-count]').textContent,
+          });
+        })()
+        """,
+        initial_url=f"{html_path.resolve().as_uri()}#{fragment}",
+    )
+    assert result["checked"] == [chosen]
+    assert result["count"] == f"Viewing 1 of {len(tallying_codes)} sources."
+
+
+def _sources_page_actions_script(setup: str) -> str:
+    """Read the Save/Cancel/Reset links' `href` after `setup` runs.
+
+    These are real `<a href>` elements kept in sync reactively (see
+    `refreshSelectionUi`/`saveTarget` in sources.html.j2), so their target can
+    be read directly without ever clicking through a real navigation."""
+    return f"""
+        (() => {{
+          {setup}
+          return JSON.stringify({{
+            save: document.querySelector('[data-sources-save]').getAttribute('href'),
+            cancel: document.querySelector('[data-sources-cancel]').getAttribute('href'),
+            reset: document.querySelector('[data-sources-page-reset]').getAttribute('href'),
+          }});
+        }})()
+    """
+
+
+def test_sources_page_save_at_the_default_selection_redirects_with_no_fragment(
+    tmp_path: Path,
+) -> None:
+    view_model = _personalization_enabled_view_model(tmp_path)
+    html_path = tmp_path / "sources.html"
+    html_path.write_text(
+        render_sources_document(view_model, public_site_url="https://seattleelections.guide"),
+        encoding="utf-8",
+    )
+    result = _evaluate_in_chrome(html_path, _sources_page_actions_script(""))
+    assert result["save"] == f"/e/{view_model.metadata.election_id}/"
+
+
+def test_sources_page_save_re_encodes_the_edited_selection(tmp_path: Path) -> None:
+    """Acceptance criterion: Save re-encodes the edited selection and
+    redirects to `/e/<election_id>/#<fragment>`."""
+    view_model = _personalization_enabled_view_model(tmp_path)
+    tallying_codes = _selectable_tallying_codes(view_model)
+    comparison_codes = _selectable_comparison_codes(view_model)
+    dropped = tallying_codes[0]
+    added_comparison = comparison_codes[0]
+
+    html_path = tmp_path / "sources.html"
+    html_path.write_text(
+        render_sources_document(view_model, public_site_url="https://seattleelections.guide"),
+        encoding="utf-8",
+    )
+    result = _evaluate_in_chrome(
+        html_path,
+        _sources_page_actions_script(
+            f"""
+              const uncheck = document.querySelector('[data-sources-source="{dropped}"]');
+              uncheck.checked = false;
+              uncheck.dispatchEvent(new Event('change', {{ bubbles: true }}));
+              const check = document.querySelector('[data-sources-source="{added_comparison}"]');
+              check.checked = true;
+              check.dispatchEvent(new Event('change', {{ bubbles: true }}));
+            """
+        ),
+    )
+    captured = result["save"]
+    assert captured.startswith(f"/e/{view_model.metadata.election_id}/#")
+    fragment = captured.split("#", 1)[1]
+    params = {
+        key: value
+        for key, _, value in (part.partition("=") for part in fragment.split("&") if part)
+    }
+    selection = params.get("sel", "")
+    tokens = [selection[i : i + 4] for i in range(0, len(selection), 4)]
+    assert dropped not in tokens
+    assert added_comparison in tokens
+    for code in tallying_codes:
+        if code != dropped:
+            assert code in tokens
+
+
+def test_sources_page_cancel_redirects_with_the_original_incoming_fragment(
+    tmp_path: Path,
+) -> None:
+    """Acceptance criterion: Cancel redirects using the original incoming
+    fragment, unchanged, even after the reader edited checkboxes."""
+    view_model = _personalization_enabled_view_model(tmp_path)
+    tallying_codes = _selectable_tallying_codes(view_model)
+    fragment = _lens_fragment(view_model, mode="s", source_codes=(tallying_codes[0],))
+
+    html_path = tmp_path / "sources.html"
+    html_path.write_text(
+        render_sources_document(view_model, public_site_url="https://seattleelections.guide"),
+        encoding="utf-8",
+    )
+    result = _evaluate_in_chrome(
+        html_path,
+        _sources_page_actions_script(
+            f"""
+              const toggle = document.querySelector('[data-sources-source="{tallying_codes[1]}"]');
+              toggle.checked = true;
+              toggle.dispatchEvent(new Event('change', {{ bubbles: true }}));
+            """
+        ),
+        initial_url=f"{html_path.resolve().as_uri()}#{fragment}",
+    )
+    assert result["cancel"] == f"/e/{view_model.metadata.election_id}/#{fragment}"
+
+
+def test_sources_page_reset_redirects_with_no_fragment(tmp_path: Path) -> None:
+    view_model = _personalization_enabled_view_model(tmp_path)
+    tallying_codes = _selectable_tallying_codes(view_model)
+    fragment = _lens_fragment(view_model, mode="s", source_codes=(tallying_codes[0],))
+
+    html_path = tmp_path / "sources.html"
+    html_path.write_text(
+        render_sources_document(view_model, public_site_url="https://seattleelections.guide"),
+        encoding="utf-8",
+    )
+    result = _evaluate_in_chrome(
+        html_path,
+        _sources_page_actions_script(""),
+        initial_url=f"{html_path.resolve().as_uri()}#{fragment}",
+    )
+    assert result["reset"] == f"/e/{view_model.metadata.election_id}/"
 
 
 def test_wrangler_and_workflow_keep_deployment_pinned_and_gated() -> None:
@@ -579,6 +803,23 @@ def _write_archive_bundles(
     return current, older
 
 
+def _bundle_view_model(root: Path, *, election_id: str) -> PublicationViewModel:
+    """A real, valid `PublicationViewModel` for one hosting-fixture bundle.
+
+    The shared rendering fixture's own election identity is unrelated to this
+    archive's election IDs, so metadata is overridden and revalidated to match.
+    """
+    base = _personalization_enabled_view_model(root)
+    updated = base.model_copy(
+        update={
+            "metadata": base.metadata.model_copy(
+                update={"election_id": election_id, "election_name": election_id.replace("-", " ")}
+            )
+        }
+    )
+    return PublicationViewModel.model_validate(updated.model_dump(mode="json"))
+
+
 def _write_release_bundle(
     root: Path,
     *,
@@ -618,6 +859,14 @@ def _write_release_bundle(
             path.write_bytes(html)
         elif relative in {pdf_relative, detailed_pdf_relative}:
             path.write_bytes(b"%PDF-1.7\n")
+        elif relative == "data/publication_view_model.json":
+            path.write_bytes(
+                canonical_json_bytes(
+                    _bundle_view_model(root / "view-model-src", election_id=election_id).model_dump(
+                        mode="json"
+                    )
+                )
+            )
         else:
             path.write_text(f"fixture for {relative}\n", encoding="utf-8")
 

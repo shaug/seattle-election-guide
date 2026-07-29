@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <meta name="description" content="Choose which sources count toward your personalized {{ guide.metadata.election_name }} results.">
+  {% set guide_path = '/e/' ~ guide.metadata.election_id ~ '/' %}
+  {% set canonical_url = public_site_url ~ guide_path ~ 'sources/' %}
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Sources &mdash; {{ guide.metadata.election_name }}">
+  <meta property="og:url" content="{{ canonical_url }}">
+  <link rel="canonical" href="{{ canonical_url }}">
+  <title>Sources &mdash; {{ guide.metadata.election_name }} &mdash; Seattle Elections Guide</title>
+  <style>
+    {{ stylesheet | safe }}
+    .page { max-width: 64rem; margin: 0 auto; background: var(--paper); min-height: 100vh; }
+    .page-header {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+      gap: .75rem 1.5rem; color: var(--white); background: var(--navy);
+      padding: 1.25rem clamp(1rem, 4vw, 2.5rem); border-bottom: .4rem solid var(--teal);
+    }
+    .page-header p {
+      min-width: 0; margin: 0; font-size: .78rem; font-weight: 800;
+      letter-spacing: .1em; text-transform: uppercase;
+    }
+    .page-header nav a { color: #9ee7df; font-weight: 800; font-size: .85rem; }
+    main { padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 3rem; }
+    main h1 {
+      margin: 0 0 .35rem; color: var(--navy);
+      font: 800 clamp(1.6rem, 4vw, 2.3rem)/1.05 Georgia, serif;
+    }
+    main > p.lede { margin: 0 0 1.5rem; color: var(--muted); max-width: 60ch; }
+    .sources-tree { border-top: none; background: none; padding: 0; }
+    .sources-page-actions {
+      display: flex; flex-wrap: wrap; gap: .6rem 1rem; align-items: center; margin: 0 0 1.25rem;
+    }
+    .sources-page-actions a {
+      display: inline-block; padding: .55rem 1.1rem; border-radius: .3rem;
+      font: inherit; font-weight: 800; text-decoration: none; cursor: pointer;
+    }
+    .sources-save { border: none; background: var(--teal); color: var(--white); }
+    .sources-save:hover { background: #0a9d8f; }
+    .sources-cancel, .sources-page-reset {
+      border: 1px solid #829ab1; background: var(--white); color: var(--ink);
+    }
+    .sources-cancel:hover, .sources-page-reset:hover { background: #eef3f6; }
+    .sources-page-actions a:focus-visible { outline: .2rem solid #f0a928; outline-offset: .15rem; }
+    .sources-page-count { margin: 0 0 1rem; font-size: .85rem; color: var(--muted); font-weight: 700; }
+    .page-footer {
+      border-top: 1px solid #cbd2d9; padding: 1.25rem clamp(1rem, 4vw, 2.5rem) 2rem;
+      color: var(--muted); font-size: .85rem;
+    }
+    .page-footer a { font-weight: 700; }
+  </style>
+</head>
+<body>
+  {% macro source_participation(source, compact=false) -%}
+    {% if compact %}{{ source.endorsement_count }}{% if source.panel_role == 'comparison' %} picks{% endif %} · {{ source.split_endorsement_count }} split{% else %}{% if source.panel_role == 'comparison' %}{{ source.endorsement_count }} picks{% else %}{{ source.endorsement_count }} endorsements{% endif %} · {{ source.split_endorsement_count }} split{% endif %}
+  {%- endmacro %}
+  {% macro coverage_gap_row(source, compact=false) -%}
+    <section class="coverage-gap-row"
+      data-coverage-gap-source-id="{{ source.id }}"
+      data-coverage-gap-status="{{ source.coverage_gap_status }}">
+      <div><a href="{{ source.evidence_url }}">{{ source.name }}</a>
+        <strong>{% if source.coverage_gap_status == 'access_restricted' %}Official results inaccessible{% else %}No published results found{% endif %}</strong></div>
+      {% if not compact %}<p>{{ source.coverage_gap_note }}</p>{% endif %}
+    </section>
+  {%- endmacro %}
+  {% macro sources_member_row(category, member_code) -%}
+    {% set psource = personalization_source_by_code[member_code] %}
+    {% set pub_source = source_by_id[psource.id] %}
+    {# The comparison category's own row never starts checked and is always
+       interactive (issue 96/97: showing the comparison predates and is
+       independent of the personalization policy), unlike an ordinary
+       tallying category's row. #}
+    {% set is_comparison = category.panel_role == 'comparison' %}
+    {# A source with zero endorsements this cycle (a coverage gap) has
+       nothing an interactive checkbox could ever toggle into a score, so it
+       stays out of this tree entirely and appears only in the coverage-gaps
+       section below, matching the guide's own "contributing" filter. #}
+    {% if pub_source.contribution_status == 'contributing' %}
+    {% set other_category_ids = psource.selection_category_ids | reject('equalto', category.id) | list %}
+    <div class="sources-row" data-sources-source-row="{{ member_code }}">
+      {% if is_comparison or guide.personalization.policy.enabled %}
+      <label class="sources-check">
+        <input type="checkbox" data-sources-source="{{ member_code }}"
+          data-sources-category-member="{{ category.code }}"{% if not is_comparison %} checked{% endif %}>
+        <a href="{{ pub_source.evidence_url }}">{{ pub_source.name }}</a>
+      </label>
+      {% else %}
+      <a class="sources-source-link" href="{{ pub_source.evidence_url }}">{{ pub_source.name }}</a>
+      {% endif %}
+      <span class="sources-count">{{ source_participation(pub_source) }}</span>
+      {% if other_category_ids %}
+      <span class="sources-also-in">also in:
+        {%- for other_id in other_category_ids %} {{ category_label_by_id[other_id] }}{% if not loop.last %},{% endif %}{% endfor -%}
+      </span>
+      {% endif %}
+    </div>
+    {% endif %}
+  {%- endmacro %}
+
+  {% set coverage_gap_sources = guide.sources | selectattr('contribution_status', 'equalto', 'coverage_gap') | list %}
+  <a class="skip-link" href="#sources-main">Skip to content</a>
+  <div class="page">
+    <header class="page-header">
+      <p>Seattle Elections Guide</p>
+      <nav aria-label="Guide links">
+        <a href="{{ guide_path }}">Back to the {{ guide.metadata.election_name }} guide</a>
+      </nav>
+    </header>
+    <main id="sources-main">
+      <h1>Customize your sources</h1>
+      <p class="lede">Choose which sources count toward your personalized results, then save to return to
+        the guide with your choice reflected there. Your selection lives entirely in this page's address
+        &mdash; nothing is stored anywhere else.</p>
+
+      <div class="sources-page-actions">
+        <a class="sources-save" data-sources-save href="{{ guide_path }}">Save</a>
+        <a class="sources-cancel" data-sources-cancel href="{{ guide_path }}">Cancel</a>
+        <a class="sources-page-reset" data-sources-page-reset href="{{ guide_path }}">Reset to defaults</a>
+      </div>
+      <p class="sources-page-count" data-sources-count role="status" aria-live="polite"></p>
+      <p class="sources-comparison-status" data-sources-comparison-status role="status" aria-live="polite"></p>
+
+      <div class="sources-tree">
+        <div class="sources-columns">
+          {% for category in guide.personalization.categories if category.selectable and category.panel_role != 'comparison' %}
+          <section class="sources-category" data-sources-category="{{ category.code }}">
+            <h3>
+              {% if guide.personalization.policy.enabled %}
+              <label class="sources-check sources-category-check">
+                <input type="checkbox" data-sources-category-toggle="{{ category.code }}" checked>
+                <span>{{ category.label }}</span>
+              </label>
+              {% else %}
+              <span>{{ category.label }}</span>
+              {% endif %}
+            </h3>
+            {% for member_code in category.member_source_codes %}
+              {{ sources_member_row(category, member_code) }}
+            {% endfor %}
+          </section>
+          {% endfor %}
+        </div>
+
+        {% set comparison_category = guide.personalization.categories | selectattr('panel_role', 'equalto', 'comparison') | first %}
+        {% if comparison_category %}
+        <section class="sources-category sources-category-comparison" data-sources-category="{{ comparison_category.code }}">
+          <p class="sources-comparison-note">Comparison only. The Times is a comparison signal
+            only: selecting it here never changes a recommendation, a count, or an agreement
+            score, and it is never counted toward the tally above.</p>
+          <h3>
+            <label class="sources-check sources-category-check">
+              <input type="checkbox" data-sources-category-toggle="{{ comparison_category.code }}">
+              <span>{{ comparison_category.label }}</span>
+            </label>
+          </h3>
+          {% for member_code in comparison_category.member_source_codes %}
+            {{ sources_member_row(comparison_category, member_code) }}
+          {% endfor %}
+        </section>
+        {% endif %}
+
+        {% if coverage_gap_sources %}
+        <section class="screen-coverage-gaps">
+          <div><p class="eyebrow">Research status</p><h2>Coverage gaps ({{ guide.metadata.coverage_gap_count }})</h2>
+            <p>These organizations were investigated, but no usable published endorsement list
+              was available. They do not contribute to consensus scores.</p></div>
+          <div class="coverage-gap-columns">
+            {% for source in coverage_gap_sources %}{{ coverage_gap_row(source) }}{% endfor %}
+          </div>
+        </section>
+        {% endif %}
+
+        {% if guide.personalization.policy.enabled %}
+        <p class="sources-version">Panel {{ guide.personalization.panel_version }} ·
+          {{ guide.personalization.panel_hash[:12] }} · Data {{ guide.metadata.data_version }}.
+          Equal weight: each checked source counts once regardless of category overlap, and a
+          source's vote splits evenly across every candidate it names.</p>
+        {% endif %}
+      </div>
+    </main>
+    <footer class="page-footer">
+      <nav aria-label="Guide links">
+        <a href="{{ guide_path }}">{{ guide.metadata.election_name }} guide</a> ·
+        <a href="/about/">About &amp; FAQ</a>
+      </nav>
+    </footer>
+  </div>
+
+  <script type="application/json" id="lens-bindings">{{ {
+    "panel_id": guide.metadata.source_panel_id,
+    "panel_hash": guide.metadata.source_panel_hash,
+    "data_version": guide.metadata.data_version,
+    "scoring": {"configuration_id": guide.personalization.scoring.configuration_id},
+    "policy": {
+      "maximum_url_characters": guide.personalization.policy.maximum_url_characters
+    },
+    "categories": (
+      lens_personalization.categories if guide.personalization.policy.enabled
+      else (lens_personalization.categories | selectattr('panel_role', 'equalto', 'comparison') | list)
+    ),
+    "sources": (
+      lens_personalization.sources if guide.personalization.policy.enabled
+      else (lens_personalization.sources | selectattr('panel_role', 'equalto', 'comparison') | list)
+    )
+  } | tojson }}</script>
+
+  <script type="module">
+{{ lens_url_script | safe }}
+
+  // Page glue for the standalone sources editor. No scoring engine here: this
+  // page only ever reads/writes a selection through the shared fragment codec
+  // above, exactly like the guide's own merged sources tree (issue 107).
+  const bindings = JSON.parse(document.querySelector('#lens-bindings').textContent);
+  const context = lensContext(bindings, bindings.data_version);
+  const guidePath = {{ guide_path | tojson }};
+
+  const comparisonSourceCodes = new Set(
+    bindings.sources.filter((item) => item.panel_role === 'comparison').map((item) => item.code),
+  );
+  const categoryMemberCodesByCode = new Map(
+    bindings.categories.map((item) => [item.code, item.member_source_codes]),
+  );
+
+  const sourceInputsByCode = new Map();
+  document.querySelectorAll('[data-sources-source]').forEach((input) => {
+    const code = input.dataset.sourcesSource;
+    if (!sourceInputsByCode.has(code)) sourceInputsByCode.set(code, []);
+    sourceInputsByCode.get(code).push(input);
+  });
+  const isCodeChecked = (code) => sourceInputsByCode.get(code)?.[0]?.checked ?? false;
+  const syncSourceCode = (code, checked) => {
+    for (const input of sourceInputsByCode.get(code) ?? []) input.checked = checked;
+  };
+  const checkedComparisonSourceCodes = () => [...comparisonSourceCodes].filter(isCodeChecked).sort();
+  const tallyingSourceCodes = [...sourceInputsByCode.keys()].filter(
+    (code) => !comparisonSourceCodes.has(code),
+  );
+  const checkedTallyingSourceCodes = () => tallyingSourceCodes.filter(isCodeChecked).sort();
+  const allCheckedSourceCodes = () => [...sourceInputsByCode.keys()].filter(isCodeChecked).sort();
+
+  const root = document.documentElement;
+  const comparisonStatusLine = document.querySelector('[data-sources-comparison-status]');
+  const applyComparisonVisibility = () => {
+    const shown = checkedComparisonSourceCodes().length > 0;
+    root.classList.toggle('show-times', shown);
+    if (comparisonStatusLine) {
+      comparisonStatusLine.textContent = shown
+        ? 'Seattle Times comparison shown. Recommendations are unchanged.'
+        : '';
+    }
+  };
+
+  const categoryToggleInputs = [...document.querySelectorAll('[data-sources-category-toggle]')];
+  const membersOfCategory = (categoryCode) => [
+    ...document.querySelectorAll(
+      `[data-sources-source][data-sources-category-member="${categoryCode}"]`,
+    ),
+  ];
+  const updateCategoryToggleStates = () => {
+    categoryToggleInputs.forEach((toggle) => {
+      const categoryCode = toggle.dataset.sourcesCategoryToggle;
+      const members = membersOfCategory(categoryCode);
+      const checkedCount = members.filter((member) => member.checked).length;
+      toggle.checked = checkedCount === members.length;
+      toggle.indeterminate = checkedCount > 0 && checkedCount < members.length;
+    });
+  };
+
+  const countLine = document.querySelector('[data-sources-count]');
+  const updateCount = () => {
+    if (countLine) {
+      countLine.textContent =
+        `Viewing ${checkedTallyingSourceCodes().length} of ${tallyingSourceCodes.length} sources.`;
+    }
+  };
+
+  const saveLink = document.querySelector('[data-sources-save]');
+
+  /**
+   * Save's target address bar carries the edited selection, matching the
+   * guide's own writeLensState: the audited default (every tallying source
+   * checked, no comparison source checked) elides the fragment entirely.
+   */
+  const saveTarget = () => {
+    const isDefault = checkedTallyingSourceCodes().length === tallyingSourceCodes.length
+      && checkedComparisonSourceCodes().length === 0;
+    if (!isDefault) {
+      const encoded = encodeLensFragment(
+        { mode: 's', categoryCodes: [], sourceCodes: allCheckedSourceCodes(), raceTarget: incomingRaceTarget },
+        context,
+      );
+      if (encoded.status === 'ok') return `${guidePath}#${encoded.fragment}`;
+    }
+    return incomingRaceTarget ? `${guidePath}#${incomingRaceTarget}` : guidePath;
+  };
+
+  const refreshSelectionUi = () => {
+    updateCategoryToggleStates();
+    updateCount();
+    applyComparisonVisibility();
+    if (saveLink) saveLink.href = saveTarget();
+  };
+
+  /**
+   * Apply a decoded selection to every checkbox: a category code expands to
+   * its current member codes, unioned with any directly named source codes.
+   * Anything else stays unchecked. Mirrors the guide's own applySelection.
+   */
+  const applySelection = (selection) => {
+    const categoryMemberCodes = (selection?.categoryCodes ?? []).flatMap(
+      (code) => categoryMemberCodesByCode.get(code) ?? [],
+    );
+    const effectiveCodes = new Set([...categoryMemberCodes, ...(selection?.sourceCodes ?? [])]);
+    for (const code of sourceInputsByCode.keys()) {
+      syncSourceCode(code, effectiveCodes.has(code));
+    }
+    refreshSelectionUi();
+  };
+
+  // Read the incoming selection once, on load, and keep the raw fragment
+  // verbatim so Cancel can restore exactly what the reader arrived with.
+  const incomingFragment = window.location.hash;
+  const incomingDecoded = decodeLensFragment(incomingFragment, context);
+  const incomingRaceTarget = incomingDecoded.status === 'legacy'
+    ? incomingDecoded.raceTarget
+    : (incomingDecoded.state?.raceTarget ?? null);
+  if (incomingDecoded.status === 'valid' || incomingDecoded.status === 'stale_version') {
+    applySelection(incomingDecoded.state);
+  } else {
+    // absent, legacy, and malformed fragments all fall back to the audited
+    // default the checkboxes already render server-side: every tallying
+    // source checked, no comparison source checked.
+    refreshSelectionUi();
+  }
+
+  document.querySelectorAll('[data-sources-source]').forEach((input) => {
+    input.addEventListener('change', () => {
+      syncSourceCode(input.dataset.sourcesSource, input.checked);
+      refreshSelectionUi();
+    });
+  });
+  categoryToggleInputs.forEach((toggle) => {
+    toggle.addEventListener('change', () => {
+      const categoryCode = toggle.dataset.sourcesCategoryToggle;
+      const members = membersOfCategory(categoryCode);
+      members.forEach((member) => syncSourceCode(member.dataset.sourcesSource, toggle.checked));
+      refreshSelectionUi();
+    });
+  });
+
+  // Cancel and Reset never depend on the edited selection, so their target
+  // is fixed once, here, rather than recomputed on every change.
+  const cancelLink = document.querySelector('[data-sources-cancel]');
+  if (cancelLink) cancelLink.href = `${guidePath}${incomingFragment}`;
+  const resetLink = document.querySelector('[data-sources-page-reset]');
+  if (resetLink) resetLink.href = guidePath;
+  </script>
+</body>
+</html>

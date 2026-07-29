@@ -69,18 +69,40 @@ def read_rendering_configuration(path: Path) -> RenderingConfiguration:
     return RenderingConfiguration.model_validate(read_yaml(path))
 
 
-def render_html_document(
-    view_model: PublicationViewModel,
-    configuration: RenderingConfiguration,
-) -> str:
-    """Render the one HTML document shared by screen and print presentation."""
-    environment = Environment(
+def _template_environment() -> Environment:
+    return Environment(
         loader=FileSystemLoader(TEMPLATE_DIR),
         autoescape=True,
         undefined=StrictUndefined,
         trim_blocks=True,
         lstrip_blocks=True,
     )
+
+
+def _personalization_lookup_context(view_model: PublicationViewModel) -> dict[str, Any]:
+    """Derived views over the personalization contract shared by every page that
+    renders it (the guide and the standalone sources page): a code -> identity
+    lookup distinct from source_by_id's id keying, category labels for a
+    multi-category source's "also in" tag, and the contract as a plain dict for
+    Jinja's `tojson` filter, which only accepts JSON-native values."""
+    return {
+        "source_by_id": {source.id: source for source in view_model.sources},
+        "personalization_source_by_code": {
+            source.code: source for source in view_model.personalization.sources
+        },
+        "category_label_by_id": {
+            category.id: category.label for category in view_model.personalization.categories
+        },
+        "lens_personalization": view_model.personalization.model_dump(mode="json"),
+    }
+
+
+def render_html_document(
+    view_model: PublicationViewModel,
+    configuration: RenderingConfiguration,
+) -> str:
+    """Render the one HTML document shared by screen and print presentation."""
+    environment = _template_environment()
     template = environment.get_template("guide.html.j2")
     # base.css carries the design tokens and accessibility utility classes (the
     # skip link, visually-hidden) shared with the site-wide About page in
@@ -114,31 +136,16 @@ def render_html_document(
     ]
     for url in rendered_urls:
         _require_web_url(url)
-    source_by_id = {source.id: source for source in view_model.sources}
     source_category_label_by_key = {
         category.category: category.label for category in view_model.methodology.source_categories
-    }
-    # The merged sources tree (issue 97) renders each category's members from
-    # the personalization contract's own transport codes, so it needs a code
-    # -> identity lookup distinct from source_by_id's id keying, plus category
-    # labels for a multi-category source's "also in" tag.
-    personalization_source_by_code = {
-        source.code: source for source in view_model.personalization.sources
-    }
-    category_label_by_id = {
-        category.id: category.label for category in view_model.personalization.categories
     }
     source_cells_by_race_id = {
         race.id: {cell.source_id: cell for cell in race.source_cells}
         for section in view_model.sections
         for race in section.races
     }
-    # A plain dict, not the model instance: Jinja's `tojson` filter (HTML-safe,
-    # matching the existing `#lens-bindings` block) only accepts JSON-native
-    # values, and the full payload is only ever inlined once a release enables
-    # the personalization policy.
-    lens_personalization = view_model.personalization.model_dump(mode="json")
     return template.render(
+        **_personalization_lookup_context(view_model),
         guide=view_model,
         config=configuration,
         stylesheet=stylesheet,
@@ -147,12 +154,8 @@ def render_html_document(
         lens_migrate_script=lens_migrate_script,
         lens_divergence_script=lens_divergence_script,
         share_link_script=share_link_script,
-        lens_personalization=lens_personalization,
         filter_options=_filter_options(view_model),
-        source_by_id=source_by_id,
         source_category_label_by_key=source_category_label_by_key,
-        personalization_source_by_code=personalization_source_by_code,
-        category_label_by_id=category_label_by_id,
         source_cells_by_race_id=source_cells_by_race_id,
         concise_warning_labels=_concise_warning_labels,
         screen_share_accessible_label=_screen_share_accessible_label,
@@ -166,6 +169,28 @@ def render_html_document(
         source_cell_group_label=_source_cell_group_label,
         source_cell_detail_label=_source_cell_detail_label,
         source_cell_group_keys=("no_endorsement", "unverified"),
+    )
+
+
+def render_sources_document(view_model: PublicationViewModel, *, public_site_url: str) -> str:
+    """Render the standalone per-election sources/customization page (issue 107).
+
+    Purely a selection editor: it reads a selection from its own incoming URL
+    fragment and writes one back on Save, but never scores anything, so it
+    inlines only the fragment codec, not the scoring engine the guide needs.
+    """
+    environment = _template_environment()
+    template = environment.get_template("sources.html.j2")
+    stylesheet = (TEMPLATE_DIR / "base.css").read_text(encoding="utf-8") + (
+        TEMPLATE_DIR / "guide.css"
+    ).read_text(encoding="utf-8")
+    lens_url_script = (TEMPLATE_DIR / "lens-url.mjs").read_text(encoding="utf-8")
+    return template.render(
+        **_personalization_lookup_context(view_model),
+        guide=view_model,
+        public_site_url=public_site_url,
+        stylesheet=stylesheet,
+        lens_url_script=lens_url_script,
     )
 
 
