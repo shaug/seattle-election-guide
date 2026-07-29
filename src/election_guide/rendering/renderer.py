@@ -713,9 +713,11 @@ def validate_rendered_guide(
     if set(parser.coverage_gap_text) != expected_coverage_gap_ids:
         missing_evidence_rows.append("document: unexpected or missing coverage-gap rows")
     for source in coverage_gap_sources:
+        # Issue 108 removed the screen sources tree's own non-compact
+        # coverage-gap listing, so print's compact-labeled row (with no note
+        # paragraph) is the only one left.
         status_label = _coverage_gap_status_label(source)
         expected_rows = [
-            _normalized_text(f"{source.name} {status_label} {source.coverage_gap_note}"),
             _normalized_text(f"{source.name} {status_label}"),
         ]
         observed_rows = [
@@ -724,12 +726,9 @@ def validate_rendered_guide(
         ]
         if (
             observed_rows != expected_rows
-            or parser.coverage_gap_links.get(source.id, [])
-            != [[source.evidence_url], [source.evidence_url]]
-            or parser.coverage_gap_statuses.get(source.id, [])
-            != [source.coverage_gap_status, source.coverage_gap_status]
-            or parser.coverage_gap_classes.get(source.id, [])
-            != [{"coverage-gap-row"}, {"coverage-gap-row"}]
+            or parser.coverage_gap_links.get(source.id, []) != [[source.evidence_url]]
+            or parser.coverage_gap_statuses.get(source.id, []) != [source.coverage_gap_status]
+            or parser.coverage_gap_classes.get(source.id, []) != [{"coverage-gap-row"}]
         ):
             missing_evidence_rows.append(f"{source.id}: coverage-gap row values")
 
