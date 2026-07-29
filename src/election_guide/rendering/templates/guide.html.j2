@@ -39,9 +39,14 @@
       {% if not compact %}<p>{{ source.coverage_gap_note }}</p>{% endif %}
     </section>
   {%- endmacro %}
-  {% macro sources_member_row(category, member_code, checked, gate_by_policy=true) -%}
+  {% macro sources_member_row(category, member_code) -%}
     {% set psource = personalization_source_by_code[member_code] %}
     {% set pub_source = source_by_id[psource.id] %}
+    {# The comparison category's own row never starts checked and is always
+       interactive (issue 96/97: showing the comparison predates and is
+       independent of the personalization policy), unlike an ordinary
+       tallying category's row. #}
+    {% set is_comparison = category.panel_role == 'comparison' %}
     {# A source with zero endorsements this cycle (a coverage gap) has
        nothing an interactive checkbox could ever toggle into a score, so it
        stays out of this tree entirely and appears only in the coverage-gaps
@@ -50,10 +55,10 @@
     {% if pub_source.contribution_status == 'contributing' %}
     {% set other_category_ids = psource.selection_category_ids | reject('equalto', category.id) | list %}
     <div class="sources-row" data-sources-source-row="{{ member_code }}">
-      {% if not gate_by_policy or guide.personalization.policy.enabled %}
+      {% if is_comparison or guide.personalization.policy.enabled %}
       <label class="sources-check">
         <input type="checkbox" data-sources-source="{{ member_code }}"
-          data-sources-category-member="{{ category.code }}"{% if checked %} checked{% endif %}>
+          data-sources-category-member="{{ category.code }}"{% if not is_comparison %} checked{% endif %}>
         <a href="{{ pub_source.evidence_url }}">{{ pub_source.name }}</a>
       </label>
       {% else %}
@@ -431,7 +436,7 @@
                 {% endif %}
               </h3>
               {% for member_code in category.member_source_codes %}
-                {{ sources_member_row(category, member_code, true) }}
+                {{ sources_member_row(category, member_code) }}
               {% endfor %}
             </section>
             {% endfor %}
@@ -450,7 +455,7 @@
               </label>
             </h3>
             {% for member_code in comparison_category.member_source_codes %}
-              {{ sources_member_row(comparison_category, member_code, false, gate_by_policy=false) }}
+              {{ sources_member_row(comparison_category, member_code) }}
             {% endfor %}
           </section>
           {% endif %}
