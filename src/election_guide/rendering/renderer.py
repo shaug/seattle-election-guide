@@ -169,6 +169,45 @@ def render_html_document(
     )
 
 
+def render_sources_document(view_model: PublicationViewModel, *, public_site_url: str) -> str:
+    """Render the standalone per-election sources/customization page (issue 107).
+
+    Purely a selection editor: it reads a selection from its own incoming URL
+    fragment and writes one back on Save, but never scores anything, so it
+    inlines only the fragment codec, not the scoring engine the guide needs.
+    """
+    environment = Environment(
+        loader=FileSystemLoader(TEMPLATE_DIR),
+        autoescape=True,
+        undefined=StrictUndefined,
+        trim_blocks=True,
+        lstrip_blocks=True,
+    )
+    template = environment.get_template("sources.html.j2")
+    stylesheet = (TEMPLATE_DIR / "base.css").read_text(encoding="utf-8") + (
+        TEMPLATE_DIR / "guide.css"
+    ).read_text(encoding="utf-8")
+    lens_url_script = (TEMPLATE_DIR / "lens-url.mjs").read_text(encoding="utf-8")
+    source_by_id = {source.id: source for source in view_model.sources}
+    personalization_source_by_code = {
+        source.code: source for source in view_model.personalization.sources
+    }
+    category_label_by_id = {
+        category.id: category.label for category in view_model.personalization.categories
+    }
+    lens_personalization = view_model.personalization.model_dump(mode="json")
+    return template.render(
+        guide=view_model,
+        public_site_url=public_site_url,
+        stylesheet=stylesheet,
+        lens_url_script=lens_url_script,
+        lens_personalization=lens_personalization,
+        source_by_id=source_by_id,
+        personalization_source_by_code=personalization_source_by_code,
+        category_label_by_id=category_label_by_id,
+    )
+
+
 def _filter_options(view_model: PublicationViewModel) -> list[str]:
     section_labels = {section.label for section in view_model.sections}
     return sorted(
