@@ -373,11 +373,8 @@ def test_hosting_stage_cli_reports_composed_site(tmp_path: Path) -> None:
     assert f"current {CURRENT_ID}; 14 assets" in verify_result.output
 
 
-def test_about_page_share_button_uses_web_share_then_falls_back_to_copy(
-    tmp_path: Path,
-) -> None:
-    """Issue 66: the About page's share action degrades cleanly like the guide's."""
-    manifest = SiteManifest(
+def _current_election_manifest() -> SiteManifest:
+    return SiteManifest(
         canonical_origin="https://seattleelections.guide",
         current_election_id=CURRENT_ID,
         elections=[
@@ -391,6 +388,13 @@ def test_about_page_share_button_uses_web_share_then_falls_back_to_copy(
             ),
         ],
     )
+
+
+def test_about_page_share_button_uses_web_share_then_falls_back_to_copy(
+    tmp_path: Path,
+) -> None:
+    """Issue 66: the About page's share action degrades cleanly like the guide's."""
+    manifest = _current_election_manifest()
     html_path = tmp_path / "about.html"
     html_path.write_text(_about_html(manifest), encoding="utf-8")
     result = _evaluate_in_chrome(
@@ -450,6 +454,27 @@ def test_about_page_share_button_uses_web_share_then_falls_back_to_copy(
     assert result["afterCancelledShare"] == "SENTINEL"
     assert result["afterClipboardCopy"] == "Link copied."
     assert result["afterExecCommandCopy"] == "Link copied."
+
+
+def test_about_page_folds_in_every_fact_the_removed_methodology_panel_stated() -> None:
+    """Issue 109: the guide's inline methodology disclosure was removed, so
+    every fact it stated that /about/ didn't already cover must now be
+    findable there."""
+    about = _about_html(_current_election_manifest())
+
+    # "Agreement, not a grade": neither the percentage nor the source count
+    # rates candidate quality.
+    assert "neither number is a quality rating of the" in about
+    # "What enters the count": the legislative-district broader-race rule.
+    assert "Legislative-district organizations count on the broader races" in about
+    # "Related organizations": disclosed, not deduplicated, one vote each.
+    assert "disclosed rather than deduplicated" in about
+    assert "keeps its own full vote" in about
+    # "The Times is separate and optional": hidden on screen, always in the PDF.
+    assert "hidden on screen by" in about
+    assert "printable PDF always includes the comparison" in about
+    # Organizations may update endorsements after our capture snapshot.
+    assert "Organizations can update their own endorsements after we capture them" in about
 
 
 def _selectable_tallying_codes(view_model: PublicationViewModel) -> list[str]:

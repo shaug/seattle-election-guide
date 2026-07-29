@@ -3,7 +3,7 @@
 .hero-kicker, .eyebrow { color: #9ee7df; font-size: .78rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
 .hero h1 { max-width: 25ch; margin: .25rem 0 .45rem; font-size: clamp(2rem, 4.2vw, 3.4rem); line-height: .98; letter-spacing: -.035em; }
 .hero-deck { max-width: 48rem; margin: 0; color: #d7e6ef; font-size: clamp(.94rem, 1.5vw, 1.08rem); }
-.hero-deck a, .methodology-screen a { color: #9ee7df; font-weight: 800; }
+.hero-deck a { color: #9ee7df; font-weight: 800; }
 .hero-meta { display: grid; gap: .24rem; min-width: 13rem; padding-left: 1.25rem; border-left: 1px solid #7794a8; color: #d7e6ef; font-size: .76rem; text-align: right; }
 .sticky-header { position: sticky; top: 0; z-index: 5; }
 .screen-controls { display: grid; grid-template-columns: minmax(15rem, 1.1fr) repeat(2, minmax(12rem, .85fr)) minmax(10rem, .7fr); align-items: end; gap: .65rem 1rem; padding: .65rem clamp(1rem, 4vw, 3rem); background: rgba(255,255,255,.96); border-bottom: 1px solid var(--line); }
@@ -168,12 +168,6 @@ a.race-detail-source-row:hover strong { text-decoration: underline; text-underli
 .guide-notes > summary::-webkit-details-marker { display: none; }
 .guide-notes > summary span:last-child { color: #9ee7df; font-size: 1.25rem; line-height: 1; transition: transform .18s ease; }
 .guide-notes[open] > summary span:last-child { transform: rotate(45deg); }
-.methodology-screen { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem 2.25rem; padding: 1.75rem clamp(1rem, 4vw, 3rem) 2rem; border-top: 1px solid #526f83; background: #0b2238; color: var(--white); }
-.methodology-panel { min-width: 0; }
-.methodology-screen h3 { margin: 0 0 .5rem; color: #9ee7df; }
-.methodology-screen p { margin: .45rem 0; color: #d7e6ef; font-size: .86rem; }
-.methodology-overlap { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 2rem; padding-top: 1rem; border-top: 1px solid #526f83; }
-.methodology-overlap h3 { grid-column: 1 / -1; }
 .sources-tree { padding: 1.75rem clamp(1rem, 4vw, 3rem) 2.5rem; border-top: 1px solid #526f83; background: #f7f9fb; color: var(--ink); }
 .sources-heading { display: grid; grid-template-columns: minmax(0, 1fr) minmax(16rem, 1fr); align-items: end; gap: 1rem 3rem; margin-bottom: 1.25rem; }
 .sources-heading h2 { margin: .15rem 0 0; color: var(--navy); font-size: 1.7rem; line-height: 1.05; }
@@ -226,11 +220,10 @@ a.race-detail-source-row:hover strong { text-decoration: underline; text-underli
   .screen-controls p { grid-column: auto; justify-content: flex-start; justify-self: start; text-align: left; }
   .view-setting { width: 100%; }
   html.compact-ballot-mode .race-grid { grid-template-columns: 1fr; }
-  .race-grid, .methodology-screen, .footer-summary, .sources-heading, .screen-coverage-gaps, .coverage-gap-columns { grid-template-columns: 1fr; }
+  .race-grid, .footer-summary, .sources-heading, .screen-coverage-gaps, .coverage-gap-columns { grid-template-columns: 1fr; }
   .sources-columns { column-count: 1; }
   .footer-summary { gap: .8rem; }
   .footer-actions { justify-content: flex-start; }
-  .methodology-overlap { display: block; }
   .sources-heading > p { justify-self: start; text-align: left; }
   .sources-row { grid-template-columns: minmax(0, 1fr); gap: .15rem; }
   .sources-count { justify-self: start; white-space: normal; }
@@ -386,10 +379,4 @@ a.race-detail-source-row:hover strong { text-decoration: underline; text-underli
   html.detailed-edition .footer-summary { display: none; }
   html.detailed-edition .screen-footer { background: white; color: var(--ink); }
   html.detailed-edition .detailed-footer-audit { display: inline; }
-  html.detailed-edition .methodology-screen { display: grid !important; grid-template-columns: 1fr 1fr; gap: .12in; padding: .2in; background: white; color: var(--ink); }
-  html.detailed-edition .methodology-panel { break-inside: avoid; padding: .12in; border: .5px solid var(--line); }
-  html.detailed-edition .methodology-screen h2 { font-size: 18pt; }
-  html.detailed-edition .methodology-screen h3 { color: var(--navy); }
-  html.detailed-edition .methodology-screen a { color: var(--navy); }
-  html.detailed-edition .methodology-screen p, html.detailed-edition .methodology-screen li { font-size: 8pt; }
 }

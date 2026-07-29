@@ -448,9 +448,9 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "Coverage note:" not in html
     assert "Category representation and support" not in html
     assert 'data-display-role="grade"' not in html
-    assert 'class="methodology-panel screen-consensus-key"' in html
-    assert 'class="guide-notes" id="methodology"' in html
+    assert 'id="methodology"' not in html
     assert 'class="guide-notes merged-sources" id="sources"' in html
+    assert 'href="/about/"' in html
     assert "How the consensus works" not in html
     assert "Verify the guide" not in html
     assert "Build and audit details" not in html
@@ -1928,7 +1928,7 @@ def test_overflowing_screen_methodology_does_not_bloat_concise_pdf(tmp_path: Pat
     assert "This canonical interpretation sentence" not in concise_text
 
 
-def test_responsive_tablet_layout_and_methodology_disclosure(tmp_path: Path) -> None:
+def test_responsive_tablet_layout_renders(tmp_path: Path) -> None:
     view_model = _view_model(tmp_path / "fixture")
     html_path = tmp_path / "guide.html"
     html_path.write_text(
@@ -2244,6 +2244,20 @@ def _sources_tree_html(tmp_path: Path) -> str:
     )
 
 
+def test_guide_has_no_orphaned_methodology_markup_css_or_js(tmp_path: Path) -> None:
+    """Issue 109: the on-screen inline methodology disclosure, its CSS, and any
+    JS that only existed to support it are gone from the guide entirely. The
+    fixed print edition's own separate, always-printed "How to read this
+    guide" page (a different section that predates and is independent of the
+    removed on-screen disclosure) is untouched and keeps its own self-contained
+    explanation, since a printed PDF cannot link out to /about/."""
+    html = _sources_tree_html(tmp_path)
+    assert 'id="methodology"' not in html
+    assert "methodology-screen" not in html
+    assert "methodology-panel" not in html
+    assert "methodology-overlap" not in html
+
+
 def test_sources_tree_shell_hides_the_times_comparison_by_default(tmp_path: Path) -> None:
     """Issue 79: the default responsive load carries no Times pill or decision."""
     html = _sources_tree_html(tmp_path)
@@ -2315,19 +2329,14 @@ def test_sources_tree_shell_leaves_the_print_comparison_untouched(tmp_path: Path
 
 def test_sources_tree_shell_describes_a_generic_optional_comparison(tmp_path: Path) -> None:
     """Issue 103: the hero byline must not name a specific comparison source
-    (the schema allows more than one in the future), but the dedicated
-    methodology-panel note about the Times specifically is unaffected. Both
-    now link to the sources section rather than only naming it in bold."""
+    (the schema allows more than one in the future). It links to the sources
+    section rather than only naming it in bold."""
     html = _sources_tree_html(tmp_path)
     hero = html.split('<p class="hero-deck">')[1].split("</p>")[0]
 
     assert "optional comparison" in hero
     assert "Times" not in hero
     assert 'href="#sources"' in hero
-    assert "The Times is separate and optional" in html
-    methodology_note = html.split("The Times is separate and optional")[1].split("</p>")[0]
-    assert "hidden by default on screen" in methodology_note
-    assert 'href="#sources"' in methodology_note
 
 
 def test_footer_share_button_uses_web_share_then_falls_back_to_copy(tmp_path: Path) -> None:

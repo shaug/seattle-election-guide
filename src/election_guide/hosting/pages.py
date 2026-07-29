@@ -554,9 +554,17 @@ def _about_html(site_manifest: SiteManifest) -> str:
           point splits evenly among them unless the organization states its own split. Silence, "no
           endorsement," and races an organization simply did not cover are shown as counts but
           never count toward a candidate's share, so a small sample never looks more decisive than
-          it is.</p>
-        <p>The Seattle Times is shown separately, as a comparison, and is off by default: it never
-          adds to the progressive consensus above, no matter how you choose to view the guide.</p>
+          it is. The percentage is that leading choice's share of points; the source count next to
+          it is simply the sample behind it &mdash; neither number is a quality rating of the
+          candidate.</p>
+        <p>Legislative-district organizations count on the broader races their district covers, but
+          only on their own district's legislative contests.</p>
+        <p>Some tracked organizations are related &mdash; a state and local chapter of the same
+          group, for example. These relationships are disclosed rather than deduplicated: each
+          separately governed organization keeps its own full vote.</p>
+        <p>The Seattle Times is shown separately, as a comparison, and is hidden on screen by
+          default: it never adds to the progressive consensus above, no matter how you choose to
+          view the guide. The printable PDF always includes the comparison.</p>
       </section>
 
       <section aria-labelledby="why-ballot-varies">
@@ -582,6 +590,9 @@ def _about_html(site_manifest: SiteManifest) -> str:
           revision that built it, in its footer. Each source row links directly to the
           organization's own endorsement page or document, so any displayed result can be checked
           against the original evidence.</p>
+        <p>Organizations can update their own endorsements after we capture them, so a source's
+          current page may drift from what a guide recorded; use the same evidence links to confirm
+          the exact snapshot behind any race.</p>
         <p><a href="{escaped_current_path}release-status.json">Current release status</a> and
           <a href="{escaped_current_path}release-manifest.json">release manifest</a> are public JSON
           files for the current guide. The complete decision ledger, source metadata, and validation
