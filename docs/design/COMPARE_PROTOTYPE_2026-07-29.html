@@ -1,0 +1,594 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compare sources — Seattle Elections Guide (mockup)</title>
+<style>
+  .visually-hidden { position: absolute; clip: rect(0 0 0 0); clip-path: inset(50%);
+    width: 1px; height: 1px; overflow: hidden; white-space: nowrap; }
+  :root {
+    --navy: #102a43; --teal: #087f73; --teal-deep: #06655c; --mint: #9ee7df;
+    --paper: #fbfaf6; --ink: #17212b; --muted: #52606d; --hairline: #d9e2ec;
+    --card: #ffffff; --ground: #f2f0ea; --link: #176b87;
+    --agree-tint: #eaf5f2; --agree-edge: #9ccfc5;
+    --differ-tint: #fdf3e2; --differ-edge: #ecc07c; --differ-ink: #8a5a12;
+    --focus: #f0a928;
+    --track: #e6e3da;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --navy: #0b1f33; --teal: #2aa596; --teal-deep: #7fd4c8; --mint: #9ee7df;
+      --paper: #151a20; --ink: #e8ecef; --muted: #9aa7b1; --hairline: #2c3742;
+      --card: #1b222b; --ground: #10151b; --link: #7cc3da;
+      --agree-tint: #14332e; --agree-edge: #2c6b60;
+      --differ-tint: #38290e; --differ-edge: #8a6420; --differ-ink: #ecc07c;
+      --track: #2c3742;
+    }
+  }
+  :root[data-theme="light"] {
+    --navy: #102a43; --teal: #087f73; --teal-deep: #06655c; --mint: #9ee7df;
+    --paper: #fbfaf6; --ink: #17212b; --muted: #52606d; --hairline: #d9e2ec;
+    --card: #ffffff; --ground: #f2f0ea; --link: #176b87;
+    --agree-tint: #eaf5f2; --agree-edge: #9ccfc5;
+    --differ-tint: #fdf3e2; --differ-edge: #ecc07c; --differ-ink: #8a5a12;
+    --focus: #f0a928; --track: #e6e3da;
+  }
+  :root[data-theme="dark"] {
+    --navy: #0b1f33; --teal: #2aa596; --teal-deep: #7fd4c8; --mint: #9ee7df;
+    --paper: #151a20; --ink: #e8ecef; --muted: #9aa7b1; --hairline: #2c3742;
+    --card: #1b222b; --ground: #10151b; --link: #7cc3da;
+    --agree-tint: #14332e; --agree-edge: #2c6b60;
+    --differ-tint: #38290e; --differ-edge: #8a6420; --differ-ink: #ecc07c;
+    --focus: #f0a928; --track: #2c3742;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--ground); color: var(--ink);
+    font-family: "Avenir Next", Avenir, system-ui, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    line-height: 1.45; font-size: 16px;
+  }
+  a { color: var(--link); }
+  :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+  .proto-note {
+    background: var(--navy); color: var(--mint); font-size: .72rem; letter-spacing: .06em;
+    text-transform: uppercase; font-weight: 600; text-align: center;
+    padding: .35rem .75rem; border-bottom: 1px solid rgba(255,255,255,.14);
+  }
+  .proto-note b { color: #fff; font-weight: 700; }
+
+  /* ── Shared shell (per #115 A3 / icon-candidates lockup) ─────────────── */
+  header.shell {
+    background: var(--navy); border-bottom: .3rem solid var(--teal);
+    padding: .8rem clamp(1rem, 4vw, 2.5rem);
+    display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
+  }
+  header.shell .brand {
+    display: flex; align-items: center; gap: .6rem; color: #fff;
+    font-weight: 800; letter-spacing: -.01em; font-size: 1.05rem; text-decoration: none;
+  }
+  header.shell nav { margin-left: auto; display: flex; gap: 1.1rem; font-size: .8rem; font-weight: 700; }
+  header.shell nav a { color: var(--mint); text-decoration: none; padding: .2rem 0; }
+  header.shell nav a[aria-current="page"] { color: #fff; border-bottom: 2px solid var(--mint); }
+
+  /* ── Page head ────────────────────────────────────────────────────────── */
+  .page-head { background: var(--paper); border-bottom: 1px solid var(--hairline);
+    padding: 1.4rem clamp(1rem, 4vw, 2.5rem) 1.2rem; }
+  .kicker { color: var(--teal-deep); font-size: .72rem; font-weight: 700; letter-spacing: .14em;
+    text-transform: uppercase; margin: 0 0 .3rem; }
+  .page-head h1 { font-family: Georgia, "Times New Roman", serif; font-weight: 700;
+    font-size: clamp(1.7rem, 4vw, 2.3rem); margin: 0 0 .35rem; letter-spacing: -.01em; }
+  .page-head .lede { color: var(--muted); margin: 0; max-width: 46rem; }
+  .presets { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .9rem; }
+  .presets .preset-label { font-size: .72rem; font-weight: 700; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--muted); align-self: center; }
+  .presets button {
+    font: inherit; font-size: .8rem; font-weight: 600; color: var(--teal-deep);
+    background: var(--card); border: 1px solid var(--hairline); border-radius: 999px;
+    padding: .3rem .8rem; cursor: pointer;
+  }
+  .presets button:hover { border-color: var(--teal); }
+
+  /* ── Sticky controls bar (F22) ───────────────────────────────────────── */
+  .controls {
+    position: sticky; top: 0; z-index: 30; background: var(--paper);
+    border-bottom: 1px solid var(--hairline); box-shadow: 0 1px 0 rgba(16,42,67,.06);
+    padding: .65rem clamp(1rem, 4vw, 2.5rem);
+    display: flex; align-items: center; gap: 1.4rem; flex-wrap: wrap;
+  }
+  .control { display: flex; flex-direction: column; gap: .25rem; }
+  .control > .label { font-size: .68rem; font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--muted); }
+  .control select {
+    font: inherit; font-size: .85rem; padding: .3rem 1.8rem .3rem .5rem;
+    border: 1px solid var(--hairline); border-radius: .35rem; background: var(--card); color: var(--ink);
+  }
+  .seg { display: inline-flex; border: 1px solid var(--navy); border-radius: .4rem; overflow: hidden; }
+  .seg button {
+    font: inherit; font-size: .78rem; font-weight: 700; padding: .32rem .8rem;
+    border: 0; background: var(--card); color: var(--ink); cursor: pointer;
+  }
+  .seg button[aria-pressed="true"] { background: var(--navy); color: #fff; }
+  .status { margin-left: auto; text-align: right; font-size: .78rem; color: var(--muted); }
+  .status b { color: var(--ink); }
+  .hidden-cols-note { font-size: .72rem; color: var(--differ-ink); background: var(--differ-tint);
+    border: 1px solid var(--differ-edge); border-radius: .35rem; padding: .2rem .5rem; }
+
+  /* ── Comparison table ────────────────────────────────────────────────── */
+  .table-wrap { padding: 1.2rem clamp(1rem, 4vw, 2.5rem) 0; }
+  .table-scroller { overflow-x: auto; background: var(--card); border: 1px solid var(--hairline);
+    border-radius: .55rem; border-top: .3rem solid var(--teal); }
+  table.compare { border-collapse: separate; border-spacing: 0; width: 100%; min-width: 100%; }
+  table.compare caption { position: absolute; clip: rect(0 0 0 0); clip-path: inset(50%); }
+
+  th.race-col, td.race-cell {
+    position: sticky; left: 0; z-index: 2; background: var(--card);
+    text-align: left; min-width: 200px; max-width: 260px;
+    border-right: 1px solid var(--hairline);
+  }
+  thead th {
+    vertical-align: top; padding: .7rem .75rem .6rem; border-bottom: 2px solid var(--navy);
+    background: var(--card); position: sticky; top: 0; z-index: 3;
+  }
+  thead th.race-col { z-index: 4; }
+  thead th.race-col .t { font-size: .72rem; font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--muted); }
+
+  .col-head { display: flex; flex-direction: column; gap: .3rem; min-width: 165px; }
+  .col-head .badge-row { min-height: 1.05rem; }
+  .col-head .picker-row { display: flex; align-items: center; gap: .3rem; }
+  .col-head select {
+    font: inherit; font-size: .85rem; font-weight: 700; width: 100%;
+    padding: .28rem 1.6rem .28rem .45rem; color: var(--ink);
+    border: 1px solid var(--hairline); border-radius: .35rem; background: var(--paper);
+  }
+  .col-head .remove {
+    font: inherit; border: 0; background: none; color: var(--muted); cursor: pointer;
+    font-size: 1rem; line-height: 1; padding: .25rem .3rem; border-radius: .3rem;
+  }
+  .col-head .remove:hover { color: var(--differ-ink); background: var(--differ-tint); }
+  .col-head .meta { font-size: .68rem; font-weight: 600; color: var(--muted); letter-spacing: .02em; }
+  .col-head .badge { display: inline-block; font-size: .62rem; font-weight: 700; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--teal-deep); border: 1px solid var(--agree-edge);
+    background: var(--agree-tint); border-radius: 999px; padding: .05rem .45rem; margin-right: .3rem; }
+  .col-head .badge.cmp { color: var(--differ-ink); border-color: var(--differ-edge); background: var(--differ-tint); }
+  th.add-col { width: 52px; border-bottom: 2px solid var(--navy); background: var(--card); }
+  th.add-col button {
+    font: inherit; font-size: 1.1rem; font-weight: 700; width: 34px; height: 34px;
+    border: 1.5px dashed var(--hairline); border-radius: 50%; background: none;
+    color: var(--teal-deep); cursor: pointer;
+  }
+  th.add-col button:hover { border-color: var(--teal); }
+
+  tbody.section th.section-head {
+    font-family: Georgia, "Times New Roman", serif; font-size: 1.05rem; font-weight: 700;
+    text-align: left; padding: .8rem .75rem .4rem; color: var(--ink);
+    background: var(--paper); border-bottom: 1px solid var(--hairline);
+    position: sticky; left: 0;
+  }
+  tbody.section td.section-fill { background: var(--paper); border-bottom: 1px solid var(--hairline); }
+
+  td { padding: .55rem .75rem; border-bottom: 1px solid var(--hairline); vertical-align: top; }
+  tr:last-child td { border-bottom: 0; }
+  td.race-cell .office { font-size: .7rem; font-weight: 700; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--muted); line-height: 1.3; }
+  td.race-cell .office a { color: inherit; text-decoration: none; }
+  td.race-cell .office a:hover { color: var(--link); text-decoration: underline; }
+  td.race-cell .differs-chip { display: inline-block; margin-top: .25rem; font-size: .62rem;
+    font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--differ-ink);
+    background: var(--differ-tint); border: 1px solid var(--differ-edge); border-radius: 999px;
+    padding: .02rem .45rem; }
+
+  td.cell { min-width: 165px; }
+  td.cell .pick { font-weight: 700; font-size: .92rem; line-height: 1.25; }
+  td.cell .pick .co { font-weight: 600; color: var(--muted); font-size: .8rem; }
+  td.cell.none .pick, td.cell.oos .pick, td.cell.ncov .pick { color: var(--muted); font-weight: 500; font-style: italic; }
+  td.cell .sub { margin-top: .3rem; display: flex; align-items: center; gap: .45rem; }
+  td.cell .sub .n { font-size: .68rem; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .mini-meter { flex: 0 0 56px; height: 8px; border-radius: 999px; background: var(--track);
+    overflow: hidden; }
+  .mini-meter i { display: block; height: 100%; background: var(--teal); border-radius: 999px; }
+
+  td.cell.agree { background: var(--agree-tint); box-shadow: inset 3px 0 0 var(--agree-edge); }
+  td.cell.differ { background: var(--differ-tint); box-shadow: inset 3px 0 0 var(--differ-edge); }
+  td.cell.differ .pick::after {
+    content: "≠"; margin-left: .35rem; font-size: .75rem; font-weight: 800; color: var(--differ-ink);
+  }
+
+  tr.empty-row td { text-align: center; color: var(--muted); padding: 2rem 1rem; font-style: italic; }
+
+  /* legend + footer */
+  .legend { padding: .9rem clamp(1rem, 4vw, 2.5rem); display: flex; flex-wrap: wrap; gap: 1.2rem;
+    font-size: .74rem; color: var(--muted); align-items: center; }
+  .legend .key { display: inline-flex; align-items: center; gap: .35rem; }
+  .legend .swatch { width: 14px; height: 14px; border-radius: 3px; display: inline-block; }
+  .legend .swatch.agree { background: var(--agree-tint); border: 1px solid var(--agree-edge); }
+  .legend .swatch.differ { background: var(--differ-tint); border: 1px solid var(--differ-edge); }
+  footer.site {
+    margin-top: 1rem; background: var(--paper); border-top: 1px solid var(--hairline);
+    padding: 1rem clamp(1rem, 4vw, 2.5rem) 2rem; font-size: .74rem; color: var(--muted);
+  }
+  footer.site .method { max-width: 56rem; }
+  @media (prefers-reduced-motion: no-preference) {
+    td.cell { transition: background .15s ease; }
+  }
+</style>
+
+<div class="proto-note"><b>Planning prototype</b> · real August 2026 primary data · column pickers, filters &amp; links are live</div>
+
+<header class="shell">
+  <a class="brand" href="#">
+    <svg width="26" height="26" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#087f73"/><rect x="10" y="25" width="44" height="14" rx="7" fill="#102a43"/><rect x="10" y="25" width="31" height="14" rx="7" fill="#9ee7df"/></svg>
+    Seattle Elections Guide
+  </a>
+  <nav aria-label="Site">
+    <a href="https://seattleelections.guide/e/wa-2026-primary/">Endorsements</a>
+    <a href="#" aria-current="page">Compare</a>
+    <a href="https://seattleelections.guide/e/wa-2026-primary/sources/">Sources</a>
+    <a href="https://seattleelections.guide/about/">About</a>
+  </nav>
+</header>
+
+<div class="page-head">
+  <p class="kicker">August 2026 Primary · Election August 4, 2026</p>
+  <h1>Compare sources</h1>
+  <p class="lede">Pick up to three signals — a single source, a whole category, or all sources —
+    and see where they agree and where they split, race by race. The first column is the baseline
+    the others are compared against.</p>
+  <div class="presets" role="group" aria-label="Suggested comparisons">
+    <span class="preset-label">Try:</span>
+    <button data-preset="strn,stim">The Stranger vs. The Times</button>
+    <button data-preset="Glab,Genv,Gdem">Labor vs. Environment vs. Dems</button>
+    <button data-preset="gall,urbn">The Urbanist vs. everyone</button>
+  </div>
+</div>
+
+<div class="controls">
+  <div class="control">
+    <span class="label" id="lbl-show">Show races</span>
+    <select id="race-filter" aria-labelledby="lbl-show"></select>
+  </div>
+  <div class="control">
+    <span class="label" id="lbl-races">Races</span>
+    <span class="seg" role="group" aria-labelledby="lbl-races">
+      <button id="btn-complete" aria-pressed="true">Complete</button>
+      <button id="btn-contested" aria-pressed="false">Contested</button>
+    </span>
+  </div>
+  <div class="control">
+    <span class="label" id="lbl-rows">Rows</span>
+    <span class="seg" role="group" aria-labelledby="lbl-rows">
+      <button id="btn-all-rows" aria-pressed="true">All</button>
+      <button id="btn-diff-rows" aria-pressed="false">Differences only</button>
+    </span>
+  </div>
+  <span class="hidden-cols-note" id="hidden-note" hidden></span>
+  <p class="status" id="status" role="status" aria-live="polite"></p>
+</div>
+
+<div class="table-wrap">
+  <div class="table-scroller">
+    <table class="compare" id="cmp-table">
+      <caption id="cmp-caption">Endorsement comparison by race</caption>
+      <thead id="cmp-head"></thead>
+      <!-- tbodies rendered by script -->
+    </table>
+  </div>
+</div>
+
+<div class="legend" aria-label="Legend">
+  <span class="key"><span class="swatch agree"></span> agrees with the baseline column</span>
+  <span class="key"><span class="swatch differ"></span> ≠ differs from the baseline column</span>
+  <span class="key">— no endorsement published</span>
+  <span class="key">“Outside district” — source only endorses in its own legislative district</span>
+  <span class="key">“+ name” — co-endorsement</span>
+</div>
+
+<footer class="site">
+  <p class="method">Category and All-sources columns use the guide’s equal-weight formula: each
+    endorsing source counts once, and a source’s vote splits evenly across every candidate it names.
+    The Seattle Times is shown for comparison; it is never counted toward any score.</p>
+  <p>Election 2026-08-04 · Panel wa-2026-primary-default-sources-v4 · Data 746f83dbe09f — mockup rendered from the published guide.</p>
+</footer>
+
+<script>
+const DATA = {"cats":{"Ggen":"Progressive editorial and general","Gdem":"Democratic Party","Gurb":"Transportation and urbanism","Genv":"Environment","Glab":"Labor","Grgt":"Rights and representation","Gcmp":"Centrist comparison"},"catOrder":["Ggen","Gdem","Gurb","Genv","Glab","Grgt","Gcmp"],"sources":{"fuse":{"name":"Fuse Washington","cats":["Ggen"],"count":"2 endorsements · 0 split","short":"Fuse WA"},"sdsa":{"name":"Seattle Democratic Socialists of America","cats":["Ggen"],"count":"1 endorsements · 0 split","short":"Seattle DSA"},"sldr":{"name":"Sage Leaders","cats":["Ggen"],"count":"9 endorsements · 1 split","short":"Sage Leaders"},"strn":{"name":"The Stranger Election Control Board","cats":["Ggen"],"count":"23 endorsements · 0 split","short":"The Stranger"},"t4tx":{"name":"Tech 4 Taxes","cats":["Ggen"],"count":"6 endorsements · 1 split","short":"Tech 4 Taxes"},"urbn":{"name":"The Urbanist Elections Committee","cats":["Ggen"],"count":"20 endorsements · 0 split","short":"The Urbanist"},"wbus":{"name":"The Washington Bus","cats":["Ggen"],"count":"4 endorsements · 0 split","short":"The WA Bus"},"wcan":{"name":"Washington Community Action Network","cats":["Ggen"],"count":"2 endorsements · 0 split","short":"WA Community Action"},"wwfp":{"name":"Washington Working Families Party","cats":["Ggen"],"count":"5 endorsements · 0 split","short":"WA Working Families"},"kcdm":{"name":"King County Democrats","cats":["Gdem"],"count":"25 endorsements · 1 split","short":"King Co. Democrats"},"ld11":{"name":"11th Legislative District Democrats","cats":["Gdem"],"count":"7 endorsements · 2 split","short":"11th LD Democrats"},"ld32":{"name":"32nd Legislative District Democrats","cats":["Gdem"],"count":"11 endorsements · 3 split","short":"32nd LD Democrats"},"ld34":{"name":"34th Legislative District Democrats","cats":["Gdem"],"count":"12 endorsements · 0 split","short":"34th LD Democrats"},"ld36":{"name":"36th Legislative District Democrats","cats":["Gdem"],"count":"11 endorsements · 3 split","short":"36th LD Democrats"},"ld37":{"name":"37th Legislative District Democrats","cats":["Gdem"],"count":"12 endorsements · 0 split","short":"37th LD Democrats"},"ld43":{"name":"43rd Legislative District Democrats","cats":["Gdem"],"count":"13 endorsements · 1 split","short":"43rd LD Democrats"},"ld46":{"name":"46th Legislative District Democrats","cats":["Gdem"],"count":"11 endorsements · 0 split","short":"46th LD Democrats"},"wsto":{"name":"Washington State Stonewall Democrats","cats":["Gdem","Grgt"],"count":"22 endorsements · 2 split","short":"Stonewall Democrats"},"ssub":{"name":"Seattle Subway","cats":["Gurb"],"count":"2 endorsements · 0 split","short":"Seattle Subway"},"t4ho":{"name":"Tech 4 Housing","cats":["Gurb"],"count":"4 endorsements · 0 split","short":"Tech 4 Housing"},"trun":{"name":"Transit Riders Union","cats":["Gurb"],"count":"3 endorsements · 1 split","short":"Transit Riders Union"},"wbik":{"name":"Washington Bikes","cats":["Gurb"],"count":"12 endorsements · 0 split","short":"Washington Bikes"},"sicl":{"name":"Sierra Club Washington State Chapter","cats":["Genv"],"count":"17 endorsements · 0 split","short":"Sierra Club WA"},"wcac":{"name":"Washington Conservation Action","cats":["Genv"],"count":"17 endorsements · 0 split","short":"WA Conservation Action"},"aftw":{"name":"AFT Washington","cats":["Glab"],"count":"20 endorsements · 2 split","short":"AFT Washington"},"mlkl":{"name":"MLK Labor","cats":["Glab"],"count":"3 endorsements · 0 split","short":"MLK Labor"},"pr17":{"name":"PROTEC17","cats":["Glab"],"count":"4 endorsements · 0 split","short":"PROTEC17"},"s775":{"name":"SEIU 775","cats":["Glab"],"count":"24 endorsements · 0 split","short":"SEIU 775"},"s925":{"name":"SEIU 925","cats":["Glab"],"count":"27 endorsements · 2 split","short":"SEIU 925"},"ufcw":{"name":"UFCW 3000","cats":["Glab"],"count":"23 endorsements · 1 split","short":"UFCW 3000"},"weas":{"name":"Washington Education Association","cats":["Glab"],"count":"12 endorsements · 0 split","short":"WA Education Assoc."},"wsbt":{"name":"Washington State Building and Construction Trades Council","cats":["Glab"],"count":"12 endorsements · 0 split","short":"WA Building Trades"},"wslc":{"name":"Washington State Labor Council, AFL-CIO","cats":["Glab"],"count":"26 endorsements · 2 split","short":"WA State Labor Council"},"alrs":{"name":"Alliance for Gun Responsibility Victory Fund","cats":["Grgt"],"count":"22 endorsements · 2 split","short":"Alliance for Gun Responsibility"},"nwpc":{"name":"National Women's Political Caucus of Washington","cats":["Grgt"],"count":"20 endorsements · 3 split","short":"NWPC Washington"},"oamv":{"name":"OneAmerica Votes","cats":["Grgt"],"count":"9 endorsements · 0 split","short":"OneAmerica Votes"},"ppaa":{"name":"Planned Parenthood Alliance Advocates","cats":["Grgt"],"count":"3 endorsements · 0 split","short":"Planned Parenthood AA"},"snws":{"name":"Seattle Gay News Editorial Board","cats":["Grgt"],"count":"3 endorsements · 0 split","short":"Seattle Gay News"},"whal":{"name":"Washington Housing Alliance","cats":["Grgt"],"count":"19 endorsements · 2 split","short":"WA Housing Alliance"},"wpaj":{"name":"Washington for Peace and Justice","cats":["Grgt"],"count":"19 endorsements · 2 split","short":"WA for Peace & Justice"},"stim":{"name":"The Seattle Times Editorial Board","cats":["Gcmp"],"count":"15 picks · 0 split","short":"Seattle Times"}},"races":[{"id":"us-house-7","label":"U.S. Representative — Congressional District 7","section":"Federal","lead":"Pramila Jayapal","share":100.0,"n":19,"contested":true,"cand":{"pramila-jayapal":"Pramila Jayapal"},"st":{"strn":{"c":["pramila-jayapal"],"m":false},"fuse":{"c":["pramila-jayapal"],"m":false},"wpaj":{"c":["pramila-jayapal"],"m":false},"kcdm":{"c":["pramila-jayapal"],"m":false},"ld32":{"c":["pramila-jayapal"],"m":false},"ld34":{"c":["pramila-jayapal"],"m":false},"ld36":{"c":["pramila-jayapal"],"m":false},"ld37":{"c":["pramila-jayapal"],"m":false},"ld43":{"c":["pramila-jayapal"],"m":false},"ld46":{"c":["pramila-jayapal"],"m":false},"wsto":{"c":["pramila-jayapal"],"m":false},"sicl":{"c":["pramila-jayapal"],"m":false},"wslc":{"c":["pramila-jayapal"],"m":false},"s775":{"c":["pramila-jayapal"],"m":false},"weas":{"c":["pramila-jayapal"],"m":false},"wsbt":{"c":["pramila-jayapal"],"m":false},"oamv":{"c":["pramila-jayapal"],"m":false},"alrs":{"c":["pramila-jayapal"],"m":false},"nwpc":{"c":["pramila-jayapal"],"m":false}}},{"id":"us-house-9","label":"U.S. Representative — Congressional District 9","section":"Federal","lead":"Adam Smith","share":73.0,"n":11,"contested":true,"cand":{"adam-smith":"Adam Smith","kshama-sawant":"Kshama Sawant","melissa-chaudhry":"Melissa Chaudhry"},"st":{"kcdm":{"c":["adam-smith"],"m":false},"wsto":{"c":["adam-smith"],"m":false},"sicl":{"c":["adam-smith"],"m":false},"wslc":{"c":["adam-smith"],"m":false},"s775":{"c":["adam-smith"],"m":false},"weas":{"c":["adam-smith"],"m":false},"wsbt":{"c":["adam-smith"],"m":false},"alrs":{"c":["adam-smith"],"m":false},"strn":{"c":["kshama-sawant"],"m":false},"wpaj":{"c":["kshama-sawant","melissa-chaudhry"],"m":true},"snws":{"c":["kshama-sawant"],"m":false}}},{"id":"ld-11-state-representative-1","label":"Legislative District 11 State Representative — Position 1","section":"State","lead":"David Hackney","share":64.0,"n":11,"contested":true,"cand":{"david-hackney":"David Hackney","ashley-fedan":"Ashley Fedan"},"st":{"kcdm":{"c":["david-hackney","ashley-fedan"],"m":true},"ld11":{"c":["david-hackney","ashley-fedan"],"m":true},"wslc":{"c":["david-hackney"],"m":false},"s775":{"c":["david-hackney"],"m":false},"s925":{"c":["david-hackney"],"m":false},"ufcw":{"c":["david-hackney"],"m":false},"aftw":{"c":["david-hackney"],"m":false},"alrs":{"c":["david-hackney"],"m":false},"stim":{"c":["david-hackney"],"m":false},"strn":{"c":["ashley-fedan"],"m":false},"wsto":{"c":["ashley-fedan"],"m":false},"nwpc":{"c":["ashley-fedan"],"m":false}}},{"id":"ld-11-state-representative-2","label":"Legislative District 11 State Representative — Position 2","section":"State","lead":"Steve Bergquist","share":100.0,"n":8,"contested":false,"cand":{"steve-bergquist":"Steve Bergquist"},"st":{"kcdm":{"c":["steve-bergquist"],"m":false},"ld11":{"c":["steve-bergquist"],"m":false},"sicl":{"c":["steve-bergquist"],"m":false},"wslc":{"c":["steve-bergquist"],"m":false},"s775":{"c":["steve-bergquist"],"m":false},"s925":{"c":["steve-bergquist"],"m":false},"aftw":{"c":["steve-bergquist"],"m":false},"whal":{"c":["steve-bergquist"],"m":false}}},{"id":"ld-32-state-representative-1","label":"Legislative District 32 State Representative — Position 1","section":"State","lead":"Danica Noble","share":67.0,"n":12,"contested":true,"cand":{"danica-noble":"Danica Noble","keith-scully":"Keith Scully","jenna-nand":"Jenna Nand"},"st":{"urbn":{"c":["danica-noble"],"m":false},"t4tx":{"c":["danica-noble"],"m":false},"trun":{"c":["danica-noble"],"m":false},"wslc":{"c":["danica-noble"],"m":false},"ufcw":{"c":["danica-noble"],"m":false},"aftw":{"c":["danica-noble"],"m":false},"alrs":{"c":["danica-noble"],"m":false},"whal":{"c":["danica-noble","keith-scully"],"m":true},"nwpc":{"c":["danica-noble","jenna-nand"],"m":true},"strn":{"c":["keith-scully"],"m":false},"sicl":{"c":["keith-scully"],"m":false},"stim":{"c":["keith-scully"],"m":false},"weas":{"c":["jenna-nand"],"m":false}}},{"id":"ld-32-state-representative-2","label":"Legislative District 32 State Representative — Position 2","section":"State","lead":"Lauren Davis","share":58.0,"n":18,"contested":true,"cand":{"lauren-davis":"Lauren Davis","imraan-siddiqi":"Imraan Siddiqi"},"st":{"kcdm":{"c":["lauren-davis"],"m":false},"ld32":{"c":["lauren-davis"],"m":false},"wslc":{"c":["lauren-davis"],"m":false},"s775":{"c":["lauren-davis"],"m":false},"s925":{"c":["lauren-davis"],"m":false},"ufcw":{"c":["lauren-davis","imraan-siddiqi"],"m":true},"aftw":{"c":["lauren-davis","imraan-siddiqi"],"m":true},"weas":{"c":["lauren-davis"],"m":false},"wsbt":{"c":["lauren-davis"],"m":false},"alrs":{"c":["lauren-davis"],"m":false},"whal":{"c":["lauren-davis","imraan-siddiqi"],"m":true},"nwpc":{"c":["lauren-davis"],"m":false},"strn":{"c":["imraan-siddiqi"],"m":false},"urbn":{"c":["imraan-siddiqi"],"m":false},"wpaj":{"c":["imraan-siddiqi"],"m":false},"sldr":{"c":["imraan-siddiqi"],"m":false},"wsto":{"c":["imraan-siddiqi"],"m":false},"oamv":{"c":["imraan-siddiqi"],"m":false}}},{"id":"ld-32-state-senator","label":"Legislative District 32 State Senator","section":"State","lead":"Cindy Ryu","share":72.0,"n":16,"contested":true,"cand":{"cindy-ryu":"Cindy Ryu","jesse-salomon":"Jesse Salomon"},"st":{"strn":{"c":["cindy-ryu"],"m":false},"wpaj":{"c":["cindy-ryu"],"m":false},"sldr":{"c":["cindy-ryu"],"m":false},"kcdm":{"c":["cindy-ryu"],"m":false},"ld32":{"c":["cindy-ryu"],"m":false},"wsto":{"c":["cindy-ryu"],"m":false},"wslc":{"c":["cindy-ryu"],"m":false},"aftw":{"c":["cindy-ryu"],"m":false},"weas":{"c":["cindy-ryu"],"m":false},"alrs":{"c":["cindy-ryu","jesse-salomon"],"m":true},"whal":{"c":["cindy-ryu"],"m":false},"nwpc":{"c":["cindy-ryu"],"m":false},"urbn":{"c":["jesse-salomon"],"m":false},"s925":{"c":["jesse-salomon"],"m":false},"ufcw":{"c":["jesse-salomon"],"m":false},"wsbt":{"c":["jesse-salomon"],"m":false},"stim":{"c":["jesse-salomon"],"m":false}}},{"id":"ld-34-state-representative-1","label":"Legislative District 34 State Representative — Position 1","section":"State","lead":"Brianna K. Thomas","share":100.0,"n":8,"contested":false,"cand":{"brianna-k-thomas":"Brianna K. Thomas"},"st":{"ld34":{"c":["brianna-k-thomas"],"m":false},"wsto":{"c":["brianna-k-thomas"],"m":false},"wslc":{"c":["brianna-k-thomas"],"m":false},"s775":{"c":["brianna-k-thomas"],"m":false},"s925":{"c":["brianna-k-thomas"],"m":false},"ufcw":{"c":["brianna-k-thomas"],"m":false},"aftw":{"c":["brianna-k-thomas"],"m":false},"whal":{"c":["brianna-k-thomas"],"m":false}}},{"id":"ld-34-state-representative-2","label":"Legislative District 34 State Representative — Position 2","section":"State","lead":"Joe Fitzgibbon","share":95.0,"n":19,"contested":true,"cand":{"joe-fitzgibbon":"Joe Fitzgibbon","mary-anito":"Mary Anito"},"st":{"strn":{"c":["joe-fitzgibbon"],"m":false},"urbn":{"c":["joe-fitzgibbon"],"m":false},"wpaj":{"c":["joe-fitzgibbon"],"m":false},"kcdm":{"c":["joe-fitzgibbon"],"m":false},"ld34":{"c":["joe-fitzgibbon"],"m":false},"wsto":{"c":["joe-fitzgibbon"],"m":false},"wbik":{"c":["joe-fitzgibbon"],"m":false},"wcac":{"c":["joe-fitzgibbon"],"m":false},"sicl":{"c":["joe-fitzgibbon"],"m":false},"wslc":{"c":["joe-fitzgibbon"],"m":false},"s775":{"c":["joe-fitzgibbon"],"m":false},"s925":{"c":["joe-fitzgibbon"],"m":false},"ufcw":{"c":["joe-fitzgibbon"],"m":false},"aftw":{"c":["joe-fitzgibbon"],"m":false},"weas":{"c":["joe-fitzgibbon"],"m":false},"wsbt":{"c":["joe-fitzgibbon"],"m":false},"alrs":{"c":["joe-fitzgibbon"],"m":false},"whal":{"c":["joe-fitzgibbon"],"m":false},"nwpc":{"c":["mary-anito"],"m":false}}},{"id":"ld-34-state-senator","label":"Legislative District 34 State Senator","section":"State","lead":"Emily Alvarado","share":100.0,"n":16,"contested":false,"cand":{"emily-alvarado":"Emily Alvarado"},"st":{"wpaj":{"c":["emily-alvarado"],"m":false},"sldr":{"c":["emily-alvarado"],"m":false},"kcdm":{"c":["emily-alvarado"],"m":false},"ld34":{"c":["emily-alvarado"],"m":false},"wbik":{"c":["emily-alvarado"],"m":false},"wcac":{"c":["emily-alvarado"],"m":false},"sicl":{"c":["emily-alvarado"],"m":false},"wslc":{"c":["emily-alvarado"],"m":false},"s775":{"c":["emily-alvarado"],"m":false},"s925":{"c":["emily-alvarado"],"m":false},"ufcw":{"c":["emily-alvarado"],"m":false},"aftw":{"c":["emily-alvarado"],"m":false},"wsbt":{"c":["emily-alvarado"],"m":false},"oamv":{"c":["emily-alvarado"],"m":false},"alrs":{"c":["emily-alvarado"],"m":false},"whal":{"c":["emily-alvarado"],"m":false}}},{"id":"ld-36-state-representative-1","label":"Legislative District 36 State Representative — Position 1","section":"State","lead":"Julia Grant Reed","share":100.0,"n":17,"contested":false,"cand":{"julia-grant-reed":"Julia Grant Reed"},"st":{"urbn":{"c":["julia-grant-reed"],"m":false},"sldr":{"c":["julia-grant-reed"],"m":false},"kcdm":{"c":["julia-grant-reed"],"m":false},"ld36":{"c":["julia-grant-reed"],"m":false},"wbik":{"c":["julia-grant-reed"],"m":false},"wcac":{"c":["julia-grant-reed"],"m":false},"sicl":{"c":["julia-grant-reed"],"m":false},"wslc":{"c":["julia-grant-reed"],"m":false},"s775":{"c":["julia-grant-reed"],"m":false},"s925":{"c":["julia-grant-reed"],"m":false},"ufcw":{"c":["julia-grant-reed"],"m":false},"aftw":{"c":["julia-grant-reed"],"m":false},"wsbt":{"c":["julia-grant-reed"],"m":false},"oamv":{"c":["julia-grant-reed"],"m":false},"alrs":{"c":["julia-grant-reed"],"m":false},"whal":{"c":["julia-grant-reed"],"m":false},"nwpc":{"c":["julia-grant-reed"],"m":false}}},{"id":"ld-36-state-representative-2","label":"Legislative District 36 State Representative — Position 2","section":"State","lead":"Liz Berry","share":100.0,"n":14,"contested":false,"cand":{"liz-berry":"Liz Berry"},"st":{"wpaj":{"c":["liz-berry"],"m":false},"ld36":{"c":["liz-berry"],"m":false},"wbik":{"c":["liz-berry"],"m":false},"wcac":{"c":["liz-berry"],"m":false},"sicl":{"c":["liz-berry"],"m":false},"wslc":{"c":["liz-berry"],"m":false},"s775":{"c":["liz-berry"],"m":false},"s925":{"c":["liz-berry"],"m":false},"ufcw":{"c":["liz-berry"],"m":false},"aftw":{"c":["liz-berry"],"m":false},"wsbt":{"c":["liz-berry"],"m":false},"alrs":{"c":["liz-berry"],"m":false},"whal":{"c":["liz-berry"],"m":false},"nwpc":{"c":["liz-berry"],"m":false}}},{"id":"ld-36-state-senator","label":"Legislative District 36 State Senator","section":"State","lead":"Noel C. Frame","share":100.0,"n":10,"contested":true,"cand":{"noel-c-frame":"Noel C. Frame"},"st":{"ld36":{"c":["noel-c-frame"],"m":false},"wcac":{"c":["noel-c-frame"],"m":false},"sicl":{"c":["noel-c-frame"],"m":false},"wslc":{"c":["noel-c-frame"],"m":false},"s775":{"c":["noel-c-frame"],"m":false},"s925":{"c":["noel-c-frame"],"m":false},"ufcw":{"c":["noel-c-frame"],"m":false},"aftw":{"c":["noel-c-frame"],"m":false},"alrs":{"c":["noel-c-frame"],"m":false},"whal":{"c":["noel-c-frame"],"m":false}}},{"id":"ld-37-state-representative-1","label":"Legislative District 37 State Representative — Position 1","section":"State","lead":"Sharon Tomiko Santos / Kelabe Tewolde","share":50.0,"n":13,"contested":true,"cand":{"kelabe-tewolde":"Kelabe Tewolde","sharon-tomiko-santos":"Sharon Tomiko Santos"},"st":{"strn":{"c":["kelabe-tewolde"],"m":false},"urbn":{"c":["kelabe-tewolde"],"m":false},"t4ho":{"c":["kelabe-tewolde"],"m":false},"wpaj":{"c":["kelabe-tewolde","sharon-tomiko-santos"],"m":true},"snws":{"c":["kelabe-tewolde"],"m":false},"sldr":{"c":["kelabe-tewolde"],"m":false},"wsto":{"c":["kelabe-tewolde"],"m":false},"ld37":{"c":["sharon-tomiko-santos"],"m":false},"wslc":{"c":["sharon-tomiko-santos"],"m":false},"s925":{"c":["sharon-tomiko-santos"],"m":false},"aftw":{"c":["sharon-tomiko-santos"],"m":false},"alrs":{"c":["sharon-tomiko-santos"],"m":false},"nwpc":{"c":["sharon-tomiko-santos"],"m":false}}},{"id":"ld-37-state-representative-2","label":"Legislative District 37 State Representative — Position 2","section":"State","lead":"Jaelynn Scott","share":100.0,"n":20,"contested":true,"cand":{"jaelynn-scott":"Jaelynn Scott"},"st":{"strn":{"c":["jaelynn-scott"],"m":false},"urbn":{"c":["jaelynn-scott"],"m":false},"sdsa":{"c":["jaelynn-scott"],"m":false},"t4ho":{"c":["jaelynn-scott"],"m":false},"t4tx":{"c":["jaelynn-scott"],"m":false},"wpaj":{"c":["jaelynn-scott"],"m":false},"sldr":{"c":["jaelynn-scott"],"m":false},"kcdm":{"c":["jaelynn-scott"],"m":false},"ld37":{"c":["jaelynn-scott"],"m":false},"wsto":{"c":["jaelynn-scott"],"m":false},"wcac":{"c":["jaelynn-scott"],"m":false},"wslc":{"c":["jaelynn-scott"],"m":false},"s775":{"c":["jaelynn-scott"],"m":false},"s925":{"c":["jaelynn-scott"],"m":false},"ufcw":{"c":["jaelynn-scott"],"m":false},"aftw":{"c":["jaelynn-scott"],"m":false},"oamv":{"c":["jaelynn-scott"],"m":false},"alrs":{"c":["jaelynn-scott"],"m":false},"whal":{"c":["jaelynn-scott"],"m":false},"nwpc":{"c":["jaelynn-scott"],"m":false}}},{"id":"ld-37-state-senator","label":"Legislative District 37 State Senator","section":"State","lead":"Chipalo Street","share":91.0,"n":16,"contested":true,"cand":{"chipalo-street":"Chipalo Street","tatiana-brown":"Tatiana Brown"},"st":{"strn":{"c":["chipalo-street"],"m":false},"wpaj":{"c":["chipalo-street"],"m":false},"sldr":{"c":["chipalo-street","tatiana-brown"],"m":true},"kcdm":{"c":["chipalo-street"],"m":false},"ld37":{"c":["chipalo-street"],"m":false},"wsto":{"c":["chipalo-street"],"m":false},"wcac":{"c":["chipalo-street"],"m":false},"wslc":{"c":["chipalo-street"],"m":false},"s775":{"c":["chipalo-street"],"m":false},"s925":{"c":["chipalo-street"],"m":false},"ufcw":{"c":["chipalo-street"],"m":false},"aftw":{"c":["chipalo-street"],"m":false},"wsbt":{"c":["chipalo-street"],"m":false},"alrs":{"c":["chipalo-street"],"m":false},"whal":{"c":["chipalo-street"],"m":false},"wbus":{"c":["tatiana-brown"],"m":false}}},{"id":"ld-43-state-representative-1","label":"Legislative District 43 State Representative — Position 1","section":"State","lead":"Nicole Macri","share":100.0,"n":17,"contested":true,"cand":{"nicole-macri":"Nicole Macri"},"st":{"strn":{"c":["nicole-macri"],"m":false},"urbn":{"c":["nicole-macri"],"m":false},"wpaj":{"c":["nicole-macri"],"m":false},"kcdm":{"c":["nicole-macri"],"m":false},"ld43":{"c":["nicole-macri"],"m":false},"wsto":{"c":["nicole-macri"],"m":false},"wbik":{"c":["nicole-macri"],"m":false},"wcac":{"c":["nicole-macri"],"m":false},"sicl":{"c":["nicole-macri"],"m":false},"wslc":{"c":["nicole-macri"],"m":false},"s775":{"c":["nicole-macri"],"m":false},"s925":{"c":["nicole-macri"],"m":false},"ufcw":{"c":["nicole-macri"],"m":false},"aftw":{"c":["nicole-macri"],"m":false},"alrs":{"c":["nicole-macri"],"m":false},"whal":{"c":["nicole-macri"],"m":false},"nwpc":{"c":["nicole-macri"],"m":false}}},{"id":"ld-43-state-representative-2","label":"Legislative District 43 State Representative — Position 2","section":"State","lead":"Shaun Scott","share":100.0,"n":9,"contested":false,"cand":{"shaun-scott":"Shaun Scott"},"st":{"wpaj":{"c":["shaun-scott"],"m":false},"wwfp":{"c":["shaun-scott"],"m":false},"ld43":{"c":["shaun-scott"],"m":false},"wslc":{"c":["shaun-scott"],"m":false},"s775":{"c":["shaun-scott"],"m":false},"s925":{"c":["shaun-scott"],"m":false},"ufcw":{"c":["shaun-scott"],"m":false},"aftw":{"c":["shaun-scott"],"m":false},"whal":{"c":["shaun-scott"],"m":false}}},{"id":"ld-43-state-senator","label":"Legislative District 43 State Senator","section":"State","lead":"Jamie Pedersen","share":57.0,"n":23,"contested":true,"cand":{"jamie-pedersen":"Jamie Pedersen","hannah-sabio-howell":"Hannah Sabio-Howell"},"st":{"strn":{"c":["jamie-pedersen"],"m":false},"wsto":{"c":["jamie-pedersen","hannah-sabio-howell"],"m":true},"wbik":{"c":["jamie-pedersen"],"m":false},"wcac":{"c":["jamie-pedersen"],"m":false},"sicl":{"c":["jamie-pedersen"],"m":false},"wslc":{"c":["jamie-pedersen"],"m":false},"s775":{"c":["jamie-pedersen"],"m":false},"s925":{"c":["jamie-pedersen"],"m":false},"ufcw":{"c":["jamie-pedersen"],"m":false},"aftw":{"c":["jamie-pedersen","hannah-sabio-howell"],"m":true},"weas":{"c":["jamie-pedersen"],"m":false},"wsbt":{"c":["jamie-pedersen"],"m":false},"alrs":{"c":["jamie-pedersen"],"m":false},"whal":{"c":["jamie-pedersen"],"m":false},"stim":{"c":["jamie-pedersen"],"m":false},"urbn":{"c":["hannah-sabio-howell"],"m":false},"t4tx":{"c":["hannah-sabio-howell"],"m":false},"wpaj":{"c":["hannah-sabio-howell"],"m":false},"wwfp":{"c":["hannah-sabio-howell"],"m":false},"wbus":{"c":["hannah-sabio-howell"],"m":false},"sldr":{"c":["hannah-sabio-howell"],"m":false},"kcdm":{"c":["hannah-sabio-howell"],"m":false},"ld43":{"c":["hannah-sabio-howell"],"m":false},"nwpc":{"c":["hannah-sabio-howell"],"m":false}}},{"id":"ld-46-state-representative-1","label":"Legislative District 46 State Representative — Position 1","section":"State","lead":"Gerry Pollet","share":56.0,"n":16,"contested":true,"cand":{"gerry-pollet":"Gerry Pollet","ron-davis":"Ron Davis","will-dreher":"Will Dreher"},"st":{"wcac":{"c":["gerry-pollet"],"m":false},"sicl":{"c":["gerry-pollet"],"m":false},"wslc":{"c":["gerry-pollet"],"m":false},"s775":{"c":["gerry-pollet"],"m":false},"s925":{"c":["gerry-pollet"],"m":false},"ufcw":{"c":["gerry-pollet"],"m":false},"aftw":{"c":["gerry-pollet"],"m":false},"weas":{"c":["gerry-pollet"],"m":false},"alrs":{"c":["gerry-pollet"],"m":false},"stim":{"c":["gerry-pollet"],"m":false},"urbn":{"c":["ron-davis"],"m":false},"t4ho":{"c":["ron-davis"],"m":false},"t4tx":{"c":["ron-davis"],"m":false},"wsto":{"c":["ron-davis"],"m":false},"wbik":{"c":["ron-davis"],"m":false},"ssub":{"c":["ron-davis"],"m":false},"strn":{"c":["will-dreher"],"m":false}}},{"id":"ld-46-state-representative-2","label":"Legislative District 46 State Representative — Position 2","section":"State","lead":"Darya Farivar","share":100.0,"n":18,"contested":true,"cand":{"darya-farivar":"Darya Farivar"},"st":{"urbn":{"c":["darya-farivar"],"m":false},"wpaj":{"c":["darya-farivar"],"m":false},"wwfp":{"c":["darya-farivar"],"m":false},"kcdm":{"c":["darya-farivar"],"m":false},"ld46":{"c":["darya-farivar"],"m":false},"wsto":{"c":["darya-farivar"],"m":false},"wbik":{"c":["darya-farivar"],"m":false},"wcac":{"c":["darya-farivar"],"m":false},"sicl":{"c":["darya-farivar"],"m":false},"wslc":{"c":["darya-farivar"],"m":false},"s775":{"c":["darya-farivar"],"m":false},"s925":{"c":["darya-farivar"],"m":false},"ufcw":{"c":["darya-farivar"],"m":false},"aftw":{"c":["darya-farivar"],"m":false},"oamv":{"c":["darya-farivar"],"m":false},"alrs":{"c":["darya-farivar"],"m":false},"whal":{"c":["darya-farivar"],"m":false},"nwpc":{"c":["darya-farivar"],"m":false}}},{"id":"ld-46-state-senator","label":"Legislative District 46 State Senator","section":"State","lead":"Javier Valdez","share":100.0,"n":15,"contested":true,"cand":{"javier-valdez":"Javier Valdez"},"st":{"urbn":{"c":["javier-valdez"],"m":false},"kcdm":{"c":["javier-valdez"],"m":false},"ld46":{"c":["javier-valdez"],"m":false},"wsto":{"c":["javier-valdez"],"m":false},"wbik":{"c":["javier-valdez"],"m":false},"wcac":{"c":["javier-valdez"],"m":false},"sicl":{"c":["javier-valdez"],"m":false},"wslc":{"c":["javier-valdez"],"m":false},"s775":{"c":["javier-valdez"],"m":false},"s925":{"c":["javier-valdez"],"m":false},"ufcw":{"c":["javier-valdez"],"m":false},"aftw":{"c":["javier-valdez"],"m":false},"oamv":{"c":["javier-valdez"],"m":false},"alrs":{"c":["javier-valdez"],"m":false},"whal":{"c":["javier-valdez"],"m":false}}},{"id":"king-county-assessor","label":"King County Assessor","section":"County","lead":"Rob Foxcurran","share":58.0,"n":13,"contested":true,"cand":{"rob-foxcurran":"Rob Foxcurran","christopher-roberts":"Christopher Roberts"},"st":{"strn":{"c":["rob-foxcurran"],"m":false},"urbn":{"c":["rob-foxcurran"],"m":false},"kcdm":{"c":["rob-foxcurran"],"m":false},"ld11":{"c":["rob-foxcurran"],"m":false},"ld36":{"c":["rob-foxcurran","christopher-roberts"],"m":true},"ld37":{"c":["rob-foxcurran"],"m":false},"ufcw":{"c":["rob-foxcurran"],"m":false},"pr17":{"c":["rob-foxcurran"],"m":false},"stim":{"c":["rob-foxcurran"],"m":false},"ld32":{"c":["christopher-roberts"],"m":false},"ld34":{"c":["christopher-roberts"],"m":false},"ld43":{"c":["christopher-roberts"],"m":false},"ld46":{"c":["christopher-roberts"],"m":false},"wsto":{"c":["christopher-roberts"],"m":false}}},{"id":"king-county-council-2","label":"Metropolitan King County Council — District 2","section":"County","lead":"Rebecca Saldaña","share":88.0,"n":24,"contested":true,"cand":{"rebecca-salda-a":"Rebecca Saldaña","toshiko-grace-hasegawa":"Toshiko Grace Hasegawa"},"st":{"strn":{"c":["rebecca-salda-a"],"m":false},"urbn":{"c":["rebecca-salda-a"],"m":false},"t4ho":{"c":["rebecca-salda-a"],"m":false},"t4tx":{"c":["rebecca-salda-a","toshiko-grace-hasegawa"],"m":true},"wpaj":{"c":["rebecca-salda-a"],"m":false},"wcan":{"c":["rebecca-salda-a"],"m":false},"wbus":{"c":["rebecca-salda-a"],"m":false},"kcdm":{"c":["rebecca-salda-a"],"m":false},"ld37":{"c":["rebecca-salda-a"],"m":false},"ld43":{"c":["rebecca-salda-a"],"m":false},"ld46":{"c":["rebecca-salda-a"],"m":false},"wsto":{"c":["rebecca-salda-a"],"m":false},"trun":{"c":["rebecca-salda-a","toshiko-grace-hasegawa"],"m":true},"wbik":{"c":["rebecca-salda-a"],"m":false},"wcac":{"c":["rebecca-salda-a"],"m":false},"mlkl":{"c":["rebecca-salda-a"],"m":false},"s775":{"c":["rebecca-salda-a"],"m":false},"s925":{"c":["rebecca-salda-a"],"m":false},"ufcw":{"c":["rebecca-salda-a"],"m":false},"pr17":{"c":["rebecca-salda-a"],"m":false},"alrs":{"c":["rebecca-salda-a","toshiko-grace-hasegawa"],"m":true},"whal":{"c":["rebecca-salda-a"],"m":false},"nwpc":{"c":["rebecca-salda-a","toshiko-grace-hasegawa"],"m":true},"ld11":{"c":["toshiko-grace-hasegawa"],"m":false},"stim":{"c":["toshiko-grace-hasegawa"],"m":false}}},{"id":"king-county-council-8","label":"Metropolitan King County Council — District 8","section":"County","lead":"Teresa Mosqueda","share":100.0,"n":23,"contested":true,"cand":{"teresa-mosqueda":"Teresa Mosqueda","nick-duda":"Nick Duda"},"st":{"strn":{"c":["teresa-mosqueda"],"m":false},"urbn":{"c":["teresa-mosqueda"],"m":false},"fuse":{"c":["teresa-mosqueda"],"m":false},"wpaj":{"c":["teresa-mosqueda"],"m":false},"wcan":{"c":["teresa-mosqueda"],"m":false},"wwfp":{"c":["teresa-mosqueda"],"m":false},"kcdm":{"c":["teresa-mosqueda"],"m":false},"ld11":{"c":["teresa-mosqueda"],"m":false},"ld34":{"c":["teresa-mosqueda"],"m":false},"ld37":{"c":["teresa-mosqueda"],"m":false},"ld43":{"c":["teresa-mosqueda"],"m":false},"wbik":{"c":["teresa-mosqueda"],"m":false},"ssub":{"c":["teresa-mosqueda"],"m":false},"wcac":{"c":["teresa-mosqueda"],"m":false},"mlkl":{"c":["teresa-mosqueda"],"m":false},"s925":{"c":["teresa-mosqueda"],"m":false},"ufcw":{"c":["teresa-mosqueda"],"m":false},"wsbt":{"c":["teresa-mosqueda"],"m":false},"pr17":{"c":["teresa-mosqueda"],"m":false},"oamv":{"c":["teresa-mosqueda"],"m":false},"alrs":{"c":["teresa-mosqueda"],"m":false},"whal":{"c":["teresa-mosqueda"],"m":false},"nwpc":{"c":["teresa-mosqueda"],"m":false},"stim":{"c":["nick-duda"],"m":false}}},{"id":"supreme-court-justice-1","label":"Washington Supreme Court Justice — Position 1","section":"State Supreme Court","lead":"Colleen Melody","share":100.0,"n":19,"contested":true,"cand":{"colleen-melody":"Colleen Melody"},"st":{"strn":{"c":["colleen-melody"],"m":false},"urbn":{"c":["colleen-melody"],"m":false},"kcdm":{"c":["colleen-melody"],"m":false},"ld32":{"c":["colleen-melody"],"m":false},"ld34":{"c":["colleen-melody"],"m":false},"ld36":{"c":["colleen-melody"],"m":false},"ld37":{"c":["colleen-melody"],"m":false},"ld43":{"c":["colleen-melody"],"m":false},"ld46":{"c":["colleen-melody"],"m":false},"wsto":{"c":["colleen-melody"],"m":false},"wcac":{"c":["colleen-melody"],"m":false},"sicl":{"c":["colleen-melody"],"m":false},"wslc":{"c":["colleen-melody"],"m":false},"s775":{"c":["colleen-melody"],"m":false},"s925":{"c":["colleen-melody"],"m":false},"ufcw":{"c":["colleen-melody"],"m":false},"weas":{"c":["colleen-melody"],"m":false},"ppaa":{"c":["colleen-melody"],"m":false},"nwpc":{"c":["colleen-melody"],"m":false},"stim":{"c":["colleen-melody"],"m":false}}},{"id":"supreme-court-justice-3","label":"Washington Supreme Court Justice — Position 3","section":"State Supreme Court","lead":"Jaime Michelle Hawk / Mike Diaz","share":50.0,"n":19,"contested":true,"cand":{"jaime-michelle-hawk":"Jaime Michelle Hawk","mike-diaz":"Mike Diaz"},"st":{"urbn":{"c":["jaime-michelle-hawk"],"m":false},"wpaj":{"c":["jaime-michelle-hawk"],"m":false},"ld11":{"c":["jaime-michelle-hawk"],"m":false},"ld32":{"c":["jaime-michelle-hawk","mike-diaz"],"m":true},"ld36":{"c":["jaime-michelle-hawk","mike-diaz"],"m":true},"ld43":{"c":["jaime-michelle-hawk","mike-diaz"],"m":true},"ld46":{"c":["jaime-michelle-hawk"],"m":false},"wsto":{"c":["jaime-michelle-hawk","mike-diaz"],"m":true},"wslc":{"c":["jaime-michelle-hawk","mike-diaz"],"m":true},"s775":{"c":["jaime-michelle-hawk"],"m":false},"s925":{"c":["jaime-michelle-hawk"],"m":false},"nwpc":{"c":["jaime-michelle-hawk"],"m":false},"strn":{"c":["mike-diaz"],"m":false},"kcdm":{"c":["mike-diaz"],"m":false},"ld34":{"c":["mike-diaz"],"m":false},"ld37":{"c":["mike-diaz"],"m":false},"wcac":{"c":["mike-diaz"],"m":false},"weas":{"c":["mike-diaz"],"m":false},"ppaa":{"c":["mike-diaz"],"m":false},"stim":{"c":["mike-diaz"],"m":false}}},{"id":"supreme-court-justice-5","label":"Washington Supreme Court Justice — Position 5","section":"State Supreme Court","lead":"Theo Angelis","share":65.0,"n":20,"contested":true,"cand":{"theo-angelis":"Theo Angelis","sharonda-amamilo":"Sharonda Amamilo"},"st":{"strn":{"c":["theo-angelis"],"m":false},"wpaj":{"c":["theo-angelis"],"m":false},"kcdm":{"c":["theo-angelis"],"m":false},"ld11":{"c":["theo-angelis","sharonda-amamilo"],"m":true},"ld32":{"c":["theo-angelis"],"m":false},"ld36":{"c":["theo-angelis","sharonda-amamilo"],"m":true},"ld43":{"c":["theo-angelis"],"m":false},"ld46":{"c":["theo-angelis"],"m":false},"wsto":{"c":["theo-angelis"],"m":false},"sicl":{"c":["theo-angelis"],"m":false},"wslc":{"c":["theo-angelis","sharonda-amamilo"],"m":true},"s775":{"c":["theo-angelis"],"m":false},"s925":{"c":["theo-angelis","sharonda-amamilo"],"m":true},"wsbt":{"c":["theo-angelis"],"m":false},"ppaa":{"c":["theo-angelis"],"m":false},"urbn":{"c":["sharonda-amamilo"],"m":false},"ld34":{"c":["sharonda-amamilo"],"m":false},"ld37":{"c":["sharonda-amamilo"],"m":false},"weas":{"c":["sharonda-amamilo"],"m":false},"nwpc":{"c":["sharonda-amamilo"],"m":false},"stim":{"c":["sharonda-amamilo"],"m":false}}},{"id":"supreme-court-justice-7","label":"Washington Supreme Court Justice — Position 7","section":"State Supreme Court","lead":"Debra L. Stephens","share":100.0,"n":12,"contested":true,"cand":{"debra-l-stephens":"Debra L. Stephens"},"st":{"strn":{"c":["debra-l-stephens"],"m":false},"kcdm":{"c":["debra-l-stephens"],"m":false},"ld32":{"c":["debra-l-stephens"],"m":false},"ld34":{"c":["debra-l-stephens"],"m":false},"ld36":{"c":["debra-l-stephens"],"m":false},"ld37":{"c":["debra-l-stephens"],"m":false},"ld43":{"c":["debra-l-stephens"],"m":false},"sicl":{"c":["debra-l-stephens"],"m":false},"wslc":{"c":["debra-l-stephens"],"m":false},"s925":{"c":["debra-l-stephens"],"m":false},"weas":{"c":["debra-l-stephens"],"m":false},"nwpc":{"c":["debra-l-stephens"],"m":false},"stim":{"c":["debra-l-stephens"],"m":false}}},{"id":"seattle-city-council-5","label":"Seattle City Council — District 5","section":"City","lead":"Nilu Jenks","share":93.0,"n":23,"contested":true,"cand":{"nilu-jenks":"Nilu Jenks","julie-kang":"Julie Kang","silas-james":"Silas James"},"st":{"strn":{"c":["nilu-jenks"],"m":false},"urbn":{"c":["nilu-jenks"],"m":false},"t4tx":{"c":["nilu-jenks"],"m":false},"wpaj":{"c":["nilu-jenks"],"m":false},"snws":{"c":["nilu-jenks"],"m":false},"wwfp":{"c":["nilu-jenks"],"m":false},"wbus":{"c":["nilu-jenks"],"m":false},"sldr":{"c":["nilu-jenks"],"m":false},"kcdm":{"c":["nilu-jenks"],"m":false},"ld32":{"c":["nilu-jenks","julie-kang"],"m":true},"ld36":{"c":["nilu-jenks"],"m":false},"ld46":{"c":["nilu-jenks"],"m":false},"wsto":{"c":["nilu-jenks"],"m":false},"trun":{"c":["nilu-jenks"],"m":false},"wbik":{"c":["nilu-jenks"],"m":false},"wcac":{"c":["nilu-jenks"],"m":false},"s775":{"c":["nilu-jenks"],"m":false},"s925":{"c":["nilu-jenks","silas-james"],"m":true},"ufcw":{"c":["nilu-jenks"],"m":false},"pr17":{"c":["nilu-jenks"],"m":false},"oamv":{"c":["nilu-jenks"],"m":false},"alrs":{"c":["nilu-jenks"],"m":false},"nwpc":{"c":["nilu-jenks","julie-kang"],"m":true},"stim":{"c":["julie-kang"],"m":false}}},{"id":"seattle-municipal-court-judge-5","label":"Seattle Municipal Court Judge — Position 5","section":"City","lead":"Gabe Rothstein","share":94.0,"n":9,"contested":true,"cand":{"gabe-rothstein":"Gabe Rothstein","garmon-newsom":"Garmon Newsom"},"st":{"strn":{"c":["gabe-rothstein"],"m":false},"kcdm":{"c":["gabe-rothstein"],"m":false},"ld32":{"c":["gabe-rothstein","garmon-newsom"],"m":true},"ld34":{"c":["gabe-rothstein"],"m":false},"ld37":{"c":["gabe-rothstein"],"m":false},"ld43":{"c":["gabe-rothstein"],"m":false},"ld46":{"c":["gabe-rothstein"],"m":false},"wsto":{"c":["gabe-rothstein"],"m":false},"s925":{"c":["gabe-rothstein"],"m":false},"stim":{"c":["garmon-newsom"],"m":false}}},{"id":"seattle-proposition-1-library-levy","label":"Seattle Proposition 1 — Property Tax Levy for Seattle Public Library","section":"City","lead":"Yes","share":100.0,"n":9,"contested":true,"cand":{"yes":"Yes","no":"No"},"st":{"strn":{"c":["yes"],"m":false},"urbn":{"c":["yes"],"m":false},"kcdm":{"c":["yes"],"m":false},"ld32":{"c":["yes"],"m":false},"ld34":{"c":["yes"],"m":false},"ld36":{"c":["yes"],"m":false},"ld43":{"c":["yes"],"m":false},"ld46":{"c":["yes"],"m":false},"mlkl":{"c":["yes"],"m":false},"stim":{"c":["no"],"m":false}}}]};
+
+/* ── signal model ─────────────────────────────────────────────────────── */
+const ALLSIG = 'gall'; // reserved lowercase-g sentinel: "all sources" (g-prefix can never collide with source or category codes)
+const isCat = s => /^G[a-z]{3}$/.test(s);
+const sigName = s => s === ALLSIG ? 'All sources' : isCat(s) ? DATA.cats[s] : DATA.sources[s].name;
+const sigShort = s => s === ALLSIG ? 'All sources' : isCat(s) ? DATA.cats[s] : DATA.sources[s].short;
+
+function categoryMembers(cat) {
+  return Object.keys(DATA.sources).filter(c => DATA.sources[c].cats.includes(cat));
+}
+function tallySet(codes, race) {
+  // equal weight: each endorsing source counts once; splits divide evenly. Times never tallies.
+  const w = {}; let n = 0;
+  for (const c of codes) {
+    if (c === 'stim') continue;
+    const st = race.st[c];
+    if (!st) continue;
+    n++;
+    for (const cand of st.c) w[cand] = (w[cand] || 0) + 1 / st.c.length;
+  }
+  if (!n) return { n: 0, leads: [], share: 0 };
+  let top = 0;
+  for (const cand in w) top = Math.max(top, w[cand]);
+  const leads = Object.keys(w).filter(c => w[c] > top - 1e-9);
+  return { n, leads, share: Math.round((top / n) * 100) };
+}
+const ldRace = id => (id.match(/^ld-(\d+)-/) || [])[1];
+const ldSource = c => (c.match(/^ld(\d+)$/) || [])[1];
+
+/* cell model: {kind:'pick'|'none'|'oos'|'ncov', leads:[], co:bool, share?, n?, m?} */
+function cellFor(sig, race) {
+  if (sig === ALLSIG) {
+    const t = tallySet(Object.keys(DATA.sources), race);
+    return t.n ? { kind: 'pick', leads: t.leads, share: t.share, n: t.n, agg: true }
+               : { kind: 'none' };
+  }
+  if (isCat(sig)) {
+    if (sig === 'Gcmp') return cellFor('stim', race); // single comparison member; never tallies
+    const t = tallySet(categoryMembers(sig), race);
+    return t.n ? { kind: 'pick', leads: t.leads, share: t.share, n: t.n,
+                   m: categoryMembers(sig).length, agg: true }
+               : { kind: 'none' };
+  }
+  const st = race.st[sig];
+  if (st) return { kind: 'pick', leads: st.c, co: st.m };
+  // per decision: no-endorsement, not-covered, unavailable, unverified all render as the same blank
+  const rd = ldRace(race.id), sd = ldSource(sig);
+  if (sd && rd && sd !== rd) return { kind: 'oos' };
+  return { kind: 'none' };
+}
+const hasData = c => c.kind === 'pick';
+const disjoint = (a, b) => !a.leads.some(x => b.leads.includes(x));
+
+/* ── state ────────────────────────────────────────────────────────────── */
+const MAX_COLUMNS = 3;
+let state = {
+  cols: ['gall', 'strn', 'stim'],
+  contested: false, diffOnly: false, section: 'all',
+};
+/* Fragment mirrors the lens codec: fixed-width 4-char tokens joined with NO
+   separator (lens-url.mjs style), but order-preserving — the first token is
+   the baseline column. */
+function readHash() {
+  const h = new URLSearchParams(location.hash.replace(/^#/, ''));
+  const raw = h.get('cols') || '';
+  if (raw && raw.length % 4 === 0) {
+    const cols = [];
+    for (let i = 0; i < raw.length; i += 4) {
+      const t = raw.slice(i, i + 4);
+      if ((t === ALLSIG || isCat(t) || DATA.sources[t]) && !cols.includes(t)) cols.push(t);
+    }
+    if (cols.length >= 2) state.cols = cols.slice(0, MAX_COLUMNS);
+  }
+  state.diffOnly = h.get('diff') === '1';
+  state.contested = h.get('races') === 'contested';
+  state.section = h.get('show') || 'all';
+}
+function writeHash() {
+  const h = new URLSearchParams();
+  h.set('cmp', '1');
+  h.set('cols', state.cols.join(''));
+  if (state.diffOnly) h.set('diff', '1');
+  if (state.contested) h.set('races', 'contested');
+  if (state.section !== 'all') h.set('show', state.section);
+  history.replaceState(null, '', '#' + h.toString());
+}
+
+/* ── responsive column budget ─────────────────────────────────────────── */
+function budget() {
+  const w = document.querySelector('.table-wrap').clientWidth;
+  return Math.min(MAX_COLUMNS, w < 620 ? 2 : MAX_COLUMNS);
+}
+
+/* ── render ───────────────────────────────────────────────────────────── */
+const table = document.getElementById('cmp-table');
+const head = document.getElementById('cmp-head');
+
+function pickerOptions(current, used) {
+  const opt = (v, label) => {
+    const dis = used.includes(v) && v !== current ? ' disabled' : '';
+    const sel = v === current ? ' selected' : '';
+    return `<option value="${v}"${sel}${dis}>${label}</option>`;
+  };
+  let html = opt(ALLSIG, 'All sources');
+  html += '<optgroup label="Categories">';
+  for (const c of DATA.catOrder) if (c !== 'Gcmp') html += opt(c, DATA.cats[c]);
+  html += '</optgroup>';
+  for (const c of DATA.catOrder) {
+    const members = categoryMembers(c).sort((a, b) => DATA.sources[a].name.localeCompare(DATA.sources[b].name));
+    if (!members.length) continue;
+    html += `<optgroup label="${DATA.cats[c]}${c === 'Gcmp' ? ' (comparison only)' : ''}">`;
+    for (const m of members) html += opt(m, DATA.sources[m].name);
+    html += '</optgroup>';
+  }
+  return html;
+}
+
+function coverageMeta(sig) {
+  if (sig === ALLSIG) return 'audited baseline · 40 sources';
+  if (isCat(sig)) {
+    if (sig === 'Gcmp') return 'comparison only · never counted';
+    return `${categoryMembers(sig).length} sources, equal weight`;
+  }
+  const covered = DATA.races.filter(r => r.st[sig]).length;
+  const cat = DATA.sources[sig].cats.filter(c => c !== 'Gcmp').map(c => DATA.cats[c]).join(' · ');
+  if (sig === 'stim') return `comparison only · covers ${covered} of ${DATA.races.length} races`;
+  return `endorsed in ${covered} of ${DATA.races.length} races`;
+}
+
+function candName(race, slug) { return race.cand[slug] || slug; }
+
+function renderCell(cell, race, baseCell, isBaseline) {
+  let cls = 'cell', body = '', sub = '';
+  if (cell.kind === 'none') body = '<span class="pick">—</span>';
+  else if (cell.kind === 'oos') body = '<span class="pick">Outside district</span>';
+  else {
+    const names = cell.leads.map(s => candName(race, s));
+    const tied = cell.agg && cell.leads.length > 1;
+    let label = tied ? 'Tied — ' + names.join(' / ')
+      : cell.co ? `${names[0]} <span class="co">+ ${names.slice(1).join(', ')}</span>`
+      : names.join(' / ');
+    body = `<span class="pick">${label}</span>`;
+    if (cell.agg) {
+      const nOf = cell.m ? `${cell.n} of ${cell.m}` : `${cell.n} sources`;
+      sub = `<span class="sub"><span class="mini-meter" role="img" aria-label="Agreement ${cell.share}%"><i style="width:${cell.share}%"></i></span><span class="n">${cell.share}% · ${nOf}</span></span>`;
+    }
+  }
+  if (cell.kind === 'oos') cls += ' oos';
+  if (cell.kind === 'none') cls += ' none';
+  if (!isBaseline && hasData(cell) && baseCell && hasData(baseCell)) {
+    cls += disjoint(cell, baseCell) ? ' differ' : ' agree';
+  }
+  const sr = cls.includes('differ') ? '<span class="visually-hidden"> (differs from baseline)</span>' : '';
+  return `<td class="${cls}">${body}${sr}${sub}</td>`;
+}
+
+function render() {
+  const b = budget();
+  const visible = state.cols.slice(0, b);
+  const hiddenCount = state.cols.length - visible.length;
+  const note = document.getElementById('hidden-note');
+  note.hidden = !hiddenCount;
+  if (hiddenCount) note.textContent = `${hiddenCount} column${hiddenCount > 1 ? 's' : ''} hidden at this width — still counted in differences`;
+
+  /* header */
+  let h = '<tr><th class="race-col" scope="col"><span class="t">Race</span></th>';
+  visible.forEach((sig, i) => {
+    const cmp = sig === 'stim' || sig === 'Gcmp';
+    h += `<th scope="col"><div class="col-head">
+      <div class="badge-row">${i === 0 ? '<span class="badge">Baseline</span>' : ''}${cmp ? '<span class="badge cmp">Comparison only</span>' : ''}</div>
+      <div class="picker-row">
+        <select data-col="${i}" aria-label="Column ${i + 1} signal">${pickerOptions(sig, state.cols)}</select>
+        ${state.cols.length > 2 ? `<button class="remove" data-remove="${i}" aria-label="Remove ${sigName(sig)} column">×</button>` : ''}
+      </div>
+      <span class="meta">${coverageMeta(sig)}</span>
+    </div></th>`;
+  });
+  if (state.cols.length < b) {
+    h += '<th class="add-col"><button id="add-col" aria-label="Add a column">+</button></th>';
+  }
+  h += '</tr>';
+  head.innerHTML = h;
+
+  /* body */
+  table.querySelectorAll('tbody').forEach(tb => tb.remove());
+  const nCols = visible.length + 1 + (state.cols.length < b ? 1 : 0);
+  const sections = [...new Set(DATA.races.map(r => r.section))];
+  let shown = 0, differCount = 0;
+  for (const sec of sections) {
+    if (state.section !== 'all' && state.section !== sec) continue;
+    const races = DATA.races.filter(r => r.section === sec)
+      .filter(r => !state.contested || r.contested);
+    if (!races.length) continue;
+    let rows = '';
+    for (const race of races) {
+      // differences are computed over the FULL configured column set (per
+      // decision: a shared link keeps its row set even when width hides columns)
+      const allCells = state.cols.map(sig => cellFor(sig, race));
+      const withData = allCells.filter(hasData);
+      let differs = false;
+      for (let i = 0; i < withData.length && !differs; i++)
+        for (let j = i + 1; j < withData.length; j++)
+          if (disjoint(withData[i], withData[j])) { differs = true; break; }
+      if (state.diffOnly && !differs) continue;
+      shown++; if (differs) differCount++;
+      const cells = allCells.slice(0, visible.length);
+      const base = cells[0];
+      let tds = '';
+      cells.forEach((c, i) => { tds += renderCell(c, race, base, i === 0); });
+      if (state.cols.length < b) tds += '<td></td>';
+      rows += `<tr>
+        <td class="race-cell" ${differs ? 'data-differs' : ''}>
+          <span class="office"><a href="https://seattleelections.guide/e/wa-2026-primary/#race-${race.id}" title="Open race detail in the guide">${race.label}</a></span>
+          ${differs ? '<span class="differs-chip">≠ differs</span>' : ''}
+        </td>${tds}</tr>`;
+    }
+    if (!rows) continue;
+    const tb = document.createElement('tbody');
+    tb.className = 'section';
+    tb.innerHTML = `<tr><th class="section-head" scope="rowgroup">${sec}</th><td class="section-fill" colspan="${nCols - 1}"></td></tr>${rows}`;
+    table.appendChild(tb);
+  }
+  if (!shown) {
+    const tb = document.createElement('tbody');
+    tb.innerHTML = `<tr class="empty-row"><td colspan="${nCols}">${
+      state.diffOnly ? 'These signals agree in every race they share under the current filters.'
+                     : 'No races match the current filters.'}</td></tr>`;
+    table.appendChild(tb);
+  }
+
+  /* caption + status */
+  const totalShownBase = DATA.races.filter(r => (!state.contested || r.contested) &&
+    (state.section === 'all' || r.section === state.section)).length;
+  document.getElementById('cmp-caption').textContent =
+    'Endorsement comparison: ' + visible.map(sigName).join(' vs. ');
+  document.getElementById('status').innerHTML =
+    `<b>${shown}</b> of ${totalShownBase} races shown · <b>${differCount}</b> differ`;
+
+  /* wire header controls */
+  head.querySelectorAll('select[data-col]').forEach(sel => {
+    sel.addEventListener('change', () => {
+      state.cols[+sel.dataset.col] = sel.value;
+      writeHash(); render();
+    });
+  });
+  head.querySelectorAll('button[data-remove]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.cols.splice(+btn.dataset.remove, 1);
+      writeHash(); render();
+    });
+  });
+  const add = document.getElementById('add-col');
+  if (add) add.addEventListener('click', () => {
+    const unused = ['stim', 'Glab', 'Gdem', 'Genv', 'kcdm', 'sicl', 'wslc']
+      .find(s => !state.cols.includes(s)) || 'Ggen';
+    state.cols.push(unused);
+    writeHash(); render();
+  });
+}
+
+/* controls */
+function seg(idOn, idOff, key) {
+  const on = document.getElementById(idOn), off = document.getElementById(idOff);
+  const sync = () => {
+    on.setAttribute('aria-pressed', String(!state[key]));
+    off.setAttribute('aria-pressed', String(state[key]));
+  };
+  on.addEventListener('click', () => { state[key] = false; sync(); writeHash(); render(); });
+  off.addEventListener('click', () => { state[key] = true; sync(); writeHash(); render(); });
+  sync();
+}
+seg('btn-complete', 'btn-contested', 'contested');
+seg('btn-all-rows', 'btn-diff-rows', 'diffOnly');
+
+const rf = document.getElementById('race-filter');
+{
+  const sections = [...new Set(DATA.races.map(r => r.section))];
+  rf.innerHTML = '<option value="all">All Seattle ballot races</option>' +
+    sections.map(s => `<option value="${s}">${s}</option>`).join('');
+  rf.addEventListener('change', () => { state.section = rf.value; writeHash(); render(); });
+}
+
+document.querySelectorAll('.presets button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    state.cols = btn.dataset.preset.split(',');
+    writeHash(); render();
+  });
+});
+
+let rt;
+addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(render, 120); });
+
+readHash();
+rf.value = state.section;
+document.getElementById('btn-contested').setAttribute('aria-pressed', String(state.contested));
+document.getElementById('btn-complete').setAttribute('aria-pressed', String(!state.contested));
+document.getElementById('btn-diff-rows').setAttribute('aria-pressed', String(state.diffOnly));
+document.getElementById('btn-all-rows').setAttribute('aria-pressed', String(!state.diffOnly));
+render();
+</script>
