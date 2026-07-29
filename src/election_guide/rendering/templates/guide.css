@@ -170,6 +170,26 @@ a.race-detail-source-row:hover strong { text-decoration: underline; text-underli
 .sources-comparison-status { margin: 0 0 .5rem; padding: .5rem .75rem; border-left: .25rem solid #d9a15d; background: #fff6e8; color: #8a4b00; font-size: .85rem; font-weight: 600; }
 .sources-summary-link a { color: #9ee7df; font-weight: 800; }
 .detailed-source-directory { display: none; }
+/* The classes below are shared with the dedicated sources page
+   (sources.html.j2), which reads this same stylesheet and still renders its
+   own checkbox tree with this markup; the guide itself has none of it left. */
+.sources-tree { padding: 1.75rem clamp(1rem, 4vw, 3rem) 2.5rem; border-top: 1px solid #526f83; background: #f7f9fb; color: var(--ink); }
+.sources-columns { column-count: 2; column-gap: 1.5rem; margin-bottom: 1rem; }
+.sources-category { display: inline-block; width: 100%; min-width: 0; margin: 0 0 1rem; break-inside: avoid; border: 1px solid #d9e2ec; border-top: .22rem solid var(--teal); background: var(--white); vertical-align: top; }
+.sources-category h3 { margin: 0; padding: .65rem .75rem .55rem; color: var(--teal); font-size: .74rem; letter-spacing: .08em; line-height: 1.15; text-transform: uppercase; }
+.sources-category-check { display: flex; align-items: center; gap: .5rem; margin: 0; font: inherit; color: inherit; letter-spacing: inherit; text-transform: inherit; cursor: pointer; }
+.sources-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: .2rem .75rem; min-height: 2.5rem; padding: .5rem .75rem; border-top: 1px solid #e0e7ed; }
+.sources-check { display: flex; min-width: 0; align-items: center; gap: .5rem; margin: 0; font-weight: 600; }
+.sources-row a, .sources-source-link { min-width: 0; color: var(--navy); font-size: .8rem; font-weight: 700; overflow-wrap: anywhere; }
+.sources-also-in { grid-column: 1 / -1; color: var(--muted); font-size: .68rem; font-weight: 600; white-space: normal; }
+.sources-count { justify-self: end; color: #176554; font-size: .72rem; font-variant-numeric: tabular-nums; font-weight: 800; white-space: nowrap; }
+.sources-category-comparison { border-top-color: #d9a15d; background: #fff6e8; }
+.sources-category-comparison h3, .sources-category-comparison .sources-count { color: #8a4b00; }
+.sources-comparison-note { margin: 0; padding: .55rem .75rem; border-bottom: 1px solid #f0dab3; color: #8a4b00; font-size: .72rem; line-height: 1.35; }
+.sources-version { margin: 0; color: #46596a; font-size: .78rem; }
+.screen-coverage-gaps { display: grid; grid-template-columns: minmax(14rem, .7fr) minmax(0, 1.3fr); gap: 1rem 2rem; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid #cbd2d9; }
+.screen-coverage-gaps h2 { margin: .15rem 0 .35rem; color: var(--navy); font-size: 1.35rem; }
+.screen-coverage-gaps > div > p:last-child { margin: 0; color: var(--muted); font-size: .8rem; }
 .coverage-gap-columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem; }
 .coverage-gap-row { min-width: 0; padding: .7rem .8rem; border: 1px solid #d9e2ec; border-left: .22rem solid #829ab1; background: var(--white); }
 .coverage-gap-row div { display: flex; min-width: 0; flex-wrap: wrap; justify-content: space-between; gap: .25rem .75rem; }
@@ -197,7 +217,10 @@ a.race-detail-source-row:hover strong { text-decoration: underline; text-underli
   .screen-controls p { grid-column: auto; justify-content: flex-start; justify-self: start; text-align: left; }
   .view-setting { width: 100%; }
   html.compact-ballot-mode .race-grid { grid-template-columns: 1fr; }
-  .race-grid, .footer-summary, .coverage-gap-columns { grid-template-columns: 1fr; }
+  .race-grid, .footer-summary, .screen-coverage-gaps, .coverage-gap-columns { grid-template-columns: 1fr; }
+  .sources-columns { column-count: 1; }
+  .sources-row { grid-template-columns: minmax(0, 1fr); gap: .15rem; }
+  .sources-count { justify-self: start; white-space: normal; }
   .footer-summary { gap: .8rem; }
   .footer-actions { justify-content: flex-start; }
   .screen-footer-meta { flex-direction: column; }
