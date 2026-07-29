@@ -247,6 +247,13 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
 
     html = render_html_document(view_model, configuration)
 
+    # Issue 108 acceptance: a coverage-gap source has zero endorsements and was
+    # never selectable on the sources page's own tree, so the guide's lens
+    # bindings (which drive its "Viewing N of M sources" total) must exclude
+    # it too, exactly like the sources page's own contribution_status filter.
+    bindings = json.loads(html.split('id="lens-bindings">')[1].split("</script>")[0])
+    assert gap_source.id not in {source["id"] for source in bindings["sources"]}
+
     races = [race for section in view_model.sections for race in section.races]
     source_by_id = {source.id: source for source in view_model.sources}
     category_label_by_key = {
