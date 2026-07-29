@@ -281,7 +281,10 @@
             {% if guide.personalization.policy.enabled %}
             <div class="insufficient-note" data-lens-only data-lens-insufficient hidden>
               Too few explicit endorsements to assess consensus reliably in My sources.</div>
-            <p class="lens-comparison" data-lens-only data-lens-comparison hidden></p>
+            {# role="group" matches the Times comparison bar's idiom: a bare
+               <p> is name-prohibited in ARIA, so the agree/differ aria-label
+               applied by applyAllSourcesSignal needs the role to be exposed. #}
+            <p class="lens-comparison" role="group" data-lens-only data-lens-comparison hidden></p>
             {% endif %}
             <dialog class="race-detail-dialog" id="race-detail-{{ race.id }}"
               data-race-detail-dialog data-race-id="{{ race.id }}"
@@ -308,7 +311,7 @@
                 <section class="race-detail-lens" data-lens-only data-race-detail-lens>
                   <h4>My sources</h4>
                   <p data-lens-detail-summary></p>
-                  <p class="lens-comparison" data-lens-only data-lens-detail-audited hidden></p>
+                  <p class="lens-comparison" role="group" data-lens-only data-lens-detail-audited hidden></p>
                   <ul class="lens-detail-sources" data-lens-detail-sources></ul>
                 </section>
                 {% endif %}

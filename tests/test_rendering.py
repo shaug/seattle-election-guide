@@ -3070,12 +3070,18 @@ def test_personalization_divergent_race_discloses_a_compact_comparison_and_full_
               sourceRowCount: dialog.querySelectorAll('[data-lens-detail-sources] li').length,
             };
           }
+          const divergentComparison = divergent?.querySelector('[data-lens-comparison]');
           return JSON.stringify({
             hasDivergent: divergent !== undefined,
             hasUnchanged: unchanged !== undefined,
             divergentBadge: divergent?.querySelector('[data-lens-card-badge]')?.textContent,
-            divergentComparisonText: divergent
-              ?.querySelector('[data-lens-comparison]')?.textContent,
+            divergentComparisonText: divergentComparison?.textContent,
+            divergentComparisonRole: divergentComparison?.getAttribute('role'),
+            divergentComparisonAriaLabel: divergentComparison?.getAttribute('aria-label'),
+            divergentComparisonToned: Boolean(
+              divergentComparison?.classList.contains('lens-comparison-differs')
+              || divergentComparison?.classList.contains('lens-comparison-agrees'),
+            ),
             unchangedComparisonHidden: unchanged?.querySelector('[data-lens-comparison]')?.hidden,
             detail,
           });
@@ -3088,6 +3094,13 @@ def test_personalization_divergent_race_discloses_a_compact_comparison_and_full_
     )
     assert result["divergentBadge"].strip() == "My sources"
     assert "All sources:" in result["divergentComparisonText"]
+    # Item G27: tone tint is never the sole agree/differ carrier — the bar is
+    # a named group whose accessible label states the agreement in words.
+    assert result["divergentComparisonRole"] == "group"
+    assert result["divergentComparisonAriaLabel"].startswith(
+        ("All sources agree with your selection.", "All sources differ from your selection.")
+    )
+    assert result["divergentComparisonToned"] is True
     assert result["detail"]["auditedHidden"] is False
     assert "All sources:" in result["detail"]["auditedText"]
     assert result["detail"]["sourceRowCount"] >= 0
