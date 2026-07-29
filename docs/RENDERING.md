@@ -80,7 +80,7 @@ uv run election-guide render build \
 ```
 
 Overflow generations additionally contain
-`Seattle_2026_Primary_Endorsement_Guide_Detailed.pdf` and `pdf/detailed-pages/`. The validation
+`Seattle_2026_Primary_Elections_Guide_Detailed.pdf` and `pdf/detailed-pages/`. The validation
 report records `concise_plus_detailed` and the detailed page count when that fallback is used.
 
 The rendering destination must be absent or empty. The renderer stages the complete generation
@@ -99,7 +99,7 @@ output/rendered/
 │   ├── desktop.png
 │   └── mobile.png
 └── pdf/
-    ├── Seattle_2026_Primary_Endorsement_Guide.pdf
+    ├── Seattle_2026_Primary_Elections_Guide.pdf
     └── pages/
         ├── page-1.png
         └── page-2.png

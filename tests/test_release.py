@@ -352,8 +352,8 @@ def test_release_build_packages_complete_deterministic_public_bundle(
         pdf_dir = output_dir / "pdf"
         pdf_dir.mkdir(parents=True)
         html = output_dir / "seattle-2026-primary-guide.html"
-        pdf = pdf_dir / "Seattle_2026_Primary_Endorsement_Guide.pdf"
-        detailed_pdf = pdf_dir / "Seattle_2026_Primary_Endorsement_Guide_Detailed.pdf"
+        pdf = pdf_dir / "Seattle_2026_Primary_Elections_Guide.pdf"
+        detailed_pdf = pdf_dir / "Seattle_2026_Primary_Elections_Guide_Detailed.pdf"
         page = pdf_dir / "pages/page-1.png"
         detailed_page = pdf_dir / "detailed-pages/page-1.png"
         screenshot = output_dir / "screenshots/desktop.png"
@@ -429,7 +429,7 @@ def test_release_build_packages_complete_deterministic_public_bundle(
     assert "seattle-election-guide/release-manifest.json" in names
     assert "seattle-election-guide/data/canonical-dataset.json" in names
     assert "seattle-election-guide/data/consensus.json" in names
-    assert "seattle-election-guide/guide/Seattle_2026_Primary_Endorsement_Guide.pdf" in names
+    assert "seattle-election-guide/guide/Seattle_2026_Primary_Elections_Guide.pdf" in names
     assert "seattle-election-guide/validation/rendering/pdf/pages/page-1.png" in names
     assert "seattle-election-guide/validation/rendering/screenshots/desktop.png" in names
 
