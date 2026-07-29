@@ -128,7 +128,7 @@
         <div class="sources-columns">
           {% for category in guide.personalization.categories if category.selectable and category.panel_role != 'comparison' %}
           <section class="sources-category" data-sources-category="{{ category.code }}">
-            <h3>
+            <h2>
               {% if guide.personalization.policy.enabled %}
               <label class="sources-check sources-category-check">
                 <input type="checkbox" data-sources-category-toggle="{{ category.code }}" checked>
@@ -137,7 +137,7 @@
               {% else %}
               <span>{{ category.label }}</span>
               {% endif %}
-            </h3>
+            </h2>
             {% for member_code in category.member_source_codes %}
               {{ sources_member_row(category, member_code) }}
             {% endfor %}
@@ -151,12 +151,12 @@
           <p class="sources-comparison-note">Comparison only. The Times is a comparison signal
             only: selecting it here never changes a recommendation, a count, or an agreement
             score, and it is never counted toward the tally above.</p>
-          <h3>
+          <h2>
             <label class="sources-check sources-category-check">
               <input type="checkbox" data-sources-category-toggle="{{ comparison_category.code }}">
               <span>{{ comparison_category.label }}</span>
             </label>
-          </h3>
+          </h2>
           {% for member_code in comparison_category.member_source_codes %}
             {{ sources_member_row(comparison_category, member_code) }}
           {% endfor %}

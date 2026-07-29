@@ -565,6 +565,11 @@
     lens_personalization.sources if guide.personalization.policy.enabled
     else (lens_personalization.sources | selectattr('panel_role', 'equalto', 'comparison') | list)
   ) %}
+    {# A coverage-gap source has zero endorsements and was never selectable on
+       the sources page's own tree (issue 107's own "contributing" filter), so
+       it must not count toward the guide's "Viewing N of M" total either;
+       only the always-shown comparison source is exempt from this filter. #}
+    {% if s.panel_role == 'comparison' or source_by_id[s.id].contribution_status == 'contributing' %}
     {% set _ = bindings_sources.items.append({
       "id": s.id,
       "code": s.code,
@@ -575,6 +580,7 @@
       "overlap_group_ids": s.overlap_group_ids,
       "name": source_by_id[s.id].name
     }) %}
+    {% endif %}
   {% endfor %}
   <script type="application/json" id="lens-bindings">{{ {
     "panel_id": guide.metadata.source_panel_id,
