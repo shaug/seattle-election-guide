@@ -1973,7 +1973,7 @@ def test_pdf_identity_validation_rejects_concatenated_print_title(tmp_path: Path
     html_path.write_text(
         html.replace(
             '<h1 data-document-role="print-title">Seattle Progressive Elections Guide</h1>',
-            '<h1 data-document-role="print-title">SeattleProgressiveEndorsementGuide</h1>',
+            '<h1 data-document-role="print-title">SeattleProgressiveElectionsGuide</h1>',
             1,
         ),
         encoding="utf-8",
