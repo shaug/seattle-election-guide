@@ -28,6 +28,7 @@ from tests.test_rendering import (  # pyright: ignore[reportPrivateUsage]
     _evaluate_in_chrome,  # pyright: ignore[reportPrivateUsage]
     _lens_fragment,  # pyright: ignore[reportPrivateUsage]
     _personalization_enabled_view_model,  # pyright: ignore[reportPrivateUsage]
+    _tallying_selectable,  # pyright: ignore[reportPrivateUsage]
 )
 
 COMMIT = "a" * 40
@@ -456,7 +457,7 @@ def _selectable_tallying_codes(view_model: PublicationViewModel) -> list[str]:
         {
             code
             for category in view_model.personalization.categories
-            if category.selectable and category.panel_role != "comparison"
+            if _tallying_selectable(category)
             for code in category.member_source_codes
         }
     )
