@@ -176,7 +176,7 @@ a.race-detail-source-row:hover strong { text-decoration: underline; text-underli
 .sources-tree { padding: 1.75rem clamp(1rem, 4vw, 3rem) 2.5rem; border-top: 1px solid #526f83; background: #f7f9fb; color: var(--ink); }
 .sources-columns { column-count: 2; column-gap: 1.5rem; margin-bottom: 1rem; }
 .sources-category { display: inline-block; width: 100%; min-width: 0; margin: 0 0 1rem; break-inside: avoid; border: 1px solid #d9e2ec; border-top: .22rem solid var(--teal); background: var(--white); vertical-align: top; }
-.sources-category h3 { margin: 0; padding: .65rem .75rem .55rem; color: var(--teal); font-size: .74rem; letter-spacing: .08em; line-height: 1.15; text-transform: uppercase; }
+.sources-category h2 { margin: 0; padding: .65rem .75rem .55rem; color: var(--teal); font-size: .74rem; letter-spacing: .08em; line-height: 1.15; text-transform: uppercase; }
 .sources-category-check { display: flex; align-items: center; gap: .5rem; margin: 0; font: inherit; color: inherit; letter-spacing: inherit; text-transform: inherit; cursor: pointer; }
 .sources-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: .2rem .75rem; min-height: 2.5rem; padding: .5rem .75rem; border-top: 1px solid #e0e7ed; }
 .sources-check { display: flex; min-width: 0; align-items: center; gap: .5rem; margin: 0; font-weight: 600; }
@@ -184,7 +184,7 @@ a.race-detail-source-row:hover strong { text-decoration: underline; text-underli
 .sources-also-in { grid-column: 1 / -1; color: var(--muted); font-size: .68rem; font-weight: 600; white-space: normal; }
 .sources-count { justify-self: end; color: #176554; font-size: .72rem; font-variant-numeric: tabular-nums; font-weight: 800; white-space: nowrap; }
 .sources-category-comparison { border-top-color: #d9a15d; background: #fff6e8; }
-.sources-category-comparison h3, .sources-category-comparison .sources-count { color: #8a4b00; }
+.sources-category-comparison h2, .sources-category-comparison .sources-count { color: #8a4b00; }
 .sources-comparison-note { margin: 0; padding: .55rem .75rem; border-bottom: 1px solid #f0dab3; color: #8a4b00; font-size: .72rem; line-height: 1.35; }
 .sources-version { margin: 0; color: #46596a; font-size: .78rem; }
 .screen-coverage-gaps { display: grid; grid-template-columns: minmax(14rem, .7fr) minmax(0, 1.3fr); gap: 1rem 2rem; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid #cbd2d9; }
