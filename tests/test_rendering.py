@@ -82,150 +82,150 @@ PROJECT_ROOT = Path(__file__).parent.parent
 RENDERING_CONFIG = PROJECT_ROOT / "config/rendering/pdf.yaml"
 DARWIN_VISUAL_BASELINES = {
     "pdf-page-1": [
-        0.171,
-        0.196,
-        0.124,
-        0.106,
-        0.112,
-        0.146,
-        0.157,
-        0.133,
-        0.114,
-        0.140,
-        0.159,
+        0.173,
+        0.173,
         0.137,
+        0.094,
+        0.112,
+        0.149,
+        0.175,
+        0.118,
+        0.114,
+        0.144,
+        0.208,
+        0.140,
         0.064,
-        0.089,
-        0.099,
-        0.084,
+        0.085,
+        0.075,
+        0.054,
     ],
     "pdf-page-2": [
         0.090,
         0.058,
-        0.056,
+        0.048,
         0.031,
-        0.077,
-        0.056,
-        0.103,
-        0.039,
-        0.093,
-        0.073,
-        0.094,
-        0.037,
+        0.133,
+        0.090,
+        0.042,
+        0.024,
+        0.152,
+        0.106,
         0.047,
-        0.031,
-        0.052,
-        0.022,
+        0.025,
+        0.060,
+        0.044,
+        0.037,
+        0.018,
     ],
     "desktop": [
-        0.455,
-        0.669,
-        0.688,
-        0.514,
-        0.080,
-        0.051,
-        0.065,
-        0.042,
+        0.441,
+        0.639,
+        0.692,
+        0.472,
+        0.081,
+        0.084,
         0.077,
-        0.065,
-        0.051,
-        0.054,
-        0.085,
-        0.068,
-        0.103,
-        0.052,
+        0.058,
+        0.071,
+        0.072,
+        0.071,
+        0.073,
+        0.077,
+        0.099,
+        0.094,
+        0.086,
     ],
     "mobile": [
-        0.614,
-        0.609,
-        0.616,
-        0.693,
-        0.233,
-        0.254,
-        0.029,
-        0.021,
-        0.142,
-        0.145,
-        0.076,
-        0.082,
-        0.114,
-        0.111,
-        0.058,
-        0.058,
+        0.702,
+        0.723,
+        0.741,
+        0.796,
+        0.234,
+        0.252,
+        0.033,
+        0.030,
+        0.127,
+        0.119,
+        0.110,
+        0.051,
+        0.097,
+        0.092,
+        0.086,
+        0.044,
     ],
 }
 LINUX_VISUAL_BASELINES = {
     "pdf-page-1": [
-        0.165,
-        0.193,
-        0.120,
-        0.103,
-        0.107,
-        0.144,
-        0.152,
+        0.167,
+        0.170,
         0.133,
+        0.091,
+        0.107,
+        0.147,
+        0.170,
+        0.118,
         0.108,
+        0.144,
+        0.202,
         0.140,
-        0.153,
-        0.137,
         0.061,
-        0.089,
-        0.095,
-        0.084,
+        0.085,
+        0.071,
+        0.054,
     ],
     "pdf-page-2": [
         0.078,
         0.051,
-        0.050,
+        0.042,
         0.029,
-        0.080,
-        0.055,
-        0.097,
-        0.037,
+        0.136,
         0.089,
-        0.071,
-        0.099,
-        0.039,
-        0.046,
-        0.037,
-        0.048,
-        0.021,
+        0.036,
+        0.022,
+        0.148,
+        0.104,
+        0.052,
+        0.027,
+        0.059,
+        0.050,
+        0.033,
+        0.017,
     ],
     "desktop": [
-        0.463,
-        0.659,
-        0.728,
-        0.514,
-        0.072,
-        0.044,
+        0.449,
+        0.629,
+        0.732,
+        0.472,
+        0.073,
+        0.077,
+        0.070,
         0.058,
-        0.042,
-        0.067,
-        0.055,
-        0.043,
-        0.054,
-        0.080,
-        0.060,
-        0.090,
-        0.052,
+        0.061,
+        0.062,
+        0.063,
+        0.073,
+        0.072,
+        0.091,
+        0.081,
+        0.086,
     ],
     "mobile": [
-        0.626,
-        0.626,
-        0.634,
-        0.696,
-        0.227,
-        0.237,
-        0.028,
-        0.027,
-        0.120,
-        0.103,
-        0.074,
-        0.092,
-        0.092,
-        0.052,
-        0.041,
-        0.071,
+        0.714,
+        0.740,
+        0.759,
+        0.799,
+        0.228,
+        0.235,
+        0.032,
+        0.036,
+        0.105,
+        0.077,
+        0.108,
+        0.061,
+        0.075,
+        0.033,
+        0.069,
+        0.057,
     ],
 }
 APPROVED_VISUAL_BASELINES_BY_PLATFORM = {
@@ -289,7 +289,12 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "url.searchParams.set('filter', select.value)" in html
     assert "syncControlsFromUrl();" in html
     assert "html.compact-ballot-mode .race-grid { grid-template-columns: repeat(4" in html
-    assert "html.compact-ballot-mode .race-grid { grid-template-columns: 1fr; }" in html
+    # Phones keep two compact columns so Compact stays visibly denser than
+    # Full on mobile (issue 115, item F23).
+    assert (
+        "html.compact-ballot-mode .race-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }"
+        in html
+    )
     assert "> View endorsements" not in html
     assert "html.compact-ballot-mode .screen-comparisons { display: none; }" in html
     assert html.count('<dialog class="race-detail-dialog"') == len(races)
@@ -352,15 +357,29 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
                 dialog_html.count(f'data-endorsed-candidate-id="{candidate_id}"')
                 == contributing_count + comparison_count
             )
-        expected_row_count = sum(
-            len(cell.candidate_ids)
-            if _source_cell_group(cell, race, source_by_id[cell.source_id]) == "candidate"
-            else 1
+
+        def _cell_row_count(cell: SourceCell, race: PublicationRace = race) -> int:
+            if _source_cell_group(cell, race, source_by_id[cell.source_id]) == "candidate":
+                return len(cell.candidate_ids)
+            return 1
+
+        expected_row_count = sum(_cell_row_count(cell) for cell in race.source_cells)
+        # A comparison source's one badge is its "Comparison only" role, not a
+        # category label (issue 115, item G29).
+        expected_category_badge_count = sum(
+            _cell_row_count(cell)
             for cell in race.source_cells
+            if source_by_id[cell.source_id].panel_role != "comparison"
         )
+        expected_comparison_badge_count = expected_row_count - expected_category_badge_count
         assert dialog_html.count('data-race-detail-source-id="') == expected_row_count
         assert dialog_html.count('data-source-group="') == expected_row_count
-        assert dialog_html.count('class="race-detail-category-badge') == expected_row_count
+        assert dialog_html.count('class="race-detail-category-badge') == (
+            expected_category_badge_count
+        )
+        assert dialog_html.count('class="race-detail-comparison-badge') == (
+            expected_comparison_badge_count
+        )
         expected_co_endorsement_rows = sum(
             len(cell.candidate_ids)
             for cell in race.source_cells
@@ -424,7 +443,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "Consensus among explicitly endorsing sources" in html
     assert "Seattle Times" in html
     assert "August 2026 Primary" in html
-    assert "Seattle Progressive Elections Guide" in html
+    assert "Seattle Elections Guide" in html
     canonical_url = f"{configuration.public_site_url}/e/{view_model.metadata.election_id}/"
     assert f'<link rel="canonical" href="{canonical_url}">' in html
     assert f'<meta property="og:url" content="{canonical_url}">' in html
@@ -432,7 +451,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert f'<meta name="twitter:title" content="{configuration.title}">' in html
     assert f'<meta name="twitter:description" content="{configuration.subject}">' in html
     assert f'href="{configuration.pdf_filename}">Printable PDF</a>' in html
-    assert 'href="mailto:seattle-elections@dobravoda.dev">Feedback?</a>' in html
+    assert 'href="mailto:seattle-elections@dobravoda.dev">Contact</a>' in html
     assert 'href="/about/">About &amp; FAQ</a>' in html
     assert 'class="footer-actions" aria-label="Guide links"' in html
     footer_actions_start = html.index('<nav class="footer-actions"')
@@ -453,7 +472,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "Category representation and support" not in html
     assert 'data-display-role="grade"' not in html
     assert 'id="methodology"' not in html
-    assert 'class="sources-summary"' in html
+    assert 'class="sources-summary"' not in html
     assert 'href="/about/"' in html
     assert "How the consensus works" not in html
     assert "Verify the guide" not in html
@@ -474,21 +493,22 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
         assert (
             f'<span class="print-times-choice">{comparison.print_choice_label}</span></b>' in html
         )
-    assert ".screen-race-result, .screen-race-context { display: grid;" in html
+    assert (
+        ".screen-race-result { display: grid; grid-template-columns: minmax(0, 1fr) 11rem;" in html
+    )
     assert "grid-template-columns: minmax(0, 1fr) 11rem" in html
     assert (
-        ".screen-meter { --meter-direction: to left; --meter-text-align: right; display: flex;"
-        in html
+        ".screen-meter { display: flex; align-items: center; justify-content: flex-start;" in html
     )
-    assert "linear-gradient(var(--meter-direction), var(--teal) 0 var(--meter-fill)" in html
-    assert (
-        "html.compact-ballot-mode .screen-meter { --meter-direction: to right; "
-        "--meter-text-align: left;" in html
-    )
-    assert "text-align: var(--meter-text-align);" in html
-    assert ".comparison-status { font-weight: 800; }" in html
+    assert "linear-gradient(to right, var(--teal) 0 var(--meter-fill)" in html
+    assert "html.compact-ballot-mode .screen-meter { width: 100%; height: 1.6rem; }" in html
+    assert "text-align: left;" in html
+    assert ".comparison-status { font-weight: 700; }" in html
     assert ".comparison-choice { min-width: 0; font-weight: 500; }" in html
-    assert ".comparison-agrees { border-color: #83bfae; background: #edf8f4;" in html
+    assert (
+        ".comparison-agrees, .lens-comparison-agrees { "
+        "border-left-color: var(--tone-agree-border); background: var(--tone-agree-bg);" in html
+    )
     contributing_sources = [
         source for source in view_model.sources if source.contribution_status == "contributing"
     ]
@@ -575,7 +595,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "font: 800 8.9pt/1 var(--print-sans)" in html
     assert "--print-meter-width: 1.65in" in html
     assert "grid-template-columns: minmax(0, 1fr) var(--print-meter-width)" in html
-    assert "linear-gradient(to left, var(--teal) 0 var(--meter-fill)" in html
+    assert "linear-gradient(to right, var(--teal) 0 var(--meter-fill)" in html
     assert 'style="--meter-fill: ' in html
 
 
@@ -1030,10 +1050,10 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     reader = PdfReader(rendered.pdf_path)
     assert len(reader.pages) == 2
     assert reader.metadata is not None
-    assert reader.metadata.title == "Seattle Progressive Elections Guide"
+    assert reader.metadata.title == "Seattle Elections Guide"
     concise_text = " ".join(page.extract_text() or "" for page in reader.pages)
     assert "august 2026 primary" in concise_text.casefold()
-    assert "Seattle Progressive Elections Guide" in concise_text
+    assert "Seattle Elections Guide" in concise_text
     assert all(source.name in concise_text for source in view_model.sources)
     assert (
         f"Panel {view_model.metadata.source_panel_version} · "
@@ -1966,8 +1986,8 @@ def test_pdf_identity_validation_rejects_concatenated_print_title(tmp_path: Path
     html = render_html_document(view_model, configuration)
     html_path.write_text(
         html.replace(
-            '<h1 data-document-role="print-title">Seattle Progressive Elections Guide</h1>',
-            '<h1 data-document-role="print-title">SeattleProgressiveElectionsGuide</h1>',
+            '<h1 data-document-role="print-title">Seattle Elections Guide</h1>',
+            '<h1 data-document-role="print-title">SeattleElectionsGuide</h1>',
             1,
         ),
         encoding="utf-8",
@@ -1997,7 +2017,7 @@ def test_pdf_identity_validation_rejects_concatenated_print_title(tmp_path: Path
 
     identity_check = next(check for check in report.checks if check.id == "pdf-display-values")
     assert not identity_check.passed
-    assert "Seattle Progressive Elections Guide" in identity_check.message
+    assert "Seattle Elections Guide" in identity_check.message
 
 
 def _dense_view_model(view_model: PublicationViewModel) -> PublicationViewModel:
@@ -2263,8 +2283,9 @@ def test_sources_tree_shell_hides_the_times_comparison_by_default(tmp_path: Path
     assert '.race-detail-source-list > li[data-source-role="comparison"]' in stylesheet
     assert ".show-times" not in html.split("<style>")[0]
 
-    # Hiding a grid item must not reflow its sibling out of the column it occupies.
-    assert ".screen-race-context .support-line { grid-column: 2; }" in stylesheet
+    # An empty or fully hidden comparisons wrapper collapses instead of
+    # leaving a stranded gap in the card's context stack.
+    assert ".screen-comparisons:empty { display: none; }" in stylesheet
 
     # A heading may never claim more sources than the state actually lists.
     detail = html.split('data-race-detail-group="no_endorsement"')[1].split("</section>")[0]
@@ -2289,9 +2310,9 @@ def test_sources_tree_shell_exposes_no_dialog_and_keeps_controls_in_the_merged_s
 
     assert 'id="sources"' not in html
     assert "data-sources-source" not in html
-    summary_section = html.split('class="sources-summary"')[1].split("</div>")[0]
-    assert "data-sources-comparison-status" in summary_section
-    assert "data-sources-link" in summary_section
+    assert "data-sources-comparison-status" in html
+    band = html.split('<div class="site-band">')[1].split("</div>")[0]
+    assert "data-sources-link" in band
 
 
 def test_sources_tree_shell_encodes_state_through_the_published_codec(tmp_path: Path) -> None:
@@ -2317,8 +2338,7 @@ def test_sources_tree_shell_leaves_the_print_comparison_untouched(tmp_path: Path
     # banner/notice/summary are suppressed in print (issue 108: the compact
     # sources summary that replaced the interactive tree is screen-only too).
     assert ".lens-banner, .lens-notice { display: none; }" in print_block
-    assert ".sources-comparison-status," in print_block
-    assert ".sources-summary-count { display: none; }" in print_block
+    assert ".sources-comparison-status { display: none; }" in print_block
     assert "show-times" not in print_block
     assert "print-times-pick" in stylesheet
     assert "Read the Times pill" in html
@@ -2331,9 +2351,9 @@ def test_sources_tree_shell_describes_a_generic_optional_comparison(tmp_path: Pa
     html = _sources_tree_html(tmp_path)
     hero = html.split('<p class="hero-deck">')[1].split("</p>")[0]
 
-    assert "optional comparison" in hero
     assert "Times" not in hero
-    assert '/sources/" data-sources-link' in hero
+    band = html.split('<div class="site-band">')[1].split("</div>")[0]
+    assert '/sources/" data-sources-link' in band
 
 
 def test_sources_links_carry_the_guides_current_fragment(tmp_path: Path) -> None:
@@ -2774,25 +2794,20 @@ def test_personalization_initial_my_sources_matches_audited_consensus(tmp_path: 
         render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
         encoding="utf-8",
     )
-    selectable_source_count = sum(
-        1 for source in view_model.personalization.sources if _tallying_selectable(source)
-    )
     result = _evaluate_in_chrome(
         html_path,
         """
         JSON.stringify({
-          summaryHidden: document.querySelector('[data-sources-summary-count]').hidden,
-          summaryText: document.querySelector('[data-sources-summary-count]').textContent,
+          summaryPresent: document.querySelector('[data-sources-summary-count]') !== null,
           timesShown: document.documentElement.classList.contains('show-times'),
           personalized: document.documentElement.classList.contains('lens-personalized'),
           bannerHidden: document.querySelector('[data-lens-banner]').hidden,
         })
         """,
     )
-    assert result["summaryHidden"] is False
-    assert result["summaryText"] == (
-        f"Viewing {selectable_source_count} of {selectable_source_count} sources."
-    )
+    # The default state carries no visible selection chrome at all: the old
+    # footer "Viewing N of M sources" line was removed (issue 115, item G28).
+    assert result["summaryPresent"] is False
     assert result["timesShown"] is False
     assert result["personalized"] is False
     assert result["bannerHidden"] is True
@@ -2926,7 +2941,6 @@ def test_personalization_shared_link_restores_the_same_version_selection(tmp_pat
         html_path,
         """
         JSON.stringify({
-          summaryText: document.querySelector('[data-sources-summary-count]').textContent,
           bannerHidden: document.querySelector('[data-lens-banner]').hidden,
           bannerText: document.querySelector('[data-lens-banner]').textContent,
           search: window.location.search,
@@ -2934,11 +2948,10 @@ def test_personalization_shared_link_restores_the_same_version_selection(tmp_pat
         """,
         initial_url=shared_url,
     )
-    assert (
-        result["summaryText"] == f"Viewing {len(expected_codes)} of {len(tallying_codes)} sources."
-    )
     assert result["bannerHidden"] is False
-    assert "Viewing" in result["bannerText"]
+    assert (
+        result["bannerText"] == f"Counting {len(expected_codes)} of {len(tallying_codes)} sources."
+    )
     assert result["search"] == "?edition=compact"
 
 
@@ -3065,9 +3078,9 @@ def test_personalization_divergent_race_discloses_a_compact_comparison_and_full_
         "expected at least one production race to diverge from the full-panel audited baseline"
     )
     assert result["divergentBadge"].strip() == "My sources"
-    assert "Audited consensus:" in result["divergentComparisonText"]
+    assert "All sources:" in result["divergentComparisonText"]
     assert result["detail"]["auditedHidden"] is False
-    assert "Audited consensus:" in result["detail"]["auditedText"]
+    assert "All sources:" in result["detail"]["auditedText"]
     assert result["detail"]["sourceRowCount"] >= 0
     if result["hasUnchanged"]:
         assert result["unchangedComparisonHidden"] is True
@@ -3111,8 +3124,9 @@ def test_personalization_stale_link_migrates_with_a_persistent_notice(tmp_path: 
     97 still reads a legacy categoryCodes-shaped fragment for backward
     compatibility even though it never writes one anymore, expanding it to
     that category's own member source codes on load — issue 108 removed the
-    guide's checkboxes, so the expansion is observed through the "viewing N
-    of M" summary count rather than individual checkbox state.
+    guide's checkboxes, so the expansion is observed through the lens
+    banner's "Counting N of M sources." line rather than individual checkbox
+    state (issue 115 removed the old always-visible footer summary count).
     """
     view_model = _personalization_enabled_view_model(tmp_path)
     contract = view_model.personalization
@@ -3139,16 +3153,22 @@ def test_personalization_stale_link_migrates_with_a_persistent_notice(tmp_path: 
         JSON.stringify({
           noticeHidden: document.querySelector('[data-lens-notice]').hidden,
           noticeText: document.querySelector('[data-lens-notice]').textContent,
-          summaryText: document.querySelector('[data-sources-summary-count]').textContent,
+          bannerText: document.querySelector('[data-lens-banner]').textContent,
         })
         """,
         initial_url=f"{html_path.resolve().as_uri()}#{fragment}",
     )
     assert result["noticeHidden"] is False
     assert "migrated" in result["noticeText"]
-    assert result["summaryText"] == (
-        f"Viewing {len(category.member_source_codes)} of {tallying_count} sources."
-    )
+    if len(category.member_source_codes) == tallying_count:
+        # The migrated category expands to the full tallying panel, which is
+        # by definition the default selection, so no personalized banner
+        # shows; the migration itself is disclosed by the notice above.
+        assert result["bannerText"] == ""
+    else:
+        assert result["bannerText"] == (
+            f"Counting {len(category.member_source_codes)} of {tallying_count} sources."
+        )
 
 
 def test_personalization_unresolvable_link_falls_back_to_audited_with_a_persistent_notice(

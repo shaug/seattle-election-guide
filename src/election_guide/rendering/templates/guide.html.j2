@@ -11,16 +11,21 @@
   <meta property="og:title" content="{{ config.title }}">
   <meta property="og:description" content="{{ config.subject }}">
   <meta property="og:url" content="{{ canonical_url }}">
+  <meta property="og:image" content="{{ config.public_site_url }}/og-image.png">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="{{ config.title }}">
   <meta name="twitter:description" content="{{ config.subject }}">
   <link rel="canonical" href="{{ canonical_url }}">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <title>{{ config.title }}</title>
   <style>{{ stylesheet | safe }}</style>
 </head>
 <body>
   {% macro source_participation(source, compact=false) -%}
-    {% if compact %}{{ source.endorsement_count }}{% if source.panel_role == 'comparison' %} picks{% endif %} · {{ source.split_endorsement_count }} split{% else %}{% if source.panel_role == 'comparison' %}{{ source.endorsement_count }} picks{% else %}{{ source.endorsement_count }} endorsements{% endif %} · {{ source.split_endorsement_count }} split{% endif %}
+    {%- set count_noun = ('pick' if source.panel_role == 'comparison' else 'endorsement') ~ ('' if source.endorsement_count == 1 else 's') -%}
+    {% if compact %}{{ source.endorsement_count }}{% if source.panel_role == 'comparison' %} {{ count_noun }}{% endif %} · {{ source.split_endorsement_count }} split{% else %}{{ source.endorsement_count }} {{ count_noun }} · {{ source.split_endorsement_count }} split{% endif %}
   {%- endmacro %}
   {% macro source_row(source, compact=false) -%}
     <div class="source-row source-row-{{ source.panel_role }}"
@@ -41,9 +46,13 @@
     </section>
   {%- endmacro %}
   {% macro race_detail_source_badge(source) -%}
-    <span class="race-detail-category-badge">{{ source_category_label_by_key[source.category] }}</span>
+    {# A comparison source's one badge is its role; repeating its category
+       label ("Centrist comparison") next to "Comparison only" said the same
+       thing twice (UI polish issue 115, item G29). #}
     {% if source.panel_role == 'comparison' %}
     <span class="race-detail-comparison-badge">Comparison only</span>
+    {% else %}
+    <span class="race-detail-category-badge">{{ source_category_label_by_key[source.category] }}</span>
     {% endif %}
   {%- endmacro %}
   {% macro source_count_phrase(count, group_key=none) -%}
@@ -143,15 +152,19 @@
   <a class="skip-link" href="#guide-races">Skip to recommendations</a>
 
   <main class="screen-guide">
+    {{ site_band | safe }}
     <header class="hero">
       <div class="hero-copy">
         <div class="hero-kicker">{{ election_display_label }}</div>
-        <h1>Seattle Progressive Elections Guide</h1>
-        <p class="hero-deck">Progressive endorsement agreement at a glance. An optional comparison
-          source is available under <a href="{{ sources_page_url }}" data-sources-link>Sources</a>.</p>
+        <h1>Seattle Elections Guide</h1>
+        <p class="hero-tagline">Seattle&rsquo;s progressive voices, distilled.</p>
+        <p class="hero-deck">Endorsement agreement across
+          {{ contributing_sources | selectattr('panel_role', 'equalto', 'consensus') | list | length }}
+          organizations in {{ guide.metadata.published_race_count }} Seattle races &mdash; every
+          claim linked to its source.</p>
       </div>
       <div class="hero-meta" aria-label="Guide metadata">
-        <span>Election {{ guide.metadata.election_date }}</span>
+        <span>Election {{ election_date_display }}</span>
         <span>{{ guide.metadata.published_race_count }} races</span>
       </div>
     </header>
@@ -193,13 +206,16 @@
       <p class="lens-banner" data-lens-banner hidden role="status" aria-live="polite"></p>
       <p class="lens-notice" data-lens-notice hidden role="status" aria-live="polite"></p>
       {% endif %}
+      {# Screen-reader announcement for the opt-in Times comparison. The old
+         visible footer status block was removed (issue 115, item G28); the
+         state itself is visible through the comparison bars appearing. #}
+      <p class="visually-hidden" data-sources-comparison-status role="status" aria-live="polite"></p>
     </div>
 
     <div id="guide-races" class="screen-sections">
       {% for section in guide.sections %}
       <section class="screen-section" data-filter-section="{{ section.id }}">
         <div class="section-heading">
-          <p>Ballot section</p>
           <h2>{{ section.label }}</h2>
         </div>
         <div class="race-grid">
@@ -241,6 +257,10 @@
                 {% endif %}
               </div>
               <div class="screen-race-context">
+                <p class="support-line" data-display-role="support"{% if guide.personalization.policy.enabled %} data-lens-hidden{% endif %}>{{ screen_support_summary(race) }}</p>
+                {% if guide.personalization.policy.enabled %}
+                <p class="support-line lens-value" data-lens-only data-lens-support></p>
+                {% endif %}
                 <div class="screen-comparisons">
                   {% for comparison in race.comparisons %}
                   <p class="comparison comparison-{{ comparison.voter_tone }}" role="group"
@@ -249,10 +269,6 @@
                   </p>
                   {% endfor %}
                 </div>
-                <p class="support-line" data-display-role="support"{% if guide.personalization.policy.enabled %} data-lens-hidden{% endif %}>{{ screen_support_summary(race) }}</p>
-                {% if guide.personalization.policy.enabled %}
-                <p class="support-line lens-value" data-lens-only data-lens-support></p>
-                {% endif %}
               </div>
             </a>
             {% if race.grade == 'Insufficient' %}
@@ -339,21 +355,12 @@
           The Seattle Times is a separate comparison signal.</p>
         <nav class="footer-actions" aria-label="Guide links">
           <a href="{{ config.pdf_filename }}">Printable PDF</a>
-          <a href="mailto:seattle-elections@dobravoda.dev">Feedback?</a>
+          <a href="mailto:seattle-elections@dobravoda.dev">Contact</a>
           <a href="/about/">About &amp; FAQ</a>
           <a href="{{ config.project_url }}">Source and audit files</a>
           <button type="button" class="footer-share" data-share-guide>Share this guide</button>
           <p class="visually-hidden" role="status" aria-live="polite" data-share-guide-status></p>
         </nav>
-      </div>
-      <div class="sources-summary">
-        <p class="sources-comparison-status" data-sources-comparison-status role="status" aria-live="polite"></p>
-        {% if guide.personalization.policy.enabled %}
-        <p class="sources-summary-count" data-sources-summary-count hidden></p>
-        {% endif %}
-        <p class="sources-summary-link">
-          <a href="{{ sources_page_url }}" data-sources-link>Customize your sources</a>
-        </p>
       </div>
       <section class="detailed-source-directory">
         {#
@@ -386,8 +393,8 @@
         {% endif %}
       </section>
       <div class="screen-footer-meta">
-        <span>Election {{ guide.metadata.election_date }} · Built {{ guide.metadata.generated_at.date().isoformat() }} · Data {{ guide.metadata.data_version }} · Code {{ guide.metadata.git_commit[:12] }}<br>
-          Panel {{ guide.metadata.source_panel_id }} · {{ guide.metadata.source_panel_hash }}</span>
+        <span>Election {{ election_date_display }} · Built {{ built_date_display }} · Data {{ guide.metadata.data_version }} · Code {{ guide.metadata.git_commit[:12] }}<br>
+          Panel {{ guide.metadata.source_panel_id }} · {{ guide.metadata.source_panel_hash[:12] }}</span>
         <a class="detailed-footer-audit" href="{{ config.project_url }}">Source and audit files</a>
       </div>
     </footer>
@@ -426,9 +433,9 @@
       <header class="print-header">
         <div>
           <p data-document-role="print-election-label">{{ election_display_label }}</p>
-          <h1 data-document-role="print-title">Seattle Progressive Elections Guide</h1>
+          <h1 data-document-role="print-title">Seattle Elections Guide</h1>
         </div>
-        <div class="print-header-meta">{{ guide.metadata.election_date }}<br>
+        <div class="print-header-meta">{{ election_date_display }}<br>
           {{ guide.metadata.published_race_count }} races · source details on page 2</div>
       </header>
       <p class="print-intro">Progressive-source consensus. Seattle Times choices are comparison only.
@@ -553,7 +560,7 @@
         </div>
       </div>
       <footer class="page-two-footer">
-        <span>Election {{ guide.metadata.election_date }} · Built {{ guide.metadata.generated_at.date().isoformat() }} · Data {{ guide.metadata.data_version }} · Code {{ guide.metadata.git_commit[:12] }}</span>
+        <span>Election {{ election_date_display }} · Built {{ built_date_display }} · Data {{ guide.metadata.data_version }} · Code {{ guide.metadata.git_commit[:12] }}</span>
         <span>Panel {{ guide.metadata.source_panel_version }} · {{ guide.metadata.source_panel_hash[:12] }} · {{ guide.metadata.published_race_count }} races · <a href="{{ config.project_url }}">Source and audit files</a></span>
       </footer>
     </section>
@@ -763,7 +770,6 @@
   {% if guide.personalization.policy.enabled %}
   const personalization = JSON.parse(document.querySelector('#lens-personalization').textContent);
   const lensBanner = document.querySelector('[data-lens-banner]');
-  const sourcesSummaryCount = document.querySelector('[data-sources-summary-count]');
   const tallyingSourceCodes = bindings.sources
     .filter((item) => item.panel_role !== 'comparison')
     .map((item) => item.code);
@@ -847,8 +853,25 @@
   };
   const supportSummary = (scored) =>
     `Based on ${scored.explicitCount} endorsing ${scored.explicitCount === 1 ? 'source' : 'sources'}`;
-  const compactAuditedSummary = (audited, labels) =>
-    `Audited consensus: ${recommendationLabel(audited, labels)} · ${percentageLabel(audited.winnerShare)}`;
+  const allSourcesSummary = (audited, labels) =>
+    `All sources: ${recommendationLabel(audited, labels)} · ${percentageLabel(audited.winnerShare)}`;
+  /**
+   * The full-panel baseline renders in the same quiet info-bar component as
+   * the Times comparison, with the same agree/differ tone: "differs" means
+   * the leading choice itself changed, not merely its share (issue 115,
+   * items G24-G27). The tone tint is never the only carrier — the aria-label
+   * states the agreement in words.
+   */
+  const applyAllSourcesSignal = (element, audited, labels, leaderChanged) => {
+    const summary = allSourcesSummary(audited, labels);
+    element.textContent = summary;
+    element.classList.toggle('lens-comparison-differs', leaderChanged);
+    element.classList.toggle('lens-comparison-agrees', !leaderChanged);
+    element.setAttribute(
+      'aria-label',
+      `${leaderChanged ? 'All sources differ from your selection' : 'All sources agree with your selection'}. ${summary}`,
+    );
+  };
 
   /**
    * Apply one race's personalized result to its card and detail dialog: the
@@ -887,7 +910,9 @@
     const comparisonEl = card.querySelector('[data-lens-comparison]');
     if (comparisonEl) {
       comparisonEl.hidden = !divergence.anyChanged;
-      if (divergence.anyChanged) comparisonEl.textContent = compactAuditedSummary(audited, labels);
+      if (divergence.anyChanged) {
+        applyAllSourcesSignal(comparisonEl, audited, labels, divergence.leader);
+      }
     }
 
     // Race detail: complete personalized values, the audited comparison when
@@ -909,7 +934,9 @@
     const auditedDetailEl = card.querySelector('[data-lens-detail-audited]');
     if (auditedDetailEl) {
       auditedDetailEl.hidden = !divergence.anyChanged;
-      if (divergence.anyChanged) auditedDetailEl.textContent = compactAuditedSummary(audited, labels);
+      if (divergence.anyChanged) {
+        applyAllSourcesSignal(auditedDetailEl, audited, labels, divergence.leader);
+      }
     }
     const sourcesEl = card.querySelector('[data-lens-detail-sources]');
     if (sourcesEl) {
@@ -943,10 +970,6 @@
    */
   const recomputePersonalizedResults = () => {
     const tallyingCodes = checkedTallyingSourceCodes();
-    if (sourcesSummaryCount) {
-      sourcesSummaryCount.hidden = false;
-      sourcesSummaryCount.textContent = `Viewing ${tallyingCodes.length} of ${tallyingSourceCodes.length} sources.`;
-    }
     const personalized = !isDefaultTallyingSelection();
     root.classList.toggle('lens-personalized', personalized);
     if (!personalized) {
@@ -957,7 +980,7 @@
     if (lensBanner) {
       lensBanner.hidden = false;
       lensBanner.textContent =
-        `Viewing ${results.sourceCodes.length} of ${tallyingSourceCodes.length} sources.`;
+        `Counting ${results.sourceCodes.length} of ${tallyingSourceCodes.length} sources.`;
     }
     const personalizedByRaceId = new Map(results.races.map((race) => [race.raceId, race]));
     raceCards.forEach((card, raceId) => {
@@ -1187,10 +1210,13 @@
         : (visible === 1 ? 'race' : 'races');
       const viewLabel = compact ? 'Compact' : 'Full';
       const scopeLabel = select.selectedOptions[0]?.textContent.trim() || 'All Seattle ballot races';
+      // Only the race count is visibly useful here — the view and scope merely
+      // echo the adjacent controls' own state — but the aria-live announcement
+      // keeps all three so a non-visual reader hears the full outcome.
       const statusParts = [`${visible} ${raceNoun} shown`, viewLabel, scopeLabel];
       status.replaceChildren(...statusParts.map((part, index) => {
         const chunk = document.createElement('span');
-        chunk.className = 'filter-status-part';
+        chunk.className = index === 0 ? 'filter-status-part' : 'filter-status-part visually-hidden';
         chunk.textContent = index === 0 ? part : `· ${part}`;
         return chunk;
       }));

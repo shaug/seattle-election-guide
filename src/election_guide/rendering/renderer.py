@@ -12,7 +12,7 @@ import tempfile
 import time
 from collections.abc import Callable
 from dataclasses import dataclass
-from datetime import UTC
+from datetime import UTC, date
 from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any, cast
@@ -41,6 +41,7 @@ from election_guide.rendering.models import (
     RenderingConfiguration,
     RenderingValidationReport,
 )
+from election_guide.rendering.shell import site_band_html
 from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
 
 TEMPLATE_DIR = Path(__file__).parent / "templates"
@@ -144,6 +145,8 @@ def render_html_document(
         for section in view_model.sections
         for race in section.races
     }
+    guide_path = f"/e/{view_model.metadata.election_id}/"
+    sources_page_url = f"{configuration.public_site_url}{guide_path}sources/"
     return template.render(
         **_personalization_lookup_context(view_model),
         guide=view_model,
@@ -154,6 +157,16 @@ def render_html_document(
         lens_migrate_script=lens_migrate_script,
         lens_divergence_script=lens_divergence_script,
         share_link_script=share_link_script,
+        site_band=site_band_html(
+            guide_href=guide_path,
+            sources_href=sources_page_url,
+            current="endorsements",
+            # The guide's own hero h1 is the brand, so its band carries nav only.
+            show_brand=False,
+            sources_link_data_attribute=True,
+        ),
+        election_date_display=_display_date(view_model.metadata.election_date),
+        built_date_display=_display_date(view_model.metadata.generated_at.date().isoformat()),
         filter_options=_filter_options(view_model),
         source_category_label_by_key=source_category_label_by_key,
         source_cells_by_race_id=source_cells_by_race_id,
@@ -185,12 +198,18 @@ def render_sources_document(view_model: PublicationViewModel, *, public_site_url
         TEMPLATE_DIR / "guide.css"
     ).read_text(encoding="utf-8")
     lens_url_script = (TEMPLATE_DIR / "lens-url.mjs").read_text(encoding="utf-8")
+    guide_path = f"/e/{view_model.metadata.election_id}/"
     return template.render(
         **_personalization_lookup_context(view_model),
         guide=view_model,
         public_site_url=public_site_url,
         stylesheet=stylesheet,
         lens_url_script=lens_url_script,
+        site_band=site_band_html(
+            guide_href=guide_path,
+            sources_href=f"{guide_path}sources/",
+            current="sources",
+        ),
     )
 
 
@@ -223,6 +242,16 @@ def _require_web_url(value: str) -> None:
         or (port is not None and not 1 <= port <= 65535)
     ):
         raise ValueError(f"rendered link is not a safe HTTP(S) URL: {value!r}")
+
+
+def _display_date(iso_date: str) -> str:
+    """Human display form ("August 4, 2026") for an ISO date string.
+
+    Reader-facing surfaces use this form; data files and version identifiers
+    keep ISO dates.
+    """
+    parsed = date.fromisoformat(iso_date)
+    return f"{parsed:%B} {parsed.day}, {parsed.year}"
 
 
 def _concise_warning_labels(race: PublicationRace) -> list[str]:
@@ -609,9 +638,12 @@ def validate_rendered_guide(
                 ]
             else:
                 expected_candidate_ids = [None]
-            expected_parts = [source.name, category_label_by_key[source.category]]
+            # A comparison source carries its one "Comparison only" role badge
+            # instead of a category label (issue 115, item G29).
             if source.panel_role == "comparison":
-                expected_parts.append("Comparison only")
+                expected_parts = [source.name, "Comparison only"]
+            else:
+                expected_parts = [source.name, category_label_by_key[source.category]]
             detail_label = _source_cell_detail_label(cell, race, expected_group)
             if detail_label is not None:
                 expected_parts.append(detail_label)
@@ -644,6 +676,7 @@ def validate_rendered_guide(
                 )
     expected_html_links = {
         "#guide-races",
+        f"/e/{view_model.metadata.election_id}/",
         f"{configuration.public_site_url}/e/{view_model.metadata.election_id}/sources/",
         configuration.pdf_filename,
         "mailto:seattle-elections@dobravoda.dev",
@@ -763,8 +796,8 @@ def validate_rendered_guide(
         "Overlap and limitations",
         "Verify before voting",
         view_model.methodology.verification_instructions,
-        f"Election {view_model.metadata.election_date}",
-        f"Built {view_model.metadata.generated_at.date().isoformat()}",
+        f"Election {_display_date(view_model.metadata.election_date)}",
+        f"Built {_display_date(view_model.metadata.generated_at.date().isoformat())}",
         f"Data {view_model.metadata.data_version}",
         f"Code {view_model.metadata.git_commit[:12]}",
         f"Panel {view_model.metadata.source_panel_version}",
@@ -856,9 +889,11 @@ def validate_rendered_guide(
     ]
     detailed_metadata = detailed_reader.metadata if detailed_reader is not None else None
     detailed_links = _pdf_links(detailed_reader) if detailed_reader is not None else []
+    # The interactive sources link lives in the screen-only nav band, which the
+    # print-oriented detailed edition hides; its own links are the audit trail
+    # and every source's evidence URL.
     expected_detailed_links = {
         configuration.project_url,
-        f"{configuration.public_site_url}/e/{view_model.metadata.election_id}/sources/",
         *(source.evidence_url for source in view_model.sources),
     }
     detailed_links_valid = detailed_reader is None or (
@@ -1394,7 +1429,7 @@ def _inspect_print_layout(
                       }
                       if (meterStyle.display !== 'flex' ||
                           meterStyle.alignItems !== 'center' ||
-                          meterStyle.justifyContent !== 'flex-end' ||
+                          meterStyle.justifyContent !== 'flex-start' ||
                           Number.parseFloat(meterStyle.borderTopWidth) < .4 ||
                           (!meter.classList.contains('print-meter-na') &&
                            meterStyle.backgroundImage === 'none')) {
@@ -1838,10 +1873,12 @@ def _capture_emulated_viewport(
                     "'.screen-race-result,.screen-race-context,.screen-meter,.comparison')]);"
                     "const meters=[...document.querySelectorAll('.screen-meter')]"
                     ".filter(meter=>getComputedStyle(meter).display!=='none');"
-                    "const meterAligned=(meter,direction,textAlign)=>{"
+                    # Every meter is left-anchored in every view (issue 115,
+                    # item D14a): the label rides the fill's left edge.
+                    "const meterAligned=(meter)=>{"
                     "const label=meter.querySelector('strong');const style=getComputedStyle(meter);"
-                    "return style.getPropertyValue('--meter-direction').trim()===direction&&"
-                    "Boolean(label&&getComputedStyle(label).textAlign===textAlign);};"
+                    "return style.justifyContent==='flex-start'&&"
+                    "Boolean(label&&getComputedStyle(label).textAlign==='left');};"
                     "const compactInput=viewInputs.find(input=>input.value==='compact');"
                     "const fullInput=viewInputs.find(input=>input.value==='full');"
                     "const scopedOption=[...filter.options].find(option=>option.value!=='all');"
@@ -1856,7 +1893,7 @@ def _capture_emulated_viewport(
                     "!grid.closest('[hidden]'));"
                     "const compactColumns=compactGrid?getComputedStyle(compactGrid)"
                     ".gridTemplateColumns.split(/\\s+/).length:0;"
-                    "const expectedCompactColumns=window.innerWidth<=720?1:"
+                    "const expectedCompactColumns=window.innerWidth<=720?2:"
                     "window.innerWidth<=1050?3:4;"
                     "const controlQuery=new URLSearchParams(window.location.search);"
                     "const controls={"
@@ -1876,7 +1913,7 @@ def _capture_emulated_viewport(
                     "noOverflow:document.documentElement.scrollWidth<=window.innerWidth+1,"
                     "compactMetersLeftAligned:compactCards.every(card=>{"
                     "const meter=card.querySelector('.screen-meter');"
-                    "return Boolean(meter&&meterAligned(meter,'to right','left'));}),"
+                    "return Boolean(meter&&meterAligned(meter));}),"
                     "comparisonsHidden:compactCards.every(card=>{"
                     "const comparisons=card.querySelector('.screen-comparisons');"
                     "return Boolean(comparisons&&"
@@ -1886,8 +1923,8 @@ def _capture_emulated_viewport(
                     "await pause();controls.reset="
                     "document.documentElement.dataset.ballotView==='full'&&"
                     "filter.value==='all'&&!contestedFilter?.checked&&window.location.search==='';"
-                    "controls.fullMetersRightAligned=meters.every(meter=>"
-                    "meterAligned(meter,'to left','right'));"
+                    "controls.fullMetersLeftAligned=meters.every(meter=>"
+                    "meterAligned(meter));"
                     "controls.statusAllGrouped=status?.children.length===3&&"
                     "status.lastElementChild?.textContent==='· All Seattle ballot races'&&"
                     "getComputedStyle(status.lastElementChild).whiteSpace==='nowrap';"
@@ -2090,7 +2127,7 @@ def _capture_emulated_viewport(
                 "comparisonsHidden": True,
                 "reset": True,
                 "statusAllGrouped": True,
-                "fullMetersRightAligned": True,
+                "fullMetersLeftAligned": True,
             },
             "disclosures": [],
             "dialogCount": expected_race_count,
@@ -2530,11 +2567,13 @@ def _pdf_value_is_present(value: str, segment: str) -> bool:
 
 
 def _source_participation_label(source: PublicationSource, *, compact: bool = False) -> str:
+    noun = "pick" if source.panel_role == "comparison" else "endorsement"
+    if source.endorsement_count != 1:
+        noun += "s"
     if compact:
         if source.panel_role == "comparison":
-            return f"{source.endorsement_count} picks · {source.split_endorsement_count} split"
+            return f"{source.endorsement_count} {noun} · {source.split_endorsement_count} split"
         return f"{source.endorsement_count} · {source.split_endorsement_count} split"
-    noun = "picks" if source.panel_role == "comparison" else "endorsements"
     return f"{source.endorsement_count} {noun} · {source.split_endorsement_count} split"
 
 
@@ -2551,7 +2590,7 @@ def _pdf_source_participation_labels(lines: list[str]) -> list[str]:
     if not lines:
         return []
     midpoint = max(len(line) for line in lines) // 2
-    pattern = re.compile(r"\d+(?:\s+picks)?\s*·\s*\d+\s+split")
+    pattern = re.compile(r"\d+(?:\s+picks?)?\s*·\s*\d+\s+split")
     columns: tuple[list[tuple[int, str]], list[tuple[int, str]]] = ([], [])
     for line_number, line in enumerate(lines):
         for match in pattern.finditer(line):
