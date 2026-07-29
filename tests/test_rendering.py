@@ -3030,14 +3030,12 @@ def test_personalization_reactive_banner_appends_below_the_controls_not_over_the
           return JSON.stringify({
             bannerHidden: banner.hidden,
             bannerBelowControls: bannerRect.top >= controlsRect.bottom - 1,
-            noOverlap: bannerRect.top >= controlsRect.top,
           });
         })()
         """,
     )
     assert result["bannerHidden"] is False
     assert result["bannerBelowControls"] is True
-    assert result["noOverlap"] is True
 
 
 def test_personalization_sources_tree_does_not_overflow_a_mobile_viewport(
