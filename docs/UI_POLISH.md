@@ -143,10 +143,10 @@ the Times as a loud pill badge, the full-panel consensus as a quiet info bar.
   "Comparison only") to a single label consistent with this header.
 
 ### L. Site shell (round 4, 2026-07-29 — post-#126 review)
-Context: A1–G29 shipped in PR #126 and verified live. Round 4 targets the
-remaining cross-page cohesion gap: the shell (frame, masthead, footer) differs
-per page. Other round-4 candidates (data-ink, lens seams, tokens) are still
-under discussion and are NOT approved yet — only the items below.
+Context: A1–G29 shipped in PR #126 and verified live. Round 4 is the full
+second cleanup pass, approved 2026-07-29: site shell (L), lens/comparison
+correctness (G2), lens presentation (H), data ink (H2), card anatomy (I),
+color/tokens (J), and chrome/microcopy (K) sections below.
 
 - **L53 — One frame for every page.** Every page renders the same `.page`
   shell at one width (76rem, set by the guide's grid) on the shared `#edf1f4`
