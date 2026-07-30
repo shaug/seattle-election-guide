@@ -485,6 +485,8 @@ def _archive_html(site_manifest: SiteManifest, *, built_date_display: str, git_c
         for election in site_manifest.elections
     )
     canonical_url = f"{site_manifest.canonical_origin}/e/"
+    description = "Published Seattle election endorsement guides."
+    escaped_description = html.escape(description, quote=True)
     head_links = site_head_links_html(site_manifest.canonical_origin)
     current_path = f"/e/{site_manifest.current_election_id}/"
     base_css = (TEMPLATE_DIR / "base.css").read_text(encoding="utf-8")
@@ -504,14 +506,14 @@ def _archive_html(site_manifest: SiteManifest, *, built_date_display: str, git_c
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Published Seattle election endorsement guides.">
+  <meta name="description" content="{escaped_description}">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Guide archive &mdash; Seattle Elections Guide">
-  <meta property="og:description" content="Published Seattle election endorsement guides.">
+  <meta property="og:description" content="{escaped_description}">
   <meta property="og:url" content="{html.escape(canonical_url, quote=True)}">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Guide archive &mdash; Seattle Elections Guide">
-  <meta name="twitter:description" content="Published Seattle election endorsement guides.">
+  <meta name="twitter:description" content="{escaped_description}">
   <link rel="canonical" href="{html.escape(canonical_url, quote=True)}">
   {head_links}
   <title>Guide archive &mdash; Seattle Elections Guide</title>
