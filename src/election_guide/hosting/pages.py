@@ -20,7 +20,12 @@ from election_guide.hosting.models import (
 from election_guide.publication.models import PublicationViewModel
 from election_guide.release.models import ReleaseManifest, ReleaseStatus
 from election_guide.rendering.renderer import TEMPLATE_DIR, render_sources_document
-from election_guide.rendering.shell import favicon_svg, site_band_html, site_head_links_html
+from election_guide.rendering.shell import (
+    favicon_svg,
+    site_band_html,
+    site_footer_band_html,
+    site_head_links_html,
+)
 from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
 
 PAGES_HEADERS = """/*
@@ -403,7 +408,12 @@ def _stage_verified_bundles(
         sources_dir = election_root / "sources"
         sources_dir.mkdir()
         (sources_dir / "index.html").write_text(
-            _sources_html(bundle.directory, canonical_origin), encoding="utf-8"
+            _sources_html(
+                bundle.directory,
+                canonical_origin,
+                pdf_filename=Path(bundle.status.guide_pdf_artifact).name,
+            ),
+            encoding="utf-8",
         )
 
         root_path = f"/e/{bundle.declaration.election_id}/"
@@ -413,7 +423,7 @@ def _stage_verified_bundles(
     return public_paths
 
 
-def _sources_html(bundle_directory: Path, canonical_origin: str) -> str:
+def _sources_html(bundle_directory: Path, canonical_origin: str, *, pdf_filename: str) -> str:
     """Render the per-election sources/customization page (issue 107).
 
     Mirrors `_about_html`'s pattern of a page-generator function invoked
@@ -423,7 +433,12 @@ def _sources_html(bundle_directory: Path, canonical_origin: str) -> str:
     view_model = PublicationViewModel.model_validate(
         read_json(bundle_directory / "data/publication_view_model.json")
     )
-    return render_sources_document(view_model, public_site_url=canonical_origin)
+    return render_sources_document(
+        view_model,
+        public_site_url=canonical_origin,
+        project_url=PROJECT_URL,
+        pdf_filename=pdf_filename,
+    )
 
 
 def _guide_pdf_artifacts(status: ReleaseStatus) -> tuple[str, ...]:
@@ -453,10 +468,12 @@ def _archive_html(site_manifest: SiteManifest) -> str:
     head_links = site_head_links_html(site_manifest.canonical_origin)
     current_path = f"/e/{site_manifest.current_election_id}/"
     base_css = (TEMPLATE_DIR / "base.css").read_text(encoding="utf-8")
+    share_link_script = (TEMPLATE_DIR / "share-link.mjs").read_text(encoding="utf-8")
     band = site_band_html(
         guide_href=current_path,
         sources_href=f"{current_path}sources/",
     )
+    footer_band = site_footer_band_html(project_url=PROJECT_URL)
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -471,7 +488,7 @@ def _archive_html(site_manifest: SiteManifest) -> str:
   <title>Guide archive &mdash; Seattle Elections Guide</title>
   <style>
     {base_css}
-    main {{ padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 3rem; }}
+    main {{ max-width: 46rem; margin: 0 auto; padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 3rem; }}
     main h1 {{
       margin: 0 0 .35rem; color: var(--navy);
       font: 700 clamp(1.8rem, 4vw, 2.6rem)/1.05 var(--screen-serif);
@@ -496,7 +513,14 @@ def _archive_html(site_manifest: SiteManifest) -> str:
 {rows}
       </ol>
     </main>
+    <footer class="site-footer">
+      {footer_band}
+    </footer>
   </div>
+  <script type="module">
+{share_link_script}
+    wireFooterShare();
+  </script>
 </body>
 </html>
 """
@@ -523,12 +547,12 @@ def _about_html(site_manifest: SiteManifest) -> str:
     escaped_canonical = html.escape(canonical_url, quote=True)
     head_links = site_head_links_html(site_manifest.canonical_origin)
     escaped_current_path = html.escape(current_path, quote=True)
-    escaped_election_name = html.escape(current.name)
     band = site_band_html(
         guide_href=current_path,
         sources_href=f"{current_path}sources/",
         current="about",
     )
+    footer_band = site_footer_band_html(project_url=PROJECT_URL)
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -547,7 +571,7 @@ def _about_html(site_manifest: SiteManifest) -> str:
   <title>About &amp; FAQ &mdash; Seattle Elections Guide</title>
   <style>
     {base_css}
-    main {{ padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 3rem; }}
+    main {{ max-width: 46rem; margin: 0 auto; padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 3rem; }}
     main h1 {{
       margin: 0 0 .35rem; color: var(--navy);
       font: 700 clamp(1.8rem, 4vw, 2.6rem)/1.05 var(--screen-serif);
@@ -557,19 +581,6 @@ def _about_html(site_manifest: SiteManifest) -> str:
     section h2 {{ color: var(--navy); font-size: 1.25rem; margin: 0 0 .5rem; }}
     section p {{ margin: 0 0 .75rem; }}
     section p:last-child {{ margin-bottom: 0; }}
-    .actions {{ display: flex; flex-wrap: wrap; gap: .6rem 1rem; align-items: center; }}
-    .share-button {{
-      padding: .45rem .9rem; border: 1px solid var(--line-strong); border-radius: .3rem;
-      background: var(--white); color: var(--ink);
-      font: inherit; font-weight: 700; cursor: pointer;
-    }}
-    .share-button:hover {{ background: #eef3f6; }}
-    .share-button:focus-visible {{ outline: .2rem solid var(--focus); outline-offset: .15rem; }}
-    .page-footer {{
-      border-top: 1px solid var(--line); padding: 1.25rem clamp(1rem, 4vw, 2.5rem) 2rem;
-      color: var(--muted); font-size: .85rem;
-    }}
-    .page-footer a {{ font-weight: 700; }}
   </style>
 </head>
 <body>
@@ -659,31 +670,65 @@ def _about_html(site_manifest: SiteManifest) -> str:
           <a href="{PROJECT_URL}">{PROJECT_URL.removeprefix("https://")}</a>.</p>
       </section>
 
-      <div class="actions">
-        <button type="button" class="share-button" data-share-about>Share this page</button>
-        <p class="visually-hidden" role="status" aria-live="polite" data-share-about-status></p>
-      </div>
     </main>
-    <footer class="page-footer">
-      <nav aria-label="Guide links">
-        <a href="{escaped_current_path}">{escaped_election_name} guide</a> &middot;
-        <a href="/e/">All published guides</a>
-      </nav>
+    <footer class="site-footer">
+      {footer_band}
     </footer>
   </div>
   <script type="module">
 {share_link_script}
-    const shareButton = document.querySelector('[data-share-about]');
-    const shareStatus = document.querySelector('[data-share-about-status]');
-    shareButton?.addEventListener('click', async () => {{
-      const value = window.location.href;
-      const result = await shareOrCopyLink(value, document.title);
-      if (!shareStatus) return;
-      if (result === 'copied') shareStatus.textContent = 'Link copied.';
-      else if (result === 'shared') shareStatus.textContent = 'Share menu opened.';
-      else if (result === 'failed') shareStatus.textContent = `Copy failed. Link: ${{value}}`;
-    }});
+    wireFooterShare();
   </script>
+</body>
+</html>
+"""
+
+
+def _not_found_html(site_manifest: SiteManifest) -> str:
+    """The worker's branded 404 (UI polish round 4, item K48).
+
+    Replaces the bare `text/plain` "Not found" response with a minimal
+    branded page: band, rule, one line, links to the current guide and the
+    archive. Deliberately lighter than every other page's shell: no shared
+    footer, since there is nothing here to share (no election, no build) and
+    K48 specs only band + rule + one line + links.
+    """
+    current_path = f"/e/{site_manifest.current_election_id}/"
+    head_links = site_head_links_html(site_manifest.canonical_origin)
+    base_css = (TEMPLATE_DIR / "base.css").read_text(encoding="utf-8")
+    band = site_band_html(guide_href=current_path, sources_href=f"{current_path}sources/")
+    escaped_current_path = html.escape(current_path, quote=True)
+    return f"""<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  {head_links}
+  <title>Page not found &mdash; Seattle Elections Guide</title>
+  <style>
+    {base_css}
+    main {{ max-width: 46rem; margin: 0 auto; padding: 3rem clamp(1rem, 4vw, 2.5rem); }}
+    main h1 {{
+      margin: 0 0 .5rem; color: var(--navy);
+      font: 700 clamp(1.6rem, 4vw, 2.2rem)/1.05 var(--screen-serif);
+    }}
+    main p {{ margin: 0; color: var(--muted); max-width: 46ch; }}
+    main p a {{ font-weight: 700; }}
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      {band}
+      <div class="page-band-rule"></div>
+    </header>
+    <main>
+      <h1>Page not found</h1>
+      <p>That page doesn&rsquo;t exist. Try the <a href="{escaped_current_path}">current guide</a>
+        or the <a href="/e/">guide archive</a>.</p>
+    </main>
+  </div>
 </body>
 </html>
 """
@@ -692,11 +737,13 @@ def _about_html(site_manifest: SiteManifest) -> str:
 def _pages_worker(site_manifest: SiteManifest, public_paths: set[str]) -> str:
     current_path = f"/e/{site_manifest.current_election_id}/"
     election_roots = [f"/e/{election.election_id}/" for election in site_manifest.elections]
+    not_found_html = _not_found_html(site_manifest)
     return f"""const CANONICAL_HOST = {json.dumps(site_manifest.canonical_origin.removeprefix("https://"))};
 const LEGACY_HOSTS = new Set({json.dumps(list(LEGACY_HOSTS))});
 const CURRENT_ELECTION_PATH = {json.dumps(current_path)};
 const ELECTION_ROOTS = {json.dumps(election_roots)};
 const PUBLIC_PATHS = new Set({json.dumps(sorted(public_paths))});
+const NOT_FOUND_HTML = {json.dumps(not_found_html)};
 
 function redirectPath(url, pathname, status) {{
   const target = new URL(url);
@@ -705,10 +752,10 @@ function redirectPath(url, pathname, status) {{
 }}
 
 function notFound() {{
-  return new Response("Not found\\n", {{
+  return new Response(NOT_FOUND_HTML, {{
     status: 404,
     headers: {{
-      "Content-Type": "text/plain; charset=utf-8",
+      "Content-Type": "text/html; charset=utf-8",
       "X-Robots-Tag": "noindex",
     }},
   }});

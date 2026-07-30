@@ -15,7 +15,6 @@
   <title>Sources &mdash; {{ guide.metadata.election_name }} &mdash; Seattle Elections Guide</title>
   <style>
     {{ stylesheet | safe }}
-    .page { max-width: 64rem; }
     main { padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 3rem; }
     main h1 {
       margin: 0 0 .35rem; color: var(--navy);
@@ -38,11 +37,6 @@
     .sources-cancel:hover, .sources-page-reset:hover { background: #eef3f6; }
     .sources-page-actions a:focus-visible { outline: .2rem solid var(--focus); outline-offset: .15rem; }
     .sources-page-count { margin: 0 0 1rem; font-size: .85rem; color: var(--muted); font-weight: 700; }
-    .page-footer {
-      border-top: 1px solid var(--line); padding: 1.25rem clamp(1rem, 4vw, 2.5rem) 2rem;
-      color: var(--muted); font-size: .85rem;
-    }
-    .page-footer a { font-weight: 700; }
   </style>
 </head>
 <body>
@@ -172,11 +166,9 @@
         {% endif %}
       </div>
     </main>
-    <footer class="page-footer">
-      <nav aria-label="Guide links">
-        <a href="{{ guide_path }}">{{ guide.metadata.election_name }} guide</a> ·
-        <a href="/about/">About &amp; FAQ</a>
-      </nav>
+    <footer class="site-footer">
+      {% if site_footer_band %}{{ site_footer_band | safe }}{% endif %}
+      {% if site_footer_audit %}<div class="site-footer-audit">{{ site_footer_audit | safe }}</div>{% endif %}
     </footer>
   </div>
 
@@ -199,11 +191,13 @@
   } | tojson }}</script>
 
   <script type="module">
+{{ share_link_script | safe }}
 {{ lens_url_script | safe }}
 
   // Page glue for the standalone sources editor. No scoring engine here: this
   // page only ever reads/writes a selection through the shared fragment codec
   // above, exactly like the guide's own merged sources tree (issue 107).
+  wireFooterShare();
   const bindings = JSON.parse(document.querySelector('#lens-bindings').textContent);
   const context = lensContext(bindings, bindings.data_version);
   const guidePath = {{ guide_path | tojson }};

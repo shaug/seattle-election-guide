@@ -118,40 +118,43 @@ DARWIN_VISUAL_BASELINES = {
         0.018,
     ],
     "desktop": [
-        0.441,
-        0.639,
-        0.692,
-        0.472,
+        0.442,
+        0.651,
+        0.703,
+        0.482,
         0.081,
-        0.084,
-        0.077,
+        0.085,
+        0.080,
         0.058,
-        0.071,
         0.072,
-        0.071,
         0.073,
+        0.071,
+        0.075,
         0.077,
         0.099,
-        0.094,
+        0.093,
         0.086,
     ],
+    # UI polish round 4 (item L54): the hero no longer carries the brand or
+    # the removed hero-meta block, shifting content up in this narrower
+    # viewport more than in "desktop" above, hence the larger delta here.
     "mobile": [
-        0.702,
-        0.723,
-        0.741,
-        0.796,
-        0.234,
-        0.252,
-        0.033,
-        0.030,
-        0.127,
-        0.119,
-        0.110,
-        0.051,
-        0.097,
+        0.597,
+        0.588,
+        0.600,
+        0.641,
+        0.246,
+        0.259,
+        0.039,
+        0.035,
+        0.125,
+        0.139,
+        0.136,
+        0.052,
+        0.099,
+        0.095,
         0.092,
-        0.086,
-        0.044,
+        0.050,
     ],
 }
 LINUX_VISUAL_BASELINES = {
@@ -192,40 +195,46 @@ LINUX_VISUAL_BASELINES = {
         0.017,
     ],
     "desktop": [
-        0.449,
-        0.629,
-        0.732,
-        0.472,
+        0.450,
+        0.641,
+        0.743,
+        0.482,
         0.073,
-        0.077,
-        0.070,
+        0.078,
+        0.073,
         0.058,
-        0.061,
         0.062,
         0.063,
-        0.073,
+        0.063,
+        0.075,
         0.072,
         0.091,
-        0.081,
+        0.080,
         0.086,
     ],
+    # UI polish round 4 (item L54): the hero no longer carries the brand or
+    # the removed hero-meta block, shifting content in this narrower
+    # viewport more than in "desktop" above. Values carry the same per-index
+    # delta measured on a real macOS run of this fixture (there is no
+    # equivalent real Linux measurement available in this environment); if
+    # CI reports different exact values, replace these with its own.
     "mobile": [
-        0.714,
-        0.740,
-        0.759,
-        0.799,
-        0.228,
-        0.235,
-        0.032,
-        0.036,
-        0.105,
+        0.609,
+        0.605,
+        0.618,
+        0.644,
+        0.240,
+        0.242,
+        0.038,
+        0.041,
+        0.103,
+        0.097,
+        0.134,
+        0.062,
         0.077,
-        0.108,
-        0.061,
+        0.036,
         0.075,
-        0.033,
-        0.069,
-        0.057,
+        0.063,
     ],
 }
 APPROVED_VISUAL_BASELINES_BY_PLATFORM = {
@@ -455,19 +464,26 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert '<meta name="twitter:card" content="summary">' in html
     assert f'<meta name="twitter:title" content="{configuration.title}">' in html
     assert f'<meta name="twitter:description" content="{configuration.subject}">' in html
-    assert f'href="{configuration.pdf_filename}">Printable PDF</a>' in html
-    assert 'href="mailto:seattle-elections@dobravoda.dev">Contact</a>' in html
-    assert 'href="/about/">About &amp; FAQ</a>' in html
-    assert 'class="footer-actions" aria-label="Guide links"' in html
-    footer_actions_start = html.index('<nav class="footer-actions"')
-    footer_actions_end = html.index("</nav>", footer_actions_start)
-    footer_actions_html = html[footer_actions_start:footer_actions_end]
-    assert footer_actions_html.count(configuration.project_url) == 1
-    assert 'class="footer-share" data-share-guide' in footer_actions_html
+    # Shared footer (UI polish round 4, item L55): icon action cluster with
+    # Share, Printable PDF, Contact, and the GitHub mark (replacing a
+    # separate "Source and audit files" text link), plus "How this works".
+    assert '<footer class="site-footer">' in html
+    footer_start = html.index('<footer class="site-footer">')
+    footer_end = html.index("</footer>", footer_start)
+    footer_html = html[footer_start:footer_end]
+    assert f'href="{configuration.pdf_filename}" aria-label="Printable PDF"' in footer_html
+    assert 'href="mailto:seattle-elections@dobravoda.dev" aria-label="Contact"' in footer_html
+    assert f'href="{configuration.project_url}" aria-label="Source and audit files on GitHub"' in (
+        footer_html
+    )
+    assert footer_html.count(configuration.project_url) == 2  # GitHub action + audit Code link
+    assert '<a class="site-footer-link" href="/about/">How this works</a>' in footer_html
+    assert "About &amp; FAQ" not in footer_html
+    assert 'class="footer-icon-action" data-footer-share' in footer_html
     assert "navigator.share" in html
     assert "shareOrCopyLink" in html
-    assert ".detailed-footer-audit { display: none; }" in html
-    assert "html.detailed-edition .detailed-footer-audit { display: inline; }" in html
+    assert "wireFooterShare();" in html
+    assert '<div class="site-footer-audit">' in footer_html
     assert ">AGREES<" not in html
     assert ">DIFFERENT PICK<" not in html
     assert ">NO PICK<" not in html
@@ -1452,10 +1468,25 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     share_label = (
         f"Consensus among explicitly endorsing sources: {accessible_race.percentage_label}"
     )
+    # The card's own compact meter (`data-display-role="share"`) is the
+    # element `html-display-values` actually keys its "share" comparison on;
+    # anchored to it (rather than a bare 'role="img"') so the corruption
+    # lands there and not on the shared footer/band's decorative brand-icon
+    # svg, which also carries `role="img"` (item L54: the band's icon now
+    # always renders, including on the guide page).
+    share_meter_match = re.search(
+        r'role="img"\s+data-display-role="share"\s+aria-label="' + re.escape(share_label) + '"',
+        accessible_html,
+    )
+    assert share_meter_match is not None
+    share_meter_original = share_meter_match.group(0)
     for index, (original, replacement) in enumerate(
         (
             (f'aria-label="{share_label}"', 'aria-label="Consensus among endorsers: 100%"'),
-            ('role="img"', 'role="presentation"'),
+            (
+                share_meter_original,
+                share_meter_original.replace('role="img"', 'role="presentation"', 1),
+            ),
         )
     ):
         assert original in accessible_html
@@ -1508,10 +1539,24 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     )
     assert unavailable_html_check.passed
     unavailable_label = "Consensus among explicitly endorsing sources: not available"
+    # Same anchoring as the share-accessibility loop above: target the
+    # card's own compact meter, not the first `role="img"` in the document
+    # (now the shared band's brand icon, item L54).
+    unavailable_meter_match = re.search(
+        r'role="img"\s+data-display-role="share"\s+aria-label="'
+        + re.escape(unavailable_label)
+        + '"',
+        unavailable_html_text,
+    )
+    assert unavailable_meter_match is not None
+    unavailable_meter_original = unavailable_meter_match.group(0)
     for index, (original, replacement) in enumerate(
         (
             (f'aria-label="{unavailable_label}"', 'aria-label="Consensus among endorsers: 0%"'),
-            ('role="img"', 'role="presentation"'),
+            (
+                unavailable_meter_original,
+                unavailable_meter_original.replace('role="img"', 'role="presentation"', 1),
+            ),
         )
     ):
         assert original in unavailable_html_text
@@ -2411,8 +2456,8 @@ def test_footer_share_button_uses_web_share_then_falls_back_to_copy(tmp_path: Pa
         """
         (async () => {
           const pause = () => new Promise((resolve) => setTimeout(resolve, 50));
-          const button = document.querySelector('[data-share-guide]');
-          const status = document.querySelector('[data-share-guide-status]');
+          const button = document.querySelector('[data-footer-share]');
+          const status = document.querySelector('[data-footer-share-status]');
 
           Object.defineProperty(navigator, 'share', {
             value: (details) => Promise.resolve(details),

@@ -104,7 +104,13 @@ def test_stage_pages_site_composes_verified_election_archive(tmp_path: Path) -> 
     worker = (output / "_worker.js").read_text(encoding="utf-8")
     assert 'const CANONICAL_HOST = "seattleelections.guide";' in worker
     assert "return redirectPath(url, CURRENT_ELECTION_PATH, 307);" in worker
-    assert 'return new Response("Not found\\n"' in worker
+    assert "return new Response(NOT_FOUND_HTML" in worker
+    # K48: the worker's 404 is a minimal branded page, not bare text/plain
+    # (the page is JSON-encoded into the worker source, so its own quotes
+    # are backslash-escaped there).
+    assert "Page not found" in worker
+    assert "site-band" in worker
+    assert f'href=\\"/e/{CURRENT_ID}/\\"' in worker
 
     deployment = json.loads((output / "deployment-manifest.json").read_text(encoding="utf-8"))
     assert deployment["schema_version"] == "2.0"
@@ -209,6 +215,9 @@ def test_generated_worker_enforces_route_contract(tmp_path: Path) -> None:
     assert results[5]["body"] == f"asset:/e/{CURRENT_ID}/Current_Guide.pdf"
     assert results[6]["status"] == 404
     assert results[6]["robots"] == "noindex"
+    # K48: a minimal branded 404 page, not the old bare text/plain response.
+    assert "Page not found" in cast(str, results[6]["body"])
+    assert f'href="/e/{CURRENT_ID}/"' in cast(str, results[6]["body"])
     assert results[7]["status"] == 404
     assert results[8]["status"] == 301
     assert results[8]["location"] == (f"https://seattleelections.guide/e/{OLDER_ID}/?source=legacy")
@@ -406,8 +415,8 @@ def test_about_page_share_button_uses_web_share_then_falls_back_to_copy(
         """
         (async () => {
           const pause = () => new Promise((resolve) => setTimeout(resolve, 50));
-          const button = document.querySelector('[data-share-about]');
-          const status = document.querySelector('[data-share-about-status]');
+          const button = document.querySelector('[data-footer-share]');
+          const status = document.querySelector('[data-footer-share-status]');
 
           Object.defineProperty(navigator, 'share', {
             value: (details) => Promise.resolve(details),
