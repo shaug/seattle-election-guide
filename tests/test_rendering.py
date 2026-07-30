@@ -2284,7 +2284,30 @@ def _dense_view_model(view_model: PublicationViewModel) -> PublicationViewModel:
         )
         for source in view_model.sources
     ]
-    return _revalidated(view_model.model_copy(update={"sections": sections, "sources": sources}))
+    # Every race's candidates (endorsement groups, source cells) are stamped
+    # from `example` above; its published lens candidate order must follow
+    # the same substitution, or the personalization payload's own H30
+    # invariant (every allocated candidate id is in `candidate_order`) would
+    # reject the reprojected races below for referencing `example`'s
+    # candidates under another race's original ballot order.
+    example_candidate_order = next(
+        race.candidate_order
+        for race in view_model.personalization.races
+        if race.race_id == example.id
+    )
+    personalization = view_model.personalization.model_copy(
+        update={
+            "races": [
+                race.model_copy(update={"candidate_order": example_candidate_order})
+                for race in view_model.personalization.races
+            ]
+        }
+    )
+    return _revalidated(
+        view_model.model_copy(
+            update={"sections": sections, "sources": sources, "personalization": personalization}
+        )
+    )
 
 
 def _visual_view_model(view_model: PublicationViewModel) -> PublicationViewModel:
@@ -2869,10 +2892,17 @@ def test_personalization_is_invisible_while_the_policy_is_disabled(tmp_path: Pat
         "data-lens-support-compact",
         "data-lens-insufficient",
         "data-lens-comparison",
+        "data-lens-confidence",
+        "data-lens-detail-confidence",
         "data-race-detail-lens",
         "data-lens-detail-summary",
         "data-lens-detail-audited",
         "data-lens-detail-sources",
+        "data-comparison-lens",
+        "data-race-detail-lens-kicker",
+        "data-race-detail-lens-count",
+        "data-race-detail-lens-meter",
+        "data-race-detail-not-counted",
         'id="lens-personalization"',
     ):
         assert marker not in body
@@ -3248,10 +3278,15 @@ def test_personalization_divergent_race_discloses_a_compact_comparison_and_full_
         render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
         encoding="utf-8",
     )
+    selected_codes_json = json.dumps(list(first_category.member_source_codes))
     result = _evaluate_in_chrome(
         html_path,
-        """
-        (async () => {
+        f"""
+        (async () => {{
+          const selectedCodes = new Set({selected_codes_json});
+          const bindings = JSON.parse(document.querySelector('#lens-bindings').textContent);
+          const codeBySourceId = new Map(bindings.sources.map((item) => [item.id, item.code]));
+          const shown = (el) => el !== null && getComputedStyle(el).display !== 'none';
           const cards = [...document.querySelectorAll('.race-card')];
           const divergent = cards.find(
             (card) => card.querySelector('[data-lens-comparison]')?.hidden === false,
@@ -3260,19 +3295,63 @@ def test_personalization_divergent_race_discloses_a_compact_comparison_and_full_
             (card) => card.querySelector('[data-lens-comparison]')?.hidden === true,
           );
           let detail = null;
-          if (divergent) {
+          if (divergent) {{
             divergent.querySelector('[data-race-detail-link]').click();
             await new Promise((resolve) => setTimeout(resolve, 50));
             const dialog = divergent.querySelector('[data-race-detail-dialog]');
-            detail = {
-              summary: dialog.querySelector('[data-lens-detail-summary]').textContent,
+            // I56: the dialog's "My sources" summary section is deleted
+            // outright; neither of its two query-only elements exists at all.
+            const deletedElementsGone =
+              dialog.querySelector('[data-lens-detail-summary]') === null
+              && dialog.querySelector('[data-lens-detail-sources]') === null
+              && dialog.querySelector('[data-race-detail-lens]') === null;
+            const noMySourcesHeading = ![...dialog.querySelectorAll('h4')].some(
+              (heading) => heading.textContent === 'My sources',
+            );
+            const cardShareText = divergent.querySelector('[data-lens-share-text]')?.textContent;
+            const sections = [...dialog.querySelectorAll('[data-race-detail-candidate-id]')];
+            // I56 hard invariant: every visible per-candidate meter equals the
+            // card's own lens share — no quantity appears with two values.
+            const visibleLensMeterShares = sections
+              .map((section) => section.querySelector('[data-race-detail-lens-meter]'))
+              .filter((meter) => shown(meter))
+              .map((meter) => (
+                meter.querySelector('[data-race-detail-lens-meter-text]')?.textContent
+              ));
+            // Every audited (pre-lens) count/meter/kicker in the dialog is
+            // hidden while the lens is active — the personalized twin is the
+            // only one visible.
+            const auditedElementsHidden = sections.every((section) => (
+              [...section.querySelectorAll('[data-lens-hidden]')].every((el) => !shown(el))
+            ));
+            // I56: an unselected source's row stays in place, visibly
+            // de-emphasized and marked "Not counted"; a selected source's row
+            // never carries that mark. Checked against every actual row
+            // rather than merely asserting one exists either way.
+            const rowMarkingCorrect = sections.every((section) => (
+              [...section.querySelectorAll('[data-endorsed-candidate-id]')]
+                .filter((row) => row.dataset.sourceRole !== 'comparison')
+                .every((row) => {{
+                  const code = codeBySourceId.get(row.dataset.raceDetailSourceId);
+                  const badge = row.querySelector('[data-race-detail-not-counted]');
+                  const marked = shown(badge);
+                  return marked === !selectedCodes.has(code);
+                }})
+            ));
+            detail = {{
+              deletedElementsGone,
+              noMySourcesHeading,
               auditedHidden: dialog.querySelector('[data-lens-detail-audited]').hidden,
               auditedText: dialog.querySelector('[data-lens-detail-audited]').textContent,
-              sourceRowCount: dialog.querySelectorAll('[data-lens-detail-sources] li').length,
-            };
-          }
+              cardShareText,
+              visibleLensMeterShares,
+              auditedElementsHidden,
+              rowMarkingCorrect,
+              candidateSectionCount: sections.length,
+            }};
+          }}
           const divergentComparison = divergent?.querySelector('[data-lens-comparison]');
-          return JSON.stringify({
+          return JSON.stringify({{
             hasDivergent: divergent !== undefined,
             hasUnchanged: unchanged !== undefined,
             // H38: the caption itself carries the lens state now that the
@@ -3290,8 +3369,8 @@ def test_personalization_divergent_race_discloses_a_compact_comparison_and_full_
             ),
             unchangedComparisonHidden: unchanged?.querySelector('[data-lens-comparison]')?.hidden,
             detail,
-          });
-        })()
+          }});
+        }})()
         """,
         initial_url=f"{html_path.resolve().as_uri()}#{fragment}",
     )
@@ -3311,9 +3390,21 @@ def test_personalization_divergent_race_discloses_a_compact_comparison_and_full_
         ("All sources agree with your selection.", "All sources differ from your selection.")
     )
     assert result["divergentComparisonToned"] is True
-    assert result["detail"]["auditedHidden"] is False
-    assert "All sources:" in result["detail"]["auditedText"]
-    assert result["detail"]["sourceRowCount"] >= 0
+    detail = result["detail"]
+    assert detail["deletedElementsGone"] is True
+    assert detail["noMySourcesHeading"] is True
+    assert detail["auditedHidden"] is False
+    assert "All sources:" in detail["auditedText"]
+    assert detail["candidateSectionCount"] > 0
+    assert detail["auditedElementsHidden"] is True
+    assert detail["rowMarkingCorrect"] is True
+    # I56 hard invariant: no quantity appears with two values — every visible
+    # per-candidate meter in the dialog equals the card's own lens share.
+    assert detail["visibleLensMeterShares"], (
+        "expected at least one visible personalized leader meter"
+    )
+    for share_text in detail["visibleLensMeterShares"]:
+        assert share_text == detail["cardShareText"]
     if result["hasUnchanged"]:
         assert result["unchangedComparisonHidden"] is True
 

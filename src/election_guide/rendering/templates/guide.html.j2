@@ -91,6 +91,16 @@
         <div class="race-detail-source-meta">
           {{ race_detail_source_badge(source) }}
           {% if detail_label %}<span class="race-detail-source-status">{{ detail_label }}</span>{% endif %}
+          {% if guide.personalization.policy.enabled and source.panel_role != 'comparison' %}
+          {# I56: an unselected source's row stays in place as evidence,
+             never removed, but is visibly marked as not counted toward the
+             lens-active per-candidate numbers. Starts empty, like every
+             other lens-only element in this template, so the static-HTML
+             evidence-row validator (renderer.py) sees no extra audited text;
+             the JS below fills it in only once a lens actually diverges. #}
+          <span class="race-detail-source-not-counted" data-lens-only
+            data-race-detail-not-counted hidden></span>
+          {% endif %}
         </div>
       {% if cell.evidence_url %}</a>{% else %}</div>{% endif %}
     </li>
@@ -99,6 +109,7 @@
     {% for candidate_id, candidate_label, endorsement_group in race_detail_candidate_choices(race, source_by_id) %}
     {% set is_leader = candidate_id in race.support_leader_candidate_ids %}
     {% set source_count = endorsement_group.source_count if endorsement_group is not none else 0 %}
+    {% set has_split = endorsement_group is not none and (endorsement_group.endorsers | selectattr('co_endorsement') | list | length > 0) %}
     {# A candidate only the comparison source picked has nothing to show by
        default: hiding it here, rather than only its rows, keeps the whole
        "0 endorsing sources" card out of the state this ticket makes default. #}
@@ -107,21 +118,48 @@
       {% if endorsement_group is none %}data-times-only{% endif %}>
       <div class="race-detail-candidate-heading">
         <div class="race-detail-candidate-title">
-          {% if is_leader %}<p>{% if race.support_leader_candidate_ids | length > 1 %}Tied for lead{% else %}Leading choice{% endif %}</p>{% endif %}
+          {% if guide.personalization.policy.enabled %}
+          {# The kicker renders for every candidate (hidden unless this
+             candidate is the audited leader) so the I56 lens-only twin below
+             can show it for whichever candidate(s) become the personalized
+             leader instead — a candidate the audited baseline does not lead
+             can become the personalized leader, and vice versa. #}
+          <p{% if not is_leader %} hidden{% endif %} data-lens-hidden>{% if race.support_leader_candidate_ids | length > 1 %}Tied for lead{% else %}Leading choice{% endif %}</p>
+          <p class="lens-value" data-lens-only data-race-detail-lens-kicker hidden></p>
+          {% elif is_leader %}
+          <p>{% if race.support_leader_candidate_ids | length > 1 %}Tied for lead{% else %}Leading choice{% endif %}</p>
+          {% endif %}
           <h4>{{ candidate_label }}</h4>
         </div>
         <div class="race-detail-candidate-metrics">
-          <span>{% if is_leader and race.recommendation_candidate_ids | length == 1 %}{{ source_count }} of {{ race.explicit_endorsement_count }} endorsing sources{% else %}{{ source_count }} endorsing source{% if source_count != 1 %}s{% endif %}{% endif %}</span>
-          {% if is_leader %}
-            {% if race.percentage_whole is none %}
-            <div class="race-detail-meter race-detail-meter-na" role="img"
-              aria-label="{{ screen_share_accessible_label(race) }}"><strong>N/A</strong></div>
-            {% else %}
-            <div class="race-detail-meter{% if race.percentage_whole < 30 %} meter-low-fill{% endif %}" style="--meter-fill: {{ race.percentage_whole }}%"
-              role="img" aria-label="{{ screen_share_accessible_label(race) }}">
-              <strong>{{ race.percentage_label }}</strong>
-            </div>
-            {% endif %}
+          <span{% if guide.personalization.policy.enabled %} data-lens-hidden{% endif %}>{% if is_leader and race.recommendation_candidate_ids | length == 1 %}{{ source_count }} of {{ race.explicit_endorsement_count }} endorsing sources{% if has_split %} (co-endorsements split){% endif %}{% else %}{{ source_count }} endorsing source{% if source_count != 1 %}s{% endif %}{% endif %}</span>
+          {% if guide.personalization.policy.enabled %}
+          <span class="lens-value" data-lens-only data-race-detail-lens-count></span>
+          {# The meter renders for every candidate (hidden unless this
+             candidate is the audited leader), plus one lens-only twin (I56),
+             for the same reason as the kicker above. #}
+          {% if race.percentage_whole is none %}
+          <div class="race-detail-meter race-detail-meter-na"{% if not is_leader %} hidden{% endif %} data-lens-hidden
+            role="img" aria-label="{{ screen_share_accessible_label(race) }}"><strong>N/A</strong></div>
+          {% else %}
+          <div class="race-detail-meter{% if race.percentage_whole < 30 %} meter-low-fill{% endif %}"{% if not is_leader %} hidden{% endif %} data-lens-hidden
+            style="--meter-fill: {{ race.percentage_whole }}%"
+            role="img" aria-label="{{ screen_share_accessible_label(race) }}">
+            <strong>{{ race.percentage_label }}</strong>
+          </div>
+          {% endif %}
+          <div class="race-detail-meter" data-lens-only data-race-detail-lens-meter hidden
+            role="img"><strong data-race-detail-lens-meter-text></strong></div>
+          {% elif is_leader %}
+          {% if race.percentage_whole is none %}
+          <div class="race-detail-meter race-detail-meter-na" role="img"
+            aria-label="{{ screen_share_accessible_label(race) }}"><strong>N/A</strong></div>
+          {% else %}
+          <div class="race-detail-meter{% if race.percentage_whole < 30 %} meter-low-fill{% endif %}" style="--meter-fill: {{ race.percentage_whole }}%"
+            role="img" aria-label="{{ screen_share_accessible_label(race) }}">
+            <strong>{{ race.percentage_label }}</strong>
+          </div>
+          {% endif %}
           {% endif %}
         </div>
       </div>
@@ -280,11 +318,37 @@
             <div class="screen-comparisons">
               {% for comparison in race.comparisons %}
               <p class="comparison comparison-{{ comparison.voter_tone }}" role="group"
-                aria-label="{{ comparison.voter_accessible_label }}" data-display-role="comparison">
+                aria-label="{{ comparison.voter_accessible_label }}" data-display-role="comparison"
+                {% if guide.personalization.policy.enabled %} data-lens-hidden{% endif %}>
                 <strong class="comparison-status">{{ comparison.print_status_label }}</strong>{% if comparison.status != 'agrees' %}<span class="comparison-separator"> · </span><span class="comparison-choice">{{ comparison.print_choice_label }}</span>{% endif %}
               </p>
+              {% if guide.personalization.policy.enabled %}
+              {# H31: recompute the Times tone/verb against the displayed
+                 (personalized) result while a lens is active — the server
+                 bakes this in against the audited result and never
+                 recomputes it, so it could otherwise read "agrees" while
+                 visibly differing from the number beside it. #}
+              <p class="comparison" role="group" data-lens-only
+                data-comparison-lens data-comparison-source-id="{{ comparison.source_id }}"></p>
+              {% endif %}
               {% endfor %}
             </div>
+            {# H32: a confidence flag must be visible on the card itself, not
+               only inside the dialog — previously it surfaced only as a bare
+               "Confidence warning" word in the (now-deleted) dialog "My
+               sources" summary. Rendered after the reference block (not
+               between the caption and the comparisons) so it never sits
+               inside the "support caption + comparison" phrase the detailed-
+               edition print validator (_detailed_pdf_race_values) checks as
+               one adjacent unit. #}
+            {% if 'low_confidence' in race.warning_codes %}
+            <p class="confidence-note" role="note" data-display-role="confidence-warning"{% if guide.personalization.policy.enabled %} data-lens-hidden{% endif %}>
+              Confidence flag: one or more endorsements need verification.</p>
+            {% endif %}
+            {% if guide.personalization.policy.enabled %}
+            <p class="confidence-note" data-lens-only data-lens-confidence hidden>
+              Confidence flag: one or more endorsements in the selected sources need verification.</p>
+            {% endif %}
             <dialog class="race-detail-dialog" id="race-detail-{{ race.id }}"
               data-race-detail-dialog data-race-id="{{ race.id }}"
               aria-labelledby="race-detail-election-{{ race.id }} race-detail-title-{{ race.id }}"
@@ -307,12 +371,18 @@
               </div>
               <div class="race-detail-body">
                 {% if guide.personalization.policy.enabled %}
-                <section class="race-detail-lens" data-lens-only data-race-detail-lens>
-                  <h4>My sources</h4>
-                  <p data-lens-detail-summary></p>
-                  <p class="lens-comparison" role="group" data-lens-only data-lens-detail-audited hidden></p>
-                  <ul class="lens-detail-sources" data-lens-detail-sources></ul>
-                </section>
+                {# I56: the dialog's own body is lens-aware (every candidate
+                   section below is lens-aware too), so the "My sources"
+                   summary section (heading, restated result line, selected-
+                   source chip list) is redundant with the highlighted/dimmed
+                   rows below and is deleted outright. Its two useful
+                   remnants rehome here: the divergent "All sources" reference
+                   line renders once, in the same quiet-bar component as the
+                   card (G26/G27 idiom); the confidence flag follows H32 onto
+                   this visible presentation instead of a bare dialog word. #}
+                <p class="lens-comparison" role="group" data-lens-only data-lens-detail-audited hidden></p>
+                <p class="confidence-note" data-lens-only data-lens-detail-confidence hidden>
+                  Confidence flag: one or more endorsements in the selected sources need verification.</p>
                 {% endif %}
                 <div class="race-detail-outcomes">
                   {{ race_detail_candidate_sections(race) }}
@@ -599,6 +669,7 @@
 {{ lens_score_script | safe }}
 {{ lens_migrate_script | safe }}
 {{ lens_divergence_script | safe }}
+{{ lens_comparison_script | safe }}
   {% endif %}
 
   // Page glue for the merged sources tree. The codec (and, once enabled, the
@@ -798,7 +869,7 @@
       ),
     ]),
   );
-  const sourceNameByCode = new Map(bindings.sources.map((item) => [item.code, item.name]));
+  const codeBySourceId = new Map(bindings.sources.map((item) => [item.id, item.code]));
   const raceDataById = new Map(personalization.races.map((race) => [race.race_id, race]));
 
   // The full selectable panel with no direct picks reproduces the published
@@ -853,6 +924,30 @@
    * items G24-G27). The tone tint is never the only carrier — the aria-label
    * states the agreement in words.
    */
+  /**
+   * Shared meter-fill policy (I40/I41): the NA state, the `--meter-fill`
+   * custom property, the low-fill label-placement guard, and the
+   * accessible label. One card-level meter (the race's own personalized
+   * share) and every dialog candidate's lens-only meter (I56) apply this
+   * exact same policy, so it is centralized here rather than hand-copied —
+   * a future change to one but not the other would silently desynchronize
+   * the card and dialog meters, the exact "two values for one quantity"
+   * failure class this ticket exists to eliminate. Returns the percentage
+   * label so a caller whose own text lives inside the meter can reuse it.
+   */
+  const applyMeterFill = (meterEl, shareString, naClass) => {
+    const label = percentageLabel(shareString);
+    const fillPercent = shareString === null ? null : Number.parseInt(label, 10);
+    meterEl.classList.toggle(naClass, shareString === null);
+    // I41: below ~30% fill the white label bleeds onto the pale track; below
+    // that threshold the low-fill guard (guide.css) renders it after the
+    // fill in muted ink instead.
+    meterEl.classList.toggle('meter-low-fill', fillPercent !== null && fillPercent < 30);
+    meterEl.style.setProperty('--meter-fill', shareString === null ? '0%' : label);
+    meterEl.setAttribute('aria-label', shareAccessibleLabel(shareString));
+    return label;
+  };
+
   const applyAllSourcesSignal = (element, audited, labels, leaderChanged) => {
     const summary = allSourcesSummary(audited, labels);
     element.textContent = summary;
@@ -867,13 +962,11 @@
   /**
    * Apply one race's personalized result to its card and detail dialog: the
    * personalized recommendation, share, source count, and insufficient-
-   * evidence state always render while My sources is active; the compact
-   * audited comparison and the detail panel's audited line render only when
+   * evidence state always render while a lens is active; the compact audited
+   * comparison and the dialog's own audited reference line render only when
    * this race actually diverges, so an unchanged race stays free of
    * redundant audited detail.
    */
-  const coveredCellStates = new Set(['endorsement', 'multi_endorsement', 'no_endorsement']);
-
   const renderRaceLens = (raceId, card, personalizedByRaceId, resolvedSourceCodes) => {
     const personalized = personalizedByRaceId.get(raceId);
     const audited = auditedByRaceId.get(raceId);
@@ -886,21 +979,7 @@
     const shareEl = card.querySelector('[data-lens-share-text]');
     if (shareEl) shareEl.textContent = percentageLabel(personalized.winnerShare);
     const shareMeter = card.querySelector('[data-lens-share]');
-    if (shareMeter) {
-      shareMeter.classList.toggle('screen-meter-na', personalized.winnerShare === null);
-      shareMeter.style.setProperty(
-        '--meter-fill',
-        personalized.winnerShare === null ? '0%' : percentageLabel(personalized.winnerShare),
-      );
-      shareMeter.setAttribute('aria-label', shareAccessibleLabel(personalized.winnerShare));
-      // I41: below ~30% fill the white label bleeds onto the pale track;
-      // below that threshold the low-fill guard (guide.css) renders it after
-      // the fill in muted ink instead.
-      const fillPercent = personalized.winnerShare === null
-        ? null
-        : Number.parseInt(percentageLabel(personalized.winnerShare), 10);
-      shareMeter.classList.toggle('meter-low-fill', fillPercent !== null && fillPercent < 30);
-    }
+    if (shareMeter) applyMeterFill(shareMeter, personalized.winnerShare, 'screen-meter-na');
     const selectedTotal = resolvedSourceCodes.length;
     const supportEl = card.querySelector('[data-lens-support]');
     if (supportEl) supportEl.textContent = supportSummary(personalized, selectedTotal);
@@ -917,23 +996,43 @@
         applyAllSourcesSignal(comparisonEl, audited, labels, divergence.leader);
       }
     }
+    // H32: the confidence flag surfaces on the card itself, not only inside
+    // the dialog.
+    const confidenceEl = card.querySelector('[data-lens-confidence]');
+    if (confidenceEl) confidenceEl.hidden = personalized.confidenceWarningCodes.length === 0;
 
-    // Race detail: complete personalized values, the audited comparison when
-    // divergent, and every contributing source.
-    const summaryEl = card.querySelector('[data-lens-detail-summary]');
-    if (summaryEl) {
-      const flags = [
-        personalized.isTied ? 'Tied' : null,
-        personalized.grade === 'Insufficient' ? 'Insufficient evidence' : null,
-        personalized.confidenceWarningCodes.length > 0 ? 'Confidence warning' : null,
-      ].filter((flag) => flag !== null);
-      summaryEl.textContent = [
-        recommendationLabel(personalized, labels),
-        percentageLabel(personalized.winnerShare),
-        supportSummary(personalized),
-        ...flags,
-      ].join(' · ');
+    // H31: recompute the Times comparison tone/verb against the *displayed*
+    // (personalized) result — the server bakes it in against the audited
+    // result and never recomputes it, so it could otherwise read "agrees"
+    // while visibly differing from the number beside it.
+    const race = raceDataById.get(raceId);
+    for (const timesEl of card.querySelectorAll('[data-comparison-lens]')) {
+      const sourceCode = codeBySourceId.get(timesEl.dataset.comparisonSourceId);
+      const cell = (race?.cells ?? []).find((item) => item.source_code === sourceCode);
+      const presentation = personalizedComparison(cell, personalized, labels);
+      timesEl.className = `comparison comparison-${presentation.tone}`;
+      timesEl.setAttribute('aria-label', presentation.ariaLabel);
+      timesEl.replaceChildren();
+      const statusEl = document.createElement('strong');
+      statusEl.className = 'comparison-status';
+      statusEl.textContent = presentation.statusLabel;
+      timesEl.append(statusEl);
+      if (presentation.showChoice) {
+        const separatorEl = document.createElement('span');
+        separatorEl.className = 'comparison-separator';
+        separatorEl.textContent = ' · ';
+        const choiceEl = document.createElement('span');
+        choiceEl.className = 'comparison-choice';
+        choiceEl.textContent = presentation.choiceLabel;
+        timesEl.append(separatorEl, choiceEl);
+      }
     }
+
+    // Race detail: I56 — every computed number in the dialog (per-candidate
+    // counts, shares, meters, and the leading-choice kicker) must equal the
+    // lens numbers on the main page while a lens is active; no quantity may
+    // appear with two values. Unselected sources stay visible as evidence,
+    // marked as not counted, rather than hidden.
     const auditedDetailEl = card.querySelector('[data-lens-detail-audited]');
     if (auditedDetailEl) {
       auditedDetailEl.hidden = !divergence.anyChanged;
@@ -941,24 +1040,62 @@
         applyAllSourcesSignal(auditedDetailEl, audited, labels, divergence.leader);
       }
     }
-    const sourcesEl = card.querySelector('[data-lens-detail-sources]');
-    if (sourcesEl) {
-      const race = raceDataById.get(raceId);
-      // "Contributing" means this race actually has a cell to show for the
-      // source: eligible, selected, and covered (an explicit endorsement or
-      // an on-record no-pick), the same states lens-score.mjs's own coverage
-      // set counts. A selected-but-not-covered source has nothing to list.
-      sourcesEl.replaceChildren(
-        ...(race?.cells ?? [])
-          .filter(
-            (cell) => resolvedSourceCodes.includes(cell.source_code) && coveredCellStates.has(cell.state),
-          )
-          .map((cell) => {
-            const item = document.createElement('li');
-            item.textContent = sourceNameByCode.get(cell.source_code) ?? cell.source_code;
-            return item;
-          }),
+    const detailConfidenceEl = card.querySelector('[data-lens-detail-confidence]');
+    if (detailConfidenceEl) {
+      detailConfidenceEl.hidden = personalized.confidenceWarningCodes.length === 0;
+    }
+    const resolvedSet = new Set(resolvedSourceCodes);
+    const standingByCandidateId = new Map(
+      personalized.standings.map((item) => [item.candidateId, item]),
+    );
+    const soleLeaderId = personalized.grade !== 'Insufficient' && !personalized.isTied
+      ? personalized.winnerId
+      : null;
+    for (const section of card.querySelectorAll('[data-race-detail-candidate-id]')) {
+      const candidateId = section.dataset.raceDetailCandidateId;
+      const isLeader = personalized.winnerIds.includes(candidateId);
+      const contributingCells = (race?.cells ?? []).filter(
+        (cell) => resolvedSet.has(cell.source_code) && candidateId in cell.allocation,
       );
+      const contributingCount = contributingCells.length;
+      const hasSplit = contributingCells.some((cell) => cell.state === 'multi_endorsement');
+
+      const kickerEl = section.querySelector('[data-race-detail-lens-kicker]');
+      if (kickerEl) {
+        kickerEl.hidden = !isLeader;
+        kickerEl.textContent = personalized.isTied ? 'Tied for lead' : 'Leading choice';
+      }
+      const countEl = section.querySelector('[data-race-detail-lens-count]');
+      if (countEl) {
+        const noun = contributingCount === 1 ? 'source' : 'sources';
+        countEl.textContent = candidateId === soleLeaderId
+          ? `${contributingCount} of ${personalized.explicitCount} endorsing sources`
+            + (hasSplit ? ' (co-endorsements split)' : '')
+          : `${contributingCount} endorsing ${noun}`;
+      }
+      const lensMeterEl = section.querySelector('[data-race-detail-lens-meter]');
+      if (lensMeterEl) {
+        lensMeterEl.hidden = !isLeader;
+        if (isLeader) {
+          const share = standingByCandidateId.get(candidateId)?.share ?? null;
+          const label = applyMeterFill(lensMeterEl, share, 'race-detail-meter-na');
+          const lensMeterTextEl = lensMeterEl.querySelector('[data-race-detail-lens-meter-text]');
+          if (lensMeterTextEl) lensMeterTextEl.textContent = label;
+        }
+      }
+      // I56: unselected sources stay in place as evidence, visibly
+      // de-emphasized and marked as not counted, rather than removed.
+      for (const row of section.querySelectorAll('[data-endorsed-candidate-id]')) {
+        if (row.dataset.sourceRole === 'comparison') continue;
+        const rowCode = codeBySourceId.get(row.dataset.raceDetailSourceId);
+        const notCounted = !resolvedSet.has(rowCode);
+        row.classList.toggle('race-detail-source-row-not-counted', notCounted);
+        const notCountedEl = row.querySelector('[data-race-detail-not-counted]');
+        if (notCountedEl) {
+          notCountedEl.hidden = !notCounted;
+          notCountedEl.textContent = notCounted ? 'Not counted' : '';
+        }
+      }
     }
   };
 

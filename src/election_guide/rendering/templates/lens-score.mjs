@@ -197,6 +197,16 @@ export function scoreRace(race, effectiveCodes, personalization) {
   let total = Rational.zero();
   for (const points of support.values()) total = total.add(points);
 
+  // H30: a tie's candidates are ordered by the race's published ballot
+  // order, never by sorting candidate ids as strings — that reproduces the
+  // exact order the audited engine itself resolves a tie in
+  // (`_ordered_support` in scoring/engine.py), so a joined label such as
+  // "A / B" never disagrees between the server's default rendering and a
+  // client lens recomputing the same tie.
+  const ballotIndex = (candidateId) => {
+    const index = race.candidate_order.indexOf(candidateId);
+    return index === -1 ? race.candidate_order.length : index;
+  };
   let maximum = null;
   for (const points of support.values()) {
     if (maximum === null || points.compare(maximum) > 0) maximum = points;
@@ -206,14 +216,14 @@ export function scoreRace(race, effectiveCodes, personalization) {
     : [...support.entries()]
         .filter(([, points]) => points.compare(maximum) === 0)
         .map(([candidateId]) => candidateId)
-        .sort();
+        .sort((left, right) => ballotIndex(left) - ballotIndex(right));
   const isTied = winnerIds.length > 1;
   const winnerShare = maximum === null || total.isZero() ? null : maximum.divide(total);
 
   const standings = [...support.entries()]
     .sort(([leftId, leftPoints], [rightId, rightPoints]) => {
       const bySupport = rightPoints.compare(leftPoints);
-      return bySupport !== 0 ? bySupport : leftId.localeCompare(rightId);
+      return bySupport !== 0 ? bySupport : ballotIndex(leftId) - ballotIndex(rightId);
     })
     .map(([candidateId, points]) => ({
       candidateId,

@@ -167,10 +167,22 @@ def test_publication_rejects_a_stale_personalization_allocation() -> None:
     race = next(
         item
         for item in payload["personalization"]["races"]
-        if item["cells"] and any(cell["allocation"] for cell in item["cells"])
+        if item["cells"]
+        and any(cell["allocation"] for cell in item["cells"])
+        and len(item["candidate_order"]) > 1
     )
     cell = next(item for item in race["cells"] if len(item["allocation"]) == 1)
-    cell["allocation"] = {"substituted-candidate": "1"}
+    original_candidate_id = next(iter(cell["allocation"]))
+    # Substitute a *real* sibling candidate from the same race (rather than an
+    # unknown id) so this exercises the cross-model "allocation must match its
+    # cells" check specifically, not the unrelated candidate-order invariant a
+    # wholly unknown candidate id would trip first (issue 132/H30).
+    substituted_candidate_id = next(
+        candidate_id
+        for candidate_id in race["candidate_order"]
+        if candidate_id != original_candidate_id
+    )
+    cell["allocation"] = {substituted_candidate_id: "1"}
 
     with pytest.raises(ValidationError, match="allocation must match"):
         PublicationViewModel.model_validate(payload)

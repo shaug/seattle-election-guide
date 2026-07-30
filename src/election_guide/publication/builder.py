@@ -469,6 +469,10 @@ def _personalization(
     sections: list[PublicationSection],
 ) -> PersonalizationContract:
     """Publish the enabled lens payload alongside the audited display model."""
+    candidate_order_by_race_id = {
+        race.id: [choice.id for choice in sorted(race.choices, key=lambda item: item.ballot_order)]
+        for race in dataset.inventory.races
+    }
     snapshot = build_panel_snapshot(dataset.source_registry)
     snapshot_source_by_id = {item.id: item for item in snapshot.sources}
     overlap_groups_by_id = {source.id: source.overlap_group_ids for source in sources}
@@ -539,13 +543,17 @@ def _personalization(
             for retired in dataset.source_registry.retired_codes
         ],
         races=personalization_races(
-            sections, {source.id: source.code for source in snapshot.sources}
+            sections,
+            {source.id: source.code for source in snapshot.sources},
+            candidate_order_by_race_id,
         ),
     )
 
 
 def personalization_races(
-    sections: list[PublicationSection], code_by_source_id: dict[str, str]
+    sections: list[PublicationSection],
+    code_by_source_id: dict[str, str],
+    candidate_order_by_race_id: dict[str, list[str]],
 ) -> list[PersonalizationRace]:
     """Project the audited display cells into the compact lens race payload.
 
@@ -573,6 +581,7 @@ def personalization_races(
                 ),
                 key=lambda cell: cell.source_code,
             ),
+            candidate_order=candidate_order_by_race_id[race.id],
         )
         for section in sections
         for race in section.races
@@ -582,8 +591,16 @@ def personalization_races(
 def reprojected_personalization(view_model: PublicationViewModel) -> PublicationViewModel:
     """Return the view model with its lens race payload rebuilt from current cells."""
     contract = view_model.personalization
+    # The candidate universe and its ballot order do not change when cells are
+    # reprojected (only eligibility/allocation do), so the existing published
+    # order is carried over rather than re-derived: reprojection has no access
+    # to the inventory's own per-choice ballot_order, only to the already-
+    # published display model.
+    candidate_order_by_race_id = {race.race_id: race.candidate_order for race in contract.races}
     races = personalization_races(
-        view_model.sections, {source.id: source.code for source in contract.sources}
+        view_model.sections,
+        {source.id: source.code for source in contract.sources},
+        candidate_order_by_race_id,
     )
     return view_model.model_copy(
         update={"personalization": contract.model_copy(update={"races": races})}

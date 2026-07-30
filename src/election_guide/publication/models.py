@@ -219,6 +219,12 @@ class PublicationComparison(PublicationModel):
             return "Times agrees"
         if self.status == "differs":
             return "Times differs"
+        if self.status == "no_consensus":
+            # H32: the visible bar must carry the same explanation the
+            # aria-label already does — a bare "Times · Mike Diaz" cannot be
+            # told apart from an unlabeled agree/differ state, so the verb
+            # itself names the missing progressive consensus.
+            return "Times picks (no consensus)"
         return "Times"
 
     @property
