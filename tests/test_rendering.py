@@ -3488,7 +3488,8 @@ def test_race_detail_dialog_reflects_the_active_lens_leader_not_the_audited_defa
           const barIndex = children.findIndex(
             (child) => child.hasAttribute('data-lens-detail-audited'),
           );
-          const summaryText = document.getElementById(`race-detail-summary-${{raceId}}`)?.textContent;
+          const summaryEl = document.getElementById(`race-detail-summary-${{raceId}}`);
+          const summaryText = summaryEl?.textContent;
           return JSON.stringify({{
             recommendation,
             domOrder,
