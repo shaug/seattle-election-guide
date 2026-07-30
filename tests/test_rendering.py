@@ -3220,6 +3220,68 @@ def test_race_detail_dialog_preserves_an_active_lens_through_open_close_and_shar
     assert "race=" not in result["hashAfterClose"]
 
 
+def test_race_detail_dialog_history_back_and_forward_preserve_an_active_lens(
+    tmp_path: Path,
+) -> None:
+    """Issue 142 acceptance criterion 4, under the exact scenario this ticket
+    exists to fix: back()/forward() must still open and close the
+    race-detail dialog correctly while a personalized lens is active, and
+    going back must restore the lens-only fragment (no stale race target)
+    rather than clearing the hash outright, unlike the no-lens case covered
+    by test_race_detail_dialog_history_back_and_forward_restore_open_state.
+    """
+    view_model = _personalization_enabled_view_model(tmp_path)
+    tallying_codes = sorted(
+        source.code for source in view_model.personalization.sources if _tallying_selectable(source)
+    )
+    personalized_codes = tallying_codes[1:]
+    fragment = _lens_fragment(view_model, mode="s", source_codes=tuple(personalized_codes))
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          const waitUntil = async (predicate, { timeoutMs = 2000, stepMs = 30 } = {}) => {
+            const deadline = Date.now() + timeoutMs;
+            while (Date.now() < deadline) {
+              if (predicate()) return true;
+              await new Promise((resolve) => setTimeout(resolve, stepMs));
+            }
+            return predicate();
+          };
+          const isOpen = () => document.querySelector('[data-race-detail-dialog][open]') !== null;
+          const link = document.querySelector('[data-race-detail-link]');
+          link.click();
+          await waitUntil(isOpen);
+          const openedHash = window.location.hash;
+
+          history.back();
+          await waitUntil(() => !isOpen());
+          const hashAfterBack = window.location.hash;
+
+          history.forward();
+          await waitUntil(isOpen);
+          const hashAfterForward = window.location.hash;
+          const openedAfterForward = isOpen();
+
+          return JSON.stringify({
+            openedHash, hashAfterBack, hashAfterForward, openedAfterForward,
+          });
+        })()
+        """,
+        initial_url=f"{html_path.resolve().as_uri()}#{fragment}",
+    )
+    assert "sel=" in result["openedHash"] and "race=" in result["openedHash"]
+    assert "sel=" in result["hashAfterBack"]
+    assert "race=" not in result["hashAfterBack"]
+    assert result["openedAfterForward"] is True
+    assert "sel=" in result["hashAfterForward"] and "race=" in result["hashAfterForward"]
+
+
 def test_race_detail_dialog_fragment_reload_restores_lens_and_reopens_dialog(
     tmp_path: Path,
 ) -> None:
