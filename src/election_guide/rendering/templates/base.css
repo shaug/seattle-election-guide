@@ -6,16 +6,46 @@
   --red: #9f2d25;
   --ink: #17212b;
   --muted: #52606d;
+  --faint: #667784;
   --line: #cbd2d9;
+  --line-soft: #d9e2ec;
+  --line-strong: #829ab1;
   --paper: #fbfaf6;
   --white: #ffffff;
-  --screen-sans: "Avenir Next", Avenir, "Helvetica Neue", Helvetica, sans-serif;
+  --mint: #9ee7df;
+  --sky: #d7e6ef;
+  --focus: #f0a928;
+  --tone-agree-border: #83bfae;
+  --tone-agree-bg: #edf8f4;
+  --tone-agree-text: #176554;
+  --tone-differ-border: #d9a15d;
+  --tone-differ-bg: #fff6e8;
+  --tone-differ-text: #8a4b00;
+  --tone-neutral-border: #b8c5cc;
+  --tone-neutral-bg: #f5f8f9;
+  --tone-neutral-text: #52606d;
+  --screen-sans: "Avenir Next", Avenir, system-ui, "Helvetica Neue", Helvetica, sans-serif;
+  --screen-serif: Georgia, "Times New Roman", serif;
 }
 
 * { box-sizing: border-box; }
 html { color: var(--ink); background: #edf1f4; font-family: var(--screen-sans); }
 body { margin: 0; line-height: 1.45; }
-a { color: #075d75; text-underline-offset: .15em; }
+a { color: var(--blue); text-underline-offset: .15em; }
 .visually-hidden { position: absolute !important; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .skip-link { position: absolute; left: 1rem; top: -5rem; z-index: 10; background: var(--white); padding: .7rem; }
 .skip-link:focus { top: 1rem; }
+
+/* Shared page shell: the slim brand band used by every page on the site
+   (guide, sources, about, archive), so the cross-page chrome has exactly one
+   implementation. */
+.site-band { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1.25rem; padding: .55rem clamp(1rem, 4vw, 3rem); background: var(--navy); color: var(--white); }
+.site-brand { display: inline-flex; align-items: center; gap: .55rem; color: var(--white); font-size: .92rem; font-weight: 700; letter-spacing: .01em; text-decoration: none; }
+.site-brand:hover { text-decoration: underline; text-underline-offset: .2em; }
+.site-brand svg { display: block; flex: 0 0 auto; }
+.site-band nav { display: flex; flex-wrap: wrap; margin-left: auto; gap: .35rem 1.1rem; }
+.site-band nav a { color: var(--mint); font-size: .8rem; font-weight: 700; text-decoration: none; white-space: nowrap; }
+.site-band nav a:hover, .site-band nav a[aria-current="page"] { text-decoration: underline; text-underline-offset: .2em; }
+.site-band a:focus-visible { outline: .2rem solid var(--focus); outline-offset: .15rem; }
+.page-band-rule { height: .4rem; background: var(--teal); }
+.page { max-width: 46rem; margin: 0 auto; background: var(--paper); min-height: 100vh; }

@@ -121,6 +121,10 @@ def test_stage_pages_site_composes_verified_election_archive(tmp_path: Path) -> 
         f"e/{OLDER_ID}/index.html",
         "e/index.html",
         "about/index.html",
+        "favicon.svg",
+        "favicon-32.png",
+        "apple-touch-icon.png",
+        "og-image.png",
     }
 
 
@@ -257,7 +261,7 @@ def test_verify_staged_site_rejects_tamper_deletion_and_unexpected_assets(
         expected_current_git_commit=COMMIT,
     )
     assert verified.current_election_id == CURRENT_ID
-    assert len(verified.assets) == 15
+    assert len(verified.assets) == 19
 
     tampered = tmp_path / "tampered"
     shutil.copytree(output, tampered)
@@ -370,7 +374,7 @@ def test_hosting_stage_cli_reports_composed_site(tmp_path: Path) -> None:
         ],
     )
     assert verify_result.exit_code == 0, verify_result.output
-    assert f"current {CURRENT_ID}; 14 assets" in verify_result.output
+    assert f"current {CURRENT_ID}; 18 assets" in verify_result.output
 
 
 def _current_election_manifest() -> SiteManifest:
@@ -571,7 +575,7 @@ def test_sources_page_loading_with_a_fragment_checks_exactly_its_sources(
         initial_url=f"{html_path.resolve().as_uri()}#{fragment}",
     )
     assert result["checked"] == [chosen]
-    assert result["count"] == f"Viewing 1 of {len(tallying_codes)} sources."
+    assert result["count"] == f"Counting 1 of {len(tallying_codes)} sources."
 
 
 def _sources_page_actions_script(setup: str) -> str:

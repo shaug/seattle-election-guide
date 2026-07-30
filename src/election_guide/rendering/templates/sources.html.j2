@@ -11,24 +11,15 @@
   <meta property="og:title" content="Sources &mdash; {{ guide.metadata.election_name }}">
   <meta property="og:url" content="{{ canonical_url }}">
   <link rel="canonical" href="{{ canonical_url }}">
+  {{ site_head_links | safe }}
   <title>Sources &mdash; {{ guide.metadata.election_name }} &mdash; Seattle Elections Guide</title>
   <style>
     {{ stylesheet | safe }}
-    .page { max-width: 64rem; margin: 0 auto; background: var(--paper); min-height: 100vh; }
-    .page-header {
-      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
-      gap: .75rem 1.5rem; color: var(--white); background: var(--navy);
-      padding: 1.25rem clamp(1rem, 4vw, 2.5rem); border-bottom: .4rem solid var(--teal);
-    }
-    .page-header p {
-      min-width: 0; margin: 0; font-size: .78rem; font-weight: 800;
-      letter-spacing: .1em; text-transform: uppercase;
-    }
-    .page-header nav a { color: #9ee7df; font-weight: 800; font-size: .85rem; }
+    .page { max-width: 64rem; }
     main { padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 3rem; }
     main h1 {
       margin: 0 0 .35rem; color: var(--navy);
-      font: 800 clamp(1.6rem, 4vw, 2.3rem)/1.05 Georgia, serif;
+      font: 700 clamp(1.6rem, 4vw, 2.3rem)/1.05 var(--screen-serif);
     }
     main > p.lede { margin: 0 0 1.5rem; color: var(--muted); max-width: 60ch; }
     .sources-tree { border-top: none; background: none; padding: 0; }
@@ -37,18 +28,18 @@
     }
     .sources-page-actions a {
       display: inline-block; padding: .55rem 1.1rem; border-radius: .3rem;
-      font: inherit; font-weight: 800; text-decoration: none; cursor: pointer;
+      font: inherit; font-weight: 700; text-decoration: none; cursor: pointer;
     }
     .sources-save { border: none; background: var(--teal); color: var(--white); }
     .sources-save:hover { background: #0a9d8f; }
     .sources-cancel, .sources-page-reset {
-      border: 1px solid #829ab1; background: var(--white); color: var(--ink);
+      border: 1px solid var(--line-strong); background: var(--white); color: var(--ink);
     }
     .sources-cancel:hover, .sources-page-reset:hover { background: #eef3f6; }
-    .sources-page-actions a:focus-visible { outline: .2rem solid #f0a928; outline-offset: .15rem; }
+    .sources-page-actions a:focus-visible { outline: .2rem solid var(--focus); outline-offset: .15rem; }
     .sources-page-count { margin: 0 0 1rem; font-size: .85rem; color: var(--muted); font-weight: 700; }
     .page-footer {
-      border-top: 1px solid #cbd2d9; padding: 1.25rem clamp(1rem, 4vw, 2.5rem) 2rem;
+      border-top: 1px solid var(--line); padding: 1.25rem clamp(1rem, 4vw, 2.5rem) 2rem;
       color: var(--muted); font-size: .85rem;
     }
     .page-footer a { font-weight: 700; }
@@ -56,7 +47,8 @@
 </head>
 <body>
   {% macro source_participation(source, compact=false) -%}
-    {% if compact %}{{ source.endorsement_count }}{% if source.panel_role == 'comparison' %} picks{% endif %} · {{ source.split_endorsement_count }} split{% else %}{% if source.panel_role == 'comparison' %}{{ source.endorsement_count }} picks{% else %}{{ source.endorsement_count }} endorsements{% endif %} · {{ source.split_endorsement_count }} split{% endif %}
+    {%- set count_noun = ('pick' if source.panel_role == 'comparison' else 'endorsement') ~ ('' if source.endorsement_count == 1 else 's') -%}
+    {% if compact %}{{ source.endorsement_count }}{% if source.panel_role == 'comparison' %} {{ count_noun }}{% endif %} · {{ source.split_endorsement_count }} split{% else %}{{ source.endorsement_count }} {{ count_noun }} · {{ source.split_endorsement_count }} split{% endif %}
   {%- endmacro %}
   {% macro coverage_gap_row(source, compact=false) -%}
     <section class="coverage-gap-row"
@@ -104,11 +96,9 @@
   {% set coverage_gap_sources = guide.sources | selectattr('contribution_status', 'equalto', 'coverage_gap') | list %}
   <a class="skip-link" href="#sources-main">Skip to content</a>
   <div class="page">
-    <header class="page-header">
-      <p>Seattle Elections Guide</p>
-      <nav aria-label="Guide links">
-        <a href="{{ guide_path }}">Back to the {{ guide.metadata.election_name }} guide</a>
-      </nav>
+    <header>
+      {{ site_band | safe }}
+      <div class="page-band-rule"></div>
     </header>
     <main id="sources-main">
       <h1>Customize your sources</h1>
@@ -148,15 +138,14 @@
         {% set comparison_category = guide.personalization.categories | selectattr('panel_role', 'equalto', 'comparison') | first %}
         {% if comparison_category %}
         <section class="sources-category sources-category-comparison" data-sources-category="{{ comparison_category.code }}">
-          <p class="sources-comparison-note">Comparison only. The Times is a comparison signal
-            only: selecting it here never changes a recommendation, a count, or an agreement
-            score, and it is never counted toward the tally above.</p>
           <h2>
             <label class="sources-check sources-category-check">
               <input type="checkbox" data-sources-category-toggle="{{ comparison_category.code }}">
-              <span>{{ comparison_category.label }}</span>
+              <span>Comparison only</span>
             </label>
           </h2>
+          <p class="sources-comparison-note">Shown for comparison; never counted toward the
+            scores.</p>
           {% for member_code in comparison_category.member_source_codes %}
             {{ sources_member_row(comparison_category, member_code) }}
           {% endfor %}
@@ -175,10 +164,11 @@
         {% endif %}
 
         {% if guide.personalization.policy.enabled %}
-        <p class="sources-version">Panel {{ guide.personalization.panel_version }} ·
-          {{ guide.personalization.panel_hash[:12] }} · Data {{ guide.metadata.data_version }}.
-          Equal weight: each checked source counts once regardless of category overlap, and a
-          source's vote splits evenly across every candidate it names.</p>
+        <p class="sources-version">Every checked source counts once, with equal weight. When a
+          source endorses more than one candidate in a race, its vote splits evenly among
+          them.</p>
+        <p class="sources-version sources-version-audit">Panel {{ guide.personalization.panel_version }} ·
+          {{ guide.personalization.panel_hash[:12] }} · Data {{ guide.metadata.data_version }}</p>
         {% endif %}
       </div>
     </main>
@@ -271,10 +261,12 @@
   };
 
   const countLine = document.querySelector('[data-sources-count]');
+  // "Counting", not "Viewing": a checked source counts toward the computed
+  // results — nothing here is merely displayed (issue 115, item D17).
   const updateCount = () => {
     if (countLine) {
       countLine.textContent =
-        `Viewing ${checkedTallyingSourceCodes().length} of ${tallyingSourceCodes.length} sources.`;
+        `Counting ${checkedTallyingSourceCodes().length} of ${tallyingSourceCodes.length} sources.`;
     }
   };
 

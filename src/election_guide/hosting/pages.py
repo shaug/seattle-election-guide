@@ -20,6 +20,7 @@ from election_guide.hosting.models import (
 from election_guide.publication.models import PublicationViewModel
 from election_guide.release.models import ReleaseManifest, ReleaseStatus
 from election_guide.rendering.renderer import TEMPLATE_DIR, render_sources_document
+from election_guide.rendering.shell import favicon_svg, site_band_html, site_head_links_html
 from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
 
 PAGES_HEADERS = """/*
@@ -38,6 +39,9 @@ LEGACY_HOSTS = (
 # The public About/FAQ page is site-wide rather than per-release, so it links to
 # the source repository directly rather than through any per-election config.
 PROJECT_URL = "https://github.com/shaug/seattle-election-guide"
+
+# Pre-rasterized copies of the shared site icon (see rendering/shell.py).
+ASSET_DIR = Path(__file__).parent / "assets"
 
 
 @dataclass(frozen=True)
@@ -132,6 +136,16 @@ def stage_pages_site(
         about_path.write_text(_about_html(site_manifest), encoding="utf-8")
         public_paths.update({"/about/", "/about/index.html"})
 
+        # Site-wide brand assets (issue 115, item A4). The SVG favicon renders
+        # from the one shared icon implementation; the PNG fallbacks and the
+        # social-card image are pre-rasterized copies of the same mark.
+        (stage / "favicon.svg").write_text(favicon_svg(), encoding="utf-8")
+        for asset_name in ("favicon-32.png", "apple-touch-icon.png", "og-image.png"):
+            shutil.copy2(ASSET_DIR / asset_name, stage / asset_name)
+        public_paths.update(
+            {"/favicon.svg", "/favicon-32.png", "/apple-touch-icon.png", "/og-image.png"}
+        )
+
         (stage / "_headers").write_text(PAGES_HEADERS, encoding="utf-8")
         public_paths.add("/deployment-manifest.json")
         (stage / "_worker.js").write_text(
@@ -202,7 +216,16 @@ def _verify_staged_pages_site(
     if len(deployment.elections) != len(site_manifest.elections):
         raise ValueError("deployment manifest election count differs from site manifest")
 
-    required_assets = {"_headers", "_worker.js", "e/index.html", "about/index.html"}
+    required_assets = {
+        "_headers",
+        "_worker.js",
+        "e/index.html",
+        "about/index.html",
+        "favicon.svg",
+        "favicon-32.png",
+        "apple-touch-icon.png",
+        "og-image.png",
+    }
     for declared, deployed in zip(site_manifest.elections, deployment.elections, strict=True):
         expected_values = {
             "election ID": (declared.election_id, deployed.election_id),
@@ -427,6 +450,13 @@ def _archive_html(site_manifest: SiteManifest) -> str:
         for election in site_manifest.elections
     )
     canonical_url = f"{site_manifest.canonical_origin}/e/"
+    head_links = site_head_links_html(site_manifest.canonical_origin)
+    current_path = f"/e/{site_manifest.current_election_id}/"
+    base_css = (TEMPLATE_DIR / "base.css").read_text(encoding="utf-8")
+    band = site_band_html(
+        guide_href=current_path,
+        sources_href=f"{current_path}sources/",
+    )
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -434,19 +464,39 @@ def _archive_html(site_manifest: SiteManifest) -> str:
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Published Seattle election endorsement guides.">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Seattle election guide archive">
+  <meta property="og:title" content="Guide archive &mdash; Seattle Elections Guide">
   <meta property="og:url" content="{html.escape(canonical_url, quote=True)}">
   <link rel="canonical" href="{html.escape(canonical_url, quote=True)}">
-  <title>Seattle election guide archive</title>
+  {head_links}
+  <title>Guide archive &mdash; Seattle Elections Guide</title>
+  <style>
+    {base_css}
+    main {{ padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 3rem; }}
+    main h1 {{
+      margin: 0 0 .35rem; color: var(--navy);
+      font: 700 clamp(1.8rem, 4vw, 2.6rem)/1.05 var(--screen-serif);
+    }}
+    main > p {{ color: var(--muted); max-width: 46ch; }}
+    ol {{ margin: 1.5rem 0 0; padding-left: 1.25rem; }}
+    li {{ margin: 0 0 .5rem; }}
+    li a {{ color: var(--navy); font-weight: 700; }}
+  </style>
 </head>
 <body>
-  <main>
-    <h1>Seattle election guide archive</h1>
-    <p>Published guides remain available at permanent election-scoped paths.</p>
-    <ol>
+  <a class="skip-link" href="#archive-main">Skip to content</a>
+  <div class="page">
+    <header>
+      {band}
+      <div class="page-band-rule"></div>
+    </header>
+    <main id="archive-main">
+      <h1>Guide archive</h1>
+      <p>Published guides remain available at permanent election-scoped paths.</p>
+      <ol>
 {rows}
-    </ol>
-  </main>
+      </ol>
+    </main>
+  </div>
 </body>
 </html>
 """
@@ -471,8 +521,14 @@ def _about_html(site_manifest: SiteManifest) -> str:
     )
     escaped_description = html.escape(description, quote=True)
     escaped_canonical = html.escape(canonical_url, quote=True)
+    head_links = site_head_links_html(site_manifest.canonical_origin)
     escaped_current_path = html.escape(current_path, quote=True)
     escaped_election_name = html.escape(current.name)
+    band = site_band_html(
+        guide_href=current_path,
+        sources_href=f"{current_path}sources/",
+        current="about",
+    )
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -480,32 +536,21 @@ def _about_html(site_manifest: SiteManifest) -> str:
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="{escaped_description}">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="About the Seattle election guide">
+  <meta property="og:title" content="About &mdash; Seattle Elections Guide">
   <meta property="og:description" content="{escaped_description}">
   <meta property="og:url" content="{escaped_canonical}">
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="About the Seattle election guide">
+  <meta name="twitter:title" content="About &mdash; Seattle Elections Guide">
   <meta name="twitter:description" content="{escaped_description}">
   <link rel="canonical" href="{escaped_canonical}">
-  <title>About &amp; FAQ &mdash; Seattle election guide</title>
+  {head_links}
+  <title>About &amp; FAQ &mdash; Seattle Elections Guide</title>
   <style>
     {base_css}
-    .page {{ max-width: 46rem; margin: 0 auto; background: var(--paper); min-height: 100vh; }}
-    .page-header {{
-      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
-      gap: .75rem 1.5rem; color: var(--white); background: var(--navy);
-      padding: 1.25rem clamp(1rem, 4vw, 2.5rem); border-bottom: .4rem solid var(--teal);
-    }}
-    .page-header p {{
-      min-width: 0; margin: 0; font-size: .78rem; font-weight: 800;
-      letter-spacing: .1em; text-transform: uppercase;
-    }}
-    .page-header nav {{ min-width: 0; }}
-    .page-header nav a {{ color: #9ee7df; font-weight: 800; font-size: .85rem; }}
     main {{ padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 3rem; }}
     main h1 {{
       margin: 0 0 .35rem; color: var(--navy);
-      font: 800 clamp(1.8rem, 4vw, 2.6rem)/1.05 Georgia, serif;
+      font: 700 clamp(1.8rem, 4vw, 2.6rem)/1.05 var(--screen-serif);
     }}
     main > p.lede {{ margin: 0 0 2rem; color: var(--muted); max-width: 46ch; }}
     section {{ margin: 0 0 2rem; }}
@@ -514,14 +559,14 @@ def _about_html(site_manifest: SiteManifest) -> str:
     section p:last-child {{ margin-bottom: 0; }}
     .actions {{ display: flex; flex-wrap: wrap; gap: .6rem 1rem; align-items: center; }}
     .share-button {{
-      padding: .45rem .9rem; border: 1px solid #829ab1; border-radius: .3rem;
+      padding: .45rem .9rem; border: 1px solid var(--line-strong); border-radius: .3rem;
       background: var(--white); color: var(--ink);
       font: inherit; font-weight: 700; cursor: pointer;
     }}
     .share-button:hover {{ background: #eef3f6; }}
-    .share-button:focus-visible {{ outline: .2rem solid #f0a928; outline-offset: .15rem; }}
+    .share-button:focus-visible {{ outline: .2rem solid var(--focus); outline-offset: .15rem; }}
     .page-footer {{
-      border-top: 1px solid #cbd2d9; padding: 1.25rem clamp(1rem, 4vw, 2.5rem) 2rem;
+      border-top: 1px solid var(--line); padding: 1.25rem clamp(1rem, 4vw, 2.5rem) 2rem;
       color: var(--muted); font-size: .85rem;
     }}
     .page-footer a {{ font-weight: 700; }}
@@ -530,11 +575,9 @@ def _about_html(site_manifest: SiteManifest) -> str:
 <body>
   <a class="skip-link" href="#about-main">Skip to content</a>
   <div class="page">
-    <header class="page-header">
-      <p>Seattle election guide</p>
-      <nav aria-label="Guide links">
-        <a href="{escaped_current_path}">Back to the {escaped_election_name} guide</a>
-      </nav>
+    <header>
+      {band}
+      <div class="page-band-rule"></div>
     </header>
     <main id="about-main">
       <h1>About this guide, and how to check our work</h1>
