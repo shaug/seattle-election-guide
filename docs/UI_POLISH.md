@@ -226,7 +226,10 @@ color/tokens (J), and chrome/microcopy (K) sections below.
   de-possessivize lens labels site-wide; no user-facing "my" remains.
   "Customize your sources" (an instruction, not a possessive claim) stays.
   The dialog's "My sources" section itself is deleted outright by I56 —
-  no rename needed there.
+  no rename needed there. Note: G26's "All sources" label is unchanged and
+  stands on its own after this — its original pairs-with-"My sources"
+  rationale is superseded; the contrast now reads against the caption's
+  "selected sources" phrasing.
 
 - **I56 — The race-detail dialog must agree with the active lens.** With a
   lens active, the dialog's lens block shows the personalized result (e.g.
