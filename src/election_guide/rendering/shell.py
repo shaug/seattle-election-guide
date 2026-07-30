@@ -233,14 +233,22 @@ def site_footer_audit_html(
     return line
 
 
-def site_head_links_html(origin: str) -> str:
+def site_head_links_html(origin: str, *, shareable: bool = True) -> str:
     """The brand-asset head block shared by every page: icons and og:image.
 
     `origin` is the canonical https origin used for the absolute og:image URL;
     the icon links stay root-relative so any origin serves its own copies.
+    `shareable` controls the accompanying twitter:card tag: every page meant
+    to be shared pairs og:image with summary_large_image (the default); the
+    404 page passes shareable=False to keep the wide image without implying
+    the page itself is a shareable card.
     """
     escaped_origin = html.escape(origin, quote=True)
+    twitter_card = (
+        '<meta name="twitter:card" content="summary_large_image">\n  ' if shareable else ""
+    )
     return (
+        f"{twitter_card}"
         f'<meta property="og:image" content="{escaped_origin}/og-image.png">\n'
         '  <link rel="icon" href="/favicon.svg" type="image/svg+xml">\n'
         '  <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">\n'

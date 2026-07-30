@@ -246,6 +246,10 @@ def test_generated_worker_enforces_route_contract(tmp_path: Path) -> None:
     # K48: a minimal branded 404 page, not the old bare text/plain response.
     assert "Page not found" in cast(str, results[6]["body"])
     assert f'href="/e/{CURRENT_ID}/"' in cast(str, results[6]["body"])
+    # The 404 still carries og:image (shared by every page), but stays out of
+    # the summary_large_image unfurling pattern -- it is noindex and not
+    # meant to be shared (issue 135's non-goal).
+    assert "twitter:card" not in cast(str, results[6]["body"])
     assert results[7]["status"] == 404
     assert results[8]["status"] == 301
     assert results[8]["location"] == (f"https://seattleelections.guide/e/{OLDER_ID}/?source=legacy")
