@@ -53,6 +53,8 @@ from election_guide.rendering.renderer import (
     _render_pdf,  # pyright: ignore[reportPrivateUsage]
     _render_pdf_pages,  # pyright: ignore[reportPrivateUsage]
     _render_screenshot,  # pyright: ignore[reportPrivateUsage]
+    _screen_support_summary,  # pyright: ignore[reportPrivateUsage]
+    _screen_support_summary_compact,  # pyright: ignore[reportPrivateUsage]
     _set_pdf_metadata,  # pyright: ignore[reportPrivateUsage]
     _source_cell_detail_label,  # pyright: ignore[reportPrivateUsage]
     _source_cell_group,  # pyright: ignore[reportPrivateUsage]
@@ -323,10 +325,14 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
         assert f'data-contested="{contested_value}"' in html[trigger_start - 300 : trigger_start]
         assert 'data-display-role="recommendation"' in trigger_html
         assert 'data-display-role="share"' in trigger_html
-        assert 'data-display-role="comparison"' in trigger_html
         assert 'data-display-role="support"' in trigger_html
         dialog_start = html.index(f'id="race-detail-{race.id}"')
         assert trigger_end < dialog_start
+        # I39: the reference block (comparisons) now renders at the card
+        # foot, after the primary anchor closes and after any insufficiency
+        # warning, not inside the clickable primary block.
+        card_foot_html = html[trigger_end:dialog_start]
+        assert 'data-display-role="comparison"' in card_foot_html
         dialog_end = html.index("</dialog>", dialog_start)
         dialog_html = html[dialog_start:dialog_end]
         assert (
@@ -510,7 +516,15 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
         assert f'class="comparison comparison-{comparison.voter_tone}" role="group"' in html
         assert f'aria-label="{comparison.voter_accessible_label}"' in html
         assert f'<strong class="comparison-status">{comparison.print_status_label}</strong>' in html
-        assert f'<span class="comparison-choice">{comparison.print_choice_label}</span>' in html
+        # H37: the screen bar drops the redundant choice when Times agrees —
+        # the choice is by definition the headline name directly above — but
+        # keeps it for every other status; the print pill (unaffected by
+        # H37, checked below) always keeps the full compound.
+        choice_span = f'<span class="comparison-choice">{comparison.print_choice_label}</span>'
+        if comparison.status == "agrees":
+            assert choice_span not in html
+        else:
+            assert choice_span in html
         assert (f"print-times-pick print-times-pick-{comparison.voter_tone}") in html
         assert (
             f'>{comparison.print_status_label}</span><span class="print-times-separator"> · '
@@ -629,6 +643,112 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "grid-template-columns: minmax(0, 1fr) var(--print-meter-width)" in html
     assert "linear-gradient(to right, var(--teal) 0 var(--meter-fill)" in html
     assert 'style="--meter-fill: ' in html
+
+
+def test_round4_card_anatomy_and_data_ink_cleanup(tmp_path: Path) -> None:
+    """docs/UI_POLISH.md round-4 items I39/H38/H34/H36/H37/I40/I41/I42."""
+    view_model = _view_model(tmp_path)
+    configuration = read_rendering_configuration(RENDERING_CONFIG)
+    races = [race for section in view_model.sections for race in section.races]
+
+    # I41: below ~30% fill, the card meter's label guard renders after the
+    # fill in muted ink instead of riding the (now too-narrow) colored fill.
+    # Reuse an existing race that already has a support leader (only its own
+    # share is overridden) so revalidation doesn't reject a share with no
+    # leader.
+    leading_race_id = next(race.id for race in races if race.percentage_whole is not None)
+    low_fill_model = view_model.model_copy(deep=True)
+    low_fill_race = next(
+        race
+        for section in low_fill_model.sections
+        for race in section.races
+        if race.id == leading_race_id
+    )
+    low_fill_race.winner_share = str(Fraction(25, 100))
+    low_fill_race.percentage_label = "25%"
+    low_fill_race.percentage_whole = 25
+    low_fill_model = _revalidated(low_fill_model)
+    low_fill_html = render_html_document(low_fill_model, configuration)
+    meter_start = low_fill_html.index(f'id="race-{leading_race_id}"')
+    meter_end = low_fill_html.index("</dialog>", meter_start)
+    assert 'class="screen-meter meter-low-fill"' in low_fill_html[meter_start:meter_end]
+
+    high_fill_model = view_model.model_copy(deep=True)
+    high_fill_race = next(
+        race
+        for section in high_fill_model.sections
+        for race in section.races
+        if race.id == leading_race_id
+    )
+    high_fill_race.winner_share = str(Fraction(70, 100))
+    high_fill_race.percentage_label = "70%"
+    high_fill_race.percentage_whole = 70
+    high_fill_model = _revalidated(high_fill_model)
+    high_fill_html = render_html_document(high_fill_model, configuration)
+    high_meter_start = high_fill_html.index(f'id="race-{leading_race_id}"')
+    high_meter_end = high_fill_html.index("</dialog>", high_meter_start)
+    assert "meter-low-fill" not in high_fill_html[high_meter_start:high_meter_end]
+
+    # H34/I39: the default caption always renders both its full and compact
+    # forms (a pure CSS toggle, mirroring the print edition's own full/compact
+    # captions), directly under the meter row and ahead of the reference
+    # block (the comparisons div) at the card foot.
+    html = render_html_document(view_model, configuration)
+    lens_hidden_attr = " data-lens-hidden" if view_model.personalization.policy.enabled else ""
+    for race in races:
+        card_start = html.index(f'id="race-{race.id}"')
+        card_end = html.index("</dialog>", card_start)
+        card_html = html[card_start:card_end]
+        full_caption = (
+            f'<p class="support-line support-full" data-display-role="support"'
+            f"{lens_hidden_attr}>{_screen_support_summary(race)}</p>"
+        )
+        compact_caption = (
+            f'<p class="support-line support-compact" data-display-role="support"'
+            f"{lens_hidden_attr}>{_screen_support_summary_compact(race)}</p>"
+        )
+        assert full_caption in card_html
+        assert compact_caption in card_html
+        assert card_html.index(full_caption) < card_html.index(compact_caption)
+        # The caption sits ahead of the reference block (I39): no card-foot
+        # comparisons div renders before the caption.
+        comparisons_index = card_html.find('<div class="screen-comparisons">')
+        if comparisons_index != -1:
+            assert card_html.index(full_caption) < comparisons_index
+    assert ".support-compact { display: none; }" in html
+    assert "html.compact-ballot-mode .support-full { display: none; }" in html
+    assert "html.compact-ballot-mode .support-compact { display: block; }" in html
+
+    # H38: no per-card "My sources" pill remains anywhere in the markup.
+    assert "lens-card-badge" not in html
+    assert "My sources</span>" not in html
+
+    # H36: the category chip loses its pill chrome (plain muted text); the
+    # comparison source's own "Comparison only" badge keeps its pill.
+    assert (
+        ".race-detail-category-badge { color: var(--muted); font-size: .68rem; "
+        "font-weight: 600; text-align: right; }" in html
+    )
+    assert (
+        ".race-detail-category-badge, .race-detail-comparison-badge { display: inline-flex;"
+        not in html
+    )
+    assert ".race-detail-comparison-badge { display: inline-flex;" in html
+
+    # I40: one meter chrome — the dialog meter now shares the card's own
+    # border/track tokens instead of its former tone-agree border/white track.
+    assert (
+        ".race-detail-meter { display: flex; flex: 0 0 auto; align-items: center; "
+        "justify-content: flex-start; width: 8.5rem; height: 1.8rem; overflow: hidden; "
+        "border: 1px solid var(--line-strong); border-radius: 1rem; "
+        "background: linear-gradient(to right, var(--teal) 0 var(--meter-fill), "
+        "var(--meter-track) var(--meter-fill) 100%); }" in html
+    )
+    assert ".race-detail-meter-na { background: var(--meter-track); }" in html
+
+    # I42: compact-mode race labels reserve consistent height so the
+    # following name+meter block starts at the same offset in every card.
+    assert "html.compact-ballot-mode .race-office { min-height: 2.3rem;" in html
 
 
 def test_rendering_configuration_rejects_contract_drift() -> None:
@@ -932,6 +1052,15 @@ def test_pdf_comparison_validation_requires_compound_chip_and_rejects_legacy_bad
     separator = "\n" if value_fn is _detailed_pdf_race_values else " "
     expected_text = separator.join(value_fn(race))
     chip_label = comparison.print_label
+    # H37: the detailed edition renders the same screen markup, which drops
+    # the redundant choice when Times agrees (the choice is by definition
+    # the headline name directly above); every other status, and both other
+    # editions (unaffected by H37), keep the full "status · choice" compound.
+    rendered_chip_label = (
+        comparison.print_status_label
+        if value_fn is _detailed_pdf_race_values and status == "agrees"
+        else chip_label
+    )
     support_label = (
         race.support_summary
         if value_fn is _pdf_race_display_values
@@ -942,7 +1071,14 @@ def test_pdf_comparison_validation_requires_compound_chip_and_rejects_legacy_bad
             else f"{race.explicit_endorsement_count} endorsers"
         )
     )
-    compound = f"{chip_label} {support_label}"
+    # I39: the detailed edition's own validator anchors each comparison
+    # against the support summary that now precedes it (not follows, as the
+    # other two editions' fixed print layout is unaffected and still does).
+    compound = (
+        f"{support_label} {rendered_chip_label}"
+        if value_fn is _detailed_pdf_race_values
+        else f"{rendered_chip_label} {support_label}"
+    )
 
     assert _missing_pdf_race_values([race], expected_text, value_fn) == []
     wrapped_header_text = expected_text.replace(
@@ -960,23 +1096,37 @@ def test_pdf_comparison_validation_requires_compound_chip_and_rejects_legacy_bad
         [race], joined_value_text, value_fn
     )
 
-    for suffix in ("body", " body", "-body"):
-        prefix_collision_text = expected_text.replace(chip_label, f"{chip_label}{suffix}", 1)
+    # I39: for the detailed edition, the chip now anchors at the *end* of its
+    # own compound (support precedes it, nothing of this race's own values
+    # follows), so a suffix separated by real whitespace reads as legitimate
+    # trailing content (the next race's own label, in a real PDF) rather than
+    # a merged-text-run corruption — unlike the other two editions, where the
+    # chip is followed by the support text within the same compound and any
+    # inserted suffix, spaced or not, breaks that required adjacency. Only
+    # the unspaced suffixes ("body", "-body") remain a meaningful merged-run
+    # signature to reject at the trailing position.
+    suffixes = (
+        ("body", "-body") if value_fn is _detailed_pdf_race_values else ("body", " body", "-body")
+    )
+    for suffix in suffixes:
+        prefix_collision_text = expected_text.replace(
+            rendered_chip_label, f"{rendered_chip_label}{suffix}", 1
+        )
         prefix_collision_missing = _missing_pdf_race_values([race], prefix_collision_text, value_fn)
         assert f"{race.id}: {compound}" in prefix_collision_missing
 
-    wrong_chip_text = expected_text.replace(chip_label, "Times differs: Wrong pick", 1)
+    wrong_chip_text = expected_text.replace(rendered_chip_label, "Times differs: Wrong pick", 1)
     wrong_chip_missing = _missing_pdf_race_values([race], wrong_chip_text, value_fn)
     assert f"{race.id}: {compound}" in wrong_chip_missing
 
     if comparison.voter_label == "No":
-        not_covered_text = expected_text.replace(chip_label, "Times: not covered", 1)
+        not_covered_text = expected_text.replace(rendered_chip_label, "Times: not covered", 1)
         not_covered_missing = _missing_pdf_race_values([race], not_covered_text, value_fn)
         assert f"{race.id}: {compound}" in not_covered_missing
 
     if badge_label != "NOT COVERED":
         legacy_text = expected_text.replace(
-            chip_label,
+            rendered_chip_label,
             f"Seattle Times {badge_label} {comparison.voter_label}",
             1,
         )
@@ -1442,13 +1592,30 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     accessible_race = next(race for race in races if race.comparisons)
     accessible_comparison = accessible_race.comparisons[0]
     accessible_html = rendered.html_path.read_text(encoding="utf-8")
+    # I39: the reference block's "All sources" bar (also `role="group"`, when
+    # a lens is active) now precedes the Times comparison bar in every race
+    # card, so the corruption below must anchor to this race's own
+    # comparison tag specifically, not the first `role="group"` in the whole
+    # document (the same scoped-match technique the share-meter check below
+    # already uses, rather than a bare 'role="img"').
+    comparison_tag_match = re.search(
+        r'<p class="comparison[^"]*" role="group"\s+aria-label="'
+        + re.escape(accessible_comparison.voter_accessible_label)
+        + '"',
+        accessible_html,
+    )
+    assert comparison_tag_match is not None
+    comparison_tag_original = comparison_tag_match.group(0)
     for index, (original, replacement) in enumerate(
         (
             (
                 f'aria-label="{accessible_comparison.voter_accessible_label}"',
                 'aria-label="Seattle Times comparison"',
             ),
-            ('role="group"', 'role="presentation"'),
+            (
+                comparison_tag_original,
+                comparison_tag_original.replace('role="group"', 'role="presentation"', 1),
+            ),
         )
     ):
         assert original in accessible_html
@@ -2696,10 +2863,10 @@ def test_personalization_is_invisible_while_the_policy_is_disabled(tmp_path: Pat
         "data-lens-banner",
         "data-lens-only",
         "data-lens-hidden",
-        "data-lens-card-badge",
         "data-lens-recommendation",
         "data-lens-share",
         "data-lens-support",
+        "data-lens-support-compact",
         "data-lens-insufficient",
         "data-lens-comparison",
         "data-race-detail-lens",
@@ -3108,7 +3275,12 @@ def test_personalization_divergent_race_discloses_a_compact_comparison_and_full_
           return JSON.stringify({
             hasDivergent: divergent !== undefined,
             hasUnchanged: unchanged !== undefined,
-            divergentBadge: divergent?.querySelector('[data-lens-card-badge]')?.textContent,
+            // H38: the caption itself carries the lens state now that the
+            // per-card "My sources" pill is retired — no separate badge
+            // element exists to query.
+            divergentSupportText: divergent?.querySelector('[data-lens-support]')?.textContent,
+            divergentSupportCompactText:
+              divergent?.querySelector('[data-lens-support-compact]')?.textContent,
             divergentComparisonText: divergentComparison?.textContent,
             divergentComparisonRole: divergentComparison?.getAttribute('role'),
             divergentComparisonAriaLabel: divergentComparison?.getAttribute('aria-label'),
@@ -3126,7 +3298,11 @@ def test_personalization_divergent_race_discloses_a_compact_comparison_and_full_
     assert result["hasDivergent"] is True, (
         "expected at least one production race to diverge from the full-panel audited baseline"
     )
-    assert result["divergentBadge"].strip() == "My sources"
+    # H38: the caption carries the lens state — "Based on N of M selected
+    # sources" — instead of a separate per-card "My sources" pill.
+    assert re.match(r"Based on \d+ of \d+ selected sources", result["divergentSupportText"])
+    assert re.match(r"\d+ of \d+ selected", result["divergentSupportCompactText"])
+    assert "My sources" not in result["divergentSupportText"]
     assert "All sources:" in result["divergentComparisonText"]
     # Item G27: tone tint is never the sole agree/differ carrier — the bar is
     # a named group whose accessible label states the agreement in words.
