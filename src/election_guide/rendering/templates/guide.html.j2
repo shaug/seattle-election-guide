@@ -924,6 +924,30 @@
    * items G24-G27). The tone tint is never the only carrier — the aria-label
    * states the agreement in words.
    */
+  /**
+   * Shared meter-fill policy (I40/I41): the NA state, the `--meter-fill`
+   * custom property, the low-fill label-placement guard, and the
+   * accessible label. One card-level meter (the race's own personalized
+   * share) and every dialog candidate's lens-only meter (I56) apply this
+   * exact same policy, so it is centralized here rather than hand-copied —
+   * a future change to one but not the other would silently desynchronize
+   * the card and dialog meters, the exact "two values for one quantity"
+   * failure class this ticket exists to eliminate. Returns the percentage
+   * label so a caller whose own text lives inside the meter can reuse it.
+   */
+  const applyMeterFill = (meterEl, shareString, naClass) => {
+    const label = percentageLabel(shareString);
+    const fillPercent = shareString === null ? null : Number.parseInt(label, 10);
+    meterEl.classList.toggle(naClass, shareString === null);
+    // I41: below ~30% fill the white label bleeds onto the pale track; below
+    // that threshold the low-fill guard (guide.css) renders it after the
+    // fill in muted ink instead.
+    meterEl.classList.toggle('meter-low-fill', fillPercent !== null && fillPercent < 30);
+    meterEl.style.setProperty('--meter-fill', shareString === null ? '0%' : label);
+    meterEl.setAttribute('aria-label', shareAccessibleLabel(shareString));
+    return label;
+  };
+
   const applyAllSourcesSignal = (element, audited, labels, leaderChanged) => {
     const summary = allSourcesSummary(audited, labels);
     element.textContent = summary;
@@ -955,21 +979,7 @@
     const shareEl = card.querySelector('[data-lens-share-text]');
     if (shareEl) shareEl.textContent = percentageLabel(personalized.winnerShare);
     const shareMeter = card.querySelector('[data-lens-share]');
-    if (shareMeter) {
-      shareMeter.classList.toggle('screen-meter-na', personalized.winnerShare === null);
-      shareMeter.style.setProperty(
-        '--meter-fill',
-        personalized.winnerShare === null ? '0%' : percentageLabel(personalized.winnerShare),
-      );
-      shareMeter.setAttribute('aria-label', shareAccessibleLabel(personalized.winnerShare));
-      // I41: below ~30% fill the white label bleeds onto the pale track;
-      // below that threshold the low-fill guard (guide.css) renders it after
-      // the fill in muted ink instead.
-      const fillPercent = personalized.winnerShare === null
-        ? null
-        : Number.parseInt(percentageLabel(personalized.winnerShare), 10);
-      shareMeter.classList.toggle('meter-low-fill', fillPercent !== null && fillPercent < 30);
-    }
+    if (shareMeter) applyMeterFill(shareMeter, personalized.winnerShare, 'screen-meter-na');
     const selectedTotal = resolvedSourceCodes.length;
     const supportEl = card.querySelector('[data-lens-support]');
     if (supportEl) supportEl.textContent = supportSummary(personalized, selectedTotal);
@@ -1068,15 +1078,7 @@
         lensMeterEl.hidden = !isLeader;
         if (isLeader) {
           const share = standingByCandidateId.get(candidateId)?.share ?? null;
-          const label = percentageLabel(share);
-          const fillPercent = share === null ? null : Number.parseInt(label, 10);
-          lensMeterEl.classList.toggle('race-detail-meter-na', share === null);
-          lensMeterEl.classList.toggle(
-            'meter-low-fill',
-            fillPercent !== null && fillPercent < 30,
-          );
-          lensMeterEl.style.setProperty('--meter-fill', share === null ? '0%' : label);
-          lensMeterEl.setAttribute('aria-label', shareAccessibleLabel(share));
+          const label = applyMeterFill(lensMeterEl, share, 'race-detail-meter-na');
           const lensMeterTextEl = lensMeterEl.querySelector('[data-race-detail-lens-meter-text]');
           if (lensMeterTextEl) lensMeterTextEl.textContent = label;
         }
