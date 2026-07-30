@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Round 4 card anatomy — target rendering (I39 + H38)</title>
+<style>
+  :root {
+    /* site tokens, verbatim from base.css */
+    --navy: #102a43;
+    --teal: #087f73;
+    --ink: #17212b;
+    --muted: #52606d;
+    --line-soft: #d9e2ec;
+    --line-strong: #829ab1;
+    --paper: #fbfaf6;
+    --tone-agree-border: #83bfae;
+    --tone-agree-bg: #edf8f4;
+    --tone-agree-text: #176554;
+    --tone-differ-border: #d9a15d;
+    --tone-differ-bg: #fff6e8;
+    --tone-differ-text: #8a4b00;
+    --tone-neutral-border: #b8c5cc;
+    --tone-neutral-bg: #f5f8f9;
+    --tone-neutral-text: #52606d;
+    --sans: "Avenir Next", Avenir, system-ui, "Helvetica Neue", Helvetica, sans-serif;
+    --serif: Georgia, "Times New Roman", serif;
+  }
+  body { margin: 0; background: #e9edf1; color: var(--ink); font-family: var(--sans); line-height: 1.45; }
+  .wrap { max-width: 72rem; margin: 0 auto; padding: 2.5rem clamp(1rem, 4vw, 3rem) 4rem; }
+  .doc-kicker { color: var(--muted); font-size: .72rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+  h1 { margin: .3rem 0 .6rem; font: 700 clamp(1.4rem, 3vw, 1.9rem)/1.15 var(--serif); }
+  .lede { margin: 0 0 1.75rem; color: var(--muted); font-size: .92rem; max-width: 64ch; }
+  .lede code { font-size: .85em; }
+
+  .board { padding: 1.5rem; background: var(--paper); border: 1px solid var(--line-soft); border-radius: .4rem; }
+  .board-banner { margin: -1.5rem -1.5rem 1.5rem; padding: .5rem 1rem; background: var(--navy); color: #fff; border-radius: .4rem .4rem 0 0; font-weight: 600; font-size: .9rem; text-align: center; }
+  .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+  @media (max-width: 760px) { .cards { grid-template-columns: 1fr; } }
+
+  /* Decided round-4 card: I39 two-block anatomy, H38 caption-carried lens */
+  .race-card { display: flex; min-width: 0; flex-direction: column; gap: .55rem; padding: 1.15rem; background: #fff; border: 1px solid var(--line-soft); border-top: .3rem solid var(--teal); box-shadow: 0 .2rem .8rem rgba(16,42,67,.08); }
+  .race-office { margin: 0; color: var(--muted); font-size: .78rem; font-weight: 600; letter-spacing: .04em; line-height: 1.2; text-transform: uppercase; }
+  .result { display: grid; grid-template-columns: minmax(0, 1fr) 11rem; align-items: center; gap: .75rem; }
+  .race-card h3 { margin: 0; color: var(--navy); font: 800 1.5rem/1.08 var(--sans); letter-spacing: -.02em; overflow-wrap: anywhere; }
+  .meter { display: flex; align-items: center; width: 11rem; height: 2rem; overflow: hidden; border: 1px solid var(--line-strong); border-radius: 1rem; background: linear-gradient(to right, var(--teal) 0 var(--fill), #edf2f4 var(--fill) 100%); }
+  .meter strong { width: 100%; padding: .05rem .75rem 0; color: #fff; font-size: 1.08rem; font-variant-numeric: tabular-nums; font-weight: 800; line-height: 1; }
+  .support { margin: 0; color: var(--muted); font-size: .72rem; line-height: 1.2; text-align: right; }
+  .refs { display: grid; gap: .35rem; margin-top: .1rem; }
+  .bar { margin: 0; padding: .38rem .6rem; border-left: .25rem solid var(--tone-neutral-border); background: var(--tone-neutral-bg); color: var(--tone-neutral-text); font-size: .74rem; line-height: 1.3; }
+  .bar b { font-weight: 700; }
+  .bar .sep { margin: 0 .25rem; font-weight: 400; }
+  .bar-agree { border-left-color: var(--tone-agree-border); background: var(--tone-agree-bg); color: var(--tone-agree-text); }
+  .bar-differ { border-left-color: var(--tone-differ-border); background: var(--tone-differ-bg); color: var(--tone-differ-text); }
+
+  .notes { margin: 2rem 0 0; padding-top: 1.25rem; border-top: 1px solid #cbd2d9; max-width: 66ch; }
+  .notes h2 { margin: 0 0 .4rem; font: 700 1.05rem/1.2 var(--serif); }
+  .notes ol { margin: 0; padding-left: 1.2rem; color: var(--muted); font-size: .88rem; }
+  .notes li { margin-bottom: .45rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="doc-kicker">UI polish · Round 4 · Decided target (archived mock-up)</p>
+  <h1>Race-card anatomy under an active lens — I39 + H38</h1>
+  <p class="lede">Reference rendering for the approved round-4 card items in
+    <code>docs/UI_POLISH.md</code>. Shown with a lens active (31 of 40 sources
+    selected) and the Times comparison on. In default view the reference block
+    holds only the Times bar (when enabled) and the caption reads
+    "Based on N endorsing sources" exactly as today. The per-card
+    "My sources" pill is retired (H38, mock-up "Variant D").</p>
+
+  <div class="board">
+    <div class="board-banner">Counting 31 of 40 sources.</div>
+    <div class="cards">
+      <article class="race-card">
+        <p class="race-office">Legislative District 36 State Senator</p>
+        <div class="result"><h3>Noel C. Frame</h3><div class="meter" style="--fill:100%"><strong>100%</strong></div></div>
+        <p class="support">Based on 5 of 31 selected sources</p>
+        <div class="refs">
+          <p class="bar bar-agree">All sources: Noel C. Frame · 100%</p>
+          <p class="bar"><b>Times</b><span class="sep">·</span>not covered</p>
+        </div>
+      </article>
+      <article class="race-card">
+        <p class="race-office">Legislative District 37 State Representative — Position 1</p>
+        <div class="result"><h3>Kelabe Tewolde</h3><div class="meter" style="--fill:65%"><strong>65%</strong></div></div>
+        <p class="support">Based on 10 of 31 selected sources</p>
+        <div class="refs">
+          <p class="bar bar-differ">All sources: Kelabe Tewolde / Sharon Tomiko Santos · 50%</p>
+          <p class="bar"><b>Times</b><span class="sep">·</span>not covered</p>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <footer class="notes">
+    <h2>Binding details</h2>
+    <ol>
+      <li><strong>Two blocks, no interleaving (I39):</strong> primary block is
+        race label → name + meter → support caption → insufficiency warning
+        (when present); reference block at the card foot is "All sources"
+        first, then Times. The caption never separates the reference bars.</li>
+      <li><strong>The caption carries the lens (H38):</strong>
+        "Based on N of M selected sources" while a lens is active; no badge,
+        no possessive. Compact mode shortens per H34.</li>
+      <li><strong>Tone (G24–G27):</strong> the All-sources bar tints agree
+        (same leading choice) or differ (leader changed); the Times bar keeps
+        its verbs, recomputed against the displayed result under a lens (H31).</li>
+      <li><strong>Tie order (H30):</strong> co-endorsed names render in one
+        canonical order everywhere this race appears.</li>
+    </ol>
+  </footer>
+</div>
+</body>
+</html>
