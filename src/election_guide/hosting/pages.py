@@ -507,7 +507,11 @@ def _archive_html(site_manifest: SiteManifest, *, built_date_display: str, git_c
   <meta name="description" content="Published Seattle election endorsement guides.">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Guide archive &mdash; Seattle Elections Guide">
+  <meta property="og:description" content="Published Seattle election endorsement guides.">
   <meta property="og:url" content="{html.escape(canonical_url, quote=True)}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Guide archive &mdash; Seattle Elections Guide">
+  <meta name="twitter:description" content="Published Seattle election endorsement guides.">
   <link rel="canonical" href="{html.escape(canonical_url, quote=True)}">
   {head_links}
   <title>Guide archive &mdash; Seattle Elections Guide</title>
@@ -594,7 +598,7 @@ def _about_html(site_manifest: SiteManifest, *, built_date_display: str, git_com
   <meta property="og:title" content="About &mdash; Seattle Elections Guide">
   <meta property="og:description" content="{escaped_description}">
   <meta property="og:url" content="{escaped_canonical}">
-  <meta name="twitter:card" content="summary">
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="About &mdash; Seattle Elections Guide">
   <meta name="twitter:description" content="{escaped_description}">
   <link rel="canonical" href="{escaped_canonical}">

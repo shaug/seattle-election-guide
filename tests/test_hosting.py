@@ -87,6 +87,19 @@ def test_stage_pages_site_composes_verified_election_archive(tmp_path: Path) -> 
     assert f'href="/e/{CURRENT_ID}/"' in archive
     assert "current" in archive
     assert '<link rel="canonical" href="https://seattleelections.guide/e/">' in archive
+    assert (
+        '<meta property="og:description" content="Published Seattle election '
+        'endorsement guides.">' in archive
+    )
+    assert '<meta name="twitter:card" content="summary_large_image">' in archive
+    assert (
+        '<meta name="twitter:title" content="Guide archive &mdash; Seattle Elections '
+        'Guide">' in archive
+    )
+    assert (
+        '<meta name="twitter:description" content="Published Seattle election '
+        'endorsement guides.">' in archive
+    )
     assert "noindex" not in archive
     # L55.2: the site-level audit-line variant (built date + Code hash,
     # linking to the exact commit) on the site-wide archive page.
@@ -98,7 +111,7 @@ def test_stage_pages_site_composes_verified_election_archive(tmp_path: Path) -> 
     about = (output / "about" / "index.html").read_text(encoding="utf-8")
     assert '<link rel="canonical" href="https://seattleelections.guide/about/">' in about
     assert '<meta property="og:url" content="https://seattleelections.guide/about/">' in about
-    assert '<meta name="twitter:card" content="summary">' in about
+    assert '<meta name="twitter:card" content="summary_large_image">' in about
     assert f'href="/e/{CURRENT_ID}/"' in about
     assert "mailto:seattle-elections@dobravoda.dev" in about
     assert "not an official voter pamphlet" in about
@@ -567,6 +580,18 @@ def test_sources_page_renders_every_category_and_source_like_the_guide_tree(
 
     assert '<link rel="canonical" href="https://seattleelections.guide/e/' in html
     assert f"/e/{view_model.metadata.election_id}/sources/" in html
+    election_name = view_model.metadata.election_name
+    assert f'<meta property="og:title" content="Sources &mdash; {election_name}">' in html
+    assert (
+        '<meta property="og:description" content="Choose which sources count '
+        f'toward your personalized {election_name} results.">' in html
+    )
+    assert '<meta name="twitter:card" content="summary_large_image">' in html
+    assert f'<meta name="twitter:title" content="Sources &mdash; {election_name}">' in html
+    assert (
+        '<meta name="twitter:description" content="Choose which sources count '
+        f'toward your personalized {election_name} results.">' in html
+    )
     assert "data-sources-save" in html
     assert "data-sources-cancel" in html
     assert "data-sources-page-reset" in html
