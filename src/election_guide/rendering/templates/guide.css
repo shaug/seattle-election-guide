@@ -74,11 +74,6 @@ html.compact-ballot-mode .support-compact { display: block; }
 .comparison-differs, .lens-comparison-differs { border-left-color: var(--tone-differ-border); background: var(--tone-differ-bg); color: var(--tone-differ-text); }
 .comparison-not_covered { border-left-color: var(--tone-neutral-border); background: var(--tone-neutral-bg); color: var(--tone-neutral-text); }
 .insufficient-note { padding: .55rem .65rem; border-left: .25rem solid var(--red); background: #fff1ef; color: #72231e; font-size: .78rem; }
-/* H32: a confidence flag is now visible on the card and in the dialog, not
-   only inside an aria-label — amber matches the other caution-tone signal
-   (J47) without implying the same red severity as an insufficient warning. */
-.confidence-note { padding: .55rem .65rem; border-left: .25rem solid var(--tone-differ-border); background: var(--tone-differ-bg); color: var(--tone-differ-text); font-size: .78rem; }
-.confidence-note[hidden] { display: none; }
 html.compact-ballot-mode .screen-sections { padding-top: .65rem; padding-bottom: 2.5rem; }
 html.compact-ballot-mode .screen-section { margin: 1.5rem 0 2.5rem; }
 html.compact-ballot-mode .section-heading h2 { margin-bottom: .65rem; font-size: clamp(1.35rem, 3vw, 2rem); }
@@ -157,6 +152,12 @@ html.lens-personalized [data-lens-hidden] { display: none; }
    border/track treatment instead of its own (tone-agree border, white
    track). */
 .race-detail-meter { display: flex; flex: 0 0 auto; align-items: center; justify-content: flex-start; width: 8.5rem; height: 1.8rem; overflow: hidden; border: 1px solid var(--line-strong); border-radius: 1rem; background: linear-gradient(to right, var(--teal) 0 var(--meter-fill), var(--meter-track) var(--meter-fill) 100%); }
+/* An explicit `display` above beats the UA stylesheet's own `[hidden] {
+   display: none }` regardless of selector specificity (author styles always
+   outrank user-agent ones), so without restating it here a hidden meter —
+   e.g. the lens-only twin (I56) on every non-leading candidate — stayed
+   visible, unfilled, and unlabeled instead of fully absent. */
+.race-detail-meter[hidden] { display: none; }
 .race-detail-meter strong { width: 100%; padding: .05rem .65rem 0; color: var(--white); font-size: .9rem; font-variant-numeric: tabular-nums; text-align: left; }
 .race-detail-meter-na { background: var(--meter-track); }
 .race-detail-meter-na strong { color: var(--muted); }

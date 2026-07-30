@@ -2892,8 +2892,6 @@ def test_personalization_is_invisible_while_the_policy_is_disabled(tmp_path: Pat
         "data-lens-support-compact",
         "data-lens-insufficient",
         "data-lens-comparison",
-        "data-lens-confidence",
-        "data-lens-detail-confidence",
         "data-race-detail-lens",
         "data-lens-detail-summary",
         "data-lens-detail-audited",
@@ -3407,6 +3405,128 @@ def test_personalization_divergent_race_discloses_a_compact_comparison_and_full_
         assert share_text == detail["cardShareText"]
     if result["hasUnchanged"]:
         assert result["unchangedComparisonHidden"] is True
+
+
+def test_race_detail_dialog_reflects_the_active_lens_leader_not_the_audited_default(
+    tmp_path: Path,
+) -> None:
+    """Ticket #141: five dialog defects found during epic #128's closeout
+    acceptance sweep, exercised together against the exact live example the
+    ticket itself reports — deselecting every `labor`-category source on
+    `ld-11-state-representative-1` flips the leader from the audited default
+    (David Hackney) to Ashley Fedan (67%), a genuine two-candidate leader
+    change rather than a mere Insufficient-grade divergence.
+
+    1. The candidate section DOM order follows the lens-personalized leader,
+       not the audited default order baked into the server-rendered HTML.
+    2. The confidence-flag UI is gone from every user-facing surface (the
+       underlying `confidence_warning`/`warning_codes` data model is
+       untouched elsewhere; this only checks presentation markers).
+    3. The "All sources" reference bar renders immediately after the last
+       candidate block, matching #131's own card-foot pattern.
+    4. Only the currently-displayed leader's section ever shows a meter
+       element; every other candidate section has none at all — not an
+       empty, unfilled one.
+    5. The dialog's aria-describedby summary is recomputed to state the
+       personalized result, not left frozen at the audited default.
+    """
+    view_model = _production_bundle().view_model
+    enabled_policy = view_model.personalization.policy.model_copy(update={"enabled": True})
+    view_model = view_model.model_copy(
+        update={
+            "personalization": view_model.personalization.model_copy(
+                update={"policy": enabled_policy}
+            )
+        }
+    )
+    labor_category = next(
+        category for category in view_model.personalization.categories if category.id == "labor"
+    )
+    labor_members = set(labor_category.member_source_codes)
+    contributing_ids = {
+        source.id for source in view_model.sources if source.contribution_status == "contributing"
+    }
+    selection = tuple(
+        source.code
+        for source in view_model.personalization.sources
+        if _tallying_selectable(source)
+        and source.id in contributing_ids
+        and source.code not in labor_members
+    )
+    fragment = _lens_fragment(view_model, mode="s", source_codes=selection)
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    race_id_json = json.dumps("ld-11-state-representative-1")
+    result = _evaluate_in_chrome(
+        html_path,
+        f"""
+        (async () => {{
+          const shown = (el) => el !== null && getComputedStyle(el).display !== 'none';
+          const raceId = {race_id_json};
+          const card = document.querySelector(`[data-publication-race-id="${{raceId}}"]`);
+          const recommendation = card.querySelector('[data-lens-recommendation]')?.textContent;
+          card.querySelector('[data-race-detail-link]').click();
+          await new Promise((resolve) => setTimeout(resolve, 50));
+          const dialog = card.querySelector('[data-race-detail-dialog]');
+          const sections = [...dialog.querySelectorAll('[data-race-detail-candidate-id]')];
+          const domOrder = sections.map((section) => section.dataset.raceDetailCandidateId);
+          const leaderSection = sections.find(
+            (section) => section.querySelector('[data-race-detail-lens-kicker]')?.hidden === false,
+          );
+          const meters = sections.map((section) => ({{
+            candidateId: section.dataset.raceDetailCandidateId,
+            meterShown: shown(section.querySelector('[data-race-detail-lens-meter]')),
+          }}));
+          const outcomes = dialog.querySelector('.race-detail-outcomes');
+          const children = [...outcomes.children];
+          const lastCandidateIndex = children
+            .map((child) => child.hasAttribute('data-race-detail-candidate-id'))
+            .lastIndexOf(true);
+          const barIndex = children.findIndex(
+            (child) => child.hasAttribute('data-lens-detail-audited'),
+          );
+          const summaryEl = document.getElementById(`race-detail-summary-${{raceId}}`);
+          const summaryText = summaryEl?.textContent;
+          return JSON.stringify({{
+            recommendation,
+            domOrder,
+            leaderCandidateId: leaderSection?.dataset.raceDetailCandidateId,
+            meters,
+            barIndex,
+            lastCandidateIndex,
+            summaryText,
+            confidenceMarkersPresent: document.body.innerHTML.includes('confidence-note')
+              || document.body.innerHTML.includes('Confidence flag'),
+          }});
+        }})()
+        """,
+        initial_url=f"{html_path.resolve().as_uri()}#{fragment}",
+    )
+    assert result["recommendation"] == "Ashley Fedan", (
+        "expected the crafted lens to flip the leader to Ashley Fedan, matching the ticket's "
+        "own live example"
+    )
+    assert len(result["domOrder"]) >= 2
+    # Item 1: DOM order follows the active lens leader.
+    assert result["leaderCandidateId"] is not None
+    assert result["domOrder"][0] == result["leaderCandidateId"]
+    assert result["domOrder"][0].endswith("ashley-fedan")
+    # Item 4: exactly the leader's section shows a meter; no other section
+    # shows even an empty one.
+    assert result["meters"], "expected at least one candidate section"
+    for meter in result["meters"]:
+        assert meter["meterShown"] == (meter["candidateId"] == result["leaderCandidateId"])
+    # Item 3: the reference bar sits immediately after the last candidate
+    # section, matching the card's own I39 foot placement.
+    assert result["barIndex"] == result["lastCandidateIndex"] + 1
+    # Item 2: no confidence-flag UI marker survives anywhere on the page.
+    assert result["confidenceMarkersPresent"] is False
+    # Item 5: the hidden accessible summary matches the displayed result.
+    assert result["summaryText"].startswith("Ashley Fedan.")
+    assert "David Hackney" not in result["summaryText"]
 
 
 def test_personalization_compact_caption_shows_only_the_lens_short_form(tmp_path: Path) -> None:

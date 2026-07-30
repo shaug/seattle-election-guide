@@ -333,22 +333,6 @@
               {% endif %}
               {% endfor %}
             </div>
-            {# H32: a confidence flag must be visible on the card itself, not
-               only inside the dialog — previously it surfaced only as a bare
-               "Confidence warning" word in the (now-deleted) dialog "My
-               sources" summary. Rendered after the reference block (not
-               between the caption and the comparisons) so it never sits
-               inside the "support caption + comparison" phrase the detailed-
-               edition print validator (_detailed_pdf_race_values) checks as
-               one adjacent unit. #}
-            {% if 'low_confidence' in race.warning_codes %}
-            <p class="confidence-note" role="note" data-display-role="confidence-warning"{% if guide.personalization.policy.enabled %} data-lens-hidden{% endif %}>
-              Confidence flag: one or more endorsements need verification.</p>
-            {% endif %}
-            {% if guide.personalization.policy.enabled %}
-            <p class="confidence-note" data-lens-only data-lens-confidence hidden>
-              Confidence flag: one or more endorsements in the selected sources need verification.</p>
-            {% endif %}
             <dialog class="race-detail-dialog" id="race-detail-{{ race.id }}"
               data-race-detail-dialog data-race-id="{{ race.id }}"
               aria-labelledby="race-detail-election-{{ race.id }} race-detail-title-{{ race.id }}"
@@ -357,7 +341,8 @@
                 <div>
                   <p id="race-detail-election-{{ race.id }}">{{ election_display_label }} · Endorsements</p>
                   <h3 id="race-detail-title-{{ race.id }}">{{ race.race_label }}</h3>
-                  <p id="race-detail-summary-{{ race.id }}" class="visually-hidden">{{ race_detail_accessible_summary(race) }}</p>
+                  <p id="race-detail-summary-{{ race.id }}" class="visually-hidden"
+                    data-race-detail-summary>{{ race_detail_accessible_summary(race) }}</p>
                 </div>
                 <div class="race-detail-actions">
                   <button type="button" data-copy-race-link="race-{{ race.id }}"
@@ -370,22 +355,22 @@
                   aria-live="polite" data-copy-race-status></p>
               </div>
               <div class="race-detail-body">
-                {% if guide.personalization.policy.enabled %}
-                {# I56: the dialog's own body is lens-aware (every candidate
-                   section below is lens-aware too), so the "My sources"
-                   summary section (heading, restated result line, selected-
-                   source chip list) is redundant with the highlighted/dimmed
-                   rows below and is deleted outright. Its two useful
-                   remnants rehome here: the divergent "All sources" reference
-                   line renders once, in the same quiet-bar component as the
-                   card (G26/G27 idiom); the confidence flag follows H32 onto
-                   this visible presentation instead of a bare dialog word. #}
-                <p class="lens-comparison" role="group" data-lens-only data-lens-detail-audited hidden></p>
-                <p class="confidence-note" data-lens-only data-lens-detail-confidence hidden>
-                  Confidence flag: one or more endorsements in the selected sources need verification.</p>
-                {% endif %}
                 <div class="race-detail-outcomes">
                   {{ race_detail_candidate_sections(race) }}
+                  {% if guide.personalization.policy.enabled %}
+                  {# I56: the dialog's own body is lens-aware (every candidate
+                     section above is lens-aware too), so the "My sources"
+                     summary section (heading, restated result line, selected-
+                     source chip list) is redundant with the highlighted/dimmed
+                     rows and is deleted outright. Its one useful remnant
+                     rehomes here: the divergent "All sources" reference line
+                     renders once, in the same quiet-bar component as the card
+                     (G26/G27 idiom), after the candidate blocks and before the
+                     source-group listings — matching the card's own I39
+                     reference-block-at-the-foot pattern instead of sitting
+                     ahead of the primary content. #}
+                  <p class="lens-comparison" role="group" data-lens-only data-lens-detail-audited hidden></p>
+                  {% endif %}
                   {% for group_key in source_cell_group_keys %}
                   {% set group_count = source_cell_group_count(race, source_by_id, group_key) %}
                   {% set shown_count = source_cell_group_count(race, source_by_id, group_key, include_comparison=False) %}
@@ -869,8 +854,53 @@
       ),
     ]),
   );
+  // The server renders candidate sections in the audited default's own order
+  // (`_candidate_endorsement_groups` in renderer.py); captured once here, per
+  // race, so a lens that stops diverging (or is cleared entirely) can restore
+  // this exact order rather than leaving whatever a prior lens last arranged.
+  const defaultCandidateOrderByRaceId = new Map(
+    [...raceCards.entries()].map(([raceId, card]) => [
+      raceId,
+      [...card.querySelectorAll('.race-detail-outcomes > [data-race-detail-candidate-id]')].map(
+        (section) => section.dataset.raceDetailCandidateId,
+      ),
+    ]),
+  );
+  // The audited default's own accessible summary, captured verbatim from the
+  // server-rendered text (`_race_detail_accessible_summary` in renderer.py)
+  // so clearing a lens can restore it exactly rather than recomputing an
+  // independent copy of that same server logic.
+  const defaultAccessibleSummaryByRaceId = new Map(
+    [...raceCards.entries()].map(([raceId, card]) => [
+      raceId,
+      card.querySelector('[data-race-detail-summary]')?.textContent ?? '',
+    ]),
+  );
   const codeBySourceId = new Map(bindings.sources.map((item) => [item.id, item.code]));
   const raceDataById = new Map(personalization.races.map((race) => [race.race_id, race]));
+
+  /**
+   * Reorder the dialog's candidate sections in place to match `orderedIds`,
+   * leaving every other child of `.race-detail-outcomes` (the reference bar,
+   * the source-group listings) exactly where it already is. `anchor` — the
+   * first non-candidate sibling, captured once before any move — stays a
+   * stable insertion point throughout: each `insertBefore` only ever
+   * relocates a candidate section, never the anchor itself.
+   */
+  const applyCandidateOrder = (card, orderedIds) => {
+    const outcomes = card.querySelector('.race-detail-outcomes');
+    if (!outcomes) return;
+    const sections = [...outcomes.querySelectorAll(':scope > [data-race-detail-candidate-id]')];
+    if (sections.length === 0) return;
+    const sectionById = new Map(
+      sections.map((section) => [section.dataset.raceDetailCandidateId, section]),
+    );
+    const anchor = sections[sections.length - 1].nextElementSibling;
+    for (const candidateId of orderedIds) {
+      const section = sectionById.get(candidateId);
+      if (section) outcomes.insertBefore(section, anchor);
+    }
+  };
 
   // The full selectable panel with no direct picks reproduces the published
   // audited consensus exactly (lens-score.mjs's own tested contract), so
@@ -917,6 +947,26 @@
     : `${scored.explicitCount} of ${selectedTotal} selected`);
   const allSourcesSummary = (audited, labels) =>
     `All sources: ${recommendationLabel(audited, labels)} · ${percentageLabel(audited.winnerShare)}`;
+  /**
+   * Mirrors `_race_detail_support_summary`/`_race_detail_accessible_summary`
+   * in renderer.py exactly, for the dialog's visually-hidden `aria-describedby`
+   * summary. A single sole leader states its own contributing count against
+   * the total, matching the count already shown in that candidate's own
+   * section; a tie or an insufficient grade falls back to the same sentence
+   * the audited default's caption itself uses (`supportSummary`) — there is
+   * no single leader's count to report in that case.
+   */
+  const raceDetailSupportSummary = (scored, selectedTotal, leaderCount) => {
+    if (scored.grade === 'Insufficient' || scored.isTied) return supportSummary(scored, selectedTotal);
+    const noun = scored.explicitCount === 1 ? 'source' : 'sources';
+    const verb = scored.explicitCount === 1 ? 'agrees' : 'agree';
+    return `${leaderCount} of ${scored.explicitCount} endorsing ${noun} ${verb}`;
+  };
+  const raceDetailAccessibleSummary = (scored, labels, selectedTotal, leaderCount) => {
+    const share = scored.winnerShare === null ? 'Consensus unavailable' : percentageLabel(scored.winnerShare);
+    return `${recommendationLabel(scored, labels)}. ${share}. `
+      + `${raceDetailSupportSummary(scored, selectedTotal, leaderCount)}.`;
+  };
   /**
    * The full-panel baseline renders in the same quiet info-bar component as
    * the Times comparison, with the same agree/differ tone: "differs" means
@@ -996,11 +1046,6 @@
         applyAllSourcesSignal(comparisonEl, audited, labels, divergence.leader);
       }
     }
-    // H32: the confidence flag surfaces on the card itself, not only inside
-    // the dialog.
-    const confidenceEl = card.querySelector('[data-lens-confidence]');
-    if (confidenceEl) confidenceEl.hidden = personalized.confidenceWarningCodes.length === 0;
-
     // H31: recompute the Times comparison tone/verb against the *displayed*
     // (personalized) result — the server bakes it in against the audited
     // result and never recomputes it, so it could otherwise read "agrees"
@@ -1040,10 +1085,6 @@
         applyAllSourcesSignal(auditedDetailEl, audited, labels, divergence.leader);
       }
     }
-    const detailConfidenceEl = card.querySelector('[data-lens-detail-confidence]');
-    if (detailConfidenceEl) {
-      detailConfidenceEl.hidden = personalized.confidenceWarningCodes.length === 0;
-    }
     const resolvedSet = new Set(resolvedSourceCodes);
     const standingByCandidateId = new Map(
       personalized.standings.map((item) => [item.candidateId, item]),
@@ -1051,6 +1092,21 @@
     const soleLeaderId = personalized.grade !== 'Insufficient' && !personalized.isTied
       ? personalized.winnerId
       : null;
+    // Ticket #141 item 1: the dialog's candidate order must follow whichever
+    // result is currently displayed, not the audited default baked into the
+    // server-rendered order. `standings` is already sorted leader-first by
+    // the personalized support (lens-score.mjs), so it directly supplies that
+    // order; any candidate with no personalized standing at all (a
+    // comparison-only pick) keeps its original relative position, appended
+    // after every scored candidate.
+    const standingOrder = personalized.standings.map((item) => item.candidateId);
+    const standingOrderSet = new Set(standingOrder);
+    const defaultOrder = defaultCandidateOrderByRaceId.get(raceId) ?? [];
+    applyCandidateOrder(card, [
+      ...standingOrder,
+      ...defaultOrder.filter((candidateId) => !standingOrderSet.has(candidateId)),
+    ]);
+    let soleLeaderContributingCount = 0;
     for (const section of card.querySelectorAll('[data-race-detail-candidate-id]')) {
       const candidateId = section.dataset.raceDetailCandidateId;
       const isLeader = personalized.winnerIds.includes(candidateId);
@@ -1073,6 +1129,7 @@
             + (hasSplit ? ' (co-endorsements split)' : '')
           : `${contributingCount} endorsing ${noun}`;
       }
+      if (candidateId === soleLeaderId) soleLeaderContributingCount = contributingCount;
       const lensMeterEl = section.querySelector('[data-race-detail-lens-meter]');
       if (lensMeterEl) {
         lensMeterEl.hidden = !isLeader;
@@ -1097,6 +1154,22 @@
         }
       }
     }
+    // Ticket #141 item 5: the dialog's aria-describedby summary is rendered
+    // server-side once, from the audited default, and never otherwise
+    // touched by this script — every other lens-aware dialog field is
+    // recomputed above, but this visually-hidden one was not, so it silently
+    // disagreed with the visible numbers for screen-reader users while a
+    // lens was active. Recompute it here the same way, mirroring
+    // `_race_detail_accessible_summary` in renderer.py exactly.
+    const summaryEl = card.querySelector('[data-race-detail-summary]');
+    if (summaryEl) {
+      summaryEl.textContent = raceDetailAccessibleSummary(
+        personalized,
+        labels,
+        selectedTotal,
+        soleLeaderContributingCount,
+      );
+    }
   };
 
   /**
@@ -1114,6 +1187,15 @@
     root.classList.toggle('lens-personalized', personalized);
     if (!personalized) {
       if (lensBanner) lensBanner.hidden = true;
+      // A lens that no longer applies (every source reselected) must restore
+      // the audited default's own candidate order and accessible summary —
+      // nothing else runs renderRaceLens once !personalized, so without this
+      // a prior lens's arrangement would otherwise linger after it clears.
+      raceCards.forEach((card, raceId) => {
+        applyCandidateOrder(card, defaultCandidateOrderByRaceId.get(raceId) ?? []);
+        const summaryEl = card.querySelector('[data-race-detail-summary]');
+        if (summaryEl) summaryEl.textContent = defaultAccessibleSummaryByRaceId.get(raceId) ?? '';
+      });
       return null;
     }
     const results = scoreSelection(personalization, { categoryCodes: [], sourceCodes: tallyingCodes });
