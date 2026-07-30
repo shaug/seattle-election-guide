@@ -47,7 +47,6 @@ from election_guide.rendering.renderer import (
     _missing_pdf_race_values,  # pyright: ignore[reportPrivateUsage]
     _pdf_race_core_values,  # pyright: ignore[reportPrivateUsage]
     _pdf_race_display_values,  # pyright: ignore[reportPrivateUsage]
-    _pdf_source_participation_labels,  # pyright: ignore[reportPrivateUsage]
     _race_detail_accessible_summary,  # pyright: ignore[reportPrivateUsage]
     _race_detail_candidate_choices,  # pyright: ignore[reportPrivateUsage]
     _race_detail_support_summary,  # pyright: ignore[reportPrivateUsage]
@@ -268,7 +267,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert 'input type="radio" name="ballot-view" value="compact"><span>Compact</span>' in html
     assert (
         'input type="radio" name="race-set" value="complete" id="complete-filter" checked'
-        "><span>Complete</span>" in html
+        "><span>All</span>" in html
     )
     assert (
         'input type="radio" name="race-set" value="contested" id="contested-filter"'
@@ -539,9 +538,11 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
             if source.panel_role == "comparison"
             else ""
         )
-        print_participation = (
-            f"{source.endorsement_count}{print_noun} · {source.split_endorsement_count} split"
+        # H35: the split suffix disappears entirely when nothing split.
+        print_split_suffix = (
+            f" · {source.split_endorsement_count} split" if source.split_endorsement_count else ""
         )
+        print_participation = f"{source.endorsement_count}{print_noun}{print_split_suffix}"
         marker = f'data-publication-source-id="{source.id}"'
         row_start = html.index(marker)
         row_end = html.index("</div>", row_start)
@@ -1968,24 +1969,6 @@ def test_responsive_tablet_layout_renders(tmp_path: Path) -> None:
         expected_race_count=sum(len(section.races) for section in view_model.sections),
         expected_source_count=len(view_model.sources),
     )
-
-
-def test_pdf_source_participation_order_survives_wrapped_source_names() -> None:
-    lines = [
-        "    First source name                       2 · 0 split           Third source",
-        "                                                    "
-        "                name wraps       5 · 1 split",
-        "    Regional Progressive Coalition and Community",
-        "    Action Network                          7 · 0 split           "
-        "Times source        15 picks · 0 split",
-    ]
-
-    assert _pdf_source_participation_labels(lines) == [
-        "2 · 0 split",
-        "7 · 0 split",
-        "5 · 1 split",
-        "15 picks · 0 split",
-    ]
 
 
 def test_pdf_identity_validation_rejects_concatenated_print_title(tmp_path: Path) -> None:

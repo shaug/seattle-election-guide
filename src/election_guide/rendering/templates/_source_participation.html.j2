@@ -1,0 +1,10 @@
+{# Shared by guide.html.j2 (print's compact source panel) and sources.html.j2
+   (the Sources page's full-form count) — the single source for this macro,
+   per issue 129/H35. Keep in sync with the renderer's Python mirror
+   (`_source_participation_label` in rendering/renderer.py), which the print
+   PDF validator uses to check this same text survived rendering. #}
+{% macro source_participation(source, compact=false) -%}
+  {%- set count_noun = ('pick' if source.panel_role == 'comparison' else 'endorsement') ~ ('' if source.endorsement_count == 1 else 's') -%}
+  {%- set split_suffix = (' · ' ~ source.split_endorsement_count ~ ' split') if source.split_endorsement_count else '' -%}
+  {% if compact %}{{ source.endorsement_count }}{% if source.panel_role == 'comparison' %} {{ count_noun }}{% endif %}{{ split_suffix }}{% else %}{{ source.endorsement_count }} {{ count_noun }}{{ split_suffix }}{% endif %}
+{%- endmacro %}

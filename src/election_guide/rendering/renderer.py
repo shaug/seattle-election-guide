@@ -771,11 +771,6 @@ def validate_rendered_guide(
     pdf_texts = [page.extract_text() or "" for page in reader.pages]
     pdf_text = "\n".join(pdf_texts)
     comparable_pdf_text = _normalized_text(pdf_text).casefold()
-    source_page_lines = (
-        (reader.pages[1].extract_text(extraction_mode="layout") or "").splitlines()
-        if len(reader.pages) > 1
-        else []
-    )
     primary_value_fn = (
         _pdf_race_core_values if detailed_pdf_path is not None else _pdf_race_display_values
     )
@@ -812,11 +807,21 @@ def validate_rendered_guide(
         for value in global_pdf_values
         if _normalized_text(value).casefold() not in comparable_pdf_text
     )
-    expected_source_participation = [
-        _source_participation_label(source, compact=True) for source in print_contributing_sources
-    ]
-    if _pdf_source_participation_labels(source_page_lines) != expected_source_participation:
-        missing_pdf_values.append("ordered source participation rows")
+    # H35 dropped the "· 0 split" suffix whenever nothing split, so a
+    # non-splitting source's compact print label is a bare number with no
+    # anchor a generic pattern could scan for, and source names can wrap
+    # across lines in extracted text besides. Requiring each source's own
+    # name immediately followed by its own expected label, after collapsing
+    # all whitespace (including the line breaks a wrapped name introduces),
+    # keeps this scoped to that source's own row without depending on either.
+    missing_pdf_values.extend(
+        f"{source.id}: print source participation row"
+        for source in print_contributing_sources
+        if _normalized_text(
+            f"{source.name} {_source_participation_label(source, compact=True)}"
+        ).casefold()
+        not in comparable_pdf_text
+    )
     pdf_identity_text = _pdf_text_runs(reader.pages[0]).casefold()
     missing_pdf_values.extend(
         value
@@ -1928,7 +1933,7 @@ def _capture_emulated_viewport(
                     "controls.fullMetersLeftAligned=meters.every(meter=>"
                     "meterAligned(meter));"
                     "controls.statusAllGrouped=status?.children.length===3&&"
-                    "status.lastElementChild?.textContent==='· All Seattle ballot races'&&"
+                    "status.lastElementChild?.textContent===' · All Seattle ballot races'&&"
                     "getComputedStyle(status.lastElementChild).whiteSpace==='nowrap';"
                     # Issue 108: the guide has no page-anchored <details>
                     # disclosures left (both the methodology and sources
@@ -2572,11 +2577,16 @@ def _source_participation_label(source: PublicationSource, *, compact: bool = Fa
     noun = "pick" if source.panel_role == "comparison" else "endorsement"
     if source.endorsement_count != 1:
         noun += "s"
+    # H35: a real split becomes more visible once the "· 0 split" that
+    # accompanied every non-splitting source disappears.
+    split_suffix = (
+        f" · {source.split_endorsement_count} split" if source.split_endorsement_count else ""
+    )
     if compact:
         if source.panel_role == "comparison":
-            return f"{source.endorsement_count} {noun} · {source.split_endorsement_count} split"
-        return f"{source.endorsement_count} · {source.split_endorsement_count} split"
-    return f"{source.endorsement_count} {noun} · {source.split_endorsement_count} split"
+            return f"{source.endorsement_count} {noun}{split_suffix}"
+        return f"{source.endorsement_count}{split_suffix}"
+    return f"{source.endorsement_count} {noun}{split_suffix}"
 
 
 def _coverage_gap_status_label(source: PublicationSource) -> str:
@@ -2585,20 +2595,6 @@ def _coverage_gap_status_label(source: PublicationSource) -> str:
     if source.coverage_gap_status == "not_found":
         return "No published results found"
     raise ValueError(f"source {source.id!r} is missing a coverage-gap status")
-
-
-def _pdf_source_participation_labels(lines: list[str]) -> list[str]:
-    """Read participation labels in PDF DOM order: left column, then right column."""
-    if not lines:
-        return []
-    midpoint = max(len(line) for line in lines) // 2
-    pattern = re.compile(r"\d+(?:\s+picks?)?\s*·\s*\d+\s+split")
-    columns: tuple[list[tuple[int, str]], list[tuple[int, str]]] = ([], [])
-    for line_number, line in enumerate(lines):
-        for match in pattern.finditer(line):
-            column = 0 if match.start() < midpoint else 1
-            columns[column].append((line_number, _normalized_text(match.group())))
-    return [label for column in columns for _, label in sorted(column)]
 
 
 def _html_semantic_values(race: PublicationRace) -> dict[str, list[str]]:
