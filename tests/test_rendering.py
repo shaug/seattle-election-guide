@@ -466,7 +466,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     canonical_url = f"{configuration.public_site_url}/e/{view_model.metadata.election_id}/"
     assert f'<link rel="canonical" href="{canonical_url}">' in html
     assert f'<meta property="og:url" content="{canonical_url}">' in html
-    assert '<meta name="twitter:card" content="summary">' in html
+    assert '<meta name="twitter:card" content="summary_large_image">' in html
     assert f'<meta name="twitter:title" content="{configuration.title}">' in html
     assert f'<meta name="twitter:description" content="{configuration.subject}">' in html
     # Shared footer (UI polish round 4, item L55): icon action cluster with

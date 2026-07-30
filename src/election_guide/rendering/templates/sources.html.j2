@@ -4,12 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex">
-  <meta name="description" content="Choose which sources count toward your personalized {{ guide.metadata.election_name }} results.">
   {% set guide_path = '/e/' ~ guide.metadata.election_id ~ '/' %}
   {% set canonical_url = public_site_url ~ guide_path ~ 'sources/' %}
+  {% set page_description = 'Choose which sources count toward your personalized ' ~ guide.metadata.election_name ~ ' results.' %}
+  <meta name="description" content="{{ page_description }}">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Sources &mdash; {{ guide.metadata.election_name }}">
+  <meta property="og:description" content="{{ page_description }}">
   <meta property="og:url" content="{{ canonical_url }}">
+  <meta name="twitter:title" content="Sources &mdash; {{ guide.metadata.election_name }}">
+  <meta name="twitter:description" content="{{ page_description }}">
   <link rel="canonical" href="{{ canonical_url }}">
   {{ site_head_links | safe }}
   <title>Sources &mdash; {{ guide.metadata.election_name }} &mdash; Seattle Elections Guide</title>
