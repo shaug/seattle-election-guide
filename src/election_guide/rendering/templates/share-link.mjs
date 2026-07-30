@@ -1,8 +1,9 @@
 // Native share sheet when available, falling back to the same clipboard/
 // execCommand pattern the per-race copy-link buttons use. A cancelled share
 // sheet (AbortError) is not a failure and must leave the caller's status line
-// untouched. Shared verbatim between the rendered guide and the site-wide
-// About page so both pages implement this fallback policy exactly once.
+// untouched. Shared verbatim between every page that renders the shared
+// footer (UI polish round 4, item L55) so this fallback policy has exactly
+// one implementation.
 export async function shareOrCopyLink(url, title) {
   if (navigator.share) {
     try {
@@ -30,4 +31,20 @@ export async function shareOrCopyLink(url, title) {
   } catch {
     return 'failed';
   }
+}
+
+// Wires the shared footer's Share icon action (`site_footer_band_html` in
+// shell.py) on every page that renders it: the guide, the dedicated Sources
+// page, About, and the archive.
+export function wireFooterShare() {
+  const shareButton = document.querySelector('[data-footer-share]');
+  const shareStatus = document.querySelector('[data-footer-share-status]');
+  shareButton?.addEventListener('click', async () => {
+    const value = window.location.href;
+    const result = await shareOrCopyLink(value, document.title);
+    if (!shareStatus) return;
+    if (result === 'copied') shareStatus.textContent = 'Link copied.';
+    else if (result === 'shared') shareStatus.textContent = 'Share menu opened.';
+    else if (result === 'failed') shareStatus.textContent = `Copy failed. Link: ${value}`;
+  });
 }

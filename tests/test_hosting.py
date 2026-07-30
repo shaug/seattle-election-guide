@@ -88,6 +88,12 @@ def test_stage_pages_site_composes_verified_election_archive(tmp_path: Path) -> 
     assert "current" in archive
     assert '<link rel="canonical" href="https://seattleelections.guide/e/">' in archive
     assert "noindex" not in archive
+    # L55.2: the site-level audit-line variant (built date + Code hash,
+    # linking to the exact commit) on the site-wide archive page.
+    assert '<div class="site-footer-audit">Built July 21, 2026' in archive
+    assert f'commit/{COMMIT}">{COMMIT[:12]}</a></div>' in archive
+    assert "Election " not in archive
+    assert "Panel " not in archive
 
     about = (output / "about" / "index.html").read_text(encoding="utf-8")
     assert '<link rel="canonical" href="https://seattleelections.guide/about/">' in about
@@ -97,6 +103,15 @@ def test_stage_pages_site_composes_verified_election_archive(tmp_path: Path) -> 
     assert "mailto:seattle-elections@dobravoda.dev" in about
     assert "not an official voter pamphlet" in about
     assert "not affiliated with any campaign" in about
+    # The shared footer's own links (Share/PDF/Contact/GitHub/How this works)
+    # replaced the old page-footer nav, which was the site's only link to the
+    # guide archive; that link now lives in About's own body prose instead.
+    assert '<a href="/e/">guide archive</a>' in about
+    # Same site-level audit-line variant on the site-wide About page.
+    assert '<div class="site-footer-audit">Built July 21, 2026' in about
+    assert f'commit/{COMMIT}">{COMMIT[:12]}</a></div>' in about
+    assert "Election " not in about
+    assert "Panel " not in about
 
     headers = (output / "_headers").read_text(encoding="utf-8")
     assert "X-Frame-Options: DENY" in headers
@@ -104,7 +119,13 @@ def test_stage_pages_site_composes_verified_election_archive(tmp_path: Path) -> 
     worker = (output / "_worker.js").read_text(encoding="utf-8")
     assert 'const CANONICAL_HOST = "seattleelections.guide";' in worker
     assert "return redirectPath(url, CURRENT_ELECTION_PATH, 307);" in worker
-    assert 'return new Response("Not found\\n"' in worker
+    assert "return new Response(NOT_FOUND_HTML" in worker
+    # K48: the worker's 404 is a minimal branded page, not bare text/plain
+    # (the page is JSON-encoded into the worker source, so its own quotes
+    # are backslash-escaped there).
+    assert "Page not found" in worker
+    assert "site-band" in worker
+    assert f'href=\\"/e/{CURRENT_ID}/\\"' in worker
 
     deployment = json.loads((output / "deployment-manifest.json").read_text(encoding="utf-8"))
     assert deployment["schema_version"] == "2.0"
@@ -209,6 +230,9 @@ def test_generated_worker_enforces_route_contract(tmp_path: Path) -> None:
     assert results[5]["body"] == f"asset:/e/{CURRENT_ID}/Current_Guide.pdf"
     assert results[6]["status"] == 404
     assert results[6]["robots"] == "noindex"
+    # K48: a minimal branded 404 page, not the old bare text/plain response.
+    assert "Page not found" in cast(str, results[6]["body"])
+    assert f'href="/e/{CURRENT_ID}/"' in cast(str, results[6]["body"])
     assert results[7]["status"] == 404
     assert results[8]["status"] == 301
     assert results[8]["location"] == (f"https://seattleelections.guide/e/{OLDER_ID}/?source=legacy")
@@ -400,14 +424,17 @@ def test_about_page_share_button_uses_web_share_then_falls_back_to_copy(
     """Issue 66: the About page's share action degrades cleanly like the guide's."""
     manifest = _current_election_manifest()
     html_path = tmp_path / "about.html"
-    html_path.write_text(_about_html(manifest), encoding="utf-8")
+    html_path.write_text(
+        _about_html(manifest, built_date_display="July 30, 2026", git_commit=COMMIT),
+        encoding="utf-8",
+    )
     result = _evaluate_in_chrome(
         html_path,
         """
         (async () => {
           const pause = () => new Promise((resolve) => setTimeout(resolve, 50));
-          const button = document.querySelector('[data-share-about]');
-          const status = document.querySelector('[data-share-about-status]');
+          const button = document.querySelector('[data-footer-share]');
+          const status = document.querySelector('[data-footer-share-status]');
 
           Object.defineProperty(navigator, 'share', {
             value: (details) => Promise.resolve(details),
@@ -464,7 +491,9 @@ def test_about_page_folds_in_every_fact_the_removed_methodology_panel_stated() -
     """Issue 109: the guide's inline methodology disclosure was removed, so
     every fact it stated that /about/ didn't already cover must now be
     findable there."""
-    about = _about_html(_current_election_manifest())
+    about = _about_html(
+        _current_election_manifest(), built_date_display="July 30, 2026", git_commit=COMMIT
+    )
 
     # "Agreement, not a grade": neither the percentage nor the source count
     # rates candidate quality.
