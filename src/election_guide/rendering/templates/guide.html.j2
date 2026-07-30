@@ -1463,6 +1463,32 @@
         return '';
       }
     };
+    /**
+     * Compose the fragment for a race-detail dialog open/close/share
+     * transition without disturbing an active personalized lens (issue
+     * 142). The dialog's own hash routing (issue 62/73) predates the lens
+     * (issue 86) and both need `window.location.hash` for their own
+     * unrelated purpose, so this rewrites only the `race` parameter of
+     * whatever fragment is already live — leaving every other segment (the
+     * lens's own selection tokens, including one mid stale-version
+     * migration) exactly as found, the same way `fragmentId()` above reads
+     * it back out. A fragment with no `=` (no active lens, an existing
+     * `#race-…` permalink, or a plain in-page anchor) falls back to the
+     * bare race id, matching this dialog's own pre-lens-era behavior.
+     */
+    const raceDetailFragment = (target) => {
+      try {
+        const raw = decodeURIComponent(window.location.hash.slice(1));
+        if (raw.includes('=')) {
+          const params = new URLSearchParams(raw);
+          if (target) params.set('race', target); else params.delete('race');
+          return `#${params.toString()}`;
+        }
+      } catch {
+        // Fall through to the bare-target fallback below.
+      }
+      return target ? `#${target}` : '';
+    };
     const openerFor = (dialog) => {
       const card = dialog.closest('[data-publication-race-id]');
       if (lastTrigger && lastTrigger.closest('[data-publication-race-id]') === card) {
@@ -1491,12 +1517,19 @@
     };
     const requestClose = (dialog) => {
       const card = dialog.closest('[data-publication-race-id]');
-      const fragment = card ? `#${card.id}` : '';
-      if (fragment && window.location.hash === fragment && history.state?.raceDetail === fragment) {
+      const target = card ? card.id : '';
+      if (target && history.state?.raceDetail === target) {
         history.back();
         return;
       }
-      history.replaceState(history.state, '', `${window.location.pathname}${window.location.search}`);
+      // Closing must strip only the race segment, not any active lens
+      // selection (issue 142) — hence raceDetailFragment(null) rather than
+      // clearing the hash outright.
+      history.replaceState(
+        history.state,
+        '',
+        `${window.location.pathname}${window.location.search}${raceDetailFragment(null)}`,
+      );
       if (dialog.open) dialog.close();
       openerFor(dialog)?.focus();
     };
@@ -1504,8 +1537,9 @@
       link.addEventListener('click', (event) => {
         event.preventDefault();
         lastTrigger = link;
+        const target = link.hash.slice(1);
         const state = history.state && typeof history.state === 'object' ? history.state : {};
-        history.pushState({ ...state, raceDetail: link.hash }, '', link.hash);
+        history.pushState({ ...state, raceDetail: target }, '', raceDetailFragment(target));
         syncRaceDetail();
       });
     });
@@ -1521,17 +1555,24 @@
     window.addEventListener('popstate', () => {
       syncControlsFromUrl();
       applyFilter({ syncUrl: false });
-      syncRaceDetail({ restoreFocus: !window.location.hash });
+      // An active lens leaves the hash non-empty even with no dialog open
+      // (issue 142), so whether focus should return to the trigger is
+      // decided by the resolved race id, not by hash truthiness.
+      syncRaceDetail({ restoreFocus: !fragmentId() });
     });
     window.addEventListener('hashchange', () => {
-      syncRaceDetail({ restoreFocus: !window.location.hash });
+      syncRaceDetail({ restoreFocus: !fragmentId() });
     });
     document.querySelectorAll('[data-copy-race-link]').forEach((button) => {
       button.addEventListener('click', async () => {
         const originalLabel = button.dataset.originalLabel || button.textContent;
         button.dataset.originalLabel = originalLabel;
+        // Composed rather than read off window.location.href directly: this
+        // must reproduce the active lens even if the dialog's own hash state
+        // was reached by a path this button cannot otherwise assume (issue
+        // 142's "Share link" requirement).
         const link = new URL(window.location.href);
-        link.hash = button.dataset.copyRaceLink;
+        link.hash = raceDetailFragment(button.dataset.copyRaceLink);
         const value = link.toString();
         try {
           if (navigator.clipboard?.writeText) {

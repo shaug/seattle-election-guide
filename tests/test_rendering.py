@@ -450,7 +450,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "race-detail-source-row-comparison" in html
     assert "See which groups line up with the leading choice" not in html
     assert "race-detail-description-" not in html
-    assert "history.pushState({ ...state, raceDetail: link.hash }" in html
+    assert "history.pushState({ ...state, raceDetail: target }" in html
     assert "history.back()" in html
     assert "target.showModal()" in html
     assert "dialog.addEventListener('cancel'" in html
@@ -458,7 +458,11 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "window.addEventListener('hashchange'" in html
     assert "navigator.clipboard?.writeText" in html
     assert "const link = new URL(window.location.href);" in html
-    assert "link.hash = button.dataset.copyRaceLink;" in html
+    # Issue 142: the dialog's own Share link no longer overwrites the whole
+    # hash with the bare race id — it rewrites only the `race` segment of
+    # whatever fragment is already live, so an active personalized selection
+    # survives the share.
+    assert "link.hash = raceDetailFragment(button.dataset.copyRaceLink);" in html
     assert "Consensus among explicitly endorsing sources" in html
     assert "Seattle Times" in html
     assert "August 2026 Primary" in html
@@ -3154,6 +3158,117 @@ def test_race_detail_dialog_history_back_and_forward_restore_open_state(
     assert result["closedAfterBack"] is True
     assert result["hashAfterBack"] == ""
     assert result["openedAfterForward"] is True
+
+
+def test_race_detail_dialog_preserves_an_active_lens_through_open_close_and_share(
+    tmp_path: Path,
+) -> None:
+    """Issue 142 acceptance criteria: opening a race-detail dialog while a
+    personalized lens is active must not clobber the lens out of the address
+    bar. Both routing schemes share `window.location.hash` (the dialog's own
+    permalink predates the lens by issues 62/73/86), so opening must compose
+    rather than overwrite, closing must strip only the race segment, and the
+    dialog's own "Share link" button must reproduce both the lens and the
+    open race rather than whatever the bare per-race fragment used to be.
+    """
+    view_model = _personalization_enabled_view_model(tmp_path)
+    tallying_codes = sorted(
+        source.code for source in view_model.personalization.sources if _tallying_selectable(source)
+    )
+    personalized_codes = tallying_codes[1:]
+    fragment = _lens_fragment(view_model, mode="s", source_codes=tuple(personalized_codes))
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+          const link = document.querySelector('[data-race-detail-link]');
+          link.click();
+          await pause(80);
+          const hashAfterOpen = window.location.hash;
+
+          Object.defineProperty(navigator, 'clipboard', {
+            value: { writeText: async (text) => { window.__copied = text; } },
+            configurable: true,
+          });
+          document.querySelector('[data-copy-race-link]').click();
+          await pause(80);
+          const sharedLink = window.__copied;
+
+          document.querySelector('[data-close-race-detail]').click();
+          await pause(80);
+          const hashAfterClose = window.location.hash;
+          const isOpenAfterClose =
+            document.querySelector('[data-race-detail-dialog][open]') !== null;
+
+          return JSON.stringify({ hashAfterOpen, sharedLink, hashAfterClose, isOpenAfterClose });
+        })()
+        """,
+        initial_url=f"{html_path.resolve().as_uri()}#{fragment}",
+    )
+    assert "sel=" in result["hashAfterOpen"]
+    assert "race=" in result["hashAfterOpen"]
+    assert "sel=" in result["sharedLink"]
+    assert "race=" in result["sharedLink"]
+    assert result["isOpenAfterClose"] is False
+    assert "sel=" in result["hashAfterClose"]
+    assert "race=" not in result["hashAfterClose"]
+
+
+def test_race_detail_dialog_fragment_reload_restores_lens_and_reopens_dialog(
+    tmp_path: Path,
+) -> None:
+    """Issue 142 acceptance criterion: a link produced while a race-detail
+    dialog is open and a lens is active (a refresh, or a copied/shared URL)
+    must restore both the personalized selection and the open dialog on
+    load, not just one or the other.
+    """
+    view_model = _personalization_enabled_view_model(tmp_path)
+    tallying_codes = sorted(
+        source.code for source in view_model.personalization.sources if _tallying_selectable(source)
+    )
+    personalized_codes = tallying_codes[1:]
+    fragment = _lens_fragment(view_model, mode="s", source_codes=tuple(personalized_codes))
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    opened = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+          document.querySelector('[data-race-detail-link]').click();
+          await pause(80);
+          return JSON.stringify({ hash: window.location.hash });
+        })()
+        """,
+        initial_url=f"{html_path.resolve().as_uri()}#{fragment}",
+    )
+    combined_hash = opened["hash"]
+    reloaded = _evaluate_in_chrome(
+        html_path,
+        """
+        JSON.stringify({
+          bannerHidden: document.querySelector('[data-lens-banner]').hidden,
+          bannerText: document.querySelector('[data-lens-banner]').textContent,
+          isOpen: document.querySelector('[data-race-detail-dialog][open]') !== null,
+        })
+        """,
+        initial_url=f"{html_path.resolve().as_uri()}{combined_hash}",
+    )
+    assert reloaded["bannerHidden"] is False
+    assert (
+        reloaded["bannerText"]
+        == f"Counting {len(personalized_codes)} of {len(tallying_codes)} sources."
+    )
+    assert reloaded["isOpen"] is True
 
 
 def test_personalization_shared_link_restores_the_same_version_selection(tmp_path: Path) -> None:
