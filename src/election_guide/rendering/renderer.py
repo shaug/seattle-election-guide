@@ -217,10 +217,14 @@ def render_sources_document(
     Purely a selection editor: it reads a selection from its own incoming URL
     fragment and writes one back on Save, but never scores anything, so it
     inlines only the fragment codec, not the scoring engine the guide needs.
-    `project_url` and `pdf_filename` feed the shared footer (item L55); a
-    caller that omits `project_url` gets a footer without a GitHub action,
-    and one that omits `pdf_filename` gets no Printable PDF action, exactly
-    like the shared footer's own general fallback behavior.
+    `project_url` and `pdf_filename` feed the shared footer (item L55): a
+    caller that omits `project_url` gets no footer band or audit line at
+    all (both need it), and one that omits `pdf_filename` gets a footer
+    without a Printable PDF action, exactly like the shared footer's own
+    general fallback behavior. Every real caller (`hosting/pages.py`)
+    supplies `project_url`, so the page always renders its footer in
+    production; this only matters for a caller (e.g. a test) that renders
+    the page without it.
     """
     environment = _template_environment()
     template = environment.get_template("sources.html.j2")

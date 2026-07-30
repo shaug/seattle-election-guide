@@ -513,7 +513,7 @@ def _archive_html(site_manifest: SiteManifest, *, built_date_display: str, git_c
   <title>Guide archive &mdash; Seattle Elections Guide</title>
   <style>
     {base_css}
-    main {{ max-width: 46rem; margin: 0 auto; padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 3rem; }}
+    main {{ padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 3rem; }}
     main h1 {{
       margin: 0 0 .35rem; color: var(--navy);
       font: 700 clamp(1.8rem, 4vw, 2.6rem)/1.05 var(--screen-serif);
@@ -531,7 +531,7 @@ def _archive_html(site_manifest: SiteManifest, *, built_date_display: str, git_c
       {band}
       <div class="page-band-rule"></div>
     </header>
-    <main id="archive-main">
+    <main id="archive-main" class="narrow-main">
       <h1>Guide archive</h1>
       <p>Published guides remain available at permanent election-scoped paths.</p>
       <ol>
@@ -602,7 +602,7 @@ def _about_html(site_manifest: SiteManifest, *, built_date_display: str, git_com
   <title>About &amp; FAQ &mdash; Seattle Elections Guide</title>
   <style>
     {base_css}
-    main {{ max-width: 46rem; margin: 0 auto; padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 3rem; }}
+    main {{ padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 3rem; }}
     main h1 {{
       margin: 0 0 .35rem; color: var(--navy);
       font: 700 clamp(1.8rem, 4vw, 2.6rem)/1.05 var(--screen-serif);
@@ -621,7 +621,7 @@ def _about_html(site_manifest: SiteManifest, *, built_date_display: str, git_com
       {band}
       <div class="page-band-rule"></div>
     </header>
-    <main id="about-main">
+    <main id="about-main" class="narrow-main">
       <h1>About this guide, and how to check our work</h1>
       <p class="lede">{html.escape(description)}</p>
 
@@ -742,7 +742,7 @@ def _not_found_html(site_manifest: SiteManifest) -> str:
   <title>Page not found &mdash; Seattle Elections Guide</title>
   <style>
     {base_css}
-    main {{ max-width: 46rem; margin: 0 auto; padding: 3rem clamp(1rem, 4vw, 2.5rem); }}
+    main {{ padding: 3rem clamp(1rem, 4vw, 2.5rem); }}
     main h1 {{
       margin: 0 0 .5rem; color: var(--navy);
       font: 700 clamp(1.6rem, 4vw, 2.2rem)/1.05 var(--screen-serif);
@@ -757,7 +757,7 @@ def _not_found_html(site_manifest: SiteManifest) -> str:
       {band}
       <div class="page-band-rule"></div>
     </header>
-    <main>
+    <main class="narrow-main">
       <h1>Page not found</h1>
       <p>That page doesn&rsquo;t exist. Try the <a href="{escaped_current_path}">current guide</a>
         or the <a href="/e/">guide archive</a>.</p>

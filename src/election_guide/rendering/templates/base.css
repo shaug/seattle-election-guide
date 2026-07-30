@@ -53,6 +53,10 @@ a { color: var(--blue); text-underline-offset: .15em; }
    base 46rem). A page wanting a narrower reading measure constrains an
    inner column itself; the frame is the site, the measure is the content. */
 .page { width: 100%; max-width: 76rem; margin: 0 auto; background: var(--paper); min-height: 100vh; }
+/* The one inner reading measure for a page that wants one (About, the
+   archive, the 404): each sets its own padding, so only the shared
+   width/centering lives here. */
+.narrow-main { max-width: 46rem; margin: 0 auto; }
 
 /* Shared page footer (item L55): one navy band mirroring `.site-band`, plus
    an optional compact mono audit line for election-scoped pages. */
