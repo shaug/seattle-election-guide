@@ -127,6 +127,9 @@ def render_html_document(
     lens_score_script = (TEMPLATE_DIR / "lens-score.mjs").read_text(encoding="utf-8")
     lens_migrate_script = (TEMPLATE_DIR / "lens-migrate.mjs").read_text(encoding="utf-8")
     lens_divergence_script = (TEMPLATE_DIR / "lens-divergence.mjs").read_text(encoding="utf-8")
+    # H31: recomputes the Times comparison tone/verb against the displayed
+    # (personalized) result while a lens is active.
+    lens_comparison_script = (TEMPLATE_DIR / "lens-comparison.mjs").read_text(encoding="utf-8")
     # Shared with the About page in hosting/pages.py so the native-share/
     # clipboard/execCommand fallback policy has exactly one implementation.
     share_link_script = (TEMPLATE_DIR / "share-link.mjs").read_text(encoding="utf-8")
@@ -164,6 +167,7 @@ def render_html_document(
         lens_score_script=lens_score_script,
         lens_migrate_script=lens_migrate_script,
         lens_divergence_script=lens_divergence_script,
+        lens_comparison_script=lens_comparison_script,
         share_link_script=share_link_script,
         site_band=site_band_html(
             guide_href=guide_path,
@@ -1799,7 +1803,13 @@ def _capture_emulated_viewport(
                     "return style.display!=='none'&&style.visibility==='visible'&&"
                     "rect.width>0&&rect.height>0;};"
                     "const displayed=element=>getComputedStyle(element).display!=='none';"
-                    "const pills=()=>[...document.querySelectorAll('.comparison')];"
+                    # UI polish issue 132 (H31): a lens-only twin comparison
+                    # bar (no data-display-role, revealed only once a lens is
+                    # actually active) now sits alongside the audited one;
+                    # this probe only ever activates show-times, never a
+                    # lens, so it must keep checking the audited bar alone.
+                    "const pills=()=>[...document.querySelectorAll("
+                    "'.comparison[data-display-role=\"comparison\"]')];"
                     "const cards=[...document.querySelectorAll('[data-publication-race-id]')];"
                     "const scored=()=>cards.map(card=>[card.querySelector('.screen-race-result')"
                     "?.textContent,card.querySelector('.screen-meter')?.textContent,"

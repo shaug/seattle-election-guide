@@ -74,6 +74,11 @@ html.compact-ballot-mode .support-compact { display: block; }
 .comparison-differs, .lens-comparison-differs { border-left-color: var(--tone-differ-border); background: var(--tone-differ-bg); color: var(--tone-differ-text); }
 .comparison-not_covered { border-left-color: var(--tone-neutral-border); background: var(--tone-neutral-bg); color: var(--tone-neutral-text); }
 .insufficient-note { padding: .55rem .65rem; border-left: .25rem solid var(--red); background: #fff1ef; color: #72231e; font-size: .78rem; }
+/* H32: a confidence flag is now visible on the card and in the dialog, not
+   only inside an aria-label — amber matches the other caution-tone signal
+   (J47) without implying the same red severity as an insufficient warning. */
+.confidence-note { padding: .55rem .65rem; border-left: .25rem solid var(--tone-differ-border); background: var(--tone-differ-bg); color: var(--tone-differ-text); font-size: .78rem; }
+.confidence-note[hidden] { display: none; }
 html.compact-ballot-mode .screen-sections { padding-top: .65rem; padding-bottom: 2.5rem; }
 html.compact-ballot-mode .screen-section { margin: 1.5rem 0 2.5rem; }
 html.compact-ballot-mode .section-heading h2 { margin-bottom: .65rem; font-size: clamp(1.35rem, 3vw, 2rem); }
@@ -128,11 +133,6 @@ html.compact-ballot-mode .insufficient-note { padding: .38rem .48rem; font-size:
    this race's own divergence, not just the active lens mode. */
 html:not(.lens-personalized) [data-lens-only] { display: none; }
 html.lens-personalized [data-lens-hidden] { display: none; }
-.race-detail-lens { margin: 0 0 .65rem; padding: .65rem .75rem; border: 1px solid #9fcfc5; border-left: .3rem solid var(--teal); background: #f2faf8; }
-.race-detail-lens h4 { margin: 0 0 .3rem; color: var(--navy); font-size: .86rem; }
-.race-detail-lens > p { margin: 0 0 .3rem; color: var(--muted); font-size: .78rem; }
-.lens-detail-sources { display: flex; flex-wrap: wrap; gap: .3rem; margin: 0; padding: 0; list-style: none; }
-.lens-detail-sources li { padding: .12rem .5rem; border: 1px solid var(--badge-border); border-radius: 1rem; background: var(--white); font-size: .68rem; color: var(--muted); }
 .race-detail-header { position: sticky; top: 0; z-index: 1; display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem 2rem; padding: 1rem 1.15rem; border-bottom: 1px solid var(--line-muted); background: var(--navy); color: var(--white); }
 .race-detail-header > div:first-child { min-width: 0; }
 .race-detail-header p { max-width: 40rem; margin: 0; color: var(--sky); font-size: .78rem; }
@@ -180,6 +180,13 @@ a.race-detail-source-row:hover strong { text-decoration: underline; text-underli
 .race-detail-category-badge { color: var(--muted); font-size: .68rem; font-weight: 600; text-align: right; }
 .race-detail-comparison-badge { display: inline-flex; align-items: center; max-width: 14rem; padding: .14rem .42rem; border: 1px solid #9bb1bf; border-radius: 1rem; background: #e8f0f3; color: #36576b; font-size: .59rem; font-weight: 700; line-height: 1.25; text-align: center; }
 .race-detail-source-status { color: var(--muted); font-size: .68rem; font-weight: 700; text-align: right; }
+/* I56: an unselected source's row stays in place as evidence — dimmed and
+   labeled, never hidden — while a lens is active. The dimming is scoped to
+   `.lens-personalized` (rather than being unconditional) so a row this class
+   marked during an earlier personalized selection cannot visibly linger
+   after the selection returns to the audited default. */
+html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source-row { opacity: .55; }
+.race-detail-source-not-counted { color: var(--muted); font-size: .6rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
 .race-detail-missing { margin-top: .75rem; border-top: 1px solid var(--line); padding-top: .65rem; }
 .race-detail-missing summary { cursor: pointer; color: var(--muted); font-size: .72rem; font-weight: 700; }
 .race-detail-missing .race-detail-source-list { margin-top: .5rem; border: 1px solid var(--line-soft); background: #f8fafb; }

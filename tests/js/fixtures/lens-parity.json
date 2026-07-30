@@ -6806,6 +6806,12 @@
     },
     "races": [
       {
+        "candidate_order": [
+          "us-house-7--david-w-blomstrom",
+          "us-house-7--pramila-jayapal",
+          "us-house-7--nirav-sheth",
+          "us-house-7--gwen-kirkland"
+        ],
         "cells": [
           {
             "allocation": {},
@@ -7152,6 +7158,13 @@
         "race_id": "us-house-7"
       },
       {
+        "candidate_order": [
+          "us-house-9--jacob-perasso",
+          "us-house-9--kshama-sawant",
+          "us-house-9--melissa-chaudhry",
+          "us-house-9--doug-basler",
+          "us-house-9--adam-smith"
+        ],
         "cells": [
           {
             "allocation": {},
@@ -7483,6 +7496,11 @@
         "race_id": "us-house-9"
       },
       {
+        "candidate_order": [
+          "ld-11-state-representative-1--ashley-fedan",
+          "ld-11-state-representative-1--christian-rombough",
+          "ld-11-state-representative-1--david-hackney"
+        ],
         "cells": [
           {
             "allocation": {
@@ -7775,6 +7793,9 @@
         "race_id": "ld-11-state-representative-1"
       },
       {
+        "candidate_order": [
+          "ld-11-state-representative-2--steve-bergquist"
+        ],
         "cells": [
           {
             "allocation": {
@@ -8057,6 +8078,14 @@
         "race_id": "ld-11-state-representative-2"
       },
       {
+        "candidate_order": [
+          "ld-32-state-representative-1--jenna-nand",
+          "ld-32-state-representative-1--will-chen",
+          "ld-32-state-representative-1--keith-scully",
+          "ld-32-state-representative-1--danica-noble",
+          "ld-32-state-representative-1--lisa-rezac",
+          "ld-32-state-representative-1--chris-bloomquist"
+        ],
         "cells": [
           {
             "allocation": {
@@ -8351,6 +8380,10 @@
         "race_id": "ld-32-state-representative-1"
       },
       {
+        "candidate_order": [
+          "ld-32-state-representative-2--lauren-davis",
+          "ld-32-state-representative-2--imraan-siddiqi"
+        ],
         "cells": [
           {
             "allocation": {
@@ -8656,6 +8689,11 @@
         "race_id": "ld-32-state-representative-2"
       },
       {
+        "candidate_order": [
+          "ld-32-state-senator--cindy-ryu",
+          "ld-32-state-senator--ira-mcbee",
+          "ld-32-state-senator--jesse-salomon"
+        ],
         "cells": [
           {
             "allocation": {
@@ -8957,6 +8995,9 @@
         "race_id": "ld-32-state-senator"
       },
       {
+        "candidate_order": [
+          "ld-34-state-representative-1--brianna-k-thomas"
+        ],
         "cells": [
           {
             "allocation": {
@@ -9239,6 +9280,10 @@
         "race_id": "ld-34-state-representative-1"
       },
       {
+        "candidate_order": [
+          "ld-34-state-representative-2--joe-fitzgibbon",
+          "ld-34-state-representative-2--mary-anito"
+        ],
         "cells": [
           {
             "allocation": {
@@ -9543,6 +9588,9 @@
         "race_id": "ld-34-state-representative-2"
       },
       {
+        "candidate_order": [
+          "ld-34-state-senator--emily-alvarado"
+        ],
         "cells": [
           {
             "allocation": {
@@ -9841,6 +9889,9 @@
         "race_id": "ld-34-state-senator"
       },
       {
+        "candidate_order": [
+          "ld-36-state-representative-1--julia-grant-reed"
+        ],
         "cells": [
           {
             "allocation": {
@@ -10141,6 +10192,9 @@
         "race_id": "ld-36-state-representative-1"
       },
       {
+        "candidate_order": [
+          "ld-36-state-representative-2--liz-berry"
+        ],
         "cells": [
           {
             "allocation": {
@@ -10435,6 +10489,10 @@
         "race_id": "ld-36-state-representative-2"
       },
       {
+        "candidate_order": [
+          "ld-36-state-senator--noel-c-frame",
+          "ld-36-state-senator--jillian-england"
+        ],
         "cells": [
           {
             "allocation": {
@@ -10721,6 +10779,10 @@
         "race_id": "ld-36-state-senator"
       },
       {
+        "candidate_order": [
+          "ld-37-state-representative-1--sharon-tomiko-santos",
+          "ld-37-state-representative-1--kelabe-tewolde"
+        ],
         "cells": [
           {
             "allocation": {
@@ -11014,6 +11076,10 @@
         "race_id": "ld-37-state-representative-1"
       },
       {
+        "candidate_order": [
+          "ld-37-state-representative-2--jaelynn-scott",
+          "ld-37-state-representative-2--evon-mccorkle"
+        ],
         "cells": [
           {
             "allocation": {
@@ -11320,6 +11386,10 @@
         "race_id": "ld-37-state-representative-2"
       },
       {
+        "candidate_order": [
+          "ld-37-state-senator--chipalo-street",
+          "ld-37-state-senator--tatiana-brown"
+        ],
         "cells": [
           {
             "allocation": {
@@ -11619,6 +11689,10 @@
         "race_id": "ld-37-state-senator"
       },
       {
+        "candidate_order": [
+          "ld-43-state-representative-1--nicole-macri",
+          "ld-43-state-representative-1--alby-clendennin"
+        ],
         "cells": [
           {
             "allocation": {
@@ -11919,6 +11993,9 @@
         "race_id": "ld-43-state-representative-1"
       },
       {
+        "candidate_order": [
+          "ld-43-state-representative-2--shaun-scott"
+        ],
         "cells": [
           {
             "allocation": {
@@ -12203,6 +12280,11 @@
         "race_id": "ld-43-state-representative-2"
       },
       {
+        "candidate_order": [
+          "ld-43-state-senator--hannah-sabio-howell",
+          "ld-43-state-senator--heather-marie-wilson",
+          "ld-43-state-senator--jamie-pedersen"
+        ],
         "cells": [
           {
             "allocation": {
@@ -12519,6 +12601,11 @@
         "race_id": "ld-43-state-senator"
       },
       {
+        "candidate_order": [
+          "ld-46-state-representative-1--gerry-pollet",
+          "ld-46-state-representative-1--ron-davis",
+          "ld-46-state-representative-1--will-dreher"
+        ],
         "cells": [
           {
             "allocation": {
@@ -12819,6 +12906,10 @@
         "race_id": "ld-46-state-representative-1"
       },
       {
+        "candidate_order": [
+          "ld-46-state-representative-2--darya-farivar",
+          "ld-46-state-representative-2--rodney-star-thornley"
+        ],
         "cells": [
           {
             "allocation": {
@@ -13121,6 +13212,10 @@
         "race_id": "ld-46-state-representative-2"
       },
       {
+        "candidate_order": [
+          "ld-46-state-senator--javier-valdez",
+          "ld-46-state-senator--sandra-stephens"
+        ],
         "cells": [
           {
             "allocation": {
@@ -13417,6 +13512,12 @@
         "race_id": "ld-46-state-senator"
       },
       {
+        "candidate_order": [
+          "king-county-assessor--dominique-m-scarimbolo",
+          "king-county-assessor--christopher-roberts",
+          "king-county-assessor--rob-foxcurran",
+          "king-county-assessor--al-dams"
+        ],
         "cells": [
           {
             "allocation": {},
@@ -13754,6 +13855,11 @@
         "race_id": "king-county-assessor"
       },
       {
+        "candidate_order": [
+          "king-county-council-2--miriam-mboya",
+          "king-county-council-2--toshiko-grace-hasegawa",
+          "king-county-council-2--rebecca-salda-a"
+        ],
         "cells": [
           {
             "allocation": {},
@@ -14116,6 +14222,11 @@
         "race_id": "king-county-council-2"
       },
       {
+        "candidate_order": [
+          "king-county-council-8--mia-jacobson",
+          "king-county-council-8--teresa-mosqueda",
+          "king-county-council-8--nick-duda"
+        ],
         "cells": [
           {
             "allocation": {},
@@ -14472,6 +14583,11 @@
         "race_id": "king-county-council-8"
       },
       {
+        "candidate_order": [
+          "supreme-court-justice-1--colleen-melody",
+          "supreme-court-justice-1--laura-christensen-colberg",
+          "supreme-court-justice-1--scott-edwards"
+        ],
         "cells": [
           {
             "allocation": {},
@@ -14820,6 +14936,11 @@
         "race_id": "supreme-court-justice-1"
       },
       {
+        "candidate_order": [
+          "supreme-court-justice-3--jaime-michelle-hawk",
+          "supreme-court-justice-3--david-stevens",
+          "supreme-court-justice-3--mike-diaz"
+        ],
         "cells": [
           {
             "allocation": {},
@@ -15173,6 +15294,12 @@
         "race_id": "supreme-court-justice-3"
       },
       {
+        "candidate_order": [
+          "supreme-court-justice-5--greg-miller",
+          "supreme-court-justice-5--theo-angelis",
+          "supreme-court-justice-5--dave-larson",
+          "supreme-court-justice-5--sharonda-amamilo"
+        ],
         "cells": [
           {
             "allocation": {},
@@ -15527,6 +15654,12 @@
         "race_id": "supreme-court-justice-5"
       },
       {
+        "candidate_order": [
+          "supreme-court-justice-7--david-r-shelvey",
+          "supreme-court-justice-7--debra-l-stephens",
+          "supreme-court-justice-7--karim-a-merchant",
+          "supreme-court-justice-7--todd-a-bloom"
+        ],
         "cells": [
           {
             "allocation": {},
@@ -15861,6 +15994,12 @@
         "race_id": "supreme-court-justice-7"
       },
       {
+        "candidate_order": [
+          "seattle-city-council-5--dimitri-georgakopoulos",
+          "seattle-city-council-5--silas-james",
+          "seattle-city-council-5--julie-kang",
+          "seattle-city-council-5--nilu-jenks"
+        ],
         "cells": [
           {
             "allocation": {},
@@ -16220,6 +16359,11 @@
         "race_id": "seattle-city-council-5"
       },
       {
+        "candidate_order": [
+          "seattle-municipal-court-judge-5--lindsay-calkins",
+          "seattle-municipal-court-judge-5--garmon-newsom",
+          "seattle-municipal-court-judge-5--gabe-rothstein"
+        ],
         "cells": [
           {
             "allocation": {},
@@ -16549,6 +16693,10 @@
         "race_id": "seattle-municipal-court-judge-5"
       },
       {
+        "candidate_order": [
+          "seattle-proposition-1-library-levy--yes",
+          "seattle-proposition-1-library-levy--no"
+        ],
         "cells": [
           {
             "allocation": {},

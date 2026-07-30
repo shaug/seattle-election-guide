@@ -175,6 +175,17 @@ class PersonalizationRace(PersonalizationModel):
     race_id: str = Field(min_length=1)
     eligible_source_codes: list[str] = Field(min_length=1)
     cells: list[PersonalizationCell]
+    candidate_order: list[str] = Field(min_length=1)
+    """Every candidate on the ballot, in the race's canonical (ballot) order.
+
+    UI polish issue 132 (H30): the audited engine resolves a tie in this same
+    order (`_ordered_support` in `scoring/engine.py`), so a client lens must
+    order its own tied labels identically rather than sorting candidate ids
+    alphabetically — otherwise the same tie renders as "A / B" server-side and
+    "B / A" client-side. Published once per race rather than re-derived from
+    cell allocations, which carry only the candidates an individual source
+    actually endorsed.
+    """
 
     @model_validator(mode="after")
     def validate_race(self) -> PersonalizationRace:
@@ -185,6 +196,16 @@ class PersonalizationRace(PersonalizationModel):
             raise ValueError(f"race {self.race_id!r} cells must be unique and sorted by code")
         if cell_codes != self.eligible_source_codes:
             raise ValueError(f"race {self.race_id!r} must publish one cell per eligible source")
+        if len(set(self.candidate_order)) != len(self.candidate_order):
+            raise ValueError(f"race {self.race_id!r} candidate order must not repeat a candidate")
+        allocated_candidate_ids = {
+            candidate_id for cell in self.cells for candidate_id in cell.allocation
+        }
+        unordered = allocated_candidate_ids - set(self.candidate_order)
+        if unordered:
+            raise ValueError(
+                f"race {self.race_id!r} candidate order omits scored candidates {sorted(unordered)}"
+            )
         return self
 
 

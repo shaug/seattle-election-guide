@@ -56,10 +56,12 @@ test('generated fixtures match the Python scoring engine exactly', () => {
         expected.winner_candidate_id,
         `${where}: winner diverged`,
       );
+      // H30: the client must reproduce the audited engine's own tie order
+      // (ballot order), not a client-side alphabetical sort of candidate ids.
       assert.deepEqual(
         race.winnerIds,
-        [...expected.winner_candidate_ids].sort(),
-        `${where}: winner set diverged`,
+        expected.winner_candidate_ids,
+        `${where}: winner order diverged from the audited ballot order`,
       );
       assert.equal(
         race.winnerShare,
@@ -275,6 +277,50 @@ test('shares are exact rationals, never floating point', () => {
   // 1/3 + 1/3 + 1/3 is exactly 1 here, where 0.1 + 0.2 !== 0.3 in binary floating point.
   assert.equal(third.add(third).add(third).compare(new Rational(1n)), 0);
   assert.notEqual(0.1 + 0.2, 0.3);
+});
+
+test('H30: every race publishes a ballot order covering its scored candidates', () => {
+  for (const race of personalization.races) {
+    assert.ok(
+      race.candidate_order.length > 0,
+      `${race.race_id}: candidate order must not be empty`,
+    );
+    assert.equal(
+      new Set(race.candidate_order).size,
+      race.candidate_order.length,
+      `${race.race_id}: candidate order must not repeat a candidate`,
+    );
+    const allocated = new Set(
+      race.cells.flatMap((cell) => Object.keys(cell.allocation)),
+    );
+    for (const candidateId of allocated) {
+      assert.ok(
+        race.candidate_order.includes(candidateId),
+        `${race.race_id}: candidate order omits scored candidate ${candidateId}`,
+      );
+    }
+  }
+});
+
+test('H30: a tied recommendation reproduces the audited ballot order, not an alphabetical one', () => {
+  const tied = fixture.cases
+    .flatMap((scenario) =>
+      scenario.races.map((race) => ({ ...race, selection: scenario.selection })),
+    )
+    .find((race) => race.is_tied && race.winner_candidate_ids.length > 1);
+  assert.ok(tied !== undefined, 'the fixture must exercise a multi-candidate tie');
+
+  const alphabetical = [...tied.winner_candidate_ids].sort();
+  assert.notDeepEqual(
+    tied.winner_candidate_ids,
+    alphabetical,
+    'the fixture tie must actually exercise a non-alphabetical ballot order '
+      + '(otherwise this test cannot distinguish the two orderings)',
+  );
+
+  const race = personalization.races.find((item) => item.race_id === tied.race_id);
+  const scored = scoreRace(race, tied.selection.sourceCodes ?? [], personalization);
+  assert.deepEqual(scored.winnerIds, tied.winner_candidate_ids);
 });
 
 test('an exact tie is resolved before any ordinary grade', () => {
