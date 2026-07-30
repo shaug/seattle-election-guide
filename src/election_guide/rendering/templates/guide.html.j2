@@ -19,10 +19,7 @@
   <style>{{ stylesheet | safe }}</style>
 </head>
 <body>
-  {% macro source_participation(source, compact=false) -%}
-    {%- set count_noun = ('pick' if source.panel_role == 'comparison' else 'endorsement') ~ ('' if source.endorsement_count == 1 else 's') -%}
-    {% if compact %}{{ source.endorsement_count }}{% if source.panel_role == 'comparison' %} {{ count_noun }}{% endif %} · {{ source.split_endorsement_count }} split{% else %}{{ source.endorsement_count }} {{ count_noun }} · {{ source.split_endorsement_count }} split{% endif %}
-  {%- endmacro %}
+  {% from '_source_participation.html.j2' import source_participation %}
   {% macro source_row(source, compact=false) -%}
     <div class="source-row source-row-{{ source.panel_role }}"
       data-publication-source-id="{{ source.id }}"
@@ -188,7 +185,7 @@
         <fieldset class="view-setting">
           <legend>Races</legend>
           <div class="segmented-control">
-            <label><input type="radio" name="race-set" value="complete" id="complete-filter" checked><span>Complete</span></label>
+            <label><input type="radio" name="race-set" value="complete" id="complete-filter" checked><span>All</span></label>
             <label><input type="radio" name="race-set" value="contested" id="contested-filter"><span>Contested</span></label>
           </div>
         </fieldset>
@@ -1188,7 +1185,7 @@
       status.replaceChildren(...statusParts.map((part, index) => {
         const chunk = document.createElement('span');
         chunk.className = index === 0 ? 'filter-status-part' : 'filter-status-part visually-hidden';
-        chunk.textContent = index === 0 ? part : `· ${part}`;
+        chunk.textContent = index === 0 ? part : ` · ${part}`;
         return chunk;
       }));
       if (syncUrl) writeControlState();
