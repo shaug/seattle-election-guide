@@ -30,6 +30,7 @@ from websocket import (  # pyright: ignore[reportUnknownVariableType]
 
 from election_guide.publication.models import (
     PublicationChoiceEndorsements,
+    PublicationComparison,
     PublicationRace,
     PublicationSource,
     PublicationViewModel,
@@ -193,6 +194,7 @@ def render_html_document(
         concise_warning_labels=_concise_warning_labels,
         screen_share_accessible_label=_screen_share_accessible_label,
         screen_support_summary=_screen_support_summary,
+        screen_support_summary_compact=_screen_support_summary_compact,
         race_detail_candidate_choices=_race_detail_candidate_choices,
         comparison_candidate_cells=_comparison_candidate_cells,
         race_detail_accessible_summary=_race_detail_accessible_summary,
@@ -328,6 +330,23 @@ def _concise_warning_labels(race: PublicationRace) -> list[str]:
 def _screen_support_summary(race: PublicationRace) -> str:
     noun = "source" if race.explicit_endorsement_count == 1 else "sources"
     return f"Based on {race.explicit_endorsement_count} endorsing {noun}"
+
+
+def _screen_support_summary_compact(race: PublicationRace) -> str:
+    """H34: the compact-mode caption drops the sentence, matching how the
+    print edition's own full/compact captions already differ."""
+    return f"{race.explicit_endorsement_count} sources"
+
+
+def _screen_comparison_label(comparison: PublicationComparison) -> str:
+    """H37: "Times agrees" renders the verb alone — the choice is by
+    definition the headline name directly above it — while every other
+    status keeps the full "status · choice" compound. Shared by the screen
+    macro's semantic-parity expectations and the detailed edition's PDF
+    validator, both of which mirror this same screen markup."""
+    return (
+        comparison.print_status_label if comparison.status == "agrees" else comparison.print_label
+    )
 
 
 def _candidate_endorsement_groups(
@@ -2672,8 +2691,13 @@ def _html_semantic_values(race: PublicationRace) -> dict[str, list[str]]:
         "race-label": [race.race_label],
         "recommendation": [race.recommendation_label],
         "share": ["N/A" if race.percentage_whole is None else race.percentage_label],
-        "support": [_screen_support_summary(race)],
-        "comparison": [comparison.print_label for comparison in race.comparisons],
+        # H34: the default caption now renders as two sibling elements (full
+        # sentence, then the compact-mode short form), both always present in
+        # the static markup and both carrying data-display-role="support" —
+        # the same "one role, ordered list of occurrences" shape the
+        # "comparison" role below already uses for its own 0-or-1 occurrences.
+        "support": [_screen_support_summary(race), _screen_support_summary_compact(race)],
+        "comparison": [_screen_comparison_label(comparison) for comparison in race.comparisons],
         "insufficient-warning": (
             ["Too few explicit endorsements to assess consensus reliably."]
             if race.grade == "Insufficient"
@@ -2706,13 +2730,22 @@ def _pdf_race_core_values(race: PublicationRace) -> list[str]:
 
 
 def _detailed_pdf_race_values(race: PublicationRace) -> list[str]:
+    # I39: the support caption now renders directly under the meter row, with
+    # the reference block (comparisons) moved to the card foot, after it —
+    # the reverse of the prior anchoring, where the comparison preceded the
+    # caption. The detailed edition renders the same screen DOM, so H37's
+    # verb-alone "Times agrees" rendering (the differing/covered choice
+    # dropped for every other status) applies here too.
     screen_support = _screen_support_summary(race)
     return [
         race.race_label,
         race.recommendation_label,
         "N/A" if race.percentage_whole is None else race.percentage_label,
         screen_support,
-        *(f"{comparison.print_label} {screen_support}" for comparison in race.comparisons),
+        *(
+            f"{screen_support} {_screen_comparison_label(comparison)}"
+            for comparison in race.comparisons
+        ),
         *(
             ["Too few explicit endorsements to assess consensus reliably."]
             if race.grade == "Insufficient"

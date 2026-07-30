@@ -117,7 +117,7 @@
             <div class="race-detail-meter race-detail-meter-na" role="img"
               aria-label="{{ screen_share_accessible_label(race) }}"><strong>N/A</strong></div>
             {% else %}
-            <div class="race-detail-meter" style="--meter-fill: {{ race.percentage_whole }}%"
+            <div class="race-detail-meter{% if race.percentage_whole < 30 %} meter-low-fill{% endif %}" style="--meter-fill: {{ race.percentage_whole }}%"
               role="img" aria-label="{{ screen_share_accessible_label(race) }}">
               <strong>{{ race.percentage_label }}</strong>
             </div>
@@ -221,7 +221,6 @@
               <p class="race-office">
                 <span id="race-label-{{ race.id }}"
                   data-display-role="race-label">{{ race.race_label }}</span>
-                {% if guide.personalization.policy.enabled %}<span class="lens-card-badge" data-lens-only data-lens-card-badge>My sources</span>{% endif %}
               </p>
               <div class="screen-race-result">
                 <h3 data-display-role="recommendation"{% if guide.personalization.policy.enabled %} data-lens-hidden{% endif %}>{{ race.recommendation_label }}</h3>
@@ -234,7 +233,7 @@
                   <strong>N/A</strong>
                 </div>
                 {% else %}
-                <div class="screen-meter" style="--meter-fill: {{ race.percentage_whole }}%"
+                <div class="screen-meter{% if race.percentage_whole < 30 %} meter-low-fill{% endif %}" style="--meter-fill: {{ race.percentage_whole }}%"
                   role="img" data-display-role="share"
                   aria-label="{{ screen_share_accessible_label(race) }}"{% if guide.personalization.policy.enabled %} data-lens-hidden{% endif %}>
                   <strong>{{ race.percentage_label }}</strong>
@@ -246,21 +245,16 @@
                 </div>
                 {% endif %}
               </div>
+              {# I39: the primary block ends with the caption directly under
+                 the meter row; the reference block (All-sources bar, then
+                 Times) renders at the card foot below, after the
+                 insufficiency warning, never interleaved with this caption. #}
               <div class="screen-race-context">
-                {# The comparison bars stay above the support line: the print
-                   validator anchors each comparison's extracted text against
-                   the support summary that follows it. #}
-                <div class="screen-comparisons">
-                  {% for comparison in race.comparisons %}
-                  <p class="comparison comparison-{{ comparison.voter_tone }}" role="group"
-                    aria-label="{{ comparison.voter_accessible_label }}" data-display-role="comparison">
-                    <strong class="comparison-status">{{ comparison.print_status_label }}</strong><span class="comparison-separator"> · </span><span class="comparison-choice">{{ comparison.print_choice_label }}</span>
-                  </p>
-                  {% endfor %}
-                </div>
-                <p class="support-line" data-display-role="support"{% if guide.personalization.policy.enabled %} data-lens-hidden{% endif %}>{{ screen_support_summary(race) }}</p>
+                <p class="support-line support-full" data-display-role="support"{% if guide.personalization.policy.enabled %} data-lens-hidden{% endif %}>{{ screen_support_summary(race) }}</p>
+                <p class="support-line support-compact" data-display-role="support"{% if guide.personalization.policy.enabled %} data-lens-hidden{% endif %}>{{ screen_support_summary_compact(race) }}</p>
                 {% if guide.personalization.policy.enabled %}
-                <p class="support-line lens-value" data-lens-only data-lens-support></p>
+                <p class="support-line lens-value support-full" data-lens-only data-lens-support></p>
+                <p class="support-line lens-value support-compact" data-lens-only data-lens-support-compact></p>
                 {% endif %}
               </div>
             </a>
@@ -270,12 +264,27 @@
             {% endif %}
             {% if guide.personalization.policy.enabled %}
             <div class="insufficient-note" data-lens-only data-lens-insufficient hidden>
-              Too few explicit endorsements to assess consensus reliably in My sources.</div>
+              Too few explicit endorsements to assess consensus reliably in the selected sources.</div>
             {# role="group" matches the Times comparison bar's idiom: a bare
                <p> is name-prohibited in ARIA, so the agree/differ aria-label
                applied by applyAllSourcesSignal needs the role to be exposed. #}
             <p class="lens-comparison" role="group" data-lens-only data-lens-comparison hidden></p>
             {% endif %}
+            {# I39: reference block at the card foot — "All sources" (above,
+               when a lens diverges) first, then Times, bars adjacent and
+               never interleaved with the support caption. The detailed-
+               edition print validator (_detailed_pdf_race_values in
+               renderer.py) anchors each comparison's extracted text against
+               the support summary that now precedes it in reading order, not
+               follows it as before this reorder. #}
+            <div class="screen-comparisons">
+              {% for comparison in race.comparisons %}
+              <p class="comparison comparison-{{ comparison.voter_tone }}" role="group"
+                aria-label="{{ comparison.voter_accessible_label }}" data-display-role="comparison">
+                <strong class="comparison-status">{{ comparison.print_status_label }}</strong>{% if comparison.status != 'agrees' %}<span class="comparison-separator"> · </span><span class="comparison-choice">{{ comparison.print_choice_label }}</span>{% endif %}
+              </p>
+              {% endfor %}
+            </div>
             <dialog class="race-detail-dialog" id="race-detail-{{ race.id }}"
               data-race-detail-dialog data-race-id="{{ race.id }}"
               aria-labelledby="race-detail-election-{{ race.id }} race-detail-title-{{ race.id }}"
@@ -819,8 +828,22 @@
     if (scored.isTied) return scored.winnerIds.map((id) => labels.get(id) ?? id).join(' / ');
     return (scored.winnerId !== null ? labels.get(scored.winnerId) : null) ?? 'No consensus';
   };
-  const supportSummary = (scored) =>
-    `Based on ${scored.explicitCount} endorsing ${scored.explicitCount === 1 ? 'source' : 'sources'}`;
+  /**
+   * H38: while a lens is active, the caption states how many of the
+   * currently-selected sources endorsed this race, out of how many are
+   * selected overall (`selectedTotal`, the same count the banner's own
+   * "Counting N of M sources" states) — never the possessive "My sources."
+   * With no lens (the default `selectedTotal === null` call from the
+   * server-rendered caption's own text), the caption is unchanged.
+   */
+  const supportSummary = (scored, selectedTotal = null) => (selectedTotal === null
+    ? `Based on ${scored.explicitCount} endorsing ${scored.explicitCount === 1 ? 'source' : 'sources'}`
+    : `Based on ${scored.explicitCount} of ${selectedTotal} selected sources`);
+  // H34: the compact-mode sibling caption, shortened the same way the print
+  // edition's own full/compact captions already are.
+  const supportSummaryCompact = (scored, selectedTotal = null) => (selectedTotal === null
+    ? `${scored.explicitCount} sources`
+    : `${scored.explicitCount} of ${selectedTotal} selected`);
   const allSourcesSummary = (audited, labels) =>
     `All sources: ${recommendationLabel(audited, labels)} · ${percentageLabel(audited.winnerShare)}`;
   /**
@@ -870,9 +893,21 @@
         personalized.winnerShare === null ? '0%' : percentageLabel(personalized.winnerShare),
       );
       shareMeter.setAttribute('aria-label', shareAccessibleLabel(personalized.winnerShare));
+      // I41: below ~30% fill the white label bleeds onto the pale track;
+      // below that threshold the low-fill guard (guide.css) renders it after
+      // the fill in muted ink instead.
+      const fillPercent = personalized.winnerShare === null
+        ? null
+        : Number.parseInt(percentageLabel(personalized.winnerShare), 10);
+      shareMeter.classList.toggle('meter-low-fill', fillPercent !== null && fillPercent < 30);
     }
+    const selectedTotal = resolvedSourceCodes.length;
     const supportEl = card.querySelector('[data-lens-support]');
-    if (supportEl) supportEl.textContent = supportSummary(personalized);
+    if (supportEl) supportEl.textContent = supportSummary(personalized, selectedTotal);
+    const supportCompactEl = card.querySelector('[data-lens-support-compact]');
+    if (supportCompactEl) {
+      supportCompactEl.textContent = supportSummaryCompact(personalized, selectedTotal);
+    }
     const insufficientEl = card.querySelector('[data-lens-insufficient]');
     if (insufficientEl) insufficientEl.hidden = personalized.grade !== 'Insufficient';
     const comparisonEl = card.querySelector('[data-lens-comparison]');

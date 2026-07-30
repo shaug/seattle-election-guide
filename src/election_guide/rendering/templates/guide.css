@@ -42,10 +42,24 @@
 .screen-meter strong { width: 100%; padding: .05rem .75rem 0; color: var(--white); font-size: 1.08rem; font-variant-numeric: tabular-nums; font-weight: 800; line-height: 1; text-align: left; }
 .screen-meter-na { background: var(--meter-track); }
 .screen-meter-na strong { color: var(--muted); }
+/* I41: below ~30% fill the white label rides past the colored fill onto the
+   pale track and loses contrast; past the threshold (screen card and dialog
+   candidate meters — the two reachable contexts, per docs/UI_POLISH.md I41)
+   the label renders after the fill instead, in muted ink. Defensive only,
+   not the tabled D14 meter redesign. */
+.screen-meter.meter-low-fill strong, .race-detail-meter.meter-low-fill strong { padding-left: calc(var(--meter-fill) + .4rem); color: var(--muted); }
 .screen-race-context { display: grid; gap: .35rem; min-width: 0; }
 .screen-comparisons { display: grid; min-width: 0; gap: .35rem; }
 .screen-comparisons:empty { display: none; }
 .support-line { min-width: 0; margin: .15rem 0 0; color: var(--muted); font-size: .72rem; line-height: 1.2; text-align: right; }
+/* H34: full view keeps the sentence-form caption; compact mode (where the
+   caption wraps to two lines per card) shortens it. Both forms always render
+   (mirroring the print edition's own full/compact captions); which one shows
+   is a pure CSS toggle, not a conditional data-lens-hidden/data-lens-only
+   fight, since neither rule here ever re-shows what those already hide. */
+.support-compact { display: none; }
+html.compact-ballot-mode .support-full { display: none; }
+html.compact-ballot-mode .support-compact { display: block; }
 
 /* One quiet info-bar component for every alternative-endorsement signal: the
    opt-in Times comparison and the personalized lens's "All sources" baseline
@@ -66,7 +80,11 @@ html.compact-ballot-mode .section-heading h2 { margin-bottom: .65rem; font-size:
 html.compact-ballot-mode .race-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .55rem; }
 html.compact-ballot-mode .race-card { gap: .35rem; padding: .65rem; border-top-width: .2rem; box-shadow: 0 .12rem .45rem rgba(16,42,67,.07); }
 html.compact-ballot-mode .race-card-primary { gap: .35rem; }
-html.compact-ballot-mode .race-office { font-size: .66rem; line-height: 1.15; }
+/* I42: a 1-3 line race label pushes the name+meter block to a different
+   baseline in every card, defeating cross-card meter comparison at a glance;
+   reserving consistent label space (rather than aligning per-row via
+   subgrid) keeps every compact card's meter starting at the same offset. */
+html.compact-ballot-mode .race-office { min-height: 2.3rem; font-size: .66rem; line-height: 1.15; }
 html.compact-ballot-mode .race-card h3 { font-size: 1.08rem; line-height: 1.05; }
 html.compact-ballot-mode .screen-race-result,
 html.compact-ballot-mode .screen-race-context { grid-template-columns: minmax(0, 1fr); gap: .3rem; }
@@ -110,7 +128,6 @@ html.compact-ballot-mode .insufficient-note { padding: .38rem .48rem; font-size:
    this race's own divergence, not just the active lens mode. */
 html:not(.lens-personalized) [data-lens-only] { display: none; }
 html.lens-personalized [data-lens-hidden] { display: none; }
-.lens-card-badge { display: inline-flex; align-items: center; margin-left: .35rem; padding: .1rem .42rem; border: 1px solid #7a9c95; border-radius: 1rem; background: #eaf5f2; color: var(--tone-agree-text); font-size: .6rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; vertical-align: middle; }
 .race-detail-lens { margin: 0 0 .65rem; padding: .65rem .75rem; border: 1px solid #9fcfc5; border-left: .3rem solid var(--teal); background: #f2faf8; }
 .race-detail-lens h4 { margin: 0 0 .3rem; color: var(--navy); font-size: .86rem; }
 .race-detail-lens > p { margin: 0 0 .3rem; color: var(--muted); font-size: .78rem; }
@@ -136,9 +153,12 @@ html.lens-personalized [data-lens-hidden] { display: none; }
 .race-card .race-detail-candidate-title h4 { margin: 0; color: var(--navy); font-size: 1.05rem; line-height: 1.1; overflow-wrap: anywhere; }
 .race-detail-candidate-metrics { display: flex; flex: 0 0 auto; align-items: center; justify-content: flex-end; gap: .45rem .75rem; }
 .race-detail-candidate-metrics > span { color: var(--muted); font-size: .68rem; white-space: nowrap; }
-.race-detail-meter { display: flex; flex: 0 0 auto; align-items: center; justify-content: flex-start; width: 8.5rem; height: 1.8rem; overflow: hidden; border: 1px solid var(--tone-agree-border); border-radius: 1rem; background: linear-gradient(to right, var(--teal) 0 var(--meter-fill), #fff var(--meter-fill) 100%); }
+/* I40: one meter chrome — the dialog meter now adopts the card's own
+   border/track treatment instead of its own (tone-agree border, white
+   track). */
+.race-detail-meter { display: flex; flex: 0 0 auto; align-items: center; justify-content: flex-start; width: 8.5rem; height: 1.8rem; overflow: hidden; border: 1px solid var(--line-strong); border-radius: 1rem; background: linear-gradient(to right, var(--teal) 0 var(--meter-fill), var(--meter-track) var(--meter-fill) 100%); }
 .race-detail-meter strong { width: 100%; padding: .05rem .65rem 0; color: var(--white); font-size: .9rem; font-variant-numeric: tabular-nums; text-align: left; }
-.race-detail-meter-na { background: #fff; }
+.race-detail-meter-na { background: var(--meter-track); }
 .race-detail-meter-na strong { color: var(--muted); }
 .race-detail-outcome-unverified { border-left-color: var(--red); }
 .race-detail-outcome-heading { display: flex; align-items: baseline; justify-content: space-between; gap: .5rem 1rem; padding: .5rem .75rem; background: var(--tone-neutral-bg); }
@@ -153,8 +173,12 @@ a.race-detail-source-row-comparison:hover { background: #edf3f5; }
 a.race-detail-source-row:hover strong { text-decoration: underline; text-underline-offset: .15em; }
 .race-detail-source-row strong { min-width: 0; color: var(--navy); font-size: .8rem; overflow-wrap: anywhere; }
 .race-detail-source-meta { display: flex; min-width: 0; align-items: center; justify-content: flex-end; gap: .3rem; }
-.race-detail-category-badge, .race-detail-comparison-badge { display: inline-flex; align-items: center; max-width: 14rem; padding: .14rem .42rem; border: 1px solid var(--badge-border); border-radius: 1rem; background: #f3f6f8; color: var(--line-muted); font-size: .59rem; font-weight: 700; line-height: 1.25; text-align: center; }
-.race-detail-comparison-badge { border-color: #9bb1bf; background: #e8f0f3; color: #36576b; }
+/* H36: every endorser row carried a bordered category pill; the taxonomy
+   outweighed the data. Row order is unchanged — the category now renders as
+   plain right-aligned muted text instead. The comparison source's own badge
+   ("Comparison only") is a role, not a category, and keeps its pill chrome. */
+.race-detail-category-badge { color: var(--muted); font-size: .68rem; font-weight: 600; text-align: right; }
+.race-detail-comparison-badge { display: inline-flex; align-items: center; max-width: 14rem; padding: .14rem .42rem; border: 1px solid #9bb1bf; border-radius: 1rem; background: #e8f0f3; color: #36576b; font-size: .59rem; font-weight: 700; line-height: 1.25; text-align: center; }
 .race-detail-source-status { color: var(--muted); font-size: .68rem; font-weight: 700; text-align: right; }
 .race-detail-missing { margin-top: .75rem; border-top: 1px solid var(--line); padding-top: .65rem; }
 .race-detail-missing summary { cursor: pointer; color: var(--muted); font-size: .72rem; font-weight: 700; }
@@ -228,7 +252,7 @@ a.race-detail-source-row:hover strong { text-decoration: underline; text-underli
   .race-detail-meter { width: 7.5rem; }
   .race-detail-source-row { grid-template-columns: 1fr; gap: .25rem; }
   .race-detail-source-meta { justify-content: flex-start; }
-  .race-detail-category-badge { max-width: 100%; text-align: left; }
+  .race-detail-category-badge { text-align: left; }
   .race-detail-source-status { text-align: left; }
 }
 
