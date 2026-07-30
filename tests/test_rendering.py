@@ -3318,6 +3318,79 @@ def test_personalization_divergent_race_discloses_a_compact_comparison_and_full_
         assert result["unchangedComparisonHidden"] is True
 
 
+def test_personalization_compact_caption_shows_only_the_lens_short_form(tmp_path: Path) -> None:
+    """H34 + H38 interaction: in compact mode, while a lens is active on a
+    divergent race, exactly the lens's own short caption ("N of M selected")
+    must be visible — never the default caption (either form) and never the
+    lens's own full-sentence form. The full/compact toggle (guide.css) and
+    the lens-active toggle ([data-lens-hidden]/[data-lens-only]) are two
+    independent CSS rule pairs applied to the same elements; this proves they
+    resolve consistently together, not just each in isolation.
+    """
+    view_model = _production_bundle().view_model
+    enabled_policy = view_model.personalization.policy.model_copy(update={"enabled": True})
+    view_model = view_model.model_copy(
+        update={
+            "personalization": view_model.personalization.model_copy(
+                update={"policy": enabled_policy}
+            )
+        }
+    )
+    first_category = next(
+        category
+        for category in view_model.personalization.categories
+        if _tallying_selectable(category)
+    )
+    fragment = _lens_fragment(
+        view_model, mode="s", source_codes=tuple(first_category.member_source_codes)
+    )
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          const pause = () => new Promise((resolve) => setTimeout(resolve, 50));
+          await pause();
+          document.documentElement.classList.add('compact-ballot-mode');
+          const cards = [...document.querySelectorAll('.race-card')];
+          const divergent = cards.find(
+            (card) => card.querySelector('[data-lens-comparison]')?.hidden === false,
+          );
+          const displayOf = (el) => (el ? getComputedStyle(el).display : null);
+          return JSON.stringify({
+            hasDivergent: divergent !== undefined,
+            defaultFullDisplay: displayOf(
+              divergent?.querySelector('.support-line.support-full:not(.lens-value)'),
+            ),
+            defaultCompactDisplay: displayOf(
+              divergent?.querySelector('.support-line.support-compact:not(.lens-value)'),
+            ),
+            lensFullDisplay: displayOf(
+              divergent?.querySelector('.support-line.support-full.lens-value'),
+            ),
+            lensCompactDisplay: displayOf(
+              divergent?.querySelector('.support-line.support-compact.lens-value'),
+            ),
+            lensCompactText: divergent?.querySelector('[data-lens-support-compact]')?.textContent,
+          });
+        })()
+        """,
+        initial_url=f"{html_path.resolve().as_uri()}#{fragment}",
+    )
+    assert result["hasDivergent"] is True, (
+        "expected at least one production race to diverge from the full-panel audited baseline"
+    )
+    assert result["defaultFullDisplay"] == "none"
+    assert result["defaultCompactDisplay"] == "none"
+    assert result["lensFullDisplay"] == "none"
+    assert result["lensCompactDisplay"] == "block"
+    assert re.match(r"\d+ of \d+ selected", result["lensCompactText"])
+
+
 def _lens_fragment(
     view_model: PublicationViewModel,
     *,
