@@ -684,6 +684,8 @@ def _about_html(site_manifest: SiteManifest, *, built_date_display: str, git_com
           reports for every release are published in the
           <a href="{PROJECT_URL}">project's source repository</a>, alongside the code that produced
           them.</p>
+        <p>Past guides remain published at their own permanent addresses in the
+          <a href="/e/">guide archive</a>.</p>
       </section>
 
       <section aria-labelledby="report-a-correction">

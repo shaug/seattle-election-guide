@@ -103,6 +103,10 @@ def test_stage_pages_site_composes_verified_election_archive(tmp_path: Path) -> 
     assert "mailto:seattle-elections@dobravoda.dev" in about
     assert "not an official voter pamphlet" in about
     assert "not affiliated with any campaign" in about
+    # The shared footer's own links (Share/PDF/Contact/GitHub/How this works)
+    # replaced the old page-footer nav, which was the site's only link to the
+    # guide archive; that link now lives in About's own body prose instead.
+    assert '<a href="/e/">guide archive</a>' in about
     # Same site-level audit-line variant on the site-wide About page.
     assert '<div class="site-footer-audit">Built July 21, 2026' in about
     assert f'commit/{COMMIT}">{COMMIT[:12]}</a></div>' in about

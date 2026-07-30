@@ -458,6 +458,12 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "Seattle Times" in html
     assert "August 2026 Primary" in html
     assert "Seattle Elections Guide" in html
+    # L54: the hero states the election, not the brand (the band carries the
+    # brand instead); the kicker states the exact election day; the old
+    # hero-meta block ("Election ..." + "N races") is gone.
+    assert '<div class="hero-kicker">ELECTION DAY · AUGUST 4</div>' in html
+    assert "<h1>August 2026 Primary</h1>" in html
+    assert 'class="hero-meta"' not in html
     canonical_url = f"{configuration.public_site_url}/e/{view_model.metadata.election_id}/"
     assert f'<link rel="canonical" href="{canonical_url}">' in html
     assert f'<meta property="og:url" content="{canonical_url}">' in html
