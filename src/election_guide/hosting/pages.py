@@ -19,10 +19,11 @@ from election_guide.hosting.models import (
 )
 from election_guide.publication.models import PublicationViewModel
 from election_guide.release.models import ReleaseManifest, ReleaseStatus
-from election_guide.rendering.renderer import TEMPLATE_DIR, render_sources_document
+from election_guide.rendering.renderer import TEMPLATE_DIR, display_date, render_sources_document
 from election_guide.rendering.shell import (
     favicon_svg,
     site_band_html,
+    site_footer_audit_html,
     site_footer_band_html,
     site_head_links_html,
 )
@@ -132,13 +133,32 @@ def stage_pages_site(
     stage = Path(tempfile.mkdtemp(prefix=f".{output_dir.name}.staging-", dir=output_dir.parent))
     try:
         public_paths = _stage_verified_bundles(stage, verified, site_manifest.canonical_origin)
+        # The site-wide About/archive pages have no election of their own, but
+        # still state which exact code built the current live release (UI
+        # polish round 4, item L55.2's site-level audit-line variant).
+        current_built_date = display_date(current.status.generated_at.date().isoformat())
+        current_git_commit = current.status.git_commit
         archive_path = stage / "e" / "index.html"
-        archive_path.write_text(_archive_html(site_manifest), encoding="utf-8")
+        archive_path.write_text(
+            _archive_html(
+                site_manifest,
+                built_date_display=current_built_date,
+                git_commit=current_git_commit,
+            ),
+            encoding="utf-8",
+        )
         public_paths.update({"/e/", "/e/index.html"})
 
         about_path = stage / "about" / "index.html"
         about_path.parent.mkdir(parents=True)
-        about_path.write_text(_about_html(site_manifest), encoding="utf-8")
+        about_path.write_text(
+            _about_html(
+                site_manifest,
+                built_date_display=current_built_date,
+                git_commit=current_git_commit,
+            ),
+            encoding="utf-8",
+        )
         public_paths.update({"/about/", "/about/index.html"})
 
         # Site-wide brand assets (issue 115, item A4). The SVG favicon renders
@@ -452,7 +472,7 @@ def _guide_pdf_artifacts(status: ReleaseStatus) -> tuple[str, ...]:
     )
 
 
-def _archive_html(site_manifest: SiteManifest) -> str:
+def _archive_html(site_manifest: SiteManifest, *, built_date_display: str, git_commit: str) -> str:
     rows = "\n".join(
         "      <li>"
         f'<a href="/e/{election.election_id}/">{html.escape(election.name)}</a>'
@@ -474,6 +494,11 @@ def _archive_html(site_manifest: SiteManifest) -> str:
         sources_href=f"{current_path}sources/",
     )
     footer_band = site_footer_band_html(project_url=PROJECT_URL)
+    footer_audit = site_footer_audit_html(
+        built_date_display=built_date_display,
+        git_commit=git_commit,
+        project_url=PROJECT_URL,
+    )
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -515,6 +540,7 @@ def _archive_html(site_manifest: SiteManifest) -> str:
     </main>
     <footer class="site-footer">
       {footer_band}
+      <div class="site-footer-audit">{footer_audit}</div>
     </footer>
   </div>
   <script type="module">
@@ -526,7 +552,7 @@ def _archive_html(site_manifest: SiteManifest) -> str:
 """
 
 
-def _about_html(site_manifest: SiteManifest) -> str:
+def _about_html(site_manifest: SiteManifest, *, built_date_display: str, git_commit: str) -> str:
     current = next(
         election
         for election in site_manifest.elections
@@ -553,6 +579,11 @@ def _about_html(site_manifest: SiteManifest) -> str:
         current="about",
     )
     footer_band = site_footer_band_html(project_url=PROJECT_URL)
+    footer_audit = site_footer_audit_html(
+        built_date_display=built_date_display,
+        git_commit=git_commit,
+        project_url=PROJECT_URL,
+    )
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -673,6 +704,7 @@ def _about_html(site_manifest: SiteManifest) -> str:
     </main>
     <footer class="site-footer">
       {footer_band}
+      <div class="site-footer-audit">{footer_audit}</div>
     </footer>
   </div>
   <script type="module">

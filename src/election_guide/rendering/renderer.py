@@ -152,8 +152,8 @@ def render_html_document(
     }
     guide_path = f"/e/{view_model.metadata.election_id}/"
     sources_page_url = f"{configuration.public_site_url}{guide_path}sources/"
-    election_date_display = _display_date(view_model.metadata.election_date)
-    built_date_display = _display_date(view_model.metadata.generated_at.date().isoformat())
+    election_date_display = display_date(view_model.metadata.election_date)
+    built_date_display = display_date(view_model.metadata.generated_at.date().isoformat())
     return template.render(
         **_personalization_lookup_context(view_model),
         guide=view_model,
@@ -251,8 +251,8 @@ def render_sources_document(
         ),
         site_footer_audit=(
             site_footer_audit_html(
-                election_date_display=_display_date(view_model.metadata.election_date),
-                built_date_display=_display_date(
+                election_date_display=display_date(view_model.metadata.election_date),
+                built_date_display=display_date(
                     view_model.metadata.generated_at.date().isoformat()
                 ),
                 data_version=view_model.metadata.data_version,
@@ -298,7 +298,7 @@ def _require_web_url(value: str) -> None:
         raise ValueError(f"rendered link is not a safe HTTP(S) URL: {value!r}")
 
 
-def _display_date(iso_date: str) -> str:
+def display_date(iso_date: str) -> str:
     """Human display form ("August 4, 2026") for an ISO date string.
 
     Reader-facing surfaces use this form; data files and version identifiers
@@ -862,8 +862,8 @@ def validate_rendered_guide(
         "Overlap and limitations",
         "Verify before voting",
         view_model.methodology.verification_instructions,
-        f"Election {_display_date(view_model.metadata.election_date)}",
-        f"Built {_display_date(view_model.metadata.generated_at.date().isoformat())}",
+        f"Election {display_date(view_model.metadata.election_date)}",
+        f"Built {display_date(view_model.metadata.generated_at.date().isoformat())}",
         f"Data {view_model.metadata.data_version}",
         f"Code {view_model.metadata.git_commit[:12]}",
         f"Panel {view_model.metadata.source_panel_version}",

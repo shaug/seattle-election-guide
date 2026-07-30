@@ -197,30 +197,40 @@ def site_footer_band_html(
 
 def site_footer_audit_html(
     *,
-    election_date_display: str,
     built_date_display: str,
-    data_version: str,
     git_commit: str,
-    source_panel_id: str,
-    source_panel_hash: str,
     project_url: str,
+    election_date_display: str | None = None,
+    data_version: str | None = None,
+    source_panel_id: str | None = None,
+    source_panel_hash: str | None = None,
 ) -> str:
-    """The compact mono audit line for election-scoped pages (item L55.2).
+    """The compact mono audit line shared by every page (item L55.2).
 
-    Election date, built date, Data/Code hashes, and Panel id+hash, with the
-    Code hash linking to the exact GitHub commit. Global (site-wide) pages
-    like About and the archive have no election or panel to state, so they
-    render no audit line at all rather than a variant with blank parts.
+    Election-scoped pages (the guide, Sources) pass every field: election
+    date, built date, Data/Code hashes, and Panel id+hash, with the Code hash
+    linking to the exact GitHub commit. Global (site-wide) pages like About
+    and the archive have no election or panel to state, so they omit
+    `election_date_display`, `data_version`, `source_panel_id`, and
+    `source_panel_hash` for the site-level variant: built date and the same
+    Code-hash commit link only, still proving which exact revision is live.
     """
     commit_url = html.escape(f"{project_url}/commit/{git_commit}", quote=True)
     escaped_short_commit = html.escape(git_commit[:12])
-    return (
-        f"Election {html.escape(election_date_display)} &middot; "
-        f"Built {html.escape(built_date_display)} &middot; "
-        f"Data {html.escape(data_version)} &middot; "
-        f'Code <a href="{commit_url}">{escaped_short_commit}</a><br>'
-        f"Panel {html.escape(source_panel_id)} &middot; {html.escape(source_panel_hash[:12])}"
-    )
+    parts: list[str] = []
+    if election_date_display is not None:
+        parts.append(f"Election {html.escape(election_date_display)}")
+    parts.append(f"Built {html.escape(built_date_display)}")
+    if data_version is not None:
+        parts.append(f"Data {html.escape(data_version)}")
+    parts.append(f'Code <a href="{commit_url}">{escaped_short_commit}</a>')
+    line = " &middot; ".join(parts)
+    if source_panel_id is not None and source_panel_hash is not None:
+        line += (
+            f"<br>Panel {html.escape(source_panel_id)} &middot; "
+            f"{html.escape(source_panel_hash[:12])}"
+        )
+    return line
 
 
 def site_head_links_html(origin: str) -> str:
