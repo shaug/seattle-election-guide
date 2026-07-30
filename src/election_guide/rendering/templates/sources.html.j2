@@ -40,10 +40,7 @@
   </style>
 </head>
 <body>
-  {% macro source_participation(source, compact=false) -%}
-    {%- set count_noun = ('pick' if source.panel_role == 'comparison' else 'endorsement') ~ ('' if source.endorsement_count == 1 else 's') -%}
-    {% if compact %}{{ source.endorsement_count }}{% if source.panel_role == 'comparison' %} {{ count_noun }}{% endif %} · {{ source.split_endorsement_count }} split{% else %}{{ source.endorsement_count }} {{ count_noun }} · {{ source.split_endorsement_count }} split{% endif %}
-  {%- endmacro %}
+  {% from '_source_participation.html.j2' import source_participation %}
   {% macro coverage_gap_row(source, compact=false) -%}
     <section class="coverage-gap-row"
       data-coverage-gap-source-id="{{ source.id }}"
@@ -148,7 +145,7 @@
 
         {% if coverage_gap_sources %}
         <section class="screen-coverage-gaps">
-          <div><p class="eyebrow">Research status</p><h2>Coverage gaps ({{ guide.metadata.coverage_gap_count }})</h2>
+          <div><p class="eyebrow eyebrow-paper">Research status</p><h2>Coverage gaps ({{ guide.metadata.coverage_gap_count }})</h2>
             <p>These organizations were investigated, but no usable published endorsement list
               was available. They do not contribute to consensus scores.</p></div>
           <div class="coverage-gap-columns">
