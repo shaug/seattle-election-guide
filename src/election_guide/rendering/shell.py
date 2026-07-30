@@ -1,9 +1,11 @@
-"""Shared cross-page chrome: the site name, brand icon, and slim nav band.
+"""Shared cross-page chrome: the site name, brand icon, nav band, and footer.
 
-Every page on the site (the guide, the sources editor, About, and the
-election archive) renders this exact band so the cross-page chrome has one
-implementation. The icon is "The Meter": the guide's agreement meter distilled
-into a mark, with a left-anchored fill matching the on-page meters.
+Every page on the site (the guide, the sources editor, About, the election
+archive, and the branded 404) renders this exact band, and every page except
+the 404 renders this exact footer, so the cross-page chrome has one
+implementation each (UI polish round 4, item L54/L55). The icon is "The
+Meter": the guide's agreement meter distilled into a mark, with a
+left-anchored fill matching the on-page meters.
 """
 
 from __future__ import annotations
@@ -11,6 +13,7 @@ from __future__ import annotations
 import html
 
 SITE_NAME = "Seattle Elections Guide"
+CONTACT_HREF = "mailto:seattle-elections@dobravoda.dev"
 
 # Brand palette, duplicated from base.css tokens because the icon also ships
 # as a standalone favicon.svg where no stylesheet exists.
@@ -18,6 +21,74 @@ _NAVY = "#102a43"
 _TEAL = "#087f73"
 _MINT = "#9ee7df"
 _PAPER = "#fbfaf6"
+
+# Minimal 24x24 stroke glyphs for the footer's icon action cluster (Share,
+# Printable PDF, Contact); `currentColor` follows the surrounding link color
+# so no separate on-dark variant is needed the way the brand mark requires.
+_SHARE_ICON_SVG = (
+    '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"'
+    ' stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img"'
+    ' aria-hidden="true" focusable="false">'
+    '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>'
+    '<line x1="8.6" y1="10.6" x2="15.4" y2="6.4"/><line x1="8.6" y1="13.4" x2="15.4" y2="17.6"/>'
+    "</svg>"
+)
+_PDF_ICON_SVG = (
+    '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"'
+    ' stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img"'
+    ' aria-hidden="true" focusable="false">'
+    '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>'
+    '<path d="M14 2v6h6"/><line x1="9" y1="15" x2="15" y2="15"/>'
+    '<line x1="9" y1="18" x2="13" y2="18"/>'
+    "</svg>"
+)
+_ENVELOPE_ICON_SVG = (
+    '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"'
+    ' stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img"'
+    ' aria-hidden="true" focusable="false">'
+    '<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 6 10 7 10-7"/>'
+    "</svg>"
+)
+# The standard "mark-github" glyph (as widely shipped on open-source project
+# sites, e.g. the Simple Icons project's CC0-licensed path data), fully
+# filled so it reads at footer icon size without stroke weight. Built from
+# explicitly space-joined chunks (rather than adjacent string literals) so a
+# missing separator at a chunk boundary cannot silently fuse two coordinates.
+_GITHUB_MARK_PATH = " ".join(
+    (
+        "M12 .297c-6.63 0-12 5.373-12 12",
+        "0 5.303 3.438 9.8 8.205 11.385",
+        ".6.113.82-.258.82-.577",
+        "0-.285-.01-1.04-.015-2.04",
+        "-3.338.724-4.042-1.61-4.042-1.61",
+        "-.546-1.387-1.333-1.756-1.333-1.756",
+        "-1.089-.744.084-.729.084-.729",
+        "1.205.084 1.838 1.236 1.838 1.236",
+        "1.07 1.835 2.809 1.305 3.495.998",
+        ".108-.776.417-1.305.76-1.605",
+        "-2.665-.3-5.466-1.332-5.466-5.93",
+        "0-1.31.465-2.38 1.235-3.22",
+        "-.135-.303-.54-1.523.105-3.176",
+        "0 0 1.005-.322 3.3 1.23",
+        ".96-.267 1.98-.399 3-.405",
+        "1.02.006 2.04.138 3 .405",
+        "2.28-1.552 3.285-1.23 3.285-1.23",
+        ".645 1.653.24 2.873.12 3.176",
+        ".765.84 1.23 1.91 1.23 3.22",
+        "0 4.61-2.805 5.625-5.475 5.92",
+        ".42.36.81 1.096.81 2.22",
+        "0 1.606-.015 2.896-.015 3.286",
+        "0 .315.21.69.825.57",
+        "C20.565 22.092 24 17.592 24 12.297",
+        "c0-6.627-5.373-12-12-12",
+    )
+)
+_GITHUB_ICON_SVG = (
+    '<svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" role="img"'
+    ' aria-hidden="true" focusable="false">'
+    f'<path d="{_GITHUB_MARK_PATH}"/>'
+    "</svg>"
+)
 
 
 def site_icon_svg(size: int | None = 22, *, on_dark: bool = False) -> str:
@@ -40,14 +111,16 @@ def site_band_html(
     sources_href: str,
     about_href: str = "/about/",
     current: str | None = None,
-    show_brand: bool = True,
     sources_link_data_attribute: bool = False,
 ) -> str:
-    """The slim navy nav band shared by every page.
+    """The slim navy nav band shared by every page, brand always present.
 
     `current` names the nav entry for this page (`endorsements`, `sources`, or
-    `about`). The guide page passes `show_brand=False` because its hero h1 is
-    the brand; every other page carries the icon-plus-name lockup linking home.
+    `about`). Every page, the guide included, carries the icon-plus-name
+    lockup linking home (UI polish round 4, item L54: the guide's hero h1
+    used to stand in for the brand and suppressed it here; the hero now
+    states the election instead, so the band's brand mark is the one place
+    the site name appears, on every page alike).
     `sources_link_data_attribute` adds the guide's `data-sources-link` hook so
     its script can carry the reader's live selection onto the Sources page.
     """
@@ -59,8 +132,6 @@ def site_band_html(
     sources_extra = " data-sources-link" if sources_link_data_attribute else ""
     brand = (
         f'<a class="site-brand" href="/">{site_icon_svg(on_dark=True)}<span>{SITE_NAME}</span></a>'
-        if show_brand
-        else ""
     )
     return (
         '<div class="site-band">'
@@ -71,6 +142,95 @@ def site_band_html(
         f"{nav_link('About', about_href, 'about')}"
         "</nav></div>"
     )
+
+
+def site_footer_band_html(
+    *,
+    project_url: str,
+    pdf_href: str | None = None,
+    about_href: str = "/about/",
+) -> str:
+    """The navy footer band shared by every page except the 404 (item L55).
+
+    Mirrors `site_band_html`: the same icon+wordmark lockup, linking home,
+    on the left; an icon action cluster on the right — Share, Printable PDF
+    (only on election-scoped pages, when `pdf_href` is given), Contact, and
+    the GitHub mark, which *replaces* a separate "Source and audit files"
+    text link rather than shipping alongside it — plus one text link home to
+    About, framed here as "How this works" rather than the nav band's plain
+    "About". The Share button's own click handling lives in each page's
+    script (see `share-link.mjs`'s `wireFooterShare`); this only renders the
+    button, its icon, and its adjacent live-region status paragraph.
+    """
+
+    def icon_link(label: str, href: str, svg: str) -> str:
+        escaped_href = html.escape(href, quote=True)
+        escaped_label = html.escape(label, quote=True)
+        return (
+            f'<a class="footer-icon-action" href="{escaped_href}" aria-label="{escaped_label}"'
+            f' title="{escaped_label}">{svg}</a>'
+        )
+
+    share_action = (
+        '<button type="button" class="footer-icon-action" data-footer-share'
+        ' aria-label="Share this page" title="Share this page">'
+        f"{_SHARE_ICON_SVG}</button>"
+    )
+    pdf_action = icon_link("Printable PDF", pdf_href, _PDF_ICON_SVG) if pdf_href is not None else ""
+    contact_action = icon_link("Contact", CONTACT_HREF, _ENVELOPE_ICON_SVG)
+    github_action = icon_link("Source and audit files on GitHub", project_url, _GITHUB_ICON_SVG)
+    escaped_about_href = html.escape(about_href, quote=True)
+    brand = (
+        f'<a class="site-footer-brand" href="/">{site_icon_svg(on_dark=True)}'
+        f"<span>{SITE_NAME}</span></a>"
+    )
+    return (
+        '<div class="site-footer-band">'
+        f"{brand}"
+        '<div class="site-footer-actions">'
+        f"{share_action}{pdf_action}{contact_action}{github_action}"
+        f'<a class="site-footer-link" href="{escaped_about_href}">How this works</a>'
+        "</div></div>"
+        '<p class="visually-hidden" role="status" aria-live="polite" data-footer-share-status></p>'
+    )
+
+
+def site_footer_audit_html(
+    *,
+    built_date_display: str,
+    git_commit: str,
+    project_url: str,
+    election_date_display: str | None = None,
+    data_version: str | None = None,
+    source_panel_id: str | None = None,
+    source_panel_hash: str | None = None,
+) -> str:
+    """The compact mono audit line shared by every page (item L55.2).
+
+    Election-scoped pages (the guide, Sources) pass every field: election
+    date, built date, Data/Code hashes, and Panel id+hash, with the Code hash
+    linking to the exact GitHub commit. Global (site-wide) pages like About
+    and the archive have no election or panel to state, so they omit
+    `election_date_display`, `data_version`, `source_panel_id`, and
+    `source_panel_hash` for the site-level variant: built date and the same
+    Code-hash commit link only, still proving which exact revision is live.
+    """
+    commit_url = html.escape(f"{project_url}/commit/{git_commit}", quote=True)
+    escaped_short_commit = html.escape(git_commit[:12])
+    parts: list[str] = []
+    if election_date_display is not None:
+        parts.append(f"Election {html.escape(election_date_display)}")
+    parts.append(f"Built {html.escape(built_date_display)}")
+    if data_version is not None:
+        parts.append(f"Data {html.escape(data_version)}")
+    parts.append(f'Code <a href="{commit_url}">{escaped_short_commit}</a>')
+    line = " &middot; ".join(parts)
+    if source_panel_id is not None and source_panel_hash is not None:
+        line += (
+            f"<br>Panel {html.escape(source_panel_id)} &middot; "
+            f"{html.escape(source_panel_hash[:12])}"
+        )
+    return line
 
 
 def site_head_links_html(origin: str) -> str:

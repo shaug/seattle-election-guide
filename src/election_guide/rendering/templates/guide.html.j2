@@ -145,21 +145,18 @@
   {% set coverage_gap_sources = guide.sources | selectattr('contribution_status', 'equalto', 'coverage_gap') | list %}
   <a class="skip-link" href="#guide-races">Skip to recommendations</a>
 
-  <main class="screen-guide">
+  <main class="page screen-guide">
     {{ site_band | safe }}
     <header class="hero">
+      <p class="detailed-edition-brand">Seattle Elections Guide</p>
       <div class="hero-copy">
-        <div class="hero-kicker">{{ election_display_label }}</div>
-        <h1>Seattle Elections Guide</h1>
+        <div class="hero-kicker">{{ election_day_kicker }}</div>
+        <h1>{{ election_display_label }}</h1>
         <p class="hero-tagline">Seattle&rsquo;s progressive voices, distilled.</p>
         <p class="hero-deck">Endorsement agreement across
           {{ contributing_sources | selectattr('panel_role', 'equalto', 'consensus') | list | length }}
           organizations in {{ guide.metadata.published_race_count }} Seattle races &mdash; every
           claim linked to its source.</p>
-      </div>
-      <div class="hero-meta" aria-label="Guide metadata">
-        <span>Election {{ election_date_display }}</span>
-        <span>{{ guide.metadata.published_race_count }} races</span>
       </div>
     </header>
 
@@ -345,23 +342,8 @@
       {% endfor %}
     </div>
 
-    <footer class="screen-footer">
-      <div class="footer-summary">
-        <div>
-          <p class="eyebrow">About this guide</p>
-          <h2>Agreement, not a candidate grade.</h2>
-        </div>
-        <p>Percentages show agreement among sources that explicitly endorsed in each race.
-          The Seattle Times is a separate comparison signal.</p>
-        <nav class="footer-actions" aria-label="Guide links">
-          <a href="{{ config.pdf_filename }}">Printable PDF</a>
-          <a href="mailto:seattle-elections@dobravoda.dev">Contact</a>
-          <a href="/about/">About &amp; FAQ</a>
-          <a href="{{ config.project_url }}">Source and audit files</a>
-          <button type="button" class="footer-share" data-share-guide>Share this guide</button>
-          <p class="visually-hidden" role="status" aria-live="polite" data-share-guide-status></p>
-        </nav>
-      </div>
+    <footer class="site-footer">
+      {{ site_footer_band | safe }}
       <section class="detailed-source-directory">
         {#
           Issue 108 removed the screen sources tree, whose forced-open
@@ -392,11 +374,7 @@
         </div>
         {% endif %}
       </section>
-      <div class="screen-footer-meta">
-        <span>Election {{ election_date_display }} · Built {{ built_date_display }} · Data {{ guide.metadata.data_version }} · Code {{ guide.metadata.git_commit[:12] }}<br>
-          Panel {{ guide.metadata.source_panel_id }} · {{ guide.metadata.source_panel_hash[:12] }}</span>
-        <a class="detailed-footer-audit" href="{{ config.project_url }}">Source and audit files</a>
-      </div>
+      <div class="site-footer-audit">{{ site_footer_audit | safe }}</div>
     </footer>
   </main>
 
@@ -620,16 +598,7 @@
   // page and the Node tests share one implementation.
   const bindings = JSON.parse(document.querySelector('#lens-bindings').textContent);
 
-  const shareGuideButton = document.querySelector('[data-share-guide]');
-  const shareGuideStatus = document.querySelector('[data-share-guide-status]');
-  shareGuideButton?.addEventListener('click', async () => {
-    const value = window.location.href;
-    const result = await shareOrCopyLink(value, document.title);
-    if (!shareGuideStatus) return;
-    if (result === 'copied') shareGuideStatus.textContent = 'Link copied.';
-    else if (result === 'shared') shareGuideStatus.textContent = 'Share menu opened.';
-    else if (result === 'failed') shareGuideStatus.textContent = `Copy failed. Link: ${value}`;
-  });
+  wireFooterShare();
 
   // Tallying categories and sources are empty while personalization is
   // disabled, so no tallying selection is possible here yet: a shared link

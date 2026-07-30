@@ -25,7 +25,6 @@
   --tone-neutral-bg: #f5f8f9;
   --tone-neutral-text: #52606d;
   --meter-track: #edf2f4;
-  --line-hairline: #7794a8;
   --line-muted: #526f83;
   --hover-tint-bg: #f3f9f8;
   --hover-tint-ring: #c0d8d4;
@@ -55,4 +54,33 @@ a { color: var(--blue); text-underline-offset: .15em; }
 .site-band nav a:hover, .site-band nav a[aria-current="page"] { text-decoration: underline; text-underline-offset: .2em; }
 .site-band a:focus-visible { outline: .2rem solid var(--focus); outline-offset: .15rem; }
 .page-band-rule { height: .4rem; background: var(--teal); }
-.page { max-width: 46rem; margin: 0 auto; background: var(--paper); min-height: 100vh; }
+/* The one frame every page renders at (UI polish round 4, item L53),
+   replacing the old three width systems (guide 76rem / Sources 64rem /
+   base 46rem). A page wanting a narrower reading measure constrains an
+   inner column itself; the frame is the site, the measure is the content. */
+.page { width: 100%; max-width: 76rem; margin: 0 auto; background: var(--paper); min-height: 100vh; }
+/* The one inner reading measure for a page that wants one (About, the
+   archive, the 404): each sets its own padding, so only the shared
+   width/centering lives here. */
+.narrow-main { max-width: 46rem; margin: 0 auto; }
+
+/* Shared page footer (item L55): one navy band mirroring `.site-band`, plus
+   an optional compact mono audit line for election-scoped pages. */
+.site-footer { background: var(--navy); color: var(--white); }
+.site-footer-band { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1.25rem; padding: .6rem clamp(1rem, 4vw, 3rem); }
+.site-footer-brand { display: inline-flex; align-items: center; gap: .55rem; color: var(--white); font-size: .92rem; font-weight: 700; letter-spacing: .01em; text-decoration: none; }
+.site-footer-brand:hover { text-decoration: underline; text-underline-offset: .2em; }
+.site-footer-brand svg { display: block; flex: 0 0 auto; }
+.site-footer-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .15rem; margin-left: auto; }
+.footer-icon-action { display: inline-flex; align-items: center; justify-content: center; width: 2.5rem; height: 2.5rem; padding: 0; border: 0; border-radius: .3rem; background: none; color: var(--mint); cursor: pointer; }
+.footer-icon-action:hover { background: rgba(255, 255, 255, .12); }
+.footer-icon-action svg { display: block; }
+.site-footer-link { margin-left: .3rem; color: var(--mint); font-size: .8rem; font-weight: 700; text-decoration: none; white-space: nowrap; }
+.site-footer-link:hover { text-decoration: underline; text-underline-offset: .2em; }
+.site-footer-band a:focus-visible, .site-footer-band button:focus-visible { outline: .2rem solid var(--focus); outline-offset: -.15rem; }
+.site-footer-audit { padding: .7rem clamp(1rem, 4vw, 3rem); border-top: 1px solid #526f83; color: #9fb3c8; font-size: .68rem; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.site-footer-audit a { color: var(--mint); font-weight: 700; }
+
+@media (max-width: 720px) {
+  .site-footer-actions { margin-left: 0; }
+}

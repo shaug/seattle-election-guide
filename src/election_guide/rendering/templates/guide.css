@@ -1,12 +1,18 @@
-.screen-guide { width: 100%; max-width: 76rem; margin: 0 auto; background: var(--paper); min-height: 100vh; }
-.hero { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 1.5rem 3rem; color: var(--white); background: var(--navy); padding: clamp(1.1rem, 2.5vw, 1.9rem) clamp(1rem, 4vw, 3rem); border-bottom: .4rem solid var(--teal); }
+/* .screen-guide is now a bare marker class for JS/print selectors; the
+   guide's root also carries `.page`, which supplies the shared 76rem frame
+   width (item L53). */
+.hero { color: var(--white); background: var(--navy); padding: clamp(1.1rem, 2.5vw, 1.9rem) clamp(1rem, 4vw, 3rem); border-bottom: .4rem solid var(--teal); }
 .hero-kicker, .eyebrow { color: var(--mint); font-size: .78rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
 .eyebrow-paper { color: var(--teal); }
 .hero h1 { max-width: 25ch; margin: .25rem 0 .45rem; font: 700 clamp(2rem, 4.2vw, 3.2rem)/1.02 var(--screen-serif); letter-spacing: -.012em; }
 .hero-tagline { max-width: 48rem; margin: 0 0 .3rem; color: var(--white); font-size: clamp(1.02rem, 1.8vw, 1.22rem); font-weight: 500; }
 .hero-deck { max-width: 48rem; margin: 0; color: var(--sky); font-size: clamp(.88rem, 1.4vw, .98rem); }
 .hero-deck a { color: var(--mint); font-weight: 700; }
-.hero-meta { display: grid; gap: .24rem; min-width: 13rem; padding-left: 1.25rem; border-left: 1px solid var(--line-hairline); color: var(--sky); font-size: .76rem; text-align: right; }
+/* Print-only identity line for the detailed/overflow PDF edition, which
+   hides the interactive band (see the detailed-edition print rules below);
+   the band already carries the brand on screen, so this stays invisible
+   there. */
+.detailed-edition-brand { display: none; }
 .sticky-header { position: sticky; top: 0; z-index: 5; }
 .screen-controls { display: grid; grid-template-columns: minmax(15rem, 1.1fr) repeat(2, minmax(12rem, .85fr)) minmax(10rem, .7fr); align-items: end; gap: .65rem 1rem; padding: .65rem clamp(1rem, 4vw, 3rem); background: var(--paper); border-bottom: 1px solid var(--line); box-shadow: 0 .1rem .4rem rgba(16,42,67,.06); }
 .race-filter-control { display: grid; min-width: 0; gap: .2rem; }
@@ -155,15 +161,9 @@ a.race-detail-source-row:hover strong { text-decoration: underline; text-underli
 .race-detail-missing .race-detail-source-list { margin-top: .5rem; border: 1px solid var(--line-soft); background: #f8fafb; }
 .race-detail-missing .race-detail-source-row { min-height: 2.3rem; padding-top: .4rem; padding-bottom: .4rem; }
 .race-detail-missing .race-detail-source-row strong, .race-detail-missing .race-detail-source-status { color: var(--faint); font-weight: 600; }
-.screen-footer { background: var(--navy); color: var(--white); }
-.footer-summary { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr) auto; align-items: center; gap: 1.25rem 2.5rem; padding: 1.4rem clamp(1rem, 4vw, 3rem); }
-.footer-summary h2 { margin: .15rem 0 0; font-size: 1.25rem; line-height: 1.1; }
-.footer-summary p { margin: 0; color: var(--sky); font-size: .86rem; }
-.footer-summary a { color: var(--mint); font-size: .82rem; font-weight: 700; white-space: nowrap; }
-.footer-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .45rem 1rem; }
-.footer-share { padding: 0; border: 0; background: none; color: var(--mint); font: inherit; font-size: .82rem; font-weight: 700; white-space: nowrap; cursor: pointer; }
-.footer-share:hover { text-decoration: underline; text-underline-offset: .15em; }
-.footer-share:focus-visible { outline: .2rem solid var(--focus); outline-offset: .15rem; }
+/* The shared footer band/audit classes (.site-footer, .site-footer-band,
+   .site-footer-audit, ...) now live in base.css alongside .site-band, since
+   About and the archive render them too without loading this stylesheet. */
 .sources-comparison-status:empty { display: none; }
 .sources-comparison-status { margin: 0 0 .5rem; padding: .5rem .75rem; border-left: .25rem solid var(--tone-differ-border); background: var(--tone-differ-bg); color: var(--tone-differ-text); font-size: .85rem; font-weight: 600; }
 .detailed-source-directory { display: none; }
@@ -194,10 +194,6 @@ a.race-detail-source-row:hover strong { text-decoration: underline; text-underli
 .coverage-gap-row a { min-width: 0; color: var(--navy); font-size: .8rem; font-weight: 700; overflow-wrap: anywhere; }
 .coverage-gap-row strong { color: var(--muted); font-size: .68rem; white-space: nowrap; }
 .coverage-gap-row p { margin: .35rem 0 0; color: var(--muted); font-size: .72rem; line-height: 1.35; }
-.screen-footer-meta { display: flex; justify-content: space-between; gap: 1rem; padding: .7rem clamp(1rem, 4vw, 3rem); border-top: 1px solid var(--line-muted); color: #9fb3c8; font-size: .68rem; }
-.screen-footer-meta span { min-width: 0; overflow-wrap: anywhere; }
-.screen-footer-meta a { color: var(--mint); font-weight: 700; white-space: nowrap; }
-.detailed-footer-audit { display: none; }
 .print-guide { display: none; }
 
 @media (max-width: 1050px) {
@@ -208,21 +204,16 @@ a.race-detail-source-row:hover strong { text-decoration: underline; text-underli
 
 @media (max-width: 720px) {
   .site-band nav { margin-left: 0; }
-  .hero { grid-template-columns: 1fr; gap: 1rem; }
   .hero h1 { max-width: 18ch; }
-  .hero-meta { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: .8rem 0 0; border-top: 1px solid var(--line-hairline); border-left: 0; text-align: left; }
   .sticky-header { position: static; }
   .screen-controls { grid-template-columns: 1fr; }
   .screen-controls p { grid-column: auto; justify-content: flex-start; justify-self: start; text-align: left; }
   .view-setting { width: 100%; }
   html.compact-ballot-mode .race-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .race-grid, .footer-summary, .screen-coverage-gaps, .coverage-gap-columns { grid-template-columns: 1fr; }
+  .race-grid, .screen-coverage-gaps, .coverage-gap-columns { grid-template-columns: 1fr; }
   .sources-columns { column-count: 1; }
   .sources-row { grid-template-columns: minmax(0, 1fr); gap: .15rem; }
   .sources-count { justify-self: start; white-space: normal; }
-  .footer-summary { gap: .8rem; }
-  .footer-actions { justify-content: flex-start; }
-  .screen-footer-meta { flex-direction: column; }
   .race-card { min-width: 0; }
   .screen-race-result { grid-template-columns: minmax(0, 1fr) 8.75rem; gap: .6rem; }
   .screen-meter { width: 8.75rem; }
@@ -355,11 +346,16 @@ a.race-detail-source-row:hover strong { text-decoration: underline; text-underli
   html.detailed-edition .screen-guide { display: block !important; max-width: none; min-height: 0; background: white; font-family: var(--print-sans); }
   html.detailed-edition .skip-link, html.detailed-edition .site-band,
   html.detailed-edition .screen-controls { display: none !important; }
-  html.detailed-edition .hero { display: block; padding: .3in; border-bottom-width: .08in; }
+  /* The hero no longer states the brand (item L54); this plain-text,
+     link-free line (hidden on screen; see .detailed-edition-brand in the
+     screen ruleset below) keeps "Seattle Elections Guide" identifiable on
+     the first page without reintroducing an interactive band link into a
+     print/PDF context. */
+  html.detailed-edition .detailed-edition-brand { display: block; margin: .3in .3in 0; color: var(--navy); font: 700 13pt/1 var(--print-sans); }
+  html.detailed-edition .hero { padding: .1in .3in .3in; border-bottom-width: .08in; }
   html.detailed-edition .hero h1 { margin: .05in 0; font-size: 26pt; }
   html.detailed-edition .hero-tagline { margin: .05in 0; font-size: 11pt; }
   html.detailed-edition .hero-deck { margin: .05in 0; font-size: 10pt; }
-  html.detailed-edition .hero-meta { display: flex; flex-wrap: wrap; gap: .05in .18in; margin-top: .1in; padding-left: 0; border-left: 0; font-size: 8pt; text-align: left; }
   html.detailed-edition .screen-sections { padding: .1in 0; }
   html.detailed-edition .screen-section { margin: .12in 0 .2in; }
   html.detailed-edition .section-heading h2 { margin: 0 0 .08in; font-size: 18pt; }
@@ -369,9 +365,13 @@ a.race-detail-source-row:hover strong { text-decoration: underline; text-underli
   html.detailed-edition .race-office, html.detailed-edition .support-line,
   html.detailed-edition .comparison, html.detailed-edition .insufficient-note { font-size: 8pt; }
   html.detailed-edition .race-card details,
-  html.detailed-edition .footer-summary { display: none; }
-  html.detailed-edition .screen-footer { background: white; color: var(--ink); }
-  html.detailed-edition .detailed-footer-audit { display: inline; }
+  html.detailed-edition .site-footer-band { display: none; }
+  html.detailed-edition .site-footer { background: white; color: var(--ink); }
+  /* The audit line's own Code-hash link already gives this edition a way to
+     verify the build, so (unlike the old dedicated detailed-only link) it
+     just stays visible, recolored for the white background. */
+  html.detailed-edition .site-footer-audit { border-top-color: var(--line); color: var(--muted); }
+  html.detailed-edition .site-footer-audit a { color: var(--blue); }
   html.detailed-edition .detailed-source-directory { display: block; padding: .12in .3in .2in; }
   html.detailed-edition .detailed-source-directory h2 { margin: 0 0 .08in; font-size: 14pt; }
   html.detailed-edition .detailed-source-directory h3 { margin: .1in 0 .04in; font-size: 9pt; }

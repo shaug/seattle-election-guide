@@ -41,7 +41,12 @@ from election_guide.rendering.models import (
     RenderingConfiguration,
     RenderingValidationReport,
 )
-from election_guide.rendering.shell import site_band_html, site_head_links_html
+from election_guide.rendering.shell import (
+    site_band_html,
+    site_footer_audit_html,
+    site_footer_band_html,
+    site_head_links_html,
+)
 from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
 
 TEMPLATE_DIR = Path(__file__).parent / "templates"
@@ -147,6 +152,8 @@ def render_html_document(
     }
     guide_path = f"/e/{view_model.metadata.election_id}/"
     sources_page_url = f"{configuration.public_site_url}{guide_path}sources/"
+    election_date_display = display_date(view_model.metadata.election_date)
+    built_date_display = display_date(view_model.metadata.generated_at.date().isoformat())
     return template.render(
         **_personalization_lookup_context(view_model),
         guide=view_model,
@@ -161,13 +168,25 @@ def render_html_document(
             guide_href=guide_path,
             sources_href=sources_page_url,
             current="endorsements",
-            # The guide's own hero h1 is the brand, so its band carries nav only.
-            show_brand=False,
             sources_link_data_attribute=True,
         ),
         site_head_links=site_head_links_html(configuration.public_site_url),
-        election_date_display=_display_date(view_model.metadata.election_date),
-        built_date_display=_display_date(view_model.metadata.generated_at.date().isoformat()),
+        election_date_display=election_date_display,
+        built_date_display=built_date_display,
+        election_day_kicker=_election_day_kicker(view_model.metadata.election_date),
+        site_footer_band=site_footer_band_html(
+            project_url=configuration.project_url,
+            pdf_href=configuration.pdf_filename,
+        ),
+        site_footer_audit=site_footer_audit_html(
+            election_date_display=election_date_display,
+            built_date_display=built_date_display,
+            data_version=view_model.metadata.data_version,
+            git_commit=view_model.metadata.git_commit,
+            source_panel_id=view_model.metadata.source_panel_id,
+            source_panel_hash=view_model.metadata.source_panel_hash,
+            project_url=configuration.project_url,
+        ),
         filter_options=_filter_options(view_model),
         source_category_label_by_key=source_category_label_by_key,
         source_cells_by_race_id=source_cells_by_race_id,
@@ -186,12 +205,26 @@ def render_html_document(
     )
 
 
-def render_sources_document(view_model: PublicationViewModel, *, public_site_url: str) -> str:
+def render_sources_document(
+    view_model: PublicationViewModel,
+    *,
+    public_site_url: str,
+    project_url: str | None = None,
+    pdf_filename: str | None = None,
+) -> str:
     """Render the standalone per-election sources/customization page (issue 107).
 
     Purely a selection editor: it reads a selection from its own incoming URL
     fragment and writes one back on Save, but never scores anything, so it
     inlines only the fragment codec, not the scoring engine the guide needs.
+    `project_url` and `pdf_filename` feed the shared footer (item L55): a
+    caller that omits `project_url` gets no footer band or audit line at
+    all (both need it), and one that omits `pdf_filename` gets a footer
+    without a Printable PDF action, exactly like the shared footer's own
+    general fallback behavior. Every real caller (`hosting/pages.py`)
+    supplies `project_url`, so the page always renders its footer in
+    production; this only matters for a caller (e.g. a test) that renders
+    the page without it.
     """
     environment = _template_environment()
     template = environment.get_template("sources.html.j2")
@@ -199,19 +232,42 @@ def render_sources_document(view_model: PublicationViewModel, *, public_site_url
         TEMPLATE_DIR / "guide.css"
     ).read_text(encoding="utf-8")
     lens_url_script = (TEMPLATE_DIR / "lens-url.mjs").read_text(encoding="utf-8")
+    share_link_script = (TEMPLATE_DIR / "share-link.mjs").read_text(encoding="utf-8")
     guide_path = f"/e/{view_model.metadata.election_id}/"
+    pdf_href = f"{guide_path}{pdf_filename}" if pdf_filename is not None else None
     return template.render(
         **_personalization_lookup_context(view_model),
         guide=view_model,
         public_site_url=public_site_url,
         stylesheet=stylesheet,
         lens_url_script=lens_url_script,
+        share_link_script=share_link_script,
         site_band=site_band_html(
             guide_href=guide_path,
             sources_href=f"{guide_path}sources/",
             current="sources",
         ),
         site_head_links=site_head_links_html(public_site_url),
+        site_footer_band=(
+            site_footer_band_html(project_url=project_url, pdf_href=pdf_href)
+            if project_url is not None
+            else None
+        ),
+        site_footer_audit=(
+            site_footer_audit_html(
+                election_date_display=display_date(view_model.metadata.election_date),
+                built_date_display=display_date(
+                    view_model.metadata.generated_at.date().isoformat()
+                ),
+                data_version=view_model.metadata.data_version,
+                git_commit=view_model.metadata.git_commit,
+                source_panel_id=view_model.metadata.source_panel_id,
+                source_panel_hash=view_model.metadata.source_panel_hash,
+                project_url=project_url,
+            )
+            if project_url is not None
+            else None
+        ),
     )
 
 
@@ -246,7 +302,7 @@ def _require_web_url(value: str) -> None:
         raise ValueError(f"rendered link is not a safe HTTP(S) URL: {value!r}")
 
 
-def _display_date(iso_date: str) -> str:
+def display_date(iso_date: str) -> str:
     """Human display form ("August 4, 2026") for an ISO date string.
 
     Reader-facing surfaces use this form; data files and version identifiers
@@ -254,6 +310,15 @@ def _display_date(iso_date: str) -> str:
     """
     parsed = date.fromisoformat(iso_date)
     return f"{parsed:%B} {parsed.day}, {parsed.year}"
+
+
+def _election_day_kicker(iso_date: str) -> str:
+    """The guide hero's kicker (UI polish round 4, item L54): the exact
+    election day, templated per election ("ELECTION DAY · AUGUST 4"). The
+    hero h1 already states the month and year, so the kicker states only the
+    day at a coarser precision, once each."""
+    parsed = date.fromisoformat(iso_date)
+    return f"ELECTION DAY · {parsed:%B} {parsed.day}".upper()
 
 
 def _concise_warning_labels(race: PublicationRace) -> list[str]:
@@ -678,12 +743,15 @@ def validate_rendered_guide(
                 )
     expected_html_links = {
         "#guide-races",
+        "/",  # the band's and footer's brand mark both link home (item L54/L55)
         f"/e/{view_model.metadata.election_id}/",
         f"{configuration.public_site_url}/e/{view_model.metadata.election_id}/sources/",
         configuration.pdf_filename,
         "mailto:seattle-elections@dobravoda.dev",
         "/about/",
         configuration.project_url,
+        # The footer audit line's Code hash links to the exact commit (item L55.2).
+        f"{configuration.project_url}/commit/{view_model.metadata.git_commit}",
         *(f"#race-{race.id}" for race in expected_races),
         *(source.evidence_url for source in view_model.sources),
         *(
@@ -793,8 +861,8 @@ def validate_rendered_guide(
         "Overlap and limitations",
         "Verify before voting",
         view_model.methodology.verification_instructions,
-        f"Election {_display_date(view_model.metadata.election_date)}",
-        f"Built {_display_date(view_model.metadata.generated_at.date().isoformat())}",
+        f"Election {display_date(view_model.metadata.election_date)}",
+        f"Built {display_date(view_model.metadata.generated_at.date().isoformat())}",
         f"Data {view_model.metadata.data_version}",
         f"Code {view_model.metadata.git_commit[:12]}",
         f"Panel {view_model.metadata.source_panel_version}",
@@ -896,11 +964,13 @@ def validate_rendered_guide(
     ]
     detailed_metadata = detailed_reader.metadata if detailed_reader is not None else None
     detailed_links = _pdf_links(detailed_reader) if detailed_reader is not None else []
-    # The interactive sources link lives in the screen-only nav band, which the
-    # print-oriented detailed edition hides; its own links are the audit trail
-    # and every source's evidence URL.
+    # The interactive band and footer-band links are hidden in this
+    # print-oriented edition (a plain, link-free text line carries the brand
+    # identity instead; see .detailed-edition-brand), so only the footer's
+    # audit trail (its Code hash link) and every source's evidence URL
+    # remain visible.
     expected_detailed_links = {
-        configuration.project_url,
+        f"{configuration.project_url}/commit/{view_model.metadata.git_commit}",
         *(source.evidence_url for source in view_model.sources),
     }
     detailed_links_valid = detailed_reader is None or (
