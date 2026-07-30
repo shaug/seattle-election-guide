@@ -47,3 +47,5 @@ a { color: var(--blue); text-underline-offset: .15em; }
 .site-band nav a { color: var(--mint); font-size: .8rem; font-weight: 700; text-decoration: none; white-space: nowrap; }
 .site-band nav a:hover, .site-band nav a[aria-current="page"] { text-decoration: underline; text-underline-offset: .2em; }
 .site-band a:focus-visible { outline: .2rem solid var(--focus); outline-offset: .15rem; }
+.page-band-rule { height: .4rem; background: var(--teal); }
+.page { max-width: 46rem; margin: 0 auto; background: var(--paper); min-height: 100vh; }

@@ -11,14 +11,11 @@
   <meta property="og:title" content="{{ config.title }}">
   <meta property="og:description" content="{{ config.subject }}">
   <meta property="og:url" content="{{ canonical_url }}">
-  <meta property="og:image" content="{{ config.public_site_url }}/og-image.png">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="{{ config.title }}">
   <meta name="twitter:description" content="{{ config.subject }}">
   <link rel="canonical" href="{{ canonical_url }}">
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  {{ site_head_links | safe }}
   <title>{{ config.title }}</title>
   <style>{{ stylesheet | safe }}</style>
 </head>

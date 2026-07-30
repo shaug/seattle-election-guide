@@ -41,7 +41,7 @@ from election_guide.rendering.models import (
     RenderingConfiguration,
     RenderingValidationReport,
 )
-from election_guide.rendering.shell import site_band_html
+from election_guide.rendering.shell import site_band_html, site_head_links_html
 from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
 
 TEMPLATE_DIR = Path(__file__).parent / "templates"
@@ -165,6 +165,7 @@ def render_html_document(
             show_brand=False,
             sources_link_data_attribute=True,
         ),
+        site_head_links=site_head_links_html(configuration.public_site_url),
         election_date_display=_display_date(view_model.metadata.election_date),
         built_date_display=_display_date(view_model.metadata.generated_at.date().isoformat()),
         filter_options=_filter_options(view_model),
@@ -210,6 +211,7 @@ def render_sources_document(view_model: PublicationViewModel, *, public_site_url
             sources_href=f"{guide_path}sources/",
             current="sources",
         ),
+        site_head_links=site_head_links_html(public_site_url),
     )
 
 

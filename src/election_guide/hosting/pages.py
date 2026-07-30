@@ -20,7 +20,7 @@ from election_guide.hosting.models import (
 from election_guide.publication.models import PublicationViewModel
 from election_guide.release.models import ReleaseManifest, ReleaseStatus
 from election_guide.rendering.renderer import TEMPLATE_DIR, render_sources_document
-from election_guide.rendering.shell import favicon_svg, site_band_html
+from election_guide.rendering.shell import favicon_svg, site_band_html, site_head_links_html
 from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
 
 PAGES_HEADERS = """/*
@@ -450,7 +450,7 @@ def _archive_html(site_manifest: SiteManifest) -> str:
         for election in site_manifest.elections
     )
     canonical_url = f"{site_manifest.canonical_origin}/e/"
-    escaped_og_image = html.escape(f"{site_manifest.canonical_origin}/og-image.png", quote=True)
+    head_links = site_head_links_html(site_manifest.canonical_origin)
     current_path = f"/e/{site_manifest.current_election_id}/"
     base_css = (TEMPLATE_DIR / "base.css").read_text(encoding="utf-8")
     band = site_band_html(
@@ -466,16 +466,11 @@ def _archive_html(site_manifest: SiteManifest) -> str:
   <meta property="og:type" content="website">
   <meta property="og:title" content="Guide archive &mdash; Seattle Elections Guide">
   <meta property="og:url" content="{html.escape(canonical_url, quote=True)}">
-  <meta property="og:image" content="{escaped_og_image}">
   <link rel="canonical" href="{html.escape(canonical_url, quote=True)}">
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  {head_links}
   <title>Guide archive &mdash; Seattle Elections Guide</title>
   <style>
     {base_css}
-    .page {{ max-width: 46rem; margin: 0 auto; background: var(--paper); min-height: 100vh; }}
-    .page-band-rule {{ height: .4rem; background: var(--teal); }}
     main {{ padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 3rem; }}
     main h1 {{
       margin: 0 0 .35rem; color: var(--navy);
@@ -526,7 +521,7 @@ def _about_html(site_manifest: SiteManifest) -> str:
     )
     escaped_description = html.escape(description, quote=True)
     escaped_canonical = html.escape(canonical_url, quote=True)
-    escaped_og_image = html.escape(f"{site_manifest.canonical_origin}/og-image.png", quote=True)
+    head_links = site_head_links_html(site_manifest.canonical_origin)
     escaped_current_path = html.escape(current_path, quote=True)
     escaped_election_name = html.escape(current.name)
     band = site_band_html(
@@ -544,19 +539,14 @@ def _about_html(site_manifest: SiteManifest) -> str:
   <meta property="og:title" content="About &mdash; Seattle Elections Guide">
   <meta property="og:description" content="{escaped_description}">
   <meta property="og:url" content="{escaped_canonical}">
-  <meta property="og:image" content="{escaped_og_image}">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="About &mdash; Seattle Elections Guide">
   <meta name="twitter:description" content="{escaped_description}">
   <link rel="canonical" href="{escaped_canonical}">
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  {head_links}
   <title>About &amp; FAQ &mdash; Seattle Elections Guide</title>
   <style>
     {base_css}
-    .page {{ max-width: 46rem; margin: 0 auto; background: var(--paper); min-height: 100vh; }}
-    .page-band-rule {{ height: .4rem; background: var(--teal); }}
     main {{ padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 3rem; }}
     main h1 {{
       margin: 0 0 .35rem; color: var(--navy);

@@ -73,6 +73,21 @@ def site_band_html(
     )
 
 
+def site_head_links_html(origin: str) -> str:
+    """The brand-asset head block shared by every page: icons and og:image.
+
+    `origin` is the canonical https origin used for the absolute og:image URL;
+    the icon links stay root-relative so any origin serves its own copies.
+    """
+    escaped_origin = html.escape(origin, quote=True)
+    return (
+        f'<meta property="og:image" content="{escaped_origin}/og-image.png">\n'
+        '  <link rel="icon" href="/favicon.svg" type="image/svg+xml">\n'
+        '  <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">\n'
+        '  <link rel="apple-touch-icon" href="/apple-touch-icon.png">'
+    )
+
+
 def favicon_svg() -> str:
     """The standalone SVG favicon asset (navy tile on any tab background)."""
     return site_icon_svg(None)
