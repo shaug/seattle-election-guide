@@ -47,6 +47,7 @@ from election_guide.rendering.renderer import (
     _CdpSocket,  # pyright: ignore[reportPrivateUsage]
     _comparison_candidate_cells,  # pyright: ignore[reportPrivateUsage]
     _detailed_pdf_race_values,  # pyright: ignore[reportPrivateUsage]
+    _has_no_majority,  # pyright: ignore[reportPrivateUsage]
     _missing_pdf_race_values,  # pyright: ignore[reportPrivateUsage]
     _pdf_race_core_values,  # pyright: ignore[reportPrivateUsage]
     _pdf_race_display_values,  # pyright: ignore[reportPrivateUsage]
@@ -682,6 +683,44 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert 'style="--meter-fill: ' in html
 
 
+def test_no_majority_uses_the_exact_unrounded_share_across_screen_dialog_and_print(
+    tmp_path: Path,
+) -> None:
+    view_model = _view_model(tmp_path)
+    configuration = read_rendering_configuration(RENDERING_CONFIG)
+    target = next(
+        race
+        for section in view_model.sections
+        for race in section.races
+        if race.winner_share is not None
+    )
+    target.winner_share = "1/2"
+    target.percentage_whole = 50
+    target.percentage_label = "50%"
+
+    assert _has_no_majority(target) is True
+    html = render_html_document(view_model, configuration)
+    card_start = html.index(f'data-publication-race-id="{target.id}"')
+    card_end = html.index("</article>", card_start)
+    card_html = html[card_start:card_end]
+    assert re.search(r'<p class="no-majority-pill"[^>]*>No majority</p>', card_html)
+    assert 'class="screen-meter meter-no-majority"' in card_html
+    assert "No majority · Leading choice" in card_html
+    assert 'class="race-detail-meter meter-no-majority"' in card_html
+    assert "No majority. Consensus among explicitly endorsing sources: 50%" in card_html
+    assert 'class="print-meter meter-no-majority" style="--meter-fill: 50%"' in html
+
+    target.winner_share = "5001/10000"
+    assert _has_no_majority(target) is False
+    above_half_html = render_html_document(view_model, configuration)
+    above_half_card_start = above_half_html.index(f'data-publication-race-id="{target.id}"')
+    above_half_card_end = above_half_html.index("</article>", above_half_card_start)
+    above_half_card = above_half_html[above_half_card_start:above_half_card_end]
+    assert re.search(r'<p class="no-majority-pill" hidden[^>]*>No majority</p>', above_half_card)
+    assert 'class="screen-meter meter-no-majority"' not in above_half_card
+    assert "No majority · Leading choice" not in above_half_card
+
+
 def test_round4_card_anatomy_and_data_ink_cleanup(tmp_path: Path) -> None:
     """docs/UI_POLISH.md round-4 items I39/H38/H34/H36/H37/I40/I41/I42."""
     view_model = _view_model(tmp_path)
@@ -708,7 +747,10 @@ def test_round4_card_anatomy_and_data_ink_cleanup(tmp_path: Path) -> None:
     low_fill_html = render_html_document(low_fill_model, configuration)
     meter_start = low_fill_html.index(f'id="race-{leading_race_id}"')
     meter_end = low_fill_html.index("</dialog>", meter_start)
-    assert 'class="screen-meter meter-low-fill"' in low_fill_html[meter_start:meter_end]
+    assert (
+        'class="screen-meter meter-no-majority meter-low-fill"'
+        in low_fill_html[meter_start:meter_end]
+    )
 
     high_fill_model = view_model.model_copy(deep=True)
     high_fill_race = next(
@@ -917,6 +959,37 @@ def test_print_layout_rejects_unstable_pill_geometry(
     )
 
     with pytest.raises(PrintLayoutError, match=expected_issue):
+        _validate_print_layout(
+            html_path,
+            find_chrome(),
+            minimum_font_points=read_rendering_configuration(
+                RENDERING_CONFIG
+            ).minimum_print_font_points,
+        )
+
+
+def test_print_layout_rejects_teal_no_majority_meter(tmp_path: Path) -> None:
+    view_model = _view_model(tmp_path / "fixture")
+    target = next(
+        race
+        for section in view_model.sections
+        for race in section.races
+        if race.winner_share is not None
+    )
+    target.winner_share = "1/2"
+    target.percentage_whole = 50
+    target.percentage_label = "50%"
+    html_path = tmp_path / "teal-no-majority.html"
+    html = render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG))
+    html_path.write_text(
+        html.replace(
+            "var(--amber) 0 var(--meter-fill)",
+            "var(--teal) 0 var(--meter-fill)",
+        ),
+        encoding="utf-8",
+    )
+
+    with pytest.raises(PrintLayoutError, match=r"print-meter\[\d+\]-treatment"):
         _validate_print_layout(
             html_path,
             find_chrome(),
@@ -2931,6 +3004,64 @@ def test_phone_dialog_metrics_fit_the_longest_live_content_at_320px(tmp_path: Pa
     assert result["countWithin"] is True
     assert result["actionsWithin"] is True
     assert result["actionSizes"] == [[40, 40], [40, 40]]
+
+
+def test_no_majority_lens_state_appears_and_dissolves_with_the_selected_sources(
+    tmp_path: Path,
+) -> None:
+    view_model = _personalization_enabled_view_model(tmp_path)
+    source_code_by_id = {source.id: source.code for source in view_model.personalization.sources}
+    split_code = source_code_by_id["washington-working-families-party"]
+    majority_code = source_code_by_id["the-urbanist"]
+    split_fragment = _lens_fragment(view_model, mode="s", source_codes=(split_code,))
+    majority_fragment = _lens_fragment(
+        view_model,
+        mode="s",
+        source_codes=tuple(sorted((split_code, majority_code))),
+    )
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+
+    result = _evaluate_in_chrome(
+        html_path,
+        f"""
+        (async () => {{
+          const pause = () => new Promise((resolve) => setTimeout(resolve, 100));
+          const card = document.querySelector('[data-publication-race-id="king-county-assessor"]');
+          const snapshot = () => {{
+            const meter = card.querySelector('[data-lens-share]');
+            const pill = card.querySelector('[data-lens-no-majority]');
+            const kicker = card.querySelector('[data-race-detail-lens-kicker]:not([hidden])');
+            return {{
+              pillHidden: pill.hidden,
+              amberMeter: meter.classList.contains('meter-no-majority'),
+              accessibleName: meter.getAttribute('aria-label'),
+              kicker: kicker?.textContent ?? null,
+            }};
+          }};
+          await pause();
+          const split = snapshot();
+          window.location.hash = {json.dumps(majority_fragment)};
+          await pause();
+          return JSON.stringify({{ split, majority: snapshot() }});
+        }})()
+        """,
+        initial_url=f"{html_path.resolve().as_uri()}#{split_fragment}",
+    )
+
+    assert result["split"] == {
+        "pillHidden": False,
+        "amberMeter": True,
+        "accessibleName": "No majority. Consensus among explicitly endorsing sources: 50%",
+        "kicker": "No majority · Tied for lead",
+    }
+    assert result["majority"]["pillHidden"] is True
+    assert result["majority"]["amberMeter"] is False
+    assert not result["majority"]["accessibleName"].startswith("No majority")
+    assert result["majority"]["kicker"] == "Leading choice"
 
 
 def test_full_race_card_stacks_name_and_meter_below_480px(tmp_path: Path) -> None:

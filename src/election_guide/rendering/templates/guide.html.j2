@@ -124,10 +124,10 @@
              can show it for whichever candidate(s) become the personalized
              leader instead — a candidate the audited baseline does not lead
              can become the personalized leader, and vice versa. #}
-          <p{% if not is_leader %} hidden{% endif %} data-lens-hidden>{% if race.support_leader_candidate_ids | length > 1 %}Tied for lead{% else %}Leading choice{% endif %}</p>
+          <p{% if not is_leader %} hidden{% endif %} data-lens-hidden>{% if has_no_majority(race) %}No majority · {% endif %}{% if race.support_leader_candidate_ids | length > 1 %}Tied for lead{% else %}Leading choice{% endif %}</p>
           <p class="lens-value" data-lens-only data-race-detail-lens-kicker hidden></p>
           {% elif is_leader %}
-          <p>{% if race.support_leader_candidate_ids | length > 1 %}Tied for lead{% else %}Leading choice{% endif %}</p>
+          <p>{% if has_no_majority(race) %}No majority · {% endif %}{% if race.support_leader_candidate_ids | length > 1 %}Tied for lead{% else %}Leading choice{% endif %}</p>
           {% endif %}
           <h4>{{ candidate_label }}</h4>
         </div>
@@ -142,7 +142,7 @@
           <div class="race-detail-meter race-detail-meter-na"{% if not is_leader %} hidden{% endif %} data-lens-hidden
             role="img" aria-label="{{ screen_share_accessible_label(race) }}"><strong>N/A</strong></div>
           {% else %}
-          <div class="race-detail-meter{% if race.percentage_whole < 30 %} meter-low-fill{% endif %}"{% if not is_leader %} hidden{% endif %} data-lens-hidden
+          <div class="race-detail-meter{% if has_no_majority(race) %} meter-no-majority{% endif %}{% if race.percentage_whole < 30 %} meter-low-fill{% endif %}"{% if not is_leader %} hidden{% endif %} data-lens-hidden
             style="--meter-fill: {{ race.percentage_whole }}%"
             role="img" aria-label="{{ screen_share_accessible_label(race) }}">
             <strong>{{ race.percentage_label }}</strong>
@@ -155,7 +155,7 @@
           <div class="race-detail-meter race-detail-meter-na" role="img"
             aria-label="{{ screen_share_accessible_label(race) }}"><strong>N/A</strong></div>
           {% else %}
-          <div class="race-detail-meter{% if race.percentage_whole < 30 %} meter-low-fill{% endif %}" style="--meter-fill: {{ race.percentage_whole }}%"
+          <div class="race-detail-meter{% if has_no_majority(race) %} meter-no-majority{% endif %}{% if race.percentage_whole < 30 %} meter-low-fill{% endif %}" style="--meter-fill: {{ race.percentage_whole }}%"
             role="img" aria-label="{{ screen_share_accessible_label(race) }}">
             <strong>{{ race.percentage_label }}</strong>
           </div>
@@ -274,7 +274,7 @@
                   <strong>N/A</strong>
                 </div>
                 {% else %}
-                <div class="screen-meter{% if race.percentage_whole < 30 %} meter-low-fill{% endif %}" style="--meter-fill: {{ race.percentage_whole }}%"
+                <div class="screen-meter{% if has_no_majority(race) %} meter-no-majority{% endif %}{% if race.percentage_whole < 30 %} meter-low-fill{% endif %}" style="--meter-fill: {{ race.percentage_whole }}%"
                   role="img" data-display-role="share"
                   aria-label="{{ screen_share_accessible_label(race) }}"{% if guide.personalization.policy.enabled %} data-lens-hidden{% endif %}>
                   <strong>{{ race.percentage_label }}</strong>
@@ -291,6 +291,10 @@
                  Times) renders at the card foot below, after the
                  insufficiency warning, never interleaved with this caption. #}
               <div class="screen-race-context">
+                <p class="no-majority-pill"{% if not has_no_majority(race) %} hidden{% endif %}{% if guide.personalization.policy.enabled %} data-lens-hidden{% endif %}>No majority</p>
+                {% if guide.personalization.policy.enabled %}
+                <p class="no-majority-pill lens-value" data-lens-only data-lens-no-majority hidden>No majority</p>
+                {% endif %}
                 <p class="support-line support-full" data-display-role="support"{% if guide.personalization.policy.enabled %} data-lens-hidden{% endif %}>{{ screen_support_summary(race) }}</p>
                 <p class="support-line support-compact" data-display-role="support"{% if guide.personalization.policy.enabled %} data-lens-hidden{% endif %}>{{ screen_support_summary_compact(race) }}</p>
                 {% if guide.personalization.policy.enabled %}
@@ -455,7 +459,7 @@
         {% if race.percentage_whole is none %}
         <div class="print-meter print-meter-na"><b class="print-meter-label"><span class="print-meter-text">N/A</span></b></div>
         {% else %}
-        <div class="print-meter" style="--meter-fill: {{ race.percentage_whole }}%">
+        <div class="print-meter{% if has_no_majority(race) %} meter-no-majority{% endif %}" style="--meter-fill: {{ race.percentage_whole }}%">
           <b class="print-meter-label"><span class="print-meter-text">{{ race.percentage_label }}</span></b>
         </div>
         {% endif %}
@@ -928,8 +932,14 @@
     const whole = (scaledNumerator * 2n + scaledDenominator) / (2n * scaledDenominator);
     return `${whole}%`;
   };
+  const hasNoMajority = (shareString) => {
+    if (shareString === null) return false;
+    const share = Rational.parse(shareString);
+    return share.numerator * 2n <= share.denominator;
+  };
   const shareAccessibleLabel = (shareString) =>
-    `Consensus among explicitly endorsing sources: ${percentageLabel(shareString)}`;
+    `${hasNoMajority(shareString) ? 'No majority. ' : ''}`
+      + `Consensus among explicitly endorsing sources: ${percentageLabel(shareString)}`;
   const recommendationLabel = (scored, labels) => {
     if (scored.grade === 'Insufficient') return 'Too few endorsements';
     if (scored.isTied) return scored.winnerIds.map((id) => labels.get(id) ?? id).join(' / ');
@@ -970,7 +980,8 @@
   };
   const raceDetailAccessibleSummary = (scored, labels, selectedTotal, leaderCount) => {
     const share = scored.winnerShare === null ? 'Consensus unavailable' : percentageLabel(scored.winnerShare);
-    return `${recommendationLabel(scored, labels)}. ${share}. `
+    const qualifier = hasNoMajority(scored.winnerShare) ? 'No majority. ' : '';
+    return `${recommendationLabel(scored, labels)}. ${qualifier}${share}. `
       + `${raceDetailSupportSummary(scored, selectedTotal, leaderCount)}.`;
   };
   /**
@@ -999,6 +1010,7 @@
     // that threshold the low-fill guard (guide.css) renders it after the
     // fill in muted ink instead.
     meterEl.classList.toggle('meter-low-fill', fillPercent !== null && fillPercent < 30);
+    meterEl.classList.toggle('meter-no-majority', hasNoMajority(shareString));
     meterEl.style.setProperty('--meter-fill', shareString === null ? '0%' : label);
     meterEl.setAttribute('aria-label', shareAccessibleLabel(shareString));
     return label;
@@ -1036,6 +1048,8 @@
     if (shareEl) shareEl.textContent = percentageLabel(personalized.winnerShare);
     const shareMeter = card.querySelector('[data-lens-share]');
     if (shareMeter) applyMeterFill(shareMeter, personalized.winnerShare, 'screen-meter-na');
+    const noMajorityEl = card.querySelector('[data-lens-no-majority]');
+    if (noMajorityEl) noMajorityEl.hidden = !hasNoMajority(personalized.winnerShare);
     const selectedTotal = resolvedSourceCodes.length;
     const supportEl = card.querySelector('[data-lens-support]');
     if (supportEl) supportEl.textContent = supportSummary(personalized, selectedTotal);
@@ -1125,7 +1139,8 @@
       const kickerEl = section.querySelector('[data-race-detail-lens-kicker]');
       if (kickerEl) {
         kickerEl.hidden = !isLeader;
-        kickerEl.textContent = personalized.isTied ? 'Tied for lead' : 'Leading choice';
+        const leaderStatus = personalized.isTied ? 'Tied for lead' : 'Leading choice';
+        kickerEl.textContent = `${hasNoMajority(personalized.winnerShare) ? 'No majority · ' : ''}${leaderStatus}`;
       }
       const countEl = section.querySelector('[data-race-detail-lens-count]');
       if (countEl) {
