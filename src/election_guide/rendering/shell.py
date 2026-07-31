@@ -214,7 +214,7 @@ def site_band_html(
         f"{nav_link('Endorsements', guide_href, 'endorsements')}"
         f"{nav_link('Compare', compare_href, 'compare') if compare_href is not None else ''}"
         f"{nav_link('Sources', sources_href, 'sources', sources_extra)}"
-        f"{nav_link('About', about_href, 'about')}"
+        f"{nav_link('How this works', about_href, 'about')}"
         "</nav></div>"
     )
 
@@ -222,6 +222,7 @@ def site_band_html(
 def site_footer_band_html(
     *,
     project_url: str,
+    audit_html: str,
     pdf_href: str | None = None,
     about_href: str = "/about/",
 ) -> str:
@@ -254,12 +255,14 @@ def site_footer_band_html(
     github_action = icon_link("Source and audit files on GitHub", project_url, _GITHUB_ICON_SVG)
     about_action = icon_link("How this works", about_href, _INFO_ICON_SVG)
     brand = (
-        f'<a class="site-footer-brand" href="/">{site_icon_svg(on_dark=True)}'
+        f'<a class="site-footer-brand" href="/" aria-label="{SITE_NAME}">'
+        f"{site_icon_svg(on_dark=True)}"
         f"<span>{SITE_NAME}</span></a>"
     )
     return (
         '<div class="site-footer-band">'
         f"{brand}"
+        f'<div class="site-footer-audit">{audit_html}</div>'
         '<div class="site-footer-actions">'
         f"{share_action}{pdf_action}{contact_action}{github_action}{about_action}"
         "</div></div>"
@@ -271,16 +274,46 @@ def site_footer_audit_html(
     *,
     data_updated_date: str,
     site_updated_date: str,
+    data_version: str,
+    git_commit: str,
+    project_url: str,
+    data_href: str,
+    source_panel_id: str | None = None,
+    source_panel_hash: str | None = None,
+) -> str:
+    """Render the shared two-line data/site provenance grammar."""
+    commit_url = html.escape(f"{project_url}/commit/{git_commit}", quote=True)
+    escaped_data_href = html.escape(data_href, quote=True)
+    escaped_data_date = html.escape(data_updated_date)
+    escaped_site_date = html.escape(site_updated_date)
+    escaped_data_version = html.escape(data_version[:12])
+    panel = ""
+    if source_panel_id is not None and source_panel_hash is not None:
+        panel = f" · Panel {html.escape(source_panel_id)} ({html.escape(source_panel_hash[:12])})"
+    return (
+        '<span class="audit-data">'
+        f"Data updated {escaped_data_date} "
+        f'(<a href="{escaped_data_href}">{escaped_data_version}</a>){panel}'
+        '</span><span class="audit-join" aria-hidden="true"> · </span>'
+        '<span class="audit-site">'
+        f"Site updated {escaped_site_date} "
+        f'(<a href="{commit_url}">{html.escape(git_commit[:12])}</a>)'
+        "</span>"
+    )
+
+
+def print_footer_audit_html(
+    *,
+    data_updated_date: str,
+    site_updated_date: str,
     git_commit: str,
     project_url: str,
 ) -> str:
-    """Render human-readable update dates linked to the exact deployed revision."""
+    """Keep the print edition's complete linked-date provenance unchanged."""
     commit_url = html.escape(f"{project_url}/commit/{git_commit}", quote=True)
-    escaped_data_date = html.escape(data_updated_date)
-    escaped_site_date = html.escape(site_updated_date)
     return (
-        f'Data last updated <a href="{commit_url}">{escaped_data_date}</a>. '
-        f'Site last updated <a href="{commit_url}">{escaped_site_date}</a>.'
+        f'Data last updated <a href="{commit_url}">{html.escape(data_updated_date)}</a>. '
+        f'Site last updated <a href="{commit_url}">{html.escape(site_updated_date)}</a>.'
     )
 
 

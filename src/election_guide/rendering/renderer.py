@@ -52,6 +52,7 @@ from election_guide.rendering.shell import (
     close_icon_svg,
     election_names,
     page_title,
+    print_footer_audit_html,
     share_icon_svg,
     site_band_html,
     site_footer_audit_html,
@@ -202,6 +203,12 @@ def render_html_document(
     document_title = page_title(election=election_display_name)
     election_date_display = display_date(view_model.metadata.election_date)
     data_updated_date, site_updated_date = _footer_update_dates(view_model)
+    print_footer_audit = print_footer_audit_html(
+        data_updated_date=data_updated_date,
+        site_updated_date=site_updated_date,
+        git_commit=view_model.metadata.git_commit,
+        project_url=configuration.project_url,
+    )
     return template.render(
         **_personalization_lookup_context(view_model),
         guide=view_model,
@@ -229,16 +236,13 @@ def render_html_document(
         site_head_links=site_head_links_html(configuration.public_site_url),
         election_date_display=election_date_display,
         election_day_kicker=_election_day_kicker(view_model.metadata.election_date),
-        site_footer_band=site_footer_band_html(
+        site_footer_band=_election_footer_band(
+            view_model,
             project_url=configuration.project_url,
+            guide_path=guide_path,
             pdf_href=configuration.pdf_filename,
         ),
-        site_footer_audit=site_footer_audit_html(
-            data_updated_date=data_updated_date,
-            site_updated_date=site_updated_date,
-            git_commit=view_model.metadata.git_commit,
-            project_url=configuration.project_url,
-        ),
+        site_footer_audit=print_footer_audit,
         filter_options=_filter_options(view_model),
         source_category_label_by_key=source_category_label_by_key,
         source_cells_by_race_id=source_cells_by_race_id,
@@ -297,12 +301,10 @@ def render_sources_document(
         election_id=view_model.metadata.election_id,
     )
     document_title = page_title(page="Sources", election=election_display_name)
-    data_updated_date, site_updated_date = _footer_update_dates(view_model)
     return template.render(
         **_personalization_lookup_context(view_model),
         guide=view_model,
         public_site_url=public_site_url,
-        release_status_href=f"{guide_path}release-status.json",
         document_title=document_title,
         election_display_name=election_display_name,
         stylesheet=stylesheet,
@@ -317,20 +319,11 @@ def render_sources_document(
             current="sources",
         ),
         site_head_links=site_head_links_html(public_site_url),
-        site_footer_band=(
-            site_footer_band_html(project_url=project_url, pdf_href=pdf_href)
-            if project_url is not None
-            else None
-        ),
-        site_footer_audit=(
-            site_footer_audit_html(
-                data_updated_date=data_updated_date,
-                site_updated_date=site_updated_date,
-                git_commit=view_model.metadata.git_commit,
-                project_url=project_url,
-            )
-            if project_url is not None
-            else None
+        site_footer_band=_election_footer_band(
+            view_model,
+            project_url=project_url,
+            guide_path=guide_path,
+            pdf_href=pdf_href,
         ),
     )
 
@@ -420,7 +413,6 @@ def render_comparison_document(
         ),
     ]
     comparison_sections = _comparison_sections(view_model)
-    data_updated_date, site_updated_date = _footer_update_dates(view_model)
     return template.render(
         guide=view_model,
         public_site_url=public_site_url,
@@ -439,20 +431,11 @@ def render_comparison_document(
             current="compare",
         ),
         site_head_links=site_head_links_html(public_site_url),
-        site_footer_band=(
-            site_footer_band_html(project_url=project_url, pdf_href=pdf_href)
-            if project_url is not None
-            else None
-        ),
-        site_footer_audit=(
-            site_footer_audit_html(
-                data_updated_date=data_updated_date,
-                site_updated_date=site_updated_date,
-                git_commit=view_model.metadata.git_commit,
-                project_url=project_url,
-            )
-            if project_url is not None
-            else None
+        site_footer_band=_election_footer_band(
+            view_model,
+            project_url=project_url,
+            guide_path=guide_path,
+            pdf_href=pdf_href,
         ),
         comparison_sections=comparison_sections,
         comparison_race_count=sum(len(section.rows) for section in comparison_sections),
@@ -641,6 +624,34 @@ def _footer_update_dates(view_model: PublicationViewModel) -> tuple[str, str]:
     return (
         data_updated_at.date().isoformat(),
         view_model.metadata.generated_at.date().isoformat(),
+    )
+
+
+def _election_footer_band(
+    view_model: PublicationViewModel,
+    *,
+    project_url: str | None,
+    guide_path: str,
+    pdf_href: str | None,
+) -> str | None:
+    """Compose election-page provenance once for Guide, Sources, and Compare."""
+    if project_url is None:
+        return None
+    data_updated_date, site_updated_date = _footer_update_dates(view_model)
+    audit_html = site_footer_audit_html(
+        data_updated_date=data_updated_date,
+        site_updated_date=site_updated_date,
+        data_version=view_model.metadata.data_version,
+        git_commit=view_model.metadata.git_commit,
+        project_url=project_url,
+        data_href=f"{guide_path}release-manifest.json",
+        source_panel_id=view_model.metadata.source_panel_id,
+        source_panel_hash=view_model.metadata.source_panel_hash,
+    )
+    return site_footer_band_html(
+        project_url=project_url,
+        audit_html=audit_html,
+        pdf_href=pdf_href,
     )
 
 
@@ -1107,6 +1118,7 @@ def validate_rendered_guide(
         configuration.project_url,
         # The footer audit line's Code hash links to the exact commit (item L55.2).
         f"{configuration.project_url}/commit/{view_model.metadata.git_commit}",
+        f"/e/{view_model.metadata.election_id}/release-manifest.json",
         *(f"#race-{race.id}" for race in expected_races),
         *(source.evidence_url for source in view_model.sources),
         *(

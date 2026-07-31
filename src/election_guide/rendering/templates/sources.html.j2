@@ -32,6 +32,13 @@
     .sources-page-actions { position: sticky; top: 0; z-index: 5; justify-content: center; }
     .sources-page-controls { display: flex; flex-wrap: wrap; justify-content: center; gap: .45rem 1rem; }
     .sources-page-actions a { color: var(--mint); font-weight: 700; }
+    .sources-page-actions .strip-action-primary {
+      display: inline-flex; align-items: center; padding: .16rem .7rem;
+      border-radius: 999px; background: var(--mint); color: var(--navy);
+      font-weight: 800; line-height: 1; text-decoration: none;
+    }
+    .sources-page-actions .strip-action-primary:hover { filter: brightness(1.06); }
+    .sources-page-actions .strip-action-quiet { color: var(--sky); font-weight: 600; }
     .sources-page-count { margin: 0; color: var(--white); font-size: .9rem; font-weight: 600; }
   </style>
 </head>
@@ -90,9 +97,9 @@
     <div class="sources-page-actions state-action-strip">
       <p class="sources-page-count" data-sources-count role="status" aria-live="polite"></p>
       <div class="sources-page-controls">
-        <a class="sources-save" data-sources-save href="{{ guide_path }}">Save</a>
+        <a class="sources-save strip-action-primary" data-sources-save href="{{ guide_path }}">Save</a>
         <a class="sources-cancel" data-sources-cancel href="{{ guide_path }}">Cancel</a>
-        <a class="sources-page-reset" data-sources-page-reset href="{{ guide_path }}">Reset to defaults</a>
+        <a class="sources-page-reset strip-action-quiet" data-sources-page-reset href="{{ guide_path }}">Reset to defaults</a>
       </div>
     </div>
     <main id="sources-main">
@@ -161,11 +168,6 @@
     </main>
     <footer class="site-footer">
       {% if site_footer_band %}{{ site_footer_band | safe }}{% endif %}
-      {% if site_footer_audit %}<div class="site-footer-audit">
-        {{ site_footer_audit | safe }}<br>
-        Source panel {{ guide.metadata.source_panel_id }} ·
-        <a href="{{ release_status_href }}">{{ guide.metadata.source_panel_hash[:12] }}</a>.
-      </div>{% endif %}
     </footer>
   </div>
 
