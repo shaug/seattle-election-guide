@@ -256,7 +256,9 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
   .race-detail-actions { width: 100%; }
   .race-detail-body { padding: .65rem; }
   .race-detail-candidate-heading { align-items: flex-start; }
-  .race-detail-candidate-metrics { flex-wrap: wrap; }
+  /* Stack the metrics: meter beside the candidate name, count underneath. */
+  .race-detail-candidate-metrics { flex-direction: column; align-items: flex-end; gap: .2rem; }
+  .race-detail-candidate-metrics > span { order: 1; }
   .race-detail-meter { width: 7.5rem; }
   .race-detail-source-row { grid-template-columns: 1fr; gap: .25rem; }
   .race-detail-source-meta { justify-content: flex-start; }
