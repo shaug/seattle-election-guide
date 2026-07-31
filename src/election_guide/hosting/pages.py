@@ -145,7 +145,11 @@ def stage_pages_site(
         # revision timestamp, matching the election-scoped footer.
         current_data_updated_date = current.status.data_as_of.date().isoformat()
         current_site_updated_date = current.status.generated_at.date().isoformat()
+        current_data_version = current.view_model.metadata.data_version
         current_git_commit = current.status.git_commit
+        current_release_manifest_href = (
+            f"/e/{current.declaration.election_id}/release-manifest.json"
+        )
         current_compare_href = (
             f"/e/{current.declaration.election_id}/compare/"
             if current.view_model.comparisons.policy.enabled
@@ -167,7 +171,9 @@ def stage_pages_site(
                 },
                 data_updated_date=current_data_updated_date,
                 site_updated_date=current_site_updated_date,
+                data_version=current_data_version,
                 git_commit=current_git_commit,
+                data_href=current_release_manifest_href,
                 compare_href=current_compare_href,
             ),
             encoding="utf-8",
@@ -181,7 +187,9 @@ def stage_pages_site(
                 site_manifest,
                 data_updated_date=current_data_updated_date,
                 site_updated_date=current_site_updated_date,
+                data_version=current_data_version,
                 git_commit=current_git_commit,
+                data_href=current_release_manifest_href,
                 compare_href=current_compare_href,
             ),
             encoding="utf-8",
@@ -201,7 +209,16 @@ def stage_pages_site(
         (stage / "_headers").write_text(PAGES_HEADERS, encoding="utf-8")
         public_paths.add("/deployment-manifest.json")
         (stage / "_worker.js").write_text(
-            _pages_worker(site_manifest, public_paths, compare_href=current_compare_href),
+            _pages_worker(
+                site_manifest,
+                public_paths,
+                data_updated_date=current_data_updated_date,
+                site_updated_date=current_site_updated_date,
+                data_version=current_data_version,
+                git_commit=current_git_commit,
+                data_href=current_release_manifest_href,
+                compare_href=current_compare_href,
+            ),
             encoding="utf-8",
         )
         deployment_manifest = {
@@ -547,7 +564,9 @@ def _archive_html(
     election_names_by_id: Mapping[str, str],
     data_updated_date: str,
     site_updated_date: str,
+    data_version: str,
     git_commit: str,
+    data_href: str,
     compare_href: str | None = None,
 ) -> str:
     rows = "\n".join(
@@ -575,13 +594,15 @@ def _archive_html(
         sources_href=f"{current_path}sources/",
         compare_href=compare_href,
     )
-    footer_band = site_footer_band_html(project_url=PROJECT_URL)
     footer_audit = site_footer_audit_html(
         data_updated_date=data_updated_date,
         site_updated_date=site_updated_date,
+        data_version=data_version,
         git_commit=git_commit,
         project_url=PROJECT_URL,
+        data_href=data_href,
     )
+    footer_band = site_footer_band_html(project_url=PROJECT_URL, audit_html=footer_audit)
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -605,7 +626,7 @@ def _archive_html(
       font: 700 clamp(1.8rem, 4vw, 2.6rem)/1.05 var(--screen-serif);
     }}
     main > p {{ color: var(--muted); max-width: 46ch; }}
-    ol {{ margin: 1.5rem 0 0; padding-left: 1.25rem; }}
+    ul {{ margin: 1.5rem 0 0; padding: 0; list-style: none; }}
     li {{ margin: 0 0 .5rem; }}
     li a {{ color: var(--navy); font-weight: 700; }}
   </style>
@@ -619,14 +640,13 @@ def _archive_html(
     </header>
     <main id="archive-main" class="narrow-main">
       <h1>Guide archive</h1>
-      <p>Published guides remain available at permanent election-scoped paths.</p>
-      <ol>
+      <p>Every guide stays up after its election &mdash; unchanged, at the same address.</p>
+      <ul>
 {rows}
-      </ol>
+      </ul>
     </main>
     <footer class="site-footer">
       {footer_band}
-      <div class="site-footer-audit">{footer_audit}</div>
     </footer>
   </div>
   <script type="module">
@@ -643,7 +663,9 @@ def _about_html(
     *,
     data_updated_date: str,
     site_updated_date: str,
+    data_version: str,
     git_commit: str,
+    data_href: str,
     compare_href: str | None = None,
 ) -> str:
     current = next(
@@ -673,13 +695,15 @@ def _about_html(
         compare_href=compare_href,
         current="about",
     )
-    footer_band = site_footer_band_html(project_url=PROJECT_URL)
     footer_audit = site_footer_audit_html(
         data_updated_date=data_updated_date,
         site_updated_date=site_updated_date,
+        data_version=data_version,
         git_commit=git_commit,
         project_url=PROJECT_URL,
+        data_href=data_href,
     )
+    footer_band = site_footer_band_html(project_url=PROJECT_URL, audit_html=footer_audit)
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -749,9 +773,9 @@ def _about_html(
 
       <section aria-labelledby="why-ballot-varies">
         <h2 id="why-ballot-varies">Why your ballot may look different</h2>
-        <p>Exact ballot contents vary by voter registration address. This guide covers the races on
-          the ballot inventory built for this election; some races shown here may not appear on your
-          own ballot, and your ballot may include a race this guide does not cover.</p>
+        <p>Exact ballot contents vary by voter registration address. This guide covers the Seattle
+          races we tracked for this election; your ballot may not include all of them, and may
+          include a race this guide doesn&rsquo;t cover.</p>
       </section>
 
       <section aria-labelledby="choices-anonymous">
@@ -771,9 +795,10 @@ def _about_html(
 
       <section aria-labelledby="verify-it">
         <h2 id="verify-it">Verify it yourself</h2>
-        <p>Every footer links the data and site update dates to the exact code revision that
-          built it. The public release status and manifest record the data version, source-panel ID
-          and hash, and complete artifact identity. Each source row links directly to the
+        <p>Every footer names the data and site update dates, links the data version to its release
+          manifest, and links the site revision to the exact code that built it. The public release
+          status and manifest record the source-panel ID and hash, and complete artifact identity.
+          Each source row links directly to the
           organization's own endorsement page or document, so any displayed result can be checked
           against the original evidence.</p>
         <p>Organizations can update their own endorsements after we capture them, so a source's
@@ -807,7 +832,6 @@ def _about_html(
     </main>
     <footer class="site-footer">
       {footer_band}
-      <div class="site-footer-audit">{footer_audit}</div>
     </footer>
   </div>
   <script type="module">
@@ -819,24 +843,36 @@ def _about_html(
 """
 
 
-def _not_found_html(site_manifest: SiteManifest, *, compare_href: str | None = None) -> str:
-    """The worker's branded 404 (UI polish round 4, item K48).
-
-    Replaces the bare `text/plain` "Not found" response with a minimal
-    branded page: band, rule, one line, links to the current guide and the
-    archive. Deliberately lighter than every other page's shell: no shared
-    footer, since there is nothing here to share (no election, no build) and
-    K48 specs only band + rule + one line + links.
-    """
+def _not_found_html(
+    site_manifest: SiteManifest,
+    *,
+    data_updated_date: str,
+    site_updated_date: str,
+    data_version: str,
+    git_commit: str,
+    data_href: str,
+    compare_href: str | None = None,
+) -> str:
+    """The worker's branded 404 with the shared global-page footer."""
     current_path = f"/e/{site_manifest.current_election_id}/"
     document_title = html.escape(page_title(page="Page not found"), quote=True)
     head_links = site_head_links_html(site_manifest.canonical_origin, shareable=False)
     base_css = (TEMPLATE_DIR / "base.css").read_text(encoding="utf-8")
+    share_link_script = (TEMPLATE_DIR / "share-link.mjs").read_text(encoding="utf-8")
     band = site_band_html(
         guide_href=current_path,
         sources_href=f"{current_path}sources/",
         compare_href=compare_href,
     )
+    footer_audit = site_footer_audit_html(
+        data_updated_date=data_updated_date,
+        site_updated_date=site_updated_date,
+        data_version=data_version,
+        git_commit=git_commit,
+        project_url=PROJECT_URL,
+        data_href=data_href,
+    )
+    footer_band = site_footer_band_html(project_url=PROJECT_URL, audit_html=footer_audit)
     escaped_current_path = html.escape(current_path, quote=True)
     return f"""<!doctype html>
 <html lang="en">
@@ -870,7 +906,14 @@ def _not_found_html(site_manifest: SiteManifest, *, compare_href: str | None = N
       <p>That page doesn&rsquo;t exist. Try the <a href="{escaped_current_path}">current guide</a>
         or the <a href="/e/">guide archive</a>.</p>
     </main>
+    <footer class="site-footer">
+      {footer_band}
+    </footer>
   </div>
+  <script type="module">
+{share_link_script}
+    wireFooterShare();
+  </script>
 </body>
 </html>
 """
@@ -880,6 +923,11 @@ def _pages_worker(
     site_manifest: SiteManifest,
     public_paths: set[str],
     *,
+    data_updated_date: str,
+    site_updated_date: str,
+    data_version: str,
+    git_commit: str,
+    data_href: str,
     compare_href: str | None = None,
 ) -> str:
     current_path = f"/e/{site_manifest.current_election_id}/"
@@ -898,7 +946,15 @@ def _pages_worker(
         if comparison_roots
         else ""
     )
-    not_found_html = _not_found_html(site_manifest, compare_href=compare_href)
+    not_found_html = _not_found_html(
+        site_manifest,
+        data_updated_date=data_updated_date,
+        site_updated_date=site_updated_date,
+        data_version=data_version,
+        git_commit=git_commit,
+        data_href=data_href,
+        compare_href=compare_href,
+    )
     return f"""const CANONICAL_HOST = {json.dumps(site_manifest.canonical_origin.removeprefix("https://"))};
 const LEGACY_HOSTS = new Set({json.dumps(list(LEGACY_HOSTS))});
 const CURRENT_ELECTION_PATH = {json.dumps(current_path)};

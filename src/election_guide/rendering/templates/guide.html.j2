@@ -179,6 +179,7 @@
   {%- endmacro %}
   {% set election_display_label = election_display_name %}
   {% set contributing_sources = guide.sources | selectattr('contribution_status', 'equalto', 'contributing') | list %}
+  {% set consensus_source_count = contributing_sources | selectattr('panel_role', 'equalto', 'consensus') | list | length %}
   {% set coverage_gap_sources = guide.sources | selectattr('contribution_status', 'equalto', 'coverage_gap') | list %}
   <a class="skip-link" href="#guide-races">Skip to recommendations</a>
 
@@ -190,10 +191,6 @@
         <div class="hero-kicker">{{ election_day_kicker }}</div>
         <h1>{{ election_display_label }}</h1>
         <p class="hero-tagline">Seattle&rsquo;s progressive voices, distilled.</p>
-        <p class="hero-deck">Endorsement agreement across
-          {{ contributing_sources | selectattr('panel_role', 'equalto', 'consensus') | list | length }}
-          organizations in {{ guide.metadata.published_race_count }} Seattle races &mdash; every
-          claim linked to its source.</p>
       </div>
     </header>
 
@@ -231,8 +228,8 @@
       </section>
 
       {% if guide.personalization.policy.enabled %}
-      <div class="lens-banner state-action-strip" data-lens-banner hidden>
-        <span data-lens-banner-status role="status" aria-live="polite"></span>
+      <div class="lens-banner state-action-strip" data-lens-banner>
+        <span data-lens-banner-status role="status" aria-live="polite">Counting all {{ consensus_source_count }} sources.</span>
         <a data-sources-link href="{{ sources_page_url }}">Edit sources</a>
       </div>
       <p class="lens-notice" data-lens-notice hidden role="status" aria-live="polite"></p>
@@ -305,11 +302,11 @@
             </a>
             {% if race.grade == 'Insufficient' %}
             <div class="insufficient-note" role="note" data-display-role="insufficient-warning"{% if guide.personalization.policy.enabled %} data-lens-hidden{% endif %}>
-              Too few explicit endorsements to assess consensus reliably.</div>
+              Too few endorsements to measure agreement.</div>
             {% endif %}
             {% if guide.personalization.policy.enabled %}
             <div class="insufficient-note" data-lens-only data-lens-insufficient hidden>
-              Too few explicit endorsements to assess consensus reliably in the selected sources.</div>
+              Too few endorsements to measure agreement among your selected sources.</div>
             {# role="group" matches the Times comparison bar's idiom: a bare
                <p> is name-prohibited in ARIA, so the agree/differ aria-label
                applied by applyAllSourcesSignal needs the role to be exposed. #}
@@ -446,7 +443,7 @@
         </div>
         {% endif %}
       </section>
-      <div class="site-footer-audit">{{ site_footer_audit | safe }}</div>
+      <div class="site-footer-audit detailed-footer-audit">{{ site_footer_audit | safe }}</div>
     </footer>
   </main>
 
@@ -489,7 +486,7 @@
           {{ guide.metadata.published_race_count }} races · source details on page 2</div>
       </header>
       <p class="print-intro">Progressive-source consensus. Seattle Times choices are comparison only.
-        Too few explicit endorsements are labeled; no recommendation is made from insufficient evidence.</p>
+        Too few endorsements to measure agreement; no recommendation from thin evidence.</p>
       <div class="print-races">
         {% set print_midpoint = (guide.metadata.published_race_count + 1) // 2 %}
         {% for print_column in range(2) %}
@@ -1206,8 +1203,13 @@
     const tallyingCodes = checkedTallyingSourceCodes();
     const personalized = !isDefaultTallyingSelection();
     root.classList.toggle('lens-personalized', personalized);
+    if (lensBanner) lensBanner.hidden = false;
+    if (lensBannerStatus) {
+      lensBannerStatus.textContent = personalized
+        ? `Counting ${tallyingCodes.length} of ${tallyingSourceCodes.length} sources.`
+        : `Counting all ${tallyingSourceCodes.length} sources.`;
+    }
     if (!personalized) {
-      if (lensBanner) lensBanner.hidden = true;
       // A lens that no longer applies (every source reselected) must restore
       // the audited default's own candidate order and accessible summary —
       // nothing else runs renderRaceLens once !personalized, so without this
@@ -1220,11 +1222,6 @@
       return null;
     }
     const results = scoreSelection(personalization, { categoryCodes: [], sourceCodes: tallyingCodes });
-    if (lensBanner) lensBanner.hidden = false;
-    if (lensBannerStatus) {
-      lensBannerStatus.textContent =
-        `Counting ${results.sourceCodes.length} of ${tallyingSourceCodes.length} sources.`;
-    }
     const personalizedByRaceId = new Map(results.races.map((race) => [race.raceId, race]));
     raceCards.forEach((card, raceId) => {
       renderRaceLens(raceId, card, personalizedByRaceId, results.sourceCodes);

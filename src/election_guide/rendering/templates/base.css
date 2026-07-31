@@ -71,25 +71,34 @@ a { color: var(--blue); text-underline-offset: .15em; }
 .state-action-strip a { color: var(--mint); font-weight: 700; }
 .state-action-strip a:focus-visible { outline: .2rem solid var(--focus); outline-offset: .15rem; }
 
-/* Shared page footer (item L55): one navy band mirroring `.site-band`, plus
-   compact linked data and site update dates. */
+/* Shared page footer (issue 179): one masthead-height navy grid carrying the
+   brand, two-line provenance whisper, and fixed-height action cluster. */
 .site-footer { background: var(--navy); color: var(--white); }
 @media screen {
   .page { display: flex; flex-direction: column; }
   .site-footer { margin-top: auto; }
 }
-.site-footer-band { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1.25rem; padding: .6rem clamp(1rem, 4vw, 3rem); }
+.site-footer-band { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 1.25rem; padding: .45rem clamp(1rem, 4vw, 3rem); }
 .site-footer-brand { display: inline-flex; align-items: center; gap: .55rem; color: var(--white); font-size: .92rem; font-weight: 700; letter-spacing: .01em; text-decoration: none; }
 .site-footer-brand:hover { text-decoration: underline; text-underline-offset: .2em; }
 .site-footer-brand svg { display: block; flex: 0 0 auto; }
-.site-footer-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .15rem; margin-left: auto; }
+.site-footer-actions { display: flex; align-items: center; gap: .15rem; margin: -.45rem 0; }
 .footer-icon-action { display: inline-flex; align-items: center; justify-content: center; width: 2.5rem; height: 2.5rem; padding: 0; border: 0; border-radius: .3rem; background: none; color: var(--mint); cursor: pointer; }
 .footer-icon-action:hover { background: rgba(255, 255, 255, .12); }
 .footer-icon-action svg { display: block; }
 .site-footer-band a:focus-visible, .site-footer-band button:focus-visible { outline: .2rem solid var(--focus); outline-offset: -.15rem; }
-.site-footer-audit { padding: .7rem clamp(1rem, 4vw, 3rem); border-top: 1px solid #526f83; color: #9fb3c8; font-size: .68rem; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.site-footer-audit { min-width: 0; color: #9fb3c8; font-size: .68rem; line-height: 1.4; font-variant-numeric: tabular-nums; }
+.site-footer-audit > span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.site-footer-audit .audit-join { display: none; }
 .site-footer-audit a { color: var(--mint); font-weight: 700; }
+.detailed-footer-audit { display: none; }
 
-@media (max-width: 720px) {
-  .site-footer-actions { margin-left: 0; }
+@media (max-width: 62rem) {
+  .site-footer-band { grid-template-columns: minmax(0, 1fr) auto; row-gap: .15rem; }
+  .site-footer-audit { grid-column: 1 / -1; grid-row: 2; }
+  .site-footer-audit > span { display: inline; overflow: visible; white-space: normal; }
+  .site-footer-audit .audit-join { display: inline; }
+}
+@media (max-width: 30rem) {
+  .site-footer-brand > span { display: none; }
 }
