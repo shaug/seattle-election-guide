@@ -85,12 +85,10 @@ Item IDs match the original review discussion.
   `source_participation` macro (guide + sources templates).
 - **E20 — Proper tagline for the hero deck.** DECIDED:
   **"Seattle's progressive voices, distilled."**
-  Followed by one factual subline, e.g. "Endorsement agreement across
-  40 organizations in all 32 Seattle races — every claim linked to its source."
-  (counts templated per election, not hardcoded). The old comparison-source
-  caveat moves out of the deck (it already lives on the Sources page and in
-  About). This also carries the "progressive" framing so the h1 can be the
-  plain brand name (A1).
+  The old comparison-source caveat moves out of the deck (it already lives on
+  the Sources page and in About). This also carries the "progressive" framing
+  so the h1 can be the plain brand name (A1). Superseded 2026-07-31: the factual
+  subline is removed; the always-present sources strip owns the live count.
 - **E21 — "Feedback?" → "Contact"** in the guide footer (and align About's
   mailto label).
 
@@ -135,6 +133,8 @@ the Times as a loud pill badge, the full-panel consensus as a quiet info bar.
   D17; D17's verbiage fix still applies to the Sources page itself. The
   aria-live "comparison shown" status that lives in this block moves to (or is
   covered by) the existing top-of-page lens notice.
+  Superseded in part 2026-07-31: the footer block stays deleted, but the
+  always-present sticky sources strip is now the primary in-page entry point.
 - **G29 — Sources page: comparison category copy (round 3).** DECIDED.
   Category header reads "Comparison only" (not "Centrist comparison"),
   followed by exactly: "Shown for comparison; never counted toward the

@@ -141,26 +141,26 @@ DARWIN_VISUAL_BASELINES = {
         0.093,
         0.086,
     ],
-    # UI polish round 4 (item L54): the hero no longer carries the brand or
-    # the removed hero-meta block, shifting content up in this narrower
-    # viewport more than in "desktop" above, hence the larger delta here.
+    # UI polish round 5.1 (issue 177): the hero deck is gone and the source
+    # strip is always present, shifting the narrow layout while preserving its
+    # overall visual density.
     "mobile": [
-        0.597,
-        0.588,
-        0.600,
-        0.641,
-        0.246,
-        0.259,
+        0.503,
+        0.495,
+        0.507,
+        0.537,
+        0.346,
+        0.356,
+        0.133,
+        0.135,
+        0.128,
+        0.170,
+        0.118,
+        0.067,
+        0.098,
+        0.115,
+        0.084,
         0.039,
-        0.035,
-        0.125,
-        0.139,
-        0.136,
-        0.052,
-        0.099,
-        0.095,
-        0.092,
-        0.050,
     ],
 }
 LINUX_VISUAL_BASELINES = {
@@ -218,29 +218,27 @@ LINUX_VISUAL_BASELINES = {
         0.080,
         0.086,
     ],
-    # UI polish round 4 (item L54): the hero no longer carries the brand or
-    # the removed hero-meta block, shifting content in this narrower
-    # viewport more than in "desktop" above. Values carry the same per-index
-    # delta measured on a real macOS run of this fixture (there is no
-    # equivalent real Linux measurement available in this environment); if
-    # CI reports different exact values, replace these with its own.
+    # UI polish round 5.1 (issue 177): values carry the same per-index delta
+    # measured on a real macOS run of this fixture (there is no equivalent
+    # real Linux measurement available in this environment); if CI reports
+    # different exact values, replace these with its own.
     "mobile": [
-        0.609,
-        0.605,
-        0.618,
-        0.644,
-        0.240,
-        0.242,
-        0.038,
-        0.041,
-        0.103,
-        0.097,
-        0.134,
-        0.062,
+        0.515,
+        0.512,
+        0.525,
+        0.540,
+        0.340,
+        0.339,
+        0.132,
+        0.141,
+        0.106,
+        0.128,
+        0.116,
         0.077,
-        0.036,
-        0.075,
-        0.063,
+        0.076,
+        0.056,
+        0.067,
+        0.052,
     ],
 }
 APPROVED_VISUAL_BASELINES_BY_PLATFORM = {
@@ -2706,14 +2704,15 @@ def test_sources_tree_shell_leaves_the_print_comparison_untouched(tmp_path: Path
     assert "Read the Times pill" in html
 
 
-def test_sources_tree_shell_describes_a_generic_optional_comparison(tmp_path: Path) -> None:
-    """Issue 103: the hero byline must not name a specific comparison source
-    (the schema allows more than one in the future). It links to the sources
-    section rather than only naming it in bold."""
+def test_guide_hero_uses_only_the_kicker_title_and_tagline(tmp_path: Path) -> None:
+    """Issue 177: the live source count belongs to the persistent strip."""
     html = _sources_tree_html(tmp_path)
-    hero = html.split('<p class="hero-deck">')[1].split("</p>")[0]
 
-    assert "Times" not in hero
+    hero = html.split('<header class="hero">')[1].split("</header>")[0]
+    assert 'class="hero-kicker"' in hero
+    assert "<h1>" in hero
+    assert 'class="hero-tagline"' in hero
+    assert 'class="hero-deck"' not in hero
     band = html.split('<div class="site-band">')[1].split("</div>")[0]
     assert '/sources/" data-sources-link' in band
 
@@ -3346,15 +3345,63 @@ def test_personalization_initial_my_sources_matches_audited_consensus(tmp_path: 
           timesShown: document.documentElement.classList.contains('show-times'),
           personalized: document.documentElement.classList.contains('lens-personalized'),
           bannerHidden: document.querySelector('[data-lens-banner]').hidden,
+          bannerText: document.querySelector('[data-lens-banner-status]').textContent,
         })
         """,
     )
-    # The default state carries no visible selection chrome at all: the old
-    # footer "Viewing N of M sources" line was removed (issue 115, item G28).
+    # The footer summary stays removed, but the live source state and edit path
+    # are now always present in the sticky strip.
     assert result["summaryPresent"] is False
     assert result["timesShown"] is False
     assert result["personalized"] is False
-    assert result["bannerHidden"] is True
+    assert result["bannerHidden"] is False
+    tallying_count = len(
+        [source for source in view_model.personalization.sources if _tallying_selectable(source)]
+    )
+    assert result["bannerText"] == f"Counting all {tallying_count} sources."
+
+
+def test_sources_strip_keeps_the_same_geometry_between_default_and_lens_states(
+    tmp_path: Path,
+) -> None:
+    view_model = _personalization_enabled_view_model(tmp_path)
+    tallying_codes = sorted(
+        source.code for source in view_model.personalization.sources if _tallying_selectable(source)
+    )
+    fragment = _lens_fragment(view_model, mode="s", source_codes=tuple(tallying_codes[1:]))
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    expression = """
+      (() => {
+        const banner = document.querySelector('[data-lens-banner]');
+        const sticky = document.querySelector('.sticky-header');
+        return JSON.stringify({
+          bannerHeight: banner.getBoundingClientRect().height,
+          stickyHeight: sticky.getBoundingClientRect().height,
+          bannerHidden: banner.hidden,
+          bannerText: banner.querySelector('[data-lens-banner-status]').textContent,
+        });
+      })()
+    """
+
+    default = _evaluate_in_chrome(html_path, expression)
+    personalized = _evaluate_in_chrome(
+        html_path,
+        expression,
+        initial_url=f"{html_path.resolve().as_uri()}#{fragment}",
+    )
+
+    assert default["bannerHidden"] is False
+    assert personalized["bannerHidden"] is False
+    assert default["bannerText"] == f"Counting all {len(tallying_codes)} sources."
+    assert personalized["bannerText"] == (
+        f"Counting {len(tallying_codes) - 1} of {len(tallying_codes)} sources."
+    )
+    assert personalized["bannerHeight"] == pytest.approx(default["bannerHeight"], abs=0.5)
+    assert personalized["stickyHeight"] == pytest.approx(default["stickyHeight"], abs=0.5)
 
 
 def test_personalization_reactive_banner_appends_below_the_controls_not_over_them(
@@ -4185,9 +4232,9 @@ def test_personalization_stale_link_migrates_with_a_persistent_notice(tmp_path: 
     assert "migrated" in result["noticeText"]
     if len(category.member_source_codes) == tallying_count:
         # The migrated category expands to the full tallying panel, which is
-        # by definition the default selection, so no personalized banner
-        # shows; the migration itself is disclosed by the notice above.
-        assert result["bannerText"] == ""
+        # by definition the default selection. The always-present banner
+        # reports that audited state while the notice discloses the migration.
+        assert result["bannerText"] == f"Counting all {tallying_count} sources."
     else:
         assert result["bannerText"] == (
             f"Counting {len(category.member_source_codes)} of {tallying_count} sources."

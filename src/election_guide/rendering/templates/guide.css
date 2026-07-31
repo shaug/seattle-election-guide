@@ -6,8 +6,6 @@
 .eyebrow-paper { color: var(--teal); }
 .hero h1 { max-width: 25ch; margin: .25rem 0 .45rem; font: 700 clamp(2rem, 4.2vw, 3.2rem)/1.02 var(--screen-serif); letter-spacing: -.012em; }
 .hero-tagline { max-width: 48rem; margin: 0 0 .3rem; color: var(--white); font-size: clamp(1.02rem, 1.8vw, 1.22rem); font-weight: 500; }
-.hero-deck { max-width: 48rem; margin: 0; color: var(--sky); font-size: clamp(.88rem, 1.4vw, .98rem); }
-.hero-deck a { color: var(--mint); font-weight: 700; }
 /* Print-only identity line for the detailed/overflow PDF edition, which
    hides the interactive band (see the detailed-edition print rules below);
    the band already carries the brand on screen, so this stays invisible
@@ -398,10 +396,11 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
      the first page without reintroducing an interactive band link into a
      print/PDF context. */
   html.detailed-edition .detailed-edition-brand { display: block; margin: .3in .3in 0; color: var(--navy); font: 700 13pt/1 var(--print-sans); }
-  html.detailed-edition .hero { padding: .1in .3in .3in; border-bottom-width: .08in; }
+  /* The removed screen-only deck no longer contributes height here; retain
+     the detailed edition's proven pagination with equivalent whitespace. */
+  html.detailed-edition .hero { padding: .1in .3in .45in; border-bottom-width: .08in; }
   html.detailed-edition .hero h1 { margin: .05in 0; font-size: 26pt; }
   html.detailed-edition .hero-tagline { margin: .05in 0; font-size: 11pt; }
-  html.detailed-edition .hero-deck { margin: .05in 0; font-size: 10pt; }
   html.detailed-edition .screen-sections { padding: .1in 0; }
   html.detailed-edition .screen-section { margin: .12in 0 .2in; }
   html.detailed-edition .section-heading h2 { margin: 0 0 .08in; font-size: 18pt; }
