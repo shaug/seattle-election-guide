@@ -77,14 +77,19 @@ the differ/amber family rather than adding a yellow.
 
 - **Modal**: a drill-down into the context you are already in — evidence
   for the thing under your cursor. Ephemeral, hash-addressable, and Escape
-  returns you exactly where you were. Canonical example: the race-detail
-  dialog.
+  returns you exactly where you were.
 - **Page**: a task with its own state and consequences, or standalone
   content people should land on from a link. Gets its own URL, `<title>`,
-  nav presence, and footer. Canonical examples: Sources (a form), About,
-  the archive.
-- Test: if it needs its own `<title>`, or someone would bookmark it, it's
-  a page. If it's "show me the receipts for this row," it's a modal.
+  nav presence, and footer. Examples: Sources (a form), About, the
+  archive.
+- Test: if it needs its own `<title>`, an unfurl, or someone would
+  bookmark it, it's a page. If it's "show me the receipts for this row,"
+  it's a modal.
+- The answer is a consequence of requirements, not an identity. Race
+  detail renders as a modal while it is evidence-on-demand; if races are
+  ever meant to be shared, unfurled, and landed on directly, the same test
+  makes them pages. Re-run the test when requirements change instead of
+  defending the current form.
 
 ## Text vs. icons
 
