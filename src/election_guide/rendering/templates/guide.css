@@ -216,8 +216,6 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
 .sources-category-comparison { border-top-color: var(--tone-differ-border); background: var(--tone-differ-bg); }
 .sources-category-comparison h2, .sources-category-comparison .sources-count { color: var(--tone-differ-text); }
 .sources-comparison-note { margin: 0; padding: .55rem .75rem; border-bottom: 1px solid #f0dab3; color: var(--tone-differ-text); font-size: .72rem; line-height: 1.35; }
-.sources-version { margin: 0; color: var(--muted); font-size: .78rem; }
-.sources-version-audit { font-variant-numeric: tabular-nums; }
 .screen-coverage-gaps { display: grid; grid-template-columns: minmax(14rem, .7fr) minmax(0, 1.3fr); gap: 1rem 2rem; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--line); }
 .screen-coverage-gaps h2 { margin: .15rem 0 .35rem; color: var(--navy); font-size: 1.35rem; }
 .screen-coverage-gaps > div > p:last-child { margin: 0; color: var(--muted); font-size: .8rem; }

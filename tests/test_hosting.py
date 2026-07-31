@@ -531,6 +531,11 @@ def test_about_page_folds_in_every_fact_the_removed_methodology_panel_stated() -
     assert "printable PDF always includes the comparison" in about
     # Organizations may update endorsements after our capture snapshot.
     assert "Organizations can update their own endorsements after we capture them" in about
+    # The Sources-page privacy aside belongs here as a reusable FAQ answer.
+    assert '<section aria-labelledby="choices-anonymous">' in about
+    assert "Are my choices anonymous?" in about
+    assert "Your source selection lives entirely in this page's address" in about
+    assert "Nothing is stored anywhere" in about
 
 
 def _selectable_tallying_codes(view_model: PublicationViewModel) -> list[str]:
@@ -562,7 +567,11 @@ def test_sources_page_renders_every_category_and_source_like_the_guide_tree(
     merged sources tree, not a redesign of it, so every selectable category
     and source must render with the same content and structure."""
     view_model = _personalization_enabled_view_model(tmp_path)
-    html = render_sources_document(view_model, public_site_url="https://seattleelections.guide")
+    html = render_sources_document(
+        view_model,
+        public_site_url="https://seattleelections.guide",
+        project_url="https://github.com/shaug/seattle-election-guide",
+    )
 
     for category in view_model.personalization.categories:
         if not category.selectable:
@@ -619,6 +628,16 @@ def test_sources_page_renders_every_category_and_source_like_the_guide_tree(
     ) not in html
     assert ".sources-cancel, .sources-page-reset {" not in html
     assert ".sources-page-actions a { color: var(--mint); font-weight: 700; }" in html
+
+    # Issue 155: the page header names the election at a deliberate measure,
+    # while privacy and audit details live in their site-wide homes.
+    assert '<div class="sources-page-intro">' in html
+    assert "August 2026 Primary · Sources" in html
+    assert ".sources-page-intro { max-width: 60ch;" in html
+    assert "Your selection lives entirely" not in html
+    assert "sources-version" not in html
+    assert html.count(f"Panel {view_model.metadata.source_panel_id}") == 1
+    assert html.count(f"Data {view_model.metadata.data_version}") == 1
 
 
 def test_sources_page_action_strip_stays_visible_with_count_and_actions(tmp_path: Path) -> None:
