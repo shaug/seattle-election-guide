@@ -74,6 +74,10 @@ a { color: var(--blue); text-underline-offset: .15em; }
 /* Shared page footer (item L55): one navy band mirroring `.site-band`, plus
    an optional compact mono audit line for election-scoped pages. */
 .site-footer { background: var(--navy); color: var(--white); }
+@media screen {
+  .page { display: flex; flex-direction: column; }
+  .site-footer { margin-top: auto; }
+}
 .site-footer-band { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1.25rem; padding: .6rem clamp(1rem, 4vw, 3rem); }
 .site-footer-brand { display: inline-flex; align-items: center; gap: .55rem; color: var(--white); font-size: .92rem; font-weight: 700; letter-spacing: .01em; text-decoration: none; }
 .site-footer-brand:hover { text-decoration: underline; text-underline-offset: .2em; }
