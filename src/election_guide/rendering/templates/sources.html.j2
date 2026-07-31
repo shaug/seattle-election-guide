@@ -106,8 +106,8 @@
       <div class="sources-page-intro">
         <p class="eyebrow eyebrow-paper">{{ election_display_name }} · Sources</p>
         <h1>Customize your sources</h1>
-        <p class="lede">Choose which sources count toward your personalized results, then save to return to
-          the guide with your choice reflected there.</p>
+        <p class="lede">Choose which sources count, then save &mdash; the guide recalculates from
+          your selection.</p>
       </div>
 
       <p class="sources-comparison-status" data-sources-comparison-status role="status" aria-live="polite"></p>
@@ -153,8 +153,8 @@
         {% if coverage_gap_sources %}
         <section class="screen-coverage-gaps">
           <div><p class="eyebrow eyebrow-paper">Research status</p><h2>Coverage gaps ({{ guide.metadata.coverage_gap_count }})</h2>
-            <p>These organizations were investigated, but no usable published endorsement list
-              was available. They do not contribute to consensus scores.</p>
+            <p>We looked for endorsement lists from these organizations and found none we could
+              use. They don&rsquo;t count toward any score.</p>
             {% if guide.personalization.policy.enabled %}<p class="coverage-gap-method">Every checked source counts once, with equal weight. When a
               source endorses more than one candidate in a race, its vote splits evenly among
               them.</p>{% endif %}</div>

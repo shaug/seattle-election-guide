@@ -294,6 +294,13 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
 
     html = render_html_document(view_model, configuration)
 
+    assert "Too few endorsements to measure agreement." in html
+    assert "Too few endorsements to measure agreement among your selected sources." in html
+    assert (
+        "Too few endorsements to measure agreement; no recommendation from thin evidence." in html
+    )
+    assert "Too few explicit endorsements" not in html
+
     # Issue 108 acceptance: a coverage-gap source has zero endorsements and was
     # never selectable on the sources page's own tree, so the guide's lens
     # bindings (which drive its "Viewing N of M sources" total) must exclude

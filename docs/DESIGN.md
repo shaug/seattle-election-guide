@@ -25,6 +25,10 @@ When in doubt, remove ink.
 - **States explain themselves in words.** Color, icons, and aria-labels
   never carry a meaning alone; the visible text says the same thing the
   screen reader hears.
+- **No system vocabulary in user-facing prose.** The implementation never
+  describes itself: "election-scoped paths," "ballot inventory," and
+  "panel" outside the audit line are internal words. Test: would you say the
+  sentence aloud to a neighbor?
 - **Demonstrate, don't advertise.** Provenance is declared by linking and
   counting in place, never claimed in prose.
 - **Never leave arithmetic doubtful.** Where a count and a share can
