@@ -14,6 +14,8 @@ import pytest
 from election_guide.publication.comparisons import ComparisonsPolicy
 from election_guide.publication.models import PublicationViewModel
 from election_guide.rendering.renderer import (
+    ComparisonCellView,
+    _comparison_row_differs,  # pyright: ignore[reportPrivateUsage]
     read_rendering_configuration,
     render_comparison_document,
     render_html_document,
@@ -62,11 +64,10 @@ def test_default_difference_oracle_matches_published_current_inputs() -> None:
                 if cell.state in {"endorsement", "multi_endorsement"}
                 else []
             )
-        data_sets = [set(picks) for picks in leading.values() if picks]
-        if any(
-            left.isdisjoint(right)
-            for index, left in enumerate(data_sets)
-            for right in data_sets[index + 1 :]
+        reference = set(leading["gall"])
+        if reference and any(
+            bool(leading[signal]) and reference.isdisjoint(leading[signal])
+            for signal in ("strn", "stim")
         ):
             observed[race_id] = leading
 
@@ -126,6 +127,7 @@ def test_compare_document_server_renders_default_contract_snapshot() -> None:
     assert payload["default_columns"] == ["gall", "strn", "stim"]
     assert payload["personalization"] == view_model.personalization.model_dump(mode="json")
     assert payload["comparisons"] == view_model.comparisons.model_dump(mode="json")
+    assert "function migrateCompareState" in rendered
 
     personalization_races = {race.race_id: race for race in view_model.personalization.races}
     sources = {source.id: source for source in view_model.personalization.sources}
@@ -190,6 +192,20 @@ def test_compare_document_refuses_disabled_policy() -> None:
             _bundle().view_model,
             public_site_url="https://seattleelections.guide",
         )
+
+
+def test_server_row_differences_are_relative_only_to_the_reference() -> None:
+    def cell(*picks: str) -> ComparisonCellView:
+        return ComparisonCellView(
+            signal="test",
+            kind="direct",
+            choice_labels=picks,
+            leading_pick_ids=picks,
+        )
+
+    assert _comparison_row_differs((cell("a", "b"), cell("a"), cell("b"))) is False
+    assert _comparison_row_differs((cell("a"), cell("a", "b"), cell("b"))) is True
+    assert _comparison_row_differs((cell(), cell("a"), cell("b"))) is False
 
 
 def _comparison_html_path(tmp_path: Path) -> Path:
@@ -460,13 +476,14 @@ def test_compare_client_swaps_the_reference_and_recomputes_relative_state(tmp_pa
           columns: [...document.querySelectorAll(
             '[data-comparison-head] [data-column-signal]',
           )].map((heading) => heading.dataset.columnSignal),
-          reference: document.querySelector('[data-comparison-title="0"]').textContent,
+          referenceLabel: document.querySelector('[data-comparison-title="0"]')
+            .getAttribute('aria-label'),
         }))()
         """,
         initial_url=result["copied"],
     )
     assert restored["columns"] == ["Genv", "strn", "stim"]
-    assert restored["reference"] != "All sources"
+    assert restored["referenceLabel"] == "Change reference, currently Environment"
 
 
 def test_compare_client_ignores_lens_state_and_keeps_its_default_reference(tmp_path: Path) -> None:
@@ -501,6 +518,74 @@ def test_compare_client_ignores_lens_state_and_keeps_its_default_reference(tmp_p
         "columns": ["gall", "strn", "stim"],
         "referenceInteractive": True,
     }
+
+
+def test_compare_client_migrates_stale_links_without_promoting_a_new_reference(
+    tmp_path: Path,
+) -> None:
+    html_path = _comparison_html_path(tmp_path)
+    current_url = _evaluate_in_chrome(
+        html_path,
+        """
+        (() => {
+          const preset = document.querySelector('.comparison-presets a');
+          return JSON.stringify(`${location.href.split('#')[0]}${preset.hash}`);
+        })()
+        """,
+    )
+    assert isinstance(current_url, str)
+    stale_url = re.sub(
+        r"(&data=)[^&]+",
+        r"\1stale-data",
+        current_url.replace("cols=gallstrnstim", "cols=strnstim"),
+    )
+    migrated = _evaluate_in_chrome(
+        html_path,
+        """
+        (() => JSON.stringify({
+          columns: [...document.querySelectorAll(
+            '[data-comparison-head] [data-column-signal]',
+          )].map((heading) => heading.dataset.columnSignal),
+          referenceLabel: document.querySelector('[data-comparison-title="0"]')
+            .getAttribute('aria-label'),
+          notice: document.querySelector('[data-comparison-hidden-notice]').textContent,
+          noticeHidden: document.querySelector('[data-comparison-hidden-notice]').hidden,
+          hash: location.hash,
+        }))()
+        """,
+        initial_url=stale_url,
+    )
+    assert migrated["columns"] == ["strn", "stim"]
+    assert migrated["referenceLabel"] == (
+        "Change reference, currently The Stranger Election Control Board"
+    )
+    assert migrated["notice"] == "This comparison link was updated for the current source list."
+    assert migrated["noticeHidden"] is False
+    assert "cols=strnstim" in migrated["hash"]
+    assert "data=stale-data" not in migrated["hash"]
+
+    missing_reference_url = stale_url.replace("cols=strnstim", "cols=zzzzstrn")
+    fallback = _evaluate_in_chrome(
+        html_path,
+        """
+        (() => JSON.stringify({
+          columns: [...document.querySelectorAll(
+            '[data-comparison-head] [data-column-signal]',
+          )].map((heading) => heading.dataset.columnSignal),
+          notice: document.querySelector('[data-comparison-hidden-notice]').textContent,
+          noticeHidden: document.querySelector('[data-comparison-hidden-notice]').hidden,
+          hash: location.hash,
+        }))()
+        """,
+        initial_url=missing_reference_url,
+    )
+    assert fallback["columns"] == ["gall", "strn", "stim"]
+    assert fallback["notice"] == (
+        "This comparison link could not be restored completely, so the default comparison is shown."
+    )
+    assert fallback["noticeHidden"] is False
+    assert "cols=gallstrnstim" in fallback["hash"]
+    assert "cols=strn" not in fallback["hash"]
 
 
 def test_compare_client_presets_filters_and_copy_link_round_trip(tmp_path: Path) -> None:

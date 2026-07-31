@@ -215,7 +215,7 @@ test('lead-set agreement handles overlap, disjoint sets, and neutral cells', () 
   assert.equal(cellAgreement(OUTSIDE_SCOPE_CELL, reference), 'neutral');
 });
 
-test('row differences use every configured data cell and ignore blank/outside-scope cells', () => {
+test('row differences compare each configured data cell only to the reference', () => {
   const alpha = { kind: 'direct', leadingPickIds: ['alpha'] };
   const alphaBeta = { kind: 'direct', leadingPickIds: ['alpha', 'beta'] };
   const beta = { kind: 'direct', leadingPickIds: ['beta'] };

@@ -346,6 +346,11 @@ def render_comparison_document(
     ).read_text(encoding="utf-8")
     share_link_script = (TEMPLATE_DIR / "share-link.mjs").read_text(encoding="utf-8")
     compare_url_script = (TEMPLATE_DIR / "compare-url.mjs").read_text(encoding="utf-8")
+    compare_migrate_script = (
+        (TEMPLATE_DIR / "compare-migrate.mjs")
+        .read_text(encoding="utf-8")
+        .replace("import { ALL_SOURCES_TOKEN } from './compare-url.mjs';\n", "")
+    )
     lens_score_script = (TEMPLATE_DIR / "lens-score.mjs").read_text(encoding="utf-8")
     compare_signals_script = (
         (TEMPLATE_DIR / "compare-signals.mjs")
@@ -404,6 +409,7 @@ def render_comparison_document(
         stylesheet=stylesheet,
         share_link_script=share_link_script,
         compare_url_script=compare_url_script,
+        compare_migrate_script=compare_migrate_script,
         lens_score_script=lens_score_script,
         compare_signals_script=compare_signals_script,
         compare_client_script=compare_client_script,
@@ -545,11 +551,12 @@ def _comparison_direct_cell(
 
 
 def _comparison_row_differs(cells: tuple[ComparisonCellView, ...]) -> bool:
-    data_cells = [set(cell.leading_pick_ids) for cell in cells if cell.leading_pick_ids]
+    if len(cells) < 2 or not cells[0].leading_pick_ids:
+        return False
+    reference = set(cells[0].leading_pick_ids)
     return any(
-        left.isdisjoint(right)
-        for index, left in enumerate(data_cells)
-        for right in data_cells[index + 1 :]
+        bool(cell.leading_pick_ids) and reference.isdisjoint(cell.leading_pick_ids)
+        for cell in cells[1:]
     )
 
 

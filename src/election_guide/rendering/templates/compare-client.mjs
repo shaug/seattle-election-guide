@@ -52,12 +52,14 @@ if (comparisonBindingsElement) {
     contestedOnly: false,
     section: 'all',
   };
+  let disclosure = '';
 
   function stateFromLocation() {
     const decoded = decodeCompareFragment(window.location.hash, context);
     if (decoded.status === 'valid') {
       state = { ...decoded.state, columns: [...decoded.state.columns] };
       if (state.columns.length < 2) state.columns = [...payload.default_columns];
+      disclosure = '';
     }
     else if (decoded.status === 'absent') {
       state = {
@@ -66,6 +68,17 @@ if (comparisonBindingsElement) {
         contestedOnly: false,
         section: 'all',
       };
+      disclosure = '';
+    }
+    else if (decoded.status === 'stale_version') {
+      const migration = migrateCompareState(decoded, personalization, context);
+      if (migration.status === 'migrated' || migration.status === 'fallback') {
+        state = { ...migration.state, columns: [...migration.state.columns] };
+        disclosure = migration.status === 'migrated'
+          ? 'This comparison link was updated for the current source list.'
+          : 'This comparison link could not be restored completely, so the default comparison is shown.';
+        writeState('replace');
+      }
     }
   }
 
@@ -378,8 +391,8 @@ if (comparisonBindingsElement) {
 
   function render(focusTarget = null) {
     const visible = state.columns;
-    notice.hidden = true;
-    notice.textContent = '';
+    notice.hidden = disclosure === '';
+    notice.textContent = disclosure;
     renderHead(visible, focusTarget);
     renderBody(visible);
     syncControls();
