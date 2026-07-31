@@ -43,6 +43,8 @@ from election_guide.rendering.models import (
     RenderingValidationReport,
 )
 from election_guide.rendering.shell import (
+    election_names,
+    page_title,
     site_band_html,
     site_footer_audit_html,
     site_footer_band_html,
@@ -156,12 +158,22 @@ def render_html_document(
     }
     guide_path = f"/e/{view_model.metadata.election_id}/"
     sources_page_url = f"{configuration.public_site_url}{guide_path}sources/"
+    election_display_name, _ = election_names(
+        view_model.metadata.election_date,
+        view_model.metadata.election_type,
+        view_model.metadata.state,
+        legacy_name=view_model.metadata.election_name,
+        election_id=view_model.metadata.election_id,
+    )
+    document_title = page_title(election=election_display_name)
     election_date_display = display_date(view_model.metadata.election_date)
     built_date_display = display_date(view_model.metadata.generated_at.date().isoformat())
     return template.render(
         **_personalization_lookup_context(view_model),
         guide=view_model,
         config=configuration,
+        document_title=document_title,
+        election_display_name=election_display_name,
         stylesheet=stylesheet,
         lens_url_script=lens_url_script,
         lens_score_script=lens_score_script,
@@ -241,10 +253,20 @@ def render_sources_document(
     share_link_script = (TEMPLATE_DIR / "share-link.mjs").read_text(encoding="utf-8")
     guide_path = f"/e/{view_model.metadata.election_id}/"
     pdf_href = f"{guide_path}{pdf_filename}" if pdf_filename is not None else None
+    election_display_name, _ = election_names(
+        view_model.metadata.election_date,
+        view_model.metadata.election_type,
+        view_model.metadata.state,
+        legacy_name=view_model.metadata.election_name,
+        election_id=view_model.metadata.election_id,
+    )
+    document_title = page_title(page="Sources", election=election_display_name)
     return template.render(
         **_personalization_lookup_context(view_model),
         guide=view_model,
         public_site_url=public_site_url,
+        document_title=document_title,
+        election_display_name=election_display_name,
         stylesheet=stylesheet,
         lens_url_script=lens_url_script,
         share_link_script=share_link_script,
@@ -866,7 +888,14 @@ def validate_rendered_guide(
         _pdf_race_core_values if detailed_pdf_path is not None else _pdf_race_display_values
     )
     missing_pdf_values = _missing_pdf_race_values(expected_races, pdf_text, primary_value_fn)
-    identity_values = ["August 2026 Primary", configuration.title]
+    election_display_name, _ = election_names(
+        view_model.metadata.election_date,
+        view_model.metadata.election_type,
+        view_model.metadata.state,
+        legacy_name=view_model.metadata.election_name,
+        election_id=view_model.metadata.election_id,
+    )
+    identity_values = [election_display_name, configuration.title]
     consensus_source_count = sum(
         source.panel_role == "consensus" for source in contributing_sources
     )

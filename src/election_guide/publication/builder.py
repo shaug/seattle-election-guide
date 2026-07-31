@@ -440,6 +440,8 @@ def _build_view_model(
             election_id=dataset.inventory.election.id,
             election_name=dataset.inventory.election.name,
             election_date=dataset.inventory.election.election_date.isoformat(),
+            election_type=dataset.inventory.election.election_type,
+            state=dataset.inventory.election.state,
             generated_at=consensus.computed_at,
             data_version=consensus.input_hash[:12],
             source_panel_id=dataset.source_registry.id,

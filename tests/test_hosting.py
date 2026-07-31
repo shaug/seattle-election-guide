@@ -87,15 +87,17 @@ def test_stage_pages_site_composes_verified_election_archive(tmp_path: Path) -> 
     assert f'href="/e/{CURRENT_ID}/"' in archive
     assert "current" in archive
     assert '<link rel="canonical" href="https://seattleelections.guide/e/">' in archive
+    assert "August 4, 2026 Washington primary" in archive
+    assert "November 4, 2025 Washington general" in archive
+    archive_title = "Guide archive — Seattle Elections Guide"
+    assert f'<meta property="og:title" content="{archive_title}">' in archive
+    assert f'<meta name="twitter:title" content="{archive_title}">' in archive
+    assert f"<title>{archive_title}</title>" in archive
     assert (
         '<meta property="og:description" content="Published Seattle election '
         'endorsement guides.">' in archive
     )
     assert '<meta name="twitter:card" content="summary_large_image">' in archive
-    assert (
-        '<meta name="twitter:title" content="Guide archive &mdash; Seattle Elections '
-        'Guide">' in archive
-    )
     assert (
         '<meta name="twitter:description" content="Published Seattle election '
         'endorsement guides.">' in archive
@@ -110,6 +112,10 @@ def test_stage_pages_site_composes_verified_election_archive(tmp_path: Path) -> 
 
     about = (output / "about" / "index.html").read_text(encoding="utf-8")
     assert '<link rel="canonical" href="https://seattleelections.guide/about/">' in about
+    about_title = "About — Seattle Elections Guide"
+    assert f'<meta property="og:title" content="{about_title}">' in about
+    assert f'<meta name="twitter:title" content="{about_title}">' in about
+    assert f"<title>{about_title}</title>" in about
     assert '<meta property="og:url" content="https://seattleelections.guide/about/">' in about
     assert '<meta name="twitter:card" content="summary_large_image">' in about
     assert f'href="/e/{CURRENT_ID}/"' in about
@@ -137,6 +143,7 @@ def test_stage_pages_site_composes_verified_election_archive(tmp_path: Path) -> 
     # (the page is JSON-encoded into the worker source, so its own quotes
     # are backslash-escaped there).
     assert "Page not found" in worker
+    assert r"Page not found \u2014 Seattle Elections Guide" in worker
     assert "site-band" in worker
     assert f'href=\\"/e/{CURRENT_ID}/\\"' in worker
 
@@ -425,7 +432,6 @@ def _current_election_manifest() -> SiteManifest:
         elections=[
             PublishedElection(
                 election_id=CURRENT_ID,
-                name="August 2026 Primary",
                 bundle_id=CURRENT_BUNDLE_ID,
                 release_version="primary.2",
                 source_panel_id="test-panel-v2",
@@ -584,14 +590,15 @@ def test_sources_page_renders_every_category_and_source_like_the_guide_tree(
 
     assert '<link rel="canonical" href="https://seattleelections.guide/e/' in html
     assert f"/e/{view_model.metadata.election_id}/sources/" in html
-    election_name = view_model.metadata.election_name
-    assert f'<meta property="og:title" content="Sources &mdash; {election_name}">' in html
+    election_name = "August 2026 Primary"
+    document_title = f"Sources — {election_name} — Seattle Elections Guide"
+    assert f'<meta property="og:title" content="{document_title}">' in html
     assert (
         '<meta property="og:description" content="Choose which sources count '
         f'toward your personalized {election_name} results.">' in html
     )
     assert '<meta name="twitter:card" content="summary_large_image">' in html
-    assert f'<meta name="twitter:title" content="Sources &mdash; {election_name}">' in html
+    assert f'<meta name="twitter:title" content="{document_title}">' in html
     assert (
         '<meta name="twitter:description" content="Choose which sources count '
         f'toward your personalized {election_name} results.">' in html
@@ -904,7 +911,6 @@ def _manifest_election(
 ) -> dict[str, str]:
     return {
         "election_id": election_id,
-        "name": election_id.replace("-", " ").title(),
         "bundle_id": bundle_id,
         "release_version": release_version,
         "source_panel_id": "test-panel-v2",
@@ -945,11 +951,23 @@ def _bundle_view_model(root: Path, *, election_id: str) -> PublicationViewModel:
     The shared rendering fixture's own election identity is unrelated to this
     archive's election IDs, so metadata is overridden and revalidated to match.
     """
+    election_year = 2026 if election_id == CURRENT_ID else 2025
+    election_month = "August" if election_id == CURRENT_ID else "November"
+    election_type = "primary" if election_id == CURRENT_ID else "general"
+    election_type_label = election_type.title()
+    election_date = f"{election_year}-{'08-04' if election_id == CURRENT_ID else '11-04'}"
     base = _personalization_enabled_view_model(root)
     updated = base.model_copy(
         update={
             "metadata": base.metadata.model_copy(
-                update={"election_id": election_id, "election_name": election_id.replace("-", " ")}
+                update={
+                    "election_id": election_id,
+                    "election_name": (
+                        f"{election_year} Washington {election_month} {election_type_label}"
+                    ),
+                    "election_type": election_type,
+                    "election_date": election_date,
+                }
             )
         }
     )
@@ -996,13 +1014,14 @@ def _write_release_bundle(
         elif relative in {pdf_relative, detailed_pdf_relative}:
             path.write_bytes(b"%PDF-1.7\n")
         elif relative == "data/publication_view_model.json":
-            path.write_bytes(
-                canonical_json_bytes(
-                    _bundle_view_model(root / "view-model-src", election_id=election_id).model_dump(
-                        mode="json"
-                    )
-                )
-            )
+            view_model_payload = _bundle_view_model(
+                root / "view-model-src", election_id=election_id
+            ).model_dump(mode="json")
+            # Hosting must continue to accept already-published schema-1.8
+            # bundles, which predate the optional structured naming fields.
+            view_model_payload["metadata"].pop("election_type")
+            view_model_payload["metadata"].pop("state")
+            path.write_bytes(canonical_json_bytes(view_model_payload))
         else:
             path.write_text(f"fixture for {relative}\n", encoding="utf-8")
 

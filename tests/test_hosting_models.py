@@ -15,7 +15,6 @@ PANEL_HASH = "b" * 64
 def _published_election() -> dict[str, str]:
     return {
         "election_id": CURRENT_ID,
-        "name": "Washington 2026 primary",
         "bundle_id": CURRENT_BUNDLE_ID,
         "release_version": "primary.2",
         "source_panel_id": "test-panel-v2",
