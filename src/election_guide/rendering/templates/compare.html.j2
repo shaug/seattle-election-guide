@@ -27,14 +27,16 @@
       <div class="page-band-rule"></div>
     </header>
     <main id="comparison-main" class="comparison-main">
-      <div class="comparison-intro">
-        <p class="eyebrow">{{ election_display_name }} · Compare</p>
-        <h1>Compare sources</h1>
-        <p class="lede">Put any sources side by side and see where they agree — and where they don't.
-          You're starting with all sources, The Stranger, and The Seattle Times.</p>
-        <div class="comparison-presets" role="group" aria-label="Suggested comparisons">
-          <span>Try a comparison</span>
-          {% for label, fragment in comparison_presets %}<a href="#{{ fragment }}">{{ label }}</a>{% endfor %}
+      <div class="comparison-intro-wrap">
+        <div class="comparison-intro">
+          <p class="eyebrow">{{ election_display_name }} · Compare</p>
+          <h1>Compare sources</h1>
+          <p class="lede">Put any sources side by side and see where they agree — and where they don't.
+            You're starting with all sources, The Stranger, and The Seattle Times.</p>
+          <div class="comparison-presets" role="group" aria-label="Suggested comparisons">
+            <span>Try a comparison</span>
+            {% for label, fragment in comparison_presets %}<a href="#{{ fragment }}">{{ label }}</a>{% endfor %}
+          </div>
         </div>
       </div>
 
@@ -51,14 +53,15 @@
         ], 'comparison-race-filters') }}
         {% call control_status('', 'aria-atomic="true" data-comparison-status', 'comparison-control-status') %}{{ comparison_race_count }} of {{ comparison_race_count }} races shown · {{ comparison_differ_count }} differ{% endcall %}
       {% endcall %}
-      <div class="comparison-share" role="group" aria-label="Share this comparison">
-        <span>Share this view</span>
-        <button type="button" data-comparison-copy>Copy link</button>
-        <span class="comparison-copy-status" role="status" aria-live="polite" data-comparison-copy-status></span>
-      </div>
-      <p class="comparison-hidden-notice" role="status" aria-live="polite" data-comparison-hidden-notice hidden></p>
-      <div class="comparison-table-wrap" data-comparison-grid>
-        <table class="comparison-table" data-comparison-table data-default-columns="gall,strn,stim">
+      <div class="comparison-content">
+        <div class="comparison-share" role="group" aria-label="Share this comparison">
+          <span>Share this view</span>
+          <button type="button" data-comparison-copy>Copy link</button>
+          <span class="comparison-copy-status" role="status" aria-live="polite" data-comparison-copy-status></span>
+        </div>
+        <p class="comparison-hidden-notice" role="status" aria-live="polite" data-comparison-hidden-notice hidden></p>
+        <div class="comparison-table-wrap" data-comparison-grid>
+          <table class="comparison-table" data-comparison-table data-default-columns="gall,strn,stim">
           <caption class="visually-hidden">Endorsement comparison by race</caption>
           <thead data-comparison-head>
             <tr>
@@ -102,7 +105,8 @@
             {% endfor %}
           </tbody>
           {% endfor %}
-        </table>
+          </table>
+        </div>
       </div>
 
     </main>

@@ -296,9 +296,9 @@ def test_guide_and_compare_render_the_shared_filter_control_components() -> None
         assert selector not in page_css
 
 
-@pytest.mark.parametrize("mobile_width", [None, 390])
+@pytest.mark.parametrize("viewport_width", [1440, 390])
 def test_guide_and_compare_shared_controls_have_the_same_rendered_primitives(
-    tmp_path: Path, mobile_width: int | None
+    tmp_path: Path, viewport_width: int
 ) -> None:
     script = """
     (() => {
@@ -309,6 +309,9 @@ def test_guide_and_compare_shared_controls_have_the_same_rendered_primitives(
       const selected = segmented.querySelector('input:checked + span');
       const status = bar.querySelector('.filter-control-status');
       const styles = (element) => getComputedStyle(element);
+      const barRect = bar.getBoundingClientRect();
+      const selectRect = select.getBoundingClientRect();
+      const statusRect = status.getBoundingClientRect();
       return JSON.stringify({
         roles: [...bar.children].map((child) => [...child.classList]
           .find((name) => name.startsWith('filter-'))),
@@ -326,14 +329,25 @@ def test_guide_and_compare_shared_controls_have_the_same_rendered_primitives(
         labelWeight: styles(label).fontWeight,
         selectedBackground: styles(selected).backgroundColor,
         selectedColor: styles(selected).color,
+        barLeft: barRect.left,
+        barWidth: barRect.width,
+        barHeight: barRect.height,
+        selectTop: selectRect.top,
+        selectBottom: selectRect.bottom,
+        statusTop: statusRect.top,
+        statusHeight: statusRect.height,
+        statusLineHeight: styles(status).lineHeight,
+        segmentedColumns: styles(segmented).gridTemplateColumns,
+        allOptionsFit: [...segmented.querySelectorAll('span')]
+          .every((item) => item.scrollWidth <= item.clientWidth + 1),
         outerWidth: document.documentElement.scrollWidth,
         viewportWidth: document.documentElement.clientWidth,
       });
     })()
     """
-    guide = _evaluate_in_chrome(_guide_html_path(tmp_path), script, mobile_width=mobile_width)
+    guide = _evaluate_in_chrome(_guide_html_path(tmp_path), script, mobile_width=viewport_width)
     compare = _evaluate_in_chrome(
-        _comparison_html_path(tmp_path), script, mobile_width=mobile_width
+        _comparison_html_path(tmp_path), script, mobile_width=viewport_width
     )
     assert guide["roles"] == [
         "filter-select-control",
@@ -365,6 +379,21 @@ def test_guide_and_compare_shared_controls_have_the_same_rendered_primitives(
         assert guide[key] == compare[key]
     assert guide["outerWidth"] == guide["viewportWidth"]
     assert compare["outerWidth"] == compare["viewportWidth"]
+    assert abs(guide["barLeft"] - compare["barLeft"]) < 1
+    assert abs(guide["barWidth"] - compare["barWidth"]) < 1
+    assert guide["allOptionsFit"] is True
+    assert compare["allOptionsFit"] is True
+    if viewport_width > 720:
+        assert abs(guide["barHeight"] - compare["barHeight"]) < 1
+        for rendered in (guide, compare):
+            assert rendered["selectTop"] <= rendered["statusTop"] < rendered["selectBottom"]
+            assert (
+                rendered["statusHeight"]
+                <= float(rendered["statusLineHeight"].removesuffix("px")) * 1.5
+            )
+        assert compare["segmentedColumns"] == "none"
+    else:
+        assert len(compare["segmentedColumns"].split()) == 2
 
 
 def test_compare_client_enforces_picker_bounds_and_history(tmp_path: Path) -> None:
