@@ -414,7 +414,7 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
   /* The audit line's linked update dates already provide revision provenance,
      so the detailed edition keeps it visible and recolors it for the white
      background. */
-  html.detailed-edition .site-footer-audit { border-top-color: var(--line); color: var(--muted); }
+  html.detailed-edition .detailed-footer-audit { display: block; padding: .7rem clamp(1rem, 4vw, 3rem); border-top: 1px solid var(--line); color: var(--muted); }
   html.detailed-edition .site-footer-audit a { color: var(--blue); }
   html.detailed-edition .detailed-source-directory { display: block; padding: .12in .3in .2in; }
   html.detailed-edition .detailed-source-directory h2 { margin: 0 0 .08in; font-size: 14pt; }

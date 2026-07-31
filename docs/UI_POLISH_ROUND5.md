@@ -168,3 +168,5 @@ open ticket. Numbering continues the ledger (last used: I56).
   coverage-gaps left column (it's methodology, same voice) and let the
   panel/data line join the footer audit line, which already carries the same
   identifiers.
+  Amended 2026-07-31 by #179: panel identity remains in the footer, now on the
+  data provenance line inside the single-band footer grammar.
