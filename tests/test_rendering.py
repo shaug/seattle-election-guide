@@ -2918,6 +2918,40 @@ def test_phone_dialog_metrics_fit_the_longest_live_content_at_320px(tmp_path: Pa
     assert result["countWithin"] is True
 
 
+def test_full_race_card_stacks_name_and_meter_below_480px(tmp_path: Path) -> None:
+    """Issue 151: full view stacks on phones without changing the 480px layout."""
+    view_model = _personalization_enabled_view_model(tmp_path)
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    expression = """
+      (() => {
+        const result = document.querySelector('.screen-race-result');
+        result.querySelector('h3').textContent = 'Sharon Tomiko Santos / Kelabe Tewolde';
+        const meter = result.querySelector('.screen-meter');
+        const context = result.nextElementSibling;
+        const resultBox = result.getBoundingClientRect();
+        const meterBox = meter.getBoundingClientRect();
+        return JSON.stringify({
+          columns: getComputedStyle(result).gridTemplateColumns.split(' ').length,
+          resultWidth: resultBox.width,
+          meterWidth: meterBox.width,
+          captionBelow: context.getBoundingClientRect().top >= resultBox.bottom,
+        });
+      })()
+    """
+
+    phone = _evaluate_in_chrome(html_path, expression, mobile_width=320)
+    boundary = _evaluate_in_chrome(html_path, expression, mobile_width=480)
+
+    assert phone["columns"] == 1
+    assert phone["meterWidth"] == pytest.approx(phone["resultWidth"], abs=1)
+    assert phone["captionBelow"] is True
+    assert boundary["columns"] == 2
+
+
 def _tallying_selectable(item: PersonalizationCategory | PersonalizationSource) -> bool:
     """Whether item is a selectable, tallying (non-comparison) category or
     source, for tests that specifically want a tallying-only item (e.g. moving

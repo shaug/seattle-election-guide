@@ -265,6 +265,10 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
   .race-detail-source-status { text-align: left; }
 }
 
+@media (max-width: 479px) {
+  html:not(.compact-ballot-mode) .screen-race-result { grid-template-columns: minmax(0, 1fr); gap: .4rem; }
+  html:not(.compact-ballot-mode) .screen-meter { width: 100%; }
+}
 @page { size: Letter portrait; margin: .28in .3in; }
 
 @media print {
