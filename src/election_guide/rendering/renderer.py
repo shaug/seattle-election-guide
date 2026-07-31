@@ -13,6 +13,7 @@ import time
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, date
+from fractions import Fraction
 from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any, cast
@@ -212,6 +213,7 @@ def render_html_document(
         source_category_label_by_key=source_category_label_by_key,
         source_cells_by_race_id=source_cells_by_race_id,
         concise_warning_labels=_concise_warning_labels,
+        has_no_majority=_has_no_majority,
         screen_share_accessible_label=_screen_share_accessible_label,
         screen_support_summary=_screen_support_summary,
         screen_support_summary_compact=_screen_support_summary_compact,
@@ -453,12 +455,18 @@ def _race_detail_support_summary(race: PublicationRace) -> str:
 
 def _race_detail_accessible_summary(race: PublicationRace) -> str:
     share = "Consensus unavailable" if race.percentage_whole is None else race.percentage_label
-    return f"{race.recommendation_label}. {share}. {_race_detail_support_summary(race)}."
+    qualifier = "No majority. " if _has_no_majority(race) else ""
+    return f"{race.recommendation_label}. {qualifier}{share}. {_race_detail_support_summary(race)}."
+
+
+def _has_no_majority(race: PublicationRace) -> bool:
+    return race.winner_share is not None and Fraction(race.winner_share) <= Fraction(1, 2)
 
 
 def _screen_share_accessible_label(race: PublicationRace) -> str:
     share = "not available" if race.percentage_whole is None else race.percentage_label
-    return f"Consensus among explicitly endorsing sources: {share}"
+    qualifier = "No majority. " if _has_no_majority(race) else ""
+    return f"{qualifier}Consensus among explicitly endorsing sources: {share}"
 
 
 def _source_cell_group(
@@ -1565,7 +1573,9 @@ def _inspect_print_layout(
                           meterStyle.justifyContent !== 'flex-start' ||
                           Number.parseFloat(meterStyle.borderTopWidth) < .4 ||
                           (!meter.classList.contains('print-meter-na') &&
-                           meterStyle.backgroundImage === 'none')) {
+                           meterStyle.backgroundImage === 'none') ||
+                          (meter.classList.contains('meter-no-majority') &&
+                           !meterStyle.backgroundImage.includes('rgb(217, 144, 0)'))) {
                         issues.push(`.print-meter[${index}]-treatment`);
                       }
                       if (meterLabel) {
