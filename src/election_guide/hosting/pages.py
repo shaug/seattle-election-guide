@@ -684,6 +684,11 @@ def _about_html(site_manifest: SiteManifest, *, built_date_display: str, git_com
           own ballot, and your ballot may include a race this guide does not cover.</p>
       </section>
 
+      <section aria-labelledby="choices-anonymous">
+        <h2 id="choices-anonymous">Are my choices anonymous?</h2>
+        <p>Your source selection lives entirely in this page's address. Nothing is stored anywhere
+          else, and the site has no account or profile connected to your choices.</p>
+      </section>
       <section aria-labelledby="source-panel">
         <h2 id="source-panel">The source panel is versioned, not frozen forever</h2>
         <p>The set of organizations tracked for a given guide is preregistered and locked before
