@@ -103,12 +103,13 @@ def test_stage_pages_site_composes_verified_election_archive(tmp_path: Path) -> 
         'endorsement guides.">' in archive
     )
     assert "noindex" not in archive
-    # L55.2: the site-level audit-line variant (built date + Code hash,
-    # linking to the exact commit) on the site-wide archive page.
-    assert '<div class="site-footer-audit">Built July 21, 2026' in archive
-    assert f'commit/{COMMIT}">{COMMIT[:12]}</a></div>' in archive
-    assert "Election " not in archive
-    assert "Panel " not in archive
+    footer_audit = (
+        f'Data last updated <a href="https://github.com/shaug/seattle-election-guide/commit/'
+        f'{COMMIT}">2026-07-20</a>. Site last updated <a href="https://github.com/shaug/'
+        f'seattle-election-guide/commit/{COMMIT}">2026-07-21</a>.'
+    )
+    assert f'<div class="site-footer-audit">{footer_audit}</div>' in archive
+    assert f">{COMMIT[:12]}</a>" not in archive
 
     about = (output / "about" / "index.html").read_text(encoding="utf-8")
     assert '<link rel="canonical" href="https://seattleelections.guide/about/">' in about
@@ -126,11 +127,8 @@ def test_stage_pages_site_composes_verified_election_archive(tmp_path: Path) -> 
     # replaced the old page-footer nav, which was the site's only link to the
     # guide archive; that link now lives in About's own body prose instead.
     assert '<a href="/e/">guide archive</a>' in about
-    # Same site-level audit-line variant on the site-wide About page.
-    assert '<div class="site-footer-audit">Built July 21, 2026' in about
-    assert f'commit/{COMMIT}">{COMMIT[:12]}</a></div>' in about
-    assert "Election " not in about
-    assert "Panel " not in about
+    assert f'<div class="site-footer-audit">{footer_audit}</div>' in about
+    assert f">{COMMIT[:12]}</a>" not in about
 
     headers = (output / "_headers").read_text(encoding="utf-8")
     assert "X-Frame-Options: DENY" in headers
@@ -583,7 +581,12 @@ def test_about_page_share_button_uses_web_share_then_falls_back_to_copy(
     manifest = _current_election_manifest()
     html_path = tmp_path / "about.html"
     html_path.write_text(
-        _about_html(manifest, built_date_display="July 30, 2026", git_commit=COMMIT),
+        _about_html(
+            manifest,
+            data_updated_date="2026-07-23",
+            site_updated_date="2026-07-30",
+            git_commit=COMMIT,
+        ),
         encoding="utf-8",
     )
     result = _evaluate_in_chrome(
@@ -650,7 +653,10 @@ def test_about_page_folds_in_every_fact_the_removed_methodology_panel_stated() -
     every fact it stated that /about/ didn't already cover must now be
     findable there."""
     about = _about_html(
-        _current_election_manifest(), built_date_display="July 30, 2026", git_commit=COMMIT
+        _current_election_manifest(),
+        data_updated_date="2026-07-23",
+        site_updated_date="2026-07-30",
+        git_commit=COMMIT,
     )
 
     # "Agreement, not a grade": neither the percentage nor the source count
@@ -771,8 +777,17 @@ def test_sources_page_renders_every_category_and_source_like_the_guide_tree(
     assert ".sources-page-intro { max-width: 60ch;" in html
     assert "Your selection lives entirely" not in html
     assert "sources-version" not in html
-    assert html.count(f"Panel {view_model.metadata.source_panel_id}") == 1
-    assert html.count(f"Data {view_model.metadata.data_version}") == 1
+    data_updated_date = (
+        (view_model.metadata.data_as_of or view_model.metadata.generated_at).date().isoformat()
+    )
+    site_updated_date = view_model.metadata.generated_at.date().isoformat()
+    assert f">{data_updated_date}</a>. Site last updated" in html
+    assert f">{site_updated_date}</a>." in html
+    assert f"Source panel {view_model.metadata.source_panel_id} ·" in html
+    assert (
+        f'<a href="/e/{view_model.metadata.election_id}/release-status.json">'
+        f"{view_model.metadata.source_panel_hash[:12]}</a>."
+    ) in html
 
 
 def test_sources_page_action_strip_stays_visible_with_count_and_actions(tmp_path: Path) -> None:

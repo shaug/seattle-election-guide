@@ -486,11 +486,12 @@ class PublicationMetadata(PublicationModel):
     election_id: str
     election_name: str
     election_date: str
-    # Added compatibly within schema 1.8: immutable older bundles omit these,
-    # while new bundles persist the structured naming inputs.
+    # Optional for immutable older bundles; new bundles persist the structured
+    # naming and data-cutoff inputs.
     election_type: Literal["primary", "general", "special"] | None = None
     state: str | None = Field(default=None, pattern=r"^[A-Z]{2}$")
     generated_at: AwareDatetime
+    data_as_of: AwareDatetime | None = None
     data_version: str
     source_panel_id: str
     source_panel_version: str

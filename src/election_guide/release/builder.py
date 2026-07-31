@@ -89,6 +89,7 @@ def build_release(
             consensus,
             git_commit=git_commit,
             snapshot_root=snapshot_root,
+            data_as_of=ledger.data_as_of,
         )
         write_publication_bundle(publication, data_dir)
         (data_dir / "canonical-dataset.json").write_bytes(

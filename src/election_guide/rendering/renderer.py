@@ -201,7 +201,7 @@ def render_html_document(
     )
     document_title = page_title(election=election_display_name)
     election_date_display = display_date(view_model.metadata.election_date)
-    built_date_display = display_date(view_model.metadata.generated_at.date().isoformat())
+    data_updated_date, site_updated_date = _footer_update_dates(view_model)
     return template.render(
         **_personalization_lookup_context(view_model),
         guide=view_model,
@@ -228,19 +228,15 @@ def render_html_document(
         ),
         site_head_links=site_head_links_html(configuration.public_site_url),
         election_date_display=election_date_display,
-        built_date_display=built_date_display,
         election_day_kicker=_election_day_kicker(view_model.metadata.election_date),
         site_footer_band=site_footer_band_html(
             project_url=configuration.project_url,
             pdf_href=configuration.pdf_filename,
         ),
         site_footer_audit=site_footer_audit_html(
-            election_date_display=election_date_display,
-            built_date_display=built_date_display,
-            data_version=view_model.metadata.data_version,
+            data_updated_date=data_updated_date,
+            site_updated_date=site_updated_date,
             git_commit=view_model.metadata.git_commit,
-            source_panel_id=view_model.metadata.source_panel_id,
-            source_panel_hash=view_model.metadata.source_panel_hash,
             project_url=configuration.project_url,
         ),
         filter_options=_filter_options(view_model),
@@ -301,10 +297,12 @@ def render_sources_document(
         election_id=view_model.metadata.election_id,
     )
     document_title = page_title(page="Sources", election=election_display_name)
+    data_updated_date, site_updated_date = _footer_update_dates(view_model)
     return template.render(
         **_personalization_lookup_context(view_model),
         guide=view_model,
         public_site_url=public_site_url,
+        release_status_href=f"{guide_path}release-status.json",
         document_title=document_title,
         election_display_name=election_display_name,
         stylesheet=stylesheet,
@@ -326,14 +324,9 @@ def render_sources_document(
         ),
         site_footer_audit=(
             site_footer_audit_html(
-                election_date_display=display_date(view_model.metadata.election_date),
-                built_date_display=display_date(
-                    view_model.metadata.generated_at.date().isoformat()
-                ),
-                data_version=view_model.metadata.data_version,
+                data_updated_date=data_updated_date,
+                site_updated_date=site_updated_date,
                 git_commit=view_model.metadata.git_commit,
-                source_panel_id=view_model.metadata.source_panel_id,
-                source_panel_hash=view_model.metadata.source_panel_hash,
                 project_url=project_url,
             )
             if project_url is not None
@@ -427,6 +420,7 @@ def render_comparison_document(
         ),
     ]
     comparison_sections = _comparison_sections(view_model)
+    data_updated_date, site_updated_date = _footer_update_dates(view_model)
     return template.render(
         guide=view_model,
         public_site_url=public_site_url,
@@ -452,14 +446,9 @@ def render_comparison_document(
         ),
         site_footer_audit=(
             site_footer_audit_html(
-                election_date_display=display_date(view_model.metadata.election_date),
-                built_date_display=display_date(
-                    view_model.metadata.generated_at.date().isoformat()
-                ),
-                data_version=view_model.metadata.data_version,
+                data_updated_date=data_updated_date,
+                site_updated_date=site_updated_date,
                 git_commit=view_model.metadata.git_commit,
-                source_panel_id=view_model.metadata.source_panel_id,
-                source_panel_hash=view_model.metadata.source_panel_hash,
                 project_url=project_url,
             )
             if project_url is not None
@@ -645,6 +634,14 @@ def display_date(iso_date: str) -> str:
     """
     parsed = date.fromisoformat(iso_date)
     return f"{parsed:%B} {parsed.day}, {parsed.year}"
+
+
+def _footer_update_dates(view_model: PublicationViewModel) -> tuple[str, str]:
+    data_updated_at = view_model.metadata.data_as_of or view_model.metadata.generated_at
+    return (
+        data_updated_at.date().isoformat(),
+        view_model.metadata.generated_at.date().isoformat(),
+    )
 
 
 def _election_day_kicker(iso_date: str) -> str:
@@ -1215,6 +1212,7 @@ def validate_rendered_guide(
     comparison_source_count = sum(
         source.panel_role == "comparison" for source in contributing_sources
     )
+    data_updated_date, site_updated_date = _footer_update_dates(view_model)
     global_pdf_values = [
         *(section.label for section in view_model.sections),
         f"{view_model.metadata.published_race_count} races",
@@ -1226,12 +1224,8 @@ def validate_rendered_guide(
         "Overlap and limitations",
         "Verify before voting",
         view_model.methodology.verification_instructions,
-        f"Election {display_date(view_model.metadata.election_date)}",
-        f"Built {display_date(view_model.metadata.generated_at.date().isoformat())}",
-        f"Data {view_model.metadata.data_version}",
-        f"Code {view_model.metadata.git_commit[:12]}",
-        f"Panel {view_model.metadata.source_panel_version}",
-        view_model.metadata.source_panel_hash[:12],
+        f"Data last updated {data_updated_date}",
+        f"Site last updated {site_updated_date}",
         *(source.name for source in coverage_gap_sources),
         *(_coverage_gap_status_label(source) for source in coverage_gap_sources),
     ]
@@ -1264,10 +1258,13 @@ def validate_rendered_guide(
     pages_are_letter = _pages_are_letter(reader)
     pdf_links = _pdf_links(reader)
     pdf_link_rows = _pdf_link_rows(reader)
+    commit_url = f"{configuration.project_url}/commit/{view_model.metadata.git_commit}"
     expected_pdf_links = [
         configuration.project_url,
         *(source.evidence_url for source in print_contributing_sources),
         *(source.evidence_url for source in coverage_gap_sources),
+        commit_url,
+        commit_url,
         configuration.project_url,
     ]
     expected_source_link_rows = [
@@ -1277,7 +1274,7 @@ def validate_rendered_guide(
     pdf_links_valid = (
         _web_urls_are_safe(pdf_links)
         and pdf_links == expected_pdf_links
-        and pdf_link_rows[1:-1] == expected_source_link_rows
+        and pdf_link_rows[1:-3] == expected_source_link_rows
     )
     link_count = len(pdf_links)
     metadata = reader.metadata
