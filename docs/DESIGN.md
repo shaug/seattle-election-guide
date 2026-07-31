@@ -104,6 +104,12 @@ Every icon-only control carries `aria-label` + `title` tooltip + a visible
 focus ring + an adequate tap target. The *primary* path to the methodology
 is always words — trust links don't hide behind glyphs.
 
+**Emoji are text, not iconography.** They may appear only in purely
+textual contexts — a `<title>` label, a plain-text email — never as UI
+icons. Rendered UI uses real SVG icons from a standard library (Lucide or
+similar): they take the surrounding color, stroke, and focus treatment,
+while emoji render differently on every platform and can't be styled.
+
 ## Titles & naming
 
 - **`<title>` grammar.** Election-scoped pages:
