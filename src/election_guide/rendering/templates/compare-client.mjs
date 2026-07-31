@@ -402,10 +402,10 @@ if (comparisonBindingsElement) {
 
   function syncControls() {
     sectionFilter.value = state.section;
-    document.querySelector('[data-comparison-complete]').checked = !state.contestedOnly && !state.differencesOnly;
-    document.querySelector('[data-comparison-contested]').checked = state.contestedOnly && !state.differencesOnly;
-    document.querySelector('[data-comparison-differences]').checked = !state.contestedOnly && state.differencesOnly;
-    document.querySelector('[data-comparison-contested-differences]').checked = state.contestedOnly && state.differencesOnly;
+    document.querySelector('[data-comparison-full]').checked = !state.differencesOnly;
+    document.querySelector('[data-comparison-differences]').checked = state.differencesOnly;
+    document.querySelector('[data-comparison-all-races]').checked = !state.contestedOnly;
+    document.querySelector('[data-comparison-contested]').checked = state.contestedOnly;
   }
 
   function render(focusTarget = null) {
@@ -421,24 +421,20 @@ if (comparisonBindingsElement) {
     state.section = sectionFilter.value;
     if (writeState('replace')) render();
   });
-  document.querySelector('[data-comparison-complete]').addEventListener('change', () => {
-    state.contestedOnly = false;
-    state.differencesOnly = false;
-    if (writeState('replace')) render();
-  });
-  document.querySelector('[data-comparison-contested]').addEventListener('change', () => {
-    state.contestedOnly = true;
+  document.querySelector('[data-comparison-full]').addEventListener('change', () => {
     state.differencesOnly = false;
     if (writeState('replace')) render();
   });
   document.querySelector('[data-comparison-differences]').addEventListener('change', () => {
-    state.contestedOnly = false;
     state.differencesOnly = true;
     if (writeState('replace')) render();
   });
-  document.querySelector('[data-comparison-contested-differences]').addEventListener('change', () => {
+  document.querySelector('[data-comparison-all-races]').addEventListener('change', () => {
+    state.contestedOnly = false;
+    if (writeState('replace')) render();
+  });
+  document.querySelector('[data-comparison-contested]').addEventListener('change', () => {
     state.contestedOnly = true;
-    state.differencesOnly = true;
     if (writeState('replace')) render();
   });
   document.querySelector('[data-comparison-copy]').addEventListener('click', async () => {

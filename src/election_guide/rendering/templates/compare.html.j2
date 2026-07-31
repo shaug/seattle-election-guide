@@ -19,7 +19,7 @@
   <style>{{ stylesheet | safe }}</style>
 </head>
 <body>
-  {% from '_filter_controls.html.j2' import control_bar, labeled_select, segmented_radio, control_status %}
+  {% from '_filter_controls.html.j2' import election_controls %}
   <a class="skip-link" href="#comparison-main">Skip to content</a>
   <div class="page" data-comparison-page data-election-id="{{ guide.metadata.election_id }}">
     <header>
@@ -40,18 +40,22 @@
         </div>
       </div>
 
-      {% call control_bar('Comparison controls', 'comparison-controls') %}
-        {% call labeled_select('Ballot', 'comparison-ballot-filter', 'data-comparison-section-filter') %}
-            <option value="all">All Seattle ballot races</option>
-            {% for section in comparison_sections %}<option value="{{ section.section_id }}">{{ section.section_label }}</option>{% endfor %}
-        {% endcall %}
-        {{ segmented_radio('Races', 'comparison-races', [
-          {'value': 'all', 'label': 'All', 'id': '', 'attributes': 'data-comparison-complete', 'checked': true},
-          {'value': 'contested', 'label': 'Contested', 'id': '', 'attributes': 'data-comparison-contested', 'checked': false},
-          {'value': 'differing', 'label': 'Differing', 'id': '', 'attributes': 'data-comparison-differences', 'checked': false},
-          {'value': 'contested-differences', 'label': 'Contested differences', 'id': '', 'attributes': 'data-comparison-contested-differences', 'checked': false}
-        ], 'comparison-race-filters') }}
-        {% call control_status('', 'aria-atomic="true" data-comparison-status', 'comparison-control-status') %}{{ comparison_race_count }} of {{ comparison_race_count }} races shown · {{ comparison_differ_count }} differ{% endcall %}
+      {% call election_controls(
+        'Comparison view and race filters', 'comparison-controls',
+        'comparison-ballot-filter', 'data-comparison-section-filter', '',
+        'comparison-view', [
+          {'value': 'full', 'label': 'Full', 'id': '', 'attributes': 'data-comparison-full', 'checked': true},
+          {'value': 'differing', 'label': 'Differing', 'id': '', 'attributes': 'data-comparison-differences', 'checked': false}
+        ],
+        'comparison-races', [
+          {'value': 'all', 'label': 'All', 'id': '', 'attributes': 'data-comparison-all-races', 'checked': true},
+          {'value': 'contested', 'label': 'Contested', 'id': '', 'attributes': 'data-comparison-contested', 'checked': false}
+        ],
+        '', 'aria-atomic="true" data-comparison-status', 'comparison-control-status',
+        comparison_race_count ~ ' of ' ~ comparison_race_count ~ ' races shown · ' ~ comparison_differ_count ~ ' differ'
+      ) %}
+        <option value="all">All Seattle ballot races</option>
+        {% for section in comparison_sections %}<option value="{{ section.section_id }}">{{ section.section_label }}</option>{% endfor %}
       {% endcall %}
       <div class="comparison-content">
         <div class="comparison-share" role="group" aria-label="Share this comparison">

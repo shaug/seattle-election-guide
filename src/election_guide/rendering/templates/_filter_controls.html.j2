@@ -27,3 +27,30 @@
 {% macro control_status(status_id='', attributes='', extra_class='') -%}
 <p class="filter-control-status{% if extra_class %} {{ extra_class }}{% endif %}"{% if status_id %} id="{{ status_id }}"{% endif %} role="status" aria-live="polite"{% if attributes %} {{ attributes | safe }}{% endif %}>{{ caller() }}</p>
 {%- endmacro %}
+
+{# One election-control composition shared by every election view. Pages may
+   supply their ballot options and binary View values, but not rearrange or
+   replace the Ballot / View / Races / status slots. #}
+{% macro election_controls(
+  aria_label,
+  extra_class,
+  ballot_id,
+  ballot_attributes,
+  ballot_extra_class,
+  view_name,
+  view_options,
+  race_name,
+  race_options,
+  status_id='',
+  status_attributes='',
+  status_extra_class='',
+  status_text=''
+) -%}
+{% set ballot_options = caller() %}
+{% call control_bar(aria_label, extra_class) %}
+  {% call labeled_select('Ballot', ballot_id, ballot_attributes, ballot_extra_class) %}{{ ballot_options | safe }}{% endcall %}
+  {{ segmented_radio('View', view_name, view_options, 'view-setting') }}
+  {{ segmented_radio('Races', race_name, race_options, 'view-setting') }}
+  {% call control_status(status_id, status_attributes, status_extra_class) %}{{ status_text }}{% endcall %}
+{% endcall %}
+{%- endmacro %}

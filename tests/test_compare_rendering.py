@@ -237,7 +237,7 @@ def _guide_html_path(tmp_path: Path) -> Path:
     return path
 
 
-def test_guide_and_compare_render_the_shared_filter_control_components() -> None:
+def test_guide_and_compare_render_the_shared_election_controls_composite() -> None:
     view_model = _enabled_view_model()
     guide = render_html_document(
         view_model,
@@ -258,7 +258,8 @@ def test_guide_and_compare_render_the_shared_filter_control_components() -> None
         assert 'class="filter-segmented-control' in bar.group(0)
         assert 'class="segmented-control"' in bar.group(0)
         assert 'class="filter-control-status' in bar.group(0)
-        assert bar.group(0).index('class="filter-control-status') < len(bar.group(0))
+        labels = re.findall(r'class="filter-control-label"[^>]*>([^<]+)', bar.group(0))
+        assert labels == ["Ballot", "View", "Races"]
 
     macro_source = (
         PROJECT_ROOT / "src/election_guide/rendering/templates/_filter_controls.html.j2"
@@ -269,9 +270,11 @@ def test_guide_and_compare_render_the_shared_filter_control_components() -> None
         )
         for name in ("guide.html.j2", "compare.html.j2")
     ]
-    for macro in ("control_bar", "labeled_select", "segmented_radio", "control_status"):
-        assert f"macro {macro}" in macro_source
-        assert all(f"{macro}(" in source for source in consumer_sources)
+    assert "macro election_controls" in macro_source
+    assert all("election_controls(" in source for source in consumer_sources)
+    for primitive in ("control_bar", "labeled_select", "segmented_radio", "control_status"):
+        assert f"macro {primitive}" in macro_source
+        assert all(f"{primitive}(" not in source for source in consumer_sources)
 
     base_css = (PROJECT_ROOT / "src/election_guide/rendering/templates/base.css").read_text(
         encoding="utf-8"
@@ -297,7 +300,7 @@ def test_guide_and_compare_render_the_shared_filter_control_components() -> None
 
 
 @pytest.mark.parametrize("viewport_width", [1440, 390])
-def test_guide_and_compare_shared_controls_have_the_same_rendered_primitives(
+def test_guide_and_compare_shared_controls_have_the_same_composition_and_geometry(
     tmp_path: Path, viewport_width: int
 ) -> None:
     script = """
@@ -305,8 +308,8 @@ def test_guide_and_compare_shared_controls_have_the_same_rendered_primitives(
       const bar = document.querySelector('.filter-control-bar');
       const select = bar.querySelector('.filter-select');
       const label = bar.querySelector('.filter-control-label');
-      const segmented = bar.querySelector('.segmented-control');
-      const selected = segmented.querySelector('input:checked + span');
+      const segmented = [...bar.querySelectorAll('.segmented-control')];
+      const selected = segmented[0].querySelector('input:checked + span');
       const status = bar.querySelector('.filter-control-status');
       const styles = (element) => getComputedStyle(element);
       const barRect = bar.getBoundingClientRect();
@@ -315,6 +318,14 @@ def test_guide_and_compare_shared_controls_have_the_same_rendered_primitives(
       return JSON.stringify({
         roles: [...bar.children].map((child) => [...child.classList]
           .find((name) => name.startsWith('filter-'))),
+        slotLabels: [...bar.querySelectorAll('.filter-control-label')]
+          .map((item) => item.textContent.trim()),
+        slotOptions: segmented.map((control) => [...control.querySelectorAll('span')]
+          .map((item) => item.textContent.trim())),
+        slotRects: [...bar.children].map((child) => {
+          const rect = child.getBoundingClientRect();
+          return [rect.left - barRect.left, rect.top - barRect.top, rect.width, rect.height];
+        }),
         selectLabel: document.querySelector(`label[for="${select.id}"]`)?.textContent,
         statusInside: status?.parentElement === bar,
         barDisplay: styles(bar).display,
@@ -337,8 +348,7 @@ def test_guide_and_compare_shared_controls_have_the_same_rendered_primitives(
         statusTop: statusRect.top,
         statusHeight: statusRect.height,
         statusLineHeight: styles(status).lineHeight,
-        segmentedColumns: styles(segmented).gridTemplateColumns,
-        allOptionsFit: [...segmented.querySelectorAll('span')]
+        allOptionsFit: segmented.flatMap((control) => [...control.querySelectorAll('span')])
           .every((item) => item.scrollWidth <= item.clientWidth + 1),
         outerWidth: document.documentElement.scrollWidth,
         viewportWidth: document.documentElement.clientWidth,
@@ -355,11 +365,10 @@ def test_guide_and_compare_shared_controls_have_the_same_rendered_primitives(
         "filter-segmented-control",
         "filter-control-status",
     ]
-    assert compare["roles"] == [
-        "filter-select-control",
-        "filter-segmented-control",
-        "filter-control-status",
-    ]
+    assert compare["roles"] == guide["roles"]
+    assert guide["slotLabels"] == compare["slotLabels"] == ["Ballot", "View", "Races"]
+    assert guide["slotOptions"] == [["Full", "Compact"], ["All", "Contested"]]
+    assert compare["slotOptions"] == [["Full", "Differing"], ["All", "Contested"]]
     assert guide["selectLabel"] == compare["selectLabel"] == "Ballot"
     assert guide["statusInside"] is compare["statusInside"] is True
     for key in (
@@ -381,6 +390,9 @@ def test_guide_and_compare_shared_controls_have_the_same_rendered_primitives(
     assert compare["outerWidth"] == compare["viewportWidth"]
     assert abs(guide["barLeft"] - compare["barLeft"]) < 1
     assert abs(guide["barWidth"] - compare["barWidth"]) < 1
+    for guide_rect, compare_rect in zip(guide["slotRects"], compare["slotRects"], strict=True):
+        for guide_value, compare_value in zip(guide_rect, compare_rect, strict=True):
+            assert abs(guide_value - compare_value) < 1
     assert guide["allOptionsFit"] is True
     assert compare["allOptionsFit"] is True
     if viewport_width > 720:
@@ -391,9 +403,6 @@ def test_guide_and_compare_shared_controls_have_the_same_rendered_primitives(
                 rendered["statusHeight"]
                 <= float(rendered["statusLineHeight"].removesuffix("px")) * 1.5
             )
-        assert compare["segmentedColumns"] == "none"
-    else:
-        assert len(compare["segmentedColumns"].split()) == 2
 
 
 def test_compare_client_enforces_picker_bounds_and_history(tmp_path: Path) -> None:
@@ -834,7 +843,7 @@ def test_compare_client_presets_filters_and_copy_link_round_trip(tmp_path: Path)
           await wait();
           const rowsBeforeDifferences = document
             .querySelectorAll('[data-comparison-race]').length;
-          document.querySelector('[data-comparison-contested-differences]').click();
+          document.querySelector('[data-comparison-differences]').click();
           await wait();
           const historyAfterFilters = history.length;
           const rowCount = document.querySelectorAll('[data-comparison-race]').length;
@@ -851,9 +860,8 @@ def test_compare_client_presets_filters_and_copy_link_round_trip(tmp_path: Path)
               rowsBeforeDifferences, historyBeforeFilters, historyAfterFilters,
               status: document.querySelector('[data-comparison-status]').textContent,
               copyStatus: document.querySelector('[data-comparison-copy-status]').textContent,
-              differencesChecked: document.querySelector(
-                '[data-comparison-contested-differences]',
-              ).checked,
+              differencesChecked: document.querySelector('[data-comparison-differences]').checked,
+              contestedChecked: document.querySelector('[data-comparison-contested]').checked,
               shareSeparated: !document.querySelector('[data-comparison-copy]')
                 .closest('.comparison-controls'),
           });
@@ -871,6 +879,7 @@ def test_compare_client_presets_filters_and_copy_link_round_trip(tmp_path: Path)
     assert re.fullmatch(r"\d+ of \d+ races shown · \d+ differ", result["status"])
     assert result["copyStatus"] == "Link copied."
     assert result["differencesChecked"] is True
+    assert result["contestedChecked"] is True
     assert result["shareSeparated"] is True
     restored = _evaluate_in_chrome(
         html_path,
@@ -879,7 +888,8 @@ def test_compare_client_presets_filters_and_copy_link_round_trip(tmp_path: Path)
           columns: [...document.querySelectorAll(
             '[data-comparison-head] [data-column-signal]',
           )].map((heading) => heading.dataset.columnSignal),
-          contested: document.querySelector('[data-comparison-contested-differences]').checked,
+          contested: document.querySelector('[data-comparison-contested]').checked,
+          differing: document.querySelector('[data-comparison-differences]').checked,
           copiedHash: location.hash,
         }))()
         """,
@@ -887,7 +897,53 @@ def test_compare_client_presets_filters_and_copy_link_round_trip(tmp_path: Path)
     )
     assert restored["columns"] == result["presetColumns"]
     assert restored["contested"] is True
+    assert restored["differing"] is True
     assert restored["copiedHash"] == result["hash"]
+
+
+def test_legacy_differing_and_contested_differences_fragments_restore_independent_controls(
+    tmp_path: Path,
+) -> None:
+    html_path = _comparison_html_path(tmp_path)
+    preset = _evaluate_in_chrome(
+        html_path,
+        """
+        (() => JSON.stringify({
+          hash: document.querySelector('.comparison-presets a').hash,
+        }))()
+        """,
+    )["hash"]
+    expression = """
+    (() => JSON.stringify({
+      differing: document.querySelector('[data-comparison-differences]').checked,
+      full: document.querySelector('[data-comparison-full]').checked,
+      contested: document.querySelector('[data-comparison-contested]').checked,
+      allRaces: document.querySelector('[data-comparison-all-races]').checked,
+      rowCount: document.querySelectorAll('[data-comparison-race]').length,
+    }))()
+    """
+    differing = _evaluate_in_chrome(
+        html_path,
+        expression,
+        initial_url=f"{html_path.resolve().as_uri()}{preset}&diff=1",
+    )
+    combined = _evaluate_in_chrome(
+        html_path,
+        expression,
+        initial_url=f"{html_path.resolve().as_uri()}{preset}&diff=1&races=contested",
+    )
+    assert differing == {
+        "differing": True,
+        "full": False,
+        "contested": False,
+        "allRaces": True,
+        "rowCount": 12,
+    }
+    assert combined["differing"] is True
+    assert combined["full"] is False
+    assert combined["contested"] is True
+    assert combined["allRaces"] is False
+    assert 0 < combined["rowCount"] <= differing["rowCount"]
 
 
 def test_compare_client_labels_comparison_category_truthfully(tmp_path: Path) -> None:
@@ -985,9 +1041,9 @@ def test_compare_client_mobile_budget_and_focus_have_layout_evidence(tmp_path: P
               probe.remove();
               return value;
             })(),
-            raceControlColumns: getComputedStyle(
-              document.querySelector('.comparison-race-filters .segmented-control'),
-            ).gridTemplateColumns,
+            raceControlDisplay: getComputedStyle(
+              document.querySelector('[name="comparison-races"]').closest('.segmented-control'),
+            ).display,
           });
         })()
         """,
@@ -1062,7 +1118,7 @@ def test_compare_client_mobile_budget_and_focus_have_layout_evidence(tmp_path: P
     assert mobile["removeWidth"] >= 40
     assert mobile["removeHeight"] >= 40
     assert mobile["headerBackground"] == mobile["whiteToken"]
-    assert len(mobile["raceControlColumns"].split()) == 2
+    assert mobile["raceControlDisplay"] == "flex"
     assert desktop["visibleSignals"] == ["gall", "eccd", "stim"]
     assert desktop["noticeVisible"] is False
     assert desktop["titleTopSpread"] < 1

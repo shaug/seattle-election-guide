@@ -20,7 +20,7 @@
 </head>
 <body>
   {% from '_source_participation.html.j2' import source_participation %}
-  {% from '_filter_controls.html.j2' import control_bar, labeled_select, segmented_radio, control_status %}
+  {% from '_filter_controls.html.j2' import election_controls %}
   {% macro source_row(source, compact=false) -%}
     <div class="source-row source-row-{{ source.panel_role }}"
       data-publication-source-id="{{ source.id }}"
@@ -196,27 +196,28 @@
     </header>
 
     <div class="sticky-header">
-      {% call control_bar('Guide view and race filters', 'screen-controls') %}
-        {% call labeled_select('Ballot', 'race-filter', '', 'race-filter-control') %}
-            <option value="all">All Seattle ballot races</option>
-            <optgroup label="Ballot sections">
-            {% for section in guide.sections %}
-            <option value="{{ section.id }}">{{ section.label }}</option>
-            {% endfor %}
-            </optgroup>
-            <optgroup label="Districts and jurisdictions">
-            {% for option in filter_options %}<option value="{{ option }}">{{ option }}</option>{% endfor %}
-            </optgroup>
-        {% endcall %}
-        {{ segmented_radio('View', 'ballot-view', [
+      {% call election_controls(
+        'Guide view and race filters', 'screen-controls',
+        'race-filter', '', 'race-filter-control',
+        'ballot-view', [
           {'value': 'full', 'label': 'Full', 'id': '', 'attributes': '', 'checked': true},
           {'value': 'compact', 'label': 'Compact', 'id': '', 'attributes': '', 'checked': false}
-        ], 'view-setting') }}
-        {{ segmented_radio('Races', 'race-set', [
+        ],
+        'race-set', [
           {'value': 'complete', 'label': 'All', 'id': 'complete-filter', 'attributes': '', 'checked': true},
           {'value': 'contested', 'label': 'Contested', 'id': 'contested-filter', 'attributes': '', 'checked': false}
-        ], 'view-setting') }}
-        {% call control_status('filter-status') %}{% endcall %}
+        ],
+        'filter-status'
+      ) %}
+        <option value="all">All Seattle ballot races</option>
+        <optgroup label="Ballot sections">
+        {% for section in guide.sections %}
+        <option value="{{ section.id }}">{{ section.label }}</option>
+        {% endfor %}
+        </optgroup>
+        <optgroup label="Districts and jurisdictions">
+        {% for option in filter_options %}<option value="{{ option }}">{{ option }}</option>{% endfor %}
+        </optgroup>
       {% endcall %}
 
       {% if guide.personalization.policy.enabled %}
