@@ -57,11 +57,12 @@ function fallbackState(staleState, context) {
 /**
  * Resolve a `stale_version` comparison decode against the current publication.
  *
- * Retired or otherwise unavailable direct sources are removed without
- * reordering the surviving columns. An unavailable category, fewer than two
- * surviving columns, or an invalid configured default falls back atomically to
- * the current default columns. Both outcomes carry an explicit disclosure
- * status for persistent page messaging.
+ * Retired direct sources are removed without reordering the surviving columns.
+ * An identity that resolves through neither the current panel nor a tombstone,
+ * an unavailable category, fewer than two surviving columns, or an invalid
+ * configured default falls back atomically to the current default columns.
+ * Both outcomes carry an explicit disclosure status for persistent page
+ * messaging.
  */
 export function migrateCompareState(staleDecode, personalization, context) {
   if (staleDecode.status !== 'stale_version') {
@@ -72,6 +73,10 @@ export function migrateCompareState(staleDecode, personalization, context) {
   );
   const unavailableCategory = columnResults.find(
     (result) => result.kind === 'category' && result.status !== 'current',
+  );
+  const unresolvedSource = columnResults.find(
+    (result) =>
+      result.kind === 'source' && result.status !== 'current' && result.status !== 'retired',
   );
   const columns = columnResults
     .filter((result) => result.status === 'current')
@@ -86,7 +91,12 @@ export function migrateCompareState(staleDecode, personalization, context) {
     },
   };
 
-  if (unavailableCategory === undefined && columns.length >= 2 && columns.length <= 3) {
+  if (
+    unavailableCategory === undefined &&
+    unresolvedSource === undefined &&
+    columns.length >= 2 &&
+    columns.length <= 3
+  ) {
     return {
       status: 'migrated',
       disclosureStatus: 'stale_version_migrated',
@@ -111,7 +121,12 @@ export function migrateCompareState(staleDecode, personalization, context) {
   }
   return {
     status: 'fallback',
-    reason: unavailableCategory === undefined ? 'insufficient_current_columns' : 'unresolvable_category',
+    reason:
+      unavailableCategory !== undefined
+        ? 'unresolvable_category'
+        : unresolvedSource !== undefined
+          ? 'unresolvable_source'
+          : 'insufficient_current_columns',
     disclosureStatus: 'stale_version_fallback',
     state: fallbackState(staleDecode.state, context),
     report,

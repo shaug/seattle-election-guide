@@ -116,11 +116,13 @@ test('a retired category forces fallback rather than silently changing aggregate
 });
 
 test('an unknown stale token falls back deterministically and never becomes a valid state', () => {
-  const { decoded, currentContext } = stale(['zret', 'strn']);
+  const { decoded, currentContext } = stale(['zret', 'strn', 'stim']);
   decoded.state.columns[0] = 'zzzz';
   const result = migrateCompareState(decoded, CURRENT, currentContext);
   assert.equal(result.status, 'fallback');
+  assert.equal(result.reason, 'unresolvable_source');
   assert.equal(result.disclosureStatus, 'stale_version_fallback');
+  assert.deepEqual(result.state.columns, ['gall', 'strn', 'stim']);
   assert.equal(result.report.columns[0].status, 'unknown');
 });
 
