@@ -43,8 +43,10 @@ from election_guide.rendering.models import (
     RenderingValidationReport,
 )
 from election_guide.rendering.shell import (
+    close_icon_svg,
     election_names,
     page_title,
+    share_icon_svg,
     site_band_html,
     site_footer_audit_html,
     site_footer_band_html,
@@ -181,6 +183,8 @@ def render_html_document(
         lens_divergence_script=lens_divergence_script,
         lens_comparison_script=lens_comparison_script,
         share_link_script=share_link_script,
+        race_share_icon=share_icon_svg(),
+        race_close_icon=close_icon_svg(),
         site_band=site_band_html(
             guide_href=guide_path,
             sources_href=sources_page_url,

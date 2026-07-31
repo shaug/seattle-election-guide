@@ -33,6 +33,11 @@ export async function shareOrCopyLink(url, title) {
   }
 }
 
+// The guide's race-dialog routing predates the module bundle and still lives
+// in a classic script. Publish this one shared policy to that browser-only
+// caller rather than duplicating native-share and clipboard fallbacks there.
+if (typeof window !== 'undefined') window.shareOrCopyLink = shareOrCopyLink;
+
 // Wires the shared footer's Share icon action (`site_footer_band_html` in
 // shell.py) on every page that renders it: the guide, the dedicated Sources
 // page, About, and the archive.

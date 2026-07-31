@@ -320,6 +320,8 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "card.dataset.contested === 'true'" in html
     assert "matchesScope && matchesContest" in html
     assert "url.searchParams.set('view', 'compact')" in html
+    assert '<label for="race-filter">Ballot</label>' in html
+    assert "Show races" not in html
     assert "url.searchParams.set('races', 'contested')" in html
     assert "url.searchParams.set('filter', select.value)" in html
     assert "syncControlsFromUrl();" in html
@@ -335,7 +337,10 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert html.count('<dialog class="race-detail-dialog"') == len(races)
     assert html.count("August 2026 Primary · Endorsements") == len(races)
     assert html.count('data-copy-race-link="') == len(races)
-    assert html.count(">Share link</button>") == len(races)
+    assert html.count('title="Share this race"') == len(races)
+    assert html.count('title="Close"') == len(races)
+    assert ">Share link</button>" not in html
+    assert ">Close</button>" not in html
     assert "Source details" not in html
     assert "Open source evidence" not in html
     assert "Race source audit" not in html
@@ -507,9 +512,8 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert f'<meta name="twitter:title" content="{document_title}">' in html
     assert f"<title>{document_title}</title>" in html
     assert f'<meta name="twitter:description" content="{configuration.subject}">' in html
-    # Shared footer (UI polish round 4, item L55): icon action cluster with
-    # Share, Printable PDF, Contact, and the GitHub mark (replacing a
-    # separate "Source and audit files" text link), plus "How this works".
+    # Shared footer (UI polish round 5, item M71): one icon action cluster with
+    # Share, Printable PDF, Contact, GitHub, and How this works.
     assert '<footer class="site-footer">' in html
     footer_start = html.index('<footer class="site-footer">')
     footer_end = html.index("</footer>", footer_start)
@@ -520,7 +524,8 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
         footer_html
     )
     assert footer_html.count(configuration.project_url) == 2  # GitHub action + audit Code link
-    assert '<a class="site-footer-link" href="/about/">How this works</a>' in footer_html
+    assert 'href="/about/" aria-label="How this works" title="How this works"' in footer_html
+    assert 'class="site-footer-link"' not in footer_html
     assert "About &amp; FAQ" not in footer_html
     assert 'class="footer-icon-action" data-footer-share' in footer_html
     assert "navigator.share" in html
@@ -2907,10 +2912,14 @@ def test_phone_dialog_metrics_fit_the_longest_live_content_at_320px(tmp_path: Pa
           const meterBox = box(row.querySelector('.race-detail-meter[data-lens-hidden]'));
           const countBox = box(count);
           const titleBox = box(row.querySelector('.race-detail-candidate-title'));
+          const actionBox = box(dialog.querySelector('.race-detail-actions'));
+          const actionButtons = [...dialog.querySelectorAll('.race-detail-actions button')];
           return JSON.stringify({
             titleWidth: titleBox.width,
             meterWithin: meterBox.left >= dialogBox.left && meterBox.right <= dialogBox.right,
             countWithin: countBox.left >= dialogBox.left && countBox.right <= dialogBox.right,
+            actionsWithin: actionBox.left >= dialogBox.left && actionBox.right <= dialogBox.right,
+            actionSizes: actionButtons.map((button) => [box(button).width, box(button).height]),
           });
         })()
         """,
@@ -2920,6 +2929,8 @@ def test_phone_dialog_metrics_fit_the_longest_live_content_at_320px(tmp_path: Pa
     assert result["titleWidth"] >= 100
     assert result["meterWithin"] is True
     assert result["countWithin"] is True
+    assert result["actionsWithin"] is True
+    assert result["actionSizes"] == [[40, 40], [40, 40]]
 
 
 def test_full_race_card_stacks_name_and_meter_below_480px(tmp_path: Path) -> None:
@@ -3324,6 +3335,7 @@ def test_race_detail_dialog_preserves_an_active_lens_through_open_close_and_shar
         source.code for source in view_model.personalization.sources if _tallying_selectable(source)
     )
     personalized_codes = tallying_codes[1:]
+    first_race_label = view_model.sections[0].races[0].race_label
     fragment = _lens_fragment(view_model, mode="s", source_codes=tuple(personalized_codes))
     html_path = tmp_path / "guide.html"
     html_path.write_text(
@@ -3335,18 +3347,32 @@ def test_race_detail_dialog_preserves_an_active_lens_through_open_close_and_shar
         """
         (async () => {
           const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+          window.addEventListener('unhandledrejection', (event) => {
+            window.__shareError = String(event.reason?.stack || event.reason);
+          });
           const link = document.querySelector('[data-race-detail-link]');
           link.click();
           await pause(80);
           const hashAfterOpen = window.location.hash;
 
+          Object.defineProperty(navigator, 'share', {
+            value: async (payload) => { window.__shared = payload; },
+            configurable: true,
+          });
+          const shareButton = document.querySelector('[data-copy-race-link]');
+          shareButton.click();
+          await pause(80);
+          const nativeSharedLink = window.__shared?.url || null;
+          const nativeSharedTitle = window.__shared?.title || null;
+
+          Object.defineProperty(navigator, 'share', { value: undefined, configurable: true });
           Object.defineProperty(navigator, 'clipboard', {
             value: { writeText: async (text) => { window.__copied = text; } },
             configurable: true,
           });
-          document.querySelector('[data-copy-race-link]').click();
+          shareButton.click();
           await pause(80);
-          const sharedLink = window.__copied;
+          const copiedLink = window.__copied;
 
           document.querySelector('[data-close-race-detail]').click();
           await pause(80);
@@ -3354,15 +3380,22 @@ def test_race_detail_dialog_preserves_an_active_lens_through_open_close_and_shar
           const isOpenAfterClose =
             document.querySelector('[data-race-detail-dialog][open]') !== null;
 
-          return JSON.stringify({ hashAfterOpen, sharedLink, hashAfterClose, isOpenAfterClose });
+          return JSON.stringify({
+            hashAfterOpen, nativeSharedLink, nativeSharedTitle, copiedLink,
+            shareError: window.__shareError || null,
+            hashAfterClose, isOpenAfterClose,
+          });
         })()
         """,
         initial_url=f"{html_path.resolve().as_uri()}#{fragment}",
     )
+    assert result["shareError"] is None, result["shareError"]
     assert "sel=" in result["hashAfterOpen"]
     assert "race=" in result["hashAfterOpen"]
-    assert "sel=" in result["sharedLink"]
-    assert "race=" in result["sharedLink"]
+    assert "sel=" in result["nativeSharedLink"]
+    assert "race=" in result["nativeSharedLink"]
+    assert result["nativeSharedTitle"] == first_race_label
+    assert result["copiedLink"] == result["nativeSharedLink"]
     assert result["isOpenAfterClose"] is False
     assert "sel=" in result["hashAfterClose"]
     assert "race=" not in result["hashAfterClose"]

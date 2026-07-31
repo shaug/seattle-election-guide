@@ -69,15 +69,29 @@ _TEAL = "#087f73"
 _MINT = "#9ee7df"
 _PAPER = "#fbfaf6"
 
-# Minimal 24x24 stroke glyphs for the footer's icon action cluster (Share,
-# Printable PDF, Contact); `currentColor` follows the surrounding link color
-# so no separate on-dark variant is needed the way the brand mark requires.
+# Minimal 24x24 Lucide stroke glyphs for icon action clusters. `currentColor`
+# follows the surrounding link or button color, so no separate on-dark variant
+# is needed the way the brand mark requires.
 _SHARE_ICON_SVG = (
     '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"'
     ' stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img"'
     ' aria-hidden="true" focusable="false">'
     '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>'
     '<line x1="8.6" y1="10.6" x2="15.4" y2="6.4"/><line x1="8.6" y1="13.4" x2="15.4" y2="17.6"/>'
+    "</svg>"
+)
+_INFO_ICON_SVG = (
+    '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"'
+    ' stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img"'
+    ' aria-hidden="true" focusable="false">'
+    '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>'
+    "</svg>"
+)
+_CLOSE_ICON_SVG = (
+    '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"'
+    ' stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img"'
+    ' aria-hidden="true" focusable="false">'
+    '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>'
     "</svg>"
 )
 _PDF_ICON_SVG = (
@@ -136,6 +150,18 @@ _GITHUB_ICON_SVG = (
     f'<path d="{_GITHUB_MARK_PATH}"/>'
     "</svg>"
 )
+
+
+def share_icon_svg() -> str:
+    """Return the shared Lucide Share 2 glyph for an accessible action wrapper."""
+
+    return _SHARE_ICON_SVG
+
+
+def close_icon_svg() -> str:
+    """Return the shared Lucide X glyph for an accessible action wrapper."""
+
+    return _CLOSE_ICON_SVG
 
 
 def site_icon_svg(size: int | None = 22, *, on_dark: bool = False) -> str:
@@ -200,14 +226,12 @@ def site_footer_band_html(
     """The navy footer band shared by every page except the 404 (item L55).
 
     Mirrors `site_band_html`: the same icon+wordmark lockup, linking home,
-    on the left; an icon action cluster on the right — Share, Printable PDF
-    (only on election-scoped pages, when `pdf_href` is given), Contact, and
-    the GitHub mark, which *replaces* a separate "Source and audit files"
-    text link rather than shipping alongside it — plus one text link home to
-    About, framed here as "How this works" rather than the nav band's plain
-    "About". The Share button's own click handling lives in each page's
-    script (see `share-link.mjs`'s `wireFooterShare`); this only renders the
-    button, its icon, and its adjacent live-region status paragraph.
+    on the left; a centered icon action cluster on the right — Share, Printable
+    PDF (only on election-scoped pages, when `pdf_href` is given), Contact,
+    source/audit files on GitHub, and How this works. The Share button's own
+    click handling lives in each page's script (see `share-link.mjs`'s
+    `wireFooterShare`); this only renders the button, its icon, and its adjacent
+    live-region status paragraph.
     """
 
     def icon_link(label: str, href: str, svg: str) -> str:
@@ -226,7 +250,7 @@ def site_footer_band_html(
     pdf_action = icon_link("Printable PDF", pdf_href, _PDF_ICON_SVG) if pdf_href is not None else ""
     contact_action = icon_link("Contact", CONTACT_HREF, _ENVELOPE_ICON_SVG)
     github_action = icon_link("Source and audit files on GitHub", project_url, _GITHUB_ICON_SVG)
-    escaped_about_href = html.escape(about_href, quote=True)
+    about_action = icon_link("How this works", about_href, _INFO_ICON_SVG)
     brand = (
         f'<a class="site-footer-brand" href="/">{site_icon_svg(on_dark=True)}'
         f"<span>{SITE_NAME}</span></a>"
@@ -235,8 +259,7 @@ def site_footer_band_html(
         '<div class="site-footer-band">'
         f"{brand}"
         '<div class="site-footer-actions">'
-        f"{share_action}{pdf_action}{contact_action}{github_action}"
-        f'<a class="site-footer-link" href="{escaped_about_href}">How this works</a>'
+        f"{share_action}{pdf_action}{contact_action}{github_action}{about_action}"
         "</div></div>"
         '<p class="visually-hidden" role="status" aria-live="polite" data-footer-share-status></p>'
     )
