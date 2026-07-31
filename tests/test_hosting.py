@@ -371,6 +371,16 @@ def test_comparison_preview_stages_only_the_current_direct_route(tmp_path: Path)
     assert results[2]["status"] == 404
     assert results[3] == unknown_baseline
 
+    consistent_omission = tmp_path / "preview-route-omitted"
+    shutil.copytree(preview_output, consistent_omission)
+    (consistent_omission / compare_relative).unlink()
+    deployment_path = consistent_omission / "deployment-manifest.json"
+    deployment = json.loads(deployment_path.read_text(encoding="utf-8"))
+    del deployment["assets"][compare_relative]
+    deployment_path.write_bytes(canonical_json_bytes(deployment))
+    with pytest.raises(ValueError, match="missing required public archive assets"):
+        verify_staged_pages_site(consistent_omission, preview_manifest)
+
 
 def test_disabled_comparisons_stage_no_page_or_nav_exposure(tmp_path: Path) -> None:
     current, older = _write_archive_bundles(tmp_path)

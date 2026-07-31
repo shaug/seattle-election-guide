@@ -323,7 +323,7 @@ def _verify_staged_pages_site(
             }
         )
         compare_asset = f"e/{declared.election_id}/compare/index.html"
-        if compare_asset in deployment.assets:
+        if declared.comparison_route_preview or compare_asset in deployment.assets:
             required_assets.add(compare_asset)
 
     current = next(
