@@ -2952,6 +2952,44 @@ def test_full_race_card_stacks_name_and_meter_below_480px(tmp_path: Path) -> Non
     assert boundary["columns"] == 2
 
 
+def test_shared_footer_closes_short_viewport_and_follows_tall_content(tmp_path: Path) -> None:
+    """Issue 152: the screen frame fills short pages without clipping tall ones."""
+    view_model = _personalization_enabled_view_model(tmp_path)
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    short = _evaluate_in_chrome(
+        html_path,
+        """
+        (() => {
+          document.querySelector('.screen-sections').hidden = true;
+          const footer = document.querySelector('.site-footer').getBoundingClientRect();
+          const page = document.querySelector('.page').getBoundingClientRect();
+          return JSON.stringify({
+            footerBottom: footer.bottom,
+            pageBottom: page.bottom,
+            viewport: innerHeight,
+          });
+        })()
+        """,
+    )
+    tall = _evaluate_in_chrome(
+        html_path,
+        """
+        (() => {
+          const footer = document.querySelector('.site-footer').getBoundingClientRect();
+          return JSON.stringify({footerBottom: footer.bottom, viewport: innerHeight});
+        })()
+        """,
+    )
+
+    assert short["footerBottom"] == pytest.approx(short["viewport"], abs=1)
+    assert short["pageBottom"] == pytest.approx(short["viewport"], abs=1)
+    assert tall["footerBottom"] > tall["viewport"]
+
+
 def _tallying_selectable(item: PersonalizationCategory | PersonalizationSource) -> bool:
     """Whether item is a selectable, tallying (non-comparison) category or
     source, for tests that specifically want a tallying-only item (e.g. moving
