@@ -782,6 +782,8 @@ def test_sources_page_renders_every_category_and_source_like_the_guide_tree(
     ) not in html
     assert ".sources-cancel, .sources-page-reset {" not in html
     assert ".sources-page-actions a { color: var(--mint); font-weight: 700; }" in html
+    assert 'class="sources-save strip-action-primary"' in html
+    assert 'class="sources-page-reset strip-action-quiet"' in html
 
     # Issue 155: the page header names the election at a deliberate measure,
     # while privacy and audit details live in their site-wide homes.
@@ -822,8 +824,15 @@ def test_sources_page_action_strip_stays_visible_with_count_and_actions(tmp_path
           const count = strip.querySelector('[data-sources-count]');
           return JSON.stringify({
             top: strip.getBoundingClientRect().top,
+            height: strip.getBoundingClientRect().height,
             count: count.textContent,
             actions: [...strip.querySelectorAll('a')].map((link) => link.textContent.trim()),
+            saveBackground: getComputedStyle(
+              strip.querySelector('[data-sources-save]')
+            ).backgroundColor,
+            saveColor: getComputedStyle(strip.querySelector('[data-sources-save]')).color,
+            cancelColor: getComputedStyle(strip.querySelector('[data-sources-cancel]')).color,
+            resetColor: getComputedStyle(strip.querySelector('[data-sources-page-reset]')).color,
             background: getComputedStyle(strip).backgroundColor,
             position: getComputedStyle(strip).position,
             visible: strip.getBoundingClientRect().bottom > 0,
@@ -833,8 +842,13 @@ def test_sources_page_action_strip_stays_visible_with_count_and_actions(tmp_path
         initial_url=html_path.resolve().as_uri(),
     )
     assert result["top"] == pytest.approx(0, abs=1)
+    assert result["height"] <= 42
     assert result["count"].startswith("Counting ")
     assert result["actions"] == ["Save", "Cancel", "Reset to defaults"]
+    assert result["saveBackground"] == "rgb(158, 231, 223)"
+    assert result["saveColor"] == "rgb(16, 42, 67)"
+    assert result["cancelColor"] == "rgb(158, 231, 223)"
+    assert result["resetColor"] == "rgb(215, 230, 239)"
     assert result["background"] == "rgb(16, 42, 67)"
     assert result["position"] == "sticky"
     assert result["visible"] is True

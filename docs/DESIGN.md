@@ -25,6 +25,8 @@ When in doubt, remove ink.
 - **States explain themselves in words.** Color, icons, and aria-labels
   never carry a meaning alone; the visible text says the same thing the
   screen reader hears.
+- **Demonstrate, don't advertise.** Provenance is declared by linking and
+  counting in place, never claimed in prose.
 - **Never leave arithmetic doubtful.** Where a count and a share can
   legitimately disagree, say why inline — the race dialog's
   "(co-endorsements split)" exists so a reader who does the division isn't
@@ -137,10 +139,10 @@ while emoji render differently on every platform and can't be styled.
   becoming one full-width line below brand and actions under squeeze. Content
   that *explains* the guide belongs to the About page, not the footer.
 - **Sticky strips are one family.** A persistent surface states current
-  state *and carries its actions*: the guide's controls bar, the lens
-  banner ("Counting 39 of 40 sources · Edit sources"), the Sources action
-  bar. Same placement logic and surface treatment everywhere; two strips
-  doing the same job must rhyme.
+  state *and carries its actions*: the guide's controls bar, its always-present
+  sources strip ("Counting all 40 sources" by default; "39 of 40" under a
+  lens), and the Sources action bar. Same placement logic and surface
+  treatment everywhere; two strips doing the same job must rhyme.
 
 ## Data display
 
