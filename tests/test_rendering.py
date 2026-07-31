@@ -65,8 +65,9 @@ from election_guide.rendering.renderer import (
     find_chrome,
     find_pdftoppm,
 )
+from election_guide.rendering.shell import election_names
 from election_guide.scoring import score_dataset
-from election_guide.serialization import canonical_json_bytes, read_json
+from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
 from tests.test_personalization import (
     _bundle as _production_bundle,  # pyright: ignore[reportPrivateUsage]
 )
@@ -242,6 +243,27 @@ APPROVED_VISUAL_BASELINES_BY_PLATFORM = {
     "darwin": DARWIN_VISUAL_BASELINES,
     "linux": LINUX_VISUAL_BASELINES,
 }
+
+
+def test_canonical_names_use_structured_future_election_data() -> None:
+    seed = cast(
+        dict[str, Any],
+        read_yaml(PROJECT_ROOT / "tests/fixtures/initialization/wa-2027-seattle-general.yaml"),
+    )
+    election = cast(dict[str, Any], seed["election"])
+    assert election["name"] == "Fixture 2027 Seattle Municipal General Election"
+    assert election_names(
+        str(election["election_date"]),
+        cast(str, election["election_type"]),
+        cast(str, election["state"]),
+    ) == ("November 2027 General", "November 2, 2027 Washington general")
+    assert election_names(
+        str(election["election_date"]),
+        None,
+        None,
+        legacy_name=cast(str, election["name"]),
+        election_id=cast(str, election["id"]),
+    ) == ("November 2027 General", "November 2, 2027 Washington general")
 
 
 def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path: Path) -> None:
@@ -477,7 +499,10 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert f'<link rel="canonical" href="{canonical_url}">' in html
     assert f'<meta property="og:url" content="{canonical_url}">' in html
     assert '<meta name="twitter:card" content="summary_large_image">' in html
-    assert f'<meta name="twitter:title" content="{configuration.title}">' in html
+    document_title = "August 2026 Primary — Seattle Elections Guide"
+    assert f'<meta property="og:title" content="{document_title}">' in html
+    assert f'<meta name="twitter:title" content="{document_title}">' in html
+    assert f"<title>{document_title}</title>" in html
     assert f'<meta name="twitter:description" content="{configuration.subject}">' in html
     # Shared footer (UI polish round 4, item L55): icon action cluster with
     # Share, Printable PDF, Contact, and the GitHub mark (replacing a

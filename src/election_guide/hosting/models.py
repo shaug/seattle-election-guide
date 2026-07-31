@@ -34,7 +34,6 @@ class PublishedElection(HostingModel):
     """One election release selected for the public archive."""
 
     election_id: str = Field(pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
-    name: str = Field(min_length=1, max_length=200)
     bundle_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
     release_version: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
     source_panel_id: str = Field(min_length=1)
@@ -42,14 +41,6 @@ class PublishedElection(HostingModel):
     git_commit: str | None = Field(default=None, pattern=r"^[0-9a-f]{40}$")
     release_manifest_sha256: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
     bundle_sha256: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
-
-    @model_validator(mode="after")
-    def strip_name(self) -> PublishedElection:
-        stripped = self.name.strip()
-        if not stripped:
-            raise ValueError("published election name cannot be blank")
-        self.name = stripped
-        return self
 
 
 class SiteManifest(HostingModel):

@@ -21,7 +21,9 @@ from election_guide.publication.models import PublicationViewModel
 from election_guide.release.models import ReleaseManifest, ReleaseStatus
 from election_guide.rendering.renderer import TEMPLATE_DIR, display_date, render_sources_document
 from election_guide.rendering.shell import (
+    election_names,
     favicon_svg,
+    page_title,
     site_band_html,
     site_footer_audit_html,
     site_footer_band_html,
@@ -72,6 +74,7 @@ class _VerifiedBundle:
     directory: Path
     status: ReleaseStatus
     manifest: ReleaseManifest
+    view_model: PublicationViewModel
 
 
 def read_site_manifest(path: Path) -> SiteManifest:
@@ -142,6 +145,16 @@ def stage_pages_site(
         archive_path.write_text(
             _archive_html(
                 site_manifest,
+                election_names_by_id={
+                    bundle.declaration.election_id: election_names(
+                        bundle.view_model.metadata.election_date,
+                        bundle.view_model.metadata.election_type,
+                        bundle.view_model.metadata.state,
+                        legacy_name=bundle.view_model.metadata.election_name,
+                        election_id=bundle.view_model.metadata.election_id,
+                    )[1]
+                    for bundle in verified
+                },
                 built_date_display=current_built_date,
                 git_commit=current_git_commit,
             ),
@@ -351,6 +364,11 @@ def _verify_bundle(declaration: PublishedElection, bundle_dir: Path) -> _Verifie
     status = ReleaseStatus.model_validate(read_json(bundle_dir / "release-status.json"))
     manifest_path = bundle_dir / "release-manifest.json"
     manifest = ReleaseManifest.model_validate(read_json(manifest_path))
+    view_model = PublicationViewModel.model_validate(
+        read_json(bundle_dir / "data/publication_view_model.json")
+    )
+    if view_model.metadata.election_id != declaration.election_id:
+        raise ValueError(f"bundle {declaration.bundle_id!r} publication election differs")
     if status.election_id != declaration.election_id:
         raise ValueError(
             f"bundle {declaration.bundle_id!r} election differs: "
@@ -392,7 +410,7 @@ def _verify_bundle(declaration: PublishedElection, bundle_dir: Path) -> _Verifie
         bundle_dir
     ):
         raise ValueError(f"bundle {declaration.bundle_id!r} bundle hash differs")
-    return _VerifiedBundle(declaration, bundle_dir, status, manifest)
+    return _VerifiedBundle(declaration, bundle_dir, status, manifest, view_model)
 
 
 def _stage_verified_bundles(
@@ -429,7 +447,7 @@ def _stage_verified_bundles(
         sources_dir.mkdir()
         (sources_dir / "index.html").write_text(
             _sources_html(
-                bundle.directory,
+                bundle.view_model,
                 canonical_origin,
                 pdf_filename=Path(bundle.status.guide_pdf_artifact).name,
             ),
@@ -443,16 +461,10 @@ def _stage_verified_bundles(
     return public_paths
 
 
-def _sources_html(bundle_directory: Path, canonical_origin: str, *, pdf_filename: str) -> str:
-    """Render the per-election sources/customization page (issue 107).
-
-    Mirrors `_about_html`'s pattern of a page-generator function invoked
-    during staging, but per election rather than site-wide, and consuming the
-    same `PublicationViewModel` the guide itself already renders from.
-    """
-    view_model = PublicationViewModel.model_validate(
-        read_json(bundle_directory / "data/publication_view_model.json")
-    )
+def _sources_html(
+    view_model: PublicationViewModel, canonical_origin: str, *, pdf_filename: str
+) -> str:
+    """Render the per-election sources/customization page (issue 107)."""
     return render_sources_document(
         view_model,
         public_site_url=canonical_origin,
@@ -472,10 +484,17 @@ def _guide_pdf_artifacts(status: ReleaseStatus) -> tuple[str, ...]:
     )
 
 
-def _archive_html(site_manifest: SiteManifest, *, built_date_display: str, git_commit: str) -> str:
+def _archive_html(
+    site_manifest: SiteManifest,
+    *,
+    election_names_by_id: Mapping[str, str],
+    built_date_display: str,
+    git_commit: str,
+) -> str:
     rows = "\n".join(
         "      <li>"
-        f'<a href="/e/{election.election_id}/">{html.escape(election.name)}</a>'
+        f'<a href="/e/{election.election_id}/">'
+        f"{html.escape(election_names_by_id[election.election_id])}</a>"
         + (
             " <strong>(current)</strong>"
             if election.election_id == site_manifest.current_election_id
@@ -487,6 +506,7 @@ def _archive_html(site_manifest: SiteManifest, *, built_date_display: str, git_c
     canonical_url = f"{site_manifest.canonical_origin}/e/"
     description = "Published Seattle election endorsement guides."
     escaped_description = html.escape(description, quote=True)
+    document_title = html.escape(page_title(page="Guide archive"), quote=True)
     head_links = site_head_links_html(site_manifest.canonical_origin)
     current_path = f"/e/{site_manifest.current_election_id}/"
     base_css = (TEMPLATE_DIR / "base.css").read_text(encoding="utf-8")
@@ -508,14 +528,14 @@ def _archive_html(site_manifest: SiteManifest, *, built_date_display: str, git_c
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="{escaped_description}">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Guide archive &mdash; Seattle Elections Guide">
+  <meta property="og:title" content="{document_title}">
   <meta property="og:description" content="{escaped_description}">
   <meta property="og:url" content="{html.escape(canonical_url, quote=True)}">
-  <meta name="twitter:title" content="Guide archive &mdash; Seattle Elections Guide">
+  <meta name="twitter:title" content="{document_title}">
   <meta name="twitter:description" content="{escaped_description}">
   <link rel="canonical" href="{html.escape(canonical_url, quote=True)}">
   {head_links}
-  <title>Guide archive &mdash; Seattle Elections Guide</title>
+  <title>{document_title}</title>
   <style>
     {base_css}
     main {{ padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 3rem; }}
@@ -576,6 +596,7 @@ def _about_html(site_manifest: SiteManifest, *, built_date_display: str, git_com
     )
     escaped_description = html.escape(description, quote=True)
     escaped_canonical = html.escape(canonical_url, quote=True)
+    document_title = html.escape(page_title(page="About"), quote=True)
     head_links = site_head_links_html(site_manifest.canonical_origin)
     escaped_current_path = html.escape(current_path, quote=True)
     band = site_band_html(
@@ -596,14 +617,14 @@ def _about_html(site_manifest: SiteManifest, *, built_date_display: str, git_com
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="{escaped_description}">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="About &mdash; Seattle Elections Guide">
+  <meta property="og:title" content="{document_title}">
   <meta property="og:description" content="{escaped_description}">
   <meta property="og:url" content="{escaped_canonical}">
-  <meta name="twitter:title" content="About &mdash; Seattle Elections Guide">
+  <meta name="twitter:title" content="{document_title}">
   <meta name="twitter:description" content="{escaped_description}">
   <link rel="canonical" href="{escaped_canonical}">
   {head_links}
-  <title>About &amp; FAQ &mdash; Seattle Elections Guide</title>
+  <title>{document_title}</title>
   <style>
     {base_css}
     main {{ padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 3rem; }}
@@ -732,6 +753,7 @@ def _not_found_html(site_manifest: SiteManifest) -> str:
     K48 specs only band + rule + one line + links.
     """
     current_path = f"/e/{site_manifest.current_election_id}/"
+    document_title = html.escape(page_title(page="Page not found"), quote=True)
     head_links = site_head_links_html(site_manifest.canonical_origin, shareable=False)
     base_css = (TEMPLATE_DIR / "base.css").read_text(encoding="utf-8")
     band = site_band_html(guide_href=current_path, sources_href=f"{current_path}sources/")
@@ -742,8 +764,10 @@ def _not_found_html(site_manifest: SiteManifest) -> str:
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex">
+  <meta property="og:title" content="{document_title}">
+  <meta name="twitter:title" content="{document_title}">
   {head_links}
-  <title>Page not found &mdash; Seattle Elections Guide</title>
+  <title>{document_title}</title>
   <style>
     {base_css}
     main {{ padding: 3rem clamp(1rem, 4vw, 2.5rem); }}

@@ -8,14 +8,14 @@
   {% set canonical_url = config.public_site_url ~ '/e/' ~ guide.metadata.election_id ~ '/' %}
   {% set sources_page_url = config.public_site_url ~ '/e/' ~ guide.metadata.election_id ~ '/sources/' %}
   <meta property="og:type" content="website">
-  <meta property="og:title" content="{{ config.title }}">
+  <meta property="og:title" content="{{ document_title }}">
   <meta property="og:description" content="{{ config.subject }}">
   <meta property="og:url" content="{{ canonical_url }}">
-  <meta name="twitter:title" content="{{ config.title }}">
+  <meta name="twitter:title" content="{{ document_title }}">
   <meta name="twitter:description" content="{{ config.subject }}">
   <link rel="canonical" href="{{ canonical_url }}">
   {{ site_head_links | safe }}
-  <title>{{ config.title }}</title>
+  <title>{{ document_title }}</title>
   <style>{{ stylesheet | safe }}</style>
 </head>
 <body>
@@ -177,7 +177,7 @@
     </section>
     {% endfor %}
   {%- endmacro %}
-  {% set election_display_label = 'August 2026 Primary' %}
+  {% set election_display_label = election_display_name %}
   {% set contributing_sources = guide.sources | selectattr('contribution_status', 'equalto', 'contributing') | list %}
   {% set coverage_gap_sources = guide.sources | selectattr('contribution_status', 'equalto', 'coverage_gap') | list %}
   <a class="skip-link" href="#guide-races">Skip to recommendations</a>

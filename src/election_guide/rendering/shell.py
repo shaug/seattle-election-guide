@@ -11,9 +11,56 @@ left-anchored fill matching the on-page meters.
 from __future__ import annotations
 
 import html
+from datetime import date
 
 SITE_NAME = "Seattle Elections Guide"
 CONTACT_HREF = "mailto:seattle-elections@dobravoda.dev"
+
+
+def election_names(
+    election_date: str,
+    election_type: str | None,
+    state: str | None,
+    *,
+    legacy_name: str | None = None,
+    election_id: str | None = None,
+) -> tuple[str, str]:
+    """Return canonical names, with a strict reader for immutable schema-1.8 bundles."""
+
+    if election_type is None:
+        type_tokens = {
+            token.casefold()
+            for token in (legacy_name or "").split()
+            if token.casefold() in {"primary", "general", "special"}
+        }
+        if len(type_tokens) != 1:
+            raise ValueError(
+                "legacy election name must contain exactly one supported election type"
+            )
+        election_type = type_tokens.pop()
+    if state is None:
+        prefix = (election_id or "").split("-", 1)[0].upper()
+        state = prefix if len(prefix) == 2 else None
+
+    parsed_date = date.fromisoformat(election_date)
+    if election_type not in {"primary", "general", "special"}:
+        raise ValueError(f"unsupported election type: {election_type}")
+    state_name = {"WA": "Washington"}.get(state) if state is not None else None
+    if state_name is None:
+        raise ValueError(f"unsupported election state: {state}")
+    display_name = f"{parsed_date:%B %Y} {election_type.title()}"
+    archive_name = (
+        f"{parsed_date:%B} {parsed_date.day}, {parsed_date:%Y} {state_name} {election_type}"
+    )
+    return display_name, archive_name
+
+
+def page_title(*, page: str | None = None, election: str | None = None) -> str:
+    """Build the shared title grammar for every site surface."""
+
+    parts = [part for part in (page, election, SITE_NAME) if part]
+    return " — ".join(parts)
+
 
 # Brand palette, duplicated from base.css tokens because the icon also ships
 # as a standalone favicon.svg where no stylesheet exists.
