@@ -8,6 +8,7 @@ from typing import Literal
 
 from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, model_validator
 
+from election_guide.publication.comparisons import ComparisonsContract
 from election_guide.publication.personalization import PersonalizationContract
 from election_guide.scoring.models import ComparisonStatus, Grade
 
@@ -514,12 +515,13 @@ class PublicationMetadata(PublicationModel):
 
 
 class PublicationViewModel(PublicationModel):
-    schema_version: Literal["1.8"] = "1.8"
+    schema_version: Literal["1.9"] = "1.9"
     metadata: PublicationMetadata
     sources: list[PublicationSource]
     sections: list[PublicationSection]
     methodology: PublicationMethodology
     personalization: PersonalizationContract
+    comparisons: ComparisonsContract
 
     @model_validator(mode="after")
     def validate_topology(self) -> PublicationViewModel:
@@ -802,6 +804,69 @@ class PublicationViewModel(PublicationModel):
                         f"personalization cell {lens_cell.source_code!r} confidence must match "
                         f"race {lens_race.race_id!r}"
                     )
+        return self
+
+    @model_validator(mode="after")
+    def validate_comparisons(self) -> PublicationViewModel:
+        """Bind comparison labels and baselines to the existing published truth."""
+        display_index = self.comparisons.display_index
+        published_positions = [
+            (section_order, race_order, section, race)
+            for section_order, section in enumerate(self.sections)
+            for race_order, race in enumerate(section.races)
+        ]
+        if [display.race_id for display in display_index] != [
+            race.id for _, _, _, race in published_positions
+        ]:
+            raise ValueError(
+                "comparison display index must contain every personalization race exactly once"
+            )
+        if [display.race_id for display in display_index] != [
+            race.race_id for race in self.personalization.races
+        ]:
+            raise ValueError("comparison display index must match personalization race order")
+
+        for display, lens, (section_order, race_order, section, published) in zip(
+            display_index,
+            self.personalization.races,
+            published_positions,
+            strict=True,
+        ):
+            if (
+                display.race_label != published.race_label
+                or display.section_id != section.id
+                or display.section_label != section.label
+                or display.section_order != section_order
+                or display.race_order != race_order
+            ):
+                raise ValueError(
+                    f"comparison display race {display.race_id!r} must match "
+                    "rendered grouping and order"
+                )
+
+            display_names = display.candidate_names | display.measure_response_labels
+            if set(display_names) != set(lens.candidate_order):
+                raise ValueError(
+                    f"comparison display race {display.race_id!r} must label every ballot choice"
+                )
+            allocated_ids = {
+                candidate_id for cell in lens.cells for candidate_id in cell.allocation
+            }
+            if not allocated_ids <= set(display_names):
+                raise ValueError(
+                    f"comparison display race {display.race_id!r} must label "
+                    "every allocation candidate"
+                )
+            baseline = display.baseline
+            if (
+                baseline.leading_pick_ids != published.support_leader_candidate_ids
+                or baseline.share != published.winner_share
+                or baseline.explicit_source_count != published.explicit_endorsement_count
+            ):
+                raise ValueError(
+                    f"comparison baseline for race {display.race_id!r} must match "
+                    "published consensus"
+                )
         return self
 
 

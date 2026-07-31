@@ -21,7 +21,10 @@ from pypdf.generic import NameObject, TextStringObject
 from websocket import create_connection  # pyright: ignore[reportUnknownVariableType]
 
 from election_guide.publication import build_publication_bundle
-from election_guide.publication.builder import reprojected_personalization
+from election_guide.publication.builder import (
+    reprojected_comparisons,
+    reprojected_personalization,
+)
 from election_guide.publication.models import (
     PublicationComparison,
     PublicationRace,
@@ -2508,8 +2511,9 @@ def _revalidated(view_model: PublicationViewModel) -> PublicationViewModel:
             )
         }
     )
+    reprojected = reprojected_personalization(rebuilt)
     return PublicationViewModel.model_validate(
-        reprojected_personalization(rebuilt).model_dump(mode="json")
+        reprojected_comparisons(reprojected).model_dump(mode="json")
     )
 
 

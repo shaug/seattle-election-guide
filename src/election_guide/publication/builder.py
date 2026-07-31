@@ -27,6 +27,12 @@ from election_guide.normalization.models import (
     ReviewItem,
 )
 from election_guide.normalization.semantics import EXPLICIT_STATUSES
+from election_guide.publication.comparisons import (
+    ComparisonBaseline,
+    ComparisonDisplayRace,
+    ComparisonsContract,
+    ComparisonsPolicy,
+)
 from election_guide.publication.models import (
     BuildManifest,
     CellState,
@@ -461,6 +467,7 @@ def _build_view_model(
         sections=sections,
         methodology=_methodology(dataset, consensus),
         personalization=_personalization(dataset, consensus, sources, sections),
+        comparisons=_comparisons(dataset, sections),
     )
 
 
@@ -552,6 +559,51 @@ def _personalization(
     )
 
 
+def _comparisons(
+    dataset: CanonicalDataset,
+    sections: list[PublicationSection],
+) -> ComparisonsContract:
+    """Publish display metadata without duplicating personalization scoring truth."""
+    inventory_by_id = {race.id: race for race in dataset.inventory.races}
+    return ComparisonsContract(
+        policy=ComparisonsPolicy(enabled=False),
+        display_index=[
+            ComparisonDisplayRace(
+                race_id=published.id,
+                race_label=published.race_label,
+                race_type=inventory_by_id[published.id].race_type,
+                section_id=section.id,
+                section_label=section.label,
+                section_order=section_order,
+                race_order=race_order,
+                candidate_names={
+                    choice.id: choice.display_name
+                    for choice in sorted(
+                        inventory_by_id[published.id].choices,
+                        key=lambda item: item.ballot_order,
+                    )
+                    if inventory_by_id[published.id].race_type != "measure"
+                },
+                measure_response_labels={
+                    choice.id: choice.display_name
+                    for choice in sorted(
+                        inventory_by_id[published.id].choices,
+                        key=lambda item: item.ballot_order,
+                    )
+                    if inventory_by_id[published.id].race_type == "measure"
+                },
+                baseline=ComparisonBaseline(
+                    leading_pick_ids=published.support_leader_candidate_ids,
+                    share=published.winner_share,
+                    explicit_source_count=published.explicit_endorsement_count,
+                ),
+            )
+            for section_order, section in enumerate(sections)
+            for race_order, published in enumerate(section.races)
+        ],
+    )
+
+
 def personalization_races(
     sections: list[PublicationSection],
     code_by_source_id: dict[str, str],
@@ -606,6 +658,78 @@ def reprojected_personalization(view_model: PublicationViewModel) -> Publication
     )
     return view_model.model_copy(
         update={"personalization": contract.model_copy(update={"races": races})}
+    )
+
+
+def reprojected_comparisons(view_model: PublicationViewModel) -> PublicationViewModel:
+    """Return comparison display records rebuilt from a changed display model.
+
+    Rendering tests intentionally construct coherent synthetic view models. Keep
+    their derived comparison contract synchronized just as
+    `reprojected_personalization` keeps the stance payload synchronized.
+    """
+    contract = view_model.comparisons
+    display_by_id = {race.race_id: race for race in contract.display_index}
+    lens_by_id = {race.race_id: race for race in view_model.personalization.races}
+    labels_by_choice_id = {
+        choice_id: label
+        for display in contract.display_index
+        for choice_id, label in (display.candidate_names | display.measure_response_labels).items()
+    }
+    for section in view_model.sections:
+        for race in section.races:
+            for cell in race.source_cells:
+                labels_by_choice_id.update(
+                    zip(cell.candidate_ids, cell.candidate_labels, strict=True)
+                )
+            labels_by_choice_id.update(
+                zip(
+                    race.support_leader_candidate_ids,
+                    race.support_leader_candidate_labels,
+                    strict=True,
+                )
+            )
+            for comparison in race.comparisons:
+                labels_by_choice_id.update(
+                    zip(
+                        comparison.candidate_ids,
+                        comparison.candidate_labels,
+                        strict=True,
+                    )
+                )
+
+    display_index: list[ComparisonDisplayRace] = []
+    for section_order, section in enumerate(view_model.sections):
+        for race_order, race in enumerate(section.races):
+            original = display_by_id[race.id]
+            choice_names = {
+                choice_id: labels_by_choice_id[choice_id]
+                for choice_id in lens_by_id[race.id].candidate_order
+            }
+            display_index.append(
+                original.model_copy(
+                    update={
+                        "race_label": race.race_label,
+                        "section_id": section.id,
+                        "section_label": section.label,
+                        "section_order": section_order,
+                        "race_order": race_order,
+                        "candidate_names": (
+                            {} if original.race_type == "measure" else choice_names
+                        ),
+                        "measure_response_labels": (
+                            choice_names if original.race_type == "measure" else {}
+                        ),
+                        "baseline": ComparisonBaseline(
+                            leading_pick_ids=race.support_leader_candidate_ids,
+                            share=race.winner_share,
+                            explicit_source_count=race.explicit_endorsement_count,
+                        ),
+                    }
+                )
+            )
+    return view_model.model_copy(
+        update={"comparisons": contract.model_copy(update={"display_index": display_index})}
     )
 
 
@@ -893,6 +1017,33 @@ def _validate_publication(
         and view_model.metadata.race_count == len(dataset.inventory.races)
         and view_model.metadata.published_race_count == len(consensus.races)
     )
+    comparison_by_id = {race.race_id: race for race in view_model.comparisons.display_index}
+    comparison_contract_match = [race.race_id for race in view_model.comparisons.display_index] == [
+        race.id for race in view_races
+    ] and all(
+        comparison_by_id[race_id].baseline.leading_pick_ids
+        == consensus_by_id[race_id].winner_candidate_ids
+        and comparison_by_id[race_id].baseline.share
+        == (
+            None
+            if consensus_by_id[race_id].winner_share is None
+            else str(consensus_by_id[race_id].winner_share)
+        )
+        and comparison_by_id[race_id].baseline.explicit_source_count
+        == consensus_by_id[race_id].explicit_endorsement_count
+        and (
+            comparison_by_id[race_id].candidate_names
+            | comparison_by_id[race_id].measure_response_labels
+        )
+        == {
+            choice.id: choice.display_name
+            for choice in sorted(
+                inventory_by_id[race_id].choices,
+                key=lambda item: item.ballot_order,
+            )
+        }
+        for race_id in consensus_by_id
+    )
     checks = [
         ValidationCheck(
             id="authoritative-consensus",
@@ -929,6 +1080,14 @@ def _validate_publication(
             id="publication-metadata",
             passed=metadata_match,
             message="Publication metadata matches canonical election and consensus inputs.",
+        ),
+        ValidationCheck(
+            id="comparison-display-contract",
+            passed=comparison_contract_match,
+            message=(
+                "Comparison display order, labels, and audited baselines match "
+                "publication and consensus exactly."
+            ),
         ),
     ]
     return checks
