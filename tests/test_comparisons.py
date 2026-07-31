@@ -44,20 +44,20 @@ def _payload() -> dict[str, Any]:
     return copy.deepcopy(_bundle().view_model.model_dump(mode="json"))
 
 
-def test_comparisons_are_disabled_without_changing_personalization() -> None:
+def test_comparisons_are_enabled_without_changing_personalization() -> None:
     view_model = _bundle().view_model
     before = canonical_json_bytes(view_model.personalization.model_dump(mode="json"))
 
-    enabled = view_model.model_copy(
+    disabled = view_model.model_copy(
         update={
             "comparisons": view_model.comparisons.model_copy(
-                update={"policy": ComparisonsPolicy(enabled=True)}
+                update={"policy": ComparisonsPolicy(enabled=False)}
             )
         }
     )
 
-    assert view_model.comparisons.policy.enabled is False
-    assert canonical_json_bytes(enabled.personalization.model_dump(mode="json")) == before
+    assert view_model.comparisons.policy.enabled is True
+    assert canonical_json_bytes(disabled.personalization.model_dump(mode="json")) == before
 
 
 def test_display_index_matches_rendered_grouping_order_and_choice_labels() -> None:

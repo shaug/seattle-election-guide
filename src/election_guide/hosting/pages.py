@@ -769,6 +769,15 @@ def _about_html(
         <p>The Seattle Times is shown separately, as a comparison, and is hidden on screen by
           default: it never adds to the progressive consensus above, no matter how you choose to
           view the guide. The printable PDF always includes the comparison.</p>
+        <p>The Comparisons page puts up to three sources side by side for every race. A column can
+          show all sources together, one organization, or a category of organizations. The first
+          column is the reference for the differences highlighted across the row. Category columns
+          give each member organization equal weight, while sources such as The Seattle Times are
+          shown only for comparison and never change the overall result.</p>
+        <p>A comparison link stores its ordered columns and filters in the address after the
+          <code>#</code>. Opening the same link against the same data version restores that view;
+          an old or unrecognized link falls back to the default view and explains why instead of
+          silently showing a different comparison.</p>
       </section>
 
       <section aria-labelledby="why-ballot-varies">

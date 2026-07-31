@@ -571,7 +571,9 @@ def _comparisons(
     """Publish display metadata without duplicating personalization scoring truth."""
     inventory_by_id = {race.id: race for race in dataset.inventory.races}
     return ComparisonsContract(
-        policy=ComparisonsPolicy(enabled=False),
+        # Comparison releases created before this switch retain their serialized
+        # disabled policy. New releases publish the audited comparison route.
+        policy=ComparisonsPolicy(enabled=True),
         display_index=[
             ComparisonDisplayRace(
                 race_id=published.id,

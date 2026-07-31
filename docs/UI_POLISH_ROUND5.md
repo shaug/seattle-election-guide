@@ -170,3 +170,14 @@ open ticket. Numbering continues the ledger (last used: I56).
   identifiers.
   Amended 2026-07-31 by #179: panel identity remains in the footer, now on the
   data provenance line inside the single-band footer grammar.
+
+## Comparisons page validation ledger
+
+The hands-on soft-launch findings about column identity, fixed reference context, sticky axes,
+control vocabulary, copy, and repeated data ink were accepted as release blockers and resolved by
+#183. The promoted experience was accepted as shippable after that production review.
+
+- **M74 — Revisit compact treatment for comparison presets on phones.** The preset links wrap
+  correctly and remain usable, but a future polish pass can test a denser presentation after the
+  page has real usage evidence. Presets must remain ordinary fragment links rather than a second
+  state mechanism.

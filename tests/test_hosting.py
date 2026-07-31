@@ -20,6 +20,7 @@ from election_guide.hosting import (
 )
 from election_guide.hosting.models import PublishedElection, SiteManifest
 from election_guide.hosting.pages import _about_html  # pyright: ignore[reportPrivateUsage]
+from election_guide.publication.comparisons import ComparisonsPolicy
 from election_guide.publication.models import PublicationViewModel
 from election_guide.release.models import REQUIRED_RELEASE_ARTIFACTS, ReleaseStatus
 from election_guide.rendering.renderer import render_sources_document
@@ -361,9 +362,9 @@ def test_comparison_preview_stages_only_the_current_direct_route(tmp_path: Path)
     assert not (preview_output / "e" / OLDER_ID / "compare").exists()
     compare_html = compare_path.read_text(encoding="utf-8")
     assert 'data-default-columns="gall,strn,stim"' in compare_html
-    assert compare_html.index(">Endorsements</a>") < compare_html.index(">Sources</a>")
-    assert compare_html.index(">Sources</a>") < compare_html.index(">Comparisons</a>")
-    assert compare_html.index(">Comparisons</a>") < compare_html.index(">How this works</a>")
+    assert compare_html.index(">Endorsements</a>") < compare_html.index(">Comparisons</a>")
+    assert compare_html.index(">Comparisons</a>") < compare_html.index(">Sources</a>")
+    assert compare_html.index(">Sources</a>") < compare_html.index(">How this works</a>")
 
     hidden_compare_pages = (
         preview_output / "e" / CURRENT_ID / "index.html",
@@ -1125,6 +1126,9 @@ def test_sources_page_reset_redirects_with_no_fragment(tmp_path: Path) -> None:
 
 
 def test_wrangler_and_workflow_keep_deployment_pinned_and_gated() -> None:
+    site_manifest = yaml.safe_load(
+        (PROJECT_ROOT / "config/hosting/site.yaml").read_text(encoding="utf-8")
+    )
     wrangler = json.loads((PROJECT_ROOT / "wrangler.jsonc").read_text(encoding="utf-8"))
     package = json.loads((PROJECT_ROOT / "package.json").read_text(encoding="utf-8"))
     workflow = yaml.load(
@@ -1135,6 +1139,12 @@ def test_wrangler_and_workflow_keep_deployment_pinned_and_gated() -> None:
     assert wrangler["name"] == "seattle-elections"
     assert wrangler["pages_build_output_dir"] == "./dist/cloudflare-site"
     assert package["devDependencies"]["wrangler"] == "4.113.0"
+    current_election = next(
+        election
+        for election in site_manifest["elections"]
+        if election["election_id"] == site_manifest["current_election_id"]
+    )
+    assert "comparison_route_preview" not in current_election
     deploy = workflow["jobs"]["deploy"]
     assert deploy["needs"] == "check"
     assert deploy["environment"]["name"] == "production"
@@ -1280,7 +1290,13 @@ def _bundle_view_model(root: Path, *, election_id: str) -> PublicationViewModel:
                     "election_type": election_type,
                     "election_date": election_date,
                 }
-            )
+            ),
+            # These fixtures model already-published bundles from before the
+            # comparison policy existed. Individual tests explicitly enable a
+            # current bundle when exercising the new route.
+            "comparisons": base.comparisons.model_copy(
+                update={"policy": ComparisonsPolicy(enabled=False)}
+            ),
         }
     )
     return PublicationViewModel.model_validate(updated.model_dump(mode="json"))
