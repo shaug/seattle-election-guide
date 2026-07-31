@@ -72,7 +72,7 @@ a { color: var(--blue); text-underline-offset: .15em; }
 .state-action-strip a:focus-visible { outline: .2rem solid var(--focus); outline-offset: .15rem; }
 
 /* Shared page footer (item L55): one navy band mirroring `.site-band`, plus
-   an optional compact mono audit line for election-scoped pages. */
+   compact linked data and site update dates. */
 .site-footer { background: var(--navy); color: var(--white); }
 @media screen {
   .page { display: flex; flex-direction: column; }

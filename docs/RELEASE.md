@@ -48,13 +48,13 @@ build.
 
 ## Build and inspect
 
-Use a stable version, build timestamp, and Git revision:
+Use a stable version, the commit timestamp, and the full Git revision:
 
 ```bash
 uv run election-guide release build \
   data/releases/wa-2026-primary/source-decisions.yaml \
     --release-version 2026-primary.2 \
-    --generated-at 2026-07-23T17:15:00Z \
+    --generated-at "$(git show -s --format=%cI HEAD)" \
   --git-commit "$(git rev-parse HEAD)"
 ```
 

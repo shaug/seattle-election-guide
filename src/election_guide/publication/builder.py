@@ -9,6 +9,7 @@ import os
 import shutil
 import tempfile
 from dataclasses import dataclass
+from datetime import datetime
 from fractions import Fraction
 from pathlib import Path
 from typing import Literal, cast
@@ -114,6 +115,7 @@ def build_publication_bundle(
     *,
     git_commit: str,
     snapshot_root: Path,
+    data_as_of: datetime | None = None,
 ) -> PublicationBundle:
     """Compute every issue-7 artifact from canonical data and one consensus report."""
     stripped_commit = git_commit.strip()
@@ -133,6 +135,7 @@ def build_publication_bundle(
         effective,
         unresolved,
         stripped_commit,
+        data_as_of or validated_consensus.computed_at,
     )
     checks = _validate_publication(dataset, validated_consensus, view_model)
     validation_report = ValidationReport(
@@ -261,6 +264,7 @@ def _build_view_model(
     effective: dict[str, BaseModel],
     unresolved: list[ReviewItem],
     git_commit: str,
+    data_as_of: datetime,
 ) -> PublicationViewModel:
     active_sources = [
         source for source in dataset.source_registry.sources if source.panel_role != "excluded"
@@ -449,6 +453,7 @@ def _build_view_model(
             election_type=dataset.inventory.election.election_type,
             state=dataset.inventory.election.state,
             generated_at=consensus.computed_at,
+            data_as_of=data_as_of,
             data_version=consensus.input_hash[:12],
             source_panel_id=dataset.source_registry.id,
             source_panel_version=panel_version(dataset.source_registry.id),

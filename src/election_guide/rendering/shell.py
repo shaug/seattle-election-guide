@@ -269,40 +269,19 @@ def site_footer_band_html(
 
 def site_footer_audit_html(
     *,
-    built_date_display: str,
+    data_updated_date: str,
+    site_updated_date: str,
     git_commit: str,
     project_url: str,
-    election_date_display: str | None = None,
-    data_version: str | None = None,
-    source_panel_id: str | None = None,
-    source_panel_hash: str | None = None,
 ) -> str:
-    """The compact mono audit line shared by every page (item L55.2).
-
-    Election-scoped pages (the guide, Sources) pass every field: election
-    date, built date, Data/Code hashes, and Panel id+hash, with the Code hash
-    linking to the exact GitHub commit. Global (site-wide) pages like About
-    and the archive have no election or panel to state, so they omit
-    `election_date_display`, `data_version`, `source_panel_id`, and
-    `source_panel_hash` for the site-level variant: built date and the same
-    Code-hash commit link only, still proving which exact revision is live.
-    """
+    """Render human-readable update dates linked to the exact deployed revision."""
     commit_url = html.escape(f"{project_url}/commit/{git_commit}", quote=True)
-    escaped_short_commit = html.escape(git_commit[:12])
-    parts: list[str] = []
-    if election_date_display is not None:
-        parts.append(f"Election {html.escape(election_date_display)}")
-    parts.append(f"Built {html.escape(built_date_display)}")
-    if data_version is not None:
-        parts.append(f"Data {html.escape(data_version)}")
-    parts.append(f'Code <a href="{commit_url}">{escaped_short_commit}</a>')
-    line = " &middot; ".join(parts)
-    if source_panel_id is not None and source_panel_hash is not None:
-        line += (
-            f"<br>Panel {html.escape(source_panel_id)} &middot; "
-            f"{html.escape(source_panel_hash[:12])}"
-        )
-    return line
+    escaped_data_date = html.escape(data_updated_date)
+    escaped_site_date = html.escape(site_updated_date)
+    return (
+        f'Data last updated <a href="{commit_url}">{escaped_data_date}</a>. '
+        f'Site last updated <a href="{commit_url}">{escaped_site_date}</a>.'
+    )
 
 
 def site_head_links_html(origin: str, *, shareable: bool = True) -> str:

@@ -22,7 +22,6 @@ from election_guide.publication.models import PublicationViewModel
 from election_guide.release.models import ReleaseManifest, ReleaseStatus
 from election_guide.rendering.renderer import (
     TEMPLATE_DIR,
-    display_date,
     render_comparison_document,
     render_sources_document,
 )
@@ -142,10 +141,10 @@ def stage_pages_site(
     stage = Path(tempfile.mkdtemp(prefix=f".{output_dir.name}.staging-", dir=output_dir.parent))
     try:
         public_paths = _stage_verified_bundles(stage, verified, site_manifest.canonical_origin)
-        # The site-wide About/archive pages have no election of their own, but
-        # still state which exact code built the current live release (UI
-        # polish round 4, item L55.2's site-level audit-line variant).
-        current_built_date = display_date(current.status.generated_at.date().isoformat())
+        # Site-wide pages use the current release's data cutoff and deployed
+        # revision timestamp, matching the election-scoped footer.
+        current_data_updated_date = current.status.data_as_of.date().isoformat()
+        current_site_updated_date = current.status.generated_at.date().isoformat()
         current_git_commit = current.status.git_commit
         current_compare_href = (
             f"/e/{current.declaration.election_id}/compare/"
@@ -166,7 +165,8 @@ def stage_pages_site(
                     )[1]
                     for bundle in verified
                 },
-                built_date_display=current_built_date,
+                data_updated_date=current_data_updated_date,
+                site_updated_date=current_site_updated_date,
                 git_commit=current_git_commit,
                 compare_href=current_compare_href,
             ),
@@ -179,7 +179,8 @@ def stage_pages_site(
         about_path.write_text(
             _about_html(
                 site_manifest,
-                built_date_display=current_built_date,
+                data_updated_date=current_data_updated_date,
+                site_updated_date=current_site_updated_date,
                 git_commit=current_git_commit,
                 compare_href=current_compare_href,
             ),
@@ -544,7 +545,8 @@ def _archive_html(
     site_manifest: SiteManifest,
     *,
     election_names_by_id: Mapping[str, str],
-    built_date_display: str,
+    data_updated_date: str,
+    site_updated_date: str,
     git_commit: str,
     compare_href: str | None = None,
 ) -> str:
@@ -575,7 +577,8 @@ def _archive_html(
     )
     footer_band = site_footer_band_html(project_url=PROJECT_URL)
     footer_audit = site_footer_audit_html(
-        built_date_display=built_date_display,
+        data_updated_date=data_updated_date,
+        site_updated_date=site_updated_date,
         git_commit=git_commit,
         project_url=PROJECT_URL,
     )
@@ -638,7 +641,8 @@ def _archive_html(
 def _about_html(
     site_manifest: SiteManifest,
     *,
-    built_date_display: str,
+    data_updated_date: str,
+    site_updated_date: str,
     git_commit: str,
     compare_href: str | None = None,
 ) -> str:
@@ -671,7 +675,8 @@ def _about_html(
     )
     footer_band = site_footer_band_html(project_url=PROJECT_URL)
     footer_audit = site_footer_audit_html(
-        built_date_display=built_date_display,
+        data_updated_date=data_updated_date,
+        site_updated_date=site_updated_date,
         git_commit=git_commit,
         project_url=PROJECT_URL,
     )
@@ -760,14 +765,15 @@ def _about_html(
           scoring begins, so results can't be adjusted after the fact to fit an outcome. When
           legitimate new evidence turns up &mdash; a source we missed, or one that was misclassified
           &mdash; it is added to a later, explicitly versioned panel rather than silently
-          rewriting this one. Every guide states its exact panel ID and hash in its footer, so a
-          later revision is always visible, never hidden.</p>
+          rewriting this one. Every guide's public release status and manifest preserve its exact
+          panel ID and hash, so a later revision is always visible, never hidden.</p>
       </section>
 
       <section aria-labelledby="verify-it">
         <h2 id="verify-it">Verify it yourself</h2>
-        <p>Every guide records a data version, a source-panel ID and hash, and the exact code
-          revision that built it, in its footer. Each source row links directly to the
+        <p>Every footer links the data and site update dates to the exact code revision that
+          built it. The public release status and manifest record the data version, source-panel ID
+          and hash, and complete artifact identity. Each source row links directly to the
           organization's own endorsement page or document, so any displayed result can be checked
           against the original evidence.</p>
         <p>Organizations can update their own endorsements after we capture them, so a source's

@@ -524,7 +524,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert f'href="{configuration.project_url}" aria-label="Source and audit files on GitHub"' in (
         footer_html
     )
-    assert footer_html.count(configuration.project_url) == 2  # GitHub action + audit Code link
+    assert footer_html.count(configuration.project_url) == 3  # GitHub action + two date links
     assert 'href="/about/" aria-label="How this works" title="How this works"' in footer_html
     assert 'class="site-footer-link"' not in footer_html
     assert "About &amp; FAQ" not in footer_html
@@ -533,6 +533,9 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "shareOrCopyLink" in html
     assert "wireFooterShare();" in html
     assert '<div class="site-footer-audit">' in footer_html
+    assert "Data last updated" in footer_html
+    assert "Site last updated" in footer_html
+    assert f">{view_model.metadata.git_commit[:12]}</a>" not in footer_html
     assert ">AGREES<" not in html
     assert ">DIFFERENT PICK<" not in html
     assert ">NO PICK<" not in html
@@ -1347,15 +1350,17 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     assert "august 2026 primary" in concise_text.casefold()
     assert "Seattle Elections Guide" in concise_text
     assert all(source.name in concise_text for source in view_model.sources)
-    assert (
-        f"Panel {view_model.metadata.source_panel_version} · "
-        f"{view_model.metadata.source_panel_hash[:12]}"
-    ) in concise_text
+    data_updated_date = (
+        (view_model.metadata.data_as_of or view_model.metadata.generated_at).date().isoformat()
+    )
+    site_updated_date = view_model.metadata.generated_at.date().isoformat()
+    assert f"Data last updated {data_updated_date}" in concise_text
+    assert f"Site last updated {site_updated_date}" in concise_text
     times_source = next(
         source for source in view_model.sources if source.panel_role == "comparison"
     )
     assert f"{times_source.endorsement_count} picks" in concise_text
-    assert report.link_count == len(view_model.sources) + 2
+    assert report.link_count == len(view_model.sources) + 4
     assert all(len(page.extract_text() or "") > 100 for page in reader.pages)
     with Image.open(rendered.page_images[0]) as page:
         assert page.size == (1224, 1584)
@@ -2076,14 +2081,27 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     )
     assert not swapped_source_counts_check.passed
 
+    data_updated_date = (
+        (view_model.metadata.data_as_of or view_model.metadata.generated_at).date().isoformat()
+    )
+    site_updated_date = view_model.metadata.generated_at.date().isoformat()
+    project_url = read_rendering_configuration(RENDERING_CONFIG).project_url
+    commit_url = f"{project_url}/commit/{view_model.metadata.git_commit}"
     metadata_marker = (
-        f"Data {view_model.metadata.data_version} · Code {view_model.metadata.git_commit[:12]}"
+        f'Data last updated <a href="{commit_url}">{data_updated_date}</a>. '
+        f'Site last updated <a href="{commit_url}">{site_updated_date}</a>.'
     )
     rendered_html_text = rendered.html_path.read_text(encoding="utf-8")
     assert metadata_marker in rendered_html_text
     wrong_metadata_html = tmp_path / "wrong-publication-metadata.html"
     wrong_metadata_html.write_text(
-        rendered_html_text.replace(metadata_marker, "Data WRONG-VERSION · Code wrong-commit", 2),
+        rendered_html_text.replace(
+            metadata_marker,
+            metadata_marker.replace(data_updated_date, "1900-01-01").replace(
+                site_updated_date, "1900-01-02"
+            ),
+            2,
+        ),
         encoding="utf-8",
     )
     wrong_metadata_pdf = tmp_path / "wrong-publication-metadata.pdf"

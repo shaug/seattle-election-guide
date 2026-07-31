@@ -610,8 +610,8 @@
         </div>
       </div>
       <footer class="page-two-footer">
-        <span>Election {{ election_date_display }} · Built {{ built_date_display }} · Data {{ guide.metadata.data_version }} · Code {{ guide.metadata.git_commit[:12] }}</span>
-        <span>Panel {{ guide.metadata.source_panel_version }} · {{ guide.metadata.source_panel_hash[:12] }} · {{ guide.metadata.published_race_count }} races · <a href="{{ config.project_url }}">Source and audit files</a></span>
+        <span>{{ site_footer_audit | safe }}</span>
+        <span>{{ guide.metadata.published_race_count }} races · <a href="{{ config.project_url }}">Source and audit files</a></span>
       </footer>
     </section>
   </div>
