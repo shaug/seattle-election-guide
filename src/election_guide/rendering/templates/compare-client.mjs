@@ -16,6 +16,7 @@ if (comparisonBindingsElement) {
   const head = document.querySelector('[data-comparison-head]');
   const notice = document.querySelector('[data-comparison-hidden-notice]');
   const status = document.querySelector('[data-comparison-status]');
+  const copyStatus = document.querySelector('[data-comparison-copy-status]');
   const sectionFilter = document.querySelector('[data-comparison-section-filter]');
   const contestedIds = new Set(payload.contested_race_ids);
   const races = new Map(personalization.races.map((race) => [race.race_id, race]));
@@ -205,19 +206,33 @@ if (comparisonBindingsElement) {
     head.append(row);
   }
 
-  function cellFor(signal, race, display) {
-    const cell = engine.resolveColumn(signal, race);
+  function cellFor(signal, cell, display, baseline, isBaseline) {
     const labels = candidateLabels(display);
     const element = document.createElement('td');
     element.className = 'comparison-cell';
     element.dataset.columnSignal = signal;
     element.dataset.cellKind = cell.kind;
+    const agreement = isBaseline ? 'baseline' : cellAgreement(cell, baseline);
+    element.dataset.agreement = agreement;
     const picks = document.createElement('span');
     picks.className = 'comparison-cell-picks';
     picks.textContent = cell.kind === 'outside_scope'
       ? 'Outside district'
       : (cell.leadingPickIds?.map((id) => labels[id]).join(' / ') || '—');
     element.append(picks);
+    if (agreement === 'agree' || agreement === 'differ') {
+      const visibleSignal = document.createElement('span');
+      visibleSignal.className = 'comparison-cell-signal';
+      visibleSignal.setAttribute('aria-hidden', 'true');
+      visibleSignal.textContent = agreement === 'agree' ? 'Agrees' : '≠ Differs';
+      element.append(visibleSignal);
+      const accessibleSignal = document.createElement('span');
+      accessibleSignal.className = 'visually-hidden';
+      accessibleSignal.textContent = agreement === 'agree'
+        ? 'Agrees with baseline.'
+        : 'Differs from baseline.';
+      element.append(accessibleSignal);
+    }
     if (cell.share != null) {
       const meta = document.createElement('span');
       meta.className = 'comparison-cell-meta';
@@ -233,13 +248,21 @@ if (comparisonBindingsElement) {
   function renderBody(visible) {
     table.querySelectorAll('tbody').forEach((body) => body.remove());
     const sections = new Map();
+    let total = 0;
+    let differCount = 0;
     for (const display of comparisons.display_index) {
       if (state.section !== 'all' && display.section_id !== state.section) continue;
       if (state.contestedOnly && !contestedIds.has(display.race_id)) continue;
+      total += 1;
+      const race = races.get(display.race_id);
+      const configuredCells = state.columns.map((signal) => engine.resolveColumn(signal, race));
+      const differs = rowDiffers(configuredCells);
+      if (differs) differCount += 1;
+      if (state.differencesOnly && !differs) continue;
       if (!sections.has(display.section_id)) {
         sections.set(display.section_id, { label: display.section_label, displays: [] });
       }
-      sections.get(display.section_id).displays.push(display);
+      sections.get(display.section_id).displays.push({ display, race, configuredCells, differs });
     }
     let shown = 0;
     for (const [sectionId, section] of sections) {
@@ -253,10 +276,12 @@ if (comparisonBindingsElement) {
       headingCell.textContent = section.label;
       heading.append(headingCell);
       body.append(heading);
-      for (const display of section.displays) {
+      for (const item of section.displays) {
+        const { display, race, configuredCells, differs } = item;
         shown += 1;
         const row = document.createElement('tr');
         row.dataset.comparisonRace = display.race_id;
+        row.dataset.rowDiffers = String(differs);
         const raceHeading = document.createElement('th');
         raceHeading.scope = 'row';
         raceHeading.className = 'comparison-race';
@@ -264,9 +289,17 @@ if (comparisonBindingsElement) {
         link.href = `../#race-${display.race_id}`;
         link.textContent = display.race_label;
         raceHeading.append(link);
+        if (differs) {
+          const chip = document.createElement('span');
+          chip.className = 'comparison-differs-chip';
+          chip.textContent = '≠ differs';
+          raceHeading.append(chip);
+        }
         row.append(raceHeading);
-        const race = races.get(display.race_id);
-        for (const signal of visible) row.append(cellFor(signal, race, display));
+        const baseline = configuredCells[0];
+        visible.forEach((signal, index) => {
+          row.append(cellFor(signal, configuredCells[index], display, baseline, index === 0));
+        });
         if (state.columns.length < 3) row.append(document.createElement('td'));
         body.append(row);
       }
@@ -278,12 +311,30 @@ if (comparisonBindingsElement) {
       row.className = 'comparison-empty';
       const cell = document.createElement('td');
       cell.colSpan = visible.length + 1 + (state.columns.length < 3 ? 1 : 0);
-      cell.textContent = 'No races match the current filters.';
+      const allAgree = state.differencesOnly && total > 0 && differCount === 0;
+      const message = document.createElement('p');
+      message.textContent = allAgree
+        ? 'These signals agree in every race they share under the current filters.'
+        : 'No races match the current filters.';
+      cell.append(message);
+      const reset = document.createElement('button');
+      reset.type = 'button';
+      reset.className = 'comparison-reset';
+      reset.textContent = allAgree ? 'Show all rows' : 'Reset filters';
+      reset.addEventListener('click', () => {
+        state.differencesOnly = false;
+        if (!allAgree) {
+          state.contestedOnly = false;
+          state.section = 'all';
+        }
+        if (writeState('replace')) render();
+      });
+      cell.append(reset);
       row.append(cell);
       body.append(row);
       table.append(body);
     }
-    status.textContent = `${shown} races shown.`;
+    status.textContent = `${shown} of ${total} races shown · ${differCount} differ`;
   }
 
   function syncControls() {
@@ -323,16 +374,14 @@ if (comparisonBindingsElement) {
     if (writeState('replace')) render();
   });
   document.querySelector('[data-comparison-differences]').addEventListener('click', () => {
-    // #122 owns row-difference filtering and presentation. #121 persists the
-    // control state without changing which rows are presented.
     state.differencesOnly = true;
     if (writeState('replace')) render();
   });
   document.querySelector('[data-comparison-copy]').addEventListener('click', async () => {
     const result = await shareOrCopyLink(window.location.href, document.title);
-    if (result === 'copied') status.textContent = 'Link copied.';
-    else if (result === 'shared') status.textContent = 'Share menu opened.';
-    else if (result === 'failed') status.textContent = `Copy failed. Link: ${window.location.href}`;
+    if (result === 'copied') copyStatus.textContent = 'Link copied.';
+    else if (result === 'shared') copyStatus.textContent = 'Share menu opened.';
+    else if (result === 'failed') copyStatus.textContent = `Copy failed. Link: ${window.location.href}`;
   });
   document.querySelectorAll('.comparison-presets a').forEach((link) => {
     link.addEventListener('click', (event) => {
