@@ -214,7 +214,7 @@ def site_band_html(
         f"{nav_link('Endorsements', guide_href, 'endorsements')}"
         f"{nav_link('Compare', compare_href, 'compare') if compare_href is not None else ''}"
         f"{nav_link('Sources', sources_href, 'sources', sources_extra)}"
-        f"{nav_link('About', about_href, 'about')}"
+        f"{nav_link('How this works', about_href, 'about')}"
         "</nav></div>"
     )
 
