@@ -2877,6 +2877,47 @@ def _evaluate_in_chrome(
         shutil.rmtree(profile, ignore_errors=True)
 
 
+def test_phone_dialog_metrics_fit_the_longest_live_content_at_320px(tmp_path: Path) -> None:
+    """Issue 150: the metrics column may wrap, but must never escape the dialog."""
+    view_model = _personalization_enabled_view_model(tmp_path)
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (() => {
+          const row = document.querySelector('.race-detail-candidate');
+          const dialog = row.closest('.race-detail-dialog');
+          row.querySelector('h4').textContent = 'Sharon Tomiko Santos / Kelabe Tewolde';
+          const count = row.querySelector(
+            '.race-detail-candidate-metrics > span[data-lens-hidden]'
+          );
+          count.textContent = '12 of 18 endorsing sources (co-endorsements split)';
+          dialog.showModal();
+          const box = (element) => element.getBoundingClientRect();
+          const dialogBox = box(dialog);
+          const meterBox = box(row.querySelector('.race-detail-meter[data-lens-hidden]'));
+          const countBox = box(count);
+          const titleBox = box(row.querySelector('.race-detail-candidate-title'));
+          return JSON.stringify({
+            titleWidth: titleBox.width,
+            meterWithin: meterBox.left >= dialogBox.left && meterBox.right <= dialogBox.right,
+            countWithin: countBox.left >= dialogBox.left && countBox.right <= dialogBox.right,
+          });
+        })()
+        """,
+        mobile_width=320,
+    )
+
+    assert result["titleWidth"] >= 100
+    assert result["meterWithin"] is True
+    assert result["countWithin"] is True
+
+
 def _tallying_selectable(item: PersonalizationCategory | PersonalizationSource) -> bool:
     """Whether item is a selectable, tallying (non-comparison) category or
     source, for tests that specifically want a tallying-only item (e.g. moving
