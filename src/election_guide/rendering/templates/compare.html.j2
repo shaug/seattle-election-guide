@@ -31,7 +31,33 @@
         <h1>Compare sources</h1>
         <p class="lede">See the audited consensus beside two editorial perspectives, race by race.
           The page starts with all sources, The Stranger, and The Seattle Times.</p>
+        <div class="comparison-presets" role="group" aria-label="Suggested comparisons">
+          <span>Try:</span>
+          {% for label, fragment in comparison_presets %}<a href="#{{ fragment }}">{{ label }}</a>{% endfor %}
+        </div>
       </div>
+
+      <div class="comparison-controls" aria-label="Comparison controls">
+        <label>Show races
+          <select data-comparison-section-filter>
+            <option value="all">All Seattle ballot races</option>
+            {% for section in comparison_sections %}<option value="{{ section.section_id }}">{{ section.section_label }}</option>{% endfor %}
+          </select>
+        </label>
+        <fieldset>
+          <legend>Races</legend>
+          <button type="button" data-comparison-complete aria-pressed="true">Complete</button>
+          <button type="button" data-comparison-contested aria-pressed="false">Contested</button>
+        </fieldset>
+        <fieldset>
+          <legend>Rows</legend>
+          <button type="button" data-comparison-all-rows aria-pressed="true">All</button>
+          <button type="button" data-comparison-differences aria-pressed="false">Differences only</button>
+        </fieldset>
+        <button type="button" data-comparison-copy>Copy link</button>
+        <span class="comparison-control-status" role="status" aria-live="polite" data-comparison-status></span>
+      </div>
+      <p class="comparison-hidden-notice" role="status" aria-live="polite" data-comparison-hidden-notice hidden></p>
 
       <div class="comparison-table-wrap" data-comparison-grid>
         <table class="comparison-table" data-comparison-table data-default-columns="gall,strn,stim">
@@ -101,6 +127,10 @@
   <script type="application/json" id="comparison-bindings" data-comparison-bindings>{{ comparison_payload | tojson }}</script>
   <script type="module">
 {{ share_link_script | safe }}
+{{ compare_url_script | safe }}
+{{ lens_score_script | safe }}
+{{ compare_signals_script | safe }}
+{{ compare_client_script | safe }}
   wireFooterShare();
   </script>
 </body>

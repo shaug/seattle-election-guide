@@ -20,6 +20,7 @@ from election_guide.rendering.renderer import (
     render_sources_document,
 )
 from tests.test_comparisons import _bundle  # pyright: ignore[reportPrivateUsage]
+from tests.test_rendering import _evaluate_in_chrome  # pyright: ignore[reportPrivateUsage]
 
 PROJECT_ROOT = Path(__file__).parents[1]
 
@@ -146,3 +147,202 @@ def test_compare_document_refuses_disabled_policy() -> None:
             _bundle().view_model,
             public_site_url="https://seattleelections.guide",
         )
+
+
+def _comparison_html_path(tmp_path: Path) -> Path:
+    path = tmp_path / "compare.html"
+    path.write_text(
+        render_comparison_document(
+            _enabled_view_model(),
+            public_site_url="https://seattleelections.guide",
+            project_url="https://github.com/shaug/seattle-election-guide",
+        ),
+        encoding="utf-8",
+    )
+    return path
+
+
+def test_compare_client_enforces_picker_bounds_and_history(tmp_path: Path) -> None:
+    html_path = _comparison_html_path(tmp_path)
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          const wait = () => new Promise((resolve) => setTimeout(resolve, 120));
+          const signals = () => [...document.querySelectorAll('[data-comparison-column]')]
+            .map((picker) => picker.value);
+          const initial = signals();
+          const firstPicker = document.querySelector('[data-comparison-column="0"]');
+          const duplicateDisabled = [...firstPicker.options]
+            .find((item) => item.value === initial[1]).disabled;
+          const multiCategoryCopies = [...firstPicker.options]
+            .filter((item) => item.value === 'wsto').length;
+
+          document.querySelector('[data-comparison-remove="2"]').click();
+          await wait();
+          const afterRemove = signals();
+          const removeButtonsAtMinimum = document
+            .querySelectorAll('[data-comparison-remove]').length;
+          document.querySelector('.comparison-column-add').click();
+          await wait();
+          const afterAdd = signals();
+
+          const picker = document.querySelector('[data-comparison-column="1"]');
+          const previous = picker.value;
+          picker.value = 'Glab';
+          picker.dispatchEvent(new Event('change', { bubbles: true }));
+          await wait();
+          const changed = signals();
+          const changedHash = location.hash;
+          history.back();
+          await wait();
+          const afterBack = signals();
+          history.forward();
+          await wait();
+          const afterForward = signals();
+          return JSON.stringify({
+            initial, duplicateDisabled, multiCategoryCopies, afterRemove,
+            removeButtonsAtMinimum, afterAdd, previous, changed, changedHash,
+            afterBack, afterForward,
+            hasAddAtMaximum: Boolean(document.querySelector('.comparison-column-add')),
+          });
+        })()
+        """,
+    )
+    assert result["initial"] == ["gall", "strn", "stim"]
+    assert result["duplicateDisabled"] is True
+    assert result["multiCategoryCopies"] == 2
+    assert result["afterRemove"] == ["gall", "strn"]
+    assert result["removeButtonsAtMinimum"] == 0
+    assert len(result["afterAdd"]) == 3
+    assert len(set(result["afterAdd"])) == 3
+    assert result["changed"] == ["gall", "Glab", result["afterAdd"][2]]
+    assert "cols=gallGlab" in result["changedHash"]
+    assert result["afterBack"] == result["afterAdd"]
+    assert result["afterForward"] == result["changed"]
+    assert result["hasAddAtMaximum"] is False
+
+
+def test_compare_client_presets_filters_and_copy_link_round_trip(tmp_path: Path) -> None:
+    html_path = _comparison_html_path(tmp_path)
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          const wait = () => new Promise((resolve) => setTimeout(resolve, 120));
+          const preset = document.querySelector('.comparison-presets a');
+          const presetHref = preset.getAttribute('href');
+          preset.click();
+          await wait();
+          const presetColumns = [...document.querySelectorAll('[data-comparison-column]')]
+            .map((picker) => picker.value);
+          const historyBeforeFilters = history.length;
+          document.querySelector('[data-comparison-contested]').click();
+          await wait();
+          const rowsBeforeDifferences = document
+            .querySelectorAll('[data-comparison-race]').length;
+          document.querySelector('[data-comparison-differences]').click();
+          await wait();
+          const historyAfterFilters = history.length;
+          const rowCount = document.querySelectorAll('[data-comparison-race]').length;
+          const beforeCopy = location.href;
+          let copied = null;
+          Object.defineProperty(navigator, 'share', { value: undefined, configurable: true });
+          Object.defineProperty(navigator, 'clipboard', {
+            value: { writeText: async (value) => { copied = value; } }, configurable: true,
+          });
+          document.querySelector('[data-comparison-copy]').click();
+          await wait();
+          return JSON.stringify({
+            presetHref, presetColumns, hash: location.hash, rowCount, beforeCopy, copied,
+            rowsBeforeDifferences, historyBeforeFilters, historyAfterFilters,
+            status: document.querySelector('[data-comparison-status]').textContent,
+            differencesPressed: document.querySelector('[data-comparison-differences]')
+              .getAttribute('aria-pressed'),
+          });
+        })()
+        """,
+    )
+    assert result["presetHref"].startswith("#cmp=1&cols=strnstim&")
+    assert result["presetColumns"] == ["strn", "stim"]
+    assert "races=contested" in result["hash"]
+    assert "diff=1" in result["hash"]
+    assert result["rowCount"] > 0
+    assert result["rowCount"] == result["rowsBeforeDifferences"]
+    assert result["historyAfterFilters"] == result["historyBeforeFilters"]
+    assert result["copied"] == result["beforeCopy"]
+    assert result["status"] == "Link copied."
+    assert result["differencesPressed"] == "true"
+
+
+def test_compare_client_labels_comparison_category_truthfully(tmp_path: Path) -> None:
+    html_path = _comparison_html_path(tmp_path)
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (() => {
+          const picker = document.querySelector('[data-comparison-column="0"]');
+          const comparisonCategory = [...picker.options]
+            .find((item) => item.value === 'Gcmp');
+          picker.value = 'Gcmp';
+          picker.dispatchEvent(new Event('change', { bubbles: true }));
+          const meta = document.querySelector('.comparison-column-meta');
+          const gall = [...document.querySelectorAll('[data-comparison-column="1"] option')]
+            .find((item) => item.value === 'gall');
+          return JSON.stringify({
+            optionLabel: comparisonCategory.textContent,
+            coverage: meta.textContent,
+            allSourcesDisabledInSibling: gall.disabled,
+          });
+        })()
+        """,
+    )
+    assert result["optionLabel"].endswith("(Comparison only)")
+    assert result["coverage"] == "Comparison only · never counted"
+    assert result["allSourcesDisabledInSibling"] is False
+
+
+def test_compare_client_mobile_budget_and_focus_have_layout_evidence(tmp_path: Path) -> None:
+    html_path = _comparison_html_path(tmp_path)
+    mobile = _evaluate_in_chrome(
+        html_path,
+        """
+        (() => {
+          const pickers = [...document.querySelectorAll('[data-comparison-column]')];
+          pickers[0].focus();
+          const focus = getComputedStyle(pickers[0]);
+          const table = document.querySelector('[data-comparison-table]').getBoundingClientRect();
+          const wrap = document.querySelector('[data-comparison-grid]').getBoundingClientRect();
+          return JSON.stringify({
+            visibleSignals: pickers.map((picker) => picker.value),
+            notice: document.querySelector('[data-comparison-hidden-notice]').textContent,
+            noticeVisible: !document.querySelector('[data-comparison-hidden-notice]').hidden,
+            configured: new URLSearchParams(location.hash.slice(1)).get('cols'),
+            focusOutlineStyle: focus.outlineStyle,
+            focusOutlineWidth: focus.outlineWidth,
+            tableWidth: table.width,
+            wrapWidth: wrap.width,
+          });
+        })()
+        """,
+        mobile_width=390,
+    )
+    desktop = _evaluate_in_chrome(
+        html_path,
+        """
+        (() => JSON.stringify({
+          visibleSignals: [...document.querySelectorAll('[data-comparison-column]')]
+            .map((picker) => picker.value),
+          noticeVisible: !document.querySelector('[data-comparison-hidden-notice]').hidden,
+        }))()
+        """,
+    )
+    assert mobile["visibleSignals"] == ["gall", "strn"]
+    assert mobile["noticeVisible"] is True
+    assert "1 configured column hidden" in mobile["notice"]
+    assert mobile["configured"] is None
+    assert mobile["focusOutlineStyle"] != "none"
+    assert float(mobile["focusOutlineWidth"].removesuffix("px")) > 0
+    assert mobile["tableWidth"] >= mobile["wrapWidth"]
+    assert desktop["visibleSignals"] == ["gall", "strn", "stim"]
+    assert desktop["noticeVisible"] is False

@@ -357,6 +357,14 @@ def render_comparison_document(
         TEMPLATE_DIR / "compare.css"
     ).read_text(encoding="utf-8")
     share_link_script = (TEMPLATE_DIR / "share-link.mjs").read_text(encoding="utf-8")
+    compare_url_script = (TEMPLATE_DIR / "compare-url.mjs").read_text(encoding="utf-8")
+    lens_score_script = (TEMPLATE_DIR / "lens-score.mjs").read_text(encoding="utf-8")
+    compare_signals_script = (
+        (TEMPLATE_DIR / "compare-signals.mjs")
+        .read_text(encoding="utf-8")
+        .replace("import { scoreRace } from './lens-score.mjs';\n", "")
+    )
+    compare_client_script = (TEMPLATE_DIR / "compare-client.mjs").read_text(encoding="utf-8")
     guide_path = f"/e/{view_model.metadata.election_id}/"
     pdf_href = f"{guide_path}{pdf_filename}" if pdf_filename is not None else None
     election_display_name, _ = election_names(
@@ -367,6 +375,55 @@ def render_comparison_document(
         election_id=view_model.metadata.election_id,
     )
     document_title = page_title(page="Compare sources", election=election_display_name)
+    source_names = {source.id: source.name for source in view_model.sources}
+    source_labels = {
+        source.code: source_names[source.id] for source in view_model.personalization.sources
+    }
+    audited_source_count = sum(
+        source.panel_role != "comparison" and source.contribution_status == "contributing"
+        for source in view_model.sources
+    )
+    race_by_id = {race.id: race for section in view_model.sections for race in section.races}
+    affirmative_states = {"endorsement", "multi_endorsement"}
+    source_coverage = {
+        source.code: sum(
+            any(
+                cell.source_code == source.code and cell.state in affirmative_states
+                for cell in race.cells
+            )
+            for race in view_model.personalization.races
+        )
+        for source in view_model.personalization.sources
+    }
+    comparison_payload = {
+        "schema_version": "1.0",
+        "data_version": view_model.metadata.data_version,
+        "default_columns": ["gall", "strn", "stim"],
+        "personalization": view_model.personalization.model_dump(mode="json"),
+        "comparisons": view_model.comparisons.model_dump(mode="json"),
+        "source_labels": source_labels,
+        "source_coverage": source_coverage,
+        "audited_source_count": audited_source_count,
+        "contested_race_ids": [
+            display.race_id
+            for display in view_model.comparisons.display_index
+            if race_by_id[display.race_id].is_contested
+        ],
+    }
+    preset_fragments = [
+        (
+            "The Stranger vs. The Times",
+            _comparison_fragment(view_model, ["strn", "stim"]),
+        ),
+        (
+            "Labor vs. Environment vs. Dems",
+            _comparison_fragment(view_model, ["Glab", "Genv", "Gdem"]),
+        ),
+        (
+            "The Urbanist vs. everyone",
+            _comparison_fragment(view_model, ["gall", "urbn"]),
+        ),
+    ]
     return template.render(
         guide=view_model,
         public_site_url=public_site_url,
@@ -374,6 +431,10 @@ def render_comparison_document(
         election_display_name=election_display_name,
         stylesheet=stylesheet,
         share_link_script=share_link_script,
+        compare_url_script=compare_url_script,
+        lens_score_script=lens_score_script,
+        compare_signals_script=compare_signals_script,
+        compare_client_script=compare_client_script,
         site_band=site_band_html(
             guide_href=guide_path,
             compare_href=f"{guide_path}compare/",
@@ -402,14 +463,25 @@ def render_comparison_document(
             else None
         ),
         comparison_sections=_comparison_sections(view_model),
-        comparison_payload={
-            "schema_version": "1.0",
-            "default_columns": ["gall", "strn", "stim"],
-            "personalization": view_model.personalization.model_dump(mode="json"),
-            "comparisons": view_model.comparisons.model_dump(mode="json"),
-        },
+        comparison_payload=comparison_payload,
+        comparison_presets=preset_fragments,
         comparison_percentage_label=comparison_percentage_label,
     )
+
+
+def _comparison_fragment(view_model: PublicationViewModel, columns: list[str]) -> str:
+    """Build a static preset fragment in the canonical compare-codec order."""
+    from urllib.parse import urlencode
+
+    parameters = [
+        ("cmp", "1"),
+        ("cols", "".join(columns)),
+        ("panel", view_model.personalization.panel_id),
+        ("ph", view_model.personalization.panel_hash[:12]),
+        ("data", view_model.metadata.data_version),
+        ("scoring", view_model.personalization.scoring.configuration_id),
+    ]
+    return urlencode(parameters)
 
 
 def _comparison_sections(view_model: PublicationViewModel) -> tuple[ComparisonSectionView, ...]:
