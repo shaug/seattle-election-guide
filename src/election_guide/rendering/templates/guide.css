@@ -141,12 +141,12 @@ html.lens-personalized [data-lens-hidden] { display: none; }
 .race-detail-candidate, .race-detail-outcome { overflow: hidden; border: 1px solid var(--line-soft); border-left: .3rem solid var(--line-strong); background: var(--white); }
 .race-detail-candidate { border-color: #e8c58e; border-left-color: var(--amber); }
 .race-detail-candidate-leader { border-color: #9fcfc5; border-left-color: var(--teal); }
-.race-detail-candidate-heading { display: flex; align-items: center; justify-content: space-between; gap: .5rem 1.25rem; padding: .55rem .75rem; background: var(--tone-differ-bg); }
+.race-detail-candidate-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem 1.25rem; padding: .55rem .75rem; background: var(--tone-differ-bg); }
 .race-detail-candidate-leader .race-detail-candidate-heading { background: var(--tone-agree-bg); }
 .race-detail-candidate-title { min-width: 0; }
 .race-detail-candidate-title p { margin: 0 0 .05rem; color: var(--tone-agree-text); font-size: .62rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 .race-card .race-detail-candidate-title h4 { min-width: 0; margin: 0; color: var(--navy); font-size: 1.05rem; line-height: 1.1; overflow-wrap: anywhere; }
-.race-detail-candidate-metrics { display: flex; flex: 0 0 auto; align-items: center; justify-content: flex-end; gap: .45rem .75rem; }
+.race-detail-candidate-metrics { display: flex; flex: 0 0 auto; margin-left: auto; align-items: center; justify-content: flex-end; gap: .45rem .75rem; }
 .race-detail-candidate-metrics > span { color: var(--muted); font-size: .68rem; white-space: nowrap; }
 /* I40: one meter chrome — the dialog meter now adopts the card's own
    border/track treatment instead of its own (tone-agree border, white
