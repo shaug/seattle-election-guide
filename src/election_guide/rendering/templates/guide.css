@@ -12,13 +12,6 @@
    there. */
 .detailed-edition-brand { display: none; }
 .sticky-header { position: sticky; top: 0; z-index: 5; }
-.screen-controls { display: grid; grid-template-columns: minmax(15rem, 1.1fr) repeat(2, minmax(12rem, .85fr)) minmax(10rem, .7fr); align-items: end; gap: .65rem 1rem; padding: .65rem clamp(1rem, 4vw, 3rem); background: var(--paper); border-bottom: 1px solid var(--line); box-shadow: 0 .1rem .4rem rgba(16,42,67,.06); }
-.race-filter-control { display: grid; min-width: 0; gap: .2rem; }
-.screen-controls label, .screen-controls legend { color: var(--navy); font-size: .72rem; font-weight: 700; }
-.screen-controls select { width: 100%; min-width: 0; min-height: 2.7rem; padding: .45rem .7rem; border: 1px solid var(--line-strong); border-radius: .3rem; background: var(--white); color: var(--ink); font: inherit; }
-.view-setting { min-width: 0; margin: 0; padding: 0; border: 0; }
-.view-setting legend { margin-bottom: .2rem; padding: 0; }
-.screen-controls p { display: flex; flex-wrap: wrap; align-self: center; justify-content: flex-end; justify-self: end; gap: .15rem .35rem; margin: 0; color: var(--muted); font-size: .72rem; text-align: right; }
 .filter-status-part { white-space: nowrap; }
 .screen-sections { min-width: 0; padding: 1rem clamp(1rem, 4vw, 3rem) 4rem; }
 .screen-section { margin: 2.5rem 0 4rem; }
@@ -226,8 +219,6 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
 .print-guide { display: none; }
 
 @media (max-width: 1050px) {
-  .screen-controls { grid-template-columns: minmax(15rem, 1fr) repeat(2, minmax(12rem, 1fr)); }
-  .screen-controls p { grid-column: 1 / -1; justify-content: flex-start; justify-self: start; text-align: left; }
   html.compact-ballot-mode .race-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
@@ -235,9 +226,6 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
   .site-band nav { margin-left: 0; }
   .hero h1 { max-width: 18ch; }
   .sticky-header { position: static; }
-  .screen-controls { grid-template-columns: 1fr; }
-  .screen-controls p { grid-column: auto; justify-content: flex-start; justify-self: start; text-align: left; }
-  .view-setting { width: 100%; }
   html.compact-ballot-mode .race-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .race-grid, .screen-coverage-gaps, .coverage-gap-columns { grid-template-columns: 1fr; }
   .sources-columns { column-count: 1; }
@@ -381,7 +369,7 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
   html.detailed-edition .print-guide { display: none !important; }
   html.detailed-edition .screen-guide { display: block !important; max-width: none; min-height: 0; background: white; font-family: var(--print-sans); }
   html.detailed-edition .skip-link, html.detailed-edition .site-band,
-  html.detailed-edition .screen-controls { display: none !important; }
+  html.detailed-edition .filter-control-bar { display: none !important; }
   /* The hero no longer states the brand (item L54); this plain-text,
      link-free line (hidden on screen; see .detailed-edition-brand in the
      screen ruleset below) keeps "Seattle Elections Guide" identifiable on

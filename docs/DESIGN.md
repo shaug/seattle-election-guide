@@ -223,7 +223,9 @@ then any sticky strip, then content.
   treatment everywhere; two strips doing the same job must rhyme.
 - **Shared controls are actual components.** A segmented choice uses the
   shared radio structure and focus treatment; a task page does not draw a
-  button group that merely resembles it.
+  button group that merely resembles it. Election filter bars, labeled selects,
+  segmented radios, and their status placement share one rendered component;
+  pages provide only labels, options, IDs, and behavior hooks.
 
 ## Data display
 

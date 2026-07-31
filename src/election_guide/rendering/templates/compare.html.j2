@@ -19,6 +19,7 @@
   <style>{{ stylesheet | safe }}</style>
 </head>
 <body>
+  {% from '_filter_controls.html.j2' import control_bar, labeled_select, segmented_radio, control_status %}
   <a class="skip-link" href="#comparison-main">Skip to content</a>
   <div class="page" data-comparison-page data-election-id="{{ guide.metadata.election_id }}">
     <header>
@@ -37,33 +38,25 @@
         </div>
       </div>
 
-      <div class="comparison-controls" aria-label="Comparison controls">
-        <label>Area
-          <select data-comparison-section-filter>
+      {% call control_bar('Comparison controls', 'comparison-controls') %}
+        {% call labeled_select('Ballot', 'comparison-ballot-filter', 'data-comparison-section-filter') %}
             <option value="all">All Seattle ballot races</option>
             {% for section in comparison_sections %}<option value="{{ section.section_id }}">{{ section.section_label }}</option>{% endfor %}
-          </select>
-        </label>
-        <fieldset class="comparison-race-filters">
-          <legend>Races</legend>
-          <div class="segmented-control">
-            <label><input type="radio" name="comparison-races" value="all" data-comparison-complete checked><span>All</span></label>
-            <label><input type="radio" name="comparison-races" value="contested" data-comparison-contested><span>Contested</span></label>
-            <label><input type="radio" name="comparison-races" value="differing" data-comparison-differences><span>Differing</span></label>
-            <label><input type="radio" name="comparison-races" value="contested-differences" data-comparison-contested-differences><span>Contested differences</span></label>
-          </div>
-        </fieldset>
-      </div>
+        {% endcall %}
+        {{ segmented_radio('Races', 'comparison-races', [
+          {'value': 'all', 'label': 'All', 'id': '', 'attributes': 'data-comparison-complete', 'checked': true},
+          {'value': 'contested', 'label': 'Contested', 'id': '', 'attributes': 'data-comparison-contested', 'checked': false},
+          {'value': 'differing', 'label': 'Differing', 'id': '', 'attributes': 'data-comparison-differences', 'checked': false},
+          {'value': 'contested-differences', 'label': 'Contested differences', 'id': '', 'attributes': 'data-comparison-contested-differences', 'checked': false}
+        ], 'comparison-race-filters') }}
+        {% call control_status('', 'aria-atomic="true" data-comparison-status', 'comparison-control-status') %}{{ comparison_race_count }} of {{ comparison_race_count }} races shown · {{ comparison_differ_count }} differ{% endcall %}
+      {% endcall %}
       <div class="comparison-share" role="group" aria-label="Share this comparison">
         <span>Share this view</span>
         <button type="button" data-comparison-copy>Copy link</button>
         <span class="comparison-copy-status" role="status" aria-live="polite" data-comparison-copy-status></span>
       </div>
       <p class="comparison-hidden-notice" role="status" aria-live="polite" data-comparison-hidden-notice hidden></p>
-      <p class="comparison-control-status" role="status" aria-live="polite" aria-atomic="true"
-        data-comparison-status>{{ comparison_race_count }} of {{ comparison_race_count }} races shown ·
-        {{ comparison_differ_count }} differ</p>
-
       <div class="comparison-table-wrap" data-comparison-grid>
         <table class="comparison-table" data-comparison-table data-default-columns="gall,strn,stim">
           <caption class="visually-hidden">Endorsement comparison by race</caption>

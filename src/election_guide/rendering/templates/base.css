@@ -112,6 +112,30 @@ a { color: var(--blue); text-underline-offset: .15em; }
 .segmented-control input:checked + span { background: var(--navy); color: var(--white); }
 .segmented-control input:focus-visible + span { outline: .2rem solid var(--focus); outline-offset: -.2rem; }
 
+/* Shared filter controls. Election pages render these through
+   `_filter_controls.html.j2`; pages supply options and behavior hooks, while
+   this component owns the surface, labels, fields, status, and reflow. */
+.filter-control-bar { display: flex; min-width: 0; flex-wrap: wrap; align-items: flex-end; gap: .65rem 1rem; margin: 0; padding: .65rem clamp(1rem, 4vw, 3rem); border-bottom: 1px solid var(--line); background: var(--paper); box-shadow: 0 .1rem .4rem rgba(16,42,67,.06); }
+.filter-select-control { display: grid; min-width: min(100%, 15rem); flex: 1 1 15rem; gap: .2rem; }
+.filter-control-label { margin: 0 0 .2rem; padding: 0; color: var(--navy); font-size: .72rem; font-weight: 700; }
+.filter-select { width: 100%; min-width: 0; min-height: 2.7rem; max-width: 100%; padding: .45rem .7rem; border: 1px solid var(--line-strong); border-radius: .3rem; background: var(--white); color: var(--ink); font: inherit; }
+.filter-segmented-control { min-width: min(100%, 12rem); flex: 1 1 12rem; margin: 0; padding: 0; border: 0; }
+.filter-segmented-control[data-option-count="4"] { flex-basis: 31rem; }
+.filter-control-status { display: flex; min-width: 8rem; flex: 0 1 auto; flex-wrap: wrap; align-self: center; gap: .15rem .35rem; margin: 0 0 0 auto; color: var(--muted); font-size: .72rem; text-align: right; }
+.filter-select:focus-visible { outline: .2rem solid var(--focus); outline-offset: .12rem; }
+
+@media (max-width: 720px) {
+  .filter-control-bar { align-items: stretch; padding-inline: 1rem; }
+  .filter-select-control, .filter-segmented-control, .filter-control-status { width: 100%; flex-basis: 100%; }
+  .filter-control-status { margin-left: 0; text-align: left; }
+  .filter-segmented-control[data-option-count="4"] .segmented-control { display: grid; grid-template-columns: 1fr 1fr; }
+  .filter-segmented-control[data-option-count="4"] .segmented-control label { min-height: 2.7rem; }
+  .filter-segmented-control[data-option-count="4"] .segmented-control label + label { border-left: 0; }
+  .filter-segmented-control[data-option-count="4"] .segmented-control label:nth-child(even) { border-left: 1px solid var(--line-strong); }
+  .filter-segmented-control[data-option-count="4"] .segmented-control label:nth-child(n+3) { border-top: 1px solid var(--line-strong); }
+  .filter-segmented-control[data-option-count="4"] .segmented-control span { padding-inline: .4rem; white-space: normal; text-align: center; }
+}
+
 /* Shared page footer (issue 179): one masthead-height navy grid carrying the
    brand, two-line provenance whisper, and fixed-height action cluster. */
 .site-footer { background: var(--navy); color: var(--white); }

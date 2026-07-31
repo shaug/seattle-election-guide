@@ -434,7 +434,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "card.dataset.contested === 'true'" in html
     assert "matchesScope && matchesContest" in html
     assert "url.searchParams.set('view', 'compact')" in html
-    assert '<label for="race-filter">Ballot</label>' in html
+    assert '<label class="filter-control-label" for="race-filter">Ballot</label>' in html
     assert "Show races" not in html
     assert "url.searchParams.set('races', 'contested')" in html
     assert "url.searchParams.set('filter', select.value)" in html

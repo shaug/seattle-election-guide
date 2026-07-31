@@ -225,6 +225,148 @@ def _comparison_html_path(tmp_path: Path) -> Path:
     return path
 
 
+def _guide_html_path(tmp_path: Path) -> Path:
+    path = tmp_path / "guide.html"
+    path.write_text(
+        render_html_document(
+            _enabled_view_model(),
+            read_rendering_configuration(PROJECT_ROOT / "config/rendering/pdf.yaml"),
+        ),
+        encoding="utf-8",
+    )
+    return path
+
+
+def test_guide_and_compare_render_the_shared_filter_control_components() -> None:
+    view_model = _enabled_view_model()
+    guide = render_html_document(
+        view_model,
+        read_rendering_configuration(PROJECT_ROOT / "config/rendering/pdf.yaml"),
+    )
+    compare = render_comparison_document(
+        view_model,
+        public_site_url="https://seattleelections.guide",
+    )
+    for rendered in (guide, compare):
+        bar = re.search(
+            r'<section class="[^"]*filter-control-bar[^"]*".*?</section>', rendered, re.S
+        )
+        assert bar is not None
+        assert 'class="filter-select-control' in bar.group(0)
+        assert 'class="filter-control-label"' in bar.group(0)
+        assert 'class="filter-select"' in bar.group(0)
+        assert 'class="filter-segmented-control' in bar.group(0)
+        assert 'class="segmented-control"' in bar.group(0)
+        assert 'class="filter-control-status' in bar.group(0)
+        assert bar.group(0).index('class="filter-control-status') < len(bar.group(0))
+
+    macro_source = (
+        PROJECT_ROOT / "src/election_guide/rendering/templates/_filter_controls.html.j2"
+    ).read_text(encoding="utf-8")
+    consumer_sources = [
+        (PROJECT_ROOT / f"src/election_guide/rendering/templates/{name}").read_text(
+            encoding="utf-8"
+        )
+        for name in ("guide.html.j2", "compare.html.j2")
+    ]
+    for macro in ("control_bar", "labeled_select", "segmented_radio", "control_status"):
+        assert f"macro {macro}" in macro_source
+        assert all(f"{macro}(" in source for source in consumer_sources)
+
+    base_css = (PROJECT_ROOT / "src/election_guide/rendering/templates/base.css").read_text(
+        encoding="utf-8"
+    )
+    page_css = "\n".join(
+        (PROJECT_ROOT / f"src/election_guide/rendering/templates/{name}").read_text(
+            encoding="utf-8"
+        )
+        for name in ("guide.css", "compare.css")
+    )
+    page_css = page_css.replace(
+        "html.detailed-edition .filter-control-bar { display: none !important; }", ""
+    )
+    for selector in (
+        ".filter-control-bar",
+        ".filter-select-control",
+        ".filter-select",
+        ".filter-segmented-control",
+        ".filter-control-status",
+    ):
+        assert selector in base_css
+        assert selector not in page_css
+
+
+@pytest.mark.parametrize("mobile_width", [None, 390])
+def test_guide_and_compare_shared_controls_have_the_same_rendered_primitives(
+    tmp_path: Path, mobile_width: int | None
+) -> None:
+    script = """
+    (() => {
+      const bar = document.querySelector('.filter-control-bar');
+      const select = bar.querySelector('.filter-select');
+      const label = bar.querySelector('.filter-control-label');
+      const segmented = bar.querySelector('.segmented-control');
+      const selected = segmented.querySelector('input:checked + span');
+      const status = bar.querySelector('.filter-control-status');
+      const styles = (element) => getComputedStyle(element);
+      return JSON.stringify({
+        roles: [...bar.children].map((child) => [...child.classList]
+          .find((name) => name.startsWith('filter-'))),
+        selectLabel: document.querySelector(`label[for="${select.id}"]`)?.textContent,
+        statusInside: status?.parentElement === bar,
+        barDisplay: styles(bar).display,
+        barBackground: styles(bar).backgroundColor,
+        barPaddingTop: styles(bar).paddingTop,
+        barBorderBottom: styles(bar).borderBottomWidth,
+        selectHeight: styles(select).height,
+        selectPadding: styles(select).padding,
+        selectRadius: styles(select).borderRadius,
+        labelColor: styles(label).color,
+        labelSize: styles(label).fontSize,
+        labelWeight: styles(label).fontWeight,
+        selectedBackground: styles(selected).backgroundColor,
+        selectedColor: styles(selected).color,
+        outerWidth: document.documentElement.scrollWidth,
+        viewportWidth: document.documentElement.clientWidth,
+      });
+    })()
+    """
+    guide = _evaluate_in_chrome(_guide_html_path(tmp_path), script, mobile_width=mobile_width)
+    compare = _evaluate_in_chrome(
+        _comparison_html_path(tmp_path), script, mobile_width=mobile_width
+    )
+    assert guide["roles"] == [
+        "filter-select-control",
+        "filter-segmented-control",
+        "filter-segmented-control",
+        "filter-control-status",
+    ]
+    assert compare["roles"] == [
+        "filter-select-control",
+        "filter-segmented-control",
+        "filter-control-status",
+    ]
+    assert guide["selectLabel"] == compare["selectLabel"] == "Ballot"
+    assert guide["statusInside"] is compare["statusInside"] is True
+    for key in (
+        "barDisplay",
+        "barBackground",
+        "barPaddingTop",
+        "barBorderBottom",
+        "selectHeight",
+        "selectPadding",
+        "selectRadius",
+        "labelColor",
+        "labelSize",
+        "labelWeight",
+        "selectedBackground",
+        "selectedColor",
+    ):
+        assert guide[key] == compare[key]
+    assert guide["outerWidth"] == guide["viewportWidth"]
+    assert compare["outerWidth"] == compare["viewportWidth"]
+
+
 def test_compare_client_enforces_picker_bounds_and_history(tmp_path: Path) -> None:
     html_path = _comparison_html_path(tmp_path)
     result = _evaluate_in_chrome(
