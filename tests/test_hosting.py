@@ -103,6 +103,11 @@ def test_stage_pages_site_composes_verified_election_archive(tmp_path: Path) -> 
         'endorsement guides.">' in archive
     )
     assert "noindex" not in archive
+    assert "Every guide stays up after its election &mdash; unchanged, at the same address." in (
+        archive
+    )
+    assert "<ul>" in archive
+    assert "<ol>" not in archive
     footer_audit = (
         f'Data last updated <a href="https://github.com/shaug/seattle-election-guide/commit/'
         f'{COMMIT}">2026-07-20</a>. Site last updated <a href="https://github.com/shaug/'
@@ -123,6 +128,12 @@ def test_stage_pages_site_composes_verified_election_archive(tmp_path: Path) -> 
     assert "mailto:seattle-elections@dobravoda.dev" in about
     assert "not an official voter pamphlet" in about
     assert "not affiliated with any campaign" in about
+    normalized_about = " ".join(about.split())
+    assert (
+        "This guide covers the Seattle races we tracked for this election; your ballot may not "
+        "include all of them, and may include a race this guide doesn&rsquo;t cover."
+        in normalized_about
+    )
     # The shared footer's own links (Share/PDF/Contact/GitHub/How this works)
     # replaced the old page-footer nav, which was the site's only link to the
     # guide archive; that link now lives in About's own body prose instead.
@@ -752,6 +763,27 @@ def test_sources_page_renders_every_category_and_source_like_the_guide_tree(
     assert (
         '<meta name="twitter:description" content="Choose which sources count '
         f'toward your personalized {election_name} results.">' in html
+    )
+    assert (
+        "Choose which sources count, then save &mdash; the guide recalculates from\n"
+        "          your selection." in html
+    )
+    coverage_model = view_model.model_copy(deep=True)
+    coverage_source = coverage_model.sources[0]
+    coverage_source.contribution_status = "coverage_gap"
+    coverage_source.coverage_gap_status = "not_found"
+    coverage_source.coverage_gap_note = "No usable endorsement list was found."
+    coverage_source.endorsement_count = 0
+    coverage_source.split_endorsement_count = 0
+    coverage_model.metadata.contributing_source_count -= 1
+    coverage_model.metadata.coverage_gap_count += 1
+    coverage_html = render_sources_document(
+        coverage_model,
+        public_site_url="https://seattleelections.guide",
+    )
+    assert (
+        "We looked for endorsement lists from these organizations and found none we could\n"
+        "              use. They don&rsquo;t count toward any score." in coverage_html
     )
     assert "data-sources-save" in html
     assert "data-sources-cancel" in html

@@ -605,7 +605,7 @@ def _archive_html(
       font: 700 clamp(1.8rem, 4vw, 2.6rem)/1.05 var(--screen-serif);
     }}
     main > p {{ color: var(--muted); max-width: 46ch; }}
-    ol {{ margin: 1.5rem 0 0; padding-left: 1.25rem; }}
+    ul {{ margin: 1.5rem 0 0; padding: 0; list-style: none; }}
     li {{ margin: 0 0 .5rem; }}
     li a {{ color: var(--navy); font-weight: 700; }}
   </style>
@@ -619,10 +619,10 @@ def _archive_html(
     </header>
     <main id="archive-main" class="narrow-main">
       <h1>Guide archive</h1>
-      <p>Published guides remain available at permanent election-scoped paths.</p>
-      <ol>
+      <p>Every guide stays up after its election &mdash; unchanged, at the same address.</p>
+      <ul>
 {rows}
-      </ol>
+      </ul>
     </main>
     <footer class="site-footer">
       {footer_band}
@@ -749,9 +749,9 @@ def _about_html(
 
       <section aria-labelledby="why-ballot-varies">
         <h2 id="why-ballot-varies">Why your ballot may look different</h2>
-        <p>Exact ballot contents vary by voter registration address. This guide covers the races on
-          the ballot inventory built for this election; some races shown here may not appear on your
-          own ballot, and your ballot may include a race this guide does not cover.</p>
+        <p>Exact ballot contents vary by voter registration address. This guide covers the Seattle
+          races we tracked for this election; your ballot may not include all of them, and may
+          include a race this guide doesn&rsquo;t cover.</p>
       </section>
 
       <section aria-labelledby="choices-anonymous">

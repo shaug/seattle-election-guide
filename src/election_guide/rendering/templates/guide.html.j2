@@ -305,11 +305,11 @@
             </a>
             {% if race.grade == 'Insufficient' %}
             <div class="insufficient-note" role="note" data-display-role="insufficient-warning"{% if guide.personalization.policy.enabled %} data-lens-hidden{% endif %}>
-              Too few explicit endorsements to assess consensus reliably.</div>
+              Too few endorsements to measure agreement.</div>
             {% endif %}
             {% if guide.personalization.policy.enabled %}
             <div class="insufficient-note" data-lens-only data-lens-insufficient hidden>
-              Too few explicit endorsements to assess consensus reliably in the selected sources.</div>
+              Too few endorsements to measure agreement among your selected sources.</div>
             {# role="group" matches the Times comparison bar's idiom: a bare
                <p> is name-prohibited in ARIA, so the agree/differ aria-label
                applied by applyAllSourcesSignal needs the role to be exposed. #}
@@ -489,7 +489,7 @@
           {{ guide.metadata.published_race_count }} races · source details on page 2</div>
       </header>
       <p class="print-intro">Progressive-source consensus. Seattle Times choices are comparison only.
-        Too few explicit endorsements are labeled; no recommendation is made from insufficient evidence.</p>
+        Too few endorsements to measure agreement; no recommendation from thin evidence.</p>
       <div class="print-races">
         {% set print_midpoint = (guide.metadata.published_race_count + 1) // 2 %}
         {% for print_column in range(2) %}

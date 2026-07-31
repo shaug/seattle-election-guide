@@ -3050,9 +3050,7 @@ def _html_semantic_values(race: PublicationRace) -> dict[str, list[str]]:
         "support": [_screen_support_summary(race), _screen_support_summary_compact(race)],
         "comparison": [_screen_comparison_label(comparison) for comparison in race.comparisons],
         "insufficient-warning": (
-            ["Too few explicit endorsements to assess consensus reliably."]
-            if race.grade == "Insufficient"
-            else []
+            ["Too few endorsements to measure agreement."] if race.grade == "Insufficient" else []
         ),
     }
 
@@ -3097,11 +3095,7 @@ def _detailed_pdf_race_values(race: PublicationRace) -> list[str]:
             f"{screen_support} {_screen_comparison_label(comparison)}"
             for comparison in race.comparisons
         ),
-        *(
-            ["Too few explicit endorsements to assess consensus reliably."]
-            if race.grade == "Insufficient"
-            else []
-        ),
+        *(["Too few endorsements to measure agreement."] if race.grade == "Insufficient" else []),
     ]
 
 
