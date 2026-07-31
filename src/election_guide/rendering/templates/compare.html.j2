@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% set guide_path = '/e/' ~ guide.metadata.election_id ~ '/' %}
+  {% set canonical_url = public_site_url ~ guide_path ~ 'compare/' %}
+  {% set page_description = 'Compare the audited all-sources result with The Stranger and The Seattle Times for ' ~ election_display_name ~ '.' %}
+  <meta name="description" content="{{ page_description }}">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{{ document_title }}">
+  <meta property="og:description" content="{{ page_description }}">
+  <meta property="og:url" content="{{ canonical_url }}">
+  <meta name="twitter:title" content="{{ document_title }}">
+  <meta name="twitter:description" content="{{ page_description }}">
+  <link rel="canonical" href="{{ canonical_url }}">
+  {{ site_head_links | safe }}
+  <title>{{ document_title }}</title>
+  <style>{{ stylesheet | safe }}</style>
+</head>
+<body>
+  <a class="skip-link" href="#comparison-main">Skip to content</a>
+  <div class="page" data-comparison-page data-election-id="{{ guide.metadata.election_id }}">
+    <header>
+      {{ site_band | safe }}
+      <div class="page-band-rule"></div>
+    </header>
+    <main id="comparison-main" class="comparison-main">
+      <div class="comparison-intro">
+        <p class="eyebrow">{{ election_display_name }} · Sources</p>
+        <h1>Compare sources</h1>
+        <p class="lede">See the audited consensus beside two editorial perspectives, race by race.
+          The page starts with all sources, The Stranger, and The Seattle Times.</p>
+      </div>
+
+      <div class="comparison-table-wrap" data-comparison-grid>
+        <table class="comparison-table" data-comparison-table data-default-columns="gall,strn,stim">
+          <caption>Endorsement comparison by race</caption>
+          <thead data-comparison-head>
+            <tr>
+              <th scope="col">Race</th>
+              <th scope="col" data-column-signal="gall">All sources</th>
+              <th scope="col" data-column-signal="strn">The Stranger</th>
+              <th scope="col" data-column-signal="stim">The Seattle Times
+                <span class="comparison-only-badge">Comparison only</span>
+              </th>
+            </tr>
+          </thead>
+          {% for section in comparison_sections %}
+          <tbody data-comparison-section="{{ section.section_id }}">
+            <tr class="comparison-section-heading">
+              <th scope="rowgroup" colspan="4">{{ section.section_label }}</th>
+            </tr>
+            {% for row in section.rows %}
+            <tr data-comparison-race="{{ row.race_id }}">
+              <th scope="row" class="comparison-race">
+                <a href="{{ guide_path }}#race-{{ row.race_id }}">{{ row.race_label }}</a>
+              </th>
+              {% for cell in row.cells %}
+              <td class="comparison-cell" data-column-signal="{{ cell.signal }}"
+                data-cell-kind="{{ cell.kind }}"
+                data-leading-pick-ids='{{ cell.leading_pick_ids | list | tojson }}'
+                {% if cell.share is not none %}data-share="{{ cell.share }}"{% endif %}
+                {% if cell.explicit_source_count is not none %}data-explicit-source-count="{{ cell.explicit_source_count }}"{% endif %}>
+                <span class="comparison-cell-picks">
+                  {% if cell.kind == 'outside_scope' %}Outside district
+                  {% elif cell.choice_labels %}{{ cell.choice_labels | join(' / ') }}
+                  {% else %}&mdash;{% endif %}
+                </span>
+                {% if cell.kind == 'baseline' and cell.share is not none %}
+                <span class="comparison-cell-meta">{{ comparison_percentage_label(cell.share) }} ·
+                  {{ cell.explicit_source_count }} sources</span>
+                {% endif %}
+              </td>
+              {% endfor %}
+            </tr>
+            {% endfor %}
+          </tbody>
+          {% endfor %}
+        </table>
+      </div>
+
+      <div class="comparison-legend" aria-label="Legend">
+        <span><b>All sources</b> audited consensus</span>
+        <span><b>&mdash;</b> no endorsement published</span>
+        <span><b>Outside district</b> source is not eligible for that legislative race</span>
+        <span><b>Name / name</b> co-endorsement or tie</span>
+      </div>
+      <aside class="comparison-method">
+        <p>Each organization has equal weight; multi-candidate endorsements split one point.
+          No endorsement and missing coverage stay visible but do not enter the percentage.</p>
+        <p>The Seattle Times is shown for comparison; it is never counted toward any score.</p>
+        <p><strong>Comparison only.</strong> Shown for comparison; never counted toward the scores.</p>
+      </aside>
+    </main>
+    <footer class="site-footer">
+      {% if site_footer_band %}{{ site_footer_band | safe }}{% endif %}
+      {% if site_footer_audit %}<div class="site-footer-audit">{{ site_footer_audit | safe }}</div>{% endif %}
+    </footer>
+  </div>
+  <script type="application/json" id="comparison-bindings" data-comparison-bindings>{{ comparison_payload | tojson }}</script>
+  <script type="module">
+{{ share_link_script | safe }}
+  wireFooterShare();
+  </script>
+</body>
+</html>

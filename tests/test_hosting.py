@@ -270,6 +270,78 @@ def test_generated_worker_enforces_route_contract(tmp_path: Path) -> None:
     }
 
 
+def test_enabled_comparisons_stage_verify_and_route_exact_asset(tmp_path: Path) -> None:
+    current, older = _write_archive_bundles(tmp_path)
+    _enable_comparisons(current)
+    manifest = _write_site_manifest(tmp_path, current_first=True)
+    output = tmp_path / "site"
+
+    stage_pages_site(
+        manifest,
+        {CURRENT_BUNDLE_ID: current, OLDER_BUNDLE_ID: older},
+        output,
+    )
+    verified = verify_staged_pages_site(output, manifest)
+
+    compare_relative = f"e/{CURRENT_ID}/compare/index.html"
+    compare_path = output / compare_relative
+    assert compare_path.is_file()
+    assert (
+        verified.assets[compare_relative] == hashlib.sha256(compare_path.read_bytes()).hexdigest()
+    )
+    assert not (output / "e" / OLDER_ID / "compare").exists()
+
+    compare_html = compare_path.read_text(encoding="utf-8")
+    assert 'data-default-columns="gall,strn,stim"' in compare_html
+    assert 'href="/e/wa-2026-primary/compare/" aria-current="page">Compare</a>' in compare_html
+    sources_html = (output / "e" / CURRENT_ID / "sources" / "index.html").read_text(
+        encoding="utf-8"
+    )
+    assert f'href="/e/{CURRENT_ID}/compare/">Compare</a>' in sources_html
+    assert f'href="/e/{CURRENT_ID}/compare/">Compare</a>' in (
+        output / "about" / "index.html"
+    ).read_text(encoding="utf-8")
+    assert f'href="/e/{CURRENT_ID}/compare/">Compare</a>' in (
+        output / "e" / "index.html"
+    ).read_text(encoding="utf-8")
+
+    results = _run_worker(
+        output / "_worker.js",
+        [
+            f"https://seattleelections.guide/e/{CURRENT_ID}/compare",
+            f"https://seattleelections.guide/e/{CURRENT_ID}/compare/",
+            "https://seattleelections.guide/e/not-an-election/compare/",
+        ],
+    )
+    assert results[0]["status"] == 308
+    assert results[0]["location"] == (f"https://seattleelections.guide/e/{CURRENT_ID}/compare/")
+    assert results[1]["body"] == f"asset:/e/{CURRENT_ID}/compare/"
+    assert results[2]["status"] == 404
+
+
+def test_disabled_comparisons_stage_no_page_or_nav_exposure(tmp_path: Path) -> None:
+    current, older = _write_archive_bundles(tmp_path)
+    manifest = _write_site_manifest(tmp_path, current_first=True)
+    output = tmp_path / "site"
+
+    stage_pages_site(
+        manifest,
+        {CURRENT_BUNDLE_ID: current, OLDER_BUNDLE_ID: older},
+        output,
+    )
+
+    assert not (output / "e" / CURRENT_ID / "compare").exists()
+    assert not (output / "e" / OLDER_ID / "compare").exists()
+    worker = (output / "_worker.js").read_text(encoding="utf-8")
+    assert "/compare/" not in worker
+    assert "COMPARISON_ROOTS" not in worker
+    assert "/compare/" not in (output / "e" / CURRENT_ID / "sources" / "index.html").read_text(
+        encoding="utf-8"
+    )
+    assert "/compare/" not in (output / "about" / "index.html").read_text(encoding="utf-8")
+    assert "/compare/" not in (output / "e" / "index.html").read_text(encoding="utf-8")
+
+
 def test_bundle_drift_does_not_replace_existing_output(tmp_path: Path) -> None:
     current, older = _write_archive_bundles(tmp_path)
     output = tmp_path / "site"
@@ -1093,6 +1165,20 @@ def _write_release_bundle(
         )
     )
     return bundle
+
+
+def _enable_comparisons(bundle: Path) -> None:
+    view_model_path = bundle / "data" / "publication_view_model.json"
+    view_model = json.loads(view_model_path.read_text(encoding="utf-8"))
+    view_model["comparisons"]["policy"]["enabled"] = True
+    view_model_path.write_bytes(canonical_json_bytes(view_model))
+
+    manifest_path = bundle / "release-manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["artifact_hashes"]["data/publication_view_model.json"] = hashlib.sha256(
+        view_model_path.read_bytes()
+    ).hexdigest()
+    manifest_path.write_bytes(canonical_json_bytes(manifest))
 
 
 def _tree_bytes(root: Path) -> dict[str, bytes]:

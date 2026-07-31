@@ -182,14 +182,15 @@ def site_band_html(
     *,
     guide_href: str,
     sources_href: str,
+    compare_href: str | None = None,
     about_href: str = "/about/",
     current: str | None = None,
     sources_link_data_attribute: bool = False,
 ) -> str:
     """The slim navy nav band shared by every page, brand always present.
 
-    `current` names the nav entry for this page (`endorsements`, `sources`, or
-    `about`). Every page, the guide included, carries the icon-plus-name
+    `current` names the nav entry for this page (`endorsements`, `compare`,
+    `sources`, or `about`). Every page, the guide included, carries the icon-plus-name
     lockup linking home (UI polish round 4, item L54: the guide's hero h1
     used to stand in for the brand and suppressed it here; the hero now
     states the election instead, so the band's brand mark is the one place
@@ -211,6 +212,7 @@ def site_band_html(
         f"{brand}"
         '<nav aria-label="Site">'
         f"{nav_link('Endorsements', guide_href, 'endorsements')}"
+        f"{nav_link('Compare', compare_href, 'compare') if compare_href is not None else ''}"
         f"{nav_link('Sources', sources_href, 'sources', sources_extra)}"
         f"{nav_link('About', about_href, 'about')}"
         "</nav></div>"

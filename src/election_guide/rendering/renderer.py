@@ -37,6 +37,11 @@ from election_guide.publication.models import (
     PublicationViewModel,
     SourceCell,
 )
+from election_guide.publication.personalization import (
+    PersonalizationCell,
+    PersonalizationRace,
+    PersonalizationSource,
+)
 from election_guide.rendering.models import (
     RenderCheck,
     RenderedPage,
@@ -70,6 +75,30 @@ class RenderedGuide:
     validation_report: RenderingValidationReport
     detailed_pdf_path: Path | None
     detailed_page_images: list[Path]
+
+
+@dataclass(frozen=True)
+class ComparisonCellView:
+    signal: str
+    kind: str
+    choice_labels: tuple[str, ...]
+    leading_pick_ids: tuple[str, ...]
+    share: str | None = None
+    explicit_source_count: int | None = None
+
+
+@dataclass(frozen=True)
+class ComparisonRowView:
+    race_id: str
+    race_label: str
+    cells: tuple[ComparisonCellView, ...]
+
+
+@dataclass(frozen=True)
+class ComparisonSectionView:
+    section_id: str
+    section_label: str
+    rows: tuple[ComparisonRowView, ...]
 
 
 class PrintLayoutError(ValueError):
@@ -189,6 +218,9 @@ def render_html_document(
         site_band=site_band_html(
             guide_href=guide_path,
             sources_href=sources_page_url,
+            compare_href=(
+                f"{guide_path}compare/" if view_model.comparisons.policy.enabled else None
+            ),
             current="endorsements",
             sources_link_data_attribute=True,
         ),
@@ -279,6 +311,9 @@ def render_sources_document(
         site_band=site_band_html(
             guide_href=guide_path,
             sources_href=f"{guide_path}sources/",
+            compare_href=(
+                f"{guide_path}compare/" if view_model.comparisons.policy.enabled else None
+            ),
             current="sources",
         ),
         site_head_links=site_head_links_html(public_site_url),
@@ -303,6 +338,182 @@ def render_sources_document(
             else None
         ),
     )
+
+
+def render_comparison_document(
+    view_model: PublicationViewModel,
+    *,
+    public_site_url: str,
+    project_url: str | None = None,
+    pdf_filename: str | None = None,
+) -> str:
+    """Render the policy-gated, no-JavaScript comparison baseline."""
+    if not view_model.comparisons.policy.enabled:
+        raise ValueError("comparison page cannot render while its release policy is disabled")
+
+    environment = _template_environment()
+    template = environment.get_template("compare.html.j2")
+    stylesheet = (TEMPLATE_DIR / "base.css").read_text(encoding="utf-8") + (
+        TEMPLATE_DIR / "compare.css"
+    ).read_text(encoding="utf-8")
+    share_link_script = (TEMPLATE_DIR / "share-link.mjs").read_text(encoding="utf-8")
+    guide_path = f"/e/{view_model.metadata.election_id}/"
+    pdf_href = f"{guide_path}{pdf_filename}" if pdf_filename is not None else None
+    election_display_name, _ = election_names(
+        view_model.metadata.election_date,
+        view_model.metadata.election_type,
+        view_model.metadata.state,
+        legacy_name=view_model.metadata.election_name,
+        election_id=view_model.metadata.election_id,
+    )
+    document_title = page_title(page="Compare sources", election=election_display_name)
+    return template.render(
+        guide=view_model,
+        public_site_url=public_site_url,
+        document_title=document_title,
+        election_display_name=election_display_name,
+        stylesheet=stylesheet,
+        share_link_script=share_link_script,
+        site_band=site_band_html(
+            guide_href=guide_path,
+            compare_href=f"{guide_path}compare/",
+            sources_href=f"{guide_path}sources/",
+            current="compare",
+        ),
+        site_head_links=site_head_links_html(public_site_url),
+        site_footer_band=(
+            site_footer_band_html(project_url=project_url, pdf_href=pdf_href)
+            if project_url is not None
+            else None
+        ),
+        site_footer_audit=(
+            site_footer_audit_html(
+                election_date_display=display_date(view_model.metadata.election_date),
+                built_date_display=display_date(
+                    view_model.metadata.generated_at.date().isoformat()
+                ),
+                data_version=view_model.metadata.data_version,
+                git_commit=view_model.metadata.git_commit,
+                source_panel_id=view_model.metadata.source_panel_id,
+                source_panel_hash=view_model.metadata.source_panel_hash,
+                project_url=project_url,
+            )
+            if project_url is not None
+            else None
+        ),
+        comparison_sections=_comparison_sections(view_model),
+        comparison_payload={
+            "schema_version": "1.0",
+            "default_columns": ["gall", "strn", "stim"],
+            "personalization": view_model.personalization.model_dump(mode="json"),
+            "comparisons": view_model.comparisons.model_dump(mode="json"),
+        },
+        comparison_percentage_label=comparison_percentage_label,
+    )
+
+
+def _comparison_sections(view_model: PublicationViewModel) -> tuple[ComparisonSectionView, ...]:
+    personalization_races = {race.race_id: race for race in view_model.personalization.races}
+    sources = {source.id: source for source in view_model.personalization.sources}
+    try:
+        stranger = sources["the-stranger"]
+        times = sources["seattle-times-editorial-board"]
+    except KeyError as error:
+        raise ValueError(f"comparison default source is unavailable: {error.args[0]}") from error
+
+    grouped: list[ComparisonSectionView] = []
+    current_section_id: str | None = None
+    current_section_label = ""
+    rows: list[ComparisonRowView] = []
+    for display in view_model.comparisons.display_index:
+        if display.section_id != current_section_id:
+            if current_section_id is not None:
+                grouped.append(
+                    ComparisonSectionView(
+                        section_id=current_section_id,
+                        section_label=current_section_label,
+                        rows=tuple(rows),
+                    )
+                )
+            current_section_id = display.section_id
+            current_section_label = display.section_label
+            rows = []
+
+        race = personalization_races[display.race_id]
+        labels = display.candidate_names or display.measure_response_labels
+        rows.append(
+            ComparisonRowView(
+                race_id=display.race_id,
+                race_label=display.race_label,
+                cells=(
+                    ComparisonCellView(
+                        signal="gall",
+                        kind="baseline",
+                        choice_labels=tuple(
+                            labels[pick_id] for pick_id in display.baseline.leading_pick_ids
+                        ),
+                        leading_pick_ids=tuple(display.baseline.leading_pick_ids),
+                        share=display.baseline.share,
+                        explicit_source_count=display.baseline.explicit_source_count,
+                    ),
+                    _comparison_direct_cell(stranger, race, labels),
+                    _comparison_direct_cell(times, race, labels),
+                ),
+            )
+        )
+    if current_section_id is not None:
+        grouped.append(
+            ComparisonSectionView(
+                section_id=current_section_id,
+                section_label=current_section_label,
+                rows=tuple(rows),
+            )
+        )
+    return tuple(grouped)
+
+
+def _comparison_direct_cell(
+    source: PersonalizationSource,
+    race: PersonalizationRace,
+    labels: dict[str, str],
+) -> ComparisonCellView:
+    if source.code not in race.eligible_source_codes:
+        return ComparisonCellView(
+            signal=source.code,
+            kind="outside_scope",
+            choice_labels=(),
+            leading_pick_ids=(),
+        )
+
+    cells = {cell.source_code: cell for cell in race.cells}
+    published: PersonalizationCell = cells[source.code]
+    if published.state not in {"endorsement", "multi_endorsement"}:
+        return ComparisonCellView(
+            signal=source.code,
+            kind="blank",
+            choice_labels=(),
+            leading_pick_ids=(),
+        )
+    leading_pick_ids = tuple(
+        candidate_id
+        for candidate_id in race.candidate_order
+        if candidate_id in published.allocation
+    )
+    return ComparisonCellView(
+        signal=source.code,
+        kind="comparison" if source.panel_role == "comparison" else "direct",
+        choice_labels=tuple(labels[candidate_id] for candidate_id in leading_pick_ids),
+        leading_pick_ids=leading_pick_ids,
+    )
+
+
+def comparison_percentage_label(value: str | None) -> str:
+    if value is None:
+        return ""
+    percentage = Fraction(value) * 100
+    if percentage.denominator == 1:
+        return f"{percentage.numerator}%"
+    return f"{float(percentage):.1f}%"
 
 
 def _filter_options(view_model: PublicationViewModel) -> list[str]:

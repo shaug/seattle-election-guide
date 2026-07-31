@@ -19,7 +19,12 @@ from election_guide.hosting.models import (
 )
 from election_guide.publication.models import PublicationViewModel
 from election_guide.release.models import ReleaseManifest, ReleaseStatus
-from election_guide.rendering.renderer import TEMPLATE_DIR, display_date, render_sources_document
+from election_guide.rendering.renderer import (
+    TEMPLATE_DIR,
+    display_date,
+    render_comparison_document,
+    render_sources_document,
+)
 from election_guide.rendering.shell import (
     election_names,
     favicon_svg,
@@ -141,6 +146,11 @@ def stage_pages_site(
         # polish round 4, item L55.2's site-level audit-line variant).
         current_built_date = display_date(current.status.generated_at.date().isoformat())
         current_git_commit = current.status.git_commit
+        current_compare_href = (
+            f"/e/{current.declaration.election_id}/compare/"
+            if current.view_model.comparisons.policy.enabled
+            else None
+        )
         archive_path = stage / "e" / "index.html"
         archive_path.write_text(
             _archive_html(
@@ -157,6 +167,7 @@ def stage_pages_site(
                 },
                 built_date_display=current_built_date,
                 git_commit=current_git_commit,
+                compare_href=current_compare_href,
             ),
             encoding="utf-8",
         )
@@ -169,6 +180,7 @@ def stage_pages_site(
                 site_manifest,
                 built_date_display=current_built_date,
                 git_commit=current_git_commit,
+                compare_href=current_compare_href,
             ),
             encoding="utf-8",
         )
@@ -187,7 +199,7 @@ def stage_pages_site(
         (stage / "_headers").write_text(PAGES_HEADERS, encoding="utf-8")
         public_paths.add("/deployment-manifest.json")
         (stage / "_worker.js").write_text(
-            _pages_worker(site_manifest, public_paths),
+            _pages_worker(site_manifest, public_paths, compare_href=current_compare_href),
             encoding="utf-8",
         )
         deployment_manifest = {
@@ -309,6 +321,9 @@ def _verify_staged_pages_site(
                 ),
             }
         )
+        compare_asset = f"e/{declared.election_id}/compare/index.html"
+        if compare_asset in deployment.assets:
+            required_assets.add(compare_asset)
 
     current = next(
         election
@@ -457,6 +472,18 @@ def _stage_verified_bundles(
         root_path = f"/e/{bundle.declaration.election_id}/"
         public_paths.update({root_path, f"{root_path}index.html"})
         public_paths.update({f"{root_path}sources/", f"{root_path}sources/index.html"})
+        if bundle.view_model.comparisons.policy.enabled:
+            compare_dir = election_root / "compare"
+            compare_dir.mkdir()
+            (compare_dir / "index.html").write_text(
+                _comparison_html(
+                    bundle.view_model,
+                    canonical_origin,
+                    pdf_filename=Path(bundle.status.guide_pdf_artifact).name,
+                ),
+                encoding="utf-8",
+            )
+            public_paths.update({f"{root_path}compare/", f"{root_path}compare/index.html"})
         public_paths.update(f"{root_path}{name}" for name in names)
     return public_paths
 
@@ -466,6 +493,18 @@ def _sources_html(
 ) -> str:
     """Render the per-election sources/customization page (issue 107)."""
     return render_sources_document(
+        view_model,
+        public_site_url=canonical_origin,
+        project_url=PROJECT_URL,
+        pdf_filename=pdf_filename,
+    )
+
+
+def _comparison_html(
+    view_model: PublicationViewModel, canonical_origin: str, *, pdf_filename: str
+) -> str:
+    """Render the per-election comparisons page when its release policy permits it."""
+    return render_comparison_document(
         view_model,
         public_site_url=canonical_origin,
         project_url=PROJECT_URL,
@@ -490,6 +529,7 @@ def _archive_html(
     election_names_by_id: Mapping[str, str],
     built_date_display: str,
     git_commit: str,
+    compare_href: str | None = None,
 ) -> str:
     rows = "\n".join(
         "      <li>"
@@ -514,6 +554,7 @@ def _archive_html(
     band = site_band_html(
         guide_href=current_path,
         sources_href=f"{current_path}sources/",
+        compare_href=compare_href,
     )
     footer_band = site_footer_band_html(project_url=PROJECT_URL)
     footer_audit = site_footer_audit_html(
@@ -577,7 +618,13 @@ def _archive_html(
 """
 
 
-def _about_html(site_manifest: SiteManifest, *, built_date_display: str, git_commit: str) -> str:
+def _about_html(
+    site_manifest: SiteManifest,
+    *,
+    built_date_display: str,
+    git_commit: str,
+    compare_href: str | None = None,
+) -> str:
     current = next(
         election
         for election in site_manifest.elections
@@ -602,6 +649,7 @@ def _about_html(site_manifest: SiteManifest, *, built_date_display: str, git_com
     band = site_band_html(
         guide_href=current_path,
         sources_href=f"{current_path}sources/",
+        compare_href=compare_href,
         current="about",
     )
     footer_band = site_footer_band_html(project_url=PROJECT_URL)
@@ -748,7 +796,7 @@ def _about_html(site_manifest: SiteManifest, *, built_date_display: str, git_com
 """
 
 
-def _not_found_html(site_manifest: SiteManifest) -> str:
+def _not_found_html(site_manifest: SiteManifest, *, compare_href: str | None = None) -> str:
     """The worker's branded 404 (UI polish round 4, item K48).
 
     Replaces the bare `text/plain` "Not found" response with a minimal
@@ -761,7 +809,11 @@ def _not_found_html(site_manifest: SiteManifest) -> str:
     document_title = html.escape(page_title(page="Page not found"), quote=True)
     head_links = site_head_links_html(site_manifest.canonical_origin, shareable=False)
     base_css = (TEMPLATE_DIR / "base.css").read_text(encoding="utf-8")
-    band = site_band_html(guide_href=current_path, sources_href=f"{current_path}sources/")
+    band = site_band_html(
+        guide_href=current_path,
+        sources_href=f"{current_path}sources/",
+        compare_href=compare_href,
+    )
     escaped_current_path = html.escape(current_path, quote=True)
     return f"""<!doctype html>
 <html lang="en">
@@ -801,15 +853,34 @@ def _not_found_html(site_manifest: SiteManifest) -> str:
 """
 
 
-def _pages_worker(site_manifest: SiteManifest, public_paths: set[str]) -> str:
+def _pages_worker(
+    site_manifest: SiteManifest,
+    public_paths: set[str],
+    *,
+    compare_href: str | None = None,
+) -> str:
     current_path = f"/e/{site_manifest.current_election_id}/"
     election_roots = [f"/e/{election.election_id}/" for election in site_manifest.elections]
-    not_found_html = _not_found_html(site_manifest)
+    comparison_roots = sorted(path for path in public_paths if path.endswith("/compare/"))
+    comparison_root_declaration = (
+        f"const COMPARISON_ROOTS = {json.dumps(comparison_roots)};\n" if comparison_roots else ""
+    )
+    comparison_redirect = (
+        """    for (const root of COMPARISON_ROOTS) {
+      if (url.pathname === root.slice(0, -1)) {
+        return redirectPath(url, root, 308);
+      }
+    }
+"""
+        if comparison_roots
+        else ""
+    )
+    not_found_html = _not_found_html(site_manifest, compare_href=compare_href)
     return f"""const CANONICAL_HOST = {json.dumps(site_manifest.canonical_origin.removeprefix("https://"))};
 const LEGACY_HOSTS = new Set({json.dumps(list(LEGACY_HOSTS))});
 const CURRENT_ELECTION_PATH = {json.dumps(current_path)};
 const ELECTION_ROOTS = {json.dumps(election_roots)};
-const PUBLIC_PATHS = new Set({json.dumps(sorted(public_paths))});
+{comparison_root_declaration}const PUBLIC_PATHS = new Set({json.dumps(sorted(public_paths))});
 const NOT_FOUND_HTML = {json.dumps(not_found_html)};
 
 function redirectPath(url, pathname, status) {{
@@ -852,7 +923,7 @@ export default {{
         return redirectPath(url, root, 308);
       }}
     }}
-    if (!PUBLIC_PATHS.has(url.pathname)) {{
+{comparison_redirect}    if (!PUBLIC_PATHS.has(url.pathname)) {{
       return notFound();
     }}
     return env.ASSETS.fetch(request);
