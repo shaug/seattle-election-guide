@@ -599,6 +599,47 @@ def test_sources_page_renders_every_category_and_source_like_the_guide_tree(
     assert "data-sources-save" in html
     assert "data-sources-cancel" in html
     assert "data-sources-page-reset" in html
+    assert 'class="sources-page-actions state-action-strip"' in html
+    assert html.index("sources-page-actions state-action-strip") < html.index(
+        '<main id="sources-main">'
+    )
+    assert ".sources-page-actions { position: sticky; top: 0; z-index: 5; }" in html
+
+
+def test_sources_page_action_strip_stays_visible_with_count_and_actions(tmp_path: Path) -> None:
+    """Issue 154/M68: the state and all form actions share one sticky surface."""
+    view_model = _personalization_enabled_view_model(tmp_path)
+    html_path = tmp_path / "sources.html"
+    html_path.write_text(
+        render_sources_document(view_model, public_site_url="https://seattleelections.guide"),
+        encoding="utf-8",
+    )
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          window.scrollTo(0, document.body.scrollHeight);
+          await new Promise((resolve) => setTimeout(resolve, 60));
+          const strip = document.querySelector('.sources-page-actions');
+          const count = strip.querySelector('[data-sources-count]');
+          return JSON.stringify({
+            top: strip.getBoundingClientRect().top,
+            count: count.textContent,
+            actions: [...strip.querySelectorAll('a')].map((link) => link.textContent.trim()),
+            background: getComputedStyle(strip).backgroundColor,
+            position: getComputedStyle(strip).position,
+            visible: strip.getBoundingClientRect().bottom > 0,
+          });
+        })()
+        """,
+        initial_url=html_path.resolve().as_uri(),
+    )
+    assert result["top"] == pytest.approx(0, abs=1)
+    assert result["count"].startswith("Counting ")
+    assert result["actions"] == ["Save", "Cancel", "Reset to defaults"]
+    assert result["background"] == "rgb(16, 42, 67)"
+    assert result["position"] == "sticky"
+    assert result["visible"] is True
 
 
 def test_sources_page_loading_with_a_fragment_checks_exactly_its_sources(

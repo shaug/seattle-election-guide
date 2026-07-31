@@ -114,7 +114,8 @@ html.compact-ballot-mode .insufficient-note { padding: .38rem .48rem; font-size:
 .race-detail-dialog { width: min(54rem, calc(100vw - 2rem)); max-height: calc(100vh - 2rem); padding: 0; overflow: auto; border: 1px solid var(--line-strong); border-radius: .45rem; background: var(--paper); color: var(--ink); box-shadow: 0 1rem 3rem rgba(16,42,67,.35); }
 .race-detail-dialog::backdrop { background: rgba(9, 30, 48, .68); }
 
-.lens-banner { margin: 0; padding: .5rem 1rem; background: var(--navy); color: #fff; font-weight: 600; font-size: .9rem; text-align: center; }
+.lens-banner { justify-content: center; margin: 0; text-align: center; }
+.lens-banner a { white-space: nowrap; }
 .lens-banner[hidden] { display: none; }
 .lens-notice { margin: 0; padding: .5rem 1rem; border-bottom: 1px solid var(--tone-differ-border); background: var(--tone-differ-bg); color: var(--tone-differ-text); font-weight: 600; font-size: .85rem; text-align: center; }
 .lens-notice[hidden] { display: none; }

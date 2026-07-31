@@ -26,21 +26,23 @@
     }
     main > p.lede { margin: 0 0 1.5rem; color: var(--muted); max-width: 60ch; }
     .sources-tree { border-top: none; background: none; padding: 0; }
-    .sources-page-actions {
-      display: flex; flex-wrap: wrap; gap: .6rem 1rem; align-items: center; margin: 0 0 1.25rem;
-    }
+    .sources-page-actions { position: sticky; top: 0; z-index: 5; }
+    .sources-page-controls { display: flex; flex-wrap: wrap; gap: .6rem 1rem; margin-left: auto; }
     .sources-page-actions a {
-      display: inline-block; padding: .55rem 1.1rem; border-radius: .3rem;
+      display: inline-block; padding: .5rem 1rem; border-radius: .3rem;
       font: inherit; font-weight: 700; text-decoration: none; cursor: pointer;
     }
-    .sources-save { border: none; background: var(--teal); color: var(--white); }
+    .sources-save { border: 1px solid var(--teal); background: var(--teal); color: var(--white); }
     .sources-save:hover { background: #0a9d8f; }
     .sources-cancel, .sources-page-reset {
       border: 1px solid var(--line-strong); background: var(--white); color: var(--ink);
     }
     .sources-cancel:hover, .sources-page-reset:hover { background: #eef3f6; }
     .sources-page-actions a:focus-visible { outline: .2rem solid var(--focus); outline-offset: .15rem; }
-    .sources-page-count { margin: 0 0 1rem; font-size: .85rem; color: var(--muted); font-weight: 700; }
+    .sources-page-count { margin: 0; color: var(--white); font-size: .85rem; font-weight: 700; }
+    @media (max-width: 520px) {
+      .sources-page-controls { width: 100%; margin-left: 0; }
+    }
   </style>
 </head>
 <body>
@@ -95,18 +97,20 @@
       {{ site_band | safe }}
       <div class="page-band-rule"></div>
     </header>
+    <div class="sources-page-actions state-action-strip">
+      <p class="sources-page-count" data-sources-count role="status" aria-live="polite"></p>
+      <div class="sources-page-controls">
+        <a class="sources-save" data-sources-save href="{{ guide_path }}">Save</a>
+        <a class="sources-cancel" data-sources-cancel href="{{ guide_path }}">Cancel</a>
+        <a class="sources-page-reset" data-sources-page-reset href="{{ guide_path }}">Reset to defaults</a>
+      </div>
+    </div>
     <main id="sources-main">
       <h1>Customize your sources</h1>
       <p class="lede">Choose which sources count toward your personalized results, then save to return to
         the guide with your choice reflected there. Your selection lives entirely in this page's address
         &mdash; nothing is stored anywhere else.</p>
 
-      <div class="sources-page-actions">
-        <a class="sources-save" data-sources-save href="{{ guide_path }}">Save</a>
-        <a class="sources-cancel" data-sources-cancel href="{{ guide_path }}">Cancel</a>
-        <a class="sources-page-reset" data-sources-page-reset href="{{ guide_path }}">Reset to defaults</a>
-      </div>
-      <p class="sources-page-count" data-sources-count role="status" aria-live="polite"></p>
       <p class="sources-comparison-status" data-sources-comparison-status role="status" aria-live="polite"></p>
 
       <div class="sources-tree">

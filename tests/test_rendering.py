@@ -3087,6 +3087,9 @@ def test_personalization_reactive_banner_appends_below_the_controls_not_over_the
           return JSON.stringify({
             bannerHidden: banner.hidden,
             bannerBelowControls: bannerRect.top >= controlsRect.bottom - 1,
+            bannerText: banner.querySelector('[data-lens-banner-status]').textContent,
+            editSourcesHref: banner.querySelector('[data-sources-link]').href,
+            background: getComputedStyle(banner).backgroundColor,
           });
         })()
         """,
@@ -3094,6 +3097,9 @@ def test_personalization_reactive_banner_appends_below_the_controls_not_over_the
     )
     assert result["bannerHidden"] is False
     assert result["bannerBelowControls"] is True
+    assert result["bannerText"].startswith("Counting ")
+    assert result["editSourcesHref"].endswith(f"/sources/#{fragment}")
+    assert result["background"] == "rgb(16, 42, 67)"
 
 
 def test_race_detail_dialog_history_back_and_forward_restore_open_state(
@@ -3319,7 +3325,7 @@ def test_race_detail_dialog_fragment_reload_restores_lens_and_reopens_dialog(
         """
         JSON.stringify({
           bannerHidden: document.querySelector('[data-lens-banner]').hidden,
-          bannerText: document.querySelector('[data-lens-banner]').textContent,
+          bannerText: document.querySelector('[data-lens-banner-status]').textContent,
           isOpen: document.querySelector('[data-race-detail-dialog][open]') !== null,
         })
         """,
@@ -3357,7 +3363,7 @@ def test_personalization_shared_link_restores_the_same_version_selection(tmp_pat
         """
         JSON.stringify({
           bannerHidden: document.querySelector('[data-lens-banner]').hidden,
-          bannerText: document.querySelector('[data-lens-banner]').textContent,
+          bannerText: document.querySelector('[data-lens-banner-status]').textContent,
           search: window.location.search,
         })
         """,
@@ -3846,7 +3852,7 @@ def test_personalization_stale_link_migrates_with_a_persistent_notice(tmp_path: 
         JSON.stringify({
           noticeHidden: document.querySelector('[data-lens-notice]').hidden,
           noticeText: document.querySelector('[data-lens-notice]').textContent,
-          bannerText: document.querySelector('[data-lens-banner]').textContent,
+          bannerText: document.querySelector('[data-lens-banner-status]').textContent,
         })
         """,
         initial_url=f"{html_path.resolve().as_uri()}#{fragment}",

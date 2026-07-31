@@ -64,6 +64,13 @@ a { color: var(--blue); text-underline-offset: .15em; }
    width/centering lives here. */
 .narrow-main { max-width: 46rem; margin: 0 auto; }
 
+/* Shared persistent state/action surface (DESIGN.md: sticky strips are one
+   family). Page-specific CSS owns whether a strip itself sticks or participates
+   in an existing sticky group; the surface and action treatment live here. */
+.state-action-strip { display: flex; flex-wrap: wrap; align-items: center; gap: .45rem 1rem; padding: .55rem clamp(1rem, 4vw, 3rem); background: var(--navy); color: var(--white); font-size: .9rem; font-weight: 600; }
+.state-action-strip a { color: var(--mint); font-weight: 700; }
+.state-action-strip a:focus-visible { outline: .2rem solid var(--focus); outline-offset: .15rem; }
+
 /* Shared page footer (item L55): one navy band mirroring `.site-band`, plus
    an optional compact mono audit line for election-scoped pages. */
 .site-footer { background: var(--navy); color: var(--white); }
