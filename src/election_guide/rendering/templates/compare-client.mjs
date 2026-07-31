@@ -53,6 +53,8 @@ if (comparisonBindingsElement) {
     section: 'all',
   };
   let disclosure = '';
+  let lastLocationKey = null;
+  const locationKey = () => `${window.location.pathname}${window.location.search}${window.location.hash}`;
 
   function stateFromLocation() {
     const decoded = decodeCompareFragment(window.location.hash, context);
@@ -88,7 +90,15 @@ if (comparisonBindingsElement) {
     const target = `${window.location.pathname}${window.location.search}#${encoded.fragment}`;
     if (mode === 'replace') history.replaceState({ comparison: true }, '', target);
     else history.pushState({ comparison: true }, '', target);
+    lastLocationKey = locationKey();
     return true;
+  }
+
+  function syncFromLocation() {
+    if (locationKey() === lastLocationKey) return;
+    stateFromLocation();
+    lastLocationKey = locationKey();
+    render();
   }
 
   function option(value, text, current, used) {
@@ -437,8 +447,8 @@ if (comparisonBindingsElement) {
       if (writeState()) render();
     });
   });
-  window.addEventListener('popstate', () => { stateFromLocation(); render(); });
-  window.addEventListener('hashchange', () => { stateFromLocation(); render(); });
+  window.addEventListener('popstate', syncFromLocation);
+  window.addEventListener('hashchange', syncFromLocation);
   let resizeTimer;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
@@ -446,5 +456,6 @@ if (comparisonBindingsElement) {
   });
 
   stateFromLocation();
+  lastLocationKey = locationKey();
   render();
 }

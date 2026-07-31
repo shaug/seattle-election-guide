@@ -587,6 +587,38 @@ def test_compare_client_migrates_stale_links_without_promoting_a_new_reference(
     assert "cols=gallstrnstim" in fallback["hash"]
     assert "cols=strn" not in fallback["hash"]
 
+    traversed = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          const wait = () => new Promise((resolve) => setTimeout(resolve, 250));
+          const current = document.querySelector('.comparison-presets a').hash;
+          const parameters = new URLSearchParams(current.slice(1));
+          parameters.set('cols', 'zzzzstrn');
+          parameters.set('data', 'stale-data');
+          const stale = `#${parameters}`;
+          history.replaceState({}, '', current);
+          history.pushState({}, '', stale);
+          history.pushState({}, '', current);
+          history.back();
+          await wait();
+          return JSON.stringify({
+            columns: [...document.querySelectorAll(
+              '[data-comparison-head] [data-column-signal]',
+            )].map((heading) => heading.dataset.columnSignal),
+            notice: document.querySelector('[data-comparison-hidden-notice]').textContent,
+            noticeHidden: document.querySelector('[data-comparison-hidden-notice]').hidden,
+            hash: location.hash,
+          });
+        })()
+        """,
+    )
+    assert traversed["columns"] == ["gall", "strn", "stim"]
+    assert traversed["notice"] == fallback["notice"]
+    assert traversed["noticeHidden"] is False
+    assert "cols=gallstrnstim" in traversed["hash"]
+    assert "data=stale-data" not in traversed["hash"]
+
 
 def test_compare_client_presets_filters_and_copy_link_round_trip(tmp_path: Path) -> None:
     html_path = _comparison_html_path(tmp_path)
