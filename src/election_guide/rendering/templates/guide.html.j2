@@ -231,7 +231,10 @@
       </section>
 
       {% if guide.personalization.policy.enabled %}
-      <p class="lens-banner" data-lens-banner hidden role="status" aria-live="polite"></p>
+      <div class="lens-banner state-action-strip" data-lens-banner hidden>
+        <span data-lens-banner-status role="status" aria-live="polite"></span>
+        <a data-sources-link href="{{ sources_page_url }}">Edit sources</a>
+      </div>
       <p class="lens-notice" data-lens-notice hidden role="status" aria-live="polite"></p>
       {% endif %}
       {# Screen-reader announcement for the opt-in Times comparison. The old
@@ -803,6 +806,7 @@
   {% if guide.personalization.policy.enabled %}
   const personalization = JSON.parse(document.querySelector('#lens-personalization').textContent);
   const lensBanner = document.querySelector('[data-lens-banner]');
+  const lensBannerStatus = document.querySelector('[data-lens-banner-status]');
   const tallyingSourceCodes = bindings.sources
     .filter((item) => item.panel_role !== 'comparison')
     .map((item) => item.code);
@@ -1199,9 +1203,9 @@
       return null;
     }
     const results = scoreSelection(personalization, { categoryCodes: [], sourceCodes: tallyingCodes });
-    if (lensBanner) {
-      lensBanner.hidden = false;
-      lensBanner.textContent =
+    if (lensBanner) lensBanner.hidden = false;
+    if (lensBannerStatus) {
+      lensBannerStatus.textContent =
         `Counting ${results.sourceCodes.length} of ${tallyingSourceCodes.length} sources.`;
     }
     const personalizedByRaceId = new Map(results.races.map((race) => [race.raceId, race]));
