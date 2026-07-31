@@ -702,7 +702,7 @@ def _about_html(
       margin: 0 0 .35rem; color: var(--navy);
       font: 700 clamp(1.8rem, 4vw, 2.6rem)/1.05 var(--screen-serif);
     }}
-    main > p.lede {{ margin: 0 0 2rem; color: var(--muted); max-width: 46ch; }}
+    main > p.lede {{ margin: 0 0 2rem; color: var(--muted); }}
     section {{ margin: 0 0 2rem; }}
     section h2 {{ color: var(--navy); font-size: 1.25rem; margin: 0 0 .5rem; }}
     section p {{ margin: 0 0 .75rem; }}
