@@ -200,7 +200,7 @@
     <div class="sticky-header">
       <section class="screen-controls" aria-label="Guide view and race filters">
         <div class="race-filter-control">
-          <label for="race-filter">Show races</label>
+          <label for="race-filter">Ballot</label>
           <select id="race-filter">
             <option value="all">All Seattle ballot races</option>
             <optgroup label="Ballot sections">
@@ -349,10 +349,12 @@
                 </div>
                 <div class="race-detail-actions">
                   <button type="button" data-copy-race-link="race-{{ race.id }}"
-                    aria-label="Copy a share link to {{ race.race_label }}"
-                    aria-describedby="copy-race-status-{{ race.id }}">Share link</button>
+                    aria-label="Share {{ race.race_label }}"
+                    title="Share this race"
+                    aria-describedby="copy-race-status-{{ race.id }}">{{ race_share_icon | safe }}</button>
                   <button type="button" data-close-race-detail
-                    aria-label="Close endorsements for {{ race.race_label }}">Close</button>
+                    aria-label="Close endorsements for {{ race.race_label }}"
+                    title="Close">{{ race_close_icon | safe }}</button>
                 </div>
                 <p id="copy-race-status-{{ race.id }}" class="visually-hidden" role="status"
                   aria-live="polite" data-copy-race-status></p>
@@ -1569,42 +1571,25 @@
     });
     document.querySelectorAll('[data-copy-race-link]').forEach((button) => {
       button.addEventListener('click', async () => {
-        const originalLabel = button.dataset.originalLabel || button.textContent;
-        button.dataset.originalLabel = originalLabel;
         // Composed rather than read off window.location.href directly: this
         // must reproduce the active lens even if the dialog's own hash state
         // was reached by a path this button cannot otherwise assume (issue
-        // 142's "Share link" requirement).
+        // 142's race-share requirement).
         const link = new URL(window.location.href);
         link.hash = raceDetailFragment(button.dataset.copyRaceLink);
         const value = link.toString();
-        try {
-          if (navigator.clipboard?.writeText) {
-            await navigator.clipboard.writeText(value);
-          } else {
-            const field = document.createElement('textarea');
-            field.value = value;
-            field.setAttribute('readonly', '');
-            field.className = 'visually-hidden';
-            document.body.append(field);
-            field.select();
-            const copied = document.execCommand('copy');
-            field.remove();
-            if (!copied) throw new Error('Copy command was unavailable');
-          }
-          const raceLabel = button.closest('[data-publication-race-id]')
-            ?.querySelector('[data-display-role="race-label"]')?.textContent?.trim();
-          const copyStatus = button.closest('[data-race-detail-dialog]')
-            ?.querySelector('[data-copy-race-status]');
-          if (copyStatus) copyStatus.textContent = `Link copied for ${raceLabel || 'this race'}`;
-          button.textContent = 'Link copied';
-        } catch {
-          const copyStatus = button.closest('[data-race-detail-dialog]')
-            ?.querySelector('[data-copy-race-status]');
-          if (copyStatus) copyStatus.textContent = `Copy failed. Link: ${value}`;
-          button.textContent = 'Copy failed';
+        const raceLabel = button.closest('[data-publication-race-id]')
+          ?.querySelector('[data-display-role="race-label"]')?.textContent?.trim();
+        const copyStatus = button.closest('[data-race-detail-dialog]')
+          ?.querySelector('[data-copy-race-status]');
+        const result = await window.shareOrCopyLink(value, raceLabel || document.title);
+        if (copyStatus && result === 'copied') {
+          copyStatus.textContent = `Link copied for ${raceLabel || 'this race'}`;
+        } else if (copyStatus && result === 'shared') {
+          copyStatus.textContent = `Share menu opened for ${raceLabel || 'this race'}`;
+        } else if (copyStatus && result === 'failed') {
+          copyStatus.textContent = `Copy failed. Link: ${value}`;
         }
-        window.setTimeout(() => { button.textContent = originalLabel; }, 1800);
         button.focus();
       });
     });

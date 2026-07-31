@@ -86,8 +86,6 @@ a { color: var(--blue); text-underline-offset: .15em; }
 .footer-icon-action { display: inline-flex; align-items: center; justify-content: center; width: 2.5rem; height: 2.5rem; padding: 0; border: 0; border-radius: .3rem; background: none; color: var(--mint); cursor: pointer; }
 .footer-icon-action:hover { background: rgba(255, 255, 255, .12); }
 .footer-icon-action svg { display: block; }
-.site-footer-link { margin-left: .3rem; color: var(--mint); font-size: .8rem; font-weight: 700; text-decoration: none; white-space: nowrap; }
-.site-footer-link:hover { text-decoration: underline; text-underline-offset: .2em; }
 .site-footer-band a:focus-visible, .site-footer-band button:focus-visible { outline: .2rem solid var(--focus); outline-offset: -.15rem; }
 .site-footer-audit { padding: .7rem clamp(1rem, 4vw, 3rem); border-top: 1px solid #526f83; color: #9fb3c8; font-size: .68rem; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
 .site-footer-audit a { color: var(--mint); font-weight: 700; }
