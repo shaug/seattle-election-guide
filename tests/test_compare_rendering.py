@@ -99,6 +99,8 @@ def test_compare_document_server_renders_default_contract_snapshot() -> None:
         rendered.count('data-column-signal="stim"') == len(view_model.comparisons.display_index) + 1
     )
     assert "Put any sources side by side and see where they agree" in rendered
+    assert "audited all-sources" not in rendered
+    assert '<div class="segmented-control">' in rendered
     assert "Audited baseline" not in rendered
     assert 'class="comparison-only-badge"' not in rendered
     assert "Each organization has equal weight" not in rendered
@@ -213,28 +215,46 @@ def test_compare_client_enforces_picker_bounds_and_history(tmp_path: Path) -> No
           const signals = () => [...document.querySelectorAll(
             '[data-comparison-head] [data-column-signal]',
           )].map((heading) => heading.dataset.columnSignal);
+          const openPicker = (index) => {
+            document.querySelector(`[data-comparison-title="${index}"]`).click();
+            return document.querySelector(`[data-comparison-column="${index}"]`);
+          };
           const initial = signals();
-          const firstPicker = document.querySelector('[data-comparison-column="1"]');
+          const restingPickerCount = document.querySelectorAll('[data-comparison-column]').length;
+          const firstPicker = openPicker(1);
+          const pickerFocused = document.activeElement === firstPicker;
           const duplicateDisabled = [...firstPicker.options]
             .find((item) => item.value === initial[2]).disabled;
           const multiCategoryCopies = [...firstPicker.options]
             .filter((item) => item.value === 'wsto').length;
+          firstPicker.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+          await wait();
+          const escapeRestoredTitle = document.activeElement
+            === document.querySelector('[data-comparison-title="1"]');
 
           document.querySelector('[data-comparison-remove="2"]').click();
           await wait();
           const afterRemove = signals();
+          const focusAfterRemove = document.activeElement?.dataset.comparisonTitle;
           const removeButtonsAtMinimum = document
             .querySelectorAll('[data-comparison-remove]').length;
+          const blurPicker = openPicker(1);
+          document.querySelector('.comparison-column-add').focus();
+          const blurClosed = !blurPicker.isConnected
+            && !document.querySelector('[data-comparison-column="1"]')
+            && document.activeElement === document.querySelector('.comparison-column-add');
           document.querySelector('.comparison-column-add').click();
           await wait();
           const afterAdd = signals();
+          const focusAfterAdd = document.activeElement?.dataset.comparisonTitle;
 
-          const picker = document.querySelector('[data-comparison-column="1"]');
+          const picker = openPicker(1);
           const previous = picker.value;
           picker.value = 'Glab';
           picker.dispatchEvent(new Event('change', { bubbles: true }));
           await wait();
           const changed = signals();
+          const focusAfterChange = document.activeElement?.dataset.comparisonTitle;
           const changedHash = location.hash;
           history.back();
           await wait();
@@ -245,7 +265,9 @@ def test_compare_client_enforces_picker_bounds_and_history(tmp_path: Path) -> No
           return JSON.stringify({
             initial, duplicateDisabled, multiCategoryCopies, afterRemove,
             removeButtonsAtMinimum, afterAdd, previous, changed, changedHash,
-            afterBack, afterForward,
+            afterBack, afterForward, restingPickerCount, pickerFocused,
+            escapeRestoredTitle, blurClosed, focusAfterRemove, focusAfterAdd,
+            focusAfterChange,
             hasAddAtMaximum: Boolean(document.querySelector('.comparison-column-add')),
             addDisabledAtMaximum: document.querySelector('.comparison-column-add').disabled,
             addTextAtMaximum: document.querySelector('.comparison-column-add').textContent,
@@ -258,12 +280,19 @@ def test_compare_client_enforces_picker_bounds_and_history(tmp_path: Path) -> No
     assert result["initial"] == ["gall", "strn", "stim"]
     assert result["duplicateDisabled"] is True
     assert result["multiCategoryCopies"] == 2
+    assert result["restingPickerCount"] == 0
+    assert result["pickerFocused"] is True
+    assert result["escapeRestoredTitle"] is True
     assert result["afterRemove"] == ["gall", "strn"]
     assert result["removeButtonsAtMinimum"] == 0
+    assert result["focusAfterRemove"] == "1"
+    assert result["blurClosed"] is True
     assert len(result["afterAdd"]) == 3
     assert len(set(result["afterAdd"])) == 3
+    assert result["focusAfterAdd"] == "2"
     assert result["changed"] == ["gall", "Glab", result["afterAdd"][2]]
     assert "cols=gallGlab" in result["changedHash"]
+    assert result["focusAfterChange"] == "1"
     assert result["afterBack"] == result["afterAdd"]
     assert result["afterForward"] == result["changed"]
     assert result["hasAddAtMaximum"] is True
@@ -311,6 +340,40 @@ def test_compare_client_repairs_legacy_fragments_to_the_fixed_baseline(tmp_path:
     }
 
 
+def test_compare_client_ignores_lens_state_and_keeps_its_fixed_baseline(tmp_path: Path) -> None:
+    html_path = _comparison_html_path(tmp_path)
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          const wait = () => new Promise((resolve) => setTimeout(resolve, 120));
+          const baselineText = () => document.querySelector(
+            '[data-comparison-race] [data-column-signal="gall"] .comparison-cell-picks',
+          ).textContent;
+          const before = baselineText();
+          location.hash = 'lens=1&mode=a&panel=saved-panel&ph=abcdef123456';
+          await wait();
+          return JSON.stringify({
+            before,
+            after: baselineText(),
+            columns: [...document.querySelectorAll(
+              '[data-comparison-head] [data-column-signal]',
+            )].map((heading) => heading.dataset.columnSignal),
+            baselineInteractive: Boolean(document.querySelector(
+              '[data-column-signal="gall"] button, [data-comparison-column="0"]',
+            )),
+          });
+        })()
+        """,
+    )
+    assert result == {
+        "before": result["before"],
+        "after": result["before"],
+        "columns": ["gall", "strn", "stim"],
+        "baselineInteractive": False,
+    }
+
+
 def test_compare_client_presets_filters_and_copy_link_round_trip(tmp_path: Path) -> None:
     html_path = _comparison_html_path(tmp_path)
     result = _evaluate_in_chrome(
@@ -347,8 +410,11 @@ def test_compare_client_presets_filters_and_copy_link_round_trip(tmp_path: Path)
               rowsBeforeDifferences, historyBeforeFilters, historyAfterFilters,
               status: document.querySelector('[data-comparison-status]').textContent,
               copyStatus: document.querySelector('[data-comparison-copy-status]').textContent,
-              differencesPressed: document.querySelector('[data-comparison-contested-differences]')
-              .getAttribute('aria-pressed'),
+              differencesChecked: document.querySelector(
+                '[data-comparison-contested-differences]',
+              ).checked,
+              shareSeparated: !document.querySelector('[data-comparison-copy]')
+                .closest('.comparison-controls'),
           });
         })()
         """,
@@ -363,7 +429,24 @@ def test_compare_client_presets_filters_and_copy_link_round_trip(tmp_path: Path)
     assert result["copied"] == result["beforeCopy"]
     assert re.fullmatch(r"\d+ of \d+ races shown · \d+ differ", result["status"])
     assert result["copyStatus"] == "Link copied."
-    assert result["differencesPressed"] == "true"
+    assert result["differencesChecked"] is True
+    assert result["shareSeparated"] is True
+    restored = _evaluate_in_chrome(
+        html_path,
+        """
+        (() => JSON.stringify({
+          columns: [...document.querySelectorAll(
+            '[data-comparison-head] [data-column-signal]',
+          )].map((heading) => heading.dataset.columnSignal),
+          contested: document.querySelector('[data-comparison-contested-differences]').checked,
+          copiedHash: location.hash,
+        }))()
+        """,
+        initial_url=result["copied"],
+    )
+    assert restored["columns"] == result["presetColumns"]
+    assert restored["contested"] is True
+    assert restored["copiedHash"] == result["hash"]
 
 
 def test_compare_client_labels_comparison_category_truthfully(tmp_path: Path) -> None:
@@ -372,17 +455,17 @@ def test_compare_client_labels_comparison_category_truthfully(tmp_path: Path) ->
         html_path,
         """
         (() => {
+          document.querySelector('[data-comparison-title="1"]').click();
           const picker = document.querySelector('[data-comparison-column="1"]');
           const comparisonCategory = [...picker.options]
             .find((item) => item.value === 'Gcmp');
           picker.value = 'Gcmp';
           picker.dispatchEvent(new Event('change', { bubbles: true }));
-          const meta = document.querySelector(
-            '[data-column-signal="Gcmp"] .comparison-column-meta',
-          );
           return JSON.stringify({
             optionLabel: comparisonCategory.textContent,
-            coverage: meta.textContent,
+            coverageMetadata: Boolean(document.querySelector('.comparison-column-meta')),
+            coverageText: document.querySelector('[data-comparison-head]').textContent
+              .includes('Endorsed in'),
             baselineTitle: document.querySelector(
               '[data-column-signal="gall"] .comparison-column-title',
             ).textContent,
@@ -392,7 +475,8 @@ def test_compare_client_labels_comparison_category_truthfully(tmp_path: Path) ->
         """,
     )
     assert result["optionLabel"].endswith("(Comparison only)")
-    assert re.fullmatch(r"Endorsed in \d+ races", result["coverage"])
+    assert result["coverageMetadata"] is False
+    assert result["coverageText"] is False
     assert result["baselineTitle"] == "All sources"
     assert result["baselinePicker"] is False
 
@@ -403,12 +487,12 @@ def test_compare_client_mobile_budget_and_focus_have_layout_evidence(tmp_path: P
         html_path,
         """
         (() => {
-          let pickers = [...document.querySelectorAll('[data-comparison-column]')];
-          pickers[0].value = 'eccd';
-          pickers[0].dispatchEvent(new Event('change', { bubbles: true }));
-          pickers = [...document.querySelectorAll('[data-comparison-column]')];
-          pickers[0].focus();
-          const focus = getComputedStyle(pickers[0]);
+          document.querySelector('[data-comparison-title="1"]').click();
+          const picker = document.querySelector('[data-comparison-column="1"]');
+          picker.value = 'eccd';
+          picker.dispatchEvent(new Event('change', { bubbles: true }));
+          const titleActions = [...document.querySelectorAll('[data-comparison-title]')];
+          const focus = getComputedStyle(titleActions[0]);
           const tableElement = document.querySelector('[data-comparison-table]');
           const wrapElement = document.querySelector('[data-comparison-grid]');
           const table = tableElement.getBoundingClientRect();
@@ -436,12 +520,28 @@ def test_compare_client_mobile_budget_and_focus_have_layout_evidence(tmp_path: P
             rowDisplay: getComputedStyle(firstRace).display,
             cellDisplay: getComputedStyle(firstRaceCells[0]).display,
             cellLabels: firstRaceCells.map((cell) => cell.dataset.columnLabel),
-            pickerLabels: pickers.map((picker) => picker.getAttribute('aria-label')),
+            titleLabels: titleActions.map((title) => title.getAttribute('aria-label')),
+            restingPickerCount: document.querySelectorAll('[data-comparison-column]').length,
+            focusReturned: document.activeElement === titleActions[0],
             copyTag: document.querySelector('[data-comparison-copy]').tagName,
             titlesFit: titles.every((title) => title.scrollWidth <= title.clientWidth),
             removeTitle: remove.title,
             removeWidth: remove.getBoundingClientRect().width,
             removeHeight: remove.getBoundingClientRect().height,
+            headerBackground: getComputedStyle(
+              document.querySelector('[data-column-signal="eccd"]'),
+            ).backgroundColor,
+            whiteToken: (() => {
+              const probe = document.createElement('i');
+              probe.style.background = 'var(--white)';
+              document.body.append(probe);
+              const value = getComputedStyle(probe).backgroundColor;
+              probe.remove();
+              return value;
+            })(),
+            raceControlColumns: getComputedStyle(
+              document.querySelector('.comparison-race-filters .segmented-control'),
+            ).gridTemplateColumns,
           });
         })()
         """,
@@ -451,11 +551,12 @@ def test_compare_client_mobile_budget_and_focus_have_layout_evidence(tmp_path: P
         html_path,
         """
         (() => {
-          let pickers = [...document.querySelectorAll('[data-comparison-column]')];
-          pickers[0].value = 'eccd';
-          pickers[0].dispatchEvent(new Event('change', { bubbles: true }));
-          pickers = [...document.querySelectorAll('[data-comparison-column]')];
-          const pickerTops = pickers.map((picker) => picker.getBoundingClientRect().top);
+          document.querySelector('[data-comparison-title="1"]').click();
+          const picker = document.querySelector('[data-comparison-column="1"]');
+          picker.value = 'eccd';
+          picker.dispatchEvent(new Event('change', { bubbles: true }));
+          const titleTops = [...document.querySelectorAll('.comparison-column-title')]
+            .map((title) => title.getBoundingClientRect().top);
           const wrap = document.querySelector('[data-comparison-grid]');
           const table = document.querySelector('[data-comparison-table]');
           return JSON.stringify({
@@ -463,7 +564,7 @@ def test_compare_client_mobile_budget_and_focus_have_layout_evidence(tmp_path: P
               '[data-comparison-head] [data-column-signal]',
             )].map((heading) => heading.dataset.columnSignal),
             noticeVisible: !document.querySelector('[data-comparison-hidden-notice]').hidden,
-            pickerTopSpread: Math.max(...pickerTops) - Math.min(...pickerTops),
+            titleTopSpread: Math.max(...titleTops) - Math.min(...titleTops),
             stickyHead: getComputedStyle(
               document.querySelector('[data-comparison-head] th'),
             ).position,
@@ -497,13 +598,15 @@ def test_compare_client_mobile_budget_and_focus_have_layout_evidence(tmp_path: P
         "Environment and Climate Caucus of the Washington State Democratic Party",
         "The Seattle Times Editorial Board",
     ]
-    assert mobile["pickerLabels"] == [
+    assert mobile["titleLabels"] == [
         (
             "Change Environment and Climate Caucus of the Washington State "
             "Democratic Party comparison"
         ),
         "Change The Seattle Times Editorial Board comparison",
     ]
+    assert mobile["restingPickerCount"] == 0
+    assert mobile["focusReturned"] is True
     assert mobile["copyTag"] == "BUTTON"
     assert mobile["titlesFit"] is True
     assert mobile["removeTitle"] == (
@@ -511,9 +614,11 @@ def test_compare_client_mobile_budget_and_focus_have_layout_evidence(tmp_path: P
     )
     assert mobile["removeWidth"] >= 40
     assert mobile["removeHeight"] >= 40
+    assert mobile["headerBackground"] == mobile["whiteToken"]
+    assert len(mobile["raceControlColumns"].split()) == 2
     assert desktop["visibleSignals"] == ["gall", "eccd", "stim"]
     assert desktop["noticeVisible"] is False
-    assert desktop["pickerTopSpread"] < 1
+    assert desktop["titleTopSpread"] < 1
     assert desktop["stickyHead"] == "sticky"
     assert desktop["wrapOverflowX"] == "visible"
     assert desktop["wrapScrollWidth"] == desktop["wrapClientWidth"]
@@ -541,6 +646,7 @@ def test_default_differences_match_fixed_oracle_with_visual_and_accessible_signa
             probe.remove();
             return color;
           };
+          const transparent = 'rgba(0, 0, 0, 0)';
           const narrow = window.matchMedia('(max-width: 720px)').matches;
           const senator = document.querySelector(
             '[data-comparison-race="ld-32-state-senator"]',
@@ -565,6 +671,7 @@ def test_default_differences_match_fixed_oracle_with_visual_and_accessible_signa
             differ: {
               state: differ.dataset.agreement,
               background: getComputedStyle(differ).backgroundColor,
+              borderLeftWidth: getComputedStyle(differ).borderLeftWidth,
               token: tokenBackground('--tone-differ-bg'),
               hasSignal: Boolean(differ.querySelector('.comparison-cell-signal')),
             },
@@ -595,6 +702,8 @@ def test_default_differences_match_fixed_oracle_with_visual_and_accessible_signa
             )].map((heading) => heading.dataset.columnSignal),
             hiddenNotice: document.querySelector('[data-comparison-hidden-notice]').textContent,
             differsLabel: senator.querySelector('.comparison-race-differs').textContent,
+            differsCarrierCount: senator.querySelectorAll('.comparison-race-differs').length,
+            transparent,
             senatorStillShown: Boolean(document.querySelector(
               '[data-comparison-race="ld-32-state-senator"]',
             )),
@@ -610,13 +719,14 @@ def test_default_differences_match_fixed_oracle_with_visual_and_accessible_signa
     assert result["statusLive"] == "polite"
     assert result["agree"] == {
         "state": "agree",
-        "background": result["agree"]["token"],
+        "background": result["transparent"],
         "token": result["agree"]["token"],
         "hasSignal": False,
     }
     assert result["differ"] == {
         "state": "differ",
         "background": result["differ"]["token"],
+        "borderLeftWidth": "0px",
         "token": result["differ"]["token"],
         "hasSignal": False,
     }
@@ -636,6 +746,7 @@ def test_default_differences_match_fixed_oracle_with_visual_and_accessible_signa
     assert result["hiddenNotice"] == ""
     assert result["senatorStillShown"] is True
     assert result["differsLabel"] == "Differs"
+    assert result["differsCarrierCount"] == 1
 
 
 def test_coendorsement_intersection_and_blank_are_not_differences(tmp_path: Path) -> None:
@@ -646,6 +757,7 @@ def test_coendorsement_intersection_and_blank_are_not_differences(tmp_path: Path
           const wait = () => new Promise((resolve) => setTimeout(resolve, 120));
           document.querySelector('[data-comparison-remove="2"]').click();
           await wait();
+          document.querySelector('[data-comparison-title="1"]').click();
           const picker = document.querySelector('[data-comparison-column="1"]');
           picker.value = 'kcdm';
           picker.dispatchEvent(new Event('change', { bubbles: true }));
@@ -659,8 +771,10 @@ def test_coendorsement_intersection_and_blank_are_not_differences(tmp_path: Path
             picks: coendorsementCell.querySelector('.comparison-cell-picks').textContent,
             rowDiffers: coendorsement.dataset.rowDiffers,
           };
-          picker.value = 'stim';
-          picker.dispatchEvent(new Event('change', { bubbles: true }));
+          document.querySelector('[data-comparison-title="1"]').click();
+          const nextPicker = document.querySelector('[data-comparison-column="1"]');
+          nextPicker.value = 'stim';
+          nextPicker.dispatchEvent(new Event('change', { bubbles: true }));
           await wait();
           const blank = document.querySelector('[data-comparison-race="us-house-9"]');
           return JSON.stringify({
@@ -688,6 +802,7 @@ def test_all_agree_and_no_match_empty_states_are_distinct_and_resettable(tmp_pat
           const wait = () => new Promise((resolve) => setTimeout(resolve, 120));
           document.querySelector('[data-comparison-remove="2"]').click();
           await wait();
+          document.querySelector('[data-comparison-title="1"]').click();
           const picker = document.querySelector('[data-comparison-column="1"]');
           picker.value = 'wslc';
           picker.dispatchEvent(new Event('change', { bubbles: true }));
@@ -701,8 +816,7 @@ def test_all_agree_and_no_match_empty_states_are_distinct_and_resettable(tmp_pat
           return JSON.stringify({
             message, resetLabel,
             rowsAfterReset: document.querySelectorAll('[data-comparison-race]').length,
-            differencesPressed: document.querySelector('[data-comparison-differences]')
-              .getAttribute('aria-pressed'),
+            differencesChecked: document.querySelector('[data-comparison-differences]').checked,
           });
         })()
         """,
@@ -710,7 +824,7 @@ def test_all_agree_and_no_match_empty_states_are_distinct_and_resettable(tmp_pat
     assert all_agree["message"].startswith("These signals agree in every race they share")
     assert all_agree["resetLabel"] == "Show all rows"
     assert all_agree["rowsAfterReset"] == 32
-    assert all_agree["differencesPressed"] == "false"
+    assert all_agree["differencesChecked"] is False
 
     no_match_path = _comparison_html_path(tmp_path)
     no_match_html = no_match_path.read_text(encoding="utf-8")
@@ -732,8 +846,7 @@ def test_all_agree_and_no_match_empty_states_are_distinct_and_resettable(tmp_pat
           return JSON.stringify({
             message, resetLabel,
             rowsAfterReset: document.querySelectorAll('[data-comparison-race]').length,
-            contestedPressed: document.querySelector('[data-comparison-contested]')
-              .getAttribute('aria-pressed'),
+            contestedChecked: document.querySelector('[data-comparison-contested]').checked,
           });
         })()
         """,
@@ -741,4 +854,4 @@ def test_all_agree_and_no_match_empty_states_are_distinct_and_resettable(tmp_pat
     assert no_match["message"] == "No races match the current filters."
     assert no_match["resetLabel"] == "Reset filters"
     assert no_match["rowsAfterReset"] == 32
-    assert no_match["contestedPressed"] == "false"
+    assert no_match["contestedChecked"] is False

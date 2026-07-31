@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   {% set guide_path = '/e/' ~ guide.metadata.election_id ~ '/' %}
   {% set canonical_url = public_site_url ~ guide_path ~ 'compare/' %}
-  {% set page_description = 'Compare the audited all-sources result with The Stranger and The Seattle Times for ' ~ election_display_name ~ '.' %}
+  {% set page_description = 'Compare the all-sources result with The Stranger and The Seattle Times for ' ~ election_display_name ~ '.' %}
   <meta name="description" content="{{ page_description }}">
   <meta property="og:type" content="website">
   <meta property="og:title" content="{{ document_title }}">
@@ -44,17 +44,20 @@
             {% for section in comparison_sections %}<option value="{{ section.section_id }}">{{ section.section_label }}</option>{% endfor %}
           </select>
         </label>
-        <fieldset class="comparison-race-filters segmented-control">
+        <fieldset class="comparison-race-filters">
           <legend>Races</legend>
-          <button type="button" data-comparison-complete aria-pressed="true">All</button>
-          <button type="button" data-comparison-contested aria-pressed="false">Contested</button>
-          <button type="button" data-comparison-differences aria-pressed="false">Differing</button>
-          <button type="button" data-comparison-contested-differences aria-pressed="false">Contested differences</button>
+          <div class="segmented-control">
+            <label><input type="radio" name="comparison-races" value="all" data-comparison-complete checked><span>All</span></label>
+            <label><input type="radio" name="comparison-races" value="contested" data-comparison-contested><span>Contested</span></label>
+            <label><input type="radio" name="comparison-races" value="differing" data-comparison-differences><span>Differing</span></label>
+            <label><input type="radio" name="comparison-races" value="contested-differences" data-comparison-contested-differences><span>Contested differences</span></label>
+          </div>
         </fieldset>
-        <div class="comparison-share">
-          <button type="button" data-comparison-copy>Copy link</button>
-          <span class="comparison-copy-status" role="status" aria-live="polite" data-comparison-copy-status></span>
-        </div>
+      </div>
+      <div class="comparison-share" role="group" aria-label="Share this comparison">
+        <span>Share this view</span>
+        <button type="button" data-comparison-copy>Copy link</button>
+        <span class="comparison-copy-status" role="status" aria-live="polite" data-comparison-copy-status></span>
       </div>
       <p class="comparison-hidden-notice" role="status" aria-live="polite" data-comparison-hidden-notice hidden></p>
       <p class="comparison-control-status" role="status" aria-live="polite" aria-atomic="true"

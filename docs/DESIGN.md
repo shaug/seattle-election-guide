@@ -221,6 +221,9 @@ then any sticky strip, then content.
   sources strip ("Counting all 40 sources" by default; "39 of 40" under a
   lens), and the Sources action bar. Same placement logic and surface
   treatment everywhere; two strips doing the same job must rhyme.
+- **Shared controls are actual components.** A segmented choice uses the
+  shared radio structure and focus treatment; a task page does not draw a
+  button group that merely resembles it.
 
 ## Data display
 
@@ -242,6 +245,19 @@ then any sticky strip, then content.
   zero-counts are suppressed rather than printed forty times; taxonomy
   renders as plain muted text, not chrome; rows in a grid align so a row
   of meters can be swept in one eye movement.
+
+  *Comparison-page decision recorded July 31, 2026:*
+
+- **Comparison starts from one fixed reference.** The All sources column is
+  stable and noninteractive. Other columns show their full identity at rest
+  and become editors only while the reader is changing them.
+- **One quiet difference encoding.** A comparison cell carries its choice and
+  an amber tint when it differs. Agreement recedes; the race identity carries
+  the single visible and accessible “Differs” label. Shared conventions do not
+  need a repeated legend.
+- **Responsive identity stays attached.** Comparison layouts never require a
+  horizontal scroller. When columns stack, every fact repeats its source
+  identity so a label is never orphaned from its value.
 - **Absence of a majority is information.** A leading share at or below
   50% gets the "No majority" treatment in the differ/amber family —
   default styling never overstates confidence.
@@ -256,8 +272,7 @@ sentences with real separators; every page keeps the skip link.
 ## Non-goals
 
 This document does not govern the **print/PDF editions** (they share the
-color tokens but follow their own compact layout idiom), the
-**election-comparison pages** (under active design), or **dark mode**
+color tokens but follow their own compact layout idiom) or **dark mode**
 (none exists; adding one is a project, not a patch).
 
 ## Changing this document

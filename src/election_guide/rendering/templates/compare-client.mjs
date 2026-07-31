@@ -35,14 +35,6 @@ if (comparisonBindingsElement) {
     const category = categories.find((item) => item.code === signal);
     return category?.panel_role === 'comparison' || sources.get(signal)?.panel_role === 'comparison';
   };
-  const coverageFor = (signal) => {
-    if (signal === ALL_SOURCES_TOKEN) return '';
-    const count = comparisons.display_index.filter((display) => {
-      const cell = engine.resolveColumn(signal, races.get(display.race_id));
-      return (cell.leadingPickIds?.length ?? 0) > 0;
-    }).length;
-    return `Endorsed in ${count} races`;
-  };
   const candidateLabels = (display) => ({
     ...display.candidate_names,
     ...display.measure_response_labels,
@@ -99,7 +91,7 @@ if (comparisonBindingsElement) {
     return element;
   }
 
-  function pickerFor(signal, index) {
+  function pickerFor(signal, index, title) {
     const select = document.createElement('select');
     select.className = 'comparison-column-picker';
     select.dataset.comparisonColumn = String(index);
@@ -133,12 +125,65 @@ if (comparisonBindingsElement) {
       next[index] = select.value;
       if (new Set(next).size !== next.length) return;
       state.columns = next;
-      if (writeState()) render();
+      if (writeState()) render({ kind: 'title', index });
     });
+    let closing = false;
+    const closeEditor = (restoreFocus) => {
+      if (closing || !select.isConnected) return;
+      closing = true;
+      select.replaceWith(title);
+      syncTitleHeights();
+      if (restoreFocus) window.setTimeout(() => title.focus(), 0);
+    };
+    select.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      event.preventDefault();
+      event.stopPropagation();
+      closeEditor(true);
+    });
+    select.addEventListener('blur', () => closeEditor(false));
     return select;
   }
 
-  function renderHead(visible) {
+  function titleFor(signal, index) {
+    if (index === 0) {
+      const title = document.createElement('strong');
+      title.className = 'comparison-column-title';
+      title.textContent = labelFor(signal);
+      return title;
+    }
+    const title = document.createElement('button');
+    title.type = 'button';
+    title.className = 'comparison-column-title comparison-column-title-action';
+    title.dataset.comparisonTitle = String(index);
+    title.setAttribute('aria-label', `Change ${labelFor(signal)} comparison`);
+    title.textContent = labelFor(signal);
+    title.addEventListener('click', () => {
+      const picker = pickerFor(signal, index, title);
+      title.replaceWith(picker);
+      syncTitleHeights();
+      picker.focus();
+    });
+    return title;
+  }
+
+  function syncTitleHeights() {
+    head.style.removeProperty('--comparison-title-height');
+    const titles = [...head.querySelectorAll('.comparison-column-title')];
+    if (!titles.length) return;
+    const titleHeight = Math.max(...titles.map((title) => title.scrollHeight));
+    head.style.setProperty('--comparison-title-height', `${titleHeight}px`);
+  }
+
+  function restoreHeadFocus(target) {
+    if (!target) return;
+    const selector = target.kind === 'add'
+      ? '.comparison-column-add'
+      : `[data-comparison-title="${target.index}"]`;
+    head.querySelector(selector)?.focus();
+  }
+
+  function renderHead(visible, focusTarget) {
     head.replaceChildren();
     const row = document.createElement('tr');
     const race = document.createElement('th');
@@ -159,7 +204,7 @@ if (comparisonBindingsElement) {
           .find((signal) => !state.columns.includes(signal));
       if (!available) return;
       state.columns = [...state.columns, available];
-      if (writeState()) render();
+      if (writeState()) render({ kind: 'title', index: state.columns.length - 1 });
     });
     race.append(add);
     row.append(race);
@@ -174,19 +219,7 @@ if (comparisonBindingsElement) {
       label.textContent = index === 0 ? 'Reference' : '\u00a0';
       if (index !== 0) label.setAttribute('aria-hidden', 'true');
       heading.append(label);
-      const title = document.createElement('strong');
-      title.className = 'comparison-column-title';
-      title.textContent = labelFor(signal);
-      heading.append(title);
-      if (index === 0) {
-        const spacer = document.createElement('span');
-        spacer.className = 'comparison-column-heading-spacer';
-        spacer.setAttribute('aria-hidden', 'true');
-        heading.append(spacer);
-      }
-      const pickerRow = document.createElement('div');
-      pickerRow.className = 'comparison-column-heading-row';
-      if (index !== 0) pickerRow.append(pickerFor(signal, index));
+      heading.append(titleFor(signal, index));
       if (index !== 0 && state.columns.length > 2) {
         const remove = document.createElement('button');
         remove.type = 'button';
@@ -197,25 +230,17 @@ if (comparisonBindingsElement) {
         remove.textContent = '×';
         remove.addEventListener('click', () => {
           state.columns = state.columns.filter((_, columnIndex) => columnIndex !== index);
-          if (writeState()) render();
+          const focusIndex = Math.min(index, state.columns.length - 1);
+          if (writeState()) render({ kind: 'title', index: focusIndex });
         });
-        pickerRow.append(remove);
+        heading.append(remove);
       }
-      if (index !== 0) heading.append(pickerRow);
-      const meta = document.createElement('span');
-      meta.className = 'comparison-column-meta';
-      meta.textContent = coverageFor(signal);
-      heading.append(meta);
       cell.append(heading);
       row.append(cell);
     });
     head.append(row);
-    head.style.removeProperty('--comparison-title-height');
-    const titleHeight = Math.max(
-      ...[...head.querySelectorAll('.comparison-column-title')]
-        .map((title) => title.scrollHeight),
-    );
-    head.style.setProperty('--comparison-title-height', `${titleHeight}px`);
+    syncTitleHeights();
+    restoreHeadFocus(focusTarget);
   }
 
   function cellFor(signal, cell, display, baseline, isBaseline) {
@@ -339,17 +364,17 @@ if (comparisonBindingsElement) {
 
   function syncControls() {
     sectionFilter.value = state.section;
-    document.querySelector('[data-comparison-complete]').setAttribute('aria-pressed', String(!state.contestedOnly && !state.differencesOnly));
-    document.querySelector('[data-comparison-contested]').setAttribute('aria-pressed', String(state.contestedOnly && !state.differencesOnly));
-    document.querySelector('[data-comparison-differences]').setAttribute('aria-pressed', String(!state.contestedOnly && state.differencesOnly));
-    document.querySelector('[data-comparison-contested-differences]').setAttribute('aria-pressed', String(state.contestedOnly && state.differencesOnly));
+    document.querySelector('[data-comparison-complete]').checked = !state.contestedOnly && !state.differencesOnly;
+    document.querySelector('[data-comparison-contested]').checked = state.contestedOnly && !state.differencesOnly;
+    document.querySelector('[data-comparison-differences]').checked = !state.contestedOnly && state.differencesOnly;
+    document.querySelector('[data-comparison-contested-differences]').checked = state.contestedOnly && state.differencesOnly;
   }
 
-  function render() {
+  function render(focusTarget = null) {
     const visible = state.columns;
     notice.hidden = true;
     notice.textContent = '';
-    renderHead(visible);
+    renderHead(visible, focusTarget);
     renderBody(visible);
     syncControls();
   }
@@ -358,22 +383,22 @@ if (comparisonBindingsElement) {
     state.section = sectionFilter.value;
     if (writeState('replace')) render();
   });
-  document.querySelector('[data-comparison-complete]').addEventListener('click', () => {
+  document.querySelector('[data-comparison-complete]').addEventListener('change', () => {
     state.contestedOnly = false;
     state.differencesOnly = false;
     if (writeState('replace')) render();
   });
-  document.querySelector('[data-comparison-contested]').addEventListener('click', () => {
+  document.querySelector('[data-comparison-contested]').addEventListener('change', () => {
     state.contestedOnly = true;
     state.differencesOnly = false;
     if (writeState('replace')) render();
   });
-  document.querySelector('[data-comparison-differences]').addEventListener('click', () => {
+  document.querySelector('[data-comparison-differences]').addEventListener('change', () => {
     state.contestedOnly = false;
     state.differencesOnly = true;
     if (writeState('replace')) render();
   });
-  document.querySelector('[data-comparison-contested-differences]').addEventListener('click', () => {
+  document.querySelector('[data-comparison-contested-differences]').addEventListener('change', () => {
     state.contestedOnly = true;
     state.differencesOnly = true;
     if (writeState('replace')) render();
@@ -398,7 +423,7 @@ if (comparisonBindingsElement) {
   let resizeTimer;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(render, 80);
+    resizeTimer = setTimeout(syncTitleHeights, 80);
   });
 
   stateFromLocation();
