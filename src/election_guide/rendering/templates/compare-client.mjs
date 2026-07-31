@@ -37,10 +37,10 @@ if (comparisonBindingsElement) {
   };
   const coverageFor = (signal) => {
     if (signal === ALL_SOURCES_TOKEN) {
-      const count = personalization.sources.filter((source) => source.panel_role !== 'comparison').length;
-      return `Audited baseline · ${count} sources`;
+      return `Audited baseline · ${payload.audited_source_count} sources`;
     }
     const category = categories.find((item) => item.code === signal);
+    if (category?.panel_role === 'comparison') return 'Comparison only · never counted';
     if (category) return `${category.member_source_codes.length} sources, equal weight`;
     const count = payload.source_coverage[signal] ?? 0;
     return isComparison(signal)
@@ -107,7 +107,8 @@ if (comparisonBindingsElement) {
     const categoryGroup = document.createElement('optgroup');
     categoryGroup.label = 'Categories';
     for (const category of categories) {
-      categoryGroup.append(option(category.code, category.label, signal, used));
+      const suffix = isComparison(category.code) ? ' (Comparison only)' : '';
+      categoryGroup.append(option(category.code, `${category.label}${suffix}`, signal, used));
     }
     select.append(categoryGroup);
 
@@ -307,25 +308,25 @@ if (comparisonBindingsElement) {
 
   sectionFilter.addEventListener('change', () => {
     state.section = sectionFilter.value;
-    if (writeState()) render();
+    if (writeState('replace')) render();
   });
   document.querySelector('[data-comparison-complete]').addEventListener('click', () => {
     state.contestedOnly = false;
-    if (writeState()) render();
+    if (writeState('replace')) render();
   });
   document.querySelector('[data-comparison-contested]').addEventListener('click', () => {
     state.contestedOnly = true;
-    if (writeState()) render();
+    if (writeState('replace')) render();
   });
   document.querySelector('[data-comparison-all-rows]').addEventListener('click', () => {
     state.differencesOnly = false;
-    if (writeState()) render();
+    if (writeState('replace')) render();
   });
   document.querySelector('[data-comparison-differences]').addEventListener('click', () => {
     // #122 owns row-difference filtering and presentation. #121 persists the
     // control state without changing which rows are presented.
     state.differencesOnly = true;
-    if (writeState()) render();
+    if (writeState('replace')) render();
   });
   document.querySelector('[data-comparison-copy]').addEventListener('click', async () => {
     const result = await shareOrCopyLink(window.location.href, document.title);

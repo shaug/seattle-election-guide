@@ -379,6 +379,10 @@ def render_comparison_document(
     source_labels = {
         source.code: source_names[source.id] for source in view_model.personalization.sources
     }
+    audited_source_count = sum(
+        source.panel_role != "comparison" and source.contribution_status == "contributing"
+        for source in view_model.sources
+    )
     race_by_id = {race.id: race for section in view_model.sections for race in section.races}
     affirmative_states = {"endorsement", "multi_endorsement"}
     source_coverage = {
@@ -399,6 +403,7 @@ def render_comparison_document(
         "comparisons": view_model.comparisons.model_dump(mode="json"),
         "source_labels": source_labels,
         "source_coverage": source_coverage,
+        "audited_source_count": audited_source_count,
         "contested_race_ids": [
             display.race_id
             for display in view_model.comparisons.display_index

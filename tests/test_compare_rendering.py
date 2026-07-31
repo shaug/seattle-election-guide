@@ -236,9 +236,14 @@ def test_compare_client_presets_filters_and_copy_link_round_trip(tmp_path: Path)
           await wait();
           const presetColumns = [...document.querySelectorAll('[data-comparison-column]')]
             .map((picker) => picker.value);
+          const historyBeforeFilters = history.length;
           document.querySelector('[data-comparison-contested]').click();
+          await wait();
+          const rowsBeforeDifferences = document
+            .querySelectorAll('[data-comparison-race]').length;
           document.querySelector('[data-comparison-differences]').click();
           await wait();
+          const historyAfterFilters = history.length;
           const rowCount = document.querySelectorAll('[data-comparison-race]').length;
           const beforeCopy = location.href;
           let copied = null;
@@ -250,6 +255,7 @@ def test_compare_client_presets_filters_and_copy_link_round_trip(tmp_path: Path)
           await wait();
           return JSON.stringify({
             presetHref, presetColumns, hash: location.hash, rowCount, beforeCopy, copied,
+            rowsBeforeDifferences, historyBeforeFilters, historyAfterFilters,
             status: document.querySelector('[data-comparison-status]').textContent,
             differencesPressed: document.querySelector('[data-comparison-differences]')
               .getAttribute('aria-pressed'),
@@ -262,9 +268,38 @@ def test_compare_client_presets_filters_and_copy_link_round_trip(tmp_path: Path)
     assert "races=contested" in result["hash"]
     assert "diff=1" in result["hash"]
     assert result["rowCount"] > 0
+    assert result["rowCount"] == result["rowsBeforeDifferences"]
+    assert result["historyAfterFilters"] == result["historyBeforeFilters"]
     assert result["copied"] == result["beforeCopy"]
     assert result["status"] == "Link copied."
     assert result["differencesPressed"] == "true"
+
+
+def test_compare_client_labels_comparison_category_truthfully(tmp_path: Path) -> None:
+    html_path = _comparison_html_path(tmp_path)
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (() => {
+          const picker = document.querySelector('[data-comparison-column="0"]');
+          const comparisonCategory = [...picker.options]
+            .find((item) => item.value === 'Gcmp');
+          picker.value = 'Gcmp';
+          picker.dispatchEvent(new Event('change', { bubbles: true }));
+          const meta = document.querySelector('.comparison-column-meta');
+          const gall = [...document.querySelectorAll('[data-comparison-column="1"] option')]
+            .find((item) => item.value === 'gall');
+          return JSON.stringify({
+            optionLabel: comparisonCategory.textContent,
+            coverage: meta.textContent,
+            allSourcesDisabledInSibling: gall.disabled,
+          });
+        })()
+        """,
+    )
+    assert result["optionLabel"].endswith("(Comparison only)")
+    assert result["coverage"] == "Comparison only · never counted"
+    assert result["allSourcesDisabledInSibling"] is False
 
 
 def test_compare_client_mobile_budget_and_focus_have_layout_evidence(tmp_path: Path) -> None:
