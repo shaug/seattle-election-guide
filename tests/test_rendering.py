@@ -69,7 +69,7 @@ from election_guide.rendering.renderer import (
     find_chrome,
     find_pdftoppm,
 )
-from election_guide.rendering.shell import election_names
+from election_guide.rendering.shell import election_names, site_band_html
 from election_guide.scoring import score_dataset
 from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
 from tests.test_personalization import (
@@ -266,6 +266,19 @@ def test_canonical_names_use_structured_future_election_data() -> None:
         legacy_name=cast(str, election["name"]),
         election_id=cast(str, election["id"]),
     ) == ("November 2027 General", "November 2, 2027 Washington general")
+
+
+def test_shared_site_band_names_the_methodology_path_for_what_it_does() -> None:
+    band = site_band_html(
+        guide_href="/e/wa-2026-primary/",
+        sources_href="/e/wa-2026-primary/sources/",
+        about_href="/about/",
+        current="about",
+    )
+
+    assert ">How this works</a>" in band
+    assert ">About</a>" not in band
+    assert 'href="/about/" aria-current="page"' in band
 
 
 def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path: Path) -> None:
@@ -3021,6 +3034,60 @@ def test_phone_dialog_metrics_fit_the_longest_live_content_at_320px(tmp_path: Pa
     assert result["countWithin"] is True
     assert result["actionsWithin"] is True
     assert result["actionSizes"] == [[40, 40], [40, 40]]
+
+
+@pytest.mark.parametrize("mobile_width", [320, 375, 414])
+def test_phone_dialog_header_keeps_actions_beside_longest_race_title(
+    tmp_path: Path, mobile_width: int
+) -> None:
+    """Issue 174: icon actions stay beside the wrapped title without a dead band."""
+    view_model = _personalization_enabled_view_model(tmp_path)
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (() => {
+          const dialog = document.querySelector('.race-detail-dialog');
+          const header = dialog.querySelector('.race-detail-header');
+          const titleBlock = header.firstElementChild;
+          const title = titleBlock.querySelector('h3');
+          const actions = header.querySelector('.race-detail-actions');
+          title.textContent =
+            'Seattle Proposition 1 — Property Tax Levy for Seattle Public Library';
+          dialog.showModal();
+          const box = (element) => element.getBoundingClientRect();
+          const before = {
+            header: box(header),
+            titleBlock: box(titleBlock),
+            title: box(title),
+            actions: box(actions),
+          };
+          dialog.scrollTop = Math.min(160, dialog.scrollHeight - dialog.clientHeight);
+          const after = box(header);
+          return JSON.stringify({
+            titleWraps: title.scrollHeight > parseFloat(getComputedStyle(title).lineHeight) * 1.5,
+            actionsBesideTitle:
+              before.actions.left >= before.titleBlock.right &&
+              before.actions.top < before.title.bottom,
+            headerHeightBefore: before.header.height,
+            headerHeightAfter: after.height,
+            headerTopBefore: before.header.top,
+            headerTopAfter: after.top,
+          });
+        })()
+        """,
+        mobile_width=mobile_width,
+    )
+
+    assert result["titleWraps"] is True
+    assert result["actionsBesideTitle"] is True
+    assert result["headerHeightAfter"] == pytest.approx(result["headerHeightBefore"], abs=0.5)
+    assert result["headerTopAfter"] == pytest.approx(result["headerTopBefore"], abs=0.5)
 
 
 def test_no_majority_lens_state_appears_and_dissolves_with_the_selected_sources(

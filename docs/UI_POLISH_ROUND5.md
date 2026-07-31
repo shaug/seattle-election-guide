@@ -146,12 +146,11 @@ open ticket. Numbering continues the ledger (last used: I56).
 
 - **M71 — Footer "How this works" text link amid the icon row.** DECIDED
   2026-07-30: ⓘ icon button with tooltip, matching the other footer icons.
-  Discoverability isn't lost because the masthead already links the About
-  page from the top of every page — the footer entry is a convenience
-  repeat, not the primary path. Optional companion (fine with Scott if
-  deemed worthwhile): rename the masthead nav label "About" → "How this
-  works" so the primary path carries the stronger scent; if renamed, keep
-  the page's own `<title>` page-name consistent with the M60 template.
+  Discoverability isn't lost because the masthead links the About page from
+  the top of every page — the footer entry is a convenience repeat, not the
+  primary path. DECIDED 2026-07-31: the masthead label is "How this works" so
+  that primary path names what the page does; the page's own `<title>` remains
+  "About" under the M60 template.
 
 - **M72 — Race-dialog header actions as icons.** "Share link" and "Close"
   are text links in the dialog header. Replace with icon buttons: X for
