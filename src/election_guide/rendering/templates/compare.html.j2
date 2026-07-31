@@ -55,9 +55,12 @@
           <button type="button" data-comparison-differences aria-pressed="false">Differences only</button>
         </fieldset>
         <button type="button" data-comparison-copy>Copy link</button>
-        <span class="comparison-control-status" role="status" aria-live="polite" data-comparison-status></span>
+        <span class="comparison-copy-status" role="status" aria-live="polite" data-comparison-copy-status></span>
       </div>
       <p class="comparison-hidden-notice" role="status" aria-live="polite" data-comparison-hidden-notice hidden></p>
+      <p class="comparison-control-status" role="status" aria-live="polite" aria-atomic="true"
+        data-comparison-status>{{ comparison_race_count }} of {{ comparison_race_count }} races shown ·
+        {{ comparison_differ_count }} differ</p>
 
       <div class="comparison-table-wrap" data-comparison-grid>
         <table class="comparison-table" data-comparison-table data-default-columns="gall,strn,stim">
@@ -78,21 +81,30 @@
               <th scope="rowgroup" colspan="4">{{ section.section_label }}</th>
             </tr>
             {% for row in section.rows %}
-            <tr data-comparison-race="{{ row.race_id }}">
+            <tr data-comparison-race="{{ row.race_id }}" data-row-differs="{{ row.differs | lower }}">
               <th scope="row" class="comparison-race">
                 <a href="{{ guide_path }}#race-{{ row.race_id }}">{{ row.race_label }}</a>
+                {% if row.differs %}<span class="comparison-differs-chip">≠ differs</span>{% endif %}
               </th>
               {% for cell in row.cells %}
               <td class="comparison-cell" data-column-signal="{{ cell.signal }}"
                 data-cell-kind="{{ cell.kind }}"
+                data-agreement="{{ cell.agreement }}"
                 data-leading-pick-ids='{{ cell.leading_pick_ids | list | tojson }}'
                 {% if cell.share is not none %}data-share="{{ cell.share }}"{% endif %}
                 {% if cell.explicit_source_count is not none %}data-explicit-source-count="{{ cell.explicit_source_count }}"{% endif %}>
                 <span class="comparison-cell-picks">
                   {% if cell.kind == 'outside_scope' %}Outside district
                   {% elif cell.choice_labels %}{{ cell.choice_labels | join(' / ') }}
-                  {% else %}&mdash;{% endif %}
+                {% else %}&mdash;{% endif %}
                 </span>
+                {% if cell.agreement == 'agree' %}
+                <span class="comparison-cell-signal" aria-hidden="true">Agrees</span>
+                <span class="visually-hidden">Agrees with baseline.</span>
+                {% elif cell.agreement == 'differ' %}
+                <span class="comparison-cell-signal" aria-hidden="true">≠ Differs</span>
+                <span class="visually-hidden">Differs from baseline.</span>
+                {% endif %}
                 {% if cell.kind == 'baseline' and cell.share is not none %}
                 <span class="comparison-cell-meta">{{ comparison_percentage_label(cell.share) }} ·
                   {{ cell.explicit_source_count }} sources</span>
@@ -108,6 +120,8 @@
 
       <div class="comparison-legend" aria-label="Legend">
         <span><b>All sources</b> audited consensus</span>
+        <span><b>Agrees</b> leading picks overlap the baseline</span>
+        <span><b>≠ Differs</b> leading picks do not overlap the baseline</span>
         <span><b>&mdash;</b> no endorsement published</span>
         <span><b>Outside district</b> source is not eligible for that legislative race</span>
         <span><b>Name / name</b> co-endorsement or tie</span>

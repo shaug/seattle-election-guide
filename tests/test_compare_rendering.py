@@ -23,6 +23,7 @@ from tests.test_comparisons import _bundle  # pyright: ignore[reportPrivateUsage
 from tests.test_rendering import _evaluate_in_chrome  # pyright: ignore[reportPrivateUsage]
 
 PROJECT_ROOT = Path(__file__).parents[1]
+DEFAULT_DIFFERENCE_ORACLE = PROJECT_ROOT / "tests/fixtures/comparison-default-differences.json"
 
 
 def _enabled_view_model() -> PublicationViewModel:
@@ -34,6 +35,46 @@ def _enabled_view_model() -> PublicationViewModel:
             )
         }
     )
+
+
+def test_default_difference_oracle_matches_published_current_inputs() -> None:
+    """Keep the hand-verified list independent of the client rowDiffers implementation."""
+    view_model = _enabled_view_model()
+    oracle = json.loads(DEFAULT_DIFFERENCE_ORACLE.read_text(encoding="utf-8"))
+    displays = {display.race_id: display for display in view_model.comparisons.display_index}
+    races = {race.race_id: race for race in view_model.personalization.races}
+
+    observed: dict[str, dict[str, list[str]]] = {}
+    for race_id, display in displays.items():
+        race = races[race_id]
+        leading = {"gall": list(display.baseline.leading_pick_ids)}
+        for signal in ("strn", "stim"):
+            if signal not in race.eligible_source_codes:
+                leading[signal] = []
+                continue
+            cell = next(cell for cell in race.cells if cell.source_code == signal)
+            leading[signal] = (
+                [
+                    candidate_id
+                    for candidate_id in race.candidate_order
+                    if candidate_id in cell.allocation
+                ]
+                if cell.state in {"endorsement", "multi_endorsement"}
+                else []
+            )
+        data_sets = [set(picks) for picks in leading.values() if picks]
+        if any(
+            left.isdisjoint(right)
+            for index, left in enumerate(data_sets)
+            for right in data_sets[index + 1 :]
+        ):
+            observed[race_id] = leading
+
+    expected = {item["race_id"]: item["leading_pick_ids"] for item in oracle["differing_races"]}
+    assert observed == expected
+    assert [displays[item["race_id"]].race_label for item in oracle["differing_races"]] == [
+        item["race_label"] for item in oracle["differing_races"]
+    ]
 
 
 def test_compare_document_server_renders_default_contract_snapshot() -> None:
@@ -67,7 +108,7 @@ def test_compare_document_server_renders_default_contract_snapshot() -> None:
     assert table is not None
     normalized = re.sub(r"\s+", " ", unescape(table.group(0))).strip()
     assert hashlib.sha256(normalized.encode()).hexdigest() == (
-        "a1e06e05b29202f3a0d146111ef150a2e8078142a9104ea614638b59a23c4020"
+        "9422da29b50aa452268e6dc35e3a75b2655954186fbbeec1444ede453f91c9c0"
     )
 
     payload_match = re.search(
@@ -86,7 +127,7 @@ def test_compare_document_server_renders_default_contract_snapshot() -> None:
     sources = {source.id: source for source in view_model.personalization.sources}
     for display in view_model.comparisons.display_index:
         race_match = re.search(
-            rf'<tr data-comparison-race="{re.escape(display.race_id)}">(.*?)</tr>',
+            rf'<tr data-comparison-race="{re.escape(display.race_id)}"[^>]*>(.*?)</tr>',
             rendered,
             flags=re.DOTALL,
         )
@@ -121,11 +162,9 @@ def test_compare_document_server_renders_default_contract_snapshot() -> None:
                         for candidate_id in personalization_races[display.race_id].candidate_order
                         if candidate_id in cell.allocation
                     ]
-            assert (
-                f'data-column-signal="{source.code}"\n'
-                f'                data-cell-kind="{expected_kind}"\n'
-                f"                data-leading-pick-ids='{json.dumps(expected_ids)}'" in row
-            )
+            assert f'data-column-signal="{source.code}"' in row
+            assert f'data-cell-kind="{expected_kind}"' in row
+            assert f"data-leading-pick-ids='{json.dumps(expected_ids)}'" in row
             for candidate_id in expected_ids:
                 assert html.escape(labels[candidate_id]) in row
 
@@ -253,11 +292,12 @@ def test_compare_client_presets_filters_and_copy_link_round_trip(tmp_path: Path)
           });
           document.querySelector('[data-comparison-copy]').click();
           await wait();
-          return JSON.stringify({
-            presetHref, presetColumns, hash: location.hash, rowCount, beforeCopy, copied,
-            rowsBeforeDifferences, historyBeforeFilters, historyAfterFilters,
-            status: document.querySelector('[data-comparison-status]').textContent,
-            differencesPressed: document.querySelector('[data-comparison-differences]')
+            return JSON.stringify({
+              presetHref, presetColumns, hash: location.hash, rowCount, beforeCopy, copied,
+              rowsBeforeDifferences, historyBeforeFilters, historyAfterFilters,
+              status: document.querySelector('[data-comparison-status]').textContent,
+              copyStatus: document.querySelector('[data-comparison-copy-status]').textContent,
+              differencesPressed: document.querySelector('[data-comparison-differences]')
               .getAttribute('aria-pressed'),
           });
         })()
@@ -268,10 +308,11 @@ def test_compare_client_presets_filters_and_copy_link_round_trip(tmp_path: Path)
     assert "races=contested" in result["hash"]
     assert "diff=1" in result["hash"]
     assert result["rowCount"] > 0
-    assert result["rowCount"] == result["rowsBeforeDifferences"]
+    assert result["rowCount"] < result["rowsBeforeDifferences"]
     assert result["historyAfterFilters"] == result["historyBeforeFilters"]
     assert result["copied"] == result["beforeCopy"]
-    assert result["status"] == "Link copied."
+    assert re.fullmatch(r"\d+ of \d+ races shown · \d+ differ", result["status"])
+    assert result["copyStatus"] == "Link copied."
     assert result["differencesPressed"] == "true"
 
 
@@ -346,3 +387,229 @@ def test_compare_client_mobile_budget_and_focus_have_layout_evidence(tmp_path: P
     assert mobile["tableWidth"] >= mobile["wrapWidth"]
     assert desktop["visibleSignals"] == ["gall", "strn", "stim"]
     assert desktop["noticeVisible"] is False
+
+
+@pytest.mark.parametrize("mobile_width", [None, 390])
+def test_default_differences_match_fixed_oracle_with_visual_and_accessible_signals(
+    tmp_path: Path, mobile_width: int | None
+) -> None:
+    oracle = json.loads(DEFAULT_DIFFERENCE_ORACLE.read_text(encoding="utf-8"))
+    expected_ids = [item["race_id"] for item in oracle["differing_races"]]
+    result = _evaluate_in_chrome(
+        _comparison_html_path(tmp_path),
+        """
+        (async () => {
+          const wait = () => new Promise((resolve) => setTimeout(resolve, 120));
+          const tokenBackground = (name) => {
+            const probe = document.createElement('span');
+            probe.style.background = `var(${name})`;
+            document.body.append(probe);
+            const color = getComputedStyle(probe).backgroundColor;
+            probe.remove();
+            return color;
+          };
+          const narrow = window.matchMedia('(max-width: 720px)').matches;
+          const senator = document.querySelector(
+            '[data-comparison-race="ld-32-state-senator"]',
+          );
+          const agree = senator.querySelector('[data-column-signal="strn"]');
+          const differ = document.querySelector(
+            narrow
+              ? '[data-comparison-race="ld-32-state-representative-1"] [data-column-signal="strn"]'
+              : '[data-comparison-race="ld-32-state-senator"] [data-column-signal="stim"]',
+          );
+          const baseline = senator.querySelector('[data-column-signal="gall"]');
+          const blank = document.querySelector(
+            '[data-cell-kind="blank"][data-column-signal="strn"]',
+          );
+          const appearance = {
+            agree: {
+              state: agree.dataset.agreement,
+              background: getComputedStyle(agree).backgroundColor,
+              token: tokenBackground('--tone-agree-bg'),
+              visible: agree.querySelector('.comparison-cell-signal').textContent,
+              accessible: agree.querySelector('.visually-hidden').textContent,
+            },
+            differ: {
+              state: differ.dataset.agreement,
+              background: getComputedStyle(differ).backgroundColor,
+              token: tokenBackground('--tone-differ-bg'),
+              visible: differ.querySelector('.comparison-cell-signal').textContent,
+              accessible: differ.querySelector('.visually-hidden').textContent,
+            },
+            baseline: {
+              state: baseline.dataset.agreement,
+              background: getComputedStyle(baseline).backgroundColor,
+              hasSignal: Boolean(baseline.querySelector('.comparison-cell-signal')),
+            },
+            blank: {
+              state: blank.dataset.agreement,
+              background: getComputedStyle(blank).backgroundColor,
+              hasSignal: Boolean(blank.querySelector('.comparison-cell-signal')),
+            },
+          };
+          const chipIds = [...document.querySelectorAll('[data-row-differs="true"]')]
+            .map((row) => row.dataset.comparisonRace);
+          document.querySelector('[data-comparison-differences]').click();
+          await wait();
+          return JSON.stringify({
+            filteredIds: [...document.querySelectorAll('[data-comparison-race]')]
+              .map((row) => row.dataset.comparisonRace),
+            chipIds,
+            status: document.querySelector('[data-comparison-status]').textContent,
+            statusLive: document.querySelector('[data-comparison-status]')
+              .getAttribute('aria-live'),
+            visibleSignals: [...document.querySelectorAll('[data-comparison-column]')]
+              .map((picker) => picker.value),
+            hiddenNotice: document.querySelector('[data-comparison-hidden-notice]').textContent,
+            senatorStillShown: Boolean(document.querySelector(
+              '[data-comparison-race="ld-32-state-senator"]',
+            )),
+            ...appearance,
+          });
+        })()
+        """,
+        mobile_width=mobile_width,
+    )
+    assert result["filteredIds"] == expected_ids
+    assert result["chipIds"] == expected_ids
+    assert result["status"] == f"{len(expected_ids)} of 32 races shown · {len(expected_ids)} differ"
+    assert result["statusLive"] == "polite"
+    assert result["agree"] == {
+        "state": "agree",
+        "background": result["agree"]["token"],
+        "token": result["agree"]["token"],
+        "visible": "Agrees",
+        "accessible": "Agrees with baseline.",
+    }
+    assert result["differ"] == {
+        "state": "differ",
+        "background": result["differ"]["token"],
+        "token": result["differ"]["token"],
+        "visible": "≠ Differs",
+        "accessible": "Differs from baseline.",
+    }
+    assert result["baseline"]["state"] == "baseline"
+    assert result["baseline"]["background"] not in {
+        result["agree"]["token"],
+        result["differ"]["token"],
+    }
+    assert result["baseline"]["hasSignal"] is False
+    assert result["blank"]["state"] == "neutral"
+    assert result["blank"]["background"] not in {
+        result["agree"]["token"],
+        result["differ"]["token"],
+    }
+    assert result["blank"]["hasSignal"] is False
+    if mobile_width is None:
+        assert result["visibleSignals"] == ["gall", "strn", "stim"]
+    else:
+        assert result["visibleSignals"] == ["gall", "strn"]
+        assert "remains configured and counted" in result["hiddenNotice"]
+        assert result["senatorStillShown"] is True
+
+
+def test_coendorsement_intersection_and_blank_are_not_differences(tmp_path: Path) -> None:
+    result = _evaluate_in_chrome(
+        _comparison_html_path(tmp_path),
+        """
+        (async () => {
+          const wait = () => new Promise((resolve) => setTimeout(resolve, 120));
+          document.querySelector('[data-comparison-remove="2"]').click();
+          await wait();
+          const picker = document.querySelector('[data-comparison-column="1"]');
+          picker.value = 'kcdm';
+          picker.dispatchEvent(new Event('change', { bubbles: true }));
+          await wait();
+          const coendorsement = document.querySelector(
+            '[data-comparison-race="ld-11-state-representative-1"]',
+          );
+          const coendorsementCell = coendorsement.querySelector('[data-column-signal="kcdm"]');
+          const coendorsementResult = {
+            agreement: coendorsementCell.dataset.agreement,
+            picks: coendorsementCell.querySelector('.comparison-cell-picks').textContent,
+            rowDiffers: coendorsement.dataset.rowDiffers,
+          };
+          picker.value = 'stim';
+          picker.dispatchEvent(new Event('change', { bubbles: true }));
+          await wait();
+          const blank = document.querySelector('[data-comparison-race="us-house-9"]');
+          return JSON.stringify({
+            coendorsementResult,
+            blankAgreement: blank.querySelector('[data-column-signal="stim"]').dataset.agreement,
+            blankRowDiffers: blank.dataset.rowDiffers,
+          });
+        })()
+        """,
+    )
+    assert result["coendorsementResult"] == {
+        "agreement": "agree",
+        "picks": "Ashley Fedan / David Hackney",
+        "rowDiffers": "false",
+    }
+    assert result["blankAgreement"] == "neutral"
+    assert result["blankRowDiffers"] == "false"
+
+
+def test_all_agree_and_no_match_empty_states_are_distinct_and_resettable(tmp_path: Path) -> None:
+    all_agree = _evaluate_in_chrome(
+        _comparison_html_path(tmp_path),
+        """
+        (async () => {
+          const wait = () => new Promise((resolve) => setTimeout(resolve, 120));
+          document.querySelector('[data-comparison-remove="2"]').click();
+          await wait();
+          const picker = document.querySelector('[data-comparison-column="1"]');
+          picker.value = 'wslc';
+          picker.dispatchEvent(new Event('change', { bubbles: true }));
+          await wait();
+          document.querySelector('[data-comparison-differences]').click();
+          await wait();
+          const message = document.querySelector('.comparison-empty p').textContent;
+          const resetLabel = document.querySelector('.comparison-reset').textContent;
+          document.querySelector('.comparison-reset').click();
+          await wait();
+          return JSON.stringify({
+            message, resetLabel,
+            rowsAfterReset: document.querySelectorAll('[data-comparison-race]').length,
+            differencesPressed: document.querySelector('[data-comparison-differences]')
+              .getAttribute('aria-pressed'),
+          });
+        })()
+        """,
+    )
+    assert all_agree["message"].startswith("These signals agree in every race they share")
+    assert all_agree["resetLabel"] == "Show all rows"
+    assert all_agree["rowsAfterReset"] == 32
+    assert all_agree["differencesPressed"] == "false"
+
+    no_match_path = _comparison_html_path(tmp_path)
+    no_match_html = no_match_path.read_text(encoding="utf-8")
+    no_match_path.write_text(
+        re.sub(r'"contested_race_ids": \[[^]]*\]', '"contested_race_ids": []', no_match_html),
+        encoding="utf-8",
+    )
+    no_match = _evaluate_in_chrome(
+        no_match_path,
+        """
+        (async () => {
+          const wait = () => new Promise((resolve) => setTimeout(resolve, 120));
+          document.querySelector('[data-comparison-contested]').click();
+          await wait();
+          const message = document.querySelector('.comparison-empty p').textContent;
+          const resetLabel = document.querySelector('.comparison-reset').textContent;
+          document.querySelector('.comparison-reset').click();
+          await wait();
+          return JSON.stringify({
+            message, resetLabel,
+            rowsAfterReset: document.querySelectorAll('[data-comparison-race]').length,
+            contestedPressed: document.querySelector('[data-comparison-contested]')
+              .getAttribute('aria-pressed'),
+          });
+        })()
+        """,
+    )
+    assert no_match["message"] == "No races match the current filters."
+    assert no_match["resetLabel"] == "Reset filters"
+    assert no_match["rowsAfterReset"] == 32
+    assert no_match["contestedPressed"] == "false"

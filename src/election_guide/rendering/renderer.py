@@ -85,6 +85,7 @@ class ComparisonCellView:
     leading_pick_ids: tuple[str, ...]
     share: str | None = None
     explicit_source_count: int | None = None
+    agreement: str = "neutral"
 
 
 @dataclass(frozen=True)
@@ -92,6 +93,7 @@ class ComparisonRowView:
     race_id: str
     race_label: str
     cells: tuple[ComparisonCellView, ...]
+    differs: bool
 
 
 @dataclass(frozen=True)
@@ -424,6 +426,7 @@ def render_comparison_document(
             _comparison_fragment(view_model, ["gall", "urbn"]),
         ),
     ]
+    comparison_sections = _comparison_sections(view_model)
     return template.render(
         guide=view_model,
         public_site_url=public_site_url,
@@ -462,7 +465,11 @@ def render_comparison_document(
             if project_url is not None
             else None
         ),
-        comparison_sections=_comparison_sections(view_model),
+        comparison_sections=comparison_sections,
+        comparison_race_count=sum(len(section.rows) for section in comparison_sections),
+        comparison_differ_count=sum(
+            row.differs for section in comparison_sections for row in section.rows
+        ),
         comparison_payload=comparison_payload,
         comparison_presets=preset_fragments,
         comparison_percentage_label=comparison_percentage_label,
@@ -513,24 +520,24 @@ def _comparison_sections(view_model: PublicationViewModel) -> tuple[ComparisonSe
 
         race = personalization_races[display.race_id]
         labels = display.candidate_names or display.measure_response_labels
+        baseline = ComparisonCellView(
+            signal="gall",
+            kind="baseline",
+            choice_labels=tuple(labels[pick_id] for pick_id in display.baseline.leading_pick_ids),
+            leading_pick_ids=tuple(display.baseline.leading_pick_ids),
+            share=display.baseline.share,
+            explicit_source_count=display.baseline.explicit_source_count,
+            agreement="baseline",
+        )
+        stranger_cell = _comparison_direct_cell(stranger, race, labels, baseline)
+        times_cell = _comparison_direct_cell(times, race, labels, baseline)
+        cells = (baseline, stranger_cell, times_cell)
         rows.append(
             ComparisonRowView(
                 race_id=display.race_id,
                 race_label=display.race_label,
-                cells=(
-                    ComparisonCellView(
-                        signal="gall",
-                        kind="baseline",
-                        choice_labels=tuple(
-                            labels[pick_id] for pick_id in display.baseline.leading_pick_ids
-                        ),
-                        leading_pick_ids=tuple(display.baseline.leading_pick_ids),
-                        share=display.baseline.share,
-                        explicit_source_count=display.baseline.explicit_source_count,
-                    ),
-                    _comparison_direct_cell(stranger, race, labels),
-                    _comparison_direct_cell(times, race, labels),
-                ),
+                cells=cells,
+                differs=_comparison_row_differs(cells),
             )
         )
     if current_section_id is not None:
@@ -548,6 +555,7 @@ def _comparison_direct_cell(
     source: PersonalizationSource,
     race: PersonalizationRace,
     labels: dict[str, str],
+    baseline: ComparisonCellView,
 ) -> ComparisonCellView:
     if source.code not in race.eligible_source_codes:
         return ComparisonCellView(
@@ -576,6 +584,16 @@ def _comparison_direct_cell(
         kind="comparison" if source.panel_role == "comparison" else "direct",
         choice_labels=tuple(labels[candidate_id] for candidate_id in leading_pick_ids),
         leading_pick_ids=leading_pick_ids,
+        agreement=("agree" if set(leading_pick_ids) & set(baseline.leading_pick_ids) else "differ"),
+    )
+
+
+def _comparison_row_differs(cells: tuple[ComparisonCellView, ...]) -> bool:
+    data_cells = [set(cell.leading_pick_ids) for cell in cells if cell.leading_pick_ids]
+    return any(
+        left.isdisjoint(right)
+        for index, left in enumerate(data_cells)
+        for right in data_cells[index + 1 :]
     )
 
 
