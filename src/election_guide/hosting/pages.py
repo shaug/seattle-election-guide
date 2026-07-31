@@ -17,6 +17,7 @@ from election_guide.hosting.models import (
     PublishedElection,
     SiteManifest,
 )
+from election_guide.publication.comparisons import ComparisonsPolicy
 from election_guide.publication.models import PublicationViewModel
 from election_guide.release.models import ReleaseManifest, ReleaseStatus
 from election_guide.rendering.renderer import (
@@ -472,12 +473,15 @@ def _stage_verified_bundles(
         root_path = f"/e/{bundle.declaration.election_id}/"
         public_paths.update({root_path, f"{root_path}index.html"})
         public_paths.update({f"{root_path}sources/", f"{root_path}sources/index.html"})
-        if bundle.view_model.comparisons.policy.enabled:
+        if (
+            bundle.view_model.comparisons.policy.enabled
+            or bundle.declaration.comparison_route_preview
+        ):
             compare_dir = election_root / "compare"
             compare_dir.mkdir()
             (compare_dir / "index.html").write_text(
                 _comparison_html(
-                    bundle.view_model,
+                    _comparison_route_view_model(bundle),
                     canonical_origin,
                     pdf_filename=Path(bundle.status.guide_pdf_artifact).name,
                 ),
@@ -486,6 +490,19 @@ def _stage_verified_bundles(
             public_paths.update({f"{root_path}compare/", f"{root_path}compare/index.html"})
         public_paths.update(f"{root_path}{name}" for name in names)
     return public_paths
+
+
+def _comparison_route_view_model(bundle: _VerifiedBundle) -> PublicationViewModel:
+    """Enable only the staged route when the current release is in preview."""
+    if bundle.view_model.comparisons.policy.enabled:
+        return bundle.view_model
+    return bundle.view_model.model_copy(
+        update={
+            "comparisons": bundle.view_model.comparisons.model_copy(
+                update={"policy": ComparisonsPolicy(enabled=True)}
+            )
+        }
+    )
 
 
 def _sources_html(
@@ -503,7 +520,7 @@ def _sources_html(
 def _comparison_html(
     view_model: PublicationViewModel, canonical_origin: str, *, pdf_filename: str
 ) -> str:
-    """Render the per-election comparisons page when its release policy permits it."""
+    """Render a per-election comparison route after hosting has admitted it."""
     return render_comparison_document(
         view_model,
         public_site_url=canonical_origin,

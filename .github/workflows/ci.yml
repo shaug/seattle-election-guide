@@ -72,6 +72,7 @@ jobs:
             --output-dir dist/cloudflare-site
           test -f dist/cloudflare-site/e/index.html
           test -f dist/cloudflare-site/e/wa-2026-primary/index.html
+          test -f dist/cloudflare-site/e/wa-2026-primary/compare/index.html
           test -f dist/cloudflare-site/e/wa-2026-primary/Seattle_2026_Primary_Elections_Guide.pdf
           uv run election-guide hosting verify \
             config/hosting/site.yaml \

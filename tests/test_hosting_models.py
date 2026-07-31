@@ -92,3 +92,20 @@ def test_deployment_manifest_rejects_noncanonical_asset_paths(invalid_path: str)
                 "assets": {invalid_path: "e" * 64},
             }
         )
+
+
+def test_site_manifest_rejects_historical_comparison_route_preview() -> None:
+    historical = {
+        **_published_election(),
+        "election_id": "wa-2025-general",
+        "bundle_id": "wa-2025-general-release",
+        "comparison_route_preview": True,
+    }
+    with pytest.raises(ValueError, match="only the current election"):
+        SiteManifest.model_validate(
+            {
+                "canonical_origin": "https://seattleelections.guide",
+                "current_election_id": CURRENT_ID,
+                "elections": [_published_election(), historical],
+            }
+        )

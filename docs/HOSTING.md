@@ -75,6 +75,10 @@ The public route contract is:
 - `/e/` is an index of every declared guide, with the current election listed first;
 - `/e/<election-id>/` serves that election's HTML, PDFs, release status, and release manifest;
 - `/e/<election-id>` redirects to the trailing-slash form;
+- the current election may set `comparison_route_preview: true` to serve
+  `/e/<election-id>/compare/` and canonicalize its slashless form without adding a link from the
+  guide, Sources, archive, About/FAQ, or 404 page; this preview override is rejected for historical
+  elections and the release's comparison policy remains the source of truth for public promotion;
 - `/about/` is a site-wide, hand-authored About/FAQ page explaining the methodology, source-panel
   versioning, and how to report a correction, with reciprocal navigation to the current guide;
   every rendered guide links back to it from its footer;

@@ -319,6 +319,59 @@ def test_enabled_comparisons_stage_verify_and_route_exact_asset(tmp_path: Path) 
     assert results[2]["status"] == 404
 
 
+def test_comparison_preview_stages_only_the_current_direct_route(tmp_path: Path) -> None:
+    current, older = _write_archive_bundles(tmp_path)
+    baseline_manifest = _write_site_manifest(tmp_path / "baseline", current_first=True)
+    preview_manifest = _write_site_manifest(tmp_path / "preview", current_first=True)
+    preview_payload = yaml.safe_load(preview_manifest.read_text(encoding="utf-8"))
+    preview_payload["elections"][0]["comparison_route_preview"] = True
+    preview_manifest.write_text(yaml.safe_dump(preview_payload, sort_keys=False), encoding="utf-8")
+    assignments = {CURRENT_BUNDLE_ID: current, OLDER_BUNDLE_ID: older}
+    baseline_output = tmp_path / "baseline-site"
+    preview_output = tmp_path / "preview-site"
+
+    stage_pages_site(baseline_manifest, assignments, baseline_output)
+    stage_pages_site(preview_manifest, assignments, preview_output)
+    verified = verify_staged_pages_site(preview_output, preview_manifest)
+
+    compare_relative = f"e/{CURRENT_ID}/compare/index.html"
+    compare_path = preview_output / compare_relative
+    assert compare_path.is_file()
+    assert (
+        verified.assets[compare_relative] == hashlib.sha256(compare_path.read_bytes()).hexdigest()
+    )
+    assert not (preview_output / "e" / OLDER_ID / "compare").exists()
+    assert 'data-default-columns="gall,strn,stim"' in compare_path.read_text(encoding="utf-8")
+
+    existing_html = sorted(
+        path.relative_to(baseline_output) for path in baseline_output.rglob("*.html")
+    )
+    assert existing_html
+    for relative in existing_html:
+        baseline_bytes = (baseline_output / relative).read_bytes()
+        assert (preview_output / relative).read_bytes() == baseline_bytes
+        assert b"/compare/" not in baseline_bytes
+
+    unknown_baseline = _run_worker(
+        baseline_output / "_worker.js",
+        ["https://seattleelections.guide/e/not-an-election/compare/"],
+    )[0]
+    results = _run_worker(
+        preview_output / "_worker.js",
+        [
+            f"https://seattleelections.guide/e/{CURRENT_ID}/compare",
+            f"https://seattleelections.guide/e/{CURRENT_ID}/compare/",
+            f"https://seattleelections.guide/e/{OLDER_ID}/compare/",
+            "https://seattleelections.guide/e/not-an-election/compare/",
+        ],
+    )
+    assert results[0]["status"] == 308
+    assert results[0]["location"] == f"https://seattleelections.guide/e/{CURRENT_ID}/compare/"
+    assert results[1]["body"] == f"asset:/e/{CURRENT_ID}/compare/"
+    assert results[2]["status"] == 404
+    assert results[3] == unknown_baseline
+
+
 def test_disabled_comparisons_stage_no_page_or_nav_exposure(tmp_path: Path) -> None:
     current, older = _write_archive_bundles(tmp_path)
     manifest = _write_site_manifest(tmp_path, current_first=True)
