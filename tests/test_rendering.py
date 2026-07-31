@@ -2780,7 +2780,9 @@ def test_sources_tree_shell_exposes_no_dialog_and_keeps_controls_in_the_merged_s
     keeps only a compact, non-interactive summary and a link to the
     dedicated sources page."""
     html = _sources_tree_html(tmp_path)
-    controls = html.split('<section class="screen-controls"')[1].split("</section>")[0]
+    controls = html.split('<section class="screen-controls filter-control-bar"')[1].split(
+        "</section>"
+    )[0]
 
     assert controls.count("<button") == 0
     assert "data-customize-open" not in html
