@@ -26,23 +26,10 @@
     }
     main > p.lede { margin: 0 0 1.5rem; color: var(--muted); max-width: 60ch; }
     .sources-tree { border-top: none; background: none; padding: 0; }
-    .sources-page-actions { position: sticky; top: 0; z-index: 5; }
-    .sources-page-controls { display: flex; flex-wrap: wrap; gap: .6rem 1rem; margin-left: auto; }
-    .sources-page-actions a {
-      display: inline-block; padding: .5rem 1rem; border-radius: .3rem;
-      font: inherit; font-weight: 700; text-decoration: none; cursor: pointer;
-    }
-    .sources-save { border: 1px solid var(--teal); background: var(--teal); color: var(--white); }
-    .sources-save:hover { background: #0a9d8f; }
-    .sources-cancel, .sources-page-reset {
-      border: 1px solid var(--line-strong); background: var(--white); color: var(--ink);
-    }
-    .sources-cancel:hover, .sources-page-reset:hover { background: #eef3f6; }
-    .sources-page-actions a:focus-visible { outline: .2rem solid var(--focus); outline-offset: .15rem; }
-    .sources-page-count { margin: 0; color: var(--white); font-size: .85rem; font-weight: 700; }
-    @media (max-width: 520px) {
-      .sources-page-controls { width: 100%; margin-left: 0; }
-    }
+    .sources-page-actions { position: sticky; top: 0; z-index: 5; justify-content: center; }
+    .sources-page-controls { display: flex; flex-wrap: wrap; justify-content: center; gap: .45rem 1rem; }
+    .sources-page-actions a { color: var(--mint); font-weight: 700; }
+    .sources-page-count { margin: 0; color: var(--white); font-size: .9rem; font-weight: 600; }
   </style>
 </head>
 <body>

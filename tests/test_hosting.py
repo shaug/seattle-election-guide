@@ -603,7 +603,15 @@ def test_sources_page_renders_every_category_and_source_like_the_guide_tree(
     assert html.index("sources-page-actions state-action-strip") < html.index(
         '<main id="sources-main">'
     )
-    assert ".sources-page-actions { position: sticky; top: 0; z-index: 5; }" in html
+    assert (
+        ".sources-page-actions { position: sticky; top: 0; z-index: 5; justify-content: center; }"
+    ) in html
+    assert (
+        ".sources-page-controls { display: flex; flex-wrap: wrap; "
+        "gap: .6rem 1rem; margin-left: auto; }"
+    ) not in html
+    assert ".sources-cancel, .sources-page-reset {" not in html
+    assert ".sources-page-actions a { color: var(--mint); font-weight: 700; }" in html
 
 
 def test_sources_page_action_strip_stays_visible_with_count_and_actions(tmp_path: Path) -> None:
