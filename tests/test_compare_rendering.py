@@ -112,7 +112,7 @@ def test_compare_document_server_renders_default_contract_snapshot() -> None:
     assert table is not None
     normalized = re.sub(r"\s+", " ", unescape(table.group(0))).strip()
     assert hashlib.sha256(normalized.encode()).hexdigest() == (
-        "b861d1df30281e01f3b89ab4580b73544fde479371412e5af6854a3fda3f2a9f"
+        "e29e9728bcf459a388680a903e1ba8d41359c464201b156a3bb9dc9286e6bfdd"
     )
 
     payload_match = re.search(
@@ -271,8 +271,11 @@ def test_compare_client_enforces_picker_bounds_and_history(tmp_path: Path) -> No
             hasAddAtMaximum: Boolean(document.querySelector('.comparison-column-add')),
             addDisabledAtMaximum: document.querySelector('.comparison-column-add').disabled,
             addTextAtMaximum: document.querySelector('.comparison-column-add').textContent,
-            baselineHasPicker: Boolean(document.querySelector('[data-comparison-column="0"]')),
-            baselineHasRemove: Boolean(document.querySelector('[data-comparison-remove="0"]')),
+            referenceHasPickerAtRest: Boolean(document.querySelector(
+              '[data-comparison-column="0"]',
+            )),
+            referenceHasTitle: Boolean(document.querySelector('[data-comparison-title="0"]')),
+            referenceHasRemove: Boolean(document.querySelector('[data-comparison-remove="0"]')),
           });
         })()
         """,
@@ -298,11 +301,14 @@ def test_compare_client_enforces_picker_bounds_and_history(tmp_path: Path) -> No
     assert result["hasAddAtMaximum"] is True
     assert result["addDisabledAtMaximum"] is True
     assert result["addTextAtMaximum"] == "Maximum 3 comparisons"
-    assert result["baselineHasPicker"] is False
-    assert result["baselineHasRemove"] is False
+    assert result["referenceHasPickerAtRest"] is False
+    assert result["referenceHasTitle"] is True
+    assert result["referenceHasRemove"] is False
 
 
-def test_compare_client_repairs_legacy_fragments_to_the_fixed_baseline(tmp_path: Path) -> None:
+def test_compare_client_preserves_an_arbitrary_first_reference_from_a_legacy_fragment(
+    tmp_path: Path,
+) -> None:
     html_path = _comparison_html_path(tmp_path)
     result = _evaluate_in_chrome(
         html_path,
@@ -317,14 +323,14 @@ def test_compare_client_repairs_legacy_fragments_to_the_fixed_baseline(tmp_path:
           const headings = [...document.querySelectorAll(
             '[data-comparison-head] [data-column-signal]',
           )].map((heading) => heading.dataset.columnSignal);
-          const baseline = document.querySelector(
-            '[data-comparison-race] [data-column-signal="gall"]',
+          const reference = document.querySelector(
+            '[data-comparison-race] [data-column-signal="strn"]',
           );
           return JSON.stringify({
             headings,
-            baselineAgreement: baseline.dataset.agreement,
-            baselineTitle: document.querySelector(
-              '[data-column-signal="gall"] .comparison-column-title',
+            referenceAgreement: reference.dataset.agreement,
+            referenceTitle: document.querySelector(
+              '[data-column-signal="strn"] .comparison-column-title',
             ).textContent,
             removeTargets: [...document.querySelectorAll('[data-comparison-remove]')]
               .map((button) => button.dataset.comparisonRemove),
@@ -333,34 +339,157 @@ def test_compare_client_repairs_legacy_fragments_to_the_fixed_baseline(tmp_path:
         """,
     )
     assert result == {
-        "headings": ["gall", "strn", "stim"],
-        "baselineAgreement": "baseline",
-        "baselineTitle": "All sources",
-        "removeTargets": ["1", "2"],
+        "headings": ["strn", "stim"],
+        "referenceAgreement": "reference",
+        "referenceTitle": "The Stranger Election Control Board",
+        "removeTargets": [],
     }
 
 
-def test_compare_client_ignores_lens_state_and_keeps_its_fixed_baseline(tmp_path: Path) -> None:
+def test_compare_client_swaps_the_reference_and_recomputes_relative_state(tmp_path: Path) -> None:
     html_path = _comparison_html_path(tmp_path)
     result = _evaluate_in_chrome(
         html_path,
         """
         (async () => {
           const wait = () => new Promise((resolve) => setTimeout(resolve, 120));
-          const baselineText = () => document.querySelector(
+          const signals = () => [...document.querySelectorAll(
+            '[data-comparison-head] [data-column-signal]',
+          )].map((heading) => heading.dataset.columnSignal);
+          const differingRows = () => [...document.querySelectorAll('[data-row-differs="true"]')]
+            .map((row) => row.dataset.comparisonRace);
+          const tintedRows = () => [...new Set([...document.querySelectorAll(
+            '.comparison-cell[data-agreement="differ"]',
+          )].map((cell) => cell.closest('[data-comparison-race]').dataset.comparisonRace))];
+          const openReference = () => {
+            document.querySelector('[data-comparison-title="0"]').click();
+            return document.querySelector('[data-comparison-column="0"]');
+          };
+
+          const defaultRows = differingRows();
+          const defaultStatus = document.querySelector('[data-comparison-status]').textContent;
+          let picker = openReference();
+          const pickerLabel = picker.getAttribute('aria-label');
+          const initialPickerValue = picker.value;
+          const allSourcesOptions = [...picker.options]
+            .filter((option) => option.value === 'gall').length;
+          const duplicateDisabled = [...picker.options]
+            .find((option) => option.value === 'strn').disabled;
+          picker.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+          await wait();
+          const escapeFocus = document.activeElement?.dataset.comparisonTitle;
+
+          picker = openReference();
+          document.querySelector('[data-comparison-title="1"]').focus();
+          const blurClosed = !picker.isConnected
+            && document.activeElement?.dataset.comparisonTitle === '1';
+
+          picker = openReference();
+          picker.value = 'Genv';
+          picker.dispatchEvent(new Event('change', { bubbles: true }));
+          await wait();
+          const changedRows = differingRows();
+          const changedTintedRows = tintedRows();
+          const changedStatus = document.querySelector('[data-comparison-status]').textContent;
+          const changedHash = location.hash;
+          const focusAfterChange = document.activeElement?.dataset.comparisonTitle;
+          const referenceAgreement = document.querySelector(
+            '[data-comparison-race] .comparison-cell[data-column-signal="Genv"]',
+          ).dataset.agreement;
+          picker = openReference();
+          const allSourcesAvailableAfterChange = ![...picker.options]
+            .find((option) => option.value === 'gall').disabled;
+          picker.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+          await wait();
+
+          history.back();
+          await wait();
+          const afterBack = signals();
+          history.forward();
+          await wait();
+          const afterForward = signals();
+
+          let copied = null;
+          Object.defineProperty(navigator, 'share', { value: undefined, configurable: true });
+          Object.defineProperty(navigator, 'clipboard', {
+            value: { writeText: async (value) => { copied = value; } }, configurable: true,
+          });
+          document.querySelector('[data-comparison-copy]').click();
+          await wait();
+
+          document.querySelector('[data-comparison-remove="2"]').click();
+          await wait();
+          return JSON.stringify({
+            defaultRows, defaultStatus, pickerLabel, initialPickerValue, allSourcesOptions,
+            duplicateDisabled, escapeFocus, blurClosed,
+            changedRows, changedTintedRows, changedStatus, changedHash, focusAfterChange,
+            referenceAgreement, allSourcesAvailableAfterChange, afterBack, afterForward, copied,
+            afterRemove: signals(),
+            referenceLabel: document.querySelector(
+              '[data-column-signal="Genv"] .comparison-column-label',
+            ).textContent,
+            referenceRemove: Boolean(document.querySelector('[data-comparison-remove="0"]')),
+          });
+        })()
+        """,
+    )
+    assert result["pickerLabel"] == "Change reference, currently All sources"
+    assert result["initialPickerValue"] == "gall"
+    assert result["allSourcesOptions"] == 1
+    assert result["duplicateDisabled"] is True
+    assert result["escapeFocus"] == "0"
+    assert result["blurClosed"] is True
+    assert result["changedHash"].startswith("#cmp=1&cols=Genvstrnstim&")
+    assert result["focusAfterChange"] == "0"
+    assert result["referenceAgreement"] == "reference"
+    assert result["allSourcesAvailableAfterChange"] is True
+    assert result["changedRows"] == result["changedTintedRows"]
+    assert result["changedRows"] != result["defaultRows"]
+    assert result["changedStatus"] != result["defaultStatus"]
+    assert result["afterBack"] == ["gall", "strn", "stim"]
+    assert result["afterForward"] == ["Genv", "strn", "stim"]
+    assert result["copied"].endswith(result["changedHash"])
+    assert result["afterRemove"] == ["Genv", "strn"]
+    assert result["referenceLabel"] == "Reference"
+    assert result["referenceRemove"] is False
+
+    restored = _evaluate_in_chrome(
+        html_path,
+        """
+        (() => JSON.stringify({
+          columns: [...document.querySelectorAll(
+            '[data-comparison-head] [data-column-signal]',
+          )].map((heading) => heading.dataset.columnSignal),
+          reference: document.querySelector('[data-comparison-title="0"]').textContent,
+        }))()
+        """,
+        initial_url=result["copied"],
+    )
+    assert restored["columns"] == ["Genv", "strn", "stim"]
+    assert restored["reference"] != "All sources"
+
+
+def test_compare_client_ignores_lens_state_and_keeps_its_default_reference(tmp_path: Path) -> None:
+    html_path = _comparison_html_path(tmp_path)
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          const wait = () => new Promise((resolve) => setTimeout(resolve, 120));
+          const referenceText = () => document.querySelector(
             '[data-comparison-race] [data-column-signal="gall"] .comparison-cell-picks',
           ).textContent;
-          const before = baselineText();
+          const before = referenceText();
           location.hash = 'lens=1&mode=a&panel=saved-panel&ph=abcdef123456';
           await wait();
           return JSON.stringify({
             before,
-            after: baselineText(),
+            after: referenceText(),
             columns: [...document.querySelectorAll(
               '[data-comparison-head] [data-column-signal]',
             )].map((heading) => heading.dataset.columnSignal),
-            baselineInteractive: Boolean(document.querySelector(
-              '[data-column-signal="gall"] button, [data-comparison-column="0"]',
+            referenceInteractive: Boolean(document.querySelector(
+              '[data-column-signal="gall"] [data-comparison-title="0"]',
             )),
           });
         })()
@@ -370,7 +499,7 @@ def test_compare_client_ignores_lens_state_and_keeps_its_fixed_baseline(tmp_path
         "before": result["before"],
         "after": result["before"],
         "columns": ["gall", "strn", "stim"],
-        "baselineInteractive": False,
+        "referenceInteractive": True,
     }
 
 
@@ -466,10 +595,14 @@ def test_compare_client_labels_comparison_category_truthfully(tmp_path: Path) ->
             coverageMetadata: Boolean(document.querySelector('.comparison-column-meta')),
             coverageText: document.querySelector('[data-comparison-head]').textContent
               .includes('Endorsed in'),
-            baselineTitle: document.querySelector(
+            referenceTitle: document.querySelector(
               '[data-column-signal="gall"] .comparison-column-title',
             ).textContent,
-            baselinePicker: Boolean(document.querySelector('[data-comparison-column="0"]')),
+            referencePickerAtRest: Boolean(document.querySelector(
+              '[data-comparison-column="0"]',
+            )),
+            referenceTitleLabel: document.querySelector('[data-comparison-title="0"]')
+              .getAttribute('aria-label'),
           });
         })()
         """,
@@ -477,8 +610,9 @@ def test_compare_client_labels_comparison_category_truthfully(tmp_path: Path) ->
     assert result["optionLabel"].endswith("(Comparison only)")
     assert result["coverageMetadata"] is False
     assert result["coverageText"] is False
-    assert result["baselineTitle"] == "All sources"
-    assert result["baselinePicker"] is False
+    assert result["referenceTitle"] == "All sources"
+    assert result["referencePickerAtRest"] is False
+    assert result["referenceTitleLabel"] == "Change reference, currently All sources"
 
 
 def test_compare_client_mobile_budget_and_focus_have_layout_evidence(tmp_path: Path) -> None:
@@ -492,7 +626,7 @@ def test_compare_client_mobile_budget_and_focus_have_layout_evidence(tmp_path: P
           picker.value = 'eccd';
           picker.dispatchEvent(new Event('change', { bubbles: true }));
           const titleActions = [...document.querySelectorAll('[data-comparison-title]')];
-          const focus = getComputedStyle(titleActions[0]);
+          const focus = getComputedStyle(titleActions[1]);
           const tableElement = document.querySelector('[data-comparison-table]');
           const wrapElement = document.querySelector('[data-comparison-grid]');
           const table = tableElement.getBoundingClientRect();
@@ -522,7 +656,7 @@ def test_compare_client_mobile_budget_and_focus_have_layout_evidence(tmp_path: P
             cellLabels: firstRaceCells.map((cell) => cell.dataset.columnLabel),
             titleLabels: titleActions.map((title) => title.getAttribute('aria-label')),
             restingPickerCount: document.querySelectorAll('[data-comparison-column]').length,
-            focusReturned: document.activeElement === titleActions[0],
+            focusReturned: document.activeElement === titleActions[1],
             copyTag: document.querySelector('[data-comparison-copy]').tagName,
             titlesFit: titles.every((title) => title.scrollWidth <= title.clientWidth),
             removeTitle: remove.title,
@@ -599,6 +733,7 @@ def test_compare_client_mobile_budget_and_focus_have_layout_evidence(tmp_path: P
         "The Seattle Times Editorial Board",
     ]
     assert mobile["titleLabels"] == [
+        "Change reference, currently All sources",
         (
             "Change Environment and Climate Caucus of the Washington State "
             "Democratic Party comparison"
@@ -657,7 +792,7 @@ def test_default_differences_match_fixed_oracle_with_visual_and_accessible_signa
               ? '[data-comparison-race="ld-32-state-representative-1"] [data-column-signal="strn"]'
               : '[data-comparison-race="ld-32-state-senator"] [data-column-signal="stim"]',
           );
-          const baseline = senator.querySelector('[data-column-signal="gall"]');
+          const reference = senator.querySelector('[data-column-signal="gall"]');
           const blank = document.querySelector(
             '[data-cell-kind="blank"][data-column-signal="strn"]',
           );
@@ -675,10 +810,10 @@ def test_default_differences_match_fixed_oracle_with_visual_and_accessible_signa
               token: tokenBackground('--tone-differ-bg'),
               hasSignal: Boolean(differ.querySelector('.comparison-cell-signal')),
             },
-            baseline: {
-              state: baseline.dataset.agreement,
-              background: getComputedStyle(baseline).backgroundColor,
-              hasSignal: Boolean(baseline.querySelector('.comparison-cell-signal')),
+            reference: {
+              state: reference.dataset.agreement,
+              background: getComputedStyle(reference).backgroundColor,
+              hasSignal: Boolean(reference.querySelector('.comparison-cell-signal')),
             },
             blank: {
               state: blank.dataset.agreement,
@@ -730,12 +865,12 @@ def test_default_differences_match_fixed_oracle_with_visual_and_accessible_signa
         "token": result["differ"]["token"],
         "hasSignal": False,
     }
-    assert result["baseline"]["state"] == "baseline"
-    assert result["baseline"]["background"] not in {
+    assert result["reference"]["state"] == "reference"
+    assert result["reference"]["background"] not in {
         result["agree"]["token"],
         result["differ"]["token"],
     }
-    assert result["baseline"]["hasSignal"] is False
+    assert result["reference"]["hasSignal"] is False
     assert result["blank"]["state"] == "neutral"
     assert result["blank"]["background"] not in {
         result["agree"]["token"],

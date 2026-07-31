@@ -135,7 +135,7 @@ const comparisons = {
 
 const engine = createColumnSignalEngine(personalization, comparisons);
 
-test('gall is the audited display baseline verbatim and is never recomputed', () => {
+test('gall resolves the published all-sources result verbatim', () => {
   assert.deepEqual(engine.resolveColumn('gall', race), {
     kind: 'baseline',
     leadingPickIds: ['beta'],
@@ -204,15 +204,15 @@ test('all four non-affirmative states resolve to the identical blank cell', () =
 });
 
 test('lead-set agreement handles overlap, disjoint sets, and neutral cells', () => {
-  const baseline = { kind: 'baseline', leadingPickIds: ['alpha', 'beta'] };
+  const reference = { kind: 'baseline', leadingPickIds: ['alpha', 'beta'] };
   const overlap = { kind: 'direct', leadingPickIds: ['beta'] };
   const disjoint = { kind: 'direct', leadingPickIds: ['gamma'] };
 
-  assert.equal(leadSetsIntersect(baseline, overlap), true);
-  assert.equal(cellAgreement(overlap, baseline), 'agree');
-  assert.equal(cellAgreement(disjoint, baseline), 'differ');
-  assert.equal(cellAgreement(BLANK_CELL, baseline), 'neutral');
-  assert.equal(cellAgreement(OUTSIDE_SCOPE_CELL, baseline), 'neutral');
+  assert.equal(leadSetsIntersect(reference, overlap), true);
+  assert.equal(cellAgreement(overlap, reference), 'agree');
+  assert.equal(cellAgreement(disjoint, reference), 'differ');
+  assert.equal(cellAgreement(BLANK_CELL, reference), 'neutral');
+  assert.equal(cellAgreement(OUTSIDE_SCOPE_CELL, reference), 'neutral');
 });
 
 test('row differences use every configured data cell and ignore blank/outside-scope cells', () => {
@@ -223,6 +223,7 @@ test('row differences use every configured data cell and ignore blank/outside-sc
 
   assert.equal(rowDiffers([alpha, alphaBeta, BLANK_CELL, OUTSIDE_SCOPE_CELL]), false);
   assert.equal(rowDiffers([alpha, alphaBeta, beta]), true);
+  assert.equal(rowDiffers([alphaBeta, alpha, beta]), false);
   assert.equal(rowDiffers([alpha, alphaBeta, gamma]), true);
 });
 

@@ -1,8 +1,8 @@
 // Pure signal resolution for the election-scoped comparisons table.
 //
 // The published personalization contract owns source stances, eligibility, and
-// category membership. The comparison display contract owns the audited
-// all-sources baseline. Category arithmetic is delegated to lens-score.mjs so
+// category membership. The comparison display contract owns the published
+// all-sources result. Category arithmetic is delegated to lens-score.mjs so
 // comparisons cannot grow a second scoring path.
 
 import { scoreRace } from './lens-score.mjs';
@@ -76,7 +76,7 @@ export function createColumnSignalEngine(personalization, comparisons) {
     if (signal === ALL_SOURCES_SIGNAL) {
       const display = displayIndex.get(race.race_id);
       if (display === undefined) {
-        throw new RangeError(`race ${race.race_id} has no comparison display baseline`);
+        throw new RangeError(`race ${race.race_id} has no published all-sources result`);
       }
       return {
         kind: 'baseline',
@@ -122,23 +122,18 @@ export function leadSetsIntersect(left, right) {
 }
 
 /**
- * Compare one cell with the configured baseline.
+ * Compare one cell with the configured reference.
  *
  * Blank and outside-scope cells are neutral: they never claim agreement and
  * never create a difference.
  */
-export function cellAgreement(cell, baseline) {
-  if (!isDataCell(cell) || !isDataCell(baseline)) return 'neutral';
-  return leadSetsIntersect(cell, baseline) ? 'agree' : 'differ';
+export function cellAgreement(cell, reference) {
+  if (!isDataCell(cell) || !isDataCell(reference)) return 'neutral';
+  return leadSetsIntersect(cell, reference) ? 'agree' : 'differ';
 }
 
-/** True when any two data-bearing configured cells have disjoint lead sets. */
+/** True when any configured comparison has a disjoint lead set from the reference. */
 export function rowDiffers(cells) {
-  const dataCells = cells.filter(isDataCell);
-  for (let left = 0; left < dataCells.length; left += 1) {
-    for (let right = left + 1; right < dataCells.length; right += 1) {
-      if (!leadSetsIntersect(dataCells[left], dataCells[right])) return true;
-    }
-  }
-  return false;
+  const [reference, ...comparisons] = cells;
+  return comparisons.some((cell) => cellAgreement(cell, reference) === 'differ');
 }

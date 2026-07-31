@@ -31,7 +31,7 @@
 .comparison-table tr > :first-child { position: sticky; z-index: 2; left: 0; box-shadow: 1px 0 var(--row-separator); }
 .comparison-table tbody tr > th:first-child { background: var(--white); }
 .comparison-column-heading { position: relative; display: grid; grid-template-rows: 1.1rem auto; gap: .3rem; padding-right: 2.2rem; }
-.comparison-column-heading:has(.comparison-column-title:not(.comparison-column-title-action)) { padding-right: 0; }
+.comparison-column-reference { padding-right: 0; }
 .comparison-column-label { display: block; min-height: 1.1rem; color: var(--mint); font-size: .62rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
 .comparison-column-title { display: block; min-width: 0; min-height: var(--comparison-title-height, 2.1rem); overflow-wrap: anywhere; font-size: .86rem; line-height: 1.2; }
 .comparison-column-title-action { width: 100%; padding: 0; border: 0; background: transparent; color: var(--white); font: inherit; font-weight: 800; text-align: left; text-decoration: underline; text-decoration-color: var(--mint); text-decoration-thickness: .08em; text-underline-offset: .18em; cursor: pointer; }
@@ -71,7 +71,7 @@
   .comparison-table tr > :first-child { position: static; box-shadow: none; }
   .comparison-table thead th + th { padding-block: .55rem; }
   .comparison-column-heading { grid-template-rows: auto; min-height: 2.5rem; padding-right: 2.5rem; }
-  .comparison-column-heading:has(.comparison-column-title:not(.comparison-column-title-action)) { min-height: 0; padding-right: 0; }
+  .comparison-column-reference { min-height: 0; padding-right: 0; }
   .comparison-column-label { color: var(--teal); }
   .comparison-column-label[aria-hidden="true"] { display: none; }
   .comparison-column-title { min-height: 0; }

@@ -53,14 +53,10 @@ if (comparisonBindingsElement) {
     section: 'all',
   };
 
-  function withFixedBaseline(columns) {
-    return [ALL_SOURCES_TOKEN, ...columns.filter((signal) => signal !== ALL_SOURCES_TOKEN)].slice(0, 3);
-  }
-
   function stateFromLocation() {
     const decoded = decodeCompareFragment(window.location.hash, context);
     if (decoded.status === 'valid') {
-      state = { ...decoded.state, columns: withFixedBaseline(decoded.state.columns) };
+      state = { ...decoded.state, columns: [...decoded.state.columns] };
       if (state.columns.length < 2) state.columns = [...payload.default_columns];
     }
     else if (decoded.status === 'absent') {
@@ -95,8 +91,18 @@ if (comparisonBindingsElement) {
     const select = document.createElement('select');
     select.className = 'comparison-column-picker';
     select.dataset.comparisonColumn = String(index);
-    select.setAttribute('aria-label', `Change ${labelFor(signal)} comparison`);
+    select.setAttribute(
+      'aria-label',
+      index === 0
+        ? `Change reference, currently ${labelFor(signal)}`
+        : `Change ${labelFor(signal)} comparison`,
+    );
     const used = new Set(state.columns);
+
+    const publishedGroup = document.createElement('optgroup');
+    publishedGroup.label = 'Published result';
+    publishedGroup.append(option(ALL_SOURCES_TOKEN, 'All sources', signal, used));
+    select.append(publishedGroup);
 
     const categoryGroup = document.createElement('optgroup');
     categoryGroup.label = 'Categories';
@@ -146,17 +152,16 @@ if (comparisonBindingsElement) {
   }
 
   function titleFor(signal, index) {
-    if (index === 0) {
-      const title = document.createElement('strong');
-      title.className = 'comparison-column-title';
-      title.textContent = labelFor(signal);
-      return title;
-    }
     const title = document.createElement('button');
     title.type = 'button';
     title.className = 'comparison-column-title comparison-column-title-action';
     title.dataset.comparisonTitle = String(index);
-    title.setAttribute('aria-label', `Change ${labelFor(signal)} comparison`);
+    title.setAttribute(
+      'aria-label',
+      index === 0
+        ? `Change reference, currently ${labelFor(signal)}`
+        : `Change ${labelFor(signal)} comparison`,
+    );
     title.textContent = labelFor(signal);
     title.addEventListener('click', () => {
       const picker = pickerFor(signal, index, title);
@@ -214,6 +219,7 @@ if (comparisonBindingsElement) {
       cell.dataset.columnSignal = signal;
       const heading = document.createElement('div');
       heading.className = 'comparison-column-heading';
+      if (index === 0) heading.classList.add('comparison-column-reference');
       const label = document.createElement('span');
       label.className = 'comparison-column-label';
       label.textContent = index === 0 ? 'Reference' : '\u00a0';
@@ -243,14 +249,14 @@ if (comparisonBindingsElement) {
     restoreHeadFocus(focusTarget);
   }
 
-  function cellFor(signal, cell, display, baseline, isBaseline) {
+  function cellFor(signal, cell, display, reference, isReference) {
     const labels = candidateLabels(display);
     const element = document.createElement('td');
     element.className = 'comparison-cell';
     element.dataset.columnSignal = signal;
     element.dataset.columnLabel = labelFor(signal);
     element.dataset.cellKind = cell.kind;
-    const agreement = isBaseline ? 'baseline' : cellAgreement(cell, baseline);
+    const agreement = isReference ? 'reference' : cellAgreement(cell, reference);
     element.dataset.agreement = agreement;
     const picks = document.createElement('span');
     picks.className = 'comparison-cell-picks';
@@ -322,9 +328,9 @@ if (comparisonBindingsElement) {
           raceHeading.append(differsLabel);
         }
         row.append(raceHeading);
-        const baseline = configuredCells[0];
+        const reference = configuredCells[0];
         visible.forEach((signal, index) => {
-          row.append(cellFor(signal, configuredCells[index], display, baseline, index === 0));
+          row.append(cellFor(signal, configuredCells[index], display, reference, index === 0));
         });
         body.append(row);
       }

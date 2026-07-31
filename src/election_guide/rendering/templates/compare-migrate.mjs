@@ -90,8 +90,10 @@ export function migrateCompareState(staleDecode, personalization, context) {
       status: sectionCurrent ? 'current' : 'unknown',
     },
   };
+  const referenceCurrent = columnResults[0]?.status === 'current';
 
   if (
+    referenceCurrent &&
     unavailableCategory === undefined &&
     unresolvedSource === undefined &&
     columns.length >= 2 &&
@@ -122,7 +124,9 @@ export function migrateCompareState(staleDecode, personalization, context) {
   return {
     status: 'fallback',
     reason:
-      unavailableCategory !== undefined
+      !referenceCurrent
+        ? 'unresolvable_reference'
+        : unavailableCategory !== undefined
         ? 'unresolvable_category'
         : unresolvedSource !== undefined
           ? 'unresolvable_source'

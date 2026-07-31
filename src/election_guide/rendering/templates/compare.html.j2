@@ -90,7 +90,7 @@
               <td class="comparison-cell" data-column-signal="{{ cell.signal }}"
                 data-column-label="{% if cell.signal == 'gall' %}All sources{% else %}{{ comparison_source_labels[cell.signal] }}{% endif %}"
                 data-cell-kind="{{ cell.kind }}"
-                data-agreement="{{ cell.agreement }}"
+                data-agreement="{% if loop.first %}reference{% else %}{{ cell.agreement }}{% endif %}"
                 data-leading-pick-ids='{{ cell.leading_pick_ids | list | tojson }}'
                 {% if cell.share is not none %}data-share="{{ cell.share }}"{% endif %}
                 {% if cell.explicit_source_count is not none %}data-explicit-source-count="{{ cell.explicit_source_count }}"{% endif %}>

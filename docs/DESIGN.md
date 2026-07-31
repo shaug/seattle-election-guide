@@ -51,7 +51,7 @@ never introduces a color literal. The families and what they mean:
 | Paper / white | `--paper`, `--white` | Content ground / data surfaces (cards, rows) |
 | Teal | `--teal` | The brand and data accent: meters, section rules, card borders |
 | Blue | `--blue` | Hyperlinks. Nothing else |
-| Agree tone | `--tone-agree-*` | Agreement with the baseline; the leading choice |
+| Agree tone | `--tone-agree-*` | Agreement with the current reference; the leading choice |
 | Differ tone | `--tone-differ-*`, `--amber` | Attention and divergence: comparison signals that differ, challenger sections, no-majority states |
 | Neutral tone | `--tone-neutral-*` | Not covered; no signal |
 | Focus | `--focus` | Every focus ring, everywhere |
@@ -248,9 +248,12 @@ then any sticky strip, then content.
 
   *Comparison-page decision recorded July 31, 2026:*
 
-- **Comparison starts from one fixed reference.** The All sources column is
-  stable and noninteractive. Other columns show their full identity at rest
-  and become editors only while the reader is changing them.
+- **Comparison starts from one explicit reference role.** The first column is
+  stable in position and cannot be removed, but its signal is selectable. Every
+  agreement, difference tint, and difference count is relative to that chosen
+  reference. All sources is the published default, not an immutable baseline.
+  Every column shows its full identity at rest and becomes an editor only while
+  the reader is changing it.
 - **One quiet difference encoding.** A comparison cell carries its choice and
   an amber tint when it differs. Agreement recedes; the race identity carries
   the single visible and accessible “Differs” label. Shared conventions do not
