@@ -113,8 +113,12 @@ def test_compare_document_server_renders_default_contract_snapshot() -> None:
     assert table is not None
     normalized = re.sub(r"\s+", " ", unescape(table.group(0))).strip()
     assert hashlib.sha256(normalized.encode()).hexdigest() == (
-        "e29e9728bcf459a388680a903e1ba8d41359c464201b156a3bb9dc9286e6bfdd"
+        "37d7b85afc5f36d8a02fa1f9b24216f8e69759b10f5eb9beabf64432e1588421"
     )
+    static_head = re.search(r"<thead.*?</thead>", normalized)
+    assert static_head is not None
+    assert "Reference" not in static_head.group(0)
+    assert "Maximum" not in static_head.group(0)
 
     payload_match = re.search(
         r'<script type="application/json" id="comparison-bindings" '
@@ -254,15 +258,26 @@ def test_compare_client_enforces_picker_bounds_and_history(tmp_path: Path) -> No
           const focusAfterRemove = document.activeElement?.dataset.comparisonTitle;
           const removeButtonsAtMinimum = document
             .querySelectorAll('[data-comparison-remove]').length;
+          const addAtMinimum = document.querySelector('.comparison-column-add');
+          const addAtMinimumEvidence = {
+            text: addAtMinimum.textContent,
+            ariaLabel: addAtMinimum.getAttribute('aria-label'),
+            title: addAtMinimum.title,
+            column: addAtMinimum.closest('[data-column-signal]').dataset.columnSignal,
+          };
           const blurPicker = openPicker(1);
-          document.querySelector('.comparison-column-add').focus();
+          addAtMinimum.focus();
           const blurClosed = !blurPicker.isConnected
             && !document.querySelector('[data-comparison-column="1"]')
-            && document.activeElement === document.querySelector('.comparison-column-add');
-          document.querySelector('.comparison-column-add').click();
+            && document.activeElement === addAtMinimum;
+          addAtMinimum.click();
           await wait();
           const afterAdd = signals();
-          const focusAfterAdd = document.activeElement?.dataset.comparisonTitle;
+          const addedPicker = document.querySelector('[data-comparison-column="2"]');
+          const focusAfterAdd = document.activeElement === addedPicker;
+          const addedPickerValue = addedPicker.value;
+          const bodyCellCounts = [...document.querySelectorAll('[data-comparison-race]')]
+            .map((row) => row.querySelectorAll('.comparison-cell').length);
 
           const picker = openPicker(1);
           const previous = picker.value;
@@ -283,10 +298,10 @@ def test_compare_client_enforces_picker_bounds_and_history(tmp_path: Path) -> No
             removeButtonsAtMinimum, afterAdd, previous, changed, changedHash,
             afterBack, afterForward, restingPickerCount, pickerFocused,
             escapeRestoredTitle, blurClosed, focusAfterRemove, focusAfterAdd,
-            focusAfterChange,
+            focusAfterChange, addAtMinimumEvidence, addedPickerValue, bodyCellCounts,
             hasAddAtMaximum: Boolean(document.querySelector('.comparison-column-add')),
-            addDisabledAtMaximum: document.querySelector('.comparison-column-add').disabled,
-            addTextAtMaximum: document.querySelector('.comparison-column-add').textContent,
+            raceHeaderText: document.querySelector('[data-comparison-head] th').textContent,
+            headTextAtMaximum: document.querySelector('[data-comparison-head]').innerText,
             referenceHasPickerAtRest: Boolean(document.querySelector(
               '[data-comparison-column="0"]',
             )),
@@ -305,18 +320,27 @@ def test_compare_client_enforces_picker_bounds_and_history(tmp_path: Path) -> No
     assert result["afterRemove"] == ["gall", "strn"]
     assert result["removeButtonsAtMinimum"] == 0
     assert result["focusAfterRemove"] == "1"
+    assert result["addAtMinimumEvidence"] == {
+        "text": "+",
+        "ariaLabel": "Add comparison column",
+        "title": "Add comparison column",
+        "column": "strn",
+    }
     assert result["blurClosed"] is True
     assert len(result["afterAdd"]) == 3
     assert len(set(result["afterAdd"])) == 3
-    assert result["focusAfterAdd"] == "2"
+    assert result["focusAfterAdd"] is True
+    assert result["addedPickerValue"] == result["afterAdd"][2]
+    assert set(result["bodyCellCounts"]) == {3}
     assert result["changed"] == ["gall", "Glab", result["afterAdd"][2]]
     assert "cols=gallGlab" in result["changedHash"]
     assert result["focusAfterChange"] == "1"
     assert result["afterBack"] == result["afterAdd"]
     assert result["afterForward"] == result["changed"]
-    assert result["hasAddAtMaximum"] is True
-    assert result["addDisabledAtMaximum"] is True
-    assert result["addTextAtMaximum"] == "Maximum 3 comparisons"
+    assert result["hasAddAtMaximum"] is False
+    assert result["raceHeaderText"] == "Race"
+    assert "Maximum" not in result["headTextAtMaximum"]
+    assert "Reference" not in result["headTextAtMaximum"]
     assert result["referenceHasPickerAtRest"] is False
     assert result["referenceHasTitle"] is True
     assert result["referenceHasRemove"] is False
@@ -441,9 +465,9 @@ def test_compare_client_swaps_the_reference_and_recomputes_relative_state(tmp_pa
             changedRows, changedTintedRows, changedStatus, changedHash, focusAfterChange,
             referenceAgreement, allSourcesAvailableAfterChange, afterBack, afterForward, copied,
             afterRemove: signals(),
-            referenceLabel: document.querySelector(
+            visibleReferenceLabel: Boolean(document.querySelector(
               '[data-column-signal="Genv"] .comparison-column-label',
-            ).textContent,
+            )),
             referenceRemove: Boolean(document.querySelector('[data-comparison-remove="0"]')),
           });
         })()
@@ -466,7 +490,7 @@ def test_compare_client_swaps_the_reference_and_recomputes_relative_state(tmp_pa
     assert result["afterForward"] == ["Genv", "strn", "stim"]
     assert result["copied"].endswith(result["changedHash"])
     assert result["afterRemove"] == ["Genv", "strn"]
-    assert result["referenceLabel"] == "Reference"
+    assert result["visibleReferenceLabel"] is False
     assert result["referenceRemove"] is False
 
     restored = _evaluate_in_chrome(
@@ -877,6 +901,78 @@ def test_compare_client_mobile_budget_and_focus_have_layout_evidence(tmp_path: P
     assert desktop["tableWidth"] <= desktop["wrapWidth"] + 1
     assert desktop["outerWidth"] == desktop["viewportWidth"]
     assert desktop["titlesFit"] is True
+
+
+def test_compare_client_mobile_add_action_is_compact_and_opens_the_new_picker(
+    tmp_path: Path,
+) -> None:
+    result = _evaluate_in_chrome(
+        _comparison_html_path(tmp_path),
+        """
+        (async () => {
+          const wait = () => new Promise((resolve) => setTimeout(resolve, 120));
+          document.querySelector('[data-comparison-remove="2"]').click();
+          await wait();
+          const add = document.querySelector('.comparison-column-add');
+          add.focus();
+          const focus = getComputedStyle(add);
+          const addRect = add.getBoundingClientRect();
+          const wrap = document.querySelector('[data-comparison-grid]');
+          const before = {
+            text: add.textContent,
+            ariaLabel: add.getAttribute('aria-label'),
+            title: add.title,
+            signal: add.closest('[data-column-signal]').dataset.columnSignal,
+            width: addRect.width,
+            height: addRect.height,
+            focusOutlineStyle: focus.outlineStyle,
+            focusOutlineWidth: focus.outlineWidth,
+            raceText: document.querySelector('[data-comparison-head] th').textContent,
+            headText: document.querySelector('[data-comparison-head]').innerText,
+            outerWidth: document.documentElement.scrollWidth,
+            viewportWidth: document.documentElement.clientWidth,
+            wrapScrollWidth: wrap.scrollWidth,
+            wrapClientWidth: wrap.clientWidth,
+          };
+          add.click();
+          await wait();
+          const picker = document.querySelector('[data-comparison-column="2"]');
+          return JSON.stringify({
+            before,
+            pickerFocused: document.activeElement === picker,
+            pickerValue: picker.value,
+            visibleSignals: [...document.querySelectorAll(
+              '[data-comparison-head] [data-column-signal]',
+            )].map((heading) => heading.dataset.columnSignal),
+            plusAtMaximum: Boolean(document.querySelector('.comparison-column-add')),
+            bodyCellCounts: [...document.querySelectorAll('[data-comparison-race]')]
+              .map((row) => row.querySelectorAll('.comparison-cell').length),
+            outerWidth: document.documentElement.scrollWidth,
+            viewportWidth: document.documentElement.clientWidth,
+          });
+        })()
+        """,
+        mobile_width=390,
+    )
+    assert result["before"]["text"] == "+"
+    assert result["before"]["ariaLabel"] == "Add comparison column"
+    assert result["before"]["title"] == "Add comparison column"
+    assert result["before"]["signal"] == "strn"
+    assert result["before"]["width"] >= 40
+    assert result["before"]["height"] >= 40
+    assert result["before"]["focusOutlineStyle"] != "none"
+    assert float(result["before"]["focusOutlineWidth"].removesuffix("px")) > 0
+    assert result["before"]["raceText"] == "Race"
+    assert "Reference" not in result["before"]["headText"]
+    assert "Maximum" not in result["before"]["headText"]
+    assert result["before"]["outerWidth"] == result["before"]["viewportWidth"]
+    assert result["before"]["wrapScrollWidth"] == result["before"]["wrapClientWidth"]
+    assert result["pickerFocused"] is True
+    assert result["pickerValue"] == result["visibleSignals"][2]
+    assert len(result["visibleSignals"]) == 3
+    assert result["plusAtMaximum"] is False
+    assert set(result["bodyCellCounts"]) == {3}
+    assert result["outerWidth"] == result["viewportWidth"]
 
 
 @pytest.mark.parametrize("mobile_width", [None, 390])

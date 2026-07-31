@@ -205,10 +205,17 @@ if (comparisonBindingsElement) {
 
   function restoreHeadFocus(target) {
     if (!target) return;
-    const selector = target.kind === 'add'
-      ? '.comparison-column-add'
+    const selector = target.kind === 'picker'
+      ? `[data-comparison-column="${target.index}"]`
       : `[data-comparison-title="${target.index}"]`;
     head.querySelector(selector)?.focus();
+  }
+
+  function nextUnusedSignal() {
+    const preferred = ['stim', 'Glab', 'Gdem', 'Genv', 'kcdm', 'sicl', 'wslc'];
+    return preferred.find((signal) => !state.columns.includes(signal))
+      ?? [...categories.map((item) => item.code), ...sources.keys()]
+        .find((signal) => !state.columns.includes(signal));
   }
 
   function renderHead(visible, focusTarget) {
@@ -220,21 +227,6 @@ if (comparisonBindingsElement) {
     raceLabel.className = 'comparison-column-label';
     raceLabel.textContent = 'Race';
     race.append(raceLabel);
-    const add = document.createElement('button');
-    add.type = 'button';
-    add.className = 'comparison-column-add';
-    add.disabled = state.columns.length >= 3;
-    add.textContent = add.disabled ? 'Maximum 3 comparisons' : 'Add comparison';
-    add.addEventListener('click', () => {
-      const preferred = ['stim', 'Glab', 'Gdem', 'Genv', 'kcdm', 'sicl', 'wslc'];
-      const available = preferred.find((signal) => !state.columns.includes(signal))
-        ?? [...categories.map((item) => item.code), ...sources.keys()]
-          .find((signal) => !state.columns.includes(signal));
-      if (!available) return;
-      state.columns = [...state.columns, available];
-      if (writeState()) render({ kind: 'title', index: state.columns.length - 1 });
-    });
-    race.append(add);
     row.append(race);
     visible.forEach((signal, index) => {
       const cell = document.createElement('th');
@@ -243,12 +235,13 @@ if (comparisonBindingsElement) {
       const heading = document.createElement('div');
       heading.className = 'comparison-column-heading';
       if (index === 0) heading.classList.add('comparison-column-reference');
-      const label = document.createElement('span');
-      label.className = 'comparison-column-label';
-      label.textContent = index === 0 ? 'Reference' : '\u00a0';
-      if (index !== 0) label.setAttribute('aria-hidden', 'true');
-      heading.append(label);
-      heading.append(titleFor(signal, index));
+      const title = titleFor(signal, index);
+      heading.append(title);
+      if (focusTarget?.kind === 'picker' && focusTarget.index === index) {
+        title.replaceWith(pickerFor(signal, index, title));
+      }
+      const actions = document.createElement('span');
+      actions.className = 'comparison-column-actions';
       if (index !== 0 && state.columns.length > 2) {
         const remove = document.createElement('button');
         remove.type = 'button';
@@ -262,8 +255,24 @@ if (comparisonBindingsElement) {
           const focusIndex = Math.min(index, state.columns.length - 1);
           if (writeState()) render({ kind: 'title', index: focusIndex });
         });
-        heading.append(remove);
+        actions.append(remove);
       }
+      if (index === state.columns.length - 1 && state.columns.length < 3) {
+        const add = document.createElement('button');
+        add.type = 'button';
+        add.className = 'comparison-column-add';
+        add.setAttribute('aria-label', 'Add comparison column');
+        add.title = 'Add comparison column';
+        add.textContent = '+';
+        add.addEventListener('click', () => {
+          const available = nextUnusedSignal();
+          if (!available) return;
+          state.columns = [...state.columns, available];
+          if (writeState()) render({ kind: 'picker', index: state.columns.length - 1 });
+        });
+        actions.append(add);
+      }
+      if (actions.childElementCount > 0) heading.append(actions);
       cell.append(heading);
       row.append(cell);
     });

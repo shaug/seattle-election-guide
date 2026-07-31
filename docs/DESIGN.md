@@ -253,7 +253,12 @@ then any sticky strip, then content.
   agreement, difference tint, and difference count is relative to that chosen
   reference. All sources is the published default, not an immutable baseline.
   Every column shows its full identity at rest and becomes an editor only while
-  the reader is changing it.
+  the reader is changing it. Position and accessible names carry the reference
+  semantics; the header does not repeat a visible “Reference” label. The Race
+  header contains only “Race.” When another column can be added, an icon-only
+  plus action lives in the last comparison header and opens the new column's
+  identity editor immediately. At capacity the plus disappears; capacity is
+  implicit and no maximum message or disabled control is shown.
 - **One quiet difference encoding.** A comparison cell carries its choice and
   an amber tint when it differs. Agreement recedes; the race identity carries
   the single visible and accessible “Differs” label. Shared conventions do not
