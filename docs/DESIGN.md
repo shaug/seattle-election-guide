@@ -132,9 +132,10 @@ while emoji render differently on every platform and can't be styled.
 - One masthead band and one footer implementation, shared by every page —
   never re-implemented per page.
 - The footer has exactly three jobs: exit ramps (the icon cluster and the
-  methodology link), provenance (the mono audit line), and closing the
-  frame. Content that *explains* the guide belongs to the About page, not
-  the footer.
+  methodology link), provenance, and closing the frame. It is one navy band
+  mirroring the masthead: provenance is a two-line whisper beside the brand,
+  becoming one full-width line below brand and actions under squeeze. Content
+  that *explains* the guide belongs to the About page, not the footer.
 - **Sticky strips are one family.** A persistent surface states current
   state *and carries its actions*: the guide's controls bar, the lens
   banner ("Counting 39 of 40 sources · Edit sources"), the Sources action

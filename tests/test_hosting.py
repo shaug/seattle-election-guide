@@ -103,13 +103,13 @@ def test_stage_pages_site_composes_verified_election_archive(tmp_path: Path) -> 
         'endorsement guides.">' in archive
     )
     assert "noindex" not in archive
-    footer_audit = (
-        f'Data last updated <a href="https://github.com/shaug/seattle-election-guide/commit/'
-        f'{COMMIT}">2026-07-20</a>. Site last updated <a href="https://github.com/shaug/'
-        f'seattle-election-guide/commit/{COMMIT}">2026-07-21</a>.'
+    assert '<div class="site-footer-audit"><span class="audit-data">' in archive
+    assert f'Data updated 2026-07-20 (<a href="/e/{CURRENT_ID}/release-manifest.json">' in archive
+    assert " · Panel " not in archive
+    assert (
+        f'Site updated 2026-07-21 (<a href="https://github.com/shaug/'
+        f'seattle-election-guide/commit/{COMMIT}">{COMMIT[:12]}</a>)' in archive
     )
-    assert f'<div class="site-footer-audit">{footer_audit}</div>' in archive
-    assert f">{COMMIT[:12]}</a>" not in archive
 
     about = (output / "about" / "index.html").read_text(encoding="utf-8")
     assert '<link rel="canonical" href="https://seattleelections.guide/about/">' in about
@@ -127,8 +127,9 @@ def test_stage_pages_site_composes_verified_election_archive(tmp_path: Path) -> 
     # replaced the old page-footer nav, which was the site's only link to the
     # guide archive; that link now lives in About's own body prose instead.
     assert '<a href="/e/">guide archive</a>' in about
-    assert f'<div class="site-footer-audit">{footer_audit}</div>' in about
-    assert f">{COMMIT[:12]}</a>" not in about
+    assert '<div class="site-footer-audit"><span class="audit-data">' in about
+    assert " · Panel " not in about
+    assert f">{COMMIT[:12]}</a>" in about
 
     headers = (output / "_headers").read_text(encoding="utf-8")
     assert "X-Frame-Options: DENY" in headers
@@ -144,6 +145,10 @@ def test_stage_pages_site_composes_verified_election_archive(tmp_path: Path) -> 
     assert r"Page not found \u2014 Seattle Elections Guide" in worker
     assert "site-band" in worker
     assert f'href=\\"/e/{CURRENT_ID}/\\"' in worker
+    assert "site-footer-band" in worker
+    assert "Data updated 2026-07-20" in worker
+    assert "Site updated 2026-07-21" in worker
+    assert " \\u00b7 Panel " not in worker
 
     deployment = json.loads((output / "deployment-manifest.json").read_text(encoding="utf-8"))
     assert deployment["schema_version"] == "2.0"
@@ -251,6 +256,10 @@ def test_generated_worker_enforces_route_contract(tmp_path: Path) -> None:
     # K48: a minimal branded 404 page, not the old bare text/plain response.
     assert "Page not found" in cast(str, results[6]["body"])
     assert f'href="/e/{CURRENT_ID}/"' in cast(str, results[6]["body"])
+    assert '<footer class="site-footer">' in cast(str, results[6]["body"])
+    assert "Data updated 2026-07-20" in cast(str, results[6]["body"])
+    assert "Site updated 2026-07-21" in cast(str, results[6]["body"])
+    assert " · Panel " not in cast(str, results[6]["body"])
     # The 404 still carries og:image (shared by every page), but stays out of
     # the summary_large_image unfurling pattern -- it is noindex and not
     # meant to be shared (issue 135's non-goal).
@@ -585,7 +594,9 @@ def test_about_page_share_button_uses_web_share_then_falls_back_to_copy(
             manifest,
             data_updated_date="2026-07-23",
             site_updated_date="2026-07-30",
+            data_version="data-version-123456",
             git_commit=COMMIT,
+            data_href=f"/e/{CURRENT_ID}/release-manifest.json",
         ),
         encoding="utf-8",
     )
@@ -656,7 +667,9 @@ def test_about_page_folds_in_every_fact_the_removed_methodology_panel_stated() -
         _current_election_manifest(),
         data_updated_date="2026-07-23",
         site_updated_date="2026-07-30",
+        data_version="data-version-123456",
         git_commit=COMMIT,
+        data_href=f"/e/{CURRENT_ID}/release-manifest.json",
     )
 
     # "Agreement, not a grade": neither the percentage nor the source count
@@ -781,13 +794,14 @@ def test_sources_page_renders_every_category_and_source_like_the_guide_tree(
         (view_model.metadata.data_as_of or view_model.metadata.generated_at).date().isoformat()
     )
     site_updated_date = view_model.metadata.generated_at.date().isoformat()
-    assert f">{data_updated_date}</a>. Site last updated" in html
-    assert f">{site_updated_date}</a>." in html
-    assert f"Source panel {view_model.metadata.source_panel_id} ·" in html
+    assert f"Data updated {data_updated_date} (" in html
+    assert f"Site updated {site_updated_date} (" in html
+    assert f"Panel {view_model.metadata.source_panel_id} (" in html
     assert (
-        f'<a href="/e/{view_model.metadata.election_id}/release-status.json">'
-        f"{view_model.metadata.source_panel_hash[:12]}</a>."
+        f'<a href="/e/{view_model.metadata.election_id}/release-manifest.json">'
+        f"{view_model.metadata.data_version[:12]}</a>"
     ) in html
+    assert f"({view_model.metadata.source_panel_hash[:12]})" in html
 
 
 def test_sources_page_action_strip_stays_visible_with_count_and_actions(tmp_path: Path) -> None:

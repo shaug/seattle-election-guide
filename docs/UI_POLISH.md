@@ -79,6 +79,8 @@ Item IDs match the original review discussion.
   panel hash to 12 chars (match Sources page). Rewrite the Sources-page footer
   prose: separate the audit identifiers (compact, mono) from a plain-English
   method note about equal weighting and split endorsements.
+  Superseded 2026-07-31 by #179: provenance now uses the shared two-line
+  data/panel + site grammar inside the single footer band.
 
 ### E. Microcopy
 - **E19 — Pluralization bug:** "1 endorsements · 0 split" in the
@@ -188,6 +190,8 @@ color/tokens (J), and chrome/microcopy (K) sections below.
      sentence from D18) move into the page body near what they explain; the
      shared footer carries only shared content. The hidden print
      source-directory and sr-only status regions are unaffected.
+  Superseded in anatomy 2026-07-31 by #179: the audit floor is folded into
+  the one navy band; it becomes one full-width provenance line under squeeze.
 
 ### G2. Lens & comparison correctness (round 4)
 - **H30 — One canonical co-endorsement order.** The server card label and the

@@ -524,7 +524,9 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert f'href="{configuration.project_url}" aria-label="Source and audit files on GitHub"' in (
         footer_html
     )
-    assert footer_html.count(configuration.project_url) == 3  # GitHub action + two date links
+    # Web band: GitHub action + code revision. The hidden detailed/print audit
+    # retains its two linked dates as a separate medium.
+    assert footer_html.count(configuration.project_url) == 4
     assert 'href="/about/" aria-label="How this works" title="How this works"' in footer_html
     assert 'class="site-footer-link"' not in footer_html
     assert "About &amp; FAQ" not in footer_html
@@ -533,9 +535,11 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "shareOrCopyLink" in html
     assert "wireFooterShare();" in html
     assert '<div class="site-footer-audit">' in footer_html
-    assert "Data last updated" in footer_html
-    assert "Site last updated" in footer_html
-    assert f">{view_model.metadata.git_commit[:12]}</a>" not in footer_html
+    assert "Data updated" in footer_html
+    assert "Site updated" in footer_html
+    assert f"Panel {view_model.metadata.source_panel_id}" in footer_html
+    assert f"({view_model.metadata.source_panel_hash[:12]})" in footer_html
+    assert f">{view_model.metadata.git_commit[:12]}</a>" in footer_html
     assert ">AGREES<" not in html
     assert ">DIFFERENT PICK<" not in html
     assert ">NO PICK<" not in html
@@ -3152,6 +3156,62 @@ def test_shared_footer_closes_short_viewport_and_follows_tall_content(tmp_path: 
     assert short["footerBottom"] == pytest.approx(short["viewport"], abs=1)
     assert short["pageBottom"] == pytest.approx(short["viewport"], abs=1)
     assert tall["footerBottom"] > tall["viewport"]
+
+
+def test_shared_footer_keeps_icons_on_row_one_and_provenance_full_width_on_squeeze(
+    tmp_path: Path,
+) -> None:
+    """Issue 179: provenance changes rows without pushing down the icon cluster."""
+    view_model = _personalization_enabled_view_model(tmp_path)
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    expression = """
+      (() => {
+        const band = document.querySelector('.site-footer-band');
+        const brand = band.querySelector('.site-footer-brand').getBoundingClientRect();
+        const audit = band.querySelector('.site-footer-audit').getBoundingClientRect();
+        const actions = band.querySelector('.site-footer-actions').getBoundingClientRect();
+        const join = band.querySelector('.audit-join');
+        const wordmark = band.querySelector('.site-footer-brand > span');
+        return JSON.stringify({
+          columns: getComputedStyle(band).gridTemplateColumns.split(' ').length,
+          brandTop: brand.top,
+          brandBottom: brand.bottom,
+          brandRight: brand.right,
+          actionsTop: actions.top,
+          actionsBottom: actions.bottom,
+          actionsLeft: actions.left,
+          auditTop: audit.top,
+          auditWidth: audit.width,
+          bandWidth: band.getBoundingClientRect().width,
+          joinDisplay: getComputedStyle(join).display,
+          wordmarkDisplay: getComputedStyle(wordmark).display,
+        });
+      })()
+    """
+
+    wide = _evaluate_in_chrome(html_path, expression, mobile_width=1200)
+    squeezed = _evaluate_in_chrome(html_path, expression, mobile_width=900)
+    phone = _evaluate_in_chrome(html_path, expression, mobile_width=390)
+    narrow_phone = _evaluate_in_chrome(html_path, expression, mobile_width=320)
+
+    assert wide["columns"] == 3
+    assert wide["auditTop"] < wide["brandBottom"]
+    assert wide["joinDisplay"] == "none"
+    assert squeezed["columns"] == 2
+    assert squeezed["actionsTop"] < squeezed["brandBottom"]
+    assert squeezed["actionsBottom"] > squeezed["brandTop"]
+    assert squeezed["auditTop"] >= squeezed["brandBottom"]
+    assert squeezed["auditWidth"] > squeezed["bandWidth"] * 0.85
+    assert squeezed["joinDisplay"] == "inline"
+    for narrow in (phone, narrow_phone):
+        assert narrow["columns"] == 2
+        assert narrow["wordmarkDisplay"] == "none"
+        assert narrow["brandRight"] <= narrow["actionsLeft"]
+        assert narrow["auditTop"] >= narrow["brandBottom"]
 
 
 def _tallying_selectable(item: PersonalizationCategory | PersonalizationSource) -> bool:

@@ -161,11 +161,6 @@
     </main>
     <footer class="site-footer">
       {% if site_footer_band %}{{ site_footer_band | safe }}{% endif %}
-      {% if site_footer_audit %}<div class="site-footer-audit">
-        {{ site_footer_audit | safe }}<br>
-        Source panel {{ guide.metadata.source_panel_id }} ·
-        <a href="{{ release_status_href }}">{{ guide.metadata.source_panel_hash[:12] }}</a>.
-      </div>{% endif %}
     </footer>
   </div>
 
