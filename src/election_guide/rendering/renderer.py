@@ -367,22 +367,7 @@ def render_comparison_document(
     source_labels = {
         source.code: source_names[source.id] for source in view_model.personalization.sources
     }
-    audited_source_count = sum(
-        source.panel_role != "comparison" and source.contribution_status == "contributing"
-        for source in view_model.sources
-    )
     race_by_id = {race.id: race for section in view_model.sections for race in section.races}
-    affirmative_states = {"endorsement", "multi_endorsement"}
-    source_coverage = {
-        source.code: sum(
-            any(
-                cell.source_code == source.code and cell.state in affirmative_states
-                for cell in race.cells
-            )
-            for race in view_model.personalization.races
-        )
-        for source in view_model.personalization.sources
-    }
     comparison_payload = {
         "schema_version": "1.0",
         "data_version": view_model.metadata.data_version,
@@ -390,8 +375,6 @@ def render_comparison_document(
         "personalization": view_model.personalization.model_dump(mode="json"),
         "comparisons": view_model.comparisons.model_dump(mode="json"),
         "source_labels": source_labels,
-        "source_coverage": source_coverage,
-        "audited_source_count": audited_source_count,
         "contested_race_ids": [
             display.race_id
             for display in view_model.comparisons.display_index
@@ -400,15 +383,15 @@ def render_comparison_document(
     }
     preset_fragments = [
         (
-            "The Stranger vs. The Times",
-            _comparison_fragment(view_model, ["strn", "stim"]),
+            "The Stranger and The Times",
+            _comparison_fragment(view_model, ["gall", "strn", "stim"]),
         ),
         (
-            "Labor vs. Environment vs. Dems",
-            _comparison_fragment(view_model, ["Glab", "Genv", "Gdem"]),
+            "Labor and environment",
+            _comparison_fragment(view_model, ["gall", "Glab", "Genv"]),
         ),
         (
-            "The Urbanist vs. everyone",
+            "The Urbanist",
             _comparison_fragment(view_model, ["gall", "urbn"]),
         ),
     ]
@@ -443,6 +426,7 @@ def render_comparison_document(
             row.differs for section in comparison_sections for row in section.rows
         ),
         comparison_payload=comparison_payload,
+        comparison_source_labels=source_labels,
         comparison_presets=preset_fragments,
         comparison_percentage_label=comparison_percentage_label,
     )

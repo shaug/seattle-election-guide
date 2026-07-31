@@ -27,35 +27,34 @@
     </header>
     <main id="comparison-main" class="comparison-main">
       <div class="comparison-intro">
-        <p class="eyebrow">{{ election_display_name }} · Sources</p>
+        <p class="eyebrow">{{ election_display_name }} · Compare</p>
         <h1>Compare sources</h1>
-        <p class="lede">See the audited consensus beside two editorial perspectives, race by race.
-          The page starts with all sources, The Stranger, and The Seattle Times.</p>
+        <p class="lede">Put any sources side by side and see where they agree — and where they don't.
+          You're starting with all sources, The Stranger, and The Seattle Times.</p>
         <div class="comparison-presets" role="group" aria-label="Suggested comparisons">
-          <span>Try:</span>
+          <span>Try a comparison</span>
           {% for label, fragment in comparison_presets %}<a href="#{{ fragment }}">{{ label }}</a>{% endfor %}
         </div>
       </div>
 
       <div class="comparison-controls" aria-label="Comparison controls">
-        <label>Show races
+        <label>Area
           <select data-comparison-section-filter>
             <option value="all">All Seattle ballot races</option>
             {% for section in comparison_sections %}<option value="{{ section.section_id }}">{{ section.section_label }}</option>{% endfor %}
           </select>
         </label>
-        <fieldset>
+        <fieldset class="comparison-race-filters segmented-control">
           <legend>Races</legend>
-          <button type="button" data-comparison-complete aria-pressed="true">Complete</button>
+          <button type="button" data-comparison-complete aria-pressed="true">All</button>
           <button type="button" data-comparison-contested aria-pressed="false">Contested</button>
+          <button type="button" data-comparison-differences aria-pressed="false">Differing</button>
+          <button type="button" data-comparison-contested-differences aria-pressed="false">Contested differences</button>
         </fieldset>
-        <fieldset>
-          <legend>Rows</legend>
-          <button type="button" data-comparison-all-rows aria-pressed="true">All</button>
-          <button type="button" data-comparison-differences aria-pressed="false">Differences only</button>
-        </fieldset>
-        <button type="button" data-comparison-copy>Copy link</button>
-        <span class="comparison-copy-status" role="status" aria-live="polite" data-comparison-copy-status></span>
+        <div class="comparison-share">
+          <button type="button" data-comparison-copy>Copy link</button>
+          <span class="comparison-copy-status" role="status" aria-live="polite" data-comparison-copy-status></span>
+        </div>
       </div>
       <p class="comparison-hidden-notice" role="status" aria-live="polite" data-comparison-hidden-notice hidden></p>
       <p class="comparison-control-status" role="status" aria-live="polite" aria-atomic="true"
@@ -64,15 +63,13 @@
 
       <div class="comparison-table-wrap" data-comparison-grid>
         <table class="comparison-table" data-comparison-table data-default-columns="gall,strn,stim">
-          <caption>Endorsement comparison by race</caption>
+          <caption class="visually-hidden">Endorsement comparison by race</caption>
           <thead data-comparison-head>
             <tr>
               <th scope="col">Race</th>
-              <th scope="col" data-column-signal="gall">All sources</th>
-              <th scope="col" data-column-signal="strn">The Stranger</th>
-              <th scope="col" data-column-signal="stim">The Seattle Times
-                <span class="comparison-only-badge">Comparison only</span>
-              </th>
+              <th scope="col" data-column-signal="gall"><span class="comparison-column-label">Reference</span><strong>All sources</strong></th>
+              <th scope="col" data-column-signal="strn"><span class="comparison-column-label" aria-hidden="true">&nbsp;</span><strong>{{ comparison_source_labels['strn'] }}</strong></th>
+              <th scope="col" data-column-signal="stim"><span class="comparison-column-label" aria-hidden="true">&nbsp;</span><strong>{{ comparison_source_labels['stim'] }}</strong></th>
             </tr>
           </thead>
           {% for section in comparison_sections %}
@@ -84,10 +81,11 @@
             <tr data-comparison-race="{{ row.race_id }}" data-row-differs="{{ row.differs | lower }}">
               <th scope="row" class="comparison-race">
                 <a href="{{ guide_path }}#race-{{ row.race_id }}">{{ row.race_label }}</a>
-                {% if row.differs %}<span class="comparison-differs-chip">≠ differs</span>{% endif %}
+                {% if row.differs %}<span class="comparison-race-differs">Differs</span>{% endif %}
               </th>
               {% for cell in row.cells %}
               <td class="comparison-cell" data-column-signal="{{ cell.signal }}"
+                data-column-label="{% if cell.signal == 'gall' %}All sources{% else %}{{ comparison_source_labels[cell.signal] }}{% endif %}"
                 data-cell-kind="{{ cell.kind }}"
                 data-agreement="{{ cell.agreement }}"
                 data-leading-pick-ids='{{ cell.leading_pick_ids | list | tojson }}'
@@ -96,15 +94,8 @@
                 <span class="comparison-cell-picks">
                   {% if cell.kind == 'outside_scope' %}Outside district
                   {% elif cell.choice_labels %}{{ cell.choice_labels | join(' / ') }}
-                {% else %}&mdash;{% endif %}
+                {% else %}<span title="No endorsement published">&mdash;</span>{% endif %}
                 </span>
-                {% if cell.agreement == 'agree' %}
-                <span class="comparison-cell-signal" aria-hidden="true">Agrees</span>
-                <span class="visually-hidden">Agrees with baseline.</span>
-                {% elif cell.agreement == 'differ' %}
-                <span class="comparison-cell-signal" aria-hidden="true">≠ Differs</span>
-                <span class="visually-hidden">Differs from baseline.</span>
-                {% endif %}
                 {% if cell.kind == 'baseline' and cell.share is not none %}
                 <span class="comparison-cell-meta">{{ comparison_percentage_label(cell.share) }} ·
                   {{ cell.explicit_source_count }} sources</span>
@@ -118,20 +109,6 @@
         </table>
       </div>
 
-      <div class="comparison-legend" aria-label="Legend">
-        <span><b>All sources</b> audited consensus</span>
-        <span><b>Agrees</b> leading picks overlap the baseline</span>
-        <span><b>≠ Differs</b> leading picks do not overlap the baseline</span>
-        <span><b>&mdash;</b> no endorsement published</span>
-        <span><b>Outside district</b> source is not eligible for that legislative race</span>
-        <span><b>Name / name</b> co-endorsement or tie</span>
-      </div>
-      <aside class="comparison-method">
-        <p>Each organization has equal weight; multi-candidate endorsements split one point.
-          No endorsement and missing coverage stay visible but do not enter the percentage.</p>
-        <p>The Seattle Times is shown for comparison; it is never counted toward any score.</p>
-        <p><strong>Comparison only.</strong> Shown for comparison; never counted toward the scores.</p>
-      </aside>
     </main>
     <footer class="site-footer">
       {% if site_footer_band %}{{ site_footer_band | safe }}{% endif %}

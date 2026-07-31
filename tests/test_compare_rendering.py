@@ -98,17 +98,19 @@ def test_compare_document_server_renders_default_contract_snapshot() -> None:
     assert (
         rendered.count('data-column-signal="stim"') == len(view_model.comparisons.display_index) + 1
     )
-    assert "Shown for comparison; never counted toward the scores." in rendered
-    assert (
-        "Each organization has equal weight; multi-candidate endorsements split one point."
-        in rendered
-    )
+    assert "Put any sources side by side and see where they agree" in rendered
+    assert "Audited baseline" not in rendered
+    assert 'class="comparison-only-badge"' not in rendered
+    assert "Each organization has equal weight" not in rendered
+    assert 'class="comparison-legend"' not in rendered
+    assert 'class="comparison-method"' not in rendered
+    assert "≠" not in rendered
 
     table = re.search(r'<table class="comparison-table".*?</table>', rendered, flags=re.DOTALL)
     assert table is not None
     normalized = re.sub(r"\s+", " ", unescape(table.group(0))).strip()
     assert hashlib.sha256(normalized.encode()).hexdigest() == (
-        "9422da29b50aa452268e6dc35e3a75b2655954186fbbeec1444ede453f91c9c0"
+        "b861d1df30281e01f3b89ab4580b73544fde479371412e5af6854a3fda3f2a9f"
     )
 
     payload_match = re.search(
@@ -208,12 +210,13 @@ def test_compare_client_enforces_picker_bounds_and_history(tmp_path: Path) -> No
         """
         (async () => {
           const wait = () => new Promise((resolve) => setTimeout(resolve, 120));
-          const signals = () => [...document.querySelectorAll('[data-comparison-column]')]
-            .map((picker) => picker.value);
+          const signals = () => [...document.querySelectorAll(
+            '[data-comparison-head] [data-column-signal]',
+          )].map((heading) => heading.dataset.columnSignal);
           const initial = signals();
-          const firstPicker = document.querySelector('[data-comparison-column="0"]');
+          const firstPicker = document.querySelector('[data-comparison-column="1"]');
           const duplicateDisabled = [...firstPicker.options]
-            .find((item) => item.value === initial[1]).disabled;
+            .find((item) => item.value === initial[2]).disabled;
           const multiCategoryCopies = [...firstPicker.options]
             .filter((item) => item.value === 'wsto').length;
 
@@ -244,6 +247,10 @@ def test_compare_client_enforces_picker_bounds_and_history(tmp_path: Path) -> No
             removeButtonsAtMinimum, afterAdd, previous, changed, changedHash,
             afterBack, afterForward,
             hasAddAtMaximum: Boolean(document.querySelector('.comparison-column-add')),
+            addDisabledAtMaximum: document.querySelector('.comparison-column-add').disabled,
+            addTextAtMaximum: document.querySelector('.comparison-column-add').textContent,
+            baselineHasPicker: Boolean(document.querySelector('[data-comparison-column="0"]')),
+            baselineHasRemove: Boolean(document.querySelector('[data-comparison-remove="0"]')),
           });
         })()
         """,
@@ -259,7 +266,49 @@ def test_compare_client_enforces_picker_bounds_and_history(tmp_path: Path) -> No
     assert "cols=gallGlab" in result["changedHash"]
     assert result["afterBack"] == result["afterAdd"]
     assert result["afterForward"] == result["changed"]
-    assert result["hasAddAtMaximum"] is False
+    assert result["hasAddAtMaximum"] is True
+    assert result["addDisabledAtMaximum"] is True
+    assert result["addTextAtMaximum"] == "Maximum 3 comparisons"
+    assert result["baselineHasPicker"] is False
+    assert result["baselineHasRemove"] is False
+
+
+def test_compare_client_repairs_legacy_fragments_to_the_fixed_baseline(tmp_path: Path) -> None:
+    html_path = _comparison_html_path(tmp_path)
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          const wait = () => new Promise((resolve) => setTimeout(resolve, 120));
+          const preset = document.querySelector('.comparison-presets a');
+          const parameters = new URLSearchParams(preset.hash.slice(1));
+          parameters.set('cols', 'strnstim');
+          location.hash = parameters.toString();
+          await wait();
+          const headings = [...document.querySelectorAll(
+            '[data-comparison-head] [data-column-signal]',
+          )].map((heading) => heading.dataset.columnSignal);
+          const baseline = document.querySelector(
+            '[data-comparison-race] [data-column-signal="gall"]',
+          );
+          return JSON.stringify({
+            headings,
+            baselineAgreement: baseline.dataset.agreement,
+            baselineTitle: document.querySelector(
+              '[data-column-signal="gall"] .comparison-column-title',
+            ).textContent,
+            removeTargets: [...document.querySelectorAll('[data-comparison-remove]')]
+              .map((button) => button.dataset.comparisonRemove),
+          });
+        })()
+        """,
+    )
+    assert result == {
+        "headings": ["gall", "strn", "stim"],
+        "baselineAgreement": "baseline",
+        "baselineTitle": "All sources",
+        "removeTargets": ["1", "2"],
+    }
 
 
 def test_compare_client_presets_filters_and_copy_link_round_trip(tmp_path: Path) -> None:
@@ -273,14 +322,15 @@ def test_compare_client_presets_filters_and_copy_link_round_trip(tmp_path: Path)
           const presetHref = preset.getAttribute('href');
           preset.click();
           await wait();
-          const presetColumns = [...document.querySelectorAll('[data-comparison-column]')]
-            .map((picker) => picker.value);
+          const presetColumns = [...document.querySelectorAll(
+            '[data-comparison-head] [data-column-signal]',
+          )].map((heading) => heading.dataset.columnSignal);
           const historyBeforeFilters = history.length;
           document.querySelector('[data-comparison-contested]').click();
           await wait();
           const rowsBeforeDifferences = document
             .querySelectorAll('[data-comparison-race]').length;
-          document.querySelector('[data-comparison-differences]').click();
+          document.querySelector('[data-comparison-contested-differences]').click();
           await wait();
           const historyAfterFilters = history.length;
           const rowCount = document.querySelectorAll('[data-comparison-race]').length;
@@ -297,14 +347,14 @@ def test_compare_client_presets_filters_and_copy_link_round_trip(tmp_path: Path)
               rowsBeforeDifferences, historyBeforeFilters, historyAfterFilters,
               status: document.querySelector('[data-comparison-status]').textContent,
               copyStatus: document.querySelector('[data-comparison-copy-status]').textContent,
-              differencesPressed: document.querySelector('[data-comparison-differences]')
+              differencesPressed: document.querySelector('[data-comparison-contested-differences]')
               .getAttribute('aria-pressed'),
           });
         })()
         """,
     )
-    assert result["presetHref"].startswith("#cmp=1&cols=strnstim&")
-    assert result["presetColumns"] == ["strn", "stim"]
+    assert result["presetHref"].startswith("#cmp=1&cols=gallstrnstim&")
+    assert result["presetColumns"] == ["gall", "strn", "stim"]
     assert "races=contested" in result["hash"]
     assert "diff=1" in result["hash"]
     assert result["rowCount"] > 0
@@ -322,25 +372,29 @@ def test_compare_client_labels_comparison_category_truthfully(tmp_path: Path) ->
         html_path,
         """
         (() => {
-          const picker = document.querySelector('[data-comparison-column="0"]');
+          const picker = document.querySelector('[data-comparison-column="1"]');
           const comparisonCategory = [...picker.options]
             .find((item) => item.value === 'Gcmp');
           picker.value = 'Gcmp';
           picker.dispatchEvent(new Event('change', { bubbles: true }));
-          const meta = document.querySelector('.comparison-column-meta');
-          const gall = [...document.querySelectorAll('[data-comparison-column="1"] option')]
-            .find((item) => item.value === 'gall');
+          const meta = document.querySelector(
+            '[data-column-signal="Gcmp"] .comparison-column-meta',
+          );
           return JSON.stringify({
             optionLabel: comparisonCategory.textContent,
             coverage: meta.textContent,
-            allSourcesDisabledInSibling: gall.disabled,
+            baselineTitle: document.querySelector(
+              '[data-column-signal="gall"] .comparison-column-title',
+            ).textContent,
+            baselinePicker: Boolean(document.querySelector('[data-comparison-column="0"]')),
           });
         })()
         """,
     )
     assert result["optionLabel"].endswith("(Comparison only)")
-    assert result["coverage"] == "Comparison only · never counted"
-    assert result["allSourcesDisabledInSibling"] is False
+    assert re.fullmatch(r"Endorsed in \d+ races", result["coverage"])
+    assert result["baselineTitle"] == "All sources"
+    assert result["baselinePicker"] is False
 
 
 def test_compare_client_mobile_budget_and_focus_have_layout_evidence(tmp_path: Path) -> None:
@@ -349,13 +403,24 @@ def test_compare_client_mobile_budget_and_focus_have_layout_evidence(tmp_path: P
         html_path,
         """
         (() => {
-          const pickers = [...document.querySelectorAll('[data-comparison-column]')];
+          let pickers = [...document.querySelectorAll('[data-comparison-column]')];
+          pickers[0].value = 'eccd';
+          pickers[0].dispatchEvent(new Event('change', { bubbles: true }));
+          pickers = [...document.querySelectorAll('[data-comparison-column]')];
           pickers[0].focus();
           const focus = getComputedStyle(pickers[0]);
-          const table = document.querySelector('[data-comparison-table]').getBoundingClientRect();
-          const wrap = document.querySelector('[data-comparison-grid]').getBoundingClientRect();
+          const tableElement = document.querySelector('[data-comparison-table]');
+          const wrapElement = document.querySelector('[data-comparison-grid]');
+          const table = tableElement.getBoundingClientRect();
+          const wrap = wrapElement.getBoundingClientRect();
+          const titles = [...document.querySelectorAll('.comparison-column-title')];
+          const remove = document.querySelector('[data-comparison-remove="1"]');
+          const firstRace = document.querySelector('[data-comparison-race]');
+          const firstRaceCells = [...firstRace.querySelectorAll('.comparison-cell')];
           return JSON.stringify({
-            visibleSignals: pickers.map((picker) => picker.value),
+            visibleSignals: [...document.querySelectorAll(
+              '[data-comparison-head] [data-column-signal]',
+            )].map((heading) => heading.dataset.columnSignal),
             notice: document.querySelector('[data-comparison-hidden-notice]').textContent,
             noticeVisible: !document.querySelector('[data-comparison-hidden-notice]').hidden,
             configured: new URLSearchParams(location.hash.slice(1)).get('cols'),
@@ -363,6 +428,20 @@ def test_compare_client_mobile_budget_and_focus_have_layout_evidence(tmp_path: P
             focusOutlineWidth: focus.outlineWidth,
             tableWidth: table.width,
             wrapWidth: wrap.width,
+            outerWidth: document.documentElement.scrollWidth,
+            viewportWidth: document.documentElement.clientWidth,
+            wrapScrollWidth: wrapElement.scrollWidth,
+            wrapClientWidth: wrapElement.clientWidth,
+            wrapOverflowX: getComputedStyle(wrapElement).overflowX,
+            rowDisplay: getComputedStyle(firstRace).display,
+            cellDisplay: getComputedStyle(firstRaceCells[0]).display,
+            cellLabels: firstRaceCells.map((cell) => cell.dataset.columnLabel),
+            pickerLabels: pickers.map((picker) => picker.getAttribute('aria-label')),
+            copyTag: document.querySelector('[data-comparison-copy]').tagName,
+            titlesFit: titles.every((title) => title.scrollWidth <= title.clientWidth),
+            removeTitle: remove.title,
+            removeWidth: remove.getBoundingClientRect().width,
+            removeHeight: remove.getBoundingClientRect().height,
           });
         })()
         """,
@@ -371,22 +450,76 @@ def test_compare_client_mobile_budget_and_focus_have_layout_evidence(tmp_path: P
     desktop = _evaluate_in_chrome(
         html_path,
         """
-        (() => JSON.stringify({
-          visibleSignals: [...document.querySelectorAll('[data-comparison-column]')]
-            .map((picker) => picker.value),
-          noticeVisible: !document.querySelector('[data-comparison-hidden-notice]').hidden,
-        }))()
+        (() => {
+          let pickers = [...document.querySelectorAll('[data-comparison-column]')];
+          pickers[0].value = 'eccd';
+          pickers[0].dispatchEvent(new Event('change', { bubbles: true }));
+          pickers = [...document.querySelectorAll('[data-comparison-column]')];
+          const pickerTops = pickers.map((picker) => picker.getBoundingClientRect().top);
+          const wrap = document.querySelector('[data-comparison-grid]');
+          const table = document.querySelector('[data-comparison-table]');
+          return JSON.stringify({
+            visibleSignals: [...document.querySelectorAll(
+              '[data-comparison-head] [data-column-signal]',
+            )].map((heading) => heading.dataset.columnSignal),
+            noticeVisible: !document.querySelector('[data-comparison-hidden-notice]').hidden,
+            pickerTopSpread: Math.max(...pickerTops) - Math.min(...pickerTops),
+            stickyHead: getComputedStyle(
+              document.querySelector('[data-comparison-head] th'),
+            ).position,
+            wrapOverflowX: getComputedStyle(wrap).overflowX,
+            wrapScrollWidth: wrap.scrollWidth,
+            wrapClientWidth: wrap.clientWidth,
+            tableWidth: table.getBoundingClientRect().width,
+            wrapWidth: wrap.getBoundingClientRect().width,
+            outerWidth: document.documentElement.scrollWidth,
+            viewportWidth: document.documentElement.clientWidth,
+            titlesFit: [...document.querySelectorAll('.comparison-column-title')]
+              .every((title) => title.scrollWidth <= title.clientWidth),
+          });
+        })()
         """,
     )
-    assert mobile["visibleSignals"] == ["gall", "strn"]
-    assert mobile["noticeVisible"] is True
-    assert "1 configured column hidden" in mobile["notice"]
-    assert mobile["configured"] is None
+    assert mobile["visibleSignals"] == ["gall", "eccd", "stim"]
+    assert mobile["noticeVisible"] is False
+    assert mobile["notice"] == ""
+    assert mobile["configured"] == "galleccdstim"
     assert mobile["focusOutlineStyle"] != "none"
     assert float(mobile["focusOutlineWidth"].removesuffix("px")) > 0
-    assert mobile["tableWidth"] >= mobile["wrapWidth"]
-    assert desktop["visibleSignals"] == ["gall", "strn", "stim"]
+    assert mobile["tableWidth"] <= mobile["wrapWidth"] + 1
+    assert mobile["outerWidth"] == mobile["viewportWidth"]
+    assert mobile["wrapScrollWidth"] == mobile["wrapClientWidth"]
+    assert mobile["wrapOverflowX"] == "visible"
+    assert mobile["rowDisplay"] == "block"
+    assert mobile["cellDisplay"] == "grid"
+    assert mobile["cellLabels"] == [
+        "All sources",
+        "Environment and Climate Caucus of the Washington State Democratic Party",
+        "The Seattle Times Editorial Board",
+    ]
+    assert mobile["pickerLabels"] == [
+        (
+            "Change Environment and Climate Caucus of the Washington State "
+            "Democratic Party comparison"
+        ),
+        "Change The Seattle Times Editorial Board comparison",
+    ]
+    assert mobile["copyTag"] == "BUTTON"
+    assert mobile["titlesFit"] is True
+    assert mobile["removeTitle"] == (
+        "Remove Environment and Climate Caucus of the Washington State Democratic Party"
+    )
+    assert mobile["removeWidth"] >= 40
+    assert mobile["removeHeight"] >= 40
+    assert desktop["visibleSignals"] == ["gall", "eccd", "stim"]
     assert desktop["noticeVisible"] is False
+    assert desktop["pickerTopSpread"] < 1
+    assert desktop["stickyHead"] == "sticky"
+    assert desktop["wrapOverflowX"] == "visible"
+    assert desktop["wrapScrollWidth"] == desktop["wrapClientWidth"]
+    assert desktop["tableWidth"] <= desktop["wrapWidth"] + 1
+    assert desktop["outerWidth"] == desktop["viewportWidth"]
+    assert desktop["titlesFit"] is True
 
 
 @pytest.mark.parametrize("mobile_width", [None, 390])
@@ -427,15 +560,13 @@ def test_default_differences_match_fixed_oracle_with_visual_and_accessible_signa
               state: agree.dataset.agreement,
               background: getComputedStyle(agree).backgroundColor,
               token: tokenBackground('--tone-agree-bg'),
-              visible: agree.querySelector('.comparison-cell-signal').textContent,
-              accessible: agree.querySelector('.visually-hidden').textContent,
+              hasSignal: Boolean(agree.querySelector('.comparison-cell-signal')),
             },
             differ: {
               state: differ.dataset.agreement,
               background: getComputedStyle(differ).backgroundColor,
               token: tokenBackground('--tone-differ-bg'),
-              visible: differ.querySelector('.comparison-cell-signal').textContent,
-              accessible: differ.querySelector('.visually-hidden').textContent,
+              hasSignal: Boolean(differ.querySelector('.comparison-cell-signal')),
             },
             baseline: {
               state: baseline.dataset.agreement,
@@ -459,9 +590,11 @@ def test_default_differences_match_fixed_oracle_with_visual_and_accessible_signa
             status: document.querySelector('[data-comparison-status]').textContent,
             statusLive: document.querySelector('[data-comparison-status]')
               .getAttribute('aria-live'),
-            visibleSignals: [...document.querySelectorAll('[data-comparison-column]')]
-              .map((picker) => picker.value),
+            visibleSignals: [...document.querySelectorAll(
+              '[data-comparison-head] [data-column-signal]',
+            )].map((heading) => heading.dataset.columnSignal),
             hiddenNotice: document.querySelector('[data-comparison-hidden-notice]').textContent,
+            differsLabel: senator.querySelector('.comparison-race-differs').textContent,
             senatorStillShown: Boolean(document.querySelector(
               '[data-comparison-race="ld-32-state-senator"]',
             )),
@@ -479,15 +612,13 @@ def test_default_differences_match_fixed_oracle_with_visual_and_accessible_signa
         "state": "agree",
         "background": result["agree"]["token"],
         "token": result["agree"]["token"],
-        "visible": "Agrees",
-        "accessible": "Agrees with baseline.",
+        "hasSignal": False,
     }
     assert result["differ"] == {
         "state": "differ",
         "background": result["differ"]["token"],
         "token": result["differ"]["token"],
-        "visible": "≠ Differs",
-        "accessible": "Differs from baseline.",
+        "hasSignal": False,
     }
     assert result["baseline"]["state"] == "baseline"
     assert result["baseline"]["background"] not in {
@@ -501,12 +632,10 @@ def test_default_differences_match_fixed_oracle_with_visual_and_accessible_signa
         result["differ"]["token"],
     }
     assert result["blank"]["hasSignal"] is False
-    if mobile_width is None:
-        assert result["visibleSignals"] == ["gall", "strn", "stim"]
-    else:
-        assert result["visibleSignals"] == ["gall", "strn"]
-        assert "remains configured and counted" in result["hiddenNotice"]
-        assert result["senatorStillShown"] is True
+    assert result["visibleSignals"] == ["gall", "strn", "stim"]
+    assert result["hiddenNotice"] == ""
+    assert result["senatorStillShown"] is True
+    assert result["differsLabel"] == "Differs"
 
 
 def test_coendorsement_intersection_and_blank_are_not_differences(tmp_path: Path) -> None:

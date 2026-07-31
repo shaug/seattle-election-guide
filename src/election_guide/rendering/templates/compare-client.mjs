@@ -20,7 +20,6 @@ if (comparisonBindingsElement) {
   const sectionFilter = document.querySelector('[data-comparison-section-filter]');
   const contestedIds = new Set(payload.contested_race_ids);
   const races = new Map(personalization.races.map((race) => [race.race_id, race]));
-  const displays = new Map(comparisons.display_index.map((display) => [display.race_id, display]));
   const categories = personalization.categories.filter((category) => category.selectable);
   const sources = new Map(
     personalization.sources.filter((source) => source.selectable).map((source) => [source.code, source]),
@@ -37,16 +36,12 @@ if (comparisonBindingsElement) {
     return category?.panel_role === 'comparison' || sources.get(signal)?.panel_role === 'comparison';
   };
   const coverageFor = (signal) => {
-    if (signal === ALL_SOURCES_TOKEN) {
-      return `Audited baseline · ${payload.audited_source_count} sources`;
-    }
-    const category = categories.find((item) => item.code === signal);
-    if (category?.panel_role === 'comparison') return 'Comparison only · never counted';
-    if (category) return `${category.member_source_codes.length} sources, equal weight`;
-    const count = payload.source_coverage[signal] ?? 0;
-    return isComparison(signal)
-      ? `Comparison only · endorsed in ${count} races`
-      : `Endorsed in ${count} races`;
+    if (signal === ALL_SOURCES_TOKEN) return '';
+    const count = comparisons.display_index.filter((display) => {
+      const cell = engine.resolveColumn(signal, races.get(display.race_id));
+      return (cell.leadingPickIds?.length ?? 0) > 0;
+    }).length;
+    return `Endorsed in ${count} races`;
   };
   const candidateLabels = (display) => ({
     ...display.candidate_names,
@@ -66,9 +61,16 @@ if (comparisonBindingsElement) {
     section: 'all',
   };
 
+  function withFixedBaseline(columns) {
+    return [ALL_SOURCES_TOKEN, ...columns.filter((signal) => signal !== ALL_SOURCES_TOKEN)].slice(0, 3);
+  }
+
   function stateFromLocation() {
     const decoded = decodeCompareFragment(window.location.hash, context);
-    if (decoded.status === 'valid') state = { ...decoded.state };
+    if (decoded.status === 'valid') {
+      state = { ...decoded.state, columns: withFixedBaseline(decoded.state.columns) };
+      if (state.columns.length < 2) state.columns = [...payload.default_columns];
+    }
     else if (decoded.status === 'absent') {
       state = {
         columns: [...payload.default_columns],
@@ -101,9 +103,8 @@ if (comparisonBindingsElement) {
     const select = document.createElement('select');
     select.className = 'comparison-column-picker';
     select.dataset.comparisonColumn = String(index);
-    select.setAttribute('aria-label', `Column ${index + 1} signal`);
+    select.setAttribute('aria-label', `Change ${labelFor(signal)} comparison`);
     const used = new Set(state.columns);
-    select.append(option(ALL_SOURCES_TOKEN, 'All sources', signal, used));
 
     const categoryGroup = document.createElement('optgroup');
     categoryGroup.label = 'Categories';
@@ -137,16 +138,30 @@ if (comparisonBindingsElement) {
     return select;
   }
 
-  function visibleColumns() {
-    return state.columns.slice(0, window.matchMedia('(max-width: 720px)').matches ? 2 : 3);
-  }
-
   function renderHead(visible) {
     head.replaceChildren();
     const row = document.createElement('tr');
     const race = document.createElement('th');
     race.scope = 'col';
-    race.textContent = 'Race';
+    const raceLabel = document.createElement('span');
+    raceLabel.className = 'comparison-column-label';
+    raceLabel.textContent = 'Race';
+    race.append(raceLabel);
+    const add = document.createElement('button');
+    add.type = 'button';
+    add.className = 'comparison-column-add';
+    add.disabled = state.columns.length >= 3;
+    add.textContent = add.disabled ? 'Maximum 3 comparisons' : 'Add comparison';
+    add.addEventListener('click', () => {
+      const preferred = ['stim', 'Glab', 'Gdem', 'Genv', 'kcdm', 'sicl', 'wslc'];
+      const available = preferred.find((signal) => !state.columns.includes(signal))
+        ?? [...categories.map((item) => item.code), ...sources.keys()]
+          .find((signal) => !state.columns.includes(signal));
+      if (!available) return;
+      state.columns = [...state.columns, available];
+      if (writeState()) render();
+    });
+    race.append(add);
     row.append(race);
     visible.forEach((signal, index) => {
       const cell = document.createElement('th');
@@ -154,29 +169,39 @@ if (comparisonBindingsElement) {
       cell.dataset.columnSignal = signal;
       const heading = document.createElement('div');
       heading.className = 'comparison-column-heading';
+      const label = document.createElement('span');
+      label.className = 'comparison-column-label';
+      label.textContent = index === 0 ? 'Reference' : '\u00a0';
+      if (index !== 0) label.setAttribute('aria-hidden', 'true');
+      heading.append(label);
+      const title = document.createElement('strong');
+      title.className = 'comparison-column-title';
+      title.textContent = labelFor(signal);
+      heading.append(title);
       if (index === 0) {
-        const badge = document.createElement('span');
-        badge.className = 'comparison-baseline-badge';
-        badge.textContent = 'Baseline';
-        heading.append(badge);
+        const spacer = document.createElement('span');
+        spacer.className = 'comparison-column-heading-spacer';
+        spacer.setAttribute('aria-hidden', 'true');
+        heading.append(spacer);
       }
       const pickerRow = document.createElement('div');
       pickerRow.className = 'comparison-column-heading-row';
-      pickerRow.append(pickerFor(signal, index));
-      if (state.columns.length > 2) {
+      if (index !== 0) pickerRow.append(pickerFor(signal, index));
+      if (index !== 0 && state.columns.length > 2) {
         const remove = document.createElement('button');
         remove.type = 'button';
         remove.className = 'comparison-column-remove';
         remove.dataset.comparisonRemove = String(index);
-        remove.setAttribute('aria-label', `Remove ${labelFor(signal)} column`);
-        remove.textContent = 'Remove';
+        remove.setAttribute('aria-label', `Remove ${labelFor(signal)}`);
+        remove.title = `Remove ${labelFor(signal)}`;
+        remove.textContent = '×';
         remove.addEventListener('click', () => {
           state.columns = state.columns.filter((_, columnIndex) => columnIndex !== index);
           if (writeState()) render();
         });
         pickerRow.append(remove);
       }
-      heading.append(pickerRow);
+      if (index !== 0) heading.append(pickerRow);
       const meta = document.createElement('span');
       meta.className = 'comparison-column-meta';
       meta.textContent = coverageFor(signal);
@@ -184,26 +209,13 @@ if (comparisonBindingsElement) {
       cell.append(heading);
       row.append(cell);
     });
-    if (state.columns.length < 3) {
-      const cell = document.createElement('th');
-      cell.scope = 'col';
-      const add = document.createElement('button');
-      add.type = 'button';
-      add.className = 'comparison-column-add';
-      add.textContent = 'Add column';
-      add.addEventListener('click', () => {
-        const preferred = ['stim', 'Glab', 'Gdem', 'Genv', 'kcdm', 'sicl', 'wslc'];
-        const available = preferred.find((signal) => !state.columns.includes(signal))
-          ?? [ALL_SOURCES_TOKEN, ...categories.map((item) => item.code), ...sources.keys()]
-            .find((signal) => !state.columns.includes(signal));
-        if (!available) return;
-        state.columns = [...state.columns, available];
-        if (writeState()) render();
-      });
-      cell.append(add);
-      row.append(cell);
-    }
     head.append(row);
+    head.style.removeProperty('--comparison-title-height');
+    const titleHeight = Math.max(
+      ...[...head.querySelectorAll('.comparison-column-title')]
+        .map((title) => title.scrollHeight),
+    );
+    head.style.setProperty('--comparison-title-height', `${titleHeight}px`);
   }
 
   function cellFor(signal, cell, display, baseline, isBaseline) {
@@ -211,6 +223,7 @@ if (comparisonBindingsElement) {
     const element = document.createElement('td');
     element.className = 'comparison-cell';
     element.dataset.columnSignal = signal;
+    element.dataset.columnLabel = labelFor(signal);
     element.dataset.cellKind = cell.kind;
     const agreement = isBaseline ? 'baseline' : cellAgreement(cell, baseline);
     element.dataset.agreement = agreement;
@@ -219,20 +232,8 @@ if (comparisonBindingsElement) {
     picks.textContent = cell.kind === 'outside_scope'
       ? 'Outside district'
       : (cell.leadingPickIds?.map((id) => labels[id]).join(' / ') || '—');
+    if (cell.kind === 'blank') picks.title = 'No endorsement published';
     element.append(picks);
-    if (agreement === 'agree' || agreement === 'differ') {
-      const visibleSignal = document.createElement('span');
-      visibleSignal.className = 'comparison-cell-signal';
-      visibleSignal.setAttribute('aria-hidden', 'true');
-      visibleSignal.textContent = agreement === 'agree' ? 'Agrees' : '≠ Differs';
-      element.append(visibleSignal);
-      const accessibleSignal = document.createElement('span');
-      accessibleSignal.className = 'visually-hidden';
-      accessibleSignal.textContent = agreement === 'agree'
-        ? 'Agrees with baseline.'
-        : 'Differs from baseline.';
-      element.append(accessibleSignal);
-    }
     if (cell.share != null) {
       const meta = document.createElement('span');
       meta.className = 'comparison-cell-meta';
@@ -272,7 +273,7 @@ if (comparisonBindingsElement) {
       heading.className = 'comparison-section-heading';
       const headingCell = document.createElement('th');
       headingCell.scope = 'rowgroup';
-      headingCell.colSpan = visible.length + 1 + (state.columns.length < 3 ? 1 : 0);
+      headingCell.colSpan = visible.length + 1;
       headingCell.textContent = section.label;
       heading.append(headingCell);
       body.append(heading);
@@ -290,17 +291,16 @@ if (comparisonBindingsElement) {
         link.textContent = display.race_label;
         raceHeading.append(link);
         if (differs) {
-          const chip = document.createElement('span');
-          chip.className = 'comparison-differs-chip';
-          chip.textContent = '≠ differs';
-          raceHeading.append(chip);
+          const differsLabel = document.createElement('span');
+          differsLabel.className = 'comparison-race-differs';
+          differsLabel.textContent = 'Differs';
+          raceHeading.append(differsLabel);
         }
         row.append(raceHeading);
         const baseline = configuredCells[0];
         visible.forEach((signal, index) => {
           row.append(cellFor(signal, configuredCells[index], display, baseline, index === 0));
         });
-        if (state.columns.length < 3) row.append(document.createElement('td'));
         body.append(row);
       }
       table.append(body);
@@ -310,7 +310,7 @@ if (comparisonBindingsElement) {
       const row = document.createElement('tr');
       row.className = 'comparison-empty';
       const cell = document.createElement('td');
-      cell.colSpan = visible.length + 1 + (state.columns.length < 3 ? 1 : 0);
+      cell.colSpan = visible.length + 1;
       const allAgree = state.differencesOnly && total > 0 && differCount === 0;
       const message = document.createElement('p');
       message.textContent = allAgree
@@ -339,19 +339,16 @@ if (comparisonBindingsElement) {
 
   function syncControls() {
     sectionFilter.value = state.section;
-    document.querySelector('[data-comparison-complete]').setAttribute('aria-pressed', String(!state.contestedOnly));
-    document.querySelector('[data-comparison-contested]').setAttribute('aria-pressed', String(state.contestedOnly));
-    document.querySelector('[data-comparison-all-rows]').setAttribute('aria-pressed', String(!state.differencesOnly));
-    document.querySelector('[data-comparison-differences]').setAttribute('aria-pressed', String(state.differencesOnly));
+    document.querySelector('[data-comparison-complete]').setAttribute('aria-pressed', String(!state.contestedOnly && !state.differencesOnly));
+    document.querySelector('[data-comparison-contested]').setAttribute('aria-pressed', String(state.contestedOnly && !state.differencesOnly));
+    document.querySelector('[data-comparison-differences]').setAttribute('aria-pressed', String(!state.contestedOnly && state.differencesOnly));
+    document.querySelector('[data-comparison-contested-differences]').setAttribute('aria-pressed', String(state.contestedOnly && state.differencesOnly));
   }
 
   function render() {
-    const visible = visibleColumns();
-    const hidden = state.columns.length - visible.length;
-    notice.hidden = hidden === 0;
-    notice.textContent = hidden
-      ? `${hidden} configured column hidden at this width. It remains configured and counted.`
-      : '';
+    const visible = state.columns;
+    notice.hidden = true;
+    notice.textContent = '';
     renderHead(visible);
     renderBody(visible);
     syncControls();
@@ -363,17 +360,21 @@ if (comparisonBindingsElement) {
   });
   document.querySelector('[data-comparison-complete]').addEventListener('click', () => {
     state.contestedOnly = false;
+    state.differencesOnly = false;
     if (writeState('replace')) render();
   });
   document.querySelector('[data-comparison-contested]').addEventListener('click', () => {
     state.contestedOnly = true;
-    if (writeState('replace')) render();
-  });
-  document.querySelector('[data-comparison-all-rows]').addEventListener('click', () => {
     state.differencesOnly = false;
     if (writeState('replace')) render();
   });
   document.querySelector('[data-comparison-differences]').addEventListener('click', () => {
+    state.contestedOnly = false;
+    state.differencesOnly = true;
+    if (writeState('replace')) render();
+  });
+  document.querySelector('[data-comparison-contested-differences]').addEventListener('click', () => {
+    state.contestedOnly = true;
     state.differencesOnly = true;
     if (writeState('replace')) render();
   });
