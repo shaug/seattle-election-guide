@@ -703,6 +703,75 @@ def test_about_page_folds_in_every_fact_the_removed_methodology_panel_stated() -
     assert "Nothing is stored anywhere" in about
 
 
+@pytest.mark.parametrize("mobile_width", [None, 720], ids=["desktop", "720px"])
+def test_about_and_sources_ledes_follow_their_page_measure(
+    tmp_path: Path,
+    mobile_width: int | None,
+) -> None:
+    """Issue 182: ledes inherit each page's deliberate reading measure."""
+    about_path = tmp_path / "about.html"
+    about_path.write_text(
+        _about_html(
+            _current_election_manifest(),
+            data_updated_date="2026-07-23",
+            site_updated_date="2026-07-30",
+            data_version="data-version-123456",
+            git_commit=COMMIT,
+            data_href=f"/e/{CURRENT_ID}/release-manifest.json",
+        ),
+        encoding="utf-8",
+    )
+    about = _evaluate_in_chrome(
+        about_path,
+        """
+        (() => {
+          const lede = document.querySelector('main > p.lede');
+          const bodyParagraph = document.querySelector('main section p');
+          const style = getComputedStyle(lede);
+          return JSON.stringify({
+            ledeWidth: lede.getBoundingClientRect().width,
+            measureWidth: bodyParagraph.getBoundingClientRect().width,
+            maxWidth: style.maxWidth,
+            color: style.color,
+            fontSize: style.fontSize,
+          });
+        })()
+        """,
+        mobile_width=mobile_width,
+    )
+
+    view_model = _personalization_enabled_view_model(tmp_path)
+    sources_path = tmp_path / "sources.html"
+    sources_path.write_text(
+        render_sources_document(view_model, public_site_url="https://seattleelections.guide"),
+        encoding="utf-8",
+    )
+    sources = _evaluate_in_chrome(
+        sources_path,
+        """
+        (() => {
+          const intro = document.querySelector('.sources-page-intro');
+          const lede = intro.querySelector('.lede');
+          const style = getComputedStyle(lede);
+          return JSON.stringify({
+            ledeWidth: lede.getBoundingClientRect().width,
+            measureWidth: intro.getBoundingClientRect().width,
+            maxWidth: style.maxWidth,
+            color: style.color,
+            fontSize: style.fontSize,
+          });
+        })()
+        """,
+        mobile_width=mobile_width,
+    )
+
+    for page in (about, sources):
+        assert page["ledeWidth"] == pytest.approx(page["measureWidth"], abs=1)
+        assert page["maxWidth"] == "none"
+        assert page["color"] == "rgb(82, 96, 109)"
+        assert page["fontSize"] == "16px"
+
+
 def _selectable_tallying_codes(view_model: PublicationViewModel) -> list[str]:
     return sorted(
         {
