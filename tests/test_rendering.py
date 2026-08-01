@@ -129,23 +129,29 @@ DARWIN_VISUAL_BASELINES = {
         0.037,
         0.018,
     ],
+    # Re-approved 2026-08-01 (issue 192): the masthead nav is visible at desktop
+    # width again. Chrome hides closed <details> content with
+    # `::details-content { content-visibility: hidden }`, which zeroed the nav's
+    # width and pushed its links off-screen; the band legitimately looks
+    # different now. The print pages and the mobile shot were unaffected and
+    # keep their approved values.
     "desktop": [
-        0.442,
-        0.651,
-        0.703,
-        0.482,
-        0.081,
-        0.085,
-        0.080,
-        0.058,
-        0.072,
-        0.073,
+        0.382,
+        0.593,
+        0.613,
+        0.422,
+        0.149,
+        0.190,
+        0.184,
+        0.129,
         0.071,
-        0.075,
-        0.077,
-        0.099,
-        0.093,
-        0.086,
+        0.065,
+        0.068,
+        0.069,
+        0.078,
+        0.106,
+        0.097,
+        0.089,
     ],
     # UI polish round 5.1 (issue 177): the hero deck is gone and the source
     # strip is always present, shifting the narrow layout while preserving its

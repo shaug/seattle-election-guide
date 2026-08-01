@@ -61,13 +61,24 @@ a { color: var(--blue); text-underline-offset: .15em; }
 .band-icon-action:hover { background: rgba(255, 255, 255, .12); }
 .band-icon-action svg { display: block; }
 
-/* The nav is one disclosure at every width (issue 192). Above the breakpoint an
-   author rule forces the panel visible — author rules beat the UA's
-   `details:not([open]) > *:not(summary) { display: none }` regardless of
-   specificity — and the summary is hidden, so it renders as the familiar inline
-   row. Below the breakpoint they swap. No JavaScript is involved, which is what
-   lets the frozen archive pages keep working. */
+/* The nav is one disclosure at every width (issue 192). Above the breakpoint the
+   panel is forced visible and the summary hidden, so it renders as the familiar
+   inline row; below the breakpoint they swap. No JavaScript is involved, which
+   is what lets the frozen archive pages keep working.
+
+   Revealing a closed <details> takes two rules, because browsers hide its
+   content two different ways. Older engines apply
+   `details:not([open]) > *:not(summary) { display: none }`, which the author
+   `display: flex` below overrides. Current Chrome, Safari and Firefox instead
+   wrap the content in a `::details-content` pseudo-element carrying
+   `content-visibility: hidden`; that suppresses size contribution, so the nav
+   computes to zero width and its links overflow off-screen while still
+   reporting `display: flex`. Forcing the pseudo-element visible is what
+   actually shows the row. Doing this unconditionally is safe: below the
+   breakpoint the panel is hidden by `display: none` on the nav itself, which
+   content-visibility does not undo. */
 .site-band-menu { position: relative; }
+.site-band-menu::details-content { content-visibility: visible; }
 .site-band-menu > summary { display: none; list-style: none; }
 .site-band-menu > summary::-webkit-details-marker { display: none; }
 .site-band-menu > nav { display: flex; flex-wrap: wrap; gap: .35rem 1.1rem; margin-left: .5rem; }
