@@ -40,6 +40,7 @@
         </div>
       </div>
 
+      <div class="sticky-header" data-sticky-controls>
       {% call election_controls(
         'Comparison view and race filters', 'comparison-controls',
         'comparison-ballot-filter', 'data-comparison-section-filter', '',
@@ -57,6 +58,7 @@
         <option value="all">All Seattle ballot races</option>
         {% for section in comparison_sections %}<option value="{{ section.section_id }}">{{ section.section_label }}</option>{% endfor %}
       {% endcall %}
+      </div>
       <div class="comparison-content">
         <p class="comparison-hidden-notice" role="status" aria-live="polite" data-comparison-hidden-notice hidden></p>
         <div class="comparison-table-wrap" data-comparison-grid>

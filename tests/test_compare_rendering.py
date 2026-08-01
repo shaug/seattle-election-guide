@@ -252,6 +252,7 @@ def test_guide_and_compare_render_the_shared_election_controls_composite() -> No
         public_site_url="https://seattleelections.guide",
     )
     for rendered in (guide, compare):
+        assert '<div class="sticky-header"' in rendered
         bar = re.search(
             r'<section class="[^"]*filter-control-bar[^"]*".*?</section>', rendered, re.S
         )
@@ -301,6 +302,9 @@ def test_guide_and_compare_render_the_shared_election_controls_composite() -> No
     ):
         assert selector in base_css
         assert selector not in page_css
+    assert ".sticky-header { position: sticky; top: 0; z-index: 5; }" in base_css
+    assert ".sticky-header { position: static; }" in base_css
+    assert ".sticky-header" not in page_css
 
 
 @pytest.mark.parametrize("viewport_width", [1440, 390])
@@ -407,6 +411,105 @@ def test_guide_and_compare_shared_controls_have_the_same_composition_and_geometr
                 rendered["statusHeight"]
                 <= float(rendered["statusLineHeight"].removesuffix("px")) * 1.5
             )
+
+
+@pytest.mark.parametrize("viewport_width", [1440, 390])
+def test_guide_and_compare_controls_share_the_scroll_placement_contract(
+    tmp_path: Path, viewport_width: int
+) -> None:
+    script = """
+    (async () => {
+      const wrapper = document.querySelector('.sticky-header');
+      const documentTop = wrapper.getBoundingClientRect().top + scrollY;
+      window.scrollTo(0, documentTop + 100);
+      await new Promise((resolve) => setTimeout(resolve, 80));
+      const wrapperRect = wrapper.getBoundingClientRect();
+      const barRect = wrapper.querySelector('.filter-control-bar').getBoundingClientRect();
+      return JSON.stringify({
+        position: getComputedStyle(wrapper).position,
+        wrapperTop: wrapperRect.top,
+        barTop: barRect.top,
+        barBottom: barRect.bottom,
+        visible: barRect.bottom > 0 && barRect.top < innerHeight,
+        outerWidth: document.documentElement.scrollWidth,
+        viewportWidth: document.documentElement.clientWidth,
+      });
+    })()
+    """
+    guide = _evaluate_in_chrome(_guide_html_path(tmp_path), script, mobile_width=viewport_width)
+    compare = _evaluate_in_chrome(
+        _comparison_html_path(tmp_path), script, mobile_width=viewport_width
+    )
+    assert guide["position"] == compare["position"]
+    assert guide["outerWidth"] == guide["viewportWidth"]
+    assert compare["outerWidth"] == compare["viewportWidth"]
+    if viewport_width > 720:
+        assert guide["position"] == "sticky"
+        assert abs(guide["wrapperTop"]) < 1
+        assert abs(compare["wrapperTop"]) < 1
+        assert abs(guide["barTop"] - compare["barTop"]) < 1
+        assert guide["visible"] is compare["visible"] is True
+    else:
+        assert guide["position"] == "static"
+        assert abs(guide["wrapperTop"] + 100) < 1
+        assert abs(compare["wrapperTop"] + 100) < 1
+        assert abs(guide["barTop"] - compare["barTop"]) < 1
+        assert guide["visible"] is compare["visible"]
+
+
+@pytest.mark.parametrize("viewport_width", [1440, 838, 390])
+def test_compare_table_headers_stack_below_controls_without_overlap(
+    tmp_path: Path, viewport_width: int
+) -> None:
+    result = _evaluate_in_chrome(
+        _comparison_html_path(tmp_path),
+        """
+        (async () => {
+          const controls = document.querySelector('[data-sticky-controls]');
+          const table = document.querySelector('[data-comparison-table]');
+          const header = document.querySelector('[data-comparison-head] th');
+          const title = document.querySelector('[data-comparison-title="1"]');
+          const tableTop = table.getBoundingClientRect().top + scrollY;
+          window.scrollTo(0, tableTop + (innerWidth > 720 ? 320 : 0));
+          await new Promise((resolve) => setTimeout(resolve, 80));
+          title.focus();
+          const controlsRect = controls.getBoundingClientRect();
+          const headerRect = header.getBoundingClientRect();
+          const titleRect = title.getBoundingClientRect();
+          return JSON.stringify({
+            controlsPosition: getComputedStyle(controls).position,
+            controlsTop: controlsRect.top,
+            controlsBottom: controlsRect.bottom,
+            controlsHeight: controlsRect.height,
+            measuredOffset: parseFloat(getComputedStyle(document.documentElement)
+              .getPropertyValue('--sticky-controls-height')),
+            headerPosition: getComputedStyle(header).position,
+            headerTop: headerRect.top,
+            headerBottom: headerRect.bottom,
+            headerVisible: headerRect.bottom > 0 && headerRect.top < innerHeight,
+            titleVisible: titleRect.bottom > 0 && titleRect.top < innerHeight,
+            titleBelowControls: titleRect.top >= controlsRect.bottom - 1,
+            outerWidth: document.documentElement.scrollWidth,
+            viewportWidth: document.documentElement.clientWidth,
+          });
+        })()
+        """,
+        mobile_width=viewport_width,
+    )
+    assert result["outerWidth"] == result["viewportWidth"]
+    assert abs(result["measuredOffset"] - result["controlsHeight"]) < 1
+    assert result["headerVisible"] is True
+    assert result["titleVisible"] is True
+    if viewport_width > 720:
+        assert result["controlsPosition"] == "sticky"
+        assert result["headerPosition"] == "sticky"
+        assert abs(result["controlsTop"]) < 1
+        assert abs(result["headerTop"] - result["controlsBottom"]) < 1
+        assert result["titleBelowControls"] is True
+    else:
+        assert result["controlsPosition"] == "static"
+        assert result["headerPosition"] == "static"
+        assert result["controlsBottom"] <= 0
 
 
 def test_compare_client_enforces_picker_bounds_and_history(tmp_path: Path) -> None:

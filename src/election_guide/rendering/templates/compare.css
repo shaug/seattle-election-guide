@@ -19,8 +19,8 @@
 .comparison-table-wrap { width: 100%; max-width: 100%; overflow: visible; border: 1px solid var(--line); border-radius: .35rem; background: var(--white); }
 .comparison-table { width: 100%; min-width: 0; border-collapse: separate; border-spacing: 0; table-layout: fixed; }
 .comparison-table th, .comparison-table td { padding: .75rem .8rem; border-top: 1px solid var(--row-separator); vertical-align: top; text-align: left; }
-.comparison-table thead th { position: sticky; z-index: 3; top: 0; height: 5.4rem; border-top: 0; background: var(--navy); color: var(--white); font-size: .82rem; }
-.comparison-table thead th:first-child { z-index: 5; width: 27%; }
+.comparison-table thead th { position: sticky; z-index: 3; top: var(--sticky-controls-height, 5.5rem); height: 5.4rem; border-top: 0; background: var(--navy); color: var(--white); font-size: .82rem; }
+.comparison-table thead th:first-child { z-index: 4; width: 27%; }
 .comparison-table tr > :first-child { position: sticky; z-index: 2; left: 0; box-shadow: 1px 0 var(--row-separator); }
 .comparison-table tbody tr > th:first-child { background: var(--white); }
 .comparison-column-heading { position: relative; min-height: 2.5rem; padding-right: 2.8rem; }

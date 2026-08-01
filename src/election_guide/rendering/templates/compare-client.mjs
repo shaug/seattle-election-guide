@@ -17,12 +17,22 @@ if (comparisonBindingsElement) {
   const notice = document.querySelector('[data-comparison-hidden-notice]');
   const status = document.querySelector('[data-comparison-status]');
   const sectionFilter = document.querySelector('[data-comparison-section-filter]');
+  const stickyControls = document.querySelector('[data-sticky-controls]');
   const contestedIds = new Set(payload.contested_race_ids);
   const races = new Map(personalization.races.map((race) => [race.race_id, race]));
   const categories = personalization.categories.filter((category) => category.selectable);
   const sources = new Map(
     personalization.sources.filter((source) => source.selectable).map((source) => [source.code, source]),
   );
+
+  function syncStickyControlsHeight() {
+    document.documentElement.style.setProperty(
+      '--sticky-controls-height',
+      `${stickyControls.getBoundingClientRect().height}px`,
+    );
+  }
+  syncStickyControlsHeight();
+  new ResizeObserver(syncStickyControlsHeight).observe(stickyControls);
 
   const labelFor = (signal) => {
     if (signal === ALL_SOURCES_TOKEN) return 'All sources';

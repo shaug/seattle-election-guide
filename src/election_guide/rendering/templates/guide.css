@@ -11,7 +11,6 @@
    the band already carries the brand on screen, so this stays invisible
    there. */
 .detailed-edition-brand { display: none; }
-.sticky-header { position: sticky; top: 0; z-index: 5; }
 .filter-status-part { white-space: nowrap; }
 .screen-sections { min-width: 0; padding: 1rem clamp(1rem, 4vw, 3rem) 4rem; }
 .screen-section { margin: 2.5rem 0 4rem; }
@@ -225,7 +224,6 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
 @media (max-width: 720px) {
   .site-band nav { margin-left: 0; }
   .hero h1 { max-width: 18ch; }
-  .sticky-header { position: static; }
   html.compact-ballot-mode .race-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .race-grid, .screen-coverage-gaps, .coverage-gap-columns { grid-template-columns: 1fr; }
   .sources-columns { column-count: 1; }
