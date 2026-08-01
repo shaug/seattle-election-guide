@@ -212,23 +212,27 @@ LINUX_VISUAL_BASELINES = {
         0.033,
         0.017,
     ],
+    # Re-approved 2026-08-01 (issue 192), from the signature CI reported: the
+    # masthead nav is visible at desktop width again. Same shape as the darwin
+    # re-approval — only this entry moved, while the print pages and the mobile
+    # shot stayed inside tolerance on both platforms.
     "desktop": [
-        0.450,
-        0.641,
-        0.743,
-        0.482,
-        0.073,
-        0.078,
-        0.073,
+        0.390,
+        0.603,
+        0.613,
+        0.422,
+        0.152,
+        0.178,
+        0.180,
+        0.129,
+        0.071,
+        0.059,
         0.058,
-        0.062,
-        0.063,
-        0.063,
-        0.075,
-        0.072,
-        0.091,
-        0.080,
-        0.086,
+        0.071,
+        0.068,
+        0.067,
+        0.069,
+        0.071,
     ],
     # UI polish round 5.1 (issue 177): values carry the same per-index delta
     # measured on a real macOS run of this fixture (there is no equivalent
