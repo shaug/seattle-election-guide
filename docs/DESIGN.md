@@ -157,15 +157,8 @@ while emoji render differently on every platform and can't be styled.
 
 ## Site shell
 
-> **Status (2026-08-01).** The rules in this section are adopted and govern
-> all new work — build against them. The shared page head, the election-day
-> banner, and their styles ship with this document; converting the six
-> existing pages to them lands separately under issue 192, deliberately
-> sequenced after the Comparisons epic (#116) so every page, including the
-> ones that epic adds, is converted once. Until that lands, the shipped
-> pages still carry their old bespoke headers — the one place where this
-> document leads the UI rather than describing it. **New pages must use
-> `site_page_head_html`; do not hand-roll a header.**
+> **Status (2026-08-01).** Adopted, and now applied to every page. **New
+> pages must use `site_page_head_html`; do not hand-roll a header.**
 
 **Exceptions are allowed; cascades are not.** An exception must name what
 it buys, and must not require a second rule to bend to accommodate it.
@@ -207,6 +200,22 @@ then any sticky strip, then content.
 - **Masthead = actions on the page; footer = meta about the site.** Share
   belongs to the masthead because it acts on what you are reading;
   Contact, source files, and the methodology link belong to the footer.
+- **Every in-site link is root-relative.** An absolute production URL walks
+  readers off any other origin — a local preview, a staging deploy, a PR
+  preview — straight to the live site. Only links that genuinely leave the
+  site carry an origin.
+- **Every off-site link opens in a new tab**, with `rel="noopener"`, so a
+  reader checking a receipt keeps their place in the guide. The referrer is
+  left intact so the organizations we cite can see the traffic. An icon-only
+  external control carries the new-tab hint in its accessible name, since it
+  has no visible text to carry it.
+- **A page's path matches its name.** Renaming a page renames its URL, with
+  a permanent redirect from the old address so nothing already linked
+  breaks. *(2026-08-01: `/compare/` became `/comparisons/`.)*
+- **Nav order follows dependency, not traffic.** Endorsements is the
+  destination, Sources is what feeds it, Comparisons is a view derived from
+  those sources, and How this works explains all three. *(2026-08-01: this
+  reverses the order issue 197 shipped, which placed Comparisons second.)*
 - One masthead band and one footer implementation, shared by every page —
   never re-implemented per page. One page head likewise, in two measure
   modes: full-bleed, or constrained to its page's reading column when that

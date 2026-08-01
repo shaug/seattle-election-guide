@@ -16,7 +16,9 @@ The canonical comparison status and legacy badge label remain available in audit
 ## Election comparison page
 
 When a release's comparison policy is enabled, hosting publishes
-`/e/<election-id>/compare/` and adds Comparisons to the shared navigation. The temporary
+`/e/<election-id>/comparisons/` and adds Comparisons to the shared navigation; the page shipped
+at `/e/<election-id>/compare/` before issue 192 renamed it, and that address permanently redirects.
+The temporary
 `comparison_route_preview` manifest flag stages only the direct current-election route; it does not
 change a release's serialized policy or expose navigation on any other page. Releases built before
 the policy was enabled keep their disabled policy and do not gain a route or navigation item when a

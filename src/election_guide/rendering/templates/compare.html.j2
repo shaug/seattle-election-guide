@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   {% set guide_path = '/e/' ~ guide.metadata.election_id ~ '/' %}
-  {% set canonical_url = public_site_url ~ guide_path ~ 'compare/' %}
+  {% set canonical_url = public_site_url ~ guide_path ~ 'comparisons/' %}
   {% set page_description = 'Compare the all-sources result with The Stranger and The Seattle Times for ' ~ election_display_name ~ '.' %}
   <meta name="description" content="{{ page_description }}">
   <meta property="og:type" content="website">
@@ -125,7 +125,7 @@
 {{ compare_client_script | safe }}
 {{ election_day_script | safe }}
   wireElectionDay();
-  wireFooterShare();
+  wireShellShare();
   </script>
 </body>
 </html>

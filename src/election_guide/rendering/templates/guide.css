@@ -1,11 +1,14 @@
 /* .screen-guide is now a bare marker class for JS/print selectors; the
    guide's root also carries `.page`, which supplies the shared 76rem frame
    width (item L53). */
-.hero { color: var(--white); background: var(--navy); padding: clamp(1.1rem, 2.5vw, 1.9rem) clamp(1rem, 4vw, 3rem); border-bottom: .4rem solid var(--teal); }
-.hero-kicker, .eyebrow { color: var(--mint); font-size: .78rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+/* The guide's bespoke hero became the shared .page-head (issue 192): one
+   component for every page, with the extended navy variant as the single
+   exception the brand-link target buys. Its rules live in base.css beside the
+   band. The kicker went with it — election day is now the Context slot's
+   banner, which can retire itself once the election passes as permanent chrome
+   never could. */
+.eyebrow { color: var(--mint); font-size: .78rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
 .eyebrow-paper { color: var(--teal); }
-.hero h1 { max-width: 25ch; margin: .25rem 0 .45rem; font: 700 clamp(2rem, 4.2vw, 3.2rem)/1.02 var(--screen-serif); letter-spacing: -.012em; }
-.hero-tagline { max-width: 48rem; margin: 0 0 .3rem; color: var(--white); font-size: clamp(1.02rem, 1.8vw, 1.22rem); font-weight: 500; }
 /* Print-only identity line for the detailed/overflow PDF edition, which
    hides the interactive band (see the detailed-edition print rules below);
    the band already carries the brand on screen, so this stays invisible
@@ -223,7 +226,7 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
 
 @media (max-width: 720px) {
   .site-band nav { margin-left: 0; }
-  .hero h1 { max-width: 18ch; }
+  .page-head.extended h1 { max-width: 18ch; }
   html.compact-ballot-mode .race-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .race-grid, .screen-coverage-gaps, .coverage-gap-columns { grid-template-columns: 1fr; }
   .sources-columns { column-count: 1; }
@@ -367,6 +370,7 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
   html.detailed-edition .print-guide { display: none !important; }
   html.detailed-edition .screen-guide { display: block !important; max-width: none; min-height: 0; background: white; font-family: var(--print-sans); }
   html.detailed-edition .skip-link, html.detailed-edition .site-band,
+  html.detailed-edition .election-day,
   html.detailed-edition .filter-control-bar { display: none !important; }
   /* The hero no longer states the brand (item L54); this plain-text,
      link-free line (hidden on screen; see .detailed-edition-brand in the
@@ -376,9 +380,9 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
   html.detailed-edition .detailed-edition-brand { display: block; margin: .3in .3in 0; color: var(--navy); font: 700 13pt/1 var(--print-sans); }
   /* The removed screen-only deck no longer contributes height here; retain
      the detailed edition's proven pagination with equivalent whitespace. */
-  html.detailed-edition .hero { padding: .1in .3in .45in; border-bottom-width: .08in; }
-  html.detailed-edition .hero h1 { margin: .05in 0; font-size: 26pt; }
-  html.detailed-edition .hero-tagline { margin: .05in 0; font-size: 11pt; }
+  html.detailed-edition .page-head { padding: .1in .3in .45in; border-bottom-width: .08in; }
+  html.detailed-edition .page-head h1 { margin: .05in 0; font-size: 26pt; }
+  html.detailed-edition .page-tagline { margin: .05in 0; font-size: 11pt; }
   html.detailed-edition .screen-sections { padding: .1in 0; }
   html.detailed-edition .screen-section { margin: .12in 0 .2in; }
   html.detailed-edition .section-heading h2 { margin: 0 0 .08in; font-size: 18pt; }

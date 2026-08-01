@@ -26,6 +26,7 @@ from election_guide.rendering.renderer import (
     render_sources_document,
 )
 from election_guide.rendering.shell import (
+    EXTERNAL_LINK_ATTRIBUTES,
     election_names,
     favicon_svg,
     page_title,
@@ -33,6 +34,7 @@ from election_guide.rendering.shell import (
     site_footer_audit_html,
     site_footer_band_html,
     site_head_links_html,
+    site_page_head_html,
 )
 from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
 
@@ -151,7 +153,7 @@ def stage_pages_site(
             f"/e/{current.declaration.election_id}/release-manifest.json"
         )
         current_compare_href = (
-            f"/e/{current.declaration.election_id}/compare/"
+            f"/e/{current.declaration.election_id}/comparisons/"
             if current.view_model.comparisons.policy.enabled
             else None
         )
@@ -340,7 +342,7 @@ def _verify_staged_pages_site(
                 ),
             }
         )
-        compare_asset = f"e/{declared.election_id}/compare/index.html"
+        compare_asset = f"e/{declared.election_id}/comparisons/index.html"
         if declared.comparison_route_preview or compare_asset in deployment.assets:
             required_assets.add(compare_asset)
 
@@ -495,7 +497,7 @@ def _stage_verified_bundles(
             bundle.view_model.comparisons.policy.enabled
             or bundle.declaration.comparison_route_preview
         ):
-            compare_dir = election_root / "compare"
+            compare_dir = election_root / "comparisons"
             compare_dir.mkdir()
             (compare_dir / "index.html").write_text(
                 _comparison_html(
@@ -505,7 +507,7 @@ def _stage_verified_bundles(
                 ),
                 encoding="utf-8",
             )
-            public_paths.update({f"{root_path}compare/", f"{root_path}compare/index.html"})
+            public_paths.update({f"{root_path}comparisons/", f"{root_path}comparisons/index.html"})
         public_paths.update(f"{root_path}{name}" for name in names)
     return public_paths
 
@@ -603,6 +605,13 @@ def _archive_html(
         data_href=data_href,
     )
     footer_band = site_footer_band_html(project_url=PROJECT_URL, audit_html=footer_audit)
+    head = site_page_head_html(
+        mode="measured",
+        title="Guide archive",
+        tagline_html=(
+            "Every guide stays up after its election &mdash; unchanged, at the same address."
+        ),
+    )
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -638,9 +647,8 @@ def _archive_html(
       {band}
       <div class="page-band-rule"></div>
     </header>
+    {head}
     <main id="archive-main" class="narrow-main">
-      <h1>Guide archive</h1>
-      <p>Every guide stays up after its election &mdash; unchanged, at the same address.</p>
       <ul>
 {rows}
       </ul>
@@ -651,7 +659,7 @@ def _archive_html(
   </div>
   <script type="module">
 {share_link_script}
-    wireFooterShare();
+    wireShellShare();
   </script>
 </body>
 </html>
@@ -686,7 +694,7 @@ def _about_html(
     )
     escaped_description = html.escape(description, quote=True)
     escaped_canonical = html.escape(canonical_url, quote=True)
-    document_title = html.escape(page_title(page="About"), quote=True)
+    document_title = html.escape(page_title(page="How this works"), quote=True)
     head_links = site_head_links_html(site_manifest.canonical_origin)
     escaped_current_path = html.escape(current_path, quote=True)
     band = site_band_html(
@@ -704,6 +712,9 @@ def _about_html(
         data_href=data_href,
     )
     footer_band = site_footer_band_html(project_url=PROJECT_URL, audit_html=footer_audit)
+    head = site_page_head_html(
+        mode="measured", title="How this works", tagline_html=html.escape(description)
+    )
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -740,9 +751,8 @@ def _about_html(
       {band}
       <div class="page-band-rule"></div>
     </header>
+    {head}
     <main id="about-main" class="narrow-main">
-      <h1>About this guide, and how to check our work</h1>
-      <p class="lede">{html.escape(description)}</p>
 
       <section aria-labelledby="what-this-is">
         <h2 id="what-this-is">What this guide is &mdash; and is not</h2>
@@ -817,8 +827,8 @@ def _about_html(
           <a href="{escaped_current_path}release-manifest.json">release manifest</a> are public JSON
           files for the current guide. The complete decision ledger, source metadata, and validation
           reports for every release are published in the
-          <a href="{PROJECT_URL}">project's source repository</a>, alongside the code that produced
-          them.</p>
+          <a href="{PROJECT_URL}"{EXTERNAL_LINK_ATTRIBUTES}>project's source repository</a>,
+          alongside the code that produced them.</p>
         <p>Past guides remain published at their own permanent addresses in the
           <a href="/e/">guide archive</a>.</p>
       </section>
@@ -835,7 +845,7 @@ def _about_html(
         <h2 id="who-maintains-this">Who maintains this</h2>
         <p>This is an independent, volunteer-run project, not affiliated with any campaign,
           party, or any organization it tracks. Its code and methodology are public at
-          <a href="{PROJECT_URL}">{PROJECT_URL.removeprefix("https://")}</a>.</p>
+          <a href="{PROJECT_URL}"{EXTERNAL_LINK_ATTRIBUTES}>{PROJECT_URL.removeprefix("https://")}</a>.</p>
       </section>
 
     </main>
@@ -845,7 +855,7 @@ def _about_html(
   </div>
   <script type="module">
 {share_link_script}
-    wireFooterShare();
+    wireShellShare();
   </script>
 </body>
 </html>
@@ -867,11 +877,11 @@ def _not_found_html(
     document_title = html.escape(page_title(page="Page not found"), quote=True)
     head_links = site_head_links_html(site_manifest.canonical_origin, shareable=False)
     base_css = (TEMPLATE_DIR / "base.css").read_text(encoding="utf-8")
-    share_link_script = (TEMPLATE_DIR / "share-link.mjs").read_text(encoding="utf-8")
     band = site_band_html(
         guide_href=current_path,
         sources_href=f"{current_path}sources/",
         compare_href=compare_href,
+        shareable=False,
     )
     footer_audit = site_footer_audit_html(
         data_updated_date=data_updated_date,
@@ -883,6 +893,15 @@ def _not_found_html(
     )
     footer_band = site_footer_band_html(project_url=PROJECT_URL, audit_html=footer_audit)
     escaped_current_path = html.escape(current_path, quote=True)
+    head = site_page_head_html(
+        mode="measured",
+        title="Page not found",
+        tagline_html=(
+            "That page doesn&rsquo;t exist. Try the "
+            f'<a href="{escaped_current_path}">current guide</a>, or the '
+            '<a href="/e/">archive of past guides</a>.'
+        ),
+    )
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -910,19 +929,12 @@ def _not_found_html(
       {band}
       <div class="page-band-rule"></div>
     </header>
-    <main class="narrow-main">
-      <h1>Page not found</h1>
-      <p>That page doesn&rsquo;t exist. Try the <a href="{escaped_current_path}">current guide</a>
-        or the <a href="/e/">guide archive</a>.</p>
-    </main>
+    {head}
+    <main class="narrow-main"></main>
     <footer class="site-footer">
       {footer_band}
     </footer>
   </div>
-  <script type="module">
-{share_link_script}
-    wireFooterShare();
-  </script>
 </body>
 </html>
 """
@@ -941,14 +953,21 @@ def _pages_worker(
 ) -> str:
     current_path = f"/e/{site_manifest.current_election_id}/"
     election_roots = [f"/e/{election.election_id}/" for election in site_manifest.elections]
-    comparison_roots = sorted(path for path in public_paths if path.endswith("/compare/"))
+    comparison_roots = sorted(path for path in public_paths if path.endswith("/comparisons/"))
     comparison_root_declaration = (
         f"const COMPARISON_ROOTS = {json.dumps(comparison_roots)};\n" if comparison_roots else ""
     )
     comparison_redirect = (
-        """    for (const root of COMPARISON_ROOTS) {
+        r"""    for (const root of COMPARISON_ROOTS) {
       if (url.pathname === root.slice(0, -1)) {
         return redirectPath(url, root, 308);
+      }
+      // The page shipped at /compare/ before issue 192 renamed it to match its
+      // own name. Anything already linked or bookmarked keeps working, with a
+      // permanent redirect so caches and search engines learn the new address.
+      const renamed = root.replace(/comparisons\/$/, "compare");
+      if (url.pathname === renamed || url.pathname === `${renamed}/`) {
+        return redirectPath(url, root, 301);
       }
     }
 """

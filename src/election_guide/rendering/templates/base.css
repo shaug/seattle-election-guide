@@ -45,15 +45,55 @@ a { color: var(--blue); text-underline-offset: .15em; }
 /* Shared page shell: the slim brand band used by every page on the site
    (guide, sources, about, archive), so the cross-page chrome has exactly one
    implementation. */
-.site-band { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1.25rem; padding: .55rem clamp(1rem, 4vw, 3rem); background: var(--navy); color: var(--white); }
-.site-brand { display: inline-flex; align-items: center; gap: .55rem; color: var(--white); font-size: .92rem; font-weight: 700; letter-spacing: .01em; text-decoration: none; }
+.site-band { display: flex; align-items: center; gap: .5rem 1.25rem; padding: .55rem clamp(1rem, 4vw, 3rem); background: var(--navy); color: var(--white); }
+.site-brand { display: inline-flex; align-items: center; gap: .55rem; min-width: 0; color: var(--white); font-size: .92rem; font-weight: 700; letter-spacing: .01em; text-decoration: none; }
 .site-brand:hover { text-decoration: underline; text-underline-offset: .2em; }
 .site-brand svg { display: block; flex: 0 0 auto; }
-.site-band nav { display: flex; flex-wrap: wrap; margin-left: auto; gap: .35rem 1.1rem; }
-.site-band nav a { color: var(--mint); font-size: .8rem; font-weight: 700; text-decoration: none; white-space: nowrap; }
-.site-band nav a:hover, .site-band nav a[aria-current="page"] { text-decoration: underline; text-underline-offset: .2em; }
-.site-band a:focus-visible { outline: .2rem solid var(--focus); outline-offset: .15rem; }
+/* At 360px and above the wordmark fits beside Share and Pages with room to
+   spare (verified: 31px slack at 360, 61px at 390). At 320px — iPhone 5/SE1
+   class — it ellipsizes instead, which is graceful: the mark still identifies
+   the site, nothing overlaps, and the page never scrolls sideways. Tightening
+   the gutter to recover those last few pixels was tried and left it 6px short,
+   so the ellipsis is the accepted behaviour rather than a near-miss hack. */
+.site-brand span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.site-band-actions { display: flex; align-items: center; gap: .15rem; margin: -.45rem 0 -.45rem auto; }
+.band-icon-action { display: inline-flex; align-items: center; justify-content: center; width: 2.5rem; height: 2.5rem; flex: 0 0 auto; padding: 0; border: 0; border-radius: .3rem; background: none; color: var(--mint); cursor: pointer; }
+.band-icon-action:hover { background: rgba(255, 255, 255, .12); }
+.band-icon-action svg { display: block; }
+
+/* The nav is one disclosure at every width (issue 192). Above the breakpoint the
+   panel is forced visible and the summary hidden, so it renders as the familiar
+   inline row; below the breakpoint they swap. No JavaScript is involved, which
+   is what lets the frozen archive pages keep working.
+
+   Revealing a closed <details> takes two rules, because browsers hide its
+   content two different ways. Older engines apply
+   `details:not([open]) > *:not(summary) { display: none }`, which the author
+   `display: flex` below overrides. Current Chrome, Safari and Firefox instead
+   wrap the content in a `::details-content` pseudo-element carrying
+   `content-visibility: hidden`; that suppresses size contribution, so the nav
+   computes to zero width and its links overflow off-screen while still
+   reporting `display: flex`. Forcing the pseudo-element visible is what
+   actually shows the row. Doing this unconditionally is safe: below the
+   breakpoint the panel is hidden by `display: none` on the nav itself, which
+   content-visibility does not undo. */
+.site-band-menu { position: relative; }
+.site-band-menu::details-content { content-visibility: visible; }
+.site-band-menu > summary { display: none; list-style: none; }
+.site-band-menu > summary::-webkit-details-marker { display: none; }
+.site-band-menu > nav { display: flex; flex-wrap: wrap; gap: .35rem 1.1rem; margin-left: .5rem; }
+.site-band-menu > nav a { color: var(--mint); font-size: .8rem; font-weight: 700; text-decoration: none; white-space: nowrap; }
+.site-band-menu > nav a:hover, .site-band-menu > nav a[aria-current="page"] { text-decoration: underline; text-underline-offset: .2em; }
+.site-band a:focus-visible, .site-band button:focus-visible, .site-band summary:focus-visible { outline: .2rem solid var(--focus); outline-offset: .15rem; }
 .page-band-rule { height: .4rem; background: var(--teal); }
+
+@media (max-width: 45rem) {
+  .site-band-menu > summary { display: inline-flex; align-items: center; height: 2.5rem; padding: 0 .6rem; border-radius: .3rem; color: var(--mint); font-size: .8rem; font-weight: 700; cursor: pointer; }
+  .site-band-menu > summary:hover { background: rgba(255, 255, 255, .12); }
+  .site-band-menu > nav { display: none; position: absolute; right: 0; top: calc(100% + .55rem); z-index: 6; flex-direction: column; flex-wrap: nowrap; gap: 0; min-width: 12rem; margin: 0; padding: .35rem 0; background: var(--navy); border: 1px solid rgba(158, 231, 223, .3); border-radius: .3rem; box-shadow: 0 .5rem 1.2rem rgba(16, 42, 67, .35); }
+  .site-band-menu[open] > nav { display: flex; }
+  .site-band-menu > nav a { padding: .55rem .9rem; font-size: .88rem; }
+}
 
 /* Slot 2: one page head, two grounds. The extended variant is the single
    exception the brand-link target buys (issue 192, R3/R4); it bends no other
