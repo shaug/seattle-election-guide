@@ -50,6 +50,7 @@ from election_guide.rendering.models import (
 )
 from election_guide.rendering.shell import (
     close_icon_svg,
+    election_day_banner_html,
     election_names,
     page_title,
     print_footer_audit_html,
@@ -58,6 +59,7 @@ from election_guide.rendering.shell import (
     site_footer_audit_html,
     site_footer_band_html,
     site_head_links_html,
+    site_page_head_html,
 )
 from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
 
@@ -358,6 +360,7 @@ def render_comparison_document(
         .replace("import { scoreRace } from './lens-score.mjs';\n", "")
     )
     compare_client_script = (TEMPLATE_DIR / "compare-client.mjs").read_text(encoding="utf-8")
+    election_day_script = (TEMPLATE_DIR / "election-day.mjs").read_text(encoding="utf-8")
     guide_path = f"/e/{view_model.metadata.election_id}/"
     pdf_href = f"{guide_path}{pdf_filename}" if pdf_filename is not None else None
     election_display_name, _ = election_names(
@@ -420,6 +423,15 @@ def render_comparison_document(
             current="compare",
         ),
         site_head_links=site_head_links_html(public_site_url),
+        site_page_head=site_page_head_html(
+            eyebrow=election_display_name,
+            title="Comparisons",
+            tagline_html=(
+                "Put any sources side by side and see where they agree — and where they don't."
+            ),
+        ),
+        election_day_banner=election_day_banner_html(view_model.metadata.election_date),
+        election_day_script=election_day_script,
         site_footer_band=_election_footer_band(
             view_model,
             project_url=project_url,
@@ -1119,6 +1131,8 @@ def validate_rendered_guide(
             if cell.evidence_url is not None
         ),
     }
+    if view_model.comparisons.policy.enabled:
+        expected_html_links.add(f"/e/{view_model.metadata.election_id}/compare/")
     canonical_url = f"{configuration.public_site_url}/e/{view_model.metadata.election_id}/"
     required_site_metadata = {
         f'<link rel="canonical" href="{canonical_url}">',

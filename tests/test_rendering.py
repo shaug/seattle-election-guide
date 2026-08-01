@@ -376,16 +376,16 @@ def test_shared_site_band_names_the_methodology_path_for_what_it_does() -> None:
     assert 'href="/about/" aria-current="page"' in band
 
 
-def test_shared_site_band_orders_optional_compare_after_sources() -> None:
+def test_shared_site_band_orders_optional_compare_before_sources() -> None:
     band = site_band_html(
         guide_href="/e/wa-2026-primary/",
         sources_href="/e/wa-2026-primary/sources/",
         compare_href="/e/wa-2026-primary/compare/",
     )
 
-    assert band.index(">Endorsements</a>") < band.index(">Sources</a>")
-    assert band.index(">Sources</a>") < band.index(">Comparisons</a>")
-    assert band.index(">Comparisons</a>") < band.index(">How this works</a>")
+    assert band.index(">Endorsements</a>") < band.index(">Comparisons</a>")
+    assert band.index(">Comparisons</a>") < band.index(">Sources</a>")
+    assert band.index(">Sources</a>") < band.index(">How this works</a>")
 
 
 def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path: Path) -> None:

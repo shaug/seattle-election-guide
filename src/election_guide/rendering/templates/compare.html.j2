@@ -26,12 +26,11 @@
       {{ site_band | safe }}
       <div class="page-band-rule"></div>
     </header>
+    {{ election_day_banner | safe }}
     <main id="comparison-main" class="comparison-main">
+      {{ site_page_head | safe }}
       <div class="comparison-intro-wrap">
         <div class="comparison-intro">
-          <p class="eyebrow">{{ election_display_name }} · Comparisons</p>
-          <h1>Comparisons</h1>
-          <p class="lede">Put any sources side by side and see where they agree — and where they don't.</p>
           <div class="comparison-presets" role="group" aria-label="Suggested comparisons">
             <span>Try a comparison</span>
             {% for label, fragment in comparison_presets %}<a href="#{{ fragment }}">{{ label }}</a>{% endfor %}
@@ -124,6 +123,8 @@
 {{ lens_score_script | safe }}
 {{ compare_signals_script | safe }}
 {{ compare_client_script | safe }}
+{{ election_day_script | safe }}
+  wireElectionDay();
   wireFooterShare();
   </script>
 </body>

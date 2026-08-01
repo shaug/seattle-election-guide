@@ -90,8 +90,13 @@ def test_compare_document_server_renders_default_contract_snapshot() -> None:
 
     assert 'href="/e/wa-2026-primary/compare/" aria-current="page">Comparisons</a>' in rendered
     assert "<title>Comparisons — August 2026 Primary — Seattle Elections Guide</title>" in rendered
+    assert '<header class="page-head">' in rendered
+    assert '<p class="page-eyebrow">August 2026 Primary</p>' in rendered
     assert "<h1>Comparisons</h1>" in rendered
-    assert "August 2026 Primary · Comparisons" in rendered
+    assert 'data-election-day="2026-08-04"' in rendered
+    assert "<b>Election day:</b> Tuesday, August 4, 2026" in rendered
+    assert rendered.index(">Endorsements</a>") < rendered.index(">Comparisons</a>")
+    assert rendered.index(">Comparisons</a>") < rendered.index(">Sources</a>")
     assert 'data-default-columns="gall,strn,stim"' in rendered
     assert rendered.count("data-comparison-race=") == len(view_model.comparisons.display_index)
     assert (
@@ -218,9 +223,17 @@ def test_compare_document_server_renders_default_contract_snapshot() -> None:
 
 
 def test_compare_document_refuses_disabled_policy() -> None:
+    view_model = _bundle().view_model
+    disabled = view_model.model_copy(
+        update={
+            "comparisons": view_model.comparisons.model_copy(
+                update={"policy": ComparisonsPolicy(enabled=False)}
+            )
+        }
+    )
     with pytest.raises(ValueError, match="release policy is disabled"):
         render_comparison_document(
-            _bundle().view_model,
+            disabled,
             public_site_url="https://seattleelections.guide",
         )
 
