@@ -462,9 +462,7 @@ def render_comparison_document(
         site_page_head=site_page_head_html(
             eyebrow=election_display_name,
             title="Comparisons",
-            tagline_html=(
-                "Put any sources side by side and see where they agree — and where they don't."
-            ),
+            tagline_html="Endorsements side by side, surfacing tension.",
         ),
         election_day_banner=election_day_banner_html(view_model.metadata.election_date),
         election_day_script=election_day_script,
