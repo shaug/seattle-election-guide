@@ -384,8 +384,8 @@ def test_shared_site_band_orders_optional_compare_after_sources() -> None:
     )
 
     assert band.index(">Endorsements</a>") < band.index(">Sources</a>")
-    assert band.index(">Sources</a>") < band.index(">Compare</a>")
-    assert band.index(">Compare</a>") < band.index(">How this works</a>")
+    assert band.index(">Sources</a>") < band.index(">Comparisons</a>")
+    assert band.index(">Comparisons</a>") < band.index(">How this works</a>")
 
 
 def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path: Path) -> None:

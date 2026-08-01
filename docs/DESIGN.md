@@ -265,9 +265,15 @@ then any sticky strip, then content.
   an amber tint when it differs. Agreement recedes; the race identity carries
   the single visible and accessible “Differs” label. Shared conventions do not
   need a repeated legend.
-- **Responsive identity stays attached.** Comparison layouts never require a
-  horizontal scroller. When columns stack, every fact repeats its source
-  identity so a label is never orphaned from its value.
+- **Responsive comparison context stays attached.** At narrow widths the Race
+  and reference columns remain fixed while the remaining comparison columns
+  scroll horizontally in discrete column-sized steps. A directional cue states
+  when more columns are offscreen. The fully supported viewport floor is 320px:
+  at and below that width the Race column keeps a 5rem minimum and source
+  columns keep a 6.35rem minimum. Narrower viewports may show less of the next
+  comparison, but those columns never compress further or collapse into stacked
+  cards; the comparison rail remains independently scrollable and the page
+  itself never pans horizontally.
 - **Absence of a majority is information.** A leading share at or below
   50% gets the "No majority" treatment in the differ/amber family —
   default styling never overstates confidence.

@@ -367,7 +367,7 @@ def render_comparison_document(
         legacy_name=view_model.metadata.election_name,
         election_id=view_model.metadata.election_id,
     )
-    document_title = page_title(page="Compare sources", election=election_display_name)
+    document_title = page_title(page="Comparisons", election=election_display_name)
     source_names = {source.id: source.name for source in view_model.sources}
     source_labels = {
         source.code: source_names[source.id] for source in view_model.personalization.sources

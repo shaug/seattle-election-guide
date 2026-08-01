@@ -88,7 +88,10 @@ def test_compare_document_server_renders_default_contract_snapshot() -> None:
         pdf_filename="Seattle_Election_Guide.pdf",
     )
 
-    assert 'href="/e/wa-2026-primary/compare/" aria-current="page">Compare</a>' in rendered
+    assert 'href="/e/wa-2026-primary/compare/" aria-current="page">Comparisons</a>' in rendered
+    assert "<title>Comparisons — August 2026 Primary — Seattle Elections Guide</title>" in rendered
+    assert "<h1>Comparisons</h1>" in rendered
+    assert "August 2026 Primary · Comparisons" in rendered
     assert 'data-default-columns="gall,strn,stim"' in rendered
     assert rendered.count("data-comparison-race=") == len(view_model.comparisons.display_index)
     assert (
@@ -211,7 +214,7 @@ def test_compare_document_server_renders_default_contract_snapshot() -> None:
         public_site_url="https://seattleelections.guide",
     )
     for page in (guide, sources_page):
-        assert 'href="/e/wa-2026-primary/compare/">Compare</a>' in page
+        assert 'href="/e/wa-2026-primary/compare/">Comparisons</a>' in page
 
 
 def test_compare_document_refuses_disabled_policy() -> None:
@@ -1440,6 +1443,41 @@ def test_mobile_comparison_scrolls_columns_while_preserving_context(
         "scrollWidth": result["twoColumns"]["clientWidth"],
         "clientWidth": result["twoColumns"]["clientWidth"],
     }
+
+
+def test_comparison_columns_do_not_compress_below_the_supported_320px_floor(
+    tmp_path: Path,
+) -> None:
+    result = _evaluate_in_chrome(
+        _comparison_html_path(tmp_path),
+        """
+        (() => {
+          const wrap = document.querySelector('[data-comparison-grid]');
+          const row = document.querySelector('[data-comparison-race]');
+          const cells = [...row.children];
+          return JSON.stringify({
+            raceWidth: cells[0].getBoundingClientRect().width,
+            sourceWidths: cells.slice(1).map((cell) => cell.getBoundingClientRect().width),
+            racePosition: getComputedStyle(cells[0]).position,
+            referencePosition: getComputedStyle(cells[1]).position,
+            overflowX: getComputedStyle(wrap).overflowX,
+            wrapScrollWidth: wrap.scrollWidth,
+            wrapClientWidth: wrap.clientWidth,
+            outerWidth: document.documentElement.scrollWidth,
+            viewportWidth: document.documentElement.clientWidth,
+          });
+        })()
+        """,
+        mobile_width=280,
+    )
+
+    assert result["raceWidth"] == pytest.approx(80, abs=1)
+    assert all(width == pytest.approx(101.6, abs=1) for width in result["sourceWidths"])
+    assert result["racePosition"] == "sticky"
+    assert result["referencePosition"] == "sticky"
+    assert result["overflowX"] == "auto"
+    assert result["wrapScrollWidth"] > result["wrapClientWidth"]
+    assert result["outerWidth"] == result["viewportWidth"] == 280
 
 
 @pytest.mark.parametrize("viewport_width", [1440, 900])

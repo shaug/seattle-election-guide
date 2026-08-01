@@ -80,6 +80,8 @@
   .comparison-table .comparison-cell::before { content: none; }
   .comparison-table .comparison-cell-meta { display: block; }
 }
+/* 320px is the supported viewport floor. These widths remain fixed below it so
+   the comparison rail scrolls instead of compressing its data into illegibility. */
 @media (max-width: 381px) {
   .comparison-table-wrap { --comparison-race-width: 5rem; --comparison-source-width: 6.35rem; }
 }

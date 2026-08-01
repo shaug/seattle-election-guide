@@ -311,15 +311,15 @@ def test_enabled_comparisons_stage_verify_and_route_exact_asset(tmp_path: Path) 
 
     compare_html = compare_path.read_text(encoding="utf-8")
     assert 'data-default-columns="gall,strn,stim"' in compare_html
-    assert 'href="/e/wa-2026-primary/compare/" aria-current="page">Compare</a>' in compare_html
+    assert 'href="/e/wa-2026-primary/compare/" aria-current="page">Comparisons</a>' in compare_html
     sources_html = (output / "e" / CURRENT_ID / "sources" / "index.html").read_text(
         encoding="utf-8"
     )
-    assert f'href="/e/{CURRENT_ID}/compare/">Compare</a>' in sources_html
-    assert f'href="/e/{CURRENT_ID}/compare/">Compare</a>' in (
+    assert f'href="/e/{CURRENT_ID}/compare/">Comparisons</a>' in sources_html
+    assert f'href="/e/{CURRENT_ID}/compare/">Comparisons</a>' in (
         output / "about" / "index.html"
     ).read_text(encoding="utf-8")
-    assert f'href="/e/{CURRENT_ID}/compare/">Compare</a>' in (
+    assert f'href="/e/{CURRENT_ID}/compare/">Comparisons</a>' in (
         output / "e" / "index.html"
     ).read_text(encoding="utf-8")
 
@@ -362,8 +362,8 @@ def test_comparison_preview_stages_only_the_current_direct_route(tmp_path: Path)
     compare_html = compare_path.read_text(encoding="utf-8")
     assert 'data-default-columns="gall,strn,stim"' in compare_html
     assert compare_html.index(">Endorsements</a>") < compare_html.index(">Sources</a>")
-    assert compare_html.index(">Sources</a>") < compare_html.index(">Compare</a>")
-    assert compare_html.index(">Compare</a>") < compare_html.index(">How this works</a>")
+    assert compare_html.index(">Sources</a>") < compare_html.index(">Comparisons</a>")
+    assert compare_html.index(">Comparisons</a>") < compare_html.index(">How this works</a>")
 
     hidden_compare_pages = (
         preview_output / "e" / CURRENT_ID / "index.html",
@@ -371,7 +371,7 @@ def test_comparison_preview_stages_only_the_current_direct_route(tmp_path: Path)
         preview_output / "about" / "index.html",
     )
     for page in hidden_compare_pages:
-        assert f'href="/e/{CURRENT_ID}/compare/">Compare</a>' not in page.read_text(
+        assert f'href="/e/{CURRENT_ID}/compare/">Comparisons</a>' not in page.read_text(
             encoding="utf-8"
         )
 
