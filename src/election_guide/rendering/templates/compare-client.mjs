@@ -258,7 +258,11 @@ if (comparisonBindingsElement) {
         remove.dataset.comparisonRemove = String(index);
         remove.setAttribute('aria-label', `Remove ${labelFor(signal)}`);
         remove.title = `Remove ${labelFor(signal)}`;
-        remove.textContent = '×';
+        const removeIcon = document.createElement('span');
+        removeIcon.className = 'comparison-column-action-icon';
+        removeIcon.setAttribute('aria-hidden', 'true');
+        removeIcon.textContent = '×';
+        remove.append(removeIcon);
         remove.addEventListener('click', () => {
           state.columns = state.columns.filter((_, columnIndex) => columnIndex !== index);
           const focusIndex = Math.min(index, state.columns.length - 1);
@@ -272,7 +276,11 @@ if (comparisonBindingsElement) {
         add.className = 'comparison-column-add';
         add.setAttribute('aria-label', 'Add comparison column');
         add.title = 'Add comparison column';
-        add.textContent = '+';
+        const addIcon = document.createElement('span');
+        addIcon.className = 'comparison-column-action-icon';
+        addIcon.setAttribute('aria-hidden', 'true');
+        addIcon.textContent = '+';
+        add.append(addIcon);
         add.addEventListener('click', () => {
           const available = nextUnusedSignal();
           if (!available) return;

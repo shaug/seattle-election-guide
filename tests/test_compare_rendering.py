@@ -1294,6 +1294,88 @@ def test_compare_client_mobile_budget_and_focus_have_layout_evidence(tmp_path: P
     assert desktop["titlesFit"] is True
 
 
+@pytest.mark.parametrize("viewport_width", [1440, 900])
+def test_compare_header_uses_one_compact_corner_action_geometry(
+    tmp_path: Path, viewport_width: int
+) -> None:
+    result = _evaluate_in_chrome(
+        _comparison_html_path(tmp_path),
+        """
+        (async () => {
+          const wait = () => new Promise((resolve) => setTimeout(resolve, 120));
+          const capture = () => {
+            const head = document.querySelector('[data-comparison-head]');
+            const headerCells = [...head.querySelectorAll('th')];
+            const raceCell = headerCells[0].getBoundingClientRect();
+            const raceLabel = headerCells[0]
+              .querySelector('.comparison-column-label').getBoundingClientRect();
+            const cells = headerCells.slice(1).map((cell) => {
+              const cellRect = cell.getBoundingClientRect();
+              const title = cell.querySelector('.comparison-column-title');
+              const titleRect = title.getBoundingClientRect();
+              const action = cell.querySelector(
+                '.comparison-column-remove, .comparison-column-add',
+              );
+              const icon = action?.querySelector('.comparison-column-action-icon');
+              const iconRect = icon?.getBoundingClientRect();
+              return {
+                signal: cell.dataset.columnSignal,
+                titleTop: titleRect.top,
+                titleFits: title.scrollWidth <= title.clientWidth,
+                actionType: action?.classList.contains('comparison-column-add')
+                  ? 'add'
+                  : (action ? 'remove' : null),
+                iconTopInset: iconRect ? iconRect.top - cellRect.top : null,
+                iconRightInset: iconRect ? cellRect.right - iconRect.right : null,
+                iconOverlapsTitle: iconRect ? !(
+                  iconRect.left >= titleRect.right || iconRect.right <= titleRect.left
+                  || iconRect.top >= titleRect.bottom || iconRect.bottom <= titleRect.top
+                ) : false,
+              };
+            });
+            const titleTops = cells.map((cell) => cell.titleTop);
+            return {
+              height: head.getBoundingClientRect().height,
+              stickyPosition: getComputedStyle(headerCells[0]).position,
+              raceTopInset: raceLabel.top - raceCell.top,
+              raceLeftInset: raceLabel.left - raceCell.left,
+              titleTopSpread: Math.max(...titleTops) - Math.min(...titleTops),
+              cells,
+            };
+          };
+
+          const threeColumns = capture();
+          document.querySelector('[data-comparison-remove="2"]').click();
+          await wait();
+          return JSON.stringify({ threeColumns, twoColumns: capture() });
+        })()
+        """,
+        mobile_width=viewport_width,
+    )
+
+    for layout in (result["threeColumns"], result["twoColumns"]):
+        assert layout["height"] < 80
+        assert layout["stickyPosition"] == "sticky"
+        assert layout["titleTopSpread"] < 1
+        assert all(cell["titleFits"] for cell in layout["cells"])
+        for cell in layout["cells"]:
+            assert cell["iconOverlapsTitle"] is False
+            if cell["actionType"] is None:
+                continue
+            assert abs(cell["iconTopInset"] - layout["raceTopInset"]) <= 4
+            assert abs(cell["iconRightInset"] - layout["raceLeftInset"]) <= 4
+
+    assert [cell["actionType"] for cell in result["threeColumns"]["cells"]] == [
+        None,
+        "remove",
+        "remove",
+    ]
+    assert [cell["actionType"] for cell in result["twoColumns"]["cells"]] == [
+        None,
+        "add",
+    ]
+
+
 def test_compare_client_mobile_add_action_is_compact_and_opens_the_new_picker(
     tmp_path: Path,
 ) -> None:
