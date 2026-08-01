@@ -1294,7 +1294,7 @@ def test_compare_client_mobile_budget_and_focus_have_layout_evidence(tmp_path: P
     assert desktop["titlesFit"] is True
 
 
-@pytest.mark.parametrize("viewport_width", [390, 320])
+@pytest.mark.parametrize("viewport_width", [390, 375, 320])
 def test_mobile_comparison_scrolls_columns_while_preserving_context(
     tmp_path: Path, viewport_width: int
 ) -> None:

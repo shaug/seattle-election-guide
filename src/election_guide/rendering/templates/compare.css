@@ -80,6 +80,6 @@
   .comparison-table .comparison-cell::before { content: none; }
   .comparison-table .comparison-cell-meta { display: block; }
 }
-@media (max-width: 360px) {
+@media (max-width: 381px) {
   .comparison-table-wrap { --comparison-race-width: 5rem; --comparison-source-width: 6.35rem; }
 }
