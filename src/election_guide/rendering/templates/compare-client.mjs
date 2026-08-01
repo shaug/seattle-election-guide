@@ -16,7 +16,6 @@ if (comparisonBindingsElement) {
   const head = document.querySelector('[data-comparison-head]');
   const notice = document.querySelector('[data-comparison-hidden-notice]');
   const status = document.querySelector('[data-comparison-status]');
-  const copyStatus = document.querySelector('[data-comparison-copy-status]');
   const sectionFilter = document.querySelector('[data-comparison-section-filter]');
   const contestedIds = new Set(payload.contested_race_ids);
   const races = new Map(personalization.races.map((race) => [race.race_id, race]));
@@ -436,12 +435,6 @@ if (comparisonBindingsElement) {
   document.querySelector('[data-comparison-contested]').addEventListener('change', () => {
     state.contestedOnly = true;
     if (writeState('replace')) render();
-  });
-  document.querySelector('[data-comparison-copy]').addEventListener('click', async () => {
-    const result = await shareOrCopyLink(window.location.href, document.title);
-    if (result === 'copied') copyStatus.textContent = 'Link copied.';
-    else if (result === 'shared') copyStatus.textContent = 'Share menu opened.';
-    else if (result === 'failed') copyStatus.textContent = `Copy failed. Link: ${window.location.href}`;
   });
   document.querySelectorAll('.comparison-presets a').forEach((link) => {
     link.addEventListener('click', (event) => {

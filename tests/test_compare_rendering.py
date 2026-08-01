@@ -108,6 +108,10 @@ def test_compare_document_server_renders_default_contract_snapshot() -> None:
     assert 'class="comparison-legend"' not in rendered
     assert 'class="comparison-method"' not in rendered
     assert "≠" not in rendered
+    assert 'class="comparison-share"' not in rendered
+    assert "data-comparison-copy" not in rendered
+    assert "data-footer-share" in rendered
+    assert "wireFooterShare();" in rendered
 
     table = re.search(r'<table class="comparison-table".*?</table>', rendered, flags=re.DOTALL)
     assert table is not None
@@ -629,13 +633,7 @@ def test_compare_client_swaps_the_reference_and_recomputes_relative_state(tmp_pa
           await wait();
           const afterForward = signals();
 
-          let copied = null;
-          Object.defineProperty(navigator, 'share', { value: undefined, configurable: true });
-          Object.defineProperty(navigator, 'clipboard', {
-            value: { writeText: async (value) => { copied = value; } }, configurable: true,
-          });
-          document.querySelector('[data-comparison-copy]').click();
-          await wait();
+          const configuredUrl = location.href;
 
           document.querySelector('[data-comparison-remove="2"]').click();
           await wait();
@@ -643,7 +641,8 @@ def test_compare_client_swaps_the_reference_and_recomputes_relative_state(tmp_pa
             defaultRows, defaultStatus, pickerLabel, initialPickerValue, allSourcesOptions,
             duplicateDisabled, escapeFocus, blurClosed,
             changedRows, changedTintedRows, changedStatus, changedHash, focusAfterChange,
-            referenceAgreement, allSourcesAvailableAfterChange, afterBack, afterForward, copied,
+            referenceAgreement, allSourcesAvailableAfterChange, afterBack, afterForward,
+            configuredUrl,
             afterRemove: signals(),
             visibleReferenceLabel: Boolean(document.querySelector(
               '[data-column-signal="Genv"] .comparison-column-label',
@@ -668,7 +667,7 @@ def test_compare_client_swaps_the_reference_and_recomputes_relative_state(tmp_pa
     assert result["changedStatus"] != result["defaultStatus"]
     assert result["afterBack"] == ["gall", "strn", "stim"]
     assert result["afterForward"] == ["Genv", "strn", "stim"]
-    assert result["copied"].endswith(result["changedHash"])
+    assert result["configuredUrl"].endswith(result["changedHash"])
     assert result["afterRemove"] == ["Genv", "strn"]
     assert result["visibleReferenceLabel"] is False
     assert result["referenceRemove"] is False
@@ -684,7 +683,7 @@ def test_compare_client_swaps_the_reference_and_recomputes_relative_state(tmp_pa
             .getAttribute('aria-label'),
         }))()
         """,
-        initial_url=result["copied"],
+        initial_url=result["configuredUrl"],
     )
     assert restored["columns"] == ["Genv", "strn", "stim"]
     assert restored["referenceLabel"] == "Change reference, currently Environment"
@@ -824,7 +823,7 @@ def test_compare_client_migrates_stale_links_without_promoting_a_new_reference(
     assert "data=stale-data" not in traversed["hash"]
 
 
-def test_compare_client_presets_filters_and_copy_link_round_trip(tmp_path: Path) -> None:
+def test_compare_client_presets_filters_and_url_round_trip(tmp_path: Path) -> None:
     html_path = _comparison_html_path(tmp_path)
     result = _evaluate_in_chrome(
         html_path,
@@ -847,24 +846,14 @@ def test_compare_client_presets_filters_and_copy_link_round_trip(tmp_path: Path)
           await wait();
           const historyAfterFilters = history.length;
           const rowCount = document.querySelectorAll('[data-comparison-race]').length;
-          const beforeCopy = location.href;
-          let copied = null;
-          Object.defineProperty(navigator, 'share', { value: undefined, configurable: true });
-          Object.defineProperty(navigator, 'clipboard', {
-            value: { writeText: async (value) => { copied = value; } }, configurable: true,
-          });
-          document.querySelector('[data-comparison-copy]').click();
-          await wait();
+          const configuredUrl = location.href;
             return JSON.stringify({
-              presetHref, presetColumns, hash: location.hash, rowCount, beforeCopy, copied,
+              presetHref, presetColumns, hash: location.hash, rowCount, configuredUrl,
               rowsBeforeDifferences, historyBeforeFilters, historyAfterFilters,
               status: document.querySelector('[data-comparison-status]').textContent,
-              copyStatus: document.querySelector('[data-comparison-copy-status]').textContent,
               differencesChecked: document.querySelector('[data-comparison-differences]').checked,
               contestedChecked: document.querySelector('[data-comparison-contested]').checked,
-              shareSeparated: !document.querySelector('[data-comparison-copy]')
-                .closest('.comparison-controls'),
-          });
+            });
         })()
         """,
     )
@@ -875,12 +864,9 @@ def test_compare_client_presets_filters_and_copy_link_round_trip(tmp_path: Path)
     assert result["rowCount"] > 0
     assert result["rowCount"] < result["rowsBeforeDifferences"]
     assert result["historyAfterFilters"] == result["historyBeforeFilters"]
-    assert result["copied"] == result["beforeCopy"]
     assert re.fullmatch(r"\d+ of \d+ races shown · \d+ differ", result["status"])
-    assert result["copyStatus"] == "Link copied."
     assert result["differencesChecked"] is True
     assert result["contestedChecked"] is True
-    assert result["shareSeparated"] is True
     restored = _evaluate_in_chrome(
         html_path,
         """
@@ -890,15 +876,15 @@ def test_compare_client_presets_filters_and_copy_link_round_trip(tmp_path: Path)
           )].map((heading) => heading.dataset.columnSignal),
           contested: document.querySelector('[data-comparison-contested]').checked,
           differing: document.querySelector('[data-comparison-differences]').checked,
-          copiedHash: location.hash,
+          restoredHash: location.hash,
         }))()
         """,
-        initial_url=result["copied"],
+        initial_url=result["configuredUrl"],
     )
     assert restored["columns"] == result["presetColumns"]
     assert restored["contested"] is True
     assert restored["differing"] is True
-    assert restored["copiedHash"] == result["hash"]
+    assert restored["restoredHash"] == result["hash"]
 
 
 def test_legacy_differing_and_contested_differences_fragments_restore_independent_controls(
@@ -1025,7 +1011,6 @@ def test_compare_client_mobile_budget_and_focus_have_layout_evidence(tmp_path: P
             titleLabels: titleActions.map((title) => title.getAttribute('aria-label')),
             restingPickerCount: document.querySelectorAll('[data-comparison-column]').length,
             focusReturned: document.activeElement === titleActions[1],
-            copyTag: document.querySelector('[data-comparison-copy]').tagName,
             titlesFit: titles.every((title) => title.scrollWidth <= title.clientWidth),
             removeTitle: remove.title,
             removeWidth: remove.getBoundingClientRect().width,
@@ -1110,7 +1095,6 @@ def test_compare_client_mobile_budget_and_focus_have_layout_evidence(tmp_path: P
     ]
     assert mobile["restingPickerCount"] == 0
     assert mobile["focusReturned"] is True
-    assert mobile["copyTag"] == "BUTTON"
     assert mobile["titlesFit"] is True
     assert mobile["removeTitle"] == (
         "Remove Environment and Climate Caucus of the Washington State Democratic Party"

@@ -9,14 +9,12 @@
 .comparison-presets > span { color: var(--muted); font-weight: 700; letter-spacing: .02em; }
 .comparison-presets a { color: var(--blue); font-weight: 700; }
 .comparison-column-picker { max-width: 100%; padding: .45rem .7rem; border: 1px solid var(--line-strong); border-radius: .3rem; background: var(--white); color: var(--ink); font: inherit; }
-.comparison-share button, .comparison-column-remove, .comparison-column-add, .comparison-reset { min-height: 2rem; padding: .35rem .55rem; border: 1px solid var(--line); border-radius: .2rem; background: var(--white); color: var(--navy); font-weight: 700; cursor: pointer; }
-.comparison-share { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .6rem; margin: .65rem 0 .8rem; padding-left: .75rem; border-left: .25rem solid var(--teal); color: var(--muted); font-size: .74rem; font-weight: 700; }
-.comparison-presets a:focus-visible, .comparison-share :focus-visible,
+.comparison-column-remove, .comparison-column-add, .comparison-reset { min-height: 2rem; padding: .35rem .55rem; border: 1px solid var(--line); border-radius: .2rem; background: var(--white); color: var(--navy); font-weight: 700; cursor: pointer; }
+.comparison-presets a:focus-visible,
 .comparison-column-picker:focus-visible,
 .comparison-column-title-action:focus-visible, .comparison-column-remove:focus-visible,
 .comparison-column-add:focus-visible, .comparison-table a:focus-visible,
 .comparison-reset:focus-visible { outline: .2rem solid var(--focus); outline-offset: .12rem; }
-.comparison-copy-status { min-width: 5rem; font-weight: 500; }
 .comparison-hidden-notice { margin: 0 0 .65rem; padding: .55rem .7rem; border-left: .25rem solid var(--teal); background: var(--sky); color: var(--navy); font-size: .78rem; font-weight: 700; }
 .comparison-table-wrap { width: 100%; max-width: 100%; overflow: visible; border: 1px solid var(--line); border-radius: .35rem; background: var(--white); }
 .comparison-table { width: 100%; min-width: 0; border-collapse: separate; border-spacing: 0; table-layout: fixed; }
@@ -47,7 +45,6 @@
 .comparison-cell[data-cell-kind="blank"] .comparison-cell-picks,
 .comparison-cell[data-cell-kind="outside_scope"] .comparison-cell-picks { color: var(--muted); font-weight: 500; font-style: italic; }
 @media (max-width: 720px) {
-  .comparison-share { margin-bottom: .8rem; }
   .comparison-table, .comparison-table thead, .comparison-table tbody,
   .comparison-table tr, .comparison-table th, .comparison-table td { display: block; width: 100%; }
   .comparison-table { table-layout: auto; }

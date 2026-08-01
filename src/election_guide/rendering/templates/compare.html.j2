@@ -58,11 +58,6 @@
         {% for section in comparison_sections %}<option value="{{ section.section_id }}">{{ section.section_label }}</option>{% endfor %}
       {% endcall %}
       <div class="comparison-content">
-        <div class="comparison-share" role="group" aria-label="Share this comparison">
-          <span>Share this view</span>
-          <button type="button" data-comparison-copy>Copy link</button>
-          <span class="comparison-copy-status" role="status" aria-live="polite" data-comparison-copy-status></span>
-        </div>
         <p class="comparison-hidden-notice" role="status" aria-live="polite" data-comparison-hidden-notice hidden></p>
         <div class="comparison-table-wrap" data-comparison-grid>
           <table class="comparison-table" data-comparison-table data-default-columns="gall,strn,stim">
