@@ -359,7 +359,21 @@ def test_comparison_preview_stages_only_the_current_direct_route(tmp_path: Path)
         verified.assets[compare_relative] == hashlib.sha256(compare_path.read_bytes()).hexdigest()
     )
     assert not (preview_output / "e" / OLDER_ID / "compare").exists()
-    assert 'data-default-columns="gall,strn,stim"' in compare_path.read_text(encoding="utf-8")
+    compare_html = compare_path.read_text(encoding="utf-8")
+    assert 'data-default-columns="gall,strn,stim"' in compare_html
+    assert compare_html.index(">Endorsements</a>") < compare_html.index(">Sources</a>")
+    assert compare_html.index(">Sources</a>") < compare_html.index(">Compare</a>")
+    assert compare_html.index(">Compare</a>") < compare_html.index(">How this works</a>")
+
+    hidden_compare_pages = (
+        preview_output / "e" / CURRENT_ID / "index.html",
+        preview_output / "e" / CURRENT_ID / "sources" / "index.html",
+        preview_output / "about" / "index.html",
+    )
+    for page in hidden_compare_pages:
+        assert f'href="/e/{CURRENT_ID}/compare/">Compare</a>' not in page.read_text(
+            encoding="utf-8"
+        )
 
     existing_html = sorted(
         path.relative_to(baseline_output) for path in baseline_output.rglob("*.html")
