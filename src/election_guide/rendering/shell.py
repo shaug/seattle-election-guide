@@ -15,6 +15,10 @@ from datetime import date
 
 SITE_NAME = "Seattle Elections Guide"
 CONTACT_HREF = "mailto:seattle-elections@dobravoda.dev"
+# King County Elections administers Seattle's ballots and is already this
+# repository's cited authority for the sample ballot, candidate filings, and
+# precinct maps (config/elections/*-inventory.yaml).
+HOW_TO_VOTE_HREF = "https://kingcounty.gov/en/dept/elections/how-to-vote"
 
 
 def election_names(
@@ -216,6 +220,85 @@ def site_band_html(
         f"{nav_link('Sources', sources_href, 'sources', sources_extra)}"
         f"{nav_link('How this works', about_href, 'about')}"
         "</nav></div>"
+    )
+
+
+def site_page_head_html(
+    *,
+    title: str,
+    tagline: str,
+    eyebrow: str | None = None,
+    extended: bool = False,
+    narrow: bool = False,
+) -> str:
+    """Slot 2 of the shell grammar (issue 192): one page head for every page.
+
+    `eyebrow` is the election name on election-scoped pages and `None` on
+    agnostic ones, where its absence is the only signal needed (R2). `title` is
+    the page's own name, agreeing with its nav label and `<title>` (R5), and for
+    election-scoped pages it is a plural noun so eyebrow and title read as one
+    name — "August 2026 Primary Comparisons" (R5a).
+
+    `narrow` constrains the head to the same ~46rem reading column its page's
+    body uses, reusing the shared `.narrow-main` class. DESIGN.md § Typography
+    holds that the frame is the site and the measure is the content, so a head
+    whose page sets a book measure must sit on it too — otherwise the tagline
+    outruns the prose directly beneath it.
+
+    `extended` runs the masthead's navy through the head instead of stopping it
+    at the band. It is the single exception the brand-link target buys (R3/R4);
+    it needs no other rule to bend, because the ground-relative color rules
+    already carry the eyebrow to mint and the title to white.
+    """
+
+    classes = "page-head extended" if extended else "page-head"
+    eyebrow_html = (
+        f'<p class="page-eyebrow">{html.escape(eyebrow)}</p>' if eyebrow is not None else ""
+    )
+    inner = f'{eyebrow_html}<h1>{html.escape(title)}</h1><p class="page-tagline">{tagline}</p>'
+    if narrow:
+        classes = f"{classes} narrow"
+        inner = f'<div class="narrow-main">{inner}</div>'
+    return f'<header class="{classes}">{inner}</header>'
+
+
+def election_day_banner_html(
+    election_date: str,
+    *,
+    how_to_vote_href: str = HOW_TO_VOTE_HREF,
+) -> str:
+    """Slot 4 of the shell grammar (issue 192): the election-day banner.
+
+    The server renders a **tense-neutral** statement — "Election day: Tuesday,
+    August 4, 2026" — because an archived guide is a frozen file that cannot know
+    today's date, and a page built before an election would otherwise keep
+    insisting the election is upcoming forever. A label plus a date is true in
+    both eras. `election-day.mjs` then escalates it as the date nears and
+    rewrites it in the past tense once the election has happened.
+
+    The "How to vote" link is rendered unconditionally rather than added by
+    script: without JavaScript, a reader before the election would otherwise lose
+    the link exactly when it matters most, whereas a reader of an archived guide
+    merely sees an evergreen link about how voting works. The first cost is much
+    the worse of the two.
+
+    Replaces the guide hero's old "ELECTION DAY · AUGUST 4" kicker, which stated
+    the same fact in permanent chrome that could never retire it.
+    """
+
+    parsed = date.fromisoformat(election_date)
+    full = f"{parsed:%A}, {parsed:%B} {parsed.day}, {parsed:%Y}"
+    short = f"{parsed:%A}, {parsed:%B} {parsed.day}"
+    return (
+        f'<p class="election-day" data-election-day="{html.escape(election_date, quote=True)}"'
+        f' data-election-day-full="{html.escape(full, quote=True)}"'
+        f' data-election-day-short="{html.escape(short, quote=True)}">'
+        f'<span class="election-day-when" data-election-day-when>'
+        f"<b>Election day:</b> {html.escape(full)}</span>"
+        '<span class="election-day-separator" aria-hidden="true"> · </span>'
+        f'<a class="election-day-action" href="{html.escape(how_to_vote_href, quote=True)}">'
+        "How to vote</a>"
+        "</p>"
     )
 
 

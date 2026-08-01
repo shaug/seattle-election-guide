@@ -69,7 +69,13 @@ from election_guide.rendering.renderer import (
     find_chrome,
     find_pdftoppm,
 )
-from election_guide.rendering.shell import election_names, site_band_html
+from election_guide.rendering.shell import (
+    HOW_TO_VOTE_HREF,
+    election_day_banner_html,
+    election_names,
+    site_band_html,
+    site_page_head_html,
+)
 from election_guide.scoring import score_dataset
 from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
 from tests.test_personalization import (
@@ -266,6 +272,70 @@ def test_canonical_names_use_structured_future_election_data() -> None:
         legacy_name=cast(str, election["name"]),
         election_id=cast(str, election["id"]),
     ) == ("November 2027 General", "November 2, 2027 Washington general")
+
+
+def test_page_head_names_the_page_and_puts_the_election_in_the_eyebrow() -> None:
+    """Issue 192: one head for every page. The h1 is the page's own name and
+    the eyebrow is the election, so the two read as one name and the strongest
+    identity on screen keeps its size and position across page types."""
+    head = site_page_head_html(
+        eyebrow="August 2026 Primary",
+        title="Comparisons",
+        tagline="Put any sources side by side.",
+    )
+
+    assert '<p class="page-eyebrow">August 2026 Primary</p>' in head
+    assert "<h1>Comparisons</h1>" in head
+    assert '<header class="page-head">' in head
+
+
+def test_page_head_omits_the_eyebrow_on_election_agnostic_pages() -> None:
+    """Presence follows the page's kind: the absence of an eyebrow is the only
+    marker an agnostic page needs, so no extra mechanism is spent on it."""
+    head = site_page_head_html(title="How this works", tagline="How this guide works.")
+
+    assert "page-eyebrow" not in head
+    assert "<h1>How this works</h1>" in head
+
+
+def test_extended_page_head_is_the_one_exception_primacy_buys() -> None:
+    """The dial (R3): the masthead's navy runs through the head on the page the
+    brand lockup links to. It bends no other rule — the eyebrow's mint-on-navy
+    and the title's white are the ground-relative colors already prescribed."""
+    extended = site_page_head_html(
+        eyebrow="August 2026 Primary", title="Endorsements", tagline="Distilled.", extended=True
+    )
+    plain = site_page_head_html(eyebrow="August 2026 Primary", title="Sources", tagline="Choose.")
+
+    assert '<header class="page-head extended">' in extended
+    assert '<header class="page-head">' in plain
+
+
+def test_page_head_takes_its_pages_reading_measure_when_it_has_one() -> None:
+    """A head above a book-measure column sits on that column, so its tagline
+    never outruns the prose beneath it."""
+    narrow = site_page_head_html(
+        title="Guide archive", tagline="Every guide stays up.", narrow=True
+    )
+
+    assert '<header class="page-head narrow">' in narrow
+    assert '<div class="narrow-main">' in narrow
+
+
+def test_election_day_banner_states_a_truth_that_survives_the_election() -> None:
+    """Every guide is a frozen file that cannot know today's date, so the server
+    writes a tense-neutral statement — true before and after the election — and
+    the script escalates or rewrites it. A reader without JavaScript is never
+    told something false, whichever era they arrive in."""
+    banner = election_day_banner_html("2026-08-04")
+
+    assert 'data-election-day="2026-08-04"' in banner
+    assert "<b>Election day:</b> Tuesday, August 4, 2026" in banner
+    # No verb tense to go stale, and the date in both the long and short forms
+    # the script needs so it never has to reformat a date itself.
+    assert "Election day is" not in banner
+    assert 'data-election-day-short="Tuesday, August 4"' in banner
+    assert HOW_TO_VOTE_HREF in banner
 
 
 def test_shared_site_band_names_the_methodology_path_for_what_it_does() -> None:
