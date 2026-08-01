@@ -421,7 +421,13 @@ def test_guide_and_compare_shared_controls_have_the_same_composition_and_geometr
     assert compare["outerWidth"] == compare["viewportWidth"]
     assert abs(guide["barLeft"] - compare["barLeft"]) < 1
     assert abs(guide["barWidth"] - compare["barWidth"]) < 1
-    for guide_rect, compare_rect in zip(guide["slotRects"], compare["slotRects"], strict=True):
+    # The status slot carries intentionally different live copy on each page, so
+    # its text metrics may differ across browser/font environments. Compare the
+    # three shared controls here; the status has its own placement constraints
+    # below.
+    for guide_rect, compare_rect in zip(
+        guide["slotRects"][:3], compare["slotRects"][:3], strict=True
+    ):
         for guide_value, compare_value in zip(guide_rect, compare_rect, strict=True):
             assert abs(guide_value - compare_value) < 1
     assert guide["allOptionsFit"] is True
