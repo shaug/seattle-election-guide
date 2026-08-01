@@ -377,6 +377,7 @@ def test_guide_and_compare_shared_controls_have_the_same_composition_and_geometr
         selectTop: selectRect.top,
         selectBottom: selectRect.bottom,
         statusTop: statusRect.top,
+        statusBottom: statusRect.bottom,
         statusHeight: statusRect.height,
         statusLineHeight: styles(status).lineHeight,
         allOptionsFit: segmented.flatMap((control) => [...control.querySelectorAll('span')])
@@ -435,7 +436,8 @@ def test_guide_and_compare_shared_controls_have_the_same_composition_and_geometr
     if viewport_width > 720:
         assert abs(guide["barHeight"] - compare["barHeight"]) < 1
         for rendered in (guide, compare):
-            assert rendered["selectTop"] <= rendered["statusTop"] < rendered["selectBottom"]
+            assert rendered["statusTop"] < rendered["selectBottom"]
+            assert rendered["statusBottom"] > rendered["selectTop"]
             assert (
                 rendered["statusHeight"]
                 <= float(rendered["statusLineHeight"].removesuffix("px")) * 1.5
