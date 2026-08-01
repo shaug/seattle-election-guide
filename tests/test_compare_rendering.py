@@ -330,7 +330,7 @@ def test_guide_and_compare_render_the_shared_election_controls_composite() -> No
     assert ".sticky-header" not in page_css
 
 
-@pytest.mark.parametrize("viewport_width", [1440, 390])
+@pytest.mark.parametrize("viewport_width", [1440, 900, 721, 390])
 def test_guide_and_compare_shared_controls_have_the_same_composition_and_geometry(
     tmp_path: Path, viewport_width: int
 ) -> None:
@@ -380,6 +380,8 @@ def test_guide_and_compare_shared_controls_have_the_same_composition_and_geometr
         statusBottom: statusRect.bottom,
         statusHeight: statusRect.height,
         statusLineHeight: styles(status).lineHeight,
+        statusWhiteSpace: styles(status).whiteSpace,
+        statusFits: status.scrollWidth <= status.clientWidth + 1,
         allOptionsFit: segmented.flatMap((control) => [...control.querySelectorAll('span')])
           .every((item) => item.scrollWidth <= item.clientWidth + 1),
         outerWidth: document.documentElement.scrollWidth,
@@ -433,6 +435,8 @@ def test_guide_and_compare_shared_controls_have_the_same_composition_and_geometr
             assert abs(guide_value - compare_value) < 1
     assert guide["allOptionsFit"] is True
     assert compare["allOptionsFit"] is True
+    assert guide["statusWhiteSpace"] == compare["statusWhiteSpace"] == "nowrap"
+    assert guide["statusFits"] is compare["statusFits"] is True
     if viewport_width > 720:
         assert abs(guide["barHeight"] - compare["barHeight"]) < 1
         for rendered in (guide, compare):
