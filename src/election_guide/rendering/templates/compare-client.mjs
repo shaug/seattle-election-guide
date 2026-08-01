@@ -14,6 +14,8 @@ if (comparisonBindingsElement) {
   const engine = createColumnSignalEngine(personalization, comparisons);
   const table = document.querySelector('[data-comparison-table]');
   const head = document.querySelector('[data-comparison-head]');
+  const grid = document.querySelector('[data-comparison-grid]');
+  const scrollHint = document.querySelector('[data-comparison-scroll-hint]');
   const notice = document.querySelector('[data-comparison-hidden-notice]');
   const status = document.querySelector('[data-comparison-status]');
   const sectionFilter = document.querySelector('[data-comparison-section-filter]');
@@ -33,6 +35,28 @@ if (comparisonBindingsElement) {
   }
   syncStickyControlsHeight();
   new ResizeObserver(syncStickyControlsHeight).observe(stickyControls);
+
+  function syncComparisonScrollHint() {
+    grid.style.setProperty('--comparison-scroll-left', `${grid.scrollLeft}px`);
+    const maximum = Math.max(0, grid.scrollWidth - grid.clientWidth);
+    const hasOverflow = maximum > 2;
+    scrollHint.hidden = !hasOverflow;
+    grid.tabIndex = hasOverflow ? 0 : -1;
+    if (!hasOverflow) {
+      scrollHint.textContent = '';
+      scrollHint.removeAttribute('data-scroll-position');
+      return;
+    }
+    const atStart = grid.scrollLeft <= 2;
+    const atEnd = grid.scrollLeft >= maximum - 2;
+    const position = atStart ? 'start' : (atEnd ? 'end' : 'middle');
+    scrollHint.dataset.scrollPosition = position;
+    scrollHint.textContent = position === 'start'
+      ? 'More columns →'
+      : (position === 'end' ? '← More columns' : '← More columns →');
+  }
+  grid.addEventListener('scroll', syncComparisonScrollHint, { passive: true });
+  new ResizeObserver(syncComparisonScrollHint).observe(grid);
 
   const labelFor = (signal) => {
     if (signal === ALL_SOURCES_TOKEN) return 'All sources';
@@ -228,6 +252,7 @@ if (comparisonBindingsElement) {
   }
 
   function renderHead(visible, focusTarget) {
+    table.style.setProperty('--comparison-column-count', String(visible.length));
     head.replaceChildren();
     const row = document.createElement('tr');
     const race = document.createElement('th');
@@ -432,6 +457,7 @@ if (comparisonBindingsElement) {
     renderHead(visible, focusTarget);
     renderBody(visible);
     syncControls();
+    window.requestAnimationFrame(syncComparisonScrollHint);
   }
 
   sectionFilter.addEventListener('change', () => {
@@ -468,7 +494,10 @@ if (comparisonBindingsElement) {
   let resizeTimer;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(syncTitleHeights, 80);
+    resizeTimer = setTimeout(() => {
+      syncTitleHeights();
+      syncComparisonScrollHint();
+    }, 80);
   });
 
   stateFromLocation();

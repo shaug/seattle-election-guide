@@ -60,9 +60,11 @@
       </div>
       <div class="comparison-content">
         <p class="comparison-hidden-notice" role="status" aria-live="polite" data-comparison-hidden-notice hidden></p>
-        <div class="comparison-table-wrap" data-comparison-grid>
+        <p class="comparison-scroll-hint" data-comparison-scroll-hint aria-hidden="true" hidden></p>
+        <div class="comparison-table-wrap" data-comparison-grid role="region"
+          aria-label="Scrollable endorsement comparison" tabindex="-1">
           <table class="comparison-table" data-comparison-table data-default-columns="gall,strn,stim">
-          <caption class="visually-hidden">Endorsement comparison by race</caption>
+          <caption class="visually-hidden">Endorsement comparison by race. On narrow screens, scroll horizontally to see additional comparison columns.</caption>
           <thead data-comparison-head>
             <tr>
               <th scope="col">Race</th>

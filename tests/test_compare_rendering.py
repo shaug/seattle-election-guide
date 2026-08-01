@@ -137,7 +137,7 @@ def test_compare_document_server_renders_default_contract_snapshot() -> None:
     assert table is not None
     normalized = re.sub(r"\s+", " ", unescape(table.group(0))).strip()
     assert hashlib.sha256(normalized.encode()).hexdigest() == (
-        "37d7b85afc5f36d8a02fa1f9b24216f8e69759b10f5eb9beabf64432e1588421"
+        "43946d9255351b68d8a53621f36fff687153fd9b8a6f40831151a0eae1ba83bd"
     )
     static_head = re.search(r"<thead.*?</thead>", normalized)
     assert static_head is not None
@@ -1198,9 +1198,9 @@ def test_compare_client_mobile_budget_and_focus_have_layout_evidence(tmp_path: P
             headerBackground: getComputedStyle(
               document.querySelector('[data-column-signal="eccd"]'),
             ).backgroundColor,
-            whiteToken: (() => {
+            navyToken: (() => {
               const probe = document.createElement('i');
-              probe.style.background = 'var(--white)';
+              probe.style.background = 'var(--navy)';
               document.body.append(probe);
               const value = getComputedStyle(probe).backgroundColor;
               probe.remove();
@@ -1254,12 +1254,12 @@ def test_compare_client_mobile_budget_and_focus_have_layout_evidence(tmp_path: P
     assert mobile["configured"] == "galleccdstim"
     assert mobile["focusOutlineStyle"] != "none"
     assert float(mobile["focusOutlineWidth"].removesuffix("px")) > 0
-    assert mobile["tableWidth"] <= mobile["wrapWidth"] + 1
+    assert mobile["tableWidth"] > mobile["wrapWidth"]
     assert mobile["outerWidth"] == mobile["viewportWidth"]
-    assert mobile["wrapScrollWidth"] == mobile["wrapClientWidth"]
-    assert mobile["wrapOverflowX"] == "visible"
-    assert mobile["rowDisplay"] == "block"
-    assert mobile["cellDisplay"] == "grid"
+    assert mobile["wrapScrollWidth"] > mobile["wrapClientWidth"]
+    assert mobile["wrapOverflowX"] == "auto"
+    assert mobile["rowDisplay"] == "table-row"
+    assert mobile["cellDisplay"] == "table-cell"
     assert mobile["cellLabels"] == [
         "All sources",
         "Environment and Climate Caucus of the Washington State Democratic Party",
@@ -1281,7 +1281,7 @@ def test_compare_client_mobile_budget_and_focus_have_layout_evidence(tmp_path: P
     )
     assert mobile["removeWidth"] >= 40
     assert mobile["removeHeight"] >= 40
-    assert mobile["headerBackground"] == mobile["whiteToken"]
+    assert mobile["headerBackground"] == mobile["navyToken"]
     assert mobile["raceControlDisplay"] == "flex"
     assert desktop["visibleSignals"] == ["gall", "eccd", "stim"]
     assert desktop["noticeVisible"] is False
@@ -1292,6 +1292,154 @@ def test_compare_client_mobile_budget_and_focus_have_layout_evidence(tmp_path: P
     assert desktop["tableWidth"] <= desktop["wrapWidth"] + 1
     assert desktop["outerWidth"] == desktop["viewportWidth"]
     assert desktop["titlesFit"] is True
+
+
+@pytest.mark.parametrize("viewport_width", [390, 320])
+def test_mobile_comparison_scrolls_columns_while_preserving_context(
+    tmp_path: Path, viewport_width: int
+) -> None:
+    result = _evaluate_in_chrome(
+        _comparison_html_path(tmp_path),
+        """
+        (async () => {
+          const wait = () => new Promise((resolve) => setTimeout(resolve, 180));
+          await wait();
+          const wrap = document.querySelector('[data-comparison-grid]');
+          const table = document.querySelector('[data-comparison-table]');
+          const hint = document.querySelector('[data-comparison-scroll-hint]');
+          const headerCells = [...document.querySelectorAll('[data-comparison-head] th')];
+          const row = document.querySelector('[data-comparison-race]');
+          const section = document.querySelector('.comparison-section-heading th');
+          const cells = [...row.children];
+          const rects = () => ({
+            wrap: wrap.getBoundingClientRect(),
+            table: table.getBoundingClientRect(),
+            race: cells[0].getBoundingClientRect(),
+            reference: cells[1].getBoundingClientRect(),
+            firstComparison: cells[2].getBoundingClientRect(),
+            lastComparison: cells.at(-1).getBoundingClientRect(),
+            section: section.getBoundingClientRect(),
+          });
+          const summarize = () => {
+            const measured = rects();
+            return {
+              scrollLeft: wrap.scrollLeft,
+              raceLeft: measured.race.left,
+              raceRight: measured.race.right,
+              referenceLeft: measured.reference.left,
+              referenceRight: measured.reference.right,
+              firstComparisonLeft: measured.firstComparison.left,
+              firstComparisonRight: measured.firstComparison.right,
+              lastComparisonLeft: measured.lastComparison.left,
+              lastComparisonRight: measured.lastComparison.right,
+              wrapLeft: measured.wrap.left,
+              wrapRight: measured.wrap.right,
+              tableLeft: measured.table.left,
+              tableWidth: measured.table.width,
+              sectionLeft: measured.section.left,
+              sectionWidth: measured.section.width,
+              headerRaceLeft: headerCells[0].getBoundingClientRect().left,
+              headerReferenceLeft: headerCells[1].getBoundingClientRect().left,
+              hintHidden: hint.hidden,
+              hintText: hint.textContent,
+              hintPosition: hint.dataset.scrollPosition,
+            };
+          };
+
+          const before = summarize();
+          wrap.scrollLeft = wrap.scrollWidth;
+          wrap.dispatchEvent(new Event('scroll'));
+          await wait();
+          const after = summarize();
+
+          const sourceHeader = document.querySelector(
+            '[data-comparison-head] th:nth-child(3)',
+          );
+          const layout = {
+            overflowX: getComputedStyle(wrap).overflowX,
+            snapType: getComputedStyle(wrap).scrollSnapType,
+            snapAlign: getComputedStyle(sourceHeader).scrollSnapAlign,
+            regionLabel: wrap.getAttribute('aria-label'),
+            tabIndexAtThree: wrap.tabIndex,
+            rowDisplay: getComputedStyle(row).display,
+            cellDisplay: getComputedStyle(cells[1]).display,
+            racePosition: getComputedStyle(cells[0]).position,
+            referencePosition: getComputedStyle(cells[1]).position,
+            sourceHeaderPosition: getComputedStyle(sourceHeader).position,
+            sourceHeaderTop: getComputedStyle(sourceHeader).top,
+            raceHeaderPosition: getComputedStyle(headerCells[0]).position,
+            referenceHeaderPosition: getComputedStyle(headerCells[1]).position,
+            sectionPosition: getComputedStyle(section).position,
+            sectionColspan: section.colSpan,
+            outerWidth: document.documentElement.scrollWidth,
+            viewportWidth: document.documentElement.clientWidth,
+          };
+
+          document.querySelector('[data-comparison-remove="2"]').click();
+          await wait();
+          const twoColumns = {
+            hintHidden: hint.hidden,
+            tabIndex: wrap.tabIndex,
+            scrollWidth: wrap.scrollWidth,
+            clientWidth: wrap.clientWidth,
+          };
+          return JSON.stringify({
+            before,
+            after,
+            twoColumns,
+            ...layout,
+          });
+        })()
+        """,
+        mobile_width=viewport_width,
+    )
+
+    assert result["overflowX"] == "auto"
+    assert result["snapType"] == "x mandatory"
+    assert result["snapAlign"] == "start"
+    assert result["regionLabel"] == "Scrollable endorsement comparison"
+    assert result["tabIndexAtThree"] == 0
+    assert result["rowDisplay"] == "table-row"
+    assert result["cellDisplay"] == "table-cell"
+    assert result["racePosition"] == "sticky"
+    assert result["referencePosition"] == "sticky"
+    assert result["sourceHeaderPosition"] == "static"
+    assert result["sourceHeaderTop"] == "auto"
+    assert result["raceHeaderPosition"] == "static"
+    assert result["referenceHeaderPosition"] == "static"
+    assert result["sectionPosition"] == "static"
+    assert result["sectionColspan"] == 4
+    assert result["outerWidth"] == result["viewportWidth"]
+
+    before = result["before"]
+    after = result["after"]
+    assert before["hintHidden"] is False
+    assert before["hintText"] == "More columns →"
+    assert before["hintPosition"] == "start"
+    assert before["firstComparisonLeft"] >= before["referenceRight"] - 1
+    assert before["firstComparisonRight"] <= before["wrapRight"] + 1
+    assert abs(before["sectionLeft"] - before["tableLeft"]) < 1
+    assert abs(before["sectionWidth"] - before["tableWidth"]) < 1
+
+    assert after["scrollLeft"] > 0
+    assert after["hintHidden"] is False
+    assert after["hintText"] == "← More columns"
+    assert after["hintPosition"] == "end"
+    assert abs(after["raceLeft"] - before["raceLeft"]) < 1
+    assert abs(after["referenceLeft"] - before["referenceLeft"]) < 1
+    assert abs(after["headerRaceLeft"] - before["headerRaceLeft"]) < 1
+    assert abs(after["headerReferenceLeft"] - before["headerReferenceLeft"]) < 1
+    assert after["lastComparisonLeft"] >= after["referenceRight"] - 1
+    assert after["lastComparisonRight"] <= after["wrapRight"] + 1
+    assert after["sectionLeft"] < before["sectionLeft"]
+    assert abs(after["sectionWidth"] - after["tableWidth"]) < 1
+
+    assert result["twoColumns"] == {
+        "hintHidden": True,
+        "tabIndex": -1,
+        "scrollWidth": result["twoColumns"]["clientWidth"],
+        "clientWidth": result["twoColumns"]["clientWidth"],
+    }
 
 
 @pytest.mark.parametrize("viewport_width", [1440, 900])
