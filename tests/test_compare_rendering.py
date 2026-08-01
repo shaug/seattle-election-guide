@@ -1385,7 +1385,6 @@ def test_default_differences_match_fixed_oracle_with_visual_and_accessible_signa
             probe.remove();
             return color;
           };
-          const transparent = 'rgba(0, 0, 0, 0)';
           const narrow = window.matchMedia('(max-width: 720px)').matches;
           const senator = document.querySelector(
             '[data-comparison-race="ld-32-state-senator"]',
@@ -1424,7 +1423,25 @@ def test_default_differences_match_fixed_oracle_with_visual_and_accessible_signa
               background: getComputedStyle(blank).backgroundColor,
               hasSignal: Boolean(blank.querySelector('.comparison-cell-signal')),
             },
+            agreeMatchesReference: agree.querySelector('.comparison-cell-picks').textContent
+              === reference.querySelector('.comparison-cell-picks').textContent,
           };
+          document.querySelector('[data-comparison-title="2"]').click();
+          const picker = document.querySelector('[data-comparison-column="2"]');
+          picker.value = 'ld11';
+          picker.dispatchEvent(new Event('change', { bubbles: true }));
+          await wait();
+          const outside = document.querySelector('[data-cell-kind="outside_scope"]');
+          appearance.outside = {
+            state: outside.dataset.agreement,
+            background: getComputedStyle(outside).backgroundColor,
+            hasSignal: Boolean(outside.querySelector('.comparison-cell-signal')),
+          };
+          document.querySelector('[data-comparison-title="2"]').click();
+          const restoredPicker = document.querySelector('[data-comparison-column="2"]');
+          restoredPicker.value = 'stim';
+          restoredPicker.dispatchEvent(new Event('change', { bubbles: true }));
+          await wait();
           const chipIds = [...document.querySelectorAll('[data-row-differs="true"]')]
             .map((row) => row.dataset.comparisonRace);
           document.querySelector('[data-comparison-differences]').click();
@@ -1442,7 +1459,6 @@ def test_default_differences_match_fixed_oracle_with_visual_and_accessible_signa
             hiddenNotice: document.querySelector('[data-comparison-hidden-notice]').textContent,
             differsLabel: senator.querySelector('.comparison-race-differs').textContent,
             differsCarrierCount: senator.querySelectorAll('.comparison-race-differs').length,
-            transparent,
             senatorStillShown: Boolean(document.querySelector(
               '[data-comparison-race="ld-32-state-senator"]',
             )),
@@ -1458,10 +1474,11 @@ def test_default_differences_match_fixed_oracle_with_visual_and_accessible_signa
     assert result["statusLive"] == "polite"
     assert result["agree"] == {
         "state": "agree",
-        "background": result["transparent"],
+        "background": result["agree"]["token"],
         "token": result["agree"]["token"],
         "hasSignal": False,
     }
+    assert result["agreeMatchesReference"] is True
     assert result["differ"] == {
         "state": "differ",
         "background": result["differ"]["token"],
@@ -1481,11 +1498,90 @@ def test_default_differences_match_fixed_oracle_with_visual_and_accessible_signa
         result["differ"]["token"],
     }
     assert result["blank"]["hasSignal"] is False
+    assert result["outside"]["state"] == "neutral"
+    assert result["outside"]["background"] not in {
+        result["agree"]["token"],
+        result["differ"]["token"],
+    }
+    assert result["outside"]["hasSignal"] is False
     assert result["visibleSignals"] == ["gall", "strn", "stim"]
     assert result["hiddenNotice"] == ""
     assert result["senatorStillShown"] is True
     assert result["differsLabel"] == "Differs"
     assert result["differsCarrierCount"] == 1
+
+
+def test_agreement_tones_recompute_when_the_reference_changes(tmp_path: Path) -> None:
+    result = _evaluate_in_chrome(
+        _comparison_html_path(tmp_path),
+        """
+        (async () => {
+          const wait = () => new Promise((resolve) => setTimeout(resolve, 120));
+          const tokenBackground = (name) => {
+            const probe = document.createElement('span');
+            probe.style.background = `var(${name})`;
+            document.body.append(probe);
+            const color = getComputedStyle(probe).backgroundColor;
+            probe.remove();
+            return color;
+          };
+          const raceId = 'ld-32-state-representative-1';
+          const beforeRace = document.querySelector(`[data-comparison-race="${raceId}"]`);
+          const beforeCell = beforeRace.querySelector('[data-column-signal="strn"]');
+          const before = {
+            state: beforeCell.dataset.agreement,
+            background: getComputedStyle(beforeCell).backgroundColor,
+            rowDiffers: beforeRace.dataset.rowDiffers,
+            differsText: beforeRace.querySelector('.comparison-race-differs').textContent,
+          };
+
+          document.querySelector('[data-comparison-title="0"]').click();
+          const picker = document.querySelector('[data-comparison-column="0"]');
+          picker.value = 'Genv';
+          picker.dispatchEvent(new Event('change', { bubbles: true }));
+          await wait();
+
+          const afterRace = document.querySelector(`[data-comparison-race="${raceId}"]`);
+          const reference = afterRace.querySelector('[data-column-signal="Genv"]');
+          const agree = afterRace.querySelector('[data-column-signal="strn"]');
+          return JSON.stringify({
+            before,
+            after: {
+              state: agree.dataset.agreement,
+              background: getComputedStyle(agree).backgroundColor,
+              matchesReference: agree.querySelector('.comparison-cell-picks').textContent
+                === reference.querySelector('.comparison-cell-picks').textContent,
+              rowDiffers: afterRace.dataset.rowDiffers,
+              differsLabelPresent: Boolean(afterRace.querySelector('.comparison-race-differs')),
+            },
+            reference: {
+              state: reference.dataset.agreement,
+              background: getComputedStyle(reference).backgroundColor,
+            },
+            agreeToken: tokenBackground('--tone-agree-bg'),
+            differToken: tokenBackground('--tone-differ-bg'),
+          });
+        })()
+        """,
+    )
+    assert result["before"] == {
+        "state": "differ",
+        "background": result["differToken"],
+        "rowDiffers": "true",
+        "differsText": "Differs",
+    }
+    assert result["after"] == {
+        "state": "agree",
+        "background": result["agreeToken"],
+        "matchesReference": True,
+        "rowDiffers": "false",
+        "differsLabelPresent": False,
+    }
+    assert result["reference"]["state"] == "reference"
+    assert result["reference"]["background"] not in {
+        result["agreeToken"],
+        result["differToken"],
+    }
 
 
 def test_coendorsement_intersection_and_blank_are_not_differences(tmp_path: Path) -> None:
@@ -1507,9 +1603,15 @@ def test_coendorsement_intersection_and_blank_are_not_differences(tmp_path: Path
           const coendorsementCell = coendorsement.querySelector('[data-column-signal="kcdm"]');
           const coendorsementResult = {
             agreement: coendorsementCell.dataset.agreement,
+            background: getComputedStyle(coendorsementCell).backgroundColor,
             picks: coendorsementCell.querySelector('.comparison-cell-picks').textContent,
             rowDiffers: coendorsement.dataset.rowDiffers,
           };
+          const probe = document.createElement('span');
+          probe.style.background = 'var(--tone-agree-bg)';
+          document.body.append(probe);
+          const agreeToken = getComputedStyle(probe).backgroundColor;
+          probe.remove();
           document.querySelector('[data-comparison-title="1"]').click();
           const nextPicker = document.querySelector('[data-comparison-column="1"]');
           nextPicker.value = 'stim';
@@ -1518,6 +1620,7 @@ def test_coendorsement_intersection_and_blank_are_not_differences(tmp_path: Path
           const blank = document.querySelector('[data-comparison-race="us-house-9"]');
           return JSON.stringify({
             coendorsementResult,
+            agreeToken,
             blankAgreement: blank.querySelector('[data-column-signal="stim"]').dataset.agreement,
             blankRowDiffers: blank.dataset.rowDiffers,
           });
@@ -1526,6 +1629,7 @@ def test_coendorsement_intersection_and_blank_are_not_differences(tmp_path: Path
     )
     assert result["coendorsementResult"] == {
         "agreement": "agree",
+        "background": result["agreeToken"],
         "picks": "Ashley Fedan / David Hackney",
         "rowDiffers": "false",
     }
