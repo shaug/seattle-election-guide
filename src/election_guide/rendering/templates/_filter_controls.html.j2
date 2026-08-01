@@ -1,0 +1,56 @@
+{% macro control_bar(aria_label, extra_class='') -%}
+<section class="{% if extra_class %}{{ extra_class }} {% endif %}filter-control-bar" aria-label="{{ aria_label }}">
+  {{ caller() }}
+</section>
+{%- endmacro %}
+
+{% macro labeled_select(label, select_id, attributes='', extra_class='') -%}
+<div class="filter-select-control{% if extra_class %} {{ extra_class }}{% endif %}">
+  <label class="filter-control-label" for="{{ select_id }}">{{ label }}</label>
+  <select class="filter-select" id="{{ select_id }}"{% if attributes %} {{ attributes | safe }}{% endif %}>
+    {{ caller() }}
+  </select>
+</div>
+{%- endmacro %}
+
+{% macro segmented_radio(label, name, options, extra_class='') -%}
+<fieldset class="filter-segmented-control{% if extra_class %} {{ extra_class }}{% endif %}" data-option-count="{{ options | length }}">
+  <legend class="filter-control-label">{{ label }}</legend>
+  <div class="segmented-control">
+    {% for option in options -%}
+    <label><input type="radio" name="{{ name }}" value="{{ option.value }}"{% if option.id %} id="{{ option.id }}"{% endif %}{% if option.attributes %} {{ option.attributes | safe }}{% endif %}{% if option.checked %} checked{% endif %}><span>{{ option.label }}</span></label>
+    {%- endfor %}
+  </div>
+</fieldset>
+{%- endmacro %}
+
+{% macro control_status(status_id='', attributes='', extra_class='') -%}
+<p class="filter-control-status{% if extra_class %} {{ extra_class }}{% endif %}"{% if status_id %} id="{{ status_id }}"{% endif %} role="status" aria-live="polite"{% if attributes %} {{ attributes | safe }}{% endif %}>{{ caller() }}</p>
+{%- endmacro %}
+
+{# One election-control composition shared by every election view. Pages may
+   supply their ballot options and binary View values, but not rearrange or
+   replace the Ballot / View / Races / status slots. #}
+{% macro election_controls(
+  aria_label,
+  extra_class,
+  ballot_id,
+  ballot_attributes,
+  ballot_extra_class,
+  view_name,
+  view_options,
+  race_name,
+  race_options,
+  status_id='',
+  status_attributes='',
+  status_extra_class='',
+  status_text=''
+) -%}
+{% set ballot_options = caller() %}
+{% call control_bar(aria_label, extra_class) %}
+  {% call labeled_select('Ballot', ballot_id, ballot_attributes, ballot_extra_class) %}{{ ballot_options | safe }}{% endcall %}
+  {{ segmented_radio('View', view_name, view_options, 'view-setting') }}
+  {{ segmented_radio('Races', race_name, race_options, 'view-setting') }}
+  {% call control_status(status_id, status_attributes, status_extra_class) %}{{ status_text }}{% endcall %}
+{% endcall %}
+{%- endmacro %}

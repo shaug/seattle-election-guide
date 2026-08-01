@@ -376,6 +376,18 @@ def test_shared_site_band_names_the_methodology_path_for_what_it_does() -> None:
     assert 'href="/about/" aria-current="page"' in band
 
 
+def test_shared_site_band_orders_optional_compare_after_sources() -> None:
+    band = site_band_html(
+        guide_href="/e/wa-2026-primary/",
+        sources_href="/e/wa-2026-primary/sources/",
+        compare_href="/e/wa-2026-primary/compare/",
+    )
+
+    assert band.index(">Endorsements</a>") < band.index(">Sources</a>")
+    assert band.index(">Sources</a>") < band.index(">Comparisons</a>")
+    assert band.index(">Comparisons</a>") < band.index(">How this works</a>")
+
+
 def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path: Path) -> None:
     view_model = _view_model(tmp_path)
     gap_source = next(source for source in view_model.sources if source.endorsement_count == 0)
@@ -434,7 +446,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "card.dataset.contested === 'true'" in html
     assert "matchesScope && matchesContest" in html
     assert "url.searchParams.set('view', 'compact')" in html
-    assert '<label for="race-filter">Ballot</label>' in html
+    assert '<label class="filter-control-label" for="race-filter">Ballot</label>' in html
     assert "Show races" not in html
     assert "url.searchParams.set('races', 'contested')" in html
     assert "url.searchParams.set('filter', select.value)" in html
@@ -2780,7 +2792,9 @@ def test_sources_tree_shell_exposes_no_dialog_and_keeps_controls_in_the_merged_s
     keeps only a compact, non-interactive summary and a link to the
     dedicated sources page."""
     html = _sources_tree_html(tmp_path)
-    controls = html.split('<section class="screen-controls"')[1].split("</section>")[0]
+    controls = html.split('<section class="screen-controls filter-control-bar"')[1].split(
+        "</section>"
+    )[0]
 
     assert controls.count("<button") == 0
     assert "data-customize-open" not in html

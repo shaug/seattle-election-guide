@@ -51,7 +51,7 @@ never introduces a color literal. The families and what they mean:
 | Paper / white | `--paper`, `--white` | Content ground / data surfaces (cards, rows) |
 | Teal | `--teal` | The brand and data accent: meters, section rules, card borders |
 | Blue | `--blue` | Hyperlinks. Nothing else |
-| Agree tone | `--tone-agree-*` | Agreement with the baseline; the leading choice |
+| Agree tone | `--tone-agree-*` | Agreement with the current reference; the leading choice |
 | Differ tone | `--tone-differ-*`, `--amber` | Attention and divergence: comparison signals that differ, challenger sections, no-majority states |
 | Neutral tone | `--tone-neutral-*` | Not covered; no signal |
 | Focus | `--focus` | Every focus ring, everywhere |
@@ -221,6 +221,11 @@ then any sticky strip, then content.
   sources strip ("Counting all 40 sources" by default; "39 of 40" under a
   lens), and the Sources action bar. Same placement logic and surface
   treatment everywhere; two strips doing the same job must rhyme.
+- **Shared controls are actual components.** A segmented choice uses the
+  shared radio structure and focus treatment; a task page does not draw a
+  button group that merely resembles it. Election filter bars, labeled selects,
+  segmented radios, and their status placement share one rendered component;
+  pages provide only labels, options, IDs, and behavior hooks.
 
 ## Data display
 
@@ -242,6 +247,33 @@ then any sticky strip, then content.
   zero-counts are suppressed rather than printed forty times; taxonomy
   renders as plain muted text, not chrome; rows in a grid align so a row
   of meters can be swept in one eye movement.
+
+  *Comparison-page decision recorded July 31, 2026:*
+
+- **Comparison starts from one explicit reference role.** The first column is
+  stable in position and cannot be removed, but its signal is selectable. Every
+  agreement, difference tint, and difference count is relative to that chosen
+  reference. All sources is the published default, not an immutable baseline.
+  Every column shows its full identity at rest and becomes an editor only while
+  the reader is changing it. Position and accessible names carry the reference
+  semantics; the header does not repeat a visible “Reference” label. The Race
+  header contains only “Race.” When another column can be added, an icon-only
+  plus action lives in the last comparison header and opens the new column's
+  identity editor immediately. At capacity the plus disappears; capacity is
+  implicit and no maximum message or disabled control is shown.
+- **One quiet difference encoding.** A comparison cell carries its choice and
+  an amber tint when it differs. Agreement recedes; the race identity carries
+  the single visible and accessible “Differs” label. Shared conventions do not
+  need a repeated legend.
+- **Responsive comparison context stays attached.** At narrow widths the Race
+  and reference columns remain fixed while the remaining comparison columns
+  scroll horizontally in discrete column-sized steps. A directional cue states
+  when more columns are offscreen. The fully supported viewport floor is 320px:
+  at and below that width the Race column keeps a 5rem minimum and source
+  columns keep a 6.35rem minimum. Narrower viewports may show less of the next
+  comparison, but those columns never compress further or collapse into stacked
+  cards; the comparison rail remains independently scrollable and the page
+  itself never pans horizontally.
 - **Absence of a majority is information.** A leading share at or below
   50% gets the "No majority" treatment in the differ/amber family —
   default styling never overstates confidence.
@@ -256,8 +288,7 @@ sentences with real separators; every page keeps the skip link.
 ## Non-goals
 
 This document does not govern the **print/PDF editions** (they share the
-color tokens but follow their own compact layout idiom), the
-**election-comparison pages** (under active design), or **dark mode**
+color tokens but follow their own compact layout idiom) or **dark mode**
 (none exists; adding one is a project, not a patch).
 
 ## Changing this document

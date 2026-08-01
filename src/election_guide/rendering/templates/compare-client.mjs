@@ -14,17 +14,49 @@ if (comparisonBindingsElement) {
   const engine = createColumnSignalEngine(personalization, comparisons);
   const table = document.querySelector('[data-comparison-table]');
   const head = document.querySelector('[data-comparison-head]');
+  const grid = document.querySelector('[data-comparison-grid]');
+  const scrollHint = document.querySelector('[data-comparison-scroll-hint]');
   const notice = document.querySelector('[data-comparison-hidden-notice]');
   const status = document.querySelector('[data-comparison-status]');
-  const copyStatus = document.querySelector('[data-comparison-copy-status]');
   const sectionFilter = document.querySelector('[data-comparison-section-filter]');
+  const stickyControls = document.querySelector('[data-sticky-controls]');
   const contestedIds = new Set(payload.contested_race_ids);
   const races = new Map(personalization.races.map((race) => [race.race_id, race]));
-  const displays = new Map(comparisons.display_index.map((display) => [display.race_id, display]));
   const categories = personalization.categories.filter((category) => category.selectable);
   const sources = new Map(
     personalization.sources.filter((source) => source.selectable).map((source) => [source.code, source]),
   );
+
+  function syncStickyControlsHeight() {
+    document.documentElement.style.setProperty(
+      '--sticky-controls-height',
+      `${stickyControls.getBoundingClientRect().height}px`,
+    );
+  }
+  syncStickyControlsHeight();
+  new ResizeObserver(syncStickyControlsHeight).observe(stickyControls);
+
+  function syncComparisonScrollHint() {
+    grid.style.setProperty('--comparison-scroll-left', `${grid.scrollLeft}px`);
+    const maximum = Math.max(0, grid.scrollWidth - grid.clientWidth);
+    const hasOverflow = maximum > 2;
+    scrollHint.hidden = !hasOverflow;
+    grid.tabIndex = hasOverflow ? 0 : -1;
+    if (!hasOverflow) {
+      scrollHint.textContent = '';
+      scrollHint.removeAttribute('data-scroll-position');
+      return;
+    }
+    const atStart = grid.scrollLeft <= 2;
+    const atEnd = grid.scrollLeft >= maximum - 2;
+    const position = atStart ? 'start' : (atEnd ? 'end' : 'middle');
+    scrollHint.dataset.scrollPosition = position;
+    scrollHint.textContent = position === 'start'
+      ? 'More columns →'
+      : (position === 'end' ? '← More columns' : '← More columns →');
+  }
+  grid.addEventListener('scroll', syncComparisonScrollHint, { passive: true });
+  new ResizeObserver(syncComparisonScrollHint).observe(grid);
 
   const labelFor = (signal) => {
     if (signal === ALL_SOURCES_TOKEN) return 'All sources';
@@ -35,18 +67,6 @@ if (comparisonBindingsElement) {
   const isComparison = (signal) => {
     const category = categories.find((item) => item.code === signal);
     return category?.panel_role === 'comparison' || sources.get(signal)?.panel_role === 'comparison';
-  };
-  const coverageFor = (signal) => {
-    if (signal === ALL_SOURCES_TOKEN) {
-      return `Audited baseline · ${payload.audited_source_count} sources`;
-    }
-    const category = categories.find((item) => item.code === signal);
-    if (category?.panel_role === 'comparison') return 'Comparison only · never counted';
-    if (category) return `${category.member_source_codes.length} sources, equal weight`;
-    const count = payload.source_coverage[signal] ?? 0;
-    return isComparison(signal)
-      ? `Comparison only · endorsed in ${count} races`
-      : `Endorsed in ${count} races`;
   };
   const candidateLabels = (display) => ({
     ...display.candidate_names,
@@ -65,10 +85,17 @@ if (comparisonBindingsElement) {
     contestedOnly: false,
     section: 'all',
   };
+  let disclosure = '';
+  let lastLocationKey = null;
+  const locationKey = () => `${window.location.pathname}${window.location.search}${window.location.hash}`;
 
   function stateFromLocation() {
     const decoded = decodeCompareFragment(window.location.hash, context);
-    if (decoded.status === 'valid') state = { ...decoded.state };
+    if (decoded.status === 'valid') {
+      state = { ...decoded.state, columns: [...decoded.state.columns] };
+      if (state.columns.length < 2) state.columns = [...payload.default_columns];
+      disclosure = '';
+    }
     else if (decoded.status === 'absent') {
       state = {
         columns: [...payload.default_columns],
@@ -76,6 +103,17 @@ if (comparisonBindingsElement) {
         contestedOnly: false,
         section: 'all',
       };
+      disclosure = '';
+    }
+    else if (decoded.status === 'stale_version') {
+      const migration = migrateCompareState(decoded, personalization, context);
+      if (migration.status === 'migrated' || migration.status === 'fallback') {
+        state = { ...migration.state, columns: [...migration.state.columns] };
+        disclosure = migration.status === 'migrated'
+          ? 'This comparison link was updated for the current source list.'
+          : 'This comparison link could not be restored completely, so the default comparison is shown.';
+        writeState('replace');
+      }
     }
   }
 
@@ -85,7 +123,15 @@ if (comparisonBindingsElement) {
     const target = `${window.location.pathname}${window.location.search}#${encoded.fragment}`;
     if (mode === 'replace') history.replaceState({ comparison: true }, '', target);
     else history.pushState({ comparison: true }, '', target);
+    lastLocationKey = locationKey();
     return true;
+  }
+
+  function syncFromLocation() {
+    if (locationKey() === lastLocationKey) return;
+    stateFromLocation();
+    lastLocationKey = locationKey();
+    render();
   }
 
   function option(value, text, current, used) {
@@ -97,13 +143,22 @@ if (comparisonBindingsElement) {
     return element;
   }
 
-  function pickerFor(signal, index) {
+  function pickerFor(signal, index, title) {
     const select = document.createElement('select');
     select.className = 'comparison-column-picker';
     select.dataset.comparisonColumn = String(index);
-    select.setAttribute('aria-label', `Column ${index + 1} signal`);
+    select.setAttribute(
+      'aria-label',
+      index === 0
+        ? `Change reference, currently ${labelFor(signal)}`
+        : `Change ${labelFor(signal)} comparison`,
+    );
     const used = new Set(state.columns);
-    select.append(option(ALL_SOURCES_TOKEN, 'All sources', signal, used));
+
+    const publishedGroup = document.createElement('optgroup');
+    publishedGroup.label = 'Published result';
+    publishedGroup.append(option(ALL_SOURCES_TOKEN, 'All sources', signal, used));
+    select.append(publishedGroup);
 
     const categoryGroup = document.createElement('optgroup');
     categoryGroup.label = 'Categories';
@@ -132,21 +187,80 @@ if (comparisonBindingsElement) {
       next[index] = select.value;
       if (new Set(next).size !== next.length) return;
       state.columns = next;
-      if (writeState()) render();
+      if (writeState()) render({ kind: 'title', index });
     });
+    let closing = false;
+    const closeEditor = (restoreFocus) => {
+      if (closing || !select.isConnected) return;
+      closing = true;
+      select.replaceWith(title);
+      syncTitleHeights();
+      if (restoreFocus) window.setTimeout(() => title.focus(), 0);
+    };
+    select.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      event.preventDefault();
+      event.stopPropagation();
+      closeEditor(true);
+    });
+    select.addEventListener('blur', () => closeEditor(false));
     return select;
   }
 
-  function visibleColumns() {
-    return state.columns.slice(0, window.matchMedia('(max-width: 720px)').matches ? 2 : 3);
+  function titleFor(signal, index) {
+    const title = document.createElement('button');
+    title.type = 'button';
+    title.className = 'comparison-column-title comparison-column-title-action';
+    title.dataset.comparisonTitle = String(index);
+    title.setAttribute(
+      'aria-label',
+      index === 0
+        ? `Change reference, currently ${labelFor(signal)}`
+        : `Change ${labelFor(signal)} comparison`,
+    );
+    title.textContent = labelFor(signal);
+    title.addEventListener('click', () => {
+      const picker = pickerFor(signal, index, title);
+      title.replaceWith(picker);
+      syncTitleHeights();
+      picker.focus();
+    });
+    return title;
   }
 
-  function renderHead(visible) {
+  function syncTitleHeights() {
+    head.style.removeProperty('--comparison-title-height');
+    const titles = [...head.querySelectorAll('.comparison-column-title')];
+    if (!titles.length) return;
+    const titleHeight = Math.max(...titles.map((title) => title.scrollHeight));
+    head.style.setProperty('--comparison-title-height', `${titleHeight}px`);
+  }
+
+  function restoreHeadFocus(target) {
+    if (!target) return;
+    const selector = target.kind === 'picker'
+      ? `[data-comparison-column="${target.index}"]`
+      : `[data-comparison-title="${target.index}"]`;
+    head.querySelector(selector)?.focus();
+  }
+
+  function nextUnusedSignal() {
+    const preferred = ['stim', 'Glab', 'Gdem', 'Genv', 'kcdm', 'sicl', 'wslc'];
+    return preferred.find((signal) => !state.columns.includes(signal))
+      ?? [...categories.map((item) => item.code), ...sources.keys()]
+        .find((signal) => !state.columns.includes(signal));
+  }
+
+  function renderHead(visible, focusTarget) {
+    table.style.setProperty('--comparison-column-count', String(visible.length));
     head.replaceChildren();
     const row = document.createElement('tr');
     const race = document.createElement('th');
     race.scope = 'col';
-    race.textContent = 'Race';
+    const raceLabel = document.createElement('span');
+    raceLabel.className = 'comparison-column-label';
+    raceLabel.textContent = 'Race';
+    race.append(raceLabel);
     row.append(race);
     visible.forEach((signal, index) => {
       const cell = document.createElement('th');
@@ -154,85 +268,77 @@ if (comparisonBindingsElement) {
       cell.dataset.columnSignal = signal;
       const heading = document.createElement('div');
       heading.className = 'comparison-column-heading';
-      if (index === 0) {
-        const badge = document.createElement('span');
-        badge.className = 'comparison-baseline-badge';
-        badge.textContent = 'Baseline';
-        heading.append(badge);
+      if (index === 0) heading.classList.add('comparison-column-reference');
+      const title = titleFor(signal, index);
+      heading.append(title);
+      if (focusTarget?.kind === 'picker' && focusTarget.index === index) {
+        title.replaceWith(pickerFor(signal, index, title));
       }
-      const pickerRow = document.createElement('div');
-      pickerRow.className = 'comparison-column-heading-row';
-      pickerRow.append(pickerFor(signal, index));
-      if (state.columns.length > 2) {
+      const actions = document.createElement('span');
+      actions.className = 'comparison-column-actions';
+      if (index !== 0 && state.columns.length > 2) {
         const remove = document.createElement('button');
         remove.type = 'button';
         remove.className = 'comparison-column-remove';
         remove.dataset.comparisonRemove = String(index);
-        remove.setAttribute('aria-label', `Remove ${labelFor(signal)} column`);
-        remove.textContent = 'Remove';
+        remove.setAttribute('aria-label', `Remove ${labelFor(signal)}`);
+        remove.title = `Remove ${labelFor(signal)}`;
+        const removeIcon = document.createElement('span');
+        removeIcon.className = 'comparison-column-action-icon';
+        removeIcon.setAttribute('aria-hidden', 'true');
+        removeIcon.textContent = '×';
+        remove.append(removeIcon);
         remove.addEventListener('click', () => {
           state.columns = state.columns.filter((_, columnIndex) => columnIndex !== index);
-          if (writeState()) render();
+          const focusIndex = Math.min(index, state.columns.length - 1);
+          if (writeState()) render({ kind: 'title', index: focusIndex });
         });
-        pickerRow.append(remove);
+        actions.append(remove);
       }
-      heading.append(pickerRow);
-      const meta = document.createElement('span');
-      meta.className = 'comparison-column-meta';
-      meta.textContent = coverageFor(signal);
-      heading.append(meta);
+      if (index === state.columns.length - 1 && state.columns.length < 3) {
+        const add = document.createElement('button');
+        add.type = 'button';
+        add.className = 'comparison-column-add';
+        add.setAttribute('aria-label', 'Add comparison column');
+        add.title = 'Add comparison column';
+        const addIcon = document.createElement('span');
+        addIcon.className = 'comparison-column-action-icon';
+        addIcon.setAttribute('aria-hidden', 'true');
+        addIcon.textContent = '+';
+        add.append(addIcon);
+        add.addEventListener('click', () => {
+          const available = nextUnusedSignal();
+          if (!available) return;
+          state.columns = [...state.columns, available];
+          if (writeState()) render({ kind: 'picker', index: state.columns.length - 1 });
+        });
+        actions.append(add);
+      }
+      if (actions.childElementCount > 0) heading.append(actions);
       cell.append(heading);
       row.append(cell);
     });
-    if (state.columns.length < 3) {
-      const cell = document.createElement('th');
-      cell.scope = 'col';
-      const add = document.createElement('button');
-      add.type = 'button';
-      add.className = 'comparison-column-add';
-      add.textContent = 'Add column';
-      add.addEventListener('click', () => {
-        const preferred = ['stim', 'Glab', 'Gdem', 'Genv', 'kcdm', 'sicl', 'wslc'];
-        const available = preferred.find((signal) => !state.columns.includes(signal))
-          ?? [ALL_SOURCES_TOKEN, ...categories.map((item) => item.code), ...sources.keys()]
-            .find((signal) => !state.columns.includes(signal));
-        if (!available) return;
-        state.columns = [...state.columns, available];
-        if (writeState()) render();
-      });
-      cell.append(add);
-      row.append(cell);
-    }
     head.append(row);
+    syncTitleHeights();
+    restoreHeadFocus(focusTarget);
   }
 
-  function cellFor(signal, cell, display, baseline, isBaseline) {
+  function cellFor(signal, cell, display, reference, isReference) {
     const labels = candidateLabels(display);
     const element = document.createElement('td');
     element.className = 'comparison-cell';
     element.dataset.columnSignal = signal;
+    element.dataset.columnLabel = labelFor(signal);
     element.dataset.cellKind = cell.kind;
-    const agreement = isBaseline ? 'baseline' : cellAgreement(cell, baseline);
+    const agreement = isReference ? 'reference' : cellAgreement(cell, reference);
     element.dataset.agreement = agreement;
     const picks = document.createElement('span');
     picks.className = 'comparison-cell-picks';
     picks.textContent = cell.kind === 'outside_scope'
       ? 'Outside district'
       : (cell.leadingPickIds?.map((id) => labels[id]).join(' / ') || '—');
+    if (cell.kind === 'blank') picks.title = 'No endorsement published';
     element.append(picks);
-    if (agreement === 'agree' || agreement === 'differ') {
-      const visibleSignal = document.createElement('span');
-      visibleSignal.className = 'comparison-cell-signal';
-      visibleSignal.setAttribute('aria-hidden', 'true');
-      visibleSignal.textContent = agreement === 'agree' ? 'Agrees' : '≠ Differs';
-      element.append(visibleSignal);
-      const accessibleSignal = document.createElement('span');
-      accessibleSignal.className = 'visually-hidden';
-      accessibleSignal.textContent = agreement === 'agree'
-        ? 'Agrees with baseline.'
-        : 'Differs from baseline.';
-      element.append(accessibleSignal);
-    }
     if (cell.share != null) {
       const meta = document.createElement('span');
       meta.className = 'comparison-cell-meta';
@@ -272,7 +378,7 @@ if (comparisonBindingsElement) {
       heading.className = 'comparison-section-heading';
       const headingCell = document.createElement('th');
       headingCell.scope = 'rowgroup';
-      headingCell.colSpan = visible.length + 1 + (state.columns.length < 3 ? 1 : 0);
+      headingCell.colSpan = visible.length + 1;
       headingCell.textContent = section.label;
       heading.append(headingCell);
       body.append(heading);
@@ -290,17 +396,16 @@ if (comparisonBindingsElement) {
         link.textContent = display.race_label;
         raceHeading.append(link);
         if (differs) {
-          const chip = document.createElement('span');
-          chip.className = 'comparison-differs-chip';
-          chip.textContent = '≠ differs';
-          raceHeading.append(chip);
+          const differsLabel = document.createElement('span');
+          differsLabel.className = 'comparison-race-differs';
+          differsLabel.textContent = 'Differs';
+          raceHeading.append(differsLabel);
         }
         row.append(raceHeading);
-        const baseline = configuredCells[0];
+        const reference = configuredCells[0];
         visible.forEach((signal, index) => {
-          row.append(cellFor(signal, configuredCells[index], display, baseline, index === 0));
+          row.append(cellFor(signal, configuredCells[index], display, reference, index === 0));
         });
-        if (state.columns.length < 3) row.append(document.createElement('td'));
         body.append(row);
       }
       table.append(body);
@@ -310,7 +415,7 @@ if (comparisonBindingsElement) {
       const row = document.createElement('tr');
       row.className = 'comparison-empty';
       const cell = document.createElement('td');
-      cell.colSpan = visible.length + 1 + (state.columns.length < 3 ? 1 : 0);
+      cell.colSpan = visible.length + 1;
       const allAgree = state.differencesOnly && total > 0 && differCount === 0;
       const message = document.createElement('p');
       message.textContent = allAgree
@@ -339,49 +444,41 @@ if (comparisonBindingsElement) {
 
   function syncControls() {
     sectionFilter.value = state.section;
-    document.querySelector('[data-comparison-complete]').setAttribute('aria-pressed', String(!state.contestedOnly));
-    document.querySelector('[data-comparison-contested]').setAttribute('aria-pressed', String(state.contestedOnly));
-    document.querySelector('[data-comparison-all-rows]').setAttribute('aria-pressed', String(!state.differencesOnly));
-    document.querySelector('[data-comparison-differences]').setAttribute('aria-pressed', String(state.differencesOnly));
+    document.querySelector('[data-comparison-full]').checked = !state.differencesOnly;
+    document.querySelector('[data-comparison-differences]').checked = state.differencesOnly;
+    document.querySelector('[data-comparison-all-races]').checked = !state.contestedOnly;
+    document.querySelector('[data-comparison-contested]').checked = state.contestedOnly;
   }
 
-  function render() {
-    const visible = visibleColumns();
-    const hidden = state.columns.length - visible.length;
-    notice.hidden = hidden === 0;
-    notice.textContent = hidden
-      ? `${hidden} configured column hidden at this width. It remains configured and counted.`
-      : '';
-    renderHead(visible);
+  function render(focusTarget = null) {
+    const visible = state.columns;
+    notice.hidden = disclosure === '';
+    notice.textContent = disclosure;
+    renderHead(visible, focusTarget);
     renderBody(visible);
     syncControls();
+    window.requestAnimationFrame(syncComparisonScrollHint);
   }
 
   sectionFilter.addEventListener('change', () => {
     state.section = sectionFilter.value;
     if (writeState('replace')) render();
   });
-  document.querySelector('[data-comparison-complete]').addEventListener('click', () => {
-    state.contestedOnly = false;
-    if (writeState('replace')) render();
-  });
-  document.querySelector('[data-comparison-contested]').addEventListener('click', () => {
-    state.contestedOnly = true;
-    if (writeState('replace')) render();
-  });
-  document.querySelector('[data-comparison-all-rows]').addEventListener('click', () => {
+  document.querySelector('[data-comparison-full]').addEventListener('change', () => {
     state.differencesOnly = false;
     if (writeState('replace')) render();
   });
-  document.querySelector('[data-comparison-differences]').addEventListener('click', () => {
+  document.querySelector('[data-comparison-differences]').addEventListener('change', () => {
     state.differencesOnly = true;
     if (writeState('replace')) render();
   });
-  document.querySelector('[data-comparison-copy]').addEventListener('click', async () => {
-    const result = await shareOrCopyLink(window.location.href, document.title);
-    if (result === 'copied') copyStatus.textContent = 'Link copied.';
-    else if (result === 'shared') copyStatus.textContent = 'Share menu opened.';
-    else if (result === 'failed') copyStatus.textContent = `Copy failed. Link: ${window.location.href}`;
+  document.querySelector('[data-comparison-all-races]').addEventListener('change', () => {
+    state.contestedOnly = false;
+    if (writeState('replace')) render();
+  });
+  document.querySelector('[data-comparison-contested]').addEventListener('change', () => {
+    state.contestedOnly = true;
+    if (writeState('replace')) render();
   });
   document.querySelectorAll('.comparison-presets a').forEach((link) => {
     link.addEventListener('click', (event) => {
@@ -392,14 +489,18 @@ if (comparisonBindingsElement) {
       if (writeState()) render();
     });
   });
-  window.addEventListener('popstate', () => { stateFromLocation(); render(); });
-  window.addEventListener('hashchange', () => { stateFromLocation(); render(); });
+  window.addEventListener('popstate', syncFromLocation);
+  window.addEventListener('hashchange', syncFromLocation);
   let resizeTimer;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(render, 80);
+    resizeTimer = setTimeout(() => {
+      syncTitleHeights();
+      syncComparisonScrollHint();
+    }, 80);
   });
 
   stateFromLocation();
+  lastLocationKey = locationKey();
   render();
 }

@@ -346,6 +346,11 @@ def render_comparison_document(
     ).read_text(encoding="utf-8")
     share_link_script = (TEMPLATE_DIR / "share-link.mjs").read_text(encoding="utf-8")
     compare_url_script = (TEMPLATE_DIR / "compare-url.mjs").read_text(encoding="utf-8")
+    compare_migrate_script = (
+        (TEMPLATE_DIR / "compare-migrate.mjs")
+        .read_text(encoding="utf-8")
+        .replace("import { ALL_SOURCES_TOKEN } from './compare-url.mjs';\n", "")
+    )
     lens_score_script = (TEMPLATE_DIR / "lens-score.mjs").read_text(encoding="utf-8")
     compare_signals_script = (
         (TEMPLATE_DIR / "compare-signals.mjs")
@@ -362,27 +367,12 @@ def render_comparison_document(
         legacy_name=view_model.metadata.election_name,
         election_id=view_model.metadata.election_id,
     )
-    document_title = page_title(page="Compare sources", election=election_display_name)
+    document_title = page_title(page="Comparisons", election=election_display_name)
     source_names = {source.id: source.name for source in view_model.sources}
     source_labels = {
         source.code: source_names[source.id] for source in view_model.personalization.sources
     }
-    audited_source_count = sum(
-        source.panel_role != "comparison" and source.contribution_status == "contributing"
-        for source in view_model.sources
-    )
     race_by_id = {race.id: race for section in view_model.sections for race in section.races}
-    affirmative_states = {"endorsement", "multi_endorsement"}
-    source_coverage = {
-        source.code: sum(
-            any(
-                cell.source_code == source.code and cell.state in affirmative_states
-                for cell in race.cells
-            )
-            for race in view_model.personalization.races
-        )
-        for source in view_model.personalization.sources
-    }
     comparison_payload = {
         "schema_version": "1.0",
         "data_version": view_model.metadata.data_version,
@@ -390,8 +380,6 @@ def render_comparison_document(
         "personalization": view_model.personalization.model_dump(mode="json"),
         "comparisons": view_model.comparisons.model_dump(mode="json"),
         "source_labels": source_labels,
-        "source_coverage": source_coverage,
-        "audited_source_count": audited_source_count,
         "contested_race_ids": [
             display.race_id
             for display in view_model.comparisons.display_index
@@ -400,15 +388,15 @@ def render_comparison_document(
     }
     preset_fragments = [
         (
-            "The Stranger vs. The Times",
+            "The Stranger and The Times",
             _comparison_fragment(view_model, ["strn", "stim"]),
         ),
         (
-            "Labor vs. Environment vs. Dems",
-            _comparison_fragment(view_model, ["Glab", "Genv", "Gdem"]),
+            "Labor and environment",
+            _comparison_fragment(view_model, ["Glab", "Genv"]),
         ),
         (
-            "The Urbanist vs. everyone",
+            "All sources and The Urbanist",
             _comparison_fragment(view_model, ["gall", "urbn"]),
         ),
     ]
@@ -421,6 +409,7 @@ def render_comparison_document(
         stylesheet=stylesheet,
         share_link_script=share_link_script,
         compare_url_script=compare_url_script,
+        compare_migrate_script=compare_migrate_script,
         lens_score_script=lens_score_script,
         compare_signals_script=compare_signals_script,
         compare_client_script=compare_client_script,
@@ -443,6 +432,7 @@ def render_comparison_document(
             row.differs for section in comparison_sections for row in section.rows
         ),
         comparison_payload=comparison_payload,
+        comparison_source_labels=source_labels,
         comparison_presets=preset_fragments,
         comparison_percentage_label=comparison_percentage_label,
     )
@@ -561,11 +551,12 @@ def _comparison_direct_cell(
 
 
 def _comparison_row_differs(cells: tuple[ComparisonCellView, ...]) -> bool:
-    data_cells = [set(cell.leading_pick_ids) for cell in cells if cell.leading_pick_ids]
+    if len(cells) < 2 or not cells[0].leading_pick_ids:
+        return False
+    reference = set(cells[0].leading_pick_ids)
     return any(
-        left.isdisjoint(right)
-        for index, left in enumerate(data_cells)
-        for right in data_cells[index + 1 :]
+        bool(cell.leading_pick_ids) and reference.isdisjoint(cell.leading_pick_ids)
+        for cell in cells[1:]
     )
 
 
