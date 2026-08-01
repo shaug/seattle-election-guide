@@ -281,7 +281,7 @@ def test_page_head_names_the_page_and_puts_the_election_in_the_eyebrow() -> None
     head = site_page_head_html(
         eyebrow="August 2026 Primary",
         title="Comparisons",
-        tagline="Put any sources side by side.",
+        tagline_html="Put any sources side by side.",
     )
 
     assert '<p class="page-eyebrow">August 2026 Primary</p>' in head
@@ -292,7 +292,7 @@ def test_page_head_names_the_page_and_puts_the_election_in_the_eyebrow() -> None
 def test_page_head_omits_the_eyebrow_on_election_agnostic_pages() -> None:
     """Presence follows the page's kind: the absence of an eyebrow is the only
     marker an agnostic page needs, so no extra mechanism is spent on it."""
-    head = site_page_head_html(title="How this works", tagline="How this guide works.")
+    head = site_page_head_html(title="How this works", tagline_html="How this guide works.")
 
     assert "page-eyebrow" not in head
     assert "<h1>How this works</h1>" in head
@@ -303,9 +303,14 @@ def test_extended_page_head_is_the_one_exception_primacy_buys() -> None:
     brand lockup links to. It bends no other rule — the eyebrow's mint-on-navy
     and the title's white are the ground-relative colors already prescribed."""
     extended = site_page_head_html(
-        eyebrow="August 2026 Primary", title="Endorsements", tagline="Distilled.", extended=True
+        eyebrow="August 2026 Primary",
+        title="Endorsements",
+        tagline_html="Distilled.",
+        mode="extended",
     )
-    plain = site_page_head_html(eyebrow="August 2026 Primary", title="Sources", tagline="Choose.")
+    plain = site_page_head_html(
+        eyebrow="August 2026 Primary", title="Sources", tagline_html="Choose."
+    )
 
     assert '<header class="page-head extended">' in extended
     assert '<header class="page-head">' in plain
@@ -314,12 +319,32 @@ def test_extended_page_head_is_the_one_exception_primacy_buys() -> None:
 def test_page_head_takes_its_pages_reading_measure_when_it_has_one() -> None:
     """A head above a book-measure column sits on that column, so its tagline
     never outruns the prose beneath it."""
-    narrow = site_page_head_html(
-        title="Guide archive", tagline="Every guide stays up.", narrow=True
+    measured = site_page_head_html(
+        title="Guide archive", tagline_html="Every guide stays up.", mode="measured"
     )
 
-    assert '<header class="page-head narrow">' in narrow
-    assert '<div class="narrow-main">' in narrow
+    assert '<header class="page-head narrow">' in measured
+    assert '<div class="narrow-main">' in measured
+
+
+def test_page_head_escapes_its_names_but_not_its_tagline() -> None:
+    """The head's escaping is deliberately asymmetric, so pin it.
+
+    `title` and `eyebrow` are names and are escaped here. `tagline_html` carries
+    inline markup on purpose — entities in the guide's copy, real links on the
+    404 — so its caller owns escaping, which is why the parameter says `_html`.
+    Issue 192 review finding cor-1: the asymmetry is fine, being silent about it
+    was not.
+    """
+    head = site_page_head_html(
+        eyebrow="A & B",
+        title="Sources <script>",
+        tagline_html='Read <a href="/e/">the archive</a>.',
+    )
+
+    assert "<h1>Sources &lt;script&gt;</h1>" in head
+    assert "A &amp; B" in head
+    assert 'Read <a href="/e/">the archive</a>.' in head
 
 
 def test_election_day_banner_states_a_truth_that_survives_the_election() -> None:
