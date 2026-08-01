@@ -6,7 +6,9 @@
   <meta name="author" content="{{ config.author }}">
   <meta name="description" content="{{ config.subject }}">
   {% set canonical_url = config.public_site_url ~ '/e/' ~ guide.metadata.election_id ~ '/' %}
-  {% set sources_page_url = config.public_site_url ~ '/e/' ~ guide.metadata.election_id ~ '/sources/' %}
+  {# Root-relative: an absolute production URL walked readers off any other
+     origin — local preview, staging, PR preview — to the live site. #}
+  {% set sources_page_url = '/e/' ~ guide.metadata.election_id ~ '/sources/' %}
   <meta property="og:type" content="website">
   <meta property="og:title" content="{{ document_title }}">
   <meta property="og:description" content="{{ config.subject }}">
@@ -26,7 +28,7 @@
       data-publication-source-id="{{ source.id }}"
       data-source-category="{{ source.category }}"
       data-source-role="{{ source.panel_role }}">
-      <a href="{{ source.evidence_url }}">{{ source.name }}</a>
+      <a href="{{ source.evidence_url }}"{{ external_link_attributes }}>{{ source.name }}</a>
       <span>{{ source_participation(source, compact) }}</span>
     </div>
   {%- endmacro %}
@@ -34,7 +36,7 @@
     <section class="coverage-gap-row"
       data-coverage-gap-source-id="{{ source.id }}"
       data-coverage-gap-status="{{ source.coverage_gap_status }}">
-      <div><a href="{{ source.evidence_url }}">{{ source.name }}</a>
+      <div><a href="{{ source.evidence_url }}"{{ external_link_attributes }}>{{ source.name }}</a>
         <strong>{% if source.coverage_gap_status == 'access_restricted' %}Official results inaccessible{% else %}No published results found{% endif %}</strong></div>
       {% if not compact %}<p>{{ source.coverage_gap_note }}</p>{% endif %}
     </section>
@@ -64,7 +66,7 @@
       <li data-race-detail-source-id="{{ cell.source_id }}"
         data-source-category="{{ source.category }}" data-source-state="{{ cell.state }}"
         data-source-role="{{ source.panel_role }}" data-source-group="{{ group_key }}">
-        {% if cell.evidence_url %}<a class="race-detail-source-row{% if source.panel_role == 'comparison' %} race-detail-source-row-comparison{% endif %}" href="{{ cell.evidence_url }}">
+        {% if cell.evidence_url %}<a class="race-detail-source-row{% if source.panel_role == 'comparison' %} race-detail-source-row-comparison{% endif %}" href="{{ cell.evidence_url }}"{{ external_link_attributes }}>
         {% else %}<div class="race-detail-source-row{% if source.panel_role == 'comparison' %} race-detail-source-row-comparison{% endif %}">
         {% endif %}
           <strong>{{ source.name }}</strong>
@@ -85,7 +87,7 @@
       data-source-category="{{ source.category }}" data-source-state="{{ cell.state }}"
       data-source-role="{{ source.panel_role }}" data-source-group="candidate"
       data-endorsed-candidate-id="{{ candidate_id }}">
-      {% if cell.evidence_url %}<a class="race-detail-source-row{% if source.panel_role == 'comparison' %} race-detail-source-row-comparison{% endif %}" href="{{ cell.evidence_url }}">
+      {% if cell.evidence_url %}<a class="race-detail-source-row{% if source.panel_role == 'comparison' %} race-detail-source-row-comparison{% endif %}" href="{{ cell.evidence_url }}"{{ external_link_attributes }}>
       {% else %}<div class="race-detail-source-row{% if source.panel_role == 'comparison' %} race-detail-source-row-comparison{% endif %}">
       {% endif %}
         <strong>{{ source.name }}</strong>
@@ -419,7 +421,7 @@
         <div>
           <h3>{{ category.label }}</h3>
           {% for source in contributing_sources if source.category == category.category %}
-          <p><a href="{{ source.evidence_url }}">{{ source.name }}</a></p>
+          <p><a href="{{ source.evidence_url }}"{{ external_link_attributes }}>{{ source.name }}</a></p>
           {% endfor %}
         </div>
         {% endfor %}
@@ -427,7 +429,7 @@
         <div>
           <h3>Coverage gaps</h3>
           {% for source in coverage_gap_sources %}
-          <p><a href="{{ source.evidence_url }}">{{ source.name }}</a></p>
+          <p><a href="{{ source.evidence_url }}"{{ external_link_attributes }}>{{ source.name }}</a></p>
           {% endfor %}
         </div>
         {% endif %}
@@ -501,7 +503,7 @@
         {% endfor %}
       </div>
       <footer>Verify details and evidence in the responsive guide at
-        <a href="{{ config.project_url }}">{{ config.project_url }}</a></footer>
+        <a href="{{ config.project_url }}"{{ external_link_attributes }}>{{ config.project_url }}</a></footer>
     </section>
 
     <section class="print-page print-page-two">
@@ -597,7 +599,7 @@
       </div>
       <footer class="page-two-footer">
         <span>{{ site_footer_audit | safe }}</span>
-        <span>{{ guide.metadata.published_race_count }} races · <a href="{{ config.project_url }}">Source and audit files</a></span>
+        <span>{{ guide.metadata.published_race_count }} races · <a href="{{ config.project_url }}"{{ external_link_attributes }}>Source and audit files</a></span>
       </footer>
     </section>
   </div>

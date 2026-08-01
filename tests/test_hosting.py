@@ -114,7 +114,8 @@ def test_stage_pages_site_composes_verified_election_archive(tmp_path: Path) -> 
     assert " · Panel " not in archive
     assert (
         f'Site updated 2026-07-21 (<a href="https://github.com/shaug/'
-        f'seattle-election-guide/commit/{COMMIT}">{COMMIT[:12]}</a>)' in archive
+        f'seattle-election-guide/commit/{COMMIT}"'
+        f' target="_blank" rel="noopener">{COMMIT[:12]}</a>)' in archive
     )
 
     about = (output / "about" / "index.html").read_text(encoding="utf-8")
@@ -302,7 +303,7 @@ def test_enabled_comparisons_stage_verify_and_route_exact_asset(tmp_path: Path) 
     )
     verified = verify_staged_pages_site(output, manifest)
 
-    compare_relative = f"e/{CURRENT_ID}/compare/index.html"
+    compare_relative = f"e/{CURRENT_ID}/comparisons/index.html"
     compare_path = output / compare_relative
     assert compare_path.is_file()
     assert (
@@ -312,30 +313,41 @@ def test_enabled_comparisons_stage_verify_and_route_exact_asset(tmp_path: Path) 
 
     compare_html = compare_path.read_text(encoding="utf-8")
     assert 'data-default-columns="gall,strn,stim"' in compare_html
-    assert 'href="/e/wa-2026-primary/compare/" aria-current="page">Comparisons</a>' in compare_html
+    assert (
+        'href="/e/wa-2026-primary/comparisons/" aria-current="page">Comparisons</a>' in compare_html
+    )
     sources_html = (output / "e" / CURRENT_ID / "sources" / "index.html").read_text(
         encoding="utf-8"
     )
-    assert f'href="/e/{CURRENT_ID}/compare/">Comparisons</a>' in sources_html
-    assert f'href="/e/{CURRENT_ID}/compare/">Comparisons</a>' in (
+    assert f'href="/e/{CURRENT_ID}/comparisons/">Comparisons</a>' in sources_html
+    assert f'href="/e/{CURRENT_ID}/comparisons/">Comparisons</a>' in (
         output / "about" / "index.html"
     ).read_text(encoding="utf-8")
-    assert f'href="/e/{CURRENT_ID}/compare/">Comparisons</a>' in (
+    assert f'href="/e/{CURRENT_ID}/comparisons/">Comparisons</a>' in (
         output / "e" / "index.html"
     ).read_text(encoding="utf-8")
 
     results = _run_worker(
         output / "_worker.js",
         [
+            f"https://seattleelections.guide/e/{CURRENT_ID}/comparisons",
+            f"https://seattleelections.guide/e/{CURRENT_ID}/comparisons/",
+            "https://seattleelections.guide/e/not-an-election/comparisons/",
+            # The page shipped at /compare/ before issue 192 renamed it, so
+            # anything already linked or bookmarked must still arrive.
             f"https://seattleelections.guide/e/{CURRENT_ID}/compare",
             f"https://seattleelections.guide/e/{CURRENT_ID}/compare/",
-            "https://seattleelections.guide/e/not-an-election/compare/",
         ],
     )
+    # Trailing-slash normalisation stays a 308; the rename is a permanent 301,
+    # so caches and search engines learn the new address.
     assert results[0]["status"] == 308
-    assert results[0]["location"] == (f"https://seattleelections.guide/e/{CURRENT_ID}/compare/")
-    assert results[1]["body"] == f"asset:/e/{CURRENT_ID}/compare/"
+    assert results[0]["location"] == (f"https://seattleelections.guide/e/{CURRENT_ID}/comparisons/")
+    assert results[1]["body"] == f"asset:/e/{CURRENT_ID}/comparisons/"
     assert results[2]["status"] == 404
+    for legacy in (results[3], results[4]):
+        assert legacy["status"] == 301
+        assert legacy["location"] == f"https://seattleelections.guide/e/{CURRENT_ID}/comparisons/"
 
 
 def test_comparison_preview_stages_only_the_current_direct_route(tmp_path: Path) -> None:
@@ -353,7 +365,7 @@ def test_comparison_preview_stages_only_the_current_direct_route(tmp_path: Path)
     stage_pages_site(preview_manifest, assignments, preview_output)
     verified = verify_staged_pages_site(preview_output, preview_manifest)
 
-    compare_relative = f"e/{CURRENT_ID}/compare/index.html"
+    compare_relative = f"e/{CURRENT_ID}/comparisons/index.html"
     compare_path = preview_output / compare_relative
     assert compare_path.is_file()
     assert (
@@ -372,7 +384,7 @@ def test_comparison_preview_stages_only_the_current_direct_route(tmp_path: Path)
         preview_output / "about" / "index.html",
     )
     for page in hidden_compare_pages:
-        assert f'href="/e/{CURRENT_ID}/compare/">Comparisons</a>' not in page.read_text(
+        assert f'href="/e/{CURRENT_ID}/comparisons/">Comparisons</a>' not in page.read_text(
             encoding="utf-8"
         )
 
@@ -383,24 +395,24 @@ def test_comparison_preview_stages_only_the_current_direct_route(tmp_path: Path)
     for relative in existing_html:
         baseline_bytes = (baseline_output / relative).read_bytes()
         assert (preview_output / relative).read_bytes() == baseline_bytes
-        assert b"/compare/" not in baseline_bytes
+        assert b"/comparisons/" not in baseline_bytes
 
     unknown_baseline = _run_worker(
         baseline_output / "_worker.js",
-        ["https://seattleelections.guide/e/not-an-election/compare/"],
+        ["https://seattleelections.guide/e/not-an-election/comparisons/"],
     )[0]
     results = _run_worker(
         preview_output / "_worker.js",
         [
-            f"https://seattleelections.guide/e/{CURRENT_ID}/compare",
-            f"https://seattleelections.guide/e/{CURRENT_ID}/compare/",
-            f"https://seattleelections.guide/e/{OLDER_ID}/compare/",
-            "https://seattleelections.guide/e/not-an-election/compare/",
+            f"https://seattleelections.guide/e/{CURRENT_ID}/comparisons",
+            f"https://seattleelections.guide/e/{CURRENT_ID}/comparisons/",
+            f"https://seattleelections.guide/e/{OLDER_ID}/comparisons/",
+            "https://seattleelections.guide/e/not-an-election/comparisons/",
         ],
     )
     assert results[0]["status"] == 308
-    assert results[0]["location"] == f"https://seattleelections.guide/e/{CURRENT_ID}/compare/"
-    assert results[1]["body"] == f"asset:/e/{CURRENT_ID}/compare/"
+    assert results[0]["location"] == f"https://seattleelections.guide/e/{CURRENT_ID}/comparisons/"
+    assert results[1]["body"] == f"asset:/e/{CURRENT_ID}/comparisons/"
     assert results[2]["status"] == 404
     assert results[3] == unknown_baseline
 
@@ -429,13 +441,13 @@ def test_disabled_comparisons_stage_no_page_or_nav_exposure(tmp_path: Path) -> N
     assert not (output / "e" / CURRENT_ID / "compare").exists()
     assert not (output / "e" / OLDER_ID / "compare").exists()
     worker = (output / "_worker.js").read_text(encoding="utf-8")
-    assert "/compare/" not in worker
+    assert "/comparisons/" not in worker
     assert "COMPARISON_ROOTS" not in worker
-    assert "/compare/" not in (output / "e" / CURRENT_ID / "sources" / "index.html").read_text(
+    assert "/comparisons/" not in (output / "e" / CURRENT_ID / "sources" / "index.html").read_text(
         encoding="utf-8"
     )
-    assert "/compare/" not in (output / "about" / "index.html").read_text(encoding="utf-8")
-    assert "/compare/" not in (output / "e" / "index.html").read_text(encoding="utf-8")
+    assert "/comparisons/" not in (output / "about" / "index.html").read_text(encoding="utf-8")
+    assert "/comparisons/" not in (output / "e" / "index.html").read_text(encoding="utf-8")
 
 
 def test_bundle_drift_does_not_replace_existing_output(tmp_path: Path) -> None:

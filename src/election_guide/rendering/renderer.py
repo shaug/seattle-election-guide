@@ -20,6 +20,7 @@ from typing import Any, cast
 from urllib.parse import urlsplit
 
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
+from markupsafe import Markup
 from PIL import Image, ImageChops
 from pypdf import PageObject, PdfReader, PdfWriter
 from pypdf.generic import ArrayObject, DictionaryObject, IndirectObject
@@ -49,6 +50,7 @@ from election_guide.rendering.models import (
     RenderingValidationReport,
 )
 from election_guide.rendering.shell import (
+    EXTERNAL_LINK_ATTRIBUTES,
     HOW_TO_VOTE_HREF,
     close_icon_svg,
     election_day_banner_html,
@@ -117,13 +119,23 @@ def read_rendering_configuration(path: Path) -> RenderingConfiguration:
 
 
 def _template_environment() -> Environment:
-    return Environment(
+    environment = Environment(
         loader=FileSystemLoader(TEMPLATE_DIR),
         autoescape=True,
         undefined=StrictUndefined,
         trim_blocks=True,
         lstrip_blocks=True,
     )
+    # A global rather than a per-render variable: most evidence links are
+    # rendered inside macros, which do not see the calling template's context,
+    # so passing it per render silently covered only the handful of links
+    # outside a macro.
+    # Markup, not a plain string: autoescape is on, so a bare string would render
+    # as `target=&#34;_blank&#34;` and do nothing.
+    # `Environment.globals` is typed for Jinja's own builtins, so widen it here.
+    globals_map = cast(dict[str, Any], environment.globals)
+    globals_map["external_link_attributes"] = Markup(EXTERNAL_LINK_ATTRIBUTES)
+    return environment
 
 
 def _personalization_lookup_context(view_model: PublicationViewModel) -> dict[str, Any]:
@@ -196,7 +208,12 @@ def render_html_document(
         for race in section.races
     }
     guide_path = f"/e/{view_model.metadata.election_id}/"
-    sources_page_url = f"{configuration.public_site_url}{guide_path}sources/"
+    # Root-relative, like every other in-site link: an absolute production URL
+    # walked a reader off any other origin — a local preview, a staging deploy,
+    # a PR preview — straight to seattleelections.guide. Nothing needs the
+    # origin: the band link, the strip's "Edit sources" link, and the script
+    # that appends the live lens fragment all work from a path.
+    sources_page_url = f"{guide_path}sources/"
     election_display_name, _ = election_names(
         view_model.metadata.election_date,
         view_model.metadata.election_type,
@@ -232,7 +249,7 @@ def render_html_document(
             guide_href=guide_path,
             sources_href=sources_page_url,
             compare_href=(
-                f"{guide_path}compare/" if view_model.comparisons.policy.enabled else None
+                f"{guide_path}comparisons/" if view_model.comparisons.policy.enabled else None
             ),
             current="endorsements",
             sources_link_data_attribute=True,
@@ -326,7 +343,7 @@ def render_sources_document(
             guide_href=guide_path,
             sources_href=f"{guide_path}sources/",
             compare_href=(
-                f"{guide_path}compare/" if view_model.comparisons.policy.enabled else None
+                f"{guide_path}comparisons/" if view_model.comparisons.policy.enabled else None
             ),
             current="sources",
         ),
@@ -437,7 +454,7 @@ def render_comparison_document(
         compare_client_script=compare_client_script,
         site_band=site_band_html(
             guide_href=guide_path,
-            compare_href=f"{guide_path}compare/",
+            compare_href=f"{guide_path}comparisons/",
             sources_href=f"{guide_path}sources/",
             current="comparisons",
         ),
@@ -1130,7 +1147,7 @@ def validate_rendered_guide(
         # Slot 4's "How to vote" (issue 192). King County Elections administers
         # Seattle's ballots and is already this repository's cited authority.
         HOW_TO_VOTE_HREF,
-        f"{configuration.public_site_url}/e/{view_model.metadata.election_id}/sources/",
+        f"/e/{view_model.metadata.election_id}/sources/",
         configuration.pdf_filename,
         "mailto:seattle-elections@dobravoda.dev",
         "/about/",
@@ -1148,7 +1165,7 @@ def validate_rendered_guide(
         ),
     }
     if view_model.comparisons.policy.enabled:
-        expected_html_links.add(f"/e/{view_model.metadata.election_id}/compare/")
+        expected_html_links.add(f"/e/{view_model.metadata.election_id}/comparisons/")
     canonical_url = f"{configuration.public_site_url}/e/{view_model.metadata.election_id}/"
     required_site_metadata = {
         f'<link rel="canonical" href="{canonical_url}">',

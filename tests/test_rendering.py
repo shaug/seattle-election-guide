@@ -392,7 +392,7 @@ def test_shared_site_band_orders_nav_by_dependency() -> None:
     band = site_band_html(
         guide_href="/e/wa-2026-primary/",
         sources_href="/e/wa-2026-primary/sources/",
-        compare_href="/e/wa-2026-primary/compare/",
+        compare_href="/e/wa-2026-primary/comparisons/",
     )
 
     assert band.index(">Endorsements</a>") < band.index(">Sources</a>")
@@ -666,9 +666,8 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     footer_html = html[footer_start:footer_end]
     assert f'href="{configuration.pdf_filename}" aria-label="Printable PDF"' in footer_html
     assert 'href="mailto:seattle-elections@dobravoda.dev" aria-label="Contact"' in footer_html
-    assert f'href="{configuration.project_url}" aria-label="Source and audit files on GitHub"' in (
-        footer_html
-    )
+    assert f'href="{configuration.project_url}"' in footer_html
+    assert 'aria-label="Source and audit files on GitHub (opens in a new tab)"' in footer_html
     # Web band: GitHub action + code revision. The hidden detailed/print audit
     # retains its two linked dates as a separate medium.
     assert footer_html.count(configuration.project_url) == 4
@@ -760,7 +759,12 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
         # evidence link now appears exactly twice: once in print's compact
         # source panel, and once in the detailed-edition-only source directory
         # that keeps that overflow PDF's evidence links complete.
-        assert html.count(f'<a href="{source.evidence_url}">{source.name}</a>') == 2
+        assert (
+            html.count(
+                f'<a href="{source.evidence_url}" target="_blank" rel="noopener">{source.name}</a>'
+            )
+            == 2
+        )
         print_noun = (
             (" pick" if source.endorsement_count == 1 else " picks")
             if source.panel_role == "comparison"
@@ -784,7 +788,12 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
         # row is the only data-coverage-gap-source-id row now, but the
         # detailed-edition source directory adds a second evidence link.
         assert html.count(f'data-coverage-gap-source-id="{source.id}"') == 1
-        assert html.count(f'<a href="{source.evidence_url}">{source.name}</a>') == 2
+        assert (
+            html.count(
+                f'<a href="{source.evidence_url}" target="_blank" rel="noopener">{source.name}</a>'
+            )
+            == 2
+        )
         assert source.coverage_gap_note is not None
         status_label = (
             "Official results inaccessible"
@@ -1696,8 +1705,10 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     assert not endorsement_check.passed
 
     first_source, second_source = view_model.sources[:2]
-    first_source_link = f'<a href="{first_source.evidence_url}">{first_source.name}</a>'
-    second_source_link = f'<a href="{second_source.evidence_url}">{second_source.name}</a>'
+    # Evidence links leave the site, so they open in a new tab (issue 192).
+    ext = ' target="_blank" rel="noopener"'
+    first_source_link = f'<a href="{first_source.evidence_url}"{ext}>{first_source.name}</a>'
+    second_source_link = f'<a href="{second_source.evidence_url}"{ext}>{second_source.name}</a>'
     assert first_source_link in canonical_html
     assert second_source_link in canonical_html
     swapped_source_links_html = tmp_path / "swapped-publication-source-links.html"
@@ -1705,12 +1716,12 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
         canonical_html.replace(first_source_link, "__FIRST_SOURCE_LINK__", 2)
         .replace(
             second_source_link,
-            f'<a href="{first_source.evidence_url}">{second_source.name}</a>',
+            f'<a href="{first_source.evidence_url}"{ext}>{second_source.name}</a>',
             2,
         )
         .replace(
             "__FIRST_SOURCE_LINK__",
-            f'<a href="{second_source.evidence_url}">{first_source.name}</a>',
+            f'<a href="{second_source.evidence_url}"{ext}>{first_source.name}</a>',
             2,
         ),
         encoding="utf-8",
@@ -2113,12 +2124,12 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
         canonical_html.replace(first_source_link, "__FIRST_SOURCE_LINK__", 2)
         .replace(
             second_source_link,
-            f'<a href="{second_source.evidence_url}">{first_source.name}</a>',
+            f'<a href="{second_source.evidence_url}"{ext}>{first_source.name}</a>',
             2,
         )
         .replace(
             "__FIRST_SOURCE_LINK__",
-            f'<a href="{first_source.evidence_url}">{second_source.name}</a>',
+            f'<a href="{first_source.evidence_url}"{ext}>{second_source.name}</a>',
             2,
         ),
         encoding="utf-8",
@@ -2238,9 +2249,11 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     site_updated_date = view_model.metadata.generated_at.date().isoformat()
     project_url = read_rendering_configuration(RENDERING_CONFIG).project_url
     commit_url = f"{project_url}/commit/{view_model.metadata.git_commit}"
+    # Off-site links open in a new tab (issue 192), the commit link included.
+    external = ' target="_blank" rel="noopener"'
     metadata_marker = (
-        f'Data last updated <a href="{commit_url}">{data_updated_date}</a>. '
-        f'Site last updated <a href="{commit_url}">{site_updated_date}</a>.'
+        f'Data last updated <a href="{commit_url}"{external}>{data_updated_date}</a>. '
+        f'Site last updated <a href="{commit_url}"{external}>{site_updated_date}</a>.'
     )
     rendered_html_text = rendered.html_path.read_text(encoding="utf-8")
     assert metadata_marker in rendered_html_text
@@ -2898,14 +2911,17 @@ def test_sources_links_carry_the_guides_current_fragment(tmp_path: Path) -> None
         html_path,
         """
         (() => JSON.stringify({
-          hrefs: [...document.querySelectorAll('[data-sources-link]')].map((link) => link.href),
+          // The literal attribute, not the DOM-resolved URL: these links are
+          // root-relative now (issue 192), so the resolved form depends on the
+          // origin the page happens to be served from — which is exactly what
+          // this link must not depend on.
+          hrefs: [...document.querySelectorAll('[data-sources-link]')]
+            .map((link) => link.getAttribute('href')),
         }))()
         """,
         initial_url=f"{html_path.resolve().as_uri()}#{fragment}",
     )
-    expected_href = (
-        f"{configuration.public_site_url}/e/{view_model.metadata.election_id}/sources/#{fragment}"
-    )
+    expected_href = f"/e/{view_model.metadata.election_id}/sources/#{fragment}"
     assert result["hrefs"]
     assert all(href == expected_href for href in result["hrefs"])
 

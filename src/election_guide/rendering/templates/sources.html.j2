@@ -40,7 +40,7 @@
     <section class="coverage-gap-row"
       data-coverage-gap-source-id="{{ source.id }}"
       data-coverage-gap-status="{{ source.coverage_gap_status }}">
-      <div><a href="{{ source.evidence_url }}">{{ source.name }}</a>
+      <div><a href="{{ source.evidence_url }}"{{ external_link_attributes }}>{{ source.name }}</a>
         <strong>{% if source.coverage_gap_status == 'access_restricted' %}Official results inaccessible{% else %}No published results found{% endif %}</strong></div>
       {% if not compact %}<p>{{ source.coverage_gap_note }}</p>{% endif %}
     </section>
@@ -64,10 +64,10 @@
       <label class="sources-check">
         <input type="checkbox" data-sources-source="{{ member_code }}"
           data-sources-category-member="{{ category.code }}"{% if not is_comparison %} checked{% endif %}>
-        <a href="{{ pub_source.evidence_url }}">{{ pub_source.name }}</a>
+        <a href="{{ pub_source.evidence_url }}"{{ external_link_attributes }}>{{ pub_source.name }}</a>
       </label>
       {% else %}
-      <a class="sources-source-link" href="{{ pub_source.evidence_url }}">{{ pub_source.name }}</a>
+      <a class="sources-source-link" href="{{ pub_source.evidence_url }}"{{ external_link_attributes }}>{{ pub_source.name }}</a>
       {% endif %}
       <span class="sources-count">{{ source_participation(pub_source) }}</span>
       {% if other_category_ids %}

@@ -200,6 +200,18 @@ then any sticky strip, then content.
 - **Masthead = actions on the page; footer = meta about the site.** Share
   belongs to the masthead because it acts on what you are reading;
   Contact, source files, and the methodology link belong to the footer.
+- **Every in-site link is root-relative.** An absolute production URL walks
+  readers off any other origin — a local preview, a staging deploy, a PR
+  preview — straight to the live site. Only links that genuinely leave the
+  site carry an origin.
+- **Every off-site link opens in a new tab**, with `rel="noopener"`, so a
+  reader checking a receipt keeps their place in the guide. The referrer is
+  left intact so the organizations we cite can see the traffic. An icon-only
+  external control carries the new-tab hint in its accessible name, since it
+  has no visible text to carry it.
+- **A page's path matches its name.** Renaming a page renames its URL, with
+  a permanent redirect from the old address so nothing already linked
+  breaks. *(2026-08-01: `/compare/` became `/comparisons/`.)*
 - **Nav order follows dependency, not traffic.** Endorsements is the
   destination, Sources is what feeds it, Comparisons is a view derived from
   those sources, and How this works explains all three. *(2026-08-01: this

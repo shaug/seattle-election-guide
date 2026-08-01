@@ -21,6 +21,14 @@ CONTACT_HREF = "mailto:seattle-elections@dobravoda.dev"
 # precinct maps (config/elections/*-inventory.yaml).
 HOW_TO_VOTE_HREF = "https://kingcounty.gov/en/dept/elections/how-to-vote"
 
+# Every link that leaves the site opens in a new tab, so a reader checking a
+# receipt — an endorsement's evidence, the source files, how to vote — keeps
+# their place in the guide. `noopener` is the security half; the referrer is
+# deliberately left intact so the organizations we cite can see the traffic.
+# In-site navigation never uses this.
+EXTERNAL_LINK_ATTRIBUTES = ' target="_blank" rel="noopener"'
+OPENS_IN_NEW_TAB = " (opens in a new tab)"
+
 
 def election_names(
     election_date: str,
@@ -337,8 +345,8 @@ def election_day_banner_html(
         f'<span class="election-day-when" data-election-day-when>'
         f"<b>Election day:</b> {html.escape(full)}</span>"
         '<span class="election-day-separator" aria-hidden="true"> · </span>'
-        f'<a class="election-day-action" href="{html.escape(how_to_vote_href, quote=True)}">'
-        "How to vote</a>"
+        f'<a class="election-day-action" href="{html.escape(how_to_vote_href, quote=True)}"'
+        f"{EXTERNAL_LINK_ATTRIBUTES}>How to vote</a>"
         "</p>"
     )
 
@@ -363,17 +371,21 @@ def site_footer_band_html(
     generated edition altogether.
     """
 
-    def icon_link(label: str, href: str, svg: str) -> str:
+    def icon_link(label: str, href: str, svg: str, *, external: bool = False) -> str:
         escaped_href = html.escape(href, quote=True)
-        escaped_label = html.escape(label, quote=True)
+        # An icon-only control has no visible text to carry the new-tab hint, so
+        # it goes in the accessible name instead.
+        escaped_label = html.escape(label + (OPENS_IN_NEW_TAB if external else ""), quote=True)
         return (
             f'<a class="footer-icon-action" href="{escaped_href}" aria-label="{escaped_label}"'
-            f' title="{escaped_label}">{svg}</a>'
+            f' title="{escaped_label}"{EXTERNAL_LINK_ATTRIBUTES if external else ""}>{svg}</a>'
         )
 
     pdf_action = icon_link("Printable PDF", pdf_href, _PDF_ICON_SVG) if pdf_href is not None else ""
     contact_action = icon_link("Contact", CONTACT_HREF, _ENVELOPE_ICON_SVG)
-    github_action = icon_link("Source and audit files on GitHub", project_url, _GITHUB_ICON_SVG)
+    github_action = icon_link(
+        "Source and audit files on GitHub", project_url, _GITHUB_ICON_SVG, external=True
+    )
     about_action = icon_link("How this works", about_href, _INFO_ICON_SVG)
     brand = (
         f'<a class="site-footer-brand" href="/" aria-label="{SITE_NAME}">'
@@ -417,7 +429,7 @@ def site_footer_audit_html(
         '</span><span class="audit-join" aria-hidden="true"> · </span>'
         '<span class="audit-site">'
         f"Site updated {escaped_site_date} "
-        f'(<a href="{commit_url}">{html.escape(git_commit[:12])}</a>)'
+        f'(<a href="{commit_url}"{EXTERNAL_LINK_ATTRIBUTES}>{html.escape(git_commit[:12])}</a>)'
         "</span>"
     )
 
@@ -432,8 +444,10 @@ def print_footer_audit_html(
     """Keep the print edition's complete linked-date provenance unchanged."""
     commit_url = html.escape(f"{project_url}/commit/{git_commit}", quote=True)
     return (
-        f'Data last updated <a href="{commit_url}">{html.escape(data_updated_date)}</a>. '
-        f'Site last updated <a href="{commit_url}">{html.escape(site_updated_date)}</a>.'
+        f'Data last updated <a href="{commit_url}"{EXTERNAL_LINK_ATTRIBUTES}>'
+        f"{html.escape(data_updated_date)}</a>. "
+        f'Site last updated <a href="{commit_url}"{EXTERNAL_LINK_ATTRIBUTES}>'
+        f"{html.escape(site_updated_date)}</a>."
     )
 
 

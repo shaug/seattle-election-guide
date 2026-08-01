@@ -26,6 +26,7 @@ from election_guide.rendering.renderer import (
     render_sources_document,
 )
 from election_guide.rendering.shell import (
+    EXTERNAL_LINK_ATTRIBUTES,
     election_names,
     favicon_svg,
     page_title,
@@ -152,7 +153,7 @@ def stage_pages_site(
             f"/e/{current.declaration.election_id}/release-manifest.json"
         )
         current_compare_href = (
-            f"/e/{current.declaration.election_id}/compare/"
+            f"/e/{current.declaration.election_id}/comparisons/"
             if current.view_model.comparisons.policy.enabled
             else None
         )
@@ -341,7 +342,7 @@ def _verify_staged_pages_site(
                 ),
             }
         )
-        compare_asset = f"e/{declared.election_id}/compare/index.html"
+        compare_asset = f"e/{declared.election_id}/comparisons/index.html"
         if declared.comparison_route_preview or compare_asset in deployment.assets:
             required_assets.add(compare_asset)
 
@@ -496,7 +497,7 @@ def _stage_verified_bundles(
             bundle.view_model.comparisons.policy.enabled
             or bundle.declaration.comparison_route_preview
         ):
-            compare_dir = election_root / "compare"
+            compare_dir = election_root / "comparisons"
             compare_dir.mkdir()
             (compare_dir / "index.html").write_text(
                 _comparison_html(
@@ -506,7 +507,7 @@ def _stage_verified_bundles(
                 ),
                 encoding="utf-8",
             )
-            public_paths.update({f"{root_path}compare/", f"{root_path}compare/index.html"})
+            public_paths.update({f"{root_path}comparisons/", f"{root_path}comparisons/index.html"})
         public_paths.update(f"{root_path}{name}" for name in names)
     return public_paths
 
@@ -826,7 +827,7 @@ def _about_html(
           <a href="{escaped_current_path}release-manifest.json">release manifest</a> are public JSON
           files for the current guide. The complete decision ledger, source metadata, and validation
           reports for every release are published in the
-          <a href="{PROJECT_URL}">project's source repository</a>, alongside the code that produced
+          <a href="{PROJECT_URL}"{EXTERNAL_LINK_ATTRIBUTES}>project's source repository</a>, alongside the code that produced
           them.</p>
         <p>Past guides remain published at their own permanent addresses in the
           <a href="/e/">guide archive</a>.</p>
@@ -844,7 +845,7 @@ def _about_html(
         <h2 id="who-maintains-this">Who maintains this</h2>
         <p>This is an independent, volunteer-run project, not affiliated with any campaign,
           party, or any organization it tracks. Its code and methodology are public at
-          <a href="{PROJECT_URL}">{PROJECT_URL.removeprefix("https://")}</a>.</p>
+          <a href="{PROJECT_URL}"{EXTERNAL_LINK_ATTRIBUTES}>{PROJECT_URL.removeprefix("https://")}</a>.</p>
       </section>
 
     </main>
@@ -952,14 +953,21 @@ def _pages_worker(
 ) -> str:
     current_path = f"/e/{site_manifest.current_election_id}/"
     election_roots = [f"/e/{election.election_id}/" for election in site_manifest.elections]
-    comparison_roots = sorted(path for path in public_paths if path.endswith("/compare/"))
+    comparison_roots = sorted(path for path in public_paths if path.endswith("/comparisons/"))
     comparison_root_declaration = (
         f"const COMPARISON_ROOTS = {json.dumps(comparison_roots)};\n" if comparison_roots else ""
     )
     comparison_redirect = (
-        """    for (const root of COMPARISON_ROOTS) {
+        r"""    for (const root of COMPARISON_ROOTS) {
       if (url.pathname === root.slice(0, -1)) {
         return redirectPath(url, root, 308);
+      }
+      // The page shipped at /compare/ before issue 192 renamed it to match its
+      // own name. Anything already linked or bookmarked keeps working, with a
+      // permanent redirect so caches and search engines learn the new address.
+      const renamed = root.replace(/comparisons\/$/, "compare");
+      if (url.pathname === renamed || url.pathname === `${renamed}/`) {
+        return redirectPath(url, root, 301);
       }
     }
 """

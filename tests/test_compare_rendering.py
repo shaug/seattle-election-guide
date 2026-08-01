@@ -88,7 +88,7 @@ def test_compare_document_server_renders_default_contract_snapshot() -> None:
         pdf_filename="Seattle_Election_Guide.pdf",
     )
 
-    assert 'href="/e/wa-2026-primary/compare/" aria-current="page">Comparisons</a>' in rendered
+    assert 'href="/e/wa-2026-primary/comparisons/" aria-current="page">Comparisons</a>' in rendered
     assert "<title>Comparisons — August 2026 Primary — Seattle Elections Guide</title>" in rendered
     assert '<header class="page-head">' in rendered
     assert '<p class="page-eyebrow">August 2026 Primary</p>' in rendered
@@ -222,7 +222,7 @@ def test_compare_document_server_renders_default_contract_snapshot() -> None:
         public_site_url="https://seattleelections.guide",
     )
     for page in (guide, sources_page):
-        assert 'href="/e/wa-2026-primary/compare/">Comparisons</a>' in page
+        assert 'href="/e/wa-2026-primary/comparisons/">Comparisons</a>' in page
 
 
 def test_compare_document_refuses_disabled_policy() -> None:
