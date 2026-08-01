@@ -96,7 +96,7 @@ def test_compare_document_server_renders_default_contract_snapshot() -> None:
     assert 'data-election-day="2026-08-04"' in rendered
     assert "<b>Election day:</b> Tuesday, August 4, 2026" in rendered
     assert rendered.index(">Endorsements</a>") < rendered.index(">Comparisons</a>")
-    assert rendered.index(">Comparisons</a>") < rendered.index(">Sources</a>")
+    assert rendered.index(">Sources</a>") < rendered.index(">Comparisons</a>")
     assert 'data-default-columns="gall,strn,stim"' in rendered
     assert rendered.count("data-comparison-race=") == len(view_model.comparisons.display_index)
     assert (
@@ -124,8 +124,11 @@ def test_compare_document_server_renders_default_contract_snapshot() -> None:
     assert "≠" not in rendered
     assert 'class="comparison-share"' not in rendered
     assert "data-comparison-copy" not in rendered
-    assert "data-footer-share" in rendered
-    assert "wireFooterShare();" in rendered
+    # Issue 192: Share is a masthead action now — it acts on the page you are
+    # reading, while the footer keeps meta about the site.
+    assert "data-footer-share" not in rendered
+    assert "data-shell-share" in rendered
+    assert "wireShellShare();" in rendered
 
     presets = re.search(r'<div class="comparison-presets".*?</div>', rendered, re.S)
     assert presets is not None

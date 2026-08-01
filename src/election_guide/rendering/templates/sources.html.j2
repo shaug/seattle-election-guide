@@ -20,14 +20,6 @@
   <style>
     {{ stylesheet | safe }}
     main { padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 3rem; }
-    main h1 {
-      margin: 0 0 .35rem; color: var(--navy);
-      font: 700 clamp(1.6rem, 4vw, 2.3rem)/1.05 var(--screen-serif);
-    }
-    .sources-page-intro { max-width: 60ch; margin: 0 0 1.5rem; }
-    .sources-page-intro .eyebrow { margin-bottom: .35rem; }
-    .sources-page-intro h1 { margin-bottom: .5rem; }
-    .sources-page-intro .lede { margin: 0; color: var(--muted); }
     .sources-tree { border-top: none; background: none; padding: 0; }
     .sources-page-actions { position: sticky; top: 0; z-index: 5; justify-content: center; }
     .sources-page-controls { display: flex; flex-wrap: wrap; justify-content: center; gap: .45rem 1rem; }
@@ -94,6 +86,8 @@
       {{ site_band | safe }}
       <div class="page-band-rule"></div>
     </header>
+    {{ election_day_banner | safe }}
+    {{ site_page_head | safe }}
     <div class="sources-page-actions state-action-strip">
       <p class="sources-page-count" data-sources-count role="status" aria-live="polite"></p>
       <div class="sources-page-controls">
@@ -103,12 +97,6 @@
       </div>
     </div>
     <main id="sources-main">
-      <div class="sources-page-intro">
-        <p class="eyebrow eyebrow-paper">{{ election_display_name }} · Sources</p>
-        <h1>Customize your sources</h1>
-        <p class="lede">Choose which sources count, then save &mdash; the guide recalculates from
-          your selection.</p>
-      </div>
 
       <p class="sources-comparison-status" data-sources-comparison-status role="status" aria-live="polite"></p>
 
@@ -191,12 +179,14 @@
 
   <script type="module">
 {{ share_link_script | safe }}
+{{ election_day_script | safe }}
 {{ lens_url_script | safe }}
 
   // Page glue for the standalone sources editor. No scoring engine here: this
   // page only ever reads/writes a selection through the shared fragment codec
   // above, exactly like the guide's own merged sources tree (issue 107).
-  wireFooterShare();
+  wireShellShare();
+  wireElectionDay();
   const bindings = JSON.parse(document.querySelector('#lens-bindings').textContent);
   const context = lensContext(bindings, bindings.data_version);
   const guidePath = {{ guide_path | tojson }};

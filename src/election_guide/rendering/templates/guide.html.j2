@@ -186,14 +186,10 @@
 
   <main class="page screen-guide">
     {{ site_band | safe }}
-    <header class="hero">
-      <p class="detailed-edition-brand">Seattle Elections Guide</p>
-      <div class="hero-copy">
-        <div class="hero-kicker">{{ election_day_kicker }}</div>
-        <h1>{{ election_display_label }}</h1>
-        <p class="hero-tagline">Seattle&rsquo;s progressive voices, distilled.</p>
-      </div>
-    </header>
+    <p class="detailed-edition-brand">Seattle Elections Guide</p>
+    {{ site_page_head | safe }}
+    <div class="page-band-rule"></div>
+    {{ election_day_banner | safe }}
 
     <div class="sticky-header">
       {% call election_controls(
@@ -648,6 +644,7 @@
   {% endif %}
   <script type="module">
 {{ share_link_script | safe }}
+{{ election_day_script | safe }}
 {{ lens_url_script | safe }}
   {% if guide.personalization.policy.enabled %}
 {{ lens_score_script | safe }}
@@ -661,7 +658,8 @@
   // page and the Node tests share one implementation.
   const bindings = JSON.parse(document.querySelector('#lens-bindings').textContent);
 
-  wireFooterShare();
+  wireShellShare();
+  wireElectionDay();
 
   // Tallying categories and sources are empty while personalization is
   // disabled, so no tallying selection is possible here yet: a shared link

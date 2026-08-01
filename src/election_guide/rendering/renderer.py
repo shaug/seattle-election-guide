@@ -49,6 +49,7 @@ from election_guide.rendering.models import (
     RenderingValidationReport,
 )
 from election_guide.rendering.shell import (
+    HOW_TO_VOTE_HREF,
     close_icon_svg,
     election_day_banner_html,
     election_names,
@@ -172,6 +173,7 @@ def render_html_document(
     # Shared with the About page in hosting/pages.py so the native-share/
     # clipboard/execCommand fallback policy has exactly one implementation.
     share_link_script = (TEMPLATE_DIR / "share-link.mjs").read_text(encoding="utf-8")
+    election_day_script = (TEMPLATE_DIR / "election-day.mjs").read_text(encoding="utf-8")
     rendered_urls = [
         configuration.project_url,
         *(source.evidence_url for source in view_model.sources),
@@ -202,7 +204,7 @@ def render_html_document(
         legacy_name=view_model.metadata.election_name,
         election_id=view_model.metadata.election_id,
     )
-    document_title = page_title(election=election_display_name)
+    document_title = page_title(page="Endorsements", election=election_display_name)
     election_date_display = display_date(view_model.metadata.election_date)
     data_updated_date, site_updated_date = _footer_update_dates(view_model)
     print_footer_audit = print_footer_audit_html(
@@ -235,9 +237,16 @@ def render_html_document(
             current="endorsements",
             sources_link_data_attribute=True,
         ),
+        site_page_head=site_page_head_html(
+            eyebrow=election_display_name,
+            title="Endorsements",
+            tagline_html="Seattle&rsquo;s progressive voices, distilled.",
+            mode="extended",
+        ),
+        election_day_banner=election_day_banner_html(view_model.metadata.election_date),
+        election_day_script=election_day_script,
         site_head_links=site_head_links_html(configuration.public_site_url),
         election_date_display=election_date_display,
-        election_day_kicker=_election_day_kicker(view_model.metadata.election_date),
         site_footer_band=_election_footer_band(
             view_model,
             project_url=configuration.project_url,
@@ -293,6 +302,7 @@ def render_sources_document(
     ).read_text(encoding="utf-8")
     lens_url_script = (TEMPLATE_DIR / "lens-url.mjs").read_text(encoding="utf-8")
     share_link_script = (TEMPLATE_DIR / "share-link.mjs").read_text(encoding="utf-8")
+    election_day_script = (TEMPLATE_DIR / "election-day.mjs").read_text(encoding="utf-8")
     guide_path = f"/e/{view_model.metadata.election_id}/"
     pdf_href = f"{guide_path}{pdf_filename}" if pdf_filename is not None else None
     election_display_name, _ = election_names(
@@ -320,6 +330,15 @@ def render_sources_document(
             ),
             current="sources",
         ),
+        site_page_head=site_page_head_html(
+            eyebrow=election_display_name,
+            title="Sources",
+            tagline_html=(
+                "Choose which sources count &mdash; the guide recalculates from your selection."
+            ),
+        ),
+        election_day_banner=election_day_banner_html(view_model.metadata.election_date),
+        election_day_script=election_day_script,
         site_head_links=site_head_links_html(public_site_url),
         site_footer_band=_election_footer_band(
             view_model,
@@ -420,7 +439,7 @@ def render_comparison_document(
             guide_href=guide_path,
             compare_href=f"{guide_path}compare/",
             sources_href=f"{guide_path}sources/",
-            current="compare",
+            current="comparisons",
         ),
         site_head_links=site_head_links_html(public_site_url),
         site_page_head=site_page_head_html(
@@ -656,15 +675,6 @@ def _election_footer_band(
         audit_html=audit_html,
         pdf_href=pdf_href,
     )
-
-
-def _election_day_kicker(iso_date: str) -> str:
-    """The guide hero's kicker (UI polish round 4, item L54): the exact
-    election day, templated per election ("ELECTION DAY · AUGUST 4"). The
-    hero h1 already states the month and year, so the kicker states only the
-    day at a coarser precision, once each."""
-    parsed = date.fromisoformat(iso_date)
-    return f"ELECTION DAY · {parsed:%B} {parsed.day}".upper()
 
 
 def _concise_warning_labels(race: PublicationRace) -> list[str]:
@@ -1112,8 +1122,14 @@ def validate_rendered_guide(
                 )
     expected_html_links = {
         "#guide-races",
-        "/",  # the band's and footer's brand mark both link home (item L54/L55)
+        "/",  # the footer's brand mark links home (item L55)
+        # The band's brand mark links straight to the current election's guide
+        # rather than to `/`, which only redirects there (issue 192); that link
+        # target is also what the extended-masthead dial keys off.
         f"/e/{view_model.metadata.election_id}/",
+        # Slot 4's "How to vote" (issue 192). King County Elections administers
+        # Seattle's ballots and is already this repository's cited authority.
+        HOW_TO_VOTE_HREF,
         f"{configuration.public_site_url}/e/{view_model.metadata.election_id}/sources/",
         configuration.pdf_filename,
         "mailto:seattle-elections@dobravoda.dev",

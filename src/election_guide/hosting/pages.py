@@ -33,6 +33,7 @@ from election_guide.rendering.shell import (
     site_footer_audit_html,
     site_footer_band_html,
     site_head_links_html,
+    site_page_head_html,
 )
 from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
 
@@ -603,6 +604,13 @@ def _archive_html(
         data_href=data_href,
     )
     footer_band = site_footer_band_html(project_url=PROJECT_URL, audit_html=footer_audit)
+    head = site_page_head_html(
+        mode="measured",
+        title="Guide archive",
+        tagline_html=(
+            "Every guide stays up after its election &mdash; unchanged, at the same address."
+        ),
+    )
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -638,9 +646,8 @@ def _archive_html(
       {band}
       <div class="page-band-rule"></div>
     </header>
+    {head}
     <main id="archive-main" class="narrow-main">
-      <h1>Guide archive</h1>
-      <p>Every guide stays up after its election &mdash; unchanged, at the same address.</p>
       <ul>
 {rows}
       </ul>
@@ -651,7 +658,7 @@ def _archive_html(
   </div>
   <script type="module">
 {share_link_script}
-    wireFooterShare();
+    wireShellShare();
   </script>
 </body>
 </html>
@@ -686,7 +693,7 @@ def _about_html(
     )
     escaped_description = html.escape(description, quote=True)
     escaped_canonical = html.escape(canonical_url, quote=True)
-    document_title = html.escape(page_title(page="About"), quote=True)
+    document_title = html.escape(page_title(page="How this works"), quote=True)
     head_links = site_head_links_html(site_manifest.canonical_origin)
     escaped_current_path = html.escape(current_path, quote=True)
     band = site_band_html(
@@ -704,6 +711,9 @@ def _about_html(
         data_href=data_href,
     )
     footer_band = site_footer_band_html(project_url=PROJECT_URL, audit_html=footer_audit)
+    head = site_page_head_html(
+        mode="measured", title="How this works", tagline_html=html.escape(description)
+    )
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -740,9 +750,8 @@ def _about_html(
       {band}
       <div class="page-band-rule"></div>
     </header>
+    {head}
     <main id="about-main" class="narrow-main">
-      <h1>About this guide, and how to check our work</h1>
-      <p class="lede">{html.escape(description)}</p>
 
       <section aria-labelledby="what-this-is">
         <h2 id="what-this-is">What this guide is &mdash; and is not</h2>
@@ -845,7 +854,7 @@ def _about_html(
   </div>
   <script type="module">
 {share_link_script}
-    wireFooterShare();
+    wireShellShare();
   </script>
 </body>
 </html>
@@ -867,11 +876,11 @@ def _not_found_html(
     document_title = html.escape(page_title(page="Page not found"), quote=True)
     head_links = site_head_links_html(site_manifest.canonical_origin, shareable=False)
     base_css = (TEMPLATE_DIR / "base.css").read_text(encoding="utf-8")
-    share_link_script = (TEMPLATE_DIR / "share-link.mjs").read_text(encoding="utf-8")
     band = site_band_html(
         guide_href=current_path,
         sources_href=f"{current_path}sources/",
         compare_href=compare_href,
+        shareable=False,
     )
     footer_audit = site_footer_audit_html(
         data_updated_date=data_updated_date,
@@ -883,6 +892,15 @@ def _not_found_html(
     )
     footer_band = site_footer_band_html(project_url=PROJECT_URL, audit_html=footer_audit)
     escaped_current_path = html.escape(current_path, quote=True)
+    head = site_page_head_html(
+        mode="measured",
+        title="Page not found",
+        tagline_html=(
+            "That page doesn&rsquo;t exist. Try the "
+            f'<a href="{escaped_current_path}">current guide</a>, or the '
+            '<a href="/e/">archive of past guides</a>.'
+        ),
+    )
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -910,19 +928,12 @@ def _not_found_html(
       {band}
       <div class="page-band-rule"></div>
     </header>
-    <main class="narrow-main">
-      <h1>Page not found</h1>
-      <p>That page doesn&rsquo;t exist. Try the <a href="{escaped_current_path}">current guide</a>
-        or the <a href="/e/">guide archive</a>.</p>
-    </main>
+    {head}
+    <main class="narrow-main"></main>
     <footer class="site-footer">
       {footer_band}
     </footer>
   </div>
-  <script type="module">
-{share_link_script}
-    wireFooterShare();
-  </script>
 </body>
 </html>
 """

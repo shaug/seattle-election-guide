@@ -376,16 +376,22 @@ def test_shared_site_band_names_the_methodology_path_for_what_it_does() -> None:
     assert 'href="/about/" aria-current="page"' in band
 
 
-def test_shared_site_band_orders_optional_compare_before_sources() -> None:
+def test_shared_site_band_orders_nav_by_dependency() -> None:
+    """Reading order follows what each page depends on: the guide is the
+    destination, Sources is what feeds it, Comparisons is a view derived from
+    those sources, and How this works explains all three.
+
+    This reverses the order issue 197 shipped, which put Comparisons second.
+    """
     band = site_band_html(
         guide_href="/e/wa-2026-primary/",
         sources_href="/e/wa-2026-primary/sources/",
         compare_href="/e/wa-2026-primary/compare/",
     )
 
-    assert band.index(">Endorsements</a>") < band.index(">Comparisons</a>")
-    assert band.index(">Comparisons</a>") < band.index(">Sources</a>")
-    assert band.index(">Sources</a>") < band.index(">How this works</a>")
+    assert band.index(">Endorsements</a>") < band.index(">Sources</a>")
+    assert band.index(">Sources</a>") < band.index(">Comparisons</a>")
+    assert band.index(">Comparisons</a>") < band.index(">How this works</a>")
 
 
 def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path: Path) -> None:
@@ -626,14 +632,22 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     # L54: the hero states the election, not the brand (the band carries the
     # brand instead); the kicker states the exact election day; the old
     # hero-meta block ("Election ..." + "N races") is gone.
-    assert '<div class="hero-kicker">ELECTION DAY · AUGUST 4</div>' in html
-    assert "<h1>August 2026 Primary</h1>" in html
+    # Issue 192: the head names the page and the eyebrow names the election, on
+    # every page alike. The old "ELECTION DAY · AUGUST 4" kicker is gone — that
+    # fact belongs to the election-day banner, which can retire itself once the
+    # election has passed, as permanent chrome never could.
+    assert '<p class="page-eyebrow">August 2026 Primary</p>' in html
+    assert "<h1>Endorsements</h1>" in html
+    assert 'class="hero-kicker"' not in html
     assert 'class="hero-meta"' not in html
+    assert 'data-election-day="2026-08-04"' in html
     canonical_url = f"{configuration.public_site_url}/e/{view_model.metadata.election_id}/"
     assert f'<link rel="canonical" href="{canonical_url}">' in html
     assert f'<meta property="og:url" content="{canonical_url}">' in html
     assert '<meta name="twitter:card" content="summary_large_image">' in html
-    document_title = "August 2026 Primary — Seattle Elections Guide"
+    # Issue 192 (R5): the guide page's no-page-segment title exception is
+    # retired, so every election-scoped page shares one title grammar.
+    document_title = "Endorsements — August 2026 Primary — Seattle Elections Guide"
     assert f'<meta property="og:title" content="{document_title}">' in html
     assert f'<meta name="twitter:title" content="{document_title}">' in html
     assert f"<title>{document_title}</title>" in html
@@ -655,10 +669,12 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert 'href="/about/" aria-label="How this works" title="How this works"' in footer_html
     assert 'class="site-footer-link"' not in footer_html
     assert "About &amp; FAQ" not in footer_html
-    assert 'class="footer-icon-action" data-footer-share' in footer_html
+    # Issue 192: Share moved to the masthead — actions on the page belong there,
+    # while the footer keeps meta about the site.
+    assert "data-footer-share" not in footer_html
     assert "navigator.share" in html
     assert "shareOrCopyLink" in html
-    assert "wireFooterShare();" in html
+    assert "wireShellShare();" in html
     assert '<div class="site-footer-audit">' in footer_html
     assert "Data updated" in footer_html
     assert "Site updated" in footer_html
@@ -2837,15 +2853,20 @@ def test_sources_tree_shell_leaves_the_print_comparison_untouched(tmp_path: Path
     assert "Read the Times pill" in html
 
 
-def test_guide_hero_uses_only_the_kicker_title_and_tagline(tmp_path: Path) -> None:
-    """Issue 177: the live source count belongs to the persistent strip."""
+def test_guide_head_carries_the_eyebrow_title_and_tagline(tmp_path: Path) -> None:
+    """Issue 177: the live source count belongs to the persistent strip.
+
+    Issue 192: the guide's bespoke hero became the shared page head. It is the
+    brand-link target, so it takes the one exception that page buys — the
+    masthead's navy runs through the head instead of stopping at the band.
+    """
     html = _sources_tree_html(tmp_path)
 
-    hero = html.split('<header class="hero">')[1].split("</header>")[0]
-    assert 'class="hero-kicker"' in hero
-    assert "<h1>" in hero
-    assert 'class="hero-tagline"' in hero
-    assert 'class="hero-deck"' not in hero
+    head = html.split('<header class="page-head extended">')[1].split("</header>")[0]
+    assert 'class="page-eyebrow"' in head
+    assert "<h1>Endorsements</h1>" in head
+    assert 'class="page-tagline"' in head
+    assert 'class="hero-deck"' not in head
     band = html.split('<div class="site-band">')[1].split("</div>")[0]
     assert '/sources/" data-sources-link' in band
 
@@ -2883,7 +2904,7 @@ def test_sources_links_carry_the_guides_current_fragment(tmp_path: Path) -> None
     assert all(href == expected_href for href in result["hrefs"])
 
 
-def test_footer_share_button_uses_web_share_then_falls_back_to_copy(tmp_path: Path) -> None:
+def test_masthead_share_button_uses_web_share_then_falls_back_to_copy(tmp_path: Path) -> None:
     """Issue 66: the share action must degrade cleanly when the Web Share API,
 
     then the Clipboard API, are unavailable, without letting a declined share
@@ -2896,8 +2917,8 @@ def test_footer_share_button_uses_web_share_then_falls_back_to_copy(tmp_path: Pa
         """
         (async () => {
           const pause = () => new Promise((resolve) => setTimeout(resolve, 50));
-          const button = document.querySelector('[data-footer-share]');
-          const status = document.querySelector('[data-footer-share-status]');
+          const button = document.querySelector('[data-shell-share]');
+          const status = document.querySelector('[data-shell-share-status]');
 
           Object.defineProperty(navigator, 'share', {
             value: (details) => Promise.resolve(details),

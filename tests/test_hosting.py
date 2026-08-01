@@ -119,7 +119,7 @@ def test_stage_pages_site_composes_verified_election_archive(tmp_path: Path) -> 
 
     about = (output / "about" / "index.html").read_text(encoding="utf-8")
     assert '<link rel="canonical" href="https://seattleelections.guide/about/">' in about
-    about_title = "About — Seattle Elections Guide"
+    about_title = "How this works — Seattle Elections Guide"
     assert f'<meta property="og:title" content="{about_title}">' in about
     assert f'<meta name="twitter:title" content="{about_title}">' in about
     assert f"<title>{about_title}</title>" in about
@@ -363,7 +363,7 @@ def test_comparison_preview_stages_only_the_current_direct_route(tmp_path: Path)
     compare_html = compare_path.read_text(encoding="utf-8")
     assert 'data-default-columns="gall,strn,stim"' in compare_html
     assert compare_html.index(">Endorsements</a>") < compare_html.index(">Comparisons</a>")
-    assert compare_html.index(">Comparisons</a>") < compare_html.index(">Sources</a>")
+    assert compare_html.index(">Sources</a>") < compare_html.index(">Comparisons</a>")
     assert compare_html.index(">Sources</a>") < compare_html.index(">How this works</a>")
 
     hidden_compare_pages = (
@@ -631,8 +631,8 @@ def test_about_page_share_button_uses_web_share_then_falls_back_to_copy(
         """
         (async () => {
           const pause = () => new Promise((resolve) => setTimeout(resolve, 50));
-          const button = document.querySelector('[data-footer-share]');
-          const status = document.querySelector('[data-footer-share-status]');
+          const button = document.querySelector('[data-shell-share]');
+          const status = document.querySelector('[data-shell-share-status]');
 
           Object.defineProperty(navigator, 'share', {
             value: (details) => Promise.resolve(details),
@@ -740,7 +740,7 @@ def test_about_and_sources_ledes_follow_their_page_measure(
         about_path,
         """
         (() => {
-          const lede = document.querySelector('main > p.lede');
+          const lede = document.querySelector('.page-head .page-tagline');
           const bodyParagraph = document.querySelector('main section p');
           const style = getComputedStyle(lede);
           return JSON.stringify({
@@ -765,12 +765,12 @@ def test_about_and_sources_ledes_follow_their_page_measure(
         sources_path,
         """
         (() => {
-          const intro = document.querySelector('.sources-page-intro');
-          const lede = intro.querySelector('.lede');
+          const head = document.querySelector('.page-head');
+          const lede = head.querySelector('.page-tagline');
           const style = getComputedStyle(lede);
           return JSON.stringify({
             ledeWidth: lede.getBoundingClientRect().width,
-            measureWidth: intro.getBoundingClientRect().width,
+            headWidth: head.getBoundingClientRect().width,
             maxWidth: style.maxWidth,
             color: style.color,
             fontSize: style.fontSize,
@@ -780,11 +780,26 @@ def test_about_and_sources_ledes_follow_their_page_measure(
         mobile_width=mobile_width,
     )
 
+    # Issue 192 replaced two bespoke intro blocks with one page head that has two
+    # measure modes, so the rule is now stated per mode rather than per page.
+    #
+    # A head on a page that sets a book measure (About) shares that column
+    # outright: same width as the prose beneath it, and no second measure of its
+    # own.
+    assert about["ledeWidth"] == pytest.approx(about["measureWidth"], abs=1)
+    assert about["maxWidth"] == "none"
+
+    # A full-bleed head (Sources, whose body is a wide multi-column tree) carries
+    # the measure itself, and must never let prose span the 76rem frame.
+    assert sources["ledeWidth"] < sources["headWidth"]
+    assert sources["maxWidth"] != "none"
+
+    # A measured head is prose above prose, so it takes the body's size exactly.
+    # A full-bleed head is a deck and scales with the frame, so it is not pinned.
+    assert about["fontSize"] == "16px"
+
     for page in (about, sources):
-        assert page["ledeWidth"] == pytest.approx(page["measureWidth"], abs=1)
-        assert page["maxWidth"] == "none"
         assert page["color"] == "rgb(82, 96, 109)"
-        assert page["fontSize"] == "16px"
 
 
 def _selectable_tallying_codes(view_model: PublicationViewModel) -> list[str]:
@@ -861,10 +876,7 @@ def test_sources_page_renders_every_category_and_source_like_the_guide_tree(
         '<meta name="twitter:description" content="Choose which sources count '
         f'toward your personalized {election_name} results.">' in html
     )
-    assert (
-        "Choose which sources count, then save &mdash; the guide recalculates from\n"
-        "          your selection." in html
-    )
+    assert "Choose which sources count &mdash; the guide recalculates from your selection." in html
     coverage_model = view_model.model_copy(deep=True)
     coverage_source = coverage_model.sources[0]
     coverage_source.contribution_status = "coverage_gap"
@@ -903,9 +915,12 @@ def test_sources_page_renders_every_category_and_source_like_the_guide_tree(
 
     # Issue 155: the page header names the election at a deliberate measure,
     # while privacy and audit details live in their site-wide homes.
-    assert '<div class="sources-page-intro">' in html
-    assert "August 2026 Primary · Sources" in html
-    assert ".sources-page-intro { max-width: 60ch;" in html
+    # Issue 192: the bespoke intro became the shared page head, the eyebrow
+    # names only the election, and the h1 agrees with the nav label (R5).
+    assert '<header class="page-head">' in html
+    assert '<p class="page-eyebrow">August 2026 Primary</p>' in html
+    assert "<h1>Sources</h1>" in html
+    assert "· Sources" not in html
     assert "Your selection lives entirely" not in html
     assert "sources-version" not in html
     data_updated_date = (

@@ -191,15 +191,23 @@ def site_band_html(
     about_href: str = "/about/",
     current: str | None = None,
     sources_link_data_attribute: bool = False,
+    shareable: bool = True,
 ) -> str:
-    """The slim navy nav band shared by every page, brand always present.
+    """Slot 1 of the shell grammar (issue 192): brand, nav, and page actions.
 
-    `current` names the nav entry for this page (`endorsements`, `compare`,
-    `sources`, or `about`). Every page, the guide included, carries the icon-plus-name
-    lockup linking home (UI polish round 4, item L54: the guide's hero h1
-    used to stand in for the brand and suppressed it here; the hero now
-    states the election instead, so the band's brand mark is the one place
-    the site name appears, on every page alike).
+    `current` names the nav entry for this page (`endorsements`, `comparisons`,
+    `sources`, or `about`). The brand lockup links to `guide_href` — the current
+    election's endorsements page — rather than `/`, which only redirects there;
+    that link target is also what R3 keys the extended masthead off.
+
+    The nav is one `<details>` disclosure at every width. Above the shell
+    breakpoint CSS forces its panel visible and hides the summary, so it renders
+    as the familiar inline row; below it, the summary becomes a control reading
+    "Pages" and the panel drops beneath. This needs no JavaScript, which matters
+    because the archived guides are frozen files.
+
+    `shareable` follows the same flag that governs a page's social card (R2), so
+    the 404 gets neither an og card nor a Share action from one property.
     `sources_link_data_attribute` adds the guide's `data-sources-link` hook so
     its script can carry the reader's live selection onto the Sources page.
     """
@@ -210,17 +218,40 @@ def site_band_html(
 
     sources_extra = " data-sources-link" if sources_link_data_attribute else ""
     brand = (
-        f'<a class="site-brand" href="/">{site_icon_svg(on_dark=True)}<span>{SITE_NAME}</span></a>'
+        f'<a class="site-brand" href="{html.escape(guide_href, quote=True)}">'
+        f"{site_icon_svg(on_dark=True)}<span>{SITE_NAME}</span></a>"
+    )
+    # Share is named in DESIGN.md's universal-glyph set, so it stays icon-only at
+    # every width; the disclosure control beside it is text, matching the nav
+    # links it stands in for.
+    share_action = (
+        '<button type="button" class="band-icon-action" data-shell-share'
+        ' aria-label="Share this page" title="Share this page">'
+        f"{_SHARE_ICON_SVG}</button>"
+        if shareable
+        else ""
+    )
+    share_status = (
+        '<p class="visually-hidden" role="status" aria-live="polite" data-shell-share-status></p>'
+        if shareable
+        else ""
     )
     return (
         '<div class="site-band">'
         f"{brand}"
+        '<div class="site-band-actions">'
+        f"{share_action}"
+        '<details class="site-band-menu">'
+        "<summary>Pages</summary>"
         '<nav aria-label="Site">'
+        # Reading order follows dependency: the guide is the destination, Sources
+        # is what feeds it, Comparisons is a view derived from those sources, and
+        # How this works explains all three.
         f"{nav_link('Endorsements', guide_href, 'endorsements')}"
-        f"{nav_link('Comparisons', compare_href, 'compare') if compare_href is not None else ''}"
         f"{nav_link('Sources', sources_href, 'sources', sources_extra)}"
-        f"{nav_link('How this works', about_href, 'about')}"
-        "</nav></div>"
+        + (nav_link("Comparisons", compare_href, "comparisons") if compare_href is not None else "")
+        + f"{nav_link('How this works', about_href, 'about')}"
+        "</nav></details></div></div>" + share_status
     )
 
 
@@ -322,12 +353,14 @@ def site_footer_band_html(
     """The navy footer band shared by every page except the 404 (item L55).
 
     Mirrors `site_band_html`: the same icon+wordmark lockup, linking home,
-    on the left; a centered icon action cluster on the right — Share, Printable
-    PDF (only on election-scoped pages, when `pdf_href` is given), Contact,
-    source/audit files on GitHub, and How this works. The Share button's own
-    click handling lives in each page's script (see `share-link.mjs`'s
-    `wireFooterShare`); this only renders the button, its icon, and its adjacent
-    live-region status paragraph.
+    on the left; a centered icon action cluster on the right — Printable PDF
+    (only on election-scoped pages, when `pdf_href` is given), Contact,
+    source/audit files on GitHub, and How this works.
+
+    Share moved to the masthead in issue 192, under the rule promoted to
+    DESIGN.md § Site shell: *masthead = actions on the page; footer = meta about
+    the site.* The Printable PDF action stays here until issue 193 retires the
+    generated edition altogether.
     """
 
     def icon_link(label: str, href: str, svg: str) -> str:
@@ -338,11 +371,6 @@ def site_footer_band_html(
             f' title="{escaped_label}">{svg}</a>'
         )
 
-    share_action = (
-        '<button type="button" class="footer-icon-action" data-footer-share'
-        ' aria-label="Share this page" title="Share this page">'
-        f"{_SHARE_ICON_SVG}</button>"
-    )
     pdf_action = icon_link("Printable PDF", pdf_href, _PDF_ICON_SVG) if pdf_href is not None else ""
     contact_action = icon_link("Contact", CONTACT_HREF, _ENVELOPE_ICON_SVG)
     github_action = icon_link("Source and audit files on GitHub", project_url, _GITHUB_ICON_SVG)
@@ -357,9 +385,8 @@ def site_footer_band_html(
         f"{brand}"
         f'<div class="site-footer-audit">{audit_html}</div>'
         '<div class="site-footer-actions">'
-        f"{share_action}{pdf_action}{contact_action}{github_action}{about_action}"
+        f"{pdf_action}{contact_action}{github_action}{about_action}"
         "</div></div>"
-        '<p class="visually-hidden" role="status" aria-live="polite" data-footer-share-status></p>'
     )
 
 
