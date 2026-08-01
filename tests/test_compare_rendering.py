@@ -1451,6 +1451,49 @@ def test_mobile_comparison_scrolls_columns_while_preserving_context(
     }
 
 
+@pytest.mark.parametrize("viewport_width", [390, 320])
+def test_mobile_lower_rows_keep_visible_source_identity(
+    tmp_path: Path, viewport_width: int
+) -> None:
+    result = _evaluate_in_chrome(
+        _comparison_html_path(tmp_path),
+        """
+        (async () => {
+          const rows = [...document.querySelectorAll('[data-comparison-race]')];
+          const row = rows[Math.min(15, rows.length - 1)];
+          const cells = [...row.querySelectorAll('.comparison-cell')];
+          window.scrollTo(0, row.getBoundingClientRect().top + scrollY - (innerHeight / 2));
+          await new Promise((resolve) => setTimeout(resolve, 80));
+          const rowRect = row.getBoundingClientRect();
+          const headers = [...document.querySelectorAll(
+            '[data-comparison-head] [data-column-signal]',
+          )];
+          return JSON.stringify({
+            rowVisible: rowRect.bottom > 0 && rowRect.top < innerHeight,
+            headersOffscreen: headers.every(
+              (header) => header.getBoundingClientRect().bottom <= 0,
+            ),
+            labels: cells.map((cell) => ({
+              expected: cell.dataset.columnLabel,
+              visible: getComputedStyle(cell, '::before').content,
+              display: getComputedStyle(cell, '::before').display,
+            })),
+            outerWidth: document.documentElement.scrollWidth,
+            viewportWidth: document.documentElement.clientWidth,
+          });
+        })()
+        """,
+        mobile_width=viewport_width,
+    )
+    assert result["rowVisible"] is True
+    assert result["headersOffscreen"] is True
+    assert result["labels"]
+    for label in result["labels"]:
+        assert label["visible"].strip('"') == label["expected"]
+        assert label["display"] == "block"
+    assert result["outerWidth"] == result["viewportWidth"]
+
+
 def test_comparison_columns_do_not_compress_below_the_supported_320px_floor(
     tmp_path: Path,
 ) -> None:

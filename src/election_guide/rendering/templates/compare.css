@@ -77,7 +77,7 @@
   .comparison-column-heading .comparison-column-picker { min-height: 2.5rem; }
   .comparison-section-heading th { border-top-width: .4rem; }
   .comparison-table th, .comparison-table td { padding: .6rem .55rem; font-size: .76rem; overflow-wrap: anywhere; }
-  .comparison-table .comparison-cell::before { content: none; }
+  .comparison-table .comparison-cell::before { content: attr(data-column-label); display: block; margin-bottom: .3rem; color: var(--muted); font-size: .58rem; font-weight: 700; line-height: 1.15; }
   .comparison-table .comparison-cell-meta { display: block; }
 }
 /* 320px is the supported viewport floor. These widths remain fixed below it so
