@@ -110,6 +110,15 @@ Every icon-only control carries `aria-label` + `title` tooltip + a visible
 focus ring + an adequate tap target. The *primary* path to the methodology
 is always words — trust links don't hide behind glyphs.
 
+**Collapsing a text path costs a word.** A control that collapses a text
+path carries a visible label, because collapsing is precisely the removal
+of the text path that would have licensed an icon-only control. The
+masthead's mobile nav control is therefore the word "Pages", with no glyph
+at all — matching the band's own logic, where the brand is the one lockup
+carrying a mark and every other member is words. Note that clause 2 above
+licenses the footer's info icon by way of a masthead text path; keep that
+dependency in view when changing how the masthead collapses.
+
 **Emoji are text, not iconography.** They may appear only in purely
 textual contexts — a `<title>` label, a plain-text email — never as UI
 icons. Rendered UI uses real SVG icons from a standard library (Lucide or
@@ -119,24 +128,89 @@ while emoji render differently on every platform and can't be styled.
 ## Titles & naming
 
 - **`<title>` grammar.** Election-scoped pages:
-  `"<page> — <election> — Seattle Elections Guide"`. The guide page
-  itself: `"<election> — Seattle Elections Guide"`. Election-agnostic
-  pages (About, archive, 404): `"<page> — Seattle Elections Guide"`.
-  The same values feed `og:title`.
+  `"<page> — <election> — Seattle Elections Guide"`, the guide page
+  included. Election-agnostic pages (About, archive, 404):
+  `"<page> — Seattle Elections Guide"`. The same values feed `og:title`.
+  *(2026-08-01, issue 192: the guide page's exemption from the page
+  segment is retired. It bought a lighter social unfurl and cost a
+  carve-out in the rule that makes eyebrow, h1, nav, and title agree
+  everywhere else — a cheap exception with an expensive cascade.)*
 - **One canonical election name per context** — one display form (hero),
   one dated archive form — both generated from election data, never
   hand-typed.
-- **The brand lives in the band; the h1 describes the page.** The hero h1
-  is the election; the Sources h1 is the task; the About h1 is the
-  promise. No page h1 repeats the site name.
+- **The brand lives in the band; the h1 is the page's own name.** Every
+  page, the guide included, names itself in its h1 and agrees with its nav
+  label: Endorsements, Comparisons, Sources, How this works. The election
+  is the eyebrow above it, never the h1. No page h1 repeats the site name.
+  *(2026-08-01, issue 192: this inverts the previous rule, under which the
+  guide's h1 was the election. That made the strongest identity on screen
+  change size ~4x between page types, and left the guide as the one page
+  not naming itself.)*
+- **Election-scoped pages are named with a plural noun**; agnostic pages
+  are named with a phrase. Eyebrow and h1 then read as one name — "August
+  2026 Primary Comparisons" — so the naming itself marks which pages are
+  election-scoped. Rejects "Compare" (a verb) and "Customize your sources"
+  (an instruction) as page names.
 - **Dates are for humans**: "August 4, 2026", never "2026-08-04". A kicker
   states the same fact at a different precision, not twice: "ELECTION DAY
   · AUGUST 4" above "August 2026 Primary".
 
 ## Site shell
 
+> **Status (2026-08-01).** The rules in this section are adopted and govern
+> all new work — build against them. The shared page head, the election-day
+> banner, and their styles ship with this document; converting the six
+> existing pages to them lands separately under issue 192, deliberately
+> sequenced after the Comparisons epic (#116) so every page, including the
+> ones that epic adds, is converted once. Until that lands, the shipped
+> pages still carry their old bespoke headers — the one place where this
+> document leads the UI rather than describing it. **New pages must use
+> `site_page_head_html`; do not hand-roll a header.**
+
+**Exceptions are allowed; cascades are not.** An exception must name what
+it buys, and must not require a second rule to bend to accommodate it.
+Test: trace every rule the exception touches; if any needs amending to
+survive it, change the exception's shape, not the other rules. *(This is
+why the mobile nav control is a word rather than a hamburger: an icon-only
+menu would break "text vs. icons", whose own clause licensing the footer's
+info icon depends on the masthead linking About in words — two rules
+bending for one convenience.)*
+
+**Slots.** Every page renders one sequence, and slots may be absent but
+are never reordered or restyled per page:
+
+**Masthead → Context → Body**, where the masthead is the band plus the
+teal rule that closes it, Context is the election-day banner, and the Body
+opens with the page head (unless the dial has pulled it into the masthead),
+then any sticky strip, then content.
+
+- **The dial.** The masthead's navy ends after the band — except on the
+  page the brand lockup links to, where the page head sits *inside* the
+  masthead, above the closing rule, on navy. Exactly one page qualifies by
+  construction, and it stays correct on its own if home ever moves.
+- **Presence follows the page's kind, not its identity.** The eyebrow and
+  the Context banner appear iff the page is election-scoped; their absence
+  is the only marker agnostic pages need. Share appears iff the page is
+  shareable — the same flag that governs its social card, which is why the
+  404 has neither.
+- **Primacy is bought with named exceptions, and they are enumerated.**
+  Being the brand-link target currently buys exactly one: the extended
+  masthead. A second must be argued and written down here, not accrued.
+- **Width changes what is visible, never what is said.** Slot order,
+  presence, and copy are width-invariant. Only presentation adapts — an
+  action may change how it is presented (a visible control, or a labelled
+  item inside the nav disclosure) but may never disappear. Rejects a
+  desktop-only tagline or a mobile-only warning.
+- **Desktop's dividend is simultaneity.** Extra width buys more visible at
+  once — nav inline instead of behind a control, provenance on one line —
+  never additional content or a second tier of chrome.
+- **Masthead = actions on the page; footer = meta about the site.** Share
+  belongs to the masthead because it acts on what you are reading;
+  Contact, source files, and the methodology link belong to the footer.
 - One masthead band and one footer implementation, shared by every page —
-  never re-implemented per page.
+  never re-implemented per page. One page head likewise, in two measure
+  modes: full-bleed, or constrained to its page's reading column when that
+  page sets one, so a tagline never outruns the prose beneath it.
 - The footer has exactly three jobs: exit ramps (the icon cluster and the
   methodology link), provenance, and closing the frame. It is one navy band
   mirroring the masthead: provenance is a two-line whisper beside the brand,
