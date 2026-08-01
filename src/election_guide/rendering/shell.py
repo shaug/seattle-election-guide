@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import html
 from datetime import date
+from typing import Literal
 
 SITE_NAME = "Seattle Elections Guide"
 CONTACT_HREF = "mailto:seattle-elections@dobravoda.dev"
@@ -226,10 +227,9 @@ def site_band_html(
 def site_page_head_html(
     *,
     title: str,
-    tagline: str,
+    tagline_html: str,
     eyebrow: str | None = None,
-    extended: bool = False,
-    narrow: bool = False,
+    mode: Literal["plain", "extended", "measured"] = "plain",
 ) -> str:
     """Slot 2 of the shell grammar (issue 192): one page head for every page.
 
@@ -239,27 +239,37 @@ def site_page_head_html(
     election-scoped pages it is a plural noun so eyebrow and title read as one
     name — "August 2026 Primary Comparisons" (R5a).
 
-    `narrow` constrains the head to the same ~46rem reading column its page's
-    body uses, reusing the shared `.narrow-main` class. DESIGN.md § Typography
-    holds that the frame is the site and the measure is the content, so a head
-    whose page sets a book measure must sit on it too — otherwise the tagline
-    outruns the prose directly beneath it.
+    **`title` and `eyebrow` are escaped here; `tagline_html` is not.** The
+    tagline carries inline markup on purpose — entities in the guide's copy, and
+    real links on the 404 — so its caller owns escaping any value that is not a
+    literal. `_about_html` shows the pattern: it passes `html.escape(...)`. The
+    name says `_html` so this asymmetry is visible at the call site rather than
+    only in this docstring.
 
-    `extended` runs the masthead's navy through the head instead of stopping it
-    at the band. It is the single exception the brand-link target buys (R3/R4);
-    it needs no other rule to bend, because the ground-relative color rules
-    already carry the eyebrow to mint and the title to white.
+    `mode` selects the head's one legal variation, as a closed set rather than
+    independent flags, so a shape the grammar does not define cannot be
+    expressed:
+
+    - `plain` — the head sits below the masthead on paper.
+    - `extended` — the masthead's navy runs through the head instead of stopping
+      at the band. This is the single exception the brand-link target buys
+      (R3/R4), and it bends no other rule: the ground-relative color rules
+      already carry the eyebrow to mint and the title to white.
+    - `measured` — the head takes the same ~46rem reading column its page's body
+      uses, reusing the shared `.narrow-main` class. DESIGN.md § Typography
+      holds that the frame is the site and the measure is the content, so a head
+      whose page sets a book measure must sit on it too, or its tagline outruns
+      the prose directly beneath it.
     """
 
-    classes = "page-head extended" if extended else "page-head"
+    variant = {"plain": "", "extended": " extended", "measured": " narrow"}[mode]
     eyebrow_html = (
         f'<p class="page-eyebrow">{html.escape(eyebrow)}</p>' if eyebrow is not None else ""
     )
-    inner = f'{eyebrow_html}<h1>{html.escape(title)}</h1><p class="page-tagline">{tagline}</p>'
-    if narrow:
-        classes = f"{classes} narrow"
+    inner = f'{eyebrow_html}<h1>{html.escape(title)}</h1><p class="page-tagline">{tagline_html}</p>'
+    if mode == "measured":
         inner = f'<div class="narrow-main">{inner}</div>'
-    return f'<header class="{classes}">{inner}</header>'
+    return f'<header class="page-head{variant}">{inner}</header>'
 
 
 def election_day_banner_html(
