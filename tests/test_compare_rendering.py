@@ -1485,12 +1485,18 @@ def test_default_differences_match_fixed_oracle_with_visual_and_accessible_signa
             agree: {
               state: agree.dataset.agreement,
               background: getComputedStyle(agree).backgroundColor,
+              fontWeight: getComputedStyle(
+                agree.querySelector('.comparison-cell-picks'),
+              ).fontWeight,
               token: tokenBackground('--tone-agree-bg'),
               hasSignal: Boolean(agree.querySelector('.comparison-cell-signal')),
             },
             differ: {
               state: differ.dataset.agreement,
               background: getComputedStyle(differ).backgroundColor,
+              fontWeight: getComputedStyle(
+                differ.querySelector('.comparison-cell-picks'),
+              ).fontWeight,
               borderLeftWidth: getComputedStyle(differ).borderLeftWidth,
               token: tokenBackground('--tone-differ-bg'),
               hasSignal: Boolean(differ.querySelector('.comparison-cell-signal')),
@@ -1498,6 +1504,9 @@ def test_default_differences_match_fixed_oracle_with_visual_and_accessible_signa
             reference: {
               state: reference.dataset.agreement,
               background: getComputedStyle(reference).backgroundColor,
+              fontWeight: getComputedStyle(
+                reference.querySelector('.comparison-cell-picks'),
+              ).fontWeight,
               hasSignal: Boolean(reference.querySelector('.comparison-cell-signal')),
             },
             blank: {
@@ -1557,6 +1566,7 @@ def test_default_differences_match_fixed_oracle_with_visual_and_accessible_signa
     assert result["agree"] == {
         "state": "agree",
         "background": result["agree"]["token"],
+        "fontWeight": "700",
         "token": result["agree"]["token"],
         "hasSignal": False,
     }
@@ -1564,11 +1574,13 @@ def test_default_differences_match_fixed_oracle_with_visual_and_accessible_signa
     assert result["differ"] == {
         "state": "differ",
         "background": result["differ"]["token"],
+        "fontWeight": "700",
         "borderLeftWidth": "0px",
         "token": result["differ"]["token"],
         "hasSignal": False,
     }
     assert result["reference"]["state"] == "reference"
+    assert result["reference"]["fontWeight"] == "700"
     assert result["reference"]["background"] not in {
         result["agree"]["token"],
         result["differ"]["token"],
@@ -1593,7 +1605,10 @@ def test_default_differences_match_fixed_oracle_with_visual_and_accessible_signa
     assert result["differsCarrierCount"] == 1
 
 
-def test_agreement_tones_recompute_when_the_reference_changes(tmp_path: Path) -> None:
+@pytest.mark.parametrize("mobile_width", [None, 390])
+def test_agreement_tones_recompute_when_the_reference_changes(
+    tmp_path: Path, mobile_width: int | None
+) -> None:
     result = _evaluate_in_chrome(
         _comparison_html_path(tmp_path),
         """
@@ -1613,6 +1628,9 @@ def test_agreement_tones_recompute_when_the_reference_changes(tmp_path: Path) ->
           const before = {
             state: beforeCell.dataset.agreement,
             background: getComputedStyle(beforeCell).backgroundColor,
+            fontWeight: getComputedStyle(
+              beforeCell.querySelector('.comparison-cell-picks'),
+            ).fontWeight,
             rowDiffers: beforeRace.dataset.rowDiffers,
             differsText: beforeRace.querySelector('.comparison-race-differs').textContent,
           };
@@ -1631,6 +1649,9 @@ def test_agreement_tones_recompute_when_the_reference_changes(tmp_path: Path) ->
             after: {
               state: agree.dataset.agreement,
               background: getComputedStyle(agree).backgroundColor,
+              fontWeight: getComputedStyle(
+                agree.querySelector('.comparison-cell-picks'),
+              ).fontWeight,
               matchesReference: agree.querySelector('.comparison-cell-picks').textContent
                 === reference.querySelector('.comparison-cell-picks').textContent,
               rowDiffers: afterRace.dataset.rowDiffers,
@@ -1639,27 +1660,34 @@ def test_agreement_tones_recompute_when_the_reference_changes(tmp_path: Path) ->
             reference: {
               state: reference.dataset.agreement,
               background: getComputedStyle(reference).backgroundColor,
+              fontWeight: getComputedStyle(
+                reference.querySelector('.comparison-cell-picks'),
+              ).fontWeight,
             },
             agreeToken: tokenBackground('--tone-agree-bg'),
             differToken: tokenBackground('--tone-differ-bg'),
           });
         })()
         """,
+        mobile_width=mobile_width,
     )
     assert result["before"] == {
         "state": "differ",
         "background": result["differToken"],
+        "fontWeight": "700",
         "rowDiffers": "true",
         "differsText": "Differs",
     }
     assert result["after"] == {
         "state": "agree",
         "background": result["agreeToken"],
+        "fontWeight": "700",
         "matchesReference": True,
         "rowDiffers": "false",
         "differsLabelPresent": False,
     }
     assert result["reference"]["state"] == "reference"
+    assert result["reference"]["fontWeight"] == "700"
     assert result["reference"]["background"] not in {
         result["agreeToken"],
         result["differToken"],

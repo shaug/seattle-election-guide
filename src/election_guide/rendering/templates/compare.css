@@ -42,7 +42,7 @@
 .comparison-cell[data-agreement="agree"] { background: var(--tone-agree-bg); }
 .comparison-cell[data-agreement="differ"] { background: var(--tone-differ-bg); }
 .comparison-cell-picks { display: block; font-weight: 700; line-height: 1.25; }
-.comparison-cell[data-agreement="agree"] .comparison-cell-picks { color: var(--muted); font-weight: 500; }
+.comparison-cell[data-agreement="agree"] .comparison-cell-picks { color: var(--muted); }
 .comparison-cell-meta { display: block; margin-top: .25rem; color: var(--muted); font-size: .7rem; font-variant-numeric: tabular-nums; }
 .comparison-cell[data-cell-kind="blank"] .comparison-cell-picks,
 .comparison-cell[data-cell-kind="outside_scope"] .comparison-cell-picks { color: var(--muted); font-weight: 500; font-style: italic; }
