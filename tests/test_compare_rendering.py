@@ -108,12 +108,9 @@ def test_compare_document_server_renders_default_contract_snapshot() -> None:
     assert (
         rendered.count('data-column-signal="stim"') == len(view_model.comparisons.display_index) + 1
     )
-    assert "Put any sources side by side and see where they agree" in rendered
+    assert "Endorsements side by side, surfacing tension." in rendered
     assert "You're starting with all sources" not in rendered
-    assert (
-        'name="description" content="Compare the all-sources result with The Stranger and '
-        'The Seattle Times for August 2026 Primary."' in rendered
-    )
+    assert 'name="description" content="Endorsements side by side, surfacing tension."' in rendered
     assert "audited all-sources" not in rendered
     assert '<div class="segmented-control">' in rendered
     assert "Audited baseline" not in rendered
