@@ -174,11 +174,13 @@ color/tokens (J), and chrome/microcopy (K) sections below.
   (mirroring `site_band_html`), same frame on every page. Three jobs only:
   exit ramps, provenance, closing the frame. Anatomy:
   1. Navy band mirroring the masthead: left, the same icon + wordmark lockup;
-     right, an icon action cluster — Share, Printable PDF (election-scoped
-     pages only), Contact (envelope), GitHub mark (CONFIRMED: replaces
-     "Source and audit files" text; the audit-line commit link below is the
-     separate deep path) — with `aria-label` + `title` + focus ring +
-     adequate tap targets; plus one text link "How this works" → `/about/`.
+     right, an icon action cluster — Contact (envelope), GitHub mark
+     (CONFIRMED: replaces "Source and audit files" text; the audit-line commit
+     link below is the separate deep path) — with `aria-label` + `title` +
+     focus ring + adequate tap targets; plus one text link "How this works" →
+     `/about/`. (Shipped with Share and a Printable PDF action in this
+     cluster too; issue 192 moved Share to the masthead and issue 193 retired
+     the generated PDF edition, removing both.)
   2. Compact mono audit line: election date · built date · Data/Code hashes ·
      Panel id+hash; the Code hash links to the GitHub commit. Global pages
      (About, archive) render the site-level variant without election/panel
@@ -301,11 +303,6 @@ color/tokens (J), and chrome/microcopy (K) sections below.
      full-panel recomputation before the external comparison signal). Default
      view (no lens, no Times) renders neither; Times-only renders one bar as
      today.
-  Implementation note: the detailed-edition print validator anchors each
-  comparison's extracted text against the support summary that *follows* it
-  (guide.html.j2 comment near the comparisons block); moving the support line
-  above the Times bar requires re-anchoring that validator check in the
-  renderer mirror, not just reordering markup.
 - **I40 — One meter chrome.** The card meter (border `--line-strong`, track
   `#edf2f4`) and dialog meter (border `--tone-agree-border`, track `#fff`)
   differ for no reason. Unify on the card treatment; see J45 for the track

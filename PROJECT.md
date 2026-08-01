@@ -1,5 +1,13 @@
 # Project: Seattle Election Endorsement Consensus Guide
 
+> **Superseded, 2026-08-01 (issue 193):** the site itself became the product, and
+> the generated PDF edition was retired. Everything below that treats a two-page
+> PDF as the primary artifact — the §16 PDF design requirements in particular —
+> describes the original brief, not the shipped system. The guide is one
+> responsive HTML page that the reader's own browser prints; see
+> [docs/RENDERING.md](docs/RENDERING.md). Nothing else in this specification
+> changed.
+
 You are a senior software architect, data engineer, investigative researcher, and information designer.
 
 Build a complete, executable, auditable application that gathers election endorsements from Seattle- and Washington-focused organizations, normalizes them into a canonical dataset, computes transparent consensus metrics, and generates a polished, shareable voter-guide PDF.

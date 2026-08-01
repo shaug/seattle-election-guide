@@ -37,8 +37,8 @@ six-source evaluation and deterministic scoring impact,
 [docs/NORMALIZATION.md](docs/NORMALIZATION.md) for matching and review,
 [docs/SCORING.md](docs/SCORING.md) for consensus semantics, and
 [docs/PUBLICATION_EXPORTS.md](docs/PUBLICATION_EXPORTS.md) for canonical exports and the shared
-publication view model, and [docs/RENDERING.md](docs/RENDERING.md) for HTML/PDF generation and
-visual inspection. [docs/RELEASE.md](docs/RELEASE.md) documents final audit and versioned GitHub
+publication view model, and [docs/RENDERING.md](docs/RENDERING.md) for HTML generation and visual
+inspection. [docs/RELEASE.md](docs/RELEASE.md) documents final audit and versioned GitHub
 Release publication, and [docs/HOSTING.md](docs/HOSTING.md) documents automatic Cloudflare Pages
 deployment with Wrangler. Deterministic JSON and CSV exports, provenance and build manifests, the
 complete source matrix, and the single renderer-facing view model are implemented.
@@ -50,7 +50,6 @@ Requirements:
 - Python 3.12 or newer
 - [uv](https://docs.astral.sh/uv/)
 - Chrome or Chromium
-- Poppler's `pdftoppm`
 - Node.js 24 and npm for local Cloudflare Pages preview or deployment
 
 Install the locked environment and run the checks:

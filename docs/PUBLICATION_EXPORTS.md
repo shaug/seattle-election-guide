@@ -23,7 +23,7 @@ are present.
 ## Canonical bundle
 
 - `consensus.json`: the revalidated exact scoring result.
-- `publication_view_model.json`: the presentation-neutral input shared by HTML and PDF.
+- `publication_view_model.json`: the presentation-neutral input the renderer reads.
 - `race_summary.csv`: one row per published race and its displayed scoring values.
 - `endorsement_records.csv`: effective normalized decisions with allocations and evidence links.
 - `source_metadata.csv`: the complete frozen registry, including excluded sources.
@@ -48,12 +48,12 @@ category analysis, and overlap metadata for audit.
 
 ## Shared view model
 
-HTML and PDF consumers must read `publication_view_model.json`; neither consumer may calculate
-winners, grades, percentages, coverage, comparisons, or warnings independently. The model
+Every consumer must read `publication_view_model.json` rather than calculating winners, grades,
+percentages, coverage, comparisons, or warnings independently. The model
 includes preformatted recommendation, percentage, support, alternatives, comparison badges,
 candidate-centric affirmative endorsement groups, per-race category representation and candidate
 support, methodology, the audit grade legend, limitations, build identity, and ordered source
-cells. Voter-facing HTML and PDF use the consensus share and source count rather than displaying
+cells. The voter-facing guide uses the consensus share and source count rather than displaying
 the audit grade. Methodology also publishes source categories and possible-overlap groups. It
 identifies `source_level` as the default aggregation view and `not_computed` as the deduplicated-view
 status, so a consumer cannot silently substitute coalition grouping for raw source-level consensus.

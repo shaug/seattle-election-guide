@@ -68,7 +68,6 @@ def test_stage_pages_site_composes_verified_election_archive(tmp_path: Path) -> 
     assert result.release_version == "primary.2"
     assert result.git_commit == COMMIT
     assert result.html_path == output / "e" / CURRENT_ID / "index.html"
-    assert result.pdf_paths == (output / "e" / CURRENT_ID / "Current_Guide.pdf",)
     assert result.election_paths == (
         output / "e" / CURRENT_ID,
         output / "e" / OLDER_ID,
@@ -79,7 +78,8 @@ def test_stage_pages_site_composes_verified_election_archive(tmp_path: Path) -> 
     assert (output / "e" / OLDER_ID / "index.html").read_bytes() == (
         b"<!doctype html><title>Older guide</title>\n"
     )
-    assert (output / "e" / CURRENT_ID / "Current_Guide.pdf").read_bytes() == b"%PDF-1.7\n"
+    # Issue 193: the archive stages no generated PDF edition.
+    assert not list((output / "e" / CURRENT_ID).glob("*.pdf"))
     assert (output / "e" / CURRENT_ID / "release-status.json").is_file()
     assert (output / "e" / CURRENT_ID / "release-manifest.json").is_file()
 
@@ -136,7 +136,7 @@ def test_stage_pages_site_composes_verified_election_archive(tmp_path: Path) -> 
         "include all of them, and may include a race this guide doesn&rsquo;t cover."
         in normalized_about
     )
-    # The shared footer's own links (Share/PDF/Contact/GitHub/How this works)
+    # The shared footer's own links (Share/Contact/GitHub/How this works)
     # replaced the old page-footer nav, which was the site's only link to the
     # guide archive; that link now lives in About's own body prose instead.
     assert '<a href="/e/">guide archive</a>' in about
@@ -174,7 +174,6 @@ def test_stage_pages_site_composes_verified_election_archive(tmp_path: Path) -> 
         "_headers",
         "_worker.js",
         f"e/{CURRENT_ID}/index.html",
-        f"e/{CURRENT_ID}/Current_Guide.pdf",
         f"e/{OLDER_ID}/index.html",
         "e/index.html",
         "about/index.html",
@@ -263,7 +262,10 @@ def test_generated_worker_enforces_route_contract(tmp_path: Path) -> None:
     assert results[3]["status"] == 308
     assert results[3]["location"] == f"https://seattleelections.guide/e/{CURRENT_ID}/"
     assert results[4]["body"] == f"asset:/e/{CURRENT_ID}/"
-    assert results[5]["body"] == f"asset:/e/{CURRENT_ID}/Current_Guide.pdf"
+    # Issue 193: every PDF path this election ever published redirects to its
+    # guide page instead of 404ing.
+    assert results[5]["status"] == 301
+    assert results[5]["location"] == f"https://seattleelections.guide/e/{CURRENT_ID}/"
     assert results[6]["status"] == 404
     assert results[6]["robots"] == "noindex"
     # K48: a minimal branded 404 page, not the old bare text/plain response.
@@ -277,7 +279,8 @@ def test_generated_worker_enforces_route_contract(tmp_path: Path) -> None:
     # the summary_large_image unfurling pattern -- it is noindex and not
     # meant to be shared (issue 135's non-goal).
     assert "twitter:card" not in cast(str, results[6]["body"])
-    assert results[7]["status"] == 404
+    assert results[7]["status"] == 301
+    assert results[7]["location"] == f"https://seattleelections.guide/e/{CURRENT_ID}/"
     assert results[8]["status"] == 301
     assert results[8]["location"] == (f"https://seattleelections.guide/e/{OLDER_ID}/?source=legacy")
     assert results[9]["status"] == 308
@@ -471,10 +474,7 @@ def test_bundle_drift_does_not_replace_existing_output(tmp_path: Path) -> None:
 def test_verify_staged_site_rejects_tamper_deletion_and_unexpected_assets(
     tmp_path: Path,
 ) -> None:
-    current, older = _write_archive_bundles(
-        tmp_path,
-        detailed_pdf_filename="Current_Detailed_Guide.pdf",
-    )
+    current, older = _write_archive_bundles(tmp_path)
     manifest = _write_site_manifest(tmp_path, current_first=True)
     output = tmp_path / "site"
     stage_pages_site(
@@ -489,7 +489,7 @@ def test_verify_staged_site_rejects_tamper_deletion_and_unexpected_assets(
         expected_current_git_commit=COMMIT,
     )
     assert verified.current_election_id == CURRENT_ID
-    assert len(verified.assets) == 19
+    assert len(verified.assets) == 16
 
     tampered = tmp_path / "tampered"
     shutil.copytree(output, tampered)
@@ -499,20 +499,19 @@ def test_verify_staged_site_rejects_tamper_deletion_and_unexpected_assets(
 
     missing = tmp_path / "missing"
     shutil.copytree(output, missing)
-    (missing / "e" / CURRENT_ID / "Current_Guide.pdf").unlink()
-    with pytest.raises(ValueError, match=r"missing=.*Current_Guide\.pdf"):
+    (missing / "e" / CURRENT_ID / "sources" / "index.html").unlink()
+    with pytest.raises(ValueError, match=r"missing=.*sources/index\.html"):
         verify_staged_pages_site(missing, manifest)
 
-    for pdf_filename in ("Current_Guide.pdf", "Current_Detailed_Guide.pdf"):
-        consistent_omission = tmp_path / f"omitted-{pdf_filename}"
-        shutil.copytree(output, consistent_omission)
-        (consistent_omission / "e" / CURRENT_ID / pdf_filename).unlink()
-        deployment_path = consistent_omission / "deployment-manifest.json"
-        deployment = json.loads(deployment_path.read_text(encoding="utf-8"))
-        del deployment["assets"][f"e/{CURRENT_ID}/{pdf_filename}"]
-        deployment_path.write_bytes(canonical_json_bytes(deployment))
-        with pytest.raises(ValueError, match="missing required public archive assets"):
-            verify_staged_pages_site(consistent_omission, manifest)
+    consistent_omission = tmp_path / "omitted-sources"
+    shutil.copytree(output, consistent_omission)
+    (consistent_omission / "e" / CURRENT_ID / "sources" / "index.html").unlink()
+    deployment_path = consistent_omission / "deployment-manifest.json"
+    deployment = json.loads(deployment_path.read_text(encoding="utf-8"))
+    del deployment["assets"][f"e/{CURRENT_ID}/sources/index.html"]
+    deployment_path.write_bytes(canonical_json_bytes(deployment))
+    with pytest.raises(ValueError, match="missing required public archive assets"):
+        verify_staged_pages_site(consistent_omission, manifest)
 
     unexpected = tmp_path / "unexpected"
     shutil.copytree(output, unexpected)
@@ -602,7 +601,7 @@ def test_hosting_stage_cli_reports_composed_site(tmp_path: Path) -> None:
         ],
     )
     assert verify_result.exit_code == 0, verify_result.output
-    assert f"current {CURRENT_ID}; 18 assets" in verify_result.output
+    assert f"current {CURRENT_ID}; 16 assets" in verify_result.output
 
 
 def _current_election_manifest() -> SiteManifest:
@@ -1284,7 +1283,6 @@ def _write_archive_bundles(
     *,
     current_html: bytes = b"current\n",
     older_html: bytes = b"older\n",
-    detailed_pdf_filename: str | None = None,
 ) -> tuple[Path, Path]:
     current = _write_release_bundle(
         root / "current",
@@ -1292,8 +1290,6 @@ def _write_archive_bundles(
         release_version="primary.2",
         git_commit=COMMIT,
         html=current_html,
-        pdf_filename="Current_Guide.pdf",
-        detailed_pdf_filename=detailed_pdf_filename,
     )
     older = _write_release_bundle(
         root / "older",
@@ -1301,7 +1297,6 @@ def _write_archive_bundles(
         release_version="general.1",
         git_commit=OLDER_COMMIT,
         html=older_html,
-        pdf_filename="Older_Guide.pdf",
     )
     return current, older
 
@@ -1348,28 +1343,13 @@ def _write_release_bundle(
     release_version: str,
     git_commit: str,
     html: bytes,
-    pdf_filename: str,
-    detailed_pdf_filename: str | None = None,
 ) -> Path:
     bundle = root / "bundle"
     html_relative = "guide/guide.html"
-    pdf_relative = f"guide/{pdf_filename}"
-    detailed_pdf_relative = (
-        f"guide/{detailed_pdf_filename}" if detailed_pdf_filename is not None else None
-    )
     public_artifacts = {
         html_relative,
-        pdf_relative,
-        "validation/rendering/pdf/pages/page-1.png",
         "validation/rendering/screenshots/desktop.png",
     }
-    if detailed_pdf_relative is not None:
-        public_artifacts.update(
-            {
-                detailed_pdf_relative,
-                "validation/rendering/pdf/detailed-pages/page-1.png",
-            }
-        )
     included = sorted(REQUIRED_RELEASE_ARTIFACTS | public_artifacts)
     for relative in included:
         if relative in {"release-manifest.json", "release-status.json"}:
@@ -1378,8 +1358,6 @@ def _write_release_bundle(
         path.parent.mkdir(parents=True, exist_ok=True)
         if relative == html_relative:
             path.write_bytes(html)
-        elif relative in {pdf_relative, detailed_pdf_relative}:
-            path.write_bytes(b"%PDF-1.7\n")
         elif relative == "data/publication_view_model.json":
             view_model_payload = _bundle_view_model(
                 root / "view-model-src", election_id=election_id
@@ -1410,12 +1388,7 @@ def _write_release_bundle(
             "source_access_failures": [],
             "incomplete_races": [],
             "validation_reports": {"publication": True, "rendering": True},
-            "rendering_edition": (
-                "concise_plus_detailed" if detailed_pdf_relative is not None else "concise"
-            ),
             "guide_html_artifact": html_relative,
-            "guide_pdf_artifact": pdf_relative,
-            "detailed_guide_pdf_artifact": detailed_pdf_relative,
             "included_artifacts": included,
             "warnings": [],
         }

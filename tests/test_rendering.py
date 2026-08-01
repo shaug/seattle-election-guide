@@ -6,7 +6,6 @@ import shutil
 import subprocess
 import sys
 import tempfile
-from collections.abc import Callable
 from fractions import Fraction
 from pathlib import Path
 from stat import S_IMODE
@@ -16,8 +15,6 @@ from urllib.parse import urlencode
 import pytest
 from PIL import Image
 from pydantic import ValidationError
-from pypdf import PdfReader, PdfWriter
-from pypdf.generic import NameObject, TextStringObject
 from websocket import create_connection  # pyright: ignore[reportUnknownVariableType]
 
 from election_guide.publication import build_publication_bundle
@@ -44,30 +41,19 @@ from election_guide.rendering import (
 from election_guide.rendering.bundler import TEMPLATE_DIR, bundle_entry
 from election_guide.rendering.models import RenderingValidationReport
 from election_guide.rendering.renderer import (
-    PrintLayoutError,
     _candidate_endorsement_groups,  # pyright: ignore[reportPrivateUsage]
     _CdpSocket,  # pyright: ignore[reportPrivateUsage]
-    _detailed_pdf_race_values,  # pyright: ignore[reportPrivateUsage]
     _has_no_majority,  # pyright: ignore[reportPrivateUsage]
-    _missing_pdf_race_values,  # pyright: ignore[reportPrivateUsage]
-    _pdf_race_core_values,  # pyright: ignore[reportPrivateUsage]
-    _pdf_race_display_values,  # pyright: ignore[reportPrivateUsage]
     _race_detail_accessible_summary,  # pyright: ignore[reportPrivateUsage]
     _race_detail_support_summary,  # pyright: ignore[reportPrivateUsage]
-    _render_pdf,  # pyright: ignore[reportPrivateUsage]
-    _render_pdf_pages,  # pyright: ignore[reportPrivateUsage]
     _render_screenshot,  # pyright: ignore[reportPrivateUsage]
     _screen_support_summary,  # pyright: ignore[reportPrivateUsage]
     _screen_support_summary_compact,  # pyright: ignore[reportPrivateUsage]
-    _set_pdf_metadata,  # pyright: ignore[reportPrivateUsage]
     _source_cell_detail_label,  # pyright: ignore[reportPrivateUsage]
     _source_cell_group,  # pyright: ignore[reportPrivateUsage]
     _terminate_process,  # pyright: ignore[reportPrivateUsage]
-    _trim_trailing_blank_pages,  # pyright: ignore[reportPrivateUsage]
-    _validate_print_layout,  # pyright: ignore[reportPrivateUsage]
     _wait_for_devtools_endpoint,  # pyright: ignore[reportPrivateUsage]
     find_chrome,
-    find_pdftoppm,
 )
 from election_guide.rendering.shell import (
     HOW_TO_VOTE_HREF,
@@ -91,50 +77,8 @@ from tests.test_scoring import (
 )
 
 PROJECT_ROOT = Path(__file__).parent.parent
-RENDERING_CONFIG = PROJECT_ROOT / "config/rendering/pdf.yaml"
+RENDERING_CONFIG = PROJECT_ROOT / "config/rendering/guide.yaml"
 DARWIN_VISUAL_BASELINES = {
-    "pdf-page-1": [
-        0.173,
-        0.173,
-        0.137,
-        0.094,
-        0.112,
-        0.149,
-        0.175,
-        0.118,
-        0.114,
-        0.144,
-        0.208,
-        0.140,
-        0.064,
-        0.085,
-        0.075,
-        0.054,
-    ],
-    "pdf-page-2": [
-        0.090,
-        0.058,
-        0.048,
-        0.031,
-        0.133,
-        0.090,
-        0.042,
-        0.024,
-        0.152,
-        0.106,
-        0.047,
-        0.025,
-        0.060,
-        0.044,
-        0.037,
-        0.018,
-    ],
-    # Re-approved 2026-08-01 (issue 192): the masthead nav is visible at desktop
-    # width again. Chrome hides closed <details> content with
-    # `::details-content { content-visibility: hidden }`, which zeroed the nav's
-    # width and pushed its links off-screen; the band legitimately looks
-    # different now. The print pages and the mobile shot were unaffected and
-    # keep their approved values.
     "desktop": [
         0.382,
         0.593,
@@ -176,46 +120,6 @@ DARWIN_VISUAL_BASELINES = {
     ],
 }
 LINUX_VISUAL_BASELINES = {
-    "pdf-page-1": [
-        0.167,
-        0.170,
-        0.133,
-        0.091,
-        0.107,
-        0.147,
-        0.170,
-        0.118,
-        0.108,
-        0.144,
-        0.202,
-        0.140,
-        0.061,
-        0.085,
-        0.071,
-        0.054,
-    ],
-    "pdf-page-2": [
-        0.078,
-        0.051,
-        0.042,
-        0.029,
-        0.136,
-        0.089,
-        0.036,
-        0.022,
-        0.148,
-        0.104,
-        0.052,
-        0.027,
-        0.059,
-        0.050,
-        0.033,
-        0.017,
-    ],
-    # Re-approved 2026-08-01 (issue 192), from the signature CI reported: the
-    # masthead nav is visible at desktop width again. Same shape as the darwin
-    # re-approval — only this entry moved, while the print pages and the mobile
-    # shot stayed inside tolerance on both platforms.
     "desktop": [
         0.390,
         0.603,
@@ -419,9 +323,6 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
 
     assert "Too few endorsements to measure agreement." in html
     assert "Too few endorsements to measure agreement among your selected sources." in html
-    assert (
-        "Too few endorsements to measure agreement; no recommendation from thin evidence." in html
-    )
     assert "Too few explicit endorsements" not in html
 
     # Issue 108 acceptance: a coverage-gap source has zero endorsements and was
@@ -648,18 +549,20 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert f"<title>{document_title}</title>" in html
     assert f'<meta name="twitter:description" content="{configuration.subject}">' in html
     # Shared footer (UI polish round 5, item M71): one icon action cluster with
-    # Share, Printable PDF, Contact, GitHub, and How this works.
+    # Share, Contact, GitHub, and How this works. Issue 193 retired the
+    # generated PDF edition, so the cluster no longer offers a Printable PDF.
     assert '<footer class="site-footer">' in html
     footer_start = html.index('<footer class="site-footer">')
     footer_end = html.index("</footer>", footer_start)
     footer_html = html[footer_start:footer_end]
-    assert f'href="{configuration.pdf_filename}" aria-label="Printable PDF"' in footer_html
+    assert "Printable PDF" not in html
+    assert ".pdf" not in footer_html
     assert 'href="mailto:seattle-elections@dobravoda.dev" aria-label="Contact"' in footer_html
     assert f'href="{configuration.project_url}"' in footer_html
     assert 'aria-label="Source and audit files on GitHub (opens in a new tab)"' in footer_html
-    # Web band: GitHub action + code revision. The hidden detailed/print audit
-    # retains its two linked dates as a separate medium.
-    assert footer_html.count(configuration.project_url) == 4
+    # Web band: the GitHub action plus the audit line's code-revision link.
+    # Issue 193 removed the hidden print audit and its two extra linked dates.
+    assert footer_html.count(configuration.project_url) == 2
     assert 'href="/about/" aria-label="How this works" title="How this works"' in footer_html
     assert 'class="site-footer-link"' not in footer_html
     assert "About &amp; FAQ" not in footer_html
@@ -719,113 +622,25 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
         ".lens-comparison-agrees { "
         "border-left-color: var(--tone-agree-border); background: var(--tone-agree-bg);" in html
     )
-    contributing_sources = [
-        source for source in view_model.sources if source.contribution_status == "contributing"
-    ]
-    coverage_gap_sources = [
-        source for source in view_model.sources if source.contribution_status == "coverage_gap"
-    ]
-    # Issue 108 removed the screen sources tree entirely (including its own
-    # coverage-gap listing), so print's source panel is now the only place
-    # that renders data-publication-source-id/data-coverage-gap-source-id rows.
-    assert html.count('data-publication-source-id="') == len(contributing_sources)
-    assert html.count('data-coverage-gap-source-id="') == len(coverage_gap_sources)
-    assert html.count('class="source-column"') == 2
-    for source in contributing_sources:
-        assert html.count(f'data-publication-source-id="{source.id}"') == 1
-        assert html.count(f'data-source-role="{source.panel_role}"') >= 1
-        # Issue 108 removed the screen sources tree; every contributing source's
-        # evidence link now appears exactly twice: once in print's compact
-        # source panel, and once in the detailed-edition-only source directory
-        # that keeps that overflow PDF's evidence links complete.
-        assert (
-            html.count(
-                f'<a href="{source.evidence_url}" target="_blank" rel="noopener">{source.name}</a>'
-            )
-            == 2
-        )
-        print_noun = (
-            (" pick" if source.endorsement_count == 1 else " picks")
-            if source.panel_role == "comparison"
-            else ""
-        )
-        # H35: the split suffix disappears entirely when nothing split.
-        print_split_suffix = (
-            f" · {source.split_endorsement_count} split" if source.split_endorsement_count else ""
-        )
-        print_participation = f"{source.endorsement_count}{print_noun}{print_split_suffix}"
-        marker = f'data-publication-source-id="{source.id}"'
-        row_start = html.index(marker)
-        row_end = html.index("</div>", row_start)
-        assert print_participation in html[row_start:row_end]
-    assert "Read the meter" in html
-    assert "Read the Times pill" not in html
-    assert "Overlap and limitations" in html
-    assert "Verify before voting" in html
-    for source in coverage_gap_sources:
-        # Same story as contributing sources above: print's own coverage-gap
-        # row is the only data-coverage-gap-source-id row now, but the
-        # detailed-edition source directory adds a second evidence link.
-        assert html.count(f'data-coverage-gap-source-id="{source.id}"') == 1
-        assert (
-            html.count(
-                f'<a href="{source.evidence_url}" target="_blank" rel="noopener">{source.name}</a>'
-            )
-            == 2
-        )
-        assert source.coverage_gap_note is not None
-        status_label = (
-            "Official results inaccessible"
-            if source.coverage_gap_status == "access_restricted"
-            else "No published results found"
-        )
-        assert html.count(status_label) >= 1
-    assert "zero means the source currently contributes no picks" not in html
-    assert "break-inside: avoid;" in html
-    assert ".source-columns { display: grid;" in html
-    assert "grid-template-columns: 1fr 1fr;" in html
-    assert ".source-row { display: grid;" in html
-    category_group_markers = [
-        f'data-source-category-group="{category.category}"'
-        for category in view_model.methodology.source_categories
-    ]
-    assert all(html.count(marker) == 1 for marker in category_group_markers)
-    assert [html.index(marker) for marker in category_group_markers] == sorted(
-        html.index(marker) for marker in category_group_markers
-    )
-    assert category_group_markers[-1] == 'data-source-category-group="comparison"'
-    print_contributing_sources = [
-        source
-        for category in view_model.methodology.source_categories
-        for source in contributing_sources
-        if source.category == category.category
-    ]
-    print_source_positions = [
-        html.rindex(f'data-publication-source-id="{source.id}"')
-        for source in print_contributing_sources
-    ]
-    assert print_source_positions == sorted(print_source_positions)
-    assert "source_midpoint" not in html
-    assert 'class="print-metadata"' not in html
-    assert ".print-races { display: grid; grid-template-columns: 1fr 1fr;" in html
-    assert html.count('class="print-race-column"') == 2
-    assert "State — continued" in html
-    assert ".print-race:nth-of-type(even) { background: #f2f6f8; }" in html
-    assert '--print-sans: Helvetica, "Liberation Sans", sans-serif' in html
-    assert "const centerPrintInk = () =>" in html
-    assert "window.addEventListener('beforeprint', calibratePrintInk)" in html
-    assert "requestAnimationFrame(() => requestAnimationFrame(calibratePrintInk))" in html
-    assert "font: 800 17pt/.95 var(--print-sans)" in html
-    assert '<div class="print-guide">' in html
-    assert '<div class="print-guide" aria-hidden="true">' not in html
-    assert "font: 800 8.9pt/1 var(--print-sans)" in html
-    assert "--print-meter-width: 1.65in" in html
-    assert "grid-template-columns: minmax(0, 1fr) var(--print-meter-width)" in html
-    assert "linear-gradient(to right, var(--teal) 0 var(--meter-fill)" in html
+    # Issue 193 retired the generated PDF edition, and with it the guide's
+    # second rendering of its own data: the print source panel and the
+    # detailed-edition source directory. The Sources page owns that listing
+    # now, so the guide carries no publication-source or coverage-gap rows.
+    assert 'data-publication-source-id="' not in html
+    assert 'data-coverage-gap-source-id="' not in html
+    assert 'class="print-guide"' not in html
+    assert "print-race" not in html
+    assert "--print-sans" not in html
+    assert "centerPrintInk" not in html
+    assert "detailed-edition" not in html
+    # What survives is one print stylesheet over the page the reader sees.
+    assert "@media print {" in html
+    assert ".state-action-strip, .sticky-header, .filter-control-bar { display: none" in html
+    assert "html .race-grid, html.compact-ballot-mode .race-grid" in html
     assert 'style="--meter-fill: ' in html
 
 
-def test_no_majority_uses_the_exact_unrounded_share_across_screen_dialog_and_print(
+def test_no_majority_uses_the_exact_unrounded_share_across_the_card_and_dialog(
     tmp_path: Path,
 ) -> None:
     view_model = _view_model(tmp_path)
@@ -850,7 +665,6 @@ def test_no_majority_uses_the_exact_unrounded_share_across_screen_dialog_and_pri
     assert "No majority · Leading choice" in card_html
     assert 'class="race-detail-meter meter-no-majority"' in card_html
     assert "No majority. Consensus among explicitly endorsing sources: 50%" in card_html
-    assert 'class="print-meter meter-no-majority" style="--meter-fill: 50%"' in html
 
     target.winner_share = "5001/10000"
     assert _has_no_majority(target) is False
@@ -972,153 +786,21 @@ def test_rendering_configuration_rejects_contract_drift() -> None:
     with pytest.raises(ValidationError, match="Extra inputs are not permitted"):
         type(configuration).model_validate(payload)
 
-    for field in ("title", "author", "subject"):
+    for field in ("author", "subject"):
         blank = configuration.model_dump(mode="json")
         blank[field] = "   "
         with pytest.raises(ValidationError):
             type(configuration).model_validate(blank)
 
     coerced = configuration.model_dump(mode="json")
-    coerced["require_selectable_text"] = 1
+    coerced["desktop_width"] = "1440"
     with pytest.raises(ValidationError):
         type(configuration).model_validate(coerced)
 
-    aliased_pdfs = configuration.model_dump(mode="json")
-    aliased_pdfs["detailed_pdf_filename"] = aliased_pdfs["pdf_filename"]
-    with pytest.raises(ValidationError, match="must be distinct"):
-        type(configuration).model_validate(aliased_pdfs)
-
-
-def test_print_layout_rejects_visibly_uncentered_control_text(tmp_path: Path) -> None:
-    view_model = _view_model(tmp_path / "fixture")
-    html_path = tmp_path / "uncentered.html"
-    html = render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG))
-    html_path.write_text(
-        html.replace(
-            "</head>",
-            """
-<style>
-@media print {
-  .print-guide { font-family: Arial, Helvetica, sans-serif; }
-  .print-meter-label { padding: 0 .05in 0 0; }
-  .print-meter-text { position: relative; top: -3px; transform: none; }
-}
-</style>
-<script>window.__disablePrintInkCentering = true;</script>
-</head>
-""",
-            1,
-        ),
-        encoding="utf-8",
-    )
-
-    with pytest.raises(PrintLayoutError, match=r"label-centering"):
-        _validate_print_layout(
-            html_path,
-            find_chrome(),
-            minimum_font_points=read_rendering_configuration(
-                RENDERING_CONFIG
-            ).minimum_print_font_points,
-        )
-
-
-@pytest.mark.parametrize(
-    ("injected_markup", "expected_issue"),
-    [
-        (
-            """
-<script>
-let printMeterOffset = false;
-window.addEventListener('beforeprint', () => {
-  const label = document.querySelector('.print-meter-label');
-  if (label) label.style.paddingTop = printMeterOffset ? '0px' : '2px';
-  printMeterOffset = !printMeterOffset;
-});
-</script>
-""",
-            "print-ink-calibration-repeatability",
-        ),
-        (
-            """
-<script>
-let printMeterInset = false;
-window.addEventListener('beforeprint', () => {
-  const meter = document.querySelector('.print-meter');
-  if (meter) meter.style.paddingLeft = printMeterInset ? '5px' : '10px';
-  printMeterInset = !printMeterInset;
-});
-</script>
-""",
-            "print-ink-calibration-repeatability",
-        ),
-    ],
-)
-def test_print_layout_rejects_unstable_pill_geometry(
-    tmp_path: Path, injected_markup: str, expected_issue: str
-) -> None:
-    view_model = _view_model(tmp_path / "fixture")
-    html_path = tmp_path / "unstable-pill.html"
-    html = render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG))
-    html_path.write_text(
-        html.replace("</body>", f"{injected_markup}</body>", 1),
-        encoding="utf-8",
-    )
-
-    with pytest.raises(PrintLayoutError, match=expected_issue):
-        _validate_print_layout(
-            html_path,
-            find_chrome(),
-            minimum_font_points=read_rendering_configuration(
-                RENDERING_CONFIG
-            ).minimum_print_font_points,
-        )
-
-
-def test_print_layout_rejects_teal_no_majority_meter(tmp_path: Path) -> None:
-    view_model = _view_model(tmp_path / "fixture")
-    target = next(
-        race
-        for section in view_model.sections
-        for race in section.races
-        if race.winner_share is not None
-    )
-    target.winner_share = "1/2"
-    target.percentage_whole = 50
-    target.percentage_label = "50%"
-    html_path = tmp_path / "teal-no-majority.html"
-    html = render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG))
-    html_path.write_text(
-        html.replace(
-            "var(--amber) 0 var(--meter-fill)",
-            "var(--teal) 0 var(--meter-fill)",
-        ),
-        encoding="utf-8",
-    )
-
-    with pytest.raises(PrintLayoutError, match=r"print-meter\[\d+\]-treatment"):
-        _validate_print_layout(
-            html_path,
-            find_chrome(),
-            minimum_font_points=read_rendering_configuration(
-                RENDERING_CONFIG
-            ).minimum_print_font_points,
-        )
-
-
-def test_print_layout_rejects_underfilled_source_page(tmp_path: Path) -> None:
-    view_model = _view_model(tmp_path / "fixture")
-    html_path = tmp_path / "underfilled.html"
-    html = render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG))
-    html_path.write_text(html.replace("height: 9.45in", "height: auto", 1), encoding="utf-8")
-
-    with pytest.raises(PrintLayoutError, match=r"print-page\[1\]-underfill"):
-        _validate_print_layout(
-            html_path,
-            find_chrome(),
-            minimum_font_points=read_rendering_configuration(
-                RENDERING_CONFIG
-            ).minimum_print_font_points,
-        )
+    retired_pdf_key = configuration.model_dump(mode="json")
+    retired_pdf_key["pdf_filename"] = "Guide.pdf"
+    with pytest.raises(ValidationError, match="Extra inputs are not permitted"):
+        type(configuration).model_validate(retired_pdf_key)
 
 
 def test_html_escapes_publication_text_and_filter_attributes(tmp_path: Path) -> None:
@@ -1168,136 +850,6 @@ def test_html_rejects_non_web_evidence_links(tmp_path: Path) -> None:
         render_html_document(cell_view_model, read_rendering_configuration(RENDERING_CONFIG))
 
 
-def test_pdf_result_header_cannot_be_masked_by_comparison_text(tmp_path: Path) -> None:
-    race = next(
-        race
-        for section in _view_model(tmp_path).sections
-        for race in section.races
-        if race.recommendation_candidate_labels
-    )
-    share = "N/A" if race.percentage_whole is None else race.percentage_label
-    misleading_text = " ".join(
-        (
-            race.race_label,
-            "Wrong recommendation",
-            share,
-            race.support_summary,
-            "Seattle Times",
-            race.comparisons[0].voter_label,
-            race.recommendation_label,
-            *race.warning_messages,
-        )
-    )
-
-    missing = _missing_pdf_race_values([race], misleading_text, _pdf_race_display_values)
-
-    assert f"{race.id}: ordered race result header" in missing
-
-    short_choice_race = race.model_copy(update={"recommendation_label": "Yes"})
-    prefix_corrupted_text = " ".join(_pdf_race_display_values(short_choice_race)).replace(
-        "Yes", "Yesterday", 1
-    )
-    prefix_corrupted_missing = _missing_pdf_race_values(
-        [short_choice_race], prefix_corrupted_text, _pdf_race_display_values
-    )
-    assert f"{race.id}: ordered race result header" in prefix_corrupted_missing
-    assert f"{race.id}: Yes" in prefix_corrupted_missing
-
-    percentage_race = race.model_copy(update={"percentage_label": "100%", "percentage_whole": 100})
-    suffixed_percentage_text = " ".join(_pdf_race_display_values(percentage_race)).replace(
-        "100%", "100%%", 1
-    )
-    suffixed_percentage_missing = _missing_pdf_race_values(
-        [percentage_race], suffixed_percentage_text, _pdf_race_display_values
-    )
-    assert f"{race.id}: 100%" in suffixed_percentage_missing
-
-    prefixed_percentage_text = " ".join(_pdf_race_display_values(percentage_race)).replace(
-        "100%", "!100%", 1
-    )
-    prefixed_percentage_missing = _missing_pdf_race_values(
-        [percentage_race], prefixed_percentage_text, _pdf_race_display_values
-    )
-    assert f"{race.id}: 100%" in prefixed_percentage_missing
-
-
-@pytest.mark.parametrize(
-    "value_fn",
-    (_pdf_race_display_values, _pdf_race_core_values, _detailed_pdf_race_values),
-)
-@pytest.mark.parametrize(
-    ("status", "badge_label", "candidate_labels"),
-    (
-        ("agrees", "AGREES", ["Candidate A"]),
-        ("differs", "DIFFERENT PICK", ["No"]),
-        ("no_endorsement", "NO PICK", []),
-    ),
-)
-def test_pdf_validation_never_requires_comparison_text_and_rejects_legacy_badges(
-    tmp_path: Path,
-    value_fn: Callable[[PublicationRace], list[str]],
-    status: str,
-    badge_label: str,
-    candidate_labels: list[str],
-) -> None:
-    """Issue 124: no edition prints the Times pick, and none may reintroduce it.
-
-    The audited comparison record is still published, so this guards both
-    directions: the expected-value set must not quote it, and a badge-shaped
-    "Seattle Times AGREES ..." run appearing in the extracted text is still
-    reported as legacy markup.
-    """
-    race = next(
-        race
-        for section in _view_model(tmp_path).sections
-        for race in section.races
-        if race.recommendation_candidate_labels
-    ).model_copy(deep=True)
-    rendered_candidate_labels = (
-        race.recommendation_candidate_labels if status == "agrees" else candidate_labels
-    )
-    rendered_candidate_ids = (
-        race.recommendation_candidate_ids
-        if status == "agrees"
-        else [f"comparison-candidate-{index}" for index, _ in enumerate(rendered_candidate_labels)]
-    )
-    comparison = PublicationComparison.model_validate(
-        {
-            "source_id": race.comparisons[0].source_id,
-            "status": status,
-            "badge_label": badge_label,
-            "candidate_ids": rendered_candidate_ids,
-            "candidate_labels": rendered_candidate_labels,
-        }
-    )
-    race.comparisons = [comparison]
-    separator = "\n" if value_fn is _detailed_pdf_race_values else " "
-    expected_values = value_fn(race)
-    assert not any(value.casefold().startswith("times") for value in expected_values)
-    expected_text = separator.join(expected_values)
-
-    assert _missing_pdf_race_values([race], expected_text, value_fn) == []
-    wrapped_header_text = expected_text.replace(
-        race.race_label,
-        race.race_label.replace(" ", "\n", 1),
-        1,
-    )
-    assert _missing_pdf_race_values([race], wrapped_header_text, value_fn) == []
-    joined_value_text = expected_text.replace(
-        race.race_label,
-        race.race_label.replace(" ", "", 1),
-        1,
-    )
-    assert f"{race.id}: {race.race_label}" in _missing_pdf_race_values(
-        [race], joined_value_text, value_fn
-    )
-
-    legacy_text = f"{expected_text}{separator}Seattle Times {badge_label} {comparison.voter_label}"
-    assert f"{race.id}: legacy Seattle Times badge {badge_label}" in _missing_pdf_race_values(
-        [race], legacy_text, value_fn
-    )
-
-
 def test_nonempty_render_destination_is_preserved(tmp_path: Path) -> None:
     view_model = _view_model(tmp_path / "fixture")
     view_model_path = tmp_path / "publication_view_model.json"
@@ -1325,7 +877,7 @@ def _recommendation_tag_pattern(label: str) -> re.Pattern[str]:
     )
 
 
-def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path: Path) -> None:
+def test_chromium_build_is_semantically_faithful_and_visually_safe(tmp_path: Path) -> None:
     view_model = _visual_view_model(_view_model(tmp_path / "fixture"))
     view_model_path = tmp_path / "publication_view_model.json"
     view_model_path.write_bytes(canonical_json_bytes(view_model.model_dump(mode="json")))
@@ -1346,75 +898,17 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
         assert f"print-times-pick-{tone}" not in rendered_html
 
     assert rendered.validation_report.passed
-    assert rendered.validation_report.edition == "concise"
-    assert rendered.detailed_pdf_path is None
-    assert rendered.validation_report.page_count == 2
-    assert len(rendered.page_images) == 2
     assert len(rendered.screenshots) == 2
     report = RenderingValidationReport.model_validate(read_json(rendered.validation_path))
     assert report == rendered.validation_report
-    tagged_structure_check = next(
-        check for check in report.checks if check.id == "pdf-tagged-structure"
-    )
-    assert tagged_structure_check.passed
     vacuous = report.model_dump(mode="json")
-    vacuous.update(
-        {
-            "page_count": 0,
-            "pdf_text_length": 0,
-            "link_count": 0,
-            "checks": [],
-            "pages": [],
-        }
-    )
+    vacuous["checks"] = []
     with pytest.raises(ValidationError, match="each required check exactly once"):
         RenderingValidationReport.model_validate(vacuous)
-    invalid_fallback = report.model_dump(mode="json")
-    invalid_fallback.update(
-        {
-            "edition": "concise_plus_detailed",
-            "detailed_page_count": 1,
-            "detailed_pages": [
-                {
-                    "page_number": 1,
-                    "image_path": "pdf/detailed-pages/page-1.png",
-                    "width": 1224,
-                    "height": 1584,
-                    "ink_fraction": 0,
-                    "edge_ink_fraction": 0,
-                }
-            ],
-        }
-    )
-    with pytest.raises(ValidationError, match="longer than two pages"):
-        RenderingValidationReport.model_validate(invalid_fallback)
-    swapped_page_paths = report.model_dump(mode="json")
-    swapped_page_paths["pages"][0]["image_path"] = "pdf/pages/page-2.png"
-    swapped_page_paths["pages"][1]["image_path"] = "pdf/pages/page-1.png"
-    with pytest.raises(ValidationError, match="page paths must match"):
-        RenderingValidationReport.model_validate(swapped_page_paths)
-    reader = PdfReader(rendered.pdf_path)
-    assert len(reader.pages) == 2
-    assert reader.metadata is not None
-    assert reader.metadata.title == "Seattle Elections Guide"
-    concise_text = " ".join(page.extract_text() or "" for page in reader.pages)
-    assert "august 2026 primary" in concise_text.casefold()
-    assert "Seattle Elections Guide" in concise_text
-    assert all(source.name in concise_text for source in view_model.sources)
-    data_updated_date = (
-        (view_model.metadata.data_as_of or view_model.metadata.generated_at).date().isoformat()
-    )
-    site_updated_date = view_model.metadata.generated_at.date().isoformat()
-    assert f"Data last updated {data_updated_date}" in concise_text
-    assert f"Site last updated {site_updated_date}" in concise_text
-    times_source = next(
-        source for source in view_model.sources if source.panel_role == "comparison"
-    )
-    assert f"{times_source.endorsement_count} picks" in concise_text
-    assert report.link_count == len(view_model.sources) + 4
-    assert all(len(page.extract_text() or "") > 100 for page in reader.pages)
-    with Image.open(rendered.page_images[0]) as page:
-        assert page.size == (1224, 1584)
+    inconsistent = report.model_dump(mode="json")
+    inconsistent["checks"][0]["passed"] = False
+    with pytest.raises(ValidationError, match="summary does not match its checks"):
+        RenderingValidationReport.model_validate(inconsistent)
     with Image.open(rendered.screenshots[0]) as desktop:
         assert desktop.size == (1440, 1200)
     with Image.open(rendered.screenshots[1]) as mobile:
@@ -1422,13 +916,7 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     assert S_IMODE((tmp_path / "rendered").stat().st_mode) == 0o755
     assert S_IMODE(rendered.html_path.stat().st_mode) == 0o644
     approved_baselines = APPROVED_VISUAL_BASELINES_BY_PLATFORM[sys.platform]
-    artifact_paths = dict(
-        zip(
-            approved_baselines,
-            [*rendered.page_images, *rendered.screenshots],
-            strict=True,
-        )
-    )
+    artifact_paths = dict(zip(approved_baselines, rendered.screenshots, strict=True))
     observed_signatures = {
         label: _coarse_visual_signature(path) for label, path in artifact_paths.items()
     }
@@ -1453,8 +941,6 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
         view_model,
         read_rendering_configuration(RENDERING_CONFIG),
         rendered.html_path,
-        rendered.pdf_path,
-        rendered.page_images,
         blank_screenshots,
     )
     responsive_check = next(
@@ -1481,8 +967,6 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
         view_model,
         read_rendering_configuration(RENDERING_CONFIG),
         mutated_html,
-        rendered.pdf_path,
-        rendered.page_images,
         rendered.screenshots,
     )
     evidence_check = next(
@@ -1503,8 +987,6 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
         view_model,
         read_rendering_configuration(RENDERING_CONFIG),
         unexpected_link_html,
-        rendered.pdf_path,
-        rendered.page_images,
         rendered.screenshots,
     )
     unexpected_link_check = next(
@@ -1539,8 +1021,6 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
         view_model,
         read_rendering_configuration(RENDERING_CONFIG),
         duplicate_row_html,
-        rendered.pdf_path,
-        rendered.page_images,
         rendered.screenshots,
     )
     duplicate_row_check = next(
@@ -1564,8 +1044,6 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
         view_model,
         read_rendering_configuration(RENDERING_CONFIG),
         wrong_recommendation_html,
-        rendered.pdf_path,
-        rendered.page_images,
         rendered.screenshots,
     )
     semantic_check = next(
@@ -1586,107 +1064,12 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
         view_model,
         read_rendering_configuration(RENDERING_CONFIG),
         endorsement_html,
-        rendered.pdf_path,
-        rendered.page_images,
         rendered.screenshots,
     )
     endorsement_check = next(
         check for check in endorsement_report.checks if check.id == "html-source-evidence"
     )
     assert not endorsement_check.passed
-
-    first_source, second_source = view_model.sources[:2]
-    # Evidence links leave the site, so they open in a new tab (issue 192).
-    ext = ' target="_blank" rel="noopener"'
-    first_source_link = f'<a href="{first_source.evidence_url}"{ext}>{first_source.name}</a>'
-    second_source_link = f'<a href="{second_source.evidence_url}"{ext}>{second_source.name}</a>'
-    assert first_source_link in canonical_html
-    assert second_source_link in canonical_html
-    swapped_source_links_html = tmp_path / "swapped-publication-source-links.html"
-    swapped_source_links_html.write_text(
-        canonical_html.replace(first_source_link, "__FIRST_SOURCE_LINK__", 2)
-        .replace(
-            second_source_link,
-            f'<a href="{first_source.evidence_url}"{ext}>{second_source.name}</a>',
-            2,
-        )
-        .replace(
-            "__FIRST_SOURCE_LINK__",
-            f'<a href="{second_source.evidence_url}"{ext}>{first_source.name}</a>',
-            2,
-        ),
-        encoding="utf-8",
-    )
-    swapped_source_links_report = validate_rendered_guide(
-        view_model,
-        read_rendering_configuration(RENDERING_CONFIG),
-        swapped_source_links_html,
-        rendered.pdf_path,
-        rendered.page_images,
-        rendered.screenshots,
-    )
-    swapped_source_links_check = next(
-        check for check in swapped_source_links_report.checks if check.id == "html-source-evidence"
-    )
-    assert not swapped_source_links_check.passed
-
-    consensus_source = next(
-        source for source in view_model.sources if source.panel_role == "consensus"
-    )
-    source_role_marker = (
-        f'data-publication-source-id="{consensus_source.id}"\n'
-        f'      data-source-category="{consensus_source.category}"\n'
-        '      data-source-role="consensus"'
-    )
-    assert source_role_marker in canonical_html
-    wrong_source_role_html = tmp_path / "wrong-publication-source-role.html"
-    wrong_source_role_html.write_text(
-        canonical_html.replace(
-            source_role_marker,
-            source_role_marker.replace(
-                'data-source-role="consensus"', 'data-source-role="comparison"'
-            ),
-            1,
-        ),
-        encoding="utf-8",
-    )
-    wrong_source_role_report = validate_rendered_guide(
-        view_model,
-        read_rendering_configuration(RENDERING_CONFIG),
-        wrong_source_role_html,
-        rendered.pdf_path,
-        rendered.page_images,
-        rendered.screenshots,
-    )
-    wrong_source_role_check = next(
-        check for check in wrong_source_role_report.checks if check.id == "html-source-evidence"
-    )
-    assert not wrong_source_role_check.passed
-
-    fake_source_row = (
-        '<div class="source-row source-row-consensus" '
-        'data-publication-source-id="fake-source" '
-        f'data-source-category="{first_source.category}" data-source-role="consensus">'
-        f'<a href="{first_source.evidence_url}">Fake Organization</a>'
-        "<span>Consensus</span></div>"
-    )
-    extra_source_row_html = tmp_path / "extra-publication-source-row.html"
-    extra_source_row_html.write_text(
-        canonical_html.replace(first_source_link, fake_source_row + first_source_link, 1),
-        encoding="utf-8",
-    )
-    extra_source_row_report = validate_rendered_guide(
-        view_model,
-        read_rendering_configuration(RENDERING_CONFIG),
-        extra_source_row_html,
-        rendered.pdf_path,
-        rendered.page_images,
-        rendered.screenshots,
-    )
-    extra_source_row_check = next(
-        check for check in extra_source_row_report.checks if check.id == "html-source-evidence"
-    )
-    assert not extra_source_row_check.passed
 
     source_group = next(
         group
@@ -1715,8 +1098,6 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
         view_model,
         read_rendering_configuration(RENDERING_CONFIG),
         wrong_group_html,
-        rendered.pdf_path,
-        rendered.page_images,
         rendered.screenshots,
     )
     wrong_group_check = next(
@@ -1748,8 +1129,6 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
             view_model,
             read_rendering_configuration(RENDERING_CONFIG),
             conflicting_html,
-            rendered.pdf_path,
-            rendered.page_images,
             rendered.screenshots,
         )
         conflicting_check = next(
@@ -1798,8 +1177,6 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
             view_model,
             read_rendering_configuration(RENDERING_CONFIG),
             broken_share_html,
-            rendered.pdf_path,
-            rendered.page_images,
             rendered.screenshots,
         )
         broken_share_check = next(
@@ -1829,8 +1206,6 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
         unavailable_view_model,
         read_rendering_configuration(RENDERING_CONFIG),
         unavailable_html,
-        rendered.pdf_path,
-        rendered.page_images,
         rendered.screenshots,
     )
     unavailable_html_check = next(
@@ -1868,433 +1243,12 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
             unavailable_view_model,
             read_rendering_configuration(RENDERING_CONFIG),
             broken_unavailable_html,
-            rendered.pdf_path,
-            rendered.page_images,
             rendered.screenshots,
         )
         broken_unavailable_check = next(
             check for check in broken_unavailable_report.checks if check.id == "html-display-values"
         )
         assert not broken_unavailable_check.passed
-
-    race_for_masking = next(race for race in races if race.recommendation_candidate_labels)
-    masked_pdf_html = tmp_path / "masked-pdf.html"
-    print_result_element = (
-        '<div class="print-race-result">\n'
-        f"        <strong>{race_for_masking.recommendation_label}</strong>"
-    )
-    rendered_html_text = rendered.html_path.read_text(encoding="utf-8")
-    assert print_result_element in rendered_html_text
-    masked_html_text = rendered_html_text.replace(
-        print_result_element,
-        print_result_element.replace(
-            f"<strong>{race_for_masking.recommendation_label}</strong>",
-            "<strong>Wrong recommendation</strong>",
-        ),
-        1,
-    )
-    masked_pdf_html.write_text(masked_html_text, encoding="utf-8")
-    masked_pdf = tmp_path / "masked.pdf"
-    _render_pdf(masked_pdf_html, masked_pdf, find_chrome())
-    masked_pdf_report = validate_rendered_guide(
-        view_model,
-        read_rendering_configuration(RENDERING_CONFIG),
-        rendered.html_path,
-        masked_pdf,
-        rendered.page_images,
-        rendered.screenshots,
-    )
-    masked_pdf_check = next(
-        check for check in masked_pdf_report.checks if check.id == "pdf-display-values"
-    )
-    assert not masked_pdf_check.passed
-
-    malicious_link_pdf = tmp_path / "malicious-link.pdf"
-    writer = PdfWriter()
-    writer.clone_document_from_reader(PdfReader(rendered.pdf_path))
-    replaced_link = False
-    for page in writer.pages:
-        for annotation_reference in page.get("/Annots", []):
-            annotation = annotation_reference.get_object()
-            action = annotation.get("/A")
-            if action is not None and action.get("/URI"):
-                action[NameObject("/URI")] = TextStringObject("https://evil.example/phish")
-                replaced_link = True
-                break
-        if replaced_link:
-            break
-    assert replaced_link
-    with malicious_link_pdf.open("wb") as output:
-        writer.write(output)
-    malicious_link_report = validate_rendered_guide(
-        view_model,
-        read_rendering_configuration(RENDERING_CONFIG),
-        rendered.html_path,
-        malicious_link_pdf,
-        rendered.page_images,
-        rendered.screenshots,
-    )
-    pdf_link_check = next(
-        check for check in malicious_link_report.checks if check.id == "pdf-links"
-    )
-    assert not pdf_link_check.passed
-
-    swapped_source_pdf = tmp_path / "swapped-publication-source-links.pdf"
-    _render_pdf(swapped_source_links_html, swapped_source_pdf, find_chrome())
-    swapped_source_pdf_report = validate_rendered_guide(
-        view_model,
-        read_rendering_configuration(RENDERING_CONFIG),
-        rendered.html_path,
-        swapped_source_pdf,
-        rendered.page_images,
-        rendered.screenshots,
-    )
-    swapped_source_pdf_link_check = next(
-        check for check in swapped_source_pdf_report.checks if check.id == "pdf-links"
-    )
-    assert not swapped_source_pdf_link_check.passed
-
-    swapped_source_names_html = tmp_path / "swapped-publication-source-names.html"
-    swapped_source_names_html.write_text(
-        canonical_html.replace(first_source_link, "__FIRST_SOURCE_LINK__", 2)
-        .replace(
-            second_source_link,
-            f'<a href="{second_source.evidence_url}"{ext}>{first_source.name}</a>',
-            2,
-        )
-        .replace(
-            "__FIRST_SOURCE_LINK__",
-            f'<a href="{first_source.evidence_url}"{ext}>{second_source.name}</a>',
-            2,
-        ),
-        encoding="utf-8",
-    )
-    swapped_source_names_pdf = tmp_path / "swapped-publication-source-names.pdf"
-    _render_pdf(swapped_source_names_html, swapped_source_names_pdf, find_chrome())
-    swapped_source_names_report = validate_rendered_guide(
-        view_model,
-        read_rendering_configuration(RENDERING_CONFIG),
-        rendered.html_path,
-        swapped_source_names_pdf,
-        rendered.page_images,
-        rendered.screenshots,
-    )
-    swapped_source_names_check = next(
-        check for check in swapped_source_names_report.checks if check.id == "pdf-links"
-    )
-    assert not swapped_source_names_check.passed
-
-    counted_source = next(
-        source for source in view_model.sources if source.split_endorsement_count > 0
-    )
-    assert (
-        sum(
-            source.endorsement_count == counted_source.endorsement_count
-            and source.split_endorsement_count == counted_source.split_endorsement_count
-            for source in view_model.sources
-        )
-        == 1
-    )
-    # Issue 97 removed the screen evidence directory's own use of the
-    # source_row macro (the merged sources tree renders its own inline
-    # checkbox markup instead), so each source now carries exactly one
-    # `data-publication-source-id` row: print's own.
-    print_source_marker = f'data-publication-source-id="{counted_source.id}"'
-    print_source_start = canonical_html.index(print_source_marker)
-    print_count_start = canonical_html.index("<span>", print_source_start)
-    print_count_end = canonical_html.index("</span>", print_count_start) + len("</span>")
-    wrong_source_count_html = tmp_path / "wrong-publication-source-count.html"
-    wrong_source_count_html.write_text(
-        canonical_html[:print_count_start]
-        + "<span>999 · 999 split</span>"
-        + canonical_html[print_count_end:],
-        encoding="utf-8",
-    )
-    wrong_source_count_pdf = tmp_path / "wrong-publication-source-count.pdf"
-    _render_pdf(wrong_source_count_html, wrong_source_count_pdf, find_chrome())
-    wrong_source_count_pdf_report = validate_rendered_guide(
-        view_model,
-        read_rendering_configuration(RENDERING_CONFIG),
-        rendered.html_path,
-        wrong_source_count_pdf,
-        rendered.page_images,
-        rendered.screenshots,
-    )
-    wrong_source_count_pdf_check = next(
-        check for check in wrong_source_count_pdf_report.checks if check.id == "pdf-display-values"
-    )
-    assert not wrong_source_count_pdf_check.passed
-
-    first_count_source = next(
-        source for source in view_model.sources if source.panel_role == "consensus"
-    )
-    second_count_source = next(
-        source
-        for source in view_model.sources
-        if source.panel_role == "consensus"
-        and (
-            source.endorsement_count,
-            source.split_endorsement_count,
-        )
-        != (
-            first_count_source.endorsement_count,
-            first_count_source.split_endorsement_count,
-        )
-    )
-
-    def print_count_span(source_id: str) -> tuple[int, int]:
-        marker = f'data-publication-source-id="{source_id}"'
-        row_start = canonical_html.index(marker)
-        count_start = canonical_html.index("<span>", row_start)
-        count_end = canonical_html.index("</span>", count_start) + len("</span>")
-        return count_start, count_end
-
-    first_start, first_end = print_count_span(first_count_source.id)
-    second_start, second_end = print_count_span(second_count_source.id)
-    assert first_start < second_start
-    first_count = canonical_html[first_start:first_end]
-    second_count = canonical_html[second_start:second_end]
-    swapped_source_counts_html = tmp_path / "swapped-publication-source-counts.html"
-    swapped_source_counts_html.write_text(
-        canonical_html[:first_start]
-        + second_count
-        + canonical_html[first_end:second_start]
-        + first_count
-        + canonical_html[second_end:],
-        encoding="utf-8",
-    )
-    swapped_source_counts_pdf = tmp_path / "swapped-publication-source-counts.pdf"
-    _render_pdf(swapped_source_counts_html, swapped_source_counts_pdf, find_chrome())
-    swapped_source_counts_report = validate_rendered_guide(
-        view_model,
-        read_rendering_configuration(RENDERING_CONFIG),
-        rendered.html_path,
-        swapped_source_counts_pdf,
-        rendered.page_images,
-        rendered.screenshots,
-    )
-    swapped_source_counts_check = next(
-        check for check in swapped_source_counts_report.checks if check.id == "pdf-display-values"
-    )
-    assert not swapped_source_counts_check.passed
-
-    data_updated_date = (
-        (view_model.metadata.data_as_of or view_model.metadata.generated_at).date().isoformat()
-    )
-    site_updated_date = view_model.metadata.generated_at.date().isoformat()
-    project_url = read_rendering_configuration(RENDERING_CONFIG).project_url
-    commit_url = f"{project_url}/commit/{view_model.metadata.git_commit}"
-    # Off-site links open in a new tab (issue 192), the commit link included.
-    external = ' target="_blank" rel="noopener"'
-    metadata_marker = (
-        f'Data last updated <a href="{commit_url}"{external}>{data_updated_date}</a>. '
-        f'Site last updated <a href="{commit_url}"{external}>{site_updated_date}</a>.'
-    )
-    rendered_html_text = rendered.html_path.read_text(encoding="utf-8")
-    assert metadata_marker in rendered_html_text
-    wrong_metadata_html = tmp_path / "wrong-publication-metadata.html"
-    wrong_metadata_html.write_text(
-        rendered_html_text.replace(
-            metadata_marker,
-            metadata_marker.replace(data_updated_date, "1900-01-01").replace(
-                site_updated_date, "1900-01-02"
-            ),
-            2,
-        ),
-        encoding="utf-8",
-    )
-    wrong_metadata_pdf = tmp_path / "wrong-publication-metadata.pdf"
-    _render_pdf(wrong_metadata_html, wrong_metadata_pdf, find_chrome())
-    wrong_metadata_report = validate_rendered_guide(
-        view_model,
-        read_rendering_configuration(RENDERING_CONFIG),
-        rendered.html_path,
-        wrong_metadata_pdf,
-        rendered.page_images,
-        rendered.screenshots,
-    )
-    wrong_metadata_check = next(
-        check for check in wrong_metadata_report.checks if check.id == "pdf-display-values"
-    )
-    assert not wrong_metadata_check.passed
-
-
-def test_dense_concise_content_still_fits_two_pages(tmp_path: Path) -> None:
-    view_model = _dense_view_model(_view_model(tmp_path / "fixture"))
-    view_model_path = tmp_path / "publication_view_model.json"
-    view_model_path.write_bytes(canonical_json_bytes(view_model.model_dump(mode="json")))
-
-    rendered = build_rendered_guide(
-        view_model_path,
-        RENDERING_CONFIG,
-        tmp_path / "rendered",
-    )
-
-    assert rendered.validation_report.passed
-    assert rendered.validation_report.page_count == 2
-    assert rendered.validation_report.edition == "concise"
-    assert rendered.detailed_pdf_path is None
-    assert rendered.validation_report.detailed_page_count == 0
-    assert rendered.detailed_page_images == []
-
-
-def test_long_comparison_choice_is_not_truncated(tmp_path: Path) -> None:
-    view_model = _visual_view_model(_view_model(tmp_path / "fixture"))
-    race = next(race for section in view_model.sections for race in section.races)
-    long_label = "Alexandria Ocasio-Cortez-Washington"
-    candidate_id = race.recommendation_candidate_ids[0]
-    race.support_leader_candidate_labels = [
-        long_label if item == candidate_id else label
-        for item, label in zip(
-            race.support_leader_candidate_ids,
-            race.support_leader_candidate_labels,
-            strict=True,
-        )
-    ]
-    race.support_leader_label = " / ".join(race.support_leader_candidate_labels)
-    race.recommendation_candidate_labels = [
-        long_label if item == candidate_id else label
-        for item, label in zip(
-            race.recommendation_candidate_ids,
-            race.recommendation_candidate_labels,
-            strict=True,
-        )
-    ]
-    race.recommendation_label = " / ".join(race.recommendation_candidate_labels)
-    for group in race.endorsement_groups:
-        if group.candidate_id == candidate_id:
-            group.candidate_label = long_label
-    for alternative in race.alternatives:
-        if alternative.candidate_id == candidate_id:
-            alternative.candidate_label = long_label
-    for category in race.category_breakdown:
-        for support in category.candidate_support:
-            if support.candidate_id == candidate_id:
-                support.candidate_label = long_label
-    for cell in race.source_cells:
-        cell.candidate_labels = [
-            long_label if item == candidate_id else label
-            for item, label in zip(cell.candidate_ids, cell.candidate_labels, strict=True)
-        ]
-    race.comparisons = [
-        PublicationComparison.model_validate(
-            {
-                "source_id": race.comparisons[0].source_id,
-                "status": "agrees",
-                "badge_label": "AGREES",
-                "candidate_ids": [candidate_id],
-                "candidate_labels": [long_label],
-            }
-        )
-    ]
-    view_model = _revalidated(view_model)
-    view_model_path = tmp_path / "publication_view_model.json"
-    view_model_path.write_bytes(canonical_json_bytes(view_model.model_dump(mode="json")))
-
-    rendered = build_rendered_guide(
-        view_model_path,
-        RENDERING_CONFIG,
-        tmp_path / "rendered",
-    )
-
-    assert rendered.validation_report.passed
-    assert rendered.validation_report.edition == "concise_plus_detailed"
-    assert rendered.detailed_pdf_path is not None
-    pdf_text = " ".join(
-        " ".join((page.extract_text() or "").split()) for page in PdfReader(rendered.pdf_path).pages
-    )
-    assert long_label in pdf_text
-    assert f"{race.explicit_endorsement_count} endorsers" in pdf_text
-
-    compact_support = (
-        '<span class="print-support print-support-compact">'
-        f"{race.explicit_endorsement_count} endorsers</span>"
-    )
-    rendered_html = rendered.html_path.read_text(encoding="utf-8")
-    assert compact_support in rendered_html
-    wrong_count_html = tmp_path / "wrong-compact-count.html"
-    wrong_count_html.write_text(
-        rendered_html.replace(
-            compact_support, compact_support.replace("endorsers", "99 endorsers"), 1
-        ),
-        encoding="utf-8",
-    )
-    wrong_count_pdf = tmp_path / "wrong-compact-count.pdf"
-    _render_pdf(wrong_count_html, wrong_count_pdf, find_chrome(), edition="compact")
-    wrong_count_report = validate_rendered_guide(
-        view_model,
-        read_rendering_configuration(RENDERING_CONFIG),
-        rendered.html_path,
-        wrong_count_pdf,
-        rendered.page_images,
-        rendered.screenshots,
-        detailed_pdf_path=rendered.detailed_pdf_path,
-        detailed_page_images=rendered.detailed_page_images,
-    )
-    wrong_count_check = next(
-        check for check in wrong_count_report.checks if check.id == "pdf-display-values"
-    )
-    assert not wrong_count_check.passed
-
-
-def test_detailed_pdf_trims_only_rendered_trailing_blank_pages(tmp_path: Path) -> None:
-    pdf_path = tmp_path / "detailed.pdf"
-    writer = PdfWriter()
-    for _ in range(3):
-        writer.add_blank_page(width=612, height=792)
-    with pdf_path.open("wb") as output:
-        writer.write(output)
-
-    page_images = [tmp_path / f"page-{number}.png" for number in range(1, 4)]
-    for path in page_images[:2]:
-        image = Image.new("RGB", (200, 260), "white")
-        for x in range(20, 180):
-            for y in range(20, 40):
-                image.putpixel((x, y), (0, 0, 0))
-        image.save(path)
-    Image.new("RGB", (200, 260), "white").save(page_images[2])
-
-    assert _trim_trailing_blank_pages(pdf_path, page_images) == 1
-    assert len(PdfReader(pdf_path).pages) == 2
-
-
-def test_detailed_pdf_preserves_sparse_page_with_extractable_text(tmp_path: Path) -> None:
-    pdf_path = tmp_path / "detailed.pdf"
-    writer = PdfWriter()
-    writer.add_blank_page(width=612, height=792)
-    writer.append(PROJECT_ROOT / "tests/fixtures/evidence/endorsements.pdf")
-    with pdf_path.open("wb") as output:
-        writer.write(output)
-
-    page_images = [tmp_path / f"page-{number}.png" for number in range(1, 3)]
-    for path in page_images:
-        Image.new("RGB", (200, 260), "white").save(path)
-
-    assert PdfReader(pdf_path).pages[-1].extract_text()
-    assert _trim_trailing_blank_pages(pdf_path, page_images) == 0
-    assert len(PdfReader(pdf_path).pages) == 2
-
-
-def test_overflowing_screen_methodology_does_not_bloat_concise_pdf(tmp_path: Path) -> None:
-    view_model = _view_model(tmp_path / "fixture")
-    view_model.methodology.interpretation_notes = [
-        "This canonical interpretation sentence must remain visible in the published methodology. "
-        * 180
-    ]
-    view_model_path = tmp_path / "publication_view_model.json"
-    view_model_path.write_bytes(canonical_json_bytes(view_model.model_dump(mode="json")))
-    rendered = build_rendered_guide(view_model_path, RENDERING_CONFIG, tmp_path / "rendered")
-
-    assert rendered.validation_report.passed
-    assert rendered.validation_report.edition == "concise"
-    assert rendered.detailed_pdf_path is None
-    assert "This canonical interpretation sentence" not in rendered.html_path.read_text(
-        encoding="utf-8"
-    )
-    concise_text = " ".join(
-        page.extract_text() or "" for page in PdfReader(rendered.pdf_path).pages
-    )
-    assert "This canonical interpretation sentence" not in concise_text
 
 
 def test_responsive_tablet_layout_renders(tmp_path: Path) -> None:
@@ -2316,47 +1270,6 @@ def test_responsive_tablet_layout_renders(tmp_path: Path) -> None:
             source.panel_role != "comparison" for source in view_model.sources
         ),
     )
-
-
-def test_pdf_identity_validation_rejects_concatenated_print_title(tmp_path: Path) -> None:
-    view_model = _view_model(tmp_path / "fixture")
-    configuration = read_rendering_configuration(RENDERING_CONFIG)
-    html_path = tmp_path / "guide.html"
-    html = render_html_document(view_model, configuration)
-    html_path.write_text(
-        html.replace(
-            '<h1 data-document-role="print-title">Seattle Elections Guide</h1>',
-            '<h1 data-document-role="print-title">SeattleElectionsGuide</h1>',
-            1,
-        ),
-        encoding="utf-8",
-    )
-    pdf_path = tmp_path / "guide.pdf"
-    _render_pdf(html_path, pdf_path, find_chrome())
-    _set_pdf_metadata(pdf_path, view_model, configuration)
-    page_dir = tmp_path / "pages"
-    page_dir.mkdir()
-    page_images = _render_pdf_pages(pdf_path, page_dir, find_pdftoppm())
-    screenshots: list[Path] = []
-    for name, width in (("desktop", configuration.desktop_width), ("mobile", 390)):
-        screenshot = Image.new("RGB", (width, configuration.screenshot_height), "white")
-        screenshot.paste("black", (0, 0, width, 100))
-        screenshot_path = tmp_path / f"{name}.png"
-        screenshot.save(screenshot_path)
-        screenshots.append(screenshot_path)
-
-    report = validate_rendered_guide(
-        view_model,
-        configuration,
-        html_path,
-        pdf_path,
-        page_images,
-        screenshots,
-    )
-
-    identity_check = next(check for check in report.checks if check.id == "pdf-display-values")
-    assert not identity_check.passed
-    assert "Seattle Elections Guide" in identity_check.message
 
 
 def _dense_view_model(view_model: PublicationViewModel) -> PublicationViewModel:
@@ -2701,21 +1614,6 @@ def test_sources_tree_shell_encodes_state_through_the_published_codec(tmp_path: 
     assert "decodeLensFragment(" in html
 
 
-def test_the_print_edition_carries_no_times_comparison(tmp_path: Path) -> None:
-    """Issue 124: print loses the Times pill and its methodology legend too."""
-    html = _sources_tree_html(tmp_path)
-    stylesheet = html.split("<style>")[1].split("</style>")[0]
-    print_block = stylesheet.split("@media print {")[1]
-
-    # The screen-only banner and notice are still suppressed in print.
-    assert ".lens-banner, .lens-notice { display: none; }" in print_block
-    assert "print-times-pick" not in stylesheet
-    assert "print-comparison" not in stylesheet
-    assert "times-summary" not in stylesheet
-    assert "Read the Times pill" not in html
-    assert "Seattle Times choices are comparison only" not in html
-
-
 def test_guide_head_carries_the_eyebrow_title_and_tagline(tmp_path: Path) -> None:
     """Issue 177: the live source count belongs to the persistent strip.
 
@@ -2911,16 +1809,21 @@ def _evaluate_in_chrome(
     *,
     mobile_width: int | None = None,
     initial_url: str | None = None,
+    viewport: tuple[int, int] | None = None,
+    media: str | None = None,
 ) -> dict[str, Any]:
     """Load one local file in headless Chrome and return one JSON object result.
 
     A minimal harness for the personalization flow: unlike _render_screenshot's
     responsive-interaction probe, this only needs one page load and one script
     evaluation, so it does not share that function's screenshot-capture
-    machinery. Pass mobile_width to emulate a narrow CSS viewport first. Pass
-    initial_url to navigate to an already-encoded shared link (query string
-    and/or fragment) instead of the bare file, to exercise a load-time restore
-    rather than an in-page transition.
+    machinery. Pass mobile_width to emulate a narrow CSS viewport first, or
+    viewport for an exact desktop-shaped one. Pass initial_url to navigate to
+    an already-encoded shared link (query string and/or fragment) instead of
+    the bare file, to exercise a load-time restore rather than an in-page
+    transition. Pass media="print" to evaluate against the print stylesheet
+    (issue 193: the browser's own print output is the printable edition, so
+    that is the only place its rules can be measured).
     """
     chrome_path = find_chrome()
     profile = Path(tempfile.mkdtemp(prefix="election-guide-chrome-"))
@@ -2972,12 +1875,29 @@ def _evaluate_in_chrome(
                         },
                         session_id=session_id,
                     )
+                elif viewport is not None:
+                    cdp.command(
+                        "Emulation.setDeviceMetricsOverride",
+                        {
+                            "width": viewport[0],
+                            "height": viewport[1],
+                            "deviceScaleFactor": 1,
+                            "mobile": False,
+                        },
+                        session_id=session_id,
+                    )
                 cdp.command(
                     "Page.navigate",
                     {"url": initial_url or html_path.resolve().as_uri()},
                     session_id=session_id,
                 )
                 cdp.wait_event("Page.loadEventFired", session_id=session_id)
+                if media is not None:
+                    cdp.command(
+                        "Emulation.setEmulatedMedia",
+                        {"media": media},
+                        session_id=session_id,
+                    )
                 evaluated = cdp.command(
                     "Runtime.evaluate",
                     {"expression": expression, "returnByValue": True, "awaitPromise": True},
@@ -2993,6 +1913,88 @@ def _evaluate_in_chrome(
             _terminate_process(process)
     finally:
         shutil.rmtree(profile, ignore_errors=True)
+
+
+def test_printing_the_guide_suppresses_chrome_and_keeps_every_race_whole(
+    tmp_path: Path,
+) -> None:
+    """Issue 193: the browser's own print output is the printable edition.
+
+    Measured at the US Letter content box the `@page` margins leave (8.5in
+    minus .55in per side, 11in minus .5in per side, at 96dpi), because a
+    clipped column only shows up against a real page width.
+    """
+    view_model = _personalization_enabled_view_model(tmp_path)
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    expected_races = sum(len(section.races) for section in view_model.sections)
+
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (() => {
+          const display = (selector) => {
+            const element = document.querySelector(selector);
+            return element === null ? 'absent' : getComputedStyle(element).display;
+          };
+          const shown = (selector) => [...document.querySelectorAll(selector)]
+            .filter((element) => element.getBoundingClientRect().height > 0).length;
+          const cards = [...document.querySelectorAll('.race-card')];
+          const pageWidth = document.documentElement.getBoundingClientRect().width;
+          return JSON.stringify({
+            band: display('.site-band'),
+            controls: display('.screen-controls'),
+            stickyHeader: display('.sticky-header'),
+            skipLink: display('.skip-link'),
+            footerActions: display('.site-footer-actions'),
+            dialog: display('.race-detail-dialog'),
+            pageHeadBackground:
+              getComputedStyle(document.querySelector('.page-head')).backgroundColor,
+            pageHeadTitle: shown('.page-head h1'),
+            electionDay: display('.election-day'),
+            gridColumnCount: getComputedStyle(document.querySelector('.race-grid'))
+              .gridTemplateColumns.split(' ').length,
+            visibleCards: shown('.race-card'),
+            visibleRecommendations: shown('.race-card h3'),
+            visibleMeters: shown('.screen-meter'),
+            clippedCards: cards.filter((card) => card.scrollWidth > card.clientWidth + 1).length,
+            overflowingElements: [...document.querySelectorAll('.screen-guide *')]
+              .filter((element) => element.getBoundingClientRect().right > pageWidth + 1).length,
+            horizontalScroll: document.documentElement.scrollWidth > pageWidth + 1,
+            auditVisible: shown('.site-footer-audit') > 0,
+          });
+        })()
+        """,
+        viewport=(758, 960),
+        media="print",
+    )
+
+    # Chrome suppressed: nothing the reader could only have used on screen.
+    assert result["band"] == "none"
+    assert result["controls"] == "none"
+    assert result["stickyHeader"] == "none"
+    assert result["skipLink"] == "none"
+    assert result["footerActions"] == "none"
+    assert result["dialog"] == "none"
+    # The shared page head (issue 192) is the guide's navy extended variant on
+    # screen; on paper it flattens onto white and keeps its title.
+    assert result["pageHeadBackground"] == "rgb(255, 255, 255)"
+    assert result["pageHeadTitle"] == 1
+    # Slot 4 still states the election day, which a printed guide wants.
+    assert result["electionDay"] != "none"
+    # Races and recommendations intact.
+    assert result["visibleCards"] == expected_races
+    assert result["visibleRecommendations"] == expected_races
+    assert result["visibleMeters"] == expected_races
+    assert result["auditVisible"] is True
+    # No clipped columns.
+    assert result["gridColumnCount"] == 2
+    assert result["clippedCards"] == 0
+    assert result["overflowingElements"] == 0
+    assert result["horizontalScroll"] is False
 
 
 def test_phone_dialog_metrics_fit_the_longest_live_content_at_320px(tmp_path: Path) -> None:

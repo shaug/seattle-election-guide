@@ -109,7 +109,7 @@ manual_app = typer.Typer(help="Validate and import structured manual transcripti
 normalize_app = typer.Typer(help="Match and validate canonical endorsement records.")
 review_app = typer.Typer(help="Inspect and resolve ambiguous normalization records.")
 export_app = typer.Typer(help="Generate canonical machine-readable publication artifacts.")
-render_app = typer.Typer(help="Render and validate the responsive HTML and concise PDF guide.")
+render_app = typer.Typer(help="Render and validate the responsive HTML guide.")
 release_app = typer.Typer(help="Compile, audit, and package a versioned public release.")
 collect_app = typer.Typer(help="Refresh source-specific endorsement adapters.")
 hosting_app = typer.Typer(help="Stage validated release artifacts for static hosting.")
@@ -428,7 +428,7 @@ def release_build(
     ] = Path("config/scoring/default.yaml"),
     rendering_config_path: Annotated[
         Path, typer.Option(exists=True, dir_okay=False, readable=True)
-    ] = Path("config/rendering/pdf.yaml"),
+    ] = Path("config/rendering/guide.yaml"),
     snapshot_root: Annotated[Path, typer.Option(file_okay=False, readable=True)] = Path(
         "data/releases/wa-2026-primary/snapshots"
     ),
@@ -440,9 +440,6 @@ def release_build(
         str | None, typer.Option(help="Code revision recorded in release manifests.")
     ] = None,
     chrome_path: Annotated[
-        Path | None, typer.Option(exists=True, dir_okay=False, readable=True)
-    ] = None,
-    pdftoppm_path: Annotated[
         Path | None, typer.Option(exists=True, dir_okay=False, readable=True)
     ] = None,
 ) -> None:
@@ -462,7 +459,6 @@ def release_build(
             generated_at=_parse_aware_datetime(generated_at),
             git_commit=git_commit or _git_commit(),
             chrome_path=chrome_path,
-            pdftoppm_path=pdftoppm_path,
         )
     except (
         OSError,
@@ -749,7 +745,7 @@ def render_build(
     config_path: Annotated[
         Path,
         typer.Option(exists=True, dir_okay=False, readable=True),
-    ] = Path("config/rendering/pdf.yaml"),
+    ] = Path("config/rendering/guide.yaml"),
     output_dir: Annotated[
         Path,
         typer.Option(file_okay=False),
@@ -758,19 +754,14 @@ def render_build(
         Path | None,
         typer.Option(exists=True, dir_okay=False, readable=True),
     ] = None,
-    pdftoppm_path: Annotated[
-        Path | None,
-        typer.Option(exists=True, dir_okay=False, readable=True),
-    ] = None,
 ) -> None:
-    """Build responsive HTML, a two-page PDF, and rendered visual checks."""
+    """Build the responsive HTML guide and its rendered visual checks."""
     try:
         rendered = build_rendered_guide(
             view_model_path,
             config_path,
             output_dir,
             chrome_path=chrome_path,
-            pdftoppm_path=pdftoppm_path,
         )
     except (
         OSError,
@@ -782,13 +773,9 @@ def render_build(
     ) as error:
         typer.echo(f"guide rendering failed: {error}", err=True)
         raise typer.Exit(code=1) from error
-    outputs = f"{rendered.html_path} and {rendered.pdf_path}"
-    if rendered.detailed_pdf_path is not None:
-        outputs = f"{outputs}, with detailed fallback {rendered.detailed_pdf_path}"
     typer.echo(
-        f"rendered guide: {outputs} "
-        f"({rendered.validation_report.edition}, "
-        f"{rendered.validation_report.page_count} concise pages)"
+        f"rendered guide: {rendered.html_path} "
+        f"({len(rendered.validation_report.checks)} checks passed)"
     )
 
 

@@ -21,26 +21,7 @@
   <style>{{ stylesheet | safe }}</style>
 </head>
 <body>
-  {% from '_source_participation.html.j2' import source_participation %}
   {% from '_filter_controls.html.j2' import election_controls %}
-  {% macro source_row(source, compact=false) -%}
-    <div class="source-row source-row-{{ source.panel_role }}"
-      data-publication-source-id="{{ source.id }}"
-      data-source-category="{{ source.category }}"
-      data-source-role="{{ source.panel_role }}">
-      <a href="{{ source.evidence_url }}"{{ external_link_attributes }}>{{ source.name }}</a>
-      <span>{{ source_participation(source, compact) }}</span>
-    </div>
-  {%- endmacro %}
-  {% macro coverage_gap_row(source, compact=false) -%}
-    <section class="coverage-gap-row"
-      data-coverage-gap-source-id="{{ source.id }}"
-      data-coverage-gap-status="{{ source.coverage_gap_status }}">
-      <div><a href="{{ source.evidence_url }}"{{ external_link_attributes }}>{{ source.name }}</a>
-        <strong>{% if source.coverage_gap_status == 'access_restricted' %}Official results inaccessible{% else %}No published results found{% endif %}</strong></div>
-      {% if not compact %}<p>{{ source.coverage_gap_note }}</p>{% endif %}
-    </section>
-  {%- endmacro %}
   {% macro race_detail_source_badge(source) -%}
     <span class="race-detail-category-badge">{{ source_category_label_by_key[source.category] }}</span>
   {%- endmacro %}
@@ -169,12 +150,10 @@
   {% set election_display_label = election_display_name %}
   {% set contributing_sources = guide.sources | selectattr('contribution_status', 'equalto', 'contributing') | list %}
   {% set consensus_source_count = contributing_sources | selectattr('panel_role', 'equalto', 'consensus') | list | length %}
-  {% set coverage_gap_sources = guide.sources | selectattr('contribution_status', 'equalto', 'coverage_gap') | list %}
   <a class="skip-link" href="#guide-races">Skip to recommendations</a>
 
   <main class="page screen-guide">
     {{ site_band | safe }}
-    <p class="detailed-edition-brand">Seattle Elections Guide</p>
     {{ site_page_head | safe }}
     <div class="page-band-rule"></div>
     {{ election_day_banner | safe }}
@@ -361,196 +340,8 @@
 
     <footer class="site-footer">
       {{ site_footer_band | safe }}
-      <section class="detailed-source-directory">
-        {#
-          Issue 108 removed the screen sources tree, whose forced-open
-          <details> element was how the detailed/overflow PDF edition (a
-          fallback render used when content doesn't fit the normal two-page
-          print layout) surfaced every source's evidence link; the normal
-          print page's own source panel is hidden in that edition. This
-          plain, non-interactive list restores that coverage without reusing
-          the print panel's data-publication-source-id/data-coverage-gap-
-          source-id rows, which existing validation expects to appear
-          exactly once per source.
-        #}
-        <h2>Sources contributing to this guide</h2>
-        {% for category in guide.methodology.source_categories %}
-        <div>
-          <h3>{{ category.label }}</h3>
-          {% for source in contributing_sources if source.category == category.category %}
-          <p><a href="{{ source.evidence_url }}"{{ external_link_attributes }}>{{ source.name }}</a></p>
-          {% endfor %}
-        </div>
-        {% endfor %}
-        {% if coverage_gap_sources %}
-        <div>
-          <h3>Coverage gaps</h3>
-          {% for source in coverage_gap_sources %}
-          <p><a href="{{ source.evidence_url }}"{{ external_link_attributes }}>{{ source.name }}</a></p>
-          {% endfor %}
-        </div>
-        {% endif %}
-      </section>
-      <div class="site-footer-audit detailed-footer-audit">{{ site_footer_audit | safe }}</div>
     </footer>
   </main>
-
-  <div class="print-guide">
-    {% macro print_race(race) %}
-    <article class="print-race">
-      <div class="print-race-title">{{ race.race_label }}</div>
-      <div class="print-race-result">
-        <strong>{{ race.recommendation_label }}</strong>
-        {% if race.percentage_whole is none %}
-        <div class="print-meter print-meter-na"><b class="print-meter-label"><span class="print-meter-text">N/A</span></b></div>
-        {% else %}
-        <div class="print-meter{% if has_no_majority(race) %} meter-no-majority{% endif %}" style="--meter-fill: {{ race.percentage_whole }}%">
-          <b class="print-meter-label"><span class="print-meter-text">{{ race.percentage_label }}</span></b>
-        </div>
-        {% endif %}
-      </div>
-      {% set print_warnings = concise_warning_labels(race) %}
-      <div class="print-race-context">
-        <span class="print-support print-support-full">{{ race.support_summary }}</span>
-        <span class="print-support print-support-compact">{{ race.explicit_endorsement_count }} endorsers</span>
-        {% if print_warnings %}<b class="print-compact-warning">{{ print_warnings[0] }}</b>{% endif %}
-      </div>
-      {% if print_warnings %}
-      <div class="print-race-notes">
-        <span>{{ print_warnings | join(' / ') }}</span>
-      </div>{% endif %}
-    </article>
-    {% endmacro %}
-    <section class="print-page print-page-one">
-      <header class="print-header">
-        <div>
-          <p data-document-role="print-election-label">{{ election_display_label }}</p>
-          <h1 data-document-role="print-title">Seattle Elections Guide</h1>
-        </div>
-        <div class="print-header-meta">{{ election_date_display }}<br>
-          {{ guide.metadata.published_race_count }} races · source details on page 2</div>
-      </header>
-      <p class="print-intro">Progressive-source consensus.
-        Too few endorsements to measure agreement; no recommendation from thin evidence.</p>
-      <div class="print-races">
-        {% set print_midpoint = (guide.metadata.published_race_count + 1) // 2 %}
-        {% for print_column in range(2) %}
-        {% set print_start = 0 if print_column == 0 else print_midpoint %}
-        {% set print_end = print_midpoint if print_column == 0 else guide.metadata.published_race_count %}
-        {% set print_position = namespace(value=0) %}
-        {% set displayed_section = namespace(id='') %}
-        <div class="print-race-column">
-          {% for section in guide.sections %}
-          {% set section_first = print_position.value %}
-            {% for race in section.races %}
-              {% if print_position.value >= print_start and print_position.value < print_end %}
-                {% if displayed_section.id != section.id %}
-                <h2 class="print-section-title">{{ section.label }}{% if print_position.value > section_first %} — continued{% endif %}</h2>
-                {% set displayed_section.id = section.id %}
-                {% endif %}
-                {{ print_race(race) }}
-              {% endif %}
-              {% set print_position.value = print_position.value + 1 %}
-            {% endfor %}
-          {% endfor %}
-        </div>
-        {% endfor %}
-      </div>
-      <footer>Verify details and evidence in the responsive guide at
-        <a href="{{ config.project_url }}"{{ external_link_attributes }}>{{ config.project_url }}</a></footer>
-    </section>
-
-    <section class="print-page print-page-two">
-      <header class="method-header">
-        <p>Methodology and sources</p>
-        <h1>How to read this guide</h1>
-        <div>{{ guide.metadata.contributing_source_count }} contributing sources ·
-          {{ guide.metadata.coverage_gap_count }} coverage gaps</div>
-      </header>
-      <div class="page-two-content">
-        <div class="method-summary">
-          <article>
-            <h2>Read the meter</h2>
-            <p><strong>The percentage is agreement, not a candidate grade.</strong> It is the
-              leading choice's share among sources that explicitly endorsed in that race.</p>
-            <p>The source count shows the sample behind that percentage.</p>
-          </article>
-          <article>
-            <h2>Counting and scope</h2>
-            <p>Each organization has equal weight; multi-candidate endorsements split one point.
-              No endorsement and missing coverage stay visible but do not enter the percentage.</p>
-            <p>LD groups count on broader races they cover, but only their own district's
-              legislative races. Your registration address determines your exact ballot.</p>
-          </article>
-        </div>
-
-        <section class="source-panel">
-          <div class="source-panel-heading">
-            <div><p>Evidence directory</p><h2>Sources contributing to this guide</h2></div>
-            <span>{{ contributing_sources | selectattr('panel_role', 'equalto', 'consensus') | list | length }} consensus<br>
-              Counts: endorsements/picks · split subset</span>
-          </div>
-          {% set source_categories = guide.methodology.source_categories %}
-          {% set source_category_split = namespace(index=1, count=0, difference=contributing_sources | length) %}
-          {% for category in source_categories %}
-            {% set category_count = contributing_sources | selectattr('category', 'equalto', category.category) | list | length %}
-            {% set source_category_split.count = source_category_split.count + category_count %}
-            {% set difference = (contributing_sources | length - (2 * source_category_split.count)) | abs %}
-            {% if not loop.last and difference < source_category_split.difference %}
-              {% set source_category_split.index = loop.index %}
-              {% set source_category_split.difference = difference %}
-            {% endif %}
-          {% endfor %}
-          <div class="source-columns">
-            {% for source_column in range(2) %}
-            {% set category_start = 0 if source_column == 0 else source_category_split.index %}
-            {% set category_end = source_category_split.index if source_column == 0 else source_categories | length %}
-            <div class="source-column" data-source-column="{{ source_column + 1 }}">
-              {% for category in source_categories[category_start:category_end] %}
-              <section class="source-category-group" data-source-category-group="{{ category.category }}">
-                <h3 data-source-category="{{ category.category }}">{{ category.label }}</h3>
-                {% for source in contributing_sources if source.category == category.category %}
-                  {{ source_row(source, true) }}
-                {% endfor %}
-              </section>
-              {% endfor %}
-            </div>
-            {% endfor %}
-          </div>
-          {% if coverage_gap_sources %}
-          <section class="print-coverage-gaps">
-            <div class="print-coverage-gap-heading"><h3>Coverage gaps</h3><span>Investigated; not counted in consensus</span></div>
-            <div class="coverage-gap-columns">
-              {% for source in coverage_gap_sources %}{{ coverage_gap_row(source, true) }}{% endfor %}
-            </div>
-          </section>
-          {% endif %}
-        </section>
-
-        <div class="method-notes">
-          <article>
-            <h2>Overlap and limitations</h2>
-            <p>{% if guide.methodology.source_overlap_groups %}{% for group in guide.methodology.source_overlap_groups %}<strong>{{ group.label }}</strong>
-              ({{ group.source_ids | length }}){% if not loop.last %}; {% endif %}{% endfor %}.
-              {% else %}No possible overlap groups span multiple active sources.
-              {% endif %}
-              These relationships are disclosed, not deduplicated; each separately governed source
-              keeps one vote. Organizations may update endorsements after capture.</p>
-          </article>
-          <article>
-            <h2>Verify before voting</h2>
-            <p>{{ guide.methodology.verification_instructions }} This guide aggregates
-              endorsements; it is not independent candidate vetting.</p>
-          </article>
-        </div>
-      </div>
-      <footer class="page-two-footer">
-        <span>{{ site_footer_audit | safe }}</span>
-        <span>{{ guide.metadata.published_race_count }} races · <a href="{{ config.project_url }}"{{ external_link_attributes }}>Source and audit files</a></span>
-      </footer>
-    </section>
-  </div>
-
 
   {% set bindings_sources = namespace(items=[]) %}
   {% for s in lens_personalization.sources %}
@@ -849,8 +640,7 @@
   const supportSummary = (scored, selectedTotal = null) => (selectedTotal === null
     ? `Based on ${scored.explicitCount} endorsing ${scored.explicitCount === 1 ? 'source' : 'sources'}`
     : `Based on ${scored.explicitCount} of ${selectedTotal} selected sources`);
-  // H34: the compact-mode sibling caption, shortened the same way the print
-  // edition's own full/compact captions already are.
+  // H34: the compact-mode sibling caption, shortened for a denser card.
   const supportSummaryCompact = (scored, selectedTotal = null) => (selectedTotal === null
     ? `${scored.explicitCount} sources`
     : `${scored.explicitCount} of ${selectedTotal} selected`);
@@ -1181,81 +971,6 @@
   </script>
   <script>
   (() => {
-    const initialQuery = new URLSearchParams(window.location.search);
-    const edition = initialQuery.get('edition');
-    if (edition === 'compact' || edition === 'detailed') {
-      document.documentElement.classList.add(`${edition}-edition`);
-    }
-    const centerPrintInk = () => {
-      if (window.__disablePrintInkCentering) return;
-      const printGuide = document.querySelector('.print-guide');
-      if (!printGuide || getComputedStyle(printGuide).display === 'none') return;
-      const context = document.createElement('canvas').getContext('2d');
-      if (!context) return;
-      const inkBounds = (element) => {
-        const style = getComputedStyle(element);
-        context.font = [style.fontStyle, style.fontWeight, style.fontSize, style.fontFamily]
-          .join(' ');
-        const text = [...element.childNodes]
-          .filter((node) => node.nodeType === Node.TEXT_NODE)
-          .map((node) => node.textContent).join('');
-        const metrics = context.measureText(text);
-        const marker = document.createElement('i');
-        marker.style.cssText = 'display:inline-block;width:0;height:0;overflow:hidden;'
-          + 'margin:0;padding:0;border:0;vertical-align:baseline';
-        element.append(marker);
-        const baseline = marker.getBoundingClientRect().top;
-        marker.remove();
-        return {
-          top: baseline - metrics.actualBoundingBoxAscent,
-          bottom: baseline + metrics.actualBoundingBoxDescent,
-        };
-      };
-      const center = (container, elements, paddingTarget = container) => {
-        paddingTarget.style.removeProperty('padding-top');
-        paddingTarget.style.removeProperty('padding-bottom');
-        for (let attempt = 0; attempt < 4; attempt += 1) {
-          const bounds = elements.map(inkBounds);
-          const containerRect = container.getBoundingClientRect();
-          const inkTop = Math.min(...bounds.map((bound) => bound.top));
-          const inkBottom = Math.max(...bounds.map((bound) => bound.bottom));
-          const imbalance = (inkTop - containerRect.top) -
-            (containerRect.bottom - inkBottom);
-          if (Math.abs(imbalance) < .05) break;
-          const offset = -imbalance / 2;
-          const style = getComputedStyle(paddingTarget);
-          paddingTarget.style.paddingTop =
-            `${(Number.parseFloat(style.paddingTop) + offset).toFixed(3)}px`;
-          paddingTarget.style.paddingBottom =
-            `${(Number.parseFloat(style.paddingBottom) - offset).toFixed(3)}px`;
-        }
-      };
-      document.querySelectorAll('.print-meter').forEach((meter) => {
-        const text = meter.querySelector('.print-meter-text');
-        const label = meter.querySelector('.print-meter-label');
-        if (text && label) center(meter, [text], label);
-      });
-      document.documentElement.dataset.printInkCentered = 'true';
-    };
-    const printMedia = window.matchMedia('print');
-    const calibratePrintInk = () => {
-      if (!printMedia.matches) return;
-      if (document.fonts.status === 'loaded') {
-        centerPrintInk();
-      } else {
-        document.fonts.ready.then(() => {
-          if (printMedia.matches) centerPrintInk();
-        });
-      }
-    };
-    window.addEventListener('beforeprint', calibratePrintInk);
-    printMedia.addEventListener('change', (event) => {
-      if (event.matches) {
-        requestAnimationFrame(() => requestAnimationFrame(calibratePrintInk));
-      }
-    });
-    calibratePrintInk();
-
     const select = document.querySelector('#race-filter');
     const completeFilter = document.querySelector('#complete-filter');
     const viewInputs = [...document.querySelectorAll('input[name="ballot-view"]')];

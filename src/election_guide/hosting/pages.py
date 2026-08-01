@@ -71,7 +71,6 @@ class StagedPagesSite:
     source_panel_id: str
     source_panel_hash: str
     html_path: Path
-    pdf_paths: tuple[Path, ...]
     election_paths: tuple[Path, ...]
     sources_path: Path
 
@@ -255,9 +254,6 @@ def stage_pages_site(
             shutil.rmtree(stage, ignore_errors=True)
 
     current_root = output_dir / "e" / current.declaration.election_id
-    pdf_paths = tuple(
-        current_root / Path(relative).name for relative in _guide_pdf_artifacts(current.status)
-    )
     return StagedPagesSite(
         output_dir=output_dir,
         current_election_id=current.declaration.election_id,
@@ -266,7 +262,6 @@ def stage_pages_site(
         source_panel_id=current.status.source_panel_id,
         source_panel_hash=current.status.source_panel_hash,
         html_path=current_root / "index.html",
-        pdf_paths=pdf_paths,
         election_paths=tuple(
             output_dir / "e" / bundle.declaration.election_id for bundle in verified
         ),
@@ -337,10 +332,6 @@ def _verify_staged_pages_site(
                 f"e/{declared.election_id}/release-status.json",
                 f"e/{declared.election_id}/release-manifest.json",
                 f"e/{declared.election_id}/sources/index.html",
-                *(
-                    f"e/{declared.election_id}/{Path(relative).name}"
-                    for relative in _guide_pdf_artifacts(status)
-                ),
             }
         )
         compare_asset = f"e/{declared.election_id}/comparisons/index.html"
@@ -462,32 +453,16 @@ def _stage_verified_bundles(
         html_source = bundle.directory / bundle.status.guide_html_artifact
         shutil.copy2(html_source, election_root / "index.html")
 
-        names = [
-            *(Path(relative).name for relative in _guide_pdf_artifacts(bundle.status)),
-            "release-status.json",
-            "release-manifest.json",
-        ]
-        if len(names) != len(set(names)) or "index.html" in names:
-            raise ValueError(f"bundle {bundle.declaration.bundle_id!r} repeats a public asset name")
-        for relative in _guide_pdf_artifacts(bundle.status):
-            shutil.copy2(bundle.directory / relative, election_root / Path(relative).name)
-        shutil.copy2(
-            bundle.directory / "release-status.json",
-            election_root / "release-status.json",
-        )
-        shutil.copy2(
-            bundle.directory / "release-manifest.json",
-            election_root / "release-manifest.json",
-        )
+        # One list, so what is copied and what the worker will route are the
+        # same set by construction.
+        names = ("release-status.json", "release-manifest.json")
+        for name in names:
+            shutil.copy2(bundle.directory / name, election_root / name)
 
         sources_dir = election_root / "sources"
         sources_dir.mkdir()
         (sources_dir / "index.html").write_text(
-            _sources_html(
-                bundle.view_model,
-                canonical_origin,
-                pdf_filename=Path(bundle.status.guide_pdf_artifact).name,
-            ),
+            _sources_html(bundle.view_model, canonical_origin),
             encoding="utf-8",
         )
 
@@ -501,11 +476,7 @@ def _stage_verified_bundles(
             compare_dir = election_root / "comparisons"
             compare_dir.mkdir()
             (compare_dir / "index.html").write_text(
-                _comparison_html(
-                    _comparison_route_view_model(bundle),
-                    canonical_origin,
-                    pdf_filename=Path(bundle.status.guide_pdf_artifact).name,
-                ),
+                _comparison_html(_comparison_route_view_model(bundle), canonical_origin),
                 encoding="utf-8",
             )
             public_paths.update({f"{root_path}comparisons/", f"{root_path}comparisons/index.html"})
@@ -526,38 +497,21 @@ def _comparison_route_view_model(bundle: _VerifiedBundle) -> PublicationViewMode
     )
 
 
-def _sources_html(
-    view_model: PublicationViewModel, canonical_origin: str, *, pdf_filename: str
-) -> str:
+def _sources_html(view_model: PublicationViewModel, canonical_origin: str) -> str:
     """Render the per-election sources/customization page (issue 107)."""
     return render_sources_document(
         view_model,
         public_site_url=canonical_origin,
         project_url=PROJECT_URL,
-        pdf_filename=pdf_filename,
     )
 
 
-def _comparison_html(
-    view_model: PublicationViewModel, canonical_origin: str, *, pdf_filename: str
-) -> str:
+def _comparison_html(view_model: PublicationViewModel, canonical_origin: str) -> str:
     """Render a per-election comparison route after hosting has admitted it."""
     return render_comparison_document(
         view_model,
         public_site_url=canonical_origin,
         project_url=PROJECT_URL,
-        pdf_filename=pdf_filename,
-    )
-
-
-def _guide_pdf_artifacts(status: ReleaseStatus) -> tuple[str, ...]:
-    return (
-        status.guide_pdf_artifact,
-        *(
-            (status.detailed_guide_pdf_artifact,)
-            if status.detailed_guide_pdf_artifact is not None
-            else ()
-        ),
     )
 
 
@@ -1030,6 +984,12 @@ export default {{
     for (const root of ELECTION_ROOTS) {{
       if (url.pathname === root.slice(0, -1)) {{
         return redirectPath(url, root, 308);
+      }}
+      // The generated PDF edition was retired (issue 193). Every PDF this
+      // election ever published lived directly under its root, so anything
+      // still linking one lands on the guide it was made from.
+      if (url.pathname.startsWith(root) && url.pathname.endsWith(".pdf")) {{
+        return redirectPath(url, root, 301);
       }}
     }}
 {comparison_redirect}    if (!PUBLIC_PATHS.has(url.pathname)) {{

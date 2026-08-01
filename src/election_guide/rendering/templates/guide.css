@@ -9,11 +9,6 @@
    never could. */
 .eyebrow { color: var(--mint); font-size: .78rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
 .eyebrow-paper { color: var(--teal); }
-/* Print-only identity line for the detailed/overflow PDF edition, which
-   hides the interactive band (see the detailed-edition print rules below);
-   the band already carries the brand on screen, so this stays invisible
-   there. */
-.detailed-edition-brand { display: none; }
 .filter-status-part { white-space: nowrap; }
 .screen-sections { min-width: 0; padding: 1rem clamp(1rem, 4vw, 3rem) 4rem; }
 .screen-section { margin: 2.5rem 0 4rem; }
@@ -160,7 +155,6 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
 /* The shared footer band/audit classes (.site-footer, .site-footer-band,
    .site-footer-audit, ...) now live in base.css alongside .site-band, since
    About and the archive render them too without loading this stylesheet. */
-.detailed-source-directory { display: none; }
 /* The classes below are shared with the dedicated sources page
    (sources.html.j2), which reads this same stylesheet and still renders its
    own checkbox tree with this markup; the guide itself has none of it left. */
@@ -186,7 +180,6 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
 .coverage-gap-row a { min-width: 0; color: var(--navy); font-size: .8rem; font-weight: 700; overflow-wrap: anywhere; }
 .coverage-gap-row strong { color: var(--muted); font-size: .68rem; white-space: nowrap; }
 .coverage-gap-row p { margin: .35rem 0 0; color: var(--muted); font-size: .72rem; line-height: 1.35; }
-.print-guide { display: none; }
 
 @media (max-width: 1050px) {
   html.compact-ballot-mode .race-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -223,142 +216,33 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
   html:not(.compact-ballot-mode) .screen-race-result { grid-template-columns: minmax(0, 1fr); gap: .4rem; }
   html:not(.compact-ballot-mode) .screen-meter { width: 100%; }
 }
-@page { size: Letter portrait; margin: .28in .3in; }
 
+@page { margin: .5in .55in; }
+
+/* Ctrl+P is the printable edition (issue 193). No second rendering of the
+   guide exists any more, so these rules only have to make the page the
+   reader is already looking at legible on paper: drop the guide's own
+   screen-only notices, flatten its surfaces onto white, and keep every race
+   whole across a page break. The shared shell — band, page head, election-day
+   slot, sticky filter bar, footer — is printed by base.css for every page. */
 @media print {
-  .lens-banner, .lens-notice { display: none; }
-  :root { --print-meter-width: 1.65in; --print-sans: Helvetica, "Liberation Sans", sans-serif; }
-  html, body { width: 8.5in; margin: 0; background: white; color: #111820; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-  .skip-link, .screen-guide, script { display: none !important; }
-  .print-guide { display: block; font-family: var(--print-sans); }
-  .print-page { position: relative; width: 7.9in; height: 10.44in; overflow: hidden; }
-  .print-page-two { break-before: page; page-break-before: always; }
-  .print-header { display: flex; justify-content: space-between; align-items: flex-end; height: .58in; border-bottom: 3px solid var(--navy); }
-  .print-header p { margin: 0; color: var(--teal); font-size: 7.2pt; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
-  .print-header h1 { margin: .015in 0 0; color: var(--navy); font: 800 17pt/.95 var(--print-sans); letter-spacing: -.025em; }
-  .print-header-meta { padding-bottom: .015in; text-align: right; color: var(--muted); font-size: 6.8pt; line-height: 1.35; }
-  .print-intro { margin: .045in 0 .07in; color: var(--muted); font-size: 6.7pt; line-height: 1.2; }
-  .print-races { display: grid; grid-template-columns: 1fr 1fr; gap: .14in; height: 9.32in; }
-  .print-race-column { display: flex; min-width: 0; height: 100%; flex-direction: column; }
-  .print-section-title { break-after: avoid; margin: .03in 0 0; padding: .035in .065in; background: var(--navy); color: white; font-size: 7.2pt; line-height: 1; letter-spacing: .08em; text-transform: uppercase; }
-  .print-section-title:first-child { margin-top: 0; }
-  .print-race { display: flex; min-height: 0; flex: 1 1 0; flex-direction: column; justify-content: center; break-inside: avoid; margin: 0; padding: .035in .065in .04in; border: .5px solid #c9d5dd; border-top: 0; border-left: 2px solid var(--teal); background: white; }
-  .print-race:nth-of-type(even) { background: #f2f6f8; }
-  .print-race-title { color: var(--muted); font-size: 6.35pt; font-weight: 800; line-height: 1.05; text-transform: uppercase; word-spacing: .03em; }
-  .print-race-result { display: grid; grid-template-columns: minmax(0, 1fr) var(--print-meter-width); align-items: center; gap: .06in; margin-top: .022in; }
-  .print-race-result > strong { min-width: 0; color: var(--navy); font: 800 8.9pt/1 var(--print-sans); }
-  .print-meter { display: flex; align-items: center; justify-content: flex-start; width: var(--print-meter-width); height: .15in; overflow: hidden; border: .5px solid #afc4ca; border-radius: .075in; background: linear-gradient(to right, var(--teal) 0 var(--meter-fill), var(--meter-track) var(--meter-fill) 100%); box-shadow: inset 0 0 0 .5px rgba(16, 42, 67, .05); }
-  .print-meter-label { display: flex; align-items: center; justify-content: flex-start; width: 100%; height: 100%; padding: .007in .05in; color: white; font-size: 6.6pt; font-variant-numeric: tabular-nums; font-weight: 700; line-height: 1; letter-spacing: 0; text-align: left; white-space: nowrap; }
-  .print-meter.meter-no-majority { background: linear-gradient(to right, var(--amber) 0 var(--meter-fill), var(--meter-track) var(--meter-fill) 100%); }
-  .print-meter.meter-no-majority .print-meter-label { color: var(--navy); }
-  .print-meter-na { background: var(--meter-track); }
-  .print-meter-na .print-meter-label { color: var(--muted); }
-  /* Issue 124 emptied the left cell (it held the Times pick); the caption and
-     the compact warning keep the meter column they have always occupied
-     rather than sliding under the race name. */
-  /* The retired Times pill (issue 124) was this row's tallest child, so the
-     row keeps that height explicitly and top-aligns its one remaining child.
-     Without both, the caption drops close enough to the warning line beneath
-     it that PDF text extraction merges the two runs into one. */
-  .print-race-context { display: grid; grid-template-columns: minmax(0, 1fr) var(--print-meter-width); align-items: start; gap: .06in; margin-top: .02in; min-height: .15in; color: var(--muted); font-size: 6.1pt; line-height: 1.05; }
-  .print-support { grid-column: 2; min-width: 0; text-align: right; white-space: nowrap; }
-  .print-support-compact { display: none; }
-  .print-compact-warning { display: none; }
-  .print-race-notes { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .02in; margin-top: .008in; color: var(--muted); font-size: 6pt; line-height: 1.08; }
-  .print-race-notes span { min-width: 0; }
-  .print-race-notes span:last-child { flex-shrink: 0; color: #812b25; font-weight: 800; }
-  .print-page footer { position: absolute; bottom: 0; left: 0; right: 0; padding-top: .045in; border-top: .5px solid #9fb3c8; color: var(--muted); font-size: 6.2pt; }
-  .print-page-one footer { left: 0; }
-  .print-page-two footer { left: .08in; right: .08in; }
-  .method-header { display: grid; grid-template-columns: 1fr auto; align-items: end; height: .72in; border-bottom: 3px solid var(--navy); }
-  .method-header p { grid-column: 1 / -1; margin: 0; color: var(--teal); font-size: 7.2pt; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
-  .method-header h1 { margin: 0; color: var(--navy); font: 800 20pt/.95 var(--print-sans); letter-spacing: -.025em; }
-  .method-header div { max-width: 2.5in; padding-bottom: .02in; color: var(--muted); font-size: 6pt; text-align: right; }
-  .page-two-content { display: flex; height: 9.45in; flex-direction: column; padding-top: .08in; }
-  .method-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: .07in; }
-  .method-summary article, .method-notes article { min-width: 0; padding: .08in; border: .5px solid #c9d5dd; border-radius: .055in; background: #f7f9fb; }
-  .method-summary article { border-top: 2.5px solid var(--teal); }
-  .method-summary h2, .method-notes h2 { margin: 0 0 .035in; color: var(--navy); font: 800 8.3pt/1 var(--print-sans); }
-  .method-summary p, .method-notes p { margin: .025in 0; color: var(--muted); font-size: 6.2pt; line-height: 1.22; }
-  .source-panel { display: flex; min-height: 0; flex: 1 1 auto; flex-direction: column; margin-top: .075in; padding: .075in .09in .085in; border: .5px solid #c9d5dd; border-radius: .06in; background: white; }
-  .source-panel-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: .1in; padding-bottom: .045in; border-bottom: 1.5px solid var(--navy); }
-  .source-panel-heading p { margin: 0; color: var(--teal); font-size: 6pt; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
-  .source-panel-heading h2 { margin: .012in 0 0; color: var(--navy); font: 800 11.5pt/1 var(--print-sans); }
-  .source-panel-heading > span { padding-bottom: .01in; color: var(--muted); font-size: 6.1pt; white-space: nowrap; }
-  .source-columns { display: grid; min-height: 0; flex: 1 1 auto; grid-template-columns: 1fr 1fr; gap: .16in; padding-top: .045in; }
-  .source-column { display: flex; min-width: 0; flex-direction: column; }
-  .source-category-group { display: contents; }
-  .source-column + .source-column { padding-left: .12in; border-left: .5px solid #c9d5dd; }
-  .source-column h3 { margin: .045in 0 .015in; color: var(--teal); font: 800 6.35pt/1.05 var(--print-sans); letter-spacing: .04em; text-transform: uppercase; }
-  .source-column h3:first-child { margin-top: 0; }
-  .source-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: .055in; min-height: .15in; flex: 1 1 0; padding: .012in .03in .011in; border-bottom: .5px solid #d9e2ec; border-left: 2px solid var(--teal); background: #f7f9fb; font-size: 6.25pt; line-height: 1.08; }
-  .source-row a { min-width: 0; color: var(--navy); font-weight: 700; text-decoration-thickness: .4px; text-underline-offset: .8px; overflow-wrap: anywhere; }
-  .source-row span { color: var(--tone-agree-text); font-size: 6pt; font-weight: 800; white-space: nowrap; }
-  .source-row-comparison { border-left-color: #b56a00; background: var(--tone-differ-bg); }
-  .source-row-comparison span { color: var(--tone-differ-text); }
-  .print-coverage-gaps { margin-top: .055in; padding-top: .04in; border-top: 1px solid #c9d5dd; }
-  .print-coverage-gap-heading { display: flex; align-items: baseline; justify-content: space-between; gap: .1in; margin-bottom: .025in; }
-  .print-coverage-gap-heading h3 { margin: 0; color: var(--navy); font: 800 7pt/1 var(--print-sans); text-transform: uppercase; }
-  .print-coverage-gap-heading span { color: var(--muted); font-size: 6pt; }
-  .print-coverage-gaps .coverage-gap-columns { display: grid; grid-template-columns: 1fr 1fr; gap: .07in; }
-  .print-coverage-gaps .coverage-gap-row { min-width: 0; padding: .035in .045in; border: .5px solid #c9d5dd; border-left: 2px solid #829ab1; background: #f7f9fb; }
-  .print-coverage-gaps .coverage-gap-row div { display: flex; align-items: baseline; justify-content: space-between; gap: .05in; }
-  .print-coverage-gaps .coverage-gap-row a { min-width: 0; color: var(--navy); font-size: 6pt; font-weight: 700; overflow-wrap: anywhere; }
-  .print-coverage-gaps .coverage-gap-row strong { flex: 0 0 auto; color: var(--muted); font-size: 6pt; font-weight: 700; }
-  .method-notes { display: grid; grid-template-columns: 1.15fr .85fr; gap: .07in; margin-top: .075in; }
-  .method-notes article:first-child { border-left: 2.5px solid var(--teal); }
-  .method-notes article:last-child { border-left: 2.5px solid var(--teal); }
-  .page-two-footer { display: flex; justify-content: space-between; gap: .15in; }
-  .page-two-footer span:last-child { text-align: right; }
-
-  html.compact-edition .print-race-notes { display: none; }
-  html.compact-edition { --print-meter-width: 1.25in; }
-  html.compact-edition .print-race { padding-top: .025in; padding-bottom: .03in; }
-  html.compact-edition .print-race-result { margin-top: .012in; }
-  html.compact-edition .print-race-context { margin-top: .01in; }
-  html.compact-edition .print-race-result > strong { font-size: 8.1pt; }
-  html.compact-edition .print-support-full { display: none; }
-  html.compact-edition .print-support-compact { display: block; }
-  html.compact-edition .print-race-context { grid-template-columns: minmax(0, 1fr) var(--print-meter-width); }
-  /* Pinned rather than auto-placed: with the Times pick gone from row 1 the
-     warning would otherwise slide up beside the caption, changing this
-     edition's proven per-race height. */
-  html.compact-edition .print-compact-warning { grid-row: 2; grid-column: 1; display: inline; flex-shrink: 0; color: #812b25; font-size: 6pt; }
-
-  html.detailed-edition, html.detailed-edition body { width: auto; }
-  html.detailed-edition .print-guide { display: none !important; }
-  html.detailed-edition .screen-guide { display: block !important; max-width: none; min-height: 0; background: white; font-family: var(--print-sans); }
-  html.detailed-edition .skip-link, html.detailed-edition .site-band,
-  html.detailed-edition .election-day,
-  html.detailed-edition .filter-control-bar { display: none !important; }
-  /* The hero no longer states the brand (item L54); this plain-text,
-     link-free line (hidden on screen; see .detailed-edition-brand in the
-     screen ruleset below) keeps "Seattle Elections Guide" identifiable on
-     the first page without reintroducing an interactive band link into a
-     print/PDF context. */
-  html.detailed-edition .detailed-edition-brand { display: block; margin: .3in .3in 0; color: var(--navy); font: 700 13pt/1 var(--print-sans); }
-  /* The removed screen-only deck no longer contributes height here; retain
-     the detailed edition's proven pagination with equivalent whitespace. */
-  html.detailed-edition .page-head { padding: .1in .3in .45in; border-bottom-width: .08in; }
-  html.detailed-edition .page-head h1 { margin: .05in 0; font-size: 26pt; }
-  html.detailed-edition .page-tagline { margin: .05in 0; font-size: 11pt; }
-  html.detailed-edition .screen-sections { padding: .1in 0; }
-  html.detailed-edition .screen-section { margin: .12in 0 .2in; }
-  html.detailed-edition .section-heading h2 { margin: 0 0 .08in; font-size: 18pt; }
-  html.detailed-edition .race-grid { grid-template-columns: 1fr; gap: .08in; }
-  html.detailed-edition .race-card { break-inside: avoid; gap: .06in; padding: .12in; box-shadow: none; }
-  html.detailed-edition .race-card h3 { font-size: 13pt; }
-  html.detailed-edition .race-office, html.detailed-edition .support-line,
-  html.detailed-edition .insufficient-note { font-size: 8pt; }
-  html.detailed-edition .race-card details,
-  html.detailed-edition .site-footer-band { display: none; }
-  html.detailed-edition .site-footer { background: white; color: var(--ink); }
-  /* The audit line's linked update dates already provide revision provenance,
-     so the detailed edition keeps it visible and recolors it for the white
-     background. */
-  html.detailed-edition .detailed-footer-audit { display: block; padding: .7rem clamp(1rem, 4vw, 3rem); border-top: 1px solid var(--line); color: var(--muted); }
-  html.detailed-edition .site-footer-audit a { color: var(--blue); }
-  html.detailed-edition .detailed-source-directory { display: block; padding: .12in .3in .2in; }
-  html.detailed-edition .detailed-source-directory h2 { margin: 0 0 .08in; font-size: 14pt; }
-  html.detailed-edition .detailed-source-directory h3 { margin: .1in 0 .04in; font-size: 9pt; }
+  .lens-banner, .lens-notice { display: none !important; }
+  .screen-sections { padding: 0; }
+  .screen-section { margin: .18in 0 0; }
+  .section-heading h2 { margin: 0 0 .07in; font-size: 15pt; break-after: avoid; }
+  /* Both selectors carry the compact-mode specificity so a reader who
+     printed while the four-column compact view was on still gets columns
+     wide enough to hold a candidate name. */
+  html .race-grid, html.compact-ballot-mode .race-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .1in; }
+  html .race-card, html.compact-ballot-mode .race-card { gap: .04in; padding: .09in; background: var(--white); box-shadow: none; break-inside: avoid; }
+  html .race-office, html.compact-ballot-mode .race-office { min-height: 0; font-size: 7.5pt; }
+  html .race-card h3, html.compact-ballot-mode .race-card h3 { font-size: 12.5pt; }
+  html .screen-meter, html.compact-ballot-mode .screen-meter { width: 7.5rem; height: 1.2rem; }
+  html .screen-meter strong, html.compact-ballot-mode .screen-meter strong { font-size: 9.5pt; }
+  .screen-race-result, .screen-race-context { break-inside: avoid; }
+  .support-line, .lens-comparison, .insufficient-note { font-size: 8pt; }
+  .race-card-primary { margin: 0; padding: 0; }
+  /* A closed <dialog> already prints nothing; one left open by a reader who
+     printed from a race panel would otherwise print over the page. */
+  .race-detail-dialog { display: none !important; }
 }

@@ -298,9 +298,11 @@ sentences with real separators; every page keeps the skip link.
 
 ## Non-goals
 
-This document does not govern the **print/PDF editions** (they share the
-color tokens but follow their own compact layout idiom) or **dark mode**
-(none exists; adding one is a project, not a patch).
+This document governs the screen. Printing is the same page with its
+chrome suppressed (issue 193 retired the separate PDF edition), so the
+print stylesheet inherits these rules rather than restating them. This
+document does not govern **dark mode** (none exists; adding one is a
+project, not a patch).
 
 ## Changing this document
 
