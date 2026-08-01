@@ -8,6 +8,7 @@ import json
 import re
 from html import unescape
 from pathlib import Path
+from urllib.parse import parse_qs, urlencode
 
 import pytest
 
@@ -117,6 +118,20 @@ def test_compare_document_server_renders_default_contract_snapshot() -> None:
     assert "data-comparison-copy" not in rendered
     assert "data-footer-share" in rendered
     assert "wireFooterShare();" in rendered
+
+    presets = re.search(r'<div class="comparison-presets".*?</div>', rendered, re.S)
+    assert presets is not None
+    links = re.findall(r'<a href="#([^"]+)">([^<]+)</a>', presets.group(0))
+    assert [label for _, label in links] == [
+        "The Stranger and The Times",
+        "Labor and environment",
+        "All sources and The Urbanist",
+    ]
+    assert [parse_qs(unescape(fragment))["cols"] for fragment, _ in links] == [
+        ["strnstim"],
+        ["GlabGenv"],
+        ["gallurbn"],
+    ]
 
     table = re.search(r'<table class="comparison-table".*?</table>', rendered, flags=re.DOTALL)
     assert table is not None
@@ -931,6 +946,60 @@ def test_compare_client_migrates_stale_links_without_promoting_a_new_reference(
     assert "data=stale-data" not in traversed["hash"]
 
 
+def test_each_comparison_preset_clicks_and_loads_its_exact_ordered_columns(
+    tmp_path: Path,
+) -> None:
+    html_path = _comparison_html_path(tmp_path)
+    clicked = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          const wait = () => new Promise((resolve) => setTimeout(resolve, 120));
+          const links = [...document.querySelectorAll('.comparison-presets a')];
+          const results = [];
+          for (const link of links) {
+            link.click();
+            await wait();
+            results.push({
+              label: link.textContent,
+              hash: location.hash,
+              columns: [...document.querySelectorAll(
+                '[data-comparison-head] [data-column-signal]',
+              )].map((heading) => heading.dataset.columnSignal),
+            });
+          }
+          return JSON.stringify({
+            hrefs: links.map((link) => link.getAttribute('href')),
+            results,
+          });
+        })()
+        """,
+    )
+    expected = [
+        ("The Stranger and The Times", ["strn", "stim"]),
+        ("Labor and environment", ["Glab", "Genv"]),
+        ("All sources and The Urbanist", ["gall", "urbn"]),
+    ]
+    assert [(item["label"], item["columns"]) for item in clicked["results"]] == expected
+    assert ["gall" in item["columns"] for item in clicked["results"]] == [False, False, True]
+
+    for href, (_, columns) in zip(clicked["hrefs"], expected, strict=True):
+        loaded = _evaluate_in_chrome(
+            html_path,
+            """
+            (() => JSON.stringify({
+              columns: [...document.querySelectorAll(
+                '[data-comparison-head] [data-column-signal]',
+              )].map((heading) => heading.dataset.columnSignal),
+              hash: location.hash,
+            }))()
+            """,
+            initial_url=f"{html_path.resolve().as_uri()}{href}",
+        )
+        assert loaded["columns"] == columns
+        assert loaded["hash"] == href
+
+
 def test_compare_client_presets_filters_and_url_round_trip(tmp_path: Path) -> None:
     html_path = _comparison_html_path(tmp_path)
     result = _evaluate_in_chrome(
@@ -965,8 +1034,8 @@ def test_compare_client_presets_filters_and_url_round_trip(tmp_path: Path) -> No
         })()
         """,
     )
-    assert result["presetHref"].startswith("#cmp=1&cols=gallstrnstim&")
-    assert result["presetColumns"] == ["gall", "strn", "stim"]
+    assert result["presetHref"].startswith("#cmp=1&cols=strnstim&")
+    assert result["presetColumns"] == ["strn", "stim"]
     assert "races=contested" in result["hash"]
     assert "diff=1" in result["hash"]
     assert result["rowCount"] > 0
@@ -1007,6 +1076,9 @@ def test_legacy_differing_and_contested_differences_fragments_restore_independen
         }))()
         """,
     )["hash"]
+    parameters = parse_qs(unescape(preset.removeprefix("#")))
+    parameters["cols"] = ["gallstrnstim"]
+    preset = f"#{urlencode(parameters, doseq=True)}"
     expression = """
     (() => JSON.stringify({
       differing: document.querySelector('[data-comparison-differences]').checked,

@@ -389,14 +389,14 @@ def render_comparison_document(
     preset_fragments = [
         (
             "The Stranger and The Times",
-            _comparison_fragment(view_model, ["gall", "strn", "stim"]),
+            _comparison_fragment(view_model, ["strn", "stim"]),
         ),
         (
             "Labor and environment",
-            _comparison_fragment(view_model, ["gall", "Glab", "Genv"]),
+            _comparison_fragment(view_model, ["Glab", "Genv"]),
         ),
         (
-            "The Urbanist",
+            "All sources and The Urbanist",
             _comparison_fragment(view_model, ["gall", "urbn"]),
         ),
     ]
