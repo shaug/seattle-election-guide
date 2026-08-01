@@ -827,8 +827,8 @@ def _about_html(
           <a href="{escaped_current_path}release-manifest.json">release manifest</a> are public JSON
           files for the current guide. The complete decision ledger, source metadata, and validation
           reports for every release are published in the
-          <a href="{PROJECT_URL}"{EXTERNAL_LINK_ATTRIBUTES}>project's source repository</a>, alongside the code that produced
-          them.</p>
+          <a href="{PROJECT_URL}"{EXTERNAL_LINK_ATTRIBUTES}>project's source repository</a>,
+          alongside the code that produced them.</p>
         <p>Past guides remain published at their own permanent addresses in the
           <a href="/e/">guide archive</a>.</p>
       </section>
