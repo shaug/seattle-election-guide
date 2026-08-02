@@ -106,6 +106,13 @@ class RaceCandidateDisplay(ClientPayloadModel):
     label: str
 
 
+class FilterScope(ClientPayloadModel):
+    """One option of the guide's Ballot filter, addressed by its token."""
+
+    value: str
+    label: str
+
+
 class RaceDisplay(ClientPayloadModel):
     """The audited presentation of one race that client code must be able to
     reproduce or restore.
@@ -119,6 +126,10 @@ class RaceDisplay(ClientPayloadModel):
     """
 
     race_id: str
+    race_label: str
+    """The race's display name. The dialog's share button used to read it back
+    out of the card's own `[data-display-role="race-label"]` text (issue
+    #239)."""
     candidates: list[RaceCandidateDisplay]
     """The audited default's own candidate order, with each candidate's display
     label. A lens that stops diverging restores exactly this order rather than
@@ -146,6 +157,14 @@ class GuidePayload(LensPayload):
     """The endorsements guide's payload."""
 
     races: list[RaceDisplay]
+    filter_scopes: list[FilterScope]
+    """Every Ballot-filter token the page offers, with the label the select
+    renders for it, in rendered order. The filter status line used to read the
+    selected option's text back out of the select (issue #239), and the set of
+    admissible tokens off `select.options`."""
+    sources_page_path: str
+    """Where the page's `[data-sources-link]` anchors point, so the module that
+    appends the live lens fragment does not have to be told by the template."""
     personalization: PersonalizationContract | None
     """Null while the release policy disables the lens: without it nothing on
     the page can rescore, so publishing it would ship a contract no code reads.
@@ -158,6 +177,9 @@ class SourcesPayload(LensPayload):
     A selection editor only: it never scores anything, so it publishes no
     personalization contract and no race display data.
     """
+
+    guide_path: str
+    """Where Save, Cancel, and Reset return the reader."""
 
 
 class ComparisonsPayload(ClientPayloadModel):
@@ -261,29 +283,40 @@ def _lens_fields(view_model: PublicationViewModel, *, contributing_only: bool) -
     }
 
 
-def guide_payload(view_model: PublicationViewModel, *, races: list[RaceDisplay]) -> GuidePayload:
+def guide_payload(
+    view_model: PublicationViewModel,
+    *,
+    races: list[RaceDisplay],
+    filter_scopes: list[FilterScope],
+    sources_page_path: str,
+) -> GuidePayload:
     """Build the guide's payload.
 
-    `races` comes from the renderer rather than from here, because it must be
-    the very text and order the server rendered — the renderer owns the audited
-    presentation, and the payload publishes it rather than recomputing it.
+    `races` and `filter_scopes` come from the renderer rather than from here,
+    because they must be the very text and order the server rendered — the
+    renderer owns the audited presentation, and the payload publishes it rather
+    than recomputing it.
     """
     return GuidePayload(
         **_lens_fields(view_model, contributing_only=True),
         races=races,
+        filter_scopes=filter_scopes,
+        sources_page_path=sources_page_path,
         personalization=(
             view_model.personalization if view_model.personalization.policy.enabled else None
         ),
     )
 
 
-def sources_payload(view_model: PublicationViewModel) -> SourcesPayload:
+def sources_payload(view_model: PublicationViewModel, *, guide_path: str) -> SourcesPayload:
     """Build the sources editor's payload.
 
     Categories and sources are published in full regardless of the lens policy,
     and regardless of contribution status: this page renders the whole tree.
     """
-    return SourcesPayload(**_lens_fields(view_model, contributing_only=False))
+    return SourcesPayload(
+        **_lens_fields(view_model, contributing_only=False), guide_path=guide_path
+    )
 
 
 def comparisons_payload(

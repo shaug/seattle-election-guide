@@ -5,8 +5,10 @@ import { fileURLToPath } from 'node:url';
 import {
   decodeLensFragment,
   encodeLensFragment,
+  fragmentRaceTarget,
   LENS_SCHEMA_VERSION,
   lensContext,
+  withRaceTarget,
 } from '../../src/election_guide/rendering/templates/lens-url.mjs';
 import { assertModuleGuard } from './support/module-guards.mjs';
 
@@ -486,4 +488,70 @@ test('the committed panel snapshot round-trips through the codec', () => {
       `${source.id} is not selectable and must be refused`,
     );
   }
+});
+
+// The race segment. The dialog's hash routing (issues 62/73) predates the lens
+// (issue 86) and both live in one fragment, so the dialog needs the race id out
+// of a fragment this codec may otherwise be unable to admit. Until issue #239
+// it hand-parsed the hash for it, twice, in a classic script.
+
+test('the race segment is read out of a lens fragment and a bare anchor alike', () => {
+  assert.equal(fragmentRaceTarget('#race-mayor'), 'race-mayor');
+  assert.equal(fragmentRaceTarget('race-mayor'), 'race-mayor');
+  assert.equal(
+    fragmentRaceTarget(`#lens=${LENS_SCHEMA_VERSION}&mode=a&race=race-mayor`),
+    'race-mayor',
+  );
+  assert.equal(fragmentRaceTarget(`#lens=${LENS_SCHEMA_VERSION}&mode=a`), '');
+  assert.equal(fragmentRaceTarget(''), '');
+  assert.equal(fragmentRaceTarget(null), '');
+  assert.equal(fragmentRaceTarget(undefined), '');
+});
+
+test('a fragment that is not valid percent-encoding names no race rather than throwing', () => {
+  assert.equal(fragmentRaceTarget('#%E0%A4%A'), '');
+  assert.equal(withRaceTarget('#%E0%A4%A', 'race-mayor'), '#race-mayor');
+});
+
+test('rewriting the race segment leaves every other segment exactly as found', () => {
+  const fragment = encoded({
+    mode: 's',
+    sourceCodes: ['strn', 'urbn'],
+    raceTarget: 'race-mayor',
+  });
+  const rewritten = withRaceTarget(`#${fragment}`, 'race-council');
+  const decoded = decodeLensFragment(rewritten, context());
+
+  assert.equal(decoded.status, 'valid');
+  assert.equal(decoded.state.raceTarget, 'race-council');
+  assert.deepEqual(decoded.state.sourceCodes, ['strn', 'urbn']);
+});
+
+test('dropping the race segment keeps the selection, and only the selection', () => {
+  const fragment = encoded({ mode: 's', sourceCodes: ['strn'], raceTarget: 'race-mayor' });
+  const decoded = decodeLensFragment(withRaceTarget(`#${fragment}`, null), context());
+
+  assert.equal(decoded.status, 'valid');
+  assert.equal(decoded.state.raceTarget, null);
+  assert.deepEqual(decoded.state.sourceCodes, ['strn']);
+});
+
+test('a fragment with no lens reduces to the bare race target, as the dialog always did', () => {
+  assert.equal(withRaceTarget('#race-mayor', 'race-council'), '#race-council');
+  assert.equal(withRaceTarget('#race-mayor', null), '');
+  assert.equal(withRaceTarget('', 'race-mayor'), '#race-mayor');
+  assert.equal(withRaceTarget('', null), '');
+});
+
+test('a stale-version fragment keeps its bindings through a race rewrite', () => {
+  // The case the dialog's own comment conceded: a link mid-migration must not
+  // lose the tokens the migration is about to read.
+  const stale = 'lens=2&mode=s&sel=strn&panel=old-panel&ph=abc123&data=old&scoring=old';
+  const rewritten = withRaceTarget(`#${stale}`, 'race-mayor');
+  const parameters = new URLSearchParams(rewritten.slice(1));
+
+  assert.equal(parameters.get('panel'), 'old-panel');
+  assert.equal(parameters.get('sel'), 'strn');
+  assert.equal(parameters.get('race'), 'race-mayor');
+  assert.equal(decodeLensFragment(rewritten, context()).status, 'stale_version');
 });

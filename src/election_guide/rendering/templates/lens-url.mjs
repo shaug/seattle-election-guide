@@ -15,6 +15,34 @@ const CATEGORY_PREFIX = 'G';
 const HASH_PREFIX_LENGTH = 12;
 
 /**
+ * What the codec needs to know about one category or source: whether a link may
+ * name it, and whether naming it means anything any more.
+ *
+ * Declared structurally rather than as `PersonalizationCategory`/
+ * `PersonalizationSource` because both of the codec's callers now hand it a
+ * page payload, whose `LensCategory`/`LensSource` carry the same two fields
+ * under the same names but not the rest of the personalization contract. The
+ * codec never reads the rest, so requiring it would be a type asserting more
+ * than the code does.
+ *
+ * @typedef {object} LensTokenBinding
+ * @property {boolean} selectable
+ * @property {string} panel_role
+ */
+
+/**
+ * The published identity a fragment is read and written against.
+ *
+ * @typedef {object} LensBindings
+ * @property {string} panel_id
+ * @property {string} panel_hash
+ * @property {{ configuration_id: string }} scoring
+ * @property {{ maximum_url_characters: number }} policy
+ * @property {readonly (LensTokenBinding & { code: string })[]} categories
+ * @property {readonly (LensTokenBinding & { code: string })[]} sources
+ */
+
+/**
  * The version bindings, token catalogs, and limits one fragment is read and
  * written against.
  *
@@ -24,8 +52,8 @@ const HASH_PREFIX_LENGTH = 12;
  * @property {string} dataVersion
  * @property {string} scoringId
  * @property {number} maximumUrlCharacters
- * @property {Map<string, PersonalizationCategory>} categories
- * @property {Map<string, PersonalizationSource>} sources
+ * @property {Map<string, LensTokenBinding>} categories
+ * @property {Map<string, LensTokenBinding>} sources
  */
 
 /**
@@ -77,27 +105,27 @@ const HASH_PREFIX_LENGTH = 12;
 /**
  * Read the version bindings and limits a fragment is written against.
  *
- * @param {PersonalizationContract} personalization
+ * @param {LensBindings} bindings
  * @param {string} dataVersion
  * @returns {LensContext}
  */
-export function lensContext(personalization, dataVersion) {
-  /** @type {Map<string, PersonalizationCategory>} */
+export function lensContext(bindings, dataVersion) {
+  /** @type {Map<string, LensTokenBinding>} */
   const categories = new Map();
-  /** @type {Map<string, PersonalizationSource>} */
+  /** @type {Map<string, LensTokenBinding>} */
   const sources = new Map();
-  for (const category of personalization.categories) {
+  for (const category of bindings.categories) {
     categories.set(category.code, category);
   }
-  for (const source of personalization.sources) {
+  for (const source of bindings.sources) {
     sources.set(source.code, source);
   }
   return {
-    panelId: personalization.panel_id,
-    panelHashPrefix: personalization.panel_hash.slice(0, HASH_PREFIX_LENGTH),
+    panelId: bindings.panel_id,
+    panelHashPrefix: bindings.panel_hash.slice(0, HASH_PREFIX_LENGTH),
     dataVersion,
-    scoringId: personalization.scoring.configuration_id,
-    maximumUrlCharacters: personalization.policy.maximum_url_characters,
+    scoringId: bindings.scoring.configuration_id,
+    maximumUrlCharacters: bindings.policy.maximum_url_characters,
     categories,
     sources,
   };
@@ -302,6 +330,70 @@ export function decodeLensFragment(fragment, context) {
     return invalid('audited_mode_carries_selection', { token: tokens[0] });
   }
   return { status: 'valid', state: { ...common, ...partitionTokens(tokens) }, binding };
+}
+
+/**
+ * The `race` segment of any fragment, whatever else the fragment carries.
+ *
+ * The race-detail dialog's hash routing (issues 62/73) predates the lens
+ * (issue 86) and both live in the same fragment, so the dialog needs the race
+ * id out of a fragment this codec may otherwise be unable to admit — a
+ * mid-migration `stale_version` link, or one that fails classification. That is
+ * why this is not `decodeLensFragment(...).state.raceTarget`: it reads the one
+ * segment the dialog owns and judges nothing else. It is still the codec's to
+ * own, because it is fragment parsing (docs/FRONTEND.md § State and URLs: no
+ * second script parses the hash by hand).
+ *
+ * @param {string|null|undefined} fragment
+ * @returns {string} The race target, or `''` when the fragment names none.
+ */
+export function fragmentRaceTarget(fragment) {
+  const raw = decodeFragment(fragment);
+  if (raw === '') return '';
+  if (!raw.includes('=')) return raw;
+  return new URLSearchParams(raw).get('race') ?? '';
+}
+
+/**
+ * The same fragment with only its `race` segment rewritten.
+ *
+ * Every other segment — the lens's own selection tokens and version bindings
+ * included — is left exactly as found, so opening, closing, or sharing a race
+ * never disturbs an active lens (issue 142). A fragment with no `=` (no active
+ * lens, an existing `#race-…` permalink, or a plain in-page anchor) reduces to
+ * the bare target, matching the dialog's own pre-lens behavior.
+ *
+ * @param {string|null|undefined} fragment
+ * @param {string|null} target
+ * @returns {string} A fragment including its leading `#`, or `''` for none.
+ */
+export function withRaceTarget(fragment, target) {
+  const raw = decodeFragment(fragment);
+  if (raw.includes('=')) {
+    const parameters = new URLSearchParams(raw);
+    if (target) parameters.set('race', target);
+    else parameters.delete('race');
+    return `#${parameters.toString()}`;
+  }
+  return target ? `#${target}` : '';
+}
+
+/**
+ * One fragment, percent-decoded and stripped of its `#`.
+ *
+ * A fragment that is not valid percent-encoding decodes to nothing rather than
+ * throwing: the two readers above both treated a `URIError` as "names no race",
+ * and a fragment this malformed carries no segment either of them can honor.
+ *
+ * @param {string|null|undefined} fragment
+ * @returns {string}
+ */
+function decodeFragment(fragment) {
+  try {
+    return decodeURIComponent(String(fragment ?? '').replace(/^#/, ''));
+  } catch {
+    return '';
+  }
 }
 
 /**

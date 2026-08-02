@@ -1,33 +1,35 @@
 // sources-entry.mjs is the standalone sources editor's client entry
-// (docs/FRONTEND.md § Modules). Like the guide, its page glue is still inline
-// and destructures the entry's `glue` object, so the same contract between
-// module and template is checked here until issue #239 removes both sides.
+// (docs/FRONTEND.md § Modules). Like the guide's, it handed its template a
+// `glue` object until issue #239 moved the page's behavior into modules; `boot`
+// is now its whole surface.
 
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { boot, glue } from '../../src/election_guide/rendering/templates/sources-entry.mjs';
+import * as entry from '../../src/election_guide/rendering/templates/sources-entry.mjs';
 import { assertModuleGuard } from './support/module-guards.mjs';
 
 const TEMPLATE = fileURLToPath(
   new URL('../../src/election_guide/rendering/templates/sources.html.j2', import.meta.url),
 );
 
-test('the entry offers the one invocation its template makes', () => {
-  assert.equal(typeof boot, 'function');
+test('the entry offers exactly the one invocation its template makes', () => {
+  assert.deepEqual(Object.keys(entry), ['boot']);
+  assert.equal(typeof entry.boot, 'function');
 });
 
-test('every name the template destructures is one the entry hands over', () => {
+test('the template reaches the bundle only through that invocation', () => {
   const source = readFileSync(TEMPLATE, 'utf8');
-  const destructuring = source.match(/const \{([^}]*)\} = SourcesPage\.glue;/);
-  assert.ok(destructuring, 'sources.html.j2 no longer destructures SourcesPage.glue');
-  const wanted = destructuring[1]
-    .split(',')
-    .map((name) => name.trim())
-    .filter(Boolean);
-  assert.deepEqual(wanted.slice().sort(), Object.keys(glue).sort());
-  for (const name of wanted) assert.equal(typeof glue[name], 'function');
+  assert.ok(
+    source.includes('SourcesPage.boot();'),
+    'sources.html.j2 no longer invokes the entry it inlines',
+  );
+  assert.ok(
+    !source.includes('SourcesPage.glue'),
+    'sources.html.j2 destructures the entry again. The page has one entry point, and its ' +
+      'behavior lives in modules (docs/FRONTEND.md § Modules).',
+  );
 });
 
 test('the module keeps client state out of storage', () => {
