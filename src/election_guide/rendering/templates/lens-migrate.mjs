@@ -12,6 +12,50 @@
 // one migration result. Wiring it into a page, encoding the result back into
 // a shareable link, and scoring it are each owned elsewhere.
 
+/**
+ * How one category token resolved against the current panel.
+ *
+ * @typedef {object} CategoryResolution
+ * @property {string} code
+ * @property {'current'|'retired'|'unresolved'|'unknown'} status
+ * @property {string} [formerId]
+ * @property {string} [reason]
+ * @property {string[]} [addedMemberCodes] Present only with origin history.
+ * @property {string[]} [removedMemberCodes] Present only with origin history.
+ */
+
+/**
+ * How one direct source token resolved against the current panel.
+ *
+ * @typedef {object} SourceResolution
+ * @property {string} code
+ * @property {'current'|'reclassified'|'retired'|'unavailable'|'unknown'|'removed'} status
+ * @property {string} [currentRole]
+ * @property {string} [formerId]
+ * @property {string} [reason]
+ */
+
+/**
+ * @typedef {object} MigrationReport
+ * @property {boolean} historyAvailable
+ * @property {CategoryResolution[]} categories
+ * @property {SourceResolution[]} sources
+ */
+
+/**
+ * @typedef {{ status: 'rejected', reason: 'unresolvable_category', category: string,
+ *     report: MigrationReport }
+ *   | { status: 'migrated', selection: import('./lens-url.mjs').LensState,
+ *     report: MigrationReport }
+ * } LensMigrationResult
+ */
+
+/**
+ * @param {Personalization} personalization
+ * @param {'source'|'category'} kind
+ * @param {string} code
+ * @returns {PersonalizationRetiredCode|undefined}
+ */
 function retiredEntry(personalization, kind, code) {
   return personalization.retired_codes.find((item) => item.kind === kind && item.code === code);
 }
@@ -27,10 +71,16 @@ function retiredEntry(personalization, kind, code) {
  * resolved entry also reports which current members are new and which
  * origin members are gone, so a caller can disclose the change rather than
  * silently broadening or narrowing what an equal-weighted selection meant.
+ *
+ * @param {string} code
+ * @param {Personalization} personalization
+ * @param {PanelSnapshot|null} originSnapshot
+ * @returns {CategoryResolution}
  */
 function resolveCategoryToken(code, personalization, originSnapshot) {
   const current = personalization.categories.find((item) => item.code === code);
-  if (current !== undefined && current.selectable && current.member_source_codes.length > 0) {
+  if (current?.selectable && current.member_source_codes.length > 0) {
+    /** @type {CategoryResolution} */
     const result = { code, status: 'current' };
     if (originSnapshot !== null) {
       // A category absent from the origin snapshot is treated as having had
@@ -69,10 +119,15 @@ function resolveCategoryToken(code, personalization, originSnapshot) {
  * migrated selection; it never forces a fallback to audited. Source codes
  * are permanent once issued, so a surviving code always names the same
  * source it always did.
+ *
+ * @param {string} code
+ * @param {Personalization} personalization
+ * @param {PanelSnapshot|null} originSnapshot
+ * @returns {SourceResolution}
  */
 function resolveSourceToken(code, personalization, originSnapshot) {
   const current = personalization.sources.find((item) => item.code === code);
-  if (current !== undefined && current.selectable) {
+  if (current?.selectable) {
     return { code, status: 'current' };
   }
   if (current !== undefined) {
@@ -100,6 +155,12 @@ function resolveSourceToken(code, personalization, originSnapshot) {
  * which origin members are gone. Nothing in this module requires it to
  * migrate correctly, since the current panel's cumulative retired-code
  * tombstones already resolve every prior retirement on their own.
+ *
+ * @param {{ state: import('./lens-url.mjs').LensState,
+ *   binding: import('./lens-url.mjs').LensBinding }} staleDecode
+ * @param {Personalization} personalization
+ * @param {PanelSnapshot|null} [originSnapshot]
+ * @returns {LensMigrationResult}
  */
 export function migrateLensState(staleDecode, personalization, originSnapshot = null) {
   const { state, binding } = staleDecode;

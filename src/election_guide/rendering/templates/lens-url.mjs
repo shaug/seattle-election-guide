@@ -14,9 +14,77 @@ const TOKEN_PATTERN = /^[0-9A-Za-z]{4}$/;
 const CATEGORY_PREFIX = 'G';
 const HASH_PREFIX_LENGTH = 12;
 
-/** Read the version bindings and limits a fragment is written against. */
+/**
+ * The version bindings, token catalogs, and limits one fragment is read and
+ * written against.
+ *
+ * @typedef {object} LensContext
+ * @property {string} panelId
+ * @property {string} panelHashPrefix
+ * @property {string} dataVersion
+ * @property {string} scoringId
+ * @property {number} maximumUrlCharacters
+ * @property {Map<string, PersonalizationCategory>} categories
+ * @property {Map<string, PersonalizationSource>} sources
+ */
+
+/**
+ * The four published identifiers a fragment carries so a stale link is
+ * recognizable as stale. Read from the fragment, so every field may be absent.
+ *
+ * @typedef {object} LensBinding
+ * @property {string|null} panelId
+ * @property {string|null} panelHashPrefix
+ * @property {string|null} dataVersion
+ * @property {string|null} scoringId
+ */
+
+/**
+ * Lens state in its decoded, canonical form.
+ *
+ * @typedef {object} LensState
+ * @property {'a'|'s'} mode
+ * @property {string|null} raceTarget
+ * @property {string[]} categoryCodes
+ * @property {string[]} sourceCodes
+ */
+
+/** Why a token or fragment could not be admitted. */
+/**
+ * @typedef {'malformed_token'|'unknown_token'|'case_confusable_token'
+ *   |'forbidden_token'|'oversized'|'unrecognized_fragment'|'repeated_parameter'
+ *   |'unsupported_schema'|'unknown_mode'|'ragged_selection'|'missing_binding'
+ *   |'audited_mode_carries_selection'} LensFailureReason
+ */
+
+/**
+ * Exactly one status per decode.
+ *
+ * @typedef {{ status: 'absent' }
+ *   | { status: 'legacy', raceTarget: string }
+ *   | { status: 'valid', state: LensState, binding: LensBinding }
+ *   | { status: 'stale_version', state: LensState, binding: LensBinding }
+ *   | { status: 'malformed', reason: LensFailureReason, [key: string]: unknown }
+ * } LensDecodeResult
+ */
+
+/**
+ * @typedef {{ status: 'ok', fragment: string }
+ *   | { status: 'rejected', reason: LensFailureReason, [key: string]: unknown }
+ * } LensEncodeResult
+ */
+
+/**
+ * Read the version bindings and limits a fragment is written against.
+ *
+ * @param {Personalization} personalization
+ * @param {string} dataVersion
+ * @returns {LensContext}
+ */
 export function lensContext(personalization, dataVersion) {
+  /** @type {Map<string, PersonalizationCategory>} */
   const categories = new Map();
+  /** @type {Map<string, PersonalizationSource>} */
   const sources = new Map();
   for (const category of personalization.categories) {
     categories.set(category.code, category);
@@ -35,11 +103,20 @@ export function lensContext(personalization, dataVersion) {
   };
 }
 
+/**
+ * @param {string} token
+ * @returns {boolean}
+ */
 function isCategoryToken(token) {
   return token.startsWith(CATEGORY_PREFIX);
 }
 
-/** The one canonical form: split on the reserved prefix, sort within each group. */
+/**
+ * The one canonical form: split on the reserved prefix, sort within each group.
+ *
+ * @param {readonly string[]} tokens
+ * @returns {{ categoryCodes: string[], sourceCodes: string[] }}
+ */
 function partitionTokens(tokens) {
   return {
     categoryCodes: tokens.filter(isCategoryToken).sort(),
@@ -47,6 +124,17 @@ function partitionTokens(tokens) {
   };
 }
 
+/**
+ * @typedef {{ ok: true, token: string }
+ *   | { ok: false, reason: LensFailureReason, token: string }
+ * } TokenClassification
+ */
+
+/**
+ * @param {string} token
+ * @param {LensContext} context
+ * @returns {TokenClassification}
+ */
 function classifyToken(token, context) {
   if (!TOKEN_PATTERN.test(token)) {
     return { ok: false, reason: 'malformed_token', token };
@@ -62,7 +150,13 @@ function classifyToken(token, context) {
   return { ok: true, token };
 }
 
-/** Distinguish a wrong-case near miss from a genuinely unknown token. */
+/**
+ * Distinguish a wrong-case near miss from a genuinely unknown token.
+ *
+ * @param {string} token
+ * @param {ReadonlyMap<string, unknown>} known
+ * @returns {'case_confusable_token'|'unknown_token'}
+ */
 function confusableReason(token, known) {
   const folded = token.toLowerCase();
   for (const code of known.keys()) {
@@ -78,6 +172,10 @@ function confusableReason(token, known) {
  * nothing this codec can express. It is dropped rather than rejected (see
  * `withoutComparisonTokens`), and an unknown token is not one of these — it
  * still fails classification.
+ *
+ * @param {string} token
+ * @param {LensContext} context
+ * @returns {boolean}
  */
 function isComparisonToken(token, context) {
   const known = isCategoryToken(token) ? context.categories : context.sources;
@@ -94,11 +192,20 @@ function isComparisonToken(token, context) {
  * naming a comparison source in the current panel named the same source when
  * the link was written — which is why this is safe to apply to a
  * `stale_version` link too, before its tokens are otherwise interpreted.
+ *
+ * @param {readonly string[]} tokens
+ * @param {LensContext} context
+ * @returns {string[]}
  */
 function withoutComparisonTokens(tokens, context) {
   return tokens.filter((token) => !isComparisonToken(token, context));
 }
 
+/**
+ * @param {LensFailureReason} reason
+ * @param {Record<string, unknown>} [detail]
+ * @returns {LensDecodeResult}
+ */
 function invalid(reason, detail) {
   return { status: 'malformed', reason, ...detail };
 }
@@ -110,6 +217,10 @@ function invalid(reason, detail) {
  * existing `#race-…` permalink, `valid` for a same-version lens link,
  * `stale_version` for a lens link written against another published version,
  * or `malformed` for anything that must not be scored.
+ *
+ * @param {string|null|undefined} fragment
+ * @param {LensContext} context
+ * @returns {LensDecodeResult}
  */
 export function decodeLensFragment(fragment, context) {
   const raw = String(fragment ?? '').replace(/^#/, '');
@@ -139,6 +250,7 @@ export function decodeLensFragment(fragment, context) {
     return invalid('ragged_selection', { length: selection.length });
   }
 
+  /** @type {string[]} */
   const parsed = [];
   for (let index = 0; index < selection.length; index += TOKEN_LENGTH) {
     const token = selection.slice(index, index + TOKEN_LENGTH);
@@ -158,6 +270,9 @@ export function decodeLensFragment(fragment, context) {
   }
 
   const raceTarget = parameters.get('race');
+  // Annotated because a narrowed literal widens back to `string` once it is a
+  // mutable object property, which would lose the two-mode guarantee above.
+  /** @type {Pick<LensState, 'mode'|'raceTarget'>} */
   const common = {
     mode,
     raceTarget: raceTarget === null || raceTarget === '' ? null : raceTarget,
@@ -194,9 +309,14 @@ export function decodeLensFragment(fragment, context) {
  *
  * Encoding is canonical and lossless for a same-version link: decoding the
  * result reproduces the same state, and re-encoding reproduces the same string.
+ *
+ * @param {Partial<LensState>} state
+ * @param {LensContext} context
+ * @returns {LensEncodeResult}
  */
 export function encodeLensFragment(state, context) {
   const mode = state.mode === 's' ? 's' : 'a';
+  /** @type {string[]} */
   const tokens = [];
   const requested = withoutComparisonTokens(
     [...(state.categoryCodes ?? []), ...(state.sourceCodes ?? [])],

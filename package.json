@@ -2,13 +2,18 @@
   "name": "seattle-election-guide-hosting",
   "private": true,
   "scripts": {
+    "lint": "biome ci",
+    "lint:fix": "biome check --write",
+    "typecheck": "tsc --noEmit",
     "pages:create": "wrangler pages project create seattle-elections --production-branch=main",
     "pages:deploy": "wrangler pages deploy --branch=main",
     "pages:dev": "wrangler pages dev",
     "pages:version": "wrangler --version"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.5.6",
     "esbuild": "0.28.1",
+    "typescript": "5.9.3",
     "wrangler": "4.113.0"
   }
 }

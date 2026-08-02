@@ -1,11 +1,10 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-
-import { assertModuleGuard } from './support/module-guards.mjs';
 import {
-  DIVERGENCE_DIMENSIONS,
   compareRaceResults,
+  DIVERGENCE_DIMENSIONS,
 } from '../../src/election_guide/rendering/templates/lens-divergence.mjs';
+import { assertModuleGuard } from './support/module-guards.mjs';
 
 /** A minimal scoreRace()-shaped result; only the fields compareRaceResults reads. */
 function raceResult(overrides = {}) {

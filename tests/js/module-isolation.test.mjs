@@ -9,9 +9,9 @@
 // loading has nowhere to hide.
 //
 // This check cannot see the document's "imports what it references" clause — a
-// free identifier is a runtime ReferenceError, never a load failure. The pure
-// modules' half of that clause is guarded in support/module-guards.mjs; the
-// rest arrives with `tsc --checkJs`.
+// free identifier is a runtime ReferenceError, never a load failure. That
+// clause is now `tsc --checkJs`'s: it reports any free identifier as TS2304
+// before this test ever runs.
 
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';

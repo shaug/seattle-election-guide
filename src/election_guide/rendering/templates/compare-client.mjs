@@ -9,11 +9,25 @@ import {
   encodeCompareFragment,
 } from './compare-url.mjs';
 
+/**
+ * The Comparisons page renders all of these before its entry runs, so each
+ * lookup is asserted rather than guarded. Only the bindings element is
+ * genuinely optional — the page is inert without a payload.
+ *
+ * @template {Element} T
+ * @param {string} selector
+ * @returns {T}
+ */
+function required(selector) {
+  return /** @type {T} */ (document.querySelector(selector));
+}
+
 /** Attach the interactive comparison table to a rendered Comparisons page. */
 export function wireComparisons() {
   const comparisonBindingsElement = document.querySelector('[data-comparison-bindings]');
   if (!comparisonBindingsElement) return;
-  const payload = JSON.parse(comparisonBindingsElement.textContent);
+  /** @type {ComparePageBindings} */
+  const payload = JSON.parse(/** @type {string} */ (comparisonBindingsElement.textContent));
   const personalization = payload.personalization;
   const comparisons = payload.comparisons;
   const context = compareContext(
@@ -23,19 +37,29 @@ export function wireComparisons() {
     payload.default_columns,
   );
   const engine = createColumnSignalEngine(personalization, comparisons);
-  const table = document.querySelector('[data-comparison-table]');
-  const head = document.querySelector('[data-comparison-head]');
-  const grid = document.querySelector('[data-comparison-grid]');
-  const scrollHint = document.querySelector('[data-comparison-scroll-hint]');
-  const notice = document.querySelector('[data-comparison-hidden-notice]');
-  const status = document.querySelector('[data-comparison-status]');
-  const sectionFilter = document.querySelector('[data-comparison-section-filter]');
-  const stickyControls = document.querySelector('[data-sticky-controls]');
+  /** @type {HTMLTableElement} */
+  const table = required('[data-comparison-table]');
+  /** @type {HTMLElement} */
+  const head = required('[data-comparison-head]');
+  /** @type {HTMLElement} */
+  const grid = required('[data-comparison-grid]');
+  /** @type {HTMLElement} */
+  const scrollHint = required('[data-comparison-scroll-hint]');
+  /** @type {HTMLElement} */
+  const notice = required('[data-comparison-hidden-notice]');
+  /** @type {HTMLElement} */
+  const status = required('[data-comparison-status]');
+  /** @type {HTMLSelectElement} */
+  const sectionFilter = required('[data-comparison-section-filter]');
+  /** @type {HTMLElement} */
+  const stickyControls = required('[data-sticky-controls]');
   const contestedIds = new Set(payload.contested_race_ids);
   const races = new Map(personalization.races.map((race) => [race.race_id, race]));
   const categories = personalization.categories.filter((category) => category.selectable);
   const sources = new Map(
-    personalization.sources.filter((source) => source.selectable).map((source) => [source.code, source]),
+    personalization.sources
+      .filter((source) => source.selectable)
+      .map((source) => [source.code, source]),
   );
 
   function syncStickyControlsHeight() {
@@ -60,32 +84,49 @@ export function wireComparisons() {
     }
     const atStart = grid.scrollLeft <= 2;
     const atEnd = grid.scrollLeft >= maximum - 2;
-    const position = atStart ? 'start' : (atEnd ? 'end' : 'middle');
+    const position = atStart ? 'start' : atEnd ? 'end' : 'middle';
     scrollHint.dataset.scrollPosition = position;
-    scrollHint.textContent = position === 'start'
-      ? 'More columns →'
-      : (position === 'end' ? '← More columns' : '← More columns →');
+    scrollHint.textContent =
+      position === 'start'
+        ? 'More columns →'
+        : position === 'end'
+          ? '← More columns'
+          : '← More columns →';
   }
   grid.addEventListener('scroll', syncComparisonScrollHint, { passive: true });
   new ResizeObserver(syncComparisonScrollHint).observe(grid);
 
+  /** @param {string} signal */
   const labelFor = (signal) => {
     if (signal === ALL_SOURCES_TOKEN) return 'All sources';
-    return categories.find((category) => category.code === signal)?.label
-      ?? payload.source_labels[signal]
-      ?? signal;
+    return (
+      categories.find((category) => category.code === signal)?.label ??
+      payload.source_labels[signal] ??
+      signal
+    );
   };
+  /** @param {string} signal */
   const isComparison = (signal) => {
     const category = categories.find((item) => item.code === signal);
-    return category?.panel_role === 'comparison' || sources.get(signal)?.panel_role === 'comparison';
+    return (
+      category?.panel_role === 'comparison' || sources.get(signal)?.panel_role === 'comparison'
+    );
   };
+  /** @param {ComparisonDisplayRace} display */
   const candidateLabels = (display) => ({
     ...display.candidate_names,
     ...display.measure_response_labels,
   });
+  /**
+   * The denominator default is numeric because the array is already numeric:
+   * an integer rational such as `3` splits to one element. `'1'` divided the
+   * same after coercion, so this reads as it always behaved.
+   *
+   * @param {string|null|undefined} rational
+   */
   const percentage = (rational) => {
     if (rational == null) return '';
-    const [top, bottom = '1'] = String(rational).split('/').map(Number);
+    const [top, bottom = 1] = String(rational).split('/').map(Number);
     const value = (top / bottom) * 100;
     return `${Number.isInteger(value) ? value : value.toFixed(1)}%`;
   };
@@ -97,8 +138,10 @@ export function wireComparisons() {
     section: 'all',
   };
   let disclosure = '';
+  /** @type {string|null} */
   let lastLocationKey = null;
-  const locationKey = () => `${window.location.pathname}${window.location.search}${window.location.hash}`;
+  const locationKey = () =>
+    `${window.location.pathname}${window.location.search}${window.location.hash}`;
 
   function stateFromLocation() {
     const decoded = decodeCompareFragment(window.location.hash, context);
@@ -106,8 +149,7 @@ export function wireComparisons() {
       state = { ...decoded.state, columns: [...decoded.state.columns] };
       if (state.columns.length < 2) state.columns = [...payload.default_columns];
       disclosure = '';
-    }
-    else if (decoded.status === 'absent') {
+    } else if (decoded.status === 'absent') {
       state = {
         columns: [...payload.default_columns],
         differencesOnly: false,
@@ -115,14 +157,14 @@ export function wireComparisons() {
         section: 'all',
       };
       disclosure = '';
-    }
-    else if (decoded.status === 'stale_version') {
+    } else if (decoded.status === 'stale_version') {
       const migration = migrateCompareState(decoded, personalization, context);
       if (migration.status === 'migrated' || migration.status === 'fallback') {
         state = { ...migration.state, columns: [...migration.state.columns] };
-        disclosure = migration.status === 'migrated'
-          ? 'This comparison link was updated for the current source list.'
-          : 'This comparison link could not be restored completely, so the default comparison is shown.';
+        disclosure =
+          migration.status === 'migrated'
+            ? 'This comparison link was updated for the current source list.'
+            : 'This comparison link could not be restored completely, so the default comparison is shown.';
         writeState('replace');
       }
     }
@@ -145,6 +187,13 @@ export function wireComparisons() {
     render();
   }
 
+  /**
+   * @param {string} value
+   * @param {string} text
+   * @param {string} current
+   * @param {ReadonlySet<string>} used
+   * @returns {HTMLOptionElement}
+   */
   function option(value, text, current, used) {
     const element = document.createElement('option');
     element.value = value;
@@ -154,6 +203,19 @@ export function wireComparisons() {
     return element;
   }
 
+  /**
+   * Which control the next render should return focus to, so a change made
+   * from the keyboard does not drop the reader back at the top of the page.
+   *
+   * @typedef {{ kind: 'picker'|'title', index: number }} FocusTarget
+   */
+
+  /**
+   * @param {string} signal
+   * @param {number} index
+   * @param {HTMLButtonElement} title
+   * @returns {HTMLSelectElement}
+   */
   function pickerFor(signal, index, title) {
     const select = document.createElement('select');
     select.className = 'comparison-column-picker';
@@ -201,6 +263,7 @@ export function wireComparisons() {
       if (writeState()) render({ kind: 'title', index });
     });
     let closing = false;
+    /** @param {boolean} restoreFocus */
     const closeEditor = (restoreFocus) => {
       if (closing || !select.isConnected) return;
       closing = true;
@@ -218,6 +281,11 @@ export function wireComparisons() {
     return select;
   }
 
+  /**
+   * @param {string} signal
+   * @param {number} index
+   * @returns {HTMLButtonElement}
+   */
   function titleFor(signal, index) {
     const title = document.createElement('button');
     title.type = 'button';
@@ -247,21 +315,30 @@ export function wireComparisons() {
     head.style.setProperty('--comparison-title-height', `${titleHeight}px`);
   }
 
+  /** @param {FocusTarget|null} target */
   function restoreHeadFocus(target) {
     if (!target) return;
-    const selector = target.kind === 'picker'
-      ? `[data-comparison-column="${target.index}"]`
-      : `[data-comparison-title="${target.index}"]`;
-    head.querySelector(selector)?.focus();
+    const selector =
+      target.kind === 'picker'
+        ? `[data-comparison-column="${target.index}"]`
+        : `[data-comparison-title="${target.index}"]`;
+    /** @type {HTMLElement|null} */ (head.querySelector(selector))?.focus();
   }
 
   function nextUnusedSignal() {
     const preferred = ['stim', 'Glab', 'Gdem', 'Genv', 'kcdm', 'sicl', 'wslc'];
-    return preferred.find((signal) => !state.columns.includes(signal))
-      ?? [...categories.map((item) => item.code), ...sources.keys()]
-        .find((signal) => !state.columns.includes(signal));
+    return (
+      preferred.find((signal) => !state.columns.includes(signal)) ??
+      [...categories.map((item) => item.code), ...sources.keys()].find(
+        (signal) => !state.columns.includes(signal),
+      )
+    );
   }
 
+  /**
+   * @param {readonly string[]} visible
+   * @param {FocusTarget|null} focusTarget
+   */
   function renderHead(visible, focusTarget) {
     table.style.setProperty('--comparison-column-count', String(visible.length));
     head.replaceChildren();
@@ -334,6 +411,14 @@ export function wireComparisons() {
     restoreHeadFocus(focusTarget);
   }
 
+  /**
+   * @param {string} signal
+   * @param {import('./compare-signals.mjs').ComparisonCell} cell
+   * @param {ComparisonDisplayRace} display
+   * @param {import('./compare-signals.mjs').ComparisonCell} reference
+   * @param {boolean} isReference
+   * @returns {HTMLTableCellElement}
+   */
   function cellFor(signal, cell, display, reference, isReference) {
     const labels = candidateLabels(display);
     const element = document.createElement('td');
@@ -345,25 +430,39 @@ export function wireComparisons() {
     element.dataset.agreement = agreement;
     const picks = document.createElement('span');
     picks.className = 'comparison-cell-picks';
-    picks.textContent = cell.kind === 'outside_scope'
-      ? 'Outside district'
-      : (cell.leadingPickIds?.map((id) => labels[id]).join(' / ') || '—');
+    picks.textContent =
+      cell.kind === 'outside_scope'
+        ? 'Outside district'
+        : cell.leadingPickIds?.map((id) => labels[id]).join(' / ') || '—';
     if (cell.kind === 'blank') picks.title = 'No endorsement published';
     element.append(picks);
     if (cell.share != null) {
       const meta = document.createElement('span');
       meta.className = 'comparison-cell-meta';
-      const count = cell.kind === 'aggregate'
-        ? `${cell.endorsingCount} of ${cell.memberCount} sources`
-        : `${cell.endorsingCount} sources`;
+      const count =
+        cell.kind === 'aggregate'
+          ? `${cell.endorsingCount} of ${cell.memberCount} sources`
+          : `${cell.endorsingCount} sources`;
       meta.textContent = `${percentage(cell.share)} · ${count}`;
       element.append(meta);
     }
     return element;
   }
 
+  /**
+   * @typedef {object} SectionRow
+   * @property {ComparisonDisplayRace} display
+   * @property {PersonalizationRace} race
+   * @property {import('./compare-signals.mjs').ComparisonCell[]} configuredCells
+   * @property {boolean} differs
+   */
+
+  /** @param {readonly string[]} visible */
   function renderBody(visible) {
-    table.querySelectorAll('tbody').forEach((body) => body.remove());
+    table.querySelectorAll('tbody').forEach((body) => {
+      body.remove();
+    });
+    /** @type {Map<string, { label: string, displays: SectionRow[] }>} */
     const sections = new Map();
     let total = 0;
     let differCount = 0;
@@ -371,15 +470,19 @@ export function wireComparisons() {
       if (state.section !== 'all' && display.section_id !== state.section) continue;
       if (state.contestedOnly && !contestedIds.has(display.race_id)) continue;
       total += 1;
-      const race = races.get(display.race_id);
+      // Every display row names a published race: both come from the same
+      // payload, and the comparison contract is built from `personalization`.
+      const race = /** @type {PersonalizationRace} */ (races.get(display.race_id));
       const configuredCells = state.columns.map((signal) => engine.resolveColumn(signal, race));
       const differs = rowDiffers(configuredCells);
       if (differs) differCount += 1;
       if (state.differencesOnly && !differs) continue;
-      if (!sections.has(display.section_id)) {
-        sections.set(display.section_id, { label: display.section_label, displays: [] });
+      let section = sections.get(display.section_id);
+      if (section === undefined) {
+        section = { label: display.section_label, displays: [] };
+        sections.set(display.section_id, section);
       }
-      sections.get(display.section_id).displays.push({ display, race, configuredCells, differs });
+      section.displays.push({ display, race, configuredCells, differs });
     }
     let shown = 0;
     for (const [sectionId, section] of sections) {
@@ -394,7 +497,10 @@ export function wireComparisons() {
       heading.append(headingCell);
       body.append(heading);
       for (const item of section.displays) {
-        const { display, race, configuredCells, differs } = item;
+        // `race` stays on the row record for the lit-html conversion of this
+        // table to render from (#238); this loop only needs the display
+        // labels and the cells.
+        const { display, configuredCells, differs } = item;
         shown += 1;
         const row = document.createElement('tr');
         row.dataset.comparisonRace = display.race_id;
@@ -453,14 +559,25 @@ export function wireComparisons() {
     status.textContent = `${shown} of ${total} races shown · ${differCount} differ`;
   }
 
+  /**
+   * The four filter toggles sit in the static controls bar, outside every
+   * region a render replaces, and are looked up on demand exactly as before.
+   *
+   * @param {string} selector
+   * @returns {HTMLInputElement}
+   */
+  const toggleInput = (selector) =>
+    /** @type {HTMLInputElement} */ (document.querySelector(selector));
+
   function syncControls() {
     sectionFilter.value = state.section;
-    document.querySelector('[data-comparison-full]').checked = !state.differencesOnly;
-    document.querySelector('[data-comparison-differences]').checked = state.differencesOnly;
-    document.querySelector('[data-comparison-all-races]').checked = !state.contestedOnly;
-    document.querySelector('[data-comparison-contested]').checked = state.contestedOnly;
+    toggleInput('[data-comparison-full]').checked = !state.differencesOnly;
+    toggleInput('[data-comparison-differences]').checked = state.differencesOnly;
+    toggleInput('[data-comparison-all-races]').checked = !state.contestedOnly;
+    toggleInput('[data-comparison-contested]').checked = state.contestedOnly;
   }
 
+  /** @param {FocusTarget|null} [focusTarget] */
   function render(focusTarget = null) {
     const visible = state.columns;
     notice.hidden = disclosure === '';
@@ -475,23 +592,24 @@ export function wireComparisons() {
     state.section = sectionFilter.value;
     if (writeState('replace')) render();
   });
-  document.querySelector('[data-comparison-full]').addEventListener('change', () => {
+  toggleInput('[data-comparison-full]').addEventListener('change', () => {
     state.differencesOnly = false;
     if (writeState('replace')) render();
   });
-  document.querySelector('[data-comparison-differences]').addEventListener('change', () => {
+  toggleInput('[data-comparison-differences]').addEventListener('change', () => {
     state.differencesOnly = true;
     if (writeState('replace')) render();
   });
-  document.querySelector('[data-comparison-all-races]').addEventListener('change', () => {
+  toggleInput('[data-comparison-all-races]').addEventListener('change', () => {
     state.contestedOnly = false;
     if (writeState('replace')) render();
   });
-  document.querySelector('[data-comparison-contested]').addEventListener('change', () => {
+  toggleInput('[data-comparison-contested]').addEventListener('change', () => {
     state.contestedOnly = true;
     if (writeState('replace')) render();
   });
-  document.querySelectorAll('.comparison-presets a').forEach((link) => {
+  /** @type {NodeListOf<HTMLAnchorElement>} */
+  (document.querySelectorAll('.comparison-presets a')).forEach((link) => {
     link.addEventListener('click', (event) => {
       const decoded = decodeCompareFragment(link.hash, context);
       if (decoded.status !== 'valid') return;
@@ -502,6 +620,7 @@ export function wireComparisons() {
   });
   window.addEventListener('popstate', syncFromLocation);
   window.addEventListener('hashchange', syncFromLocation);
+  /** @type {number|undefined} */
   let resizeTimer;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);

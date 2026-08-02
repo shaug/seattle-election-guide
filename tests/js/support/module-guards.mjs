@@ -15,9 +15,16 @@
 //   wiring  Storage only. A module whose whole job is attaching behavior to
 //           the page necessarily names DOM identifiers; the persistence rule
 //           still binds it (docs/FRONTEND.md § State and URLs).
+//
+// This guard once also scanned each pure module for a sibling's exported name
+// used without an import — the enforcement ticket's stand-in for real type
+// checking. `tsc --checkJs` now reports any free identifier as TS2304, in
+// every module rather than only the pure ones, and without the regex scan's
+// false positive on a local name that happens to match a sibling's export. The
+// stand-in is deleted rather than kept alongside its replacement.
 
 import assert from 'node:assert/strict';
-import { readFileSync, readdirSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 const DOCUMENT = 'docs/FRONTEND.md';
@@ -96,33 +103,6 @@ function mentions(code, identifier) {
   return new RegExp(`\\b${identifier}\\b`).test(code);
 }
 
-function exportedNames(source) {
-  const names = new Set();
-  for (const [, name] of source.matchAll(
-    /^export\s+(?:async\s+)?(?:function|const|let|var|class)\s+([A-Za-z_$][\w$]*)/gm,
-  )) {
-    names.add(name);
-  }
-  for (const [, clause] of source.matchAll(/^export\s*\{([^}]*)\}/gm)) {
-    for (const specifier of clause.split(',')) {
-      const name = specifier.trim().split(/\s+as\s+/).pop()?.trim();
-      if (name) names.add(name);
-    }
-  }
-  return names;
-}
-
-function importedNames(source) {
-  const names = new Set();
-  for (const [, clause] of source.matchAll(/import\s*\{([^}]*)\}\s*from/g)) {
-    for (const specifier of clause.split(',')) {
-      const name = specifier.trim().split(/\s+as\s+/)[0]?.trim();
-      if (name) names.add(name);
-    }
-  }
-  return names;
-}
-
 /**
  * Assert one module against its tier.
  *
@@ -159,23 +139,5 @@ export function assertModuleGuard(moduleName) {
         `A computing module is testable in plain Node (rule: pure modules get a purity ` +
         `guard, ${DOCUMENT} § Testing).`,
     );
-  }
-
-  // A pure module that names a sibling's export without importing it is
-  // relying on paste order — the concatenation defect § Modules forbids. This
-  // replaces the sibling names the old ad-hoc lists spelled out one at a time.
-  const imported = importedNames(moduleSource(moduleName));
-  for (const sibling of moduleNames()) {
-    if (sibling === moduleName) continue;
-    for (const name of exportedNames(moduleSource(sibling))) {
-      if (imported.has(name)) continue;
-      assert.equal(
-        mentions(code, name),
-        false,
-        `${moduleName} references ${name} from ${sibling} without importing it. A module ` +
-          `imports what it references and never relies on another's names being present ` +
-          `through concatenation (rule: modules, ${DOCUMENT}).`,
-      );
-    }
   }
 }

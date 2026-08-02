@@ -111,6 +111,13 @@ def bundle_entry(entry_module: str, *, global_name: str) -> str:
         # Ship the source characters rather than \u escapes: the page stays
         # readable, as it was under concatenation.
         "--charset=utf8",
+        # Ignore the repository tsconfig.json esbuild would otherwise discover
+        # by walking up from the entry module. That file configures the type
+        # checker, and several of its options change what esbuild emits — its
+        # `strict` alone adds a `"use strict";` prologue to every bundle. The
+        # checker must not be able to move the shipped bytes, so the bundle is
+        # built from these flags only (docs/FRONTEND.md, Dependencies).
+        "--tsconfig-raw={}",
     ]
     result = subprocess.run(
         command,

@@ -4,9 +4,8 @@
 
 import assert from 'node:assert/strict';
 import test from 'node:test';
-
-import { assertModuleGuard } from './support/module-guards.mjs';
 import { boot } from '../../src/election_guide/rendering/templates/shell-entry.mjs';
+import { assertModuleGuard } from './support/module-guards.mjs';
 
 test('the entry offers exactly the one invocation its documents make', () => {
   assert.equal(typeof boot, 'function');

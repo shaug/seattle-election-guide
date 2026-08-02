@@ -15,8 +15,50 @@ const NO_ENDORSEMENT_STATE = 'no_endorsement';
 // unexported names must not collide.
 const SCORE_CATEGORY_PREFIX = 'G';
 
+/**
+ * One candidate's place in a scored race.
+ *
+ * @typedef {object} RaceStanding
+ * @property {string} candidateId
+ * @property {string} supportPoints An exact rational.
+ * @property {string|null} share An exact rational, or null when nothing was allocated.
+ */
+
+/**
+ * One race's personalized score. The audited baseline is this same shape,
+ * produced by scoring the full selectable panel with no direct picks.
+ *
+ * @typedef {object} RaceScore
+ * @property {string} raceId
+ * @property {ScoreGrade} grade
+ * @property {string|null} winnerId Null when the race is tied or unscored.
+ * @property {string[]} winnerIds In published ballot order.
+ * @property {boolean} isTied
+ * @property {string|null} winnerShare An exact rational.
+ * @property {number} explicitCount
+ * @property {number} eligibleCount
+ * @property {number} coveredCount
+ * @property {string[]} missingCodes
+ * @property {string[]} noEndorsementCodes
+ * @property {string[]} confidenceWarningCodes
+ * @property {RaceStanding[]} standings
+ */
+
+/**
+ * What a caller asks to score with: direct source picks, category picks, or
+ * both. Category membership is resolved here, not by the caller.
+ *
+ * @typedef {object} LensSelection
+ * @property {string[]} [categoryCodes]
+ * @property {string[]} [sourceCodes]
+ */
+
 /** An exact rational. BigInt throughout so no share is ever approximated. */
 export class Rational {
+  /**
+   * @param {bigint} numerator
+   * @param {bigint} [denominator]
+   */
   constructor(numerator, denominator = 1n) {
     if (denominator === 0n) throw new RangeError('a rational needs a nonzero denominator');
     const sign = denominator < 0n ? -1n : 1n;
@@ -31,7 +73,12 @@ export class Rational {
     return new Rational(0n);
   }
 
-  /** Parse the published `numerator/denominator` (or integer) form. */
+  /**
+   * Parse the published `numerator/denominator` (or integer) form.
+   *
+   * @param {string} value
+   * @returns {Rational}
+   */
   static parse(value) {
     const text = String(value).trim();
     const [top, bottom = '1'] = text.split('/');
@@ -41,6 +88,10 @@ export class Rational {
     return new Rational(BigInt(top), BigInt(bottom));
   }
 
+  /**
+   * @param {Rational} other
+   * @returns {Rational}
+   */
   add(other) {
     return new Rational(
       this.numerator * other.denominator + other.numerator * this.denominator,
@@ -48,12 +99,21 @@ export class Rational {
     );
   }
 
+  /**
+   * @param {Rational} other
+   * @returns {Rational}
+   */
   divide(other) {
     if (other.numerator === 0n) throw new RangeError('cannot divide a rational by zero');
     return new Rational(this.numerator * other.denominator, this.denominator * other.numerator);
   }
 
-  /** -1, 0, or 1. Cross-multiplied, so no rounding enters the comparison. */
+  /**
+   * -1, 0, or 1. Cross-multiplied, so no rounding enters the comparison.
+   *
+   * @param {Rational} other
+   * @returns {-1|0|1}
+   */
   compare(other) {
     const left = this.numerator * other.denominator;
     const right = other.numerator * this.denominator;
@@ -66,12 +126,15 @@ export class Rational {
   }
 
   toString() {
-    return this.denominator === 1n
-      ? `${this.numerator}`
-      : `${this.numerator}/${this.denominator}`;
+    return this.denominator === 1n ? `${this.numerator}` : `${this.numerator}/${this.denominator}`;
   }
 }
 
+/**
+ * @param {bigint} left
+ * @param {bigint} right
+ * @returns {bigint}
+ */
 function gcd(left, right) {
   let a = left;
   let b = right;
@@ -83,6 +146,10 @@ function gcd(left, right) {
   return a === 0n ? 1n : a;
 }
 
+/**
+ * @param {string} code
+ * @returns {boolean}
+ */
 function isCategoryCode(code) {
   return code.startsWith(SCORE_CATEGORY_PREFIX);
 }
@@ -94,6 +161,12 @@ function isCategoryCode(code) {
  * every entry point is closed over the panel roles the publication declares.
  * A comparison source is displayed but never scored, and a source the panel
  * does not publish as selectable can never be selected back in.
+ *
+ * @param {Personalization} personalization
+ * @returns {{
+ *   sources: Map<string, PersonalizationSource>,
+ *   categories: Map<string, PersonalizationCategory>,
+ * }}
  */
 function panelAdmission(personalization) {
   const forbidden = new Set(personalization.policy.comparison_source_codes);
@@ -104,9 +177,7 @@ function panelAdmission(personalization) {
         .map((item) => [item.code, item]),
     ),
     categories: new Map(
-      personalization.categories
-        .filter((item) => item.selectable)
-        .map((item) => [item.code, item]),
+      personalization.categories.filter((item) => item.selectable).map((item) => [item.code, item]),
     ),
   };
 }
@@ -119,12 +190,19 @@ function panelAdmission(personalization) {
  * and a direct pick, contributes exactly once. Anything the panel does not
  * publish as selectable is refused even when the caller asks for it, which is
  * what keeps the comparison source out of every personalized score.
+ *
+ * @param {LensSelection} selection
+ * @param {Personalization} personalization
+ * @returns {{ sourceCodes: string[], ignoredCodes: string[] }}
  */
 export function resolveSelection(selection, personalization) {
   const { sources: admissible, categories: selectableCategories } = panelAdmission(personalization);
 
+  /** @type {Set<string>} */
   const effective = new Set();
+  /** @type {string[]} */
   const ignored = [];
+  /** @param {string} code */
   const admit = (code) => {
     if (!admissible.has(code)) {
       ignored.push(code);
@@ -151,7 +229,15 @@ export function resolveSelection(selection, personalization) {
   return { sourceCodes: [...effective].sort(), ignoredCodes: [...new Set(ignored)].sort() };
 }
 
-/** Resolve a grade in the audited policy order: tie, then insufficient, then share. */
+/**
+ * Resolve a grade in the audited policy order: tie, then insufficient, then share.
+ *
+ * @param {PersonalizationScoring} scoring
+ * @param {number} explicitCount
+ * @param {Rational|null} winnerShare
+ * @param {boolean} isTied
+ * @returns {ScoreGrade}
+ */
 function gradeFor(scoring, explicitCount, winnerShare, isTied) {
   if (isTied) return 'TIED';
   if (explicitCount < scoring.minimum_explicit_sources || winnerShare === null) {
@@ -172,6 +258,11 @@ function gradeFor(scoring, explicitCount, winnerShare, isTied) {
  * A source that is not eligible for this race has no published cell, so it
  * cannot contribute: that is what keeps a legislative-district source out of
  * another district's races even when the caller selects it.
+ *
+ * @param {PersonalizationRace} race
+ * @param {readonly string[]} effectiveCodes
+ * @param {Personalization} personalization
+ * @returns {RaceScore}
  */
 export function scoreRace(race, effectiveCodes, personalization) {
   // Admission is re-derived from the payload here rather than trusted from the
@@ -186,6 +277,7 @@ export function scoreRace(race, effectiveCodes, personalization) {
   const covered = new Set([...explicit, ...noEndorsement].map((cell) => cell.source_code));
   const eligible = race.eligible_source_codes.filter((code) => selected.has(code));
 
+  /** @type {Map<string, Rational>} */
   const support = new Map();
   for (const cell of explicit) {
     for (const [candidateId, points] of Object.entries(cell.allocation)) {
@@ -203,20 +295,23 @@ export function scoreRace(race, effectiveCodes, personalization) {
   // (`_ordered_support` in scoring/engine.py), so a joined label such as
   // "A / B" never disagrees between the server's default rendering and a
   // client lens recomputing the same tie.
+  /** @param {string} candidateId */
   const ballotIndex = (candidateId) => {
     const index = race.candidate_order.indexOf(candidateId);
     return index === -1 ? race.candidate_order.length : index;
   };
+  /** @type {Rational|null} */
   let maximum = null;
   for (const points of support.values()) {
     if (maximum === null || points.compare(maximum) > 0) maximum = points;
   }
-  const winnerIds = maximum === null
-    ? []
-    : [...support.entries()]
-        .filter(([, points]) => points.compare(maximum) === 0)
-        .map(([candidateId]) => candidateId)
-        .sort((left, right) => ballotIndex(left) - ballotIndex(right));
+  const winnerIds =
+    maximum === null
+      ? []
+      : [...support.entries()]
+          .filter(([, points]) => points.compare(maximum) === 0)
+          .map(([candidateId]) => candidateId)
+          .sort((left, right) => ballotIndex(left) - ballotIndex(right));
   const isTied = winnerIds.length > 1;
   const winnerShare = maximum === null || total.isZero() ? null : maximum.divide(total);
 
@@ -256,6 +351,10 @@ export function scoreRace(race, effectiveCodes, personalization) {
  *
  * Returns structured results only. Presentation, URLs, and migration are owned
  * elsewhere; this function mutates nothing.
+ *
+ * @param {Personalization} personalization
+ * @param {LensSelection} selection
+ * @returns {{ sourceCodes: string[], ignoredCodes: string[], races: RaceScore[] }}
  */
 export function scoreSelection(personalization, selection) {
   const resolved = resolveSelection(selection, personalization);

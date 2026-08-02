@@ -1,7 +1,5 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-
-import { assertModuleGuard } from './support/module-guards.mjs';
 import {
   ALL_SOURCES_TOKEN,
   COMPARE_SCHEMA_VERSION,
@@ -14,6 +12,7 @@ import {
   encodeLensFragment,
   lensContext,
 } from '../../src/election_guide/rendering/templates/lens-url.mjs';
+import { assertModuleGuard } from './support/module-guards.mjs';
 
 const PANEL_HASH = '6cd4acaa0c5e4ed0b5ddd0134d7de2af5a54c2085e7ad463f9b575b8e6dcb43f';
 
@@ -122,6 +121,33 @@ test('exact duplicate columns are removed before enforcing the two-to-three colu
     const result = encodeCompareFragment({ columns }, context());
     assert.equal(result.status, 'rejected');
     assert.equal(result.reason, 'column_count');
+  }
+});
+
+test('a decoded column count outside the two-to-three limit is malformed', () => {
+  // Hand-built rather than encoded: the encoder refuses these counts, so a
+  // link carrying one was written outside this codec. Decoding is the side
+  // that has to survive it — a one-column state reaches the table as a
+  // reference column with nothing to compare against.
+  const withColumns = (cols) => {
+    const parameters = new URLSearchParams(encoded({ columns: ['gall', 'strn'] }));
+    parameters.set('cols', cols);
+    return parameters.toString();
+  };
+
+  for (const [cols, count] of [
+    ['', 0],
+    ['gall', 1],
+    // Duplicates collapse first, so the surviving count is what is enforced.
+    ['gallgall', 1],
+    ['gallstrnstimurbn', 4],
+  ]) {
+    const decoded = decodeCompareFragment(withColumns(cols), context());
+    assert.equal(decoded.status, 'malformed', `cols=${cols}`);
+    assert.equal(decoded.reason, 'column_count', `cols=${cols}`);
+    assert.equal(decoded.count, count, `cols=${cols}`);
+    assert.equal(decoded.minimum, 2);
+    assert.equal(decoded.maximum, 3);
   }
 });
 

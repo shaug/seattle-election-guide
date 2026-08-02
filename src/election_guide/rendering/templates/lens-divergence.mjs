@@ -10,15 +10,31 @@
 // maintained copy of the audited values.
 
 /** The six structured dimensions a personalized card discloses a difference in. */
-export const DIVERGENCE_DIMENSIONS = Object.freeze([
-  'leader',
-  'recommendationState',
-  'percentage',
-  'sourceCount',
-  'tie',
-  'warning',
-]);
+export const DIVERGENCE_DIMENSIONS = Object.freeze(
+  /** @type {const} */ ([
+    'leader',
+    'recommendationState',
+    'percentage',
+    'sourceCount',
+    'tie',
+    'warning',
+  ]),
+);
 
+/**
+ * @typedef {(typeof DIVERGENCE_DIMENSIONS)[number]} DivergenceDimension
+ */
+
+/**
+ * Which dimensions differ, plus whether any of them do.
+ *
+ * @typedef {Record<DivergenceDimension, boolean> & { anyChanged: boolean }} Divergence
+ */
+
+/**
+ * @param {readonly string[]} codes
+ * @returns {string}
+ */
 function sortedJoin(codes) {
   return [...codes].sort().join('|');
 }
@@ -35,6 +51,14 @@ function sortedJoin(codes) {
  * - `sourceCount`: the number of sources with an explicit endorsement changed.
  * - `tie`: the race is tied on one side and not the other.
  * - `warning`: the set of sources carrying a confidence warning changed.
+ *
+ * Typed against `scoreRace`'s result without importing the module: this
+ * comparison stays independent of the scoring engine at runtime, and a
+ * type-only reference keeps it that way while still binding the two shapes.
+ *
+ * @param {import('./lens-score.mjs').RaceScore} audited
+ * @param {import('./lens-score.mjs').RaceScore} personalized
+ * @returns {Divergence}
  */
 export function compareRaceResults(audited, personalized) {
   const changed = {
@@ -45,7 +69,8 @@ export function compareRaceResults(audited, personalized) {
     sourceCount: audited.explicitCount !== personalized.explicitCount,
     tie: audited.isTied !== personalized.isTied,
     warning:
-      sortedJoin(audited.confidenceWarningCodes) !== sortedJoin(personalized.confidenceWarningCodes),
+      sortedJoin(audited.confidenceWarningCodes) !==
+      sortedJoin(personalized.confidenceWarningCodes),
   };
   return { ...changed, anyChanged: DIVERGENCE_DIMENSIONS.some((dimension) => changed[dimension]) };
 }

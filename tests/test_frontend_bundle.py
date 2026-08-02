@@ -68,6 +68,24 @@ def test_bundling_the_same_entry_twice_produces_the_same_bytes(
     assert _fresh(entry, global_name) == _fresh(entry, global_name)
 
 
+@pytest.mark.parametrize(("entry", "global_name"), sorted(ENTRIES.items()))
+def test_the_type_checker_config_does_not_reach_the_bundle(entry: str, global_name: str) -> None:
+    """The repository tsconfig.json configures `tsc`, not the build.
+
+    esbuild discovers a tsconfig by walking up from the entry module and honors
+    several of its options, so the checker's settings could silently move the
+    shipped bytes: `strict` alone prepends a `"use strict";` prologue, which
+    would put a statement ahead of the single page-scope binding every template
+    invokes. The bundler pins `--tsconfig-raw={}` to sever that; this fails if
+    the flag is dropped, without depending on which options the checker happens
+    to set today.
+    """
+    bundle = _fresh(entry, global_name)
+
+    assert not bundle.lstrip().startswith(('"use strict"', "'use strict'"))
+    assert bundle.startswith("var ")
+
+
 def test_every_entry_module_on_disk_is_covered_here() -> None:
     """A page added with an entry but no bundle test would go unchecked."""
     on_disk = sorted(path.name for path in TEMPLATE_DIR.glob("*-entry.mjs"))

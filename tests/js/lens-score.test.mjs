@@ -1,15 +1,14 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
 import test from 'node:test';
-
-import { assertModuleGuard } from './support/module-guards.mjs';
+import { fileURLToPath } from 'node:url';
 import {
   Rational,
   resolveSelection,
   scoreRace,
   scoreSelection,
 } from '../../src/election_guide/rendering/templates/lens-score.mjs';
+import { assertModuleGuard } from './support/module-guards.mjs';
 
 const fixture = JSON.parse(
   readFileSync(fileURLToPath(new URL('./fixtures/lens-parity.json', import.meta.url)), 'utf8'),
@@ -52,11 +51,7 @@ test('generated fixtures match the Python scoring engine exactly', () => {
       assert.ok(race !== undefined, `${where}: race missing from the lens result`);
       assert.equal(race.grade, expected.grade, `${where}: grade diverged`);
       assert.equal(race.isTied, expected.is_tied, `${where}: tie state diverged`);
-      assert.equal(
-        race.winnerId,
-        expected.winner_candidate_id,
-        `${where}: winner diverged`,
-      );
+      assert.equal(race.winnerId, expected.winner_candidate_id, `${where}: winner diverged`);
       // H30: the client must reproduce the audited engine's own tie order
       // (ballot order), not a client-side alphabetical sort of candidate ids.
       assert.deepEqual(
@@ -244,13 +239,22 @@ test('an unknown category or source code is ignored rather than scored', () => {
 
 test('selecting the comparison category admits its display but never its tally', () => {
   const scenario = fixture.cases.find((item) => item.name === 'comparison-category-selected');
-  const comparisonCategory = personalization.categories.find((item) => item.panel_role === 'comparison');
-  assert.ok(comparisonCategory.selectable, 'the comparison category must be selectable for display');
+  const comparisonCategory = personalization.categories.find(
+    (item) => item.panel_role === 'comparison',
+  );
+  assert.ok(
+    comparisonCategory.selectable,
+    'the comparison category must be selectable for display',
+  );
   assert.ok(comparisonCategory.member_source_codes.length > 0);
 
   const resolved = resolveSelection({ categoryCodes: [comparisonCategory.code] }, personalization);
 
-  assert.deepEqual(resolved.sourceCodes, [], 'a comparison category member can never enter the tally');
+  assert.deepEqual(
+    resolved.sourceCodes,
+    [],
+    'a comparison category member can never enter the tally',
+  );
   for (const code of comparisonCategory.member_source_codes) {
     assert.ok(resolved.ignoredCodes.includes(code));
   }
@@ -262,7 +266,11 @@ test('selecting the comparison category admits its display but never its tally',
   }
   const byRaceId = new Map(scenario.races.map((item) => [item.race_id, item]));
   for (const race of scored.races) {
-    assert.equal(race.grade, byRaceId.get(race.raceId).grade, `${race.raceId}: diverged from the audited oracle`);
+    assert.equal(
+      race.grade,
+      byRaceId.get(race.raceId).grade,
+      `${race.raceId}: diverged from the audited oracle`,
+    );
   }
 });
 
@@ -291,9 +299,7 @@ test('H30: every race publishes a ballot order covering its scored candidates', 
       race.candidate_order.length,
       `${race.race_id}: candidate order must not repeat a candidate`,
     );
-    const allocated = new Set(
-      race.cells.flatMap((cell) => Object.keys(cell.allocation)),
-    );
+    const allocated = new Set(race.cells.flatMap((cell) => Object.keys(cell.allocation)));
     for (const candidateId of allocated) {
       assert.ok(
         race.candidate_order.includes(candidateId),
@@ -315,8 +321,8 @@ test('H30: a tied recommendation reproduces the audited ballot order, not an alp
   assert.notDeepEqual(
     tied.winner_candidate_ids,
     alphabetical,
-    'the fixture tie must actually exercise a non-alphabetical ballot order '
-      + '(otherwise this test cannot distinguish the two orderings)',
+    'the fixture tie must actually exercise a non-alphabetical ballot order ' +
+      '(otherwise this test cannot distinguish the two orderings)',
   );
 
   const race = personalization.races.find((item) => item.race_id === tied.race_id);
@@ -325,9 +331,7 @@ test('H30: a tied recommendation reproduces the audited ballot order, not an alp
 });
 
 test('an exact tie is resolved before any ordinary grade', () => {
-  const tied = fixture.cases
-    .flatMap((scenario) => scenario.races)
-    .filter((race) => race.is_tied);
+  const tied = fixture.cases.flatMap((scenario) => scenario.races).filter((race) => race.is_tied);
   assert.ok(tied.length > 0, 'the fixture must exercise tie resolution');
 
   for (const race of tied) {

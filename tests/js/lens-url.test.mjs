@@ -1,15 +1,14 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
 import test from 'node:test';
-
-import { assertModuleGuard } from './support/module-guards.mjs';
+import { fileURLToPath } from 'node:url';
 import {
-  LENS_SCHEMA_VERSION,
   decodeLensFragment,
   encodeLensFragment,
+  LENS_SCHEMA_VERSION,
   lensContext,
 } from '../../src/election_guide/rendering/templates/lens-url.mjs';
+import { assertModuleGuard } from './support/module-guards.mjs';
 
 const PANEL_HASH = '6cd4acaa0c5e4ed0b5ddd0134d7de2af5a54c2085e7ad463f9b575b8e6dcb43f';
 
@@ -29,7 +28,12 @@ function personalization(overrides = {}) {
       { id: 'the-stranger', code: 'strn', selectable: true, panel_role: 'consensus' },
       { id: 'the-urbanist', code: 'urbn', selectable: true, panel_role: 'consensus' },
       { id: 'mlk-labor', code: 'mlkl', selectable: true, panel_role: 'consensus' },
-      { id: 'seattle-times-editorial-board', code: 'stim', selectable: true, panel_role: 'comparison' },
+      {
+        id: 'seattle-times-editorial-board',
+        code: 'stim',
+        selectable: true,
+        panel_role: 'comparison',
+      },
     ],
     ...overrides,
   };
@@ -132,10 +136,7 @@ test('exact duplicates are removed while direct and category intent is preserved
 });
 
 test('a category selection is not expanded into its members', () => {
-  const decoded = decodeLensFragment(
-    encoded({ mode: 's', categoryCodes: ['Glab'] }),
-    context(),
-  );
+  const decoded = decodeLensFragment(encoded({ mode: 's', categoryCodes: ['Glab'] }), context());
 
   assert.deepEqual(decoded.state.categoryCodes, ['Glab']);
   assert.deepEqual(decoded.state.sourceCodes, []);
@@ -200,7 +201,10 @@ test('a case-confusable token is rejected rather than silently matched', () => {
 // ignores those tokens and replays everything else exactly.
 test('a comparison token is silently ignored, never rejected', () => {
   for (const token of ['stim', 'Gcmp']) {
-    const decoded = decodeLensFragment(`${encoded({ mode: 's', sourceCodes: ['strn'] })}${token}`, context());
+    const decoded = decodeLensFragment(
+      `${encoded({ mode: 's', sourceCodes: ['strn'] })}${token}`,
+      context(),
+    );
 
     assert.equal(decoded.status, 'valid');
     assert.deepEqual(decoded.state.categoryCodes, []);
@@ -243,7 +247,10 @@ test('audited mode still refuses an ordinary selection', () => {
 
 test('a nonselectable category cannot be selected', () => {
   const inactive = context({
-    categories: [...personalization().categories, { id: 'inactive', code: 'Gzzq', selectable: false, panel_role: 'tallying' }],
+    categories: [
+      ...personalization().categories,
+      { id: 'inactive', code: 'Gzzq', selectable: false, panel_role: 'tallying' },
+    ],
   });
 
   const rejected = encodeLensFragment({ mode: 's', categoryCodes: ['Gzzq'] }, inactive);
@@ -430,7 +437,9 @@ test('the codec stays pure', () => {
 test('the committed panel snapshot round-trips through the codec', () => {
   const catalog = JSON.parse(
     readFileSync(
-      fileURLToPath(new URL('../../data/releases/wa-2026-primary/panel-snapshots.json', import.meta.url)),
+      fileURLToPath(
+        new URL('../../data/releases/wa-2026-primary/panel-snapshots.json', import.meta.url),
+      ),
       'utf8',
     ),
   );

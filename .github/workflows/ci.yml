@@ -45,7 +45,7 @@ jobs:
         run: uv run pyright
       - name: Test
         run: uv run pytest
-      - name: Test the fragment codec
+      - name: Lint, type-check, and test the client modules
         run: make check-js
       - name: Validate canonical election inventory
         run: uv run election-guide inventory validate data/normalized/wa-2026-primary-inventory.json
