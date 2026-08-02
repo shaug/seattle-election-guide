@@ -88,8 +88,22 @@ The public route contract is:
 
 The generated Pages worker uses an exact staged-asset allowlist before consulting the Pages asset
 binding. This prevents Cloudflare's document fallback from turning a historical-looking unknown URL
-into the current guide. The archive and known election pages remain indexable. Rendered guides set
-their canonical and Open Graph URL to `https://seattleelections.guide/e/<election-id>/`.
+into the current guide. The archive and known election pages remain indexable on the canonical
+host. Rendered guides set their canonical and Open Graph URL to
+`https://seattleelections.guide/e/<election-id>/`.
+
+### Only the canonical host is indexable
+
+The worker attaches `X-Robots-Tag: noindex` to every asset response whose hostname is not
+`seattleelections.guide`. Legacy hosts are redirected to canonical before the rule applies, so that
+hop stays a bare `301`, and the `404` page is `noindex` on every host including canonical.
+
+This reverses an earlier decision (issue 209). Indexing the Cloudflare Pages hostnames alongside the
+custom domain was reasonable while `seattle-elections.pages.dev` was the only other name for the
+site. It stops being reasonable once every pull request can mint a hostname serving a complete copy
+of a voter guide, because a preview's endorsement data may already be wrong and nothing outside the
+canonical host is a claim this project wants to publish. The rule lives in the worker rather than
+`_headers` because `_headers` is host-blind and cannot express it.
 
 ## Local staging and preview
 
@@ -111,8 +125,8 @@ bundle's exact Git revision before it changes the existing output. It then atomi
 - each election's `release-status.json` and `release-manifest.json`;
 - `about/index.html`, the site-wide About/FAQ page, generated from the manifest;
 - a site-wide deployment manifest recording every verified release and staged asset hash; and
-- `_headers` with browser-security and revalidation policy. The public guide is indexable by
-  search engines on both its custom domain and Cloudflare Pages hostnames.
+- `_headers` with browser-security and revalidation policy. Indexability is not set here: it
+  depends on the request's hostname, which `_headers` cannot see, so the worker applies it.
 
 `hosting stage` verifies the completed tree before the atomic swap. The same integrity gate can be
 run independently, and CI runs it once before artifact upload and again after the deploy job
