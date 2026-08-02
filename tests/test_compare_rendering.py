@@ -125,7 +125,8 @@ def test_compare_document_server_renders_default_contract_snapshot() -> None:
     # reading, while the footer keeps meta about the site.
     assert "data-footer-share" not in rendered
     assert "data-shell-share" in rendered
-    assert "wireShellShare();" in rendered
+    # Wired by the bundled entry, which the template does nothing but invoke.
+    assert "ComparePage.boot();" in rendered
 
     presets = re.search(r'<div class="comparison-presets".*?</div>', rendered, re.S)
     assert presets is not None

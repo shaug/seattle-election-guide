@@ -20,6 +20,7 @@ from election_guide.hosting.models import (
 from election_guide.publication.comparisons import ComparisonsPolicy
 from election_guide.publication.models import PublicationViewModel
 from election_guide.release.models import ReleaseManifest, ReleaseStatus
+from election_guide.rendering.bundler import bundle_entry
 from election_guide.rendering.renderer import (
     TEMPLATE_DIR,
     render_comparison_document,
@@ -590,7 +591,7 @@ def _archive_html(
     head_links = site_head_links_html(site_manifest.canonical_origin)
     current_path = f"/e/{site_manifest.current_election_id}/"
     base_css = (TEMPLATE_DIR / "base.css").read_text(encoding="utf-8")
-    share_link_script = (TEMPLATE_DIR / "share-link.mjs").read_text(encoding="utf-8")
+    shell_entry_script = bundle_entry("shell-entry.mjs", global_name="ShellPage")
     band = site_band_html(
         guide_href=current_path,
         sources_href=f"{current_path}sources/",
@@ -658,8 +659,8 @@ def _archive_html(
     </footer>
   </div>
   <script type="module">
-{share_link_script}
-    wireShellShare();
+{shell_entry_script}
+    ShellPage.boot();
   </script>
 </body>
 </html>
@@ -687,7 +688,7 @@ def _about_html(
     # renderer.py) so the design tokens, accessibility utilities, and the
     # share/copy-link fallback policy have exactly one implementation each.
     base_css = (TEMPLATE_DIR / "base.css").read_text(encoding="utf-8")
-    share_link_script = (TEMPLATE_DIR / "share-link.mjs").read_text(encoding="utf-8")
+    shell_entry_script = bundle_entry("shell-entry.mjs", global_name="ShellPage")
     description = (
         "How this guide aggregates organizational endorsements, why the source panel is "
         "versioned, how to verify a result, and how to report a correction."
@@ -855,8 +856,8 @@ def _about_html(
     </footer>
   </div>
   <script type="module">
-{share_link_script}
-    wireShellShare();
+{shell_entry_script}
+    ShellPage.boot();
   </script>
 </body>
 </html>

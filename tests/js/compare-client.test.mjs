@@ -1,14 +1,19 @@
-// compare-client.mjs is the Comparisons page's entry: it reads the DOM at
-// module scope, so it carries the storage tier of the shared guard rather than
-// the full purity tier, and it is the one module grandfathered out of
-// standalone loading in tests/frontend_ratchets.json. The guard is a source
-// scan, so it binds this module even though the module cannot be imported
-// here. Behavior coverage follows the bundler, which is what makes this module
-// loadable at all (docs/FRONTEND.md § Modules, § Testing).
+// compare-client.mjs is the Comparisons page's wiring: attaching the
+// interactive table, its pickers, and its filters is DOM work by design, so it
+// carries the storage tier of the shared guard rather than the full purity
+// tier. It declares its real imports and loads standalone now that
+// compare-entry.mjs bundles it, so its behavior coverage is no longer blocked
+// on the bundler — it waits on a lightweight DOM (docs/FRONTEND.md § Testing).
 
+import assert from 'node:assert/strict';
 import test from 'node:test';
 
 import { assertModuleGuard } from './support/module-guards.mjs';
+import { wireComparisons } from '../../src/election_guide/rendering/templates/compare-client.mjs';
+
+test('wiring the page is a call the entry makes, not a module side effect', () => {
+  assert.equal(typeof wireComparisons, 'function');
+});
 
 test('the module keeps client state out of storage', () => {
   assertModuleGuard('compare-client.mjs');

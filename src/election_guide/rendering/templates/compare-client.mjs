@@ -1,7 +1,18 @@
 // Interactive comparison-page glue. State is admitted and serialized only by
 // compare-url.mjs; cell arithmetic is owned only by compare-signals.mjs.
-const comparisonBindingsElement = document.querySelector('[data-comparison-bindings]');
-if (comparisonBindingsElement) {
+import { migrateCompareState } from './compare-migrate.mjs';
+import { cellAgreement, createColumnSignalEngine, rowDiffers } from './compare-signals.mjs';
+import {
+  ALL_SOURCES_TOKEN,
+  compareContext,
+  decodeCompareFragment,
+  encodeCompareFragment,
+} from './compare-url.mjs';
+
+/** Attach the interactive comparison table to a rendered Comparisons page. */
+export function wireComparisons() {
+  const comparisonBindingsElement = document.querySelector('[data-comparison-bindings]');
+  if (!comparisonBindingsElement) return;
   const payload = JSON.parse(comparisonBindingsElement.textContent);
   const personalization = payload.personalization;
   const comparisons = payload.comparisons;
