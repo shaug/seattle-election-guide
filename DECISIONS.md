@@ -53,6 +53,6 @@ denominator, but both remain visible as separate coverage signals.
 
 - An unresolved high-severity review item affecting a displayed race blocks the standard
   publication build.
-- HTML and PDF are generated from one publication view model.
+- The published guide is generated from one publication view model.
 - Reproducibility tests use an explicit build timestamp or `SOURCE_DATE_EPOCH`.
 - GitHub Releases, rather than normal commits, carry versioned publication bundles.

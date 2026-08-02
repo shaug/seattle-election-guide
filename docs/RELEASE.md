@@ -59,28 +59,26 @@ uv run election-guide release build \
 ```
 
 The command requires a clean Git checkout and a full revision equal to `HEAD`, then recomputes
-consensus, canonical exports, responsive HTML, the two-page PDF, and the
-detailed PDF fallback when necessary. It fails unless publication and rendered-artifact validation
-both pass, all relevant high-severity reviews are resolved, every included evidence snapshot is
-permitted, and every displayed decision has valid provenance.
+consensus, canonical exports, and the responsive HTML guide. It fails unless publication and
+rendered-artifact validation both pass, all relevant high-severity reviews are resolved, every
+included evidence snapshot is permitted, and every displayed decision has valid provenance.
 
 The output directory contains the release ZIP and an unpacked `bundle/` for inspection. The ZIP
 contains:
 
-- concise and detailed PDF editions plus responsive HTML;
+- the responsive HTML guide;
 - canonical dataset, consensus, and publication-view-model JSON;
 - race, decision, source, review, and source-matrix CSV files;
 - publication, rendering, provenance, build, and release manifests;
-- concise and detailed page images plus desktop and mobile screenshots referenced by the rendering
-  validation report; and
+- desktop and mobile screenshots referenced by the rendering validation report; and
 - release notes that state source-access failures, incomplete coverage, review counts, data time,
   and code revision.
 
 The ZIP uses stable entry ordering, timestamps, permissions, and compression settings. Repeating a
 build with identical inputs produces identical archive bytes.
 
-Inspect both concise PDF pages, every detailed PDF page, desktop and mobile screenshots, all
-machine validation reports, and `RELEASE_NOTES.md`. Test the archive before publication:
+Inspect the desktop and mobile screenshots, all machine validation reports, and
+`RELEASE_NOTES.md`. Test the archive before publication:
 
 ```bash
 unzip -t dist/primary-release/seattle-election-guide-2026-primary.2.zip
@@ -104,7 +102,7 @@ archive, and confirm the release tag targets the recorded mainline commit.
 
 ## Website publication
 
-The validated HTML and PDF are also resolved through the repository-owned site manifest and staged
+The validated HTML is also resolved through the repository-owned site manifest and staged
 under the election-scoped `/e/<election-id>/` path for deployment from `main`. See
 [HOSTING.md](HOSTING.md) for the archive manifest, route contract, Wrangler configuration, safety
 gates, one-time credentials, local preview, and automatic deployment workflow.

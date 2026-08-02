@@ -85,7 +85,6 @@ def test_compare_document_server_renders_default_contract_snapshot() -> None:
         view_model,
         public_site_url="https://seattleelections.guide",
         project_url="https://github.com/shaug/seattle-election-guide",
-        pdf_filename="Seattle_Election_Guide.pdf",
     )
 
     assert 'href="/e/wa-2026-primary/comparisons/" aria-current="page">Comparisons</a>' in rendered
@@ -213,7 +212,7 @@ def test_compare_document_server_renders_default_contract_snapshot() -> None:
 
     guide = render_html_document(
         view_model,
-        read_rendering_configuration(PROJECT_ROOT / "config/rendering/pdf.yaml"),
+        read_rendering_configuration(PROJECT_ROOT / "config/rendering/guide.yaml"),
     )
     sources_page = render_sources_document(
         view_model,
@@ -271,7 +270,7 @@ def _guide_html_path(tmp_path: Path) -> Path:
     path.write_text(
         render_html_document(
             _enabled_view_model(),
-            read_rendering_configuration(PROJECT_ROOT / "config/rendering/pdf.yaml"),
+            read_rendering_configuration(PROJECT_ROOT / "config/rendering/guide.yaml"),
         ),
         encoding="utf-8",
     )
@@ -282,7 +281,7 @@ def test_guide_and_compare_render_the_shared_election_controls_composite() -> No
     view_model = _enabled_view_model()
     guide = render_html_document(
         view_model,
-        read_rendering_configuration(PROJECT_ROOT / "config/rendering/pdf.yaml"),
+        read_rendering_configuration(PROJECT_ROOT / "config/rendering/guide.yaml"),
     )
     compare = render_comparison_document(
         view_model,
@@ -326,9 +325,6 @@ def test_guide_and_compare_render_the_shared_election_controls_composite() -> No
             encoding="utf-8"
         )
         for name in ("guide.css", "compare.css")
-    )
-    page_css = page_css.replace(
-        "html.detailed-edition .filter-control-bar { display: none !important; }", ""
     )
     for selector in (
         ".filter-control-bar",

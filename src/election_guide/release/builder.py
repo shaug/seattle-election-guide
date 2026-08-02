@@ -12,7 +12,6 @@ import zipfile
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Literal
 
 from election_guide.evidence.models import CapturedManifest
 from election_guide.normalization.models import CanonicalDataset
@@ -53,7 +52,6 @@ def build_release(
     generated_at: datetime,
     git_commit: str,
     chrome_path: Path | None = None,
-    pdftoppm_path: Path | None = None,
 ) -> ReleaseResult:
     """Run the complete publication pipeline and atomically publish one release directory."""
     if generated_at.tzinfo is None or generated_at.utcoffset() is None:
@@ -100,7 +98,6 @@ def build_release(
             rendering_config_path,
             render_dir,
             chrome_path=chrome_path,
-            pdftoppm_path=pdftoppm_path,
         )
 
         guide_dir = stage_bundle / "guide"
@@ -108,21 +105,8 @@ def build_release(
         guide_dir.mkdir(parents=True)
         validation_dir.mkdir(parents=True)
         shutil.copy2(rendered.html_path, guide_dir / rendered.html_path.name)
-        shutil.copy2(rendered.pdf_path, guide_dir / rendered.pdf_path.name)
-        if rendered.detailed_pdf_path is not None:
-            shutil.copy2(
-                rendered.detailed_pdf_path,
-                guide_dir / rendered.detailed_pdf_path.name,
-            )
         rendering_validation_dir = validation_dir / "rendering"
-        for rendered_artifact in sorted(
-            {
-                rendered.validation_path,
-                *rendered.page_images,
-                *rendered.detailed_page_images,
-                *rendered.screenshots,
-            }
-        ):
+        for rendered_artifact in sorted({rendered.validation_path, *rendered.screenshots}):
             relative = rendered_artifact.relative_to(render_dir)
             target = rendering_validation_dir / relative
             target.parent.mkdir(parents=True, exist_ok=True)
@@ -146,14 +130,7 @@ def build_release(
             git_commit=git_commit,
             publication_passed=publication.validation_report.passed,
             rendering_passed=rendered.validation_report.passed,
-            rendering_edition=rendered.validation_report.edition,
             guide_html_artifact=(Path("guide") / rendered.html_path.name).as_posix(),
-            guide_pdf_artifact=(Path("guide") / rendered.pdf_path.name).as_posix(),
-            detailed_guide_pdf_artifact=(
-                (Path("guide") / rendered.detailed_pdf_path.name).as_posix()
-                if rendered.detailed_pdf_path is not None
-                else None
-            ),
             included_artifacts=included_artifacts,
         )
         (stage_bundle / "release-status.json").write_bytes(
@@ -202,10 +179,7 @@ def _release_status(
     git_commit: str,
     publication_passed: bool,
     rendering_passed: bool,
-    rendering_edition: Literal["concise", "concise_plus_detailed"],
     guide_html_artifact: str,
-    guide_pdf_artifact: str,
-    detailed_guide_pdf_artifact: str | None,
     included_artifacts: list[str],
 ) -> ReleaseStatus:
     unresolved_ids = {item.id for item in dataset.review_items} - {
@@ -269,10 +243,7 @@ def _release_status(
             "publication": publication_passed,
             "rendering": rendering_passed,
         },
-        rendering_edition=rendering_edition,
         guide_html_artifact=guide_html_artifact,
-        guide_pdf_artifact=guide_pdf_artifact,
-        detailed_guide_pdf_artifact=detailed_guide_pdf_artifact,
         included_artifacts=included_artifacts,
         warnings=warnings,
     )
@@ -289,8 +260,8 @@ def _release_notes(status: ReleaseStatus, election_name: str) -> str:
     warning_lines = "\n".join(f"- {warning}" for warning in status.warnings) or "- None."
     return f"""# {election_name} endorsement consensus guide
 
-Release `{status.release_version}` packages the public HTML and PDF guide with its canonical JSON,
-CSV, review, validation, provenance, build, and release manifests.
+Release `{status.release_version}` packages the public HTML guide with its canonical JSON, CSV,
+review, validation, provenance, build, and release manifests.
 
 ## Audit identity
 

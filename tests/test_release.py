@@ -27,7 +27,7 @@ PROJECT_ROOT = Path(__file__).parents[1]
 INVENTORY = PROJECT_ROOT / "data/normalized/wa-2026-primary-inventory.json"
 REGISTRY = PROJECT_ROOT / "config/sources/default.yaml"
 SCORING = PROJECT_ROOT / "config/scoring/default.yaml"
-RENDERING = PROJECT_ROOT / "config/rendering/pdf.yaml"
+RENDERING = PROJECT_ROOT / "config/rendering/guide.yaml"
 GENERATED_AT = datetime(2026, 7, 23, 17, 15, tzinfo=UTC)
 
 
@@ -349,34 +349,19 @@ def test_release_build_packages_complete_deterministic_public_bundle(
     ) -> SimpleNamespace:
         assert view_model_path.is_file()
         assert config_path == RENDERING
-        pdf_dir = output_dir / "pdf"
-        pdf_dir.mkdir(parents=True)
+        output_dir.mkdir(parents=True, exist_ok=True)
         html = output_dir / "seattle-2026-primary-guide.html"
-        pdf = pdf_dir / "Seattle_2026_Primary_Elections_Guide.pdf"
-        detailed_pdf = pdf_dir / "Seattle_2026_Primary_Elections_Guide_Detailed.pdf"
-        page = pdf_dir / "pages/page-1.png"
-        detailed_page = pdf_dir / "detailed-pages/page-1.png"
         screenshot = output_dir / "screenshots/desktop.png"
         validation = output_dir / "rendering_validation_report.json"
-        page.parent.mkdir(parents=True)
-        detailed_page.parent.mkdir(parents=True)
         screenshot.parent.mkdir(parents=True)
         html.write_text("<!doctype html><title>Guide</title>", encoding="utf-8")
-        pdf.write_bytes(b"%PDF-1.7\nrelease fixture\n")
-        detailed_pdf.write_bytes(b"%PDF-1.7\ndetailed release fixture\n")
-        page.write_bytes(b"concise page")
-        detailed_page.write_bytes(b"detailed page")
         screenshot.write_bytes(b"desktop screenshot")
         validation.write_text('{"passed":true}\n', encoding="utf-8")
         return SimpleNamespace(
             html_path=html,
-            pdf_path=pdf,
-            detailed_pdf_path=detailed_pdf,
             validation_path=validation,
-            page_images=[page],
-            detailed_page_images=[detailed_page],
             screenshots=[screenshot],
-            validation_report=SimpleNamespace(passed=True, edition="concise_plus_detailed"),
+            validation_report=SimpleNamespace(passed=True),
         )
 
     def accept_test_checkout(_: str) -> None:
@@ -429,9 +414,10 @@ def test_release_build_packages_complete_deterministic_public_bundle(
     assert "seattle-election-guide/release-manifest.json" in names
     assert "seattle-election-guide/data/canonical-dataset.json" in names
     assert "seattle-election-guide/data/consensus.json" in names
-    assert "seattle-election-guide/guide/Seattle_2026_Primary_Elections_Guide.pdf" in names
-    assert "seattle-election-guide/validation/rendering/pdf/pages/page-1.png" in names
+    assert "seattle-election-guide/guide/seattle-2026-primary-guide.html" in names
     assert "seattle-election-guide/validation/rendering/screenshots/desktop.png" in names
+    # Issue 193: the release no longer carries a generated PDF edition.
+    assert not any(name.endswith(".pdf") for name in names)
 
     release_manifest = json.loads(
         (second.bundle_dir / "release-manifest.json").read_text(encoding="utf-8")
@@ -450,10 +436,8 @@ def test_release_build_packages_complete_deterministic_public_bundle(
         ({"generated_at": datetime(2026, 7, 19, tzinfo=UTC)}, "cannot predate"),
         ({"validation_reports": {"invented": True}}, "not canonical"),
         ({"included_artifacts": []}, "missing rendered guide artifacts"),
-        (
-            {"detailed_guide_pdf_artifact": "guide/custom-guide.pdf"},
-            "must be distinct",
-        ),
+        ({"guide_html_artifact": "guide/custom-guide.pdf"}, "invalid file types"),
+        ({"guide_html_artifact": "elsewhere/custom-guide.html"}, "canonical paths under guide/"),
     ],
 )
 def test_release_status_rejects_vacuous_or_inconsistent_audit_claims(
@@ -477,18 +461,12 @@ def test_release_status_rejects_vacuous_or_inconsistent_audit_claims(
         "source_access_failures": [],
         "incomplete_races": [],
         "validation_reports": {"publication": True, "rendering": True},
-        "rendering_edition": "concise_plus_detailed",
         "guide_html_artifact": "guide/custom-guide.html",
-        "guide_pdf_artifact": "guide/custom-guide.pdf",
-        "detailed_guide_pdf_artifact": "guide/custom-guide-detailed.pdf",
         "included_artifacts": sorted(
             REQUIRED_RELEASE_ARTIFACTS
             | {
                 "guide/custom-guide.html",
                 "guide/custom-guide.pdf",
-                "guide/custom-guide-detailed.pdf",
-                "validation/rendering/pdf/pages/page-1.png",
-                "validation/rendering/pdf/detailed-pages/page-1.png",
                 "validation/rendering/screenshots/desktop.png",
             }
         ),
@@ -498,7 +476,7 @@ def test_release_status_rejects_vacuous_or_inconsistent_audit_claims(
         ReleaseStatus.model_validate(valid | update)
 
 
-def test_release_status_accepts_configured_concise_only_guide_artifacts() -> None:
+def test_release_status_accepts_a_configured_html_guide_artifact() -> None:
     status = ReleaseStatus.model_validate(
         {
             "release_version": "test",
@@ -517,16 +495,11 @@ def test_release_status_accepts_configured_concise_only_guide_artifacts() -> Non
             "source_access_failures": [],
             "incomplete_races": [],
             "validation_reports": {"publication": True, "rendering": True},
-            "rendering_edition": "concise",
             "guide_html_artifact": "guide/alternate.html",
-            "guide_pdf_artifact": "guide/alternate.pdf",
-            "detailed_guide_pdf_artifact": None,
             "included_artifacts": sorted(
                 REQUIRED_RELEASE_ARTIFACTS
                 | {
                     "guide/alternate.html",
-                    "guide/alternate.pdf",
-                    "validation/rendering/pdf/pages/page-1.png",
                     "validation/rendering/screenshots/mobile.png",
                 }
             ),
@@ -534,7 +507,7 @@ def test_release_status_accepts_configured_concise_only_guide_artifacts() -> Non
         }
     )
 
-    assert status.rendering_edition == "concise"
+    assert status.guide_html_artifact == "guide/alternate.html"
 
 
 @pytest.mark.parametrize(

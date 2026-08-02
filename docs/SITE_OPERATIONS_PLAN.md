@@ -29,7 +29,7 @@ documents Pages-hostname indexability as a deliberate choice.
 
 **F3 — Cloudflare cannot build this project.** The Pages project is Direct Upload. Automatic
 per-PR preview deployments are a Git-integration feature and are not available without letting
-Cloudflare run the build, which it cannot do (Python, Chromium, Poppler, the deterministic
+Cloudflare run the build, which it cannot do (Python, Chromium, the deterministic
 double-build) and should not do (the verification gate lives in GitHub Actions). Per-PR previews
 must be built in CI and uploaded with Wrangler.
 
@@ -161,8 +161,8 @@ Excludes any custom preview hostname (D1).
 
 **Label-gating rather than every PR.** The stated goal is that every PR *can* have its own
 deployment; label-gating delivers that without spending a deploy on every PR. This matters more
-here than in `eldritchdark` because SEG's build is genuinely expensive — Chromium, Poppler, and
-the deterministic double release build — and many PRs are data or documentation changes with no
+here than in `eldritchdark` because SEG's build is genuinely expensive — Chromium and the
+deterministic double release build — and many PRs are data or documentation changes with no
 visual surface. If the label proves to be friction in practice, inverting to deploy-by-default
 with an opt-out label is a one-line change to the same workflow.
 
@@ -727,8 +727,7 @@ D1; D2 and Epic G together in their own conversation.
 
 # Watch items, not tickets
 
-**CI duration.** The `check` job installs Chromium and Poppler and builds the release twice on
-every pull request. That is the correct gate today. It grows as elections accumulate and each
+**CI duration.** The `check` job builds the release twice on every pull request under Chromium. That is the correct gate today. It grows as elections accumulate and each
 declared bundle must be staged. Worth a stated time budget so the erosion is noticed rather than
 absorbed — but not worth weakening the determinism check to fix preemptively.
 

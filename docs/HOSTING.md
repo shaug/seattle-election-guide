@@ -3,8 +3,7 @@
 The public archive is a Direct Upload Cloudflare Pages project named `seattle-elections`. GitHub
 Actions builds and validates the current release, resolves every release declared in
 `config/hosting/site.yaml`, composes the complete archive, and then uses the repository-pinned
-Wrangler version to upload that exact artifact. Cloudflare does not run the Python/PDF build
-itself.
+Wrangler version to upload that exact artifact. Cloudflare does not run the Python build itself.
 
 ## One-time setup
 
@@ -73,7 +72,9 @@ The public route contract is:
 
 - `/` returns a temporary `307` redirect to the manifest-declared current election;
 - `/e/` is an index of every declared guide, with the current election listed first;
-- `/e/<election-id>/` serves that election's HTML, PDFs, release status, and release manifest;
+- `/e/<election-id>/` serves that election's HTML, release status, and release manifest;
+- `/e/<election-id>/<anything>.pdf` returns a permanent `301` redirect to that election's guide
+  page, so links to the retired generated PDF edition (issue 193) still resolve;
 - `/e/<election-id>` redirects to the trailing-slash form;
 - the current election may set `comparison_route_preview: true` to serve
   `/e/<election-id>/comparisons/` and canonicalize its slashless form without adding a link from the
@@ -88,8 +89,7 @@ The public route contract is:
 The generated Pages worker uses an exact staged-asset allowlist before consulting the Pages asset
 binding. This prevents Cloudflare's document fallback from turning a historical-looking unknown URL
 into the current guide. The archive and known election pages remain indexable. Rendered guides set
-their canonical and Open Graph URL to `https://seattleelections.guide/e/<election-id>/`; relative
-PDF links therefore remain scoped to the same election.
+their canonical and Open Graph URL to `https://seattleelections.guide/e/<election-id>/`.
 
 ## Local staging and preview
 
@@ -108,7 +108,7 @@ bundle's exact Git revision before it changes the existing output. It then atomi
 
 - `e/index.html`, generated from the manifest;
 - each guide at `e/<election-id>/index.html`, copied byte-for-byte from its validated release;
-- each election's concise/detailed PDFs, `release-status.json`, and `release-manifest.json`;
+- each election's `release-status.json` and `release-manifest.json`;
 - `about/index.html`, the site-wide About/FAQ page, generated from the manifest;
 - a site-wide deployment manifest recording every verified release and staged asset hash; and
 - `_headers` with browser-security and revalidation policy. The public guide is indexable by

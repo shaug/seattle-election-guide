@@ -31,12 +31,8 @@ jobs:
       # build below, not only for `make check-js` (docs/FRONTEND.md, Modules).
       - name: Install locked Node dependencies
         run: npm ci
-      - name: Install rendering system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install --no-install-recommends --yes poppler-utils
-          google-chrome --version
-          pdftoppm -v
+      - name: Check the rendering browser
+        run: google-chrome --version
       - name: Check formatting
         run: uv run ruff format --check .
       - name: Lint
@@ -69,7 +65,7 @@ jobs:
           unzip -Z1 dist/ci-release-a/seattle-election-guide-2026-primary.2.zip \
             | grep -Fx 'seattle-election-guide/validation/rendering/rendering_validation_report.json'
           unzip -Z1 dist/ci-release-a/seattle-election-guide-2026-primary.2.zip \
-            | grep -Fx 'seattle-election-guide/validation/rendering/pdf/pages/page-1.png'
+            | grep -Fx 'seattle-election-guide/validation/rendering/screenshots/desktop.png'
           test "$(stat -c '%a' dist/ci-release-a)" = 755
       - name: Stage verified Cloudflare Pages site
         run: |
@@ -80,7 +76,7 @@ jobs:
           test -f dist/cloudflare-site/e/index.html
           test -f dist/cloudflare-site/e/wa-2026-primary/index.html
           test -f dist/cloudflare-site/e/wa-2026-primary/comparisons/index.html
-          test -f dist/cloudflare-site/e/wa-2026-primary/Seattle_2026_Primary_Elections_Guide.pdf
+          test -z "$(find dist/cloudflare-site -name '*.pdf' -print -quit)"
           uv run election-guide hosting verify \
             config/hosting/site.yaml \
             dist/cloudflare-site \

@@ -169,7 +169,7 @@ class RaceCoverageStatus(ReleaseModel):
 
 
 class ReleaseStatus(ReleaseModel):
-    schema_version: Literal["1.1"] = "1.1"
+    schema_version: Literal["1.2"] = "1.2"
     release_version: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
     election_id: str
     source_panel_id: str
@@ -186,10 +186,7 @@ class ReleaseStatus(ReleaseModel):
     source_access_failures: list[SourceAccessStatus]
     incomplete_races: list[RaceCoverageStatus]
     validation_reports: dict[str, bool]
-    rendering_edition: Literal["concise", "concise_plus_detailed"]
     guide_html_artifact: str
-    guide_pdf_artifact: str
-    detailed_guide_pdf_artifact: str | None
     included_artifacts: list[str]
     warnings: list[str]
 
@@ -228,49 +225,20 @@ class ReleaseStatus(ReleaseModel):
             raise ValueError(
                 f"release artifact paths must be canonical and relative: {invalid_paths}"
             )
-        guide_paths = [
-            self.guide_html_artifact,
-            self.guide_pdf_artifact,
-            *(
-                [self.detailed_guide_pdf_artifact]
-                if self.detailed_guide_pdf_artifact is not None
-                else []
-            ),
-        ]
-        if any(
-            PurePosixPath(path).parent != PurePosixPath("guide")
-            or path != PurePosixPath(path).as_posix()
-            for path in guide_paths
+        guide_html = self.guide_html_artifact
+        if (
+            PurePosixPath(guide_html).parent != PurePosixPath("guide")
+            or guide_html != PurePosixPath(guide_html).as_posix()
         ):
             raise ValueError("release guide artifacts must be canonical paths under guide/")
-        if not self.guide_html_artifact.endswith(".html") or not self.guide_pdf_artifact.endswith(
-            ".pdf"
-        ):
+        if not guide_html.endswith(".html"):
             raise ValueError("release guide artifacts have invalid file types")
-        if self.rendering_edition == "concise":
-            if self.detailed_guide_pdf_artifact is not None:
-                raise ValueError("concise release cannot name a detailed PDF")
-        elif (
-            self.detailed_guide_pdf_artifact is None
-            or not self.detailed_guide_pdf_artifact.endswith(".pdf")
-        ):
-            raise ValueError("detailed rendering edition requires its PDF artifact")
-        elif self.detailed_guide_pdf_artifact == self.guide_pdf_artifact:
-            raise ValueError("concise and detailed PDF artifacts must be distinct")
-        missing_guides = set(guide_paths) - set(self.included_artifacts)
-        if missing_guides:
-            raise ValueError(
-                f"release is missing rendered guide artifacts: {sorted(missing_guides)}"
-            )
+        if guide_html not in self.included_artifacts:
+            raise ValueError(f"release is missing rendered guide artifacts: {guide_html}")
         missing_artifacts = REQUIRED_RELEASE_ARTIFACTS - set(self.included_artifacts)
         if missing_artifacts:
             raise ValueError(f"release is missing required artifacts: {sorted(missing_artifacts)}")
-        required_qa_prefixes = (
-            "validation/rendering/pdf/pages/",
-            "validation/rendering/screenshots/",
-        )
-        if self.rendering_edition == "concise_plus_detailed":
-            required_qa_prefixes += ("validation/rendering/pdf/detailed-pages/",)
+        required_qa_prefixes = ("validation/rendering/screenshots/",)
         missing_qa = [
             prefix
             for prefix in required_qa_prefixes

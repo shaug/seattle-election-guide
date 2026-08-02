@@ -107,15 +107,6 @@ _CLOSE_ICON_SVG = (
     '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>'
     "</svg>"
 )
-_PDF_ICON_SVG = (
-    '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"'
-    ' stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img"'
-    ' aria-hidden="true" focusable="false">'
-    '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>'
-    '<path d="M14 2v6h6"/><line x1="9" y1="15" x2="15" y2="15"/>'
-    '<line x1="9" y1="18" x2="13" y2="18"/>'
-    "</svg>"
-)
 _ENVELOPE_ICON_SVG = (
     '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"'
     ' stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img"'
@@ -355,20 +346,18 @@ def site_footer_band_html(
     *,
     project_url: str,
     audit_html: str,
-    pdf_href: str | None = None,
     about_href: str = "/about/",
 ) -> str:
     """The navy footer band shared by every page except the 404 (item L55).
 
     Mirrors `site_band_html`: the same icon+wordmark lockup, linking home,
-    on the left; a centered icon action cluster on the right — Printable PDF
-    (only on election-scoped pages, when `pdf_href` is given), Contact,
+    on the left; a centered icon action cluster on the right — Contact,
     source/audit files on GitHub, and How this works.
 
     Share moved to the masthead in issue 192, under the rule promoted to
     DESIGN.md § Site shell: *masthead = actions on the page; footer = meta about
-    the site.* The Printable PDF action stays here until issue 193 retires the
-    generated edition altogether.
+    the site.* Issue 193 retired the generated PDF edition, taking the Printable
+    PDF action with it — the browser's own print output is the printable one now.
     """
 
     def icon_link(label: str, href: str, svg: str, *, external: bool = False) -> str:
@@ -381,7 +370,6 @@ def site_footer_band_html(
             f' title="{escaped_label}"{EXTERNAL_LINK_ATTRIBUTES if external else ""}>{svg}</a>'
         )
 
-    pdf_action = icon_link("Printable PDF", pdf_href, _PDF_ICON_SVG) if pdf_href is not None else ""
     contact_action = icon_link("Contact", CONTACT_HREF, _ENVELOPE_ICON_SVG)
     github_action = icon_link(
         "Source and audit files on GitHub", project_url, _GITHUB_ICON_SVG, external=True
@@ -397,7 +385,7 @@ def site_footer_band_html(
         f"{brand}"
         f'<div class="site-footer-audit">{audit_html}</div>'
         '<div class="site-footer-actions">'
-        f"{pdf_action}{contact_action}{github_action}{about_action}"
+        f"{contact_action}{github_action}{about_action}"
         "</div></div>"
     )
 
@@ -431,23 +419,6 @@ def site_footer_audit_html(
         f"Site updated {escaped_site_date} "
         f'(<a href="{commit_url}"{EXTERNAL_LINK_ATTRIBUTES}>{html.escape(git_commit[:12])}</a>)'
         "</span>"
-    )
-
-
-def print_footer_audit_html(
-    *,
-    data_updated_date: str,
-    site_updated_date: str,
-    git_commit: str,
-    project_url: str,
-) -> str:
-    """Keep the print edition's complete linked-date provenance unchanged."""
-    commit_url = html.escape(f"{project_url}/commit/{git_commit}", quote=True)
-    return (
-        f'Data last updated <a href="{commit_url}"{EXTERNAL_LINK_ATTRIBUTES}>'
-        f"{html.escape(data_updated_date)}</a>. "
-        f'Site last updated <a href="{commit_url}"{EXTERNAL_LINK_ATTRIBUTES}>'
-        f"{html.escape(site_updated_date)}</a>."
     )
 
 

@@ -1,4 +1,4 @@
-"""Responsive HTML, Chromium PDF, and rendered-artifact validation."""
+"""Responsive HTML rendering and rendered-artifact validation."""
 
 from election_guide.rendering.models import RenderingConfiguration, RenderingValidationReport
 from election_guide.rendering.renderer import (

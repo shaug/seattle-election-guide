@@ -199,7 +199,6 @@ a { color: var(--blue); text-underline-offset: .15em; }
 .site-footer-audit > span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .site-footer-audit .audit-join { display: none; }
 .site-footer-audit a { color: var(--mint); font-weight: 700; }
-.detailed-footer-audit { display: none; }
 
 @media (max-width: 62rem) {
   .site-footer-band { grid-template-columns: minmax(0, 1fr) auto; row-gap: .15rem; }
@@ -209,4 +208,32 @@ a { color: var(--blue); text-underline-offset: .15em; }
 }
 @media (max-width: 30rem) {
   .site-footer-brand > span { display: none; }
+}
+
+/* The browser's own print output is the site's printable edition (issue 193).
+   Every page therefore drops the chrome a reader cannot use on paper and
+   prints its shell on white — every slot of it, so sibling pages print alike;
+   each page's own stylesheet keeps its content legible. */
+@media print {
+  html, body { background: var(--white); }
+  .page { max-width: none; min-height: 0; background: var(--white); }
+  .skip-link, .site-band, .page-band-rule, .site-footer-actions,
+  .state-action-strip, .sticky-header, .filter-control-bar { display: none !important; }
+  a { color: var(--ink); text-decoration: none; }
+  .site-footer { border-top: 1px solid var(--line); background: var(--white); color: var(--muted); }
+  .site-footer-band { grid-template-columns: auto minmax(0, 1fr); padding: .35rem 0; }
+  .site-footer-brand { color: var(--navy); }
+  .site-footer-audit { color: var(--muted); }
+  .site-footer-audit > span { display: inline; overflow: visible; white-space: normal; }
+  .site-footer-audit .audit-join { display: inline; }
+  .site-footer-audit a { color: var(--muted); }
+  /* The guide's bespoke hero became the shared .page-head (issue 192), so the
+     extended navy variant is what has to flatten onto paper. */
+  .page-head.extended { padding: 0 0 .12in; border-bottom: 2px solid var(--navy); background: var(--white); color: var(--ink); }
+  .page-head.extended h1 { margin: .04in 0 .05in; color: var(--navy); font-size: 22pt; }
+  .page-head.extended .page-eyebrow { color: var(--teal); font-size: 8pt; }
+  .page-head.extended .page-tagline { color: var(--muted); font-size: 10pt; }
+  /* Slot 4 states the election day, which is worth keeping on paper; it just
+     stops being a tinted banner. */
+  .election-day { padding: .04in 0 0; border-bottom: 0; background: none; color: var(--muted); font-size: 8pt; }
 }
