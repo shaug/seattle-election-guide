@@ -678,7 +678,46 @@ def test_compare_client_enforces_picker_bounds_and_history(tmp_path: Path) -> No
     assert "Reference" not in result["headTextAtMaximum"]
     assert result["referenceHasPickerAtRest"] is False
     assert result["referenceHasTitle"] is True
-    assert result["referenceHasRemove"] is False
+    assert result["referenceHasRemove"] is True
+
+
+def test_compare_client_removes_the_first_column_and_promotes_the_next_reference(
+    tmp_path: Path,
+) -> None:
+    html_path = _comparison_html_path(tmp_path)
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          const wait = () => new Promise((resolve) => setTimeout(resolve, 120));
+          const signals = () => [...document.querySelectorAll(
+            '[data-comparison-head] [data-column-signal]',
+          )].map((heading) => heading.dataset.columnSignal);
+          const remove = document.querySelector('[data-comparison-remove="0"]');
+          const removeLabel = remove.getAttribute('aria-label');
+          remove.click();
+          await wait();
+          return JSON.stringify({
+            removeLabel,
+            afterRemove: signals(),
+            hash: new URLSearchParams(location.hash.slice(1)).get('cols'),
+            focusAfterRemove: document.activeElement?.dataset.comparisonTitle,
+            promotedAgreement: document.querySelector(
+              '[data-comparison-race] .comparison-cell[data-column-signal="strn"]',
+            ).dataset.agreement,
+            removeButtonsAtMinimum: document.querySelectorAll('[data-comparison-remove]').length,
+          });
+        })()
+        """,
+    )
+    assert result == {
+        "removeLabel": "Remove All sources",
+        "afterRemove": ["strn", "stim"],
+        "hash": "strnstim",
+        "focusAfterRemove": "0",
+        "promotedAgreement": "reference",
+        "removeButtonsAtMinimum": 0,
+    }
 
 
 def test_compare_client_preserves_an_arbitrary_first_reference_from_a_legacy_fragment(
@@ -1620,7 +1659,7 @@ def test_compare_header_uses_one_compact_corner_action_geometry(
             assert abs(cell["iconRightInset"] - layout["raceLeftInset"]) <= 4
 
     assert [cell["actionType"] for cell in result["threeColumns"]["cells"]] == [
-        None,
+        "remove",
         "remove",
         "remove",
     ]
