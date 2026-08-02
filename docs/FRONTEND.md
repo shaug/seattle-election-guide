@@ -18,7 +18,11 @@ check is a bug in the check — fix or amend it, never route around it.
 - **Every `.mjs` file is a real ES module.** It declares its imports, imports
   what it references, and loads standalone in Node. No module may rely on
   another's names being present through script concatenation or paste order.
-  *Check: pending — a Node test `import()`s every module in isolation.*
+  *Check: exists — `tests/js/module-isolation.test.mjs` `import()`s every
+  module in isolation, against a shrinking allowlist of the modules that
+  cannot yet load alone. A free identifier is a runtime `ReferenceError`, not
+  a load failure, so the "imports what it references" clause is covered for
+  pure modules by the shared guard and otherwise waits on `tsc --checkJs`.*
 - **Each page has one client entry module.** Pages are assembled by bundling
   the entry's import graph (esbuild, exact-pinned) and inlining the result into
   the template. Published pages remain self-contained single files; the module
@@ -26,8 +30,9 @@ check is a bug in the check — fix or amend it, never route around it.
 - **Templates carry no logic in `<script>`.** A template's inline script is at
   most the bundled text plus a single entry invocation. Behavior lives in
   modules, where it can be imported and tested.
-  *Check: pending — per-template inline-script line ceilings that only
-  decrease (see Adoption).*
+  *Check: exists — `tests/test_frontend_ratchets.py` holds each template to a
+  recorded inline-script line ceiling that only decreases, and to a registry
+  of the injection placeholders the ceiling excludes (see Adoption).*
 
 ## Rendering
 
@@ -69,8 +74,9 @@ check is a bug in the check — fix or amend it, never route around it.
 ## State and URLs
 
 - **The URL fragment is the only client persistence.** No `localStorage`, no
-  `sessionStorage`, no cookies. *Check: exists — module purity tests assert
-  the absence of storage identifiers; extend to every module.*
+  `sessionStorage`, no cookies. *Check: exists — the shared guard in
+  `tests/js/support/module-guards.mjs` asserts the absence of every storage
+  identifier in every module, page wiring included.*
 - **Each page's codec module is the sole reader and writer of `location`.**
   One owner per fragment. No second script parses the hash by hand, and no
   handler edits `location` around the codec.
@@ -103,7 +109,11 @@ check is a bug in the check — fix or amend it, never route around it.
 - **Full HTML documents are Jinja templates extending the shared layout.** No
   new Python-string documents or fragments; autoescaping is the default, not a
   per-call discipline. The existing f-string pages are grandfathered on a
-  shrinking allowlist. *Check: pending.*
+  shrinking allowlist. *Check: exists — `tests/test_frontend_ratchets.py`
+  parses every module under `src/` and reports each function whose own body
+  holds a string literal beginning `<!doctype`, whether it is returned
+  directly or named first, then holds that set to the allowlist. Fragments are
+  not covered.*
 
 ## Dependencies
 
@@ -119,9 +129,13 @@ check is a bug in the check — fix or amend it, never route around it.
 
 ## Testing
 
-- **Pure modules get Node tests plus a purity guard** — the existing pattern:
-  a test that asserts the module's source references no DOM, network, storage,
-  or viewport identifier.
+- **Pure modules get Node tests plus a purity guard** — a test that asserts
+  the module's source references no DOM, network, storage, or viewport
+  identifier. The identifier set lives once in
+  `tests/js/support/module-guards.mjs`; every module's test imports it and
+  declares which of its two tiers applies, so tightening the set tightens
+  every module at once. Page wiring names DOM identifiers by design and takes
+  the storage tier only.
 - **Render functions get Node tests against view-model fixtures**, in a
   lightweight DOM (happy-dom) where one is needed. Headless-Chrome tests
   remain the integration layer; they are not the first line of coverage for
@@ -136,10 +150,12 @@ This document describes the target state; the codebase does not yet comply.
 The transition is legislated, not implied:
 
 - **Existing violations are grandfathered, new ones are not.** The epic's
-  first ticket lands the pending checks with today's measurements frozen in:
-  per-template inline-script ceilings, the f-string page allowlist, the
-  known missing parity fixtures. Ceilings and allowlists only shrink. New
-  code complies immediately.
+  first ticket lands the checks above with today's measurements frozen into
+  `tests/frontend_ratchets.json`: per-template inline-script ceilings and
+  their injection-placeholder registry, the f-string page allowlist, and the
+  modules that do not yet load standalone. Ceilings and allowlists only
+  shrink, and the checks enforce that in both directions — a ceiling that is
+  now too high fails until it is lowered. New code complies immediately.
 - **Migration tickets lower ceilings.** Each ticket that moves glue into
   modules, or a page onto the shared layout, updates the recorded ceiling in
   the same pull request. The epic's closeout deletes the grandfather lists.

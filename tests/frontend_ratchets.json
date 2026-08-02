@@ -1,0 +1,85 @@
+{
+  "documentation": [
+    "Grandfathered front-end debt, frozen at the values docs/FRONTEND.md's",
+    "Adoption section legislates. Every number and every entry here may only",
+    "shrink; the checks that read this file are tests/test_frontend_ratchets.py",
+    "and tests/js/module-isolation.test.mjs. The front-end architecture epic's",
+    "closeout deletes this file once every list is empty.",
+    "",
+    "inline_script_ceilings: exact permitted count of inline-script source",
+    "lines per Jinja template (docs/FRONTEND.md, Modules: templates carry no",
+    "logic in <script>). The metric is defined in tests/test_frontend_ratchets.py",
+    "and is enforced as an equality, so moving glue into a module fails the",
+    "check until the ceiling is lowered in the same pull request. A template",
+    "absent from this map must carry no inline script.",
+    "",
+    "module_injection_placeholders: the `{{ name | safe }}` lines each template",
+    "may use inside a <script> element to inline a module. Placeholder lines are",
+    "excluded from the line count, so an unregistered one would be an unmeasured",
+    "way to inject Python-built script; registering them makes an added",
+    "injection point a checked change. Placeholders outside every <script> —",
+    "the shell's head links, band, and footer fragments — are not covered here.",
+    "",
+    "fstring_documents: functions under src/election_guide whose own body holds",
+    "a `<!doctype`-leading string literal (docs/FRONTEND.md, Server-side",
+    "templates). A document held at module scope is not covered.",
+    "",
+    "module_isolation_exemptions: client modules that do not yet load",
+    "standalone in Node (docs/FRONTEND.md, Modules: every .mjs is a real ES",
+    "module). `error` is matched as a substring of the load failure, so an",
+    "exemption cannot silently start covering a different defect."
+  ],
+  "inline_script_ceilings": {
+    "compare.html.j2": 2,
+    "guide.html.j2": 880,
+    "sources.html.j2": 133
+  },
+  "module_injection_placeholders": {
+    "compare.html.j2": [
+      "compare_client_script",
+      "compare_migrate_script",
+      "compare_signals_script",
+      "compare_url_script",
+      "election_day_script",
+      "lens_score_script",
+      "share_link_script"
+    ],
+    "guide.html.j2": [
+      "election_day_script",
+      "lens_divergence_script",
+      "lens_migrate_script",
+      "lens_score_script",
+      "lens_url_script",
+      "share_link_script"
+    ],
+    "sources.html.j2": [
+      "election_day_script",
+      "lens_url_script",
+      "share_link_script"
+    ]
+  },
+  "fstring_documents": [
+    {
+      "module": "election_guide/hosting/pages.py",
+      "function": "_archive_html",
+      "reason": "The archive index predates the shared Jinja layout."
+    },
+    {
+      "module": "election_guide/hosting/pages.py",
+      "function": "_about_html",
+      "reason": "The About page predates the shared Jinja layout."
+    },
+    {
+      "module": "election_guide/hosting/pages.py",
+      "function": "_not_found_html",
+      "reason": "The 404 page predates the shared Jinja layout."
+    }
+  ],
+  "module_isolation_exemptions": [
+    {
+      "module": "compare-client.mjs",
+      "error": "document is not defined",
+      "reason": "The Comparisons entry reads the DOM at module scope, so it only loads inside a page. It resolves its siblings' names by paste order too; the bundler ticket fixes both."
+    }
+  ]
+}

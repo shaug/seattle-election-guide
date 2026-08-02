@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 
+import { assertModuleGuard } from './support/module-guards.mjs';
 import {
   BLANK_CELL,
   OUTSIDE_SCOPE_CELL,
@@ -257,23 +258,6 @@ test('every current-election gall cell equals the audited scoring oracle exactly
   }
 });
 
-test('the signal engine has no DOM, network, or viewport dependency', () => {
-  const source = readFileSync(
-    fileURLToPath(
-      new URL('../../src/election_guide/rendering/templates/compare-signals.mjs', import.meta.url),
-    ),
-    'utf8',
-  );
-  const code = source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|\s)\/\/.*$/gm, '');
-  for (const forbidden of [
-    'window',
-    'document',
-    'location',
-    'fetch',
-    'XMLHttpRequest',
-    'matchMedia',
-    'innerWidth',
-  ]) {
-    assert.equal(new RegExp(`\\b${forbidden}\\b`).test(code), false);
-  }
+test('the signal engine stays pure', () => {
+  assertModuleGuard('compare-signals.mjs');
 });

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
+import { assertModuleGuard } from './support/module-guards.mjs';
 import {
   DIVERGENCE_DIMENSIONS,
   compareRaceResults,
@@ -132,4 +133,8 @@ test('every defined divergence dimension is exercised by at least one case above
       `${dimension} was not exercised`,
     );
   }
+});
+
+test('the module stays pure', () => {
+  assertModuleGuard('lens-divergence.mjs');
 });

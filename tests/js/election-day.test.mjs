@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
+import { assertModuleGuard } from './support/module-guards.mjs';
 import { electionDayStatement } from '../../src/election_guide/rendering/templates/election-day.mjs';
 
 const NAMES = { full: 'Tuesday, August 4, 2026', short: 'Tuesday, August 4' };
@@ -54,4 +55,8 @@ test('after the election the banner changes tense instead of vanishing', () => {
 test('a long-past election reads the same as a just-past one', () => {
   assert.equal(electionDayStatement(-900, NAMES).tone, 'past');
   assert.equal(electionDayStatement(-900, NAMES).action, false);
+});
+
+test('the module keeps client state out of storage', () => {
+  assertModuleGuard('election-day.mjs');
 });

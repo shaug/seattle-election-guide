@@ -1,8 +1,7 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 
+import { assertModuleGuard } from './support/module-guards.mjs';
 import {
   ALL_SOURCES_TOKEN,
   COMPARE_SCHEMA_VERSION,
@@ -213,26 +212,6 @@ test('lens and comparison fragments reject cleanly on the other page', () => {
   assert.equal(lensDecode.reason, 'unsupported_schema');
 });
 
-test('the codec is pure and has no lens, scoring, DOM, storage, or network dependency', () => {
-  const source = readFileSync(
-    fileURLToPath(new URL('../../src/election_guide/rendering/templates/compare-url.mjs', import.meta.url)),
-    'utf8',
-  );
-  const code = source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|\s)\/\/.*$/gm, '');
-  for (const forbidden of [
-    'window',
-    'document',
-    'location',
-    'history',
-    'fetch',
-    'XMLHttpRequest',
-    'localStorage',
-    'sessionStorage',
-    'navigator',
-    'decodeLensFragment',
-    'encodeLensFragment',
-    'scoreSelection',
-  ]) {
-    assert.equal(new RegExp(`\\b${forbidden}\\b`).test(code), false, `unexpected ${forbidden}`);
-  }
+test('the codec stays pure', () => {
+  assertModuleGuard('compare-url.mjs');
 });

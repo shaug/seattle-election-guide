@@ -1,8 +1,7 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
 import test from 'node:test';
-import { fileURLToPath } from 'node:url';
 
+import { assertModuleGuard } from './support/module-guards.mjs';
 import { migrateLensState } from '../../src/election_guide/rendering/templates/lens-migrate.mjs';
 
 /**
@@ -404,25 +403,6 @@ test('a multi-code migrated selection is sorted regardless of input order', () =
   });
 });
 
-test('the module has no DOM, network, or sibling-lens dependency', () => {
-  const source = readFileSync(
-    fileURLToPath(
-      new URL('../../src/election_guide/rendering/templates/lens-migrate.mjs', import.meta.url),
-    ),
-    'utf8',
-  );
-  const code = source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|\s)\/\/.*$/gm, '');
-
-  for (const forbidden of [
-    'window',
-    'document',
-    'location',
-    'fetch',
-    'localStorage',
-    'decodeLensFragment',
-    'encodeLensFragment',
-    'scoreSelection',
-  ]) {
-    assert.equal(new RegExp(`\\b${forbidden}\\b`).test(code), false, `unexpected ${forbidden}`);
-  }
+test('the module stays pure', () => {
+  assertModuleGuard('lens-migrate.mjs');
 });
