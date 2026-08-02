@@ -1,5 +1,8 @@
 # Review Guide
 
+This guide governs endorsement-data review. Front-end code standards live in
+`docs/FRONTEND.md`; UI/UX rules live in `docs/DESIGN.md`.
+
 No endorsement becomes publishable solely because an extractor produced it.
 
 For each claim, a reviewer must verify:
