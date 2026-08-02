@@ -170,15 +170,13 @@
   } | tojson }}</script>
 
   <script type="module">
-{{ share_link_script | safe }}
-{{ election_day_script | safe }}
-{{ lens_url_script | safe }}
+{{ sources_entry_script | safe }}
+  const { decodeLensFragment, encodeLensFragment, lensContext } = SourcesPage.glue;
 
-  // Page glue for the standalone sources editor. No scoring engine here: this
-  // page only ever reads/writes a selection through the shared fragment codec
-  // above, exactly like the guide's own merged sources tree (issue 107).
-  wireShellShare();
-  wireElectionDay();
+  // Page glue for the standalone sources editor, still inline pending issue
+  // #239. No scoring engine here: this page only ever reads/writes a selection
+  // through the shared fragment codec, like the guide's merged sources tree.
+  SourcesPage.boot();
   const bindings = JSON.parse(document.querySelector('#lens-bindings').textContent);
   const context = lensContext(bindings, bindings.data_version);
   const guidePath = {{ guide_path | tojson }};

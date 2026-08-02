@@ -23,10 +23,27 @@ check is a bug in the check — fix or amend it, never route around it.
   cannot yet load alone. A free identifier is a runtime `ReferenceError`, not
   a load failure, so the "imports what it references" clause is covered for
   pure modules by the shared guard and otherwise waits on `tsc --checkJs`.*
-- **Each page has one client entry module.** Pages are assembled by bundling
-  the entry's import graph (esbuild, exact-pinned) and inlining the result into
-  the template. Published pages remain self-contained single files; the module
+- **Each page has one client entry module.** Entry modules live beside the
+  templates as `<page>-entry.mjs`; the shell-only documents (About, the
+  archive) share `shell-entry.mjs`. Pages are assembled by bundling the entry's
+  import graph (esbuild, exact-pinned) and inlining the result into the
+  template. Published pages remain self-contained single files; the module
   graph is a build-time reality, not a runtime one.
+  *Check: exists — `tests/test_frontend_bundle.py` bundles every
+  `*-entry.mjs`, requires each to be covered there, and asserts no import
+  survives into the page.*
+- **The renderer bundles; there is no prebuild step.** `rendering/bundler.py`
+  invokes esbuild during rendering, so nothing has to run before
+  `election-guide release build` or `pytest` and no generated bundle lives in
+  the tree to go stale. Two consequences bind callers: Node and an installed
+  `node_modules` are prerequisites for *rendering*, not only for `make
+  check-js`, and the bundler refuses to run an esbuild other than the one
+  `package.json` pins, because output is reproducible only per version.
+  The bundle is never minified, and each entry leaves exactly one binding in
+  the page's module scope — so no module's top-level names reach page scope,
+  and the cross-module collision this section warns about cannot occur.
+  *Check: exists — `tests/test_frontend_bundle.py` asserts byte-identical
+  output across two bundles of each entry and enforces the version pin.*
 - **Templates carry no logic in `<script>`.** A template's inline script is at
   most the bundled text plus a single entry invocation. Behavior lives in
   modules, where it can be imported and tested.

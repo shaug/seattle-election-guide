@@ -42,6 +42,7 @@ from election_guide.publication.personalization import (
     PersonalizationRace,
     PersonalizationSource,
 )
+from election_guide.rendering.bundler import TEMPLATE_DIR, bundle_entry
 from election_guide.rendering.models import (
     RenderCheck,
     RenderedPage,
@@ -65,7 +66,6 @@ from election_guide.rendering.shell import (
 )
 from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
 
-TEMPLATE_DIR = Path(__file__).parent / "templates"
 LETTER_WIDTH_POINTS = 612.0
 LETTER_HEIGHT_POINTS = 792.0
 
@@ -168,20 +168,9 @@ def render_html_document(
     stylesheet = (TEMPLATE_DIR / "base.css").read_text(encoding="utf-8") + (
         TEMPLATE_DIR / "guide.css"
     ).read_text(encoding="utf-8")
-    # The fragment codec ships from its single source; the page inlines it verbatim
-    # inside a module script so the guide stays one self-contained file.
-    lens_url_script = (TEMPLATE_DIR / "lens-url.mjs").read_text(encoding="utf-8")
-    # The scoring engine, migration resolver, and divergence comparison are
-    # only ever needed once a lens release enables the policy; the template
-    # inlines each only inside that gate, so a disabled release's page is
-    # unaffected.
-    lens_score_script = (TEMPLATE_DIR / "lens-score.mjs").read_text(encoding="utf-8")
-    lens_migrate_script = (TEMPLATE_DIR / "lens-migrate.mjs").read_text(encoding="utf-8")
-    lens_divergence_script = (TEMPLATE_DIR / "lens-divergence.mjs").read_text(encoding="utf-8")
-    # Shared with the About page in hosting/pages.py so the native-share/
-    # clipboard/execCommand fallback policy has exactly one implementation.
-    share_link_script = (TEMPLATE_DIR / "share-link.mjs").read_text(encoding="utf-8")
-    election_day_script = (TEMPLATE_DIR / "election-day.mjs").read_text(encoding="utf-8")
+    # One entry module, one bundle, inlined verbatim inside a module script so
+    # the guide stays one self-contained file (docs/FRONTEND.md, Modules).
+    guide_entry_script = bundle_entry("guide-entry.mjs", global_name="GuidePage")
     rendered_urls = [
         configuration.project_url,
         *(source.evidence_url for source in view_model.sources),
@@ -233,11 +222,7 @@ def render_html_document(
         document_title=document_title,
         election_display_name=election_display_name,
         stylesheet=stylesheet,
-        lens_url_script=lens_url_script,
-        lens_score_script=lens_score_script,
-        lens_migrate_script=lens_migrate_script,
-        lens_divergence_script=lens_divergence_script,
-        share_link_script=share_link_script,
+        guide_entry_script=guide_entry_script,
         race_share_icon=share_icon_svg(),
         race_close_icon=close_icon_svg(),
         site_band=site_band_html(
@@ -256,7 +241,6 @@ def render_html_document(
             mode="extended",
         ),
         election_day_banner=election_day_banner_html(view_model.metadata.election_date),
-        election_day_script=election_day_script,
         site_head_links=site_head_links_html(configuration.public_site_url),
         election_date_display=election_date_display,
         site_footer_band=_election_footer_band(
@@ -312,9 +296,7 @@ def render_sources_document(
     stylesheet = (TEMPLATE_DIR / "base.css").read_text(encoding="utf-8") + (
         TEMPLATE_DIR / "guide.css"
     ).read_text(encoding="utf-8")
-    lens_url_script = (TEMPLATE_DIR / "lens-url.mjs").read_text(encoding="utf-8")
-    share_link_script = (TEMPLATE_DIR / "share-link.mjs").read_text(encoding="utf-8")
-    election_day_script = (TEMPLATE_DIR / "election-day.mjs").read_text(encoding="utf-8")
+    sources_entry_script = bundle_entry("sources-entry.mjs", global_name="SourcesPage")
     guide_path = f"/e/{view_model.metadata.election_id}/"
     pdf_href = f"{guide_path}{pdf_filename}" if pdf_filename is not None else None
     election_display_name, _ = election_names(
@@ -335,8 +317,7 @@ def render_sources_document(
         document_title=document_title,
         election_display_name=election_display_name,
         stylesheet=stylesheet,
-        lens_url_script=lens_url_script,
-        share_link_script=share_link_script,
+        sources_entry_script=sources_entry_script,
         compare_href=compare_href,
         site_band=site_band_html(
             guide_href=guide_path,
@@ -352,7 +333,6 @@ def render_sources_document(
             ),
         ),
         election_day_banner=election_day_banner_html(view_model.metadata.election_date),
-        election_day_script=election_day_script,
         site_head_links=site_head_links_html(public_site_url),
         site_footer_band=_election_footer_band(
             view_model,
@@ -379,21 +359,7 @@ def render_comparison_document(
     stylesheet = (TEMPLATE_DIR / "base.css").read_text(encoding="utf-8") + (
         TEMPLATE_DIR / "compare.css"
     ).read_text(encoding="utf-8")
-    share_link_script = (TEMPLATE_DIR / "share-link.mjs").read_text(encoding="utf-8")
-    compare_url_script = (TEMPLATE_DIR / "compare-url.mjs").read_text(encoding="utf-8")
-    compare_migrate_script = (
-        (TEMPLATE_DIR / "compare-migrate.mjs")
-        .read_text(encoding="utf-8")
-        .replace("import { ALL_SOURCES_TOKEN } from './compare-url.mjs';\n", "")
-    )
-    lens_score_script = (TEMPLATE_DIR / "lens-score.mjs").read_text(encoding="utf-8")
-    compare_signals_script = (
-        (TEMPLATE_DIR / "compare-signals.mjs")
-        .read_text(encoding="utf-8")
-        .replace("import { scoreRace } from './lens-score.mjs';\n", "")
-    )
-    compare_client_script = (TEMPLATE_DIR / "compare-client.mjs").read_text(encoding="utf-8")
-    election_day_script = (TEMPLATE_DIR / "election-day.mjs").read_text(encoding="utf-8")
+    compare_entry_script = bundle_entry("compare-entry.mjs", global_name="ComparePage")
     guide_path = f"/e/{view_model.metadata.election_id}/"
     pdf_href = f"{guide_path}{pdf_filename}" if pdf_filename is not None else None
     election_display_name, _ = election_names(
@@ -443,12 +409,7 @@ def render_comparison_document(
         document_title=document_title,
         election_display_name=election_display_name,
         stylesheet=stylesheet,
-        share_link_script=share_link_script,
-        compare_url_script=compare_url_script,
-        compare_migrate_script=compare_migrate_script,
-        lens_score_script=lens_score_script,
-        compare_signals_script=compare_signals_script,
-        compare_client_script=compare_client_script,
+        compare_entry_script=compare_entry_script,
         site_band=site_band_html(
             guide_href=guide_path,
             compare_href=f"{guide_path}comparisons/",
@@ -462,7 +423,6 @@ def render_comparison_document(
             tagline_html="Endorsements side by side, surfacing tension.",
         ),
         election_day_banner=election_day_banner_html(view_model.metadata.election_date),
-        election_day_script=election_day_script,
         site_footer_band=_election_footer_band(
             view_model,
             project_url=project_url,

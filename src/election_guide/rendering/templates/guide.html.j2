@@ -590,22 +590,15 @@
   <script type="application/json" id="lens-personalization">{{ lens_personalization | tojson }}</script>
   {% endif %}
   <script type="module">
-{{ share_link_script | safe }}
-{{ election_day_script | safe }}
-{{ lens_url_script | safe }}
-  {% if guide.personalization.policy.enabled %}
-{{ lens_score_script | safe }}
-{{ lens_migrate_script | safe }}
-{{ lens_divergence_script | safe }}
-  {% endif %}
+{{ guide_entry_script | safe }}
+  const { Rational, compareRaceResults, decodeLensFragment, encodeLensFragment, lensContext, migrateLensState, scoreSelection } = GuidePage.glue;
 
-  // Page glue for the merged sources tree. The codec (and, once enabled, the
-  // scoring engine) above is inlined verbatim from its module, so the shipped
-  // page and the Node tests share one implementation.
+  // Page glue for the merged sources tree, still inline pending issue #239.
+  // The codec and the scoring engine reach it off the bundle above, so the
+  // shipped page and the Node tests share one implementation.
   const bindings = JSON.parse(document.querySelector('#lens-bindings').textContent);
 
-  wireShellShare();
-  wireElectionDay();
+  GuidePage.boot();
 
   const context = lensContext(bindings, bindings.data_version);
   const categoryMemberCodesByCode = new Map(

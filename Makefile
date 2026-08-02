@@ -2,6 +2,7 @@
 
 sync:
 	uv sync --frozen
+	npm ci
 
 format:
 	uv run ruff format .

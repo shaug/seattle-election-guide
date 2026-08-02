@@ -2,10 +2,11 @@
 // standalone in Node, relying on no other module's names being present through
 // script concatenation or paste order.
 //
-// Today's pages are still assembled by concatenation, so the modules that
-// cannot yet load alone are grandfathered in tests/frontend_ratchets.json with
-// the exact failure they produce. That list only shrinks: a module that starts
-// loading fails this test until its entry is deleted.
+// The list of modules that cannot yet load alone is grandfathered in
+// tests/frontend_ratchets.json with the exact failure each produces. It is
+// empty as of the bundler ticket, and only shrinks: a module that starts
+// loading fails this test until its entry is deleted, and one that stops
+// loading has nowhere to hide.
 //
 // This check cannot see the document's "imports what it references" clause — a
 // free identifier is a runtime ReferenceError, never a load failure. The pure

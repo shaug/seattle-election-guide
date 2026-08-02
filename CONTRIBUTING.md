@@ -6,9 +6,14 @@ Work is organized through GitHub issues and focused pull requests. Do not commit
 ## Local checks
 
 ```bash
-uv sync --frozen
+make sync
 make check
 ```
+
+`make sync` installs both toolchains from their lockfiles (`uv sync --frozen`
+and `npm ci`). Node is not optional: rendering bundles each page's client entry
+module with the pinned esbuild, so `pytest` and `election-guide release build`
+both need `node_modules` present (docs/FRONTEND.md, Modules).
 
 ## Pull requests
 

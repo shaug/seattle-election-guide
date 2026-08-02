@@ -30,32 +30,19 @@
     "exemption cannot silently start covering a different defect."
   ],
   "inline_script_ceilings": {
-    "compare.html.j2": 2,
-    "guide.html.j2": 880,
+    "compare.html.j2": 1,
+    "guide.html.j2": 878,
     "sources.html.j2": 133
   },
   "module_injection_placeholders": {
     "compare.html.j2": [
-      "compare_client_script",
-      "compare_migrate_script",
-      "compare_signals_script",
-      "compare_url_script",
-      "election_day_script",
-      "lens_score_script",
-      "share_link_script"
+      "compare_entry_script"
     ],
     "guide.html.j2": [
-      "election_day_script",
-      "lens_divergence_script",
-      "lens_migrate_script",
-      "lens_score_script",
-      "lens_url_script",
-      "share_link_script"
+      "guide_entry_script"
     ],
     "sources.html.j2": [
-      "election_day_script",
-      "lens_url_script",
-      "share_link_script"
+      "sources_entry_script"
     ]
   },
   "fstring_documents": [
@@ -75,11 +62,5 @@
       "reason": "The 404 page predates the shared Jinja layout."
     }
   ],
-  "module_isolation_exemptions": [
-    {
-      "module": "compare-client.mjs",
-      "error": "document is not defined",
-      "reason": "The Comparisons entry reads the DOM at module scope, so it only loads inside a page. It resolves its siblings' names by paste order too; the bundler ticket fixes both."
-    }
-  ]
+  "module_isolation_exemptions": []
 }

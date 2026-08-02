@@ -41,6 +41,7 @@ from election_guide.rendering import (
     render_html_document,
     validate_rendered_guide,
 )
+from election_guide.rendering.bundler import TEMPLATE_DIR, bundle_entry
 from election_guide.rendering.models import RenderingValidationReport
 from election_guide.rendering.renderer import (
     PrintLayoutError,
@@ -667,7 +668,10 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "data-footer-share" not in footer_html
     assert "navigator.share" in html
     assert "shareOrCopyLink" in html
-    assert "wireShellShare();" in html
+    # The bundled entry is what wires it now; the page's whole share contract is
+    # the masthead control plus the one entry invocation (docs/FRONTEND.md).
+    assert "data-shell-share" in html
+    assert "GuidePage.boot();" in html
     assert '<div class="site-footer-audit">' in footer_html
     assert "Data updated" in footer_html
     assert "Site updated" in footer_html
@@ -2678,14 +2682,20 @@ def test_sources_tree_shell_exposes_no_dialog_and_keeps_controls_in_the_merged_s
 
 
 def test_sources_tree_shell_encodes_state_through_the_published_codec(tmp_path: Path) -> None:
-    html = _sources_tree_html(tmp_path)
-    codec = (
-        Path(__file__).parent.parent / "src/election_guide/rendering/templates/lens-url.mjs"
-    ).read_text(encoding="utf-8")
+    """The page reaches the codec through the bundler, not by restating it.
 
-    # The page inlines the codec verbatim rather than restating its rules.
+    Before the bundler this asserted the codec's source text appeared verbatim
+    in the page, which is the paste-order arrangement issue #234 removed. The
+    same guarantee now has two halves: the guide's entry imports the published
+    codec, and the page inlines that entry's bundle byte for byte.
+    """
+    html = _sources_tree_html(tmp_path)
+    codec = (TEMPLATE_DIR / "lens-url.mjs").read_text(encoding="utf-8")
+    entry = (TEMPLATE_DIR / "guide-entry.mjs").read_text(encoding="utf-8")
+
     assert "export function encodeLensFragment" in codec
-    assert codec.strip() in html
+    assert "from './lens-url.mjs'" in entry
+    assert bundle_entry("guide-entry.mjs", global_name="GuidePage") in html
     assert 'id="lens-bindings"' in html
     assert "encodeLensFragment(" in html
     assert "decodeLensFragment(" in html

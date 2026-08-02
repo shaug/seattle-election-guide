@@ -21,10 +21,16 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: npm
       - name: Install Python
         run: uv python install 3.12
       - name: Install locked dependencies
         run: uv sync --frozen
+      # Rendering bundles each page's client entry with the pinned esbuild, so
+      # the Node toolchain is a prerequisite for pytest and for the release
+      # build below, not only for `make check-js` (docs/FRONTEND.md, Modules).
+      - name: Install locked Node dependencies
+        run: npm ci
       - name: Install rendering system dependencies
         run: |
           sudo apt-get update

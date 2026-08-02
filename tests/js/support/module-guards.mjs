@@ -60,15 +60,19 @@ const PURITY_IDENTIFIERS = [
  */
 export const MODULE_KINDS = {
   'compare-client.mjs': 'wiring',
+  'compare-entry.mjs': 'wiring',
   'compare-migrate.mjs': 'pure',
   'compare-signals.mjs': 'pure',
   'compare-url.mjs': 'pure',
   'election-day.mjs': 'wiring',
+  'guide-entry.mjs': 'wiring',
   'lens-divergence.mjs': 'pure',
   'lens-migrate.mjs': 'pure',
   'lens-score.mjs': 'pure',
   'lens-url.mjs': 'pure',
   'share-link.mjs': 'wiring',
+  'shell-entry.mjs': 'wiring',
+  'sources-entry.mjs': 'wiring',
 };
 
 export function moduleNames() {
