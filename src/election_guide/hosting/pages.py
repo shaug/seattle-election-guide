@@ -962,6 +962,12 @@ function notFound() {{
   }});
 }}
 
+function noindex(response) {{
+  const marked = new Response(response.body, response);
+  marked.headers.set("X-Robots-Tag", "noindex");
+  return marked;
+}}
+
 export default {{
   async fetch(request, env) {{
     const url = new URL(request.url);
@@ -995,7 +1001,14 @@ export default {{
 {comparison_redirect}    if (!PUBLIC_PATHS.has(url.pathname)) {{
       return notFound();
     }}
-    return env.ASSETS.fetch(request);
+    // Only the canonical host may be indexed (issue 209). Every other
+    // hostname -- the Cloudflare *.pages.dev domain, and any per-pull-request
+    // preview -- serves a complete copy of the guide whose endorsement data
+    // may already be stale, so it must never compete with the real site in
+    // search results. The 404 above is noindex on every host, canonical
+    // included.
+    const asset = await env.ASSETS.fetch(request);
+    return url.hostname === CANONICAL_HOST ? asset : noindex(asset);
   }},
 }};
 """

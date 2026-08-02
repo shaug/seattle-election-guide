@@ -293,6 +293,61 @@ def test_generated_worker_enforces_route_contract(tmp_path: Path) -> None:
     }
 
 
+def test_generated_worker_indexes_only_the_canonical_host(tmp_path: Path) -> None:
+    current, older = _write_archive_bundles(tmp_path)
+    output = tmp_path / "site"
+    stage_pages_site(
+        _write_site_manifest(tmp_path, current_first=True),
+        {CURRENT_BUNDLE_ID: current, OLDER_BUNDLE_ID: older},
+        output,
+    )
+
+    guide = f"/e/{CURRENT_ID}/"
+    canonical_asset, canonical_missing, pages_asset, pages_missing, preview_asset, legacy = (
+        _run_worker(
+            output / "_worker.js",
+            [
+                f"https://seattleelections.guide{guide}",
+                "https://seattleelections.guide/e/not-an-election/",
+                f"https://seattle-elections.pages.dev{guide}",
+                "https://seattle-elections.pages.dev/e/not-an-election/",
+                f"https://pr-42.seattle-elections.pages.dev{guide}",
+                f"https://seattle-elections.dobravoda.dev{guide}",
+            ],
+        )
+    )
+
+    # Issue 209: the canonical host is the only one search engines may index.
+    assert canonical_asset == {
+        "status": 200,
+        "location": None,
+        "robots": None,
+        "body": f"asset:{guide}",
+    }
+    # Every other hostname serves the same guide with noindex attached, so a
+    # preview deployment cannot compete with the real site in search results.
+    for off_canonical in (pages_asset, preview_asset):
+        assert off_canonical["status"] == 200
+        assert off_canonical["robots"] == "noindex"
+        assert off_canonical["body"] == f"asset:{guide}"
+
+    # The 404 is noindex everywhere, canonical included -- that predates this
+    # rule and is not host-dependent.
+    assert canonical_missing["status"] == 404
+    assert canonical_missing["robots"] == "noindex"
+    assert pages_missing["status"] == 404
+    assert pages_missing["robots"] == "noindex"
+
+    # A legacy host still redirects to canonical before any header applies, so
+    # the hop stays a bare 301 rather than a noindex response.
+    assert legacy == {
+        "status": 301,
+        "location": f"https://seattleelections.guide{guide}",
+        "robots": None,
+        "body": "",
+    }
+
+
 def test_enabled_comparisons_stage_verify_and_route_exact_asset(tmp_path: Path) -> None:
     current, older = _write_archive_bundles(tmp_path)
     _enable_comparisons(current)
