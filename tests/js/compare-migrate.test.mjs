@@ -1,8 +1,7 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 
+import { assertModuleGuard } from './support/module-guards.mjs';
 import { migrateCompareState } from '../../src/election_guide/rendering/templates/compare-migrate.mjs';
 import {
   compareContext,
@@ -160,7 +159,7 @@ test('invalid current defaults reject instead of manufacturing a fallback', () =
   assert.equal(result.reason, 'invalid_default_columns');
 });
 
-test('migration rejects a same-version decode and remains pure', () => {
+test('migration rejects a same-version decode', () => {
   const currentContext = compareContext(CURRENT, 'data-v2', COMPARISONS);
   const encoded = encodeCompareFragment({ columns: ['gall', 'strn'] }, currentContext);
   const decoded = decodeCompareFragment(encoded.fragment, currentContext);
@@ -168,23 +167,8 @@ test('migration rejects a same-version decode and remains pure', () => {
     status: 'rejected',
     reason: 'not_stale_version',
   });
+});
 
-  const source = readFileSync(
-    fileURLToPath(
-      new URL('../../src/election_guide/rendering/templates/compare-migrate.mjs', import.meta.url),
-    ),
-    'utf8',
-  );
-  const code = source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|\s)\/\/.*$/gm, '');
-  for (const forbidden of [
-    'window',
-    'document',
-    'location',
-    'history',
-    'fetch',
-    'localStorage',
-    'scoreSelection',
-  ]) {
-    assert.equal(new RegExp(`\\b${forbidden}\\b`).test(code), false, `unexpected ${forbidden}`);
-  }
+test('the module stays pure', () => {
+  assertModuleGuard('compare-migrate.mjs');
 });

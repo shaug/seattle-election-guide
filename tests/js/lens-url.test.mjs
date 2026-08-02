@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 
+import { assertModuleGuard } from './support/module-guards.mjs';
 import {
   LENS_SCHEMA_VERSION,
   decodeLensFragment,
@@ -422,29 +423,8 @@ test('a lens link may carry a race target alongside a selection', () => {
   assert.equal(decoded.state.raceTarget, 'race-us-house-7');
 });
 
-test('the codec never reads or writes anything outside the fragment string', () => {
-  const source = readFileSync(
-    fileURLToPath(new URL('../../src/election_guide/rendering/templates/lens-url.mjs', import.meta.url)),
-    'utf8',
-  );
-  const code = source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|\s)\/\/.*$/gm, '');
-
-  for (const forbidden of [
-    'window',
-    'document',
-    'location',
-    'fetch',
-    'XMLHttpRequest',
-    'localStorage',
-    'sessionStorage',
-    'navigator',
-  ]) {
-    assert.equal(
-      new RegExp(`\\b${forbidden}\\b`).test(code),
-      false,
-      `${forbidden} would let fragment state escape the client`,
-    );
-  }
+test('the codec stays pure', () => {
+  assertModuleGuard('lens-url.mjs');
 });
 
 test('the committed panel snapshot round-trips through the codec', () => {

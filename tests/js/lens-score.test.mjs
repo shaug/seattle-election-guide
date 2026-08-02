@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 
+import { assertModuleGuard } from './support/module-guards.mjs';
 import {
   Rational,
   resolveSelection,
@@ -360,33 +361,8 @@ test('one source cannot reach the explicit-source floor', () => {
   }
 });
 
-test('the engine has no DOM or network dependency', () => {
-  const source = readFileSync(
-    fileURLToPath(
-      new URL('../../src/election_guide/rendering/templates/lens-score.mjs', import.meta.url),
-    ),
-    'utf8',
-  );
-  const code = source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|\s)\/\/.*$/gm, '');
-
-  for (const forbidden of [
-    'window',
-    'document',
-    'location',
-    'fetch',
-    'XMLHttpRequest',
-    'localStorage',
-    'sessionStorage',
-    'navigator',
-    'require',
-    'process',
-  ]) {
-    assert.equal(
-      new RegExp(`\\b${forbidden}\\b`).test(code),
-      false,
-      `${forbidden} would make the engine environment-dependent`,
-    );
-  }
+test('the engine stays pure', () => {
+  assertModuleGuard('lens-score.mjs');
 });
 
 test('the engine mutates neither the payload nor the selection', () => {
