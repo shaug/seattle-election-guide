@@ -1,11 +1,13 @@
-# Site operations plan (2026-08-01, open questions resolved, not yet filed)
+# Site operations plan (planned 2026-08-01, filed as #202–#227)
 
 Operational and process work to mature the site's deploy, release, monitoring, and
 election-planning practice. Scoped to deliberately avoid site rendering and features; the two
 items that do touch rendering are called out and deferred.
 
-Item IDs are `O<n>` for shovel-ready work and `D<n>` for open questions. Nothing here is filed
-yet. Epics are the intended GitHub parents; each `O` item is one PR-sized child.
+Item IDs are `O<n>` for work items and `D<n>` for the questions this plan resolved. Every item is
+filed; see *Filed issues* below for the mapping. Each epic is a GitHub parent and each `O` item is
+one PR-sized child. This document remains the rationale of record — the issues carry the work, and
+where they disagree the issues win.
 
 ## Findings that shape the plan
 
