@@ -37,6 +37,16 @@ ENTRIES = {
 }
 
 
+# esbuild writes bundled dependencies' licence notices into one block at the
+# end of the output, introduced by exactly this line.
+LICENCE_BANNER = "/*! Bundled license information:"
+
+
+def _code(bundle: str) -> str:
+    """The bundle's code, without the licence block esbuild appends to it."""
+    return bundle.split(LICENCE_BANNER, 1)[0]
+
+
 def _fresh(entry: str, global_name: str) -> str:
     """Bundle without the render-time cache, so esbuild actually runs."""
     bundle_entry.cache_clear()
@@ -53,7 +63,9 @@ def test_each_entry_bundles_to_one_binding_that_boots_the_page(
     assert "boot: () => boot" in bundle
     # An IIFE, so no module's top-level names reach page scope: the collision
     # class the concatenated pages carried cannot recur (docs/FRONTEND.md).
-    assert bundle.rstrip().endswith("})();")
+    # esbuild collects the licence notices of bundled dependencies after it —
+    # a comment, not code, and one the page must keep carrying.
+    assert _code(bundle).rstrip().endswith("})();")
     # Self-contained: no statement or specifier survives that would make the
     # published page fetch anything at runtime.
     assert not re.search(r"^\s*(?:import|export)[\s({]", bundle, re.MULTILINE)
@@ -108,6 +120,53 @@ def test_the_installed_esbuild_is_the_exact_version_package_json_pins() -> None:
 
     assert installed == pinned, f"esbuild {installed} is installed, not {pinned}: run `npm ci`"
     assert _fresh("shell-entry.mjs", "ShellPage")
+
+
+def test_every_declared_dependency_is_an_exact_version() -> None:
+    """Runtime and dev-time dependencies alike are exact-pinned.
+
+    The bundler enforces this for esbuild, because its own output depends on
+    the version. The rule is wider than that (docs/FRONTEND.md, Dependencies):
+    a checker or formatter that drifts between machines fails the diff rather
+    than the code, and lit-html ships in the page, so a range there would make
+    the published bytes depend on when the build ran.
+    """
+    manifest = json.loads(PACKAGE_JSON.read_text(encoding="utf-8"))
+    declared = {
+        **manifest.get("dependencies", {}),
+        **manifest.get("devDependencies", {}),
+    }
+    assert declared, "package.json declares no dependencies"
+
+    ranged = sorted(
+        name for name, version in declared.items() if not re.fullmatch(r"\d+\.\d+\.\d+", version)
+    )
+    assert not ranged, (
+        f"{ranged} are not pinned to an exact version in package.json. Every version is "
+        f"pinned exactly (rule: dependencies, docs/FRONTEND.md)."
+    )
+
+
+def test_the_runtime_dependency_ships_inline_and_fetches_nothing() -> None:
+    """Runtime: lit-html, bundled at build time and readable in the page source.
+
+    `test_each_entry_bundles_to_one_binding_that_boots_the_page` already proves
+    no import survives. This adds the other half of the rule for the one
+    runtime dependency: its code is actually in the page rather than reached
+    for at run time.
+    """
+    bundle = bundle_entry("compare-entry.mjs", global_name="ComparePage")
+
+    assert "lit-html" in json.loads(PACKAGE_JSON.read_text(encoding="utf-8"))["dependencies"]
+    assert "node_modules/lit-html/lit-html.js" in bundle, (
+        "the Comparisons bundle does not carry lit-html's browser source. It is bundled at "
+        "build time and shipped inline like our own modules (rule: dependencies, "
+        "docs/FRONTEND.md). lit-html also publishes a `node` build, which binds a DOM stub "
+        "when it loads; a page must never be built from that one."
+    )
+    assert "node_modules/lit-html/node/" not in bundle
+    assert "fetch(" not in bundle
+    assert "import(" not in bundle
 
 
 def test_an_unknown_entry_is_a_bundler_error_rather_than_an_esbuild_message() -> None:
