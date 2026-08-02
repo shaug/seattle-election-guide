@@ -32,9 +32,9 @@ does and when to reach for the kill switch instead.
 
 Leave publishing disabled until the project and both secrets exist. Then create the repository
 Actions variable `CLOUDFLARE_PAGES_ENABLED` with the exact value `true`. Run the **CI** workflow
-manually on `main` for the first upload. After that, every push to `main` builds, validates, and
-stages automatically, then queues a production deployment for approval. Pull requests never receive
-the Cloudflare secrets and never deploy.
+manually on `main` for the first upload. That run, and every push to `main` after it, builds,
+validates, and stages automatically, then queues a production deployment for approval. Pull requests
+never receive the Cloudflare secrets and never deploy.
 
 ## Custom domains
 
@@ -196,13 +196,18 @@ the run and leaves the live site on its previous deployment. Work can keep landi
 deployment waits, which is the point: merging and publishing are separate decisions, and during the
 week before an election the second one deserves its own moment.
 
-Two limits shape how long a deployment can usefully wait. The `deploy` job serializes on one
-concurrency group, so production deployments do not stack up: at most one waits at a time, and a
-newer one displaces the one queued behind it. Confirm which commit a waiting deployment carries
-before approving it — the deployments log records it — rather than assuming it is the current head
-of `main`. And the job publishes by downloading the `cloudflare-site` artifact that `check` uploaded,
-which Actions keeps for seven days; approving after that fails at the download step instead of
-publishing. Re-run CI on the commit to stage a fresh artifact.
+What waits is one commit, not a backlog. The `deploy` job serializes on a single concurrency group,
+so production deployments never accumulate: a run queued behind the waiting one is itself canceled
+when a newer run queues behind it. Approving therefore publishes the commit the waiting deployment
+carries — the deployments log records which — and that is not necessarily the head of `main`. To
+publish a newer commit instead, reject the waiting deployment and approve the newer one. Re-running
+CI on the exact commit you want is the dependable way to produce a deployment for it.
+
+A hold is also bounded. The job publishes by downloading the `cloudflare-site` artifact that `check`
+uploaded, and Actions keeps that artifact for seven days; approving afterward fails at the download
+step rather than publishing. GitHub fails an unapproved deployment after thirty days, but the
+artifact expires long before that, so seven days is the real limit. Past it, re-run CI on the commit
+to stage a fresh artifact.
 
 The only reviewer is the maintainer, so this is self-approval, and admins can bypass it. That is
 deliberate. What it buys is the pause and the audit trail in the deployment log, not enforcement
@@ -224,8 +229,10 @@ created.
 
 ### Which one to use
 
-Approval is the per-deploy pause, and the normal path. It never needs to be undone: hold a specific
-commit, sit on a change overnight, or let a day's work land before publishing any of it.
+Approval is the per-deploy pause, and the normal path: hold a specific commit, or sit on a change
+overnight before putting it in front of voters. Because what waits is a single commit rather than a
+backlog, letting several merges land and then publishing means approving the deployment for the
+commit you actually want — rejecting the waiting one first if it is not that commit.
 
 The variable is the durable off switch. Use it when publication should be off rather than merely
 waiting: while Cloudflare credentials are rotated, while the Pages project is rebuilt, or for any
