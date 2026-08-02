@@ -71,6 +71,7 @@ export const MODULE_KINDS = {
   'compare-entry.mjs': 'wiring',
   'compare-migrate.mjs': 'pure',
   'compare-signals.mjs': 'pure',
+  'compare-table.mjs': 'pure',
   'compare-url.mjs': 'pure',
   'election-day.mjs': 'wiring',
   'guide-entry.mjs': 'wiring',

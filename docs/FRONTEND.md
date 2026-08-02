@@ -65,11 +65,40 @@ check is a bug in the check — fix or amend it, never route around it.
   alone for crawlers and readers without JavaScript. Client rendering takes a
   region over only when personalization or interaction requires it; the
   default audited view does zero DOM work.
+- **The takeover idiom.** A region is one element that carries a `data-` hook,
+  and lit owns that element's children — never the element itself, which the
+  server keeps. Takeover is explicit and one-way: the wiring clears the
+  server's children once, renders, and owns the region from then on. It
+  happens at the latest moment the reader's intent requires:
+  - A region whose *content* is a projection of state is left exactly as the
+    server rendered it until the state stops being the audited default. The
+    Comparisons table's row groups are this case, and an ordinary visit now
+    does no DOM work on them at all.
+  - A region that *carries its own controls* is taken over at boot, because
+    the audited baseline cannot render those controls: a `<button>` the server
+    ships is a control that does nothing for a reader without JavaScript. The
+    Comparisons table's `<thead>` is this case — the server renders the same
+    column labels as static text — and it is the reason the bullet above says
+    "the default audited view" rather than "the default audited page".
+
+  The audited restore is not a saved copy of the server's markup. Returning to
+  the audited default renders the same template with the audited view model,
+  which the parity check below is what makes equivalent.
 - **Client and server markup for the same region must agree.** A lit-html
   template rendered with audited data must produce the region the Jinja
-  template rendered. *Check: pending — a Node parity test renders the lit
-  template with audited view-model data and diffs it against the server
-  output.*
+  template rendered. *Check: exists for the regions lit renders —
+  `tests/js/compare-markup-parity.test.mjs` boots the audited Comparisons page
+  in the lightweight DOM, drives it away from the default and back, and diffs
+  the row groups lit rendered against the ones committed in
+  `tests/js/fixtures/compare-audited-page.html`, which
+  `tests/test_compare_rendering.py` holds to a fresh render. The comparison is
+  of parsed markup — every tag, attribute, and run of text — ignoring only
+  comments, whitespace, attribute order, and the difference between a relative
+  and an absolute form of the same URL; `tests/js/support/markup-parity.mjs`
+  states that list and takes a region, so #248 brings the guide and sources
+  lens regions to the same check. A head that the server does not render
+  interactively has no region to compare, and is covered instead by the
+  behavior tests in `tests/test_compare_rendering.py`.*
 - **Repeated lists that re-render use keyed rendering** (lit-html `repeat`),
   so re-renders preserve element identity and focus. A control the reader is
   using must still exist after the render it triggers.
@@ -129,8 +158,10 @@ check is a bug in the check — fix or amend it, never route around it.
   `schema_version` and holds the client's own literal to the Python constant,
   so a version bump cannot ship a build that refuses its own payload. What
   runs unexercised is the reveal itself — `readClientPayload` writing the
-  notice, and the entry throwing — because Node has no document; it gains
-  coverage with the lightweight DOM (#238, Testing below).*
+  notice, and the entry throwing. The lightweight DOM this was waiting on has
+  landed (#238, Testing below), so what remains is an unwritten test rather
+  than a missing capability; it belongs to #236's follow-up, not to the ticket
+  that brought the DOM in.*
 
 ## State and URLs
 
@@ -151,8 +182,14 @@ check is a bug in the check — fix or amend it, never route around it.
 - **A comment is not a contract.** Any logic implemented in both Python and
   JavaScript — labels, formatting, scoring, encoding — requires a generated
   parity fixture: the Python side emits golden cases, the Node tests assert
-  them. `lens-score`'s parity fixture is the pattern. *Check: pending for
-  labels and percentage formatting; exists for scoring.*
+  them. `lens-score`'s parity fixture is the pattern. *Check: exists for
+  scoring; partial for the comparison table's labels and percentages — the
+  markup-parity test (Rendering, above) diffs both sides' output for every
+  cell the audited page renders, which is what caught `toFixed` rounding a
+  9/16 share to 56.3% where the audited renderer's half-to-even gives 56.2%.
+  It cannot reach a value the audited page does not render, so a generated
+  golden-case fixture is still owed for the shares only a category column
+  produces.*
 - **Prefer deleting a mirror to fixing one.** Where the contract can carry
   the computed value instead (a label in the payload rather than a formatter
   on each side), carry the value. The audited candidate order and the audited
@@ -189,7 +226,16 @@ check is a bug in the check — fix or amend it, never route around it.
 - **Runtime: lit-html, and nothing else without amending this document.**
   Exact-pinned, bundled at build time, shipped inline in the page like our own
   modules. Nothing is fetched at runtime; every shipped byte remains readable
-  in the page source.
+  in the page source. It is the standalone `lit-html` package — not `lit`,
+  and no reactive-element or decorator layer with it — because what the pages
+  need is a template renderer over view-model state, which is what Rendering
+  above describes. Its BSD-3-Clause notice travels with it: esbuild collects
+  the licences of everything it bundles into one comment at the end of the
+  inlined script, which is the redistribution the licence asks for and stays
+  readable like the rest.
+  *Check: exists — `tests/test_frontend_bundle.py` asserts that lit-html's
+  source is in the bundle rather than fetched, that no import survives into a
+  page, and that every declared dependency is an exact version.*
 - **Dev-time dependencies are few, shallow, and exact-pinned.** The toolchain
   is:
   - **esbuild** — bundles each page's entry (Modules, above).
@@ -198,6 +244,9 @@ check is a bug in the check — fix or amend it, never route around it.
     runnable `.mjs`. Types are carried in JSDoc.
   - **Biome** — one tool for lint and format across the client modules and
     their Node tests, replacing a separate linter and formatter.
+  - **happy-dom** — the lightweight DOM the Node tests render in (Testing,
+    below). A test dependency only: nothing it provides is shipped, and
+    headless Chrome remains the integration layer.
   - **json-schema-to-typescript** — the schema-to-types generator, run by
     `make types` to emit the payload declarations (The data contract, above).
     Its output is committed and a Python test fails when that output is
@@ -224,7 +273,9 @@ check is a bug in the check — fix or amend it, never route around it.
 - **Render functions get Node tests against view-model fixtures**, in a
   lightweight DOM (happy-dom) where one is needed. Headless-Chrome tests
   remain the integration layer; they are not the first line of coverage for
-  logic.
+  logic. `tests/js/support/dom.mjs` installs the DOM; a test that needs one
+  calls it rather than building its own, so there is one answer to what a
+  client module may assume exists.
 - **Every discipline in this document that can be checked, is checked, in
   `make check`.** A rule without a check is either pending (named above) or
   reviewer-applied by explicit note here.
@@ -259,9 +310,6 @@ Decided by their implementing tickets, then recorded here:
 
 - The shared fragment-codec core: how much of `compare-url` / `lens-url` is
   parameterized into one module, and the shape of its page-schema parameter.
-- The takeover idiom for lens-aware regions: the exact container boundary at
-  which lit-html assumes ownership from the server baseline, and how the
-  audited restore is expressed.
 - Per-page CSS entry points: whether stylesheets move to the same
   entry-per-page model as scripts, and what replaces the shared
   `base.css + guide.css` concatenation.

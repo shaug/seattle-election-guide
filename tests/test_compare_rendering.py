@@ -13,7 +13,6 @@ from urllib.parse import parse_qs, urlencode
 import pytest
 
 from election_guide.publication.comparisons import ComparisonsPolicy
-from election_guide.publication.models import PublicationViewModel
 from election_guide.rendering.renderer import (
     ComparisonCellView,
     _comparison_row_differs,  # pyright: ignore[reportPrivateUsage]
@@ -22,6 +21,11 @@ from election_guide.rendering.renderer import (
     render_html_document,
     render_sources_document,
 )
+from tests.compare_parity import (
+    AUDITED_PAGE_PATH,
+    build_audited_comparison_page,
+)
+from tests.compare_parity import enabled_view_model as _enabled_view_model
 from tests.test_comparisons import _bundle  # pyright: ignore[reportPrivateUsage]
 from tests.test_rendering import _evaluate_in_chrome  # pyright: ignore[reportPrivateUsage]
 
@@ -29,15 +33,17 @@ PROJECT_ROOT = Path(__file__).parents[1]
 DEFAULT_DIFFERENCE_ORACLE = PROJECT_ROOT / "tests/fixtures/comparison-default-differences.json"
 
 
-def _enabled_view_model() -> PublicationViewModel:
-    view_model = _bundle().view_model
-    return view_model.model_copy(
-        update={
-            "comparisons": view_model.comparisons.model_copy(
-                update={"policy": ComparisonsPolicy(enabled=True)}
-            )
-        }
-    )
+def _comparison_table(rendered: str) -> str:
+    """The server-rendered comparison table, apart from the rest of the page.
+
+    The page inlines the bundled client modules, whose lit-html templates
+    contain the same attribute names the table's markup does. A count over the
+    whole document would see both, so assertions about what the server rendered
+    read the table itself.
+    """
+    match = re.search(r'<table class="comparison-table".*?</table>', rendered, re.DOTALL)
+    assert match is not None, "the comparisons page rendered no comparison table"
+    return match.group(0)
 
 
 def test_default_difference_oracle_matches_published_current_inputs() -> None:
@@ -79,6 +85,26 @@ def test_default_difference_oracle_matches_published_current_inputs() -> None:
     ]
 
 
+def test_committed_audited_page_fixture_matches_a_fresh_render() -> None:
+    """The Node markup-parity check is only as good as the page it diffs against.
+
+    docs/FRONTEND.md § Rendering requires the lit-html rendering of a region to
+    be the region the Jinja template rendered. The Node side of that comparison
+    reads a committed copy of the audited page, so a change to the Jinja
+    template or to the published data has to land with a regenerated fixture —
+    otherwise the parity test would keep passing against markup the site no
+    longer serves.
+    """
+    committed = AUDITED_PAGE_PATH.read_text(encoding="utf-8")
+
+    assert committed == build_audited_comparison_page(), (
+        f"{AUDITED_PAGE_PATH.relative_to(PROJECT_ROOT)} is not what the renderer now "
+        "produces, so the Node markup-parity test is diffing against a page that no longer "
+        "exists. Regenerate it in this pull request with "
+        "`uv run python -m tests.compare_parity` (docs/FRONTEND.md, Rendering)."
+    )
+
+
 def test_compare_document_server_renders_default_contract_snapshot() -> None:
     view_model = _enabled_view_model()
     rendered = render_comparison_document(
@@ -97,16 +123,14 @@ def test_compare_document_server_renders_default_contract_snapshot() -> None:
     assert rendered.index(">Endorsements</a>") < rendered.index(">Comparisons</a>")
     assert rendered.index(">Sources</a>") < rendered.index(">Comparisons</a>")
     assert 'data-default-columns="gall,strn,stim"' in rendered
-    assert rendered.count("data-comparison-race=") == len(view_model.comparisons.display_index)
-    assert (
-        rendered.count('data-column-signal="gall"') == len(view_model.comparisons.display_index) + 1
-    )
-    assert (
-        rendered.count('data-column-signal="strn"') == len(view_model.comparisons.display_index) + 1
-    )
-    assert (
-        rendered.count('data-column-signal="stim"') == len(view_model.comparisons.display_index) + 1
-    )
+    # Counted over the table rather than the document: the page inlines the
+    # bundled client modules, and the lit-html templates in them name the same
+    # attributes they render (docs/FRONTEND.md, Rendering).
+    table = _comparison_table(rendered)
+    assert table.count("data-comparison-race=") == len(view_model.comparisons.display_index)
+    assert table.count('data-column-signal="gall"') == len(view_model.comparisons.display_index) + 1
+    assert table.count('data-column-signal="strn"') == len(view_model.comparisons.display_index) + 1
+    assert table.count('data-column-signal="stim"') == len(view_model.comparisons.display_index) + 1
     assert "Endorsements side by side, surfacing tension." in rendered
     assert "You're starting with all sources" not in rendered
     assert 'name="description" content="Endorsements side by side, surfacing tension."' in rendered

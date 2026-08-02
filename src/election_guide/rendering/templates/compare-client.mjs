@@ -1,8 +1,26 @@
 // Interactive comparison-page glue. State is admitted and serialized only by
-// compare-url.mjs; cell arithmetic is owned only by compare-signals.mjs.
+// compare-url.mjs; cell arithmetic is owned only by compare-signals.mjs; the
+// table's markup is owned only by compare-table.mjs.
+//
+// This module is wiring: it holds the view-model state, listens, and hands lit
+// a view model. The two regions it owns are taken over on different terms
+// (docs/FRONTEND.md § Rendering, "the region-takeover idiom"):
+//
+//   head  Taken over at boot, because the column controls live in it and the
+//         audited baseline cannot render them.
+//   body  Left as the server rendered it until the state stops being the
+//         audited default. Most visits never change it, and those visits now
+//         do no work on the largest region of the page.
+//
+// Takeover is one-way. Once lit owns a region, returning to the audited default
+// re-renders it from the audited view model rather than putting the server's
+// markup back — `compare-markup-parity.test.mjs` is what makes those two the
+// same thing.
+import { render } from 'lit-html';
 import { readClientPayload } from './client-payload.mjs';
 import { migrateCompareState } from './compare-migrate.mjs';
 import { cellAgreement, createColumnSignalEngine, rowDiffers } from './compare-signals.mjs';
+import { comparisonBodyTemplate, comparisonHeadTemplate } from './compare-table.mjs';
 import {
   ALL_SOURCES_TOKEN,
   compareContext,
@@ -121,30 +139,72 @@ export function wireComparisons() {
     ...display.measure_response_labels,
   });
   /**
+   * The audited renderer's percentage, mirrored.
+   *
+   * `comparison_percentage_label` scales the share as a rational, prints a
+   * whole percentage with no decimal, and otherwise rounds to one place
+   * half-to-even. `toFixed` rounds halves away from zero instead, which made
+   * the same 9/16 share read 56.2% on the audited page and 56.3% the moment a
+   * reader touched it. The markup-parity test found that; the arithmetic here
+   * stays on integers so the two sides cannot drift apart again over a float
+   * (docs/FRONTEND.md § Cross-language mirrors).
+   *
    * The denominator default is numeric because the array is already numeric:
-   * an integer rational such as `3` splits to one element. `'1'` divided the
-   * same after coercion, so this reads as it always behaved.
+   * an integer rational such as `3` splits to one element.
    *
    * @param {string|null|undefined} rational
    */
   const percentage = (rational) => {
     if (rational == null) return '';
     const [top, bottom = 1] = String(rational).split('/').map(Number);
-    const value = (top / bottom) * 100;
-    return `${Number.isInteger(value) ? value : value.toFixed(1)}%`;
+    if ((top * 100) % bottom === 0) return `${(top * 100) / bottom}%`;
+    const tenths = top * 1000;
+    const whole = Math.floor(tenths / bottom);
+    const doubled = 2 * (tenths - whole * bottom);
+    const rounded = doubled > bottom || (doubled === bottom && whole % 2 !== 0) ? whole + 1 : whole;
+    return `${(rounded / 10).toFixed(1)}%`;
   };
 
-  let state = {
+  const auditedDefault = () => ({
     columns: [...payload.default_columns],
     differencesOnly: false,
     contestedOnly: false,
     section: 'all',
-  };
+  });
+
+  let state = auditedDefault();
+  /**
+   * Which column, if any, is showing its picker instead of its title. State,
+   * not DOM: the render decides which control exists, so no handler swaps
+   * nodes and nothing has to be put back afterwards.
+   *
+   * @type {number|null}
+   */
+  let editingColumn = null;
+  /**
+   * Whether lit has taken each region over from the server. One-way: after the
+   * first takeover the audited default is re-rendered from the audited view
+   * model, never handed back to the server's markup.
+   */
+  let headTakenOver = false;
+  let bodyTakenOver = false;
   let disclosure = '';
   /** @type {string|null} */
   let lastLocationKey = null;
   const locationKey = () =>
     `${window.location.pathname}${window.location.search}${window.location.hash}`;
+
+  /** True while the reader is still looking at exactly what the server rendered. */
+  function showingAuditedDefault() {
+    const audited = auditedDefault();
+    return (
+      !state.differencesOnly &&
+      !state.contestedOnly &&
+      state.section === audited.section &&
+      state.columns.length === audited.columns.length &&
+      state.columns.every((signal, index) => signal === audited.columns[index])
+    );
+  }
 
   function stateFromLocation() {
     const decoded = decodeCompareFragment(window.location.hash, context);
@@ -153,12 +213,7 @@ export function wireComparisons() {
       if (state.columns.length < 2) state.columns = [...payload.default_columns];
       disclosure = '';
     } else if (decoded.status === 'absent') {
-      state = {
-        columns: [...payload.default_columns],
-        differencesOnly: false,
-        contestedOnly: false,
-        section: 'all',
-      };
+      state = auditedDefault();
       disclosure = '';
     } else if (decoded.status === 'stale_version') {
       const migration = migrateCompareState(decoded, personalization, context);
@@ -187,145 +242,74 @@ export function wireComparisons() {
     if (locationKey() === lastLocationKey) return;
     stateFromLocation();
     lastLocationKey = locationKey();
-    render();
+    editingColumn = null;
+    renderPage();
   }
 
   /**
-   * @param {string} value
-   * @param {string} text
-   * @param {string} current
-   * @param {ReadonlySet<string>} used
-   * @returns {HTMLOptionElement}
-   */
-  function option(value, text, current, used) {
-    const element = document.createElement('option');
-    element.value = value;
-    element.textContent = text;
-    element.selected = value === current;
-    element.disabled = used.has(value) && value !== current;
-    return element;
-  }
-
-  /**
-   * Which control the next render should return focus to, so a change made
-   * from the keyboard does not drop the reader back at the top of the page.
+   * The options one picker offers, grouped as the control presents them.
    *
-   * @typedef {{ kind: 'picker'|'title', index: number }} FocusTarget
-   */
-
-  /**
    * @param {string} signal
-   * @param {number} index
-   * @param {HTMLButtonElement} title
-   * @returns {HTMLSelectElement}
+   * @returns {import('./compare-table.mjs').ComparisonOptionGroupView[]}
    */
-  function pickerFor(signal, index, title) {
-    const select = document.createElement('select');
-    select.className = 'comparison-column-picker';
-    select.dataset.comparisonColumn = String(index);
-    select.setAttribute(
-      'aria-label',
-      index === 0
-        ? `Change reference, currently ${labelFor(signal)}`
-        : `Change ${labelFor(signal)} comparison`,
-    );
+  function groupsFor(signal) {
     const used = new Set(state.columns);
+    /**
+     * @param {string} value
+     * @param {string} text
+     * @returns {import('./compare-table.mjs').ComparisonOptionView}
+     */
+    const option = (value, text) => ({
+      value,
+      label: text,
+      selected: value === signal,
+      disabled: used.has(value) && value !== signal,
+    });
 
-    const publishedGroup = document.createElement('optgroup');
-    publishedGroup.label = 'Published result';
-    publishedGroup.append(option(ALL_SOURCES_TOKEN, 'All sources', signal, used));
-    select.append(publishedGroup);
-
-    const categoryGroup = document.createElement('optgroup');
-    categoryGroup.label = 'Categories';
+    const groups = [
+      { label: 'Published result', options: [option(ALL_SOURCES_TOKEN, 'All sources')] },
+      {
+        label: 'Categories',
+        options: categories.map((category) =>
+          option(
+            category.code,
+            `${category.label}${isComparison(category.code) ? ' (Comparison only)' : ''}`,
+          ),
+        ),
+      },
+    ];
     for (const category of categories) {
-      const suffix = isComparison(category.code) ? ' (Comparison only)' : '';
-      categoryGroup.append(option(category.code, `${category.label}${suffix}`, signal, used));
-    }
-    select.append(categoryGroup);
-
-    for (const category of categories) {
-      const group = document.createElement('optgroup');
-      group.label = isComparison(category.code)
-        ? `${category.label} (Comparison only)`
-        : category.label;
       const members = category.member_source_codes
         .filter((code) => sources.has(code))
         .sort((left, right) => labelFor(left).localeCompare(labelFor(right)));
-      for (const member of members) {
-        const suffix = isComparison(member) ? ' (Comparison only)' : '';
-        group.append(option(member, `${labelFor(member)}${suffix}`, signal, used));
-      }
-      if (members.length) select.append(group);
+      if (!members.length) continue;
+      groups.push({
+        label: isComparison(category.code) ? `${category.label} (Comparison only)` : category.label,
+        options: members.map((member) =>
+          option(member, `${labelFor(member)}${isComparison(member) ? ' (Comparison only)' : ''}`),
+        ),
+      });
     }
-    select.addEventListener('change', () => {
-      const next = [...state.columns];
-      next[index] = select.value;
-      if (new Set(next).size !== next.length) return;
-      state.columns = next;
-      if (writeState()) render({ kind: 'title', index });
-    });
-    let closing = false;
-    /** @param {boolean} restoreFocus */
-    const closeEditor = (restoreFocus) => {
-      if (closing || !select.isConnected) return;
-      closing = true;
-      select.replaceWith(title);
-      syncTitleHeights();
-      if (restoreFocus) window.setTimeout(() => title.focus(), 0);
+    return groups;
+  }
+
+  /** @returns {import('./compare-table.mjs').ComparisonHeadView} */
+  function headView() {
+    return {
+      columns: state.columns.map((signal, index) => ({
+        signal,
+        index,
+        title: labelFor(signal),
+        controlLabel:
+          index === 0
+            ? `Change reference, currently ${labelFor(signal)}`
+            : `Change ${labelFor(signal)} comparison`,
+        editing: editingColumn === index,
+        groups: editingColumn === index ? groupsFor(signal) : [],
+        removeLabel: state.columns.length > 2 ? `Remove ${labelFor(signal)}` : null,
+        canAdd: index === state.columns.length - 1 && state.columns.length < 3,
+      })),
     };
-    select.addEventListener('keydown', (event) => {
-      if (event.key !== 'Escape') return;
-      event.preventDefault();
-      event.stopPropagation();
-      closeEditor(true);
-    });
-    select.addEventListener('blur', () => closeEditor(false));
-    return select;
-  }
-
-  /**
-   * @param {string} signal
-   * @param {number} index
-   * @returns {HTMLButtonElement}
-   */
-  function titleFor(signal, index) {
-    const title = document.createElement('button');
-    title.type = 'button';
-    title.className = 'comparison-column-title comparison-column-title-action';
-    title.dataset.comparisonTitle = String(index);
-    title.setAttribute(
-      'aria-label',
-      index === 0
-        ? `Change reference, currently ${labelFor(signal)}`
-        : `Change ${labelFor(signal)} comparison`,
-    );
-    title.textContent = labelFor(signal);
-    title.addEventListener('click', () => {
-      const picker = pickerFor(signal, index, title);
-      title.replaceWith(picker);
-      syncTitleHeights();
-      picker.focus();
-    });
-    return title;
-  }
-
-  function syncTitleHeights() {
-    head.style.removeProperty('--comparison-title-height');
-    const titles = [...head.querySelectorAll('.comparison-column-title')];
-    if (!titles.length) return;
-    const titleHeight = Math.max(...titles.map((title) => title.scrollHeight));
-    head.style.setProperty('--comparison-title-height', `${titleHeight}px`);
-  }
-
-  /** @param {FocusTarget|null} target */
-  function restoreHeadFocus(target) {
-    if (!target) return;
-    const selector =
-      target.kind === 'picker'
-        ? `[data-comparison-column="${target.index}"]`
-        : `[data-comparison-title="${target.index}"]`;
-    /** @type {HTMLElement|null} */ (head.querySelector(selector))?.focus();
   }
 
   function nextUnusedSignal() {
@@ -339,79 +323,96 @@ export function wireComparisons() {
   }
 
   /**
-   * @param {readonly string[]} visible
-   * @param {FocusTarget|null} focusTarget
+   * The only focus calls left in this module, and each one moves focus to a
+   * control that did not exist before the render: a picker the reader just
+   * opened, or the title that replaced the picker they were in. Focus on a
+   * control that survives a render is not touched, because lit's keyed
+   * rendering keeps that element (docs/FRONTEND.md § Rendering).
+   *
+   * @param {'title'|'picker'} kind
+   * @param {number} index
    */
-  function renderHead(visible, focusTarget) {
-    table.style.setProperty('--comparison-column-count', String(visible.length));
-    head.replaceChildren();
-    const row = document.createElement('tr');
-    const race = document.createElement('th');
-    race.scope = 'col';
-    const raceLabel = document.createElement('span');
-    raceLabel.className = 'comparison-column-label';
-    raceLabel.textContent = 'Race';
-    race.append(raceLabel);
-    row.append(race);
-    visible.forEach((signal, index) => {
-      const cell = document.createElement('th');
-      cell.scope = 'col';
-      cell.dataset.columnSignal = signal;
-      const heading = document.createElement('div');
-      heading.className = 'comparison-column-heading';
-      const title = titleFor(signal, index);
-      heading.append(title);
-      if (focusTarget?.kind === 'picker' && focusTarget.index === index) {
-        title.replaceWith(pickerFor(signal, index, title));
+  function focusHeadControl(kind, index) {
+    const selector =
+      kind === 'picker'
+        ? `[data-comparison-column="${index}"]`
+        : `[data-comparison-title="${index}"]`;
+    /** @type {HTMLElement|null} */ (head.querySelector(selector))?.focus();
+  }
+
+  /** @type {import('./compare-table.mjs').ComparisonHeadActions} */
+  const headActions = {
+    onEdit(index) {
+      editingColumn = index;
+      renderHead();
+      focusHeadControl('picker', index);
+    },
+    onChoose(index, value) {
+      const next = [...state.columns];
+      next[index] = value;
+      if (new Set(next).size !== next.length) return;
+      state.columns = next;
+      editingColumn = null;
+      if (writeState()) {
+        renderPage();
+        focusHeadControl('title', index);
       }
-      const actions = document.createElement('span');
-      actions.className = 'comparison-column-actions';
-      if (state.columns.length > 2) {
-        const remove = document.createElement('button');
-        remove.type = 'button';
-        remove.className = 'comparison-column-remove';
-        remove.dataset.comparisonRemove = String(index);
-        remove.setAttribute('aria-label', `Remove ${labelFor(signal)}`);
-        remove.title = `Remove ${labelFor(signal)}`;
-        const removeIcon = document.createElement('span');
-        removeIcon.className = 'comparison-column-action-icon';
-        removeIcon.setAttribute('aria-hidden', 'true');
-        removeIcon.textContent = '×';
-        remove.append(removeIcon);
-        remove.addEventListener('click', () => {
-          state.columns = state.columns.filter((_, columnIndex) => columnIndex !== index);
-          const focusIndex = Math.min(index, state.columns.length - 1);
-          if (writeState()) render({ kind: 'title', index: focusIndex });
-        });
-        actions.append(remove);
+    },
+    onCancel(index) {
+      if (editingColumn !== index) return;
+      editingColumn = null;
+      renderHead();
+      // Deliberately asynchronous: the keydown that closed the picker is still
+      // being dispatched on an element lit has already removed, and focusing
+      // during that dispatch is what the previous implementation had to defer
+      // too.
+      window.setTimeout(() => focusHeadControl('title', index), 0);
+    },
+    onDismiss(index) {
+      // Focus has already moved on; closing the picker must not chase it.
+      if (editingColumn !== index) return;
+      editingColumn = null;
+      renderHead();
+    },
+    onRemove(index) {
+      state.columns = state.columns.filter((_, columnIndex) => columnIndex !== index);
+      editingColumn = null;
+      const focusIndex = Math.min(index, state.columns.length - 1);
+      if (writeState()) {
+        renderPage();
+        focusHeadControl('title', focusIndex);
       }
-      if (index === state.columns.length - 1 && state.columns.length < 3) {
-        const add = document.createElement('button');
-        add.type = 'button';
-        add.className = 'comparison-column-add';
-        add.setAttribute('aria-label', 'Add comparison column');
-        add.title = 'Add comparison column';
-        const addIcon = document.createElement('span');
-        addIcon.className = 'comparison-column-action-icon';
-        addIcon.setAttribute('aria-hidden', 'true');
-        addIcon.textContent = '+';
-        add.append(addIcon);
-        add.addEventListener('click', () => {
-          const available = nextUnusedSignal();
-          if (!available) return;
-          state.columns = [...state.columns, available];
-          if (writeState()) render({ kind: 'picker', index: state.columns.length - 1 });
-        });
-        actions.append(add);
+    },
+    onAdd() {
+      const available = nextUnusedSignal();
+      if (available === undefined) return;
+      state.columns = [...state.columns, available];
+      editingColumn = state.columns.length - 1;
+      if (writeState()) {
+        renderPage();
+        focusHeadControl('picker', state.columns.length - 1);
       }
-      if (actions.childElementCount > 0) heading.append(actions);
-      else heading.classList.add('comparison-column-plain');
-      cell.append(heading);
-      row.append(cell);
-    });
-    head.append(row);
+    },
+  };
+
+  function syncTitleHeights() {
+    head.style.removeProperty('--comparison-title-height');
+    const titles = [...head.querySelectorAll('.comparison-column-title')];
+    if (!titles.length) return;
+    const titleHeight = Math.max(...titles.map((title) => title.scrollHeight));
+    head.style.setProperty('--comparison-title-height', `${titleHeight}px`);
+  }
+
+  function renderHead() {
+    table.style.setProperty('--comparison-column-count', String(state.columns.length));
+    if (!headTakenOver) {
+      // The audited head is static text; the interactive one replaces it once,
+      // and lit owns the region from here.
+      head.replaceChildren();
+      headTakenOver = true;
+    }
+    render(comparisonHeadTemplate(headView(), headActions), head);
     syncTitleHeights();
-    restoreHeadFocus(focusTarget);
   }
 
   /**
@@ -420,55 +421,47 @@ export function wireComparisons() {
    * @param {ComparisonDisplayRace} display
    * @param {import('./compare-signals.mjs').ComparisonCell} reference
    * @param {boolean} isReference
-   * @returns {HTMLTableCellElement}
+   * @returns {import('./compare-table.mjs').ComparisonCellView}
    */
-  function cellFor(signal, cell, display, reference, isReference) {
+  function cellView(signal, cell, display, reference, isReference) {
     const labels = candidateLabels(display);
-    const element = document.createElement('td');
-    element.className = 'comparison-cell';
-    element.dataset.columnSignal = signal;
-    element.dataset.columnLabel = labelFor(signal);
-    element.dataset.cellKind = cell.kind;
-    const agreement = isReference ? 'reference' : cellAgreement(cell, reference);
-    element.dataset.agreement = agreement;
-    const picks = document.createElement('span');
-    picks.className = 'comparison-cell-picks';
-    picks.textContent =
-      cell.kind === 'outside_scope'
-        ? 'Outside district'
-        : cell.leadingPickIds?.map((id) => labels[id]).join(' / ') || '—';
-    if (cell.kind === 'blank') picks.title = 'No endorsement published';
-    element.append(picks);
-    if (cell.share != null) {
-      const meta = document.createElement('span');
-      meta.className = 'comparison-cell-meta';
-      const count =
-        cell.kind === 'aggregate'
-          ? `${cell.endorsingCount} of ${cell.memberCount} sources`
-          : `${cell.endorsingCount} sources`;
-      meta.textContent = `${percentage(cell.share)} · ${count}`;
-      element.append(meta);
-    }
-    return element;
+    const leadingPickIds = cell.leadingPickIds ?? [];
+    const share = cell.share ?? null;
+    const meta =
+      share === null
+        ? null
+        : `${percentage(share)} · ${
+            cell.kind === 'aggregate'
+              ? `${cell.endorsingCount} of ${cell.memberCount} sources`
+              : `${cell.endorsingCount} sources`
+          }`;
+    return {
+      signal,
+      columnLabel: labelFor(signal),
+      kind: cell.kind,
+      agreement: isReference ? 'reference' : cellAgreement(cell, reference),
+      leadingPickIds,
+      share,
+      explicitSourceCount: cell.endorsingCount ?? null,
+      choiceLabels: leadingPickIds.map((id) => labels[id]),
+      meta,
+    };
   }
 
   /**
-   * @typedef {object} SectionRow
-   * @property {ComparisonDisplayRace} display
-   * @property {PersonalizationRace} race
-   * @property {import('./compare-signals.mjs').ComparisonCell[]} configuredCells
-   * @property {boolean} differs
+   * The row groups the current state selects, plus the counts the status line
+   * reports. Pure with respect to the DOM: this is the whole of what the body
+   * template needs.
+   *
+   * @returns {{ view: import('./compare-table.mjs').ComparisonBodyView, status: string,
+   *   allAgree: boolean }}
    */
-
-  /** @param {readonly string[]} visible */
-  function renderBody(visible) {
-    table.querySelectorAll('tbody').forEach((body) => {
-      body.remove();
-    });
-    /** @type {Map<string, { label: string, displays: SectionRow[] }>} */
+  function bodyView() {
+    /** @type {Map<string, import('./compare-table.mjs').ComparisonSectionView>} */
     const sections = new Map();
     let total = 0;
     let differCount = 0;
+    let shown = 0;
     for (const display of comparisons.display_index) {
       if (state.section !== 'all' && display.section_id !== state.section) continue;
       if (state.contestedOnly && !contestedIds.has(display.race_id)) continue;
@@ -482,84 +475,66 @@ export function wireComparisons() {
       if (state.differencesOnly && !differs) continue;
       let section = sections.get(display.section_id);
       if (section === undefined) {
-        section = { label: display.section_label, displays: [] };
+        section = {
+          sectionId: display.section_id,
+          sectionLabel: display.section_label,
+          rows: [],
+        };
         sections.set(display.section_id, section);
       }
-      section.displays.push({ display, race, configuredCells, differs });
+      const reference = configuredCells[0];
+      shown += 1;
+      section.rows.push({
+        raceId: display.race_id,
+        raceLabel: display.race_label,
+        raceHref: `../#race-${display.race_id}`,
+        differs,
+        cells: state.columns.map((signal, index) =>
+          cellView(signal, configuredCells[index], display, reference, index === 0),
+        ),
+      });
     }
-    let shown = 0;
-    for (const [sectionId, section] of sections) {
-      const body = document.createElement('tbody');
-      body.dataset.comparisonSection = sectionId;
-      const heading = document.createElement('tr');
-      heading.className = 'comparison-section-heading';
-      const headingCell = document.createElement('th');
-      headingCell.scope = 'rowgroup';
-      headingCell.colSpan = visible.length + 1;
-      headingCell.textContent = section.label;
-      heading.append(headingCell);
-      body.append(heading);
-      for (const item of section.displays) {
-        // `race` stays on the row record for the lit-html conversion of this
-        // table to render from (#238); this loop only needs the display
-        // labels and the cells.
-        const { display, configuredCells, differs } = item;
-        shown += 1;
-        const row = document.createElement('tr');
-        row.dataset.comparisonRace = display.race_id;
-        row.dataset.rowDiffers = String(differs);
-        const raceHeading = document.createElement('th');
-        raceHeading.scope = 'row';
-        raceHeading.className = 'comparison-race';
-        const link = document.createElement('a');
-        link.href = `../#race-${display.race_id}`;
-        link.textContent = display.race_label;
-        raceHeading.append(link);
-        if (differs) {
-          const differsLabel = document.createElement('span');
-          differsLabel.className = 'comparison-race-differs';
-          differsLabel.textContent = 'Differs';
-          raceHeading.append(differsLabel);
-        }
-        row.append(raceHeading);
-        const reference = configuredCells[0];
-        visible.forEach((signal, index) => {
-          row.append(cellFor(signal, configuredCells[index], display, reference, index === 0));
-        });
-        body.append(row);
-      }
-      table.append(body);
+    const allAgree = state.differencesOnly && total > 0 && differCount === 0;
+    return {
+      view: {
+        sections: [...sections.values()],
+        columnCount: state.columns.length,
+        empty:
+          shown > 0
+            ? null
+            : {
+                message: allAgree
+                  ? 'These signals agree in every race they share under the current filters.'
+                  : 'No races match the current filters.',
+                action: allAgree ? 'Show all rows' : 'Reset filters',
+              },
+      },
+      status: `${shown} of ${total} races shown · ${differCount} differ`,
+      allAgree,
+    };
+  }
+
+  function renderBody() {
+    // The audited default is already on the page. Until the reader asks for
+    // something else, this region does no DOM work at all.
+    if (!bodyTakenOver && showingAuditedDefault()) return;
+    const { view, status: statusText, allAgree } = bodyView();
+    if (!bodyTakenOver) {
+      for (const body of [...table.querySelectorAll('tbody')]) body.remove();
+      bodyTakenOver = true;
     }
-    if (shown === 0) {
-      const body = document.createElement('tbody');
-      const row = document.createElement('tr');
-      row.className = 'comparison-empty';
-      const cell = document.createElement('td');
-      cell.colSpan = visible.length + 1;
-      const allAgree = state.differencesOnly && total > 0 && differCount === 0;
-      const message = document.createElement('p');
-      message.textContent = allAgree
-        ? 'These signals agree in every race they share under the current filters.'
-        : 'No races match the current filters.';
-      cell.append(message);
-      const reset = document.createElement('button');
-      reset.type = 'button';
-      reset.className = 'comparison-reset';
-      reset.textContent = allAgree ? 'Show all rows' : 'Reset filters';
-      reset.addEventListener('click', () => {
+    render(
+      comparisonBodyTemplate(view, () => {
         state.differencesOnly = false;
         if (!allAgree) {
           state.contestedOnly = false;
           state.section = 'all';
         }
-        if (writeState('replace')) render();
-      });
-      cell.append(reset);
-      row.append(cell);
-      body.append(row);
-      table.append(body);
-    }
-    status.textContent = `${shown} of ${total} races shown · ${differCount} differ`;
+        if (writeState('replace')) renderPage();
+      }),
+      table,
+    );
+    status.textContent = statusText;
   }
 
   /**
@@ -580,36 +555,35 @@ export function wireComparisons() {
     toggleInput('[data-comparison-contested]').checked = state.contestedOnly;
   }
 
-  /** @param {FocusTarget|null} [focusTarget] */
-  function render(focusTarget = null) {
-    const visible = state.columns;
+  // Everything one state change implies: both regions, the controls, the hint.
+  function renderPage() {
     notice.hidden = disclosure === '';
     notice.textContent = disclosure;
-    renderHead(visible, focusTarget);
-    renderBody(visible);
+    renderHead();
+    renderBody();
     syncControls();
     window.requestAnimationFrame(syncComparisonScrollHint);
   }
 
   sectionFilter.addEventListener('change', () => {
     state.section = sectionFilter.value;
-    if (writeState('replace')) render();
+    if (writeState('replace')) renderPage();
   });
   toggleInput('[data-comparison-full]').addEventListener('change', () => {
     state.differencesOnly = false;
-    if (writeState('replace')) render();
+    if (writeState('replace')) renderPage();
   });
   toggleInput('[data-comparison-differences]').addEventListener('change', () => {
     state.differencesOnly = true;
-    if (writeState('replace')) render();
+    if (writeState('replace')) renderPage();
   });
   toggleInput('[data-comparison-all-races]').addEventListener('change', () => {
     state.contestedOnly = false;
-    if (writeState('replace')) render();
+    if (writeState('replace')) renderPage();
   });
   toggleInput('[data-comparison-contested]').addEventListener('change', () => {
     state.contestedOnly = true;
-    if (writeState('replace')) render();
+    if (writeState('replace')) renderPage();
   });
   /** @type {NodeListOf<HTMLAnchorElement>} */
   (document.querySelectorAll('.comparison-presets a')).forEach((link) => {
@@ -618,7 +592,7 @@ export function wireComparisons() {
       if (decoded.status !== 'valid') return;
       event.preventDefault();
       state = { ...decoded.state };
-      if (writeState()) render();
+      if (writeState()) renderPage();
     });
   });
   window.addEventListener('popstate', syncFromLocation);
@@ -635,5 +609,5 @@ export function wireComparisons() {
 
   stateFromLocation();
   lastLocationKey = locationKey();
-  render();
+  renderPage();
 }
