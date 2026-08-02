@@ -48,10 +48,10 @@
   {% macro sources_member_row(category, member_code) -%}
     {% set psource = personalization_source_by_code[member_code] %}
     {% set pub_source = source_by_id[psource.id] %}
-    {# The comparison category's own row never starts checked and is always
-       interactive (issue 96/97: showing the comparison predates and is
-       independent of the personalization policy), unlike an ordinary
-       tallying category's row. #}
+    {# Issue 124: a comparison source is documented here but is no longer
+       checkable anywhere — the guide has no comparison to show, and choosing
+       comparison columns is the Comparisons page's job. Its row keeps the
+       name, the evidence link, and the endorsement overview. #}
     {% set is_comparison = category.panel_role == 'comparison' %}
     {# A source with zero endorsements this cycle (a coverage gap) has
        nothing an interactive checkbox could ever toggle into a score, so it
@@ -60,10 +60,10 @@
     {% if pub_source.contribution_status == 'contributing' %}
     {% set other_category_ids = psource.selection_category_ids | reject('equalto', category.id) | list %}
     <div class="sources-row" data-sources-source-row="{{ member_code }}">
-      {% if is_comparison or guide.personalization.policy.enabled %}
+      {% if guide.personalization.policy.enabled and not is_comparison %}
       <label class="sources-check">
         <input type="checkbox" data-sources-source="{{ member_code }}"
-          data-sources-category-member="{{ category.code }}"{% if not is_comparison %} checked{% endif %}>
+          data-sources-category-member="{{ category.code }}" checked>
         <a href="{{ pub_source.evidence_url }}"{{ external_link_attributes }}>{{ pub_source.name }}</a>
       </label>
       {% else %}
@@ -98,8 +98,6 @@
     </div>
     <main id="sources-main">
 
-      <p class="sources-comparison-status" data-sources-comparison-status role="status" aria-live="polite"></p>
-
       <div class="sources-tree">
         <div class="sources-columns">
           {% for category in guide.personalization.categories if category.selectable and category.panel_role != 'comparison' %}
@@ -124,14 +122,10 @@
         {% set comparison_category = guide.personalization.categories | selectattr('panel_role', 'equalto', 'comparison') | first %}
         {% if comparison_category %}
         <section class="sources-category sources-category-comparison" data-sources-category="{{ comparison_category.code }}">
-          <h2>
-            <label class="sources-check sources-category-check">
-              <input type="checkbox" data-sources-category-toggle="{{ comparison_category.code }}">
-              <span>Comparison only</span>
-            </label>
-          </h2>
-          <p class="sources-comparison-note">Shown for comparison; never counted toward the
-            scores.</p>
+          <h2><span>Comparison only</span></h2>
+          <p class="sources-comparison-note">Never counted toward the scores. Every source here is
+            available on the {% if compare_href %}<a href="{{ compare_href }}">Comparisons page</a>{% else %}Comparisons page{% endif %},
+            where you can put it side by side with the consensus.</p>
           {% for member_code in comparison_category.member_source_codes %}
             {{ sources_member_row(comparison_category, member_code) }}
           {% endfor %}
@@ -159,6 +153,10 @@
     </footer>
   </div>
 
+  {# Categories and sources are published in full regardless of the lens
+     policy: the codec identifies a pre-removal link's comparison token by its
+     published role (issue 124), and must see that role to ignore the token
+     rather than reject the whole link. #}
   <script type="application/json" id="lens-bindings">{{ {
     "panel_id": guide.metadata.source_panel_id,
     "panel_hash": guide.metadata.source_panel_hash,
@@ -167,14 +165,8 @@
     "policy": {
       "maximum_url_characters": guide.personalization.policy.maximum_url_characters
     },
-    "categories": (
-      lens_personalization.categories if guide.personalization.policy.enabled
-      else (lens_personalization.categories | selectattr('panel_role', 'equalto', 'comparison') | list)
-    ),
-    "sources": (
-      lens_personalization.sources if guide.personalization.policy.enabled
-      else (lens_personalization.sources | selectattr('panel_role', 'equalto', 'comparison') | list)
-    )
+    "categories": lens_personalization.categories,
+    "sources": lens_personalization.sources
   } | tojson }}</script>
 
   <script type="module">
@@ -191,9 +183,6 @@
   const context = lensContext(bindings, bindings.data_version);
   const guidePath = {{ guide_path | tojson }};
 
-  const comparisonSourceCodes = new Set(
-    bindings.sources.filter((item) => item.panel_role === 'comparison').map((item) => item.code),
-  );
   const categoryMemberCodesByCode = new Map(
     bindings.categories.map((item) => [item.code, item.member_source_codes]),
   );
@@ -208,24 +197,10 @@
   const syncSourceCode = (code, checked) => {
     for (const input of sourceInputsByCode.get(code) ?? []) input.checked = checked;
   };
-  const checkedComparisonSourceCodes = () => [...comparisonSourceCodes].filter(isCodeChecked).sort();
-  const tallyingSourceCodes = [...sourceInputsByCode.keys()].filter(
-    (code) => !comparisonSourceCodes.has(code),
-  );
+  // Issue 124: a comparison source renders no checkbox at all, so every input
+  // this page has is a tallying one.
+  const tallyingSourceCodes = [...sourceInputsByCode.keys()];
   const checkedTallyingSourceCodes = () => tallyingSourceCodes.filter(isCodeChecked).sort();
-  const allCheckedSourceCodes = () => [...sourceInputsByCode.keys()].filter(isCodeChecked).sort();
-
-  const root = document.documentElement;
-  const comparisonStatusLine = document.querySelector('[data-sources-comparison-status]');
-  const applyComparisonVisibility = () => {
-    const shown = checkedComparisonSourceCodes().length > 0;
-    root.classList.toggle('show-times', shown);
-    if (comparisonStatusLine) {
-      comparisonStatusLine.textContent = shown
-        ? 'Seattle Times comparison shown. Recommendations are unchanged.'
-        : '';
-    }
-  };
 
   const categoryToggleInputs = [...document.querySelectorAll('[data-sources-category-toggle]')];
   const membersOfCategory = (categoryCode) => [
@@ -258,14 +233,13 @@
   /**
    * Save's target address bar carries the edited selection, matching the
    * guide's own writeLensState: the audited default (every tallying source
-   * checked, no comparison source checked) elides the fragment entirely.
+   * checked) elides the fragment entirely.
    */
   const saveTarget = () => {
-    const isDefault = checkedTallyingSourceCodes().length === tallyingSourceCodes.length
-      && checkedComparisonSourceCodes().length === 0;
+    const isDefault = checkedTallyingSourceCodes().length === tallyingSourceCodes.length;
     if (!isDefault) {
       const encoded = encodeLensFragment(
-        { mode: 's', categoryCodes: [], sourceCodes: allCheckedSourceCodes(), raceTarget: incomingRaceTarget },
+        { mode: 's', categoryCodes: [], sourceCodes: checkedTallyingSourceCodes(), raceTarget: incomingRaceTarget },
         context,
       );
       if (encoded.status === 'ok') return `${guidePath}#${encoded.fragment}`;
@@ -276,7 +250,6 @@
   const refreshSelectionUi = () => {
     updateCategoryToggleStates();
     updateCount();
-    applyComparisonVisibility();
     if (saveLink) saveLink.href = saveTarget();
   };
 
@@ -308,7 +281,7 @@
   } else {
     // absent, legacy, and malformed fragments all fall back to the audited
     // default the checkboxes already render server-side: every tallying
-    // source checked, no comparison source checked.
+    // source checked.
     refreshSelectionUi();
   }
 

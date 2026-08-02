@@ -48,17 +48,17 @@ test('the published policy governs the sharing-size limit', () => {
   assert.equal(context().maximumUrlCharacters, 4096);
 });
 
-test('an audited state with the comparison source selected is representable', () => {
+test('an audited state carrying only a comparison token is the plain baseline', () => {
   const fragment = encoded({ mode: 'a', sourceCodes: ['stim'] });
   const decoded = decodeLensFragment(fragment, context());
 
   assert.equal(decoded.status, 'valid');
   assert.equal(decoded.state.mode, 'a');
   assert.deepEqual(decoded.state.categoryCodes, []);
-  assert.deepEqual(decoded.state.sourceCodes, ['stim']);
+  assert.deepEqual(decoded.state.sourceCodes, []);
 });
 
-test('a personalized state is representable with and without the comparison source', () => {
+test('a comparison token is dropped from a personalized state, not rejected', () => {
   for (const withComparison of [true, false]) {
     const sourceCodes = withComparison ? ['strn', 'stim'] : ['strn'];
     const state = { mode: 's', categoryCodes: ['Glab'], sourceCodes };
@@ -67,7 +67,7 @@ test('a personalized state is representable with and without the comparison sour
     assert.equal(decoded.status, 'valid');
     assert.equal(decoded.state.mode, 's');
     assert.deepEqual(decoded.state.categoryCodes, ['Glab']);
-    assert.deepEqual(decoded.state.sourceCodes, [...sourceCodes].sort());
+    assert.deepEqual(decoded.state.sourceCodes, ['strn']);
   }
 });
 
@@ -89,7 +89,7 @@ test('same-version encoding is canonical and lossless', () => {
   const state = {
     mode: 's',
     categoryCodes: ['Glab', 'Genv'],
-    sourceCodes: ['urbn', 'strn', 'stim'],
+    sourceCodes: ['urbn', 'strn'],
     raceTarget: 'us-house-7',
   };
   const fragment = encoded(state);
@@ -99,7 +99,7 @@ test('same-version encoding is canonical and lossless', () => {
   assert.deepEqual(decoded.state, {
     mode: 's',
     categoryCodes: ['Genv', 'Glab'],
-    sourceCodes: ['stim', 'strn', 'urbn'],
+    sourceCodes: ['strn', 'urbn'],
     raceTarget: 'us-house-7',
   });
   assert.equal(encoded(decoded.state), fragment);
@@ -194,21 +194,36 @@ test('a case-confusable token is rejected rather than silently matched', () => {
   assert.equal(decoded.token, 'STRN');
 });
 
-test('the comparison source can be selected in sources mode', () => {
-  const decoded = decodeLensFragment(`${encoded({ mode: 's' })}&sel=stim`, context());
+// Issue 124 retired the guide-side comparison. A link written before that
+// removal may still name a comparison source or its category; the codec
+// ignores those tokens and replays everything else exactly.
+test('a comparison token is silently ignored, never rejected', () => {
+  for (const token of ['stim', 'Gcmp']) {
+    const decoded = decodeLensFragment(`${encoded({ mode: 's', sourceCodes: ['strn'] })}${token}`, context());
 
-  assert.equal(decoded.status, 'valid');
-  assert.deepEqual(decoded.state.sourceCodes, ['stim']);
+    assert.equal(decoded.status, 'valid');
+    assert.deepEqual(decoded.state.categoryCodes, []);
+    assert.deepEqual(decoded.state.sourceCodes, ['strn']);
+  }
 
-  const encodedState = encodeLensFragment({ mode: 's', sourceCodes: ['stim'] }, context());
-  assert.equal(encodedState.status, 'ok');
+  // An unknown token is still a real error: only a published comparison
+  // identity is dropped.
+  const unknown = decodeLensFragment(`${encoded({ mode: 's' })}&sel=zzzz`, context());
+  assert.equal(unknown.status, 'malformed');
+  assert.equal(unknown.reason, 'unknown_token');
 });
 
-test('the comparison source may ride along in audited mode, but an ordinary source may not', () => {
-  const shown = decodeLensFragment(`${encoded({ mode: 'a' })}&sel=stim`, context());
-  assert.equal(shown.status, 'valid');
-  assert.deepEqual(shown.state.sourceCodes, ['stim']);
+test('a comparison token never survives re-encoding', () => {
+  const result = encodeLensFragment(
+    { mode: 's', categoryCodes: ['Gcmp'], sourceCodes: ['strn', 'stim'] },
+    context(),
+  );
 
+  assert.equal(result.status, 'ok');
+  assert.equal(new URLSearchParams(result.fragment).get('sel'), 'strn');
+});
+
+test('audited mode still refuses an ordinary selection', () => {
   const rejected = decodeLensFragment(`${encoded({ mode: 'a' })}&sel=strn`, context());
   assert.equal(rejected.status, 'malformed');
   assert.equal(rejected.reason, 'audited_mode_carries_selection');
@@ -218,8 +233,11 @@ test('the comparison source may ride along in audited mode, but an ordinary sour
   assert.equal(encodeRejected.status, 'rejected');
   assert.equal(encodeRejected.reason, 'audited_mode_carries_selection');
 
-  const encodeAllowed = encodeLensFragment({ mode: 'a', sourceCodes: ['stim'] }, context());
-  assert.equal(encodeAllowed.status, 'ok');
+  // A comparison token is dropped first, so an audited link that carried
+  // only one still encodes as the plain audited baseline.
+  const comparisonOnly = encodeLensFragment({ mode: 'a', sourceCodes: ['stim'] }, context());
+  assert.equal(comparisonOnly.status, 'ok');
+  assert.equal(new URLSearchParams(comparisonOnly.fragment).get('sel'), null);
 });
 
 test('a nonselectable category cannot be selected', () => {
@@ -449,8 +467,14 @@ test('the committed panel snapshot round-trips through the codec', () => {
     'd119ee3107bb',
   );
 
-  const selectableCategories = snapshot.categories.filter((item) => item.selectable);
-  const selectableSources = snapshot.sources.filter((item) => item.selectable);
+  // A comparison identity is selectable in the payload but inert in the
+  // codec (issue 124), so the round-trip is over the tallying panel.
+  const selectableCategories = snapshot.categories.filter(
+    (item) => item.selectable && item.panel_role !== 'comparison',
+  );
+  const selectableSources = snapshot.sources.filter(
+    (item) => item.selectable && item.panel_role !== 'comparison',
+  );
   assert.ok(selectableCategories.length > 0 && selectableSources.length > 0);
 
   const state = {

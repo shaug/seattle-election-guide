@@ -6,12 +6,18 @@ they do not recompute consensus or presentation labels. Print text has a configu
 If the complete content cannot fit at that floor, the renderer emits a compact two-page summary
 plus a longer detailed PDF instead of shrinking or clipping text.
 
-Seattle Times comparisons use one outlined, softly tinted result chip beneath the consensus choice.
-Bold `Times agrees` or `Times differs` status text is separated from the lighter choice by a centered
-dot; a restrained neutral `Times · not covered` chip means the captured guide has no Times
-endorsement. Badge contents use a small optical correction so the visible glyphs, rather than
-merely their CSS line boxes, appear vertically centered. Color is never the only status signal.
-The canonical comparison status and legacy badge label remain available in audit exports.
+The guide presents the progressive consensus and nothing else. Issue 124 retired the per-race
+Seattle Times comparison from every guide surface — screen cards, race detail, the personalized
+lens, and print — in favour of the Comparisons page below, which is now the one place a reader puts
+the Times beside the consensus. The canonical comparison status and legacy badge label remain in the
+published view model and audit exports; nothing the guide renders quotes them, and PDF validation
+rejects a legacy `Seattle Times AGREES …` run reappearing in the extracted text.
+
+A lens link written before that removal stays valid. `lens-url.mjs` drops a comparison-role token
+(for example `stim`, or the `Gcmp` category) while decoding and encoding: the token is ignored,
+never rejected, and every other part of the link replays exactly. The published personalization
+payload therefore keeps publishing comparison-role sources and categories, so the codec can
+recognize such a token in order to discard it.
 
 ## Election comparison page
 
@@ -47,18 +53,16 @@ replays exactly. Unknown tokens or mismatched versions degrade to the server-ren
 a persistent disclosure; they never silently select a different valid signal.
 
 Each responsive race card uses its core recommendation area—office, recommended choice, consensus meter,
-and comparison context—as one keyboard-focusable link to a stable `#race-<canonical-race-id>` fragment.
+and support context—as one keyboard-focusable link to a stable `#race-<canonical-race-id>` fragment.
 The panel eyebrow names both the election and the content type (`August 2026 Primary · Endorsements`) so a
 shared fragment remains self-orienting.
 The link opens a voter-facing panel organized first by endorsed candidate or choice, with sections ranked by
 endorsing-source count. The leading section
 contains the consensus meter and exact agreeing-source ratio so the panel does not repeat the leading
 choice in a separate summary block. Each source row pairs the organization name with its registered
-category badge; multi-candidate endorsements appear once in every candidate section they support. An
-affirmative Seattle Times decision appears inside the candidate section it selected, with a visible
-`Comparison only` badge and restrained row treatment; it does not affect the section's endorsing-source
-count or consensus meter. Non-affirmative Times decisions follow their canonical no-endorsement,
-verification, or missing-coverage outcome. Explicit non-endorsements and decisions that need verification
+category badge; multi-candidate endorsements appear once in every candidate section they support. A
+comparison-role source contributes no row, no count, and no candidate section here (issue 124): a
+candidate only the Times picked gets no section at all. Explicit non-endorsements and decisions that need verification
 follow the candidate sections. Split, tied, and verification rows retain the text needed to understand
 the distinct decision. Sources that did not cover the race are placed last in a collapsed section.
 Evidence-linked decisions make the whole source row clickable; capture and publication metadata remain
@@ -69,8 +73,10 @@ close the matching panel, and focus returns to the race card's recommendation li
 The concise PDF uses a scan-first, two-column briefing layout. Print typography is sans serif,
 candidate or choice names carry the strongest row emphasis, alternating race backgrounds separate
 adjacent choices, and each race forms a three-line unit: office; choice with a fixed-width,
-right-filled consensus meter; then the Times comparison and explicitly endorsing source count
-aligned beneath the fields they explain. Shared meter widths make shares comparable down each
+right-filled consensus meter; then the explicitly endorsing source count
+aligned beneath the fields it explains. That third line keeps the height its retired comparison chip
+set, so the caption stays clear of the warning line beneath it in extracted PDF text.
+Shared meter widths make shares comparable down each
 column. Fine meter outlines, soft empty tracks, and optically centered tabular percentages keep
 the quantitative encoding legible without dominating the choice. Section bars and flex-distributed
 race rows use the available page height instead of
@@ -144,10 +150,10 @@ The generation fails unless:
 
 - responsive HTML contains every canonical race in order and every display value; each affirmative
   endorser appears under every endorsed candidate or choice with its own evidence link;
-- every race-detail view contains every canonical source decision in the correct voter-facing outcome
-  section, with affirmative multi-candidate decisions repeated once per selected candidate, comparison
-  decisions visibly marked without entering consensus counts, and the exact state and evidence link when
-  one exists;
+- every race-detail view contains every canonical tallying source decision in the correct
+  voter-facing outcome section, with affirmative multi-candidate decisions repeated once per selected
+  candidate, comparison-role decisions absent entirely (issue 124), and the exact state and evidence
+  link when one exists;
 - desktop and mobile browser checks exercise copied permalinks, direct fragments, back/forward restoration,
   close-button and Escape behavior, focus placement/return, dialog naming, and viewport containment;
 - the configured desktop and mobile captures use their exact CSS viewport dimensions without
@@ -156,7 +162,7 @@ The generation fails unless:
   title, author, and subject metadata, plus document, heading, article, and paragraph structure tags;
 - a normal concise PDF contains every published race display value; when overflow invokes the
   fallback, the compact PDF retains the race, recommendation, consensus share, explicit-source
-  count, Seattle Times comparison, and insufficient-evidence warning while the detailed PDF
+  count, and insufficient-evidence warning while the detailed PDF
   retains the complete voter-facing values and methodology;
 - Chrome print-layout measurements find no text below the configured font floor, clipped card text,
   underfilled or imbalanced race columns, overflowing methodology panel, or footer overlap, and

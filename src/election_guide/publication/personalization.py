@@ -64,7 +64,6 @@ class PersonalizationPolicy(PersonalizationModel):
     weighting: Literal["equal"] = "equal"
     minimum_explicit_sources: int = Field(ge=1, strict=True)
     comparison_source_codes: list[str] = Field(min_length=1)
-    comparison_hidden_by_default: bool = Field(strict=True)
     maximum_url_characters: int = Field(ge=1, strict=True)
 
     @model_validator(mode="after")
@@ -73,8 +72,6 @@ class PersonalizationPolicy(PersonalizationModel):
             raise ValueError("personalization must offer the audited and sources modes in order")
         if self.comparison_source_codes != sorted(set(self.comparison_source_codes)):
             raise ValueError("comparison source codes must be unique and sorted")
-        if not self.comparison_hidden_by_default:
-            raise ValueError("comparison sources must stay hidden by default")
         return self
 
 

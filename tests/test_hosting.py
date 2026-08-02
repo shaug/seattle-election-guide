@@ -718,9 +718,11 @@ def test_about_page_folds_in_every_fact_the_removed_methodology_panel_stated() -
     # "Related organizations": disclosed, not deduplicated, one vote each.
     assert "disclosed rather than deduplicated" in about
     assert "keeps its own full vote" in about
-    # "The Times is separate and optional": hidden on screen, always in the PDF.
-    assert "hidden on screen by" in about
-    assert "printable PDF always includes the comparison" in about
+    # Issue 124: the Times is documented, not offered — the Endorsements page
+    # shows it nowhere, and About points at where it can still be compared.
+    assert "the Endorsements page does not show" in about
+    assert "the Comparisons page is where you can put" in about
+    assert "hidden on screen by" not in about
     # Organizations may update endorsements after our capture snapshot.
     assert "Organizations can update their own endorsements after we capture them" in about
     # The Sources-page privacy aside belongs here as a reusable FAQ answer.
@@ -849,28 +851,37 @@ def test_sources_page_renders_every_category_and_source_like_the_guide_tree(
         project_url="https://github.com/shaug/seattle-election-guide",
     )
 
-    for category in view_model.personalization.categories:
-        if not category.selectable:
-            continue
-        assert f'data-sources-category="{category.code}"' in html
-        for member_code in category.member_source_codes:
-            assert f'data-sources-source="{member_code}"' in html
-            assert f'data-sources-category-member="{category.code}"' in html
-
-    assert "sources-category-comparison" in html
-    assert "sources-comparison-note" in html
     tallying_codes = _selectable_tallying_codes(view_model)
     comparison_codes = _selectable_comparison_codes(view_model)
     assert tallying_codes, "fixture must exercise at least one tallying source"
     assert comparison_codes, "fixture must exercise the comparison source"
 
-    # Every tallying source starts checked (the audited default); the
-    # comparison source never starts checked (issue 96/97).
+    for category in view_model.personalization.categories:
+        if not category.selectable:
+            continue
+        assert f'data-sources-category="{category.code}"' in html
+        for member_code in category.member_source_codes:
+            assert f'data-sources-source-row="{member_code}"' in html
+            if member_code in comparison_codes:
+                continue
+            assert f'data-sources-source="{member_code}"' in html
+            assert f'data-sources-category-member="{category.code}"' in html
+
+    # Issue 124: the comparison section still documents the Times — name,
+    # evidence link, and endorsement overview — but offers no checkbox and
+    # points at the Comparisons page instead.
+    assert "sources-category-comparison" in html
+    assert "sources-comparison-note" in html
+    assert f'href="/e/{view_model.metadata.election_id}/comparisons/">Comparisons page</a>' in html
+    for code in comparison_codes:
+        assert f'data-sources-source="{code}"' not in html
+        row = html.split(f'data-sources-source-row="{code}"')[1].split("</div>")[0]
+        assert "sources-source-link" in row
+        assert "sources-count" in row
+
+    # Every tallying source starts checked (the audited default).
     for row in html.split('<div class="sources-row"')[1:]:
-        row_head = row.split(">", 1)[0]
-        if any(f'data-sources-source="{code}"' in row for code in comparison_codes):
-            assert "checked" not in row_head
-        elif any(f'data-sources-source="{code}"' in row for code in tallying_codes):
+        if any(f'data-sources-source="{code}"' in row for code in tallying_codes):
             assert "checked" in row
 
     assert '<link rel="canonical" href="https://seattleelections.guide/e/' in html
@@ -1065,12 +1076,15 @@ def test_sources_page_save_at_the_default_selection_redirects_with_no_fragment(
 
 def test_sources_page_save_re_encodes_the_edited_selection(tmp_path: Path) -> None:
     """Acceptance criterion: Save re-encodes the edited selection and
-    redirects to `/e/<election_id>/#<fragment>`."""
+    redirects to `/e/<election_id>/#<fragment>`.
+
+    Issue 124: a comparison source has no checkbox to edit any more, and its
+    code never reaches the saved fragment.
+    """
     view_model = _personalization_enabled_view_model(tmp_path)
     tallying_codes = _selectable_tallying_codes(view_model)
     comparison_codes = _selectable_comparison_codes(view_model)
     dropped = tallying_codes[0]
-    added_comparison = comparison_codes[0]
 
     html_path = tmp_path / "sources.html"
     html_path.write_text(
@@ -1084,9 +1098,6 @@ def test_sources_page_save_re_encodes_the_edited_selection(tmp_path: Path) -> No
               const uncheck = document.querySelector('[data-sources-source="{dropped}"]');
               uncheck.checked = false;
               uncheck.dispatchEvent(new Event('change', {{ bubbles: true }}));
-              const check = document.querySelector('[data-sources-source="{added_comparison}"]');
-              check.checked = true;
-              check.dispatchEvent(new Event('change', {{ bubbles: true }}));
             """
         ),
     )
@@ -1100,7 +1111,8 @@ def test_sources_page_save_re_encodes_the_edited_selection(tmp_path: Path) -> No
     selection = params.get("sel", "")
     tokens = [selection[i : i + 4] for i in range(0, len(selection), 4)]
     assert dropped not in tokens
-    assert added_comparison in tokens
+    for code in comparison_codes:
+        assert code not in tokens
     for code in tallying_codes:
         if code != dropped:
             assert code in tokens

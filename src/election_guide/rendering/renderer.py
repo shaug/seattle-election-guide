@@ -32,7 +32,6 @@ from websocket import (  # pyright: ignore[reportUnknownVariableType]
 
 from election_guide.publication.models import (
     PublicationChoiceEndorsements,
-    PublicationComparison,
     PublicationRace,
     PublicationSource,
     PublicationViewModel,
@@ -179,9 +178,6 @@ def render_html_document(
     lens_score_script = (TEMPLATE_DIR / "lens-score.mjs").read_text(encoding="utf-8")
     lens_migrate_script = (TEMPLATE_DIR / "lens-migrate.mjs").read_text(encoding="utf-8")
     lens_divergence_script = (TEMPLATE_DIR / "lens-divergence.mjs").read_text(encoding="utf-8")
-    # H31: recomputes the Times comparison tone/verb against the displayed
-    # (personalized) result while a lens is active.
-    lens_comparison_script = (TEMPLATE_DIR / "lens-comparison.mjs").read_text(encoding="utf-8")
     # Shared with the About page in hosting/pages.py so the native-share/
     # clipboard/execCommand fallback policy has exactly one implementation.
     share_link_script = (TEMPLATE_DIR / "share-link.mjs").read_text(encoding="utf-8")
@@ -241,7 +237,6 @@ def render_html_document(
         lens_score_script=lens_score_script,
         lens_migrate_script=lens_migrate_script,
         lens_divergence_script=lens_divergence_script,
-        lens_comparison_script=lens_comparison_script,
         share_link_script=share_link_script,
         race_share_icon=share_icon_svg(),
         race_close_icon=close_icon_svg(),
@@ -279,8 +274,8 @@ def render_html_document(
         screen_share_accessible_label=_screen_share_accessible_label,
         screen_support_summary=_screen_support_summary,
         screen_support_summary_compact=_screen_support_summary_compact,
-        race_detail_candidate_choices=_race_detail_candidate_choices,
-        comparison_candidate_cells=_comparison_candidate_cells,
+        candidate_endorsement_groups=_candidate_endorsement_groups,
+        tallying_source_cells=_tallying_source_cells,
         race_detail_accessible_summary=_race_detail_accessible_summary,
         race_detail_support_summary=_race_detail_support_summary,
         source_cell_group=_source_cell_group,
@@ -330,6 +325,9 @@ def render_sources_document(
         election_id=view_model.metadata.election_id,
     )
     document_title = page_title(page="Sources", election=election_display_name)
+    # Issue 124: the comparison section is documentation, not a control, and
+    # points at the one page that still puts these sources side by side.
+    compare_href = f"{guide_path}comparisons/" if view_model.comparisons.policy.enabled else None
     return template.render(
         **_personalization_lookup_context(view_model),
         guide=view_model,
@@ -339,12 +337,11 @@ def render_sources_document(
         stylesheet=stylesheet,
         lens_url_script=lens_url_script,
         share_link_script=share_link_script,
+        compare_href=compare_href,
         site_band=site_band_html(
             guide_href=guide_path,
             sources_href=f"{guide_path}sources/",
-            compare_href=(
-                f"{guide_path}comparisons/" if view_model.comparisons.policy.enabled else None
-            ),
+            compare_href=compare_href,
             current="sources",
         ),
         site_page_head=site_page_head_html(
@@ -707,17 +704,6 @@ def _screen_support_summary_compact(race: PublicationRace) -> str:
     return f"{race.explicit_endorsement_count} sources"
 
 
-def _screen_comparison_label(comparison: PublicationComparison) -> str:
-    """H37: "Times agrees" renders the verb alone — the choice is by
-    definition the headline name directly above it — while every other
-    status keeps the full "status · choice" compound. Shared by the screen
-    macro's semantic-parity expectations and the detailed edition's PDF
-    validator, both of which mirror this same screen markup."""
-    return (
-        comparison.print_status_label if comparison.status == "agrees" else comparison.print_label
-    )
-
-
 def _candidate_endorsement_groups(
     race: PublicationRace,
 ) -> list[PublicationChoiceEndorsements]:
@@ -733,49 +719,20 @@ def _candidate_endorsement_groups(
     )
 
 
-def _comparison_candidate_cells(
+def _tallying_source_cells(
     race: PublicationRace,
     sources: dict[str, PublicationSource],
-    candidate_id: str,
 ) -> list[SourceCell]:
+    """The cells the guide renders as evidence.
+
+    Issue 124 retired the guide-side comparison entirely, so a comparison
+    source contributes no row, no count, and no candidate section here. It
+    stays in the payload and on the Comparisons page, which is now the one
+    place a reader compares it against the consensus.
+    """
     return [
-        cell
-        for cell in race.source_cells
-        if sources[cell.source_id].panel_role == "comparison"
-        and cell.state in {"endorsement", "multi_endorsement"}
-        and candidate_id in cell.candidate_ids
+        cell for cell in race.source_cells if sources[cell.source_id].panel_role != "comparison"
     ]
-
-
-def _race_detail_candidate_choices(
-    race: PublicationRace,
-    sources: dict[str, PublicationSource],
-) -> list[tuple[str, str, PublicationChoiceEndorsements | None]]:
-    endorsement_groups = _candidate_endorsement_groups(race)
-    choices: list[tuple[str, str, PublicationChoiceEndorsements | None]] = [
-        (group.candidate_id, group.candidate_label, group) for group in endorsement_groups
-    ]
-    contributing_candidate_ids = {group.candidate_id for group in endorsement_groups}
-    comparison_only_labels: dict[str, str] = {}
-    for cell in race.source_cells:
-        if sources[cell.source_id].panel_role != "comparison" or cell.state not in {
-            "endorsement",
-            "multi_endorsement",
-        }:
-            continue
-        for candidate_id, candidate_label in zip(
-            cell.candidate_ids, cell.candidate_labels, strict=True
-        ):
-            if candidate_id not in contributing_candidate_ids:
-                comparison_only_labels[candidate_id] = candidate_label
-    choices.extend(
-        (candidate_id, candidate_label, None)
-        for candidate_id, candidate_label in sorted(
-            comparison_only_labels.items(),
-            key=lambda item: (item[1].casefold(), item[0]),
-        )
-    )
-    return choices
 
 
 def _race_detail_support_summary(race: PublicationRace) -> str:
@@ -825,18 +782,11 @@ def _source_cell_group_count(
     race: PublicationRace,
     sources: dict[str, PublicationSource],
     group: str,
-    *,
-    include_comparison: bool = True,
 ) -> int:
-    """Count the cells in one group, optionally excluding the comparison source.
-
-    The responsive guide hides the comparison by default, so a heading rendered
-    for that state must count only the rows it actually shows.
-    """
+    """Count the rendered cells in one group."""
     return sum(
         _source_cell_group(cell, race, sources[cell.source_id]) == group
-        and (include_comparison or sources[cell.source_id].panel_role != "comparison")
-        for cell in race.source_cells
+        for cell in _tallying_source_cells(race, sources)
     )
 
 
@@ -960,7 +910,11 @@ def build_rendered_guide(
                 title=f"{configuration.title} - Detailed Edition",
             )
         expected_race_count = sum(len(section.races) for section in view_model.sections)
-        expected_source_count = len(view_model.sources)
+        # Issue 124: a comparison source renders no race-detail row, so the
+        # dialog's expected row count is the tallying panel alone.
+        expected_source_count = sum(
+            source.panel_role != "comparison" for source in view_model.sources
+        )
         screenshots = [
             _render_screenshot(
                 html_path,
@@ -1055,16 +1009,6 @@ def validate_rendered_guide(
             normalized_expected = [_normalized_text(value) for value in expected_values]
             if observed_values != normalized_expected:
                 mismatched_html_roles.append(f"{race.id}/{role}")
-        comparison_key = (race.id, "comparison")
-        expected_accessible_names = [
-            comparison.voter_accessible_label for comparison in race.comparisons
-        ]
-        if parser.display_accessible_names.get(comparison_key, []) != expected_accessible_names:
-            mismatched_html_roles.append(f"{race.id}/comparison-accessible-name")
-        if parser.display_element_roles.get(comparison_key, []) != [
-            "group" for _ in race.comparisons
-        ]:
-            mismatched_html_roles.append(f"{race.id}/comparison-accessible-role")
         share_key = (race.id, "share")
         if parser.display_accessible_names.get(share_key, []) != [
             _screen_share_accessible_label(race)
@@ -1077,14 +1021,17 @@ def validate_rendered_guide(
     category_label_by_key = {
         category.category: category.label for category in view_model.methodology.source_categories
     }
+    # Issue 124: a comparison source renders no race-detail row at all.
     expected_detail_keys = {
-        (race.id, cell.source_id) for race in expected_races for cell in race.source_cells
+        (race.id, cell.source_id)
+        for race in expected_races
+        for cell in _tallying_source_cells(race, source_by_id)
     }
     if set(parser.race_detail_text) != expected_detail_keys:
         missing_evidence_rows.append("document: unexpected or missing race-detail source rows")
     for race in expected_races:
-        candidate_choices = _race_detail_candidate_choices(race, source_by_id)
-        for cell in race.source_cells:
+        endorsement_groups = _candidate_endorsement_groups(race)
+        for cell in _tallying_source_cells(race, source_by_id):
             key = (race.id, cell.source_id)
             source = source_by_id[cell.source_id]
             expected_group = _source_cell_group(cell, race, source)
@@ -1093,18 +1040,13 @@ def validate_rendered_guide(
             )
             if expected_group == "candidate":
                 expected_candidate_ids: list[str | None] = [
-                    candidate_id
-                    for candidate_id, _candidate_label, _endorsement_group in candidate_choices
-                    if candidate_id in cell.candidate_ids
+                    group.candidate_id
+                    for group in endorsement_groups
+                    if group.candidate_id in cell.candidate_ids
                 ]
             else:
                 expected_candidate_ids = [None]
-            # A comparison source carries its one "Comparison only" role badge
-            # instead of a category label (issue 115, item G29).
-            if source.panel_role == "comparison":
-                expected_parts = [source.name, "Comparison only"]
-            else:
-                expected_parts = [source.name, category_label_by_key[source.category]]
+            expected_parts = [source.name, category_label_by_key[source.category]]
             detail_label = _source_cell_detail_label(cell, race, expected_group)
             if detail_label is not None:
                 expected_parts.append(detail_label)
@@ -1116,8 +1058,6 @@ def validate_rendered_guide(
             expected_categories = [source.category for _ in expected_candidate_ids]
             expected_groups = [expected_group for _ in expected_candidate_ids]
             expected_row_class = {"race-detail-source-row"}
-            if source.panel_role == "comparison":
-                expected_row_class.add("race-detail-source-row-comparison")
             expected_row_classes = [expected_row_class for _ in expected_candidate_ids]
             observed_rows = [
                 _normalized_text(" ".join(parts)) for parts in parser.race_detail_text.get(key, [])
@@ -1158,7 +1098,7 @@ def validate_rendered_guide(
         *(
             cell.evidence_url
             for race in expected_races
-            for cell in race.source_cells
+            for cell in _tallying_source_cells(race, source_by_id)
             if cell.evidence_url is not None
         ),
     }
@@ -1257,9 +1197,6 @@ def validate_rendered_guide(
     consensus_source_count = sum(
         source.panel_role == "consensus" for source in contributing_sources
     )
-    comparison_source_count = sum(
-        source.panel_role == "comparison" for source in contributing_sources
-    )
     data_updated_date, site_updated_date = _footer_update_dates(view_model)
     global_pdf_values = [
         *(section.label for section in view_model.sections),
@@ -1267,7 +1204,6 @@ def validate_rendered_guide(
         f"{view_model.metadata.contributing_source_count} contributing sources",
         f"{view_model.metadata.coverage_gap_count} coverage gaps",
         f"{consensus_source_count} consensus",
-        f"{comparison_source_count} Times comparison",
         *(category.label for category in view_model.methodology.source_categories),
         "Overlap and limitations",
         "Verify before voting",
@@ -1700,15 +1636,14 @@ def _inspect_print_layout(
                     "new Promise(resolve => requestAnimationFrame("
                     "() => requestAnimationFrame(() => {"
                     "const signature = () => JSON.stringify("
-                    "[...document.querySelectorAll('.print-meter, .print-times-pick')]"
+                    "[...document.querySelectorAll('.print-meter')]"
                     ".map(element => {"
                     "const rect = element.getBoundingClientRect();"
                     "const style = getComputedStyle(element);"
                     "const paddingTarget = element.querySelector('.print-meter-label') || element;"
                     "const paddingStyle = getComputedStyle(paddingTarget);"
-                    "const children = element.classList.contains('print-meter') ? "
-                    "[element.querySelector('.print-meter-text')].filter(Boolean) : "
-                    "[...element.querySelectorAll(':scope > span')];"
+                    "const children = "
+                    "[element.querySelector('.print-meter-text')].filter(Boolean);"
                     "return [rect.left.toFixed(3), rect.top.toFixed(3),"
                     "rect.right.toFixed(3), rect.bottom.toFixed(3),"
                     "rect.width.toFixed(3), rect.height.toFixed(3),"
@@ -1792,13 +1727,13 @@ def _inspect_print_layout(
                   };
                   const selectors = detailed ? [
                     '.screen-guide', '.race-card h3', '.support-line', '.alternative',
-                    '.comparison', '.warning'
+                    '.warning'
                   ] : [
                     '.print-races', '.method-summary article', '.source-panel', '.source-row',
                     '.coverage-gap-row',
                     '.method-notes article', '.page-two-footer span', '.print-race-title',
                     '.print-race-result > strong', '.print-race-context > span',
-                    '.print-times-pick', '.print-race-notes span'
+                    '.print-race-notes span'
                   ];
                   for (const selector of selectors) {
                     const elements = [...document.querySelectorAll(selector)];
@@ -1942,42 +1877,8 @@ def _inspect_print_layout(
                   }
                   for (const [index, race] of
                        [...document.querySelectorAll('.print-race')].entries()) {
-                    const comparison = race.querySelector('.print-times-pick');
-                    if (comparison) {
-                      const comparisonStyle = getComputedStyle(comparison);
-                      const borderWidths = [
-                        comparisonStyle.borderTopWidth,
-                        comparisonStyle.borderRightWidth,
-                        comparisonStyle.borderBottomWidth,
-                        comparisonStyle.borderLeftWidth,
-                      ].map(Number.parseFloat);
-                      const status = comparison.querySelector('.print-times-status');
-                      const choice = comparison.querySelector('.print-times-choice');
-                      if (comparisonStyle.display !== 'inline-flex' ||
-                          comparisonStyle.alignItems !== 'center' ||
-                          Math.abs(Number.parseFloat(comparisonStyle.paddingRight) - 4.8) > .15 ||
-                          Math.abs(Number.parseFloat(comparisonStyle.paddingLeft) - 4.8) > .15 ||
-                          Math.abs(comparison.getBoundingClientRect().height - 14.4) > .5 ||
-                          borderWidths.some(width => Math.abs(width - 1) > .1)) {
-                        issues.push(`.print-race[${index}]-comparison-treatment`);
-                      }
-                      if (status && choice &&
-                          Number.parseInt(getComputedStyle(status).fontWeight) <=
-                          Number.parseInt(getComputedStyle(choice).fontWeight)) {
-                        issues.push(`.print-race[${index}]-comparison-hierarchy`);
-                      }
-                      const separator = comparison.querySelector('.print-times-separator');
-                      const comparisonText = [status, separator, choice].filter(Boolean);
-                      const imbalance = inkImbalance(comparison, comparisonText);
-                      if (imbalance === null || Math.abs(imbalance) > 1.2) {
-                        const detail = imbalance === null ? 'unmeasurable' :
-                          `${imbalance.toFixed(2)}px`;
-                        issues.push(`.print-race[${index}]-comparison-centering(${detail})`);
-                      }
-                    }
                     for (const [selector, element] of [
-                      ['result', race.querySelector('.print-race-result > strong')],
-                      ['comparison', comparison]
+                      ['result', race.querySelector('.print-race-result > strong')]
                     ]) {
                       if (!element) continue;
                       const style = getComputedStyle(element);
@@ -1990,7 +1891,6 @@ def _inspect_print_layout(
                     }
                     for (const [selector, element] of [
                       ['result', race.querySelector('.print-race-result > strong')],
-                      ['comparison', race.querySelector('.print-times-pick')],
                       ['support', [...race.querySelectorAll('.print-support')].find(
                         item => getComputedStyle(item).display !== 'none'
                       )]
@@ -2003,11 +1903,6 @@ def _inspect_print_layout(
                       if (textRect.left < elementRect.left - 1 ||
                           textRect.right > elementRect.right + 1) {
                         issues.push(`.print-race[${index}]-${selector}-bounds`);
-                      }
-                      if (selector === 'comparison' &&
-                          (textRect.top < elementRect.top - 1 ||
-                           textRect.bottom > elementRect.bottom + 1)) {
-                        issues.push(`.print-race[${index}]-comparison-vertical-bounds`);
                       }
                     }
                   }
@@ -2153,78 +2048,21 @@ def _capture_emulated_viewport(
         cdp.command("Page.enable", session_id=session_id)
         cdp.command("Page.navigate", {"url": url}, session_id=session_id)
         cdp.wait_event("Page.loadEventFired", session_id=session_id)
-        # Issue 108: the guide has no interactive selection controls left, so
-        # the comparison source can only ever become "checked" the way a real
-        # reader reaches that state — arriving with a URL fragment naming it
-        # (returned from the dedicated sources page's own Save action), not by
-        # clicking a checkbox that no longer exists.
-        sources_tree_probe = cdp.command(
+        # Issue 124 retired the guide-side Times comparison: nothing
+        # comparison-shaped may render on a real page. The companion contract —
+        # that a link shared before the removal still replays with its token
+        # ignored — is a property of the codec, not of a viewport, so it is
+        # owned by the lens-url Node tests and by the browser replay test in
+        # tests/test_rendering.py rather than repeated per screenshot here.
+        residue_probe = cdp.command(
             "Runtime.evaluate",
             {
                 "expression": (
-                    "(async()=>{"
-                    "const pause=()=>new Promise(resolve=>setTimeout(resolve,120));"
-                    "const root=document.documentElement;"
+                    "(()=>{"
                     "const bindings=JSON.parse("
                     "document.querySelector('#lens-bindings').textContent);"
-                    "const comparisonSource=bindings.sources.find("
+                    "const comparison=bindings.sources.find("
                     "item=>item.panel_role==='comparison');"
-                    # A real "check just the comparison box" interaction keeps
-                    # every tallying source checked too — a fragment naming
-                    # only the comparison code would also uncheck every
-                    # tallying source (issue 97's own applySelection contract:
-                    # every code not named is unchecked), which is not the
-                    # scenario this probe means to exercise.
-                    "const tallyingCodes=bindings.sources.filter("
-                    "item=>item.panel_role!=='comparison').map(item=>item.code);"
-                    "const selectedCodes=comparisonSource"
-                    "?[...tallyingCodes,comparisonSource.code].sort():tallyingCodes;"
-                    "const params=new URLSearchParams();"
-                    "params.set('lens','2');params.set('mode','s');"
-                    "params.set('panel',bindings.panel_id);"
-                    "params.set('ph',bindings.panel_hash.slice(0,12));"
-                    "params.set('data',bindings.data_version);"
-                    "params.set('scoring',bindings.scoring.configuration_id);"
-                    "params.set('sel',selectedCodes.join(''));"
-                    "const comparisonFragment=params.toString();"
-                    "const shownOnScreen=element=>{const style=getComputedStyle(element);"
-                    "const rect=element.getBoundingClientRect();"
-                    "return style.display!=='none'&&style.visibility==='visible'&&"
-                    "rect.width>0&&rect.height>0;};"
-                    "const displayed=element=>getComputedStyle(element).display!=='none';"
-                    # UI polish issue 132 (H31): a lens-only twin comparison
-                    # bar (no data-display-role, revealed only once a lens is
-                    # actually active) now sits alongside the audited one;
-                    # this probe only ever activates show-times, never a
-                    # lens, so it must keep checking the audited bar alone.
-                    "const pills=()=>[...document.querySelectorAll("
-                    "'.comparison[data-display-role=\"comparison\"]')];"
-                    "const cards=[...document.querySelectorAll('[data-publication-race-id]')];"
-                    "const scored=()=>cards.map(card=>[card.querySelector('.screen-race-result')"
-                    "?.textContent,card.querySelector('.screen-meter')?.textContent,"
-                    "card.querySelector('.screen-race-context')?.textContent].join('|')"
-                    ".replace(/\\s+/g,' ').trim()).join('||');"
-                    "const before=scored();"
-                    "const controlCount=document.querySelectorAll("
-                    "'.screen-controls button,.screen-controls select,.screen-controls input')"
-                    ".length;"
-                    "const wrappers=()=>[...document.querySelectorAll("
-                    "'.race-detail-source-list>li[data-source-role=\"comparison\"]')];"
-                    "const supportAligned=()=>[...document.querySelectorAll("
-                    "'.screen-race-context')].filter(context=>context.offsetParent).every("
-                    "context=>{const support=context.querySelector('.support-line');"
-                    "const meter=context.closest('[data-publication-race-id]')"
-                    "?.querySelector('.screen-meter');"
-                    "if(!support||!meter)return true;"
-                    "return Math.abs(support.getBoundingClientRect().right-"
-                    "meter.getBoundingClientRect().right)<=1;});"
-                    # A closed <dialog> has no layout box, so a descendant's
-                    # innerText cannot reliably resolve CSS visibility (e.g.
-                    # the show-times-dependent data-times-hidden/-only pair)
-                    # while its dialog stays closed; briefly opening every
-                    # closed dialog (a plain property set, not showModal(),
-                    # so multiple can be open at once with no modal conflict)
-                    # gives each one a real layout pass before reading text.
                     "const countsAgree=()=>{"
                     "const dialogs=[...document.querySelectorAll('[data-race-detail-dialog]')];"
                     "const wasClosed=dialogs.filter(dialog=>!dialog.open);"
@@ -2241,109 +2079,57 @@ def _capture_emulated_viewport(
                     "return !Number.isFinite(claimed)||claimed===shown;});"
                     "wasClosed.forEach(dialog=>{dialog.open=false;});"
                     "return result;};"
-                    "const hidden={"
-                    "pills:pills().length>0&&pills().every(item=>!shownOnScreen(item)),"
-                    "wrappers:wrappers().length>0&&wrappers().every(item=>!displayed(item)),"
-                    "supportAligned:supportAligned(),"
-                    "noRootClass:!root.classList.contains('show-times'),"
-                    "cleanHash:window.location.hash===''};"
-                    # A real hash assignment (not history.replaceState) fires a
-                    # native hashchange event, matching how a reader actually
-                    # reaches this state: returning from the sources page's own
-                    # Save redirect, never an in-page control.
-                    "window.location.hash=comparisonFragment;await pause();"
-                    "const revealed={rootClass:root.classList.contains('show-times'),"
-                    "pills:pills().every(item=>displayed(item)),"
-                    "lensFragment:window.location.hash.includes('lens=2')&&"
-                    "window.location.hash.includes('sel=')&&"
-                    "window.location.hash.includes('mode=s'),"
-                    "wrappers:wrappers().every(item=>displayed(item)),"
-                    "scoringUnchanged:scored()===before};"
-                    "document.querySelector('.skip-link')?.click();await pause();"
-                    "const afterAnchor={stillShown:root.classList.contains('show-times'),"
-                    "anchorHash:window.location.hash==='#guide-races'};"
-                    "return JSON.stringify({hidden,revealed,afterAnchor,"
-                    "countsAgree:countsAgree(),controlCount,before});})()"
-                ),
-                "returnByValue": True,
-                "awaitPromise": True,
-            },
-            session_id=session_id,
-        )
-        sources_tree_result = cast(dict[str, Any], sources_tree_probe["result"])
-        if "value" not in sources_tree_result:
-            raise ValueError(f"sources tree validation failed: {sources_tree_probe}")
-        sources_tree_metrics = cast(
-            dict[str, object], json.loads(cast(str, sources_tree_result["value"]))
-        )
-        expected_sources_tree = {
-            "hidden": {
-                "pills": True,
-                "wrappers": True,
-                "supportAligned": True,
-                "noRootClass": True,
-                "cleanHash": True,
-            },
-            "revealed": {
-                "rootClass": True,
-                "pills": True,
-                "lensFragment": True,
-                "wrappers": True,
-                "scoringUnchanged": True,
-            },
-            "afterAnchor": {"stillShown": True, "anchorHash": True},
-            "countsAgree": True,
-            "controlCount": EXPECTED_SCREEN_CONTROL_COUNT,
-            "before": sources_tree_metrics.get("before"),
-        }
-        if sources_tree_metrics != expected_sources_tree:
-            raise ValueError(f"sources tree comparison validation failed: {sources_tree_metrics}")
-        before_scores = cast(str, sources_tree_metrics["before"])
-
-        # A fresh navigation, matching how a reader actually leaves this state
-        # (Cancel/Reset on the dedicated sources page, or a plain reload) —
-        # never same-page hash clearing, which the codec deliberately leaves
-        # inert once a lens fragment is already applied (issue 108: the guide
-        # has nothing left that clears its own selection in place).
-        cdp.command("Page.navigate", {"url": url}, session_id=session_id)
-        cdp.wait_event("Page.loadEventFired", session_id=session_id)
-        restored_probe = cdp.command(
-            "Runtime.evaluate",
-            {
-                "expression": (
-                    "(()=>{"
-                    "const cards=[...document.querySelectorAll('[data-publication-race-id]')];"
-                    "const scored=()=>cards.map(card=>[card.querySelector('.screen-race-result')"
-                    "?.textContent,card.querySelector('.screen-meter')?.textContent,"
-                    "card.querySelector('.screen-race-context')?.textContent].join('|')"
-                    ".replace(/\\s+/g,' ').trim()).join('||');"
+                    "const supportAligned=()=>[...document.querySelectorAll("
+                    "'.screen-race-context')].filter(context=>context.offsetParent).every("
+                    "context=>{const support=context.querySelector('.support-line');"
+                    "const meter=context.closest('[data-publication-race-id]')"
+                    "?.querySelector('.screen-meter');"
+                    "if(!support||!meter)return true;"
+                    "return Math.abs(support.getBoundingClientRect().right-"
+                    "meter.getBoundingClientRect().right)<=1;});"
+                    "const controlCount=document.querySelectorAll("
+                    "'.screen-controls button,.screen-controls select,.screen-controls input')"
+                    ".length;"
                     "return JSON.stringify({"
-                    "rootClass:!document.documentElement.classList.contains('show-times'),"
-                    "cleanHash:window.location.hash==='',"
-                    f"scoringUnchanged:scored()==={json.dumps(before_scores)}}});"
+                    "comparisonPublished:Boolean(comparison),"
+                    "noComparisonBars:document.querySelectorAll("
+                    "'.comparison,.screen-comparisons,[data-display-role=\"comparison\"]')"
+                    ".length===0,"
+                    # The evidence panel still lists the Times as a source
+                    # (a stated non-goal); what must be gone is every
+                    # comparison row inside a race's own detail dialog.
+                    "noComparisonRows:document.querySelectorAll("
+                    '\'.race-detail-source-list [data-source-role="comparison"],'
+                    ".race-detail-comparison-badge').length===0,"
+                    "noTimesInPrint:document.querySelectorAll("
+                    "'.print-times-pick,.print-comparison,.times-summary').length===0,"
+                    "noTimesText:!document.querySelector('.screen-guide,.print-guide')"
+                    ".innerHTML.includes('Times comparison'),"
+                    "countsAgree:countsAgree(),supportAligned:supportAligned(),"
+                    "controlCount});"
                     "})()"
                 ),
                 "returnByValue": True,
             },
             session_id=session_id,
         )
-        restored_result = cast(dict[str, Any], restored_probe["result"])
-        if "value" not in restored_result:
-            raise ValueError(f"sources tree restoration validation failed: {restored_probe}")
-        restored_metrics = cast(dict[str, object], json.loads(cast(str, restored_result["value"])))
-        expected_restored = {"rootClass": True, "cleanHash": True, "scoringUnchanged": True}
-        if restored_metrics != expected_restored:
-            raise ValueError(f"sources tree restoration validation failed: {restored_metrics}")
+        residue_result = cast(dict[str, Any], residue_probe["result"])
+        if "value" not in residue_result:
+            raise ValueError(f"comparison removal validation failed: {residue_probe}")
+        residue_metrics = cast(dict[str, object], json.loads(cast(str, residue_result["value"])))
+        expected_residue = {
+            "comparisonPublished": True,
+            "noComparisonBars": True,
+            "noComparisonRows": True,
+            "noTimesInPrint": True,
+            "noTimesText": True,
+            "countsAgree": True,
+            "supportAligned": True,
+            "controlCount": EXPECTED_SCREEN_CONTROL_COUNT,
+        }
+        if residue_metrics != expected_residue:
+            raise ValueError(f"comparison removal validation failed: {residue_metrics}")
 
-        # Leave the comparison shown so the checks below still exercise its markup.
-        cdp.command(
-            "Runtime.evaluate",
-            {
-                "expression": "document.documentElement.classList.add('show-times');true",
-                "returnByValue": True,
-            },
-            session_id=session_id,
-        )
         time.sleep(0.2)
         evaluated = cdp.command(
             "Runtime.evaluate",
@@ -2365,7 +2151,7 @@ def _capture_emulated_viewport(
                     ".filter(card=>getComputedStyle(card).display!=='none'&&"
                     "card.getBoundingClientRect().width>0&&card.getBoundingClientRect().height>0);"
                     "const cardParts=cards.flatMap(card=>[...card.querySelectorAll("
-                    "'.screen-race-result,.screen-race-context,.screen-meter,.comparison')]);"
+                    "'.screen-race-result,.screen-race-context,.screen-meter')]);"
                     "const meters=[...document.querySelectorAll('.screen-meter')]"
                     ".filter(meter=>getComputedStyle(meter).display!=='none');"
                     # Every meter is left-anchored in every view (issue 115,
@@ -2409,10 +2195,7 @@ def _capture_emulated_viewport(
                     "compactMetersLeftAligned:compactCards.every(card=>{"
                     "const meter=card.querySelector('.screen-meter');"
                     "return Boolean(meter&&meterAligned(meter));}),"
-                    "comparisonsHidden:compactCards.every(card=>{"
-                    "const comparisons=card.querySelector('.screen-comparisons');"
-                    "return Boolean(comparisons&&"
-                    "getComputedStyle(comparisons).display==='none');})};"
+                    "};"
                     "fullInput?.click();completeFilter?.click();"
                     "filter.value='all';filter.dispatchEvent(new Event('change',{bubbles:true}));"
                     "await pause();controls.reset="
@@ -2449,14 +2232,6 @@ def _capture_emulated_viewport(
                     "window.dispatchEvent(new PopStateEvent('popstate',{state:null}));"
                     "await pause();"
                     "const directRect=firstDialog?.getBoundingClientRect();"
-                    "const comparisonRow=firstDialog?.querySelector("
-                    "'.race-detail-source-row-comparison');"
-                    "const comparisonBadge=comparisonRow?.querySelector("
-                    "'.race-detail-comparison-badge');"
-                    "const comparisonStyle=comparisonRow?getComputedStyle(comparisonRow):null;"
-                    "const comparisonBadgeRect=comparisonBadge?.getBoundingClientRect();"
-                    "const comparisonBadgeStyle=comparisonBadge?"
-                    "getComputedStyle(comparisonBadge):null;"
                     "const direct={open:Boolean(firstDialog?.open),"
                     "hash:window.location.hash===firstHash,"
                     "focused:document.activeElement===closeButton,"
@@ -2468,15 +2243,6 @@ def _capture_emulated_viewport(
                     "document.getElementById(firstDialog.getAttribute('aria-describedby'))),"
                     "sourceRows:new Set(Array.from(firstDialog?.querySelectorAll("
                     "'[data-race-detail-source-id]')||[],row=>row.dataset.raceDetailSourceId)).size,"
-                    "comparisonStyled:Boolean(comparisonRow&&comparisonStyle&&"
-                    "comparisonStyle.backgroundColor!=='rgba(0, 0, 0, 0)'&&"
-                    "comparisonStyle.boxShadow!=='none'),"
-                    "comparisonBadgeVisible:Boolean(comparisonBadge&&comparisonBadgeStyle&&"
-                    "comparisonBadge.textContent?.trim()==='Comparison only'&&"
-                    "comparisonBadgeStyle.display!=='none'&&"
-                    "comparisonBadgeStyle.visibility==='visible'&&"
-                    "Number(comparisonBadgeStyle.opacity)>0&&comparisonBadgeRect&&"
-                    "comparisonBadgeRect.width>0&&comparisonBadgeRect.height>0),"
                     "inViewport:Boolean(directRect&&directRect.left>=0&&directRect.top>=0&&"
                     "directRect.right<=window.innerWidth&&directRect.bottom<=window.innerHeight),"
                     "noOverflow:Boolean(firstDialog&&firstDialog.scrollWidth<=firstDialog.clientWidth+1)};"
@@ -2619,7 +2385,6 @@ def _capture_emulated_viewport(
                 "denseColumns": True,
                 "noOverflow": True,
                 "compactMetersLeftAligned": True,
-                "comparisonsHidden": True,
                 "reset": True,
                 "statusAllGrouped": True,
                 "fullMetersLeftAligned": True,
@@ -2642,8 +2407,6 @@ def _capture_emulated_viewport(
                 "labelled": True,
                 "described": True,
                 "sourceRows": expected_source_count,
-                "comparisonStyled": True,
-                "comparisonBadgeVisible": True,
                 "inViewport": True,
                 "noOverflow": True,
             },
@@ -3049,13 +2812,6 @@ def _pdf_text_runs(page: PageObject) -> str:
 def _pdf_value_is_present(value: str, segment: str) -> bool:
     normalized = _normalized_text(value).casefold()
     comparable_segment = _normalized_text(segment).casefold()
-    if normalized.startswith(("seattle times ", "times ", "times:")):
-        compact_times_label = normalized.startswith(("times ", "times:"))
-        normalized = normalized.replace("·", " ")
-        comparable_segment = comparable_segment.replace("·", " ")
-        pattern = r"\s*".join(re.escape(word) for word in normalized.split())
-        prefix = r"(?<!seattle\s)(?<!\S)" if compact_times_label else r"(?<!\S)"
-        return re.search(prefix + pattern + r"(?=\s|$)", comparable_segment) is not None
     return (
         re.search(r"(?<!\S)" + re.escape(normalized) + r"(?=\s|$)", comparable_segment) is not None
     )
@@ -3090,13 +2846,10 @@ def _html_semantic_values(race: PublicationRace) -> dict[str, list[str]]:
         "race-label": [race.race_label],
         "recommendation": [race.recommendation_label],
         "share": ["N/A" if race.percentage_whole is None else race.percentage_label],
-        # H34: the default caption now renders as two sibling elements (full
+        # H34: the default caption renders as two sibling elements (full
         # sentence, then the compact-mode short form), both always present in
-        # the static markup and both carrying data-display-role="support" —
-        # the same "one role, ordered list of occurrences" shape the
-        # "comparison" role below already uses for its own 0-or-1 occurrences.
+        # the static markup and both carrying data-display-role="support".
         "support": [_screen_support_summary(race), _screen_support_summary_compact(race)],
-        "comparison": [_screen_comparison_label(comparison) for comparison in race.comparisons],
         "insufficient-warning": (
             ["Too few endorsements to measure agreement."] if race.grade == "Insufficient" else []
         ),
@@ -3109,7 +2862,6 @@ def _pdf_race_display_values(race: PublicationRace) -> list[str]:
         race.recommendation_label,
         "N/A" if race.percentage_whole is None else race.percentage_label,
         race.support_summary,
-        *(f"{comparison.print_label} {race.support_summary}" for comparison in race.comparisons),
         *_concise_warning_labels(race),
     ]
 
@@ -3121,28 +2873,17 @@ def _pdf_race_core_values(race: PublicationRace) -> list[str]:
         race.recommendation_label,
         "N/A" if race.percentage_whole is None else race.percentage_label,
         compact_support,
-        *(f"{comparison.print_label} {compact_support}" for comparison in race.comparisons),
         *(_concise_warning_labels(race)[:1]),
     ]
 
 
 def _detailed_pdf_race_values(race: PublicationRace) -> list[str]:
-    # I39: the support caption now renders directly under the meter row, with
-    # the reference block (comparisons) moved to the card foot, after it —
-    # the reverse of the prior anchoring, where the comparison preceded the
-    # caption. The detailed edition renders the same screen DOM, so H37's
-    # verb-alone "Times agrees" rendering (the differing/covered choice
-    # dropped for every other status) applies here too.
-    screen_support = _screen_support_summary(race)
+    """The detailed edition renders the same screen DOM, in reading order."""
     return [
         race.race_label,
         race.recommendation_label,
         "N/A" if race.percentage_whole is None else race.percentage_label,
-        screen_support,
-        *(
-            f"{screen_support} {_screen_comparison_label(comparison)}"
-            for comparison in race.comparisons
-        ),
+        _screen_support_summary(race),
         *(["Too few endorsements to measure agreement."] if race.grade == "Insufficient" else []),
     ]
 

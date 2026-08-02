@@ -6788,7 +6788,6 @@
     "panel_id": "wa-2026-primary-default-sources-v4",
     "panel_version": "v4",
     "policy": {
-      "comparison_hidden_by_default": true,
       "comparison_source_codes": [
         "stim"
       ],
