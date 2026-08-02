@@ -268,7 +268,6 @@ if (comparisonBindingsElement) {
       cell.dataset.columnSignal = signal;
       const heading = document.createElement('div');
       heading.className = 'comparison-column-heading';
-      if (index === 0) heading.classList.add('comparison-column-reference');
       const title = titleFor(signal, index);
       heading.append(title);
       if (focusTarget?.kind === 'picker' && focusTarget.index === index) {
@@ -276,7 +275,7 @@ if (comparisonBindingsElement) {
       }
       const actions = document.createElement('span');
       actions.className = 'comparison-column-actions';
-      if (index !== 0 && state.columns.length > 2) {
+      if (state.columns.length > 2) {
         const remove = document.createElement('button');
         remove.type = 'button';
         remove.className = 'comparison-column-remove';
@@ -315,6 +314,7 @@ if (comparisonBindingsElement) {
         actions.append(add);
       }
       if (actions.childElementCount > 0) heading.append(actions);
+      else heading.classList.add('comparison-column-plain');
       cell.append(heading);
       row.append(cell);
     });
