@@ -1,5 +1,6 @@
 // Interactive comparison-page glue. State is admitted and serialized only by
 // compare-url.mjs; cell arithmetic is owned only by compare-signals.mjs.
+import { readClientPayload } from './client-payload.mjs';
 import { migrateCompareState } from './compare-migrate.mjs';
 import { cellAgreement, createColumnSignalEngine, rowDiffers } from './compare-signals.mjs';
 import {
@@ -24,10 +25,12 @@ function required(selector) {
 
 /** Attach the interactive comparison table to a rendered Comparisons page. */
 export function wireComparisons() {
-  const comparisonBindingsElement = document.querySelector('[data-comparison-bindings]');
-  if (!comparisonBindingsElement) return;
-  /** @type {ComparePageBindings} */
-  const payload = JSON.parse(/** @type {string} */ (comparisonBindingsElement.textContent));
+  // A payload this build cannot read leaves the server-rendered comparison
+  // table exactly as it is, behind the notice readClientPayload reveals
+  // (docs/FRONTEND.md, The data contract).
+  const admitted = readClientPayload(document);
+  if (admitted === null) return;
+  const payload = /** @type {ComparisonsPayload} */ (admitted);
   const personalization = payload.personalization;
   const comparisons = payload.comparisons;
   const context = compareContext(

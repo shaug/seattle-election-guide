@@ -36,7 +36,7 @@ import { ALL_SOURCES_TOKEN } from './compare-url.mjs';
  */
 
 /**
- * @param {Personalization} personalization
+ * @param {PersonalizationContract} personalization
  * @param {'source'|'category'} kind
  * @param {string} code
  * @returns {PersonalizationRetiredCode|undefined}
@@ -47,7 +47,7 @@ function retiredEntry(personalization, kind, code) {
 
 /**
  * @param {string} code
- * @param {Personalization} personalization
+ * @param {PersonalizationContract} personalization
  * @returns {ColumnResolution}
  */
 function resolveColumn(code, personalization) {
@@ -112,7 +112,7 @@ function fallbackState(staleState, context) {
  * messaging.
  *
  * @param {import('./compare-url.mjs').CompareDecodeResult} staleDecode
- * @param {Personalization} personalization
+ * @param {PersonalizationContract} personalization
  * @param {import('./compare-url.mjs').CompareContext} context
  * @returns {CompareMigrationResult}
  */

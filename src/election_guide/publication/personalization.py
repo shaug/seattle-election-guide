@@ -38,9 +38,17 @@ SCORED_CELL_STATES: frozenset[str] = frozenset({"endorsement", "multi_endorsemen
 
 
 class PersonalizationModel(BaseModel):
-    """Reject undeclared fields so a drifting payload fails publication."""
+    """Reject undeclared fields so a drifting payload fails publication.
 
-    model_config = ConfigDict(extra="forbid")
+    A published contract is always serialized whole, so a field with a default
+    is still present in the JSON a client reads. `rendering/payload.py`
+    generates the client's TypeScript declarations from this contract's
+    serialization schema, and without the flag below every defaulted field
+    would be declared optional there — forcing client code to guard against an
+    absence that cannot occur.
+    """
+
+    model_config = ConfigDict(extra="forbid", json_schema_serialization_defaults_required=True)
 
 
 def _exact_fraction(value: str, label: str) -> Fraction:

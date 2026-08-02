@@ -59,6 +59,10 @@
       </div>
       <div class="comparison-content">
         <p class="comparison-hidden-notice" role="status" aria-live="polite" data-comparison-hidden-notice hidden></p>
+        {# Revealed only when the embedded payload cannot be read or names a schema
+           version this build does not understand; the server-rendered table below
+           stands unchanged (docs/FRONTEND.md, The data contract). #}
+        <p class="comparison-hidden-notice" role="status" aria-live="polite" data-payload-notice hidden></p>
         <p class="comparison-scroll-hint" data-comparison-scroll-hint aria-hidden="true" hidden></p>
         <div class="comparison-table-wrap" data-comparison-grid role="region"
           aria-label="Scrollable endorsement comparison" tabindex="-1">
@@ -115,7 +119,10 @@
       {% if site_footer_band %}{{ site_footer_band | safe }}{% endif %}
     </footer>
   </div>
-  <script type="application/json" id="comparison-bindings" data-comparison-bindings>{{ comparison_payload | tojson }}</script>
+  {# One payload element per page, built by rendering/payload.py from the Pydantic
+     models the client's declarations are generated from (docs/FRONTEND.md, The
+     data contract). #}
+  <script type="application/json" data-client-payload>{{ client_payload | tojson }}</script>
   <script type="module">
 {{ compare_entry_script | safe }}
   ComparePage.boot();

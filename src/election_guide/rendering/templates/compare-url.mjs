@@ -88,9 +88,9 @@ const MAX_COLUMNS = 3;
 /**
  * Read the version bindings, token catalogs, filters, and limits for a fragment.
  *
- * @param {Personalization} personalization
+ * @param {PersonalizationContract} personalization
  * @param {string} dataVersion
- * @param {Comparisons} comparisons
+ * @param {ComparisonsContract} comparisons
  * @param {string[]} [defaultColumns]
  * @returns {CompareContext}
  */

@@ -79,22 +79,58 @@ check is a bug in the check — fix or amend it, never route around it.
 - **The embedded JSON payload is the complete client contract.** Everything
   client code needs — identifiers, display labels, ordering, summaries — comes
   from the payload. Client code never reads state out of rendered markup; the
-  DOM is write-only projection.
+  DOM is write-only projection. Locating a render target is projection, not a
+  read: a `dataset` lookup that answers "which element is this" stays.
+  Each page publishes exactly one payload element,
+  `<script type="application/json" data-client-payload>`, and admits it
+  through `client-payload.mjs` rather than parsing it by hand.
+  *Check: partial — `tests/test_rendering.py` names each read the guide's
+  module script used to make and fails if one returns, and asserts the payload
+  it replaced them with equals the rendered dialog it was read from. The
+  guide's classic script still reads two display strings; issue #239 removes
+  them as it extracts that script, and the rule is reviewer-applied until
+  then.*
 - **One identifier space.** The payload, the markup's data attributes, and the
   client modules use the same identifier for the same entity. A translation
   map between two of our own identifier spaces is a defect in the contract.
+  The panel's transport `code` is that identifier: the markup addresses a
+  source by code, and no client module translates between code and id.
+  Not finished, and unowned: the personalization contract the payload inlines
+  still carries its internal ids — one of which, `retired_codes[].former_id`,
+  the migration resolvers read — and its `sources` overlap the payload's own
+  code-only list. No ticket narrows the inlined contract yet; the closeout
+  walk (#245) disposes of this rather than letting the bullet read as done.
 - **The payload is typed from the Pydantic models.** The publication view
   model emits JSON Schema; the build generates TypeScript declarations from
   it; client modules are checked against them (`tsc --checkJs`). A Python
   model change that breaks a client consumer fails `make check`.
-  *Check: partial — `tsc --checkJs` runs in `make check` and holds every
-  client module to the payload declarations, but those declarations are still
-  hand-transcribed in `templates/client-payload.d.ts`. Nothing yet connects
-  them to the Pydantic models, so a Python model change breaks the client
-  silently; generating them closes this.*
+  *Check: partial — `rendering/payload.py` models the three page payloads and
+  renders `templates/types/client-payload.d.ts` from their schema (`make
+  types`); `tests/test_client_payload_types.py` fails when the committed
+  declarations are not what the models generate, and `tsc --checkJs` holds
+  every client module to them without running Python. Only names no payload
+  field carries — the share result, the prior-panel snapshot — stay
+  hand-written, in `types/client-runtime.d.ts` beside them. What the type
+  checker does not reach yet is the glue still inline in `.html.j2`:
+  `GuidePayload`, `SourcesPayload`, `RaceDisplay`, `RaceCandidateDisplay`,
+  `LensSource`, and `LensCategory` have no `.mjs` consumer, so a rename in
+  those models regenerates cleanly and leaves an inline reader addressing a
+  field that is gone. Issue #239 extracts those scripts into modules `tsc`
+  checks, which is what makes the rule above hold for every payload name.*
 - **`schema_version` is validated at parse time.** A payload the client does
   not understand degrades to the server-rendered baseline with a visible
   notice — never a silent no-op, never a half-enhanced page.
+  *Check: partial — `tests/js/client-payload.test.mjs` holds
+  `parseClientPayload` to refusing an absent, malformed, unversioned, or
+  future-versioned payload, and requires every page to render exactly one
+  payload element and exactly one notice element, so neither end of the
+  reveal can be dropped silently.
+  `tests/test_client_payload_types.py` requires every page payload to declare
+  `schema_version` and holds the client's own literal to the Python constant,
+  so a version bump cannot ship a build that refuses its own payload. What
+  runs unexercised is the reveal itself — `readClientPayload` writing the
+  notice, and the entry throwing — because Node has no document; it gains
+  coverage with the lightweight DOM (#238, Testing below).*
 
 ## State and URLs
 
@@ -119,15 +155,23 @@ check is a bug in the check — fix or amend it, never route around it.
   labels and percentage formatting; exists for scoring.*
 - **Prefer deleting a mirror to fixing one.** Where the contract can carry
   the computed value instead (a label in the payload rather than a formatter
-  on each side), carry the value.
+  on each side), carry the value. The audited candidate order and the audited
+  accessible summary are carried this way: the renderer publishes the text and
+  the order it rendered, so nothing recomputes them client-side to restore
+  them.
 
 ## Shared names
 
 - **Names shared across template, JS, and CSS are declared once.** `data-*`
   attributes, root state classes, breakpoints, and grade strings live in one
   contract module; templates, stylesheets, and client code consume it, and
-  tests import it rather than restating literals. *Check: pending — a
-  manifest test fails on shared names not declared in the contract module.*
+  tests import it rather than restating literals. A name with a Python origin
+  is declared there — the grade strings are `scoring/models.py`'s `Grade`,
+  reaching the client as `ComputedGrade` through the payload generator, so the
+  presentation-only names are what remains for a JavaScript contract module.
+  *Check: partial — `tests/test_client_payload_types.py` fails when the
+  client's grade vocabulary stops matching the audited engine's; the manifest
+  test for presentation-only names is pending.*
 
 ## Server-side templates
 
@@ -154,8 +198,12 @@ check is a bug in the check — fix or amend it, never route around it.
     runnable `.mjs`. Types are carried in JSDoc.
   - **Biome** — one tool for lint and format across the client modules and
     their Node tests, replacing a separate linter and formatter.
-  - **the schema-to-types generator** — emits the payload declarations (The
-    data contract, above).
+  - **json-schema-to-typescript** — the schema-to-types generator, run by
+    `make types` to emit the payload declarations (The data contract, above).
+    Its output is committed and a Python test fails when that output is
+    stale, so `tsc` holds the modules to the declarations without a Python
+    run; the staleness test itself does regenerate, inside `pytest`, which
+    already needs `node_modules` for the bundler.
 
   Installs use the committed lockfile (`npm ci`), and every version is pinned
   exactly, because a checker or formatter that drifts between machines fails

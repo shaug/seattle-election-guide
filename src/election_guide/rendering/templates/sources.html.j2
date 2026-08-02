@@ -96,6 +96,10 @@
         <a class="sources-page-reset strip-action-quiet" data-sources-page-reset href="{{ guide_path }}">Reset to defaults</a>
       </div>
     </div>
+    {# Revealed only when the embedded payload cannot be read or names a schema
+       version this build does not understand; the server-rendered tree below
+       stands unchanged (docs/FRONTEND.md, The data contract). #}
+    <p class="lens-notice" data-payload-notice hidden role="status" aria-live="polite"></p>
     <main id="sources-main">
 
       <div class="sources-tree">
@@ -153,21 +157,10 @@
     </footer>
   </div>
 
-  {# Categories and sources are published in full regardless of the lens
-     policy: the codec identifies a pre-removal link's comparison token by its
-     published role (issue 124), and must see that role to ignore the token
-     rather than reject the whole link. #}
-  <script type="application/json" id="lens-bindings">{{ {
-    "panel_id": guide.metadata.source_panel_id,
-    "panel_hash": guide.metadata.source_panel_hash,
-    "data_version": guide.metadata.data_version,
-    "scoring": {"configuration_id": guide.personalization.scoring.configuration_id},
-    "policy": {
-      "maximum_url_characters": guide.personalization.policy.maximum_url_characters
-    },
-    "categories": lens_personalization.categories,
-    "sources": lens_personalization.sources
-  } | tojson }}</script>
+  {# One payload element per page, built by rendering/payload.py from the
+     Pydantic models the client's declarations are generated from
+     (docs/FRONTEND.md, The data contract). #}
+  <script type="application/json" data-client-payload>{{ client_payload | tojson }}</script>
 
   <script type="module">
 {{ sources_entry_script | safe }}
@@ -176,8 +169,8 @@
   // Page glue for the standalone sources editor, still inline pending issue
   // #239. No scoring engine here: this page only ever reads/writes a selection
   // through the shared fragment codec, like the guide's merged sources tree.
-  SourcesPage.boot();
-  const bindings = JSON.parse(document.querySelector('#lens-bindings').textContent);
+  // `boot` hands back the payload, or stops here behind a notice (its module).
+  const bindings = SourcesPage.boot();
   const context = lensContext(bindings, bindings.data_version);
   const guidePath = {{ guide_path | tojson }};
 

@@ -77,7 +77,7 @@ const HASH_PREFIX_LENGTH = 12;
 /**
  * Read the version bindings and limits a fragment is written against.
  *
- * @param {Personalization} personalization
+ * @param {PersonalizationContract} personalization
  * @param {string} dataVersion
  * @returns {LensContext}
  */

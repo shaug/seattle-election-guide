@@ -30,7 +30,7 @@ const SCORE_CATEGORY_PREFIX = 'G';
  *
  * @typedef {object} RaceScore
  * @property {string} raceId
- * @property {ScoreGrade} grade
+ * @property {ComputedGrade} grade
  * @property {string|null} winnerId Null when the race is tied or unscored.
  * @property {string[]} winnerIds In published ballot order.
  * @property {boolean} isTied
@@ -162,7 +162,7 @@ function isCategoryCode(code) {
  * A comparison source is displayed but never scored, and a source the panel
  * does not publish as selectable can never be selected back in.
  *
- * @param {Personalization} personalization
+ * @param {PersonalizationContract} personalization
  * @returns {{
  *   sources: Map<string, PersonalizationSource>,
  *   categories: Map<string, PersonalizationCategory>,
@@ -192,7 +192,7 @@ function panelAdmission(personalization) {
  * what keeps the comparison source out of every personalized score.
  *
  * @param {LensSelection} selection
- * @param {Personalization} personalization
+ * @param {PersonalizationContract} personalization
  * @returns {{ sourceCodes: string[], ignoredCodes: string[] }}
  */
 export function resolveSelection(selection, personalization) {
@@ -236,7 +236,7 @@ export function resolveSelection(selection, personalization) {
  * @param {number} explicitCount
  * @param {Rational|null} winnerShare
  * @param {boolean} isTied
- * @returns {ScoreGrade}
+ * @returns {ComputedGrade}
  */
 function gradeFor(scoring, explicitCount, winnerShare, isTied) {
   if (isTied) return 'TIED';
@@ -261,7 +261,7 @@ function gradeFor(scoring, explicitCount, winnerShare, isTied) {
  *
  * @param {PersonalizationRace} race
  * @param {readonly string[]} effectiveCodes
- * @param {Personalization} personalization
+ * @param {PersonalizationContract} personalization
  * @returns {RaceScore}
  */
 export function scoreRace(race, effectiveCodes, personalization) {
@@ -352,7 +352,7 @@ export function scoreRace(race, effectiveCodes, personalization) {
  * Returns structured results only. Presentation, URLs, and migration are owned
  * elsewhere; this function mutates nothing.
  *
- * @param {Personalization} personalization
+ * @param {PersonalizationContract} personalization
  * @param {LensSelection} selection
  * @returns {{ sourceCodes: string[], ignoredCodes: string[], races: RaceScore[] }}
  */

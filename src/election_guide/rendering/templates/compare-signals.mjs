@@ -111,7 +111,7 @@ function directCell(source, race) {
 /**
  * @param {PersonalizationCategory} category
  * @param {PersonalizationRace} race
- * @param {Personalization} personalization
+ * @param {PersonalizationContract} personalization
  * @returns {AggregateCell|EmptyCell}
  */
 function aggregateCell(category, race, personalization) {
@@ -138,8 +138,8 @@ function aggregateCell(category, race, personalization) {
  * race is one entry from personalization.races and signal is a current source
  * code, category code, or the reserved `gall` sentinel.
  *
- * @param {Personalization} personalization
- * @param {Comparisons} comparisons
+ * @param {PersonalizationContract} personalization
+ * @param {ComparisonsContract} comparisons
  * @returns {{ resolveColumn: (signal: string, race: PersonalizationRace) => ComparisonCell }}
  */
 export function createColumnSignalEngine(personalization, comparisons) {

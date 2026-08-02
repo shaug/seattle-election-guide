@@ -45,6 +45,13 @@ from election_guide.rendering.models import (
     RenderingConfiguration,
     RenderingValidationReport,
 )
+from election_guide.rendering.payload import (
+    RaceCandidateDisplay,
+    RaceDisplay,
+    comparisons_payload,
+    guide_payload,
+    sources_payload,
+)
 from election_guide.rendering.shell import (
     EXTERNAL_LINK_ATTRIBUTES,
     HOW_TO_VOTE_HREF,
@@ -124,19 +131,37 @@ def _template_environment() -> Environment:
 def _personalization_lookup_context(view_model: PublicationViewModel) -> dict[str, Any]:
     """Derived views over the personalization contract shared by every page that
     renders it (the guide and the standalone sources page): a code -> identity
-    lookup distinct from source_by_id's id keying, category labels for a
-    multi-category source's "also in" tag, and the contract as a plain dict for
-    Jinja's `tojson` filter, which only accepts JSON-native values."""
+    lookup distinct from source_by_id's id keying, the reverse id -> code lookup
+    the markup needs to address a source the way the client payload does, and
+    category labels for a multi-category source's "also in" tag."""
     return {
         "source_by_id": {source.id: source for source in view_model.sources},
         "personalization_source_by_code": {
             source.code: source for source in view_model.personalization.sources
         },
+        # docs/FRONTEND.md, The data contract: one identifier space. A rendered
+        # source is addressed by the same transport code the payload publishes,
+        # so no client module translates between the two.
+        "source_code_by_id": {
+            source.id: source.code for source in view_model.personalization.sources
+        },
         "category_label_by_id": {
             category.id: category.label for category in view_model.personalization.categories
         },
-        "lens_personalization": view_model.personalization.model_dump(mode="json"),
     }
+
+
+def _race_display(race: PublicationRace) -> RaceDisplay:
+    """One race's audited presentation, published so no client module reads it
+    back out of the dialog (docs/FRONTEND.md, The data contract)."""
+    return RaceDisplay(
+        race_id=race.id,
+        candidates=[
+            RaceCandidateDisplay(candidate_id=group.candidate_id, label=group.candidate_label)
+            for group in _candidate_endorsement_groups(race)
+        ],
+        audited_accessible_summary=_race_detail_accessible_summary(race),
+    )
 
 
 def render_html_document(
@@ -199,6 +224,12 @@ def render_html_document(
         election_display_name=election_display_name,
         stylesheet=stylesheet,
         guide_entry_script=guide_entry_script,
+        client_payload=guide_payload(
+            view_model,
+            races=[
+                _race_display(race) for section in view_model.sections for race in section.races
+            ],
+        ).model_dump(mode="json"),
         race_share_icon=share_icon_svg(),
         race_close_icon=close_icon_svg(),
         site_band=site_band_html(
@@ -285,6 +316,7 @@ def render_sources_document(
         election_display_name=election_display_name,
         stylesheet=stylesheet,
         sources_entry_script=sources_entry_script,
+        client_payload=sources_payload(view_model).model_dump(mode="json"),
         compare_href=compare_href,
         site_band=site_band_html(
             guide_href=guide_path,
@@ -334,24 +366,7 @@ def render_comparison_document(
         election_id=view_model.metadata.election_id,
     )
     document_title = page_title(page="Comparisons", election=election_display_name)
-    source_names = {source.id: source.name for source in view_model.sources}
-    source_labels = {
-        source.code: source_names[source.id] for source in view_model.personalization.sources
-    }
-    race_by_id = {race.id: race for section in view_model.sections for race in section.races}
-    comparison_payload = {
-        "schema_version": "1.0",
-        "data_version": view_model.metadata.data_version,
-        "default_columns": ["gall", "strn", "stim"],
-        "personalization": view_model.personalization.model_dump(mode="json"),
-        "comparisons": view_model.comparisons.model_dump(mode="json"),
-        "source_labels": source_labels,
-        "contested_race_ids": [
-            display.race_id
-            for display in view_model.comparisons.display_index
-            if race_by_id[display.race_id].is_contested
-        ],
-    }
+    payload = comparisons_payload(view_model, default_columns=["gall", "strn", "stim"])
     preset_fragments = [
         (
             "The Stranger and The Times",
@@ -397,8 +412,8 @@ def render_comparison_document(
         comparison_differ_count=sum(
             row.differs for section in comparison_sections for row in section.rows
         ),
-        comparison_payload=comparison_payload,
-        comparison_source_labels=source_labels,
+        client_payload=payload.model_dump(mode="json"),
+        comparison_source_labels=payload.source_labels,
         comparison_presets=preset_fragments,
         comparison_percentage_label=comparison_percentage_label,
     )
@@ -855,9 +870,13 @@ def validate_rendered_guide(
     category_label_by_key = {
         category.category: category.label for category in view_model.methodology.source_categories
     }
+    # A rendered source row is addressed by its transport code, the one
+    # identifier the client payload publishes (docs/FRONTEND.md, The data
+    # contract), so the observed keys are in code space too.
+    source_code_by_id = {source.id: source.code for source in view_model.personalization.sources}
     # Issue 124: a comparison source renders no race-detail row at all.
     expected_detail_keys = {
-        (race.id, cell.source_id)
+        (race.id, source_code_by_id[cell.source_id])
         for race in expected_races
         for cell in _tallying_source_cells(race, source_by_id)
     }
@@ -866,7 +885,7 @@ def validate_rendered_guide(
     for race in expected_races:
         endorsement_groups = _candidate_endorsement_groups(race)
         for cell in _tallying_source_cells(race, source_by_id):
-            key = (race.id, cell.source_id)
+            key = (race.id, source_code_by_id[cell.source_id])
             source = source_by_id[cell.source_id]
             expected_group = _source_cell_group(cell, race, source)
             expected_links: set[str] = (
@@ -1134,7 +1153,7 @@ def _capture_emulated_viewport(
                 "expression": (
                     "(()=>{"
                     "const bindings=JSON.parse("
-                    "document.querySelector('#lens-bindings').textContent);"
+                    "document.querySelector('[data-client-payload]').textContent);"
                     "const comparison=bindings.sources.find("
                     "item=>item.panel_role==='comparison');"
                     "const countsAgree=()=>{"
@@ -1313,7 +1332,7 @@ def _capture_emulated_viewport(
                     "described:Boolean(firstDialog?.getAttribute('aria-describedby')&&"
                     "document.getElementById(firstDialog.getAttribute('aria-describedby'))),"
                     "sourceRows:new Set(Array.from(firstDialog?.querySelectorAll("
-                    "'[data-race-detail-source-id]')||[],row=>row.dataset.raceDetailSourceId)).size,"
+                    "'[data-race-detail-source-code]')||[],row=>row.dataset.raceDetailSourceCode)).size,"
                     "inViewport:Boolean(directRect&&directRect.left>=0&&directRect.top>=0&&"
                     "directRect.right<=window.innerWidth&&directRect.bottom<=window.innerHeight),"
                     "noOverflow:Boolean(firstDialog&&firstDialog.scrollWidth<=firstDialog.clientWidth+1)};"
@@ -1651,9 +1670,9 @@ class _GuideHTMLParser(HTMLParser):
             self.race_ids.append(race_id)
             self.race_text[race_id] = []
             self._current_race_id = race_id
-        detail_source_id = attributes.get("data-race-detail-source-id")
-        if detail_source_id is not None and self._current_race_id is not None:
-            detail_key = (self._current_race_id, detail_source_id)
+        detail_source_code = attributes.get("data-race-detail-source-code")
+        if detail_source_code is not None and self._current_race_id is not None:
+            detail_key = (self._current_race_id, detail_source_code)
             detail_rows = self.race_detail_text.setdefault(detail_key, [])
             detail_links = self.race_detail_links.setdefault(detail_key, [])
             detail_rows.append([])

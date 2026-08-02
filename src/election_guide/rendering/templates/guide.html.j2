@@ -34,7 +34,7 @@
       {% set source = source_by_id[cell.source_id] %}
       {% if source_cell_group(cell, race, source) == group_key %}
       {% set detail_label = source_cell_detail_label(cell, race, group_key) %}
-      <li data-race-detail-source-id="{{ cell.source_id }}"
+      <li data-race-detail-source-code="{{ source_code_by_id[cell.source_id] }}"
         data-source-category="{{ source.category }}" data-source-state="{{ cell.state }}"
         data-source-role="{{ source.panel_role }}" data-source-group="{{ group_key }}">
         {% if cell.evidence_url %}<a class="race-detail-source-row" href="{{ cell.evidence_url }}"{{ external_link_attributes }}>
@@ -54,7 +54,7 @@
   {% macro race_detail_candidate_source_row(race, cell, candidate_id) -%}
     {% set source = source_by_id[cell.source_id] %}
     {% set detail_label = source_cell_detail_label(cell, race, 'candidate') %}
-    <li data-race-detail-source-id="{{ cell.source_id }}"
+    <li data-race-detail-source-code="{{ source_code_by_id[cell.source_id] }}"
       data-source-category="{{ source.category }}" data-source-state="{{ cell.state }}"
       data-source-role="{{ source.panel_role }}" data-source-group="candidate"
       data-endorsed-candidate-id="{{ candidate_id }}">
@@ -190,6 +190,10 @@
       </div>
       <p class="lens-notice" data-lens-notice hidden role="status" aria-live="polite"></p>
       {% endif %}
+      {# Revealed only when the embedded payload cannot be read or names a
+         schema version this build does not understand; the audited page
+         below stands unchanged (docs/FRONTEND.md, The data contract). #}
+      <p class="lens-notice" data-payload-notice hidden role="status" aria-live="polite"></p>
     </div>
 
     <div id="guide-races" class="screen-sections">
@@ -343,54 +347,20 @@
     </footer>
   </main>
 
-  {% set bindings_sources = namespace(items=[]) %}
-  {% for s in lens_personalization.sources %}
-    {# A coverage-gap source has zero endorsements and was never selectable on
-       the sources page's own tree (issue 107's own "contributing" filter), so
-       it must not count toward the guide's "Counting N of M" total either.
-
-       A comparison source is exempt: nothing selects it any more (issue 124),
-       but the codec identifies a pre-removal link's comparison token by the
-       published role, and must be able to see that role to ignore the token
-       rather than reject the whole link. #}
-    {% if s.panel_role == 'comparison' or source_by_id[s.id].contribution_status == 'contributing' %}
-    {% set _ = bindings_sources.items.append({
-      "id": s.id,
-      "code": s.code,
-      "panel_role": s.panel_role,
-      "selectable": s.selectable,
-      "reporting_category_id": s.reporting_category_id,
-      "selection_category_ids": s.selection_category_ids,
-      "overlap_group_ids": s.overlap_group_ids,
-      "name": source_by_id[s.id].name
-    }) %}
-    {% endif %}
-  {% endfor %}
-  <script type="application/json" id="lens-bindings">{{ {
-    "panel_id": guide.metadata.source_panel_id,
-    "panel_hash": guide.metadata.source_panel_hash,
-    "data_version": guide.metadata.data_version,
-    "scoring": {"configuration_id": guide.personalization.scoring.configuration_id},
-    "policy": {
-      "maximum_url_characters": guide.personalization.policy.maximum_url_characters
-    },
-    "categories": lens_personalization.categories,
-    "sources": bindings_sources.items
-  } | tojson }}</script>
-  {% if guide.personalization.policy.enabled %}
-  <script type="application/json" id="lens-personalization">{{ lens_personalization | tojson }}</script>
-  {% endif %}
+  {# One payload element per page, built by rendering/payload.py from the
+     Pydantic models the client's declarations are generated from
+     (docs/FRONTEND.md, The data contract). #}
+  <script type="application/json" data-client-payload>{{ client_payload | tojson }}</script>
   <script type="module">
 {{ guide_entry_script | safe }}
   const { Rational, compareRaceResults, decodeLensFragment, encodeLensFragment, lensContext, migrateLensState, scoreSelection } = GuidePage.glue;
 
   // Page glue for the merged sources tree, still inline pending issue #239.
   // The codec and the scoring engine reach it off the bundle above, so the
-  // shipped page and the Node tests share one implementation.
-  const bindings = JSON.parse(document.querySelector('#lens-bindings').textContent);
-
-  GuidePage.boot();
-
+  // shipped page and the Node tests share one implementation. `boot` wires the
+  // shell and hands back the page's payload, or stops the page on the audited
+  // baseline behind a visible notice (guide-entry.mjs).
+  const bindings = GuidePage.boot();
   const context = lensContext(bindings, bindings.data_version);
   const categoryMemberCodesByCode = new Map(
     bindings.categories.map((item) => [item.code, item.member_source_codes]),
@@ -507,7 +477,7 @@
   };
 
   {% if guide.personalization.policy.enabled %}
-  const personalization = JSON.parse(document.querySelector('#lens-personalization').textContent);
+  const personalization = bindings.personalization;
   const lensBanner = document.querySelector('[data-lens-banner]');
   const lensBannerStatus = document.querySelector('[data-lens-banner-status]');
   const tallyingSourceCodes = bindings.sources
@@ -523,54 +493,32 @@
   const isDefaultSelection = () =>
     checkedTallyingSourceCodes().length === tallyingSourceCodes.length;
 
-  /**
-   * Per-race presentation data the lens payload does not carry: candidate
-   * display labels and source display names. Candidate labels already exist
-   * in the server-rendered, audited-only DOM (the race detail dialog's
-   * candidate headings); source names come from the lens bindings payload
-   * (issue 108: the guide no longer has a sources tree DOM to read them from).
-   */
+  // Locating each race's render target is projection, not state: the id is the
+  // payload's own `race_id`, and nothing is read back out of the card.
   const raceCards = new Map(
     [...document.querySelectorAll('[data-publication-race-id]')].map((card) => [
       card.dataset.publicationRaceId,
       card,
     ]),
   );
+  // Every per-race presentation value comes from the payload, which publishes
+  // exactly what the server rendered: the audited candidate order, each
+  // candidate's display label, and the dialog's audited accessible summary.
   const candidateLabelsByRaceId = new Map(
-    [...raceCards.entries()].map(([raceId, card]) => [
-      raceId,
-      new Map(
-        [...card.querySelectorAll('[data-race-detail-candidate-id]')].map((section) => [
-          section.dataset.raceDetailCandidateId,
-          section.querySelector('.race-detail-candidate-title h4')?.textContent
-            ?? section.dataset.raceDetailCandidateId,
-        ]),
-      ),
+    bindings.races.map((race) => [
+      race.race_id,
+      new Map(race.candidates.map((candidate) => [candidate.candidate_id, candidate.label])),
     ]),
   );
-  // The server renders candidate sections in the audited default's own order
-  // (`_candidate_endorsement_groups` in renderer.py); captured once here, per
-  // race, so a lens that stops diverging (or is cleared entirely) can restore
-  // this exact order rather than leaving whatever a prior lens last arranged.
   const defaultCandidateOrderByRaceId = new Map(
-    [...raceCards.entries()].map(([raceId, card]) => [
-      raceId,
-      [...card.querySelectorAll('.race-detail-outcomes > [data-race-detail-candidate-id]')].map(
-        (section) => section.dataset.raceDetailCandidateId,
-      ),
+    bindings.races.map((race) => [
+      race.race_id,
+      race.candidates.map((candidate) => candidate.candidate_id),
     ]),
   );
-  // The audited default's own accessible summary, captured verbatim from the
-  // server-rendered text (`_race_detail_accessible_summary` in renderer.py)
-  // so clearing a lens can restore it exactly rather than recomputing an
-  // independent copy of that same server logic.
   const defaultAccessibleSummaryByRaceId = new Map(
-    [...raceCards.entries()].map(([raceId, card]) => [
-      raceId,
-      card.querySelector('[data-race-detail-summary]')?.textContent ?? '',
-    ]),
+    bindings.races.map((race) => [race.race_id, race.audited_accessible_summary]),
   );
-  const codeBySourceId = new Map(bindings.sources.map((item) => [item.id, item.code]));
   const raceDataById = new Map(personalization.races.map((race) => [race.race_id, race]));
 
   /**
@@ -821,8 +769,7 @@
       // I56: unselected sources stay in place as evidence, visibly
       // de-emphasized and marked as not counted, rather than removed.
       for (const row of section.querySelectorAll('[data-endorsed-candidate-id]')) {
-        const rowCode = codeBySourceId.get(row.dataset.raceDetailSourceId);
-        const notCounted = !resolvedSet.has(rowCode);
+        const notCounted = !resolvedSet.has(row.dataset.raceDetailSourceCode);
         row.classList.toggle('race-detail-source-row-not-counted', notCounted);
         const notCountedEl = row.querySelector('[data-race-detail-not-counted]');
         if (notCountedEl) {
