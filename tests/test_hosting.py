@@ -1251,7 +1251,18 @@ def test_wrangler_and_workflow_keep_deployment_pinned_and_gated() -> None:
         "CLOUDFLARE_API_TOKEN": "${{ secrets.CLOUDFLARE_API_TOKEN }}",
     }
     check_steps = workflow["jobs"]["check"]["steps"]
+    # The check job runs on pull requests, including from forks, so no deployment
+    # credential may reach it. The automatic job token is not one: it is bounded by
+    # the workflow's read-only permissions, and listing published releases needs it.
     assert not any("secrets" in json.dumps(step) for step in check_steps)
+    assert workflow["permissions"] == {"contents": "read"}
+    releases_step = next(
+        step
+        for step in check_steps
+        if step.get("name") == "Verify declared release versions are published"
+    )
+    assert releases_step["env"] == {"GH_TOKEN": "${{ github.token }}"}
+    assert "hosting verify-releases config/hosting/site.yaml" in releases_step["run"]
     stage_step = next(
         step for step in check_steps if step.get("name") == "Stage verified Cloudflare Pages site"
     )

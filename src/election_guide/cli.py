@@ -32,7 +32,13 @@ from election_guide.evidence.storage import (
     record_unavailable,
     verify_capture,
 )
-from election_guide.hosting import stage_pages_site, verify_staged_pages_site
+from election_guide.hosting import (
+    published_release_tags,
+    read_site_manifest,
+    stage_pages_site,
+    verify_declared_releases_published,
+    verify_staged_pages_site,
+)
 from election_guide.initialization import initialize_election, read_election_configuration
 from election_guide.inventory.importer import (
     extract_public_inputs,
@@ -192,6 +198,20 @@ def hosting_verify(
         f"Pages site: verified ({len(result.elections)} elections; "
         f"current {result.current_election_id}; {len(result.assets)} assets)"
     )
+
+
+@hosting_app.command("verify-releases")
+def hosting_verify_releases(
+    site_manifest: Annotated[Path, typer.Argument(exists=True, dir_okay=False, readable=True)],
+) -> None:
+    """Verify every declared election release is published as a GitHub Release."""
+    try:
+        manifest = read_site_manifest(site_manifest)
+        verify_declared_releases_published(manifest, published_release_tags())
+    except (OSError, UnicodeError, json.JSONDecodeError, ValidationError, ValueError) as error:
+        typer.echo(f"hosting verify-releases failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    typer.echo(f"Declared releases: verified ({len(manifest.elections)} declared)")
 
 
 @election_app.command("init")
