@@ -238,11 +238,12 @@ function parseColumns(selection, failure) {
 }
 
 /**
- * @template {CompareMalformed|CompareRejected} T
+ * Decode-side only, like `parseColumns`: the failure type is concrete.
+ *
  * @param {URLSearchParams} parameters
- * @param {FailureFactory<T>} failure
+ * @param {FailureFactory<CompareMalformed>} failure
  * @returns {{ state: Omit<CompareState, 'columns'>, error?: undefined }
- *   | { state?: undefined, error: T }}
+ *   | { state?: undefined, error: CompareMalformed }}
  */
 function parseFilters(parameters, failure) {
   const difference = parameters.get('diff');

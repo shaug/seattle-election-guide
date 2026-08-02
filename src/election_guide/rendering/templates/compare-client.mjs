@@ -497,8 +497,9 @@ export function wireComparisons() {
       heading.append(headingCell);
       body.append(heading);
       for (const item of section.displays) {
-        // `race` stays on the row record for the lit-html migration to render
-        // from (#248); this loop only needs the display labels and the cells.
+        // `race` stays on the row record for the lit-html conversion of this
+        // table to render from (#238); this loop only needs the display
+        // labels and the cells.
         const { display, configuredCells, differs } = item;
         shown += 1;
         const row = document.createElement('tr');

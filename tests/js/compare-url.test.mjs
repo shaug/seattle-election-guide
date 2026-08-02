@@ -124,6 +124,33 @@ test('exact duplicate columns are removed before enforcing the two-to-three colu
   }
 });
 
+test('a decoded column count outside the two-to-three limit is malformed', () => {
+  // Hand-built rather than encoded: the encoder refuses these counts, so a
+  // link carrying one was written outside this codec. Decoding is the side
+  // that has to survive it — a one-column state reaches the table as a
+  // reference column with nothing to compare against.
+  const withColumns = (cols) => {
+    const parameters = new URLSearchParams(encoded({ columns: ['gall', 'strn'] }));
+    parameters.set('cols', cols);
+    return parameters.toString();
+  };
+
+  for (const [cols, count] of [
+    ['', 0],
+    ['gall', 1],
+    // Duplicates collapse first, so the surviving count is what is enforced.
+    ['gallgall', 1],
+    ['gallstrnstimurbn', 4],
+  ]) {
+    const decoded = decodeCompareFragment(withColumns(cols), context());
+    assert.equal(decoded.status, 'malformed', `cols=${cols}`);
+    assert.equal(decoded.reason, 'column_count', `cols=${cols}`);
+    assert.equal(decoded.count, count, `cols=${cols}`);
+    assert.equal(decoded.minimum, 2);
+    assert.equal(decoded.maximum, 3);
+  }
+});
+
 test('gmin and every other lowercase-g token reject distinctly as reserved', () => {
   for (const token of ['gmin', 'gzzz', 'gALL']) {
     const decode = decodeCompareFragment(
