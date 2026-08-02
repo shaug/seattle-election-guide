@@ -25,10 +25,13 @@ check is a bug in the check — fix or amend it, never route around it.
   pure modules by the shared guard and otherwise waits on `tsc --checkJs`.*
 - **Each page has one client entry module.** Entry modules live beside the
   templates as `<page>-entry.mjs`; the shell-only documents (About, the
-  archive) share `shell-entry.mjs`. Pages are assembled by bundling the entry's
-  import graph (esbuild, exact-pinned) and inlining the result into the
-  template. Published pages remain self-contained single files; the module
-  graph is a build-time reality, not a runtime one.
+  archive) share `shell-entry.mjs`. The 404 is the deliberate exception: it
+  declares itself unshareable, renders no Share control, and so ships no
+  script at all — an entry there would bundle wiring with nothing to wire.
+  Pages are assembled by bundling the entry's import graph (esbuild,
+  exact-pinned) and inlining the result into the template. Published pages
+  remain self-contained single files; the module graph is a build-time
+  reality, not a runtime one.
   *Check: exists — `tests/test_frontend_bundle.py` bundles every
   `*-entry.mjs`, requires each to be covered there, and asserts no import
   survives into the page.*

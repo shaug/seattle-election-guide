@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import re
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -76,14 +77,19 @@ def test_every_entry_module_on_disk_is_covered_here() -> None:
 def test_the_installed_esbuild_is_the_exact_version_package_json_pins() -> None:
     """Dev-time dependencies are exact-pinned (docs/FRONTEND.md, Dependencies).
 
-    Bundle output is only reproducible for one version, so the renderer refuses
-    to run any other. `bundle_entry` performing that check is what turns the
-    pin into a build-time fact rather than a lockfile aspiration.
+    Bundle output is only reproducible for one version, so `bundle_entry`
+    refuses both a manifest range and an installed binary that disagrees with
+    the pin. That rule lives in the bundler alone; bundling successfully is
+    what proves it held, and the version is named here only so a failure reads
+    as "run `npm ci`" rather than as a mystery.
     """
     pinned = json.loads(PACKAGE_JSON.read_text(encoding="utf-8"))["devDependencies"]["esbuild"]
-    assert re.fullmatch(r"\d+\.\d+\.\d+", pinned), "esbuild must be pinned to an exact version"
-    assert ESBUILD.exists(), "run `npm ci`: rendering bundles client modules with esbuild"
-    _fresh("shell-entry.mjs", "ShellPage")
+    installed = subprocess.run(
+        [str(ESBUILD), "--version"], capture_output=True, text=True, encoding="utf-8", check=True
+    ).stdout.strip()
+
+    assert installed == pinned, f"esbuild {installed} is installed, not {pinned}: run `npm ci`"
+    assert _fresh("shell-entry.mjs", "ShellPage")
 
 
 def test_an_unknown_entry_is_a_bundler_error_rather_than_an_esbuild_message() -> None:

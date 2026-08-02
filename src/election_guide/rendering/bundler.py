@@ -18,6 +18,7 @@ every shipped byte stays readable in the page source.
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 from functools import cache
 from pathlib import Path
@@ -35,6 +36,10 @@ PACKAGE_JSON = REPO_ROOT / "package.json"
 # lowered and the bundle reads like its sources.
 TARGET = "es2022"
 
+# "0.28.1", never "^0.28.1" or "0.28": output is reproducible per exact
+# version, so a range is not a pin (docs/FRONTEND.md, Dependencies).
+EXACT_VERSION = re.compile(r"\d+\.\d+\.\d+")
+
 
 class BundleError(RuntimeError):
     """esbuild is unavailable, mispinned, or failed on a client entry module."""
@@ -45,7 +50,7 @@ def _pinned_esbuild_version() -> str:
     """The exact version `package.json` pins, which is what may be run."""
     manifest = json.loads(PACKAGE_JSON.read_text(encoding="utf-8"))
     pinned = manifest.get("devDependencies", {}).get("esbuild")
-    if not isinstance(pinned, str) or not pinned[:1].isdigit():
+    if not isinstance(pinned, str) or not EXACT_VERSION.fullmatch(pinned):
         raise BundleError(
             f"{PACKAGE_JSON} must pin esbuild to an exact version; found {pinned!r}. "
             "Dev-time dependencies are exact-pinned (docs/FRONTEND.md, Dependencies)."
@@ -67,6 +72,7 @@ def _verified_esbuild() -> Path:
         [str(ESBUILD), "--version"],
         capture_output=True,
         text=True,
+        encoding="utf-8",
         check=True,
     ).stdout.strip()
     if found != pinned:
@@ -110,6 +116,10 @@ def bundle_entry(entry_module: str, *, global_name: str) -> str:
         command,
         capture_output=True,
         text=True,
+        # Explicit, not the process locale: the modules carry non-ASCII the
+        # bundle keeps verbatim under --charset=utf8, and the `read_text`
+        # concatenation this replaced named its encoding too.
+        encoding="utf-8",
         cwd=TEMPLATE_DIR,
     )
     if result.returncode != 0:
