@@ -1,6 +1,7 @@
 // The standalone sources editor's client entry (docs/FRONTEND.md § Modules).
 // No scoring engine reaches this page: it only ever reads and writes a
 // selection through the shared fragment codec.
+import { requireClientPayload } from './client-payload.mjs';
 import { wireElectionDay } from './election-day.mjs';
 import { decodeLensFragment, encodeLensFragment, lensContext } from './lens-url.mjs';
 import { wireShellShare } from './share-link.mjs';
@@ -12,8 +13,10 @@ import { wireShellShare } from './share-link.mjs';
  */
 export const glue = { decodeLensFragment, encodeLensFragment, lensContext };
 
-/** Wire the sources page's shell behavior. */
+/** Wire the sources page's shell behavior and admit its payload, exactly as
+ * the guide's entry does. */
 export function boot() {
   wireShellShare();
   wireElectionDay();
+  return requireClientPayload(document);
 }

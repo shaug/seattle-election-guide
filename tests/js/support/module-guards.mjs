@@ -66,6 +66,7 @@ const PURITY_IDENTIFIERS = [
  * this choice deliberately rather than arriving unguarded.
  */
 export const MODULE_KINDS = {
+  'client-payload.mjs': 'wiring',
   'compare-client.mjs': 'wiring',
   'compare-entry.mjs': 'wiring',
   'compare-migrate.mjs': 'pure',

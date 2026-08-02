@@ -20,6 +20,11 @@ modules with Biome, type-checks them with `tsc --noEmit --checkJs`, and then
 runs the Node tests. `make format` fixes both languages: ruff for Python,
 `biome check --write` for JavaScript.
 
+`make types` regenerates the client payload declarations from the Pydantic
+models (docs/FRONTEND.md, The data contract). Run it after changing anything
+the payload publishes and commit the result; `make check` fails while the
+committed declarations and the models disagree.
+
 ## Pull requests
 
 - Link the issue that defines the scope.

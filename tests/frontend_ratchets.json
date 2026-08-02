@@ -31,7 +31,7 @@
   ],
   "inline_script_ceilings": {
     "compare.html.j2": 1,
-    "guide.html.j2": 802,
+    "guide.html.j2": 778,
     "sources.html.j2": 133
   },
   "module_injection_placeholders": {

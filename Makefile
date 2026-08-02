@@ -1,4 +1,4 @@
-.PHONY: sync format check check-js test release-verify hosting-stage hosting-serve hosting-deploy
+.PHONY: sync format check check-js types test release-verify hosting-stage hosting-serve hosting-deploy
 
 sync:
 	uv sync --frozen
@@ -26,6 +26,14 @@ check-js:
 	npm run lint
 	npm run typecheck
 	node --test 'tests/js/**/*.test.mjs'
+
+# Regenerate the client payload declarations from the Pydantic models
+# (docs/FRONTEND.md, The data contract). Committing the output is what lets
+# `tsc` hold every client module to it without a Python run;
+# `tests/test_client_payload_types.py` regenerates during `pytest` and fails
+# when the committed file and the models disagree.
+types:
+	uv run python -c "from election_guide.rendering.payload import generate_client_payload_types as g; g()"
 
 test:
 	uv run pytest

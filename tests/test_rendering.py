@@ -7,6 +7,7 @@ import subprocess
 import sys
 import tempfile
 from fractions import Fraction
+from html import unescape
 from pathlib import Path
 from stat import S_IMODE
 from typing import Any, cast
@@ -40,6 +41,7 @@ from election_guide.rendering import (
 )
 from election_guide.rendering.bundler import TEMPLATE_DIR, bundle_entry
 from election_guide.rendering.models import RenderingValidationReport
+from election_guide.rendering.payload import CLIENT_PAYLOAD_SCHEMA_VERSION, GuidePayload
 from election_guide.rendering.renderer import (
     _candidate_endorsement_groups,  # pyright: ignore[reportPrivateUsage]
     _CdpSocket,  # pyright: ignore[reportPrivateUsage]
@@ -78,6 +80,10 @@ from tests.test_scoring import (
 
 PROJECT_ROOT = Path(__file__).parent.parent
 RENDERING_CONFIG = PROJECT_ROOT / "config/rendering/guide.yaml"
+# The one payload element every page publishes (docs/FRONTEND.md, The data
+# contract). The whole opening tag, so the selector inside the inlined bundle
+# is not mistaken for a second element.
+PAYLOAD_ELEMENT = '<script type="application/json" data-client-payload>'
 DARWIN_VISUAL_BASELINES = {
     "desktop": [
         0.382,
@@ -329,11 +335,15 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     # never selectable on the sources page's own tree, so the guide's lens
     # bindings (which drive its "Viewing N of M sources" total) must exclude
     # it too, exactly like the sources page's own contribution_status filter.
-    bindings = json.loads(html.split('id="lens-bindings">')[1].split("</script>")[0])
-    assert gap_source.id not in {source["id"] for source in bindings["sources"]}
+    gap_code = next(
+        source.code for source in view_model.personalization.sources if source.id == gap_source.id
+    )
+    bindings = _client_payload(html)
+    assert gap_code not in {source["code"] for source in bindings["sources"]}
 
     races = [race for section in view_model.sections for race in section.races]
     source_by_id = {source.id: source for source in view_model.sources}
+    source_code_by_id = {source.id: source.code for source in view_model.personalization.sources}
     category_label_by_key = {
         category.category: category.label for category in view_model.methodology.source_categories
     }
@@ -452,7 +462,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
             if source_by_id[cell.source_id].panel_role != "comparison"
         ]
         expected_row_count = sum(_cell_row_count(cell) for cell in tallying_cells)
-        assert dialog_html.count('data-race-detail-source-id="') == expected_row_count
+        assert dialog_html.count('data-race-detail-source-code="') == expected_row_count
         assert dialog_html.count('data-source-group="') == expected_row_count
         assert dialog_html.count('class="race-detail-category-badge') == expected_row_count
         assert "race-detail-comparison-badge" not in dialog_html
@@ -477,13 +487,13 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
         for cell in race.source_cells:
             group = _source_cell_group(cell, race, source_by_id[cell.source_id])
             source = source_by_id[cell.source_id]
+            code = source_code_by_id[cell.source_id]
             if source.panel_role == "comparison":
-                assert f'data-race-detail-source-id="{cell.source_id}"' not in dialog_html
+                assert f'data-race-detail-source-code="{code}"' not in dialog_html
                 continue
             expected_occurrences = len(cell.candidate_ids) if group == "candidate" else 1
             assert (
-                dialog_html.count(f'data-race-detail-source-id="{cell.source_id}"')
-                == expected_occurrences
+                dialog_html.count(f'data-race-detail-source-code="{code}"') == expected_occurrences
             )
             assert f'data-source-state="{cell.state}"' in dialog_html
             assert category_label_by_key[source.category] in dialog_html
@@ -1004,7 +1014,12 @@ def test_chromium_build_is_semantically_faithful_and_visually_safe(tmp_path: Pat
     detail_source = next(
         source for source in view_model.sources if source.id == detail_cell.source_id
     )
-    row_marker = f'<li data-race-detail-source-id="{detail_cell.source_id}"'
+    detail_source_code = next(
+        source.code
+        for source in view_model.personalization.sources
+        if source.id == detail_cell.source_id
+    )
+    row_marker = f'<li data-race-detail-source-code="{detail_source_code}"'
     race_start = canonical_html.index(f'id="race-detail-{detail_race.id}"')
     row_start = canonical_html.index(row_marker, race_start)
     row_end = canonical_html.index("</li>", row_start) + len("</li>")
@@ -1475,6 +1490,11 @@ def _view_model(root: Path) -> PublicationViewModel:
     ).view_model
 
 
+def _client_payload(html: str) -> dict[str, Any]:
+    """The page's one embedded JSON payload (docs/FRONTEND.md, The data contract)."""
+    return json.loads(html.split(PAYLOAD_ELEMENT)[1].split("</script>")[0])
+
+
 def _revalidated(view_model: PublicationViewModel) -> PublicationViewModel:
     """Revalidate a hand-built display model with a coherent lens payload.
 
@@ -1566,7 +1586,7 @@ def test_the_guide_carries_no_times_comparison_at_all(tmp_path: Path) -> None:
 
     # Every group heading states one count, matching the rows it lists.
     detail = html.split('data-race-detail-group="no_endorsement"')[1].split("</section>")[0]
-    listed = detail.count('data-race-detail-source-id="')
+    listed = detail.count('data-race-detail-source-code="')
     assert f"{listed} source" in detail
 
 
@@ -1609,9 +1629,79 @@ def test_sources_tree_shell_encodes_state_through_the_published_codec(tmp_path: 
     assert "export function encodeLensFragment" in codec
     assert "from './lens-url.mjs'" in entry
     assert bundle_entry("guide-entry.mjs", global_name="GuidePage") in html
-    assert 'id="lens-bindings"' in html
+    assert '<script type="application/json" data-client-payload>' in html
     assert "encodeLensFragment(" in html
     assert "decodeLensFragment(" in html
+
+
+def test_the_guide_glue_reads_no_state_out_of_rendered_markup(tmp_path: Path) -> None:
+    """docs/FRONTEND.md, The data contract: the DOM is write-only projection.
+
+    The guide's module script used to recover three audited values by reading
+    the dialog it had just been sent — the candidate display labels, the audited
+    candidate order, and the audited accessible summary — and to translate a
+    row's publication id into the transport code the payload speaks. All four
+    are contract now, so each former read is named here: a reintroduced one
+    fails this test rather than surviving until a markup change silently moves
+    the behavior.
+
+    The guide's *classic* script still reads display text (the race label and
+    the filter scope label). Those go with issue #239, which extracts that
+    script, and are deliberately not covered here.
+    """
+    template = (TEMPLATE_DIR / "guide.html.j2").read_text(encoding="utf-8")
+    module_script = template.split('<script type="module">')[1].split("</script>")[0]
+
+    for scrape in (
+        # Candidate display labels, read off the dialog's own headings.
+        ".race-detail-candidate-title h4",
+        # The audited candidate order, captured from server-rendered DOM order.
+        ".race-detail-outcomes > [data-race-detail-candidate-id]",
+        # The audited accessible summary, captured verbatim for restore.
+        "card.querySelector('[data-race-detail-summary]')?.textContent",
+        # The translation map between our own two identifier spaces.
+        "codeBySourceId",
+    ):
+        assert scrape not in module_script, scrape
+
+    # Each one now comes from the payload, which publishes what the server
+    # rendered rather than a second computation of it.
+    html = _sources_tree_html(tmp_path)
+    payload = GuidePayload.model_validate(_client_payload(html))
+    assert payload.races
+    # A race nobody endorsed renders no candidate sections, so it publishes no
+    # candidates either; the two sides agree race by race.
+    for race in payload.races:
+        assert all(candidate.label for candidate in race.candidates)
+        assert race.audited_accessible_summary
+        dialog = html.split(f'id="race-detail-{race.race_id}"')[1].split("</dialog>")[0]
+        rendered_order = re.findall(r'data-race-detail-candidate-id="([^"]+)"', dialog)
+        assert rendered_order == [candidate.candidate_id for candidate in race.candidates]
+        # The payload carries the text; the template escapes it on the way out
+        # (`Rodney 'Star' Thornley` renders as `Rodney &#39;Star&#39; Thornley`).
+        # Compare the decoded markup, so the two sides are held to the same text
+        # rather than to one spelling of an entity.
+        rendered_text = unescape(dialog)
+        for candidate in race.candidates:
+            assert f"<h4>{candidate.label}</h4>" in rendered_text
+        assert race.audited_accessible_summary in rendered_text
+    assert any(race.candidates for race in payload.races)
+
+
+def test_the_guide_publishes_exactly_one_payload_element(tmp_path: Path) -> None:
+    """One payload element convention across pages (The data contract).
+
+    The guide used to publish two — the lens bindings and, separately, the
+    personalization contract — so a reader of the page had to know which held
+    what. One element, one model, one schema version.
+    """
+    html = _sources_tree_html(tmp_path)
+
+    assert html.count('<script type="application/json"') == 1
+    assert html.count(PAYLOAD_ELEMENT) == 1
+    payload = GuidePayload.model_validate(_client_payload(html))
+    assert payload.schema_version == CLIENT_PAYLOAD_SCHEMA_VERSION
+    assert payload.personalization is not None
 
 
 def test_guide_head_carries_the_eyebrow_title_and_tagline(tmp_path: Path) -> None:
@@ -2335,14 +2425,21 @@ def test_personalization_is_invisible_while_the_policy_is_disabled(tmp_path: Pat
         "data-race-detail-lens-count",
         "data-race-detail-lens-meter",
         "data-race-detail-not-counted",
-        'id="lens-personalization"',
     ):
         assert marker not in body
+
+    # The contract itself is withheld while the policy is disabled: nothing on
+    # the page can rescore, so publishing it would ship a contract no code reads.
+    assert _client_payload(html)["personalization"] is None
+    # The payload notice is not lens furniture: a page with the lens switched
+    # off still admits a payload, so it still has to be able to say when it
+    # could not (docs/FRONTEND.md, The data contract).
+    assert "data-payload-notice" in html
 
     # Issue 124: the bindings still publish every category and source,
     # including the comparison one, so the codec can classify a pre-removal
     # link's token and drop it rather than reject the whole link.
-    bindings = json.loads(html.split('id="lens-bindings">')[1].split("</script>")[0])
+    bindings = _client_payload(html)
     assert "comparison" in {item["panel_role"] for item in bindings["categories"]}
     assert "comparison" in {item["panel_role"] for item in bindings["sources"]}
     assert len(bindings["categories"]) == len(view_model.personalization.categories)
@@ -2419,7 +2516,7 @@ def test_personalization_bindings_include_every_selectable_category_and_source(
     assert len(selectable_categories) > 0
     assert len(selectable_sources) > 0
 
-    bindings = json.loads(html.split('id="lens-bindings">')[1].split("</script>")[0])
+    bindings = _client_payload(html)
     assert len(bindings["categories"]) == len(contract.categories)
     assert len(bindings["sources"]) == len(contract.sources)
     assert {item["code"] for item in bindings["sources"]} == {
@@ -2952,8 +3049,6 @@ def test_personalization_divergent_race_discloses_a_compact_comparison_and_full_
         f"""
         (async () => {{
           const selectedCodes = new Set({selected_codes_json});
-          const bindings = JSON.parse(document.querySelector('#lens-bindings').textContent);
-          const codeBySourceId = new Map(bindings.sources.map((item) => [item.id, item.code]));
           const shown = (el) => el !== null && getComputedStyle(el).display !== 'none';
           const cards = [...document.querySelectorAll('.race-card')];
           const divergent = cards.find(
@@ -2999,10 +3094,9 @@ def test_personalization_divergent_race_discloses_a_compact_comparison_and_full_
             const rowMarkingCorrect = sections.every((section) => (
               [...section.querySelectorAll('[data-endorsed-candidate-id]')]
                 .every((row) => {{
-                  const code = codeBySourceId.get(row.dataset.raceDetailSourceId);
                   const badge = row.querySelector('[data-race-detail-not-counted]');
                   const marked = shown(badge);
-                  return marked === !selectedCodes.has(code);
+                  return marked === !selectedCodes.has(row.dataset.raceDetailSourceCode);
                 }})
             ));
             detail = {{

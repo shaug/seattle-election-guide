@@ -51,7 +51,7 @@
  */
 
 /**
- * @param {Personalization} personalization
+ * @param {PersonalizationContract} personalization
  * @param {'source'|'category'} kind
  * @param {string} code
  * @returns {PersonalizationRetiredCode|undefined}
@@ -73,7 +73,7 @@ function retiredEntry(personalization, kind, code) {
  * silently broadening or narrowing what an equal-weighted selection meant.
  *
  * @param {string} code
- * @param {Personalization} personalization
+ * @param {PersonalizationContract} personalization
  * @param {PanelSnapshot|null} originSnapshot
  * @returns {CategoryResolution}
  */
@@ -121,7 +121,7 @@ function resolveCategoryToken(code, personalization, originSnapshot) {
  * source it always did.
  *
  * @param {string} code
- * @param {Personalization} personalization
+ * @param {PersonalizationContract} personalization
  * @param {PanelSnapshot|null} originSnapshot
  * @returns {SourceResolution}
  */
@@ -158,7 +158,7 @@ function resolveSourceToken(code, personalization, originSnapshot) {
  *
  * @param {{ state: import('./lens-url.mjs').LensState,
  *   binding: import('./lens-url.mjs').LensBinding }} staleDecode
- * @param {Personalization} personalization
+ * @param {PersonalizationContract} personalization
  * @param {PanelSnapshot|null} [originSnapshot]
  * @returns {LensMigrationResult}
  */

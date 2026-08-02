@@ -16,9 +16,17 @@ COMPARISONS_SCHEMA_VERSION = "1.0"
 
 
 class ComparisonsModel(BaseModel):
-    """Reject undeclared fields so a drifting display contract fails publication."""
+    """Reject undeclared fields so a drifting display contract fails publication.
 
-    model_config = ConfigDict(extra="forbid")
+    A published contract is always serialized whole, so a field with a default
+    is still present in the JSON a client reads. `rendering/payload.py`
+    generates the client's TypeScript declarations from this contract's
+    serialization schema, and without the flag below every defaulted field
+    would be declared optional there — forcing client code to guard against an
+    absence that cannot occur.
+    """
+
+    model_config = ConfigDict(extra="forbid", json_schema_serialization_defaults_required=True)
 
 
 class ComparisonsPolicy(ComparisonsModel):

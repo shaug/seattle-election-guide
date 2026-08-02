@@ -153,8 +153,7 @@ def test_compare_document_server_renders_default_contract_snapshot() -> None:
     assert "Maximum" not in static_head.group(0)
 
     payload_match = re.search(
-        r'<script type="application/json" id="comparison-bindings" '
-        r"data-comparison-bindings>(.*?)</script>",
+        r'<script type="application/json" data-client-payload>(.*?)</script>',
         rendered,
         flags=re.DOTALL,
     )
