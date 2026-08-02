@@ -1,17 +1,16 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
 import test from 'node:test';
-
-import { assertModuleGuard } from './support/module-guards.mjs';
+import { fileURLToPath } from 'node:url';
 import {
   BLANK_CELL,
-  OUTSIDE_SCOPE_CELL,
   cellAgreement,
   createColumnSignalEngine,
   leadSetsIntersect,
+  OUTSIDE_SCOPE_CELL,
   rowDiffers,
 } from '../../src/election_guide/rendering/templates/compare-signals.mjs';
+import { assertModuleGuard } from './support/module-guards.mjs';
 
 const sources = [
   { code: 'aaaa', panel_role: 'consensus', selectable: true },
@@ -72,17 +71,7 @@ const personalization = {
 const race = {
   race_id: 'fixture-race',
   candidate_order: ['alpha', 'beta'],
-  eligible_source_codes: [
-    'aaaa',
-    'bbbb',
-    'cccc',
-    'ld11',
-    'stim',
-    'nend',
-    'ncov',
-    'unav',
-    'unvr',
-  ],
+  eligible_source_codes: ['aaaa', 'bbbb', 'cccc', 'ld11', 'stim', 'nend', 'ncov', 'unav', 'unvr'],
   cells: [
     {
       source_code: 'aaaa',

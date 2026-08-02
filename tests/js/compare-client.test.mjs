@@ -7,9 +7,8 @@
 
 import assert from 'node:assert/strict';
 import test from 'node:test';
-
-import { assertModuleGuard } from './support/module-guards.mjs';
 import { wireComparisons } from '../../src/election_guide/rendering/templates/compare-client.mjs';
+import { assertModuleGuard } from './support/module-guards.mjs';
 
 test('wiring the page is a call the entry makes, not a module side effect', () => {
   assert.equal(typeof wireComparisons, 'function');

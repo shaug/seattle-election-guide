@@ -4,13 +4,18 @@
 // untouched. Shared verbatim between every page that renders the shared
 // footer (UI polish round 4, item L55) so this fallback policy has exactly
 // one implementation.
+/**
+ * @param {string} url
+ * @param {string} title
+ * @returns {Promise<ShareResult>}
+ */
 export async function shareOrCopyLink(url, title) {
   if (navigator.share) {
     try {
       await navigator.share({ title, url });
       return 'shared';
     } catch (error) {
-      if (error?.name === 'AbortError') return 'cancelled';
+      if (/** @type {Error|null} */ (error)?.name === 'AbortError') return 'cancelled';
     }
   }
   try {

@@ -21,8 +21,9 @@ check is a bug in the check — fix or amend it, never route around it.
   *Check: exists — `tests/js/module-isolation.test.mjs` `import()`s every
   module in isolation, against a shrinking allowlist of the modules that
   cannot yet load alone. A free identifier is a runtime `ReferenceError`, not
-  a load failure, so the "imports what it references" clause is covered for
-  pure modules by the shared guard and otherwise waits on `tsc --checkJs`.*
+  a load failure, so the "imports what it references" clause is `tsc
+  --checkJs`'s: it reports any name a module uses without declaring or
+  importing it (TS2304).*
 - **Each page has one client entry module.** Entry modules live beside the
   templates as `<page>-entry.mjs`; the shell-only documents (About, the
   archive) share `shell-entry.mjs`. The 404 is the deliberate exception: it
@@ -86,7 +87,11 @@ check is a bug in the check — fix or amend it, never route around it.
   model emits JSON Schema; the build generates TypeScript declarations from
   it; client modules are checked against them (`tsc --checkJs`). A Python
   model change that breaks a client consumer fails `make check`.
-  *Check: pending.*
+  *Check: partial — `tsc --checkJs` runs in `make check` and holds every
+  client module to the payload declarations, but those declarations are still
+  hand-transcribed in `templates/client-payload.d.ts`. Nothing yet connects
+  them to the Pydantic models, so a Python model change breaks the client
+  silently; generating them closes this.*
 - **`schema_version` is validated at parse time.** A payload the client does
   not understand degrades to the server-rendered baseline with a visible
   notice — never a silent no-op, never a half-enhanced page.
@@ -141,11 +146,23 @@ check is a bug in the check — fix or amend it, never route around it.
   Exact-pinned, bundled at build time, shipped inline in the page like our own
   modules. Nothing is fetched at runtime; every shipped byte remains readable
   in the page source.
-- **Dev-time dependencies are few, shallow, and exact-pinned.** The build
-  toolchain is esbuild, typescript (as a checker), and the schema-to-types
-  generator. Installs use the committed lockfile (`npm ci`). Adding a dev
-  dependency requires the issue that first uses it, as with Python
-  dependencies (ARCHITECTURE.md).
+- **Dev-time dependencies are few, shallow, and exact-pinned.** The toolchain
+  is:
+  - **esbuild** — bundles each page's entry (Modules, above).
+  - **typescript** — `tsc --noEmit --checkJs` over the client modules. A
+    checker only: no transform step, no build output, and the modules stay
+    runnable `.mjs`. Types are carried in JSDoc.
+  - **Biome** — one tool for lint and format across the client modules and
+    their Node tests, replacing a separate linter and formatter.
+  - **the schema-to-types generator** — emits the payload declarations (The
+    data contract, above).
+
+  Installs use the committed lockfile (`npm ci`), and every version is pinned
+  exactly, because a checker or formatter that drifts between machines fails
+  the diff rather than the code. Adding a dev dependency requires the issue
+  that first uses it, as with Python dependencies (ARCHITECTURE.md).
+  *Check: exists — `make check-js` runs Biome, then `tsc`, then the Node
+  tests, and CI runs the same target.*
 
 ## Testing
 

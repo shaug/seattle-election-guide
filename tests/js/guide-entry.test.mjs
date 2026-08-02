@@ -11,9 +11,8 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
-
-import { assertModuleGuard } from './support/module-guards.mjs';
 import { boot, glue } from '../../src/election_guide/rendering/templates/guide-entry.mjs';
+import { assertModuleGuard } from './support/module-guards.mjs';
 
 const TEMPLATE = fileURLToPath(
   new URL('../../src/election_guide/rendering/templates/guide.html.j2', import.meta.url),
@@ -27,7 +26,10 @@ test('every name the template destructures is one the entry hands over', () => {
   const source = readFileSync(TEMPLATE, 'utf8');
   const destructuring = source.match(/const \{([^}]*)\} = GuidePage\.glue;/);
   assert.ok(destructuring, 'guide.html.j2 no longer destructures GuidePage.glue');
-  const wanted = destructuring[1].split(',').map((name) => name.trim()).filter(Boolean);
+  const wanted = destructuring[1]
+    .split(',')
+    .map((name) => name.trim())
+    .filter(Boolean);
   assert.deepEqual(wanted.slice().sort(), Object.keys(glue).sort());
   for (const name of wanted) assert.equal(typeof glue[name], 'function');
 });

@@ -16,15 +16,95 @@ const HASH_PREFIX_LENGTH = 12;
 const MIN_COLUMNS = 2;
 const MAX_COLUMNS = 3;
 
-/** Read the version bindings, token catalogs, filters, and limits for a fragment. */
+/**
+ * The version bindings, token catalogs, filters, and limits one comparison
+ * fragment is read and written against.
+ *
+ * @typedef {object} CompareContext
+ * @property {string} panelId
+ * @property {string} panelHashPrefix
+ * @property {string} dataVersion
+ * @property {string} scoringId
+ * @property {number} maximumUrlCharacters
+ * @property {Map<string, PersonalizationCategory>} categories
+ * @property {Map<string, PersonalizationSource>} sources
+ * @property {Set<string>} sectionIds
+ * @property {string[]} defaultColumns
+ */
+
+/**
+ * @typedef {object} CompareBinding
+ * @property {string|null} panelId
+ * @property {string|null} panelHashPrefix
+ * @property {string|null} dataVersion
+ * @property {string|null} scoringId
+ */
+
+/**
+ * Comparison state in its decoded form. Column order is meaningful: the first
+ * column is the reference the rest are compared against.
+ *
+ * @typedef {object} CompareState
+ * @property {string[]} columns
+ * @property {boolean} differencesOnly
+ * @property {boolean} contestedOnly
+ * @property {string} section
+ */
+
+/**
+ * @typedef {'malformed_token'|'unknown_token'|'case_confusable_token'
+ *   |'forbidden_token'|'reserved_token'|'oversized'|'unrecognized_fragment'
+ *   |'repeated_parameter'|'unsupported_schema'|'not_for_this_page'
+ *   |'ragged_selection'|'column_count'|'unknown_toggle'|'unknown_filter'
+ *   |'missing_binding'|'unknown_section'|'invalid_state'} CompareFailureReason
+ */
+
+/**
+ * @typedef {{ status: 'malformed', reason: CompareFailureReason, [key: string]: unknown }
+ * } CompareMalformed
+ */
+
+/**
+ * @typedef {{ status: 'rejected', reason: CompareFailureReason, [key: string]: unknown }
+ * } CompareRejected
+ */
+
+/**
+ * @typedef {{ status: 'absent' }
+ *   | { status: 'valid', state: CompareState, binding: CompareBinding }
+ *   | { status: 'stale_version', state: CompareState, binding: CompareBinding }
+ *   | CompareMalformed
+ * } CompareDecodeResult
+ */
+
+/**
+ * Both codecs share their structural checks but report failure differently:
+ * decoding produces `malformed`, encoding produces `rejected`.
+ *
+ * @template {CompareMalformed|CompareRejected} T
+ * @typedef {(reason: CompareFailureReason, detail?: Record<string, unknown>) => T} FailureFactory
+ */
+
+/**
+ * Read the version bindings, token catalogs, filters, and limits for a fragment.
+ *
+ * @param {Personalization} personalization
+ * @param {string} dataVersion
+ * @param {Comparisons} comparisons
+ * @param {string[]} [defaultColumns]
+ * @returns {CompareContext}
+ */
 export function compareContext(
   personalization,
   dataVersion,
   comparisons,
   defaultColumns = [ALL_SOURCES_TOKEN, 'strn', 'stim'],
 ) {
+  /** @type {Map<string, PersonalizationCategory>} */
   const categories = new Map();
+  /** @type {Map<string, PersonalizationSource>} */
   const sources = new Map();
+  /** @type {Set<string>} */
   const sectionIds = new Set();
   for (const category of personalization.categories) categories.set(category.code, category);
   for (const source of personalization.sources) sources.set(source.code, source);
@@ -42,14 +122,29 @@ export function compareContext(
   };
 }
 
+/**
+ * @param {CompareFailureReason} reason
+ * @param {Record<string, unknown>} [detail]
+ * @returns {CompareMalformed}
+ */
 function invalid(reason, detail = {}) {
   return { status: 'malformed', reason, ...detail };
 }
 
+/**
+ * @param {CompareFailureReason} reason
+ * @param {Record<string, unknown>} [detail]
+ * @returns {CompareRejected}
+ */
 function rejected(reason, detail = {}) {
   return { status: 'rejected', reason, ...detail };
 }
 
+/**
+ * @param {string} token
+ * @param {ReadonlyMap<string, unknown>} known
+ * @returns {'case_confusable_token'|'unknown_token'}
+ */
 function confusableReason(token, known) {
   const folded = token.toLowerCase();
   for (const code of known.keys()) {
@@ -58,6 +153,17 @@ function confusableReason(token, known) {
   return 'unknown_token';
 }
 
+/**
+ * @typedef {{ ok: true, token: string }
+ *   | { ok: false, reason: CompareFailureReason, token: string }
+ * } TokenClassification
+ */
+
+/**
+ * @param {string} token
+ * @param {CompareContext} context
+ * @returns {TokenClassification}
+ */
 function classifyToken(token, context) {
   if (!TOKEN_PATTERN.test(token)) return { ok: false, reason: 'malformed_token', token };
   if (token === ALL_SOURCES_TOKEN) return { ok: true, token };
@@ -71,7 +177,12 @@ function classifyToken(token, context) {
   return { ok: true, token };
 }
 
+/**
+ * @param {readonly string[]} tokens
+ * @returns {string[]}
+ */
 function orderedUnique(tokens) {
+  /** @type {string[]} */
   const unique = [];
   for (const token of tokens) {
     if (!unique.includes(token)) unique.push(token);
@@ -79,6 +190,12 @@ function orderedUnique(tokens) {
   return unique;
 }
 
+/**
+ * @template {CompareMalformed|CompareRejected} T
+ * @param {readonly string[]} columns
+ * @param {FailureFactory<T>} failure
+ * @returns {T|null}
+ */
 function validateColumnCount(columns, failure) {
   if (columns.length < MIN_COLUMNS || columns.length > MAX_COLUMNS) {
     return failure('column_count', {
@@ -90,10 +207,21 @@ function validateColumnCount(columns, failure) {
   return null;
 }
 
+/**
+ * Decode-side only, so the failure type is concrete rather than generic: the
+ * caller narrows on `error` being null, which needs a type that cannot itself
+ * be falsy.
+ *
+ * @param {string} selection
+ * @param {FailureFactory<CompareMalformed>} failure
+ * @returns {{ columns: string[], error: CompareMalformed|null }
+ *   | { columns?: undefined, error: CompareMalformed }}
+ */
 function parseColumns(selection, failure) {
   if (selection.length % COMPARE_TOKEN_LENGTH !== 0) {
     return { error: failure('ragged_selection', { length: selection.length }) };
   }
+  /** @type {string[]} */
   const tokens = [];
   for (let index = 0; index < selection.length; index += COMPARE_TOKEN_LENGTH) {
     const token = selection.slice(index, index + COMPARE_TOKEN_LENGTH);
@@ -109,6 +237,13 @@ function parseColumns(selection, failure) {
   return { columns, error: validateColumnCount(columns, failure) };
 }
 
+/**
+ * @template {CompareMalformed|CompareRejected} T
+ * @param {URLSearchParams} parameters
+ * @param {FailureFactory<T>} failure
+ * @returns {{ state: Omit<CompareState, 'columns'>, error?: undefined }
+ *   | { state?: undefined, error: T }}
+ */
 function parseFilters(parameters, failure) {
   const difference = parameters.get('diff');
   if (difference !== null && difference !== '1') {
@@ -127,6 +262,10 @@ function parseFilters(parameters, failure) {
   };
 }
 
+/**
+ * @param {URLSearchParams} parameters
+ * @returns {CompareBinding}
+ */
 function bindingFrom(parameters) {
   return {
     panelId: parameters.get('panel'),
@@ -136,6 +275,11 @@ function bindingFrom(parameters) {
   };
 }
 
+/**
+ * @param {CompareBinding} binding
+ * @param {CompareContext} context
+ * @returns {boolean}
+ */
 function isCurrentBinding(binding, context) {
   return (
     binding.panelId === context.panelId &&
@@ -151,6 +295,10 @@ function isCurrentBinding(binding, context) {
  * The status taxonomy mirrors lens-url.mjs: `absent`, `valid`,
  * `stale_version`, or `malformed`. A stale state has passed structural checks
  * but has not been admitted against the current panel and must never be scored.
+ *
+ * @param {string|null|undefined} fragment
+ * @param {CompareContext} context
+ * @returns {CompareDecodeResult}
  */
 export function decodeCompareFragment(fragment, context) {
   const raw = String(fragment ?? '').replace(/^#/, '');
@@ -178,7 +326,12 @@ export function decodeCompareFragment(fragment, context) {
   for (const [key, value] of Object.entries(binding)) {
     if (value === null || value === '') return invalid('missing_binding', { parameter: key });
   }
-  const state = { columns: parsedColumns.columns, ...parsedFilters.state };
+  // `parseColumns` only reports a null error on the path that also set
+  // `columns`, and the guard above returned every other path.
+  const state = {
+    columns: /** @type {string[]} */ (parsedColumns.columns),
+    ...parsedFilters.state,
+  };
   if (!isCurrentBinding(binding, context)) return { status: 'stale_version', state, binding };
 
   for (const token of state.columns) {
@@ -193,6 +346,10 @@ export function decodeCompareFragment(fragment, context) {
 
 /**
  * Encode comparison state into its one canonical, order-preserving fragment.
+ *
+ * @param {Partial<CompareState>} state
+ * @param {CompareContext} context
+ * @returns {{ status: 'ok', fragment: string } | CompareRejected}
  */
 export function encodeCompareFragment(state, context) {
   const columns = orderedUnique(state.columns ?? []);

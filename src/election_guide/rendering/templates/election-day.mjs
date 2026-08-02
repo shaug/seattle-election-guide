@@ -15,15 +15,29 @@
 // hue is introduced; past this window the banner stays on the neutral surface.
 const ESCALATION_WINDOW_DAYS = 7;
 
+/**
+ * @param {string} electionIso
+ * @param {Date} now
+ * @returns {number}
+ */
 function calendarDaysUntil(electionIso, now) {
   // Compare calendar days in local time, not elapsed hours: "today" must mean
   // the reader's today, and an election 20 hours away is still tomorrow.
   const [year, month, day] = electionIso.split('-').map(Number);
   const election = new Date(year, month - 1, day);
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  return Math.round((election - today) / 86400000);
+  // `getTime()` rather than subtracting the dates directly: identical at
+  // runtime (subtraction calls `valueOf`), but the arithmetic is declared.
+  return Math.round((election.getTime() - today.getTime()) / 86400000);
 }
 
+/**
+ * The banner's tone and copy for a given distance from election day.
+ *
+ * @param {number} daysUntil
+ * @param {{ full: string, short: string }} phrasing
+ * @returns {{ tone: 'past'|'soon'|'default', html: string|null, action: boolean }}
+ */
 export function electionDayStatement(daysUntil, { full, short }) {
   if (daysUntil < 0) {
     return { tone: 'past', html: `<b>This election was held ${full}.</b>`, action: false };
@@ -36,22 +50,33 @@ export function electionDayStatement(daysUntil, { full, short }) {
     };
   }
   if (daysUntil <= ESCALATION_WINDOW_DAYS) {
-    const relative = new Intl.RelativeTimeFormat('en', { numeric: 'auto' })
-      .format(daysUntil, 'day');
-    return { tone: 'soon', html: `<b>Election day is ${relative}</b> &mdash; ${short}`, action: true };
+    const relative = new Intl.RelativeTimeFormat('en', { numeric: 'auto' }).format(
+      daysUntil,
+      'day',
+    );
+    return {
+      tone: 'soon',
+      html: `<b>Election day is ${relative}</b> &mdash; ${short}`,
+      action: true,
+    };
   }
   // Far out: the server's tense-neutral rendering is already right.
   return { tone: 'default', html: null, action: true };
 }
 
+/** @param {Date} [now] */
 export function wireElectionDay(now = new Date()) {
   const banner = document.querySelector('[data-election-day]');
   if (!banner) return;
+  // The three attributes are written together by the banner's Jinja template,
+  // so a rendered banner always carries all of them. Asserted rather than
+  // coerced: a banner missing them is a template defect that should keep
+  // throwing here, not quietly format the string "null".
   const statement = electionDayStatement(
-    calendarDaysUntil(banner.getAttribute('data-election-day'), now),
+    calendarDaysUntil(/** @type {string} */ (banner.getAttribute('data-election-day')), now),
     {
-      full: banner.getAttribute('data-election-day-full'),
-      short: banner.getAttribute('data-election-day-short'),
+      full: /** @type {string} */ (banner.getAttribute('data-election-day-full')),
+      short: /** @type {string} */ (banner.getAttribute('data-election-day-short')),
     },
   );
 

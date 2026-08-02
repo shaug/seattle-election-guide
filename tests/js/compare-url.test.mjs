@@ -1,7 +1,5 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-
-import { assertModuleGuard } from './support/module-guards.mjs';
 import {
   ALL_SOURCES_TOKEN,
   COMPARE_SCHEMA_VERSION,
@@ -14,6 +12,7 @@ import {
   encodeLensFragment,
   lensContext,
 } from '../../src/election_guide/rendering/templates/lens-url.mjs';
+import { assertModuleGuard } from './support/module-guards.mjs';
 
 const PANEL_HASH = '6cd4acaa0c5e4ed0b5ddd0134d7de2af5a54c2085e7ad463f9b575b8e6dcb43f';
 

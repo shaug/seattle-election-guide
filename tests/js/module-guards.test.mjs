@@ -8,7 +8,7 @@ import { existsSync } from 'node:fs';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 
-import { MODULE_KINDS, assertModuleGuard, moduleNames } from './support/module-guards.mjs';
+import { assertModuleGuard, MODULE_KINDS, moduleNames } from './support/module-guards.mjs';
 
 const DOCUMENT = 'docs/FRONTEND.md';
 

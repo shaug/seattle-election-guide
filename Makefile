@@ -7,6 +7,7 @@ sync:
 format:
 	uv run ruff format .
 	uv run ruff check --fix .
+	npm run lint:fix
 
 check:
 	uv run ruff format --check .
@@ -18,7 +19,12 @@ check:
 	uv run election-guide release verify data/releases/wa-2026-primary/source-decisions.yaml
 	$(MAKE) check-js
 
+# Lint and format first, then types, then behavior: a formatting or typing
+# failure is cheaper to read than a test failure caused by the same mistake
+# (docs/FRONTEND.md, Dependencies and Testing).
 check-js:
+	npm run lint
+	npm run typecheck
 	node --test 'tests/js/**/*.test.mjs'
 
 test:

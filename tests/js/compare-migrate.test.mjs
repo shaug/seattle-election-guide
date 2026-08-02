@@ -1,13 +1,12 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-
-import { assertModuleGuard } from './support/module-guards.mjs';
 import { migrateCompareState } from '../../src/election_guide/rendering/templates/compare-migrate.mjs';
 import {
   compareContext,
   decodeCompareFragment,
   encodeCompareFragment,
 } from '../../src/election_guide/rendering/templates/compare-url.mjs';
+import { assertModuleGuard } from './support/module-guards.mjs';
 
 const ORIGIN = {
   panel_id: 'panel-v1',

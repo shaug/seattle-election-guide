@@ -4,15 +4,57 @@ import { ALL_SOURCES_TOKEN } from './compare-url.mjs';
 // only resolves column identities and filters. It never scores a migrated or
 // fallback state; the persistent disclosure status is part of every success.
 
+/**
+ * How one configured column resolved against the current publication.
+ *
+ * @typedef {object} ColumnResolution
+ * @property {string} code
+ * @property {'aggregate'|'category'|'source'} kind
+ * @property {'current'|'retired'|'unresolved'|'unknown'} status
+ * @property {string} [formerId]
+ * @property {string} [reason]
+ */
+
+/**
+ * @typedef {object} CompareMigrationReport
+ * @property {ColumnResolution[]} columns
+ * @property {{ value: string, status: 'current'|'unknown' }} section
+ */
+
+/**
+ * @typedef {{ status: 'rejected',
+ *     reason: 'not_stale_version'|'invalid_default_columns',
+ *     report?: CompareMigrationReport }
+ *   | { status: 'migrated', disclosureStatus: 'stale_version_migrated',
+ *     state: import('./compare-url.mjs').CompareState, report: CompareMigrationReport }
+ *   | { status: 'fallback',
+ *     reason: 'unresolvable_reference'|'unresolvable_category'|'unresolvable_source'
+ *       |'insufficient_current_columns',
+ *     disclosureStatus: 'stale_version_fallback',
+ *     state: import('./compare-url.mjs').CompareState, report: CompareMigrationReport }
+ * } CompareMigrationResult
+ */
+
+/**
+ * @param {Personalization} personalization
+ * @param {'source'|'category'} kind
+ * @param {string} code
+ * @returns {PersonalizationRetiredCode|undefined}
+ */
 function retiredEntry(personalization, kind, code) {
   return personalization.retired_codes.find((item) => item.kind === kind && item.code === code);
 }
 
+/**
+ * @param {string} code
+ * @param {Personalization} personalization
+ * @returns {ColumnResolution}
+ */
 function resolveColumn(code, personalization) {
   if (code === ALL_SOURCES_TOKEN) return { code, kind: 'aggregate', status: 'current' };
   if (code.startsWith('G')) {
     const current = personalization.categories.find((item) => item.code === code);
-    if (current !== undefined && current.selectable) {
+    if (current?.selectable) {
       return { code, kind: 'category', status: 'current' };
     }
     const retired = retiredEntry(personalization, 'category', code);
@@ -29,7 +71,7 @@ function resolveColumn(code, personalization) {
   }
 
   const current = personalization.sources.find((item) => item.code === code);
-  if (current !== undefined && current.selectable) {
+  if (current?.selectable) {
     return { code, kind: 'source', status: 'current' };
   }
   const retired = retiredEntry(personalization, 'source', code);
@@ -45,6 +87,11 @@ function resolveColumn(code, personalization) {
   return { code, kind: 'source', status: current === undefined ? 'unknown' : 'unresolved' };
 }
 
+/**
+ * @param {import('./compare-url.mjs').CompareState} staleState
+ * @param {import('./compare-url.mjs').CompareContext} context
+ * @returns {import('./compare-url.mjs').CompareState}
+ */
 function fallbackState(staleState, context) {
   return {
     columns: [...context.defaultColumns],
@@ -63,6 +110,11 @@ function fallbackState(staleState, context) {
  * configured default falls back atomically to the current default columns.
  * Both outcomes carry an explicit disclosure status for persistent page
  * messaging.
+ *
+ * @param {import('./compare-url.mjs').CompareDecodeResult} staleDecode
+ * @param {Personalization} personalization
+ * @param {import('./compare-url.mjs').CompareContext} context
+ * @returns {CompareMigrationResult}
  */
 export function migrateCompareState(staleDecode, personalization, context) {
   if (staleDecode.status !== 'stale_version') {
@@ -83,6 +135,7 @@ export function migrateCompareState(staleDecode, personalization, context) {
     .map((result) => result.code);
   const sectionCurrent =
     staleDecode.state.section === 'all' || context.sectionIds.has(staleDecode.state.section);
+  /** @type {CompareMigrationReport} */
   const report = {
     columns: columnResults,
     section: {
@@ -123,10 +176,9 @@ export function migrateCompareState(staleDecode, personalization, context) {
   }
   return {
     status: 'fallback',
-    reason:
-      !referenceCurrent
-        ? 'unresolvable_reference'
-        : unavailableCategory !== undefined
+    reason: !referenceCurrent
+      ? 'unresolvable_reference'
+      : unavailableCategory !== undefined
         ? 'unresolvable_category'
         : unresolvedSource !== undefined
           ? 'unresolvable_source'

@@ -15,6 +15,11 @@ and `npm ci`). Node is not optional: rendering bundles each page's client entry
 module with the pinned esbuild, so `pytest` and `election-guide release build`
 both need `node_modules` present (docs/FRONTEND.md, Modules).
 
+`make check` ends in `make check-js`, which lints and format-checks the client
+modules with Biome, type-checks them with `tsc --noEmit --checkJs`, and then
+runs the Node tests. `make format` fixes both languages: ruff for Python,
+`biome check --write` for JavaScript.
+
 ## Pull requests
 
 - Link the issue that defines the scope.

@@ -1,8 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-
-import { assertModuleGuard } from './support/module-guards.mjs';
 import { electionDayStatement } from '../../src/election_guide/rendering/templates/election-day.mjs';
+import { assertModuleGuard } from './support/module-guards.mjs';
 
 const NAMES = { full: 'Tuesday, August 4, 2026', short: 'Tuesday, August 4' };
 

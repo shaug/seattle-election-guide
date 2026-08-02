@@ -1,8 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-
-import { assertModuleGuard } from './support/module-guards.mjs';
 import { migrateLensState } from '../../src/election_guide/rendering/templates/lens-migrate.mjs';
+import { assertModuleGuard } from './support/module-guards.mjs';
 
 /**
  * A synthetic successive-panel fixture: v1 (the origin a stale link points
@@ -42,14 +41,25 @@ const ORIGIN_SNAPSHOT = {
       selectable: true,
       member_source_codes: ['zret'],
     },
-    { id: 'comparison', code: 'Gcmp', label: 'Comparison', selectable: false, member_source_codes: [] },
+    {
+      id: 'comparison',
+      code: 'Gcmp',
+      label: 'Comparison',
+      selectable: false,
+      member_source_codes: [],
+    },
   ],
   sources: [
     { id: 'the-stranger', code: 'strn', name: 'The Stranger', panel_role: 'consensus' },
     { id: 'the-urbanist', code: 'urbn', name: 'The Urbanist', panel_role: 'consensus' },
     { id: 'a-retired-outlet', code: 'zret', name: 'A Retired Outlet', panel_role: 'consensus' },
     { id: 'a-dropped-outlet', code: 'zdrp', name: 'A Dropped Outlet', panel_role: 'consensus' },
-    { id: 'seattle-times-editorial-board', code: 'stim', name: 'The Seattle Times', panel_role: 'comparison' },
+    {
+      id: 'seattle-times-editorial-board',
+      code: 'stim',
+      name: 'The Seattle Times',
+      panel_role: 'comparison',
+    },
   ],
 };
 
@@ -60,11 +70,29 @@ const CURRENT_PERSONALIZATION = {
     // and lost 'zdrp' (a source dropped without a tombstone). A comparison
     // source can never be a member of a selectable category, so the
     // reclassified 'urbn' case below is exercised only as a direct pick.
-    { id: 'labor', code: 'Glab', label: 'Labor', selectable: true, member_source_codes: ['newp', 'strn'] },
+    {
+      id: 'labor',
+      code: 'Glab',
+      label: 'Labor',
+      selectable: true,
+      member_source_codes: ['newp', 'strn'],
+    },
     // Urbanism was retired outright: the category itself is gone.
     // Environmental's only member (zret) was retired, leaving it empty.
-    { id: 'environmental', code: 'Genv', label: 'Environmental', selectable: true, member_source_codes: [] },
-    { id: 'comparison', code: 'Gcmp', label: 'Comparison', selectable: false, member_source_codes: [] },
+    {
+      id: 'environmental',
+      code: 'Genv',
+      label: 'Environmental',
+      selectable: true,
+      member_source_codes: [],
+    },
+    {
+      id: 'comparison',
+      code: 'Gcmp',
+      label: 'Comparison',
+      selectable: false,
+      member_source_codes: [],
+    },
   ],
   sources: [
     { id: 'the-stranger', code: 'strn', panel_role: 'consensus', selectable: true },
