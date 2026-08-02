@@ -38,8 +38,6 @@
 .screen-meter.meter-low-fill strong, .race-detail-meter.meter-low-fill strong { padding-left: calc(var(--meter-fill) + .4rem); color: var(--muted); }
 .screen-race-context { display: grid; gap: .35rem; min-width: 0; }
 .no-majority-pill { justify-self: end; margin: 0; padding: .18rem .48rem; border: 1px solid var(--tone-differ-border); border-radius: 999px; background: var(--tone-differ-bg); color: var(--tone-differ-text); font-size: .68rem; font-weight: 800; letter-spacing: .02em; line-height: 1.2; }
-.screen-comparisons { display: grid; min-width: 0; gap: .35rem; }
-.screen-comparisons:empty { display: none; }
 .support-line { min-width: 0; margin: .15rem 0 0; color: var(--muted); font-size: .72rem; line-height: 1.2; text-align: right; }
 /* H34: full view keeps the sentence-form caption; compact mode (where the
    caption wraps to two lines per card) shortens it. Both forms always render
@@ -50,18 +48,11 @@
 html.compact-ballot-mode .support-full { display: none; }
 html.compact-ballot-mode .support-compact { display: block; }
 
-/* One quiet info-bar component for every alternative-endorsement signal: the
-   opt-in Times comparison and the personalized lens's "All sources" baseline
-   render identically, with agree/differ tone carried by the border and tint. */
-.comparison, .lens-comparison { min-width: 0; margin: 0; padding: .38rem .6rem; border-left: .25rem solid var(--tone-neutral-border); background: var(--tone-neutral-bg); color: var(--tone-neutral-text); font-size: .74rem; line-height: 1.3; overflow-wrap: anywhere; }
-.comparison-status { font-weight: 700; }
-/* No opacity here: an opacity layer splits the separator into its own PDF
-   text run, which breaks the detailed edition's extracted-text adjacency. */
-.comparison-separator { margin: 0 .25rem; font-weight: 400; }
-.comparison-choice { min-width: 0; font-weight: 500; }
-.comparison-agrees, .lens-comparison-agrees { border-left-color: var(--tone-agree-border); background: var(--tone-agree-bg); color: var(--tone-agree-text); }
-.comparison-differs, .lens-comparison-differs { border-left-color: var(--tone-differ-border); background: var(--tone-differ-bg); color: var(--tone-differ-text); }
-.comparison-not_covered { border-left-color: var(--tone-neutral-border); background: var(--tone-neutral-bg); color: var(--tone-neutral-text); }
+/* One quiet info-bar component for the personalized lens's "All sources"
+   baseline, with agree/differ tone carried by the border and tint. */
+.lens-comparison { min-width: 0; margin: 0; padding: .38rem .6rem; border-left: .25rem solid var(--tone-neutral-border); background: var(--tone-neutral-bg); color: var(--tone-neutral-text); font-size: .74rem; line-height: 1.3; overflow-wrap: anywhere; }
+.lens-comparison-agrees { border-left-color: var(--tone-agree-border); background: var(--tone-agree-bg); color: var(--tone-agree-text); }
+.lens-comparison-differs { border-left-color: var(--tone-differ-border); background: var(--tone-differ-bg); color: var(--tone-differ-text); }
 .insufficient-note { padding: .55rem .65rem; border-left: .25rem solid var(--red); background: #fff1ef; color: #72231e; font-size: .78rem; }
 html.compact-ballot-mode .screen-sections { padding-top: .65rem; padding-bottom: 2.5rem; }
 html.compact-ballot-mode .screen-section { margin: 1.5rem 0 2.5rem; }
@@ -79,22 +70,6 @@ html.compact-ballot-mode .screen-race-result,
 html.compact-ballot-mode .screen-race-context { grid-template-columns: minmax(0, 1fr); gap: .3rem; }
 html.compact-ballot-mode .screen-meter { width: 100%; height: 1.6rem; }
 html.compact-ballot-mode .screen-meter strong { padding-right: .55rem; padding-left: .55rem; font-size: .84rem; }
-html.compact-ballot-mode .screen-comparisons { display: none; }
-
-/* The Times comparison is opt-in on screen. Hiding it in CSS rather than in
-   script keeps the default correct before, and without, JavaScript. Print is
-   unaffected: the fixed PDF always carries the comparison. */
-/* The detailed edition is an explicitly requested complete rendering, not the
-   default load, so it keeps the comparison visible and no published content
-   becomes unreachable. The comparison row is hidden through its list-item
-   wrapper, so no stranded divider or empty grid row is left behind. */
-html:not(.show-times):not(.detailed-edition) .screen-comparisons,
-html:not(.show-times):not(.detailed-edition)
-  .race-detail-source-list > li[data-source-role="comparison"],
-html:not(.show-times):not(.detailed-edition) [data-times-only] { display: none; }
-html.show-times [data-times-hidden],
-html.detailed-edition [data-times-hidden] { display: none; }
-
 html.compact-ballot-mode .support-line { margin-top: 0; font-size: .68rem; text-align: left; }
 html.compact-ballot-mode .insufficient-note { padding: .38rem .48rem; font-size: .68rem; line-height: 1.25; }
 .race-card-primary { display: grid; min-width: 0; gap: .55rem; margin: -.35rem; padding: .35rem; border-radius: .3rem; color: inherit; cursor: pointer; text-decoration: none; transition: background-color .15s ease, box-shadow .15s ease; }
@@ -111,10 +86,9 @@ html.compact-ballot-mode .insufficient-note { padding: .38rem .48rem; font-size:
 
 /* Per-race personalized presentation (issue 81). A card is either showing
    the audited baseline or its personalized result, never both at once, so
-   the two are mutually exclusive display:none toggles on the same root
-   class the Times comparison already uses this pattern for. The compact
-   audited comparison and race-detail section are additionally gated by
-   their own [hidden] attribute, since whether they show at all depends on
+   the two are mutually exclusive display:none toggles on one root class. The
+   "All sources" reference bar and its race-detail twin are additionally gated
+   by their own [hidden] attribute, since whether they show at all depends on
    this race's own divergence, not just the active lens mode. */
 html:not(.lens-personalized) [data-lens-only] { display: none; }
 html.lens-personalized [data-lens-hidden] { display: none; }
@@ -163,17 +137,13 @@ html.lens-personalized [data-lens-hidden] { display: none; }
 .race-detail-source-list li + li { border-top: 1px solid var(--row-separator); }
 .race-detail-source-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: .35rem 1rem; min-height: 2.55rem; padding: .48rem .75rem; color: inherit; text-decoration: none; }
 a.race-detail-source-row:hover { background: #f8fafb; }
-.race-detail-source-row-comparison { background: #f4f7f8; box-shadow: inset .18rem 0 var(--line-strong); }
-a.race-detail-source-row-comparison:hover { background: #edf3f5; }
 a.race-detail-source-row:hover strong { text-decoration: underline; text-underline-offset: .15em; }
 .race-detail-source-row strong { min-width: 0; color: var(--navy); font-size: .8rem; overflow-wrap: anywhere; }
 .race-detail-source-meta { display: flex; min-width: 0; align-items: center; justify-content: flex-end; gap: .3rem; }
 /* H36: every endorser row carried a bordered category pill; the taxonomy
    outweighed the data. Row order is unchanged — the category now renders as
-   plain right-aligned muted text instead. The comparison source's own badge
-   ("Comparison only") is a role, not a category, and keeps its pill chrome. */
+   plain right-aligned muted text instead. */
 .race-detail-category-badge { color: var(--muted); font-size: .68rem; font-weight: 600; text-align: right; }
-.race-detail-comparison-badge { display: inline-flex; align-items: center; max-width: 14rem; padding: .14rem .42rem; border: 1px solid #9bb1bf; border-radius: 1rem; background: #e8f0f3; color: #36576b; font-size: .59rem; font-weight: 700; line-height: 1.25; text-align: center; }
 .race-detail-source-status { color: var(--muted); font-size: .68rem; font-weight: 700; text-align: right; }
 /* I56: an unselected source's row stays in place as evidence — dimmed and
    labeled, never hidden — while a lens is active. The dimming is scoped to
@@ -190,8 +160,6 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
 /* The shared footer band/audit classes (.site-footer, .site-footer-band,
    .site-footer-audit, ...) now live in base.css alongside .site-band, since
    About and the archive render them too without loading this stylesheet. */
-.sources-comparison-status:empty { display: none; }
-.sources-comparison-status { margin: 0 0 .5rem; padding: .5rem .75rem; border-left: .25rem solid var(--tone-differ-border); background: var(--tone-differ-bg); color: var(--tone-differ-text); font-size: .85rem; font-weight: 600; }
 .detailed-source-directory { display: none; }
 /* The classes below are shared with the dedicated sources page
    (sources.html.j2), which reads this same stylesheet and still renders its
@@ -235,7 +203,7 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
   .race-card { min-width: 0; }
   .screen-race-result { grid-template-columns: minmax(0, 1fr) 8.75rem; gap: .6rem; }
   .screen-meter { width: 8.75rem; }
-  .comparison, .lens-comparison { padding-right: .55rem; padding-left: .55rem; }
+  .lens-comparison { padding-right: .55rem; padding-left: .55rem; }
   .insufficient-note { overflow-wrap: anywhere; }
   .race-detail-dialog { width: calc(100vw - 1rem); max-height: calc(100vh - 1rem); }
   .race-detail-header { padding: .8rem; }
@@ -259,11 +227,6 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
 
 @media print {
   .lens-banner, .lens-notice { display: none; }
-  /* Print always shows the fixed .print-guide copy (concise edition) or the
-     same on-screen page with interaction suppressed (detailed edition);
-     either way, the screen-only Times status line is never part of the
-     printed page. */
-  .sources-comparison-status { display: none; }
   :root { --print-meter-width: 1.65in; --print-sans: Helvetica, "Liberation Sans", sans-serif; }
   html, body { width: 8.5in; margin: 0; background: white; color: #111820; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
   .skip-link, .screen-guide, script { display: none !important; }
@@ -290,17 +253,16 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
   .print-meter.meter-no-majority .print-meter-label { color: var(--navy); }
   .print-meter-na { background: var(--meter-track); }
   .print-meter-na .print-meter-label { color: var(--muted); }
-  .print-race-context { display: grid; grid-template-columns: minmax(0, 1fr) var(--print-meter-width); align-items: center; gap: .06in; margin-top: .02in; color: var(--muted); font-size: 6.1pt; line-height: 1.05; }
-  .print-comparison { display: block; min-width: 0; }
-  .print-support { min-width: 0; text-align: right; white-space: nowrap; }
+  /* Issue 124 emptied the left cell (it held the Times pick); the caption and
+     the compact warning keep the meter column they have always occupied
+     rather than sliding under the race name. */
+  /* The retired Times pill (issue 124) was this row's tallest child, so the
+     row keeps that height explicitly and top-aligns its one remaining child.
+     Without both, the caption drops close enough to the warning line beneath
+     it that PDF text extraction merges the two runs into one. */
+  .print-race-context { display: grid; grid-template-columns: minmax(0, 1fr) var(--print-meter-width); align-items: start; gap: .06in; margin-top: .02in; min-height: .15in; color: var(--muted); font-size: 6.1pt; line-height: 1.05; }
+  .print-support { grid-column: 2; min-width: 0; text-align: right; white-space: nowrap; }
   .print-support-compact { display: none; }
-  .print-times-pick { display: inline-flex; align-items: center; box-sizing: border-box; max-width: 100%; height: .15in; padding: .015in .05in; border: 1px solid #aebdc5; border-radius: .075in; background: #f7fafb; color: var(--muted); font-size: 6.1pt; font-weight: 500; line-height: 1; overflow-wrap: anywhere; }
-  .print-times-status { font-weight: 800; }
-  .print-times-separator { margin: 0 .018in; font-weight: 400; opacity: .72; }
-  .print-times-choice { font-weight: 500; }
-  .print-times-pick-agrees { border-color: var(--tone-agree-border); background: var(--tone-agree-bg); color: var(--tone-agree-text); }
-  .print-times-pick-differs { border-color: var(--tone-differ-border); background: var(--tone-differ-bg); color: var(--tone-differ-text); }
-  .print-times-pick-not_covered { border-color: var(--tone-neutral-border); background: var(--tone-neutral-bg); color: var(--muted); }
   .print-compact-warning { display: none; }
   .print-race-notes { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .02in; margin-top: .008in; color: var(--muted); font-size: 6pt; line-height: 1.08; }
   .print-race-notes span { min-width: 0; }
@@ -318,10 +280,6 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
   .method-summary article { border-top: 2.5px solid var(--teal); }
   .method-summary h2, .method-notes h2 { margin: 0 0 .035in; color: var(--navy); font: 800 8.3pt/1 var(--print-sans); }
   .method-summary p, .method-notes p { margin: .025in 0; color: var(--muted); font-size: 6.2pt; line-height: 1.22; }
-  .times-summary p { display: flex; align-items: center; gap: .035in; }
-  .method-pill { flex: 0 0 auto; padding: .012in .035in; border: .75px solid var(--tone-neutral-border); border-radius: .06in; background: var(--tone-neutral-bg); color: var(--muted); font-size: 6pt; line-height: 1; }
-  .method-pill-agrees { border-color: var(--tone-agree-border); background: var(--tone-agree-bg); color: var(--tone-agree-text); }
-  .method-pill-differs { border-color: var(--tone-differ-border); background: var(--tone-differ-bg); color: var(--tone-differ-text); }
   .source-panel { display: flex; min-height: 0; flex: 1 1 auto; flex-direction: column; margin-top: .075in; padding: .075in .09in .085in; border: .5px solid #c9d5dd; border-radius: .06in; background: white; }
   .source-panel-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: .1in; padding-bottom: .045in; border-bottom: 1.5px solid var(--navy); }
   .source-panel-heading p { margin: 0; color: var(--teal); font-size: 6pt; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
@@ -362,9 +320,10 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
   html.compact-edition .print-support-full { display: none; }
   html.compact-edition .print-support-compact { display: block; }
   html.compact-edition .print-race-context { grid-template-columns: minmax(0, 1fr) var(--print-meter-width); }
-  html.compact-edition .print-comparison { max-width: 100%; }
-  html.compact-edition .print-times-pick { max-width: 100%; }
-  html.compact-edition .print-compact-warning { display: inline; flex-shrink: 0; color: #812b25; font-size: 6pt; }
+  /* Pinned rather than auto-placed: with the Times pick gone from row 1 the
+     warning would otherwise slide up beside the caption, changing this
+     edition's proven per-race height. */
+  html.compact-edition .print-compact-warning { grid-row: 2; grid-column: 1; display: inline; flex-shrink: 0; color: #812b25; font-size: 6pt; }
 
   html.detailed-edition, html.detailed-edition body { width: auto; }
   html.detailed-edition .print-guide { display: none !important; }
@@ -390,7 +349,7 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
   html.detailed-edition .race-card { break-inside: avoid; gap: .06in; padding: .12in; box-shadow: none; }
   html.detailed-edition .race-card h3 { font-size: 13pt; }
   html.detailed-edition .race-office, html.detailed-edition .support-line,
-  html.detailed-edition .comparison, html.detailed-edition .insufficient-note { font-size: 8pt; }
+  html.detailed-edition .insufficient-note { font-size: 8pt; }
   html.detailed-edition .race-card details,
   html.detailed-edition .site-footer-band { display: none; }
   html.detailed-edition .site-footer { background: white; color: var(--ink); }

@@ -71,10 +71,32 @@ function confusableReason(token, known) {
   return 'unknown_token';
 }
 
-/** Whether a known token names a comparison-role category or source. */
+/**
+ * Whether a known token names a comparison-role category or source.
+ *
+ * Issue 124 retired the guide's per-race comparison, so such a token now names
+ * nothing this codec can express. It is dropped rather than rejected (see
+ * `withoutComparisonTokens`), and an unknown token is not one of these — it
+ * still fails classification.
+ */
 function isComparisonToken(token, context) {
   const known = isCategoryToken(token) ? context.categories : context.sources;
   return known.get(token)?.panel_role === 'comparison';
+}
+
+/**
+ * Drop every comparison token, keeping the rest in order.
+ *
+ * A link shared before issue 124 could carry one (for example `stim`, "also
+ * show the Times"). The comparison it asked for no longer exists, but the rest
+ * of the link is still a valid selection, so the token is silently ignored and
+ * everything else replays exactly. Codes are permanent once issued, so a token
+ * naming a comparison source in the current panel named the same source when
+ * the link was written — which is why this is safe to apply to a
+ * `stale_version` link too, before its tokens are otherwise interpreted.
+ */
+function withoutComparisonTokens(tokens, context) {
+  return tokens.filter((token) => !isComparisonToken(token, context));
 }
 
 function invalid(reason, detail) {
@@ -117,12 +139,13 @@ export function decodeLensFragment(fragment, context) {
     return invalid('ragged_selection', { length: selection.length });
   }
 
-  const tokens = [];
+  const parsed = [];
   for (let index = 0; index < selection.length; index += TOKEN_LENGTH) {
     const token = selection.slice(index, index + TOKEN_LENGTH);
     if (!TOKEN_PATTERN.test(token)) return invalid('malformed_token', { token });
-    if (!tokens.includes(token)) tokens.push(token);
+    if (!parsed.includes(token)) parsed.push(token);
   }
+  const tokens = withoutComparisonTokens(parsed, context);
 
   const binding = {
     panelId: parameters.get('panel'),
@@ -156,15 +179,12 @@ export function decodeLensFragment(fragment, context) {
     const classified = classifyToken(token, context);
     if (!classified.ok) return invalid(classified.reason, { token: classified.token });
   }
-  // Audited mode never restricts scoring (there is nothing to restrict), so a
-  // comparison token — display-only and never scored — may still ride along
-  // to represent "show this comparison source." Any other token would imply a
-  // restricted audited score, which does not exist.
-  if (mode === 'a') {
-    const nonComparison = tokens.find((token) => !isComparisonToken(token, context));
-    if (nonComparison !== undefined) {
-      return invalid('audited_mode_carries_selection', { token: nonComparison });
-    }
+  // Audited mode restricts nothing (there is nothing to restrict), so any
+  // surviving token would imply a restricted audited score, which does not
+  // exist. Comparison tokens are already gone by here, so an audited link that
+  // carried only those decodes as the plain audited baseline it now means.
+  if (mode === 'a' && tokens.length > 0) {
+    return invalid('audited_mode_carries_selection', { token: tokens[0] });
   }
   return { status: 'valid', state: { ...common, ...partitionTokens(tokens) }, binding };
 }
@@ -178,13 +198,16 @@ export function decodeLensFragment(fragment, context) {
 export function encodeLensFragment(state, context) {
   const mode = state.mode === 's' ? 's' : 'a';
   const tokens = [];
-  const requested = [...(state.categoryCodes ?? []), ...(state.sourceCodes ?? [])];
+  const requested = withoutComparisonTokens(
+    [...(state.categoryCodes ?? []), ...(state.sourceCodes ?? [])],
+    context,
+  );
   for (const token of requested) {
     const classified = classifyToken(token, context);
     if (!classified.ok) {
       return { status: 'rejected', reason: classified.reason, token: classified.token };
     }
-    if (mode === 'a' && !isComparisonToken(token, context)) {
+    if (mode === 'a') {
       return { status: 'rejected', reason: 'audited_mode_carries_selection', token };
     }
     if (!tokens.includes(token)) tokens.push(token);

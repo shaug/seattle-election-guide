@@ -36,9 +36,9 @@ When in doubt, remove ink.
   "(co-endorsements split)" exists so a reader who does the division isn't
   left doubting the math.
 - **Labels are declarative and short.** Signal name first, then the
-  choice: "All sources: Danica Noble · 67%", "Times differs · Keith
-  Scully." Drop words a position already implies: "Times agrees" names no
-  one, because the name is the headline directly above.
+  choice: "All sources: Danica Noble · 67%". Drop words a position already
+  implies — a reference bar that agrees with the headline directly above it
+  need not repeat the name.
 
 ## Color
 
@@ -248,10 +248,12 @@ then any sticky strip, then content.
   a low fill). The meter is slated for redesign: maintain it, don't extend
   it.
 - **Alternative signals share one quiet component.** Anything that is an
-  *alternative* to the result the reader asked for — the full-panel
-  baseline under a lens, an external comparison source — renders as the
-  same tone-tinted info bar. No pills, no badges. Reference bars sit
-  together at the card foot, never interleaved with the primary data.
+  *alternative* to the result the reader asked for — today, the full-panel
+  baseline under a lens — renders as a tone-tinted info bar. No pills, no
+  badges. Reference bars sit at the card foot, never interleaved with the
+  primary data. *(2026-08-01: issue 124 moved the one external comparison
+  source off the guide entirely; comparing sources is the Comparisons
+  page's job.)*
 - **Data-ink discipline.** Page-level state never repeats on every card;
   zero-counts are suppressed rather than printed forty times; taxonomy
   renders as plain muted text, not chrome; rows in a grid align so a row

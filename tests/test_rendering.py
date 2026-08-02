@@ -44,15 +44,14 @@ from election_guide.rendering import (
 from election_guide.rendering.models import RenderingValidationReport
 from election_guide.rendering.renderer import (
     PrintLayoutError,
+    _candidate_endorsement_groups,  # pyright: ignore[reportPrivateUsage]
     _CdpSocket,  # pyright: ignore[reportPrivateUsage]
-    _comparison_candidate_cells,  # pyright: ignore[reportPrivateUsage]
     _detailed_pdf_race_values,  # pyright: ignore[reportPrivateUsage]
     _has_no_majority,  # pyright: ignore[reportPrivateUsage]
     _missing_pdf_race_values,  # pyright: ignore[reportPrivateUsage]
     _pdf_race_core_values,  # pyright: ignore[reportPrivateUsage]
     _pdf_race_display_values,  # pyright: ignore[reportPrivateUsage]
     _race_detail_accessible_summary,  # pyright: ignore[reportPrivateUsage]
-    _race_detail_candidate_choices,  # pyright: ignore[reportPrivateUsage]
     _race_detail_support_summary,  # pyright: ignore[reportPrivateUsage]
     _render_pdf,  # pyright: ignore[reportPrivateUsage]
     _render_pdf_pages,  # pyright: ignore[reportPrivateUsage]
@@ -475,7 +474,6 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
         in html
     )
     assert "> View endorsements" not in html
-    assert "html.compact-ballot-mode .screen-comparisons { display: none; }" in html
     assert html.count('<dialog class="race-detail-dialog"') == len(races)
     assert html.count("August 2026 Primary · Endorsements") == len(races)
     assert html.count('data-copy-race-link="') == len(races)
@@ -500,11 +498,13 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
         assert 'data-display-role="support"' in trigger_html
         dialog_start = html.index(f'id="race-detail-{race.id}"')
         assert trigger_end < dialog_start
-        # I39: the reference block (comparisons) now renders at the card
-        # foot, after the primary anchor closes and after any insufficiency
-        # warning, not inside the clickable primary block.
+        # Issue 124: the per-race Times comparison is gone from the card
+        # entirely. Only the lens's own "All sources" reference bar remains
+        # at the card foot.
         card_foot_html = html[trigger_end:dialog_start]
-        assert 'data-display-role="comparison"' in card_foot_html
+        assert 'data-display-role="comparison"' not in card_foot_html
+        assert "screen-comparisons" not in card_foot_html
+        assert "data-comparison-lens" not in card_foot_html
         dialog_end = html.index("</dialog>", dialog_start)
         dialog_html = html[dialog_start:dialog_end]
         assert (
@@ -522,26 +522,19 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
         assert race.recommendation_label in dialog_html
         assert _race_detail_accessible_summary(race) in dialog_html
         assert _race_detail_support_summary(race) in dialog_html
-        candidate_choices = _race_detail_candidate_choices(race, source_by_id)
+        endorsement_groups = _candidate_endorsement_groups(race)
         candidate_positions = [
-            dialog_html.index(f'data-race-detail-candidate-id="{candidate_id}"')
-            for candidate_id, _candidate_label, _endorsement_group in candidate_choices
+            dialog_html.index(f'data-race-detail-candidate-id="{group.candidate_id}"')
+            for group in endorsement_groups
         ]
         assert candidate_positions == sorted(candidate_positions)
-        source_counts = [
-            endorsement_group.source_count if endorsement_group is not None else 0
-            for _candidate_id, _candidate_label, endorsement_group in candidate_choices
-        ]
+        source_counts = [group.source_count for group in endorsement_groups]
         assert source_counts == sorted(source_counts, reverse=True)
-        for candidate_id, candidate_label, endorsement_group in candidate_choices:
-            assert candidate_label in dialog_html
-            contributing_count = (
-                endorsement_group.source_count if endorsement_group is not None else 0
-            )
-            comparison_count = len(_comparison_candidate_cells(race, source_by_id, candidate_id))
+        for group in endorsement_groups:
+            assert group.candidate_label in dialog_html
             assert (
-                dialog_html.count(f'data-endorsed-candidate-id="{candidate_id}"')
-                == contributing_count + comparison_count
+                dialog_html.count(f'data-endorsed-candidate-id="{group.candidate_id}"')
+                == group.source_count
             )
 
         def _cell_row_count(cell: SourceCell, race: PublicationRace = race) -> int:
@@ -549,33 +542,26 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
                 return len(cell.candidate_ids)
             return 1
 
-        expected_row_count = sum(_cell_row_count(cell) for cell in race.source_cells)
-        # A comparison source's one badge is its "Comparison only" role, not a
-        # category label (issue 115, item G29).
-        expected_category_badge_count = sum(
-            _cell_row_count(cell)
+        # Issue 124: a comparison source contributes no row, no badge, and no
+        # candidate section to the guide's race detail.
+        tallying_cells = [
+            cell
             for cell in race.source_cells
             if source_by_id[cell.source_id].panel_role != "comparison"
-        )
-        expected_comparison_badge_count = expected_row_count - expected_category_badge_count
+        ]
+        expected_row_count = sum(_cell_row_count(cell) for cell in tallying_cells)
         assert dialog_html.count('data-race-detail-source-id="') == expected_row_count
         assert dialog_html.count('data-source-group="') == expected_row_count
-        assert dialog_html.count('class="race-detail-category-badge') == (
-            expected_category_badge_count
-        )
-        assert dialog_html.count('class="race-detail-comparison-badge') == (
-            expected_comparison_badge_count
-        )
+        assert dialog_html.count('class="race-detail-category-badge') == expected_row_count
+        assert "race-detail-comparison-badge" not in dialog_html
         expected_co_endorsement_rows = sum(
-            len(cell.candidate_ids)
-            for cell in race.source_cells
-            if cell.state == "multi_endorsement"
+            len(cell.candidate_ids) for cell in tallying_cells if cell.state == "multi_endorsement"
         )
         assert dialog_html.count(">Co-endorsed</span>") == expected_co_endorsement_rows
         for state in ("not_covered", "not_applicable"):
             missing_count = sum(
                 _source_cell_group(cell, race, source_by_id[cell.source_id]) == state
-                for cell in race.source_cells
+                for cell in tallying_cells
             )
             if not missing_count:
                 continue
@@ -588,21 +574,17 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
             assert summary in dialog_html
         for cell in race.source_cells:
             group = _source_cell_group(cell, race, source_by_id[cell.source_id])
+            source = source_by_id[cell.source_id]
+            if source.panel_role == "comparison":
+                assert f'data-race-detail-source-id="{cell.source_id}"' not in dialog_html
+                continue
             expected_occurrences = len(cell.candidate_ids) if group == "candidate" else 1
             assert (
                 dialog_html.count(f'data-race-detail-source-id="{cell.source_id}"')
                 == expected_occurrences
             )
             assert f'data-source-state="{cell.state}"' in dialog_html
-            source = source_by_id[cell.source_id]
-            # A comparison source's one badge is its "Comparison only" role;
-            # its category label no longer repeats next to it (issue 115,
-            # item G29).
-            if source.panel_role == "comparison":
-                assert "Comparison only" in dialog_html
-                assert category_label_by_key[source.category] not in dialog_html
-            else:
-                assert category_label_by_key[source.category] in dialog_html
+            assert category_label_by_key[source.category] in dialog_html
             detail_label = _source_cell_detail_label(cell, race, group)
             if detail_label is not None:
                 assert detail_label in dialog_html
@@ -611,15 +593,17 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "No endorsement" in html
     assert "Made no endorsement" not in html
     assert "Needs verification" in html
-    assert "Comparison only" in html
-    # "Never counted toward the tally" belonged to the merged sources tree's
-    # comparison-only category note (issue 97); issue 108 moved that whole
-    # tree to the dedicated sources page, so the phrase no longer appears in
-    # the guide anywhere, including the race-detail rows, which say
-    # "Comparison only" instead (checked above).
+    # Issue 124: every guide-side trace of the per-race Times comparison is
+    # gone. The Times itself stays listed in the evidence panel, so the check
+    # below is for the retired treatment, not the source.
+    assert "Comparison only" not in html
     assert "never counted toward the tally" not in html
     assert 'data-race-detail-group="comparison"' not in html
-    assert "race-detail-source-row-comparison" in html
+    assert "race-detail-source-row-comparison" not in html
+    assert "Times comparison" not in html
+    assert "print-times-pick" not in html
+    assert "screen-comparisons" not in html
+    assert "show-times" not in html
     assert "See which groups line up with the leading choice" not in html
     assert "race-detail-description-" not in html
     assert "history.pushState({ ...state, raceDetail: target }" in html
@@ -705,29 +689,17 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "Verify the guide" not in html
     assert "Build and audit details" not in html
     assert configuration.project_url in html
+    # Issue 124: the audited comparison records stay published, but nothing
+    # the guide renders may quote them any more, on screen or in print.
     comparisons = [comparison for race in races for comparison in race.comparisons]
+    assert comparisons
     for comparison in comparisons:
-        assert f"comparison-{comparison.voter_tone}" in html
-        assert f'class="comparison comparison-{comparison.voter_tone}" role="group"' in html
-        assert f'aria-label="{comparison.voter_accessible_label}"' in html
-        assert f'<strong class="comparison-status">{comparison.print_status_label}</strong>' in html
-        # H37: the screen bar drops the redundant choice when Times agrees —
-        # the choice is by definition the headline name directly above — but
-        # keeps it for every other status; the print pill (unaffected by
-        # H37, checked below) always keeps the full compound.
-        choice_span = f'<span class="comparison-choice">{comparison.print_choice_label}</span>'
-        if comparison.status == "agrees":
-            assert choice_span not in html
-        else:
-            assert choice_span in html
-        assert (f"print-times-pick print-times-pick-{comparison.voter_tone}") in html
-        assert (
-            f'>{comparison.print_status_label}</span><span class="print-times-separator"> · '
-            in html
-        )
-        assert (
-            f'<span class="print-times-choice">{comparison.print_choice_label}</span></b>' in html
-        )
+        # "Times" alone (the not-covered status) also names a font family in
+        # the stylesheet, so only the distinctive labels are asserted absent.
+        if comparison.print_status_label != "Times":
+            assert comparison.print_status_label not in html
+        assert comparison.voter_accessible_label not in html
+        assert comparison.badge_label not in html
     assert (
         ".screen-race-result { display: grid; grid-template-columns: minmax(0, 1fr) 11rem;" in html
     )
@@ -738,10 +710,9 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "linear-gradient(to right, var(--teal) 0 var(--meter-fill)" in html
     assert "html.compact-ballot-mode .screen-meter { width: 100%; height: 1.6rem; }" in html
     assert "text-align: left;" in html
-    assert ".comparison-status { font-weight: 700; }" in html
-    assert ".comparison-choice { min-width: 0; font-weight: 500; }" in html
+    assert ".comparison-status { font-weight: 700; }" not in html
     assert (
-        ".comparison-agrees, .lens-comparison-agrees { "
+        ".lens-comparison-agrees { "
         "border-left-color: var(--tone-agree-border); background: var(--tone-agree-bg);" in html
     )
     contributing_sources = [
@@ -784,7 +755,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
         row_end = html.index("</div>", row_start)
         assert print_participation in html[row_start:row_end]
     assert "Read the meter" in html
-    assert "Read the Times pill" in html
+    assert "Read the Times pill" not in html
     assert "Overlap and limitations" in html
     assert "Verify before voting" in html
     for source in coverage_gap_sources:
@@ -956,11 +927,7 @@ def test_round4_card_anatomy_and_data_ink_cleanup(tmp_path: Path) -> None:
         assert full_caption in card_html
         assert compact_caption in card_html
         assert card_html.index(full_caption) < card_html.index(compact_caption)
-        # The caption sits ahead of the reference block (I39): no card-foot
-        # comparisons div renders before the caption.
-        comparisons_index = card_html.find('<div class="screen-comparisons">')
-        if comparisons_index != -1:
-            assert card_html.index(full_caption) < comparisons_index
+        assert "screen-comparisons" not in card_html
     assert ".support-compact { display: none; }" in html
     assert "html.compact-ballot-mode .support-full { display: none; }" in html
     assert "html.compact-ballot-mode .support-compact { display: block; }" in html
@@ -969,17 +936,13 @@ def test_round4_card_anatomy_and_data_ink_cleanup(tmp_path: Path) -> None:
     assert "lens-card-badge" not in html
     assert "My sources</span>" not in html
 
-    # H36: the category chip loses its pill chrome (plain muted text); the
-    # comparison source's own "Comparison only" badge keeps its pill.
+    # H36: the category chip loses its pill chrome (plain muted text). Issue
+    # 124 retired the comparison role badge along with the rows that carried it.
     assert (
         ".race-detail-category-badge { color: var(--muted); font-size: .68rem; "
         "font-weight: 600; text-align: right; }" in html
     )
-    assert (
-        ".race-detail-category-badge, .race-detail-comparison-badge { display: inline-flex;"
-        not in html
-    )
-    assert ".race-detail-comparison-badge { display: inline-flex;" in html
+    assert "race-detail-comparison-badge" not in html
 
     # I40: one meter chrome — the dialog meter now shares the card's own
     # border/track tokens instead of its former tone-agree border/white track.
@@ -1034,7 +997,7 @@ def test_print_layout_rejects_visibly_uncentered_control_text(tmp_path: Path) ->
 @media print {
   .print-guide { font-family: Arial, Helvetica, sans-serif; }
   .print-meter-label { padding: 0 .05in 0 0; }
-  .print-meter-text, .print-times-pick > span { position: relative; top: -3px; transform: none; }
+  .print-meter-text { position: relative; top: -3px; transform: none; }
 }
 </style>
 <script>window.__disablePrintInkCentering = true;</script>
@@ -1045,7 +1008,7 @@ def test_print_layout_rejects_visibly_uncentered_control_text(tmp_path: Path) ->
         encoding="utf-8",
     )
 
-    with pytest.raises(PrintLayoutError, match=r"(label|comparison)-centering"):
+    with pytest.raises(PrintLayoutError, match=r"label-centering"):
         _validate_print_layout(
             html_path,
             find_chrome(),
@@ -1058,34 +1021,6 @@ def test_print_layout_rejects_visibly_uncentered_control_text(tmp_path: Path) ->
 @pytest.mark.parametrize(
     ("injected_markup", "expected_issue"),
     [
-        (
-            """
-<style>@media print { .print-times-pick { height: .18in !important; } }</style>
-""",
-            "comparison-treatment",
-        ),
-        (
-            """
-<style>@media print { .print-times-pick { border-width: 2px !important; } }</style>
-""",
-            "comparison-treatment",
-        ),
-        (
-            """
-<script>
-let printPillOffset = false;
-window.addEventListener('beforeprint', () => {
-  const pillText = document.querySelector('.print-times-pick > span');
-  if (pillText) {
-    pillText.style.position = 'relative';
-    pillText.style.top = printPillOffset ? '0px' : '1px';
-  }
-  printPillOffset = !printPillOffset;
-});
-</script>
-""",
-            "print-ink-calibration-repeatability",
-        ),
         (
             """
 <script>
@@ -1102,11 +1037,11 @@ window.addEventListener('beforeprint', () => {
         (
             """
 <script>
-let printPillInset = false;
+let printMeterInset = false;
 window.addEventListener('beforeprint', () => {
-  const pill = document.querySelector('.print-times-pick');
-  if (pill) pill.style.paddingLeft = printPillInset ? '5px' : '10px';
-  printPillInset = !printPillInset;
+  const meter = document.querySelector('.print-meter');
+  if (meter) meter.style.paddingLeft = printMeterInset ? '5px' : '10px';
+  printMeterInset = !printMeterInset;
 });
 </script>
 """,
@@ -1292,16 +1227,22 @@ def test_pdf_result_header_cannot_be_masked_by_comparison_text(tmp_path: Path) -
         ("agrees", "AGREES", ["Candidate A"]),
         ("differs", "DIFFERENT PICK", ["No"]),
         ("no_endorsement", "NO PICK", []),
-        ("not_covered", "NOT COVERED", []),
     ),
 )
-def test_pdf_comparison_validation_requires_compound_chip_and_rejects_legacy_badges(
+def test_pdf_validation_never_requires_comparison_text_and_rejects_legacy_badges(
     tmp_path: Path,
     value_fn: Callable[[PublicationRace], list[str]],
     status: str,
     badge_label: str,
     candidate_labels: list[str],
 ) -> None:
+    """Issue 124: no edition prints the Times pick, and none may reintroduce it.
+
+    The audited comparison record is still published, so this guards both
+    directions: the expected-value set must not quote it, and a badge-shaped
+    "Seattle Times AGREES ..." run appearing in the extracted text is still
+    reported as legacy markup.
+    """
     race = next(
         race
         for section in _view_model(tmp_path).sections
@@ -1327,35 +1268,9 @@ def test_pdf_comparison_validation_requires_compound_chip_and_rejects_legacy_bad
     )
     race.comparisons = [comparison]
     separator = "\n" if value_fn is _detailed_pdf_race_values else " "
-    expected_text = separator.join(value_fn(race))
-    chip_label = comparison.print_label
-    # H37: the detailed edition renders the same screen markup, which drops
-    # the redundant choice when Times agrees (the choice is by definition
-    # the headline name directly above); every other status, and both other
-    # editions (unaffected by H37), keep the full "status · choice" compound.
-    rendered_chip_label = (
-        comparison.print_status_label
-        if value_fn is _detailed_pdf_race_values and status == "agrees"
-        else chip_label
-    )
-    support_label = (
-        race.support_summary
-        if value_fn is _pdf_race_display_values
-        else (
-            f"Based on {race.explicit_endorsement_count} endorsing "
-            f"{'source' if race.explicit_endorsement_count == 1 else 'sources'}"
-            if value_fn is _detailed_pdf_race_values
-            else f"{race.explicit_endorsement_count} endorsers"
-        )
-    )
-    # I39: the detailed edition's own validator anchors each comparison
-    # against the support summary that now precedes it (not follows, as the
-    # other two editions' fixed print layout is unaffected and still does).
-    compound = (
-        f"{support_label} {rendered_chip_label}"
-        if value_fn is _detailed_pdf_race_values
-        else f"{rendered_chip_label} {support_label}"
-    )
+    expected_values = value_fn(race)
+    assert not any(value.casefold().startswith("times") for value in expected_values)
+    expected_text = separator.join(expected_values)
 
     assert _missing_pdf_race_values([race], expected_text, value_fn) == []
     wrapped_header_text = expected_text.replace(
@@ -1373,43 +1288,10 @@ def test_pdf_comparison_validation_requires_compound_chip_and_rejects_legacy_bad
         [race], joined_value_text, value_fn
     )
 
-    # I39: for the detailed edition, the chip now anchors at the *end* of its
-    # own compound (support precedes it, nothing of this race's own values
-    # follows), so a suffix separated by real whitespace reads as legitimate
-    # trailing content (the next race's own label, in a real PDF) rather than
-    # a merged-text-run corruption — unlike the other two editions, where the
-    # chip is followed by the support text within the same compound and any
-    # inserted suffix, spaced or not, breaks that required adjacency. Only
-    # the unspaced suffixes ("body", "-body") remain a meaningful merged-run
-    # signature to reject at the trailing position.
-    suffixes = (
-        ("body", "-body") if value_fn is _detailed_pdf_race_values else ("body", " body", "-body")
+    legacy_text = f"{expected_text}{separator}Seattle Times {badge_label} {comparison.voter_label}"
+    assert f"{race.id}: legacy Seattle Times badge {badge_label}" in _missing_pdf_race_values(
+        [race], legacy_text, value_fn
     )
-    for suffix in suffixes:
-        prefix_collision_text = expected_text.replace(
-            rendered_chip_label, f"{rendered_chip_label}{suffix}", 1
-        )
-        prefix_collision_missing = _missing_pdf_race_values([race], prefix_collision_text, value_fn)
-        assert f"{race.id}: {compound}" in prefix_collision_missing
-
-    wrong_chip_text = expected_text.replace(rendered_chip_label, "Times differs: Wrong pick", 1)
-    wrong_chip_missing = _missing_pdf_race_values([race], wrong_chip_text, value_fn)
-    assert f"{race.id}: {compound}" in wrong_chip_missing
-
-    if comparison.voter_label == "No":
-        not_covered_text = expected_text.replace(rendered_chip_label, "Times: not covered", 1)
-        not_covered_missing = _missing_pdf_race_values([race], not_covered_text, value_fn)
-        assert f"{race.id}: {compound}" in not_covered_missing
-
-    if badge_label != "NOT COVERED":
-        legacy_text = expected_text.replace(
-            rendered_chip_label,
-            f"Seattle Times {badge_label} {comparison.voter_label}",
-            1,
-        )
-        legacy_missing = _missing_pdf_race_values([race], legacy_text, value_fn)
-        assert f"{race.id}: {compound}" in legacy_missing
-        assert f"{race.id}: legacy Seattle Times badge {badge_label}" in legacy_missing
 
 
 def test_nonempty_render_destination_is_preserved(tmp_path: Path) -> None:
@@ -1456,7 +1338,8 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     for percentage in (53, 64, 70, 100):
         assert f'style="--meter-fill: {percentage}%"' in rendered_html
     for tone in ("agrees", "differs", "not_covered"):
-        assert f"comparison-{tone}" in rendered_html
+        assert f'class="comparison comparison-{tone}"' not in rendered_html
+        assert f"print-times-pick-{tone}" not in rendered_html
 
     assert rendered.validation_report.passed
     assert rendered.validation_report.edition == "concise"
@@ -1870,55 +1753,12 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
         )
         assert not conflicting_check.passed
 
+    # Issue 124: no comparison bar is rendered any more, so the accessible-name
+    # tampering below anchors on the share meter alone. The comparison record
+    # is still published — its accessible label must simply never appear.
     accessible_race = next(race for race in races if race.comparisons)
-    accessible_comparison = accessible_race.comparisons[0]
     accessible_html = rendered.html_path.read_text(encoding="utf-8")
-    # I39: the reference block's "All sources" bar (also `role="group"`, when
-    # a lens is active) now precedes the Times comparison bar in every race
-    # card, so the corruption below must anchor to this race's own
-    # comparison tag specifically, not the first `role="group"` in the whole
-    # document (the same scoped-match technique the share-meter check below
-    # already uses, rather than a bare 'role="img"').
-    comparison_tag_match = re.search(
-        r'<p class="comparison[^"]*" role="group"\s+aria-label="'
-        + re.escape(accessible_comparison.voter_accessible_label)
-        + '"',
-        accessible_html,
-    )
-    assert comparison_tag_match is not None
-    comparison_tag_original = comparison_tag_match.group(0)
-    for index, (original, replacement) in enumerate(
-        (
-            (
-                f'aria-label="{accessible_comparison.voter_accessible_label}"',
-                'aria-label="Seattle Times comparison"',
-            ),
-            (
-                comparison_tag_original,
-                comparison_tag_original.replace('role="group"', 'role="presentation"', 1),
-            ),
-        )
-    ):
-        assert original in accessible_html
-        broken_accessibility_html = tmp_path / f"broken-comparison-accessibility-{index}.html"
-        broken_accessibility_html.write_text(
-            accessible_html.replace(original, replacement, 1),
-            encoding="utf-8",
-        )
-        broken_accessibility_report = validate_rendered_guide(
-            view_model,
-            read_rendering_configuration(RENDERING_CONFIG),
-            broken_accessibility_html,
-            rendered.pdf_path,
-            rendered.page_images,
-            rendered.screenshots,
-        )
-        broken_accessibility_check = next(
-            check
-            for check in broken_accessibility_report.checks
-            if check.id == "html-display-values"
-        )
-        assert not broken_accessibility_check.passed
+    assert accessible_race.comparisons[0].voter_accessible_label not in accessible_html
 
     share_label = (
         f"Consensus among explicitly endorsing sources: {accessible_race.percentage_label}"
@@ -2047,19 +1887,6 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
             f"<strong>{race_for_masking.recommendation_label}</strong>",
             "<strong>Wrong recommendation</strong>",
         ),
-        1,
-    )
-    comparison = race_for_masking.comparisons[0]
-    comparison_element = (
-        f'<b class="print-times-pick print-times-pick-{comparison.voter_tone}">'
-        f'<span class="print-times-status">{comparison.print_status_label}</span>'
-        '<span class="print-times-separator"> · </span>'
-        f'<span class="print-times-choice">{comparison.print_choice_label}</span></b>'
-    )
-    assert comparison_element in masked_html_text
-    masked_html_text = masked_html_text.replace(
-        comparison_element,
-        comparison_element.replace("</b>", f" / {race_for_masking.recommendation_label}</b>"),
         1,
     )
     masked_pdf_html.write_text(masked_html_text, encoding="utf-8")
@@ -2481,7 +2308,9 @@ def test_responsive_tablet_layout_renders(tmp_path: Path) -> None:
         width=768,
         height=1200,
         expected_race_count=sum(len(section.races) for section in view_model.sections),
-        expected_source_count=len(view_model.sources),
+        expected_source_count=sum(
+            source.panel_role != "comparison" for source in view_model.sources
+        ),
     )
 
 
@@ -2802,25 +2631,26 @@ def test_guide_has_no_orphaned_methodology_markup_css_or_js(tmp_path: Path) -> N
     assert "methodology-overlap" not in html
 
 
-def test_sources_tree_shell_hides_the_times_comparison_by_default(tmp_path: Path) -> None:
-    """Issue 79: the default responsive load carries no Times pill or decision."""
+def test_the_guide_carries_no_times_comparison_at_all(tmp_path: Path) -> None:
+    """Issue 124: the opt-in Times comparison is retired, not merely hidden.
+
+    Issue 79 shipped it as a CSS-gated reveal driven by a `show-times` root
+    class; nothing of that mechanism — the bars, the hidden race-detail rows,
+    the two-count headings, or the class itself — survives.
+    """
     html = _sources_tree_html(tmp_path)
     stylesheet = html.split("<style>")[1].split("</style>")[0]
 
-    # Hidden in CSS rather than in script, so the default holds before and without JS.
-    assert "html:not(.show-times):not(.detailed-edition) .screen-comparisons" in stylesheet
-    # The wrapper is hidden, not the inner row, so no bordered list item is stranded.
-    assert '.race-detail-source-list > li[data-source-role="comparison"]' in stylesheet
-    assert ".show-times" not in html.split("<style>")[0]
+    assert "show-times" not in html
+    assert "screen-comparisons" not in html
+    assert "data-times-hidden" not in html
+    assert "data-times-only" not in html
+    assert 'data-source-role="comparison"' not in stylesheet
 
-    # An empty or fully hidden comparisons wrapper collapses instead of
-    # leaving a stranded gap in the card's context stack.
-    assert ".screen-comparisons:empty { display: none; }" in stylesheet
-
-    # A heading may never claim more sources than the state actually lists.
+    # Every group heading states one count, matching the rows it lists.
     detail = html.split('data-race-detail-group="no_endorsement"')[1].split("</section>")[0]
-    assert "data-times-hidden" in detail and "data-times-only" in detail
-    assert "html.show-times [data-times-hidden]" in stylesheet
+    listed = detail.count('data-race-detail-source-id="')
+    assert f"{listed} source" in detail
 
 
 def test_sources_tree_shell_exposes_no_dialog_and_keeps_controls_in_the_merged_section(
@@ -2842,7 +2672,7 @@ def test_sources_tree_shell_exposes_no_dialog_and_keeps_controls_in_the_merged_s
 
     assert 'id="sources"' not in html
     assert "data-sources-source" not in html
-    assert "data-sources-comparison-status" in html
+    assert "data-sources-comparison-status" not in html
     band = html.split('<div class="site-band">')[1].split("</div>")[0]
     assert "data-sources-link" in band
 
@@ -2861,19 +2691,19 @@ def test_sources_tree_shell_encodes_state_through_the_published_codec(tmp_path: 
     assert "decodeLensFragment(" in html
 
 
-def test_sources_tree_shell_leaves_the_print_comparison_untouched(tmp_path: Path) -> None:
+def test_the_print_edition_carries_no_times_comparison(tmp_path: Path) -> None:
+    """Issue 124: print loses the Times pill and its methodology legend too."""
     html = _sources_tree_html(tmp_path)
     stylesheet = html.split("<style>")[1].split("</style>")[0]
     print_block = stylesheet.split("@media print {")[1]
 
-    # The fixed PDF always carries the comparison; only the screen-only
-    # banner/notice/summary are suppressed in print (issue 108: the compact
-    # sources summary that replaced the interactive tree is screen-only too).
+    # The screen-only banner and notice are still suppressed in print.
     assert ".lens-banner, .lens-notice { display: none; }" in print_block
-    assert ".sources-comparison-status { display: none; }" in print_block
-    assert "show-times" not in print_block
-    assert "print-times-pick" in stylesheet
-    assert "Read the Times pill" in html
+    assert "print-times-pick" not in stylesheet
+    assert "print-comparison" not in stylesheet
+    assert "times-summary" not in stylesheet
+    assert "Read the Times pill" not in html
+    assert "Seattle Times choices are comparison only" not in html
 
 
 def test_guide_head_carries_the_eyebrow_title_and_tagline(tmp_path: Path) -> None:
@@ -3000,45 +2830,44 @@ def test_masthead_share_button_uses_web_share_then_falls_back_to_copy(tmp_path: 
     assert result["afterExecCommandCopy"] == "Link copied."
 
 
-def _candidate_section(html: str, candidate_id: str) -> str:
-    match = re.search(
-        rf'<section class="race-detail-candidate[^"]*"\s+'
-        rf'data-race-detail-candidate-id="{re.escape(candidate_id)}"[^>]*>',
-        html,
-    )
-    assert match is not None, f"no rendered section for {candidate_id!r}"
-    return match.group(0)
+def test_a_comparison_only_candidate_gets_no_section_at_all() -> None:
+    """Issue 124: a candidate only the Seattle Times picked is not a guide choice.
 
-
-def test_sources_tree_shell_hides_a_comparison_only_candidate_by_default() -> None:
-    """Issue 79: a candidate only the Seattle Times picked must not leak by default."""
+    Issue 79 rendered its section and hid it behind `data-times-only`; now the
+    section is never built, so nothing about that pick reaches the page.
+    """
     view_model = _production_bundle().view_model
     html = render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG))
     source_by_id = {source.id: source for source in view_model.sources}
 
-    group_by_candidate_id = {
-        candidate_id: endorsement_group
+    rendered_candidate_ids = {
+        group.candidate_id
         for section in view_model.sections
         for race in section.races
-        for candidate_id, _label, endorsement_group in _race_detail_candidate_choices(
-            race, source_by_id
-        )
+        for group in _candidate_endorsement_groups(race)
     }
+    endorsed_candidate_ids = {
+        group.candidate_id
+        for section in view_model.sections
+        for race in section.races
+        for group in race.endorsement_groups
+    }
+    assert rendered_candidate_ids == endorsed_candidate_ids
+
     comparison_only_candidate_ids = {
-        candidate_id for candidate_id, group in group_by_candidate_id.items() if group is None
-    }
+        candidate_id
+        for section in view_model.sections
+        for race in section.races
+        for cell in race.source_cells
+        if source_by_id[cell.source_id].panel_role == "comparison"
+        for candidate_id in cell.candidate_ids
+    } - endorsed_candidate_ids
     # The production panel has at least one candidate only the comparison source
-    # picked; confirm the assertions below are not vacuous.
+    # picked; confirm the assertion below is not vacuous.
     assert len(comparison_only_candidate_ids) > 0
-
+    assert "data-times-only" not in html
     for candidate_id in comparison_only_candidate_ids:
-        assert "data-times-only" in _candidate_section(html, candidate_id)
-
-    # A candidate with a real consensus endorser must not carry the marker.
-    contributing_id = next(
-        candidate_id for candidate_id, group in group_by_candidate_id.items() if group is not None
-    )
-    assert "data-times-only" not in _candidate_section(html, contributing_id)
+        assert f'data-race-detail-candidate-id="{candidate_id}"' not in html
 
 
 def _personalization_view_model(tmp_path: Path, *, enabled: bool) -> PublicationViewModel:
@@ -3453,11 +3282,9 @@ def _tallying_selectable(item: PersonalizationCategory | PersonalizationSource) 
 
 def test_personalization_is_invisible_while_the_policy_is_disabled(tmp_path: Path) -> None:
     """Issue 80/81: no tallying selection UI, no reset action, and no per-race
-    lens presentation, while disabled. The comparison category/source's own
-    binding data stays present regardless (issue 96/97/108): showing the
-    comparison predates and is independent of this policy, and now flows
-    entirely through the lens bindings payload rather than a checkbox — the
-    guide has no interactive selection controls of its own left at all.
+    lens presentation, while disabled. The full bindings payload stays present
+    regardless (issue 124): the codec must still be able to recognize a
+    pre-removal link's comparison token in order to ignore it.
 
     The stylesheet carries `[data-lens-only]`/`[data-lens-hidden]` selectors
     unconditionally (an unused selector is harmless with no matching markup),
@@ -3500,24 +3327,24 @@ def test_personalization_is_invisible_while_the_policy_is_disabled(tmp_path: Pat
     ):
         assert marker not in body
 
-    # The comparison category/source stay present in the lens bindings payload
-    # (issue 96/97): showing the comparison predates and is independent of
-    # this policy, so the codec must still be able to classify its own token
-    # while disabled, even with no on-screen selection UI of any kind.
+    # Issue 124: the bindings still publish every category and source,
+    # including the comparison one, so the codec can classify a pre-removal
+    # link's token and drop it rather than reject the whole link.
     bindings = json.loads(html.split('id="lens-bindings">')[1].split("</script>")[0])
-    assert [item["panel_role"] for item in bindings["categories"]] == ["comparison"]
-    assert [item["panel_role"] for item in bindings["sources"]] == ["comparison"]
+    assert "comparison" in {item["panel_role"] for item in bindings["categories"]}
+    assert "comparison" in {item["panel_role"] for item in bindings["sources"]}
+    assert len(bindings["categories"]) == len(view_model.personalization.categories)
 
 
-def test_personalization_times_reflects_the_incoming_url_while_the_policy_is_disabled(
+def test_a_comparison_token_is_inert_while_the_policy_is_disabled(
     tmp_path: Path,
 ) -> None:
-    """Issue 96: Times state is independent of the newer personalization
-    policy and must still be read correctly from an incoming URL fragment
-    even while that policy is disabled. Issue 108: the guide has no
-    interactive control of its own left that could write this fragment — it
-    only ever reads whatever fragment a reader arrives with (from a shared
-    link, or from the dedicated sources page's own Save action).
+    """Issue 124: a pre-removal link is not an error, even with no lens policy.
+
+    Issue 96 made the Times toggle readable from an incoming fragment while
+    personalization was disabled. Nothing acts on that token any more, so the
+    only requirement left is that the link is neither rejected nor rewritten:
+    the address bar keeps it verbatim and the page shows the audited guide.
     """
     view_model = _personalization_disabled_view_model(tmp_path)
     comparison_code = next(
@@ -3530,25 +3357,14 @@ def test_personalization_times_reflects_the_incoming_url_while_the_policy_is_dis
         render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
         encoding="utf-8",
     )
-    shown_fragment = _lens_fragment(view_model, mode="s", source_codes=(comparison_code,))
-    shown_result = _evaluate_in_chrome(
+    fragment = _lens_fragment(view_model, mode="s", source_codes=(comparison_code,))
+    result = _evaluate_in_chrome(
         html_path,
-        "JSON.stringify({"
-        "shownHash: window.location.hash,"
-        "shownClass: document.documentElement.classList.contains('show-times')})",
-        initial_url=f"{html_path.resolve().as_uri()}#{shown_fragment}",
+        "JSON.stringify({hash: window.location.hash})",
+        initial_url=f"{html_path.resolve().as_uri()}#{fragment}",
     )
-    hidden_result = _evaluate_in_chrome(
-        html_path,
-        "JSON.stringify({"
-        "hiddenHash: window.location.hash,"
-        "hiddenClass: document.documentElement.classList.contains('show-times')})",
-    )
-    assert shown_result["shownClass"] is True
-    assert shown_result["shownHash"] != ""
-    assert "sel=" in shown_result["shownHash"]
-    assert hidden_result["hiddenClass"] is False
-    assert hidden_result["hiddenHash"] == ""
+
+    assert result["hash"] == f"#{fragment}"
 
 
 def test_personalization_ordinary_anchor_survives_initial_load_while_disabled(
@@ -3632,7 +3448,6 @@ def test_personalization_initial_my_sources_matches_audited_consensus(tmp_path: 
         """
         JSON.stringify({
           summaryPresent: document.querySelector('[data-sources-summary-count]') !== null,
-          timesShown: document.documentElement.classList.contains('show-times'),
           personalized: document.documentElement.classList.contains('lens-personalized'),
           bannerHidden: document.querySelector('[data-lens-banner]').hidden,
           bannerText: document.querySelector('[data-lens-banner-status]').textContent,
@@ -3642,7 +3457,6 @@ def test_personalization_initial_my_sources_matches_audited_consensus(tmp_path: 
     # The footer summary stays removed, but the live source state and edit path
     # are now always present in the sticky strip.
     assert result["summaryPresent"] is False
-    assert result["timesShown"] is False
     assert result["personalized"] is False
     assert result["bannerHidden"] is False
     tallying_count = len(
@@ -4172,7 +3986,6 @@ def test_personalization_divergent_race_discloses_a_compact_comparison_and_full_
             // rather than merely asserting one exists either way.
             const rowMarkingCorrect = sections.every((section) => (
               [...section.querySelectorAll('[data-endorsed-candidate-id]')]
-                .filter((row) => row.dataset.sourceRole !== 'comparison')
                 .every((row) => {{
                   const code = codeBySourceId.get(row.dataset.raceDetailSourceId);
                   const badge = row.querySelector('[data-race-detail-not-counted]');
@@ -4621,14 +4434,12 @@ def test_personalization_prior_schema_link_falls_back_to_a_clean_base_url(
         JSON.stringify({
           noticeHidden: document.querySelector('[data-lens-notice]').hidden,
           hash: window.location.hash,
-          comparisonShown: document.documentElement.classList.contains('show-times'),
         })
         """,
         initial_url=f"{html_path.resolve().as_uri()}#{fragment}",
     )
     assert result["noticeHidden"] is False
     assert result["hash"] == ""
-    assert result["comparisonShown"] is False
 
 
 def test_personalization_ordinary_anchor_navigation_never_shows_a_lens_notice(
@@ -4696,11 +4507,16 @@ def test_personalization_notice_clears_on_the_next_explicit_change(tmp_path: Pat
     assert result["afterHidden"] is True
 
 
-def test_personalization_times_comparison_stays_independent_of_the_lens(tmp_path: Path) -> None:
-    """Issue 81/97/108 acceptance criterion: the Seattle Times comparison
-    remains visually and computationally independent of the personalized
-    lens. Showing it must not change the personalized recommendation text,
-    and personalizing the selection must not implicitly reveal it.
+def test_a_pre_removal_shared_link_replays_with_its_comparison_token_ignored(
+    tmp_path: Path,
+) -> None:
+    """Issue 124 acceptance criterion: the token is ignored, never rejected.
+
+    A link written before the removal carried a real personalized selection
+    plus a comparison token meaning "also show the Times." The comparison is
+    gone, so that token now names nothing — but the rest of the link must
+    still replay exactly, which is checked here against the very same link
+    with the token removed.
     """
     view_model = _personalization_enabled_view_model(tmp_path)
     comparison_code = next(
@@ -4714,36 +4530,43 @@ def test_personalization_times_comparison_stays_independent_of_the_lens(tmp_path
     # Diverge from the default so the lens actually personalizes and
     # populates [data-lens-recommendation] for the check below.
     personalized_codes = tallying_codes[1:]
-    first_fragment = _lens_fragment(view_model, mode="s", source_codes=tuple(personalized_codes))
-    second_fragment = _lens_fragment(
+    current_fragment = _lens_fragment(view_model, mode="s", source_codes=tuple(personalized_codes))
+    legacy_fragment = _lens_fragment(
         view_model, mode="s", source_codes=(*personalized_codes, comparison_code)
     )
+    assert legacy_fragment != current_fragment
     html_path = tmp_path / "guide.html"
     html_path.write_text(
         render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
         encoding="utf-8",
     )
-    result = _evaluate_in_chrome(
-        html_path,
-        f"""
-        (async () => {{
-          const pause = () => new Promise((resolve) => setTimeout(resolve, 60));
-          const timesShownAfterPersonalizing =
-            document.documentElement.classList.contains('show-times');
-          const firstCard = document.querySelector('.race-card');
-          const before = firstCard.querySelector('[data-lens-recommendation]').textContent;
-          window.location.hash = {second_fragment!r};
-          await pause();
-          const after = firstCard.querySelector('[data-lens-recommendation]').textContent;
-          return JSON.stringify({{
-            timesShownAfterPersonalizing,
-            timesShownAfterToggle: document.documentElement.classList.contains('show-times'),
-            recommendationUnchanged: before === after,
-          }});
-        }})()
-        """,
-        initial_url=f"{html_path.resolve().as_uri()}#{first_fragment}",
+    probe = """
+        JSON.stringify({
+          hash: window.location.hash,
+          personalized: document.documentElement.classList.contains('lens-personalized'),
+          banner: document.querySelector('[data-lens-banner-status]')?.textContent ?? '',
+          notice: document.querySelector('[data-lens-notice]:not([hidden])')?.textContent ?? '',
+          sourcesHref: document.querySelector('[data-sources-link]')?.getAttribute('href') ?? '',
+          cards: [...document.querySelectorAll('[data-publication-race-id]')].map((card) => [
+            card.querySelector('[data-lens-recommendation]')?.textContent,
+            card.querySelector('[data-lens-share-text]')?.textContent,
+            card.querySelector('[data-lens-support]')?.textContent,
+          ].join('|')).join('||'),
+        })
+        """
+    legacy = _evaluate_in_chrome(
+        html_path, probe, initial_url=f"{html_path.resolve().as_uri()}#{legacy_fragment}"
     )
-    assert result["timesShownAfterPersonalizing"] is False
-    assert result["timesShownAfterToggle"] is True
-    assert result["recommendationUnchanged"] is True
+    current = _evaluate_in_chrome(
+        html_path, probe, initial_url=f"{html_path.resolve().as_uri()}#{current_fragment}"
+    )
+
+    # Inert, not rejected: no fallback notice, no address-bar rewrite.
+    assert legacy["notice"] == ""
+    assert legacy["hash"] == f"#{legacy_fragment}"
+    assert legacy["personalized"] is True
+    # The token changes nothing, and is not carried onward to the sources page.
+    assert {key: value for key, value in legacy.items() if key != "hash"} == {
+        key: value for key, value in current.items() if key != "hash"
+    }
+    assert comparison_code not in legacy["sourcesHref"]

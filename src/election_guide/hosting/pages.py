@@ -776,9 +776,10 @@ def _about_html(
         <p>Some tracked organizations are related &mdash; a state and local chapter of the same
           group, for example. These relationships are disclosed rather than deduplicated: each
           separately governed organization keeps its own full vote.</p>
-        <p>The Seattle Times is shown separately, as a comparison, and is hidden on screen by
-          default: it never adds to the progressive consensus above, no matter how you choose to
-          view the guide. The printable PDF always includes the comparison.</p>
+        <p>The Seattle Times is tracked as a comparison, never as part of the progressive
+          consensus: it adds nothing to the numbers above, and the Endorsements page does not show
+          it at all. The Sources page documents it, and the Comparisons page is where you can put
+          it beside the consensus race by race.</p>
         <p>The Comparisons page puts up to three sources side by side for every race. A column can
           show all sources together, one organization, or a category of organizations. The first
           column is the reference for the differences highlighted across the row. Category columns

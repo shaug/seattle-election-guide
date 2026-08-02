@@ -501,7 +501,6 @@ def _personalization(
                 for source in sources
                 if source.panel_role == "comparison"
             ),
-            comparison_hidden_by_default=True,
             maximum_url_characters=MAXIMUM_URL_CHARACTERS,
         ),
         panel_id=snapshot.panel_id,

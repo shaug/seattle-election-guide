@@ -201,38 +201,14 @@ class PublicationComparison(PublicationModel):
         return "NOT COVERED"
 
     @property
-    def voter_tone(self) -> Literal["agrees", "differs", "not_covered", "neutral"]:
-        if self.status == "agrees":
-            return "agrees"
-        if self.status == "differs":
-            return "differs"
-        if self.status in {"no_endorsement", "not_covered"}:
-            return "not_covered"
-        return "neutral"
-
-    @property
-    def print_label(self) -> str:
-        return f"{self.print_status_label} · {self.print_choice_label}"
-
-    @property
     def print_status_label(self) -> str:
         if self.status == "agrees":
             return "Times agrees"
         if self.status == "differs":
             return "Times differs"
         if self.status == "no_consensus":
-            # H32: the visible bar must carry the same explanation the
-            # aria-label already does — a bare "Times · Mike Diaz" cannot be
-            # told apart from an unlabeled agree/differ state, so the verb
-            # itself names the missing progressive consensus.
             return "Times picks (no consensus)"
         return "Times"
-
-    @property
-    def print_choice_label(self) -> str:
-        if self.candidate_labels:
-            return self.voter_label
-        return "not covered"
 
     @property
     def voter_accessible_label(self) -> str:
