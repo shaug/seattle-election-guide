@@ -196,9 +196,17 @@ the run and leaves the live site on its previous deployment. Work can keep landi
 deployment waits, which is the point: merging and publishing are separate decisions, and during the
 week before an election the second one deserves its own moment.
 
+Two limits shape how long a deployment can usefully wait. The `deploy` job serializes on one
+concurrency group, so production deployments do not stack up: at most one waits at a time, and a
+newer one displaces the one queued behind it. Confirm which commit a waiting deployment carries
+before approving it — the deployments log records it — rather than assuming it is the current head
+of `main`. And the job publishes by downloading the `cloudflare-site` artifact that `check` uploaded,
+which Actions keeps for seven days; approving after that fails at the download step instead of
+publishing. Re-run CI on the commit to stage a fresh artifact.
+
 The only reviewer is the maintainer, so this is self-approval, and admins can bypass it. That is
-deliberate. The value is the deliberate pause and the audit trail in the deployment log, not
-enforcement against oneself.
+deliberate. What it buys is the pause and the audit trail in the deployment log, not enforcement
+against oneself.
 
 ### Branch policy
 
@@ -216,12 +224,11 @@ created.
 
 ### Which one to use
 
-Approval is the per-deploy pause. It is the normal path, it leaves a reviewable queue, and it never
-needs to be undone. Use it to hold a specific commit, to sit on a change overnight, or to keep
-landing work during a quiet period without changing what voters see.
+Approval is the per-deploy pause, and the normal path. It never needs to be undone: hold a specific
+commit, sit on a change overnight, or let a day's work land before publishing any of it.
 
-The variable is the durable off switch. It takes a deliberate settings change to restore, and while
-it is unset no deployment record exists to approve later. Use it when publication should be off
-rather than merely waiting: while Cloudflare credentials are rotated, while the Pages project is
-rebuilt, or for a freeze long enough that a queue of pending deployments would itself become the
-problem.
+The variable is the durable off switch. Use it when publication should be off rather than merely
+waiting: while Cloudflare credentials are rotated, while the Pages project is rebuilt, or for any
+freeze approaching the seven-day artifact window. While it is unset the `deploy` job never runs, so
+there is no deployment to expire or approve by mistake, and restoring publication takes a deliberate
+settings change rather than a click.
