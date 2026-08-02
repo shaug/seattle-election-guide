@@ -208,13 +208,11 @@ function validateColumnCount(columns, failure) {
 }
 
 /**
- * Decode-side only, so the failure type is concrete rather than generic: the
- * caller narrows on `error` being null, which needs a type that cannot itself
- * be falsy.
+ * Decode-side only, so the failure type is concrete rather than generic.
  *
  * @param {string} selection
  * @param {FailureFactory<CompareMalformed>} failure
- * @returns {{ columns: string[], error: CompareMalformed|null }
+ * @returns {{ columns: string[], error?: undefined }
  *   | { columns?: undefined, error: CompareMalformed }}
  */
 function parseColumns(selection, failure) {
@@ -234,7 +232,9 @@ function parseColumns(selection, failure) {
     tokens.push(token);
   }
   const columns = orderedUnique(tokens);
-  return { columns, error: validateColumnCount(columns, failure) };
+  const countError = validateColumnCount(columns, failure);
+  if (countError !== null) return { error: countError };
+  return { columns };
 }
 
 /**
@@ -326,12 +326,7 @@ export function decodeCompareFragment(fragment, context) {
   for (const [key, value] of Object.entries(binding)) {
     if (value === null || value === '') return invalid('missing_binding', { parameter: key });
   }
-  // `parseColumns` only reports a null error on the path that also set
-  // `columns`, and the guard above returned every other path.
-  const state = {
-    columns: /** @type {string[]} */ (parsedColumns.columns),
-    ...parsedFilters.state,
-  };
+  const state = { columns: parsedColumns.columns, ...parsedFilters.state };
   if (!isCurrentBinding(binding, context)) return { status: 'stale_version', state, binding };
 
   for (const token of state.columns) {
