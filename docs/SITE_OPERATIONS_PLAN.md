@@ -42,6 +42,24 @@ changes over time. They must be fetched from their published GitHub Releases.
 is live in production has no published archive, so F4's fetch strategy has nothing to fetch for
 the current election.
 
+## Filed issues
+
+Filed 2026-08-01. This document remains the rationale of record; the issues carry the work.
+
+| Epic | Issue | Children |
+| --- | --- | --- |
+| A — Pre-merge preview deployments | #202 | O1 #209, O2 #210 |
+| B — Publication control | #203 | O3 #211, O4 #212 |
+| C — Release integrity and history | #204 | O5 #213, O6 #214, O7 #215, O8 #216 |
+| D — Traffic monitoring | #205 | O9 #217, O10 #218 |
+| E — Election operations calendar | #206 | O11 #219, O12 #220, O13 #221 |
+| F — Production monitoring and continuity | #207 | O14 #222, O15 #223, O16 #224, O17 #225, O18 #226, O19 #227 |
+| G — Post-election results (deferred) | #208 | none; needs a design conversation first |
+
+Sub-issue and blocked-by relationships are populated on the issues themselves. Blockers recorded:
+#210 by #209; #212 by #210; #214 and #215 by #213; #218 by #217; #220 by #219; #224 by #222 and
+#219.
+
 ## Reference implementations in adjacent repositories
 
 `shaug/eldritchdark` (private) already runs the deploy topology this plan proposes, split across
