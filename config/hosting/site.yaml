@@ -7,4 +7,3 @@ elections:
     release_version: 2026-primary.2
     source_panel_id: wa-2026-primary-default-sources-v4
     source_panel_hash: 389a978b149da9afdb919fdb9dfd1d4d3fbecc290d3b1cd41da3e3fd363de0b5
-    comparison_route_preview: true

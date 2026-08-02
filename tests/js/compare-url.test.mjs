@@ -103,7 +103,7 @@ test('property-tested valid states decode losslessly and re-encode canonically',
   }
 });
 
-test('column order and baseline-first identity round-trip without sorting', () => {
+test('column order and reference-first identity round-trip without sorting', () => {
   for (const columns of [
     ['strn', 'gall'],
     ['stim', 'Glab', 'strn'],

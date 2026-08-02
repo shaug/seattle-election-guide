@@ -13,6 +13,39 @@ endorsement. Badge contents use a small optical correction so the visible glyphs
 merely their CSS line boxes, appear vertically centered. Color is never the only status signal.
 The canonical comparison status and legacy badge label remain available in audit exports.
 
+## Election comparison page
+
+When a release's comparison policy is enabled, hosting publishes
+`/e/<election-id>/comparisons/` and adds Comparisons to the shared navigation; the page shipped
+at `/e/<election-id>/compare/` before issue 192 renamed it, and that address permanently redirects.
+The temporary
+`comparison_route_preview` manifest flag stages only the direct current-election route; it does not
+change a release's serialized policy or expose navigation on any other page. Releases built before
+the policy was enabled keep their disabled policy and do not gain a route or navigation item when a
+newer release is staged beside them.
+
+The server-rendered default is `All sources | The Stranger | The Seattle Times`, so the complete
+default remains readable without JavaScript. `All sources` is copied exactly from the audited
+publication display model; it is never recomputed in the browser. A direct-source column renders
+that source's published stance. A category column applies the published equal-weight allocation
+contract to its current eligible members. Comparison-role sources and categories remain
+hard-excluded from aggregate arithmetic.
+
+Column order is semantic: the first configured column is the selectable reference used by the
+visible difference cues and cannot be removed or repositioned. Agreement is an intersection between
+leading-pick sets, so a tie or co-endorsement agrees when it shares at least one leading pick. Blank
+publication states render as the same dash; `Outside district` comes only from published race
+eligibility. At narrow widths the race and reference columns remain fixed while the other configured
+columns scroll horizontally; filters and difference-row calculation continue to use the complete
+configuration.
+
+Interactive state uses the versioned comparison fragment codec. Its `cols` value is an ordered
+concatenation of fixed-width four-character source/category codes, including the reserved `gall`
+audited-panel sentinel. The fragment also binds the panel, panel hash, data, and scoring versions
+and carries the section, contested-race, and differences-only filters. A same-version fragment
+replays exactly. Unknown tokens or mismatched versions degrade to the server-rendered default with
+a persistent disclosure; they never silently select a different valid signal.
+
 Each responsive race card uses its core recommendation area—office, recommended choice, consensus meter,
 and comparison context—as one keyboard-focusable link to a stable `#race-<canonical-race-id>` fragment.
 The panel eyebrow names both the election and the content type (`August 2026 Primary · Endorsements`) so a

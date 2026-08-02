@@ -129,23 +129,29 @@ DARWIN_VISUAL_BASELINES = {
         0.037,
         0.018,
     ],
+    # Re-approved 2026-08-01 (issue 192): the masthead nav is visible at desktop
+    # width again. Chrome hides closed <details> content with
+    # `::details-content { content-visibility: hidden }`, which zeroed the nav's
+    # width and pushed its links off-screen; the band legitimately looks
+    # different now. The print pages and the mobile shot were unaffected and
+    # keep their approved values.
     "desktop": [
-        0.442,
-        0.651,
-        0.703,
-        0.482,
-        0.081,
-        0.085,
-        0.080,
-        0.058,
-        0.072,
-        0.073,
+        0.382,
+        0.593,
+        0.613,
+        0.422,
+        0.149,
+        0.190,
+        0.184,
+        0.129,
         0.071,
-        0.075,
-        0.077,
-        0.099,
-        0.093,
-        0.086,
+        0.065,
+        0.068,
+        0.069,
+        0.078,
+        0.106,
+        0.097,
+        0.089,
     ],
     # UI polish round 5.1 (issue 177): the hero deck is gone and the source
     # strip is always present, shifting the narrow layout while preserving its
@@ -206,23 +212,27 @@ LINUX_VISUAL_BASELINES = {
         0.033,
         0.017,
     ],
+    # Re-approved 2026-08-01 (issue 192), from the signature CI reported: the
+    # masthead nav is visible at desktop width again. Same shape as the darwin
+    # re-approval — only this entry moved, while the print pages and the mobile
+    # shot stayed inside tolerance on both platforms.
     "desktop": [
-        0.450,
-        0.641,
-        0.743,
-        0.482,
-        0.073,
-        0.078,
-        0.073,
+        0.390,
+        0.603,
+        0.613,
+        0.422,
+        0.152,
+        0.178,
+        0.180,
+        0.129,
+        0.071,
+        0.059,
         0.058,
-        0.062,
-        0.063,
-        0.063,
-        0.075,
-        0.072,
-        0.091,
-        0.080,
-        0.086,
+        0.071,
+        0.068,
+        0.067,
+        0.069,
+        0.071,
     ],
     # UI polish round 5.1 (issue 177): values carry the same per-index delta
     # measured on a real macOS run of this fixture (there is no equivalent
@@ -376,6 +386,24 @@ def test_shared_site_band_names_the_methodology_path_for_what_it_does() -> None:
     assert 'href="/about/" aria-current="page"' in band
 
 
+def test_shared_site_band_orders_nav_by_dependency() -> None:
+    """Reading order follows what each page depends on: the guide is the
+    destination, Sources is what feeds it, Comparisons is a view derived from
+    those sources, and How this works explains all three.
+
+    This reverses the order issue 197 shipped, which put Comparisons second.
+    """
+    band = site_band_html(
+        guide_href="/e/wa-2026-primary/",
+        sources_href="/e/wa-2026-primary/sources/",
+        compare_href="/e/wa-2026-primary/comparisons/",
+    )
+
+    assert band.index(">Endorsements</a>") < band.index(">Sources</a>")
+    assert band.index(">Sources</a>") < band.index(">Comparisons</a>")
+    assert band.index(">Comparisons</a>") < band.index(">How this works</a>")
+
+
 def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path: Path) -> None:
     view_model = _view_model(tmp_path)
     gap_source = next(source for source in view_model.sources if source.endorsement_count == 0)
@@ -434,7 +462,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "card.dataset.contested === 'true'" in html
     assert "matchesScope && matchesContest" in html
     assert "url.searchParams.set('view', 'compact')" in html
-    assert '<label for="race-filter">Ballot</label>' in html
+    assert '<label class="filter-control-label" for="race-filter">Ballot</label>' in html
     assert "Show races" not in html
     assert "url.searchParams.set('races', 'contested')" in html
     assert "url.searchParams.set('filter', select.value)" in html
@@ -614,14 +642,22 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     # L54: the hero states the election, not the brand (the band carries the
     # brand instead); the kicker states the exact election day; the old
     # hero-meta block ("Election ..." + "N races") is gone.
-    assert '<div class="hero-kicker">ELECTION DAY · AUGUST 4</div>' in html
-    assert "<h1>August 2026 Primary</h1>" in html
+    # Issue 192: the head names the page and the eyebrow names the election, on
+    # every page alike. The old "ELECTION DAY · AUGUST 4" kicker is gone — that
+    # fact belongs to the election-day banner, which can retire itself once the
+    # election has passed, as permanent chrome never could.
+    assert '<p class="page-eyebrow">August 2026 Primary</p>' in html
+    assert "<h1>Endorsements</h1>" in html
+    assert 'class="hero-kicker"' not in html
     assert 'class="hero-meta"' not in html
+    assert 'data-election-day="2026-08-04"' in html
     canonical_url = f"{configuration.public_site_url}/e/{view_model.metadata.election_id}/"
     assert f'<link rel="canonical" href="{canonical_url}">' in html
     assert f'<meta property="og:url" content="{canonical_url}">' in html
     assert '<meta name="twitter:card" content="summary_large_image">' in html
-    document_title = "August 2026 Primary — Seattle Elections Guide"
+    # Issue 192 (R5): the guide page's no-page-segment title exception is
+    # retired, so every election-scoped page shares one title grammar.
+    document_title = "Endorsements — August 2026 Primary — Seattle Elections Guide"
     assert f'<meta property="og:title" content="{document_title}">' in html
     assert f'<meta name="twitter:title" content="{document_title}">' in html
     assert f"<title>{document_title}</title>" in html
@@ -634,19 +670,20 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     footer_html = html[footer_start:footer_end]
     assert f'href="{configuration.pdf_filename}" aria-label="Printable PDF"' in footer_html
     assert 'href="mailto:seattle-elections@dobravoda.dev" aria-label="Contact"' in footer_html
-    assert f'href="{configuration.project_url}" aria-label="Source and audit files on GitHub"' in (
-        footer_html
-    )
+    assert f'href="{configuration.project_url}"' in footer_html
+    assert 'aria-label="Source and audit files on GitHub (opens in a new tab)"' in footer_html
     # Web band: GitHub action + code revision. The hidden detailed/print audit
     # retains its two linked dates as a separate medium.
     assert footer_html.count(configuration.project_url) == 4
     assert 'href="/about/" aria-label="How this works" title="How this works"' in footer_html
     assert 'class="site-footer-link"' not in footer_html
     assert "About &amp; FAQ" not in footer_html
-    assert 'class="footer-icon-action" data-footer-share' in footer_html
+    # Issue 192: Share moved to the masthead — actions on the page belong there,
+    # while the footer keeps meta about the site.
+    assert "data-footer-share" not in footer_html
     assert "navigator.share" in html
     assert "shareOrCopyLink" in html
-    assert "wireFooterShare();" in html
+    assert "wireShellShare();" in html
     assert '<div class="site-footer-audit">' in footer_html
     assert "Data updated" in footer_html
     assert "Site updated" in footer_html
@@ -726,7 +763,12 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
         # evidence link now appears exactly twice: once in print's compact
         # source panel, and once in the detailed-edition-only source directory
         # that keeps that overflow PDF's evidence links complete.
-        assert html.count(f'<a href="{source.evidence_url}">{source.name}</a>') == 2
+        assert (
+            html.count(
+                f'<a href="{source.evidence_url}" target="_blank" rel="noopener">{source.name}</a>'
+            )
+            == 2
+        )
         print_noun = (
             (" pick" if source.endorsement_count == 1 else " picks")
             if source.panel_role == "comparison"
@@ -750,7 +792,12 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
         # row is the only data-coverage-gap-source-id row now, but the
         # detailed-edition source directory adds a second evidence link.
         assert html.count(f'data-coverage-gap-source-id="{source.id}"') == 1
-        assert html.count(f'<a href="{source.evidence_url}">{source.name}</a>') == 2
+        assert (
+            html.count(
+                f'<a href="{source.evidence_url}" target="_blank" rel="noopener">{source.name}</a>'
+            )
+            == 2
+        )
         assert source.coverage_gap_note is not None
         status_label = (
             "Official results inaccessible"
@@ -1662,8 +1709,10 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     assert not endorsement_check.passed
 
     first_source, second_source = view_model.sources[:2]
-    first_source_link = f'<a href="{first_source.evidence_url}">{first_source.name}</a>'
-    second_source_link = f'<a href="{second_source.evidence_url}">{second_source.name}</a>'
+    # Evidence links leave the site, so they open in a new tab (issue 192).
+    ext = ' target="_blank" rel="noopener"'
+    first_source_link = f'<a href="{first_source.evidence_url}"{ext}>{first_source.name}</a>'
+    second_source_link = f'<a href="{second_source.evidence_url}"{ext}>{second_source.name}</a>'
     assert first_source_link in canonical_html
     assert second_source_link in canonical_html
     swapped_source_links_html = tmp_path / "swapped-publication-source-links.html"
@@ -1671,12 +1720,12 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
         canonical_html.replace(first_source_link, "__FIRST_SOURCE_LINK__", 2)
         .replace(
             second_source_link,
-            f'<a href="{first_source.evidence_url}">{second_source.name}</a>',
+            f'<a href="{first_source.evidence_url}"{ext}>{second_source.name}</a>',
             2,
         )
         .replace(
             "__FIRST_SOURCE_LINK__",
-            f'<a href="{second_source.evidence_url}">{first_source.name}</a>',
+            f'<a href="{second_source.evidence_url}"{ext}>{first_source.name}</a>',
             2,
         ),
         encoding="utf-8",
@@ -2079,12 +2128,12 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
         canonical_html.replace(first_source_link, "__FIRST_SOURCE_LINK__", 2)
         .replace(
             second_source_link,
-            f'<a href="{second_source.evidence_url}">{first_source.name}</a>',
+            f'<a href="{second_source.evidence_url}"{ext}>{first_source.name}</a>',
             2,
         )
         .replace(
             "__FIRST_SOURCE_LINK__",
-            f'<a href="{first_source.evidence_url}">{second_source.name}</a>',
+            f'<a href="{first_source.evidence_url}"{ext}>{second_source.name}</a>',
             2,
         ),
         encoding="utf-8",
@@ -2204,9 +2253,11 @@ def test_chromium_build_is_two_page_selectable_linked_and_visually_safe(tmp_path
     site_updated_date = view_model.metadata.generated_at.date().isoformat()
     project_url = read_rendering_configuration(RENDERING_CONFIG).project_url
     commit_url = f"{project_url}/commit/{view_model.metadata.git_commit}"
+    # Off-site links open in a new tab (issue 192), the commit link included.
+    external = ' target="_blank" rel="noopener"'
     metadata_marker = (
-        f'Data last updated <a href="{commit_url}">{data_updated_date}</a>. '
-        f'Site last updated <a href="{commit_url}">{site_updated_date}</a>.'
+        f'Data last updated <a href="{commit_url}"{external}>{data_updated_date}</a>. '
+        f'Site last updated <a href="{commit_url}"{external}>{site_updated_date}</a>.'
     )
     rendered_html_text = rendered.html_path.read_text(encoding="utf-8")
     assert metadata_marker in rendered_html_text
@@ -2780,7 +2831,9 @@ def test_sources_tree_shell_exposes_no_dialog_and_keeps_controls_in_the_merged_s
     keeps only a compact, non-interactive summary and a link to the
     dedicated sources page."""
     html = _sources_tree_html(tmp_path)
-    controls = html.split('<section class="screen-controls"')[1].split("</section>")[0]
+    controls = html.split('<section class="screen-controls filter-control-bar"')[1].split(
+        "</section>"
+    )[0]
 
     assert controls.count("<button") == 0
     assert "data-customize-open" not in html
@@ -2823,15 +2876,20 @@ def test_sources_tree_shell_leaves_the_print_comparison_untouched(tmp_path: Path
     assert "Read the Times pill" in html
 
 
-def test_guide_hero_uses_only_the_kicker_title_and_tagline(tmp_path: Path) -> None:
-    """Issue 177: the live source count belongs to the persistent strip."""
+def test_guide_head_carries_the_eyebrow_title_and_tagline(tmp_path: Path) -> None:
+    """Issue 177: the live source count belongs to the persistent strip.
+
+    Issue 192: the guide's bespoke hero became the shared page head. It is the
+    brand-link target, so it takes the one exception that page buys — the
+    masthead's navy runs through the head instead of stopping at the band.
+    """
     html = _sources_tree_html(tmp_path)
 
-    hero = html.split('<header class="hero">')[1].split("</header>")[0]
-    assert 'class="hero-kicker"' in hero
-    assert "<h1>" in hero
-    assert 'class="hero-tagline"' in hero
-    assert 'class="hero-deck"' not in hero
+    head = html.split('<header class="page-head extended">')[1].split("</header>")[0]
+    assert 'class="page-eyebrow"' in head
+    assert "<h1>Endorsements</h1>" in head
+    assert 'class="page-tagline"' in head
+    assert 'class="hero-deck"' not in head
     band = html.split('<div class="site-band">')[1].split("</div>")[0]
     assert '/sources/" data-sources-link' in band
 
@@ -2857,19 +2915,22 @@ def test_sources_links_carry_the_guides_current_fragment(tmp_path: Path) -> None
         html_path,
         """
         (() => JSON.stringify({
-          hrefs: [...document.querySelectorAll('[data-sources-link]')].map((link) => link.href),
+          // The literal attribute, not the DOM-resolved URL: these links are
+          // root-relative now (issue 192), so the resolved form depends on the
+          // origin the page happens to be served from — which is exactly what
+          // this link must not depend on.
+          hrefs: [...document.querySelectorAll('[data-sources-link]')]
+            .map((link) => link.getAttribute('href')),
         }))()
         """,
         initial_url=f"{html_path.resolve().as_uri()}#{fragment}",
     )
-    expected_href = (
-        f"{configuration.public_site_url}/e/{view_model.metadata.election_id}/sources/#{fragment}"
-    )
+    expected_href = f"/e/{view_model.metadata.election_id}/sources/#{fragment}"
     assert result["hrefs"]
     assert all(href == expected_href for href in result["hrefs"])
 
 
-def test_footer_share_button_uses_web_share_then_falls_back_to_copy(tmp_path: Path) -> None:
+def test_masthead_share_button_uses_web_share_then_falls_back_to_copy(tmp_path: Path) -> None:
     """Issue 66: the share action must degrade cleanly when the Web Share API,
 
     then the Clipboard API, are unavailable, without letting a declined share
@@ -2882,8 +2943,8 @@ def test_footer_share_button_uses_web_share_then_falls_back_to_copy(tmp_path: Pa
         """
         (async () => {
           const pause = () => new Promise((resolve) => setTimeout(resolve, 50));
-          const button = document.querySelector('[data-footer-share]');
-          const status = document.querySelector('[data-footer-share-status]');
+          const button = document.querySelector('[data-shell-share]');
+          const status = document.querySelector('[data-shell-share-status]');
 
           Object.defineProperty(navigator, 'share', {
             value: (details) => Promise.resolve(details),

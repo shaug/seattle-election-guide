@@ -45,15 +45,55 @@ a { color: var(--blue); text-underline-offset: .15em; }
 /* Shared page shell: the slim brand band used by every page on the site
    (guide, sources, about, archive), so the cross-page chrome has exactly one
    implementation. */
-.site-band { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1.25rem; padding: .55rem clamp(1rem, 4vw, 3rem); background: var(--navy); color: var(--white); }
-.site-brand { display: inline-flex; align-items: center; gap: .55rem; color: var(--white); font-size: .92rem; font-weight: 700; letter-spacing: .01em; text-decoration: none; }
+.site-band { display: flex; align-items: center; gap: .5rem 1.25rem; padding: .55rem clamp(1rem, 4vw, 3rem); background: var(--navy); color: var(--white); }
+.site-brand { display: inline-flex; align-items: center; gap: .55rem; min-width: 0; color: var(--white); font-size: .92rem; font-weight: 700; letter-spacing: .01em; text-decoration: none; }
 .site-brand:hover { text-decoration: underline; text-underline-offset: .2em; }
 .site-brand svg { display: block; flex: 0 0 auto; }
-.site-band nav { display: flex; flex-wrap: wrap; margin-left: auto; gap: .35rem 1.1rem; }
-.site-band nav a { color: var(--mint); font-size: .8rem; font-weight: 700; text-decoration: none; white-space: nowrap; }
-.site-band nav a:hover, .site-band nav a[aria-current="page"] { text-decoration: underline; text-underline-offset: .2em; }
-.site-band a:focus-visible { outline: .2rem solid var(--focus); outline-offset: .15rem; }
+/* At 360px and above the wordmark fits beside Share and Pages with room to
+   spare (verified: 31px slack at 360, 61px at 390). At 320px — iPhone 5/SE1
+   class — it ellipsizes instead, which is graceful: the mark still identifies
+   the site, nothing overlaps, and the page never scrolls sideways. Tightening
+   the gutter to recover those last few pixels was tried and left it 6px short,
+   so the ellipsis is the accepted behaviour rather than a near-miss hack. */
+.site-brand span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.site-band-actions { display: flex; align-items: center; gap: .15rem; margin: -.45rem 0 -.45rem auto; }
+.band-icon-action { display: inline-flex; align-items: center; justify-content: center; width: 2.5rem; height: 2.5rem; flex: 0 0 auto; padding: 0; border: 0; border-radius: .3rem; background: none; color: var(--mint); cursor: pointer; }
+.band-icon-action:hover { background: rgba(255, 255, 255, .12); }
+.band-icon-action svg { display: block; }
+
+/* The nav is one disclosure at every width (issue 192). Above the breakpoint the
+   panel is forced visible and the summary hidden, so it renders as the familiar
+   inline row; below the breakpoint they swap. No JavaScript is involved, which
+   is what lets the frozen archive pages keep working.
+
+   Revealing a closed <details> takes two rules, because browsers hide its
+   content two different ways. Older engines apply
+   `details:not([open]) > *:not(summary) { display: none }`, which the author
+   `display: flex` below overrides. Current Chrome, Safari and Firefox instead
+   wrap the content in a `::details-content` pseudo-element carrying
+   `content-visibility: hidden`; that suppresses size contribution, so the nav
+   computes to zero width and its links overflow off-screen while still
+   reporting `display: flex`. Forcing the pseudo-element visible is what
+   actually shows the row. Doing this unconditionally is safe: below the
+   breakpoint the panel is hidden by `display: none` on the nav itself, which
+   content-visibility does not undo. */
+.site-band-menu { position: relative; }
+.site-band-menu::details-content { content-visibility: visible; }
+.site-band-menu > summary { display: none; list-style: none; }
+.site-band-menu > summary::-webkit-details-marker { display: none; }
+.site-band-menu > nav { display: flex; flex-wrap: wrap; gap: .35rem 1.1rem; margin-left: .5rem; }
+.site-band-menu > nav a { color: var(--mint); font-size: .8rem; font-weight: 700; text-decoration: none; white-space: nowrap; }
+.site-band-menu > nav a:hover, .site-band-menu > nav a[aria-current="page"] { text-decoration: underline; text-underline-offset: .2em; }
+.site-band a:focus-visible, .site-band button:focus-visible, .site-band summary:focus-visible { outline: .2rem solid var(--focus); outline-offset: .15rem; }
 .page-band-rule { height: .4rem; background: var(--teal); }
+
+@media (max-width: 45rem) {
+  .site-band-menu > summary { display: inline-flex; align-items: center; height: 2.5rem; padding: 0 .6rem; border-radius: .3rem; color: var(--mint); font-size: .8rem; font-weight: 700; cursor: pointer; }
+  .site-band-menu > summary:hover { background: rgba(255, 255, 255, .12); }
+  .site-band-menu > nav { display: none; position: absolute; right: 0; top: calc(100% + .55rem); z-index: 6; flex-direction: column; flex-wrap: nowrap; gap: 0; min-width: 12rem; margin: 0; padding: .35rem 0; background: var(--navy); border: 1px solid rgba(158, 231, 223, .3); border-radius: .3rem; box-shadow: 0 .5rem 1.2rem rgba(16, 42, 67, .35); }
+  .site-band-menu[open] > nav { display: flex; }
+  .site-band-menu > nav a { padding: .55rem .9rem; font-size: .88rem; }
+}
 
 /* Slot 2: one page head, two grounds. The extended variant is the single
    exception the brand-link target buys (issue 192, R3/R4); it bends no other
@@ -95,12 +135,49 @@ a { color: var(--blue); text-underline-offset: .15em; }
    width/centering lives here. */
 .narrow-main { max-width: 46rem; margin: 0 auto; }
 
+/* Shared sticky stack for election controls and any state strip that follows
+   them. Guide and task pages use this wrapper so placement is behavioral
+   parity, not a page-local imitation. The tall mobile stack remains in flow. */
+.sticky-header { position: sticky; top: 0; z-index: 5; }
+
 /* Shared persistent state/action surface (DESIGN.md: sticky strips are one
-   family). Page-specific CSS owns whether a strip itself sticks or participates
-   in an existing sticky group; the surface and action treatment live here. */
+   family). */
 .state-action-strip { display: flex; flex-wrap: wrap; align-items: center; gap: .45rem 1rem; padding: .55rem clamp(1rem, 4vw, 3rem); background: var(--navy); color: var(--white); font-size: .9rem; font-weight: 600; }
 .state-action-strip a { color: var(--mint); font-weight: 700; }
 .state-action-strip a:focus-visible { outline: .2rem solid var(--focus); outline-offset: .15rem; }
+
+/* Shared segmented radio control. The guide and task pages use the same
+   structure so selection, focus, borders, and tap geometry stay consistent. */
+.segmented-control { display: flex; min-width: 0; min-height: 2.7rem; overflow: hidden; border: 1px solid var(--line-strong); border-radius: .3rem; background: var(--white); }
+.segmented-control label { display: flex; min-width: 0; flex: 1 1 0; align-items: stretch; color: var(--ink); cursor: pointer; }
+.segmented-control label + label { border-left: 1px solid var(--line-strong); }
+.segmented-control input { position: absolute; opacity: 0; }
+.segmented-control span { display: flex; width: 100%; min-width: 0; align-items: center; justify-content: center; padding: .45rem .7rem; white-space: nowrap; }
+.segmented-control input:checked + span { background: var(--navy); color: var(--white); }
+.segmented-control input:focus-visible + span { outline: .2rem solid var(--focus); outline-offset: -.2rem; }
+
+/* Shared filter controls. Election pages render these through
+   `_filter_controls.html.j2`; pages supply options and behavior hooks, while
+   this component owns the surface, labels, fields, status, and reflow. */
+.filter-control-bar { display: flex; min-width: 0; flex-wrap: wrap; align-items: flex-end; gap: .65rem 1rem; margin: 0; padding: .65rem clamp(1rem, 4vw, 3rem); border-bottom: 1px solid var(--line); background: var(--paper); box-shadow: 0 .1rem .4rem rgba(16,42,67,.06); }
+.filter-select-control { display: grid; min-width: min(100%, 15rem); flex: 1 1 15rem; gap: .2rem; }
+.filter-control-label { margin: 0 0 .2rem; padding: 0; color: var(--navy); font-size: .72rem; font-weight: 700; }
+.filter-select { width: 100%; min-width: 0; min-height: 2.7rem; max-width: 100%; padding: .45rem .7rem; border: 1px solid var(--line-strong); border-radius: .3rem; background: var(--white); color: var(--ink); font: inherit; }
+.filter-segmented-control { min-width: min(100%, 12rem); flex: 1 1 12rem; margin: 0; padding: 0; border: 0; }
+.filter-control-status { display: flex; min-width: 12rem; flex: 0 0 12rem; flex-wrap: nowrap; align-self: center; gap: .15rem .35rem; margin: 0 0 0 auto; color: var(--muted); font-size: .72rem; line-height: 1.3; text-align: right; white-space: nowrap; }
+.filter-select:focus-visible { outline: .2rem solid var(--focus); outline-offset: .12rem; }
+
+@media (min-width: 721px) and (max-width: 62rem) {
+  .filter-control-bar { gap: .65rem .35rem; padding-inline: .75rem; }
+  .filter-select-control, .filter-segmented-control { min-width: 10rem; flex-basis: 10rem; }
+}
+
+@media (max-width: 720px) {
+  .sticky-header { position: static; }
+  .filter-control-bar { align-items: stretch; padding-inline: 1rem; }
+  .filter-select-control, .filter-segmented-control, .filter-control-status { width: 100%; flex-basis: 100%; }
+  .filter-control-status { min-width: 0; margin-left: 0; text-align: left; }
+}
 
 /* Shared page footer (issue 179): one masthead-height navy grid carrying the
    brand, two-line provenance whisper, and fixed-height action cluster. */

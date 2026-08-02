@@ -20,14 +20,6 @@
   <style>
     {{ stylesheet | safe }}
     main { padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 3rem; }
-    main h1 {
-      margin: 0 0 .35rem; color: var(--navy);
-      font: 700 clamp(1.6rem, 4vw, 2.3rem)/1.05 var(--screen-serif);
-    }
-    .sources-page-intro { max-width: 60ch; margin: 0 0 1.5rem; }
-    .sources-page-intro .eyebrow { margin-bottom: .35rem; }
-    .sources-page-intro h1 { margin-bottom: .5rem; }
-    .sources-page-intro .lede { margin: 0; color: var(--muted); }
     .sources-tree { border-top: none; background: none; padding: 0; }
     .sources-page-actions { position: sticky; top: 0; z-index: 5; justify-content: center; }
     .sources-page-controls { display: flex; flex-wrap: wrap; justify-content: center; gap: .45rem 1rem; }
@@ -48,7 +40,7 @@
     <section class="coverage-gap-row"
       data-coverage-gap-source-id="{{ source.id }}"
       data-coverage-gap-status="{{ source.coverage_gap_status }}">
-      <div><a href="{{ source.evidence_url }}">{{ source.name }}</a>
+      <div><a href="{{ source.evidence_url }}"{{ external_link_attributes }}>{{ source.name }}</a>
         <strong>{% if source.coverage_gap_status == 'access_restricted' %}Official results inaccessible{% else %}No published results found{% endif %}</strong></div>
       {% if not compact %}<p>{{ source.coverage_gap_note }}</p>{% endif %}
     </section>
@@ -72,10 +64,10 @@
       <label class="sources-check">
         <input type="checkbox" data-sources-source="{{ member_code }}"
           data-sources-category-member="{{ category.code }}"{% if not is_comparison %} checked{% endif %}>
-        <a href="{{ pub_source.evidence_url }}">{{ pub_source.name }}</a>
+        <a href="{{ pub_source.evidence_url }}"{{ external_link_attributes }}>{{ pub_source.name }}</a>
       </label>
       {% else %}
-      <a class="sources-source-link" href="{{ pub_source.evidence_url }}">{{ pub_source.name }}</a>
+      <a class="sources-source-link" href="{{ pub_source.evidence_url }}"{{ external_link_attributes }}>{{ pub_source.name }}</a>
       {% endif %}
       <span class="sources-count">{{ source_participation(pub_source) }}</span>
       {% if other_category_ids %}
@@ -94,6 +86,8 @@
       {{ site_band | safe }}
       <div class="page-band-rule"></div>
     </header>
+    {{ election_day_banner | safe }}
+    {{ site_page_head | safe }}
     <div class="sources-page-actions state-action-strip">
       <p class="sources-page-count" data-sources-count role="status" aria-live="polite"></p>
       <div class="sources-page-controls">
@@ -103,12 +97,6 @@
       </div>
     </div>
     <main id="sources-main">
-      <div class="sources-page-intro">
-        <p class="eyebrow eyebrow-paper">{{ election_display_name }} · Sources</p>
-        <h1>Customize your sources</h1>
-        <p class="lede">Choose which sources count, then save &mdash; the guide recalculates from
-          your selection.</p>
-      </div>
 
       <p class="sources-comparison-status" data-sources-comparison-status role="status" aria-live="polite"></p>
 
@@ -191,12 +179,14 @@
 
   <script type="module">
 {{ share_link_script | safe }}
+{{ election_day_script | safe }}
 {{ lens_url_script | safe }}
 
   // Page glue for the standalone sources editor. No scoring engine here: this
   // page only ever reads/writes a selection through the shared fragment codec
   // above, exactly like the guide's own merged sources tree (issue 107).
-  wireFooterShare();
+  wireShellShare();
+  wireElectionDay();
   const bindings = JSON.parse(document.querySelector('#lens-bindings').textContent);
   const context = lensContext(bindings, bindings.data_version);
   const guidePath = {{ guide_path | tojson }};

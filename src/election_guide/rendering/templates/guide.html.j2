@@ -6,7 +6,9 @@
   <meta name="author" content="{{ config.author }}">
   <meta name="description" content="{{ config.subject }}">
   {% set canonical_url = config.public_site_url ~ '/e/' ~ guide.metadata.election_id ~ '/' %}
-  {% set sources_page_url = config.public_site_url ~ '/e/' ~ guide.metadata.election_id ~ '/sources/' %}
+  {# Root-relative: an absolute production URL walked readers off any other
+     origin — local preview, staging, PR preview — to the live site. #}
+  {% set sources_page_url = '/e/' ~ guide.metadata.election_id ~ '/sources/' %}
   <meta property="og:type" content="website">
   <meta property="og:title" content="{{ document_title }}">
   <meta property="og:description" content="{{ config.subject }}">
@@ -20,12 +22,13 @@
 </head>
 <body>
   {% from '_source_participation.html.j2' import source_participation %}
+  {% from '_filter_controls.html.j2' import election_controls %}
   {% macro source_row(source, compact=false) -%}
     <div class="source-row source-row-{{ source.panel_role }}"
       data-publication-source-id="{{ source.id }}"
       data-source-category="{{ source.category }}"
       data-source-role="{{ source.panel_role }}">
-      <a href="{{ source.evidence_url }}">{{ source.name }}</a>
+      <a href="{{ source.evidence_url }}"{{ external_link_attributes }}>{{ source.name }}</a>
       <span>{{ source_participation(source, compact) }}</span>
     </div>
   {%- endmacro %}
@@ -33,7 +36,7 @@
     <section class="coverage-gap-row"
       data-coverage-gap-source-id="{{ source.id }}"
       data-coverage-gap-status="{{ source.coverage_gap_status }}">
-      <div><a href="{{ source.evidence_url }}">{{ source.name }}</a>
+      <div><a href="{{ source.evidence_url }}"{{ external_link_attributes }}>{{ source.name }}</a>
         <strong>{% if source.coverage_gap_status == 'access_restricted' %}Official results inaccessible{% else %}No published results found{% endif %}</strong></div>
       {% if not compact %}<p>{{ source.coverage_gap_note }}</p>{% endif %}
     </section>
@@ -63,7 +66,7 @@
       <li data-race-detail-source-id="{{ cell.source_id }}"
         data-source-category="{{ source.category }}" data-source-state="{{ cell.state }}"
         data-source-role="{{ source.panel_role }}" data-source-group="{{ group_key }}">
-        {% if cell.evidence_url %}<a class="race-detail-source-row{% if source.panel_role == 'comparison' %} race-detail-source-row-comparison{% endif %}" href="{{ cell.evidence_url }}">
+        {% if cell.evidence_url %}<a class="race-detail-source-row{% if source.panel_role == 'comparison' %} race-detail-source-row-comparison{% endif %}" href="{{ cell.evidence_url }}"{{ external_link_attributes }}>
         {% else %}<div class="race-detail-source-row{% if source.panel_role == 'comparison' %} race-detail-source-row-comparison{% endif %}">
         {% endif %}
           <strong>{{ source.name }}</strong>
@@ -84,7 +87,7 @@
       data-source-category="{{ source.category }}" data-source-state="{{ cell.state }}"
       data-source-role="{{ source.panel_role }}" data-source-group="candidate"
       data-endorsed-candidate-id="{{ candidate_id }}">
-      {% if cell.evidence_url %}<a class="race-detail-source-row{% if source.panel_role == 'comparison' %} race-detail-source-row-comparison{% endif %}" href="{{ cell.evidence_url }}">
+      {% if cell.evidence_url %}<a class="race-detail-source-row{% if source.panel_role == 'comparison' %} race-detail-source-row-comparison{% endif %}" href="{{ cell.evidence_url }}"{{ external_link_attributes }}>
       {% else %}<div class="race-detail-source-row{% if source.panel_role == 'comparison' %} race-detail-source-row-comparison{% endif %}">
       {% endif %}
         <strong>{{ source.name }}</strong>
@@ -185,47 +188,35 @@
 
   <main class="page screen-guide">
     {{ site_band | safe }}
-    <header class="hero">
-      <p class="detailed-edition-brand">Seattle Elections Guide</p>
-      <div class="hero-copy">
-        <div class="hero-kicker">{{ election_day_kicker }}</div>
-        <h1>{{ election_display_label }}</h1>
-        <p class="hero-tagline">Seattle&rsquo;s progressive voices, distilled.</p>
-      </div>
-    </header>
+    <p class="detailed-edition-brand">Seattle Elections Guide</p>
+    {{ site_page_head | safe }}
+    <div class="page-band-rule"></div>
+    {{ election_day_banner | safe }}
 
     <div class="sticky-header">
-      <section class="screen-controls" aria-label="Guide view and race filters">
-        <div class="race-filter-control">
-          <label for="race-filter">Ballot</label>
-          <select id="race-filter">
-            <option value="all">All Seattle ballot races</option>
-            <optgroup label="Ballot sections">
-            {% for section in guide.sections %}
-            <option value="{{ section.id }}">{{ section.label }}</option>
-            {% endfor %}
-            </optgroup>
-            <optgroup label="Districts and jurisdictions">
-            {% for option in filter_options %}<option value="{{ option }}">{{ option }}</option>{% endfor %}
-            </optgroup>
-          </select>
-        </div>
-        <fieldset class="view-setting">
-          <legend>View</legend>
-          <div class="segmented-control">
-            <label><input type="radio" name="ballot-view" value="full" checked><span>Full</span></label>
-            <label><input type="radio" name="ballot-view" value="compact"><span>Compact</span></label>
-          </div>
-        </fieldset>
-        <fieldset class="view-setting">
-          <legend>Races</legend>
-          <div class="segmented-control">
-            <label><input type="radio" name="race-set" value="complete" id="complete-filter" checked><span>All</span></label>
-            <label><input type="radio" name="race-set" value="contested" id="contested-filter"><span>Contested</span></label>
-          </div>
-        </fieldset>
-        <p id="filter-status" role="status" aria-live="polite"></p>
-      </section>
+      {% call election_controls(
+        'Guide view and race filters', 'screen-controls',
+        'race-filter', '', 'race-filter-control',
+        'ballot-view', [
+          {'value': 'full', 'label': 'Full', 'id': '', 'attributes': '', 'checked': true},
+          {'value': 'compact', 'label': 'Compact', 'id': '', 'attributes': '', 'checked': false}
+        ],
+        'race-set', [
+          {'value': 'complete', 'label': 'All', 'id': 'complete-filter', 'attributes': '', 'checked': true},
+          {'value': 'contested', 'label': 'Contested', 'id': 'contested-filter', 'attributes': '', 'checked': false}
+        ],
+        'filter-status'
+      ) %}
+        <option value="all">All Seattle ballot races</option>
+        <optgroup label="Ballot sections">
+        {% for section in guide.sections %}
+        <option value="{{ section.id }}">{{ section.label }}</option>
+        {% endfor %}
+        </optgroup>
+        <optgroup label="Districts and jurisdictions">
+        {% for option in filter_options %}<option value="{{ option }}">{{ option }}</option>{% endfor %}
+        </optgroup>
+      {% endcall %}
 
       {% if guide.personalization.policy.enabled %}
       <div class="lens-banner state-action-strip" data-lens-banner>
@@ -430,7 +421,7 @@
         <div>
           <h3>{{ category.label }}</h3>
           {% for source in contributing_sources if source.category == category.category %}
-          <p><a href="{{ source.evidence_url }}">{{ source.name }}</a></p>
+          <p><a href="{{ source.evidence_url }}"{{ external_link_attributes }}>{{ source.name }}</a></p>
           {% endfor %}
         </div>
         {% endfor %}
@@ -438,7 +429,7 @@
         <div>
           <h3>Coverage gaps</h3>
           {% for source in coverage_gap_sources %}
-          <p><a href="{{ source.evidence_url }}">{{ source.name }}</a></p>
+          <p><a href="{{ source.evidence_url }}"{{ external_link_attributes }}>{{ source.name }}</a></p>
           {% endfor %}
         </div>
         {% endif %}
@@ -512,7 +503,7 @@
         {% endfor %}
       </div>
       <footer>Verify details and evidence in the responsive guide at
-        <a href="{{ config.project_url }}">{{ config.project_url }}</a></footer>
+        <a href="{{ config.project_url }}"{{ external_link_attributes }}>{{ config.project_url }}</a></footer>
     </section>
 
     <section class="print-page print-page-two">
@@ -608,7 +599,7 @@
       </div>
       <footer class="page-two-footer">
         <span>{{ site_footer_audit | safe }}</span>
-        <span>{{ guide.metadata.published_race_count }} races · <a href="{{ config.project_url }}">Source and audit files</a></span>
+        <span>{{ guide.metadata.published_race_count }} races · <a href="{{ config.project_url }}"{{ external_link_attributes }}>Source and audit files</a></span>
       </footer>
     </section>
   </div>
@@ -655,6 +646,7 @@
   {% endif %}
   <script type="module">
 {{ share_link_script | safe }}
+{{ election_day_script | safe }}
 {{ lens_url_script | safe }}
   {% if guide.personalization.policy.enabled %}
 {{ lens_score_script | safe }}
@@ -668,7 +660,8 @@
   // page and the Node tests share one implementation.
   const bindings = JSON.parse(document.querySelector('#lens-bindings').textContent);
 
-  wireFooterShare();
+  wireShellShare();
+  wireElectionDay();
 
   // Tallying categories and sources are empty while personalization is
   // disabled, so no tallying selection is possible here yet: a shared link

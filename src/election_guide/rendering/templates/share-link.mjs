@@ -38,12 +38,16 @@ export async function shareOrCopyLink(url, title) {
 // caller rather than duplicating native-share and clipboard fallbacks there.
 if (typeof window !== 'undefined') window.shareOrCopyLink = shareOrCopyLink;
 
-// Wires the shared footer's Share icon action (`site_footer_band_html` in
-// shell.py) on every page that renders it: the guide, the dedicated Sources
-// page, About, and the archive.
-export function wireFooterShare() {
-  const shareButton = document.querySelector('[data-footer-share]');
-  const shareStatus = document.querySelector('[data-footer-share-status]');
+// Wires the masthead's Share action (`site_band_html` in shell.py) on every
+// shareable page: the guide, Comparisons, Sources, About, and the archive. The
+// 404 renders no Share action at all, since it declares itself unshareable for
+// its social card and one flag governs both (issue 192, R2).
+//
+// Share moved out of the footer in issue 192: the masthead carries actions on
+// the page, the footer carries meta about the site.
+export function wireShellShare() {
+  const shareButton = document.querySelector('[data-shell-share]');
+  const shareStatus = document.querySelector('[data-shell-share-status]');
   shareButton?.addEventListener('click', async () => {
     const value = window.location.href;
     const result = await shareOrCopyLink(value, document.title);

@@ -51,7 +51,7 @@ never introduces a color literal. The families and what they mean:
 | Paper / white | `--paper`, `--white` | Content ground / data surfaces (cards, rows) |
 | Teal | `--teal` | The brand and data accent: meters, section rules, card borders |
 | Blue | `--blue` | Hyperlinks. Nothing else |
-| Agree tone | `--tone-agree-*` | Agreement with the baseline; the leading choice |
+| Agree tone | `--tone-agree-*` | Agreement with the current reference; the leading choice |
 | Differ tone | `--tone-differ-*`, `--amber` | Attention and divergence: comparison signals that differ, challenger sections, no-majority states |
 | Neutral tone | `--tone-neutral-*` | Not covered; no signal |
 | Focus | `--focus` | Every focus ring, everywhere |
@@ -157,15 +157,8 @@ while emoji render differently on every platform and can't be styled.
 
 ## Site shell
 
-> **Status (2026-08-01).** The rules in this section are adopted and govern
-> all new work — build against them. The shared page head, the election-day
-> banner, and their styles ship with this document; converting the six
-> existing pages to them lands separately under issue 192, deliberately
-> sequenced after the Comparisons epic (#116) so every page, including the
-> ones that epic adds, is converted once. Until that lands, the shipped
-> pages still carry their old bespoke headers — the one place where this
-> document leads the UI rather than describing it. **New pages must use
-> `site_page_head_html`; do not hand-roll a header.**
+> **Status (2026-08-01).** Adopted, and now applied to every page. **New
+> pages must use `site_page_head_html`; do not hand-roll a header.**
 
 **Exceptions are allowed; cascades are not.** An exception must name what
 it buys, and must not require a second rule to bend to accommodate it.
@@ -207,6 +200,22 @@ then any sticky strip, then content.
 - **Masthead = actions on the page; footer = meta about the site.** Share
   belongs to the masthead because it acts on what you are reading;
   Contact, source files, and the methodology link belong to the footer.
+- **Every in-site link is root-relative.** An absolute production URL walks
+  readers off any other origin — a local preview, a staging deploy, a PR
+  preview — straight to the live site. Only links that genuinely leave the
+  site carry an origin.
+- **Every off-site link opens in a new tab**, with `rel="noopener"`, so a
+  reader checking a receipt keeps their place in the guide. The referrer is
+  left intact so the organizations we cite can see the traffic. An icon-only
+  external control carries the new-tab hint in its accessible name, since it
+  has no visible text to carry it.
+- **A page's path matches its name.** Renaming a page renames its URL, with
+  a permanent redirect from the old address so nothing already linked
+  breaks. *(2026-08-01: `/compare/` became `/comparisons/`.)*
+- **Nav order follows dependency, not traffic.** Endorsements is the
+  destination, Sources is what feeds it, Comparisons is a view derived from
+  those sources, and How this works explains all three. *(2026-08-01: this
+  reverses the order issue 197 shipped, which placed Comparisons second.)*
 - One masthead band and one footer implementation, shared by every page —
   never re-implemented per page. One page head likewise, in two measure
   modes: full-bleed, or constrained to its page's reading column when that
@@ -221,6 +230,11 @@ then any sticky strip, then content.
   sources strip ("Counting all 40 sources" by default; "39 of 40" under a
   lens), and the Sources action bar. Same placement logic and surface
   treatment everywhere; two strips doing the same job must rhyme.
+- **Shared controls are actual components.** A segmented choice uses the
+  shared radio structure and focus treatment; a task page does not draw a
+  button group that merely resembles it. Election filter bars, labeled selects,
+  segmented radios, and their status placement share one rendered component;
+  pages provide only labels, options, IDs, and behavior hooks.
 
 ## Data display
 
@@ -242,6 +256,33 @@ then any sticky strip, then content.
   zero-counts are suppressed rather than printed forty times; taxonomy
   renders as plain muted text, not chrome; rows in a grid align so a row
   of meters can be swept in one eye movement.
+
+  *Comparison-page decision recorded July 31, 2026:*
+
+- **Comparison starts from one explicit reference role.** The first column is
+  stable in position and cannot be removed, but its signal is selectable. Every
+  agreement, difference tint, and difference count is relative to that chosen
+  reference. All sources is the published default, not an immutable baseline.
+  Every column shows its full identity at rest and becomes an editor only while
+  the reader is changing it. Position and accessible names carry the reference
+  semantics; the header does not repeat a visible “Reference” label. The Race
+  header contains only “Race.” When another column can be added, an icon-only
+  plus action lives in the last comparison header and opens the new column's
+  identity editor immediately. At capacity the plus disappears; capacity is
+  implicit and no maximum message or disabled control is shown.
+- **One quiet difference encoding.** A comparison cell carries its choice and
+  an amber tint when it differs. Agreement recedes; the race identity carries
+  the single visible and accessible “Differs” label. Shared conventions do not
+  need a repeated legend.
+- **Responsive comparison context stays attached.** At narrow widths the Race
+  and reference columns remain fixed while the remaining comparison columns
+  scroll horizontally in discrete column-sized steps. A directional cue states
+  when more columns are offscreen. The fully supported viewport floor is 320px:
+  at and below that width the Race column keeps a 5rem minimum and source
+  columns keep a 6.35rem minimum. Narrower viewports may show less of the next
+  comparison, but those columns never compress further or collapse into stacked
+  cards; the comparison rail remains independently scrollable and the page
+  itself never pans horizontally.
 - **Absence of a majority is information.** A leading share at or below
   50% gets the "No majority" treatment in the differ/amber family —
   default styling never overstates confidence.
@@ -256,8 +297,7 @@ sentences with real separators; every page keeps the skip link.
 ## Non-goals
 
 This document does not govern the **print/PDF editions** (they share the
-color tokens but follow their own compact layout idiom), the
-**election-comparison pages** (under active design), or **dark mode**
+color tokens but follow their own compact layout idiom) or **dark mode**
 (none exists; adding one is a project, not a patch).
 
 ## Changing this document

@@ -3,7 +3,7 @@
 // Like lens-url.mjs, this module is pure: it validates fragment state but never
 // scores, fetches, or touches the DOM. Unlike the lens codec, comparison column
 // tokens deliberately retain their configured order because the first column is
-// the baseline against which the remaining columns are compared.
+// the reference against which the remaining columns are compared.
 
 export const COMPARE_SCHEMA_VERSION = '1';
 export const ALL_SOURCES_TOKEN = 'gall';

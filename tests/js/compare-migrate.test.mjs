@@ -83,11 +83,12 @@ test('surviving columns migrate in their original order with persistent disclosu
   });
 });
 
-test('a retired direct source migrates through its tombstone when two columns survive', () => {
+test('a retired reference falls back rather than silently promoting another column', () => {
   const { decoded, currentContext } = stale(['zret', 'strn', 'stim']);
   const result = migrateCompareState(decoded, CURRENT, currentContext);
-  assert.equal(result.status, 'migrated');
-  assert.deepEqual(result.state.columns, ['strn', 'stim']);
+  assert.equal(result.status, 'fallback');
+  assert.equal(result.reason, 'unresolvable_reference');
+  assert.deepEqual(result.state.columns, ['gall', 'strn', 'stim']);
   assert.deepEqual(result.report.columns[0], {
     code: 'zret',
     kind: 'source',
@@ -97,11 +98,19 @@ test('a retired direct source migrates through its tombstone when two columns su
   });
 });
 
+test('a retired non-reference source drops without changing the reference', () => {
+  const { decoded, currentContext } = stale(['strn', 'zret', 'stim']);
+  const result = migrateCompareState(decoded, CURRENT, currentContext);
+  assert.equal(result.status, 'migrated');
+  assert.deepEqual(result.state.columns, ['strn', 'stim']);
+  assert.equal(result.report.columns[1].status, 'retired');
+});
+
 test('too few surviving columns fall back atomically to defaults with persistent disclosure', () => {
   const { decoded, currentContext } = stale(['zret', 'strn']);
   const result = migrateCompareState(decoded, CURRENT, currentContext);
   assert.equal(result.status, 'fallback');
-  assert.equal(result.reason, 'insufficient_current_columns');
+  assert.equal(result.reason, 'unresolvable_reference');
   assert.equal(result.disclosureStatus, 'stale_version_fallback');
   assert.deepEqual(result.state.columns, ['gall', 'strn', 'stim']);
 });
@@ -110,7 +119,7 @@ test('a retired category forces fallback rather than silently changing aggregate
   const { decoded, currentContext } = stale(['Gurb', 'strn', 'stim']);
   const result = migrateCompareState(decoded, CURRENT, currentContext);
   assert.equal(result.status, 'fallback');
-  assert.equal(result.reason, 'unresolvable_category');
+  assert.equal(result.reason, 'unresolvable_reference');
   assert.equal(result.report.columns[0].status, 'retired');
   assert.deepEqual(result.state.columns, ['gall', 'strn', 'stim']);
 });
@@ -120,7 +129,7 @@ test('an unknown stale token falls back deterministically and never becomes a va
   decoded.state.columns[0] = 'zzzz';
   const result = migrateCompareState(decoded, CURRENT, currentContext);
   assert.equal(result.status, 'fallback');
-  assert.equal(result.reason, 'unresolvable_source');
+  assert.equal(result.reason, 'unresolvable_reference');
   assert.equal(result.disclosureStatus, 'stale_version_fallback');
   assert.deepEqual(result.state.columns, ['gall', 'strn', 'stim']);
   assert.equal(result.report.columns[0].status, 'unknown');

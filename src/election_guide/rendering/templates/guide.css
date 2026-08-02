@@ -1,31 +1,19 @@
 /* .screen-guide is now a bare marker class for JS/print selectors; the
    guide's root also carries `.page`, which supplies the shared 76rem frame
    width (item L53). */
-.hero { color: var(--white); background: var(--navy); padding: clamp(1.1rem, 2.5vw, 1.9rem) clamp(1rem, 4vw, 3rem); border-bottom: .4rem solid var(--teal); }
-.hero-kicker, .eyebrow { color: var(--mint); font-size: .78rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+/* The guide's bespoke hero became the shared .page-head (issue 192): one
+   component for every page, with the extended navy variant as the single
+   exception the brand-link target buys. Its rules live in base.css beside the
+   band. The kicker went with it — election day is now the Context slot's
+   banner, which can retire itself once the election passes as permanent chrome
+   never could. */
+.eyebrow { color: var(--mint); font-size: .78rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
 .eyebrow-paper { color: var(--teal); }
-.hero h1 { max-width: 25ch; margin: .25rem 0 .45rem; font: 700 clamp(2rem, 4.2vw, 3.2rem)/1.02 var(--screen-serif); letter-spacing: -.012em; }
-.hero-tagline { max-width: 48rem; margin: 0 0 .3rem; color: var(--white); font-size: clamp(1.02rem, 1.8vw, 1.22rem); font-weight: 500; }
 /* Print-only identity line for the detailed/overflow PDF edition, which
    hides the interactive band (see the detailed-edition print rules below);
    the band already carries the brand on screen, so this stays invisible
    there. */
 .detailed-edition-brand { display: none; }
-.sticky-header { position: sticky; top: 0; z-index: 5; }
-.screen-controls { display: grid; grid-template-columns: minmax(15rem, 1.1fr) repeat(2, minmax(12rem, .85fr)) minmax(10rem, .7fr); align-items: end; gap: .65rem 1rem; padding: .65rem clamp(1rem, 4vw, 3rem); background: var(--paper); border-bottom: 1px solid var(--line); box-shadow: 0 .1rem .4rem rgba(16,42,67,.06); }
-.race-filter-control { display: grid; min-width: 0; gap: .2rem; }
-.screen-controls label, .screen-controls legend { color: var(--navy); font-size: .72rem; font-weight: 700; }
-.screen-controls select { width: 100%; min-width: 0; min-height: 2.7rem; padding: .45rem .7rem; border: 1px solid var(--line-strong); border-radius: .3rem; background: var(--white); color: var(--ink); font: inherit; }
-.view-setting { min-width: 0; margin: 0; padding: 0; border: 0; }
-.view-setting legend { margin-bottom: .2rem; padding: 0; }
-.segmented-control { display: flex; min-width: 0; min-height: 2.7rem; overflow: hidden; border: 1px solid var(--line-strong); border-radius: .3rem; background: var(--white); }
-.segmented-control label { display: flex; min-width: 0; flex: 1 1 0; align-items: stretch; color: var(--ink); cursor: pointer; }
-.segmented-control label + label { border-left: 1px solid var(--line-strong); }
-.segmented-control input { position: absolute; opacity: 0; }
-.segmented-control span { display: flex; width: 100%; min-width: 0; align-items: center; justify-content: center; padding: .45rem .7rem; white-space: nowrap; }
-.segmented-control input:checked + span { background: var(--navy); color: var(--white); }
-.segmented-control input:focus-visible + span { outline: .2rem solid var(--focus); outline-offset: -.2rem; }
-.screen-controls p { display: flex; flex-wrap: wrap; align-self: center; justify-content: flex-end; justify-self: end; gap: .15rem .35rem; margin: 0; color: var(--muted); font-size: .72rem; text-align: right; }
 .filter-status-part { white-space: nowrap; }
 .screen-sections { min-width: 0; padding: 1rem clamp(1rem, 4vw, 3rem) 4rem; }
 .screen-section { margin: 2.5rem 0 4rem; }
@@ -233,18 +221,12 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
 .print-guide { display: none; }
 
 @media (max-width: 1050px) {
-  .screen-controls { grid-template-columns: minmax(15rem, 1fr) repeat(2, minmax(12rem, 1fr)); }
-  .screen-controls p { grid-column: 1 / -1; justify-content: flex-start; justify-self: start; text-align: left; }
   html.compact-ballot-mode .race-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 @media (max-width: 720px) {
   .site-band nav { margin-left: 0; }
-  .hero h1 { max-width: 18ch; }
-  .sticky-header { position: static; }
-  .screen-controls { grid-template-columns: 1fr; }
-  .screen-controls p { grid-column: auto; justify-content: flex-start; justify-self: start; text-align: left; }
-  .view-setting { width: 100%; }
+  .page-head.extended h1 { max-width: 18ch; }
   html.compact-ballot-mode .race-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .race-grid, .screen-coverage-gaps, .coverage-gap-columns { grid-template-columns: 1fr; }
   .sources-columns { column-count: 1; }
@@ -388,7 +370,8 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
   html.detailed-edition .print-guide { display: none !important; }
   html.detailed-edition .screen-guide { display: block !important; max-width: none; min-height: 0; background: white; font-family: var(--print-sans); }
   html.detailed-edition .skip-link, html.detailed-edition .site-band,
-  html.detailed-edition .screen-controls { display: none !important; }
+  html.detailed-edition .election-day,
+  html.detailed-edition .filter-control-bar { display: none !important; }
   /* The hero no longer states the brand (item L54); this plain-text,
      link-free line (hidden on screen; see .detailed-edition-brand in the
      screen ruleset below) keeps "Seattle Elections Guide" identifiable on
@@ -397,9 +380,9 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
   html.detailed-edition .detailed-edition-brand { display: block; margin: .3in .3in 0; color: var(--navy); font: 700 13pt/1 var(--print-sans); }
   /* The removed screen-only deck no longer contributes height here; retain
      the detailed edition's proven pagination with equivalent whitespace. */
-  html.detailed-edition .hero { padding: .1in .3in .45in; border-bottom-width: .08in; }
-  html.detailed-edition .hero h1 { margin: .05in 0; font-size: 26pt; }
-  html.detailed-edition .hero-tagline { margin: .05in 0; font-size: 11pt; }
+  html.detailed-edition .page-head { padding: .1in .3in .45in; border-bottom-width: .08in; }
+  html.detailed-edition .page-head h1 { margin: .05in 0; font-size: 26pt; }
+  html.detailed-edition .page-tagline { margin: .05in 0; font-size: 11pt; }
   html.detailed-edition .screen-sections { padding: .1in 0; }
   html.detailed-edition .screen-section { margin: .12in 0 .2in; }
   html.detailed-edition .section-heading h2 { margin: 0 0 .08in; font-size: 18pt; }

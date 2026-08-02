@@ -20,6 +20,7 @@ from typing import Any, cast
 from urllib.parse import urlsplit
 
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
+from markupsafe import Markup
 from PIL import Image, ImageChops
 from pypdf import PageObject, PdfReader, PdfWriter
 from pypdf.generic import ArrayObject, DictionaryObject, IndirectObject
@@ -49,7 +50,10 @@ from election_guide.rendering.models import (
     RenderingValidationReport,
 )
 from election_guide.rendering.shell import (
+    EXTERNAL_LINK_ATTRIBUTES,
+    HOW_TO_VOTE_HREF,
     close_icon_svg,
+    election_day_banner_html,
     election_names,
     page_title,
     print_footer_audit_html,
@@ -58,6 +62,7 @@ from election_guide.rendering.shell import (
     site_footer_audit_html,
     site_footer_band_html,
     site_head_links_html,
+    site_page_head_html,
 )
 from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
 
@@ -114,13 +119,23 @@ def read_rendering_configuration(path: Path) -> RenderingConfiguration:
 
 
 def _template_environment() -> Environment:
-    return Environment(
+    environment = Environment(
         loader=FileSystemLoader(TEMPLATE_DIR),
         autoescape=True,
         undefined=StrictUndefined,
         trim_blocks=True,
         lstrip_blocks=True,
     )
+    # A global rather than a per-render variable: most evidence links are
+    # rendered inside macros, which do not see the calling template's context,
+    # so passing it per render silently covered only the handful of links
+    # outside a macro.
+    # Markup, not a plain string: autoescape is on, so a bare string would render
+    # as `target=&#34;_blank&#34;` and do nothing.
+    # `Environment.globals` is typed for Jinja's own builtins, so widen it here.
+    globals_map = cast(dict[str, Any], environment.globals)
+    globals_map["external_link_attributes"] = Markup(EXTERNAL_LINK_ATTRIBUTES)
+    return environment
 
 
 def _personalization_lookup_context(view_model: PublicationViewModel) -> dict[str, Any]:
@@ -170,6 +185,7 @@ def render_html_document(
     # Shared with the About page in hosting/pages.py so the native-share/
     # clipboard/execCommand fallback policy has exactly one implementation.
     share_link_script = (TEMPLATE_DIR / "share-link.mjs").read_text(encoding="utf-8")
+    election_day_script = (TEMPLATE_DIR / "election-day.mjs").read_text(encoding="utf-8")
     rendered_urls = [
         configuration.project_url,
         *(source.evidence_url for source in view_model.sources),
@@ -192,7 +208,12 @@ def render_html_document(
         for race in section.races
     }
     guide_path = f"/e/{view_model.metadata.election_id}/"
-    sources_page_url = f"{configuration.public_site_url}{guide_path}sources/"
+    # Root-relative, like every other in-site link: an absolute production URL
+    # walked a reader off any other origin — a local preview, a staging deploy,
+    # a PR preview — straight to seattleelections.guide. Nothing needs the
+    # origin: the band link, the strip's "Edit sources" link, and the script
+    # that appends the live lens fragment all work from a path.
+    sources_page_url = f"{guide_path}sources/"
     election_display_name, _ = election_names(
         view_model.metadata.election_date,
         view_model.metadata.election_type,
@@ -200,7 +221,7 @@ def render_html_document(
         legacy_name=view_model.metadata.election_name,
         election_id=view_model.metadata.election_id,
     )
-    document_title = page_title(election=election_display_name)
+    document_title = page_title(page="Endorsements", election=election_display_name)
     election_date_display = display_date(view_model.metadata.election_date)
     data_updated_date, site_updated_date = _footer_update_dates(view_model)
     print_footer_audit = print_footer_audit_html(
@@ -228,14 +249,21 @@ def render_html_document(
             guide_href=guide_path,
             sources_href=sources_page_url,
             compare_href=(
-                f"{guide_path}compare/" if view_model.comparisons.policy.enabled else None
+                f"{guide_path}comparisons/" if view_model.comparisons.policy.enabled else None
             ),
             current="endorsements",
             sources_link_data_attribute=True,
         ),
+        site_page_head=site_page_head_html(
+            eyebrow=election_display_name,
+            title="Endorsements",
+            tagline_html="Seattle&rsquo;s progressive voices, distilled.",
+            mode="extended",
+        ),
+        election_day_banner=election_day_banner_html(view_model.metadata.election_date),
+        election_day_script=election_day_script,
         site_head_links=site_head_links_html(configuration.public_site_url),
         election_date_display=election_date_display,
-        election_day_kicker=_election_day_kicker(view_model.metadata.election_date),
         site_footer_band=_election_footer_band(
             view_model,
             project_url=configuration.project_url,
@@ -291,6 +319,7 @@ def render_sources_document(
     ).read_text(encoding="utf-8")
     lens_url_script = (TEMPLATE_DIR / "lens-url.mjs").read_text(encoding="utf-8")
     share_link_script = (TEMPLATE_DIR / "share-link.mjs").read_text(encoding="utf-8")
+    election_day_script = (TEMPLATE_DIR / "election-day.mjs").read_text(encoding="utf-8")
     guide_path = f"/e/{view_model.metadata.election_id}/"
     pdf_href = f"{guide_path}{pdf_filename}" if pdf_filename is not None else None
     election_display_name, _ = election_names(
@@ -314,10 +343,19 @@ def render_sources_document(
             guide_href=guide_path,
             sources_href=f"{guide_path}sources/",
             compare_href=(
-                f"{guide_path}compare/" if view_model.comparisons.policy.enabled else None
+                f"{guide_path}comparisons/" if view_model.comparisons.policy.enabled else None
             ),
             current="sources",
         ),
+        site_page_head=site_page_head_html(
+            eyebrow=election_display_name,
+            title="Sources",
+            tagline_html=(
+                "Choose which sources count &mdash; the guide recalculates from your selection."
+            ),
+        ),
+        election_day_banner=election_day_banner_html(view_model.metadata.election_date),
+        election_day_script=election_day_script,
         site_head_links=site_head_links_html(public_site_url),
         site_footer_band=_election_footer_band(
             view_model,
@@ -346,6 +384,11 @@ def render_comparison_document(
     ).read_text(encoding="utf-8")
     share_link_script = (TEMPLATE_DIR / "share-link.mjs").read_text(encoding="utf-8")
     compare_url_script = (TEMPLATE_DIR / "compare-url.mjs").read_text(encoding="utf-8")
+    compare_migrate_script = (
+        (TEMPLATE_DIR / "compare-migrate.mjs")
+        .read_text(encoding="utf-8")
+        .replace("import { ALL_SOURCES_TOKEN } from './compare-url.mjs';\n", "")
+    )
     lens_score_script = (TEMPLATE_DIR / "lens-score.mjs").read_text(encoding="utf-8")
     compare_signals_script = (
         (TEMPLATE_DIR / "compare-signals.mjs")
@@ -353,6 +396,7 @@ def render_comparison_document(
         .replace("import { scoreRace } from './lens-score.mjs';\n", "")
     )
     compare_client_script = (TEMPLATE_DIR / "compare-client.mjs").read_text(encoding="utf-8")
+    election_day_script = (TEMPLATE_DIR / "election-day.mjs").read_text(encoding="utf-8")
     guide_path = f"/e/{view_model.metadata.election_id}/"
     pdf_href = f"{guide_path}{pdf_filename}" if pdf_filename is not None else None
     election_display_name, _ = election_names(
@@ -362,27 +406,12 @@ def render_comparison_document(
         legacy_name=view_model.metadata.election_name,
         election_id=view_model.metadata.election_id,
     )
-    document_title = page_title(page="Compare sources", election=election_display_name)
+    document_title = page_title(page="Comparisons", election=election_display_name)
     source_names = {source.id: source.name for source in view_model.sources}
     source_labels = {
         source.code: source_names[source.id] for source in view_model.personalization.sources
     }
-    audited_source_count = sum(
-        source.panel_role != "comparison" and source.contribution_status == "contributing"
-        for source in view_model.sources
-    )
     race_by_id = {race.id: race for section in view_model.sections for race in section.races}
-    affirmative_states = {"endorsement", "multi_endorsement"}
-    source_coverage = {
-        source.code: sum(
-            any(
-                cell.source_code == source.code and cell.state in affirmative_states
-                for cell in race.cells
-            )
-            for race in view_model.personalization.races
-        )
-        for source in view_model.personalization.sources
-    }
     comparison_payload = {
         "schema_version": "1.0",
         "data_version": view_model.metadata.data_version,
@@ -390,8 +419,6 @@ def render_comparison_document(
         "personalization": view_model.personalization.model_dump(mode="json"),
         "comparisons": view_model.comparisons.model_dump(mode="json"),
         "source_labels": source_labels,
-        "source_coverage": source_coverage,
-        "audited_source_count": audited_source_count,
         "contested_race_ids": [
             display.race_id
             for display in view_model.comparisons.display_index
@@ -400,15 +427,15 @@ def render_comparison_document(
     }
     preset_fragments = [
         (
-            "The Stranger vs. The Times",
+            "The Stranger and The Times",
             _comparison_fragment(view_model, ["strn", "stim"]),
         ),
         (
-            "Labor vs. Environment vs. Dems",
-            _comparison_fragment(view_model, ["Glab", "Genv", "Gdem"]),
+            "Labor and environment",
+            _comparison_fragment(view_model, ["Glab", "Genv"]),
         ),
         (
-            "The Urbanist vs. everyone",
+            "All sources and The Urbanist",
             _comparison_fragment(view_model, ["gall", "urbn"]),
         ),
     ]
@@ -421,16 +448,24 @@ def render_comparison_document(
         stylesheet=stylesheet,
         share_link_script=share_link_script,
         compare_url_script=compare_url_script,
+        compare_migrate_script=compare_migrate_script,
         lens_score_script=lens_score_script,
         compare_signals_script=compare_signals_script,
         compare_client_script=compare_client_script,
         site_band=site_band_html(
             guide_href=guide_path,
-            compare_href=f"{guide_path}compare/",
+            compare_href=f"{guide_path}comparisons/",
             sources_href=f"{guide_path}sources/",
-            current="compare",
+            current="comparisons",
         ),
         site_head_links=site_head_links_html(public_site_url),
+        site_page_head=site_page_head_html(
+            eyebrow=election_display_name,
+            title="Comparisons",
+            tagline_html="Endorsements side by side, surfacing tension.",
+        ),
+        election_day_banner=election_day_banner_html(view_model.metadata.election_date),
+        election_day_script=election_day_script,
         site_footer_band=_election_footer_band(
             view_model,
             project_url=project_url,
@@ -443,6 +478,7 @@ def render_comparison_document(
             row.differs for section in comparison_sections for row in section.rows
         ),
         comparison_payload=comparison_payload,
+        comparison_source_labels=source_labels,
         comparison_presets=preset_fragments,
         comparison_percentage_label=comparison_percentage_label,
     )
@@ -561,11 +597,12 @@ def _comparison_direct_cell(
 
 
 def _comparison_row_differs(cells: tuple[ComparisonCellView, ...]) -> bool:
-    data_cells = [set(cell.leading_pick_ids) for cell in cells if cell.leading_pick_ids]
+    if len(cells) < 2 or not cells[0].leading_pick_ids:
+        return False
+    reference = set(cells[0].leading_pick_ids)
     return any(
-        left.isdisjoint(right)
-        for index, left in enumerate(data_cells)
-        for right in data_cells[index + 1 :]
+        bool(cell.leading_pick_ids) and reference.isdisjoint(cell.leading_pick_ids)
+        for cell in cells[1:]
     )
 
 
@@ -653,15 +690,6 @@ def _election_footer_band(
         audit_html=audit_html,
         pdf_href=pdf_href,
     )
-
-
-def _election_day_kicker(iso_date: str) -> str:
-    """The guide hero's kicker (UI polish round 4, item L54): the exact
-    election day, templated per election ("ELECTION DAY · AUGUST 4"). The
-    hero h1 already states the month and year, so the kicker states only the
-    day at a coarser precision, once each."""
-    parsed = date.fromisoformat(iso_date)
-    return f"ELECTION DAY · {parsed:%B} {parsed.day}".upper()
 
 
 def _concise_warning_labels(race: PublicationRace) -> list[str]:
@@ -1109,9 +1137,15 @@ def validate_rendered_guide(
                 )
     expected_html_links = {
         "#guide-races",
-        "/",  # the band's and footer's brand mark both link home (item L54/L55)
+        "/",  # the footer's brand mark links home (item L55)
+        # The band's brand mark links straight to the current election's guide
+        # rather than to `/`, which only redirects there (issue 192); that link
+        # target is also what the extended-masthead dial keys off.
         f"/e/{view_model.metadata.election_id}/",
-        f"{configuration.public_site_url}/e/{view_model.metadata.election_id}/sources/",
+        # Slot 4's "How to vote" (issue 192). King County Elections administers
+        # Seattle's ballots and is already this repository's cited authority.
+        HOW_TO_VOTE_HREF,
+        f"/e/{view_model.metadata.election_id}/sources/",
         configuration.pdf_filename,
         "mailto:seattle-elections@dobravoda.dev",
         "/about/",
@@ -1128,6 +1162,8 @@ def validate_rendered_guide(
             if cell.evidence_url is not None
         ),
     }
+    if view_model.comparisons.policy.enabled:
+        expected_html_links.add(f"/e/{view_model.metadata.election_id}/comparisons/")
     canonical_url = f"{configuration.public_site_url}/e/{view_model.metadata.election_id}/"
     required_site_metadata = {
         f'<link rel="canonical" href="{canonical_url}">',
