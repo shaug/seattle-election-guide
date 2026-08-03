@@ -1,8 +1,0 @@
-{# The Sources page's per-source count (issue 129/H35). Kept as its own
-   macro file so the count grammar has one definition, whichever page
-   renders it. #}
-{% macro source_participation(source, compact=false) -%}
-  {%- set count_noun = ('pick' if source.panel_role == 'comparison' else 'endorsement') ~ ('' if source.endorsement_count == 1 else 's') -%}
-  {%- set split_suffix = (' · ' ~ source.split_endorsement_count ~ ' split') if source.split_endorsement_count else '' -%}
-  {% if compact %}{{ source.endorsement_count }}{% if source.panel_role == 'comparison' %} {{ count_noun }}{% endif %}{{ split_suffix }}{% else %}{{ source.endorsement_count }} {{ count_noun }}{{ split_suffix }}{% endif %}
-{%- endmacro %}

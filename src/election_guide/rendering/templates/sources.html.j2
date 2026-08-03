@@ -35,7 +35,6 @@
   </style>
 </head>
 <body>
-  {% from '_source_participation.html.j2' import source_participation %}
   {% macro coverage_gap_row(source, compact=false) -%}
     <section class="coverage-gap-row"
       data-coverage-gap-source-id="{{ source.id }}"
@@ -69,7 +68,7 @@
       {% else %}
       <a class="sources-source-link" href="{{ pub_source.evidence_url }}"{{ external_link_attributes }}>{{ pub_source.name }}</a>
       {% endif %}
-      <span class="sources-count">{{ source_participation(pub_source) }}</span>
+      <span class="sources-count">{{ source_participation_label(pub_source) }}</span>
       {% if other_category_ids %}
       <span class="sources-also-in">also in:
         {%- for other_id in other_category_ids %} {{ category_label_by_id[other_id] }}{% if not loop.last %},{% endif %}{% endfor -%}
@@ -89,7 +88,12 @@
     {{ election_day_banner | safe }}
     {{ site_page_head | safe }}
     <div class="sources-page-actions state-action-strip">
-      <p class="sources-page-count" data-sources-count role="status" aria-live="polite"></p>
+      {# The audited count, rendered rather than left for the client to fill in:
+         the page has to stand alone without JavaScript, and the region has to
+         hold the same text on both sides for the parity check to mean anything
+         (docs/FRONTEND.md § Rendering). "Counting", not "Viewing": a checked
+         source counts toward the computed results (issue 115, item D17). #}
+      <p class="sources-page-count" data-sources-count role="status" aria-live="polite">Counting {{ counted_source_count }} of {{ counted_source_count }} sources.</p>
       <div class="sources-page-controls">
         <a class="sources-save strip-action-primary" data-sources-save href="{{ guide_path }}">Save</a>
         <a class="sources-cancel" data-sources-cancel href="{{ guide_path }}">Cancel</a>
@@ -107,7 +111,14 @@
     <main id="sources-main">
 
       <div class="sources-tree">
-        <div class="sources-columns">
+        {# The selection region (docs/FRONTEND.md § Rendering). Only the
+           selectable categories: the comparison-only section below carries no
+           checkbox, and the coverage-gaps section carries no source a
+           selection can reach, so neither is a projection of selection state
+           and both stay as the server rendered them. sources-tree.mjs renders
+           this region's children, and `sources-markup-parity.test.mjs` holds
+           what it renders to the markup below. #}
+        <div class="sources-columns" data-sources-tree>
           {% for category in guide.personalization.categories if category.selectable and category.panel_role != 'comparison' %}
           <section class="sources-category" data-sources-category="{{ category.code }}">
             <h2>

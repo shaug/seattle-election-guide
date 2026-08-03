@@ -1,8 +1,11 @@
-// guide-lens.mjs is the guide's personalized rendering, moved out of
-// guide.html.j2's module script by issue #239. It is still imperative DOM
-// writing — the lit-html conversion is issue #248 — so these tests pin the
-// behavior the move had to preserve, in a lightweight DOM
-// (docs/FRONTEND.md § Testing).
+// guide-lens.mjs is the guide's personalized rendering. Since issue #248 the
+// race card's three regions are lit-html templates over view-model state and
+// only the race-detail dialog is still patched by hand, so these tests read the
+// rendered markup rather than the twin elements that used to hold it, in a
+// lightweight DOM (docs/FRONTEND.md § Testing).
+//
+// The banner is not here: it is page chrome, and `guide-client.test.mjs` covers
+// the region that owns it.
 
 import assert from 'node:assert/strict';
 import test from 'node:test';
@@ -111,17 +114,25 @@ function payload(personalization = personalizationContract()) {
   });
 }
 
+// The audited baseline the card regions are taken over from, as guide.html.j2
+// renders it: one element per value, holding the audited result.
 function lensMarkup() {
   return `
-    <div data-lens-banner hidden><span data-lens-banner-status></span></div>
     <article id="race-mayor" data-publication-race-id="mayor">
-      <h3 data-lens-recommendation></h3>
-      <div data-lens-share><strong data-lens-share-text></strong></div>
-      <p data-lens-no-majority hidden></p>
-      <p data-lens-support></p>
-      <p data-lens-support-compact></p>
-      <div data-lens-insufficient hidden></div>
-      <p data-lens-comparison hidden></p>
+      <div class="screen-race-result" data-lens-result>
+        <h3 data-display-role="recommendation">Ada Lovelace / Blaise Pascal</h3>
+        <div class="screen-meter meter-no-majority" style="--meter-fill: 50%" role="img"
+          data-display-role="share"
+          aria-label="No majority. Consensus among explicitly endorsing sources: 50%">
+          <strong>50%</strong>
+        </div>
+      </div>
+      <div class="screen-race-context" data-lens-context>
+        <p class="no-majority-pill">No majority</p>
+        <p class="support-line support-full" data-display-role="support">Based on 2 endorsing sources</p>
+        <p class="support-line support-compact" data-display-role="support">2 sources</p>
+      </div>
+      <div class="race-card-foot" data-lens-foot></div>
       <dialog data-race-detail-dialog>
         <p data-race-detail-summary>The audited summary, verbatim.</p>
         <div class="race-detail-outcomes">
@@ -166,17 +177,20 @@ test('a page with the lens disabled has no renderer at all', async () => {
   assert.equal(lens, null);
 });
 
-test('the audited default reveals the banner and renders no personalized values', async () => {
+// The takeover idiom (docs/FRONTEND.md § Rendering): a region whose content is
+// a projection of state is left exactly as the server rendered it until the
+// state stops being the audited default.
+test('the audited default leaves every card region as the server rendered it', async () => {
   const { document, lens } = await build();
+  const before = document.querySelector('[data-lens-result] h3');
   lens.render(['strn', 'mlkl']);
 
-  assert.equal(document.querySelector('[data-lens-banner]').hidden, false);
-  assert.equal(
-    document.querySelector('[data-lens-banner-status]').textContent,
-    'Counting all 2 sources.',
-  );
   assert.equal(document.documentElement.classList.contains('lens-personalized'), false);
-  assert.equal(document.querySelector('[data-lens-recommendation]').textContent, '');
+  assert.ok(
+    document.querySelector('[data-lens-result] h3') === before,
+    'the client rebuilt a card region at the audited default',
+  );
+  assert.equal(before.textContent, 'Ada Lovelace / Blaise Pascal');
 });
 
 test('a narrowed selection renders the personalized result and counts', async () => {
@@ -184,24 +198,28 @@ test('a narrowed selection renders the personalized result and counts', async ()
   lens.render(['strn']);
 
   assert.equal(document.documentElement.classList.contains('lens-personalized'), true);
+  assert.equal(document.querySelector('[data-lens-result] h3').textContent, 'Ada Lovelace');
   assert.equal(
-    document.querySelector('[data-lens-banner-status]').textContent,
-    'Counting 1 of 2 sources.',
+    document.querySelector('[data-lens-result] .screen-meter strong').textContent,
+    '100%',
   );
-  assert.equal(document.querySelector('[data-lens-recommendation]').textContent, 'Ada Lovelace');
-  assert.equal(document.querySelector('[data-lens-share-text]').textContent, '100%');
   assert.equal(
-    document.querySelector('[data-lens-support]').textContent,
+    document.querySelector('[data-lens-context] .support-full').textContent,
     'Based on 1 of 1 selected sources',
   );
+  assert.equal(
+    document.querySelector('[data-lens-context] .support-compact').textContent,
+    '1 of 1 selected',
+  );
+  assert.equal(document.querySelector('[data-lens-context] .no-majority-pill').hidden, true);
 });
 
 test('the meter carries the fill, the tone, and the spoken label together', async () => {
   const { document, lens } = await build();
   lens.render(['strn']);
-  const meter = document.querySelector('[data-lens-share]');
+  const meter = document.querySelector('[data-lens-result] .screen-meter');
 
-  assert.equal(meter.style.getPropertyValue('--meter-fill'), '100%');
+  assert.equal(meter.getAttribute('style'), '--meter-fill: 100%');
   assert.equal(meter.classList.contains('meter-no-majority'), false);
   assert.match(meter.getAttribute('aria-label'), /Consensus among explicitly endorsing sources/);
 });
@@ -211,16 +229,28 @@ test('the meter carries the fill, the tone, and the spoken label together', asyn
 test('a race whose leader changed discloses the full-panel reference, in words', async () => {
   const { document, lens } = await build();
   lens.render(['mlkl']);
-  const bar = document.querySelector('[data-lens-comparison]');
+  const bar = document.querySelector('[data-lens-foot] .lens-comparison');
 
-  assert.equal(bar.hidden, false);
+  assert.ok(bar, 'a divergent race should render the All-sources reference bar');
   assert.match(bar.textContent, /^All sources: /);
+  assert.equal(bar.getAttribute('role'), 'group');
   assert.match(
     bar.getAttribute('aria-label'),
     /All sources (differ from|agree with) your selection/,
   );
   // The dialog carries the same reference line (I56).
   assert.equal(document.querySelector('[data-lens-detail-audited]').hidden, false);
+});
+
+// The bar is divergence-only, so an unchanged race renders no element at all
+// rather than an empty one waiting to be filled in.
+test('a selection that changes nothing renders no reference bar', async () => {
+  const { document, lens } = await build();
+  lens.render(['mlkl']);
+  assert.ok(document.querySelector('[data-lens-foot] .lens-comparison'));
+
+  lens.render(['strn', 'mlkl']);
+  assert.equal(document.querySelector('[data-lens-foot] .lens-comparison'), null);
 });
 
 // I56: no quantity may appear with two values, and an unselected source stays
@@ -251,15 +281,27 @@ test('the leading candidate is moved to the front of the dialog', async () => {
 
 // The restore this ticket had to keep: nothing runs the renderer once the lens
 // stops applying, so clearing it must put the audited order and summary back.
-test('reselecting every source restores the audited order and summary', async () => {
+test('reselecting every source restores the audited order, values, and summary', async () => {
   const { document, lens } = await build();
   lens.render(['mlkl']);
   assert.notEqual(
     document.querySelector('[data-race-detail-summary]').textContent,
     'The audited summary, verbatim.',
   );
+  assert.equal(document.querySelector('[data-lens-result] h3').textContent, 'Blaise Pascal');
 
   lens.render(['strn', 'mlkl']);
+  // The audited restore is a render of the audited view model, not a copy of
+  // the server's markup put back (docs/FRONTEND.md § Rendering).
+  assert.equal(
+    document.querySelector('[data-lens-result] h3').textContent,
+    'Ada Lovelace / Blaise Pascal',
+  );
+  assert.equal(document.querySelector('[data-lens-context] .no-majority-pill').hidden, false);
+  assert.equal(
+    document.querySelector('[data-lens-context] .support-full').textContent,
+    'Based on 2 endorsing sources',
+  );
   const order = [
     ...document.querySelectorAll('.race-detail-outcomes > [data-race-detail-candidate-id]'),
   ].map((section) => section.dataset.raceDetailCandidateId);
@@ -294,6 +336,92 @@ test('the audited candidate order and labels come from the payload', async () =>
     ...document.querySelectorAll('.race-detail-outcomes > [data-race-detail-candidate-id]'),
   ].map((section) => section.dataset.raceDetailCandidateId);
   assert.deepEqual(order, ['blaise', 'ada']);
+});
+
+// The Insufficient branch of the card foot, which nothing else reaches: no
+// race on the published ballot carries that grade, so the markup-parity fixture
+// cannot exercise it either. Both wordings are mirrors of the audited renderer
+// — the audited one of guide.html.j2's literal, the personalized one of the
+// sentence the retired lens-only twin used to carry — so they are asserted here
+// rather than left to a whole-document search that the inlined bundle would
+// satisfy on its own (docs/FRONTEND.md § Cross-language mirrors).
+test('an insufficient race states the shortage, in the wording that applies', async () => {
+  // Three endorsing sources required, so both the one-source lens and the
+  // two-source audited baseline fall short. Both sources back Ada here: a tie
+  // outranks Insufficient in the grade order, and a tied audited baseline would
+  // never reach the audited wording.
+  const strict = payload();
+  strict.personalization.scoring.minimum_explicit_sources = 3;
+  strict.personalization.races[0].cells[1].allocation = { ada: '1' };
+  const { document, lens } = await build(strict);
+  const note = () => document.querySelector('[data-lens-foot] .insufficient-note');
+
+  lens.render(['strn']);
+  assert.equal(
+    note().textContent,
+    'Too few endorsements to measure agreement among your selected sources.',
+  );
+  assert.equal(note().getAttribute('role'), 'note');
+
+  // The audited restore is a render, so it must put the server's own wording
+  // back rather than leaving the personalized sentence behind.
+  lens.render(['strn', 'mlkl']);
+  assert.equal(note().textContent, 'Too few endorsements to measure agreement.');
+});
+
+// I41's threshold is a Python/JavaScript mirror — guide.html.j2 writes
+// `race.percentage_whole < 30`, meterView writes `fillPercent < 30` — and the
+// markup-parity fixture cannot reach it, because no race on the published
+// ballot has a sub-30% leader (docs/FRONTEND.md § Cross-language mirrors: the
+// diff "cannot reach a value the audited page does not render"). So the
+// decision is exercised here, through meterView, rather than restated in a
+// fixture that would agree with whatever production chose.
+test('a share below the I41 threshold carries the low-fill guard', async () => {
+  // Five sources, four candidates. The audited baseline gives Ada two of five
+  // (40%, above the threshold); dropping her second endorser leaves a four-way
+  // tie at 25%, below it.
+  const spread = payload();
+  const codes = ['strn', 'mlkl', 'urbn', 'kcdm', 'sicl'];
+  spread.personalization.sources = codes.map((code) => ({
+    id: code,
+    code,
+    selectable: true,
+    panel_role: 'consensus',
+    reporting_category_id: 'press',
+    selection_category_ids: ['press'],
+    overlap_group_ids: [],
+  }));
+  spread.personalization.categories[0].member_source_codes = codes;
+  spread.personalization.races[0].candidate_order = ['ada', 'blaise', 'carol', 'dave'];
+  spread.personalization.races[0].eligible_source_codes = codes;
+  spread.personalization.races[0].cells = [
+    { source_code: 'strn', state: 'endorsement', allocation: { ada: '1' } },
+    { source_code: 'mlkl', state: 'endorsement', allocation: { blaise: '1' } },
+    { source_code: 'urbn', state: 'endorsement', allocation: { carol: '1' } },
+    { source_code: 'kcdm', state: 'endorsement', allocation: { dave: '1' } },
+    { source_code: 'sicl', state: 'endorsement', allocation: { ada: '1' } },
+  ];
+  spread.sources = spread.personalization.sources;
+  spread.categories = spread.personalization.categories;
+  spread.races[0].candidates = ['ada', 'blaise', 'carol', 'dave'].map((candidate_id) => ({
+    candidate_id,
+    label: candidate_id,
+  }));
+
+  const { document, lens } = await build(spread);
+  const meter = () => document.querySelector('[data-lens-result] .screen-meter');
+
+  lens.render(['strn', 'mlkl', 'urbn', 'kcdm']);
+  assert.equal(meter().querySelector('strong').textContent, '25%');
+  assert.ok(
+    meter().classList.contains('meter-low-fill'),
+    'a 25% share is below the I41 threshold and must carry the low-fill guard',
+  );
+
+  // The audited restore renders 40%, which is above it.
+  lens.render(codes);
+  assert.equal(meter().querySelector('strong').textContent, '40%');
+  assert.equal(meter().classList.contains('meter-low-fill'), false);
 });
 
 test('the module keeps client state out of storage', () => {

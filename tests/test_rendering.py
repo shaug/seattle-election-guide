@@ -56,6 +56,7 @@ from election_guide.rendering.renderer import (
     _terminate_process,  # pyright: ignore[reportPrivateUsage]
     _wait_for_devtools_endpoint,  # pyright: ignore[reportPrivateUsage]
     find_chrome,
+    render_sources_document,
 )
 from election_guide.rendering.shell import (
     HOW_TO_VOTE_HREF,
@@ -66,6 +67,12 @@ from election_guide.rendering.shell import (
 )
 from election_guide.scoring import score_dataset
 from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
+from tests.page_parity import (
+    GUIDE_PAGE_PATH,
+    SOURCES_PAGE_PATH,
+    build_audited_guide_page,
+    build_audited_sources_page,
+)
 from tests.test_personalization import (
     _bundle as _production_bundle,  # pyright: ignore[reportPrivateUsage]
 )
@@ -327,8 +334,16 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
 
     html = render_html_document(view_model, configuration)
 
-    assert "Too few endorsements to measure agreement." in html
-    assert "Too few endorsements to measure agreement among your selected sources." in html
+    # Against the rendered markup, not the whole document: since issue #248 the
+    # client carries its own copy of this wording, and the renderer inlines the
+    # bundle into the page, so a whole-document search would be satisfied by
+    # guide-lens.mjs and would stop constraining this template. The personalized
+    # wording is no longer server markup at all — the lens-only twin that used
+    # to carry it is retired — and is asserted client-side instead, in
+    # `tests/js/guide-lens.test.mjs`.
+    body = html.split("</style>", 1)[1].split('<script type="module">', 1)[0]
+    assert "Too few endorsements to measure agreement." in body
+    assert "Too few endorsements to measure agreement among your selected sources." not in body
     assert "Too few explicit endorsements" not in html
 
     # Issue 108 acceptance: a coverage-gap source has zero endorsements and was
@@ -745,19 +760,21 @@ def test_round4_card_anatomy_and_data_ink_cleanup(tmp_path: Path) -> None:
     # forms (a pure CSS toggle, mirroring the print edition's own full/compact
     # captions), directly under the meter row and ahead of the reference
     # block (the comparisons div) at the card foot.
+    # Issue #248 retired the lens-only twins: one caption element carries the
+    # audited text and, once a selection diverges, the personalized text, so
+    # the markup no longer varies with the policy.
     html = render_html_document(view_model, configuration)
-    lens_hidden_attr = " data-lens-hidden" if view_model.personalization.policy.enabled else ""
     for race in races:
         card_start = html.index(f'id="race-{race.id}"')
         card_end = html.index("</dialog>", card_start)
         card_html = html[card_start:card_end]
         full_caption = (
             f'<p class="support-line support-full" data-display-role="support"'
-            f"{lens_hidden_attr}>{_screen_support_summary(race)}</p>"
+            f">{_screen_support_summary(race)}</p>"
         )
         compact_caption = (
             f'<p class="support-line support-compact" data-display-role="support"'
-            f"{lens_hidden_attr}>{_screen_support_summary_compact(race)}</p>"
+            f">{_screen_support_summary_compact(race)}</p>"
         )
         assert full_caption in card_html
         assert compact_caption in card_html
@@ -883,12 +900,7 @@ def test_nonempty_render_destination_is_preserved(tmp_path: Path) -> None:
 
 
 def _recommendation_tag_pattern(label: str) -> re.Pattern[str]:
-    """Match a rendered recommendation `<h3>` around its exact label text.
-
-    The opening tag may carry an additional `data-lens-hidden` attribute when
-    the personalization policy is enabled, so match it with `[^>]*` rather
-    than assuming a bare tag.
-    """
+    """Match a rendered recommendation `<h3>` around its exact label text."""
     return re.compile(
         r'(<h3 data-display-role="recommendation"[^>]*>)' + re.escape(label) + r"(</h3>)"
     )
@@ -2250,8 +2262,8 @@ def test_no_majority_lens_state_appears_and_dissolves_with_the_selected_sources(
           const pause = () => new Promise((resolve) => setTimeout(resolve, 100));
           const card = document.querySelector('[data-publication-race-id="king-county-assessor"]');
           const snapshot = () => {{
-            const meter = card.querySelector('[data-lens-share]');
-            const pill = card.querySelector('[data-lens-no-majority]');
+            const meter = card.querySelector('[data-lens-result] .screen-meter');
+            const pill = card.querySelector('[data-lens-context] .no-majority-pill');
             const kicker = card.querySelector('[data-race-detail-lens-kicker]:not([hidden])');
             return {{
               pillHidden: pill.hidden,
@@ -2449,12 +2461,6 @@ def test_personalization_is_invisible_while_the_policy_is_disabled(tmp_path: Pat
         "data-lens-banner",
         "data-lens-only",
         "data-lens-hidden",
-        "data-lens-recommendation",
-        "data-lens-share",
-        "data-lens-support",
-        "data-lens-support-compact",
-        "data-lens-insufficient",
-        "data-lens-comparison",
         "data-race-detail-lens",
         "data-lens-detail-summary",
         "data-lens-detail-audited",
@@ -2477,6 +2483,18 @@ def test_personalization_is_invisible_while_the_policy_is_disabled(tmp_path: Pat
     # address bar, and the rule requires the reader be told why (issue #239).
     assert "data-payload-notice" in body
     assert "data-lens-notice" in body
+
+    # Issue #248: the sources page's tree is a lit region now, so the switch has
+    # to reach the payload as well as the markup. An empty tree is what stops
+    # the client taking the region over and rendering the checkboxes this
+    # template deliberately withheld.
+    sources_html = render_sources_document(
+        view_model, public_site_url="https://seattleelections.guide"
+    )
+    sources_body = sources_html.split("</style>", 1)[1].split('<script type="module">', 1)[0]
+    assert "data-sources-source=" not in sources_body
+    assert "data-sources-category-toggle=" not in sources_body
+    assert _client_payload(sources_html)["tree"] == []
 
     # Issue 124: the bindings still publish every category and source,
     # including the comparison one, so the codec can classify a pre-removal
@@ -3029,8 +3047,10 @@ def test_personalization_full_panel_selection_shows_no_divergent_comparison(tmp_
         (async () => {
           const cards = [...document.querySelectorAll('.race-card')];
           const personalized = document.documentElement.classList.contains('lens-personalized');
+          // Issue #248: the reference bar is divergence-only markup now, so
+          // the audited page renders no element at all rather than a hidden one.
           const anyComparisonShown = cards.some(
-            (card) => card.querySelector('[data-lens-comparison]')?.hidden === false,
+            (card) => card.querySelector('[data-lens-foot] .lens-comparison') !== null,
           );
           const firstCard = cards[0];
           return JSON.stringify({
@@ -3093,12 +3113,10 @@ def test_personalization_divergent_race_discloses_a_compact_comparison_and_full_
           const selectedCodes = new Set({selected_codes_json});
           const shown = (el) => el !== null && getComputedStyle(el).display !== 'none';
           const cards = [...document.querySelectorAll('.race-card')];
-          const divergent = cards.find(
-            (card) => card.querySelector('[data-lens-comparison]')?.hidden === false,
-          );
-          const unchanged = cards.find(
-            (card) => card.querySelector('[data-lens-comparison]')?.hidden === true,
-          );
+          // The reference bar exists only on a card that diverges (issue #248).
+          const bar = (card) => card.querySelector('[data-lens-foot] .lens-comparison');
+          const divergent = cards.find((card) => bar(card) !== null);
+          const unchanged = cards.find((card) => bar(card) === null);
           let detail = null;
           if (divergent) {{
             divergent.querySelector('[data-race-detail-link]').click();
@@ -3113,7 +3131,9 @@ def test_personalization_divergent_race_discloses_a_compact_comparison_and_full_
             const noMySourcesHeading = ![...dialog.querySelectorAll('h4')].some(
               (heading) => heading.textContent === 'My sources',
             );
-            const cardShareText = divergent.querySelector('[data-lens-share-text]')?.textContent;
+            const cardShareText = divergent.querySelector(
+              '[data-lens-result] .screen-meter strong',
+            )?.textContent;
             const sections = [...dialog.querySelectorAll('[data-race-detail-candidate-id]')];
             // I56 hard invariant: every visible per-candidate meter equals the
             // card's own lens share — no quantity appears with two values.
@@ -3153,16 +3173,19 @@ def test_personalization_divergent_race_discloses_a_compact_comparison_and_full_
               candidateSectionCount: sections.length,
             }};
           }}
-          const divergentComparison = divergent?.querySelector('[data-lens-comparison]');
+          const divergentComparison = divergent === undefined ? null : bar(divergent);
           return JSON.stringify({{
             hasDivergent: divergent !== undefined,
             hasUnchanged: unchanged !== undefined,
             // H38: the caption itself carries the lens state now that the
             // per-card "My sources" pill is retired — no separate badge
             // element exists to query.
-            divergentSupportText: divergent?.querySelector('[data-lens-support]')?.textContent,
-            divergentSupportCompactText:
-              divergent?.querySelector('[data-lens-support-compact]')?.textContent,
+            divergentSupportText: divergent?.querySelector(
+              '[data-lens-context] .support-full',
+            )?.textContent,
+            divergentSupportCompactText: divergent?.querySelector(
+              '[data-lens-context] .support-compact',
+            )?.textContent,
             divergentComparisonText: divergentComparison?.textContent,
             divergentComparisonRole: divergentComparison?.getAttribute('role'),
             divergentComparisonAriaLabel: divergentComparison?.getAttribute('aria-label'),
@@ -3170,7 +3193,7 @@ def test_personalization_divergent_race_discloses_a_compact_comparison_and_full_
               divergentComparison?.classList.contains('lens-comparison-differs')
               || divergentComparison?.classList.contains('lens-comparison-agrees'),
             ),
-            unchangedComparisonHidden: unchanged?.querySelector('[data-lens-comparison]')?.hidden,
+            unchangedComparisonAbsent: unchanged === undefined ? null : bar(unchanged) === null,
             detail,
           }});
         }})()
@@ -3209,7 +3232,7 @@ def test_personalization_divergent_race_discloses_a_compact_comparison_and_full_
     for share_text in detail["visibleLensMeterShares"]:
         assert share_text == detail["cardShareText"]
     if result["hasUnchanged"]:
-        assert result["unchangedComparisonHidden"] is True
+        assert result["unchangedComparisonAbsent"] is True
 
 
 def test_race_detail_dialog_reflects_the_active_lens_leader_not_the_audited_default(
@@ -3272,7 +3295,9 @@ def test_race_detail_dialog_reflects_the_active_lens_leader_not_the_audited_defa
           const shown = (el) => el !== null && getComputedStyle(el).display !== 'none';
           const raceId = {race_id_json};
           const card = document.querySelector(`[data-publication-race-id="${{raceId}}"]`);
-          const recommendation = card.querySelector('[data-lens-recommendation]')?.textContent;
+          const recommendation = card.querySelector(
+            '[data-lens-result] [data-display-role="recommendation"]',
+          )?.textContent;
           card.querySelector('[data-race-detail-link]').click();
           await new Promise((resolve) => setTimeout(resolve, 50));
           const dialog = card.querySelector('[data-race-detail-dialog]');
@@ -3336,12 +3361,15 @@ def test_race_detail_dialog_reflects_the_active_lens_leader_not_the_audited_defa
 
 def test_personalization_compact_caption_shows_only_the_lens_short_form(tmp_path: Path) -> None:
     """H34 + H38 interaction: in compact mode, while a lens is active on a
-    divergent race, exactly the lens's own short caption ("N of M selected")
-    must be visible — never the default caption (either form) and never the
-    lens's own full-sentence form. The full/compact toggle (guide.css) and
-    the lens-active toggle ([data-lens-hidden]/[data-lens-only]) are two
-    independent CSS rule pairs applied to the same elements; this proves they
-    resolve consistently together, not just each in isolation.
+    divergent race, exactly the short caption must be visible, and it must be
+    carrying the lens's own text ("N of M selected") rather than the audited
+    sentence.
+
+    Issue #248 retired the lens-only caption twins, so there is one full
+    caption and one compact caption per card and the only toggle left is the
+    full/compact one (guide.css). What this proves is that the surviving pair
+    still resolves the way it did when four elements were involved: the
+    compact one visible, the full one not, and the visible text the lens's.
     """
     view_model = _production_bundle().view_model
     enabled_policy = view_model.personalization.policy.model_copy(update={"enabled": True})
@@ -3374,24 +3402,21 @@ def test_personalization_compact_caption_shows_only_the_lens_short_form(tmp_path
           document.documentElement.classList.add('compact-ballot-mode');
           const cards = [...document.querySelectorAll('.race-card')];
           const divergent = cards.find(
-            (card) => card.querySelector('[data-lens-comparison]')?.hidden === false,
+            (card) => card.querySelector('[data-lens-foot] .lens-comparison') !== null,
           );
           const displayOf = (el) => (el ? getComputedStyle(el).display : null);
+          const caption = (form) => divergent?.querySelector(
+            `[data-lens-context] .support-line.support-${form}`,
+          );
           return JSON.stringify({
             hasDivergent: divergent !== undefined,
-            defaultFullDisplay: displayOf(
-              divergent?.querySelector('.support-line.support-full:not(.lens-value)'),
-            ),
-            defaultCompactDisplay: displayOf(
-              divergent?.querySelector('.support-line.support-compact:not(.lens-value)'),
-            ),
-            lensFullDisplay: displayOf(
-              divergent?.querySelector('.support-line.support-full.lens-value'),
-            ),
-            lensCompactDisplay: displayOf(
-              divergent?.querySelector('.support-line.support-compact.lens-value'),
-            ),
-            lensCompactText: divergent?.querySelector('[data-lens-support-compact]')?.textContent,
+            captionCount: divergent
+              ? divergent.querySelectorAll('[data-lens-context] .support-line').length
+              : null,
+            fullDisplay: displayOf(caption('full')),
+            compactDisplay: displayOf(caption('compact')),
+            fullText: caption('full')?.textContent,
+            compactText: caption('compact')?.textContent,
           });
         })()
         """,
@@ -3400,11 +3425,12 @@ def test_personalization_compact_caption_shows_only_the_lens_short_form(tmp_path
     assert result["hasDivergent"] is True, (
         "expected at least one production race to diverge from the full-panel audited baseline"
     )
-    assert result["defaultFullDisplay"] == "none"
-    assert result["defaultCompactDisplay"] == "none"
-    assert result["lensFullDisplay"] == "none"
-    assert result["lensCompactDisplay"] == "block"
-    assert re.match(r"\d+ of \d+ selected", result["lensCompactText"])
+    # One caption per form, not two: the lens-only twins are gone.
+    assert result["captionCount"] == 2
+    assert result["fullDisplay"] == "none"
+    assert result["compactDisplay"] == "block"
+    assert re.match(r"\d+ of \d+ selected", result["compactText"])
+    assert re.match(r"Based on \d+ of \d+ selected sources", result["fullText"])
 
 
 def _lens_fragment(
@@ -3675,8 +3701,8 @@ def test_a_pre_removal_shared_link_replays_with_its_comparison_token_ignored(
     tallying_codes = sorted(
         source.code for source in view_model.personalization.sources if _tallying_selectable(source)
     )
-    # Diverge from the default so the lens actually personalizes and
-    # populates [data-lens-recommendation] for the check below.
+    # Diverge from the default so the lens actually personalizes and renders
+    # the card regions read below.
     personalized_codes = tallying_codes[1:]
     current_fragment = _lens_fragment(view_model, mode="s", source_codes=tuple(personalized_codes))
     legacy_fragment = _lens_fragment(
@@ -3696,9 +3722,10 @@ def test_a_pre_removal_shared_link_replays_with_its_comparison_token_ignored(
           notice: document.querySelector('[data-lens-notice]:not([hidden])')?.textContent ?? '',
           sourcesHref: document.querySelector('[data-sources-link]')?.getAttribute('href') ?? '',
           cards: [...document.querySelectorAll('[data-publication-race-id]')].map((card) => [
-            card.querySelector('[data-lens-recommendation]')?.textContent,
-            card.querySelector('[data-lens-share-text]')?.textContent,
-            card.querySelector('[data-lens-support]')?.textContent,
+            card.querySelector('[data-lens-result] [data-display-role="recommendation"]')
+              ?.textContent,
+            card.querySelector('[data-lens-result] .screen-meter strong')?.textContent,
+            card.querySelector('[data-lens-context] .support-full')?.textContent,
           ].join('|')).join('||'),
         })
         """
@@ -3718,3 +3745,26 @@ def test_a_pre_removal_shared_link_replays_with_its_comparison_token_ignored(
         key: value for key, value in current.items() if key != "hash"
     }
     assert comparison_code not in legacy["sourcesHref"]
+
+
+def test_committed_lens_page_fixtures_match_a_fresh_render() -> None:
+    """The Node markup-parity checks are only as good as the pages they diff
+    against.
+
+    docs/FRONTEND.md § Rendering requires the lit-html rendering of a region to
+    be the region the Jinja template rendered. The Node side of that comparison
+    reads a committed copy of each audited page, so a change to a Jinja
+    template or to the published data has to land with regenerated fixtures —
+    otherwise the parity tests would keep passing against markup the site no
+    longer serves.
+    """
+    for path, fresh in (
+        (GUIDE_PAGE_PATH, build_audited_guide_page()),
+        (SOURCES_PAGE_PATH, build_audited_sources_page()),
+    ):
+        assert path.read_text(encoding="utf-8") == fresh, (
+            f"{path.relative_to(PROJECT_ROOT)} is not what the renderer now produces, so the "
+            "Node markup-parity test is diffing against a page that no longer exists. "
+            "Regenerate it in this pull request with `uv run python -m tests.page_parity` "
+            "(docs/FRONTEND.md, Rendering)."
+        )

@@ -49,6 +49,11 @@ html.compact-ballot-mode .support-compact { display: block; }
 .lens-comparison-agrees { border-left-color: var(--tone-agree-border); background: var(--tone-agree-bg); color: var(--tone-agree-text); }
 .lens-comparison-differs { border-left-color: var(--tone-differ-border); background: var(--tone-differ-bg); color: var(--tone-differ-text); }
 .insufficient-note { padding: .55rem .65rem; border-left: .25rem solid var(--red); background: #fff1ef; color: #72231e; font-size: .78rem; }
+/* The card foot exists so lit has one region to own below the card's link
+   (docs/FRONTEND.md, Rendering). It must not become a box: its children are
+   direct flex items of the card, so the card's own gap still separates the
+   insufficiency warning from the All-sources bar. */
+.race-card-foot { display: contents; }
 html.compact-ballot-mode .screen-sections { padding-top: .65rem; padding-bottom: 2.5rem; }
 html.compact-ballot-mode .screen-section { margin: 1.5rem 0 2.5rem; }
 html.compact-ballot-mode .section-heading h2 { margin-bottom: .65rem; font-size: clamp(1.35rem, 3vw, 2rem); }
