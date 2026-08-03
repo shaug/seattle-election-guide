@@ -232,12 +232,15 @@ def breakpoint_survey(surfaces: dict[str, list[str]]) -> dict[str, list[str]]:
     survey: dict[str, list[str]] = {}
     for threshold in sorted(thresholds, key=int):
         number = re.compile(rf"(?<![\d.]){threshold}(?![\d.])")
-        found = ["stylesheet"]
-        found += [
+        # Thresholds are discovered from the stylesheets, so that surface is
+        # always one of theirs. Saying so inside the same comprehension the
+        # other two surveys use keeps the result ordered by SURFACE_ORDER by
+        # construction, which is what the manifest is checked against.
+        found = [
             kind
             for kind in SURFACE_ORDER
-            if kind != "stylesheet"
-            and any(
+            if kind == "stylesheet"
+            or any(
                 number.search(line) and WIDTH_CONTEXT.search(line)
                 for text in surfaces.get(kind, [])
                 for line in text.splitlines()
