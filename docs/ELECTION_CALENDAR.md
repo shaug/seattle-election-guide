@@ -139,5 +139,6 @@ while leaving that seam open rather than committing to it. A milestone's `kind`
 and ID are stable enough to key voter-facing text against; that text belongs on
 the rendering side, not here.
 
-The retrospective milestone therefore declares a date and nothing else. The
-checklist it will point to is tracked separately.
+The retrospective milestone therefore declares a date and a reference to
+`docs/POST_ELECTION_RETROSPECTIVE.md`, and no wording of its own. A reference
+names where the work is written down; it is not copy about the milestone.
