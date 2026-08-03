@@ -53,6 +53,8 @@ Requirements:
 - [uv](https://docs.astral.sh/uv/)
 - Chrome or Chromium
 - Node.js 24 and npm for local Cloudflare Pages preview or deployment
+- `jq`, which `make check` runs against the pull-request preview workflow's own
+  deployment filter
 
 Install the locked environment and run the checks:
 
