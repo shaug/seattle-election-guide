@@ -155,26 +155,35 @@ def materialize_released_bundle(declaration: PublishedElection, work_dir: Path) 
 def _extract_bundle(archive_path: Path, bundle_dir: Path, declaration: PublishedElection) -> None:
     """Extract the archive's single bundle root, rejecting unsafe member paths."""
     prefix = f"{ARCHIVE_ROOT_DIR}/"
-    with zipfile.ZipFile(archive_path) as archive:
-        members = [name for name in archive.namelist() if not name.endswith("/")]
-        if not members:
-            raise ValueError(f"release archive {archive_path.name!r} contains no files")
-        outside = sorted(name for name in members if not name.startswith(prefix))
-        if outside:
-            raise ValueError(
-                f"release archive {archive_path.name!r} contains entries outside "
-                f"{ARCHIVE_ROOT_DIR!r}: {outside[:5]}"
-            )
-        for name in members:
-            relative = PurePosixPath(name[len(prefix) :])
-            if not relative.parts or relative.is_absolute() or ".." in relative.parts:
+    # A replaced, truncated, or CRC-corrupt download raises BadZipFile, which is
+    # not a ValueError and would escape the command's error handling as a
+    # traceback. Every archive-level rejection reads the same way instead.
+    try:
+        with zipfile.ZipFile(archive_path) as archive:
+            members = [name for name in archive.namelist() if not name.endswith("/")]
+            if not members:
+                raise ValueError(f"release archive {archive_path.name!r} contains no files")
+            outside = sorted(name for name in members if not name.startswith(prefix))
+            if outside:
                 raise ValueError(
-                    f"release archive {archive_path.name!r} contains an unsafe entry: {name!r}"
+                    f"release archive {archive_path.name!r} contains entries outside "
+                    f"{ARCHIVE_ROOT_DIR!r}: {outside[:5]}"
                 )
-            target = bundle_dir / Path(*relative.parts)
-            target.parent.mkdir(parents=True, exist_ok=True)
-            with archive.open(name) as source, target.open("wb") as sink:
-                shutil.copyfileobj(source, sink, READ_CHUNK_SIZE)
+            for name in members:
+                relative = PurePosixPath(name[len(prefix) :])
+                if not relative.parts or relative.is_absolute() or ".." in relative.parts:
+                    raise ValueError(
+                        f"release archive {archive_path.name!r} contains an unsafe entry: {name!r}"
+                    )
+                target = bundle_dir / Path(*relative.parts)
+                target.parent.mkdir(parents=True, exist_ok=True)
+                with archive.open(name) as source, target.open("wb") as sink:
+                    shutil.copyfileobj(source, sink, READ_CHUNK_SIZE)
+    except zipfile.BadZipFile as error:
+        raise ValueError(
+            f"release archive {archive_path.name!r} for bundle {declaration.bundle_id!r} "
+            f"is not a readable ZIP archive: {error}"
+        ) from error
     if not (bundle_dir / "release-status.json").is_file():
         raise ValueError(
             f"bundle {declaration.bundle_id!r} archive has no release-status.json; "

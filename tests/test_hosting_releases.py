@@ -427,3 +427,59 @@ def test_supplying_every_bundle_locally_downloads_nothing(
     )
 
     assert result.current_election_id == CURRENT_ID
+
+
+def test_an_unreadable_historical_archive_fails_with_a_clear_message(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A replaced or truncated download must not surface as a traceback."""
+    current, older = _write_archive_bundles(tmp_path / "bundles")
+    published = tmp_path / "published"
+    published.mkdir()
+    archive = published / release_archive_name("general.1")
+    archive.write_bytes(b"404: Not Found\n")
+    manifest_path = _two_election_manifest(tmp_path, older_bundle_sha256=_bundle_hash(older))
+    monkeypatch.setattr(releases, "download_release_archive", _delivering_download(archive))
+
+    with pytest.raises(ValueError) as error:
+        stage_pages_site(
+            manifest_path,
+            {CURRENT_BUNDLE_ID: current},
+            tmp_path / "site",
+            released_bundle_dir=tmp_path / "released",
+        )
+
+    message = str(error.value)
+    assert "is not a readable ZIP archive" in message
+    assert OLDER_BUNDLE_ID in message
+
+
+def test_the_cli_reports_an_unreadable_archive_without_a_traceback(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    current, older = _write_archive_bundles(tmp_path / "bundles")
+    published = tmp_path / "published"
+    published.mkdir()
+    archive = published / release_archive_name("general.1")
+    archive.write_bytes(b"404: Not Found\n")
+    manifest_path = _two_election_manifest(tmp_path, older_bundle_sha256=_bundle_hash(older))
+    monkeypatch.setattr(releases, "download_release_archive", _delivering_download(archive))
+
+    result = CliRunner().invoke(
+        cli.app,
+        [
+            "hosting",
+            "stage",
+            str(manifest_path),
+            "--bundle",
+            f"{CURRENT_BUNDLE_ID}={current}",
+            "--released-bundle-dir",
+            str(tmp_path / "released"),
+            "--output-dir",
+            str(tmp_path / "site"),
+        ],
+    )
+
+    assert result.exit_code == 1
+    assert "hosting stage failed" in result.output
+    assert "is not a readable ZIP archive" in result.output
