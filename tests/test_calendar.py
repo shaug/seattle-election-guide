@@ -66,6 +66,7 @@ def test_committed_calendar_declares_the_2026_general_and_the_2027_cycle() -> No
     calendar = read_election_calendar(CALENDAR_PATH)
 
     assert [election.id for election in calendar.elections] == [
+        "wa-2026-primary",
         "wa-2026-general",
         "wa-2027-february-special",
         "wa-2027-april-special",
@@ -80,6 +81,29 @@ def test_every_declared_election_captures_results_at_both_unrecoverable_windows(
     for election in calendar.elections:
         kinds = {item.kind for item in calendar.election_milestones(election.id)}
         assert set(REQUIRED_MILESTONE_KINDS) <= kinds
+
+
+def test_2026_primary_declares_only_the_windows_still_ahead_of_it() -> None:
+    """Added after its runway passed, so its earlier milestones stay absent."""
+    calendar = read_election_calendar(CALENDAR_PATH)
+
+    milestones = calendar.election_milestones("wa-2026-primary")
+    assert [item.kind for item in milestones] == [
+        "election_day",
+        "results_capture_election_night",
+        "certification",
+        "results_capture_post_certification",
+    ]
+    scheduled = {item.kind: calendar.scheduled_date(item) for item in milestones}
+    assert scheduled["results_capture_election_night"] == date(2026, 8, 4)
+    assert scheduled["results_capture_post_certification"] == date(2026, 8, 20)
+
+
+def test_calendar_coverage_starts_at_the_soonest_election_day() -> None:
+    calendar = read_election_calendar(CALENDAR_PATH)
+
+    earliest = min(calendar.scheduled_date(item) for item in calendar.milestones)
+    assert earliest == date(2026, 8, 4)
 
 
 def test_2026_general_hands_initialization_to_the_election_init_workflow() -> None:
@@ -255,8 +279,8 @@ def test_calendar_validate_reports_the_declared_span() -> None:
     result = runner.invoke(app, ["calendar", "validate", str(CALENDAR_PATH)])
 
     assert result.exit_code == 0
-    assert "election calendar: valid (5 elections" in result.stdout
-    assert "2026-08-20 through 2027-12-02" in result.stdout
+    assert "election calendar: valid (6 elections" in result.stdout
+    assert "2026-08-04 through 2027-12-02" in result.stdout
 
 
 def test_calendar_validate_rejects_an_invalid_calendar(tmp_path: Path) -> None:

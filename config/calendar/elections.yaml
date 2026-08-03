@@ -9,6 +9,11 @@
 schema_version: "1.0"
 
 elections:
+  - id: wa-2026-primary
+    election_type: primary
+    election_scope: mixed
+    election_date: 2026-08-04
+    state: WA
   - id: wa-2026-general
     election_type: general
     election_scope: mixed
@@ -36,6 +41,31 @@ elections:
     state: WA
 
 milestones:
+  # 2026 August primary. Added after its runway had already passed, so it
+  # declares only the milestones still ahead of it. Its earlier milestones are
+  # deliberately absent rather than backfilled: they are already done, and
+  # declaring them would schedule work that cannot be performed.
+  - election_id: wa-2026-primary
+    id: election-day
+    kind: election_day
+    offset_days: 0
+  - election_id: wa-2026-primary
+    id: results-capture-election-night
+    kind: results_capture_election_night
+    offset_days: 0
+    workflow: evidence capture
+    reference: docs/EVIDENCE_CAPTURE.md
+  - election_id: wa-2026-primary
+    id: certification
+    kind: certification
+    offset_days: 15
+  - election_id: wa-2026-primary
+    id: results-capture-post-certification
+    kind: results_capture_post_certification
+    offset_days: 16
+    workflow: evidence capture
+    reference: docs/EVIDENCE_CAPTURE.md
+
   # 2026 November general. The field is settled by the August primary, so the
   # front half anchors to that certification rather than to filing week.
   - election_id: wa-2026-general
