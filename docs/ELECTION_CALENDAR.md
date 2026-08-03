@@ -110,6 +110,26 @@ milestone set from the nearest election of the same type and adjust only what
 its dates require; the shape is meant to be repetitive, because a milestone
 silently absent from one cycle is exactly the failure this file prevents.
 
+Keep the file in date order. An election added far enough ahead carries the
+full set.
+
+### Adding an election whose runway has passed
+
+An election already under way is the one case where the full set is wrong.
+Declare only the milestones still ahead of it and leave the earlier ones out.
+A milestone is a commitment to do work on a date; backfilling one that has
+already come and gone schedules work nobody can perform, and the tracking
+workflow that reads this file would have to filter it back out.
+
+The 2026 August primary is the worked example. It was added two days before its
+election and carries four milestones — election day, the election-night
+capture, certification, and the post-certification capture — because those were
+the only ones left. Its initialization, inventory import, panel freeze,
+collection window, mailing, and publication had all already happened.
+
+Judge the boundary by what remains, not by the milestone's kind: an election
+added a month out keeps its refresh points and drops its panel freeze.
+
 ## What the calendar does not declare
 
 No display strings, no banner semantics, and no copy. Decision D5 in
