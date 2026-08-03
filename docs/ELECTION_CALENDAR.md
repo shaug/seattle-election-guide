@@ -103,6 +103,51 @@ repeated election ID, and on a repeated milestone ID within one election. It
 fails on an election with no election-day milestone or with two, on a missing
 results capture, and on any field the schema does not declare.
 
+## Tracking milestones as issues
+
+A declared milestone is inert until someone sees it. The `Calendar` workflow
+runs daily and opens one issue per milestone falling inside a lead window,
+defaulting to twenty-one days:
+
+```bash
+uv run election-guide calendar track config/calendar/elections.yaml --dry-run
+```
+
+Each issue follows the repository's task template, carries the election, the
+date, and the command that does the work, is labeled `type: ops` and
+`area: operations`, and is attached to a GitHub milestone named for its
+election. A milestone already past its date is never opened; an issue for work
+nobody can still do is worse than none.
+
+The last line of every generated issue is its marker —
+`calendar-milestone: <election-id>/<milestone-id>`. That marker is the entire
+idempotence mechanism. Each run reads the markers of every existing issue, open
+**and closed**, and skips the milestones already represented, so a daily
+schedule never accumulates duplicates and a completed milestone is not
+reopened.
+
+The marker is derived from identity, never from a date, so a milestone whose
+date moves is still recognized as already tracked and does not get a second
+issue. Nothing rewrites the first one: creation is the only operation this
+workflow performs. **If you move a declared date after its issue is open, fix
+that issue by hand** — its title and acceptance line still carry the date it
+was opened with.
+
+The listing that finds those markers filters by the `type: ops` label rather
+than searching for the marker text. GitHub's issue search ranks by relevance
+over an eventually consistent index, so it can both match unrelated issues and
+omit one created moments earlier — which is exactly when a second run would
+duplicate it.
+
+That makes the label a precondition of the no-duplicate guarantee: **a
+generated issue must keep its `type: ops` label.** Strip it and the next run
+stops seeing that issue's marker and reopens the milestone, once a day, for as
+long as it stays inside the window. The label the run reads and the label it
+writes are one constant in the code, so they cannot drift apart on their own.
+
+`--dry-run` still queries GitHub, so it prints what the real run would create
+rather than what the calendar contains.
+
 ## Adding an election
 
 Append the election, then its milestones, then run the validator. Copy the
