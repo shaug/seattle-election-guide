@@ -14,11 +14,11 @@ from typing import Any, cast
 from urllib.parse import urlencode
 
 import pytest
-import yaml
 from PIL import Image
 from pydantic import ValidationError
 from websocket import create_connection  # pyright: ignore[reportUnknownVariableType]
 
+from election_guide.inventory.importer import read_inventory
 from election_guide.publication import build_publication_bundle
 from election_guide.publication.builder import (
     reprojected_comparisons,
@@ -68,6 +68,7 @@ from election_guide.rendering.shell import (
 )
 from election_guide.scoring import score_dataset
 from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
+from election_guide.sources.registry import read_source_registry
 from tests.page_parity import (
     GUIDE_PAGE_PATH,
     SOURCES_PAGE_PATH,
@@ -661,10 +662,9 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
         ".screen-race-result { display: grid; grid-template-columns: minmax(0, 1fr) 11rem;" in html
     )
     assert "grid-template-columns: minmax(0, 1fr) 11rem" in html
-    # The caption's row is the one whose track grows; what that is for is
-    # measured by test_the_support_caption_stays_on_one_line_beside_the_name,
-    # not by this string.
-    assert "grid-template-columns: minmax(0, 1fr) minmax(11rem, max-content)" in html
+    # Nothing here restates the caption row's track. A string assertion cannot
+    # fail for the reason it is written down, as this change learned twice; that
+    # track is measured by test_the_support_caption_stays_on_one_line_beside_the_name.
     assert (
         ".screen-meter { display: flex; align-items: center; justify-content: flex-start;" in html
     )
@@ -736,20 +736,16 @@ def _longest_tie_label() -> str:
 
     A tie renders every leading name joined by ' / ', so the two longest
     candidate names bound how far a wrapped name reaches across its column.
-    Read from the inventory rather than hard-coded, so a later ballot with
-    longer names tightens the layout tests that use it.
+    Read through the inventory reader rather than the raw file, so a shape
+    change is an error here instead of a silently empty label.
     """
-    inventory = json.loads(
-        (PROJECT_ROOT / "data/normalized/wa-2026-primary-inventory.json").read_text(
-            encoding="utf-8"
-        )
-    )
+    inventory = read_inventory(PROJECT_ROOT / "data/normalized/wa-2026-primary-inventory.json")
     names = sorted(
         {
-            choice["display_name"]
-            for race in inventory["races"]
-            for choice in race.get("choices", [])
-            if choice.get("choice_type") == "candidate"
+            choice.display_name
+            for race in inventory.races
+            for choice in race.choices
+            if choice.choice_type == "candidate"
         },
         key=len,
         reverse=True,
@@ -812,13 +808,22 @@ def test_the_no_majority_pill_sits_under_the_name_and_displaces_nothing(
             pillAfterCaption: pillBox === null || pillBox.top >= captionBox.bottom - 1,
             contextColumns:
               getComputedStyle(context).gridTemplateColumns.split(' ').length,
+            captionTop: Math.round(captionBox.top),
+            captionHeight: Math.round(captionBox.height),
           };
         }).filter(Boolean);
         const full = rows();
+        // The caption's row holds two items of different heights, so its
+        // cross-axis alignment decides whether a pill appearing beside the
+        // caption moves the caption. Suppress every pill and re-measure.
+        const pills = [...document.querySelectorAll('.no-majority-pill:not([hidden])')];
+        pills.forEach((pill) => { pill.hidden = true; });
+        const fullWithoutPills = rows();
+        pills.forEach((pill) => { pill.hidden = false; });
         document.documentElement.classList.add('compact-ballot-mode');
         const compact = rows();
         document.documentElement.classList.remove('compact-ballot-mode');
-        return JSON.stringify({full, compact});
+        return JSON.stringify({full, fullWithoutPills, compact});
       })()
     """
 
@@ -834,6 +839,17 @@ def test_the_no_majority_pill_sits_under_the_name_and_displaces_nothing(
     # anywhere that could displace it.
     assert all(card["contextColumns"] == 2 for card in full)
     assert all(card["pillBesideCaption"] for card in full)
+    # The pill shares the caption's row, so "beside" has to mean the caption did
+    # not move to make room. (The meter is in the row above and cannot move at
+    # all, which is why nothing here asserts that it didn't.)
+    assert [card["captionTop"] for card in full] == [
+        card["captionTop"] for card in measured["fullWithoutPills"]
+    ]
+    # ...and did not stretch to the pill's height either, which is the other way
+    # a taller neighbour can reshape it.
+    assert [card["captionHeight"] for card in full] == [
+        card["captionHeight"] for card in measured["fullWithoutPills"]
+    ]
 
     # Compact is one column, and there the pill comes after the caption. Note
     # what is NOT asserted: that hiding a pill leaves the meter where it was.
@@ -873,9 +889,7 @@ def test_the_support_caption_stays_on_one_line_beside_the_name(tmp_path: Path) -
     # assertions elsewhere in this file), with both counts bounded by the
     # registry's source count. Build that, so the width measured is the width
     # the reader can actually get.
-    sources = len(
-        yaml.safe_load((PROJECT_ROOT / "config/sources/default.yaml").read_text())["sources"]
-    )
+    sources = len(read_source_registry(PROJECT_ROOT / "config/sources/default.yaml").sources)
     longest_caption = f"Based on {sources} of {sources} selected sources"
     assert len(longest_caption) > len(
         max(
@@ -906,6 +920,15 @@ def test_the_support_caption_stays_on_one_line_beside_the_name(tmp_path: Path) -
             // One line-box tall, not "as short as its neighbours" — if every
             // caption wrapped, a comparison between them would still pass.
             lines: box.height / parseFloat(getComputedStyle(caption).lineHeight),
+            // The track is the caption's own width, so the box hugs its text.
+            // Measured against the text's own rect, not scrollWidth, which for
+            // a block box is just the box again. Without the sizing the caption
+            // lands in an implicit auto track that absorbs the row's free space.
+            hugsText: (() => {
+              const text = document.createRange();
+              text.selectNodeContents(caption);
+              return Math.abs(box.width - text.getBoundingClientRect().width) <= 2;
+            })(),
             insideCard: box.left >= cardBox.left - 1 && box.right <= cardBox.right + 1,
             clearOfName: clear,
           };
@@ -913,6 +936,7 @@ def test_the_support_caption_stays_on_one_line_beside_the_name(tmp_path: Path) -
         return JSON.stringify({
           measured: captions.length,
           oneLine: captions.every((c) => c.lines <= 1.05),
+          allHugText: captions.every((c) => c.hugsText),
           allInsideCard: captions.every((c) => c.insideCard),
           allClearOfName: captions.every((c) => c.clearOfName),
           pageOverflow: document.documentElement.scrollWidth
@@ -938,6 +962,13 @@ def test_the_support_caption_stays_on_one_line_beside_the_name(tmp_path: Path) -
         assert edition["allInsideCard"] is True
         assert edition["allClearOfName"] is True
         assert edition["pageOverflow"] is False
+
+    # Only where the card is two columns: the caption's track is its own width,
+    # so the box hugs the text. Below 480px the card is one column and the
+    # caption spans it, which is the point of that layout, not a defect.
+    for edition in (screen, band, printed):
+        assert edition["allHugText"] is True
+    assert phone["allHugText"] is False
 
 
 def test_round4_card_anatomy_and_data_ink_cleanup(tmp_path: Path) -> None:

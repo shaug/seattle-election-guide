@@ -50,10 +50,14 @@
    narrows to 8.75rem — or, pinned to one line, overhangs left onto a wrapped
    name's last line, measured as ink overlap on every card at 560px with the
    longest tie label this ballot can produce. `max-content` takes neither: the
-   track widens, the row above keeps its own fixed meter track, and both rows
-   stay flush against the card's right edge. */
-.screen-race-context { display: grid; grid-template-columns: minmax(0, 1fr) minmax(11rem, max-content); align-items: start; gap: 0 .75rem; min-width: 0; }
-.screen-race-context .no-majority-pill { grid-column: 1; }
+   track is exactly the caption, the row above keeps its own fixed meter track,
+   and both rows stay flush against the card's right edge.
+   No floor under the max-content: the widest caption a reader can get (185.77px,
+   the client's "Based on N of M selected sources") is wider than the meter at
+   every breakpoint, so a floor could only ever restate what the content already
+   demands. `align-items: start` keeps the caption's top where it is when a pill
+   appears beside it. */
+.screen-race-context { display: grid; grid-template-columns: minmax(0, 1fr) max-content; align-items: start; min-width: 0; }
 .screen-race-context .support-line { grid-column: 2; }
 .no-majority-pill { justify-self: start; margin: 0; padding: .18rem .48rem; border: 1px solid var(--tone-differ-border); border-radius: 999px; background: var(--tone-differ-bg); color: var(--tone-differ-text); font-size: .68rem; font-weight: 800; letter-spacing: .02em; line-height: 1.2; }
 .support-line { min-width: 0; margin: .15rem 0 0; color: var(--muted); font-size: .72rem; line-height: 1.2; text-align: right; }
@@ -98,7 +102,6 @@ html.compact-ballot-mode .race-card h3 { font-size: 1.08rem; line-height: 1.05; 
    at stake here, only the caption's. */
 html.compact-ballot-mode .screen-race-result,
 html.compact-ballot-mode .screen-race-context { grid-template-columns: minmax(0, 1fr); gap: .3rem; }
-html.compact-ballot-mode .screen-race-context .no-majority-pill,
 html.compact-ballot-mode .screen-race-context .support-line { grid-column: 1; }
 html.compact-ballot-mode .no-majority-pill { order: 1; }
 html.compact-ballot-mode .screen-meter { width: 100%; height: 1.6rem; }
@@ -204,7 +207,6 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
   .race-grid { grid-template-columns: 1fr; }
   .race-card { min-width: 0; }
   .screen-race-result { grid-template-columns: minmax(0, 1fr) 8.75rem; gap: .6rem; }
-  .screen-race-context { grid-template-columns: minmax(0, 1fr) minmax(8.75rem, max-content); gap: 0 .6rem; }
   .screen-meter { width: 8.75rem; }
   .lens-comparison { padding-right: .55rem; padding-left: .55rem; }
   .insufficient-note { overflow-wrap: anywhere; }
@@ -228,7 +230,6 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
   /* One column means one column: without this the explicit `grid-column: 2`
      above would open an implicit second track and sit the caption beside the
      pill instead of under it. */
-  html:not(.compact-ballot-mode) .screen-race-context .no-majority-pill,
   html:not(.compact-ballot-mode) .screen-race-context .support-line { grid-column: 1; }
   html:not(.compact-ballot-mode) .screen-meter { width: 100%; }
 }
