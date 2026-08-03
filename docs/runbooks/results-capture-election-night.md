@@ -24,6 +24,9 @@ execution has recorded the authority's real page and export structure below.
 - `config/elections/<election-id>.yaml` exists; its `ballot_data_sources` entry names the
   authority's election page (for `wa-2026-primary`:
   <https://kingcounty.gov/en/dept/elections/election-information/2026/august-primary>).
+- `king-county-elections` is registered in the source registry
+  (`config/sources/default.yaml`): `evidence capture` refuses unregistered source ids, so the
+  registry entry must land as its own reviewed change *before* election night, not during it.
 - A working directory under the Git-ignored `tmp/` for downloaded artifacts.
 
 ## Procedure
@@ -35,7 +38,13 @@ execution has recorded the authority's real page and export structure below.
    machine-readable export the authority publishes (CSV, XML, JSON — whatever is offered).
    Bytes first, judgment later: capture formats even if they look redundant; the ingestion
    design will decide which one matters.
-3. **Capture each artifact:**
+3. **Capture each artifact, with the capture method matched to the artifact.** The CLI's
+   `CaptureRequest` validation rejects mismatches, so the pairing is not a style choice:
+   `static_html` only for the rendered HTML results page; `pdf` only for PDF documents;
+   `manual_upload` for the machine-readable exports (CSV, XML, JSON) — the CLI's honest
+   category for bytes the caller fetched itself, whose manifest does not claim the command
+   observed an HTTP exchange. Direct methods (`static_html`, `pdf`) additionally require
+   `--http-status` with the observed 2xx; `manual_upload` takes no `--http-status`.
 
    ```bash
    uv run election-guide evidence capture tmp/<artifact> \
@@ -43,10 +52,9 @@ execution has recorded the authority's real page and export structure below.
      --requested-url <url followed> \
      --canonical-url <final url> \
      --retrieved-at <UTC timestamp of the fetch> \
-     --http-status 200 \
-     --media-type <text/html | text/csv | …> \
+     --media-type <text/html | text/csv | text/xml | application/json | application/pdf> \
+     --capture-method <static_html | pdf | manual_upload> \
      --title "<election> election-night results (<representation>)" \
-     --capture-method static_html \
      --redistribution restricted \
      --redistribution-note "Official results retained locally; manifest public."
    ```
@@ -91,5 +99,7 @@ Stop and flag a human when:
 *(Appended after each execution; this section is why the next cycle is easier than this one.)*
 
 - Not yet executed. First execution: `wa-2026-primary`, due 2026-08-04. Expected discoveries:
-  the canonical results URL pattern, which export formats King County actually publishes,
-  whether the `king-county-elections` source id needs registration first.
+  the canonical results URL pattern and which export formats King County actually publishes.
+- 2026-08-03 (pre-execution review): the `king-county-elections` source id is confirmed
+  unregistered, and `evidence capture` requires a registered source — moved to Preconditions;
+  the registry entry must land before election night.
