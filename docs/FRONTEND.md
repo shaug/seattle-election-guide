@@ -305,14 +305,60 @@ check is a bug in the check — fix or amend it, never route around it.
 - **A comment is not a contract.** Any logic implemented in both Python and
   JavaScript — labels, formatting, scoring, encoding — requires a generated
   parity fixture: the Python side emits golden cases, the Node tests assert
-  them. `lens-score`'s parity fixture is the pattern. *Check: exists for
-  scoring; partial for the comparison table's labels and percentages — the
-  markup-parity test (Rendering, above) diffs both sides' output for every
-  cell the audited page renders, which is what caught `toFixed` rounding a
-  9/16 share to 56.3% where the audited renderer's half-to-even gives 56.2%.
-  It cannot reach a value the audited page does not render, so a generated
-  golden-case fixture is still owed for the shares only a category column
-  produces.*
+  them. `lens-score`'s parity fixture is the pattern.
+  *Check: exists — `tests/mirrors.json` is the inventory of surviving mirrors
+  and the proof that holds each one; `tests/mirror_parity.py` runs the shipped
+  server implementations over real publication bundles and emits
+  `tests/js/fixtures/mirror-parity.json`, which `tests/js/mirror-parity.test.mjs`
+  asserts against the client. `tests/test_mirrors.py` regenerates the fixture
+  during `pytest`, so a committed golden file cannot go stale while staying
+  green. The first thing the fixture found was a real divergence: the meter's
+  spoken label read the visible `N/A` aloud where the audited renderer says
+  "not available", on the null share no audited page renders and no markup diff
+  can reach.*
+- **The inventory of mirrors is derived, not listed.**
+  `tests/cross_language_mirrors.py` finds candidates two ways — the same
+  display-text template written on both sides, and a definition on one side
+  that the other names — and `tests/test_mirrors.py` holds `tests/mirrors.json`
+  to the union in both directions. The second signal is the rule above read
+  mechanically: a comment claiming a mirror is what puts that mirror on the
+  inventory, so the claim can no longer be the only thing documenting it. For a
+  mirror whose whole content is one shared string, that derivation is the proof:
+  drop the wording from either side and the declared evidence stops being
+  derived.
+
+  **Both sides are read the same way**, which took four corrections to get right
+  and is where this scan kept missing real mirrors. A lit template is markup
+  with text in it, exactly as a `.j2` file is, so both are split on their tags
+  and on Jinja control flow: the text on either side of an `{% if %}`/`{% else %}`
+  is two templates the page renders separately, not one blob. A Jinja
+  expression's own literals and `~` concatenations are read by Jinja's own
+  parser — the one that renders these files — and string literals are read by a
+  brace-balanced scan rather than a pattern, so a literal inside a `${...}` is
+  read to any depth — including the
+  `` html`...` `` sub-template lit uses for a conditional fragment. A single
+  token counts as display text unless it looks like syntax, because requiring a
+  space discarded the meter's `N/A` and the comparison table's `Race` heading.
+  Each of those was a blind spot invisible to the scan that had it, which is the
+  entire argument for reviewing the inventory rather than trusting it.
+
+  **The derivation is a floor, not a ceiling**, and four limits say why an entry
+  may exist that no signal pins. Symbol matching is restricted to multiword
+  names, because `text` and `boot` are defined on both sides and mean nothing to
+  each other, and to functions and classes rather than every binding — a
+  constant mirrored across the boundary is left to its own check, as
+  `CLIENT_PAYLOAD_SCHEMA_VERSION` is to `tests/test_client_payload_types.py`. A mirror that shares no words with its counterpart is invisible to
+  both signals — the Comparisons fragment encoding is exactly that, and is on
+  the inventory because a reviewer put it there — so arithmetic and encoding
+  mirrors carry golden cases rather than evidence keys. Attribute text is
+  dropped with the tag that holds it, so a `title` or `aria-label` spelled on
+  both sides is left to the markup diff. And an evidence key records that a
+  template is spelled on each side, not where or how many times, so a text-backed
+  entry catches wording dropped from a side but not one implementation of it
+  moving while another occurrence anywhere on that side keeps the key alive.
+  Adding
+  an entry after reading the code is the intended way to close what those limits
+  leave; `tests/mirrors.json` is reviewed, not merely generated.
 - **Prefer deleting a mirror to fixing one.** Where the contract can carry
   the computed value instead (a label in the payload rather than a formatter
   on each side), carry the value. The audited candidate order and the audited
@@ -323,7 +369,9 @@ check is a bug in the check — fix or amend it, never route around it.
   that tree to lit without adding a second implementation of either. The count
   grammar that used to be a Jinja macro is now `source_participation_label` in
   `rendering/payload.py`, feeding the template and the payload from one
-  definition.
+  definition. `tests/mirrors.json` records the deletions alongside the
+  survivors, so a reader looking for a mirror an old issue named can see it was
+  removed rather than go hunting for it.
 
 ## Shared names
 

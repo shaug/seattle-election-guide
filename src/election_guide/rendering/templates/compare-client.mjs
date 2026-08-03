@@ -29,7 +29,11 @@ import { readClientPayload } from './client-payload.mjs';
 import { migrateCompareState } from './compare-migrate.mjs';
 import { createCompareRouter } from './compare-route.mjs';
 import { cellAgreement, createColumnSignalEngine, rowDiffers } from './compare-signals.mjs';
-import { comparisonBodyTemplate, comparisonHeadTemplate } from './compare-table.mjs';
+import {
+  comparisonBodyTemplate,
+  comparisonHeadTemplate,
+  comparisonPercentageLabel,
+} from './compare-table.mjs';
 import {
   ALL_SOURCES_TOKEN,
   compareContext,
@@ -171,33 +175,6 @@ export function wireComparisons() {
     ...display.candidate_names,
     ...display.measure_response_labels,
   });
-  /**
-   * The audited renderer's percentage, mirrored.
-   *
-   * `comparison_percentage_label` scales the share as a rational, prints a
-   * whole percentage with no decimal, and otherwise rounds to one place
-   * half-to-even. `toFixed` rounds halves away from zero instead, which made
-   * the same 9/16 share read 56.2% on the audited page and 56.3% the moment a
-   * reader touched it. The markup-parity test found that; the arithmetic here
-   * stays on integers so the two sides cannot drift apart again over a float
-   * (docs/FRONTEND.md § Cross-language mirrors).
-   *
-   * The denominator default is numeric because the array is already numeric:
-   * an integer rational such as `3` splits to one element.
-   *
-   * @param {string|null|undefined} rational
-   */
-  const percentage = (rational) => {
-    if (rational == null) return '';
-    const [top, bottom = 1] = String(rational).split('/').map(Number);
-    if ((top * 100) % bottom === 0) return `${(top * 100) / bottom}%`;
-    const tenths = top * 1000;
-    const whole = Math.floor(tenths / bottom);
-    const doubled = 2 * (tenths - whole * bottom);
-    const rounded = doubled > bottom || (doubled === bottom && whole % 2 !== 0) ? whole + 1 : whole;
-    return `${(rounded / 10).toFixed(1)}%`;
-  };
-
   const router = createCompareRouter();
 
   /** @returns {import('./compare-url.mjs').CompareState} */
@@ -580,7 +557,7 @@ export function wireComparisons() {
     const meta =
       share === null
         ? null
-        : `${percentage(share)} · ${
+        : `${comparisonPercentageLabel(share)} · ${
             cell.kind === 'aggregate'
               ? `${cell.endorsingCount} of ${cell.memberCount} sources`
               : `${cell.endorsingCount} sources`
