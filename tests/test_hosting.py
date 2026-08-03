@@ -1306,7 +1306,9 @@ def test_pr_preview_workflow_is_label_gated_fork_safe_and_head_bound() -> None:
     # skipped rather than failed and the token is never in scope.
     assert fork_guard in deploy["if"]
     assert "contains(github.event.pull_request.labels.*.name, 'deploy preview')" in deploy["if"]
-    assert "github.event.action != 'closed'" in deploy["if"]
+    # State, not action: labeling an already-closed pull request would otherwise
+    # deploy a preview that no later close event could tear down.
+    assert "github.event.pull_request.state == 'open'" in deploy["if"]
     assert deploy["environment"]["name"] == "pr-${{ github.event.pull_request.number }}"
     assert deploy["environment"]["url"] == "${{ steps.deploy.outputs.url }}"
 

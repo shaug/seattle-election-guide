@@ -27,8 +27,11 @@ jobs:
     # job rather than failing it. `pull_request_target` would run the fork's
     # code with the token in scope, which is why this workflow does not use it;
     # a contributor's branch is previewed by pushing it to origin instead.
+    # Gating on state rather than only on the action keeps a `labeled` event on
+    # an already-closed pull request from deploying a preview that no later
+    # close event would ever tear down.
     if: >-
-      github.event.action != 'closed' &&
+      github.event.pull_request.state == 'open' &&
       github.event.pull_request.head.repo.full_name == github.repository &&
       contains(github.event.pull_request.labels.*.name, 'deploy preview') &&
       vars.CLOUDFLARE_PAGES_ENABLED == 'true'
