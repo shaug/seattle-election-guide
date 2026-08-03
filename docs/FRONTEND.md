@@ -71,8 +71,11 @@ check is a bug in the check — fix or amend it, never route around it.
   editor, the filter bar on the site-wide pages. Splitting `base.css` by
   component is a separate decision about the shell, not this one.
   *Check: exists — `tests/test_page_stylesheets.py` holds every page to its
-  declared parts, holds every stylesheet on disk to a page that reads it, and
-  asserts no page ships a class styled only by another page's own stylesheet.*
+  declared parts, holds every stylesheet on disk to a page that reads it,
+  asserts no page ships a class styled only by another page's own stylesheet,
+  and holds `base.html.j2` to being the only template that opens a `<style>`
+  element or fills the styles slot, since rules written in a template would
+  ship outside the entry and so outside every other assertion here.*
 - **Templates carry no logic in `<script>`.** A template's inline script is at
   most the bundled text plus a single entry invocation. Behavior lives in
   modules, where it can be imported and tested.
