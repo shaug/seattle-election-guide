@@ -33,12 +33,24 @@ DOCUMENT = "docs/FRONTEND.md"
 # instead.
 PLACEHOLDER_LINE = re.compile(r"^\s*\{\{\s*([A-Za-z_][A-Za-z0-9_]*)\s*\|\s*safe\s*\}\}\s*$")
 
-SCRIPT_ELEMENT = re.compile(r"<script\b([^>]*)>(.*?)</script>", re.DOTALL)
+# Tag names are case-insensitive in HTML, so the element matcher must be too:
+# a `<SCRIPT>` block a browser runs but this pattern does not match is a hole
+# the whole metric falls through, silently and in both directions — neither its
+# lines nor the placeholders inside it would be seen.
+SCRIPT_ELEMENT = re.compile(r"<script\b([^>]*)>(.*?)</script>", re.DOTALL | re.IGNORECASE)
 
 # Payload elements are the data contract, not behavior (docs/FRONTEND.md, "The
-# data contract"), so they are outside the inline-script ceiling. The
+# data contract"), so their lines are outside the inline-script ceiling. The
 # attribute-name boundary matters: without it a `data-type="application/json"`
 # on an executable module script would exempt it from the whole metric.
+#
+# This pattern deliberately does *not* take the `re.IGNORECASE` above. The
+# element matcher and the exemption matcher fail in opposite directions: one
+# that misses an element hides script, while one that matches too much exempts
+# it. So the matcher that finds work is as permissive as HTML, and the matcher
+# that excuses work stays literal. A `TYPE="application/json"` payload is
+# therefore counted rather than exempted — a ratchet can absorb being told to
+# lowercase an attribute, and cannot absorb the other mistake.
 PAYLOAD_TYPE = re.compile(r"""(?:^|\s)type\s*=\s*["']application/json["']""")
 
 DOCTYPE_PREFIX = "<!doctype"
@@ -78,23 +90,29 @@ def measure_inline_script(source: str) -> InlineScript:
     """Measure a Jinja template's inline script.
 
     The metric, stated once here so later tickets lower ceilings against the
-    same definition: for every `<script>` element in the template *source* that
-    is not a `type="application/json"` payload, take its content — everything
-    between the tags, whether or not it shares a line with them — and count its
-    lines, less the lines that are nothing but a `{{ name | safe }}`
-    module-injection placeholder. A blank first or last line is the ordinary
-    consequence of writing the tags on their own lines and does not count.
-    Placeholder names are reported separately so that adding an injection point
-    is itself a checked change rather than an unmeasured way to inject
-    Python-built script.
+    same definition: for every `<script>` element in the template *source*, take
+    its content — everything between the tags, whether or not it shares a line
+    with them — and count its lines, less the lines that are nothing but a
+    `{{ name | safe }}` module-injection placeholder. A blank first or last line
+    is the ordinary consequence of writing the tags on their own lines and does
+    not count. A `type="application/json"` payload element contributes no lines
+    at all: it is the data contract, not behavior.
+
+    The two halves have different scopes on purpose. The *count* skips payload
+    elements; the *placeholder registry* does not. `| safe` writes its value
+    with no escaping, so a placeholder inside a payload element can close that
+    element and open an executable one — which is the injection the registry
+    exists to make a checked change. Reporting names from everywhere a
+    `<script>` element reaches is also the only version of this scan that cannot
+    be under-inclusive: a skip in the counter is a decision about lines, and
+    letting it silently become a decision about injection points is how a check
+    grows a blind spot it cannot see.
     """
 
     counted = 0
     placeholders: list[str] = []
     for element in SCRIPT_ELEMENT.finditer(source):
-        attributes = element.group(1)
-        if PAYLOAD_TYPE.search(attributes):
-            continue
+        payload = PAYLOAD_TYPE.search(element.group(1)) is not None
         content = element.group(2).splitlines()
         if content and not content[0].strip():
             content = content[1:]
@@ -104,7 +122,7 @@ def measure_inline_script(source: str) -> InlineScript:
             placeholder = PLACEHOLDER_LINE.match(line)
             if placeholder:
                 placeholders.append(placeholder.group(1))
-            else:
+            elif not payload:
                 counted += 1
     return {"lines": counted, "placeholders": sorted(placeholders)}
 
@@ -126,6 +144,59 @@ def test_the_metric_sees_script_that_shares_a_line_with_its_tags() -> None:
         "lines": 1,
         "placeholders": ["entry_script"],
     }
+
+
+def test_the_metric_sees_a_script_element_in_whatever_case_it_is_written() -> None:
+    """A tag name is case-insensitive in HTML, and a browser runs `<SCRIPT>`.
+
+    An element matcher that does not is the worst shape a check can take: it
+    reports zero for the block it cannot see, so the block escapes the ceiling
+    *and* the placeholder registry at once, and the suite stays green while
+    saying nothing.
+    """
+
+    assert measure_inline_script('<SCRIPT>\n  document.title = "x";\n</SCRIPT>')["lines"] == 1
+    assert measure_inline_script("<Script>\n  a();\n  b();\n</Script>")["lines"] == 2
+    assert measure_inline_script("<SCRIPT>{{ sneaky | safe }}</SCRIPT>") == {
+        "lines": 0,
+        "placeholders": ["sneaky"],
+    }
+    # Mixed case across the pair is still one element, because HTML says so.
+    assert measure_inline_script("<SCRIPT>\n  a();\n</script>")["lines"] == 1
+
+    # The exemption does not follow the element matcher into case-insensitivity:
+    # matching too little there hides script, so an oddly cased payload is
+    # counted rather than excused. Failing this way costs an author one
+    # lowercased attribute; failing the other way costs the metric its meaning.
+    assert measure_inline_script('<SCRIPT TYPE="application/json">a();</SCRIPT>')["lines"] == 1
+    assert measure_inline_script('<SCRIPT type="application/json">a();</SCRIPT>')["lines"] == 0
+    # And the attribute-name boundary survives the new flag in both cases.
+    assert measure_inline_script('<SCRIPT data-type="application/json">a();</SCRIPT>')["lines"] == 1
+
+
+def test_the_placeholder_registry_reaches_inside_a_payload_element() -> None:
+    """A payload element is outside the *ceiling*, not outside the *registry*.
+
+    `| safe` writes its value unescaped, so a placeholder inside
+    `<script type="application/json">` can close that element and open an
+    executable one. Skipping the element whole would have let an injection point
+    be added there without the manifest ever recording it — a hole in exactly
+    the check whose job is to make every injection point a checked change.
+    """
+
+    payload = '<script type="application/json">\n{{ sneaky | safe }}\n</script>'
+    assert measure_inline_script(payload) == {"lines": 0, "placeholders": ["sneaky"]}
+
+    # The payload's own lines stay uncounted: the data contract is not behavior.
+    assert measure_inline_script('<script type="application/json">{"a": 1}</script>') == {
+        "lines": 0,
+        "placeholders": [],
+    }
+    # `| tojson` is the escaped form the real payload elements use, and is not
+    # an injection point, so it is not registered as one.
+    assert measure_inline_script(
+        '<script type="application/json">{{ client_payload | tojson }}</script>'
+    ) == {"lines": 0, "placeholders": []}
 
 
 def test_inline_script_stays_within_its_recorded_ceiling() -> None:
