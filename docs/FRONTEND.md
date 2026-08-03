@@ -302,15 +302,48 @@ check is a bug in the check — fix or amend it, never route around it.
 ## Shared names
 
 - **Names shared across template, JS, and CSS are declared once.** `data-*`
-  attributes, root state classes, breakpoints, and grade strings live in one
-  contract module; templates, stylesheets, and client code consume it, and
-  tests import it rather than restating literals. A name with a Python origin
-  is declared there — the grade strings are `scoring/models.py`'s `Grade`,
-  reaching the client as `ComputedGrade` through the payload generator, so the
-  presentation-only names are what remains for a JavaScript contract module.
-  *Check: partial — `tests/test_client_payload_types.py` fails when the
-  client's grade vocabulary stops matching the audited engine's; the manifest
-  test for presentation-only names is pending.*
+  attributes, class names that reach executable code, and breakpoints are
+  declared in `tests/shared_names.json`, which records for each name the exact
+  set of surfaces that spell it: template, stylesheet, client, python, test. A
+  rename that reaches three of them and misses the fourth changes the derived
+  set and fails `make check`.
+
+  **The declaration is enforced by a scan, not by a generator**, and the
+  stylesheet is why. An attribute or class name is selector *syntax*, while a
+  custom property holds a *value*: `[var(--x)]` is not a selector and
+  `@media (max-width: var(--bp))` is not a query, so a stylesheet cannot consume
+  a generated name. Substituting names in during the build is not open either —
+  each page's stylesheet is concatenated precisely so the shipped bytes are the
+  authored bytes (Modules, above). Any generator would therefore leave the one
+  surface a rename most often misses still restating every literal, so the
+  contract is enforced by reading every surface instead of emitting into some.
+  Declared once here means one place says what the shared names are, and every
+  restatement is held to it.
+
+  **Names with a Python origin are not declared here**, because they already
+  have a generator and a value may not have two. The grade strings are
+  `scoring/models.py`'s `Grade`, reaching the client as `ComputedGrade` through
+  the payload generator (The data contract, above); this contract covers the
+  presentation-only names, and checks that no grade string appears in it.
+
+  Class names are in scope when a `.mjs` module or a Python probe string spells
+  them, not when only a template and a stylesheet do. That pair is every class
+  in the codebase and a miss there renders unstyled — loud. The quiet ones are
+  what this covers, and the sharpest is a class name inside a Chrome audit
+  probe: `rendering/browser.py` selects `.screen-race-context` in four probe
+  strings, and a rename that misses one makes the probe match zero elements and
+  report *success*. That case is why the scope is class names that cross into
+  code rather than root state classes alone.
+  *Check: exists — `tests/test_shared_names.py` derives the shared-name map
+  from the tree and holds it to `tests/shared_names.json` in both directions, so
+  an undeclared shared name, a stale declaration, and a name that gained or lost
+  a surface each fail. Each scanner is exercised on a source small enough to
+  read, as the inline-script metric is. `tests/test_client_payload_types.py`
+  separately fails when the client's grade vocabulary stops matching the audited
+  engine's. Two limits are deliberate: surfaces are recorded by kind rather than
+  by file, so a miss within one language is left to that language's own checker;
+  and the scan is textual, so a name a comment mentions counts as spelled
+  there.*
 
 ## Server-side templates
 
