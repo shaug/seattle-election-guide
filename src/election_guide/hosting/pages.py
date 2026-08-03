@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import hashlib
-import html
 import json
 import os
 import shutil
@@ -26,17 +25,12 @@ from election_guide.rendering.renderer import (
     TEMPLATE_DIR,
     render_comparison_document,
     render_sources_document,
+    template_environment,
 )
 from election_guide.rendering.shell import (
-    EXTERNAL_LINK_ATTRIBUTES,
     election_names,
     favicon_svg,
     page_title,
-    site_band_html,
-    site_footer_audit_html,
-    site_footer_band_html,
-    site_head_links_html,
-    site_page_head_html,
 )
 from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
 
@@ -542,6 +536,31 @@ def _comparison_html(view_model: PublicationViewModel, canonical_origin: str) ->
     )
 
 
+def _site_document(template_name: str, **context: object) -> str:
+    """Render one of the three site-wide documents through the shared layout.
+
+    About, the archive, and the 404 are not election-scoped, so they carry no
+    view model and no source panel, but they extend the same `base.html.j2` and
+    call the same shell macros as the guide, Sources, and Comparisons
+    (docs/FRONTEND.md § Server-side templates).
+    """
+    environment = template_environment()
+    rendered = environment.get_template(template_name).render(
+        # Shared verbatim with the rendered guide (rendering/templates/base.css)
+        # so the design tokens, accessibility utilities, and the share/copy-link
+        # fallback policy have exactly one implementation each.
+        stylesheet=(TEMPLATE_DIR / "base.css").read_text(encoding="utf-8"),
+        project_url=PROJECT_URL,
+        **context,
+    )
+    # Jinja drops a template's single trailing newline; the f-strings these
+    # three documents replaced ended with one. Restoring it keeps the published
+    # bytes of the live About, archive, and 404 pages identical across this
+    # conversion, which is the whole claim issue 241 makes about them. The
+    # election-scoped pages were already Jinja and already end without it.
+    return rendered + "\n"
+
+
 def _archive_html(
     site_manifest: SiteManifest,
     *,
@@ -553,99 +572,30 @@ def _archive_html(
     data_href: str,
     compare_href: str | None = None,
 ) -> str:
-    rows = "\n".join(
-        "      <li>"
-        f'<a href="/e/{election.election_id}/">'
-        f"{html.escape(election_names_by_id[election.election_id])}</a>"
-        + (
-            " <strong>(current)</strong>"
-            if election.election_id == site_manifest.current_election_id
-            else ""
-        )
-        + "</li>"
-        for election in site_manifest.elections
-    )
-    canonical_url = f"{site_manifest.canonical_origin}/e/"
-    description = "Published Seattle election endorsement guides."
-    escaped_description = html.escape(description, quote=True)
-    document_title = html.escape(page_title(page="Guide archive"), quote=True)
-    head_links = site_head_links_html(site_manifest.canonical_origin)
-    current_path = f"/e/{site_manifest.current_election_id}/"
-    base_css = (TEMPLATE_DIR / "base.css").read_text(encoding="utf-8")
-    shell_entry_script = bundle_entry("shell-entry.mjs", global_name="ShellPage")
-    band = site_band_html(
-        guide_href=current_path,
-        sources_href=f"{current_path}sources/",
+    return _site_document(
+        "archive.html.j2",
+        document_title=page_title(page="Guide archive"),
+        page_description="Published Seattle election endorsement guides.",
+        canonical_url=f"{site_manifest.canonical_origin}/e/",
+        canonical_origin=site_manifest.canonical_origin,
+        current_path=f"/e/{site_manifest.current_election_id}/",
+        current_election_id=site_manifest.current_election_id,
+        elections=site_manifest.elections,
+        election_names_by_id=election_names_by_id,
         compare_href=compare_href,
-    )
-    footer_audit = site_footer_audit_html(
+        shell_entry_script=bundle_entry("shell-entry.mjs", global_name="ShellPage"),
         data_updated_date=data_updated_date,
         site_updated_date=site_updated_date,
         data_version=data_version,
         git_commit=git_commit,
-        project_url=PROJECT_URL,
         data_href=data_href,
     )
-    footer_band = site_footer_band_html(project_url=PROJECT_URL, audit_html=footer_audit)
-    head = site_page_head_html(
-        mode="measured",
-        title="Guide archive",
-        tagline_html=(
-            "Every guide stays up after its election &mdash; unchanged, at the same address."
-        ),
-    )
-    return f"""<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="{escaped_description}">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="{document_title}">
-  <meta property="og:description" content="{escaped_description}">
-  <meta property="og:url" content="{html.escape(canonical_url, quote=True)}">
-  <meta name="twitter:title" content="{document_title}">
-  <meta name="twitter:description" content="{escaped_description}">
-  <link rel="canonical" href="{html.escape(canonical_url, quote=True)}">
-  {head_links}
-  <title>{document_title}</title>
-  <style>
-    {base_css}
-    main {{ padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 3rem; }}
-    main h1 {{
-      margin: 0 0 .35rem; color: var(--navy);
-      font: 700 clamp(1.8rem, 4vw, 2.6rem)/1.05 var(--screen-serif);
-    }}
-    main > p {{ color: var(--muted); max-width: 46ch; }}
-    ul {{ margin: 1.5rem 0 0; padding: 0; list-style: none; }}
-    li {{ margin: 0 0 .5rem; }}
-    li a {{ color: var(--navy); font-weight: 700; }}
-  </style>
-</head>
-<body>
-  <a class="skip-link" href="#archive-main">Skip to content</a>
-  <div class="page">
-    <header>
-      {band}
-      <div class="page-band-rule"></div>
-    </header>
-    {head}
-    <main id="archive-main" class="narrow-main">
-      <ul>
-{rows}
-      </ul>
-    </main>
-    <footer class="site-footer">
-      {footer_band}
-    </footer>
-  </div>
-  <script type="module">
-{shell_entry_script}
-    ShellPage.boot();
-  </script>
-</body>
-</html>
-"""
+
+
+ABOUT_DESCRIPTION = (
+    "How this guide aggregates organizational endorsements, why the source panel is "
+    "versioned, how to verify a result, and how to report a correction."
+)
 
 
 def _about_html(
@@ -658,191 +608,23 @@ def _about_html(
     data_href: str,
     compare_href: str | None = None,
 ) -> str:
-    current = next(
-        election
-        for election in site_manifest.elections
-        if election.election_id == site_manifest.current_election_id
-    )
-    current_path = f"/e/{current.election_id}/"
-    canonical_url = f"{site_manifest.canonical_origin}/about/"
-    # Shared verbatim with the rendered guide (src/election_guide/rendering/
-    # renderer.py) so the design tokens, accessibility utilities, and the
-    # share/copy-link fallback policy have exactly one implementation each.
-    base_css = (TEMPLATE_DIR / "base.css").read_text(encoding="utf-8")
-    shell_entry_script = bundle_entry("shell-entry.mjs", global_name="ShellPage")
-    description = (
-        "How this guide aggregates organizational endorsements, why the source panel is "
-        "versioned, how to verify a result, and how to report a correction."
-    )
-    escaped_description = html.escape(description, quote=True)
-    escaped_canonical = html.escape(canonical_url, quote=True)
-    document_title = html.escape(page_title(page="How this works"), quote=True)
-    head_links = site_head_links_html(site_manifest.canonical_origin)
-    escaped_current_path = html.escape(current_path, quote=True)
-    band = site_band_html(
-        guide_href=current_path,
-        sources_href=f"{current_path}sources/",
+    current_path = f"/e/{site_manifest.current_election_id}/"
+    return _site_document(
+        "about.html.j2",
+        document_title=page_title(page="How this works"),
+        page_description=ABOUT_DESCRIPTION,
+        canonical_url=f"{site_manifest.canonical_origin}/about/",
+        canonical_origin=site_manifest.canonical_origin,
+        current_path=current_path,
         compare_href=compare_href,
-        current="about",
-    )
-    footer_audit = site_footer_audit_html(
+        project_url_label=PROJECT_URL.removeprefix("https://"),
+        shell_entry_script=bundle_entry("shell-entry.mjs", global_name="ShellPage"),
         data_updated_date=data_updated_date,
         site_updated_date=site_updated_date,
         data_version=data_version,
         git_commit=git_commit,
-        project_url=PROJECT_URL,
         data_href=data_href,
     )
-    footer_band = site_footer_band_html(project_url=PROJECT_URL, audit_html=footer_audit)
-    head = site_page_head_html(
-        mode="measured", title="How this works", tagline_html=html.escape(description)
-    )
-    return f"""<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="{escaped_description}">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="{document_title}">
-  <meta property="og:description" content="{escaped_description}">
-  <meta property="og:url" content="{escaped_canonical}">
-  <meta name="twitter:title" content="{document_title}">
-  <meta name="twitter:description" content="{escaped_description}">
-  <link rel="canonical" href="{escaped_canonical}">
-  {head_links}
-  <title>{document_title}</title>
-  <style>
-    {base_css}
-    main {{ padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 3rem; }}
-    main h1 {{
-      margin: 0 0 .35rem; color: var(--navy);
-      font: 700 clamp(1.8rem, 4vw, 2.6rem)/1.05 var(--screen-serif);
-    }}
-    main > p.lede {{ margin: 0 0 2rem; color: var(--muted); }}
-    section {{ margin: 0 0 2rem; }}
-    section h2 {{ color: var(--navy); font-size: 1.25rem; margin: 0 0 .5rem; }}
-    section p {{ margin: 0 0 .75rem; }}
-    section p:last-child {{ margin-bottom: 0; }}
-  </style>
-</head>
-<body>
-  <a class="skip-link" href="#about-main">Skip to content</a>
-  <div class="page">
-    <header>
-      {band}
-      <div class="page-band-rule"></div>
-    </header>
-    {head}
-    <main id="about-main" class="narrow-main">
-
-      <section aria-labelledby="what-this-is">
-        <h2 id="what-this-is">What this guide is &mdash; and is not</h2>
-        <p>This site aggregates endorsements that progressive and left-of-center organizations have
-          already published. It is not an official voter pamphlet, it does not independently vet any
-          candidate, and it does not predict who will win. A high agreement percentage means many of
-          the organizations we track agree with each other, not that we do.</p>
-      </section>
-
-      <section aria-labelledby="how-the-numbers-work">
-        <h2 id="how-the-numbers-work">How the numbers work</h2>
-        <p>Each organization gets one point per race. If it endorses more than one candidate, that
-          point splits evenly among them unless the organization states its own split. Silence, "no
-          endorsement," and races an organization simply did not cover are shown as counts but
-          never count toward a candidate's share, so a small sample never looks more decisive than
-          it is. The percentage is that leading choice's share of points; the source count next to
-          it is simply the sample behind it &mdash; neither number is a quality rating of the
-          candidate.</p>
-        <p>Legislative-district organizations count on the broader races their district covers, but
-          only on their own district's legislative contests.</p>
-        <p>Some tracked organizations are related &mdash; a state and local chapter of the same
-          group, for example. These relationships are disclosed rather than deduplicated: each
-          separately governed organization keeps its own full vote.</p>
-        <p>The Seattle Times is tracked as a comparison, never as part of the progressive
-          consensus: it adds nothing to the numbers above, and the Endorsements page does not show
-          it at all. The Sources page documents it, and the Comparisons page is where you can put
-          it beside the consensus race by race.</p>
-        <p>The Comparisons page puts up to three sources side by side for every race. A column can
-          show all sources together, one organization, or a category of organizations. The first
-          column is the reference for the differences highlighted across the row. Category columns
-          give each member organization equal weight, while sources such as The Seattle Times are
-          shown only for comparison and never change the overall result.</p>
-        <p>A comparison link stores its ordered columns and filters in the address after the
-          <code>#</code>. Opening the same link against the same data version restores that view;
-          an old or unrecognized link falls back to the default view and explains why instead of
-          silently showing a different comparison.</p>
-      </section>
-
-      <section aria-labelledby="why-ballot-varies">
-        <h2 id="why-ballot-varies">Why your ballot may look different</h2>
-        <p>Exact ballot contents vary by voter registration address. This guide covers the Seattle
-          races we tracked for this election; your ballot may not include all of them, and may
-          include a race this guide doesn&rsquo;t cover.</p>
-      </section>
-
-      <section aria-labelledby="choices-anonymous">
-        <h2 id="choices-anonymous">Are my choices anonymous?</h2>
-        <p>Your source selection lives entirely in this page's address. Nothing is stored anywhere
-          else, and the site has no account or profile connected to your choices.</p>
-      </section>
-      <section aria-labelledby="source-panel">
-        <h2 id="source-panel">The source panel is versioned, not frozen forever</h2>
-        <p>The set of organizations tracked for a given guide is preregistered and locked before
-          scoring begins, so results can't be adjusted after the fact to fit an outcome. When
-          legitimate new evidence turns up &mdash; a source we missed, or one that was misclassified
-          &mdash; it is added to a later, explicitly versioned panel rather than silently
-          rewriting this one. Every guide's public release status and manifest preserve its exact
-          panel ID and hash, so a later revision is always visible, never hidden.</p>
-      </section>
-
-      <section aria-labelledby="verify-it">
-        <h2 id="verify-it">Verify it yourself</h2>
-        <p>Every footer names the data and site update dates, links the data version to its release
-          manifest, and links the site revision to the exact code that built it. The public release
-          status and manifest record the source-panel ID and hash, and complete artifact identity.
-          Each source row links directly to the
-          organization's own endorsement page or document, so any displayed result can be checked
-          against the original evidence.</p>
-        <p>Organizations can update their own endorsements after we capture them, so a source's
-          current page may drift from what a guide recorded; use the same evidence links to confirm
-          the exact snapshot behind any race.</p>
-        <p><a href="{escaped_current_path}release-status.json">Current release status</a> and
-          <a href="{escaped_current_path}release-manifest.json">release manifest</a> are public JSON
-          files for the current guide. The complete decision ledger, source metadata, and validation
-          reports for every release are published in the
-          <a href="{PROJECT_URL}"{EXTERNAL_LINK_ATTRIBUTES}>project's source repository</a>,
-          alongside the code that produced them.</p>
-        <p>Past guides remain published at their own permanent addresses in the
-          <a href="/e/">guide archive</a>.</p>
-      </section>
-
-      <section aria-labelledby="report-a-correction">
-        <h2 id="report-a-correction">Report a correction or suggest a source</h2>
-        <p>Found a stale or wrong endorsement, or know an organization we should be tracking?
-          Email <a href="mailto:seattle-elections@dobravoda.dev">seattle-elections@dobravoda.dev</a>
-          &mdash; no GitHub account needed. If you already use GitHub, you are also welcome to
-          open an issue directly against the source repository below.</p>
-      </section>
-
-      <section aria-labelledby="who-maintains-this">
-        <h2 id="who-maintains-this">Who maintains this</h2>
-        <p>This is an independent, volunteer-run project, not affiliated with any campaign,
-          party, or any organization it tracks. Its code and methodology are public at
-          <a href="{PROJECT_URL}"{EXTERNAL_LINK_ATTRIBUTES}>{PROJECT_URL.removeprefix("https://")}</a>.</p>
-      </section>
-
-    </main>
-    <footer class="site-footer">
-      {footer_band}
-    </footer>
-  </div>
-  <script type="module">
-{shell_entry_script}
-    ShellPage.boot();
-  </script>
-</body>
-</html>
-"""
 
 
 def _not_found_html(
@@ -856,71 +638,19 @@ def _not_found_html(
     compare_href: str | None = None,
 ) -> str:
     """The worker's branded 404 with the shared global-page footer."""
-    current_path = f"/e/{site_manifest.current_election_id}/"
-    document_title = html.escape(page_title(page="Page not found"), quote=True)
-    head_links = site_head_links_html(site_manifest.canonical_origin, shareable=False)
-    base_css = (TEMPLATE_DIR / "base.css").read_text(encoding="utf-8")
-    band = site_band_html(
-        guide_href=current_path,
-        sources_href=f"{current_path}sources/",
-        compare_href=compare_href,
+    return _site_document(
+        "not-found.html.j2",
+        document_title=page_title(page="Page not found"),
+        canonical_origin=site_manifest.canonical_origin,
         shareable=False,
-    )
-    footer_audit = site_footer_audit_html(
+        current_path=f"/e/{site_manifest.current_election_id}/",
+        compare_href=compare_href,
         data_updated_date=data_updated_date,
         site_updated_date=site_updated_date,
         data_version=data_version,
         git_commit=git_commit,
-        project_url=PROJECT_URL,
         data_href=data_href,
     )
-    footer_band = site_footer_band_html(project_url=PROJECT_URL, audit_html=footer_audit)
-    escaped_current_path = html.escape(current_path, quote=True)
-    head = site_page_head_html(
-        mode="measured",
-        title="Page not found",
-        tagline_html=(
-            "That page doesn&rsquo;t exist. Try the "
-            f'<a href="{escaped_current_path}">current guide</a>, or the '
-            '<a href="/e/">archive of past guides</a>.'
-        ),
-    )
-    return f"""<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex">
-  <meta property="og:title" content="{document_title}">
-  <meta name="twitter:title" content="{document_title}">
-  {head_links}
-  <title>{document_title}</title>
-  <style>
-    {base_css}
-    main {{ padding: 3rem clamp(1rem, 4vw, 2.5rem); }}
-    main h1 {{
-      margin: 0 0 .5rem; color: var(--navy);
-      font: 700 clamp(1.6rem, 4vw, 2.2rem)/1.05 var(--screen-serif);
-    }}
-    main p {{ margin: 0; color: var(--muted); max-width: 46ch; }}
-    main p a {{ font-weight: 700; }}
-  </style>
-</head>
-<body>
-  <div class="page">
-    <header>
-      {band}
-      <div class="page-band-rule"></div>
-    </header>
-    {head}
-    <main class="narrow-main"></main>
-    <footer class="site-footer">
-      {footer_band}
-    </footer>
-  </div>
-</body>
-</html>
-"""
 
 
 def _pages_worker(

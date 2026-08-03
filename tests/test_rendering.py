@@ -57,13 +57,12 @@ from election_guide.rendering.renderer import (
     _wait_for_devtools_endpoint,  # pyright: ignore[reportPrivateUsage]
     find_chrome,
     render_sources_document,
+    template_environment,
 )
 from election_guide.rendering.shell import (
     HOW_TO_VOTE_HREF,
     election_day_banner_html,
     election_names,
-    site_band_html,
-    site_page_head_html,
 )
 from election_guide.scoring import score_dataset
 from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
@@ -201,15 +200,30 @@ def test_canonical_names_use_structured_future_election_data() -> None:
     ) == ("November 2027 General", "November 2, 2027 Washington general")
 
 
+def _render_shell(source: str, **context: object) -> str:
+    """Render a snippet against the real template environment.
+
+    Issue 241 moved the shell grammar from Python builders in `shell.py` into
+    `_shell.html.j2`'s macros, so these tests drive it the way a page does —
+    through the same environment, with the same globals and autoescaping.
+    """
+    return template_environment().from_string(source).render(**context)
+
+
+def _page_head(title: str, tagline: str = "A tagline.", **options: object) -> str:
+    return _render_shell(
+        "{% call shell.page_head(title, eyebrow=eyebrow, mode=mode) %}" + tagline + "{% endcall %}",
+        title=title,
+        eyebrow=options.get("eyebrow"),
+        mode=options.get("mode", "plain"),
+    )
+
+
 def test_page_head_names_the_page_and_puts_the_election_in_the_eyebrow() -> None:
     """Issue 192: one head for every page. The h1 is the page's own name and
     the eyebrow is the election, so the two read as one name and the strongest
     identity on screen keeps its size and position across page types."""
-    head = site_page_head_html(
-        eyebrow="August 2026 Primary",
-        title="Comparisons",
-        tagline_html="Put any sources side by side.",
-    )
+    head = _page_head("Comparisons", "Put any sources side by side.", eyebrow="August 2026 Primary")
 
     assert '<p class="page-eyebrow">August 2026 Primary</p>' in head
     assert "<h1>Comparisons</h1>" in head
@@ -219,7 +233,7 @@ def test_page_head_names_the_page_and_puts_the_election_in_the_eyebrow() -> None
 def test_page_head_omits_the_eyebrow_on_election_agnostic_pages() -> None:
     """Presence follows the page's kind: the absence of an eyebrow is the only
     marker an agnostic page needs, so no extra mechanism is spent on it."""
-    head = site_page_head_html(title="How this works", tagline_html="How this guide works.")
+    head = _page_head("How this works", "How this guide works.")
 
     assert "page-eyebrow" not in head
     assert "<h1>How this works</h1>" in head
@@ -229,15 +243,10 @@ def test_extended_page_head_is_the_one_exception_primacy_buys() -> None:
     """The dial (R3): the masthead's navy runs through the head on the page the
     brand lockup links to. It bends no other rule — the eyebrow's mint-on-navy
     and the title's white are the ground-relative colors already prescribed."""
-    extended = site_page_head_html(
-        eyebrow="August 2026 Primary",
-        title="Endorsements",
-        tagline_html="Distilled.",
-        mode="extended",
+    extended = _page_head(
+        "Endorsements", "Distilled.", eyebrow="August 2026 Primary", mode="extended"
     )
-    plain = site_page_head_html(
-        eyebrow="August 2026 Primary", title="Sources", tagline_html="Choose."
-    )
+    plain = _page_head("Sources", "Choose.", eyebrow="August 2026 Primary")
 
     assert '<header class="page-head extended">' in extended
     assert '<header class="page-head">' in plain
@@ -246,32 +255,40 @@ def test_extended_page_head_is_the_one_exception_primacy_buys() -> None:
 def test_page_head_takes_its_pages_reading_measure_when_it_has_one() -> None:
     """A head above a book-measure column sits on that column, so its tagline
     never outruns the prose beneath it."""
-    measured = site_page_head_html(
-        title="Guide archive", tagline_html="Every guide stays up.", mode="measured"
-    )
+    measured = _page_head("Guide archive", "Every guide stays up.", mode="measured")
 
     assert '<header class="page-head narrow">' in measured
     assert '<div class="narrow-main">' in measured
 
 
-def test_page_head_escapes_its_names_but_not_its_tagline() -> None:
-    """The head's escaping is deliberately asymmetric, so pin it.
+def test_page_head_escapes_its_names_and_anything_interpolated_into_its_tagline() -> None:
+    """The head's escaping asymmetry, restated for the Jinja shell (issue 241).
 
-    `title` and `eyebrow` are names and are escaped here. `tagline_html` carries
-    inline markup on purpose — entities in the guide's copy, real links on the
-    404 — so its caller owns escaping, which is why the parameter says `_html`.
-    Issue 192 review finding cor-1: the asymmetry is fine, being silent about it
-    was not.
+    It used to be a naming convention: `tagline_html` was not escaped and its
+    caller owned the escape, which is why `_about_html` had to pass
+    `html.escape(...)`. The tagline is now the caller's `{% call %}` block, so
+    the asymmetry is structural rather than advisory — markup authored in a
+    template is markup, and a *value* interpolated into it is escaped like any
+    other. Issue 192 review finding cor-1 asked that this be explicit, not that
+    it be removed: taglines still carry entities in the guide's copy and real
+    links on the 404.
     """
-    head = site_page_head_html(
-        eyebrow="A & B",
+    head = _render_shell(
+        "{% call shell.page_head(title, eyebrow=eyebrow) %}"
+        'Read <a href="/e/">the archive</a>. {{ untrusted }}'
+        "{% endcall %}",
         title="Sources <script>",
-        tagline_html='Read <a href="/e/">the archive</a>.',
+        eyebrow="A & B",
+        untrusted='<script>alert("x")</script>',
     )
 
     assert "<h1>Sources &lt;script&gt;</h1>" in head
     assert "A &amp; B" in head
+    # Authored markup reaches the page as markup...
     assert 'Read <a href="/e/">the archive</a>.' in head
+    # ...and an interpolated value does not.
+    assert "<script>alert" not in head
+    assert "&lt;script&gt;alert(&#34;x&#34;)&lt;/script&gt;" in head
 
 
 def test_election_day_banner_states_a_truth_that_survives_the_election() -> None:
@@ -291,11 +308,10 @@ def test_election_day_banner_states_a_truth_that_survives_the_election() -> None
 
 
 def test_shared_site_band_names_the_methodology_path_for_what_it_does() -> None:
-    band = site_band_html(
-        guide_href="/e/wa-2026-primary/",
-        sources_href="/e/wa-2026-primary/sources/",
-        about_href="/about/",
-        current="about",
+    band = _render_shell(
+        "{{ shell.band(guide_href='/e/wa-2026-primary/',"
+        " sources_href='/e/wa-2026-primary/sources/',"
+        " about_href='/about/', current='about') }}"
     )
 
     assert ">How this works</a>" in band
@@ -310,10 +326,10 @@ def test_shared_site_band_orders_nav_by_dependency() -> None:
 
     This reverses the order issue 197 shipped, which put Comparisons second.
     """
-    band = site_band_html(
-        guide_href="/e/wa-2026-primary/",
-        sources_href="/e/wa-2026-primary/sources/",
-        compare_href="/e/wa-2026-primary/comparisons/",
+    band = _render_shell(
+        "{{ shell.band(guide_href='/e/wa-2026-primary/',"
+        " sources_href='/e/wa-2026-primary/sources/',"
+        " compare_href='/e/wa-2026-primary/comparisons/') }}"
     )
 
     assert band.index(">Endorsements</a>") < band.index(">Sources</a>")

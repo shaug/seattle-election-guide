@@ -38,7 +38,7 @@ export async function shareOrCopyLink(url, title) {
   }
 }
 
-// Wires the masthead's Share action (`site_band_html` in shell.py) on every
+// Wires the masthead's Share action (the `band` macro in `_shell.html.j2`) on every
 // shareable page: the guide, Comparisons, Sources, About, and the archive. The
 // 404 renders no Share action at all, since it declares itself unshareable for
 // its social card and one flag governs both (issue 192, R2).

@@ -11,18 +11,25 @@
     "logic in <script>). The metric is defined in tests/test_frontend_ratchets.py",
     "and is enforced as an equality, so moving glue into a module fails the",
     "check until the ceiling is lowered in the same pull request. A template",
-    "absent from this map must carry no inline script.",
+    "absent from this map must carry no inline script. The 404 is recorded at",
+    "0 anyway, because shipping no script at all is a decision there",
+    "(docs/FRONTEND.md, Modules) rather than an absence nobody reached yet.",
     "",
     "module_injection_placeholders: the `{{ name | safe }}` lines each template",
     "may use inside a <script> element to inline a module. Placeholder lines are",
     "excluded from the line count, so an unregistered one would be an unmeasured",
     "way to inject Python-built script; registering them makes an added",
     "injection point a checked change. Placeholders outside every <script> —",
-    "the shell's head links, band, and footer fragments — are not covered here.",
+    "the stylesheet each page inlines — are not covered here. The shell's head",
+    "links, band, and footer stopped being placeholders in issue 241: they are",
+    "macros in rendering/templates/_shell.html.j2 now.",
     "",
     "fstring_documents: functions under src/election_guide whose own body holds",
     "a `<!doctype`-leading string literal (docs/FRONTEND.md, Server-side",
-    "templates). A document held at module scope is not covered.",
+    "templates). A document held at module scope is not covered. Empty since",
+    "issue 241 moved About, the archive, and the 404 onto base.html.j2: every",
+    "full HTML document is a Jinja template now, and the check having no",
+    "entries left to allow is what holds that line.",
     "",
     "module_isolation_exemptions: client modules that do not yet load",
     "standalone in Node (docs/FRONTEND.md, Modules: every .mjs is a real ES",
@@ -30,11 +37,20 @@
     "exemption cannot silently start covering a different defect."
   ],
   "inline_script_ceilings": {
+    "about.html.j2": 1,
+    "archive.html.j2": 1,
     "compare.html.j2": 1,
     "guide.html.j2": 1,
+    "not-found.html.j2": 0,
     "sources.html.j2": 1
   },
   "module_injection_placeholders": {
+    "about.html.j2": [
+      "shell_entry_script"
+    ],
+    "archive.html.j2": [
+      "shell_entry_script"
+    ],
     "compare.html.j2": [
       "compare_entry_script"
     ],
@@ -45,22 +61,6 @@
       "sources_entry_script"
     ]
   },
-  "fstring_documents": [
-    {
-      "module": "election_guide/hosting/pages.py",
-      "function": "_archive_html",
-      "reason": "The archive index predates the shared Jinja layout."
-    },
-    {
-      "module": "election_guide/hosting/pages.py",
-      "function": "_about_html",
-      "reason": "The About page predates the shared Jinja layout."
-    },
-    {
-      "module": "election_guide/hosting/pages.py",
-      "function": "_not_found_html",
-      "reason": "The 404 page predates the shared Jinja layout."
-    }
-  ],
+  "fstring_documents": [],
   "module_isolation_exemptions": []
 }

@@ -1,0 +1,45 @@
+{# The one layout every full HTML document on the site extends
+   (docs/FRONTEND.md § Server-side templates, issue 241).
+
+   It owns the parts of a document that are the same everywhere — the doctype
+   and `<html lang>`, the charset and viewport tags, the brand-asset head
+   block, the `<title>`, and the `<style>` element — and leaves four slots:
+
+   - `head_meta`  the page's own description, og/twitter, robots, and canonical
+                  tags, written at the head's two-space indent;
+   - `styles`     the whole `<style>` element, overridden only by a page that
+                  appends its own rules to the shared stylesheet;
+   - `body`       everything inside `<body>` except the scripts; and
+   - `scripts`    the script slot — a page's client payload element and the one
+                  module script that inlines its entry bundle.
+
+   The script slot deliberately lives in each page rather than here. A
+   template's inline script is held to a recorded ceiling per template
+   (tests/frontend_ratchets.json), and a page that ships no script at all — the
+   404 — must be able to record a ceiling of zero rather than inherit a slot it
+   does not fill.
+
+   `shell` is an environment global (rendering/renderer.py) holding
+   `_shell.html.j2`'s macros, so no template has to import the shell to render
+   the band, page head, or footer.
+
+   Every page supplies `document_title`, `stylesheet`, and `canonical_origin`.
+   `shareable` follows the flag that governs a page's social card (R2) and
+   defaults to true; only the 404 sets it false. #}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+{% block head_meta %}{% endblock %}
+  {{ shell.head_links(canonical_origin, shareable=shareable | default(true)) }}
+  <title>{{ document_title }}</title>
+{% block styles %}
+  <style>{{ stylesheet | safe }}</style>
+{% endblock %}
+</head>
+<body>
+{% block body %}{% endblock %}
+{% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,14 +1,8 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+{% extends 'base.html.j2' %}
+{% block head_meta %}
   <meta name="author" content="{{ config.author }}">
   <meta name="description" content="{{ config.subject }}">
   {% set canonical_url = config.public_site_url ~ '/e/' ~ guide.metadata.election_id ~ '/' %}
-  {# Root-relative: an absolute production URL walked readers off any other
-     origin — local preview, staging, PR preview — to the live site. #}
-  {% set sources_page_url = '/e/' ~ guide.metadata.election_id ~ '/sources/' %}
   <meta property="og:type" content="website">
   <meta property="og:title" content="{{ document_title }}">
   <meta property="og:description" content="{{ config.subject }}">
@@ -16,11 +10,8 @@
   <meta name="twitter:title" content="{{ document_title }}">
   <meta name="twitter:description" content="{{ config.subject }}">
   <link rel="canonical" href="{{ canonical_url }}">
-  {{ site_head_links | safe }}
-  <title>{{ document_title }}</title>
-  <style>{{ stylesheet | safe }}</style>
-</head>
-<body>
+{% endblock %}
+{% block body %}
   {% from '_filter_controls.html.j2' import election_controls %}
   {% macro race_detail_source_badge(source) -%}
     <span class="race-detail-category-badge">{{ source_category_label_by_key[source.category] }}</span>
@@ -153,8 +144,8 @@
   <a class="skip-link" href="#guide-races">Skip to recommendations</a>
 
   <main class="page screen-guide">
-    {{ site_band | safe }}
-    {{ site_page_head | safe }}
+    {{ shell.band(guide_href=guide_path, sources_href=sources_page_url, compare_href=compare_href, current='endorsements', sources_link_data_attribute=true) }}
+    {%+ call shell.page_head('Endorsements', eyebrow=election_display_name, mode='extended') %}Seattle&rsquo;s progressive voices, distilled.{% endcall +%}
     <div class="page-band-rule"></div>
     {{ election_day_banner | safe }}
 
@@ -345,9 +336,11 @@
     </div>
 
     <footer class="site-footer">
-      {{ site_footer_band | safe }}
+      {{ shell.election_footer_band(project_url, guide.metadata, guide_path, footer_data_updated_date, footer_site_updated_date) }}
     </footer>
   </main>
+{% endblock %}
+{% block scripts %}
 
   {# One payload element per page, built by rendering/payload.py from the
      Pydantic models the client's declarations are generated from
@@ -357,5 +350,4 @@
 {{ guide_entry_script | safe }}
   GuidePage.boot();
   </script>
-</body>
-</html>
+{% endblock %}
