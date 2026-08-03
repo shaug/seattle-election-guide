@@ -7,7 +7,7 @@ import subprocess
 import sys
 import tempfile
 from fractions import Fraction
-from html import unescape
+from html import escape, unescape
 from pathlib import Path
 from stat import S_IMODE
 from typing import Any, cast
@@ -369,15 +369,17 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert html.count('<a class="race-card-primary"') == len(races)
     assert html.count('aria-label="View endorsements for ') == len(races)
     assert '<option value="Legislative District 43">Legislative District 43</option>' in html
-    assert "JSON.parse(card.dataset.filterTokens)" in html
-    assert "card.dataset.contested === 'true'" in html
+    # The filter behavior ships in the bundled guide-filters.mjs now rather than
+    # in an inline script (issue #239); the shipped page must still carry it.
+    assert "card.dataset.filterTokens" in html
+    assert 'card.dataset.contested === "true"' in html
     assert "matchesScope && matchesContest" in html
-    assert "url.searchParams.set('view', 'compact')" in html
+    assert 'query.set("view", "compact")' in html
     assert '<label class="filter-control-label" for="race-filter">Ballot</label>' in html
     assert "Show races" not in html
-    assert "url.searchParams.set('races', 'contested')" in html
-    assert "url.searchParams.set('filter', select.value)" in html
-    assert "syncControlsFromUrl();" in html
+    assert 'query.set("races", "contested")' in html
+    assert 'query.set("filter", state.scope)' in html
+    assert "syncFromUrl();" in html
     assert "html.compact-ballot-mode .race-grid { grid-template-columns: repeat(4" in html
     # Phones keep two compact columns so Compact stays visibly denser than
     # Full on mobile (issue 115, item F23).
@@ -518,19 +520,24 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "show-times" not in html
     assert "See which groups line up with the leading choice" not in html
     assert "race-detail-description-" not in html
-    assert "history.pushState({ ...state, raceDetail: target }" in html
+    # The dialog's routing ships in the bundled guide-dialog.mjs now rather than
+    # in an inline classic script (issue #239), and reaches `location` only
+    # through the codec-owned router in lens-route.mjs.
+    assert "raceDetail: target" in html
+    assert "history.pushState(state" in html
     assert "history.back()" in html
     assert "target.showModal()" in html
-    assert "dialog.addEventListener('cancel'" in html
-    assert "window.addEventListener('popstate'" in html
-    assert "window.addEventListener('hashchange'" in html
+    assert 'dialog.addEventListener("cancel"' in html
+    assert 'window.addEventListener("popstate"' in html
+    assert 'window.addEventListener("hashchange"' in html
     assert "navigator.clipboard?.writeText" in html
     assert "const link = new URL(window.location.href);" in html
     # Issue 142: the dialog's own Share link no longer overwrites the whole
     # hash with the bare race id — it rewrites only the `race` segment of
     # whatever fragment is already live, so an active personalized selection
-    # survives the share.
-    assert "link.hash = raceDetailFragment(button.dataset.copyRaceLink);" in html
+    # survives the share. Issue #239 made that rewrite the codec's
+    # `withRaceTarget` rather than a second hand-parse of the hash.
+    assert "link.hash = withRaceTarget(window.location.hash, target);" in html
     assert "Consensus among explicitly endorsing sources" in html
     assert "Seattle Times" in html
     assert "August 2026 Primary" in html
@@ -1624,10 +1631,13 @@ def test_sources_tree_shell_encodes_state_through_the_published_codec(tmp_path: 
     """
     html = _sources_tree_html(tmp_path)
     codec = (TEMPLATE_DIR / "lens-url.mjs").read_text(encoding="utf-8")
-    entry = (TEMPLATE_DIR / "guide-entry.mjs").read_text(encoding="utf-8")
+    # The entry's own imports are the shell and the page wiring; issue #239 moved
+    # the glue that reaches the codec into guide-client.mjs, one edge further
+    # down the same import graph.
+    client = (TEMPLATE_DIR / "guide-client.mjs").read_text(encoding="utf-8")
 
     assert "export function encodeLensFragment" in codec
-    assert "from './lens-url.mjs'" in entry
+    assert "from './lens-url.mjs'" in client
     assert bundle_entry("guide-entry.mjs", global_name="GuidePage") in html
     assert '<script type="application/json" data-client-payload>' in html
     assert "encodeLensFragment(" in html
@@ -1640,17 +1650,17 @@ def test_the_guide_glue_reads_no_state_out_of_rendered_markup(tmp_path: Path) ->
     The guide's module script used to recover three audited values by reading
     the dialog it had just been sent — the candidate display labels, the audited
     candidate order, and the audited accessible summary — and to translate a
-    row's publication id into the transport code the payload speaks. All four
-    are contract now, so each former read is named here: a reintroduced one
-    fails this test rather than surviving until a markup change silently moves
-    the behavior.
+    row's publication id into the transport code the payload speaks. Its
+    *classic* script read two more: the race label for the share status, and the
+    filter scope label for the status line. All six are contract now, so each
+    former read is named here: a reintroduced one fails this test rather than
+    surviving until a markup change silently moves the behavior.
 
-    The guide's *classic* script still reads display text (the race label and
-    the filter scope label). Those go with issue #239, which extracts that
-    script, and are deliberately not covered here.
+    The whole client bundle is swept, not one script block. Issue #239 moved
+    both blocks into modules, so the page's client code is the bundle the
+    template inlines — which is where a reintroduced read would now live.
     """
-    template = (TEMPLATE_DIR / "guide.html.j2").read_text(encoding="utf-8")
-    module_script = template.split('<script type="module">')[1].split("</script>")[0]
+    client = bundle_entry("guide-entry.mjs", global_name="GuidePage")
 
     for scrape in (
         # Candidate display labels, read off the dialog's own headings.
@@ -1658,11 +1668,15 @@ def test_the_guide_glue_reads_no_state_out_of_rendered_markup(tmp_path: Path) ->
         # The audited candidate order, captured from server-rendered DOM order.
         ".race-detail-outcomes > [data-race-detail-candidate-id]",
         # The audited accessible summary, captured verbatim for restore.
-        "card.querySelector('[data-race-detail-summary]')?.textContent",
+        '[data-race-detail-summary]")?.textContent',
         # The translation map between our own two identifier spaces.
         "codeBySourceId",
+        # The race label for the share status (issue #239).
+        '[data-display-role="race-label"]',
+        # The filter scope label for the status line (issue #239).
+        "selectedOptions",
     ):
-        assert scrape not in module_script, scrape
+        assert scrape not in client, scrape
 
     # Each one now comes from the payload, which publishes what the server
     # rendered rather than a second computation of it.
@@ -1686,6 +1700,28 @@ def test_the_guide_glue_reads_no_state_out_of_rendered_markup(tmp_path: Path) ->
             assert f"<h4>{candidate.label}</h4>" in rendered_text
         assert race.audited_accessible_summary in rendered_text
     assert any(race.candidates for race in payload.races)
+
+    # The two reads issue #239 removed, and where their values come from now.
+    for race in payload.races:
+        assert race.race_label
+        card = html.split(f'id="race-{race.race_id}"')[1].split("</article>")[0]
+        assert f'data-display-role="race-label">{escape(race.race_label, quote=False)}<' in card
+
+    # One generator for the Ballot filter: the payload publishes exactly the
+    # options the select renders, in the same order.
+    select = html.split('<select class="filter-select" id="race-filter"')[1].split("</select>")[0]
+    rendered = [
+        (value, unescape(label))
+        for value, label in re.findall(r'<option value="([^"]*)">([^<]*)</option>', select)
+    ]
+    assert rendered == [(scope.value, scope.label) for scope in payload.filter_scopes]
+
+    # Where the Sources links point, so the module that appends the live lens
+    # fragment is not told by the template. Root-relative, like every in-site
+    # link, and the same path the rendered anchors carry.
+    assert payload.sources_page_path.startswith("/e/")
+    assert payload.sources_page_path.endswith("/sources/")
+    assert f'href="{payload.sources_page_path}" data-sources-link' in html
 
 
 def test_the_guide_publishes_exactly_one_payload_element(tmp_path: Path) -> None:
@@ -2390,18 +2426,21 @@ def test_personalization_is_invisible_while_the_policy_is_disabled(tmp_path: Pat
 
     The stylesheet carries `[data-lens-only]`/`[data-lens-hidden]` selectors
     unconditionally (an unused selector is harmless with no matching markup),
-    so, like the existing show-times check, this looks only at the body.
+    and since issue #239 so does the page's one bundle: the lens renderer's
+    selectors are string literals in guide-lens.mjs whether or not a payload
+    ever hands it a personalization contract. Both are inert without matching
+    markup, which is what this sweeps for — the rendered markup only, between
+    the stylesheet and the bundle.
 
-    `data-lens-notice` is deliberately excluded from the marker list: the
-    `<p data-lens-notice>` element itself is still policy-gated, but the
-    module script's `clearLensNotice()` helper is an unconditional no-op
-    utility (called from the always-present `refreshSelectionUi()`) whose
-    `querySelector('[data-lens-notice]')` call leaves that literal string in
-    the page's JS regardless of policy state.
+    `data-lens-notice` is deliberately excluded from the marker list, and is
+    asserted present below instead: since issue #239 a page with the lens
+    switched off still has to report a fragment it could not read
+    (docs/FRONTEND.md § State and URLs), so the notice element is no longer
+    policy-gated.
     """
     view_model = _personalization_disabled_view_model(tmp_path)
     html = render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG))
-    body = html.split("</style>", 1)[1]
+    body = html.split("</style>", 1)[1].split('<script type="module">', 1)[0]
 
     for marker in (
         "data-sources-reset",
@@ -2433,8 +2472,11 @@ def test_personalization_is_invisible_while_the_policy_is_disabled(tmp_path: Pat
     assert _client_payload(html)["personalization"] is None
     # The payload notice is not lens furniture: a page with the lens switched
     # off still admits a payload, so it still has to be able to say when it
-    # could not (docs/FRONTEND.md, The data contract).
-    assert "data-payload-notice" in html
+    # could not (docs/FRONTEND.md, The data contract). The lens notice is the
+    # same argument for the fragment: an unreadable link is cleaned from the
+    # address bar, and the rule requires the reader be told why (issue #239).
+    assert "data-payload-notice" in body
+    assert "data-lens-notice" in body
 
     # Issue 124: the bindings still publish every category and source,
     # including the comparison one, so the codec can classify a pre-removal

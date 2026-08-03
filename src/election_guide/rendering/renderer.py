@@ -46,6 +46,7 @@ from election_guide.rendering.models import (
     RenderingValidationReport,
 )
 from election_guide.rendering.payload import (
+    FilterScope,
     RaceCandidateDisplay,
     RaceDisplay,
     comparisons_payload,
@@ -94,6 +95,15 @@ class ComparisonRowView:
     race_label: str
     cells: tuple[ComparisonCellView, ...]
     differs: bool
+
+
+@dataclass(frozen=True)
+class FilterScopeGroupView:
+    """One `<optgroup>` of the guide's Ballot filter. `label` is `None` for the
+    ungrouped leading option."""
+
+    label: str | None
+    options: tuple[FilterScope, ...]
 
 
 @dataclass(frozen=True)
@@ -156,6 +166,7 @@ def _race_display(race: PublicationRace) -> RaceDisplay:
     back out of the dialog (docs/FRONTEND.md, The data contract)."""
     return RaceDisplay(
         race_id=race.id,
+        race_label=race.race_label,
         candidates=[
             RaceCandidateDisplay(candidate_id=group.candidate_id, label=group.candidate_label)
             for group in _candidate_endorsement_groups(race)
@@ -208,6 +219,7 @@ def render_html_document(
     # origin: the band link, the strip's "Edit sources" link, and the script
     # that appends the live lens fragment all work from a path.
     sources_page_url = f"{guide_path}sources/"
+    filter_scope_groups = _filter_scope_groups(view_model)
     election_display_name, _ = election_names(
         view_model.metadata.election_date,
         view_model.metadata.election_type,
@@ -229,6 +241,8 @@ def render_html_document(
             races=[
                 _race_display(race) for section in view_model.sections for race in section.races
             ],
+            filter_scopes=[option for group in filter_scope_groups for option in group.options],
+            sources_page_path=sources_page_url,
         ).model_dump(mode="json"),
         race_share_icon=share_icon_svg(),
         race_close_icon=close_icon_svg(),
@@ -254,7 +268,7 @@ def render_html_document(
             project_url=configuration.project_url,
             guide_path=guide_path,
         ),
-        filter_options=_filter_options(view_model),
+        filter_scope_groups=filter_scope_groups,
         source_category_label_by_key=source_category_label_by_key,
         source_cells_by_race_id=source_cells_by_race_id,
         has_no_majority=_has_no_majority,
@@ -316,7 +330,7 @@ def render_sources_document(
         election_display_name=election_display_name,
         stylesheet=stylesheet,
         sources_entry_script=sources_entry_script,
-        client_payload=sources_payload(view_model).model_dump(mode="json"),
+        client_payload=sources_payload(view_model, guide_path=guide_path).model_dump(mode="json"),
         compare_href=compare_href,
         site_band=site_band_html(
             guide_href=guide_path,
@@ -561,6 +575,37 @@ def _filter_options(view_model: PublicationViewModel) -> list[str]:
             if token not in section_labels and (" " in token or token.endswith("wide"))
         }
     )
+
+
+def _filter_scope_groups(view_model: PublicationViewModel) -> list[FilterScopeGroupView]:
+    """The Ballot filter's option groups, in rendered order.
+
+    One generator for both consumers (docs/FRONTEND.md, The data contract): the
+    template renders its `<optgroup>`/`<option>` markup from these, and the
+    payload publishes the same options flattened, so the filter status line can
+    name the selected scope without reading the select's own text back
+    (issue #239). The options are `FilterScope` on both sides, so the two
+    consumers cannot disagree about a key.
+    """
+    return [
+        FilterScopeGroupView(
+            label=None,
+            options=(FilterScope(value="all", label="All Seattle ballot races"),),
+        ),
+        FilterScopeGroupView(
+            label="Ballot sections",
+            options=tuple(
+                FilterScope(value=section.id, label=section.label)
+                for section in view_model.sections
+            ),
+        ),
+        FilterScopeGroupView(
+            label="Districts and jurisdictions",
+            options=tuple(
+                FilterScope(value=token, label=token) for token in _filter_options(view_model)
+            ),
+        ),
+    ]
 
 
 def _require_web_url(value: str) -> None:

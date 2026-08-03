@@ -1,37 +1,39 @@
 // guide-entry.mjs is the endorsements guide's client entry
 // (docs/FRONTEND.md § Modules).
 //
-// The guide's page glue is still inline in guide.html.j2 and destructures the
-// entry's `glue` object, so that object is a contract between a module and a
-// template with nothing between them: a name dropped from one side and not the
-// other is `undefined` at the first click, not a load error. The test below is
-// what makes it a checked contract until issue #239 removes both sides.
+// Until issue #239 the entry also handed the template a `glue` object, because
+// several hundred lines of the guide's behavior lived in guide.html.j2's own
+// `<script>` blocks and called those names directly. That glue is modules now,
+// so `boot` is the entry's whole surface and the template's whole content is
+// one invocation of it — which is what the tests below hold it to.
 
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { boot, glue } from '../../src/election_guide/rendering/templates/guide-entry.mjs';
+import * as entry from '../../src/election_guide/rendering/templates/guide-entry.mjs';
 import { assertModuleGuard } from './support/module-guards.mjs';
 
 const TEMPLATE = fileURLToPath(
   new URL('../../src/election_guide/rendering/templates/guide.html.j2', import.meta.url),
 );
 
-test('the entry offers the one invocation its template makes', () => {
-  assert.equal(typeof boot, 'function');
+test('the entry offers exactly the one invocation its template makes', () => {
+  assert.deepEqual(Object.keys(entry), ['boot']);
+  assert.equal(typeof entry.boot, 'function');
 });
 
-test('every name the template destructures is one the entry hands over', () => {
+test('the template reaches the bundle only through that invocation', () => {
   const source = readFileSync(TEMPLATE, 'utf8');
-  const destructuring = source.match(/const \{([^}]*)\} = GuidePage\.glue;/);
-  assert.ok(destructuring, 'guide.html.j2 no longer destructures GuidePage.glue');
-  const wanted = destructuring[1]
-    .split(',')
-    .map((name) => name.trim())
-    .filter(Boolean);
-  assert.deepEqual(wanted.slice().sort(), Object.keys(glue).sort());
-  for (const name of wanted) assert.equal(typeof glue[name], 'function');
+  assert.ok(
+    source.includes('GuidePage.boot();'),
+    'guide.html.j2 no longer invokes the entry it inlines',
+  );
+  assert.ok(
+    !source.includes('GuidePage.glue'),
+    'guide.html.j2 destructures the entry again. The page has one entry point, and its ' +
+      'behavior lives in modules (docs/FRONTEND.md § Modules).',
+  );
 });
 
 test('the module keeps client state out of storage', () => {

@@ -38,11 +38,6 @@ export async function shareOrCopyLink(url, title) {
   }
 }
 
-// The guide's race-dialog routing predates the module bundle and still lives
-// in a classic script. Publish this one shared policy to that browser-only
-// caller rather than duplicating native-share and clipboard fallbacks there.
-if (typeof window !== 'undefined') window.shareOrCopyLink = shareOrCopyLink;
-
 // Wires the masthead's Share action (`site_band_html` in shell.py) on every
 // shareable page: the guide, Comparisons, Sources, About, and the archive. The
 // 404 renders no Share action at all, since it declares itself unshareable for

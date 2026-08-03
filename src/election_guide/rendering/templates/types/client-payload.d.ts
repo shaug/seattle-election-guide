@@ -49,6 +49,8 @@ interface GuidePayload {
   categories: LensCategory[];
   sources: LensSource[];
   races: RaceDisplay[];
+  filter_scopes: FilterScope[];
+  sources_page_path: string;
   personalization: PersonalizationContract | null;
 }
 /**
@@ -100,6 +102,7 @@ interface LensSource {
  */
 interface RaceDisplay {
   race_id: string;
+  race_label: string;
   candidates: RaceCandidateDisplay[];
   audited_accessible_summary: string;
 }
@@ -108,6 +111,13 @@ interface RaceDisplay {
  */
 interface RaceCandidateDisplay {
   candidate_id: string;
+  label: string;
+}
+/**
+ * One option of the guide's Ballot filter, addressed by its token.
+ */
+interface FilterScope {
+  value: string;
   label: string;
 }
 /**
@@ -259,6 +269,7 @@ interface SourcesPayload {
   scoring: LensScoring;
   categories: LensCategory[];
   sources: LensSource[];
+  guide_path: string;
 }
 /**
  * The Comparisons page's payload.

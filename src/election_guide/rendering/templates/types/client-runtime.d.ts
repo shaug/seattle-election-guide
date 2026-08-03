@@ -21,12 +21,3 @@ type PanelSnapshot = {
 
 /** What `shareOrCopyLink` reports back to a caller's status line. */
 type ShareResult = 'shared' | 'cancelled' | 'copied' | 'failed';
-
-interface Window {
-  /**
-   * share-link.mjs publishes its one share/copy policy here for the guide's
-   * race-dialog routing, which predates the module bundle and still runs as a
-   * classic script. Optional because only that module assigns it.
-   */
-  shareOrCopyLink?: (url: string, title: string) => Promise<ShareResult>;
-}

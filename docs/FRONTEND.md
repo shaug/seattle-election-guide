@@ -113,12 +113,12 @@ check is a bug in the check — fix or amend it, never route around it.
   Each page publishes exactly one payload element,
   `<script type="application/json" data-client-payload>`, and admits it
   through `client-payload.mjs` rather than parsing it by hand.
-  *Check: partial — `tests/test_rendering.py` names each read the guide's
-  module script used to make and fails if one returns, and asserts the payload
-  it replaced them with equals the rendered dialog it was read from. The
-  guide's classic script still reads two display strings; issue #239 removes
-  them as it extracts that script, and the rule is reviewer-applied until
-  then.*
+  *Check: exists — `tests/test_rendering.py` names each read the guide's
+  client code used to make and fails if one returns, sweeping the whole
+  bundle rather than one script block, and asserts the payload it replaced
+  them with equals the rendered markup it was read from: the dialog's
+  candidates and summary, the card's race label, and the Ballot filter's own
+  options.*
 - **One identifier space.** The payload, the markup's data attributes, and the
   client modules use the same identifier for the same entity. A translation
   map between two of our own identifier spaces is a defect in the contract.
@@ -139,13 +139,11 @@ check is a bug in the check — fix or amend it, never route around it.
   declarations are not what the models generate, and `tsc --checkJs` holds
   every client module to them without running Python. Only names no payload
   field carries — the share result, the prior-panel snapshot — stay
-  hand-written, in `types/client-runtime.d.ts` beside them. What the type
-  checker does not reach yet is the glue still inline in `.html.j2`:
-  `GuidePayload`, `SourcesPayload`, `RaceDisplay`, `RaceCandidateDisplay`,
-  `LensSource`, and `LensCategory` have no `.mjs` consumer, so a rename in
-  those models regenerates cleanly and leaves an inline reader addressing a
-  field that is gone. Issue #239 extracts those scripts into modules `tsc`
-  checks, which is what makes the rule above hold for every payload name.*
+  hand-written, in `types/client-runtime.d.ts` beside them. Issue #239 closed
+  the last gap: `GuidePayload`, `SourcesPayload`, and the race-display and
+  panel types they carry now have `.mjs` consumers, because the glue that
+  reads them is modules rather than inline script, so a rename in those models
+  fails `tsc` instead of leaving a reader addressing a field that is gone.*
 - **`schema_version` is validated at parse time.** A payload the client does
   not understand degrades to the server-rendered baseline with a visible
   notice — never a silent no-op, never a half-enhanced page.
@@ -171,11 +169,30 @@ check is a bug in the check — fix or amend it, never route around it.
   identifier in every module, page wiring included.*
 - **Each page's codec module is the sole reader and writer of `location`.**
   One owner per fragment. No second script parses the hash by hand, and no
-  handler edits `location` around the codec.
+  handler edits `location` around the codec. A page whose codec is pure pairs
+  it with one router module that holds the `location` and `history` calls and
+  parses nothing itself — `lens-url.mjs` with `lens-route.mjs` is that pair
+  for the guide and the sources editor.
+  *Check: partial — `tests/js/lens-route.test.mjs` sweeps every client module
+  for `location` or `history` and fails on one that is neither an owner nor a
+  recorded exception, so a new access is a change to that list. Two exceptions
+  are recorded there today: `share-link.mjs`, which copies the address
+  verbatim and interprets no segment of it, and `compare-client.mjs`, whose
+  page has its own fragment and its own codec — issue #243 gives Comparisons
+  the router half.*
 - **Decode and encode failures are surfaced.** A stale, malformed, or
   unencodable state produces a reader-visible notice and a cleaned address
   bar, exactly as the guide's lens notices do today. Silent fallthrough is a
-  defect.
+  defect. It binds both directions: a selection that cannot be *written* into
+  a link is as much a failure as a link that cannot be read, and the reader is
+  told rather than handed a link that quietly drops it.
+  *Check: partial — `tests/js/guide-client.test.mjs` and
+  `tests/js/sources-client.test.mjs` hold each page to a notice for an
+  unreadable incoming fragment and for a rejected encode, and to leaving an
+  ordinary in-page anchor alone. `selectionFragment` in `lens-selection.mjs`
+  is what makes the encode half unmissable: it returns a rejection a caller
+  has to dispose of rather than an empty string. Comparisons is not covered
+  yet; that is issue #243.*
 
 ## Cross-language mirrors
 

@@ -100,6 +100,10 @@
        version this build does not understand; the server-rendered tree below
        stands unchanged (docs/FRONTEND.md, The data contract). #}
     <p class="lens-notice" data-payload-notice hidden role="status" aria-live="polite"></p>
+    {# The fragment's own failures: an incoming link this build cannot read, and
+       a selection too large to write into the Save link. Both used to fall
+       through in silence (docs/FRONTEND.md § State and URLs). #}
+    <p class="lens-notice" data-sources-notice hidden role="status" aria-live="polite"></p>
     <main id="sources-main">
 
       <div class="sources-tree">
@@ -164,139 +168,7 @@
 
   <script type="module">
 {{ sources_entry_script | safe }}
-  const { decodeLensFragment, encodeLensFragment, lensContext } = SourcesPage.glue;
-
-  // Page glue for the standalone sources editor, still inline pending issue
-  // #239. No scoring engine here: this page only ever reads/writes a selection
-  // through the shared fragment codec, like the guide's merged sources tree.
-  // `boot` hands back the payload, or stops here behind a notice (its module).
-  const bindings = SourcesPage.boot();
-  const context = lensContext(bindings, bindings.data_version);
-  const guidePath = {{ guide_path | tojson }};
-
-  const categoryMemberCodesByCode = new Map(
-    bindings.categories.map((item) => [item.code, item.member_source_codes]),
-  );
-
-  const sourceInputsByCode = new Map();
-  document.querySelectorAll('[data-sources-source]').forEach((input) => {
-    const code = input.dataset.sourcesSource;
-    if (!sourceInputsByCode.has(code)) sourceInputsByCode.set(code, []);
-    sourceInputsByCode.get(code).push(input);
-  });
-  const isCodeChecked = (code) => sourceInputsByCode.get(code)?.[0]?.checked ?? false;
-  const syncSourceCode = (code, checked) => {
-    for (const input of sourceInputsByCode.get(code) ?? []) input.checked = checked;
-  };
-  // Issue 124: a comparison source renders no checkbox at all, so every input
-  // this page has is a tallying one.
-  const tallyingSourceCodes = [...sourceInputsByCode.keys()];
-  const checkedTallyingSourceCodes = () => tallyingSourceCodes.filter(isCodeChecked).sort();
-
-  const categoryToggleInputs = [...document.querySelectorAll('[data-sources-category-toggle]')];
-  const membersOfCategory = (categoryCode) => [
-    ...document.querySelectorAll(
-      `[data-sources-source][data-sources-category-member="${categoryCode}"]`,
-    ),
-  ];
-  const updateCategoryToggleStates = () => {
-    categoryToggleInputs.forEach((toggle) => {
-      const categoryCode = toggle.dataset.sourcesCategoryToggle;
-      const members = membersOfCategory(categoryCode);
-      const checkedCount = members.filter((member) => member.checked).length;
-      toggle.checked = checkedCount === members.length;
-      toggle.indeterminate = checkedCount > 0 && checkedCount < members.length;
-    });
-  };
-
-  const countLine = document.querySelector('[data-sources-count]');
-  // "Counting", not "Viewing": a checked source counts toward the computed
-  // results — nothing here is merely displayed (issue 115, item D17).
-  const updateCount = () => {
-    if (countLine) {
-      countLine.textContent =
-        `Counting ${checkedTallyingSourceCodes().length} of ${tallyingSourceCodes.length} sources.`;
-    }
-  };
-
-  const saveLink = document.querySelector('[data-sources-save]');
-
-  /**
-   * Save's target address bar carries the edited selection, matching the
-   * guide's own writeLensState: the audited default (every tallying source
-   * checked) elides the fragment entirely.
-   */
-  const saveTarget = () => {
-    const isDefault = checkedTallyingSourceCodes().length === tallyingSourceCodes.length;
-    if (!isDefault) {
-      const encoded = encodeLensFragment(
-        { mode: 's', categoryCodes: [], sourceCodes: checkedTallyingSourceCodes(), raceTarget: incomingRaceTarget },
-        context,
-      );
-      if (encoded.status === 'ok') return `${guidePath}#${encoded.fragment}`;
-    }
-    return incomingRaceTarget ? `${guidePath}#${incomingRaceTarget}` : guidePath;
-  };
-
-  const refreshSelectionUi = () => {
-    updateCategoryToggleStates();
-    updateCount();
-    if (saveLink) saveLink.href = saveTarget();
-  };
-
-  /**
-   * Apply a decoded selection to every checkbox: a category code expands to
-   * its current member codes, unioned with any directly named source codes.
-   * Anything else stays unchecked. Mirrors the guide's own applySelection.
-   */
-  const applySelection = (selection) => {
-    const categoryMemberCodes = (selection?.categoryCodes ?? []).flatMap(
-      (code) => categoryMemberCodesByCode.get(code) ?? [],
-    );
-    const effectiveCodes = new Set([...categoryMemberCodes, ...(selection?.sourceCodes ?? [])]);
-    for (const code of sourceInputsByCode.keys()) {
-      syncSourceCode(code, effectiveCodes.has(code));
-    }
-    refreshSelectionUi();
-  };
-
-  // Read the incoming selection once, on load, and keep the raw fragment
-  // verbatim so Cancel can restore exactly what the reader arrived with.
-  const incomingFragment = window.location.hash;
-  const incomingDecoded = decodeLensFragment(incomingFragment, context);
-  const incomingRaceTarget = incomingDecoded.status === 'legacy'
-    ? incomingDecoded.raceTarget
-    : (incomingDecoded.state?.raceTarget ?? null);
-  if (incomingDecoded.status === 'valid' || incomingDecoded.status === 'stale_version') {
-    applySelection(incomingDecoded.state);
-  } else {
-    // absent, legacy, and malformed fragments all fall back to the audited
-    // default the checkboxes already render server-side: every tallying
-    // source checked.
-    refreshSelectionUi();
-  }
-
-  document.querySelectorAll('[data-sources-source]').forEach((input) => {
-    input.addEventListener('change', () => {
-      syncSourceCode(input.dataset.sourcesSource, input.checked);
-      refreshSelectionUi();
-    });
-  });
-  categoryToggleInputs.forEach((toggle) => {
-    toggle.addEventListener('change', () => {
-      const categoryCode = toggle.dataset.sourcesCategoryToggle;
-      const members = membersOfCategory(categoryCode);
-      members.forEach((member) => syncSourceCode(member.dataset.sourcesSource, toggle.checked));
-      refreshSelectionUi();
-    });
-  });
-
-  // Cancel and Reset never depend on the edited selection, so their target
-  // is fixed once, here, rather than recomputed on every change.
-  const cancelLink = document.querySelector('[data-sources-cancel]');
-  if (cancelLink) cancelLink.href = `${guidePath}${incomingFragment}`;
-  const resetLink = document.querySelector('[data-sources-page-reset]');
-  if (resetLink) resetLink.href = guidePath;
+  SourcesPage.boot();
   </script>
 </body>
 </html>
