@@ -1304,9 +1304,10 @@ def test_pr_preview_workflow_is_label_gated_fork_safe_and_head_bound() -> None:
     deploy = workflow["jobs"]["deploy"]
     assert deploy["concurrency"]["group"].endswith("pr-${{ github.event.pull_request.number }}")
     assert deploy["concurrency"]["cancel-in-progress"] == "true"
+    # Teardown shares the deploy job's group so a close landing mid-build queues
+    # behind the upload rather than racing it, and never cancels.
     teardown_concurrency = workflow["jobs"]["teardown"]["concurrency"]
-    assert teardown_concurrency["group"].endswith("pr-${{ github.event.pull_request.number }}")
-    assert teardown_concurrency["group"] != deploy["concurrency"]["group"]
+    assert teardown_concurrency["group"] == deploy["concurrency"]["group"]
     assert teardown_concurrency["cancel-in-progress"] == "false"
 
     fork_guard = "github.event.pull_request.head.repo.full_name == github.repository"

@@ -137,10 +137,14 @@ jobs:
       vars.CLOUDFLARE_PAGES_ENABLED == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    # Its own group, and never cancelled: a teardown that loses its race leaves
-    # a preview live with no event left to retry it.
+    # Deliberately the deploy job's group, so a close landing mid-build queues
+    # behind the upload instead of racing it: teardown would otherwise delete
+    # the current deployments and let the still-running deploy publish a fresh
+    # one that no later event would ever clean up. `cancel-in-progress: false`
+    # means teardown itself cancels nothing; only a `reopened` deploy can
+    # displace a pending teardown, which is what reopening should do.
     concurrency:
-      group: pages-preview-teardown-pr-${{ github.event.pull_request.number }}
+      group: pages-preview-pr-${{ github.event.pull_request.number }}
       cancel-in-progress: false
     permissions:
       contents: read
