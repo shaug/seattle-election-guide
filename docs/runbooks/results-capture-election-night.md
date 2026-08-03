@@ -43,8 +43,12 @@ execution has recorded the authority's real page and export structure below.
    `static_html` only for the rendered HTML results page; `pdf` only for PDF documents;
    `manual_upload` for the machine-readable exports (CSV, XML, JSON) — the CLI's honest
    category for bytes the caller fetched itself, whose manifest does not claim the command
-   observed an HTTP exchange. Direct methods (`static_html`, `pdf`) additionally require
-   `--http-status` with the observed 2xx; `manual_upload` takes no `--http-status`.
+   observed an HTTP exchange. Direct methods — `static_html`, `pdf`, and the escalation
+   path's `browser` — additionally require `--http-status` with the observed 2xx;
+   `manual_upload` takes no `--http-status`. When the final URL differs from the URL
+   followed, record the chain with one or more `--redirect-url` options beginning with the
+   requested URL and ending with the canonical URL; with no redirect, pass the same URL to
+   both `--requested-url` and `--canonical-url`.
 
    ```bash
    uv run election-guide evidence capture tmp/<artifact> \
@@ -92,7 +96,8 @@ Stop and flag a human when:
   an authority is a reviewed registry change, not something to improvise mid-capture.
 - The authority's page requires interaction (not static fetchable content) that the
   `static_html` capture method cannot honestly describe — switch to the `browser` method with
-  `--browser-required`, and note the change here.
+  `--browser-required`, keeping `--http-status` (browser is also a direct method), and note
+  the change here.
 
 ## Postmortem notes
 
