@@ -88,8 +88,17 @@ The public route contract is:
 - `/about/` is a site-wide, hand-authored About/FAQ page explaining the methodology, source-panel
   versioning, and how to report a correction, with reciprocal navigation to the current guide;
   every rendered guide links back to it from its footer;
-- `/about` redirects to the trailing-slash form; and
+- `/about` redirects to the trailing-slash form;
+- `/calendar.ics` is a site-wide RFC 5545 calendar of voter-facing election dates, served as
+  `text/calendar; charset=utf-8`; and
 - unknown elections, assets, and other paths return a real `404` with `noindex`.
+
+The calendar feed is generated from `config/calendar/elections.yaml` at staging time and carries
+only milestones marked `public: true`; its `DTSTAMP` is the current release's build timestamp
+rather than the clock, so restaging the same inputs produces identical bytes. It joins the staged
+asset set like any other file, so `hosting verify` checks its hash against the deployment manifest.
+`docs/ELECTION_CALENDAR.md` explains how a milestone is marked public and when to bump its
+`revision`.
 
 The generated Pages worker uses an exact staged-asset allowlist before consulting the Pages asset
 binding. This prevents Cloudflare's document fallback from turning a historical-looking unknown URL

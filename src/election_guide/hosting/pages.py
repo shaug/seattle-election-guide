@@ -11,12 +11,14 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
 
+from election_guide.calendar import read_election_calendar
 from election_guide.hosting.models import (
     DeploymentManifest,
     PublishedElection,
     SiteManifest,
 )
 from election_guide.hosting.releases import materialize_released_bundle
+from election_guide.publication.calendar_feed import build_calendar_feed
 from election_guide.publication.comparisons import ComparisonsPolicy
 from election_guide.publication.models import PublicationViewModel
 from election_guide.release.models import ReleaseManifest, ReleaseStatus
@@ -34,12 +36,24 @@ from election_guide.rendering.shell import (
 from election_guide.rendering.stylesheets import page_stylesheet
 from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
 
-PAGES_HEADERS = """/*
+CALENDAR_FEED_NAME = "calendar.ics"
+# Repository-relative, like every other configuration default in the CLI. The
+# staging function takes it as a parameter so a caller can point elsewhere.
+DEFAULT_CALENDAR_PATH = Path("config/calendar/elections.yaml")
+
+PAGES_HEADERS = f"""/*
   Cache-Control: public, max-age=0, must-revalidate
   Referrer-Policy: strict-origin-when-cross-origin
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Permissions-Policy: camera=(), geolocation=(), microphone=()
+
+# A calendar client decides the file's type from this header, not the
+# extension. Cache-Control is deliberately left to the wildcard rule above:
+# Pages joins repeated headers rather than overriding them, so a second
+# directive here would merge into a contradictory value.
+/{CALENDAR_FEED_NAME}
+  Content-Type: text/calendar; charset=utf-8
 """
 
 LEGACY_HOSTS = (
@@ -108,6 +122,7 @@ def stage_pages_site(
     *,
     expected_current_git_commit: str | None = None,
     released_bundle_dir: Path | None = None,
+    calendar_path: Path = DEFAULT_CALENDAR_PATH,
 ) -> StagedPagesSite:
     """Verify every declared release and atomically stage the complete public archive."""
     site_manifest_path = site_manifest_path.resolve()
@@ -208,6 +223,22 @@ def stage_pages_site(
             {"/favicon.svg", "/favicon-32.png", "/apple-touch-icon.png", "/og-image.png"}
         )
 
+        # The subscribable election calendar (issue 259). Its DTSTAMP is the
+        # current release's build time rather than the clock, so restaging the
+        # same inputs produces identical bytes and a subscriber sees a revision
+        # only when the declared calendar actually changed.
+        # Written as bytes: RFC 5545 requires CRLF, and text mode would rewrite
+        # those endings to the host platform's.
+        (stage / CALENDAR_FEED_NAME).write_bytes(
+            build_calendar_feed(
+                read_election_calendar(calendar_path),
+                canonical_origin=site_manifest.canonical_origin,
+                published_at=current.status.generated_at,
+                published_election_ids={bundle.declaration.election_id for bundle in verified},
+            ).encode("utf-8")
+        )
+        public_paths.add(f"/{CALENDAR_FEED_NAME}")
+
         (stage / "_headers").write_text(PAGES_HEADERS, encoding="utf-8")
         public_paths.add("/deployment-manifest.json")
         (stage / "_worker.js").write_text(
@@ -292,6 +323,7 @@ def _verify_staged_pages_site(
         "favicon-32.png",
         "apple-touch-icon.png",
         "og-image.png",
+        CALENDAR_FEED_NAME,
     }
     for declared, deployed in zip(site_manifest.elections, deployment.elections, strict=True):
         expected_values = {

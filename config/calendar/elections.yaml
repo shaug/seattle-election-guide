@@ -49,6 +49,7 @@ milestones:
     id: election-day
     kind: election_day
     offset_days: 0
+    public: true
   - election_id: wa-2026-primary
     id: results-capture-election-night
     kind: results_capture_election_night
@@ -96,12 +97,14 @@ milestones:
     id: ballots-mail
     kind: ballots_mail
     offset_days: -18
+    public: true
   - election_id: wa-2026-general
     id: guide-publishes
     kind: guide_publishes
     offset_days: -18
     workflow: release build
     reference: docs/RELEASE.md
+    public: true
   - election_id: wa-2026-general
     id: refresh-mid-ballot
     kind: refresh
@@ -118,6 +121,7 @@ milestones:
     id: election-day
     kind: election_day
     offset_days: 0
+    public: true
   - election_id: wa-2026-general
     id: results-capture-election-night
     kind: results_capture_election_night
@@ -170,12 +174,14 @@ milestones:
     id: ballots-mail
     kind: ballots_mail
     offset_days: -18
+    public: true
   - election_id: wa-2027-february-special
     id: guide-publishes
     kind: guide_publishes
     offset_days: -18
     workflow: release build
     reference: docs/RELEASE.md
+    public: true
   - election_id: wa-2027-february-special
     id: refresh-final
     kind: refresh
@@ -186,6 +192,7 @@ milestones:
     id: election-day
     kind: election_day
     offset_days: 0
+    public: true
   - election_id: wa-2027-february-special
     id: results-capture-election-night
     kind: results_capture_election_night
@@ -232,12 +239,14 @@ milestones:
     id: ballots-mail
     kind: ballots_mail
     offset_days: -18
+    public: true
   - election_id: wa-2027-april-special
     id: guide-publishes
     kind: guide_publishes
     offset_days: -18
     workflow: release build
     reference: docs/RELEASE.md
+    public: true
   - election_id: wa-2027-april-special
     id: refresh-final
     kind: refresh
@@ -248,6 +257,7 @@ milestones:
     id: election-day
     kind: election_day
     offset_days: 0
+    public: true
   - election_id: wa-2027-april-special
     id: results-capture-election-night
     kind: results_capture_election_night
@@ -299,12 +309,14 @@ milestones:
     id: ballots-mail
     kind: ballots_mail
     offset_days: -18
+    public: true
   - election_id: wa-2027-primary
     id: guide-publishes
     kind: guide_publishes
     offset_days: -18
     workflow: release build
     reference: docs/RELEASE.md
+    public: true
   - election_id: wa-2027-primary
     id: refresh-mid-ballot
     kind: refresh
@@ -321,6 +333,7 @@ milestones:
     id: election-day
     kind: election_day
     offset_days: 0
+    public: true
   - election_id: wa-2027-primary
     id: results-capture-election-night
     kind: results_capture_election_night
@@ -367,12 +380,14 @@ milestones:
     id: ballots-mail
     kind: ballots_mail
     offset_days: -18
+    public: true
   - election_id: wa-2027-general
     id: guide-publishes
     kind: guide_publishes
     offset_days: -18
     workflow: release build
     reference: docs/RELEASE.md
+    public: true
   - election_id: wa-2027-general
     id: refresh-mid-ballot
     kind: refresh
@@ -389,6 +404,7 @@ milestones:
     id: election-day
     kind: election_day
     offset_days: 0
+    public: true
   - election_id: wa-2027-general
     id: results-capture-election-night
     kind: results_capture_election_night
