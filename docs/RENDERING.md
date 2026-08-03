@@ -78,7 +78,9 @@ Printing suppresses the chrome a reader cannot use on paper — the brand band, 
 controls, the lens banner, the footer's action cluster — flattens the screen surfaces onto white,
 holds the race grid at two columns whichever on-screen density is active, and keeps each race card
 whole across a page break. The shell rules live in `base.css` so every page prints; the guide's own
-rules live in `guide.css`. No font file is redistributed and the responsive typography is unchanged.
+rules live in `guide.css`; and the page margins and lens-notice suppression it shares with the
+sources editor live in `guide-sources.css` (`rendering/stylesheets.py` declares which parts each
+page reads). No font file is redistributed and the responsive typography is unchanged.
 
 ## Requirements
 

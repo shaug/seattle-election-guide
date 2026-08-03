@@ -70,6 +70,7 @@ from election_guide.rendering.shell import (
     share_icon_svg,
     site_icon_svg,
 )
+from election_guide.rendering.stylesheets import page_stylesheet
 from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
 
 
@@ -204,12 +205,10 @@ def render_html_document(
     """Render the guide's one HTML document, which also carries its print rules."""
     environment = template_environment()
     template = environment.get_template("guide.html.j2")
-    # base.css carries the design tokens and accessibility utility classes (the
-    # skip link, visually-hidden) shared with the site-wide About page in
-    # hosting/pages.py, so both read the one file rather than hand-duplicating it.
-    stylesheet = (TEMPLATE_DIR / "base.css").read_text(encoding="utf-8") + (
-        TEMPLATE_DIR / "guide.css"
-    ).read_text(encoding="utf-8")
+    # One CSS entry per page, so the guide ships the shell, the rules it shares
+    # with the sources editor, and its own — and nothing the editor alone
+    # renders (rendering/stylesheets.py).
+    stylesheet = page_stylesheet("guide")
     # One entry module, one bundle, inlined verbatim inside a module script so
     # the guide stays one self-contained file (docs/FRONTEND.md, Modules).
     guide_entry_script = bundle_entry("guide-entry.mjs", global_name="GuidePage")
@@ -315,9 +314,7 @@ def render_sources_document(
     """
     environment = template_environment()
     template = environment.get_template("sources.html.j2")
-    stylesheet = (TEMPLATE_DIR / "base.css").read_text(encoding="utf-8") + (
-        TEMPLATE_DIR / "guide.css"
-    ).read_text(encoding="utf-8")
+    stylesheet = page_stylesheet("sources")
     sources_entry_script = bundle_entry("sources-entry.mjs", global_name="SourcesPage")
     guide_path = f"/e/{view_model.metadata.election_id}/"
     election_display_name, _ = election_names(
@@ -372,9 +369,7 @@ def render_comparison_document(
 
     environment = template_environment()
     template = environment.get_template("compare.html.j2")
-    stylesheet = (TEMPLATE_DIR / "base.css").read_text(encoding="utf-8") + (
-        TEMPLATE_DIR / "compare.css"
-    ).read_text(encoding="utf-8")
+    stylesheet = page_stylesheet("compare")
     compare_entry_script = bundle_entry("compare-entry.mjs", global_name="ComparePage")
     guide_path = f"/e/{view_model.metadata.election_id}/"
     election_display_name, _ = election_names(

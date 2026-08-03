@@ -1,3 +1,7 @@
+/* The design tokens and the shell every page renders (docs/DESIGN.md). It is
+   the first part of every page's stylesheet, so a page stylesheet can use a
+   token and override a shell rule without restating either
+   (rendering/stylesheets.py). */
 :root {
   --navy: #102a43;
   --blue: #176b87;

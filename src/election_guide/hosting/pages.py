@@ -22,7 +22,6 @@ from election_guide.publication.models import PublicationViewModel
 from election_guide.release.models import ReleaseManifest, ReleaseStatus
 from election_guide.rendering.bundler import bundle_entry
 from election_guide.rendering.renderer import (
-    TEMPLATE_DIR,
     render_comparison_document,
     render_sources_document,
     template_environment,
@@ -32,6 +31,7 @@ from election_guide.rendering.shell import (
     favicon_svg,
     page_title,
 )
+from election_guide.rendering.stylesheets import page_stylesheet
 from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
 
 PAGES_HEADERS = """/*
@@ -536,20 +536,21 @@ def _comparison_html(view_model: PublicationViewModel, canonical_origin: str) ->
     )
 
 
-def _site_document(template_name: str, **context: object) -> str:
+def _site_document(page: str, **context: object) -> str:
     """Render one of the three site-wide documents through the shared layout.
 
     About, the archive, and the 404 are not election-scoped, so they carry no
     view model and no source panel, but they extend the same `base.html.j2` and
     call the same shell macros as the guide, Sources, and Comparisons
     (docs/FRONTEND.md § Server-side templates).
+
+    `page` names both the template and the page's declared CSS entry, which is
+    `base.css` — the tokens and shell shared verbatim with every other page —
+    plus this page's own stylesheet (rendering/stylesheets.py).
     """
     environment = template_environment()
-    rendered = environment.get_template(template_name).render(
-        # Shared verbatim with the rendered guide (rendering/templates/base.css)
-        # so the design tokens, accessibility utilities, and the share/copy-link
-        # fallback policy have exactly one implementation each.
-        stylesheet=(TEMPLATE_DIR / "base.css").read_text(encoding="utf-8"),
+    rendered = environment.get_template(f"{page}.html.j2").render(
+        stylesheet=page_stylesheet(page),
         project_url=PROJECT_URL,
         **context,
     )
@@ -573,7 +574,7 @@ def _archive_html(
     compare_href: str | None = None,
 ) -> str:
     return _site_document(
-        "archive.html.j2",
+        "archive",
         document_title=page_title(page="Guide archive"),
         page_description="Published Seattle election endorsement guides.",
         canonical_url=f"{site_manifest.canonical_origin}/e/",
@@ -610,7 +611,7 @@ def _about_html(
 ) -> str:
     current_path = f"/e/{site_manifest.current_election_id}/"
     return _site_document(
-        "about.html.j2",
+        "about",
         document_title=page_title(page="How this works"),
         page_description=ABOUT_DESCRIPTION,
         canonical_url=f"{site_manifest.canonical_origin}/about/",
@@ -639,7 +640,7 @@ def _not_found_html(
 ) -> str:
     """The worker's branded 404 with the shared global-page footer."""
     return _site_document(
-        "not-found.html.j2",
+        "not-found",
         document_title=page_title(page="Page not found"),
         canonical_origin=site_manifest.canonical_origin,
         shareable=False,

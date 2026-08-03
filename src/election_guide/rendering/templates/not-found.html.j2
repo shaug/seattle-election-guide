@@ -14,18 +14,6 @@
   <meta property="og:title" content="{{ document_title }}">
   <meta name="twitter:title" content="{{ document_title }}">
 {% endblock %}
-{% block styles %}
-  <style>
-    {{ stylesheet | safe }}
-    main { padding: 3rem clamp(1rem, 4vw, 2.5rem); }
-    main h1 {
-      margin: 0 0 .5rem; color: var(--navy);
-      font: 700 clamp(1.6rem, 4vw, 2.2rem)/1.05 var(--screen-serif);
-    }
-    main p { margin: 0; color: var(--muted); max-width: 46ch; }
-    main p a { font-weight: 700; }
-  </style>
-{% endblock %}
 {% block body %}
   <div class="page">
     <header>
