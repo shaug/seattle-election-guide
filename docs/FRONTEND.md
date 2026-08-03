@@ -305,14 +305,32 @@ check is a bug in the check — fix or amend it, never route around it.
 - **A comment is not a contract.** Any logic implemented in both Python and
   JavaScript — labels, formatting, scoring, encoding — requires a generated
   parity fixture: the Python side emits golden cases, the Node tests assert
-  them. `lens-score`'s parity fixture is the pattern. *Check: exists for
-  scoring; partial for the comparison table's labels and percentages — the
-  markup-parity test (Rendering, above) diffs both sides' output for every
-  cell the audited page renders, which is what caught `toFixed` rounding a
-  9/16 share to 56.3% where the audited renderer's half-to-even gives 56.2%.
-  It cannot reach a value the audited page does not render, so a generated
-  golden-case fixture is still owed for the shares only a category column
-  produces.*
+  them. `lens-score`'s parity fixture is the pattern.
+  *Check: exists — `tests/mirrors.json` names every surviving mirror and the
+  proof that holds it; `tests/mirror_parity.py` runs the shipped server
+  implementations over real publication bundles and emits
+  `tests/js/fixtures/mirror-parity.json`, which `tests/js/mirror-parity.test.mjs`
+  asserts against the client. `tests/test_mirrors.py` regenerates the fixture
+  during `pytest`, so a committed golden file cannot go stale while staying
+  green. The first thing the fixture found was a real divergence: the meter's
+  spoken label read the visible `N/A` aloud where the audited renderer says
+  "not available", on the null share no audited page renders and no markup diff
+  can reach.*
+- **The inventory of mirrors is derived, not listed.**
+  `tests/cross_language_mirrors.py` finds candidates two ways — the same
+  display-text template written on both sides, and a definition on one side
+  that the other names — and `tests/test_mirrors.py` holds `tests/mirrors.json`
+  to the union in both directions. The second signal is the rule above read
+  mechanically: a comment claiming a mirror is what puts that mirror on the
+  inventory, so the claim can no longer be the only thing documenting it. For a
+  mirror whose whole content is one shared string, that derivation *is* the
+  proof — change the wording on either side alone and the declared evidence
+  stops being derived. Two limits are deliberate: symbol matching is restricted
+  to multiword names, because `text` and `boot` are defined on both sides and
+  mean nothing to each other; and a formatter whose output shares no words with
+  its counterpart is invisible to both signals, which is why the inventory is a
+  floor the derivation raises rather than a ceiling it defines, and why
+  arithmetic mirrors carry golden cases instead.
 - **Prefer deleting a mirror to fixing one.** Where the contract can carry
   the computed value instead (a label in the payload rather than a formatter
   on each side), carry the value. The audited candidate order and the audited
@@ -323,7 +341,9 @@ check is a bug in the check — fix or amend it, never route around it.
   that tree to lit without adding a second implementation of either. The count
   grammar that used to be a Jinja macro is now `source_participation_label` in
   `rendering/payload.py`, feeding the template and the payload from one
-  definition.
+  definition. `tests/mirrors.json` records the deletions alongside the
+  survivors, so a reader looking for a mirror an old issue named can see it was
+  removed rather than go hunting for it.
 
 ## Shared names
 
