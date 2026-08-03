@@ -68,6 +68,9 @@ from election_guide.publication.models import (
     _percentage_whole,  # pyright: ignore[reportPrivateUsage]
 )
 from election_guide.rendering import context
+from election_guide.rendering.validation import (
+    _html_semantic_values,  # pyright: ignore[reportPrivateUsage]
+)
 from election_guide.serialization import read_json
 from tests.test_personalization import DATASET_PATH, _bundle  # pyright: ignore[reportPrivateUsage]
 
@@ -151,6 +154,16 @@ def _leader_count(race: PublicationRace) -> int:
     )
 
 
+def _meter_label(race: PublicationRace) -> str:
+    """The meter's visible text, as the rendered-HTML validator requires it.
+
+    `_html_semantic_values` is the audited page's own statement of what each
+    display role must contain, so its `share` entry is the server's answer for
+    both a race with a share and a race without one.
+    """
+    return _html_semantic_values(race)["share"][0]
+
+
 def _scored(race: PublicationRace) -> dict[str, Any]:
     """The race as the client's scorer reports it, which is what the mirrors read."""
     return {
@@ -209,19 +222,19 @@ def _race_cases(race: PublicationRace, panel: str) -> list[dict[str, Any]]:
             "expected": context.race_detail_accessible_summary(race),
         },
     ]
-    # `percentage_label` is the meter's visible text only when there is a share;
-    # for a race without one the template writes its own `N/A` and the field's
-    # em dash is never rendered. So the mirror's claim is made where the field
-    # is the rendered text, and the client's null rendering is asserted through
-    # the accessible label above, which the server does compute for both.
-    if share is not None:
-        cases.append(
-            {
-                "mirror": "share-percentage-label",
-                "input": {"share": share},
-                "expected": race.percentage_label,
-            }
-        )
+    # The meter's visible text. `percentage_label` is that text only when there
+    # is a share: for a race without one the template writes its own `N/A` and
+    # the field's em dash is never rendered. `rendering/validation.py` already
+    # spells the whole rule as one expression, because the rendered-HTML
+    # validator has to know what the meter should say, so both branches read it
+    # from there rather than leaving the null one to a literal nobody checks.
+    cases.append(
+        {
+            "mirror": "share-percentage-label" if share is not None else "meter-unavailable-label",
+            "input": {"share": share},
+            "expected": _meter_label(race),
+        }
+    )
     for case in cases:
         case["source"] = f"published race {race.id} on the {panel} panel"
     return cases

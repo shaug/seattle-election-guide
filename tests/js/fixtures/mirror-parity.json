@@ -364,6 +364,15 @@
       "source": "sources-audited-page.html, the rendered page count"
     },
     {
+      "mirror": "meter-unavailable-label",
+      "input": {
+        "share": null
+      },
+      "expected": "N/A",
+      "source": "published race ld-11-state-representative-2 on the single-source panel",
+      "note": "One source falls below the explicit-source floor, so every race is insufficient and the races it did not cover have no share at all."
+    },
+    {
       "mirror": "no-majority",
       "input": {
         "share": "1"

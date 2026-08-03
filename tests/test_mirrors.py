@@ -31,7 +31,18 @@ LENS_FIXTURE_PATH = PROJECT_ROOT / "tests" / "js" / "fixtures" / "lens-parity.js
 DOCUMENT = "docs/FRONTEND.md"
 REGENERATE = "uv run python -m tests.mirror_parity"
 
-PROOFS = {"parity-fixture", "lens-parity-fixture", "shared-literal", "payload-carried"}
+PROOFS = {
+    "parity-fixture",
+    "lens-parity-fixture",
+    "markup-parity",
+    "shared-literal",
+    "payload-carried",
+}
+# Proofs that rest on the derivation seeing the text on both sides, and so are
+# meaningless without evidence to lose. `markup-parity` is included because its
+# region diff and the derivation cover each other: the diff catches a rendering
+# that stops matching, the evidence catches wording that leaves one side.
+_TEXT_BACKED_PROOFS = {"markup-parity", "shared-literal"}
 
 
 @pytest.fixture(scope="module")
@@ -51,18 +62,18 @@ def test_every_entry_declares_a_known_proof(inventory: dict[str, Any]) -> None:
         assert entry["client"].strip() and entry["server"].strip(), f"{name} names only one side"
 
 
-def test_a_shared_literal_proof_rests_on_derived_text(inventory: dict[str, Any]) -> None:
+def test_a_text_backed_proof_rests_on_derived_text(inventory: dict[str, Any]) -> None:
     """A string-only mirror is proven by the derivation seeing it on both sides.
 
     So that proof is meaningless without text evidence: with none declared,
     nothing about the entry would change when one side's wording moved.
     """
     for name, entry in inventory.items():
-        if entry["proof"] != "shared-literal":
+        if entry["proof"] not in _TEXT_BACKED_PROOFS:
             continue
         assert any(item.startswith("text:") for item in entry["evidence"]), (
-            f"{name} is proven by a shared literal but declares no text evidence, so no "
-            f"change to either side could fail this check ({DOCUMENT} § Cross-language mirrors)."
+            f"{name} is proven by its shared text but declares none, so no change to either "
+            f"side could fail this check ({DOCUMENT} § Cross-language mirrors)."
         )
 
 

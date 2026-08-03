@@ -327,29 +327,32 @@ check is a bug in the check — fix or amend it, never route around it.
   drop the wording from either side and the declared evidence stops being
   derived.
 
-  Text is read one rendered branch at a time on both sides. A `{% if %}` splits
-  the markup around it rather than collapsing with it, a Jinja expression's own
-  literals and `~` concatenations are read, and a literal nested inside a
-  `${...}` is read too. Each of those was a blind spot that hid a real mirror —
-  the dialog's `Leading choice` / `Tied for lead` kicker, its contributing-count
-  sentence, and the Comparisons status line — and none of them was visible to
-  the scan that missed them, which is the whole argument for reviewing the
-  inventory rather than trusting it.
+  **Both sides are read the same way**, which took four corrections to get right
+  and is where this scan kept missing real mirrors. A lit template is markup
+  with text in it, exactly as a `.j2` file is, so both are split on their tags
+  and on Jinja control flow: the text on either side of an `{% if %}`/`{% else %}`
+  is two templates the page renders separately, not one blob. A Jinja
+  expression's own literals and `~` concatenations are read at any bracket
+  depth, and a literal nested inside a `${...}` is read too. A single token
+  counts as display text unless it looks like syntax, because requiring a space
+  discarded the meter's `N/A` and the comparison table's `Race` heading. Each of
+  those was a blind spot invisible to the scan that had it, which is the entire
+  argument for reviewing the inventory rather than trusting it.
 
-  **The derivation is a floor, not a ceiling**, and three limits say why an
-  entry may exist that no signal pins. Symbol matching is restricted to
-  multiword names, because `text` and `boot` are defined on both sides and mean
-  nothing to each other. A mirror that shares no display text and names no
-  counterpart is invisible to both signals — the Comparisons fragment encoding
-  is exactly that, and is on the inventory because a reviewer put it there — so
-  arithmetic and encoding mirrors carry golden cases rather than evidence keys.
-  And an evidence key records that a template is spelled on each side, not where
-  or how many times, so a `shared-literal` entry catches wording dropped from a
-  side but not one implementation of it moving while another occurrence in the
-  same file keeps the key alive. Text a macro's caller assembles, or a filter
-  chain builds, is still beyond the scan. Adding an entry after reading the code
-  is the intended way to close the gap those limits leave; `tests/mirrors.json`
-  is reviewed, not merely generated.
+  **The derivation is a floor, not a ceiling**, and four limits say why an entry
+  may exist that no signal pins. Symbol matching is restricted to multiword
+  names, because `text` and `boot` are defined on both sides and mean nothing to
+  each other. A mirror that shares no words with its counterpart is invisible to
+  both signals — the Comparisons fragment encoding is exactly that, and is on
+  the inventory because a reviewer put it there — so arithmetic and encoding
+  mirrors carry golden cases rather than evidence keys. Attribute text is
+  dropped with the tag that holds it, so a `title` or `aria-label` spelled on
+  both sides is left to the markup diff. And an evidence key records that a
+  template is spelled on each side, not where or how many times, so a text-backed
+  entry catches wording dropped from a side but not one implementation of it
+  moving while another occurrence in the same file keeps the key alive. Adding
+  an entry after reading the code is the intended way to close what those limits
+  leave; `tests/mirrors.json` is reviewed, not merely generated.
 - **Prefer deleting a mirror to fixing one.** Where the contract can carry
   the computed value instead (a label in the payload rather than a formatter
   on each side), carry the value. The audited candidate order and the audited

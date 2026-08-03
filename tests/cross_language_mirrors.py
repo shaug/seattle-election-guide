@@ -29,15 +29,18 @@ arithmetic — ``percentageLabel`` shares only ``%`` with its Python side — an
 named symbols misses a mirror nobody annotated. The union is the candidate set,
 and every candidate needs an inventory entry saying how that mirror is proven.
 
-Text is read one *rendered branch* at a time on both sides, which took three
-corrections to get right and is where this scan previously missed real mirrors:
-a ``{% if %}`` splits the markup around it rather than collapsing into it, a
-Jinja expression's own literals and ``~`` concatenations are read, and a literal
-nested inside a ``${...}`` is read too. The dialog's ``Leading choice`` kicker,
-its contributing-count sentence, and the Comparisons status line each hid behind
-one of those.
+Both sides are read the same way, which took four corrections to get right and
+is where this scan kept missing real mirrors. A lit template is markup with text
+in it exactly as a ``.j2`` file is, so both are split on their tags and on Jinja
+control flow; a ``{% if %}``/``{% else %}`` yields the two templates the page
+renders rather than one blob; a Jinja expression's own literals and ``~``
+concatenations are read at any bracket depth; a literal nested inside a
+``${...}`` is read too; and a single token counts as display text unless it
+looks like syntax. The dialog's ``Leading choice`` kicker, its contributing-count
+sentence, the Comparisons status line, the meter's ``N/A`` and the comparison
+head's ``Race`` each hid behind one of those.
 
-Three limits are deliberate, and are the reason the fixtures rather than this
+Four limits are deliberate, and are the reason the fixtures rather than this
 scan carry the correctness claim:
 
 - Symbol matching is restricted to multiword names (``snake_case`` with an
@@ -50,14 +53,18 @@ scan carry the correctness claim:
   rule distrusts, so it must reach the inventory; a comment quoting a label is
   not a second implementation of it, so it must not.
 - Text evidence finds only mirrors that share words, and a formatter whose
-  output is one word (``supportSummaryCompact``'s ``"N sources"``) shares too
-  little to be found. Nor does an evidence key record *where* a template is
-  spelled, so a `shared-literal` entry catches wording dropped from a side but
-  not one implementation moving while a second occurrence in the same file keeps
-  the key alive. Text a macro's caller assembles, or a filter chain builds, is
-  beyond it as well. So `tests/mirrors.json` is a floor the derivation raises,
-  not a ceiling it defines: every derived candidate must appear there, and
-  reviewed entries may be added that no signal pins.
+  output is a bare number (``supportSummaryCompact``'s ``"N sources"``, whose
+  only word is ``sources``) shares too little to be found.
+- Attribute text is dropped with the tag holding it, so a ``title`` or
+  ``aria-label`` spelled on both sides is left to the markup diff. Nor does an
+  evidence key record *where* a template is spelled, so a text-backed entry
+  catches wording dropped from a side but not one implementation moving while a
+  second occurrence in the same file keeps the key alive. Text a macro's caller
+  assembles, or a filter chain builds, is beyond it as well.
+
+So `tests/mirrors.json` is a floor the derivation raises, not a ceiling it
+defines: every derived candidate must appear there, and reviewed entries may be
+added that no signal pins.
 """
 
 from __future__ import annotations
@@ -101,6 +108,8 @@ _WHITESPACE = re.compile(r"\s+")
 _JS_EXPORT = re.compile(r"^export (?:async )?(?:function|class) (\w+)", re.M)
 _MULTIWORD_SNAKE = re.compile(r"^[a-z][a-z0-9]*(?:_[a-z0-9]+)+$")
 _MULTIWORD_CAMEL = re.compile(r"^[a-z][a-zA-Z0-9]*[A-Z][a-zA-Z0-9]*$")
+# A lowercase token joined by separators: a class name, state key, or path.
+_SYNTAX_TOKEN = re.compile(r"^[a-z0-9]+([-_.:/][a-z0-9]+)*$")
 
 
 def _server_files() -> list[Path]:
@@ -127,13 +136,20 @@ def _is_display_text(template: str) -> bool:
     Deliberately generous. A false positive costs one inventory entry recording
     how that text is already proven; a false negative is a mirror nobody looks
     at, which is what this module exists to prevent.
+
+    A sentence is admitted by having a space or a placeholder. A single token is
+    admitted unless it *looks like syntax* — all-lowercase words joined by
+    hyphens, underscores, dots, or slashes are class names, state keys, and
+    paths, and `tests/shared_names.json` already owns names shared as syntax.
+    Requiring a space instead would have been simpler and was wrong: it silently
+    discarded the meter's `N/A` and the comparison head's `Race`, both of which
+    are display text written on both sides of the boundary.
     """
-    if len(template) < 4 or not re.search(r"[A-Za-z]{2}", template):
+    if len(template) < 3 or not re.search(r"[A-Za-z]", template):
         return False
-    # A bare identifier, selector, or path is a name rather than a sentence, and
-    # `tests/shared_names.json` already owns names shared as syntax. Requiring a
-    # space or a placeholder keeps this scan on prose.
-    return " " in template or HOLE in template
+    if " " in template or HOLE in template:
+        return True
+    return not _SYNTAX_TOKEN.match(template)
 
 
 def _python_literals(source: str) -> set[str]:
@@ -279,11 +295,18 @@ def _client_literals(source: str, depth: int = 0) -> set[str]:
 
 
 def _client_templates(path: Path) -> set[str]:
-    return {
-        template
-        for literal in _client_literals(_executable_client_source(path))
-        if _is_display_text(template := _normalize(literal))
-    }
+    """Client display text, split on markup exactly as the Jinja side is.
+
+    A lit template is markup with text in it, the same shape a `.j2` file has,
+    so it is read the same way. Reading the client literal whole while splitting
+    the server's markup made the two sides asymmetric, and the asymmetry hid
+    every string a lit template wraps in an element: the comparison head's
+    `Race`, the no-majority pill, the sources tree's `also in:`.
+    """
+    chunks: set[str] = set()
+    for literal in _client_literals(_executable_client_source(path)):
+        chunks.update(_HTML_TAG.split(literal))
+    return {template for chunk in chunks if _is_display_text(template := _normalize(chunk))}
 
 
 def shared_text() -> dict[str, dict[str, list[str]]]:

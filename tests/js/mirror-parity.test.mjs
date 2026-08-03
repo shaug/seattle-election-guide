@@ -73,6 +73,10 @@ function auditedPayload(page) {
  */
 const RUNNERS = {
   'share-percentage-label': ({ share }) => percentageLabel(share),
+  // The same client function, asserted for the share the server has no
+  // number for. Its own mirror because the server writes that branch as a
+  // template literal rather than as the `percentage_label` field.
+  'meter-unavailable-label': ({ share }) => percentageLabel(share),
   'no-majority': ({ share }) => hasNoMajority(share),
   'share-accessible-label': ({ share }) => shareAccessibleLabel(share),
   'support-summary': ({ scored: race }) => supportSummary(scored(race)),
