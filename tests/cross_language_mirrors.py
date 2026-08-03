@@ -34,11 +34,14 @@ is where this scan kept missing real mirrors. A lit template is markup with text
 in it exactly as a ``.j2`` file is, so both are split on their tags and on Jinja
 control flow; a ``{% if %}``/``{% else %}`` yields the two templates the page
 renders rather than one blob; a Jinja expression's own literals and ``~``
-concatenations are read at any bracket depth; a literal nested inside a
-``${...}`` is read too; and a single token counts as display text unless it
-looks like syntax. The dialog's ``Leading choice`` kicker, its contributing-count
-sentence, the Comparisons status line, the meter's ``N/A`` and the comparison
-head's ``Race`` each hid behind one of those.
+concatenations are read at any bracket depth; string literals are read by a
+brace-balanced scan rather than a pattern, so a literal nested inside a
+``${...}`` is read to any depth — including the ``html`...`` sub-template lit
+uses for a conditional fragment; and a single token counts as display text
+unless it looks like syntax. The dialog's ``Leading choice`` kicker, its
+contributing-count sentence, the Comparisons status line, the meter's ``N/A``,
+the comparison head's ``Race`` and the ``Differs`` badge each hid behind one of
+those.
 
 Four limits are deliberate, and are the reason the fixtures rather than this
 scan carry the correctness claim:
@@ -59,8 +62,10 @@ scan carry the correctness claim:
   ``aria-label`` spelled on both sides is left to the markup diff. Nor does an
   evidence key record *where* a template is spelled, so a text-backed entry
   catches wording dropped from a side but not one implementation moving while a
-  second occurrence in the same file keeps the key alive. Text a macro's caller
-  assembles, or a filter chain builds, is beyond it as well.
+  second occurrence anywhere on that side keeps the key alive — ``Full`` is
+  written by both the guide's view toggle and the Comparisons filter, so only
+  the pair of them leaving would be noticed. Text a macro's caller assembles, or
+  a filter chain builds, is beyond it as well.
 
 So `tests/mirrors.json` is a floor the derivation raises, not a ceiling it
 defines: every derived candidate must appear there, and reviewed entries may be
@@ -84,8 +89,6 @@ SERVER_DIRS = (
 # so it cannot collide with real text.
 HOLE = "•"
 
-_JS_STRING = re.compile(r"""(?P<q>["'`])(?P<body>(?:\\.|(?!(?P=q)).)*)(?P=q)""", re.DOTALL)
-_JS_HOLE = re.compile(r"\$\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}")
 _JS_BLOCK_COMMENT = re.compile(r"/\*[\s\S]*?\*/")
 # Whitespace or line start before `//`, so a `https://` inside a string survives.
 # The same heuristic `tests/js/support/module-guards.mjs` strips comments with.
@@ -273,24 +276,84 @@ def _executable_client_source(path: Path) -> str:
     return _JS_LINE_COMMENT.sub(r"\1", _JS_BLOCK_COMMENT.sub("", text))
 
 
+def _read_js_string(source: str, start: int) -> tuple[str, list[str], int]:
+    """Read one string literal, returning its skeleton, its holes, and the end.
+
+    Written as a scan rather than a pattern because a regex cannot balance
+    braces: `` `${row.differs ? html`<span>Differs</span>` : nothing}` `` nests a
+    template literal inside an interpolation inside a template literal, which is
+    the ordinary lit idiom for a conditional fragment. A pattern that stopped at
+    the next backtick ended the outer literal at the *inner* one and then paired
+    every following backtick wrongly, so the text between them belonged to no
+    string at all and the badge inside was never read.
+    """
+    quote = source[start]
+    index = start + 1
+    skeleton: list[str] = []
+    holes: list[str] = []
+    while index < len(source):
+        character = source[index]
+        if character == "\\":
+            skeleton.append(source[index : index + 2])
+            index += 2
+            continue
+        if character == quote:
+            return "".join(skeleton), holes, index + 1
+        if quote == "`" and character == "$" and source[index + 1 : index + 2] == "{":
+            inner, index = _read_interpolation(source, index + 2)
+            holes.append(inner)
+            skeleton.append(HOLE)
+            continue
+        skeleton.append(character)
+        index += 1
+    return "".join(skeleton), holes, index
+
+
+def _read_interpolation(source: str, start: int) -> tuple[str, int]:
+    """Read one `${...}` body by brace balance, stepping over nested strings."""
+    index = start
+    depth = 1
+    body: list[str] = []
+    while index < len(source):
+        character = source[index]
+        if character in "\"'`":
+            nested_start = index
+            _, _, index = _read_js_string(source, index)
+            body.append(source[nested_start:index])
+            continue
+        if character == "{":
+            depth += 1
+        elif character == "}":
+            depth -= 1
+            if depth == 0:
+                return "".join(body), index + 1
+        body.append(character)
+        index += 1
+    return "".join(body), index
+
+
 def _client_literals(source: str, depth: int = 0) -> set[str]:
     """Every string literal, including those nested inside an interpolation.
 
-    The mirror image of the Jinja fix above, and the same blind spot: a
+    The mirror image of the Jinja handling above, and the same blind spot: a
     conditional inside `${...}` — ``` `${tied ? 'No majority · ' : ''}${rest}` ```
     — is a literal the reader sees, but the enclosing template literal collapses
     to a bare hole, and a scan that stopped at the outer quote would never look
-    inside. So the interpolations are scanned as source in their own right.
+    inside. So the interpolations are scanned as source in their own right, to
+    any depth of nesting.
     """
-    if depth > 8:
+    if depth > 12:
         return set()
     literals: set[str] = set()
-    for match in _JS_STRING.finditer(source):
-        body = match.group("body")
-        literals.add(_JS_HOLE.sub(HOLE, body))
-        if match.group("q") == "`":
-            for interpolation in _JS_HOLE.finditer(body):
-                literals |= _client_literals(interpolation.group(0)[2:-1], depth + 1)
+    index = 0
+    while index < len(source):
+        if source[index] in "\"'`":
+            skeleton, holes, index = _read_js_string(source, index)
+            literals.add(skeleton)
+            for hole in holes:
+                literals |= _client_literals(hole, depth + 1)
+            continue
+        index += 1
     return literals
 
 

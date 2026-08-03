@@ -168,6 +168,13 @@
       ],
       "note": "A third spelling of the qualifier, after 'No majority.' in the accessible summaries and 'No majority ·' in the dialog kicker. This one is inside a card region guide-markup-parity diffs against the audited page, so the rendered markup is what holds it."
     },
+    "comparison-differs-badge": {
+      "client": "compare-table.mjs rowTemplate",
+      "server": "compare.html.j2 row header",
+      "proof": "markup-parity",
+      "evidence": ["text:Differs"],
+      "note": "The badge marking a race whose columns disagree. Written inside a conditional lit sub-template, which is the shape that hid it: a nested `html` template inside a `${...}` inside a template literal. The audited page renders twelve of these inside the row groups compare-markup-parity diffs, so the pair is held there; the entry exists so it is also named."
+    },
     "sources-also-in-tag": {
       "client": "sources-tree.mjs, the category tag line",
       "server": "sources.html.j2 sources-also-in span",

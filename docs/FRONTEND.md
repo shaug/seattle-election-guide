@@ -333,11 +333,13 @@ check is a bug in the check — fix or amend it, never route around it.
   and on Jinja control flow: the text on either side of an `{% if %}`/`{% else %}`
   is two templates the page renders separately, not one blob. A Jinja
   expression's own literals and `~` concatenations are read at any bracket
-  depth, and a literal nested inside a `${...}` is read too. A single token
-  counts as display text unless it looks like syntax, because requiring a space
-  discarded the meter's `N/A` and the comparison table's `Race` heading. Each of
-  those was a blind spot invisible to the scan that had it, which is the entire
-  argument for reviewing the inventory rather than trusting it.
+  depth, and string literals are read by a brace-balanced scan rather than a
+  pattern, so a literal inside a `${...}` is read to any depth — including the
+  `` html`...` `` sub-template lit uses for a conditional fragment. A single
+  token counts as display text unless it looks like syntax, because requiring a
+  space discarded the meter's `N/A` and the comparison table's `Race` heading.
+  Each of those was a blind spot invisible to the scan that had it, which is the
+  entire argument for reviewing the inventory rather than trusting it.
 
   **The derivation is a floor, not a ceiling**, and four limits say why an entry
   may exist that no signal pins. Symbol matching is restricted to multiword
@@ -350,7 +352,8 @@ check is a bug in the check — fix or amend it, never route around it.
   both sides is left to the markup diff. And an evidence key records that a
   template is spelled on each side, not where or how many times, so a text-backed
   entry catches wording dropped from a side but not one implementation of it
-  moving while another occurrence in the same file keeps the key alive. Adding
+  moving while another occurrence anywhere on that side keeps the key alive.
+  Adding
   an entry after reading the code is the intended way to close what those limits
   leave; `tests/mirrors.json` is reviewed, not merely generated.
 - **Prefer deleting a mirror to fixing one.** Where the contract can carry
