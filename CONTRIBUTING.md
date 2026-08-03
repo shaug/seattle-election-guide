@@ -34,6 +34,15 @@ committed declarations and the models disagree.
 - Document new policy or methodology choices before using them to score real data.
 - State exactly what was verified and what remains incomplete.
 
+Write commit subjects in the conventional form (`feat:`, `fix:`, `docs:`, `build:`) — they are the
+text of the changelog entry. `CHANGELOG.md` is generated from history by
+[git-cliff](https://git-cliff.org) and must never be hand-edited; `make check` regenerates it and
+fails when the committed copy differs. After a merge changes history, run:
+
+```bash
+npm run changelog
+```
+
 ## Adding sources
 
 Register the organization and its eligibility before collecting results. Record discovery status

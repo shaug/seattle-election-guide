@@ -1,4 +1,4 @@
-.PHONY: sync format check check-js types test release-verify hosting-stage hosting-serve hosting-deploy
+.PHONY: sync format check check-js check-changelog changelog types test release-verify hosting-stage hosting-serve hosting-deploy
 
 sync:
 	uv sync --frozen
@@ -19,6 +19,18 @@ check:
 	uv run election-guide calendar validate config/calendar/elections.yaml
 	uv run election-guide release verify data/releases/wa-2026-primary/source-decisions.yaml
 	$(MAKE) check-js
+	$(MAKE) check-changelog
+
+changelog:
+	npm run changelog
+
+# CHANGELOG.md is generated, so the committed copy has to be the one the current
+# history produces. Regenerate into a scratch file and compare (issue 216).
+check-changelog:
+	npm run changelog:version
+	mkdir -p dist
+	npx git-cliff --config cliff.toml --output dist/CHANGELOG.check.md
+	cmp CHANGELOG.md dist/CHANGELOG.check.md
 
 # Lint and format first, then types, then behavior: a formatting or typing
 # failure is cheaper to read than a test failure caused by the same mistake

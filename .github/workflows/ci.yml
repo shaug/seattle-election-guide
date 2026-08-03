@@ -15,6 +15,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # CHANGELOG.md is rendered from the complete commit history and its
+          # release tags, so the default shallow, tagless checkout would
+          # regenerate a different file (issue 216).
+          fetch-depth: 0
       - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
@@ -43,6 +48,8 @@ jobs:
         run: uv run pytest
       - name: Lint, type-check, and test the client modules
         run: make check-js
+      - name: Verify the committed changelog matches history
+        run: make check-changelog
       - name: Validate canonical election inventory
         run: uv run election-guide inventory validate data/normalized/wa-2026-primary-inventory.json
       - name: Validate the election operations calendar
