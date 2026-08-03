@@ -41,6 +41,32 @@
 {%- endmacro %}
 
 
+{% macro social_meta(document_title, description, canonical_url) -%}
+{#- The social-card and canonical grammar every full-content page renders.
+
+   The companion to `head_links`, which carries the half of the same policy
+   that is the same on every page (the card type and image). This half varies
+   only in its three values, so it is one macro rather than eight lines copied
+   into each template — a change to how the site describes itself to a crawler
+   or a share sheet is one edit, not five.
+
+   The 404 deliberately does not call this: it is `noindex` with no canonical
+   and no description, and carries only the two title tags, so routing it
+   through here would mean conditionals for a page that wants none of it.
+
+   Indented like `head_links` and for the same reason — the call site supplies
+   the first line's two spaces, and the continuations carry their own. -#}
+<meta name="description" content="{{ description }}">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{{ document_title }}">
+  <meta property="og:description" content="{{ description }}">
+  <meta property="og:url" content="{{ canonical_url }}">
+  <meta name="twitter:title" content="{{ document_title }}">
+  <meta name="twitter:description" content="{{ description }}">
+  <link rel="canonical" href="{{ canonical_url }}">
+{%- endmacro %}
+
+
 {% macro nav_link(label, href, key, current, sources_link=false) -%}
 <a href="{{ href }}"{% if sources_link %} data-sources-link{% endif %}{% if current == key %} aria-current="page"{% endif %}>{{ label }}</a>
 {%- endmacro %}

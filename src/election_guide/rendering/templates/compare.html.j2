@@ -2,14 +2,7 @@
 {% block head_meta %}
   {% set canonical_url = public_site_url ~ guide_path ~ 'comparisons/' %}
   {% set page_description = 'Endorsements side by side, surfacing tension.' %}
-  <meta name="description" content="{{ page_description }}">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="{{ document_title }}">
-  <meta property="og:description" content="{{ page_description }}">
-  <meta property="og:url" content="{{ canonical_url }}">
-  <meta name="twitter:title" content="{{ document_title }}">
-  <meta name="twitter:description" content="{{ page_description }}">
-  <link rel="canonical" href="{{ canonical_url }}">
+  {{ shell.social_meta(document_title, page_description, canonical_url) }}
 {% endblock %}
 {% block body %}
   {% from '_filter_controls.html.j2' import election_controls %}

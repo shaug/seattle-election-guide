@@ -1,15 +1,8 @@
 {% extends 'base.html.j2' %}
 {% block head_meta %}
-  <meta name="author" content="{{ config.author }}">
-  <meta name="description" content="{{ config.subject }}">
   {% set canonical_url = config.public_site_url ~ '/e/' ~ guide.metadata.election_id ~ '/' %}
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="{{ document_title }}">
-  <meta property="og:description" content="{{ config.subject }}">
-  <meta property="og:url" content="{{ canonical_url }}">
-  <meta name="twitter:title" content="{{ document_title }}">
-  <meta name="twitter:description" content="{{ config.subject }}">
-  <link rel="canonical" href="{{ canonical_url }}">
+  <meta name="author" content="{{ config.author }}">
+  {{ shell.social_meta(document_title, config.subject, canonical_url) }}
 {% endblock %}
 {% block body %}
   {% from '_filter_controls.html.j2' import election_controls %}
