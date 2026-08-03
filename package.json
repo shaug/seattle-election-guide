@@ -7,7 +7,7 @@
     "lint": "biome ci",
     "lint:fix": "biome check --write",
     "pages:create": "wrangler pages project create seattle-elections --production-branch=main",
-    "pages:deploy": "wrangler pages deploy --branch=main",
+    "pages:deploy": "wrangler pages deploy --branch=${PAGES_BRANCH:-main}",
     "pages:dev": "wrangler pages dev",
     "pages:version": "wrangler --version",
     "typecheck": "tsc --noEmit"

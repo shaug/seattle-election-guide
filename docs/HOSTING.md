@@ -36,8 +36,9 @@ switch instead.
 Leave publishing disabled until the project and both secrets exist. Then create the repository
 Actions variable `CLOUDFLARE_PAGES_ENABLED` with the exact value `true`. Run the **CI** workflow
 manually on `main` for the first upload. That run, and every push to `main` after it, builds,
-validates, and stages automatically, then queues a production deployment for approval. Pull requests
-never receive the Cloudflare secrets and never deploy.
+validates, and stages automatically, then queues a production deployment for approval. A pull
+request deploys only when it is opted in, and only from a branch in this repository — see
+[Pull request previews](#pull-request-previews).
 
 ## Custom domains
 
@@ -207,6 +208,49 @@ make hosting-serve
 For an exceptional local production upload, run `make hosting-deploy` after authenticating
 Wrangler. Normal publication should go through GitHub Actions so the deployed artifact is the one
 that passed the full mainline release checks.
+
+## Pull request previews
+
+A pull request can be reviewed as rendered pages rather than as a diff. Apply the **`deploy
+preview`** label and `.github/workflows/deploy-pr-preview.yml` builds the release at the pull
+request's head commit, stages the complete site, verifies it, and uploads it as its own Pages
+deployment. A single comment on the pull request carries the link and is rewritten in place on each
+push.
+
+The preview lives at:
+
+```text
+https://pr-<number>.seattle-elections.pages.dev
+```
+
+The alias comes from the pull request number, not the branch name. It is therefore stable across
+pushes and immune to the mangling that slashes in a real branch name would cause. Pushing to a
+labeled pull request replaces the deployment behind the same alias instead of minting a new address.
+
+Four rules govern when a preview exists:
+
+- **Opt in with the label.** Previews are not automatic. This build is expensive — Chromium
+  rendering plus a full release build — and most pull requests here change data or prose with no
+  visual surface. Removing the label stops future deployments. If the label ever becomes friction,
+  inverting to deploy-by-default with an opt-out label is a one-line change to the same workflow.
+- **Only branches in this repository.** The deploy job requires
+  `github.event.pull_request.head.repo.full_name == github.repository`. A pull request from a fork
+  skips the job — it is not failed, and it never receives the Cloudflare secrets. Preview a
+  contributor's work by pushing their branch to origin and opening a pull request from it. The
+  workflow deliberately does not use `pull_request_target`, which would run a fork's code with the
+  Cloudflare API token in scope.
+- **Closing tears the preview down.** Closing or merging the pull request deletes its deployments.
+  Teardown is not label-gated, so a preview whose label was removed before the pull request closed
+  is still cleaned up.
+- **`CLOUDFLARE_PAGES_ENABLED` still applies.** Previews respect the same publication switch as
+  production.
+
+Previews carry `X-Robots-Tag: noindex` like every other non-canonical host, so a preview cannot
+compete with the real site in search results. Its pages still declare the production canonical URL,
+because a preview is a copy of the site rather than a separate site.
+
+Production is unaffected. The `pages:deploy` script defaults to `--branch=main`; only the preview
+workflow overrides it, by setting `PAGES_BRANCH`.
 
 ## Deployment gate
 

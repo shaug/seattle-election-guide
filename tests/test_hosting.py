@@ -1281,6 +1281,91 @@ def test_wrangler_and_workflow_keep_deployment_pinned_and_gated() -> None:
     assert "--expected-git-commit=" in verify_step["run"]
 
 
+def test_pr_preview_workflow_is_label_gated_fork_safe_and_head_bound() -> None:
+    workflow = yaml.load(
+        (PROJECT_ROOT / ".github/workflows/deploy-pr-preview.yml").read_text(encoding="utf-8"),
+        Loader=yaml.BaseLoader,
+    )
+    package = json.loads((PROJECT_ROOT / "package.json").read_text(encoding="utf-8"))
+
+    # `pull_request_target` would run a fork's code with the Cloudflare token in
+    # scope. It must never appear here (issue 210).
+    assert set(workflow["on"]) == {"pull_request"}
+    assert workflow["on"]["pull_request"]["types"] == [
+        "labeled",
+        "synchronize",
+        "reopened",
+        "closed",
+    ]
+    assert "pr-" in workflow["concurrency"]["group"]
+
+    deploy = workflow["jobs"]["deploy"]
+    fork_guard = "github.event.pull_request.head.repo.full_name == github.repository"
+    # A fork's pull request fails this job-level condition, so the job is
+    # skipped rather than failed and the token is never in scope.
+    assert fork_guard in deploy["if"]
+    assert "contains(github.event.pull_request.labels.*.name, 'deploy preview')" in deploy["if"]
+    assert "github.event.action != 'closed'" in deploy["if"]
+    assert deploy["environment"]["name"] == "pr-${{ github.event.pull_request.number }}"
+    assert deploy["environment"]["url"] == "${{ steps.deploy.outputs.url }}"
+
+    # The audit footer must show a commit that exists in the repository, not the
+    # ephemeral merge commit the pull_request event checks out by default.
+    head_sha = "${{ github.event.pull_request.head.sha }}"
+    assert deploy["env"]["HEAD_SHA"] == head_sha
+    assert deploy["env"]["PAGES_BRANCH"] == "pr-${{ github.event.pull_request.number }}"
+    checkout = next(
+        step for step in deploy["steps"] if step.get("uses", "").startswith("actions/checkout")
+    )
+    assert checkout["with"]["ref"] == head_sha
+    build_step = next(
+        step
+        for step in deploy["steps"]
+        if step.get("name") == "Build the primary release at the pull request head"
+    )
+    assert '--git-commit "$HEAD_SHA"' in build_step["run"]
+    stage_step = next(
+        step for step in deploy["steps"] if step.get("name") == "Stage and verify the Pages site"
+    )
+    assert '--expected-git-commit "$HEAD_SHA"' in stage_step["run"]
+    # Staging is verified before anything is uploaded, exactly as production is.
+    assert "hosting verify" in stage_step["run"]
+    assert deploy["steps"].index(stage_step) < deploy["steps"].index(
+        next(step for step in deploy["steps"] if step.get("name") == "Deploy the preview")
+    )
+
+    # Teardown is deliberately not label-gated: a preview whose label was
+    # removed before the pull request closed must still be cleaned up.
+    teardown = workflow["jobs"]["teardown"]
+    assert "github.event.action == 'closed'" in teardown["if"]
+    assert fork_guard in teardown["if"]
+    assert "labels" not in teardown["if"]
+    delete_step = next(
+        step
+        for step in teardown["steps"]
+        if step.get("name") == "Delete this pull request's preview deployments"
+    )
+    assert "wrangler pages deployment list" in delete_step["run"]
+    assert "wrangler pages deployment delete" in delete_step["run"]
+
+    # Production keeps its own call site untouched: the script still defaults to
+    # main, so `pages:deploy` with no PAGES_BRANCH is byte-identical to before.
+    assert package["scripts"]["pages:deploy"] == (
+        "wrangler pages deploy --branch=${PAGES_BRANCH:-main}"
+    )
+    ci = yaml.load(
+        (PROJECT_ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8"),
+        Loader=yaml.BaseLoader,
+    )
+    production_deploy = next(
+        step
+        for step in ci["jobs"]["deploy"]["steps"]
+        if step.get("name") == "Deploy production site"
+    )
+    assert "PAGES_BRANCH" not in json.dumps(production_deploy)
+    assert "--branch" not in production_deploy["run"]
+
+
 def _run_worker(worker_path: Path, urls: list[str]) -> list[dict[str, object]]:
     script = """
 (async () => {
