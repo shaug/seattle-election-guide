@@ -1,22 +1,11 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+{% extends 'base.html.j2' %}
+{% block head_meta %}
   <meta name="robots" content="noindex">
-  {% set guide_path = '/e/' ~ guide.metadata.election_id ~ '/' %}
   {% set canonical_url = public_site_url ~ guide_path ~ 'sources/' %}
   {% set page_description = 'Choose which sources count toward your personalized ' ~ election_display_name ~ ' results.' %}
-  <meta name="description" content="{{ page_description }}">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="{{ document_title }}">
-  <meta property="og:description" content="{{ page_description }}">
-  <meta property="og:url" content="{{ canonical_url }}">
-  <meta name="twitter:title" content="{{ document_title }}">
-  <meta name="twitter:description" content="{{ page_description }}">
-  <link rel="canonical" href="{{ canonical_url }}">
-  {{ site_head_links | safe }}
-  <title>{{ document_title }}</title>
+  {{ shell.social_meta(document_title, page_description, canonical_url) }}
+{% endblock %}
+{% block styles %}
   <style>
     {{ stylesheet | safe }}
     main { padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 3rem; }
@@ -33,8 +22,8 @@
     .sources-page-actions .strip-action-quiet { color: var(--sky); font-weight: 600; }
     .sources-page-count { margin: 0; color: var(--white); font-size: .9rem; font-weight: 600; }
   </style>
-</head>
-<body>
+{% endblock %}
+{% block body %}
   {% macro coverage_gap_row(source, compact=false) -%}
     <section class="coverage-gap-row"
       data-coverage-gap-source-id="{{ source.id }}"
@@ -82,11 +71,11 @@
   <a class="skip-link" href="#sources-main">Skip to content</a>
   <div class="page">
     <header>
-      {{ site_band | safe }}
+      {{ shell.band(guide_href=guide_path, sources_href=guide_path ~ 'sources/', compare_href=compare_href, current='sources') }}
       <div class="page-band-rule"></div>
     </header>
     {{ election_day_banner | safe }}
-    {{ site_page_head | safe }}
+    {%+ call shell.page_head('Sources', eyebrow=election_display_name) %}Choose which sources count &mdash; the guide recalculates from your selection.{% endcall +%}
     <div class="sources-page-actions state-action-strip">
       {# The audited count, rendered rather than left for the client to fill in:
          the page has to stand alone without JavaScript, and the region has to
@@ -168,9 +157,11 @@
       </div>
     </main>
     <footer class="site-footer">
-      {% if site_footer_band %}{{ site_footer_band | safe }}{% endif %}
+      {% if project_url is not none %}{{ shell.election_footer_band(project_url, guide.metadata, guide_path, footer_data_updated_date, footer_site_updated_date) }}{% endif %}
     </footer>
   </div>
+{% endblock %}
+{% block scripts %}
 
   {# One payload element per page, built by rendering/payload.py from the
      Pydantic models the client's declarations are generated from
@@ -181,5 +172,4 @@
 {{ sources_entry_script | safe }}
   SourcesPage.boot();
   </script>
-</body>
-</html>
+{% endblock %}

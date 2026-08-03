@@ -55,18 +55,20 @@ from election_guide.rendering.payload import (
     sources_payload,
 )
 from election_guide.rendering.shell import (
+    CONTACT_HREF,
     EXTERNAL_LINK_ATTRIBUTES,
     HOW_TO_VOTE_HREF,
+    OPENS_IN_NEW_TAB,
+    SITE_NAME,
     close_icon_svg,
     election_day_banner_html,
     election_names,
+    envelope_icon_svg,
+    github_icon_svg,
+    info_icon_svg,
     page_title,
     share_icon_svg,
-    site_band_html,
-    site_footer_audit_html,
-    site_footer_band_html,
-    site_head_links_html,
-    site_page_head_html,
+    site_icon_svg,
 )
 from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
 
@@ -119,7 +121,13 @@ def read_rendering_configuration(path: Path) -> RenderingConfiguration:
     return RenderingConfiguration.model_validate(read_yaml(path))
 
 
-def _template_environment() -> Environment:
+def template_environment() -> Environment:
+    """The one Jinja environment every full HTML document renders through.
+
+    Public because `hosting/pages.py` renders the three site-wide documents —
+    About, the archive, and the 404 — from the same environment and the same
+    `base.html.j2` layout as the election-scoped pages (issue 241).
+    """
     environment = Environment(
         loader=FileSystemLoader(TEMPLATE_DIR),
         autoescape=True,
@@ -127,15 +135,28 @@ def _template_environment() -> Environment:
         trim_blocks=True,
         lstrip_blocks=True,
     )
-    # A global rather than a per-render variable: most evidence links are
-    # rendered inside macros, which do not see the calling template's context,
-    # so passing it per render silently covered only the handful of links
-    # outside a macro.
-    # Markup, not a plain string: autoescape is on, so a bare string would render
-    # as `target=&#34;_blank&#34;` and do nothing.
+    # Globals rather than per-render variables: most of these are read inside
+    # `_shell.html.j2`'s macros, which do not see the calling template's
+    # context, so passing them per render silently covered only the handful of
+    # uses outside a macro.
+    # The link attributes are Markup, not a plain string: autoescape is on, so a
+    # bare string would render as `target=&#34;_blank&#34;` and do nothing. The
+    # icon builders return Markup for the same reason.
     # `Environment.globals` is typed for Jinja's own builtins, so widen it here.
     globals_map = cast(dict[str, Any], environment.globals)
     globals_map["external_link_attributes"] = Markup(EXTERNAL_LINK_ATTRIBUTES)
+    globals_map["opens_in_new_tab"] = OPENS_IN_NEW_TAB
+    globals_map["site_name"] = SITE_NAME
+    globals_map["contact_href"] = CONTACT_HREF
+    globals_map["site_icon_svg"] = site_icon_svg
+    globals_map["share_icon_svg"] = share_icon_svg
+    globals_map["info_icon_svg"] = info_icon_svg
+    globals_map["envelope_icon_svg"] = envelope_icon_svg
+    globals_map["github_icon_svg"] = github_icon_svg
+    # The shell macros as a global too, so no page has to import them to render
+    # the band, page head, or footer. `.module` binds them against the globals
+    # set above, which is why it is built last.
+    globals_map["shell"] = environment.get_template("_shell.html.j2").module
     return environment
 
 
@@ -181,7 +202,7 @@ def render_html_document(
     configuration: RenderingConfiguration,
 ) -> str:
     """Render the guide's one HTML document, which also carries its print rules."""
-    environment = _template_environment()
+    environment = template_environment()
     template = environment.get_template("guide.html.j2")
     # base.css carries the design tokens and accessibility utility classes (the
     # skip link, visually-hidden) shared with the site-wide About page in
@@ -247,28 +268,15 @@ def render_html_document(
         ).model_dump(mode="json"),
         race_share_icon=share_icon_svg(),
         race_close_icon=close_icon_svg(),
-        site_band=site_band_html(
-            guide_href=guide_path,
-            sources_href=sources_page_url,
-            compare_href=(
-                f"{guide_path}comparisons/" if view_model.comparisons.policy.enabled else None
-            ),
-            current="endorsements",
-            sources_link_data_attribute=True,
-        ),
-        site_page_head=site_page_head_html(
-            eyebrow=election_display_name,
-            title="Endorsements",
-            tagline_html="Seattle&rsquo;s progressive voices, distilled.",
-            mode="extended",
+        guide_path=guide_path,
+        sources_page_url=sources_page_url,
+        compare_href=(
+            f"{guide_path}comparisons/" if view_model.comparisons.policy.enabled else None
         ),
         election_day_banner=election_day_banner_html(view_model.metadata.election_date),
-        site_head_links=site_head_links_html(configuration.public_site_url),
-        site_footer_band=_election_footer_band(
-            view_model,
-            project_url=configuration.project_url,
-            guide_path=guide_path,
-        ),
+        canonical_origin=configuration.public_site_url,
+        project_url=configuration.project_url,
+        **_footer_update_context(view_model),
         filter_scope_groups=filter_scope_groups,
         source_category_label_by_key=source_category_label_by_key,
         source_cells_by_race_id=source_cells_by_race_id,
@@ -305,7 +313,7 @@ def render_sources_document(
     production; this only matters for a caller (e.g. a test) that renders the
     page without it.
     """
-    environment = _template_environment()
+    environment = template_environment()
     template = environment.get_template("sources.html.j2")
     stylesheet = (TEMPLATE_DIR / "base.css").read_text(encoding="utf-8") + (
         TEMPLATE_DIR / "guide.css"
@@ -344,26 +352,11 @@ def render_sources_document(
             {source.code for category in payload.tree for source in category.sources}
         ),
         compare_href=compare_href,
-        site_band=site_band_html(
-            guide_href=guide_path,
-            sources_href=f"{guide_path}sources/",
-            compare_href=compare_href,
-            current="sources",
-        ),
-        site_page_head=site_page_head_html(
-            eyebrow=election_display_name,
-            title="Sources",
-            tagline_html=(
-                "Choose which sources count &mdash; the guide recalculates from your selection."
-            ),
-        ),
+        guide_path=guide_path,
         election_day_banner=election_day_banner_html(view_model.metadata.election_date),
-        site_head_links=site_head_links_html(public_site_url),
-        site_footer_band=_election_footer_band(
-            view_model,
-            project_url=project_url,
-            guide_path=guide_path,
-        ),
+        canonical_origin=public_site_url,
+        project_url=project_url,
+        **_footer_update_context(view_model),
     )
 
 
@@ -377,7 +370,7 @@ def render_comparison_document(
     if not view_model.comparisons.policy.enabled:
         raise ValueError("comparison page cannot render while its release policy is disabled")
 
-    environment = _template_environment()
+    environment = template_environment()
     template = environment.get_template("compare.html.j2")
     stylesheet = (TEMPLATE_DIR / "base.css").read_text(encoding="utf-8") + (
         TEMPLATE_DIR / "compare.css"
@@ -415,24 +408,11 @@ def render_comparison_document(
         election_display_name=election_display_name,
         stylesheet=stylesheet,
         compare_entry_script=compare_entry_script,
-        site_band=site_band_html(
-            guide_href=guide_path,
-            compare_href=f"{guide_path}comparisons/",
-            sources_href=f"{guide_path}sources/",
-            current="comparisons",
-        ),
-        site_head_links=site_head_links_html(public_site_url),
-        site_page_head=site_page_head_html(
-            eyebrow=election_display_name,
-            title="Comparisons",
-            tagline_html="Endorsements side by side, surfacing tension.",
-        ),
+        guide_path=guide_path,
         election_day_banner=election_day_banner_html(view_model.metadata.election_date),
-        site_footer_band=_election_footer_band(
-            view_model,
-            project_url=project_url,
-            guide_path=guide_path,
-        ),
+        canonical_origin=public_site_url,
+        project_url=project_url,
+        **_footer_update_context(view_model),
         comparison_sections=comparison_sections,
         comparison_race_count=sum(len(section.rows) for section in comparison_sections),
         comparison_differ_count=sum(
@@ -646,30 +626,19 @@ def _footer_update_dates(view_model: PublicationViewModel) -> tuple[str, str]:
     )
 
 
-def _election_footer_band(
-    view_model: PublicationViewModel,
-    *,
-    project_url: str | None,
-    guide_path: str,
-) -> str | None:
-    """Compose election-page provenance once for Guide, Sources, and Compare."""
-    if project_url is None:
-        return None
+def _footer_update_context(view_model: PublicationViewModel) -> dict[str, str]:
+    """The two provenance dates the shared election footer renders.
+
+    Everything else its audit line needs is already on `guide.metadata`, which
+    the template has, so only the derived dates cross the boundary. The footer
+    itself is `_shell.html.j2`'s `election_footer_band`, composed once for the
+    guide, Sources, and Comparisons.
+    """
     data_updated_date, site_updated_date = _footer_update_dates(view_model)
-    audit_html = site_footer_audit_html(
-        data_updated_date=data_updated_date,
-        site_updated_date=site_updated_date,
-        data_version=view_model.metadata.data_version,
-        git_commit=view_model.metadata.git_commit,
-        project_url=project_url,
-        data_href=f"{guide_path}release-manifest.json",
-        source_panel_id=view_model.metadata.source_panel_id,
-        source_panel_hash=view_model.metadata.source_panel_hash,
-    )
-    return site_footer_band_html(
-        project_url=project_url,
-        audit_html=audit_html,
-    )
+    return {
+        "footer_data_updated_date": data_updated_date,
+        "footer_site_updated_date": site_updated_date,
+    }
 
 
 def _screen_support_summary(race: PublicationRace) -> str:

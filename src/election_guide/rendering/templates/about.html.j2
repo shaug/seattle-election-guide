@@ -1,0 +1,140 @@
+{# The site-wide "How this works" page (hosting/pages.py).
+
+   Election-agnostic, so its page head carries no eyebrow and its footer no
+   source panel; its band highlights the About nav entry. #}
+{% extends 'base.html.j2' %}
+{% block head_meta %}
+  {{ shell.social_meta(document_title, page_description, canonical_url) }}
+{% endblock %}
+{% block styles %}
+  <style>
+    {{ stylesheet | safe }}
+    main { padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 3rem; }
+    main h1 {
+      margin: 0 0 .35rem; color: var(--navy);
+      font: 700 clamp(1.8rem, 4vw, 2.6rem)/1.05 var(--screen-serif);
+    }
+    main > p.lede { margin: 0 0 2rem; color: var(--muted); }
+    section { margin: 0 0 2rem; }
+    section h2 { color: var(--navy); font-size: 1.25rem; margin: 0 0 .5rem; }
+    section p { margin: 0 0 .75rem; }
+    section p:last-child { margin-bottom: 0; }
+  </style>
+{% endblock %}
+{% block body %}
+  <a class="skip-link" href="#about-main">Skip to content</a>
+  <div class="page">
+    <header>
+      {{ shell.band(guide_href=current_path, sources_href=current_path ~ 'sources/', compare_href=compare_href, current='about') }}
+      <div class="page-band-rule"></div>
+    </header>
+    {%+ call shell.page_head('How this works', mode='measured') %}{{ page_description }}{% endcall +%}
+    <main id="about-main" class="narrow-main">
+
+      <section aria-labelledby="what-this-is">
+        <h2 id="what-this-is">What this guide is &mdash; and is not</h2>
+        <p>This site aggregates endorsements that progressive and left-of-center organizations have
+          already published. It is not an official voter pamphlet, it does not independently vet any
+          candidate, and it does not predict who will win. A high agreement percentage means many of
+          the organizations we track agree with each other, not that we do.</p>
+      </section>
+
+      <section aria-labelledby="how-the-numbers-work">
+        <h2 id="how-the-numbers-work">How the numbers work</h2>
+        <p>Each organization gets one point per race. If it endorses more than one candidate, that
+          point splits evenly among them unless the organization states its own split. Silence, "no
+          endorsement," and races an organization simply did not cover are shown as counts but
+          never count toward a candidate's share, so a small sample never looks more decisive than
+          it is. The percentage is that leading choice's share of points; the source count next to
+          it is simply the sample behind it &mdash; neither number is a quality rating of the
+          candidate.</p>
+        <p>Legislative-district organizations count on the broader races their district covers, but
+          only on their own district's legislative contests.</p>
+        <p>Some tracked organizations are related &mdash; a state and local chapter of the same
+          group, for example. These relationships are disclosed rather than deduplicated: each
+          separately governed organization keeps its own full vote.</p>
+        <p>The Seattle Times is tracked as a comparison, never as part of the progressive
+          consensus: it adds nothing to the numbers above, and the Endorsements page does not show
+          it at all. The Sources page documents it, and the Comparisons page is where you can put
+          it beside the consensus race by race.</p>
+        <p>The Comparisons page puts up to three sources side by side for every race. A column can
+          show all sources together, one organization, or a category of organizations. The first
+          column is the reference for the differences highlighted across the row. Category columns
+          give each member organization equal weight, while sources such as The Seattle Times are
+          shown only for comparison and never change the overall result.</p>
+        <p>A comparison link stores its ordered columns and filters in the address after the
+          <code>#</code>. Opening the same link against the same data version restores that view;
+          an old or unrecognized link falls back to the default view and explains why instead of
+          silently showing a different comparison.</p>
+      </section>
+
+      <section aria-labelledby="why-ballot-varies">
+        <h2 id="why-ballot-varies">Why your ballot may look different</h2>
+        <p>Exact ballot contents vary by voter registration address. This guide covers the Seattle
+          races we tracked for this election; your ballot may not include all of them, and may
+          include a race this guide doesn&rsquo;t cover.</p>
+      </section>
+
+      <section aria-labelledby="choices-anonymous">
+        <h2 id="choices-anonymous">Are my choices anonymous?</h2>
+        <p>Your source selection lives entirely in this page's address. Nothing is stored anywhere
+          else, and the site has no account or profile connected to your choices.</p>
+      </section>
+      <section aria-labelledby="source-panel">
+        <h2 id="source-panel">The source panel is versioned, not frozen forever</h2>
+        <p>The set of organizations tracked for a given guide is preregistered and locked before
+          scoring begins, so results can't be adjusted after the fact to fit an outcome. When
+          legitimate new evidence turns up &mdash; a source we missed, or one that was misclassified
+          &mdash; it is added to a later, explicitly versioned panel rather than silently
+          rewriting this one. Every guide's public release status and manifest preserve its exact
+          panel ID and hash, so a later revision is always visible, never hidden.</p>
+      </section>
+
+      <section aria-labelledby="verify-it">
+        <h2 id="verify-it">Verify it yourself</h2>
+        <p>Every footer names the data and site update dates, links the data version to its release
+          manifest, and links the site revision to the exact code that built it. The public release
+          status and manifest record the source-panel ID and hash, and complete artifact identity.
+          Each source row links directly to the
+          organization's own endorsement page or document, so any displayed result can be checked
+          against the original evidence.</p>
+        <p>Organizations can update their own endorsements after we capture them, so a source's
+          current page may drift from what a guide recorded; use the same evidence links to confirm
+          the exact snapshot behind any race.</p>
+        <p><a href="{{ current_path }}release-status.json">Current release status</a> and
+          <a href="{{ current_path }}release-manifest.json">release manifest</a> are public JSON
+          files for the current guide. The complete decision ledger, source metadata, and validation
+          reports for every release are published in the
+          <a href="{{ project_url }}"{{ external_link_attributes }}>project's source repository</a>,
+          alongside the code that produced them.</p>
+        <p>Past guides remain published at their own permanent addresses in the
+          <a href="/e/">guide archive</a>.</p>
+      </section>
+
+      <section aria-labelledby="report-a-correction">
+        <h2 id="report-a-correction">Report a correction or suggest a source</h2>
+        <p>Found a stale or wrong endorsement, or know an organization we should be tracking?
+          Email <a href="mailto:seattle-elections@dobravoda.dev">seattle-elections@dobravoda.dev</a>
+          &mdash; no GitHub account needed. If you already use GitHub, you are also welcome to
+          open an issue directly against the source repository below.</p>
+      </section>
+
+      <section aria-labelledby="who-maintains-this">
+        <h2 id="who-maintains-this">Who maintains this</h2>
+        <p>This is an independent, volunteer-run project, not affiliated with any campaign,
+          party, or any organization it tracks. Its code and methodology are public at
+          <a href="{{ project_url }}"{{ external_link_attributes }}>{{ project_url_label }}</a>.</p>
+      </section>
+
+    </main>
+    <footer class="site-footer">
+      {{ shell.footer_band(project_url, shell.footer_audit(data_updated_date, site_updated_date, data_version, git_commit, project_url, data_href)) }}
+    </footer>
+  </div>
+{% endblock %}
+{% block scripts %}
+  <script type="module">
+{{ shell_entry_script | safe }}
+    ShellPage.boot();
+  </script>
+{% endblock %}

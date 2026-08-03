@@ -1,0 +1,48 @@
+{# The election archive index, listing every published guide (hosting/pages.py).
+
+   Site-wide rather than election-scoped, so its footer carries no source
+   panel and its band highlights no nav entry. #}
+{% extends 'base.html.j2' %}
+{% block head_meta %}
+  {{ shell.social_meta(document_title, page_description, canonical_url) }}
+{% endblock %}
+{% block styles %}
+  <style>
+    {{ stylesheet | safe }}
+    main { padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 3rem; }
+    main h1 {
+      margin: 0 0 .35rem; color: var(--navy);
+      font: 700 clamp(1.8rem, 4vw, 2.6rem)/1.05 var(--screen-serif);
+    }
+    main > p { color: var(--muted); max-width: 46ch; }
+    ul { margin: 1.5rem 0 0; padding: 0; list-style: none; }
+    li { margin: 0 0 .5rem; }
+    li a { color: var(--navy); font-weight: 700; }
+  </style>
+{% endblock %}
+{% block body %}
+  <a class="skip-link" href="#archive-main">Skip to content</a>
+  <div class="page">
+    <header>
+      {{ shell.band(guide_href=current_path, sources_href=current_path ~ 'sources/', compare_href=compare_href) }}
+      <div class="page-band-rule"></div>
+    </header>
+    {%+ call shell.page_head('Guide archive', mode='measured') %}Every guide stays up after its election &mdash; unchanged, at the same address.{% endcall +%}
+    <main id="archive-main" class="narrow-main">
+      <ul>
+{% for election in elections %}
+      <li><a href="/e/{{ election.election_id }}/">{{ election_names_by_id[election.election_id] }}</a>{% if election.election_id == current_election_id %} <strong>(current)</strong>{% endif %}</li>
+{% endfor %}
+      </ul>
+    </main>
+    <footer class="site-footer">
+      {{ shell.footer_band(project_url, shell.footer_audit(data_updated_date, site_updated_date, data_version, git_commit, project_url, data_href)) }}
+    </footer>
+  </div>
+{% endblock %}
+{% block scripts %}
+  <script type="module">
+{{ shell_entry_script | safe }}
+    ShellPage.boot();
+  </script>
+{% endblock %}

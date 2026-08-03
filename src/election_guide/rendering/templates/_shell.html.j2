@@ -1,0 +1,207 @@
+{# The shell grammar (docs/DESIGN.md § Site shell, issue 192) as macros.
+
+   These render the cross-page chrome every page shares: the nav band, the page
+   head, and the footer band with its provenance line. They were Python string
+   builders in `rendering/shell.py` until issue 241; moving them here is what
+   makes autoescaping the default for the shell rather than a per-call
+   `html.escape` discipline (docs/FRONTEND.md § Server-side templates).
+
+   Each macro emits its fragment with no internal newlines, exactly as the
+   builders it replaced did. That is not incidental formatting: the band and
+   footer are flex rows of inline-level children, so whitespace between them is
+   rendered whitespace, and the committed markup-parity fixtures in
+   `tests/js/fixtures/` are compared byte for byte.
+
+   `site_name`, `contact_href`, `opens_in_new_tab`, `external_link_attributes`,
+   and the icon builders are environment globals, registered in
+   `rendering/renderer.py`. Macros do not see their caller's context, and the
+   shell is rendered from inside macros almost everywhere, so passing these per
+   render would silently cover only the handful of uses outside a macro. #}
+
+{% macro head_links(origin, shareable=true) -%}
+{# The brand-asset head block shared by every page: icons and og:image.
+
+   `origin` is the canonical https origin used for the absolute og:image URL;
+   the icon links stay root-relative so any origin serves its own copies.
+   `shareable` controls the accompanying twitter:card tag: every page meant to
+   be shared pairs og:image with summary_large_image (the default); the 404
+   passes shareable=false to keep the wide image without implying the page
+   itself is a shareable card.
+
+   The two-space continuation indent is the head's, because this block is
+   emitted inside `<head>` where its first line is already indented. The indent
+   that follows the twitter:card line sits inside the `if`, and `{%+` keeps
+   `lstrip_blocks` from eating it, so an unshareable page starts flush with the
+   `og:image` tag exactly as the builder this replaced did. -#}
+{% if shareable %}<meta name="twitter:card" content="summary_large_image">
+  {%+ endif %}<meta property="og:image" content="{{ origin }}/og-image.png">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+{%- endmacro %}
+
+
+{% macro social_meta(document_title, description, canonical_url) -%}
+{#- The social-card and canonical grammar every full-content page renders.
+
+   The companion to `head_links`, which carries the half of the same policy
+   that is the same on every page (the card type and image). This half varies
+   only in its three values, so it is one macro rather than eight lines copied
+   into each template — a change to how the site describes itself to a crawler
+   or a share sheet is one edit, not five.
+
+   The 404 deliberately does not call this: it is `noindex` with no canonical
+   and no description, and carries only the two title tags, so routing it
+   through here would mean conditionals for a page that wants none of it.
+
+   Indented like `head_links` and for the same reason — the call site supplies
+   the first line's two spaces, and the continuations carry their own. -#}
+<meta name="description" content="{{ description }}">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{{ document_title }}">
+  <meta property="og:description" content="{{ description }}">
+  <meta property="og:url" content="{{ canonical_url }}">
+  <meta name="twitter:title" content="{{ document_title }}">
+  <meta name="twitter:description" content="{{ description }}">
+  <link rel="canonical" href="{{ canonical_url }}">
+{%- endmacro %}
+
+
+{% macro nav_link(label, href, key, current, sources_link=false) -%}
+<a href="{{ href }}"{% if sources_link %} data-sources-link{% endif %}{% if current == key %} aria-current="page"{% endif %}>{{ label }}</a>
+{%- endmacro %}
+
+
+{% macro band(guide_href, sources_href, compare_href=none, about_href='/about/', current=none, sources_link_data_attribute=false, shareable=true) -%}
+{# Slot 1 of the shell grammar: brand, nav, and page actions.
+
+   `current` names this page's nav entry (`endorsements`, `comparisons`,
+   `sources`, or `about`). The brand lockup links to `guide_href` — the current
+   election's endorsements page — rather than `/`, which only redirects there;
+   that link target is also what R3 keys the extended masthead off.
+
+   The nav is one `<details>` disclosure at every width. Above the shell
+   breakpoint CSS forces its panel visible and hides the summary, so it renders
+   as the familiar inline row; below it, the summary becomes a control reading
+   "Pages" and the panel drops beneath. This needs no JavaScript, which matters
+   because the archived guides are frozen files.
+
+   `shareable` follows the same flag that governs a page's social card (R2), so
+   the 404 gets neither an og card nor a Share action from one property.
+   `sources_link_data_attribute` adds the guide's `data-sources-link` hook so
+   its entry module can carry the reader's live selection onto the Sources
+   page; lit does not own shell markup, so that href is patched imperatively. #}
+<div class="site-band"><a class="site-brand" href="{{ guide_href }}">{{ site_icon_svg(on_dark=true) }}<span>{{ site_name }}</span></a><div class="site-band-actions">
+{%- if shareable -%}
+<button type="button" class="band-icon-action" data-shell-share aria-label="Share this page" title="Share this page">{{ share_icon_svg() }}</button>
+{%- endif -%}
+<details class="site-band-menu"><summary>Pages</summary><nav aria-label="Site">
+{#- Reading order follows dependency: the guide is the destination, Sources is
+    what feeds it, Comparisons is a view derived from those sources, and How
+    this works explains all three. -#}
+{{- nav_link('Endorsements', guide_href, 'endorsements', current) -}}
+{{- nav_link('Sources', sources_href, 'sources', current, sources_link_data_attribute) -}}
+{%- if compare_href is not none -%}
+{{- nav_link('Comparisons', compare_href, 'comparisons', current) -}}
+{%- endif -%}
+{{- nav_link('How this works', about_href, 'about', current) -}}
+</nav></details></div></div>
+{%- if shareable -%}
+<p class="visually-hidden" role="status" aria-live="polite" data-shell-share-status></p>
+{%- endif -%}
+{%- endmacro %}
+
+
+{% macro page_head(title, eyebrow=none, mode='plain') -%}
+{# Slot 2 of the shell grammar: one page head for every page.
+
+   `eyebrow` is the election name on election-scoped pages and `none` on
+   agnostic ones, where its absence is the only signal needed (R2). `title` is
+   the page's own name, agreeing with its nav label and `<title>` (R5), and for
+   election-scoped pages it is a plural noun so eyebrow and title read as one
+   name — "August 2026 Primary Comparisons" (R5a).
+
+   **The tagline is the caller's `{% call %}` block, not a parameter.** It
+   carries inline markup on purpose — entities in the guide's copy, real links
+   on the 404 — so it is authored as template markup by the calling page,
+   where a literal `&rsquo;` stays literal and an interpolated value is escaped
+   like anything else. That is the same asymmetry the old `tagline_html`
+   parameter had, made structural instead of advisory: escaping used to be the
+   caller's to remember (`_about_html` passed `html.escape(...)`, and the
+   `_html` suffix carried the warning), and a caller who forgot got an
+   injection. Now a tagline that wants markup opts in by writing markup, and
+   everything interpolated is escaped by default.
+
+   `mode` selects the head's one legal variation, as a closed set rather than
+   independent flags, so a shape the grammar does not define cannot be
+   expressed:
+
+   - `plain` — the head sits below the masthead on paper.
+   - `extended` — the masthead's navy runs through the head instead of stopping
+     at the band. This is the single exception the brand-link target buys
+     (R3/R4), and it bends no other rule: the ground-relative color rules
+     already carry the eyebrow to mint and the title to white.
+   - `measured` — the head takes the same ~46rem reading column its page's body
+     uses, reusing the shared `.narrow-main` class. DESIGN.md § Typography
+     holds that the frame is the site and the measure is the content, so a head
+     whose page sets a book measure must sit on it too, or its tagline outruns
+     the prose directly beneath it. #}
+{%- set variant = {'plain': '', 'extended': ' extended', 'measured': ' narrow'}[mode] -%}
+<header class="page-head{{ variant }}">
+{%- if mode == 'measured' %}<div class="narrow-main">{% endif -%}
+{%- if eyebrow is not none %}<p class="page-eyebrow">{{ eyebrow }}</p>{% endif -%}
+<h1>{{ title }}</h1><p class="page-tagline">{{ caller() }}</p>
+{%- if mode == 'measured' %}</div>{% endif -%}
+</header>
+{%- endmacro %}
+
+
+{% macro footer_audit(data_updated_date, site_updated_date, data_version, git_commit, project_url, data_href, source_panel_id=none, source_panel_hash=none) -%}
+{# The shared two-line data/site provenance grammar. #}
+<span class="audit-data">Data updated {{ data_updated_date }} (<a href="{{ data_href }}">{{ data_version[:12] }}</a>)
+{%- if source_panel_id is not none and source_panel_hash is not none %} · Panel {{ source_panel_id }} ({{ source_panel_hash[:12] }}){% endif -%}
+</span><span class="audit-join" aria-hidden="true"> · </span><span class="audit-site">Site updated {{ site_updated_date }} (<a href="{{ project_url }}/commit/{{ git_commit }}"{{ external_link_attributes }}>{{ git_commit[:12] }}</a>)</span>
+{%- endmacro %}
+
+
+{% macro footer_icon_link(label, href, svg, external=false) -%}
+{# An icon-only control has no visible text to carry the new-tab hint, so it
+   goes in the accessible name instead. #}
+{%- set accessible_label = label ~ (opens_in_new_tab if external else '') -%}
+<a class="footer-icon-action" href="{{ href }}" aria-label="{{ accessible_label }}" title="{{ accessible_label }}"{% if external %}{{ external_link_attributes }}{% endif %}>{{ svg }}</a>
+{%- endmacro %}
+
+
+{% macro footer_band(project_url, audit, about_href='/about/') -%}
+{# The navy footer band, rendered by every page including the 404 (item L55).
+
+   The builder this replaced was documented as "shared by every page except the
+   404", which its own caller contradicted: `_not_found_html` rendered this band
+   like everything else, and still does. Only the *audit* line varies — the
+   site-wide pages carry no source panel — and only the Share action is
+   genuinely absent from the 404, up in the masthead.
+
+   Mirrors `band`: the same icon+wordmark lockup, linking home, on the left; a
+   centered icon action cluster on the right — Contact, source/audit files on
+   GitHub, and How this works.
+
+   Share moved to the masthead in issue 192, under the rule promoted to
+   DESIGN.md § Site shell: *masthead = actions on the page; footer = meta about
+   the site.* Issue 193 retired the generated PDF edition, taking the Printable
+   PDF action with it — the browser's own print output is the printable one
+   now. #}
+<div class="site-footer-band"><a class="site-footer-brand" href="/" aria-label="{{ site_name }}">{{ site_icon_svg(on_dark=true) }}<span>{{ site_name }}</span></a><div class="site-footer-audit">{{ audit }}</div><div class="site-footer-actions">
+{{- footer_icon_link('Contact', contact_href, envelope_icon_svg()) -}}
+{{- footer_icon_link('Source and audit files on GitHub', project_url, github_icon_svg(), external=true) -}}
+{{- footer_icon_link('How this works', about_href, info_icon_svg()) -}}
+</div></div>
+{%- endmacro %}
+
+
+{% macro election_footer_band(project_url, metadata, guide_path, data_updated_date, site_updated_date) -%}
+{# Election-page provenance, composed once for the guide, Sources, and
+   Comparisons. The site-wide pages (About, the archive) have no election
+   metadata and no source panel, so they call `footer_band` with their own
+   `footer_audit` directly. #}
+{{- footer_band(project_url, footer_audit(data_updated_date, site_updated_date, metadata.data_version, metadata.git_commit, project_url, guide_path ~ 'release-manifest.json', metadata.source_panel_id, metadata.source_panel_hash)) -}}
+{%- endmacro %}

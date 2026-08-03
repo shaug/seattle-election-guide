@@ -158,7 +158,8 @@ while emoji render differently on every platform and can't be styled.
 ## Site shell
 
 > **Status (2026-08-01).** Adopted, and now applied to every page. **New
-> pages must use `site_page_head_html`; do not hand-roll a header.**
+> pages must use the `shell.page_head` macro
+> (`rendering/templates/_shell.html.j2`); do not hand-roll a header.**
 
 **Exceptions are allowed; cascades are not.** An exception must name what
 it buys, and must not require a second rule to bend to accommodate it.

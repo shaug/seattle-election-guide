@@ -277,12 +277,22 @@ check is a bug in the check — fix or amend it, never route around it.
 
 - **Full HTML documents are Jinja templates extending the shared layout.** No
   new Python-string documents or fragments; autoescaping is the default, not a
-  per-call discipline. The existing f-string pages are grandfathered on a
-  shrinking allowlist. *Check: exists — `tests/test_frontend_ratchets.py`
-  parses every module under `src/` and reports each function whose own body
-  holds a string literal beginning `<!doctype`, whether it is returned
-  directly or named first, then holds that set to the allowlist. Fragments are
-  not covered.*
+  per-call discipline. `base.html.j2` owns the document skeleton and leaves
+  four slots — `head_meta`, `styles`, `body`, and `scripts` — and the shell
+  grammar (band, page head, footer) is macros in `_shell.html.j2`, reached
+  through the `shell` environment global rather than imported per page. A page
+  whose shell slot needs real markup authors that markup in its own template:
+  the page head's tagline is the caller's `{% call %}` block, so a literal
+  entity is literal and an interpolated value is escaped, instead of Python
+  handing in pre-escaped HTML the way `tagline_html` used to require.
+  *Check: exists — `tests/test_frontend_ratchets.py` parses every module under
+  `src/` and reports each function whose own body holds a string literal
+  beginning `<!doctype`, whether it is returned directly or named first, then
+  holds that set to the allowlist, which issue 241 emptied. The same module
+  covers the templates: exactly one `.j2` may open a `<!doctype`, and every
+  other non-partial template must name `base.html.j2` in an `extends`, so a new
+  page cannot restate the document instead of extending it. Fragments are not
+  covered.*
 
 ## Dependencies
 

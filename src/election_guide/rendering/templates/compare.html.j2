@@ -1,34 +1,20 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  {% set guide_path = '/e/' ~ guide.metadata.election_id ~ '/' %}
+{% extends 'base.html.j2' %}
+{% block head_meta %}
   {% set canonical_url = public_site_url ~ guide_path ~ 'comparisons/' %}
   {% set page_description = 'Endorsements side by side, surfacing tension.' %}
-  <meta name="description" content="{{ page_description }}">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="{{ document_title }}">
-  <meta property="og:description" content="{{ page_description }}">
-  <meta property="og:url" content="{{ canonical_url }}">
-  <meta name="twitter:title" content="{{ document_title }}">
-  <meta name="twitter:description" content="{{ page_description }}">
-  <link rel="canonical" href="{{ canonical_url }}">
-  {{ site_head_links | safe }}
-  <title>{{ document_title }}</title>
-  <style>{{ stylesheet | safe }}</style>
-</head>
-<body>
+  {{ shell.social_meta(document_title, page_description, canonical_url) }}
+{% endblock %}
+{% block body %}
   {% from '_filter_controls.html.j2' import election_controls %}
   <a class="skip-link" href="#comparison-main">Skip to content</a>
   <div class="page" data-comparison-page data-election-id="{{ guide.metadata.election_id }}">
     <header>
-      {{ site_band | safe }}
+      {{ shell.band(guide_href=guide_path, sources_href=guide_path ~ 'sources/', compare_href=guide_path ~ 'comparisons/', current='comparisons') }}
       <div class="page-band-rule"></div>
     </header>
     {{ election_day_banner | safe }}
     <main id="comparison-main" class="comparison-main">
-      {{ site_page_head | safe }}
+      {%+ call shell.page_head('Comparisons', eyebrow=election_display_name) %}Endorsements side by side, surfacing tension.{% endcall +%}
       <div class="comparison-intro-wrap">
         <div class="comparison-intro">
           <div class="comparison-presets" role="group" aria-label="Suggested comparisons">
@@ -116,9 +102,11 @@
 
     </main>
     <footer class="site-footer">
-      {% if site_footer_band %}{{ site_footer_band | safe }}{% endif %}
+      {% if project_url is not none %}{{ shell.election_footer_band(project_url, guide.metadata, guide_path, footer_data_updated_date, footer_site_updated_date) }}{% endif %}
     </footer>
   </div>
+{% endblock %}
+{% block scripts %}
   {# One payload element per page, built by rendering/payload.py from the Pydantic
      models the client's declarations are generated from (docs/FRONTEND.md, The
      data contract). #}
@@ -127,5 +115,4 @@
 {{ compare_entry_script | safe }}
   ComparePage.boot();
   </script>
-</body>
-</html>
+{% endblock %}
