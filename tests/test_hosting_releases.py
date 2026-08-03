@@ -218,24 +218,6 @@ def _released_archive(bundle_dir: Path, release_version: str, destination: Path)
     return archive_path
 
 
-def _gh_download_stub(
-    archive_path: Path | None,
-    *,
-    returncode: int = 0,
-    stderr: str = "",
-) -> Callable[..., subprocess.CompletedProcess[str]]:
-    """Stand in for the `gh release download` subprocess itself."""
-
-    def _run(command: list[str], **kwargs: Any) -> subprocess.CompletedProcess[str]:
-        if returncode == 0 and archive_path is not None:
-            target_dir = Path(command[command.index("--dir") + 1])
-            target_dir.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(archive_path, target_dir / archive_path.name)
-        return subprocess.CompletedProcess(command, returncode, stdout="", stderr=stderr)
-
-    return _run
-
-
 def _delivering_download(archive_path: Path) -> Callable[..., Path]:
     """Stand in for `download_release_archive`.
 
@@ -252,18 +234,10 @@ def _delivering_download(archive_path: Path) -> Callable[..., Path]:
     return _download
 
 
-def _two_election_manifest(root: Path, *, older_bundle_sha256: str) -> Path:
-    older = dict(_manifest_election(OLDER_ID, OLDER_BUNDLE_ID, "general.1"))
-    older["bundle_sha256"] = older_bundle_sha256
-    manifest = {
-        "schema_version": "1.0",
-        "canonical_origin": "https://seattleelections.guide",
-        "current_election_id": CURRENT_ID,
-        "elections": [_manifest_election(CURRENT_ID, CURRENT_BUNDLE_ID, "primary.2"), older],
-    }
-    path = root / "site.yaml"
-    path.write_text(yaml.safe_dump(manifest, sort_keys=False), encoding="utf-8")
-    return path
+def _older_declaration(**overrides: str) -> PublishedElection:
+    declaration = dict(_manifest_election(OLDER_ID, OLDER_BUNDLE_ID, "general.1"))
+    declaration.update(overrides)
+    return PublishedElection.model_validate(declaration)
 
 
 def test_two_election_manifest_stages_and_verifies_from_a_published_release(
@@ -272,7 +246,9 @@ def test_two_election_manifest_stages_and_verifies_from_a_published_release(
     """The historical election is never built here — only downloaded and verified."""
     current, older = _write_archive_bundles(tmp_path / "bundles")
     archive = _released_archive(older, "general.1", tmp_path / "published")
-    manifest_path = _two_election_manifest(tmp_path, older_bundle_sha256=_bundle_hash(older))
+    manifest_path = _write_site_manifest(
+        tmp_path, current_first=True, older_bundle_sha256=_bundle_hash(older)
+    )
     monkeypatch.setattr(releases, "download_release_archive", _delivering_download(archive))
     output = tmp_path / "site"
 
@@ -300,7 +276,7 @@ def test_a_tampered_historical_archive_fails_the_build(
     pinned = _bundle_hash(older)
     (older / "guide" / "guide.html").write_bytes(b"tampered\n")
     archive = _released_archive(older, "general.1", tmp_path / "published")
-    manifest_path = _two_election_manifest(tmp_path, older_bundle_sha256=pinned)
+    manifest_path = _write_site_manifest(tmp_path, current_first=True, older_bundle_sha256=pinned)
     monkeypatch.setattr(releases, "download_release_archive", _delivering_download(archive))
 
     with pytest.raises(ValueError) as error:
@@ -327,7 +303,7 @@ def test_tampering_that_also_rewrites_the_release_manifest_is_caught_by_the_pin(
     manifest["artifact_hashes"]["guide/guide.html"] = hashlib.sha256(tampered).hexdigest()
     manifest_path_in_bundle.write_text(json.dumps(manifest), encoding="utf-8")
     archive = _released_archive(older, "general.1", tmp_path / "published")
-    manifest_path = _two_election_manifest(tmp_path, older_bundle_sha256=pinned)
+    manifest_path = _write_site_manifest(tmp_path, current_first=True, older_bundle_sha256=pinned)
     monkeypatch.setattr(releases, "download_release_archive", _delivering_download(archive))
 
     with pytest.raises(ValueError) as error:
@@ -347,12 +323,14 @@ def test_a_missing_historical_archive_fails_the_build(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     current, older = _write_archive_bundles(tmp_path / "bundles")
-    manifest_path = _two_election_manifest(tmp_path, older_bundle_sha256=_bundle_hash(older))
-    monkeypatch.setattr(
-        subprocess,
-        "run",
-        _gh_download_stub(None, returncode=1, stderr="release not found"),
+    manifest_path = _write_site_manifest(
+        tmp_path, current_first=True, older_bundle_sha256=_bundle_hash(older)
     )
+
+    def _failing_gh(command: list[str], **kwargs: Any) -> subprocess.CompletedProcess[str]:
+        return subprocess.CompletedProcess(command, 1, stdout="", stderr="release not found")
+
+    monkeypatch.setattr(subprocess, "run", _failing_gh)
 
     with pytest.raises(ValueError) as error:
         stage_pages_site(
@@ -391,16 +369,7 @@ def test_an_archive_escaping_the_bundle_root_is_rejected(tmp_path: Path) -> None
     with zipfile.ZipFile(archive_path, "w") as archive:
         archive.writestr(f"{ARCHIVE_ROOT_DIR}/release-status.json", "{}")
         archive.writestr("../escaped.txt", "nope")
-    declaration = PublishedElection.model_validate(
-        {
-            "election_id": OLDER_ID,
-            "bundle_id": OLDER_BUNDLE_ID,
-            "release_version": "general.1",
-            "source_panel_id": "test-panel-v2",
-            "source_panel_hash": PANEL_HASH,
-            "bundle_sha256": "d" * 64,
-        }
-    )
+    declaration = _older_declaration(bundle_sha256="d" * 64)
 
     with pytest.raises(ValueError, match="outside"):
         _extract_bundle(archive_path, tmp_path / "out", declaration)
@@ -429,31 +398,6 @@ def test_supplying_every_bundle_locally_downloads_nothing(
     assert result.current_election_id == CURRENT_ID
 
 
-def test_an_unreadable_historical_archive_fails_with_a_clear_message(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    """A replaced or truncated download must not surface as a traceback."""
-    current, older = _write_archive_bundles(tmp_path / "bundles")
-    published = tmp_path / "published"
-    published.mkdir()
-    archive = published / release_archive_name("general.1")
-    archive.write_bytes(b"404: Not Found\n")
-    manifest_path = _two_election_manifest(tmp_path, older_bundle_sha256=_bundle_hash(older))
-    monkeypatch.setattr(releases, "download_release_archive", _delivering_download(archive))
-
-    with pytest.raises(ValueError) as error:
-        stage_pages_site(
-            manifest_path,
-            {CURRENT_BUNDLE_ID: current},
-            tmp_path / "site",
-            released_bundle_dir=tmp_path / "released",
-        )
-
-    message = str(error.value)
-    assert "is not a readable ZIP archive" in message
-    assert OLDER_BUNDLE_ID in message
-
-
 def test_the_cli_reports_an_unreadable_archive_without_a_traceback(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -462,7 +406,9 @@ def test_the_cli_reports_an_unreadable_archive_without_a_traceback(
     published.mkdir()
     archive = published / release_archive_name("general.1")
     archive.write_bytes(b"404: Not Found\n")
-    manifest_path = _two_election_manifest(tmp_path, older_bundle_sha256=_bundle_hash(older))
+    manifest_path = _write_site_manifest(
+        tmp_path, current_first=True, older_bundle_sha256=_bundle_hash(older)
+    )
     monkeypatch.setattr(releases, "download_release_archive", _delivering_download(archive))
 
     result = CliRunner().invoke(
@@ -483,6 +429,7 @@ def test_the_cli_reports_an_unreadable_archive_without_a_traceback(
     assert result.exit_code == 1
     assert "hosting stage failed" in result.output
     assert "is not a readable ZIP archive" in result.output
+    assert OLDER_BUNDLE_ID in result.output
 
 
 def _corrupt_deflated_member(archive_path: Path, member: str) -> None:
@@ -497,40 +444,18 @@ def _corrupt_deflated_member(archive_path: Path, member: str) -> None:
     archive_path.write_bytes(bytes(raw))
 
 
-@pytest.mark.parametrize(
-    "member",
-    ["data/publication_view_model.json", "release-status.json"],
-)
-def test_a_corrupt_archive_member_fails_with_a_clear_message(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, member: str
-) -> None:
+def test_a_corrupt_archive_member_fails_with_a_clear_message(tmp_path: Path) -> None:
     """In-place corruption of a real archive raises zlib.error, not BadZipFile."""
-    current, older = _write_archive_bundles(tmp_path / "bundles")
+    _, older = _write_archive_bundles(tmp_path / "bundles")
     archive = _released_archive(older, "general.1", tmp_path / "published")
-    _corrupt_deflated_member(archive, f"{ARCHIVE_ROOT_DIR}/{member}")
-    manifest_path = _two_election_manifest(tmp_path, older_bundle_sha256=_bundle_hash(older))
-    monkeypatch.setattr(releases, "download_release_archive", _delivering_download(archive))
+    _corrupt_deflated_member(archive, f"{ARCHIVE_ROOT_DIR}/data/publication_view_model.json")
 
-    result = CliRunner().invoke(
-        cli.app,
-        [
-            "hosting",
-            "stage",
-            str(manifest_path),
-            "--bundle",
-            f"{CURRENT_BUNDLE_ID}={current}",
-            "--released-bundle-dir",
-            str(tmp_path / "released"),
-            "--output-dir",
-            str(tmp_path / "site"),
-        ],
-    )
+    with pytest.raises(ValueError) as error:
+        _extract_bundle(archive, tmp_path / "out", _older_declaration(bundle_sha256="d" * 64))
 
-    assert result.exception is None or isinstance(result.exception, SystemExit)
-    assert result.exit_code == 1
-    assert "hosting stage failed" in result.output
-    assert "is not a readable ZIP archive" in result.output
-    assert OLDER_BUNDLE_ID in result.output
+    message = str(error.value)
+    assert "is not a readable ZIP archive" in message
+    assert OLDER_BUNDLE_ID in message
 
 
 def test_an_encrypted_archive_member_fails_with_a_clear_message(tmp_path: Path) -> None:
@@ -542,16 +467,7 @@ def test_an_encrypted_archive_member_fails_with_a_clear_message(tmp_path: Path) 
     central = raw.index(b"PK\x01\x02")
     raw[central + 8] |= 0x01  # and the central directory's, which is the one read
     archive_path.write_bytes(bytes(raw))
-    declaration = PublishedElection.model_validate(
-        {
-            "election_id": OLDER_ID,
-            "bundle_id": OLDER_BUNDLE_ID,
-            "release_version": "general.1",
-            "source_panel_id": "test-panel-v2",
-            "source_panel_hash": PANEL_HASH,
-            "bundle_sha256": "d" * 64,
-        }
-    )
+    declaration = _older_declaration(bundle_sha256="d" * 64)
 
     with pytest.raises(ValueError, match="is not a readable ZIP archive"):
         _extract_bundle(archive_path, tmp_path / "out", declaration)

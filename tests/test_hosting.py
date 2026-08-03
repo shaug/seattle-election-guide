@@ -1318,10 +1318,17 @@ process.stdout.write(JSON.stringify(results));
     return cast(list[dict[str, object]], json.loads(completed.stdout))
 
 
-def _write_site_manifest(root: Path, *, current_first: bool) -> Path:
+def _write_site_manifest(
+    root: Path,
+    *,
+    current_first: bool,
+    older_bundle_sha256: str | None = None,
+) -> Path:
     root.mkdir(parents=True, exist_ok=True)
     current = _manifest_election(CURRENT_ID, CURRENT_BUNDLE_ID, "primary.2")
     older = _manifest_election(OLDER_ID, OLDER_BUNDLE_ID, "general.1")
+    if older_bundle_sha256 is not None:
+        older["bundle_sha256"] = older_bundle_sha256
     elections = [current, older] if current_first else [older, current]
     manifest = {
         "schema_version": "1.0",
