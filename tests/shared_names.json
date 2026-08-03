@@ -1,0 +1,778 @@
+{
+  "documentation": [
+    "The shared-name contract (docs/FRONTEND.md, Shared names). A name that more",
+    "than one surface spells is declared here once, and tests/test_shared_names.py",
+    "derives the same map from the tree and holds the two to equality. A rename",
+    "that reaches three surfaces and misses the fourth changes the derived map and",
+    "fails make check.",
+    "",
+    "Each value is the exact set of surface kinds that spell the name, in the",
+    "order: template (Jinja), stylesheet (page CSS), client (.mjs modules),",
+    "python (src/election_guide, including rendering/browser.py's CDP audit",
+    "probes), test (the Python and Node tests; the rendered fixtures under",
+    "tests/js/fixtures are excluded as generated output).",
+    "",
+    "This file is not a ratchet. tests/frontend_ratchets.json records",
+    "grandfathered debt that only shrinks and that the epic's closeout deletes;",
+    "the shared-name contract is permanent and moves in both directions, so it",
+    "lives beside that file rather than inside it.",
+    "",
+    "data_attributes: every data-* name on more than one surface.",
+    "",
+    "class_names: every authored class name that reaches executable code -- a",
+    "client module or a Python probe string. A class only a template and a",
+    "stylesheet share is out of scope: that pair is every class in the codebase,",
+    "and a miss there renders unstyled rather than passing quietly.",
+    "",
+    "breakpoints: every @media width threshold that executable code restates.",
+    "Outside a stylesheet a bare integer counts only where the same line names a",
+    "width, which is how rendering/browser.py restates one.",
+    "",
+    "The scan is textual, so a name a comment mentions counts as spelled there.",
+    "That keeps prose about a name accurate when it is renamed and never lets a",
+    "real use hide behind one; no entry below is present only for that reason.",
+    "Surfaces are recorded by kind rather than by file, so a rename that misses a",
+    "second file of the same kind is left to that language's own checker --- tsc",
+    "and the module tests for the client, pyright for Python. The boundary",
+    "between languages is the one nothing else can see, and is what this holds.",
+    "",
+    "Grade strings are deliberately absent. They have a Python origin",
+    "(scoring/models.py's Grade) and reach the client through the payload",
+    "generator issue #236 landed; a second declaration here would give one",
+    "vocabulary two generators."
+  ],
+  "data_attributes": {
+    "data-agreement": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "data-cell-kind": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "data-client-payload": [
+      "template",
+      "client",
+      "python",
+      "test"
+    ],
+    "data-close-race-detail": [
+      "template",
+      "client",
+      "python",
+      "test"
+    ],
+    "data-column-label": [
+      "template",
+      "stylesheet",
+      "client"
+    ],
+    "data-column-signal": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "data-comparison-all-races": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-comparison-column": [
+      "client",
+      "test"
+    ],
+    "data-comparison-contested": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-comparison-differences": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-comparison-full": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-comparison-grid": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-comparison-head": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-comparison-hidden-notice": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-comparison-race": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-comparison-remove": [
+      "client",
+      "test"
+    ],
+    "data-comparison-scroll-hint": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-comparison-section": [
+      "template",
+      "client"
+    ],
+    "data-comparison-section-filter": [
+      "template",
+      "client"
+    ],
+    "data-comparison-status": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-comparison-table": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-comparison-title": [
+      "client",
+      "test"
+    ],
+    "data-contested": [
+      "template",
+      "test"
+    ],
+    "data-copy-race-link": [
+      "template",
+      "client",
+      "python",
+      "test"
+    ],
+    "data-copy-race-status": [
+      "template",
+      "client",
+      "python",
+      "test"
+    ],
+    "data-coverage-gap-source-id": [
+      "template",
+      "test"
+    ],
+    "data-default-columns": [
+      "template",
+      "test"
+    ],
+    "data-display-role": [
+      "template",
+      "client",
+      "python",
+      "test"
+    ],
+    "data-election-day": [
+      "client",
+      "python",
+      "test"
+    ],
+    "data-election-day-full": [
+      "client",
+      "python"
+    ],
+    "data-election-day-short": [
+      "client",
+      "python",
+      "test"
+    ],
+    "data-election-day-when": [
+      "client",
+      "python"
+    ],
+    "data-endorsed-candidate-id": [
+      "template",
+      "client",
+      "python",
+      "test"
+    ],
+    "data-explicit-source-count": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-filter-section": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-filter-tokens": [
+      "template",
+      "test"
+    ],
+    "data-leading-pick-ids": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-lens-banner": [
+      "template",
+      "test"
+    ],
+    "data-lens-banner-status": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-lens-context": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-lens-detail-audited": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-lens-foot": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-lens-hidden": [
+      "template",
+      "stylesheet",
+      "test"
+    ],
+    "data-lens-notice": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-lens-only": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "data-lens-result": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-payload-notice": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-publication-race-id": [
+      "template",
+      "client",
+      "python",
+      "test"
+    ],
+    "data-race-detail-candidate-id": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-race-detail-dialog": [
+      "template",
+      "client",
+      "python",
+      "test"
+    ],
+    "data-race-detail-group": [
+      "template",
+      "test"
+    ],
+    "data-race-detail-lens-count": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-race-detail-lens-kicker": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-race-detail-lens-meter": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-race-detail-lens-meter-text": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-race-detail-link": [
+      "template",
+      "client",
+      "python",
+      "test"
+    ],
+    "data-race-detail-not-counted": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-race-detail-source-code": [
+      "template",
+      "python",
+      "test"
+    ],
+    "data-race-detail-summary": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-race-id": [
+      "template",
+      "test"
+    ],
+    "data-row-differs": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-share": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-shell-share": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-shell-share-status": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-source-category": [
+      "template",
+      "python"
+    ],
+    "data-source-group": [
+      "template",
+      "python",
+      "test"
+    ],
+    "data-source-role": [
+      "template",
+      "python",
+      "test"
+    ],
+    "data-source-state": [
+      "template",
+      "python",
+      "test"
+    ],
+    "data-sources-cancel": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-sources-category": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-sources-category-member": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-sources-category-toggle": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-sources-count": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-sources-link": [
+      "template",
+      "client",
+      "python",
+      "test"
+    ],
+    "data-sources-notice": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-sources-page-reset": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-sources-save": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-sources-source": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-sources-source-row": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-sources-tree": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-sticky-controls": [
+      "template",
+      "client",
+      "test"
+    ]
+  },
+  "class_names": {
+    "compact-ballot-mode": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "comparison-cell": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "comparison-cell-meta": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "comparison-cell-picks": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "comparison-column-action-icon": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "comparison-column-actions": [
+      "stylesheet",
+      "client"
+    ],
+    "comparison-column-add": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "comparison-column-heading": [
+      "stylesheet",
+      "client"
+    ],
+    "comparison-column-label": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "comparison-column-picker": [
+      "stylesheet",
+      "client"
+    ],
+    "comparison-column-plain": [
+      "stylesheet",
+      "client"
+    ],
+    "comparison-column-remove": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "comparison-column-title": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "comparison-column-title-action": [
+      "stylesheet",
+      "client"
+    ],
+    "comparison-empty": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "comparison-presets": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "comparison-race": [
+      "template",
+      "stylesheet",
+      "client"
+    ],
+    "comparison-race-differs": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "comparison-reset": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "comparison-section-heading": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "election-day": [
+      "stylesheet",
+      "client",
+      "python",
+      "test"
+    ],
+    "election-day-past": [
+      "stylesheet",
+      "client"
+    ],
+    "election-day-soon": [
+      "stylesheet",
+      "client"
+    ],
+    "filter-status-part": [
+      "stylesheet",
+      "client"
+    ],
+    "insufficient-note": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "lens-comparison": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "lens-comparison-agrees": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "lens-comparison-differs": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "lens-personalized": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "meter-low-fill": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "meter-no-majority": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "no-majority-pill": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "race-card-foot": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "race-card-primary": [
+      "template",
+      "stylesheet",
+      "python",
+      "test"
+    ],
+    "race-detail-meter-na": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "race-detail-outcomes": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "race-detail-source-list": [
+      "template",
+      "stylesheet",
+      "python"
+    ],
+    "race-detail-source-row": [
+      "template",
+      "stylesheet",
+      "python"
+    ],
+    "race-detail-source-row-not-counted": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "race-grid": [
+      "template",
+      "stylesheet",
+      "python",
+      "test"
+    ],
+    "race-office": [
+      "template",
+      "stylesheet",
+      "python",
+      "test"
+    ],
+    "screen-meter": [
+      "template",
+      "stylesheet",
+      "client",
+      "python",
+      "test"
+    ],
+    "screen-meter-na": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "screen-race-context": [
+      "template",
+      "stylesheet",
+      "client",
+      "python",
+      "test"
+    ],
+    "screen-race-result": [
+      "template",
+      "stylesheet",
+      "client",
+      "python",
+      "test"
+    ],
+    "segmented-control": [
+      "template",
+      "stylesheet",
+      "python",
+      "test"
+    ],
+    "sources-also-in": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "sources-category": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "sources-category-check": [
+      "template",
+      "stylesheet",
+      "client"
+    ],
+    "sources-check": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "sources-columns": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "sources-count": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "sources-row": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "support-compact": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "support-full": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "support-line": [
+      "template",
+      "stylesheet",
+      "client",
+      "python",
+      "test"
+    ],
+    "visually-hidden": [
+      "template",
+      "stylesheet",
+      "client",
+      "python",
+      "test"
+    ]
+  },
+  "breakpoints": {
+    "720": [
+      "stylesheet",
+      "python",
+      "test"
+    ],
+    "1050": [
+      "stylesheet",
+      "python"
+    ]
+  }
+}

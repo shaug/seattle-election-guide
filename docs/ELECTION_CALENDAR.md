@@ -103,6 +103,75 @@ repeated election ID, and on a repeated milestone ID within one election. It
 fails on an election with no election-day milestone or with two, on a missing
 results capture, and on any field the schema does not declare.
 
+## Tracking milestones as issues
+
+A declared milestone is inert until someone sees it. The `Calendar` workflow
+runs daily and opens one issue per milestone falling inside a lead window,
+defaulting to twenty-one days:
+
+```bash
+uv run election-guide calendar track config/calendar/elections.yaml --dry-run
+```
+
+Each issue follows the repository's task template, carries the election, the
+date, and the command that does the work, is labeled `type: ops` and
+`area: operations`, and is attached to a GitHub milestone named for its
+election. A milestone already past its date is never opened; an issue for work
+nobody can still do is worse than none.
+
+The last line of every generated issue is its marker —
+`calendar-milestone: <election-id>/<milestone-id>`. That marker is the entire
+idempotence mechanism. Each run reads the markers of every existing issue, open
+**and closed**, and skips the milestones already represented, so a daily
+schedule never accumulates duplicates and a completed milestone is not
+reopened.
+
+The marker is derived from identity, never from a date, so a milestone whose
+date moves is still recognized as already tracked and does not get a second
+issue. Nothing rewrites the first one: creation is the only operation this
+workflow performs. **If you move a declared date after its issue is open, fix
+that issue by hand** — its title and acceptance line still carry the date it
+was opened with.
+
+The listing that finds those markers filters by the `type: ops` label rather
+than searching for the marker text. GitHub's issue search ranks by relevance
+over an eventually consistent index, so it can both match unrelated issues and
+omit one created moments earlier — which is exactly when a second run would
+duplicate it.
+
+That makes the label a precondition of the no-duplicate guarantee: **a
+generated issue must keep its `type: ops` label.** Strip it and the next run
+stops seeing that issue's marker and reopens the milestone, once a day, for as
+long as it stays inside the window. The label the run reads and the label it
+writes are one constant in the code, so they cannot drift apart on their own.
+
+`--dry-run` still queries GitHub, so it prints what the real run would create
+rather than what the calendar contains.
+
+## Marking a milestone public
+
+Most milestones are internal: a source-panel freeze or an inventory import means
+nothing to a voter. A milestone carries `public: true` only when a reader would
+want it in their own calendar, and the default is `false` — the published feed
+is opt-in, so a new milestone kind stays internal until someone decides
+otherwise rather than leaking the moment it is declared.
+
+Three kinds are public today: `ballots_mail`, `guide_publishes`, and
+`election_day`. Marking a milestone public is only half the job — the words a
+reader sees live in `MILESTONE_COPY` in
+`src/election_guide/publication/calendar_feed.py`, keyed by milestone kind,
+because decision D5 keeps display strings out of this file. A milestone marked
+public whose kind has no copy fails the build rather than publishing an untitled
+event.
+
+A public milestone also carries `revision`, starting at 1. **Bump it by hand
+whenever you change a published milestone's date or its wording.** It becomes
+the event's `SEQUENCE`, which is how a subscribed calendar knows it is looking
+at a newer version of an event it already has. It cannot be derived: a build has
+no memory of the previous one, and the same input has to produce the same bytes.
+The event's identity never changes, so a moved date corrects the existing entry
+instead of adding a second one.
+
 ## Adding an election
 
 Append the election, then its milestones, then run the validator. Copy the
@@ -139,5 +208,6 @@ while leaving that seam open rather than committing to it. A milestone's `kind`
 and ID are stable enough to key voter-facing text against; that text belongs on
 the rendering side, not here.
 
-The retrospective milestone therefore declares a date and nothing else. The
-checklist it will point to is tracked separately.
+The retrospective milestone therefore declares a date and a reference to
+`docs/POST_ELECTION_RETROSPECTIVE.md`, and no wording of its own. A reference
+names where the work is written down; it is not copy about the milestone.

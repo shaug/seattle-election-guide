@@ -1,0 +1,50 @@
+name: Calendar
+
+# Milestones are known years ahead, so this only has to notice one coming due.
+# A daily run with a three-week lead window means a missed day costs nothing:
+# the milestone stays inside the window until it is opened.
+on:
+  schedule:
+    - cron: "0 15 * * *"
+  workflow_dispatch:
+    inputs:
+      lead_days:
+        description: Open issues for milestones due within this many days
+        required: false
+        default: "21"
+      dry_run:
+        description: Print what would be created without opening anything
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  # Two concurrent runs could each read an empty marker set and both create the
+  # same issue. Serializing them is what makes idempotence hold in practice.
+  group: calendar-tracking
+  cancel-in-progress: false
+
+jobs:
+  track:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Install the pipeline
+        run: uv sync --frozen
+      - name: Open tracking issues for milestones coming due
+        # Inputs reach the shell through the environment, never through
+        # expression interpolation into the script itself.
+        run: >-
+          uv run election-guide calendar track config/calendar/elections.yaml
+          --repository "$GITHUB_REPOSITORY"
+          --lead-days "$LEAD_DAYS"
+          ${DRY_RUN:+--dry-run}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          LEAD_DAYS: ${{ inputs.lead_days || '21' }}
+          DRY_RUN: ${{ inputs.dry_run && '1' || '' }}

@@ -253,6 +253,32 @@ check is a bug in the check — fix or amend it, never route around it.
   recorded exception, so a new access is a change to that list. One exception
   is recorded there: `share-link.mjs`, which copies the address verbatim and
   interprets no segment of it, so there is no fragment for a codec to own.*
+- **The codecs share a vocabulary, not an engine.** The structural rules both
+  fragments obey live once, in `fragment-codec.mjs`: the token grammar,
+  admission against the current panel's catalogs, the four published
+  identifiers that make a stale link recognizable as stale, the
+  repeated-parameter refusal, and the published sharing limit in both
+  directions. That module is deliberately *not* a schema-driven codec. It
+  covers about a quarter of either page codec; the rest is each page's real
+  content — the lens's two modes, its category-before-source ordering and its
+  legacy `#race-…` permalinks; Comparisons' ordered columns, its two-to-three
+  column bound, its reserved lowercase-`g` namespace, its filter parameters
+  and its refusal to read a lens link — and expressing that as configuration
+  would cost more than the sharing saves while moving a page's rules out of
+  the page's own codec. Each codec still reads top to bottom as the grammar it
+  owns. The one parameter that crosses the seam is the page's own failure
+  factory: the same structural problem is `malformed` when decoding and
+  `rejected` when encoding, and each page names reasons the shared module has
+  never heard of, so a shared helper that can fail returns what the caller's
+  factory built. A third fragment would extend this module only where it
+  genuinely restates one of those rules.
+  *Check: exists — `tests/js/fragment-codec.test.mjs` states the shared rules
+  where they live, including the two whose ordering a page depends on: the
+  token scan reports the leftmost token breaking any rule, the caller's own
+  rule included, and a token is ranked for case confusion only inside the
+  catalog its own prefix names. The guard in `module-guards.test.mjs` keeps
+  the module pure. Both page suites are unchanged by the extraction, which is
+  what makes them its regression test.*
 - **Decode and encode failures are surfaced.** A stale, malformed, or
   unencodable state produces a reader-visible notice and an address bar that
   names a state a link can reproduce — cleaned when it holds a fragment the
@@ -302,15 +328,48 @@ check is a bug in the check — fix or amend it, never route around it.
 ## Shared names
 
 - **Names shared across template, JS, and CSS are declared once.** `data-*`
-  attributes, root state classes, breakpoints, and grade strings live in one
-  contract module; templates, stylesheets, and client code consume it, and
-  tests import it rather than restating literals. A name with a Python origin
-  is declared there — the grade strings are `scoring/models.py`'s `Grade`,
-  reaching the client as `ComputedGrade` through the payload generator, so the
-  presentation-only names are what remains for a JavaScript contract module.
-  *Check: partial — `tests/test_client_payload_types.py` fails when the
-  client's grade vocabulary stops matching the audited engine's; the manifest
-  test for presentation-only names is pending.*
+  attributes, class names that reach executable code, and breakpoints are
+  declared in `tests/shared_names.json`, which records for each name the exact
+  set of surfaces that spell it: template, stylesheet, client, python, test. A
+  rename that reaches three of them and misses the fourth changes the derived
+  set and fails `make check`.
+
+  **The declaration is enforced by a scan, not by a generator**, and the
+  stylesheet is why. An attribute or class name is selector *syntax*, while a
+  custom property holds a *value*: `[var(--x)]` is not a selector and
+  `@media (max-width: var(--bp))` is not a query, so a stylesheet cannot consume
+  a generated name. Substituting names in during the build is not open either —
+  each page's stylesheet is concatenated precisely so the shipped bytes are the
+  authored bytes (Modules, above). Any generator would therefore leave the one
+  surface a rename most often misses still restating every literal, so the
+  contract is enforced by reading every surface instead of emitting into some.
+  Declared once here means one place says what the shared names are, and every
+  restatement is held to it.
+
+  **Names with a Python origin are not declared here**, because they already
+  have a generator and a value may not have two. The grade strings are
+  `scoring/models.py`'s `Grade`, reaching the client as `ComputedGrade` through
+  the payload generator (The data contract, above); this contract covers the
+  presentation-only names, and checks that no grade string appears in it.
+
+  Class names are in scope when a `.mjs` module or a Python probe string spells
+  them, not when only a template and a stylesheet do. That pair is every class
+  in the codebase and a miss there renders unstyled — loud. The quiet ones are
+  what this covers, and the sharpest is a class name inside a Chrome audit
+  probe: `rendering/browser.py` selects `.screen-race-context` in four probe
+  strings, and a rename that misses one makes the probe match zero elements and
+  report *success*. That case is why the scope is class names that cross into
+  code rather than root state classes alone.
+  *Check: exists — `tests/test_shared_names.py` derives the shared-name map
+  from the tree and holds it to `tests/shared_names.json` in both directions, so
+  an undeclared shared name, a stale declaration, and a name that gained or lost
+  a surface each fail. Each scanner is exercised on a source small enough to
+  read, as the inline-script metric is. `tests/test_client_payload_types.py`
+  separately fails when the client's grade vocabulary stops matching the audited
+  engine's. Two limits are deliberate: surfaces are recorded by kind rather than
+  by file, so a miss within one language is left to that language's own checker;
+  and the scan is textual, so a name a comment mentions counts as spelled
+  there.*
 
 ## Server-side templates
 
@@ -418,7 +477,10 @@ The transition is legislated, not implied:
 
 ## Open questions
 
-Decided by their implementing tickets, then recorded here:
+Decided by their implementing tickets, then recorded here.
 
-- The shared fragment-codec core: how much of `compare-url` / `lens-url` is
-  parameterized into one module, and the shape of its page-schema parameter.
+None outstanding. The last one — how much of `compare-url` / `lens-url` becomes
+one module, and the shape of its page-schema parameter — was answered by #244
+and is recorded as a rule in State and URLs above: a shared vocabulary rather
+than a parameterized codec, and no page-schema parameter at all beyond each
+page's own failure factory.

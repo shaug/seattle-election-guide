@@ -4,15 +4,33 @@
 // scores, fetches, or touches the DOM. Unlike the lens codec, comparison column
 // tokens deliberately retain their configured order because the first column is
 // the reference against which the remaining columns are compared.
+//
+// The structural checks this shares with the lens codec — token admission, the
+// four version bindings, the sharing limit — live in `fragment-codec.mjs`.
+// What stays here is what makes this fragment Comparisons': ordered columns,
+// the two-to-three column bound, the reserved lowercase-`g` namespace whose
+// only member so far is `gall`, the filter parameters, and the refusal to read
+// a lens link.
+
+import {
+  classifyCatalogToken,
+  codecContext,
+  isCurrentBinding,
+  isWellFormedToken,
+  missingBindingParameter,
+  openFragment,
+  orderedUnique,
+  readBinding,
+  repeatedParameter,
+  scanTokens,
+  sizedFragment,
+  writeBinding,
+} from './fragment-codec.mjs';
 
 export const COMPARE_SCHEMA_VERSION = '1';
 export const ALL_SOURCES_TOKEN = 'gall';
-export const COMPARE_TOKEN_LENGTH = 4;
 
-const TOKEN_PATTERN = /^[0-9A-Za-z]{4}$/;
-const CATEGORY_PREFIX = 'G';
 const RESERVED_PREFIX = 'g';
-const HASH_PREFIX_LENGTH = 12;
 const MIN_COLUMNS = 2;
 const MAX_COLUMNS = 3;
 
@@ -20,24 +38,12 @@ const MAX_COLUMNS = 3;
  * The version bindings, token catalogs, filters, and limits one comparison
  * fragment is read and written against.
  *
- * @typedef {object} CompareContext
- * @property {string} panelId
- * @property {string} panelHashPrefix
- * @property {string} dataVersion
- * @property {string} scoringId
- * @property {number} maximumUrlCharacters
- * @property {Map<string, PersonalizationCategory>} categories
- * @property {Map<string, PersonalizationSource>} sources
- * @property {Set<string>} sectionIds
- * @property {string[]} defaultColumns
+ * @typedef {import('./fragment-codec.mjs').CodecContext
+ *   & { sectionIds: Set<string>, defaultColumns: string[] }} CompareContext
  */
 
 /**
- * @typedef {object} CompareBinding
- * @property {string|null} panelId
- * @property {string|null} panelHashPrefix
- * @property {string|null} dataVersion
- * @property {string|null} scoringId
+ * @typedef {import('./fragment-codec.mjs').CodecBinding} CompareBinding
  */
 
 /**
@@ -100,23 +106,11 @@ export function compareContext(
   comparisons,
   defaultColumns = [ALL_SOURCES_TOKEN, 'strn', 'stim'],
 ) {
-  /** @type {Map<string, PersonalizationCategory>} */
-  const categories = new Map();
-  /** @type {Map<string, PersonalizationSource>} */
-  const sources = new Map();
   /** @type {Set<string>} */
   const sectionIds = new Set();
-  for (const category of personalization.categories) categories.set(category.code, category);
-  for (const source of personalization.sources) sources.set(source.code, source);
   for (const race of comparisons.display_index) sectionIds.add(race.section_id);
   return {
-    panelId: personalization.panel_id,
-    panelHashPrefix: personalization.panel_hash.slice(0, HASH_PREFIX_LENGTH),
-    dataVersion,
-    scoringId: personalization.scoring.configuration_id,
-    maximumUrlCharacters: personalization.policy.maximum_url_characters,
-    categories,
-    sources,
+    ...codecContext(personalization, dataVersion),
     sectionIds,
     defaultColumns: [...defaultColumns],
   };
@@ -141,53 +135,31 @@ function rejected(reason, detail = {}) {
 }
 
 /**
+ * Whether a token is this page's own rather than the catalogs'.
+ *
+ * Lowercase `g` is reserved for aggregate columns the page defines itself.
+ * `gall` is the only one so far; every other spelling is refused rather than
+ * looked up, so adding a second aggregate never has to reinterpret a link that
+ * already guessed at its name.
+ *
  * @param {string} token
- * @param {ReadonlyMap<string, unknown>} known
- * @returns {'case_confusable_token'|'unknown_token'}
+ * @returns {boolean}
  */
-function confusableReason(token, known) {
-  const folded = token.toLowerCase();
-  for (const code of known.keys()) {
-    if (code.toLowerCase() === folded) return 'case_confusable_token';
-  }
-  return 'unknown_token';
+function isReservedToken(token) {
+  return token.startsWith(RESERVED_PREFIX) && token !== ALL_SOURCES_TOKEN;
 }
-
-/**
- * @typedef {{ ok: true, token: string }
- *   | { ok: false, reason: CompareFailureReason, token: string }
- * } TokenClassification
- */
 
 /**
  * @param {string} token
  * @param {CompareContext} context
- * @returns {TokenClassification}
+ * @returns {import('./fragment-codec.mjs').CodecTokenClassification
+ *   | { ok: false, reason: 'reserved_token', token: string }}
  */
 function classifyToken(token, context) {
-  if (!TOKEN_PATTERN.test(token)) return { ok: false, reason: 'malformed_token', token };
+  if (!isWellFormedToken(token)) return { ok: false, reason: 'malformed_token', token };
   if (token === ALL_SOURCES_TOKEN) return { ok: true, token };
-  if (token.startsWith(RESERVED_PREFIX)) {
-    return { ok: false, reason: 'reserved_token', token };
-  }
-  const known = token.startsWith(CATEGORY_PREFIX) ? context.categories : context.sources;
-  const entry = known.get(token);
-  if (entry === undefined) return { ok: false, reason: confusableReason(token, known), token };
-  if (!entry.selectable) return { ok: false, reason: 'forbidden_token', token };
-  return { ok: true, token };
-}
-
-/**
- * @param {readonly string[]} tokens
- * @returns {string[]}
- */
-function orderedUnique(tokens) {
-  /** @type {string[]} */
-  const unique = [];
-  for (const token of tokens) {
-    if (!unique.includes(token)) unique.push(token);
-  }
-  return unique;
+  if (isReservedToken(token)) return { ok: false, reason: 'reserved_token', token };
+  return classifyCatalogToken(token, context);
 }
 
 /**
@@ -216,25 +188,13 @@ function validateColumnCount(columns, failure) {
  *   | { columns?: undefined, error: CompareMalformed }}
  */
 function parseColumns(selection, failure) {
-  if (selection.length % COMPARE_TOKEN_LENGTH !== 0) {
-    return { error: failure('ragged_selection', { length: selection.length }) };
-  }
-  /** @type {string[]} */
-  const tokens = [];
-  for (let index = 0; index < selection.length; index += COMPARE_TOKEN_LENGTH) {
-    const token = selection.slice(index, index + COMPARE_TOKEN_LENGTH);
-    if (!TOKEN_PATTERN.test(token)) {
-      return { error: failure('malformed_token', { token }) };
-    }
-    if (token.startsWith(RESERVED_PREFIX) && token !== ALL_SOURCES_TOKEN) {
-      return { error: failure('reserved_token', { token }) };
-    }
-    tokens.push(token);
-  }
-  const columns = orderedUnique(tokens);
-  const countError = validateColumnCount(columns, failure);
+  const scanned = scanTokens(selection, failure, (token) =>
+    isReservedToken(token) ? failure('reserved_token', { token }) : null,
+  );
+  if (scanned.error !== undefined) return { error: scanned.error };
+  const countError = validateColumnCount(scanned.tokens, failure);
   if (countError !== null) return { error: countError };
-  return { columns };
+  return { columns: scanned.tokens };
 }
 
 /**
@@ -264,33 +224,6 @@ function parseFilters(parameters, failure) {
 }
 
 /**
- * @param {URLSearchParams} parameters
- * @returns {CompareBinding}
- */
-function bindingFrom(parameters) {
-  return {
-    panelId: parameters.get('panel'),
-    panelHashPrefix: parameters.get('ph'),
-    dataVersion: parameters.get('data'),
-    scoringId: parameters.get('scoring'),
-  };
-}
-
-/**
- * @param {CompareBinding} binding
- * @param {CompareContext} context
- * @returns {boolean}
- */
-function isCurrentBinding(binding, context) {
-  return (
-    binding.panelId === context.panelId &&
-    binding.panelHashPrefix === context.panelHashPrefix &&
-    binding.dataVersion === context.dataVersion &&
-    binding.scoringId === context.scoringId
-  );
-}
-
-/**
  * Decode one comparison-page location fragment.
  *
  * The status taxonomy mirrors lens-url.mjs: `absent`, `valid`,
@@ -302,17 +235,14 @@ function isCurrentBinding(binding, context) {
  * @returns {CompareDecodeResult}
  */
 export function decodeCompareFragment(fragment, context) {
-  const raw = String(fragment ?? '').replace(/^#/, '');
-  if (raw === '') return { status: 'absent' };
-  if (raw.length > context.maximumUrlCharacters) {
-    return invalid('oversized', { length: raw.length });
-  }
+  const opened = openFragment(fragment, context, invalid);
+  if (opened.decoded !== undefined) return opened.decoded;
+  const raw = opened.raw;
   if (!raw.includes('=')) return invalid('unrecognized_fragment');
 
   const parameters = new URLSearchParams(raw);
-  for (const key of parameters.keys()) {
-    if (parameters.getAll(key).length > 1) return invalid('repeated_parameter', { parameter: key });
-  }
+  const repeated = repeatedParameter(parameters);
+  if (repeated !== null) return invalid('repeated_parameter', { parameter: repeated });
   if (parameters.get('cmp') !== COMPARE_SCHEMA_VERSION) {
     if (parameters.has('lens')) return invalid('not_for_this_page', { schema: 'lens' });
     return invalid('unsupported_schema', { cmp: parameters.get('cmp') });
@@ -323,10 +253,9 @@ export function decodeCompareFragment(fragment, context) {
   const parsedFilters = parseFilters(parameters, invalid);
   if (parsedFilters.error) return parsedFilters.error;
 
-  const binding = bindingFrom(parameters);
-  for (const [key, value] of Object.entries(binding)) {
-    if (value === null || value === '') return invalid('missing_binding', { parameter: key });
-  }
+  const binding = readBinding(parameters);
+  const missing = missingBindingParameter(binding);
+  if (missing !== null) return invalid('missing_binding', { parameter: missing });
   const state = { columns: parsedColumns.columns, ...parsedFilters.state };
   if (!isCurrentBinding(binding, context)) return { status: 'stale_version', state, binding };
 
@@ -371,20 +300,10 @@ export function encodeCompareFragment(state, context) {
   const parameters = new URLSearchParams();
   parameters.set('cmp', COMPARE_SCHEMA_VERSION);
   parameters.set('cols', columns.join(''));
-  parameters.set('panel', context.panelId);
-  parameters.set('ph', context.panelHashPrefix);
-  parameters.set('data', context.dataVersion);
-  parameters.set('scoring', context.scoringId);
+  writeBinding(parameters, context);
   if (state.differencesOnly === true) parameters.set('diff', '1');
   if (state.contestedOnly === true) parameters.set('races', 'contested');
   if (section !== 'all') parameters.set('show', section);
 
-  const fragment = parameters.toString();
-  if (fragment.length > context.maximumUrlCharacters) {
-    return rejected('oversized', {
-      length: fragment.length,
-      limit: context.maximumUrlCharacters,
-    });
-  }
-  return { status: 'ok', fragment };
+  return sizedFragment(parameters, context, rejected);
 }

@@ -128,6 +128,15 @@ def test_committed_milestones_name_workflows_the_cli_actually_exposes() -> None:
         assert result.exit_code == 0, f"calendar names a missing workflow: {workflow}"
 
 
+def test_every_retrospective_milestone_references_the_checklist() -> None:
+    calendar = read_election_calendar(CALENDAR_PATH)
+
+    retrospectives = [item for item in calendar.milestones if item.kind == "retrospective"]
+    assert retrospectives
+    for milestone in retrospectives:
+        assert milestone.reference == "docs/POST_ELECTION_RETROSPECTIVE.md"
+
+
 def test_committed_milestone_references_point_at_existing_documents() -> None:
     calendar = read_election_calendar(CALENDAR_PATH)
 
@@ -138,10 +147,19 @@ def test_committed_milestone_references_point_at_existing_documents() -> None:
 
 
 def test_calendar_schema_declares_no_presentation_fields() -> None:
-    """D5 keeps the rendering seam open: identity and dates, never copy."""
+    """D5 keeps the rendering seam open: identity and dates, never copy.
+
+    `public` and `revision` were added for the calendar feed (issue 259) and do
+    not cross that line. `public` says *whether* a reader should see a date, not
+    what they see; the words live in `MILESTONE_COPY` on the rendering side.
+    `revision` is a data version a subscriber's client compares, not anything
+    displayed. Neither is a display string, banner semantic, or copy.
+    """
     declared = set(CalendarElection.model_fields) | set(CalendarMilestone.model_fields)
 
     assert declared == {
+        "public",
+        "revision",
         "id",
         "election_type",
         "election_scope",
