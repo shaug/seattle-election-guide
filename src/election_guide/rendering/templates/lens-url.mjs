@@ -5,66 +5,42 @@
 // scores, never expands a category into its members, and never touches the DOM.
 // Category membership is resolved at scoring time so a category link follows
 // current membership.
+//
+// The structural checks this shares with the comparison codec — token
+// admission, the four version bindings, the sharing limit — live in
+// `fragment-codec.mjs`. What stays here is what makes this fragment the lens's:
+// its two modes, its category-before-source ordering, its legacy `#race-…`
+// permalinks, and the comparison tokens issue 124 retired.
+
+import {
+  classifyCatalogToken,
+  codecContext,
+  isCategoryToken,
+  isCurrentBinding,
+  missingBindingParameter,
+  openFragment,
+  readBinding,
+  repeatedParameter,
+  scanTokens,
+  sizedFragment,
+  writeBinding,
+} from './fragment-codec.mjs';
 
 export const LENS_SCHEMA_VERSION = '2';
-export const TOKEN_LENGTH = 4;
 export const LEGACY_RACE_PREFIX = 'race-';
-
-const TOKEN_PATTERN = /^[0-9A-Za-z]{4}$/;
-const CATEGORY_PREFIX = 'G';
-const HASH_PREFIX_LENGTH = 12;
-
-/**
- * What the codec needs to know about one category or source: whether a link may
- * name it, and whether naming it means anything any more.
- *
- * Declared structurally rather than as `PersonalizationCategory`/
- * `PersonalizationSource` because both of the codec's callers now hand it a
- * page payload, whose `LensCategory`/`LensSource` carry the same two fields
- * under the same names but not the rest of the personalization contract. The
- * codec never reads the rest, so requiring it would be a type asserting more
- * than the code does.
- *
- * @typedef {object} LensTokenBinding
- * @property {boolean} selectable
- * @property {string} panel_role
- */
 
 /**
  * The published identity a fragment is read and written against.
  *
- * @typedef {object} LensBindings
- * @property {string} panel_id
- * @property {string} panel_hash
- * @property {{ configuration_id: string }} scoring
- * @property {{ maximum_url_characters: number }} policy
- * @property {readonly (LensTokenBinding & { code: string })[]} categories
- * @property {readonly (LensTokenBinding & { code: string })[]} sources
+ * @typedef {import('./fragment-codec.mjs').CodecBindings} LensBindings
  */
 
 /**
- * The version bindings, token catalogs, and limits one fragment is read and
- * written against.
- *
- * @typedef {object} LensContext
- * @property {string} panelId
- * @property {string} panelHashPrefix
- * @property {string} dataVersion
- * @property {string} scoringId
- * @property {number} maximumUrlCharacters
- * @property {Map<string, LensTokenBinding>} categories
- * @property {Map<string, LensTokenBinding>} sources
+ * @typedef {import('./fragment-codec.mjs').CodecContext} LensContext
  */
 
 /**
- * The four published identifiers a fragment carries so a stale link is
- * recognizable as stale. Read from the fragment, so every field may be absent.
- *
- * @typedef {object} LensBinding
- * @property {string|null} panelId
- * @property {string|null} panelHashPrefix
- * @property {string|null} dataVersion
- * @property {string|null} scoringId
+ * @typedef {import('./fragment-codec.mjs').CodecBinding} LensBinding
  */
 
 /**
@@ -86,20 +62,28 @@ const HASH_PREFIX_LENGTH = 12;
  */
 
 /**
+ * @typedef {{ status: 'malformed', reason: LensFailureReason, [key: string]: unknown }
+ * } LensMalformed
+ */
+
+/**
+ * @typedef {{ status: 'rejected', reason: LensFailureReason, [key: string]: unknown }
+ * } LensRejected
+ */
+
+/**
  * Exactly one status per decode.
  *
  * @typedef {{ status: 'absent' }
  *   | { status: 'legacy', raceTarget: string }
  *   | { status: 'valid', state: LensState, binding: LensBinding }
  *   | { status: 'stale_version', state: LensState, binding: LensBinding }
- *   | { status: 'malformed', reason: LensFailureReason, [key: string]: unknown }
+ *   | LensMalformed
  * } LensDecodeResult
  */
 
 /**
- * @typedef {{ status: 'ok', fragment: string }
- *   | { status: 'rejected', reason: LensFailureReason, [key: string]: unknown }
- * } LensEncodeResult
+ * @typedef {{ status: 'ok', fragment: string } | LensRejected} LensEncodeResult
  */
 
 /**
@@ -110,33 +94,7 @@ const HASH_PREFIX_LENGTH = 12;
  * @returns {LensContext}
  */
 export function lensContext(bindings, dataVersion) {
-  /** @type {Map<string, LensTokenBinding>} */
-  const categories = new Map();
-  /** @type {Map<string, LensTokenBinding>} */
-  const sources = new Map();
-  for (const category of bindings.categories) {
-    categories.set(category.code, category);
-  }
-  for (const source of bindings.sources) {
-    sources.set(source.code, source);
-  }
-  return {
-    panelId: bindings.panel_id,
-    panelHashPrefix: bindings.panel_hash.slice(0, HASH_PREFIX_LENGTH),
-    dataVersion,
-    scoringId: bindings.scoring.configuration_id,
-    maximumUrlCharacters: bindings.policy.maximum_url_characters,
-    categories,
-    sources,
-  };
-}
-
-/**
- * @param {string} token
- * @returns {boolean}
- */
-function isCategoryToken(token) {
-  return token.startsWith(CATEGORY_PREFIX);
+  return codecContext(bindings, dataVersion);
 }
 
 /**
@@ -150,47 +108,6 @@ function partitionTokens(tokens) {
     categoryCodes: tokens.filter(isCategoryToken).sort(),
     sourceCodes: tokens.filter((token) => !isCategoryToken(token)).sort(),
   };
-}
-
-/**
- * @typedef {{ ok: true, token: string }
- *   | { ok: false, reason: LensFailureReason, token: string }
- * } TokenClassification
- */
-
-/**
- * @param {string} token
- * @param {LensContext} context
- * @returns {TokenClassification}
- */
-function classifyToken(token, context) {
-  if (!TOKEN_PATTERN.test(token)) {
-    return { ok: false, reason: 'malformed_token', token };
-  }
-  const known = isCategoryToken(token) ? context.categories : context.sources;
-  const entry = known.get(token);
-  if (entry === undefined) {
-    return { ok: false, reason: confusableReason(token, known), token };
-  }
-  if (!entry.selectable) {
-    return { ok: false, reason: 'forbidden_token', token };
-  }
-  return { ok: true, token };
-}
-
-/**
- * Distinguish a wrong-case near miss from a genuinely unknown token.
- *
- * @param {string} token
- * @param {ReadonlyMap<string, unknown>} known
- * @returns {'case_confusable_token'|'unknown_token'}
- */
-function confusableReason(token, known) {
-  const folded = token.toLowerCase();
-  for (const code of known.keys()) {
-    if (code.toLowerCase() === folded) return 'case_confusable_token';
-  }
-  return 'unknown_token';
 }
 
 /**
@@ -232,10 +149,19 @@ function withoutComparisonTokens(tokens, context) {
 /**
  * @param {LensFailureReason} reason
  * @param {Record<string, unknown>} [detail]
- * @returns {LensDecodeResult}
+ * @returns {LensMalformed}
  */
 function invalid(reason, detail) {
   return { status: 'malformed', reason, ...detail };
+}
+
+/**
+ * @param {LensFailureReason} reason
+ * @param {Record<string, unknown>} [detail]
+ * @returns {LensRejected}
+ */
+function rejected(reason, detail) {
+  return { status: 'rejected', reason, ...detail };
 }
 
 /**
@@ -251,11 +177,9 @@ function invalid(reason, detail) {
  * @returns {LensDecodeResult}
  */
 export function decodeLensFragment(fragment, context) {
-  const raw = String(fragment ?? '').replace(/^#/, '');
-  if (raw === '') return { status: 'absent' };
-  if (raw.length > context.maximumUrlCharacters) {
-    return invalid('oversized', { length: raw.length });
-  }
+  const opened = openFragment(fragment, context, invalid);
+  if (opened.decoded !== undefined) return opened.decoded;
+  const raw = opened.raw;
   if (!raw.includes('=')) {
     return raw.startsWith(LEGACY_RACE_PREFIX)
       ? { status: 'legacy', raceTarget: raw }
@@ -263,9 +187,8 @@ export function decodeLensFragment(fragment, context) {
   }
 
   const parameters = new URLSearchParams(raw);
-  for (const key of parameters.keys()) {
-    if (parameters.getAll(key).length > 1) return invalid('repeated_parameter', { parameter: key });
-  }
+  const repeated = repeatedParameter(parameters);
+  if (repeated !== null) return invalid('repeated_parameter', { parameter: repeated });
   if (parameters.get('lens') !== LENS_SCHEMA_VERSION) {
     return invalid('unsupported_schema', { lens: parameters.get('lens') });
   }
@@ -273,29 +196,13 @@ export function decodeLensFragment(fragment, context) {
   const mode = parameters.get('mode');
   if (mode !== 'a' && mode !== 's') return invalid('unknown_mode', { mode });
 
-  const selection = parameters.get('sel') ?? '';
-  if (selection.length % TOKEN_LENGTH !== 0) {
-    return invalid('ragged_selection', { length: selection.length });
-  }
+  const scanned = scanTokens(parameters.get('sel') ?? '', invalid);
+  if (scanned.error !== undefined) return scanned.error;
+  const tokens = withoutComparisonTokens(scanned.tokens, context);
 
-  /** @type {string[]} */
-  const parsed = [];
-  for (let index = 0; index < selection.length; index += TOKEN_LENGTH) {
-    const token = selection.slice(index, index + TOKEN_LENGTH);
-    if (!TOKEN_PATTERN.test(token)) return invalid('malformed_token', { token });
-    if (!parsed.includes(token)) parsed.push(token);
-  }
-  const tokens = withoutComparisonTokens(parsed, context);
-
-  const binding = {
-    panelId: parameters.get('panel'),
-    panelHashPrefix: parameters.get('ph'),
-    dataVersion: parameters.get('data'),
-    scoringId: parameters.get('scoring'),
-  };
-  for (const [key, value] of Object.entries(binding)) {
-    if (value === null || value === '') return invalid('missing_binding', { parameter: key });
-  }
+  const binding = readBinding(parameters);
+  const missing = missingBindingParameter(binding);
+  if (missing !== null) return invalid('missing_binding', { parameter: missing });
 
   const raceTarget = parameters.get('race');
   // Annotated because a narrowed literal widens back to `string` once it is a
@@ -309,17 +216,12 @@ export function decodeLensFragment(fragment, context) {
   // Resolve the version before consulting the current panel. A link written
   // against another published version is stale even when its codes no longer
   // exist here, and #78 needs its binding and original tokens to migrate it.
-  const currentVersion =
-    binding.panelId === context.panelId &&
-    binding.panelHashPrefix === context.panelHashPrefix &&
-    binding.dataVersion === context.dataVersion &&
-    binding.scoringId === context.scoringId;
-  if (!currentVersion) {
+  if (!isCurrentBinding(binding, context)) {
     return { status: 'stale_version', state: { ...common, ...partitionTokens(tokens) }, binding };
   }
 
   for (const token of tokens) {
-    const classified = classifyToken(token, context);
+    const classified = classifyCatalogToken(token, context);
     if (!classified.ok) return invalid(classified.reason, { token: classified.token });
   }
   // Audited mode restricts nothing (there is nothing to restrict), so any
@@ -415,12 +317,12 @@ export function encodeLensFragment(state, context) {
     context,
   );
   for (const token of requested) {
-    const classified = classifyToken(token, context);
+    const classified = classifyCatalogToken(token, context);
     if (!classified.ok) {
-      return { status: 'rejected', reason: classified.reason, token: classified.token };
+      return rejected(classified.reason, { token: classified.token });
     }
     if (mode === 'a') {
-      return { status: 'rejected', reason: 'audited_mode_carries_selection', token };
+      return rejected('audited_mode_carries_selection', { token });
     }
     if (!tokens.includes(token)) tokens.push(token);
   }
@@ -429,22 +331,10 @@ export function encodeLensFragment(state, context) {
   const parameters = new URLSearchParams();
   parameters.set('lens', LENS_SCHEMA_VERSION);
   parameters.set('mode', mode);
-  parameters.set('panel', context.panelId);
-  parameters.set('ph', context.panelHashPrefix);
-  parameters.set('data', context.dataVersion);
-  parameters.set('scoring', context.scoringId);
+  writeBinding(parameters, context);
   const selection = [...categoryCodes, ...sourceCodes].join('');
   if (selection !== '') parameters.set('sel', selection);
   if (state.raceTarget) parameters.set('race', state.raceTarget);
 
-  const fragment = parameters.toString();
-  if (fragment.length > context.maximumUrlCharacters) {
-    return {
-      status: 'rejected',
-      reason: 'oversized',
-      length: fragment.length,
-      limit: context.maximumUrlCharacters,
-    };
-  }
-  return { status: 'ok', fragment };
+  return sizedFragment(parameters, context, rejected);
 }
