@@ -19,6 +19,10 @@ import { fileURLToPath } from 'node:url';
 import { rowDiffers } from '../../src/election_guide/rendering/templates/compare-signals.mjs';
 import { comparisonPercentageLabel } from '../../src/election_guide/rendering/templates/compare-table.mjs';
 import {
+  compareContext,
+  encodeCompareFragment,
+} from '../../src/election_guide/rendering/templates/compare-url.mjs';
+import {
   countingSummary,
   hasNoMajority,
   percentageLabel,
@@ -84,6 +88,22 @@ const RUNNERS = {
   'comparison-percentage-label': ({ share }) => comparisonPercentageLabel(share),
   'comparison-row-differs': ({ cells }) => rowDiffers(cells),
   'tallying-source-count': ({ page }) => tallyingSourceCodes(auditedPayload(page).sources).length,
+  // The codec is asked for the fragment the way the page asks for it: a context
+  // built from the payload the server embedded, so the binding the client
+  // writes is the binding that page published. A rejected encode returns its
+  // reason rather than a fragment, which fails the comparison loudly instead of
+  // comparing undefined with a string.
+  'compare-fragment-encoding': ({ page, columns }) => {
+    const payload = auditedPayload(page);
+    const context = compareContext(
+      payload.personalization,
+      payload.data_version,
+      payload.comparisons,
+      payload.default_columns,
+    );
+    const encoded = encodeCompareFragment({ columns }, context);
+    return encoded.status === 'ok' ? encoded.fragment : `${encoded.status}: ${encoded.reason}`;
+  },
 };
 
 test('the parity fixture is the one this build understands', () => {

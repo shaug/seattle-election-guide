@@ -306,9 +306,9 @@ check is a bug in the check — fix or amend it, never route around it.
   JavaScript — labels, formatting, scoring, encoding — requires a generated
   parity fixture: the Python side emits golden cases, the Node tests assert
   them. `lens-score`'s parity fixture is the pattern.
-  *Check: exists — `tests/mirrors.json` names every surviving mirror and the
-  proof that holds it; `tests/mirror_parity.py` runs the shipped server
-  implementations over real publication bundles and emits
+  *Check: exists — `tests/mirrors.json` is the inventory of surviving mirrors
+  and the proof that holds each one; `tests/mirror_parity.py` runs the shipped
+  server implementations over real publication bundles and emits
   `tests/js/fixtures/mirror-parity.json`, which `tests/js/mirror-parity.test.mjs`
   asserts against the client. `tests/test_mirrors.py` regenerates the fixture
   during `pytest`, so a committed golden file cannot go stale while staying
@@ -323,14 +323,23 @@ check is a bug in the check — fix or amend it, never route around it.
   to the union in both directions. The second signal is the rule above read
   mechanically: a comment claiming a mirror is what puts that mirror on the
   inventory, so the claim can no longer be the only thing documenting it. For a
-  mirror whose whole content is one shared string, that derivation *is* the
-  proof — change the wording on either side alone and the declared evidence
-  stops being derived. Two limits are deliberate: symbol matching is restricted
-  to multiword names, because `text` and `boot` are defined on both sides and
-  mean nothing to each other; and a formatter whose output shares no words with
-  its counterpart is invisible to both signals, which is why the inventory is a
-  floor the derivation raises rather than a ceiling it defines, and why
-  arithmetic mirrors carry golden cases instead.
+  mirror whose whole content is one shared string, that derivation is the proof:
+  drop the wording from either side and the declared evidence stops being
+  derived.
+
+  **The derivation is a floor, not a ceiling**, and three limits say why an
+  entry may exist that no signal pins. Symbol matching is restricted to
+  multiword names, because `text` and `boot` are defined on both sides and mean
+  nothing to each other. A mirror that shares no display text and names no
+  counterpart is invisible to both signals — the Comparisons fragment encoding
+  is exactly that, and is on the inventory because a reviewer put it there — so
+  arithmetic and encoding mirrors carry golden cases rather than evidence keys.
+  And an evidence key records that a template is spelled on each side, not where
+  or how many times, so a `shared-literal` entry catches wording dropped from a
+  side but not one implementation of it moving while another occurrence in the
+  same file keeps the key alive. Adding an entry after reading the code is the
+  intended way to close the gap those limits leave; `tests/mirrors.json` is
+  reviewed, not merely generated.
 - **Prefer deleting a mirror to fixing one.** Where the contract can carry
   the computed value instead (a label in the payload rather than a formatter
   on each side), carry the value. The audited candidate order and the audited

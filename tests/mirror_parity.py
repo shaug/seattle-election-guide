@@ -9,7 +9,7 @@ inventory marks `parity-fixture`, and `tests/js/mirror-parity.test.mjs` asserts
 them against the client modules.
 
 **Nothing here restates a formatting rule.** Each expectation comes from the
-shipped server implementation, in one of three ways:
+shipped server implementation, in one of four ways:
 
 `published race`
     Most cases come from a real publication bundle, so the expectation is a
@@ -24,9 +24,15 @@ shipped server implementation, in one of three ways:
     A percentage formatter takes a rational string, not a race, so its rounding
     boundaries are reachable directly. `comparison_percentage_label` is called
     as shipped; the whole-percentage rounding comes from `_percentage_whole`,
-    the same function `publication/builder.py` uses to fill `percentage_label`.
-    Only the trailing `%` is written here, and it is written identically in
-    `builder.py`, in `models.py`'s validator, and in the client.
+    the same function `publication/builder.py` uses to fill `percentage_label`;
+    and `has_no_majority` is called on a copy of a published race carrying the
+    boundary share, because it reads a race rather than a share. Only the
+    trailing `%` is written here, and it is written identically in `builder.py`,
+    in `models.py`'s validator, and in the client.
+
+`fragment`
+    `comparison_fragment` writes the Comparisons preset fragment and is called
+    as shipped, on the same view model the audited page was rendered from.
 
 `audited page`
     Two strings are the server's template text rather than any function's
@@ -70,6 +76,7 @@ FIXTURE_PATH = PROJECT_ROOT / "tests" / "js" / "fixtures" / "mirror-parity.json"
 MIRRORS_PATH = PROJECT_ROOT / "tests" / "mirrors.json"
 GUIDE_PAGE_PATH = PROJECT_ROOT / "tests" / "js" / "fixtures" / "guide-audited-page.html"
 SOURCES_PAGE_PATH = PROJECT_ROOT / "tests" / "js" / "fixtures" / "sources-audited-page.html"
+COMPARE_PAGE_PATH = PROJECT_ROOT / "tests" / "js" / "fixtures" / "compare-audited-page.html"
 
 FIXTURE_SCHEMA_VERSION = "1.0"
 
@@ -257,7 +264,16 @@ def _panel_cases(dataset: CanonicalDataset) -> list[dict[str, Any]]:
     return cases
 
 
-def _share_cases() -> list[dict[str, Any]]:
+def _share_cases(base_race: PublicationRace) -> list[dict[str, Any]]:
+    """Cases for the formatters that take a share rather than a race.
+
+    `has_no_majority` reads a race, not a share, so a boundary share reaches it
+    through a copy of a published race carrying that share and nothing else
+    changed. The copy skips validation deliberately — the point is to call the
+    shipped predicate on an input no published race happens to hold, not to
+    restate its threshold here, which would make this module a second and
+    competing definition of the rule.
+    """
     cases: list[dict[str, Any]] = []
     for share, note in BOUNDARY_SHARES:
         cases.append(
@@ -282,9 +298,11 @@ def _share_cases() -> list[dict[str, Any]]:
             {
                 "mirror": "no-majority",
                 "input": {"share": share},
-                "expected": Fraction(share) <= Fraction(1, 2),
+                "expected": context.has_no_majority(
+                    base_race.model_copy(update={"winner_share": share})
+                ),
                 "note": note,
-                "source": "the published no-majority threshold",
+                "source": "has_no_majority as shipped, on a race carrying this share",
             }
         )
     cases.append(
@@ -378,6 +396,65 @@ def _audited_page_text(path: Path, attribute: str) -> str:
     return match.group(1).strip()
 
 
+# Column sets to encode, within the two-to-three columns `compare-url.mjs`
+# admits. The first three are the presets the Comparisons page renders as
+# links; the rest reach shapes no preset uses, so the codec's ordering and its
+# reserved aggregate token are covered rather than assumed.
+#
+# The bound is the client's alone: `MIN_COLUMNS`/`MAX_COLUMNS` guard
+# `encodeCompareFragment`, and `comparison_fragment` has no matching guard. The
+# two sides therefore agree on every input the server actually produces — every
+# preset asks for two — and a fixture case outside that range would be
+# asserting a shape only one side has an opinion about. The asymmetry is real
+# but latent: a fourth column added to a preset in `rendering/documents.py`
+# would render a link the client refuses to decode, and the page would open on
+# its default columns instead. `tests/mirrors.json` records that rather than
+# this module papering over it with a case.
+FRAGMENT_COLUMNS: tuple[tuple[tuple[str, ...], str], ...] = (
+    (("strn", "stim"), "The two direct sources the page offers as a preset."),
+    (("Glab", "Genv"), "Two category columns, whose tokens are capitalized."),
+    (("gall", "urbn"), "The reserved all-sources aggregate beside a direct source."),
+    (
+        ("gall", "strn", "stim"),
+        "Three columns concatenate in the order given, not in sorted order.",
+    ),
+    (
+        ("stim", "strn"),
+        "The same two sources in the other order encode to a different fragment.",
+    ),
+)
+
+
+def _fragment_cases(view_model: PublicationViewModel) -> list[dict[str, Any]]:
+    """The Comparisons preset fragment, which both sides write independently.
+
+    `comparison_fragment` composes the fragment in Python for the links the
+    audited page renders; `encodeCompareFragment` composes it in JavaScript for
+    every state change after that. Both spell the same parameter names in the
+    same canonical order, the same `cmp=1` schema version, and the same
+    twelve-character panel-hash prefix — `panel_hash[:12]` on one side and
+    `HASH_PREFIX_LENGTH = 12` on the other.
+
+    docs/FRONTEND.md § Cross-language mirrors names encoding as a mirror
+    category, and this is the only one left. It shares no display text and
+    neither side names the other, so `cross_language_mirrors.py` cannot see it;
+    it is on the inventory because a reader put it there. A change to the
+    prefix or the order on one side alone turns every server-rendered preset
+    link into a `stale_version` rejection, which is quiet: the page still loads,
+    on the default columns rather than the ones the link asked for.
+    """
+    return [
+        {
+            "mirror": "compare-fragment-encoding",
+            "input": {"page": COMPARE_PAGE_PATH.name, "columns": list(columns)},
+            "expected": context.comparison_fragment(view_model, list(columns)),
+            "note": note,
+            "source": "comparison_fragment as shipped",
+        }
+        for columns, note in FRAGMENT_COLUMNS
+    ]
+
+
 def _only_count(text: str) -> int:
     """The one number a counting sentence states, or both if it states them twice.
 
@@ -465,11 +542,13 @@ def _deduplicate(cases: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
 def build_mirror_parity_fixture(dataset: CanonicalDataset) -> dict[str, Any]:
     """Emit every golden case, computed by the server implementations."""
+    view_model = _bundle(dataset).view_model
     cases = _deduplicate(
         [
             *_panel_cases(dataset),
-            *_share_cases(),
+            *_share_cases(_races(view_model)[0]),
             *_row_differs_cases(),
+            *_fragment_cases(view_model),
             *_counting_cases(),
         ]
     )

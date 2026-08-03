@@ -20,6 +20,72 @@
   ],
   "cases": [
     {
+      "mirror": "compare-fragment-encoding",
+      "input": {
+        "page": "compare-audited-page.html",
+        "columns": [
+          "Glab",
+          "Genv"
+        ]
+      },
+      "expected": "cmp=1&cols=GlabGenv&panel=wa-2026-primary-default-sources-v4&ph=389a978b149d&data=746f83dbe09f&scoring=unweighted-progressive-v1",
+      "note": "Two category columns, whose tokens are capitalized.",
+      "source": "comparison_fragment as shipped"
+    },
+    {
+      "mirror": "compare-fragment-encoding",
+      "input": {
+        "page": "compare-audited-page.html",
+        "columns": [
+          "gall",
+          "strn",
+          "stim"
+        ]
+      },
+      "expected": "cmp=1&cols=gallstrnstim&panel=wa-2026-primary-default-sources-v4&ph=389a978b149d&data=746f83dbe09f&scoring=unweighted-progressive-v1",
+      "note": "Three columns concatenate in the order given, not in sorted order.",
+      "source": "comparison_fragment as shipped"
+    },
+    {
+      "mirror": "compare-fragment-encoding",
+      "input": {
+        "page": "compare-audited-page.html",
+        "columns": [
+          "gall",
+          "urbn"
+        ]
+      },
+      "expected": "cmp=1&cols=gallurbn&panel=wa-2026-primary-default-sources-v4&ph=389a978b149d&data=746f83dbe09f&scoring=unweighted-progressive-v1",
+      "note": "The reserved all-sources aggregate beside a direct source.",
+      "source": "comparison_fragment as shipped"
+    },
+    {
+      "mirror": "compare-fragment-encoding",
+      "input": {
+        "page": "compare-audited-page.html",
+        "columns": [
+          "stim",
+          "strn"
+        ]
+      },
+      "expected": "cmp=1&cols=stimstrn&panel=wa-2026-primary-default-sources-v4&ph=389a978b149d&data=746f83dbe09f&scoring=unweighted-progressive-v1",
+      "note": "The same two sources in the other order encode to a different fragment.",
+      "source": "comparison_fragment as shipped"
+    },
+    {
+      "mirror": "compare-fragment-encoding",
+      "input": {
+        "page": "compare-audited-page.html",
+        "columns": [
+          "strn",
+          "stim"
+        ]
+      },
+      "expected": "cmp=1&cols=strnstim&panel=wa-2026-primary-default-sources-v4&ph=389a978b149d&data=746f83dbe09f&scoring=unweighted-progressive-v1",
+      "note": "The two direct sources the page offers as a preset.",
+      "source": "comparison_fragment as shipped"
+    },
+    {
       "mirror": "comparison-percentage-label",
       "input": {
         "share": "1/1"
@@ -313,7 +379,7 @@
       },
       "expected": false,
       "note": "A unanimous share prints with no decimal at all.",
-      "source": "the published no-majority threshold"
+      "source": "has_no_majority as shipped, on a race carrying this share"
     },
     {
       "mirror": "no-majority",
@@ -331,7 +397,7 @@
       },
       "expected": true,
       "note": "A repeating share, which must not print more than one decimal.",
-      "source": "the published no-majority threshold"
+      "source": "has_no_majority as shipped, on a race carrying this share"
     },
     {
       "mirror": "no-majority",
@@ -340,7 +406,7 @@
       },
       "expected": true,
       "note": "A share whose tenths are neither exact nor a half.",
-      "source": "the published no-majority threshold"
+      "source": "has_no_majority as shipped, on a race carrying this share"
     },
     {
       "mirror": "no-majority",
@@ -349,7 +415,7 @@
       },
       "expected": true,
       "note": "12.5% whole rounds half up to 13%; the tenths form is exact.",
-      "source": "the published no-majority threshold"
+      "source": "has_no_majority as shipped, on a race carrying this share"
     },
     {
       "mirror": "no-majority",
@@ -358,7 +424,7 @@
       },
       "expected": false,
       "note": "68.75%: half-to-even in tenths gives 68.8%, the odd tenth rounding up.",
-      "source": "the published no-majority threshold"
+      "source": "has_no_majority as shipped, on a race carrying this share"
     },
     {
       "mirror": "no-majority",
@@ -376,7 +442,7 @@
       },
       "expected": false,
       "note": "The repeating share that rounds up.",
-      "source": "the published no-majority threshold"
+      "source": "has_no_majority as shipped, on a race carrying this share"
     },
     {
       "mirror": "no-majority",
@@ -385,7 +451,7 @@
       },
       "expected": true,
       "note": "37.5% whole rounds half up to 38%.",
-      "source": "the published no-majority threshold"
+      "source": "has_no_majority as shipped, on a race carrying this share"
     },
     {
       "mirror": "no-majority",
@@ -421,7 +487,7 @@
       },
       "expected": false,
       "note": "56.25%: half-to-even in tenths gives 56.2%, away-from-zero 56.3%.",
-      "source": "the published no-majority threshold"
+      "source": "has_no_majority as shipped, on a race carrying this share"
     },
     {
       "mirror": "no-majority",

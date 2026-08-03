@@ -118,6 +118,14 @@
       "evidence": [],
       "note": "Set logic over lead sets, sharing no text at all. Neutral cells are the interesting half: a blank column must neither agree nor create a difference."
     },
+    "compare-fragment-encoding": {
+      "client": "compare-url.mjs encodeCompareFragment, with fragment-codec.mjs writeBinding",
+      "server": "rendering/context.py comparison_fragment",
+      "proof": "parity-fixture",
+      "evidence": [],
+      "note": "The encoding mirror, which § Cross-language mirrors names as a category and which is the only one left. Python composes the preset fragments the Comparisons page renders as links; the client composes the same fragment for every state change after that. Both spell the same parameter names in the same canonical order, the same cmp=1 schema version, and the same twelve-character panel-hash prefix — panel_hash[:12] against HASH_PREFIX_LENGTH = 12. It shares no display text and neither side names the other, so no derivation signal can see it: this entry exists because a reviewer put it there, which is the floor-not-ceiling rule doing its work. Drift here is quiet rather than loud — a preset link decodes as stale_version and the page loads on its default columns instead of the ones the link asked for.",
+      "known_asymmetry": "The two sides agree on every column set the server produces, but not on which sets are legal. compare-url.mjs guards encodeCompareFragment with MIN_COLUMNS = 2 and MAX_COLUMNS = 3; comparison_fragment has no matching guard. Every preset in rendering/documents.py asks for two columns, so nothing is wrong today, but a one- or four-column preset would render a link the client refuses to decode. The golden cases stay inside the range both sides admit rather than asserting a shape only one of them has an opinion about."
+    },
     "lens-scoring": {
       "client": "lens-score.mjs scoreSelection",
       "server": "scoring/engine.py score_dataset",
