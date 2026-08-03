@@ -138,6 +138,7 @@ milestones:
     id: retrospective
     kind: retrospective
     offset_days: 30
+    reference: docs/POST_ELECTION_RETROSPECTIVE.md
 
   # 2027 February special. Specials carry measures placed by resolution, so
   # there is no filing week and the runway is shorter.
@@ -408,3 +409,4 @@ milestones:
     id: retrospective
     kind: retrospective
     offset_days: 30
+    reference: docs/POST_ELECTION_RETROSPECTIVE.md
