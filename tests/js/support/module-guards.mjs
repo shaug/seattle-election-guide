@@ -70,6 +70,7 @@ export const MODULE_KINDS = {
   'compare-client.mjs': 'wiring',
   'compare-entry.mjs': 'wiring',
   'compare-migrate.mjs': 'pure',
+  'compare-route.mjs': 'wiring',
   'compare-signals.mjs': 'pure',
   'compare-table.mjs': 'pure',
   'compare-url.mjs': 'pure',

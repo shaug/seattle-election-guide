@@ -1,6 +1,14 @@
 // Interactive comparison-page glue. State is admitted and serialized only by
-// compare-url.mjs; cell arithmetic is owned only by compare-signals.mjs; the
-// table's markup is owned only by compare-table.mjs.
+// compare-url.mjs; the address bar it lives in is touched only by
+// compare-route.mjs; cell arithmetic is owned only by compare-signals.mjs; the
+// table's markup is owned only by compare-table.mjs. This module names neither
+// `location` nor `history` (docs/FRONTEND.md § State and URLs).
+//
+// Every way the page can fail to read or write its link ends in something the
+// reader can see. A decode this build cannot use, a migration that cannot
+// resolve, and a change the codec refuses each resolve to a stated outcome —
+// text, an address bar that is cleaned or left alone, and a defined state —
+// rather than to nothing at all.
 //
 // This module is wiring: it holds the view-model state, listens, and hands lit
 // a view model. The two regions it owns are taken over on different terms
@@ -19,6 +27,7 @@
 import { render } from 'lit-html';
 import { readClientPayload } from './client-payload.mjs';
 import { migrateCompareState } from './compare-migrate.mjs';
+import { createCompareRouter } from './compare-route.mjs';
 import { cellAgreement, createColumnSignalEngine, rowDiffers } from './compare-signals.mjs';
 import { comparisonBodyTemplate, comparisonHeadTemplate } from './compare-table.mjs';
 import {
@@ -27,6 +36,30 @@ import {
   decodeCompareFragment,
   encodeCompareFragment,
 } from './compare-url.mjs';
+
+/**
+ * What a reader is told when the link they arrived on says nothing this page
+ * can read. Each of these ends the same way — with what is on the screen now —
+ * because a notice that only reports a failure leaves the reader guessing what
+ * they are looking at (docs/FRONTEND.md § State and URLs; docs/DESIGN.md
+ * § Voice).
+ */
+const UNREADABLE_LINK_NOTICE =
+  'This comparison link could not be read, so the default comparison is shown.';
+const MIGRATED_LINK_NOTICE = 'This comparison link was updated for the current source list.';
+const PARTIAL_LINK_NOTICE =
+  'This comparison link could not be restored completely, so the default comparison is shown.';
+const UNMIGRATABLE_LINK_NOTICE =
+  'This comparison link could not be updated for the current source list, so the default ' +
+  'comparison is shown.';
+
+/**
+ * And what they are told when a change they just made cannot be written into a
+ * link. The change is not applied, because a comparison the address bar cannot
+ * name is one no reload, copy, or Back press could reproduce.
+ */
+const UNSHAREABLE_VIEW_NOTICE =
+  'That change could not be put into a shareable link, so the comparison is unchanged.';
 
 /**
  * The Comparisons page renders all of these before its entry runs, so each
@@ -165,6 +198,9 @@ export function wireComparisons() {
     return `${(rounded / 10).toFixed(1)}%`;
   };
 
+  const router = createCompareRouter();
+
+  /** @returns {import('./compare-url.mjs').CompareState} */
   const auditedDefault = () => ({
     columns: [...payload.default_columns],
     differencesOnly: false,
@@ -172,7 +208,23 @@ export function wireComparisons() {
     section: 'all',
   });
 
+  /**
+   * An independent copy, so that the state the address bar names and the state
+   * the reader is editing are never the same array.
+   *
+   * @param {import('./compare-url.mjs').CompareState} value
+   * @returns {import('./compare-url.mjs').CompareState}
+   */
+  const snapshot = (value) => ({ ...value, columns: [...value.columns] });
+
   let state = auditedDefault();
+  /**
+   * The state the address bar currently names: what a change the codec refuses
+   * returns to, so the page never shows a comparison no link could reproduce.
+   *
+   * @type {import('./compare-url.mjs').CompareState}
+   */
+  let committed = auditedDefault();
   /**
    * Which column, if any, is showing its picker instead of its title. State,
    * not DOM: the render decides which control exists, so no handler swaps
@@ -188,11 +240,20 @@ export function wireComparisons() {
    */
   let headTakenOver = false;
   let bodyTakenOver = false;
-  let disclosure = '';
+  /**
+   * How this load resolved the link it arrived on. Persistent: it describes a
+   * shared link, not an ongoing in-page navigation.
+   */
+  let linkNotice = '';
+  /**
+   * Why the reader's last change did not take, when it did not. Cleared by the
+   * next change that does, so it never outlives the action it explains.
+   */
+  let changeNotice = '';
+  /** The more recent of the two is what the page says. */
+  const disclosure = () => changeNotice || linkNotice;
   /** @type {string|null} */
-  let lastLocationKey = null;
-  const locationKey = () =>
-    `${window.location.pathname}${window.location.search}${window.location.hash}`;
+  let writtenAddress = null;
 
   /** True while the reader is still looking at exactly what the server rendered. */
   function showingAuditedDefault() {
@@ -206,42 +267,132 @@ export function wireComparisons() {
     );
   }
 
-  function stateFromLocation() {
-    const decoded = decodeCompareFragment(window.location.hash, context);
+  /**
+   * One decoded fragment resolved to the state the page should show, what the
+   * reader is told about it, and what becomes of the address it arrived in.
+   *
+   * A `null` state means the fragment says nothing about this comparison — the
+   * skip link is one, and so is any other in-page anchor — so the page keeps
+   * what it has and says nothing about it.
+   *
+   * @typedef {object} CompareOutcome
+   * @property {import('./compare-url.mjs').CompareState|null} state
+   * @property {string} notice
+   * @property {'keep'|'clean'|'rewrite'} address
+   */
+
+  /**
+   * Resolve one decoded fragment. Every decode status has a branch here, and
+   * every branch that is not `valid` or `absent` carries an explanation: a link
+   * that fails silently is the defect the rule names (docs/FRONTEND.md § State
+   * and URLs).
+   *
+   * @param {import('./compare-url.mjs').CompareDecodeResult} decoded
+   * @returns {CompareOutcome}
+   */
+  function resolve(decoded) {
     if (decoded.status === 'valid') {
-      state = { ...decoded.state, columns: [...decoded.state.columns] };
-      if (state.columns.length < 2) state.columns = [...payload.default_columns];
-      disclosure = '';
-    } else if (decoded.status === 'absent') {
-      state = auditedDefault();
-      disclosure = '';
-    } else if (decoded.status === 'stale_version') {
-      const migration = migrateCompareState(decoded, personalization, context);
-      if (migration.status === 'migrated' || migration.status === 'fallback') {
-        state = { ...migration.state, columns: [...migration.state.columns] };
-        disclosure =
-          migration.status === 'migrated'
-            ? 'This comparison link was updated for the current source list.'
-            : 'This comparison link could not be restored completely, so the default comparison is shown.';
-        writeState('replace');
-      }
+      return { state: decoded.state, notice: '', address: 'keep' };
     }
+    if (decoded.status === 'absent') {
+      return { state: auditedDefault(), notice: '', address: 'keep' };
+    }
+    if (decoded.status === 'stale_version') {
+      const migration = migrateCompareState(decoded, personalization, context);
+      if (migration.status === 'rejected') {
+        return { state: auditedDefault(), notice: UNMIGRATABLE_LINK_NOTICE, address: 'clean' };
+      }
+      return {
+        state: migration.state,
+        notice: migration.status === 'migrated' ? MIGRATED_LINK_NOTICE : PARTIAL_LINK_NOTICE,
+        address: 'rewrite',
+      };
+    }
+    // `malformed`. An ordinary in-page anchor is not a comparison link and the
+    // codec says so by name, so clicking around the page never manufactures an
+    // explanation or disturbs the address bar.
+    if (decoded.reason === 'unrecognized_fragment') {
+      return { state: null, notice: '', address: 'keep' };
+    }
+    return { state: auditedDefault(), notice: UNREADABLE_LINK_NOTICE, address: 'clean' };
   }
 
-  function writeState(mode = 'push') {
+  /**
+   * Put the current state in the address bar.
+   *
+   * @param {'push'|'replace'} mode
+   * @returns {boolean} False when the codec refuses the state.
+   */
+  function writeFragment(mode) {
     const encoded = encodeCompareFragment(state, context);
     if (encoded.status !== 'ok') return false;
-    const target = `${window.location.pathname}${window.location.search}#${encoded.fragment}`;
-    if (mode === 'replace') history.replaceState({ comparison: true }, '', target);
-    else history.pushState({ comparison: true }, '', target);
-    lastLocationKey = locationKey();
+    router.write(encoded.fragment, mode);
+    committed = snapshot(state);
+    writtenAddress = router.key();
     return true;
   }
 
-  function syncFromLocation() {
-    if (locationKey() === lastLocationKey) return;
-    stateFromLocation();
-    lastLocationKey = locationKey();
+  /** Drop an unusable fragment, so a reload reproduces what the reader sees. */
+  function clearFragment() {
+    router.clearFragment();
+    committed = snapshot(state);
+    writtenAddress = router.key();
+  }
+
+  /** Adopt whatever the live address says, and do what it implies. */
+  function readAddress() {
+    const outcome = resolve(decodeCompareFragment(router.fragment(), context));
+    if (outcome.state === null) {
+      writtenAddress = router.key();
+      return;
+    }
+    state = snapshot(outcome.state);
+    linkNotice = outcome.notice;
+    changeNotice = '';
+    if (outcome.address === 'clean') {
+      clearFragment();
+      return;
+    }
+    // A migrated state replaces the stale link it was resolved from. If the
+    // codec will not write it, nothing can carry it: the page falls back to the
+    // audited default, clears the link, and says which of the two happened.
+    if (outcome.address === 'rewrite' && !writeFragment('replace')) {
+      state = auditedDefault();
+      linkNotice = UNMIGRATABLE_LINK_NOTICE;
+      clearFragment();
+      return;
+    }
+    committed = snapshot(state);
+    writtenAddress = router.key();
+  }
+
+  /**
+   * Apply the change the reader just made, and render.
+   *
+   * A state the codec refuses is not applied. The page and the address bar stay
+   * on the one state a link can reproduce, and the reader is told why their
+   * change did not take — an unencodable state is a failure, and failures are
+   * surfaced rather than dropped (docs/FRONTEND.md § State and URLs).
+   *
+   * @param {'push'|'replace'} [mode]
+   * @returns {boolean}
+   */
+  function commit(mode = 'push') {
+    if (writeFragment(mode)) {
+      changeNotice = '';
+      renderPage();
+      return true;
+    }
+    state = snapshot(committed);
+    editingColumn = null;
+    changeNotice = UNSHAREABLE_VIEW_NOTICE;
+    renderPage();
+    return false;
+  }
+
+  function syncFromAddress() {
+    if (router.key() === writtenAddress) return;
+    readAddress();
     editingColumn = null;
     renderPage();
   }
@@ -353,10 +504,12 @@ export function wireComparisons() {
       if (new Set(next).size !== next.length) return;
       state.columns = next;
       editingColumn = null;
-      if (writeState()) {
-        renderPage();
-        focusHeadControl('title', index);
-      }
+      commit();
+      // The picker the reader was in has been replaced by a title either way:
+      // by the column they chose, or — when the codec refused it — by the one
+      // that was there before. Clamped, because a refusal restores the column
+      // count as well as the columns.
+      focusHeadControl('title', Math.min(index, state.columns.length - 1));
     },
     onCancel(index) {
       if (editingColumn !== index) return;
@@ -377,21 +530,18 @@ export function wireComparisons() {
     onRemove(index) {
       state.columns = state.columns.filter((_, columnIndex) => columnIndex !== index);
       editingColumn = null;
-      const focusIndex = Math.min(index, state.columns.length - 1);
-      if (writeState()) {
-        renderPage();
-        focusHeadControl('title', focusIndex);
-      }
+      commit();
+      focusHeadControl('title', Math.min(index, state.columns.length - 1));
     },
     onAdd() {
       const available = nextUnusedSignal();
       if (available === undefined) return;
       state.columns = [...state.columns, available];
       editingColumn = state.columns.length - 1;
-      if (writeState()) {
-        renderPage();
-        focusHeadControl('picker', state.columns.length - 1);
-      }
+      // A refused column leaves no picker to focus, so focus goes to the last
+      // title instead of chasing a control the render did not produce.
+      if (commit()) focusHeadControl('picker', state.columns.length - 1);
+      else focusHeadControl('title', state.columns.length - 1);
     },
   };
 
@@ -530,7 +680,7 @@ export function wireComparisons() {
           state.contestedOnly = false;
           state.section = 'all';
         }
-        if (writeState('replace')) renderPage();
+        commit('replace');
       }),
       table,
     );
@@ -556,9 +706,13 @@ export function wireComparisons() {
   }
 
   // Everything one state change implies: both regions, the controls, the hint.
+  // `syncControls` is what puts a refused change back on the screen: the
+  // checkbox the reader clicked reports the state that survived, not the one
+  // they asked for.
   function renderPage() {
-    notice.hidden = disclosure === '';
-    notice.textContent = disclosure;
+    const text = disclosure();
+    notice.hidden = text === '';
+    notice.textContent = text;
     renderHead();
     renderBody();
     syncControls();
@@ -567,36 +721,39 @@ export function wireComparisons() {
 
   sectionFilter.addEventListener('change', () => {
     state.section = sectionFilter.value;
-    if (writeState('replace')) renderPage();
+    commit('replace');
   });
   toggleInput('[data-comparison-full]').addEventListener('change', () => {
     state.differencesOnly = false;
-    if (writeState('replace')) renderPage();
+    commit('replace');
   });
   toggleInput('[data-comparison-differences]').addEventListener('change', () => {
     state.differencesOnly = true;
-    if (writeState('replace')) renderPage();
+    commit('replace');
   });
   toggleInput('[data-comparison-all-races]').addEventListener('change', () => {
     state.contestedOnly = false;
-    if (writeState('replace')) renderPage();
+    commit('replace');
   });
   toggleInput('[data-comparison-contested]').addEventListener('change', () => {
     state.contestedOnly = true;
-    if (writeState('replace')) renderPage();
+    commit('replace');
   });
   /** @type {NodeListOf<HTMLAnchorElement>} */
   (document.querySelectorAll('.comparison-presets a')).forEach((link) => {
     link.addEventListener('click', (event) => {
+      // A preset this build cannot read is left to the browser, which navigates
+      // to it and hands it back through the fragment listener below — where the
+      // reader is told what became of it, rather than nothing happening.
       const decoded = decodeCompareFragment(link.hash, context);
       if (decoded.status !== 'valid') return;
       event.preventDefault();
-      state = { ...decoded.state };
-      if (writeState()) renderPage();
+      state = snapshot(decoded.state);
+      commit();
     });
   });
-  window.addEventListener('popstate', syncFromLocation);
-  window.addEventListener('hashchange', syncFromLocation);
+  router.onHistoryChange(syncFromAddress);
+  router.onFragmentChange(syncFromAddress);
   /** @type {number|undefined} */
   let resizeTimer;
   window.addEventListener('resize', () => {
@@ -607,7 +764,6 @@ export function wireComparisons() {
     }, 80);
   });
 
-  stateFromLocation();
-  lastLocationKey = locationKey();
+  readAddress();
   renderPage();
 }
