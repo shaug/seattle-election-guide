@@ -1,4 +1,4 @@
-// guide-format.mjs mirrors the display strings `rendering/renderer.py` writes
+// guide-format.mjs mirrors the display strings `rendering/context.py` writes
 // for the audited default. While a lens is active the client recomputes them,
 // so a drift between the two sides shows a reader one quantity with two
 // spellings. These are the client half of that mirror

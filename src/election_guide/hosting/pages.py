@@ -21,7 +21,7 @@ from election_guide.publication.comparisons import ComparisonsPolicy
 from election_guide.publication.models import PublicationViewModel
 from election_guide.release.models import ReleaseManifest, ReleaseStatus
 from election_guide.rendering.bundler import bundle_entry
-from election_guide.rendering.renderer import (
+from election_guide.rendering.documents import (
     render_comparison_document,
     render_sources_document,
     template_environment,

@@ -1,6 +1,6 @@
 // The guide's display strings, as the audited renderer writes them.
 //
-// Every function here mirrors one in `rendering/renderer.py`: while a lens is
+// Every function here mirrors one in `rendering/context.py`: while a lens is
 // active the client recomputes the same captions, shares, and accessible
 // summaries the server rendered for the audited default, and the two must agree
 // word for word or a reader sees one quantity with two spellings. Extracted
@@ -117,7 +117,7 @@ export function allSourcesSummary(audited, labels) {
 }
 
 /**
- * Mirrors `_race_detail_support_summary` in renderer.py.
+ * Mirrors `race_detail_support_summary` in `rendering/context.py`.
  *
  * A single sole leader states its own contributing count against the total,
  * matching the count already shown in that candidate's section; a tie or an
@@ -138,7 +138,7 @@ export function raceDetailSupportSummary(scored, selectedTotal, leaderCount) {
 }
 
 /**
- * Mirrors `_race_detail_accessible_summary` in renderer.py, for the dialog's
+ * Mirrors `race_detail_accessible_summary` in `rendering/context.py`, for the dialog's
  * visually-hidden `aria-describedby` text.
  *
  * @param {ScoredRace} scored

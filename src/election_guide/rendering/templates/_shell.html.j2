@@ -14,7 +14,7 @@
 
    `site_name`, `contact_href`, `opens_in_new_tab`, `external_link_attributes`,
    and the icon builders are environment globals, registered in
-   `rendering/renderer.py`. Macros do not see their caller's context, and the
+   `rendering/documents.py`. Macros do not see their caller's context, and the
    shell is rendered from inside macros almost everywhere, so passing these per
    render would silently cover only the handful of uses outside a macro. #}
 

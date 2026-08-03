@@ -27,7 +27,7 @@ from pathlib import Path
 
 from election_guide.publication.models import PublicationViewModel
 from election_guide.rendering import read_rendering_configuration, render_html_document
-from election_guide.rendering.renderer import render_sources_document
+from election_guide.rendering.documents import render_sources_document
 from tests.test_personalization import _bundle  # pyright: ignore[reportPrivateUsage]
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]

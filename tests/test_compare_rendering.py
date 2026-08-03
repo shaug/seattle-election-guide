@@ -13,10 +13,9 @@ from urllib.parse import parse_qs, urlencode
 import pytest
 
 from election_guide.publication.comparisons import ComparisonsPolicy
-from election_guide.rendering.renderer import (
-    ComparisonCellView,
-    _comparison_row_differs,  # pyright: ignore[reportPrivateUsage]
-    read_rendering_configuration,
+from election_guide.rendering.config import read_rendering_configuration
+from election_guide.rendering.context import ComparisonCellView, comparison_row_differs
+from election_guide.rendering.documents import (
     render_comparison_document,
     render_html_document,
     render_sources_document,
@@ -270,9 +269,9 @@ def test_server_row_differences_are_relative_only_to_the_reference() -> None:
             leading_pick_ids=picks,
         )
 
-    assert _comparison_row_differs((cell("a", "b"), cell("a"), cell("b"))) is False
-    assert _comparison_row_differs((cell("a"), cell("a", "b"), cell("b"))) is True
-    assert _comparison_row_differs((cell(), cell("a"), cell("b"))) is False
+    assert comparison_row_differs((cell("a", "b"), cell("a"), cell("b"))) is False
+    assert comparison_row_differs((cell("a"), cell("a", "b"), cell("b"))) is True
+    assert comparison_row_differs((cell(), cell("a"), cell("b"))) is False
 
 
 def _comparison_html_path(tmp_path: Path) -> Path:

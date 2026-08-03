@@ -23,7 +23,7 @@ from election_guide.hosting.pages import _about_html  # pyright: ignore[reportPr
 from election_guide.publication.comparisons import ComparisonsPolicy
 from election_guide.publication.models import PublicationViewModel
 from election_guide.release.models import REQUIRED_RELEASE_ARTIFACTS, ReleaseStatus
-from election_guide.rendering.renderer import render_sources_document
+from election_guide.rendering.documents import render_sources_document
 from election_guide.serialization import canonical_json_bytes
 from tests.test_rendering import (  # pyright: ignore[reportPrivateUsage]
     _evaluate_in_chrome,  # pyright: ignore[reportPrivateUsage]
