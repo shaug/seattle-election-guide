@@ -45,17 +45,19 @@
    not the tabled D14 meter redesign. */
 .screen-meter.meter-low-fill strong, .race-detail-meter.meter-low-fill strong { padding-left: calc(var(--meter-fill) + .4rem); color: var(--muted); }
 /* The card's second row, in the same shape as the first: pill under the name,
-   caption under the meter. This is the track that has to grow. A caption wider
-   than a fixed track either wraps — it does, at 480-720px where the track
-   narrows to 8.75rem — or, pinned to one line, overhangs left onto a wrapped
-   name's last line, measured as ink overlap on every card at 560px with the
-   longest tie label this ballot can produce. `max-content` takes neither: the
-   track is exactly the caption, the row above keeps its own fixed meter track,
-   and both rows stay flush against the card's right edge.
-   No floor under the max-content: the widest caption a reader can get (185.77px,
-   the client's "Based on N of M selected sources") is wider than the meter at
-   every breakpoint, so a floor could only ever restate what the content already
-   demands. `align-items: start` keeps the caption's top where it is when a pill
+   caption under the meter. This is the track that has to grow. Against a fixed
+   track the caption wraps — it does, at 480-720px where the meter narrows to
+   8.75rem, and at the wide default too — and pinning it to one line instead
+   (`white-space: nowrap`, the first attempt here) trades the wrap for a page
+   wider than the viewport. `max-content` takes neither: the track is exactly
+   the caption, the row above keeps its own fixed meter track, and both rows
+   stay flush against the card's right edge.
+   No floor under it. At the two breakpoints where the card has two columns the
+   widest caption a reader can get (185.77px — the client's "Based on N of M
+   selected sources") is wider than the meter, so a floor could only restate
+   what the content already demands; in print and compact, where the meter is
+   wider, a floor would make the caption's box stop hugging its text.
+   `align-items: start` keeps the caption's own height when a taller pill
    appears beside it. */
 .screen-race-context { display: grid; grid-template-columns: minmax(0, 1fr) max-content; align-items: start; min-width: 0; }
 .screen-race-context .support-line { grid-column: 2; }

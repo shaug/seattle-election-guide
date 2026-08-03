@@ -18,7 +18,6 @@ from PIL import Image
 from pydantic import ValidationError
 from websocket import create_connection  # pyright: ignore[reportUnknownVariableType]
 
-from election_guide.inventory.importer import read_inventory
 from election_guide.publication import build_publication_bundle
 from election_guide.publication.builder import (
     reprojected_comparisons,
@@ -731,28 +730,6 @@ def test_no_majority_uses_the_exact_unrounded_share_across_the_card_and_dialog(
     assert "No majority · Leading choice" not in above_half_card
 
 
-def _longest_tie_label() -> str:
-    """The widest recommendation label this ballot can produce.
-
-    A tie renders every leading name joined by ' / ', so the two longest
-    candidate names bound how far a wrapped name reaches across its column.
-    Read through the inventory reader rather than the raw file, so a shape
-    change is an error here instead of a silently empty label.
-    """
-    inventory = read_inventory(PROJECT_ROOT / "data/normalized/wa-2026-primary-inventory.json")
-    names = sorted(
-        {
-            choice.display_name
-            for race in inventory.races
-            for choice in race.choices
-            if choice.choice_type == "candidate"
-        },
-        key=len,
-        reverse=True,
-    )
-    return " / ".join(names[:2])
-
-
 def test_the_no_majority_pill_sits_under_the_name_and_displaces_nothing(
     tmp_path: Path,
 ) -> None:
@@ -864,17 +841,16 @@ def test_the_no_majority_pill_sits_under_the_name_and_displaces_nothing(
 def test_the_support_caption_stays_on_one_line_beside_the_name(tmp_path: Path) -> None:
     """The caption shares the meter's column, and the column is sized to hold it.
 
-    The caption runs a little wider than the meter, so the track carries
-    `max-content`. Pin what that buys: the caption stays on one line, keeping the
-    fixed position under the meter that I39/H38 give it, and it stays clear of
-    the name rather than overhanging left onto a wrapped line of it.
+    The caption runs wider than the meter, so its track carries `max-content`.
+    Both alternatives are reachable and both are caught here: a fixed track wraps
+    the caption — `oneLine` — and a fixed track pinned with `white-space: nowrap`
+    pushes the page wider than its viewport — `pageOverflow`. `allHugText` catches
+    the third case, where the track goes away entirely and the caption falls into
+    an implicit track that absorbs the row's free space.
 
-    Both failure modes are real. A fixed track wraps the caption at 480-720px,
-    where the track narrows to 8.75rem; a fixed track plus `white-space: nowrap`
-    stops the wrap but paints the caption over a wrapped name's last line —
-    measured on every card at 560px with the longest tie label this ballot can
-    produce. 560px catches both; the other widths guard the same property in the
-    editions a reader gets, including print, where captions drop to 8pt.
+    Nothing here asserts the caption clears the name. It cannot reach it: the two
+    live in different rows of `.race-card-primary`, separated by that grid's gap,
+    so an assertion about their glyphs would pass whatever the CSS said.
     """
     view_model = _view_model(tmp_path)
     html_path = tmp_path / "guide.html"
@@ -902,20 +878,10 @@ def test_the_support_caption_stays_on_one_line_beside_the_name(tmp_path: Path) -
         const captions = [...document.querySelectorAll('.race-card')].map((card) => {
           const caption = [...card.querySelectorAll('.support-line')]
             .find((line) => line.getClientRects().length);
-          const name = card.querySelector('h3');
-          if (!caption || !name) return null;
+          if (!caption) return null;
           caption.textContent = LONGEST;
-          name.textContent = TIE_LABEL;
           const box = caption.getBoundingClientRect();
           const cardBox = card.getBoundingClientRect();
-          // Ink, not boxes: the name's own line rects, since its block box
-          // spans the column whether or not glyphs reach the caption.
-          const range = document.createRange();
-          range.selectNodeContents(name);
-          const clear = [...range.getClientRects()]
-            .filter((line) => line.width > 0)
-            .every((line) => line.right <= box.left
-              || line.bottom <= box.top || line.top >= box.bottom);
           return {
             // One line-box tall, not "as short as its neighbours" — if every
             // caption wrapped, a comparison between them would still pass.
@@ -930,7 +896,6 @@ def test_the_support_caption_stays_on_one_line_beside_the_name(tmp_path: Path) -
               return Math.abs(box.width - text.getBoundingClientRect().width) <= 2;
             })(),
             insideCard: box.left >= cardBox.left - 1 && box.right <= cardBox.right + 1,
-            clearOfName: clear,
           };
         }).filter(Boolean);
         return JSON.stringify({
@@ -938,14 +903,11 @@ def test_the_support_caption_stays_on_one_line_beside_the_name(tmp_path: Path) -
           oneLine: captions.every((c) => c.lines <= 1.05),
           allHugText: captions.every((c) => c.hugsText),
           allInsideCard: captions.every((c) => c.insideCard),
-          allClearOfName: captions.every((c) => c.clearOfName),
           pageOverflow: document.documentElement.scrollWidth
             > document.documentElement.clientWidth,
         });
       })()
-    """.replace("LONGEST", json.dumps(longest_caption)).replace(
-        "TIE_LABEL", json.dumps(_longest_tie_label())
-    )
+    """.replace("LONGEST", json.dumps(longest_caption))
 
     screen = _evaluate_in_chrome(html_path, expression)
     phone = _evaluate_in_chrome(html_path, expression, mobile_width=320)
@@ -960,7 +922,6 @@ def test_the_support_caption_stays_on_one_line_beside_the_name(tmp_path: Path) -
         assert edition["measured"] > 0
         assert edition["oneLine"] is True
         assert edition["allInsideCard"] is True
-        assert edition["allClearOfName"] is True
         assert edition["pageOverflow"] is False
 
     # Only where the card is two columns: the caption's track is its own width,
