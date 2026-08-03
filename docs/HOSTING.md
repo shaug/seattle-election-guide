@@ -26,14 +26,18 @@ the Cloudflare account ID. Store both values under the GitHub repository's Actio
 - `CLOUDFLARE_API_TOKEN`
 - `CLOUDFLARE_ACCOUNT_ID`
 
-The workflow uses the GitHub `production` environment. GitHub creates that environment on the
-first enabled deployment; environment protection rules may be added later if publication should
-require approval.
+The workflow uses the GitHub `production` environment, which carries a required-reviewer rule and a
+`main`-only deployment branch policy. Both are configured under **Settings / Environments /
+production**: add the maintainer as a required reviewer, and add a deployment branch rule naming
+`main`. Rebuilding the environment without them restores automatic publication.
+[Deployment gate](#deployment-gate) describes what each one does and when to reach for the kill
+switch instead.
 
 Leave publishing disabled until the project and both secrets exist. Then create the repository
 Actions variable `CLOUDFLARE_PAGES_ENABLED` with the exact value `true`. Run the **CI** workflow
-manually on `main` for the first upload. After that, every push to `main` builds, validates, stages,
-and publishes automatically. Pull requests never receive the Cloudflare secrets and never deploy.
+manually on `main` for the first upload. That run, and every push to `main` after it, builds,
+validates, and stages automatically, then queues a production deployment for approval. Pull requests
+never receive the Cloudflare secrets and never deploy.
 
 ## Custom domains
 
@@ -183,5 +187,58 @@ manifest-declared bundles, stages the complete site, and uploads the staged dire
 short-lived GitHub Actions artifact. Only then can the production job download and upload it with
 Wrangler. Concurrent production uploads are serialized.
 
+Passing CI makes a commit publishable; it does not publish it. Two independent controls stand
+between a green merge and the live site.
+
+### Approval
+
+The `production` environment carries a required-reviewer protection rule. A merge to `main` runs
+`check` and then queues `deploy` in a waiting state until a reviewer approves it from the workflow
+run page. The repository's Deployments page lists the waiting deployment and links to that run, but
+carries no approval control of its own. Approving starts the upload; rejecting ends the run and
+leaves the live site on its previous deployment. Work can keep landing on `main` while a deployment
+waits, which is the point: merging and publishing are separate decisions, and during the week before
+an election the second one deserves its own moment.
+
+What waits is one commit, not a backlog. The `deploy` job serializes on a single concurrency group,
+so production deployments never accumulate: a run queued behind the waiting one is itself canceled
+when a newer run queues behind it. Approving therefore publishes the commit the waiting deployment
+carries — the deployments log records which — and that is not necessarily the head of `main`. To
+publish a newer commit instead, reject the waiting deployment and approve the newer one. Re-running
+CI on the exact commit you want is the dependable way to produce a deployment for it.
+
+A hold is also bounded. The job publishes by downloading the `cloudflare-site` artifact that `check`
+uploaded, and Actions keeps that artifact for seven days; approving afterward fails at the download
+step rather than publishing. GitHub fails an unapproved deployment after thirty days, but the
+artifact expires long before that, so seven days is the real limit. Past it, re-run CI on the commit
+to stage a fresh artifact.
+
+The only reviewer is the maintainer, so this is self-approval, and admins can bypass it. That is
+deliberate. What it buys is the pause and the audit trail in the deployment log, not enforcement
+against oneself.
+
+### Branch policy
+
+The same environment restricts deployments to one branch, `main`. A workflow running on any other
+ref cannot target `production` at all, so a pull-request or preview job cannot reach the production
+Pages project even if it names the environment. The `deploy` job already tests
+`github.ref == 'refs/heads/main'`; the branch policy enforces that same rule from repository
+settings, where editing the workflow cannot reach it.
+
+### Kill switch
+
 To stop automatic publication without changing code, set `CLOUDFLARE_PAGES_ENABLED` to any value
-other than `true` or delete the variable.
+other than `true` or delete the variable. The `deploy` job is skipped outright and no deployment is
+created.
+
+### Which one to use
+
+Approval is the per-deploy pause, and the normal path: hold a specific commit, or sit on a change
+overnight before putting it in front of voters. See [Approval](#approval) for which commit a waiting
+deployment carries.
+
+The variable is the durable off switch. Use it when publication should be off rather than merely
+waiting: while Cloudflare credentials are rotated, while the Pages project is rebuilt, or for any
+freeze approaching the seven-day artifact window. While it is unset the `deploy` job never runs, so
+there is no deployment to expire or approve by mistake, and restoring publication takes a deliberate
+settings change rather than a click.
