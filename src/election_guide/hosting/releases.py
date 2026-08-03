@@ -1,19 +1,32 @@
-"""Check that every declared election release has a published GitHub Release.
+"""Resolve declared election releases against their published GitHub Releases.
 
 The site manifest names a `release_version` for every election it serves, and the
 archive for that version is expected to exist as a published GitHub Release. The
 two drift silently otherwise: a version can be declared, built, and deployed
 without its archive ever being published.
+
+That published archive is also the only way to obtain a historical election's
+bundle. Only the current election is built from source; older ones cannot be
+rebuilt, because their pinned artifact hashes were produced by the rendering code
+of their own time. So they are downloaded from their release and checked against
+the hash the manifest pins.
 """
 
 from __future__ import annotations
 
 import json
+import shutil
 import subprocess
+import zipfile
+import zlib
 from collections.abc import Iterable
+from pathlib import Path, PurePosixPath
 from typing import Any, cast
 
-from election_guide.hosting.models import SiteManifest
+from election_guide.hosting.models import PublishedElection, SiteManifest
+from election_guide.release.models import ARCHIVE_ROOT_DIR, release_archive_name
+
+READ_CHUNK_SIZE = 1024 * 1024
 
 # The repository publishes one release per election version, so this ceiling sits
 # far above any real history while still bounding the query.
@@ -79,3 +92,104 @@ def verify_declared_releases_published(
     ]
     if missing:
         raise ValueError("; ".join(missing))
+
+
+def download_release_archive(declaration: PublishedElection, destination: Path) -> Path:
+    """Download one published release's versioned ZIP into `destination`."""
+    archive_name = release_archive_name(declaration.release_version)
+    destination.mkdir(parents=True, exist_ok=True)
+    archive_path = destination / archive_name
+    if archive_path.exists():
+        archive_path.unlink()
+    command = [
+        "gh",
+        "release",
+        "download",
+        declaration.release_version,
+        "--pattern",
+        archive_name,
+        "--dir",
+        str(destination),
+    ]
+    try:
+        completed = subprocess.run(command, capture_output=True, text=True, check=False)
+    except OSError as error:
+        raise ValueError(
+            "the GitHub CLI is required to download a published release archive: install "
+            "`gh` (https://cli.github.com) and authenticate it"
+        ) from error
+    if completed.returncode != 0:
+        detail = completed.stderr.strip() or completed.stdout.strip()
+        raise ValueError(
+            f"could not download archive {archive_name!r} from release "
+            f"{declaration.release_version!r}: {detail}"
+        )
+    if not archive_path.is_file():
+        raise ValueError(
+            f"release {declaration.release_version!r} published no archive named {archive_name!r}"
+        )
+    return archive_path
+
+
+def materialize_released_bundle(declaration: PublishedElection, work_dir: Path) -> Path:
+    """Download and unpack one election's published bundle.
+
+    `bundle_sha256` is mandatory here rather than optional as it is elsewhere. A
+    downloaded archive is remote input, and its own release manifest cannot vouch
+    for it: whatever could replace the artifacts could replace their recorded
+    hashes too. Staging verifies the unpacked tree against that pin, so an
+    unpinned historical election must not resolve at all.
+    """
+    if declaration.bundle_sha256 is None:
+        raise ValueError(
+            f"election {declaration.election_id!r} must declare bundle_sha256 before its "
+            "bundle can be resolved from a published release"
+        )
+    bundle_dir = work_dir / declaration.bundle_id
+    if bundle_dir.exists():
+        shutil.rmtree(bundle_dir)
+    archive_path = download_release_archive(declaration, work_dir)
+    _extract_bundle(archive_path, bundle_dir, declaration)
+    return bundle_dir
+
+
+def _extract_bundle(archive_path: Path, bundle_dir: Path, declaration: PublishedElection) -> None:
+    """Extract the archive's single bundle root, rejecting unsafe member paths."""
+    prefix = f"{ARCHIVE_ROOT_DIR}/"
+    # A damaged download fails in several ways, none of them a ValueError, so any
+    # of them would escape the command's error handling as a traceback. Whole-file
+    # damage raises BadZipFile; a corrupt member body raises zlib.error, which is
+    # the case that matters most here because the packer deflates every entry. An
+    # encrypted member raises RuntimeError and an unknown compression method
+    # raises NotImplementedError. Every archive-level rejection reads the same way.
+    try:
+        with zipfile.ZipFile(archive_path) as archive:
+            members = [name for name in archive.namelist() if not name.endswith("/")]
+            if not members:
+                raise ValueError(f"release archive {archive_path.name!r} contains no files")
+            outside = sorted(name for name in members if not name.startswith(prefix))
+            if outside:
+                raise ValueError(
+                    f"release archive {archive_path.name!r} contains entries outside "
+                    f"{ARCHIVE_ROOT_DIR!r}: {outside[:5]}"
+                )
+            for name in members:
+                relative = PurePosixPath(name[len(prefix) :])
+                if not relative.parts or relative.is_absolute() or ".." in relative.parts:
+                    raise ValueError(
+                        f"release archive {archive_path.name!r} contains an unsafe entry: {name!r}"
+                    )
+                target = bundle_dir / Path(*relative.parts)
+                target.parent.mkdir(parents=True, exist_ok=True)
+                with archive.open(name) as source, target.open("wb") as sink:
+                    shutil.copyfileobj(source, sink, READ_CHUNK_SIZE)
+    except (zipfile.BadZipFile, zlib.error, RuntimeError, NotImplementedError) as error:
+        raise ValueError(
+            f"release archive {archive_path.name!r} for bundle {declaration.bundle_id!r} "
+            f"is not a readable ZIP archive: {error}"
+        ) from error
+    if not (bundle_dir / "release-status.json").is_file():
+        raise ValueError(
+            f"bundle {declaration.bundle_id!r} archive has no release-status.json; "
+            "it does not look like a release bundle"
+        )

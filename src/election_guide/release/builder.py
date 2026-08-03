@@ -18,10 +18,12 @@ from election_guide.normalization.models import CanonicalDataset
 from election_guide.publication import build_publication_bundle, write_publication_bundle
 from election_guide.release.compiler import read_release_ledger, verify_release_compilation
 from election_guide.release.models import (
+    ARCHIVE_ROOT_DIR,
     RaceCoverageStatus,
     ReleaseManifest,
     ReleaseStatus,
     SourceAccessStatus,
+    release_archive_name,
 )
 from election_guide.rendering import build_rendered_guide
 from election_guide.scoring import ConsensusReport, read_scoring_configuration, score_dataset
@@ -151,7 +153,7 @@ def build_release(
             canonical_json_bytes(manifest.model_dump(mode="json"))
         )
 
-        archive_name = f"seattle-election-guide-{release_version}.zip"
+        archive_name = release_archive_name(release_version)
         archive_path = stage / archive_name
         _write_deterministic_zip(stage_bundle, archive_path, generated_at)
         _set_public_permissions(stage)
@@ -303,7 +305,7 @@ def _write_deterministic_zip(bundle_dir: Path, output: Path, generated_at: datet
         for path in sorted(bundle_dir.rglob("*")):
             if not path.is_file():
                 continue
-            relative = Path("seattle-election-guide") / path.relative_to(bundle_dir)
+            relative = Path(ARCHIVE_ROOT_DIR) / path.relative_to(bundle_dir)
             info = zipfile.ZipInfo(relative.as_posix(), date_time=timestamp)
             info.compress_type = zipfile.ZIP_DEFLATED
             info.external_attr = 0o100644 << 16

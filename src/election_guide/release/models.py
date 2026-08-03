@@ -17,7 +17,15 @@ from pydantic import (
     model_validator,
 )
 
+ARCHIVE_ROOT_DIR = "seattle-election-guide"
 REQUIRED_VALIDATION_REPORTS = frozenset({"publication", "rendering"})
+
+
+def release_archive_name(release_version: str) -> str:
+    """File name of the one versioned ZIP published for a release."""
+    return f"{ARCHIVE_ROOT_DIR}-{release_version}.zip"
+
+
 REQUIRED_RELEASE_ARTIFACTS = frozenset(
     {
         "RELEASE_NOTES.md",

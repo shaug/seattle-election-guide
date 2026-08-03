@@ -17,6 +17,7 @@ from election_guide.hosting.models import (
     PublishedElection,
     SiteManifest,
 )
+from election_guide.hosting.releases import materialize_released_bundle
 from election_guide.publication.comparisons import ComparisonsPolicy
 from election_guide.publication.models import PublicationViewModel
 from election_guide.release.models import ReleaseManifest, ReleaseStatus
@@ -112,11 +113,16 @@ def stage_pages_site(
     output_dir: Path,
     *,
     expected_current_git_commit: str | None = None,
+    released_bundle_dir: Path | None = None,
 ) -> StagedPagesSite:
     """Verify every declared release and atomically stage the complete public archive."""
     site_manifest_path = site_manifest_path.resolve()
     output_dir = output_dir.resolve()
     site_manifest = read_site_manifest(site_manifest_path)
+    if released_bundle_dir is not None:
+        bundle_dirs = _resolve_released_bundles(
+            site_manifest, bundle_dirs, released_bundle_dir.resolve()
+        )
     _validate_bundle_assignments(site_manifest, bundle_dirs)
 
     verified: list[_VerifiedBundle] = []
@@ -371,6 +377,27 @@ def _verify_staged_pages_site(
     if not required_assets.issubset(deployment.assets):
         raise ValueError("deployment manifest is missing required public archive assets")
     return deployment
+
+
+def _resolve_released_bundles(
+    site_manifest: SiteManifest,
+    bundle_dirs: Mapping[str, Path],
+    released_bundle_dir: Path,
+) -> dict[str, Path]:
+    """Fill in every declared bundle not supplied locally from its published release.
+
+    Only the current election is built from source. A historical election cannot be
+    rebuilt — its pinned artifact hashes came from the rendering code of its own
+    time — so its bundle is downloaded from the release that published it.
+    """
+    resolved = dict(bundle_dirs)
+    for declaration in site_manifest.elections:
+        if declaration.bundle_id in resolved:
+            continue
+        resolved[declaration.bundle_id] = materialize_released_bundle(
+            declaration, released_bundle_dir
+        )
+    return resolved
 
 
 def _validate_bundle_assignments(

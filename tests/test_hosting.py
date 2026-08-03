@@ -1269,6 +1269,10 @@ def test_wrangler_and_workflow_keep_deployment_pinned_and_gated() -> None:
     assert "config/hosting/site.yaml" in stage_step["run"]
     assert "--bundle wa-2026-primary-2026-primary.2=" in stage_step["run"]
     assert "hosting verify" in stage_step["run"]
+    # Any election not built from source above is resolved from its published
+    # release, which reads GitHub with the same read-only job token (issue 215).
+    assert "--released-bundle-dir dist/released-bundles" in stage_step["run"]
+    assert stage_step["env"] == {"GH_TOKEN": "${{ github.token }}"}
     deploy_steps = deploy["steps"]
     verify_step = next(
         step for step in deploy_steps if step.get("name") == "Verify downloaded Pages site"
@@ -1314,10 +1318,17 @@ process.stdout.write(JSON.stringify(results));
     return cast(list[dict[str, object]], json.loads(completed.stdout))
 
 
-def _write_site_manifest(root: Path, *, current_first: bool) -> Path:
+def _write_site_manifest(
+    root: Path,
+    *,
+    current_first: bool,
+    older_bundle_sha256: str | None = None,
+) -> Path:
     root.mkdir(parents=True, exist_ok=True)
     current = _manifest_election(CURRENT_ID, CURRENT_BUNDLE_ID, "primary.2")
     older = _manifest_election(OLDER_ID, OLDER_BUNDLE_ID, "general.1")
+    if older_bundle_sha256 is not None:
+        older["bundle_sha256"] = older_bundle_sha256
     elections = [current, older] if current_first else [older, current]
     manifest = {
         "schema_version": "1.0",
