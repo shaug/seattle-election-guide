@@ -2,9 +2,14 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
+import shutil
 import subprocess
+import zipfile
+from collections.abc import Callable
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -13,12 +18,27 @@ import yaml
 from typer.testing import CliRunner
 
 from election_guide import cli
-from election_guide.hosting.models import SiteManifest
+from election_guide.hosting import releases, stage_pages_site, verify_staged_pages_site
+from election_guide.hosting.models import PublishedElection, SiteManifest
+from election_guide.hosting.pages import _bundle_hash  # pyright: ignore[reportPrivateUsage]
 from election_guide.hosting.releases import (
     RELEASE_QUERY_LIMIT,
+    _extract_bundle,  # pyright: ignore[reportPrivateUsage]
     _published_tags,  # pyright: ignore[reportPrivateUsage]
     published_release_tags,
     verify_declared_releases_published,
+)
+from election_guide.release.builder import (
+    _write_deterministic_zip,  # pyright: ignore[reportPrivateUsage]
+)
+from election_guide.release.models import ARCHIVE_ROOT_DIR, release_archive_name
+from tests.test_hosting import (
+    COMMIT,
+    CURRENT_BUNDLE_ID,
+    OLDER_BUNDLE_ID,
+    _manifest_election,  # pyright: ignore[reportPrivateUsage]
+    _write_archive_bundles,  # pyright: ignore[reportPrivateUsage]
+    _write_site_manifest,  # pyright: ignore[reportPrivateUsage]
 )
 
 CURRENT_ID = "wa-2026-primary"
@@ -184,3 +204,226 @@ def test_cli_passes_when_every_declared_version_is_published(
 
     assert result.exit_code == 0
     assert "Declared releases: verified (1 declared)" in result.output
+
+
+def _released_archive(bundle_dir: Path, release_version: str, destination: Path) -> Path:
+    """A real published-shaped archive for one bundle, written by the release packer."""
+    destination.mkdir(parents=True, exist_ok=True)
+    archive_path = destination / release_archive_name(release_version)
+    _write_deterministic_zip(
+        bundle_dir,
+        archive_path,
+        datetime(2026, 7, 21, 12, 0, tzinfo=UTC),
+    )
+    return archive_path
+
+
+def _gh_download_stub(
+    archive_path: Path | None,
+    *,
+    returncode: int = 0,
+    stderr: str = "",
+) -> Callable[..., subprocess.CompletedProcess[str]]:
+    """Stand in for the `gh release download` subprocess itself."""
+
+    def _run(command: list[str], **kwargs: Any) -> subprocess.CompletedProcess[str]:
+        if returncode == 0 and archive_path is not None:
+            target_dir = Path(command[command.index("--dir") + 1])
+            target_dir.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(archive_path, target_dir / archive_path.name)
+        return subprocess.CompletedProcess(command, returncode, stdout="", stderr=stderr)
+
+    return _run
+
+
+def _delivering_download(archive_path: Path) -> Callable[..., Path]:
+    """Stand in for `download_release_archive`.
+
+    Staging renders HTML, which shells out to the pinned esbuild, so these tests
+    replace the one download boundary rather than every subprocess call.
+    """
+
+    def _download(declaration: PublishedElection, destination: Path) -> Path:
+        destination.mkdir(parents=True, exist_ok=True)
+        target = destination / archive_path.name
+        shutil.copy2(archive_path, target)
+        return target
+
+    return _download
+
+
+def _two_election_manifest(root: Path, *, older_bundle_sha256: str) -> Path:
+    older = dict(_manifest_election(OLDER_ID, OLDER_BUNDLE_ID, "general.1"))
+    older["bundle_sha256"] = older_bundle_sha256
+    manifest = {
+        "schema_version": "1.0",
+        "canonical_origin": "https://seattleelections.guide",
+        "current_election_id": CURRENT_ID,
+        "elections": [_manifest_election(CURRENT_ID, CURRENT_BUNDLE_ID, "primary.2"), older],
+    }
+    path = root / "site.yaml"
+    path.write_text(yaml.safe_dump(manifest, sort_keys=False), encoding="utf-8")
+    return path
+
+
+def test_two_election_manifest_stages_and_verifies_from_a_published_release(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The historical election is never built here — only downloaded and verified."""
+    current, older = _write_archive_bundles(tmp_path / "bundles")
+    archive = _released_archive(older, "general.1", tmp_path / "published")
+    manifest_path = _two_election_manifest(tmp_path, older_bundle_sha256=_bundle_hash(older))
+    monkeypatch.setattr(releases, "download_release_archive", _delivering_download(archive))
+    output = tmp_path / "site"
+
+    result = stage_pages_site(
+        manifest_path,
+        {CURRENT_BUNDLE_ID: current},
+        output,
+        expected_current_git_commit=COMMIT,
+        released_bundle_dir=tmp_path / "released",
+    )
+
+    assert result.election_paths == (
+        output / "e" / CURRENT_ID,
+        output / "e" / OLDER_ID,
+    )
+    assert (output / "e" / OLDER_ID / "index.html").read_bytes() == b"older\n"
+    deployment = verify_staged_pages_site(output, manifest_path, expected_current_git_commit=COMMIT)
+    assert [election.election_id for election in deployment.elections] == [CURRENT_ID, OLDER_ID]
+
+
+def test_a_tampered_historical_archive_fails_the_build(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    current, older = _write_archive_bundles(tmp_path / "bundles")
+    pinned = _bundle_hash(older)
+    (older / "guide" / "guide.html").write_bytes(b"tampered\n")
+    archive = _released_archive(older, "general.1", tmp_path / "published")
+    manifest_path = _two_election_manifest(tmp_path, older_bundle_sha256=pinned)
+    monkeypatch.setattr(releases, "download_release_archive", _delivering_download(archive))
+
+    with pytest.raises(ValueError) as error:
+        stage_pages_site(
+            manifest_path,
+            {CURRENT_BUNDLE_ID: current},
+            tmp_path / "site",
+            released_bundle_dir=tmp_path / "released",
+        )
+
+    assert str(error.value) == "release artifact hash mismatch: guide/guide.html"
+
+
+def test_tampering_that_also_rewrites_the_release_manifest_is_caught_by_the_pin(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The archive's own manifest cannot vouch for it, which is why the pin exists."""
+    current, older = _write_archive_bundles(tmp_path / "bundles")
+    pinned = _bundle_hash(older)
+    tampered = b"tampered\n"
+    (older / "guide" / "guide.html").write_bytes(tampered)
+    manifest_path_in_bundle = older / "release-manifest.json"
+    manifest = json.loads(manifest_path_in_bundle.read_text(encoding="utf-8"))
+    manifest["artifact_hashes"]["guide/guide.html"] = hashlib.sha256(tampered).hexdigest()
+    manifest_path_in_bundle.write_text(json.dumps(manifest), encoding="utf-8")
+    archive = _released_archive(older, "general.1", tmp_path / "published")
+    manifest_path = _two_election_manifest(tmp_path, older_bundle_sha256=pinned)
+    monkeypatch.setattr(releases, "download_release_archive", _delivering_download(archive))
+
+    with pytest.raises(ValueError) as error:
+        stage_pages_site(
+            manifest_path,
+            {CURRENT_BUNDLE_ID: current},
+            tmp_path / "site",
+            released_bundle_dir=tmp_path / "released",
+        )
+
+    message = str(error.value)
+    assert OLDER_BUNDLE_ID in message
+    assert "bundle hash differs" in message
+
+
+def test_a_missing_historical_archive_fails_the_build(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    current, older = _write_archive_bundles(tmp_path / "bundles")
+    manifest_path = _two_election_manifest(tmp_path, older_bundle_sha256=_bundle_hash(older))
+    monkeypatch.setattr(
+        subprocess,
+        "run",
+        _gh_download_stub(None, returncode=1, stderr="release not found"),
+    )
+
+    with pytest.raises(ValueError) as error:
+        stage_pages_site(
+            manifest_path,
+            {CURRENT_BUNDLE_ID: current},
+            tmp_path / "site",
+            released_bundle_dir=tmp_path / "released",
+        )
+
+    message = str(error.value)
+    assert "could not download archive" in message
+    assert "general.1" in message
+    assert "release not found" in message
+
+
+def test_an_unpinned_historical_election_refuses_to_resolve(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Without a pin nothing vouches for the download, so it must not be used."""
+    current, older = _write_archive_bundles(tmp_path / "bundles")
+    archive = _released_archive(older, "general.1", tmp_path / "published")
+    manifest_path = _write_site_manifest(tmp_path, current_first=True)
+    monkeypatch.setattr(releases, "download_release_archive", _delivering_download(archive))
+
+    with pytest.raises(ValueError, match="must declare bundle_sha256"):
+        stage_pages_site(
+            manifest_path,
+            {CURRENT_BUNDLE_ID: current},
+            tmp_path / "site",
+            released_bundle_dir=tmp_path / "released",
+        )
+
+
+def test_an_archive_escaping_the_bundle_root_is_rejected(tmp_path: Path) -> None:
+    archive_path = tmp_path / "evil.zip"
+    with zipfile.ZipFile(archive_path, "w") as archive:
+        archive.writestr(f"{ARCHIVE_ROOT_DIR}/release-status.json", "{}")
+        archive.writestr("../escaped.txt", "nope")
+    declaration = PublishedElection.model_validate(
+        {
+            "election_id": OLDER_ID,
+            "bundle_id": OLDER_BUNDLE_ID,
+            "release_version": "general.1",
+            "source_panel_id": "test-panel-v2",
+            "source_panel_hash": PANEL_HASH,
+            "bundle_sha256": "d" * 64,
+        }
+    )
+
+    with pytest.raises(ValueError, match="outside"):
+        _extract_bundle(archive_path, tmp_path / "out", declaration)
+
+
+def test_supplying_every_bundle_locally_downloads_nothing(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Current single-election behavior: nothing to resolve, so no release is read."""
+    current, older = _write_archive_bundles(tmp_path / "bundles")
+    manifest_path = _write_site_manifest(tmp_path, current_first=True)
+
+    def _forbidden(declaration: PublishedElection, destination: Path) -> Path:
+        raise AssertionError(f"no release should be read, but downloaded {declaration.bundle_id}")
+
+    monkeypatch.setattr(releases, "download_release_archive", _forbidden)
+
+    result = stage_pages_site(
+        manifest_path,
+        {CURRENT_BUNDLE_ID: current, OLDER_BUNDLE_ID: older},
+        tmp_path / "site",
+        expected_current_git_commit=COMMIT,
+        released_bundle_dir=tmp_path / "released",
+    )
+
+    assert result.current_election_id == CURRENT_ID

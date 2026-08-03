@@ -151,6 +151,16 @@ def hosting_stage(
         str | None,
         typer.Option(help="Reject a current-election release not built from this Git revision."),
     ] = None,
+    released_bundle_dir: Annotated[
+        Path | None,
+        typer.Option(
+            file_okay=False,
+            help=(
+                "Resolve every declared bundle not passed with --bundle from its published "
+                "GitHub Release, downloading and unpacking it here."
+            ),
+        ),
+    ] = None,
 ) -> None:
     """Verify and atomically compose the complete public election archive."""
     try:
@@ -167,6 +177,7 @@ def hosting_stage(
             bundle_dirs,
             output_dir,
             expected_current_git_commit=expected_git_commit,
+            released_bundle_dir=released_bundle_dir,
         )
     except (OSError, UnicodeError, json.JSONDecodeError, ValidationError, ValueError) as error:
         typer.echo(f"hosting stage failed: {error}", err=True)

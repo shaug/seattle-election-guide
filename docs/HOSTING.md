@@ -128,7 +128,36 @@ Release, naming each election and the tag it expects. Draft releases do not coun
 tag name but publishes no archive. It reads release state through the GitHub CLI, so `gh` must be
 installed and authenticated — CI supplies the default `GITHUB_TOKEN`, and the check is read-only.
 
-Publishing a release is described in [RELEASE.md](RELEASE.md).
+Publishing a release is described in [RELEASE.md](RELEASE.md). Publish first: this check runs on
+pull requests, so a new `release_version` must already have a published Release before the pull
+request that declares it in `site.yaml` can pass CI.
+
+## Historical bundles
+
+Only the current election is built from source. An older election cannot be rebuilt — its pinned
+artifact hashes were produced by the rendering code of its own time, and rendering changes since
+then would make the bytes diverge — so its bundle is downloaded from the Release that published it.
+
+Pass `--released-bundle-dir` to resolve every declared bundle that was not supplied with
+`--bundle`:
+
+```bash
+uv run election-guide hosting stage config/hosting/site.yaml \
+  --bundle wa-2026-primary-2026-primary.2=dist/primary-release/bundle \
+  --released-bundle-dir dist/released-bundles \
+  --output-dir dist/cloudflare-site
+```
+
+Each unresolved election's versioned ZIP is downloaded through the GitHub CLI, unpacked under that
+directory, and staged like any other bundle. Supplying every bundle locally downloads nothing, so
+the current single-election build is unaffected.
+
+An election resolved this way **must** declare `bundle_sha256`, and staging rejects it otherwise. A
+downloaded archive is remote input, and the release manifest travelling inside it cannot vouch for
+it: whatever could replace the artifacts could replace their recorded hashes too. The pin lives in
+`site.yaml`, which is under review, so it is the one hash an attacker who controls the archive does
+not control. Archive entries outside the bundle root, or with parent-directory segments, are
+rejected before anything is written.
 
 ## Local staging and preview
 

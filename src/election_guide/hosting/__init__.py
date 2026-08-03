@@ -13,6 +13,8 @@ from election_guide.hosting.pages import (
     verify_staged_pages_site,
 )
 from election_guide.hosting.releases import (
+    download_release_archive,
+    materialize_released_bundle,
     published_release_tags,
     verify_declared_releases_published,
 )
@@ -23,6 +25,8 @@ __all__ = [
     "PublishedElection",
     "SiteManifest",
     "StagedPagesSite",
+    "download_release_archive",
+    "materialize_released_bundle",
     "published_release_tags",
     "read_site_manifest",
     "stage_pages_site",

@@ -1269,6 +1269,10 @@ def test_wrangler_and_workflow_keep_deployment_pinned_and_gated() -> None:
     assert "config/hosting/site.yaml" in stage_step["run"]
     assert "--bundle wa-2026-primary-2026-primary.2=" in stage_step["run"]
     assert "hosting verify" in stage_step["run"]
+    # Any election not built from source above is resolved from its published
+    # release, which reads GitHub with the same read-only job token (issue 215).
+    assert "--released-bundle-dir dist/released-bundles" in stage_step["run"]
+    assert stage_step["env"] == {"GH_TOKEN": "${{ github.token }}"}
     deploy_steps = deploy["steps"]
     verify_step = next(
         step for step in deploy_steps if step.get("name") == "Verify downloaded Pages site"
