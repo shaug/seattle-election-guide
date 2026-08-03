@@ -56,6 +56,25 @@ export function resolveSelectedCodes(selection, memberCodesByCategoryCode, panel
 }
 
 /**
+ * The codes of the sources that count toward a score, in published order.
+ *
+ * A source tallies unless its panel role is `comparison` — issue 124 retired
+ * the comparison treatment, and such a source is published only so the codec
+ * can recognize a pre-removal link's token and ignore it. Stated once here
+ * because both halves of the guide need the same answer and must not be able
+ * to disagree: the banner's "Counting N of M" and the Sources link's decision
+ * to carry a lens fragment are the same judgement.
+ *
+ * @param {readonly { code: string, panel_role: string }[]} panelSources
+ * @returns {string[]}
+ */
+export function tallyingSourceCodes(panelSources) {
+  return panelSources
+    .filter((source) => source.panel_role !== 'comparison')
+    .map((source) => source.code);
+}
+
+/**
  * The audited default: every tallying source counted.
  *
  * Represented by the absence of a lens fragment (issue 97's "every checkbox

@@ -98,6 +98,15 @@ class ComparisonRowView:
 
 
 @dataclass(frozen=True)
+class FilterScopeGroupView:
+    """One `<optgroup>` of the guide's Ballot filter. `label` is `None` for the
+    ungrouped leading option."""
+
+    label: str | None
+    options: tuple[FilterScope, ...]
+
+
+@dataclass(frozen=True)
 class ComparisonSectionView:
     section_id: str
     section_label: str
@@ -232,7 +241,7 @@ def render_html_document(
             races=[
                 _race_display(race) for section in view_model.sections for race in section.races
             ],
-            filter_scopes=_filter_scopes(filter_scope_groups),
+            filter_scopes=[option for group in filter_scope_groups for option in group.options],
             sources_page_path=sources_page_url,
         ).model_dump(mode="json"),
         race_share_icon=share_icon_svg(),
@@ -568,36 +577,34 @@ def _filter_options(view_model: PublicationViewModel) -> list[str]:
     )
 
 
-def _filter_scope_groups(view_model: PublicationViewModel) -> list[dict[str, Any]]:
+def _filter_scope_groups(view_model: PublicationViewModel) -> list[FilterScopeGroupView]:
     """The Ballot filter's option groups, in rendered order.
 
     One generator for both consumers (docs/FRONTEND.md, The data contract): the
-    template renders its `<optgroup>`/`<option>` markup from this, and the
+    template renders its `<optgroup>`/`<option>` markup from these, and the
     payload publishes the same options flattened, so the filter status line can
     name the selected scope without reading the select's own text back
-    (issue #239).
+    (issue #239). The options are `FilterScope` on both sides, so the two
+    consumers cannot disagree about a key.
     """
     return [
-        {"label": None, "options": [{"value": "all", "label": "All Seattle ballot races"}]},
-        {
-            "label": "Ballot sections",
-            "options": [
-                {"value": section.id, "label": section.label} for section in view_model.sections
-            ],
-        },
-        {
-            "label": "Districts and jurisdictions",
-            "options": [{"value": token, "label": token} for token in _filter_options(view_model)],
-        },
-    ]
-
-
-def _filter_scopes(groups: list[dict[str, Any]]) -> list[FilterScope]:
-    """The same options, flattened for the payload."""
-    return [
-        FilterScope(value=option["value"], label=option["label"])
-        for group in groups
-        for option in group["options"]
+        FilterScopeGroupView(
+            label=None,
+            options=(FilterScope(value="all", label="All Seattle ballot races"),),
+        ),
+        FilterScopeGroupView(
+            label="Ballot sections",
+            options=tuple(
+                FilterScope(value=section.id, label=section.label)
+                for section in view_model.sections
+            ),
+        ),
+        FilterScopeGroupView(
+            label="Districts and jurisdictions",
+            options=tuple(
+                FilterScope(value=token, label=token) for token in _filter_options(view_model)
+            ),
+        ),
     ]
 
 

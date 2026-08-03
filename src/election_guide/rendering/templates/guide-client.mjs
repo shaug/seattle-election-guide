@@ -25,6 +25,7 @@ import {
   resolveSelectedCodes,
   SELECTION_LINK_FAILURE_NOTICE,
   selectionFragment,
+  tallyingSourceCodes,
 } from './lens-selection.mjs';
 import { decodeLensFragment, lensContext } from './lens-url.mjs';
 
@@ -60,9 +61,7 @@ export function wireGuide(payload) {
     payload.categories.map((category) => [category.code, category.member_source_codes]),
   );
   const panelSourceCodes = payload.sources.map((source) => source.code);
-  const tallyingCodes = payload.sources
-    .filter((source) => source.panel_role !== 'comparison')
-    .map((source) => source.code);
+  const tallyingCodes = tallyingSourceCodes(payload.sources);
 
   const lensNotice = /** @type {HTMLElement|null} */ (document.querySelector('[data-lens-notice]'));
   const sourcesLinks = /** @type {HTMLAnchorElement[]} */ ([

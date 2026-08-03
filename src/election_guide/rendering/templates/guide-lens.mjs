@@ -26,7 +26,7 @@ import {
 } from './guide-format.mjs';
 import { compareRaceResults } from './lens-divergence.mjs';
 import { scoreSelection } from './lens-score.mjs';
-import { isDefaultSelection } from './lens-selection.mjs';
+import { isDefaultSelection, tallyingSourceCodes } from './lens-selection.mjs';
 
 /**
  * Shared meter-fill policy (I40/I41): the NA state, the `--meter-fill` custom
@@ -127,9 +127,7 @@ export function createGuideLens(payload) {
   const root = document.documentElement;
   const lensBanner = document.querySelector('[data-lens-banner]');
   const lensBannerStatus = document.querySelector('[data-lens-banner-status]');
-  const tallyingCodes = payload.sources
-    .filter((source) => source.panel_role !== 'comparison')
-    .map((source) => source.code);
+  const tallyingCodes = tallyingSourceCodes(payload.sources);
 
   // Locating each race's render target is projection, not state: the id is the
   // payload's own `race_id`, and nothing is read back out of the card.

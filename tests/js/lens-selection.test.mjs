@@ -11,6 +11,7 @@ import {
   resolveSelectedCodes,
   SELECTION_LINK_FAILURE_NOTICE,
   selectionFragment,
+  tallyingSourceCodes,
 } from '../../src/election_guide/rendering/templates/lens-selection.mjs';
 import {
   decodeLensFragment,
@@ -79,6 +80,28 @@ test('no selection at all selects nothing, and never throws', () => {
   assert.deepEqual(resolveSelectedCodes(null, MEMBERS, PANEL_CODES), []);
   assert.deepEqual(resolveSelectedCodes(undefined, MEMBERS, PANEL_CODES), []);
   assert.deepEqual(resolveSelectedCodes({}, MEMBERS, PANEL_CODES), []);
+});
+
+// One definition of the tallying rule: both halves of the guide read it, and a
+// disagreement between them would show a banner claiming every source counts
+// while the Sources link published a narrowed selection.
+test('a source tallies unless its panel role is comparison', () => {
+  assert.deepEqual(
+    tallyingSourceCodes([
+      { code: 'strn', panel_role: 'consensus' },
+      { code: 'stim', panel_role: 'comparison' },
+      { code: 'urbn', panel_role: 'consensus' },
+    ]),
+    ['strn', 'urbn'],
+  );
+});
+
+test('the tallying codes keep the panel’s published order', () => {
+  assert.deepEqual(tallyingSourceCodes(bindings().sources), PANEL_CODES);
+});
+
+test('a panel of nothing but comparison sources tallies nothing', () => {
+  assert.deepEqual(tallyingSourceCodes([{ code: 'stim', panel_role: 'comparison' }]), []);
 });
 
 test('the audited default is every tallying source, and encodes to no lens', () => {
