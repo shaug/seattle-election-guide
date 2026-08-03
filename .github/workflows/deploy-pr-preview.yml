@@ -1,0 +1,195 @@
+name: PR preview
+
+# Previews are opt-in per pull request (issue 210). The build is expensive --
+# Chromium rendering plus a full release build -- and most pull requests here
+# change data or prose with no visual surface, so a label decides rather than
+# every push paying for a deployment.
+on:
+  pull_request:
+    types:
+      - labeled
+      - synchronize
+      - reopened
+      - closed
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy PR preview
+    # The head-repository guard is what keeps the Cloudflare token away from
+    # code this repository does not control. A fork's pull request skips this
+    # job rather than failing it. `pull_request_target` would run the fork's
+    # code with the token in scope, which is why this workflow does not use it;
+    # a contributor's branch is previewed by pushing it to origin instead.
+    # Gating on state rather than only on the action keeps a `labeled` event on
+    # an already-closed pull request from deploying a preview that no later
+    # close event would ever tear down.
+    if: >-
+      github.event.pull_request.state == 'open' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      contains(github.event.pull_request.labels.*.name, 'deploy preview') &&
+      vars.CLOUDFLARE_PAGES_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # Scoped to this job rather than the workflow. A workflow-level cancelling
+    # group would also cover teardown, and a superseding event arriving while a
+    # close-triggered teardown was still running would cancel it -- with no
+    # second `closed` event to retry it, the preview would survive.
+    concurrency:
+      group: pages-preview-pr-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
+    permissions:
+      contents: read
+      deployments: write
+      pull-requests: write
+    environment:
+      name: pr-${{ github.event.pull_request.number }}
+      url: ${{ steps.deploy.outputs.url }}
+    env:
+      # The pull_request event's own SHA is an ephemeral merge commit that
+      # exists in no branch. The audit footer has to show a commit a reader can
+      # actually look up, so every step that records one uses the head instead.
+      HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+      # Consumed by the `pages:deploy` script, which defaults to main.
+      PAGES_BRANCH: pr-${{ github.event.pull_request.number }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install Python
+        run: uv python install 3.12
+      - name: Install locked dependencies
+        run: uv sync --frozen
+      - name: Install locked Node dependencies
+        run: npm ci
+      - name: Check the rendering browser
+        run: google-chrome --version
+      - name: Verify Wrangler version
+        run: npm run pages:version
+      # One build, not the deterministic double build the `check` job runs: CI
+      # already proves reproducibility on this commit, and a preview only needs
+      # the artifact.
+      - name: Build the primary release at the pull request head
+        run: |
+          SITE_UPDATED_AT="$(git show -s --format=%cI "$HEAD_SHA")"
+          uv run election-guide release build data/releases/wa-2026-primary/source-decisions.yaml \
+              --release-version 2026-primary.2 \
+              --generated-at "$SITE_UPDATED_AT" \
+              --git-commit "$HEAD_SHA" \
+            --output-dir dist/pr-release
+      - name: Stage and verify the Pages site
+        run: |
+          uv run election-guide hosting stage config/hosting/site.yaml \
+            --bundle wa-2026-primary-2026-primary.2=dist/pr-release/bundle \
+            --expected-git-commit "$HEAD_SHA" \
+            --output-dir dist/cloudflare-site
+          uv run election-guide hosting verify \
+            config/hosting/site.yaml \
+            dist/cloudflare-site \
+            --expected-git-commit "$HEAD_SHA"
+      # The alias is derived from the pull request number rather than the branch
+      # name, so it is stable across pushes and immune to the mangling real
+      # branch names get.
+      - name: Deploy the preview
+        id: deploy
+        run: |
+          npm run pages:deploy -- \
+            --commit-hash="$HEAD_SHA" \
+            --commit-dirty=false
+          echo "url=https://${PAGES_BRANCH}.seattle-elections.pages.dev" >> "$GITHUB_OUTPUT"
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      # One comment per pull request, rewritten in place, so a long-running
+      # branch does not accumulate a link per push. `--edit-last` targets this
+      # workflow's own previous comment, which is unambiguous because nothing
+      # else comments here as the Actions bot.
+      - name: Comment the preview link
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PREVIEW_URL: ${{ steps.deploy.outputs.url }}
+        run: |
+          printf '**Preview:** %s\n\nBuilt from `%s`. Every non-canonical host is `noindex`, so this copy cannot appear in search results. Removing the `deploy preview` label stops future deployments; closing this pull request tears this one down.\n' \
+            "$PREVIEW_URL" "$HEAD_SHA" > comment.md
+          gh pr comment "$PR_NUMBER" \
+            --body-file comment.md \
+            --edit-last \
+            --create-if-none
+
+  teardown:
+    name: Remove PR preview
+    # Deliberately not label-gated. A preview that was deployed and then had its
+    # label removed must still be cleaned up when the pull request closes, so
+    # this runs on every same-repository close and no-ops when it finds nothing.
+    if: >-
+      github.event.action == 'closed' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      vars.CLOUDFLARE_PAGES_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # Deliberately the deploy job's group, so a close landing mid-build queues
+    # behind the upload instead of racing it: teardown would otherwise delete
+    # the current deployments and let the still-running deploy publish a fresh
+    # one that no later event would ever clean up. `cancel-in-progress: false`
+    # means teardown itself cancels nothing; only a `reopened` deploy can
+    # displace a pending teardown, which is what reopening should do.
+    concurrency:
+      group: pages-preview-pr-${{ github.event.pull_request.number }}
+      cancel-in-progress: false
+    permissions:
+      contents: read
+    env:
+      PREVIEW_BRANCH: pr-${{ github.event.pull_request.number }}
+    steps:
+      # Pinned to the base branch on purpose. A bare checkout on a
+      # `pull_request` event resolves refs/pull/<number>/merge, and GitHub
+      # retires that ref when the pull request closes -- which is exactly when
+      # this job runs. All the job needs is the lockfile, so it reads it from a
+      # ref that still exists.
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install pinned Wrangler
+        run: npm ci --ignore-scripts
+      - name: Delete this pull request's preview deployments
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          npx wrangler pages deployment list \
+            --project-name seattle-elections \
+            --environment preview \
+            --json > deployments.json
+          # Wrangler does not pass the API objects through: it maps each one to
+          # {Id, Environment, Branch, Source, Deployment, Status, Build} before
+          # printing. Selecting on the raw API field names would match nothing
+          # and delete nothing, silently. tests/test_hosting.py pins this filter
+          # by its exact text, which catches an edit but would not catch Wrangler
+          # changing the projection under it.
+          ids="$(jq -r --arg branch "$PREVIEW_BRANCH" \
+            '.[] | select(.Branch == $branch) | .Id' \
+            deployments.json)"
+          if [ -z "$ids" ]; then
+            echo "No preview deployments found for $PREVIEW_BRANCH."
+            exit 0
+          fi
+          for id in $ids; do
+            echo "Deleting deployment $id"
+            npx wrangler pages deployment delete "$id" \
+              --project-name seattle-elections \
+              --force
+          done
