@@ -29,7 +29,22 @@ const AUDITED_PAGE = readFileSync(
 );
 
 // The DOM first, then lit-html and anything that reaches it: see dom.mjs.
-installDom(PAGE);
+const bootstrapDocument = installDom(PAGE);
+bootstrapDocument.write(AUDITED_PAGE);
+
+/**
+ * The payload the fixture publishes, read once here rather than by a helper a
+ * test could call at any moment.
+ *
+ * `installDom` replaces `document`, `window`, and `history` on the global
+ * object, so reading the payload through a fresh window mid-test would silently
+ * discard the page the test is asserting against — including the address bar
+ * three of them check.
+ */
+const AUDITED_PAYLOAD = /** @type {string} */ (
+  /** @type {Element} */ (bootstrapDocument.querySelector('[data-client-payload]')).textContent
+);
+
 const { wireComparisons } = await import(
   '../../src/election_guide/rendering/templates/compare-client.mjs'
 );
@@ -63,13 +78,8 @@ function boot({ fragment = '', editPayload } = {}) {
   return document;
 }
 
-/** The payload the fixture publishes, read without wiring the page. */
-function auditedPayload() {
-  const document = installDom(PAGE);
-  document.write(AUDITED_PAGE);
-  const element = /** @type {Element} */ (document.querySelector('[data-client-payload]'));
-  return JSON.parse(/** @type {string} */ (element.textContent));
-}
+/** An independent copy of that payload, so an edit in one test cannot reach another. */
+const auditedPayload = () => JSON.parse(AUDITED_PAYLOAD);
 
 /** @param {Document} document */
 function notice(document) {
