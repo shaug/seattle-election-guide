@@ -656,10 +656,14 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
             assert comparison.print_status_label not in html
         assert comparison.voter_accessible_label not in html
         assert comparison.badge_label not in html
+    # Both card rows carry the same pair of columns, the metric one sized from
+    # the meter's floor up to its caption; the two geometry tests above measure
+    # what that pairing is for.
     assert (
-        ".screen-race-result { display: grid; grid-template-columns: minmax(0, 1fr) 11rem;" in html
+        ".screen-race-result { display: grid; "
+        "grid-template-columns: minmax(0, 1fr) minmax(11rem, max-content);" in html
     )
-    assert "grid-template-columns: minmax(0, 1fr) 11rem" in html
+    assert "grid-template-columns: minmax(0, 1fr) minmax(11rem, max-content)" in html
     assert (
         ".screen-meter { display: flex; align-items: center; justify-content: flex-start;" in html
     )
@@ -724,6 +728,208 @@ def test_no_majority_uses_the_exact_unrounded_share_across_the_card_and_dialog(
     assert re.search(r'<p class="no-majority-pill" hidden[^>]*>No majority</p>', above_half_card)
     assert 'class="screen-meter meter-no-majority"' not in above_half_card
     assert "No majority · Leading choice" not in above_half_card
+
+
+def _longest_tie_label() -> str:
+    """The widest recommendation label this ballot can produce.
+
+    A tie renders every leading name joined by ' / ', so the two longest
+    candidate names bound how far a wrapped name reaches across its column.
+    Read from the inventory rather than hard-coded, so a later ballot with
+    longer names tightens the layout tests that use it.
+    """
+    inventory = json.loads(
+        (PROJECT_ROOT / "data/normalized/wa-2026-primary-inventory.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    names = sorted(
+        {
+            choice["display_name"]
+            for race in inventory["races"]
+            for choice in race.get("choices", [])
+            if choice.get("choice_type") == "candidate"
+        },
+        key=len,
+        reverse=True,
+    )
+    return " / ".join(names[:2])
+
+
+def test_the_no_majority_pill_sits_under_the_name_and_displaces_nothing(
+    tmp_path: Path,
+) -> None:
+    """M63: the pill qualifies the pick, so it hangs under the name it applies to.
+
+    The card's two rows share one pair of columns — name over pill, meter over
+    caption — which is only observable as geometry. Assert what that buys: the
+    meter reads against the name's first line rather than its middle, the pill's
+    left edge is the name's, and the caption keeps the same gap below its meter
+    whether or not the card carries a pill. Compact stacks the pair and puts the
+    pill last, so there the assertion is that suppressing every pill moves no
+    meter (docs/UI_POLISH.md I42).
+    """
+    view_model = _view_model(tmp_path)
+    tied = next(
+        race
+        for section in view_model.sections
+        for race in section.races
+        if race.winner_share is not None
+    )
+    tied.winner_share = "1/2"
+    tied.percentage_whole = 50
+    tied.percentage_label = "50%"
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    expression = """
+      (() => {
+        const rows = () => [...document.querySelectorAll('.race-card')].map((card) => {
+          const name = card.querySelector('h3');
+          const meter = card.querySelector('.screen-meter');
+          const caption = [...card.querySelectorAll('.support-line')]
+            .find((line) => line.getClientRects().length);
+          const pill = card.querySelector('.no-majority-pill:not([hidden])');
+          if (!name || !meter || !caption) return null;
+          const nameBox = name.getBoundingClientRect();
+          const meterBox = meter.getBoundingClientRect();
+          const pillBox = pill && pill.getClientRects().length
+            ? pill.getBoundingClientRect() : null;
+          return {
+            pilled: Boolean(pillBox),
+            meterOffset: Math.round(meterBox.top - card.getBoundingClientRect().top),
+            captionGap: Math.round(caption.getBoundingClientRect().top - meterBox.bottom),
+            captionFlush: Math.abs(
+              caption.getBoundingClientRect().right - meterBox.right) <= 1,
+            meterTopsWithName: Math.abs(meterBox.top - nameBox.top) <= 1,
+            pillLeftWithName: pillBox === null
+              || Math.abs(pillBox.left - nameBox.left) <= 1,
+          };
+        }).filter(Boolean);
+        const full = rows();
+        const pillsFull = [...document.querySelectorAll('.no-majority-pill:not([hidden])')];
+        pillsFull.forEach((pill) => { pill.hidden = true; });
+        const fullWithoutPills = rows();
+        pillsFull.forEach((pill) => { pill.hidden = false; });
+        document.documentElement.classList.add('compact-ballot-mode');
+        const compact = rows();
+        const pills = [...document.querySelectorAll('.no-majority-pill:not([hidden])')];
+        pills.forEach((pill) => { pill.hidden = true; });
+        const compactWithoutPills = rows();
+        pills.forEach((pill) => { pill.hidden = false; });
+        document.documentElement.classList.remove('compact-ballot-mode');
+        return JSON.stringify({full, fullWithoutPills, compact, compactWithoutPills});
+      })()
+    """
+
+    measured = _evaluate_in_chrome(html_path, expression)
+    full = measured["full"]
+    assert any(card["pilled"] for card in full), "fixture must render a pill"
+    assert any(not card["pilled"] for card in full), "fixture must render a card without one"
+
+    assert all(card["meterTopsWithName"] for card in full)
+    assert all(card["pillLeftWithName"] for card in full)
+    assert all(card["captionFlush"] for card in full)
+    # The pill is in the other column, so it has nothing to push: suppressing
+    # every pill leaves both the meter and its caption exactly where they were.
+    # (The gap itself varies between cards — a two-line name makes the row it
+    # shares with the meter taller — which is the name's doing, not the pill's.)
+    assert [card["captionGap"] for card in full] == [
+        card["captionGap"] for card in measured["fullWithoutPills"]
+    ]
+    assert [card["meterOffset"] for card in full] == [
+        card["meterOffset"] for card in measured["fullWithoutPills"]
+    ]
+
+    # I42: whatever offset a compact card's meter has, its pill did not add it.
+    assert any(card["pilled"] for card in measured["compact"])
+    assert [card["meterOffset"] for card in measured["compact"]] == [
+        card["meterOffset"] for card in measured["compactWithoutPills"]
+    ]
+
+
+def test_the_support_caption_stays_on_one_line_beside_the_name(tmp_path: Path) -> None:
+    """The caption shares the meter's column, and the column is sized to hold it.
+
+    The caption runs a little wider than the meter, so the track carries
+    `max-content`. Pin what that buys: the caption stays on one line, keeping the
+    fixed position under the meter that I39/H38 give it, and it stays clear of
+    the name rather than overhanging left onto a wrapped line of it.
+
+    Both failure modes are real. A fixed track wraps the caption at 480-720px,
+    where the track narrows to 8.75rem; a fixed track plus `white-space: nowrap`
+    stops the wrap but paints the caption over a wrapped name's last line —
+    measured on every card at 560px with the longest tie label this ballot can
+    produce. 560px catches both; the other widths guard the same property in the
+    editions a reader gets, including print, where captions drop to 8pt.
+    """
+    view_model = _view_model(tmp_path)
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    longest_caption = max(
+        (screen_support_summary(race) for section in view_model.sections for race in section.races),
+        key=len,
+    )
+    expression = """
+      (() => {
+        const captions = [...document.querySelectorAll('.race-card')].map((card) => {
+          const caption = [...card.querySelectorAll('.support-line')]
+            .find((line) => line.getClientRects().length);
+          const name = card.querySelector('h3');
+          if (!caption || !name) return null;
+          caption.textContent = LONGEST;
+          name.textContent = TIE_LABEL;
+          const box = caption.getBoundingClientRect();
+          const cardBox = card.getBoundingClientRect();
+          // Ink, not boxes: the name's own line rects, since its block box
+          // spans the column whether or not glyphs reach the caption.
+          const range = document.createRange();
+          range.selectNodeContents(name);
+          const clear = [...range.getClientRects()]
+            .filter((line) => line.width > 0)
+            .every((line) => line.right <= box.left
+              || line.bottom <= box.top || line.top >= box.bottom);
+          return {
+            // One line-box tall, not "as short as its neighbours" — if every
+            // caption wrapped, a comparison between them would still pass.
+            lines: box.height / parseFloat(getComputedStyle(caption).lineHeight),
+            insideCard: box.left >= cardBox.left - 1 && box.right <= cardBox.right + 1,
+            clearOfName: clear,
+          };
+        }).filter(Boolean);
+        return JSON.stringify({
+          measured: captions.length,
+          oneLine: captions.every((c) => c.lines <= 1.05),
+          allInsideCard: captions.every((c) => c.insideCard),
+          allClearOfName: captions.every((c) => c.clearOfName),
+          pageOverflow: document.documentElement.scrollWidth
+            > document.documentElement.clientWidth,
+        });
+      })()
+    """.replace("LONGEST", json.dumps(longest_caption)).replace(
+        "TIE_LABEL", json.dumps(_longest_tie_label())
+    )
+
+    screen = _evaluate_in_chrome(html_path, expression)
+    phone = _evaluate_in_chrome(html_path, expression, mobile_width=320)
+    # Inside the 480-720px band, where the track narrows: the widths at which
+    # the sizing decides whether the caption wraps, and where a caption that
+    # overhangs its track lands on the name's last line. One width carries both,
+    # and every Chrome launch here is a real cost to the suite.
+    band = _evaluate_in_chrome(html_path, expression, mobile_width=560)
+    printed = _evaluate_in_chrome(html_path, expression, mobile_width=768, media="print")
+
+    for edition in (screen, phone, band, printed):
+        assert edition["measured"] > 0
+        assert edition["oneLine"] is True
+        assert edition["allInsideCard"] is True
+        assert edition["allClearOfName"] is True
+        assert edition["pageOverflow"] is False
 
 
 def test_round4_card_anatomy_and_data_ink_cleanup(tmp_path: Path) -> None:

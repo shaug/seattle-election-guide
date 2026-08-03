@@ -20,7 +20,14 @@
 .race-card { display: flex; min-width: 0; flex-direction: column; gap: .55rem; padding: 1.15rem; background: var(--white); border: 1px solid var(--line-soft); border-top: .3rem solid var(--teal); box-shadow: 0 .2rem .8rem rgba(16,42,67,.08); }
 .race-card[hidden], .screen-section[hidden] { display: none; }
 .race-office { margin: 0; overflow-wrap: anywhere; color: var(--muted); font-size: .78rem; font-weight: 600; letter-spacing: .04em; line-height: 1.2; text-transform: uppercase; }
-.screen-race-result { display: grid; grid-template-columns: minmax(0, 1fr) 11rem; align-items: center; gap: .75rem; min-width: 0; }
+/* The card's two rows share one pair of columns: the name over the pill on the
+   left, the meter over its caption on the right. Top-aligned rather than
+   centered so the meter reads against the name's first line, and columned so
+   that the pill — which qualifies the pick, not the share — sits under the
+   name it applies to without displacing the caption that belongs to the
+   meter (I39/H38). The metric column takes its floor from the meter and grows
+   to the caption, which runs a little wider; see .screen-race-context. */
+.screen-race-result { display: grid; grid-template-columns: minmax(0, 1fr) minmax(11rem, max-content); align-items: start; gap: .75rem; min-width: 0; }
 .race-card h3 { min-width: 0; margin: 0; color: var(--navy); font: 800 1.5rem/1.08 var(--screen-sans); letter-spacing: -.02em; overflow-wrap: anywhere; }
 .screen-meter { display: flex; align-items: center; justify-content: flex-start; width: 11rem; height: 2rem; overflow: hidden; border: 1px solid var(--line-strong); border-radius: 1rem; background: linear-gradient(to right, var(--teal) 0 var(--meter-fill), var(--meter-track) var(--meter-fill) 100%); }
 .screen-meter strong { width: 100%; padding: .05rem .75rem 0; color: var(--white); font-size: 1.08rem; font-variant-numeric: tabular-nums; font-weight: 800; line-height: 1; text-align: left; }
@@ -34,8 +41,16 @@
    the label renders after the fill instead, in muted ink. Defensive only,
    not the tabled D14 meter redesign. */
 .screen-meter.meter-low-fill strong, .race-detail-meter.meter-low-fill strong { padding-left: calc(var(--meter-fill) + .4rem); color: var(--muted); }
-.screen-race-context { display: grid; gap: .35rem; min-width: 0; }
-.no-majority-pill { justify-self: end; margin: 0; padding: .18rem .48rem; border: 1px solid var(--tone-differ-border); border-radius: 999px; background: var(--tone-differ-bg); color: var(--tone-differ-text); font-size: .68rem; font-weight: 800; letter-spacing: .02em; line-height: 1.2; }
+/* The second row of that pair of columns. A caption wider than its track would
+   otherwise wrap, or overhang left onto a wrapped name's last line — measured
+   as ink overlap on every card at 560px with the longest tie label this ballot
+   can produce — so the track grows to hold it while the meter above keeps its
+   own fixed width. Both stay flush right, which is what renderer-side
+   `supportAligned` and `metersRightAligned` check. */
+.screen-race-context { display: grid; grid-template-columns: minmax(0, 1fr) minmax(11rem, max-content); align-items: start; gap: 0 .75rem; min-width: 0; }
+.screen-race-context .no-majority-pill { grid-column: 1; }
+.screen-race-context .support-line { grid-column: 2; }
+.no-majority-pill { justify-self: start; margin: 0; padding: .18rem .48rem; border: 1px solid var(--tone-differ-border); border-radius: 999px; background: var(--tone-differ-bg); color: var(--tone-differ-text); font-size: .68rem; font-weight: 800; letter-spacing: .02em; line-height: 1.2; }
 .support-line { min-width: 0; margin: .15rem 0 0; color: var(--muted); font-size: .72rem; line-height: 1.2; text-align: right; }
 /* H34: full view keeps the sentence-form caption; compact mode (where the
    caption wraps to two lines per card) shortens it. Both forms always render
@@ -69,8 +84,16 @@ html.compact-ballot-mode .race-card-primary { gap: .35rem; }
    subgrid) keeps every compact card's meter starting at the same offset. */
 html.compact-ballot-mode .race-office { min-height: 2.3rem; font-size: .66rem; line-height: 1.15; }
 html.compact-ballot-mode .race-card h3 { font-size: 1.08rem; line-height: 1.05; }
+/* Compact stacks the pair back into one column. The pill goes last, after the
+   caption: above the meter it would push a tied card's meter off the row's
+   baseline (I42), and between meter and caption it would cost the caption the
+   adjacency it owes the meter (I39/H38) — measured 30px there against 5px
+   here, with meter offsets identical either way. Last pays neither. */
 html.compact-ballot-mode .screen-race-result,
 html.compact-ballot-mode .screen-race-context { grid-template-columns: minmax(0, 1fr); gap: .3rem; }
+html.compact-ballot-mode .screen-race-context .no-majority-pill,
+html.compact-ballot-mode .screen-race-context .support-line { grid-column: 1; }
+html.compact-ballot-mode .no-majority-pill { order: 1; }
 html.compact-ballot-mode .screen-meter { width: 100%; height: 1.6rem; }
 html.compact-ballot-mode .screen-meter strong { padding-right: .55rem; padding-left: .55rem; font-size: .84rem; }
 html.compact-ballot-mode .support-line { margin-top: 0; font-size: .68rem; text-align: left; }
@@ -173,7 +196,8 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
   html.compact-ballot-mode .race-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .race-grid { grid-template-columns: 1fr; }
   .race-card { min-width: 0; }
-  .screen-race-result { grid-template-columns: minmax(0, 1fr) 8.75rem; gap: .6rem; }
+  .screen-race-result,
+  .screen-race-context { grid-template-columns: minmax(0, 1fr) minmax(8.75rem, max-content); gap: 0 .6rem; }
   .screen-meter { width: 8.75rem; }
   .lens-comparison { padding-right: .55rem; padding-left: .55rem; }
   .insufficient-note { overflow-wrap: anywhere; }
@@ -192,7 +216,13 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
 }
 
 @media (max-width: 479px) {
-  html:not(.compact-ballot-mode) .screen-race-result { grid-template-columns: minmax(0, 1fr); gap: .4rem; }
+  html:not(.compact-ballot-mode) .screen-race-result,
+  html:not(.compact-ballot-mode) .screen-race-context { grid-template-columns: minmax(0, 1fr); gap: .4rem; }
+  /* One column means one column: without this the explicit `grid-column: 2`
+     above would open an implicit second track and sit the caption beside the
+     pill instead of under it. */
+  html:not(.compact-ballot-mode) .screen-race-context .no-majority-pill,
+  html:not(.compact-ballot-mode) .screen-race-context .support-line { grid-column: 1; }
   html:not(.compact-ballot-mode) .screen-meter { width: 100%; }
 }
 
