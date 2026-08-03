@@ -128,6 +128,15 @@ def test_committed_milestones_name_workflows_the_cli_actually_exposes() -> None:
         assert result.exit_code == 0, f"calendar names a missing workflow: {workflow}"
 
 
+def test_every_retrospective_milestone_references_the_checklist() -> None:
+    calendar = read_election_calendar(CALENDAR_PATH)
+
+    retrospectives = [item for item in calendar.milestones if item.kind == "retrospective"]
+    assert retrospectives
+    for milestone in retrospectives:
+        assert milestone.reference == "docs/POST_ELECTION_RETROSPECTIVE.md"
+
+
 def test_committed_milestone_references_point_at_existing_documents() -> None:
     calendar = read_election_calendar(CALENDAR_PATH)
 
