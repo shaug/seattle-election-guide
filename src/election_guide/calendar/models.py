@@ -96,6 +96,16 @@ class CalendarMilestone(CalendarModel):
     offset_days: int = Field(ge=-730, le=365)
     workflow: str | None = Field(default=None, pattern=WORKFLOW_PATTERN)
     reference: str | None = Field(default=None, min_length=1)
+    # Whether a voter should see this date. Default false, so a new milestone
+    # kind is internal until someone decides otherwise: the published feed is
+    # opt-in, never opt-out. This marks audience, not presentation — the words
+    # a reader sees live on the rendering side (D5).
+    public: bool = Field(default=False, strict=True)
+    # Bumped by hand when a published milestone's date or wording changes, so a
+    # subscribed calendar treats the event as a revision rather than ignoring
+    # it. It cannot be derived: a build has no memory of the previous one, and
+    # the same input must always produce the same bytes.
+    revision: int = Field(default=1, ge=1)
 
     @field_validator("reference")
     @classmethod
@@ -136,6 +146,11 @@ class ElectionCalendar(CalendarModel):
     def election_milestones(self, election_id: str) -> list[CalendarMilestone]:
         """List one election's milestones in declaration order."""
         return [item for item in self.milestones if item.election_id == election_id]
+
+    def public_milestones(self) -> list[CalendarMilestone]:
+        """List every milestone a voter should see, soonest first."""
+        public = [item for item in self.milestones if item.public]
+        return sorted(public, key=lambda item: (self.scheduled_date(item), item.election_id))
 
     def scheduled_date(self, milestone: CalendarMilestone) -> date:
         """Resolve the calendar date a milestone's offset implies."""

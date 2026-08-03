@@ -148,6 +148,30 @@ writes are one constant in the code, so they cannot drift apart on their own.
 `--dry-run` still queries GitHub, so it prints what the real run would create
 rather than what the calendar contains.
 
+## Marking a milestone public
+
+Most milestones are internal: a source-panel freeze or an inventory import means
+nothing to a voter. A milestone carries `public: true` only when a reader would
+want it in their own calendar, and the default is `false` — the published feed
+is opt-in, so a new milestone kind stays internal until someone decides
+otherwise rather than leaking the moment it is declared.
+
+Three kinds are public today: `ballots_mail`, `guide_publishes`, and
+`election_day`. Marking a milestone public is only half the job — the words a
+reader sees live in `MILESTONE_COPY` in
+`src/election_guide/publication/calendar_feed.py`, keyed by milestone kind,
+because decision D5 keeps display strings out of this file. A milestone marked
+public whose kind has no copy fails the build rather than publishing an untitled
+event.
+
+A public milestone also carries `revision`, starting at 1. **Bump it by hand
+whenever you change a published milestone's date or its wording.** It becomes
+the event's `SEQUENCE`, which is how a subscribed calendar knows it is looking
+at a newer version of an event it already has. It cannot be derived: a build has
+no memory of the previous one, and the same input has to produce the same bytes.
+The event's identity never changes, so a moved date corrects the existing entry
+instead of adding a second one.
+
 ## Adding an election
 
 Append the election, then its milestones, then run the validator. Copy the

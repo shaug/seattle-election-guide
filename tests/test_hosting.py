@@ -544,7 +544,7 @@ def test_verify_staged_site_rejects_tamper_deletion_and_unexpected_assets(
         expected_current_git_commit=COMMIT,
     )
     assert verified.current_election_id == CURRENT_ID
-    assert len(verified.assets) == 16
+    assert len(verified.assets) == 17
 
     tampered = tmp_path / "tampered"
     shutil.copytree(output, tampered)
@@ -656,7 +656,7 @@ def test_hosting_stage_cli_reports_composed_site(tmp_path: Path) -> None:
         ],
     )
     assert verify_result.exit_code == 0, verify_result.output
-    assert f"current {CURRENT_ID}; 16 assets" in verify_result.output
+    assert f"current {CURRENT_ID}; 17 assets" in verify_result.output
 
 
 def _current_election_manifest() -> SiteManifest:
@@ -1623,3 +1623,111 @@ def _tree_bytes(root: Path) -> dict[str, bytes]:
         for path in sorted(root.rglob("*"))
         if path.is_file()
     }
+
+
+def test_calendar_feed_is_staged_served_and_hash_verified(tmp_path: Path) -> None:
+    """Criteria 5 and 6: the route is allowlisted, typed, and hash-checked."""
+    current, older = _write_archive_bundles(tmp_path)
+    site_manifest = _write_site_manifest(tmp_path, current_first=True)
+    output = tmp_path / "site"
+
+    stage_pages_site(
+        site_manifest,
+        {CURRENT_BUNDLE_ID: current, OLDER_BUNDLE_ID: older},
+        output,
+        calendar_path=PROJECT_ROOT / "config" / "calendar" / "elections.yaml",
+    )
+
+    # Read bytes: RFC 5545 requires CRLF, and read_text would translate it away.
+    feed = (output / "calendar.ics").read_bytes()
+    assert feed.startswith(b"BEGIN:VCALENDAR\r\n")
+    assert feed.endswith(b"END:VCALENDAR\r\n")
+    assert b"BEGIN:VEVENT" in feed
+
+    # The worker's allowlist is what stops Cloudflare's document fallback from
+    # answering an unknown path with the current guide.
+    worker = (output / "_worker.js").read_text(encoding="utf-8")
+    assert '"/calendar.ics"' in worker
+
+    headers = (output / "_headers").read_text(encoding="utf-8")
+    assert "/calendar.ics" in headers
+    assert "Content-Type: text/calendar; charset=utf-8" in headers
+
+    # verify recomputes every staged asset's hash against the manifest.
+    verified = verify_staged_pages_site(output, site_manifest)
+    assert "calendar.ics" in verified.assets
+
+    (output / "calendar.ics").write_bytes(feed + b"TAMPERED\r\n")
+    with pytest.raises(ValueError):
+        verify_staged_pages_site(output, site_manifest)
+
+
+def test_restaging_the_same_inputs_reproduces_the_feed_byte_for_byte(tmp_path: Path) -> None:
+    """Criterion 3: a rebuild must not churn every subscriber's calendar."""
+    current, older = _write_archive_bundles(tmp_path)
+    site_manifest = _write_site_manifest(tmp_path, current_first=True)
+    assignments = {CURRENT_BUNDLE_ID: current, OLDER_BUNDLE_ID: older}
+    calendar_path = PROJECT_ROOT / "config" / "calendar" / "elections.yaml"
+
+    first = tmp_path / "first"
+    second = tmp_path / "second"
+    stage_pages_site(site_manifest, assignments, first, calendar_path=calendar_path)
+    stage_pages_site(site_manifest, assignments, second, calendar_path=calendar_path)
+
+    assert (first / "calendar.ics").read_bytes() == (second / "calendar.ics").read_bytes()
+
+
+def test_every_calendar_link_resolves_to_a_staged_path(tmp_path: Path) -> None:
+    """A subscriber's click must not land on the worker's 404."""
+    current, older = _write_archive_bundles(tmp_path)
+    site_manifest = _write_site_manifest(tmp_path, current_first=True)
+    output = tmp_path / "site"
+
+    stage_pages_site(
+        site_manifest,
+        {CURRENT_BUNDLE_ID: current, OLDER_BUNDLE_ID: older},
+        output,
+        calendar_path=PROJECT_ROOT / "config" / "calendar" / "elections.yaml",
+    )
+
+    # Bytes, so the CRLF the RFC requires survives to the unfolding below.
+    feed = (output / "calendar.ics").read_bytes().decode("utf-8")
+    worker = (output / "_worker.js").read_text(encoding="utf-8")
+    links = {
+        line.removeprefix("URL:").strip()
+        for line in feed.replace("\r\n ", "").split("\r\n")
+        if line.startswith("URL:")
+    }
+    assert links
+
+    for link in links:
+        path = link.removeprefix("https://seattleelections.guide")
+        # The worker serves an allowlisted asset path or a declared election
+        # root; anything else is answered by its 404.
+        assert f'"{path}"' in worker or f'"{path}index.html"' in worker, path
+
+
+def test_verification_rejects_a_site_with_no_calendar_feed(tmp_path: Path) -> None:
+    """The feed is a documented public route, so its absence must fail the gate."""
+    current, older = _write_archive_bundles(tmp_path)
+    site_manifest = _write_site_manifest(tmp_path, current_first=True)
+    output = tmp_path / "site"
+
+    stage_pages_site(
+        site_manifest,
+        {CURRENT_BUNDLE_ID: current, OLDER_BUNDLE_ID: older},
+        output,
+        calendar_path=PROJECT_ROOT / "config" / "calendar" / "elections.yaml",
+    )
+    # Drop the feed from both the tree and the manifest, which is the shape a
+    # build that stopped writing it produces. Deleting only the file trips the
+    # earlier tree-versus-manifest check and never reaches the required-asset
+    # guard this test exists for.
+    (output / "calendar.ics").unlink()
+    manifest_path = output / "deployment-manifest.json"
+    deployment = json.loads(manifest_path.read_text(encoding="utf-8"))
+    del deployment["assets"]["calendar.ics"]
+    manifest_path.write_text(json.dumps(deployment), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="missing required public archive assets"):
+        verify_staged_pages_site(output, site_manifest)
