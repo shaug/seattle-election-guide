@@ -27,8 +27,11 @@ the Cloudflare account ID. Store both values under the GitHub repository's Actio
 - `CLOUDFLARE_ACCOUNT_ID`
 
 The workflow uses the GitHub `production` environment, which carries a required-reviewer rule and a
-`main`-only deployment branch policy. [Deployment gate](#deployment-gate) describes what each one
-does and when to reach for the kill switch instead.
+`main`-only deployment branch policy. Both are configured under **Settings / Environments /
+production**: add the maintainer as a required reviewer, and add a deployment branch rule naming
+`main`. Rebuilding the environment without them restores automatic publication.
+[Deployment gate](#deployment-gate) describes what each one does and when to reach for the kill
+switch instead.
 
 Leave publishing disabled until the project and both secrets exist. Then create the repository
 Actions variable `CLOUDFLARE_PAGES_ENABLED` with the exact value `true`. Run the **CI** workflow
@@ -190,11 +193,12 @@ between a green merge and the live site.
 ### Approval
 
 The `production` environment carries a required-reviewer protection rule. A merge to `main` runs
-`check` and then queues `deploy` in a waiting state until a reviewer approves it, from either the
-workflow run page or the repository's Deployments page. Approving starts the upload; rejecting ends
-the run and leaves the live site on its previous deployment. Work can keep landing on `main` while a
-deployment waits, which is the point: merging and publishing are separate decisions, and during the
-week before an election the second one deserves its own moment.
+`check` and then queues `deploy` in a waiting state until a reviewer approves it from the workflow
+run page. The repository's Deployments page lists the waiting deployment and links to that run, but
+carries no approval control of its own. Approving starts the upload; rejecting ends the run and
+leaves the live site on its previous deployment. Work can keep landing on `main` while a deployment
+waits, which is the point: merging and publishing are separate decisions, and during the week before
+an election the second one deserves its own moment.
 
 What waits is one commit, not a backlog. The `deploy` job serializes on a single concurrency group,
 so production deployments never accumulate: a run queued behind the waiting one is itself canceled
@@ -218,8 +222,8 @@ against oneself.
 The same environment restricts deployments to one branch, `main`. A workflow running on any other
 ref cannot target `production` at all, so a pull-request or preview job cannot reach the production
 Pages project even if it names the environment. The `deploy` job already tests
-`github.ref == 'refs/heads/main'`; the branch policy enforces the same rule from repository settings,
-where editing the workflow cannot reach it.
+`github.ref == 'refs/heads/main'`; the branch policy enforces that same rule from repository
+settings, where editing the workflow cannot reach it.
 
 ### Kill switch
 
@@ -230,9 +234,8 @@ created.
 ### Which one to use
 
 Approval is the per-deploy pause, and the normal path: hold a specific commit, or sit on a change
-overnight before putting it in front of voters. Because what waits is a single commit rather than a
-backlog, letting several merges land and then publishing means approving the deployment for the
-commit you actually want — rejecting the waiting one first if it is not that commit.
+overnight before putting it in front of voters. See [Approval](#approval) for which commit a waiting
+deployment carries.
 
 The variable is the durable off switch. Use it when publication should be off rather than merely
 waiting: while Cloudflare credentials are rotated, while the Pages project is rebuilt, or for any
