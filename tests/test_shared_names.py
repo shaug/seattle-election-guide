@@ -23,10 +23,13 @@ some of them, and no name gains a second generator.
 **The surfaces.** `template` is the Jinja templates, `stylesheet` the page
 stylesheets, `client` the `.mjs` modules, `python` everything under
 `src/election_guide` — which is where `rendering/browser.py` holds the CDP audit
-probes — and `test` the Python and Node tests. The committed fixtures under
-`tests/js/fixtures/` are excluded: they are rendered output, not an authored
-restatement, and counting them would put every name on the `test` surface and
-make the whole check vacuous.
+probes — and `test` the Python and Node tests, this module included. The
+committed fixtures under `tests/js/fixtures/` are excluded because they are
+rendered output rather than an authored restatement: counting them would put
+every name on the `test` surface and make the whole check vacuous. Today that
+exclusion is a guard rather than a filter — the fixtures are `.html` and
+`.json`, which the surface globs do not reach anyway — and it is kept so that
+committing a `.mjs` fixture there later cannot quietly hollow the check out.
 
 **What is in scope, and what is not.** Three categories, matching the rule:
 
@@ -112,7 +115,7 @@ def _surface_files() -> dict[str, list[Path]]:
         "test": sorted(
             path
             for path in [*TESTS_ROOT.rglob("*.py"), *TESTS_ROOT.rglob("*.mjs")]
-            if FIXTURE_DIR not in path.parents and path != Path(__file__).resolve()
+            if FIXTURE_DIR not in path.parents
         ),
     }
 
@@ -131,7 +134,11 @@ DATA_ATTRIBUTE = re.compile(r"data-[a-z][a-z0-9-]*")
 # A class selector in a stylesheet: a dot-prefixed kebab-case name, ended by
 # something that can follow a selector. The kebab requirement is what keeps
 # `guide.css` and `FRONTEND.md` — file names in comments read as selectors —
-# out of the vocabulary; every class this codebase authors is hyphenated.
+# out of the vocabulary. It is a limit of the scan rather than a rule about
+# authoring: the stylesheets do hold a few single-word classes (`.eyebrow`,
+# `.extended`), and one of those would go uncovered if executable code started
+# selecting it. None does today, so the blind spot is empty; a single-word class
+# that a module or a probe string selects would need this pattern widened.
 CSS_CLASS_SELECTOR = re.compile(r"\.(-?[a-z][a-z0-9]*(?:-[a-z0-9]+)+)(?![a-zA-Z0-9_-])")
 
 CLASS_LIST_OPERAND = re.compile(
@@ -140,10 +147,14 @@ CLASS_LIST_OPERAND = re.compile(
 
 MEDIA_BREAKPOINT = re.compile(r"@media[^{]*?\(\s*(?:min|max)-width:\s*(\d+)px")
 
+# The prefix this module's own scanner fixtures use, so an example never spells
+# a name the site actually ships.
+FIXTURE_PREFIX = "probe-"
+
 # Outside a stylesheet a bare integer is ambiguous — a vote count is not a
 # breakpoint — so a restatement counts only where the same line also names a
-# width. That is exactly how `rendering/browser.py` restates one:
-# `window.innerWidth<=720?2:window.innerWidth<=1050?3:4`.
+# width. That is how `rendering/browser.py` restates them: its compact-column
+# probe compares `window.innerWidth` against the guide's two grid breakpoints.
 WIDTH_CONTEXT = re.compile(r"innerWidth|outerWidth|clientWidth|matchMedia|min-width|max-width")
 
 
@@ -258,103 +269,107 @@ def survey_tree() -> SharedNames:
 
 def test_the_data_attribute_scan_sees_every_authoring_form() -> None:
     surfaces = {
-        "template": ['<div data-lens-only class="x">'],
-        "stylesheet": ["[data-lens-only] { display: none; }"],
-        "client": ["el.querySelector('[data-lens-only]')"],
-        "python": ["\"document.querySelector('[data-probe-only]')\""],
+        "template": ['<div data-probe-region class="x">'],
+        "stylesheet": ["[data-probe-region] { display: none; }"],
+        "client": ["el.querySelector('[data-probe-region]')"],
+        "python": ["\"document.querySelector('[data-probe-lonely]')\""],
         "test": [""],
     }
     survey = data_attribute_survey(surfaces)
 
-    assert survey["data-lens-only"] == ["template", "stylesheet", "client"]
+    assert survey["data-probe-region"] == ["template", "stylesheet", "client"]
     # One surface is not a shared name.
-    assert "data-probe-only" not in survey
+    assert "data-probe-lonely" not in survey
 
 
 def test_a_data_attribute_is_not_confused_with_a_longer_one() -> None:
     surfaces = {
-        "template": ["<b data-election-day-short>"],
-        "client": ["dataset.electionDay", "'[data-election-day]'"],
+        "template": ["<b data-probe-region-short>"],
+        "client": ["dataset.probeRegion", "'[data-probe-region]'"],
         "stylesheet": [""],
         "python": [""],
         "test": [""],
     }
     survey = data_attribute_survey(surfaces)
 
-    # `data-election-day` must not be found inside `data-election-day-short`:
+    # `data-probe-region` must not be found inside `data-probe-region-short`:
     # they are two names, and conflating them would hide a rename of either.
-    assert survey.get("data-election-day") is None
-    assert survey.get("data-election-day-short") is None
+    assert survey.get("data-probe-region") is None
+    assert survey.get("data-probe-region-short") is None
 
 
 def test_a_name_is_not_found_in_a_file_named_after_it() -> None:
     """Modules are named for what they render, so the two collide in prose.
 
-    `rendering/shell.py` mentions `election-day.mjs`; the class `.election-day`
-    is a different thing, and recording Python as a surface that spells it would
-    put a fact in the contract that renaming the class could not honour.
+    A module named after the region it renders is mentioned by name in comments,
+    and the class of the same name is a different thing. Recording that file's
+    surface as one that spells the class would put a fact in the contract that
+    renaming the class could not honour.
     """
     surfaces = {
-        "stylesheet": [".election-day { display: flex; }"],
-        "client": ["root.classList.toggle('election-day', soon);"],
-        "python": ["# `election-day.mjs` escalates the banner as the date nears."],
+        "stylesheet": [".probe-banner { display: flex; }"],
+        "client": ["root.classList.toggle('probe-banner', soon);"],
+        "python": ["# `probe-banner.mjs` escalates the banner as the date nears."],
         "template": [""],
         "test": [""],
     }
 
-    assert class_name_survey(surfaces) == {"election-day": ["stylesheet", "client"]}
+    assert class_name_survey(surfaces) == {"probe-banner": ["stylesheet", "client"]}
 
 
 def test_the_class_vocabulary_ignores_file_names_in_comments() -> None:
     surfaces = {
         "stylesheet": [
             "/* base.css and docs/FRONTEND.md govern this. */\n"
-            ".screen-race-context { display: grid; }\n"
-            "html.compact-ballot-mode .race-grid { gap: 0; }\n"
+            ".probe-region { display: grid; }\n"
+            "html.probe-mode .probe-grid { gap: 0; }\n"
         ],
-        "client": ["root.classList.toggle('lens-personalized', on);"],
+        "client": ["root.classList.toggle('probe-state', on);"],
         "template": [""],
         "python": [""],
         "test": [""],
     }
 
     assert class_vocabulary(surfaces) == {
-        "screen-race-context",
-        "compact-ballot-mode",
-        "race-grid",
-        "lens-personalized",
+        "probe-region",
+        "probe-mode",
+        "probe-grid",
+        "probe-state",
     }
 
 
 def test_the_class_scan_reports_only_names_executable_code_spells() -> None:
     surfaces = {
-        "stylesheet": [".screen-race-context { display: grid; }\n.quiet-only { color: red; }\n"],
-        "template": ['<div class="screen-race-context"></div><p class="quiet-only">'],
+        "stylesheet": [".probe-region { display: grid; }\n.probe-quiet-only { color: red; }\n"],
+        "template": ['<div class="probe-region"></div><p class="probe-quiet-only">'],
         # The probe form the rule exists for: a selector inside a CDP string.
-        "python": ["\"[...document.querySelectorAll('.screen-race-context')]\""],
+        "python": ["\"[...document.querySelectorAll('.probe-region')]\""],
         "client": [""],
         "test": [""],
     }
     survey = class_name_survey(surfaces)
 
-    assert survey == {"screen-race-context": ["template", "stylesheet", "python"]}
+    assert survey == {"probe-region": ["template", "stylesheet", "python"]}
     # Template + stylesheet alone is every class in the codebase, and a miss
     # there renders unstyled rather than silently passing.
-    assert "quiet-only" not in survey
+    assert "probe-quiet-only" not in survey
 
 
 def test_the_breakpoint_scan_needs_a_width_context_outside_the_stylesheet() -> None:
+    # 641 is deliberately not one of the site's breakpoints: this module is held
+    # to the contract like every other test, so its fixtures spell invented
+    # names rather than real ones.
     surfaces = {
-        "stylesheet": ["@media (max-width: 720px) { .race-grid { gap: 0; } }"],
-        "python": ['"const columns=window.innerWidth<=720?2:4;"'],
+        "stylesheet": ["@media (max-width: 641px) { .probe-grid { gap: 0; } }"],
+        "python": ['"const columns=window.innerWidth<=641?2:4;"'],
         "template": [""],
         "client": [""],
         "test": [""],
     }
-    assert breakpoint_survey(surfaces) == {"720": ["stylesheet", "python"]}
+    assert breakpoint_survey(surfaces) == {"641": ["stylesheet", "python"]}
 
-    # A bare 720 that is not about width is a coincidence, not a restatement.
-    coincidence = dict(surfaces, python=["total_votes = 720"])
+    # A bare 641 that is not about width is a coincidence, not a restatement.
+    coincidence = dict(surfaces, python=["total_votes = 641"])
     assert breakpoint_survey(coincidence) == {}
 
 
@@ -431,6 +446,41 @@ def test_the_manifest_declares_no_surface_that_is_not_a_surface() -> None:
             f"{name!r} is declared with a single surface, so it is not a shared name. "
             f"Delete the entry ({RULE})."
         )
+
+
+def test_this_module_spells_no_name_the_contract_has_lost() -> None:
+    """This module is held to the contract it defines, prose included.
+
+    It is a test, so it is on the `test` surface like any other, and its
+    fixtures spell invented `probe-` names so that no production name is
+    restated for the sake of an example. What is left is the handful of real
+    names its explanation names on purpose — the probe case that decides the
+    scope. Those would otherwise be the one place a completed rename could go
+    stale: the old spelling would survive here as a single-surface name, which
+    the survey drops, and nothing would fail.
+
+    So every production-shaped name this file spells must still be a declared
+    one. After a rename, the name in the prose is no longer in the manifest and
+    this fails, which is what keeps the contract's own stated rationale true.
+    """
+    source = Path(__file__).resolve().read_text(encoding="utf-8")
+    declared = set(declared_names())
+
+    spelled = set(CSS_CLASS_SELECTOR.findall(source)) | set(DATA_ATTRIBUTE.findall(source))
+    stale = sorted(
+        name
+        for name in spelled
+        if not name.startswith(FIXTURE_PREFIX)
+        and not name.startswith(f"data-{FIXTURE_PREFIX}")
+        and name not in declared
+    )
+
+    assert not stale, (
+        f"{stale} are spelled in {Path(__file__).name} but are not declared in "
+        f"tests/shared_names.json. Either they were renamed everywhere else and this file's "
+        f"explanation still names the old spelling, or a real name was used where a "
+        f"{FIXTURE_PREFIX!r} fixture name belongs ({RULE})."
+    )
 
 
 def test_no_value_with_a_python_origin_is_declared_here() -> None:
