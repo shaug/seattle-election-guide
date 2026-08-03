@@ -1297,9 +1297,18 @@ def test_pr_preview_workflow_is_label_gated_fork_safe_and_head_bound() -> None:
         "reopened",
         "closed",
     ]
-    assert "pr-" in workflow["concurrency"]["group"]
-
+    # Concurrency is per job, not per workflow. A cancelling workflow-level
+    # group would also cover teardown, and a teardown cancelled mid-run leaves
+    # a live preview with no second `closed` event to retry it.
+    assert "concurrency" not in workflow
     deploy = workflow["jobs"]["deploy"]
+    assert deploy["concurrency"]["group"].endswith("pr-${{ github.event.pull_request.number }}")
+    assert deploy["concurrency"]["cancel-in-progress"] == "true"
+    teardown_concurrency = workflow["jobs"]["teardown"]["concurrency"]
+    assert teardown_concurrency["group"].endswith("pr-${{ github.event.pull_request.number }}")
+    assert teardown_concurrency["group"] != deploy["concurrency"]["group"]
+    assert teardown_concurrency["cancel-in-progress"] == "false"
+
     fork_guard = "github.event.pull_request.head.repo.full_name == github.repository"
     # A fork's pull request fails this job-level condition, so the job is
     # skipped rather than failed and the token is never in scope.

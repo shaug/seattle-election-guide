@@ -15,10 +15,6 @@ on:
 permissions:
   contents: read
 
-concurrency:
-  group: pages-preview-pr-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
-
 jobs:
   deploy:
     name: Deploy PR preview
@@ -37,6 +33,13 @@ jobs:
       vars.CLOUDFLARE_PAGES_ENABLED == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    # Scoped to this job rather than the workflow. A workflow-level cancelling
+    # group would also cover teardown, and a superseding event arriving while a
+    # close-triggered teardown was still running would cancel it -- with no
+    # second `closed` event to retry it, the preview would survive.
+    concurrency:
+      group: pages-preview-pr-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
     permissions:
       contents: read
       deployments: write
@@ -112,7 +115,7 @@ jobs:
       # else comments here as the Actions bot.
       - name: Comment the preview link
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PREVIEW_URL: ${{ steps.deploy.outputs.url }}
         run: |
@@ -134,6 +137,11 @@ jobs:
       vars.CLOUDFLARE_PAGES_ENABLED == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    # Its own group, and never cancelled: a teardown that loses its race leaves
+    # a preview live with no event left to retry it.
+    concurrency:
+      group: pages-preview-teardown-pr-${{ github.event.pull_request.number }}
+      cancel-in-progress: false
     permissions:
       contents: read
     env:
