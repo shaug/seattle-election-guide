@@ -17,6 +17,7 @@ import typer
 from pydantic import ValidationError
 
 from election_guide import __version__
+from election_guide.calendar import read_election_calendar
 from election_guide.collection import read_adapter_spec, refresh_source, validate_adapter
 from election_guide.collection.http import fetch_http
 from election_guide.collection.refresh import RefreshOrderError, record_refresh_failure
@@ -108,6 +109,7 @@ app = typer.Typer(
     no_args_is_help=True,
 )
 inventory_app = typer.Typer(help="Import and validate the official Seattle ballot inventory.")
+calendar_app = typer.Typer(help="Validate the declared election operations calendar.")
 election_app = typer.Typer(help="Initialize and validate configuration for an election.")
 sources_app = typer.Typer(help="Inspect and validate the frozen endorsement-source panel.")
 evidence_app = typer.Typer(help="Capture, verify, and manually transcribe source evidence.")
@@ -120,6 +122,7 @@ release_app = typer.Typer(help="Compile, audit, and package a versioned public r
 collect_app = typer.Typer(help="Refresh source-specific endorsement adapters.")
 hosting_app = typer.Typer(help="Stage validated release artifacts for static hosting.")
 app.add_typer(inventory_app, name="inventory")
+app.add_typer(calendar_app, name="calendar")
 app.add_typer(election_app, name="election")
 app.add_typer(sources_app, name="sources")
 app.add_typer(evidence_app, name="evidence")
@@ -212,6 +215,26 @@ def hosting_verify_releases(
         typer.echo(f"hosting verify-releases failed: {error}", err=True)
         raise typer.Exit(code=1) from error
     typer.echo(f"Declared releases: verified ({len(manifest.elections)} declared)")
+
+
+@calendar_app.command("validate")
+def calendar_validate(
+    calendar_path: Annotated[
+        Path,
+        typer.Argument(exists=True, dir_okay=False, readable=True),
+    ] = Path("config/calendar/elections.yaml"),
+) -> None:
+    """Validate declared elections, milestone identity, and milestone offsets."""
+    try:
+        calendar = read_election_calendar(calendar_path)
+    except ValueError as error:
+        typer.echo(f"election calendar invalid: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    scheduled = sorted(calendar.scheduled_date(milestone) for milestone in calendar.milestones)
+    typer.echo(
+        f"election calendar: valid ({len(calendar.elections)} elections, "
+        f"{len(calendar.milestones)} milestones; {scheduled[0]} through {scheduled[-1]})"
+    )
 
 
 @election_app.command("init")

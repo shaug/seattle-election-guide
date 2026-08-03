@@ -45,6 +45,8 @@ jobs:
         run: make check-js
       - name: Validate canonical election inventory
         run: uv run election-guide inventory validate data/normalized/wa-2026-primary-inventory.json
+      - name: Validate the election operations calendar
+        run: uv run election-guide calendar validate config/calendar/elections.yaml
       # Every election the site serves is resolved from its published release
       # archive, so a declared version with no published Release is a broken
       # deployment waiting to happen (docs/HOSTING.md, Published releases).
