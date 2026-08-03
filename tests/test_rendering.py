@@ -39,26 +39,27 @@ from election_guide.rendering import (
     render_html_document,
     validate_rendered_guide,
 )
-from election_guide.rendering.bundler import TEMPLATE_DIR, bundle_entry
-from election_guide.rendering.models import RenderingValidationReport
-from election_guide.rendering.payload import CLIENT_PAYLOAD_SCHEMA_VERSION, GuidePayload
-from election_guide.rendering.renderer import (
-    _candidate_endorsement_groups,  # pyright: ignore[reportPrivateUsage]
+from election_guide.rendering.browser import (
     _CdpSocket,  # pyright: ignore[reportPrivateUsage]
-    _has_no_majority,  # pyright: ignore[reportPrivateUsage]
-    _race_detail_accessible_summary,  # pyright: ignore[reportPrivateUsage]
-    _race_detail_support_summary,  # pyright: ignore[reportPrivateUsage]
-    _render_screenshot,  # pyright: ignore[reportPrivateUsage]
-    _screen_support_summary,  # pyright: ignore[reportPrivateUsage]
-    _screen_support_summary_compact,  # pyright: ignore[reportPrivateUsage]
-    _source_cell_detail_label,  # pyright: ignore[reportPrivateUsage]
-    _source_cell_group,  # pyright: ignore[reportPrivateUsage]
     _terminate_process,  # pyright: ignore[reportPrivateUsage]
     _wait_for_devtools_endpoint,  # pyright: ignore[reportPrivateUsage]
     find_chrome,
-    render_sources_document,
-    template_environment,
+    render_screenshot,
 )
+from election_guide.rendering.bundler import TEMPLATE_DIR, bundle_entry
+from election_guide.rendering.context import (
+    candidate_endorsement_groups,
+    has_no_majority,
+    race_detail_accessible_summary,
+    race_detail_support_summary,
+    screen_support_summary,
+    screen_support_summary_compact,
+    source_cell_detail_label,
+    source_cell_group,
+)
+from election_guide.rendering.documents import render_sources_document, template_environment
+from election_guide.rendering.models import RenderingValidationReport
+from election_guide.rendering.payload import CLIENT_PAYLOAD_SCHEMA_VERSION, GuidePayload
 from election_guide.rendering.shell import (
     HOW_TO_VOTE_HREF,
     election_day_banner_html,
@@ -465,9 +466,9 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
         assert 'aria-live="polite" data-copy-race-status' in dialog_html
         assert f'aria-describedby="copy-race-status-{race.id}"' in dialog_html
         assert race.recommendation_label in dialog_html
-        assert _race_detail_accessible_summary(race) in dialog_html
-        assert _race_detail_support_summary(race) in dialog_html
-        endorsement_groups = _candidate_endorsement_groups(race)
+        assert race_detail_accessible_summary(race) in dialog_html
+        assert race_detail_support_summary(race) in dialog_html
+        endorsement_groups = candidate_endorsement_groups(race)
         candidate_positions = [
             dialog_html.index(f'data-race-detail-candidate-id="{group.candidate_id}"')
             for group in endorsement_groups
@@ -483,7 +484,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
             )
 
         def _cell_row_count(cell: SourceCell, race: PublicationRace = race) -> int:
-            if _source_cell_group(cell, race, source_by_id[cell.source_id]) == "candidate":
+            if source_cell_group(cell, race, source_by_id[cell.source_id]) == "candidate":
                 return len(cell.candidate_ids)
             return 1
 
@@ -505,7 +506,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
         assert dialog_html.count(">Co-endorsed</span>") == expected_co_endorsement_rows
         for state in ("not_covered", "not_applicable"):
             missing_count = sum(
-                _source_cell_group(cell, race, source_by_id[cell.source_id]) == state
+                source_cell_group(cell, race, source_by_id[cell.source_id]) == state
                 for cell in tallying_cells
             )
             if not missing_count:
@@ -518,7 +519,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
                 summary = f"{missing_count} {noun} {verb} outside this district"
             assert summary in dialog_html
         for cell in race.source_cells:
-            group = _source_cell_group(cell, race, source_by_id[cell.source_id])
+            group = source_cell_group(cell, race, source_by_id[cell.source_id])
             source = source_by_id[cell.source_id]
             code = source_code_by_id[cell.source_id]
             if source.panel_role == "comparison":
@@ -530,7 +531,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
             )
             assert f'data-source-state="{cell.state}"' in dialog_html
             assert category_label_by_key[source.category] in dialog_html
-            detail_label = _source_cell_detail_label(cell, race, group)
+            detail_label = source_cell_detail_label(cell, race, group)
             if detail_label is not None:
                 assert detail_label in dialog_html
             if cell.evidence_url is not None:
@@ -703,7 +704,7 @@ def test_no_majority_uses_the_exact_unrounded_share_across_the_card_and_dialog(
     target.percentage_whole = 50
     target.percentage_label = "50%"
 
-    assert _has_no_majority(target) is True
+    assert has_no_majority(target) is True
     html = render_html_document(view_model, configuration)
     card_start = html.index(f'data-publication-race-id="{target.id}"')
     card_end = html.index("</article>", card_start)
@@ -715,7 +716,7 @@ def test_no_majority_uses_the_exact_unrounded_share_across_the_card_and_dialog(
     assert "No majority. Consensus among explicitly endorsing sources: 50%" in card_html
 
     target.winner_share = "5001/10000"
-    assert _has_no_majority(target) is False
+    assert has_no_majority(target) is False
     above_half_html = render_html_document(view_model, configuration)
     above_half_card_start = above_half_html.index(f'data-publication-race-id="{target.id}"')
     above_half_card_end = above_half_html.index("</article>", above_half_card_start)
@@ -786,11 +787,11 @@ def test_round4_card_anatomy_and_data_ink_cleanup(tmp_path: Path) -> None:
         card_html = html[card_start:card_end]
         full_caption = (
             f'<p class="support-line support-full" data-display-role="support"'
-            f">{_screen_support_summary(race)}</p>"
+            f">{screen_support_summary(race)}</p>"
         )
         compact_caption = (
             f'<p class="support-line support-compact" data-display-role="support"'
-            f">{_screen_support_summary_compact(race)}</p>"
+            f">{screen_support_summary_compact(race)}</p>"
         )
         assert full_caption in card_html
         assert compact_caption in card_html
@@ -1309,7 +1310,7 @@ def test_responsive_tablet_layout_renders(tmp_path: Path) -> None:
         encoding="utf-8",
     )
 
-    _render_screenshot(
+    render_screenshot(
         html_path,
         tmp_path / "tablet.png",
         find_chrome(),
@@ -1906,7 +1907,7 @@ def test_a_comparison_only_candidate_gets_no_section_at_all() -> None:
         group.candidate_id
         for section in view_model.sections
         for race in section.races
-        for group in _candidate_endorsement_groups(race)
+        for group in candidate_endorsement_groups(race)
     }
     endorsed_candidate_ids = {
         group.candidate_id
@@ -1968,7 +1969,7 @@ def _evaluate_in_chrome(
 ) -> dict[str, Any]:
     """Load one local file in headless Chrome and return one JSON object result.
 
-    A minimal harness for the personalization flow: unlike _render_screenshot's
+    A minimal harness for the personalization flow: unlike render_screenshot's
     responsive-interaction probe, this only needs one page load and one script
     evaluation, so it does not share that function's screenshot-capture
     machinery. Pass mobile_width to emulate a narrow CSS viewport first, or

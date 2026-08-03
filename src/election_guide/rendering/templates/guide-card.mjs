@@ -19,7 +19,7 @@
 //
 // Pure in the guard's sense and in the useful sense: view model in, template
 // out. Every string it renders comes from `guide-format.mjs`, which mirrors
-// `rendering/renderer.py` and is tested against it.
+// `rendering/context.py` and is tested against it.
 
 import { html, nothing } from 'lit-html';
 

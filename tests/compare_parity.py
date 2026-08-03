@@ -23,7 +23,7 @@ from pathlib import Path
 
 from election_guide.publication.comparisons import ComparisonsPolicy
 from election_guide.publication.models import PublicationViewModel
-from election_guide.rendering.renderer import render_comparison_document
+from election_guide.rendering.documents import render_comparison_document
 from tests.page_parity import PUBLIC_SITE_URL, strip_for_parity
 from tests.test_comparisons import _bundle  # pyright: ignore[reportPrivateUsage]
 
