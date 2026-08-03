@@ -778,6 +778,14 @@ def test_the_no_majority_pill_sits_under_the_name_and_displaces_nothing(
             meterTopsWithName: Math.abs(meterBox.top - nameBox.top) <= 1,
             pillLeftWithName: pillBox === null
               || Math.abs(pillBox.left - nameBox.left) <= 1,
+            // Its left edge alone survives a stretch, so measure the box against
+            // its own text: deleting `justify-self` widens the pill to its whole
+            // column while every edge assertion still passes.
+            pillHugsText: pillBox === null || (() => {
+              const text = document.createRange();
+              text.selectNodeContents(pill);
+              return pillBox.width - text.getBoundingClientRect().width < 40;
+            })(),
             // Beside the caption in two columns, or after it in one — never
             // between the meter and the caption it belongs to.
             pillBesideCaption: pillBox === null
@@ -811,6 +819,7 @@ def test_the_no_majority_pill_sits_under_the_name_and_displaces_nothing(
 
     assert all(card["meterTopsWithName"] for card in full)
     assert all(card["pillLeftWithName"] for card in full)
+    assert all(card["pillHugsText"] for card in full)
     assert all(card["captionFlush"] for card in full)
     # Two columns in full view, so the pill sits beside the caption rather than
     # anywhere that could displace it.
@@ -842,11 +851,13 @@ def test_the_support_caption_stays_on_one_line_beside_the_name(tmp_path: Path) -
     """The caption shares the meter's column, and the column is sized to hold it.
 
     The caption runs wider than the meter, so its track carries `max-content`.
-    Both alternatives are reachable and both are caught here: a fixed track wraps
-    the caption — `oneLine` — and a fixed track pinned with `white-space: nowrap`
-    pushes the page wider than its viewport — `pageOverflow`. `allHugText` catches
-    the third case, where the track goes away entirely and the caption falls into
-    an implicit track that absorbs the row's free space.
+    Three arrangements were tried and rejected, and each fails a named assertion
+    here: a fixed track wraps the caption (`oneLine`, and `allHugText` with it); a
+    fixed track pinned with `white-space: nowrap` leaves the box narrower than its
+    own text (`allHugText`); and no track at all drops the caption into an implicit
+    one that absorbs the row's free space (`allHugText` again). `pageOverflow` is
+    not one of those guards — no arrangement in this design's decision space makes
+    the page wider than its viewport — it is the general no-overflow check.
 
     Nothing here asserts the caption clears the name. It cannot reach it: the two
     live in different rows of `.race-card-primary`, separated by that grid's gap,
@@ -911,14 +922,14 @@ def test_the_support_caption_stays_on_one_line_beside_the_name(tmp_path: Path) -
 
     screen = _evaluate_in_chrome(html_path, expression)
     phone = _evaluate_in_chrome(html_path, expression, mobile_width=320)
-    # Inside the 480-720px band, where the track narrows: the widths at which
-    # the sizing decides whether the caption wraps, and where a caption that
-    # overhangs its track lands on the name's last line. One width carries both,
-    # and every Chrome launch here is a real cost to the suite.
-    band = _evaluate_in_chrome(html_path, expression, mobile_width=560)
+    # No band width here. The caption's own track is 185.77px at every screen
+    # width, so 560px measured exactly what the default already does — the two
+    # editions failed together under every control and separately under none —
+    # and each Chrome launch is a real cost to a suite that already flakes under
+    # load. 320px and print stay because each fails where the others pass.
     printed = _evaluate_in_chrome(html_path, expression, mobile_width=768, media="print")
 
-    for edition in (screen, phone, band, printed):
+    for edition in (screen, phone, printed):
         assert edition["measured"] > 0
         assert edition["oneLine"] is True
         assert edition["allInsideCard"] is True
@@ -927,7 +938,7 @@ def test_the_support_caption_stays_on_one_line_beside_the_name(tmp_path: Path) -
     # Only where the card is two columns: the caption's track is its own width,
     # so the box hugs the text. Below 480px the card is one column and the
     # caption spans it, which is the point of that layout, not a defect.
-    for edition in (screen, band, printed):
+    for edition in (screen, printed):
         assert edition["allHugText"] is True
     assert phone["allHugText"] is False
 

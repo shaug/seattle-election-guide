@@ -46,17 +46,20 @@
 .screen-meter.meter-low-fill strong, .race-detail-meter.meter-low-fill strong { padding-left: calc(var(--meter-fill) + .4rem); color: var(--muted); }
 /* The card's second row, in the same shape as the first: pill under the name,
    caption under the meter. This is the track that has to grow. Against a fixed
-   track the caption wraps — it does, at 480-720px where the meter narrows to
-   8.75rem, and at the wide default too — and pinning it to one line instead
-   (`white-space: nowrap`, the first attempt here) trades the wrap for a page
-   wider than the viewport. `max-content` takes neither: the track is exactly
-   the caption, the row above keeps its own fixed meter track, and both rows
-   stay flush against the card's right edge.
-   No floor under it. At the two breakpoints where the card has two columns the
-   widest caption a reader can get (185.77px — the client's "Based on N of M
-   selected sources") is wider than the meter, so a floor could only restate
-   what the content already demands; in print and compact, where the meter is
-   wider, a floor would make the caption's box stop hugging its text.
+   track the caption wraps — measured at the wide default and across 480-720px —
+   and pinning it to one line instead (`white-space: nowrap`, the first attempt
+   here) trades the wrap for a box narrower than its own text, which then
+   overhangs leftward inside the card. `max-content` takes neither: the track is
+   exactly the caption, the row above keeps its own fixed meter track, and both
+   rows stay flush against the card's right edge. Both alternatives are caught
+   by the same assertion, `allHugText`, since both stop the box matching its
+   text.
+   No floor under it. The widest caption a reader can get is 185.77px — the
+   client's "Based on N of M selected sources" — so at the screen breakpoints a
+   floor could only restate what the content already demands, and in print it
+   would actively break: an 11rem floor (176px) against an 8pt caption of
+   171.91px stops the box hugging its text. Compact replaces this track outright
+   (below), so a floor here could not reach it either way.
    `align-items: start` keeps the caption's own height when a taller pill
    appears beside it. */
 .screen-race-context { display: grid; grid-template-columns: minmax(0, 1fr) max-content; align-items: start; min-width: 0; }
