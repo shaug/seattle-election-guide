@@ -107,24 +107,21 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       # One comment per pull request, rewritten in place, so a long-running
-      # branch does not accumulate a link per push.
+      # branch does not accumulate a link per push. `--edit-last` targets this
+      # workflow's own previous comment, which is unambiguous because nothing
+      # else comments here as the Actions bot.
       - name: Comment the preview link
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PREVIEW_URL: ${{ steps.deploy.outputs.url }}
         run: |
-          printf '<!-- pages-preview -->\n**Preview:** %s\n\nBuilt from `%s`. Every non-canonical host is `noindex`, so this copy cannot appear in search results. Removing the `deploy preview` label stops future deployments; closing this pull request tears this one down.\n' \
+          printf '**Preview:** %s\n\nBuilt from `%s`. Every non-canonical host is `noindex`, so this copy cannot appear in search results. Removing the `deploy preview` label stops future deployments; closing this pull request tears this one down.\n' \
             "$PREVIEW_URL" "$HEAD_SHA" > comment.md
-          existing="$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments?per_page=100" \
-            --jq 'map(select(.body | startswith("<!-- pages-preview -->"))) | .[0].id // empty')"
-          if [ -n "$existing" ]; then
-            gh api --method PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$existing" \
-              -F body=@comment.md >/dev/null
-          else
-            gh api --method POST "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments" \
-              -F body=@comment.md >/dev/null
-          fi
+          gh pr comment "$PR_NUMBER" \
+            --body-file comment.md \
+            --edit-last \
+            --create-if-none
 
   teardown:
     name: Remove PR preview
