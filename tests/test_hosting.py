@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-import re
 import shutil
 import subprocess
 from pathlib import Path
@@ -1348,9 +1347,21 @@ def test_pr_preview_workflow_is_label_gated_fork_safe_and_head_bound() -> None:
         for step in teardown["steps"]
         if step.get("name") == "Delete this pull request's preview deployments"
     )
+    # The checkout is pinned to the base branch: a bare checkout resolves
+    # refs/pull/<number>/merge, which GitHub retires exactly when this job runs.
+    teardown_checkout = next(
+        step for step in teardown["steps"] if step.get("uses", "").startswith("actions/checkout")
+    )
+    assert teardown_checkout.get("with", {}).get("ref") == (
+        "${{ github.event.pull_request.base.ref }}"
+    )
     assert "wrangler pages deployment list" in delete_step["run"]
     assert "wrangler pages deployment delete" in delete_step["run"]
-    _assert_teardown_selects_only_this_pull_request(delete_step["run"])
+    # Wrangler 4.113.0 does not print the Cloudflare API objects: it maps each
+    # one to {Id, Environment, Branch, Source, Deployment, Status, Build} first.
+    # Selecting on the raw API field names matches nothing, deletes nothing, and
+    # still exits 0, so the exact field names are the contract here.
+    assert "'.[] | select(.Branch == $branch) | .Id'" in delete_step["run"]
 
     # Production keeps its own call site untouched: the script still defaults to
     # main, so `pages:deploy` with no PAGES_BRANCH is byte-identical to before.
@@ -1368,48 +1379,6 @@ def test_pr_preview_workflow_is_label_gated_fork_safe_and_head_bound() -> None:
     )
     assert "PAGES_BRANCH" not in json.dumps(production_deploy)
     assert "--branch" not in production_deploy["run"]
-
-
-def _assert_teardown_selects_only_this_pull_request(run_block: str) -> None:
-    """Run the workflow's own jq filter over Wrangler's real output shape.
-
-    `wrangler pages deployment list --json` does not print the Cloudflare API
-    objects. Wrangler 4.113.0 maps each one to
-    ``{Id, Environment, Branch, Source, Deployment, Status, Build}`` first, so a
-    filter written against the raw API field names selects nothing, deletes
-    nothing, and still exits 0. Asserting the command names appears in the step
-    cannot catch that, so this executes the shipped filter instead.
-    """
-    programs = re.findall(r"'([^']*select\([^']*)'", run_block)
-    assert len(programs) == 1, f"expected one jq selection program, found {programs}"
-    deployments = [
-        {
-            "Id": "11111111-aaaa-4aaa-8aaa-111111111111",
-            "Environment": "Preview",
-            "Branch": "pr-42",
-            "Source": "0123456",
-            "Deployment": "https://11111111.seattle-elections.pages.dev",
-            "Status": "Success",
-            "Build": "https://dash.cloudflare.com/acct/pages/view/seattle-elections/1111",
-        },
-        {
-            "Id": "22222222-bbbb-4bbb-8bbb-222222222222",
-            "Environment": "Preview",
-            "Branch": "pr-7",
-            "Source": "89abcde",
-            "Deployment": "https://22222222.seattle-elections.pages.dev",
-            "Status": "Success",
-            "Build": "https://dash.cloudflare.com/acct/pages/view/seattle-elections/2222",
-        },
-    ]
-    selected = subprocess.run(
-        ["jq", "-r", "--arg", "branch", "pr-42", programs[0]],
-        input=json.dumps(deployments),
-        check=True,
-        capture_output=True,
-        text=True,
-    ).stdout.split()
-    assert selected == ["11111111-aaaa-4aaa-8aaa-111111111111"]
 
 
 def _run_worker(worker_path: Path, urls: list[str]) -> list[dict[str, object]]:

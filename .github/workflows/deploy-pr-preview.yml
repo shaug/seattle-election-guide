@@ -142,7 +142,14 @@ jobs:
     env:
       PREVIEW_BRANCH: pr-${{ github.event.pull_request.number }}
     steps:
+      # Pinned to the base branch on purpose. A bare checkout on a
+      # `pull_request` event resolves refs/pull/<number>/merge, and GitHub
+      # retires that ref when the pull request closes -- which is exactly when
+      # this job runs. All the job needs is the lockfile, so it reads it from a
+      # ref that still exists.
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
