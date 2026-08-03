@@ -219,11 +219,15 @@ def test_the_guide_and_the_sources_editor_still_share_what_they_both_render() ->
     """
     for page in ("guide", "sources"):
         stylesheet = re.sub(r"/\*.*?\*/", "", page_stylesheet(page), flags=re.S)
-        classes = _declared_classes(stylesheet)
-        assert {"lens-notice", "site-band"} <= classes, (
-            f"the {page} page lost the shared lens notice or band rules ({RULE})"
+        assert "lens-notice" in _declared_classes(stylesheet), (
+            f"the {page} page lost the shared lens notice rules; they belong to the part "
+            f"both pages read (rendering/stylesheets.py; {RULE})"
         )
-        assert re.search(r"@page\s*\{", stylesheet), (
-            f"the {page} page lost its @page margins, which it prints with; they belong to "
-            f"the part both pages read (rendering/stylesheets.py; {RULE})"
-        )
+        # Asserted as declarations, not as classes: `.site-band` itself is
+        # base.css's, which every entry reads, so class membership would hold
+        # even with this rule gone.
+        for declaration in (r"\.site-band nav\s*\{", r"@page\s*\{"):
+            assert re.search(declaration, stylesheet), (
+                f"the {page} page lost `{declaration}`, which it renders; it belongs to the "
+                f"part both pages read (rendering/stylesheets.py; {RULE})"
+            )
