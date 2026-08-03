@@ -47,10 +47,12 @@ Four limits are deliberate, and are the reason the fixtures rather than this
 scan carry the correctness claim:
 
 - Symbol matching is restricted to multiword names (``snake_case`` with an
-  underscore, ``camelCase`` with an internal capital). ``text`` and ``boot`` are
-  defined on both sides and mean nothing to each other; a single word cannot
-  distinguish a reference from a coincidence. Single-word mirrors are left to
-  the text signal.
+  underscore, ``camelCase`` with an internal capital), and to functions and
+  classes rather than every binding. ``text`` and ``boot`` are defined on both
+  sides and mean nothing to each other; a single word cannot distinguish a
+  reference from a coincidence. Single-word and constant mirrors are left to the
+  text signal and to their own checks — ``CLIENT_PAYLOAD_SCHEMA_VERSION`` is
+  spelled on both sides and held by ``tests/test_client_payload_types.py``.
 - Symbol matching reads raw source, comments included, while text matching
   reads comment-stripped source. A comment claiming a mirror is the claim this
   rule distrusts, so it must reach the inventory; a comment quoting a label is

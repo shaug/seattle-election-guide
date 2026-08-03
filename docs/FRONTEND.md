@@ -344,7 +344,9 @@ check is a bug in the check — fix or amend it, never route around it.
   **The derivation is a floor, not a ceiling**, and four limits say why an entry
   may exist that no signal pins. Symbol matching is restricted to multiword
   names, because `text` and `boot` are defined on both sides and mean nothing to
-  each other. A mirror that shares no words with its counterpart is invisible to
+  each other, and to functions and classes rather than every binding — a
+  constant mirrored across the boundary is left to its own check, as
+  `CLIENT_PAYLOAD_SCHEMA_VERSION` is to `tests/test_client_payload_types.py`. A mirror that shares no words with its counterpart is invisible to
   both signals — the Comparisons fragment encoding is exactly that, and is on
   the inventory because a reviewer put it there — so arithmetic and encoding
   mirrors carry golden cases rather than evidence keys. Attribute text is
