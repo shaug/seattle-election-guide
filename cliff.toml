@@ -1,0 +1,85 @@
+# Changelog generation (issue 216, docs/SITE_OPERATIONS_PLAN.md O8).
+#
+# git-cliff renders history; it does not own versioning. That is why it is here:
+# this project's release versions are election-scoped (`2026-primary.2`), not
+# semver, so a generator that bumped versions itself would fight docs/RELEASE.md.
+#
+# The output is committed and CI regenerates it and compares bytes, so every
+# setting below has to be a pure function of git history. Nothing may depend on
+# the wall clock, the checkout path, or which machine runs it.
+
+[changelog]
+header = """
+# Changelog
+
+Site and code changes, generated from commit history by
+[git-cliff](https://git-cliff.org). Do not edit by hand: CI regenerates this
+file and fails when the result differs from what is committed.
+
+This is not the record of what the guide *said*. Endorsement data, source
+coverage, and the audit trail for one published election live in that release's
+own `RELEASE_NOTES.md`, inside its bundle and attached to its GitHub Release.
+This file covers the software that renders and ships those bundles.
+"""
+
+# Only tagged releases are rendered. An "unreleased" section would make the byte
+# comparison below unsatisfiable: it would contain the very commit that carries
+# the regenerated file, so committing it would change what the next regeneration
+# produces. It would also break on every pull request, because CI checks out an
+# ephemeral `refs/pull/N/merge` commit that no author can predict, and again at
+# squash-merge, which appends a `(#N)` suffix the branch never saw.
+#
+# Rendering only tagged history makes the file a pure function of releases: the
+# commit that regenerates it sits after the newest tag and contributes nothing.
+body = """
+{% if version %}\
+## {{ version }} — {{ timestamp | date(format="%Y-%m-%d") }}
+{% for group, commits in commits | group_by(attribute="group") %}
+### {{ group }}
+{% for commit in commits | sort(attribute="message") %}
+- {{ commit.message | split(pat="\n") | first | upper_first | trim }}\
+{% endfor %}
+{% endfor %}
+{% endif %}\
+"""
+
+trim = false
+footer = ""
+postprocessors = [
+  # The per-release body ends with a separator blank line, which the last
+  # release does not need; leave exactly one trailing newline.
+  { pattern = "\n+$", replace = "\n" },
+]
+
+[git]
+conventional_commits = true
+# The convention was adopted partway through: 44 earlier commits predate it, and
+# they are real work (the comparison grid, the shell-grammar rollout). Dropping
+# them would silently omit a third of the project's history, so they are kept and
+# fall through to "Other" below.
+filter_unconventional = false
+split_commits = false
+protect_breaking_commits = false
+filter_commits = false
+
+# Election-scoped release tags, not semver. This also excludes `archive/*` tags,
+# which mark abandoned branches rather than releases.
+tag_pattern = "[0-9]{4}-[a-z]+\\.[0-9]+"
+
+# Ordered: the first matching parser wins.
+commit_parsers = [
+  { message = "^feat", group = "Added" },
+  { message = "^fix", group = "Fixed" },
+  { message = "^perf", group = "Performance" },
+  { message = "^refactor", group = "Changed" },
+  { message = "^docs", group = "Documentation" },
+  { message = "^test", group = "Tests" },
+  { message = "^(build|ci|chore)", group = "Tooling" },
+  { message = "^revert", group = "Reverted" },
+  { message = ".*", group = "Other" },
+]
+
+# Sort by version topology rather than by date, so a rebase that rewrites commit
+# timestamps cannot reorder the rendered history.
+topo_order = true
+sort_commits = "oldest"

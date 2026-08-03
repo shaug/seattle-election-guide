@@ -100,6 +100,20 @@ gh release create 2026-primary.2 \
 After upload, download the asset into a temporary directory, compare its SHA-256 with the local
 archive, and confirm the release tag targets the recorded mainline commit.
 
+## Changelog
+
+`CHANGELOG.md` records tagged releases, so it changes once per release rather than once per pull
+request. The new tag has to exist first — that is what moves its commits out of untagged history and
+into a section. Once the release above is published, regenerate and commit the result:
+
+```bash
+npm run changelog
+```
+
+`make check` regenerates the file and compares bytes, so a stale copy fails the build. Never edit it
+by hand. It covers the software that renders and ships bundles; what the guide *said* for one
+election is in that bundle's own `RELEASE_NOTES.md`.
+
 ## Website publication
 
 The validated HTML is also resolved through the repository-owned site manifest and staged
