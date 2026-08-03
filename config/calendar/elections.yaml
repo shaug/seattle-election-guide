@@ -1,0 +1,380 @@
+# Declared election cadence and the work each election implies.
+#
+# Every milestone is an offset in days from its election's date; nothing here
+# carries a display string, banner semantics, or copy. See
+# docs/ELECTION_CALENDAR.md for how the offsets are chosen and how to add an
+# election, and validate any edit with:
+#
+#   uv run election-guide calendar validate config/calendar/elections.yaml
+schema_version: "1.0"
+
+elections:
+  - id: wa-2026-general
+    election_type: general
+    election_scope: mixed
+    election_date: 2026-11-03
+    state: WA
+  - id: wa-2027-february-special
+    election_type: special
+    election_scope: municipal
+    election_date: 2027-02-09
+    state: WA
+  - id: wa-2027-april-special
+    election_type: special
+    election_scope: municipal
+    election_date: 2027-04-27
+    state: WA
+  - id: wa-2027-primary
+    election_type: primary
+    election_scope: municipal
+    election_date: 2027-08-03
+    state: WA
+  - id: wa-2027-general
+    election_type: general
+    election_scope: municipal
+    election_date: 2027-11-02
+    state: WA
+
+milestones:
+  # 2026 November general. The field is settled by the August primary, so the
+  # front half anchors to that certification rather than to filing week.
+  - election_id: wa-2026-general
+    id: initialize-election
+    kind: initialize_election
+    offset_days: -75
+    workflow: election init
+    reference: docs/ELECTION_INITIALIZATION.md
+  - election_id: wa-2026-general
+    id: official-inventory-import
+    kind: official_inventory_import
+    offset_days: -70
+    workflow: inventory import-initialized
+    reference: docs/BALLOT_INVENTORY.md
+  - election_id: wa-2026-general
+    id: source-panel-freeze
+    kind: source_panel_freeze
+    offset_days: -60
+    workflow: sources snapshot
+    reference: SOURCE_POLICY.md
+  - election_id: wa-2026-general
+    id: collection-opens
+    kind: collection_opens
+    offset_days: -56
+    workflow: collect refresh
+    reference: docs/COLLECTION.md
+  - election_id: wa-2026-general
+    id: ballots-mail
+    kind: ballots_mail
+    offset_days: -18
+  - election_id: wa-2026-general
+    id: guide-publishes
+    kind: guide_publishes
+    offset_days: -18
+    workflow: release build
+    reference: docs/RELEASE.md
+  - election_id: wa-2026-general
+    id: refresh-mid-ballot
+    kind: refresh
+    offset_days: -11
+    workflow: collect refresh
+    reference: docs/COLLECTION.md
+  - election_id: wa-2026-general
+    id: refresh-final
+    kind: refresh
+    offset_days: -4
+    workflow: collect refresh
+    reference: docs/COLLECTION.md
+  - election_id: wa-2026-general
+    id: election-day
+    kind: election_day
+    offset_days: 0
+  - election_id: wa-2026-general
+    id: results-capture-election-night
+    kind: results_capture_election_night
+    offset_days: 0
+    workflow: evidence capture
+    reference: docs/EVIDENCE_CAPTURE.md
+  - election_id: wa-2026-general
+    id: certification
+    kind: certification
+    offset_days: 21
+  - election_id: wa-2026-general
+    id: results-capture-post-certification
+    kind: results_capture_post_certification
+    offset_days: 22
+    workflow: evidence capture
+    reference: docs/EVIDENCE_CAPTURE.md
+  - election_id: wa-2026-general
+    id: retrospective
+    kind: retrospective
+    offset_days: 30
+
+  # 2027 February special. Specials carry measures placed by resolution, so
+  # there is no filing week and the runway is shorter.
+  - election_id: wa-2027-february-special
+    id: initialize-election
+    kind: initialize_election
+    offset_days: -60
+    workflow: election init
+    reference: docs/ELECTION_INITIALIZATION.md
+  - election_id: wa-2027-february-special
+    id: official-inventory-import
+    kind: official_inventory_import
+    offset_days: -45
+    workflow: inventory import-initialized
+    reference: docs/BALLOT_INVENTORY.md
+  - election_id: wa-2027-february-special
+    id: source-panel-freeze
+    kind: source_panel_freeze
+    offset_days: -30
+    workflow: sources snapshot
+    reference: SOURCE_POLICY.md
+  - election_id: wa-2027-february-special
+    id: collection-opens
+    kind: collection_opens
+    offset_days: -28
+    workflow: collect refresh
+    reference: docs/COLLECTION.md
+  - election_id: wa-2027-february-special
+    id: ballots-mail
+    kind: ballots_mail
+    offset_days: -18
+  - election_id: wa-2027-february-special
+    id: guide-publishes
+    kind: guide_publishes
+    offset_days: -18
+    workflow: release build
+    reference: docs/RELEASE.md
+  - election_id: wa-2027-february-special
+    id: refresh-final
+    kind: refresh
+    offset_days: -4
+    workflow: collect refresh
+    reference: docs/COLLECTION.md
+  - election_id: wa-2027-february-special
+    id: election-day
+    kind: election_day
+    offset_days: 0
+  - election_id: wa-2027-february-special
+    id: results-capture-election-night
+    kind: results_capture_election_night
+    offset_days: 0
+    workflow: evidence capture
+    reference: docs/EVIDENCE_CAPTURE.md
+  - election_id: wa-2027-february-special
+    id: certification
+    kind: certification
+    offset_days: 15
+  - election_id: wa-2027-february-special
+    id: results-capture-post-certification
+    kind: results_capture_post_certification
+    offset_days: 16
+    workflow: evidence capture
+    reference: docs/EVIDENCE_CAPTURE.md
+
+  # 2027 April special.
+  - election_id: wa-2027-april-special
+    id: initialize-election
+    kind: initialize_election
+    offset_days: -60
+    workflow: election init
+    reference: docs/ELECTION_INITIALIZATION.md
+  - election_id: wa-2027-april-special
+    id: official-inventory-import
+    kind: official_inventory_import
+    offset_days: -45
+    workflow: inventory import-initialized
+    reference: docs/BALLOT_INVENTORY.md
+  - election_id: wa-2027-april-special
+    id: source-panel-freeze
+    kind: source_panel_freeze
+    offset_days: -30
+    workflow: sources snapshot
+    reference: SOURCE_POLICY.md
+  - election_id: wa-2027-april-special
+    id: collection-opens
+    kind: collection_opens
+    offset_days: -28
+    workflow: collect refresh
+    reference: docs/COLLECTION.md
+  - election_id: wa-2027-april-special
+    id: ballots-mail
+    kind: ballots_mail
+    offset_days: -18
+  - election_id: wa-2027-april-special
+    id: guide-publishes
+    kind: guide_publishes
+    offset_days: -18
+    workflow: release build
+    reference: docs/RELEASE.md
+  - election_id: wa-2027-april-special
+    id: refresh-final
+    kind: refresh
+    offset_days: -4
+    workflow: collect refresh
+    reference: docs/COLLECTION.md
+  - election_id: wa-2027-april-special
+    id: election-day
+    kind: election_day
+    offset_days: 0
+  - election_id: wa-2027-april-special
+    id: results-capture-election-night
+    kind: results_capture_election_night
+    offset_days: 0
+    workflow: evidence capture
+    reference: docs/EVIDENCE_CAPTURE.md
+  - election_id: wa-2027-april-special
+    id: certification
+    kind: certification
+    offset_days: 15
+  - election_id: wa-2027-april-special
+    id: results-capture-post-certification
+    kind: results_capture_post_certification
+    offset_days: 16
+    workflow: evidence capture
+    reference: docs/EVIDENCE_CAPTURE.md
+
+  # 2027 August primary. The only election in the cycle with a filing week,
+  # which is what sets the field for the November general.
+  - election_id: wa-2027-primary
+    id: initialize-election
+    kind: initialize_election
+    offset_days: -120
+    workflow: election init
+    reference: docs/ELECTION_INITIALIZATION.md
+  - election_id: wa-2027-primary
+    id: filing-closes
+    kind: filing_closes
+    offset_days: -74
+  - election_id: wa-2027-primary
+    id: official-inventory-import
+    kind: official_inventory_import
+    offset_days: -66
+    workflow: inventory import-initialized
+    reference: docs/BALLOT_INVENTORY.md
+  - election_id: wa-2027-primary
+    id: source-panel-freeze
+    kind: source_panel_freeze
+    offset_days: -45
+    workflow: sources snapshot
+    reference: SOURCE_POLICY.md
+  - election_id: wa-2027-primary
+    id: collection-opens
+    kind: collection_opens
+    offset_days: -42
+    workflow: collect refresh
+    reference: docs/COLLECTION.md
+  - election_id: wa-2027-primary
+    id: ballots-mail
+    kind: ballots_mail
+    offset_days: -18
+  - election_id: wa-2027-primary
+    id: guide-publishes
+    kind: guide_publishes
+    offset_days: -18
+    workflow: release build
+    reference: docs/RELEASE.md
+  - election_id: wa-2027-primary
+    id: refresh-mid-ballot
+    kind: refresh
+    offset_days: -11
+    workflow: collect refresh
+    reference: docs/COLLECTION.md
+  - election_id: wa-2027-primary
+    id: refresh-final
+    kind: refresh
+    offset_days: -4
+    workflow: collect refresh
+    reference: docs/COLLECTION.md
+  - election_id: wa-2027-primary
+    id: election-day
+    kind: election_day
+    offset_days: 0
+  - election_id: wa-2027-primary
+    id: results-capture-election-night
+    kind: results_capture_election_night
+    offset_days: 0
+    workflow: evidence capture
+    reference: docs/EVIDENCE_CAPTURE.md
+  - election_id: wa-2027-primary
+    id: certification
+    kind: certification
+    offset_days: 15
+  - election_id: wa-2027-primary
+    id: results-capture-post-certification
+    kind: results_capture_post_certification
+    offset_days: 16
+    workflow: evidence capture
+    reference: docs/EVIDENCE_CAPTURE.md
+
+  # 2027 November general, anchored to the August primary's certification.
+  - election_id: wa-2027-general
+    id: initialize-election
+    kind: initialize_election
+    offset_days: -75
+    workflow: election init
+    reference: docs/ELECTION_INITIALIZATION.md
+  - election_id: wa-2027-general
+    id: official-inventory-import
+    kind: official_inventory_import
+    offset_days: -70
+    workflow: inventory import-initialized
+    reference: docs/BALLOT_INVENTORY.md
+  - election_id: wa-2027-general
+    id: source-panel-freeze
+    kind: source_panel_freeze
+    offset_days: -60
+    workflow: sources snapshot
+    reference: SOURCE_POLICY.md
+  - election_id: wa-2027-general
+    id: collection-opens
+    kind: collection_opens
+    offset_days: -56
+    workflow: collect refresh
+    reference: docs/COLLECTION.md
+  - election_id: wa-2027-general
+    id: ballots-mail
+    kind: ballots_mail
+    offset_days: -18
+  - election_id: wa-2027-general
+    id: guide-publishes
+    kind: guide_publishes
+    offset_days: -18
+    workflow: release build
+    reference: docs/RELEASE.md
+  - election_id: wa-2027-general
+    id: refresh-mid-ballot
+    kind: refresh
+    offset_days: -11
+    workflow: collect refresh
+    reference: docs/COLLECTION.md
+  - election_id: wa-2027-general
+    id: refresh-final
+    kind: refresh
+    offset_days: -4
+    workflow: collect refresh
+    reference: docs/COLLECTION.md
+  - election_id: wa-2027-general
+    id: election-day
+    kind: election_day
+    offset_days: 0
+  - election_id: wa-2027-general
+    id: results-capture-election-night
+    kind: results_capture_election_night
+    offset_days: 0
+    workflow: evidence capture
+    reference: docs/EVIDENCE_CAPTURE.md
+  - election_id: wa-2027-general
+    id: certification
+    kind: certification
+    offset_days: 21
+  - election_id: wa-2027-general
+    id: results-capture-post-certification
+    kind: results_capture_post_certification
+    offset_days: 22
+    workflow: evidence capture
+    reference: docs/EVIDENCE_CAPTURE.md
+  - election_id: wa-2027-general
+    id: retrospective
+    kind: retrospective
+    offset_days: 30

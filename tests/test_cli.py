@@ -24,6 +24,7 @@ def test_help_lists_foundational_commands() -> None:
     result = runner.invoke(app, ["--help"])
 
     assert result.exit_code == 0
+    assert "calendar" in result.stdout
     assert "doctor" in result.stdout
     assert "election" in result.stdout
     assert "collect" in result.stdout

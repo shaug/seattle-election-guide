@@ -16,6 +16,7 @@ check:
 	uv run pytest
 	uv run election-guide inventory validate data/normalized/wa-2026-primary-inventory.json
 	uv run election-guide sources validate config/sources/default.yaml
+	uv run election-guide calendar validate config/calendar/elections.yaml
 	uv run election-guide release verify data/releases/wa-2026-primary/source-decisions.yaml
 	$(MAKE) check-js
 

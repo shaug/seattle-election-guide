@@ -27,6 +27,8 @@ bare domain temporarily redirects to the explicitly declared current election. A
 language for voters, with reciprocal navigation to and from every guide.
 See [PROJECT.md](PROJECT.md) for the
 product specification, [DECISIONS.md](DECISIONS.md) for the launch contract,
+[docs/ELECTION_CALENDAR.md](docs/ELECTION_CALENDAR.md) for the declared election cadence and the
+milestones it schedules,
 [docs/ELECTION_INITIALIZATION.md](docs/ELECTION_INITIALIZATION.md) for starting future elections,
 [docs/BALLOT_INVENTORY.md](docs/BALLOT_INVENTORY.md) for inventory scope and reproduction,
 [docs/SOURCE_DISCOVERY.md](docs/SOURCE_DISCOVERY.md) for the source panel,
