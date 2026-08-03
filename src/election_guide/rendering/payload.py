@@ -31,7 +31,7 @@ from pydantic import BaseModel, ConfigDict, RootModel
 from pydantic.json_schema import GenerateJsonSchema
 
 from election_guide.publication.comparisons import ComparisonsContract
-from election_guide.publication.models import PublicationViewModel
+from election_guide.publication.models import PublicationSource, PublicationViewModel
 from election_guide.publication.personalization import PersonalizationContract
 from election_guide.rendering.bundler import (
     EXACT_VERSION,
@@ -97,6 +97,35 @@ class LensSource(ClientPayloadModel):
     name: str
     panel_role: Literal["consensus", "comparison"]
     selectable: bool
+
+
+class SourcesTreeSource(ClientPayloadModel):
+    """One selectable source's row on the sources page.
+
+    Everything the row renders, so the client can render it. `participation`
+    and `also_in` are carried rather than recomputed on the client:
+    docs/FRONTEND.md's Cross-language mirrors section prefers carrying a
+    computed value to maintaining a second implementation of the grammar that
+    computes it.
+    """
+
+    code: str
+    name: str
+    evidence_url: str
+    participation: str
+    """The row's endorsement count, phrased as `source_participation_label`
+    writes it."""
+    also_in: list[str]
+    """The labels of every other category this source is selectable under, in
+    the order the audited page tags them."""
+
+
+class SourcesTreeCategory(ClientPayloadModel):
+    """One selectable category on the sources page, with its rows."""
+
+    code: str
+    label: str
+    sources: list[SourcesTreeSource]
 
 
 class RaceCandidateDisplay(ClientPayloadModel):
@@ -180,6 +209,13 @@ class SourcesPayload(LensPayload):
 
     guide_path: str
     """Where Save, Cancel, and Reset return the reader."""
+    tree: list[SourcesTreeCategory]
+    """The selectable tree the page renders, category by category, in rendered
+    order. Issue #248 gave that tree to lit-html, and a client that renders
+    markup needs every value the markup carries (docs/FRONTEND.md, The data
+    contract). The comparison-only section and the coverage-gap section are not
+    here: neither carries any selection state, so both stay exactly as the
+    server rendered them."""
 
 
 class ComparisonsPayload(ClientPayloadModel):
@@ -308,6 +344,70 @@ def guide_payload(
     )
 
 
+def source_participation_label(source: PublicationSource) -> str:
+    """One source's endorsement count, as the sources page phrases it.
+
+    Issue 129/H35's count grammar, defined once so the Jinja template that
+    renders the audited row and the payload the client re-renders it from
+    cannot spell the same count two ways.
+    """
+    noun = "pick" if source.panel_role == "comparison" else "endorsement"
+    if source.endorsement_count != 1:
+        noun += "s"
+    split = f" · {source.split_endorsement_count} split" if source.split_endorsement_count else ""
+    return f"{source.endorsement_count} {noun}{split}"
+
+
+def _sources_tree(view_model: PublicationViewModel) -> list[SourcesTreeCategory]:
+    """The selectable tree the sources page renders.
+
+    Empty while the release policy disables the lens, because the template
+    renders no checkbox at all then — a source is a plain link, and a category
+    heading is plain text. Publishing a tree anyway would invite the client to
+    render controls the policy withheld (issues 80/81).
+
+    Otherwise the same three filters the template applies, in the same order:
+    selectable non-comparison categories, and within each one the members that
+    actually contribute (issue 107's "contributing" filter — a source with no
+    endorsements this cycle has nothing a checkbox could toggle into a score,
+    and appears in the coverage-gaps section instead).
+    """
+    if not view_model.personalization.policy.enabled:
+        return []
+    source_by_id = {source.id: source for source in view_model.sources}
+    personalization_source_by_code = {
+        source.code: source for source in view_model.personalization.sources
+    }
+    category_label_by_id = {
+        category.id: category.label for category in view_model.personalization.categories
+    }
+    tree: list[SourcesTreeCategory] = []
+    for category in view_model.personalization.categories:
+        if not category.selectable or category.panel_role == "comparison":
+            continue
+        sources: list[SourcesTreeSource] = []
+        for member_code in category.member_source_codes:
+            personalization_source = personalization_source_by_code[member_code]
+            published = source_by_id[personalization_source.id]
+            if published.contribution_status != "contributing":
+                continue
+            sources.append(
+                SourcesTreeSource(
+                    code=member_code,
+                    name=published.name,
+                    evidence_url=published.evidence_url,
+                    participation=source_participation_label(published),
+                    also_in=[
+                        category_label_by_id[other_id]
+                        for other_id in personalization_source.selection_category_ids
+                        if other_id != category.id
+                    ],
+                )
+            )
+        tree.append(SourcesTreeCategory(code=category.code, label=category.label, sources=sources))
+    return tree
+
+
 def sources_payload(view_model: PublicationViewModel, *, guide_path: str) -> SourcesPayload:
     """Build the sources editor's payload.
 
@@ -315,7 +415,9 @@ def sources_payload(view_model: PublicationViewModel, *, guide_path: str) -> Sou
     and regardless of contribution status: this page renders the whole tree.
     """
     return SourcesPayload(
-        **_lens_fields(view_model, contributing_only=False), guide_path=guide_path
+        **_lens_fields(view_model, contributing_only=False),
+        guide_path=guide_path,
+        tree=_sources_tree(view_model),
     )
 
 

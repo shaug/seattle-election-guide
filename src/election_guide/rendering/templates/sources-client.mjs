@@ -5,7 +5,15 @@
 // selection through the shared fragment codec. Roughly half of what was inline
 // here was a hand-kept copy of the guide's own lens glue; that half is now
 // `lens-selection.mjs`, which both pages import, so the two cannot drift.
+//
+// Since issue #248 the selection itself is state here rather than checkbox
+// state read back out of the DOM: `sources-tree.mjs` renders the tree from a
+// set of counted codes, and every change event updates the set and re-renders.
+// That is the direction docs/FRONTEND.md's data contract requires — the DOM is
+// write-only projection — and it is what lets the tree's audited rendering be
+// diffed against the server's.
 
+import { html, render } from 'lit-html';
 import { createLensRouter } from './lens-route.mjs';
 import {
   raceTargetFrom,
@@ -14,6 +22,7 @@ import {
   selectionFragment,
 } from './lens-selection.mjs';
 import { decodeLensFragment, lensContext } from './lens-url.mjs';
+import { sourcesTreeTemplate } from './sources-tree.mjs';
 
 /** What a reader is told when the link they arrived on could not be read. */
 const UNREADABLE_LINK_NOTICE =
@@ -33,57 +42,38 @@ export function wireSourcesEditor(payload) {
     payload.categories.map((category) => [category.code, category.member_source_codes]),
   );
 
-  /** @type {Map<string, HTMLInputElement[]>} */
-  const sourceInputsByCode = new Map();
-  /** @type {NodeListOf<HTMLInputElement>} */
-  (document.querySelectorAll('[data-sources-source]')).forEach((input) => {
-    const code = /** @type {string} */ (input.dataset.sourcesSource);
-    if (!sourceInputsByCode.has(code)) sourceInputsByCode.set(code, []);
-    /** @type {HTMLInputElement[]} */ (sourceInputsByCode.get(code)).push(input);
-  });
-  /** @param {string} code */
-  const isCodeChecked = (code) => sourceInputsByCode.get(code)?.[0]?.checked ?? false;
+  const tree = /** @type {HTMLElement|null} */ (document.querySelector('[data-sources-tree]'));
+  // Issue 124: a comparison source renders no checkbox at all, and the payload's
+  // tree carries only the selectable categories, so every code below is a
+  // tallying one. Deduplicated, because a source selectable under two
+  // categories has a row under each and is still one source to count.
+  const tallyingCodes = [
+    ...new Set(payload.tree.flatMap((category) => category.sources.map((source) => source.code))),
+  ];
   /**
-   * @param {string} code
-   * @param {boolean} checked
+   * Which sources count. The audited default is every one of them, which is
+   * exactly what the server rendered.
+   *
+   * @type {Set<string>}
    */
-  const syncSourceCode = (code, checked) => {
-    for (const input of sourceInputsByCode.get(code) ?? []) input.checked = checked;
-  };
-  // Issue 124: a comparison source renders no checkbox at all, so every input
-  // this page has is a tallying one.
-  const tallyingCodes = [...sourceInputsByCode.keys()];
-  const checkedTallyingCodes = () => tallyingCodes.filter(isCodeChecked).sort();
+  const counted = new Set(tallyingCodes);
+  const checkedTallyingCodes = () => tallyingCodes.filter((code) => counted.has(code)).sort();
+  /**
+   * Whether there is a selection to render at all.
+   *
+   * A release with the lens switched off (issues 80/81) renders a deliberately
+   * non-interactive tree — a plain link per source, a plain category heading —
+   * and publishes no tree for this module to render. There is nothing to take
+   * over, and taking the region over anyway would put checkboxes on a page the
+   * policy withheld them from.
+   */
+  const selectable = payload.tree.length > 0;
+  /** Whether lit has replaced the server's markup with its own. One-way. */
+  let takenOver = false;
 
-  const categoryToggleInputs = /** @type {HTMLInputElement[]} */ ([
-    ...document.querySelectorAll('[data-sources-category-toggle]'),
-  ]);
-  /** @param {string} categoryCode */
-  const membersOfCategory = (categoryCode) =>
-    /** @type {HTMLInputElement[]} */ ([
-      ...document.querySelectorAll(
-        `[data-sources-source][data-sources-category-member="${categoryCode}"]`,
-      ),
-    ]);
-  const updateCategoryToggleStates = () => {
-    categoryToggleInputs.forEach((toggle) => {
-      const categoryCode = /** @type {string} */ (toggle.dataset.sourcesCategoryToggle);
-      const members = membersOfCategory(categoryCode);
-      const checkedCount = members.filter((member) => member.checked).length;
-      toggle.checked = checkedCount === members.length;
-      toggle.indeterminate = checkedCount > 0 && checkedCount < members.length;
-    });
-  };
-
-  const countLine = document.querySelector('[data-sources-count]');
-  // "Counting", not "Viewing": a checked source counts toward the computed
-  // results — nothing here is merely displayed (issue 115, item D17).
-  const updateCount = () => {
-    if (countLine) {
-      countLine.textContent = `Counting ${checkedTallyingCodes().length} of ${tallyingCodes.length} sources.`;
-    }
-  };
-
+  const countLine = /** @type {HTMLElement|null} */ (
+    document.querySelector('[data-sources-count]')
+  );
   const notice = /** @type {HTMLElement|null} */ (document.querySelector('[data-sources-notice]'));
   /** @param {string|null} text */
   const showNotice = (text) => {
@@ -96,9 +86,71 @@ export function wireSourcesEditor(payload) {
     document.querySelector('[data-sources-save]')
   );
 
-  const refreshSelectionUi = () => {
-    updateCategoryToggleStates();
-    updateCount();
+  /** @type {import('./sources-tree.mjs').SourcesTreeActions} */
+  const actions = {
+    onSource(code, checked) {
+      if (checked) counted.add(code);
+      else counted.delete(code);
+      renderPage();
+    },
+    onCategory(code, checked) {
+      const category = payload.tree.find((item) => item.code === code);
+      for (const source of category?.sources ?? []) {
+        if (checked) counted.add(source.code);
+        else counted.delete(source.code);
+      }
+      renderPage();
+    },
+  };
+
+  /** @returns {import('./sources-tree.mjs').SourceCategoryView[]} */
+  const treeView = () =>
+    payload.tree.map((category) => {
+      const countedMembers = category.sources.filter((source) => counted.has(source.code)).length;
+      return {
+        code: category.code,
+        label: category.label,
+        checked: countedMembers === category.sources.length,
+        indeterminate: countedMembers > 0 && countedMembers < category.sources.length,
+        rows: category.sources.map((source) => ({
+          code: source.code,
+          name: source.name,
+          evidenceUrl: source.evidence_url,
+          participation: source.participation,
+          alsoIn: source.also_in,
+          checked: counted.has(source.code),
+        })),
+      };
+    });
+
+  /**
+   * Everything one selection change implies: the tree, the count, and where
+   * Save carries the reader.
+   *
+   * "Counting", not "Viewing": a checked source counts toward the computed
+   * results — nothing here is merely displayed (issue 115, item D17).
+   */
+  const renderPage = () => {
+    if (selectable) {
+      if (!takenOver) {
+        // Takeover is one-way and explicit: the server's markup for both
+        // regions is dropped once, here, and lit owns them from now on
+        // (docs/FRONTEND.md § Rendering). Without this, lit would render its
+        // own copy after the server's rather than in place of it. It happens at
+        // boot because the tree is a field of controls: a takeover triggered by
+        // the reader's own click would destroy the checkbox they just pressed.
+        tree?.replaceChildren();
+        countLine?.replaceChildren();
+        takenOver = true;
+      }
+      if (tree) render(sourcesTreeTemplate(treeView(), actions), tree);
+      if (countLine) {
+        render(
+          html`Counting ${checkedTallyingCodes().length} of ${tallyingCodes.length} sources.`,
+          countLine,
+        );
+      }
+    }
     if (!saveLink) return;
     // Save carries the edited selection back to the guide, matching the guide's
     // own Sources link: the audited default (every tallying source checked)
@@ -119,20 +171,20 @@ export function wireSourcesEditor(payload) {
   };
 
   /**
-   * Apply a decoded selection to every checkbox: a category code expands to its
-   * current member codes, unioned with any directly named source codes.
-   * Anything else stays unchecked. Shared with the guide.
+   * Apply a decoded selection: a category code expands to its current member
+   * codes, unioned with any directly named source codes. Anything else stops
+   * counting. Shared with the guide.
    *
    * @param {import('./lens-url.mjs').LensState|null} selection
    */
   const applySelection = (selection) => {
     const effective = new Set(
-      resolveSelectedCodes(selection, memberCodesByCategoryCode, [...sourceInputsByCode.keys()]),
+      resolveSelectedCodes(selection, memberCodesByCategoryCode, tallyingCodes),
     );
-    for (const code of sourceInputsByCode.keys()) {
-      syncSourceCode(code, effective.has(code));
+    counted.clear();
+    for (const code of tallyingCodes) {
+      if (effective.has(code)) counted.add(code);
     }
-    refreshSelectionUi();
   };
 
   // Read the incoming selection once, on load, and keep the raw fragment
@@ -143,36 +195,17 @@ export function wireSourcesEditor(payload) {
   const incomingRaceTarget = raceTargetFrom(incomingDecoded, usable ? incomingDecoded.state : null);
   if (usable) {
     applySelection(incomingDecoded.state);
-  } else {
+  } else if (
     // `absent` and `legacy` fragments carry no selection to apply, so the
-    // checkboxes stand as the server rendered them: every tallying source
-    // checked. A `malformed` one is a failure, and says so rather than looking
-    // like an ordinary default landing.
-    if (
-      incomingDecoded.status === 'malformed' &&
-      incomingDecoded.reason !== 'unrecognized_fragment'
-    ) {
-      showNotice(UNREADABLE_LINK_NOTICE);
-    }
-    refreshSelectionUi();
+    // audited default stands: every tallying source counted. A `malformed` one
+    // is a failure, and says so rather than looking like an ordinary default
+    // landing.
+    incomingDecoded.status === 'malformed' &&
+    incomingDecoded.reason !== 'unrecognized_fragment'
+  ) {
+    showNotice(UNREADABLE_LINK_NOTICE);
   }
-
-  /** @type {NodeListOf<HTMLInputElement>} */
-  (document.querySelectorAll('[data-sources-source]')).forEach((input) => {
-    input.addEventListener('change', () => {
-      syncSourceCode(/** @type {string} */ (input.dataset.sourcesSource), input.checked);
-      refreshSelectionUi();
-    });
-  });
-  categoryToggleInputs.forEach((toggle) => {
-    toggle.addEventListener('change', () => {
-      const categoryCode = /** @type {string} */ (toggle.dataset.sourcesCategoryToggle);
-      for (const member of membersOfCategory(categoryCode)) {
-        syncSourceCode(/** @type {string} */ (member.dataset.sourcesSource), toggle.checked);
-      }
-      refreshSelectionUi();
-    });
-  });
+  renderPage();
 
   // Cancel and Reset never depend on the edited selection, so their target is
   // fixed once, here, rather than recomputed on every change.

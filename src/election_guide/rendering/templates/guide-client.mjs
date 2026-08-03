@@ -1,7 +1,7 @@
 // The endorsements guide's page wiring: what used to be guide.html.j2's two
 // inline `<script>` blocks (issue #239).
 //
-// This module composes; the behavior lives in the four modules it calls. The
+// This module composes; the behavior lives in the modules it calls. The
 // composition order matters and is the order the two script blocks ran in
 // before the extraction: a classic `<script>` executes at parse time and a
 // `<script type="module">` is deferred, so the filters and the dialog were
@@ -14,10 +14,16 @@
 // different scripts depending on the release policy; the payload already says
 // which one applies (`personalization` is null when the lens is off), so the
 // branch is a runtime one now and the template carries no logic at all.
+//
+// What this module renders is the lens strip's text in the sticky header
+// (issue #248): the banner's live count and the notice below it. Both are
+// `aria-live` elements the server renders and lit renders *into*, never
+// replaces — see the note beside their lookup below.
 
+import { html, nothing, render } from 'lit-html';
 import { wireRaceDialogs } from './guide-dialog.mjs';
 import { wireGuideFilters } from './guide-filters.mjs';
-import { createGuideLens } from './guide-lens.mjs';
+import { createGuideLens, lensCountingSummary } from './guide-lens.mjs';
 import { migrateLensState } from './lens-migrate.mjs';
 import { createLensRouter } from './lens-route.mjs';
 import {
@@ -63,17 +69,23 @@ export function wireGuide(payload) {
   const panelSourceCodes = payload.sources.map((source) => source.code);
   const tallyingCodes = tallyingSourceCodes(payload.sources);
 
+  /**
+   * The lens strip's two announcing elements, which stay the server's.
+   *
+   * lit renders their text; it never renders the elements themselves. A live
+   * region announces a change only if it was already in the accessibility tree
+   * when the change happened, so an element lit created — even one render
+   * earlier, in the same task — would announce nothing, and every notice this
+   * page raises is a boot-time one. Keeping the parser's elements is what makes
+   * the announcement work, and it is the same shape the sources page's count
+   * line uses (docs/FRONTEND.md § Rendering).
+   */
+  const bannerStatus = /** @type {HTMLElement|null} */ (
+    document.querySelector('[data-lens-banner-status]')
+  );
   const lensNotice = /** @type {HTMLElement|null} */ (document.querySelector('[data-lens-notice]'));
-  const sourcesLinks = /** @type {HTMLAnchorElement[]} */ ([
-    ...document.querySelectorAll('[data-sources-link]'),
-  ]);
-
-  /** @param {string|null} text */
-  const showLensNotice = (text) => {
-    if (!lensNotice) return;
-    lensNotice.hidden = text === null;
-    lensNotice.textContent = text ?? '';
-  };
+  /** The server's own text, dropped once so lit can own these two text nodes. */
+  for (const region of [bannerStatus, lensNotice]) region?.replaceChildren();
 
   /**
    * Which sources currently count (issue 108): the guide has no interactive
@@ -85,6 +97,20 @@ export function wireGuide(payload) {
    * @type {string[]}
    */
   let selectedCodes = [...tallyingCodes];
+  /** A persistent explanation of how this load resolved its link, when warranted. */
+  /** @type {string|null} */
+  let notice = null;
+  /**
+   * The race the reader is on, as the live fragment resolves it.
+   *
+   * Held rather than recomputed: it changes only when the fragment does, and
+   * resolving it means decoding the fragment. The hashchange handler used to
+   * decode twice for one event — once to find this target and once to find the
+   * selection — which issue #239 moved here verbatim and left for #248.
+   *
+   * @type {string|null}
+   */
+  let raceTarget = null;
 
   /**
    * Resolve one decoded fragment to live lens state plus a persistent
@@ -140,30 +166,51 @@ export function wireGuide(payload) {
     return { state: null, notice: UNREADABLE_LINK_NOTICE, cleanAddress: true };
   };
 
-  /** The race the reader is currently on, as the live fragment resolves today. */
-  const currentRaceTarget = () => {
+  /** Decode the live fragment once, for both the selection and the race target. */
+  const readFragment = () => {
     const decoded = decodeLensFragment(router.fragment(), context);
-    return raceTargetFrom(decoded, resolve(decoded).state);
+    const outcome = resolve(decoded);
+    raceTarget = raceTargetFrom(decoded, outcome.state);
+    return outcome;
   };
 
   /**
-   * Point every Sources link at the page the reader would edit their selection
-   * on, carrying the selection they are looking at.
+   * Where the Sources link should carry the reader: the page they would edit
+   * their selection on, holding the selection they are looking at.
    *
    * A rejected encode — an oversized selection is the reachable case — used to
    * fall through to the bare guide path, so the reader followed a link that
    * silently dropped what they had chosen. It now says so
    * (docs/FRONTEND.md § State and URLs).
    */
-  const updateSourcesLinks = () => {
-    const raceTarget = currentRaceTarget();
+  const sourcesHref = () => {
     const result = selectionFragment({ selectedCodes, tallyingCodes, raceTarget, context });
-    if (result.status === 'rejected') showLensNotice(SELECTION_LINK_FAILURE_NOTICE);
+    if (result.status === 'rejected') notice = SELECTION_LINK_FAILURE_NOTICE;
     const fragment = result.status === 'ok' ? result.fragment : raceTarget ? `#${raceTarget}` : '';
-    const href = `${payload.sources_page_path}${fragment}`;
-    sourcesLinks.forEach((link) => {
+    return `${payload.sources_page_path}${fragment}`;
+  };
+
+  /**
+   * Render the lens strip's text, and point every Sources link at the selection
+   * the reader is looking at.
+   *
+   * Neither Sources link is lit's. The one in the strip and the one in the
+   * shell band (`shell.py` renders it on every page) are both server markup,
+   * and both take the same plain href assignment. The loop re-queries rather
+   * than caching, so a link the page gains later is not missed.
+   */
+  const renderChrome = () => {
+    const href = sourcesHref();
+    if (bannerStatus) render(html`${lensCountingSummary(payload, selectedCodes)}`, bannerStatus);
+    if (lensNotice) {
+      lensNotice.hidden = notice === null;
+      render(html`${notice ?? nothing}`, lensNotice);
+    }
+    for (const link of /** @type {HTMLAnchorElement[]} */ ([
+      ...document.querySelectorAll('[data-sources-link]'),
+    ])) {
       link.href = href;
-    });
+    }
   };
 
   /**
@@ -174,9 +221,9 @@ export function wireGuide(payload) {
    */
   const applySelection = (selection) => {
     selectedCodes = resolveSelectedCodes(selection, memberCodesByCategoryCode, panelSourceCodes);
-    showLensNotice(null);
+    notice = null;
     lens?.render(selectedCodes);
-    updateSourcesLinks();
+    renderChrome();
   };
 
   // Computed once, from the page's initial address: a persistent migration or
@@ -184,29 +231,34 @@ export function wireGuide(payload) {
   // not an ongoing in-page navigation, so later hashchange events (including
   // the skip link, which the codec deliberately does not recognize as
   // lens-shaped) never manufacture or overwrite it.
-  const initial = resolve(decodeLensFragment(router.fragment(), context));
+  const initial = readFragment();
   // applySelection clears any existing notice, so the state is applied before
   // the notice below is set, not after — otherwise this very notice would erase
   // itself on the same load that produced it.
   if (initial.state !== null) applySelection(initial.state);
   else lens?.render(selectedCodes);
-  if (initial.notice) showLensNotice(initial.notice);
+  if (initial.notice) notice = initial.notice;
   if (initial.cleanAddress) {
     // A malformed or unmigratable link resolves to the audited consensus; clear
     // it from the address bar so a reload or copy reproduces that resolved state
-    // instead of failing the same way again.
+    // instead of failing the same way again. Clearing it replaces the history
+    // entry rather than navigating, so nothing tells the race target that the
+    // address it was read from is gone: re-read it here, and the Sources link
+    // below points at the address the reader is actually on. The outcome is
+    // discarded — the notice above is this load's, and a cleared fragment has
+    // no explanation of its own to add.
     router.clearFragment();
+    readFragment();
   }
-  updateSourcesLinks();
+  renderChrome();
 
   // A plain in-page anchor (the skip link) also fires hashchange, and so does
   // opening or closing a race-detail dialog; the Sources link's target always
   // needs the current race target regardless, but only a genuine lens-shaped
   // change also re-applies a selection.
   router.onFragmentChange(() => {
-    updateSourcesLinks();
-    const state = resolve(decodeLensFragment(router.fragment(), context)).state;
-    if (!state) return;
-    applySelection(state);
+    const outcome = readFragment();
+    if (outcome.state) applySelection(outcome.state);
+    else renderChrome();
   });
 }

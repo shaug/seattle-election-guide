@@ -80,28 +80,69 @@ check is a bug in the check — fix or amend it, never route around it.
     Comparisons table's `<thead>` is this case — the server renders the same
     column labels as static text — and it is the reason the bullet above says
     "the default audited view" rather than "the default audited page".
+  - A region that is a *field of controls the reader operates* is taken over at
+    boot too, and the reason is stated where it is done. The first takeover
+    replaces the region's children, so one triggered by the reader's own click
+    would destroy the control they are holding and drop their focus, which the
+    keyed-rendering rule below forbids. The sources editor's tree is this case:
+    it keeps the server's audited markup and re-renders it identically at boot,
+    which is what the parity check makes checkable.
 
   The audited restore is not a saved copy of the server's markup. Returning to
   the audited default renders the same template with the audited view model,
   which the parity check below is what makes equivalent.
+- **An `aria-live` element is never a region lit owns; it is one lit renders
+  into.** A live region announces a change only if it was already in the
+  accessibility tree when the change happened, so an element the client created
+  — even one render before it filled it, in the same task — announces nothing.
+  The server renders every announcing element and it stays for the life of the
+  page; lit owns its text. The guide's banner status and lens notice, and the
+  sources editor's count line, are all this shape. #248 shipped a lit-owned
+  lens strip first and had to undo it: every notice the guide raises is a
+  boot-time one, so a strip lit created would have told a screen-reader reader
+  nothing about the broken link they followed.
+  *Check: partial — `guide-client.test.mjs` asserts element identity across
+  `wireGuide` for both announcing elements on the audited, unreadable-link, and
+  same-version-link paths, and `guide-markup-parity.test.mjs` asserts it against
+  the real audited page. Nothing checks that a new `aria-live` element has not
+  been introduced somewhere else.*
+- **A region is one element per value, not a pair.** A value that changes
+  between the audited and the personalized view is carried by the element the
+  server rendered it in; there is no empty twin beside it for the client to
+  fill, and no CSS rule choosing between them. #248 retired the guide's
+  `[data-lens-only]`/`[data-lens-hidden]` twins from the race card for this
+  reason: two elements holding one quantity is how the card and the dialog came
+  to disagree about it. The dialog's own twins survive only because #136 is
+  deleting that markup outright (Adoption, below).
 - **Client and server markup for the same region must agree.** A lit-html
   template rendered with audited data must produce the region the Jinja
-  template rendered. *Check: exists for the regions lit renders —
-  `tests/js/compare-markup-parity.test.mjs` boots the audited Comparisons page
-  in the lightweight DOM, drives it away from the default and back, and diffs
-  the row groups lit rendered against the ones committed in
-  `tests/js/fixtures/compare-audited-page.html`, which
-  `tests/test_compare_rendering.py` holds to a fresh render. The comparison is
-  of parsed markup — every tag, attribute, and run of text — ignoring only
-  comments, whitespace, attribute order, and the difference between a relative
-  and an absolute form of the same URL; `tests/js/support/markup-parity.mjs`
-  states that list and takes a region, so #248 brings the guide and sources
-  lens regions to the same check. A head that the server does not render
-  interactively has no region to compare, and is covered instead by the
-  behavior tests in `tests/test_compare_rendering.py`.*
+  template rendered. *Check: exists for every region lit renders. Each page's
+  parity test boots its audited page in the lightweight DOM and diffs what lit
+  rendered against what Jinja did: `compare-markup-parity.test.mjs` for the
+  Comparisons table's row groups, `guide-markup-parity.test.mjs` for all three
+  card regions of every race on the ballot after a lens is applied and cleared,
+  and `sources-markup-parity.test.mjs` for the sources tree and count line at
+  boot. The audited pages are committed
+  under `tests/js/fixtures/`, rendered by `tests/page_parity.py` and
+  `tests/compare_parity.py`, and held to a fresh render by
+  `tests/test_rendering.py` and `tests/test_compare_rendering.py`. The
+  comparison is of parsed markup — every tag, attribute, and run of text —
+  ignoring only comments, whitespace, attribute order, and the difference
+  between a relative and an absolute form of the same URL;
+  `tests/js/support/markup-parity.mjs` states that list and takes a region. A
+  head that the server does not render interactively has no region to compare,
+  and is covered instead by the behavior tests in
+  `tests/test_compare_rendering.py`.*
 - **Repeated lists that re-render use keyed rendering** (lit-html `repeat`),
   so re-renders preserve element identity and focus. A control the reader is
   using must still exist after the render it triggers.
+- **A form control's live value is bound with `live()`.** A checkbox is the one
+  binding whose DOM value changes without a render — the browser sets it on a
+  click and restores it on a back-navigation, both behind lit's record of what
+  it last wrote — so an ordinary property binding can decide a repair is a
+  no-op and skip it. `live()` compares against the element instead. The sources
+  tree binds `checked` and `indeterminate` this way, and also writes the
+  `checked` *attribute*, which is what a no-JS reader and the parity check see.
 
 ## The data contract
 
@@ -212,7 +253,12 @@ check is a bug in the check — fix or amend it, never route around it.
   on each side), carry the value. The audited candidate order and the audited
   accessible summary are carried this way: the renderer publishes the text and
   the order it rendered, so nothing recomputes them client-side to restore
-  them.
+  them. So is every string the sources tree renders — its per-source
+  endorsement count and its "also in" category tags — which is why #248 gave
+  that tree to lit without adding a second implementation of either. The count
+  grammar that used to be a Jinja macro is now `source_participation_label` in
+  `rendering/payload.py`, feeding the template and the payload from one
+  definition.
 
 ## Shared names
 

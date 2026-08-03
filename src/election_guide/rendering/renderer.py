@@ -51,6 +51,7 @@ from election_guide.rendering.payload import (
     RaceDisplay,
     comparisons_payload,
     guide_payload,
+    source_participation_label,
     sources_payload,
 )
 from election_guide.rendering.shell import (
@@ -322,6 +323,7 @@ def render_sources_document(
     # Issue 124: the comparison section is documentation, not a control, and
     # points at the one page that still puts these sources side by side.
     compare_href = f"{guide_path}comparisons/" if view_model.comparisons.policy.enabled else None
+    payload = sources_payload(view_model, guide_path=guide_path)
     return template.render(
         **_personalization_lookup_context(view_model),
         guide=view_model,
@@ -330,7 +332,17 @@ def render_sources_document(
         election_display_name=election_display_name,
         stylesheet=stylesheet,
         sources_entry_script=sources_entry_script,
-        client_payload=sources_payload(view_model, guide_path=guide_path).model_dump(mode="json"),
+        client_payload=payload.model_dump(mode="json"),
+        # One definition of the count grammar, shared by the audited row this
+        # template renders and the payload the client re-renders it from
+        # (docs/FRONTEND.md § Cross-language mirrors).
+        source_participation_label=source_participation_label,
+        # How many sources the audited default counts. Read off the payload's
+        # own tree, deduplicated, so the audited count line and the client's
+        # cannot disagree about which rows are one source.
+        counted_source_count=len(
+            {source.code for category in payload.tree for source in category.sources}
+        ),
         compare_href=compare_href,
         site_band=site_band_html(
             guide_href=guide_path,

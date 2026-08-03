@@ -38,10 +38,34 @@ function payload(overrides = {}) {
       { code: 'strn', name: 'The Stranger', selectable: true, panel_role: 'consensus' },
       { code: 'urbn', name: 'The Urbanist', selectable: true, panel_role: 'consensus' },
     ],
+    tree: [
+      {
+        code: 'Gprs',
+        label: 'Press',
+        sources: [
+          {
+            code: 'strn',
+            name: 'The Stranger',
+            evidence_url: 'https://example.test/stranger',
+            participation: '12 endorsements',
+            also_in: [],
+          },
+          {
+            code: 'urbn',
+            name: 'The Urbanist',
+            evidence_url: 'https://example.test/urbanist',
+            participation: '9 endorsements',
+            also_in: [],
+          },
+        ],
+      },
+    ],
     ...overrides,
   });
 }
 
+// The audited baseline the region is taken over from: every source counted,
+// exactly as sources.html.j2 renders it.
 function sourcesMarkup() {
   return `
     <p data-sources-count></p>
@@ -50,11 +74,13 @@ function sourcesMarkup() {
     <a data-sources-page-reset href="${GUIDE_PATH}">Reset</a>
     <p data-payload-notice hidden></p>
     <p data-sources-notice hidden></p>
-    <section data-sources-category="Gprs">
-      <input type="checkbox" data-sources-category-toggle="Gprs" checked>
-      <input type="checkbox" data-sources-source="strn" data-sources-category-member="Gprs" checked>
-      <input type="checkbox" data-sources-source="urbn" data-sources-category-member="Gprs" checked>
-    </section>`;
+    <div data-sources-tree>
+      <section data-sources-category="Gprs">
+        <input type="checkbox" data-sources-category-toggle="Gprs" checked>
+        <input type="checkbox" data-sources-source="strn" data-sources-category-member="Gprs" checked>
+        <input type="checkbox" data-sources-source="urbn" data-sources-category-member="Gprs" checked>
+      </section>
+    </div>`;
 }
 
 /**
@@ -190,6 +216,48 @@ test('an unreadable incoming link is reported, not quietly ignored', async () =>
 test('an ordinary in-page anchor is not a failure', async () => {
   const document = await wire(`${SOURCES_URL}#sources-main`);
   assert.equal(notice(document).hidden, true);
+});
+
+// Issues 80/81: a release can switch the lens off, and the repository keeps
+// that branch working. The server then renders a deliberately non-interactive
+// tree — a plain link per source, no checkbox, no category toggle — and
+// publishes no tree for the client to render. Taking the region over anyway
+// would put controls on a page the policy withheld them from, which is the one
+// thing the switch exists to prevent.
+test('a page with the lens switched off keeps the tree the server rendered', async () => {
+  const document = installDom(SOURCES_URL);
+  document.body.innerHTML = `
+    <p data-sources-count>Counting 0 of 0 sources.</p>
+    <a data-sources-save href="${GUIDE_PATH}">Save</a>
+    <a data-sources-cancel href="${GUIDE_PATH}">Cancel</a>
+    <a data-sources-page-reset href="${GUIDE_PATH}">Reset</a>
+    <p data-sources-notice hidden></p>
+    <div data-sources-tree>
+      <section data-sources-category="Gprs">
+        <h2><span>Press</span></h2>
+        <div class="sources-row" data-sources-source-row="strn">
+          <a class="sources-source-link" href="https://example.test/strn">The Stranger</a>
+        </div>
+      </section>
+    </div>`;
+  const tree = document.querySelector('[data-sources-tree]');
+  const before = tree.firstElementChild;
+  const { wireSourcesEditor } = await import(
+    '../../src/election_guide/rendering/templates/sources-client.mjs'
+  );
+
+  wireSourcesEditor(payload({ tree: [] }));
+
+  assert.ok(tree.firstElementChild === before, 'the client rebuilt a region it does not own');
+  assert.equal(tree.querySelectorAll('[data-sources-source]').length, 0);
+  assert.equal(tree.querySelectorAll('[data-sources-category-toggle]').length, 0);
+  assert.equal(tree.querySelectorAll('.sources-source-link').length, 1);
+  // The count line is the server's too, rather than a count of nothing written
+  // over the top of it.
+  assert.equal(
+    document.querySelector('[data-sources-count]').textContent,
+    'Counting 0 of 0 sources.',
+  );
 });
 
 test('the module keeps client state out of storage', () => {

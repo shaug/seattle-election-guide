@@ -144,18 +144,21 @@ function guideMarkup() {
     <input type="radio" name="race-set" value="complete" id="complete-filter" checked>
     <input type="radio" name="race-set" value="contested">
     <p id="filter-status"></p>
-    <div data-lens-banner hidden><span data-lens-banner-status></span></div>
-    <a data-sources-link href="${SOURCES_PATH}">Edit sources</a>
-    <p class="lens-notice" data-lens-notice hidden></p>
+    <a class="band-sources-link" data-sources-link href="${SOURCES_PATH}">Sources</a>
+    <div class="lens-banner" data-lens-banner>
+      <span data-lens-banner-status role="status" aria-live="polite">Counting all 3 sources.</span>
+      <a data-sources-link href="${SOURCES_PATH}">Edit sources</a>
+    </div>
+    <p class="lens-notice" data-lens-notice hidden role="status" aria-live="polite"></p>
     <section data-filter-section="local">
       <article id="race-mayor" data-publication-race-id="mayor" data-contested="true"
         data-filter-tokens='["city"]'>
         <a href="#race-mayor" data-race-detail-link>Mayor</a>
-        <h3 data-lens-recommendation></h3>
-        <div data-lens-share><strong data-lens-share-text></strong></div>
-        <p data-lens-support></p>
-        <p data-lens-support-compact></p>
-        <p data-lens-comparison hidden></p>
+        <div class="screen-race-result" data-lens-result>
+          <h3 data-display-role="recommendation">Ada Lovelace</h3>
+        </div>
+        <div class="screen-race-context" data-lens-context></div>
+        <div class="race-card-foot" data-lens-foot></div>
         <dialog data-race-detail-dialog data-race-id="mayor">
           <p data-race-detail-summary>The audited summary, verbatim.</p>
           <div class="race-detail-outcomes">
@@ -191,13 +194,20 @@ async function wire(url, pagePayload = payload()) {
 }
 
 const notice = (/** @type {Document} */ document) => document.querySelector('[data-lens-notice]');
+const bannerStatus = (/** @type {Document} */ document) =>
+  document.querySelector('[data-lens-banner-status]').textContent;
+/** The strip's own Sources link. */
 const sourcesHref = (/** @type {Document} */ document) =>
-  document.querySelector('[data-sources-link]').getAttribute('href');
+  document.querySelector('[data-lens-banner] [data-sources-link]').getAttribute('href');
+/** The shell band's, which is pointed at the same place. */
+const bandSourcesHref = (/** @type {Document} */ document) =>
+  document.querySelector('.band-sources-link').getAttribute('href');
 
 test('the audited default renders with no notice and a bare Sources link', async () => {
   const document = await wire(GUIDE_URL);
   assert.equal(notice(document).hidden, true);
   assert.equal(sourcesHref(document), SOURCES_PATH);
+  assert.equal(bannerStatus(document), 'Counting all 3 sources.');
   assert.equal(document.documentElement.classList.contains('lens-personalized'), false);
 });
 
@@ -205,7 +215,8 @@ test('a same-version link applies its selection and explains nothing', async () 
   const document = await wire(`${GUIDE_URL}#${lensFragment(['strn'])}`);
   assert.equal(notice(document).hidden, true);
   assert.equal(document.documentElement.classList.contains('lens-personalized'), true);
-  assert.equal(document.querySelector('[data-lens-recommendation]').textContent, 'Ada Lovelace');
+  assert.equal(bannerStatus(document), 'Counting 1 of 3 sources.');
+  assert.equal(document.querySelector('[data-lens-result] h3').textContent, 'Ada Lovelace');
 });
 
 test('the Sources link carries the reader’s live selection', async () => {
@@ -213,6 +224,90 @@ test('the Sources link carries the reader’s live selection', async () => {
   const href = sourcesHref(document);
   assert.ok(href.startsWith(`${SOURCES_PATH}#`));
   assert.match(href, /sel=strn/);
+  // The shell band's link is not part of the region, and is pointed at the
+  // same place by hand.
+  assert.equal(bandSourcesHref(document), href);
+});
+
+// The strip's live regions have to be in the accessibility tree before the
+// first change they announce, which is why lit takes this region at boot
+// rather than on the first divergence (docs/FRONTEND.md § Rendering).
+test('the banner status is one live element across a selection change', async () => {
+  const document = await wire(GUIDE_URL);
+  const status = document.querySelector('[data-lens-banner-status]');
+  assert.equal(status.getAttribute('aria-live'), 'polite');
+
+  window.location.hash = `#${lensFragment(['strn'])}`;
+  window.dispatchEvent(new Event('hashchange'));
+
+  assert.ok(
+    document.querySelector('[data-lens-banner-status]') === status,
+    'the announcement element was replaced, so the change it carries would not be announced',
+  );
+  assert.equal(status.textContent, 'Counting 1 of 3 sources.');
+});
+
+// The other half of the same rule, and the one that is easy to lose. A live
+// region only announces a change if it was already in the accessibility tree
+// when the change happened, so the announcing elements have to be the ones the
+// parser created — not ones the client built, however early. Every notice this
+// page can raise is a boot-time one, so if lit owned these elements the reader
+// who followed a broken link would be told nothing at all.
+//
+// Asserted as element identity across wireGuide, which is the property that
+// actually holds the guarantee: the final DOM looks the same either way, so a
+// test that only read textContent would pass against a client that replaced
+// them.
+//
+// @param {string} url
+// @param {any} [pagePayload]
+async function bootedStrip(url, pagePayload = payload()) {
+  const document = installDom(url);
+  document.body.innerHTML = guideMarkup();
+  const before = {
+    status: document.querySelector('[data-lens-banner-status]'),
+    notice: document.querySelector('[data-lens-notice]'),
+  };
+  const { wireGuide } = await import(
+    '../../src/election_guide/rendering/templates/guide-client.mjs'
+  );
+  wireGuide(pagePayload);
+  return { document, before, notice: document.querySelector('[data-lens-notice]') };
+}
+
+test("the announcing elements are the server's, before and after boot", async () => {
+  for (const [label, url, pagePayload] of [
+    ['the audited default', GUIDE_URL, payload()],
+    ['an unreadable link', `${GUIDE_URL}#lens=9&mode=s&sel=strn`, payload()],
+    ['a same-version link', `${GUIDE_URL}#${lensFragment(['strn'])}`, payload()],
+  ]) {
+    const { document, before } = await bootedStrip(url, pagePayload);
+    assert.ok(
+      document.querySelector('[data-lens-banner-status]') === before.status,
+      `${label}: the banner's announcing element was replaced, so a change to it would not ` +
+        'be announced (rule: rendering, docs/FRONTEND.md).',
+    );
+    assert.ok(
+      document.querySelector('[data-lens-notice]') === before.notice,
+      `${label}: the notice's announcing element was replaced, so the reader who followed a ` +
+        'broken link would not be told (rule: rendering, docs/FRONTEND.md).',
+    );
+  }
+});
+
+// The notice raised from inside the render itself: an oversized selection is
+// reported by sourcesHref() during renderChrome, so it exercises the same
+// element on the path where the text arrives last.
+test('a selection too large to encode is announced, not just displayed', async () => {
+  const incoming = lensFragment(['Gprs']);
+  const cramped = payload();
+  cramped.policy = { maximum_url_characters: incoming.length };
+  cramped.personalization.policy = { maximum_url_characters: incoming.length, enabled: true };
+
+  const { document, before, notice } = await bootedStrip(`${GUIDE_URL}#${incoming}`, cramped);
+
+  assert.ok(document.querySelector('[data-lens-notice]') === before.notice);
+  assert.equal(notice.textContent, SELECTION_LINK_FAILURE_NOTICE);
 });
 
 test('the Sources link is root-relative, so it never leaves the current origin', async () => {

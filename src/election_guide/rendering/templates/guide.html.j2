@@ -183,6 +183,12 @@
         {% endfor %}
       {% endcall %}
 
+      {# The lens strip's two announcing elements are the server's for the life
+         of the page (docs/FRONTEND.md § Rendering): lit renders their text,
+         never the elements themselves, because a live region only announces a
+         change if it was already in the accessibility tree when the change
+         happened — and one that is created and filled in the same task was
+         not. #}
       {% if guide.personalization.policy.enabled %}
       <div class="lens-banner state-action-strip" data-lens-banner>
         <span data-lens-banner-status role="status" aria-live="polite">Counting all {{ consensus_source_count }} sources.</span>
@@ -221,26 +227,24 @@
                 <span id="race-label-{{ race.id }}"
                   data-display-role="race-label">{{ race.race_label }}</span>
               </p>
-              <div class="screen-race-result">
-                <h3 data-display-role="recommendation"{% if guide.personalization.policy.enabled %} data-lens-hidden{% endif %}>{{ race.recommendation_label }}</h3>
-                {% if guide.personalization.policy.enabled %}
-                <h3 class="lens-value" data-lens-only data-lens-recommendation></h3>
-                {% endif %}
+              {# Three lens regions, each one element the server already had
+                 (docs/FRONTEND.md § Rendering). Where this markup used to
+                 carry an audited element and an empty `[data-lens-only]` twin
+                 for every value, it now carries one element whose children
+                 guide-card.mjs renders — from the audited view model until a
+                 selection diverges, from the personalized one afterwards. #}
+              <div class="screen-race-result" data-lens-result>
+                <h3 data-display-role="recommendation">{{ race.recommendation_label }}</h3>
                 {% if race.percentage_whole is none %}
                 <div class="screen-meter screen-meter-na" role="img" data-display-role="share"
-                  aria-label="{{ screen_share_accessible_label(race) }}"{% if guide.personalization.policy.enabled %} data-lens-hidden{% endif %}>
+                  aria-label="{{ screen_share_accessible_label(race) }}">
                   <strong>N/A</strong>
                 </div>
                 {% else %}
                 <div class="screen-meter{% if has_no_majority(race) %} meter-no-majority{% endif %}{% if race.percentage_whole < 30 %} meter-low-fill{% endif %}" style="--meter-fill: {{ race.percentage_whole }}%"
                   role="img" data-display-role="share"
-                  aria-label="{{ screen_share_accessible_label(race) }}"{% if guide.personalization.policy.enabled %} data-lens-hidden{% endif %}>
+                  aria-label="{{ screen_share_accessible_label(race) }}">
                   <strong>{{ race.percentage_label }}</strong>
-                </div>
-                {% endif %}
-                {% if guide.personalization.policy.enabled %}
-                <div class="screen-meter" data-lens-only data-lens-share role="img">
-                  <strong data-lens-share-text></strong>
                 </div>
                 {% endif %}
               </div>
@@ -248,33 +252,26 @@
                  the meter row; the reference block (the All-sources bar)
                  renders at the card foot below, after the insufficiency
                  warning, never interleaved with this caption. #}
-              <div class="screen-race-context">
-                <p class="no-majority-pill"{% if not has_no_majority(race) %} hidden{% endif %}{% if guide.personalization.policy.enabled %} data-lens-hidden{% endif %}>No majority</p>
-                {% if guide.personalization.policy.enabled %}
-                <p class="no-majority-pill lens-value" data-lens-only data-lens-no-majority hidden>No majority</p>
-                {% endif %}
-                <p class="support-line support-full" data-display-role="support"{% if guide.personalization.policy.enabled %} data-lens-hidden{% endif %}>{{ screen_support_summary(race) }}</p>
-                <p class="support-line support-compact" data-display-role="support"{% if guide.personalization.policy.enabled %} data-lens-hidden{% endif %}>{{ screen_support_summary_compact(race) }}</p>
-                {% if guide.personalization.policy.enabled %}
-                <p class="support-line lens-value support-full" data-lens-only data-lens-support></p>
-                <p class="support-line lens-value support-compact" data-lens-only data-lens-support-compact></p>
-                {% endif %}
+              <div class="screen-race-context" data-lens-context>
+                <p class="no-majority-pill"{% if not has_no_majority(race) %} hidden{% endif %}>No majority</p>
+                <p class="support-line support-full" data-display-role="support">{{ screen_support_summary(race) }}</p>
+                <p class="support-line support-compact" data-display-role="support">{{ screen_support_summary_compact(race) }}</p>
               </div>
             </a>
-            {% if race.grade == 'Insufficient' %}
-            <div class="insufficient-note" role="note" data-display-role="insufficient-warning"{% if guide.personalization.policy.enabled %} data-lens-hidden{% endif %}>
-              Too few endorsements to measure agreement.</div>
-            {% endif %}
-            {% if guide.personalization.policy.enabled %}
-            <div class="insufficient-note" data-lens-only data-lens-insufficient hidden>
-              Too few endorsements to measure agreement among your selected sources.</div>
-            {# I39: the reference block sits at the card foot, below the
-               insufficiency warning, never interleaved with the support
-               caption. A bare <p> is name-prohibited in ARIA, so the
-               agree/differ aria-label applied by applyAllSourcesSignal needs
-               role="group" to be exposed. #}
-            <p class="lens-comparison" role="group" data-lens-only data-lens-comparison hidden></p>
-            {% endif %}
+            {# The card foot (I39): the insufficiency warning, then the
+               All-sources reference bar. `display: contents` (guide.css), so
+               the wrapper gives lit one region to own without becoming a box
+               of its own — both blocks stay direct flex items of the card and
+               keep the gap between them. The audited baseline renders the
+               warning alone, and only for a race that has one; the reference
+               bar is divergence-only, so nothing stands empty here waiting to
+               be filled in. #}
+            <div class="race-card-foot" data-lens-foot>
+              {% if race.grade == 'Insufficient' %}
+              <div class="insufficient-note" role="note" data-display-role="insufficient-warning">
+                Too few endorsements to measure agreement.</div>
+              {% endif %}
+            </div>
             <dialog class="race-detail-dialog" id="race-detail-{{ race.id }}"
               data-race-detail-dialog data-race-id="{{ race.id }}"
               aria-labelledby="race-detail-election-{{ race.id }} race-detail-title-{{ race.id }}"
