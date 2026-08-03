@@ -24,9 +24,11 @@ execution has recorded the authority's real page and export structure below.
 - `config/elections/<election-id>.yaml` exists; its `ballot_data_sources` entry names the
   authority's election page (for `wa-2026-primary`:
   <https://kingcounty.gov/en/dept/elections/election-information/2026/august-primary>).
-- `king-county-elections` is registered in the source registry
-  (`config/sources/default.yaml`): `evidence capture` refuses unregistered source ids, so the
-  registry entry must land as its own reviewed change *before* election night, not during it.
+- Known limitation, tracked as #281: `evidence capture` validates source ids against the
+  endorsement source registry, and King County Elections is an authority, not an endorsement
+  source — it does not belong in that registry. Until the authority capture lane lands,
+  step 3 runs in its interim manual form; the bytes are stored content-addressed, so formal
+  manifests are backfilled verifiably afterward.
 - A working directory under the Git-ignored `tmp/` for downloaded artifacts.
 
 ## Procedure
@@ -38,21 +40,37 @@ execution has recorded the authority's real page and export structure below.
    machine-readable export the authority publishes (CSV, XML, JSON — whatever is offered).
    Bytes first, judgment later: capture formats even if they look redundant; the ingestion
    design will decide which one matters.
-3. **Capture each artifact, with the capture method matched to the artifact.** The CLI's
-   `CaptureRequest` validation rejects mismatches, so the pairing is not a style choice:
-   `static_html` only for the rendered HTML results page; `pdf` only for PDF documents;
-   `manual_upload` for the machine-readable exports (CSV, XML, JSON) — the CLI's honest
-   category for bytes the caller fetched itself, whose manifest does not claim the command
-   observed an HTTP exchange. Direct methods — `static_html`, `pdf`, and the escalation
-   path's `browser` — additionally require `--http-status` with the observed 2xx;
-   `manual_upload` takes no `--http-status`. When the final URL differs from the URL
-   followed, record the chain with one or more `--redirect-url` options beginning with the
-   requested URL and ending with the canonical URL; with no redirect, pass the same URL to
-   both `--requested-url` and `--canonical-url`.
+3. **Capture each artifact.**
+
+   **Interim form (until #281 lands — including the 2026-08-04 first execution).** King County
+   Elections is an authority, not an endorsement source, and `evidence capture` currently
+   accepts only registered endorsement sources, so capture manually and preserve exactly what
+   a manifest would record. Per artifact:
+
+   - compute the hash (`shasum -a 256 <artifact>`) and store the bytes at
+     `data/snapshots/sha256/<first two hash characters>/<full sha256>` — the standard
+     Git-ignored storage boundary;
+   - record, in the capture PR and the postmortem notes: requested and final URLs (and the
+     redirect chain when they differ), retrieval time in UTC, HTTP status, media type, byte
+     length, and the sha256.
+
+   Because storage is content-addressed, #281 backfills real manifests from these bytes and
+   this metadata, and `evidence verify` proves the backfill honest.
+
+   **Target form (after #281).** The capture method must match the artifact — the CLI's
+   `CaptureRequest` validation rejects mismatches: `static_html` only for the rendered HTML
+   results page; `pdf` only for PDF documents; `manual_upload` for the machine-readable
+   exports (CSV, XML, JSON) — the CLI's honest category for bytes the caller fetched itself,
+   whose manifest does not claim the command observed an HTTP exchange. Direct methods —
+   `static_html`, `pdf`, and the escalation path's `browser` — additionally require
+   `--http-status` with the observed 2xx; `manual_upload` takes no `--http-status`. When the
+   final URL differs from the URL followed, record the chain with one or more `--redirect-url`
+   options beginning with the requested URL and ending with the canonical URL; with no
+   redirect, pass the same URL to both `--requested-url` and `--canonical-url`.
 
    ```bash
    uv run election-guide evidence capture tmp/<artifact> \
-     --source-id king-county-elections \
+     --source-id <authority id per #281> \
      --requested-url <url followed> \
      --canonical-url <final url> \
      --retrieved-at <UTC timestamp of the fetch> \
@@ -63,27 +81,34 @@ execution has recorded the authority's real page and export structure below.
      --redistribution-note "Official results retained locally; manifest public."
    ```
 
-   Follow the repository default for raw official artifacts (`docs/COLLECTION.md`): restricted,
-   local-only bytes with a public manifest, even though results are public records — relaxing
-   that is a separate decision, not a capture-time judgment call.
+   In both forms, follow the repository default for raw official artifacts
+   (`docs/COLLECTION.md`): restricted, local-only bytes with a public record of provenance,
+   even though results are public records — relaxing that is a separate decision, not a
+   capture-time judgment call.
 4. **Repeat for the Secretary of State** (<https://results.vote.wa.gov>) for the same election,
    as corroborating evidence for state-level races. Secondary: skip rather than escalate if it
    is unavailable, and note the skip.
-5. **Verify every manifest:**
+5. **Verify every capture.** Interim form: recompute each stored file's sha256 from its
+   content-addressed path and confirm it matches the recorded hash and byte length. Target
+   form:
 
    ```bash
    uv run election-guide evidence verify data/manifests/evidence/<capture-id>.json
    ```
 
-6. **Open a pull request** containing the new manifests. The PR body lists what was captured,
-   the artifacts' formats, and any observations about structure — those observations are input
-   to the ingestion adapter design (#208).
+6. **Open a pull request** with the capture record: in the interim form, the recorded
+   provenance metadata (in the postmortem notes) with no manifests yet; in the target form,
+   the new manifests. The PR body lists what was captured, the artifacts' formats, and any
+   observations about structure — those observations are input to the ingestion adapter
+   design (#208).
 
 ## Verification
 
-- Every capture ID verifies (step 5) — hash and byte length recompute cleanly.
-- The manifests' retrieval times fall on election night, Pacific time.
-- The PR contains only manifests (and this runbook's postmortem notes); no bytes, no
+- Every capture verifies (step 5): hashes and byte lengths recompute cleanly from the stored
+  bytes — against the recorded metadata in the interim form, via `evidence verify` in the
+  target form.
+- The recorded retrieval times fall on election night, Pacific time.
+- The PR contains only provenance records (and this runbook's postmortem notes); no bytes, no
   `data/results/` changes — ingestion happens at certification, not tonight.
 
 ## Escalation
@@ -92,12 +117,10 @@ Stop and flag a human when:
 
 - No results publication is discoverable from the official election page by 9:00 p.m. Pacific.
   Retry hourly; do not guess at URLs beyond the authority's own navigation.
-- `evidence capture` rejects the `king-county-elections` source id as unregistered. Registering
-  an authority is a reviewed registry change, not something to improvise mid-capture.
-- The authority's page requires interaction (not static fetchable content) that the
-  `static_html` capture method cannot honestly describe — switch to the `browser` method with
-  `--browser-required`, keeping `--http-status` (browser is also a direct method), and note
-  the change here.
+- The authority's page requires interaction (not static fetchable content) — in the interim
+  form, note the fact and save what the browser delivered; in the target form, switch to the
+  `browser` method with `--browser-required`, keeping `--http-status` (browser is also a
+  direct method), and note the change here.
 
 ## Postmortem notes
 
@@ -105,6 +128,8 @@ Stop and flag a human when:
 
 - Not yet executed. First execution: `wa-2026-primary`, due 2026-08-04. Expected discoveries:
   the canonical results URL pattern and which export formats King County actually publishes.
-- 2026-08-03 (pre-execution review): the `king-county-elections` source id is confirmed
-  unregistered, and `evidence capture` requires a registered source — moved to Preconditions;
-  the registry entry must land before election night.
+- 2026-08-03 (pre-execution review): `evidence capture` accepts only registered endorsement
+  sources, and King County Elections is an authority, not an endorsement source — decided not
+  to force it into the panel registry. The authority capture lane is #281; until it lands,
+  step 3's interim manual form applies, and #281 backfills manifests from the retained
+  content-addressed bytes.
