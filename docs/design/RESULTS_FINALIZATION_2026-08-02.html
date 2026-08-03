@@ -1,0 +1,781 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Results finalization — design mockups (epic #208)</title>
+<style>
+  /* Doc chrome tokens: derived from the site's own palette (base.css), navy-biased
+     neutrals rather than grey. Mockup frames deliberately stay in the site's light
+     paper world in both themes — they depict the real site, which is light-only. */
+  :root {
+    --doc-bg: #eef1f4;
+    --doc-surface: #ffffff;
+    --doc-ink: #17212b;
+    --doc-muted: #52606d;
+    --doc-faint: #667784;
+    --doc-line: #d5dde4;
+    --doc-navy: #102a43;
+    --doc-teal: #087f73;
+    --doc-blue: #176b87;
+    --doc-amber: #a86f00;
+    --doc-mint: #9ee7df;
+    --doc-code-bg: #102a43;
+    --doc-code-ink: #d7e6ef;
+    --sans: "Avenir Next", Avenir, system-ui, "Helvetica Neue", Helvetica, sans-serif;
+    --serif: Georgia, "Times New Roman", serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --doc-bg: #0c1622;
+      --doc-surface: #14212f;
+      --doc-ink: #e2e9ef;
+      --doc-muted: #9fb3c8;
+      --doc-faint: #7a8fa3;
+      --doc-line: #24384c;
+      --doc-navy: #d7e6ef;
+      --doc-teal: #4fc4b5;
+      --doc-blue: #6fb9d4;
+      --doc-amber: #dfa93f;
+      --doc-mint: #9ee7df;
+      --doc-code-bg: #0a1420;
+      --doc-code-ink: #c4d5e2;
+    }
+  }
+  :root[data-theme="dark"] {
+    --doc-bg: #0c1622; --doc-surface: #14212f; --doc-ink: #e2e9ef; --doc-muted: #9fb3c8;
+    --doc-faint: #7a8fa3; --doc-line: #24384c; --doc-navy: #d7e6ef; --doc-teal: #4fc4b5;
+    --doc-blue: #6fb9d4; --doc-amber: #dfa93f; --doc-mint: #9ee7df;
+    --doc-code-bg: #0a1420; --doc-code-ink: #c4d5e2;
+  }
+  :root[data-theme="light"] {
+    --doc-bg: #eef1f4; --doc-surface: #ffffff; --doc-ink: #17212b; --doc-muted: #52606d;
+    --doc-faint: #667784; --doc-line: #d5dde4; --doc-navy: #102a43; --doc-teal: #087f73;
+    --doc-blue: #176b87; --doc-amber: #a86f00; --doc-mint: #9ee7df;
+    --doc-code-bg: #102a43; --doc-code-ink: #d7e6ef;
+  }
+
+  /* Site-world tokens: fixed light values from base.css, used only inside mockups. */
+  .mock {
+    --navy: #102a43; --blue: #176b87; --teal: #087f73; --amber: #d99000; --red: #9f2d25;
+    --ink: #17212b; --muted: #52606d; --faint: #667784;
+    --line: #cbd2d9; --line-soft: #d9e2ec; --line-strong: #829ab1;
+    --paper: #fbfaf6; --white: #ffffff; --mint: #9ee7df; --sky: #d7e6ef;
+    --tone-agree-border: #83bfae; --tone-agree-bg: #edf8f4; --tone-agree-text: #176554;
+    --tone-differ-border: #d9a15d; --tone-differ-bg: #fff6e8; --tone-differ-text: #8a4b00;
+    --tone-neutral-border: #b8c5cc; --tone-neutral-bg: #f5f8f9; --tone-neutral-text: #52606d;
+    --meter-track: #edf2f4; --row-separator: #e0e7ed;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--doc-bg); color: var(--doc-ink);
+         font: 400 1rem/1.55 var(--sans); }
+  .frame { max-width: 47rem; margin: 0 auto; padding: 0 1.25rem 5rem; }
+
+  header.doc-head { padding: 3rem 0 1.6rem; border-bottom: 3px solid var(--doc-teal); }
+  .eyebrow { margin: 0 0 .35rem; color: var(--doc-teal); font-size: .76rem; font-weight: 700;
+             letter-spacing: .16em; text-transform: uppercase; }
+  h1 { margin: 0 0 .5rem; color: var(--doc-navy); font: 700 clamp(2rem, 5vw, 2.7rem)/1.06 var(--serif);
+       letter-spacing: -.012em; text-wrap: balance; }
+  .tagline { max-width: 42rem; margin: 0; color: var(--doc-muted); font-size: 1.06rem; font-weight: 500; }
+
+  h2 { margin: 3rem 0 .3rem; color: var(--doc-navy); font: 700 1.55rem/1.15 var(--serif);
+       letter-spacing: -.008em; text-wrap: balance; }
+  h2 .sec-note { display: block; margin-top: .15rem; color: var(--doc-faint); font: 600 .74rem/1.3 var(--sans);
+                 letter-spacing: .1em; text-transform: uppercase; }
+  h3 { margin: 1.8rem 0 .3rem; color: var(--doc-navy); font: 700 1.08rem/1.25 var(--sans); }
+  p { max-width: 65ch; margin: .65rem 0; }
+  li { max-width: 62ch; margin: .3rem 0; }
+  strong { color: var(--doc-navy); }
+  a { color: var(--doc-blue); text-underline-offset: .15em; }
+  .aside { max-width: 62ch; margin: 1rem 0; padding: .75rem 1rem; border-left: 3px solid var(--doc-amber);
+           background: var(--doc-surface); color: var(--doc-muted); font-size: .93rem; border-radius: 0 .3rem .3rem 0; }
+  .aside strong { color: var(--doc-ink); }
+
+  /* Posture cards */
+  .postures { display: grid; gap: .9rem; margin: 1.4rem 0; }
+  .posture { padding: 1rem 1.15rem 1.05rem; background: var(--doc-surface); border: 1px solid var(--doc-line);
+             border-radius: .35rem; }
+  .posture-head { display: flex; align-items: baseline; gap: .6rem; flex-wrap: wrap; }
+  .posture-head h4 { margin: 0; color: var(--doc-navy); font-size: 1.02rem; }
+  .posture p { margin: .45rem 0 0; color: var(--doc-muted); font-size: .93rem; }
+  .chip { display: inline-block; padding: .1rem .55rem; border-radius: 1rem; font-size: .7rem;
+          font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+  .chip-pick { background: var(--doc-teal); color: #fff; }
+  .chip-no { border: 1px solid var(--doc-line); color: var(--doc-faint); }
+
+  /* Timeline */
+  .timeline { margin: 1.6rem 0 .6rem; padding: 0; list-style: none; }
+  .timeline li { position: relative; max-width: none; margin: 0; padding: 0 0 1.15rem 1.7rem;
+                 border-left: 2px solid var(--doc-line); margin-left: .5rem; }
+  .timeline li:last-child { border-left-color: transparent; padding-bottom: .2rem; }
+  .timeline li::before { content: ""; position: absolute; left: -.4rem; top: .3rem; width: .7rem; height: .7rem;
+                         border-radius: 50%; background: var(--doc-surface); border: 2px solid var(--doc-teal); }
+  .timeline li.capture::before { background: var(--doc-teal); }
+  .tl-when { display: block; color: var(--doc-teal); font-size: .72rem; font-weight: 700;
+             letter-spacing: .1em; text-transform: uppercase; }
+  .tl-what { display: block; color: var(--doc-ink); font-weight: 600; }
+  .tl-note { display: block; max-width: 58ch; color: var(--doc-muted); font-size: .9rem; }
+
+  /* Mockup frames */
+  figure.mockframe { margin: 1.5rem 0 2.2rem; }
+  figure.mockframe figcaption { margin: 0 0 .5rem; color: var(--doc-muted); font-size: .86rem; }
+  figure.mockframe figcaption b { color: var(--doc-ink); }
+  .mock { overflow: hidden; border: 1px solid var(--doc-line); border-radius: .5rem;
+          background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 16px;
+          line-height: 1.45; box-shadow: 0 .35rem 1.4rem rgba(16,42,67,.14); }
+  .browser-bar { display: flex; align-items: center; gap: .45rem; padding: .45rem .8rem;
+                 background: #e4e9ee; border-bottom: 1px solid var(--line); }
+  .browser-bar i { width: .6rem; height: .6rem; border-radius: 50%; background: #c3ccd4; }
+  .browser-bar span { margin-left: .4rem; color: #52606d; font-size: .72rem; font-family: var(--mono); }
+
+  /* Mock: site band + banner */
+  .m-band { display: flex; align-items: center; gap: .55rem; padding: .55rem 1.1rem; background: var(--navy); color: var(--white); }
+  .m-band b { font-size: .92rem; letter-spacing: .01em; }
+  .m-band nav { margin-left: auto; display: flex; gap: 1rem; }
+  .m-band nav span { color: var(--mint); font-size: .8rem; font-weight: 700; }
+  .m-rule { height: .4rem; background: var(--teal); }
+  .m-banner { padding: .5rem 1.1rem; border-bottom: 1px solid var(--tone-neutral-border);
+              background: var(--tone-neutral-bg); color: var(--tone-neutral-text);
+              font-size: .88rem; text-align: center; }
+  .m-banner .bl { display: block; }
+  .m-banner b { color: var(--navy); font-weight: 800; }
+  .m-banner a { color: inherit; font-weight: 700; text-underline-offset: .15em; }
+  .m-banner.counting { border-bottom-color: var(--tone-differ-border); background: var(--tone-differ-bg); color: var(--tone-differ-text); }
+  .m-banner.counting b { color: var(--tone-differ-text); }
+  .m-banner.past { color: var(--muted); }
+  .m-banner.past b { color: var(--muted); font-weight: 700; }
+  .banner-stack .m-banner + .m-banner { border-top: 1px dashed var(--line); }
+  .banner-label { padding: .5rem 1.1rem .1rem; color: var(--faint); font-size: .68rem; font-weight: 700;
+                  letter-spacing: .12em; text-transform: uppercase; background: var(--paper); }
+
+  /* Mock: race card */
+  .m-cardwrap { padding: 1.1rem; background: var(--paper); }
+  .m-race-card { display: flex; flex-direction: column; gap: .55rem; max-width: 30rem; margin: 0 auto;
+                 padding: 1.15rem; background: var(--white); border: 1px solid var(--line-soft);
+                 border-top: .3rem solid var(--teal); box-shadow: 0 .2rem .8rem rgba(16,42,67,.08); }
+  .m-office { margin: 0; color: var(--muted); font-size: .78rem; font-weight: 600;
+              letter-spacing: .04em; line-height: 1.2; text-transform: uppercase; }
+  .m-result-row { display: grid; grid-template-columns: minmax(0,1fr) 10rem; align-items: center; gap: .75rem; }
+  .m-race-card h5 { margin: 0; color: var(--navy); font: 800 1.5rem/1.08 var(--sans); letter-spacing: -.02em; }
+  .m-meter { display: flex; align-items: center; width: 10rem; height: 2rem; overflow: hidden;
+             border: 1px solid var(--line-strong); border-radius: 1rem;
+             background: linear-gradient(to right, var(--teal) 0 78%, var(--meter-track) 78% 100%); }
+  .m-meter strong { padding: .05rem .75rem 0; color: var(--white); font-size: 1.08rem;
+                    font-variant-numeric: tabular-nums; font-weight: 800; line-height: 1; }
+  /* The results strip a certified race grows */
+  .m-outcome { margin-top: .2rem; padding-top: .65rem; border-top: 1px solid var(--row-separator); }
+  .m-outcome-head { display: flex; align-items: baseline; gap: .5rem; margin-bottom: .45rem; }
+  .m-outcome-head span { color: var(--muted); font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+  .m-cert { display: inline-block; padding: .08rem .5rem; border: 1px solid var(--tone-agree-border);
+            border-radius: 1rem; background: var(--tone-agree-bg); color: var(--tone-agree-text);
+            font-size: .68rem; font-weight: 700; letter-spacing: .04em; }
+  .m-cert.counting { border-color: var(--tone-differ-border); background: var(--tone-differ-bg); color: var(--tone-differ-text); }
+  .m-tally { display: grid; gap: .3rem; }
+  .m-tally-row { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: .15rem .6rem; }
+  .m-tally-name { display: flex; align-items: baseline; gap: .5rem; font-size: .92rem; font-weight: 600; color: var(--ink); }
+  .m-tally-name .adv { padding: .06rem .5rem; border-radius: 1rem; background: var(--sky);
+                       color: var(--navy); font-size: .64rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+  .m-tally-share { color: var(--ink); font-size: .92rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .m-tally-bar { grid-column: 1 / -1; height: .45rem; border-radius: .25rem; background: var(--meter-track); overflow: hidden; }
+  .m-tally-bar i { display: block; height: 100%; background: var(--navy); border-radius: .25rem; }
+  .m-tally-row.trailing .m-tally-name, .m-tally-row.trailing .m-tally-share { color: var(--muted); font-weight: 500; }
+  .m-tally-row.trailing .m-tally-bar i { background: var(--line-strong); }
+  .m-provenance { margin: .55rem 0 0; color: var(--faint); font-size: .72rem; }
+  .m-provenance a { color: var(--blue); }
+
+  /* Mock: endorsements view (race-detail dialog) */
+  .m-dialog { max-width: 33rem; margin: 1.1rem auto; overflow: hidden; border: 1px solid var(--line-strong);
+              border-radius: .45rem; background: var(--paper); box-shadow: 0 1rem 3rem rgba(16,42,67,.35); }
+  .m-dialog-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
+                     padding: 1rem 1.15rem; border-bottom: 1px solid #526f83; background: var(--navy); color: var(--white); }
+  .m-dialog-header .eyebrow-mock { margin: 0; color: var(--mint); font-size: .68rem; font-weight: 700;
+                                   letter-spacing: .14em; text-transform: uppercase; }
+  .m-dialog-header h5 { margin: .15rem 0 .25rem; color: var(--white); font: 700 1.35rem/1.15 var(--sans); }
+  .m-dialog-close { width: 2.2rem; height: 2.2rem; border-radius: 50%; display: flex; align-items: center;
+                    justify-content: center; color: var(--mint); font-size: 1.1rem; flex: 0 0 auto; }
+  .m-cert-strip { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .3rem .6rem;
+                  padding: .45rem 1rem; border-bottom: 1px solid var(--tone-neutral-border);
+                  background: var(--tone-neutral-bg); color: var(--tone-neutral-text); font-size: .8rem; }
+  .m-cert-strip b { color: var(--navy); }
+  .m-dialog-body { display: grid; gap: .65rem; padding: .75rem; }
+  .m-cand { overflow: hidden; border: 1px solid #e8c58e; border-left: .3rem solid var(--amber); background: var(--white); }
+  .m-cand.leader { border-color: #9fcfc5; border-left-color: var(--teal); }
+  .m-cand-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+                    gap: .5rem 1.25rem; padding: .55rem .75rem; background: var(--tone-differ-bg); }
+  .m-cand.leader .m-cand-heading { background: var(--tone-agree-bg); }
+  .m-cand-title { min-width: 0; }
+  .m-cand-title p { margin: 0 0 .05rem; color: var(--tone-agree-text); font-size: .62rem; font-weight: 700;
+                    letter-spacing: .08em; text-transform: uppercase; }
+  .m-cand-title h6 { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem .45rem; margin: 0; color: var(--navy); font: 700 1.05rem/1.1 var(--sans); }
+  /* Narrow-width demo: the heading's flex row simply wraps — no separate layout. */
+  .m-narrowwrap { display: flex; justify-content: center; padding: 1.1rem; background: #3d5368; }
+  .m-cand.m-narrow { width: 15rem; background: var(--white); }
+  .m-narrow .m-cand-heading { flex-direction: column; align-items: flex-start; gap: .45rem; }
+  .m-narrow .m-cand-metrics { margin-left: 0; align-items: flex-start; }
+  .m-cand-metrics { display: flex; flex-direction: column; margin-left: auto; align-items: flex-end; gap: .18rem; }
+  .m-cand-metrics > span { color: var(--muted); font-size: .68rem; white-space: nowrap; }
+  .m-cand-meter { display: flex; align-items: center; width: 8.5rem; height: 1.8rem; overflow: hidden;
+                  border: 1px solid var(--line-strong); border-radius: 1rem;
+                  background: linear-gradient(to right, var(--teal) 0 var(--fill), var(--meter-track) var(--fill) 100%); }
+  .m-cand-meter strong { padding: .05rem .65rem 0; color: var(--white); font-size: .9rem; font-variant-numeric: tabular-nums; }
+  /* The vote-share row: same tally-bar idiom as the race card, one fact-toned chip. */
+  .m-cand-result { display: flex; align-items: center; gap: .6rem; padding: .5rem .75rem;
+                   border-bottom: 1px solid var(--row-separator); background: var(--white); }
+  .m-cand-result .m-tally-bar { flex: 1 1 auto; }
+  .m-advchip { flex: 0 0 auto; padding: .1rem .55rem; border-radius: 1rem; background: var(--sky);
+               color: var(--navy); font-size: .64rem; font-weight: 800; letter-spacing: .06em;
+               text-transform: uppercase; white-space: nowrap; }
+  .m-cand-share { flex: 0 0 auto; color: var(--ink); font-size: .88rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .m-cand-result.trailing .m-cand-share { color: var(--muted); font-weight: 600; }
+  .m-cand-result.trailing .m-tally-bar i { background: var(--line-strong); }
+  .chipbar { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .9rem; padding: .8rem 1rem; }
+  .chipbar span.ctx { color: var(--muted); font-size: .78rem; }
+  .m-src { margin: 0; padding: 0; list-style: none; }
+  .m-src li { display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+              min-height: 2.4rem; padding: .42rem .75rem; }
+  .m-src li + li { border-top: 1px solid var(--row-separator); }
+  .m-src strong { color: var(--navy); font-size: .8rem; font-weight: 700; }
+  .m-src span { color: var(--muted); font-size: .68rem; font-weight: 600; }
+
+  /* Mock: comparison table (compare.css idiom) */
+  .m-cmp-pad { padding: 1rem; }
+  .m-cmp-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: .35rem; background: var(--white); }
+  /* Explicit color and size: a doctype-less viewing context (quirks mode) stops
+     tables inheriting either, falling back to the page defaults. */
+  .m-cmp { width: 100%; min-width: 36rem; border-collapse: separate; border-spacing: 0;
+           color: var(--ink); font-size: .8rem; }
+  .m-cmp th, .m-cmp td { padding: .6rem .7rem; border-top: 1px solid var(--row-separator); vertical-align: top; text-align: left; }
+  .m-cmp thead th { border-top: 0; background: var(--navy); color: var(--white); font-size: .78rem; }
+  .m-cmp .col-label { display: block; color: var(--mint); font-size: .58rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+  .m-cmp .col-title { display: inline-block; margin-top: .1rem; font-weight: 800; text-decoration: underline;
+                      text-decoration-color: var(--mint); text-decoration-thickness: .08em; text-underline-offset: .18em; }
+  .m-cmp .col-add { float: right; color: var(--mint); font-size: 1.15rem; font-weight: 800; line-height: 1; }
+  .m-cmp .sec th { padding: .4rem .7rem; background: var(--sky); color: var(--navy); font-size: .7rem;
+                   letter-spacing: .05em; text-transform: uppercase; }
+  .m-cmp tbody th { background: var(--white); font-size: .79rem; font-weight: 700; line-height: 1.3; }
+  .m-cmp td.agree { background: var(--tone-agree-bg); }
+  .m-cmp td.agree .picks { color: var(--muted); }
+  .m-cmp .picks { display: block; font-weight: 700; line-height: 1.25; }
+  .m-cmp .picks.blank { color: var(--muted); font-weight: 500; font-style: italic; }
+  .m-cmp .meta { display: block; margin-top: .25rem; color: var(--muted); font-size: .66rem; font-variant-numeric: tabular-nums; }
+
+  /* Mock: corrections log */
+  .m-log { padding: 1.1rem 1.2rem 1.3rem; background: var(--paper); }
+  .m-log-eyebrow { margin: 0 0 .15rem; color: var(--teal); font-size: .68rem; font-weight: 700;
+                   letter-spacing: .16em; text-transform: uppercase; }
+  .m-log h6 { margin: 0 0 .2rem; color: var(--navy); font: 700 1.7rem/1.05 var(--serif); letter-spacing: -.012em; }
+  .m-log-tagline { margin: 0 0 .9rem; color: var(--muted); font-size: .92rem; font-weight: 500; }
+  .m-log-entry { max-width: 34rem; padding: .85rem 1rem; background: var(--white); border: 1px solid var(--line-soft);
+                 border-left: .3rem solid var(--amber); box-shadow: 0 .15rem .6rem rgba(16,42,67,.07); }
+  .m-log-entry + .m-log-entry { margin-top: .7rem; }
+  .m-log-date { color: var(--muted); font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+  .m-log-entry p { margin: .3rem 0 0; color: var(--ink); font-size: .9rem; max-width: none; }
+  .m-log-entry p b { color: var(--navy); }
+  .m-log-entry .m-provenance { margin-top: .4rem; }
+
+  /* Code block */
+  pre { margin: 1.1rem 0; padding: 1rem 1.15rem; overflow-x: auto; background: var(--doc-code-bg);
+        color: var(--doc-code-ink); border-radius: .45rem; font: .82rem/1.55 var(--mono); }
+  pre .c { color: #7e97ad; } pre .k { color: var(--doc-mint); }
+
+  /* Decision table */
+  .decisions { margin: 1.2rem 0; border: 1px solid var(--doc-line); border-radius: .4rem; overflow: hidden; }
+  .decision { padding: .8rem 1rem; background: var(--doc-surface); }
+  .decision + .decision { border-top: 1px solid var(--doc-line); }
+  .decision b { display: block; color: var(--doc-navy); }
+  .decision span { color: var(--doc-muted); font-size: .92rem; }
+  .decision .lean { color: var(--doc-teal); font-weight: 700; font-size: .8rem; letter-spacing: .04em; }
+
+  footer.doc-foot { margin-top: 3.5rem; padding-top: 1rem; border-top: 1px solid var(--doc-line);
+                    color: var(--doc-faint); font-size: .8rem; }
+  @media (max-width: 34rem) {
+    .m-result-row { grid-template-columns: 1fr; }
+    .m-band nav { display: none; }
+  }
+</style>
+
+<div class="frame">
+  <header class="doc-head">
+    <p class="eyebrow">Epic #208 · Design brainstorm · August 2, 2026</p>
+    <h1>Finalizing an election</h1>
+    <p class="tagline">How results enter the data, how we know they are final, and what a completed
+      race looks like on the site — sized to a guide whose job is helping people vote, not covering
+      the count.</p>
+  </header>
+
+  <h2>What the site wants to be<span class="sec-note">The decision that sizes everything else</span></h2>
+  <p>The site's purpose is in the name: it helps voters vote. Results are a secondary feature — but
+    "secondary" still has three plausible sizes, and choosing one settles most of the open
+    questions downstream.</p>
+
+  <div class="postures">
+    <div class="posture">
+      <div class="posture-head"><h4>A · Point elsewhere</h4><span class="chip chip-no">Too little</span></div>
+      <p>The archived guide gains one line — "this election has concluded; see King County
+        Elections for results" — and nothing else changes. Cheap, but it leaves the archive
+        permanently saying "vote for X" about a question that has been answered, and the reader has
+        to leave to find out how the story ended.</p>
+    </div>
+    <div class="posture">
+      <div class="posture-head"><h4>B · Close the record</h4><span class="chip chip-pick">Decided · Aug 2, 2026</span></div>
+      <p>Certified results are ingested once, with the same evidence-capture and provenance
+        discipline as endorsements, and each archived race states how it completed: who advanced or
+        won, with what share, certified when, by whom. While ballots are being counted the site
+        links out rather than republishing numbers. The archive becomes a complete historical
+        record; the site never becomes a results tracker.</p>
+    </div>
+    <div class="posture">
+      <div class="posture-head"><h4>C · Track the count</h4><span class="chip chip-no">Too much</span></div>
+      <p>Ingest election-night numbers and the daily ballot drops, updating races as counts evolve.
+        This competes with King County's own results site (which will always be fresher), demands
+        deploy operations exactly when attention is scarcest, and — because late ballots shift
+        Seattle results substantially — publishes numbers most likely to mislead precisely when
+        traffic is highest.</p>
+    </div>
+  </div>
+
+  <p>Posture B also honors the epic's framing constraint: results are shown as <strong>what
+    happened</strong>, next to what the guide recommended — never as a score. No accuracy language,
+    no track record, no "the guide called it." The one place results genuinely serve the voting
+    mission is continuity: a primary's outcome defines the general's ballot, and an archive that
+    records advancement explains the next guide's starting lineup.</p>
+
+  <div class="aside"><strong>Already banked:</strong> election-night and certified results
+    <em>capture</em> are O11 calendar milestones, deliberately separated from this design — the raw
+    evidence will exist whenever this design lands, because those windows are unrecoverable. The
+    calendar initially began coverage after this primary; the 2026 primary is being added
+    retroactively, so its August 4 election-night and ~August 19 certification captures are
+    tracked. Election night is in two days.</div>
+
+  <h2>How finality actually arrives<span class="sec-note">Washington's count, as a state machine</span></h2>
+  <p>Washington votes by mail with postmark-day validity, so the count is a process, not an event.
+    The model needs four states — and only one of them publishes numbers on the site.</p>
+
+  <ul class="timeline">
+    <li>
+      <span class="tl-when">Tuesday, August 4 · election day</span>
+      <span class="tl-what">Guide banner flips to its "past" state</span>
+      <span class="tl-note">Status: <b>counting</b>. The self-retiring banner (#192) already plans
+        for this; its stylesheet notes the past state "is where results belong later."</span>
+    </li>
+    <li class="capture">
+      <span class="tl-when">~8:15 p.m. election night</span>
+      <span class="tl-what">Capture №1 — election-night snapshot (evidence only)</span>
+      <span class="tl-note">First county tabulation, hashed into the evidence store per O11.
+        Proposed: never rendered — Seattle's late ballots routinely move races by several points,
+        and archiving a misleading number as if it were an answer works against the site's whole
+        posture.</span>
+    </li>
+    <li>
+      <span class="tl-when">August 5–18 · daily ballot drops</span>
+      <span class="tl-what">Site links out; ingests nothing</span>
+      <span class="tl-note">The counting banner names the authority and links to its live counts.
+        No deploys, no refresh cadence, no race with the county's website.</span>
+    </li>
+    <li class="capture">
+      <span class="tl-when">~August 19 · county certification</span>
+      <span class="tl-what">Capture №2 — certified results (the published dataset)</span>
+      <span class="tl-note">Status: <b>certified</b>. County canvass certifies roughly two weeks
+        after a primary (three after a general). One adapter run, one review, one deploy through
+        the normal approval gate. This is the finalization moment.</span>
+    </li>
+    <li>
+      <span class="tl-when">Rare · recount or amended canvass</span>
+      <span class="tl-what">Status: <b>amended</b> — a re-run of capture №2</span>
+      <span class="tl-note">Mandatory recounts trigger on very close margins. Modeled as a new
+        capture superseding the old, with the change noted in the corrections log rather than
+        silently overwritten.</span>
+    </li>
+  </ul>
+
+  <h2>Mockups<span class="sec-note">Built with the site's real tokens and a real race</span></h2>
+
+  <h3>1 · The banner carries the status</h3>
+  <p>The election-day banner (#192) already exists, with its own verbiage, coloring, and
+    self-retiring state machine: a tense-neutral server rendering, an amber escalation inside seven
+    days, and a past-tense rewrite once the election has happened. <strong>None of that changes in
+    this epic.</strong> The rows below reproduce the shipped states verbatim so the scope boundary
+    is unmistakable: this design only adds what happens <em>after</em> election day, and only when
+    results data exists — with no results file, the banner keeps its existing past rewrite
+    forever.</p>
+  <p>The two new states extend the same element and the same two color surfaces — counting on the
+    existing amber attention family, certified settling into the existing muted past state; no new
+    hues. Their text follows four rules, because less is more: at most two lines; a line never
+    breaks mid-sentence — each line is a complete thought; links name their destination; and
+    exactly one date appears — the most important next one, or the last one once the election is
+    completely over. Nothing about when counts update: that is not how this site works.</p>
+
+  <figure class="mockframe">
+    <figcaption><b>Banner states</b> — the three shipped states, unchanged, then the two this epic
+      adds.</figcaption>
+    <div class="mock banner-stack">
+      <div class="browser-bar"><i></i><i></i><i></i><span>seattleelections.guide/e/wa-2026-primary/</span></div>
+      <div class="m-band"><b>Seattle Election Guide</b><nav><span>Guide</span><span>Compare</span><span>Sources</span><span>About</span></nav></div>
+      <div class="m-rule"></div>
+      <div class="banner-label">Existing, unchanged — far from election day</div>
+      <div class="m-banner"><b>Election day:</b> Tuesday, August 4, 2026 · <a href="#">How to vote</a></div>
+      <div class="banner-label">Existing, unchanged — election week and election day (amber escalation)</div>
+      <div class="m-banner counting"><b>Election day is today</b> — ballots due by 8pm · <a href="#">How to vote</a></div>
+      <div class="banner-label">Existing, unchanged — past rewrite; remains the default when no results data exists</div>
+      <div class="m-banner past"><b>This election was held Tuesday, August 4, 2026.</b></div>
+      <div class="banner-label">New — August 5 – 18, while the results file says counting</div>
+      <div class="m-banner counting">
+        <span class="bl"><b>Ballots are being counted</b> — see the count at <a href="#">King County Elections</a>.</span>
+        <span class="bl">Results certify August 19, 2026.</span>
+      </div>
+      <div class="banner-label">New — certified</div>
+      <div class="m-banner past">
+        <span class="bl"><b>This election is complete.</b></span>
+        <span class="bl">Results were certified August 19, 2026.</span>
+      </div>
+    </div>
+  </figure>
+
+  <h3>2 · A certified race card</h3>
+  <p>The card keeps its identity — office, the guide's recommendation, the consensus meter — and
+    grows a results strip below a rule. Tally bars are navy on the neutral track, deliberately
+    outside the agree/differ tone families: results are facts, not judgments. The recommendation is
+    not restyled by the outcome in either direction.</p>
+
+  <figure class="mockframe">
+    <figcaption><b>Race card, certified state</b> — County Council District 8, a top-two primary
+      with three candidates.</figcaption>
+    <div class="mock">
+      <div class="m-cardwrap">
+        <div class="m-race-card">
+          <p class="m-office">Metropolitan King County Councilmember · District 8</p>
+          <div class="m-result-row">
+            <h5>Teresa Mosqueda</h5>
+            <div class="m-meter"><strong>11 of 14</strong></div>
+          </div>
+          <div class="m-outcome">
+            <div class="m-outcome-head">
+              <span>Result</span>
+              <span class="m-cert">Certified · Aug 19, 2026</span>
+            </div>
+            <div class="m-tally">
+              <div class="m-tally-row">
+                <span class="m-tally-name">Teresa Mosqueda <span class="adv">Advances</span></span>
+                <span class="m-tally-share">54.2%</span>
+                <span class="m-tally-bar"><i style="width:54.2%"></i></span>
+              </div>
+              <div class="m-tally-row">
+                <span class="m-tally-name">Mia Jacobson <span class="adv">Advances</span></span>
+                <span class="m-tally-share">27.9%</span>
+                <span class="m-tally-bar"><i style="width:27.9%"></i></span>
+              </div>
+              <div class="m-tally-row trailing">
+                <span class="m-tally-name">Nick Duda</span>
+                <span class="m-tally-share">17.4%</span>
+                <span class="m-tally-bar"><i style="width:17.4%"></i></span>
+              </div>
+            </div>
+            <p class="m-provenance">61,234 ballots · King County Elections · <a href="#">capture 9f3c…e2</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </figure>
+
+  <p>Between election day and certification, the same slot renders one honest line instead of
+    numbers: a <span class="chip chip-no" style="text-transform:none;letter-spacing:0">Counting — results certify Aug 19</span>
+    chip in the amber family, with no tally rows. The card never shows a number the county could
+    contradict tomorrow.</p>
+
+  <h3>3 · The endorsements view</h3>
+  <p>The race-detail dialog is where a reader compares candidates source by source, so results
+    belong here too — but as a <strong>state, not an option</strong>. No toggle, no new filter
+    control: when certified data exists for the election, the view renders it; before that, it
+    doesn't. One state driven by the data's presence keeps the controls uncluttered and adds one
+    rendering case to test instead of a combinatorial option.</p>
+  <p>Three touches carry it. A certified strip sits under the dialog header. Each candidate then
+    gets a slim <strong>vote-share row</strong> between the heading and its source list — the same
+    navy-on-track tally bar the race card uses, so votes look the same everywhere and never borrow
+    the meter, which here already means "share of endorsing sources." The meter keeps its top-line
+    place beside the candidate's name, with the endorsing-source count captioned beneath it. And
+    the advancing candidates carry one small <strong>"Advances" chip</strong> immediately after the
+    candidate's name — the same placement the race card uses, which also keeps the vote bars on one
+    shared scale instead of shortening whichever rows happen to carry a chip. The chip is sky on
+    navy, a lightened tint of the site's own navy, deliberately outside the agree/differ tone
+    families. Neither good nor bad; fact.</p>
+
+  <figure class="mockframe">
+    <figcaption><b>Endorsements dialog, certified state</b> — same District 8 race. Candidate order
+      is unchanged (endorsement order, not finish order); the archive records what the guide said.</figcaption>
+    <div class="mock" style="background:#3d5368; padding: 0 1rem;">
+      <div class="m-dialog">
+        <div class="m-dialog-header">
+          <div>
+            <p class="eyebrow-mock">2026 Washington August Primary · Endorsements</p>
+            <h5>Metropolitan King County Councilmember · District 8</h5>
+          </div>
+          <div class="m-dialog-close">✕</div>
+        </div>
+        <div class="m-cert-strip"><b>Certified result</b> · August 19, 2026 · King County Elections ·
+          61,234 ballots</div>
+        <div class="m-dialog-body">
+          <div class="m-cand leader">
+            <div class="m-cand-heading">
+              <div class="m-cand-title">
+                <p>Leading choice</p>
+                <h6>Teresa Mosqueda <span class="m-advchip">Advances</span></h6>
+              </div>
+              <div class="m-cand-metrics">
+                <div class="m-cand-meter" style="--fill:78%"><strong>11 of 14</strong></div>
+                <span>11 of 14 endorsing sources</span>
+              </div>
+            </div>
+            <div class="m-cand-result">
+              <span class="m-tally-bar"><i style="width:54.2%"></i></span>
+              <span class="m-cand-share">54.2%</span>
+            </div>
+            <ul class="m-src">
+              <li><strong>The Stranger</strong><span>Media</span></li>
+              <li><strong>Washington Bikes</strong><span>Advocacy</span></li>
+              <li><strong>MLK Labor</strong><span>Labor</span></li>
+            </ul>
+          </div>
+          <div class="m-cand">
+            <div class="m-cand-heading">
+              <div class="m-cand-title"><h6>Mia Jacobson <span class="m-advchip">Advances</span></h6></div>
+              <div class="m-cand-metrics">
+                <span>2 endorsing sources</span>
+              </div>
+            </div>
+            <div class="m-cand-result">
+              <span class="m-tally-bar"><i style="width:27.9%"></i></span>
+              <span class="m-cand-share">27.9%</span>
+            </div>
+            <ul class="m-src">
+              <li><strong>Seattle Times</strong><span>Media</span></li>
+            </ul>
+          </div>
+          <div class="m-cand">
+            <div class="m-cand-heading">
+              <div class="m-cand-title"><h6>Nick Duda</h6></div>
+              <div class="m-cand-metrics">
+                <span>1 endorsing source</span>
+              </div>
+            </div>
+            <div class="m-cand-result trailing">
+              <span class="m-tally-bar"><i style="width:17.4%"></i></span>
+              <span class="m-cand-share">17.4%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </figure>
+
+  <p>At narrow widths nothing new is invented: the heading's two sides stack — kicker, name, and
+    chip first; meter and source count following — and when the name and chip cannot share a line,
+    the chip wraps beneath the name. That is the whole mobile accommodation.</p>
+
+  <figure class="mockframe">
+    <figcaption><b>Narrow width</b> — the leader's section at a phone-class measure. The sides
+      stack and the chip wraps under the name; the vote bar and sources are unchanged.</figcaption>
+    <div class="mock m-narrowwrap">
+      <div class="m-cand leader m-narrow">
+        <div class="m-cand-heading">
+          <div class="m-cand-title">
+            <p>Leading choice</p>
+            <h6>Teresa Mosqueda <span class="m-advchip">Advances</span></h6>
+          </div>
+          <div class="m-cand-metrics">
+            <div class="m-cand-meter" style="--fill:78%"><strong>11 of 14</strong></div>
+            <span>11 of 14 endorsing sources</span>
+          </div>
+        </div>
+        <div class="m-cand-result">
+          <span class="m-tally-bar"><i style="width:54.2%"></i></span>
+          <span class="m-cand-share">54.2%</span>
+        </div>
+        <ul class="m-src">
+          <li><strong>The Stranger</strong><span>Media</span></li>
+        </ul>
+      </div>
+    </div>
+  </figure>
+
+  <p>The chip's label follows the race type — one component, three words. "Advances" in a primary;
+    "Elected" once a general certifies a winner ("Won" reads like sport, and "Elected" survives
+    contact with judges and school boards); "Approved" or "Rejected" for ballot measures, matching
+    the language on the certification itself. Rejected stays in the same sky tint — it is still
+    just a fact.</p>
+
+  <figure class="mockframe">
+    <figcaption><b>Chip vocabulary</b> — the one results chip across race types.</figcaption>
+    <div class="mock chipbar">
+      <span class="ctx">Primary</span> <span class="m-advchip">Advances</span>
+      <span class="ctx">General</span> <span class="m-advchip">Elected</span>
+      <span class="ctx">Measure</span> <span class="m-advchip">Approved</span> <span class="m-advchip">Rejected</span>
+    </div>
+  </figure>
+
+  <h3>4 · The comparison view</h3>
+  <p>The comparison page's native grammar is choosing columns, so results join
+    <span style="font-family:var(--mono);font-size:.85em">/compare/</span> as
+    <strong>another addable column</strong> — the one surface where showing results is a reader's
+    choice, because column selection is that page's idiom. The state gate still governs
+    availability: the column picker offers "Certified result" only when the results file exists.
+    Cells speak the table's own language — choice labels on the picks line, shares and the
+    certification status on the meta line.</p>
+  <p>One hard rule from the framing: the result column is <strong>excluded from agreement</strong>.
+    Its cells never tint agree or differ, and it never contributes to a row's "Differs" marker.
+    The page states what happened next to what sources said; it does not score one against the
+    other.</p>
+
+  <figure class="mockframe">
+    <figcaption><b>Comparison view with a result column</b> — sources keep their agreement tints;
+      the result column stays neutral.</figcaption>
+    <div class="mock">
+      <div class="m-cmp-pad">
+        <div class="m-cmp-wrap">
+          <table class="m-cmp">
+            <thead>
+              <tr>
+                <th><span class="col-label">Race</span></th>
+                <th><span class="col-label">Column 1</span><span class="col-title">The Stranger</span></th>
+                <th><span class="col-label">Column 2</span><span class="col-title">Consensus</span></th>
+                <th><span class="col-label">Column 3</span><span class="col-title">Certified result</span><span class="col-add">+</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="sec"><th colspan="4">King County</th></tr>
+              <tr>
+                <th>Metropolitan King County Councilmember · District 8</th>
+                <td class="agree"><span class="picks">Teresa Mosqueda</span></td>
+                <td class="agree"><span class="picks">Teresa Mosqueda</span><span class="meta">11 of 14 sources</span></td>
+                <td><span class="picks">Teresa Mosqueda / Mia Jacobson</span><span class="meta">54.2% · 27.9% · advance</span></td>
+              </tr>
+              <tr>
+                <th>Assessor</th>
+                <td><span class="picks blank">—</span></td>
+                <td class="agree"><span class="picks">Rowan Ellis</span><span class="meta">6 of 14 sources</span></td>
+                <td><span class="picks">Rowan Ellis / Dana Okafor</span><span class="meta">44.8% · 31.1% · advance</span></td>
+              </tr>
+              <tr class="sec"><th colspan="4">City of Seattle</th></tr>
+              <tr>
+                <th>Proposition 1 · Social housing levy</th>
+                <td class="agree"><span class="picks">Yes</span></td>
+                <td class="agree"><span class="picks">Yes</span><span class="meta">12 of 14 sources</span></td>
+                <td><span class="picks">Approved</span><span class="meta">61.4% yes</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </figure>
+
+  <h3>5 · The corrections log</h3>
+  <p>Bundled here by decision D2 because both features are the archive talking about itself after
+    publication. Corrections are <strong>per-election</strong>: a top-line page with the same
+    affordances and structure as any other major page, rendered — and linked in the nav — only when
+    that election actually has corrections. Anything that crosses elections is a site matter and
+    belongs to the changelog (O8), not to Corrections. A results amendment is the clearest case of
+    a correction the page must carry; the editorial line is <strong>"anything that changes what a
+    published page asserts"</strong> — routine pre-election data refreshes don't qualify; changed
+    recommendations, retracted endorsements, and amended results do.</p>
+
+  <figure class="mockframe">
+    <figcaption><b>Corrections page</b> — per-election, a full page in the election's own chrome,
+      existing only because this election has corrections.</figcaption>
+    <div class="mock">
+      <div class="browser-bar"><i></i><i></i><i></i><span>seattleelections.guide/e/wa-2026-primary/corrections/</span></div>
+      <div class="m-band"><b>Seattle Election Guide</b><nav><span>Guide</span><span>Compare</span><span>Sources</span><span>Corrections</span><span>About</span></nav></div>
+      <div class="m-rule"></div>
+      <div class="m-log">
+        <p class="m-log-eyebrow">2026 Washington August Primary</p>
+        <h6>Corrections</h6>
+        <p class="m-log-tagline">We get it right, eventually.</p>
+        <div class="m-log-entry">
+          <span class="m-log-date">August 27, 2026</span>
+          <p><b>Amended result, State Representative (LD 32, Pos. 1).</b> The county's amended
+            canvass moved the second advancing candidate after a machine recount. The certified
+            figures published August 19 have been replaced; both captures remain in the archive.</p>
+          <p class="m-provenance">supersedes <a href="#">capture 9f3c…e2</a> → <a href="#">capture 41ab…77</a></p>
+        </div>
+        <div class="m-log-entry">
+          <span class="m-log-date">July 22, 2026</span>
+          <p><b>Corrected an endorsement attribution.</b> The 46th District Democrats' sole
+            endorsement in the County Assessor race was attributed to the wrong candidate for
+            roughly six hours on July 21. The guide's recommendation was unaffected.</p>
+        </div>
+      </div>
+    </div>
+  </figure>
+
+  <h2>The data, sketched<span class="sec-note">Same discipline as endorsements</span></h2>
+  <p>One results file per election, written by a collection adapter over the King County (and, for
+    state races, Secretary of State) published results — evidence-captured, hashed, and validated
+    like everything else. The election-night capture lives in the manifest but feeds no rendering.</p>
+
+<pre><code><span class="c"># data/results/wa-2026-primary.yaml</span>
+<span class="k">election_id:</span> wa-2026-primary
+<span class="k">status:</span> certified          <span class="c"># counting | certified | amended</span>
+<span class="k">certified_on:</span> 2026-08-19
+<span class="k">authority:</span> King County Elections
+<span class="k">captures:</span>
+  - <span class="k">kind:</span> election_night   <span class="c"># evidence only, never rendered</span>
+    <span class="k">captured_at:</span> 2026-08-04T20:35:00-07:00
+    <span class="k">evidence:</span> data/manifests/evidence/capture-kc-results-…json
+  - <span class="k">kind:</span> certified
+    <span class="k">captured_at:</span> 2026-08-19T16:05:00-07:00
+    <span class="k">evidence:</span> data/manifests/evidence/capture-kc-results-…json
+<span class="k">races:</span>
+  - <span class="k">race_id:</span> king-county-council-8
+    <span class="k">ballots_counted:</span> 61234
+    <span class="k">outcomes:</span>
+      - <span class="k">choice_id:</span> king-county-council-8--teresa-mosqueda
+        <span class="k">votes:</span> 33189
+        <span class="k">share:</span> 0.542
+        <span class="k">advanced:</span> true      <span class="c"># `elected` in a general; `approved` on measures</span></code></pre>
+
+  <p>Validation asserts every <code style="font-family:var(--mono);font-size:.85em">choice_id</code>
+    exists in the inventory, shares sum to ~1 per race, and an <em>amended</em> file cites the
+    capture it supersedes — which is what feeds the corrections log automatically.</p>
+
+  <h2>Decisions<span class="sec-note">Ratified August 2, 2026 · what little remains open</span></h2>
+  <div class="decisions">
+    <div class="decision"><b>Posture B — close the record.</b>
+      <span>Certified results only; the site never tracks the count.</span></div>
+    <div class="decision"><b>Election-night numbers do not render.</b>
+      <span>Captured as evidence, shown nowhere. Not right now; revisit only if a real need appears.</span></div>
+    <div class="decision"><b>Outcomes never displace recommendations.</b>
+      <span>The site is about who <em>should</em> win — and should have won. Reality is a secondary
+      consideration, rendered as context beneath the recommendation, never as the headline.</span></div>
+    <div class="decision"><b>Endorsements view: certified strip + per-candidate vote row.</b>
+      <span>No per-source annotations. Renders as a state when certified data exists — no toggle,
+      no new control.</span></div>
+    <div class="decision"><b>Measures say Approved / Rejected.</b>
+      <span>Matching the certification's own language, in the same fact-toned chip.</span></div>
+    <div class="decision"><b>Corrections are per-election.</b>
+      <span>A top-line page with full page affordances, existing only when that election has
+      corrections; cross-election fixes belong to the site changelog, not Corrections.
+      Tagline: "We get it right, eventually."</span></div>
+    <div class="decision"><b>The general never consumes primary results.</b>
+      <span>They are separate elections; the county's official general inventory is the sole
+      source of truth.</span></div>
+    <div class="decision"><b>Trends across elections are out of scope.</b>
+      <span>Entirely. Nothing in this design anticipates them beyond the certified data existing.</span></div>
+    <div class="decision"><b>Results join the comparison view as an addable column.</b>
+      <span>Offered in the column picker only when certified data exists; cells use the table's
+      own grammar; excluded from agreement — no tints and no "Differs" against reality.</span></div>
+    <div class="decision"><b>Banners are terse, and pre-election states are untouched.</b>
+      <span>The shipped #192 banner (tense-neutral rendering, amber escalation, past rewrite) is
+      out of scope; the two new states activate only when results data exists and reuse its
+      existing tones. New-state text: at most two lines; a line never breaks mid-sentence; links
+      name their destination; exactly one date — the most important next one, or the last once the
+      election is over. Nothing about count-update cadence.</span></div>
+    <div class="decision"><b>Still open</b>
+      <span>A small mockup pass for ballot measures (approve-share bar, validation thresholds);
+      "Elected" as the general-race chip label (standing proposal, unobjected); the exact
+      amended-result flow, decided when a recount first happens.</span></div>
+  </div>
+
+  <footer class="doc-foot">
+    Brainstorm for the epic "Post-election results" (#208) · mockups use the production palette,
+    faces, and component geometry from base.css and guide.css · candidates shown are the real
+    District 8 primary field from the published inventory; tallies are illustrative.
+  </footer>
+</div>
