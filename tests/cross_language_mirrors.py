@@ -29,6 +29,14 @@ arithmetic — ``percentageLabel`` shares only ``%`` with its Python side — an
 named symbols misses a mirror nobody annotated. The union is the candidate set,
 and every candidate needs an inventory entry saying how that mirror is proven.
 
+Text is read one *rendered branch* at a time on both sides, which took three
+corrections to get right and is where this scan previously missed real mirrors:
+a ``{% if %}`` splits the markup around it rather than collapsing into it, a
+Jinja expression's own literals and ``~`` concatenations are read, and a literal
+nested inside a ``${...}`` is read too. The dialog's ``Leading choice`` kicker,
+its contributing-count sentence, and the Comparisons status line each hid behind
+one of those.
+
 Three limits are deliberate, and are the reason the fixtures rather than this
 scan carry the correctness claim:
 
@@ -43,7 +51,11 @@ scan carry the correctness claim:
   not a second implementation of it, so it must not.
 - Text evidence finds only mirrors that share words, and a formatter whose
   output is one word (``supportSummaryCompact``'s ``"N sources"``) shares too
-  little to be found. So `tests/mirrors.json` is a floor the derivation raises,
+  little to be found. Nor does an evidence key record *where* a template is
+  spelled, so a `shared-literal` entry catches wording dropped from a side but
+  not one implementation moving while a second occurrence in the same file keeps
+  the key alive. Text a macro's caller assembles, or a filter chain builds, is
+  beyond it as well. So `tests/mirrors.json` is a floor the derivation raises,
   not a ceiling it defines: every derived candidate must appear there, and
   reviewed entries may be added that no signal pins.
 """
@@ -71,9 +83,20 @@ _JS_BLOCK_COMMENT = re.compile(r"/\*[\s\S]*?\*/")
 # Whitespace or line start before `//`, so a `https://` inside a string survives.
 # The same heuristic `tests/js/support/module-guards.mjs` strips comments with.
 _JS_LINE_COMMENT = re.compile(r"(^|\s)//.*$", re.M)
-_JINJA_HOLE = re.compile(r"\{\{.*?\}\}|\{%.*?%\}", re.DOTALL)
+# A `{{ value }}` is an interpolation, so it becomes a hole. A `{% tag %}` is
+# control flow, so it becomes a *boundary*: the text on either side of an
+# `{% if %}`/`{% else %}` is two templates the page renders separately, and
+# fusing them into one produces a template neither side ever writes.
+_JINJA_VALUE = re.compile(r"\{\{.*?\}\}", re.DOTALL)
+_JINJA_TAG = re.compile(r"\{%.*?%\}", re.DOTALL)
 _JINJA_COMMENT = re.compile(r"\{#.*?#\}", re.DOTALL)
+_JINJA_CONSTRUCT = re.compile(r"\{\{(.*?)\}\}|\{%(.*?)%\}", re.DOTALL)
+_JINJA_QUOTED = re.compile(r"'([^'\\]*(?:\\.[^'\\]*)*)'|\"([^\"\\]*(?:\\.[^\"\\]*)*)\"")
+# The contents of one bracket group, non-greedy so nesting is reached by recursion.
+_BRACKET_GROUP = re.compile(r"[(\[{](.*)[)\]}]", re.DOTALL)
 _HTML_TAG = re.compile(r"<[^>]*>", re.DOTALL)
+# Chunk boundary. Like HOLE, chosen from outside the authored character set.
+_BOUNDARY = "\x00"
 _WHITESPACE = re.compile(r"\s+")
 _JS_EXPORT = re.compile(r"^export (?:async )?(?:function|class) (\w+)", re.M)
 _MULTIWORD_SNAKE = re.compile(r"^[a-z][a-z0-9]*(?:_[a-z0-9]+)+$")
@@ -135,20 +158,97 @@ def _python_literals(source: str) -> set[str]:
     return literals
 
 
+def _split_top_level(text: str, separator: str) -> list[str]:
+    """Split on a separator that is outside brackets and outside a string."""
+    parts: list[str] = []
+    depth = 0
+    quote: str | None = None
+    current: list[str] = []
+    for character in text:
+        if quote is not None:
+            current.append(character)
+            if character == quote:
+                quote = None
+            continue
+        if character in "\"'":
+            quote = character
+        elif character in "([{":
+            depth += 1
+        elif character in ")]}":
+            depth -= 1
+        elif character == separator and depth == 0:
+            parts.append("".join(current))
+            current = []
+            continue
+        current.append(character)
+    parts.append("".join(current))
+    return parts
+
+
+def _jinja_expression_templates(source: str) -> set[str]:
+    """Display text a Jinja *expression* composes rather than writes as markup.
+
+    `compare.html.j2` builds its control status as
+    `count ~ ' of ' ~ count ~ ' races shown · ' ~ differ ~ ' differ'` and hands
+    it to a macro. Treating the whole construct as one interpolation deletes
+    that sentence, so a `~` concatenation is reassembled into the template it
+    renders as, with every non-literal operand standing in as a hole. Quoted
+    literals that are not part of a concatenation are taken on their own.
+    """
+    templates: set[str] = set()
+    for match in _JINJA_CONSTRUCT.finditer(source):
+        body = match.group(1) if match.group(1) is not None else match.group(2)
+        templates |= _expression_templates(body or "")
+    return templates
+
+
+def _expression_templates(expression: str, depth: int = 0) -> set[str]:
+    """Every template one Jinja expression composes, at any bracket depth.
+
+    Recursive because the sentence that motivated this is an *argument* to a
+    macro call: `{% call election_controls(..., a ~ ' of ' ~ b ~ ' differ') %}`
+    keeps its concatenation inside parentheses, so splitting only the
+    construct's own top level would never reach it.
+    """
+    if depth > 8:
+        return set()
+    templates: set[str] = set()
+    for argument in _split_top_level(expression, ","):
+        operands = _split_top_level(argument, "~")
+        if len(operands) > 1:
+            templates.add(
+                "".join(
+                    quoted.group(1) or quoted.group(2) or ""
+                    if (quoted := _JINJA_QUOTED.fullmatch(operand.strip()))
+                    else HOLE
+                    for operand in operands
+                )
+            )
+        for quoted in _JINJA_QUOTED.finditer(argument):
+            templates.add(quoted.group(1) or quoted.group(2) or "")
+        for inner in _BRACKET_GROUP.finditer(argument):
+            templates |= _expression_templates(inner.group(1), depth + 1)
+    return templates
+
+
+def _jinja_markup_templates(source: str) -> set[str]:
+    """Display text a Jinja template writes as markup, one branch at a time."""
+    holed = _JINJA_VALUE.sub(HOLE, source)
+    bounded = _JINJA_TAG.sub(_BOUNDARY, holed)
+    chunks: list[str] = []
+    for between_tags in _HTML_TAG.split(bounded):
+        chunks.extend(between_tags.split(_BOUNDARY))
+    return set(chunks)
+
+
 def _python_templates(path: Path) -> set[str]:
     text = path.read_text(encoding="utf-8")
     if path.suffix == ".j2":
-        stripped = _JINJA_HOLE.sub(HOLE, _JINJA_COMMENT.sub("", text))
-        return {
-            template
-            for chunk in _HTML_TAG.split(stripped)
-            if _is_display_text(template := _normalize(chunk))
-        }
-    return {
-        template
-        for literal in _python_literals(text)
-        if _is_display_text(template := _normalize(literal))
-    }
+        stripped = _JINJA_COMMENT.sub("", text)
+        candidates = _jinja_markup_templates(stripped) | _jinja_expression_templates(stripped)
+    else:
+        candidates = _python_literals(text)
+    return {template for literal in candidates if _is_display_text(template := _normalize(literal))}
 
 
 def _executable_client_source(path: Path) -> str:
@@ -157,11 +257,32 @@ def _executable_client_source(path: Path) -> str:
     return _JS_LINE_COMMENT.sub(r"\1", _JS_BLOCK_COMMENT.sub("", text))
 
 
+def _client_literals(source: str, depth: int = 0) -> set[str]:
+    """Every string literal, including those nested inside an interpolation.
+
+    The mirror image of the Jinja fix above, and the same blind spot: a
+    conditional inside `${...}` — ``` `${tied ? 'No majority · ' : ''}${rest}` ```
+    — is a literal the reader sees, but the enclosing template literal collapses
+    to a bare hole, and a scan that stopped at the outer quote would never look
+    inside. So the interpolations are scanned as source in their own right.
+    """
+    if depth > 8:
+        return set()
+    literals: set[str] = set()
+    for match in _JS_STRING.finditer(source):
+        body = match.group("body")
+        literals.add(_JS_HOLE.sub(HOLE, body))
+        if match.group("q") == "`":
+            for interpolation in _JS_HOLE.finditer(body):
+                literals |= _client_literals(interpolation.group(0)[2:-1], depth + 1)
+    return literals
+
+
 def _client_templates(path: Path) -> set[str]:
     return {
         template
-        for match in _JS_STRING.finditer(_executable_client_source(path))
-        if _is_display_text(template := _normalize(_JS_HOLE.sub(HOLE, match.group("body"))))
+        for literal in _client_literals(_executable_client_source(path))
+        if _is_display_text(template := _normalize(literal))
     }
 
 

@@ -327,6 +327,15 @@ check is a bug in the check — fix or amend it, never route around it.
   drop the wording from either side and the declared evidence stops being
   derived.
 
+  Text is read one rendered branch at a time on both sides. A `{% if %}` splits
+  the markup around it rather than collapsing with it, a Jinja expression's own
+  literals and `~` concatenations are read, and a literal nested inside a
+  `${...}` is read too. Each of those was a blind spot that hid a real mirror —
+  the dialog's `Leading choice` / `Tied for lead` kicker, its contributing-count
+  sentence, and the Comparisons status line — and none of them was visible to
+  the scan that missed them, which is the whole argument for reviewing the
+  inventory rather than trusting it.
+
   **The derivation is a floor, not a ceiling**, and three limits say why an
   entry may exist that no signal pins. Symbol matching is restricted to
   multiword names, because `text` and `boot` are defined on both sides and mean
@@ -337,9 +346,10 @@ check is a bug in the check — fix or amend it, never route around it.
   And an evidence key records that a template is spelled on each side, not where
   or how many times, so a `shared-literal` entry catches wording dropped from a
   side but not one implementation of it moving while another occurrence in the
-  same file keeps the key alive. Adding an entry after reading the code is the
-  intended way to close the gap those limits leave; `tests/mirrors.json` is
-  reviewed, not merely generated.
+  same file keeps the key alive. Text a macro's caller assembles, or a filter
+  chain builds, is still beyond the scan. Adding an entry after reading the code
+  is the intended way to close the gap those limits leave; `tests/mirrors.json`
+  is reviewed, not merely generated.
 - **Prefer deleting a mirror to fixing one.** Where the contract can carry
   the computed value instead (a label in the payload rather than a formatter
   on each side), carry the value. The audited candidate order and the audited
