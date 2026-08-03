@@ -10,6 +10,7 @@ that recurring; these tests hold the manifest to its claims.
 from __future__ import annotations
 
 import re
+from collections import Counter
 
 import pytest
 
@@ -35,48 +36,46 @@ SHARED_FIRST = "base.css"
 LAYOUT = "base.html.j2"
 
 
-def _declared_classes(part: str) -> set[str]:
-    """Every class a stylesheet part writes a rule for, comments excluded.
+def _declared_classes(source: str) -> set[str]:
+    """Every class the CSS in `source` writes a rule for, comments excluded.
 
-    Scanned brace by brace rather than line by line so a selector nested in an
-    `@media` block counts too: a responsive rule is as much this part's as an
-    unconditional one, and reading only column-zero selectors would let a page
-    stylesheet hide another page's rules inside a media query.
+    Takes the stylesheet text rather than a filename so the same definition of
+    "declares a class" answers for a part and for a whole page's entry — one
+    rule, not one per side of the comparison.
+
+    `[^{}]*` cannot cross a brace, so each match is one block's prelude at any
+    nesting depth: a selector inside an `@media` block counts, and reading only
+    top-level ones would let a page hide another page's rules in a media query.
     """
-    source = re.sub(r"/\*.*?\*/", "", (TEMPLATE_DIR / part).read_text(encoding="utf-8"), flags=re.S)
-    selectors: list[str] = []
-    prelude: list[str] = []
-    for character in source:
-        if character == "{":
-            candidate = "".join(prelude).strip()
-            # An at-rule's prelude is a condition, not a selector.
-            if not candidate.startswith("@"):
-                selectors.append(candidate)
-            prelude = []
-        elif character == "}":
-            prelude = []
-        else:
-            prelude.append(character)
+    without_comments = re.sub(r"/\*.*?\*/", "", source, flags=re.S)
+    selectors = [
+        prelude
+        for prelude in re.findall(r"[^{}]*(?=\{)", without_comments)
+        # An at-rule's prelude is a condition, not a selector.
+        if not prelude.strip().startswith("@")
+    ]
     return set(CLASS_SELECTOR.findall("\n".join(selectors)))
+
+
+def _part_classes(part: str) -> set[str]:
+    """Every class one stylesheet part declares."""
+    return _declared_classes((TEMPLATE_DIR / part).read_text(encoding="utf-8"))
+
+
+def _readers() -> Counter[str]:
+    """How many pages read each declared part."""
+    return Counter(part for parts in PAGE_STYLESHEETS.values() for part in parts)
 
 
 def _exclusive_parts(page: str) -> set[str]:
     """The parts only `page` reads."""
-    others = {part for name, parts in PAGE_STYLESHEETS.items() if name != page for part in parts}
-    return set(PAGE_STYLESHEETS[page]) - others
+    readers = _readers()
+    return {part for part in PAGE_STYLESHEETS[page] if readers[part] == 1}
 
 
 def _shared_classes() -> set[str]:
     """Classes declared in a part more than one page reads."""
-    readers: dict[str, int] = {}
-    for parts in PAGE_STYLESHEETS.values():
-        for part in parts:
-            readers[part] = readers.get(part, 0) + 1
-    shared: set[str] = set()
-    for part, count in readers.items():
-        if count > 1:
-            shared |= _declared_classes(part)
-    return shared
+    return set[str]().union(*(_part_classes(p) for p, n in _readers().items() if n > 1))
 
 
 @pytest.mark.parametrize("page", sorted(PAGE_STYLESHEETS))
@@ -88,10 +87,6 @@ def test_every_page_reads_the_shared_base_first_and_its_own_stylesheet_last(page
         f"ones ({RULE})"
     )
     assert len(set(parts)) == len(parts), f"{page} reads a part twice ({RULE})"
-    for part in parts:
-        assert (TEMPLATE_DIR / part).is_file(), (
-            f"{page} names a stylesheet that does not exist ({RULE})"
-        )
 
 
 @pytest.mark.parametrize("page", sorted(PAGE_STYLESHEETS))
@@ -101,11 +96,18 @@ def test_a_page_renders_a_template_of_the_same_name(page: str) -> None:
     )
 
 
-def test_every_stylesheet_in_the_template_directory_is_declared_by_a_page() -> None:
-    """An undeclared stylesheet is one nothing ships: it would go stale unseen."""
+def test_every_stylesheet_is_declared_by_a_page_and_every_declared_part_exists() -> None:
+    """Set equality both ways: no stylesheet nothing ships, no part that is missing.
+
+    An undeclared stylesheet would go stale unseen; a declared part with no
+    file would fail at render time instead of here.
+    """
     declared = {part for parts in PAGE_STYLESHEETS.values() for part in parts}
     on_disk = {path.name for path in TEMPLATE_DIR.glob("*.css")}
-    assert on_disk == declared, f"a stylesheet on disk is read by no page ({RULE})"
+    assert on_disk == declared, (
+        f"declared but missing: {sorted(declared - on_disk)}; "
+        f"on disk but read by no page: {sorted(on_disk - declared)} ({RULE})"
+    )
 
 
 def test_only_the_shared_layout_writes_a_style_element_or_fills_the_styles_slot() -> None:
@@ -149,60 +151,79 @@ def test_an_undeclared_page_is_a_named_failure_rather_than_a_missing_file() -> N
 def test_no_page_ships_a_rule_group_only_another_page_renders(page: str) -> None:
     """The acceptance property, as a property of the shipped bytes.
 
-    A class styled only by a stylesheet one other page reads must not appear in
-    this page's stylesheet at all — not through the manifest, and not through a
-    rule copied back in. A class two pages really do render belongs in a part
-    they both read, which is what makes `_shared_classes` the right exemption
-    rather than an allowlist that would have to be maintained.
+    A class styled only by a stylesheet one other page reads must not be styled
+    by this page's entry at all — not through the manifest, and not through a
+    rule copied back in, since a copied rule declares the class too. A class two
+    pages really do render belongs in a part they both read, which is what makes
+    `_shared_classes` the right exemption rather than an allowlist to maintain.
     """
-    shipped = page_stylesheet(page)
+    shipped = _declared_classes(page_stylesheet(page))
     shared = _shared_classes()
     for other in PAGE_STYLESHEETS:
         if other == page:
             continue
-        exclusive: set[str] = set()
-        for part in _exclusive_parts(other):
-            exclusive |= _declared_classes(part)
-        for name in sorted(exclusive - shared):
-            assert not re.search(rf"(?<![\w-])\.{re.escape(name)}(?![\w-])", shipped), (
-                f"the {page} page ships .{name}, styled only by the {other} page's own "
-                f"stylesheet; move it to a part both read (rendering/stylesheets.py; {RULE})"
-            )
+        exclusive = set[str]().union(*(_part_classes(p) for p in _exclusive_parts(other)))
+        leaked = sorted((exclusive - shared) & shipped)
+        assert not leaked, (
+            f"the {page} page styles {leaked}, styled only by the {other} page's own "
+            f"stylesheet; move them to a part both read (rendering/stylesheets.py; {RULE})"
+        )
 
 
 def test_the_guide_document_no_longer_ships_the_sources_editors_checkbox_tree() -> None:
-    """Issue 246's spot check, named so a regression reads as the thing it is."""
-    guide = page_stylesheet("guide")
-    for selector in (
-        ".sources-tree",
-        ".sources-columns",
-        ".sources-category",
-        ".sources-check",
-        ".sources-count",
-        ".screen-coverage-gaps",
-        ".coverage-gap-row",
-    ):
-        assert selector not in guide
+    """Issue 246's spot check, named so a regression reads as the thing it is.
 
-    sources = page_stylesheet("sources")
-    for selector in (".sources-tree", ".screen-coverage-gaps", ".coverage-gap-row"):
-        assert selector in sources
+    Asked of the classes each entry declares rather than of its raw text, so a
+    comment that names a moved rule — the natural way to explain where it went
+    — is prose rather than a build failure.
+    """
+    guide = _declared_classes(page_stylesheet("guide"))
+    sources = _declared_classes(page_stylesheet("sources"))
+
+    editor_only = {
+        "sources-tree",
+        "sources-columns",
+        "sources-category",
+        "sources-check",
+        "sources-count",
+        "screen-coverage-gaps",
+        "coverage-gap-row",
+    }
+    assert not editor_only & guide, (
+        f"the guide document styles {sorted(editor_only & guide)}, which only the sources "
+        f"editor renders ({RULE})"
+    )
+    assert editor_only <= sources, (
+        f"the sources editor lost {sorted(editor_only - sources)}, which it renders ({RULE})"
+    )
+
     # ...and the reverse: the editor stopped carrying the guide's race grid,
     # race-detail dialog, and printable edition.
-    for selector in (".race-grid", ".race-detail-dialog", ".race-card", ".screen-meter"):
-        assert selector not in sources
-        assert selector in guide
+    guide_only = {"race-grid", "race-detail-dialog", "race-card", "screen-meter"}
+    assert not guide_only & sources, (
+        f"the sources editor styles {sorted(guide_only & sources)}, which only the guide "
+        f"renders ({RULE})"
+    )
+    assert guide_only <= guide, (
+        f"the guide lost {sorted(guide_only - guide)}, which it renders ({RULE})"
+    )
 
 
 def test_the_guide_and_the_sources_editor_still_share_what_they_both_render() -> None:
     """The other half of the split: neither page lost a rule it does render.
 
-    Both templates render a `.lens-notice`, and both documents print with the
-    same page margins, so dropping `guide-sources.css` from either entry is a
-    silent visual regression rather than a saving.
+    Both templates render a `.lens-notice`, both render the band whose nav the
+    720px rule resets, and both documents print with the same page margins, so
+    dropping `guide-sources.css` from either entry is a silent visual
+    regression rather than a saving.
     """
     for page in ("guide", "sources"):
-        shipped = page_stylesheet(page)
-        assert ".lens-notice" in shipped
-        assert "@page" in shipped
-        assert ".site-band nav" in shipped
+        stylesheet = re.sub(r"/\*.*?\*/", "", page_stylesheet(page), flags=re.S)
+        classes = _declared_classes(stylesheet)
+        assert {"lens-notice", "site-band"} <= classes, (
+            f"the {page} page lost the shared lens notice or band rules ({RULE})"
+        )
+        assert re.search(r"@page\s*\{", stylesheet), (
+            f"the {page} page lost its @page margins, which it prints with; they belong to "
+            f"the part both pages read (rendering/stylesheets.py; {RULE})"
+        )

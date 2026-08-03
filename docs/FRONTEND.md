@@ -52,9 +52,12 @@ check is a bug in the check — fix or amend it, never route around it.
   bundle.** `rendering/stylesheets.py` maps every page to the stylesheets it
   ships, in cascade order: `base.css` first — the design tokens and the shell
   every page renders (docs/DESIGN.md) — and `<page>.css` last, so a page can
-  override a shared rule without restating it. A rule two pages render, and no
-  third, lives in a part they both name (`guide-sources.css`), never copied
-  into both. A page writes no rules in its template: nothing overrides
+  override a shared rule without restating it. A rule *group* two pages render,
+  and no third, lives in a part they both name (`guide-sources.css`), never
+  copied into both. That is about components — the class-based groups a page
+  owns; a page's own `main` frame rules stay page-local even where two pages'
+  happen to match, because hoisting a padding value is not what keeps the
+  groups apart. A page writes no rules in its template: nothing overrides
   `base.html.j2`'s `styles` slot.
 
   The parts are concatenated rather than bundled, which is the one place this
@@ -67,9 +70,9 @@ check is a bug in the check — fix or amend it, never route around it.
 
   Scope: this rule governs which *page* stylesheets a page reads. `base.css`
   stays whole and shared by DESIGN.md's rule, so a page still carries shell
-  groups it happens not to render — the footer on Comparisons and the sources
-  editor, the filter bar on the site-wide pages. Splitting `base.css` by
-  component is a separate decision about the shell, not this one.
+  groups it happens not to render — the filter bar and the election-day banner
+  on the site-wide pages, the action strip on Comparisons. Splitting `base.css`
+  by component is a separate decision about the shell, not this one.
   *Check: exists — `tests/test_page_stylesheets.py` holds every page to its
   declared parts, holds every stylesheet on disk to a page that reads it,
   asserts no page ships a class styled only by another page's own stylesheet,
