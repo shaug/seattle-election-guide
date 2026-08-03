@@ -105,6 +105,27 @@ of a voter guide, because a preview's endorsement data may already be wrong and 
 canonical host is a claim this project wants to publish. The rule lives in the worker rather than
 `_headers` because `_headers` is host-blind and cannot express it.
 
+## Published releases
+
+Every election the site serves is expected to have a published GitHub Release whose tag is the
+`release_version` declared for it in `config/hosting/site.yaml`. That archive is the durable copy of
+the bundle: it is what a historical election is resolved from once it is no longer built from
+source, and what an audit compares a deployed guide against.
+
+Nothing enforced that pairing before, so the two drifted — `2026-primary.2` was declared, built, and
+deployed while only `2026-primary.1` had ever been published (issue 213). CI now rejects that:
+
+```bash
+uv run election-guide hosting verify-releases config/hosting/site.yaml
+```
+
+The command reads every declared election and fails when a `release_version` has no published
+Release, naming each election and the tag it expects. Draft releases do not count; a draft carries a
+tag name but publishes no archive. It reads release state through the GitHub CLI, so `gh` must be
+installed and authenticated — CI supplies the default `GITHUB_TOKEN`, and the check is read-only.
+
+Publishing a release is described in [RELEASE.md](RELEASE.md).
+
 ## Local staging and preview
 
 Build the audited release as described in [RELEASE.md](RELEASE.md), then stage it:

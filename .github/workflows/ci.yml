@@ -45,6 +45,15 @@ jobs:
         run: make check-js
       - name: Validate canonical election inventory
         run: uv run election-guide inventory validate data/normalized/wa-2026-primary-inventory.json
+      # Every election the site serves is resolved from its published release
+      # archive, so a declared version with no published Release is a broken
+      # deployment waiting to happen (docs/HOSTING.md, Published releases).
+      - name: Verify declared release versions are published
+        run: uv run election-guide hosting verify-releases config/hosting/site.yaml
+        env:
+          # The automatic job token, not a deployment secret: this job runs on
+          # pull requests and is held to the workflow's read-only permissions.
+          GH_TOKEN: ${{ github.token }}
       - name: Verify reproducible primary release inputs
         run: uv run election-guide release verify data/releases/wa-2026-primary/source-decisions.yaml
       - name: Build and verify deterministic primary release

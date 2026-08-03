@@ -12,6 +12,10 @@ from election_guide.hosting.pages import (
     stage_pages_site,
     verify_staged_pages_site,
 )
+from election_guide.hosting.releases import (
+    published_release_tags,
+    verify_declared_releases_published,
+)
 
 __all__ = [
     "DeployedElection",
@@ -19,7 +23,9 @@ __all__ = [
     "PublishedElection",
     "SiteManifest",
     "StagedPagesSite",
+    "published_release_tags",
     "read_site_manifest",
     "stage_pages_site",
+    "verify_declared_releases_published",
     "verify_staged_pages_site",
 ]
