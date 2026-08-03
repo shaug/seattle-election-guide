@@ -9,7 +9,7 @@ import subprocess
 import tempfile
 from collections.abc import Generator
 from contextlib import contextmanager
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Annotated, Any, cast
 
@@ -17,7 +17,8 @@ import typer
 from pydantic import ValidationError
 
 from election_guide import __version__
-from election_guide.calendar import read_election_calendar
+from election_guide.calendar import plan_issues, read_election_calendar
+from election_guide.calendar.github_tracker import GitHubIssueTracker
 from election_guide.collection import read_adapter_spec, refresh_source, validate_adapter
 from election_guide.collection.http import fetch_http
 from election_guide.collection.refresh import RefreshOrderError, record_refresh_failure
@@ -246,6 +247,50 @@ def calendar_validate(
         f"election calendar: valid ({len(calendar.elections)} elections, "
         f"{len(calendar.milestones)} milestones; {scheduled[0]} through {scheduled[-1]})"
     )
+
+
+@calendar_app.command("track")
+def calendar_track(
+    calendar_path: Annotated[
+        Path,
+        typer.Argument(exists=True, dir_okay=False, readable=True),
+    ] = Path("config/calendar/elections.yaml"),
+    repository: Annotated[
+        str, typer.Option(help="GitHub repository as OWNER/NAME.")
+    ] = "shaug/seattle-election-guide",
+    as_of: Annotated[
+        str | None, typer.Option(help="Evaluate the window from this ISO 8601 date.")
+    ] = None,
+    lead_days: Annotated[
+        int, typer.Option(help="Open issues for milestones due within this many days.")
+    ] = 21,
+    dry_run: Annotated[
+        bool, typer.Option(help="Print what would be created without opening anything.")
+    ] = False,
+) -> None:
+    """Open one tracking issue per calendar milestone coming due."""
+    try:
+        calendar = read_election_calendar(calendar_path)
+        today = date.fromisoformat(as_of) if as_of is not None else datetime.now(UTC).date()
+        tracker = GitHubIssueTracker(repository)
+        # A dry run still reads existing markers. Printing milestones that
+        # already have issues would report work the real run would skip.
+        planned = plan_issues(
+            calendar,
+            as_of=today,
+            lead_days=lead_days,
+            existing_markers=tracker.existing_markers(),
+        )
+        for request in planned:
+            if dry_run:
+                typer.echo(f"would create: {request.title} [{request.marker}]")
+            else:
+                typer.echo(f"created: {tracker.create(request)}")
+    except (OSError, UnicodeError, json.JSONDecodeError, ValidationError, ValueError) as error:
+        typer.echo(f"calendar tracking failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    verb = "would be opened" if dry_run else "opened"
+    typer.echo(f"calendar tracking: {len(planned)} {verb}, window {lead_days} days from {today}")
 
 
 @election_app.command("init")
