@@ -18,6 +18,7 @@ import json
 import shutil
 import subprocess
 import zipfile
+import zlib
 from collections.abc import Iterable
 from pathlib import Path, PurePosixPath
 from typing import Any, cast
@@ -155,9 +156,12 @@ def materialize_released_bundle(declaration: PublishedElection, work_dir: Path) 
 def _extract_bundle(archive_path: Path, bundle_dir: Path, declaration: PublishedElection) -> None:
     """Extract the archive's single bundle root, rejecting unsafe member paths."""
     prefix = f"{ARCHIVE_ROOT_DIR}/"
-    # A replaced, truncated, or CRC-corrupt download raises BadZipFile, which is
-    # not a ValueError and would escape the command's error handling as a
-    # traceback. Every archive-level rejection reads the same way instead.
+    # A damaged download fails in several ways, none of them a ValueError, so any
+    # of them would escape the command's error handling as a traceback. Whole-file
+    # damage raises BadZipFile; a corrupt member body raises zlib.error, which is
+    # the case that matters most here because the packer deflates every entry. An
+    # encrypted member raises RuntimeError and an unknown compression method
+    # raises NotImplementedError. Every archive-level rejection reads the same way.
     try:
         with zipfile.ZipFile(archive_path) as archive:
             members = [name for name in archive.namelist() if not name.endswith("/")]
@@ -179,7 +183,7 @@ def _extract_bundle(archive_path: Path, bundle_dir: Path, declaration: Published
                 target.parent.mkdir(parents=True, exist_ok=True)
                 with archive.open(name) as source, target.open("wb") as sink:
                     shutil.copyfileobj(source, sink, READ_CHUNK_SIZE)
-    except zipfile.BadZipFile as error:
+    except (zipfile.BadZipFile, zlib.error, RuntimeError, NotImplementedError) as error:
         raise ValueError(
             f"release archive {archive_path.name!r} for bundle {declaration.bundle_id!r} "
             f"is not a readable ZIP archive: {error}"

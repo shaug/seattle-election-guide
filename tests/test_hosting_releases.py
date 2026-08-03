@@ -483,3 +483,75 @@ def test_the_cli_reports_an_unreadable_archive_without_a_traceback(
     assert result.exit_code == 1
     assert "hosting stage failed" in result.output
     assert "is not a readable ZIP archive" in result.output
+
+
+def _corrupt_deflated_member(archive_path: Path, member: str) -> None:
+    """Damage one deflated member's body in place, leaving the ZIP structure intact."""
+    with zipfile.ZipFile(archive_path) as archive:
+        info = archive.getinfo(member)
+        assert info.compress_type == zipfile.ZIP_DEFLATED, "the packer deflates every entry"
+        body_offset = info.header_offset + 30 + len(info.filename.encode()) + len(info.extra or b"")
+    raw = bytearray(archive_path.read_bytes())
+    for index in range(body_offset + 4, body_offset + 68):
+        raw[index] ^= 0xFF
+    archive_path.write_bytes(bytes(raw))
+
+
+@pytest.mark.parametrize(
+    "member",
+    ["data/publication_view_model.json", "release-status.json"],
+)
+def test_a_corrupt_archive_member_fails_with_a_clear_message(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, member: str
+) -> None:
+    """In-place corruption of a real archive raises zlib.error, not BadZipFile."""
+    current, older = _write_archive_bundles(tmp_path / "bundles")
+    archive = _released_archive(older, "general.1", tmp_path / "published")
+    _corrupt_deflated_member(archive, f"{ARCHIVE_ROOT_DIR}/{member}")
+    manifest_path = _two_election_manifest(tmp_path, older_bundle_sha256=_bundle_hash(older))
+    monkeypatch.setattr(releases, "download_release_archive", _delivering_download(archive))
+
+    result = CliRunner().invoke(
+        cli.app,
+        [
+            "hosting",
+            "stage",
+            str(manifest_path),
+            "--bundle",
+            f"{CURRENT_BUNDLE_ID}={current}",
+            "--released-bundle-dir",
+            str(tmp_path / "released"),
+            "--output-dir",
+            str(tmp_path / "site"),
+        ],
+    )
+
+    assert result.exception is None or isinstance(result.exception, SystemExit)
+    assert result.exit_code == 1
+    assert "hosting stage failed" in result.output
+    assert "is not a readable ZIP archive" in result.output
+    assert OLDER_BUNDLE_ID in result.output
+
+
+def test_an_encrypted_archive_member_fails_with_a_clear_message(tmp_path: Path) -> None:
+    archive_path = tmp_path / release_archive_name("general.1")
+    with zipfile.ZipFile(archive_path, "w") as archive:
+        archive.writestr(f"{ARCHIVE_ROOT_DIR}/release-status.json", "{}")
+    raw = bytearray(archive_path.read_bytes())
+    raw[6] |= 0x01  # the local header's general-purpose "encrypted" flag
+    central = raw.index(b"PK\x01\x02")
+    raw[central + 8] |= 0x01  # and the central directory's, which is the one read
+    archive_path.write_bytes(bytes(raw))
+    declaration = PublishedElection.model_validate(
+        {
+            "election_id": OLDER_ID,
+            "bundle_id": OLDER_BUNDLE_ID,
+            "release_version": "general.1",
+            "source_panel_id": "test-panel-v2",
+            "source_panel_hash": PANEL_HASH,
+            "bundle_sha256": "d" * 64,
+        }
+    )
+
+    with pytest.raises(ValueError, match="is not a readable ZIP archive"):
+        _extract_bundle(archive_path, tmp_path / "out", declaration)
