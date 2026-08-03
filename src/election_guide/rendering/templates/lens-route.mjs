@@ -10,16 +10,13 @@
 // by hand. Both pages' glue asks this module for state and hands it state back;
 // none of it names `location` itself.
 //
-// Two page-owned exceptions are recorded rather than routed, because neither is
-// fragment or query state:
-//
-//   share-link.mjs   The masthead Share action copies the address the reader is
-//                    looking at, verbatim, with no segment of it interpreted.
-//   compare-client.mjs
-//                    The Comparisons page has its own codec (`compare-url.mjs`)
-//                    and its own fragment; issue #243 gives that page the same
-//                    treatment. This router is deliberately not shared with it:
-//                    one owner per fragment, not one owner for all of them.
+// This is not the only such owner: Comparisons has `compare-route.mjs`, because
+// the rule is one owner per fragment rather than one owner for all of them.
+// `LOCATION_OWNERS` in `tests/js/lens-route.test.mjs` is the registry of every
+// owner and every recorded exception, with the argument for each — and the
+// sweep beside it is what fails when a module joins the list without joining
+// the registry. It is deliberately not restated here: the sweep strips comments
+// before scanning, so a second copy of the list is one nothing can keep honest.
 
 import { fragmentRaceTarget, withRaceTarget } from './lens-url.mjs';
 

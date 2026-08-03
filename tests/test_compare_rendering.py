@@ -898,7 +898,14 @@ def test_compare_client_swaps_the_reference_and_recomputes_relative_state(tmp_pa
     assert restored["referenceLabel"] == "Change reference, currently Environment"
 
 
-def test_compare_client_ignores_lens_state_and_keeps_its_default_reference(tmp_path: Path) -> None:
+def test_compare_client_reports_a_guide_link_instead_of_ignoring_it(tmp_path: Path) -> None:
+    """A lens link on this page is unreadable, and the reader is told so.
+
+    The Node suite covers every decode, migration, and encode outcome against
+    the audited fixture; this is the one that runs in a real browser, through
+    the bundle the page actually ships, so the notice and the cleared address
+    are proved where a reader would meet them (issue #243).
+    """
     html_path = _comparison_html_path(tmp_path)
     result = _evaluate_in_chrome(
         html_path,
@@ -911,6 +918,7 @@ def test_compare_client_ignores_lens_state_and_keeps_its_default_reference(tmp_p
           const before = referenceText();
           location.hash = 'lens=1&mode=a&panel=saved-panel&ph=abcdef123456';
           await wait();
+          const notice = document.querySelector('[data-comparison-hidden-notice]');
           return JSON.stringify({
             before,
             after: referenceText(),
@@ -920,6 +928,9 @@ def test_compare_client_ignores_lens_state_and_keeps_its_default_reference(tmp_p
             referenceInteractive: Boolean(document.querySelector(
               '[data-column-signal="gall"] [data-comparison-title="0"]',
             )),
+            notice: notice.textContent,
+            noticeHidden: notice.hidden,
+            hash: location.hash,
           });
         })()
         """,
@@ -929,6 +940,9 @@ def test_compare_client_ignores_lens_state_and_keeps_its_default_reference(tmp_p
         "after": result["before"],
         "columns": ["gall", "strn", "stim"],
         "referenceInteractive": True,
+        "notice": ("This comparison link could not be read, so the default comparison is shown."),
+        "noticeHidden": False,
+        "hash": "",
     }
 
 

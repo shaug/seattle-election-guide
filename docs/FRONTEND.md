@@ -244,27 +244,35 @@ check is a bug in the check — fix or amend it, never route around it.
   handler edits `location` around the codec. A page whose codec is pure pairs
   it with one router module that holds the `location` and `history` calls and
   parses nothing itself — `lens-url.mjs` with `lens-route.mjs` is that pair
-  for the guide and the sources editor.
-  *Check: partial — `tests/js/lens-route.test.mjs` sweeps every client module
+  for the guide and the sources editor, and `compare-url.mjs` with
+  `compare-route.mjs` is that pair for Comparisons. One owner per fragment
+  means the two routers are deliberately separate: the pages read different
+  schemas against different contexts.
+  *Check: exists — `tests/js/lens-route.test.mjs` sweeps every client module
   for `location` or `history` and fails on one that is neither an owner nor a
-  recorded exception, so a new access is a change to that list. Two exceptions
-  are recorded there today: `share-link.mjs`, which copies the address
-  verbatim and interprets no segment of it, and `compare-client.mjs`, whose
-  page has its own fragment and its own codec — issue #243 gives Comparisons
-  the router half.*
+  recorded exception, so a new access is a change to that list. One exception
+  is recorded there: `share-link.mjs`, which copies the address verbatim and
+  interprets no segment of it, so there is no fragment for a codec to own.*
 - **Decode and encode failures are surfaced.** A stale, malformed, or
-  unencodable state produces a reader-visible notice and a cleaned address
-  bar, exactly as the guide's lens notices do today. Silent fallthrough is a
-  defect. It binds both directions: a selection that cannot be *written* into
-  a link is as much a failure as a link that cannot be read, and the reader is
-  told rather than handed a link that quietly drops it.
-  *Check: partial — `tests/js/guide-client.test.mjs` and
-  `tests/js/sources-client.test.mjs` hold each page to a notice for an
-  unreadable incoming fragment and for a rejected encode, and to leaving an
-  ordinary in-page anchor alone. `selectionFragment` in `lens-selection.mjs`
-  is what makes the encode half unmissable: it returns a rejection a caller
-  has to dispose of rather than an empty string. Comparisons is not covered
-  yet; that is issue #243.*
+  unencodable state produces a reader-visible notice and an address bar that
+  names a state a link can reproduce — cleaned when it holds a fragment the
+  page could not use, left alone when it already names the state that
+  survived. Silent fallthrough is a defect. It binds both directions: a
+  selection that cannot be *written* into a link is as much a failure as a
+  link that cannot be read, and the reader is told rather than handed a link
+  that quietly drops it. Every status the codec can return needs a branch;
+  a status with no branch is indistinguishable from one the page ignored.
+  *Check: exists — `tests/js/guide-client.test.mjs`,
+  `tests/js/sources-client.test.mjs`, and `tests/js/compare-client.test.mjs`
+  hold each page to a notice for an unreadable incoming fragment and for a
+  rejected encode, and to leaving an ordinary in-page anchor alone. The
+  Comparisons tests additionally cover each migration outcome and prove a
+  refused change is reverted rather than half-applied.
+  `selectionFragment` in `lens-selection.mjs` is what makes the encode half
+  unmissable for the guide and the sources editor: it returns a rejection a
+  caller has to dispose of rather than an empty string. On Comparisons that
+  role belongs to `commit`, which is the only way a reader's change reaches
+  the address bar and has nowhere to drop a rejection.*
 
 ## Cross-language mirrors
 

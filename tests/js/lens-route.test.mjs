@@ -79,18 +79,18 @@ test('the shareable race link is composed from the live address', async () => {
 });
 
 // The rule: each page's codec module is the sole reader and writer of
-// `location`; no handler edits `location` around the codec. The two exceptions
-// are recorded here with their argument rather than left implicit, so adding a
-// third is a change to this list.
+// `location`; no handler edits `location` around the codec. Every owner and
+// every exception is recorded here with its argument rather than left implicit,
+// so adding one is a change to this list.
 const LOCATION_OWNERS = {
   'lens-route.mjs': 'The guide and sources editor own their address bar here.',
+  'compare-route.mjs':
+    'The Comparisons page owns its address bar here. One owner per fragment, not one ' +
+    'owner for every fragment: this page reads a different schema against a different ' +
+    'context, decoded by its own codec, compare-url.mjs.',
   'share-link.mjs':
     'The masthead Share action copies the address verbatim; no segment of it is ' +
     'interpreted, so there is no fragment for a codec to own.',
-  'compare-client.mjs':
-    'The Comparisons page has its own fragment and its own codec (compare-url.mjs). ' +
-    'Issue #243 gives that page the same treatment; one owner per fragment, not one ' +
-    'owner for every fragment.',
 };
 
 test('only the recorded owners read or write location or history', () => {
