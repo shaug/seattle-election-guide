@@ -111,7 +111,7 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PREVIEW_URL: ${{ steps.deploy.outputs.url }}
         run: |
-          printf '<!-- pages-preview -->\n**Preview:** %s\n\nBuilt from `%s`. Every non-canonical host is `noindex`, so this copy cannot appear in search results. Remove the `deploy preview` label or close this pull request to tear it down.\n' \
+          printf '<!-- pages-preview -->\n**Preview:** %s\n\nBuilt from `%s`. Every non-canonical host is `noindex`, so this copy cannot appear in search results. Removing the `deploy preview` label stops future deployments; closing this pull request tears this one down.\n' \
             "$PREVIEW_URL" "$HEAD_SHA" > comment.md
           existing="$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments?per_page=100" \
             --jq 'map(select(.body | startswith("<!-- pages-preview -->"))) | .[0].id // empty')"
@@ -155,8 +155,13 @@ jobs:
             --project-name seattle-elections \
             --environment preview \
             --json > deployments.json
+          # Wrangler does not pass the API objects through: it maps each one to
+          # {Id, Environment, Branch, Source, Deployment, Status, Build} before
+          # printing. Selecting on the raw API field names would match nothing
+          # and delete nothing, silently. tests/test_hosting.py runs this exact
+          # filter against a fixture in that shape.
           ids="$(jq -r --arg branch "$PREVIEW_BRANCH" \
-            '.[] | select(.deployment_trigger.metadata.branch == $branch) | .id' \
+            '.[] | select(.Branch == $branch) | .Id' \
             deployments.json)"
           if [ -z "$ids" ]; then
             echo "No preview deployments found for $PREVIEW_BRANCH."
