@@ -46,7 +46,7 @@ human's *judgment* — PR review and deploy approval — is never automated at a
 | ----- | ---------- | ---------------------------------------------------------------------- |
 | 0     | Declared   | Remembering dates: the calendar is repository data.                    |
 | 1     | Scheduled  | Polling the calendar: due milestones open tracking issues (#220).      |
-| 2     | Watched    | Noticing omissions: a milestone whose promised artifact never appeared escalates its issue. |
+| 2     | Watched    | Noticing omissions: a milestone whose promised artifact never appeared escalates its issue (#279). |
 | 3     | Dispatched | Launching the session: the tracking issue triggers an unattended agent run whose only output is a PR. |
 
 Every runbook declares its own level. Mechanical, timing-critical work (results capture) is a
@@ -55,8 +55,8 @@ even when everything around it is automated. The declaration is versioned repo s
 runbook's autonomy is a reviewed change, not a habit.
 
 Levels 1 and 2 are deterministic — a scheduled GitHub Actions job reading the calendar; no agent
-involved. They are scoped as #220. Level 3 is per-runbook opt-in and needs no new
-infrastructure design until a runbook wants it.
+involved. Level 1 is #220 (unchanged in scope); level 2 is its follow-up, #279. Level 3 is
+per-runbook opt-in and needs no new infrastructure design until a runbook wants it.
 
 ## Runbook anatomy
 
