@@ -25,9 +25,12 @@
    centered so the meter reads against the name's first line, and columned so
    that the pill — which qualifies the pick, not the share — sits under the
    name it applies to without displacing the caption that belongs to the
-   meter (I39/H38). The metric column takes its floor from the meter and grows
-   to the caption, which runs a little wider; see .screen-race-context. */
-.screen-race-result { display: grid; grid-template-columns: minmax(0, 1fr) minmax(11rem, max-content); align-items: start; gap: .75rem; min-width: 0; }
+   meter (I39/H38).
+   The two rows are separate grids, not one: what they share is a right edge,
+   which is where the meter and the caption meet (renderer-side
+   `metersRightAligned` and `supportAligned`). Their metric tracks are not the
+   same width, because only the caption's grows — see .screen-race-context. */
+.screen-race-result { display: grid; grid-template-columns: minmax(0, 1fr) 11rem; align-items: start; gap: .75rem; min-width: 0; }
 .race-card h3 { min-width: 0; margin: 0; color: var(--navy); font: 800 1.5rem/1.08 var(--screen-sans); letter-spacing: -.02em; overflow-wrap: anywhere; }
 .screen-meter { display: flex; align-items: center; justify-content: flex-start; width: 11rem; height: 2rem; overflow: hidden; border: 1px solid var(--line-strong); border-radius: 1rem; background: linear-gradient(to right, var(--teal) 0 var(--meter-fill), var(--meter-track) var(--meter-fill) 100%); }
 .screen-meter strong { width: 100%; padding: .05rem .75rem 0; color: var(--white); font-size: 1.08rem; font-variant-numeric: tabular-nums; font-weight: 800; line-height: 1; text-align: left; }
@@ -41,12 +44,14 @@
    the label renders after the fill instead, in muted ink. Defensive only,
    not the tabled D14 meter redesign. */
 .screen-meter.meter-low-fill strong, .race-detail-meter.meter-low-fill strong { padding-left: calc(var(--meter-fill) + .4rem); color: var(--muted); }
-/* The second row of that pair of columns. A caption wider than its track would
-   otherwise wrap, or overhang left onto a wrapped name's last line — measured
-   as ink overlap on every card at 560px with the longest tie label this ballot
-   can produce — so the track grows to hold it while the meter above keeps its
-   own fixed width. Both stay flush right, which is what renderer-side
-   `supportAligned` and `metersRightAligned` check. */
+/* The card's second row, in the same shape as the first: pill under the name,
+   caption under the meter. This is the track that has to grow. A caption wider
+   than a fixed track either wraps — it does, at 480-720px where the track
+   narrows to 8.75rem — or, pinned to one line, overhangs left onto a wrapped
+   name's last line, measured as ink overlap on every card at 560px with the
+   longest tie label this ballot can produce. `max-content` takes neither: the
+   track widens, the row above keeps its own fixed meter track, and both rows
+   stay flush against the card's right edge. */
 .screen-race-context { display: grid; grid-template-columns: minmax(0, 1fr) minmax(11rem, max-content); align-items: start; gap: 0 .75rem; min-width: 0; }
 .screen-race-context .no-majority-pill { grid-column: 1; }
 .screen-race-context .support-line { grid-column: 2; }
@@ -84,11 +89,13 @@ html.compact-ballot-mode .race-card-primary { gap: .35rem; }
    subgrid) keeps every compact card's meter starting at the same offset. */
 html.compact-ballot-mode .race-office { min-height: 2.3rem; font-size: .66rem; line-height: 1.15; }
 html.compact-ballot-mode .race-card h3 { font-size: 1.08rem; line-height: 1.05; }
-/* Compact stacks the pair back into one column. The pill goes last, after the
-   caption: above the meter it would push a tied card's meter off the row's
-   baseline (I42), and between meter and caption it would cost the caption the
-   adjacency it owes the meter (I39/H38) — measured 30px there against 5px
-   here, with meter offsets identical either way. Last pays neither. */
+/* Compact stacks both rows into one column, so the pill's position is now a
+   question of order rather than of columns. It goes last, after the caption:
+   in source order it sits between meter and caption, which costs the caption
+   the adjacency it owes the meter (I39/H38) — measured 30px there against 5px
+   here. It cannot be pushed above the meter and cannot displace one: the pill
+   lives in the row below in both renderers, so I42's baseline is not what is
+   at stake here, only the caption's. */
 html.compact-ballot-mode .screen-race-result,
 html.compact-ballot-mode .screen-race-context { grid-template-columns: minmax(0, 1fr); gap: .3rem; }
 html.compact-ballot-mode .screen-race-context .no-majority-pill,
@@ -196,7 +203,7 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
   html.compact-ballot-mode .race-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .race-grid { grid-template-columns: 1fr; }
   .race-card { min-width: 0; }
-  .screen-race-result,
+  .screen-race-result { grid-template-columns: minmax(0, 1fr) 8.75rem; gap: .6rem; }
   .screen-race-context { grid-template-columns: minmax(0, 1fr) minmax(8.75rem, max-content); gap: 0 .6rem; }
   .screen-meter { width: 8.75rem; }
   .lens-comparison { padding-right: .55rem; padding-left: .55rem; }

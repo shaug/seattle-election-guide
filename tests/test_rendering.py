@@ -14,6 +14,7 @@ from typing import Any, cast
 from urllib.parse import urlencode
 
 import pytest
+import yaml
 from PIL import Image
 from pydantic import ValidationError
 from websocket import create_connection  # pyright: ignore[reportUnknownVariableType]
@@ -656,13 +657,13 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
             assert comparison.print_status_label not in html
         assert comparison.voter_accessible_label not in html
         assert comparison.badge_label not in html
-    # Both card rows carry the same pair of columns, the metric one sized from
-    # the meter's floor up to its caption; the two geometry tests above measure
-    # what that pairing is for.
     assert (
-        ".screen-race-result { display: grid; "
-        "grid-template-columns: minmax(0, 1fr) minmax(11rem, max-content);" in html
+        ".screen-race-result { display: grid; grid-template-columns: minmax(0, 1fr) 11rem;" in html
     )
+    assert "grid-template-columns: minmax(0, 1fr) 11rem" in html
+    # The caption's row is the one whose track grows; what that is for is
+    # measured by test_the_support_caption_stays_on_one_line_beside_the_name,
+    # not by this string.
     assert "grid-template-columns: minmax(0, 1fr) minmax(11rem, max-content)" in html
     assert (
         ".screen-meter { display: flex; align-items: center; justify-content: flex-start;" in html
@@ -761,13 +762,12 @@ def test_the_no_majority_pill_sits_under_the_name_and_displaces_nothing(
 ) -> None:
     """M63: the pill qualifies the pick, so it hangs under the name it applies to.
 
-    The card's two rows share one pair of columns — name over pill, meter over
+    The card's two rows carry the same shape — name over pill, meter over
     caption — which is only observable as geometry. Assert what that buys: the
     meter reads against the name's first line rather than its middle, the pill's
-    left edge is the name's, and the caption keeps the same gap below its meter
-    whether or not the card carries a pill. Compact stacks the pair and puts the
-    pill last, so there the assertion is that suppressing every pill moves no
-    meter (docs/UI_POLISH.md I42).
+    left edge is the name's, the caption is flush to the meter, and the pill
+    sits beside the caption rather than anywhere it could displace it. Compact
+    stacks both rows into one column, and there the pill comes last.
     """
     view_model = _view_model(tmp_path)
     tied = next(
@@ -797,30 +797,28 @@ def test_the_no_majority_pill_sits_under_the_name_and_displaces_nothing(
           const meterBox = meter.getBoundingClientRect();
           const pillBox = pill && pill.getClientRects().length
             ? pill.getBoundingClientRect() : null;
+          const captionBox = caption.getBoundingClientRect();
+          const context = caption.closest('.screen-race-context');
           return {
             pilled: Boolean(pillBox),
-            meterOffset: Math.round(meterBox.top - card.getBoundingClientRect().top),
-            captionGap: Math.round(caption.getBoundingClientRect().top - meterBox.bottom),
-            captionFlush: Math.abs(
-              caption.getBoundingClientRect().right - meterBox.right) <= 1,
+            captionFlush: Math.abs(captionBox.right - meterBox.right) <= 1,
             meterTopsWithName: Math.abs(meterBox.top - nameBox.top) <= 1,
             pillLeftWithName: pillBox === null
               || Math.abs(pillBox.left - nameBox.left) <= 1,
+            // Beside the caption in two columns, or after it in one — never
+            // between the meter and the caption it belongs to.
+            pillBesideCaption: pillBox === null
+              || (pillBox.top < captionBox.bottom && pillBox.bottom > captionBox.top),
+            pillAfterCaption: pillBox === null || pillBox.top >= captionBox.bottom - 1,
+            contextColumns:
+              getComputedStyle(context).gridTemplateColumns.split(' ').length,
           };
         }).filter(Boolean);
         const full = rows();
-        const pillsFull = [...document.querySelectorAll('.no-majority-pill:not([hidden])')];
-        pillsFull.forEach((pill) => { pill.hidden = true; });
-        const fullWithoutPills = rows();
-        pillsFull.forEach((pill) => { pill.hidden = false; });
         document.documentElement.classList.add('compact-ballot-mode');
         const compact = rows();
-        const pills = [...document.querySelectorAll('.no-majority-pill:not([hidden])')];
-        pills.forEach((pill) => { pill.hidden = true; });
-        const compactWithoutPills = rows();
-        pills.forEach((pill) => { pill.hidden = false; });
         document.documentElement.classList.remove('compact-ballot-mode');
-        return JSON.stringify({full, fullWithoutPills, compact, compactWithoutPills});
+        return JSON.stringify({full, compact});
       })()
     """
 
@@ -832,22 +830,19 @@ def test_the_no_majority_pill_sits_under_the_name_and_displaces_nothing(
     assert all(card["meterTopsWithName"] for card in full)
     assert all(card["pillLeftWithName"] for card in full)
     assert all(card["captionFlush"] for card in full)
-    # The pill is in the other column, so it has nothing to push: suppressing
-    # every pill leaves both the meter and its caption exactly where they were.
-    # (The gap itself varies between cards — a two-line name makes the row it
-    # shares with the meter taller — which is the name's doing, not the pill's.)
-    assert [card["captionGap"] for card in full] == [
-        card["captionGap"] for card in measured["fullWithoutPills"]
-    ]
-    assert [card["meterOffset"] for card in full] == [
-        card["meterOffset"] for card in measured["fullWithoutPills"]
-    ]
+    # Two columns in full view, so the pill sits beside the caption rather than
+    # anywhere that could displace it.
+    assert all(card["contextColumns"] == 2 for card in full)
+    assert all(card["pillBesideCaption"] for card in full)
 
-    # I42: whatever offset a compact card's meter has, its pill did not add it.
-    assert any(card["pilled"] for card in measured["compact"])
-    assert [card["meterOffset"] for card in measured["compact"]] == [
-        card["meterOffset"] for card in measured["compactWithoutPills"]
-    ]
+    # Compact is one column, and there the pill comes after the caption. Note
+    # what is NOT asserted: that hiding a pill leaves the meter where it was.
+    # The pill is in the row below the meter in both renderers, so that holds by
+    # construction and an assertion on it could never fail.
+    compact = measured["compact"]
+    assert any(card["pilled"] for card in compact)
+    assert all(card["contextColumns"] == 1 for card in compact)
+    assert all(card["pillAfterCaption"] for card in compact)
 
 
 def test_the_support_caption_stays_on_one_line_beside_the_name(tmp_path: Path) -> None:
@@ -871,9 +866,22 @@ def test_the_support_caption_stays_on_one_line_beside_the_name(tmp_path: Path) -
         render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
         encoding="utf-8",
     )
-    longest_caption = max(
-        (screen_support_summary(race) for section in view_model.sections for race in section.races),
-        key=len,
+    # The widest caption the card can hold is not the server's — the fixture's
+    # own top out at a one-digit count, and the audited form is the shorter one
+    # anyway. Once a lens selection diverges the client writes "Based on N of M
+    # selected sources" (guide-format.mjs; its shape is pinned by the regex
+    # assertions elsewhere in this file), with both counts bounded by the
+    # registry's source count. Build that, so the width measured is the width
+    # the reader can actually get.
+    sources = len(
+        yaml.safe_load((PROJECT_ROOT / "config/sources/default.yaml").read_text())["sources"]
+    )
+    longest_caption = f"Based on {sources} of {sources} selected sources"
+    assert len(longest_caption) > len(
+        max(
+            (screen_support_summary(race) for s in view_model.sections for race in s.races),
+            key=len,
+        )
     )
     expression = """
       (() => {
@@ -2535,6 +2543,11 @@ def test_full_race_card_stacks_name_and_meter_below_480px(tmp_path: Path) -> Non
         const meterBox = meter.getBoundingClientRect();
         return JSON.stringify({
           columns: getComputedStyle(result).gridTemplateColumns.split(' ').length,
+          // The context row pins its pill and caption to explicit columns, so
+          // one column here means both resets landed: without them the pinned
+          // `grid-column: 2` opens an implicit second track and sits the caption
+          // beside the pill instead of under it.
+          contextColumns: getComputedStyle(context).gridTemplateColumns.split(' ').length,
           resultWidth: resultBox.width,
           meterWidth: meterBox.width,
           captionBelow: context.getBoundingClientRect().top >= resultBox.bottom,
@@ -2546,9 +2559,11 @@ def test_full_race_card_stacks_name_and_meter_below_480px(tmp_path: Path) -> Non
     boundary = _evaluate_in_chrome(html_path, expression, mobile_width=480)
 
     assert phone["columns"] == 1
+    assert phone["contextColumns"] == 1
     assert phone["meterWidth"] == pytest.approx(phone["resultWidth"], abs=1)
     assert phone["captionBelow"] is True
     assert boundary["columns"] == 2
+    assert boundary["contextColumns"] == 2
 
 
 def test_shared_footer_closes_short_viewport_and_follows_tall_content(tmp_path: Path) -> None:
