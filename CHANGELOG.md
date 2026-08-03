@@ -9,22 +9,6 @@ coverage, and the audit trail for one published election live in that release's
 own `RELEASE_NOTES.md`, inside its bundle and attached to its GitHub Release.
 This file covers the software that renders and ships those bundles.
 
-## Unreleased
-
-### Added
-
-- Assert every declared release version is published (#257)
-- Declare the election calendar as repository data (#262)
-- Index only the canonical host (#255)
-- Resolve historical bundles from their published releases (#261)
-
-### Documentation
-
-- Document the production approval gate (#258)
-
-### Other
-
-- Extract the guide and sources inline glue into real modules (#260)
 ## 2026-primary.2 — 2026-08-02
 
 ### Added

@@ -22,14 +22,25 @@ own `RELEASE_NOTES.md`, inside its bundle and attached to its GitHub Release.
 This file covers the software that renders and ships those bundles.
 """
 
+# Only tagged releases are rendered. An "unreleased" section would make the byte
+# comparison below unsatisfiable: it would contain the very commit that carries
+# the regenerated file, so committing it would change what the next regeneration
+# produces. It would also break on every pull request, because CI checks out an
+# ephemeral `refs/pull/N/merge` commit that no author can predict, and again at
+# squash-merge, which appends a `(#N)` suffix the branch never saw.
+#
+# Rendering only tagged history makes the file a pure function of releases: the
+# commit that regenerates it sits after the newest tag and contributes nothing.
 body = """
-{% if version %}## {{ version }} — {{ timestamp | date(format="%Y-%m-%d") }}{% else %}## Unreleased{% endif %}
+{% if version %}\
+## {{ version }} — {{ timestamp | date(format="%Y-%m-%d") }}
 {% for group, commits in commits | group_by(attribute="group") %}
 ### {{ group }}
 {% for commit in commits | sort(attribute="message") %}
 - {{ commit.message | split(pat="\n") | first | upper_first | trim }}\
 {% endfor %}
 {% endfor %}
+{% endif %}\
 """
 
 trim = false

@@ -68,6 +68,25 @@ def test_ci_checks_the_changelog_against_complete_history() -> None:
     assert "env" not in changelog_step
 
 
+def test_the_changelog_records_only_tagged_releases() -> None:
+    """The byte comparison is only satisfiable if untagged commits render nothing.
+
+    An "unreleased" section would contain the very commit that carries the
+    regenerated file, so committing it would change what the next regeneration
+    produces. It would also differ on every pull request, because CI renders an
+    ephemeral `refs/pull/N/merge` commit, and again at squash-merge, which
+    appends a `(#N)` suffix the branch never saw.
+    """
+    text = CHANGELOG.read_text(encoding="utf-8")
+    config = (PROJECT_ROOT / "cliff.toml").read_text(encoding="utf-8")
+
+    assert "Unreleased" not in text
+    assert re.search(r"^## (?!\d{4}-[a-z]+\.\d+ )", text, flags=re.MULTILINE) is None
+    # The body renders nothing at all when there is no version.
+    assert "{% if version %}" in config
+    assert "{% else %}" not in config
+
+
 def test_the_changelog_config_pins_election_scoped_tags() -> None:
     config = (PROJECT_ROOT / "cliff.toml").read_text(encoding="utf-8")
 
