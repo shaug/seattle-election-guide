@@ -52,7 +52,8 @@ execution has recorded the authority's real page and export structure below.
      Git-ignored storage boundary;
    - record, in the capture PR and the postmortem notes: requested and final URLs (and the
      redirect chain when they differ), retrieval time in UTC, HTTP status, media type, byte
-     length, and the sha256.
+     length, the sha256, and the title per the target form's template ("<election>
+     election-night results (<representation>)") — every field a backfilled manifest requires.
 
    Because storage is content-addressed, #281 backfills real manifests from these bytes and
    this metadata, and `evidence verify` proves the backfill honest.
