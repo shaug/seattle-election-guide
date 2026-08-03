@@ -332,9 +332,10 @@ check is a bug in the check — fix or amend it, never route around it.
   with text in it, exactly as a `.j2` file is, so both are split on their tags
   and on Jinja control flow: the text on either side of an `{% if %}`/`{% else %}`
   is two templates the page renders separately, not one blob. A Jinja
-  expression's own literals and `~` concatenations are read at any bracket
-  depth, and string literals are read by a brace-balanced scan rather than a
-  pattern, so a literal inside a `${...}` is read to any depth — including the
+  expression's own literals and `~` concatenations are read by Jinja's own
+  parser — the one that renders these files — and string literals are read by a
+  brace-balanced scan rather than a pattern, so a literal inside a `${...}` is
+  read to any depth — including the
   `` html`...` `` sub-template lit uses for a conditional fragment. A single
   token counts as display text unless it looks like syntax, because requiring a
   space discarded the meter's `N/A` and the comparison table's `Race` heading.

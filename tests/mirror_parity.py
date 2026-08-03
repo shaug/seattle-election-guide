@@ -76,7 +76,6 @@ from tests.test_personalization import DATASET_PATH, _bundle  # pyright: ignore[
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 FIXTURE_PATH = PROJECT_ROOT / "tests" / "js" / "fixtures" / "mirror-parity.json"
-MIRRORS_PATH = PROJECT_ROOT / "tests" / "mirrors.json"
 GUIDE_PAGE_PATH = PROJECT_ROOT / "tests" / "js" / "fixtures" / "guide-audited-page.html"
 SOURCES_PAGE_PATH = PROJECT_ROOT / "tests" / "js" / "fixtures" / "sources-audited-page.html"
 COMPARE_PAGE_PATH = PROJECT_ROOT / "tests" / "js" / "fixtures" / "compare-audited-page.html"
@@ -575,14 +574,6 @@ def build_mirror_parity_fixture(dataset: CanonicalDataset) -> dict[str, Any]:
 def generate() -> dict[str, Any]:
     dataset = CanonicalDataset.model_validate(read_json(DATASET_PATH))
     return build_mirror_parity_fixture(dataset)
-
-
-def fixtured_mirrors() -> set[str]:
-    """The inventory entries this module is expected to emit cases for."""
-    inventory = json.loads(MIRRORS_PATH.read_text(encoding="utf-8"))
-    return {
-        name for name, entry in inventory["mirrors"].items() if entry["proof"] == "parity-fixture"
-    }
 
 
 if __name__ == "__main__":

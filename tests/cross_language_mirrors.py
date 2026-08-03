@@ -34,7 +34,8 @@ is where this scan kept missing real mirrors. A lit template is markup with text
 in it exactly as a ``.j2`` file is, so both are split on their tags and on Jinja
 control flow; a ``{% if %}``/``{% else %}`` yields the two templates the page
 renders rather than one blob; a Jinja expression's own literals and ``~``
-concatenations are read at any bracket depth; string literals are read by a
+concatenations are read by Jinja's own parser, the one that renders these
+files; string literals are read by a
 brace-balanced scan rather than a pattern, so a literal nested inside a
 ``${...}`` is read to any depth — including the ``html`...`` sub-template lit
 uses for a conditional fragment; and a single token counts as display text
@@ -80,6 +81,8 @@ import ast
 import re
 from pathlib import Path
 
+from jinja2 import Environment, nodes
+
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 CLIENT_DIR = PROJECT_ROOT / "src" / "election_guide" / "rendering" / "templates"
 SERVER_DIRS = (
@@ -102,10 +105,6 @@ _JS_LINE_COMMENT = re.compile(r"(^|\s)//.*$", re.M)
 _JINJA_VALUE = re.compile(r"\{\{.*?\}\}", re.DOTALL)
 _JINJA_TAG = re.compile(r"\{%.*?%\}", re.DOTALL)
 _JINJA_COMMENT = re.compile(r"\{#.*?#\}", re.DOTALL)
-_JINJA_CONSTRUCT = re.compile(r"\{\{(.*?)\}\}|\{%(.*?)%\}", re.DOTALL)
-_JINJA_QUOTED = re.compile(r"'([^'\\]*(?:\\.[^'\\]*)*)'|\"([^\"\\]*(?:\\.[^\"\\]*)*)\"")
-# The contents of one bracket group, non-greedy so nesting is reached by recursion.
-_BRACKET_GROUP = re.compile(r"[(\[{](.*)[)\]}]", re.DOTALL)
 _HTML_TAG = re.compile(r"<[^>]*>", re.DOTALL)
 # Chunk boundary. Like HOLE, chosen from outside the authored character set.
 _BOUNDARY = "\x00"
@@ -179,76 +178,37 @@ def _python_literals(source: str) -> set[str]:
     return literals
 
 
-def _split_top_level(text: str, separator: str) -> list[str]:
-    """Split on a separator that is outside brackets and outside a string."""
-    parts: list[str] = []
-    depth = 0
-    quote: str | None = None
-    current: list[str] = []
-    for character in text:
-        if quote is not None:
-            current.append(character)
-            if character == quote:
-                quote = None
-            continue
-        if character in "\"'":
-            quote = character
-        elif character in "([{":
-            depth += 1
-        elif character in ")]}":
-            depth -= 1
-        elif character == separator and depth == 0:
-            parts.append("".join(current))
-            current = []
-            continue
-        current.append(character)
-    parts.append("".join(current))
-    return parts
-
-
 def _jinja_expression_templates(source: str) -> set[str]:
     """Display text a Jinja *expression* composes rather than writes as markup.
 
     `compare.html.j2` builds its control status as
     `count ~ ' of ' ~ count ~ ' races shown · ' ~ differ ~ ' differ'` and hands
-    it to a macro. Treating the whole construct as one interpolation deletes
-    that sentence, so a `~` concatenation is reassembled into the template it
-    renders as, with every non-literal operand standing in as a hole. Quoted
-    literals that are not part of a concatenation are taken on their own.
+    it to a macro, so treating the whole construct as one interpolation would
+    delete that sentence. A concatenation is reassembled into the template it
+    renders as, with every non-literal operand standing in as a hole.
+
+    Parsed by Jinja rather than matched, for the same reason the Python side
+    uses `ast`: this project already depends on Jinja and already parses these
+    exact files to render them, so the parser that produces the page is the one
+    that reads it here. The hand-written splitter this replaced had to track
+    quote state, bracket depth, and a recursion cap, and still mis-read
+    `{% set x = 'a' ~ b ~ 'c' %}` — it took the assignment as an operand and
+    emitted a fragment of the sentence.
     """
     templates: set[str] = set()
-    for match in _JINJA_CONSTRUCT.finditer(source):
-        body = match.group(1) if match.group(1) is not None else match.group(2)
-        templates |= _expression_templates(body or "")
-    return templates
-
-
-def _expression_templates(expression: str, depth: int = 0) -> set[str]:
-    """Every template one Jinja expression composes, at any bracket depth.
-
-    Recursive because the sentence that motivated this is an *argument* to a
-    macro call: `{% call election_controls(..., a ~ ' of ' ~ b ~ ' differ') %}`
-    keeps its concatenation inside parentheses, so splitting only the
-    construct's own top level would never reach it.
-    """
-    if depth > 8:
-        return set()
-    templates: set[str] = set()
-    for argument in _split_top_level(expression, ","):
-        operands = _split_top_level(argument, "~")
-        if len(operands) > 1:
+    for node in Environment(autoescape=True).parse(source).find_all((nodes.Const, nodes.Concat)):
+        if isinstance(node, nodes.Const):
+            if isinstance(node.value, str):
+                templates.add(node.value)
+        else:
             templates.add(
                 "".join(
-                    quoted.group(1) or quoted.group(2) or ""
-                    if (quoted := _JINJA_QUOTED.fullmatch(operand.strip()))
+                    child.value
+                    if isinstance(child, nodes.Const) and isinstance(child.value, str)
                     else HOLE
-                    for operand in operands
+                    for child in node.nodes
                 )
             )
-        for quoted in _JINJA_QUOTED.finditer(argument):
-            templates.add(quoted.group(1) or quoted.group(2) or "")
-        for inner in _BRACKET_GROUP.finditer(argument):
-            templates |= _expression_templates(inner.group(1), depth + 1)
     return templates
 
 
@@ -396,33 +356,38 @@ def named_symbols() -> dict[str, dict[str, list[str]]]:
     # counterpart only in a comment is precisely the case this signal exists to
     # enter into the inventory, so stripping comments here would delete the
     # signal's whole reason for being.
-    server_text = {path.name: path.read_text(encoding="utf-8") for path in _server_files()}
-    client_text = {path.name: path.read_text(encoding="utf-8") for path in _client_files()}
+    #
+    # Keyed by path, not by basename: `rendering/models.py` and
+    # `publication/models.py` share a name, and a name-keyed map silently held
+    # one of them and dropped the other from a scan whose whole claim is that
+    # nothing escapes it.
+    server_text = {path: path.read_text(encoding="utf-8") for path in _server_files()}
+    client_text = {path: path.read_text(encoding="utf-8") for path in _client_files()}
 
     server_defs: dict[str, set[str]] = {}
-    for path in _server_files():
+    for path, source in server_text.items():
         if path.suffix != ".py":
             continue
-        for node in ast.walk(ast.parse(server_text[path.name])):
+        for node in ast.walk(ast.parse(source)):
             if isinstance(
                 node, ast.FunctionDef | ast.AsyncFunctionDef | ast.ClassDef
             ) and _MULTIWORD_SNAKE.match(node.name):
                 server_defs.setdefault(node.name, set()).add(path.name)
     client_defs: dict[str, set[str]] = {}
-    for path in _client_files():
-        for match in _JS_EXPORT.finditer(client_text[path.name]):
+    for path, source in client_text.items():
+        for match in _JS_EXPORT.finditer(source):
             if _MULTIWORD_CAMEL.match(match.group(1)):
                 client_defs.setdefault(match.group(1), set()).add(path.name)
 
     found: dict[str, dict[str, list[str]]] = {}
     for name, defined_in in server_defs.items():
         word = re.compile(rf"\b{re.escape(name)}\b")
-        named_by = sorted(other for other, body in client_text.items() if word.search(body))
+        named_by = sorted(other.name for other, body in client_text.items() if word.search(body))
         if named_by:
             found[name] = {"server": sorted(defined_in), "client": named_by}
     for name, defined_in in client_defs.items():
         word = re.compile(rf"\b{re.escape(name)}\b")
-        named_by = sorted(other for other, body in server_text.items() if word.search(body))
+        named_by = sorted(other.name for other, body in server_text.items() if word.search(body))
         if named_by:
             entry = found.setdefault(name, {"server": [], "client": []})
             entry["server"] = sorted({*entry["server"], *named_by})

@@ -24,9 +24,10 @@ from typing import Any
 import pytest
 
 from tests.cross_language_mirrors import derived_evidence
-from tests.mirror_parity import FIXTURE_PATH, FIXTURE_SCHEMA_VERSION, MIRRORS_PATH, generate
+from tests.mirror_parity import FIXTURE_PATH, FIXTURE_SCHEMA_VERSION, generate
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
+MIRRORS_PATH = PROJECT_ROOT / "tests" / "mirrors.json"
 LENS_FIXTURE_PATH = PROJECT_ROOT / "tests" / "js" / "fixtures" / "lens-parity.json"
 DOCUMENT = "docs/FRONTEND.md"
 REGENERATE = "uv run python -m tests.mirror_parity"
