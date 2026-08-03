@@ -70,10 +70,12 @@ export const MODULE_KINDS = {
   'compare-client.mjs': 'wiring',
   'compare-entry.mjs': 'wiring',
   'compare-migrate.mjs': 'pure',
+  'compare-route.mjs': 'wiring',
   'compare-signals.mjs': 'pure',
   'compare-table.mjs': 'pure',
   'compare-url.mjs': 'pure',
   'election-day.mjs': 'wiring',
+  'guide-card.mjs': 'pure',
   'guide-client.mjs': 'wiring',
   'guide-dialog.mjs': 'wiring',
   'guide-entry.mjs': 'wiring',
@@ -90,6 +92,7 @@ export const MODULE_KINDS = {
   'shell-entry.mjs': 'wiring',
   'sources-client.mjs': 'wiring',
   'sources-entry.mjs': 'wiring',
+  'sources-tree.mjs': 'pure',
 };
 
 export function moduleNames() {

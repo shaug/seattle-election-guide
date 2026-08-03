@@ -1,0 +1,29 @@
+{# The worker's branded 404 (hosting/pages.py).
+
+   The only document on the site with no `scripts` block at all: it declares
+   itself unshareable, so it renders no Share control, and an entry module here
+   would bundle wiring with nothing to wire (docs/FRONTEND.md § Modules). Its
+   recorded inline-script ceiling is 0, which is what keeps that deliberate
+   exception checked rather than merely intended.
+
+   It is also the only page with no skip link, and the only one whose head is
+   `noindex` with no canonical and no social card beyond the title. #}
+{% extends 'base.html.j2' %}
+{% block head_meta %}
+  <meta name="robots" content="noindex">
+  <meta property="og:title" content="{{ document_title }}">
+  <meta name="twitter:title" content="{{ document_title }}">
+{% endblock %}
+{% block body %}
+  <div class="page">
+    <header>
+      {{ shell.band(guide_href=current_path, sources_href=current_path ~ 'sources/', compare_href=compare_href, shareable=false) }}
+      <div class="page-band-rule"></div>
+    </header>
+    {%+ call shell.page_head('Page not found', mode='measured') %}That page doesn&rsquo;t exist. Try the <a href="{{ current_path }}">current guide</a>, or the <a href="/e/">archive of past guides</a>.{% endcall +%}
+    <main class="narrow-main"></main>
+    <footer class="site-footer">
+      {{ shell.footer_band(project_url, shell.footer_audit(data_updated_date, site_updated_date, data_version, git_commit, project_url, data_href)) }}
+    </footer>
+  </div>
+{% endblock %}

@@ -1,41 +1,11 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+{% extends 'base.html.j2' %}
+{% block head_meta %}
   <meta name="robots" content="noindex">
-  {% set guide_path = '/e/' ~ guide.metadata.election_id ~ '/' %}
   {% set canonical_url = public_site_url ~ guide_path ~ 'sources/' %}
   {% set page_description = 'Choose which sources count toward your personalized ' ~ election_display_name ~ ' results.' %}
-  <meta name="description" content="{{ page_description }}">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="{{ document_title }}">
-  <meta property="og:description" content="{{ page_description }}">
-  <meta property="og:url" content="{{ canonical_url }}">
-  <meta name="twitter:title" content="{{ document_title }}">
-  <meta name="twitter:description" content="{{ page_description }}">
-  <link rel="canonical" href="{{ canonical_url }}">
-  {{ site_head_links | safe }}
-  <title>{{ document_title }}</title>
-  <style>
-    {{ stylesheet | safe }}
-    main { padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 3rem; }
-    .sources-tree { border-top: none; background: none; padding: 0; }
-    .sources-page-actions { position: sticky; top: 0; z-index: 5; justify-content: center; }
-    .sources-page-controls { display: flex; flex-wrap: wrap; justify-content: center; gap: .45rem 1rem; }
-    .sources-page-actions a { color: var(--mint); font-weight: 700; }
-    .sources-page-actions .strip-action-primary {
-      display: inline-flex; align-items: center; padding: .16rem .7rem;
-      border-radius: 999px; background: var(--mint); color: var(--navy);
-      font-weight: 800; line-height: 1; text-decoration: none;
-    }
-    .sources-page-actions .strip-action-primary:hover { filter: brightness(1.06); }
-    .sources-page-actions .strip-action-quiet { color: var(--sky); font-weight: 600; }
-    .sources-page-count { margin: 0; color: var(--white); font-size: .9rem; font-weight: 600; }
-  </style>
-</head>
-<body>
-  {% from '_source_participation.html.j2' import source_participation %}
+  {{ shell.social_meta(document_title, page_description, canonical_url) }}
+{% endblock %}
+{% block body %}
   {% macro coverage_gap_row(source, compact=false) -%}
     <section class="coverage-gap-row"
       data-coverage-gap-source-id="{{ source.id }}"
@@ -69,7 +39,7 @@
       {% else %}
       <a class="sources-source-link" href="{{ pub_source.evidence_url }}"{{ external_link_attributes }}>{{ pub_source.name }}</a>
       {% endif %}
-      <span class="sources-count">{{ source_participation(pub_source) }}</span>
+      <span class="sources-count">{{ source_participation_label(pub_source) }}</span>
       {% if other_category_ids %}
       <span class="sources-also-in">also in:
         {%- for other_id in other_category_ids %} {{ category_label_by_id[other_id] }}{% if not loop.last %},{% endif %}{% endfor -%}
@@ -83,13 +53,18 @@
   <a class="skip-link" href="#sources-main">Skip to content</a>
   <div class="page">
     <header>
-      {{ site_band | safe }}
+      {{ shell.band(guide_href=guide_path, sources_href=guide_path ~ 'sources/', compare_href=compare_href, current='sources') }}
       <div class="page-band-rule"></div>
     </header>
     {{ election_day_banner | safe }}
-    {{ site_page_head | safe }}
+    {%+ call shell.page_head('Sources', eyebrow=election_display_name) %}Choose which sources count &mdash; the guide recalculates from your selection.{% endcall +%}
     <div class="sources-page-actions state-action-strip">
-      <p class="sources-page-count" data-sources-count role="status" aria-live="polite"></p>
+      {# The audited count, rendered rather than left for the client to fill in:
+         the page has to stand alone without JavaScript, and the region has to
+         hold the same text on both sides for the parity check to mean anything
+         (docs/FRONTEND.md § Rendering). "Counting", not "Viewing": a checked
+         source counts toward the computed results (issue 115, item D17). #}
+      <p class="sources-page-count" data-sources-count role="status" aria-live="polite">Counting {{ counted_source_count }} of {{ counted_source_count }} sources.</p>
       <div class="sources-page-controls">
         <a class="sources-save strip-action-primary" data-sources-save href="{{ guide_path }}">Save</a>
         <a class="sources-cancel" data-sources-cancel href="{{ guide_path }}">Cancel</a>
@@ -107,7 +82,14 @@
     <main id="sources-main">
 
       <div class="sources-tree">
-        <div class="sources-columns">
+        {# The selection region (docs/FRONTEND.md § Rendering). Only the
+           selectable categories: the comparison-only section below carries no
+           checkbox, and the coverage-gaps section carries no source a
+           selection can reach, so neither is a projection of selection state
+           and both stay as the server rendered them. sources-tree.mjs renders
+           this region's children, and `sources-markup-parity.test.mjs` holds
+           what it renders to the markup below. #}
+        <div class="sources-columns" data-sources-tree>
           {% for category in guide.personalization.categories if category.selectable and category.panel_role != 'comparison' %}
           <section class="sources-category" data-sources-category="{{ category.code }}">
             <h2>
@@ -157,9 +139,11 @@
       </div>
     </main>
     <footer class="site-footer">
-      {% if site_footer_band %}{{ site_footer_band | safe }}{% endif %}
+      {% if project_url is not none %}{{ shell.election_footer_band(project_url, guide.metadata, guide_path, footer_data_updated_date, footer_site_updated_date) }}{% endif %}
     </footer>
   </div>
+{% endblock %}
+{% block scripts %}
 
   {# One payload element per page, built by rendering/payload.py from the
      Pydantic models the client's declarations are generated from
@@ -170,5 +154,4 @@
 {{ sources_entry_script | safe }}
   SourcesPage.boot();
   </script>
-</body>
-</html>
+{% endblock %}

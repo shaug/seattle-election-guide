@@ -48,6 +48,37 @@ check is a bug in the check — fix or amend it, never route around it.
   and the cross-module collision this section warns about cannot occur.
   *Check: exists — `tests/test_frontend_bundle.py` asserts byte-identical
   output across two bundles of each entry and enforces the version pin.*
+- **Each page has one CSS entry too, and it is a declared list of parts, not a
+  bundle.** `rendering/stylesheets.py` maps every page to the stylesheets it
+  ships, in cascade order: `base.css` first — the design tokens and the shell
+  every page renders (docs/DESIGN.md) — and `<page>.css` last, so a page can
+  override a shared rule without restating it. A rule *group* two pages render,
+  and no third, lives in a part they both name (`guide-sources.css`), never
+  copied into both. That is about components — the class-based groups a page
+  owns; a page's own `main` frame rules stay page-local even where two pages'
+  happen to match, because hoisting a padding value is not what keeps the
+  groups apart. A page writes no rules in its template: nothing overrides
+  `base.html.j2`'s `styles` slot.
+
+  The parts are concatenated rather than bundled, which is the one place this
+  seam deliberately differs from the script side above. Scripts needed a
+  bundler because modules resolving each other by paste order was a
+  correctness problem; CSS has no import graph, no name collisions, and
+  nothing to tree-shake, so esbuild's CSS support would buy nothing a list does
+  not — while reprinting every rule and dropping the comments that explain
+  them. Concatenation keeps the shipped bytes the authored bytes.
+
+  Scope: this rule governs which *page* stylesheets a page reads. `base.css`
+  stays whole and shared by DESIGN.md's rule, so a page still carries shell
+  groups it happens not to render — the filter bar and the election-day banner
+  on the site-wide pages, the action strip on Comparisons. Splitting `base.css`
+  by component is a separate decision about the shell, not this one.
+  *Check: exists — `tests/test_page_stylesheets.py` holds every page to its
+  declared parts, holds every stylesheet on disk to a page that reads it,
+  asserts no page ships a class styled only by another page's own stylesheet,
+  and holds `base.html.j2` to being the only template that opens a `<style>`
+  element or fills the styles slot, since rules written in a template would
+  ship outside the entry and so outside every other assertion here.*
 - **Templates carry no logic in `<script>`.** A template's inline script is at
   most the bundled text plus a single entry invocation. Behavior lives in
   modules, where it can be imported and tested.
@@ -80,28 +111,69 @@ check is a bug in the check — fix or amend it, never route around it.
     Comparisons table's `<thead>` is this case — the server renders the same
     column labels as static text — and it is the reason the bullet above says
     "the default audited view" rather than "the default audited page".
+  - A region that is a *field of controls the reader operates* is taken over at
+    boot too, and the reason is stated where it is done. The first takeover
+    replaces the region's children, so one triggered by the reader's own click
+    would destroy the control they are holding and drop their focus, which the
+    keyed-rendering rule below forbids. The sources editor's tree is this case:
+    it keeps the server's audited markup and re-renders it identically at boot,
+    which is what the parity check makes checkable.
 
   The audited restore is not a saved copy of the server's markup. Returning to
   the audited default renders the same template with the audited view model,
   which the parity check below is what makes equivalent.
+- **An `aria-live` element is never a region lit owns; it is one lit renders
+  into.** A live region announces a change only if it was already in the
+  accessibility tree when the change happened, so an element the client created
+  — even one render before it filled it, in the same task — announces nothing.
+  The server renders every announcing element and it stays for the life of the
+  page; lit owns its text. The guide's banner status and lens notice, and the
+  sources editor's count line, are all this shape. #248 shipped a lit-owned
+  lens strip first and had to undo it: every notice the guide raises is a
+  boot-time one, so a strip lit created would have told a screen-reader reader
+  nothing about the broken link they followed.
+  *Check: partial — `guide-client.test.mjs` asserts element identity across
+  `wireGuide` for both announcing elements on the audited, unreadable-link, and
+  same-version-link paths, and `guide-markup-parity.test.mjs` asserts it against
+  the real audited page. Nothing checks that a new `aria-live` element has not
+  been introduced somewhere else.*
+- **A region is one element per value, not a pair.** A value that changes
+  between the audited and the personalized view is carried by the element the
+  server rendered it in; there is no empty twin beside it for the client to
+  fill, and no CSS rule choosing between them. #248 retired the guide's
+  `[data-lens-only]`/`[data-lens-hidden]` twins from the race card for this
+  reason: two elements holding one quantity is how the card and the dialog came
+  to disagree about it. The dialog's own twins survive only because #136 is
+  deleting that markup outright (Adoption, below).
 - **Client and server markup for the same region must agree.** A lit-html
   template rendered with audited data must produce the region the Jinja
-  template rendered. *Check: exists for the regions lit renders —
-  `tests/js/compare-markup-parity.test.mjs` boots the audited Comparisons page
-  in the lightweight DOM, drives it away from the default and back, and diffs
-  the row groups lit rendered against the ones committed in
-  `tests/js/fixtures/compare-audited-page.html`, which
-  `tests/test_compare_rendering.py` holds to a fresh render. The comparison is
-  of parsed markup — every tag, attribute, and run of text — ignoring only
-  comments, whitespace, attribute order, and the difference between a relative
-  and an absolute form of the same URL; `tests/js/support/markup-parity.mjs`
-  states that list and takes a region, so #248 brings the guide and sources
-  lens regions to the same check. A head that the server does not render
-  interactively has no region to compare, and is covered instead by the
-  behavior tests in `tests/test_compare_rendering.py`.*
+  template rendered. *Check: exists for every region lit renders. Each page's
+  parity test boots its audited page in the lightweight DOM and diffs what lit
+  rendered against what Jinja did: `compare-markup-parity.test.mjs` for the
+  Comparisons table's row groups, `guide-markup-parity.test.mjs` for all three
+  card regions of every race on the ballot after a lens is applied and cleared,
+  and `sources-markup-parity.test.mjs` for the sources tree and count line at
+  boot. The audited pages are committed
+  under `tests/js/fixtures/`, rendered by `tests/page_parity.py` and
+  `tests/compare_parity.py`, and held to a fresh render by
+  `tests/test_rendering.py` and `tests/test_compare_rendering.py`. The
+  comparison is of parsed markup — every tag, attribute, and run of text —
+  ignoring only comments, whitespace, attribute order, and the difference
+  between a relative and an absolute form of the same URL;
+  `tests/js/support/markup-parity.mjs` states that list and takes a region. A
+  head that the server does not render interactively has no region to compare,
+  and is covered instead by the behavior tests in
+  `tests/test_compare_rendering.py`.*
 - **Repeated lists that re-render use keyed rendering** (lit-html `repeat`),
   so re-renders preserve element identity and focus. A control the reader is
   using must still exist after the render it triggers.
+- **A form control's live value is bound with `live()`.** A checkbox is the one
+  binding whose DOM value changes without a render — the browser sets it on a
+  click and restores it on a back-navigation, both behind lit's record of what
+  it last wrote — so an ordinary property binding can decide a repair is a
+  no-op and skip it. `live()` compares against the element instead. The sources
+  tree binds `checked` and `indeterminate` this way, and also writes the
+  `checked` *attribute*, which is what a no-JS reader and the parity check see.
 
 ## The data contract
 
@@ -172,27 +244,35 @@ check is a bug in the check — fix or amend it, never route around it.
   handler edits `location` around the codec. A page whose codec is pure pairs
   it with one router module that holds the `location` and `history` calls and
   parses nothing itself — `lens-url.mjs` with `lens-route.mjs` is that pair
-  for the guide and the sources editor.
-  *Check: partial — `tests/js/lens-route.test.mjs` sweeps every client module
+  for the guide and the sources editor, and `compare-url.mjs` with
+  `compare-route.mjs` is that pair for Comparisons. One owner per fragment
+  means the two routers are deliberately separate: the pages read different
+  schemas against different contexts.
+  *Check: exists — `tests/js/lens-route.test.mjs` sweeps every client module
   for `location` or `history` and fails on one that is neither an owner nor a
-  recorded exception, so a new access is a change to that list. Two exceptions
-  are recorded there today: `share-link.mjs`, which copies the address
-  verbatim and interprets no segment of it, and `compare-client.mjs`, whose
-  page has its own fragment and its own codec — issue #243 gives Comparisons
-  the router half.*
+  recorded exception, so a new access is a change to that list. One exception
+  is recorded there: `share-link.mjs`, which copies the address verbatim and
+  interprets no segment of it, so there is no fragment for a codec to own.*
 - **Decode and encode failures are surfaced.** A stale, malformed, or
-  unencodable state produces a reader-visible notice and a cleaned address
-  bar, exactly as the guide's lens notices do today. Silent fallthrough is a
-  defect. It binds both directions: a selection that cannot be *written* into
-  a link is as much a failure as a link that cannot be read, and the reader is
-  told rather than handed a link that quietly drops it.
-  *Check: partial — `tests/js/guide-client.test.mjs` and
-  `tests/js/sources-client.test.mjs` hold each page to a notice for an
-  unreadable incoming fragment and for a rejected encode, and to leaving an
-  ordinary in-page anchor alone. `selectionFragment` in `lens-selection.mjs`
-  is what makes the encode half unmissable: it returns a rejection a caller
-  has to dispose of rather than an empty string. Comparisons is not covered
-  yet; that is issue #243.*
+  unencodable state produces a reader-visible notice and an address bar that
+  names a state a link can reproduce — cleaned when it holds a fragment the
+  page could not use, left alone when it already names the state that
+  survived. Silent fallthrough is a defect. It binds both directions: a
+  selection that cannot be *written* into a link is as much a failure as a
+  link that cannot be read, and the reader is told rather than handed a link
+  that quietly drops it. Every status the codec can return needs a branch;
+  a status with no branch is indistinguishable from one the page ignored.
+  *Check: exists — `tests/js/guide-client.test.mjs`,
+  `tests/js/sources-client.test.mjs`, and `tests/js/compare-client.test.mjs`
+  hold each page to a notice for an unreadable incoming fragment and for a
+  rejected encode, and to leaving an ordinary in-page anchor alone. The
+  Comparisons tests additionally cover each migration outcome and prove a
+  refused change is reverted rather than half-applied.
+  `selectionFragment` in `lens-selection.mjs` is what makes the encode half
+  unmissable for the guide and the sources editor: it returns a rejection a
+  caller has to dispose of rather than an empty string. On Comparisons that
+  role belongs to `commit`, which is the only way a reader's change reaches
+  the address bar and has nowhere to drop a rejection.*
 
 ## Cross-language mirrors
 
@@ -212,7 +292,12 @@ check is a bug in the check — fix or amend it, never route around it.
   on each side), carry the value. The audited candidate order and the audited
   accessible summary are carried this way: the renderer publishes the text and
   the order it rendered, so nothing recomputes them client-side to restore
-  them.
+  them. So is every string the sources tree renders — its per-source
+  endorsement count and its "also in" category tags — which is why #248 gave
+  that tree to lit without adding a second implementation of either. The count
+  grammar that used to be a Jinja macro is now `source_participation_label` in
+  `rendering/payload.py`, feeding the template and the payload from one
+  definition.
 
 ## Shared names
 
@@ -231,12 +316,22 @@ check is a bug in the check — fix or amend it, never route around it.
 
 - **Full HTML documents are Jinja templates extending the shared layout.** No
   new Python-string documents or fragments; autoescaping is the default, not a
-  per-call discipline. The existing f-string pages are grandfathered on a
-  shrinking allowlist. *Check: exists — `tests/test_frontend_ratchets.py`
-  parses every module under `src/` and reports each function whose own body
-  holds a string literal beginning `<!doctype`, whether it is returned
-  directly or named first, then holds that set to the allowlist. Fragments are
-  not covered.*
+  per-call discipline. `base.html.j2` owns the document skeleton and leaves
+  four slots — `head_meta`, `styles`, `body`, and `scripts` — and the shell
+  grammar (band, page head, footer) is macros in `_shell.html.j2`, reached
+  through the `shell` environment global rather than imported per page. A page
+  whose shell slot needs real markup authors that markup in its own template:
+  the page head's tagline is the caller's `{% call %}` block, so a literal
+  entity is literal and an interpolated value is escaped, instead of Python
+  handing in pre-escaped HTML the way `tagline_html` used to require.
+  *Check: exists — `tests/test_frontend_ratchets.py` parses every module under
+  `src/` and reports each function whose own body holds a string literal
+  beginning `<!doctype`, whether it is returned directly or named first, then
+  holds that set to the allowlist, which issue 241 emptied. The same module
+  covers the templates: exactly one `.j2` may open a `<!doctype`, and every
+  other non-partial template must name `base.html.j2` in an `extends`, so a new
+  page cannot restate the document instead of extending it. Fragments are not
+  covered.*
 
 ## Dependencies
 
@@ -327,6 +422,3 @@ Decided by their implementing tickets, then recorded here:
 
 - The shared fragment-codec core: how much of `compare-url` / `lens-url` is
   parameterized into one module, and the shape of its page-schema parameter.
-- Per-page CSS entry points: whether stylesheets move to the same
-  entry-per-page model as scripts, and what replaces the shared
-  `base.css + guide.css` concatenation.

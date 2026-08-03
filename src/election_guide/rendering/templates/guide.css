@@ -1,3 +1,8 @@
+/* The guide document's own page stylesheet (issue 246). It is read by the
+   guide and by nothing else, so a rule here may assume the guide's markup:
+   the race grid, the race-detail dialog, and the guide's printable edition.
+   Rules the sources editor also renders live in guide-sources.css, and the
+   tokens and shared shell live in base.css (rendering/stylesheets.py). */
 /* .screen-guide is now a bare marker class for JS/print selectors; the
    guide's root also carries `.page`, which supplies the shared 76rem frame
    width (item L53). */
@@ -7,8 +12,6 @@
    band. The kicker went with it — election day is now the Context slot's
    banner, which can retire itself once the election passes as permanent chrome
    never could. */
-.eyebrow { color: var(--mint); font-size: .78rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
-.eyebrow-paper { color: var(--teal); }
 .filter-status-part { white-space: nowrap; }
 .screen-sections { min-width: 0; padding: 1rem clamp(1rem, 4vw, 3rem) 4rem; }
 .screen-section { margin: 2.5rem 0 4rem; }
@@ -49,6 +52,11 @@ html.compact-ballot-mode .support-compact { display: block; }
 .lens-comparison-agrees { border-left-color: var(--tone-agree-border); background: var(--tone-agree-bg); color: var(--tone-agree-text); }
 .lens-comparison-differs { border-left-color: var(--tone-differ-border); background: var(--tone-differ-bg); color: var(--tone-differ-text); }
 .insufficient-note { padding: .55rem .65rem; border-left: .25rem solid var(--red); background: #fff1ef; color: #72231e; font-size: .78rem; }
+/* The card foot exists so lit has one region to own below the card's link
+   (docs/FRONTEND.md, Rendering). It must not become a box: its children are
+   direct flex items of the card, so the card's own gap still separates the
+   insufficiency warning from the All-sources bar. */
+.race-card-foot { display: contents; }
 html.compact-ballot-mode .screen-sections { padding-top: .65rem; padding-bottom: 2.5rem; }
 html.compact-ballot-mode .screen-section { margin: 1.5rem 0 2.5rem; }
 html.compact-ballot-mode .section-heading h2 { margin-bottom: .65rem; font-size: clamp(1.35rem, 3vw, 2rem); }
@@ -76,8 +84,6 @@ html.compact-ballot-mode .insufficient-note { padding: .38rem .48rem; font-size:
 .lens-banner { justify-content: center; margin: 0; text-align: center; }
 .lens-banner a { white-space: nowrap; }
 .lens-banner[hidden] { display: none; }
-.lens-notice { margin: 0; padding: .5rem 1rem; border-bottom: 1px solid var(--tone-differ-border); background: var(--tone-differ-bg); color: var(--tone-differ-text); font-weight: 600; font-size: .85rem; text-align: center; }
-.lens-notice[hidden] { display: none; }
 
 /* Per-race personalized presentation (issue 81). A card is either showing
    the audited baseline or its personalized result, never both at once, so
@@ -153,46 +159,19 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
 .race-detail-missing .race-detail-source-row { min-height: 2.3rem; padding-top: .4rem; padding-bottom: .4rem; }
 .race-detail-missing .race-detail-source-row strong, .race-detail-missing .race-detail-source-status { color: var(--faint); font-weight: 600; }
 /* The shared footer band/audit classes (.site-footer, .site-footer-band,
-   .site-footer-audit, ...) now live in base.css alongside .site-band, since
-   About and the archive render them too without loading this stylesheet. */
-/* The classes below are shared with the dedicated sources page
-   (sources.html.j2), which reads this same stylesheet and still renders its
-   own checkbox tree with this markup; the guide itself has none of it left. */
-.sources-tree { padding: 1.75rem clamp(1rem, 4vw, 3rem) 2.5rem; border-top: 1px solid var(--line-muted); background: #f7f9fb; color: var(--ink); }
-.sources-columns { column-count: 2; column-gap: 1.5rem; margin-bottom: 1rem; }
-.sources-category { display: inline-block; width: 100%; min-width: 0; margin: 0 0 1rem; break-inside: avoid; border: 1px solid var(--line-soft); border-top: .22rem solid var(--teal); background: var(--white); vertical-align: top; }
-.sources-category h2 { margin: 0; padding: .65rem .75rem .55rem; color: var(--teal); font-size: .74rem; letter-spacing: .08em; line-height: 1.15; text-transform: uppercase; }
-.sources-category-check { display: flex; align-items: center; gap: .5rem; margin: 0; font: inherit; color: inherit; letter-spacing: inherit; text-transform: inherit; cursor: pointer; }
-.sources-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: .2rem .75rem; min-height: 2.5rem; padding: .5rem .75rem; border-top: 1px solid var(--row-separator); }
-.sources-check { display: flex; min-width: 0; align-items: center; gap: .5rem; margin: 0; font-weight: 600; }
-.sources-row a, .sources-source-link { min-width: 0; color: var(--navy); font-size: .8rem; font-weight: 700; overflow-wrap: anywhere; }
-.sources-also-in { grid-column: 1 / -1; color: var(--muted); font-size: .68rem; font-weight: 600; white-space: normal; }
-.sources-count { justify-self: end; color: var(--tone-agree-text); font-size: .72rem; font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
-.sources-category-comparison { border-top-color: var(--tone-differ-border); background: var(--tone-differ-bg); }
-.sources-category-comparison h2, .sources-category-comparison .sources-count { color: var(--tone-differ-text); }
-.sources-comparison-note { margin: 0; padding: .55rem .75rem; border-bottom: 1px solid #f0dab3; color: var(--tone-differ-text); font-size: .72rem; line-height: 1.35; }
-.screen-coverage-gaps { display: grid; grid-template-columns: minmax(14rem, .7fr) minmax(0, 1.3fr); gap: 1rem 2rem; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--line); }
-.screen-coverage-gaps h2 { margin: .15rem 0 .35rem; color: var(--navy); font-size: 1.35rem; }
-.screen-coverage-gaps > div > p:last-child { margin: 0; color: var(--muted); font-size: .8rem; }
-.coverage-gap-columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem; }
-.coverage-gap-row { min-width: 0; padding: .7rem .8rem; border: 1px solid var(--line-soft); border-left: .22rem solid var(--line-strong); background: var(--white); }
-.coverage-gap-row div { display: flex; min-width: 0; flex-wrap: wrap; justify-content: space-between; gap: .25rem .75rem; }
-.coverage-gap-row a { min-width: 0; color: var(--navy); font-size: .8rem; font-weight: 700; overflow-wrap: anywhere; }
-.coverage-gap-row strong { color: var(--muted); font-size: .68rem; white-space: nowrap; }
-.coverage-gap-row p { margin: .35rem 0 0; color: var(--muted); font-size: .72rem; line-height: 1.35; }
+   .site-footer-audit, ...) live in base.css alongside .site-band, since About
+   and the archive render them too without loading this stylesheet. The
+   sources editor's checkbox tree and coverage-gap section moved the other way,
+   into sources.css, when each page gained its own stylesheet (issue 246). */
 
 @media (max-width: 1050px) {
   html.compact-ballot-mode .race-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 @media (max-width: 720px) {
-  .site-band nav { margin-left: 0; }
   .page-head.extended h1 { max-width: 18ch; }
   html.compact-ballot-mode .race-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .race-grid, .screen-coverage-gaps, .coverage-gap-columns { grid-template-columns: 1fr; }
-  .sources-columns { column-count: 1; }
-  .sources-row { grid-template-columns: minmax(0, 1fr); gap: .15rem; }
-  .sources-count { justify-self: start; white-space: normal; }
+  .race-grid { grid-template-columns: 1fr; }
   .race-card { min-width: 0; }
   .screen-race-result { grid-template-columns: minmax(0, 1fr) 8.75rem; gap: .6rem; }
   .screen-meter { width: 8.75rem; }
@@ -217,8 +196,6 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
   html:not(.compact-ballot-mode) .screen-meter { width: 100%; }
 }
 
-@page { margin: .5in .55in; }
-
 /* Ctrl+P is the printable edition (issue 193). No second rendering of the
    guide exists any more, so these rules only have to make the page the
    reader is already looking at legible on paper: drop the guide's own
@@ -226,7 +203,7 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
    whole across a page break. The shared shell — band, page head, election-day
    slot, sticky filter bar, footer — is printed by base.css for every page. */
 @media print {
-  .lens-banner, .lens-notice { display: none !important; }
+  .lens-banner { display: none !important; }
   .screen-sections { padding: 0; }
   .screen-section { margin: .18in 0 0; }
   .section-heading h2 { margin: 0 0 .07in; font-size: 15pt; break-after: avoid; }

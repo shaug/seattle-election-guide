@@ -78,7 +78,28 @@ Printing suppresses the chrome a reader cannot use on paper — the brand band, 
 controls, the lens banner, the footer's action cluster — flattens the screen surfaces onto white,
 holds the race grid at two columns whichever on-screen density is active, and keeps each race card
 whole across a page break. The shell rules live in `base.css` so every page prints; the guide's own
-rules live in `guide.css`. No font file is redistributed and the responsive typography is unchanged.
+rules live in `guide.css`; and the page margins and lens-notice suppression it shares with the
+sources editor live in `guide-sources.css` (`rendering/stylesheets.py` declares which parts each
+page reads). No font file is redistributed and the responsive typography is unchanged.
+
+## Modules
+
+The rendering package is split one concern per module, and nothing imports across a seam that
+is not listed here (issue 242):
+
+| Module | Owns |
+|---|---|
+| `rendering/config.py` | Reading the strict rendering contract, beside the model it validates into. |
+| `rendering/context.py` | Derived display values over the view model. No markup, no I/O. |
+| `rendering/documents.py` | The Jinja environment and the four document renderers. |
+| `rendering/validation.py` | Reparsing a rendered document and checking it against the view model. |
+| `rendering/browser.py` | Chrome process management, the CDP client, and screenshot capture. |
+| `rendering/pipeline.py` | `build_rendered_guide`: render, capture, validate, publish. |
+
+`rendering/__init__.py` re-exports the build entry points (`build_rendered_guide`,
+`render_html_document`, `read_rendering_configuration`, `validate_rendered_guide`, and their
+models); import anything else from the module that owns it. There is no `renderer.py` façade —
+a caller's import names the concern it depends on.
 
 ## Requirements
 

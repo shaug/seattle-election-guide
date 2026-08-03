@@ -270,6 +270,31 @@ interface SourcesPayload {
   categories: LensCategory[];
   sources: LensSource[];
   guide_path: string;
+  tree: SourcesTreeCategory[];
+}
+/**
+ * One selectable category on the sources page, with its rows.
+ */
+interface SourcesTreeCategory {
+  code: string;
+  label: string;
+  sources: SourcesTreeSource[];
+}
+/**
+ * One selectable source's row on the sources page.
+ *
+ * Everything the row renders, so the client can render it. `participation`
+ * and `also_in` are carried rather than recomputed on the client:
+ * docs/FRONTEND.md's Cross-language mirrors section prefers carrying a
+ * computed value to maintaining a second implementation of the grammar that
+ * computes it.
+ */
+interface SourcesTreeSource {
+  code: string;
+  name: string;
+  evidence_url: string;
+  participation: string;
+  also_in: string[];
 }
 /**
  * The Comparisons page's payload.

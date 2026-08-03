@@ -277,3 +277,46 @@ def test_python_string_documents_stay_on_the_shrinking_allowlist() -> None:
         f"Python-string document. Delete the entry in this pull request "
         f"(rule: the allowlist only shrinks, {DOCUMENT} § Adoption)."
     )
+
+
+LAYOUT = "base.html.j2"
+EXTENDS = re.compile(r"""\{%-?\s*extends\s+['"]([^'"]+)['"]""")
+
+
+def test_every_full_document_template_extends_the_shared_layout() -> None:
+    """docs/FRONTEND.md, Server-side templates: *extending the shared layout*.
+
+    The f-string scan above covers the Python half of that rule and is empty
+    since issue 241. This covers the half it cannot see: a new `.j2` that opens
+    its own `<!doctype` would satisfy "documents are Jinja templates" while
+    still duplicating the head, band, and footer the layout owns.
+
+    A template is a page unless its name marks it a partial (`_shell`,
+    `_filter_controls`). Exactly one template may hold the doctype, and every
+    other page must reach it through `extends`.
+    """
+
+    templates = sorted(TEMPLATE_DIR.glob("*.j2"))
+    assert templates, "expected Jinja templates under rendering/templates"
+
+    holds_doctype = [
+        template.name
+        for template in templates
+        if DOCTYPE_PREFIX in template.read_text(encoding="utf-8").lower()
+    ]
+    assert holds_doctype == [LAYOUT], (
+        f"{holds_doctype} open a full HTML document; only {LAYOUT} may. A page "
+        f"template extends the layout instead of restating the document "
+        f"(rule: server-side templates, {DOCUMENT})."
+    )
+
+    for template in templates:
+        if template.name == LAYOUT or template.name.startswith("_"):
+            continue
+        extended = EXTENDS.search(template.read_text(encoding="utf-8"))
+        assert extended is not None and extended.group(1) == LAYOUT, (
+            f"{template.name} is a page template that does not extend {LAYOUT}. "
+            f"Every full HTML document extends the shared layout, so the head, "
+            f"band, and footer have one implementation each "
+            f"(rule: server-side templates, {DOCUMENT})."
+        )

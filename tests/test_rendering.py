@@ -39,33 +39,40 @@ from election_guide.rendering import (
     render_html_document,
     validate_rendered_guide,
 )
-from election_guide.rendering.bundler import TEMPLATE_DIR, bundle_entry
-from election_guide.rendering.models import RenderingValidationReport
-from election_guide.rendering.payload import CLIENT_PAYLOAD_SCHEMA_VERSION, GuidePayload
-from election_guide.rendering.renderer import (
-    _candidate_endorsement_groups,  # pyright: ignore[reportPrivateUsage]
+from election_guide.rendering.browser import (
     _CdpSocket,  # pyright: ignore[reportPrivateUsage]
-    _has_no_majority,  # pyright: ignore[reportPrivateUsage]
-    _race_detail_accessible_summary,  # pyright: ignore[reportPrivateUsage]
-    _race_detail_support_summary,  # pyright: ignore[reportPrivateUsage]
-    _render_screenshot,  # pyright: ignore[reportPrivateUsage]
-    _screen_support_summary,  # pyright: ignore[reportPrivateUsage]
-    _screen_support_summary_compact,  # pyright: ignore[reportPrivateUsage]
-    _source_cell_detail_label,  # pyright: ignore[reportPrivateUsage]
-    _source_cell_group,  # pyright: ignore[reportPrivateUsage]
     _terminate_process,  # pyright: ignore[reportPrivateUsage]
     _wait_for_devtools_endpoint,  # pyright: ignore[reportPrivateUsage]
     find_chrome,
+    render_screenshot,
 )
+from election_guide.rendering.bundler import TEMPLATE_DIR, bundle_entry
+from election_guide.rendering.context import (
+    candidate_endorsement_groups,
+    has_no_majority,
+    race_detail_accessible_summary,
+    race_detail_support_summary,
+    screen_support_summary,
+    screen_support_summary_compact,
+    source_cell_detail_label,
+    source_cell_group,
+)
+from election_guide.rendering.documents import render_sources_document, template_environment
+from election_guide.rendering.models import RenderingValidationReport
+from election_guide.rendering.payload import CLIENT_PAYLOAD_SCHEMA_VERSION, GuidePayload
 from election_guide.rendering.shell import (
     HOW_TO_VOTE_HREF,
     election_day_banner_html,
     election_names,
-    site_band_html,
-    site_page_head_html,
 )
 from election_guide.scoring import score_dataset
 from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
+from tests.page_parity import (
+    GUIDE_PAGE_PATH,
+    SOURCES_PAGE_PATH,
+    build_audited_guide_page,
+    build_audited_sources_page,
+)
 from tests.test_personalization import (
     _bundle as _production_bundle,  # pyright: ignore[reportPrivateUsage]
 )
@@ -194,15 +201,30 @@ def test_canonical_names_use_structured_future_election_data() -> None:
     ) == ("November 2027 General", "November 2, 2027 Washington general")
 
 
+def _render_shell(source: str, **context: object) -> str:
+    """Render a snippet against the real template environment.
+
+    Issue 241 moved the shell grammar from Python builders in `shell.py` into
+    `_shell.html.j2`'s macros, so these tests drive it the way a page does —
+    through the same environment, with the same globals and autoescaping.
+    """
+    return template_environment().from_string(source).render(**context)
+
+
+def _page_head(title: str, tagline: str = "A tagline.", **options: object) -> str:
+    return _render_shell(
+        "{% call shell.page_head(title, eyebrow=eyebrow, mode=mode) %}" + tagline + "{% endcall %}",
+        title=title,
+        eyebrow=options.get("eyebrow"),
+        mode=options.get("mode", "plain"),
+    )
+
+
 def test_page_head_names_the_page_and_puts_the_election_in_the_eyebrow() -> None:
     """Issue 192: one head for every page. The h1 is the page's own name and
     the eyebrow is the election, so the two read as one name and the strongest
     identity on screen keeps its size and position across page types."""
-    head = site_page_head_html(
-        eyebrow="August 2026 Primary",
-        title="Comparisons",
-        tagline_html="Put any sources side by side.",
-    )
+    head = _page_head("Comparisons", "Put any sources side by side.", eyebrow="August 2026 Primary")
 
     assert '<p class="page-eyebrow">August 2026 Primary</p>' in head
     assert "<h1>Comparisons</h1>" in head
@@ -212,7 +234,7 @@ def test_page_head_names_the_page_and_puts_the_election_in_the_eyebrow() -> None
 def test_page_head_omits_the_eyebrow_on_election_agnostic_pages() -> None:
     """Presence follows the page's kind: the absence of an eyebrow is the only
     marker an agnostic page needs, so no extra mechanism is spent on it."""
-    head = site_page_head_html(title="How this works", tagline_html="How this guide works.")
+    head = _page_head("How this works", "How this guide works.")
 
     assert "page-eyebrow" not in head
     assert "<h1>How this works</h1>" in head
@@ -222,15 +244,10 @@ def test_extended_page_head_is_the_one_exception_primacy_buys() -> None:
     """The dial (R3): the masthead's navy runs through the head on the page the
     brand lockup links to. It bends no other rule — the eyebrow's mint-on-navy
     and the title's white are the ground-relative colors already prescribed."""
-    extended = site_page_head_html(
-        eyebrow="August 2026 Primary",
-        title="Endorsements",
-        tagline_html="Distilled.",
-        mode="extended",
+    extended = _page_head(
+        "Endorsements", "Distilled.", eyebrow="August 2026 Primary", mode="extended"
     )
-    plain = site_page_head_html(
-        eyebrow="August 2026 Primary", title="Sources", tagline_html="Choose."
-    )
+    plain = _page_head("Sources", "Choose.", eyebrow="August 2026 Primary")
 
     assert '<header class="page-head extended">' in extended
     assert '<header class="page-head">' in plain
@@ -239,32 +256,40 @@ def test_extended_page_head_is_the_one_exception_primacy_buys() -> None:
 def test_page_head_takes_its_pages_reading_measure_when_it_has_one() -> None:
     """A head above a book-measure column sits on that column, so its tagline
     never outruns the prose beneath it."""
-    measured = site_page_head_html(
-        title="Guide archive", tagline_html="Every guide stays up.", mode="measured"
-    )
+    measured = _page_head("Guide archive", "Every guide stays up.", mode="measured")
 
     assert '<header class="page-head narrow">' in measured
     assert '<div class="narrow-main">' in measured
 
 
-def test_page_head_escapes_its_names_but_not_its_tagline() -> None:
-    """The head's escaping is deliberately asymmetric, so pin it.
+def test_page_head_escapes_its_names_and_anything_interpolated_into_its_tagline() -> None:
+    """The head's escaping asymmetry, restated for the Jinja shell (issue 241).
 
-    `title` and `eyebrow` are names and are escaped here. `tagline_html` carries
-    inline markup on purpose — entities in the guide's copy, real links on the
-    404 — so its caller owns escaping, which is why the parameter says `_html`.
-    Issue 192 review finding cor-1: the asymmetry is fine, being silent about it
-    was not.
+    It used to be a naming convention: `tagline_html` was not escaped and its
+    caller owned the escape, which is why `_about_html` had to pass
+    `html.escape(...)`. The tagline is now the caller's `{% call %}` block, so
+    the asymmetry is structural rather than advisory — markup authored in a
+    template is markup, and a *value* interpolated into it is escaped like any
+    other. Issue 192 review finding cor-1 asked that this be explicit, not that
+    it be removed: taglines still carry entities in the guide's copy and real
+    links on the 404.
     """
-    head = site_page_head_html(
-        eyebrow="A & B",
+    head = _render_shell(
+        "{% call shell.page_head(title, eyebrow=eyebrow) %}"
+        'Read <a href="/e/">the archive</a>. {{ untrusted }}'
+        "{% endcall %}",
         title="Sources <script>",
-        tagline_html='Read <a href="/e/">the archive</a>.',
+        eyebrow="A & B",
+        untrusted='<script>alert("x")</script>',
     )
 
     assert "<h1>Sources &lt;script&gt;</h1>" in head
     assert "A &amp; B" in head
+    # Authored markup reaches the page as markup...
     assert 'Read <a href="/e/">the archive</a>.' in head
+    # ...and an interpolated value does not.
+    assert "<script>alert" not in head
+    assert "&lt;script&gt;alert(&#34;x&#34;)&lt;/script&gt;" in head
 
 
 def test_election_day_banner_states_a_truth_that_survives_the_election() -> None:
@@ -284,11 +309,10 @@ def test_election_day_banner_states_a_truth_that_survives_the_election() -> None
 
 
 def test_shared_site_band_names_the_methodology_path_for_what_it_does() -> None:
-    band = site_band_html(
-        guide_href="/e/wa-2026-primary/",
-        sources_href="/e/wa-2026-primary/sources/",
-        about_href="/about/",
-        current="about",
+    band = _render_shell(
+        "{{ shell.band(guide_href='/e/wa-2026-primary/',"
+        " sources_href='/e/wa-2026-primary/sources/',"
+        " about_href='/about/', current='about') }}"
     )
 
     assert ">How this works</a>" in band
@@ -303,10 +327,10 @@ def test_shared_site_band_orders_nav_by_dependency() -> None:
 
     This reverses the order issue 197 shipped, which put Comparisons second.
     """
-    band = site_band_html(
-        guide_href="/e/wa-2026-primary/",
-        sources_href="/e/wa-2026-primary/sources/",
-        compare_href="/e/wa-2026-primary/comparisons/",
+    band = _render_shell(
+        "{{ shell.band(guide_href='/e/wa-2026-primary/',"
+        " sources_href='/e/wa-2026-primary/sources/',"
+        " compare_href='/e/wa-2026-primary/comparisons/') }}"
     )
 
     assert band.index(">Endorsements</a>") < band.index(">Sources</a>")
@@ -327,8 +351,16 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
 
     html = render_html_document(view_model, configuration)
 
-    assert "Too few endorsements to measure agreement." in html
-    assert "Too few endorsements to measure agreement among your selected sources." in html
+    # Against the rendered markup, not the whole document: since issue #248 the
+    # client carries its own copy of this wording, and the renderer inlines the
+    # bundle into the page, so a whole-document search would be satisfied by
+    # guide-lens.mjs and would stop constraining this template. The personalized
+    # wording is no longer server markup at all — the lens-only twin that used
+    # to carry it is retired — and is asserted client-side instead, in
+    # `tests/js/guide-lens.test.mjs`.
+    body = html.split("</style>", 1)[1].split('<script type="module">', 1)[0]
+    assert "Too few endorsements to measure agreement." in body
+    assert "Too few endorsements to measure agreement among your selected sources." not in body
     assert "Too few explicit endorsements" not in html
 
     # Issue 108 acceptance: a coverage-gap source has zero endorsements and was
@@ -434,9 +466,9 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
         assert 'aria-live="polite" data-copy-race-status' in dialog_html
         assert f'aria-describedby="copy-race-status-{race.id}"' in dialog_html
         assert race.recommendation_label in dialog_html
-        assert _race_detail_accessible_summary(race) in dialog_html
-        assert _race_detail_support_summary(race) in dialog_html
-        endorsement_groups = _candidate_endorsement_groups(race)
+        assert race_detail_accessible_summary(race) in dialog_html
+        assert race_detail_support_summary(race) in dialog_html
+        endorsement_groups = candidate_endorsement_groups(race)
         candidate_positions = [
             dialog_html.index(f'data-race-detail-candidate-id="{group.candidate_id}"')
             for group in endorsement_groups
@@ -452,7 +484,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
             )
 
         def _cell_row_count(cell: SourceCell, race: PublicationRace = race) -> int:
-            if _source_cell_group(cell, race, source_by_id[cell.source_id]) == "candidate":
+            if source_cell_group(cell, race, source_by_id[cell.source_id]) == "candidate":
                 return len(cell.candidate_ids)
             return 1
 
@@ -474,7 +506,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
         assert dialog_html.count(">Co-endorsed</span>") == expected_co_endorsement_rows
         for state in ("not_covered", "not_applicable"):
             missing_count = sum(
-                _source_cell_group(cell, race, source_by_id[cell.source_id]) == state
+                source_cell_group(cell, race, source_by_id[cell.source_id]) == state
                 for cell in tallying_cells
             )
             if not missing_count:
@@ -487,7 +519,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
                 summary = f"{missing_count} {noun} {verb} outside this district"
             assert summary in dialog_html
         for cell in race.source_cells:
-            group = _source_cell_group(cell, race, source_by_id[cell.source_id])
+            group = source_cell_group(cell, race, source_by_id[cell.source_id])
             source = source_by_id[cell.source_id]
             code = source_code_by_id[cell.source_id]
             if source.panel_role == "comparison":
@@ -499,7 +531,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
             )
             assert f'data-source-state="{cell.state}"' in dialog_html
             assert category_label_by_key[source.category] in dialog_html
-            detail_label = _source_cell_detail_label(cell, race, group)
+            detail_label = source_cell_detail_label(cell, race, group)
             if detail_label is not None:
                 assert detail_label in dialog_html
             if cell.evidence_url is not None:
@@ -672,7 +704,7 @@ def test_no_majority_uses_the_exact_unrounded_share_across_the_card_and_dialog(
     target.percentage_whole = 50
     target.percentage_label = "50%"
 
-    assert _has_no_majority(target) is True
+    assert has_no_majority(target) is True
     html = render_html_document(view_model, configuration)
     card_start = html.index(f'data-publication-race-id="{target.id}"')
     card_end = html.index("</article>", card_start)
@@ -684,7 +716,7 @@ def test_no_majority_uses_the_exact_unrounded_share_across_the_card_and_dialog(
     assert "No majority. Consensus among explicitly endorsing sources: 50%" in card_html
 
     target.winner_share = "5001/10000"
-    assert _has_no_majority(target) is False
+    assert has_no_majority(target) is False
     above_half_html = render_html_document(view_model, configuration)
     above_half_card_start = above_half_html.index(f'data-publication-race-id="{target.id}"')
     above_half_card_end = above_half_html.index("</article>", above_half_card_start)
@@ -745,19 +777,21 @@ def test_round4_card_anatomy_and_data_ink_cleanup(tmp_path: Path) -> None:
     # forms (a pure CSS toggle, mirroring the print edition's own full/compact
     # captions), directly under the meter row and ahead of the reference
     # block (the comparisons div) at the card foot.
+    # Issue #248 retired the lens-only twins: one caption element carries the
+    # audited text and, once a selection diverges, the personalized text, so
+    # the markup no longer varies with the policy.
     html = render_html_document(view_model, configuration)
-    lens_hidden_attr = " data-lens-hidden" if view_model.personalization.policy.enabled else ""
     for race in races:
         card_start = html.index(f'id="race-{race.id}"')
         card_end = html.index("</dialog>", card_start)
         card_html = html[card_start:card_end]
         full_caption = (
             f'<p class="support-line support-full" data-display-role="support"'
-            f"{lens_hidden_attr}>{_screen_support_summary(race)}</p>"
+            f">{screen_support_summary(race)}</p>"
         )
         compact_caption = (
             f'<p class="support-line support-compact" data-display-role="support"'
-            f"{lens_hidden_attr}>{_screen_support_summary_compact(race)}</p>"
+            f">{screen_support_summary_compact(race)}</p>"
         )
         assert full_caption in card_html
         assert compact_caption in card_html
@@ -883,12 +917,7 @@ def test_nonempty_render_destination_is_preserved(tmp_path: Path) -> None:
 
 
 def _recommendation_tag_pattern(label: str) -> re.Pattern[str]:
-    """Match a rendered recommendation `<h3>` around its exact label text.
-
-    The opening tag may carry an additional `data-lens-hidden` attribute when
-    the personalization policy is enabled, so match it with `[^>]*` rather
-    than assuming a bare tag.
-    """
+    """Match a rendered recommendation `<h3>` around its exact label text."""
     return re.compile(
         r'(<h3 data-display-role="recommendation"[^>]*>)' + re.escape(label) + r"(</h3>)"
     )
@@ -1281,7 +1310,7 @@ def test_responsive_tablet_layout_renders(tmp_path: Path) -> None:
         encoding="utf-8",
     )
 
-    _render_screenshot(
+    render_screenshot(
         html_path,
         tmp_path / "tablet.png",
         find_chrome(),
@@ -1878,7 +1907,7 @@ def test_a_comparison_only_candidate_gets_no_section_at_all() -> None:
         group.candidate_id
         for section in view_model.sections
         for race in section.races
-        for group in _candidate_endorsement_groups(race)
+        for group in candidate_endorsement_groups(race)
     }
     endorsed_candidate_ids = {
         group.candidate_id
@@ -1940,7 +1969,7 @@ def _evaluate_in_chrome(
 ) -> dict[str, Any]:
     """Load one local file in headless Chrome and return one JSON object result.
 
-    A minimal harness for the personalization flow: unlike _render_screenshot's
+    A minimal harness for the personalization flow: unlike render_screenshot's
     responsive-interaction probe, this only needs one page load and one script
     evaluation, so it does not share that function's screenshot-capture
     machinery. Pass mobile_width to emulate a narrow CSS viewport first, or
@@ -2250,8 +2279,8 @@ def test_no_majority_lens_state_appears_and_dissolves_with_the_selected_sources(
           const pause = () => new Promise((resolve) => setTimeout(resolve, 100));
           const card = document.querySelector('[data-publication-race-id="king-county-assessor"]');
           const snapshot = () => {{
-            const meter = card.querySelector('[data-lens-share]');
-            const pill = card.querySelector('[data-lens-no-majority]');
+            const meter = card.querySelector('[data-lens-result] .screen-meter');
+            const pill = card.querySelector('[data-lens-context] .no-majority-pill');
             const kicker = card.querySelector('[data-race-detail-lens-kicker]:not([hidden])');
             return {{
               pillHidden: pill.hidden,
@@ -2449,12 +2478,6 @@ def test_personalization_is_invisible_while_the_policy_is_disabled(tmp_path: Pat
         "data-lens-banner",
         "data-lens-only",
         "data-lens-hidden",
-        "data-lens-recommendation",
-        "data-lens-share",
-        "data-lens-support",
-        "data-lens-support-compact",
-        "data-lens-insufficient",
-        "data-lens-comparison",
         "data-race-detail-lens",
         "data-lens-detail-summary",
         "data-lens-detail-audited",
@@ -2477,6 +2500,18 @@ def test_personalization_is_invisible_while_the_policy_is_disabled(tmp_path: Pat
     # address bar, and the rule requires the reader be told why (issue #239).
     assert "data-payload-notice" in body
     assert "data-lens-notice" in body
+
+    # Issue #248: the sources page's tree is a lit region now, so the switch has
+    # to reach the payload as well as the markup. An empty tree is what stops
+    # the client taking the region over and rendering the checkboxes this
+    # template deliberately withheld.
+    sources_html = render_sources_document(
+        view_model, public_site_url="https://seattleelections.guide"
+    )
+    sources_body = sources_html.split("</style>", 1)[1].split('<script type="module">', 1)[0]
+    assert "data-sources-source=" not in sources_body
+    assert "data-sources-category-toggle=" not in sources_body
+    assert _client_payload(sources_html)["tree"] == []
 
     # Issue 124: the bindings still publish every category and source,
     # including the comparison one, so the codec can classify a pre-removal
@@ -3029,8 +3064,10 @@ def test_personalization_full_panel_selection_shows_no_divergent_comparison(tmp_
         (async () => {
           const cards = [...document.querySelectorAll('.race-card')];
           const personalized = document.documentElement.classList.contains('lens-personalized');
+          // Issue #248: the reference bar is divergence-only markup now, so
+          // the audited page renders no element at all rather than a hidden one.
           const anyComparisonShown = cards.some(
-            (card) => card.querySelector('[data-lens-comparison]')?.hidden === false,
+            (card) => card.querySelector('[data-lens-foot] .lens-comparison') !== null,
           );
           const firstCard = cards[0];
           return JSON.stringify({
@@ -3093,12 +3130,10 @@ def test_personalization_divergent_race_discloses_a_compact_comparison_and_full_
           const selectedCodes = new Set({selected_codes_json});
           const shown = (el) => el !== null && getComputedStyle(el).display !== 'none';
           const cards = [...document.querySelectorAll('.race-card')];
-          const divergent = cards.find(
-            (card) => card.querySelector('[data-lens-comparison]')?.hidden === false,
-          );
-          const unchanged = cards.find(
-            (card) => card.querySelector('[data-lens-comparison]')?.hidden === true,
-          );
+          // The reference bar exists only on a card that diverges (issue #248).
+          const bar = (card) => card.querySelector('[data-lens-foot] .lens-comparison');
+          const divergent = cards.find((card) => bar(card) !== null);
+          const unchanged = cards.find((card) => bar(card) === null);
           let detail = null;
           if (divergent) {{
             divergent.querySelector('[data-race-detail-link]').click();
@@ -3113,7 +3148,9 @@ def test_personalization_divergent_race_discloses_a_compact_comparison_and_full_
             const noMySourcesHeading = ![...dialog.querySelectorAll('h4')].some(
               (heading) => heading.textContent === 'My sources',
             );
-            const cardShareText = divergent.querySelector('[data-lens-share-text]')?.textContent;
+            const cardShareText = divergent.querySelector(
+              '[data-lens-result] .screen-meter strong',
+            )?.textContent;
             const sections = [...dialog.querySelectorAll('[data-race-detail-candidate-id]')];
             // I56 hard invariant: every visible per-candidate meter equals the
             // card's own lens share — no quantity appears with two values.
@@ -3153,16 +3190,19 @@ def test_personalization_divergent_race_discloses_a_compact_comparison_and_full_
               candidateSectionCount: sections.length,
             }};
           }}
-          const divergentComparison = divergent?.querySelector('[data-lens-comparison]');
+          const divergentComparison = divergent === undefined ? null : bar(divergent);
           return JSON.stringify({{
             hasDivergent: divergent !== undefined,
             hasUnchanged: unchanged !== undefined,
             // H38: the caption itself carries the lens state now that the
             // per-card "My sources" pill is retired — no separate badge
             // element exists to query.
-            divergentSupportText: divergent?.querySelector('[data-lens-support]')?.textContent,
-            divergentSupportCompactText:
-              divergent?.querySelector('[data-lens-support-compact]')?.textContent,
+            divergentSupportText: divergent?.querySelector(
+              '[data-lens-context] .support-full',
+            )?.textContent,
+            divergentSupportCompactText: divergent?.querySelector(
+              '[data-lens-context] .support-compact',
+            )?.textContent,
             divergentComparisonText: divergentComparison?.textContent,
             divergentComparisonRole: divergentComparison?.getAttribute('role'),
             divergentComparisonAriaLabel: divergentComparison?.getAttribute('aria-label'),
@@ -3170,7 +3210,7 @@ def test_personalization_divergent_race_discloses_a_compact_comparison_and_full_
               divergentComparison?.classList.contains('lens-comparison-differs')
               || divergentComparison?.classList.contains('lens-comparison-agrees'),
             ),
-            unchangedComparisonHidden: unchanged?.querySelector('[data-lens-comparison]')?.hidden,
+            unchangedComparisonAbsent: unchanged === undefined ? null : bar(unchanged) === null,
             detail,
           }});
         }})()
@@ -3209,7 +3249,7 @@ def test_personalization_divergent_race_discloses_a_compact_comparison_and_full_
     for share_text in detail["visibleLensMeterShares"]:
         assert share_text == detail["cardShareText"]
     if result["hasUnchanged"]:
-        assert result["unchangedComparisonHidden"] is True
+        assert result["unchangedComparisonAbsent"] is True
 
 
 def test_race_detail_dialog_reflects_the_active_lens_leader_not_the_audited_default(
@@ -3272,7 +3312,9 @@ def test_race_detail_dialog_reflects_the_active_lens_leader_not_the_audited_defa
           const shown = (el) => el !== null && getComputedStyle(el).display !== 'none';
           const raceId = {race_id_json};
           const card = document.querySelector(`[data-publication-race-id="${{raceId}}"]`);
-          const recommendation = card.querySelector('[data-lens-recommendation]')?.textContent;
+          const recommendation = card.querySelector(
+            '[data-lens-result] [data-display-role="recommendation"]',
+          )?.textContent;
           card.querySelector('[data-race-detail-link]').click();
           await new Promise((resolve) => setTimeout(resolve, 50));
           const dialog = card.querySelector('[data-race-detail-dialog]');
@@ -3336,12 +3378,15 @@ def test_race_detail_dialog_reflects_the_active_lens_leader_not_the_audited_defa
 
 def test_personalization_compact_caption_shows_only_the_lens_short_form(tmp_path: Path) -> None:
     """H34 + H38 interaction: in compact mode, while a lens is active on a
-    divergent race, exactly the lens's own short caption ("N of M selected")
-    must be visible — never the default caption (either form) and never the
-    lens's own full-sentence form. The full/compact toggle (guide.css) and
-    the lens-active toggle ([data-lens-hidden]/[data-lens-only]) are two
-    independent CSS rule pairs applied to the same elements; this proves they
-    resolve consistently together, not just each in isolation.
+    divergent race, exactly the short caption must be visible, and it must be
+    carrying the lens's own text ("N of M selected") rather than the audited
+    sentence.
+
+    Issue #248 retired the lens-only caption twins, so there is one full
+    caption and one compact caption per card and the only toggle left is the
+    full/compact one (guide.css). What this proves is that the surviving pair
+    still resolves the way it did when four elements were involved: the
+    compact one visible, the full one not, and the visible text the lens's.
     """
     view_model = _production_bundle().view_model
     enabled_policy = view_model.personalization.policy.model_copy(update={"enabled": True})
@@ -3374,24 +3419,21 @@ def test_personalization_compact_caption_shows_only_the_lens_short_form(tmp_path
           document.documentElement.classList.add('compact-ballot-mode');
           const cards = [...document.querySelectorAll('.race-card')];
           const divergent = cards.find(
-            (card) => card.querySelector('[data-lens-comparison]')?.hidden === false,
+            (card) => card.querySelector('[data-lens-foot] .lens-comparison') !== null,
           );
           const displayOf = (el) => (el ? getComputedStyle(el).display : null);
+          const caption = (form) => divergent?.querySelector(
+            `[data-lens-context] .support-line.support-${form}`,
+          );
           return JSON.stringify({
             hasDivergent: divergent !== undefined,
-            defaultFullDisplay: displayOf(
-              divergent?.querySelector('.support-line.support-full:not(.lens-value)'),
-            ),
-            defaultCompactDisplay: displayOf(
-              divergent?.querySelector('.support-line.support-compact:not(.lens-value)'),
-            ),
-            lensFullDisplay: displayOf(
-              divergent?.querySelector('.support-line.support-full.lens-value'),
-            ),
-            lensCompactDisplay: displayOf(
-              divergent?.querySelector('.support-line.support-compact.lens-value'),
-            ),
-            lensCompactText: divergent?.querySelector('[data-lens-support-compact]')?.textContent,
+            captionCount: divergent
+              ? divergent.querySelectorAll('[data-lens-context] .support-line').length
+              : null,
+            fullDisplay: displayOf(caption('full')),
+            compactDisplay: displayOf(caption('compact')),
+            fullText: caption('full')?.textContent,
+            compactText: caption('compact')?.textContent,
           });
         })()
         """,
@@ -3400,11 +3442,12 @@ def test_personalization_compact_caption_shows_only_the_lens_short_form(tmp_path
     assert result["hasDivergent"] is True, (
         "expected at least one production race to diverge from the full-panel audited baseline"
     )
-    assert result["defaultFullDisplay"] == "none"
-    assert result["defaultCompactDisplay"] == "none"
-    assert result["lensFullDisplay"] == "none"
-    assert result["lensCompactDisplay"] == "block"
-    assert re.match(r"\d+ of \d+ selected", result["lensCompactText"])
+    # One caption per form, not two: the lens-only twins are gone.
+    assert result["captionCount"] == 2
+    assert result["fullDisplay"] == "none"
+    assert result["compactDisplay"] == "block"
+    assert re.match(r"\d+ of \d+ selected", result["compactText"])
+    assert re.match(r"Based on \d+ of \d+ selected sources", result["fullText"])
 
 
 def _lens_fragment(
@@ -3675,8 +3718,8 @@ def test_a_pre_removal_shared_link_replays_with_its_comparison_token_ignored(
     tallying_codes = sorted(
         source.code for source in view_model.personalization.sources if _tallying_selectable(source)
     )
-    # Diverge from the default so the lens actually personalizes and
-    # populates [data-lens-recommendation] for the check below.
+    # Diverge from the default so the lens actually personalizes and renders
+    # the card regions read below.
     personalized_codes = tallying_codes[1:]
     current_fragment = _lens_fragment(view_model, mode="s", source_codes=tuple(personalized_codes))
     legacy_fragment = _lens_fragment(
@@ -3696,9 +3739,10 @@ def test_a_pre_removal_shared_link_replays_with_its_comparison_token_ignored(
           notice: document.querySelector('[data-lens-notice]:not([hidden])')?.textContent ?? '',
           sourcesHref: document.querySelector('[data-sources-link]')?.getAttribute('href') ?? '',
           cards: [...document.querySelectorAll('[data-publication-race-id]')].map((card) => [
-            card.querySelector('[data-lens-recommendation]')?.textContent,
-            card.querySelector('[data-lens-share-text]')?.textContent,
-            card.querySelector('[data-lens-support]')?.textContent,
+            card.querySelector('[data-lens-result] [data-display-role="recommendation"]')
+              ?.textContent,
+            card.querySelector('[data-lens-result] .screen-meter strong')?.textContent,
+            card.querySelector('[data-lens-context] .support-full')?.textContent,
           ].join('|')).join('||'),
         })
         """
@@ -3718,3 +3762,26 @@ def test_a_pre_removal_shared_link_replays_with_its_comparison_token_ignored(
         key: value for key, value in current.items() if key != "hash"
     }
     assert comparison_code not in legacy["sourcesHref"]
+
+
+def test_committed_lens_page_fixtures_match_a_fresh_render() -> None:
+    """The Node markup-parity checks are only as good as the pages they diff
+    against.
+
+    docs/FRONTEND.md § Rendering requires the lit-html rendering of a region to
+    be the region the Jinja template rendered. The Node side of that comparison
+    reads a committed copy of each audited page, so a change to a Jinja
+    template or to the published data has to land with regenerated fixtures —
+    otherwise the parity tests would keep passing against markup the site no
+    longer serves.
+    """
+    for path, fresh in (
+        (GUIDE_PAGE_PATH, build_audited_guide_page()),
+        (SOURCES_PAGE_PATH, build_audited_sources_page()),
+    ):
+        assert path.read_text(encoding="utf-8") == fresh, (
+            f"{path.relative_to(PROJECT_ROOT)} is not what the renderer now produces, so the "
+            "Node markup-parity test is diffing against a page that no longer exists. "
+            "Regenerate it in this pull request with `uv run python -m tests.page_parity` "
+            "(docs/FRONTEND.md, Rendering)."
+        )
