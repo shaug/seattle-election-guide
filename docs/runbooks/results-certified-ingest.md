@@ -46,12 +46,10 @@ it should stay human-launched at least through the first full cycle.
 ### Phase 2 — ingest (blocked on #208's ingestion tooling)
 
 4. Run the results adapter against the captured certified export to produce
-   `data/results/<election-id>.yaml` per the `docs/RESULTS.md` contract: `status: certified`,
-   `certified_on`, both captures referenced, per-race outcomes with `choice_id`, votes, share,
-   and advancement/election/approval flags.
-5. Run its validator: every `choice_id` resolves against the frozen ballot inventory, shares
-   sum to ~1 per race, capture references resolve. Unmatched candidate or contest names fail
-   loudly — they are never guessed.
+   `data/results/<election-id>.yaml` per the `docs/RESULTS.md` data model — that document
+   owns the contract; this runbook does not restate it.
+5. Run its validator against the same contract. The one judgment rule this runbook owns:
+   unmatched candidate or contest names escalate — they are never guessed.
 6. Rebuild and confirm the results surfaces render: banner in its certified state, race-card
    results strips, endorsements-dialog vote rows, compare column offered, corrections page
    only if this election has corrections.

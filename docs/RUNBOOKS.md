@@ -88,8 +88,10 @@ The recurring workflows differ in profile but share the contract:
 
 ## Index
 
-| Runbook                                       | Trigger                              | Autonomy |
-| --------------------------------------------- | ------------------------------------ | -------- |
-| `runbooks/results-capture-election-night.md`  | `results_capture_election_night`     | Human-launched (level 3 candidate) |
-| `runbooks/results-certified-ingest.md`        | `results_capture_post_certification` | Human-launched |
-| Endorsement discovery sweep                   | `collection_opens` → `refresh`       | Planned — write at the general's `collection_opens` |
+Each runbook's autonomy level is declared in the runbook itself — its single owner.
+
+| Runbook                                       | Trigger                              |
+| --------------------------------------------- | ------------------------------------ |
+| `runbooks/results-capture-election-night.md`  | `results_capture_election_night`     |
+| `runbooks/results-certified-ingest.md`        | `results_capture_post_certification` |
+| Endorsement discovery sweep — planned; write at the general's `collection_opens` | `collection_opens` → `refresh` |
