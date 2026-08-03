@@ -1,0 +1,12 @@
+/* The archive index's own page stylesheet (issue 246). Written inline in
+   archive.html.j2's styles block until each page gained a CSS entry of its
+   own (rendering/stylesheets.py). */
+main { padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 3rem; }
+main h1 {
+  margin: 0 0 .35rem; color: var(--navy);
+  font: 700 clamp(1.8rem, 4vw, 2.6rem)/1.05 var(--screen-serif);
+}
+main > p { color: var(--muted); max-width: 46ch; }
+ul { margin: 1.5rem 0 0; padding: 0; list-style: none; }
+li { margin: 0 0 .5rem; }
+li a { color: var(--navy); font-weight: 700; }

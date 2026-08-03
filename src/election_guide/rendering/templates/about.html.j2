@@ -6,21 +6,6 @@
 {% block head_meta %}
   {{ shell.social_meta(document_title, page_description, canonical_url) }}
 {% endblock %}
-{% block styles %}
-  <style>
-    {{ stylesheet | safe }}
-    main { padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 3rem; }
-    main h1 {
-      margin: 0 0 .35rem; color: var(--navy);
-      font: 700 clamp(1.8rem, 4vw, 2.6rem)/1.05 var(--screen-serif);
-    }
-    main > p.lede { margin: 0 0 2rem; color: var(--muted); }
-    section { margin: 0 0 2rem; }
-    section h2 { color: var(--navy); font-size: 1.25rem; margin: 0 0 .5rem; }
-    section p { margin: 0 0 .75rem; }
-    section p:last-child { margin-bottom: 0; }
-  </style>
-{% endblock %}
 {% block body %}
   <a class="skip-link" href="#about-main">Skip to content</a>
   <div class="page">

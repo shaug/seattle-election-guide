@@ -5,24 +5,6 @@
   {% set page_description = 'Choose which sources count toward your personalized ' ~ election_display_name ~ ' results.' %}
   {{ shell.social_meta(document_title, page_description, canonical_url) }}
 {% endblock %}
-{% block styles %}
-  <style>
-    {{ stylesheet | safe }}
-    main { padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 3rem; }
-    .sources-tree { border-top: none; background: none; padding: 0; }
-    .sources-page-actions { position: sticky; top: 0; z-index: 5; justify-content: center; }
-    .sources-page-controls { display: flex; flex-wrap: wrap; justify-content: center; gap: .45rem 1rem; }
-    .sources-page-actions a { color: var(--mint); font-weight: 700; }
-    .sources-page-actions .strip-action-primary {
-      display: inline-flex; align-items: center; padding: .16rem .7rem;
-      border-radius: 999px; background: var(--mint); color: var(--navy);
-      font-weight: 800; line-height: 1; text-decoration: none;
-    }
-    .sources-page-actions .strip-action-primary:hover { filter: brightness(1.06); }
-    .sources-page-actions .strip-action-quiet { color: var(--sky); font-weight: 600; }
-    .sources-page-count { margin: 0; color: var(--white); font-size: .9rem; font-weight: 600; }
-  </style>
-{% endblock %}
 {% block body %}
   {% macro coverage_gap_row(source, compact=false) -%}
     <section class="coverage-gap-row"

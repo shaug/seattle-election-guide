@@ -7,8 +7,11 @@
 
    - `head_meta`  the page's own description, og/twitter, robots, and canonical
                   tags, written at the head's two-space indent;
-   - `styles`     the whole `<style>` element, overridden only by a page that
-                  appends its own rules to the shared stylesheet;
+   - `styles`     the whole `<style>` element. No page overrides it: since
+                  issue 246 a page's own rules live in its own stylesheet,
+                  declared as the last part of its CSS entry
+                  (rendering/stylesheets.py), so `stylesheet` is already
+                  everything the page ships;
    - `body`       everything inside `<body>` except the scripts; and
    - `scripts`    the script slot — a page's client payload element and the one
                   module script that inlines its entry bundle.

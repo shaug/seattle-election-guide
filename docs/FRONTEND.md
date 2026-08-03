@@ -48,6 +48,31 @@ check is a bug in the check — fix or amend it, never route around it.
   and the cross-module collision this section warns about cannot occur.
   *Check: exists — `tests/test_frontend_bundle.py` asserts byte-identical
   output across two bundles of each entry and enforces the version pin.*
+- **Each page has one CSS entry too, and it is a declared list of parts, not a
+  bundle.** `rendering/stylesheets.py` maps every page to the stylesheets it
+  ships, in cascade order: `base.css` first — the design tokens and the shell
+  every page renders (docs/DESIGN.md) — and `<page>.css` last, so a page can
+  override a shared rule without restating it. A rule two pages render, and no
+  third, lives in a part they both name (`guide-sources.css`), never copied
+  into both. A page writes no rules in its template: nothing overrides
+  `base.html.j2`'s `styles` slot.
+
+  The parts are concatenated rather than bundled, which is the one place this
+  seam deliberately differs from the script side above. Scripts needed a
+  bundler because modules resolving each other by paste order was a
+  correctness problem; CSS has no import graph, no name collisions, and
+  nothing to tree-shake, so esbuild's CSS support would buy nothing a list does
+  not — while reprinting every rule and dropping the comments that explain
+  them. Concatenation keeps the shipped bytes the authored bytes.
+
+  Scope: this rule governs which *page* stylesheets a page reads. `base.css`
+  stays whole and shared by DESIGN.md's rule, so a page still carries shell
+  groups it happens not to render — the footer on Comparisons and the sources
+  editor, the filter bar on the site-wide pages. Splitting `base.css` by
+  component is a separate decision about the shell, not this one.
+  *Check: exists — `tests/test_page_stylesheets.py` holds every page to its
+  declared parts, holds every stylesheet on disk to a page that reads it, and
+  asserts no page ships a class styled only by another page's own stylesheet.*
 - **Templates carry no logic in `<script>`.** A template's inline script is at
   most the bundled text plus a single entry invocation. Behavior lives in
   modules, where it can be imported and tested.
@@ -383,6 +408,3 @@ Decided by their implementing tickets, then recorded here:
 
 - The shared fragment-codec core: how much of `compare-url` / `lens-url` is
   parameterized into one module, and the shape of its page-schema parameter.
-- Per-page CSS entry points: whether stylesheets move to the same
-  entry-per-page model as scripts, and what replaces the shared
-  `base.css + guide.css` concatenation.
