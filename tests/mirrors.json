@@ -172,7 +172,9 @@
       "client": "compare-table.mjs rowTemplate",
       "server": "compare.html.j2 row header",
       "proof": "markup-parity",
-      "evidence": ["text:Differs"],
+      "evidence": [
+        "text:Differs"
+      ],
       "note": "The badge marking a race whose columns disagree. Written inside a conditional lit sub-template, which is the shape that hid it: a nested `html` template inside a `${...}` inside a template literal. The audited page renders twelve of these inside the row groups compare-markup-parity diffs, so the pair is held there; the entry exists so it is also named."
     },
     "sources-also-in-tag": {
@@ -243,25 +245,13 @@
       "note": "The order a race page puts its candidate sections back into when a lens clears. It is the payload's own race.candidates, published from the order the renderer rendered, because the two sides break a tie differently: the renderer orders equal support by display label and the client's standings order it by ballot position. Recomputing put a tie's two candidates back in the wrong order, which is what race-markup-parity.test.mjs caught -- so the client names the server's function only to record that it does not reimplement it. The deleted map below carries the same removal for the guide, from #236."
     },
     "race-detail-lens-kicker": {
-      "client": "guide-lens.mjs, the race-detail lens kicker",
-      "server": "guide.html.j2 candidate kicker",
+      "client": "race-client.mjs, the tied-leader kicker",
+      "server": "race.html.j2 candidate heading",
       "proof": "shared-literal",
       "evidence": [
-        "text:Leading choice",
-        "text:No majority ·",
         "text:Tied for lead"
       ],
-      "note": "Three words the dialog shows above a candidate, written as a Jinja branch on one side and a ternary on the other. Note the qualifier is spelled 'No majority ·' here and 'No majority.' in the accessible summaries — two spellings of one idea, each mirrored separately, which is why both keys are declared. tests/page_parity.py empties the dialog interior when it builds the audited page, so no markup diff can reach these; the words are the whole mirror and the derivation is what holds them."
-    },
-    "race-detail-lens-count": {
-      "client": "guide-lens.mjs, the race-detail lens count",
-      "server": "guide.html.j2 candidate metrics span",
-      "proof": "shared-literal",
-      "evidence": [
-        "text:(co-endorsements split)",
-        "text:of • endorsing sources"
-      ],
-      "note": "The sole leader's contributing count, and the parenthetical that appears when a co-endorsement splits its support. Same dialog interior as the kicker above and the same reason nothing else covers it. The evidence keys carry the placeholder positions as well as the words, so a count that moved within the sentence would fail too."
+      "note": "One word a race page shows above a tied candidate, written as a Jinja branch on one side and a ternary on the other. 'Leading choice' left this mirror when the headline became the sole leader's own heading: the server spells it there and the client only shows or hides that block, so it is no longer written twice. 'No majority ·' went with it — the qualifier is the headline's pill now, and the accessible summaries spell their own 'No majority.', which is mirrored under its own key."
     },
     "comparison-control-status": {
       "client": "compare-client.mjs, the comparison control status",
@@ -319,6 +309,7 @@
     "audited candidate order": "#236 publishes the order the renderer rendered; the client no longer re-sorts.",
     "sources tree strings": "#248 gave the tree to lit reading payload strings, so its endorsement counts and category tags have no second implementation.",
     "election-day phrasing": "rendering/shell.py publishes the full and short dates as data attributes; election-day.mjs chooses copy but formats no date.",
-    "source participation label": "rendering/payload.py source_participation_label feeds the template and the payload from one definition, replacing a Jinja macro."
+    "source participation label": "rendering/payload.py source_participation_label feeds the template and the payload from one definition, replacing a Jinja macro.",
+    "race-detail-lens-count": "Deleted with the counts it mirrored. A candidate heading no longer states how many sources endorsed them, because those sources are the rows listed directly below it — so neither side spells 'of N endorsing sources' or its co-endorsement parenthetical."
   }
 }

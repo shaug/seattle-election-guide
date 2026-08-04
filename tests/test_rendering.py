@@ -670,8 +670,12 @@ def test_race_page_renders_the_whole_race_from_one_view_model(tmp_path: Path) ->
         assert race.recommendation_label in body
         assert race_detail_accessible_summary(race) in body
         assert race_detail_support_summary(race) in body
-        assert screen_support_summary(race) in body
-        assert screen_support_summary_compact(race) in body
+        # No visible caption counts the endorsing sources: they are the rows on
+        # the page, so a count would restate the list a reader is looking at.
+        # Asserted as the absence of the element rather than of its wording,
+        # because the accessible summary asserted above spells that wording
+        # itself — a reader who cannot see the rows cannot count them.
+        assert "support-line" not in body
 
         endorsement_groups = candidate_endorsement_groups(race)
         candidate_positions = [
@@ -818,10 +822,12 @@ def test_no_majority_uses_the_exact_unrounded_share_across_the_card_and_the_race
     assert re.search(r'<p class="no-majority-pill"[^>]*>No majority</p>', card_html)
     assert 'class="screen-meter meter-no-majority"' in card_html
 
-    # The same exact share, on the page the card links to (issue #136).
+    # The same exact share, on the page the card links to (issue #136). The
+    # qualifier is the headline's own pill there rather than a word in the
+    # eyebrow, because the headline is the leading choice's heading.
     race_html = _race_html(view_model, target.id)
-    assert "No majority · Leading choice" in race_html
-    assert 'class="race-detail-meter meter-no-majority"' in race_html
+    assert re.search(r'<p class="no-majority-pill"[^>]*>No majority</p>', race_html)
+    assert 'class="screen-meter meter-no-majority"' in race_html
     assert "No majority. Consensus among explicitly endorsing sources: 50%" in race_html
 
     target.winner_share = "5001/10000"
@@ -832,7 +838,9 @@ def test_no_majority_uses_the_exact_unrounded_share_across_the_card_and_the_race
     above_half_card = above_half_html[above_half_card_start:above_half_card_end]
     assert re.search(r'<p class="no-majority-pill" hidden[^>]*>No majority</p>', above_half_card)
     assert 'class="screen-meter meter-no-majority"' not in above_half_card
-    assert "No majority · Leading choice" not in _race_html(view_model, target.id)
+    above_half_race = _race_html(view_model, target.id)
+    assert re.search(r'<p class="no-majority-pill" hidden[^>]*>No majority</p>', above_half_race)
+    assert 'class="screen-meter meter-no-majority"' not in above_half_race
 
 
 def test_the_no_majority_pill_sits_under_the_name_and_displaces_nothing(
@@ -2100,8 +2108,23 @@ def test_the_guide_glue_reads_no_state_out_of_rendered_markup(tmp_path: Path) ->
         # Compare the decoded markup, so the two sides are held to the same text
         # rather than to one spelling of an entity.
         rendered_text = unescape(race_html)
+        # Every candidate is named exactly once. The leading choice is named by
+        # the headline, whose heading its section therefore does not render;
+        # everyone else is named by their own section heading.
+        headlined = next(
+            (
+                found
+                for found in view_model.sections
+                for found in found.races
+                if found.id == race.race_id
+            ),
+        ).recommendation_candidate_ids
         for candidate in race.candidates:
-            assert f"<h4>{candidate.label}</h4>" in rendered_text
+            if len(headlined) == 1 and candidate.candidate_id == headlined[0]:
+                assert f'data-display-role="recommendation">{candidate.label}</h3>' in rendered_text
+                assert f"<h4>{candidate.label}</h4>" not in rendered_text
+            else:
+                assert f"<h4>{candidate.label}</h4>" in rendered_text
         assert race.audited_accessible_summary in rendered_text
         # The card's link and the payload's published path are one address.
         assert race.race_path == f"/e/{view_model.metadata.election_id}/races/{race.race_id}/"
@@ -2551,6 +2574,11 @@ def test_phone_race_page_keeps_its_metrics_and_its_longest_title_inside_the_scre
     could escape and the sticky header its icon actions sat in. What is left to
     measure is what a reader on a phone can actually lose: a metrics column
     pushed off the side, and a race title long enough to pan the page.
+
+    The metrics measured here are the headline's, because the headline is the
+    leading choice's own heading now that the two are one block. The longest
+    values are written in rather than chosen from the fixture, so the claim is
+    about the layout and not about which races this dataset happens to hold.
     """
     view_model = _personalization_enabled_view_model(tmp_path)
     race = max(
@@ -2568,26 +2596,28 @@ def test_phone_race_page_keeps_its_metrics_and_its_longest_title_inside_the_scre
         html_path,
         """
         (() => {
-          const row = document.querySelector('.race-detail-candidate');
-          row.querySelector('h4').textContent = 'Sharon Tomiko Santos / Kelabe Tewolde';
-          const count = row.querySelector('.race-detail-candidate-metrics > span');
-          count.textContent = '12 of 18 endorsing sources (co-endorsements split)';
+          const headline = document.querySelector('.race-headline');
+          const title = headline.querySelector('[data-display-role="recommendation"]');
+          title.textContent = 'Sharon Tomiko Santos / Kelabe Tewolde';
           const box = (element) => element.getBoundingClientRect();
           const page = document.querySelector('.race-detail');
           const pageBox = box(page);
-          const meterBox = box(row.querySelector('.race-detail-meter'));
-          const countBox = box(count);
-          const titleBox = box(row.querySelector('.race-detail-candidate-title'));
+          const meterBox = box(headline.querySelector('.screen-meter'));
+          // A tied candidate's heading carries the other meter on this page,
+          // beside a name that can be as long as the one written in above.
+          const tiedHeading = document.querySelector('.race-detail-candidate-heading');
+          tiedHeading.querySelector('h4').textContent = 'Sharon Tomiko Santos / Kelabe Tewolde';
+          const headingBox = box(tiedHeading);
+          const titleBox = box(title);
           const heading = document.querySelector('.page-head h1');
-          // The longest race name the ballot could carry, set here rather than
-          // chosen from the fixture, so the claim is about the layout and not
-          // about which races this dataset happens to hold.
+          // The longest race name the ballot could carry.
           heading.textContent =
             'Seattle Proposition 1 — Property Tax Levy for Seattle Public Library';
           return JSON.stringify({
             titleWidth: titleBox.width,
             meterWithin: meterBox.left >= pageBox.left && meterBox.right <= pageBox.right + 1,
-            countWithin: countBox.left >= pageBox.left && countBox.right <= pageBox.right + 1,
+            headingWithin:
+              headingBox.left >= pageBox.left && headingBox.right <= pageBox.right + 1,
             headingWraps: box(heading).height >
               parseFloat(getComputedStyle(heading).lineHeight) * 1.5,
             horizontalScroll:
@@ -2602,7 +2632,7 @@ def test_phone_race_page_keeps_its_metrics_and_its_longest_title_inside_the_scre
 
     assert result["titleWidth"] >= 100
     assert result["meterWithin"] is True
-    assert result["countWithin"] is True
+    assert result["headingWithin"] is True
     # The longest race name on the ballot wraps rather than panning the page.
     assert result["headingWraps"] is True
     assert result["horizontalScroll"] is False
@@ -2676,6 +2706,12 @@ def test_race_page_no_majority_state_appears_and_dissolves_with_the_selected_sou
 
     Every computed number on a race page is the lens's while a lens is active,
     and the leading-choice kicker is one of them (I56).
+
+    A lens can also change which shape the page is in. A tie has no single
+    leading choice, so it renders no headline and marks each tied candidate in
+    amber instead; a majority restores the headline and leaves the sections
+    unmarked. Both directions are exercised here, because the headline is shown
+    and hidden rather than rendered and removed.
     """
     view_model = _personalization_enabled_view_model(tmp_path)
     source_code_by_id = {source.id: source.code for source in view_model.personalization.sources}
@@ -2695,20 +2731,25 @@ def test_race_page_no_majority_state_appears_and_dissolves_with_the_selected_sou
         (async () => {{
           const pause = () => new Promise((resolve) => setTimeout(resolve, 100));
           const snapshot = () => {{
+            const headline = document.querySelector('[data-race-headline]');
             const meter = document.querySelector('[data-lens-result] .screen-meter');
             const pill = document.querySelector('[data-lens-context] .no-majority-pill');
             const kicker = document.querySelector('.race-detail-candidate-title p');
+            // Only a tied candidate carries one, so its absence is the state.
             const detailMeter = document.querySelector('.race-detail-meter');
             return {{
+              headlineHidden: headline.hidden,
               pillHidden: pill.hidden,
               amberMeter: meter.classList.contains('meter-no-majority'),
               accessibleName: meter.getAttribute('aria-label'),
               kicker: kicker?.textContent ?? null,
-              detailAmber: detailMeter.classList.contains('meter-no-majority'),
+              detailAmber: detailMeter?.classList.contains('meter-no-majority') ?? null,
               // The two meters on the page state one share, in words as well
               // as in tint (docs/DESIGN.md, Data display).
               sameSpokenShare:
-                detailMeter.getAttribute('aria-label') === meter.getAttribute('aria-label'),
+                detailMeter === null
+                  ? null
+                  : detailMeter.getAttribute('aria-label') === meter.getAttribute('aria-label'),
             }};
           }};
           await pause();
@@ -2721,20 +2762,26 @@ def test_race_page_no_majority_state_appears_and_dissolves_with_the_selected_sou
         initial_url=f"{html_path.resolve().as_uri()}#{split_fragment}",
     )
 
+    # Tied: no headline, and each tied candidate marked amber in its own right.
     assert result["split"] == {
+        "headlineHidden": True,
         "pillHidden": False,
         "amberMeter": True,
         "accessibleName": "No majority. Consensus among explicitly endorsing sources: 50%",
-        "kicker": "No majority · Tied for lead",
+        "kicker": "Tied for lead",
         "detailAmber": True,
         "sameSpokenShare": True,
     }
+    # A majority resolves the tie: the headline returns and nothing is marked.
+    assert result["majority"]["headlineHidden"] is False
     assert result["majority"]["pillHidden"] is True
     assert result["majority"]["amberMeter"] is False
-    assert result["majority"]["detailAmber"] is False
     assert not result["majority"]["accessibleName"].startswith("No majority")
-    assert result["majority"]["kicker"] == "Leading choice"
-    assert result["majority"]["sameSpokenShare"] is True
+    # A sole leader's section has neither eyebrow nor meter: the headline is its
+    # heading, and its share is stated there once.
+    assert result["majority"]["kicker"] is None
+    assert result["majority"]["detailAmber"] is None
+    assert result["majority"]["sameSpokenShare"] is None
 
 
 def test_full_race_card_stacks_name_and_meter_below_480px(tmp_path: Path) -> None:
@@ -3514,7 +3561,10 @@ def test_personalization_divergent_race_discloses_a_compact_comparison_on_its_ca
     assert detail["barAtHeadlineFoot"] is True
     assert "All sources:" in detail["barText"]
     assert detail["barNotInOutcomes"] is True
-    assert detail["visibleMeterShares"], "expected at least one visible personalized leader meter"
+    # A sole leading choice states its share once, in the headline: its section
+    # carries no meter that could disagree. Where a lens produces a tie instead,
+    # every tied candidate carries one, and each states the headline's share.
+    assert detail["headlineShare"]
     for share_text in detail["visibleMeterShares"]:
         assert share_text == detail["headlineShare"]
 
@@ -3566,8 +3616,10 @@ def test_race_page_reflects_the_active_lens_leader_not_the_audited_default(
         (() => {
           const sections = [...document.querySelectorAll('[data-race-detail-candidate-id]')];
           const domOrder = sections.map((section) => section.dataset.raceDetailCandidateId);
+          // The leading choice's section is the one the headline heads, which
+          // is why it renders no heading of its own.
           const leaderSection = sections.find(
-            (section) => section.querySelector('.race-detail-candidate-title p') !== null,
+            (section) => section.classList.contains('race-detail-candidate-headlined'),
           );
           const meters = sections.map((section) => ({
             candidateId: section.dataset.raceDetailCandidateId,
@@ -3578,7 +3630,9 @@ def test_race_page_reflects_the_active_lens_leader_not_the_audited_default(
               '[data-lens-result] [data-display-role="recommendation"]',
             )?.textContent,
             domOrder,
-            leaderCandidateId: leaderSection?.dataset.raceDetailCandidateId,
+            leaderCandidateId: leaderSection?.dataset.raceDetailCandidateId ?? null,
+            leaderHasHeading:
+              leaderSection?.querySelector('.race-detail-candidate-heading') !== null,
             meters,
             barAtHeadlineFoot:
               document.querySelector('[data-lens-foot] .lens-comparison') !== null,
@@ -3601,11 +3655,15 @@ def test_race_page_reflects_the_active_lens_leader_not_the_audited_default(
     assert result["leaderCandidateId"] is not None
     assert result["domOrder"][0] == result["leaderCandidateId"]
     assert result["domOrder"][0].endswith("ashley-fedan")
-    # Item 4: exactly the leader's section renders a meter; no other section
-    # renders even an empty one.
+    # The leading choice is named once: the headline is its heading, so its own
+    # section renders none.
+    assert result["leaderHasHeading"] is False
+    # Item 4: the share is stated once too, in that headline. No section renders
+    # a meter — a tie is the only shape that puts meters back in the sections,
+    # and this lens produced a sole leader.
     assert result["meters"], "expected at least one candidate section"
     for meter in result["meters"]:
-        assert meter["meterPresent"] == (meter["candidateId"] == result["leaderCandidateId"])
+        assert meter["meterPresent"] is False
     # Item 3: the reference bar sits at the headline's foot, matching the
     # card's own I39 placement rather than interleaving with the sections.
     assert result["barAtHeadlineFoot"] is True

@@ -51,7 +51,7 @@ never introduces a color literal. The families and what they mean:
 | Paper / white | `--paper`, `--white` | Content ground / data surfaces (cards, rows) |
 | Teal | `--teal` | The brand and data accent: meters, section rules, card borders |
 | Blue | `--blue` | Hyperlinks. Nothing else |
-| Agree tone | `--tone-agree-*` | Agreement with the current reference; the leading choice |
+| Agree tone | `--tone-agree-*` | Agreement with the current reference; a *clear* leading choice |
 | Differ tone | `--tone-differ-*`, `--amber` | Attention and divergence: comparison signals that differ, challenger sections, no-majority states |
 | Neutral tone | `--tone-neutral-*` | Not covered; no signal |
 | Focus | `--focus` | Every focus ring, everywhere |
@@ -269,6 +269,22 @@ then any sticky strip, then content.
   kickers — shows the lens value; the audited baseline appears only as the
   explicitly labeled "All sources" reference line, never as an unmarked
   second number.
+- **A name appears once per page.** A page that states a result and then
+  lists what produced it must not head both with the same name: one of the
+  two is the heading. On a race page the headline *is* the leading choice's
+  heading, which is why that candidate's section renders none.
+  *(2026-08-04, issue 136 follow-up: the two were rendered independently and
+  captioned each other's numbers — "Based on 11 endorsing sources" above
+  "8 of 11" — which is the drift a single heading makes impossible.)*
+- **Agree tone claims a favourite, so a tie never wears it.** A tie is a
+  warning that the reader has to choose, not a recommendation to accept:
+  every tied candidate takes the differ family, in its own section, each with
+  its own meter. Green would say the opposite of what a tie means.
+  *(2026-08-04, issue 136 follow-up.)*
+- **Don't count a list the reader is looking at.** A heading above a list of
+  endorsing sources states no number of them; the count is the list. It
+  survives in the visually-hidden accessible summary, because a reader who
+  cannot see the rows cannot count them. *(2026-08-04, issue 136 follow-up.)*
 - **One meter.** A single chrome everywhere, left-anchored fill matching
   the brand icon, label riding the fill (falling back to muted ink beside
   a low fill). The meter is slated for redesign: maintain it, don't extend

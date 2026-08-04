@@ -12,13 +12,32 @@
    guide-race.css, which this page also reads. */
 
 .screen-race { min-width: 0; }
+/* The shell's 25ch title measure is sized for a page's own short name —
+   "Endorsements", "Sources", "Comparisons". A race page's title is instead the
+   race's published name, 45 to 68 characters of it, and that measure broke
+   "U.S. Representative — Congressional District 9" after the dash with half the
+   width still empty. A record's name is one unit: it takes the width it needs
+   and wraps only where the viewport makes it. */
+.screen-race .page-head h1 { max-width: none; }
 .race-detail { min-width: 0; padding: 1rem clamp(1rem, 4vw, 3rem) 4rem; }
 .race-detail :focus-visible { outline: .2rem solid var(--focus); outline-offset: .15rem; }
 /* The headline: the recommendation and its meter, then the caption row, then
    the reference bar when a lens diverges — the same order and the same
    components the card puts them in, so a reader arriving from a card sees the
    quantity they clicked, larger. */
-.race-headline { display: grid; gap: .55rem; margin-bottom: 1.25rem; padding: 1.15rem; background: var(--white); border: 1px solid var(--line-soft); border-top: .3rem solid var(--teal); box-shadow: 0 .2rem .8rem rgba(16,42,67,.08); }
+.race-headline { display: grid; gap: .55rem; margin-bottom: 1.25rem; padding: 1.15rem; background: var(--tone-agree-bg); border: 1px solid #9fcfc5; border-left: .3rem solid var(--teal); box-shadow: 0 .2rem .8rem rgba(16,42,67,.08); }
+/* `display` beats the UA sheet's `[hidden]`, so every block that hides itself
+   restates it — the same line `.lens-banner` and `.race-card` carry. */
+.race-headline[hidden] { display: none; }
+/* The leading choice's eyebrow, in the same voice the section headings use for
+   theirs — this block is the leader's heading now, at the headline's size. */
+.race-headline-eyebrow { margin: 0; color: var(--tone-agree-text); font-size: .68rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+/* When the headline is a candidate's heading, it and that candidate's rows read
+   as one block: no gap between them, and the section drops the top border the
+   headline already draws. The template sets the class, because it is the side
+   that knows whether the headline named a single candidate. */
+.race-headline-heads-section { margin-bottom: 0; }
+.race-detail-candidate-headlined { border-top: 0; }
 /* Like the card foot, and for the same reason: lit needs one region to own
    without it becoming a box that opens a gap when it is empty. */
 .race-headline-foot { display: contents; }
@@ -26,11 +45,16 @@
 .race-detail-outcomes { display: grid; gap: .65rem; }
 .race-detail-candidate, .race-detail-outcome { overflow: hidden; border: 1px solid var(--line-soft); border-left: .3rem solid var(--line-strong); background: var(--white); }
 .race-detail-candidate { border-color: #e8c58e; border-left-color: var(--amber); }
+/* Teal belongs to the one clear favourite, whose heading is the headline above.
+   A tied leader keeps the amber every other candidate wears: the green would
+   read as "this is the answer", and the reason a tie is worth marking is that
+   it is not (docs/DESIGN.md, Data display — default styling never overstates
+   confidence). What marks it instead is its eyebrow and its own meter. */
 .race-detail-candidate-leader { border-color: #9fcfc5; border-left-color: var(--teal); }
 .race-detail-candidate-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem 1.25rem; padding: .55rem .75rem; background: var(--tone-differ-bg); }
-.race-detail-candidate-leader .race-detail-candidate-heading { background: var(--tone-agree-bg); }
 .race-detail-candidate-title { min-width: 0; }
-.race-detail-candidate-title p { margin: 0 0 .05rem; color: var(--tone-agree-text); font-size: .62rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+/* Only a tied leader has this eyebrow, and it takes the amber its box wears. */
+.race-detail-candidate-tied .race-detail-candidate-title p { margin: 0 0 .05rem; color: var(--tone-differ-text); font-size: .62rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 .race-detail-candidate-title h4 { min-width: 0; margin: 0; color: var(--navy); font-size: 1.05rem; line-height: 1.1; overflow-wrap: anywhere; }
 .race-detail-candidate-metrics { display: flex; flex: 0 0 auto; margin-left: auto; align-items: center; justify-content: flex-end; gap: .45rem .75rem; }
 .race-detail-candidate-metrics > span { color: var(--muted); font-size: .68rem; white-space: nowrap; }
