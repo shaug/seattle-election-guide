@@ -5,6 +5,7 @@
 
 import assert from 'node:assert/strict';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { join, relative, sep } from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 
@@ -48,8 +49,14 @@ test('the guard holds for every client module, and every module is tested', () =
 // textual scan for the package name matched this file, because naming the
 // package is what a scanner for it has to do — and the fix for that is not an
 // exemption for the scanner, which is how a check comes to be blind to itself.
-// Nothing can construct that window without importing the package, so the
-// structural question is also the complete one.
+// Nothing can construct that window without importing the package, so reading
+// specifiers is the complete question to ask of a file.
+//
+// Which files get asked is the other half, and it has to match the suite's own
+// reach: `make check-js` runs `node --test 'tests/js/**/*.test.mjs'`, a
+// recursive glob, so a sweep that listed one directory would run green over a
+// test in a subdirectory that Node had just executed. The listing below is
+// recursive for that reason.
 const DOM_PACKAGE = 'happy-dom';
 const DOM_INSTALLER = 'support/dom.mjs';
 // Two forms, because this suite writes both. `[^;]` rather than `[^;\n]` in the
@@ -70,16 +77,19 @@ function importedPackages(source) {
   return [...source.matchAll(IMPORT_SPECIFIER)].map((match) => match[1] ?? match[2]);
 }
 
+/** Every `.mjs` under tests/js, at any depth, as a path relative to it. */
+function sweptFiles() {
+  const here = fileURLToPath(new URL('.', import.meta.url));
+  return readdirSync(here, { recursive: true, withFileTypes: true })
+    .filter((entry) => entry.isFile() && entry.name.endsWith('.mjs'))
+    .map((entry) => relative(here, join(entry.parentPath, entry.name)).split(sep).join('/'))
+    .filter((name) => name !== DOM_INSTALLER)
+    .sort();
+}
+
 test('every file that installs a DOM is the one installer', () => {
   const here = fileURLToPath(new URL('.', import.meta.url));
-  const files = [
-    ...readdirSync(here)
-      .filter((name) => name.endsWith('.test.mjs'))
-      .map((name) => name),
-    ...readdirSync(`${here}support`).map((name) => `support/${name}`),
-  ].filter((name) => name !== DOM_INSTALLER);
-
-  const offenders = files.filter((name) =>
+  const offenders = sweptFiles().filter((name) =>
     importedPackages(readFileSync(here + name, 'utf8')).includes(DOM_PACKAGE),
   );
 
@@ -92,6 +102,20 @@ test('every file that installs a DOM is the one installer', () => {
       `which is the ordering that helper is for (rule: render functions get Node tests against ` +
       `view-model fixtures, ${DOCUMENT} § Testing).`,
   );
+});
+
+test('the DOM sweep reaches as deep as the test runner does', () => {
+  // `node --test 'tests/js/**/*.test.mjs'` is recursive, so a sweep that listed
+  // one directory would have run green over a file Node had just executed. The
+  // listing has to be the same shape as the glob, and this is what says so.
+  const swept = sweptFiles();
+  assert.ok(swept.includes('support/module-guards.mjs'), 'the sweep did not descend into support/');
+  assert.ok(swept.every((name) => name.endsWith('.mjs')));
+  assert.ok(!swept.includes(DOM_INSTALLER), 'the one installer must be the one exemption');
+  // Every file the suite runs is a file the sweep read.
+  for (const name of readdirSync(fileURLToPath(new URL('.', import.meta.url)))) {
+    if (name.endsWith('.test.mjs')) assert.ok(swept.includes(name), `${name} was not swept`);
+  }
 });
 
 test('the DOM sweep can actually see an import of the package', () => {
