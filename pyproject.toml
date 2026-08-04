@@ -48,3 +48,7 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+# U+2044 FRACTION SLASH is deliberate display text, not a mistyped solidus: the
+# meter v2 caption's fallback for a fractional part with no single vulgar-glyph
+# spells numerator⁄denominator with it (docs/METER_V2.md § Counting, issue 312).
+allowed-confusables = ["⁄"]

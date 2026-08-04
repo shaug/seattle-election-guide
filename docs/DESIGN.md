@@ -67,6 +67,7 @@ never introduces a color literal. The families and what they mean:
 | Agree tone | `--tone-agree-*` | Agreement with the current reference; a *clear* leading choice |
 | Differ tone | `--tone-differ-*`, `--amber` | Attention and divergence: comparison signals that differ, challenger sections, no-majority states |
 | Neutral tone | `--tone-neutral-*` | Not covered; no signal |
+| Meter | `--meter-*` | The segmented meter's own palette (docs/METER_V2.md § Color): track, tie depth, trailing ranks, seam ink. Its majority and no-majority fills are `--teal` and `--amber` themselves |
 | Focus | `--focus` | Every focus ring, everywhere |
 
 **Rule:** a new UI state must first try to inherit an existing family *by

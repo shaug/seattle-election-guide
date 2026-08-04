@@ -34,6 +34,15 @@
       "evidence": [],
       "note": "A whole percentage over exact integer arithmetic on both sides. Shares no words with its server half, so only the fixture can see it drift; the fixture's boundary shares are the exact halves a float round would land on the wrong side of."
     },
+    "endorsement-count-label": {
+      "client": "guide-format.mjs endorsementCountLabel",
+      "server": "rendering/context.py endorsement_count_label",
+      "proof": "parity-fixture",
+      "evidence": [
+        "symbol:endorsement_count_label"
+      ],
+      "note": "Meter v2's caption tally ('21½ of 23 endorsements', docs/METER_V2.md § Counting): an exact rational as a mixed number with vulgar-fraction glyphs, never a float — the mockup's float formatter is illustrative only. A fractional part outside the glyph set falls back to numerator⁄denominator with the fraction slash. Landed ahead of the surfaces (#312), so nothing renders it yet; the fixture is what holds the two sides together until a caption does."
+    },
     "no-majority": {
       "client": "guide-format.mjs hasNoMajority",
       "server": "rendering/context.py has_no_majority",

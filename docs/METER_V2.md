@@ -98,16 +98,20 @@ Exactly three color commitments carry meaning; no other hue does:
 | Meaning | Color |
 | --- | --- |
 | Majority leader | The site's own teal `#087f73` (`base.css --teal`) — the same fill v1 uses |
-| Tied leaders | Variations of amber: `#d99000` (`base.css --amber`) and `#8a5d12` |
+| Tied leaders | Variations of amber: `#d99000` (`base.css --amber`) and `#8a5d12` (`--meter-tie-deep`) |
 | Sole leader without a majority | Amber `#d99000` — v1's no-majority semantic, unchanged |
 | Selected candidate (race-page context) | The candidate's color, bold — `saturate(1.5) brightness(.9)` in the mockup; other blocks recede to 30% opacity and the resting percent hides |
-| Trailing candidates | The muted set, by rank: slate `#7d95ad`, taupe `#a99e8a`, plum `#a08296` |
+| Trailing candidates | The muted set, by rank: slate `#7d95ad` (`--meter-trail-slate`), taupe `#a99e8a` (`--meter-trail-taupe`), plum `#a08296` (`--meter-trail-plum`) |
 
 When a pool runs out — a fourth trailing candidate, a third tied leader — subsequent candidates
 continue the last hue stepped progressively toward the track color, so two candidates in one
 meter never share a swatch. Every color above enters `base.css` as a named token at
 implementation time; `docs/DESIGN.md`'s rule that page CSS never introduces a color literal
-applies to the meter like everything else.
+applies to the meter like everything else. The tokens landed in #312 under the `--meter-`
+family the track already began (`--meter-track`), spelled above and in § Seams: hue names for
+the trailing set because the doc, not the stylesheet, owns the rank order. The majority and
+no-majority fills are `--teal` and `--amber` themselves — no meter aliases — so a surface
+that recolors one recolors the site's own semantic.
 
 Reasoning. The teal was retained deliberately over a slightly greener, more chromatic candidate
 that scored better on palette-validation checks: color continuity with the icon, the social
@@ -134,8 +138,13 @@ information.
   the meter itself. Caption fractions are exact rationals rendered as vulgar-fraction glyphs
   (½, ⅓, ¼, …), formatted by a mirrored Python/JS pair registered in `tests/mirrors.json` like
   every other display string — never by float arithmetic (the mockup's formatter is
-  illustrative only). The resting percent reuses the existing `percentageLabel` mirror (exact
-  half-up on a `Fraction`), not a new rounding.
+  illustrative only). The pair landed in #312 as `endorsement_count_label`
+  (`rendering/context.py`) and `endorsementCountLabel` (`guide-format.mjs`). A fractional
+  part with no single glyph — reachable the moment splits compound past Unicode's set, a
+  quarter plus a third being 7/12 — renders as numerator⁄denominator with the U+2044
+  fraction slash, joined to a nonzero whole part by a no-break space: "2 1⁄12". The resting
+  percent reuses the existing `percentageLabel` mirror (exact half-up on a `Fraction`), not a
+  new rounding.
 - Block width therefore varies from race to race (constant track, varying endorsement counts).
   Decided and accepted: the meter helps a voter decide *within* a race, and meter-to-meter
   share comparability matters more than making one endorsement the same width everywhere.
@@ -181,7 +190,7 @@ Seams are hairline (1px), **darker than the fill**, and minimally contrasting �
 fill, not a line on it:
 
 - Between blocks of the **same candidate**: the fill mixed 88% with a dark ink pole
-  (`#1a2530`).
+  (`#1a2530`, `base.css --meter-seam-pole`).
 - Between blocks of **different candidates**, and between the halves of a split block: the
   50/50 blend of the two facing colors, mixed 86% with the same pole. The hue change itself is
   the separator, so the seam never has to shout.

@@ -484,6 +484,52 @@ def has_no_majority(race: PublicationRace) -> bool:
     return race.winner_share is not None and Fraction(race.winner_share) <= Fraction(1, 2)
 
 
+# The single-glyph vulgar fractions Unicode offers, keyed by the reduced
+# fractional part each renders. Everything else falls back below.
+_VULGAR_FRACTION_GLYPHS = {
+    (1, 2): "½",
+    (1, 3): "⅓",
+    (2, 3): "⅔",
+    (1, 4): "¼",
+    (3, 4): "¾",
+    (1, 5): "⅕",
+    (2, 5): "⅖",
+    (3, 5): "⅗",
+    (4, 5): "⅘",
+    (1, 6): "⅙",
+    (5, 6): "⅚",
+    (1, 7): "⅐",
+    (1, 8): "⅛",
+    (3, 8): "⅜",
+    (5, 8): "⅝",
+    (7, 8): "⅞",
+    (1, 9): "⅑",
+    (1, 10): "⅒",
+}
+
+
+def endorsement_count_label(count: Fraction) -> str:
+    """An exact endorsement tally as a mixed number: "21½", "⅓", "7".
+
+    Meter v2's caption states the count, not the percent, and a split
+    endorsement makes the tally an exact rational (docs/METER_V2.md, Counting),
+    so this renders a `Fraction` — never a float — as its whole part plus a
+    vulgar-fraction glyph. A fractional part with no single glyph, reachable
+    the moment splits compound past the glyph table (a quarter plus a third is
+    7/12), renders as numerator⁄denominator with the U+2044 fraction slash,
+    joined to a nonzero whole part by a no-break space: "2 7⁄12".
+    """
+    whole = count.numerator // count.denominator
+    part = count - whole
+    if not part:
+        return str(whole)
+    glyph = _VULGAR_FRACTION_GLYPHS.get((part.numerator, part.denominator))
+    if glyph is not None:
+        return f"{whole}{glyph}" if whole else glyph
+    fallback = f"{part.numerator}⁄{part.denominator}"
+    return f"{whole}\u00a0{fallback}" if whole else fallback
+
+
 def screen_share_accessible_label(race: PublicationRace) -> str:
     share = "not available" if race.percentage_whole is None else race.percentage_label
     qualifier = "No majority. " if has_no_majority(race) else ""
