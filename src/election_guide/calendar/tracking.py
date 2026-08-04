@@ -21,12 +21,11 @@ from election_guide.calendar.models import CalendarMilestone, ElectionCalendar
 # issue. Nothing rewrites the existing issue — see `plan_issues`.
 MARKER_PREFIX = "calendar-milestone:"
 
-# The label the marker read filters by, and the first label every generated
-# issue carries. One definition: if the read label and the written label ever
-# diverge, the read returns nothing and every run reopens every milestone.
-TRACKING_LABEL = "type: ops"
-
-ISSUE_LABELS: tuple[str, ...] = (TRACKING_LABEL, "area: operations")
+# Labels applied to every generated issue, for triage only. Nothing about
+# idempotence depends on them: the marker read scans every issue in the
+# repository, so removing a label here changes what the issue looks like and
+# not whether it is seen.
+ISSUE_LABELS: tuple[str, ...] = ("type: ops", "area: operations")
 
 
 def milestone_marker(election_id: str, milestone_id: str) -> str:

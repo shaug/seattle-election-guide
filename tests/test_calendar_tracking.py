@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import subprocess
 from datetime import date
+from itertools import pairwise
 from pathlib import Path
 from subprocess import CompletedProcess
 from typing import Any
@@ -13,7 +14,6 @@ import pytest
 from typer.testing import CliRunner
 
 from election_guide.calendar import (
-    ISSUE_LABELS,
     ElectionCalendar,
     IssueRequest,
     due_milestones,
@@ -27,7 +27,7 @@ from election_guide.calendar.github_tracker import (
     issue_bodies,
     markers_in_issues,
 )
-from election_guide.calendar.tracking import MARKER_PREFIX, TRACKING_LABEL
+from election_guide.calendar.tracking import MARKER_PREFIX
 from election_guide.cli import app
 
 PROJECT_ROOT = Path(__file__).parents[1]
@@ -239,7 +239,9 @@ def test_existing_markers_lists_by_label_across_open_and_closed_issues(
     assert command[:3] == ["gh", "issue", "list"]
     # Closed issues count, and the filter is the label rather than a text search.
     assert "--state" in command and command[command.index("--state") + 1] == "all"
-    assert "--label" in command and command[command.index("--label") + 1] == TRACKING_LABEL
+    # Every issue, not a labelled subset: a generated issue that loses its
+    # label must still be seen, or its milestone reopens on every run.
+    assert "--label" not in command
     assert "--search" not in command
     # The body is what carries the marker back; any other field reads as empty.
     assert command[command.index("--json") + 1] == "body"
@@ -259,9 +261,34 @@ def test_existing_markers_refuses_a_truncated_listing(monkeypatch: pytest.Monkey
         GitHubIssueTracker("owner/repo").existing_markers()
 
 
-def test_the_read_label_is_the_label_that_gets_written() -> None:
-    """Drift here would silently reopen every milestone on every run."""
-    assert ISSUE_LABELS[0] == TRACKING_LABEL
+def test_an_unlabelled_issue_still_suppresses_its_milestone(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Idempotence must not depend on anyone leaving a label alone."""
+    marker = milestone_marker("wa-2027-general", "election-day")
+
+    def _run(command: list[str], **kwargs: Any) -> CompletedProcess[str]:
+        # An issue stripped of every label, carrying only its marker.
+        return _completed(command, json.dumps([{"body": f"triaged\n\n{marker}"}]))
+
+    monkeypatch.setattr(subprocess, "run", _run)
+
+    assert GitHubIssueTracker("owner/repo").existing_markers() == {marker}
+
+
+def test_a_quoted_marker_does_not_suppress_a_milestone() -> None:
+    """Only the last line counts, so discussing the system is safe."""
+    marker = milestone_marker("wa-2027-general", "election-day")
+    quoting = f"Every issue ends with a line like\n\n    {marker}\n\nwhich is its identity."
+
+    assert markers_in_issues([quoting]) == set()
+    assert markers_in_issues([f"{quoting}\n\n{marker}"]) == {marker}
+
+
+def test_a_trailing_blank_line_does_not_hide_the_marker() -> None:
+    marker = milestone_marker("wa-2027-general", "election-day")
+
+    assert markers_in_issues([f"body\n\n{marker}\n\n"]) == {marker}
 
 
 def test_create_attaches_the_milestone_and_every_label(
@@ -400,3 +427,21 @@ def test_a_real_run_creates_each_planned_issue(monkeypatch: pytest.MonkeyPatch) 
     assert result.exit_code == 0
     assert len(created) == 5
     assert "calendar tracking: 5 opened," in result.stdout
+
+
+def test_the_workflow_runs_every_six_hours_off_the_hour() -> None:
+    """A single daily attempt has no margin for a same-day milestone."""
+    workflow = (PROJECT_ROOT / ".github" / "workflows" / "calendar.yml").read_text(encoding="utf-8")
+
+    schedule = [line.strip() for line in workflow.splitlines() if "cron:" in line]
+    assert len(schedule) == 1
+    cron = schedule[0].split('"')[1]
+    minute, hours = cron.split()[0], cron.split()[1]
+
+    # Off the hour: the top of the hour is GitHub's most congested slot.
+    assert minute != "0"
+    # Evenly spaced every six hours, so a dropped slot is covered soon.
+    slots = sorted(int(hour) for hour in hours.split(","))
+    assert len(slots) == 4
+    assert {later - earlier for earlier, later in pairwise(slots)} == {6}
+    assert (slots[0] + 24) - slots[-1] == 6

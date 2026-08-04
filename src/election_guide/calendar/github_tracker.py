@@ -11,12 +11,11 @@ import json
 import subprocess
 from typing import Any, cast
 
-from election_guide.calendar.tracking import MARKER_PREFIX, TRACKING_LABEL, IssueRequest
+from election_guide.calendar.tracking import MARKER_PREFIX, IssueRequest
 
-# Every issue this tool has ever opened has to be readable in one listing, so
-# the bound is the repository's lifetime count of labeled issues, not the lead
-# window. The read fails loudly rather than truncating, because a silently
-# dropped marker is a duplicate issue.
+# Every issue in the repository has to be readable in one listing, so the bound
+# is its lifetime issue count, not the lead window. The read fails loudly rather
+# than truncating, because a silently dropped marker is a duplicate issue.
 ISSUE_QUERY_LIMIT = 1000
 
 
@@ -49,17 +48,22 @@ def issue_bodies(payload: str) -> list[str]:
 
 
 def markers_in_issues(bodies: list[str]) -> set[str]:
-    """Collect every calendar marker present in the given issue bodies.
+    """Collect the calendar marker each issue body ends with, if any.
 
     Public because this parse is the idempotence contract: a marker that is
     written but not read back opens a duplicate on the next run.
+
+    Only the final non-empty line counts. Generated issues always end with
+    their marker, so nothing is missed — and an issue that merely quotes one
+    while discussing this system cannot suppress a real milestone.
     """
-    return {
-        stripped
-        for body in bodies
-        for line in body.splitlines()
-        if (stripped := line.strip()).startswith(MARKER_PREFIX)
-    }
+    markers: set[str] = set()
+    for body in bodies:
+        lines = [line.strip() for line in body.splitlines()]
+        tail = next((line for line in reversed(lines) if line), "")
+        if tail.startswith(MARKER_PREFIX):
+            markers.add(tail)
+    return markers
 
 
 class GitHubIssueTracker:
@@ -69,17 +73,21 @@ class GitHubIssueTracker:
         self.repository = repository
 
     def existing_markers(self) -> set[str]:
-        """Read markers from every issue this tool has opened, open or closed.
+        """Read markers from every issue in the repository, open or closed.
 
         Closed issues count. A milestone whose issue was opened and completed
         must not be reopened as a duplicate on the next run.
 
-        The listing filters by the label the tool applies, not by a text search
-        for the marker. GitHub's issue search is a relevance-ranked full-text
-        query over an eventually consistent index: it would match unrelated
-        issues that merely contain the marker's words, and it can omit an issue
-        created moments earlier — precisely when a second run would duplicate
-        it.
+        Every issue, not a labelled subset: a generated issue that loses its
+        `type: ops` label during ordinary triage would otherwise become
+        invisible, and the next run would reopen its milestone once per run
+        forever. Idempotence should not depend on anyone's triage habits.
+
+        The listing is also not a text search. GitHub's issue search is a
+        relevance-ranked full-text query over an eventually consistent index:
+        it would match unrelated issues that merely contain the marker's words,
+        and it can omit an issue created moments earlier — precisely when a
+        second run would duplicate it.
         """
         payload = _run(
             [
@@ -90,8 +98,6 @@ class GitHubIssueTracker:
                 self.repository,
                 "--state",
                 "all",
-                "--label",
-                TRACKING_LABEL,
                 "--limit",
                 str(ISSUE_QUERY_LIMIT),
                 "--json",

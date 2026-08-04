@@ -106,8 +106,8 @@ results capture, and on any field the schema does not declare.
 ## Tracking milestones as issues
 
 A declared milestone is inert until someone sees it. The `Calendar` workflow
-runs daily and opens one issue per milestone falling inside a lead window,
-defaulting to twenty-one days:
+runs every six hours and opens one issue per milestone falling inside a lead
+window, defaulting to twenty-one days:
 
 ```bash
 uv run election-guide calendar track config/calendar/elections.yaml --dry-run
@@ -133,17 +133,27 @@ workflow performs. **If you move a declared date after its issue is open, fix
 that issue by hand** — its title and acceptance line still carry the date it
 was opened with.
 
-The listing that finds those markers filters by the `type: ops` label rather
-than searching for the marker text. GitHub's issue search ranks by relevance
+The listing that finds those markers reads **every** issue in the repository,
+open and closed, and takes the marker only from each body's final line. Reading
+everything means the labels a generated issue carries are for triage alone —
+strip them and the issue is still seen, so idempotence does not depend on
+anyone's triage habits. Taking only the final line means an issue that quotes a
+marker while discussing this system cannot suppress a real milestone.
+
+It is deliberately not a text search. GitHub's issue search ranks by relevance
 over an eventually consistent index, so it can both match unrelated issues and
 omit one created moments earlier — which is exactly when a second run would
-duplicate it.
+duplicate it. The listing fails loudly if it ever reaches its size limit,
+because a silently dropped marker is a duplicate issue.
 
-That makes the label a precondition of the no-duplicate guarantee: **a
-generated issue must keep its `type: ops` label.** Strip it and the next run
-stops seeing that issue's marker and reopens the milestone, once a day, for as
-long as it stays inside the window. The label the run reads and the label it
-writes are one constant in the code, so they cannot drift apart on their own.
+**Why every six hours.** A scheduled workflow on GitHub is best effort: runs are
+delayed under load and sometimes dropped, and the top of the hour is the most
+congested slot there is — one run in that slot fired forty-five minutes late.
+The lead window keeps a milestone eligible for three weeks, but that only
+protects the issue eventually existing. It does not protect the reminder
+arriving in time, and a milestone due today is worth nothing tomorrow. Four
+attempts a day at an off-the-hour minute cost nothing, because re-running
+creates nothing.
 
 `--dry-run` still queries GitHub, so it prints what the real run would create
 rather than what the calendar contains.
