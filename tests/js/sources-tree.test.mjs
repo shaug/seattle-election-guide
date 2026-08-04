@@ -44,9 +44,12 @@ document.body.append(host);
 /**
  * @param {readonly string[]} counted
  * @param {readonly string[]} [alsoIn]
+ * @param {readonly string[]} [codes] Which sources the category holds, in order.
+ *   Every test but the keyed-rendering one draws the same two; that one changes
+ *   the list, which is the only way index reuse and keying differ.
  */
-function draw(counted, alsoIn = []) {
-  const rows = ['strn', 'urbn'].map((code) => ({
+function draw(counted, alsoIn = [], codes = ['strn', 'urbn']) {
+  const rows = codes.map((code) => ({
     code,
     name: code === 'strn' ? 'The Stranger' : 'The Urbanist',
     evidenceUrl: `https://example.test/${code}`,
@@ -103,6 +106,30 @@ test('a re-render keeps the very same input elements', () => {
   assert.equal(before.hasAttribute('checked'), false);
   assert.equal(toggle().indeterminate, true);
   assert.equal(toggle().checked, false);
+});
+
+// The test above re-renders the same two rows in the same order, where index
+// reuse and keying are indistinguishable — dropping `repeat` for `.map` passes
+// it. Keying only shows itself when the list itself changes, so this drops the
+// first row and asks whether the second one survived as the same element. With
+// `repeat` keyed by code it does; with `.map` the reader's checkbox is the node
+// that used to be the row above it, holding its state.
+test('a row that outlives a change to the list is the same row', () => {
+  draw(['strn', 'urbn']);
+  const survivor = box('urbn');
+  survivor.focus();
+
+  draw(['urbn'], [], ['urbn']);
+
+  assert.ok(
+    box('urbn') === survivor,
+    'the surviving row was rebuilt; keyed rendering is what preserves the control the ' +
+      'reader is holding (rule: repeated lists use keyed rendering, docs/FRONTEND.md)',
+  );
+  assert.ok(
+    document.activeElement === survivor,
+    'focus did not survive the render by identity, so something would have to restore it',
+  );
 });
 
 // The property, not only the attribute: a click sets the property, and only a

@@ -157,7 +157,17 @@ def test_the_runtime_dependency_ships_inline_and_fetches_nothing() -> None:
     """
     bundle = bundle_entry("compare-entry.mjs", global_name="ComparePage")
 
-    assert "lit-html" in json.loads(PACKAGE_JSON.read_text(encoding="utf-8"))["dependencies"]
+    # "lit-html, and nothing else without amending this document" is the whole
+    # rule, and asserting only that lit-html is present enforced half of it: a
+    # second runtime dependency would have passed every check in this file.
+    # Equality is what makes adding one a change to docs/FRONTEND.md, which is
+    # what the rule says it must be (#245).
+    declared = json.loads(PACKAGE_JSON.read_text(encoding="utf-8"))["dependencies"]
+    assert set(declared) == {"lit-html"}, (
+        f"package.json declares runtime dependencies {sorted(declared)}. The runtime is "
+        f"lit-html and nothing else without amending the document in the same pull request "
+        f"(rule: dependencies, docs/FRONTEND.md)."
+    )
     assert "node_modules/lit-html/lit-html.js" in bundle, (
         "the Comparisons bundle does not carry lit-html's browser source. It is bundled at "
         "build time and shipped inline like our own modules (rule: dependencies, "
