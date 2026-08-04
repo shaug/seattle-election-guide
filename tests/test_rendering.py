@@ -1104,6 +1104,11 @@ def test_html_rejects_non_web_evidence_links(tmp_path: Path) -> None:
     with pytest.raises(ValueError, match=r"safe HTTP\(S\) URL"):
         render_html_document(source_view_model, read_rendering_configuration(RENDERING_CONFIG))
 
+    # A source's own receipt is rendered by the sources editor's tree and its
+    # coverage-gap rows, so that renderer checks it too.
+    with pytest.raises(ValueError, match=r"safe HTTP\(S\) URL"):
+        render_sources_document(source_view_model, public_site_url="https://seattleelections.guide")
+
     cell_view_model = _view_model(tmp_path / "cell")
     cell = next(
         cell
