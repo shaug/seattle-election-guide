@@ -55,7 +55,7 @@ milestones:
     kind: results_capture_election_night
     offset_days: 0
     workflow: evidence capture
-    reference: docs/EVIDENCE_CAPTURE.md
+    reference: docs/runbooks/results-capture-election-night.md
   - election_id: wa-2026-primary
     id: certification
     kind: certification
@@ -65,7 +65,7 @@ milestones:
     kind: results_capture_post_certification
     offset_days: 16
     workflow: evidence capture
-    reference: docs/EVIDENCE_CAPTURE.md
+    reference: docs/runbooks/results-certified-ingest.md
 
   # 2026 November general. The field is settled by the August primary, so the
   # front half anchors to that certification rather than to filing week.
@@ -127,7 +127,7 @@ milestones:
     kind: results_capture_election_night
     offset_days: 0
     workflow: evidence capture
-    reference: docs/EVIDENCE_CAPTURE.md
+    reference: docs/runbooks/results-capture-election-night.md
   - election_id: wa-2026-general
     id: certification
     kind: certification
@@ -137,7 +137,7 @@ milestones:
     kind: results_capture_post_certification
     offset_days: 22
     workflow: evidence capture
-    reference: docs/EVIDENCE_CAPTURE.md
+    reference: docs/runbooks/results-certified-ingest.md
   - election_id: wa-2026-general
     id: retrospective
     kind: retrospective
@@ -198,7 +198,7 @@ milestones:
     kind: results_capture_election_night
     offset_days: 0
     workflow: evidence capture
-    reference: docs/EVIDENCE_CAPTURE.md
+    reference: docs/runbooks/results-capture-election-night.md
   - election_id: wa-2027-february-special
     id: certification
     kind: certification
@@ -208,7 +208,7 @@ milestones:
     kind: results_capture_post_certification
     offset_days: 16
     workflow: evidence capture
-    reference: docs/EVIDENCE_CAPTURE.md
+    reference: docs/runbooks/results-certified-ingest.md
 
   # 2027 April special.
   - election_id: wa-2027-april-special
@@ -263,7 +263,7 @@ milestones:
     kind: results_capture_election_night
     offset_days: 0
     workflow: evidence capture
-    reference: docs/EVIDENCE_CAPTURE.md
+    reference: docs/runbooks/results-capture-election-night.md
   - election_id: wa-2027-april-special
     id: certification
     kind: certification
@@ -273,7 +273,7 @@ milestones:
     kind: results_capture_post_certification
     offset_days: 16
     workflow: evidence capture
-    reference: docs/EVIDENCE_CAPTURE.md
+    reference: docs/runbooks/results-certified-ingest.md
 
   # 2027 August primary. The only election in the cycle with a filing week,
   # which is what sets the field for the November general.
@@ -339,7 +339,7 @@ milestones:
     kind: results_capture_election_night
     offset_days: 0
     workflow: evidence capture
-    reference: docs/EVIDENCE_CAPTURE.md
+    reference: docs/runbooks/results-capture-election-night.md
   - election_id: wa-2027-primary
     id: certification
     kind: certification
@@ -349,7 +349,7 @@ milestones:
     kind: results_capture_post_certification
     offset_days: 16
     workflow: evidence capture
-    reference: docs/EVIDENCE_CAPTURE.md
+    reference: docs/runbooks/results-certified-ingest.md
 
   # 2027 November general, anchored to the August primary's certification.
   - election_id: wa-2027-general
@@ -410,7 +410,7 @@ milestones:
     kind: results_capture_election_night
     offset_days: 0
     workflow: evidence capture
-    reference: docs/EVIDENCE_CAPTURE.md
+    reference: docs/runbooks/results-capture-election-night.md
   - election_id: wa-2027-general
     id: certification
     kind: certification
@@ -420,7 +420,7 @@ milestones:
     kind: results_capture_post_certification
     offset_days: 22
     workflow: evidence capture
-    reference: docs/EVIDENCE_CAPTURE.md
+    reference: docs/runbooks/results-certified-ingest.md
   - election_id: wa-2027-general
     id: retrospective
     kind: retrospective
