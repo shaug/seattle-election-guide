@@ -247,13 +247,18 @@ purpose and watch the check fail.
 - **Repeated lists that re-render use keyed rendering** (lit-html `repeat`),
   so re-renders preserve element identity and focus. A control the reader is
   using must still exist after the render it triggers.
-  *Check: exists — `compare-table.test.mjs` re-renders after a column change and
-  asserts the untouched column's element is the same object (`a === b`, not a
-  markup diff), that focus survived by identity rather than being restored, and
-  that a surviving row was not rebuilt. `sources-tree.test.mjs` does the same
-  across a selection change. Replacing `repeat` with `.map` in either template
-  fails those assertions, which is what makes them the check rather than a
-  restatement of it.*
+  *Check: exists — and the assertion that carries it is a narrower one than it
+  looks. Element identity is asserted in several places (`a === b`, not a markup
+  diff), but keyed and unkeyed rendering are indistinguishable while the list
+  itself holds still: reusing the element at each index gives the same answer.
+  What distinguishes them is a render that **changes the list**, and each
+  template has exactly one such case. `compare-table.test.mjs` drops a race from
+  the body and asserts a surviving row is the same element;
+  `sources-tree.test.mjs` drops a source from a category and asserts the
+  surviving checkbox is the same element and still holds focus. Replacing
+  `repeat` with an unkeyed `.map` fails those two and nothing else — the
+  head-column and re-render cases keep their lists steady and pass either way,
+  which is why they are not what holds this rule.*
 - **A form control's live value is bound with `live()`.** A checkbox is the one
   binding whose DOM value changes without a render — the browser sets it on a
   click and restores it on a back-navigation, both behind lit's record of what
@@ -637,12 +642,12 @@ purpose and watch the check fail.
   calls it rather than building its own, so there is one answer to what a
   client module may assume exists.
   *Check: exists for the single-installer clause — `module-guards.test.mjs`
-  sweeps every Node test and support file for an import of the DOM package and
-  fails on any but `support/dom.mjs`. It reads import specifiers rather than
-  text, because a textual scan for the package name matched the scanner, and
-  the fix for that is not to exempt the scanner. Which render functions have
-  fixtures is not counted; the parity harnesses above are what make the
-  rendered ones checkable.*
+  sweeps every Node test and support file for an import of the DOM package,
+  static or dynamic, and fails on any but `support/dom.mjs`. It reads import
+  specifiers rather than text, because a textual scan for the package name
+  matched the scanner, and the fix for that is not to exempt the scanner. Which
+  render functions have fixtures is not counted; the parity harnesses above are
+  what make the rendered ones checkable.*
 - **Every discipline in this document that can be checked, is checked, in
   `make check`.** A rule without a check carries a `Reviewer-applied:`
   annotation saying so and naming what a reviewer is looking for. #245 walked
@@ -652,12 +657,14 @@ purpose and watch the check fail.
   *Check: exists — `tests/test_frontend_ratchets.py` reads this document and
   fails on a rule between Modules and Adoption that carries none of the three
   markers, so the walk does not have to be repeated by hand and a rule added
-  later cannot arrive silently unheld. A second test asks the question the
-  sweep cannot ask of itself — how many top-level bullets it failed to
-  recognize — and holds that to zero, because the sweep's first version could
-  not read a rule whose name wraps onto a second line and so was silently blind
-  to four of them, this one included. It holds the *form*, not the truth of the
-  claim: writing `Check: exists` is what the sweep sees, and whether the named
+  later cannot arrive silently unheld. Its unit is the bullet, not the bold
+  name: an earlier version matched the name, could not read one that wrapped
+  onto a second line, and was silently blind to four rules — this one included
+  — each of which also lent its marker to the rule above it. A definition that
+  every rule satisfies by construction is what removed that, rather than a
+  second scan counting what the first one missed. It holds the *form*, not the
+  truth of the claim: writing `Check: exists` is what the sweep sees, and
+  whether the named
   check can observe a violation is the preamble's instruction to break the rule
   and watch it fail. Adoption and Open questions are outside the sweep, because
   they record how the epic ran and what it decided rather than stating rules a

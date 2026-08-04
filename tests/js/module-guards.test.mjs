@@ -52,15 +52,22 @@ test('the guard holds for every client module, and every module is tested', () =
 // structural question is also the complete one.
 const DOM_PACKAGE = 'happy-dom';
 const DOM_INSTALLER = 'support/dom.mjs';
-// `[^;]` rather than `[^;\n]`: a multi-line `import {\n  Window,\n} from '…'`
-// is the form a formatter produces the moment the list grows, and a scan that
-// stops at the newline would stop seeing exactly the imports most likely to
-// exist. No import statement holds a semicolon before its `from`.
-const IMPORT_SPECIFIER = /(?:^|\n)\s*import\s[^;]*?from\s*['"]([^'"]+)['"]/g;
+// Two forms, because this suite writes both. `[^;]` rather than `[^;\n]` in the
+// static form: a multi-line `import {\n  Window,\n} from '…'` is what a
+// formatter produces the moment the list grows, and a scan stopping at the
+// newline would stop seeing exactly the imports most likely to exist. The
+// dynamic `import('…')` alternative matters more here than it would elsewhere —
+// `await import(...)` is how every test in this directory loads the module under
+// test after `installDom()`, so it is the form an author would reach for, not an
+// exotic one. No import statement holds a semicolon before its `from`.
+const STATIC_IMPORT = /(?:^|\n)\s*import\s[^;]*?from\s*['"]([^'"]+)['"]/.source;
+const DYNAMIC_IMPORT = /import\s*\(\s*['"]([^'"]+)['"]/.source;
+const IMPORT_SPECIFIER = new RegExp(`${STATIC_IMPORT}|${DYNAMIC_IMPORT}`, 'g');
 
 /** @param {string} source */
 function importedPackages(source) {
-  return [...source.matchAll(IMPORT_SPECIFIER)].map((match) => match[1]);
+  // One group per alternative, so whichever form matched is the one to read.
+  return [...source.matchAll(IMPORT_SPECIFIER)].map((match) => match[1] ?? match[2]);
 }
 
 test('every file that installs a DOM is the one installer', () => {
@@ -95,7 +102,14 @@ test('the DOM sweep can actually see an import of the package', () => {
     DOM_PACKAGE,
   ]);
   assert.deepEqual(importedPackages(`import Dom from "${DOM_PACKAGE}";\n`), [DOM_PACKAGE]);
+  // The dynamic form, which is how every test here loads its module under test
+  // and so the one an author evading this would reach for without meaning to.
+  assert.deepEqual(importedPackages(`const { Window } = await import('${DOM_PACKAGE}');\n`), [
+    DOM_PACKAGE,
+  ]);
+  assert.deepEqual(importedPackages(`await import(\n  "${DOM_PACKAGE}",\n);\n`), [DOM_PACKAGE]);
   assert.ok(!importedPackages("import test from 'node:test';\n").includes(DOM_PACKAGE));
+  assert.ok(!importedPackages("await import('./support/dom.mjs');\n").includes(DOM_PACKAGE));
   // A mention in prose is not an import, which is why the sweep reads
   // specifiers: this very file names the package three times.
   assert.deepEqual(importedPackages(`// we do not import ${DOM_PACKAGE} here\n`), []);
