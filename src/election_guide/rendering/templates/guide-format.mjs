@@ -32,6 +32,57 @@ export function percentageLabel(shareString) {
   return `${whole}%`;
 }
 
+// The single-glyph vulgar fractions Unicode offers, keyed by the reduced
+// fractional part (`numerator/denominator`) each renders. Everything else
+// falls back inside `endorsementCountLabel`.
+const VULGAR_FRACTION_GLYPHS = new Map([
+  ['1/2', '½'],
+  ['1/3', '⅓'],
+  ['2/3', '⅔'],
+  ['1/4', '¼'],
+  ['3/4', '¾'],
+  ['1/5', '⅕'],
+  ['2/5', '⅖'],
+  ['3/5', '⅗'],
+  ['4/5', '⅘'],
+  ['1/6', '⅙'],
+  ['5/6', '⅚'],
+  ['1/7', '⅐'],
+  ['1/8', '⅛'],
+  ['3/8', '⅜'],
+  ['5/8', '⅝'],
+  ['7/8', '⅞'],
+  ['1/9', '⅑'],
+  ['1/10', '⅒'],
+]);
+
+/**
+ * An exact endorsement tally as a mixed number: "21½", "⅓", "7".
+ *
+ * Mirrors `endorsement_count_label` in `rendering/context.py`. Meter v2's
+ * caption states the count, not the percent, and a split endorsement makes
+ * the tally an exact rational (docs/METER_V2.md, Counting), so this renders
+ * the published `numerator/denominator` form over bigint arithmetic — never a
+ * float — as its whole part plus a vulgar-fraction glyph. A fractional part
+ * with no single glyph, reachable the moment splits compound past the glyph
+ * table (a quarter plus a third is 7/12), renders as numerator⁄denominator
+ * with the U+2044 fraction slash, joined to a nonzero whole part by a
+ * no-break space: "2 7⁄12".
+ *
+ * @param {string} countString
+ * @returns {string}
+ */
+export function endorsementCountLabel(countString) {
+  const count = Rational.parse(countString);
+  const whole = count.numerator / count.denominator;
+  const rest = count.numerator % count.denominator;
+  if (rest === 0n) return `${whole}`;
+  const glyph = VULGAR_FRACTION_GLYPHS.get(`${rest}/${count.denominator}`);
+  if (glyph !== undefined) return whole === 0n ? glyph : `${whole}${glyph}`;
+  const fallback = `${rest}⁄${count.denominator}`;
+  return whole === 0n ? fallback : `${whole}\u00a0${fallback}`;
+}
+
 /**
  * Whether the leading choice failed to clear half the endorsing sources.
  *

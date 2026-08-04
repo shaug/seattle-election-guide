@@ -29,6 +29,15 @@
   --tone-neutral-bg: #f5f8f9;
   --tone-neutral-text: #52606d;
   --meter-track: #edf2f4;
+  /* Meter v2, the segmented meter (docs/METER_V2.md, Color and Seams). The
+     majority and no-majority fills reuse --teal and --amber above; these are
+     the values v2 adds. Declared ahead of the surfaces (issue 312), so nothing
+     references them until the layout lands. */
+  --meter-tie-deep: #8a5d12;
+  --meter-trail-slate: #7d95ad;
+  --meter-trail-taupe: #a99e8a;
+  --meter-trail-plum: #a08296;
+  --meter-seam-pole: #1a2530;
   --line-muted: #526f83;
   --hover-tint-bg: #f3f9f8;
   --hover-tint-ring: #c0d8d4;

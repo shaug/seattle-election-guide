@@ -126,6 +126,22 @@ BOUNDARY_SHARES: tuple[tuple[str, str], ...] = (
     ("1/7", "A share whose tenths are neither exact nor a half."),
 )
 
+# Endorsement tallies for the caption's count formatter, covering whole
+# numbers, the glyph table's denominators, and the fallback past it. Each is
+# exact, for the same reason as the shares above: neither side may reach for a
+# float (docs/METER_V2.md § Counting).
+COUNT_TALLIES: tuple[tuple[str, str], ...] = (
+    ("0", "A zero tally is a digit, not an empty string."),
+    ("23", "A whole tally is plain digits with no fractional part."),
+    ("43/2", "The spec's own caption: a half renders as its glyph, 21½."),
+    ("1/3", "A three-way split's single share is a bare glyph with no whole part."),
+    ("2/3", "A non-unit fractional part still has a glyph."),
+    ("7/4", "Quarters sit directly against the whole part: 1¾."),
+    ("1/7", "A seven-way split is the n-way case with a glyph: ⅐."),
+    ("4/8", "An unreduced tally reduces before the glyph lookup: ½."),
+    ("25/12", "Twelfths have no glyph, so the fallback spells 2 1⁄12."),
+)
+
 
 def _races(view_model: PublicationViewModel) -> list[PublicationRace]:
     return [race for section in view_model.sections for race in section.races]
@@ -327,6 +343,24 @@ def _share_cases(base_race: PublicationRace) -> list[dict[str, Any]]:
         }
     )
     return cases
+
+
+def _count_cases() -> list[dict[str, Any]]:
+    """Cases for the caption's count formatter, which takes a tally, not a race.
+
+    No published race renders a count caption yet — #312 lands the formatter
+    ahead of the meter v2 surfaces — so every case is a direct call, exactly as
+    the boundary shares reach the percentage formatters."""
+    return [
+        {
+            "mirror": "endorsement-count-label",
+            "input": {"count": tally},
+            "expected": context.endorsement_count_label(Fraction(tally)),
+            "note": note,
+            "source": "endorsement_count_label as shipped",
+        }
+        for tally, note in COUNT_TALLIES
+    ]
 
 
 def _row_differs_cases() -> list[dict[str, Any]]:
@@ -559,6 +593,7 @@ def build_mirror_parity_fixture(dataset: CanonicalDataset) -> dict[str, Any]:
         [
             *_panel_cases(dataset),
             *_share_cases(_races(view_model)[0]),
+            *_count_cases(),
             *_row_differs_cases(),
             *_fragment_cases(view_model),
             *_counting_cases(),

@@ -24,6 +24,7 @@ import {
 } from '../../src/election_guide/rendering/templates/compare-url.mjs';
 import {
   countingSummary,
+  endorsementCountLabel,
   hasNoMajority,
   percentageLabel,
   raceDetailAccessibleSummary,
@@ -77,6 +78,7 @@ const RUNNERS = {
   // number for. Its own mirror because the server writes that branch as a
   // template literal rather than as the `percentage_label` field.
   'meter-unavailable-label': ({ share }) => percentageLabel(share),
+  'endorsement-count-label': ({ count }) => endorsementCountLabel(count),
   'no-majority': ({ share }) => hasNoMajority(share),
   'share-accessible-label': ({ share }) => shareAccessibleLabel(share),
   'support-summary': ({ scored: race }) => supportSummary(scored(race)),

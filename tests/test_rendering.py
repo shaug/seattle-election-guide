@@ -49,6 +49,7 @@ from election_guide.rendering.browser import (
 from election_guide.rendering.bundler import TEMPLATE_DIR, bundle_entry
 from election_guide.rendering.context import (
     candidate_endorsement_groups,
+    endorsement_count_label,
     has_no_majority,
     race_detail_accessible_summary,
     race_detail_support_summary,
@@ -797,6 +798,26 @@ def test_race_page_rejects_a_race_that_is_not_on_this_ballot(tmp_path: Path) -> 
     view_model = _revalidated(_view_model(tmp_path))
     with pytest.raises(ValueError, match="has no race"):
         _race_html(view_model, "not-a-race")
+
+
+def test_endorsement_count_label_spells_exact_tallies_with_vulgar_fraction_glyphs() -> None:
+    """Meter v2's caption tally (docs/METER_V2.md, Counting), golden on the
+    Python side. `tests/js/guide-format.test.mjs` pins the client twin to the
+    same strings, and the parity fixture holds the two sides to each other, so
+    a rule change has to move three places at once — which is the point."""
+    assert endorsement_count_label(Fraction(23)) == "23"
+    assert endorsement_count_label(Fraction(0)) == "0"
+    assert endorsement_count_label(Fraction(43, 2)) == "21½"
+    assert endorsement_count_label(Fraction(1, 3)) == "⅓"
+    assert endorsement_count_label(Fraction(2, 3)) == "⅔"
+    assert endorsement_count_label(Fraction(7, 4)) == "1¾"
+    assert endorsement_count_label(Fraction(1, 7)) == "⅐"
+    # An unreduced tally reduces before the glyph lookup.
+    assert endorsement_count_label(Fraction(4, 8)) == "½"
+    # Twelfths have no single glyph: the fallback is numerator⁄denominator
+    # (U+2044) joined to a nonzero whole part by a no-break space.
+    assert endorsement_count_label(Fraction(25, 12)) == "2\u00a01⁄12"
+    assert endorsement_count_label(Fraction(7, 12)) == "7⁄12"
 
 
 def test_no_majority_uses_the_exact_unrounded_share_across_the_card_and_the_race_page(

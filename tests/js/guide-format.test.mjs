@@ -10,6 +10,7 @@ import test from 'node:test';
 import {
   allSourcesSummary,
   countingSummary,
+  endorsementCountLabel,
   filterStatusParts,
   hasNoMajority,
   percentageLabel,
@@ -55,6 +56,21 @@ test('a share prints as a whole percentage, rounded half up on exact arithmetic'
   assert.equal(percentageLabel('1/8'), '13%');
   assert.equal(percentageLabel('1/1'), '100%');
   assert.equal(percentageLabel(null), 'N/A');
+});
+
+test('the caption tally is an exact mixed number spelled with vulgar-fraction glyphs', () => {
+  assert.equal(endorsementCountLabel('23'), '23');
+  assert.equal(endorsementCountLabel('0'), '0');
+  assert.equal(endorsementCountLabel('43/2'), '21½');
+  assert.equal(endorsementCountLabel('1/3'), '⅓');
+  assert.equal(endorsementCountLabel('2/3'), '⅔');
+  assert.equal(endorsementCountLabel('7/4'), '1¾');
+  assert.equal(endorsementCountLabel('1/7'), '⅐');
+  // An unreduced tally reduces before the glyph lookup.
+  assert.equal(endorsementCountLabel('4/8'), '½');
+  // Twelfths have no single glyph: the fallback is numerator⁄denominator
+  // (U+2044) joined to a nonzero whole part by a no-break space.
+  assert.equal(endorsementCountLabel('25/12'), '2\u00a01⁄12');
 });
 
 test('no majority means at or below half, not merely below the leader', () => {
