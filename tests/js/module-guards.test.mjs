@@ -59,17 +59,31 @@ test('the guard holds for every client module, and every module is tested', () =
 // recursive for that reason.
 const DOM_PACKAGE = 'happy-dom';
 const DOM_INSTALLER = 'support/dom.mjs';
-// Two forms, because this suite writes both. `[^;]` rather than `[^;\n]` in the
-// static form: a multi-line `import {\n  Window,\n} from '…'` is what a
-// formatter produces the moment the list grows, and a scan stopping at the
-// newline would stop seeing exactly the imports most likely to exist. The
-// dynamic `import('…')` alternative matters more here than it would elsewhere —
-// `await import(...)` is how every test in this directory loads the module under
-// test after `installDom()`, so it is the form an author would reach for, not an
-// exotic one. No import statement holds a semicolon before its `from`.
-const STATIC_IMPORT = /(?:^|\n)\s*import\s[^;]*?from\s*['"]([^'"]+)['"]/.source;
-const DYNAMIC_IMPORT = /import\s*\(\s*['"]([^'"]+)['"]/.source;
-const IMPORT_SPECIFIER = new RegExp(`${STATIC_IMPORT}|${DYNAMIC_IMPORT}`, 'g');
+// Every way an ES module can name another module, because a scan that covers
+// some of them is a scan an author evades without meaning to. Enumerated rather
+// than approximated: each form below was written into a test file and confirmed
+// to fail the sweep.
+//
+//   FROM_CLAUSE   `import d from 'x'`, `import {a} from 'x'`, `import * as n
+//                 from 'x'`, and the `export … from 'x'` re-exports, which name
+//                 a module exactly as an import does. `[^;]` rather than
+//                 `[^;\n]` because a multi-line `import {\n  Window,\n} from …`
+//                 is what a formatter produces the moment the list grows, and a
+//                 scan stopping at the newline would stop seeing the imports
+//                 most likely to exist. Requiring `from` is what keeps
+//                 `export const X = 'not-a-package'` out.
+//   BARE_IMPORT   `import 'x'`, which has no `from` at all.
+//   DYNAMIC       `import('x')`. This one matters more here than elsewhere:
+//                 `await import(...)` is how every test in this directory loads
+//                 its module under test after `installDom()`, so it is the form
+//                 an author would reach for by habit.
+//
+// `require` is not covered and does not need to be: these are `.mjs` files,
+// where it is not defined.
+const FROM_CLAUSE = /(?:^|\n)\s*(?:import|export)\b[^;]*?\bfrom\s*['"]([^'"]+)['"]/.source;
+const BARE_IMPORT = /(?:^|\n)\s*import\s*['"]([^'"]+)['"]/.source;
+const DYNAMIC_IMPORT = /\bimport\s*\(\s*['"]([^'"]+)['"]/.source;
+const IMPORT_SPECIFIER = new RegExp(`${FROM_CLAUSE}|${BARE_IMPORT}|${DYNAMIC_IMPORT}`, 'g');
 
 /**
  * The package a specifier names, ignoring any subpath into it.
@@ -91,7 +105,7 @@ function packageOf(specifier) {
 function importedPackages(source) {
   // One group per alternative, so whichever form matched is the one to read.
   return [...source.matchAll(IMPORT_SPECIFIER)]
-    .map((match) => packageOf(match[1] ?? match[2]))
+    .map((match) => packageOf(match[1] ?? match[2] ?? match[3]))
     .filter((name) => name !== null);
 }
 
@@ -160,6 +174,21 @@ test('the DOM sweep can actually see an import of the package', () => {
   assert.deepEqual(importedPackages(`await import('${DOM_PACKAGE}/lib/window/Window.js');\n`), [
     DOM_PACKAGE,
   ]);
+  // The forms with no `from` clause and no default binding. A side-effect
+  // import and a re-export both name a module, and a scan built only around
+  // `import … from` reads neither.
+  assert.deepEqual(importedPackages(`import '${DOM_PACKAGE}';\n`), [DOM_PACKAGE]);
+  assert.deepEqual(importedPackages(`import '${DOM_PACKAGE}/lib/index.js';\n`), [DOM_PACKAGE]);
+  assert.deepEqual(importedPackages(`export { Window } from '${DOM_PACKAGE}';\n`), [DOM_PACKAGE]);
+  assert.deepEqual(importedPackages(`export * from '${DOM_PACKAGE}';\n`), [DOM_PACKAGE]);
+  assert.deepEqual(importedPackages(`export * as dom from '${DOM_PACKAGE}';\n`), [DOM_PACKAGE]);
+  assert.deepEqual(importedPackages(`import * as dom from '${DOM_PACKAGE}';\n`), [DOM_PACKAGE]);
+  assert.deepEqual(importedPackages(`import d, { Window } from '${DOM_PACKAGE}';\n`), [
+    DOM_PACKAGE,
+  ]);
+  // Requiring a `from` is what keeps an ordinary exported string out: this
+  // module exports the package name itself.
+  assert.deepEqual(importedPackages(`export const NAME = '${DOM_PACKAGE}';\n`), []);
   // A scoped package keeps both of its segments, so the two halves of one name
   // cannot be read as a package and a subpath.
   assert.deepEqual(importedPackages("import x from '@scope/pkg/deep.js';\n"), ['@scope/pkg']);
