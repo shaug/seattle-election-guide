@@ -88,6 +88,7 @@ export const MODULE_KINDS = {
   'lens-score.mjs': 'pure',
   'lens-selection.mjs': 'pure',
   'lens-url.mjs': 'pure',
+  'meter-layout.mjs': 'pure',
   'race-client.mjs': 'wiring',
   'race-detail.mjs': 'pure',
   'race-entry.mjs': 'wiring',

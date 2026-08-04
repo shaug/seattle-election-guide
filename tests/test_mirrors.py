@@ -23,6 +23,7 @@ from typing import Any
 
 import pytest
 
+from election_guide.rendering import context
 from tests.cross_language_mirrors import derived_evidence
 from tests.mirror_parity import FIXTURE_PATH, FIXTURE_SCHEMA_VERSION, generate
 
@@ -137,6 +138,36 @@ def test_every_case_carries_the_provenance_of_its_expectation(
     for case in committed_fixture["cases"]:
         assert case["source"].strip(), f"{case['mirror']} has a case with no source"
         assert case["note"].strip(), f"{case['mirror']} has a case with no note"
+
+
+def test_the_meter_layout_ignores_the_order_its_cells_arrive_in(
+    committed_fixture: dict[str, Any],
+) -> None:
+    """The server's half of the claim the client's own suite makes on its side.
+
+    Meter v2's block list is generated here from `race.source_cells` in
+    active-source order, while the client hands the same race's cells to its
+    mirror keyed by sorted transport code. Every expectation in the fixture is
+    therefore only reproducible if the layout's canonical order is what decides
+    the result — so feeding the same cells backwards has to change nothing.
+    """
+    cases = [case for case in committed_fixture["cases"] if case["mirror"] == "meter-layout-blocks"]
+    assert cases, "the fixture carries no meter-layout cases, so this proves nothing"
+    for case in cases:
+        endorsements = [
+            context.MeterEndorsement(
+                source_label=item["source_label"],
+                candidate_ids=tuple(item["candidate_ids"]),
+                candidate_labels=tuple(item["candidate_labels"]),
+            )
+            for item in case["input"]["endorsements"]
+        ]
+        assert context.meter_layout_blocks(list(reversed(endorsements))) == (
+            context.meter_layout_blocks(endorsements)
+        ), (
+            f"{case['source']} laid out differently when its cells were reversed, so something "
+            f"in the layout reads the input order rather than the canonical one."
+        )
 
 
 def test_the_committed_fixture_matches_a_fresh_generation(
