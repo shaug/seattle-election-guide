@@ -1,3 +1,5 @@
+<!doctype html>
+<html lang="en">
 <meta charset="utf-8">
 <title>SEG meter — segmented redesign playground</title>
 <style>
@@ -36,17 +38,6 @@ header h1 { margin: 0 0 .3rem; color: var(--navy); font-size: 1.55rem; letter-sp
 header p.lede { margin: 0; max-width: 62ch; color: var(--muted); font-size: .97rem; }
 .eyebrow { margin: 0 0 .4rem; color: var(--faint); font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
 
-/* ── Controls ── */
-.controls { position: sticky; top: 0; z-index: 30; margin: 1.5rem -.5rem 2rem; padding: .7rem .5rem; display: flex; flex-wrap: wrap; gap: .55rem 1.1rem; background: color-mix(in srgb, var(--paper) 92%, transparent); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); }
-.ctl { display: flex; flex-direction: column; gap: .18rem; }
-.ctl > span { color: var(--faint); font-size: .66rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; }
-.seg { display: inline-flex; border: 1px solid var(--line-strong); border-radius: .55rem; overflow: hidden; }
-.seg button { appearance: none; border: 0; margin: 0; padding: .28rem .6rem; background: var(--card); color: var(--muted); font: inherit; font-size: .8rem; font-weight: 600; cursor: pointer; border-right: 1px solid var(--line); }
-.seg button:last-child { border-right: 0; }
-.seg button[aria-pressed="true"] { background: var(--navy); color: var(--paper); }
-:root[data-theme="dark"] .seg button[aria-pressed="true"], .dark-pressed { background: var(--navy); }
-.seg button:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
-
 /* ── Sections ── */
 section { margin-top: 3rem; }
 section > h2 { margin: 0 0 .25rem; color: var(--navy); font-size: 1.15rem; }
@@ -60,6 +51,7 @@ section > p.note { margin: 0 0 1.2rem; max-width: 68ch; color: var(--muted); fon
 .scanrow .rlabel small { display: block; color: var(--faint); font-weight: 500; font-size: .72rem; }
 @media (max-width: 700px) {
   .scanhead, .scanrow { grid-template-columns: 1fr 8.75rem 8.75rem; gap: .6rem; }
+  .oldmeter, .segmeter.size-card { width: 8.75rem; }
 }
 
 /* ── The old pill ── */
@@ -96,8 +88,9 @@ section > p.note { margin: 0 0 1.2rem; max-width: 68ch; color: var(--muted); fon
    leads with the voices. */
 .pct { position: absolute; inset: 0; z-index: 1; display: flex; align-items: center; padding: .05rem .75rem 0; color: #fff; font-size: 1.02rem; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; pointer-events: none; transition: opacity .15s ease; }
 .pct.nomaj { color: #102a43; }
+.pct.na { color: var(--muted); }
 @media (hover: hover) {
-  .segmeter:hover .pct, .segmeter:focus-within .pct { opacity: 0; }
+  .segmeter:hover .pct:not(.na), .segmeter:focus-within .pct:not(.na) { opacity: 0; }
   .segmeter:hover .blk + .blk, .segmeter:focus-within .blk + .blk {
     border-left-color: var(--seamcol, var(--gapcol));
     border-image-source: var(--seamimg, none); border-image-slice: 1;
@@ -105,17 +98,18 @@ section > p.note { margin: 0 0 1.2rem; max-width: 68ch; color: var(--muted); fon
   .segmeter:hover .blk.merged .half.bot, .segmeter:focus-within .blk.merged .half.bot { border-top-color: var(--splitline, var(--gapcol)); }
 }
 @media (hover: none) {
-  .pct { display: none; }
+  .pct:not(.na) { display: none; }
   .blk + .blk {
     border-left-color: var(--seamcol, var(--gapcol));
     border-image-source: var(--seamimg, none); border-image-slice: 1;
   }
   .blk.merged .half.bot { border-top-color: var(--splitline, var(--gapcol)); }
 }
-/* candidate context: the selected candidate goes bold, everything else recedes */
+/* candidate context: the selected candidate goes bold, everything else —
+   including the resting percent — recedes */
 .segmeter.hasctx .blk:not(.ctx) { opacity: .3; }
 .segmeter.hasctx .blk.ctx { filter: saturate(1.5) brightness(.9); }
-.blk.linked { filter: brightness(1.12) saturate(1.2); }
+.segmeter.hasctx .pct { opacity: 0; }
 
 /* ── Race cards ── */
 .racecard { margin-top: 1.4rem; padding: 1.1rem 1.2rem 1.25rem; background: var(--card); border: 1px solid var(--line); border-radius: .8rem; }
@@ -132,11 +126,10 @@ section > p.note { margin: 0 0 1.2rem; max-width: 68ch; color: var(--muted); fon
 .caption b { color: var(--ink); font-weight: 700; }
 .oldref { display: flex; align-items: center; gap: .6rem; margin-top: .8rem; color: var(--faint); font-size: .72rem; }
 
-/* ── Tooltip ── */
+/* ── Tooltip (illustrative — the doc's content contract is normative) ── */
 #tip { position: fixed; z-index: 99; max-width: 17rem; padding: .45rem .65rem; background: var(--tip-bg); color: var(--tip-ink); border-radius: .45rem; font-size: .78rem; line-height: 1.35; pointer-events: none; opacity: 0; transition: opacity .1s; box-shadow: 0 4px 14px rgba(0,0,0,.25); }
 #tip.show { opacity: 1; }
 #tip .t-src { font-weight: 700; }
-#tip .t-cat { opacity: .75; font-size: .7rem; }
 
 /* ── Findings ── */
 .twocol { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
@@ -153,8 +146,6 @@ footer { margin-top: 3.5rem; padding-top: 1rem; border-top: 1px solid var(--line
   <h1>The segmented meter</h1>
   <p class="lede">One block per endorsement, grouped by candidate, on the same constant-width bar. Splits stack both candidates’ colors in one block, so the fractional count explains itself. Every decision is made — this page is the reference rendering of the final design. Real data from the 2026 primary; one synthetic race covers the no-majority case this cycle didn’t produce.</p>
 </header>
-
-<div class="controls" id="controls"></div>
 
 <section id="scan">
   <h2>The scan test</h2>
@@ -174,11 +165,11 @@ footer { margin-top: 3.5rem; padding-top: 1rem; border-top: 1px solid var(--line
     <div>
       <p class="eyebrow">What this fixes</p>
       <ul>
-        <li><b>The percentage is gone</b> — the count is countable, and the caption sits outside the pill, so the &lt;30% low-fill label guard retires with it.</li>
-        <li><b>Splits explain themselves</b> — a split is a visibly divided block, which is why the tally says 16½.</li>
-        <li><b>Every candidate appears</b>, not just the leader; the full field breakdown is the meter.</li>
-        <li><b>Inspectable</b> — each block carries its endorsement on hover/focus.</li>
-        <li><b>Non-majority races work</b> — no label inside the fill, so nothing breaks under 50%.</li>
+        <li><b>The percentage becomes a resting summary</b> — it still greets first inspection on desktop, but the count is countable, hover trades the number for the evidence, and touch skips it entirely.</li>
+        <li><b>Splits explain themselves</b> — a split is a visibly divided block, which is why the tally can say 21½.</li>
+        <li><b>Every endorsed candidate appears</b>, not just the leader; the field's endorsement weight is the meter. (A candidate with zero endorsements has no block — same as their absence from the tally today.)</li>
+        <li><b>Inspectable</b> — each block carries its endorsement in a tooltip (hover, or tap on touch).</li>
+        <li><b>Non-majority races work</b> — the amber field is made of real blocks, so nothing degrades under 50%.</li>
       </ul>
     </div>
     <div>
@@ -197,7 +188,7 @@ footer { margin-top: 3.5rem; padding-top: 1rem; border-top: 1px solid var(--line
 <footer id="foot"></footer>
 </div>
 
-<div id="tip" role="status"></div>
+<div id="tip"></div>
 
 <script>
 const RACES = [{"id": "us-house-7", "label": "CONGRESSIONAL DISTRICT 7 U.S. Representative", "candidates": {"us-house-7--david-w-blomstrom": "David W. Blomstrom", "us-house-7--pramila-jayapal": "Pramila Jayapal", "us-house-7--nirav-sheth": "Nirav Sheth", "us-house-7--gwen-kirkland": "Gwen Kirkland"}, "cells": [{"source": "32nd Legislative District Democrats", "category": "Democratic Party", "candidates": ["us-house-7--pramila-jayapal"]}, {"source": "34th Legislative District Democrats", "category": "Democratic Party", "candidates": ["us-house-7--pramila-jayapal"]}, {"source": "36th Legislative District Democrats", "category": "Democratic Party", "candidates": ["us-house-7--pramila-jayapal"]}, {"source": "37th Legislative District Democrats", "category": "Democratic Party", "candidates": ["us-house-7--pramila-jayapal"]}, {"source": "43rd Legislative District Democrats", "category": "Democratic Party", "candidates": ["us-house-7--pramila-jayapal"]}, {"source": "46th Legislative District Democrats", "category": "Democratic Party", "candidates": ["us-house-7--pramila-jayapal"]}, {"source": "Alliance for Gun Responsibility Victory Fund", "category": "Rights and representation", "candidates": ["us-house-7--pramila-jayapal"]}, {"source": "Fuse Washington", "category": "Progressive editorial and general", "candidates": ["us-house-7--pramila-jayapal"]}, {"source": "King County Democrats", "category": "Democratic Party", "candidates": ["us-house-7--pramila-jayapal"]}, {"source": "National Women's Political Caucus of Washington", "category": "Rights and representation", "candidates": ["us-house-7--pramila-jayapal"]}, {"source": "OneAmerica Votes", "category": "Rights and representation", "candidates": ["us-house-7--pramila-jayapal"]}, {"source": "SEIU 775", "category": "Labor", "candidates": ["us-house-7--pramila-jayapal"]}, {"source": "Sierra Club Washington State Chapter", "category": "Environment", "candidates": ["us-house-7--pramila-jayapal"]}, {"source": "The Stranger Election Control Board", "category": "Progressive editorial and general", "candidates": ["us-house-7--pramila-jayapal"]}, {"source": "The Urbanist Elections Committee", "category": "Progressive editorial and general", "candidates": []}, {"source": "Washington Education Association", "category": "Labor", "candidates": ["us-house-7--pramila-jayapal"]}, {"source": "Washington for Peace and Justice", "category": "Rights and representation", "candidates": ["us-house-7--pramila-jayapal"]}, {"source": "Washington State Building and Construction Trades Council", "category": "Labor", "candidates": ["us-house-7--pramila-jayapal"]}, {"source": "Washington State Labor Council, AFL-CIO", "category": "Labor", "candidates": ["us-house-7--pramila-jayapal"]}, {"source": "Washington State Stonewall Democrats", "category": "Democratic Party", "candidates": ["us-house-7--pramila-jayapal"]}]}, {"id": "seattle-city-council-5", "label": "Council District No. 5", "candidates": {"seattle-city-council-5--dimitri-georgakopoulos": "Dimitri Georgakopoulos", "seattle-city-council-5--silas-james": "Silas James", "seattle-city-council-5--julie-kang": "Julie Kang", "seattle-city-council-5--nilu-jenks": "Nilu Jenks"}, "cells": [{"source": "32nd Legislative District Democrats", "category": "Democratic Party", "candidates": ["seattle-city-council-5--julie-kang", "seattle-city-council-5--nilu-jenks"]}, {"source": "36th Legislative District Democrats", "category": "Democratic Party", "candidates": ["seattle-city-council-5--nilu-jenks"]}, {"source": "46th Legislative District Democrats", "category": "Democratic Party", "candidates": ["seattle-city-council-5--nilu-jenks"]}, {"source": "Alliance for Gun Responsibility Victory Fund", "category": "Rights and representation", "candidates": ["seattle-city-council-5--nilu-jenks"]}, {"source": "King County Democrats", "category": "Democratic Party", "candidates": ["seattle-city-council-5--nilu-jenks"]}, {"source": "National Women's Political Caucus of Washington", "category": "Rights and representation", "candidates": ["seattle-city-council-5--nilu-jenks", "seattle-city-council-5--julie-kang"]}, {"source": "OneAmerica Votes", "category": "Rights and representation", "candidates": ["seattle-city-council-5--nilu-jenks"]}, {"source": "PROTEC17", "category": "Labor", "candidates": ["seattle-city-council-5--nilu-jenks"]}, {"source": "Sage Leaders", "category": "Progressive editorial and general", "candidates": ["seattle-city-council-5--nilu-jenks"]}, {"source": "Seattle Gay News Editorial Board", "category": "Rights and representation", "candidates": ["seattle-city-council-5--nilu-jenks"]}, {"source": "SEIU 775", "category": "Labor", "candidates": ["seattle-city-council-5--nilu-jenks"]}, {"source": "SEIU 925", "category": "Labor", "candidates": ["seattle-city-council-5--nilu-jenks", "seattle-city-council-5--silas-james"]}, {"source": "Tech 4 Taxes", "category": "Progressive editorial and general", "candidates": ["seattle-city-council-5--nilu-jenks"]}, {"source": "The Stranger Election Control Board", "category": "Progressive editorial and general", "candidates": ["seattle-city-council-5--nilu-jenks"]}, {"source": "The Urbanist Elections Committee", "category": "Progressive editorial and general", "candidates": ["seattle-city-council-5--nilu-jenks"]}, {"source": "The Washington Bus", "category": "Progressive editorial and general", "candidates": ["seattle-city-council-5--nilu-jenks"]}, {"source": "Transit Riders Union", "category": "Transportation and urbanism", "candidates": ["seattle-city-council-5--nilu-jenks"]}, {"source": "UFCW 3000", "category": "Labor", "candidates": ["seattle-city-council-5--nilu-jenks"]}, {"source": "Washington Bikes", "category": "Transportation and urbanism", "candidates": ["seattle-city-council-5--nilu-jenks"]}, {"source": "Washington Conservation Action", "category": "Environment", "candidates": ["seattle-city-council-5--nilu-jenks"]}, {"source": "Washington for Peace and Justice", "category": "Rights and representation", "candidates": ["seattle-city-council-5--nilu-jenks"]}, {"source": "Washington State Stonewall Democrats", "category": "Democratic Party", "candidates": ["seattle-city-council-5--nilu-jenks"]}, {"source": "Washington Working Families Party", "category": "Progressive editorial and general", "candidates": ["seattle-city-council-5--nilu-jenks"]}]}, {"id": "king-county-council-2", "label": "Metropolitan King County Council District No. 2", "candidates": {"king-county-council-2--miriam-mboya": "Miriam Mboya", "king-county-council-2--toshiko-grace-hasegawa": "Toshiko Grace Hasegawa", "king-county-council-2--rebecca-salda-a": "Rebecca Salda\u00f1a"}, "cells": [{"source": "11th Legislative District Democrats", "category": "Democratic Party", "candidates": ["king-county-council-2--toshiko-grace-hasegawa"]}, {"source": "37th Legislative District Democrats", "category": "Democratic Party", "candidates": ["king-county-council-2--rebecca-salda-a"]}, {"source": "43rd Legislative District Democrats", "category": "Democratic Party", "candidates": ["king-county-council-2--rebecca-salda-a"]}, {"source": "46th Legislative District Democrats", "category": "Democratic Party", "candidates": ["king-county-council-2--rebecca-salda-a"]}, {"source": "Alliance for Gun Responsibility Victory Fund", "category": "Rights and representation", "candidates": ["king-county-council-2--rebecca-salda-a", "king-county-council-2--toshiko-grace-hasegawa"]}, {"source": "King County Democrats", "category": "Democratic Party", "candidates": ["king-county-council-2--rebecca-salda-a"]}, {"source": "MLK Labor", "category": "Labor", "candidates": ["king-county-council-2--rebecca-salda-a"]}, {"source": "National Women's Political Caucus of Washington", "category": "Rights and representation", "candidates": ["king-county-council-2--rebecca-salda-a", "king-county-council-2--toshiko-grace-hasegawa"]}, {"source": "PROTEC17", "category": "Labor", "candidates": ["king-county-council-2--rebecca-salda-a"]}, {"source": "SEIU 775", "category": "Labor", "candidates": ["king-county-council-2--rebecca-salda-a"]}, {"source": "SEIU 925", "category": "Labor", "candidates": ["king-county-council-2--rebecca-salda-a"]}, {"source": "Tech 4 Housing", "category": "Transportation and urbanism", "candidates": ["king-county-council-2--rebecca-salda-a"]}, {"source": "Tech 4 Taxes", "category": "Progressive editorial and general", "candidates": ["king-county-council-2--toshiko-grace-hasegawa", "king-county-council-2--rebecca-salda-a"]}, {"source": "The Stranger Election Control Board", "category": "Progressive editorial and general", "candidates": ["king-county-council-2--rebecca-salda-a"]}, {"source": "The Urbanist Elections Committee", "category": "Progressive editorial and general", "candidates": ["king-county-council-2--rebecca-salda-a"]}, {"source": "The Washington Bus", "category": "Progressive editorial and general", "candidates": ["king-county-council-2--rebecca-salda-a"]}, {"source": "Transit Riders Union", "category": "Transportation and urbanism", "candidates": ["king-county-council-2--toshiko-grace-hasegawa", "king-county-council-2--rebecca-salda-a"]}, {"source": "UFCW 3000", "category": "Labor", "candidates": ["king-county-council-2--rebecca-salda-a"]}, {"source": "Washington Bikes", "category": "Transportation and urbanism", "candidates": ["king-county-council-2--rebecca-salda-a"]}, {"source": "Washington Community Action Network", "category": "Progressive editorial and general", "candidates": ["king-county-council-2--rebecca-salda-a"]}, {"source": "Washington Conservation Action", "category": "Environment", "candidates": ["king-county-council-2--rebecca-salda-a"]}, {"source": "Washington for Peace and Justice", "category": "Rights and representation", "candidates": ["king-county-council-2--rebecca-salda-a"]}, {"source": "Washington Housing Alliance", "category": "Rights and representation", "candidates": ["king-county-council-2--rebecca-salda-a"]}, {"source": "Washington State Stonewall Democrats", "category": "Democratic Party", "candidates": ["king-county-council-2--rebecca-salda-a"]}]}, {"id": "ld-43-state-senator", "label": "State Senator", "candidates": {"ld-43-state-senator--hannah-sabio-howell": "Hannah Sabio-Howell", "ld-43-state-senator--heather-marie-wilson": "Heather-Marie Wilson", "ld-43-state-senator--jamie-pedersen": "Jamie Pedersen"}, "cells": [{"source": "43rd Legislative District Democrats", "category": "Democratic Party", "candidates": ["ld-43-state-senator--hannah-sabio-howell"]}, {"source": "AFT Washington", "category": "Labor", "candidates": ["ld-43-state-senator--jamie-pedersen", "ld-43-state-senator--hannah-sabio-howell"]}, {"source": "Alliance for Gun Responsibility Victory Fund", "category": "Rights and representation", "candidates": ["ld-43-state-senator--jamie-pedersen"]}, {"source": "King County Democrats", "category": "Democratic Party", "candidates": ["ld-43-state-senator--hannah-sabio-howell"]}, {"source": "National Women's Political Caucus of Washington", "category": "Rights and representation", "candidates": ["ld-43-state-senator--hannah-sabio-howell"]}, {"source": "Sage Leaders", "category": "Progressive editorial and general", "candidates": ["ld-43-state-senator--hannah-sabio-howell"]}, {"source": "SEIU 775", "category": "Labor", "candidates": ["ld-43-state-senator--jamie-pedersen"]}, {"source": "SEIU 925", "category": "Labor", "candidates": ["ld-43-state-senator--jamie-pedersen"]}, {"source": "Sierra Club Washington State Chapter", "category": "Environment", "candidates": ["ld-43-state-senator--jamie-pedersen"]}, {"source": "Tech 4 Taxes", "category": "Progressive editorial and general", "candidates": ["ld-43-state-senator--hannah-sabio-howell"]}, {"source": "The Stranger Election Control Board", "category": "Progressive editorial and general", "candidates": ["ld-43-state-senator--jamie-pedersen"]}, {"source": "The Urbanist Elections Committee", "category": "Progressive editorial and general", "candidates": ["ld-43-state-senator--hannah-sabio-howell"]}, {"source": "The Washington Bus", "category": "Progressive editorial and general", "candidates": ["ld-43-state-senator--hannah-sabio-howell"]}, {"source": "UFCW 3000", "category": "Labor", "candidates": ["ld-43-state-senator--jamie-pedersen"]}, {"source": "Washington Bikes", "category": "Transportation and urbanism", "candidates": ["ld-43-state-senator--jamie-pedersen"]}, {"source": "Washington Conservation Action", "category": "Environment", "candidates": ["ld-43-state-senator--jamie-pedersen"]}, {"source": "Washington Education Association", "category": "Labor", "candidates": ["ld-43-state-senator--jamie-pedersen"]}, {"source": "Washington for Peace and Justice", "category": "Rights and representation", "candidates": ["ld-43-state-senator--hannah-sabio-howell"]}, {"source": "Washington Housing Alliance", "category": "Rights and representation", "candidates": ["ld-43-state-senator--jamie-pedersen"]}, {"source": "Washington State Building and Construction Trades Council", "category": "Labor", "candidates": ["ld-43-state-senator--jamie-pedersen"]}, {"source": "Washington State Labor Council, AFL-CIO", "category": "Labor", "candidates": ["ld-43-state-senator--jamie-pedersen"]}, {"source": "Washington State Stonewall Democrats", "category": "Democratic Party", "candidates": ["ld-43-state-senator--jamie-pedersen", "ld-43-state-senator--hannah-sabio-howell"]}, {"source": "Washington Working Families Party", "category": "Progressive editorial and general", "candidates": ["ld-43-state-senator--hannah-sabio-howell"]}]}, {"id": "ld-46-state-representative-1", "label": "State Representative Pos. 1", "candidates": {"ld-46-state-representative-1--gerry-pollet": "Gerry Pollet", "ld-46-state-representative-1--ron-davis": "Ron Davis", "ld-46-state-representative-1--will-dreher": "Will Dreher"}, "cells": [{"source": "46th Legislative District Democrats", "category": "Democratic Party", "candidates": []}, {"source": "AFT Washington", "category": "Labor", "candidates": ["ld-46-state-representative-1--gerry-pollet"]}, {"source": "Alliance for Gun Responsibility Victory Fund", "category": "Rights and representation", "candidates": ["ld-46-state-representative-1--gerry-pollet"]}, {"source": "Seattle Subway", "category": "Transportation and urbanism", "candidates": ["ld-46-state-representative-1--ron-davis"]}, {"source": "SEIU 775", "category": "Labor", "candidates": ["ld-46-state-representative-1--gerry-pollet"]}, {"source": "SEIU 925", "category": "Labor", "candidates": ["ld-46-state-representative-1--gerry-pollet"]}, {"source": "Sierra Club Washington State Chapter", "category": "Environment", "candidates": ["ld-46-state-representative-1--gerry-pollet"]}, {"source": "Tech 4 Housing", "category": "Transportation and urbanism", "candidates": ["ld-46-state-representative-1--ron-davis"]}, {"source": "Tech 4 Taxes", "category": "Progressive editorial and general", "candidates": ["ld-46-state-representative-1--ron-davis"]}, {"source": "The Stranger Election Control Board", "category": "Progressive editorial and general", "candidates": ["ld-46-state-representative-1--will-dreher"]}, {"source": "The Urbanist Elections Committee", "category": "Progressive editorial and general", "candidates": ["ld-46-state-representative-1--ron-davis"]}, {"source": "UFCW 3000", "category": "Labor", "candidates": ["ld-46-state-representative-1--gerry-pollet"]}, {"source": "Washington Bikes", "category": "Transportation and urbanism", "candidates": ["ld-46-state-representative-1--ron-davis"]}, {"source": "Washington Conservation Action", "category": "Environment", "candidates": ["ld-46-state-representative-1--gerry-pollet"]}, {"source": "Washington Education Association", "category": "Labor", "candidates": ["ld-46-state-representative-1--gerry-pollet"]}, {"source": "Washington State Labor Council, AFL-CIO", "category": "Labor", "candidates": ["ld-46-state-representative-1--gerry-pollet"]}, {"source": "Washington State Stonewall Democrats", "category": "Democratic Party", "candidates": ["ld-46-state-representative-1--ron-davis"]}]}, {"id": "supreme-court-justice-3", "label": "Justice Position #03", "candidates": {"supreme-court-justice-3--jaime-michelle-hawk": "Jaime Michelle Hawk", "supreme-court-justice-3--david-stevens": "David Stevens", "supreme-court-justice-3--mike-diaz": "Mike Diaz"}, "cells": [{"source": "11th Legislative District Democrats", "category": "Democratic Party", "candidates": ["supreme-court-justice-3--jaime-michelle-hawk"]}, {"source": "32nd Legislative District Democrats", "category": "Democratic Party", "candidates": ["supreme-court-justice-3--jaime-michelle-hawk", "supreme-court-justice-3--mike-diaz"]}, {"source": "34th Legislative District Democrats", "category": "Democratic Party", "candidates": ["supreme-court-justice-3--mike-diaz"]}, {"source": "36th Legislative District Democrats", "category": "Democratic Party", "candidates": ["supreme-court-justice-3--mike-diaz", "supreme-court-justice-3--jaime-michelle-hawk"]}, {"source": "37th Legislative District Democrats", "category": "Democratic Party", "candidates": ["supreme-court-justice-3--mike-diaz"]}, {"source": "43rd Legislative District Democrats", "category": "Democratic Party", "candidates": ["supreme-court-justice-3--jaime-michelle-hawk", "supreme-court-justice-3--mike-diaz"]}, {"source": "46th Legislative District Democrats", "category": "Democratic Party", "candidates": ["supreme-court-justice-3--jaime-michelle-hawk"]}, {"source": "King County Democrats", "category": "Democratic Party", "candidates": ["supreme-court-justice-3--mike-diaz"]}, {"source": "National Women's Political Caucus of Washington", "category": "Rights and representation", "candidates": ["supreme-court-justice-3--jaime-michelle-hawk"]}, {"source": "Planned Parenthood Alliance Advocates", "category": "Rights and representation", "candidates": ["supreme-court-justice-3--mike-diaz"]}, {"source": "SEIU 775", "category": "Labor", "candidates": ["supreme-court-justice-3--jaime-michelle-hawk"]}, {"source": "SEIU 925", "category": "Labor", "candidates": ["supreme-court-justice-3--jaime-michelle-hawk"]}, {"source": "The Stranger Election Control Board", "category": "Progressive editorial and general", "candidates": ["supreme-court-justice-3--mike-diaz"]}, {"source": "The Urbanist Elections Committee", "category": "Progressive editorial and general", "candidates": ["supreme-court-justice-3--jaime-michelle-hawk"]}, {"source": "Washington Conservation Action", "category": "Environment", "candidates": ["supreme-court-justice-3--mike-diaz"]}, {"source": "Washington Education Association", "category": "Labor", "candidates": ["supreme-court-justice-3--mike-diaz"]}, {"source": "Washington for Peace and Justice", "category": "Rights and representation", "candidates": ["supreme-court-justice-3--jaime-michelle-hawk"]}, {"source": "Washington State Labor Council, AFL-CIO", "category": "Labor", "candidates": ["supreme-court-justice-3--mike-diaz", "supreme-court-justice-3--jaime-michelle-hawk"]}, {"source": "Washington State Stonewall Democrats", "category": "Democratic Party", "candidates": ["supreme-court-justice-3--jaime-michelle-hawk", "supreme-court-justice-3--mike-diaz"]}]}, {"id": "seattle-municipal-court-judge-5", "label": "Municipal Court Judge Position No. 5", "candidates": {"seattle-municipal-court-judge-5--lindsay-calkins": "Lindsay Calkins", "seattle-municipal-court-judge-5--garmon-newsom": "Garmon Newsom", "seattle-municipal-court-judge-5--gabe-rothstein": "Gabe Rothstein"}, "cells": [{"source": "32nd Legislative District Democrats", "category": "Democratic Party", "candidates": ["seattle-municipal-court-judge-5--gabe-rothstein", "seattle-municipal-court-judge-5--garmon-newsom"]}, {"source": "34th Legislative District Democrats", "category": "Democratic Party", "candidates": ["seattle-municipal-court-judge-5--gabe-rothstein"]}, {"source": "37th Legislative District Democrats", "category": "Democratic Party", "candidates": ["seattle-municipal-court-judge-5--gabe-rothstein"]}, {"source": "43rd Legislative District Democrats", "category": "Democratic Party", "candidates": ["seattle-municipal-court-judge-5--gabe-rothstein"]}, {"source": "46th Legislative District Democrats", "category": "Democratic Party", "candidates": ["seattle-municipal-court-judge-5--gabe-rothstein"]}, {"source": "King County Democrats", "category": "Democratic Party", "candidates": ["seattle-municipal-court-judge-5--gabe-rothstein"]}, {"source": "SEIU 925", "category": "Labor", "candidates": ["seattle-municipal-court-judge-5--gabe-rothstein"]}, {"source": "The Stranger Election Control Board", "category": "Progressive editorial and general", "candidates": ["seattle-municipal-court-judge-5--gabe-rothstein"]}, {"source": "Washington State Stonewall Democrats", "category": "Democratic Party", "candidates": ["seattle-municipal-court-judge-5--gabe-rothstein"]}]}, {"id": "hypothetical-no-majority", "label": "Hypothetical \u2014 no majority (synthetic data)", "synthetic": true, "candidates": {"h--avery": "Jordan Avery", "h--brooks": "Sam Brooks", "h--cho": "Dana Cho"}, "cells": [{"source": "Example org A", "category": "Synthetic", "candidates": ["h--avery"]}, {"source": "Example org B", "category": "Synthetic", "candidates": ["h--avery"]}, {"source": "Example org C", "category": "Synthetic", "candidates": ["h--avery"]}, {"source": "Example org D", "category": "Synthetic", "candidates": ["h--avery"]}, {"source": "Example org E", "category": "Synthetic", "candidates": ["h--avery"]}, {"source": "Example org F", "category": "Synthetic", "candidates": ["h--brooks"]}, {"source": "Example org G", "category": "Synthetic", "candidates": ["h--brooks"]}, {"source": "Example org H", "category": "Synthetic", "candidates": ["h--brooks"]}, {"source": "Example org I", "category": "Synthetic", "candidates": ["h--brooks"]}, {"source": "Example org J", "category": "Synthetic", "candidates": ["h--cho"]}, {"source": "Example org K", "category": "Synthetic", "candidates": ["h--cho"]}, {"source": "Example org L", "category": "Synthetic", "candidates": ["h--cho"]}, {"source": "Example org M", "category": "Synthetic", "candidates": ["h--avery", "h--brooks"]}]}];
@@ -213,34 +204,23 @@ const LABELS = {
   "hypothetical-no-majority": ["Hypothetical race", "synthetic — no majority"],
 };
 
-/* Palette (validated: dataviz six-checks, light surface #fbfaf6).
-   Decided 2026-08-04: green = majority, amber = no majority (matching the
-   current meter's semantic), amber variations = tie. Trailing hues carry no
-   status meaning. */
-const MAJORITY_GREENS = {
-  teal: "#087f73",     // the site's own meter teal
-  adjusted: "#0a8f67", // nudged greener/more chromatic to clear the palette validator's chroma floor
-};
+/* Palette, ratified 2026-08-04. Majority = the site's own teal (base.css
+   --teal), amber = no majority and amber variations = tie (base.css --amber,
+   v1's semantic unchanged). Trailing hues carry no status meaning and are
+   recessive by intent. Pools that run out continue by stepping toward the
+   track, so two candidates in one meter never share a swatch. */
 const COLORS = {
-  majority: "#0a8f67",
-  noMajority: "#d19000",
-  tie: ["#d19000", "#8a5d12"],
+  majority: "#087f73",
+  noMajority: "#d99000",
+  tie: ["#d99000", "#8a5d12"],
   muted: ["#7d95ad", "#a99e8a", "#a08296"],
-  distinct: ["#3d6dbd", "#b04f8c", "#b06026"],
-  /* monotonic recede: each further-trailing candidate steps lighter, sinking
-     toward the track — the long tail of loss reads in the fade itself */
-  slate: ["#7e93a8", "#9fb0c0", "#bfcad5"],
 };
+const overflow = (base, step) =>
+  `color-mix(in srgb, ${base} ${Math.max(30, 100 - 22 * step)}%, var(--track))`;
 
-/* Locked 2026-08-04: grouped arrangement, stacked splits, count captions.
-   Candidate color treatment is the one remaining exploration. */
+/* Every design control is decided; the only interactive state left is the
+   per-race candidate-context preview. */
 const state = {
-  split: "horizontal",
-  arrange: "grouped",
-  trailing: "muted",       // decided: distinguishable yet obviously less relevant
-  green: "teal",           // decided: the site's own teal — continuity with the vote you feel good about
-  boundary: "hl-dark",     // decided: hairline, darker than fill
-  caption: "count",
   ctx: {},                 // raceId -> candidateId
 };
 
@@ -266,18 +246,22 @@ function standings(race) {
 }
 
 /* ── color assignment ── */
-function candidateColors(race, st) {
+function candidateColors(st) {
   const out = {};
   let trailIdx = 0, tieIdx = 0;
   st.rows.forEach(row => {
     const isLeader = Math.abs(row.units - st.rows[0].units) < 1e-9;
     let c;
-    if (isLeader && st.isTie) c = COLORS.tie[Math.min(tieIdx++, COLORS.tie.length - 1)];
-    else if (isLeader && st.hasMajority) c = MAJORITY_GREENS[state.green];
+    if (isLeader && st.isTie) {
+      const i = tieIdx++;
+      c = i < COLORS.tie.length ? COLORS.tie[i]
+        : overflow(COLORS.tie[COLORS.tie.length - 1], i - COLORS.tie.length + 1);
+    } else if (isLeader && st.hasMajority) c = COLORS.majority;
     else if (isLeader) c = COLORS.noMajority;
     else {
-      const pool = COLORS[state.trailing];
-      c = pool[trailIdx++ % pool.length];
+      const i = trailIdx++;
+      c = i < COLORS.muted.length ? COLORS.muted[i]
+        : overflow(COLORS.muted[i % COLORS.muted.length], Math.floor(i / COLORS.muted.length));
     }
     out[row.cid] = c;
   });
@@ -293,18 +277,6 @@ function layout(race, st) {
   const totalUnits = endorsing.length;
   const order = new Map(st.rows.map((r, i) => [r.cid, i]));
   const blocks = [];
-
-  if (state.arrange === "source") {
-    for (const cell of endorsing) {
-      if (cell.candidates.length === 1) {
-        blocks.push({ type: "solid", w: 1, cell, cid: cell.candidates[0] });
-      } else {
-        const [a, b] = [...cell.candidates].sort((x, y) => order.get(x) - order.get(y));
-        blocks.push({ type: "merged", w: 1, cell, ca: a, cb: b });
-      }
-    }
-    return { blocks, totalUnits };
-  }
 
   // grouped: solids per run; each split is one divided block, placed at the
   // boundary after the higher-ranked candidate's run
@@ -328,30 +300,40 @@ function layout(race, st) {
 }
 
 /* ── formatting ── */
+/* Illustrative formatter: this data only produces halves, which are exact in
+   floating point. The real caption must format exact rationals through the
+   shared percentage/label mirrors (docs/METER_V2.md, Implementation notes). */
 function units(u) {
   const whole = Math.floor(u + 1e-9);
-  const frac = u - whole;
-  if (frac > 0.74) return String(whole + 1);
-  if (frac > 0.4) return (whole ? whole : "") + "½";
-  if (frac > 0.2) return (whole ? whole : "") + (frac > 0.3 ? "⅓" : "¼");
-  return String(whole);
+  return u - whole > 0.25 ? (whole ? whole : "") + "½" : String(whole);
 }
-function decisionText(cell, race) {
-  if (!cell.candidates.length) return "No endorsement";
+function decisionText(cell, race, order) {
   if (cell.candidates.length === 1) return "Endorsed " + (race.candidates[cell.candidates[0]] || cell.candidates[0]);
-  return "Split: " + cell.candidates.map(c => race.candidates[c] || c).join(" + ") + " — ½ each";
+  const named = [...cell.candidates].sort((x, y) => (order?.get(x) ?? 0) - (order?.get(y) ?? 0));
+  const share = cell.candidates.length === 2 ? "½" : "1/" + cell.candidates.length;
+  return "Split: " + named.map(c => race.candidates[c] || c).join(" + ") + ` — ${share} each`;
 }
 
 /* ── meter DOM ── */
 function meterEl(race, st, opts = {}) {
-  const { blocks, totalUnits } = layout(race, st);
-  const colors = candidateColors(race, st);
-  const ang = state.split === "horizontal" ? "180deg" : "90deg";
   const ctxCid = state.ctx[race.id];
   const m = document.createElement("div");
   m.className = "segmeter" + (opts.card ? " size-card" : "") + (ctxCid ? " hasctx" : "");
-  const leader = st.rows[0];
+  // One tab stop per meter: the meter itself. Focus reveals the seams
+  // (:focus-within); the blocks are presentational to AT — role="img" makes
+  // them so — and the standings label carries the whole story.
+  m.tabIndex = 0;
   m.setAttribute("role", "img");
+  if (!st.rows.length) {
+    // The N/A state: no endorsements (or a lens that leaves the race
+    // unscored) renders the empty track and v1's muted "N/A".
+    m.classList.add("segmeter-na");
+    m.setAttribute("aria-label", "No endorsements recorded");
+    m.innerHTML = `<div class="pct na" aria-hidden="true">N/A</div>`;
+    return m;
+  }
+  const { blocks, totalUnits } = layout(race, st);
+  const colors = candidateColors(st);
   m.setAttribute("aria-label",
     st.rows.map(r => `${r.name} ${units(r.units)} of ${units(st.total)} endorsements`).join("; "));
   // Dividers stay quiet everywhere: between same-candidate neighbors, a soft
@@ -359,36 +341,24 @@ function meterEl(race, st, opts = {}) {
   // the two facing colors — the hue change itself is the separator. "Groove"
   // mixes the seam darker (one scored slab), "grout" mixes it lighter
   // (tiles on the page), "hairline" is grout at 1px.
-  // Hairline seams, minimal yet apparent: a step off the fill, not a line on it.
-  // Lighter vs darker than the fill is the remaining judgment call.
-  const dark = state.boundary === "hl-dark";
-  const tint = c => dark
-    ? `color-mix(in srgb, ${c} 88%, #1a2530)`
-    : `color-mix(in srgb, ${c} 84%, var(--gapcol))`;
-  const bridge = (a, b) => {
-    const avg = `color-mix(in srgb, ${a} 50%, ${b} 50%)`;
-    return dark
-      ? `color-mix(in srgb, ${avg} 86%, #1a2530)`
-      : `color-mix(in srgb, ${avg} 82%, var(--gapcol))`;
-  };
-  const facing = (b, side) => {
+  // Hairline seams, minimal yet apparent: a step off the fill, not a line on
+  // it, mixed darker than the fill (ratified). Same-candidate seams tint the
+  // fill; cross-candidate seams bridge the two facing colors.
+  const tint = c => `color-mix(in srgb, ${c} 88%, #1a2530)`;
+  const bridge = (a, b) =>
+    `color-mix(in srgb, color-mix(in srgb, ${a} 50%, ${b} 50%) 86%, #1a2530)`;
+  const facing = b => {
     if (!b) return [null, null];
     if (b.type === "solid") return [b.cid, b.cid];
-    if (b.type === "merged") {
-      if (state.split === "horizontal") return [b.ca, b.cb];
-      return side === "left" ? [b.ca, b.ca] : [b.cb, b.cb];
-    }
-    return [null, null];
+    return [b.ca, b.cb];
   };
+  const order = new Map(st.rows.map((r, i) => [r.cid, i]));
   let prev = null;
   for (let bi = 0; bi < blocks.length; bi++) {
     const b = blocks[bi];
     const el = document.createElement("div");
     el.className = "blk " + (b.type === "merged" ? "merged" : b.type);
     el.style.width = (100 * b.w / totalUnits) + "%";
-    el.style.setProperty("--ang", ang);
-    el.dataset.cell = b.cell.idx;
-    el.tabIndex = 0;
     if (b.type === "solid") {
       el.style.setProperty("--c", colors[b.cid]);
       el.dataset.cands = b.cid;
@@ -420,7 +390,7 @@ function meterEl(race, st, opts = {}) {
       el.innerHTML = `<span class="half top"></span><span class="half bot"></span>`;
     }
     if (prev) {
-      const pf = facing(prev, "right"), cf = facing(b, "left");
+      const pf = facing(prev), cf = facing(b);
       const halves = [0, 1].map(h => {
         if (pf[h] && pf[h] === cf[h]) return tint(colors[pf[h]]);
         if (pf[h] && cf[h]) return bridge(colors[pf[h]], colors[cf[h]]);
@@ -430,7 +400,8 @@ function meterEl(race, st, opts = {}) {
       else el.style.setProperty("--seamimg",
         `linear-gradient(180deg, ${halves[0]} 0 50%, ${halves[1]} 50% 100%)`);
     }
-    el.setAttribute("aria-label", b.cell.source + ": " + decisionText(b.cell, race));
+    el.dataset.src = b.cell.source;
+    el.dataset.dec = decisionText(b.cell, race, order);
     m.appendChild(el);
     prev = b;
   }
@@ -442,9 +413,15 @@ function meterEl(race, st, opts = {}) {
   return m;
 }
 
-function oldMeterEl(race, st) {
+function oldMeterEl(st) {
   const pct = st.sharePct;
   const el = document.createElement("div");
+  if (pct === null) {
+    el.className = "oldmeter nomaj";
+    el.style.setProperty("--fill", "0%");
+    el.innerHTML = "<strong style='color:var(--muted)'>N/A</strong>";
+    return el;
+  }
   const noMaj = !st.hasMajority;
   el.className = "oldmeter" + (noMaj ? " nomaj" : "") + (pct < 30 ? " lowfill" : "");
   el.style.setProperty("--fill", pct + "%");
@@ -453,44 +430,18 @@ function oldMeterEl(race, st) {
   return el;
 }
 
-function captionEl(race, st) {
+function captionEl(st) {
   const p = document.createElement("p");
   p.className = "caption";
+  if (!st.rows.length) {
+    p.textContent = "No endorsements recorded";
+    return p;
+  }
   const leader = st.rows[0];
-  if (state.caption === "none") return p;
-  if (state.caption === "percent") {
-    p.innerHTML = `<b>${st.sharePct}%</b> — ${leader.name}` + (st.isTie ? " (tied)" : "");
-  } else {
-    const who = st.isTie ? st.rows.filter(r => Math.abs(r.units - leader.units) < 1e-9).map(r => r.name).join(" / ") : leader.name;
-    p.innerHTML = `<b>${who}</b> — ${units(leader.units)} of ${units(st.total)} endorsements` +
-      (st.isTie ? " (tied)" : "");
-  }
+  const who = st.isTie ? st.rows.filter(r => Math.abs(r.units - leader.units) < 1e-9).map(r => r.name).join(" / ") : leader.name;
+  p.innerHTML = `<b>${who}</b> — ${units(leader.units)} of ${units(st.total)} endorsements` +
+    (st.isTie ? " (tied)" : "");
   return p;
-}
-
-/* ── controls ── */
-const CTLS = [
-];
-function renderControls() {
-  const host = document.getElementById("controls");
-  host.innerHTML = "";
-  host.style.display = CTLS.length ? "" : "none";
-  for (const [label, key, opts] of CTLS) {
-    const wrap = document.createElement("div");
-    wrap.className = "ctl";
-    wrap.innerHTML = `<span>${label}</span>`;
-    const seg = document.createElement("div");
-    seg.className = "seg";
-    for (const [val, text] of opts) {
-      const b = document.createElement("button");
-      b.textContent = text;
-      b.setAttribute("aria-pressed", String(state[key] === val));
-      b.onclick = () => { state[key] = val; renderAll(); };
-      seg.appendChild(b);
-    }
-    wrap.appendChild(seg);
-    host.appendChild(wrap);
-  }
 }
 
 /* ── sections ── */
@@ -510,7 +461,7 @@ function renderScan() {
     lab.className = "rlabel";
     lab.innerHTML = big + "<small>" + small + "</small>";
     row.appendChild(lab);
-    row.appendChild(oldMeterEl(race, st));
+    row.appendChild(oldMeterEl(st));
     row.appendChild(meterEl(race, st, { card: true }));
     host.appendChild(row);
   }
@@ -521,7 +472,7 @@ function renderCards() {
   host.innerHTML = "";
   for (const race of RACES) {
     const st = standings(race);
-    const colors = candidateColors(race, st);
+    const colors = candidateColors(st);
     const card = document.createElement("div");
     card.className = "racecard";
     const [big, small] = LABELS[race.id] || [race.label, ""];
@@ -551,13 +502,13 @@ function renderCards() {
     const mr = document.createElement("div");
     mr.className = "meterrow";
     mr.appendChild(meterEl(race, st));
-    mr.appendChild(captionEl(race, st));
+    mr.appendChild(captionEl(st));
     card.appendChild(mr);
 
     const oldref = document.createElement("div");
     oldref.className = "oldref";
     oldref.appendChild(document.createTextNode("current meter:"));
-    oldref.appendChild(oldMeterEl(race, st));
+    oldref.appendChild(oldMeterEl(st));
     card.appendChild(oldref);
 
     host.appendChild(card);
@@ -568,23 +519,23 @@ function renderFoot() {
   document.getElementById("foot").innerHTML =
     "Data: wa-2026-primary canonical dataset (comparison-role sources excluded, matching the site’s tally; " +
     "declining sources excluded per the Aug 4 denominator decision). The no-majority race is synthetic — this " +
-    "cycle produced none. Status colors (green majority, amber tie / no-majority) validated with the dataviz " +
-    "six-checks on the site’s paper surface; the “Muted” trailing set is recessive by intent and relies on " +
-    "grouping, dividers, and the legend for identity.";
+    "cycle produced none. Colors: the site’s own teal and amber were retained for continuity, knowingly " +
+    "sitting a step below the dataviz palette validator’s categorical chroma floor; the “Muted” trailing set " +
+    "is recessive by intent. Identity is never carried by color alone — grouping, dividers, chips, captions, " +
+    "and tooltips carry it in text.";
 }
 
-function renderAll() { renderControls(); renderScan(); renderCards(); renderFoot(); }
+function renderAll() { renderScan(); renderCards(); renderFoot(); }
 
 /* ── tooltip + hover linking ── */
 const tip = document.getElementById("tip");
 function showTip(el) {
-  const raceCard = el.closest(".segmeter");
-  const cellIdx = el.dataset.cell;
-  // find race by walking DOM order: store on element instead
-  const info = el.getAttribute("aria-label") || "";
-  const [src, rest] = info.split(/: (.+)/s);
-  tip.innerHTML = `<div class="t-src">${src}</div><div>${rest || ""}</div>`;
+  if (!el.dataset.src) return;
+  tip.innerHTML = `<div class="t-src"></div><div></div>`;
+  tip.firstChild.textContent = el.dataset.src;
+  tip.lastChild.textContent = el.dataset.dec;
   tip.classList.add("show");
+  tip.style.left = "8px";
   const r = el.getBoundingClientRect();
   const tr = tip.getBoundingClientRect();
   let x = Math.min(Math.max(8, r.left + r.width / 2 - tr.width / 2), innerWidth - tr.width - 8);
@@ -592,19 +543,13 @@ function showTip(el) {
   if (y < 8) y = r.bottom + 8;
   tip.style.left = x + "px";
   tip.style.top = y + "px";
-  // link both halves of the same split
-  if (raceCard) {
-    raceCard.querySelectorAll(`[data-cell="${cellIdx}"]`).forEach(n => n.classList.add("linked"));
-  }
 }
-function hideTip(el) {
+function hideTip() {
   tip.classList.remove("show");
-  document.querySelectorAll(".blk.linked").forEach(n => n.classList.remove("linked"));
 }
 document.addEventListener("pointerover", e => { const b = e.target.closest(".blk"); if (b) showTip(b); });
-document.addEventListener("pointerout", e => { const b = e.target.closest(".blk"); if (b) hideTip(b); });
-document.addEventListener("focusin", e => { const b = e.target.closest(".blk"); if (b) showTip(b); });
-document.addEventListener("focusout", e => { const b = e.target.closest(".blk"); if (b) hideTip(b); });
+document.addEventListener("pointerout", e => { const b = e.target.closest(".blk"); if (b) hideTip(); });
 
 renderAll();
 </script>
+</html>
