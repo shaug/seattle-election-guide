@@ -285,7 +285,18 @@ class PublicationCategoryAnalysis(PublicationModel):
 
 
 class PublicationRace(PublicationModel):
-    id: str
+    id: str = Field(pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+    """A slug, because issue #136 made it an address.
+
+    A race id was an HTML id and a URL fragment, where any value is inert. It is
+    now a directory name under the staged archive and a segment of the race
+    page's public URL, so it is constrained the same way every other identifier
+    the site builds a path from already is: `PublicationSource.id` below, and
+    `PublishedElection.election_id` in `hosting/models.py`, which
+    `hosting/pages.py` joins into `e/<election_id>/`. Enforcing it here is what
+    lets `rendering/shell.py`'s `race_page_path` interpolate the value without
+    escaping it.
+    """
     section_id: str
     section_label: str
     jurisdiction_id: str

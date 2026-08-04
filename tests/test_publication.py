@@ -209,6 +209,15 @@ def test_bundle_is_deterministic_reconstructable_and_complete(tmp_path: Path) ->
     with pytest.raises(ValidationError, match="source categories must match"):
         PublicationViewModel.model_validate(mutated.model_dump(mode="json"))
 
+    # A race id is a directory name in the staged archive and a segment of the
+    # race page's public URL (issue #136), so it is held to the same slug
+    # pattern `PublicationSource.id` and `PublishedElection.election_id` carry.
+    for bad_id in ("../escape", "Has Spaces", "UPPER", "trailing-"):
+        mutated = first.view_model.model_copy(deep=True)
+        mutated.sections[0].races[0].id = bad_id
+        with pytest.raises(ValidationError, match="string_pattern_mismatch"):
+            PublicationViewModel.model_validate(mutated.model_dump(mode="json"))
+
     mutated = first.view_model.model_copy(deep=True)
     mutated_target = next(
         race for section in mutated.sections for race in section.races if race.id == RACE_ID
