@@ -197,6 +197,15 @@ def render_sources_document(
     production; this only matters for a caller (e.g. a test) that renders the
     page without it.
     """
+    # The sources editor renders every source's own receipt — in the tree and
+    # in the coverage-gap rows — so this is the renderer that checks them, the
+    # same way the guide checks the links it renders itself. The guide checks
+    # them today as well; issue #136 moves the guide's evidence rows onto the
+    # race pages, and this is the check that keeps the sources page covered
+    # once it does.
+    for source in view_model.sources:
+        _require_web_url(source.evidence_url)
+
     environment = template_environment()
     template = environment.get_template("sources.html.j2")
     stylesheet = page_stylesheet("sources")
