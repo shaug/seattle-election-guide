@@ -5,13 +5,16 @@
 
 import assert from 'node:assert/strict';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
-import { join, relative, sep } from 'node:path';
+import { join, sep } from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 
 import { assertModuleGuard, MODULE_KINDS, moduleNames } from './support/module-guards.mjs';
 
 const DOCUMENT = 'docs/FRONTEND.md';
+
+/** This directory, resolved once. */
+const TESTS_DIR = fileURLToPath(new URL('.', import.meta.url));
 
 test('every client module declares which guard tier it belongs to', () => {
   assert.deepEqual(
@@ -30,7 +33,7 @@ test('the guard holds for every client module, and every module is tested', () =
   for (const name of moduleNames()) {
     const testName = name.replace(/\.mjs$/, '.test.mjs');
     assert.ok(
-      existsSync(fileURLToPath(new URL(`./${testName}`, import.meta.url))),
+      existsSync(join(TESTS_DIR, testName)),
       `${name} has no tests/js/${testName}. Every module is tested in Node, and its test ` +
         `carries the shared guard (${DOCUMENT} § Testing).`,
     );
@@ -111,18 +114,19 @@ function importedPackages(source) {
 
 /** Every `.mjs` under tests/js, at any depth, as a path relative to it. */
 function sweptFiles() {
-  const here = fileURLToPath(new URL('.', import.meta.url));
-  return readdirSync(here, { recursive: true, withFileTypes: true })
-    .filter((entry) => entry.isFile() && entry.name.endsWith('.mjs'))
-    .map((entry) => relative(here, join(entry.parentPath, entry.name)).split(sep).join('/'))
-    .filter((name) => name !== DOM_INSTALLER)
+  // A recursive `readdirSync` already yields paths relative to the directory it
+  // was given, so nothing here needs to build an absolute path and take it apart
+  // again. Separators are normalized because the comparison against
+  // DOM_INSTALLER is a posix-shaped literal.
+  return readdirSync(TESTS_DIR, { recursive: true })
+    .map((name) => name.split(sep).join('/'))
+    .filter((name) => name.endsWith('.mjs') && name !== DOM_INSTALLER)
     .sort();
 }
 
 test('every file that installs a DOM is the one installer', () => {
-  const here = fileURLToPath(new URL('.', import.meta.url));
   const offenders = sweptFiles().filter((name) =>
-    importedPackages(readFileSync(here + name, 'utf8')).includes(DOM_PACKAGE),
+    importedPackages(readFileSync(join(TESTS_DIR, name), 'utf8')).includes(DOM_PACKAGE),
   );
 
   assert.deepEqual(
@@ -145,7 +149,7 @@ test('the DOM sweep reaches as deep as the test runner does', () => {
   assert.ok(swept.every((name) => name.endsWith('.mjs')));
   assert.ok(!swept.includes(DOM_INSTALLER), 'the one installer must be the one exemption');
   // Every file the suite runs is a file the sweep read.
-  for (const name of readdirSync(fileURLToPath(new URL('.', import.meta.url)))) {
+  for (const name of readdirSync(TESTS_DIR)) {
     if (name.endsWith('.test.mjs')) assert.ok(swept.includes(name), `${name} was not swept`);
   }
 });
