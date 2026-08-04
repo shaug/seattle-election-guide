@@ -229,10 +229,10 @@ test('a narrowed selection rescores the race and says what it is counting', () =
 
   assert.equal(document.documentElement.classList.contains('lens-personalized'), true);
   assert.equal(document.querySelector('[data-lens-result] h3').textContent, 'Blaise Pascal');
-  assert.equal(
-    document.querySelector('[data-lens-context] .support-full').textContent,
-    'Based on 1 of 1 selected sources',
-  );
+  // The headline states no count: this candidate's endorsing sources are the
+  // rows listed directly below it, so a caption naming how many there are would
+  // restate the list. The strip is what says what is being counted.
+  assert.equal(document.querySelector('[data-lens-context] .support-line'), null);
   assert.equal(
     document.querySelector('[data-lens-banner-status]').textContent,
     'Counting 1 of 2 sources.',
