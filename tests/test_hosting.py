@@ -32,6 +32,18 @@ from tests.test_rendering import (  # pyright: ignore[reportPrivateUsage]
     _tallying_selectable,  # pyright: ignore[reportPrivateUsage]
 )
 
+# Everything the archive stages that is not a race page: the two elections'
+# guides, release files, sources and (when enabled) comparison routes, plus the
+# site-wide documents, brand assets, calendar feed, headers, worker and
+# deployment manifest.
+SITE_WIDE_ASSET_COUNT = 17
+
+
+def _staged_race_asset_count(site_dir: Path) -> int:
+    """Every file staged under a `races/` directory, across every election."""
+    return sum(1 for path in site_dir.glob("e/*/races/*/*") if path.is_file())
+
+
 COMMIT = "a" * 40
 OLDER_COMMIT = "c" * 40
 PANEL_HASH = "b" * 64
@@ -224,6 +236,80 @@ def test_changing_current_election_preserves_historical_election_bytes(tmp_path:
     }
 
 
+def test_stage_publishes_one_page_and_one_card_for_every_race(tmp_path: Path) -> None:
+    """Issue #136: race detail is a published address, in every election.
+
+    An archived election keeps its own race pages at their own addresses, as
+    the archived guide itself does — and each page is rendered from the bundle's
+    own verified view model, so a historical election's pages are a function of
+    the data it was published with.
+    """
+    current, older = _write_archive_bundles(tmp_path)
+    manifest = _write_site_manifest(tmp_path, current_first=True)
+    output = tmp_path / "site"
+
+    stage_pages_site(
+        manifest,
+        {CURRENT_BUNDLE_ID: current, OLDER_BUNDLE_ID: older},
+        output,
+    )
+
+    for election_id, bundle in ((CURRENT_ID, current), (OLDER_ID, older)):
+        view_model = PublicationViewModel.model_validate(
+            json.loads((bundle / "data/publication_view_model.json").read_text(encoding="utf-8"))
+        )
+        races = [race for section in view_model.sections for race in section.races]
+        assert races
+        staged = sorted(path.name for path in (output / "e" / election_id / "races").iterdir())
+        assert staged == sorted(race.id for race in races)
+        for race in races:
+            directory = output / "e" / election_id / "races" / race.id
+            page = (directory / "index.html").read_text(encoding="utf-8")
+            canonical = f"https://seattleelections.guide/e/{election_id}/races/{race.id}/"
+            assert f'<link rel="canonical" href="{canonical}">' in page
+            assert f'<meta property="og:image" content="{canonical}og-image.png">' in page
+            assert race.race_label in page
+            # A PNG, and its own: the card names this race rather than the site.
+            card = (directory / "og-image.png").read_bytes()
+            assert card.startswith(b"\x89PNG\r\n\x1a\n")
+            assert card != (output / "og-image.png").read_bytes()
+
+    # The archive's own race pages are a function of its data, so restaging
+    # produces the same bytes.
+    second = tmp_path / "second-site"
+    stage_pages_site(
+        _write_site_manifest(tmp_path / "second", current_first=True),
+        {CURRENT_BUNDLE_ID: current, OLDER_BUNDLE_ID: older},
+        second,
+    )
+    assert _tree_bytes(output / "e" / OLDER_ID / "races") == _tree_bytes(
+        second / "e" / OLDER_ID / "races"
+    )
+
+
+def test_verify_rejects_a_race_page_without_its_social_card(tmp_path: Path) -> None:
+    """The pairing is what could actually break: two calls write these files."""
+    current, older = _write_archive_bundles(tmp_path)
+    manifest = _write_site_manifest(tmp_path, current_first=True)
+    output = tmp_path / "site"
+    stage_pages_site(
+        manifest,
+        {CURRENT_BUNDLE_ID: current, OLDER_BUNDLE_ID: older},
+        output,
+    )
+
+    stripped = tmp_path / "stripped"
+    shutil.copytree(output, stripped)
+    orphan = next((stripped / "e" / CURRENT_ID / "races").iterdir())
+    (orphan / "og-image.png").unlink()
+    deployment = json.loads((stripped / "deployment-manifest.json").read_text(encoding="utf-8"))
+    del deployment["assets"][f"e/{CURRENT_ID}/races/{orphan.name}/og-image.png"]
+    (stripped / "deployment-manifest.json").write_bytes(canonical_json_bytes(deployment))
+
+    with pytest.raises(ValueError, match="missing required public archive assets"):
+        verify_staged_pages_site(stripped, manifest)
+
+
 def test_generated_worker_enforces_route_contract(tmp_path: Path) -> None:
     current, older = _write_archive_bundles(tmp_path)
     output = tmp_path / "site"
@@ -234,6 +320,9 @@ def test_generated_worker_enforces_route_contract(tmp_path: Path) -> None:
     )
 
     worker_path = output / "_worker.js"
+    # Read off what was staged rather than named here, so the route contract
+    # does not have to know which races this fixture's ballot carries.
+    race_id = sorted(path.name for path in (output / "e" / CURRENT_ID / "races").iterdir())[0]
     urls = [
         "https://seattleelections.guide/?from=root",
         "https://seattleelections.guide/e",
@@ -246,6 +335,10 @@ def test_generated_worker_enforces_route_contract(tmp_path: Path) -> None:
         f"https://seattle-elections.guide/e/{OLDER_ID}/?source=legacy",
         "https://seattleelections.guide/about?ref=footer",
         "https://seattleelections.guide/about/",
+        f"https://seattleelections.guide/e/{CURRENT_ID}/races/{race_id}/",
+        f"https://seattleelections.guide/e/{CURRENT_ID}/races/{race_id}?share=1",
+        f"https://seattleelections.guide/e/{CURRENT_ID}/races/",
+        f"https://seattleelections.guide/e/{CURRENT_ID}/races/not-a-race/",
     ]
     results = _run_worker(worker_path, urls)
 
@@ -285,6 +378,15 @@ def test_generated_worker_enforces_route_contract(tmp_path: Path) -> None:
     assert results[8]["location"] == (f"https://seattleelections.guide/e/{OLDER_ID}/?source=legacy")
     assert results[9]["status"] == 308
     assert results[9]["location"] == "https://seattleelections.guide/about/?ref=footer"
+    # Issue #136: a race page is a published address, its slashless form
+    # redirects, and the directory that holds them is not a page.
+    assert results[11]["body"] == (f"asset:/e/{CURRENT_ID}/races/{race_id}/")
+    assert results[12]["status"] == 308
+    assert results[12]["location"] == (
+        f"https://seattleelections.guide/e/{CURRENT_ID}/races/{race_id}/?share=1"
+    )
+    assert results[13]["status"] == 404
+    assert results[14]["status"] == 404
     assert results[10] == {
         "status": 200,
         "location": None,
@@ -544,7 +646,11 @@ def test_verify_staged_site_rejects_tamper_deletion_and_unexpected_assets(
         expected_current_git_commit=COMMIT,
     )
     assert verified.current_election_id == CURRENT_ID
-    assert len(verified.assets) == 17
+    # The site-wide files, plus one page and one social card per race in each
+    # published election (issue #136). Counted rather than written down, so a
+    # ballot with a different number of races does not need this number edited.
+    assert len(verified.assets) == SITE_WIDE_ASSET_COUNT + _staged_race_asset_count(output)
+    assert _staged_race_asset_count(output) > 0
 
     tampered = tmp_path / "tampered"
     shutil.copytree(output, tampered)
@@ -656,7 +762,8 @@ def test_hosting_stage_cli_reports_composed_site(tmp_path: Path) -> None:
         ],
     )
     assert verify_result.exit_code == 0, verify_result.output
-    assert f"current {CURRENT_ID}; 17 assets" in verify_result.output
+    expected_assets = SITE_WIDE_ASSET_COUNT + _staged_race_asset_count(output)
+    assert f"current {CURRENT_ID}; {expected_assets} assets" in verify_result.output
 
 
 def _current_election_manifest() -> SiteManifest:

@@ -12,6 +12,7 @@ REQUIRED_RENDER_CHECK_IDS = frozenset(
         "html-race-topology",
         "html-display-values",
         "html-source-evidence",
+        "html-race-identity",
         "responsive-viewports",
     }
 )

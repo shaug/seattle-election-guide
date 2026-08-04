@@ -28,14 +28,16 @@
 
    Every page supplies `document_title`, `stylesheet`, and `canonical_origin`.
    `shareable` follows the flag that governs a page's social card (R2) and
-   defaults to true; only the 404 sets it false. #}
+   defaults to true; only the 404 sets it false. `social_image_path` names the
+   card a page unfurls with and defaults to the site-wide brand image; only a
+   race page sets it, to its own build-time card (issue #136). #}
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 {% block head_meta %}{% endblock %}
-  {{ shell.head_links(canonical_origin, shareable=shareable | default(true)) }}
+  {{ shell.head_links(canonical_origin, shareable=shareable | default(true), image_path=social_image_path | default('/og-image.png')) }}
   <title>{{ document_title }}</title>
 {% block styles %}
   <style>{{ stylesheet | safe }}</style>

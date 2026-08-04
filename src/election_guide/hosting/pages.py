@@ -25,13 +25,17 @@ from election_guide.release.models import ReleaseManifest, ReleaseStatus
 from election_guide.rendering.bundler import bundle_entry
 from election_guide.rendering.documents import (
     render_comparison_document,
+    render_race_document,
     render_sources_document,
     template_environment,
 )
+from election_guide.rendering.og_image import race_card, render_race_card
 from election_guide.rendering.shell import (
     election_names,
     favicon_svg,
     page_title,
+    race_og_image_path,
+    race_page_path,
 )
 from election_guide.rendering.stylesheets import page_stylesheet
 from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
@@ -369,6 +373,7 @@ def _verify_staged_pages_site(
         compare_asset = f"e/{declared.election_id}/comparisons/index.html"
         if declared.comparison_route_preview or compare_asset in deployment.assets:
             required_assets.add(compare_asset)
+        required_assets.update(_required_race_assets(declared.election_id, deployment.assets))
 
     current = next(
         election
@@ -403,6 +408,31 @@ def _verify_staged_pages_site(
     if not required_assets.issubset(deployment.assets):
         raise ValueError("deployment manifest is missing required public archive assets")
     return deployment
+
+
+def _required_race_assets(election_id: str, assets: Mapping[str, str]) -> set[str]:
+    """Every race page this election staged, and the card each one must carry.
+
+    The declaration this function is checked against names a release, not a
+    ballot, so the race ids come from what was staged rather than from a list
+    this verifier could hold. What it therefore proves is the pairing and the
+    floor: every election publishes at least one race page, and no race page
+    ships without the social card its `og:image` points at — which is the way
+    this could actually go wrong, since the page and the card are written by
+    two different calls (issue #136).
+    """
+    prefix = f"e/{election_id}/races/"
+    race_ids = sorted(
+        path.removeprefix(prefix).removesuffix("/index.html")
+        for path in assets
+        if path.startswith(prefix) and path.endswith("/index.html")
+    )
+    if not race_ids:
+        raise ValueError(f"staged archive has no race pages for election {election_id!r}")
+    return {f"{prefix}{race_id}/{name}" for race_id in race_ids for name in _RACE_ASSET_NAMES}
+
+
+_RACE_ASSET_NAMES = ("index.html", "og-image.png")
 
 
 def _resolve_released_bundles(
@@ -522,6 +552,7 @@ def _stage_verified_bundles(
         root_path = f"/e/{bundle.declaration.election_id}/"
         public_paths.update({root_path, f"{root_path}index.html"})
         public_paths.update({f"{root_path}sources/", f"{root_path}sources/index.html"})
+        public_paths.update(_stage_race_pages(bundle, election_root, canonical_origin))
         if (
             bundle.view_model.comparisons.policy.enabled
             or bundle.declaration.comparison_route_preview
@@ -534,6 +565,55 @@ def _stage_verified_bundles(
             )
             public_paths.update({f"{root_path}comparisons/", f"{root_path}comparisons/index.html"})
         public_paths.update(f"{root_path}{name}" for name in names)
+    return public_paths
+
+
+def _stage_race_pages(
+    bundle: _VerifiedBundle,
+    election_root: Path,
+    canonical_origin: str,
+) -> set[str]:
+    """One page and one social card per race in this election (issue #136).
+
+    Race detail is a page rather than a dialog over the guide, so every race in
+    every published election's inventory gets its own directory here — an
+    archived guide's races included, exactly as the archived guide itself keeps
+    its own address. Both files are rendered from the bundle's own verified view
+    model, so a historical election's pages are a function of the data it was
+    published with.
+    """
+    view_model = bundle.view_model
+    election_id = bundle.declaration.election_id
+    election_display_name, _ = election_names(
+        view_model.metadata.election_date,
+        view_model.metadata.election_type,
+        view_model.metadata.state,
+        legacy_name=view_model.metadata.election_name,
+        election_id=view_model.metadata.election_id,
+    )
+    races_root = election_root / "races"
+    races_root.mkdir()
+    public_paths: set[str] = set()
+    for section in view_model.sections:
+        for race in section.races:
+            directory = races_root / race.id
+            directory.mkdir()
+            (directory / "index.html").write_text(
+                render_race_document(
+                    view_model,
+                    race.id,
+                    public_site_url=canonical_origin,
+                    project_url=PROJECT_URL,
+                ),
+                encoding="utf-8",
+            )
+            (directory / "og-image.png").write_bytes(
+                render_race_card(race_card(race, election_name=election_display_name))
+            )
+            path = race_page_path(election_id, race.id)
+            public_paths.update(
+                {path, f"{path}index.html", race_og_image_path(election_id, race.id)}
+            )
     return public_paths
 
 
@@ -788,7 +868,17 @@ export default {{
         return redirectPath(url, root, 301);
       }}
     }}
-{comparison_redirect}    if (!PUBLIC_PATHS.has(url.pathname)) {{
+{comparison_redirect}    // A directory addressed without its trailing slash is the same page
+    // (issue #136 added thirty-odd race pages per election, and enumerating
+    // each one's slashless form here would restate what PUBLIC_PATHS already
+    // says). The named redirects above still come first, because each of those
+    // is either older than this rule or means something other than "the same
+    // page": `/` is a 307 to the current election, and the retired `/compare`
+    // is a 301 to a renamed one.
+    if (!PUBLIC_PATHS.has(url.pathname) && PUBLIC_PATHS.has(`${{url.pathname}}/`)) {{
+      return redirectPath(url, `${{url.pathname}}/`, 308);
+    }}
+    if (!PUBLIC_PATHS.has(url.pathname)) {{
       return notFound();
     }}
     // Only the canonical host may be indexed (issue 209). Every other

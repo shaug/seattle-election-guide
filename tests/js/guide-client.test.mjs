@@ -1,8 +1,9 @@
 // guide-client.mjs is what used to be guide.html.j2's two inline `<script>`
-// blocks (issue #239). It composes; the behavior is in the four modules it
-// calls, each tested beside it. What is tested here is the composition itself —
-// the incoming link's resolution, the notices it produces, and the Sources links
-// it keeps pointed at the reader's selection.
+// blocks (issue #239). It composes; the behavior is in the modules it calls,
+// each tested beside it. What is tested here is the composition itself — the
+// incoming link's resolution, the notices it produces, the Sources links it
+// keeps pointed at the reader's selection, and the one navigation it performs:
+// forwarding a `#race-…` link to the page that link now means (issue #136).
 
 import assert from 'node:assert/strict';
 import test from 'node:test';
@@ -124,6 +125,7 @@ function payload(overrides = {}) {
       {
         race_id: 'mayor',
         race_label: 'Seattle Mayor',
+        race_path: '/e/wa-2026-primary/races/mayor/',
         candidates: [
           { candidate_id: 'ada', label: 'Ada Lovelace' },
           { candidate_id: 'blaise', label: 'Blaise Pascal' },
@@ -153,20 +155,14 @@ function guideMarkup() {
     <section data-filter-section="local">
       <article id="race-mayor" data-publication-race-id="mayor" data-contested="true"
         data-filter-tokens='["city"]'>
-        <a href="#race-mayor" data-race-detail-link>Mayor</a>
-        <div class="screen-race-result" data-lens-result>
-          <h3 data-display-role="recommendation">Ada Lovelace</h3>
-        </div>
-        <div class="screen-race-context" data-lens-context></div>
-        <div class="race-card-foot" data-lens-foot></div>
-        <dialog data-race-detail-dialog data-race-id="mayor">
-          <p data-race-detail-summary>The audited summary, verbatim.</p>
-          <div class="race-detail-outcomes">
-            <section data-race-detail-candidate-id="ada"></section>
-            <section data-race-detail-candidate-id="blaise"></section>
+        <a class="race-card-primary" href="/e/wa-2026-primary/races/mayor/">
+          <p class="race-office">Mayor</p>
+          <div class="screen-race-result" data-lens-result>
+            <h3 data-display-role="recommendation">Ada Lovelace</h3>
           </div>
-          <button type="button" data-close-race-detail></button>
-        </dialog>
+          <div class="screen-race-context" data-lens-context></div>
+        </a>
+        <div class="race-card-foot" data-lens-foot></div>
       </article>
     </section>`;
 }
@@ -175,17 +171,10 @@ function guideMarkup() {
  * @param {string} url
  * @param {any} [pagePayload]
  */
-async function wire(url, pagePayload = payload()) {
+async function wire(url, pagePayload = payload(), prepare = undefined) {
   const document = installDom(url);
   document.body.innerHTML = guideMarkup();
-  for (const dialog of document.querySelectorAll('dialog')) {
-    dialog.showModal = function showModal() {
-      this.open = true;
-    };
-    dialog.close = function close() {
-      this.open = false;
-    };
-  }
+  prepare?.(window);
   const { wireGuide } = await import(
     '../../src/election_guide/rendering/templates/guide-client.mjs'
   );
@@ -391,6 +380,54 @@ test('a later hashchange to an ordinary anchor changes no selection', async () =
   window.dispatchEvent(new Event('hashchange'));
 
   assert.equal(document.documentElement.classList.contains('lens-personalized'), true);
+  assert.equal(notice(document).hidden, true);
+});
+
+// Issue #136: a `#race-…` link shared while race detail was a dialog still
+// names a race, and it now names a page. The forward happens before anything
+// else runs, so nothing is rendered on a page the reader never sees.
+test('a link naming a race leaves the guide for that race\u2019s own page', async () => {
+  /** @type {string[]} */
+  const replaced = [];
+  const document = await wire(`${GUIDE_URL}#race-mayor`, undefined, (window) => {
+    Object.defineProperty(window.location, 'replace', {
+      configurable: true,
+      value: (/** @type {string} */ address) => replaced.push(address),
+    });
+  });
+
+  assert.deepEqual(replaced, ['/e/wa-2026-primary/races/mayor/']);
+  // Nothing was wired: the strip still holds the server's own text.
+  assert.equal(bannerStatus(document), 'Counting all 3 sources.');
+});
+
+test('a lens link naming a race carries the selection to that page', async () => {
+  /** @type {string[]} */
+  const replaced = [];
+  await wire(`${GUIDE_URL}#${lensFragment(['strn'])}&race=race-mayor`, undefined, (window) => {
+    Object.defineProperty(window.location, 'replace', {
+      configurable: true,
+      value: (/** @type {string} */ address) => replaced.push(address),
+    });
+  });
+
+  assert.equal(replaced.length, 1);
+  assert.ok(replaced[0].startsWith('/e/wa-2026-primary/races/mayor/#'), replaced[0]);
+  assert.match(replaced[0], /sel=strn/);
+  assert.ok(!replaced[0].includes('race='), replaced[0]);
+});
+
+test('a fragment naming no race of this election stays on the guide', async () => {
+  /** @type {string[]} */
+  const replaced = [];
+  const document = await wire(`${GUIDE_URL}#race-not-on-this-ballot`, undefined, (window) => {
+    Object.defineProperty(window.location, 'replace', {
+      configurable: true,
+      value: (/** @type {string} */ address) => replaced.push(address),
+    });
+  });
+
+  assert.deepEqual(replaced, []);
   assert.equal(notice(document).hidden, true);
 });
 

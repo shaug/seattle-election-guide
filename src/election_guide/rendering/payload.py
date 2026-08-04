@@ -135,6 +135,38 @@ class RaceCandidateDisplay(ClientPayloadModel):
     label: str
 
 
+class RaceSourceRow(ClientPayloadModel):
+    """One endorsing source's evidence row, as the race page renders it.
+
+    The race page's candidate sections are a lit region (issue #136), and a
+    client that renders markup needs every value that markup carries — the row
+    is not read back out of the server's copy of it (docs/FRONTEND.md, The data
+    contract). `category`, `state` and `panel_role` are the row's published
+    data attributes, which `rendering/validation.py` reparses to prove the
+    rendered evidence is the view model's, and which the screenshot probe reads
+    to prove no comparison source reaches a race's own evidence.
+    """
+
+    code: str
+    name: str
+    category: str
+    category_label: str
+    state: str
+    panel_role: Literal["consensus", "comparison"]
+    detail_label: str | None
+    """The row's status phrase — "Co-endorsed" on a split endorsement — or null
+    when the group renders none."""
+    evidence_url: str | None
+    """Null for a cell with no linkable receipt; the row renders as a plain
+    block rather than a link."""
+
+
+class RaceCandidateEndorsements(RaceCandidateDisplay):
+    """One candidate's section on the race page: identity, plus its rows."""
+
+    endorsers: list[RaceSourceRow]
+
+
 class FilterScope(ClientPayloadModel):
     """One option of the guide's Ballot filter, addressed by its token."""
 
@@ -142,9 +174,8 @@ class FilterScope(ClientPayloadModel):
     label: str
 
 
-class RaceDisplay(ClientPayloadModel):
-    """The audited presentation of one race that client code must be able to
-    reproduce or restore.
+class AuditedRace(ClientPayloadModel):
+    """What every page publishes about one race, whatever depth it renders it at.
 
     Every field here was previously read back out of the server-rendered
     dialog. The document's rule is the opposite (The data contract: the DOM is
@@ -152,6 +183,10 @@ class RaceDisplay(ClientPayloadModel):
     carrying a computed value over maintaining a second implementation of the
     logic that computes it — so the audited candidate labels, the audited
     candidate order, and the audited accessible summary are published here.
+
+    The candidates are declared by the two models below rather than here,
+    because the depth is exactly what differs between them: a card names its
+    candidates, a race page renders their evidence.
     """
 
     race_id: str
@@ -159,13 +194,35 @@ class RaceDisplay(ClientPayloadModel):
     """The race's display name. The dialog's share button used to read it back
     out of the card's own `[data-display-role="race-label"]` text (issue
     #239)."""
+    audited_accessible_summary: str
+    """The race's visually-hidden summary text as the server rendered it, so
+    clearing a lens restores it verbatim."""
+
+
+class RaceDisplay(AuditedRace):
+    """One race as the guide's own card renders it."""
+
+    race_path: str
+    """The race's own page, so the guide can forward a `#race-…` link already
+    out in the world to the address that link now means (issue #136). Published
+    rather than composed on the client, because composing it would put the URL
+    grammar on both sides of the boundary — the mirror docs/FRONTEND.md's
+    Cross-language mirrors section says to carry the value instead of."""
     candidates: list[RaceCandidateDisplay]
     """The audited default's own candidate order, with each candidate's display
     label. A lens that stops diverging restores exactly this order rather than
     leaving whatever a prior lens last arranged."""
-    audited_accessible_summary: str
-    """The dialog's visually-hidden `aria-describedby` text as the server
-    rendered it, so clearing a lens restores it verbatim."""
+
+
+class RaceDetailDisplay(AuditedRace):
+    """The one race a race page is about, at that page's own depth (issue #136).
+
+    The same audited candidate order as a card publishes, with each candidate's
+    endorsing rows attached, because the race page renders those rows through
+    lit and a client that renders markup needs every value it carries.
+    """
+
+    candidates: list[RaceCandidateEndorsements]
 
 
 class LensPayload(ClientPayloadModel):
@@ -198,6 +255,32 @@ class GuidePayload(LensPayload):
     """Null while the release policy disables the lens: without it nothing on
     the page can rescore, so publishing it would ship a contract no code reads.
     """
+
+
+class RacePayload(LensPayload):
+    """One race page's payload (issue #136).
+
+    A race page is the guide's lens applied to a single race: it decodes the
+    same fragment, rescores against the same contract, and renders the race's
+    own detail from `race`. It publishes no `races` list and no filter scopes,
+    because there is one race on it and nothing to filter.
+    """
+
+    race: RaceDetailDisplay
+    sources_page_path: str
+    """Where this page's `[data-sources-link]` anchors point, carrying the live
+    selection and this race as the reader's place to return to."""
+    personalization: PersonalizationContract | None
+    """Null while the release policy disables the lens, for the reason
+    `GuidePayload` records: with no contract nothing on the page can rescore.
+
+    Otherwise the published contract narrowed to this one race. The panel — the
+    categories and sources a link is validated and migrated against — is
+    published whole, because a shared link names panel members rather than
+    races; only the per-race cells are trimmed, and a page that scores one race
+    has no use for another race's. The whole contract is roughly thirty times
+    this page's own share of it, so publishing it on each of thirty-odd race
+    pages would multiply the archive by a factor that buys nothing."""
 
 
 class SourcesPayload(LensPayload):
@@ -251,6 +334,7 @@ class ClientPayloadTypes(ClientPayloadModel):
     """
 
     guide_page: GuidePayload
+    race_page: RacePayload
     sources_page: SourcesPayload
     comparisons_page: ComparisonsPayload
     computed_grade: ComputedGrade
@@ -340,6 +424,33 @@ def guide_payload(
         sources_page_path=sources_page_path,
         personalization=(
             view_model.personalization if view_model.personalization.policy.enabled else None
+        ),
+    )
+
+
+def race_payload(
+    view_model: PublicationViewModel,
+    *,
+    race: RaceDetailDisplay,
+    sources_page_path: str,
+) -> RacePayload:
+    """Build one race page's payload.
+
+    `race` comes from the renderer for the reason `guide_payload` records: it
+    must be the very text and order the server rendered, and the renderer owns
+    the audited presentation.
+    """
+    contract = view_model.personalization
+    return RacePayload(
+        **_lens_fields(view_model, contributing_only=True),
+        race=race,
+        sources_page_path=sources_page_path,
+        personalization=(
+            contract.model_copy(
+                update={"races": [item for item in contract.races if item.race_id == race.race_id]}
+            )
+            if contract.policy.enabled
+            else None
         ),
     )
 

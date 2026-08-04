@@ -2,9 +2,12 @@
 
 The guide and the sources editor read one stylesheet before issue 246, so the
 guide document carried the editor's whole checkbox tree and coverage-gap
-section and the editor carried the guide's race grid, race-detail dialog, and
+section and the editor carried the guide's race grid, race-detail rules, and
 printable edition. The manifest in `rendering/stylesheets.py` is what stops
-that recurring; these tests hold the manifest to its claims.
+that recurring; these tests hold the manifest to its claims. Since issue #136
+its shared parts are tiers rather than pairs — one for every lens-aware page,
+a narrower one for the guide and a race page — which the `_shared_classes`
+exemption below covers without knowing how many there are.
 """
 
 from __future__ import annotations
@@ -144,7 +147,7 @@ def test_page_stylesheet_is_its_declared_parts_in_order() -> None:
 
 def test_an_undeclared_page_is_a_named_failure_rather_than_a_missing_file() -> None:
     with pytest.raises(StylesheetError, match="no stylesheet is declared"):
-        page_stylesheet("race")
+        page_stylesheet("methodology")
 
 
 @pytest.mark.parametrize("page", sorted(PAGE_STYLESHEETS))
@@ -197,9 +200,9 @@ def test_the_guide_document_no_longer_ships_the_sources_editors_checkbox_tree() 
         f"the sources editor lost {sorted(editor_only - sources)}, which it renders ({RULE})"
     )
 
-    # ...and the reverse: the editor stopped carrying the guide's race grid,
-    # race-detail dialog, and printable edition.
-    guide_only = {"race-grid", "race-detail-dialog", "race-card", "screen-meter"}
+    # ...and the reverse: the editor stopped carrying the guide's race grid, its
+    # cards, and its printable edition.
+    guide_only = {"race-grid", "race-card", "race-card-primary"}
     assert not guide_only & sources, (
         f"the sources editor styles {sorted(guide_only & sources)}, which only the guide "
         f"renders ({RULE})"
@@ -210,14 +213,14 @@ def test_the_guide_document_no_longer_ships_the_sources_editors_checkbox_tree() 
 
 
 def test_the_guide_and_the_sources_editor_still_share_what_they_both_render() -> None:
-    """The other half of the split: neither page lost a rule it does render.
+    """The other half of the split: no page lost a rule it does render.
 
-    Both templates render a `.lens-notice`, both render the band whose nav the
-    720px rule resets, and both documents print with the same page margins, so
-    dropping `guide-sources.css` from either entry is a silent visual
+    Every lens-aware template renders a `.lens-notice`, renders the band whose
+    nav the 720px rule resets, and prints with the same page margins, so
+    dropping `lens-pages.css` from any of the three entries is a silent visual
     regression rather than a saving.
     """
-    for page in ("guide", "sources"):
+    for page in ("guide", "race", "sources"):
         stylesheet = re.sub(r"/\*.*?\*/", "", page_stylesheet(page), flags=re.S)
         assert "lens-notice" in _declared_classes(stylesheet), (
             f"the {page} page lost the shared lens notice rules; they belong to the part "

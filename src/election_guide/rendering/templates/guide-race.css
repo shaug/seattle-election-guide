@@ -1,0 +1,112 @@
+/* The rules the guide document and a race page both render, and no other page
+   does (issue #136, extending issue 246's split).
+
+   A race page renders the guide card's headline result — the recommendation,
+   the one meter, the no-majority pill, the support caption — because it is the
+   same component showing the same quantity, rendered from the same lit
+   templates in `guide-card.mjs`. It renders the same quiet reference bar and
+   the same insufficiency note for the same reason, and the same lens banner,
+   because the reader's selection follows them from one page to the other.
+
+   So these are a rule group two pages render and no third, which
+   rendering/stylesheets.py gives a part they both name rather than a copy in
+   each. `.lens-notice` and the shared print margins are a tier wider still —
+   the sources editor renders them too — and live in lens-pages.css.
+
+   The guide's own frame around these components (the race grid, the card, the
+   compact ballot view, its printable edition) stays in guide.css, and a race
+   page's own frame stays in race.css: a page's `main` frame is page-local even
+   where two pages' rules happen to match (docs/FRONTEND.md, Modules). */
+
+/* The result row: the name on the left, the meter on its own fixed track at
+   the right. On a card that is the top half of a two-row grid; on a race page
+   it is the page's headline. Top-aligned rather than centered so the meter
+   reads against the name's first line. */
+.screen-race-result { display: grid; grid-template-columns: minmax(0, 1fr) 11rem; align-items: start; gap: .75rem; min-width: 0; }
+/* Selected by the region rather than by the card, because a race page renders
+   this heading outside any card. Maximum weight belongs to data
+   (docs/DESIGN.md, Typography). */
+.screen-race-result h3 { min-width: 0; margin: 0; color: var(--navy); font: 800 1.5rem/1.08 var(--screen-sans); letter-spacing: -.02em; overflow-wrap: anywhere; }
+.screen-meter { display: flex; align-items: center; justify-content: flex-start; width: 11rem; height: 2rem; overflow: hidden; border: 1px solid var(--line-strong); border-radius: 1rem; background: linear-gradient(to right, var(--teal) 0 var(--meter-fill), var(--meter-track) var(--meter-fill) 100%); }
+.screen-meter strong { width: 100%; padding: .05rem .75rem 0; color: var(--white); font-size: 1.08rem; font-variant-numeric: tabular-nums; font-weight: 800; line-height: 1; text-align: left; }
+.screen-meter-na { background: var(--meter-track); }
+.screen-meter-na strong { color: var(--muted); }
+.screen-meter.meter-no-majority { background: linear-gradient(to right, var(--amber) 0 var(--meter-fill), var(--meter-track) var(--meter-fill) 100%); }
+.screen-meter.meter-no-majority strong { color: var(--navy); }
+/* I41: below ~30% fill the white label rides past the colored fill onto the
+   pale track and loses contrast; past the threshold the label renders after
+   the fill instead, in muted ink. The threshold itself is decided once, in
+   `guide-card.mjs`'s meterView, which every meter's view model comes from —
+   the declaration is restated for the race page's own smaller chrome in
+   race.css because that chrome is only rendered there. Defensive only, not
+   the tabled D14 meter redesign. */
+.screen-meter.meter-low-fill strong { padding-left: calc(var(--meter-fill) + .4rem); color: var(--muted); }
+/* The caption row, in the same shape as the result row above: pill under the
+   name, caption under the meter. This is the track that has to grow. Against a
+   fixed track the caption wraps — measured at the wide default and across
+   480-720px — and pinning it to one line instead (`white-space: nowrap`, the
+   first attempt here) trades the wrap for a box narrower than its own text,
+   which then overhangs leftward inside the card. `max-content` takes neither:
+   the track is exactly the caption, the row above keeps its own fixed meter
+   track, and both rows stay flush against the same right edge. Both
+   alternatives are caught by the same assertion, `allHugText`, since both stop
+   the box matching its text.
+   No floor under it. The widest caption a reader can get is 185.77px — the
+   client's "Based on N of M selected sources" — so at the screen breakpoints a
+   floor could only restate what the content already demands, and in print it
+   would actively break: an 11rem floor (176px) against an 8pt caption of
+   171.91px stops the box hugging its text. The guide's compact view replaces
+   this track outright (guide.css), so a floor here could not reach it either
+   way.
+   `align-items: start` keeps the caption's own height when a taller pill
+   appears beside it. */
+.screen-race-context { display: grid; grid-template-columns: minmax(0, 1fr) max-content; align-items: start; min-width: 0; }
+.screen-race-context .support-line { grid-column: 2; }
+.no-majority-pill { justify-self: start; margin: 0; padding: .18rem .48rem; border: 1px solid var(--tone-differ-border); border-radius: 999px; background: var(--tone-differ-bg); color: var(--tone-differ-text); font-size: .68rem; font-weight: 800; letter-spacing: .02em; line-height: 1.2; }
+.support-line { min-width: 0; margin: .15rem 0 0; color: var(--muted); font-size: .72rem; line-height: 1.2; text-align: right; }
+/* H34: full view keeps the sentence-form caption; the guide's compact mode
+   (where the caption wraps to two lines per card) shortens it. Both forms
+   always render, from one template, and which one shows is a pure CSS toggle.
+   The `display: none` lives here rather than in guide.css because a race page
+   renders the same template and must hide the compact form too; the
+   `compact-ballot-mode` half of the toggle is the guide's and stays there. */
+.support-compact { display: none; }
+
+/* One quiet info-bar component for the personalized lens's "All sources"
+   baseline, with agree/differ tone carried by the border and tint. */
+.lens-comparison { min-width: 0; margin: 0; padding: .38rem .6rem; border-left: .25rem solid var(--tone-neutral-border); background: var(--tone-neutral-bg); color: var(--tone-neutral-text); font-size: .74rem; line-height: 1.3; overflow-wrap: anywhere; }
+.lens-comparison-agrees { border-left-color: var(--tone-agree-border); background: var(--tone-agree-bg); color: var(--tone-agree-text); }
+.lens-comparison-differs { border-left-color: var(--tone-differ-border); background: var(--tone-differ-bg); color: var(--tone-differ-text); }
+.insufficient-note { padding: .55rem .65rem; border-left: .25rem solid var(--red); background: #fff1ef; color: #72231e; font-size: .78rem; }
+
+/* The always-present sources strip (docs/DESIGN.md, Sticky strips). */
+.lens-banner { justify-content: center; margin: 0; text-align: center; }
+.lens-banner a { white-space: nowrap; }
+.lens-banner[hidden] { display: none; }
+
+@media (max-width: 720px) {
+  .screen-race-result { grid-template-columns: minmax(0, 1fr) 8.75rem; gap: .6rem; }
+  .screen-meter { width: 8.75rem; }
+  .lens-comparison { padding-right: .55rem; padding-left: .55rem; }
+  .insufficient-note { overflow-wrap: anywhere; }
+}
+
+@media (max-width: 479px) {
+  /* The `:not(.compact-ballot-mode)` qualifier is the guide's — a compact card
+     already stacks these rows at every width — and is inert on a race page,
+     whose root never carries that class. It is kept verbatim rather than
+     dropped so the guide's behaviour is unchanged by the move. */
+  html:not(.compact-ballot-mode) .screen-race-result,
+  html:not(.compact-ballot-mode) .screen-race-context { grid-template-columns: minmax(0, 1fr); gap: .4rem; }
+  /* One column means one column: without this the explicit `grid-column: 2`
+     above would open an implicit second track and sit the caption beside the
+     pill instead of under it. */
+  html:not(.compact-ballot-mode) .screen-race-context .support-line { grid-column: 1; }
+  html:not(.compact-ballot-mode) .screen-meter { width: 100%; }
+}
+
+@media print {
+  .screen-race-result, .screen-race-context { break-inside: avoid; }
+  .support-line, .lens-comparison, .insufficient-note { font-size: 8pt; }
+  .lens-banner { display: none !important; }
+}

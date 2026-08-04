@@ -1,0 +1,192 @@
+{# One race's own page (issue #136).
+
+   This carries what the guide's race-detail dialog carried, at an address a
+   reader can land on, share, and unfurl — which is the test DESIGN.md's
+   page-vs-modal rule says to re-run when requirements change, and this is the
+   answer it now gives.
+
+   Server rendered in full, so the page stands alone for a crawler and for a
+   reader without JavaScript. Three regions are lit's while a lens is active:
+   the headline's result, caption, and foot (the guide card's own components,
+   from `guide-card.mjs`), and the candidate sections (`race-detail.mjs`). Each
+   is one element the server already renders, whose children lit takes over
+   once the reader's selection stops being the audited default
+   (docs/FRONTEND.md § Rendering). #}
+{% extends 'base.html.j2' %}
+{% block head_meta %}
+  {% set canonical_url = public_site_url ~ race_path %}
+  {{ shell.social_meta(document_title, page_description, canonical_url) }}
+{% endblock %}
+{% block body %}
+  {% macro source_badge(row) -%}
+    <span class="race-detail-category-badge">{{ row.category_label }}</span>
+  {%- endmacro %}
+  {% macro source_count_phrase(count, group_key=none) -%}
+    {{ count }} source{% if count != 1 %}s{% endif %}{% if group_key == 'not_covered' %} did not cover this race{% elif group_key == 'not_applicable' %} {% if count == 1 %}was{% else %}were{% endif %} outside this district{% endif %}
+  {%- endmacro %}
+  {% macro source_row(row, group_key, candidate_id=none) -%}
+    <li data-race-detail-source-code="{{ row.code }}"
+      data-source-category="{{ row.category }}" data-source-state="{{ row.state }}"
+      data-source-role="{{ row.panel_role }}" data-source-group="{{ group_key }}"
+      {%- if candidate_id is not none %} data-endorsed-candidate-id="{{ candidate_id }}"{% endif %}>
+      {% if row.evidence_url %}<a class="race-detail-source-row" href="{{ row.evidence_url }}"{{ external_link_attributes }}>
+      {% else %}<div class="race-detail-source-row">
+      {% endif %}
+        <strong>{{ row.name }}</strong>
+        <div class="race-detail-source-meta">
+          {{ source_badge(row) }}
+          {% if row.detail_label %}<span class="race-detail-source-status">{{ row.detail_label }}</span>{% endif %}
+        </div>
+      {% if row.evidence_url %}</a>{% else %}</div>{% endif %}
+    </li>
+  {%- endmacro %}
+  {% macro group_source_rows(group_key) -%}
+    <ul class="race-detail-source-list">
+      {% for row in group_rows[group_key] %}{{ source_row(row, group_key) }}{% endfor %}
+    </ul>
+  {%- endmacro %}
+  {# The audited candidate sections. lit renders this same shape from the same
+     payload while a lens is active, and `race-markup-parity.test.mjs` diffs the
+     two, so a change here is a change there. #}
+  {% macro candidate_sections() -%}
+    {% for candidate in race_detail.candidates %}
+    {% set is_leader = candidate.candidate_id in race.support_leader_candidate_ids %}
+    {% set source_count = candidate.endorsers | length %}
+    {% set has_split = candidate.endorsers | selectattr('state', 'equalto', 'multi_endorsement') | list | length > 0 %}
+    <section class="race-detail-candidate{% if is_leader %} race-detail-candidate-leader{% endif %}"
+      data-race-detail-candidate-id="{{ candidate.candidate_id }}">
+      <div class="race-detail-candidate-heading">
+        <div class="race-detail-candidate-title">
+          {% if is_leader %}
+          <p>{% if has_no_majority(race) %}No majority · {% endif %}{% if race.support_leader_candidate_ids | length > 1 %}Tied for lead{% else %}Leading choice{% endif %}</p>
+          {% endif %}
+          <h4>{{ candidate.label }}</h4>
+        </div>
+        <div class="race-detail-candidate-metrics">
+          <span>{% if is_leader and race.recommendation_candidate_ids | length == 1 %}{{ source_count }} of {{ race.explicit_endorsement_count }} endorsing sources{% if has_split %} (co-endorsements split){% endif %}{% else %}{{ source_count }} endorsing source{% if source_count != 1 %}s{% endif %}{% endif %}</span>
+          {% if is_leader %}
+          {% if race.percentage_whole is none %}
+          <div class="race-detail-meter race-detail-meter-na" role="img"
+            aria-label="{{ screen_share_accessible_label(race) }}"><strong>N/A</strong></div>
+          {% else %}
+          <div class="race-detail-meter{% if has_no_majority(race) %} meter-no-majority{% endif %}{% if race.percentage_whole < 30 %} meter-low-fill{% endif %}" style="--meter-fill: {{ race.percentage_whole }}%"
+            role="img" aria-label="{{ screen_share_accessible_label(race) }}">
+            <strong>{{ race.percentage_label }}</strong>
+          </div>
+          {% endif %}
+          {% endif %}
+        </div>
+      </div>
+      <ul class="race-detail-source-list">
+        {% for row in candidate.endorsers %}{{ source_row(row, 'candidate', candidate.candidate_id) }}{% endfor %}
+      </ul>
+    </section>
+    {% endfor %}
+  {%- endmacro %}
+
+  <a class="skip-link" href="#race-detail">Skip to endorsements</a>
+
+  <div class="page screen-race">
+    <header>
+      {{ shell.band(guide_href=guide_path, sources_href=sources_page_url, compare_href=compare_href, current='endorsements', sources_link_data_attribute=true) }}
+      <div class="page-band-rule"></div>
+    </header>
+    {{ election_day_banner | safe }}
+    {%+ call shell.page_head(race.race_label, eyebrow=election_display_name) %}Every endorsement in this race, linked to its source.{% endcall +%}
+
+    {# The same strip the guide renders, for the same reason: a reader who
+       arrived under a personalized selection has to see what is being counted,
+       and be able to change it without losing their place. Its two announcing
+       elements stay the server's for the life of the page — lit renders their
+       text, never the elements (docs/FRONTEND.md § Rendering). #}
+    {% if guide.personalization.policy.enabled %}
+    <div class="lens-banner state-action-strip" data-lens-banner>
+      <span data-lens-banner-status role="status" aria-live="polite">Counting all {{ consensus_source_count }} sources.</span>
+      <a data-sources-link href="{{ sources_page_url }}">Edit sources</a>
+    </div>
+    {% endif %}
+    <p class="lens-notice" data-lens-notice hidden role="status" aria-live="polite"></p>
+    <p class="lens-notice" data-payload-notice hidden role="status" aria-live="polite"></p>
+
+    <main id="race-detail" class="race-detail" data-publication-race-id="{{ race.id }}">
+      {# The headline, in the card's own components so the reader sees the
+         quantity they clicked, larger. The summary is this block's accessible
+         description, as it was the dialog's: an element the server renders and
+         keeps, whose text the client recomputes under a lens. #}
+      <div class="race-headline" role="group" aria-label="Consensus result"
+        aria-describedby="race-consensus-summary">
+        <div class="screen-race-result" data-lens-result>
+          <h3 data-display-role="recommendation">{{ race.recommendation_label }}</h3>
+          {% if race.percentage_whole is none %}
+          <div class="screen-meter screen-meter-na" role="img" data-display-role="share"
+            aria-label="{{ screen_share_accessible_label(race) }}">
+            <strong>N/A</strong>
+          </div>
+          {% else %}
+          <div class="screen-meter{% if has_no_majority(race) %} meter-no-majority{% endif %}{% if race.percentage_whole < 30 %} meter-low-fill{% endif %}" style="--meter-fill: {{ race.percentage_whole }}%"
+            role="img" data-display-role="share"
+            aria-label="{{ screen_share_accessible_label(race) }}">
+            <strong>{{ race.percentage_label }}</strong>
+          </div>
+          {% endif %}
+        </div>
+        <div class="screen-race-context" data-lens-context>
+          <p class="no-majority-pill"{% if not has_no_majority(race) %} hidden{% endif %}>No majority</p>
+          <p class="support-line support-full" data-display-role="support">{{ screen_support_summary(race) }}</p>
+          <p class="support-line support-compact" data-display-role="support">{{ screen_support_summary_compact(race) }}</p>
+        </div>
+        <div class="race-headline-foot" data-lens-foot>
+          {% if race.grade == 'Insufficient' %}
+          <div class="insufficient-note" role="note" data-display-role="insufficient-warning">
+            Too few endorsements to measure agreement.</div>
+          {% endif %}
+        </div>
+        <p id="race-consensus-summary" class="visually-hidden"
+          data-race-detail-summary>{{ race_detail_accessible_summary(race) }}</p>
+      </div>
+
+      <div class="race-detail-outcomes">
+        {# `display: contents` (race.css), so lit owns one region without the
+           sections below losing the grid gap between them. #}
+        <div class="race-detail-candidates" data-race-candidates>
+          {{ candidate_sections() }}
+        </div>
+        {% for group_key in source_cell_group_keys %}
+        {% if group_rows[group_key] %}
+        <section class="race-detail-outcome race-detail-outcome-{{ group_key }}"
+          data-race-detail-group="{{ group_key }}">
+          <div class="race-detail-outcome-heading">
+            <h4>{{ source_cell_group_label(race, group_key) }}</h4>
+            <span>{{ source_count_phrase(group_rows[group_key] | length) }}</span>
+          </div>
+          {{ group_source_rows(group_key) }}
+        </section>
+        {% endif %}
+        {% endfor %}
+      </div>
+      {% for group_key in ('not_covered', 'not_applicable') %}
+      {% if group_rows[group_key] %}
+      <details class="race-detail-missing">
+        <summary>{{ source_count_phrase(group_rows[group_key] | length, group_key) }}</summary>
+        {{ group_source_rows(group_key) }}
+      </details>
+      {% endif %}
+      {% endfor %}
+    </main>
+
+    <footer class="site-footer">
+      {% if project_url is not none %}{{ shell.election_footer_band(project_url, guide.metadata, guide_path, footer_data_updated_date, footer_site_updated_date) }}{% endif %}
+    </footer>
+  </div>
+{% endblock %}
+{% block scripts %}
+
+  {# One payload element per page, built by rendering/payload.py from the
+     Pydantic models the client's declarations are generated from
+     (docs/FRONTEND.md, The data contract). #}
+  <script type="application/json" data-client-payload>{{ client_payload | tojson }}</script>
+  <script type="module">
+{{ race_entry_script | safe }}
+  RacePage.boot();
+  </script>
+{% endblock %}

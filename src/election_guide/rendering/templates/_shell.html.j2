@@ -18,7 +18,7 @@
    shell is rendered from inside macros almost everywhere, so passing these per
    render would silently cover only the handful of uses outside a macro. #}
 
-{% macro head_links(origin, shareable=true) -%}
+{% macro head_links(origin, shareable=true, image_path='/og-image.png') -%}
 {# The brand-asset head block shared by every page: icons and og:image.
 
    `origin` is the canonical https origin used for the absolute og:image URL;
@@ -28,13 +28,22 @@
    passes shareable=false to keep the wide image without implying the page
    itself is a shareable card.
 
+   `image_path` is the root-relative card this page unfurls with. It defaults to
+   the site-wide brand card, which is what every page shared before issue #136
+   and what every page but one still shares: a race page passes its own
+   build-time card instead, because a link to a race that unfurled as the brand
+   said nothing about the race (`rendering/og_image.py`). It is a path rather
+   than a URL for the same reason the icons are — the origin is supplied here,
+   once — and it is made absolute below because crawlers require that of
+   `og:image` specifically.
+
    The two-space continuation indent is the head's, because this block is
    emitted inside `<head>` where its first line is already indented. The indent
    that follows the twitter:card line sits inside the `if`, and `{%+` keeps
    `lstrip_blocks` from eating it, so an unshareable page starts flush with the
    `og:image` tag exactly as the builder this replaced did. -#}
 {% if shareable %}<meta name="twitter:card" content="summary_large_image">
-  {%+ endif %}<meta property="og:image" content="{{ origin }}/og-image.png">
+  {%+ endif %}<meta property="og:image" content="{{ origin }}{{ image_path }}">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">

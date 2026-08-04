@@ -8,6 +8,7 @@ from `rendering/context.py`; this module only assembles them into a document.
 
 from __future__ import annotations
 
+from functools import partial
 from typing import Any, cast
 from urllib.parse import urlsplit
 
@@ -21,6 +22,7 @@ from election_guide.rendering.models import RenderingConfiguration
 from election_guide.rendering.payload import (
     comparisons_payload,
     guide_payload,
+    race_payload,
     source_participation_label,
     sources_payload,
 )
@@ -29,13 +31,14 @@ from election_guide.rendering.shell import (
     EXTERNAL_LINK_ATTRIBUTES,
     OPENS_IN_NEW_TAB,
     SITE_NAME,
-    close_icon_svg,
     election_day_banner_html,
     election_names,
     envelope_icon_svg,
     github_icon_svg,
     info_icon_svg,
     page_title,
+    race_og_image_path,
+    race_page_path,
     share_icon_svg,
     site_icon_svg,
 )
@@ -95,27 +98,10 @@ def render_html_document(
     # One entry module, one bundle, inlined verbatim inside a module script so
     # the guide stays one self-contained file (docs/FRONTEND.md, Modules).
     guide_entry_script = bundle_entry("guide-entry.mjs", global_name="GuidePage")
-    rendered_urls = [
-        configuration.project_url,
-        *(source.evidence_url for source in view_model.sources),
-        *(
-            cell.evidence_url
-            for section in view_model.sections
-            for race in section.races
-            for cell in race.source_cells
-            if cell.evidence_url is not None
-        ),
-    ]
-    for url in rendered_urls:
-        _require_web_url(url)
-    source_category_label_by_key = {
-        category.category: category.label for category in view_model.methodology.source_categories
-    }
-    source_cells_by_race_id = {
-        race.id: {cell.source_id: cell for cell in race.source_cells}
-        for section in view_model.sections
-        for race in section.races
-    }
+    # The guide renders one off-site link of its own now that the evidence rows
+    # moved to the race pages (issue #136), and each of those pages checks its
+    # own race's receipts in `render_race_document`.
+    _require_web_url(configuration.project_url)
     guide_path = f"/e/{view_model.metadata.election_id}/"
     # Root-relative, like every other in-site link: an absolute production URL
     # walked a reader off any other origin — a local preview, a staging deploy,
@@ -133,7 +119,6 @@ def render_html_document(
     )
     document_title = page_title(page="Endorsements", election=election_display_name)
     return template.render(
-        **context.personalization_lookup_context(view_model),
         guide=view_model,
         config=configuration,
         document_title=document_title,
@@ -143,15 +128,17 @@ def render_html_document(
         client_payload=guide_payload(
             view_model,
             races=[
-                context.race_display(race)
+                context.race_display(race, race_page_path(view_model.metadata.election_id, race.id))
                 for section in view_model.sections
                 for race in section.races
             ],
             filter_scopes=[option for group in filter_scope_groups for option in group.options],
             sources_page_path=sources_page_url,
         ).model_dump(mode="json"),
-        race_share_icon=share_icon_svg(),
-        race_close_icon=close_icon_svg(),
+        # Each card links its race's own page (issue #136). Bound to this
+        # election here rather than passed as a two-argument helper, so the
+        # template cannot address a race in another election.
+        race_page_path=partial(race_page_path, view_model.metadata.election_id),
         guide_path=guide_path,
         sources_page_url=sources_page_url,
         compare_href=(
@@ -162,20 +149,124 @@ def render_html_document(
         project_url=configuration.project_url,
         **context.footer_update_context(view_model),
         filter_scope_groups=filter_scope_groups,
-        source_category_label_by_key=source_category_label_by_key,
-        source_cells_by_race_id=source_cells_by_race_id,
         has_no_majority=context.has_no_majority,
         screen_share_accessible_label=context.screen_share_accessible_label,
         screen_support_summary=context.screen_support_summary,
         screen_support_summary_compact=context.screen_support_summary_compact,
-        candidate_endorsement_groups=context.candidate_endorsement_groups,
-        tallying_source_cells=context.tallying_source_cells,
+    )
+
+
+def render_race_document(
+    view_model: PublicationViewModel,
+    race_id: str,
+    *,
+    public_site_url: str,
+    project_url: str | None = None,
+) -> str:
+    """Render one race's own page (issue #136).
+
+    Race detail lives at its own address, so it can be landed on, shared, and
+    unfurled with the race's own title, description, and card — none of which a
+    URL fragment over the guide could ever carry, because a fragment is never
+    sent to the crawler that builds the preview. `docs/DESIGN.md`'s
+    page-vs-modal test asks for exactly that re-evaluation when the
+    requirements change, and this is the page it now calls for.
+
+    Pure in the same sense the other documents are: same view model and race,
+    same bytes. That is what lets `hosting/pages.py` publish the page and
+    `rendering/validation.py` audit the very same rendering without the two
+    having to share a file.
+    """
+    race = next(
+        (
+            candidate
+            for section in view_model.sections
+            for candidate in section.races
+            if candidate.id == race_id
+        ),
+        None,
+    )
+    if race is None:
+        raise ValueError(f"election {view_model.metadata.election_id!r} has no race {race_id!r}")
+
+    # Every receipt this page links, checked before it is written into markup.
+    for cell in race.source_cells:
+        if cell.evidence_url is not None:
+            _require_web_url(cell.evidence_url)
+
+    environment = template_environment()
+    template = environment.get_template("race.html.j2")
+    stylesheet = page_stylesheet("race")
+    race_entry_script = bundle_entry("race-entry.mjs", global_name="RacePage")
+    election_id = view_model.metadata.election_id
+    guide_path = f"/e/{election_id}/"
+    sources_page_url = f"{guide_path}sources/"
+    election_display_name, _ = election_names(
+        view_model.metadata.election_date,
+        view_model.metadata.election_type,
+        view_model.metadata.state,
+        legacy_name=view_model.metadata.election_name,
+        election_id=election_id,
+    )
+    lookups = context.personalization_lookup_context(view_model)
+    source_by_id = cast(dict[str, Any], lookups["source_by_id"])
+    source_code_by_id = cast(dict[str, str], lookups["source_code_by_id"])
+    category_label_by_key = {
+        category.category: category.label for category in view_model.methodology.source_categories
+    }
+    race_detail = context.race_detail_display(
+        race,
+        source_by_id,
+        source_code_by_id=source_code_by_id,
+        category_label_by_key=category_label_by_key,
+    )
+    contributing_sources = [
+        source for source in view_model.sources if source.contribution_status == "contributing"
+    ]
+    return template.render(
+        **lookups,
+        guide=view_model,
+        race=race,
+        race_detail=race_detail,
+        public_site_url=public_site_url,
+        # DESIGN.md's title grammar for an election-scoped page, with the race
+        # itself as the page's own name: `<page> — <election> — <site>`.
+        document_title=page_title(page=race.race_label, election=election_display_name),
+        page_description=context.race_social_description(race),
+        election_display_name=election_display_name,
+        stylesheet=stylesheet,
+        race_entry_script=race_entry_script,
+        client_payload=race_payload(
+            view_model,
+            race=race_detail,
+            sources_page_path=sources_page_url,
+        ).model_dump(mode="json"),
+        race_path=race_page_path(election_id, race.id),
+        social_image_path=race_og_image_path(election_id, race.id),
+        guide_path=guide_path,
+        sources_page_url=sources_page_url,
+        compare_href=(
+            f"{guide_path}comparisons/" if view_model.comparisons.policy.enabled else None
+        ),
+        consensus_source_count=sum(
+            source.panel_role == "consensus" for source in contributing_sources
+        ),
+        election_day_banner=election_day_banner_html(view_model.metadata.election_date),
+        canonical_origin=public_site_url,
+        project_url=project_url,
+        **context.footer_update_context(view_model),
+        group_rows=context.race_source_group_rows(
+            race,
+            source_by_id,
+            source_code_by_id=source_code_by_id,
+            category_label_by_key=category_label_by_key,
+        ),
+        has_no_majority=context.has_no_majority,
+        screen_share_accessible_label=context.screen_share_accessible_label,
+        screen_support_summary=context.screen_support_summary,
+        screen_support_summary_compact=context.screen_support_summary_compact,
         race_detail_accessible_summary=context.race_detail_accessible_summary,
-        race_detail_support_summary=context.race_detail_support_summary,
-        source_cell_group=context.source_cell_group,
-        source_cell_group_count=context.source_cell_group_count,
         source_cell_group_label=context.source_cell_group_label,
-        source_cell_detail_label=context.source_cell_detail_label,
         source_cell_group_keys=("no_endorsement", "unverified"),
     )
 
@@ -197,12 +288,10 @@ def render_sources_document(
     production; this only matters for a caller (e.g. a test) that renders the
     page without it.
     """
-    # The sources editor renders every source's own receipt — in the tree and
-    # in the coverage-gap rows — so this is the renderer that checks them, the
-    # same way the guide checks the links it renders itself. The guide checks
-    # them today as well; issue #136 moves the guide's evidence rows onto the
-    # race pages, and this is the check that keeps the sources page covered
-    # once it does.
+    # Every source's receipt, checked before it is written into markup. This
+    # page is where those links are rendered — the tree's rows and the
+    # coverage-gap rows — so it is where they are checked, the same way the
+    # guide checks its one off-site link and a race page checks its own cells.
     for source in view_model.sources:
         _require_web_url(source.evidence_url)
 

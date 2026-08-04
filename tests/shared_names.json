@@ -61,12 +61,6 @@
       "python",
       "test"
     ],
-    "data-close-race-detail": [
-      "template",
-      "client",
-      "python",
-      "test"
-    ],
     "data-column-label": [
       "template",
       "stylesheet",
@@ -157,18 +151,6 @@
       "template",
       "test"
     ],
-    "data-copy-race-link": [
-      "template",
-      "client",
-      "python",
-      "test"
-    ],
-    "data-copy-race-status": [
-      "template",
-      "client",
-      "python",
-      "test"
-    ],
     "data-coverage-gap-source-id": [
       "template",
       "test"
@@ -240,29 +222,13 @@
       "client",
       "test"
     ],
-    "data-lens-detail-audited": [
-      "template",
-      "client",
-      "test"
-    ],
     "data-lens-foot": [
       "template",
       "client",
       "test"
     ],
-    "data-lens-hidden": [
-      "template",
-      "stylesheet",
-      "test"
-    ],
     "data-lens-notice": [
       "template",
-      "client",
-      "test"
-    ],
-    "data-lens-only": [
-      "template",
-      "stylesheet",
       "client",
       "test"
     ],
@@ -282,64 +248,29 @@
       "python",
       "test"
     ],
-    "data-race-detail-candidate-id": [
+    "data-race-candidates": [
       "template",
       "client",
       "test"
     ],
-    "data-race-detail-dialog": [
+    "data-race-detail-candidate-id": [
       "template",
       "client",
-      "python",
       "test"
     ],
     "data-race-detail-group": [
       "template",
       "test"
     ],
-    "data-race-detail-lens-count": [
-      "template",
-      "client",
-      "test"
-    ],
-    "data-race-detail-lens-kicker": [
-      "template",
-      "client",
-      "test"
-    ],
-    "data-race-detail-lens-meter": [
-      "template",
-      "client",
-      "test"
-    ],
-    "data-race-detail-lens-meter-text": [
-      "template",
-      "client",
-      "test"
-    ],
-    "data-race-detail-link": [
-      "template",
-      "client",
-      "python",
-      "test"
-    ],
-    "data-race-detail-not-counted": [
-      "template",
-      "client",
-      "test"
-    ],
     "data-race-detail-source-code": [
       "template",
+      "client",
       "python",
       "test"
     ],
     "data-race-detail-summary": [
       "template",
       "client",
-      "test"
-    ],
-    "data-race-id": [
-      "template",
       "test"
     ],
     "data-row-differs": [
@@ -364,20 +295,23 @@
     ],
     "data-source-category": [
       "template",
+      "client",
       "python"
     ],
     "data-source-group": [
       "template",
+      "client",
       "python",
       "test"
     ],
     "data-source-role": [
       "template",
-      "python",
+      "client",
       "test"
     ],
     "data-source-state": [
       "template",
+      "client",
       "python",
       "test"
     ],
@@ -575,7 +509,6 @@
       "test"
     ],
     "lens-comparison": [
-      "template",
       "stylesheet",
       "client",
       "test"
@@ -625,13 +558,54 @@
       "python",
       "test"
     ],
-    "race-detail-meter-na": [
+    "race-detail": [
+      "template",
+      "stylesheet",
+      "client",
+      "python",
+      "test"
+    ],
+    "race-detail-candidate": [
       "template",
       "stylesheet",
       "client",
       "test"
     ],
-    "race-detail-outcomes": [
+    "race-detail-candidate-heading": [
+      "template",
+      "stylesheet",
+      "client"
+    ],
+    "race-detail-candidate-leader": [
+      "template",
+      "stylesheet",
+      "client"
+    ],
+    "race-detail-candidate-metrics": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "race-detail-candidate-title": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "race-detail-category-badge": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "race-detail-meter": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "race-detail-meter-na": [
       "template",
       "stylesheet",
       "client",
@@ -640,14 +614,33 @@
     "race-detail-source-list": [
       "template",
       "stylesheet",
+      "client",
       "python"
+    ],
+    "race-detail-source-meta": [
+      "template",
+      "stylesheet",
+      "client"
+    ],
+    "race-detail-source-not-counted": [
+      "stylesheet",
+      "client",
+      "test"
     ],
     "race-detail-source-row": [
       "template",
       "stylesheet",
-      "python"
+      "client",
+      "python",
+      "test"
     ],
     "race-detail-source-row-not-counted": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "race-detail-source-status": [
+      "template",
       "stylesheet",
       "client",
       "test"
@@ -766,14 +759,14 @@
     ]
   },
   "breakpoints": {
+    "1050": [
+      "stylesheet",
+      "python"
+    ],
     "720": [
       "stylesheet",
       "python",
       "test"
-    ],
-    "1050": [
-      "stylesheet",
-      "python"
     ]
   }
 }

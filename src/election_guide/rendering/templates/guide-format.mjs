@@ -147,8 +147,8 @@ export function raceDetailSupportSummary(scored, selectedTotal, leaderCount) {
 }
 
 /**
- * Mirrors `race_detail_accessible_summary` in `rendering/context.py`, for the dialog's
- * visually-hidden `aria-describedby` text.
+ * Mirrors `race_detail_accessible_summary` in `rendering/context.py`, for a race
+ * page's visually-hidden `aria-describedby` text.
  *
  * @param {ScoredRace} scored
  * @param {ReadonlyMap<string, string>} labels

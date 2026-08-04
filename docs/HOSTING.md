@@ -80,7 +80,12 @@ The public route contract is:
 - `/e/<election-id>/` serves that election's HTML, release status, and release manifest;
 - `/e/<election-id>/<anything>.pdf` returns a permanent `301` redirect to that election's guide
   page, so links to the retired generated PDF edition (issue 193) still resolve;
-- `/e/<election-id>` redirects to the trailing-slash form;
+- `/e/<election-id>/races/<race-id>/` serves one race's own page and, beside it,
+  `og-image.png` — that race's build-time social card, so a shared race unfurls as the race rather
+  than as the site (issue 136). Every race in every published election's inventory has one,
+  archived elections included, and `/e/<election-id>/races/` is not itself a page;
+- a directory addressed without its trailing slash redirects to the trailing-slash form with a
+  permanent `308`, which covers `/e/<election-id>` and every race page from one rule;
 - the current election may set `comparison_route_preview: true` to serve
   `/e/<election-id>/comparisons/` and canonicalize its slashless form without adding a link from the
   guide, Sources, archive, About/FAQ, or 404 page; this preview override is rejected for historical
@@ -104,7 +109,8 @@ The generated Pages worker uses an exact staged-asset allowlist before consultin
 binding. This prevents Cloudflare's document fallback from turning a historical-looking unknown URL
 into the current guide. The archive and known election pages remain indexable on the canonical
 host. Rendered guides set their canonical and Open Graph URL to
-`https://seattleelections.guide/e/<election-id>/`.
+`https://seattleelections.guide/e/<election-id>/`, and each race page sets its own to
+`https://seattleelections.guide/e/<election-id>/races/<race-id>/`.
 
 ### Only the canonical host is indexable
 

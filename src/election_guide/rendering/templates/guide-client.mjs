@@ -4,11 +4,8 @@
 // This module composes; the behavior lives in the modules it calls. The
 // composition order matters and is the order the two script blocks ran in
 // before the extraction: a classic `<script>` executes at parse time and a
-// `<script type="module">` is deferred, so the filters and the dialog were
-// wired first and the lens second, even though the lens block came first in the
-// document. Keeping that order keeps the load-time interaction between them —
-// a dialog opening against a filtered-out card, a fragment the lens then
-// cleans — exactly as shipped.
+// `<script type="module">` is deferred, so the filters were wired first and the
+// lens second, even though the lens block came first in the document.
 //
 // One `{% if %}` disappeared in the move. The template used to compile two
 // different scripts depending on the release policy; the payload already says
@@ -19,36 +16,55 @@
 // (issue #248): the banner's live count and the notice below it. Both are
 // `aria-live` elements the server renders and lit renders *into*, never
 // replaces — see the note beside their lookup below.
+//
+// The race-detail dialog it also wired is gone (issue #136). What is left of it
+// here is one forward: a `#race-…` link shared while the dialog existed still
+// names a race, and it now names a page.
 
 import { html, nothing, render } from 'lit-html';
-import { wireRaceDialogs } from './guide-dialog.mjs';
 import { wireGuideFilters } from './guide-filters.mjs';
 import { createGuideLens, lensCountingSummary } from './guide-lens.mjs';
-import { migrateLensState } from './lens-migrate.mjs';
 import { createLensRouter } from './lens-route.mjs';
 import {
-  raceTargetFrom,
+  resolveLensLink,
   resolveSelectedCodes,
   SELECTION_LINK_FAILURE_NOTICE,
   selectionFragment,
   tallyingSourceCodes,
 } from './lens-selection.mjs';
-import { decodeLensFragment, lensContext } from './lens-url.mjs';
-
-const UNREADABLE_LINK_NOTICE = 'This link could not be read, so it shows the audited consensus.';
-const MIGRATED_LINK_NOTICE =
-  'This link was written for an earlier published data version. It was migrated to the current ' +
-  'panel, so results may differ from the original link.';
+import {
+  decodeLensFragment,
+  fragmentRaceTarget,
+  LEGACY_RACE_PREFIX,
+  lensContext,
+} from './lens-url.mjs';
 
 /**
- * One decoded fragment resolved to live state, an explanation, and whether the
- * address bar has to be cleaned.
+ * Forward a fragment that names a race to that race's own page (issue #136).
  *
- * @typedef {object} LensOutcome
- * @property {import('./lens-url.mjs').LensState|null} state
- * @property {string|null} notice
- * @property {boolean} cleanAddress
+ * Both shapes a race target can arrive in are the same target: the bare
+ * `#race-…` permalink the dialog published, and the `race=` segment a lens link
+ * carries beside its selection — which is also what the sources editor's Save
+ * writes when a reader edits their sources from a race page. The codec reads
+ * either, so this reads neither by hand.
+ *
+ * The target is resolved against the published races rather than pasted into an
+ * address: a fragment naming no race of this election leaves the reader on the
+ * guide, which is where they already are.
+ *
+ * @param {GuidePayload} payload
+ * @param {import('./lens-route.mjs').LensRouter} router
+ * @returns {boolean} Whether the page is leaving.
  */
+function forwardToRacePage(payload, router) {
+  const target = fragmentRaceTarget(router.fragment());
+  if (!target.startsWith(LEGACY_RACE_PREFIX)) return false;
+  const raceId = target.slice(LEGACY_RACE_PREFIX.length);
+  const race = payload.races.find((item) => item.race_id === raceId);
+  if (race === undefined) return false;
+  router.redirectToRacePage(race.race_path);
+  return true;
+}
 
 /**
  * Wire the guide.
@@ -57,8 +73,11 @@ const MIGRATED_LINK_NOTICE =
  */
 export function wireGuide(payload) {
   const router = createLensRouter();
-  const filters = wireGuideFilters(payload, router);
-  wireRaceDialogs(payload, router, filters);
+  // Before anything renders: this load is a navigation away, and taking cards
+  // over or rewriting the address bar first would be work done on a page the
+  // reader never sees.
+  if (forwardToRacePage(payload, router)) return;
+  wireGuideFilters(payload, router);
 
   const personalization = payload.personalization;
   const context = lensContext(payload, payload.data_version);
@@ -100,83 +119,19 @@ export function wireGuide(payload) {
   /** A persistent explanation of how this load resolved its link, when warranted. */
   /** @type {string|null} */
   let notice = null;
-  /**
-   * The race the reader is on, as the live fragment resolves it.
-   *
-   * Held rather than recomputed: it changes only when the fragment does, and
-   * resolving it means decoding the fragment. The hashchange handler used to
-   * decode twice for one event — once to find this target and once to find the
-   * selection — which issue #239 moved here verbatim and left for #248.
-   *
-   * @type {string|null}
-   */
-  let raceTarget = null;
 
-  /**
-   * Resolve one decoded fragment to live lens state plus a persistent
-   * explanation, when one is warranted.
-   *
-   * A same-version link needs neither migration nor an explanation. A
-   * `stale_version` link is resolved through issue 78's migration resolver,
-   * with no origin snapshot: nothing about correct resolution depends on one (a
-   * surviving code always names the same source or category it always did), it
-   * only refines "removed" versus "unknown" reporting this guide does not
-   * surface. A migration that must reject falls back to audited. Every other
-   * non-lens status (`absent`, `legacy`, or an ordinary in-page anchor the codec
-   * does not recognize, such as the skip link) carries no lens explanation at
-   * all, so clicking around the page never manufactures one.
-   *
-   * With the lens disabled there is nothing to migrate a stale link into and
-   * nothing on the page acts on a selection, so the decode runs only so that an
-   * unreadable fragment is recognized — and, since issue #239, reported. It
-   * used to be cleaned from the address bar in silence, which the rule forbids
-   * (docs/FRONTEND.md § State and URLs: a decode failure produces a
-   * reader-visible notice *and* a cleaned address bar).
-   *
-   * @param {import('./lens-url.mjs').LensDecodeResult} decoded
-   * @returns {LensOutcome}
-   */
-  const resolve = (decoded) => {
-    const unreadable = decoded.status === 'malformed' && decoded.reason !== 'unrecognized_fragment';
-    if (personalization === null) {
-      const usable = decoded.status === 'valid' || decoded.status === 'stale_version';
-      return {
-        state: usable ? decoded.state : null,
-        notice: unreadable ? UNREADABLE_LINK_NOTICE : null,
-        cleanAddress: unreadable,
-      };
-    }
-    if (decoded.status === 'valid') {
-      return { state: decoded.state, notice: null, cleanAddress: false };
-    }
-    if (decoded.status === 'stale_version') {
-      const migration = migrateLensState(decoded, personalization, null);
-      if (migration.status === 'migrated') {
-        return { state: migration.selection, notice: MIGRATED_LINK_NOTICE, cleanAddress: false };
-      }
-      return {
-        state: null,
-        notice:
-          'This link could not be migrated to the current published panel ' +
-          `(category ${migration.category} is no longer available), so it shows the audited consensus.`,
-        cleanAddress: true,
-      };
-    }
-    if (!unreadable) return { state: null, notice: null, cleanAddress: false };
-    return { state: null, notice: UNREADABLE_LINK_NOTICE, cleanAddress: true };
-  };
-
-  /** Decode the live fragment once, for both the selection and the race target. */
-  const readFragment = () => {
-    const decoded = decodeLensFragment(router.fragment(), context);
-    const outcome = resolve(decoded);
-    raceTarget = raceTargetFrom(decoded, outcome.state);
-    return outcome;
-  };
+  const readFragment = () =>
+    resolveLensLink(decodeLensFragment(router.fragment(), context), personalization);
 
   /**
    * Where the Sources link should carry the reader: the page they would edit
    * their selection on, holding the selection they are looking at.
+   *
+   * It carries no race target. A guide address that named one is a race page's
+   * address now and this load has already left for it (`forwardToRacePage`), so
+   * the only reader who reaches here is on the guide itself — and Save should
+   * return them to the guide. The race pages carry their own target, which is
+   * how Save returns a reader to the race they were reading.
    *
    * A rejected encode — an oversized selection is the reachable case — used to
    * fall through to the bare guide path, so the reader followed a link that
@@ -184,10 +139,14 @@ export function wireGuide(payload) {
    * (docs/FRONTEND.md § State and URLs).
    */
   const sourcesHref = () => {
-    const result = selectionFragment({ selectedCodes, tallyingCodes, raceTarget, context });
+    const result = selectionFragment({
+      selectedCodes,
+      tallyingCodes,
+      raceTarget: null,
+      context,
+    });
     if (result.status === 'rejected') notice = SELECTION_LINK_FAILURE_NOTICE;
-    const fragment = result.status === 'ok' ? result.fragment : raceTarget ? `#${raceTarget}` : '';
-    return `${payload.sources_page_path}${fragment}`;
+    return `${payload.sources_page_path}${result.status === 'ok' ? result.fragment : ''}`;
   };
 
   /**
@@ -242,20 +201,13 @@ export function wireGuide(payload) {
     // A malformed or unmigratable link resolves to the audited consensus; clear
     // it from the address bar so a reload or copy reproduces that resolved state
     // instead of failing the same way again. Clearing it replaces the history
-    // entry rather than navigating, so nothing tells the race target that the
-    // address it was read from is gone: re-read it here, and the Sources link
-    // below points at the address the reader is actually on. The outcome is
-    // discarded — the notice above is this load's, and a cleared fragment has
-    // no explanation of its own to add.
+    // entry rather than navigating.
     router.clearFragment();
-    readFragment();
   }
   renderChrome();
 
-  // A plain in-page anchor (the skip link) also fires hashchange, and so does
-  // opening or closing a race-detail dialog; the Sources link's target always
-  // needs the current race target regardless, but only a genuine lens-shaped
-  // change also re-applies a selection.
+  // A plain in-page anchor (the skip link) also fires hashchange; only a
+  // genuine lens-shaped change re-applies a selection.
   router.onFragmentChange(() => {
     const outcome = readFragment();
     if (outcome.state) applySelection(outcome.state);

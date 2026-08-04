@@ -140,18 +140,25 @@ output/rendered/
     └── mobile.png
 ```
 
+The race pages are audited here but not written into the generation. A race page is a pure function
+of the view model and one race id, and `hosting stage` renders it with the same function, so what is
+validated is exactly what will be published while the release bundle keeps the shape every
+already-published release has (issue 136).
+
 ## Blocking validation
 
 The generation fails unless:
 
 - responsive HTML contains every canonical race in order and every display value; each affirmative
   endorser appears under every endorsed candidate or choice with its own evidence link;
-- every race-detail view contains every canonical tallying source decision in the correct
+- every race's own page contains every canonical tallying source decision in the correct
   voter-facing outcome section, with affirmative multi-candidate decisions repeated once per selected
   candidate, comparison-role decisions absent entirely (issue 124), and the exact state and evidence
   link when one exists;
-- desktop and mobile browser checks exercise copied permalinks, direct fragments, back/forward restoration,
-  close-button and Escape behavior, focus placement/return, dialog naming, and viewport containment;
+- every race page declares its own title, description, canonical URL, and social card, so a shared
+  race unfurls as that race rather than as the site (issue 136);
+- desktop and mobile browser checks exercise the card's link to its race page, the filter and view
+  controls, and viewport containment;
 - the configured desktop and mobile captures use their exact CSS viewport dimensions without
   horizontal overflow, expose every race and the filter controls, and contain visible pixels; and
 - an approved coarse perceptual baseline catches wholesale hierarchy, palette, or layout changes

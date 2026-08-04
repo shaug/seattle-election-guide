@@ -16,6 +16,12 @@ so the guide document shipped the editor's whole checkbox tree and coverage-gap
 section without rendering any of it, and the editor shipped the guide's race
 grid, race-detail dialog, and printable edition.
 
+Shared parts are tiers rather than pairs: `lens-pages.css` is what every
+lens-aware page renders (the guide, a race page, and the sources editor) and
+`guide-race.css` is the narrower group only the guide and a race page render —
+the result block, the one meter, the reference bar. A page names each tier it
+reads, so nothing ships a component it does not render.
+
 Parts compose in order, so a later part may override an earlier one: `base.css`
 carries the tokens and the shell every page renders (docs/DESIGN.md) and is
 always first; a page's own stylesheet is always last.
@@ -32,8 +38,9 @@ from election_guide.rendering.bundler import TEMPLATE_DIR
 # every page stylesheet to exactly one page, and holds the pages named here to
 # the templates that exist.
 PAGE_STYLESHEETS: dict[str, tuple[str, ...]] = {
-    "guide": ("base.css", "guide-sources.css", "guide.css"),
-    "sources": ("base.css", "guide-sources.css", "sources.css"),
+    "guide": ("base.css", "lens-pages.css", "guide-race.css", "guide.css"),
+    "race": ("base.css", "lens-pages.css", "guide-race.css", "race.css"),
+    "sources": ("base.css", "lens-pages.css", "sources.css"),
     "compare": ("base.css", "compare.css"),
     "about": ("base.css", "about.css"),
     "archive": ("base.css", "archive.css"),

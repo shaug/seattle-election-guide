@@ -1,0 +1,101 @@
+/* One race's own page (issue #136). Read by the race page and nothing else, so
+   a rule here may assume its markup: the candidate sections, the evidence
+   rows, and the collapsed listings of the sources that did not weigh in.
+
+   Nearly every rule below arrived verbatim from guide.css, where it styled the
+   race-detail dialog. What is gone with the dialog is its chrome: the
+   `<dialog>` box and backdrop, the sticky navy header with its close and share
+   buttons, and the mobile viewport rules that kept the box inside the screen.
+   A page needs none of that — it has the shared masthead, the browser's own
+   Back, and the masthead's Share (docs/DESIGN.md, Site shell). The result
+   block above the sections is the guide card's own component and lives in
+   guide-race.css, which this page also reads. */
+
+.screen-race { min-width: 0; }
+.race-detail { min-width: 0; padding: 1rem clamp(1rem, 4vw, 3rem) 4rem; }
+.race-detail :focus-visible { outline: .2rem solid var(--focus); outline-offset: .15rem; }
+/* The headline: the recommendation and its meter, then the caption row, then
+   the reference bar when a lens diverges — the same order and the same
+   components the card puts them in, so a reader arriving from a card sees the
+   quantity they clicked, larger. */
+.race-headline { display: grid; gap: .55rem; margin-bottom: 1.25rem; padding: 1.15rem; background: var(--white); border: 1px solid var(--line-soft); border-top: .3rem solid var(--teal); box-shadow: 0 .2rem .8rem rgba(16,42,67,.08); }
+/* Like the card foot, and for the same reason: lit needs one region to own
+   without it becoming a box that opens a gap when it is empty. */
+.race-headline-foot { display: contents; }
+
+.race-detail-outcomes { display: grid; gap: .65rem; }
+.race-detail-candidate, .race-detail-outcome { overflow: hidden; border: 1px solid var(--line-soft); border-left: .3rem solid var(--line-strong); background: var(--white); }
+.race-detail-candidate { border-color: #e8c58e; border-left-color: var(--amber); }
+.race-detail-candidate-leader { border-color: #9fcfc5; border-left-color: var(--teal); }
+.race-detail-candidate-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem 1.25rem; padding: .55rem .75rem; background: var(--tone-differ-bg); }
+.race-detail-candidate-leader .race-detail-candidate-heading { background: var(--tone-agree-bg); }
+.race-detail-candidate-title { min-width: 0; }
+.race-detail-candidate-title p { margin: 0 0 .05rem; color: var(--tone-agree-text); font-size: .62rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.race-detail-candidate-title h4 { min-width: 0; margin: 0; color: var(--navy); font-size: 1.05rem; line-height: 1.1; overflow-wrap: anywhere; }
+.race-detail-candidate-metrics { display: flex; flex: 0 0 auto; margin-left: auto; align-items: center; justify-content: flex-end; gap: .45rem .75rem; }
+.race-detail-candidate-metrics > span { color: var(--muted); font-size: .68rem; white-space: nowrap; }
+/* I40: one meter chrome — the per-candidate meter adopts the headline meter's
+   own border/track treatment at a smaller size, and the same low-fill guard
+   (I41). The threshold behind that guard is decided once, in `guide-card.mjs`'s
+   meterView; only the declaration is restated here, because this chrome is
+   rendered on no other page. */
+.race-detail-meter { display: flex; flex: 0 0 auto; align-items: center; justify-content: flex-start; width: 8.5rem; height: 1.8rem; overflow: hidden; border: 1px solid var(--line-strong); border-radius: 1rem; background: linear-gradient(to right, var(--teal) 0 var(--meter-fill), var(--meter-track) var(--meter-fill) 100%); }
+.race-detail-meter strong { width: 100%; padding: .05rem .65rem 0; color: var(--white); font-size: .9rem; font-variant-numeric: tabular-nums; text-align: left; }
+.race-detail-meter.meter-no-majority { background: linear-gradient(to right, var(--amber) 0 var(--meter-fill), var(--meter-track) var(--meter-fill) 100%); }
+.race-detail-meter.meter-no-majority strong { color: var(--navy); }
+.race-detail-meter-na { background: var(--meter-track); }
+.race-detail-meter-na strong { color: var(--muted); }
+.race-detail-meter.meter-low-fill strong { padding-left: calc(var(--meter-fill) + .4rem); color: var(--muted); }
+.race-detail-outcome-unverified { border-left-color: var(--red); }
+.race-detail-outcome-heading { display: flex; align-items: baseline; justify-content: space-between; gap: .5rem 1rem; padding: .5rem .75rem; background: var(--tone-neutral-bg); }
+.race-detail-outcome-heading h4 { margin: 0; color: var(--navy); font-size: .86rem; }
+.race-detail-outcome-heading span { flex: 0 0 auto; color: var(--muted); font-size: .68rem; }
+.race-detail-source-list { display: grid; margin: 0; padding: 0; list-style: none; }
+.race-detail-source-list li + li { border-top: 1px solid var(--row-separator); }
+.race-detail-source-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: .35rem 1rem; min-height: 2.55rem; padding: .48rem .75rem; color: inherit; text-decoration: none; }
+a.race-detail-source-row:hover { background: #f8fafb; }
+a.race-detail-source-row:hover strong { text-decoration: underline; text-underline-offset: .15em; }
+.race-detail-source-row strong { min-width: 0; color: var(--navy); font-size: .8rem; overflow-wrap: anywhere; }
+.race-detail-source-meta { display: flex; min-width: 0; align-items: center; justify-content: flex-end; gap: .3rem; }
+/* H36: every endorser row carried a bordered category pill; the taxonomy
+   outweighed the data. Row order is unchanged — the category now renders as
+   plain right-aligned muted text instead. */
+.race-detail-category-badge { color: var(--muted); font-size: .68rem; font-weight: 600; text-align: right; }
+.race-detail-source-status { color: var(--muted); font-size: .68rem; font-weight: 700; text-align: right; }
+/* I56: an unselected source's row stays in place as evidence — dimmed and
+   labeled, never hidden — while a lens is active. The dimming is scoped to
+   `.lens-personalized` (rather than being unconditional) so a row this class
+   marked during an earlier personalized selection cannot visibly linger
+   after the selection returns to the audited default. */
+html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source-row { opacity: .55; }
+.race-detail-source-not-counted { color: var(--muted); font-size: .6rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+.race-detail-missing { margin-top: .75rem; border-top: 1px solid var(--line); padding-top: .65rem; }
+.race-detail-missing summary { cursor: pointer; color: var(--muted); font-size: .72rem; font-weight: 700; }
+.race-detail-missing .race-detail-source-list { margin-top: .5rem; border: 1px solid var(--line-soft); background: #f8fafb; }
+.race-detail-missing .race-detail-source-row { min-height: 2.3rem; padding-top: .4rem; padding-bottom: .4rem; }
+.race-detail-missing .race-detail-source-row strong, .race-detail-missing .race-detail-source-status { color: var(--faint); font-weight: 600; }
+
+@media (max-width: 720px) {
+  .race-detail { padding-right: 1rem; padding-left: 1rem; }
+  .race-headline { padding: .85rem; }
+  .race-detail-candidate-heading { align-items: flex-start; }
+  /* Stack the metrics: meter beside the candidate name, count underneath. */
+  .race-detail-candidate-metrics { flex: 0 1 auto; min-width: 0; max-width: 100%; flex-direction: column; align-items: flex-end; gap: .2rem; }
+  .race-detail-candidate-metrics > span { order: 1; max-width: 100%; text-align: right; white-space: normal; }
+  .race-detail-meter { width: 7.5rem; }
+  .race-detail-source-row { grid-template-columns: 1fr; gap: .25rem; }
+  .race-detail-source-meta { justify-content: flex-start; }
+  .race-detail-category-badge { text-align: left; }
+  .race-detail-source-status { text-align: left; }
+}
+
+/* Ctrl+P prints the page the reader is on, as everywhere else on the site
+   (issue 193): flatten the surfaces onto white and keep each candidate's
+   evidence whole across a page break. */
+@media print {
+  .race-detail { padding: 0; }
+  .race-headline { padding: .09in; background: var(--white); box-shadow: none; break-inside: avoid; }
+  .race-detail-candidate, .race-detail-outcome, .race-detail-missing { break-inside: avoid; }
+  .race-detail-source-row strong { font-size: 9pt; }
+  .race-detail-category-badge, .race-detail-source-status { font-size: 8pt; }
+}

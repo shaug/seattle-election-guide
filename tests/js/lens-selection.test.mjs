@@ -1,17 +1,20 @@
-// lens-selection.mjs is the selection logic the guide and the standalone
-// sources editor share. Before issue #239 each page carried its own copy inside
-// its own `<script>` block, kept in step by hand; this is the one place the
-// behavior is now specified.
+// lens-selection.mjs is the selection logic every lens-aware page shares — the
+// guide, a race page, and the standalone sources editor. Before issue #239 each
+// page carried its own copy inside its own `<script>` block, kept in step by
+// hand; this is the one place the behavior is now specified.
 
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   isDefaultSelection,
+  MIGRATED_LINK_NOTICE,
   raceTargetFrom,
+  resolveLensLink,
   resolveSelectedCodes,
   SELECTION_LINK_FAILURE_NOTICE,
   selectionFragment,
   tallyingSourceCodes,
+  UNREADABLE_LINK_NOTICE,
 } from '../../src/election_guide/rendering/templates/lens-selection.mjs';
 import {
   decodeLensFragment,
@@ -50,6 +53,41 @@ const MEMBERS = new Map([['Glab', ['mlkl', 'urbn']]]);
 
 /** @param {Record<string, unknown>} [overrides] */
 const context = (overrides) => lensContext(bindings(overrides), 'd119ee3107bb');
+
+/** One lens fragment against the panel above, with `sel` and `data` variable. */
+const fragment = ({ sel = '', data = 'd119ee3107bb' } = {}) =>
+  `lens=2&mode=s&panel=wa-2026-primary-default-sources-v4&ph=${PANEL_HASH.slice(0, 12)}` +
+  `&data=${data}&scoring=wa-2026-primary-equal-weight${sel ? `&sel=${sel}` : ''}`;
+
+/**
+ * The published contract `resolveLensLink` migrates a stale link against. It
+ * names the same panel the bindings above do, with the internal ids the
+ * migration resolver reads.
+ */
+const personalization = () => ({
+  panel_id: 'wa-2026-primary-default-sources-v4',
+  panel_hash: PANEL_HASH,
+  panel_version: 1,
+  retired_codes: [],
+  policy: { maximum_url_characters: 4096, enabled: true },
+  scoring: { configuration_id: 'wa-2026-primary-equal-weight' },
+  categories: [
+    {
+      id: 'labor',
+      code: 'Glab',
+      label: 'Labor',
+      selectable: true,
+      panel_role: 'tallying',
+      member_source_codes: ['mlkl', 'urbn'],
+    },
+  ],
+  sources: [
+    { id: 'the-stranger', code: 'strn', selectable: true, panel_role: 'consensus' },
+    { id: 'the-urbanist', code: 'urbn', selectable: true, panel_role: 'consensus' },
+    { id: 'mlk-labor', code: 'mlkl', selectable: true, panel_role: 'consensus' },
+  ],
+  races: [],
+});
 
 test('a category code expands to its current members, unioned with named sources', () => {
   assert.deepEqual(
@@ -193,6 +231,65 @@ test('every other shape takes the race from the state the page accepted', () => 
   // A state the page declined to use names no race either, which is what keeps
   // an unmigratable link from carrying its race forward.
   assert.equal(raceTargetFrom(decoded, undefined), null);
+});
+
+// docs/FRONTEND.md § State and URLs: a decode failure produces a
+// reader-visible notice *and* a cleaned address bar. Both halves, or neither —
+// which is the shape three pages now share rather than restate (issue #136).
+test('a link this build cannot read is reported and cleaned away', () => {
+  const outcome = resolveLensLink(
+    decodeLensFragment(`#${fragment({ sel: 'zzzz' })}`, context()),
+    personalization(),
+  );
+
+  assert.equal(outcome.state, null);
+  assert.equal(outcome.notice, UNREADABLE_LINK_NOTICE);
+  assert.equal(outcome.cleanAddress, true);
+});
+
+test('a same-version link needs neither migration nor an explanation', () => {
+  const outcome = resolveLensLink(
+    decodeLensFragment(`#${fragment({ sel: 'strn' })}`, context()),
+    personalization(),
+  );
+
+  assert.equal(outcome.notice, null);
+  assert.equal(outcome.cleanAddress, false);
+  assert.deepEqual(outcome.state?.sourceCodes, ['strn']);
+});
+
+test('a link written against an earlier published version is migrated, and says so', () => {
+  const outcome = resolveLensLink(
+    decodeLensFragment(`#${fragment({ sel: 'strn', data: 'older-version' })}`, context()),
+    personalization(),
+  );
+
+  assert.equal(outcome.notice, MIGRATED_LINK_NOTICE);
+  assert.equal(outcome.cleanAddress, false);
+  assert.deepEqual(outcome.state?.sourceCodes, ['strn']);
+});
+
+// An ordinary in-page anchor — the skip link — is not a lens link and must not
+// manufacture an explanation for one.
+test('an ordinary anchor carries no explanation at all', () => {
+  const outcome = resolveLensLink(decodeLensFragment('#guide-races', context()), personalization());
+
+  assert.equal(outcome.state, null);
+  assert.equal(outcome.notice, null);
+  assert.equal(outcome.cleanAddress, false);
+});
+
+// With the lens disabled there is nothing to migrate into and nothing acts on a
+// selection, so the decode runs only so that an unreadable fragment is still
+// recognized — and reported.
+test('an unreadable link is reported even with the lens disabled', () => {
+  const outcome = resolveLensLink(
+    decodeLensFragment(`#${fragment({ sel: 'zzzz' })}`, context()),
+    null,
+  );
+
+  assert.equal(outcome.notice, UNREADABLE_LINK_NOTICE);
+  assert.equal(outcome.cleanAddress, true);
 });
 
 test('the module computes and touches nothing', () => {

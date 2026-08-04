@@ -6,132 +6,6 @@
 {% endblock %}
 {% block body %}
   {% from '_filter_controls.html.j2' import election_controls %}
-  {% macro race_detail_source_badge(source) -%}
-    <span class="race-detail-category-badge">{{ source_category_label_by_key[source.category] }}</span>
-  {%- endmacro %}
-  {% macro source_count_phrase(count, group_key=none) -%}
-    {{ count }} source{% if count != 1 %}s{% endif %}{% if group_key == 'not_covered' %} did not cover this race{% elif group_key == 'not_applicable' %} {% if count == 1 %}was{% else %}were{% endif %} outside this district{% endif %}
-  {%- endmacro %}
-  {% macro race_detail_source_rows(race, group_key) -%}
-    <ul class="race-detail-source-list">
-      {% for cell in tallying_source_cells(race, source_by_id) %}
-      {% set source = source_by_id[cell.source_id] %}
-      {% if source_cell_group(cell, race, source) == group_key %}
-      {% set detail_label = source_cell_detail_label(cell, race, group_key) %}
-      <li data-race-detail-source-code="{{ source_code_by_id[cell.source_id] }}"
-        data-source-category="{{ source.category }}" data-source-state="{{ cell.state }}"
-        data-source-role="{{ source.panel_role }}" data-source-group="{{ group_key }}">
-        {% if cell.evidence_url %}<a class="race-detail-source-row" href="{{ cell.evidence_url }}"{{ external_link_attributes }}>
-        {% else %}<div class="race-detail-source-row">
-        {% endif %}
-          <strong>{{ source.name }}</strong>
-          <div class="race-detail-source-meta">
-            {{ race_detail_source_badge(source) }}
-            {% if detail_label %}<span class="race-detail-source-status">{{ detail_label }}</span>{% endif %}
-          </div>
-        {% if cell.evidence_url %}</a>{% else %}</div>{% endif %}
-      </li>
-      {% endif %}
-      {% endfor %}
-    </ul>
-  {%- endmacro %}
-  {% macro race_detail_candidate_source_row(race, cell, candidate_id) -%}
-    {% set source = source_by_id[cell.source_id] %}
-    {% set detail_label = source_cell_detail_label(cell, race, 'candidate') %}
-    <li data-race-detail-source-code="{{ source_code_by_id[cell.source_id] }}"
-      data-source-category="{{ source.category }}" data-source-state="{{ cell.state }}"
-      data-source-role="{{ source.panel_role }}" data-source-group="candidate"
-      data-endorsed-candidate-id="{{ candidate_id }}">
-      {% if cell.evidence_url %}<a class="race-detail-source-row" href="{{ cell.evidence_url }}"{{ external_link_attributes }}>
-      {% else %}<div class="race-detail-source-row">
-      {% endif %}
-        <strong>{{ source.name }}</strong>
-        <div class="race-detail-source-meta">
-          {{ race_detail_source_badge(source) }}
-          {% if detail_label %}<span class="race-detail-source-status">{{ detail_label }}</span>{% endif %}
-          {% if guide.personalization.policy.enabled %}
-          {# I56: an unselected source's row stays in place as evidence,
-             never removed, but is visibly marked as not counted toward the
-             lens-active per-candidate numbers. Starts empty, like every
-             other lens-only element in this template, so the static-HTML
-             evidence-row validator (rendering/validation.py) sees no extra audited text;
-             the JS below fills it in only once a lens actually diverges. #}
-          <span class="race-detail-source-not-counted" data-lens-only
-            data-race-detail-not-counted hidden></span>
-          {% endif %}
-        </div>
-      {% if cell.evidence_url %}</a>{% else %}</div>{% endif %}
-    </li>
-  {%- endmacro %}
-  {% macro race_detail_candidate_sections(race) -%}
-    {# Every rendered candidate is an endorsed one: issue 124 removed the
-       comparison-only picks that were this loop's one source of a candidate
-       with no endorsement group. #}
-    {% for endorsement_group in candidate_endorsement_groups(race) %}
-    {% set candidate_id = endorsement_group.candidate_id %}
-    {% set candidate_label = endorsement_group.candidate_label %}
-    {% set is_leader = candidate_id in race.support_leader_candidate_ids %}
-    {% set source_count = endorsement_group.source_count %}
-    {% set has_split = endorsement_group.endorsers | selectattr('co_endorsement') | list | length > 0 %}
-    <section class="race-detail-candidate{% if is_leader %} race-detail-candidate-leader{% endif %}"
-      data-race-detail-candidate-id="{{ candidate_id }}">
-      <div class="race-detail-candidate-heading">
-        <div class="race-detail-candidate-title">
-          {% if guide.personalization.policy.enabled %}
-          {# The kicker renders for every candidate (hidden unless this
-             candidate is the audited leader) so the I56 lens-only twin below
-             can show it for whichever candidate(s) become the personalized
-             leader instead — a candidate the audited baseline does not lead
-             can become the personalized leader, and vice versa. #}
-          <p{% if not is_leader %} hidden{% endif %} data-lens-hidden>{% if has_no_majority(race) %}No majority · {% endif %}{% if race.support_leader_candidate_ids | length > 1 %}Tied for lead{% else %}Leading choice{% endif %}</p>
-          <p class="lens-value" data-lens-only data-race-detail-lens-kicker hidden></p>
-          {% elif is_leader %}
-          <p>{% if has_no_majority(race) %}No majority · {% endif %}{% if race.support_leader_candidate_ids | length > 1 %}Tied for lead{% else %}Leading choice{% endif %}</p>
-          {% endif %}
-          <h4>{{ candidate_label }}</h4>
-        </div>
-        <div class="race-detail-candidate-metrics">
-          <span{% if guide.personalization.policy.enabled %} data-lens-hidden{% endif %}>{% if is_leader and race.recommendation_candidate_ids | length == 1 %}{{ source_count }} of {{ race.explicit_endorsement_count }} endorsing sources{% if has_split %} (co-endorsements split){% endif %}{% else %}{{ source_count }} endorsing source{% if source_count != 1 %}s{% endif %}{% endif %}</span>
-          {% if guide.personalization.policy.enabled %}
-          <span class="lens-value" data-lens-only data-race-detail-lens-count></span>
-          {# The meter renders for every candidate (hidden unless this
-             candidate is the audited leader), plus one lens-only twin (I56),
-             for the same reason as the kicker above. #}
-          {% if race.percentage_whole is none %}
-          <div class="race-detail-meter race-detail-meter-na"{% if not is_leader %} hidden{% endif %} data-lens-hidden
-            role="img" aria-label="{{ screen_share_accessible_label(race) }}"><strong>N/A</strong></div>
-          {% else %}
-          <div class="race-detail-meter{% if has_no_majority(race) %} meter-no-majority{% endif %}{% if race.percentage_whole < 30 %} meter-low-fill{% endif %}"{% if not is_leader %} hidden{% endif %} data-lens-hidden
-            style="--meter-fill: {{ race.percentage_whole }}%"
-            role="img" aria-label="{{ screen_share_accessible_label(race) }}">
-            <strong>{{ race.percentage_label }}</strong>
-          </div>
-          {% endif %}
-          <div class="race-detail-meter" data-lens-only data-race-detail-lens-meter hidden
-            role="img"><strong data-race-detail-lens-meter-text></strong></div>
-          {% elif is_leader %}
-          {% if race.percentage_whole is none %}
-          <div class="race-detail-meter race-detail-meter-na" role="img"
-            aria-label="{{ screen_share_accessible_label(race) }}"><strong>N/A</strong></div>
-          {% else %}
-          <div class="race-detail-meter{% if has_no_majority(race) %} meter-no-majority{% endif %}{% if race.percentage_whole < 30 %} meter-low-fill{% endif %}" style="--meter-fill: {{ race.percentage_whole }}%"
-            role="img" aria-label="{{ screen_share_accessible_label(race) }}">
-            <strong>{{ race.percentage_label }}</strong>
-          </div>
-          {% endif %}
-          {% endif %}
-        </div>
-      </div>
-      <ul class="race-detail-source-list">
-        {% for endorser in endorsement_group.endorsers %}
-        {% set cell = source_cells_by_race_id[race.id][endorser.source_id] %}
-        {{ race_detail_candidate_source_row(race, cell, candidate_id) }}
-        {% endfor %}
-      </ul>
-    </section>
-    {% endfor %}
-  {%- endmacro %}
-  {% set election_display_label = election_display_name %}
   {% set contributing_sources = guide.sources | selectattr('contribution_status', 'equalto', 'contributing') | list %}
   {% set consensus_source_count = contributing_sources | selectattr('panel_role', 'equalto', 'consensus') | list | length %}
   <a class="skip-link" href="#guide-races">Skip to recommendations</a>
@@ -204,16 +78,23 @@
             data-contested="{{ 'true' if race.is_contested else 'false' }}"
             aria-labelledby="race-label-{{ race.id }}"
             data-filter-tokens='{{ race.filter_tokens | tojson }}'>
-            <a class="race-card-primary" href="#race-{{ race.id }}" data-race-detail-link
-              aria-label="View endorsements for {{ race.race_label }}"
-              aria-haspopup="dialog" aria-controls="race-detail-{{ race.id }}">
+            {# The card's core recommendation area is an ordinary link to the
+               race's own page (issue #136). It opened a dialog over the guide
+               until race detail became something a reader lands on, shares, and
+               unfurls, which is what DESIGN.md's page-vs-modal test turns on.
+               The card keeps its `id`, so a `#race-…` link already out in the
+               world still scrolls to this card for a reader without
+               JavaScript; with JavaScript, `guide-client.mjs` forwards it to
+               the page. #}
+            <a class="race-card-primary" href="{{ race_page_path(race.id) }}"
+              aria-label="View endorsements for {{ race.race_label }}">
               <p class="race-office">
                 <span id="race-label-{{ race.id }}"
                   data-display-role="race-label">{{ race.race_label }}</span>
               </p>
               {# Three lens regions, each one element the server already had
                  (docs/FRONTEND.md § Rendering). Where this markup used to
-                 carry an audited element and an empty `[data-lens-only]` twin
+                 carry an audited element and an empty lens-only twin beside it
                  for every value, it now carries one element whose children
                  guide-card.mjs renders — from the audited view model until a
                  selection diverges, from the personalized one afterwards. #}
@@ -256,71 +137,6 @@
                 Too few endorsements to measure agreement.</div>
               {% endif %}
             </div>
-            <dialog class="race-detail-dialog" id="race-detail-{{ race.id }}"
-              data-race-detail-dialog data-race-id="{{ race.id }}"
-              aria-labelledby="race-detail-election-{{ race.id }} race-detail-title-{{ race.id }}"
-              aria-describedby="race-detail-summary-{{ race.id }}">
-              <div class="race-detail-header">
-                <div>
-                  <p id="race-detail-election-{{ race.id }}">{{ election_display_label }} · Endorsements</p>
-                  <h3 id="race-detail-title-{{ race.id }}">{{ race.race_label }}</h3>
-                  <p id="race-detail-summary-{{ race.id }}" class="visually-hidden"
-                    data-race-detail-summary>{{ race_detail_accessible_summary(race) }}</p>
-                </div>
-                <div class="race-detail-actions">
-                  <button type="button" data-copy-race-link="race-{{ race.id }}"
-                    aria-label="Share {{ race.race_label }}"
-                    title="Share this race"
-                    aria-describedby="copy-race-status-{{ race.id }}">{{ race_share_icon | safe }}</button>
-                  <button type="button" data-close-race-detail
-                    aria-label="Close endorsements for {{ race.race_label }}"
-                    title="Close">{{ race_close_icon | safe }}</button>
-                </div>
-                <p id="copy-race-status-{{ race.id }}" class="visually-hidden" role="status"
-                  aria-live="polite" data-copy-race-status></p>
-              </div>
-              <div class="race-detail-body">
-                <div class="race-detail-outcomes">
-                  {{ race_detail_candidate_sections(race) }}
-                  {% if guide.personalization.policy.enabled %}
-                  {# I56: the dialog's own body is lens-aware (every candidate
-                     section above is lens-aware too), so the "My sources"
-                     summary section (heading, restated result line, selected-
-                     source chip list) is redundant with the highlighted/dimmed
-                     rows and is deleted outright. Its one useful remnant
-                     rehomes here: the divergent "All sources" reference line
-                     renders once, in the same quiet-bar component as the card
-                     (G26/G27 idiom), after the candidate blocks and before the
-                     source-group listings — matching the card's own I39
-                     reference-block-at-the-foot pattern instead of sitting
-                     ahead of the primary content. #}
-                  <p class="lens-comparison" role="group" data-lens-only data-lens-detail-audited hidden></p>
-                  {% endif %}
-                  {% for group_key in source_cell_group_keys %}
-                  {% set group_count = source_cell_group_count(race, source_by_id, group_key) %}
-                  {% if group_count %}
-                  <section class="race-detail-outcome race-detail-outcome-{{ group_key }}"
-                    data-race-detail-group="{{ group_key }}">
-                    <div class="race-detail-outcome-heading">
-                      <h4>{{ source_cell_group_label(race, group_key) }}</h4>
-                      <span>{{ source_count_phrase(group_count) }}</span>
-                    </div>
-                    {{ race_detail_source_rows(race, group_key) }}
-                  </section>
-                  {% endif %}
-                  {% endfor %}
-                </div>
-                {% for group_key in ('not_covered', 'not_applicable') %}
-                {% set missing_count = source_cell_group_count(race, source_by_id, group_key) %}
-                {% if missing_count %}
-                <details class="race-detail-missing">
-                  <summary>{{ source_count_phrase(missing_count, group_key) }}</summary>
-                  {{ race_detail_source_rows(race, group_key) }}
-                </details>
-                {% endif %}
-                {% endfor %}
-              </div>
-            </dialog>
           </article>
           {% endfor %}
         </div>

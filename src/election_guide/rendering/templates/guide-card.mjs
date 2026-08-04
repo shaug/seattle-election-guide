@@ -9,7 +9,7 @@
 //            reference bar, the two blocks that sit below the card's link.
 //
 // Each one replaced a pair of twin elements: the server used to render the
-// audited value and an empty `[data-lens-only]` sibling, and CSS chose between
+// audited value and an empty lens-only sibling beside it, and CSS chose between
 // them on `html.lens-personalized`. One element now carries whichever value is
 // current, because the template that renders the audited view model and the
 // template that renders the personalized one are the same template. That is
@@ -22,6 +22,7 @@
 // `rendering/context.py` and is tested against it.
 
 import { html, nothing } from 'lit-html';
+import { hasNoMajority, percentageLabel, shareAccessibleLabel } from './guide-format.mjs';
 
 /**
  * The share meter, as both renderers describe it.
@@ -67,10 +68,38 @@ import { html, nothing } from 'lit-html';
  */
 
 /**
+ * One share, as every meter on the site describes it.
+ *
+ * One policy for the NA state, the fill percentage, the low-fill guard, the
+ * no-majority tone, and the accessible label, because a card meter, a race
+ * page's headline meter, and its per-candidate meters must never disagree
+ * about the same share (I40/I41/I56). It lives here, beside `ShareMeterView`,
+ * rather than in either page's wiring, so both pages read one definition.
+ *
+ * @param {string|null} shareString
+ * @returns {ShareMeterView}
+ */
+export function meterView(shareString) {
+  const label = percentageLabel(shareString);
+  const fillPercent = shareString === null ? null : Number.parseInt(label, 10);
+  return {
+    label,
+    fillPercent,
+    // I41: below ~30% fill the white label bleeds onto the pale track, so the
+    // low-fill guard (guide-race.css) renders it after the fill in muted ink
+    // instead. Decided once, here, because one CSS rule applies the guard to
+    // every meter chrome.
+    lowFill: fillPercent !== null && fillPercent < 30,
+    noMajority: hasNoMajority(shareString),
+    accessibleLabel: shareAccessibleLabel(shareString),
+  };
+}
+
+/**
  * The meter's class list, in the order the audited template writes it.
  *
- * Every decision here is already made in the view model, which the dialog's own
- * meter shares, so the card and the dialog cannot render one share two ways
+ * Every decision here is already made in `meterView`, which a race page's own
+ * meters read too, so no two meters on the site can render one share two ways
  * (I56).
  *
  * @param {ShareMeterView} meter
@@ -88,11 +117,10 @@ function meterClasses(meter) {
 /**
  * The reference bar's tone class, and its spoken label.
  *
- * Both live here, beside the view model they read, because the card renders
- * this bar through lit and the dialog still writes its copy by hand. Two
- * elements report the same agreement about the same race at the same moment,
- * and the tint is never the only carrier (G26/G27) — so the wording is the part
- * that must not drift, and it has one definition.
+ * Both live here, beside the view model they read, because the card and a race
+ * page's headline render the same bar about the same race, and the tint is
+ * never the only carrier (G26/G27) — so the wording is the part that must not
+ * drift, and it has one definition.
  *
  * @param {boolean} leaderChanged
  * @returns {string}

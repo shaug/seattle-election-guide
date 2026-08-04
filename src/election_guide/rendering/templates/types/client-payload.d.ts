@@ -32,6 +32,7 @@ type ComputedGrade = "TIED" | "Insufficient" | "A+" | "A" | "B" | "C" | "D";
  */
 interface ClientPayloadTypes {
   guide_page: GuidePayload;
+  race_page: RacePayload;
   sources_page: SourcesPayload;
   comparisons_page: ComparisonsPayload;
   computed_grade: ComputedGrade;
@@ -90,21 +91,14 @@ interface LensSource {
   selectable: boolean;
 }
 /**
- * The audited presentation of one race that client code must be able to
- * reproduce or restore.
- *
- * Every field here was previously read back out of the server-rendered
- * dialog. The document's rule is the opposite (The data contract: the DOM is
- * write-only projection), and its Cross-language mirrors section prefers
- * carrying a computed value over maintaining a second implementation of the
- * logic that computes it — so the audited candidate labels, the audited
- * candidate order, and the audited accessible summary are published here.
+ * One race as the guide's own card renders it.
  */
 interface RaceDisplay {
   race_id: string;
   race_label: string;
-  candidates: RaceCandidateDisplay[];
   audited_accessible_summary: string;
+  race_path: string;
+  candidates: RaceCandidateDisplay[];
 }
 /**
  * One candidate's published identity and display label.
@@ -253,6 +247,69 @@ interface PersonalizationCell {
     [k: string]: string;
   };
   confidence_warning: boolean;
+}
+/**
+ * One race page's payload (issue #136).
+ *
+ * A race page is the guide's lens applied to a single race: it decodes the
+ * same fragment, rescores against the same contract, and renders the race's
+ * own detail from `race`. It publishes no `races` list and no filter scopes,
+ * because there is one race on it and nothing to filter.
+ */
+interface RacePayload {
+  schema_version: "1.0";
+  data_version: string;
+  panel_id: string;
+  panel_hash: string;
+  policy: LensPolicy;
+  scoring: LensScoring;
+  categories: LensCategory[];
+  sources: LensSource[];
+  race: RaceDetailDisplay;
+  sources_page_path: string;
+  personalization: PersonalizationContract | null;
+}
+/**
+ * The one race a race page is about, at that page's own depth (issue #136).
+ *
+ * The same audited candidate order as a card publishes, with each candidate's
+ * endorsing rows attached, because the race page renders those rows through
+ * lit and a client that renders markup needs every value it carries.
+ */
+interface RaceDetailDisplay {
+  race_id: string;
+  race_label: string;
+  audited_accessible_summary: string;
+  candidates: RaceCandidateEndorsements[];
+}
+/**
+ * One candidate's section on the race page: identity, plus its rows.
+ */
+interface RaceCandidateEndorsements {
+  candidate_id: string;
+  label: string;
+  endorsers: RaceSourceRow[];
+}
+/**
+ * One endorsing source's evidence row, as the race page renders it.
+ *
+ * The race page's candidate sections are a lit region (issue #136), and a
+ * client that renders markup needs every value that markup carries — the row
+ * is not read back out of the server's copy of it (docs/FRONTEND.md, The data
+ * contract). `category`, `state` and `panel_role` are the row's published
+ * data attributes, which `rendering/validation.py` reparses to prove the
+ * rendered evidence is the view model's, and which the screenshot probe reads
+ * to prove no comparison source reaches a race's own evidence.
+ */
+interface RaceSourceRow {
+  code: string;
+  name: string;
+  category: string;
+  category_label: string;
+  state: string;
+  panel_role: "consensus" | "comparison";
+  detail_label: string | null;
+  evidence_url: string | null;
 }
 /**
  * The standalone sources editor's payload.

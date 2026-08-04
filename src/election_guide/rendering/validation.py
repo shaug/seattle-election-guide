@@ -4,14 +4,22 @@ The document is reparsed rather than trusted: every race, semantic field,
 source-evidence row, and link the HTML exposes is compared against the same
 `rendering/context.py` values the templates rendered from, and the captured
 screenshots are checked for the configured viewport size and nonblank ink.
+
+The evidence rows are read from the race pages rather than from the guide,
+because that is where issue #136 moved them. They are still audited at release
+time and against the same view model: a race page is a pure function of the
+view model and its race id, so the document this validator parses is the
+document `hosting/pages.py` will publish.
 """
 
 from __future__ import annotations
 
 import re
+from collections.abc import Mapping
 from html.parser import HTMLParser
 from pathlib import Path
 
+from markupsafe import escape
 from PIL import Image
 
 from election_guide.publication.models import PublicationRace, PublicationViewModel
@@ -22,7 +30,11 @@ from election_guide.rendering.models import (
     RenderingConfiguration,
     RenderingValidationReport,
 )
-from election_guide.rendering.shell import HOW_TO_VOTE_HREF
+from election_guide.rendering.shell import (
+    HOW_TO_VOTE_HREF,
+    race_og_image_path,
+    race_page_path,
+)
 
 
 def validate_rendered_guide(
@@ -30,11 +42,19 @@ def validate_rendered_guide(
     configuration: RenderingConfiguration,
     html_path: Path,
     screenshots: list[Path],
+    race_documents: Mapping[str, str],
 ) -> RenderingValidationReport:
     """Validate semantic parity and rendered responsive-capture safety."""
     html = html_path.read_text(encoding="utf-8")
     parser = _GuideHTMLParser()
     parser.feed(html)
+    # One parser over every race document: each page names exactly one race, and
+    # the keys are `(race id, source code)` pairs, so the accumulated maps are
+    # the same shape the single guide document used to produce.
+    race_parser = _GuideHTMLParser()
+    for race_html in race_documents.values():
+        race_parser.feed(race_html)
+    race_parser.close()
     expected_races = [race for section in view_model.sections for race in section.races]
     expected_race_ids = [race.id for race in expected_races]
     mismatched_html_roles: list[str] = []
@@ -69,8 +89,10 @@ def validate_rendered_guide(
         for race in expected_races
         for cell in context.tallying_source_cells(race, source_by_id)
     }
-    if set(parser.race_detail_text) != expected_detail_keys:
-        missing_evidence_rows.append("document: unexpected or missing race-detail source rows")
+    if set(race_parser.race_detail_text) != expected_detail_keys:
+        missing_evidence_rows.append("race pages: unexpected or missing evidence rows")
+    if set(race_documents) != {race.id for race in expected_races}:
+        missing_evidence_rows.append("race pages: one page per race on the ballot")
     for race in expected_races:
         endorsement_groups = context.candidate_endorsement_groups(race)
         for cell in context.tallying_source_cells(race, source_by_id):
@@ -102,16 +124,17 @@ def validate_rendered_guide(
             expected_row_class = {"race-detail-source-row"}
             expected_row_classes = [expected_row_class for _ in expected_candidate_ids]
             observed_rows = [
-                _normalized_text(" ".join(parts)) for parts in parser.race_detail_text.get(key, [])
+                _normalized_text(" ".join(parts))
+                for parts in race_parser.race_detail_text.get(key, [])
             ]
             if (
                 observed_rows != expected_rows
-                or parser.race_detail_links.get(key, []) != expected_links_list
-                or parser.race_detail_states.get(key, []) != expected_states
-                or parser.race_detail_categories.get(key, []) != expected_categories
-                or parser.race_detail_groups.get(key, []) != expected_groups
-                or parser.race_detail_candidate_ids.get(key, []) != expected_candidate_ids
-                or parser.race_detail_row_classes.get(key, []) != expected_row_classes
+                or race_parser.race_detail_links.get(key, []) != expected_links_list
+                or race_parser.race_detail_states.get(key, []) != expected_states
+                or race_parser.race_detail_categories.get(key, []) != expected_categories
+                or race_parser.race_detail_groups.get(key, []) != expected_groups
+                or race_parser.race_detail_candidate_ids.get(key, []) != expected_candidate_ids
+                or race_parser.race_detail_row_classes.get(key, []) != expected_row_classes
             ):
                 missing_evidence_rows.append(
                     f"{race.id}/{cell.source_id}: race-detail group, state, candidate, "
@@ -134,13 +157,9 @@ def validate_rendered_guide(
         # The footer audit line's Code hash links to the exact commit (item L55.2).
         f"{configuration.project_url}/commit/{view_model.metadata.git_commit}",
         f"/e/{view_model.metadata.election_id}/release-manifest.json",
-        *(f"#race-{race.id}" for race in expected_races),
-        *(
-            cell.evidence_url
-            for race in expected_races
-            for cell in context.tallying_source_cells(race, source_by_id)
-            if cell.evidence_url is not None
-        ),
+        # Every card's core recommendation area links its race's own page
+        # (issue #136), where the evidence links now live.
+        *(race_page_path(view_model.metadata.election_id, race.id) for race in expected_races),
     }
     if view_model.comparisons.policy.enabled:
         expected_html_links.add(f"/e/{view_model.metadata.election_id}/comparisons/")
@@ -153,6 +172,7 @@ def validate_rendered_guide(
         missing_evidence_rows.append("document: missing election-scoped canonical metadata")
     if parser.links != expected_html_links:
         missing_evidence_rows.append("document: unexpected or missing links")
+    mislabelled_race_pages = _mislabelled_race_pages(view_model, configuration, race_documents)
     screenshot_sizes: list[tuple[int, int]] = []
     screenshot_ink: list[float] = []
     for path in screenshots:
@@ -192,6 +212,18 @@ def validate_rendered_guide(
             ),
         ),
         RenderCheck(
+            id="html-race-identity",
+            passed=not mislabelled_race_pages,
+            message=(
+                "Every race page declares its own title, description, canonical URL, and card."
+                if not mislabelled_race_pages
+                else (
+                    "Race pages are missing their own social identity: "
+                    f"{', '.join(mislabelled_race_pages[:5])}"
+                )
+            ),
+        ),
+        RenderCheck(
             id="responsive-viewports",
             passed=responsive_sizes,
             message="HTML renders nonblank content at the configured desktop and mobile viewports.",
@@ -201,6 +233,49 @@ def validate_rendered_guide(
         passed=all(check.passed for check in checks),
         checks=checks,
     )
+
+
+def _mislabelled_race_pages(
+    view_model: PublicationViewModel,
+    configuration: RenderingConfiguration,
+    race_documents: Mapping[str, str],
+) -> list[str]:
+    """Every race page that does not describe itself (issue #136).
+
+    The whole point of giving race detail an address is that a link to it
+    unfurls as that race rather than as the site. Four tags carry that, and all
+    four are per-race, so a page that inherited the site-wide ones would look
+    correct and share wrong — which is exactly the failure this ticket exists to
+    fix, and so is worth an audit rather than a reviewer's eye.
+    """
+    origin = configuration.public_site_url
+    election_id = view_model.metadata.election_id
+    races = {race.id: race for section in view_model.sections for race in section.races}
+    mislabelled: list[str] = []
+    for race_id, document in sorted(race_documents.items()):
+        race = races.get(race_id)
+        if race is None:
+            mislabelled.append(f"{race_id}: not a race in this election")
+            continue
+        canonical = f"{origin}{race_page_path(election_id, race_id)}"
+        description = context.race_social_description(race)
+        lines = {line.strip() for line in document.splitlines()}
+        required = {
+            f'<link rel="canonical" href="{canonical}">',
+            f'<meta property="og:url" content="{canonical}">',
+            f'<meta property="og:description" content="{_escaped(description)}">',
+            f'<meta property="og:image" content="{origin}'
+            f'{race_og_image_path(election_id, race_id)}">',
+        }
+        missing = sorted(tag for tag in required if tag not in lines)
+        if missing:
+            mislabelled.append(f"{race_id}: {'; '.join(missing)}")
+    return mislabelled
+
+
+def _escaped(value: str) -> str:
+    """One attribute value as Jinja's autoescaping writes it."""
+    return escape(value)
 
 
 def _normalized_text(value: str) -> str:
@@ -323,5 +398,7 @@ class _GuideHTMLParser(HTMLParser):
         if tag == self._display_role_tag:
             self._current_display_role = None
             self._display_role_tag = None
-        if tag == "article":
+        # A card on the guide and the whole of a race page: the two elements
+        # that carry `data-publication-race-id`.
+        if tag in {"article", "main"}:
             self._current_race_id = None
