@@ -616,7 +616,11 @@ purpose and watch the check fail.
   which is what makes each listed tool actually load.*
   *Reviewer-applied: "few and shallow" is a judgment no check makes, and so is
   "adding a dev dependency requires the issue that first uses it." The list
-  above is the whole toolchain; a pull request that lengthens it is making an
+  above is the whole **front-end** toolchain, not the whole `devDependencies`
+  block: `git-cliff` generates the changelog and `wrangler` deploys the site, so
+  they answer to CONTRIBUTING.md and the hosting configuration rather than to
+  this document — while still being held to exact pins by the same check, which
+  reads every entry. A pull request that lengthens either set is making an
   argument, and the reviewer is who reads it.*
 
 ## Testing
