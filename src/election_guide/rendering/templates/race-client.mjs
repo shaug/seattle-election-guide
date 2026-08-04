@@ -30,20 +30,13 @@
 // mirrors.
 
 import { html, nothing, render } from 'lit-html';
-import {
-  meterView,
-  raceContextTemplate,
-  raceFootTemplate,
-  raceResultTemplate,
-} from './guide-card.mjs';
+import { meterView, raceFootTemplate, raceResultTemplate } from './guide-card.mjs';
 import {
   allSourcesSummary,
   countingSummary,
   hasNoMajority,
   raceDetailAccessibleSummary,
   recommendationLabel,
-  supportSummary,
-  supportSummaryCompact,
 } from './guide-format.mjs';
 import { compareRaceResults } from './lens-divergence.mjs';
 import { createLensRouter } from './lens-route.mjs';
@@ -100,6 +93,9 @@ export function wireRacePage(payload) {
   const bannerStatus = element('[data-lens-banner-status]');
   const lensNotice = element('[data-lens-notice]');
   const summary = element('[data-race-detail-summary]');
+  // Shown or hidden rather than rendered, for the same reason: it is the sole
+  // leader's heading, and a lens decides whether the race has one.
+  const headline = element('[data-race-headline]');
   /** The server's own text, dropped once so lit can own these two text nodes. */
   for (const region of [bannerStatus, lensNotice]) region?.replaceChildren();
 
@@ -139,8 +135,8 @@ export function wireRacePage(payload) {
     const candidate = candidatesById.get(candidateId);
     if (candidate === undefined) return null;
     const isLeader = scored.winnerIds.includes(candidateId);
-    // A sole leader — neither tied nor unscored — is the only candidate whose
-    // count is stated against the race total, matching the audited template.
+    // A sole leader — neither tied nor unscored — is the one candidate the
+    // headline names, matching the audited template's own condition.
     const soleLeader =
       scored.grade !== 'Insufficient' && !scored.isTied && scored.winnerId === candidateId;
     const rows = candidate.endorsers.map((row) => ({
@@ -154,22 +150,18 @@ export function wireRacePage(payload) {
       evidenceUrl: row.evidence_url,
       notCounted: !counted.has(row.code),
     }));
-    const countedRows = rows.filter((row) => !row.notCounted);
-    const hasSplit = countedRows.some((row) => row.state === 'multi_endorsement');
-    const noun = countedRows.length === 1 ? 'source' : 'sources';
+    // A tied leader is every leader the headline does not name. The headline
+    // names the sole leader and nobody else, so a tie leaves all of them here —
+    // each once, each with its own meter, and none of them in the headline's
+    // green, which claims a favourite a tie does not have.
+    const tied = isLeader && !soleLeader;
     return {
       candidateId,
       label: candidate.label,
       isLeader,
-      kicker: isLeader
-        ? `${hasNoMajority(scored.winnerShare) ? 'No majority · ' : ''}` +
-          `${scored.isTied ? 'Tied for lead' : 'Leading choice'}`
-        : null,
-      count: soleLeader
-        ? `${countedRows.length} of ${scored.explicitCount} endorsing sources` +
-          (hasSplit ? ' (co-endorsements split)' : '')
-        : `${countedRows.length} endorsing ${noun}`,
-      meter: isLeader
+      inHeadline: soleLeader,
+      kicker: tied ? 'Tied for lead' : null,
+      meter: tied
         ? meterView(
             scored.standings.find((standing) => standing.candidateId === candidateId)?.share ??
               null,
@@ -234,12 +226,12 @@ export function wireRacePage(payload) {
       );
     }
     if (contextRegion) {
+      // Not the card's `raceContextTemplate`: a card carries a caption because
+      // it shows no rows, and this page lists the leader's endorsing sources
+      // directly beneath this block, so a count of them would name the length
+      // of a list already on screen. The pill is what survives.
       render(
-        raceContextTemplate({
-          noMajority: hasNoMajority(scored.winnerShare),
-          support: supportSummary(scored, selectedTotal),
-          supportCompact: supportSummaryCompact(scored, selectedTotal),
-        }),
+        html`<p class="no-majority-pill" ?hidden=${!hasNoMajority(scored.winnerShare)}>No majority</p>`,
         contextRegion,
       );
     }
@@ -273,6 +265,11 @@ export function wireRacePage(payload) {
       if (view !== null) sections.push(view);
     }
     if (candidatesRegion) render(candidateSectionsTemplate(sections), candidatesRegion);
+    // The headline is the sole leader's heading, so it is on screen exactly
+    // when there is one. A lens can create that leader or dissolve it into a
+    // tie, which is why the element is always in the document and only ever
+    // shown or hidden — there would otherwise be nothing here to fill.
+    if (headline) headline.hidden = !sections.some((section) => section.inHeadline);
     if (summary) {
       const leaderRows =
         sections.find((section) => section.candidateId === scored.winnerId)?.rows ?? [];

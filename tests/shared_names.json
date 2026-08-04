@@ -273,6 +273,11 @@
       "client",
       "test"
     ],
+    "data-race-headline": [
+      "template",
+      "client",
+      "test"
+    ],
     "data-row-differs": [
       "template",
       "client",
@@ -574,7 +579,14 @@
     "race-detail-candidate-heading": [
       "template",
       "stylesheet",
-      "client"
+      "client",
+      "test"
+    ],
+    "race-detail-candidate-headlined": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
     ],
     "race-detail-candidate-leader": [
       "template",
@@ -584,8 +596,12 @@
     "race-detail-candidate-metrics": [
       "template",
       "stylesheet",
-      "client",
-      "test"
+      "client"
+    ],
+    "race-detail-candidate-tied": [
+      "template",
+      "stylesheet",
+      "client"
     ],
     "race-detail-candidate-title": [
       "template",

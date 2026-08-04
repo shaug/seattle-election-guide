@@ -43,16 +43,26 @@ import { repeat } from 'lit-html/directives/repeat.js';
 /**
  * One candidate's section.
  *
- * `meter` is null for every candidate but the leader, which is what the
- * audited template expresses by rendering no meter at all for them. `kicker`
- * is null on the same candidates, for the same reason.
+ * `meter` and `kicker` are non-null on exactly the tied leaders, which is what
+ * the audited template expresses by rendering neither for anyone else: a share
+ * is worth stating in a heading only where it is contested.
+ *
+ * `inHeadline` marks the one candidate the page headline already names, which
+ * is the sole leader when there is one. That section renders no heading at all,
+ * because the headline is its heading and a page names a candidate once. A tie
+ * has no such candidate: every tied leader renders here instead, each with the
+ * `kicker` and `meter` that mark it, and none of them in the headline's green.
+ *
+ * No section carries a count. The sources that endorsed this candidate are the
+ * rows directly below the heading, so a number naming how many of them there
+ * are would restate the list it sits on.
  *
  * @typedef {object} CandidateSectionView
  * @property {string} candidateId
  * @property {string} label
  * @property {boolean} isLeader
+ * @property {boolean} inHeadline
  * @property {string|null} kicker
- * @property {string} count
  * @property {import('./guide-card.mjs').ShareMeterView|null} meter
  * @property {readonly SourceRowView[]} rows
  */
@@ -145,22 +155,32 @@ function sourceRowTemplate(candidateId, row) {
 function candidateSectionTemplate(candidate) {
   return html`<section
     class=${
-      candidate.isLeader
-        ? 'race-detail-candidate race-detail-candidate-leader'
-        : 'race-detail-candidate'
+      candidate.inHeadline
+        ? 'race-detail-candidate race-detail-candidate-leader race-detail-candidate-headlined'
+        : candidate.isLeader
+          ? 'race-detail-candidate race-detail-candidate-tied'
+          : 'race-detail-candidate'
     }
     data-race-detail-candidate-id=${candidate.candidateId}
-  ><div class="race-detail-candidate-heading"><div class="race-detail-candidate-title">${
-    candidate.kicker === null ? nothing : html`<p>${candidate.kicker}</p>`
-  }<h4>${candidate.label}</h4></div><div class="race-detail-candidate-metrics"><span
-        >${candidate.count}</span
-      >${
-        candidate.meter === null ? nothing : detailMeterTemplate(candidate.meter)
-      }</div></div><ul class="race-detail-source-list">${repeat(
-        candidate.rows,
-        (row) => row.code,
-        (row) => sourceRowTemplate(candidate.candidateId, row),
-      )}</ul></section>`;
+  >${
+    candidate.inHeadline
+      ? nothing
+      : html`<div class="race-detail-candidate-heading"><div
+            class="race-detail-candidate-title"
+          >${
+            candidate.kicker === null ? nothing : html`<p>${candidate.kicker}</p>`
+          }<h4>${candidate.label}</h4></div>${
+            candidate.meter === null
+              ? nothing
+              : html`<div class="race-detail-candidate-metrics">${detailMeterTemplate(
+                  candidate.meter,
+                )}</div>`
+          }</div>`
+  }<ul class="race-detail-source-list">${repeat(
+    candidate.rows,
+    (row) => row.code,
+    (row) => sourceRowTemplate(candidate.candidateId, row),
+  )}</ul></section>`;
 }
 
 /**

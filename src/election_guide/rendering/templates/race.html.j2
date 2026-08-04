@@ -48,23 +48,38 @@
   {# The audited candidate sections. lit renders this same shape from the same
      payload while a lens is active, and `race-markup-parity.test.mjs` diffs the
      two, so a change here is a change there. #}
-  {% macro candidate_sections() -%}
+  {# The candidate the headline already names, or `none` when the headline names
+     no single one. Passed in rather than read from the template scope so the
+     macro's inputs are its arguments, as `source_row`'s are. #}
+  {% macro candidate_sections(headline_candidate_id) -%}
     {% for candidate in race_detail.candidates %}
     {% set is_leader = candidate.candidate_id in race.support_leader_candidate_ids %}
-    {% set source_count = candidate.endorsers | length %}
-    {% set has_split = candidate.endorsers | selectattr('state', 'equalto', 'multi_endorsement') | list | length > 0 %}
-    <section class="race-detail-candidate{% if is_leader %} race-detail-candidate-leader{% endif %}"
+    {# Three treatments, and a candidate takes exactly one of them:
+
+       - the headline's own candidate renders no heading, because the headline
+         above is its heading and a page names a candidate once;
+       - a tied leader renders an amber heading with its own eyebrow and meter,
+         because a tie is a warning to choose rather than a favourite to
+         endorse, and every tied candidate is equally the answer; and
+       - everyone else renders an amber heading with just their name. #}
+    {% set in_headline = candidate.candidate_id == headline_candidate_id %}
+    {% set tied = is_leader and not in_headline %}
+    <section class="race-detail-candidate{% if in_headline %} race-detail-candidate-leader race-detail-candidate-headlined{% elif tied %} race-detail-candidate-tied{% endif %}"
       data-race-detail-candidate-id="{{ candidate.candidate_id }}">
+      {% if not in_headline %}
       <div class="race-detail-candidate-heading">
         <div class="race-detail-candidate-title">
-          {% if is_leader %}
-          <p>{% if has_no_majority(race) %}No majority · {% endif %}{% if race.support_leader_candidate_ids | length > 1 %}Tied for lead{% else %}Leading choice{% endif %}</p>
+          {% if tied %}
+          <p>Tied for lead</p>
           {% endif %}
           <h4>{{ candidate.label }}</h4>
         </div>
+        {# No count here. Every endorsing source this candidate has is listed
+           immediately below, so a number naming how many would restate the list
+           it sits on top of. What the heading carries is what the list cannot:
+           the share, and only where a share is contested. #}
+        {% if tied %}
         <div class="race-detail-candidate-metrics">
-          <span>{% if is_leader and race.recommendation_candidate_ids | length == 1 %}{{ source_count }} of {{ race.explicit_endorsement_count }} endorsing sources{% if has_split %} (co-endorsements split){% endif %}{% else %}{{ source_count }} endorsing source{% if source_count != 1 %}s{% endif %}{% endif %}</span>
-          {% if is_leader %}
           {% if race.percentage_whole is none %}
           <div class="race-detail-meter race-detail-meter-na" role="img"
             aria-label="{{ screen_share_accessible_label(race) }}"><strong>N/A</strong></div>
@@ -74,15 +89,22 @@
             <strong>{{ race.percentage_label }}</strong>
           </div>
           {% endif %}
-          {% endif %}
         </div>
+        {% endif %}
       </div>
+      {% endif %}
       <ul class="race-detail-source-list">
         {% for row in candidate.endorsers %}{{ source_row(row, 'candidate', candidate.candidate_id) }}{% endfor %}
       </ul>
     </section>
     {% endfor %}
   {%- endmacro %}
+
+  {# One recommendation means one leading choice, and the headline is that
+     candidate's own header. A tie recommends two and reads "A / B", so no
+     single section is the headline's and each keeps its heading. #}
+  {% set headline_candidate_id = race.recommendation_candidate_ids[0]
+     if race.recommendation_candidate_ids | length == 1 else none %}
 
   <a class="skip-link" href="#race-detail">Skip to endorsements</a>
 
@@ -92,7 +114,7 @@
       <div class="page-band-rule"></div>
     </header>
     {{ election_day_banner | safe }}
-    {%+ call shell.page_head(race.race_label, eyebrow=election_display_name) %}Every endorsement in this race, linked to its source.{% endcall +%}
+    {%+ call shell.page_head(race.race_label, eyebrow=election_display_name) %}Every endorsement that matters, with receipts.{% endcall +%}
 
     {# The same strip the guide renders, for the same reason: a reader who
        arrived under a personalized selection has to see what is being counted,
@@ -109,12 +131,24 @@
     <p class="lens-notice" data-payload-notice hidden role="status" aria-live="polite"></p>
 
     <main id="race-detail" class="race-detail" data-publication-race-id="{{ race.id }}">
-      {# The headline, in the card's own components so the reader sees the
-         quantity they clicked, larger. The summary is this block's accessible
-         description, as it was the dialog's: an element the server renders and
-         keeps, whose text the client recomputes under a lens. #}
-      <div class="race-headline" role="group" aria-label="Consensus result"
-        aria-describedby="race-consensus-summary">
+      {# The headline names the one clear favourite, in the card's own components
+         so the reader sees the quantity they clicked, larger. It is that
+         candidate's heading — the section below renders none — so it appears
+         only when the race has a single leading choice.
+
+         A tie renders no headline at all. Naming both candidates here would
+         list each of them twice on one page, and the green this block wears
+         says "clear favourite", which is the opposite of what a tie is: a
+         warning that the reader has to choose. Tied candidates carry their own
+         amber sections instead, each with its own meter and eyebrow.
+
+         Hidden rather than absent, because a lens can turn a tie into a sole
+         leader: the element the client fills has to be here to fill. #}
+      <div class="race-headline{% if headline_candidate_id is not none %} race-headline-heads-section{% endif %}"
+        role="group" aria-label="Consensus result"
+        aria-describedby="race-consensus-summary" data-race-headline
+        {%- if headline_candidate_id is none %} hidden{% endif %}>
+        <p class="race-headline-eyebrow">Leading choice</p>
         <div class="screen-race-result" data-lens-result>
           <h3 data-display-role="recommendation">{{ race.recommendation_label }}</h3>
           {% if race.percentage_whole is none %}
@@ -130,26 +164,35 @@
           </div>
           {% endif %}
         </div>
+        {# The card's caption is not repeated here for the same reason the
+           sections carry no count: this candidate's endorsing sources are
+           listed directly below the headline, so "8 of 11 endorsing sources"
+           would name the length of a list the reader is already looking at. #}
         <div class="screen-race-context" data-lens-context>
           <p class="no-majority-pill"{% if not has_no_majority(race) %} hidden{% endif %}>No majority</p>
-          <p class="support-line support-full" data-display-role="support">{{ screen_support_summary(race) }}</p>
-          <p class="support-line support-compact" data-display-role="support">{{ screen_support_summary_compact(race) }}</p>
         </div>
-        <div class="race-headline-foot" data-lens-foot>
-          {% if race.grade == 'Insufficient' %}
-          <div class="insufficient-note" role="note" data-display-role="insufficient-warning">
-            Too few endorsements to measure agreement.</div>
-          {% endif %}
-        </div>
-        <p id="race-consensus-summary" class="visually-hidden"
-          data-race-detail-summary>{{ race_detail_accessible_summary(race) }}</p>
       </div>
+
+      {# Both of these state something about the race rather than about its
+         leading choice, so they sit outside the headline and survive a race
+         that has no single leader to head one — a tie, or too few endorsements
+         to measure. The summary is the page's accessible description, as it was
+         the dialog's: an element the server renders and keeps, whose text the
+         client recomputes under a lens. #}
+      <div class="race-headline-foot" data-lens-foot>
+        {% if race.grade == 'Insufficient' %}
+        <div class="insufficient-note" role="note" data-display-role="insufficient-warning">
+          Too few endorsements to measure agreement.</div>
+        {% endif %}
+      </div>
+      <p id="race-consensus-summary" class="visually-hidden"
+        data-race-detail-summary>{{ race_detail_accessible_summary(race) }}</p>
 
       <div class="race-detail-outcomes">
         {# `display: contents` (race.css), so lit owns one region without the
            sections below losing the grid gap between them. #}
         <div class="race-detail-candidates" data-race-candidates>
-          {{ candidate_sections() }}
+          {{ candidate_sections(headline_candidate_id) }}
         </div>
         {% for group_key in source_cell_group_keys %}
         {% if group_rows[group_key] %}
