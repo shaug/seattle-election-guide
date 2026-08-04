@@ -67,6 +67,7 @@ from election_guide.rendering.shell import (
 )
 from election_guide.scoring import score_dataset
 from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
+from election_guide.sources.registry import read_source_registry
 from tests.page_parity import (
     GUIDE_PAGE_PATH,
     SOURCES_PAGE_PATH,
@@ -660,6 +661,9 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
         ".screen-race-result { display: grid; grid-template-columns: minmax(0, 1fr) 11rem;" in html
     )
     assert "grid-template-columns: minmax(0, 1fr) 11rem" in html
+    # Nothing here restates the caption row's track. A string assertion cannot
+    # fail for the reason it is written down, as this change learned twice; that
+    # track is measured by test_the_support_caption_stays_on_one_line_beside_the_name.
     assert (
         ".screen-meter { display: flex; align-items: center; justify-content: flex-start;" in html
     )
@@ -724,6 +728,219 @@ def test_no_majority_uses_the_exact_unrounded_share_across_the_card_and_dialog(
     assert re.search(r'<p class="no-majority-pill" hidden[^>]*>No majority</p>', above_half_card)
     assert 'class="screen-meter meter-no-majority"' not in above_half_card
     assert "No majority · Leading choice" not in above_half_card
+
+
+def test_the_no_majority_pill_sits_under_the_name_and_displaces_nothing(
+    tmp_path: Path,
+) -> None:
+    """M63: the pill qualifies the pick, so it hangs under the name it applies to.
+
+    The card's two rows carry the same shape — name over pill, meter over
+    caption — which is only observable as geometry. Assert what that buys: the
+    meter reads against the name's first line rather than its middle, the pill's
+    left edge is the name's, the caption is flush to the meter, and the pill
+    sits beside the caption rather than anywhere it could displace it. Compact
+    stacks both rows into one column, and there the pill comes last.
+    """
+    view_model = _view_model(tmp_path)
+    tied = next(
+        race
+        for section in view_model.sections
+        for race in section.races
+        if race.winner_share is not None
+    )
+    tied.winner_share = "1/2"
+    tied.percentage_whole = 50
+    tied.percentage_label = "50%"
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    expression = """
+      (() => {
+        const rows = () => [...document.querySelectorAll('.race-card')].map((card) => {
+          const name = card.querySelector('h3');
+          const meter = card.querySelector('.screen-meter');
+          const caption = [...card.querySelectorAll('.support-line')]
+            .find((line) => line.getClientRects().length);
+          const pill = card.querySelector('.no-majority-pill:not([hidden])');
+          if (!name || !meter || !caption) return null;
+          const nameBox = name.getBoundingClientRect();
+          const meterBox = meter.getBoundingClientRect();
+          const pillBox = pill && pill.getClientRects().length
+            ? pill.getBoundingClientRect() : null;
+          const captionBox = caption.getBoundingClientRect();
+          const context = caption.closest('.screen-race-context');
+          return {
+            pilled: Boolean(pillBox),
+            captionFlush: Math.abs(captionBox.right - meterBox.right) <= 1,
+            meterTopsWithName: Math.abs(meterBox.top - nameBox.top) <= 1,
+            pillLeftWithName: pillBox === null
+              || Math.abs(pillBox.left - nameBox.left) <= 1,
+            // Its left edge alone survives a stretch, so measure the box against
+            // its own text: deleting `justify-self` widens the pill to its whole
+            // column while every edge assertion still passes.
+            pillHugsText: pillBox === null || (() => {
+              const text = document.createRange();
+              text.selectNodeContents(pill);
+              return pillBox.width - text.getBoundingClientRect().width < 40;
+            })(),
+            // Beside the caption in two columns, or after it in one — never
+            // between the meter and the caption it belongs to.
+            pillBesideCaption: pillBox === null
+              || (pillBox.top < captionBox.bottom && pillBox.bottom > captionBox.top),
+            pillAfterCaption: pillBox === null || pillBox.top >= captionBox.bottom - 1,
+            contextColumns:
+              getComputedStyle(context).gridTemplateColumns.split(' ').length,
+            captionTop: Math.round(captionBox.top),
+            captionHeight: Math.round(captionBox.height),
+          };
+        }).filter(Boolean);
+        const full = rows();
+        // The caption's row holds two items of different heights, so its
+        // cross-axis alignment decides whether a pill appearing beside the
+        // caption moves the caption. Suppress every pill and re-measure.
+        const pills = [...document.querySelectorAll('.no-majority-pill:not([hidden])')];
+        pills.forEach((pill) => { pill.hidden = true; });
+        const fullWithoutPills = rows();
+        pills.forEach((pill) => { pill.hidden = false; });
+        document.documentElement.classList.add('compact-ballot-mode');
+        const compact = rows();
+        document.documentElement.classList.remove('compact-ballot-mode');
+        return JSON.stringify({full, fullWithoutPills, compact});
+      })()
+    """
+
+    measured = _evaluate_in_chrome(html_path, expression)
+    full = measured["full"]
+    assert any(card["pilled"] for card in full), "fixture must render a pill"
+    assert any(not card["pilled"] for card in full), "fixture must render a card without one"
+
+    assert all(card["meterTopsWithName"] for card in full)
+    assert all(card["pillLeftWithName"] for card in full)
+    assert all(card["pillHugsText"] for card in full)
+    assert all(card["captionFlush"] for card in full)
+    # Two columns in full view, so the pill sits beside the caption rather than
+    # anywhere that could displace it.
+    assert all(card["contextColumns"] == 2 for card in full)
+    assert all(card["pillBesideCaption"] for card in full)
+    # The pill shares the caption's row, so "beside" has to mean the caption did
+    # not move to make room. (The meter is in the row above and cannot move at
+    # all, which is why nothing here asserts that it didn't.)
+    assert [card["captionTop"] for card in full] == [
+        card["captionTop"] for card in measured["fullWithoutPills"]
+    ]
+    # ...and did not stretch to the pill's height either, which is the other way
+    # a taller neighbour can reshape it.
+    assert [card["captionHeight"] for card in full] == [
+        card["captionHeight"] for card in measured["fullWithoutPills"]
+    ]
+
+    # Compact is one column, and there the pill comes after the caption. Note
+    # what is NOT asserted: that hiding a pill leaves the meter where it was.
+    # The pill is in the row below the meter in both renderers, so that holds by
+    # construction and an assertion on it could never fail.
+    compact = measured["compact"]
+    assert any(card["pilled"] for card in compact)
+    assert all(card["contextColumns"] == 1 for card in compact)
+    assert all(card["pillAfterCaption"] for card in compact)
+
+
+def test_the_support_caption_stays_on_one_line_beside_the_name(tmp_path: Path) -> None:
+    """The caption shares the meter's column, and the column is sized to hold it.
+
+    The caption runs wider than the meter, so its track carries `max-content`.
+    Three arrangements were tried and rejected, and each fails a named assertion
+    here: a fixed track wraps the caption (`oneLine`, and `allHugText` with it); a
+    fixed track pinned with `white-space: nowrap` leaves the box narrower than its
+    own text (`allHugText`); and no track at all drops the caption into an implicit
+    one that absorbs the row's free space (`allHugText` again). `pageOverflow` is
+    not one of those guards — no arrangement in this design's decision space makes
+    the page wider than its viewport — it is the general no-overflow check.
+
+    Nothing here asserts the caption clears the name. It cannot reach it: the two
+    live in different rows of `.race-card-primary`, separated by that grid's gap,
+    so an assertion about their glyphs would pass whatever the CSS said.
+    """
+    view_model = _view_model(tmp_path)
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    # The widest caption the card can hold is not the server's — the fixture's
+    # own top out at a one-digit count, and the audited form is the shorter one
+    # anyway. Once a lens selection diverges the client writes "Based on N of M
+    # selected sources" (guide-format.mjs; its shape is pinned by the regex
+    # assertions elsewhere in this file), with both counts bounded by the
+    # registry's source count. Build that, so the width measured is the width
+    # the reader can actually get.
+    sources = len(read_source_registry(PROJECT_ROOT / "config/sources/default.yaml").sources)
+    longest_caption = f"Based on {sources} of {sources} selected sources"
+    assert len(longest_caption) > len(
+        max(
+            (screen_support_summary(race) for s in view_model.sections for race in s.races),
+            key=len,
+        )
+    )
+    expression = """
+      (() => {
+        const captions = [...document.querySelectorAll('.race-card')].map((card) => {
+          const caption = [...card.querySelectorAll('.support-line')]
+            .find((line) => line.getClientRects().length);
+          if (!caption) return null;
+          caption.textContent = LONGEST;
+          const box = caption.getBoundingClientRect();
+          const cardBox = card.getBoundingClientRect();
+          return {
+            // One line-box tall, not "as short as its neighbours" — if every
+            // caption wrapped, a comparison between them would still pass.
+            lines: box.height / parseFloat(getComputedStyle(caption).lineHeight),
+            // The track is the caption's own width, so the box hugs its text.
+            // Measured against the text's own rect, not scrollWidth, which for
+            // a block box is just the box again. Without the sizing the caption
+            // lands in an implicit auto track that absorbs the row's free space.
+            hugsText: (() => {
+              const text = document.createRange();
+              text.selectNodeContents(caption);
+              return Math.abs(box.width - text.getBoundingClientRect().width) <= 2;
+            })(),
+            insideCard: box.left >= cardBox.left - 1 && box.right <= cardBox.right + 1,
+          };
+        }).filter(Boolean);
+        return JSON.stringify({
+          measured: captions.length,
+          oneLine: captions.every((c) => c.lines <= 1.05),
+          allHugText: captions.every((c) => c.hugsText),
+          allInsideCard: captions.every((c) => c.insideCard),
+          pageOverflow: document.documentElement.scrollWidth
+            > document.documentElement.clientWidth,
+        });
+      })()
+    """.replace("LONGEST", json.dumps(longest_caption))
+
+    screen = _evaluate_in_chrome(html_path, expression)
+    phone = _evaluate_in_chrome(html_path, expression, mobile_width=320)
+    # No band width here. The caption's own track is 185.77px at every screen
+    # width, so 560px measured exactly what the default already does — the two
+    # editions failed together under every control and separately under none —
+    # and each Chrome launch is a real cost to a suite that already flakes under
+    # load. 320px and print stay because each fails where the others pass.
+    printed = _evaluate_in_chrome(html_path, expression, mobile_width=768, media="print")
+
+    for edition in (screen, phone, printed):
+        assert edition["measured"] > 0
+        assert edition["oneLine"] is True
+        assert edition["allInsideCard"] is True
+        assert edition["pageOverflow"] is False
+
+    # Only where the card is two columns: the caption's track is its own width,
+    # so the box hugs the text. Below 480px the card is one column and the
+    # caption spans it, which is the point of that layout, not a defect.
+    for edition in (screen, printed):
+        assert edition["allHugText"] is True
+    assert phone["allHugText"] is False
 
 
 def test_round4_card_anatomy_and_data_ink_cleanup(tmp_path: Path) -> None:
@@ -2329,6 +2546,11 @@ def test_full_race_card_stacks_name_and_meter_below_480px(tmp_path: Path) -> Non
         const meterBox = meter.getBoundingClientRect();
         return JSON.stringify({
           columns: getComputedStyle(result).gridTemplateColumns.split(' ').length,
+          // The context row pins its pill and caption to explicit columns, so
+          // one column here means both resets landed: without them the pinned
+          // `grid-column: 2` opens an implicit second track and sits the caption
+          // beside the pill instead of under it.
+          contextColumns: getComputedStyle(context).gridTemplateColumns.split(' ').length,
           resultWidth: resultBox.width,
           meterWidth: meterBox.width,
           captionBelow: context.getBoundingClientRect().top >= resultBox.bottom,
@@ -2340,9 +2562,11 @@ def test_full_race_card_stacks_name_and_meter_below_480px(tmp_path: Path) -> Non
     boundary = _evaluate_in_chrome(html_path, expression, mobile_width=480)
 
     assert phone["columns"] == 1
+    assert phone["contextColumns"] == 1
     assert phone["meterWidth"] == pytest.approx(phone["resultWidth"], abs=1)
     assert phone["captionBelow"] is True
     assert boundary["columns"] == 2
+    assert boundary["contextColumns"] == 2
 
 
 def test_shared_footer_closes_short_viewport_and_follows_tall_content(tmp_path: Path) -> None:
