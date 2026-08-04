@@ -1,10 +1,16 @@
 """Enforcement suite for the front-end code guidelines (docs/FRONTEND.md).
 
 Three of the document's rules are checkable against the Python side of the
-build and are checked here. Each one reads its grandfathered baseline from
-`tests/frontend_ratchets.json` so that a migration ticket shrinks the recorded
-value in the same pull request that removes the debt (AGENTS.md: ratchet checks
-only move one way).
+build and are checked here.
+
+The epic's two grandfather allowlists are gone (issue #245). The f-string
+document allowlist emptied in #241 and the module-isolation exemption list in
+#234, and a list with nothing on it is a list an author can still add to — so
+both checks now read no baseline at all and reject the first violation outright.
+What remains in `tests/frontend_ratchets.json` is not grandfathered debt: the
+inline-script ceilings sit at the final value the rule permits (one entry
+invocation per scripted page, zero for the 404), and the injection-placeholder
+registry is permanent. Both still move one way (AGENTS.md).
 
 The Node half of the suite lives in `tests/js/module-isolation.test.mjs` and
 `tests/js/support/module-guards.mjs`.
@@ -31,13 +37,28 @@ DOCUMENT = "docs/FRONTEND.md"
 # lines carry no authored logic — they inline a `.mjs` module verbatim — so
 # they are excluded from the inline-script line count and registered by name
 # instead.
-PLACEHOLDER_LINE = re.compile(r"^\s*\{\{\s*([A-Za-z_][A-Za-z0-9_]*)\s*\|\s*safe\s*\}\}\s*$")
+#
+# The expression form is as wide as Jinja's, because a form this does not match
+# inside a payload element is an injection point neither half of the metric
+# records (#245, closing a gap #250 left): `{{-` / `-}}` whitespace control is
+# ordinary Jinja, and a dotted or subscripted name is how a value arrives out of
+# a context object. The registered name is the whole expression, so
+# `guide.entry_script` and `guide_entry_script` are different registry entries
+# rather than the same one.
+PLACEHOLDER_LINE = re.compile(
+    r"^\s*\{\{-?\s*([A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)*)\s*\|\s*safe\s*-?\}\}\s*$"
+)
 
 # Tag names are case-insensitive in HTML, so the element matcher must be too:
 # a `<SCRIPT>` block a browser runs but this pattern does not match is a hole
 # the whole metric falls through, silently and in both directions — neither its
 # lines nor the placeholders inside it would be seen.
-SCRIPT_ELEMENT = re.compile(r"<script\b([^>]*)>(.*?)</script>", re.DOTALL | re.IGNORECASE)
+#
+# The closing tag admits trailing whitespace for the same reason (#245, the
+# second gap #250 left): `</script >` and `</script\n>` are legal HTML that a
+# browser runs, and a close this pattern cannot find swallows the rest of the
+# file into one unmatched element or none at all.
+SCRIPT_ELEMENT = re.compile(r"<script\b([^>]*)>(.*?)</script\s*>", re.DOTALL | re.IGNORECASE)
 
 # Payload elements are the data contract, not behavior (docs/FRONTEND.md, "The
 # data contract"), so their lines are outside the inline-script ceiling. The
@@ -56,23 +77,9 @@ PAYLOAD_TYPE = re.compile(r"""(?:^|\s)type\s*=\s*["']application/json["']""")
 DOCTYPE_PREFIX = "<!doctype"
 
 
-class FstringDocument(TypedDict):
-    module: str
-    function: str
-    reason: str
-
-
-class IsolationExemption(TypedDict):
-    module: str
-    error: str
-    reason: str
-
-
 class Ratchets(TypedDict):
     inline_script_ceilings: dict[str, int]
     module_injection_placeholders: dict[str, list[str]]
-    fstring_documents: list[FstringDocument]
-    module_isolation_exemptions: list[IsolationExemption]
 
 
 def read_ratchets() -> Ratchets:
@@ -172,6 +179,74 @@ def test_the_metric_sees_a_script_element_in_whatever_case_it_is_written() -> No
     assert measure_inline_script('<SCRIPT type="application/json">a();</SCRIPT>')["lines"] == 0
     # And the attribute-name boundary survives the new flag in both cases.
     assert measure_inline_script('<SCRIPT data-type="application/json">a();</SCRIPT>')["lines"] == 1
+
+
+def test_the_metric_sees_a_close_tag_written_with_trailing_space() -> None:
+    """`</script >` is legal HTML a browser runs, so the scan has to end there.
+
+    A close the pattern cannot find is the same shape of hole as an open it
+    cannot find: `.*?` runs on to the next close tag anywhere in the file, or to
+    none, and the block's lines and its placeholders both vanish from the
+    metric. #250 left this one open; #245 closes it.
+    """
+
+    assert measure_inline_script("<script>\n  evil();\n</script >")["lines"] == 1
+    assert measure_inline_script("<script>\n  evil();\n</script\n>")["lines"] == 1
+    assert measure_inline_script("<script>{{ sneaky | safe }}</script  >") == {
+        "lines": 0,
+        "placeholders": ["sneaky"],
+    }
+    # The tolerance is whitespace only: `</scriptx>` closes nothing, and the
+    # element must stay unmatched rather than quietly ending early.
+    assert measure_inline_script("<script>\n  a();\n</scriptx>")["lines"] == 0
+
+    # A trailing-space close must not let a second element merge into the first,
+    # which is what an over-eager close pattern would cause.
+    assert (
+        measure_inline_script("<script>\n  a();\n</script >\n<script>\n  b();\n</script>")["lines"]
+        == 2
+    )
+
+
+def test_the_placeholder_scan_reads_jinja_whitespace_control_and_dotted_names() -> None:
+    """`{{- x | safe -}}` and `{{ obj.attr | safe }}` are ordinary Jinja.
+
+    A placeholder form the registry does not recognize is unregistered, and
+    inside a payload element — which the ceiling skips — that makes it an
+    injection point nothing records at all. #250 left this open on the argument
+    that no template writes those forms today; #245 closes it rather than leave
+    the registry's coverage resting on nobody having reached for the form.
+    """
+
+    assert measure_inline_script("<script>\n{{- entry | safe -}}\n</script>") == {
+        "lines": 0,
+        "placeholders": ["entry"],
+    }
+    assert measure_inline_script("<script>\n{{ guide.entry_script | safe }}\n</script>") == {
+        "lines": 0,
+        "placeholders": ["guide.entry_script"],
+    }
+    # Inside a payload element too, which is where the unregistered form was
+    # invisible to both halves of the metric.
+    assert measure_inline_script(
+        '<script type="application/json">\n{{- sneaky.attr | safe -}}\n</script>'
+    ) == {"lines": 0, "placeholders": ["sneaky.attr"]}
+
+    # The registered name stays the whole expression, so a value reached through
+    # a context object is a different registry entry from a bare global.
+    assert (
+        measure_inline_script("<script>\n{{ guide.entry | safe }}\n</script>")["placeholders"]
+        != measure_inline_script("<script>\n{{ entry | safe }}\n</script>")["placeholders"]
+    )
+
+    # Still a *line* rule: a placeholder sharing its line with anything else is
+    # not a placeholder line. In an ordinary script the ceiling counts it; in a
+    # payload element neither half does, which is the one residual gap from
+    # #250 that #245 records rather than closes (docs/FRONTEND.md, Modules).
+    assert measure_inline_script("<script>\n{{ entry | safe }} boot();\n</script>") == {
+        "lines": 1,
+        "placeholders": [],
+    }
 
 
 def test_the_placeholder_registry_reaches_inside_a_payload_element() -> None:
@@ -304,7 +379,7 @@ def find_fstring_documents() -> list[tuple[str, str]]:
 
 
 def test_the_document_scan_sees_a_document_that_is_named_before_it_is_returned() -> None:
-    """The allowlist means nothing if an ordinary authoring form escapes the scan."""
+    """The rule means nothing if an ordinary authoring form escapes the scan."""
 
     returned = 'def page() -> str:\n    return f"""<!doctype html>\n<html></html>"""\n'
     named = (
@@ -326,27 +401,95 @@ def test_the_document_scan_sees_a_document_that_is_named_before_it_is_returned()
     assert document_functions(nested) == ["inner"]
 
 
-def test_python_string_documents_stay_on_the_shrinking_allowlist() -> None:
-    """docs/FRONTEND.md, Server-side templates: full documents are Jinja templates."""
+def test_no_module_builds_an_html_document_from_a_python_string() -> None:
+    """docs/FRONTEND.md, Server-side templates: full documents are Jinja templates.
 
-    allowed = sorted(
-        (entry["module"], entry["function"]) for entry in read_ratchets()["fstring_documents"]
-    )
+    This was a shrinking allowlist while About, the archive, and the 404 were
+    still Python strings. #241 moved all three onto `base.html.j2` and #245
+    deleted the empty list rather than leave a place to add to: there is no
+    grandfathered document left, so the check reads no baseline and the first
+    one to reappear fails here.
+    """
+
     found = find_fstring_documents()
-
-    added = [entry for entry in found if entry not in allowed]
-    assert not added, (
-        f"{added} build an HTML document from a Python string. Full HTML documents are "
+    assert found == [], (
+        f"{found} build an HTML document from a Python string. Full HTML documents are "
         f"Jinja templates extending the shared layout, so autoescaping is the default rather "
-        f"than a per-call discipline (rule: server-side templates, {DOCUMENT}). The existing "
-        f"pages are grandfathered on a shrinking allowlist; new ones are not."
+        f"than a per-call discipline (rule: server-side templates, {DOCUMENT}). Nothing is "
+        f"grandfathered here any more; add the page as a template extending the layout."
     )
 
-    removed = [entry for entry in allowed if entry not in found]
-    assert not removed, (
-        f"tests/frontend_ratchets.json still allows {removed}, which is no longer a "
-        f"Python-string document. Delete the entry in this pull request "
-        f"(rule: the allowlist only shrinks, {DOCUMENT} § Adoption)."
+
+DOCUMENT_PATH = REPO_ROOT / DOCUMENT
+
+# The document's normative sections: the code rules, each of which must say what
+# holds it. `Adoption` records how the epic ran and `Open questions` records what
+# it decided; neither states a rule a diff can violate, so neither is swept.
+FIRST_RULE_SECTION = "## Modules"
+LAST_RULE_SECTION_END = "## Adoption"
+
+RULE_HEADING = re.compile(r"^- \*\*(.+?)\*\*", re.MULTILINE)
+MARKER = re.compile(r"\*(?:Check: (?:exists|partial)|Reviewer-applied)")
+
+
+def rules_missing_a_marker(document: str) -> list[str]:
+    """Every normative bullet that does not say what holds it.
+
+    A bullet runs from its `- **Rule.**` opening to the next top-level bullet or
+    the end of the section, so an indented sub-bullet belongs to the rule above
+    it rather than counting as a rule of its own.
+    """
+
+    start = document.index(FIRST_RULE_SECTION)
+    body = document[start : document.index(LAST_RULE_SECTION_END, start)]
+
+    starts = [match.start() for match in RULE_HEADING.finditer(body)]
+    bounds = [*starts, len(body)]
+    return [
+        RULE_HEADING.match(body[begin:end]).group(1)  # type: ignore[union-attr]
+        for begin, end in zip(starts, bounds[1:], strict=True)
+        if not MARKER.search(body[begin:end])
+    ]
+
+
+def test_the_marker_sweep_sees_a_rule_that_says_nothing() -> None:
+    """The sweep is worth having only if an unmarked rule fails it."""
+
+    marked = "## Modules\n- **A rule.** Text.\n  *Check: exists — a test.*\n\n## Adoption\n"
+    unmarked = "## Modules\n- **A rule.** Text.\n\n## Adoption\n"
+    reviewed = (
+        "## Modules\n- **A rule.** Text.\n  *Reviewer-applied: nothing holds it.*\n\n## Adoption\n"
+    )
+    partial = "## Modules\n- **A rule.** Text.\n  *Check: partial — half of it.*\n\n## Adoption\n"
+    # A sub-bullet belongs to the rule above it and is not a rule itself.
+    nested = (
+        "## Modules\n- **A rule.** Text.\n  *Check: exists — a test.*\n"
+        "  - a case the rule covers\n\n## Adoption\n"
+    )
+
+    assert rules_missing_a_marker(marked) == []
+    assert rules_missing_a_marker(reviewed) == []
+    assert rules_missing_a_marker(partial) == []
+    assert rules_missing_a_marker(nested) == []
+    assert rules_missing_a_marker(unmarked) == ["A rule."]
+    # Prose that merely mentions a check is not a marker.
+    assert rules_missing_a_marker("## Modules\n- **A rule.** See Check: exists.\n\n## Adoption\n")
+
+
+def test_every_rule_in_the_document_says_what_holds_it() -> None:
+    """docs/FRONTEND.md's own preamble: every rule names what holds it.
+
+    #245 walked the document bullet by bullet to establish this. The walk is
+    what this test replaces: a rule added later cannot arrive silently unheld,
+    because saying `Reviewer-applied` is a sentence someone has to write.
+    """
+
+    unmarked = rules_missing_a_marker(DOCUMENT_PATH.read_text(encoding="utf-8"))
+    assert unmarked == [], (
+        f"{unmarked} state a rule without saying what holds it. Every rule ends with "
+        f"`*Check: exists*`, `*Check: partial*` naming which part, or `*Reviewer-applied:*` "
+        f"saying plainly that nothing automated holds it and what a reviewer looks for "
+        f"({DOCUMENT}, preamble)."
     )
 
 
