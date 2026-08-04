@@ -31,6 +31,19 @@ When in doubt, remove ink.
   sentence aloud to a neighbor?
 - **Demonstrate, don't advertise.** Provenance is declared by linking and
   counting in place, never claimed in prose.
+- **Swagger is allowed where the page earns it.** The register is
+  confident on purpose — a progressive city deserves a guide that sounds
+  like it believes so — but the confidence is licensed by evidence on
+  the same screen, never by assertion. A race page's "Every endorsement
+  that matters, with receipts" passes because that page lists every
+  endorsement, dims the ones the reader's own selection excludes, and
+  links each to the source that published it. The same words over a page
+  that showed a number and no rows would be advertising. Test: if a
+  reader called the bluff, is the proof already in front of them?
+  *(2026-08-04. This qualifies the rule above rather than excepting it:
+  the swagger is a claim the demonstration has already paid for. README,
+  "Why this exists," is where the register comes from and why it is not
+  borrowed.)*
 - **Never leave arithmetic doubtful.** Where a count and a share can
   legitimately disagree, say why inline — a race page's
   "(co-endorsements split)" exists so a reader who does the division isn't

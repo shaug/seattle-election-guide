@@ -7,6 +7,35 @@ This project is an endorsement aggregation, not an official voter pamphlet and n
 independent evaluation of every candidate. Accuracy, provenance, and explicit uncertainty
 take priority over coverage.
 
+## Why this exists
+
+For about two decades I voted the way a lot of Seattle did: I read The Stranger, and
+mostly nothing else. "Seattle's Only Newspaper" was never literally true, but it was
+honest about its ambition — a progressive city deserved a voice loud enough to speak for
+it, and for a long time that voice was theirs.
+
+I don't vote that way any more. The paper changed hands, and my confidence in it as a
+sole source didn't survive the change. That is my judgment about my own ballot, not a
+finding about theirs; what follows from it is this site.
+
+The mistake, in hindsight, was not trusting The Stranger. It was trusting *one* voice at
+all. A single voice can be sold, staffed differently, or simply change its mind, and a
+reader who has handed it their ballot is the last to find out. What replaces a trusted
+voice is not a better trusted voice — it's evidence you can check yourself.
+
+So this guide counts many voices and shows its work. Every endorsement is listed, linked
+to the source that published it, and counted in the open; you choose which sources count
+for you, and the numbers recompute in front of you. **The Stranger is still one of those
+sources.** Removing them would miss the point entirely — they are a real signal, and this
+site's answer to a single voice was never to silence it. It was to stop letting any one
+of them speak alone.
+
+The writing here is confident on purpose. Seattle is a progressive city and deserves a
+guide that sounds like it believes so. The difference is what the confidence rests on:
+not a masthead, not a byline, not anyone's employment history, but an aggregate you can
+audit one receipt at a time. See [docs/DESIGN.md](docs/DESIGN.md), "Voice," for the rule
+that keeps it honest.
+
 ## Status
 
 The authoritative August 2026 Seattle ballot inventory is implemented and validated. The default
