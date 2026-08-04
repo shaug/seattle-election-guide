@@ -142,8 +142,13 @@ purpose and watch the check fail.
     in `electionDayStatement` — a direct violation of this bullet's last
     sentence, and the only one in the shipped client. The banner is in-flight
     from the site-operations epic rather than this one. **Unowned.***
-  - *Two hand-patched status lines (`share-link.mjs`, `guide-dialog.mjs`) and
-    the `createElement` loop in `guide-filters.mjs`'s `apply`, which is a lit
+  - *Text written straight onto a server-rendered status or notice element:
+    `share-link.mjs` and `guide-dialog.mjs`'s copy-status lines,
+    `sources-client.mjs`'s `showNotice`, `client-payload.mjs`'s payload notice,
+    and `compare-client.mjs`'s scroll hint, status, and notice. These are named
+    as a shape rather than a closed list — a `textContent` sweep of the shipped
+    modules is the inventory, and it moves. **Unowned.***
+  - *The `createElement` loop in `guide-filters.mjs`'s `apply`, which is a lit
     template written by hand. **Unowned.***
 - **The server renders the complete audited baseline.** Every page stands
   alone for crawlers and readers without JavaScript. Client rendering takes a
@@ -647,7 +652,11 @@ purpose and watch the check fail.
   *Check: exists — `tests/test_frontend_ratchets.py` reads this document and
   fails on a rule between Modules and Adoption that carries none of the three
   markers, so the walk does not have to be repeated by hand and a rule added
-  later cannot arrive silently unheld. It holds the *form*, not the truth of the
+  later cannot arrive silently unheld. A second test asks the question the
+  sweep cannot ask of itself — how many top-level bullets it failed to
+  recognize — and holds that to zero, because the sweep's first version could
+  not read a rule whose name wraps onto a second line and so was silently blind
+  to four of them, this one included. It holds the *form*, not the truth of the
   claim: writing `Check: exists` is what the sweep sees, and whether the named
   check can observe a violation is the preamble's instruction to break the rule
   and watch it fail. Adoption and Open questions are outside the sweep, because

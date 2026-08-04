@@ -428,8 +428,38 @@ DOCUMENT_PATH = REPO_ROOT / DOCUMENT
 FIRST_RULE_SECTION = "## Modules"
 LAST_RULE_SECTION_END = "## Adoption"
 
-RULE_HEADING = re.compile(r"^- \*\*(.+?)\*\*", re.MULTILINE)
+# A top-level bullet. Every rule opens one; the sweep below requires the
+# converse, that every one of these opens a rule.
+TOP_LEVEL_BULLET = re.compile(r"^- ", re.MULTILINE)
+
+# `re.DOTALL` is load-bearing, not decoration. A long rule name wraps onto a
+# second line — four of this document's do — and without it `.` stops at the
+# newline, the bullet matches nothing, and the sweep does not merely miss that
+# rule: the unmatched bullet folds into the range of the rule above it, so its
+# marker satisfies its neighbour too. A check that cannot see the document's
+# ordinary style is the blind-spot shape this document's preamble warns about,
+# and this one had it.
+RULE_HEADING = re.compile(r"^- \*\*(.+?)\*\*", re.MULTILINE | re.DOTALL)
 MARKER = re.compile(r"\*(?:Check: (?:exists|partial)|Reviewer-applied)")
+
+
+def normative_body(document: str) -> str:
+    start = document.index(FIRST_RULE_SECTION)
+    return document[start : document.index(LAST_RULE_SECTION_END, start)]
+
+
+def unrecognized_bullets(document: str) -> int:
+    """Top-level bullets in the swept span that the rule pattern did not match.
+
+    The sweep can only report a rule it recognized, so "how many did it fail to
+    recognize" is the question its own result cannot answer. Holding this to
+    zero is what makes the count trustworthy: a bullet that opens without bold,
+    or whose bold never closes, is a rule the sweep would otherwise skip in
+    silence.
+    """
+
+    body = normative_body(document)
+    return len(TOP_LEVEL_BULLET.findall(body)) - len(RULE_HEADING.findall(body))
 
 
 def rules_missing_a_marker(document: str) -> list[str]:
@@ -440,8 +470,7 @@ def rules_missing_a_marker(document: str) -> list[str]:
     it rather than counting as a rule of its own.
     """
 
-    start = document.index(FIRST_RULE_SECTION)
-    body = document[start : document.index(LAST_RULE_SECTION_END, start)]
+    body = normative_body(document)
 
     starts = [match.start() for match in RULE_HEADING.finditer(body)]
     bounds = [*starts, len(body)]
@@ -474,6 +503,50 @@ def test_the_marker_sweep_sees_a_rule_that_says_nothing() -> None:
     assert rules_missing_a_marker(unmarked) == ["A rule."]
     # Prose that merely mentions a check is not a marker.
     assert rules_missing_a_marker("## Modules\n- **A rule.** See Check: exists.\n\n## Adoption\n")
+
+
+def test_the_marker_sweep_reads_a_rule_whose_name_wraps() -> None:
+    """A long rule name wraps onto a second line, and four of this document's do.
+
+    Without `re.DOTALL` the bullet matches nothing at all, which fails in two
+    directions at once: the wrapped rule is never checked, and — because a
+    rule's range runs to the next *matched* start — its marker is absorbed into
+    the range of the rule above it, so deleting that neighbour's marker passes
+    too. Both directions are asserted here.
+    """
+
+    wrapped = "A rule whose name is long enough that it\n  wraps."
+    wrapped_unmarked = f"## Modules\n- **{wrapped}** Text.\n\n## Adoption\n"
+    wrapped_marked = (
+        f"## Modules\n- **{wrapped}** Text.\n  *Check: exists — a test.*\n\n## Adoption\n"
+    )
+    assert rules_missing_a_marker(wrapped_unmarked) == [wrapped]
+    assert rules_missing_a_marker(wrapped_marked) == []
+
+    # The neighbour direction: an unmarked rule must not be rescued by the
+    # marker belonging to a wrapped rule that follows it.
+    neighbour = (
+        "## Modules\n- **First rule.** Text.\n"
+        "- **A second rule whose name is long enough\n  that it wraps.** Text.\n"
+        "  *Check: exists — a test.*\n\n## Adoption\n"
+    )
+    assert rules_missing_a_marker(neighbour) == ["First rule."]
+
+
+def test_the_marker_sweep_recognizes_every_bullet_it_sweeps() -> None:
+    """The sweep's count is trustworthy only if it recognized every bullet.
+
+    `rules_missing_a_marker` reports on the rules it matched, so a bullet the
+    pattern does not match is invisible to its result — the exact way the
+    wrapped-heading defect above stayed quiet. This asks the complementary
+    question the sweep cannot ask of itself.
+    """
+
+    assert unrecognized_bullets(DOCUMENT_PATH.read_text(encoding="utf-8")) == 0
+
+    # And the probe itself observes a bullet that is not a rule.
+    assert unrecognized_bullets("## Modules\n- a bare bullet\n\n## Adoption\n") == 1
+    assert unrecognized_bullets("## Modules\n- **A rule.** Text.\n\n## Adoption\n") == 0
 
 
 def test_every_rule_in_the_document_says_what_holds_it() -> None:
