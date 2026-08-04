@@ -71,10 +71,28 @@ const STATIC_IMPORT = /(?:^|\n)\s*import\s[^;]*?from\s*['"]([^'"]+)['"]/.source;
 const DYNAMIC_IMPORT = /import\s*\(\s*['"]([^'"]+)['"]/.source;
 const IMPORT_SPECIFIER = new RegExp(`${STATIC_IMPORT}|${DYNAMIC_IMPORT}`, 'g');
 
+/**
+ * The package a specifier names, ignoring any subpath into it.
+ *
+ * `happy-dom/lib/index.js` resolves and constructs a working Window — the
+ * package publishes no `exports` map to stop it — so comparing whole specifiers
+ * would let a deep import install a second DOM while the sweep read the name it
+ * was looking for and did not find it. A relative specifier names no package.
+ *
+ * @param {string} specifier
+ */
+function packageOf(specifier) {
+  if (specifier.startsWith('.') || specifier.startsWith('/')) return null;
+  const segments = specifier.split('/');
+  return specifier.startsWith('@') ? segments.slice(0, 2).join('/') : segments[0];
+}
+
 /** @param {string} source */
 function importedPackages(source) {
   // One group per alternative, so whichever form matched is the one to read.
-  return [...source.matchAll(IMPORT_SPECIFIER)].map((match) => match[1] ?? match[2]);
+  return [...source.matchAll(IMPORT_SPECIFIER)]
+    .map((match) => packageOf(match[1] ?? match[2]))
+    .filter((name) => name !== null);
 }
 
 /** Every `.mjs` under tests/js, at any depth, as a path relative to it. */
@@ -132,9 +150,25 @@ test('the DOM sweep can actually see an import of the package', () => {
     DOM_PACKAGE,
   ]);
   assert.deepEqual(importedPackages(`await import(\n  "${DOM_PACKAGE}",\n);\n`), [DOM_PACKAGE]);
+  // A subpath into the package is still the package. happy-dom publishes no
+  // `exports` map, so `happy-dom/lib/index.js` resolves and constructs a working
+  // Window; comparing whole specifiers would have read the name it was looking
+  // for, not found it, and passed.
+  assert.deepEqual(importedPackages(`import { Window } from '${DOM_PACKAGE}/lib/index.js';\n`), [
+    DOM_PACKAGE,
+  ]);
+  assert.deepEqual(importedPackages(`await import('${DOM_PACKAGE}/lib/window/Window.js');\n`), [
+    DOM_PACKAGE,
+  ]);
+  // A scoped package keeps both of its segments, so the two halves of one name
+  // cannot be read as a package and a subpath.
+  assert.deepEqual(importedPackages("import x from '@scope/pkg/deep.js';\n"), ['@scope/pkg']);
   assert.ok(!importedPackages("import test from 'node:test';\n").includes(DOM_PACKAGE));
-  assert.ok(!importedPackages("await import('./support/dom.mjs');\n").includes(DOM_PACKAGE));
+  // A relative specifier names no package, so support/dom.mjs's own callers are
+  // not mistaken for one.
+  assert.deepEqual(importedPackages("await import('./support/dom.mjs');\n"), []);
+  assert.deepEqual(importedPackages("import { x } from '../../src/thing.mjs';\n"), []);
   // A mention in prose is not an import, which is why the sweep reads
-  // specifiers: this very file names the package three times.
+  // specifiers: this very file names the package many times.
   assert.deepEqual(importedPackages(`// we do not import ${DOM_PACKAGE} here\n`), []);
 });
