@@ -300,8 +300,9 @@ then any sticky strip, then content.
   cannot see the rows cannot count them. *(2026-08-04, issue 136 follow-up.)*
 - **One meter.** A single chrome everywhere, left-anchored fill matching
   the brand icon, label riding the fill (falling back to muted ink beside
-  a low fill). The meter is slated for redesign: maintain it, don't extend
-  it.
+  a low fill). The meter's replacement is designed — meter v2, the
+  segmented meter, specified in `docs/METER_V2.md` — but not yet
+  implemented: until it lands, maintain this one, don't extend it.
 - **Alternative signals share one quiet component.** Anything that is an
   *alternative* to the result the reader asked for — today, the full-panel
   baseline under a lens — renders as a tone-tinted info bar. No pills, no
