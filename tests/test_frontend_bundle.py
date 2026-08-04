@@ -32,6 +32,7 @@ TEMPLATE_DIR = REPO_ROOT / "src" / "election_guide" / "rendering" / "templates"
 ENTRIES = {
     "compare-entry.mjs": "ComparePage",
     "guide-entry.mjs": "GuidePage",
+    "race-entry.mjs": "RacePage",
     "shell-entry.mjs": "ShellPage",
     "sources-entry.mjs": "SourcesPage",
 }

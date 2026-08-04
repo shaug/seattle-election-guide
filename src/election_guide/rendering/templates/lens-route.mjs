@@ -18,22 +18,16 @@
 // the registry. It is deliberately not restated here: the sweep strips comments
 // before scanning, so a second copy of the list is one nothing can keep honest.
 
-import { fragmentRaceTarget, withRaceTarget } from './lens-url.mjs';
+import { withRaceTarget } from './lens-url.mjs';
 
 /**
  * @typedef {object} LensRouter
  * @property {() => string} fragment The live fragment, `#` included.
- * @property {() => string} raceTarget The race the fragment names, or `''`.
- * @property {() => unknown} historyState
  * @property {() => string} controlSearch The live query string, `?` included.
  * @property {(search: string) => void} replaceControlSearch
  * @property {() => void} clearFragment
- * @property {(target: string|null) => void} replaceRaceTarget
- * @property {(target: string, state: Record<string, unknown>) => void} pushRaceTarget
- * @property {() => void} back
- * @property {(target: string|null) => string} absoluteRaceLink
+ * @property {(path: string) => void} redirectToRacePage
  * @property {(listener: () => void) => void} onFragmentChange
- * @property {(listener: () => void) => void} onHistoryChange
  */
 
 /**
@@ -48,9 +42,9 @@ export function createLensRouter() {
   /**
    * Replace the current entry, preserving whatever state it already carries.
    *
-   * `history.state` is passed through on every replace rather than dropped: the
-   * race dialog stores its own `raceDetail` marker there, and a replace that
-   * cleared it would make the next Back press stop restoring the dialog.
+   * `history.state` is passed through on every replace rather than dropped:
+   * nothing on these pages writes it today, but a replace that cleared it would
+   * silently discard whatever a future caller had put there.
    *
    * @param {string} address
    */
@@ -58,8 +52,6 @@ export function createLensRouter() {
 
   return {
     fragment: () => window.location.hash,
-    raceTarget: () => fragmentRaceTarget(window.location.hash),
-    historyState: () => history.state,
     controlSearch: () => window.location.search,
 
     replaceControlSearch(search) {
@@ -71,38 +63,27 @@ export function createLensRouter() {
       replace(bareAddress());
     },
 
-    /** Rewrite only the race segment in place, leaving any lens untouched. */
-    replaceRaceTarget(target) {
-      replace(`${bareAddress()}${withRaceTarget(window.location.hash, target)}`);
-    },
-
-    pushRaceTarget(target, state) {
-      history.pushState(state, '', withRaceTarget(window.location.hash, target));
-    },
-
-    back() {
-      history.back();
-    },
-
     /**
-     * The shareable address for one race.
+     * Leave the guide for a race's own page (issue #136).
      *
-     * Composed from the live address rather than copied off it, so the link
-     * reproduces the active lens even when the dialog's own hash state was
-     * reached by a path the share button cannot assume (issue 142).
+     * A `#race-…` link shared before race detail became a page still names a
+     * race, and this is where that link now goes. The lens travels with it: the
+     * fragment is carried over with only its race segment removed, since the
+     * path names the race from here on (issue 142). The guide's own control
+     * query does not travel — a filter and a ballot view describe a list of
+     * races, and there is one race on the page this lands on.
+     *
+     * `replace` rather than an assignment, so the address that no longer names
+     * a page is not left in the reader's history for Back to return to.
+     *
+     * @param {string} path
      */
-    absoluteRaceLink(target) {
-      const link = new URL(window.location.href);
-      link.hash = withRaceTarget(window.location.hash, target);
-      return link.toString();
+    redirectToRacePage(path) {
+      window.location.replace(`${path}${withRaceTarget(window.location.hash, null)}`);
     },
 
     onFragmentChange(listener) {
       window.addEventListener('hashchange', listener);
-    },
-
-    onHistoryChange(listener) {
-      window.addEventListener('popstate', listener);
     },
   };
 }

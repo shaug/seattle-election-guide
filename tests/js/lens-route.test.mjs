@@ -19,21 +19,10 @@ async function router(url) {
   return createLensRouter();
 }
 
-test('the router reads the live fragment, query, and history state', async () => {
+test('the router reads the live fragment and query', async () => {
   const route = await router(`${GUIDE_URL}?filter=city#race-mayor`);
   assert.equal(route.fragment(), '#race-mayor');
   assert.equal(route.controlSearch(), '?filter=city');
-  assert.equal(route.raceTarget(), 'race-mayor');
-});
-
-test('the race target comes out of a lens fragment as well as a bare anchor', async () => {
-  const route = await router(`${GUIDE_URL}#lens=2&mode=s&sel=strn&race=race-council`);
-  assert.equal(route.raceTarget(), 'race-council');
-});
-
-test('a fragment naming no race names no race', async () => {
-  const route = await router(`${GUIDE_URL}#lens=2&mode=s&sel=strn`);
-  assert.equal(route.raceTarget(), '');
 });
 
 test('clearing the fragment leaves the path and query alone', async () => {
@@ -44,38 +33,44 @@ test('clearing the fragment leaves the path and query alone', async () => {
   assert.equal(window.location.hash, '');
 });
 
-test('rewriting the race segment leaves an active lens exactly as found', async () => {
-  const route = await router(`${GUIDE_URL}#lens=2&mode=s&sel=strn&race=race-mayor`);
-  route.replaceRaceTarget('race-council');
-  assert.match(window.location.hash, /lens=2/);
-  assert.match(window.location.hash, /sel=strn/);
-  assert.match(window.location.hash, /race=race-council/);
+// Issue #136: a `#race-…` link shared while race detail was a dialog names a
+// page now, and this is the one navigation the guide performs. The lens has to
+// survive it — that is issue 142's contract — and the race segment has to not,
+// because the path names the race from here on.
+test('a race redirect carries the lens over and drops the race segment', async () => {
+  const route = await router(`${GUIDE_URL}?view=compact#lens=2&mode=s&sel=strn&race=race-mayor`);
+  /** @type {string[]} */
+  const replaced = [];
+  Object.defineProperty(window.location, 'replace', {
+    configurable: true,
+    value: (/** @type {string} */ address) => replaced.push(address),
+  });
 
-  route.replaceRaceTarget(null);
-  assert.match(window.location.hash, /lens=2/);
-  assert.match(window.location.hash, /sel=strn/);
-  assert.ok(!window.location.hash.includes('race='));
+  route.redirectToRacePage('/e/wa-2026-primary/races/mayor/');
+
+  assert.equal(replaced.length, 1);
+  const [address] = replaced;
+  assert.ok(address.startsWith('/e/wa-2026-primary/races/mayor/#'), address);
+  assert.match(address, /lens=2/);
+  assert.match(address, /sel=strn/);
+  assert.ok(!address.includes('race='), address);
+  // The guide's own filter and ballot view describe a list of races; the page
+  // this lands on has one.
+  assert.ok(!address.includes('view=compact'), address);
 });
 
-test('closing a race with no lens active leaves no fragment behind', async () => {
+test('a race redirect from a bare permalink leaves no fragment behind', async () => {
   const route = await router(`${GUIDE_URL}#race-mayor`);
-  route.replaceRaceTarget(null);
-  assert.equal(window.location.hash, '');
-});
+  /** @type {string[]} */
+  const replaced = [];
+  Object.defineProperty(window.location, 'replace', {
+    configurable: true,
+    value: (/** @type {string} */ address) => replaced.push(address),
+  });
 
-test('a replace preserves the history state the dialog stores in it', async () => {
-  const route = await router(`${GUIDE_URL}#race-mayor`);
-  route.pushRaceTarget('race-mayor', { raceDetail: 'race-mayor' });
-  route.replaceControlSearch('?view=compact');
-  assert.deepEqual(route.historyState(), { raceDetail: 'race-mayor' });
-});
+  route.redirectToRacePage('/e/wa-2026-primary/races/mayor/');
 
-test('the shareable race link is composed from the live address', async () => {
-  const route = await router(`${GUIDE_URL}#lens=2&mode=s&sel=strn`);
-  const link = route.absoluteRaceLink('race-mayor');
-  assert.ok(link.startsWith('https://seattleelections.guide/e/wa-2026-primary/'));
-  assert.match(link, /sel=strn/);
-  assert.match(link, /race=race-mayor/);
+  assert.deepEqual(replaced, ['/e/wa-2026-primary/races/mayor/']);
 });
 
 // The rule: each page's codec module is the sole reader and writer of
@@ -83,7 +78,9 @@ test('the shareable race link is composed from the live address', async () => {
 // every exception is recorded here with its argument rather than left implicit,
 // so adding one is a change to this list.
 const LOCATION_OWNERS = {
-  'lens-route.mjs': 'The guide and sources editor own their address bar here.',
+  'lens-route.mjs':
+    'The guide, its race pages, and the sources editor own their address bar here. One ' +
+    'fragment schema, one owner: all three read and write the same lens fragment.',
   'compare-route.mjs':
     'The Comparisons page owns its address bar here. One owner per fragment, not one ' +
     'owner for every fragment: this page reads a different schema against a different ' +

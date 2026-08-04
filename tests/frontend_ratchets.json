@@ -60,6 +60,7 @@
     "compare.html.j2": 1,
     "guide.html.j2": 1,
     "not-found.html.j2": 0,
+    "race.html.j2": 1,
     "sources.html.j2": 1
   },
   "module_injection_placeholders": {
@@ -74,6 +75,9 @@
     ],
     "guide.html.j2": [
       "guide_entry_script"
+    ],
+    "race.html.j2": [
+      "race_entry_script"
     ],
     "sources.html.j2": [
       "sources_entry_script"

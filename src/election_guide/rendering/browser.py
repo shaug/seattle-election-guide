@@ -63,7 +63,6 @@ def render_screenshot(
     width: int,
     height: int,
     expected_race_count: int,
-    expected_source_count: int,
 ) -> Path:
     profile = Path(tempfile.mkdtemp(prefix="election-guide-chrome-"))
     try:
@@ -96,7 +95,6 @@ def render_screenshot(
                     width=width,
                     height=height,
                     expected_race_count=expected_race_count,
-                    expected_source_count=expected_source_count,
                 )
             except (OSError, ValueError, TimeoutError, WebSocketException) as error:
                 errors.seek(0)
@@ -119,7 +117,6 @@ def _capture_emulated_viewport(
     width: int,
     height: int,
     expected_race_count: int,
-    expected_source_count: int,
 ) -> None:
     """Capture an exact CSS viewport through Chrome DevTools Protocol.
 
@@ -170,22 +167,6 @@ def _capture_emulated_viewport(
                     "document.querySelector('[data-client-payload]').textContent);"
                     "const comparison=bindings.sources.find("
                     "item=>item.panel_role==='comparison');"
-                    "const countsAgree=()=>{"
-                    "const dialogs=[...document.querySelectorAll('[data-race-detail-dialog]')];"
-                    "const wasClosed=dialogs.filter(dialog=>!dialog.open);"
-                    "wasClosed.forEach(dialog=>{dialog.open=true;});"
-                    "const result=[...document.querySelectorAll("
-                    "'.race-detail-source-list')].every(list=>{"
-                    "const shown=[...list.children].filter(item=>"
-                    "getComputedStyle(item).display!=='none').length;"
-                    # Every source list is rendered immediately after the element that
-                    # states its count (a <summary> or a heading <div>), so that single
-                    # sibling is the only shape this template emits.
-                    "const text=list.previousElementSibling?.innerText||'';"
-                    "const claimed=Number((text.match(/(\\d+)\\s+source/)||[])[1]);"
-                    "return !Number.isFinite(claimed)||claimed===shown;});"
-                    "wasClosed.forEach(dialog=>{dialog.open=false;});"
-                    "return result;};"
                     "const supportAligned=()=>[...document.querySelectorAll("
                     "'.screen-race-context')].filter(context=>context.offsetParent).every("
                     "context=>{const support=context.querySelector('.support-line');"
@@ -202,15 +183,14 @@ def _capture_emulated_viewport(
                     "noComparisonBars:document.querySelectorAll("
                     "'.comparison,.screen-comparisons,[data-display-role=\"comparison\"]')"
                     ".length===0,"
-                    # The evidence panel still lists the Times as a source
-                    # (a stated non-goal); what must be gone is every
-                    # comparison row inside a race's own detail dialog.
+                    # A race's evidence rows moved to its own page (issue #136),
+                    # so what this asserts of the guide is that none came back:
+                    # no evidence row of any role, and no comparison chrome.
                     "noComparisonRows:document.querySelectorAll("
-                    '\'.race-detail-source-list [data-source-role="comparison"],'
-                    ".race-detail-comparison-badge').length===0,"
+                    "'.race-detail-source-list,.race-detail-comparison-badge').length===0,"
                     "noTimesText:!document.querySelector('.screen-guide')"
                     ".innerHTML.includes('Times comparison'),"
-                    "countsAgree:countsAgree(),supportAligned:supportAligned(),"
+                    "supportAligned:supportAligned(),"
                     "controlCount});"
                     "})()"
                 ),
@@ -227,7 +207,6 @@ def _capture_emulated_viewport(
             "noComparisonBars": True,
             "noComparisonRows": True,
             "noTimesText": True,
-            "countsAgree": True,
             "supportAligned": True,
             "controlCount": EXPECTED_SCREEN_CONTROL_COUNT,
         }
@@ -315,62 +294,25 @@ def _capture_emulated_viewport(
                     # accordions are gone), so there is nothing left to toggle
                     # or measure here.
                     "const disclosures=[];"
-                    "const dialogs=[...document.querySelectorAll('[data-race-detail-dialog]')];"
-                    "const firstCard=cards[0];"
-                    "const firstLink=firstCard?.querySelector('[data-race-detail-link]');"
+                    # Issue #136: the card's core recommendation area is an
+                    # ordinary link to the race's own page. What was a dialog
+                    # trigger carrying `aria-haspopup` is a plain navigation now,
+                    # so what a viewport can assert about it is that every card
+                    # has one, that it wraps the card's own data rather than a
+                    # "View endorsements" label, and that it points at exactly
+                    # the address the payload publishes for that race — which is
+                    # the one way the link and the page could come apart.
+                    "const published=JSON.parse(document.querySelector("
+                    "'[data-client-payload]').textContent).races;"
                     "const coreRecommendationsLinked=cards.every(card=>{"
-                    "const link=card.querySelector("
-                    "':scope > .race-card-primary[data-race-detail-link]');"
-                    "return Boolean(link&&['.race-office','.screen-race-result',"
-                    "'.screen-race-context'].every(selector=>link.querySelector(selector))&&"
+                    "const link=card.querySelector(':scope > a.race-card-primary');"
+                    "const race=published.find("
+                    "item=>item.race_id===card.dataset.publicationRaceId);"
+                    "return Boolean(link&&race&&"
+                    "new URL(link.href).pathname===race.race_path&&"
+                    "['.race-office','.screen-race-result','.screen-race-context'].every("
+                    "selector=>link.querySelector(selector))&&"
                     "!link.textContent?.includes('View endorsements'));});"
-                    "const copyButton=firstCard?.querySelector('[data-copy-race-link]');"
-                    "const firstDialog=firstCard?.querySelector('[data-race-detail-dialog]');"
-                    "const closeButton=firstDialog?.querySelector('[data-close-race-detail]');"
-                    "let copiedValue='';"
-                    "Object.defineProperty(navigator,'clipboard',{configurable:true,value:{"
-                    "writeText:async value=>{copiedValue=value;}}});"
-                    "const firstHash=firstLink?.hash||'';"
-                    "firstCard.hidden=true;"
-                    "history.replaceState(null,'',firstHash);"
-                    "window.dispatchEvent(new PopStateEvent('popstate',{state:null}));"
-                    "await pause();"
-                    "const directRect=firstDialog?.getBoundingClientRect();"
-                    "const direct={open:Boolean(firstDialog?.open),"
-                    "hash:window.location.hash===firstHash,"
-                    "focused:document.activeElement===closeButton,"
-                    "filterReset:filter?.value==='all'&&firstCard.hidden===false,"
-                    "labelled:Boolean(firstDialog?.getAttribute('aria-labelledby')&&"
-                    "firstDialog.getAttribute('aria-labelledby').split(/\\s+/).every("
-                    "id=>document.getElementById(id))),"
-                    "described:Boolean(firstDialog?.getAttribute('aria-describedby')&&"
-                    "document.getElementById(firstDialog.getAttribute('aria-describedby'))),"
-                    "sourceRows:new Set(Array.from(firstDialog?.querySelectorAll("
-                    "'[data-race-detail-source-code]')||[],row=>row.dataset.raceDetailSourceCode)).size,"
-                    "inViewport:Boolean(directRect&&directRect.left>=0&&directRect.top>=0&&"
-                    "directRect.right<=window.innerWidth&&directRect.bottom<=window.innerHeight),"
-                    "noOverflow:Boolean(firstDialog&&firstDialog.scrollWidth<=firstDialog.clientWidth+1)};"
-                    "copyButton?.click();"
-                    "await pause();"
-                    "const copyStatus=firstDialog?.querySelector('[data-copy-race-status]');"
-                    "const copyFeedback=copyStatus?.textContent||'';"
-                    "const copyDescription=copyButton?.getAttribute('aria-describedby')||'';"
-                    "const copiedLink=copiedValue?new URL(copiedValue):null;"
-                    "const copy={copied:copiedValue.endsWith(firstHash),"
-                    "pathPreserved:copiedLink?.pathname===window.location.pathname,"
-                    "queryPreserved:copiedLink?.search===window.location.search,"
-                    "announced:copyFeedback.startsWith('Link copied'),"
-                    "inDialog:Boolean(copyStatus&&firstDialog?.contains(copyStatus)),"
-                    "described:copyDescription===copyStatus?.id};"
-                    "closeButton?.click();"
-                    "await pause();"
-                    "const directClosed={closed:firstDialog?.open===false,"
-                    "hashCleared:window.location.hash==='',focused:document.activeElement===firstLink};"
-                    "firstLink?.querySelector('[data-display-role=recommendation]')?.click();"
-                    "await pause();"
-                    "const ownedOpened=Boolean(firstDialog?.open&&"
-                    "window.location.hash===firstHash&&"
-                    "document.activeElement===closeButton);"
                     "return {innerWidth:window.innerWidth,innerHeight:window.innerHeight,"
                     "scrollWidth:document.documentElement.scrollWidth,"
                     "guideVisible:Boolean(guide&&getComputedStyle(guide).display!=='none'&&"
@@ -386,10 +328,7 @@ def _capture_emulated_viewport(
                     "height:[part.clientHeight,part.scrollHeight]})),"
                     "metersRightAligned:meters.every(meter=>Math.abs(meter.getBoundingClientRect().right-"
                     "meter.parentElement.getBoundingClientRect().right)<1),"
-                    "coreRecommendationsLinked,controls,"
-                    "disclosures,dialogCount:dialogs.length,"
-                    "copy,"
-                    "direct,directClosed,ownedOpened};})()))()"
+                    "coreRecommendationsLinked,controls,disclosures};})()))()"
                 ),
                 "returnByValue": True,
                 "awaitPromise": True,
@@ -400,73 +339,6 @@ def _capture_emulated_viewport(
         if "value" not in result:
             raise ValueError(f"responsive interaction validation failed: {evaluated}")
         metrics = cast(dict[str, object], json.loads(cast(str, result["value"])))
-        cdp.command(
-            "Runtime.evaluate",
-            {
-                "expression": (
-                    "setTimeout(()=>document.querySelector("
-                    "'[data-race-detail-dialog][open] [data-close-race-detail]')?.click(),0);"
-                    "true"
-                ),
-                "returnByValue": True,
-            },
-            session_id=session_id,
-        )
-        time.sleep(0.25)
-        traversed_back = cdp.command(
-            "Runtime.evaluate",
-            {
-                "expression": (
-                    "JSON.stringify((()=>{"
-                    "const dialog=document.querySelector('[data-race-detail-dialog]');"
-                    "const card=dialog?.closest('[data-publication-race-id]');"
-                    "const link=card?.querySelector('[data-race-detail-link]');"
-                    "return {ownedClosed:Boolean(dialog?.open===false&&"
-                    "window.location.hash===''&&document.activeElement===link)};})())"
-                ),
-                "returnByValue": True,
-            },
-            session_id=session_id,
-        )
-        back_result = cast(dict[str, Any], traversed_back["result"])
-        if "value" not in back_result:
-            raise ValueError(f"back navigation validation failed: {traversed_back}")
-        metrics.update(cast(dict[str, object], json.loads(cast(str, back_result["value"]))))
-        cdp.command(
-            "Runtime.evaluate",
-            {"expression": "setTimeout(()=>history.forward(),0);true", "returnByValue": True},
-            session_id=session_id,
-        )
-        time.sleep(0.25)
-        traversed_forward = cdp.command(
-            "Runtime.evaluate",
-            {
-                "expression": (
-                    "(async()=>{"
-                    "const pause=()=>new Promise(resolve=>setTimeout(resolve,120));"
-                    "const dialog=document.querySelector('[data-race-detail-dialog]');"
-                    "const card=dialog?.closest('[data-publication-race-id]');"
-                    "const link=card?.querySelector('[data-race-detail-link]');"
-                    "const close=dialog?.querySelector('[data-close-race-detail]');"
-                    "const firstHash=link?.hash||'';"
-                    "const forwardOpened=Boolean(dialog?.open&&"
-                    "window.location.hash===firstHash&&document.activeElement===close);"
-                    "history.replaceState(null,'',firstHash);"
-                    "dialog?.dispatchEvent(new Event('cancel',{cancelable:true}));"
-                    "await pause();"
-                    "return JSON.stringify({forwardOpened,escapeClosed:Boolean("
-                    "dialog?.open===false&&window.location.hash===''&&"
-                    "document.activeElement===link)});})()"
-                ),
-                "returnByValue": True,
-                "awaitPromise": True,
-            },
-            session_id=session_id,
-        )
-        forward_result = cast(dict[str, Any], traversed_forward["result"])
-        if "value" not in forward_result:
-            raise ValueError(f"forward navigation validation failed: {traversed_forward}")
-        metrics.update(cast(dict[str, object], json.loads(cast(str, forward_result["value"]))))
         expected_metrics: dict[str, object] = {
             "innerWidth": width,
             "innerHeight": height,
@@ -494,31 +366,6 @@ def _capture_emulated_viewport(
                 "fullMetersLeftAligned": True,
             },
             "disclosures": [],
-            "dialogCount": expected_race_count,
-            "copy": {
-                "copied": True,
-                "pathPreserved": True,
-                "queryPreserved": True,
-                "announced": True,
-                "inDialog": True,
-                "described": True,
-            },
-            "direct": {
-                "open": True,
-                "hash": True,
-                "focused": True,
-                "filterReset": True,
-                "labelled": True,
-                "described": True,
-                "sourceRows": expected_source_count,
-                "inViewport": True,
-                "noOverflow": True,
-            },
-            "directClosed": {"closed": True, "hashCleared": True, "focused": True},
-            "ownedOpened": True,
-            "ownedClosed": True,
-            "forwardOpened": True,
-            "escapeClosed": True,
         }
         if metrics != expected_metrics:
             raise ValueError(f"responsive layout overflowed its viewport: {metrics}")

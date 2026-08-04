@@ -32,7 +32,7 @@ When in doubt, remove ink.
 - **Demonstrate, don't advertise.** Provenance is declared by linking and
   counting in place, never claimed in prose.
 - **Never leave arithmetic doubtful.** Where a count and a share can
-  legitimately disagree, say why inline — the race dialog's
+  legitimately disagree, say why inline — a race page's
   "(co-endorsements split)" exists so a reader who does the division isn't
   left doubting the math.
 - **Labels are declarative and short.** Signal name first, then the
@@ -87,15 +87,37 @@ the differ/amber family rather than adding a yellow.
 - **Page**: a task with its own state and consequences, or standalone
   content people should land on from a link. Gets its own URL, `<title>`,
   nav presence, and footer. Examples: Sources (a form), About, the
-  archive.
+  archive, one race.
 - Test: if it needs its own `<title>`, an unfurl, or someone would
   bookmark it, it's a page. If it's "show me the receipts for this row,"
   it's a modal.
-- The answer is a consequence of requirements, not an identity. Race
-  detail renders as a modal while it is evidence-on-demand; if races are
-  ever meant to be shared, unfurled, and landed on directly, the same test
-  makes them pages. Re-run the test when requirements change instead of
-  defending the current form.
+- The answer is a consequence of requirements, not an identity. Re-run the
+  test when requirements change instead of defending the current form.
+  *(2026-08-04, issue 136: race detail was a modal while it was
+  evidence-on-demand. Sharing a race became a requirement, and a fragment
+  over the guide can never carry it — fragments are not sent to the crawler
+  that builds a preview, so every "shared race" unfurled as the guide. The
+  test above then reads the other way: a race needs its own `<title>`, its
+  own unfurl, and its own address, so it is a page, and the modal is gone
+  rather than kept as a second copy of the same content.)*
+- **A page whose content is one record is named for that record.** The
+  plural-noun rule above names page *kinds* — Endorsements, Comparisons,
+  Sources — and a race page is not a kind; it is one race. Its h1 and its
+  `<title>` segment are the race's own name, with the election still in the
+  eyebrow above it, so eyebrow and title read as one name exactly as they do
+  everywhere else: "August 2026 Primary · Metropolitan King County Council —
+  District 2". *(2026-08-04, issue 136. This is an exception, and it buys
+  what an exception must: the address is shareable and the share is legible.
+  It bends no other rule — the shell, the eyebrow, the title grammar, and
+  the nav all apply unchanged, and the page's nav presence is the
+  Endorsements entry it belongs under.)*
+- **A page's actions are its masthead's.** A race page's Share is the
+  masthead Share, which copies the address the reader is on — that race's
+  own. No second per-race share control exists anywhere, because there is
+  now no context in which one would copy a different link.
+  *(2026-08-04, issue 136: the dialog's own Share button was the only way to
+  copy a race's link while race detail was a modal; opening the race is what
+  copies it now.)*
 
 ## Text vs. icons
 
@@ -212,7 +234,10 @@ then any sticky strip, then content.
   has no visible text to carry it.
 - **A page's path matches its name.** Renaming a page renames its URL, with
   a permanent redirect from the old address so nothing already linked
-  breaks. *(2026-08-01: `/compare/` became `/comparisons/`.)*
+  breaks. *(2026-08-01: `/compare/` became `/comparisons/`.)* A page that
+  arrives where a fragment used to be is the same promise: a `#race-…` link
+  shared before race detail had an address is forwarded to that address,
+  carrying whatever selection the reader had. *(2026-08-04, issue 136.)*
 - **Nav order follows dependency, not traffic.** Endorsements is the
   destination, Sources is what feeds it, Comparisons is a view derived from
   those sources, and How this works explains all three. *(2026-08-01: this

@@ -233,6 +233,15 @@
       ],
       "note": "The grade strings have one generator, as § Shared names requires: the client's ComputedGrade is generated from the audited engine's Grade, and tests/test_client_payload_types.py fails when the two vocabularies stop matching. The client compares against these strings rather than redefining them."
     },
+    "audited-candidate-order": {
+      "client": "race-client.mjs restoreAudited",
+      "server": "rendering/context.py candidate_endorsement_groups",
+      "proof": "payload-carried",
+      "evidence": [
+        "symbol:candidate_endorsement_groups"
+      ],
+      "note": "The order a race page puts its candidate sections back into when a lens clears. It is the payload's own race.candidates, published from the order the renderer rendered, because the two sides break a tie differently: the renderer orders equal support by display label and the client's standings order it by ballot position. Recomputing put a tie's two candidates back in the wrong order, which is what race-markup-parity.test.mjs caught -- so the client names the server's function only to record that it does not reimplement it. The deleted map below carries the same removal for the guide, from #236."
+    },
     "race-detail-lens-kicker": {
       "client": "guide-lens.mjs, the race-detail lens kicker",
       "server": "guide.html.j2 candidate kicker",

@@ -4,10 +4,10 @@ The band, page head, and footer this module used to build are now macros in
 `rendering/templates/_shell.html.j2` (issue 241), so the cross-page chrome
 still has one implementation each (UI polish round 4, item L54/L55) but
 autoescaping is the default rather than a per-call `html.escape` discipline.
-What stays here is what a template cannot express: the naming grammar, the
-election-day banner's date arithmetic, and the icon sources — the brand mark
-in particular, because it also ships as a standalone `favicon.svg` where no
-template is involved. The icon is "The Meter": the guide's agreement meter
+What stays here is what a template cannot express: the naming and addressing
+grammar, the election-day banner's date arithmetic, and the icon sources — the
+brand mark in particular, because it also ships as a standalone `favicon.svg`
+where no template is involved. The icon is "The Meter": the guide's agreement meter
 distilled into a mark, with a left-anchored fill matching the on-page meters.
 """
 
@@ -79,6 +79,28 @@ def page_title(*, page: str | None = None, election: str | None = None) -> str:
     return " — ".join(parts)
 
 
+def race_page_path(election_id: str, race_id: str) -> str:
+    """One race's own page (issue #136).
+
+    Addressing grammar rather than chrome, so it sits beside `page_title`: the
+    renderer, the staging archive, and the rendered-document validator all have
+    to name the same address, and a race page's URL is as much a published
+    identity as its title is. Nothing is escaped or transformed here — one
+    identifier space, all the way out to the address bar (docs/FRONTEND.md, The
+    data contract) — because `PublicationRace.id` is constrained to a slug by
+    the model, exactly as `PublishedElection.election_id` is for the segment
+    above it.
+    """
+
+    return f"/e/{election_id}/races/{race_id}/"
+
+
+def race_og_image_path(election_id: str, race_id: str) -> str:
+    """The per-race social card, published beside the page it belongs to."""
+
+    return f"{race_page_path(election_id, race_id)}og-image.png"
+
+
 # Brand palette, duplicated from base.css tokens because the icon also ships
 # as a standalone favicon.svg where no stylesheet exists.
 _NAVY = "#102a43"
@@ -102,13 +124,6 @@ _INFO_ICON_SVG = Markup(
     ' stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img"'
     ' aria-hidden="true" focusable="false">'
     '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>'
-    "</svg>"
-)
-_CLOSE_ICON_SVG = Markup(
-    '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"'
-    ' stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img"'
-    ' aria-hidden="true" focusable="false">'
-    '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>'
     "</svg>"
 )
 _ENVELOPE_ICON_SVG = Markup(
@@ -168,12 +183,6 @@ def share_icon_svg() -> Markup:
     """Return the shared Lucide Share 2 glyph for an accessible action wrapper."""
 
     return _SHARE_ICON_SVG
-
-
-def close_icon_svg() -> Markup:
-    """Return the shared Lucide X glyph for an accessible action wrapper."""
-
-    return _CLOSE_ICON_SVG
 
 
 def info_icon_svg() -> Markup:

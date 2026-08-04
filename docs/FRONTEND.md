@@ -65,8 +65,9 @@ purpose and watch the check fail.
   ships, in cascade order: `base.css` first — the design tokens and the shell
   every page renders (docs/DESIGN.md) — and `<page>.css` last, so a page can
   override a shared rule without restating it. A rule *group* two pages render,
-  and no third, lives in a part they both name (`guide-sources.css`), never
-  copied into both. That is about components — the class-based groups a page
+  and no third, lives in a part they both name (`guide-race.css`), never
+  copied into both, and a wider group lives in a wider part (`lens-pages.css`,
+  read by every lens-aware page). That is about components — the class-based groups a page
   owns; a page's own `main` frame rules stay page-local even where two pages'
   happen to match, because hoisting a padding value is not what keeps the
   groups apart. A page writes no rules in its template: nothing overrides
@@ -123,10 +124,10 @@ purpose and watch the check fail.
   job was deleting those. The residue a reviewer is holding the line against,
   named so a future reader finds it stated rather than wonders whether it was
   missed:*
-  - *The race-detail dialog's imperative renderer — `renderRaceDetail` and its
-    helpers in `guide-lens.mjs`. #239 extracted it unconverted, #248 explicitly
-    excluded it, and **#136 deletes it outright** in favor of real race pages
-    (Adoption, below). It is not being ported; do not extend it.*
+  - *The race-detail dialog's imperative renderer is gone. #239 extracted it
+    unconverted, #248 excluded it, and #136 deleted it with the dialog: race
+    detail is a page now, and `race-client.mjs` renders it lit-native from the
+    same view models the card uses. Nothing was ported.*
   - *The Sources link's `href`, written imperatively in `guide-client.mjs`'s
     `renderChrome` and again in `sources-client.mjs`. #248's convert list
     promised a lit binding and could not deliver one: a second
@@ -143,7 +144,7 @@ purpose and watch the check fail.
     sentence, and the only one in the shipped client. The banner is in-flight
     from the site-operations epic rather than this one. **Unowned.***
   - *Text written straight onto a server-rendered status or notice element:
-    `share-link.mjs` and `guide-dialog.mjs`'s copy-status lines,
+    `share-link.mjs`'s copy-status line, `race-client.mjs`'s accessible summary,
     `sources-client.mjs`'s `showNotice`, `client-payload.mjs`'s payload notice,
     and `compare-client.mjs`'s scroll hint, status, and notice. These are named
     as a shape rather than a closed list — a `textContent` sweep of the shipped
@@ -217,14 +218,15 @@ purpose and watch the check fail.
   fill, and no CSS rule choosing between them. #248 retired the guide's
   `[data-lens-only]`/`[data-lens-hidden]` twins from the race card for this
   reason: two elements holding one quantity is how the card and the dialog came
-  to disagree about it. The dialog's own twins survive only because #136 is
-  deleting that markup outright (Adoption, below).
+  to disagree about it. #136 took the dialog's own twins with the dialog, and no
+  twin survives anywhere — neither attribute is in the tree.
   *Reviewer-applied. A twin is two elements that agree today, so nothing derived
   from the rendered page can tell one from a value legitimately shown twice; the
   defect appears only once they drift. The markup-parity diffs catch a drift
   between the server's element and lit's — the case that actually bit — but
-  declining the second element is the reviewer's. The dialog's surviving twins
-  are the known exception, and #136 removes them with the markup.*
+  declining the second element is the reviewer's. What is checkable is that the
+  two attributes are absent: `tests/test_rendering.py` asserts no rendered race
+  page carries either, which is what a returning twin would need.*
 - **Client and server markup for the same region must agree.** A lit-html
   template rendered with audited data must produce the region the Jinja
   template rendered. *Check: exists for every region lit renders. Each page's
@@ -284,10 +286,11 @@ purpose and watch the check fail.
   through `client-payload.mjs` rather than parsing it by hand.
   *Check: exists — `tests/test_rendering.py` names each read the guide's
   client code used to make and fails if one returns, sweeping the whole
-  bundle rather than one script block, and asserts the payload it replaced
-  them with equals the rendered markup it was read from: the dialog's
-  candidates and summary, the card's race label, and the Ballot filter's own
-  options.*
+  bundle rather than one script block — the race page's bundle too, since
+  #136 moved the detail those reads were made of — and asserts the payload it
+  replaced them with equals the rendered markup it was read from: the race
+  page's candidates and summary, the card's race label and its link to that
+  page, and the Ballot filter's own options.*
 - **One identifier space.** The payload, the markup's data attributes, and the
   client modules use the same identifier for the same entity. A translation
   map between two of our own identifier spaces is a defect in the contract.
@@ -705,11 +708,11 @@ applies them.
 - **A rule this codebase does not yet satisfy is stated as such.** #245 walked
   every bullet and annotated it rather than declaring the epic clean. The one
   substantive shortfall is the first Rendering bullet: imperative content
-  rendering survives in the race dialog (#136 deletes it), in the Sources link
-  and the other values projected onto server-owned region roots, in
-  `election-day.mjs`'s `innerHTML`, and in a handful of status lines and one
-  hand-built node loop. Each is named where the rule is, with its owner or with
-  the fact that it has none.
+  rendering survives in the Sources link and the other values projected onto
+  server-owned region roots, in `election-day.mjs`'s `innerHTML`, and in a
+  handful of status lines and one hand-built node loop. Each is named where the
+  rule is, with its owner or with the fact that it has none. The largest of
+  them, the race dialog, is gone: #136 deleted it rather than porting it.
 - **Unwired code is not presumed dead.** Shipped-but-unwired surfaces may be
   landing zones for in-flight work. Check open issues before proposing
   removal; prefer an inventory to a sweep while epics are open.
@@ -717,12 +720,11 @@ applies them.
   only front-end ones. No check can tell a landing zone from dead code; the open
   issues are what distinguishes them.
 - **Sequencing for new client work.** The bundler and lit-html foundation
-  land before new client rendering is written — both have landed. In
-  particular, the race-page migration (#136) writes its client rendering
-  lit-native on that foundation rather than porting the dialog's imperative
-  renderer and rewriting it later. Reviewer-applied: this is a scheduling
-  constraint on tickets, and the foundation it was waiting for now exists, so
-  what remains is the instruction to #136 not to port the dialog.
+  land before new client rendering is written — both have landed, and #136 was
+  the first ticket to build on them: the race page's rendering is lit-native
+  from the start rather than the dialog's imperative renderer ported and
+  rewritten later. Reviewer-applied: this is a scheduling constraint on
+  tickets, and the next one to write client rendering inherits the same rule.
 
 ## Open questions
 

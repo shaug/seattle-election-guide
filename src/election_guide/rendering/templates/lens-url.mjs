@@ -237,14 +237,16 @@ export function decodeLensFragment(fragment, context) {
 /**
  * The `race` segment of any fragment, whatever else the fragment carries.
  *
- * The race-detail dialog's hash routing (issues 62/73) predates the lens
- * (issue 86) and both live in the same fragment, so the dialog needs the race
- * id out of a fragment this codec may otherwise be unable to admit — a
- * mid-migration `stale_version` link, or one that fails classification. That is
- * why this is not `decodeLensFragment(...).state.raceTarget`: it reads the one
- * segment the dialog owns and judges nothing else. It is still the codec's to
- * own, because it is fragment parsing (docs/FRONTEND.md § State and URLs: no
- * second script parses the hash by hand).
+ * The race-detail hash routing (issues 62/73) predates the lens (issue 86) and
+ * both live in the same fragment, so the guide needs the race id out of a
+ * fragment this codec may otherwise be unable to admit — a mid-migration
+ * `stale_version` link, or one that fails classification. That is why this is
+ * not `decodeLensFragment(...).state.raceTarget`: it reads the one segment the
+ * race routing owns and judges nothing else. Issue #136 made that routing a
+ * one-way forward to the race's own page, and this is what tells the guide
+ * which page to forward to. It is still the codec's to own, because it is
+ * fragment parsing (docs/FRONTEND.md § State and URLs: no second script parses
+ * the hash by hand).
  *
  * @param {string|null|undefined} fragment
  * @returns {string} The race target, or `''` when the fragment names none.
@@ -263,7 +265,7 @@ export function fragmentRaceTarget(fragment) {
  * included — is left exactly as found, so opening, closing, or sharing a race
  * never disturbs an active lens (issue 142). A fragment with no `=` (no active
  * lens, an existing `#race-…` permalink, or a plain in-page anchor) reduces to
- * the bare target, matching the dialog's own pre-lens behavior.
+ * the bare target, matching the pre-lens behavior of those permalinks.
  *
  * @param {string|null|undefined} fragment
  * @param {string|null} target

@@ -27,7 +27,10 @@ from election_guide.publication.personalization import (
 from election_guide.rendering.payload import (
     FilterScope,
     RaceCandidateDisplay,
+    RaceCandidateEndorsements,
+    RaceDetailDisplay,
     RaceDisplay,
+    RaceSourceRow,
 )
 
 
@@ -89,17 +92,133 @@ def personalization_lookup_context(view_model: PublicationViewModel) -> dict[str
     }
 
 
-def race_display(race: PublicationRace) -> RaceDisplay:
-    """One race's audited presentation, published so no client module reads it
-    back out of the dialog (docs/FRONTEND.md, The data contract)."""
+def race_display(race: PublicationRace, race_path: str) -> RaceDisplay:
+    """One race's audited presentation on the guide, published so no client
+    module reads it back out of a card (docs/FRONTEND.md, The data contract)."""
     return RaceDisplay(
         race_id=race.id,
         race_label=race.race_label,
+        race_path=race_path,
         candidates=[
             RaceCandidateDisplay(candidate_id=group.candidate_id, label=group.candidate_label)
             for group in candidate_endorsement_groups(race)
         ],
         audited_accessible_summary=race_detail_accessible_summary(race),
+    )
+
+
+def race_detail_display(
+    race: PublicationRace,
+    sources: dict[str, PublicationSource],
+    *,
+    source_code_by_id: dict[str, str],
+    category_label_by_key: dict[str, str],
+) -> RaceDetailDisplay:
+    """One race's whole audited presentation, as its own page renders it.
+
+    The candidate sections are a lit region on the race page, so every value
+    their markup carries is published here rather than read back off the
+    server's copy of it: the row's source name, its category and that
+    category's label, its cell state, the status phrase the group gives it, and
+    its evidence link. A source that co-endorses two candidates renders one row
+    under each, which is why the rows are grouped per candidate rather than
+    listed once — the same shape `race_detail_candidate_sections` renders.
+    """
+    cells_by_source_id = {cell.source_id: cell for cell in tallying_source_cells(race, sources)}
+    return RaceDetailDisplay(
+        race_id=race.id,
+        race_label=race.race_label,
+        candidates=[
+            RaceCandidateEndorsements(
+                candidate_id=group.candidate_id,
+                label=group.candidate_label,
+                endorsers=[
+                    _race_source_row(
+                        cells_by_source_id[endorser.source_id],
+                        race,
+                        sources[endorser.source_id],
+                        group="candidate",
+                        source_code_by_id=source_code_by_id,
+                        category_label_by_key=category_label_by_key,
+                    )
+                    for endorser in group.endorsers
+                ],
+            )
+            for group in candidate_endorsement_groups(race)
+        ],
+        audited_accessible_summary=race_detail_accessible_summary(race),
+    )
+
+
+def race_source_group_rows(
+    race: PublicationRace,
+    sources: dict[str, PublicationSource],
+    *,
+    source_code_by_id: dict[str, str],
+    category_label_by_key: dict[str, str],
+) -> dict[str, list[RaceSourceRow]]:
+    """The race page's non-candidate evidence rows, grouped and in rendered order.
+
+    The four groups a source can land in when it endorsed nobody in this race:
+    no endorsement, needs verification, did not cover it, outside its district.
+    Unlike the candidate sections these are not a projection of the reader's
+    selection — a deselected source still did not cover the race — so the page
+    renders them once and lit never touches them.
+    """
+    grouped: dict[str, list[RaceSourceRow]] = {
+        group: [] for group in ("no_endorsement", "unverified", "not_covered", "not_applicable")
+    }
+    for cell in tallying_source_cells(race, sources):
+        source = sources[cell.source_id]
+        group = source_cell_group(cell, race, source)
+        if group not in grouped:
+            continue
+        grouped[group].append(
+            _race_source_row(
+                cell,
+                race,
+                source,
+                group=group,
+                source_code_by_id=source_code_by_id,
+                category_label_by_key=category_label_by_key,
+            )
+        )
+    return grouped
+
+
+def race_social_description(race: PublicationRace) -> str:
+    """One race's consensus in a sentence, for its `og:description` (issue #136).
+
+    A crawler and a share sheet get the audited result, never a personalized
+    one: a lens lives in the fragment, which never reaches a crawler at all.
+    Built from the same grammar the page renders, so an unfurl and the page it
+    unfurls cannot state the result two ways.
+    """
+    share = "" if race.percentage_whole is None else f", {race.percentage_label} agreement"
+    return (
+        f"{race.race_label}: {race.recommendation_label}{share}. "
+        f"{race_detail_support_summary(race)}."
+    )
+
+
+def _race_source_row(
+    cell: SourceCell,
+    race: PublicationRace,
+    source: PublicationSource,
+    *,
+    group: str,
+    source_code_by_id: dict[str, str],
+    category_label_by_key: dict[str, str],
+) -> RaceSourceRow:
+    return RaceSourceRow(
+        code=source_code_by_id[cell.source_id],
+        name=source.name,
+        category=source.category,
+        category_label=category_label_by_key[source.category],
+        state=cell.state,
+        panel_role=source.panel_role,
+        detail_label=source_cell_detail_label(cell, race, group),
+        evidence_url=cell.evidence_url,
     )
 
 

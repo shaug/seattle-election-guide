@@ -52,14 +52,23 @@ from election_guide.rendering.context import (
     has_no_majority,
     race_detail_accessible_summary,
     race_detail_support_summary,
+    race_social_description,
     screen_support_summary,
     screen_support_summary_compact,
     source_cell_detail_label,
     source_cell_group,
 )
-from election_guide.rendering.documents import render_sources_document, template_environment
+from election_guide.rendering.documents import (
+    render_race_document,
+    render_sources_document,
+    template_environment,
+)
 from election_guide.rendering.models import RenderingValidationReport
-from election_guide.rendering.payload import CLIENT_PAYLOAD_SCHEMA_VERSION, GuidePayload
+from election_guide.rendering.payload import (
+    CLIENT_PAYLOAD_SCHEMA_VERSION,
+    GuidePayload,
+    RacePayload,
+)
 from election_guide.rendering.shell import (
     HOW_TO_VOTE_HREF,
     election_day_banner_html,
@@ -69,10 +78,16 @@ from election_guide.scoring import score_dataset
 from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
 from election_guide.sources.registry import read_source_registry
 from tests.page_parity import (
+    FIXTURE_DIR,
     GUIDE_PAGE_PATH,
+    RACE_PAGE_PREFIX,
     SOURCES_PAGE_PATH,
     build_audited_guide_page,
+    build_audited_race_page,
     build_audited_sources_page,
+    published_view_model,
+    race_page_fixture_path,
+    race_parity_fixture_ids,
 )
 from tests.test_personalization import (
     _bundle as _production_bundle,  # pyright: ignore[reportPrivateUsage]
@@ -375,11 +390,6 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert gap_code not in {source["code"] for source in bindings["sources"]}
 
     races = [race for section in view_model.sections for race in section.races]
-    source_by_id = {source.id: source for source in view_model.sources}
-    source_code_by_id = {source.id: source.code for source in view_model.personalization.sources}
-    category_label_by_key = {
-        category.category: category.label for category in view_model.methodology.source_categories
-    }
     assert html.count('data-publication-race-id="') == len(races)
     assert all(f'data-publication-race-id="{race.id}"' in html for race in races)
     assert "@media print" in html
@@ -421,125 +431,48 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
         in html
     )
     assert "> View endorsements" not in html
-    assert html.count('<dialog class="race-detail-dialog"') == len(races)
-    assert html.count("August 2026 Primary · Endorsements") == len(races)
-    assert html.count('data-copy-race-link="') == len(races)
-    assert html.count('title="Share this race"') == len(races)
-    assert html.count('title="Close"') == len(races)
-    assert ">Share link</button>" not in html
-    assert ">Close</button>" not in html
+    # Issue #136: the card's core recommendation area is a link to the race's
+    # own page, and every trace of the dialog it used to open is gone.
+    assert "<dialog" not in html
+    assert "data-race-detail-dialog" not in html
+    assert "data-copy-race-link" not in html
+    assert "data-close-race-detail" not in html
+    assert "August 2026 Primary · Endorsements" not in html
     assert "Source details" not in html
     assert "Open source evidence" not in html
     assert "Race source audit" not in html
     for race in races:
         assert f'id="race-{race.id}"' in html
-        assert html.count(f'href="#race-{race.id}" data-race-detail-link') == 1
-        trigger_start = html.index(f'<a class="race-card-primary" href="#race-{race.id}"')
+        race_path = f"/e/{view_model.metadata.election_id}/races/{race.id}/"
+        assert html.count(f'<a class="race-card-primary" href="{race_path}"') == 1
+        trigger_start = html.index(f'<a class="race-card-primary" href="{race_path}"')
         trigger_end = html.index("</a>", trigger_start)
         trigger_html = html[trigger_start:trigger_end]
         assert f'id="race-label-{race.id}"' in trigger_html
         contested_value = "true" if race.is_contested else "false"
-        assert f'data-contested="{contested_value}"' in html[trigger_start - 300 : trigger_start]
+        assert f'data-contested="{contested_value}"' in html[trigger_start - 400 : trigger_start]
         assert 'data-display-role="recommendation"' in trigger_html
         assert 'data-display-role="share"' in trigger_html
         assert 'data-display-role="support"' in trigger_html
-        dialog_start = html.index(f'id="race-detail-{race.id}"')
-        assert trigger_end < dialog_start
         # Issue 124: the per-race Times comparison is gone from the card
         # entirely. Only the lens's own "All sources" reference bar remains
-        # at the card foot.
-        card_foot_html = html[trigger_end:dialog_start]
+        # at the card foot, which the client renders when a race diverges.
+        card_end = html.index("</article>", trigger_end)
+        card_foot_html = html[trigger_end:card_end]
         assert 'data-display-role="comparison"' not in card_foot_html
         assert "screen-comparisons" not in card_foot_html
         assert "data-comparison-lens" not in card_foot_html
-        dialog_end = html.index("</dialog>", dialog_start)
-        dialog_html = html[dialog_start:dialog_end]
-        assert (
-            f'aria-labelledby="race-detail-election-{race.id} race-detail-title-{race.id}"'
-            in dialog_html
-        )
-        assert f'id="race-detail-election-{race.id}"' in dialog_html
-        assert "race-detail-overview" not in dialog_html
-        assert "race-detail-category-groups" not in dialog_html
-        assert "data-race-detail-category=" not in dialog_html
-        assert f'id="copy-race-status-{race.id}"' in dialog_html
-        assert 'role="status"' in dialog_html
-        assert 'aria-live="polite" data-copy-race-status' in dialog_html
-        assert f'aria-describedby="copy-race-status-{race.id}"' in dialog_html
-        assert race.recommendation_label in dialog_html
-        assert race_detail_accessible_summary(race) in dialog_html
-        assert race_detail_support_summary(race) in dialog_html
-        endorsement_groups = candidate_endorsement_groups(race)
-        candidate_positions = [
-            dialog_html.index(f'data-race-detail-candidate-id="{group.candidate_id}"')
-            for group in endorsement_groups
-        ]
-        assert candidate_positions == sorted(candidate_positions)
-        source_counts = [group.source_count for group in endorsement_groups]
-        assert source_counts == sorted(source_counts, reverse=True)
-        for group in endorsement_groups:
-            assert group.candidate_label in dialog_html
-            assert (
-                dialog_html.count(f'data-endorsed-candidate-id="{group.candidate_id}"')
-                == group.source_count
-            )
-
-        def _cell_row_count(cell: SourceCell, race: PublicationRace = race) -> int:
-            if source_cell_group(cell, race, source_by_id[cell.source_id]) == "candidate":
-                return len(cell.candidate_ids)
-            return 1
-
-        # Issue 124: a comparison source contributes no row, no badge, and no
-        # candidate section to the guide's race detail.
-        tallying_cells = [
-            cell
-            for cell in race.source_cells
-            if source_by_id[cell.source_id].panel_role != "comparison"
-        ]
-        expected_row_count = sum(_cell_row_count(cell) for cell in tallying_cells)
-        assert dialog_html.count('data-race-detail-source-code="') == expected_row_count
-        assert dialog_html.count('data-source-group="') == expected_row_count
-        assert dialog_html.count('class="race-detail-category-badge') == expected_row_count
-        assert "race-detail-comparison-badge" not in dialog_html
-        expected_co_endorsement_rows = sum(
-            len(cell.candidate_ids) for cell in tallying_cells if cell.state == "multi_endorsement"
-        )
-        assert dialog_html.count(">Co-endorsed</span>") == expected_co_endorsement_rows
-        for state in ("not_covered", "not_applicable"):
-            missing_count = sum(
-                source_cell_group(cell, race, source_by_id[cell.source_id]) == state
-                for cell in tallying_cells
-            )
-            if not missing_count:
-                continue
-            noun = "source" if missing_count == 1 else "sources"
-            if state == "not_covered":
-                summary = f"{missing_count} {noun} did not cover this race"
-            else:
-                verb = "was" if missing_count == 1 else "were"
-                summary = f"{missing_count} {noun} {verb} outside this district"
-            assert summary in dialog_html
-        for cell in race.source_cells:
-            group = source_cell_group(cell, race, source_by_id[cell.source_id])
-            source = source_by_id[cell.source_id]
-            code = source_code_by_id[cell.source_id]
-            if source.panel_role == "comparison":
-                assert f'data-race-detail-source-code="{code}"' not in dialog_html
-                continue
-            expected_occurrences = len(cell.candidate_ids) if group == "candidate" else 1
-            assert (
-                dialog_html.count(f'data-race-detail-source-code="{code}"') == expected_occurrences
-            )
-            assert f'data-source-state="{cell.state}"' in dialog_html
-            assert category_label_by_key[source.category] in dialog_html
-            detail_label = source_cell_detail_label(cell, race, group)
-            if detail_label is not None:
-                assert detail_label in dialog_html
-            if cell.evidence_url is not None:
-                assert f'href="{cell.evidence_url}"' in dialog_html
-    assert "No endorsement" in html
+    # The evidence itself moved with the detail: no source row, category badge
+    # or candidate section is rendered on the guide any more. Its own audit is
+    # `test_race_page_renders_the_whole_race_from_one_view_model` below, and
+    # `rendering/validation.py` reparses every published race page.
+    assert "data-race-detail-source-code" not in html
+    assert "race-detail-category-badge" not in html
+    assert "data-race-detail-candidate-id" not in html
+    # The group headings moved to the race pages with the rows they head.
+    assert "No endorsement" not in html
     assert "Made no endorsement" not in html
-    assert "Needs verification" in html
+    assert "Needs verification" not in html
     # Issue 124: every guide-side trace of the per-race Times comparison is
     # gone. The Times itself stays listed in the evidence panel, so the check
     # below is for the retired treatment, not the source.
@@ -553,26 +486,17 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "show-times" not in html
     assert "See which groups line up with the leading choice" not in html
     assert "race-detail-description-" not in html
-    # The dialog's routing ships in the bundled guide-dialog.mjs now rather than
-    # in an inline classic script (issue #239), and reaches `location` only
-    # through the codec-owned router in lens-route.mjs.
-    assert "raceDetail: target" in html
-    assert "history.pushState(state" in html
-    assert "history.back()" in html
-    assert "target.showModal()" in html
-    assert 'dialog.addEventListener("cancel"' in html
-    assert 'window.addEventListener("popstate"' in html
+    # Issue #136: the dialog's routing is gone with it. What survives in the
+    # bundle is the one forward a `#race-…` link now takes, and it reaches
+    # `location` only through the codec-owned router in lens-route.mjs.
+    assert "target.showModal()" not in html
+    assert "history.pushState" not in html
+    assert "history.back()" not in html
+    assert 'window.addEventListener("popstate"' not in html
     assert 'window.addEventListener("hashchange"' in html
-    assert "navigator.clipboard?.writeText" in html
-    assert "const link = new URL(window.location.href);" in html
-    # Issue 142: the dialog's own Share link no longer overwrites the whole
-    # hash with the bare race id — it rewrites only the `race` segment of
-    # whatever fragment is already live, so an active personalized selection
-    # survives the share. Issue #239 made that rewrite the codec's
-    # `withRaceTarget` rather than a second hand-parse of the hash.
-    assert "link.hash = withRaceTarget(window.location.hash, target);" in html
+    assert "redirectToRacePage" in html
+    assert "withRaceTarget(window.location.hash, null)" in html
     assert "Consensus among explicitly endorsing sources" in html
-    assert "Seattle Times" in html
     assert "August 2026 Primary" in html
     assert "Seattle Elections Guide" in html
     # L54: the hero states the election, not the brand (the band carries the
@@ -693,7 +617,185 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert 'style="--meter-fill: ' in html
 
 
-def test_no_majority_uses_the_exact_unrounded_share_across_the_card_and_dialog(
+PUBLIC_SITE_URL = "https://seattleelections.guide"
+
+
+def _race_html(view_model: PublicationViewModel, race_id: str) -> str:
+    """One race page, rendered the way `hosting/pages.py` publishes it."""
+    return render_race_document(
+        view_model,
+        race_id,
+        public_site_url=PUBLIC_SITE_URL,
+        project_url="https://github.com/shaug/seattle-election-guide",
+    )
+
+
+def _race_documents(view_model: PublicationViewModel) -> dict[str, str]:
+    """Every race page of one election, as the release validator audits them."""
+    return {
+        race.id: _race_html(view_model, race.id)
+        for section in view_model.sections
+        for race in section.races
+    }
+
+
+def _write_race_html(tmp_path: Path, view_model: PublicationViewModel, race_id: str) -> Path:
+    path = tmp_path / f"race-{race_id}.html"
+    path.write_text(_race_html(view_model, race_id), encoding="utf-8")
+    return path
+
+
+def test_race_page_renders_the_whole_race_from_one_view_model(tmp_path: Path) -> None:
+    """The evidence audit the guide's dialog used to carry (issue #136).
+
+    Race detail is a page now, so every claim the dialog's markup made is made
+    of that page instead — and of every race's page, because the branches that
+    differ between races are exactly where a renderer can go wrong.
+    """
+    view_model = _revalidated(_view_model(tmp_path))
+    races = [race for section in view_model.sections for race in section.races]
+    source_by_id = {source.id: source for source in view_model.sources}
+    source_code_by_id = {source.id: source.code for source in view_model.personalization.sources}
+    category_label_by_key = {
+        category.category: category.label for category in view_model.methodology.source_categories
+    }
+
+    for race in races:
+        html = _race_html(view_model, race.id)
+        body = html.split("</style>", 1)[1].split('<script type="module">', 1)[0]
+
+        assert f'data-publication-race-id="{race.id}"' in body
+        assert body.count('data-publication-race-id="') == 1
+        assert race.race_label in body
+        assert race.recommendation_label in body
+        assert race_detail_accessible_summary(race) in body
+        assert race_detail_support_summary(race) in body
+        assert screen_support_summary(race) in body
+        assert screen_support_summary_compact(race) in body
+
+        endorsement_groups = candidate_endorsement_groups(race)
+        candidate_positions = [
+            body.index(f'data-race-detail-candidate-id="{group.candidate_id}"')
+            for group in endorsement_groups
+        ]
+        assert candidate_positions == sorted(candidate_positions)
+        source_counts = [group.source_count for group in endorsement_groups]
+        assert source_counts == sorted(source_counts, reverse=True)
+        for group in endorsement_groups:
+            assert group.candidate_label in body
+            assert (
+                body.count(f'data-endorsed-candidate-id="{group.candidate_id}"')
+                == group.source_count
+            )
+
+        def _cell_row_count(cell: SourceCell, race: PublicationRace = race) -> int:
+            if source_cell_group(cell, race, source_by_id[cell.source_id]) == "candidate":
+                return len(cell.candidate_ids)
+            return 1
+
+        # Issue 124: a comparison source contributes no row, no badge, and no
+        # candidate section to a race's evidence.
+        tallying_cells = [
+            cell
+            for cell in race.source_cells
+            if source_by_id[cell.source_id].panel_role != "comparison"
+        ]
+        expected_row_count = sum(_cell_row_count(cell) for cell in tallying_cells)
+        assert body.count('data-race-detail-source-code="') == expected_row_count
+        assert body.count('data-source-group="') == expected_row_count
+        assert body.count('class="race-detail-category-badge') == expected_row_count
+        assert "race-detail-comparison-badge" not in body
+        expected_co_endorsement_rows = sum(
+            len(cell.candidate_ids) for cell in tallying_cells if cell.state == "multi_endorsement"
+        )
+        assert body.count(">Co-endorsed</span>") == expected_co_endorsement_rows
+        for state in ("not_covered", "not_applicable"):
+            missing_count = sum(
+                source_cell_group(cell, race, source_by_id[cell.source_id]) == state
+                for cell in tallying_cells
+            )
+            if not missing_count:
+                continue
+            noun = "source" if missing_count == 1 else "sources"
+            if state == "not_covered":
+                summary = f"{missing_count} {noun} did not cover this race"
+            else:
+                verb = "was" if missing_count == 1 else "were"
+                summary = f"{missing_count} {noun} {verb} outside this district"
+            assert summary in body
+        for cell in race.source_cells:
+            group = source_cell_group(cell, race, source_by_id[cell.source_id])
+            source = source_by_id[cell.source_id]
+            code = source_code_by_id[cell.source_id]
+            if source.panel_role == "comparison":
+                assert f'data-race-detail-source-code="{code}"' not in body
+                continue
+            expected_occurrences = len(cell.candidate_ids) if group == "candidate" else 1
+            assert body.count(f'data-race-detail-source-code="{code}"') == expected_occurrences
+            assert f'data-source-state="{cell.state}"' in body
+            assert category_label_by_key[source.category] in body
+            detail_label = source_cell_detail_label(cell, race, group)
+            if detail_label is not None:
+                assert detail_label in body
+            if cell.evidence_url is not None:
+                assert f'href="{cell.evidence_url}"' in body
+
+        # The audited page carries no empty twin waiting to be filled in: the
+        # regions are lit's, and one element carries whichever value is current
+        # (docs/FRONTEND.md § Rendering).
+        assert "data-lens-only" not in body
+        assert "data-lens-hidden" not in body
+        assert "race-detail-source-row-not-counted" not in body
+        assert "Not counted" not in body
+
+
+def test_race_page_names_itself_in_its_shell_title_and_social_card(tmp_path: Path) -> None:
+    """DESIGN.md's shell and title grammar, applied to the page issue #136 added."""
+    view_model = _revalidated(_view_model(tmp_path))
+    race = next(race for section in view_model.sections for race in section.races)
+    election_id = view_model.metadata.election_id
+    html = _race_html(view_model, race.id)
+
+    canonical = f"{PUBLIC_SITE_URL}/e/{election_id}/races/{race.id}/"
+    title = f"{race.race_label} — August 2026 Primary — Seattle Elections Guide"
+    description = race_social_description(race)
+
+    # The election is the eyebrow and the race is the page's own name.
+    assert '<p class="page-eyebrow">August 2026 Primary</p>' in html
+    assert f"<h1>{escape(race.race_label)}</h1>" in html
+    assert f"<title>{escape(title)}</title>" in html
+    assert f'<meta property="og:title" content="{escape(title)}">' in html
+    assert f'<meta name="twitter:title" content="{escape(title)}">' in html
+    assert f'<link rel="canonical" href="{canonical}">' in html
+    assert f'<meta property="og:url" content="{canonical}">' in html
+    assert f'<meta property="og:description" content="{escape(description)}">' in html
+    assert f'<meta name="twitter:description" content="{escape(description)}">' in html
+    # Its own card, not the site-wide one — the whole point of the address.
+    assert f'<meta property="og:image" content="{canonical}og-image.png">' in html
+    assert '<meta name="twitter:card" content="summary_large_image">' in html
+    assert f'<meta property="og:image" content="{PUBLIC_SITE_URL}/og-image.png">' not in html
+
+    # The shell, in the order DESIGN.md fixes it, with the election-scoped slots
+    # present: the band, the Context banner, and the shared footer.
+    assert '<div class="site-band">' in html
+    assert 'data-election-day="2026-08-04"' in html
+    assert '<footer class="site-footer">' in html
+    assert 'aria-current="page">Endorsements</a>' in html
+    # The masthead Share is the page's own share action, and on a race page it
+    # copies the race's own address (docs/DESIGN.md § Site shell).
+    assert "data-shell-share" in html
+    assert "RacePage.boot();" in html
+    # The skip link every page keeps.
+    assert '<a class="skip-link" href="#race-detail">' in html
+
+
+def test_race_page_rejects_a_race_that_is_not_on_this_ballot(tmp_path: Path) -> None:
+    view_model = _revalidated(_view_model(tmp_path))
+    with pytest.raises(ValueError, match="has no race"):
+        _race_html(view_model, "not-a-race")
+
+
+def test_no_majority_uses_the_exact_unrounded_share_across_the_card_and_the_race_page(
     tmp_path: Path,
 ) -> None:
     view_model = _view_model(tmp_path)
@@ -715,9 +817,12 @@ def test_no_majority_uses_the_exact_unrounded_share_across_the_card_and_dialog(
     card_html = html[card_start:card_end]
     assert re.search(r'<p class="no-majority-pill"[^>]*>No majority</p>', card_html)
     assert 'class="screen-meter meter-no-majority"' in card_html
-    assert "No majority · Leading choice" in card_html
-    assert 'class="race-detail-meter meter-no-majority"' in card_html
-    assert "No majority. Consensus among explicitly endorsing sources: 50%" in card_html
+
+    # The same exact share, on the page the card links to (issue #136).
+    race_html = _race_html(view_model, target.id)
+    assert "No majority · Leading choice" in race_html
+    assert 'class="race-detail-meter meter-no-majority"' in race_html
+    assert "No majority. Consensus among explicitly endorsing sources: 50%" in race_html
 
     target.winner_share = "5001/10000"
     assert has_no_majority(target) is False
@@ -727,7 +832,7 @@ def test_no_majority_uses_the_exact_unrounded_share_across_the_card_and_dialog(
     above_half_card = above_half_html[above_half_card_start:above_half_card_end]
     assert re.search(r'<p class="no-majority-pill" hidden[^>]*>No majority</p>', above_half_card)
     assert 'class="screen-meter meter-no-majority"' not in above_half_card
-    assert "No majority · Leading choice" not in above_half_card
+    assert "No majority · Leading choice" not in _race_html(view_model, target.id)
 
 
 def test_the_no_majority_pill_sits_under_the_name_and_displaces_nothing(
@@ -968,7 +1073,7 @@ def test_round4_card_anatomy_and_data_ink_cleanup(tmp_path: Path) -> None:
     low_fill_model = _revalidated(low_fill_model)
     low_fill_html = render_html_document(low_fill_model, configuration)
     meter_start = low_fill_html.index(f'id="race-{leading_race_id}"')
-    meter_end = low_fill_html.index("</dialog>", meter_start)
+    meter_end = low_fill_html.index("</article>", meter_start)
     assert (
         'class="screen-meter meter-no-majority meter-low-fill"'
         in low_fill_html[meter_start:meter_end]
@@ -987,7 +1092,7 @@ def test_round4_card_anatomy_and_data_ink_cleanup(tmp_path: Path) -> None:
     high_fill_model = _revalidated(high_fill_model)
     high_fill_html = render_html_document(high_fill_model, configuration)
     high_meter_start = high_fill_html.index(f'id="race-{leading_race_id}"')
-    high_meter_end = high_fill_html.index("</dialog>", high_meter_start)
+    high_meter_end = high_fill_html.index("</article>", high_meter_start)
     assert "meter-low-fill" not in high_fill_html[high_meter_start:high_meter_end]
 
     # H34/I39: the default caption always renders both its full and compact
@@ -1000,7 +1105,7 @@ def test_round4_card_anatomy_and_data_ink_cleanup(tmp_path: Path) -> None:
     html = render_html_document(view_model, configuration)
     for race in races:
         card_start = html.index(f'id="race-{race.id}"')
-        card_end = html.index("</dialog>", card_start)
+        card_end = html.index("</article>", card_start)
         card_html = html[card_start:card_end]
         full_caption = (
             f'<p class="support-line support-full" data-display-role="support"'
@@ -1022,24 +1127,29 @@ def test_round4_card_anatomy_and_data_ink_cleanup(tmp_path: Path) -> None:
     assert "lens-card-badge" not in html
     assert "My sources</span>" not in html
 
-    # H36: the category chip loses its pill chrome (plain muted text). Issue
-    # 124 retired the comparison role badge along with the rows that carried it.
+    # H36 and I40 moved to the race page with the rows and meters they style
+    # (issue #136): the guide no longer ships either rule, and the race page's
+    # own entry does. The card's meter keeps the low-fill guard they share.
+    assert ".race-detail-category-badge" not in html
+    assert ".race-detail-meter" not in html
+    assert "race-detail-comparison-badge" not in html
+    race_stylesheet = _race_html(view_model, races[0].id).split("<style>")[1].split("</style>")[0]
     assert (
         ".race-detail-category-badge { color: var(--muted); font-size: .68rem; "
-        "font-weight: 600; text-align: right; }" in html
+        "font-weight: 600; text-align: right; }" in race_stylesheet
     )
-    assert "race-detail-comparison-badge" not in html
-
-    # I40: one meter chrome — the dialog meter now shares the card's own
-    # border/track tokens instead of its former tone-agree border/white track.
     assert (
         ".race-detail-meter { display: flex; flex: 0 0 auto; align-items: center; "
         "justify-content: flex-start; width: 8.5rem; height: 1.8rem; overflow: hidden; "
         "border: 1px solid var(--line-strong); border-radius: 1rem; "
         "background: linear-gradient(to right, var(--teal) 0 var(--meter-fill), "
-        "var(--meter-track) var(--meter-fill) 100%); }" in html
+        "var(--meter-track) var(--meter-fill) 100%); }" in race_stylesheet
     )
-    assert ".race-detail-meter-na { background: var(--meter-track); }" in html
+    assert ".race-detail-meter-na { background: var(--meter-track); }" in race_stylesheet
+    # I41's guard applies to both chromes, from one threshold in meterView; each
+    # declaration lives with the chrome it styles, so the guide ships only its.
+    assert ".screen-meter.meter-low-fill strong { padding-left:" in html
+    assert ".race-detail-meter.meter-low-fill strong { padding-left:" in race_stylesheet
 
     # I42: compact-mode race labels reserve consistent height so the
     # following name+meter block starts at the same offset in every card.
@@ -1094,20 +1204,17 @@ def test_html_rejects_non_web_evidence_links(tmp_path: Path) -> None:
         if cell.state in {"endorsement", "multi_endorsement"}
     )
     endorsement_cell.evidence_url = "javascript:alert(document.cookie)"
+    endorsement_race = next(
+        race
+        for section in view_model.sections
+        for race in section.races
+        if any(cell is endorsement_cell for cell in race.source_cells)
+    )
 
+    # The receipts are checked by the page that links them, which is the race
+    # page since issue #136.
     with pytest.raises(ValueError, match=r"safe HTTP\(S\) URL"):
-        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG))
-
-    source_view_model = _view_model(tmp_path / "source")
-    source_view_model.sources[0].evidence_url = "javascript:alert(document.cookie)"
-
-    with pytest.raises(ValueError, match=r"safe HTTP\(S\) URL"):
-        render_html_document(source_view_model, read_rendering_configuration(RENDERING_CONFIG))
-
-    # A source's own receipt is rendered by the sources editor's tree and its
-    # coverage-gap rows, so that renderer checks it too.
-    with pytest.raises(ValueError, match=r"safe HTTP\(S\) URL"):
-        render_sources_document(source_view_model, public_site_url="https://seattleelections.guide")
+        _race_html(view_model, endorsement_race.id)
 
     cell_view_model = _view_model(tmp_path / "cell")
     cell = next(
@@ -1118,9 +1225,31 @@ def test_html_rejects_non_web_evidence_links(tmp_path: Path) -> None:
         if cell.state in {"no_endorsement", "unavailable", "unverified"}
     )
     cell.evidence_url = "javascript:alert(document.cookie)"
+    cell_race = next(
+        race
+        for section in cell_view_model.sections
+        for race in section.races
+        if any(item is cell for item in race.source_cells)
+    )
 
     with pytest.raises(ValueError, match=r"safe HTTP\(S\) URL"):
-        render_html_document(cell_view_model, read_rendering_configuration(RENDERING_CONFIG))
+        _race_html(cell_view_model, cell_race.id)
+
+    # A source's own receipt is rendered by the sources editor's tree and its
+    # coverage-gap rows, so that is the renderer that checks it.
+    source_view_model = _view_model(tmp_path / "source")
+    source_view_model.sources[0].evidence_url = "javascript:alert(document.cookie)"
+
+    with pytest.raises(ValueError, match=r"safe HTTP\(S\) URL"):
+        render_sources_document(source_view_model, public_site_url=PUBLIC_SITE_URL)
+
+    # The guide's own one off-site link is still checked where it is rendered.
+    configuration = read_rendering_configuration(RENDERING_CONFIG)
+    with pytest.raises(ValueError, match=r"safe HTTP\(S\) URL"):
+        render_html_document(
+            _view_model(tmp_path / "project"),
+            configuration.model_copy(update={"project_url": "javascript:alert(1)"}),
+        )
 
 
 def test_nonempty_render_destination_is_preserved(tmp_path: Path) -> None:
@@ -1205,11 +1334,13 @@ def test_chromium_build_is_semantically_faithful_and_visually_safe(tmp_path: Pat
         blank_path = tmp_path / f"blank-{index}.png"
         blank.save(blank_path)
         blank_screenshots.append(blank_path)
+    race_documents = _race_documents(view_model)
     blank_report = validate_rendered_guide(
         view_model,
         read_rendering_configuration(RENDERING_CONFIG),
         rendered.html_path,
         blank_screenshots,
+        race_documents,
     )
     responsive_check = next(
         check for check in blank_report.checks if check.id == "responsive-viewports"
@@ -1224,18 +1355,26 @@ def test_chromium_build_is_semantically_faithful_and_visually_safe(tmp_path: Pat
         for endorser in group.endorsers
     ]
     assert len(evidence_urls) >= 2
-    mutated_html = tmp_path / "mutated.html"
-    mutated_html.write_text(
-        rendered.html_path.read_text(encoding="utf-8").replace(
-            evidence_urls[0], evidence_urls[1], 1
-        ),
-        encoding="utf-8",
+    # The evidence rows live on the race pages since issue #136, so the row
+    # tampering below corrupts those documents rather than the guide.
+    swapped_race_id = next(
+        race.id
+        for race in races
+        for group in race.endorsement_groups
+        for endorser in group.endorsers
+        if endorser.evidence_url == evidence_urls[0]
     )
+    mutated_races = dict(race_documents)
+    mutated_races[swapped_race_id] = mutated_races[swapped_race_id].replace(
+        evidence_urls[0], evidence_urls[1], 1
+    )
+    assert mutated_races[swapped_race_id] != race_documents[swapped_race_id]
     row_report = validate_rendered_guide(
         view_model,
         read_rendering_configuration(RENDERING_CONFIG),
-        mutated_html,
+        rendered.html_path,
         rendered.screenshots,
+        mutated_races,
     )
     evidence_check = next(
         check for check in row_report.checks if check.id == "html-source-evidence"
@@ -1256,13 +1395,13 @@ def test_chromium_build_is_semantically_faithful_and_visually_safe(tmp_path: Pat
         read_rendering_configuration(RENDERING_CONFIG),
         unexpected_link_html,
         rendered.screenshots,
+        race_documents,
     )
     unexpected_link_check = next(
         check for check in unexpected_link_report.checks if check.id == "html-source-evidence"
     )
     assert not unexpected_link_check.passed
 
-    canonical_html = rendered.html_path.read_text(encoding="utf-8")
     detail_race, detail_cell = next(
         (race, cell)
         for race in races
@@ -1278,23 +1417,27 @@ def test_chromium_build_is_semantically_faithful_and_visually_safe(tmp_path: Pat
         if source.id == detail_cell.source_id
     )
     row_marker = f'<li data-race-detail-source-code="{detail_source_code}"'
-    race_start = canonical_html.index(f'id="race-detail-{detail_race.id}"')
-    row_start = canonical_html.index(row_marker, race_start)
-    row_end = canonical_html.index("</li>", row_start) + len("</li>")
-    canonical_row = canonical_html[row_start:row_end]
+    canonical_race = race_documents[detail_race.id]
+    row_start = canonical_race.index(row_marker)
+    row_end = canonical_race.index("</li>", row_start) + len("</li>")
+    canonical_row = canonical_race[row_start:row_end]
+
+    def _tampered(replacement: str) -> dict[str, str]:
+        """The clean set with one race page's canonical row replaced."""
+        corrupted = dict(race_documents)
+        corrupted[detail_race.id] = canonical_race.replace(canonical_row, replacement, 1)
+        assert corrupted[detail_race.id] != canonical_race
+        return corrupted
+
     malicious_duplicate = canonical_row.replace(
         "</li>", '<a href="https://evil.example/phish">Wrong evidence</a></li>'
-    )
-    duplicate_row_html = tmp_path / "duplicate-source-row.html"
-    duplicate_row_html.write_text(
-        canonical_html.replace(canonical_row, malicious_duplicate + canonical_row, 1),
-        encoding="utf-8",
     )
     duplicate_row_report = validate_rendered_guide(
         view_model,
         read_rendering_configuration(RENDERING_CONFIG),
-        duplicate_row_html,
+        rendered.html_path,
         rendered.screenshots,
+        _tampered(malicious_duplicate + canonical_row),
     )
     duplicate_row_check = next(
         check for check in duplicate_row_report.checks if check.id == "html-source-evidence"
@@ -1318,6 +1461,7 @@ def test_chromium_build_is_semantically_faithful_and_visually_safe(tmp_path: Pat
         read_rendering_configuration(RENDERING_CONFIG),
         wrong_recommendation_html,
         rendered.screenshots,
+        race_documents,
     )
     semantic_check = next(
         check for check in semantic_report.checks if check.id == "html-display-values"
@@ -1328,16 +1472,12 @@ def test_chromium_build_is_semantically_faithful_and_visually_safe(tmp_path: Pat
         f"<strong>{detail_source.name}</strong>", "<strong>Wrong organization</strong>", 1
     )
     assert wrong_detail_row != canonical_row
-    endorsement_html = tmp_path / "wrong-endorsement-source.html"
-    endorsement_html.write_text(
-        canonical_html.replace(canonical_row, wrong_detail_row, 1),
-        encoding="utf-8",
-    )
     endorsement_report = validate_rendered_guide(
         view_model,
         read_rendering_configuration(RENDERING_CONFIG),
-        endorsement_html,
+        rendered.html_path,
         rendered.screenshots,
+        _tampered(wrong_detail_row),
     )
     endorsement_check = next(
         check for check in endorsement_report.checks if check.id == "html-source-evidence"
@@ -1356,22 +1496,16 @@ def test_chromium_build_is_semantically_faithful_and_visually_safe(tmp_path: Pat
         )
         if f'data-source-group="{group}"' in canonical_row
     )
-    wrong_group_html = tmp_path / "wrong-source-group.html"
-    wrong_group_html.write_text(
-        canonical_html.replace(
-            canonical_row,
-            canonical_row.replace(
-                f'data-source-group="{source_group}"', 'data-source-group="wrong"', 1
-            ),
-            1,
-        ),
-        encoding="utf-8",
-    )
     wrong_group_report = validate_rendered_guide(
         view_model,
         read_rendering_configuration(RENDERING_CONFIG),
-        wrong_group_html,
+        rendered.html_path,
         rendered.screenshots,
+        _tampered(
+            canonical_row.replace(
+                f'data-source-group="{source_group}"', 'data-source-group="wrong"', 1
+            )
+        ),
     )
     wrong_group_check = next(
         check for check in wrong_group_report.checks if check.id == "html-source-evidence"
@@ -1403,6 +1537,7 @@ def test_chromium_build_is_semantically_faithful_and_visually_safe(tmp_path: Pat
             read_rendering_configuration(RENDERING_CONFIG),
             conflicting_html,
             rendered.screenshots,
+            race_documents,
         )
         conflicting_check = next(
             check for check in conflicting_report.checks if check.id == "html-display-values"
@@ -1451,6 +1586,7 @@ def test_chromium_build_is_semantically_faithful_and_visually_safe(tmp_path: Pat
             read_rendering_configuration(RENDERING_CONFIG),
             broken_share_html,
             rendered.screenshots,
+            race_documents,
         )
         broken_share_check = next(
             check for check in broken_share_report.checks if check.id == "html-display-values"
@@ -1475,11 +1611,13 @@ def test_chromium_build_is_semantically_faithful_and_visually_safe(tmp_path: Pat
     )
     unavailable_html = tmp_path / "unavailable-share.html"
     unavailable_html.write_text(unavailable_html_text, encoding="utf-8")
+    unavailable_races = _race_documents(unavailable_view_model)
     unavailable_report = validate_rendered_guide(
         unavailable_view_model,
         read_rendering_configuration(RENDERING_CONFIG),
         unavailable_html,
         rendered.screenshots,
+        unavailable_races,
     )
     unavailable_html_check = next(
         check for check in unavailable_report.checks if check.id == "html-display-values"
@@ -1517,6 +1655,7 @@ def test_chromium_build_is_semantically_faithful_and_visually_safe(tmp_path: Pat
             read_rendering_configuration(RENDERING_CONFIG),
             broken_unavailable_html,
             rendered.screenshots,
+            unavailable_races,
         )
         broken_unavailable_check = next(
             check for check in broken_unavailable_report.checks if check.id == "html-display-values"
@@ -1539,9 +1678,6 @@ def test_responsive_tablet_layout_renders(tmp_path: Path) -> None:
         width=768,
         height=1200,
         expected_race_count=sum(len(section.races) for section in view_model.sections),
-        expected_source_count=sum(
-            source.panel_role != "comparison" for source in view_model.sources
-        ),
     )
 
 
@@ -1842,11 +1978,6 @@ def test_the_guide_carries_no_times_comparison_at_all(tmp_path: Path) -> None:
     assert "data-times-only" not in html
     assert 'data-source-role="comparison"' not in stylesheet
 
-    # Every group heading states one count, matching the rows it lists.
-    detail = html.split('data-race-detail-group="no_endorsement"')[1].split("</section>")[0]
-    listed = detail.count('data-race-detail-source-code="')
-    assert f"{listed} source" in detail
-
 
 def test_sources_tree_shell_exposes_no_dialog_and_keeps_controls_in_the_merged_section(
     tmp_path: Path,
@@ -1863,7 +1994,9 @@ def test_sources_tree_shell_exposes_no_dialog_and_keeps_controls_in_the_merged_s
     assert controls.count("<button") == 0
     assert "data-customize-open" not in html
     assert "customize-dialog" not in html
-    assert "<dialog" in html  # the race-detail dialogs are unaffected
+    # Issue #136 retired the last dialog on the guide with race detail, so the
+    # guide now opens no modal of any kind.
+    assert "<dialog" not in html
 
     assert 'id="sources"' not in html
     assert "data-sources-source" not in html
@@ -1914,7 +2047,7 @@ def test_the_guide_glue_reads_no_state_out_of_rendered_markup(tmp_path: Path) ->
     client = bundle_entry("guide-entry.mjs", global_name="GuidePage")
 
     for scrape in (
-        # Candidate display labels, read off the dialog's own headings.
+        # Candidate display labels, read off the detail's own headings.
         ".race-detail-candidate-title h4",
         # The audited candidate order, captured from server-rendered DOM order.
         ".race-detail-outcomes > [data-race-detail-candidate-id]",
@@ -1929,27 +2062,50 @@ def test_the_guide_glue_reads_no_state_out_of_rendered_markup(tmp_path: Path) ->
     ):
         assert scrape not in client, scrape
 
+    # ...and the race page's own bundle makes none of them either. It renders
+    # the detail the dialog rendered (issue #136), so this is where the reads
+    # would come back.
+    race_client = bundle_entry("race-entry.mjs", global_name="RacePage")
+    for scrape in (
+        ".race-detail-candidate-title h4",
+        ".race-detail-outcomes > [data-race-detail-candidate-id]",
+        "codeBySourceId",
+        '[data-display-role="race-label"]',
+    ):
+        assert scrape not in race_client, scrape
+
     # Each one now comes from the payload, which publishes what the server
     # rendered rather than a second computation of it.
     html = _sources_tree_html(tmp_path)
     payload = GuidePayload.model_validate(_client_payload(html))
     assert payload.races
     # A race nobody endorsed renders no candidate sections, so it publishes no
-    # candidates either; the two sides agree race by race.
+    # candidates either; the two sides agree race by race. The rendered side is
+    # the race's own page since issue #136, and its payload publishes the same
+    # values in the same order.
+    view_model = _revalidated(_personalization_enabled_view_model(tmp_path))
     for race in payload.races:
         assert all(candidate.label for candidate in race.candidates)
         assert race.audited_accessible_summary
-        dialog = html.split(f'id="race-detail-{race.race_id}"')[1].split("</dialog>")[0]
-        rendered_order = re.findall(r'data-race-detail-candidate-id="([^"]+)"', dialog)
+        race_html = _race_html(view_model, race.race_id)
+        race_payload = RacePayload.model_validate(_client_payload(race_html))
+        assert [candidate.candidate_id for candidate in race_payload.race.candidates] == [
+            candidate.candidate_id for candidate in race.candidates
+        ]
+        detail = race_html.split("data-race-candidates>")[1].split("</main>")[0]
+        rendered_order = re.findall(r'data-race-detail-candidate-id="([^"]+)"', detail)
         assert rendered_order == [candidate.candidate_id for candidate in race.candidates]
         # The payload carries the text; the template escapes it on the way out
         # (`Rodney 'Star' Thornley` renders as `Rodney &#39;Star&#39; Thornley`).
         # Compare the decoded markup, so the two sides are held to the same text
         # rather than to one spelling of an entity.
-        rendered_text = unescape(dialog)
+        rendered_text = unescape(race_html)
         for candidate in race.candidates:
             assert f"<h4>{candidate.label}</h4>" in rendered_text
         assert race.audited_accessible_summary in rendered_text
+        # The card's link and the payload's published path are one address.
+        assert race.race_path == f"/e/{view_model.metadata.election_id}/races/{race.race_id}/"
+        assert f'<a class="race-card-primary" href="{race.race_path}"' in html
     assert any(race.candidates for race in payload.races)
 
     # The two reads issue #239 removed, and where their values come from now.
@@ -2180,6 +2336,19 @@ def _personalization_disabled_view_model(tmp_path: Path) -> PublicationViewModel
     return _personalization_view_model(tmp_path, enabled=False)
 
 
+def _lens_enabled(view_model: PublicationViewModel) -> PublicationViewModel:
+    """One published view model with its lens policy forced on."""
+    return view_model.model_copy(
+        update={
+            "personalization": view_model.personalization.model_copy(
+                update={
+                    "policy": view_model.personalization.policy.model_copy(update={"enabled": True})
+                }
+            )
+        }
+    )
+
+
 def _evaluate_in_chrome(
     html_path: Path,
     expression: str,
@@ -2327,7 +2496,6 @@ def test_printing_the_guide_suppresses_chrome_and_keeps_every_race_whole(
             stickyHeader: display('.sticky-header'),
             skipLink: display('.skip-link'),
             footerActions: display('.site-footer-actions'),
-            dialog: display('.race-detail-dialog'),
             pageHeadBackground:
               getComputedStyle(document.querySelector('.page-head')).backgroundColor,
             pageHeadTitle: shown('.page-head h1'),
@@ -2355,7 +2523,6 @@ def test_printing_the_guide_suppresses_chrome_and_keeps_every_race_whole(
     assert result["stickyHeader"] == "none"
     assert result["skipLink"] == "none"
     assert result["footerActions"] == "none"
-    assert result["dialog"] == "none"
     # The shared page head (issue 192) is the guide's navy extended variant on
     # screen; on paper it flattens onto white and keeps its title.
     assert result["pageHeadBackground"] == "rgb(255, 255, 255)"
@@ -2374,110 +2541,83 @@ def test_printing_the_guide_suppresses_chrome_and_keeps_every_race_whole(
     assert result["horizontalScroll"] is False
 
 
-def test_phone_dialog_metrics_fit_the_longest_live_content_at_320px(tmp_path: Path) -> None:
-    """Issue 150: the metrics column may wrap, but must never escape the dialog."""
+@pytest.mark.parametrize("mobile_width", [320, 375, 414])
+def test_phone_race_page_keeps_its_metrics_and_its_longest_title_inside_the_screen(
+    tmp_path: Path, mobile_width: int
+) -> None:
+    """Issues 150/174, on the page that carries this content since issue #136.
+
+    The dialog these measured is gone, and with it the box a metrics column
+    could escape and the sticky header its icon actions sat in. What is left to
+    measure is what a reader on a phone can actually lose: a metrics column
+    pushed off the side, and a race title long enough to pan the page.
+    """
     view_model = _personalization_enabled_view_model(tmp_path)
-    html_path = tmp_path / "guide.html"
-    html_path.write_text(
-        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
-        encoding="utf-8",
+    race = max(
+        (
+            race
+            for section in view_model.sections
+            for race in section.races
+            if race.endorsement_groups
+        ),
+        key=lambda item: len(item.race_label),
     )
+    html_path = _write_race_html(tmp_path, view_model, race.id)
 
     result = _evaluate_in_chrome(
         html_path,
         """
         (() => {
           const row = document.querySelector('.race-detail-candidate');
-          const dialog = row.closest('.race-detail-dialog');
           row.querySelector('h4').textContent = 'Sharon Tomiko Santos / Kelabe Tewolde';
-          const count = row.querySelector(
-            '.race-detail-candidate-metrics > span[data-lens-hidden]'
-          );
+          const count = row.querySelector('.race-detail-candidate-metrics > span');
           count.textContent = '12 of 18 endorsing sources (co-endorsements split)';
-          dialog.showModal();
           const box = (element) => element.getBoundingClientRect();
-          const dialogBox = box(dialog);
-          const meterBox = box(row.querySelector('.race-detail-meter[data-lens-hidden]'));
+          const page = document.querySelector('.race-detail');
+          const pageBox = box(page);
+          const meterBox = box(row.querySelector('.race-detail-meter'));
           const countBox = box(count);
           const titleBox = box(row.querySelector('.race-detail-candidate-title'));
-          const actionBox = box(dialog.querySelector('.race-detail-actions'));
-          const actionButtons = [...dialog.querySelectorAll('.race-detail-actions button')];
+          const heading = document.querySelector('.page-head h1');
+          // The longest race name the ballot could carry, set here rather than
+          // chosen from the fixture, so the claim is about the layout and not
+          // about which races this dataset happens to hold.
+          heading.textContent =
+            'Seattle Proposition 1 — Property Tax Levy for Seattle Public Library';
           return JSON.stringify({
             titleWidth: titleBox.width,
-            meterWithin: meterBox.left >= dialogBox.left && meterBox.right <= dialogBox.right,
-            countWithin: countBox.left >= dialogBox.left && countBox.right <= dialogBox.right,
-            actionsWithin: actionBox.left >= dialogBox.left && actionBox.right <= dialogBox.right,
-            actionSizes: actionButtons.map((button) => [box(button).width, box(button).height]),
-          });
-        })()
-        """,
-        mobile_width=320,
-    )
-
-    assert result["titleWidth"] >= 100
-    assert result["meterWithin"] is True
-    assert result["countWithin"] is True
-    assert result["actionsWithin"] is True
-    assert result["actionSizes"] == [[40, 40], [40, 40]]
-
-
-@pytest.mark.parametrize("mobile_width", [320, 375, 414])
-def test_phone_dialog_header_keeps_actions_beside_longest_race_title(
-    tmp_path: Path, mobile_width: int
-) -> None:
-    """Issue 174: icon actions stay beside the wrapped title without a dead band."""
-    view_model = _personalization_enabled_view_model(tmp_path)
-    html_path = tmp_path / "guide.html"
-    html_path.write_text(
-        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
-        encoding="utf-8",
-    )
-
-    result = _evaluate_in_chrome(
-        html_path,
-        """
-        (() => {
-          const dialog = document.querySelector('.race-detail-dialog');
-          const header = dialog.querySelector('.race-detail-header');
-          const titleBlock = header.firstElementChild;
-          const title = titleBlock.querySelector('h3');
-          const actions = header.querySelector('.race-detail-actions');
-          title.textContent =
-            'Seattle Proposition 1 — Property Tax Levy for Seattle Public Library';
-          dialog.showModal();
-          const box = (element) => element.getBoundingClientRect();
-          const before = {
-            header: box(header),
-            titleBlock: box(titleBlock),
-            title: box(title),
-            actions: box(actions),
-          };
-          dialog.scrollTop = Math.min(160, dialog.scrollHeight - dialog.clientHeight);
-          const after = box(header);
-          return JSON.stringify({
-            titleWraps: title.scrollHeight > parseFloat(getComputedStyle(title).lineHeight) * 1.5,
-            actionsBesideTitle:
-              before.actions.left >= before.titleBlock.right &&
-              before.actions.top < before.title.bottom,
-            headerHeightBefore: before.header.height,
-            headerHeightAfter: after.height,
-            headerTopBefore: before.header.top,
-            headerTopAfter: after.top,
+            meterWithin: meterBox.left >= pageBox.left && meterBox.right <= pageBox.right + 1,
+            countWithin: countBox.left >= pageBox.left && countBox.right <= pageBox.right + 1,
+            headingWraps: box(heading).height >
+              parseFloat(getComputedStyle(heading).lineHeight) * 1.5,
+            horizontalScroll:
+              document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+            overflowing: [...document.querySelectorAll('.race-detail *')]
+              .filter((element) => box(element).right > pageBox.right + 1).length,
           });
         })()
         """,
         mobile_width=mobile_width,
     )
 
-    assert result["titleWraps"] is True
-    assert result["actionsBesideTitle"] is True
-    assert result["headerHeightAfter"] == pytest.approx(result["headerHeightBefore"], abs=0.5)
-    assert result["headerTopAfter"] == pytest.approx(result["headerTopBefore"], abs=0.5)
+    assert result["titleWidth"] >= 100
+    assert result["meterWithin"] is True
+    assert result["countWithin"] is True
+    # The longest race name on the ballot wraps rather than panning the page.
+    assert result["headingWraps"] is True
+    assert result["horizontalScroll"] is False
+    assert result["overflowing"] == 0
 
 
 def test_no_majority_lens_state_appears_and_dissolves_with_the_selected_sources(
     tmp_path: Path,
 ) -> None:
+    """The card's half of the state, on the guide.
+
+    The kicker moved to the race page with the candidate sections it labels
+    (issue #136); the test below makes the same claim there, so the two halves
+    of one quantity are still held to each other.
+    """
     view_model = _personalization_enabled_view_model(tmp_path)
     source_code_by_id = {source.id: source.code for source in view_model.personalization.sources}
     split_code = source_code_by_id["washington-working-families-party"]
@@ -2503,12 +2643,72 @@ def test_no_majority_lens_state_appears_and_dissolves_with_the_selected_sources(
           const snapshot = () => {{
             const meter = card.querySelector('[data-lens-result] .screen-meter');
             const pill = card.querySelector('[data-lens-context] .no-majority-pill');
-            const kicker = card.querySelector('[data-race-detail-lens-kicker]:not([hidden])');
+            return {{
+              pillHidden: pill.hidden,
+              amberMeter: meter.classList.contains('meter-no-majority'),
+              accessibleName: meter.getAttribute('aria-label'),
+            }};
+          }};
+          await pause();
+          const split = snapshot();
+          window.location.hash = {json.dumps(majority_fragment)};
+          await pause();
+          return JSON.stringify({{ split, majority: snapshot() }});
+        }})()
+        """,
+        initial_url=f"{html_path.resolve().as_uri()}#{split_fragment}",
+    )
+
+    assert result["split"] == {
+        "pillHidden": False,
+        "amberMeter": True,
+        "accessibleName": "No majority. Consensus among explicitly endorsing sources: 50%",
+    }
+    assert result["majority"]["pillHidden"] is True
+    assert result["majority"]["amberMeter"] is False
+    assert not result["majority"]["accessibleName"].startswith("No majority")
+
+
+def test_race_page_no_majority_state_appears_and_dissolves_with_the_selected_sources(
+    tmp_path: Path,
+) -> None:
+    """The same state, on the page that shows the candidate it qualifies.
+
+    Every computed number on a race page is the lens's while a lens is active,
+    and the leading-choice kicker is one of them (I56).
+    """
+    view_model = _personalization_enabled_view_model(tmp_path)
+    source_code_by_id = {source.id: source.code for source in view_model.personalization.sources}
+    split_code = source_code_by_id["washington-working-families-party"]
+    majority_code = source_code_by_id["the-urbanist"]
+    split_fragment = _lens_fragment(view_model, mode="s", source_codes=(split_code,))
+    majority_fragment = _lens_fragment(
+        view_model,
+        mode="s",
+        source_codes=tuple(sorted((split_code, majority_code))),
+    )
+    html_path = _write_race_html(tmp_path, view_model, "king-county-assessor")
+
+    result = _evaluate_in_chrome(
+        html_path,
+        f"""
+        (async () => {{
+          const pause = () => new Promise((resolve) => setTimeout(resolve, 100));
+          const snapshot = () => {{
+            const meter = document.querySelector('[data-lens-result] .screen-meter');
+            const pill = document.querySelector('[data-lens-context] .no-majority-pill');
+            const kicker = document.querySelector('.race-detail-candidate-title p');
+            const detailMeter = document.querySelector('.race-detail-meter');
             return {{
               pillHidden: pill.hidden,
               amberMeter: meter.classList.contains('meter-no-majority'),
               accessibleName: meter.getAttribute('aria-label'),
               kicker: kicker?.textContent ?? null,
+              detailAmber: detailMeter.classList.contains('meter-no-majority'),
+              // The two meters on the page state one share, in words as well
+              // as in tint (docs/DESIGN.md, Data display).
+              sameSpokenShare:
+                detailMeter.getAttribute('aria-label') === meter.getAttribute('aria-label'),
             }};
           }};
           await pause();
@@ -2526,11 +2726,15 @@ def test_no_majority_lens_state_appears_and_dissolves_with_the_selected_sources(
         "amberMeter": True,
         "accessibleName": "No majority. Consensus among explicitly endorsing sources: 50%",
         "kicker": "No majority · Tied for lead",
+        "detailAmber": True,
+        "sameSpokenShare": True,
     }
     assert result["majority"]["pillHidden"] is True
     assert result["majority"]["amberMeter"] is False
+    assert result["majority"]["detailAmber"] is False
     assert not result["majority"]["accessibleName"].startswith("No majority")
     assert result["majority"]["kicker"] == "Leading choice"
+    assert result["majority"]["sameSpokenShare"] is True
 
 
 def test_full_race_card_stacks_name_and_meter_below_480px(tmp_path: Path) -> None:
@@ -2970,263 +3174,114 @@ def test_personalization_reactive_banner_appends_below_the_controls_not_over_the
     assert result["background"] == "rgb(16, 42, 67)"
 
 
-def test_race_detail_dialog_history_back_and_forward_restore_open_state(
-    tmp_path: Path,
-) -> None:
-    """A race-detail dialog's own permalink is pushed as a distinct history
-    entry (unrelated to source selection, which issue 108 removed from the
-    guide's history entirely), so back()/forward() must still open and close
-    the dialog correctly.
-    """
-    view_model = _view_model(tmp_path)
-    html_path = tmp_path / "guide.html"
-    html_path.write_text(
-        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
-        encoding="utf-8",
-    )
-    result = _evaluate_in_chrome(
-        html_path,
-        """
-        (async () => {
-          const pause = () => new Promise((resolve) => setTimeout(resolve, 60));
-          // A same-page history navigation is asynchronous in headless Chrome
-          // and its exact settling time is not guaranteed, so poll for the
-          // expected outcome instead of trusting a single fixed-length pause.
-          const waitUntil = async (predicate, { timeoutMs = 2000, stepMs = 30 } = {}) => {
-            const deadline = Date.now() + timeoutMs;
-            while (Date.now() < deadline) {
-              if (predicate()) return true;
-              await new Promise((resolve) => setTimeout(resolve, stepMs));
-            }
-            return predicate();
-          };
-          const isOpen = () => document.querySelector('[data-race-detail-dialog][open]') !== null;
-          const link = document.querySelector('[data-race-detail-link]');
-          link.click();
-          await waitUntil(isOpen);
-          const openedHash = window.location.hash;
-          const openedAfterPush = isOpen();
+def test_race_page_restores_an_active_lens_from_its_own_link(tmp_path: Path) -> None:
+    """Issue 142, on the page issue #136 moved race detail to.
 
-          history.back();
-          await waitUntil(() => !isOpen());
-          const closedAfterBack = !isOpen();
-          const hashAfterBack = window.location.hash;
+    A link produced while a lens is active restores the selection on load —
+    the strip's count, the headline, every candidate's numbers, and the marks
+    on the sources it does not count — and hands the reader a Sources link that
+    carries both the selection and this race as the way back.
 
-          history.forward();
-          await waitUntil(isOpen);
-          await pause();
-          const openedAfterForward = isOpen();
-
-          return JSON.stringify({
-            openedHash,
-            openedAfterPush,
-            closedAfterBack,
-            hashAfterBack,
-            openedAfterForward,
-          });
-        })()
-        """,
-    )
-    assert result["openedHash"] != ""
-    assert result["openedAfterPush"] is True
-    assert result["closedAfterBack"] is True
-    assert result["hashAfterBack"] == ""
-    assert result["openedAfterForward"] is True
-
-
-def test_race_detail_dialog_preserves_an_active_lens_through_open_close_and_share(
-    tmp_path: Path,
-) -> None:
-    """Issue 142 acceptance criteria: opening a race-detail dialog while a
-    personalized lens is active must not clobber the lens out of the address
-    bar. Both routing schemes share `window.location.hash` (the dialog's own
-    permalink predates the lens by issues 62/73/86), so opening must compose
-    rather than overwrite, closing must strip only the race segment, and the
-    dialog's own "Share link" button must reproduce both the lens and the
-    open race rather than whatever the bare per-race fragment used to be.
+    How a reader gets here from a `#race-…` link shared before the migration is
+    `guide-client.test.mjs`'s: the forward is a navigation to a root-relative
+    site path, which a `file://` harness cannot follow.
     """
     view_model = _personalization_enabled_view_model(tmp_path)
     tallying_codes = sorted(
         source.code for source in view_model.personalization.sources if _tallying_selectable(source)
     )
-    personalized_codes = tallying_codes[1:]
-    first_race_label = view_model.sections[0].races[0].race_label
-    fragment = _lens_fragment(view_model, mode="s", source_codes=tuple(personalized_codes))
-    html_path = tmp_path / "guide.html"
-    html_path.write_text(
-        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
-        encoding="utf-8",
+    # A source that actually endorses somewhere, and the race it endorses in:
+    # deselecting a source with nothing to contribute would mark no row.
+    cells_by_race = {race.race_id: race.cells for race in view_model.personalization.races}
+    dropped_code, race_id = next(
+        (cell.source_code, race_id)
+        for code in tallying_codes
+        for race_id, cells in sorted(cells_by_race.items())
+        for cell in cells
+        if cell.source_code == code and cell.state in {"endorsement", "multi_endorsement"}
     )
+    personalized_codes = [code for code in tallying_codes if code != dropped_code]
+    fragment = _lens_fragment(view_model, mode="s", source_codes=tuple(personalized_codes))
+    race = next(
+        race for section in view_model.sections for race in section.races if race.id == race_id
+    )
+    html_path = _write_race_html(tmp_path, view_model, race.id)
+
+    result = _evaluate_in_chrome(
+        html_path,
+        f"""
+        JSON.stringify({{
+          personalized: document.documentElement.classList.contains('lens-personalized'),
+          bannerText: document.querySelector('[data-lens-banner-status]').textContent,
+          noticeHidden: document.querySelector('[data-lens-notice]').hidden,
+          sourcesHref: document.querySelector(
+            '[data-lens-banner] [data-sources-link]').getAttribute('href'),
+          droppedRowMarked: [...document.querySelectorAll(
+            '[data-race-detail-source-code={json.dumps(dropped_code)[1:-1]}]')]
+            .every((row) => row.classList.contains('race-detail-source-row-not-counted')),
+          droppedRowsListed: document.querySelectorAll(
+            '[data-race-detail-source-code={json.dumps(dropped_code)[1:-1]}]').length,
+          notCountedText: document.querySelector('.race-detail-source-not-counted')?.textContent
+            ?? null,
+          summary: document.querySelector('[data-race-detail-summary]').textContent,
+        }})
+        """,
+        initial_url=f"{html_path.resolve().as_uri()}#{fragment}",
+    )
+
+    assert result["personalized"] is True
+    assert result["bannerText"] == (
+        f"Counting {len(personalized_codes)} of {len(tallying_codes)} sources."
+    )
+    assert result["noticeHidden"] is True
+    # I56: the deselected source stays listed as evidence, marked rather than
+    # removed.
+    assert result["droppedRowsListed"] >= 1
+    assert result["droppedRowMarked"] is True
+    assert result["notCountedText"] == "Not counted"
+    assert result["summary"]
+    # Issue 142: the way back carries both the selection and this race.
+    assert result["sourcesHref"].startswith(f"/e/{view_model.metadata.election_id}/sources/#")
+    assert "sel=" in result["sourcesHref"]
+    assert f"race=race-{race.id}" in result["sourcesHref"]
+
+
+def test_a_race_page_shares_its_own_canonical_address(tmp_path: Path) -> None:
+    """Issue #136 item 7: sharing a race produces that race's own link.
+
+    The masthead Share is the page's share action (docs/DESIGN.md § Site
+    shell), and on a race page the address it copies is the race's own — which
+    is the whole reason the address exists, since a fragment over the guide
+    could never be unfurled as anything but the guide.
+    """
+    view_model = _personalization_enabled_view_model(tmp_path)
+    race = view_model.sections[0].races[0]
+    html_path = _write_race_html(tmp_path, view_model, race.id)
+
     result = _evaluate_in_chrome(
         html_path,
         """
         (async () => {
           const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-          window.addEventListener('unhandledrejection', (event) => {
-            window.__shareError = String(event.reason?.stack || event.reason);
-          });
-          const link = document.querySelector('[data-race-detail-link]');
-          link.click();
-          await pause(80);
-          const hashAfterOpen = window.location.hash;
-
           Object.defineProperty(navigator, 'share', {
             value: async (payload) => { window.__shared = payload; },
             configurable: true,
           });
-          const shareButton = document.querySelector('[data-copy-race-link]');
-          shareButton.click();
+          document.querySelector('[data-shell-share]').click();
           await pause(80);
-          const nativeSharedLink = window.__shared?.url || null;
-          const nativeSharedTitle = window.__shared?.title || null;
-
-          Object.defineProperty(navigator, 'share', { value: undefined, configurable: true });
-          Object.defineProperty(navigator, 'clipboard', {
-            value: { writeText: async (text) => { window.__copied = text; } },
-            configurable: true,
-          });
-          shareButton.click();
-          await pause(80);
-          const copiedLink = window.__copied;
-
-          document.querySelector('[data-close-race-detail]').click();
-          await pause(80);
-          const hashAfterClose = window.location.hash;
-          const isOpenAfterClose =
-            document.querySelector('[data-race-detail-dialog][open]') !== null;
-
           return JSON.stringify({
-            hashAfterOpen, nativeSharedLink, nativeSharedTitle, copiedLink,
-            shareError: window.__shareError || null,
-            hashAfterClose, isOpenAfterClose,
+            sharedUrl: window.__shared?.url ?? null,
+            sharedTitle: window.__shared?.title ?? null,
+            status: document.querySelector('[data-shell-share-status]').textContent,
+            here: window.location.href,
           });
         })()
         """,
-        initial_url=f"{html_path.resolve().as_uri()}#{fragment}",
     )
-    assert result["shareError"] is None, result["shareError"]
-    assert "sel=" in result["hashAfterOpen"]
-    assert "race=" in result["hashAfterOpen"]
-    assert "sel=" in result["nativeSharedLink"]
-    assert "race=" in result["nativeSharedLink"]
-    assert result["nativeSharedTitle"] == first_race_label
-    assert result["copiedLink"] == result["nativeSharedLink"]
-    assert result["isOpenAfterClose"] is False
-    assert "sel=" in result["hashAfterClose"]
-    assert "race=" not in result["hashAfterClose"]
 
-
-def test_race_detail_dialog_history_back_and_forward_preserve_an_active_lens(
-    tmp_path: Path,
-) -> None:
-    """Issue 142 acceptance criterion 4, under the exact scenario this ticket
-    exists to fix: back()/forward() must still open and close the
-    race-detail dialog correctly while a personalized lens is active, and
-    going back must restore the lens-only fragment (no stale race target)
-    rather than clearing the hash outright, unlike the no-lens case covered
-    by test_race_detail_dialog_history_back_and_forward_restore_open_state.
-    """
-    view_model = _personalization_enabled_view_model(tmp_path)
-    tallying_codes = sorted(
-        source.code for source in view_model.personalization.sources if _tallying_selectable(source)
-    )
-    personalized_codes = tallying_codes[1:]
-    fragment = _lens_fragment(view_model, mode="s", source_codes=tuple(personalized_codes))
-    html_path = tmp_path / "guide.html"
-    html_path.write_text(
-        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
-        encoding="utf-8",
-    )
-    result = _evaluate_in_chrome(
-        html_path,
-        """
-        (async () => {
-          const waitUntil = async (predicate, { timeoutMs = 2000, stepMs = 30 } = {}) => {
-            const deadline = Date.now() + timeoutMs;
-            while (Date.now() < deadline) {
-              if (predicate()) return true;
-              await new Promise((resolve) => setTimeout(resolve, stepMs));
-            }
-            return predicate();
-          };
-          const isOpen = () => document.querySelector('[data-race-detail-dialog][open]') !== null;
-          const link = document.querySelector('[data-race-detail-link]');
-          link.click();
-          await waitUntil(isOpen);
-          const openedHash = window.location.hash;
-
-          history.back();
-          await waitUntil(() => !isOpen());
-          const hashAfterBack = window.location.hash;
-
-          history.forward();
-          await waitUntil(isOpen);
-          const hashAfterForward = window.location.hash;
-          const openedAfterForward = isOpen();
-
-          return JSON.stringify({
-            openedHash, hashAfterBack, hashAfterForward, openedAfterForward,
-          });
-        })()
-        """,
-        initial_url=f"{html_path.resolve().as_uri()}#{fragment}",
-    )
-    assert "sel=" in result["openedHash"] and "race=" in result["openedHash"]
-    assert "sel=" in result["hashAfterBack"]
-    assert "race=" not in result["hashAfterBack"]
-    assert result["openedAfterForward"] is True
-    assert "sel=" in result["hashAfterForward"] and "race=" in result["hashAfterForward"]
-
-
-def test_race_detail_dialog_fragment_reload_restores_lens_and_reopens_dialog(
-    tmp_path: Path,
-) -> None:
-    """Issue 142 acceptance criterion: a link produced while a race-detail
-    dialog is open and a lens is active (a refresh, or a copied/shared URL)
-    must restore both the personalized selection and the open dialog on
-    load, not just one or the other.
-    """
-    view_model = _personalization_enabled_view_model(tmp_path)
-    tallying_codes = sorted(
-        source.code for source in view_model.personalization.sources if _tallying_selectable(source)
-    )
-    personalized_codes = tallying_codes[1:]
-    fragment = _lens_fragment(view_model, mode="s", source_codes=tuple(personalized_codes))
-    html_path = tmp_path / "guide.html"
-    html_path.write_text(
-        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
-        encoding="utf-8",
-    )
-    opened = _evaluate_in_chrome(
-        html_path,
-        """
-        (async () => {
-          const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-          document.querySelector('[data-race-detail-link]').click();
-          await pause(80);
-          return JSON.stringify({ hash: window.location.hash });
-        })()
-        """,
-        initial_url=f"{html_path.resolve().as_uri()}#{fragment}",
-    )
-    combined_hash = opened["hash"]
-    reloaded = _evaluate_in_chrome(
-        html_path,
-        """
-        JSON.stringify({
-          bannerHidden: document.querySelector('[data-lens-banner]').hidden,
-          bannerText: document.querySelector('[data-lens-banner-status]').textContent,
-          isOpen: document.querySelector('[data-race-detail-dialog][open]') !== null,
-        })
-        """,
-        initial_url=f"{html_path.resolve().as_uri()}{combined_hash}",
-    )
-    assert reloaded["bannerHidden"] is False
-    assert (
-        reloaded["bannerText"]
-        == f"Counting {len(personalized_codes)} of {len(tallying_codes)} sources."
-    )
-    assert reloaded["isOpen"] is True
+    assert result["sharedUrl"] == result["here"]
+    assert result["sharedTitle"].startswith(race.race_label)
+    assert result["status"] == "Share menu opened."
 
 
 def test_personalization_shared_link_restores_the_same_version_selection(tmp_path: Path) -> None:
@@ -3315,29 +3370,21 @@ def test_personalization_full_panel_selection_shows_no_divergent_comparison(tmp_
     assert result["recommendationText"] != ""
 
 
-def test_personalization_divergent_race_discloses_a_compact_comparison_and_full_detail(
+def test_personalization_divergent_race_discloses_a_compact_comparison_on_its_card(
     tmp_path: Path,
 ) -> None:
-    """Issue 81/97/108 acceptance criteria: every defined divergence dimension
-    is detected from structured values, a divergent card shows a compact
-    audited comparison, and the race detail panel discloses complete
-    audited/personalized values, contributing sources, and inclusion
-    reasons. Narrowing the real production panel to one category's own
-    sources (via an incoming fragment naming only that category's member
-    codes, the same shape a returned sources-page link would carry) is
-    virtually certain to push some races below the minimum-explicit-sources
-    threshold, diverging their recommendation state from the full default
-    panel.
+    """Issue 81/97/108 acceptance criteria, the card's half.
+
+    Every defined divergence dimension is detected from structured values and a
+    divergent card shows a compact audited comparison. The detail half moved to
+    the race page with the detail itself (issue #136) and is the test below.
+    Narrowing the real production panel to one category's own sources (via an
+    incoming fragment naming only that category's member codes, the same shape a
+    returned sources-page link would carry) is virtually certain to push some
+    races below the minimum-explicit-sources threshold, diverging their
+    recommendation state from the full default panel.
     """
-    view_model = _production_bundle().view_model
-    enabled_policy = view_model.personalization.policy.model_copy(update={"enabled": True})
-    view_model = view_model.model_copy(
-        update={
-            "personalization": view_model.personalization.model_copy(
-                update={"policy": enabled_policy}
-            )
-        }
-    )
+    view_model = _lens_enabled(_production_bundle().view_model)
     first_category = next(
         category
         for category in view_model.personalization.categories
@@ -3351,78 +3398,20 @@ def test_personalization_divergent_race_discloses_a_compact_comparison_and_full_
         render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
         encoding="utf-8",
     )
-    selected_codes_json = json.dumps(list(first_category.member_source_codes))
     result = _evaluate_in_chrome(
         html_path,
-        f"""
-        (async () => {{
-          const selectedCodes = new Set({selected_codes_json});
-          const shown = (el) => el !== null && getComputedStyle(el).display !== 'none';
+        """
+        (() => {
           const cards = [...document.querySelectorAll('.race-card')];
           // The reference bar exists only on a card that diverges (issue #248).
           const bar = (card) => card.querySelector('[data-lens-foot] .lens-comparison');
           const divergent = cards.find((card) => bar(card) !== null);
           const unchanged = cards.find((card) => bar(card) === null);
-          let detail = null;
-          if (divergent) {{
-            divergent.querySelector('[data-race-detail-link]').click();
-            await new Promise((resolve) => setTimeout(resolve, 50));
-            const dialog = divergent.querySelector('[data-race-detail-dialog]');
-            // I56: the dialog's "My sources" summary section is deleted
-            // outright; neither of its two query-only elements exists at all.
-            const deletedElementsGone =
-              dialog.querySelector('[data-lens-detail-summary]') === null
-              && dialog.querySelector('[data-lens-detail-sources]') === null
-              && dialog.querySelector('[data-race-detail-lens]') === null;
-            const noMySourcesHeading = ![...dialog.querySelectorAll('h4')].some(
-              (heading) => heading.textContent === 'My sources',
-            );
-            const cardShareText = divergent.querySelector(
-              '[data-lens-result] .screen-meter strong',
-            )?.textContent;
-            const sections = [...dialog.querySelectorAll('[data-race-detail-candidate-id]')];
-            // I56 hard invariant: every visible per-candidate meter equals the
-            // card's own lens share — no quantity appears with two values.
-            const visibleLensMeterShares = sections
-              .map((section) => section.querySelector('[data-race-detail-lens-meter]'))
-              .filter((meter) => shown(meter))
-              .map((meter) => (
-                meter.querySelector('[data-race-detail-lens-meter-text]')?.textContent
-              ));
-            // Every audited (pre-lens) count/meter/kicker in the dialog is
-            // hidden while the lens is active — the personalized twin is the
-            // only one visible.
-            const auditedElementsHidden = sections.every((section) => (
-              [...section.querySelectorAll('[data-lens-hidden]')].every((el) => !shown(el))
-            ));
-            // I56: an unselected source's row stays in place, visibly
-            // de-emphasized and marked "Not counted"; a selected source's row
-            // never carries that mark. Checked against every actual row
-            // rather than merely asserting one exists either way.
-            const rowMarkingCorrect = sections.every((section) => (
-              [...section.querySelectorAll('[data-endorsed-candidate-id]')]
-                .every((row) => {{
-                  const badge = row.querySelector('[data-race-detail-not-counted]');
-                  const marked = shown(badge);
-                  return marked === !selectedCodes.has(row.dataset.raceDetailSourceCode);
-                }})
-            ));
-            detail = {{
-              deletedElementsGone,
-              noMySourcesHeading,
-              auditedHidden: dialog.querySelector('[data-lens-detail-audited]').hidden,
-              auditedText: dialog.querySelector('[data-lens-detail-audited]').textContent,
-              cardShareText,
-              visibleLensMeterShares,
-              auditedElementsHidden,
-              rowMarkingCorrect,
-              candidateSectionCount: sections.length,
-            }};
-          }}
           const divergentComparison = divergent === undefined ? null : bar(divergent);
-          return JSON.stringify({{
+          return JSON.stringify({
             hasDivergent: divergent !== undefined,
             hasUnchanged: unchanged !== undefined,
+            divergentRaceId: divergent?.dataset.publicationRaceId ?? null,
             // H38: the caption itself carries the lens state now that the
             // per-card "My sources" pill is retired — no separate badge
             // element exists to query.
@@ -3440,9 +3429,8 @@ def test_personalization_divergent_race_discloses_a_compact_comparison_and_full_
               || divergentComparison?.classList.contains('lens-comparison-agrees'),
             ),
             unchangedComparisonAbsent: unchanged === undefined ? null : bar(unchanged) === null,
-            detail,
-          }});
-        }})()
+          });
+        })()
         """,
         initial_url=f"{html_path.resolve().as_uri()}#{fragment}",
     )
@@ -3462,57 +3450,100 @@ def test_personalization_divergent_race_discloses_a_compact_comparison_and_full_
         ("All sources agree with your selection.", "All sources differ from your selection.")
     )
     assert result["divergentComparisonToned"] is True
-    detail = result["detail"]
-    assert detail["deletedElementsGone"] is True
-    assert detail["noMySourcesHeading"] is True
-    assert detail["auditedHidden"] is False
-    assert "All sources:" in detail["auditedText"]
-    assert detail["candidateSectionCount"] > 0
-    assert detail["auditedElementsHidden"] is True
-    assert detail["rowMarkingCorrect"] is True
-    # I56 hard invariant: no quantity appears with two values — every visible
-    # per-candidate meter in the dialog equals the card's own lens share.
-    assert detail["visibleLensMeterShares"], (
-        "expected at least one visible personalized leader meter"
-    )
-    for share_text in detail["visibleLensMeterShares"]:
-        assert share_text == detail["cardShareText"]
     if result["hasUnchanged"]:
         assert result["unchangedComparisonAbsent"] is True
 
+    # The detail half, on the page the divergent card links to.
+    detail_path = _write_race_html(tmp_path, view_model, result["divergentRaceId"])
+    selected_codes_json = json.dumps(list(first_category.member_source_codes))
+    detail = _evaluate_in_chrome(
+        detail_path,
+        f"""
+        (() => {{
+          const selectedCodes = new Set({selected_codes_json});
+          const shown = (el) => el !== null && getComputedStyle(el).display !== 'none';
+          const sections = [...document.querySelectorAll('[data-race-detail-candidate-id]')];
+          // I56 hard invariant: every visible per-candidate meter equals the
+          // headline's own lens share — no quantity appears with two values.
+          const headlineShare = document.querySelector(
+            '[data-lens-result] .screen-meter strong',
+          )?.textContent;
+          const visibleMeterShares = sections
+            .map((section) => section.querySelector('.race-detail-meter'))
+            .filter((meter) => shown(meter))
+            .map((meter) => meter.querySelector('strong')?.textContent);
+          // I56: an unselected source's row stays in place, visibly
+          // de-emphasized and marked "Not counted"; a selected source's row
+          // never carries that mark. Checked against every actual row rather
+          // than merely asserting one exists either way.
+          const rowMarkingCorrect = sections.every((section) => (
+            [...section.querySelectorAll('[data-endorsed-candidate-id]')]
+              .every((row) => {{
+                const marked = row.querySelector('.race-detail-source-not-counted') !== null;
+                return marked === !selectedCodes.has(row.dataset.raceDetailSourceCode);
+              }})
+          ));
+          const outcomes = document.querySelector('.race-detail-outcomes');
+          return JSON.stringify({{
+            // I56: the "My sources" summary section is deleted outright, and
+            // the audited twins with it — one element per value.
+            noMySourcesHeading: ![...document.querySelectorAll('h4')].some(
+              (heading) => heading.textContent === 'My sources',
+            ),
+            twinsAbsent: document.querySelectorAll(
+              '[data-lens-only],[data-lens-hidden]').length === 0,
+            headlineShare,
+            visibleMeterShares,
+            rowMarkingCorrect,
+            candidateSectionCount: sections.length,
+            // Item 3 of #141: the reference bar sits at the headline's foot,
+            // matching the card's own I39 placement, ahead of the sections.
+            barAtHeadlineFoot: document.querySelector(
+              '[data-lens-foot] .lens-comparison') !== null,
+            barText: document.querySelector('[data-lens-foot] .lens-comparison')?.textContent,
+            barNotInOutcomes: outcomes.querySelector('.lens-comparison') === null,
+          }});
+        }})()
+        """,
+        initial_url=f"{detail_path.resolve().as_uri()}#{fragment}",
+    )
+    assert detail["noMySourcesHeading"] is True
+    assert detail["twinsAbsent"] is True
+    assert detail["candidateSectionCount"] > 0
+    assert detail["rowMarkingCorrect"] is True
+    assert detail["barAtHeadlineFoot"] is True
+    assert "All sources:" in detail["barText"]
+    assert detail["barNotInOutcomes"] is True
+    assert detail["visibleMeterShares"], "expected at least one visible personalized leader meter"
+    for share_text in detail["visibleMeterShares"]:
+        assert share_text == detail["headlineShare"]
 
-def test_race_detail_dialog_reflects_the_active_lens_leader_not_the_audited_default(
+
+def test_race_page_reflects_the_active_lens_leader_not_the_audited_default(
     tmp_path: Path,
 ) -> None:
-    """Ticket #141: five dialog defects found during epic #128's closeout
-    acceptance sweep, exercised together against the exact live example the
-    ticket itself reports — deselecting every `labor`-category source on
-    `ld-11-state-representative-1` flips the leader from the audited default
-    (David Hackney) to Ashley Fedan (67%), a genuine two-candidate leader
-    change rather than a mere Insufficient-grade divergence.
+    """Ticket #141's dialog defects, on the page that replaced the dialog.
+
+    The same live example the ticket reports — deselecting every
+    `labor`-category source on `ld-11-state-representative-1` flips the leader
+    from the audited default (David Hackney) to Ashley Fedan (67%), a genuine
+    two-candidate leader change rather than a mere Insufficient-grade
+    divergence.
 
     1. The candidate section DOM order follows the lens-personalized leader,
-       not the audited default order baked into the server-rendered HTML.
+       not the audited default order the server rendered.
     2. The confidence-flag UI is gone from every user-facing surface (the
-       underlying `confidence_warning`/`warning_codes` data model is
-       untouched elsewhere; this only checks presentation markers).
-    3. The "All sources" reference bar renders immediately after the last
-       candidate block, matching #131's own card-foot pattern.
+       underlying `confidence_warning`/`warning_codes` data model is untouched
+       elsewhere; this only checks presentation markers).
+    3. The "All sources" reference bar renders at the headline's foot, matching
+       #131's own card-foot pattern.
     4. Only the currently-displayed leader's section ever shows a meter
-       element; every other candidate section has none at all — not an
-       empty, unfilled one.
-    5. The dialog's aria-describedby summary is recomputed to state the
-       personalized result, not left frozen at the audited default.
+       element; every other candidate section has none at all — not an empty,
+       unfilled one.
+    5. The visually-hidden summary is recomputed to state the personalized
+       result, not left frozen at the audited default.
     """
-    view_model = _production_bundle().view_model
-    enabled_policy = view_model.personalization.policy.model_copy(update={"enabled": True})
-    view_model = view_model.model_copy(
-        update={
-            "personalization": view_model.personalization.model_copy(
-                update={"policy": enabled_policy}
-            )
-        }
-    )
+    view_model = _lens_enabled(_production_bundle().view_model)
     labor_category = next(
         category for category in view_model.personalization.categories if category.id == "labor"
     )
@@ -3528,56 +3559,36 @@ def test_race_detail_dialog_reflects_the_active_lens_leader_not_the_audited_defa
         and source.code not in labor_members
     )
     fragment = _lens_fragment(view_model, mode="s", source_codes=selection)
-    html_path = tmp_path / "guide.html"
-    html_path.write_text(
-        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
-        encoding="utf-8",
-    )
-    race_id_json = json.dumps("ld-11-state-representative-1")
+    html_path = _write_race_html(tmp_path, view_model, "ld-11-state-representative-1")
     result = _evaluate_in_chrome(
         html_path,
-        f"""
-        (async () => {{
-          const shown = (el) => el !== null && getComputedStyle(el).display !== 'none';
-          const raceId = {race_id_json};
-          const card = document.querySelector(`[data-publication-race-id="${{raceId}}"]`);
-          const recommendation = card.querySelector(
-            '[data-lens-result] [data-display-role="recommendation"]',
-          )?.textContent;
-          card.querySelector('[data-race-detail-link]').click();
-          await new Promise((resolve) => setTimeout(resolve, 50));
-          const dialog = card.querySelector('[data-race-detail-dialog]');
-          const sections = [...dialog.querySelectorAll('[data-race-detail-candidate-id]')];
+        """
+        (() => {
+          const sections = [...document.querySelectorAll('[data-race-detail-candidate-id]')];
           const domOrder = sections.map((section) => section.dataset.raceDetailCandidateId);
           const leaderSection = sections.find(
-            (section) => section.querySelector('[data-race-detail-lens-kicker]')?.hidden === false,
+            (section) => section.querySelector('.race-detail-candidate-title p') !== null,
           );
-          const meters = sections.map((section) => ({{
+          const meters = sections.map((section) => ({
             candidateId: section.dataset.raceDetailCandidateId,
-            meterShown: shown(section.querySelector('[data-race-detail-lens-meter]')),
-          }}));
-          const outcomes = dialog.querySelector('.race-detail-outcomes');
-          const children = [...outcomes.children];
-          const lastCandidateIndex = children
-            .map((child) => child.hasAttribute('data-race-detail-candidate-id'))
-            .lastIndexOf(true);
-          const barIndex = children.findIndex(
-            (child) => child.hasAttribute('data-lens-detail-audited'),
-          );
-          const summaryEl = document.getElementById(`race-detail-summary-${{raceId}}`);
-          const summaryText = summaryEl?.textContent;
-          return JSON.stringify({{
-            recommendation,
+            meterPresent: section.querySelector('.race-detail-meter') !== null,
+          }));
+          return JSON.stringify({
+            recommendation: document.querySelector(
+              '[data-lens-result] [data-display-role="recommendation"]',
+            )?.textContent,
             domOrder,
             leaderCandidateId: leaderSection?.dataset.raceDetailCandidateId,
             meters,
-            barIndex,
-            lastCandidateIndex,
-            summaryText,
+            barAtHeadlineFoot:
+              document.querySelector('[data-lens-foot] .lens-comparison') !== null,
+            barNotInOutcomes:
+              document.querySelector('.race-detail-outcomes .lens-comparison') === null,
+            summaryText: document.querySelector('[data-race-detail-summary]')?.textContent,
             confidenceMarkersPresent: document.body.innerHTML.includes('confidence-note')
               || document.body.innerHTML.includes('Confidence flag'),
-          }});
-        }})()
+          });
+        })()
         """,
         initial_url=f"{html_path.resolve().as_uri()}#{fragment}",
     )
@@ -3590,14 +3601,15 @@ def test_race_detail_dialog_reflects_the_active_lens_leader_not_the_audited_defa
     assert result["leaderCandidateId"] is not None
     assert result["domOrder"][0] == result["leaderCandidateId"]
     assert result["domOrder"][0].endswith("ashley-fedan")
-    # Item 4: exactly the leader's section shows a meter; no other section
-    # shows even an empty one.
+    # Item 4: exactly the leader's section renders a meter; no other section
+    # renders even an empty one.
     assert result["meters"], "expected at least one candidate section"
     for meter in result["meters"]:
-        assert meter["meterShown"] == (meter["candidateId"] == result["leaderCandidateId"])
-    # Item 3: the reference bar sits immediately after the last candidate
-    # section, matching the card's own I39 foot placement.
-    assert result["barIndex"] == result["lastCandidateIndex"] + 1
+        assert meter["meterPresent"] == (meter["candidateId"] == result["leaderCandidateId"])
+    # Item 3: the reference bar sits at the headline's foot, matching the
+    # card's own I39 placement rather than interleaving with the sections.
+    assert result["barAtHeadlineFoot"] is True
+    assert result["barNotInOutcomes"] is True
     # Item 2: no confidence-flag UI marker survives anywhere on the page.
     assert result["confidenceMarkersPresent"] is False
     # Item 5: the hidden accessible summary matches the displayed result.
@@ -4004,13 +4016,31 @@ def test_committed_lens_page_fixtures_match_a_fresh_render() -> None:
     otherwise the parity tests would keep passing against markup the site no
     longer serves.
     """
-    for path, fresh in (
+    race_ids = race_parity_fixture_ids(published_view_model())
+    fresh_pages = [
         (GUIDE_PAGE_PATH, build_audited_guide_page()),
         (SOURCES_PAGE_PATH, build_audited_sources_page()),
-    ):
+        *(
+            (race_page_fixture_path(race_id), build_audited_race_page(race_id))
+            for race_id in race_ids
+        ),
+    ]
+    for path, fresh in fresh_pages:
         assert path.read_text(encoding="utf-8") == fresh, (
             f"{path.relative_to(PROJECT_ROOT)} is not what the renderer now produces, so the "
             "Node markup-parity test is diffing against a page that no longer exists. "
             "Regenerate it in this pull request with `uv run python -m tests.page_parity` "
             "(docs/FRONTEND.md, Rendering)."
         )
+
+    # Which race pages are committed is derived from the data, so a shape that
+    # arrives or retires changes the set — and a fixture left behind would keep
+    # being diffed. Both directions, so neither a missing nor a stale one
+    # survives (issue #136).
+    committed = sorted(path.name for path in FIXTURE_DIR.glob(f"{RACE_PAGE_PREFIX}*.html"))
+    assert committed == sorted(race_page_fixture_path(race_id).name for race_id in race_ids), (
+        "the committed race-page fixtures are not the set the branch coverage now derives. "
+        "Regenerate them with `uv run python -m tests.page_parity` (docs/FRONTEND.md, "
+        "Rendering)."
+    )
+    assert race_ids, "no race page shape to diff against"

@@ -1,8 +1,10 @@
 /* The guide document's own page stylesheet (issue 246). It is read by the
    guide and by nothing else, so a rule here may assume the guide's markup:
-   the race grid, the race-detail dialog, and the guide's printable edition.
-   Rules the sources editor also renders live in guide-sources.css, and the
-   tokens and shared shell live in base.css (rendering/stylesheets.py). */
+   the race grid, the race card, the compact ballot view, and the guide's
+   printable edition. The result/meter/caption components a race page renders
+   too live in guide-race.css, the rules the sources editor also renders live
+   in lens-pages.css, and the tokens and shared shell live in base.css
+   (rendering/stylesheets.py). */
 /* .screen-guide is now a bare marker class for JS/print selectors; the
    guide's root also carries `.page`, which supplies the shared 76rem frame
    width (item L53). */
@@ -21,66 +23,16 @@
 .race-card[hidden], .screen-section[hidden] { display: none; }
 .race-office { margin: 0; overflow-wrap: anywhere; color: var(--muted); font-size: .78rem; font-weight: 600; letter-spacing: .04em; line-height: 1.2; text-transform: uppercase; }
 /* The card's two rows share one pair of columns: the name over the pill on the
-   left, the meter over its caption on the right. Top-aligned rather than
-   centered so the meter reads against the name's first line, and columned so
-   that the pill — which qualifies the pick, not the share — sits under the
-   name it applies to without displacing the caption that belongs to the
-   meter (I39/H38).
+   left, the meter over its caption on the right. Both rows are defined in
+   guide-race.css, because a race page renders the same pair; what the card adds
+   is the frame around them.
    The two rows are separate grids, not one: what they share is a right edge,
    which is where the meter and the caption meet (renderer-side
    `metersRightAligned` and `supportAligned`). Their metric tracks are not the
-   same width, because only the caption's grows — see .screen-race-context. */
-.screen-race-result { display: grid; grid-template-columns: minmax(0, 1fr) 11rem; align-items: start; gap: .75rem; min-width: 0; }
-.race-card h3 { min-width: 0; margin: 0; color: var(--navy); font: 800 1.5rem/1.08 var(--screen-sans); letter-spacing: -.02em; overflow-wrap: anywhere; }
-.screen-meter { display: flex; align-items: center; justify-content: flex-start; width: 11rem; height: 2rem; overflow: hidden; border: 1px solid var(--line-strong); border-radius: 1rem; background: linear-gradient(to right, var(--teal) 0 var(--meter-fill), var(--meter-track) var(--meter-fill) 100%); }
-.screen-meter strong { width: 100%; padding: .05rem .75rem 0; color: var(--white); font-size: 1.08rem; font-variant-numeric: tabular-nums; font-weight: 800; line-height: 1; text-align: left; }
-.screen-meter-na { background: var(--meter-track); }
-.screen-meter-na strong { color: var(--muted); }
-.screen-meter.meter-no-majority { background: linear-gradient(to right, var(--amber) 0 var(--meter-fill), var(--meter-track) var(--meter-fill) 100%); }
-.screen-meter.meter-no-majority strong { color: var(--navy); }
-/* I41: below ~30% fill the white label rides past the colored fill onto the
-   pale track and loses contrast; past the threshold (screen card and dialog
-   candidate meters — the two reachable contexts, per docs/UI_POLISH.md I41)
-   the label renders after the fill instead, in muted ink. Defensive only,
-   not the tabled D14 meter redesign. */
-.screen-meter.meter-low-fill strong, .race-detail-meter.meter-low-fill strong { padding-left: calc(var(--meter-fill) + .4rem); color: var(--muted); }
-/* The card's second row, in the same shape as the first: pill under the name,
-   caption under the meter. This is the track that has to grow. Against a fixed
-   track the caption wraps — measured at the wide default and across 480-720px —
-   and pinning it to one line instead (`white-space: nowrap`, the first attempt
-   here) trades the wrap for a box narrower than its own text, which then
-   overhangs leftward inside the card. `max-content` takes neither: the track is
-   exactly the caption, the row above keeps its own fixed meter track, and both
-   rows stay flush against the card's right edge. Both alternatives are caught
-   by the same assertion, `allHugText`, since both stop the box matching its
-   text.
-   No floor under it. The widest caption a reader can get is 185.77px — the
-   client's "Based on N of M selected sources" — so at the screen breakpoints a
-   floor could only restate what the content already demands, and in print it
-   would actively break: an 11rem floor (176px) against an 8pt caption of
-   171.91px stops the box hugging its text. Compact replaces this track outright
-   (below), so a floor here could not reach it either way.
-   `align-items: start` keeps the caption's own height when a taller pill
-   appears beside it. */
-.screen-race-context { display: grid; grid-template-columns: minmax(0, 1fr) max-content; align-items: start; min-width: 0; }
-.screen-race-context .support-line { grid-column: 2; }
-.no-majority-pill { justify-self: start; margin: 0; padding: .18rem .48rem; border: 1px solid var(--tone-differ-border); border-radius: 999px; background: var(--tone-differ-bg); color: var(--tone-differ-text); font-size: .68rem; font-weight: 800; letter-spacing: .02em; line-height: 1.2; }
-.support-line { min-width: 0; margin: .15rem 0 0; color: var(--muted); font-size: .72rem; line-height: 1.2; text-align: right; }
-/* H34: full view keeps the sentence-form caption; compact mode (where the
-   caption wraps to two lines per card) shortens it. Both forms always render
-   (mirroring the print edition's own full/compact captions); which one shows
-   is a pure CSS toggle, not a conditional data-lens-hidden/data-lens-only
-   fight, since neither rule here ever re-shows what those already hide. */
-.support-compact { display: none; }
+   same width, because only the caption's grows. */
 html.compact-ballot-mode .support-full { display: none; }
 html.compact-ballot-mode .support-compact { display: block; }
 
-/* One quiet info-bar component for the personalized lens's "All sources"
-   baseline, with agree/differ tone carried by the border and tint. */
-.lens-comparison { min-width: 0; margin: 0; padding: .38rem .6rem; border-left: .25rem solid var(--tone-neutral-border); background: var(--tone-neutral-bg); color: var(--tone-neutral-text); font-size: .74rem; line-height: 1.3; overflow-wrap: anywhere; }
-.lens-comparison-agrees { border-left-color: var(--tone-agree-border); background: var(--tone-agree-bg); color: var(--tone-agree-text); }
-.lens-comparison-differs { border-left-color: var(--tone-differ-border); background: var(--tone-differ-bg); color: var(--tone-differ-text); }
-.insufficient-note { padding: .55rem .65rem; border-left: .25rem solid var(--red); background: #fff1ef; color: #72231e; font-size: .78rem; }
 /* The card foot exists so lit has one region to own below the card's link
    (docs/FRONTEND.md, Rendering). It must not become a box: its children are
    direct flex items of the card, so the card's own gap still separates the
@@ -113,94 +65,21 @@ html.compact-ballot-mode .screen-meter { width: 100%; height: 1.6rem; }
 html.compact-ballot-mode .screen-meter strong { padding-right: .55rem; padding-left: .55rem; font-size: .84rem; }
 html.compact-ballot-mode .support-line { margin-top: 0; font-size: .68rem; text-align: left; }
 html.compact-ballot-mode .insufficient-note { padding: .38rem .48rem; font-size: .68rem; line-height: 1.25; }
+/* The card's core recommendation area is a link to the race's own page
+   (issue #136). It was a hash link that opened a dialog over the guide until
+   race detail became a page it can be landed on, shared, and unfurled
+   (docs/DESIGN.md, Page vs. modal). */
 .race-card-primary { display: grid; min-width: 0; gap: .55rem; margin: -.35rem; padding: .35rem; border-radius: .3rem; color: inherit; cursor: pointer; text-decoration: none; transition: background-color .15s ease, box-shadow .15s ease; }
 .race-card-primary:hover { background: var(--hover-tint-bg); box-shadow: inset 0 0 0 1px var(--hover-tint-ring); }
-.race-card-primary:focus-visible, .race-detail-dialog :focus-visible { outline: .2rem solid var(--focus); outline-offset: .15rem; }
-.race-detail-dialog { width: min(54rem, calc(100vw - 2rem)); max-height: calc(100vh - 2rem); padding: 0; overflow: auto; border: 1px solid var(--line-strong); border-radius: .45rem; background: var(--paper); color: var(--ink); box-shadow: 0 1rem 3rem rgba(16,42,67,.35); }
-.race-detail-dialog::backdrop { background: rgba(9, 30, 48, .68); }
+.race-card-primary:focus-visible { outline: .2rem solid var(--focus); outline-offset: .15rem; }
 
-.lens-banner { justify-content: center; margin: 0; text-align: center; }
-.lens-banner a { white-space: nowrap; }
-.lens-banner[hidden] { display: none; }
-
-/* Per-race personalized presentation (issue 81). A card is either showing
-   the audited baseline or its personalized result, never both at once, so
-   the two are mutually exclusive display:none toggles on one root class. The
-   "All sources" reference bar and its race-detail twin are additionally gated
-   by their own [hidden] attribute, since whether they show at all depends on
-   this race's own divergence, not just the active lens mode. */
-html:not(.lens-personalized) [data-lens-only] { display: none; }
-html.lens-personalized [data-lens-hidden] { display: none; }
-.race-detail-header { position: sticky; top: 0; z-index: 1; display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem 2rem; padding: 1rem 1.15rem; border-bottom: 1px solid var(--line-muted); background: var(--navy); color: var(--white); }
-.race-detail-header > div:first-child { min-width: 0; }
-.race-detail-header p { max-width: 40rem; margin: 0; color: var(--sky); font-size: .78rem; }
-.race-detail-header > div:first-child > p:first-child { color: var(--mint); font-size: .68rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
-.race-card .race-detail-header h3 { margin: .15rem 0 .25rem; color: var(--white); font-size: 1.35rem; }
-.race-detail-actions { display: flex; flex: 0 0 auto; align-items: center; gap: .25rem; }
-.race-detail-actions button { display: inline-flex; width: 2.5rem; height: 2.5rem; flex: 0 0 2.5rem; align-items: center; justify-content: center; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--mint); cursor: pointer; }
-.race-detail-actions button:hover { background: rgba(255,255,255,.1); color: var(--white); }
-.race-detail-actions button:focus-visible { outline: .2rem solid var(--focus); outline-offset: .12rem; }
-.race-detail-actions svg { display: block; }
-.race-detail-body { padding: .75rem; }
-.race-detail-outcomes { display: grid; gap: .65rem; }
-.race-detail-candidate, .race-detail-outcome { overflow: hidden; border: 1px solid var(--line-soft); border-left: .3rem solid var(--line-strong); background: var(--white); }
-.race-detail-candidate { border-color: #e8c58e; border-left-color: var(--amber); }
-.race-detail-candidate-leader { border-color: #9fcfc5; border-left-color: var(--teal); }
-.race-detail-candidate-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem 1.25rem; padding: .55rem .75rem; background: var(--tone-differ-bg); }
-.race-detail-candidate-leader .race-detail-candidate-heading { background: var(--tone-agree-bg); }
-.race-detail-candidate-title { min-width: 0; }
-.race-detail-candidate-title p { margin: 0 0 .05rem; color: var(--tone-agree-text); font-size: .62rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
-.race-card .race-detail-candidate-title h4 { min-width: 0; margin: 0; color: var(--navy); font-size: 1.05rem; line-height: 1.1; overflow-wrap: anywhere; }
-.race-detail-candidate-metrics { display: flex; flex: 0 0 auto; margin-left: auto; align-items: center; justify-content: flex-end; gap: .45rem .75rem; }
-.race-detail-candidate-metrics > span { color: var(--muted); font-size: .68rem; white-space: nowrap; }
-/* I40: one meter chrome — the dialog meter now adopts the card's own
-   border/track treatment instead of its own (tone-agree border, white
-   track). */
-.race-detail-meter { display: flex; flex: 0 0 auto; align-items: center; justify-content: flex-start; width: 8.5rem; height: 1.8rem; overflow: hidden; border: 1px solid var(--line-strong); border-radius: 1rem; background: linear-gradient(to right, var(--teal) 0 var(--meter-fill), var(--meter-track) var(--meter-fill) 100%); }
-/* An explicit `display` above beats the UA stylesheet's own `[hidden] {
-   display: none }` regardless of selector specificity (author styles always
-   outrank user-agent ones), so without restating it here a hidden meter —
-   e.g. the lens-only twin (I56) on every non-leading candidate — stayed
-   visible, unfilled, and unlabeled instead of fully absent. */
-.race-detail-meter[hidden] { display: none; }
-.race-detail-meter strong { width: 100%; padding: .05rem .65rem 0; color: var(--white); font-size: .9rem; font-variant-numeric: tabular-nums; text-align: left; }
-.race-detail-meter.meter-no-majority { background: linear-gradient(to right, var(--amber) 0 var(--meter-fill), var(--meter-track) var(--meter-fill) 100%); }
-.race-detail-meter.meter-no-majority strong { color: var(--navy); }
-.race-detail-meter-na { background: var(--meter-track); }
-.race-detail-meter-na strong { color: var(--muted); }
-.race-detail-outcome-unverified { border-left-color: var(--red); }
-.race-detail-outcome-heading { display: flex; align-items: baseline; justify-content: space-between; gap: .5rem 1rem; padding: .5rem .75rem; background: var(--tone-neutral-bg); }
-.race-card .race-detail-outcome-heading h4 { margin: 0; color: var(--navy); font-size: .86rem; }
-.race-detail-outcome-heading span { flex: 0 0 auto; color: var(--muted); font-size: .68rem; }
-.race-detail-source-list { display: grid; margin: 0; padding: 0; list-style: none; }
-.race-detail-source-list li + li { border-top: 1px solid var(--row-separator); }
-.race-detail-source-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: .35rem 1rem; min-height: 2.55rem; padding: .48rem .75rem; color: inherit; text-decoration: none; }
-a.race-detail-source-row:hover { background: #f8fafb; }
-a.race-detail-source-row:hover strong { text-decoration: underline; text-underline-offset: .15em; }
-.race-detail-source-row strong { min-width: 0; color: var(--navy); font-size: .8rem; overflow-wrap: anywhere; }
-.race-detail-source-meta { display: flex; min-width: 0; align-items: center; justify-content: flex-end; gap: .3rem; }
-/* H36: every endorser row carried a bordered category pill; the taxonomy
-   outweighed the data. Row order is unchanged — the category now renders as
-   plain right-aligned muted text instead. */
-.race-detail-category-badge { color: var(--muted); font-size: .68rem; font-weight: 600; text-align: right; }
-.race-detail-source-status { color: var(--muted); font-size: .68rem; font-weight: 700; text-align: right; }
-/* I56: an unselected source's row stays in place as evidence — dimmed and
-   labeled, never hidden — while a lens is active. The dimming is scoped to
-   `.lens-personalized` (rather than being unconditional) so a row this class
-   marked during an earlier personalized selection cannot visibly linger
-   after the selection returns to the audited default. */
-html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source-row { opacity: .55; }
-.race-detail-source-not-counted { color: var(--muted); font-size: .6rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
-.race-detail-missing { margin-top: .75rem; border-top: 1px solid var(--line); padding-top: .65rem; }
-.race-detail-missing summary { cursor: pointer; color: var(--muted); font-size: .72rem; font-weight: 700; }
-.race-detail-missing .race-detail-source-list { margin-top: .5rem; border: 1px solid var(--line-soft); background: #f8fafb; }
-.race-detail-missing .race-detail-source-row { min-height: 2.3rem; padding-top: .4rem; padding-bottom: .4rem; }
-.race-detail-missing .race-detail-source-row strong, .race-detail-missing .race-detail-source-status { color: var(--faint); font-weight: 600; }
 /* The shared footer band/audit classes (.site-footer, .site-footer-band,
    .site-footer-audit, ...) live in base.css alongside .site-band, since About
    and the archive render them too without loading this stylesheet. The
    sources editor's checkbox tree and coverage-gap section moved the other way,
-   into sources.css, when each page gained its own stylesheet (issue 246). */
+   into sources.css, when each page gained its own stylesheet (issue 246), and
+   the race-detail rules moved into race.css when race detail became a page
+   (issue #136). */
 
 @media (max-width: 1050px) {
   html.compact-ballot-mode .race-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -211,32 +90,6 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
   html.compact-ballot-mode .race-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .race-grid { grid-template-columns: 1fr; }
   .race-card { min-width: 0; }
-  .screen-race-result { grid-template-columns: minmax(0, 1fr) 8.75rem; gap: .6rem; }
-  .screen-meter { width: 8.75rem; }
-  .lens-comparison { padding-right: .55rem; padding-left: .55rem; }
-  .insufficient-note { overflow-wrap: anywhere; }
-  .race-detail-dialog { width: calc(100vw - 1rem); max-height: calc(100vh - 1rem); }
-  .race-detail-header { padding: .8rem; }
-  .race-detail-body { padding: .65rem; }
-  .race-detail-candidate-heading { align-items: flex-start; }
-  /* Stack the metrics: meter beside the candidate name, count underneath. */
-  .race-detail-candidate-metrics { flex: 0 1 auto; min-width: 0; max-width: 100%; flex-direction: column; align-items: flex-end; gap: .2rem; }
-  .race-detail-candidate-metrics > span { order: 1; max-width: 100%; text-align: right; white-space: normal; }
-  .race-detail-meter { width: 7.5rem; }
-  .race-detail-source-row { grid-template-columns: 1fr; gap: .25rem; }
-  .race-detail-source-meta { justify-content: flex-start; }
-  .race-detail-category-badge { text-align: left; }
-  .race-detail-source-status { text-align: left; }
-}
-
-@media (max-width: 479px) {
-  html:not(.compact-ballot-mode) .screen-race-result,
-  html:not(.compact-ballot-mode) .screen-race-context { grid-template-columns: minmax(0, 1fr); gap: .4rem; }
-  /* One column means one column: without this the explicit `grid-column: 2`
-     above would open an implicit second track and sit the caption beside the
-     pill instead of under it. */
-  html:not(.compact-ballot-mode) .screen-race-context .support-line { grid-column: 1; }
-  html:not(.compact-ballot-mode) .screen-meter { width: 100%; }
 }
 
 /* Ctrl+P is the printable edition (issue 193). No second rendering of the
@@ -246,7 +99,6 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
    whole across a page break. The shared shell — band, page head, election-day
    slot, sticky filter bar, footer — is printed by base.css for every page. */
 @media print {
-  .lens-banner { display: none !important; }
   .screen-sections { padding: 0; }
   .screen-section { margin: .18in 0 0; }
   .section-heading h2 { margin: 0 0 .07in; font-size: 15pt; break-after: avoid; }
@@ -259,10 +111,5 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
   html .race-card h3, html.compact-ballot-mode .race-card h3 { font-size: 12.5pt; }
   html .screen-meter, html.compact-ballot-mode .screen-meter { width: 7.5rem; height: 1.2rem; }
   html .screen-meter strong, html.compact-ballot-mode .screen-meter strong { font-size: 9.5pt; }
-  .screen-race-result, .screen-race-context { break-inside: avoid; }
-  .support-line, .lens-comparison, .insufficient-note { font-size: 8pt; }
   .race-card-primary { margin: 0; padding: 0; }
-  /* A closed <dialog> already prints nothing; one left open by a reader who
-     printed from a race panel would otherwise print over the page. */
-  .race-detail-dialog { display: none !important; }
 }

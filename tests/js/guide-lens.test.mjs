@@ -1,8 +1,11 @@
 // guide-lens.mjs is the guide's personalized rendering. Since issue #248 the
-// race card's three regions are lit-html templates over view-model state and
-// only the race-detail dialog is still patched by hand, so these tests read the
-// rendered markup rather than the twin elements that used to hold it, in a
-// lightweight DOM (docs/FRONTEND.md § Testing).
+// race card's three regions are lit-html templates over view-model state, so
+// these tests read the rendered markup rather than the twin elements that used
+// to hold it, in a lightweight DOM (docs/FRONTEND.md § Testing).
+//
+// The race-detail dialog this module also rendered is gone (issue #136); its
+// half of these tests moved to `race-client.test.mjs`, against the page that
+// replaced it.
 //
 // The banner is not here: it is page chrome, and `guide-client.test.mjs` covers
 // the region that owns it.
@@ -133,32 +136,6 @@ function lensMarkup() {
         <p class="support-line support-compact" data-display-role="support">2 sources</p>
       </div>
       <div class="race-card-foot" data-lens-foot></div>
-      <dialog data-race-detail-dialog>
-        <p data-race-detail-summary>The audited summary, verbatim.</p>
-        <div class="race-detail-outcomes">
-          <section data-race-detail-candidate-id="ada">
-            <p data-race-detail-lens-kicker hidden></p>
-            <span data-race-detail-lens-count></span>
-            <div data-race-detail-lens-meter hidden>
-              <strong data-race-detail-lens-meter-text></strong>
-            </div>
-            <li data-endorsed-candidate-id="ada" data-race-detail-source-code="strn">
-              <span data-race-detail-not-counted hidden></span>
-            </li>
-          </section>
-          <section data-race-detail-candidate-id="blaise">
-            <p data-race-detail-lens-kicker hidden></p>
-            <span data-race-detail-lens-count></span>
-            <div data-race-detail-lens-meter hidden>
-              <strong data-race-detail-lens-meter-text></strong>
-            </div>
-            <li data-endorsed-candidate-id="blaise" data-race-detail-source-code="mlkl">
-              <span data-race-detail-not-counted hidden></span>
-            </li>
-          </section>
-          <p data-lens-detail-audited hidden></p>
-        </div>
-      </dialog>
     </article>`;
 }
 
@@ -238,8 +215,6 @@ test('a race whose leader changed discloses the full-panel reference, in words',
     bar.getAttribute('aria-label'),
     /All sources (differ from|agree with) your selection/,
   );
-  // The dialog carries the same reference line (I56).
-  assert.equal(document.querySelector('[data-lens-detail-audited]').hidden, false);
 });
 
 // The bar is divergence-only, so an unchanged race renders no element at all
@@ -253,41 +228,11 @@ test('a selection that changes nothing renders no reference bar', async () => {
   assert.equal(document.querySelector('[data-lens-foot] .lens-comparison'), null);
 });
 
-// I56: no quantity may appear with two values, and an unselected source stays
-// in place as evidence rather than being removed.
-test('an unselected source stays visible, marked as not counted', async () => {
-  const { document, lens } = await build();
-  lens.render(['strn']);
-  const dropped = document.querySelector('[data-race-detail-source-code="mlkl"]');
-
-  assert.equal(dropped.classList.contains('race-detail-source-row-not-counted'), true);
-  assert.equal(dropped.querySelector('[data-race-detail-not-counted]').hidden, false);
-  assert.equal(dropped.querySelector('[data-race-detail-not-counted]').textContent, 'Not counted');
-
-  const kept = document.querySelector('[data-race-detail-source-code="strn"]');
-  assert.equal(kept.classList.contains('race-detail-source-row-not-counted'), false);
-  assert.equal(kept.querySelector('[data-race-detail-not-counted]').hidden, true);
-});
-
-// Ticket #141 item 1: the dialog's candidate order follows the displayed result.
-test('the leading candidate is moved to the front of the dialog', async () => {
-  const { document, lens } = await build();
-  lens.render(['mlkl']);
-  const order = [
-    ...document.querySelectorAll('.race-detail-outcomes > [data-race-detail-candidate-id]'),
-  ].map((section) => section.dataset.raceDetailCandidateId);
-  assert.deepEqual(order, ['blaise', 'ada']);
-});
-
 // The restore this ticket had to keep: nothing runs the renderer once the lens
 // stops applying, so clearing it must put the audited order and summary back.
-test('reselecting every source restores the audited order, values, and summary', async () => {
+test('reselecting every source restores the audited values', async () => {
   const { document, lens } = await build();
   lens.render(['mlkl']);
-  assert.notEqual(
-    document.querySelector('[data-race-detail-summary]').textContent,
-    'The audited summary, verbatim.',
-  );
   assert.equal(document.querySelector('[data-lens-result] h3').textContent, 'Blaise Pascal');
 
   lens.render(['strn', 'mlkl']);
@@ -302,40 +247,6 @@ test('reselecting every source restores the audited order, values, and summary',
     document.querySelector('[data-lens-context] .support-full').textContent,
     'Based on 2 endorsing sources',
   );
-  const order = [
-    ...document.querySelectorAll('.race-detail-outcomes > [data-race-detail-candidate-id]'),
-  ].map((section) => section.dataset.raceDetailCandidateId);
-  assert.deepEqual(order, ['ada', 'blaise']);
-  assert.equal(
-    document.querySelector('[data-race-detail-summary]').textContent,
-    'The audited summary, verbatim.',
-  );
-});
-
-// Ticket #141 item 5: the visually-hidden summary must not disagree with the
-// visible numbers while a lens is active.
-test('the accessible summary is recomputed with the visible result', async () => {
-  const { document, lens } = await build();
-  lens.render(['strn']);
-  const summary = document.querySelector('[data-race-detail-summary]').textContent;
-  assert.match(summary, /^Ada Lovelace\./);
-  assert.match(summary, /100%/);
-});
-
-test('the audited candidate order and labels come from the payload', async () => {
-  // A payload whose audited order is the reverse of the rendered markup proves
-  // the restore reads the contract, not the DOM it was handed.
-  const reversed = payload();
-  reversed.races[0].candidates = [
-    { candidate_id: 'blaise', label: 'Blaise Pascal' },
-    { candidate_id: 'ada', label: 'Ada Lovelace' },
-  ];
-  const { document, lens } = await build(reversed);
-  lens.render(['strn', 'mlkl']);
-  const order = [
-    ...document.querySelectorAll('.race-detail-outcomes > [data-race-detail-candidate-id]'),
-  ].map((section) => section.dataset.raceDetailCandidateId);
-  assert.deepEqual(order, ['blaise', 'ada']);
 });
 
 // The Insufficient branch of the card foot, which nothing else reaches: no

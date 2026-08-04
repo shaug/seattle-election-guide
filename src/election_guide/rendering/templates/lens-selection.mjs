@@ -1,15 +1,33 @@
-// The selection logic the guide and the standalone sources editor share.
+// The selection logic every lens-aware page shares.
 //
-// Both pages answer the same three questions about a lens — which sources a
-// decoded selection actually names, whether that is still the audited default,
-// and what fragment carries it to the other page — and until issue #239 both
-// answered them with their own copy of the same code inside their own
-// `<script>` block. One module, one implementation, tested once in Node.
+// The guide, a race page, and the standalone sources editor answer the same
+// questions about a lens — which sources a decoded selection actually names,
+// whether that is still the audited default, what an incoming link resolves to
+// and what the reader should be told about it, and what fragment carries the
+// selection to the next page. Until issue #239 each page answered them with its
+// own copy of the same code inside its own `<script>` block. One module, one
+// implementation, tested once in Node.
+//
+// What is deliberately *not* here is any page's wiring. This module shares a
+// vocabulary, not an engine, in exactly the sense `fragment-codec.mjs` does for
+// the two codecs: each page still reads its own address, renders its own
+// regions, and decides its own boot order, because those differ and expressing
+// the difference as configuration would cost more than the sharing saves.
 //
 // Pure: it maps codes to codes and hands back an outcome. Nothing here touches
 // a checkbox, a link, or `location`; the pages' own wiring does that.
 
+import { migrateLensState } from './lens-migrate.mjs';
 import { encodeLensFragment } from './lens-url.mjs';
+
+/** What a reader is told when the link they followed cannot be read at all. */
+export const UNREADABLE_LINK_NOTICE =
+  'This link could not be read, so it shows the audited consensus.';
+
+/** ...and when it was written against an earlier published data version. */
+export const MIGRATED_LINK_NOTICE =
+  'This link was written for an earlier published data version. It was migrated to the current ' +
+  'panel, so results may differ from the original link.';
 
 /**
  * What a reader is told when their selection cannot be written into a link.
@@ -123,6 +141,71 @@ export function selectionFragment({ selectedCodes, tallyingCodes, raceTarget, co
   );
   if (encoded.status !== 'ok') return { status: 'rejected', reason: encoded.reason };
   return { status: 'ok', fragment: `#${encoded.fragment}` };
+}
+
+/**
+ * One decoded fragment resolved to live state, an explanation, and whether the
+ * address bar has to be cleaned.
+ *
+ * @typedef {object} LensLinkOutcome
+ * @property {import('./lens-url.mjs').LensState|null} state
+ * @property {string|null} notice
+ * @property {boolean} cleanAddress
+ */
+
+/**
+ * Resolve one decoded fragment to live lens state plus a persistent
+ * explanation, when one is warranted.
+ *
+ * A same-version link needs neither migration nor an explanation. A
+ * `stale_version` link is resolved through issue 78's migration resolver, with
+ * no origin snapshot: nothing about correct resolution depends on one (a
+ * surviving code always names the same source or category it always did), it
+ * only refines "removed" versus "unknown" reporting these pages do not surface.
+ * A migration that must reject falls back to audited. Every other non-lens
+ * status (`absent`, `legacy`, or an ordinary in-page anchor the codec does not
+ * recognize, such as the skip link) carries no lens explanation at all, so
+ * clicking around a page never manufactures one.
+ *
+ * With the lens disabled there is nothing to migrate a stale link into and
+ * nothing on the page acts on a selection, so the decode runs only so that an
+ * unreadable fragment is recognized — and reported. It used to be cleaned from
+ * the address bar in silence, which the rule forbids (docs/FRONTEND.md § State
+ * and URLs: a decode failure produces a reader-visible notice *and* a cleaned
+ * address bar).
+ *
+ * @param {import('./lens-url.mjs').LensDecodeResult} decoded
+ * @param {PersonalizationContract|null} personalization
+ * @returns {LensLinkOutcome}
+ */
+export function resolveLensLink(decoded, personalization) {
+  const unreadable = decoded.status === 'malformed' && decoded.reason !== 'unrecognized_fragment';
+  if (personalization === null) {
+    const usable = decoded.status === 'valid' || decoded.status === 'stale_version';
+    return {
+      state: usable ? decoded.state : null,
+      notice: unreadable ? UNREADABLE_LINK_NOTICE : null,
+      cleanAddress: unreadable,
+    };
+  }
+  if (decoded.status === 'valid') {
+    return { state: decoded.state, notice: null, cleanAddress: false };
+  }
+  if (decoded.status === 'stale_version') {
+    const migration = migrateLensState(decoded, personalization, null);
+    if (migration.status === 'migrated') {
+      return { state: migration.selection, notice: MIGRATED_LINK_NOTICE, cleanAddress: false };
+    }
+    return {
+      state: null,
+      notice:
+        'This link could not be migrated to the current published panel ' +
+        `(category ${migration.category} is no longer available), so it shows the audited consensus.`,
+      cleanAddress: true,
+    };
+  }
+  if (!unreadable) return { state: null, notice: null, cleanAddress: false };
+  return { state: null, notice: UNREADABLE_LINK_NOTICE, cleanAddress: true };
 }
 
 /**
