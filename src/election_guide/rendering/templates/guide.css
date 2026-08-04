@@ -20,7 +20,17 @@
 .race-card { display: flex; min-width: 0; flex-direction: column; gap: .55rem; padding: 1.15rem; background: var(--white); border: 1px solid var(--line-soft); border-top: .3rem solid var(--teal); box-shadow: 0 .2rem .8rem rgba(16,42,67,.08); }
 .race-card[hidden], .screen-section[hidden] { display: none; }
 .race-office { margin: 0; overflow-wrap: anywhere; color: var(--muted); font-size: .78rem; font-weight: 600; letter-spacing: .04em; line-height: 1.2; text-transform: uppercase; }
-.screen-race-result { display: grid; grid-template-columns: minmax(0, 1fr) 11rem; align-items: center; gap: .75rem; min-width: 0; }
+/* The card's two rows share one pair of columns: the name over the pill on the
+   left, the meter over its caption on the right. Top-aligned rather than
+   centered so the meter reads against the name's first line, and columned so
+   that the pill — which qualifies the pick, not the share — sits under the
+   name it applies to without displacing the caption that belongs to the
+   meter (I39/H38).
+   The two rows are separate grids, not one: what they share is a right edge,
+   which is where the meter and the caption meet (renderer-side
+   `metersRightAligned` and `supportAligned`). Their metric tracks are not the
+   same width, because only the caption's grows — see .screen-race-context. */
+.screen-race-result { display: grid; grid-template-columns: minmax(0, 1fr) 11rem; align-items: start; gap: .75rem; min-width: 0; }
 .race-card h3 { min-width: 0; margin: 0; color: var(--navy); font: 800 1.5rem/1.08 var(--screen-sans); letter-spacing: -.02em; overflow-wrap: anywhere; }
 .screen-meter { display: flex; align-items: center; justify-content: flex-start; width: 11rem; height: 2rem; overflow: hidden; border: 1px solid var(--line-strong); border-radius: 1rem; background: linear-gradient(to right, var(--teal) 0 var(--meter-fill), var(--meter-track) var(--meter-fill) 100%); }
 .screen-meter strong { width: 100%; padding: .05rem .75rem 0; color: var(--white); font-size: 1.08rem; font-variant-numeric: tabular-nums; font-weight: 800; line-height: 1; text-align: left; }
@@ -34,8 +44,27 @@
    the label renders after the fill instead, in muted ink. Defensive only,
    not the tabled D14 meter redesign. */
 .screen-meter.meter-low-fill strong, .race-detail-meter.meter-low-fill strong { padding-left: calc(var(--meter-fill) + .4rem); color: var(--muted); }
-.screen-race-context { display: grid; gap: .35rem; min-width: 0; }
-.no-majority-pill { justify-self: end; margin: 0; padding: .18rem .48rem; border: 1px solid var(--tone-differ-border); border-radius: 999px; background: var(--tone-differ-bg); color: var(--tone-differ-text); font-size: .68rem; font-weight: 800; letter-spacing: .02em; line-height: 1.2; }
+/* The card's second row, in the same shape as the first: pill under the name,
+   caption under the meter. This is the track that has to grow. Against a fixed
+   track the caption wraps — measured at the wide default and across 480-720px —
+   and pinning it to one line instead (`white-space: nowrap`, the first attempt
+   here) trades the wrap for a box narrower than its own text, which then
+   overhangs leftward inside the card. `max-content` takes neither: the track is
+   exactly the caption, the row above keeps its own fixed meter track, and both
+   rows stay flush against the card's right edge. Both alternatives are caught
+   by the same assertion, `allHugText`, since both stop the box matching its
+   text.
+   No floor under it. The widest caption a reader can get is 185.77px — the
+   client's "Based on N of M selected sources" — so at the screen breakpoints a
+   floor could only restate what the content already demands, and in print it
+   would actively break: an 11rem floor (176px) against an 8pt caption of
+   171.91px stops the box hugging its text. Compact replaces this track outright
+   (below), so a floor here could not reach it either way.
+   `align-items: start` keeps the caption's own height when a taller pill
+   appears beside it. */
+.screen-race-context { display: grid; grid-template-columns: minmax(0, 1fr) max-content; align-items: start; min-width: 0; }
+.screen-race-context .support-line { grid-column: 2; }
+.no-majority-pill { justify-self: start; margin: 0; padding: .18rem .48rem; border: 1px solid var(--tone-differ-border); border-radius: 999px; background: var(--tone-differ-bg); color: var(--tone-differ-text); font-size: .68rem; font-weight: 800; letter-spacing: .02em; line-height: 1.2; }
 .support-line { min-width: 0; margin: .15rem 0 0; color: var(--muted); font-size: .72rem; line-height: 1.2; text-align: right; }
 /* H34: full view keeps the sentence-form caption; compact mode (where the
    caption wraps to two lines per card) shortens it. Both forms always render
@@ -69,8 +98,17 @@ html.compact-ballot-mode .race-card-primary { gap: .35rem; }
    subgrid) keeps every compact card's meter starting at the same offset. */
 html.compact-ballot-mode .race-office { min-height: 2.3rem; font-size: .66rem; line-height: 1.15; }
 html.compact-ballot-mode .race-card h3 { font-size: 1.08rem; line-height: 1.05; }
+/* Compact stacks both rows into one column, so the pill's position is now a
+   question of order rather than of columns. It goes last, after the caption:
+   in source order it sits between meter and caption, which costs the caption
+   the adjacency it owes the meter (I39/H38) — measured 30px there against 5px
+   here. It cannot be pushed above the meter and cannot displace one: the pill
+   lives in the row below in both renderers, so I42's baseline is not what is
+   at stake here, only the caption's. */
 html.compact-ballot-mode .screen-race-result,
 html.compact-ballot-mode .screen-race-context { grid-template-columns: minmax(0, 1fr); gap: .3rem; }
+html.compact-ballot-mode .screen-race-context .support-line { grid-column: 1; }
+html.compact-ballot-mode .no-majority-pill { order: 1; }
 html.compact-ballot-mode .screen-meter { width: 100%; height: 1.6rem; }
 html.compact-ballot-mode .screen-meter strong { padding-right: .55rem; padding-left: .55rem; font-size: .84rem; }
 html.compact-ballot-mode .support-line { margin-top: 0; font-size: .68rem; text-align: left; }
@@ -192,7 +230,12 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
 }
 
 @media (max-width: 479px) {
-  html:not(.compact-ballot-mode) .screen-race-result { grid-template-columns: minmax(0, 1fr); gap: .4rem; }
+  html:not(.compact-ballot-mode) .screen-race-result,
+  html:not(.compact-ballot-mode) .screen-race-context { grid-template-columns: minmax(0, 1fr); gap: .4rem; }
+  /* One column means one column: without this the explicit `grid-column: 2`
+     above would open an implicit second track and sit the caption beside the
+     pill instead of under it. */
+  html:not(.compact-ballot-mode) .screen-race-context .support-line { grid-column: 1; }
   html:not(.compact-ballot-mode) .screen-meter { width: 100%; }
 }
 

@@ -112,6 +112,40 @@ import { repeat } from 'lit-html/directives/repeat.js';
  */
 
 /**
+ * A comparison cell's share, as `comparison_percentage_label` writes it.
+ *
+ * The audited renderer scales the share as a rational, prints a whole
+ * percentage with no decimal, and otherwise rounds to one place half-to-even.
+ * `toFixed` rounds halves away from zero instead, which made the same 9/16
+ * share read 56.2% on the audited page and 56.3% the moment a reader touched
+ * it. The markup-parity test found that; the arithmetic here stays on integers
+ * so the two sides cannot drift apart again over a float.
+ *
+ * Exported from the table's module rather than closed over by the wiring so
+ * `mirror-parity.test.mjs` can reach it. Markup parity only ever sees the
+ * baseline column's share — a category column's share is computed on the client
+ * and rendered nowhere on the audited page — so the golden cases are the only
+ * check that reads the rounding boundaries at all
+ * (docs/FRONTEND.md § Cross-language mirrors).
+ *
+ * The denominator default is numeric because the input is already numeric: an
+ * integer rational such as `3` splits to one element.
+ *
+ * @param {string|null|undefined} rational
+ * @returns {string}
+ */
+export function comparisonPercentageLabel(rational) {
+  if (rational == null) return '';
+  const [top, bottom = 1] = String(rational).split('/').map(Number);
+  if ((top * 100) % bottom === 0) return `${(top * 100) / bottom}%`;
+  const tenths = top * 1000;
+  const whole = Math.floor(tenths / bottom);
+  const doubled = 2 * (tenths - whole * bottom);
+  const rounded = doubled > bottom || (doubled === bottom && whole % 2 !== 0) ? whole + 1 : whole;
+  return `${(rounded / 10).toFixed(1)}%`;
+}
+
+/**
  * The server writes this attribute with Python's `json.dumps`, whose default
  * item separator carries a space. Matching it here is not cosmetic: the parity
  * test compares attribute values, so a bare `JSON.stringify` would be a real

@@ -47,13 +47,22 @@ export function hasNoMajority(shareString) {
 /**
  * The meter's spoken label. The tone tint is never the only carrier.
  *
+ * A race with no share is spoken as "not available", not as the meter's visible
+ * `N/A`. `screen_share_accessible_label` has always said so; this reused
+ * `percentageLabel` instead and so read the abbreviation aloud, which is the
+ * divergence the parity fixture found (issue #240). The visible text and the
+ * spoken text are allowed to differ — an abbreviation that fits in a meter is
+ * not a phrase a screen reader should announce — so the two sides agreeing is
+ * the whole of the claim here.
+ *
  * @param {string|null} shareString
  * @returns {string}
  */
 export function shareAccessibleLabel(shareString) {
+  const share = shareString === null ? 'not available' : percentageLabel(shareString);
   return (
     `${hasNoMajority(shareString) ? 'No majority. ' : ''}` +
-    `Consensus among explicitly endorsing sources: ${percentageLabel(shareString)}`
+    `Consensus among explicitly endorsing sources: ${share}`
   );
 }
 
