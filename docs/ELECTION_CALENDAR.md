@@ -135,9 +135,17 @@ was opened with.
 
 When you edit a generated issue, **leave the marker as the body's last
 non-empty line.** The run recognizes an issue by that line and nothing else, so
-a note appended below it makes the issue invisible and the milestone is opened
-again — every six hours, for as long as it stays inside the lead window. Edit
-above the marker, or move it back to the end.
+a note appended below it would otherwise make the issue invisible. Edit above
+the marker, or move it back to the end.
+
+If that does happen, the run says so rather than quietly opening a second
+issue. Before creating anything it checks whether an existing issue's title
+already names the milestone; a title that claims a milestone no marker was
+found for means the two disagree, so the run skips that one, names the issue to
+look at, and exits non-zero. The other milestones are still opened. A title is
+never what makes a milestone count as tracked — only the marker is — because a
+human who copied a generated title could otherwise cost a real milestone its
+reminder.
 
 The listing that finds those markers reads **every** issue in the repository,
 open and closed, and takes the marker only from each body's final line. Reading

@@ -24,10 +24,11 @@ from election_guide.calendar import (
 from election_guide.calendar.github_tracker import (
     ISSUE_QUERY_LIMIT,
     GitHubIssueTracker,
-    issue_bodies,
+    TrackedIssues,
+    issue_records,
     markers_in_issues,
 )
-from election_guide.calendar.tracking import MARKER_PREFIX
+from election_guide.calendar.tracking import MARKER_PREFIX, unmarked_collisions
 from election_guide.cli import app
 
 PROJECT_ROOT = Path(__file__).parents[1]
@@ -193,11 +194,12 @@ def test_markers_are_read_back_out_of_issue_bodies() -> None:
     request = _plan(date(2027, 11, 2), 0)[0]
     payload = json.dumps([{"body": request.body}])
 
-    assert markers_in_issues(issue_bodies(payload)) == {request.marker}
+    assert markers_in_issues([body for _, body in issue_records(payload)]) == {request.marker}
 
 
 def test_markers_ignores_an_issue_with_no_body() -> None:
-    assert markers_in_issues(issue_bodies('[{"body": null}, {"body": "no marker here"}]')) == set()
+    payload = '[{"body": null}, {"body": "no marker here"}]'
+    assert markers_in_issues([body for _, body in issue_records(payload)]) == set()
 
 
 def test_the_committed_calendar_plans_only_milestones_ahead_of_the_window() -> None:
@@ -222,6 +224,10 @@ def _completed(command: list[str], stdout: str = "", code: int = 0) -> Completed
     return CompletedProcess(command, code, stdout=stdout, stderr="")
 
 
+def _nothing_tracked(self: GitHubIssueTracker) -> TrackedIssues:
+    return TrackedIssues(markers=frozenset(), titles=())
+
+
 def test_existing_markers_lists_by_label_across_open_and_closed_issues(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -234,7 +240,7 @@ def test_existing_markers_lists_by_label_across_open_and_closed_issues(
 
     monkeypatch.setattr(subprocess, "run", _run)
 
-    assert GitHubIssueTracker("owner/repo").existing_markers() == {marker}
+    assert GitHubIssueTracker("owner/repo").read_tracked_issues().markers == {marker}
     command = recorded["command"]
     assert command[:3] == ["gh", "issue", "list"]
     # Closed issues count, and the filter is the label rather than a text search.
@@ -244,7 +250,7 @@ def test_existing_markers_lists_by_label_across_open_and_closed_issues(
     assert "--label" not in command
     assert "--search" not in command
     # The body is what carries the marker back; any other field reads as empty.
-    assert command[command.index("--json") + 1] == "body"
+    assert command[command.index("--json") + 1] == "title,body"
     assert str(ISSUE_QUERY_LIMIT) in command
 
 
@@ -258,7 +264,7 @@ def test_existing_markers_refuses_a_truncated_listing(monkeypatch: pytest.Monkey
     monkeypatch.setattr(subprocess, "run", _run)
 
     with pytest.raises(ValueError, match="listing limit"):
-        GitHubIssueTracker("owner/repo").existing_markers()
+        GitHubIssueTracker("owner/repo").read_tracked_issues()
 
 
 def test_an_unlabelled_issue_still_suppresses_its_milestone(
@@ -273,7 +279,7 @@ def test_an_unlabelled_issue_still_suppresses_its_milestone(
 
     monkeypatch.setattr(subprocess, "run", _run)
 
-    assert GitHubIssueTracker("owner/repo").existing_markers() == {marker}
+    assert GitHubIssueTracker("owner/repo").read_tracked_issues().markers == {marker}
 
 
 def test_a_quoted_marker_does_not_suppress_a_milestone() -> None:
@@ -355,7 +361,7 @@ def test_a_failing_cli_is_reported(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(subprocess, "run", _run)
 
     with pytest.raises(ValueError, match="could not list existing calendar issues"):
-        GitHubIssueTracker("owner/repo").existing_markers()
+        GitHubIssueTracker("owner/repo").read_tracked_issues()
 
 
 def test_a_missing_cli_is_reported(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -365,14 +371,14 @@ def test_a_missing_cli_is_reported(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(subprocess, "run", _run)
 
     with pytest.raises(ValueError, match="GitHub CLI is required"):
-        GitHubIssueTracker("owner/repo").existing_markers()
+        GitHubIssueTracker("owner/repo").read_tracked_issues()
 
 
 def test_a_malformed_issue_listing_is_rejected() -> None:
     with pytest.raises(ValueError, match="not an array"):
-        issue_bodies(json.dumps({"body": "x"}))
+        issue_records(json.dumps({"body": "x"}))
     with pytest.raises(ValueError, match="not an object"):
-        issue_bodies(json.dumps(["x"]))
+        issue_records(json.dumps(["x"]))
 
 
 def test_dry_run_prints_the_plan_and_creates_nothing(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -381,10 +387,7 @@ def test_dry_run_prints_the_plan_and_creates_nothing(monkeypatch: pytest.MonkeyP
     def _never(self: GitHubIssueTracker, request: IssueRequest) -> str:
         raise AssertionError("a dry run must not create anything")
 
-    def _no_markers(self: GitHubIssueTracker) -> set[str]:
-        return set()
-
-    monkeypatch.setattr(GitHubIssueTracker, "existing_markers", _no_markers)
+    monkeypatch.setattr(GitHubIssueTracker, "read_tracked_issues", _nothing_tracked)
     monkeypatch.setattr(GitHubIssueTracker, "create", _never)
 
     result = CliRunner().invoke(
@@ -409,14 +412,11 @@ def test_dry_run_prints_the_plan_and_creates_nothing(monkeypatch: pytest.MonkeyP
 def test_a_real_run_creates_each_planned_issue(monkeypatch: pytest.MonkeyPatch) -> None:
     created: list[str] = []
 
-    def _no_markers(self: GitHubIssueTracker) -> set[str]:
-        return set()
-
     def _record(self: GitHubIssueTracker, request: IssueRequest) -> str:
         created.append(request.marker)
         return "issues/1"
 
-    monkeypatch.setattr(GitHubIssueTracker, "existing_markers", _no_markers)
+    monkeypatch.setattr(GitHubIssueTracker, "read_tracked_issues", _nothing_tracked)
     monkeypatch.setattr(GitHubIssueTracker, "create", _record)
 
     result = CliRunner().invoke(
@@ -449,3 +449,108 @@ def test_the_workflow_runs_every_six_hours_off_the_hour() -> None:
     assert len(slots) == 4
     assert {later - earlier for earlier, later in pairwise(slots)} == {6}
     assert (slots[0] + 24) - slots[-1] == 6
+
+
+def _tracked(markers: set[str], titles: tuple[str, ...]) -> object:
+    def _read(self: GitHubIssueTracker) -> TrackedIssues:
+        return TrackedIssues(markers=frozenset(markers), titles=titles)
+
+    return _read
+
+
+def test_a_title_claiming_an_unmarked_milestone_is_a_collision() -> None:
+    """The signals disagree, which means a marker went missing."""
+    plan = _plan(date(2027, 10, 14), 3)
+    assert plan
+
+    collisions = unmarked_collisions(plan, ("wa-2027-general: ballots-mail due 2027-09-01",))
+
+    assert [request.marker for request, _ in collisions] == [plan[0].marker]
+    assert collisions[0][1] == "wa-2027-general: ballots-mail due 2027-09-01"
+
+
+def test_an_unrelated_title_is_not_a_collision() -> None:
+    plan = _plan(date(2027, 10, 14), 3)
+
+    assert (
+        unmarked_collisions(plan, ("Something else entirely", "wa-2027-general: refresh due x"))
+        == []
+    )
+
+
+def test_a_copied_title_cannot_suppress_a_milestone(monkeypatch: pytest.MonkeyPatch) -> None:
+    """A title never establishes tracking; it only reports a contradiction.
+
+    The run stops rather than silently skipping, so a human who copied a
+    generated title cannot quietly cost a milestone its reminder.
+    """
+    monkeypatch.setattr(
+        GitHubIssueTracker,
+        "read_tracked_issues",
+        _tracked(set(), ("wa-2026-primary: election-day due 2026-08-04 — questions",)),
+    )
+
+    result = CliRunner().invoke(
+        app,
+        ["calendar", "track", str(CALENDAR_PATH), "--as-of", "2026-08-03", "--lead-days", "1"],
+    )
+
+    assert result.exit_code == 1
+    assert "already claims that milestone but carries no readable marker" in result.output
+
+
+def test_a_collision_skips_only_its_own_milestone(monkeypatch: pytest.MonkeyPatch) -> None:
+    """One contradicted milestone must not cost the others their reminders."""
+    created: list[str] = []
+
+    def _record(self: GitHubIssueTracker, request: IssueRequest) -> str:
+        created.append(request.marker)
+        return "issues/1"
+
+    monkeypatch.setattr(
+        GitHubIssueTracker,
+        "read_tracked_issues",
+        _tracked(set(), ("wa-2026-primary: election-day due 2026-08-04",)),
+    )
+    monkeypatch.setattr(GitHubIssueTracker, "create", _record)
+
+    result = CliRunner().invoke(
+        app,
+        ["calendar", "track", str(CALENDAR_PATH), "--as-of", "2026-08-03", "--lead-days", "21"],
+    )
+
+    assert result.exit_code == 1
+    assert milestone_marker("wa-2026-primary", "election-day") not in created
+    # The other four due milestones were still opened.
+    assert len(created) == 4
+    assert "4 opened" in result.output
+
+
+def test_a_marked_milestone_never_reaches_the_collision_check(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A readable marker settles it; the title is never consulted."""
+    # Both milestones fall on 2026-08-04, so both must be marked for the run
+    # to have nothing left to do.
+    marked = {
+        milestone_marker("wa-2026-primary", "election-day"),
+        milestone_marker("wa-2026-primary", "results-capture-election-night"),
+    }
+
+    def _never(self: GitHubIssueTracker, request: IssueRequest) -> str:
+        raise AssertionError("nothing should be created")
+
+    monkeypatch.setattr(
+        GitHubIssueTracker,
+        "read_tracked_issues",
+        _tracked(marked, ("wa-2026-primary: election-day due 2026-08-04",)),
+    )
+    monkeypatch.setattr(GitHubIssueTracker, "create", _never)
+
+    result = CliRunner().invoke(
+        app,
+        ["calendar", "track", str(CALENDAR_PATH), "--as-of", "2026-08-03", "--lead-days", "1"],
+    )
+
+    assert result.exit_code == 0
+    assert "0 opened" in result.output

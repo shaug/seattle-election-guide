@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+from dataclasses import dataclass
 from typing import Any, cast
 
 from election_guide.calendar.tracking import MARKER_PREFIX, IssueRequest
@@ -38,18 +39,34 @@ def _run(command: list[str], failure: str) -> str:
     return completed.stdout
 
 
-def issue_bodies(payload: str) -> list[str]:
-    """Extract issue bodies from `gh issue list --json body` output."""
+@dataclass(frozen=True)
+class TrackedIssues:
+    """What the repository already says about calendar milestones.
+
+    `markers` is the identity the tracker acts on. `titles` is only used to
+    notice that a title and the markers disagree; it never establishes that a
+    milestone is tracked.
+    """
+
+    markers: frozenset[str]
+    titles: tuple[str, ...]
+
+
+def issue_records(payload: str) -> list[tuple[str, str]]:
+    """Extract (title, body) from `gh issue list --json title,body` output."""
     issues: Any = json.loads(payload)
     if not isinstance(issues, list):
         raise ValueError("GitHub CLI returned an issue list that is not an array")
-    bodies: list[str] = []
+    records: list[tuple[str, str]] = []
     for entry in cast(list[Any], issues):
         if not isinstance(entry, dict):
             raise ValueError("GitHub CLI returned an issue that is not an object")
-        body = cast(dict[str, Any], entry).get("body")
-        bodies.append(body if isinstance(body, str) else "")
-    return bodies
+        issue = cast(dict[str, Any], entry)
+        title, body = issue.get("title"), issue.get("body")
+        records.append(
+            (title if isinstance(title, str) else "", body if isinstance(body, str) else "")
+        )
+    return records
 
 
 def markers_in_issues(bodies: list[str]) -> set[str]:
@@ -77,8 +94,8 @@ class GitHubIssueTracker:
     def __init__(self, repository: str) -> None:
         self.repository = repository
 
-    def existing_markers(self) -> set[str]:
-        """Read markers from every issue in the repository, open or closed.
+    def read_tracked_issues(self) -> TrackedIssues:
+        """Read every issue in the repository, open or closed.
 
         Closed issues count. A milestone whose issue was opened and completed
         must not be reopened as a duplicate on the next run.
@@ -106,17 +123,20 @@ class GitHubIssueTracker:
                 "--limit",
                 str(ISSUE_QUERY_LIMIT),
                 "--json",
-                "body",
+                "title,body",
             ],
             "could not list existing calendar issues",
         )
-        bodies = issue_bodies(payload)
-        if len(bodies) >= ISSUE_QUERY_LIMIT:
+        records = issue_records(payload)
+        if len(records) >= ISSUE_QUERY_LIMIT:
             raise ValueError(
                 f"reached the {ISSUE_QUERY_LIMIT}-issue listing limit, so a marker may have been "
                 "dropped; raise ISSUE_QUERY_LIMIT before running again"
             )
-        return markers_in_issues(bodies)
+        return TrackedIssues(
+            markers=frozenset(markers_in_issues([body for _, body in records])),
+            titles=tuple(title for title, _ in records),
+        )
 
     def ensure_milestone(self, title: str) -> None:
         """Create the per-election GitHub milestone unless it already exists."""

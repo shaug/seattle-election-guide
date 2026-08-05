@@ -8,6 +8,7 @@ idempotence is decided here and merely carried out there.
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from datetime import date, timedelta
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -31,6 +32,18 @@ ISSUE_LABELS: tuple[str, ...] = ("type: ops", "area: operations")
 def milestone_marker(election_id: str, milestone_id: str) -> str:
     """Build the stable identity a generated issue is recognized by."""
     return f"{MARKER_PREFIX} {election_id}/{milestone_id}"
+
+
+def milestone_title_prefix(election_id: str, milestone_id: str) -> str:
+    """The part of a generated title that names the milestone, without its date.
+
+    A date that moves does not rewrite an open issue's title, so this prefix
+    still identifies the milestone afterwards. It is never used to decide that
+    a milestone is tracked — only to notice that a title and the markers
+    disagree. Recognizing by title would let a human who copied one suppress a
+    real milestone.
+    """
+    return f"{election_id}: {milestone_id} due "
 
 
 class TrackingModel(BaseModel):
@@ -122,10 +135,36 @@ def plan_issues(
         plan.append(
             IssueRequest(
                 marker=marker,
-                title=f"{milestone.election_id}: {milestone.id} due {scheduled.isoformat()}",
+                title=(
+                    milestone_title_prefix(milestone.election_id, milestone.id)
+                    + scheduled.isoformat()
+                ),
                 body=_issue_body(milestone, milestone.election_id, scheduled, marker),
                 labels=ISSUE_LABELS,
                 milestone=milestone.election_id,
             )
         )
     return plan
+
+
+def unmarked_collisions(
+    plan: Iterable[IssueRequest], existing_titles: Iterable[str]
+) -> list[tuple[IssueRequest, str]]:
+    """Planned issues whose milestone an existing title already claims.
+
+    The marker is the only identity, so a milestone reaching the plan means no
+    marker was read for it. If a title nonetheless says the issue exists, the
+    two signals disagree — most likely an edit pushed the marker off the body's
+    last line — and creating another issue would repeat that every run.
+
+    Returns each such request beside the title that contradicts it, so the
+    caller can skip it and say which issue to look at.
+    """
+    titles = list(existing_titles)
+    collisions: list[tuple[IssueRequest, str]] = []
+    for request in plan:
+        prefix = request.title[: request.title.rindex(" due ") + len(" due ")]
+        match = next((title for title in titles if title.startswith(prefix)), None)
+        if match is not None:
+            collisions.append((request, match))
+    return collisions

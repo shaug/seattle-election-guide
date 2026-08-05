@@ -15,7 +15,9 @@ from election_guide.calendar.tracking import (
     IssueRequest,
     due_milestones,
     milestone_marker,
+    milestone_title_prefix,
     plan_issues,
+    unmarked_collisions,
 )
 
 __all__ = [
@@ -30,6 +32,8 @@ __all__ = [
     "MilestoneKind",
     "due_milestones",
     "milestone_marker",
+    "milestone_title_prefix",
     "plan_issues",
     "read_election_calendar",
+    "unmarked_collisions",
 ]
