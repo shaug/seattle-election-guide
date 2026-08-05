@@ -110,8 +110,8 @@
         "text:--meter-c:",
         "text:--meter-ca:",
         "text:--meter-cb:",
-        "text:--meter-seam-rest:",
-        "text:--meter-seam-hover:",
+        "text:--•-color:",
+        "text:--•-image:linear-gradient(180deg, • 0 50%, • 50% 100%)",
         "text:--meter-splitline-rest:",
         "text:--meter-splitline-hover:",
         "text:--meter-tongue-bg:",
@@ -122,7 +122,7 @@
         "text:½ each",
         "text:1/• each"
       ],
-      "note": "Every block's complete paint (the inline `style` value MeterBlockRender carries, built once so a Jinja macro and a lit-html template both merely write it rather than assembling it twice) and tooltip decision text (docs/METER_V2.md, The discovery model). `meter_block_decision`'s own text — 'Endorsed', the split phrasing, the two-way glyph and the literal n-way ratio — is folded in here rather than given its own entry, because every case that reaches a decision branch reaches it by rendering blocks. The n-way share and the color-mix seam blends are only reachable through meter-layout-blocks' hand-built shapes (a three-way split, adjacent bands), which this fixture reuses for the same reason that entry does."
+      "note": "Every block's complete paint (the inline `style` value MeterBlockRender carries, built once so a Jinja macro and a lit-html template both merely write it rather than assembling it twice) and tooltip decision text (docs/METER_V2.md, The discovery model). `meter_block_decision`'s own text — 'Endorsed', the split phrasing, the two-way glyph and the literal n-way ratio — is folded in here rather than given its own entry, because every case that reaches a decision branch reaches it by rendering blocks. A seam is two half colors (top, bottom), not one — a boundary between two different splits in one band shares its top half's color but not its bottom half's, which a single shared seam color painted wrong until this function paired the halves; `--{prefix}-color`/`--{prefix}-image` (a flat, transitionable color when both halves agree, a two-stop border-image gradient when they do not) is what the derivation's `--•-color:`/`--•-image:...` entries name. That two-split-band case, the n-way share, and the color-mix seam blends are only reachable through meter-layout-blocks' hand-built shapes (a three-way split, adjacent bands), which this fixture reuses for the same reason that entry does."
     },
     "meter-markup": {
       "client": "guide-card.mjs raceResultTemplate and meterBlockTemplate",

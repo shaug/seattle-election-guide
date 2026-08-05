@@ -37,9 +37,20 @@
 /* One block, one endorsement. `--meter-w`, `--meter-c` (a solid block) or
    `--meter-ca`/`--meter-cb` (a split's top/bottom halves), and the seam
    variables below all come from `MeterBlockRender.style`
-   (`rendering/context.py`) — this rule reads them, it does not decide them. */
-.meter-block { position: relative; flex: var(--meter-w) 0 0; min-width: 0; border-left: 1px solid var(--meter-seam-rest, transparent); transition: border-left-color .15s ease; }
-.meter-block:first-child { border-left-color: transparent; }
+   (`rendering/context.py`) — this rule reads them, it does not decide them.
+
+   A seam is two half colors, not one (docs/METER_V2.md, Seams): a boundary
+   between two different splits in one band shares its top half's color (the
+   same leader) but not its bottom half's (a different partner each), so a
+   single shared hairline color painted one half of the edge the wrong color
+   until this rule read the pair. `--meter-seam-rest-color`/`-hover-color` is
+   the common case (both halves agree, so a flat, smoothly transitionable
+   `border-left-color` says it); `--meter-seam-rest-image`/`-hover-image` is a
+   two-stop `border-image` gradient for the rarer case where they do not —
+   `border-image-source: none` (its default) falls back to the flat color
+   automatically, so only one of the pair need ever be set at a time. */
+.meter-block { position: relative; flex: var(--meter-w) 0 0; min-width: 0; border-left: 1px solid var(--meter-seam-rest-color, transparent); border-image-slice: 1; border-image-source: var(--meter-seam-rest-image, none); transition: border-left-color .15s ease; }
+.meter-block:first-child { border-left-color: transparent; border-image-source: none; }
 .meter-block-solid { background: var(--meter-c); }
 /* A split block's own background (set only where a tongue tip rounds) is what
    the exposed notch behind a rounded half shows through (docs/METER_V2.md,
@@ -57,7 +68,7 @@
    `_METER_DEGRADE_MAX_BLOCKS` floor, seams drop everywhere and the meter reads
    as plain candidate runs — the color change at a run boundary is still the
    boundary, without a line drawing it. */
-.screen-meter.meter-degraded .meter-block { border-left-color: transparent !important; }
+.screen-meter.meter-degraded .meter-block { border-left-color: transparent !important; border-image-source: none !important; }
 /* The resting percentage: an absolutely positioned overlay rather than a
    block's own text, so it reads as one number riding the whole bar exactly as
    v1's did, however many blocks make up the fill beneath it. */
@@ -79,12 +90,12 @@
 @media (hover: hover) {
   .screen-meter:not(.screen-meter-na):hover strong,
   .screen-meter:not(.screen-meter-na):focus-within strong { opacity: 0; }
-  .screen-meter:hover .meter-block, .screen-meter:focus-within .meter-block { border-left-color: var(--meter-seam-hover, transparent); }
+  .screen-meter:hover .meter-block, .screen-meter:focus-within .meter-block { border-left-color: var(--meter-seam-hover-color, transparent); border-image-source: var(--meter-seam-hover-image, none); }
   .screen-meter:hover .meter-half-bottom, .screen-meter:focus-within .meter-half-bottom { border-top-color: var(--meter-splitline-hover, transparent); }
 }
 @media (hover: none) {
   .screen-meter:not(.screen-meter-na) strong { display: none; }
-  .meter-block { border-left-color: var(--meter-seam-hover, transparent); }
+  .meter-block { border-left-color: var(--meter-seam-hover-color, transparent); border-image-source: var(--meter-seam-hover-image, none); }
   .meter-half-bottom { border-top-color: var(--meter-splitline-hover, transparent); }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -169,6 +180,6 @@
      Chrome geometry) — the revealed state, permanently, with no hover to
      leave. */
   .screen-meter strong { opacity: 1 !important; }
-  .meter-block { border-left-color: var(--meter-seam-hover, transparent) !important; }
+  .meter-block { border-left-color: var(--meter-seam-hover-color, transparent) !important; border-image-source: var(--meter-seam-hover-image, none) !important; }
   .meter-half-bottom { border-top-color: var(--meter-splitline-hover, transparent) !important; }
 }

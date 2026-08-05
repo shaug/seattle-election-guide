@@ -401,16 +401,47 @@ function meterSeamBridge(left, right) {
 }
 
 /**
- * The color a block's left-hand seam reads against: a solid block's own
- * color, or a split's higher-ranked (top) half. Mirrors
- * `_meter_block_leading_color`.
+ * The two colors a block's own left edge is made of, top half and bottom
+ * half: identical for a solid block, the split's own top/bottom colors for a
+ * split. A seam has two halves because a split's two halves can each face a
+ * different neighbour — a boundary between two different splits in one band,
+ * the case a single shared seam color got wrong until this function existed,
+ * since the band's shared leader makes the top halves agree while the two
+ * partners in the bottom halves do not (docs/METER_V2.md, Seams). Mirrors
+ * `_meter_block_facing`.
  *
  * @param {MeterBlock} block
  * @param {ReadonlyMap<string, string>} colors
- * @returns {string}
+ * @returns {[string, string]}
  */
-function meterBlockLeadingColor(block, colors) {
-  return /** @type {string} */ (colors.get(block.candidate_ids[0]));
+function meterBlockFacing(block, colors) {
+  if (block.type === 'solid') {
+    const color = /** @type {string} */ (colors.get(block.candidate_ids[0]));
+    return [color, color];
+  }
+  return [
+    /** @type {string} */ (colors.get(block.candidate_ids[0])),
+    /** @type {string} */ (colors.get(block.candidate_ids[1])),
+  ];
+}
+
+/**
+ * One seam's CSS declarations, as one pair of top/bottom half colors.
+ *
+ * A flat, transitionable `--{prefix}-color` when both halves agree — the
+ * common case, and the only one `border-left-color` can smoothly animate.
+ * Otherwise a two-stop `border-image` gradient, `--{prefix}-image`, since a
+ * plain border cannot show two colors on one 1px edge. Mirrors
+ * `_meter_seam_declarations`.
+ *
+ * @param {string} prefix
+ * @param {string} top
+ * @param {string} bottom
+ * @returns {string[]}
+ */
+function meterSeamDeclarations(prefix, top, bottom) {
+  if (top === bottom) return [`--${prefix}-color:${top}`];
+  return [`--${prefix}-image:linear-gradient(180deg, ${top} 0 50%, ${bottom} 50% 100%)`];
 }
 
 /**
@@ -433,12 +464,9 @@ export function meterBlockRenders(blocks, colors, labels) {
   let previous = null;
   for (const block of blocks) {
     const declarations = [`--meter-w:${block.width}`];
-    /** @type {string} */
-    let rest;
     if (block.type === 'solid') {
       const color = /** @type {string} */ (colors.get(block.candidate_ids[0]));
       declarations.push(`--meter-c:${color}`);
-      rest = color;
     } else {
       const topColor = /** @type {string} */ (colors.get(block.candidate_ids[0]));
       const bottomColor = /** @type {string} */ (colors.get(block.candidate_ids[1]));
@@ -455,18 +483,31 @@ export function meterBlockRenders(blocks, colors, labels) {
       } else if (block.tongue_corner_end) {
         declarations.push(`--meter-tongue-bg:${bottomColor}`);
       }
-      rest = block.band_start && previous !== null ? bottomColor : topColor;
+      // At rest a split's own two halves paint its resting border, except a
+      // band's first block, which rests flat on its own leader (top) color
+      // for both halves so the straight border never fragments against the
+      // rounded tongue corner (docs/METER_V2.md, Seams). This reads the
+      // block's own colors only — never the previous block's — which is
+      // what keeps a multi-split band's interior boundaries correctly
+      // two-toned instead of flattened to one half's color for the whole
+      // edge.
+      const [restTop, restBottom] = block.band_start
+        ? [topColor, topColor]
+        : [topColor, bottomColor];
+      declarations.push(...meterSeamDeclarations('meter-seam-rest', restTop, restBottom));
     }
     if (previous !== null) {
-      const previousLeading = meterBlockLeadingColor(previous, colors);
-      const currentLeading = meterBlockLeadingColor(block, colors);
-      const seamRest = block.band_start ? previousLeading : rest;
-      const seamHover =
-        previousLeading === currentLeading
-          ? meterSeamTint(previousLeading)
-          : meterSeamBridge(previousLeading, currentLeading);
-      declarations.push(`--meter-seam-rest:${seamRest}`);
-      declarations.push(`--meter-seam-hover:${seamHover}`);
+      const [previousTop, previousBottom] = meterBlockFacing(previous, colors);
+      const [currentTop, currentBottom] = meterBlockFacing(block, colors);
+      const hoverTop =
+        previousTop === currentTop
+          ? meterSeamTint(previousTop)
+          : meterSeamBridge(previousTop, currentTop);
+      const hoverBottom =
+        previousBottom === currentBottom
+          ? meterSeamTint(previousBottom)
+          : meterSeamBridge(previousBottom, currentBottom);
+      declarations.push(...meterSeamDeclarations('meter-seam-hover', hoverTop, hoverBottom));
     }
     renders.push({
       type: block.type,

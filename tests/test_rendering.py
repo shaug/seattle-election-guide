@@ -35,6 +35,7 @@ from election_guide.publication.personalization import (
 )
 from election_guide.rendering import (
     build_rendered_guide,
+    context,
     read_rendering_configuration,
     render_html_document,
     validate_rendered_guide,
@@ -79,6 +80,7 @@ from election_guide.rendering.shell import (
 from election_guide.scoring import score_dataset
 from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
 from election_guide.sources.registry import read_source_registry
+from tests.mirror_parity import LAYOUT_SHAPES
 from tests.page_parity import (
     FIXTURE_DIR,
     GUIDE_PAGE_PATH,
@@ -1102,6 +1104,126 @@ def test_the_support_caption_stays_inside_its_column_beside_the_name(tmp_path: P
     for edition in (screen, printed):
         assert edition["allHugText"] is True
     assert phone["allHugText"] is False
+
+
+def test_meter_seam_rest_never_paints_a_split_blocks_own_bottom_half_wrong() -> None:
+    """A resting seam is two half colors, not one (docs/METER_V2.md, Seams).
+
+    A real bug, found by clicking through a PR preview: a split block that is
+    not its band's first (a candidate's second or later split in one run, or a
+    band-first split whose previous block belongs to a *different* candidate's
+    own all-split run) painted its *entire* left border in one flat color —
+    either its own top (leader) half's color, or worse, the color of whatever
+    ran before it — leaving the bottom half's border visibly mismatched
+    against the block's own bottom fill at rest, on every pointer device,
+    before any hover ever should have revealed a seam at all.
+
+    `tests.mirror_parity.LAYOUT_SHAPES` already carries hand-built cases the
+    published ballot does not reach; this reuses two of them precisely because
+    each reaches one of the bug's two shapes, and asserts the *correct*
+    values rather than only that the two languages agree (they agreed on the
+    wrong answer too, since both carried the same mistake).
+    """
+    shapes = {name: endorsements for name, endorsements, _ in LAYOUT_SHAPES}
+
+    # "non-adjacent split": one leader's second split (not band-first) sits
+    # after the leader's own first split. Its own colors are teal (top) and
+    # trail-slate (bottom) — different from each other — so the fix must
+    # paint a two-stop gradient of its *own* colors, not a flat single color
+    # (the bug: a flat `var(--teal)`, matching only the top half).
+    endorsements = list(shapes["non-adjacent split"])
+    colors = context.meter_candidate_colors(
+        context.meter_standings(endorsements), frozenset({"gap--alpha"}), has_majority=True
+    )
+    blocks = context.meter_layout_blocks(endorsements)
+    second_split = next(
+        block
+        for block in blocks
+        if block.type == "split" and not block.band_start and block.band_end
+    )
+    render = context.meter_block_renders(
+        [second_split], colors, context.meter_candidate_labels(endorsements)
+    )[0]
+    assert "--meter-seam-rest-image:linear-gradient(180deg, var(--teal) 0 50%," in render.style, (
+        f"a non-band-first split's resting seam must gradient its own top/bottom colors, "
+        f"not a single flat one: {render.style}"
+    )
+    assert "--meter-seam-rest-color:" not in render.style
+
+    # "run-aware band edges": two different candidates' one-split bands sit
+    # side by side with no solid block between them (docs/METER_V2.md,
+    # Splits: "Bridge Brooks is supported only by split halves ... the two
+    # bands sit side by side"). The second band's own first (and only) split
+    # is band-first, so its resting seam must be *its own* leader color
+    # (trail-slate) — not the *previous*, unrelated candidate's leader color
+    # (teal), which is what the bug painted.
+    endorsements = list(shapes["run-aware band edges"])
+    standings = context.meter_standings(endorsements)
+    colors = context.meter_candidate_colors(
+        standings, frozenset({"band--anchor"}), has_majority=True
+    )
+    blocks = context.meter_layout_blocks(endorsements)
+    second_band_first = next(
+        block
+        for block in blocks
+        if block.type == "split" and block.candidate_ids[0] == "band--bridge" and block.band_start
+    )
+    render = context.meter_block_renders(
+        blocks, colors, context.meter_candidate_labels(endorsements)
+    )[blocks.index(second_band_first)]
+    assert render.style.count("--meter-seam-rest-color:var(--meter-trail-slate)") == 1, (
+        f"a band-first split's resting seam must be its own leader color, not the previous "
+        f"(different) candidate's: {render.style}"
+    )
+    assert "--meter-seam-rest-color:var(--teal)" not in render.style
+
+
+def test_the_meter_macro_writes_the_block_style_unmodified() -> None:
+    """The Jinja layer threads `MeterBlockRender.style` straight into the
+    rendered `style` attribute rather than re-deriving it — the wiring half
+    of the seam-rest regression above, which only exercises the pure Python
+    function and never reaches `_meter.html.j2` at all. A hand-built
+    `context.MeterView` stands in for a real page's, since the bug's shape
+    (a split block's own two-tone resting seam) is decided entirely by
+    `meter_block_renders`, not by anything the macro itself computes.
+    """
+    render = context.MeterBlockRender(
+        type="split",
+        width=1,
+        style=(
+            "--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-slate); "
+            "--meter-seam-rest-image:linear-gradient(180deg, var(--teal) 0 50%, "
+            "var(--meter-trail-slate) 50% 100%)"
+        ),
+        band_start=False,
+        band_end=True,
+        tongue_corner_start=False,
+        tongue_corner_end=True,
+        source_label="Delta Digest",
+        decision="Split: Alpha Ames + Cho Diaz — ½ each",
+    )
+    view = context.MeterView(
+        na=False,
+        no_majority=False,
+        low_fill=False,
+        degraded=False,
+        fill_percent=65,
+        percentage_label="65%",
+        accessible_label="Alpha Ames 2 of 3 endorsements",
+        blocks=(render,),
+    )
+    html = (
+        template_environment()
+        .from_string(
+            "{% from '_meter.html.j2' import segmented_meter %}{{ segmented_meter(view) }}"
+        )
+        .render(view=view)
+    )
+    assert (
+        'style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-slate); '
+        "--meter-seam-rest-image:linear-gradient(180deg, var(--teal) 0 50%, "
+        'var(--meter-trail-slate) 50% 100%)"' in html
+    ), f"the macro did not write the block's own style attribute unmodified: {html}"
 
 
 def test_round4_card_anatomy_and_data_ink_cleanup(tmp_path: Path) -> None:

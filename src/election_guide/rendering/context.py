@@ -136,14 +136,17 @@ class MeterBlockRender:
     a Jinja macro and a lit-html template that both merely write `style="{{
     render.style }}"` cannot spell one block's paint two ways.
 
-    The seam mechanism below (a single flat hairline per boundary, carried as
-    `--meter-seam`) is a deliberate simplification of the reference mockup's
-    two-toned border-image gradient: docs/METER_V2.md says the seam *colors*
-    are normative and its own mechanism is not ("any technique producing a 1px
-    seam of the specified mixes satisfies the spec"). A split block's seam
-    toward its left neighbour is the blend of the neighbour's facing color and
-    the split's own top (higher-ranked) half, which is the color that boundary
-    reads as at a glance.
+    Each seam is two half colors, not one: a boundary between two different
+    splits in one band shares its top half's color (the same leader) but not
+    its bottom half's (a different partner each), so a single shared hairline
+    color would paint one half of the edge the wrong color (`_meter_block_
+    facing`/`_meter_seam_declarations` carry this pairing). `style` carries a
+    flat, transitionable `--meter-seam-*-color` when both halves agree, or a
+    two-stop `border-image` gradient, `--meter-seam-*-image`, when they do
+    not — docs/METER_V2.md says the seam *colors* are normative and its own
+    border-image mechanism is not ("any technique producing a 1px seam of the
+    specified mixes satisfies the spec"), so this only reaches for a gradient
+    where a flat color cannot express two colors on one edge.
     """
 
     type: str
@@ -948,11 +951,35 @@ def _meter_seam_bridge(left: str, right: str) -> str:
     )
 
 
-def _meter_block_leading_color(block: MeterBlock, colors: dict[str, str]) -> str:
-    """The color a block's left-hand seam reads against: a solid block's own
-    color, or a split's higher-ranked (top) half — the color that boundary
-    reads as at a glance (see `MeterBlockRender`)."""
-    return colors[block.candidate_ids[0]]
+def _meter_block_facing(block: MeterBlock, colors: dict[str, str]) -> tuple[str, str]:
+    """The two colors a block's own left edge is made of, top half and bottom
+    half: identical for a solid block, the split's own top/bottom colors for
+    a split. A seam has two halves because a split's two halves can each face
+    a different neighbour — a boundary between two different splits in one
+    band, the case a single shared seam color got wrong until this function
+    existed, since the band's shared leader makes the top halves agree while
+    the two partners in the bottom halves do not (docs/METER_V2.md, Seams)."""
+    if block.type == "solid":
+        color = colors[block.candidate_ids[0]]
+        return (color, color)
+    return (colors[block.candidate_ids[0]], colors[block.candidate_ids[1]])
+
+
+def _meter_seam_declarations(prefix: str, top: str, bottom: str) -> list[str]:
+    """One seam's CSS declarations, as one pair of `top`/`bottom` half colors.
+
+    A flat, transitionable `--{prefix}-color` when both halves agree — the
+    common case, and the only one `border-left-color` can smoothly animate.
+    Otherwise a two-stop `border-image` gradient, `--{prefix}-image`, since a
+    plain border cannot show two colors on one 1px edge. The mockup's own
+    mechanism (docs/METER_V2.md, Seams: "any technique producing a 1px seam
+    of the specified mixes satisfies the spec" — its own border-image
+    mechanism is explicitly non-normative) is what this mirrors, kept only
+    where a flat color cannot express two colors at once.
+    """
+    if top == bottom:
+        return [f"--{prefix}-color:{top}"]
+    return [f"--{prefix}-image:linear-gradient(180deg, {top} 0 50%, {bottom} 50% 100%)"]
 
 
 def meter_block_renders(
@@ -975,7 +1002,6 @@ def meter_block_renders(
         if block.type == "solid":
             color = colors[block.candidate_ids[0]]
             declarations.append(f"--meter-c:{color}")
-            rest = color
         else:
             top_color = colors[block.candidate_ids[0]]
             bottom_color = colors[block.candidate_ids[1]]
@@ -994,17 +1020,34 @@ def meter_block_renders(
                 declarations.append(f"--meter-tongue-bg:{top_color}")
             elif block.tongue_corner_end:
                 declarations.append(f"--meter-tongue-bg:{bottom_color}")
-            rest = bottom_color if block.band_start and previous is not None else top_color
-        if previous is not None:
-            previous_leading = _meter_block_leading_color(previous, colors)
-            seam_rest = previous_leading if block.band_start else rest
-            seam_hover = (
-                _meter_seam_tint(previous_leading)
-                if previous_leading == _meter_block_leading_color(block, colors)
-                else _meter_seam_bridge(previous_leading, _meter_block_leading_color(block, colors))
+            # At rest a split's own two halves paint its resting border,
+            # except a band's first block, which rests flat on its own
+            # leader (top) color for both halves so the straight border
+            # never fragments against the rounded tongue corner
+            # (docs/METER_V2.md, Seams). This reads the block's own colors
+            # only — never the previous block's — which is what keeps a
+            # multi-split band's interior boundaries correctly two-toned
+            # instead of flattened to one half's color for the whole edge.
+            rest_top, rest_bottom = (
+                (top_color, top_color) if block.band_start else (top_color, bottom_color)
             )
-            declarations.append(f"--meter-seam-rest:{seam_rest}")
-            declarations.append(f"--meter-seam-hover:{seam_hover}")
+            declarations.extend(_meter_seam_declarations("meter-seam-rest", rest_top, rest_bottom))
+        if previous is not None:
+            previous_top, previous_bottom = _meter_block_facing(previous, colors)
+            current_top, current_bottom = _meter_block_facing(block, colors)
+            hover_top = (
+                _meter_seam_tint(previous_top)
+                if previous_top == current_top
+                else _meter_seam_bridge(previous_top, current_top)
+            )
+            hover_bottom = (
+                _meter_seam_tint(previous_bottom)
+                if previous_bottom == current_bottom
+                else _meter_seam_bridge(previous_bottom, current_bottom)
+            )
+            declarations.extend(
+                _meter_seam_declarations("meter-seam-hover", hover_top, hover_bottom)
+            )
         renders.append(
             MeterBlockRender(
                 type=block.type,

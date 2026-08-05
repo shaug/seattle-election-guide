@@ -17,6 +17,7 @@ import {
   meterBlockDecision,
   meterBlockRenders,
   meterCandidateColors,
+  meterCandidateLabels,
   meterEndorsementsFromCells,
   meterLayoutBlocks,
   meterStandings,
@@ -209,4 +210,67 @@ test('a no-endorsement cell carries no candidates and so no block or weight', ()
   );
   assert.deepEqual(meterStandings(endorsements), []);
   assert.deepEqual(meterLayoutBlocks(endorsements), []);
+});
+
+// A real bug, found by clicking through a PR preview: a split block that is
+// not its band's first (a candidate's second or later split in one run, or a
+// band-first split whose previous block belongs to a *different* candidate's
+// own all-split run) painted its *entire* left border in one flat color —
+// either its own top (leader) half's color, or worse, the color of whatever
+// ran before it — leaving the bottom half's border visibly mismatched
+// against the block's own bottom fill at rest, on every pointer device,
+// before any hover ever should have revealed a seam at all
+// (docs/METER_V2.md, Seams). `every golden is byte-identical` above only
+// proves the two languages agree; they agreed on the wrong answer too, since
+// both carried the same mistake — this asserts the *correct* values.
+test('a resting seam is two half colors, and a band-first split rests on its own leader', () => {
+  // "non-adjacent split": one leader's second split (not band-first) sits
+  // after the leader's own first split. Its own colors are teal (top) and
+  // trail-slate (bottom) — different from each other — so the fix must paint
+  // a two-stop gradient of its *own* colors, not a flat single color (the
+  // bug: a flat `var(--teal)`, matching only the top half).
+  const nonAdjacent = shaped('non-adjacent split').input.endorsements;
+  const nonAdjacentStandings = meterStandings(nonAdjacent);
+  const nonAdjacentColors = meterCandidateColors(
+    nonAdjacentStandings,
+    new Set(['gap--alpha']),
+    true,
+  );
+  const nonAdjacentBlocks = meterLayoutBlocks(nonAdjacent);
+  const secondSplit = nonAdjacentBlocks.find(
+    (block) => block.type === 'split' && !block.band_start && block.band_end,
+  );
+  const secondSplitRender = meterBlockRenders(
+    [secondSplit],
+    nonAdjacentColors,
+    meterCandidateLabels(nonAdjacent),
+  )[0];
+  assert.match(
+    secondSplitRender.style,
+    /--meter-seam-rest-image:linear-gradient\(180deg, var\(--teal\) 0 50%,/,
+  );
+  assert.doesNotMatch(secondSplitRender.style, /--meter-seam-rest-color:/);
+
+  // "run-aware band edges": two different candidates' one-split bands sit
+  // side by side with no solid block between them (docs/METER_V2.md, Splits:
+  // "Bridge Brooks is supported only by split halves ... the two bands sit
+  // side by side"). The second band's own first (and only) split is
+  // band-first, so its resting seam must be *its own* leader color
+  // (trail-slate) — not the *previous*, unrelated candidate's leader color
+  // (teal), which is what the bug painted.
+  const bandEdges = shaped('run-aware band edges').input.endorsements;
+  const bandEdgesStandings = meterStandings(bandEdges);
+  const bandEdgesColors = meterCandidateColors(bandEdgesStandings, new Set(['band--anchor']), true);
+  const bandEdgesBlocks = meterLayoutBlocks(bandEdges);
+  const secondBandFirst = bandEdgesBlocks.find(
+    (block) =>
+      block.type === 'split' && block.candidate_ids[0] === 'band--bridge' && block.band_start,
+  );
+  const secondBandFirstRender = meterBlockRenders(
+    bandEdgesBlocks,
+    bandEdgesColors,
+    meterCandidateLabels(bandEdges),
+  )[bandEdgesBlocks.indexOf(secondBandFirst)];
+  assert.match(secondBandFirstRender.style, /--meter-seam-rest-color:var\(--meter-trail-slate\)/);
+  assert.doesNotMatch(secondBandFirstRender.style, /--meter-seam-rest-color:var\(--teal\)/);
 });
