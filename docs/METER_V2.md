@@ -171,6 +171,14 @@ zero endorsements has no block at all, exactly as they have no weight in today's
 Band-edge detection (which block is a band's first or last) must be run-aware in the
 implementation; the mockup's neighbor-type heuristic is sufficient only for two-run bands.
 
+The whole of this section — the standings order, the run grouping, the split placement, the
+canonical order, and the band and tongue-corner flags — landed in #313 as the mirrored pair
+`meter_layout_blocks` (`rendering/context.py`) and `meterLayoutBlocks` (`meter-layout.mjs`),
+registered in `tests/mirrors.json` like every other. It returns an ordered block list — block
+type, width in units, candidate ids, band and tongue flags — that both renderers consume
+verbatim rather than each deriving from its neighbors. Ahead of the surfaces, as the counting
+pair was, so nothing draws a block from it yet.
+
 Placement optimizes **visual continuity, not pixel precision**: a divided block occupies a full
 block width while counting ½ to each side, so a run's pixel length may overstate its tally by
 half a block per split. Accepted; at realistic block counts the discrepancy is invisible, and

@@ -8,6 +8,7 @@ markup, loads a template, or touches the filesystem.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 from fractions import Fraction
 from typing import Any
@@ -67,6 +68,58 @@ class ComparisonSectionView:
     section_id: str
     section_label: str
     rows: tuple[ComparisonRowView, ...]
+
+
+@dataclass(frozen=True)
+class MeterEndorsement:
+    """One tallying source cell, as the segmented meter counts it.
+
+    The fields are `SourceCell`'s own, so a surface hands a cell straight
+    through rather than translating it (docs/FRONTEND.md, The data contract:
+    one identifier space). A cell naming nobody — a source that looked and
+    declined — is admitted here and carries no block and no denominator weight,
+    which is the rule rather than an omission (docs/METER_V2.md, Counting and
+    the denominator).
+    """
+
+    source_label: str
+    candidate_ids: tuple[str, ...]
+    candidate_labels: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class MeterBlock:
+    """One rectangle of the segmented meter, in rendered order.
+
+    Declarative on purpose: every surface that draws meter v2 — the card, the
+    compact ballot, the race headline, the print edition, and the social card
+    Python draws — consumes this list verbatim, so anything a renderer would
+    otherwise re-derive from a block's neighbours is decided once, here.
+
+    `type` is `"solid"` (one candidate's own endorsement) or `"split"` (one
+    block divided horizontally between the candidates it names). `width` is in
+    units: one endorsement is one unit, and the track is divided by the sum, so
+    a surface needs no second traversal to size a block. `candidate_ids` is in
+    standings order, which for a split is top to bottom.
+
+    The four flags carry the tongue rule (docs/METER_V2.md, Splits: placement
+    and the tongue rule). `band_start`/`band_end` mark the first and last split
+    of a band. `tongue_corner_start`/`tongue_corner_end` mark where that band
+    edge actually rounds its interior corner — a band edge that is also the
+    meter's own outer edge stays square, so the frame's radius is the only
+    curve there. They are two facts rather than one because they differ exactly
+    at the meter's ends, and deriving the second from the first is the check
+    each of the five surfaces would otherwise have to repeat.
+    """
+
+    type: str
+    width: int
+    candidate_ids: tuple[str, ...]
+    source_label: str
+    band_start: bool
+    band_end: bool
+    tongue_corner_start: bool
+    tongue_corner_end: bool
 
 
 def personalization_lookup_context(view_model: PublicationViewModel) -> dict[str, Any]:
@@ -528,6 +581,124 @@ def endorsement_count_label(count: Fraction) -> str:
         return f"{whole}{glyph}" if whole else glyph
     fallback = f"{part.numerator}⁄{part.denominator}"
     return f"{whole}\u00a0{fallback}" if whole else fallback
+
+
+def _meter_standings(endorsements: Sequence[MeterEndorsement]) -> list[str]:
+    """The endorsed candidates, leader first, as the meter orders their runs.
+
+    Units, not source counts: a split allocates 1/n to each candidate it names
+    (docs/METER_V2.md, Counting and the denominator), so this is exact rational
+    arithmetic rather than the whole-source ordering
+    `candidate_endorsement_groups` gives the race page's candidate sections.
+
+    Equal units are broken by display label and then by id. The comparison is
+    the plain one both languages already agree on, character by character —
+    deliberately not `casefold()`, whose JavaScript counterpart does not exist,
+    and not a locale collation, which is a different order on every machine.
+    The tie-break's whole job is to make two implementations reach one run
+    order, so it has to be an order both of them spell the same way.
+    """
+    units: dict[str, Fraction] = {}
+    labels: dict[str, str] = {}
+    for endorsement in endorsements:
+        if not endorsement.candidate_ids:
+            continue
+        share = Fraction(1, len(endorsement.candidate_ids))
+        for candidate_id, label in zip(
+            endorsement.candidate_ids, endorsement.candidate_labels, strict=True
+        ):
+            units[candidate_id] = units.get(candidate_id, Fraction(0)) + share
+            labels[candidate_id] = label
+    return sorted(
+        units,
+        key=lambda candidate_id: (-units[candidate_id], labels[candidate_id], candidate_id),
+    )
+
+
+def meter_layout_blocks(endorsements: Sequence[MeterEndorsement]) -> list[MeterBlock]:
+    """The segmented meter's blocks, left to right, from the cells it counts.
+
+    Meter v2 is one block per endorsement, grouped into runs by candidate in
+    standings order, with each split placed at the boundary between its
+    candidates' runs (docs/METER_V2.md, Splits: placement and the tongue rule).
+    This is the whole of that layout, and both renderers read the result rather
+    than recomputing it: the server iterates `race.source_cells` in active-source
+    order and the lens payload delivers sorted transport codes, so nothing about
+    the order below may depend on the order the cells arrive in.
+
+    Within a run, solid blocks sort by their source's display label and the
+    splits follow, farthest partner first so the nearest partner's split touches
+    the next run. A split between non-adjacent candidates — a third candidate's
+    run intervenes — therefore lands at the end of the higher-ranked candidate's
+    run, which is where the spec puts it. Splits with the same partner fall back
+    to the source label, for the same reason the solids sort by it: it is the
+    one key both sides hold. Two sources can share a display label, so the
+    split's own membership finishes the order — every key here is total, because
+    a key that ties is a key that hands the decision back to the order the cells
+    arrived in, which is the one thing this function may not do.
+
+    Band edges are read off the run, not off the neighbouring block. Two runs'
+    splits can sit side by side — a candidate whose whole support is split
+    halves has no solids of their own — and the mockup's neighbour-type
+    heuristic reads that pair as one band, which is why it is documented as
+    sufficient only for two-run bands.
+
+    An empty tally returns an empty list: the N/A state renders the bare track
+    (docs/METER_V2.md, Edge states), and it has no blocks to decide about.
+    """
+    standings = _meter_standings(endorsements)
+    rank = {candidate_id: index for index, candidate_id in enumerate(standings)}
+    counted = [item for item in endorsements if item.candidate_ids]
+    solids: dict[str, list[MeterEndorsement]] = {candidate_id: [] for candidate_id in standings}
+    splits: dict[str, list[tuple[tuple[str, ...], MeterEndorsement]]] = {
+        candidate_id: [] for candidate_id in standings
+    }
+    for endorsement in counted:
+        ordered = tuple(sorted(endorsement.candidate_ids, key=lambda item: rank[item]))
+        if len(ordered) == 1:
+            solids[ordered[0]].append(endorsement)
+        else:
+            splits[ordered[0]].append((ordered, endorsement))
+
+    blocks: list[MeterBlock] = []
+    for candidate_id in standings:
+        for endorsement in sorted(solids[candidate_id], key=lambda item: item.source_label):
+            blocks.append(
+                MeterBlock(
+                    type="solid",
+                    width=1,
+                    candidate_ids=(candidate_id,),
+                    source_label=endorsement.source_label,
+                    band_start=False,
+                    band_end=False,
+                    tongue_corner_start=False,
+                    tongue_corner_end=False,
+                )
+            )
+        band = sorted(
+            splits[candidate_id],
+            key=lambda item: (
+                -rank[item[0][1]],
+                item[1].source_label,
+                tuple(rank[member] for member in item[0]),
+            ),
+        )
+        for position, (ordered, endorsement) in enumerate(band):
+            starts, ends = position == 0, position == len(band) - 1
+            index = len(blocks)
+            blocks.append(
+                MeterBlock(
+                    type="split",
+                    width=1,
+                    candidate_ids=ordered,
+                    source_label=endorsement.source_label,
+                    band_start=starts,
+                    band_end=ends,
+                    tongue_corner_start=starts and index > 0,
+                    tongue_corner_end=ends and index < len(counted) - 1,
+                )
+            )
+    return blocks
 
 
 def screen_share_accessible_label(race: PublicationRace) -> str:

@@ -35,6 +35,7 @@ import {
   supportSummaryCompact,
 } from '../../src/election_guide/rendering/templates/guide-format.mjs';
 import { tallyingSourceCodes } from '../../src/election_guide/rendering/templates/lens-selection.mjs';
+import { meterLayoutBlocks } from '../../src/election_guide/rendering/templates/meter-layout.mjs';
 
 const FIXTURE = JSON.parse(
   readFileSync(fileURLToPath(new URL('./fixtures/mirror-parity.json', import.meta.url)), 'utf8'),
@@ -79,6 +80,7 @@ const RUNNERS = {
   // template literal rather than as the `percentage_label` field.
   'meter-unavailable-label': ({ share }) => percentageLabel(share),
   'endorsement-count-label': ({ count }) => endorsementCountLabel(count),
+  'meter-layout-blocks': ({ endorsements }) => meterLayoutBlocks(endorsements),
   'no-majority': ({ share }) => hasNoMajority(share),
   'share-accessible-label': ({ share }) => shareAccessibleLabel(share),
   'support-summary': ({ scored: race }) => supportSummary(scored(race)),

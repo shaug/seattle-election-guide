@@ -9,7 +9,7 @@ inventory marks `parity-fixture`, and `tests/js/mirror-parity.test.mjs` asserts
 them against the client modules.
 
 **Nothing here restates a formatting rule.** Each expectation comes from the
-shipped server implementation, in one of four ways:
+shipped server implementation, in one of five ways:
 
 `published race`
     Most cases come from a real publication bundle, so the expectation is a
@@ -40,6 +40,13 @@ shipped server implementation, in one of four ways:
     fixtures — the real rendered documents `page_parity.py` generates — so the
     client is held to the bytes the server shipped.
 
+`layout shape`
+    The segmented meter's block list takes cells rather than a race, so the
+    published cases hand it the cells of the races `page_parity.py`'s own
+    feature census already chose, and the rules this election's data cannot
+    reach — a three-way split, two split bands side by side — are hand-built
+    cell sets handed to the same shipped function.
+
 The panels are chosen for the states they reach, not for how many they are: the
 full panel is the audited page itself, and a one-source panel drives every race
 below the explicit-source floor, which is the only way to reach a null share
@@ -64,6 +71,7 @@ from election_guide.normalization.models import CanonicalDataset
 from election_guide.publication.lens_parity import restricted_dataset
 from election_guide.publication.models import (
     PublicationRace,
+    PublicationSource,
     PublicationViewModel,
     _percentage_whole,  # pyright: ignore[reportPrivateUsage]
 )
@@ -72,6 +80,7 @@ from election_guide.rendering.validation import (
     _html_semantic_values,  # pyright: ignore[reportPrivateUsage]
 )
 from election_guide.serialization import read_json
+from tests.page_parity import race_parity_fixture_ids
 from tests.test_personalization import DATASET_PATH, _bundle  # pyright: ignore[reportPrivateUsage]
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -140,6 +149,141 @@ COUNT_TALLIES: tuple[tuple[str, str], ...] = (
     ("1/7", "A seven-way split is the n-way case with a glyph: ⅐."),
     ("4/8", "An unreduced tally reduces before the glyph lookup: ½."),
     ("25/12", "Twelfths have no glyph, so the fallback spells 2 1⁄12."),
+)
+
+
+# The cell states meter v2 has an opinion about: the endorsements it draws a
+# block for, and the explicit "no endorsement" that deliberately gets neither a
+# block nor denominator weight (docs/METER_V2.md § Counting and the
+# denominator). A source that did not cover the race, or whose claim is still
+# unverified, is not in the meter's universe at all — the race page groups those
+# separately — so the layout never sees them.
+_METER_COUNTED_STATES = frozenset({"endorsement", "multi_endorsement", "no_endorsement"})
+
+
+def _endorsement(source_label: str, *candidates: tuple[str, str]) -> context.MeterEndorsement:
+    """One cell for a hand-built layout shape, spelled `(id, label)` per candidate."""
+    return context.MeterEndorsement(
+        source_label=source_label,
+        candidate_ids=tuple(candidate_id for candidate_id, _ in candidates),
+        candidate_labels=tuple(label for _, label in candidates),
+    )
+
+
+# Layout shapes the published ballot does not contain. This election's data has
+# no three-way split and no two split bands sitting side by side, and both are
+# rules the design states outright, so they are built here and handed to the
+# shipped function exactly as the comparison rows below are. The ids are ordered
+# against the labels wherever the ordering rule is the point, so a case cannot
+# pass by sorting on the wrong key.
+LAYOUT_SHAPES: tuple[tuple[str, tuple[context.MeterEndorsement, ...], str], ...] = (
+    (
+        "label tie-break",
+        (
+            _endorsement("Ashland Assembly", ("tie--first", "Zeta Zhang")),
+            _endorsement("Bellwether Board", ("tie--second", "Ada Ames")),
+        ),
+        "Equal units, so the display label breaks the tie and Ada Ames leads. "
+        "Both the ids and the source labels run the other way, so neither can be "
+        "what produced this order.",
+    ),
+    (
+        "run-aware band edges",
+        (
+            _endorsement("Alpha Assembly", ("band--anchor", "Anchor Ames")),
+            _endorsement("Beta Board", ("band--anchor", "Anchor Ames")),
+            _endorsement(
+                "Gamma Guild", ("band--anchor", "Anchor Ames"), ("band--bridge", "Bridge Brooks")
+            ),
+            _endorsement(
+                "Delta Digest", ("band--bridge", "Bridge Brooks"), ("band--tail", "Tail Cho")
+            ),
+        ),
+        "Bridge Brooks is supported only by split halves, so that run has no "
+        "solid block and the two bands sit side by side. Each is its own band, "
+        "which the mockup's neighbour-type heuristic cannot see. The last block "
+        "ends at the meter's own edge, so its tongue stays square.",
+    ),
+    (
+        "n-way split",
+        (
+            _endorsement("Alpha Assembly", ("nway--alpha", "Alpha Ames")),
+            _endorsement("Beta Board", ("nway--alpha", "Alpha Ames")),
+            _endorsement("Civic Circle", ("nway--bravo", "Bravo Brooks")),
+            _endorsement(
+                "Delta Digest",
+                ("nway--alpha", "Alpha Ames"),
+                ("nway--cho", "Cho Diaz"),
+                ("nway--bravo", "Bravo Brooks"),
+            ),
+        ),
+        "One block naming three candidates carries them in standings order, top "
+        "to bottom, not in the order the cell happened to list them.",
+    ),
+    (
+        "non-adjacent split",
+        (
+            _endorsement("Alpha Assembly", ("gap--alpha", "Alpha Ames")),
+            _endorsement("Beta Board", ("gap--alpha", "Alpha Ames")),
+            _endorsement("Civic Circle", ("gap--bravo", "Bravo Brooks")),
+            _endorsement("Delta Digest", ("gap--alpha", "Alpha Ames"), ("gap--cho", "Cho Diaz")),
+            _endorsement(
+                "Echo Examiner", ("gap--alpha", "Alpha Ames"), ("gap--bravo", "Bravo Brooks")
+            ),
+        ),
+        "Both splits sit at the end of the leader's run, farthest partner first, "
+        "so the split whose partner's run comes next is the one touching it.",
+    ),
+    (
+        "splits sharing a partner",
+        (
+            _endorsement("Alpha Assembly", ("pair--alpha", "Alpha Ames")),
+            _endorsement("Beta Board", ("pair--alpha", "Alpha Ames")),
+            _endorsement(
+                "Zenith Ledger", ("pair--alpha", "Alpha Ames"), ("pair--bravo", "Bravo Brooks")
+            ),
+            _endorsement(
+                "Yardley Yearbook", ("pair--alpha", "Alpha Ames"), ("pair--bravo", "Bravo Brooks")
+            ),
+            _endorsement("Civic Circle", ("pair--bravo", "Bravo Brooks")),
+        ),
+        "Two splits naming the same pair are the same distance apart, so the "
+        "source label decides which comes first — without it the band would keep "
+        "whichever order the cells arrived in, and the two renderers receive them "
+        "in different orders.",
+    ),
+    (
+        "splits sharing a partner and a source label",
+        (
+            _endorsement("Alpha Assembly", ("both--alpha", "Alpha Ames")),
+            _endorsement(
+                "Civic Wire",
+                ("both--alpha", "Alpha Ames"),
+                ("both--bravo", "Bravo Brooks"),
+                ("both--cho", "Cho Diaz"),
+            ),
+            _endorsement(
+                "Civic Wire", ("both--alpha", "Alpha Ames"), ("both--bravo", "Bravo Brooks")
+            ),
+        ),
+        "Two sources publishing under one display name, both splitting at the "
+        "same boundary: the partner ties and the source label ties, so the "
+        "split's own membership is what finishes the order. Without it the band "
+        "would keep whichever order the cells arrived in, and the two renderers "
+        "receive them in different orders.",
+    ),
+    (
+        "declining sources",
+        (
+            _endorsement("Alpha Assembly", ("solo--alpha", "Alpha Ames")),
+            _endorsement("Beta Board", ("solo--alpha", "Alpha Ames")),
+            _endorsement("Civic Circle"),
+            _endorsement("Delta Digest"),
+        ),
+        "Two sources looked and declined: no block, and no denominator weight "
+        "either, so the meter is two blocks wide rather than four. Every other "
+        "candidate on the ballot is named by no cell and so has no run at all.",
+    ),
 )
 
 
@@ -274,14 +418,32 @@ def _state(race: PublicationRace) -> tuple[Any, ...]:
     )
 
 
-def _panel_cases(dataset: CanonicalDataset) -> list[dict[str, Any]]:
-    cases: list[dict[str, Any]] = []
-    for panel, source_ids, note in PANELS:
-        panel_dataset = (
-            dataset if source_ids is None else restricted_dataset(dataset, set(source_ids))
+def _panel_view_models(
+    dataset: CanonicalDataset,
+) -> list[tuple[str, str, PublicationViewModel]]:
+    """Each panel as the pipeline builds it, once, for every case family that reads it.
+
+    Two families now read the same four panels. Restricting a panel is one
+    expression and it belongs in one place, or the second copy is free to drift
+    into selecting a subset the first one never scored.
+    """
+    return [
+        (
+            panel,
+            note,
+            _bundle(
+                dataset if source_ids is None else restricted_dataset(dataset, set(source_ids))
+            ).view_model,
         )
+        for panel, source_ids, note in PANELS
+    ]
+
+
+def _panel_cases(panels: list[tuple[str, str, PublicationViewModel]]) -> list[dict[str, Any]]:
+    cases: list[dict[str, Any]] = []
+    for panel, note, view_model in panels:
         seen: set[tuple[Any, ...]] = set()
-        for race in _races(_bundle(panel_dataset).view_model):
+        for race in _races(view_model):
             state = _state(race)
             if state in seen:
                 continue
@@ -361,6 +523,104 @@ def _count_cases() -> list[dict[str, Any]]:
         }
         for tally, note in COUNT_TALLIES
     ]
+
+
+def _meter_endorsements(
+    race: PublicationRace,
+    sources: dict[str, PublicationSource],
+) -> list[context.MeterEndorsement]:
+    """One race's cells as the meter counts them, in the server's own cell order.
+
+    The order matters to what this fixture proves: the server hands the layout
+    `race.source_cells` in active-source order while the client hands it cells
+    keyed by sorted transport code, so an expectation generated from the
+    server's order is only reproducible on the client if the layout's own
+    ordering rules are what decide the result.
+    """
+    return [
+        context.MeterEndorsement(
+            source_label=sources[cell.source_id].name,
+            candidate_ids=tuple(cell.candidate_ids),
+            candidate_labels=tuple(cell.candidate_labels),
+        )
+        for cell in context.tallying_source_cells(race, sources)
+        if cell.state in _METER_COUNTED_STATES
+    ]
+
+
+def _endorsement_json(endorsement: context.MeterEndorsement) -> dict[str, Any]:
+    return {
+        "source_label": endorsement.source_label,
+        "candidate_ids": list(endorsement.candidate_ids),
+        "candidate_labels": list(endorsement.candidate_labels),
+    }
+
+
+def _block_json(block: context.MeterBlock) -> dict[str, Any]:
+    """One block, in field order, so the two languages' goldens compare as bytes."""
+    return {
+        "type": block.type,
+        "width": block.width,
+        "candidate_ids": list(block.candidate_ids),
+        "source_label": block.source_label,
+        "band_start": block.band_start,
+        "band_end": block.band_end,
+        "tongue_corner_start": block.tongue_corner_start,
+        "tongue_corner_end": block.tongue_corner_end,
+    }
+
+
+def _meter_layout_case(
+    endorsements: list[context.MeterEndorsement],
+    note: str,
+    source: str,
+) -> dict[str, Any]:
+    return {
+        "mirror": "meter-layout-blocks",
+        "input": {"endorsements": [_endorsement_json(item) for item in endorsements]},
+        "expected": [_block_json(block) for block in context.meter_layout_blocks(endorsements)],
+        "note": note,
+        "source": source,
+    }
+
+
+def _meter_layout_cases(
+    panels: list[tuple[str, str, PublicationViewModel]],
+) -> list[dict[str, Any]]:
+    """Cases for the segmented meter's block list (docs/METER_V2.md).
+
+    The published races come from `page_parity.race_parity_fixture_ids`, the
+    same greedy cover over the same feature census that chooses which race pages
+    are committed as markup-parity fixtures: those are already the fewest races
+    showing every reachable shape, and the shapes the meter cares about — a
+    split, a tie, a sole leader, several candidates, a race a lens leaves with
+    no endorsement at all — are named in that census. Reusing it means the
+    selection stays a function of the committed dataset rather than of a
+    preference expressed here, and the layout and the markup it will feed are
+    read off the same races.
+
+    What that cover cannot show, this election's data does not contain, so the
+    shapes above supply it.
+    """
+    cases: list[dict[str, Any]] = []
+    for panel, note, view_model in panels:
+        sources = {source.id: source for source in view_model.sources}
+        chosen = set(race_parity_fixture_ids(view_model))
+        for race in _races(view_model):
+            if race.id not in chosen:
+                continue
+            cases.append(
+                _meter_layout_case(
+                    _meter_endorsements(race, sources),
+                    note,
+                    f"published race {race.id} on the {panel} panel",
+                )
+            )
+    cases.extend(
+        _meter_layout_case(list(endorsements), note, f"meter_layout_blocks on the {name} shape")
+        for name, endorsements, note in LAYOUT_SHAPES
+    )
+    return cases
 
 
 def _row_differs_cases() -> list[dict[str, Any]]:
@@ -588,12 +848,14 @@ def _deduplicate(cases: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
 def build_mirror_parity_fixture(dataset: CanonicalDataset) -> dict[str, Any]:
     """Emit every golden case, computed by the server implementations."""
-    view_model = _bundle(dataset).view_model
+    panels = _panel_view_models(dataset)
+    view_model = next(published for panel, _, published in panels if panel == "audited")
     cases = _deduplicate(
         [
-            *_panel_cases(dataset),
+            *_panel_cases(panels),
             *_share_cases(_races(view_model)[0]),
             *_count_cases(),
+            *_meter_layout_cases(panels),
             *_row_differs_cases(),
             *_fragment_cases(view_model),
             *_counting_cases(),
