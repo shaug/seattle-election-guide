@@ -324,6 +324,21 @@ then any sticky strip, then content.
   denominator, exactly as it did before the count-caption existed.
   *(2026-08-04, meter v2 / #314; name dropped in the same ticket's own
   review.)*
+- **The race page's candidate-context treatment is triggered by chips
+  alone, not by entering a candidate's section.** A real button per standing
+  candidate — color dot, name, exact count, `aria-pressed` — sits beside the
+  shared headline meter; pressing one bolds that candidate's own blocks,
+  recedes every other block to 30% opacity, and hides the resting percent,
+  exactly as an engaged hover does. The ticket left the trigger surface open
+  (a chip, or "entering" a candidate's section); chips alone were chosen
+  because they are the one surface the mockup actually specifies and tests —
+  real, keyboard-operable buttons with an unambiguous pressed state — while
+  "entering a section" has no settled definition for a non-pointer reader
+  (a scroll boundary is not a keyboard event) and would have doubled the
+  interaction's surface for a treatment the mockup never demonstrates that
+  way. Context is client-side presentation state only: the audited server
+  render carries no context, so the chip's `aria-pressed` always starts
+  false and no block ever starts bolded. *(2026-08-05, meter v2 / #315.)*
 - **Alternative signals share one quiet component.** Anything that is an
   *alternative* to the result the reader asked for — today, the full-panel
   baseline under a lens — renders as a tone-tinted info bar. No pills, no

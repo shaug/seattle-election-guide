@@ -632,6 +632,7 @@ def _block_render_json(render: context.MeterBlockRender) -> dict[str, Any]:
         "tongue_corner_end": render.tongue_corner_end,
         "source_label": render.source_label,
         "decision": render.decision,
+        "candidate_ids": list(render.candidate_ids),
     }
 
 

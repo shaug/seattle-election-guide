@@ -293,6 +293,23 @@ export function meterLayoutBlocks(endorsements) {
  * @property {boolean} tongue_corner_end
  * @property {string} source_label
  * @property {string} decision
+ * @property {string[]} candidate_ids Which candidate(s) this block belongs
+ *   to — one for a solid block, two for a split — carried through from
+ *   `MeterBlock.candidate_ids` unchanged so a template can write it as a
+ *   `data-meter-candidates` attribute (the race page's candidate-context
+ *   treatment reads it; #315).
+ */
+
+/**
+ * One candidate's chip (docs/METER_V2.md, the mockup's chips section; #315): the race
+ * page's trigger surface for the shared headline meter's candidate-context
+ * treatment.
+ *
+ * @typedef {object} MeterCandidateChip
+ * @property {string} candidate_id
+ * @property {string} label
+ * @property {string} color
+ * @property {string} count_label
  */
 
 // Color (docs/METER_V2.md, Color): every value below is a CSS value string,
@@ -519,10 +536,34 @@ export function meterBlockRenders(blocks, colors, labels) {
       tongue_corner_end: block.tongue_corner_end,
       source_label: block.source_label,
       decision: meterBlockDecision(block, labels),
+      candidate_ids: block.candidate_ids,
     });
     previous = block;
   }
   return renders;
+}
+
+/**
+ * Every standing candidate's chip, in the meter's own order (docs/METER_V2.md,
+ * the mockup's chips section; #315).
+ *
+ * Composes the same four maps a meter's blocks are built from — a chip can
+ * never name a different order, color, or tally than the blocks it selects
+ * among, because nothing here decides one a second time.
+ *
+ * @param {readonly string[]} standings
+ * @param {ReadonlyMap<string, Rational>} units
+ * @param {ReadonlyMap<string, string>} labels
+ * @param {ReadonlyMap<string, string>} colors
+ * @returns {MeterCandidateChip[]}
+ */
+export function meterCandidateChips(standings, units, labels, colors) {
+  return standings.map((candidateId) => ({
+    candidate_id: candidateId,
+    label: /** @type {string} */ (labels.get(candidateId)),
+    color: /** @type {string} */ (colors.get(candidateId)),
+    count_label: endorsementCountLabel(/** @type {Rational} */ (units.get(candidateId)).toString()),
+  }));
 }
 
 /**

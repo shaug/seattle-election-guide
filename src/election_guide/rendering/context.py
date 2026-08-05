@@ -158,6 +158,37 @@ class MeterBlockRender:
     tongue_corner_end: bool
     source_label: str
     decision: str
+    # Which candidate(s) this block belongs to (one for a solid block, two for
+    # a split), carried through from `MeterBlock.candidate_ids` unchanged.
+    # Nothing in `meter_block_renders` reads it — it exists so a template can
+    # write it as a `data-meter-candidates` attribute, which is the whole of
+    # what the race page's candidate-context treatment needs to find "this
+    # candidate's blocks" among a meter it does not otherwise touch (#315).
+    # Defaulted so the many hand-built `MeterBlockRender`s in tests that
+    # predate this field still construct without naming it.
+    candidate_ids: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True)
+class MeterCandidateChip:
+    """One candidate's chip (docs/METER_V2.md, the mockup's chips section; #315): the
+    race page's trigger surface for the shared headline meter's
+    candidate-context treatment. Every standing candidate gets one, in the
+    meter's own order, holding the same color its blocks use, its display
+    label, and its exact tally in the caption's own count format — a
+    candidate with no endorsements has no block and, for the same reason, no
+    chip either.
+
+    A plain data record like `MeterBlockRender`, built once by `meter_view` so
+    the audited Jinja twin and the client's own render read one decision
+    rather than two: which candidates get a chip, in what order, wearing which
+    color and which count, is decided here and nowhere else.
+    """
+
+    candidate_id: str
+    label: str
+    color: str
+    count_label: str
 
 
 @dataclass(frozen=True)
@@ -178,6 +209,11 @@ class MeterView:
     percentage_label: str
     accessible_label: str
     blocks: tuple[MeterBlockRender, ...]
+    # Empty for the N/A state, and on every chrome that has no chips of its
+    # own to render (docs/METER_V2.md, the mockup's chips section): only the race page's
+    # Jinja and lit twins read this field today. Defaulted for the same
+    # reason `MeterBlockRender.candidate_ids` is.
+    chips: tuple[MeterCandidateChip, ...] = ()
 
 
 def personalization_lookup_context(view_model: PublicationViewModel) -> dict[str, Any]:
@@ -1063,10 +1099,35 @@ def meter_block_renders(
                 tongue_corner_end=block.tongue_corner_end,
                 source_label=block.source_label,
                 decision=meter_block_decision(block, labels),
+                candidate_ids=block.candidate_ids,
             )
         )
         previous = block
     return renders
+
+
+def _meter_candidate_chips(
+    standings: Sequence[str],
+    units: dict[str, Fraction],
+    labels: dict[str, str],
+    colors: dict[str, str],
+) -> list[MeterCandidateChip]:
+    """Every standing candidate's chip, in the meter's own order (docs/METER_V2.md,
+    the mockup's chips section; #315).
+
+    Composes four maps `meter_view` already built for the blocks themselves —
+    nothing here decides a color, a label, or a count a second time, so a chip
+    can never name a different candidate order, color, or tally than the
+    blocks it selects among."""
+    return [
+        MeterCandidateChip(
+            candidate_id=candidate_id,
+            label=labels[candidate_id],
+            color=colors[candidate_id],
+            count_label=endorsement_count_label(units[candidate_id]),
+        )
+        for candidate_id in standings
+    ]
 
 
 def meter_accessible_label(
@@ -1145,6 +1206,7 @@ def meter_view(race: PublicationRace, sources: dict[str, PublicationSource]) -> 
         percentage_label=race.percentage_label,
         accessible_label=meter_accessible_label(standings, units, labels),
         blocks=tuple(meter_block_renders(blocks, colors, labels)),
+        chips=tuple(_meter_candidate_chips(standings, units, labels, colors)),
     )
 
 

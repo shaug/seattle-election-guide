@@ -217,6 +217,11 @@
       "client",
       "test"
     ],
+    "data-lens-chips": [
+      "template",
+      "client",
+      "test"
+    ],
     "data-lens-context": [
       "template",
       "client",
@@ -233,6 +238,21 @@
       "test"
     ],
     "data-lens-result": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-meter-candidate": [
+      "template",
+      "client"
+    ],
+    "data-meter-candidates": [
+      "template",
+      "client",
+      "python",
+      "test"
+    ],
+    "data-meter-chip": [
       "template",
       "client",
       "test"
@@ -546,6 +566,37 @@
     ],
     "meter-block": [
       "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "meter-block-context": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "meter-chip": [
+      "template",
+      "stylesheet",
+      "client"
+    ],
+    "meter-chip-count": [
+      "template",
+      "stylesheet",
+      "client"
+    ],
+    "meter-chip-dot": [
+      "template",
+      "stylesheet",
+      "client"
+    ],
+    "meter-chips": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "meter-context": [
       "stylesheet",
       "client",
       "test"

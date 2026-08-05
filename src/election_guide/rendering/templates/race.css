@@ -41,6 +41,10 @@
 /* Like the card foot, and for the same reason: lit needs one region to own
    without it becoming a box that opens a gap when it is empty. */
 .race-headline-foot { display: contents; }
+/* The candidate-context chips (docs/METER_V2.md, the mockup's chips section; #315): the
+   same reason as the foot above — empty on the N/A state, so the region must
+   not itself become a box the grid still gives a row and a gap to. */
+.race-headline-chips { display: contents; }
 
 .race-detail-outcomes { display: grid; gap: .65rem; }
 .race-detail-candidate, .race-detail-outcome { overflow: hidden; border: 1px solid var(--line-soft); border-left: .3rem solid var(--line-strong); background: var(--white); }

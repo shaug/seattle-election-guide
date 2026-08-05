@@ -962,7 +962,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Alpha Assembly",
-          "decision": "Endorsed Anchor Ames"
+          "decision": "Endorsed Anchor Ames",
+          "candidate_ids": [
+            "band--anchor"
+          ]
         },
         {
           "type": "solid",
@@ -973,7 +976,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Beta Board",
-          "decision": "Endorsed Anchor Ames"
+          "decision": "Endorsed Anchor Ames",
+          "candidate_ids": [
+            "band--anchor"
+          ]
         },
         {
           "type": "split",
@@ -984,7 +990,11 @@
           "tongue_corner_start": true,
           "tongue_corner_end": true,
           "source_label": "Gamma Guild",
-          "decision": "Split: Anchor Ames + Bridge Brooks — ½ each"
+          "decision": "Split: Anchor Ames + Bridge Brooks — ½ each",
+          "candidate_ids": [
+            "band--anchor",
+            "band--bridge"
+          ]
         },
         {
           "type": "split",
@@ -995,7 +1005,11 @@
           "tongue_corner_start": true,
           "tongue_corner_end": false,
           "source_label": "Delta Digest",
-          "decision": "Split: Bridge Brooks + Tail Cho — ½ each"
+          "decision": "Split: Bridge Brooks + Tail Cho — ½ each",
+          "candidate_ids": [
+            "band--bridge",
+            "band--tail"
+          ]
         }
       ],
       "note": "Bridge Brooks is supported only by split halves, so that run has no solid block and the two bands sit side by side. Each is its own band, which the mockup's neighbour-type heuristic cannot see. The last block ends at the meter's own edge, so its tongue stays square.",
@@ -1066,7 +1080,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Alpha Assembly",
-          "decision": "Endorsed Alpha Ames"
+          "decision": "Endorsed Alpha Ames",
+          "candidate_ids": [
+            "both--alpha"
+          ]
         },
         {
           "type": "split",
@@ -1077,7 +1094,11 @@
           "tongue_corner_start": true,
           "tongue_corner_end": false,
           "source_label": "Civic Wire",
-          "decision": "Split: Alpha Ames + Bravo Brooks — ½ each"
+          "decision": "Split: Alpha Ames + Bravo Brooks — ½ each",
+          "candidate_ids": [
+            "both--alpha",
+            "both--bravo"
+          ]
         },
         {
           "type": "split",
@@ -1088,7 +1109,12 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Civic Wire",
-          "decision": "Split: Alpha Ames + Bravo Brooks + Cho Diaz — 1/3 each"
+          "decision": "Split: Alpha Ames + Bravo Brooks + Cho Diaz — 1/3 each",
+          "candidate_ids": [
+            "both--alpha",
+            "both--bravo",
+            "both--cho"
+          ]
         }
       ],
       "note": "Two sources publishing under one display name, both splitting at the same boundary: the partner ties and the source label ties, so the split's own membership is what finishes the order. Without it the band would keep whichever order the cells arrived in, and the two renderers receive them in different orders.",
@@ -1182,7 +1208,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Alpha Assembly",
-          "decision": "Endorsed Alpha Ames"
+          "decision": "Endorsed Alpha Ames",
+          "candidate_ids": [
+            "gap--alpha"
+          ]
         },
         {
           "type": "solid",
@@ -1193,7 +1222,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Beta Board",
-          "decision": "Endorsed Alpha Ames"
+          "decision": "Endorsed Alpha Ames",
+          "candidate_ids": [
+            "gap--alpha"
+          ]
         },
         {
           "type": "split",
@@ -1204,7 +1236,11 @@
           "tongue_corner_start": true,
           "tongue_corner_end": false,
           "source_label": "Delta Digest",
-          "decision": "Split: Alpha Ames + Cho Diaz — ½ each"
+          "decision": "Split: Alpha Ames + Cho Diaz — ½ each",
+          "candidate_ids": [
+            "gap--alpha",
+            "gap--cho"
+          ]
         },
         {
           "type": "split",
@@ -1215,7 +1251,11 @@
           "tongue_corner_start": false,
           "tongue_corner_end": true,
           "source_label": "Echo Examiner",
-          "decision": "Split: Alpha Ames + Bravo Brooks — ½ each"
+          "decision": "Split: Alpha Ames + Bravo Brooks — ½ each",
+          "candidate_ids": [
+            "gap--alpha",
+            "gap--bravo"
+          ]
         },
         {
           "type": "solid",
@@ -1226,7 +1266,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Civic Circle",
-          "decision": "Endorsed Bravo Brooks"
+          "decision": "Endorsed Bravo Brooks",
+          "candidate_ids": [
+            "gap--bravo"
+          ]
         }
       ],
       "note": "Both splits sit at the end of the leader's run, farthest partner first, so the split whose partner's run comes next is the one touching it.",
@@ -1280,7 +1323,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "43rd Legislative District Democrats",
-          "decision": "Endorsed Christopher Roberts"
+          "decision": "Endorsed Christopher Roberts",
+          "candidate_ids": [
+            "king-county-assessor--christopher-roberts"
+          ]
         },
         {
           "type": "solid",
@@ -1291,7 +1337,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "11th Legislative District Democrats",
-          "decision": "Endorsed Rob Foxcurran"
+          "decision": "Endorsed Rob Foxcurran",
+          "candidate_ids": [
+            "king-county-assessor--rob-foxcurran"
+          ]
         }
       ],
       "source": "published race king-county-assessor on the district-sources panel",
@@ -1613,7 +1662,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "37th Legislative District Democrats",
-          "decision": "Endorsed Rebecca Saldaña"
+          "decision": "Endorsed Rebecca Saldaña",
+          "candidate_ids": [
+            "king-county-council-2--rebecca-salda-a"
+          ]
         },
         {
           "type": "solid",
@@ -1624,7 +1676,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "43rd Legislative District Democrats",
-          "decision": "Endorsed Rebecca Saldaña"
+          "decision": "Endorsed Rebecca Saldaña",
+          "candidate_ids": [
+            "king-county-council-2--rebecca-salda-a"
+          ]
         },
         {
           "type": "solid",
@@ -1635,7 +1690,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "46th Legislative District Democrats",
-          "decision": "Endorsed Rebecca Saldaña"
+          "decision": "Endorsed Rebecca Saldaña",
+          "candidate_ids": [
+            "king-county-council-2--rebecca-salda-a"
+          ]
         },
         {
           "type": "solid",
@@ -1646,7 +1704,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "King County Democrats",
-          "decision": "Endorsed Rebecca Saldaña"
+          "decision": "Endorsed Rebecca Saldaña",
+          "candidate_ids": [
+            "king-county-council-2--rebecca-salda-a"
+          ]
         },
         {
           "type": "solid",
@@ -1657,7 +1718,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "MLK Labor",
-          "decision": "Endorsed Rebecca Saldaña"
+          "decision": "Endorsed Rebecca Saldaña",
+          "candidate_ids": [
+            "king-county-council-2--rebecca-salda-a"
+          ]
         },
         {
           "type": "solid",
@@ -1668,7 +1732,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "PROTEC17",
-          "decision": "Endorsed Rebecca Saldaña"
+          "decision": "Endorsed Rebecca Saldaña",
+          "candidate_ids": [
+            "king-county-council-2--rebecca-salda-a"
+          ]
         },
         {
           "type": "solid",
@@ -1679,7 +1746,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "SEIU 775",
-          "decision": "Endorsed Rebecca Saldaña"
+          "decision": "Endorsed Rebecca Saldaña",
+          "candidate_ids": [
+            "king-county-council-2--rebecca-salda-a"
+          ]
         },
         {
           "type": "solid",
@@ -1690,7 +1760,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "SEIU 925",
-          "decision": "Endorsed Rebecca Saldaña"
+          "decision": "Endorsed Rebecca Saldaña",
+          "candidate_ids": [
+            "king-county-council-2--rebecca-salda-a"
+          ]
         },
         {
           "type": "solid",
@@ -1701,7 +1774,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Tech 4 Housing",
-          "decision": "Endorsed Rebecca Saldaña"
+          "decision": "Endorsed Rebecca Saldaña",
+          "candidate_ids": [
+            "king-county-council-2--rebecca-salda-a"
+          ]
         },
         {
           "type": "solid",
@@ -1712,7 +1788,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "The Stranger Election Control Board",
-          "decision": "Endorsed Rebecca Saldaña"
+          "decision": "Endorsed Rebecca Saldaña",
+          "candidate_ids": [
+            "king-county-council-2--rebecca-salda-a"
+          ]
         },
         {
           "type": "solid",
@@ -1723,7 +1802,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "The Urbanist Elections Committee",
-          "decision": "Endorsed Rebecca Saldaña"
+          "decision": "Endorsed Rebecca Saldaña",
+          "candidate_ids": [
+            "king-county-council-2--rebecca-salda-a"
+          ]
         },
         {
           "type": "solid",
@@ -1734,7 +1816,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "The Washington Bus",
-          "decision": "Endorsed Rebecca Saldaña"
+          "decision": "Endorsed Rebecca Saldaña",
+          "candidate_ids": [
+            "king-county-council-2--rebecca-salda-a"
+          ]
         },
         {
           "type": "solid",
@@ -1745,7 +1830,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "UFCW 3000",
-          "decision": "Endorsed Rebecca Saldaña"
+          "decision": "Endorsed Rebecca Saldaña",
+          "candidate_ids": [
+            "king-county-council-2--rebecca-salda-a"
+          ]
         },
         {
           "type": "solid",
@@ -1756,7 +1844,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Washington Bikes",
-          "decision": "Endorsed Rebecca Saldaña"
+          "decision": "Endorsed Rebecca Saldaña",
+          "candidate_ids": [
+            "king-county-council-2--rebecca-salda-a"
+          ]
         },
         {
           "type": "solid",
@@ -1767,7 +1858,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Washington Community Action Network",
-          "decision": "Endorsed Rebecca Saldaña"
+          "decision": "Endorsed Rebecca Saldaña",
+          "candidate_ids": [
+            "king-county-council-2--rebecca-salda-a"
+          ]
         },
         {
           "type": "solid",
@@ -1778,7 +1872,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Washington Conservation Action",
-          "decision": "Endorsed Rebecca Saldaña"
+          "decision": "Endorsed Rebecca Saldaña",
+          "candidate_ids": [
+            "king-county-council-2--rebecca-salda-a"
+          ]
         },
         {
           "type": "solid",
@@ -1789,7 +1886,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Washington Housing Alliance",
-          "decision": "Endorsed Rebecca Saldaña"
+          "decision": "Endorsed Rebecca Saldaña",
+          "candidate_ids": [
+            "king-county-council-2--rebecca-salda-a"
+          ]
         },
         {
           "type": "solid",
@@ -1800,7 +1900,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Washington State Stonewall Democrats",
-          "decision": "Endorsed Rebecca Saldaña"
+          "decision": "Endorsed Rebecca Saldaña",
+          "candidate_ids": [
+            "king-county-council-2--rebecca-salda-a"
+          ]
         },
         {
           "type": "solid",
@@ -1811,7 +1914,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Washington for Peace and Justice",
-          "decision": "Endorsed Rebecca Saldaña"
+          "decision": "Endorsed Rebecca Saldaña",
+          "candidate_ids": [
+            "king-county-council-2--rebecca-salda-a"
+          ]
         },
         {
           "type": "split",
@@ -1822,7 +1928,11 @@
           "tongue_corner_start": true,
           "tongue_corner_end": false,
           "source_label": "Alliance for Gun Responsibility Victory Fund",
-          "decision": "Split: Rebecca Saldaña + Toshiko Grace Hasegawa — ½ each"
+          "decision": "Split: Rebecca Saldaña + Toshiko Grace Hasegawa — ½ each",
+          "candidate_ids": [
+            "king-county-council-2--rebecca-salda-a",
+            "king-county-council-2--toshiko-grace-hasegawa"
+          ]
         },
         {
           "type": "split",
@@ -1833,7 +1943,11 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "National Women's Political Caucus of Washington",
-          "decision": "Split: Rebecca Saldaña + Toshiko Grace Hasegawa — ½ each"
+          "decision": "Split: Rebecca Saldaña + Toshiko Grace Hasegawa — ½ each",
+          "candidate_ids": [
+            "king-county-council-2--rebecca-salda-a",
+            "king-county-council-2--toshiko-grace-hasegawa"
+          ]
         },
         {
           "type": "split",
@@ -1844,7 +1958,11 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Tech 4 Taxes",
-          "decision": "Split: Rebecca Saldaña + Toshiko Grace Hasegawa — ½ each"
+          "decision": "Split: Rebecca Saldaña + Toshiko Grace Hasegawa — ½ each",
+          "candidate_ids": [
+            "king-county-council-2--rebecca-salda-a",
+            "king-county-council-2--toshiko-grace-hasegawa"
+          ]
         },
         {
           "type": "split",
@@ -1855,7 +1973,11 @@
           "tongue_corner_start": false,
           "tongue_corner_end": true,
           "source_label": "Transit Riders Union",
-          "decision": "Split: Rebecca Saldaña + Toshiko Grace Hasegawa — ½ each"
+          "decision": "Split: Rebecca Saldaña + Toshiko Grace Hasegawa — ½ each",
+          "candidate_ids": [
+            "king-county-council-2--rebecca-salda-a",
+            "king-county-council-2--toshiko-grace-hasegawa"
+          ]
         },
         {
           "type": "solid",
@@ -1866,7 +1988,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "11th Legislative District Democrats",
-          "decision": "Endorsed Toshiko Grace Hasegawa"
+          "decision": "Endorsed Toshiko Grace Hasegawa",
+          "candidate_ids": [
+            "king-county-council-2--toshiko-grace-hasegawa"
+          ]
         }
       ],
       "source": "published race king-county-council-2 on the audited panel",
@@ -1918,7 +2043,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "11th Legislative District Democrats",
-          "decision": "Endorsed Teresa Mosqueda"
+          "decision": "Endorsed Teresa Mosqueda",
+          "candidate_ids": [
+            "king-county-council-8--teresa-mosqueda"
+          ]
         },
         {
           "type": "solid",
@@ -1929,7 +2057,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "43rd Legislative District Democrats",
-          "decision": "Endorsed Teresa Mosqueda"
+          "decision": "Endorsed Teresa Mosqueda",
+          "candidate_ids": [
+            "king-county-council-8--teresa-mosqueda"
+          ]
         }
       ],
       "source": "published race king-county-council-8 on the district-sources panel",
@@ -1969,7 +2100,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "The Stranger Election Control Board",
-          "decision": "Endorsed Ashley Fedan"
+          "decision": "Endorsed Ashley Fedan",
+          "candidate_ids": [
+            "ld-11-state-representative-1--ashley-fedan"
+          ]
         }
       ],
       "note": "Two sources split some races, which is where a half share and a tie both become reachable.",
@@ -2147,7 +2281,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "AFT Washington",
-          "decision": "Endorsed Danica Noble"
+          "decision": "Endorsed Danica Noble",
+          "candidate_ids": [
+            "ld-32-state-representative-1--danica-noble"
+          ]
         },
         {
           "type": "solid",
@@ -2158,7 +2295,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Alliance for Gun Responsibility Victory Fund",
-          "decision": "Endorsed Danica Noble"
+          "decision": "Endorsed Danica Noble",
+          "candidate_ids": [
+            "ld-32-state-representative-1--danica-noble"
+          ]
         },
         {
           "type": "solid",
@@ -2169,7 +2309,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Tech 4 Taxes",
-          "decision": "Endorsed Danica Noble"
+          "decision": "Endorsed Danica Noble",
+          "candidate_ids": [
+            "ld-32-state-representative-1--danica-noble"
+          ]
         },
         {
           "type": "solid",
@@ -2180,7 +2323,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "The Urbanist Elections Committee",
-          "decision": "Endorsed Danica Noble"
+          "decision": "Endorsed Danica Noble",
+          "candidate_ids": [
+            "ld-32-state-representative-1--danica-noble"
+          ]
         },
         {
           "type": "solid",
@@ -2191,7 +2337,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Transit Riders Union",
-          "decision": "Endorsed Danica Noble"
+          "decision": "Endorsed Danica Noble",
+          "candidate_ids": [
+            "ld-32-state-representative-1--danica-noble"
+          ]
         },
         {
           "type": "solid",
@@ -2202,7 +2351,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "UFCW 3000",
-          "decision": "Endorsed Danica Noble"
+          "decision": "Endorsed Danica Noble",
+          "candidate_ids": [
+            "ld-32-state-representative-1--danica-noble"
+          ]
         },
         {
           "type": "solid",
@@ -2213,7 +2365,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Washington State Labor Council, AFL-CIO",
-          "decision": "Endorsed Danica Noble"
+          "decision": "Endorsed Danica Noble",
+          "candidate_ids": [
+            "ld-32-state-representative-1--danica-noble"
+          ]
         },
         {
           "type": "split",
@@ -2224,7 +2379,11 @@
           "tongue_corner_start": true,
           "tongue_corner_end": false,
           "source_label": "National Women's Political Caucus of Washington",
-          "decision": "Split: Danica Noble + Jenna Nand — ½ each"
+          "decision": "Split: Danica Noble + Jenna Nand — ½ each",
+          "candidate_ids": [
+            "ld-32-state-representative-1--danica-noble",
+            "ld-32-state-representative-1--jenna-nand"
+          ]
         },
         {
           "type": "split",
@@ -2235,7 +2394,11 @@
           "tongue_corner_start": false,
           "tongue_corner_end": true,
           "source_label": "Washington Housing Alliance",
-          "decision": "Split: Danica Noble + Keith Scully — ½ each"
+          "decision": "Split: Danica Noble + Keith Scully — ½ each",
+          "candidate_ids": [
+            "ld-32-state-representative-1--danica-noble",
+            "ld-32-state-representative-1--keith-scully"
+          ]
         },
         {
           "type": "solid",
@@ -2246,7 +2409,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Sierra Club Washington State Chapter",
-          "decision": "Endorsed Keith Scully"
+          "decision": "Endorsed Keith Scully",
+          "candidate_ids": [
+            "ld-32-state-representative-1--keith-scully"
+          ]
         },
         {
           "type": "solid",
@@ -2257,7 +2423,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "The Stranger Election Control Board",
-          "decision": "Endorsed Keith Scully"
+          "decision": "Endorsed Keith Scully",
+          "candidate_ids": [
+            "ld-32-state-representative-1--keith-scully"
+          ]
         },
         {
           "type": "solid",
@@ -2268,7 +2437,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Washington Education Association",
-          "decision": "Endorsed Jenna Nand"
+          "decision": "Endorsed Jenna Nand",
+          "candidate_ids": [
+            "ld-32-state-representative-1--jenna-nand"
+          ]
         }
       ],
       "note": "The published panel: the shares, grades, and captions the guide ships.",
@@ -2322,7 +2494,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "The Urbanist Elections Committee",
-          "decision": "Endorsed Danica Noble"
+          "decision": "Endorsed Danica Noble",
+          "candidate_ids": [
+            "ld-32-state-representative-1--danica-noble"
+          ]
         },
         {
           "type": "solid",
@@ -2333,7 +2508,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "The Stranger Election Control Board",
-          "decision": "Endorsed Keith Scully"
+          "decision": "Endorsed Keith Scully",
+          "candidate_ids": [
+            "ld-32-state-representative-1--keith-scully"
+          ]
         }
       ],
       "source": "published race ld-32-state-representative-1 on the two-sources panel",
@@ -2385,7 +2563,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "The Stranger Election Control Board",
-          "decision": "Endorsed Imraan Siddiqi"
+          "decision": "Endorsed Imraan Siddiqi",
+          "candidate_ids": [
+            "ld-32-state-representative-2--imraan-siddiqi"
+          ]
         },
         {
           "type": "solid",
@@ -2396,7 +2577,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "The Urbanist Elections Committee",
-          "decision": "Endorsed Imraan Siddiqi"
+          "decision": "Endorsed Imraan Siddiqi",
+          "candidate_ids": [
+            "ld-32-state-representative-2--imraan-siddiqi"
+          ]
         }
       ],
       "source": "published race ld-32-state-representative-2 on the two-sources panel",
@@ -2645,7 +2829,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "32nd Legislative District Democrats",
-          "decision": "Endorsed Lauren Davis"
+          "decision": "Endorsed Lauren Davis",
+          "candidate_ids": [
+            "ld-32-state-representative-2--lauren-davis"
+          ]
         },
         {
           "type": "solid",
@@ -2656,7 +2843,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Alliance for Gun Responsibility Victory Fund",
-          "decision": "Endorsed Lauren Davis"
+          "decision": "Endorsed Lauren Davis",
+          "candidate_ids": [
+            "ld-32-state-representative-2--lauren-davis"
+          ]
         },
         {
           "type": "solid",
@@ -2667,7 +2857,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "King County Democrats",
-          "decision": "Endorsed Lauren Davis"
+          "decision": "Endorsed Lauren Davis",
+          "candidate_ids": [
+            "ld-32-state-representative-2--lauren-davis"
+          ]
         },
         {
           "type": "solid",
@@ -2678,7 +2871,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "National Women's Political Caucus of Washington",
-          "decision": "Endorsed Lauren Davis"
+          "decision": "Endorsed Lauren Davis",
+          "candidate_ids": [
+            "ld-32-state-representative-2--lauren-davis"
+          ]
         },
         {
           "type": "solid",
@@ -2689,7 +2885,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "SEIU 775",
-          "decision": "Endorsed Lauren Davis"
+          "decision": "Endorsed Lauren Davis",
+          "candidate_ids": [
+            "ld-32-state-representative-2--lauren-davis"
+          ]
         },
         {
           "type": "solid",
@@ -2700,7 +2899,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "SEIU 925",
-          "decision": "Endorsed Lauren Davis"
+          "decision": "Endorsed Lauren Davis",
+          "candidate_ids": [
+            "ld-32-state-representative-2--lauren-davis"
+          ]
         },
         {
           "type": "solid",
@@ -2711,7 +2913,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Washington Education Association",
-          "decision": "Endorsed Lauren Davis"
+          "decision": "Endorsed Lauren Davis",
+          "candidate_ids": [
+            "ld-32-state-representative-2--lauren-davis"
+          ]
         },
         {
           "type": "solid",
@@ -2722,7 +2927,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Washington State Building and Construction Trades Council",
-          "decision": "Endorsed Lauren Davis"
+          "decision": "Endorsed Lauren Davis",
+          "candidate_ids": [
+            "ld-32-state-representative-2--lauren-davis"
+          ]
         },
         {
           "type": "solid",
@@ -2733,7 +2941,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Washington State Labor Council, AFL-CIO",
-          "decision": "Endorsed Lauren Davis"
+          "decision": "Endorsed Lauren Davis",
+          "candidate_ids": [
+            "ld-32-state-representative-2--lauren-davis"
+          ]
         },
         {
           "type": "split",
@@ -2744,7 +2955,11 @@
           "tongue_corner_start": true,
           "tongue_corner_end": false,
           "source_label": "AFT Washington",
-          "decision": "Split: Lauren Davis + Imraan Siddiqi — ½ each"
+          "decision": "Split: Lauren Davis + Imraan Siddiqi — ½ each",
+          "candidate_ids": [
+            "ld-32-state-representative-2--lauren-davis",
+            "ld-32-state-representative-2--imraan-siddiqi"
+          ]
         },
         {
           "type": "split",
@@ -2755,7 +2970,11 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "UFCW 3000",
-          "decision": "Split: Lauren Davis + Imraan Siddiqi — ½ each"
+          "decision": "Split: Lauren Davis + Imraan Siddiqi — ½ each",
+          "candidate_ids": [
+            "ld-32-state-representative-2--lauren-davis",
+            "ld-32-state-representative-2--imraan-siddiqi"
+          ]
         },
         {
           "type": "split",
@@ -2766,7 +2985,11 @@
           "tongue_corner_start": false,
           "tongue_corner_end": true,
           "source_label": "Washington Housing Alliance",
-          "decision": "Split: Lauren Davis + Imraan Siddiqi — ½ each"
+          "decision": "Split: Lauren Davis + Imraan Siddiqi — ½ each",
+          "candidate_ids": [
+            "ld-32-state-representative-2--lauren-davis",
+            "ld-32-state-representative-2--imraan-siddiqi"
+          ]
         },
         {
           "type": "solid",
@@ -2777,7 +3000,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "OneAmerica Votes",
-          "decision": "Endorsed Imraan Siddiqi"
+          "decision": "Endorsed Imraan Siddiqi",
+          "candidate_ids": [
+            "ld-32-state-representative-2--imraan-siddiqi"
+          ]
         },
         {
           "type": "solid",
@@ -2788,7 +3014,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Sage Leaders",
-          "decision": "Endorsed Imraan Siddiqi"
+          "decision": "Endorsed Imraan Siddiqi",
+          "candidate_ids": [
+            "ld-32-state-representative-2--imraan-siddiqi"
+          ]
         },
         {
           "type": "solid",
@@ -2799,7 +3028,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "The Stranger Election Control Board",
-          "decision": "Endorsed Imraan Siddiqi"
+          "decision": "Endorsed Imraan Siddiqi",
+          "candidate_ids": [
+            "ld-32-state-representative-2--imraan-siddiqi"
+          ]
         },
         {
           "type": "solid",
@@ -2810,7 +3042,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "The Urbanist Elections Committee",
-          "decision": "Endorsed Imraan Siddiqi"
+          "decision": "Endorsed Imraan Siddiqi",
+          "candidate_ids": [
+            "ld-32-state-representative-2--imraan-siddiqi"
+          ]
         },
         {
           "type": "solid",
@@ -2821,7 +3056,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Washington State Stonewall Democrats",
-          "decision": "Endorsed Imraan Siddiqi"
+          "decision": "Endorsed Imraan Siddiqi",
+          "candidate_ids": [
+            "ld-32-state-representative-2--imraan-siddiqi"
+          ]
         },
         {
           "type": "solid",
@@ -2832,7 +3070,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Washington for Peace and Justice",
-          "decision": "Endorsed Imraan Siddiqi"
+          "decision": "Endorsed Imraan Siddiqi",
+          "candidate_ids": [
+            "ld-32-state-representative-2--imraan-siddiqi"
+          ]
         }
       ],
       "source": "published race ld-32-state-representative-2 on the audited panel",
@@ -3090,7 +3331,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "34th Legislative District Democrats",
-          "decision": "Endorsed Joe Fitzgibbon"
+          "decision": "Endorsed Joe Fitzgibbon",
+          "candidate_ids": [
+            "ld-34-state-representative-2--joe-fitzgibbon"
+          ]
         },
         {
           "type": "solid",
@@ -3101,7 +3345,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "AFT Washington",
-          "decision": "Endorsed Joe Fitzgibbon"
+          "decision": "Endorsed Joe Fitzgibbon",
+          "candidate_ids": [
+            "ld-34-state-representative-2--joe-fitzgibbon"
+          ]
         },
         {
           "type": "solid",
@@ -3112,7 +3359,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Alliance for Gun Responsibility Victory Fund",
-          "decision": "Endorsed Joe Fitzgibbon"
+          "decision": "Endorsed Joe Fitzgibbon",
+          "candidate_ids": [
+            "ld-34-state-representative-2--joe-fitzgibbon"
+          ]
         },
         {
           "type": "solid",
@@ -3123,7 +3373,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "King County Democrats",
-          "decision": "Endorsed Joe Fitzgibbon"
+          "decision": "Endorsed Joe Fitzgibbon",
+          "candidate_ids": [
+            "ld-34-state-representative-2--joe-fitzgibbon"
+          ]
         },
         {
           "type": "solid",
@@ -3134,7 +3387,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "SEIU 775",
-          "decision": "Endorsed Joe Fitzgibbon"
+          "decision": "Endorsed Joe Fitzgibbon",
+          "candidate_ids": [
+            "ld-34-state-representative-2--joe-fitzgibbon"
+          ]
         },
         {
           "type": "solid",
@@ -3145,7 +3401,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "SEIU 925",
-          "decision": "Endorsed Joe Fitzgibbon"
+          "decision": "Endorsed Joe Fitzgibbon",
+          "candidate_ids": [
+            "ld-34-state-representative-2--joe-fitzgibbon"
+          ]
         },
         {
           "type": "solid",
@@ -3156,7 +3415,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Sierra Club Washington State Chapter",
-          "decision": "Endorsed Joe Fitzgibbon"
+          "decision": "Endorsed Joe Fitzgibbon",
+          "candidate_ids": [
+            "ld-34-state-representative-2--joe-fitzgibbon"
+          ]
         },
         {
           "type": "solid",
@@ -3167,7 +3429,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "The Stranger Election Control Board",
-          "decision": "Endorsed Joe Fitzgibbon"
+          "decision": "Endorsed Joe Fitzgibbon",
+          "candidate_ids": [
+            "ld-34-state-representative-2--joe-fitzgibbon"
+          ]
         },
         {
           "type": "solid",
@@ -3178,7 +3443,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "The Urbanist Elections Committee",
-          "decision": "Endorsed Joe Fitzgibbon"
+          "decision": "Endorsed Joe Fitzgibbon",
+          "candidate_ids": [
+            "ld-34-state-representative-2--joe-fitzgibbon"
+          ]
         },
         {
           "type": "solid",
@@ -3189,7 +3457,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "UFCW 3000",
-          "decision": "Endorsed Joe Fitzgibbon"
+          "decision": "Endorsed Joe Fitzgibbon",
+          "candidate_ids": [
+            "ld-34-state-representative-2--joe-fitzgibbon"
+          ]
         },
         {
           "type": "solid",
@@ -3200,7 +3471,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Washington Bikes",
-          "decision": "Endorsed Joe Fitzgibbon"
+          "decision": "Endorsed Joe Fitzgibbon",
+          "candidate_ids": [
+            "ld-34-state-representative-2--joe-fitzgibbon"
+          ]
         },
         {
           "type": "solid",
@@ -3211,7 +3485,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Washington Conservation Action",
-          "decision": "Endorsed Joe Fitzgibbon"
+          "decision": "Endorsed Joe Fitzgibbon",
+          "candidate_ids": [
+            "ld-34-state-representative-2--joe-fitzgibbon"
+          ]
         },
         {
           "type": "solid",
@@ -3222,7 +3499,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Washington Education Association",
-          "decision": "Endorsed Joe Fitzgibbon"
+          "decision": "Endorsed Joe Fitzgibbon",
+          "candidate_ids": [
+            "ld-34-state-representative-2--joe-fitzgibbon"
+          ]
         },
         {
           "type": "solid",
@@ -3233,7 +3513,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Washington Housing Alliance",
-          "decision": "Endorsed Joe Fitzgibbon"
+          "decision": "Endorsed Joe Fitzgibbon",
+          "candidate_ids": [
+            "ld-34-state-representative-2--joe-fitzgibbon"
+          ]
         },
         {
           "type": "solid",
@@ -3244,7 +3527,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Washington State Building and Construction Trades Council",
-          "decision": "Endorsed Joe Fitzgibbon"
+          "decision": "Endorsed Joe Fitzgibbon",
+          "candidate_ids": [
+            "ld-34-state-representative-2--joe-fitzgibbon"
+          ]
         },
         {
           "type": "solid",
@@ -3255,7 +3541,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Washington State Labor Council, AFL-CIO",
-          "decision": "Endorsed Joe Fitzgibbon"
+          "decision": "Endorsed Joe Fitzgibbon",
+          "candidate_ids": [
+            "ld-34-state-representative-2--joe-fitzgibbon"
+          ]
         },
         {
           "type": "solid",
@@ -3266,7 +3555,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Washington State Stonewall Democrats",
-          "decision": "Endorsed Joe Fitzgibbon"
+          "decision": "Endorsed Joe Fitzgibbon",
+          "candidate_ids": [
+            "ld-34-state-representative-2--joe-fitzgibbon"
+          ]
         },
         {
           "type": "solid",
@@ -3277,7 +3569,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Washington for Peace and Justice",
-          "decision": "Endorsed Joe Fitzgibbon"
+          "decision": "Endorsed Joe Fitzgibbon",
+          "candidate_ids": [
+            "ld-34-state-representative-2--joe-fitzgibbon"
+          ]
         },
         {
           "type": "solid",
@@ -3288,7 +3583,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "National Women's Political Caucus of Washington",
-          "decision": "Endorsed Mary Anito"
+          "decision": "Endorsed Mary Anito",
+          "candidate_ids": [
+            "ld-34-state-representative-2--mary-anito"
+          ]
         }
       ],
       "source": "published race ld-34-state-representative-2 on the audited panel",
@@ -3475,7 +3773,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Sage Leaders",
-          "decision": "Endorsed Kelabe Tewolde"
+          "decision": "Endorsed Kelabe Tewolde",
+          "candidate_ids": [
+            "ld-37-state-representative-1--kelabe-tewolde"
+          ]
         },
         {
           "type": "solid",
@@ -3486,7 +3787,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Seattle Gay News Editorial Board",
-          "decision": "Endorsed Kelabe Tewolde"
+          "decision": "Endorsed Kelabe Tewolde",
+          "candidate_ids": [
+            "ld-37-state-representative-1--kelabe-tewolde"
+          ]
         },
         {
           "type": "solid",
@@ -3497,7 +3801,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Tech 4 Housing",
-          "decision": "Endorsed Kelabe Tewolde"
+          "decision": "Endorsed Kelabe Tewolde",
+          "candidate_ids": [
+            "ld-37-state-representative-1--kelabe-tewolde"
+          ]
         },
         {
           "type": "solid",
@@ -3508,7 +3815,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "The Stranger Election Control Board",
-          "decision": "Endorsed Kelabe Tewolde"
+          "decision": "Endorsed Kelabe Tewolde",
+          "candidate_ids": [
+            "ld-37-state-representative-1--kelabe-tewolde"
+          ]
         },
         {
           "type": "solid",
@@ -3519,7 +3829,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "The Urbanist Elections Committee",
-          "decision": "Endorsed Kelabe Tewolde"
+          "decision": "Endorsed Kelabe Tewolde",
+          "candidate_ids": [
+            "ld-37-state-representative-1--kelabe-tewolde"
+          ]
         },
         {
           "type": "solid",
@@ -3530,7 +3843,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Washington State Stonewall Democrats",
-          "decision": "Endorsed Kelabe Tewolde"
+          "decision": "Endorsed Kelabe Tewolde",
+          "candidate_ids": [
+            "ld-37-state-representative-1--kelabe-tewolde"
+          ]
         },
         {
           "type": "split",
@@ -3541,7 +3857,11 @@
           "tongue_corner_start": true,
           "tongue_corner_end": true,
           "source_label": "Washington for Peace and Justice",
-          "decision": "Split: Kelabe Tewolde + Sharon Tomiko Santos — ½ each"
+          "decision": "Split: Kelabe Tewolde + Sharon Tomiko Santos — ½ each",
+          "candidate_ids": [
+            "ld-37-state-representative-1--kelabe-tewolde",
+            "ld-37-state-representative-1--sharon-tomiko-santos"
+          ]
         },
         {
           "type": "solid",
@@ -3552,7 +3872,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "37th Legislative District Democrats",
-          "decision": "Endorsed Sharon Tomiko Santos"
+          "decision": "Endorsed Sharon Tomiko Santos",
+          "candidate_ids": [
+            "ld-37-state-representative-1--sharon-tomiko-santos"
+          ]
         },
         {
           "type": "solid",
@@ -3563,7 +3886,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "AFT Washington",
-          "decision": "Endorsed Sharon Tomiko Santos"
+          "decision": "Endorsed Sharon Tomiko Santos",
+          "candidate_ids": [
+            "ld-37-state-representative-1--sharon-tomiko-santos"
+          ]
         },
         {
           "type": "solid",
@@ -3574,7 +3900,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Alliance for Gun Responsibility Victory Fund",
-          "decision": "Endorsed Sharon Tomiko Santos"
+          "decision": "Endorsed Sharon Tomiko Santos",
+          "candidate_ids": [
+            "ld-37-state-representative-1--sharon-tomiko-santos"
+          ]
         },
         {
           "type": "solid",
@@ -3585,7 +3914,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "National Women's Political Caucus of Washington",
-          "decision": "Endorsed Sharon Tomiko Santos"
+          "decision": "Endorsed Sharon Tomiko Santos",
+          "candidate_ids": [
+            "ld-37-state-representative-1--sharon-tomiko-santos"
+          ]
         },
         {
           "type": "solid",
@@ -3596,7 +3928,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "SEIU 925",
-          "decision": "Endorsed Sharon Tomiko Santos"
+          "decision": "Endorsed Sharon Tomiko Santos",
+          "candidate_ids": [
+            "ld-37-state-representative-1--sharon-tomiko-santos"
+          ]
         },
         {
           "type": "solid",
@@ -3607,7 +3942,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Washington State Labor Council, AFL-CIO",
-          "decision": "Endorsed Sharon Tomiko Santos"
+          "decision": "Endorsed Sharon Tomiko Santos",
+          "candidate_ids": [
+            "ld-37-state-representative-1--sharon-tomiko-santos"
+          ]
         }
       ],
       "source": "published race ld-37-state-representative-1 on the audited panel",
@@ -3689,7 +4027,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Alpha Assembly",
-          "decision": "Endorsed Alpha Ames"
+          "decision": "Endorsed Alpha Ames",
+          "candidate_ids": [
+            "nway--alpha"
+          ]
         },
         {
           "type": "solid",
@@ -3700,7 +4041,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Beta Board",
-          "decision": "Endorsed Alpha Ames"
+          "decision": "Endorsed Alpha Ames",
+          "candidate_ids": [
+            "nway--alpha"
+          ]
         },
         {
           "type": "split",
@@ -3711,7 +4055,12 @@
           "tongue_corner_start": true,
           "tongue_corner_end": true,
           "source_label": "Delta Digest",
-          "decision": "Split: Alpha Ames + Bravo Brooks + Cho Diaz — 1/3 each"
+          "decision": "Split: Alpha Ames + Bravo Brooks + Cho Diaz — 1/3 each",
+          "candidate_ids": [
+            "nway--alpha",
+            "nway--bravo",
+            "nway--cho"
+          ]
         },
         {
           "type": "solid",
@@ -3722,7 +4071,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Civic Circle",
-          "decision": "Endorsed Bravo Brooks"
+          "decision": "Endorsed Bravo Brooks",
+          "candidate_ids": [
+            "nway--bravo"
+          ]
         }
       ],
       "note": "One block naming three candidates carries them in standings order, top to bottom, not in the order the cell happened to list them.",
@@ -3814,7 +4166,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Alpha Assembly",
-          "decision": "Endorsed Alpha Ames"
+          "decision": "Endorsed Alpha Ames",
+          "candidate_ids": [
+            "pair--alpha"
+          ]
         },
         {
           "type": "solid",
@@ -3825,7 +4180,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Beta Board",
-          "decision": "Endorsed Alpha Ames"
+          "decision": "Endorsed Alpha Ames",
+          "candidate_ids": [
+            "pair--alpha"
+          ]
         },
         {
           "type": "split",
@@ -3836,7 +4194,11 @@
           "tongue_corner_start": true,
           "tongue_corner_end": false,
           "source_label": "Yardley Yearbook",
-          "decision": "Split: Alpha Ames + Bravo Brooks — ½ each"
+          "decision": "Split: Alpha Ames + Bravo Brooks — ½ each",
+          "candidate_ids": [
+            "pair--alpha",
+            "pair--bravo"
+          ]
         },
         {
           "type": "split",
@@ -3847,7 +4209,11 @@
           "tongue_corner_start": false,
           "tongue_corner_end": true,
           "source_label": "Zenith Ledger",
-          "decision": "Split: Alpha Ames + Bravo Brooks — ½ each"
+          "decision": "Split: Alpha Ames + Bravo Brooks — ½ each",
+          "candidate_ids": [
+            "pair--alpha",
+            "pair--bravo"
+          ]
         },
         {
           "type": "solid",
@@ -3858,7 +4224,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Civic Circle",
-          "decision": "Endorsed Bravo Brooks"
+          "decision": "Endorsed Bravo Brooks",
+          "candidate_ids": [
+            "pair--bravo"
+          ]
         }
       ],
       "note": "Two splits naming the same pair are the same distance apart, so the source label decides which comes first — without it the band would keep whichever order the cells arrived in, and the two renderers receive them in different orders.",
@@ -3910,7 +4279,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Alpha Assembly",
-          "decision": "Endorsed Alpha Ames"
+          "decision": "Endorsed Alpha Ames",
+          "candidate_ids": [
+            "solo--alpha"
+          ]
         },
         {
           "type": "solid",
@@ -3921,7 +4293,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Beta Board",
-          "decision": "Endorsed Alpha Ames"
+          "decision": "Endorsed Alpha Ames",
+          "candidate_ids": [
+            "solo--alpha"
+          ]
         }
       ],
       "note": "Two sources looked and declined: no block, and no denominator weight either, so the meter is two blocks wide rather than four. Every other candidate on the ballot is named by no cell and so has no run at all.",
@@ -3975,7 +4350,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Bellwether Board",
-          "decision": "Endorsed Ada Ames"
+          "decision": "Endorsed Ada Ames",
+          "candidate_ids": [
+            "tie--second"
+          ]
         },
         {
           "type": "solid",
@@ -3986,7 +4364,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Ashland Assembly",
-          "decision": "Endorsed Zeta Zhang"
+          "decision": "Endorsed Zeta Zhang",
+          "candidate_ids": [
+            "tie--first"
+          ]
         }
       ],
       "note": "Equal units, so the display label breaks the tie and Ada Ames leads. Both the ids and the source labels run the other way, so neither can be what produced this order.",
@@ -4242,7 +4623,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "32nd Legislative District Democrats",
-          "decision": "Endorsed Pramila Jayapal"
+          "decision": "Endorsed Pramila Jayapal",
+          "candidate_ids": [
+            "us-house-7--pramila-jayapal"
+          ]
         },
         {
           "type": "solid",
@@ -4253,7 +4637,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "34th Legislative District Democrats",
-          "decision": "Endorsed Pramila Jayapal"
+          "decision": "Endorsed Pramila Jayapal",
+          "candidate_ids": [
+            "us-house-7--pramila-jayapal"
+          ]
         },
         {
           "type": "solid",
@@ -4264,7 +4651,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "36th Legislative District Democrats",
-          "decision": "Endorsed Pramila Jayapal"
+          "decision": "Endorsed Pramila Jayapal",
+          "candidate_ids": [
+            "us-house-7--pramila-jayapal"
+          ]
         },
         {
           "type": "solid",
@@ -4275,7 +4665,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "37th Legislative District Democrats",
-          "decision": "Endorsed Pramila Jayapal"
+          "decision": "Endorsed Pramila Jayapal",
+          "candidate_ids": [
+            "us-house-7--pramila-jayapal"
+          ]
         },
         {
           "type": "solid",
@@ -4286,7 +4679,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "43rd Legislative District Democrats",
-          "decision": "Endorsed Pramila Jayapal"
+          "decision": "Endorsed Pramila Jayapal",
+          "candidate_ids": [
+            "us-house-7--pramila-jayapal"
+          ]
         },
         {
           "type": "solid",
@@ -4297,7 +4693,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "46th Legislative District Democrats",
-          "decision": "Endorsed Pramila Jayapal"
+          "decision": "Endorsed Pramila Jayapal",
+          "candidate_ids": [
+            "us-house-7--pramila-jayapal"
+          ]
         },
         {
           "type": "solid",
@@ -4308,7 +4707,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Alliance for Gun Responsibility Victory Fund",
-          "decision": "Endorsed Pramila Jayapal"
+          "decision": "Endorsed Pramila Jayapal",
+          "candidate_ids": [
+            "us-house-7--pramila-jayapal"
+          ]
         },
         {
           "type": "solid",
@@ -4319,7 +4721,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Fuse Washington",
-          "decision": "Endorsed Pramila Jayapal"
+          "decision": "Endorsed Pramila Jayapal",
+          "candidate_ids": [
+            "us-house-7--pramila-jayapal"
+          ]
         },
         {
           "type": "solid",
@@ -4330,7 +4735,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "King County Democrats",
-          "decision": "Endorsed Pramila Jayapal"
+          "decision": "Endorsed Pramila Jayapal",
+          "candidate_ids": [
+            "us-house-7--pramila-jayapal"
+          ]
         },
         {
           "type": "solid",
@@ -4341,7 +4749,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "National Women's Political Caucus of Washington",
-          "decision": "Endorsed Pramila Jayapal"
+          "decision": "Endorsed Pramila Jayapal",
+          "candidate_ids": [
+            "us-house-7--pramila-jayapal"
+          ]
         },
         {
           "type": "solid",
@@ -4352,7 +4763,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "OneAmerica Votes",
-          "decision": "Endorsed Pramila Jayapal"
+          "decision": "Endorsed Pramila Jayapal",
+          "candidate_ids": [
+            "us-house-7--pramila-jayapal"
+          ]
         },
         {
           "type": "solid",
@@ -4363,7 +4777,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "SEIU 775",
-          "decision": "Endorsed Pramila Jayapal"
+          "decision": "Endorsed Pramila Jayapal",
+          "candidate_ids": [
+            "us-house-7--pramila-jayapal"
+          ]
         },
         {
           "type": "solid",
@@ -4374,7 +4791,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Sierra Club Washington State Chapter",
-          "decision": "Endorsed Pramila Jayapal"
+          "decision": "Endorsed Pramila Jayapal",
+          "candidate_ids": [
+            "us-house-7--pramila-jayapal"
+          ]
         },
         {
           "type": "solid",
@@ -4385,7 +4805,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "The Stranger Election Control Board",
-          "decision": "Endorsed Pramila Jayapal"
+          "decision": "Endorsed Pramila Jayapal",
+          "candidate_ids": [
+            "us-house-7--pramila-jayapal"
+          ]
         },
         {
           "type": "solid",
@@ -4396,7 +4819,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Washington Education Association",
-          "decision": "Endorsed Pramila Jayapal"
+          "decision": "Endorsed Pramila Jayapal",
+          "candidate_ids": [
+            "us-house-7--pramila-jayapal"
+          ]
         },
         {
           "type": "solid",
@@ -4407,7 +4833,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Washington State Building and Construction Trades Council",
-          "decision": "Endorsed Pramila Jayapal"
+          "decision": "Endorsed Pramila Jayapal",
+          "candidate_ids": [
+            "us-house-7--pramila-jayapal"
+          ]
         },
         {
           "type": "solid",
@@ -4418,7 +4847,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Washington State Labor Council, AFL-CIO",
-          "decision": "Endorsed Pramila Jayapal"
+          "decision": "Endorsed Pramila Jayapal",
+          "candidate_ids": [
+            "us-house-7--pramila-jayapal"
+          ]
         },
         {
           "type": "solid",
@@ -4429,7 +4861,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Washington State Stonewall Democrats",
-          "decision": "Endorsed Pramila Jayapal"
+          "decision": "Endorsed Pramila Jayapal",
+          "candidate_ids": [
+            "us-house-7--pramila-jayapal"
+          ]
         },
         {
           "type": "solid",
@@ -4440,7 +4875,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Washington for Peace and Justice",
-          "decision": "Endorsed Pramila Jayapal"
+          "decision": "Endorsed Pramila Jayapal",
+          "candidate_ids": [
+            "us-house-7--pramila-jayapal"
+          ]
         }
       ],
       "source": "published race us-house-7 on the audited panel",
@@ -4480,7 +4918,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "43rd Legislative District Democrats",
-          "decision": "Endorsed Pramila Jayapal"
+          "decision": "Endorsed Pramila Jayapal",
+          "candidate_ids": [
+            "us-house-7--pramila-jayapal"
+          ]
         }
       ],
       "source": "published race us-house-7 on the district-sources panel",
@@ -4520,7 +4961,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "The Stranger Election Control Board",
-          "decision": "Endorsed Pramila Jayapal"
+          "decision": "Endorsed Pramila Jayapal",
+          "candidate_ids": [
+            "us-house-7--pramila-jayapal"
+          ]
         }
       ],
       "source": "published race us-house-7 on the single-source panel",
@@ -4685,7 +5129,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Alliance for Gun Responsibility Victory Fund",
-          "decision": "Endorsed Adam Smith"
+          "decision": "Endorsed Adam Smith",
+          "candidate_ids": [
+            "us-house-9--adam-smith"
+          ]
         },
         {
           "type": "solid",
@@ -4696,7 +5143,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "King County Democrats",
-          "decision": "Endorsed Adam Smith"
+          "decision": "Endorsed Adam Smith",
+          "candidate_ids": [
+            "us-house-9--adam-smith"
+          ]
         },
         {
           "type": "solid",
@@ -4707,7 +5157,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "SEIU 775",
-          "decision": "Endorsed Adam Smith"
+          "decision": "Endorsed Adam Smith",
+          "candidate_ids": [
+            "us-house-9--adam-smith"
+          ]
         },
         {
           "type": "solid",
@@ -4718,7 +5171,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Sierra Club Washington State Chapter",
-          "decision": "Endorsed Adam Smith"
+          "decision": "Endorsed Adam Smith",
+          "candidate_ids": [
+            "us-house-9--adam-smith"
+          ]
         },
         {
           "type": "solid",
@@ -4729,7 +5185,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Washington Education Association",
-          "decision": "Endorsed Adam Smith"
+          "decision": "Endorsed Adam Smith",
+          "candidate_ids": [
+            "us-house-9--adam-smith"
+          ]
         },
         {
           "type": "solid",
@@ -4740,7 +5199,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Washington State Building and Construction Trades Council",
-          "decision": "Endorsed Adam Smith"
+          "decision": "Endorsed Adam Smith",
+          "candidate_ids": [
+            "us-house-9--adam-smith"
+          ]
         },
         {
           "type": "solid",
@@ -4751,7 +5213,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Washington State Labor Council, AFL-CIO",
-          "decision": "Endorsed Adam Smith"
+          "decision": "Endorsed Adam Smith",
+          "candidate_ids": [
+            "us-house-9--adam-smith"
+          ]
         },
         {
           "type": "solid",
@@ -4762,7 +5227,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Washington State Stonewall Democrats",
-          "decision": "Endorsed Adam Smith"
+          "decision": "Endorsed Adam Smith",
+          "candidate_ids": [
+            "us-house-9--adam-smith"
+          ]
         },
         {
           "type": "solid",
@@ -4773,7 +5241,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Seattle Gay News Editorial Board",
-          "decision": "Endorsed Kshama Sawant"
+          "decision": "Endorsed Kshama Sawant",
+          "candidate_ids": [
+            "us-house-9--kshama-sawant"
+          ]
         },
         {
           "type": "solid",
@@ -4784,7 +5255,10 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "The Stranger Election Control Board",
-          "decision": "Endorsed Kshama Sawant"
+          "decision": "Endorsed Kshama Sawant",
+          "candidate_ids": [
+            "us-house-9--kshama-sawant"
+          ]
         },
         {
           "type": "split",
@@ -4795,7 +5269,11 @@
           "tongue_corner_start": true,
           "tongue_corner_end": false,
           "source_label": "Washington for Peace and Justice",
-          "decision": "Split: Kshama Sawant + Melissa Chaudhry — ½ each"
+          "decision": "Split: Kshama Sawant + Melissa Chaudhry — ½ each",
+          "candidate_ids": [
+            "us-house-9--kshama-sawant",
+            "us-house-9--melissa-chaudhry"
+          ]
         }
       ],
       "source": "published race us-house-9 on the audited panel",
@@ -4838,7 +5316,11 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "11th Legislative District Democrats",
-          "decision": "Split: Ashley Fedan + David Hackney — ½ each"
+          "decision": "Split: Ashley Fedan + David Hackney — ½ each",
+          "candidate_ids": [
+            "ld-11-state-representative-1--ashley-fedan",
+            "ld-11-state-representative-1--david-hackney"
+          ]
         }
       ],
       "source": "published race ld-11-state-representative-1 on the district-sources panel",

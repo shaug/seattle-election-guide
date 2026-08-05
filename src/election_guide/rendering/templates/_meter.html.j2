@@ -43,7 +43,25 @@
     ~ (' meter-tongue-end' if block.tongue_corner_end else '') }}"
   style="{{ block.style }}" data-meter-source="{{ block.source_label }}"
   data-meter-decision="{{ block.decision }}"
+  data-meter-candidates="{{ block.candidate_ids | join(',') }}"
 >{% if block.type == 'split' -%}
 <span class="meter-half meter-half-top"></span><span class="meter-half meter-half-bottom"></span>
 {%- endif %}</span>
+{%- endmacro %}
+
+{# The candidate-context treatment's trigger surface (docs/METER_V2.md,
+   the mockup's chips section; #315): one real button per standing candidate, holding
+   its color dot, name, and exact count. `aria-pressed` always starts false
+   here — the audited render carries no context, only the chip a reader could
+   press to reach one (`meter-context.mjs` owns the toggle) — so the server's
+   markup and the lit twin's audited-default render are identical, which is
+   what `race-markup-parity.test.mjs` proves. Empty `chips` (the N/A state)
+   renders nothing, matching `meter_view`'s own empty `blocks`. #}
+{% macro meter_chips(chips) -%}
+{% if chips %}<ul class="meter-chips">{% for chip in chips %}<li><button type="button"
+  class="meter-chip" aria-pressed="false" data-meter-chip
+  data-meter-candidate="{{ chip.candidate_id }}"
+><span class="meter-chip-dot" style="background: {{ chip.color }}"></span><span
+  class="meter-chip-name">{{ chip.label }}</span><span
+  class="meter-chip-count">{{ chip.count_label }}</span></button></li>{% endfor %}</ul>{% endif %}
 {%- endmacro %}

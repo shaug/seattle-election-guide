@@ -8,13 +8,14 @@
 // crawler, so the unfurl this page's `og:` tags describe is always the audited
 // consensus (rendering/documents.py).
 //
-// Four regions are lit's, each one an element the server already renders whose
+// Five regions are lit's, each one an element the server already renders whose
 // children lit takes over the first time the reader's selection stops being the
 // audited default: the headline's result, caption, and foot — the guide card's
 // own components, from `guide-card.mjs`, because a race page shows the same
-// quantities the card showed — and the candidate sections, from
-// `race-detail.mjs`. Takeover is lazy and one-way, as § Rendering's idiom
-// requires for a region whose content is a projection of state: an ordinary
+// quantities the card showed — the candidate sections, from `race-detail.mjs`,
+// and that module's own chip list, the candidate-context treatment's trigger
+// surface (docs/METER_V2.md; #315). Takeover is lazy and one-way, as § Rendering's
+// idiom requires for a region whose content is a projection of state: an ordinary
 // visit does no DOM work at all, and `race-markup-parity.test.mjs` is what makes
 // the audited restore a render rather than a saved copy of the server's markup.
 //
@@ -51,7 +52,7 @@ import {
 } from './lens-selection.mjs';
 import { decodeLensFragment, LEGACY_RACE_PREFIX, lensContext } from './lens-url.mjs';
 import { meterEndorsementsFromCells } from './meter-layout.mjs';
-import { candidateSectionsTemplate } from './race-detail.mjs';
+import { candidateSectionsTemplate, raceChipsTemplate } from './race-detail.mjs';
 
 /** The audited insufficiency warning, as race.html.j2 renders it. */
 const AUDITED_INSUFFICIENT_NOTE = 'Too few endorsements to measure agreement.';
@@ -90,6 +91,7 @@ export function wireRacePage(payload) {
   const element = (selector) => /** @type {HTMLElement|null} */ (document.querySelector(selector));
 
   const resultRegion = element('[data-lens-result]');
+  const chipsRegion = element('[data-lens-chips]');
   const contextRegion = element('[data-lens-context]');
   const footRegion = element('[data-lens-foot]');
   const candidatesRegion = element('[data-race-candidates]');
@@ -124,7 +126,7 @@ export function wireRacePage(payload) {
   /** A persistent explanation of how this load resolved its link, when warranted. */
   /** @type {string|null} */
   let notice = null;
-  /** Whether lit has taken the four regions over from the server. One-way. */
+  /** Whether lit has taken the five regions over from the server. One-way. */
   let takenOver = false;
 
   /**
@@ -210,22 +212,39 @@ export function wireRacePage(payload) {
     const isAudited = selectedTotal === null;
     if (!takenOver) {
       // Takeover is one-way and explicit: the server's markup is dropped once,
-      // and lit owns these four regions from now on. Without this, lit would
+      // and lit owns these five regions from now on. Without this, lit would
       // render its own copy after the server's rather than in place of it.
-      for (const region of [resultRegion, contextRegion, footRegion, candidatesRegion]) {
+      for (const region of [
+        resultRegion,
+        chipsRegion,
+        contextRegion,
+        footRegion,
+        candidatesRegion,
+      ]) {
         region?.replaceChildren();
       }
       takenOver = true;
     }
-    if (resultRegion) {
+    if (resultRegion || chipsRegion) {
       const endorsements = meterEndorsementsFromCells(scored.meterCells, sourceNameByCode, labels);
-      render(
-        raceResultTemplate({
-          recommendation: recommendationLabel(scored, labels),
-          meter: meterView(scored.winnerShare, endorsements, new Set(scored.winnerIds)),
-        }),
-        resultRegion,
-      );
+      const meter = meterView(scored.winnerShare, endorsements, new Set(scored.winnerIds));
+      if (resultRegion) {
+        render(
+          raceResultTemplate({
+            recommendation: recommendationLabel(scored, labels),
+            meter,
+          }),
+          resultRegion,
+        );
+      }
+      // Its own region, so a lens change rebuilds the chip list — chip counts
+      // are lens-aware like every other computed number (docs/DESIGN.md, Data
+      // display) — without disturbing the result region beside it. Any
+      // candidate context the reader had selected is dropped along with the
+      // old blocks it pointed at: the new markup carries none, the same
+      // "no context is the resting default" the audited page itself renders
+      // (`meter-context.mjs`).
+      if (chipsRegion) render(raceChipsTemplate(meter.chips), chipsRegion);
     }
     if (contextRegion) {
       // Not the card's `raceContextTemplate`: a card carries a caption because

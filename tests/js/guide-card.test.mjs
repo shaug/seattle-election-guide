@@ -62,6 +62,7 @@ const meter = (fillPercent, { lowFill = false, noMajority = false, degraded = fa
             tongue_corner_end: false,
             source_label: 'The Stranger',
             decision: 'Endorsed Ada Lovelace',
+            candidate_ids: ['ada-lovelace'],
           },
         ],
 });
@@ -87,6 +88,11 @@ test('a share with a value renders its blocks and the resting percent', () => {
   assert.equal(block.getAttribute('style'), '--meter-w:1; --meter-c:var(--teal)');
   assert.equal(block.getAttribute('data-meter-source'), 'The Stranger');
   assert.equal(block.getAttribute('data-meter-decision'), 'Endorsed Ada Lovelace');
+  assert.equal(
+    block.getAttribute('data-meter-candidates'),
+    'ada-lovelace',
+    "the race page's candidate-context treatment matches a block by this attribute (#315)",
+  );
   // The block carries no text of its own — the container's own text stays
   // exactly the resting percent, which is what the rendered-HTML validator
   // (rendering/validation.py) holds the "share" display role to.
@@ -134,6 +140,7 @@ test('a split block renders its two halves and no others', () => {
       tongue_corner_end: false,
       source_label: 'The Urbanist',
       decision: 'Split: Ada Lovelace + Blaise Pascal — ½ each',
+      candidate_ids: ['ada-lovelace', 'blaise-pascal'],
     },
   ];
   const host = rendered(raceResultTemplate({ recommendation: 'Ada / Blaise', meter: view }));

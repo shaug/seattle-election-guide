@@ -27,6 +27,7 @@ const DOCUMENT_SHELL = /^[\s\S]*?<html[^>]*>|<\/html>[\s\S]*$/g;
 
 const REGIONS = [
   '[data-lens-result]',
+  '[data-lens-chips]',
   '[data-lens-context]',
   '[data-lens-foot]',
   '[data-race-candidates]',

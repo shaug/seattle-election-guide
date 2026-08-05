@@ -18,7 +18,7 @@
   {{ shell.social_meta(document_title, page_description, canonical_url) }}
 {% endblock %}
 {% block body %}
-  {% from '_meter.html.j2' import segmented_meter %}
+  {% from '_meter.html.j2' import segmented_meter, meter_chips %}
   {% macro source_badge(row) -%}
     <span class="race-detail-category-badge">{{ row.category_label }}</span>
   {%- endmacro %}
@@ -135,10 +135,20 @@
         role="group" aria-label="Consensus result"
         aria-describedby="race-consensus-summary" data-race-headline
         {%- if headline_candidate_id is none %} hidden{% endif %}>
+        {% set race_meter = meter_view(race) %}
         <p class="race-headline-eyebrow">Leading choice</p>
         <div class="screen-race-result" data-lens-result>
           <h3 data-display-role="recommendation">{{ race.recommendation_label }}</h3>
-          {{ segmented_meter(meter_view(race)) }}
+          {{ segmented_meter(race_meter) }}
+        </div>
+        {# The candidate-context treatment's trigger surface (docs/METER_V2.md,
+           the mockup's chips section; #315): selecting a chip puts the meter above into
+           that candidate's context. Its own region, so a lens can rebuild it
+           — chip counts are lens-aware like every other computed number
+           (docs/DESIGN.md, Data display) — without touching the result or
+           context regions beside it. #}
+        <div class="race-headline-chips" data-lens-chips>
+          {{ meter_chips(race_meter.chips) }}
         </div>
         {# The card's caption is not repeated here for the same reason the
            sections carry no count: this candidate's endorsing sources are

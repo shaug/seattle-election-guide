@@ -27,6 +27,7 @@ import { Rational } from './lens-score.mjs';
 import {
   meterAccessibleLabel,
   meterBlockRenders,
+  meterCandidateChips,
   meterCandidateColors,
   meterCandidateLabels,
   meterLayoutBlocks,
@@ -55,6 +56,10 @@ const METER_DEGRADE_MAX_BLOCKS = Math.floor(120 / 3);
  * @property {boolean} degraded
  * @property {string} accessibleLabel
  * @property {import('./meter-layout.mjs').MeterBlockRender[]} blocks
+ * @property {import('./meter-layout.mjs').MeterCandidateChip[]} chips Empty
+ *   for the N/A state. Only the race page renders these today (docs/METER_V2.md,
+ *   the mockup's chips section; #315); every other chrome computes and ignores them,
+ *   the same way it already ignores fields it has no use for.
  */
 
 /**
@@ -124,6 +129,7 @@ export function meterView(shareString, endorsements, leaderIds) {
       degraded: false,
       accessibleLabel: 'No endorsements recorded',
       blocks: [],
+      chips: [],
     };
   }
   const fillPercent = Number.parseInt(label, 10);
@@ -145,6 +151,7 @@ export function meterView(shareString, endorsements, leaderIds) {
     degraded: blocks.length > METER_DEGRADE_MAX_BLOCKS,
     accessibleLabel: meterAccessibleLabel(standings, units, labels),
     blocks: meterBlockRenders(blocks, colors, labels),
+    chips: meterCandidateChips(standings, units, labels, colors),
   };
 }
 
@@ -212,6 +219,7 @@ function meterBlockTemplate(block) {
     style=${block.style}
     data-meter-source=${block.source_label}
     data-meter-decision=${block.decision}
+    data-meter-candidates=${block.candidate_ids.join(',')}
   >${
     block.type === 'split'
       ? html`<span class="meter-half meter-half-top"></span><span

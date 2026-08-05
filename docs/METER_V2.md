@@ -6,11 +6,11 @@ ambiguity. The canonical reference rendering — built from real `wa-2026-primar
 `docs/design/METER_V2_2026-08-04.html`; open it in a browser, hover the meters, and click the
 candidate chips. Where that mockup and this prose disagree, the mockup is the spec.
 
-Status: implemented on the guide card, the compact ballot, print, and the race headline (#314,
-2026-08-04) — `docs/DESIGN.md`'s "One meter" rules now describe this document's design rather
-than the retired v1 pill. Two surfaces remain: the race page's candidate-context treatment
-(#315) and the social card (#316, `rendering/og_image.py`, still drawing the v1 pill until it
-lands).
+Status: implemented on the guide card, the compact ballot, print, the race headline (#314,
+2026-08-04), and the race page's candidate-context treatment (#315, 2026-08-05) —
+`docs/DESIGN.md`'s "One meter" rules now describe this document's design rather than the
+retired v1 pill. One surface remains: the social card (#316, `rendering/og_image.py`, still
+drawing the v1 pill until it lands).
 
 Ratified August 4, 2026; the same day an adversarial review pass (four independent read-only
 reviewers) corrected the factual claims below and added the Edge states section — those

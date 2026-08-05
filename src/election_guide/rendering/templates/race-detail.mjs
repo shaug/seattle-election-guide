@@ -147,6 +147,36 @@ function candidateSectionTemplate(candidate) {
 }
 
 /**
+ * The candidate-context treatment's trigger surface (docs/METER_V2.md,
+ * the mockup's chips section; #315): one real button per standing candidate, holding
+ * its color dot, name, and exact count, `aria-pressed` always false — the
+ * audited default carries no context, only the button a reader could press
+ * to reach one. `meter-context.mjs` owns the toggle from here, reading the
+ * same `data-meter-chip`/`data-meter-candidate` attributes the audited
+ * `meter_chips` Jinja macro writes, so this template's only job is producing
+ * markup identical to that macro's for the same chips
+ * (`race-markup-parity.test.mjs`).
+ *
+ * @param {readonly import('./meter-layout.mjs').MeterCandidateChip[]} chips
+ */
+export function raceChipsTemplate(chips) {
+  if (chips.length === 0) return nothing;
+  return html`<ul class="meter-chips">${repeat(
+    chips,
+    (chip) => chip.candidate_id,
+    (chip) => html`<li><button
+        type="button"
+        class="meter-chip"
+        aria-pressed="false"
+        data-meter-chip
+        data-meter-candidate=${chip.candidate_id}
+      ><span class="meter-chip-dot" style=${`background: ${chip.color}`}></span><span
+          class="meter-chip-name"
+        >${chip.label}</span><span class="meter-chip-count">${chip.count_label}</span></button></li>`,
+  )}</ul>`;
+}
+
+/**
  * Every candidate section, in the order the current result puts them.
  *
  * Keyed by candidate id, because this is the one list on the page whose order

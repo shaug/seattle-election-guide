@@ -101,6 +101,41 @@
 @media (prefers-reduced-motion: reduce) {
   .meter-block, .meter-half-bottom, .screen-meter strong { transition: none; }
 }
+/* Candidate context (docs/METER_V2.md, Color; The discovery model; #315): a
+   race page's own trigger, `.meter-chip`s below, puts the meter into an
+   engaged state like hover. The selected candidate's blocks go bold, every
+   other block recedes, and the resting percent hides — and, matching the
+   ticket's own reveal-model ruling ("context is an engaged state like
+   hover"), the seams show too, reusing the exact hover seam colors
+   `meter_block_renders` already computed rather than declaring a third
+   state's own. Unlike the hover rules above this is not gated by
+   `@media (hover: hover)`: a click is not a pointer capability, so the
+   treatment applies on every device `meter-context.mjs` can wire a click to. */
+.screen-meter.meter-context strong { opacity: 0; }
+.screen-meter.meter-context .meter-block:not(.meter-block-context) { opacity: .3; }
+.screen-meter.meter-context .meter-block-context { filter: saturate(1.5) brightness(.9); }
+.screen-meter.meter-context .meter-block { border-left-color: var(--meter-seam-hover-color, transparent); border-image-source: var(--meter-seam-hover-image, none); }
+.screen-meter.meter-context .meter-half-bottom { border-top-color: var(--meter-splitline-hover, transparent); }
+@media (prefers-reduced-motion: reduce) {
+  .meter-block-context { transition: none; }
+}
+/* The chip list (docs/METER_V2.md, the mockup's chips section; #315): one
+   real button per standing candidate — a color dot, a name, and a count, so
+   the dot is never the only identity channel (docs/DESIGN.md,
+   Accessibility). `aria-pressed` carries the selected state;
+   `meter-context.mjs` is the only code that ever sets it to true. */
+.meter-chips { display: flex; flex-wrap: wrap; gap: .35rem .45rem; margin: 0; padding: 0; list-style: none; }
+.meter-chip { display: inline-flex; align-items: center; gap: .38rem; padding: .22rem .6rem .22rem .45rem; border: 1px solid var(--line); border-radius: 999px; background: var(--tone-neutral-bg); color: var(--ink); font: inherit; font-size: .78rem; font-weight: 600; cursor: pointer; }
+.meter-chip:focus-visible { outline: .2rem solid var(--focus); outline-offset: .15rem; }
+.meter-chip-dot { width: .68rem; height: .68rem; border-radius: 50%; flex: none; }
+.meter-chip-count { color: var(--muted); font-weight: 500; font-variant-numeric: tabular-nums; }
+.meter-chip[aria-pressed="true"] { border-color: var(--navy); box-shadow: 0 0 0 1px var(--navy); }
+@media print {
+  /* A printed page has no click to select a chip with, and the static print
+     state already shows every seam and the percent unconditionally — the
+     controls that would only ever read "not pressed" are noise beside it. */
+  .meter-chips { display: none; }
+}
 /* The per-block tooltip (`meter-tooltip.mjs`): one shared, fixed-position
    element the whole page's meters use, never a live region — the meter's own
    `role="img"` name carries the full standings, and this only adds the one
