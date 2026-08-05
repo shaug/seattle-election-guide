@@ -184,7 +184,7 @@ test('a narrowed selection renders the personalized result and counts', async ()
   );
   assert.equal(
     document.querySelector('[data-lens-context] .support-full').textContent,
-    'Ada Lovelace — 1 of 1 selected sources',
+    '1 of 1 selected sources',
   );
   assert.equal(
     document.querySelector('[data-lens-context] .support-compact').textContent,

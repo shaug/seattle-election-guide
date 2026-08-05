@@ -142,9 +142,9 @@
       "evidence": [
         "symbol:screen_support_summary",
         "text:Based on • endorsing",
-        "text:— • of • endorsements"
+        "text:of • endorsements"
       ],
-      "note": "The meter's own caption (I39), redesigned in #314 to state the recommended choice's exact endorsement count rather than only the denominator (docs/METER_V2.md, Caption): 'Nilu Jenks — 21½ of 23 endorsements'. A tie or a race with no single recommended choice falls back to the caption's pre-v2 wording, which is the branch the shared text evidence catches. Mirrored only in the no-lens branch; with a selection the client states a count against the selected total instead (H38), which the server has no wording for."
+      "note": "The meter's own caption (I39), redesigned in #314 to state the recommended choice's exact endorsement count rather than only the denominator (docs/METER_V2.md, Caption): '21½ of 23 endorsements'. Revised in #314's own review to drop the recommended choice's name from the sentence entirely — every card that renders this caption already carries that name one row up, in the headline, so the name here was pure restatement. A tie or a race with no single recommended choice falls back to the caption's pre-v2 wording, which is the branch the shared text evidence catches. Mirrored only in the no-lens branch; with a selection the client states a count against the selected total instead (H38), which the server has no wording for."
     },
     "support-summary-compact": {
       "client": "guide-format.mjs supportSummaryCompact",

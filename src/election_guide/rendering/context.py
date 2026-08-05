@@ -543,19 +543,23 @@ def _meter_support_summary_fallback(race: PublicationRace) -> str:
 def screen_support_summary(race: PublicationRace, sources: dict[str, PublicationSource]) -> str:
     """The meter's own caption (I39), stating the recommended choice's exact
     endorsement count rather than only the denominator (docs/METER_V2.md,
-    Caption — decided in #314): "Nilu Jenks — 21½ of 23 endorsements". A tie or
-    a race with no single recommended choice falls back to the caption's older
-    wording, which states only the denominator — the same fallback
-    `race_detail_support_summary` uses for the same reason, though that
-    function feeds a different string (the race page's visually-hidden
-    description) and is not part of this decision.
+    Caption — decided in #314, revised in #314's own review): "21½ of 23
+    endorsements". The caption never repeats the recommended choice's name —
+    every card that renders it already carries that name one row up, in the
+    same `<h3 data-display-role="recommendation">` this function's own
+    `leader_units` guard is keyed to, so a name here would only restate what
+    the reader already read. A tie or a race with no single recommended choice
+    falls back to the caption's older wording, which states only the
+    denominator — the same fallback `race_detail_support_summary` uses for the
+    same reason, though that function feeds a different string (the race
+    page's visually-hidden description, which has no adjacent headline to
+    lean on) and is not part of this decision.
     """
     leader_units = _meter_leader_units(race, sources)
     if leader_units is None:
         return _meter_support_summary_fallback(race)
     return (
-        f"{race.recommendation_label} — {endorsement_count_label(leader_units)} of "
-        f"{race.explicit_endorsement_count} endorsements"
+        f"{endorsement_count_label(leader_units)} of {race.explicit_endorsement_count} endorsements"
     )
 
 

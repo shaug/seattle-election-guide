@@ -313,13 +313,17 @@ then any sticky strip, then content.
   disagree, the document wins. Landed #314 (2026-08-04); the v1 gradient
   pill it replaced is gone from every chrome that draws a meter except the
   social card, which is its own child ticket.
-- **The meter's own caption states a count, not a percentage.** "Nilu
-  Jenks — 21½ of 23 endorsements," using the same formatter the meter's
-  split blocks make honest: a co-endorsement's half is a divided block, so
-  the caption's fraction is no longer invented after the fact. A tie or a
-  race with no single recommended choice has no one count to lead with, so
-  the caption falls back to naming only the denominator, exactly as it did
-  before the count-caption existed. *(2026-08-04, meter v2 / #314.)*
+- **The meter's own caption states a count, not a percentage — and never the
+  recommended choice's own name.** "21½ of 23 endorsements," using the same
+  formatter the meter's split blocks make honest: a co-endorsement's half is
+  a divided block, so the caption's fraction is no longer invented after the
+  fact. The name is left out deliberately: the card's headline one row up
+  already states it, so a name in the caption too would only repeat what the
+  reader just read. A tie or a race with no single recommended choice has no
+  one count to lead with, so the caption falls back to naming only the
+  denominator, exactly as it did before the count-caption existed.
+  *(2026-08-04, meter v2 / #314; name dropped in the same ticket's own
+  review.)*
 - **Alternative signals share one quiet component.** Anything that is an
   *alternative* to the result the reader asked for — today, the full-panel
   baseline under a lens — renders as a tone-tinted info bar. No pills, no

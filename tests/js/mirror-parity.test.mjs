@@ -102,8 +102,8 @@ const RUNNERS = {
   'meter-block-renders': ({ blocks, colors, labels }) =>
     meterBlockRenders(blocks, new Map(Object.entries(colors)), labelMap(labels)),
   'no-majority': ({ share }) => hasNoMajority(share),
-  'support-summary': ({ recommendation, leaderUnits, explicitCount }) =>
-    supportSummary(recommendation, rational(leaderUnits), explicitCount),
+  'support-summary': ({ leaderUnits, explicitCount }) =>
+    supportSummary(rational(leaderUnits), explicitCount),
   'support-summary-compact': ({ leaderUnits, explicitCount }) =>
     supportSummaryCompact(rational(leaderUnits), explicitCount),
   'recommendation-label': ({ scored: race, labels }) =>

@@ -354,7 +354,6 @@ def _race_cases(
         {
             "mirror": "support-summary",
             "input": {
-                "recommendation": race.recommendation_label,
                 "leaderUnits": leader_units_json,
                 "explicitCount": race.explicit_endorsement_count,
             },

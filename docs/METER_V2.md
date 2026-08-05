@@ -135,7 +135,10 @@ information.
   looked and declined is the same non-signal to a voter as a source with no opinion. The site is
   about endorsement weight, not sources; fill-length keeps meaning *share of endorsements*,
   exactly as in v1.
-- **The caption states the count, not the percent**: "Nilu Jenks — 21½ of 23 endorsements". The
+- **The caption states the count, not the percent**: "21½ of 23 endorsements" — never the
+  recommended choice's own name, which the card's headline already states one row up (Decision
+  log #22, revised in #314's own review after the drafted "Nilu Jenks — 21½ of 23 endorsements"
+  form shipped a name that repeated the headline on every card). The
   count is the more honest statistic — the fractional half is now *visible* as a divided block
   — and the percent is derivable from it. The percent survives only as the resting summary on
   the meter itself. Caption fractions are exact rationals rendered as vulgar-fraction glyphs
@@ -259,23 +262,31 @@ All ratified with the rest of the design (added in the August 4 review pass):
 - No new pipeline data is needed: `source_cells` already carry candidate ids and exact
   allocations, no-endorsement rows are already named in the rendering context, and
   comparison-role sources never render a block at all.
-- **Caption matrix, ruled in #314** (Decision log #22): the meter's own caption — I39's caption
-  block, `screen_support_summary`/`supportSummary` and their compact siblings — is redefined to
-  state the recommended choice's own exact count against the same denominator the sentence
-  already used, rather than only the denominator: "Nilu Jenks — 21½ of 23 endorsements" audited,
-  "Nilu Jenks — 21½ of 19 selected sources" personalized (H38's denominator is unchanged — the
-  reader's current selection total, not this race's own — only the numerator is new). The
-  compact form drops the name (the card's own heading already carries it): "21½ of 23
-  endorsements". A tie or a race with no single recommended choice has no one count to lead
-  with, so both forms fall back to the caption's pre-v2 wording, which states only the
+- **Caption matrix, ruled in #314, revised in #314's own review** (Decision log #22): the
+  meter's own caption — I39's caption block, `screen_support_summary`/`supportSummary` and their
+  compact siblings — is redefined to state the recommended choice's own exact count against the
+  same denominator the sentence already used, rather than only the denominator: "21½ of 23
+  endorsements" audited, "21½ of 19 selected sources" personalized (H38's denominator is
+  unchanged — the reader's current selection total, not this race's own — only the numerator is
+  new). The name originally drafted into this ruling — "Nilu Jenks — 21½ of 23 endorsements" —
+  was cut in review: every card the caption renders on already carries that name one row up, in
+  the card's own headline, so stating it again in the caption directly beneath was pure
+  restatement, confirmed by screenshots of real cards (LD-32 State Senator, LD-34 Position 1,
+  LD-34 Position 2, LD-34 State Senator, LD-36 Position 1, LD-36 Position 2) where the same name
+  appeared twice in one card, headline and caption. Both the full and compact forms now state
+  only the count — the compact form dropped the name from the start (the card's own heading
+  already carries it), and the full form now matches it exactly except for the fallback
+  sentence's own wording. A tie or a race with no single recommended choice has no one count to
+  lead with, so both forms fall back to the caption's pre-v2 wording, which states only the
   denominator — the same fallback `race_detail_support_summary`/`raceDetailSupportSummary`
   already used for the identical reason. That function, and the accessible-summary sentence it
   composes into (`race_detail_accessible_summary`), are unchanged and out of this ruling's scope:
-  they narrate the race page's visually-hidden description, not the meter's caption, and keep
-  their own "N of M endorsing sources agree" phrasing. The meter's *accessible name* — a
-  separate string, the `role="img"` element's own — is not a caption at all: it states the full
-  standings (§ The discovery model's accessibility model), replacing v1's
-  `screen_share_accessible_label`/`shareAccessibleLabel`, which #314 deleted.
+  they narrate the race page's visually-hidden description, which has no adjacent headline to
+  lean on, not the meter's caption, and keep their own "N of M endorsing sources agree"
+  phrasing. The meter's *accessible name* — a separate string, the `role="img"` element's own —
+  is not a caption at all: it states the full standings (§ The discovery model's accessibility
+  model), replacing v1's `screen_share_accessible_label`/`shareAccessibleLabel`, which #314
+  deleted.
 
 ## The platform
 
@@ -314,4 +325,4 @@ All ratified August 4, 2026.
 | 19 | Minimum block width | Below ~3px per block, degrade to plain candidate runs |
 | 20 | Per-candidate mini-meter | Retired; the candidate-context treatment on the shared bar replaces it |
 | 21 | n-way splits | n stacked bands in one block, standings order, "1/n each" |
-| 22 | Caption matrix | The recommended choice's own count replaces the bare denominator, audited and personalized alike; a tie or no single choice falls back to the pre-v2 sentence; the accessible name is a separate, unrelated string (the full standings) |
+| 22 | Caption matrix | The recommended choice's own count replaces the bare denominator, audited and personalized alike, but never the choice's own name — the card's headline already states it, so the caption states only the count; a tie or no single choice falls back to the pre-v2 sentence; the accessible name is a separate, unrelated string (the full standings) |

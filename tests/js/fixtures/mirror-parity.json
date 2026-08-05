@@ -9617,7 +9617,6 @@
     {
       "mirror": "support-summary",
       "input": {
-        "recommendation": "Too few endorsements",
         "leaderUnits": null,
         "explicitCount": 0
       },
@@ -9628,18 +9627,6 @@
     {
       "mirror": "support-summary",
       "input": {
-        "recommendation": "Ashley Fedan / David Hackney",
-        "leaderUnits": null,
-        "explicitCount": 1
-      },
-      "expected": "Based on 1 endorsing source",
-      "source": "published race ld-11-state-representative-1 on the district-sources panel",
-      "note": "District sources cover only their own races, so most races have no endorsing source and the rest have exactly one."
-    },
-    {
-      "mirror": "support-summary",
-      "input": {
-        "recommendation": "Too few endorsements",
         "leaderUnits": null,
         "explicitCount": 1
       },
@@ -9650,18 +9637,16 @@
     {
       "mirror": "support-summary",
       "input": {
-        "recommendation": "Adam Smith",
         "leaderUnits": "8",
         "explicitCount": 11
       },
-      "expected": "Adam Smith — 8 of 11 endorsements",
+      "expected": "8 of 11 endorsements",
       "source": "published race us-house-9 on the audited panel",
       "note": "The published panel: the shares, grades, and captions the guide ships."
     },
     {
       "mirror": "support-summary",
       "input": {
-        "recommendation": "Sharon Tomiko Santos / Kelabe Tewolde",
         "leaderUnits": null,
         "explicitCount": 13
       },
@@ -9672,73 +9657,46 @@
     {
       "mirror": "support-summary",
       "input": {
-        "recommendation": "Lauren Davis",
         "leaderUnits": "21/2",
         "explicitCount": 18
       },
-      "expected": "Lauren Davis — 10½ of 18 endorsements",
+      "expected": "10½ of 18 endorsements",
       "source": "published race ld-32-state-representative-2 on the audited panel",
       "note": "The published panel: the shares, grades, and captions the guide ships."
     },
     {
       "mirror": "support-summary",
       "input": {
-        "recommendation": "Joe Fitzgibbon",
         "leaderUnits": "18",
         "explicitCount": 19
       },
-      "expected": "Joe Fitzgibbon — 18 of 19 endorsements",
+      "expected": "18 of 19 endorsements",
       "source": "published race ld-34-state-representative-2 on the audited panel",
       "note": "The published panel: the shares, grades, and captions the guide ships."
     },
     {
       "mirror": "support-summary",
       "input": {
-        "recommendation": "Pramila Jayapal",
         "leaderUnits": "19",
         "explicitCount": 19
       },
-      "expected": "Pramila Jayapal — 19 of 19 endorsements",
+      "expected": "19 of 19 endorsements",
       "source": "published race us-house-7 on the audited panel",
       "note": "The published panel: the shares, grades, and captions the guide ships."
     },
     {
       "mirror": "support-summary",
       "input": {
-        "recommendation": "Imraan Siddiqi",
         "leaderUnits": "2",
         "explicitCount": 2
       },
-      "expected": "Imraan Siddiqi — 2 of 2 endorsements",
+      "expected": "2 of 2 endorsements",
       "source": "published race ld-32-state-representative-2 on the two-sources panel",
       "note": "Two sources split some races, which is where a half share and a tie both become reachable."
     },
     {
       "mirror": "support-summary",
       "input": {
-        "recommendation": "Teresa Mosqueda",
-        "leaderUnits": "2",
-        "explicitCount": 2
-      },
-      "expected": "Teresa Mosqueda — 2 of 2 endorsements",
-      "source": "published race king-county-council-8 on the district-sources panel",
-      "note": "District sources cover only their own races, so most races have no endorsing source and the rest have exactly one."
-    },
-    {
-      "mirror": "support-summary",
-      "input": {
-        "recommendation": "Christopher Roberts / Rob Foxcurran",
-        "leaderUnits": null,
-        "explicitCount": 2
-      },
-      "expected": "Based on 2 endorsing sources",
-      "source": "published race king-county-assessor on the district-sources panel",
-      "note": "District sources cover only their own races, so most races have no endorsing source and the rest have exactly one."
-    },
-    {
-      "mirror": "support-summary",
-      "input": {
-        "recommendation": "Keith Scully / Danica Noble",
         "leaderUnits": null,
         "explicitCount": 2
       },
@@ -9749,11 +9707,10 @@
     {
       "mirror": "support-summary",
       "input": {
-        "recommendation": "Rebecca Saldaña",
         "leaderUnits": "21",
         "explicitCount": 24
       },
-      "expected": "Rebecca Saldaña — 21 of 24 endorsements",
+      "expected": "21 of 24 endorsements",
       "source": "published race king-county-council-2 on the audited panel",
       "note": "The published panel: the shares, grades, and captions the guide ships."
     },

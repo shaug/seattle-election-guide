@@ -1006,12 +1006,16 @@ def test_the_support_caption_stays_inside_its_column_beside_the_name(tmp_path: P
     arrangement in this design's decision space makes the page wider than its
     viewport — it is the general no-overflow check.
 
-    Meter v2's caption is prefixed with the recommended choice's own name
-    (docs/METER_V2.md, Caption — #314), which can run to a second line for a
-    long one where the pre-v2 wording always fit one; `atMostTwoLines` is the
-    guard that replaced `oneLine` for that reason. The track still hugs its
-    text and stays inside the card — a caption is allowed to wrap, never to
-    overflow.
+    Meter v2's caption states the recommended choice's exact count
+    (docs/METER_V2.md, Caption — #314) but never the choice's own name — a
+    revision made in #314's own review, since the card's headline one row up
+    already carries it and a name here was pure restatement. `atMostTwoLines`
+    is kept as the ceiling rather than tightened to the pre-v2 `oneLine`
+    regardless: the personalized fallback ("Based on N of M selected
+    sources") is the caption's longest real-world shape now, and nothing in
+    this design's decision space promises it always fits one line at every
+    card width this test measures. The track still hugs its text and stays
+    inside the card — a caption is allowed to wrap, never to overflow.
 
     Nothing here asserts the caption clears the name. It cannot reach it: the two
     live in different rows of `.race-card-primary`, separated by that grid's gap,
@@ -1068,12 +1072,12 @@ def test_the_support_caption_stays_inside_its_column_beside_the_name(tmp_path: P
         }).filter(Boolean);
         return JSON.stringify({
           measured: captions.length,
-          // Meter v2's caption is prefixed with the recommended name
-          // (docs/METER_V2.md, Caption), so the widest real caption can now
-          // run to a second line for a long one — "Dominique M Scarimbolo —
-          // 1½ of 2 endorsements" measured at two lines here, where the
-          // pre-v2 wording always fit one. Two is still a hard ceiling: nothing
-          // in this design's decision space lets a caption grow without bound.
+          // Meter v2's caption states only a count, never the recommended
+          // choice's name (docs/METER_V2.md, Caption), so most real captions
+          // fit one line; the ceiling stays at two because the personalized
+          // fallback ("Based on N of M selected sources") is longer and this
+          // design's decision space does not promise it always fits one line
+          // at every width this test measures.
           atMostTwoLines: captions.every((c) => c.lines <= 2.05),
           allHugText: captions.every((c) => c.hugsText),
           allInsideCard: captions.every((c) => c.insideCard),
@@ -3665,7 +3669,7 @@ def test_personalization_divergent_race_discloses_a_compact_comparison_on_its_ca
     # The count may carry a vulgar-fraction glyph (a split endorsement), so the
     # leader-attributed form's count is matched loosely rather than as \d+.
     assert re.match(
-        r"(Based on \d+ of \d+ selected sources)|(.+ — \S+ of \d+ selected sources)",
+        r"(Based on \d+ of \d+ selected sources)|(\S+ of \d+ selected sources)",
         result["divergentSupportText"],
     )
     assert re.match(r"\S+ of \d+ selected", result["divergentSupportCompactText"])
@@ -3938,7 +3942,7 @@ def test_personalization_compact_caption_shows_only_the_lens_short_form(tmp_path
     # (docs/METER_V2.md, Caption — #314).
     assert re.match(r"\S+ of \d+ selected", result["compactText"])
     assert re.match(
-        r"(Based on \d+ of \d+ selected sources)|(.+ — \S+ of \d+ selected sources)",
+        r"(Based on \d+ of \d+ selected sources)|(\S+ of \d+ selected sources)",
         result["fullText"],
     )
 

@@ -132,9 +132,12 @@ function meterSupportSummaryFallback(explicitCount, selectedTotal) {
 /**
  * The meter's own caption (I39), stating the recommended choice's exact
  * endorsement count rather than only the denominator (docs/METER_V2.md,
- * Caption — decided in #314): "Nilu Jenks — 21½ of 23 endorsements". A tie or
- * a race with no single recommended choice falls back to the caption's older
- * wording.
+ * Caption — decided in #314, revised in #314's own review): "21½ of 23
+ * endorsements". The caption never repeats the recommended choice's name —
+ * every card that renders it already carries that name one row up, in the
+ * same headline `recommendationLabel` fills, so a name here would only
+ * restate what the reader already read. A tie or a race with no single
+ * recommended choice falls back to the caption's older wording.
  *
  * H38: while a lens is active the denominator is how many of the currently
  * selected sources are counted overall — the same count the banner states —
@@ -145,18 +148,17 @@ function meterSupportSummaryFallback(explicitCount, selectedTotal) {
  * there is no single choice to attribute it to — the caller already has both,
  * from building the same race's meter.
  *
- * @param {string} recommendation
  * @param {import('./lens-score.mjs').Rational|null} leaderUnits
  * @param {number} explicitCount
  * @param {number|null} [selectedTotal]
  * @returns {string}
  */
-export function supportSummary(recommendation, leaderUnits, explicitCount, selectedTotal = null) {
+export function supportSummary(leaderUnits, explicitCount, selectedTotal = null) {
   if (leaderUnits === null) return meterSupportSummaryFallback(explicitCount, selectedTotal);
   const count = endorsementCountLabel(leaderUnits.toString());
   return selectedTotal === null
-    ? `${recommendation} — ${count} of ${explicitCount} endorsements`
-    : `${recommendation} — ${count} of ${selectedTotal} selected sources`;
+    ? `${count} of ${explicitCount} endorsements`
+    : `${count} of ${selectedTotal} selected sources`;
 }
 
 /**

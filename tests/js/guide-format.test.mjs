@@ -95,27 +95,23 @@ test('the headline names the leader, the tie, or the absence of evidence', () =>
   assert.equal(recommendationLabel(scored({ winnerId: 'z' }), LABELS), 'No consensus');
 });
 
-// docs/METER_V2.md, Caption (decided in #314): the caption states the
-// recommended choice's exact count, not only the denominator. `leaderUnits`
-// is `null` exactly when there is no single choice to attribute it to — a
-// tie, or no consensus — which is the caption's pre-v2 fallback wording.
-test('the caption states the leader by name and exact count', () => {
-  assert.equal(
-    supportSummary('Ada Lovelace', new Rational(3n), 4),
-    'Ada Lovelace — 3 of 4 endorsements',
-  );
-  assert.equal(
-    supportSummary('Ada Lovelace', new Rational(7n, 2n), 4, 9),
-    'Ada Lovelace — 3½ of 9 selected sources',
-  );
+// docs/METER_V2.md, Caption (decided in #314, revised in #314's own review):
+// the caption states the recommended choice's exact count, not only the
+// denominator, and never the choice's name — the card's own headline already
+// carries it. `leaderUnits` is `null` exactly when there is no single choice
+// to attribute it to — a tie, or no consensus — which is the caption's pre-v2
+// fallback wording.
+test('the caption states the exact count, never the leader by name', () => {
+  assert.equal(supportSummary(new Rational(3n), 4), '3 of 4 endorsements');
+  assert.equal(supportSummary(new Rational(7n, 2n), 4, 9), '3½ of 9 selected sources');
 });
 
 test('a tie or no consensus falls back to the denominator-only sentence', () => {
-  assert.equal(supportSummary('A / B', null, 4), 'Based on 4 endorsing sources');
-  assert.equal(supportSummary('A / B', null, 1), 'Based on 1 endorsing source');
-  assert.equal(supportSummary('A / B', null, 3, 9), 'Based on 3 of 9 selected sources');
+  assert.equal(supportSummary(null, 4), 'Based on 4 endorsing sources');
+  assert.equal(supportSummary(null, 1), 'Based on 1 endorsing source');
+  assert.equal(supportSummary(null, 3, 9), 'Based on 3 of 9 selected sources');
   // Never the possessive "My sources".
-  assert.ok(!supportSummary('A / B', null, 4, 9).includes('My sources'));
+  assert.ok(!supportSummary(null, 4, 9).includes('My sources'));
 });
 
 test('the compact caption is the short form of the same count — no name', () => {
