@@ -14,9 +14,14 @@ from typing import Any, cast
 from election_guide.calendar.tracking import MARKER_PREFIX, IssueRequest
 
 # Every issue in the repository has to be readable in one listing, so the bound
-# is its lifetime issue count, not the lead window. The read fails loudly rather
-# than truncating, because a silently dropped marker is a duplicate issue.
-ISSUE_QUERY_LIMIT = 1000
+# is its lifetime issue count — not the lead window, and no longer the far
+# smaller set that carried a tracking label. This repository opened its first
+# 174 issues in 17 days, so a four-figure bound is months of headroom rather
+# than years; `gh issue list` paginates to this without extra code. The read
+# fails loudly rather than truncating, because a silently dropped marker is a
+# duplicate issue — and because tripping it stops the run opening anything at
+# all.
+ISSUE_QUERY_LIMIT = 10000
 
 
 def _run(command: list[str], failure: str) -> str:

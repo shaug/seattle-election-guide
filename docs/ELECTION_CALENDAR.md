@@ -122,7 +122,7 @@ nobody can still do is worse than none.
 The last line of every generated issue is its marker —
 `calendar-milestone: <election-id>/<milestone-id>`. That marker is the entire
 idempotence mechanism. Each run reads the markers of every existing issue, open
-**and closed**, and skips the milestones already represented, so a daily
+**and closed**, and skips the milestones already represented, so a repeating
 schedule never accumulates duplicates and a completed milestone is not
 reopened.
 
@@ -132,6 +132,12 @@ issue. Nothing rewrites the first one: creation is the only operation this
 workflow performs. **If you move a declared date after its issue is open, fix
 that issue by hand** — its title and acceptance line still carry the date it
 was opened with.
+
+When you edit a generated issue, **leave the marker as the body's last
+non-empty line.** The run recognizes an issue by that line and nothing else, so
+a note appended below it makes the issue invisible and the milestone is opened
+again — every six hours, for as long as it stays inside the lead window. Edit
+above the marker, or move it back to the end.
 
 The listing that finds those markers reads **every** issue in the repository,
 open and closed, and takes the marker only from each body's final line. Reading

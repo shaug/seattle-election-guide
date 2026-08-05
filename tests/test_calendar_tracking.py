@@ -438,8 +438,12 @@ def test_the_workflow_runs_every_six_hours_off_the_hour() -> None:
     cron = schedule[0].split('"')[1]
     minute, hours = cron.split()[0], cron.split()[1]
 
+    # Every day, so a weekly or monthly restriction cannot slip past.
+    assert cron.split()[2:] == ["*", "*", "*"]
+
     # Off the hour: the top of the hour is GitHub's most congested slot.
-    assert minute != "0"
+    # Compared numerically, so "00" cannot pass where "0" would not.
+    assert int(minute) != 0
     # Evenly spaced every six hours, so a dropped slot is covered soon.
     slots = sorted(int(hour) for hour in hours.split(","))
     assert len(slots) == 4
