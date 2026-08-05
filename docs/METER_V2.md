@@ -326,3 +326,4 @@ All ratified August 4, 2026.
 | 20 | Per-candidate mini-meter | Retired; the candidate-context treatment on the shared bar replaces it |
 | 21 | n-way splits | n stacked bands in one block, standings order, "1/n each" |
 | 22 | Caption matrix | The recommended choice's own count replaces the bare denominator, audited and personalized alike, but never the choice's own name — the card's headline already states it, so the caption states only the count; a tie or no single choice falls back to the pre-v2 sentence; the accessible name is a separate, unrelated string (the full standings) |
+| 23 | Candidate context on a split block | Per half, not per block: the selected candidate's own half bolds, its competing half recedes on its own — a flat whole-block bold would otherwise brighten a split's other candidate too, found live on a race with a split trailing band (#315 review round 2) |

@@ -110,10 +110,17 @@
    `meter_block_renders` already computed rather than declaring a third
    state's own. Unlike the hover rules above this is not gated by
    `@media (hover: hover)`: a click is not a pointer capability, so the
-   treatment applies on every device `meter-context.mjs` can wire a click to. */
+   treatment applies on every device `meter-context.mjs` can wire a click to.
+   A solid block bolds as one piece, but a split block's two halves can name
+   different candidates, so its own bold filter is scoped off split blocks
+   (`:not(.meter-block-split)`) and applied per half below instead — a flat
+   whole-block bold would otherwise brighten a selected candidate's
+   competing partner right along with them. */
 .screen-meter.meter-context strong { opacity: 0; }
 .screen-meter.meter-context .meter-block:not(.meter-block-context) { opacity: .3; }
-.screen-meter.meter-context .meter-block-context { filter: saturate(1.5) brightness(.9); }
+.screen-meter.meter-context .meter-block-context:not(.meter-block-split) { filter: saturate(1.5) brightness(.9); }
+.screen-meter.meter-context .meter-half-context { filter: saturate(1.5) brightness(.9); }
+.screen-meter.meter-context .meter-half-recede { opacity: .3; }
 .screen-meter.meter-context .meter-block { border-left-color: var(--meter-seam-hover-color, transparent); border-image-source: var(--meter-seam-hover-image, none); }
 .screen-meter.meter-context .meter-half-bottom { border-top-color: var(--meter-splitline-hover, transparent); }
 @media (prefers-reduced-motion: reduce) {

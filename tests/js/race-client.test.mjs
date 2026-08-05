@@ -148,14 +148,29 @@ const MARKUP = `
   </div>
   <p class="lens-notice" data-lens-notice hidden role="status" aria-live="polite"></p>
   <main data-publication-race-id="mayor">
-    <div class="race-headline" role="group">
+    <div class="race-headline" role="group" aria-label="Consensus result"
+      aria-describedby="race-consensus-summary" data-race-headline>
       <div class="screen-race-result" data-lens-result>
         <h3 data-display-role="recommendation">Ada Lovelace / Blaise Pascal</h3>
         <div class="screen-meter meter-no-majority" style="--meter-fill: 50%" role="img"
           data-display-role="share"
           aria-label="No majority. Consensus among explicitly endorsing sources: 50%">
+          <span class="meter-block meter-block-solid" data-meter-candidates="ada"></span><span
+            class="meter-block meter-block-solid" data-meter-candidates="blaise"></span>
           <strong>50%</strong>
         </div>
+      </div>
+      <div class="race-headline-chips" data-lens-chips>
+        <ul class="meter-chips">
+          <li><button type="button" class="meter-chip" aria-pressed="false" data-meter-chip
+            data-meter-candidate="ada"><span class="meter-chip-dot"
+            style="background: var(--teal)"></span><span class="meter-chip-name">Ada
+            Lovelace</span><span class="meter-chip-count">1 of 2 endorsements</span></button></li>
+          <li><button type="button" class="meter-chip" aria-pressed="false" data-meter-chip
+            data-meter-candidate="blaise"><span class="meter-chip-dot"
+            style="background: var(--amber)"></span><span class="meter-chip-name">Blaise
+            Pascal</span><span class="meter-chip-count">1 of 2 endorsements</span></button></li>
+        </ul>
       </div>
       <div class="screen-race-context" data-lens-context>
         <p class="no-majority-pill">No majority</p>
@@ -298,6 +313,43 @@ test('a selection that changes the leader discloses the full panel, in words', (
   assert.match(
     bar.getAttribute('aria-label'),
     /All sources (differ from|agree with) your selection/,
+  );
+});
+
+// The candidate-context treatment (`meter-context.mjs`, #315) is a click's own
+// imperative state — `aria-pressed`, `.meter-context`, `.meter-block-context`
+// — living on DOM nodes lit's incremental `render()` may reuse across a later
+// lens change rather than recreate. A context the reader selected before that
+// change must not survive pointed at whatever now occupies a reused node.
+test('a candidate context set before a lens change does not survive it', () => {
+  build();
+  // As if the reader had pressed Ada's chip: `meter-context.mjs` sets exactly
+  // this state from a click, and it is exercised independently in
+  // meter-context.test.mjs — this test starts from its result rather than
+  // dispatching a click, since what is under test here is whether a later
+  // render clears it, not how it was set.
+  const chip = document.querySelector('[data-meter-chip][data-meter-candidate="ada"]');
+  chip.setAttribute('aria-pressed', 'true');
+  const meter = document.querySelector('[data-lens-result] .screen-meter');
+  meter.classList.add('meter-context');
+  meter.querySelector('.meter-block').classList.add('meter-block-context');
+
+  // This selection changes the leader (Ada, when the panel counts both
+  // sources, to Blaise alone) — the exact case a plain unkeyed block re-render
+  // can reuse a DOM node for a different candidate than the one it last
+  // represented.
+  goTo(lensFragment(['mlkl']));
+
+  for (const c of document.querySelectorAll('[data-meter-chip]')) {
+    assert.equal(c.getAttribute('aria-pressed'), 'false', `${c.dataset.meterCandidate}'s chip`);
+  }
+  assert.equal(
+    document.querySelector('[data-lens-result] .screen-meter').classList.contains('meter-context'),
+    false,
+  );
+  assert.equal(
+    document.querySelectorAll('[data-lens-result] .meter-block-context').length,
+    0,
   );
 });
 

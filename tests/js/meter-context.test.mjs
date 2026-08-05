@@ -35,8 +35,20 @@ function headline(blockSpecs) {
   meter.className = 'screen-meter';
   for (const [, candidateIds] of blockSpecs) {
     const block = document.createElement('span');
-    block.className = 'meter-block meter-block-solid';
     block.dataset.meterCandidates = candidateIds.join(',');
+    if (candidateIds.length === 2) {
+      // A split block's own two halves, top first — the same order
+      // `data-meter-candidates` lists them in, matching production
+      // (`_meter.html.j2`, `meter-block-renders`).
+      block.className = 'meter-block meter-block-split';
+      const top = document.createElement('span');
+      top.className = 'meter-half meter-half-top';
+      const bottom = document.createElement('span');
+      bottom.className = 'meter-half meter-half-bottom';
+      block.append(top, bottom);
+    } else {
+      block.className = 'meter-block meter-block-solid';
+    }
     meter.append(block);
   }
   const chips = document.createElement('ul');
@@ -95,6 +107,68 @@ test("a split block carries two candidate ids, and either one's chip selects it"
 
   assert.equal(blockA.classList.contains('meter-block-context'), false);
   assert.equal(blockSplit.classList.contains('meter-block-context'), true);
+});
+
+// A split block's two halves can belong to different candidates — selecting
+// one must not bold its competing partner along with it (found on the live
+// preview, #315 review round 2): a flat whole-block bold would brighten both
+// halves just because one of them matches.
+test("selecting a split candidate bolds only its own half, and recedes its partner's", () => {
+  const { meter, chips } = headline([['split', ['cand-a', 'cand-b']]]);
+  const [chipA] = chips.querySelectorAll('[data-meter-chip]');
+  const [top, bottom] = meter.querySelectorAll('.meter-half-top, .meter-half-bottom');
+
+  click(chipA);
+
+  assert.equal(top.classList.contains('meter-half-context'), true, "cand-a's own top half");
+  assert.equal(top.classList.contains('meter-half-recede'), false);
+  assert.equal(bottom.classList.contains('meter-half-context'), false);
+  assert.equal(bottom.classList.contains('meter-half-recede'), true, "cand-b's competing half");
+});
+
+test('selecting the split block\'s bottom-half candidate reverses which half recedes', () => {
+  const { meter, chips } = headline([['split', ['cand-a', 'cand-b']]]);
+  const [, chipB] = chips.querySelectorAll('[data-meter-chip]');
+  const [top, bottom] = meter.querySelectorAll('.meter-half-top, .meter-half-bottom');
+
+  click(chipB);
+
+  assert.equal(top.classList.contains('meter-half-recede'), true);
+  assert.equal(bottom.classList.contains('meter-half-context'), true);
+  assert.equal(bottom.classList.contains('meter-half-recede'), false);
+});
+
+test('a split block naming neither selected candidate gets no per-half class', () => {
+  const { meter, chips } = headline([
+    ['a', ['cand-a']],
+    ['split', ['cand-b', 'cand-c']],
+  ]);
+  const [chipA] = chips.querySelectorAll('[data-meter-chip]');
+  const [top, bottom] = meter.querySelectorAll('.meter-half-top, .meter-half-bottom');
+
+  click(chipA);
+
+  // The whole split block still recedes at 30% opacity via the ordinary
+  // `:not(.meter-block-context)` rule (guide-race.css) — neither half needs
+  // its own class when both are equally uninvolved.
+  assert.equal(top.classList.contains('meter-half-context'), false);
+  assert.equal(top.classList.contains('meter-half-recede'), false);
+  assert.equal(bottom.classList.contains('meter-half-context'), false);
+  assert.equal(bottom.classList.contains('meter-half-recede'), false);
+});
+
+test('deselecting clears both halves\' per-half classes', () => {
+  const { chips, meter } = headline([['split', ['cand-a', 'cand-b']]]);
+  const [chipA] = chips.querySelectorAll('[data-meter-chip]');
+  const [top, bottom] = meter.querySelectorAll('.meter-half-top, .meter-half-bottom');
+
+  click(chipA);
+  click(chipA);
+
+  for (const half of [top, bottom]) {
+    assert.equal(half.classList.contains('meter-half-context'), false);
+    assert.equal(half.classList.contains('meter-half-recede'), false);
+  }
 });
 
 test('pressing the same chip again clears the context — deselecting restores rest', () => {

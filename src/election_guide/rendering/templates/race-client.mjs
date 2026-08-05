@@ -42,6 +42,7 @@ import {
 import { compareRaceResults } from './lens-divergence.mjs';
 import { createLensRouter } from './lens-route.mjs';
 import { scoreSelection } from './lens-score.mjs';
+import { resetMeterContext } from './meter-context.mjs';
 import {
   isDefaultSelection,
   resolveLensLink,
@@ -239,12 +240,16 @@ export function wireRacePage(payload) {
       }
       // Its own region, so a lens change rebuilds the chip list — chip counts
       // are lens-aware like every other computed number (docs/DESIGN.md, Data
-      // display) — without disturbing the result region beside it. Any
-      // candidate context the reader had selected is dropped along with the
-      // old blocks it pointed at: the new markup carries none, the same
-      // "no context is the resting default" the audited page itself renders
-      // (`meter-context.mjs`).
+      // display) — without disturbing the result region beside it.
       if (chipsRegion) render(raceChipsTemplate(meter.chips), chipsRegion);
+      // Any candidate context the reader had selected is dropped along with
+      // the old blocks it pointed at: lit's incremental `render()` above
+      // reuses a chip or block whose key recurs, and only touches the
+      // attributes and classes its own template expressions bind, so a
+      // context set imperatively by a click can survive pointed at whatever
+      // now occupies that reused node unless it is cleared explicitly here
+      // (`meter-context.mjs`, `resetMeterContext`).
+      if (headline) resetMeterContext(headline);
     }
     if (contextRegion) {
       // Not the card's `raceContextTemplate`: a card carries a caption because
