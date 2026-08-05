@@ -591,6 +591,10 @@ def _stage_race_pages(
         legacy_name=view_model.metadata.election_name,
         election_id=view_model.metadata.election_id,
     )
+    # The social card draws meter v2 from the same source cells the page
+    # itself does (docs/METER_V2.md) — `context.meter_view` and every page
+    # that calls it key sources the same way, by id.
+    source_by_id = {source.id: source for source in view_model.sources}
     races_root = election_root / "races"
     races_root.mkdir()
     public_paths: set[str] = set()
@@ -608,7 +612,7 @@ def _stage_race_pages(
                 encoding="utf-8",
             )
             (directory / "og-image.png").write_bytes(
-                render_race_card(race_card(race, election_name=election_display_name))
+                render_race_card(race_card(race, source_by_id, election_name=election_display_name))
             )
             path = race_page_path(election_id, race.id)
             public_paths.update(
