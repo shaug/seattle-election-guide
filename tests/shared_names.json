@@ -566,12 +566,14 @@
       "template",
       "stylesheet",
       "client",
+      "python",
       "test"
     ],
     "meter-half-top": [
       "template",
       "stylesheet",
       "client",
+      "python",
       "test"
     ],
     "meter-low-fill": [
@@ -589,12 +591,14 @@
     "meter-tongue-end": [
       "template",
       "stylesheet",
-      "client"
+      "client",
+      "python"
     ],
     "meter-tongue-start": [
       "template",
       "stylesheet",
-      "client"
+      "client",
+      "python"
     ],
     "meter-tooltip": [
       "stylesheet",

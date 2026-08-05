@@ -311,8 +311,11 @@ then any sticky strip, then content.
   full design — color, seams, splits, edge states, motion, and
   accessibility — is `docs/METER_V2.md`; where this line and that document
   disagree, the document wins. Landed #314 (2026-08-04); the v1 gradient
-  pill it replaced is gone from every chrome that draws a meter except the
-  social card, which is its own child ticket.
+  pill it replaced is gone from every chrome that draws a meter, the social
+  card included (#316, 2026-08-05, `rendering/og_image.py`) — a static image
+  has no hover to trade the percentage for seams, so it renders the resting
+  pointer-device state permanently rather than the print row's static-both
+  one (docs/METER_V2.md, Decision log #23).
 - **The meter's own caption states a count, not a percentage — and never the
   recommended choice's own name.** "21½ of 23 endorsements," using the same
   formatter the meter's split blocks make honest: a co-endorsement's half is

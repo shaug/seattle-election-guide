@@ -6,11 +6,12 @@ ambiguity. The canonical reference rendering — built from real `wa-2026-primar
 `docs/design/METER_V2_2026-08-04.html`; open it in a browser, hover the meters, and click the
 candidate chips. Where that mockup and this prose disagree, the mockup is the spec.
 
-Status: implemented on the guide card, the compact ballot, print, and the race headline (#314,
-2026-08-04) — `docs/DESIGN.md`'s "One meter" rules now describe this document's design rather
-than the retired v1 pill. Two surfaces remain: the race page's candidate-context treatment
-(#315) and the social card (#316, `rendering/og_image.py`, still drawing the v1 pill until it
-lands).
+Status: implemented on the guide card, the compact ballot, print, the race headline (#314,
+2026-08-04), and the social card (#316, `rendering/og_image.py`, 2026-08-05) — `docs/DESIGN.md`'s
+"One meter" rules now describe this document's design rather than the retired v1 pill on every
+surface except the race page's own candidate-context treatment. One surface remains: #315's
+candidate-context treatment was closed as not-planned after live testing found its spec
+information-design incoherent, superseded by draft issue #325.
 
 Ratified August 4, 2026; the same day an adversarial review pass (four independent read-only
 reviewers) corrected the factual claims below and added the Edge states section — those
@@ -248,10 +249,18 @@ All ratified with the rest of the design (added in the August 4 review pass):
   `guide-card.mjs` documents. The movers: `meterView` and its JS consumers (`guide-lens.mjs`,
   `race-client.mjs`, `race-detail.mjs`), the audited Jinja twins (`guide.html.j2`,
   `race.html.j2` — each hard-codes the low-fill threshold), the chrome CSS (`guide-race.css`,
-  `race.css`, `guide.css` compact/print rules), **and `rendering/og_image.py`**, which draws
+  `race.css`, `guide.css` compact/print rules), **and `rendering/og_image.py`**, which drew
   the same meter in Python for race social cards with its own copy of the fill, colors, and
-  low-fill threshold. It cannot be split into add-then-retire — the shared-presentation carving
-  constraint proven during the #136 race-page work (landed via #305–#308).
+  low-fill threshold until #316. It cannot be split into add-then-retire — the
+  shared-presentation carving constraint proven during the #136 race-page work (landed via
+  #305–#308). #316 ports `meter_layout_blocks` and `meter_candidate_colors`
+  (`rendering/context.py`) verbatim rather than reimplementing layout or ranking in Python, and
+  resolves the CSS custom properties those functions still return to RGB against a hand-kept,
+  drift-tested mirror of `base.css`'s own hex values (`og_image.py`'s own palette constants;
+  `tests/test_og_image.py::test_the_meter_palette_mirrors_base_css`) — a Python image renderer
+  has no CSS engine, so this is the module's answer to "one source of truth" for color, the same
+  shape `rendering/shell.py` already uses for the brand palette, with a proof `shell.py`'s copy
+  never had.
 - Sequencing: unblocked. The front-end architecture epic (#232) closed with #245; esbuild and
   lit-html are already in place.
 - The v1 low-fill guard's job shrinks to the desktop resting label (the percent must still
@@ -300,7 +309,7 @@ symbol; meter v2 is what the symbol opens into.
 
 ## Decision log
 
-All ratified August 4, 2026.
+Entries 1–22 ratified August 4, 2026; entry 23 confirmed August 5, 2026 during #316.
 
 | # | Decision | Ruling |
 | --- | --- | --- |
@@ -326,3 +335,4 @@ All ratified August 4, 2026.
 | 20 | Per-candidate mini-meter | Retired; the candidate-context treatment on the shared bar replaces it |
 | 21 | n-way splits | n stacked bands in one block, standings order, "1/n each" |
 | 22 | Caption matrix | The recommended choice's own count replaces the bare denominator, audited and personalized alike, but never the choice's own name — the card's headline already states it, so the caption states only the count; a tie or no single choice falls back to the pre-v2 sentence; the accessible name is a separate, unrelated string (the full standings) |
+| 23 | Social-card seams and tongue tips | Seams dropped, tongue tips kept, at the social card's own 420×56px chrome (`rendering/og_image.py`) |
