@@ -484,11 +484,18 @@ def test_a_copied_title_cannot_suppress_a_milestone(monkeypatch: pytest.MonkeyPa
     The run stops rather than silently skipping, so a human who copied a
     generated title cannot quietly cost a milestone its reminder.
     """
+    created: list[str] = []
+
+    def _record(self: GitHubIssueTracker, request: IssueRequest) -> str:
+        created.append(request.marker)
+        return "issues/1"
+
     monkeypatch.setattr(
         GitHubIssueTracker,
         "read_tracked_issues",
         _tracked(set(), ("wa-2026-primary: election-day due 2026-08-04 — questions",)),
     )
+    monkeypatch.setattr(GitHubIssueTracker, "create", _record)
 
     result = CliRunner().invoke(
         app,
@@ -497,6 +504,10 @@ def test_a_copied_title_cannot_suppress_a_milestone(monkeypatch: pytest.MonkeyPa
 
     assert result.exit_code == 1
     assert "already claims that milestone but carries no readable marker" in result.output
+    # The contradiction is reported, not silently swallowed: the milestone the
+    # copied title claimed was skipped, and the other one was still opened.
+    assert milestone_marker("wa-2026-primary", "election-day") not in created
+    assert created == [milestone_marker("wa-2026-primary", "results-capture-election-night")]
 
 
 def test_a_collision_skips_only_its_own_milestone(monkeypatch: pytest.MonkeyPatch) -> None:
