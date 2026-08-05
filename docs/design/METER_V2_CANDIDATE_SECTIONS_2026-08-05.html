@@ -174,7 +174,7 @@ footer a { color: var(--faint); }
   <p class="note">Decided in review of the first draft, 2026-08-05 — this page is now the canonical reference for #325's implementation, the same role <code>METER_V2_2026-08-04.html</code> played for #312–#316. The formal decision-log entries land in <code>docs/METER_V2.md</code> when #325 itself ships, matching how #314's and #315's own decisions were recorded.</p>
   <ul class="qlist">
     <li><b>Chrome and sizing.</b> Full section width, but the meter itself stays a fixed track (16rem here, left-adjusted) — every row's bar occupies the same physical width for scannability, the same job the card-width headline meter did. The freed space at full width goes to the label, right-adjusted.</li>
-    <li><b>Zero-endorsement candidates.</b> No section, in either model. This page is about who <i>should</i> be voted for, not who <i>can</i> be — <code>supreme-court-justice-3</code> and <code>seattle-city-council-5</code> below each have one such candidate, and neither model shows or explains them.</li>
+    <li><b>Zero-endorsement candidates.</b> No section, in either model. This page is about who <i>should</i> be voted for, not who <i>can</i> be — every real race below (<code>seattle-city-council-5</code>, <code>seattle-municipal-court-judge-5</code>, <code>supreme-court-justice-3</code>) has exactly one such candidate on the ballot, and neither model shows or explains them.</li>
     <li><b>Resting label.</b> Retained, but outside the meter, in the flexible label — a percentage that would need to fit inside a half-endorsement sliver of highlighted bar doesn't fit there. Count stays the caption's lead (<code>METER_V2.md</code> Decision #6); percentage now rides beside it.</li>
     <li><b>The headline meter's own fate.</b> The race itself gets no meter on this page at all — every candidate gets one, colorized for that candidate, same width and block layout throughout. A race-level meter remains the guide/ballot overview's job, untouched by this proposal.</li>
     <li><b>Comparisons and social cards — recommendation, not yet confirmed.</b> No change. Both already draw the single plain resting-state meter for a race, never in candidate context; this proposal only touches the race-detail page's per-candidate sections.</li>
@@ -504,9 +504,10 @@ function renderGalleryRace(race) {
 function renderFoot() {
   document.getElementById("foot").innerHTML =
     "Data: wa-2026-primary canonical dataset, the same real races METER_V2_2026-08-04.html used " +
-    "(comparison-role and declining sources excluded, matching the site's tally). The no-majority race is " +
-    "synthetic — this cycle produced none. Palette unchanged from the ratified design (docs/METER_V2.md); " +
-    "only the meter's placement is under discussion here, filed as #325 against epic #311.";
+    "(comparison-role and declining sources excluded, matching the site's tally) — all three races below " +
+    "are real, including the exact tie; no synthetic data was needed this time. Palette unchanged from the " +
+    "ratified design (docs/METER_V2.md); only the meter's placement is under discussion here, filed as " +
+    "#325 against epic #311.";
 }
 
 renderCompare(RACES.find(r => r.id === "seattle-city-council-5"));
