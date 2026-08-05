@@ -35,6 +35,28 @@ PROJECT_ROOT = Path(__file__).parents[1]
 CALENDAR_PATH = PROJECT_ROOT / "config" / "calendar" / "elections.yaml"
 
 
+@pytest.fixture(autouse=True)
+def forbid_subprocess(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Fail loudly rather than reaching GitHub.
+
+    A test here once exercised the CLI without stubbing the tracker, so every
+    run of it opened a real issue in this repository — five before anyone
+    noticed, because the calls succeeded and the suite stayed green. This
+    module drives the only production-mutating commands in the codebase
+    (`gh issue create` and the milestone POST), so nothing in it may reach a
+    subprocess by accident. Tests that need a fake `gh` override this
+    afterwards; a test that forgets now fails instead of mutating.
+    """
+
+    def _forbidden(*args: Any, **kwargs: Any) -> CompletedProcess[str]:
+        raise AssertionError(
+            f"a test reached subprocess.run{args[:1]}; stub GitHubIssueTracker "
+            "or subprocess.run instead"
+        )
+
+    monkeypatch.setattr(subprocess, "run", _forbidden)
+
+
 def _calendar() -> ElectionCalendar:
     return ElectionCalendar.model_validate(
         {
