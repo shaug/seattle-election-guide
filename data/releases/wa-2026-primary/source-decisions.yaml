@@ -1,11 +1,16 @@
 schema_version: "1.0"
 election_id: wa-2026-primary
-data_as_of: 2026-07-23T17:10:00Z
+data_as_of: 2026-08-05T00:00:00Z
 reviewer: shaug
 review_note: >-
   AI-assisted research located and persisted each available publication, then manually
   transcribed named decisions. Candidate and race identifiers were checked against the frozen
-  King County inventory; unavailable sources remain explicit and contribute no decisions.
+  King County inventory; unavailable sources remain explicit and contribute no decisions. A
+  2026-08-05 spot audit against a third-party aggregator (Election Cheat Sheet) found five
+  consensus sources (Transit Riders Union, Washington Working Families Party, Sage Leaders,
+  SEIU 775, UFCW 3000) had published additional decisions since their original 2026-07-20
+  capture; those sources were re-checked against their live pages and their decision lists
+  updated to match. No previously recorded decision was found to be incorrect.
 sources:
   - source_id: the-stranger
     captured_at: 2026-07-20T01:00:00Z
@@ -126,14 +131,18 @@ sources:
         candidate_ids: [king-county-council-8--teresa-mosqueda]
 
   - source_id: washington-working-families-party
-    captured_at: 2026-07-20T01:03:00Z
-    reviewed_at: 2026-07-20T14:05:00Z
+    captured_at: 2026-08-05T00:00:00Z
+    reviewed_at: 2026-08-05T00:00:00Z
     evidence_locator: Official Washington candidate roster, candidate and office entry.
     decisions:
       - race_id: king-county-council-8
         candidate_ids: [king-county-council-8--teresa-mosqueda]
       - race_id: seattle-city-council-5
         candidate_ids: [seattle-city-council-5--nilu-jenks]
+      - race_id: ld-37-state-representative-1
+        candidate_ids: [ld-37-state-representative-1--kelabe-tewolde]
+      - race_id: ld-37-state-representative-2
+        candidate_ids: [ld-37-state-representative-2--jaelynn-scott]
       - race_id: ld-43-state-representative-2
         candidate_ids: [ld-43-state-representative-2--shaun-scott]
       - race_id: ld-43-state-senator
@@ -466,12 +475,22 @@ sources:
         evidence_locator: Gallery image 12; restricted capture capture-washington-stonewall-democrats-20260721T154021Z-cf475b198f0a.
 
   - source_id: transit-riders-union
-    captured_at: 2026-07-20T01:10:00Z
-    reviewed_at: 2026-07-20T14:05:00Z
-    evidence_locator: Official 2026 primary endorsements page, three-item endorsement list.
+    captured_at: 2026-08-05T00:00:00Z
+    reviewed_at: 2026-08-05T00:00:00Z
+    evidence_locator: Official 2026 primary endorsements page, updated endorsement list including the June 25 special member meeting additions.
     decisions:
       - race_id: ld-32-state-representative-1
         candidate_ids: [ld-32-state-representative-1--danica-noble]
+      - race_id: ld-32-state-representative-2
+        candidate_ids: [ld-32-state-representative-2--imraan-siddiqi]
+      - race_id: ld-37-state-senator
+        candidate_ids: [ld-37-state-senator--tatiana-brown]
+      - race_id: ld-37-state-representative-1
+        candidate_ids: [ld-37-state-representative-1--kelabe-tewolde]
+      - race_id: ld-43-state-senator
+        candidate_ids: [ld-43-state-senator--hannah-sabio-howell]
+      - race_id: ld-46-state-representative-1
+        candidate_ids: [ld-46-state-representative-1--ron-davis]
       - race_id: king-county-council-2
         candidate_ids:
           - king-county-council-2--toshiko-grace-hasegawa
@@ -644,10 +663,12 @@ sources:
         candidate_ids: [ld-46-state-senator--javier-valdez]
 
   - source_id: seiu-775
-    captured_at: 2026-07-20T01:15:00Z
-    reviewed_at: 2026-07-20T14:05:00Z
+    captured_at: 2026-08-05T00:00:00Z
+    reviewed_at: 2026-08-05T00:00:00Z
     evidence_locator: Official 2026 Washington endorsements page, named office entry.
     decisions:
+      - race_id: king-county-council-8
+        candidate_ids: [king-county-council-8--teresa-mosqueda]
       - race_id: us-house-7
         candidate_ids: [us-house-7--pramila-jayapal]
       - race_id: us-house-9
@@ -726,8 +747,8 @@ sources:
         candidate_ids: [seattle-city-council-5--nilu-jenks]
 
   - source_id: sage-leaders
-    captured_at: 2026-07-20T11:01:00Z
-    reviewed_at: 2026-07-20T14:05:00Z
+    captured_at: 2026-08-05T00:00:00Z
+    reviewed_at: 2026-08-05T00:00:00Z
     evidence_locator: Official 2026 endorsements page, named candidate and office cards.
     decisions:
       - race_id: ld-32-state-senator
@@ -746,6 +767,12 @@ sources:
         candidate_ids: [ld-37-state-representative-2--jaelynn-scott]
       - race_id: ld-43-state-senator
         candidate_ids: [ld-43-state-senator--hannah-sabio-howell]
+      - race_id: ld-46-state-representative-2
+        candidate_ids: [ld-46-state-representative-2--darya-farivar]
+      - race_id: king-county-council-2
+        candidate_ids: [king-county-council-2--rebecca-salda-a]
+      - race_id: king-county-council-8
+        candidate_ids: [king-county-council-8--teresa-mosqueda]
       - race_id: seattle-city-council-5
         candidate_ids: [seattle-city-council-5--nilu-jenks]
 
@@ -860,12 +887,14 @@ sources:
         candidate_ids: [seattle-municipal-court-judge-5--gabe-rothstein]
 
   - source_id: ufcw-3000
-    captured_at: 2026-07-20T11:05:00Z
-    reviewed_at: 2026-07-20T14:05:00Z
+    captured_at: 2026-08-05T00:00:00Z
+    reviewed_at: 2026-08-05T00:00:00Z
     evidence_locator: Official endorsements page, 2026 candidate roster.
     decisions:
       - race_id: supreme-court-justice-1
         candidate_ids: [supreme-court-justice-1--colleen-melody]
+      - race_id: supreme-court-justice-3
+        candidate_ids: [supreme-court-justice-3--jaime-michelle-hawk]
       - race_id: ld-11-state-representative-1
         candidate_ids: [ld-11-state-representative-1--david-hackney]
       - race_id: ld-32-state-senator
@@ -1355,13 +1384,23 @@ sources:
         candidate_ids: [king-county-council-8--teresa-mosqueda]
 
   - source_id: seattle-gay-news
-    captured_at: 2026-07-23T12:46:00Z
-    reviewed_at: 2026-07-23T13:00:00Z
-    evidence_locator: Official SGN Editorial Board endorsement articles 168513, 168554, and 168558.
+    captured_at: 2026-08-05T00:00:00Z
+    reviewed_at: 2026-08-05T00:00:00Z
+    evidence_locator: Official SGN Editorial Board endorsement articles; the board expanded from three to nine 2026 primary endorsement articles since the original 2026-07-23 capture.
     decisions:
+      - race_id: us-house-7
+        candidate_ids: [us-house-7--pramila-jayapal]
       - race_id: us-house-9
         candidate_ids: [us-house-9--kshama-sawant]
+      - race_id: ld-37-state-senator
+        candidate_ids: [ld-37-state-senator--tatiana-brown]
       - race_id: ld-37-state-representative-1
         candidate_ids: [ld-37-state-representative-1--kelabe-tewolde]
+      - race_id: ld-37-state-representative-2
+        candidate_ids: [ld-37-state-representative-2--jaelynn-scott]
+      - race_id: ld-43-state-senator
+        candidate_ids: [ld-43-state-senator--hannah-sabio-howell]
+      - race_id: king-county-council-2
+        candidate_ids: [king-county-council-2--rebecca-salda-a]
       - race_id: seattle-city-council-5
         candidate_ids: [seattle-city-council-5--nilu-jenks]

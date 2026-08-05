@@ -4,41 +4,65 @@
     "PublicationViewModel.comparisons.display_index baseline.leading_pick_ids",
     "PublicationViewModel.personalization.races eligible_source_codes and published strn/stim cells"
   ],
-  "columns": ["gall", "strn", "stim"],
+  "columns": [
+    "gall",
+    "strn",
+    "stim"
+  ],
   "differing_races": [
     {
       "race_id": "us-house-9",
-      "race_label": "U.S. Representative — Congressional District 9",
+      "race_label": "U.S. Representative \u2014 Congressional District 9",
       "leading_pick_ids": {
-        "gall": ["us-house-9--adam-smith"],
-        "strn": ["us-house-9--kshama-sawant"],
+        "gall": [
+          "us-house-9--adam-smith"
+        ],
+        "strn": [
+          "us-house-9--kshama-sawant"
+        ],
         "stim": []
       }
     },
     {
       "race_id": "ld-11-state-representative-1",
-      "race_label": "Legislative District 11 State Representative — Position 1",
+      "race_label": "Legislative District 11 State Representative \u2014 Position 1",
       "leading_pick_ids": {
-        "gall": ["ld-11-state-representative-1--david-hackney"],
-        "strn": ["ld-11-state-representative-1--ashley-fedan"],
-        "stim": ["ld-11-state-representative-1--david-hackney"]
+        "gall": [
+          "ld-11-state-representative-1--david-hackney"
+        ],
+        "strn": [
+          "ld-11-state-representative-1--ashley-fedan"
+        ],
+        "stim": [
+          "ld-11-state-representative-1--david-hackney"
+        ]
       }
     },
     {
       "race_id": "ld-32-state-representative-1",
-      "race_label": "Legislative District 32 State Representative — Position 1",
+      "race_label": "Legislative District 32 State Representative \u2014 Position 1",
       "leading_pick_ids": {
-        "gall": ["ld-32-state-representative-1--danica-noble"],
-        "strn": ["ld-32-state-representative-1--keith-scully"],
-        "stim": ["ld-32-state-representative-1--keith-scully"]
+        "gall": [
+          "ld-32-state-representative-1--danica-noble"
+        ],
+        "strn": [
+          "ld-32-state-representative-1--keith-scully"
+        ],
+        "stim": [
+          "ld-32-state-representative-1--keith-scully"
+        ]
       }
     },
     {
       "race_id": "ld-32-state-representative-2",
-      "race_label": "Legislative District 32 State Representative — Position 2",
+      "race_label": "Legislative District 32 State Representative \u2014 Position 2",
       "leading_pick_ids": {
-        "gall": ["ld-32-state-representative-2--lauren-davis"],
-        "strn": ["ld-32-state-representative-2--imraan-siddiqi"],
+        "gall": [
+          "ld-32-state-representative-2--lauren-davis"
+        ],
+        "strn": [
+          "ld-32-state-representative-2--imraan-siddiqi"
+        ],
         "stim": []
       }
     },
@@ -46,72 +70,135 @@
       "race_id": "ld-32-state-senator",
       "race_label": "Legislative District 32 State Senator",
       "leading_pick_ids": {
-        "gall": ["ld-32-state-senator--cindy-ryu"],
-        "strn": ["ld-32-state-senator--cindy-ryu"],
-        "stim": ["ld-32-state-senator--jesse-salomon"]
+        "gall": [
+          "ld-32-state-senator--cindy-ryu"
+        ],
+        "strn": [
+          "ld-32-state-senator--cindy-ryu"
+        ],
+        "stim": [
+          "ld-32-state-senator--jesse-salomon"
+        ]
       }
     },
     {
       "race_id": "ld-46-state-representative-1",
-      "race_label": "Legislative District 46 State Representative — Position 1",
+      "race_label": "Legislative District 46 State Representative \u2014 Position 1",
       "leading_pick_ids": {
-        "gall": ["ld-46-state-representative-1--gerry-pollet"],
-        "strn": ["ld-46-state-representative-1--will-dreher"],
-        "stim": ["ld-46-state-representative-1--gerry-pollet"]
+        "gall": [
+          "ld-46-state-representative-1--gerry-pollet"
+        ],
+        "strn": [
+          "ld-46-state-representative-1--will-dreher"
+        ],
+        "stim": [
+          "ld-46-state-representative-1--gerry-pollet"
+        ]
       }
     },
     {
       "race_id": "king-county-council-2",
-      "race_label": "Metropolitan King County Council — District 2",
+      "race_label": "Metropolitan King County Council \u2014 District 2",
       "leading_pick_ids": {
-        "gall": ["king-county-council-2--rebecca-salda-a"],
-        "strn": ["king-county-council-2--rebecca-salda-a"],
-        "stim": ["king-county-council-2--toshiko-grace-hasegawa"]
+        "gall": [
+          "king-county-council-2--rebecca-salda-a"
+        ],
+        "strn": [
+          "king-county-council-2--rebecca-salda-a"
+        ],
+        "stim": [
+          "king-county-council-2--toshiko-grace-hasegawa"
+        ]
       }
     },
     {
       "race_id": "king-county-council-8",
-      "race_label": "Metropolitan King County Council — District 8",
+      "race_label": "Metropolitan King County Council \u2014 District 8",
       "leading_pick_ids": {
-        "gall": ["king-county-council-8--teresa-mosqueda"],
-        "strn": ["king-county-council-8--teresa-mosqueda"],
-        "stim": ["king-county-council-8--nick-duda"]
+        "gall": [
+          "king-county-council-8--teresa-mosqueda"
+        ],
+        "strn": [
+          "king-county-council-8--teresa-mosqueda"
+        ],
+        "stim": [
+          "king-county-council-8--nick-duda"
+        ]
+      }
+    },
+    {
+      "race_id": "supreme-court-justice-3",
+      "race_label": "Washington Supreme Court Justice \u2014 Position 3",
+      "leading_pick_ids": {
+        "gall": [
+          "supreme-court-justice-3--jaime-michelle-hawk"
+        ],
+        "strn": [
+          "supreme-court-justice-3--mike-diaz"
+        ],
+        "stim": [
+          "supreme-court-justice-3--mike-diaz"
+        ]
       }
     },
     {
       "race_id": "supreme-court-justice-5",
-      "race_label": "Washington Supreme Court Justice — Position 5",
+      "race_label": "Washington Supreme Court Justice \u2014 Position 5",
       "leading_pick_ids": {
-        "gall": ["supreme-court-justice-5--theo-angelis"],
-        "strn": ["supreme-court-justice-5--theo-angelis"],
-        "stim": ["supreme-court-justice-5--sharonda-amamilo"]
+        "gall": [
+          "supreme-court-justice-5--theo-angelis"
+        ],
+        "strn": [
+          "supreme-court-justice-5--theo-angelis"
+        ],
+        "stim": [
+          "supreme-court-justice-5--sharonda-amamilo"
+        ]
       }
     },
     {
       "race_id": "seattle-city-council-5",
-      "race_label": "Seattle City Council — District 5",
+      "race_label": "Seattle City Council \u2014 District 5",
       "leading_pick_ids": {
-        "gall": ["seattle-city-council-5--nilu-jenks"],
-        "strn": ["seattle-city-council-5--nilu-jenks"],
-        "stim": ["seattle-city-council-5--julie-kang"]
+        "gall": [
+          "seattle-city-council-5--nilu-jenks"
+        ],
+        "strn": [
+          "seattle-city-council-5--nilu-jenks"
+        ],
+        "stim": [
+          "seattle-city-council-5--julie-kang"
+        ]
       }
     },
     {
       "race_id": "seattle-municipal-court-judge-5",
-      "race_label": "Seattle Municipal Court Judge — Position 5",
+      "race_label": "Seattle Municipal Court Judge \u2014 Position 5",
       "leading_pick_ids": {
-        "gall": ["seattle-municipal-court-judge-5--gabe-rothstein"],
-        "strn": ["seattle-municipal-court-judge-5--gabe-rothstein"],
-        "stim": ["seattle-municipal-court-judge-5--garmon-newsom"]
+        "gall": [
+          "seattle-municipal-court-judge-5--gabe-rothstein"
+        ],
+        "strn": [
+          "seattle-municipal-court-judge-5--gabe-rothstein"
+        ],
+        "stim": [
+          "seattle-municipal-court-judge-5--garmon-newsom"
+        ]
       }
     },
     {
       "race_id": "seattle-proposition-1-library-levy",
-      "race_label": "Seattle Proposition 1 — Property Tax Levy for Seattle Public Library",
+      "race_label": "Seattle Proposition 1 \u2014 Property Tax Levy for Seattle Public Library",
       "leading_pick_ids": {
-        "gall": ["seattle-proposition-1-library-levy--yes"],
-        "strn": ["seattle-proposition-1-library-levy--yes"],
-        "stim": ["seattle-proposition-1-library-levy--no"]
+        "gall": [
+          "seattle-proposition-1-library-levy--yes"
+        ],
+        "strn": [
+          "seattle-proposition-1-library-levy--yes"
+        ],
+        "stim": [
+          "seattle-proposition-1-library-levy--no"
+        ]
       }
     }
   ]

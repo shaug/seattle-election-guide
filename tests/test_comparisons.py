@@ -22,7 +22,7 @@ PROJECT_ROOT = Path(__file__).parent.parent
 DATASET_PATH = PROJECT_ROOT / "data" / "normalized" / "canonical-dataset.json"
 SCORING_CONFIG_PATH = PROJECT_ROOT / "config" / "scoring" / "default.yaml"
 SNAPSHOT_ROOT = PROJECT_ROOT / "data" / "releases" / "wa-2026-primary" / "snapshots"
-NOW = datetime(2026, 7, 23, 17, 10, tzinfo=UTC)
+NOW = datetime(2026, 8, 5, 0, 20, tzinfo=UTC)
 
 
 def _bundle() -> Any:

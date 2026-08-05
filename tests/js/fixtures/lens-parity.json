@@ -1648,16 +1648,16 @@
         },
         {
           "candidate_support": {
-            "king-county-council-8--teresa-mosqueda": "5"
+            "king-county-council-8--teresa-mosqueda": "6"
           },
           "eligible_source_count": 9,
-          "explicit_endorsement_count": 5,
+          "explicit_endorsement_count": 6,
           "grade": "A+",
           "is_tied": false,
-          "missing_source_count": 4,
+          "missing_source_count": 3,
           "no_endorsement_count": 0,
           "race_id": "king-county-council-8",
-          "source_coverage_count": 5,
+          "source_coverage_count": 6,
           "winner_candidate_id": "king-county-council-8--teresa-mosqueda",
           "winner_candidate_ids": [
             "king-county-council-8--teresa-mosqueda"
@@ -2104,22 +2104,22 @@
         },
         {
           "candidate_support": {
-            "supreme-court-justice-3--jaime-michelle-hawk": "5/2",
+            "supreme-court-justice-3--jaime-michelle-hawk": "7/2",
             "supreme-court-justice-3--mike-diaz": "3/2"
           },
           "eligible_source_count": 9,
-          "explicit_endorsement_count": 4,
+          "explicit_endorsement_count": 5,
           "grade": "B",
           "is_tied": false,
-          "missing_source_count": 5,
+          "missing_source_count": 4,
           "no_endorsement_count": 0,
           "race_id": "supreme-court-justice-3",
-          "source_coverage_count": 4,
+          "source_coverage_count": 5,
           "winner_candidate_id": "supreme-court-justice-3--jaime-michelle-hawk",
           "winner_candidate_ids": [
             "supreme-court-justice-3--jaime-michelle-hawk"
           ],
-          "winner_share": "5/8"
+          "winner_share": "7/10"
         },
         {
           "candidate_support": {
@@ -2269,16 +2269,16 @@
         },
         {
           "candidate_support": {
-            "king-county-council-8--teresa-mosqueda": "10"
+            "king-county-council-8--teresa-mosqueda": "11"
           },
           "eligible_source_count": 20,
-          "explicit_endorsement_count": 10,
+          "explicit_endorsement_count": 11,
           "grade": "A+",
           "is_tied": false,
-          "missing_source_count": 10,
+          "missing_source_count": 9,
           "no_endorsement_count": 0,
           "race_id": "king-county-council-8",
-          "source_coverage_count": 10,
+          "source_coverage_count": 11,
           "winner_candidate_id": "king-county-council-8--teresa-mosqueda",
           "winner_candidate_ids": [
             "king-county-council-8--teresa-mosqueda"
@@ -2729,23 +2729,22 @@
         },
         {
           "candidate_support": {
-            "supreme-court-justice-3--jaime-michelle-hawk": "13/2",
+            "supreme-court-justice-3--jaime-michelle-hawk": "15/2",
             "supreme-court-justice-3--mike-diaz": "13/2"
           },
           "eligible_source_count": 20,
-          "explicit_endorsement_count": 13,
-          "grade": "TIED",
-          "is_tied": true,
-          "missing_source_count": 7,
+          "explicit_endorsement_count": 14,
+          "grade": "C",
+          "is_tied": false,
+          "missing_source_count": 6,
           "no_endorsement_count": 0,
           "race_id": "supreme-court-justice-3",
-          "source_coverage_count": 13,
-          "winner_candidate_id": null,
+          "source_coverage_count": 14,
+          "winner_candidate_id": "supreme-court-justice-3--jaime-michelle-hawk",
           "winner_candidate_ids": [
-            "supreme-court-justice-3--jaime-michelle-hawk",
-            "supreme-court-justice-3--mike-diaz"
+            "supreme-court-justice-3--jaime-michelle-hawk"
           ],
-          "winner_share": "1/2"
+          "winner_share": "15/28"
         },
         {
           "candidate_support": {
@@ -2883,16 +2882,16 @@
         },
         {
           "candidate_support": {
-            "king-county-council-8--teresa-mosqueda": "6"
+            "king-county-council-8--teresa-mosqueda": "7"
           },
           "eligible_source_count": 10,
-          "explicit_endorsement_count": 6,
+          "explicit_endorsement_count": 7,
           "grade": "A+",
           "is_tied": false,
-          "missing_source_count": 4,
+          "missing_source_count": 3,
           "no_endorsement_count": 0,
           "race_id": "king-county-council-8",
-          "source_coverage_count": 6,
+          "source_coverage_count": 7,
           "winner_candidate_id": "king-county-council-8--teresa-mosqueda",
           "winner_candidate_ids": [
             "king-county-council-8--teresa-mosqueda"
@@ -3342,23 +3341,22 @@
         },
         {
           "candidate_support": {
-            "supreme-court-justice-3--jaime-michelle-hawk": "5/2",
+            "supreme-court-justice-3--jaime-michelle-hawk": "7/2",
             "supreme-court-justice-3--mike-diaz": "5/2"
           },
           "eligible_source_count": 10,
-          "explicit_endorsement_count": 5,
-          "grade": "TIED",
-          "is_tied": true,
-          "missing_source_count": 5,
+          "explicit_endorsement_count": 6,
+          "grade": "C",
+          "is_tied": false,
+          "missing_source_count": 4,
           "no_endorsement_count": 0,
           "race_id": "supreme-court-justice-3",
-          "source_coverage_count": 5,
-          "winner_candidate_id": null,
+          "source_coverage_count": 6,
+          "winner_candidate_id": "supreme-court-justice-3--jaime-michelle-hawk",
           "winner_candidate_ids": [
-            "supreme-court-justice-3--jaime-michelle-hawk",
-            "supreme-court-justice-3--mike-diaz"
+            "supreme-court-justice-3--jaime-michelle-hawk"
           ],
-          "winner_share": "1/2"
+          "winner_share": "7/12"
         },
         {
           "candidate_support": {
@@ -6082,35 +6080,35 @@
         },
         {
           "candidate_support": {
-            "king-county-council-2--rebecca-salda-a": "21",
+            "king-county-council-2--rebecca-salda-a": "23",
             "king-county-council-2--toshiko-grace-hasegawa": "3"
           },
           "eligible_source_count": 42,
-          "explicit_endorsement_count": 24,
+          "explicit_endorsement_count": 26,
           "grade": "A",
           "is_tied": false,
-          "missing_source_count": 18,
+          "missing_source_count": 16,
           "no_endorsement_count": 0,
           "race_id": "king-county-council-2",
-          "source_coverage_count": 24,
+          "source_coverage_count": 26,
           "winner_candidate_id": "king-county-council-2--rebecca-salda-a",
           "winner_candidate_ids": [
             "king-county-council-2--rebecca-salda-a"
           ],
-          "winner_share": "7/8"
+          "winner_share": "23/26"
         },
         {
           "candidate_support": {
-            "king-county-council-8--teresa-mosqueda": "23"
+            "king-county-council-8--teresa-mosqueda": "25"
           },
           "eligible_source_count": 42,
-          "explicit_endorsement_count": 23,
+          "explicit_endorsement_count": 25,
           "grade": "A+",
           "is_tied": false,
-          "missing_source_count": 19,
+          "missing_source_count": 17,
           "no_endorsement_count": 0,
           "race_id": "king-county-council-8",
-          "source_coverage_count": 23,
+          "source_coverage_count": 25,
           "winner_candidate_id": "king-county-council-8--teresa-mosqueda",
           "winner_candidate_ids": [
             "king-county-council-8--teresa-mosqueda"
@@ -6176,22 +6174,22 @@
         },
         {
           "candidate_support": {
-            "ld-32-state-representative-2--imraan-siddiqi": "15/2",
+            "ld-32-state-representative-2--imraan-siddiqi": "17/2",
             "ld-32-state-representative-2--lauren-davis": "21/2"
           },
           "eligible_source_count": 36,
-          "explicit_endorsement_count": 18,
+          "explicit_endorsement_count": 19,
           "grade": "C",
           "is_tied": false,
-          "missing_source_count": 18,
+          "missing_source_count": 17,
           "no_endorsement_count": 0,
           "race_id": "ld-32-state-representative-2",
-          "source_coverage_count": 18,
+          "source_coverage_count": 19,
           "winner_candidate_id": "ld-32-state-representative-2--lauren-davis",
           "winner_candidate_ids": [
             "ld-32-state-representative-2--lauren-davis"
           ],
-          "winner_share": "7/12"
+          "winner_share": "21/38"
         },
         {
           "candidate_support": {
@@ -6323,36 +6321,35 @@
         },
         {
           "candidate_support": {
-            "ld-37-state-representative-1--kelabe-tewolde": "13/2",
+            "ld-37-state-representative-1--kelabe-tewolde": "17/2",
             "ld-37-state-representative-1--sharon-tomiko-santos": "13/2"
           },
           "eligible_source_count": 36,
-          "explicit_endorsement_count": 13,
-          "grade": "TIED",
-          "is_tied": true,
-          "missing_source_count": 23,
+          "explicit_endorsement_count": 15,
+          "grade": "C",
+          "is_tied": false,
+          "missing_source_count": 21,
           "no_endorsement_count": 0,
           "race_id": "ld-37-state-representative-1",
-          "source_coverage_count": 13,
-          "winner_candidate_id": null,
+          "source_coverage_count": 15,
+          "winner_candidate_id": "ld-37-state-representative-1--kelabe-tewolde",
           "winner_candidate_ids": [
-            "ld-37-state-representative-1--sharon-tomiko-santos",
             "ld-37-state-representative-1--kelabe-tewolde"
           ],
-          "winner_share": "1/2"
+          "winner_share": "17/30"
         },
         {
           "candidate_support": {
-            "ld-37-state-representative-2--jaelynn-scott": "20"
+            "ld-37-state-representative-2--jaelynn-scott": "22"
           },
           "eligible_source_count": 36,
-          "explicit_endorsement_count": 20,
+          "explicit_endorsement_count": 22,
           "grade": "A+",
           "is_tied": false,
-          "missing_source_count": 16,
+          "missing_source_count": 14,
           "no_endorsement_count": 0,
           "race_id": "ld-37-state-representative-2",
-          "source_coverage_count": 20,
+          "source_coverage_count": 22,
           "winner_candidate_id": "ld-37-state-representative-2--jaelynn-scott",
           "winner_candidate_ids": [
             "ld-37-state-representative-2--jaelynn-scott"
@@ -6362,21 +6359,21 @@
         {
           "candidate_support": {
             "ld-37-state-senator--chipalo-street": "29/2",
-            "ld-37-state-senator--tatiana-brown": "3/2"
+            "ld-37-state-senator--tatiana-brown": "7/2"
           },
           "eligible_source_count": 36,
-          "explicit_endorsement_count": 16,
-          "grade": "A+",
+          "explicit_endorsement_count": 18,
+          "grade": "A",
           "is_tied": false,
-          "missing_source_count": 19,
+          "missing_source_count": 17,
           "no_endorsement_count": 1,
           "race_id": "ld-37-state-senator",
-          "source_coverage_count": 17,
+          "source_coverage_count": 19,
           "winner_candidate_id": "ld-37-state-senator--chipalo-street",
           "winner_candidate_ids": [
             "ld-37-state-senator--chipalo-street"
           ],
-          "winner_share": "29/32"
+          "winner_share": "29/36"
         },
         {
           "candidate_support": {
@@ -6416,55 +6413,55 @@
         },
         {
           "candidate_support": {
-            "ld-43-state-senator--hannah-sabio-howell": "10",
+            "ld-43-state-senator--hannah-sabio-howell": "12",
             "ld-43-state-senator--jamie-pedersen": "13"
           },
           "eligible_source_count": 36,
-          "explicit_endorsement_count": 23,
+          "explicit_endorsement_count": 25,
           "grade": "C",
           "is_tied": false,
-          "missing_source_count": 13,
+          "missing_source_count": 11,
           "no_endorsement_count": 0,
           "race_id": "ld-43-state-senator",
-          "source_coverage_count": 23,
+          "source_coverage_count": 25,
           "winner_candidate_id": "ld-43-state-senator--jamie-pedersen",
           "winner_candidate_ids": [
             "ld-43-state-senator--jamie-pedersen"
           ],
-          "winner_share": "13/23"
+          "winner_share": "13/25"
         },
         {
           "candidate_support": {
             "ld-46-state-representative-1--gerry-pollet": "9",
-            "ld-46-state-representative-1--ron-davis": "6",
+            "ld-46-state-representative-1--ron-davis": "7",
             "ld-46-state-representative-1--will-dreher": "1"
           },
           "eligible_source_count": 36,
-          "explicit_endorsement_count": 16,
+          "explicit_endorsement_count": 17,
           "grade": "C",
           "is_tied": false,
-          "missing_source_count": 19,
+          "missing_source_count": 18,
           "no_endorsement_count": 1,
           "race_id": "ld-46-state-representative-1",
-          "source_coverage_count": 17,
+          "source_coverage_count": 18,
           "winner_candidate_id": "ld-46-state-representative-1--gerry-pollet",
           "winner_candidate_ids": [
             "ld-46-state-representative-1--gerry-pollet"
           ],
-          "winner_share": "9/16"
+          "winner_share": "9/17"
         },
         {
           "candidate_support": {
-            "ld-46-state-representative-2--darya-farivar": "18"
+            "ld-46-state-representative-2--darya-farivar": "19"
           },
           "eligible_source_count": 36,
-          "explicit_endorsement_count": 18,
+          "explicit_endorsement_count": 19,
           "grade": "A+",
           "is_tied": false,
-          "missing_source_count": 18,
+          "missing_source_count": 17,
           "no_endorsement_count": 0,
           "race_id": "ld-46-state-representative-2",
-          "source_coverage_count": 18,
+          "source_coverage_count": 19,
           "winner_candidate_id": "ld-46-state-representative-2--darya-farivar",
           "winner_candidate_ids": [
             "ld-46-state-representative-2--darya-farivar"
@@ -6566,23 +6563,22 @@
         },
         {
           "candidate_support": {
-            "supreme-court-justice-3--jaime-michelle-hawk": "19/2",
+            "supreme-court-justice-3--jaime-michelle-hawk": "21/2",
             "supreme-court-justice-3--mike-diaz": "19/2"
           },
           "eligible_source_count": 42,
-          "explicit_endorsement_count": 19,
-          "grade": "TIED",
-          "is_tied": true,
-          "missing_source_count": 23,
+          "explicit_endorsement_count": 20,
+          "grade": "C",
+          "is_tied": false,
+          "missing_source_count": 22,
           "no_endorsement_count": 0,
           "race_id": "supreme-court-justice-3",
-          "source_coverage_count": 19,
-          "winner_candidate_id": null,
+          "source_coverage_count": 20,
+          "winner_candidate_id": "supreme-court-justice-3--jaime-michelle-hawk",
           "winner_candidate_ids": [
-            "supreme-court-justice-3--jaime-michelle-hawk",
-            "supreme-court-justice-3--mike-diaz"
+            "supreme-court-justice-3--jaime-michelle-hawk"
           ],
-          "winner_share": "1/2"
+          "winner_share": "21/40"
         },
         {
           "candidate_support": {
@@ -6623,16 +6619,16 @@
         },
         {
           "candidate_support": {
-            "us-house-7--pramila-jayapal": "19"
+            "us-house-7--pramila-jayapal": "20"
           },
           "eligible_source_count": 42,
-          "explicit_endorsement_count": 19,
+          "explicit_endorsement_count": 20,
           "grade": "A+",
           "is_tied": false,
-          "missing_source_count": 22,
+          "missing_source_count": 21,
           "no_endorsement_count": 1,
           "race_id": "us-house-7",
-          "source_coverage_count": 20,
+          "source_coverage_count": 21,
           "winner_candidate_id": "us-house-7--pramila-jayapal",
           "winner_candidate_ids": [
             "us-house-7--pramila-jayapal"
@@ -6971,10 +6967,12 @@
             "state": "not_covered"
           },
           {
-            "allocation": {},
+            "allocation": {
+              "us-house-7--pramila-jayapal": "1"
+            },
             "confidence_warning": false,
             "source_code": "snws",
-            "state": "not_covered"
+            "state": "endorsement"
           },
           {
             "allocation": {},
@@ -8538,10 +8536,12 @@
             "state": "not_covered"
           },
           {
-            "allocation": {},
+            "allocation": {
+              "ld-32-state-representative-2--imraan-siddiqi": "1"
+            },
             "confidence_warning": false,
             "source_code": "trun",
-            "state": "not_covered"
+            "state": "endorsement"
           },
           {
             "allocation": {
@@ -10934,10 +10934,12 @@
             "state": "not_covered"
           },
           {
-            "allocation": {},
+            "allocation": {
+              "ld-37-state-representative-1--kelabe-tewolde": "1"
+            },
             "confidence_warning": false,
             "source_code": "trun",
-            "state": "not_covered"
+            "state": "endorsement"
           },
           {
             "allocation": {},
@@ -11027,10 +11029,12 @@
             "state": "endorsement"
           },
           {
-            "allocation": {},
+            "allocation": {
+              "ld-37-state-representative-1--kelabe-tewolde": "1"
+            },
             "confidence_warning": false,
             "source_code": "wwfp",
-            "state": "not_covered"
+            "state": "endorsement"
           }
         ],
         "eligible_source_codes": [
@@ -11197,10 +11201,12 @@
             "state": "endorsement"
           },
           {
-            "allocation": {},
+            "allocation": {
+              "ld-37-state-representative-2--jaelynn-scott": "1"
+            },
             "confidence_warning": false,
             "source_code": "snws",
-            "state": "not_covered"
+            "state": "endorsement"
           },
           {
             "allocation": {},
@@ -11337,10 +11343,12 @@
             "state": "endorsement"
           },
           {
-            "allocation": {},
+            "allocation": {
+              "ld-37-state-representative-2--jaelynn-scott": "1"
+            },
             "confidence_warning": false,
             "source_code": "wwfp",
-            "state": "not_covered"
+            "state": "endorsement"
           }
         ],
         "eligible_source_codes": [
@@ -11502,10 +11510,12 @@
             "state": "multi_endorsement"
           },
           {
-            "allocation": {},
+            "allocation": {
+              "ld-37-state-senator--tatiana-brown": "1"
+            },
             "confidence_warning": false,
             "source_code": "snws",
-            "state": "not_covered"
+            "state": "endorsement"
           },
           {
             "allocation": {},
@@ -11540,10 +11550,12 @@
             "state": "not_covered"
           },
           {
-            "allocation": {},
+            "allocation": {
+              "ld-37-state-senator--tatiana-brown": "1"
+            },
             "confidence_warning": false,
             "source_code": "trun",
-            "state": "not_covered"
+            "state": "endorsement"
           },
           {
             "allocation": {
@@ -12401,10 +12413,12 @@
             "state": "endorsement"
           },
           {
-            "allocation": {},
+            "allocation": {
+              "ld-43-state-senator--hannah-sabio-howell": "1"
+            },
             "confidence_warning": false,
             "source_code": "snws",
-            "state": "not_covered"
+            "state": "endorsement"
           },
           {
             "allocation": {},
@@ -12443,10 +12457,12 @@
             "state": "endorsement"
           },
           {
-            "allocation": {},
+            "allocation": {
+              "ld-43-state-senator--hannah-sabio-howell": "1"
+            },
             "confidence_warning": false,
             "source_code": "trun",
-            "state": "not_covered"
+            "state": "endorsement"
           },
           {
             "allocation": {
@@ -12759,10 +12775,12 @@
             "state": "endorsement"
           },
           {
-            "allocation": {},
+            "allocation": {
+              "ld-46-state-representative-1--ron-davis": "1"
+            },
             "confidence_warning": false,
             "source_code": "trun",
-            "state": "not_covered"
+            "state": "endorsement"
           },
           {
             "allocation": {
@@ -13019,10 +13037,12 @@
             "state": "endorsement"
           },
           {
-            "allocation": {},
+            "allocation": {
+              "ld-46-state-representative-2--darya-farivar": "1"
+            },
             "confidence_warning": false,
             "source_code": "sldr",
-            "state": "not_covered"
+            "state": "endorsement"
           },
           {
             "allocation": {},
@@ -14011,16 +14031,20 @@
             "state": "not_covered"
           },
           {
-            "allocation": {},
+            "allocation": {
+              "king-county-council-2--rebecca-salda-a": "1"
+            },
             "confidence_warning": false,
             "source_code": "sldr",
-            "state": "not_covered"
+            "state": "endorsement"
           },
           {
-            "allocation": {},
+            "allocation": {
+              "king-county-council-2--rebecca-salda-a": "1"
+            },
             "confidence_warning": false,
             "source_code": "snws",
-            "state": "not_covered"
+            "state": "endorsement"
           },
           {
             "allocation": {},
@@ -14352,10 +14376,12 @@
             "state": "endorsement"
           },
           {
-            "allocation": {},
+            "allocation": {
+              "king-county-council-8--teresa-mosqueda": "1"
+            },
             "confidence_warning": false,
             "source_code": "s775",
-            "state": "not_covered"
+            "state": "endorsement"
           },
           {
             "allocation": {
@@ -14378,10 +14404,12 @@
             "state": "not_covered"
           },
           {
-            "allocation": {},
+            "allocation": {
+              "king-county-council-8--teresa-mosqueda": "1"
+            },
             "confidence_warning": false,
             "source_code": "sldr",
-            "state": "not_covered"
+            "state": "endorsement"
           },
           {
             "allocation": {},
@@ -15147,10 +15175,12 @@
             "state": "not_covered"
           },
           {
-            "allocation": {},
+            "allocation": {
+              "supreme-court-justice-3--jaime-michelle-hawk": "1"
+            },
             "confidence_warning": false,
             "source_code": "ufcw",
-            "state": "not_covered"
+            "state": "endorsement"
           },
           {
             "allocation": {

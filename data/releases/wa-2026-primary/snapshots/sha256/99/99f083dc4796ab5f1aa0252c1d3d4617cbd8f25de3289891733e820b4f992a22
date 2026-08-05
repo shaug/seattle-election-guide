@@ -1,6 +1,15 @@
 {
-  "captured_at": "2026-07-20T01:15:00Z",
+  "captured_at": "2026-08-05T00:00:00Z",
   "decisions": [
+    {
+      "candidate_ids": [
+        "king-county-council-8--teresa-mosqueda"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "king-county-council-8",
+      "status": "endorsed"
+    },
     {
       "candidate_ids": [
         "us-house-7--pramila-jayapal"

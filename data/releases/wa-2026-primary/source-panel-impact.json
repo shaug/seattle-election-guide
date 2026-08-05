@@ -1,10 +1,10 @@
 {
   "after": {
-    "computed_at": "2026-07-23T17:10:00Z",
+    "computed_at": "2026-08-05T00:20:00Z",
     "configuration_id": "unweighted-progressive-v1",
-    "dataset_hash": "fc7b03709b6df927fe7d0e05f777442ff454f650ce2798468e79d5221df6d8ca",
+    "dataset_hash": "aac4ccfb5835278c3024406ba0b2df405fa61c2511012e745dfb0c6484531612",
     "election_id": "wa-2026-primary",
-    "input_hash": "746f83dbe09f21d235a18ccc88fbef8f80d92d7aaf873e79e915fdd4d8b6e7ae",
+    "input_hash": "88b5070f6c37b5d98544a23de5f6f36760c8f2153f97bec973d9cb7bdf3bbd2f",
     "publication_scope_hash": "43f7068c9cb92ccc25821a70bd3ddd027b49211414b103decde4fd150ebba069",
     "races": [
       {
@@ -104,16 +104,16 @@
       {
         "category_coverage_count": 6,
         "eligible_source_count": 42,
-        "explicit_endorsement_count": 24,
+        "explicit_endorsement_count": 26,
         "grade": "A",
         "is_tied": false,
-        "missing_source_count": 18,
+        "missing_source_count": 16,
         "race_id": "king-county-council-2",
-        "source_coverage_count": 24,
+        "source_coverage_count": 26,
         "warnings": [
           {
             "code": "missing_coverage",
-            "message": "18 eligible sources lack a resolved decision.",
+            "message": "16 eligible sources lack a resolved decision.",
             "review_item_ids": [],
             "source_ids": [
               "32nd-district-democrats",
@@ -124,9 +124,7 @@
               "fuse-washington",
               "oneamerica-votes",
               "planned-parenthood-alliance-advocates",
-              "sage-leaders",
               "seattle-democratic-socialists",
-              "seattle-gay-news",
               "seattle-subway",
               "sierra-club-washington",
               "washington-education-association",
@@ -178,22 +176,22 @@
         "winner_candidate_ids": [
           "king-county-council-2--rebecca-salda-a"
         ],
-        "winner_share": "7/8",
-        "winner_support_points": "21"
+        "winner_share": "23/26",
+        "winner_support_points": "23"
       },
       {
         "category_coverage_count": 6,
         "eligible_source_count": 42,
-        "explicit_endorsement_count": 23,
+        "explicit_endorsement_count": 25,
         "grade": "A+",
         "is_tied": false,
-        "missing_source_count": 19,
+        "missing_source_count": 17,
         "race_id": "king-county-council-8",
-        "source_coverage_count": 23,
+        "source_coverage_count": 25,
         "warnings": [
           {
             "code": "missing_coverage",
-            "message": "19 eligible sources lack a resolved decision.",
+            "message": "17 eligible sources lack a resolved decision.",
             "review_item_ids": [],
             "source_ids": [
               "32nd-district-democrats",
@@ -202,10 +200,8 @@
               "aft-washington",
               "environmental-climate-caucus-wa-democrats",
               "planned-parenthood-alliance-advocates",
-              "sage-leaders",
               "seattle-democratic-socialists",
               "seattle-gay-news",
-              "seiu-775",
               "sierra-club-washington",
               "tech-4-housing",
               "tech-4-taxes",
@@ -249,7 +245,7 @@
           "king-county-council-8--teresa-mosqueda"
         ],
         "winner_share": "1",
-        "winner_support_points": "23"
+        "winner_support_points": "25"
       },
       {
         "category_coverage_count": 4,
@@ -508,18 +504,18 @@
         "winner_support_points": "8"
       },
       {
-        "category_coverage_count": 4,
+        "category_coverage_count": 5,
         "eligible_source_count": 36,
-        "explicit_endorsement_count": 18,
+        "explicit_endorsement_count": 19,
         "grade": "C",
         "is_tied": false,
-        "missing_source_count": 18,
+        "missing_source_count": 17,
         "race_id": "ld-32-state-representative-2",
-        "source_coverage_count": 18,
+        "source_coverage_count": 19,
         "warnings": [
           {
             "code": "missing_coverage",
-            "message": "18 eligible sources lack a resolved decision.",
+            "message": "17 eligible sources lack a resolved decision.",
             "review_item_ids": [],
             "source_ids": [
               "environmental-climate-caucus-wa-democrats",
@@ -533,7 +529,6 @@
               "sierra-club-washington",
               "tech-4-housing",
               "tech-4-taxes",
-              "transit-riders-union",
               "washington-bikes",
               "washington-bus",
               "washington-community-action-network",
@@ -544,7 +539,7 @@
           },
           {
             "code": "low_category_coverage",
-            "message": "Resolved decisions cover 4 of 6 eligible source categories.",
+            "message": "Resolved decisions cover 5 of 6 eligible source categories.",
             "review_item_ids": [],
             "source_ids": []
           },
@@ -583,7 +578,7 @@
         "winner_candidate_ids": [
           "ld-32-state-representative-2--lauren-davis"
         ],
-        "winner_share": "7/12",
+        "winner_share": "21/38",
         "winner_support_points": "21/2"
       },
       {
@@ -1088,16 +1083,16 @@
       {
         "category_coverage_count": 5,
         "eligible_source_count": 36,
-        "explicit_endorsement_count": 13,
-        "grade": "TIED",
-        "is_tied": true,
-        "missing_source_count": 23,
+        "explicit_endorsement_count": 15,
+        "grade": "C",
+        "is_tied": false,
+        "missing_source_count": 21,
         "race_id": "ld-37-state-representative-1",
-        "source_coverage_count": 13,
+        "source_coverage_count": 15,
         "warnings": [
           {
             "code": "missing_coverage",
-            "message": "23 eligible sources lack a resolved decision.",
+            "message": "21 eligible sources lack a resolved decision.",
             "review_item_ids": [],
             "source_ids": [
               "environmental-climate-caucus-wa-democrats",
@@ -1112,7 +1107,6 @@
               "seiu-775",
               "sierra-club-washington",
               "tech-4-taxes",
-              "transit-riders-union",
               "ufcw-3000",
               "washington-bikes",
               "washington-bus",
@@ -1121,8 +1115,7 @@
               "washington-education-association",
               "washington-housing-alliance",
               "washington-state-building-trades",
-              "washington-state-democrats",
-              "washington-working-families-party"
+              "washington-state-democrats"
             ]
           },
           {
@@ -1162,25 +1155,24 @@
           }
         ],
         "winner_candidate_ids": [
-          "ld-37-state-representative-1--sharon-tomiko-santos",
           "ld-37-state-representative-1--kelabe-tewolde"
         ],
-        "winner_share": "1/2",
-        "winner_support_points": "13/2"
+        "winner_share": "17/30",
+        "winner_support_points": "17/2"
       },
       {
         "category_coverage_count": 6,
         "eligible_source_count": 36,
-        "explicit_endorsement_count": 20,
+        "explicit_endorsement_count": 22,
         "grade": "A+",
         "is_tied": false,
-        "missing_source_count": 16,
+        "missing_source_count": 14,
         "race_id": "ld-37-state-representative-2",
-        "source_coverage_count": 20,
+        "source_coverage_count": 22,
         "warnings": [
           {
             "code": "missing_coverage",
-            "message": "16 eligible sources lack a resolved decision.",
+            "message": "14 eligible sources lack a resolved decision.",
             "review_item_ids": [],
             "source_ids": [
               "environmental-climate-caucus-wa-democrats",
@@ -1188,7 +1180,6 @@
               "mlk-labor",
               "planned-parenthood-alliance-advocates",
               "protec17",
-              "seattle-gay-news",
               "seattle-subway",
               "sierra-club-washington",
               "transit-riders-union",
@@ -1197,8 +1188,7 @@
               "washington-community-action-network",
               "washington-education-association",
               "washington-state-building-trades",
-              "washington-state-democrats",
-              "washington-working-families-party"
+              "washington-state-democrats"
             ]
           },
           {
@@ -1227,21 +1217,21 @@
           "ld-37-state-representative-2--jaelynn-scott"
         ],
         "winner_share": "1",
-        "winner_support_points": "20"
+        "winner_support_points": "22"
       },
       {
-        "category_coverage_count": 5,
+        "category_coverage_count": 6,
         "eligible_source_count": 36,
-        "explicit_endorsement_count": 16,
-        "grade": "A+",
+        "explicit_endorsement_count": 18,
+        "grade": "A",
         "is_tied": false,
-        "missing_source_count": 19,
+        "missing_source_count": 17,
         "race_id": "ld-37-state-senator",
-        "source_coverage_count": 17,
+        "source_coverage_count": 19,
         "warnings": [
           {
             "code": "missing_coverage",
-            "message": "19 eligible sources lack a resolved decision.",
+            "message": "17 eligible sources lack a resolved decision.",
             "review_item_ids": [],
             "source_ids": [
               "environmental-climate-caucus-wa-democrats",
@@ -1252,24 +1242,16 @@
               "planned-parenthood-alliance-advocates",
               "protec17",
               "seattle-democratic-socialists",
-              "seattle-gay-news",
               "seattle-subway",
               "sierra-club-washington",
               "tech-4-housing",
               "tech-4-taxes",
-              "transit-riders-union",
               "washington-bikes",
               "washington-community-action-network",
               "washington-education-association",
               "washington-state-democrats",
               "washington-working-families-party"
             ]
-          },
-          {
-            "code": "low_category_coverage",
-            "message": "Resolved decisions cover 5 of 6 eligible source categories.",
-            "review_item_ids": [],
-            "source_ids": []
           },
           {
             "code": "no_endorsement",
@@ -1312,7 +1294,7 @@
         "winner_candidate_ids": [
           "ld-37-state-senator--chipalo-street"
         ],
-        "winner_share": "29/32",
+        "winner_share": "29/36",
         "winner_support_points": "29/2"
       },
       {
@@ -1460,16 +1442,16 @@
       {
         "category_coverage_count": 6,
         "eligible_source_count": 36,
-        "explicit_endorsement_count": 23,
+        "explicit_endorsement_count": 25,
         "grade": "C",
         "is_tied": false,
-        "missing_source_count": 13,
+        "missing_source_count": 11,
         "race_id": "ld-43-state-senator",
-        "source_coverage_count": 23,
+        "source_coverage_count": 25,
         "warnings": [
           {
             "code": "missing_coverage",
-            "message": "13 eligible sources lack a resolved decision.",
+            "message": "11 eligible sources lack a resolved decision.",
             "review_item_ids": [],
             "source_ids": [
               "environmental-climate-caucus-wa-democrats",
@@ -1479,10 +1461,8 @@
               "planned-parenthood-alliance-advocates",
               "protec17",
               "seattle-democratic-socialists",
-              "seattle-gay-news",
               "seattle-subway",
               "tech-4-housing",
-              "transit-riders-union",
               "washington-community-action-network",
               "washington-state-democrats"
             ]
@@ -1521,22 +1501,22 @@
         "winner_candidate_ids": [
           "ld-43-state-senator--jamie-pedersen"
         ],
-        "winner_share": "13/23",
+        "winner_share": "13/25",
         "winner_support_points": "13"
       },
       {
         "category_coverage_count": 6,
         "eligible_source_count": 36,
-        "explicit_endorsement_count": 16,
+        "explicit_endorsement_count": 17,
         "grade": "C",
         "is_tied": false,
-        "missing_source_count": 19,
+        "missing_source_count": 18,
         "race_id": "ld-46-state-representative-1",
-        "source_coverage_count": 17,
+        "source_coverage_count": 18,
         "warnings": [
           {
             "code": "missing_coverage",
-            "message": "19 eligible sources lack a resolved decision.",
+            "message": "18 eligible sources lack a resolved decision.",
             "review_item_ids": [],
             "source_ids": [
               "environmental-climate-caucus-wa-democrats",
@@ -1550,7 +1530,6 @@
               "sage-leaders",
               "seattle-democratic-socialists",
               "seattle-gay-news",
-              "transit-riders-union",
               "washington-bus",
               "washington-community-action-network",
               "washington-for-peace-and-justice",
@@ -1593,22 +1572,22 @@
         "winner_candidate_ids": [
           "ld-46-state-representative-1--gerry-pollet"
         ],
-        "winner_share": "9/16",
+        "winner_share": "9/17",
         "winner_support_points": "9"
       },
       {
         "category_coverage_count": 6,
         "eligible_source_count": 36,
-        "explicit_endorsement_count": 18,
+        "explicit_endorsement_count": 19,
         "grade": "A+",
         "is_tied": false,
-        "missing_source_count": 18,
+        "missing_source_count": 17,
         "race_id": "ld-46-state-representative-2",
-        "source_coverage_count": 18,
+        "source_coverage_count": 19,
         "warnings": [
           {
             "code": "missing_coverage",
-            "message": "18 eligible sources lack a resolved decision.",
+            "message": "17 eligible sources lack a resolved decision.",
             "review_item_ids": [],
             "source_ids": [
               "environmental-climate-caucus-wa-democrats",
@@ -1616,7 +1595,6 @@
               "mlk-labor",
               "planned-parenthood-alliance-advocates",
               "protec17",
-              "sage-leaders",
               "seattle-democratic-socialists",
               "seattle-gay-news",
               "seattle-subway",
@@ -1657,7 +1635,7 @@
           "ld-46-state-representative-2--darya-farivar"
         ],
         "winner_share": "1",
-        "winner_support_points": "18"
+        "winner_support_points": "19"
       },
       {
         "category_coverage_count": 6,
@@ -2076,16 +2054,16 @@
       {
         "category_coverage_count": 5,
         "eligible_source_count": 42,
-        "explicit_endorsement_count": 19,
-        "grade": "TIED",
-        "is_tied": true,
-        "missing_source_count": 23,
+        "explicit_endorsement_count": 20,
+        "grade": "C",
+        "is_tied": false,
+        "missing_source_count": 22,
         "race_id": "supreme-court-justice-3",
-        "source_coverage_count": 19,
+        "source_coverage_count": 20,
         "warnings": [
           {
             "code": "missing_coverage",
-            "message": "23 eligible sources lack a resolved decision.",
+            "message": "22 eligible sources lack a resolved decision.",
             "review_item_ids": [],
             "source_ids": [
               "aft-washington",
@@ -2103,7 +2081,6 @@
               "tech-4-housing",
               "tech-4-taxes",
               "transit-riders-union",
-              "ufcw-3000",
               "washington-bikes",
               "washington-bus",
               "washington-community-action-network",
@@ -2160,11 +2137,10 @@
           }
         ],
         "winner_candidate_ids": [
-          "supreme-court-justice-3--jaime-michelle-hawk",
-          "supreme-court-justice-3--mike-diaz"
+          "supreme-court-justice-3--jaime-michelle-hawk"
         ],
-        "winner_share": "1/2",
-        "winner_support_points": "19/2"
+        "winner_share": "21/40",
+        "winner_support_points": "21/2"
       },
       {
         "category_coverage_count": 5,
@@ -2353,16 +2329,16 @@
       {
         "category_coverage_count": 5,
         "eligible_source_count": 42,
-        "explicit_endorsement_count": 19,
+        "explicit_endorsement_count": 20,
         "grade": "A+",
         "is_tied": false,
-        "missing_source_count": 22,
+        "missing_source_count": 21,
         "race_id": "us-house-7",
-        "source_coverage_count": 20,
+        "source_coverage_count": 21,
         "warnings": [
           {
             "code": "missing_coverage",
-            "message": "22 eligible sources lack a resolved decision.",
+            "message": "21 eligible sources lack a resolved decision.",
             "review_item_ids": [],
             "source_ids": [
               "11th-district-democrats",
@@ -2373,7 +2349,6 @@
               "protec17",
               "sage-leaders",
               "seattle-democratic-socialists",
-              "seattle-gay-news",
               "seattle-subway",
               "seiu-925",
               "tech-4-housing",
@@ -2435,7 +2410,7 @@
           "us-house-7--pramila-jayapal"
         ],
         "winner_share": "1",
-        "winner_support_points": "19"
+        "winner_support_points": "20"
       },
       {
         "category_coverage_count": 5,
@@ -4928,9 +4903,9 @@
       "changed_fields": [
         "eligible_source_count",
         "explicit_endorsement_count",
-        "missing_source_count",
         "source_coverage_count",
         "warnings",
+        "winner_share",
         "winner_support_points"
       ],
       "race_id": "king-county-council-2"
@@ -4976,6 +4951,7 @@
     },
     {
       "changed_fields": [
+        "category_coverage_count",
         "eligible_source_count",
         "explicit_endorsement_count",
         "grade",
@@ -5062,7 +5038,6 @@
         "eligible_source_count",
         "explicit_endorsement_count",
         "grade",
-        "is_tied",
         "missing_source_count",
         "source_coverage_count",
         "warnings",
@@ -5077,7 +5052,6 @@
         "category_coverage_count",
         "eligible_source_count",
         "explicit_endorsement_count",
-        "missing_source_count",
         "source_coverage_count",
         "warnings",
         "winner_support_points"
@@ -5086,8 +5060,10 @@
     },
     {
       "changed_fields": [
+        "category_coverage_count",
         "eligible_source_count",
         "explicit_endorsement_count",
+        "grade",
         "missing_source_count",
         "source_coverage_count",
         "warnings",
@@ -5201,13 +5177,12 @@
       "changed_fields": [
         "eligible_source_count",
         "explicit_endorsement_count",
-        "grade",
-        "is_tied",
         "missing_source_count",
         "source_coverage_count",
         "warnings",
         "winner_candidate_ids",
-        "winner_share"
+        "winner_share",
+        "winner_support_points"
       ],
       "race_id": "supreme-court-justice-3"
     },
