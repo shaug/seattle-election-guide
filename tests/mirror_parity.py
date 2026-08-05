@@ -152,15 +152,6 @@ COUNT_TALLIES: tuple[tuple[str, str], ...] = (
 )
 
 
-# The cell states meter v2 has an opinion about: the endorsements it draws a
-# block for, and the explicit "no endorsement" that deliberately gets neither a
-# block nor denominator weight (docs/METER_V2.md § Counting and the
-# denominator). A source that did not cover the race, or whose claim is still
-# unverified, is not in the meter's universe at all — the race page groups those
-# separately — so the layout never sees them.
-_METER_COUNTED_STATES = frozenset({"endorsement", "multi_endorsement", "no_endorsement"})
-
-
 def _endorsement(source_label: str, *candidates: tuple[str, str]) -> context.MeterEndorsement:
     """One cell for a hand-built layout shape, spelled `(id, label)` per candidate."""
     return context.MeterEndorsement(
@@ -313,14 +304,14 @@ def _leader_count(race: PublicationRace) -> int:
     )
 
 
-def _meter_label(race: PublicationRace) -> str:
+def _meter_label(race: PublicationRace, sources: dict[str, PublicationSource]) -> str:
     """The meter's visible text, as the rendered-HTML validator requires it.
 
     `_html_semantic_values` is the audited page's own statement of what each
     display role must contain, so its `share` entry is the server's answer for
     both a race with a share and a race without one.
     """
-    return _html_semantic_values(race)["share"][0]
+    return _html_semantic_values(race, sources)["share"][0]
 
 
 def _scored(race: PublicationRace) -> dict[str, Any]:
@@ -339,11 +330,21 @@ def _scored(race: PublicationRace) -> dict[str, Any]:
     }
 
 
-def _race_cases(race: PublicationRace, panel: str) -> list[dict[str, Any]]:
+def _race_cases(
+    race: PublicationRace, panel: str, sources: dict[str, PublicationSource]
+) -> list[dict[str, Any]]:
     scored = _scored(race)
     share = race.winner_share
     leader_count = _leader_count(race)
     labels = _labels(race)
+    # `screen_support_summary`'s own leader-units guard (docs/METER_V2.md,
+    # Caption): `None` for a tie or a race with no single recommended choice,
+    # otherwise the exact tally the caption's count comes from. Reached through
+    # the private helper rather than restated here, for the reason
+    # `_percentage_whole` already is: calling the shipped guard is not a second
+    # definition of it.
+    leader_units = context._meter_leader_units(race, sources)  # pyright: ignore[reportPrivateUsage]
+    leader_units_json = str(leader_units) if leader_units is not None else None
     cases: list[dict[str, Any]] = [
         {
             "mirror": "no-majority",
@@ -351,19 +352,20 @@ def _race_cases(race: PublicationRace, panel: str) -> list[dict[str, Any]]:
             "expected": context.has_no_majority(race),
         },
         {
-            "mirror": "share-accessible-label",
-            "input": {"share": share},
-            "expected": context.screen_share_accessible_label(race),
-        },
-        {
             "mirror": "support-summary",
-            "input": {"scored": scored},
-            "expected": context.screen_support_summary(race),
+            "input": {
+                "leaderUnits": leader_units_json,
+                "explicitCount": race.explicit_endorsement_count,
+            },
+            "expected": context.screen_support_summary(race, sources),
         },
         {
             "mirror": "support-summary-compact",
-            "input": {"scored": scored},
-            "expected": context.screen_support_summary_compact(race),
+            "input": {
+                "leaderUnits": leader_units_json,
+                "explicitCount": race.explicit_endorsement_count,
+            },
+            "expected": context.screen_support_summary_compact(race, sources),
         },
         {
             "mirror": "recommendation-label",
@@ -391,7 +393,57 @@ def _race_cases(race: PublicationRace, panel: str) -> list[dict[str, Any]]:
         {
             "mirror": "share-percentage-label" if share is not None else "meter-unavailable-label",
             "input": {"share": share},
-            "expected": _meter_label(race),
+            "expected": _meter_label(race, sources),
+        }
+    )
+    endorsements = context.meter_endorsements(race, sources)
+    standings = context.meter_standings(endorsements)
+    units = context.meter_units(endorsements)
+    meter_labels = context.meter_candidate_labels(endorsements)
+    units_json = {candidate_id: str(value) for candidate_id, value in units.items()}
+    cases.append(
+        {
+            "mirror": "meter-standings",
+            "input": {"endorsements": [_endorsement_json(item) for item in endorsements]},
+            "expected": standings,
+        }
+    )
+    cases.append(
+        {
+            "mirror": "meter-accessible-label",
+            "input": {"standings": standings, "units": units_json, "labels": meter_labels},
+            "expected": context.meter_accessible_label(standings, units, meter_labels),
+        }
+    )
+    colors = context.meter_candidate_colors(
+        standings,
+        frozenset(race.support_leader_candidate_ids),
+        has_majority=not context.has_no_majority(race),
+    )
+    cases.append(
+        {
+            "mirror": "meter-candidate-colors",
+            "input": {
+                "standings": standings,
+                "leaderIds": sorted(race.support_leader_candidate_ids),
+                "hasMajority": not context.has_no_majority(race),
+            },
+            "expected": colors,
+        }
+    )
+    blocks = context.meter_layout_blocks(endorsements)
+    cases.append(
+        {
+            "mirror": "meter-block-renders",
+            "input": {
+                "blocks": [_block_json(block) for block in blocks],
+                "colors": colors,
+                "labels": meter_labels,
+            },
+            "expected": [
+                _block_render_json(item)
+                for item in context.meter_block_renders(blocks, colors, meter_labels)
+            ],
         }
     )
     for case in cases:
@@ -442,13 +494,14 @@ def _panel_view_models(
 def _panel_cases(panels: list[tuple[str, str, PublicationViewModel]]) -> list[dict[str, Any]]:
     cases: list[dict[str, Any]] = []
     for panel, note, view_model in panels:
+        sources = {source.id: source for source in view_model.sources}
         seen: set[tuple[Any, ...]] = set()
         for race in _races(view_model):
             state = _state(race)
             if state in seen:
                 continue
             seen.add(state)
-            for case in _race_cases(race, panel):
+            for case in _race_cases(race, panel, sources):
                 case["note"] = note
                 cases.append(case)
     return cases
@@ -536,16 +589,12 @@ def _meter_endorsements(
     keyed by sorted transport code, so an expectation generated from the
     server's order is only reproducible on the client if the layout's own
     ordering rules are what decide the result.
+
+    A thin alias for `context.meter_endorsements` rather than a second
+    implementation of its admission rule — #314 gave that rule its one
+    production home, which this fixture generator now uses too.
     """
-    return [
-        context.MeterEndorsement(
-            source_label=sources[cell.source_id].name,
-            candidate_ids=tuple(cell.candidate_ids),
-            candidate_labels=tuple(cell.candidate_labels),
-        )
-        for cell in context.tallying_source_cells(race, sources)
-        if cell.state in _METER_COUNTED_STATES
-    ]
+    return context.meter_endorsements(race, sources)
 
 
 def _endorsement_json(endorsement: context.MeterEndorsement) -> dict[str, Any]:
@@ -570,18 +619,108 @@ def _block_json(block: context.MeterBlock) -> dict[str, Any]:
     }
 
 
+def _block_render_json(render: context.MeterBlockRender) -> dict[str, Any]:
+    """One block's paint, in field order, so the two languages' goldens compare
+    as bytes."""
+    return {
+        "type": render.type,
+        "width": render.width,
+        "style": render.style,
+        "band_start": render.band_start,
+        "band_end": render.band_end,
+        "tongue_corner_start": render.tongue_corner_start,
+        "tongue_corner_end": render.tongue_corner_end,
+        "source_label": render.source_label,
+        "decision": render.decision,
+    }
+
+
+def _synthetic_leader_ids(standings: list[str], units: dict[str, Fraction]) -> frozenset[str]:
+    """The candidates tied for first, from units alone.
+
+    Test-only: production code reads the tie-aware leader set off the race
+    itself (`support_leader_candidate_ids`) rather than re-deriving it from
+    block units (docs/METER_V2.md, Color), because the two must not disagree.
+    A hand-built layout shape carries no race to read that set from, so this
+    reconstructs it the way the reference mockup did, for exactly the
+    synthetic shapes below and nowhere production code runs.
+    """
+    if not standings:
+        return frozenset()
+    top = units[standings[0]]
+    return frozenset(candidate_id for candidate_id in standings if units[candidate_id] == top)
+
+
 def _meter_layout_case(
     endorsements: list[context.MeterEndorsement],
     note: str,
     source: str,
-) -> dict[str, Any]:
-    return {
-        "mirror": "meter-layout-blocks",
-        "input": {"endorsements": [_endorsement_json(item) for item in endorsements]},
-        "expected": [_block_json(block) for block in context.meter_layout_blocks(endorsements)],
-        "note": note,
-        "source": source,
-    }
+) -> list[dict[str, Any]]:
+    """Every mirror one endorsement set feeds, bundled so a shape reaches all
+    of them at once: the block list, the standings order, the accessible
+    name, the candidate colors, and each block's paint and tooltip text."""
+    blocks = context.meter_layout_blocks(endorsements)
+    standings = context.meter_standings(endorsements)
+    units = context.meter_units(endorsements)
+    labels = context.meter_candidate_labels(endorsements)
+    leader_ids = _synthetic_leader_ids(standings, units)
+    has_majority = len(leader_ids) == 1 and units[standings[0]] * 2 > sum(
+        units.values(), Fraction(0)
+    )
+    colors = context.meter_candidate_colors(standings, leader_ids, has_majority=has_majority)
+    endorsements_json = [_endorsement_json(item) for item in endorsements]
+    return [
+        {
+            "mirror": "meter-layout-blocks",
+            "input": {"endorsements": endorsements_json},
+            "expected": [_block_json(block) for block in blocks],
+            "note": note,
+            "source": source,
+        },
+        {
+            "mirror": "meter-standings",
+            "input": {"endorsements": endorsements_json},
+            "expected": standings,
+            "note": note,
+            "source": source,
+        },
+        {
+            "mirror": "meter-accessible-label",
+            "input": {
+                "standings": standings,
+                "units": {candidate_id: str(value) for candidate_id, value in units.items()},
+                "labels": labels,
+            },
+            "expected": context.meter_accessible_label(standings, units, labels),
+            "note": note,
+            "source": source,
+        },
+        {
+            "mirror": "meter-candidate-colors",
+            "input": {
+                "standings": standings,
+                "leaderIds": sorted(leader_ids),
+                "hasMajority": has_majority,
+            },
+            "expected": colors,
+            "note": note,
+            "source": source,
+        },
+        {
+            "mirror": "meter-block-renders",
+            "input": {
+                "blocks": [_block_json(block) for block in blocks],
+                "colors": colors,
+                "labels": labels,
+            },
+            "expected": [
+                _block_render_json(item)
+                for item in context.meter_block_renders(blocks, colors, labels)
+            ],
+            "note": note,
+            "source": source,
+        },
+    ]
 
 
 def _meter_layout_cases(
@@ -609,17 +748,85 @@ def _meter_layout_cases(
         for race in _races(view_model):
             if race.id not in chosen:
                 continue
-            cases.append(
+            cases.extend(
                 _meter_layout_case(
                     _meter_endorsements(race, sources),
                     note,
                     f"published race {race.id} on the {panel} panel",
                 )
             )
-    cases.extend(
-        _meter_layout_case(list(endorsements), note, f"meter_layout_blocks on the {name} shape")
-        for name, endorsements, note in LAYOUT_SHAPES
-    )
+    for name, endorsements, note in LAYOUT_SHAPES:
+        cases.extend(
+            _meter_layout_case(list(endorsements), note, f"meter_layout_blocks on the {name} shape")
+        )
+    return cases
+
+
+# Color-pool exhaustion (docs/METER_V2.md, Color; Decision log #18) is not
+# reachable by this election's published data — no race runs four trailing
+# candidates or three tied leaders deep — so these hand-built standings drive
+# `meter_candidate_colors` directly, the same reason `LAYOUT_SHAPES` above
+# hand-builds the layout cases the ballot cannot reach.
+_METER_COLOR_CASES: tuple[tuple[str, list[str], frozenset[str], bool, str], ...] = (
+    (
+        "sole majority leader, three trailing candidates",
+        ["a", "b", "c", "d"],
+        frozenset({"a"}),
+        True,
+        "The trailing pool — slate, taupe, plum — exactly covers three candidates; none "
+        "steps toward the track.",
+    ),
+    (
+        "sole majority leader, four trailing candidates",
+        ["a", "b", "c", "d", "e"],
+        frozenset({"a"}),
+        True,
+        "A fourth trailing candidate exhausts the muted pool: it steps toward the track "
+        "rather than repeating a swatch.",
+    ),
+    (
+        "two tied leaders",
+        ["a", "b", "c"],
+        frozenset({"a", "b"}),
+        False,
+        "Two tied leaders exactly fill the tie pool: amber, then the deep tie amber.",
+    ),
+    (
+        "three tied leaders",
+        ["a", "b", "c"],
+        frozenset({"a", "b", "c"}),
+        False,
+        "A third tied leader exhausts the tie pool and steps toward the track, exactly as "
+        "a fourth trailing candidate does.",
+    ),
+    (
+        "sole no-majority leader",
+        ["a", "b"],
+        frozenset({"a"}),
+        False,
+        "A sole leader short of a majority keeps v1's amber, unchanged (Decision log #10).",
+    ),
+)
+
+
+def _meter_color_cases() -> list[dict[str, Any]]:
+    cases: list[dict[str, Any]] = []
+    for name, standings, leader_ids, has_majority, note in _METER_COLOR_CASES:
+        cases.append(
+            {
+                "mirror": "meter-candidate-colors",
+                "input": {
+                    "standings": standings,
+                    "leaderIds": sorted(leader_ids),
+                    "hasMajority": has_majority,
+                },
+                "expected": context.meter_candidate_colors(
+                    standings, leader_ids, has_majority=has_majority
+                ),
+                "note": note,
+                "source": f"meter_candidate_colors on the {name} shape",
+            }
+        )
     return cases
 
 
@@ -856,6 +1063,7 @@ def build_mirror_parity_fixture(dataset: CanonicalDataset) -> dict[str, Any]:
             *_share_cases(_races(view_model)[0]),
             *_count_cases(),
             *_meter_layout_cases(panels),
+            *_meter_color_cases(),
             *_row_differs_cases(),
             *_fragment_cases(view_model),
             *_counting_cases(),

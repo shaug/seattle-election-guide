@@ -168,7 +168,7 @@ def test_compare_document_server_renders_default_contract_snapshot() -> None:
     assert table is not None
     normalized = re.sub(r"\s+", " ", unescape(table.group(0))).strip()
     assert hashlib.sha256(normalized.encode()).hexdigest() == (
-        "43946d9255351b68d8a53621f36fff687153fd9b8a6f40831151a0eae1ba83bd"
+        "7033b94d8eb04924540445b3b87b74a106962777bd664d63d9117139ab10faca"
     )
     static_head = re.search(r"<thead.*?</thead>", normalized)
     assert static_head is not None
@@ -1203,7 +1203,7 @@ def test_legacy_differing_and_contested_differences_fragments_restore_independen
         "full": False,
         "contested": False,
         "allRaces": True,
-        "rowCount": 12,
+        "rowCount": 13,
     }
     assert combined["differing"] is True
     assert combined["full"] is False
@@ -2083,7 +2083,7 @@ def test_all_agree_and_no_match_empty_states_are_distinct_and_resettable(tmp_pat
           await wait();
           document.querySelector('[data-comparison-title="1"]').click();
           const picker = document.querySelector('[data-comparison-column="1"]');
-          picker.value = 'wslc';
+          picker.value = 's775';
           picker.dispatchEvent(new Event('change', { bubbles: true }));
           await wait();
           document.querySelector('[data-comparison-differences]').click();

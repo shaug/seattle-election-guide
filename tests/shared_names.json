@@ -237,6 +237,17 @@
       "client",
       "test"
     ],
+    "data-meter-decision": [
+      "template",
+      "client",
+      "test"
+    ],
+    "data-meter-source": [
+      "template",
+      "client",
+      "python",
+      "test"
+    ],
     "data-payload-notice": [
       "template",
       "client",
@@ -533,6 +544,36 @@
       "client",
       "test"
     ],
+    "meter-block": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "meter-degraded": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "meter-half": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "meter-half-bottom": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "meter-half-top": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
     "meter-low-fill": [
       "template",
       "stylesheet",
@@ -541,6 +582,26 @@
     ],
     "meter-no-majority": [
       "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "meter-tongue-end": [
+      "template",
+      "stylesheet",
+      "client"
+    ],
+    "meter-tongue-start": [
+      "template",
+      "stylesheet",
+      "client"
+    ],
+    "meter-tooltip": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "meter-tooltip-source": [
       "stylesheet",
       "client",
       "test"
@@ -593,11 +654,6 @@
       "stylesheet",
       "client"
     ],
-    "race-detail-candidate-metrics": [
-      "template",
-      "stylesheet",
-      "client"
-    ],
     "race-detail-candidate-tied": [
       "template",
       "stylesheet",
@@ -610,18 +666,6 @@
       "test"
     ],
     "race-detail-category-badge": [
-      "template",
-      "stylesheet",
-      "client",
-      "test"
-    ],
-    "race-detail-meter": [
-      "template",
-      "stylesheet",
-      "client",
-      "test"
-    ],
-    "race-detail-meter-na": [
       "template",
       "stylesheet",
       "client",

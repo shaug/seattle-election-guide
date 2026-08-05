@@ -18,6 +18,7 @@
   {{ shell.social_meta(document_title, page_description, canonical_url) }}
 {% endblock %}
 {% block body %}
+  {% from '_meter.html.j2' import segmented_meter %}
   {% macro source_badge(row) -%}
     <span class="race-detail-category-badge">{{ row.category_label }}</span>
   {%- endmacro %}
@@ -54,14 +55,17 @@
   {% macro candidate_sections(headline_candidate_id) -%}
     {% for candidate in race_detail.candidates %}
     {% set is_leader = candidate.candidate_id in race.support_leader_candidate_ids %}
-    {# Three treatments, and a candidate takes exactly one of them:
+    {# Two treatments, and a candidate takes exactly one of them:
 
        - the headline's own candidate renders no heading, because the headline
-         above is its heading and a page names a candidate once;
-       - a tied leader renders an amber heading with its own eyebrow and meter,
-         because a tie is a warning to choose rather than a favourite to
-         endorse, and every tied candidate is equally the answer; and
-       - everyone else renders an amber heading with just their name. #}
+         above is its heading and a page names a candidate once; and
+       - everyone else renders an amber heading with their name — a tied
+         leader's heading also carries a "Tied for lead" eyebrow, because a tie
+         is a warning to choose rather than a favourite to endorse, and every
+         tied candidate is equally the answer. v1's per-candidate mini-meter
+         used to sit beside that eyebrow; meter v2 retires it — the
+         candidate-context treatment on the shared headline bar replaces its
+         job (docs/METER_V2.md, Chrome geometry; #315). #}
     {% set in_headline = candidate.candidate_id == headline_candidate_id %}
     {% set tied = is_leader and not in_headline %}
     <section class="race-detail-candidate{% if in_headline %} race-detail-candidate-leader race-detail-candidate-headlined{% elif tied %} race-detail-candidate-tied{% endif %}"
@@ -74,23 +78,6 @@
           {% endif %}
           <h4>{{ candidate.label }}</h4>
         </div>
-        {# No count here. Every endorsing source this candidate has is listed
-           immediately below, so a number naming how many would restate the list
-           it sits on top of. What the heading carries is what the list cannot:
-           the share, and only where a share is contested. #}
-        {% if tied %}
-        <div class="race-detail-candidate-metrics">
-          {% if race.percentage_whole is none %}
-          <div class="race-detail-meter race-detail-meter-na" role="img"
-            aria-label="{{ screen_share_accessible_label(race) }}"><strong>N/A</strong></div>
-          {% else %}
-          <div class="race-detail-meter{% if has_no_majority(race) %} meter-no-majority{% endif %}{% if race.percentage_whole < 30 %} meter-low-fill{% endif %}" style="--meter-fill: {{ race.percentage_whole }}%"
-            role="img" aria-label="{{ screen_share_accessible_label(race) }}">
-            <strong>{{ race.percentage_label }}</strong>
-          </div>
-          {% endif %}
-        </div>
-        {% endif %}
       </div>
       {% endif %}
       <ul class="race-detail-source-list">
@@ -151,18 +138,7 @@
         <p class="race-headline-eyebrow">Leading choice</p>
         <div class="screen-race-result" data-lens-result>
           <h3 data-display-role="recommendation">{{ race.recommendation_label }}</h3>
-          {% if race.percentage_whole is none %}
-          <div class="screen-meter screen-meter-na" role="img" data-display-role="share"
-            aria-label="{{ screen_share_accessible_label(race) }}">
-            <strong>N/A</strong>
-          </div>
-          {% else %}
-          <div class="screen-meter{% if has_no_majority(race) %} meter-no-majority{% endif %}{% if race.percentage_whole < 30 %} meter-low-fill{% endif %}" style="--meter-fill: {{ race.percentage_whole }}%"
-            role="img" data-display-role="share"
-            aria-label="{{ screen_share_accessible_label(race) }}">
-            <strong>{{ race.percentage_label }}</strong>
-          </div>
-          {% endif %}
+          {{ segmented_meter(meter_view(race)) }}
         </div>
         {# The card's caption is not repeated here for the same reason the
            sections carry no count: this candidate's endorsing sources are

@@ -20,6 +20,7 @@
 
 import { render } from 'lit-html';
 import {
+  meterLeaderUnits,
   meterView,
   raceContextTemplate,
   raceFootTemplate,
@@ -36,6 +37,7 @@ import {
 import { compareRaceResults } from './lens-divergence.mjs';
 import { scoreSelection } from './lens-score.mjs';
 import { isDefaultSelection, tallyingSourceCodes } from './lens-selection.mjs';
+import { meterEndorsementsFromCells } from './meter-layout.mjs';
 
 /**
  * Which tallying sources a selection actually counts, and whether that is still
@@ -99,6 +101,9 @@ export function createGuideLens(payload) {
       new Map(race.candidates.map((candidate) => [candidate.candidate_id, candidate.label])),
     ]),
   );
+  // The meter's blocks need a source's display name, which a scored cell
+  // carries only as its transport code (docs/FRONTEND.md, The data contract).
+  const sourceNameByCode = new Map(payload.sources.map((source) => [source.code, source.name]));
   // The full selectable panel with no direct picks reproduces the published
   // audited consensus exactly (lens-score.mjs's own tested contract), so scoring
   // it once gives every card a structured baseline to diff against instead of a
@@ -134,15 +139,18 @@ export function createGuideLens(payload) {
    */
   const cardViews = (raceId, scored, selectedTotal, allSources) => {
     const labels = candidateLabelsByRaceId.get(raceId) ?? new Map();
+    const recommendation = recommendationLabel(scored, labels);
+    const endorsements = meterEndorsementsFromCells(scored.meterCells, sourceNameByCode, labels);
+    const leaderUnits = meterLeaderUnits(scored, endorsements);
     return {
       result: {
-        recommendation: recommendationLabel(scored, labels),
-        meter: meterView(scored.winnerShare),
+        recommendation,
+        meter: meterView(scored.winnerShare, endorsements, new Set(scored.winnerIds)),
       },
       context: {
         noMajority: hasNoMajority(scored.winnerShare),
-        support: supportSummary(scored, selectedTotal),
-        supportCompact: supportSummaryCompact(scored, selectedTotal),
+        support: supportSummary(leaderUnits, scored.explicitCount, selectedTotal),
+        supportCompact: supportSummaryCompact(leaderUnits, scored.explicitCount, selectedTotal),
       },
       foot: {
         insufficientNote:

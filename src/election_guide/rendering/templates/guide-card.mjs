@@ -22,20 +22,39 @@
 // `rendering/context.py` and is tested against it.
 
 import { html, nothing } from 'lit-html';
-import { hasNoMajority, percentageLabel, shareAccessibleLabel } from './guide-format.mjs';
+import { hasNoMajority, percentageLabel } from './guide-format.mjs';
+import { Rational } from './lens-score.mjs';
+import {
+  meterAccessibleLabel,
+  meterBlockRenders,
+  meterCandidateColors,
+  meterCandidateLabels,
+  meterLayoutBlocks,
+  meterStandings,
+  meterUnits,
+} from './meter-layout.mjs';
+
+// Minimum block width (docs/METER_V2.md, Edge states): below ~3px per block,
+// per-block seams drop and the meter degrades to plain candidate runs.
+// Mirrors `_METER_DEGRADE_MAX_BLOCKS` in `rendering/context.py` — see that
+// constant for why one conservative threshold covers every chrome.
+const METER_DEGRADE_MAX_BLOCKS = Math.floor(120 / 3);
 
 /**
- * The share meter, as both renderers describe it.
+ * The segmented meter, as both renderers describe it (docs/METER_V2.md).
  *
- * `fillPercent` is null exactly when there is no share to show: the audited
- * template writes no `style` attribute in that case, so neither may this one.
+ * `fillPercent` is null exactly when there is no share to show — the N/A
+ * state — in which case `blocks` is empty and the audited template writes no
+ * `style` attribute, so neither may this one.
  *
  * @typedef {object} ShareMeterView
  * @property {string} label
  * @property {number|null} fillPercent
  * @property {boolean} lowFill
  * @property {boolean} noMajority
+ * @property {boolean} degraded
  * @property {string} accessibleLabel
+ * @property {import('./meter-layout.mjs').MeterBlockRender[]} blocks
  */
 
 /**
@@ -68,38 +87,87 @@ import { hasNoMajority, percentageLabel, shareAccessibleLabel } from './guide-fo
  */
 
 /**
- * One share, as every meter on the site describes it.
+ * One share, as every meter v2 chrome describes it (docs/METER_V2.md).
  *
  * One policy for the NA state, the fill percentage, the low-fill guard, the
- * no-majority tone, and the accessible label, because a card meter, a race
- * page's headline meter, and its per-candidate meters must never disagree
- * about the same share (I40/I41/I56). It lives here, beside `ShareMeterView`,
- * rather than in either page's wiring, so both pages read one definition.
+ * no-majority tone, the block layout, and the accessible label, because a
+ * card meter and a race page's headline meter must never disagree about the
+ * same share (I40/I41/I56). It lives here, beside `ShareMeterView`, rather
+ * than in either page's wiring, so both pages read one definition.
+ *
+ * `shareString` is the winner's own share (the resting percent); `endorsements`
+ * is this race's `MeterEndorsement[]`, built by the caller from whichever
+ * source it has — the audited card's own cells, or the personalized cells a
+ * lens selects; `leaderIds` is the tie-aware leader set (`support_leader_
+ * candidate_ids` server-side, `RaceScore.winnerIds` client-side), which
+ * decides each candidate's color the same way the race's own no-majority/tie
+ * decision does (I56).
  *
  * @param {string|null} shareString
+ * @param {import('./meter-layout.mjs').MeterEndorsement[]} endorsements
+ * @param {ReadonlySet<string>} leaderIds
  * @returns {ShareMeterView}
  */
-export function meterView(shareString) {
+export function meterView(shareString, endorsements, leaderIds) {
   const label = percentageLabel(shareString);
-  const fillPercent = shareString === null ? null : Number.parseInt(label, 10);
+  // The N/A state (docs/METER_V2.md, Edge states) is decided by `shareString`
+  // alone and forces empty blocks and the N/A accessible name regardless of
+  // what `endorsements` would otherwise lay out — the audited template's N/A
+  // branch renders no blocks at all, so a view that claimed blocks anyway
+  // would describe a meter no renderer draws.
+  if (shareString === null) {
+    return {
+      label,
+      fillPercent: null,
+      lowFill: false,
+      noMajority: false,
+      degraded: false,
+      accessibleLabel: 'No endorsements recorded',
+      blocks: [],
+    };
+  }
+  const fillPercent = Number.parseInt(label, 10);
+  const noMajority = hasNoMajority(shareString);
+  const standings = meterStandings(endorsements);
+  const units = meterUnits(endorsements);
+  const labels = meterCandidateLabels(endorsements);
+  const colors = meterCandidateColors(standings, leaderIds, !noMajority);
+  const blocks = meterLayoutBlocks(endorsements);
   return {
     label,
     fillPercent,
     // I41: below ~30% fill the white label bleeds onto the pale track, so the
-    // low-fill guard (guide-race.css) renders it after the fill in muted ink
+    // low-fill guard (guide-race.css) renders it after the resting run
     // instead. Decided once, here, because one CSS rule applies the guard to
     // every meter chrome.
-    lowFill: fillPercent !== null && fillPercent < 30,
-    noMajority: hasNoMajority(shareString),
-    accessibleLabel: shareAccessibleLabel(shareString),
+    lowFill: fillPercent < 30,
+    noMajority,
+    degraded: blocks.length > METER_DEGRADE_MAX_BLOCKS,
+    accessibleLabel: meterAccessibleLabel(standings, units, labels),
+    blocks: meterBlockRenders(blocks, colors, labels),
   };
+}
+
+/**
+ * The recommended choice's exact endorsement tally, for the caption
+ * (docs/METER_V2.md, Caption). Mirrors `_meter_leader_units` in
+ * `rendering/context.py` — `null` when there is no single choice to
+ * attribute it to (a tie, or no winner), matching that function's own guard.
+ *
+ * @param {import('./lens-score.mjs').RaceScore} scored
+ * @param {import('./meter-layout.mjs').MeterEndorsement[]} endorsements
+ * @returns {import('./lens-score.mjs').Rational|null}
+ */
+export function meterLeaderUnits(scored, endorsements) {
+  if (scored.isTied || scored.winnerId === null) return null;
+  return meterUnits(endorsements).get(scored.winnerId) ?? Rational.zero();
 }
 
 /**
  * The meter's class list, in the order the audited template writes it.
  *
  * Every decision here is already made in `meterView`, which a race page's own
- * meters read too, so no two meters on the site can render one share two ways
+ * meter reads too, so no two meters on the site can render one share two ways
  * (I56).
  *
  * @param {ShareMeterView} meter
@@ -110,8 +178,47 @@ function meterClasses(meter) {
   return (
     'screen-meter' +
     (meter.noMajority ? ' meter-no-majority' : '') +
-    (meter.lowFill ? ' meter-low-fill' : '')
+    (meter.lowFill ? ' meter-low-fill' : '') +
+    (meter.degraded ? ' meter-degraded' : '')
   );
+}
+
+/**
+ * One block's class list, in the order the audited template writes it.
+ *
+ * @param {import('./meter-layout.mjs').MeterBlockRender} block
+ * @returns {string}
+ */
+function meterBlockClasses(block) {
+  return (
+    `meter-block meter-block-${block.type}` +
+    (block.tongue_corner_start ? ' meter-tongue-start' : '') +
+    (block.tongue_corner_end ? ' meter-tongue-end' : '')
+  );
+}
+
+/**
+ * One block: a bare presentational rectangle (docs/METER_V2.md, The
+ * discovery model's accessibility model — blocks carry no ARIA of their own),
+ * with the source and decision a hover or focus tooltip reads from its data
+ * attributes rather than from static text, so the meter's spoken text stays
+ * exactly the resting percent (or "N/A") and nothing more.
+ *
+ * @param {import('./meter-layout.mjs').MeterBlockRender} block
+ */
+function meterBlockTemplate(block) {
+  return html`<span
+    class=${meterBlockClasses(block)}
+    style=${block.style}
+    data-meter-source=${block.source_label}
+    data-meter-decision=${block.decision}
+  >${
+    block.type === 'split'
+      ? html`<span class="meter-half meter-half-top"></span><span
+          class="meter-half meter-half-bottom"
+        ></span>`
+      : nothing
+  }</span>`;
 }
 
 /**
@@ -153,7 +260,12 @@ export function raceResultTemplate(view) {
     role="img"
     data-display-role="share"
     aria-label=${meter.accessibleLabel}
-  ><strong>${meter.label}</strong></div>`;
+    tabindex="0"
+  >${
+    meter.fillPercent === null
+      ? html`<strong>N/A</strong>`
+      : html`${meter.blocks.map(meterBlockTemplate)}<strong>${meter.label}</strong>`
+  }</div>`;
 }
 
 /**

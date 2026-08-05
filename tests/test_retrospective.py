@@ -253,7 +253,6 @@ def test_the_impact_report_fields_the_checklist_names_are_real() -> None:
         "warnings",
         "grade",
         "winner_candidate_ids",
-        "is_tied",
         "winner_share",
     ):
         assert field in present, f"the impact report no longer reports {field}"

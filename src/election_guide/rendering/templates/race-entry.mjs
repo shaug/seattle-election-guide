@@ -2,6 +2,7 @@
 // this import graph and race.html.j2 inlines the result.
 import { requireClientPayload } from './client-payload.mjs';
 import { wireElectionDay } from './election-day.mjs';
+import { wireMeterTooltips } from './meter-tooltip.mjs';
 import { wireRacePage } from './race-client.mjs';
 import { wireShellShare } from './share-link.mjs';
 
@@ -12,12 +13,14 @@ import { wireShellShare } from './share-link.mjs';
  * nothing the payload carries, so a page whose payload cannot be read still
  * shares — and on a race page that Share action is the one that copies the
  * race's own canonical address (docs/DESIGN.md § Site shell: the masthead
- * carries the actions on the page). Then the payload is admitted, which either
- * hands back the contract the rest of the page reads or stops the page here, on
- * the complete audited baseline the server rendered.
+ * carries the actions on the page) — and its headline meter still opens its
+ * per-block tooltips. Then the payload is admitted, which either hands back
+ * the contract the rest of the page reads or stops the page here, on the
+ * complete audited baseline the server rendered.
  */
 export function boot() {
   wireShellShare();
   wireElectionDay();
+  wireMeterTooltips();
   wireRacePage(/** @type {RacePayload} */ (requireClientPayload(document)));
 }

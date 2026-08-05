@@ -17,10 +17,10 @@ import {
   raceDetailAccessibleSummary,
   raceDetailSupportSummary,
   recommendationLabel,
-  shareAccessibleLabel,
   supportSummary,
   supportSummaryCompact,
 } from '../../src/election_guide/rendering/templates/guide-format.mjs';
+import { Rational } from '../../src/election_guide/rendering/templates/lens-score.mjs';
 import { assertModuleGuard } from './support/module-guards.mjs';
 
 /**
@@ -80,14 +80,6 @@ test('no majority means at or below half, not merely below the leader', () => {
   assert.equal(hasNoMajority(null), false);
 });
 
-test('the meter says the agreement in words, not only in tint', () => {
-  assert.equal(
-    shareAccessibleLabel('2/5'),
-    'No majority. Consensus among explicitly endorsing sources: 40%',
-  );
-  assert.equal(shareAccessibleLabel('4/5'), 'Consensus among explicitly endorsing sources: 80%');
-});
-
 test('the headline names the leader, the tie, or the absence of evidence', () => {
   assert.equal(recommendationLabel(scored({}), LABELS), 'Ada Lovelace');
   assert.equal(
@@ -103,17 +95,30 @@ test('the headline names the leader, the tie, or the absence of evidence', () =>
   assert.equal(recommendationLabel(scored({ winnerId: 'z' }), LABELS), 'No consensus');
 });
 
-test('the caption counts selected sources only while a lens is active (H38)', () => {
-  assert.equal(supportSummary(scored({ explicitCount: 4 })), 'Based on 4 endorsing sources');
-  assert.equal(supportSummary(scored({ explicitCount: 1 })), 'Based on 1 endorsing source');
-  assert.equal(supportSummary(scored({ explicitCount: 3 }), 9), 'Based on 3 of 9 selected sources');
-  // Never the possessive "My sources".
-  assert.ok(!supportSummary(scored({}), 9).includes('My sources'));
+// docs/METER_V2.md, Caption (decided in #314, revised in #314's own review):
+// the caption states the recommended choice's exact count, not only the
+// denominator, and never the choice's name — the card's own headline already
+// carries it. `leaderUnits` is `null` exactly when there is no single choice
+// to attribute it to — a tie, or no consensus — which is the caption's pre-v2
+// fallback wording.
+test('the caption states the exact count, never the leader by name', () => {
+  assert.equal(supportSummary(new Rational(3n), 4), '3 of 4 endorsements');
+  assert.equal(supportSummary(new Rational(7n, 2n), 4, 9), '3½ of 9 selected sources');
 });
 
-test('the compact caption is the short form of the same sentence (H34)', () => {
-  assert.equal(supportSummaryCompact(scored({ explicitCount: 4 })), '4 sources');
-  assert.equal(supportSummaryCompact(scored({ explicitCount: 3 }), 9), '3 of 9 selected');
+test('a tie or no consensus falls back to the denominator-only sentence', () => {
+  assert.equal(supportSummary(null, 4), 'Based on 4 endorsing sources');
+  assert.equal(supportSummary(null, 1), 'Based on 1 endorsing source');
+  assert.equal(supportSummary(null, 3, 9), 'Based on 3 of 9 selected sources');
+  // Never the possessive "My sources".
+  assert.ok(!supportSummary(null, 4, 9).includes('My sources'));
+});
+
+test('the compact caption is the short form of the same count — no name', () => {
+  assert.equal(supportSummaryCompact(new Rational(3n), 4), '3 of 4 endorsements');
+  assert.equal(supportSummaryCompact(new Rational(3n), 4, 9), '3 of 9 selected');
+  assert.equal(supportSummaryCompact(null, 4), '4 sources');
+  assert.equal(supportSummaryCompact(null, 3, 9), '3 of 9 selected');
 });
 
 test('the reference bar states the full panel result', () => {

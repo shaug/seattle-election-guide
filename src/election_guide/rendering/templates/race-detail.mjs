@@ -43,15 +43,18 @@ import { repeat } from 'lit-html/directives/repeat.js';
 /**
  * One candidate's section.
  *
- * `meter` and `kicker` are non-null on exactly the tied leaders, which is what
- * the audited template expresses by rendering neither for anyone else: a share
- * is worth stating in a heading only where it is contested.
+ * `kicker` is non-null on exactly the tied leaders, which is what the audited
+ * template expresses by rendering it for nobody else. v1's per-candidate
+ * mini-meter used to sit beside it; meter v2 retires that chrome — the
+ * candidate-context treatment on the shared headline bar replaces its job
+ * (docs/METER_V2.md, Chrome geometry; #315) — so the kicker alone marks a tie
+ * here now.
  *
  * `inHeadline` marks the one candidate the page headline already names, which
  * is the sole leader when there is one. That section renders no heading at all,
  * because the headline is its heading and a page names a candidate once. A tie
  * has no such candidate: every tied leader renders here instead, each with the
- * `kicker` and `meter` that mark it, and none of them in the headline's green.
+ * `kicker` that marks it, and none of them in the headline's green.
  *
  * No section carries a count. The sources that endorsed this candidate are the
  * rows directly below the heading, so a number naming how many of them there
@@ -63,42 +66,8 @@ import { repeat } from 'lit-html/directives/repeat.js';
  * @property {boolean} isLeader
  * @property {boolean} inHeadline
  * @property {string|null} kicker
- * @property {import('./guide-card.mjs').ShareMeterView|null} meter
  * @property {readonly SourceRowView[]} rows
  */
-
-/**
- * The per-candidate meter's class list, in the order the audited template
- * writes it.
- *
- * A second chrome from the same view model as the headline meter's
- * (`guide-card.mjs`), not a second policy: whether a share is absent, low, or
- * short of a majority is decided once, so the two meters on a race page cannot
- * disagree about one number (I56).
- *
- * @param {import('./guide-card.mjs').ShareMeterView} meter
- * @returns {string}
- */
-function detailMeterClasses(meter) {
-  if (meter.fillPercent === null) return 'race-detail-meter race-detail-meter-na';
-  return (
-    'race-detail-meter' +
-    (meter.noMajority ? ' meter-no-majority' : '') +
-    (meter.lowFill ? ' meter-low-fill' : '')
-  );
-}
-
-/**
- * @param {import('./guide-card.mjs').ShareMeterView} meter
- */
-function detailMeterTemplate(meter) {
-  return html`<div
-    class=${detailMeterClasses(meter)}
-    style=${meter.fillPercent === null ? nothing : `--meter-fill: ${meter.fillPercent}%`}
-    role="img"
-    aria-label=${meter.accessibleLabel}
-  ><strong>${meter.label}</strong></div>`;
-}
 
 /**
  * The row's interior, which is a link exactly when there is a receipt to link.
@@ -169,13 +138,7 @@ function candidateSectionTemplate(candidate) {
             class="race-detail-candidate-title"
           >${
             candidate.kicker === null ? nothing : html`<p>${candidate.kicker}</p>`
-          }<h4>${candidate.label}</h4></div>${
-            candidate.meter === null
-              ? nothing
-              : html`<div class="race-detail-candidate-metrics">${detailMeterTemplate(
-                  candidate.meter,
-                )}</div>`
-          }</div>`
+          }<h4>${candidate.label}</h4></div></div>`
   }<ul class="race-detail-source-list">${repeat(
     candidate.rows,
     (row) => row.code,

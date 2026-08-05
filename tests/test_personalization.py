@@ -38,7 +38,7 @@ REGISTRY_PATH = PROJECT_ROOT / "config" / "sources" / "default.yaml"
 CATALOG_PATH = PROJECT_ROOT / "data" / "releases" / "wa-2026-primary" / "panel-snapshots.json"
 SNAPSHOT_ROOT = PROJECT_ROOT / "data" / "releases" / "wa-2026-primary" / "snapshots"
 SCORING_CONFIG_PATH = PROJECT_ROOT / "config" / "scoring" / "default.yaml"
-NOW = datetime(2026, 7, 23, 17, 10, tzinfo=UTC)
+NOW = datetime(2026, 8, 5, 0, 20, tzinfo=UTC)
 
 
 def _bundle(dataset: CanonicalDataset | None = None) -> Any:

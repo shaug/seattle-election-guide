@@ -22,7 +22,11 @@ from pathlib import Path
 from markupsafe import escape
 from PIL import Image
 
-from election_guide.publication.models import PublicationRace, PublicationViewModel
+from election_guide.publication.models import (
+    PublicationRace,
+    PublicationSource,
+    PublicationViewModel,
+)
 from election_guide.rendering import context
 from election_guide.rendering.browser import image_ink_fraction
 from election_guide.rendering.models import (
@@ -57,9 +61,10 @@ def validate_rendered_guide(
     race_parser.close()
     expected_races = [race for section in view_model.sections for race in section.races]
     expected_race_ids = [race.id for race in expected_races]
+    source_by_id = {source.id: source for source in view_model.sources}
     mismatched_html_roles: list[str] = []
     for race in expected_races:
-        for role, expected_values in _html_semantic_values(race).items():
+        for role, expected_values in _html_semantic_values(race, source_by_id).items():
             observed_values = [
                 _normalized_text(" ".join(parts))
                 for parts in parser.display_text.get((race.id, role), [])
@@ -68,14 +73,23 @@ def validate_rendered_guide(
             if observed_values != normalized_expected:
                 mismatched_html_roles.append(f"{race.id}/{role}")
         share_key = (race.id, "share")
-        if parser.display_accessible_names.get(share_key, []) != [
-            context.screen_share_accessible_label(race)
-        ]:
+        meter = context.meter_view(race, source_by_id)
+        # docs/METER_V2.md, The discovery model's accessibility model: the
+        # meter's spoken name is the full standings, not the resting
+        # percentage — `meter_view` is the one place that decision is made.
+        if parser.display_accessible_names.get(share_key, []) != [meter.accessible_label]:
             mismatched_html_roles.append(f"{race.id}/share-accessible-name")
         if parser.display_element_roles.get(share_key, []) != ["img"]:
             mismatched_html_roles.append(f"{race.id}/share-accessible-role")
+        # The card's meter renders one block per `meter_view` block — proving
+        # the segmented markup exists, not only the resting percentage text
+        # `_html_semantic_values`'s "share" role already checks.
+        if parser.meter_block_counts.get(race.id, 0) != len(meter.blocks):
+            mismatched_html_roles.append(f"{race.id}/share-block-count")
+        # The race page renders the same meter as its own headline.
+        if race_parser.meter_block_counts.get(race.id, 0) != len(meter.blocks):
+            mismatched_html_roles.append(f"{race.id}/race-page-share-block-count")
     missing_evidence_rows: list[str] = []
-    source_by_id = {source.id: source for source in view_model.sources}
     category_label_by_key = {
         category.category: category.label for category in view_model.methodology.source_categories
     }
@@ -282,7 +296,9 @@ def _normalized_text(value: str) -> str:
     return re.sub(r"\s+", " ", value).strip()
 
 
-def _html_semantic_values(race: PublicationRace) -> dict[str, list[str]]:
+def _html_semantic_values(
+    race: PublicationRace, sources: dict[str, PublicationSource]
+) -> dict[str, list[str]]:
     return {
         "race-label": [race.race_label],
         "recommendation": [race.recommendation_label],
@@ -291,8 +307,8 @@ def _html_semantic_values(race: PublicationRace) -> dict[str, list[str]]:
         # sentence, then the compact-mode short form), both always present in
         # the static markup and both carrying data-display-role="support".
         "support": [
-            context.screen_support_summary(race),
-            context.screen_support_summary_compact(race),
+            context.screen_support_summary(race, sources),
+            context.screen_support_summary_compact(race, sources),
         ],
         "insufficient-warning": (
             ["Too few endorsements to measure agreement."] if race.grade == "Insufficient" else []
@@ -316,6 +332,11 @@ class _GuideHTMLParser(HTMLParser):
         self.race_detail_groups: dict[tuple[str, str], list[str | None]] = {}
         self.race_detail_candidate_ids: dict[tuple[str, str], list[str | None]] = {}
         self.race_detail_row_classes: dict[tuple[str, str], list[set[str]]] = {}
+        # One count per race: every `data-meter-source` element is one
+        # segmented-meter block (docs/METER_V2.md), so this proves the
+        # rendered markup carries the block count `meter_view` computed rather
+        # than the resting percentage alone.
+        self.meter_block_counts: dict[str, int] = {}
         self._text_parts: list[str] = []
         self._current_race_id: str | None = None
         self._current_display_role: tuple[tuple[str, str], int] | None = None
@@ -336,6 +357,10 @@ class _GuideHTMLParser(HTMLParser):
             self.race_ids.append(race_id)
             self.race_text[race_id] = []
             self._current_race_id = race_id
+        if "data-meter-source" in attributes and self._current_race_id is not None:
+            self.meter_block_counts[self._current_race_id] = (
+                self.meter_block_counts.get(self._current_race_id, 0) + 1
+            )
         detail_source_code = attributes.get("data-race-detail-source-code")
         if detail_source_code is not None and self._current_race_id is not None:
             detail_key = (self._current_race_id, detail_source_code)

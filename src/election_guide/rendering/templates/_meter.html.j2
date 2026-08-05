@@ -1,0 +1,49 @@
+{# The segmented meter (docs/METER_V2.md), rendered from one `context.MeterView`
+   — built by `meter_view(race, sources)` — so the audited template and its
+   lit twin (`guide-card.mjs`'s `raceResultTemplate`/`meterBlockTemplate`)
+   paint the same blocks, colors, and seams from the same precomputed data
+   rather than each deriving them from a race. Both pages that render a meter
+   (`guide.html.j2`, `race.html.j2`) import this macro rather than carrying
+   their own copy — the shared-presentation carving constraint (#136) that
+   makes the chrome swap atomic applies here too.
+
+   The class-list and block-markup logic below is deliberately kept in step,
+   line for line, with `meterClasses`/`meterBlockClasses`/`meterBlockTemplate`
+   in `guide-card.mjs`: `tests/js/guide-markup-parity.test.mjs` diffs the two
+   renderers' output node for node, attribute for attribute.
+
+   A block is a `<span>`, not a `<div>`: `rendering/validation.py`'s
+   `_GuideHTMLParser` tracks one `data-display-role` element by matching its
+   closing tag *by name* rather than by nesting depth, so a same-named
+   element nested inside it — a block `<div>` inside this macro's own
+   `<div>` — closes the role's tracking at the first block rather than at
+   the meter's own end tag, and the "share" role's text (the resting
+   percentage `rendering/validation.py` checks) is read as empty. A `<span>`
+   sidesteps the collision without touching the shared parser; it is
+   blockified for free as a flex item of `.screen-meter`, so nothing about
+   its layout depends on the tag. #}
+{% macro segmented_meter(view) -%}
+<div class="{{ 'screen-meter screen-meter-na' if view.na else
+    'screen-meter'
+    ~ (' meter-no-majority' if view.no_majority else '')
+    ~ (' meter-low-fill' if view.low_fill else '')
+    ~ (' meter-degraded' if view.degraded else '') }}"
+  {%- if not view.na %} style="--meter-fill: {{ view.fill_percent }}%"{% endif %}
+  role="img" data-display-role="share" aria-label="{{ view.accessible_label }}" tabindex="0"
+>{% if view.na -%}
+<strong>N/A</strong>
+{%- else -%}
+{% for block in view.blocks %}{{ meter_block(block) }}{% endfor %}<strong>{{ view.percentage_label }}</strong>
+{%- endif %}</div>
+{%- endmacro %}
+
+{% macro meter_block(block) -%}
+<span class="{{ 'meter-block meter-block-' ~ block.type
+    ~ (' meter-tongue-start' if block.tongue_corner_start else '')
+    ~ (' meter-tongue-end' if block.tongue_corner_end else '') }}"
+  style="{{ block.style }}" data-meter-source="{{ block.source_label }}"
+  data-meter-decision="{{ block.decision }}"
+>{% if block.type == 'split' -%}
+<span class="meter-half meter-half-top"></span><span class="meter-half meter-half-bottom"></span>
+{%- endif %}</span>
+{%- endmacro %}

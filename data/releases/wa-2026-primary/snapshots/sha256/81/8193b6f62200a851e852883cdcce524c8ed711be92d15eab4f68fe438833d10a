@@ -1,5 +1,5 @@
 {
-  "captured_at": "2026-07-20T11:05:00Z",
+  "captured_at": "2026-08-05T00:00:00Z",
   "decisions": [
     {
       "candidate_ids": [
@@ -8,6 +8,15 @@
       "evidence_excerpt": null,
       "evidence_locator": null,
       "race_id": "supreme-court-justice-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-3--jaime-michelle-hawk"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "supreme-court-justice-3",
       "status": "endorsed"
     },
     {

@@ -59,6 +59,7 @@ function personalizationContract() {
       {
         id: 'stranger',
         code: 'strn',
+        name: 'The Stranger',
         selectable: true,
         panel_role: 'consensus',
         reporting_category_id: 'press',
@@ -68,6 +69,7 @@ function personalizationContract() {
       {
         id: 'mlk',
         code: 'mlkl',
+        name: 'MLK Labor',
         selectable: true,
         panel_role: 'consensus',
         reporting_category_id: 'press',
@@ -182,7 +184,7 @@ test('a narrowed selection renders the personalized result and counts', async ()
   );
   assert.equal(
     document.querySelector('[data-lens-context] .support-full').textContent,
-    'Based on 1 of 1 selected sources',
+    '1 of 1 selected sources',
   );
   assert.equal(
     document.querySelector('[data-lens-context] .support-compact').textContent,
@@ -198,7 +200,13 @@ test('the meter carries the fill, the tone, and the spoken label together', asyn
 
   assert.equal(meter.getAttribute('style'), '--meter-fill: 100%');
   assert.equal(meter.classList.contains('meter-no-majority'), false);
-  assert.match(meter.getAttribute('aria-label'), /Consensus among explicitly endorsing sources/);
+  // docs/METER_V2.md, The discovery model's accessibility model: the meter's
+  // spoken name is the full standings, not the resting percentage.
+  assert.equal(meter.getAttribute('aria-label'), 'Ada Lovelace 1 of 1 endorsements');
+  assert.equal(
+    meter.querySelector('.meter-block').getAttribute('data-meter-source'),
+    'The Stranger',
+  );
 });
 
 // G24–G27: "differs" means the leading choice itself changed, and the tint is

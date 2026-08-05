@@ -10,6 +10,11 @@
 
 const SCORED_STATES = new Set(['endorsement', 'multi_endorsement']);
 const NO_ENDORSEMENT_STATE = 'no_endorsement';
+// The cell states the segmented meter has an opinion about (docs/METER_V2.md,
+// Counting and the denominator), mirroring `METER_COUNTED_STATES` in
+// `rendering/context.py`. `scoreRace` already computes `explicit` and
+// `noEndorsement` as exactly this partition, so `meterCells` below is their
+// union rather than a second filter pass.
 // Named distinctly from lens-url.mjs's own copy of this constant: the guide
 // inlines both modules verbatim into one script scope, so their internal,
 // unexported names must not collide.
@@ -42,6 +47,19 @@ const SCORE_CATEGORY_PREFIX = 'G';
  * @property {string[]} noEndorsementCodes
  * @property {string[]} confidenceWarningCodes
  * @property {RaceStanding[]} standings
+ * @property {MeterCell[]} meterCells The cells the segmented meter counts —
+ *   `meter_endorsements`'s admission rule, over this selection's cells.
+ */
+
+/**
+ * One cell as the segmented meter counts it: the fields `meterEndorsements`
+ * (guide-lens.mjs, race-client.mjs) needs to resolve a `MeterEndorsement`,
+ * which needs a source's display name and a candidate's display label that
+ * this shape does not itself carry.
+ *
+ * @typedef {object} MeterCell
+ * @property {string} source_code
+ * @property {string[]} candidate_ids
  */
 
 /**
@@ -343,6 +361,10 @@ export function scoreRace(race, effectiveCodes, personalization) {
       .map((cell) => cell.source_code)
       .sort(),
     standings,
+    meterCells: [...explicit, ...noEndorsement].map((cell) => ({
+      source_code: cell.source_code,
+      candidate_ids: Object.keys(cell.allocation),
+    })),
   };
 }
 
