@@ -35,6 +35,7 @@ from election_guide.publication.personalization import (
 )
 from election_guide.rendering import (
     build_rendered_guide,
+    context,
     read_rendering_configuration,
     render_html_document,
     validate_rendered_guide,
@@ -51,6 +52,7 @@ from election_guide.rendering.context import (
     candidate_endorsement_groups,
     endorsement_count_label,
     has_no_majority,
+    meter_view,
     race_detail_accessible_summary,
     race_detail_support_summary,
     race_social_description,
@@ -78,6 +80,7 @@ from election_guide.rendering.shell import (
 from election_guide.scoring import score_dataset
 from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
 from election_guide.sources.registry import read_source_registry
+from tests.mirror_parity import LAYOUT_SHAPES
 from tests.page_parity import (
     FIXTURE_DIR,
     GUIDE_PAGE_PATH,
@@ -470,8 +473,11 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "data-race-detail-source-code" not in html
     assert "race-detail-category-badge" not in html
     assert "data-race-detail-candidate-id" not in html
-    # The group headings moved to the race pages with the rows they head.
-    assert "No endorsement" not in html
+    # The group headings moved to the race pages with the rows they head. The
+    # exact heading text, not a bare substring: meter v2's N/A accessible name
+    # ("No endorsements recorded", docs/METER_V2.md, The discovery model's
+    # accessibility model) coincidentally shares the words "No endorsement".
+    assert "<h4>No endorsement</h4>" not in html
     assert "Made no endorsement" not in html
     assert "Needs verification" not in html
     # Issue 124: every guide-side trace of the per-race Times comparison is
@@ -497,7 +503,10 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert 'window.addEventListener("hashchange"' in html
     assert "redirectToRacePage" in html
     assert "withRaceTarget(window.location.hash, null)" in html
-    assert "Consensus among explicitly endorsing sources" in html
+    # The bundled JS carries the meter's own accessible-name mirror
+    # (docs/METER_V2.md, The discovery model's accessibility model), which
+    # replaced screen_share_accessible_label/shareAccessibleLabel's wording.
+    assert "No endorsements recorded" in html
     assert "August 2026 Primary" in html
     assert "Seattle Elections Guide" in html
     # L54: the hero states the election, not the brand (the band carries the
@@ -588,11 +597,15 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "grid-template-columns: minmax(0, 1fr) 11rem" in html
     # Nothing here restates the caption row's track. A string assertion cannot
     # fail for the reason it is written down, as this change learned twice; that
-    # track is measured by test_the_support_caption_stays_on_one_line_beside_the_name.
+    # track is measured by test_the_support_caption_stays_inside_its_column_beside_the_name.
     assert (
-        ".screen-meter { display: flex; align-items: center; justify-content: flex-start;" in html
+        ".screen-meter { position: relative; display: flex; align-items: stretch; "
+        "justify-content: flex-start;" in html
     )
-    assert "linear-gradient(to right, var(--teal) 0 var(--meter-fill)" in html
+    # Meter v2 paints a majority leader's own blocks with the site's teal
+    # (docs/METER_V2.md § Color), as an inline custom property per block
+    # rather than a whole-meter gradient in the stylesheet.
+    assert "--meter-c:var(--teal)" in html
     assert "html.compact-ballot-mode .screen-meter { width: 100%; height: 1.6rem; }" in html
     assert "text-align: left;" in html
     assert ".comparison-status { font-weight: 700; }" not in html
@@ -849,7 +862,6 @@ def test_no_majority_uses_the_exact_unrounded_share_across_the_card_and_the_race
     race_html = _race_html(view_model, target.id)
     assert re.search(r'<p class="no-majority-pill"[^>]*>No majority</p>', race_html)
     assert 'class="screen-meter meter-no-majority"' in race_html
-    assert "No majority. Consensus among explicitly endorsing sources: 50%" in race_html
 
     target.winner_share = "5001/10000"
     assert has_no_majority(target) is False
@@ -981,17 +993,29 @@ def test_the_no_majority_pill_sits_under_the_name_and_displaces_nothing(
     assert all(card["pillAfterCaption"] for card in compact)
 
 
-def test_the_support_caption_stays_on_one_line_beside_the_name(tmp_path: Path) -> None:
+def test_the_support_caption_stays_inside_its_column_beside_the_name(tmp_path: Path) -> None:
     """The caption shares the meter's column, and the column is sized to hold it.
 
     The caption runs wider than the meter, so its track carries `max-content`.
     Three arrangements were tried and rejected, and each fails a named assertion
-    here: a fixed track wraps the caption (`oneLine`, and `allHugText` with it); a
-    fixed track pinned with `white-space: nowrap` leaves the box narrower than its
-    own text (`allHugText`); and no track at all drops the caption into an implicit
-    one that absorbs the row's free space (`allHugText` again). `pageOverflow` is
-    not one of those guards — no arrangement in this design's decision space makes
-    the page wider than its viewport — it is the general no-overflow check.
+    here: a fixed track wraps the caption short of `atMostTwoLines` (and
+    `allHugText` with it); a fixed track pinned with `white-space: nowrap` leaves
+    the box narrower than its own text (`allHugText`); and no track at all drops
+    the caption into an implicit one that absorbs the row's free space
+    (`allHugText` again). `pageOverflow` is not one of those guards — no
+    arrangement in this design's decision space makes the page wider than its
+    viewport — it is the general no-overflow check.
+
+    Meter v2's caption states the recommended choice's exact count
+    (docs/METER_V2.md, Caption — #314) but never the choice's own name — a
+    revision made in #314's own review, since the card's headline one row up
+    already carries it and a name here was pure restatement. `atMostTwoLines`
+    is kept as the ceiling rather than tightened to the pre-v2 `oneLine`
+    regardless: the personalized fallback ("Based on N of M selected
+    sources") is the caption's longest real-world shape now, and nothing in
+    this design's decision space promises it always fits one line at every
+    card width this test measures. The track still hugs its text and stays
+    inside the card — a caption is allowed to wrap, never to overflow.
 
     Nothing here asserts the caption clears the name. It cannot reach it: the two
     live in different rows of `.race-card-primary`, separated by that grid's gap,
@@ -1003,21 +1027,24 @@ def test_the_support_caption_stays_on_one_line_beside_the_name(tmp_path: Path) -
         render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
         encoding="utf-8",
     )
-    # The widest caption the card can hold is not the server's — the fixture's
-    # own top out at a one-digit count, and the audited form is the shorter one
-    # anyway. Once a lens selection diverges the client writes "Based on N of M
-    # selected sources" (guide-format.mjs; its shape is pinned by the regex
-    # assertions elsewhere in this file), with both counts bounded by the
-    # registry's source count. Build that, so the width measured is the width
-    # the reader can actually get.
-    sources = len(read_source_registry(PROJECT_ROOT / "config/sources/default.yaml").sources)
-    longest_caption = f"Based on {sources} of {sources} selected sources"
-    assert len(longest_caption) > len(
-        max(
-            (screen_support_summary(race) for s in view_model.sections for race in s.races),
-            key=len,
-        )
-    )
+    # The widest caption the card can hold is not necessarily the server's own:
+    # once a lens selection diverges without a single recommended choice, the
+    # client falls back to "Based on N of M selected sources" (guide-format.mjs;
+    # its shape is pinned by the regex assertions elsewhere in this file), with
+    # both counts bounded by the registry's source count. Meter v2's own audited
+    # caption (docs/METER_V2.md, Caption) can run longer than that fallback for a
+    # race with a long recommended name, so the true upper bound is whichever of
+    # the two is actually longest — built from what the server renders, so the
+    # width measured is the width the reader can actually get.
+    source_count = len(read_source_registry(PROJECT_ROOT / "config/sources/default.yaml").sources)
+    personalized_fallback = f"Based on {source_count} of {source_count} selected sources"
+    source_by_id = {source.id: source for source in view_model.sources}
+    audited_captions = [
+        screen_support_summary(race, source_by_id)
+        for section in view_model.sections
+        for race in section.races
+    ]
+    longest_caption = max([personalized_fallback, *audited_captions], key=len)
     expression = """
       (() => {
         const captions = [...document.querySelectorAll('.race-card')].map((card) => {
@@ -1028,8 +1055,8 @@ def test_the_support_caption_stays_on_one_line_beside_the_name(tmp_path: Path) -
           const box = caption.getBoundingClientRect();
           const cardBox = card.getBoundingClientRect();
           return {
-            // One line-box tall, not "as short as its neighbours" — if every
-            // caption wrapped, a comparison between them would still pass.
+            // Line count, not "as short as its neighbours" — if every caption
+            // wrapped, a comparison between them would still pass.
             lines: box.height / parseFloat(getComputedStyle(caption).lineHeight),
             // The track is the caption's own width, so the box hugs its text.
             // Measured against the text's own rect, not scrollWidth, which for
@@ -1045,7 +1072,13 @@ def test_the_support_caption_stays_on_one_line_beside_the_name(tmp_path: Path) -
         }).filter(Boolean);
         return JSON.stringify({
           measured: captions.length,
-          oneLine: captions.every((c) => c.lines <= 1.05),
+          // Meter v2's caption states only a count, never the recommended
+          // choice's name (docs/METER_V2.md, Caption), so most real captions
+          // fit one line; the ceiling stays at two because the personalized
+          // fallback ("Based on N of M selected sources") is longer and this
+          // design's decision space does not promise it always fits one line
+          // at every width this test measures.
+          atMostTwoLines: captions.every((c) => c.lines <= 2.05),
           allHugText: captions.every((c) => c.hugsText),
           allInsideCard: captions.every((c) => c.insideCard),
           pageOverflow: document.documentElement.scrollWidth
@@ -1065,7 +1098,7 @@ def test_the_support_caption_stays_on_one_line_beside_the_name(tmp_path: Path) -
 
     for edition in (screen, phone, printed):
         assert edition["measured"] > 0
-        assert edition["oneLine"] is True
+        assert edition["atMostTwoLines"] is True
         assert edition["allInsideCard"] is True
         assert edition["pageOverflow"] is False
 
@@ -1077,11 +1110,132 @@ def test_the_support_caption_stays_on_one_line_beside_the_name(tmp_path: Path) -
     assert phone["allHugText"] is False
 
 
+def test_meter_seam_rest_never_paints_a_split_blocks_own_bottom_half_wrong() -> None:
+    """A resting seam is two half colors, not one (docs/METER_V2.md, Seams).
+
+    A real bug, found by clicking through a PR preview: a split block that is
+    not its band's first (a candidate's second or later split in one run, or a
+    band-first split whose previous block belongs to a *different* candidate's
+    own all-split run) painted its *entire* left border in one flat color —
+    either its own top (leader) half's color, or worse, the color of whatever
+    ran before it — leaving the bottom half's border visibly mismatched
+    against the block's own bottom fill at rest, on every pointer device,
+    before any hover ever should have revealed a seam at all.
+
+    `tests.mirror_parity.LAYOUT_SHAPES` already carries hand-built cases the
+    published ballot does not reach; this reuses two of them precisely because
+    each reaches one of the bug's two shapes, and asserts the *correct*
+    values rather than only that the two languages agree (they agreed on the
+    wrong answer too, since both carried the same mistake).
+    """
+    shapes = {name: endorsements for name, endorsements, _ in LAYOUT_SHAPES}
+
+    # "non-adjacent split": one leader's second split (not band-first) sits
+    # after the leader's own first split. Its own colors are teal (top) and
+    # trail-slate (bottom) — different from each other — so the fix must
+    # paint a two-stop gradient of its *own* colors, not a flat single color
+    # (the bug: a flat `var(--teal)`, matching only the top half).
+    endorsements = list(shapes["non-adjacent split"])
+    colors = context.meter_candidate_colors(
+        context.meter_standings(endorsements), frozenset({"gap--alpha"}), has_majority=True
+    )
+    blocks = context.meter_layout_blocks(endorsements)
+    second_split = next(
+        block
+        for block in blocks
+        if block.type == "split" and not block.band_start and block.band_end
+    )
+    render = context.meter_block_renders(
+        [second_split], colors, context.meter_candidate_labels(endorsements)
+    )[0]
+    assert "--meter-seam-rest-image:linear-gradient(180deg, var(--teal) 0 50%," in render.style, (
+        f"a non-band-first split's resting seam must gradient its own top/bottom colors, "
+        f"not a single flat one: {render.style}"
+    )
+    assert "--meter-seam-rest-color:" not in render.style
+
+    # "run-aware band edges": two different candidates' one-split bands sit
+    # side by side with no solid block between them (docs/METER_V2.md,
+    # Splits: "Bridge Brooks is supported only by split halves ... the two
+    # bands sit side by side"). The second band's own first (and only) split
+    # is band-first, so its resting seam must be *its own* leader color
+    # (trail-slate) — not the *previous*, unrelated candidate's leader color
+    # (teal), which is what the bug painted.
+    endorsements = list(shapes["run-aware band edges"])
+    standings = context.meter_standings(endorsements)
+    colors = context.meter_candidate_colors(
+        standings, frozenset({"band--anchor"}), has_majority=True
+    )
+    blocks = context.meter_layout_blocks(endorsements)
+    second_band_first = next(
+        block
+        for block in blocks
+        if block.type == "split" and block.candidate_ids[0] == "band--bridge" and block.band_start
+    )
+    render = context.meter_block_renders(
+        blocks, colors, context.meter_candidate_labels(endorsements)
+    )[blocks.index(second_band_first)]
+    assert render.style.count("--meter-seam-rest-color:var(--meter-trail-slate)") == 1, (
+        f"a band-first split's resting seam must be its own leader color, not the previous "
+        f"(different) candidate's: {render.style}"
+    )
+    assert "--meter-seam-rest-color:var(--teal)" not in render.style
+
+
+def test_the_meter_macro_writes_the_block_style_unmodified() -> None:
+    """The Jinja layer threads `MeterBlockRender.style` straight into the
+    rendered `style` attribute rather than re-deriving it — the wiring half
+    of the seam-rest regression above, which only exercises the pure Python
+    function and never reaches `_meter.html.j2` at all. A hand-built
+    `context.MeterView` stands in for a real page's, since the bug's shape
+    (a split block's own two-tone resting seam) is decided entirely by
+    `meter_block_renders`, not by anything the macro itself computes.
+    """
+    render = context.MeterBlockRender(
+        type="split",
+        width=1,
+        style=(
+            "--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-slate); "
+            "--meter-seam-rest-image:linear-gradient(180deg, var(--teal) 0 50%, "
+            "var(--meter-trail-slate) 50% 100%)"
+        ),
+        band_start=False,
+        band_end=True,
+        tongue_corner_start=False,
+        tongue_corner_end=True,
+        source_label="Delta Digest",
+        decision="Split: Alpha Ames + Cho Diaz — ½ each",
+    )
+    view = context.MeterView(
+        na=False,
+        no_majority=False,
+        low_fill=False,
+        degraded=False,
+        fill_percent=65,
+        percentage_label="65%",
+        accessible_label="Alpha Ames 2 of 3 endorsements",
+        blocks=(render,),
+    )
+    html = (
+        template_environment()
+        .from_string(
+            "{% from '_meter.html.j2' import segmented_meter %}{{ segmented_meter(view) }}"
+        )
+        .render(view=view)
+    )
+    assert (
+        'style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-slate); '
+        "--meter-seam-rest-image:linear-gradient(180deg, var(--teal) 0 50%, "
+        'var(--meter-trail-slate) 50% 100%)"' in html
+    ), f"the macro did not write the block's own style attribute unmodified: {html}"
+
+
 def test_round4_card_anatomy_and_data_ink_cleanup(tmp_path: Path) -> None:
     """docs/UI_POLISH.md round-4 items I39/H38/H34/H36/H37/I40/I41/I42."""
     view_model = _view_model(tmp_path)
     configuration = read_rendering_configuration(RENDERING_CONFIG)
     races = [race for section in view_model.sections for race in section.races]
+    source_by_id = {source.id: source for source in view_model.sources}
 
     # I41: below ~30% fill, the card meter's label guard renders after the
     # fill in muted ink instead of riding the (now too-narrow) colored fill.
@@ -1138,11 +1292,11 @@ def test_round4_card_anatomy_and_data_ink_cleanup(tmp_path: Path) -> None:
         card_html = html[card_start:card_end]
         full_caption = (
             f'<p class="support-line support-full" data-display-role="support"'
-            f">{screen_support_summary(race)}</p>"
+            f">{screen_support_summary(race, source_by_id)}</p>"
         )
         compact_caption = (
             f'<p class="support-line support-compact" data-display-role="support"'
-            f">{screen_support_summary_compact(race)}</p>"
+            f">{screen_support_summary_compact(race, source_by_id)}</p>"
         )
         assert full_caption in card_html
         assert compact_caption in card_html
@@ -1167,18 +1321,13 @@ def test_round4_card_anatomy_and_data_ink_cleanup(tmp_path: Path) -> None:
         ".race-detail-category-badge { color: var(--muted); font-size: .68rem; "
         "font-weight: 600; text-align: right; }" in race_stylesheet
     )
-    assert (
-        ".race-detail-meter { display: flex; flex: 0 0 auto; align-items: center; "
-        "justify-content: flex-start; width: 8.5rem; height: 1.8rem; overflow: hidden; "
-        "border: 1px solid var(--line-strong); border-radius: 1rem; "
-        "background: linear-gradient(to right, var(--teal) 0 var(--meter-fill), "
-        "var(--meter-track) var(--meter-fill) 100%); }" in race_stylesheet
-    )
-    assert ".race-detail-meter-na { background: var(--meter-track); }" in race_stylesheet
-    # I41's guard applies to both chromes, from one threshold in meterView; each
-    # declaration lives with the chrome it styles, so the guide ships only its.
+    # v1's per-candidate mini-meter (`.race-detail-meter`) retired with meter
+    # v2 — the candidate-context treatment on the shared headline bar replaces
+    # its job (docs/METER_V2.md, Chrome geometry; #315) — so its whole chrome
+    # is gone from the race page's own stylesheet, not merely from the guide's.
+    assert ".race-detail-meter" not in race_stylesheet
+    # I41's guard now applies to the one meter chrome both pages share.
     assert ".screen-meter.meter-low-fill strong { padding-left:" in html
-    assert ".race-detail-meter.meter-low-fill strong { padding-left:" in race_stylesheet
 
     # I42: compact-mode race labels reserve consistent height so the
     # following name+meter block starts at the same offset in every card.
@@ -1580,9 +1729,12 @@ def test_chromium_build_is_semantically_faithful_and_visually_safe(tmp_path: Pat
     accessible_html = rendered.html_path.read_text(encoding="utf-8")
     assert accessible_race.comparisons[0].voter_accessible_label not in accessible_html
 
-    share_label = (
-        f"Consensus among explicitly endorsing sources: {accessible_race.percentage_label}"
-    )
+    # docs/METER_V2.md, The discovery model's accessibility model: the meter's
+    # spoken name is the full standings, computed the same way the renderer
+    # itself computes it, so this stays correct however that computation
+    # changes rather than restating one snapshot of its wording.
+    source_by_id = {source.id: source for source in view_model.sources}
+    share_label = meter_view(accessible_race, source_by_id).accessible_label
     # The card's own compact meter (`data-display-role="share"`) is the
     # element `html-display-values` actually keys its "share" comparison on;
     # anchored to it (rather than a bare 'role="img"') so the corruption
@@ -1652,7 +1804,13 @@ def test_chromium_build_is_semantically_faithful_and_visually_safe(tmp_path: Pat
         check for check in unavailable_report.checks if check.id == "html-display-values"
     )
     assert unavailable_html_check.passed
-    unavailable_label = "Consensus among explicitly endorsing sources: not available"
+    # Same computation as `share_label` above, over the mutated view model:
+    # only the summary fields were zeroed above, not `source_cells`, so this
+    # is whatever the renderer's own accessible-name mirror makes of that —
+    # not necessarily the N/A state's own "No endorsements recorded" text,
+    # which requires an empty tally rather than a merely absent share.
+    unavailable_source_by_id = {source.id: source for source in unavailable_view_model.sources}
+    unavailable_label = meter_view(unavailable_race, unavailable_source_by_id).accessible_label
     # Same anchoring as the share-accessibility loop above: target the
     # card's own compact meter, not the first `role="img"` in the document
     # (now the shared band's brand icon, item L54).
@@ -2710,14 +2868,15 @@ def test_no_majority_lens_state_appears_and_dissolves_with_the_selected_sources(
         initial_url=f"{html_path.resolve().as_uri()}#{split_fragment}",
     )
 
-    assert result["split"] == {
-        "pillHidden": False,
-        "amberMeter": True,
-        "accessibleName": "No majority. Consensus among explicitly endorsing sources: 50%",
-    }
+    # docs/METER_V2.md, The discovery model's accessibility model: the meter's
+    # spoken name is the full standings — every tied candidate's own exact
+    # count — not a restatement of the resting percentage.
+    split_accessible_name = result["split"].pop("accessibleName")
+    assert result["split"] == {"pillHidden": False, "amberMeter": True}
+    assert re.match(r".+ ½ of 1 endorsements; .+ ½ of 1 endorsements$", split_accessible_name)
     assert result["majority"]["pillHidden"] is True
     assert result["majority"]["amberMeter"] is False
-    assert not result["majority"]["accessibleName"].startswith("No majority")
+    assert re.search(r"of \d+.* endorsements", result["majority"]["accessibleName"])
 
 
 def test_race_page_no_majority_state_appears_and_dissolves_with_the_selected_sources(
@@ -2732,7 +2891,11 @@ def test_race_page_no_majority_state_appears_and_dissolves_with_the_selected_sou
     leading choice, so it renders no headline and marks each tied candidate in
     amber instead; a majority restores the headline and leaves the sections
     unmarked. Both directions are exercised here, because the headline is shown
-    and hidden rather than rendered and removed.
+    and hidden rather than rendered and removed. v1's per-candidate mini-meter
+    — the second meter this test used to hold to the headline's own spoken
+    share — retired with meter v2 (docs/METER_V2.md, Chrome geometry; #315
+    replaces its job), so a tied candidate's own section carries only its
+    kicker now.
     """
     view_model = _personalization_enabled_view_model(tmp_path)
     source_code_by_id = {source.id: source.code for source in view_model.personalization.sources}
@@ -2756,21 +2919,14 @@ def test_race_page_no_majority_state_appears_and_dissolves_with_the_selected_sou
             const meter = document.querySelector('[data-lens-result] .screen-meter');
             const pill = document.querySelector('[data-lens-context] .no-majority-pill');
             const kicker = document.querySelector('.race-detail-candidate-title p');
-            // Only a tied candidate carries one, so its absence is the state.
-            const detailMeter = document.querySelector('.race-detail-meter');
             return {{
               headlineHidden: headline.hidden,
               pillHidden: pill.hidden,
               amberMeter: meter.classList.contains('meter-no-majority'),
               accessibleName: meter.getAttribute('aria-label'),
               kicker: kicker?.textContent ?? null,
-              detailAmber: detailMeter?.classList.contains('meter-no-majority') ?? null,
-              // The two meters on the page state one share, in words as well
-              // as in tint (docs/DESIGN.md, Data display).
-              sameSpokenShare:
-                detailMeter === null
-                  ? null
-                  : detailMeter.getAttribute('aria-label') === meter.getAttribute('aria-label'),
+              // v1's per-candidate mini-meter retired with meter v2.
+              noDetailMeter: document.querySelector('.race-detail-meter') === null,
             }};
           }};
           await pause();
@@ -2784,25 +2940,26 @@ def test_race_page_no_majority_state_appears_and_dissolves_with_the_selected_sou
     )
 
     # Tied: no headline, and each tied candidate marked amber in its own right.
+    split_accessible_name = result["split"].pop("accessibleName")
     assert result["split"] == {
         "headlineHidden": True,
         "pillHidden": False,
         "amberMeter": True,
-        "accessibleName": "No majority. Consensus among explicitly endorsing sources: 50%",
         "kicker": "Tied for lead",
-        "detailAmber": True,
-        "sameSpokenShare": True,
+        "noDetailMeter": True,
     }
+    # docs/METER_V2.md, The discovery model's accessibility model: the meter's
+    # spoken name is the full standings, not a restatement of the percentage.
+    assert re.match(r".+ ½ of 1 endorsements; .+ ½ of 1 endorsements$", split_accessible_name)
     # A majority resolves the tie: the headline returns and nothing is marked.
     assert result["majority"]["headlineHidden"] is False
     assert result["majority"]["pillHidden"] is True
     assert result["majority"]["amberMeter"] is False
-    assert not result["majority"]["accessibleName"].startswith("No majority")
+    assert re.search(r"of \d+.* endorsements", result["majority"]["accessibleName"])
     # A sole leader's section has neither eyebrow nor meter: the headline is its
     # heading, and its share is stated there once.
     assert result["majority"]["kicker"] is None
-    assert result["majority"]["detailAmber"] is None
-    assert result["majority"]["sameSpokenShare"] is None
+    assert result["majority"]["noDetailMeter"] is True
 
 
 def test_full_race_card_stacks_name_and_meter_below_480px(tmp_path: Path) -> None:
@@ -3505,10 +3662,17 @@ def test_personalization_divergent_race_discloses_a_compact_comparison_on_its_ca
     assert result["hasDivergent"] is True, (
         "expected at least one production race to diverge from the full-panel audited baseline"
     )
-    # H38: the caption carries the lens state — "Based on N of M selected
-    # sources" — instead of a separate per-card "My sources" pill.
-    assert re.match(r"Based on \d+ of \d+ selected sources", result["divergentSupportText"])
-    assert re.match(r"\d+ of \d+ selected", result["divergentSupportCompactText"])
+    # H38: the caption carries the lens state — the recommended choice's own
+    # count against the selected total (docs/METER_V2.md, Caption — #314), or,
+    # absent a single recommended choice, the pre-v2 "Based on N of M selected
+    # sources" fallback — instead of a separate per-card "My sources" pill.
+    # The count may carry a vulgar-fraction glyph (a split endorsement), so the
+    # leader-attributed form's count is matched loosely rather than as \d+.
+    assert re.match(
+        r"(Based on \d+ of \d+ selected sources)|(\S+ of \d+ selected sources)",
+        result["divergentSupportText"],
+    )
+    assert re.match(r"\S+ of \d+ selected", result["divergentSupportCompactText"])
     assert "My sources" not in result["divergentSupportText"]
     assert "All sources:" in result["divergentComparisonText"]
     # Item G27: tone tint is never the sole agree/differ carrier — the bar is
@@ -3533,6 +3697,11 @@ def test_personalization_divergent_race_discloses_a_compact_comparison_on_its_ca
           const sections = [...document.querySelectorAll('[data-race-detail-candidate-id]')];
           // I56 hard invariant: every visible per-candidate meter equals the
           // headline's own lens share — no quantity appears with two values.
+          // v1's per-candidate mini-meter retired with meter v2
+          // (docs/METER_V2.md, Chrome geometry; #315), so `visibleMeterShares`
+          // is always empty now and the loop that reads it below is vacuous —
+          // kept rather than deleted so a meter that somehow reappeared here
+          // would still be held to this invariant.
           const headlineShare = document.querySelector(
             '[data-lens-result] .screen-meter strong',
           )?.textContent;
@@ -3679,9 +3848,11 @@ def test_race_page_reflects_the_active_lens_leader_not_the_audited_default(
     # The leading choice is named once: the headline is its heading, so its own
     # section renders none.
     assert result["leaderHasHeading"] is False
-    # Item 4: the share is stated once too, in that headline. No section renders
-    # a meter — a tie is the only shape that puts meters back in the sections,
-    # and this lens produced a sole leader.
+    # Item 4: the share is stated once too, in that headline. No candidate
+    # section renders a meter of its own — v1's per-candidate mini-meter
+    # retired with meter v2 (docs/METER_V2.md, Chrome geometry; #315 replaces
+    # its job), so this holds for a tie's sections exactly as it does here,
+    # for a sole leader's.
     assert result["meters"], "expected at least one candidate section"
     for meter in result["meters"]:
         assert meter["meterPresent"] is False
@@ -3766,8 +3937,14 @@ def test_personalization_compact_caption_shows_only_the_lens_short_form(tmp_path
     assert result["captionCount"] == 2
     assert result["fullDisplay"] == "none"
     assert result["compactDisplay"] == "block"
-    assert re.match(r"\d+ of \d+ selected", result["compactText"])
-    assert re.match(r"Based on \d+ of \d+ selected sources", result["fullText"])
+    # The count may carry a vulgar-fraction glyph (a split endorsement), so the
+    # leader-attributed form's count is matched loosely rather than as \d+
+    # (docs/METER_V2.md, Caption — #314).
+    assert re.match(r"\S+ of \d+ selected", result["compactText"])
+    assert re.match(
+        r"(Based on \d+ of \d+ selected sources)|(\S+ of \d+ selected sources)",
+        result["fullText"],
+    )
 
 
 def _lens_fragment(

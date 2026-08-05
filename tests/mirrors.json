@@ -48,9 +48,10 @@
       "server": "rendering/context.py meter_layout_blocks",
       "proof": "parity-fixture",
       "evidence": [
-        "symbol:meter_layout_blocks"
+        "symbol:meter_layout_blocks",
+        "symbol:meter_endorsements"
       ],
-      "note": "Meter v2's whole layout (docs/METER_V2.md § Splits: placement and the tongue rule): cells in, an ordered block list out, which both renderers consume verbatim. The two sides receive the same cells in different orders — the server iterates race.source_cells in active-source order, the lens payload delivers sorted transport codes — so the ordering rules are the mirror, and they share no display text at all. The fixture's published cases come from the races page_parity.py's feature census already selects; a three-way split and two adjacent split bands are hand-built, because this election's ballot contains neither. Landed ahead of the surfaces (#313), so nothing renders a block yet."
+      "note": "Meter v2's whole layout (docs/METER_V2.md § Splits: placement and the tongue rule): cells in, an ordered block list out, which both renderers consume verbatim. The two sides receive the same cells in different orders — the server iterates race.source_cells in active-source order, the lens payload delivers sorted transport codes — so the ordering rules are the mirror, and they share no display text at all. The fixture's published cases come from the races page_parity.py's feature census already selects; a three-way split and two adjacent split bands are hand-built, because this election's ballot contains neither. #314 gave the layout's admission rule — which cell states draw a block, and the explicit exclusion of a declining source's denominator weight — one production home, `meter_endorsements`, which this fixture's cases are built from too (closing a deferred finding from #313's review: the rule used to live only in the fixture generator)."
     },
     "no-majority": {
       "client": "guide-format.mjs hasNoMajority",
@@ -61,33 +62,99 @@
       ],
       "note": "At or below half, not merely behind the leader. The threshold is a comparison rather than a string, so the shared qualifier text alone would not catch a flipped inequality."
     },
-    "share-accessible-label": {
-      "client": "guide-format.mjs shareAccessibleLabel",
-      "server": "rendering/context.py screen_share_accessible_label",
+    "meter-standings": {
+      "client": "meter-layout.mjs meterStandings",
+      "server": "rendering/context.py meter_standings",
       "proof": "parity-fixture",
       "evidence": [
-        "symbol:screen_share_accessible_label",
-        "text:Consensus among explicitly endorsing sources:",
-        "text:No majority.",
-        "text:not available"
+        "symbol:meter_standings",
+        "symbol:meter_units",
+        "symbol:meter_candidate_labels"
       ],
-      "note": "The meter's spoken label. The two sides disagreed about a race with no share until this fixture reached one: the client reused the meter's visible N/A where the server says 'not available'. Fixed in #240 on the client, which is the side that had invented the wording."
+      "note": "The meter's own rank order — leader first, ties broken by display label then id — which its color assignment and accessible name both read (docs/METER_V2.md § Color; Splits: the tongue rule). `meter_units` and `meter_candidate_labels` are the two small helpers it and every downstream meter mirror share; none has display text of its own, so the derivation finds them only by the doc comments naming them, and this entry is where those comments point."
+    },
+    "meter-accessible-label": {
+      "client": "meter-layout.mjs meterAccessibleLabel",
+      "server": "rendering/context.py meter_accessible_label",
+      "proof": "parity-fixture",
+      "evidence": [
+        "symbol:meter_accessible_label",
+        "text:No endorsements recorded"
+      ],
+      "note": "The meter's spoken name under meter v2 (docs/METER_V2.md, The discovery model's accessibility model): the full standings, not the resting percentage — replacing screen_share_accessible_label/shareAccessibleLabel, which this ticket deleted (see `deleted` below). Empty standings is the N/A state's own name, the one piece of literal text the derivation can see; the standings sentence itself is built from `endorsement_count_label` output, which shares no further words across languages."
+    },
+    "meter-candidate-colors": {
+      "client": "meter-layout.mjs meterCandidateColors",
+      "server": "rendering/context.py meter_candidate_colors",
+      "proof": "parity-fixture",
+      "evidence": [
+        "symbol:meter_candidate_colors",
+        "text:var(--teal)",
+        "text:var(--amber)",
+        "text:var(--meter-tie-deep)",
+        "text:var(--meter-trail-slate)",
+        "text:var(--meter-trail-taupe)",
+        "text:var(--meter-trail-plum)",
+        "text:color-mix(in srgb, • •%, var(--meter-track))"
+      ],
+      "note": "Each standing candidate's block color (docs/METER_V2.md § Color): the site's own teal or amber for a sole leader, the tie/trailing pools by rank otherwise, stepping toward the track once a pool runs out (Decision log #18). Color-pool exhaustion is not reachable by this election's data — no race runs four trailing candidates or three tied leaders deep — so the fixture's exhaustion cases are hand-built standings, the same reason meter-layout-blocks hand-builds shapes the ballot cannot reach."
+    },
+    "meter-block-renders": {
+      "client": "meter-layout.mjs meterBlockRenders",
+      "server": "rendering/context.py meter_block_renders",
+      "proof": "parity-fixture",
+      "evidence": [
+        "symbol:meter_block_renders",
+        "symbol:meter_block_decision",
+        "text:--meter-w:",
+        "text:--meter-c:",
+        "text:--meter-ca:",
+        "text:--meter-cb:",
+        "text:--•-color:",
+        "text:--•-image:linear-gradient(180deg, • 0 50%, • 50% 100%)",
+        "text:--meter-splitline-rest:",
+        "text:--meter-splitline-hover:",
+        "text:--meter-tongue-bg:",
+        "text:--meter-tongue-bg:linear-gradient(90deg, • 0 50%, • 50% 100%)",
+        "text:color-mix(in srgb, • 88%, var(--meter-seam-pole))",
+        "text:Endorsed",
+        "text:Split: • —",
+        "text:½ each",
+        "text:1/• each"
+      ],
+      "note": "Every block's complete paint (the inline `style` value MeterBlockRender carries, built once so a Jinja macro and a lit-html template both merely write it rather than assembling it twice) and tooltip decision text (docs/METER_V2.md, The discovery model). `meter_block_decision`'s own text — 'Endorsed', the split phrasing, the two-way glyph and the literal n-way ratio — is folded in here rather than given its own entry, because every case that reaches a decision branch reaches it by rendering blocks. A seam is two half colors (top, bottom), not one — a boundary between two different splits in one band shares its top half's color but not its bottom half's, which a single shared seam color painted wrong until this function paired the halves; `--{prefix}-color`/`--{prefix}-image` (a flat, transitionable color when both halves agree, a two-stop border-image gradient when they do not) is what the derivation's `--•-color:`/`--•-image:...` entries name. That two-split-band case, the n-way share, and the color-mix seam blends are only reachable through meter-layout-blocks' hand-built shapes (a three-way split, adjacent bands), which this fixture reuses for the same reason that entry does."
+    },
+    "meter-markup": {
+      "client": "guide-card.mjs raceResultTemplate and meterBlockTemplate",
+      "server": "_meter.html.j2 segmented_meter and meter_block macros",
+      "proof": "markup-parity",
+      "evidence": [
+        "symbol:raceResultTemplate",
+        "text:meter-block meter-block-",
+        "text:screen-meter screen-meter-na"
+      ],
+      "note": "The meter's own markup shape — the container's class list and the block class list — held together by guide-markup-parity.test.mjs and race-markup-parity.test.mjs, which diff the audited page's [data-lens-result] region against the lit render node for node. Both renderers read one precomputed MeterView/MeterBlockRender rather than deciding a class list twice; this entry is what a Jinja macro naming a lit template by name puts in the inventory."
     },
     "support-summary": {
       "client": "guide-format.mjs supportSummary",
       "server": "rendering/context.py screen_support_summary",
       "proof": "parity-fixture",
       "evidence": [
-        "text:Based on • endorsing"
+        "symbol:screen_support_summary",
+        "text:Based on • endorsing",
+        "text:of • endorsements"
       ],
-      "note": "Mirrored only in the no-lens branch; with a selection the client states a count the server has no wording for."
+      "note": "The meter's own caption (I39), redesigned in #314 to state the recommended choice's exact endorsement count rather than only the denominator (docs/METER_V2.md, Caption): '21½ of 23 endorsements'. Revised in #314's own review to drop the recommended choice's name from the sentence entirely — every card that renders this caption already carries that name one row up, in the headline, so the name here was pure restatement. A tie or a race with no single recommended choice falls back to the caption's pre-v2 wording, which is the branch the shared text evidence catches. Mirrored only in the no-lens branch; with a selection the client states a count against the selected total instead (H38), which the server has no wording for."
     },
     "support-summary-compact": {
       "client": "guide-format.mjs supportSummaryCompact",
       "server": "rendering/context.py screen_support_summary_compact",
       "proof": "parity-fixture",
-      "evidence": [],
-      "note": "Two words and a number, so the derivation's prose filter cannot see it. A reviewed entry rather than a derived one."
+      "evidence": [
+        "symbol:screen_support_summary_compact",
+        "text:of • endorsements"
+      ],
+      "note": "The compact caption's own redesign: the leader's count, with the name dropped too — the card's own heading already carries it. Falls back to the bare denominator ('N sources') for the same no-single-leader reason support-summary does."
     },
     "recommendation-label": {
       "client": "guide-format.mjs recommendationLabel",
@@ -328,6 +395,8 @@
     "sources tree strings": "#248 gave the tree to lit reading payload strings, so its endorsement counts and category tags have no second implementation.",
     "election-day phrasing": "rendering/shell.py publishes the full and short dates as data attributes; election-day.mjs chooses copy but formats no date.",
     "source participation label": "rendering/payload.py source_participation_label feeds the template and the payload from one definition, replacing a Jinja macro.",
-    "race-detail-lens-count": "Deleted with the counts it mirrored. A candidate heading no longer states how many sources endorsed them, because those sources are the rows listed directly below it — so neither side spells 'of N endorsing sources' or its co-endorsement parenthetical."
+    "race-detail-lens-count": "Deleted with the counts it mirrored. A candidate heading no longer states how many sources endorsed them, because those sources are the rows listed directly below it — so neither side spells 'of N endorsing sources' or its co-endorsement parenthetical.",
+    "share-accessible-label": "#314 replaced the meter's spoken label with meter-accessible-label: the full standings (docs/METER_V2.md, The discovery model's accessibility model), not a restatement of the resting percentage. screen_share_accessible_label and shareAccessibleLabel are both deleted; nothing calls either.",
+    "race-detail-mini-meter": "The race page's per-candidate mini-meter (v1's own per-candidate meter, beside a tied leader's 'Tied for lead' kicker) retired with meter v2 (docs/METER_V2.md, Chrome geometry; Decision log #20) — the candidate-context treatment on the shared headline bar replaces its job in #315. race-detail.mjs's detailMeterClasses/detailMeterTemplate and race.html.j2's matching block are deleted; the kicker text alone survives."
   }
 }

@@ -12,7 +12,16 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { meterLayoutBlocks } from '../../src/election_guide/rendering/templates/meter-layout.mjs';
+import {
+  meterAccessibleLabel,
+  meterBlockDecision,
+  meterBlockRenders,
+  meterCandidateColors,
+  meterCandidateLabels,
+  meterEndorsementsFromCells,
+  meterLayoutBlocks,
+  meterStandings,
+} from '../../src/election_guide/rendering/templates/meter-layout.mjs';
 import { assertModuleGuard } from './support/module-guards.mjs';
 
 const FIXTURE = JSON.parse(
@@ -21,6 +30,8 @@ const FIXTURE = JSON.parse(
 
 /** Every golden case for this mirror, as the generator emitted them. */
 const CASES = FIXTURE.cases.filter((item) => item.mirror === 'meter-layout-blocks');
+const COLOR_CASES = FIXTURE.cases.filter((item) => item.mirror === 'meter-candidate-colors');
+const RENDER_CASES = FIXTURE.cases.filter((item) => item.mirror === 'meter-block-renders');
 
 /** One case by the source line that names it. */
 function shaped(name) {
@@ -112,4 +123,154 @@ test('a tongue reaching the meter its own edge stays square', () => {
 
 test('an unscored race lays out no blocks at all', () => {
   assert.deepEqual(meterLayoutBlocks([]), []);
+});
+
+// docs/METER_V2.md, Color: a pool that runs out steps toward the track rather
+// than repeating a swatch, so two candidates in one meter never share a color.
+// `mirror-parity.test.mjs` proves the byte-identical string for every fixture
+// case already; what this adds is the property the stepping exists for.
+test('color-pool exhaustion never repeats a swatch', () => {
+  for (const item of COLOR_CASES) {
+    const colors = meterCandidateColors(
+      item.input.standings,
+      new Set(item.input.leaderIds),
+      item.input.hasMajority,
+    );
+    assert.equal(
+      new Set(colors.values()).size,
+      colors.size,
+      `${item.source}: two candidates share one color`,
+    );
+  }
+});
+
+test('a solid block reads Endorsed; a split states the share by name', () => {
+  const labels = new Map([
+    ['jamie', 'Jamie Pedersen'],
+    ['hawk', 'Jaime Michelle Hawk'],
+    ['diaz', 'Mike Diaz'],
+    ['third', 'A Third Candidate'],
+  ]);
+  assert.equal(
+    meterBlockDecision({ type: 'solid', candidate_ids: ['jamie'] }, labels),
+    'Endorsed Jamie Pedersen',
+  );
+  assert.equal(
+    meterBlockDecision({ type: 'split', candidate_ids: ['hawk', 'diaz'] }, labels),
+    'Split: Jaime Michelle Hawk + Mike Diaz — ½ each',
+  );
+  // Decision log #21: an n-way split beyond two states the literal ratio, not
+  // a vulgar-fraction glyph — the tooltip names the split, it does not restate
+  // the caption's exact arithmetic.
+  assert.equal(
+    meterBlockDecision({ type: 'split', candidate_ids: ['hawk', 'diaz', 'third'] }, labels),
+    'Split: Jaime Michelle Hawk + Mike Diaz + A Third Candidate — 1/3 each',
+  );
+});
+
+test('the N/A state has no standings and its own accessible name', () => {
+  assert.equal(meterAccessibleLabel([], new Map(), new Map()), 'No endorsements recorded');
+});
+
+test('every block render is byte-identical to its golden, style string included', () => {
+  for (const item of RENDER_CASES) {
+    const colors = new Map(Object.entries(item.input.colors));
+    const labels = new Map(Object.entries(item.input.labels));
+    assert.equal(
+      JSON.stringify(meterBlockRenders(item.input.blocks, colors, labels), null, 2),
+      JSON.stringify(item.expected, null, 2),
+      `${item.source} serializes differently on the client. ${item.note}`,
+    );
+  }
+});
+
+// `meterEndorsementsFromCells` is the client's own side of the admission rule
+// (`meter_endorsements` in `rendering/context.py`, docs/METER_V2.md § Counting
+// and the denominator): it has no server counterpart of the same shape — the
+// server resolves a `SourceCell`, the client resolves a scored `MeterCell` —
+// so this is exercised directly rather than through the fixture.
+test('a scored cell resolves to a MeterEndorsement by its code and candidate ids', () => {
+  const sourceNameByCode = new Map([['strn', 'The Stranger']]);
+  const candidateLabelById = new Map([['jenks', 'Nilu Jenks']]);
+  const endorsements = meterEndorsementsFromCells(
+    [{ source_code: 'strn', candidate_ids: ['jenks'] }],
+    sourceNameByCode,
+    candidateLabelById,
+  );
+  assert.deepEqual(endorsements, [
+    { source_label: 'The Stranger', candidate_ids: ['jenks'], candidate_labels: ['Nilu Jenks'] },
+  ]);
+});
+
+test('a no-endorsement cell carries no candidates and so no block or weight', () => {
+  const endorsements = meterEndorsementsFromCells(
+    [{ source_code: 'strn', candidate_ids: [] }],
+    new Map([['strn', 'The Stranger']]),
+    new Map(),
+  );
+  assert.deepEqual(meterStandings(endorsements), []);
+  assert.deepEqual(meterLayoutBlocks(endorsements), []);
+});
+
+// A real bug, found by clicking through a PR preview: a split block that is
+// not its band's first (a candidate's second or later split in one run, or a
+// band-first split whose previous block belongs to a *different* candidate's
+// own all-split run) painted its *entire* left border in one flat color —
+// either its own top (leader) half's color, or worse, the color of whatever
+// ran before it — leaving the bottom half's border visibly mismatched
+// against the block's own bottom fill at rest, on every pointer device,
+// before any hover ever should have revealed a seam at all
+// (docs/METER_V2.md, Seams). `every golden is byte-identical` above only
+// proves the two languages agree; they agreed on the wrong answer too, since
+// both carried the same mistake — this asserts the *correct* values.
+test('a resting seam is two half colors, and a band-first split rests on its own leader', () => {
+  // "non-adjacent split": one leader's second split (not band-first) sits
+  // after the leader's own first split. Its own colors are teal (top) and
+  // trail-slate (bottom) — different from each other — so the fix must paint
+  // a two-stop gradient of its *own* colors, not a flat single color (the
+  // bug: a flat `var(--teal)`, matching only the top half).
+  const nonAdjacent = shaped('non-adjacent split').input.endorsements;
+  const nonAdjacentStandings = meterStandings(nonAdjacent);
+  const nonAdjacentColors = meterCandidateColors(
+    nonAdjacentStandings,
+    new Set(['gap--alpha']),
+    true,
+  );
+  const nonAdjacentBlocks = meterLayoutBlocks(nonAdjacent);
+  const secondSplit = nonAdjacentBlocks.find(
+    (block) => block.type === 'split' && !block.band_start && block.band_end,
+  );
+  const secondSplitRender = meterBlockRenders(
+    [secondSplit],
+    nonAdjacentColors,
+    meterCandidateLabels(nonAdjacent),
+  )[0];
+  assert.match(
+    secondSplitRender.style,
+    /--meter-seam-rest-image:linear-gradient\(180deg, var\(--teal\) 0 50%,/,
+  );
+  assert.doesNotMatch(secondSplitRender.style, /--meter-seam-rest-color:/);
+
+  // "run-aware band edges": two different candidates' one-split bands sit
+  // side by side with no solid block between them (docs/METER_V2.md, Splits:
+  // "Bridge Brooks is supported only by split halves ... the two bands sit
+  // side by side"). The second band's own first (and only) split is
+  // band-first, so its resting seam must be *its own* leader color
+  // (trail-slate) — not the *previous*, unrelated candidate's leader color
+  // (teal), which is what the bug painted.
+  const bandEdges = shaped('run-aware band edges').input.endorsements;
+  const bandEdgesStandings = meterStandings(bandEdges);
+  const bandEdgesColors = meterCandidateColors(bandEdgesStandings, new Set(['band--anchor']), true);
+  const bandEdgesBlocks = meterLayoutBlocks(bandEdges);
+  const secondBandFirst = bandEdgesBlocks.find(
+    (block) =>
+      block.type === 'split' && block.candidate_ids[0] === 'band--bridge' && block.band_start,
+  );
+  const secondBandFirstRender = meterBlockRenders(
+    bandEdgesBlocks,
+    bandEdgesColors,
+    meterCandidateLabels(bandEdges),
+  )[bandEdgesBlocks.indexOf(secondBandFirst)];
+  assert.match(secondBandFirstRender.style, /--meter-seam-rest-color:var\(--meter-trail-slate\)/);
+  assert.doesNotMatch(secondBandFirstRender.style, /--meter-seam-rest-color:var\(--teal\)/);
 });

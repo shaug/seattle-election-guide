@@ -74,9 +74,11 @@ class ComparisonSectionView:
 class MeterEndorsement:
     """One tallying source cell, as the segmented meter counts it.
 
-    The fields are `SourceCell`'s own, so a surface hands a cell straight
-    through rather than translating it (docs/FRONTEND.md, The data contract:
-    one identifier space). A cell naming nobody — a source that looked and
+    `candidate_ids` and `candidate_labels` are `SourceCell`'s own fields,
+    carried through unchanged. `source_label` is not: a cell names its source
+    by `source_id`, not by display name, so building this record looks the
+    source up (`meter_endorsements`, below) rather than handing the cell
+    straight through. A cell naming nobody — a source that looked and
     declined — is admitted here and carries no block and no denominator weight,
     which is the rule rather than an omission (docs/METER_V2.md, Counting and
     the denominator).
@@ -120,6 +122,62 @@ class MeterBlock:
     band_end: bool
     tongue_corner_start: bool
     tongue_corner_end: bool
+
+
+@dataclass(frozen=True)
+class MeterBlockRender:
+    """One `MeterBlock`, with everything a template needs to paint it.
+
+    The Python and JavaScript renderers both consume this verbatim rather than
+    deriving colors or seam mixes from a block's neighbours themselves — the
+    same reason `MeterBlock` itself is precomputed (docs/METER_V2.md,
+    Implementation notes). `style` is the complete inline `style` attribute
+    value, built once here so the two template layers stay pure iteration:
+    a Jinja macro and a lit-html template that both merely write `style="{{
+    render.style }}"` cannot spell one block's paint two ways.
+
+    Each seam is two half colors, not one: a boundary between two different
+    splits in one band shares its top half's color (the same leader) but not
+    its bottom half's (a different partner each), so a single shared hairline
+    color would paint one half of the edge the wrong color (`_meter_block_
+    facing`/`_meter_seam_declarations` carry this pairing). `style` carries a
+    flat, transitionable `--meter-seam-*-color` when both halves agree, or a
+    two-stop `border-image` gradient, `--meter-seam-*-image`, when they do
+    not — docs/METER_V2.md says the seam *colors* are normative and its own
+    border-image mechanism is not ("any technique producing a 1px seam of the
+    specified mixes satisfies the spec"), so this only reaches for a gradient
+    where a flat color cannot express two colors on one edge.
+    """
+
+    type: str
+    width: int
+    style: str
+    band_start: bool
+    band_end: bool
+    tongue_corner_start: bool
+    tongue_corner_end: bool
+    source_label: str
+    decision: str
+
+
+@dataclass(frozen=True)
+class MeterView:
+    """Everything one meter chrome needs to render itself (docs/METER_V2.md).
+
+    Built once per race per render by `meter_view`, so the audited Jinja twin,
+    the validator, and the client's own mirrored builder all read the same
+    decisions instead of three surfaces re-deriving them from a race
+    (I56 — no two meters on the site may disagree about one share).
+    """
+
+    na: bool
+    no_majority: bool
+    low_fill: bool
+    degraded: bool
+    fill_percent: int | None
+    percentage_label: str
+    accessible_label: str
+    blocks: tuple[MeterBlockRender, ...]
 
 
 def personalization_lookup_context(view_model: PublicationViewModel) -> dict[str, Any]:
@@ -473,15 +531,50 @@ def footer_update_context(view_model: PublicationViewModel) -> dict[str, str]:
     }
 
 
-def screen_support_summary(race: PublicationRace) -> str:
+def _meter_support_summary_fallback(race: PublicationRace) -> str:
+    """The caption's pre-v2 wording, kept as the fallback for a tie or a race
+    with no single recommended choice: there is no one candidate's count to
+    lead the sentence with, so the sentence states only the denominator, as it
+    always did (docs/METER_V2.md, Caption)."""
     noun = "source" if race.explicit_endorsement_count == 1 else "sources"
     return f"Based on {race.explicit_endorsement_count} endorsing {noun}"
 
 
-def screen_support_summary_compact(race: PublicationRace) -> str:
-    """H34: the compact-mode caption drops the sentence, matching how the
-    print edition's own full/compact captions already differ."""
-    return f"{race.explicit_endorsement_count} sources"
+def screen_support_summary(race: PublicationRace, sources: dict[str, PublicationSource]) -> str:
+    """The meter's own caption (I39), stating the recommended choice's exact
+    endorsement count rather than only the denominator (docs/METER_V2.md,
+    Caption — decided in #314, revised in #314's own review): "21½ of 23
+    endorsements". The caption never repeats the recommended choice's name —
+    every card that renders it already carries that name one row up, in the
+    same `<h3 data-display-role="recommendation">` this function's own
+    `leader_units` guard is keyed to, so a name here would only restate what
+    the reader already read. A tie or a race with no single recommended choice
+    falls back to the caption's older wording, which states only the
+    denominator — the same fallback `race_detail_support_summary` uses for the
+    same reason, though that function feeds a different string (the race
+    page's visually-hidden description, which has no adjacent headline to
+    lean on) and is not part of this decision.
+    """
+    leader_units = _meter_leader_units(race, sources)
+    if leader_units is None:
+        return _meter_support_summary_fallback(race)
+    return (
+        f"{endorsement_count_label(leader_units)} of {race.explicit_endorsement_count} endorsements"
+    )
+
+
+def screen_support_summary_compact(
+    race: PublicationRace, sources: dict[str, PublicationSource]
+) -> str:
+    """H34: the compact-mode caption drops the name — the card's own heading
+    already carries it — and the sentence, matching how the print edition's own
+    full/compact captions already differ."""
+    leader_units = _meter_leader_units(race, sources)
+    if leader_units is None:
+        return f"{race.explicit_endorsement_count} sources"
+    return (
+        f"{endorsement_count_label(leader_units)} of {race.explicit_endorsement_count} endorsements"
+    )
 
 
 def candidate_endorsement_groups(
@@ -515,9 +608,46 @@ def tallying_source_cells(
     ]
 
 
+# The cell states the segmented meter has an opinion about: the endorsements it
+# draws a block for, and the explicit "no endorsement" that deliberately gets
+# neither a block nor denominator weight (docs/METER_V2.md, Counting and the
+# denominator). A source that did not cover the race, or whose claim is still
+# unverified, is not in the meter's universe at all — the race page groups
+# those separately — so `meter_endorsements` never admits them. Exported so
+# `tests/mirror_parity.py`'s fixture cases are built from this same admission
+# rule rather than a second copy of it (a deferred finding from #313's review).
+METER_COUNTED_STATES = frozenset({"endorsement", "multi_endorsement", "no_endorsement"})
+
+
+def meter_endorsements(
+    race: PublicationRace,
+    sources: dict[str, PublicationSource],
+) -> list[MeterEndorsement]:
+    """One race's cells, as the segmented meter counts them.
+
+    The one production home for the admission rule `METER_COUNTED_STATES`
+    names: every surface that draws meter v2 from a `PublicationRace` — the
+    card, the race headline, and the validator — calls this rather than
+    re-deriving which cells count (docs/METER_V2.md, Implementation notes).
+    `tallying_source_cells` already drops a comparison source's cells; this
+    narrows further to the states the meter draws a block for or explicitly
+    excludes from the denominator, and resolves each cell's `source_id` to its
+    display name.
+    """
+    return [
+        MeterEndorsement(
+            source_label=sources[cell.source_id].name,
+            candidate_ids=tuple(cell.candidate_ids),
+            candidate_labels=tuple(cell.candidate_labels),
+        )
+        for cell in tallying_source_cells(race, sources)
+        if cell.state in METER_COUNTED_STATES
+    ]
+
+
 def race_detail_support_summary(race: PublicationRace) -> str:
     if len(race.recommendation_candidate_ids) != 1:
-        return screen_support_summary(race)
+        return _meter_support_summary_fallback(race)
     leader_id = race.recommendation_candidate_ids[0]
     leader_count = next(
         group.source_count for group in race.endorsement_groups if group.candidate_id == leader_id
@@ -583,11 +713,43 @@ def endorsement_count_label(count: Fraction) -> str:
     return f"{whole}\u00a0{fallback}" if whole else fallback
 
 
-def _meter_standings(endorsements: Sequence[MeterEndorsement]) -> list[str]:
+def meter_units(endorsements: Sequence[MeterEndorsement]) -> dict[str, Fraction]:
+    """Each candidate's exact endorsement tally: 1/n to each candidate a split
+    names (docs/METER_V2.md, Counting and the denominator). Units, not source
+    counts, and never a float — the caption's whole reason for existing is that
+    this exact fraction used to be computed and then thrown away.
+
+    Public because the meter's caption and its accessible name both need one
+    candidate's exact tally without walking the block list back apart, and
+    `meter_standings` needs it to rank the runs — a third computation of the
+    same sum is exactly what this module's other mirrored functions exist to
+    prevent.
+    """
+    units: dict[str, Fraction] = {}
+    for endorsement in endorsements:
+        if not endorsement.candidate_ids:
+            continue
+        share = Fraction(1, len(endorsement.candidate_ids))
+        for candidate_id in endorsement.candidate_ids:
+            units[candidate_id] = units.get(candidate_id, Fraction(0)) + share
+    return units
+
+
+def meter_candidate_labels(endorsements: Sequence[MeterEndorsement]) -> dict[str, str]:
+    """Each candidate's display label, as the cells that name them spell it."""
+    labels: dict[str, str] = {}
+    for endorsement in endorsements:
+        for candidate_id, label in zip(
+            endorsement.candidate_ids, endorsement.candidate_labels, strict=True
+        ):
+            labels[candidate_id] = label
+    return labels
+
+
+def meter_standings(endorsements: Sequence[MeterEndorsement]) -> list[str]:
     """The endorsed candidates, leader first, as the meter orders their runs.
 
-    Units, not source counts: a split allocates 1/n to each candidate it names
-    (docs/METER_V2.md, Counting and the denominator), so this is exact rational
+    Units, not source counts (see `meter_units`), so this is exact rational
     arithmetic rather than the whole-source ordering
     `candidate_endorsement_groups` gives the race page's candidate sections.
 
@@ -597,18 +759,13 @@ def _meter_standings(endorsements: Sequence[MeterEndorsement]) -> list[str]:
     and not a locale collation, which is a different order on every machine.
     The tie-break's whole job is to make two implementations reach one run
     order, so it has to be an order both of them spell the same way.
+
+    Public — beyond block layout, this is also the meter's color assignment's
+    and accessible name's own rank order (docs/METER_V2.md, Color; Splits: the
+    tongue rule), so every consumer reads one order rather than three.
     """
-    units: dict[str, Fraction] = {}
-    labels: dict[str, str] = {}
-    for endorsement in endorsements:
-        if not endorsement.candidate_ids:
-            continue
-        share = Fraction(1, len(endorsement.candidate_ids))
-        for candidate_id, label in zip(
-            endorsement.candidate_ids, endorsement.candidate_labels, strict=True
-        ):
-            units[candidate_id] = units.get(candidate_id, Fraction(0)) + share
-            labels[candidate_id] = label
+    units = meter_units(endorsements)
+    labels = meter_candidate_labels(endorsements)
     return sorted(
         units,
         key=lambda candidate_id: (-units[candidate_id], labels[candidate_id], candidate_id),
@@ -646,7 +803,7 @@ def meter_layout_blocks(endorsements: Sequence[MeterEndorsement]) -> list[MeterB
     An empty tally returns an empty list: the N/A state renders the bare track
     (docs/METER_V2.md, Edge states), and it has no blocks to decide about.
     """
-    standings = _meter_standings(endorsements)
+    standings = meter_standings(endorsements)
     rank = {candidate_id: index for index, candidate_id in enumerate(standings)}
     counted = [item for item in endorsements if item.candidate_ids]
     solids: dict[str, list[MeterEndorsement]] = {candidate_id: [] for candidate_id in standings}
@@ -701,10 +858,294 @@ def meter_layout_blocks(endorsements: Sequence[MeterEndorsement]) -> list[MeterB
     return blocks
 
 
-def screen_share_accessible_label(race: PublicationRace) -> str:
-    share = "not available" if race.percentage_whole is None else race.percentage_label
-    qualifier = "No majority. " if has_no_majority(race) else ""
-    return f"{qualifier}Consensus among explicitly endorsing sources: {share}"
+def _meter_leader_units(
+    race: PublicationRace, sources: dict[str, PublicationSource]
+) -> Fraction | None:
+    """The recommended choice's exact endorsement tally, or `None` when the
+    caption has no single choice to attribute it to — a tie, or a race with no
+    recommendation at all (docs/METER_V2.md, Caption)."""
+    if len(race.recommendation_candidate_ids) != 1:
+        return None
+    leader_id = race.recommendation_candidate_ids[0]
+    return meter_units(meter_endorsements(race, sources)).get(leader_id, Fraction(0))
+
+
+# Color (docs/METER_V2.md, Color): every value below is a CSS value string, not
+# a literal color, so a block's paint is always a reference to a `base.css`
+# token — the document's rule that page CSS never introduces a color literal
+# applies to a block's inline style exactly as it applies to a stylesheet rule.
+_METER_TIE_COLORS: tuple[str, ...] = ("var(--amber)", "var(--meter-tie-deep)")
+_METER_TRAIL_COLORS: tuple[str, ...] = (
+    "var(--meter-trail-slate)",
+    "var(--meter-trail-taupe)",
+    "var(--meter-trail-plum)",
+)
+
+
+def _meter_stepped_color(pool: tuple[str, ...], index: int) -> str:
+    """A color from a fixed pool, or — once the pool runs out — the pool's last
+    color stepped progressively toward the track, so two candidates in one
+    meter never share a swatch (docs/METER_V2.md, Counting and the
+    denominator's sibling rule in Color: "a fourth trailing candidate, a third
+    tied leader")."""
+    if index < len(pool):
+        return pool[index]
+    step = index - len(pool) + 1
+    percent = max(30, 100 - 22 * step)
+    return f"color-mix(in srgb, {pool[-1]} {percent}%, var(--meter-track))"
+
+
+def meter_candidate_colors(
+    standings: Sequence[str],
+    leader_ids: frozenset[str],
+    *,
+    has_majority: bool,
+) -> dict[str, str]:
+    """Each standing candidate's block color (docs/METER_V2.md, Color).
+
+    `leader_ids` is `race.support_leader_candidate_ids` — the tie-aware
+    leader set the scoring engine already decided, reused rather than
+    re-derived from `standings` so the meter's colors cannot disagree with the
+    race's own no-majority/tie decision (I56). `has_majority` only matters when
+    there is exactly one leader: the site's own teal for a majority, its own
+    amber for a sole leader short of one — v1's semantic, unchanged.
+    """
+    colors: dict[str, str] = {}
+    tie_index = 0
+    trail_index = 0
+    for candidate_id in standings:
+        if candidate_id in leader_ids:
+            if len(leader_ids) > 1:
+                colors[candidate_id] = _meter_stepped_color(_METER_TIE_COLORS, tie_index)
+                tie_index += 1
+            else:
+                colors[candidate_id] = "var(--teal)" if has_majority else "var(--amber)"
+        else:
+            colors[candidate_id] = _meter_stepped_color(_METER_TRAIL_COLORS, trail_index)
+            trail_index += 1
+    return colors
+
+
+def meter_block_decision(block: MeterBlock, labels: dict[str, str]) -> str:
+    """One block's tooltip decision line (docs/METER_V2.md, The discovery
+    model): "Endorsed Jamie Pedersen" for a solid block, "Split: Hawk + Diaz —
+    ½ each" for the common two-way split, and the literal "1/n each" ratio for
+    a wider one (Decision log #21) — a vulgar-fraction glyph would overstate
+    the tooltip's job, which is naming the split, not restating the caption's
+    exact arithmetic."""
+    names = [labels[candidate_id] for candidate_id in block.candidate_ids]
+    if block.type == "solid":
+        return f"Endorsed {names[0]}"
+    share = "½ each" if len(names) == 2 else f"1/{len(names)} each"
+    return f"Split: {' + '.join(names)} — {share}"
+
+
+def _meter_seam_tint(color: str) -> str:
+    """A same-candidate seam: the fill mixed 88% with the seam pole
+    (docs/METER_V2.md, Seams)."""
+    return f"color-mix(in srgb, {color} 88%, var(--meter-seam-pole))"
+
+
+def _meter_seam_bridge(left: str, right: str) -> str:
+    """A cross-candidate seam: the 50/50 blend of the two facing colors, mixed
+    86% with the seam pole (docs/METER_V2.md, Seams)."""
+    return (
+        f"color-mix(in srgb, color-mix(in srgb, {left} 50%, {right} 50%) 86%, "
+        "var(--meter-seam-pole))"
+    )
+
+
+def _meter_block_facing(block: MeterBlock, colors: dict[str, str]) -> tuple[str, str]:
+    """The two colors a block's own left edge is made of, top half and bottom
+    half: identical for a solid block, the split's own top/bottom colors for
+    a split. A seam has two halves because a split's two halves can each face
+    a different neighbour — a boundary between two different splits in one
+    band, the case a single shared seam color got wrong until this function
+    existed, since the band's shared leader makes the top halves agree while
+    the two partners in the bottom halves do not (docs/METER_V2.md, Seams)."""
+    if block.type == "solid":
+        color = colors[block.candidate_ids[0]]
+        return (color, color)
+    return (colors[block.candidate_ids[0]], colors[block.candidate_ids[1]])
+
+
+def _meter_seam_declarations(prefix: str, top: str, bottom: str) -> list[str]:
+    """One seam's CSS declarations, as one pair of `top`/`bottom` half colors.
+
+    A flat, transitionable `--{prefix}-color` when both halves agree — the
+    common case, and the only one `border-left-color` can smoothly animate.
+    Otherwise a two-stop `border-image` gradient, `--{prefix}-image`, since a
+    plain border cannot show two colors on one 1px edge. The mockup's own
+    mechanism (docs/METER_V2.md, Seams: "any technique producing a 1px seam
+    of the specified mixes satisfies the spec" — its own border-image
+    mechanism is explicitly non-normative) is what this mirrors, kept only
+    where a flat color cannot express two colors at once.
+    """
+    if top == bottom:
+        return [f"--{prefix}-color:{top}"]
+    return [f"--{prefix}-image:linear-gradient(180deg, {top} 0 50%, {bottom} 50% 100%)"]
+
+
+def meter_block_renders(
+    blocks: Sequence[MeterBlock],
+    colors: dict[str, str],
+    labels: dict[str, str],
+) -> list[MeterBlockRender]:
+    """Every block's paint, seam, and tooltip data, in rendered order
+    (docs/METER_V2.md, Splits: placement and the tongue rule; Seams).
+
+    The tongue tip's exposed notch shows the color the tongue rests on: a
+    band's first block rests on its own top (leader) color, a band's last
+    rests on its own bottom (partner) color, and a single-block band — both
+    flags set — is the two-stop split of both.
+    """
+    renders: list[MeterBlockRender] = []
+    previous: MeterBlock | None = None
+    for block in blocks:
+        declarations = [f"--meter-w:{block.width}"]
+        if block.type == "solid":
+            color = colors[block.candidate_ids[0]]
+            declarations.append(f"--meter-c:{color}")
+        else:
+            top_color = colors[block.candidate_ids[0]]
+            bottom_color = colors[block.candidate_ids[1]]
+            declarations.append(f"--meter-ca:{top_color}")
+            declarations.append(f"--meter-cb:{bottom_color}")
+            declarations.append(f"--meter-splitline-rest:{bottom_color}")
+            declarations.append(
+                f"--meter-splitline-hover:{_meter_seam_bridge(top_color, bottom_color)}"
+            )
+            if block.tongue_corner_start and block.tongue_corner_end:
+                declarations.append(
+                    f"--meter-tongue-bg:linear-gradient(90deg, {top_color} 0 50%, "
+                    f"{bottom_color} 50% 100%)"
+                )
+            elif block.tongue_corner_start:
+                declarations.append(f"--meter-tongue-bg:{top_color}")
+            elif block.tongue_corner_end:
+                declarations.append(f"--meter-tongue-bg:{bottom_color}")
+            # At rest a split's own two halves paint its resting border,
+            # except a band's first block, which rests flat on its own
+            # leader (top) color for both halves so the straight border
+            # never fragments against the rounded tongue corner
+            # (docs/METER_V2.md, Seams). This reads the block's own colors
+            # only — never the previous block's — which is what keeps a
+            # multi-split band's interior boundaries correctly two-toned
+            # instead of flattened to one half's color for the whole edge.
+            rest_top, rest_bottom = (
+                (top_color, top_color) if block.band_start else (top_color, bottom_color)
+            )
+            declarations.extend(_meter_seam_declarations("meter-seam-rest", rest_top, rest_bottom))
+        if previous is not None:
+            previous_top, previous_bottom = _meter_block_facing(previous, colors)
+            current_top, current_bottom = _meter_block_facing(block, colors)
+            hover_top = (
+                _meter_seam_tint(previous_top)
+                if previous_top == current_top
+                else _meter_seam_bridge(previous_top, current_top)
+            )
+            hover_bottom = (
+                _meter_seam_tint(previous_bottom)
+                if previous_bottom == current_bottom
+                else _meter_seam_bridge(previous_bottom, current_bottom)
+            )
+            declarations.extend(
+                _meter_seam_declarations("meter-seam-hover", hover_top, hover_bottom)
+            )
+        renders.append(
+            MeterBlockRender(
+                type=block.type,
+                width=block.width,
+                style="; ".join(declarations),
+                band_start=block.band_start,
+                band_end=block.band_end,
+                tongue_corner_start=block.tongue_corner_start,
+                tongue_corner_end=block.tongue_corner_end,
+                source_label=block.source_label,
+                decision=meter_block_decision(block, labels),
+            )
+        )
+        previous = block
+    return renders
+
+
+def meter_accessible_label(
+    standings: Sequence[str],
+    units: dict[str, Fraction],
+    labels: dict[str, str],
+) -> str:
+    """The meter's spoken name: the full standings, not the resting percentage
+    (docs/METER_V2.md, The discovery model's accessibility model). Empty
+    standings is the N/A state's own name."""
+    if not standings:
+        return "No endorsements recorded"
+    total = sum((units[candidate_id] for candidate_id in standings), Fraction(0))
+    return "; ".join(
+        f"{labels[candidate_id]} {endorsement_count_label(units[candidate_id])} of "
+        f"{endorsement_count_label(total)} endorsements"
+        for candidate_id in standings
+    )
+
+
+# Minimum block width (docs/METER_V2.md, Edge states): below ~3px per block,
+# per-block seams drop and the meter degrades to plain candidate runs. The
+# site's four chromes span a fixed 7.5rem (print) to a fluid 100% (compact
+# ballot, race headline), so no one static pixel width covers all of them —
+# this uses the tightest chrome's own floor (print, 120px at 16px/rem) as a
+# conservative shared threshold, which never lets *any* chrome render a
+# narrower block than the spec allows. `MeterBlock.width` is always 1 (one
+# endorsement per block), so the block count is the list length.
+_METER_DEGRADE_MAX_BLOCKS = 120 // 3
+
+
+def meter_view(race: PublicationRace, sources: dict[str, PublicationSource]) -> MeterView:
+    """The one meter view every v2 chrome renders from (docs/METER_V2.md).
+
+    Built once so the audited Jinja twin and the validator read identical
+    blocks, colors, and accessible name — the client builds the same shape
+    from its own mirrored functions over the cells its lens selects, which is
+    why every function this composes is exported rather than kept private to
+    this call.
+
+    The N/A state (docs/METER_V2.md, Edge states) is decided by `race.
+    percentage_whole` alone — the same field the resting percentage itself
+    reads — and forces empty blocks and the N/A accessible name regardless of
+    what the cells would otherwise lay out: the audited template's N/A branch
+    renders no blocks at all, so a `MeterView` that claimed blocks anyway
+    would describe a meter no renderer draws (`rendering/validation.py`'s
+    block-count check is what would catch that disagreement).
+    """
+    if race.percentage_whole is None:
+        return MeterView(
+            na=True,
+            no_majority=False,
+            low_fill=False,
+            degraded=False,
+            fill_percent=None,
+            percentage_label=race.percentage_label,
+            accessible_label="No endorsements recorded",
+            blocks=(),
+        )
+    endorsements = meter_endorsements(race, sources)
+    standings = meter_standings(endorsements)
+    units = meter_units(endorsements)
+    labels = meter_candidate_labels(endorsements)
+    colors = meter_candidate_colors(
+        standings,
+        frozenset(race.support_leader_candidate_ids),
+        has_majority=not has_no_majority(race),
+    )
+    blocks = meter_layout_blocks(endorsements)
+    return MeterView(
+        na=False,
+        no_majority=has_no_majority(race),
+        low_fill=race.percentage_whole < 30,
+        degraded=len(blocks) > _METER_DEGRADE_MAX_BLOCKS,
+        fill_percent=race.percentage_whole,
+        percentage_label=race.percentage_label,
+        accessible_label=meter_accessible_label(standings, units, labels),
+        blocks=tuple(meter_block_renders(blocks, colors, labels)),
+    )
 
 
 def source_cell_group(

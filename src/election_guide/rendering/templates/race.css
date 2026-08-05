@@ -49,27 +49,16 @@
    A tied leader keeps the amber every other candidate wears: the green would
    read as "this is the answer", and the reason a tie is worth marking is that
    it is not (docs/DESIGN.md, Data display — default styling never overstates
-   confidence). What marks it instead is its eyebrow and its own meter. */
+   confidence). What marks it instead is its "Tied for lead" eyebrow — v1's
+   per-candidate mini-meter used to sit beside that eyebrow too, but meter v2
+   retires it; the candidate-context treatment on the shared headline bar
+   replaces its job (docs/METER_V2.md, Chrome geometry; #315). */
 .race-detail-candidate-leader { border-color: #9fcfc5; border-left-color: var(--teal); }
 .race-detail-candidate-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem 1.25rem; padding: .55rem .75rem; background: var(--tone-differ-bg); }
 .race-detail-candidate-title { min-width: 0; }
 /* Only a tied leader has this eyebrow, and it takes the amber its box wears. */
 .race-detail-candidate-tied .race-detail-candidate-title p { margin: 0 0 .05rem; color: var(--tone-differ-text); font-size: .62rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 .race-detail-candidate-title h4 { min-width: 0; margin: 0; color: var(--navy); font-size: 1.05rem; line-height: 1.1; overflow-wrap: anywhere; }
-.race-detail-candidate-metrics { display: flex; flex: 0 0 auto; margin-left: auto; align-items: center; justify-content: flex-end; gap: .45rem .75rem; }
-.race-detail-candidate-metrics > span { color: var(--muted); font-size: .68rem; white-space: nowrap; }
-/* I40: one meter chrome — the per-candidate meter adopts the headline meter's
-   own border/track treatment at a smaller size, and the same low-fill guard
-   (I41). The threshold behind that guard is decided once, in `guide-card.mjs`'s
-   meterView; only the declaration is restated here, because this chrome is
-   rendered on no other page. */
-.race-detail-meter { display: flex; flex: 0 0 auto; align-items: center; justify-content: flex-start; width: 8.5rem; height: 1.8rem; overflow: hidden; border: 1px solid var(--line-strong); border-radius: 1rem; background: linear-gradient(to right, var(--teal) 0 var(--meter-fill), var(--meter-track) var(--meter-fill) 100%); }
-.race-detail-meter strong { width: 100%; padding: .05rem .65rem 0; color: var(--white); font-size: .9rem; font-variant-numeric: tabular-nums; text-align: left; }
-.race-detail-meter.meter-no-majority { background: linear-gradient(to right, var(--amber) 0 var(--meter-fill), var(--meter-track) var(--meter-fill) 100%); }
-.race-detail-meter.meter-no-majority strong { color: var(--navy); }
-.race-detail-meter-na { background: var(--meter-track); }
-.race-detail-meter-na strong { color: var(--muted); }
-.race-detail-meter.meter-low-fill strong { padding-left: calc(var(--meter-fill) + .4rem); color: var(--muted); }
 .race-detail-outcome-unverified { border-left-color: var(--red); }
 .race-detail-outcome-heading { display: flex; align-items: baseline; justify-content: space-between; gap: .5rem 1rem; padding: .5rem .75rem; background: var(--tone-neutral-bg); }
 .race-detail-outcome-heading h4 { margin: 0; color: var(--navy); font-size: .86rem; }
@@ -103,10 +92,6 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
   .race-detail { padding-right: 1rem; padding-left: 1rem; }
   .race-headline { padding: .85rem; }
   .race-detail-candidate-heading { align-items: flex-start; }
-  /* Stack the metrics: meter beside the candidate name, count underneath. */
-  .race-detail-candidate-metrics { flex: 0 1 auto; min-width: 0; max-width: 100%; flex-direction: column; align-items: flex-end; gap: .2rem; }
-  .race-detail-candidate-metrics > span { order: 1; max-width: 100%; text-align: right; white-space: normal; }
-  .race-detail-meter { width: 7.5rem; }
   .race-detail-source-row { grid-template-columns: 1fr; gap: .25rem; }
   .race-detail-source-meta { justify-content: flex-start; }
   .race-detail-category-badge { text-align: left; }

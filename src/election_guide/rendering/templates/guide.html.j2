@@ -6,6 +6,7 @@
 {% endblock %}
 {% block body %}
   {% from '_filter_controls.html.j2' import election_controls %}
+  {% from '_meter.html.j2' import segmented_meter %}
   {% set contributing_sources = guide.sources | selectattr('contribution_status', 'equalto', 'contributing') | list %}
   {% set consensus_source_count = contributing_sources | selectattr('panel_role', 'equalto', 'consensus') | list | length %}
   <a class="skip-link" href="#guide-races">Skip to recommendations</a>
@@ -100,18 +101,7 @@
                  selection diverges, from the personalized one afterwards. #}
               <div class="screen-race-result" data-lens-result>
                 <h3 data-display-role="recommendation">{{ race.recommendation_label }}</h3>
-                {% if race.percentage_whole is none %}
-                <div class="screen-meter screen-meter-na" role="img" data-display-role="share"
-                  aria-label="{{ screen_share_accessible_label(race) }}">
-                  <strong>N/A</strong>
-                </div>
-                {% else %}
-                <div class="screen-meter{% if has_no_majority(race) %} meter-no-majority{% endif %}{% if race.percentage_whole < 30 %} meter-low-fill{% endif %}" style="--meter-fill: {{ race.percentage_whole }}%"
-                  role="img" data-display-role="share"
-                  aria-label="{{ screen_share_accessible_label(race) }}">
-                  <strong>{{ race.percentage_label }}</strong>
-                </div>
-                {% endif %}
+                {{ segmented_meter(meter_view(race)) }}
               </div>
               {# I39: the primary block ends with the caption directly under
                  the meter row; the reference block (the All-sources bar)

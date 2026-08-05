@@ -50,6 +50,7 @@ import {
   tallyingSourceCodes,
 } from './lens-selection.mjs';
 import { decodeLensFragment, LEGACY_RACE_PREFIX, lensContext } from './lens-url.mjs';
+import { meterEndorsementsFromCells } from './meter-layout.mjs';
 import { candidateSectionsTemplate } from './race-detail.mjs';
 
 /** The audited insufficiency warning, as race.html.j2 renders it. */
@@ -76,6 +77,9 @@ export function wireRacePage(payload) {
   const labels = new Map(
     race.candidates.map((candidate) => [candidate.candidate_id, candidate.label]),
   );
+  // The meter's blocks need a source's display name, which a scored cell
+  // carries only as its transport code (docs/FRONTEND.md, The data contract).
+  const sourceNameByCode = new Map(payload.sources.map((source) => [source.code, source.name]));
   /** The audited candidate order, which a cleared lens restores exactly. */
   const auditedOrder = race.candidates.map((candidate) => candidate.candidate_id);
   const candidatesById = new Map(
@@ -152,8 +156,11 @@ export function wireRacePage(payload) {
     }));
     // A tied leader is every leader the headline does not name. The headline
     // names the sole leader and nobody else, so a tie leaves all of them here —
-    // each once, each with its own meter, and none of them in the headline's
-    // green, which claims a favourite a tie does not have.
+    // each once, and none of them in the headline's green, which claims a
+    // favourite a tie does not have. The per-candidate mini-meter v1 drew
+    // beside this kicker retired with meter v2 — the candidate-context
+    // treatment on the shared headline bar replaces its job
+    // (docs/METER_V2.md, Chrome geometry; #315).
     const tied = isLeader && !soleLeader;
     return {
       candidateId,
@@ -161,12 +168,6 @@ export function wireRacePage(payload) {
       isLeader,
       inHeadline: soleLeader,
       kicker: tied ? 'Tied for lead' : null,
-      meter: tied
-        ? meterView(
-            scored.standings.find((standing) => standing.candidateId === candidateId)?.share ??
-              null,
-          )
-        : null,
       rows,
     };
   };
@@ -217,10 +218,11 @@ export function wireRacePage(payload) {
       takenOver = true;
     }
     if (resultRegion) {
+      const endorsements = meterEndorsementsFromCells(scored.meterCells, sourceNameByCode, labels);
       render(
         raceResultTemplate({
           recommendation: recommendationLabel(scored, labels),
-          meter: meterView(scored.winnerShare),
+          meter: meterView(scored.winnerShare, endorsements, new Set(scored.winnerIds)),
         }),
         resultRegion,
       );

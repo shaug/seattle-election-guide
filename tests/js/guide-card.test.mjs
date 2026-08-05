@@ -35,32 +35,68 @@ function rendered(template) {
  * @param {boolean} [noMajority]
  * @returns {import('../../src/election_guide/rendering/templates/guide-card.mjs').ShareMeterView}
  */
-// `lowFill` is an explicit argument rather than something this fixture derives.
-// The I41 threshold itself lives in meterView (guide-lens.mjs), which the
-// dialog's meter shares; a fixture that recomputed it would agree with whatever
-// production chose and pin nothing. What this file checks is that the template
-// honours the decision; `guide-lens.test.mjs` checks that the decision is made
-// at 30%.
-const meter = (fillPercent, { lowFill = false, noMajority = false } = {}) => ({
+// `lowFill`/`degraded` are explicit arguments rather than something this
+// fixture derives. Both thresholds live in meterView (guide-card.mjs), which
+// every meter on the site shares; a fixture that recomputed them would agree
+// with whatever production chose and pin nothing. What this file checks is
+// that the template honours the decision; `guide-lens.test.mjs` checks that
+// the low-fill decision is made at 30%.
+const meter = (fillPercent, { lowFill = false, noMajority = false, degraded = false } = {}) => ({
   label: fillPercent === null ? 'N/A' : `${fillPercent}%`,
   fillPercent,
   lowFill,
   noMajority,
-  accessibleLabel: 'Consensus among explicitly endorsing sources: 100%',
+  degraded,
+  accessibleLabel: 'Ada Lovelace 3 of 4 endorsements',
+  blocks:
+    fillPercent === null
+      ? []
+      : [
+          {
+            type: 'solid',
+            width: 1,
+            style: '--meter-w:1; --meter-c:var(--teal)',
+            band_start: false,
+            band_end: false,
+            tongue_corner_start: false,
+            tongue_corner_end: false,
+            source_label: 'The Stranger',
+            decision: 'Endorsed Ada Lovelace',
+          },
+        ],
 });
 
-test('a share with no value renders the NA meter and no fill', () => {
+test('a share with no value renders the NA meter and no blocks', () => {
   const host = rendered(raceResultTemplate({ recommendation: 'No consensus', meter: meter(null) }));
   const box = host.querySelector('.screen-meter');
 
   assert.equal(box.getAttribute('class'), 'screen-meter screen-meter-na');
   assert.equal(box.hasAttribute('style'), false);
   assert.equal(box.querySelector('strong').textContent, 'N/A');
+  assert.equal(box.querySelectorAll('.meter-block').length, 0);
 });
 
-// I41: below ~30% fill the label would bleed onto the pale track, so the
-// low-fill guard moves it after the fill instead.
-test('a low fill carries the low-fill guard, and a high one does not', () => {
+test('a share with a value renders its blocks and the resting percent', () => {
+  const host = rendered(raceResultTemplate({ recommendation: 'Ada', meter: meter(75) }));
+  const box = host.querySelector('.screen-meter');
+
+  assert.equal(box.getAttribute('style'), '--meter-fill: 75%');
+  assert.equal(box.getAttribute('tabindex'), '0', 'the meter is its own one tab stop');
+  const block = box.querySelector('.meter-block');
+  assert.equal(block.getAttribute('class'), 'meter-block meter-block-solid');
+  assert.equal(block.getAttribute('style'), '--meter-w:1; --meter-c:var(--teal)');
+  assert.equal(block.getAttribute('data-meter-source'), 'The Stranger');
+  assert.equal(block.getAttribute('data-meter-decision'), 'Endorsed Ada Lovelace');
+  // The block carries no text of its own — the container's own text stays
+  // exactly the resting percent, which is what the rendered-HTML validator
+  // (rendering/validation.py) holds the "share" display role to.
+  assert.equal(block.textContent, '');
+  assert.equal(box.querySelector('strong').textContent, '75%');
+});
+
+// I41: below ~30% fill the label would bleed onto the trailing field, so the
+// low-fill guard moves it after the leader's run instead.
+test('a low fill and a degraded meter each carry their own class', () => {
   const low = rendered(
     raceResultTemplate({
       recommendation: 'Ada',
@@ -75,6 +111,37 @@ test('a low fill carries the low-fill guard, and a high one does not', () => {
 
   const high = rendered(raceResultTemplate({ recommendation: 'Ada', meter: meter(72) }));
   assert.equal(high.querySelector('.screen-meter').getAttribute('class'), 'screen-meter');
+
+  const degraded = rendered(
+    raceResultTemplate({ recommendation: 'Ada', meter: meter(72, { degraded: true }) }),
+  );
+  assert.equal(
+    degraded.querySelector('.screen-meter').getAttribute('class'),
+    'screen-meter meter-degraded',
+  );
+});
+
+test('a split block renders its two halves and no others', () => {
+  const view = meter(50);
+  view.blocks = [
+    {
+      type: 'split',
+      width: 1,
+      style: '--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--amber)',
+      band_start: true,
+      band_end: true,
+      tongue_corner_start: false,
+      tongue_corner_end: false,
+      source_label: 'The Urbanist',
+      decision: 'Split: Ada Lovelace + Blaise Pascal — ½ each',
+    },
+  ];
+  const host = rendered(raceResultTemplate({ recommendation: 'Ada / Blaise', meter: view }));
+  const block = host.querySelector('.meter-block');
+  assert.equal(block.getAttribute('class'), 'meter-block meter-block-split');
+  assert.equal(block.querySelectorAll('.meter-half').length, 2);
+  assert.equal(block.querySelector('.meter-half-top') !== null, true);
+  assert.equal(block.querySelector('.meter-half-bottom') !== null, true);
 });
 
 test('the no-majority pill is present but hidden when there is a majority', () => {

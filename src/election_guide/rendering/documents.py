@@ -110,6 +110,10 @@ def render_html_document(
     # that appends the live lens fragment all work from a path.
     sources_page_url = f"{guide_path}sources/"
     filter_scope_groups = context.filter_scope_groups(view_model)
+    # The meter v2 functions below all resolve a cell's `source_id` to its
+    # display name (`context.meter_endorsements`), so they need the same
+    # id-keyed lookup every other per-source function in this module builds.
+    sources_by_id = {source.id: source for source in view_model.sources}
     election_display_name, _ = election_names(
         view_model.metadata.election_date,
         view_model.metadata.election_type,
@@ -150,9 +154,11 @@ def render_html_document(
         **context.footer_update_context(view_model),
         filter_scope_groups=filter_scope_groups,
         has_no_majority=context.has_no_majority,
-        screen_share_accessible_label=context.screen_share_accessible_label,
-        screen_support_summary=context.screen_support_summary,
-        screen_support_summary_compact=context.screen_support_summary_compact,
+        screen_support_summary=partial(context.screen_support_summary, sources=sources_by_id),
+        screen_support_summary_compact=partial(
+            context.screen_support_summary_compact, sources=sources_by_id
+        ),
+        meter_view=partial(context.meter_view, sources=sources_by_id),
     )
 
 
@@ -262,9 +268,11 @@ def render_race_document(
             category_label_by_key=category_label_by_key,
         ),
         has_no_majority=context.has_no_majority,
-        screen_share_accessible_label=context.screen_share_accessible_label,
-        screen_support_summary=context.screen_support_summary,
-        screen_support_summary_compact=context.screen_support_summary_compact,
+        screen_support_summary=partial(context.screen_support_summary, sources=source_by_id),
+        screen_support_summary_compact=partial(
+            context.screen_support_summary_compact, sources=source_by_id
+        ),
+        meter_view=partial(context.meter_view, sources=source_by_id),
         race_detail_accessible_summary=context.race_detail_accessible_summary,
         source_cell_group_label=context.source_cell_group_label,
         source_cell_group_keys=("no_endorsement", "unverified"),
