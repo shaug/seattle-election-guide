@@ -1,5 +1,5 @@
 {
-  "captured_at": "2026-07-20T01:03:00Z",
+  "captured_at": "2026-08-05T00:00:00Z",
   "decisions": [
     {
       "candidate_ids": [
@@ -17,6 +17,24 @@
       "evidence_excerpt": null,
       "evidence_locator": null,
       "race_id": "seattle-city-council-5",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-representative-1--kelabe-tewolde"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "ld-37-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-representative-2--jaelynn-scott"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "ld-37-state-representative-2",
       "status": "endorsed"
     },
     {

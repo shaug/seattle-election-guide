@@ -26,7 +26,7 @@ FIXTURE_SCHEMA_VERSION = "1.0"
 # placeholder commit for build_publication_bundle, and a timestamp that must not
 # predate the newest scoring input or score_dataset refuses to run.
 FIXTURE_COMMIT = "0" * 40
-FIXTURE_COMPUTED_AT = "2026-07-23T17:15:00Z"
+FIXTURE_COMPUTED_AT = "2026-08-05T00:20:00Z"
 
 
 class ParitySelection(BaseModel):

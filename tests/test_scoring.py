@@ -51,7 +51,7 @@ from election_guide.sources.models import SourceRegistry
 from election_guide.sources.registry import read_source_registry
 
 PROJECT_ROOT = Path(__file__).parent.parent
-NOW = datetime(2026, 7, 23, 17, 15, tzinfo=UTC)
+NOW = datetime(2026, 8, 5, 0, 20, tzinfo=UTC)
 RACE_ID = "king-county-assessor"
 CONSENSUS_SOURCE_IDS = [
     "the-stranger",
@@ -657,7 +657,7 @@ def test_committed_source_panel_impact_matches_current_scoring() -> None:
     current = score_dataset(
         dataset,
         _configuration(),
-        computed_at=datetime(2026, 7, 23, 17, 10, tzinfo=UTC),
+        computed_at=datetime(2026, 8, 5, 0, 20, tzinfo=UTC),
     )
     impact = ConsensusImpactReport.model_validate(
         read_json(PROJECT_ROOT / "data/releases/wa-2026-primary/source-panel-impact.json")
@@ -666,18 +666,18 @@ def test_committed_source_panel_impact_matches_current_scoring() -> None:
     current_snapshot = summarize_consensus(current)
     assert impact.after == current_snapshot
     assert impact == compare_consensus_snapshots(impact.before, current_snapshot)
-    ld37_position_2 = next(
-        change for change in impact.changes if change.race_id == "ld-37-state-representative-2"
+    ld37_position_1 = next(
+        change for change in impact.changes if change.race_id == "ld-37-state-representative-1"
     )
-    assert "warnings" in ld37_position_2.changed_fields
+    assert {"winner_candidate_ids", "grade"} <= set(ld37_position_1.changed_fields)
     supreme_court_3 = next(
         change for change in impact.changes if change.race_id == "supreme-court-justice-3"
     )
-    assert {"winner_candidate_ids", "grade", "is_tied"} <= set(supreme_court_3.changed_fields)
-    ld46_position_1 = next(
-        change for change in impact.changes if change.race_id == "ld-46-state-representative-1"
+    assert {"winner_candidate_ids"} <= set(supreme_court_3.changed_fields)
+    ld37_senate = next(
+        change for change in impact.changes if change.race_id == "ld-37-state-senator"
     )
-    assert "grade" in ld46_position_1.changed_fields
+    assert "grade" in ld37_senate.changed_fields
 
 
 def _race_result(dataset: CanonicalDataset) -> RaceConsensus:

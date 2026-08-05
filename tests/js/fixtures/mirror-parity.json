@@ -28,7 +28,7 @@
           "Genv"
         ]
       },
-      "expected": "cmp=1&cols=GlabGenv&panel=wa-2026-primary-default-sources-v4&ph=389a978b149d&data=746f83dbe09f&scoring=unweighted-progressive-v1",
+      "expected": "cmp=1&cols=GlabGenv&panel=wa-2026-primary-default-sources-v4&ph=389a978b149d&data=88b5070f6c37&scoring=unweighted-progressive-v1",
       "note": "Two category columns, whose tokens are capitalized.",
       "source": "comparison_fragment as shipped"
     },
@@ -42,7 +42,7 @@
           "stim"
         ]
       },
-      "expected": "cmp=1&cols=gallstrnstim&panel=wa-2026-primary-default-sources-v4&ph=389a978b149d&data=746f83dbe09f&scoring=unweighted-progressive-v1",
+      "expected": "cmp=1&cols=gallstrnstim&panel=wa-2026-primary-default-sources-v4&ph=389a978b149d&data=88b5070f6c37&scoring=unweighted-progressive-v1",
       "note": "Three columns concatenate in the order given, not in sorted order.",
       "source": "comparison_fragment as shipped"
     },
@@ -55,7 +55,7 @@
           "urbn"
         ]
       },
-      "expected": "cmp=1&cols=gallurbn&panel=wa-2026-primary-default-sources-v4&ph=389a978b149d&data=746f83dbe09f&scoring=unweighted-progressive-v1",
+      "expected": "cmp=1&cols=gallurbn&panel=wa-2026-primary-default-sources-v4&ph=389a978b149d&data=88b5070f6c37&scoring=unweighted-progressive-v1",
       "note": "The reserved all-sources aggregate beside a direct source.",
       "source": "comparison_fragment as shipped"
     },
@@ -68,7 +68,7 @@
           "strn"
         ]
       },
-      "expected": "cmp=1&cols=stimstrn&panel=wa-2026-primary-default-sources-v4&ph=389a978b149d&data=746f83dbe09f&scoring=unweighted-progressive-v1",
+      "expected": "cmp=1&cols=stimstrn&panel=wa-2026-primary-default-sources-v4&ph=389a978b149d&data=88b5070f6c37&scoring=unweighted-progressive-v1",
       "note": "The same two sources in the other order encode to a different fragment.",
       "source": "comparison_fragment as shipped"
     },
@@ -81,7 +81,7 @@
           "stim"
         ]
       },
-      "expected": "cmp=1&cols=strnstim&panel=wa-2026-primary-default-sources-v4&ph=389a978b149d&data=746f83dbe09f&scoring=unweighted-progressive-v1",
+      "expected": "cmp=1&cols=strnstim&panel=wa-2026-primary-default-sources-v4&ph=389a978b149d&data=88b5070f6c37&scoring=unweighted-progressive-v1",
       "note": "The two direct sources the page offers as a preset.",
       "source": "comparison_fragment as shipped"
     },
@@ -537,26 +537,6 @@
       "mirror": "meter-accessible-label",
       "input": {
         "standings": [
-          "king-county-council-2--rebecca-salda-a",
-          "king-county-council-2--toshiko-grace-hasegawa"
-        ],
-        "units": {
-          "king-county-council-2--rebecca-salda-a": "21",
-          "king-county-council-2--toshiko-grace-hasegawa": "3"
-        },
-        "labels": {
-          "king-county-council-2--rebecca-salda-a": "Rebecca Saldaña",
-          "king-county-council-2--toshiko-grace-hasegawa": "Toshiko Grace Hasegawa"
-        }
-      },
-      "expected": "Rebecca Saldaña 21 of 24 endorsements; Toshiko Grace Hasegawa 3 of 24 endorsements",
-      "source": "published race king-county-council-2 on the audited panel",
-      "note": "The published panel: the shares, grades, and captions the guide ships."
-    },
-    {
-      "mirror": "meter-accessible-label",
-      "input": {
-        "standings": [
           "king-county-council-8--teresa-mosqueda"
         ],
         "units": {
@@ -658,7 +638,7 @@
           "ld-32-state-representative-2--imraan-siddiqi"
         ],
         "units": {
-          "ld-32-state-representative-2--imraan-siddiqi": "15/2",
+          "ld-32-state-representative-2--imraan-siddiqi": "17/2",
           "ld-32-state-representative-2--lauren-davis": "21/2"
         },
         "labels": {
@@ -666,7 +646,7 @@
           "ld-32-state-representative-2--lauren-davis": "Lauren Davis"
         }
       },
-      "expected": "Lauren Davis 10½ of 18 endorsements; Imraan Siddiqi 7½ of 18 endorsements",
+      "expected": "Lauren Davis 10½ of 19 endorsements; Imraan Siddiqi 8½ of 19 endorsements",
       "source": "published race ld-32-state-representative-2 on the audited panel",
       "note": "The published panel: the shares, grades, and captions the guide ships."
     },
@@ -711,20 +691,20 @@
       "mirror": "meter-accessible-label",
       "input": {
         "standings": [
-          "ld-37-state-representative-1--kelabe-tewolde",
-          "ld-37-state-representative-1--sharon-tomiko-santos"
+          "ld-37-state-senator--chipalo-street",
+          "ld-37-state-senator--tatiana-brown"
         ],
         "units": {
-          "ld-37-state-representative-1--kelabe-tewolde": "13/2",
-          "ld-37-state-representative-1--sharon-tomiko-santos": "13/2"
+          "ld-37-state-senator--chipalo-street": "29/2",
+          "ld-37-state-senator--tatiana-brown": "7/2"
         },
         "labels": {
-          "ld-37-state-representative-1--kelabe-tewolde": "Kelabe Tewolde",
-          "ld-37-state-representative-1--sharon-tomiko-santos": "Sharon Tomiko Santos"
+          "ld-37-state-senator--chipalo-street": "Chipalo Street",
+          "ld-37-state-senator--tatiana-brown": "Tatiana Brown"
         }
       },
-      "expected": "Kelabe Tewolde 6½ of 13 endorsements; Sharon Tomiko Santos 6½ of 13 endorsements",
-      "source": "published race ld-37-state-representative-1 on the audited panel",
+      "expected": "Chipalo Street 14½ of 18 endorsements; Tatiana Brown 3½ of 18 endorsements",
+      "source": "published race ld-37-state-senator on the audited panel",
       "note": "The published panel: the shares, grades, and captions the guide ships."
     },
     {
@@ -831,13 +811,13 @@
           "us-house-7--pramila-jayapal"
         ],
         "units": {
-          "us-house-7--pramila-jayapal": "19"
+          "us-house-7--pramila-jayapal": "20"
         },
         "labels": {
           "us-house-7--pramila-jayapal": "Pramila Jayapal"
         }
       },
-      "expected": "Pramila Jayapal 19 of 19 endorsements",
+      "expected": "Pramila Jayapal 20 of 20 endorsements",
       "source": "published race us-house-7 on the audited panel",
       "note": "The published panel: the shares, grades, and captions the guide ships."
     },
@@ -1296,581 +1276,6 @@
       ],
       "source": "published race king-county-assessor on the district-sources panel",
       "note": "District sources cover only their own races, so most races have no endorsing source and the rest have exactly one."
-    },
-    {
-      "mirror": "meter-block-renders",
-      "input": {
-        "blocks": [
-          {
-            "type": "solid",
-            "width": 1,
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "source_label": "37th Legislative District Democrats",
-            "band_start": false,
-            "band_end": false,
-            "tongue_corner_start": false,
-            "tongue_corner_end": false
-          },
-          {
-            "type": "solid",
-            "width": 1,
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "source_label": "43rd Legislative District Democrats",
-            "band_start": false,
-            "band_end": false,
-            "tongue_corner_start": false,
-            "tongue_corner_end": false
-          },
-          {
-            "type": "solid",
-            "width": 1,
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "source_label": "46th Legislative District Democrats",
-            "band_start": false,
-            "band_end": false,
-            "tongue_corner_start": false,
-            "tongue_corner_end": false
-          },
-          {
-            "type": "solid",
-            "width": 1,
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "source_label": "King County Democrats",
-            "band_start": false,
-            "band_end": false,
-            "tongue_corner_start": false,
-            "tongue_corner_end": false
-          },
-          {
-            "type": "solid",
-            "width": 1,
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "source_label": "MLK Labor",
-            "band_start": false,
-            "band_end": false,
-            "tongue_corner_start": false,
-            "tongue_corner_end": false
-          },
-          {
-            "type": "solid",
-            "width": 1,
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "source_label": "PROTEC17",
-            "band_start": false,
-            "band_end": false,
-            "tongue_corner_start": false,
-            "tongue_corner_end": false
-          },
-          {
-            "type": "solid",
-            "width": 1,
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "source_label": "SEIU 775",
-            "band_start": false,
-            "band_end": false,
-            "tongue_corner_start": false,
-            "tongue_corner_end": false
-          },
-          {
-            "type": "solid",
-            "width": 1,
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "source_label": "SEIU 925",
-            "band_start": false,
-            "band_end": false,
-            "tongue_corner_start": false,
-            "tongue_corner_end": false
-          },
-          {
-            "type": "solid",
-            "width": 1,
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "source_label": "Tech 4 Housing",
-            "band_start": false,
-            "band_end": false,
-            "tongue_corner_start": false,
-            "tongue_corner_end": false
-          },
-          {
-            "type": "solid",
-            "width": 1,
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "source_label": "The Stranger Election Control Board",
-            "band_start": false,
-            "band_end": false,
-            "tongue_corner_start": false,
-            "tongue_corner_end": false
-          },
-          {
-            "type": "solid",
-            "width": 1,
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "source_label": "The Urbanist Elections Committee",
-            "band_start": false,
-            "band_end": false,
-            "tongue_corner_start": false,
-            "tongue_corner_end": false
-          },
-          {
-            "type": "solid",
-            "width": 1,
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "source_label": "The Washington Bus",
-            "band_start": false,
-            "band_end": false,
-            "tongue_corner_start": false,
-            "tongue_corner_end": false
-          },
-          {
-            "type": "solid",
-            "width": 1,
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "source_label": "UFCW 3000",
-            "band_start": false,
-            "band_end": false,
-            "tongue_corner_start": false,
-            "tongue_corner_end": false
-          },
-          {
-            "type": "solid",
-            "width": 1,
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "source_label": "Washington Bikes",
-            "band_start": false,
-            "band_end": false,
-            "tongue_corner_start": false,
-            "tongue_corner_end": false
-          },
-          {
-            "type": "solid",
-            "width": 1,
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "source_label": "Washington Community Action Network",
-            "band_start": false,
-            "band_end": false,
-            "tongue_corner_start": false,
-            "tongue_corner_end": false
-          },
-          {
-            "type": "solid",
-            "width": 1,
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "source_label": "Washington Conservation Action",
-            "band_start": false,
-            "band_end": false,
-            "tongue_corner_start": false,
-            "tongue_corner_end": false
-          },
-          {
-            "type": "solid",
-            "width": 1,
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "source_label": "Washington Housing Alliance",
-            "band_start": false,
-            "band_end": false,
-            "tongue_corner_start": false,
-            "tongue_corner_end": false
-          },
-          {
-            "type": "solid",
-            "width": 1,
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "source_label": "Washington State Stonewall Democrats",
-            "band_start": false,
-            "band_end": false,
-            "tongue_corner_start": false,
-            "tongue_corner_end": false
-          },
-          {
-            "type": "solid",
-            "width": 1,
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "source_label": "Washington for Peace and Justice",
-            "band_start": false,
-            "band_end": false,
-            "tongue_corner_start": false,
-            "tongue_corner_end": false
-          },
-          {
-            "type": "split",
-            "width": 1,
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a",
-              "king-county-council-2--toshiko-grace-hasegawa"
-            ],
-            "source_label": "Alliance for Gun Responsibility Victory Fund",
-            "band_start": true,
-            "band_end": false,
-            "tongue_corner_start": true,
-            "tongue_corner_end": false
-          },
-          {
-            "type": "split",
-            "width": 1,
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a",
-              "king-county-council-2--toshiko-grace-hasegawa"
-            ],
-            "source_label": "National Women's Political Caucus of Washington",
-            "band_start": false,
-            "band_end": false,
-            "tongue_corner_start": false,
-            "tongue_corner_end": false
-          },
-          {
-            "type": "split",
-            "width": 1,
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a",
-              "king-county-council-2--toshiko-grace-hasegawa"
-            ],
-            "source_label": "Tech 4 Taxes",
-            "band_start": false,
-            "band_end": false,
-            "tongue_corner_start": false,
-            "tongue_corner_end": false
-          },
-          {
-            "type": "split",
-            "width": 1,
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a",
-              "king-county-council-2--toshiko-grace-hasegawa"
-            ],
-            "source_label": "Transit Riders Union",
-            "band_start": false,
-            "band_end": true,
-            "tongue_corner_start": false,
-            "tongue_corner_end": true
-          },
-          {
-            "type": "solid",
-            "width": 1,
-            "candidate_ids": [
-              "king-county-council-2--toshiko-grace-hasegawa"
-            ],
-            "source_label": "11th Legislative District Democrats",
-            "band_start": false,
-            "band_end": false,
-            "tongue_corner_start": false,
-            "tongue_corner_end": false
-          }
-        ],
-        "colors": {
-          "king-county-council-2--rebecca-salda-a": "var(--teal)",
-          "king-county-council-2--toshiko-grace-hasegawa": "var(--meter-trail-slate)"
-        },
-        "labels": {
-          "king-county-council-2--rebecca-salda-a": "Rebecca Saldaña",
-          "king-county-council-2--toshiko-grace-hasegawa": "Toshiko Grace Hasegawa"
-        }
-      },
-      "expected": [
-        {
-          "type": "solid",
-          "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--teal)",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false,
-          "source_label": "37th Legislative District Democrats",
-          "decision": "Endorsed Rebecca Saldaña"
-        },
-        {
-          "type": "solid",
-          "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false,
-          "source_label": "43rd Legislative District Democrats",
-          "decision": "Endorsed Rebecca Saldaña"
-        },
-        {
-          "type": "solid",
-          "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false,
-          "source_label": "46th Legislative District Democrats",
-          "decision": "Endorsed Rebecca Saldaña"
-        },
-        {
-          "type": "solid",
-          "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false,
-          "source_label": "King County Democrats",
-          "decision": "Endorsed Rebecca Saldaña"
-        },
-        {
-          "type": "solid",
-          "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false,
-          "source_label": "MLK Labor",
-          "decision": "Endorsed Rebecca Saldaña"
-        },
-        {
-          "type": "solid",
-          "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false,
-          "source_label": "PROTEC17",
-          "decision": "Endorsed Rebecca Saldaña"
-        },
-        {
-          "type": "solid",
-          "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false,
-          "source_label": "SEIU 775",
-          "decision": "Endorsed Rebecca Saldaña"
-        },
-        {
-          "type": "solid",
-          "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false,
-          "source_label": "SEIU 925",
-          "decision": "Endorsed Rebecca Saldaña"
-        },
-        {
-          "type": "solid",
-          "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false,
-          "source_label": "Tech 4 Housing",
-          "decision": "Endorsed Rebecca Saldaña"
-        },
-        {
-          "type": "solid",
-          "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false,
-          "source_label": "The Stranger Election Control Board",
-          "decision": "Endorsed Rebecca Saldaña"
-        },
-        {
-          "type": "solid",
-          "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false,
-          "source_label": "The Urbanist Elections Committee",
-          "decision": "Endorsed Rebecca Saldaña"
-        },
-        {
-          "type": "solid",
-          "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false,
-          "source_label": "The Washington Bus",
-          "decision": "Endorsed Rebecca Saldaña"
-        },
-        {
-          "type": "solid",
-          "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false,
-          "source_label": "UFCW 3000",
-          "decision": "Endorsed Rebecca Saldaña"
-        },
-        {
-          "type": "solid",
-          "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false,
-          "source_label": "Washington Bikes",
-          "decision": "Endorsed Rebecca Saldaña"
-        },
-        {
-          "type": "solid",
-          "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false,
-          "source_label": "Washington Community Action Network",
-          "decision": "Endorsed Rebecca Saldaña"
-        },
-        {
-          "type": "solid",
-          "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false,
-          "source_label": "Washington Conservation Action",
-          "decision": "Endorsed Rebecca Saldaña"
-        },
-        {
-          "type": "solid",
-          "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false,
-          "source_label": "Washington Housing Alliance",
-          "decision": "Endorsed Rebecca Saldaña"
-        },
-        {
-          "type": "solid",
-          "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false,
-          "source_label": "Washington State Stonewall Democrats",
-          "decision": "Endorsed Rebecca Saldaña"
-        },
-        {
-          "type": "solid",
-          "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false,
-          "source_label": "Washington for Peace and Justice",
-          "decision": "Endorsed Rebecca Saldaña"
-        },
-        {
-          "type": "split",
-          "width": 1,
-          "style": "--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-slate); --meter-splitline-rest:var(--meter-trail-slate); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)); --meter-tongue-bg:var(--teal); --meter-seam-rest-color:var(--teal); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)) 50% 100%)",
-          "band_start": true,
-          "band_end": false,
-          "tongue_corner_start": true,
-          "tongue_corner_end": false,
-          "source_label": "Alliance for Gun Responsibility Victory Fund",
-          "decision": "Split: Rebecca Saldaña + Toshiko Grace Hasegawa — ½ each"
-        },
-        {
-          "type": "split",
-          "width": 1,
-          "style": "--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-slate); --meter-splitline-rest:var(--meter-trail-slate); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)); --meter-seam-rest-image:linear-gradient(180deg, var(--teal) 0 50%, var(--meter-trail-slate) 50% 100%); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, var(--meter-trail-slate) 88%, var(--meter-seam-pole)) 50% 100%)",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false,
-          "source_label": "National Women's Political Caucus of Washington",
-          "decision": "Split: Rebecca Saldaña + Toshiko Grace Hasegawa — ½ each"
-        },
-        {
-          "type": "split",
-          "width": 1,
-          "style": "--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-slate); --meter-splitline-rest:var(--meter-trail-slate); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)); --meter-seam-rest-image:linear-gradient(180deg, var(--teal) 0 50%, var(--meter-trail-slate) 50% 100%); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, var(--meter-trail-slate) 88%, var(--meter-seam-pole)) 50% 100%)",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false,
-          "source_label": "Tech 4 Taxes",
-          "decision": "Split: Rebecca Saldaña + Toshiko Grace Hasegawa — ½ each"
-        },
-        {
-          "type": "split",
-          "width": 1,
-          "style": "--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-slate); --meter-splitline-rest:var(--meter-trail-slate); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)); --meter-tongue-bg:var(--meter-trail-slate); --meter-seam-rest-image:linear-gradient(180deg, var(--teal) 0 50%, var(--meter-trail-slate) 50% 100%); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, var(--meter-trail-slate) 88%, var(--meter-seam-pole)) 50% 100%)",
-          "band_start": false,
-          "band_end": true,
-          "tongue_corner_start": false,
-          "tongue_corner_end": true,
-          "source_label": "Transit Riders Union",
-          "decision": "Split: Rebecca Saldaña + Toshiko Grace Hasegawa — ½ each"
-        },
-        {
-          "type": "solid",
-          "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--meter-trail-slate); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, var(--meter-trail-slate) 88%, var(--meter-seam-pole)) 50% 100%)",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false,
-          "source_label": "11th Legislative District Democrats",
-          "decision": "Endorsed Toshiko Grace Hasegawa"
-        }
-      ],
-      "source": "published race king-county-council-2 on the audited panel",
-      "note": "The published panel: the shares, grades, and captions the guide ships."
     },
     {
       "mirror": "meter-block-renders",
@@ -2607,6 +2012,18 @@
             "candidate_ids": [
               "ld-32-state-representative-2--imraan-siddiqi"
             ],
+            "source_label": "Transit Riders Union",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-2--imraan-siddiqi"
+            ],
             "source_label": "Washington State Stonewall Democrats",
             "band_start": false,
             "band_end": false,
@@ -2810,6 +2227,17 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "The Urbanist Elections Committee",
+          "decision": "Endorsed Imraan Siddiqi"
+        },
+        {
+          "type": "solid",
+          "width": 1,
+          "style": "--meter-w:1; --meter-c:var(--meter-trail-slate); --meter-seam-hover-color:color-mix(in srgb, var(--meter-trail-slate) 88%, var(--meter-seam-pole))",
+          "band_start": false,
+          "band_end": false,
+          "tongue_corner_start": false,
+          "tongue_corner_end": false,
+          "source_label": "Transit Riders Union",
           "decision": "Endorsed Imraan Siddiqi"
         },
         {
@@ -3302,92 +2730,7 @@
             "type": "solid",
             "width": 1,
             "candidate_ids": [
-              "ld-37-state-representative-1--kelabe-tewolde"
-            ],
-            "source_label": "Sage Leaders",
-            "band_start": false,
-            "band_end": false,
-            "tongue_corner_start": false,
-            "tongue_corner_end": false
-          },
-          {
-            "type": "solid",
-            "width": 1,
-            "candidate_ids": [
-              "ld-37-state-representative-1--kelabe-tewolde"
-            ],
-            "source_label": "Seattle Gay News Editorial Board",
-            "band_start": false,
-            "band_end": false,
-            "tongue_corner_start": false,
-            "tongue_corner_end": false
-          },
-          {
-            "type": "solid",
-            "width": 1,
-            "candidate_ids": [
-              "ld-37-state-representative-1--kelabe-tewolde"
-            ],
-            "source_label": "Tech 4 Housing",
-            "band_start": false,
-            "band_end": false,
-            "tongue_corner_start": false,
-            "tongue_corner_end": false
-          },
-          {
-            "type": "solid",
-            "width": 1,
-            "candidate_ids": [
-              "ld-37-state-representative-1--kelabe-tewolde"
-            ],
-            "source_label": "The Stranger Election Control Board",
-            "band_start": false,
-            "band_end": false,
-            "tongue_corner_start": false,
-            "tongue_corner_end": false
-          },
-          {
-            "type": "solid",
-            "width": 1,
-            "candidate_ids": [
-              "ld-37-state-representative-1--kelabe-tewolde"
-            ],
-            "source_label": "The Urbanist Elections Committee",
-            "band_start": false,
-            "band_end": false,
-            "tongue_corner_start": false,
-            "tongue_corner_end": false
-          },
-          {
-            "type": "solid",
-            "width": 1,
-            "candidate_ids": [
-              "ld-37-state-representative-1--kelabe-tewolde"
-            ],
-            "source_label": "Washington State Stonewall Democrats",
-            "band_start": false,
-            "band_end": false,
-            "tongue_corner_start": false,
-            "tongue_corner_end": false
-          },
-          {
-            "type": "split",
-            "width": 1,
-            "candidate_ids": [
-              "ld-37-state-representative-1--kelabe-tewolde",
-              "ld-37-state-representative-1--sharon-tomiko-santos"
-            ],
-            "source_label": "Washington for Peace and Justice",
-            "band_start": true,
-            "band_end": true,
-            "tongue_corner_start": true,
-            "tongue_corner_end": true
-          },
-          {
-            "type": "solid",
-            "width": 1,
-            "candidate_ids": [
-              "ld-37-state-representative-1--sharon-tomiko-santos"
+              "ld-37-state-senator--chipalo-street"
             ],
             "source_label": "37th Legislative District Democrats",
             "band_start": false,
@@ -3399,7 +2742,7 @@
             "type": "solid",
             "width": 1,
             "candidate_ids": [
-              "ld-37-state-representative-1--sharon-tomiko-santos"
+              "ld-37-state-senator--chipalo-street"
             ],
             "source_label": "AFT Washington",
             "band_start": false,
@@ -3411,7 +2754,7 @@
             "type": "solid",
             "width": 1,
             "candidate_ids": [
-              "ld-37-state-representative-1--sharon-tomiko-santos"
+              "ld-37-state-senator--chipalo-street"
             ],
             "source_label": "Alliance for Gun Responsibility Victory Fund",
             "band_start": false,
@@ -3423,9 +2766,9 @@
             "type": "solid",
             "width": 1,
             "candidate_ids": [
-              "ld-37-state-representative-1--sharon-tomiko-santos"
+              "ld-37-state-senator--chipalo-street"
             ],
-            "source_label": "National Women's Political Caucus of Washington",
+            "source_label": "King County Democrats",
             "band_start": false,
             "band_end": false,
             "tongue_corner_start": false,
@@ -3435,7 +2778,19 @@
             "type": "solid",
             "width": 1,
             "candidate_ids": [
-              "ld-37-state-representative-1--sharon-tomiko-santos"
+              "ld-37-state-senator--chipalo-street"
+            ],
+            "source_label": "SEIU 775",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-37-state-senator--chipalo-street"
             ],
             "source_label": "SEIU 925",
             "band_start": false,
@@ -3447,9 +2802,142 @@
             "type": "solid",
             "width": 1,
             "candidate_ids": [
-              "ld-37-state-representative-1--sharon-tomiko-santos"
+              "ld-37-state-senator--chipalo-street"
+            ],
+            "source_label": "The Stranger Election Control Board",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-37-state-senator--chipalo-street"
+            ],
+            "source_label": "UFCW 3000",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-37-state-senator--chipalo-street"
+            ],
+            "source_label": "Washington Conservation Action",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-37-state-senator--chipalo-street"
+            ],
+            "source_label": "Washington Housing Alliance",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-37-state-senator--chipalo-street"
+            ],
+            "source_label": "Washington State Building and Construction Trades Council",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-37-state-senator--chipalo-street"
             ],
             "source_label": "Washington State Labor Council, AFL-CIO",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-37-state-senator--chipalo-street"
+            ],
+            "source_label": "Washington State Stonewall Democrats",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-37-state-senator--chipalo-street"
+            ],
+            "source_label": "Washington for Peace and Justice",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "split",
+            "width": 1,
+            "candidate_ids": [
+              "ld-37-state-senator--chipalo-street",
+              "ld-37-state-senator--tatiana-brown"
+            ],
+            "source_label": "Sage Leaders",
+            "band_start": true,
+            "band_end": true,
+            "tongue_corner_start": true,
+            "tongue_corner_end": true
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-37-state-senator--tatiana-brown"
+            ],
+            "source_label": "Seattle Gay News Editorial Board",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-37-state-senator--tatiana-brown"
+            ],
+            "source_label": "The Washington Bus",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-37-state-senator--tatiana-brown"
+            ],
+            "source_label": "Transit Riders Union",
             "band_start": false,
             "band_end": false,
             "tongue_corner_start": false,
@@ -3457,160 +2945,215 @@
           }
         ],
         "colors": {
-          "ld-37-state-representative-1--kelabe-tewolde": "var(--amber)",
-          "ld-37-state-representative-1--sharon-tomiko-santos": "var(--meter-tie-deep)"
+          "ld-37-state-senator--chipalo-street": "var(--teal)",
+          "ld-37-state-senator--tatiana-brown": "var(--meter-trail-slate)"
         },
         "labels": {
-          "ld-37-state-representative-1--kelabe-tewolde": "Kelabe Tewolde",
-          "ld-37-state-representative-1--sharon-tomiko-santos": "Sharon Tomiko Santos"
+          "ld-37-state-senator--chipalo-street": "Chipalo Street",
+          "ld-37-state-senator--tatiana-brown": "Tatiana Brown"
         }
       },
       "expected": [
         {
           "type": "solid",
           "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--amber)",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false,
-          "source_label": "Sage Leaders",
-          "decision": "Endorsed Kelabe Tewolde"
-        },
-        {
-          "type": "solid",
-          "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--amber); --meter-seam-hover-color:color-mix(in srgb, var(--amber) 88%, var(--meter-seam-pole))",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false,
-          "source_label": "Seattle Gay News Editorial Board",
-          "decision": "Endorsed Kelabe Tewolde"
-        },
-        {
-          "type": "solid",
-          "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--amber); --meter-seam-hover-color:color-mix(in srgb, var(--amber) 88%, var(--meter-seam-pole))",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false,
-          "source_label": "Tech 4 Housing",
-          "decision": "Endorsed Kelabe Tewolde"
-        },
-        {
-          "type": "solid",
-          "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--amber); --meter-seam-hover-color:color-mix(in srgb, var(--amber) 88%, var(--meter-seam-pole))",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false,
-          "source_label": "The Stranger Election Control Board",
-          "decision": "Endorsed Kelabe Tewolde"
-        },
-        {
-          "type": "solid",
-          "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--amber); --meter-seam-hover-color:color-mix(in srgb, var(--amber) 88%, var(--meter-seam-pole))",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false,
-          "source_label": "The Urbanist Elections Committee",
-          "decision": "Endorsed Kelabe Tewolde"
-        },
-        {
-          "type": "solid",
-          "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--amber); --meter-seam-hover-color:color-mix(in srgb, var(--amber) 88%, var(--meter-seam-pole))",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false,
-          "source_label": "Washington State Stonewall Democrats",
-          "decision": "Endorsed Kelabe Tewolde"
-        },
-        {
-          "type": "split",
-          "width": 1,
-          "style": "--meter-w:1; --meter-ca:var(--amber); --meter-cb:var(--meter-tie-deep); --meter-splitline-rest:var(--meter-tie-deep); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--amber) 50%, var(--meter-tie-deep) 50%) 86%, var(--meter-seam-pole)); --meter-tongue-bg:linear-gradient(90deg, var(--amber) 0 50%, var(--meter-tie-deep) 50% 100%); --meter-seam-rest-color:var(--amber); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--amber) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, color-mix(in srgb, var(--amber) 50%, var(--meter-tie-deep) 50%) 86%, var(--meter-seam-pole)) 50% 100%)",
-          "band_start": true,
-          "band_end": true,
-          "tongue_corner_start": true,
-          "tongue_corner_end": true,
-          "source_label": "Washington for Peace and Justice",
-          "decision": "Split: Kelabe Tewolde + Sharon Tomiko Santos — ½ each"
-        },
-        {
-          "type": "solid",
-          "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--meter-tie-deep); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, color-mix(in srgb, var(--amber) 50%, var(--meter-tie-deep) 50%) 86%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, var(--meter-tie-deep) 88%, var(--meter-seam-pole)) 50% 100%)",
+          "style": "--meter-w:1; --meter-c:var(--teal)",
           "band_start": false,
           "band_end": false,
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "37th Legislative District Democrats",
-          "decision": "Endorsed Sharon Tomiko Santos"
+          "decision": "Endorsed Chipalo Street"
         },
         {
           "type": "solid",
           "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--meter-tie-deep); --meter-seam-hover-color:color-mix(in srgb, var(--meter-tie-deep) 88%, var(--meter-seam-pole))",
+          "style": "--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))",
           "band_start": false,
           "band_end": false,
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "AFT Washington",
-          "decision": "Endorsed Sharon Tomiko Santos"
+          "decision": "Endorsed Chipalo Street"
         },
         {
           "type": "solid",
           "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--meter-tie-deep); --meter-seam-hover-color:color-mix(in srgb, var(--meter-tie-deep) 88%, var(--meter-seam-pole))",
+          "style": "--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))",
           "band_start": false,
           "band_end": false,
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Alliance for Gun Responsibility Victory Fund",
-          "decision": "Endorsed Sharon Tomiko Santos"
+          "decision": "Endorsed Chipalo Street"
         },
         {
           "type": "solid",
           "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--meter-tie-deep); --meter-seam-hover-color:color-mix(in srgb, var(--meter-tie-deep) 88%, var(--meter-seam-pole))",
+          "style": "--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))",
           "band_start": false,
           "band_end": false,
           "tongue_corner_start": false,
           "tongue_corner_end": false,
-          "source_label": "National Women's Political Caucus of Washington",
-          "decision": "Endorsed Sharon Tomiko Santos"
+          "source_label": "King County Democrats",
+          "decision": "Endorsed Chipalo Street"
         },
         {
           "type": "solid",
           "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--meter-tie-deep); --meter-seam-hover-color:color-mix(in srgb, var(--meter-tie-deep) 88%, var(--meter-seam-pole))",
+          "style": "--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))",
+          "band_start": false,
+          "band_end": false,
+          "tongue_corner_start": false,
+          "tongue_corner_end": false,
+          "source_label": "SEIU 775",
+          "decision": "Endorsed Chipalo Street"
+        },
+        {
+          "type": "solid",
+          "width": 1,
+          "style": "--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))",
           "band_start": false,
           "band_end": false,
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "SEIU 925",
-          "decision": "Endorsed Sharon Tomiko Santos"
+          "decision": "Endorsed Chipalo Street"
         },
         {
           "type": "solid",
           "width": 1,
-          "style": "--meter-w:1; --meter-c:var(--meter-tie-deep); --meter-seam-hover-color:color-mix(in srgb, var(--meter-tie-deep) 88%, var(--meter-seam-pole))",
+          "style": "--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))",
+          "band_start": false,
+          "band_end": false,
+          "tongue_corner_start": false,
+          "tongue_corner_end": false,
+          "source_label": "The Stranger Election Control Board",
+          "decision": "Endorsed Chipalo Street"
+        },
+        {
+          "type": "solid",
+          "width": 1,
+          "style": "--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))",
+          "band_start": false,
+          "band_end": false,
+          "tongue_corner_start": false,
+          "tongue_corner_end": false,
+          "source_label": "UFCW 3000",
+          "decision": "Endorsed Chipalo Street"
+        },
+        {
+          "type": "solid",
+          "width": 1,
+          "style": "--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))",
+          "band_start": false,
+          "band_end": false,
+          "tongue_corner_start": false,
+          "tongue_corner_end": false,
+          "source_label": "Washington Conservation Action",
+          "decision": "Endorsed Chipalo Street"
+        },
+        {
+          "type": "solid",
+          "width": 1,
+          "style": "--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))",
+          "band_start": false,
+          "band_end": false,
+          "tongue_corner_start": false,
+          "tongue_corner_end": false,
+          "source_label": "Washington Housing Alliance",
+          "decision": "Endorsed Chipalo Street"
+        },
+        {
+          "type": "solid",
+          "width": 1,
+          "style": "--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))",
+          "band_start": false,
+          "band_end": false,
+          "tongue_corner_start": false,
+          "tongue_corner_end": false,
+          "source_label": "Washington State Building and Construction Trades Council",
+          "decision": "Endorsed Chipalo Street"
+        },
+        {
+          "type": "solid",
+          "width": 1,
+          "style": "--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))",
           "band_start": false,
           "band_end": false,
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "Washington State Labor Council, AFL-CIO",
-          "decision": "Endorsed Sharon Tomiko Santos"
+          "decision": "Endorsed Chipalo Street"
+        },
+        {
+          "type": "solid",
+          "width": 1,
+          "style": "--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))",
+          "band_start": false,
+          "band_end": false,
+          "tongue_corner_start": false,
+          "tongue_corner_end": false,
+          "source_label": "Washington State Stonewall Democrats",
+          "decision": "Endorsed Chipalo Street"
+        },
+        {
+          "type": "solid",
+          "width": 1,
+          "style": "--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))",
+          "band_start": false,
+          "band_end": false,
+          "tongue_corner_start": false,
+          "tongue_corner_end": false,
+          "source_label": "Washington for Peace and Justice",
+          "decision": "Endorsed Chipalo Street"
+        },
+        {
+          "type": "split",
+          "width": 1,
+          "style": "--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-slate); --meter-splitline-rest:var(--meter-trail-slate); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)); --meter-tongue-bg:linear-gradient(90deg, var(--teal) 0 50%, var(--meter-trail-slate) 50% 100%); --meter-seam-rest-color:var(--teal); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)) 50% 100%)",
+          "band_start": true,
+          "band_end": true,
+          "tongue_corner_start": true,
+          "tongue_corner_end": true,
+          "source_label": "Sage Leaders",
+          "decision": "Split: Chipalo Street + Tatiana Brown — ½ each"
+        },
+        {
+          "type": "solid",
+          "width": 1,
+          "style": "--meter-w:1; --meter-c:var(--meter-trail-slate); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, var(--meter-trail-slate) 88%, var(--meter-seam-pole)) 50% 100%)",
+          "band_start": false,
+          "band_end": false,
+          "tongue_corner_start": false,
+          "tongue_corner_end": false,
+          "source_label": "Seattle Gay News Editorial Board",
+          "decision": "Endorsed Tatiana Brown"
+        },
+        {
+          "type": "solid",
+          "width": 1,
+          "style": "--meter-w:1; --meter-c:var(--meter-trail-slate); --meter-seam-hover-color:color-mix(in srgb, var(--meter-trail-slate) 88%, var(--meter-seam-pole))",
+          "band_start": false,
+          "band_end": false,
+          "tongue_corner_start": false,
+          "tongue_corner_end": false,
+          "source_label": "The Washington Bus",
+          "decision": "Endorsed Tatiana Brown"
+        },
+        {
+          "type": "solid",
+          "width": 1,
+          "style": "--meter-w:1; --meter-c:var(--meter-trail-slate); --meter-seam-hover-color:color-mix(in srgb, var(--meter-trail-slate) 88%, var(--meter-seam-pole))",
+          "band_start": false,
+          "band_end": false,
+          "tongue_corner_start": false,
+          "tongue_corner_end": false,
+          "source_label": "Transit Riders Union",
+          "decision": "Endorsed Tatiana Brown"
         }
       ],
-      "source": "published race ld-37-state-representative-1 on the audited panel",
+      "source": "published race ld-37-state-senator on the audited panel",
       "note": "The published panel: the shares, grades, and captions the guide ships."
     },
     {
@@ -4146,6 +3689,18 @@
             "candidate_ids": [
               "us-house-7--pramila-jayapal"
             ],
+            "source_label": "Seattle Gay News Editorial Board",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "us-house-7--pramila-jayapal"
+            ],
             "source_label": "Sierra Club Washington State Chapter",
             "band_start": false,
             "band_end": false,
@@ -4363,6 +3918,17 @@
           "tongue_corner_start": false,
           "tongue_corner_end": false,
           "source_label": "SEIU 775",
+          "decision": "Endorsed Pramila Jayapal"
+        },
+        {
+          "type": "solid",
+          "width": 1,
+          "style": "--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))",
+          "band_start": false,
+          "band_end": false,
+          "tongue_corner_start": false,
+          "tongue_corner_end": false,
+          "source_label": "Seattle Gay News Editorial Board",
           "decision": "Endorsed Pramila Jayapal"
         },
         {
@@ -4972,26 +4538,6 @@
       "mirror": "meter-candidate-colors",
       "input": {
         "standings": [
-          "ld-37-state-representative-1--kelabe-tewolde",
-          "ld-37-state-representative-1--sharon-tomiko-santos"
-        ],
-        "leaderIds": [
-          "ld-37-state-representative-1--kelabe-tewolde",
-          "ld-37-state-representative-1--sharon-tomiko-santos"
-        ],
-        "hasMajority": false
-      },
-      "expected": {
-        "ld-37-state-representative-1--kelabe-tewolde": "var(--amber)",
-        "ld-37-state-representative-1--sharon-tomiko-santos": "var(--meter-tie-deep)"
-      },
-      "source": "published race ld-37-state-representative-1 on the audited panel",
-      "note": "The published panel: the shares, grades, and captions the guide ships."
-    },
-    {
-      "mirror": "meter-candidate-colors",
-      "input": {
-        "standings": [
           "tie--second",
           "tie--first"
         ],
@@ -5134,25 +4680,6 @@
       "mirror": "meter-candidate-colors",
       "input": {
         "standings": [
-          "king-county-council-2--rebecca-salda-a",
-          "king-county-council-2--toshiko-grace-hasegawa"
-        ],
-        "leaderIds": [
-          "king-county-council-2--rebecca-salda-a"
-        ],
-        "hasMajority": true
-      },
-      "expected": {
-        "king-county-council-2--rebecca-salda-a": "var(--teal)",
-        "king-county-council-2--toshiko-grace-hasegawa": "var(--meter-trail-slate)"
-      },
-      "source": "published race king-county-council-2 on the audited panel",
-      "note": "The published panel: the shares, grades, and captions the guide ships."
-    },
-    {
-      "mirror": "meter-candidate-colors",
-      "input": {
-        "standings": [
           "king-county-council-8--teresa-mosqueda"
         ],
         "leaderIds": [
@@ -5257,6 +4784,25 @@
         "ld-34-state-representative-2--mary-anito": "var(--meter-trail-slate)"
       },
       "source": "published race ld-34-state-representative-2 on the audited panel",
+      "note": "The published panel: the shares, grades, and captions the guide ships."
+    },
+    {
+      "mirror": "meter-candidate-colors",
+      "input": {
+        "standings": [
+          "ld-37-state-senator--chipalo-street",
+          "ld-37-state-senator--tatiana-brown"
+        ],
+        "leaderIds": [
+          "ld-37-state-senator--chipalo-street"
+        ],
+        "hasMajority": true
+      },
+      "expected": {
+        "ld-37-state-senator--chipalo-street": "var(--teal)",
+        "ld-37-state-senator--tatiana-brown": "var(--meter-trail-slate)"
+      },
+      "source": "published race ld-37-state-senator on the audited panel",
       "note": "The published panel: the shares, grades, and captions the guide ships."
     },
     {
@@ -6084,293 +5630,6 @@
       "input": {
         "endorsements": [
           {
-            "source_label": "The Stranger Election Control Board",
-            "candidate_ids": [
-              "ld-37-state-representative-1--kelabe-tewolde"
-            ],
-            "candidate_labels": [
-              "Kelabe Tewolde"
-            ]
-          },
-          {
-            "source_label": "The Urbanist Elections Committee",
-            "candidate_ids": [
-              "ld-37-state-representative-1--kelabe-tewolde"
-            ],
-            "candidate_labels": [
-              "Kelabe Tewolde"
-            ]
-          },
-          {
-            "source_label": "Tech 4 Housing",
-            "candidate_ids": [
-              "ld-37-state-representative-1--kelabe-tewolde"
-            ],
-            "candidate_labels": [
-              "Kelabe Tewolde"
-            ]
-          },
-          {
-            "source_label": "Washington for Peace and Justice",
-            "candidate_ids": [
-              "ld-37-state-representative-1--kelabe-tewolde",
-              "ld-37-state-representative-1--sharon-tomiko-santos"
-            ],
-            "candidate_labels": [
-              "Kelabe Tewolde",
-              "Sharon Tomiko Santos"
-            ]
-          },
-          {
-            "source_label": "Seattle Gay News Editorial Board",
-            "candidate_ids": [
-              "ld-37-state-representative-1--kelabe-tewolde"
-            ],
-            "candidate_labels": [
-              "Kelabe Tewolde"
-            ]
-          },
-          {
-            "source_label": "Sage Leaders",
-            "candidate_ids": [
-              "ld-37-state-representative-1--kelabe-tewolde"
-            ],
-            "candidate_labels": [
-              "Kelabe Tewolde"
-            ]
-          },
-          {
-            "source_label": "37th Legislative District Democrats",
-            "candidate_ids": [
-              "ld-37-state-representative-1--sharon-tomiko-santos"
-            ],
-            "candidate_labels": [
-              "Sharon Tomiko Santos"
-            ]
-          },
-          {
-            "source_label": "Washington State Stonewall Democrats",
-            "candidate_ids": [
-              "ld-37-state-representative-1--kelabe-tewolde"
-            ],
-            "candidate_labels": [
-              "Kelabe Tewolde"
-            ]
-          },
-          {
-            "source_label": "Washington State Labor Council, AFL-CIO",
-            "candidate_ids": [
-              "ld-37-state-representative-1--sharon-tomiko-santos"
-            ],
-            "candidate_labels": [
-              "Sharon Tomiko Santos"
-            ]
-          },
-          {
-            "source_label": "SEIU 925",
-            "candidate_ids": [
-              "ld-37-state-representative-1--sharon-tomiko-santos"
-            ],
-            "candidate_labels": [
-              "Sharon Tomiko Santos"
-            ]
-          },
-          {
-            "source_label": "AFT Washington",
-            "candidate_ids": [
-              "ld-37-state-representative-1--sharon-tomiko-santos"
-            ],
-            "candidate_labels": [
-              "Sharon Tomiko Santos"
-            ]
-          },
-          {
-            "source_label": "Alliance for Gun Responsibility Victory Fund",
-            "candidate_ids": [
-              "ld-37-state-representative-1--sharon-tomiko-santos"
-            ],
-            "candidate_labels": [
-              "Sharon Tomiko Santos"
-            ]
-          },
-          {
-            "source_label": "National Women's Political Caucus of Washington",
-            "candidate_ids": [
-              "ld-37-state-representative-1--sharon-tomiko-santos"
-            ],
-            "candidate_labels": [
-              "Sharon Tomiko Santos"
-            ]
-          }
-        ]
-      },
-      "expected": [
-        {
-          "type": "solid",
-          "width": 1,
-          "candidate_ids": [
-            "ld-37-state-representative-1--kelabe-tewolde"
-          ],
-          "source_label": "Sage Leaders",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false
-        },
-        {
-          "type": "solid",
-          "width": 1,
-          "candidate_ids": [
-            "ld-37-state-representative-1--kelabe-tewolde"
-          ],
-          "source_label": "Seattle Gay News Editorial Board",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false
-        },
-        {
-          "type": "solid",
-          "width": 1,
-          "candidate_ids": [
-            "ld-37-state-representative-1--kelabe-tewolde"
-          ],
-          "source_label": "Tech 4 Housing",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false
-        },
-        {
-          "type": "solid",
-          "width": 1,
-          "candidate_ids": [
-            "ld-37-state-representative-1--kelabe-tewolde"
-          ],
-          "source_label": "The Stranger Election Control Board",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false
-        },
-        {
-          "type": "solid",
-          "width": 1,
-          "candidate_ids": [
-            "ld-37-state-representative-1--kelabe-tewolde"
-          ],
-          "source_label": "The Urbanist Elections Committee",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false
-        },
-        {
-          "type": "solid",
-          "width": 1,
-          "candidate_ids": [
-            "ld-37-state-representative-1--kelabe-tewolde"
-          ],
-          "source_label": "Washington State Stonewall Democrats",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false
-        },
-        {
-          "type": "split",
-          "width": 1,
-          "candidate_ids": [
-            "ld-37-state-representative-1--kelabe-tewolde",
-            "ld-37-state-representative-1--sharon-tomiko-santos"
-          ],
-          "source_label": "Washington for Peace and Justice",
-          "band_start": true,
-          "band_end": true,
-          "tongue_corner_start": true,
-          "tongue_corner_end": true
-        },
-        {
-          "type": "solid",
-          "width": 1,
-          "candidate_ids": [
-            "ld-37-state-representative-1--sharon-tomiko-santos"
-          ],
-          "source_label": "37th Legislative District Democrats",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false
-        },
-        {
-          "type": "solid",
-          "width": 1,
-          "candidate_ids": [
-            "ld-37-state-representative-1--sharon-tomiko-santos"
-          ],
-          "source_label": "AFT Washington",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false
-        },
-        {
-          "type": "solid",
-          "width": 1,
-          "candidate_ids": [
-            "ld-37-state-representative-1--sharon-tomiko-santos"
-          ],
-          "source_label": "Alliance for Gun Responsibility Victory Fund",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false
-        },
-        {
-          "type": "solid",
-          "width": 1,
-          "candidate_ids": [
-            "ld-37-state-representative-1--sharon-tomiko-santos"
-          ],
-          "source_label": "National Women's Political Caucus of Washington",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false
-        },
-        {
-          "type": "solid",
-          "width": 1,
-          "candidate_ids": [
-            "ld-37-state-representative-1--sharon-tomiko-santos"
-          ],
-          "source_label": "SEIU 925",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false
-        },
-        {
-          "type": "solid",
-          "width": 1,
-          "candidate_ids": [
-            "ld-37-state-representative-1--sharon-tomiko-santos"
-          ],
-          "source_label": "Washington State Labor Council, AFL-CIO",
-          "band_start": false,
-          "band_end": false,
-          "tongue_corner_start": false,
-          "tongue_corner_end": false
-        }
-      ],
-      "note": "The published panel: the shares, grades, and captions the guide ships.",
-      "source": "published race ld-37-state-representative-1 on the audited panel"
-    },
-    {
-      "mirror": "meter-layout-blocks",
-      "input": {
-        "endorsements": [
-          {
             "source_label": "Alpha Assembly",
             "candidate_ids": [
               "nway--alpha"
@@ -6929,243 +6188,6 @@
       "input": {
         "endorsements": [
           {
-            "source_label": "The Stranger Election Control Board",
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "candidate_labels": [
-              "Rebecca Saldaña"
-            ]
-          },
-          {
-            "source_label": "The Urbanist Elections Committee",
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "candidate_labels": [
-              "Rebecca Saldaña"
-            ]
-          },
-          {
-            "source_label": "Tech 4 Housing",
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "candidate_labels": [
-              "Rebecca Saldaña"
-            ]
-          },
-          {
-            "source_label": "Tech 4 Taxes",
-            "candidate_ids": [
-              "king-county-council-2--toshiko-grace-hasegawa",
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "candidate_labels": [
-              "Toshiko Grace Hasegawa",
-              "Rebecca Saldaña"
-            ]
-          },
-          {
-            "source_label": "Washington for Peace and Justice",
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "candidate_labels": [
-              "Rebecca Saldaña"
-            ]
-          },
-          {
-            "source_label": "Washington Community Action Network",
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "candidate_labels": [
-              "Rebecca Saldaña"
-            ]
-          },
-          {
-            "source_label": "The Washington Bus",
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "candidate_labels": [
-              "Rebecca Saldaña"
-            ]
-          },
-          {
-            "source_label": "King County Democrats",
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "candidate_labels": [
-              "Rebecca Saldaña"
-            ]
-          },
-          {
-            "source_label": "11th Legislative District Democrats",
-            "candidate_ids": [
-              "king-county-council-2--toshiko-grace-hasegawa"
-            ],
-            "candidate_labels": [
-              "Toshiko Grace Hasegawa"
-            ]
-          },
-          {
-            "source_label": "37th Legislative District Democrats",
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "candidate_labels": [
-              "Rebecca Saldaña"
-            ]
-          },
-          {
-            "source_label": "43rd Legislative District Democrats",
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "candidate_labels": [
-              "Rebecca Saldaña"
-            ]
-          },
-          {
-            "source_label": "46th Legislative District Democrats",
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "candidate_labels": [
-              "Rebecca Saldaña"
-            ]
-          },
-          {
-            "source_label": "Washington State Stonewall Democrats",
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "candidate_labels": [
-              "Rebecca Saldaña"
-            ]
-          },
-          {
-            "source_label": "Transit Riders Union",
-            "candidate_ids": [
-              "king-county-council-2--toshiko-grace-hasegawa",
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "candidate_labels": [
-              "Toshiko Grace Hasegawa",
-              "Rebecca Saldaña"
-            ]
-          },
-          {
-            "source_label": "Washington Bikes",
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "candidate_labels": [
-              "Rebecca Saldaña"
-            ]
-          },
-          {
-            "source_label": "Washington Conservation Action",
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "candidate_labels": [
-              "Rebecca Saldaña"
-            ]
-          },
-          {
-            "source_label": "MLK Labor",
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "candidate_labels": [
-              "Rebecca Saldaña"
-            ]
-          },
-          {
-            "source_label": "SEIU 775",
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "candidate_labels": [
-              "Rebecca Saldaña"
-            ]
-          },
-          {
-            "source_label": "SEIU 925",
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "candidate_labels": [
-              "Rebecca Saldaña"
-            ]
-          },
-          {
-            "source_label": "UFCW 3000",
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "candidate_labels": [
-              "Rebecca Saldaña"
-            ]
-          },
-          {
-            "source_label": "PROTEC17",
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "candidate_labels": [
-              "Rebecca Saldaña"
-            ]
-          },
-          {
-            "source_label": "Alliance for Gun Responsibility Victory Fund",
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a",
-              "king-county-council-2--toshiko-grace-hasegawa"
-            ],
-            "candidate_labels": [
-              "Rebecca Saldaña",
-              "Toshiko Grace Hasegawa"
-            ]
-          },
-          {
-            "source_label": "Washington Housing Alliance",
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a"
-            ],
-            "candidate_labels": [
-              "Rebecca Saldaña"
-            ]
-          },
-          {
-            "source_label": "National Women's Political Caucus of Washington",
-            "candidate_ids": [
-              "king-county-council-2--rebecca-salda-a",
-              "king-county-council-2--toshiko-grace-hasegawa"
-            ],
-            "candidate_labels": [
-              "Rebecca Saldaña",
-              "Toshiko Grace Hasegawa"
-            ]
-          }
-        ]
-      },
-      "expected": [
-        "king-county-council-2--rebecca-salda-a",
-        "king-county-council-2--toshiko-grace-hasegawa"
-      ],
-      "source": "published race king-county-council-2 on the audited panel",
-      "note": "The published panel: the shares, grades, and captions the guide ships."
-    },
-    {
-      "mirror": "meter-standings",
-      "input": {
-        "endorsements": [
-          {
             "source_label": "11th Legislative District Democrats",
             "candidate_ids": [
               "king-county-council-8--teresa-mosqueda"
@@ -7463,6 +6485,15 @@
           },
           {
             "source_label": "Washington State Stonewall Democrats",
+            "candidate_ids": [
+              "ld-32-state-representative-2--imraan-siddiqi"
+            ],
+            "candidate_labels": [
+              "Imraan Siddiqi"
+            ]
+          },
+          {
+            "source_label": "Transit Riders Union",
             "candidate_ids": [
               "ld-32-state-representative-2--imraan-siddiqi"
             ],
@@ -7805,129 +6836,179 @@
           {
             "source_label": "The Stranger Election Control Board",
             "candidate_ids": [
-              "ld-37-state-representative-1--kelabe-tewolde"
+              "ld-37-state-senator--chipalo-street"
             ],
             "candidate_labels": [
-              "Kelabe Tewolde"
+              "Chipalo Street"
             ]
           },
           {
             "source_label": "The Urbanist Elections Committee",
-            "candidate_ids": [
-              "ld-37-state-representative-1--kelabe-tewolde"
-            ],
-            "candidate_labels": [
-              "Kelabe Tewolde"
-            ]
-          },
-          {
-            "source_label": "Tech 4 Housing",
-            "candidate_ids": [
-              "ld-37-state-representative-1--kelabe-tewolde"
-            ],
-            "candidate_labels": [
-              "Kelabe Tewolde"
-            ]
+            "candidate_ids": [],
+            "candidate_labels": []
           },
           {
             "source_label": "Washington for Peace and Justice",
             "candidate_ids": [
-              "ld-37-state-representative-1--kelabe-tewolde",
-              "ld-37-state-representative-1--sharon-tomiko-santos"
+              "ld-37-state-senator--chipalo-street"
             ],
             "candidate_labels": [
-              "Kelabe Tewolde",
-              "Sharon Tomiko Santos"
+              "Chipalo Street"
             ]
           },
           {
             "source_label": "Seattle Gay News Editorial Board",
             "candidate_ids": [
-              "ld-37-state-representative-1--kelabe-tewolde"
+              "ld-37-state-senator--tatiana-brown"
             ],
             "candidate_labels": [
-              "Kelabe Tewolde"
+              "Tatiana Brown"
+            ]
+          },
+          {
+            "source_label": "The Washington Bus",
+            "candidate_ids": [
+              "ld-37-state-senator--tatiana-brown"
+            ],
+            "candidate_labels": [
+              "Tatiana Brown"
             ]
           },
           {
             "source_label": "Sage Leaders",
             "candidate_ids": [
-              "ld-37-state-representative-1--kelabe-tewolde"
+              "ld-37-state-senator--chipalo-street",
+              "ld-37-state-senator--tatiana-brown"
             ],
             "candidate_labels": [
-              "Kelabe Tewolde"
+              "Chipalo Street",
+              "Tatiana Brown"
+            ]
+          },
+          {
+            "source_label": "King County Democrats",
+            "candidate_ids": [
+              "ld-37-state-senator--chipalo-street"
+            ],
+            "candidate_labels": [
+              "Chipalo Street"
             ]
           },
           {
             "source_label": "37th Legislative District Democrats",
             "candidate_ids": [
-              "ld-37-state-representative-1--sharon-tomiko-santos"
+              "ld-37-state-senator--chipalo-street"
             ],
             "candidate_labels": [
-              "Sharon Tomiko Santos"
+              "Chipalo Street"
             ]
           },
           {
             "source_label": "Washington State Stonewall Democrats",
             "candidate_ids": [
-              "ld-37-state-representative-1--kelabe-tewolde"
+              "ld-37-state-senator--chipalo-street"
             ],
             "candidate_labels": [
-              "Kelabe Tewolde"
+              "Chipalo Street"
+            ]
+          },
+          {
+            "source_label": "Transit Riders Union",
+            "candidate_ids": [
+              "ld-37-state-senator--tatiana-brown"
+            ],
+            "candidate_labels": [
+              "Tatiana Brown"
+            ]
+          },
+          {
+            "source_label": "Washington Conservation Action",
+            "candidate_ids": [
+              "ld-37-state-senator--chipalo-street"
+            ],
+            "candidate_labels": [
+              "Chipalo Street"
             ]
           },
           {
             "source_label": "Washington State Labor Council, AFL-CIO",
             "candidate_ids": [
-              "ld-37-state-representative-1--sharon-tomiko-santos"
+              "ld-37-state-senator--chipalo-street"
             ],
             "candidate_labels": [
-              "Sharon Tomiko Santos"
+              "Chipalo Street"
+            ]
+          },
+          {
+            "source_label": "SEIU 775",
+            "candidate_ids": [
+              "ld-37-state-senator--chipalo-street"
+            ],
+            "candidate_labels": [
+              "Chipalo Street"
             ]
           },
           {
             "source_label": "SEIU 925",
             "candidate_ids": [
-              "ld-37-state-representative-1--sharon-tomiko-santos"
+              "ld-37-state-senator--chipalo-street"
             ],
             "candidate_labels": [
-              "Sharon Tomiko Santos"
+              "Chipalo Street"
+            ]
+          },
+          {
+            "source_label": "UFCW 3000",
+            "candidate_ids": [
+              "ld-37-state-senator--chipalo-street"
+            ],
+            "candidate_labels": [
+              "Chipalo Street"
             ]
           },
           {
             "source_label": "AFT Washington",
             "candidate_ids": [
-              "ld-37-state-representative-1--sharon-tomiko-santos"
+              "ld-37-state-senator--chipalo-street"
             ],
             "candidate_labels": [
-              "Sharon Tomiko Santos"
+              "Chipalo Street"
+            ]
+          },
+          {
+            "source_label": "Washington State Building and Construction Trades Council",
+            "candidate_ids": [
+              "ld-37-state-senator--chipalo-street"
+            ],
+            "candidate_labels": [
+              "Chipalo Street"
             ]
           },
           {
             "source_label": "Alliance for Gun Responsibility Victory Fund",
             "candidate_ids": [
-              "ld-37-state-representative-1--sharon-tomiko-santos"
+              "ld-37-state-senator--chipalo-street"
             ],
             "candidate_labels": [
-              "Sharon Tomiko Santos"
+              "Chipalo Street"
             ]
           },
           {
-            "source_label": "National Women's Political Caucus of Washington",
+            "source_label": "Washington Housing Alliance",
             "candidate_ids": [
-              "ld-37-state-representative-1--sharon-tomiko-santos"
+              "ld-37-state-senator--chipalo-street"
             ],
             "candidate_labels": [
-              "Sharon Tomiko Santos"
+              "Chipalo Street"
             ]
           }
         ]
       },
       "expected": [
-        "ld-37-state-representative-1--kelabe-tewolde",
-        "ld-37-state-representative-1--sharon-tomiko-santos"
+        "ld-37-state-senator--chipalo-street",
+        "ld-37-state-senator--tatiana-brown"
       ],
-      "source": "published race ld-37-state-representative-1 on the audited panel",
+      "source": "published race ld-37-state-senator on the audited panel",
       "note": "The published panel: the shares, grades, and captions the guide ships."
     },
     {
@@ -8167,6 +7248,15 @@
           },
           {
             "source_label": "Washington for Peace and Justice",
+            "candidate_ids": [
+              "us-house-7--pramila-jayapal"
+            ],
+            "candidate_labels": [
+              "Pramila Jayapal"
+            ]
+          },
+          {
+            "source_label": "Seattle Gay News Editorial Board",
             "candidate_ids": [
               "us-house-7--pramila-jayapal"
             ],
@@ -8551,8 +7641,8 @@
         "share": "1/2"
       },
       "expected": true,
-      "source": "published race ld-37-state-representative-1 on the audited panel",
-      "note": "The published panel: the shares, grades, and captions the guide ships."
+      "source": "published race ld-32-state-representative-1 on the two-sources panel",
+      "note": "Two sources split some races, which is where a half share and a tie both become reachable."
     },
     {
       "mirror": "no-majority",
@@ -8611,16 +7701,7 @@
     {
       "mirror": "no-majority",
       "input": {
-        "share": "3/8"
-      },
-      "expected": true,
-      "note": "37.5% whole rounds half up to 38%.",
-      "source": "has_no_majority as shipped, on a race carrying this share"
-    },
-    {
-      "mirror": "no-majority",
-      "input": {
-        "share": "7/12"
+        "share": "21/38"
       },
       "expected": false,
       "source": "published race ld-32-state-representative-2 on the audited panel",
@@ -8629,11 +7710,20 @@
     {
       "mirror": "no-majority",
       "input": {
-        "share": "7/8"
+        "share": "29/36"
       },
       "expected": false,
-      "source": "published race king-county-council-2 on the audited panel",
+      "source": "published race ld-37-state-senator on the audited panel",
       "note": "The published panel: the shares, grades, and captions the guide ships."
+    },
+    {
+      "mirror": "no-majority",
+      "input": {
+        "share": "3/8"
+      },
+      "expected": true,
+      "note": "37.5% whole rounds half up to 38%.",
+      "source": "has_no_majority as shipped, on a race carrying this share"
     },
     {
       "mirror": "no-majority",
@@ -8685,29 +7775,6 @@
       "expected": "Christopher Roberts / Rob Foxcurran. No majority. 50%. Based on 2 endorsing sources.",
       "source": "published race king-county-assessor on the district-sources panel",
       "note": "District sources cover only their own races, so most races have no endorsing source and the rest have exactly one."
-    },
-    {
-      "mirror": "race-detail-accessible-summary",
-      "input": {
-        "scored": {
-          "grade": "A",
-          "isTied": false,
-          "winnerId": "king-county-council-2--rebecca-salda-a",
-          "winnerIds": [
-            "king-county-council-2--rebecca-salda-a"
-          ],
-          "winnerShare": "7/8",
-          "explicitCount": 24
-        },
-        "labels": {
-          "king-county-council-2--rebecca-salda-a": "Rebecca Saldaña",
-          "king-county-council-2--toshiko-grace-hasegawa": "Toshiko Grace Hasegawa"
-        },
-        "leaderCount": 23
-      },
-      "expected": "Rebecca Saldaña. 88%. 23 of 24 endorsing sources agree.",
-      "source": "published race king-county-council-2 on the audited panel",
-      "note": "The published panel: the shares, grades, and captions the guide ships."
     },
     {
       "mirror": "race-detail-accessible-summary",
@@ -8789,8 +7856,8 @@
           "winnerIds": [
             "ld-32-state-representative-2--lauren-davis"
           ],
-          "winnerShare": "7/12",
-          "explicitCount": 18
+          "winnerShare": "21/38",
+          "explicitCount": 19
         },
         "labels": {
           "ld-32-state-representative-2--lauren-davis": "Lauren Davis",
@@ -8798,7 +7865,7 @@
         },
         "leaderCount": 12
       },
-      "expected": "Lauren Davis. 58%. 12 of 18 endorsing sources agree.",
+      "expected": "Lauren Davis. 55%. 12 of 19 endorsing sources agree.",
       "source": "published race ld-32-state-representative-2 on the audited panel",
       "note": "The published panel: the shares, grades, and captions the guide ships."
     },
@@ -8851,24 +7918,23 @@
       "mirror": "race-detail-accessible-summary",
       "input": {
         "scored": {
-          "grade": "TIED",
-          "isTied": true,
-          "winnerId": null,
+          "grade": "A",
+          "isTied": false,
+          "winnerId": "ld-37-state-senator--chipalo-street",
           "winnerIds": [
-            "ld-37-state-representative-1--sharon-tomiko-santos",
-            "ld-37-state-representative-1--kelabe-tewolde"
+            "ld-37-state-senator--chipalo-street"
           ],
-          "winnerShare": "1/2",
-          "explicitCount": 13
+          "winnerShare": "29/36",
+          "explicitCount": 18
         },
         "labels": {
-          "ld-37-state-representative-1--kelabe-tewolde": "Kelabe Tewolde",
-          "ld-37-state-representative-1--sharon-tomiko-santos": "Sharon Tomiko Santos"
+          "ld-37-state-senator--chipalo-street": "Chipalo Street",
+          "ld-37-state-senator--tatiana-brown": "Tatiana Brown"
         },
-        "leaderCount": 0
+        "leaderCount": 15
       },
-      "expected": "Sharon Tomiko Santos / Kelabe Tewolde. No majority. 50%. Based on 13 endorsing sources.",
-      "source": "published race ld-37-state-representative-1 on the audited panel",
+      "expected": "Chipalo Street. 81%. 15 of 18 endorsing sources agree.",
+      "source": "published race ld-37-state-senator on the audited panel",
       "note": "The published panel: the shares, grades, and captions the guide ships."
     },
     {
@@ -8904,14 +7970,14 @@
             "us-house-7--pramila-jayapal"
           ],
           "winnerShare": "1",
-          "explicitCount": 19
+          "explicitCount": 20
         },
         "labels": {
           "us-house-7--pramila-jayapal": "Pramila Jayapal"
         },
-        "leaderCount": 19
+        "leaderCount": 20
       },
-      "expected": "Pramila Jayapal. 100%. 19 of 19 endorsing sources agree.",
+      "expected": "Pramila Jayapal. 100%. 20 of 20 endorsing sources agree.",
       "source": "published race us-house-7 on the audited panel",
       "note": "The published panel: the shares, grades, and captions the guide ships."
     },
@@ -9021,26 +8087,6 @@
           "isTied": true,
           "winnerId": null,
           "winnerIds": [
-            "ld-37-state-representative-1--sharon-tomiko-santos",
-            "ld-37-state-representative-1--kelabe-tewolde"
-          ],
-          "winnerShare": "1/2",
-          "explicitCount": 13
-        },
-        "leaderCount": 0
-      },
-      "expected": "Based on 13 endorsing sources",
-      "source": "published race ld-37-state-representative-1 on the audited panel",
-      "note": "The published panel: the shares, grades, and captions the guide ships."
-    },
-    {
-      "mirror": "race-detail-support-summary",
-      "input": {
-        "scored": {
-          "grade": "TIED",
-          "isTied": true,
-          "winnerId": null,
-          "winnerIds": [
             "king-county-assessor--christopher-roberts",
             "king-county-assessor--rob-foxcurran"
           ],
@@ -9083,13 +8129,32 @@
           "winnerIds": [
             "ld-32-state-representative-2--lauren-davis"
           ],
-          "winnerShare": "7/12",
-          "explicitCount": 18
+          "winnerShare": "21/38",
+          "explicitCount": 19
         },
         "leaderCount": 12
       },
-      "expected": "12 of 18 endorsing sources agree",
+      "expected": "12 of 19 endorsing sources agree",
       "source": "published race ld-32-state-representative-2 on the audited panel",
+      "note": "The published panel: the shares, grades, and captions the guide ships."
+    },
+    {
+      "mirror": "race-detail-support-summary",
+      "input": {
+        "scored": {
+          "grade": "A",
+          "isTied": false,
+          "winnerId": "ld-37-state-senator--chipalo-street",
+          "winnerIds": [
+            "ld-37-state-senator--chipalo-street"
+          ],
+          "winnerShare": "29/36",
+          "explicitCount": 18
+        },
+        "leaderCount": 15
+      },
+      "expected": "15 of 18 endorsing sources agree",
+      "source": "published race ld-37-state-senator on the audited panel",
       "note": "The published panel: the shares, grades, and captions the guide ships."
     },
     {
@@ -9109,25 +8174,6 @@
       },
       "expected": "18 of 19 endorsing sources agree",
       "source": "published race ld-34-state-representative-2 on the audited panel",
-      "note": "The published panel: the shares, grades, and captions the guide ships."
-    },
-    {
-      "mirror": "race-detail-support-summary",
-      "input": {
-        "scored": {
-          "grade": "A+",
-          "isTied": false,
-          "winnerId": "us-house-7--pramila-jayapal",
-          "winnerIds": [
-            "us-house-7--pramila-jayapal"
-          ],
-          "winnerShare": "1",
-          "explicitCount": 19
-        },
-        "leaderCount": 19
-      },
-      "expected": "19 of 19 endorsing sources agree",
-      "source": "published race us-house-7 on the audited panel",
       "note": "The published panel: the shares, grades, and captions the guide ships."
     },
     {
@@ -9172,19 +8218,19 @@
       "mirror": "race-detail-support-summary",
       "input": {
         "scored": {
-          "grade": "A",
+          "grade": "A+",
           "isTied": false,
-          "winnerId": "king-county-council-2--rebecca-salda-a",
+          "winnerId": "us-house-7--pramila-jayapal",
           "winnerIds": [
-            "king-county-council-2--rebecca-salda-a"
+            "us-house-7--pramila-jayapal"
           ],
-          "winnerShare": "7/8",
-          "explicitCount": 24
+          "winnerShare": "1",
+          "explicitCount": 20
         },
-        "leaderCount": 23
+        "leaderCount": 20
       },
-      "expected": "23 of 24 endorsing sources agree",
-      "source": "published race king-county-council-2 on the audited panel",
+      "expected": "20 of 20 endorsing sources agree",
+      "source": "published race us-house-7 on the audited panel",
       "note": "The published panel: the shares, grades, and captions the guide ships."
     },
     {
@@ -9228,28 +8274,6 @@
       "expected": "Christopher Roberts / Rob Foxcurran",
       "source": "published race king-county-assessor on the district-sources panel",
       "note": "District sources cover only their own races, so most races have no endorsing source and the rest have exactly one."
-    },
-    {
-      "mirror": "recommendation-label",
-      "input": {
-        "scored": {
-          "grade": "A",
-          "isTied": false,
-          "winnerId": "king-county-council-2--rebecca-salda-a",
-          "winnerIds": [
-            "king-county-council-2--rebecca-salda-a"
-          ],
-          "winnerShare": "7/8",
-          "explicitCount": 24
-        },
-        "labels": {
-          "king-county-council-2--rebecca-salda-a": "Rebecca Saldaña",
-          "king-county-council-2--toshiko-grace-hasegawa": "Toshiko Grace Hasegawa"
-        }
-      },
-      "expected": "Rebecca Saldaña",
-      "source": "published race king-county-council-2 on the audited panel",
-      "note": "The published panel: the shares, grades, and captions the guide ships."
     },
     {
       "mirror": "recommendation-label",
@@ -9328,8 +8352,8 @@
           "winnerIds": [
             "ld-32-state-representative-2--lauren-davis"
           ],
-          "winnerShare": "7/12",
-          "explicitCount": 18
+          "winnerShare": "21/38",
+          "explicitCount": 19
         },
         "labels": {
           "ld-32-state-representative-2--lauren-davis": "Lauren Davis",
@@ -9387,23 +8411,22 @@
       "mirror": "recommendation-label",
       "input": {
         "scored": {
-          "grade": "TIED",
-          "isTied": true,
-          "winnerId": null,
+          "grade": "A",
+          "isTied": false,
+          "winnerId": "ld-37-state-senator--chipalo-street",
           "winnerIds": [
-            "ld-37-state-representative-1--sharon-tomiko-santos",
-            "ld-37-state-representative-1--kelabe-tewolde"
+            "ld-37-state-senator--chipalo-street"
           ],
-          "winnerShare": "1/2",
-          "explicitCount": 13
+          "winnerShare": "29/36",
+          "explicitCount": 18
         },
         "labels": {
-          "ld-37-state-representative-1--kelabe-tewolde": "Kelabe Tewolde",
-          "ld-37-state-representative-1--sharon-tomiko-santos": "Sharon Tomiko Santos"
+          "ld-37-state-senator--chipalo-street": "Chipalo Street",
+          "ld-37-state-senator--tatiana-brown": "Tatiana Brown"
         }
       },
-      "expected": "Sharon Tomiko Santos / Kelabe Tewolde",
-      "source": "published race ld-37-state-representative-1 on the audited panel",
+      "expected": "Chipalo Street",
+      "source": "published race ld-37-state-senator on the audited panel",
       "note": "The published panel: the shares, grades, and captions the guide ships."
     },
     {
@@ -9438,7 +8461,7 @@
             "us-house-7--pramila-jayapal"
           ],
           "winnerShare": "1",
-          "explicitCount": 19
+          "explicitCount": 20
         },
         "labels": {
           "us-house-7--pramila-jayapal": "Pramila Jayapal"
@@ -9512,8 +8535,8 @@
         "share": "1/2"
       },
       "expected": "50%",
-      "source": "published race ld-37-state-representative-1 on the audited panel",
-      "note": "The published panel: the shares, grades, and captions the guide ships."
+      "source": "published race ld-32-state-representative-1 on the two-sources panel",
+      "note": "Two sources split some races, which is where a half share and a tie both become reachable."
     },
     {
       "mirror": "share-percentage-label",
@@ -9572,29 +8595,29 @@
     {
       "mirror": "share-percentage-label",
       "input": {
-        "share": "3/8"
+        "share": "21/38"
       },
-      "expected": "38%",
-      "note": "37.5% whole rounds half up to 38%.",
-      "source": "_percentage_whole as shipped"
-    },
-    {
-      "mirror": "share-percentage-label",
-      "input": {
-        "share": "7/12"
-      },
-      "expected": "58%",
+      "expected": "55%",
       "source": "published race ld-32-state-representative-2 on the audited panel",
       "note": "The published panel: the shares, grades, and captions the guide ships."
     },
     {
       "mirror": "share-percentage-label",
       "input": {
-        "share": "7/8"
+        "share": "29/36"
       },
-      "expected": "88%",
-      "source": "published race king-county-council-2 on the audited panel",
+      "expected": "81%",
+      "source": "published race ld-37-state-senator on the audited panel",
       "note": "The published panel: the shares, grades, and captions the guide ships."
+    },
+    {
+      "mirror": "share-percentage-label",
+      "input": {
+        "share": "3/8"
+      },
+      "expected": "38%",
+      "note": "37.5% whole rounds half up to 38%.",
+      "source": "_percentage_whole as shipped"
     },
     {
       "mirror": "share-percentage-label",
@@ -9647,21 +8670,11 @@
     {
       "mirror": "support-summary",
       "input": {
-        "leaderUnits": null,
-        "explicitCount": 13
-      },
-      "expected": "Based on 13 endorsing sources",
-      "source": "published race ld-37-state-representative-1 on the audited panel",
-      "note": "The published panel: the shares, grades, and captions the guide ships."
-    },
-    {
-      "mirror": "support-summary",
-      "input": {
-        "leaderUnits": "21/2",
+        "leaderUnits": "29/2",
         "explicitCount": 18
       },
-      "expected": "10½ of 18 endorsements",
-      "source": "published race ld-32-state-representative-2 on the audited panel",
+      "expected": "14½ of 18 endorsements",
+      "source": "published race ld-37-state-senator on the audited panel",
       "note": "The published panel: the shares, grades, and captions the guide ships."
     },
     {
@@ -9677,11 +8690,11 @@
     {
       "mirror": "support-summary",
       "input": {
-        "leaderUnits": "19",
+        "leaderUnits": "21/2",
         "explicitCount": 19
       },
-      "expected": "19 of 19 endorsements",
-      "source": "published race us-house-7 on the audited panel",
+      "expected": "10½ of 19 endorsements",
+      "source": "published race ld-32-state-representative-2 on the audited panel",
       "note": "The published panel: the shares, grades, and captions the guide ships."
     },
     {
@@ -9707,11 +8720,11 @@
     {
       "mirror": "support-summary",
       "input": {
-        "leaderUnits": "21",
-        "explicitCount": 24
+        "leaderUnits": "20",
+        "explicitCount": 20
       },
-      "expected": "21 of 24 endorsements",
-      "source": "published race king-county-council-2 on the audited panel",
+      "expected": "20 of 20 endorsements",
+      "source": "published race us-house-7 on the audited panel",
       "note": "The published panel: the shares, grades, and captions the guide ships."
     },
     {
@@ -9747,21 +8760,11 @@
     {
       "mirror": "support-summary-compact",
       "input": {
-        "leaderUnits": null,
-        "explicitCount": 13
-      },
-      "expected": "13 sources",
-      "source": "published race ld-37-state-representative-1 on the audited panel",
-      "note": "The published panel: the shares, grades, and captions the guide ships."
-    },
-    {
-      "mirror": "support-summary-compact",
-      "input": {
-        "leaderUnits": "21/2",
+        "leaderUnits": "29/2",
         "explicitCount": 18
       },
-      "expected": "10½ of 18 endorsements",
-      "source": "published race ld-32-state-representative-2 on the audited panel",
+      "expected": "14½ of 18 endorsements",
+      "source": "published race ld-37-state-senator on the audited panel",
       "note": "The published panel: the shares, grades, and captions the guide ships."
     },
     {
@@ -9777,11 +8780,11 @@
     {
       "mirror": "support-summary-compact",
       "input": {
-        "leaderUnits": "19",
+        "leaderUnits": "21/2",
         "explicitCount": 19
       },
-      "expected": "19 of 19 endorsements",
-      "source": "published race us-house-7 on the audited panel",
+      "expected": "10½ of 19 endorsements",
+      "source": "published race ld-32-state-representative-2 on the audited panel",
       "note": "The published panel: the shares, grades, and captions the guide ships."
     },
     {
@@ -9807,11 +8810,11 @@
     {
       "mirror": "support-summary-compact",
       "input": {
-        "leaderUnits": "21",
-        "explicitCount": 24
+        "leaderUnits": "20",
+        "explicitCount": 20
       },
-      "expected": "21 of 24 endorsements",
-      "source": "published race king-county-council-2 on the audited panel",
+      "expected": "20 of 20 endorsements",
+      "source": "published race us-house-7 on the audited panel",
       "note": "The published panel: the shares, grades, and captions the guide ships."
     },
     {
