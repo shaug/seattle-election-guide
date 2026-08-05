@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Meter v2 — a meter in every section, revisited</title>
+<style>
+:root {
+  --paper: #fbfaf6; --card: #ffffff; --ink: #17212b; --navy: #102a43;
+  --muted: #52606d; --faint: #667784; --line: #cbd2d9; --line-strong: #829ab1;
+  --track: #edf2f4; --gapcol: #ffffff; --focus: #f0a928;
+  --old-teal: #087f73; --old-amber: #d99000;
+  --chip-bg: #f5f8f9; --tip-bg: #102a43; --tip-ink: #fbfaf6;
+  --bad: #b3411f; --good: #0d7a52;
+  --sans: "Avenir Next", Avenir, system-ui, "Helvetica Neue", Helvetica, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #141a20; --card: #1c242c; --ink: #e6ecf1; --navy: #cfe0ef;
+    --muted: #9fb0bf; --faint: #7d8e9c; --line: #35424e; --line-strong: #566b7d;
+    --track: #26313b; --gapcol: #1c242c; --chip-bg: #232e38;
+    --tip-bg: #e6ecf1; --tip-ink: #141a20; --bad: #e07a5a; --good: #4fb894;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #141a20; --card: #1c242c; --ink: #e6ecf1; --navy: #cfe0ef;
+  --muted: #9fb0bf; --faint: #7d8e9c; --line: #35424e; --line-strong: #566b7d;
+  --track: #26313b; --gapcol: #1c242c; --chip-bg: #232e38;
+  --tip-bg: #e6ecf1; --tip-ink: #141a20; --bad: #e07a5a; --good: #4fb894;
+}
+:root[data-theme="light"] {
+  --paper: #fbfaf6; --card: #ffffff; --ink: #17212b; --navy: #102a43;
+  --muted: #52606d; --faint: #667784; --line: #cbd2d9; --line-strong: #829ab1;
+  --track: #edf2f4; --gapcol: #ffffff; --chip-bg: #f5f8f9;
+  --tip-bg: #102a43; --tip-ink: #fbfaf6; --bad: #b3411f; --good: #0d7a52;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); line-height: 1.5; }
+.wrap { max-width: 980px; margin: 0 auto; padding: 2rem 1.25rem 5rem; }
+header h1 { margin: 0 0 .3rem; color: var(--navy); font-size: 1.55rem; letter-spacing: -.01em; text-wrap: balance; }
+header p.lede { margin: 0; max-width: 66ch; color: var(--muted); font-size: .97rem; }
+.eyebrow { margin: 0 0 .4rem; color: var(--faint); font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.status-pill { display: inline-flex; align-items: center; gap: .35rem; margin-left: .6rem; padding: .1rem .55rem; border-radius: 1rem; background: var(--chip-bg); border: 1px solid var(--line); color: var(--faint); font-size: .68rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; vertical-align: middle; }
+
+section { margin-top: 3.2rem; }
+section > h2 { margin: 0 0 .25rem; color: var(--navy); font-size: 1.15rem; }
+section > p.note { margin: 0 0 1.2rem; max-width: 70ch; color: var(--muted); font-size: .88rem; }
+
+/* ── The verdict box (the problem, stated once, plainly) ── */
+.verdict { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin: 1.1rem 0 0; }
+@media (max-width: 720px) { .verdict { grid-template-columns: 1fr; } }
+.verdict > div { padding: 1rem 1.1rem; border-radius: .7rem; border: 1px solid var(--line); }
+.verdict .no { background: color-mix(in srgb, var(--bad) 7%, var(--card)); border-color: color-mix(in srgb, var(--bad) 35%, var(--line)); }
+.verdict .yes { background: color-mix(in srgb, var(--good) 7%, var(--card)); border-color: color-mix(in srgb, var(--good) 35%, var(--line)); }
+.verdict h3 { margin: 0 0 .5rem; font-size: .82rem; letter-spacing: .04em; text-transform: uppercase; }
+.verdict .no h3 { color: var(--bad); }
+.verdict .yes h3 { color: var(--good); }
+.verdict p { margin: 0; font-size: .87rem; color: var(--muted); }
+.verdict p + p { margin-top: .5rem; }
+
+/* ── Race chrome shared with the shipped design ── */
+.racecard { margin-top: 1.4rem; padding: 1.1rem 1.2rem 1.25rem; background: var(--card); border: 1px solid var(--line); border-radius: .8rem; }
+.racecard > h3 { margin: 0 0 .15rem; font-size: 1rem; color: var(--navy); }
+.racecard > h3 small { display: block; margin-top: .1rem; color: var(--faint); font-weight: 500; font-size: .78rem; }
+.modelrow { display: flex; align-items: center; gap: .6rem; margin: .85rem 0 .5rem; }
+.modelrow .tag { font-size: .68rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; padding: .16rem .55rem; border-radius: .3rem; }
+.modelrow .tag.current { color: var(--bad); background: color-mix(in srgb, var(--bad) 14%, var(--card)); }
+.modelrow .tag.proposed { color: var(--good); background: color-mix(in srgb, var(--good) 14%, var(--card)); }
+.modelrow .desc { color: var(--faint); font-size: .78rem; }
+
+/* Current model: headline + borrowed chips, as shipped in the (unmerged) #315 branch */
+.leadhead { display: grid; grid-template-columns: minmax(0, 1fr) 11rem; align-items: start; gap: .75rem; margin-bottom: .5rem; }
+.leadhead .eyebrow { margin-bottom: .15rem; }
+.leadhead h4 { margin: 0; color: var(--navy); font-size: 1.15rem; }
+.chips { display: flex; flex-wrap: wrap; gap: .35rem .45rem; margin: .6rem 0 0; padding: 0; list-style: none; }
+.chips li { display: inline-flex; }
+.chips button { display: inline-flex; align-items: center; gap: .38rem; padding: .22rem .6rem .22rem .45rem; border: 1px solid var(--line); border-radius: 1rem; background: var(--chip-bg); color: var(--ink); font: inherit; font-size: .78rem; font-weight: 600; cursor: pointer; }
+.chips button .dot { width: .68rem; height: .68rem; border-radius: 50%; background: var(--c); flex: none; }
+.chips button .cnt { color: var(--muted); font-weight: 500; font-variant-numeric: tabular-nums; }
+.chips button[aria-pressed="true"] { border-color: var(--navy); box-shadow: 0 0 0 1px var(--navy); }
+.chips button.foreign { outline: 2px dashed var(--bad); outline-offset: 1px; }
+.foreign-flag { margin: .5rem 0 0; padding: .5rem .7rem; border-radius: .5rem; background: color-mix(in srgb, var(--bad) 10%, var(--card)); color: var(--bad); font-size: .78rem; font-weight: 600; }
+
+/* Flat endorser-section skeleton, matching the shipped race page's own shape,
+   used under both models so the comparison isn't distorted by unrelated
+   content differences. */
+.sectionlist { display: flex; flex-direction: column; gap: 0; margin-top: 1rem; border-top: 1px solid var(--line); }
+.candsection { padding: .85rem 0; border-bottom: 1px solid var(--line); }
+.candsection.is-target { background: color-mix(in srgb, var(--focus) 6%, transparent); margin: 0 -.4rem; padding-left: .4rem; padding-right: .4rem; border-radius: .4rem; }
+.candsection .chead { display: flex; align-items: baseline; justify-content: space-between; gap: .75rem; flex-wrap: wrap; }
+.candsection h5 { margin: 0; color: var(--ink); font-size: .92rem; font-weight: 700; }
+.candsection .csrc { margin: .3rem 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: .15rem; }
+.candsection .csrc li { display: flex; justify-content: space-between; gap: .75rem; font-size: .78rem; color: var(--faint); }
+.candsection .csrc li b { color: var(--muted); font-weight: 500; }
+.no-meter-note { color: var(--faint); font-size: .74rem; font-style: italic; }
+
+/* Proposed model: a static, section-owned meter — same visual language, no
+   click, no shared/borrowed state; context is simply which section it's in. */
+/* Full width, but not a stretching meter: a fixed track (left-adjusted) plus
+   a flexible label (right-adjusted) is what keeps a whole column of these
+   scannable — every row's bar occupies the same physical width, exactly like
+   the card-width headline meter did, while the freed space at full section
+   width goes to a legible count instead of text squeezed inside a half-block
+   sliver. Decided 2026-08-05. */
+.candsection .secmeter-row { display: flex; align-items: center; gap: 1rem; margin: .5rem 0 .35rem; }
+.secmeter { position: relative; display: flex; align-items: stretch; height: 1.5rem; flex: 0 0 16rem; min-width: 0; overflow: hidden; border: 1px solid var(--line-strong); border-radius: .35rem; background: var(--track); }
+.secmeter .blk { position: relative; flex: none; }
+.secmeter .blk.solid { background: var(--c); }
+.secmeter .blk + .blk { border-left: 1px solid var(--gapcol); }
+.secmeter .blk.merged .half { position: absolute; left: 0; right: 0; height: 50%; }
+.secmeter .blk.merged .half.top { top: 0; background: var(--ca); }
+.secmeter .blk.merged .half.bot { bottom: 0; background: var(--cb); }
+.secmeter .blk:not(.ctx-hit) { opacity: .3; }
+.secmeter .blk.ctx-hit:not(.merged) { filter: saturate(1.5) brightness(.9); }
+.secmeter .blk.merged.ctx-hit .half:not(.half-hit) { opacity: .3; }
+.secmeter .half.half-hit { filter: saturate(1.5) brightness(.9); }
+.seccount { flex: 1 1 auto; text-align: right; color: var(--muted); font-size: .85rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.seccount b { color: var(--ink); font-weight: 700; }
+.seccount .pct { margin-left: .4rem; color: var(--faint); }
+@media (max-width: 640px) {
+  .secmeter { flex-basis: 9rem; }
+  .seccount { font-size: .76rem; }
+}
+
+/* ── Edge-case gallery ── */
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; margin-top: 1rem; }
+.gallery .racecard { margin-top: 0; }
+
+/* ── Open questions ── */
+.qlist { margin: .3rem 0 0; padding-left: 1.15rem; color: var(--muted); font-size: .87rem; }
+.qlist li { margin-bottom: .55rem; }
+.qlist li b { color: var(--ink); }
+
+footer { margin-top: 3.5rem; padding-top: 1rem; border-top: 1px solid var(--line); color: var(--faint); font-size: .75rem; max-width: 72ch; }
+footer a { color: var(--faint); }
+</style>
+
+<div class="wrap">
+<header>
+  <p class="eyebrow">Seattle Election Guide · design exploration <span class="status-pill">Design decided · 2026-08-05</span></p>
+  <h1>A meter in every section, not one borrowed via chips</h1>
+  <p class="lede">Companion to <code>METER_V2_2026-08-04.html</code> — that mockup never showed this page against real, multi-candidate production data. This one does, and the shipped design (built correctly, in #315, per that spec) turned out to misrepresent whose meter a reader is looking at. This explores the alternative: every candidate's own section carries its own static meter.</p>
+</header>
+
+<section id="verdict">
+  <h2>What the live preview found</h2>
+  <p class="note">Not a rendering bug — the spec itself. A reader who clicks a trailing candidate's chip sees that candidate's share highlighted inside a different candidate's card, because there is only one meter and it lives in the leader's header.</p>
+  <div class="verdict">
+    <div class="no">
+      <h3>Shipped, then unmerged (#315)</h3>
+      <p>One shared meter, in the leading candidate's own header. Every candidate's chip sits there too — including candidates who have their own section below with nothing in it.</p>
+      <p>The header says whose meter this is. The chips say otherwise.</p>
+    </div>
+    <div class="yes">
+      <h3>Proposed (#325, this page)</h3>
+      <p>Every candidate's section carries its own meter, always in that candidate's own context. No click, no borrowed state, no section that promises a meter it doesn't have.</p>
+      <p>What a section shows is what it's about.</p>
+    </div>
+  </div>
+</section>
+
+<section id="compare">
+  <h2>Same race, both models</h2>
+  <p class="note">Seattle City Council, District 5 — a real four-candidate race, real production data. Nilu Jenks's chips carry Julie Kang's, Silas James's, and Dimitri Georgakopoulos's context too, even though their own sections, right below, show nothing.</p>
+  <div id="compare-host"></div>
+</section>
+
+<section id="gallery">
+  <h2>The proposed model against harder cases</h2>
+  <p class="note">A clean, decisive majority, and — real production data, not a synthetic stand-in this time — the heaviest co-endorsement splitting of any 2026 race, a real 52.5%/47.5% majority. The four-candidate field above already stress-tests "does this get repetitive"; this pair stress-tests the split-half treatment instead.</p>
+  <div class="gallery" id="gallery-host"></div>
+</section>
+
+<section id="questions">
+  <h2>Decided</h2>
+  <p class="note">Decided in review of the first draft, 2026-08-05 — this page is now the canonical reference for #325's implementation, the same role <code>METER_V2_2026-08-04.html</code> played for #312–#316. The formal decision-log entries land in <code>docs/METER_V2.md</code> when #325 itself ships, matching how #314's and #315's own decisions were recorded.</p>
+  <ul class="qlist">
+    <li><b>Chrome and sizing.</b> Full section width, but the meter itself stays a fixed track (16rem here, left-adjusted) — every row's bar occupies the same physical width for scannability, the same job the card-width headline meter did. The freed space at full width goes to the label, right-adjusted.</li>
+    <li><b>Zero-endorsement candidates.</b> No section, in either model. This page is about who <i>should</i> be voted for, not who <i>can</i> be — every real race below (<code>seattle-city-council-5</code>, <code>seattle-municipal-court-judge-5</code>, <code>supreme-court-justice-3</code>) has exactly one such candidate on the ballot, and neither model shows or explains them.</li>
+    <li><b>Resting label.</b> Retained, but outside the meter, in the flexible label — a percentage that would need to fit inside a half-endorsement sliver of highlighted bar doesn't fit there. Count stays the caption's lead (<code>METER_V2.md</code> Decision #6); percentage now rides beside it.</li>
+    <li><b>The headline meter's own fate.</b> The race itself gets no meter on this page at all — every candidate gets one, colorized for that candidate, same width and block layout throughout. A race-level meter remains the guide/ballot overview's job, untouched by this proposal.</li>
+    <li><b>Comparisons and social cards — recommendation, not yet confirmed.</b> No change. Both already draw the single plain resting-state meter for a race, never in candidate context; this proposal only touches the race-detail page's per-candidate sections.</li>
+  </ul>
+</section>
+
+<footer id="foot"></footer>
+</div>
+
+<script>
+const RACES = [{"id":"seattle-city-council-5","label":"Council District No. 5","candidates":{"seattle-city-council-5--dimitri-georgakopoulos":"Dimitri Georgakopoulos","seattle-city-council-5--silas-james":"Silas James","seattle-city-council-5--julie-kang":"Julie Kang","seattle-city-council-5--nilu-jenks":"Nilu Jenks"},"cells":[{"source":"32nd Legislative District Democrats","category":"Democratic Party","candidates":["seattle-city-council-5--julie-kang","seattle-city-council-5--nilu-jenks"]},{"source":"36th Legislative District Democrats","category":"Democratic Party","candidates":["seattle-city-council-5--nilu-jenks"]},{"source":"46th Legislative District Democrats","category":"Democratic Party","candidates":["seattle-city-council-5--nilu-jenks"]},{"source":"Alliance for Gun Responsibility Victory Fund","category":"Rights and representation","candidates":["seattle-city-council-5--nilu-jenks"]},{"source":"King County Democrats","category":"Democratic Party","candidates":["seattle-city-council-5--nilu-jenks"]},{"source":"National Women's Political Caucus of Washington","category":"Rights and representation","candidates":["seattle-city-council-5--nilu-jenks","seattle-city-council-5--julie-kang"]},{"source":"OneAmerica Votes","category":"Rights and representation","candidates":["seattle-city-council-5--nilu-jenks"]},{"source":"PROTEC17","category":"Labor","candidates":["seattle-city-council-5--nilu-jenks"]},{"source":"Sage Leaders","category":"Progressive editorial and general","candidates":["seattle-city-council-5--nilu-jenks"]},{"source":"Seattle Gay News Editorial Board","category":"Rights and representation","candidates":["seattle-city-council-5--nilu-jenks"]},{"source":"SEIU 775","category":"Labor","candidates":["seattle-city-council-5--nilu-jenks"]},{"source":"SEIU 925","category":"Labor","candidates":["seattle-city-council-5--nilu-jenks","seattle-city-council-5--silas-james"]},{"source":"Tech 4 Taxes","category":"Progressive editorial and general","candidates":["seattle-city-council-5--nilu-jenks"]},{"source":"The Stranger Election Control Board","category":"Progressive editorial and general","candidates":["seattle-city-council-5--nilu-jenks"]},{"source":"The Urbanist Elections Committee","category":"Progressive editorial and general","candidates":["seattle-city-council-5--nilu-jenks"]},{"source":"The Washington Bus","category":"Progressive editorial and general","candidates":["seattle-city-council-5--nilu-jenks"]},{"source":"Transit Riders Union","category":"Transportation and urbanism","candidates":["seattle-city-council-5--nilu-jenks"]},{"source":"UFCW 3000","category":"Labor","candidates":["seattle-city-council-5--nilu-jenks"]},{"source":"Washington Bikes","category":"Transportation and urbanism","candidates":["seattle-city-council-5--nilu-jenks"]},{"source":"Washington Conservation Action","category":"Environment","candidates":["seattle-city-council-5--nilu-jenks"]},{"source":"Washington for Peace and Justice","category":"Rights and representation","candidates":["seattle-city-council-5--nilu-jenks"]},{"source":"Washington State Stonewall Democrats","category":"Democratic Party","candidates":["seattle-city-council-5--nilu-jenks"]},{"source":"Washington Working Families Party","category":"Progressive editorial and general","candidates":["seattle-city-council-5--nilu-jenks"]}]},{"id":"supreme-court-justice-3","label":"Justice Position #03","candidates":{"supreme-court-justice-3--jaime-michelle-hawk":"Jaime Michelle Hawk","supreme-court-justice-3--david-stevens":"David Stevens","supreme-court-justice-3--mike-diaz":"Mike Diaz"},"cells":[{"source":"11th Legislative District Democrats","category":"Democratic Party","candidates":["supreme-court-justice-3--jaime-michelle-hawk"]},{"source":"32nd Legislative District Democrats","category":"Democratic Party","candidates":["supreme-court-justice-3--jaime-michelle-hawk","supreme-court-justice-3--mike-diaz"]},{"source":"34th Legislative District Democrats","category":"Democratic Party","candidates":["supreme-court-justice-3--mike-diaz"]},{"source":"36th Legislative District Democrats","category":"Democratic Party","candidates":["supreme-court-justice-3--mike-diaz","supreme-court-justice-3--jaime-michelle-hawk"]},{"source":"37th Legislative District Democrats","category":"Democratic Party","candidates":["supreme-court-justice-3--mike-diaz"]},{"source":"43rd Legislative District Democrats","category":"Democratic Party","candidates":["supreme-court-justice-3--jaime-michelle-hawk","supreme-court-justice-3--mike-diaz"]},{"source":"46th Legislative District Democrats","category":"Democratic Party","candidates":["supreme-court-justice-3--jaime-michelle-hawk"]},{"source":"King County Democrats","category":"Democratic Party","candidates":["supreme-court-justice-3--mike-diaz"]},{"source":"National Women's Political Caucus of Washington","category":"Rights and representation","candidates":["supreme-court-justice-3--jaime-michelle-hawk"]},{"source":"Planned Parenthood Alliance Advocates","category":"Rights and representation","candidates":["supreme-court-justice-3--mike-diaz"]},{"source":"SEIU 775","category":"Labor","candidates":["supreme-court-justice-3--jaime-michelle-hawk"]},{"source":"SEIU 925","category":"Labor","candidates":["supreme-court-justice-3--jaime-michelle-hawk"]},{"source":"The Stranger Election Control Board","category":"Progressive editorial and general","candidates":["supreme-court-justice-3--mike-diaz"]},{"source":"The Urbanist Elections Committee","category":"Progressive editorial and general","candidates":["supreme-court-justice-3--jaime-michelle-hawk"]},{"source":"Washington Conservation Action","category":"Environment","candidates":["supreme-court-justice-3--mike-diaz"]},{"source":"Washington Education Association","category":"Labor","candidates":["supreme-court-justice-3--mike-diaz"]},{"source":"Washington for Peace and Justice","category":"Rights and representation","candidates":["supreme-court-justice-3--jaime-michelle-hawk"]},{"source":"Washington State Labor Council, AFL-CIO","category":"Labor","candidates":["supreme-court-justice-3--mike-diaz","supreme-court-justice-3--jaime-michelle-hawk"]},{"source":"Washington State Stonewall Democrats","category":"Democratic Party","candidates":["supreme-court-justice-3--jaime-michelle-hawk","supreme-court-justice-3--mike-diaz"]},{"source":"UFCW 3000","category":"Labor","candidates":["supreme-court-justice-3--jaime-michelle-hawk"]}]},{"id":"seattle-municipal-court-judge-5","label":"Municipal Court Judge Position No. 5","candidates":{"seattle-municipal-court-judge-5--lindsay-calkins":"Lindsay Calkins","seattle-municipal-court-judge-5--garmon-newsom":"Garmon Newsom","seattle-municipal-court-judge-5--gabe-rothstein":"Gabe Rothstein"},"cells":[{"source":"32nd Legislative District Democrats","category":"Democratic Party","candidates":["seattle-municipal-court-judge-5--gabe-rothstein","seattle-municipal-court-judge-5--garmon-newsom"]},{"source":"34th Legislative District Democrats","category":"Democratic Party","candidates":["seattle-municipal-court-judge-5--gabe-rothstein"]},{"source":"37th Legislative District Democrats","category":"Democratic Party","candidates":["seattle-municipal-court-judge-5--gabe-rothstein"]},{"source":"43rd Legislative District Democrats","category":"Democratic Party","candidates":["seattle-municipal-court-judge-5--gabe-rothstein"]},{"source":"46th Legislative District Democrats","category":"Democratic Party","candidates":["seattle-municipal-court-judge-5--gabe-rothstein"]},{"source":"King County Democrats","category":"Democratic Party","candidates":["seattle-municipal-court-judge-5--gabe-rothstein"]},{"source":"SEIU 925","category":"Labor","candidates":["seattle-municipal-court-judge-5--gabe-rothstein"]},{"source":"The Stranger Election Control Board","category":"Progressive editorial and general","candidates":["seattle-municipal-court-judge-5--gabe-rothstein"]},{"source":"Washington State Stonewall Democrats","category":"Democratic Party","candidates":["seattle-municipal-court-judge-5--gabe-rothstein"]}]}];
+/* Only the three races this page actually renders — trimmed from the
+   precedent mockup's full eight, which this file doesn't otherwise use. */
+const LABELS = {
+  "seattle-city-council-5": ["Seattle City Council", "District 5"],
+  "supreme-court-justice-3": ["Supreme Court", "Justice Position 3"],
+  "seattle-municipal-court-judge-5": ["Municipal Court", "Judge Position 5"],
+};
+
+/* Palette, ratified 2026-08-04 (docs/METER_V2.md). Unchanged here — this page
+   proposes a new *placement* for the meter, not a new palette. */
+const COLORS = {
+  majority: "#087f73",
+  noMajority: "#d99000",
+  tie: ["#d99000", "#8a5d12"],
+  muted: ["#7d95ad", "#a99e8a", "#a08296"],
+};
+const overflow = (base, step) =>
+  `color-mix(in srgb, ${base} ${Math.max(30, 100 - 22 * step)}%, var(--track))`;
+
+/* ── tally, colors, layout: unchanged from the ratified mockup ── */
+function standings(race) {
+  const tally = new Map();
+  for (const cell of race.cells) {
+    const n = cell.candidates.length;
+    for (const cid of cell.candidates) tally.set(cid, (tally.get(cid) || 0) + 1 / n);
+  }
+  const rows = [...tally.entries()]
+    .map(([cid, units]) => ({ cid, units, name: race.candidates[cid] || cid }))
+    .sort((a, b) => b.units - a.units || a.name.localeCompare(b.name));
+  const total = rows.reduce((s, r) => s + r.units, 0);
+  const topUnits = rows.length ? rows[0].units : 0;
+  const leaders = rows.filter(r => Math.abs(r.units - topUnits) < 1e-9);
+  return {
+    rows, total,
+    isTie: leaders.length > 1,
+    hasMajority: leaders.length === 1 && topUnits / total > 0.5 + 1e-9,
+    sharePct: total ? Math.round(100 * topUnits / total) : null,
+  };
+}
+
+function candidateColors(st) {
+  const out = {};
+  let trailIdx = 0, tieIdx = 0;
+  st.rows.forEach(row => {
+    const isLeader = Math.abs(row.units - st.rows[0].units) < 1e-9;
+    let c;
+    if (isLeader && st.isTie) {
+      const i = tieIdx++;
+      c = i < COLORS.tie.length ? COLORS.tie[i]
+        : overflow(COLORS.tie[COLORS.tie.length - 1], i - COLORS.tie.length + 1);
+    } else if (isLeader && st.hasMajority) c = COLORS.majority;
+    else if (isLeader) c = COLORS.noMajority;
+    else {
+      const i = trailIdx++;
+      c = i < COLORS.muted.length ? COLORS.muted[i]
+        : overflow(COLORS.muted[i % COLORS.muted.length], Math.floor(i / COLORS.muted.length));
+    }
+    out[row.cid] = c;
+  });
+  return out;
+}
+
+function layout(race, st) {
+  const cells = race.cells.map((c, idx) => ({ ...c, idx }));
+  const endorsing = cells.filter(c => c.candidates.length > 0);
+  const totalUnits = endorsing.length;
+  const order = new Map(st.rows.map((r, i) => [r.cid, i]));
+  const blocks = [];
+  const runCells = st.rows.map(() => ({ solids: [], splits: [] }));
+  for (const cell of endorsing) {
+    if (cell.candidates.length === 1) runCells[order.get(cell.candidates[0])].solids.push(cell);
+    else {
+      const sorted = [...cell.candidates].sort((x, y) => order.get(x) - order.get(y));
+      runCells[order.get(sorted[0])].splits.push({ cell, sorted });
+    }
+  }
+  st.rows.forEach((row, i) => {
+    for (const cell of runCells[i].solids) blocks.push({ type: "solid", w: 1, cell, cid: row.cid });
+    runCells[i].splits.sort((p, q) => order.get(q.sorted[1]) - order.get(p.sorted[1]));
+    for (const { cell, sorted } of runCells[i].splits) {
+      blocks.push({ type: "merged", w: 1, cell, ca: sorted[0], cb: sorted[1] });
+    }
+  });
+  return { blocks, totalUnits };
+}
+
+function units(u) {
+  const whole = Math.floor(u + 1e-9);
+  return u - whole > 0.25 ? (whole ? whole : "") + "½" : String(whole);
+}
+
+/* ── endorsers grouped per candidate, for the section lists both models share ── */
+function endorsersByCandidate(race, st) {
+  const out = new Map(st.rows.map(r => [r.cid, []]));
+  for (const cell of race.cells) {
+    if (cell.candidates.length === 0) continue;
+    const split = cell.candidates.length > 1;
+    for (const cid of cell.candidates) {
+      if (out.has(cid)) out.get(cid).push({ source: cell.source, category: cell.category, split });
+    }
+  }
+  return out;
+}
+
+/* ── the shared headline meter, as shipped (unmerged) in #315 ── */
+function headlineMeterEl(race, st, colors, ctxCid) {
+  const { blocks, totalUnits } = layout(race, st);
+  const m = document.createElement("div");
+  m.className = "secmeter";
+  m.style.height = "2rem";
+  m.style.flex = "0 0 11rem";
+  m.setAttribute("role", "img");
+  m.setAttribute("aria-label",
+    st.rows.map(r => `${r.name} ${units(r.units)} of ${units(st.total)} endorsements`).join("; "));
+  for (const b of blocks) {
+    const el = document.createElement("div");
+    el.className = "blk " + (b.type === "merged" ? "merged" : "solid");
+    el.style.width = (100 * b.w / totalUnits) + "%";
+    if (b.type === "solid") {
+      el.style.setProperty("--c", colors[b.cid]);
+      if (ctxCid) el.classList.toggle("ctx-hit", b.cid === ctxCid);
+    } else {
+      el.style.setProperty("--ca", colors[b.ca]);
+      el.style.setProperty("--cb", colors[b.cb]);
+      el.innerHTML = `<span class="half top"></span><span class="half bot"></span>`;
+      if (ctxCid) {
+        const hit = b.ca === ctxCid || b.cb === ctxCid;
+        el.classList.toggle("ctx-hit", hit);
+        if (hit) {
+          el.querySelector(".half.top").classList.toggle("half-hit", b.ca === ctxCid);
+          el.querySelector(".half.bot").classList.toggle("half-hit", b.cb === ctxCid);
+        }
+      }
+    }
+    m.appendChild(el);
+  }
+  return m;
+}
+
+/* ── a candidate's own static meter — the proposal. No click, no shared
+   state: "context" is simply which candidate this section belongs to. ── */
+function sectionMeterEl(race, st, colors, forCid) {
+  const { blocks, totalUnits } = layout(race, st);
+  const m = document.createElement("div");
+  m.className = "secmeter";
+  m.setAttribute("role", "img");
+  const row = st.rows.find(r => r.cid === forCid);
+  m.setAttribute("aria-label", `${row.name}: ${units(row.units)} of ${units(st.total)} endorsements`);
+  for (const b of blocks) {
+    const el = document.createElement("div");
+    el.className = "blk " + (b.type === "merged" ? "merged" : "solid");
+    el.style.width = (100 * b.w / totalUnits) + "%";
+    if (b.type === "solid") {
+      el.style.setProperty("--c", colors[b.cid]);
+      el.classList.toggle("ctx-hit", b.cid === forCid);
+    } else {
+      el.style.setProperty("--ca", colors[b.ca]);
+      el.style.setProperty("--cb", colors[b.cb]);
+      el.innerHTML = `<span class="half top"></span><span class="half bot"></span>`;
+      const hit = b.ca === forCid || b.cb === forCid;
+      el.classList.toggle("ctx-hit", hit);
+      if (hit) {
+        el.querySelector(".half.top").classList.toggle("half-hit", b.ca === forCid);
+        el.querySelector(".half.bot").classList.toggle("half-hit", b.cb === forCid);
+      }
+    }
+    m.appendChild(el);
+  }
+  return m;
+}
+
+/* Decided 2026-08-05: a candidate with no endorsement at all gets no
+   section, in either model — this page is about who *should* be voted for,
+   not who *can* be. standings() already drops them from st.rows; no note
+   calls attention to the absence, since the absence needs no justifying. */
+
+function srcListEl(entries) {
+  const ul = document.createElement("ul");
+  ul.className = "csrc";
+  for (const e of entries.sort((a, b) => a.source.localeCompare(b.source))) {
+    const li = document.createElement("li");
+    li.innerHTML = `<span>${e.source}${e.split ? " <b>· co-endorsed</b>" : ""}</span><span>${e.category}</span>`;
+    ul.appendChild(li);
+  }
+  return ul;
+}
+
+/* ── "same race, both models" comparison panel ── */
+function renderCompare(race) {
+  const st = standings(race);
+  const colors = candidateColors(st);
+  const byCand = endorsersByCandidate(race, st);
+  const leader = st.rows[0];
+  const [big, small] = LABELS[race.id] || [race.label, ""];
+
+  const card = document.createElement("div");
+  card.className = "racecard";
+  card.innerHTML = `<h3>${big}<small>${small}</small></h3>`;
+
+  // current model
+  const curRow = document.createElement("div");
+  curRow.className = "modelrow";
+  curRow.innerHTML = `<span class="tag current">Shipped, unmerged</span><span class="desc">one shared meter, borrowed chips under ${leader.name}'s header</span>`;
+  card.appendChild(curRow);
+
+  const head = document.createElement("div");
+  head.className = "leadhead";
+  head.innerHTML = `<div><p class="eyebrow">Leading choice</p><h4>${leader.name}</h4></div>`;
+  head.appendChild(headlineMeterEl(race, st, colors, null));
+  card.appendChild(head);
+
+  const chips = document.createElement("ul");
+  chips.className = "chips";
+  let flagged = false;
+  for (const r of st.rows) {
+    const li = document.createElement("li");
+    const b = document.createElement("button");
+    b.style.setProperty("--c", colors[r.cid]);
+    const isForeign = r.cid !== leader.cid;
+    if (isForeign) { b.classList.add("foreign"); flagged = true; }
+    b.setAttribute("aria-pressed", "false");
+    b.innerHTML = `<span class="dot"></span>${r.name} <span class="cnt">${units(r.units)}</span>`;
+    li.appendChild(b);
+    chips.appendChild(li);
+  }
+  card.appendChild(chips);
+  if (flagged) {
+    const flag = document.createElement("p");
+    flag.className = "foreign-flag";
+    flag.textContent = "Dashed chips belong to candidates whose own section (below) has no meter — clicking one changes " + leader.name + "'s meter above, not theirs.";
+    card.appendChild(flag);
+  }
+
+  const curSections = document.createElement("div");
+  curSections.className = "sectionlist";
+  for (const r of st.rows) {
+    const sec = document.createElement("div");
+    sec.className = "candsection";
+    sec.innerHTML = `<div class="chead"><h5>${r.name}</h5><span class="no-meter-note">no meter in this model</span></div>`;
+    sec.appendChild(srcListEl(byCand.get(r.cid)));
+    curSections.appendChild(sec);
+  }
+  card.appendChild(curSections);
+
+  // proposed model
+  const propRow = document.createElement("div");
+  propRow.className = "modelrow";
+  propRow.innerHTML = `<span class="tag proposed">Proposed</span><span class="desc">every section carries its own meter — the race itself gets none here; that's the guide/ballot overview's job</span>`;
+  card.appendChild(propRow);
+
+  const propSections = document.createElement("div");
+  propSections.className = "sectionlist";
+  for (const r of st.rows) {
+    const sec = document.createElement("div");
+    sec.className = "candsection is-target";
+    sec.innerHTML = `<div class="chead"><h5>${r.name}</h5></div>`;
+    const mrow = document.createElement("div");
+    mrow.className = "secmeter-row";
+    mrow.appendChild(sectionMeterEl(race, st, colors, r.cid));
+    const cnt = document.createElement("span");
+    cnt.className = "seccount";
+    const pct = Math.round(100 * r.units / st.total);
+    cnt.innerHTML = `<b>${units(r.units)}</b> of ${units(st.total)} endorsements<span class="pct">${pct}%</span>`;
+    mrow.appendChild(cnt);
+    sec.appendChild(mrow);
+    sec.appendChild(srcListEl(byCand.get(r.cid)));
+    propSections.appendChild(sec);
+  }
+  card.appendChild(propSections);
+
+  document.getElementById("compare-host").appendChild(card);
+}
+
+/* ── gallery: the proposed model only, against harder cases ── */
+function renderGalleryRace(race) {
+  const st = standings(race);
+  const colors = candidateColors(st);
+  const byCand = endorsersByCandidate(race, st);
+  const [big, small] = LABELS[race.id] || [race.label, ""];
+
+  const card = document.createElement("div");
+  card.className = "racecard";
+  card.innerHTML = `<h3>${big}<small>${small}${race.synthetic ? " · synthetic" : ""}</small></h3>`;
+
+  if (!st.rows.length) {
+    const p = document.createElement("p");
+    p.className = "no-meter-note";
+    p.textContent = "No endorsements recorded.";
+    card.appendChild(p);
+    document.getElementById("gallery-host").appendChild(card);
+    return;
+  }
+
+  const sections = document.createElement("div");
+  sections.className = "sectionlist";
+  for (const r of st.rows) {
+    const sec = document.createElement("div");
+    sec.className = "candsection";
+    sec.innerHTML = `<div class="chead"><h5>${r.name}</h5></div>`;
+    const mrow = document.createElement("div");
+    mrow.className = "secmeter-row";
+    mrow.appendChild(sectionMeterEl(race, st, colors, r.cid));
+    const cnt = document.createElement("span");
+    cnt.className = "seccount";
+    const pct = Math.round(100 * r.units / st.total);
+    cnt.innerHTML = `<b>${units(r.units)}</b> of ${units(st.total)}<span class="pct">${pct}%</span>`;
+    mrow.appendChild(cnt);
+    sec.appendChild(mrow);
+    sec.appendChild(srcListEl(byCand.get(r.cid)));
+    sections.appendChild(sec);
+  }
+  card.appendChild(sections);
+  document.getElementById("gallery-host").appendChild(card);
+}
+
+function renderFoot() {
+  document.getElementById("foot").innerHTML =
+    "Data: wa-2026-primary canonical dataset (comparison-role and declining sources excluded, matching the " +
+    "site's tally). Reused from METER_V2_2026-08-04.html's own embedded copy, except Supreme Court Justice " +
+    "Position 3: that copy had gone stale by the time this page was built (a UFCW 3000 endorsement was " +
+    "recorded 2026-08-05), so its cells were re-verified against the canonical dataset directly — its real " +
+    "standing is a 52.5%/47.5% majority, not the tie the stale copy would have shown. All three races below " +
+    "are real; no synthetic data was needed. Palette unchanged from the ratified design (docs/METER_V2.md); " +
+    "only the meter's placement is under discussion here, filed as #325 against epic #311.";
+}
+
+renderCompare(RACES.find(r => r.id === "seattle-city-council-5"));
+for (const id of ["seattle-municipal-court-judge-5", "supreme-court-justice-3"]) {
+  renderGalleryRace(RACES.find(r => r.id === id));
+}
+renderFoot();
+</script>
+</html>
