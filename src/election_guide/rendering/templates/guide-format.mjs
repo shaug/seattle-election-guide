@@ -95,28 +95,6 @@ export function hasNoMajority(shareString) {
   return share.numerator * 2n <= share.denominator;
 }
 
-/**
- * The meter's spoken label. The tone tint is never the only carrier.
- *
- * A race with no share is spoken as "not available", not as the meter's visible
- * `N/A`. `screen_share_accessible_label` has always said so; this reused
- * `percentageLabel` instead and so read the abbreviation aloud, which is the
- * divergence the parity fixture found (issue #240). The visible text and the
- * spoken text are allowed to differ — an abbreviation that fits in a meter is
- * not a phrase a screen reader should announce — so the two sides agreeing is
- * the whole of the claim here.
- *
- * @param {string|null} shareString
- * @returns {string}
- */
-export function shareAccessibleLabel(shareString) {
-  const share = shareString === null ? 'not available' : percentageLabel(shareString);
-  return (
-    `${hasNoMajority(shareString) ? 'No majority. ' : ''}` +
-    `Consensus among explicitly endorsing sources: ${share}`
-  );
-}
-
 /** The scoring engine's per-race result, which is what every caption reads. */
 /** @typedef {import('./lens-score.mjs').RaceScore} ScoredRace */
 
@@ -134,35 +112,74 @@ export function recommendationLabel(scored, labels) {
 }
 
 /**
- * The card's support caption.
+ * The caption's pre-v2 wording, kept as the fallback for a tie or a race with
+ * no single recommended choice: there is no one candidate's count to lead the
+ * sentence with, so the sentence states only the denominator, as it always did
+ * (docs/METER_V2.md, Caption). Shared by `supportSummary` and
+ * `raceDetailSupportSummary`, exactly as their Python mirrors share
+ * `_meter_support_summary_fallback`.
  *
- * H38: while a lens is active the caption states how many of the currently
- * selected sources endorsed this race, out of how many are selected overall —
- * the same count the banner states — never the possessive "My sources". With no
- * lens (`selectedTotal === null`, the server-rendered caption's own text) the
- * caption is unchanged.
- *
- * @param {ScoredRace} scored
- * @param {number|null} [selectedTotal]
+ * @param {number} explicitCount
+ * @param {number|null} selectedTotal
  * @returns {string}
  */
-export function supportSummary(scored, selectedTotal = null) {
+function meterSupportSummaryFallback(explicitCount, selectedTotal) {
   return selectedTotal === null
-    ? `Based on ${scored.explicitCount} endorsing ${scored.explicitCount === 1 ? 'source' : 'sources'}`
-    : `Based on ${scored.explicitCount} of ${selectedTotal} selected sources`;
+    ? `Based on ${explicitCount} endorsing ${explicitCount === 1 ? 'source' : 'sources'}`
+    : `Based on ${explicitCount} of ${selectedTotal} selected sources`;
 }
 
 /**
- * H34: the compact-mode sibling caption, shortened for a denser card.
+ * The meter's own caption (I39), stating the recommended choice's exact
+ * endorsement count rather than only the denominator (docs/METER_V2.md,
+ * Caption — decided in #314): "Nilu Jenks — 21½ of 23 endorsements". A tie or
+ * a race with no single recommended choice falls back to the caption's older
+ * wording.
  *
- * @param {ScoredRace} scored
+ * H38: while a lens is active the denominator is how many of the currently
+ * selected sources are counted overall — the same count the banner states —
+ * never the possessive "My sources".
+ *
+ * Mirrors `screen_support_summary` in `rendering/context.py`. `leaderUnits` is
+ * the recommended choice's exact tally from `meterUnits`, or `null` when
+ * there is no single choice to attribute it to — the caller already has both,
+ * from building the same race's meter.
+ *
+ * @param {string} recommendation
+ * @param {import('./lens-score.mjs').Rational|null} leaderUnits
+ * @param {number} explicitCount
  * @param {number|null} [selectedTotal]
  * @returns {string}
  */
-export function supportSummaryCompact(scored, selectedTotal = null) {
+export function supportSummary(recommendation, leaderUnits, explicitCount, selectedTotal = null) {
+  if (leaderUnits === null) return meterSupportSummaryFallback(explicitCount, selectedTotal);
+  const count = endorsementCountLabel(leaderUnits.toString());
   return selectedTotal === null
-    ? `${scored.explicitCount} sources`
-    : `${scored.explicitCount} of ${selectedTotal} selected`;
+    ? `${recommendation} — ${count} of ${explicitCount} endorsements`
+    : `${recommendation} — ${count} of ${selectedTotal} selected sources`;
+}
+
+/**
+ * H34: the compact-mode sibling caption, shortened for a denser card — the
+ * name drops too, because the card's own heading already carries it.
+ *
+ * Mirrors `screen_support_summary_compact` in `rendering/context.py`.
+ *
+ * @param {import('./lens-score.mjs').Rational|null} leaderUnits
+ * @param {number} explicitCount
+ * @param {number|null} [selectedTotal]
+ * @returns {string}
+ */
+export function supportSummaryCompact(leaderUnits, explicitCount, selectedTotal = null) {
+  if (leaderUnits === null) {
+    return selectedTotal === null
+      ? `${explicitCount} sources`
+      : `${explicitCount} of ${selectedTotal} selected`;
+  }
+  const count = endorsementCountLabel(leaderUnits.toString());
+  return selectedTotal === null
+    ? `${count} of ${explicitCount} endorsements`
+    : `${count} of ${selectedTotal} selected`;
 }
 
 /**
@@ -191,7 +208,7 @@ export function allSourcesSummary(audited, labels) {
  */
 export function raceDetailSupportSummary(scored, selectedTotal, leaderCount) {
   if (scored.grade === 'Insufficient' || scored.isTied)
-    return supportSummary(scored, selectedTotal);
+    return meterSupportSummaryFallback(scored.explicitCount, selectedTotal);
   const noun = scored.explicitCount === 1 ? 'source' : 'sources';
   const verb = scored.explicitCount === 1 ? 'agrees' : 'agree';
   return `${leaderCount} of ${scored.explicitCount} endorsing ${noun} ${verb}`;

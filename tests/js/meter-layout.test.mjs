@@ -12,7 +12,15 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { meterLayoutBlocks } from '../../src/election_guide/rendering/templates/meter-layout.mjs';
+import {
+  meterAccessibleLabel,
+  meterBlockDecision,
+  meterBlockRenders,
+  meterCandidateColors,
+  meterEndorsementsFromCells,
+  meterLayoutBlocks,
+  meterStandings,
+} from '../../src/election_guide/rendering/templates/meter-layout.mjs';
 import { assertModuleGuard } from './support/module-guards.mjs';
 
 const FIXTURE = JSON.parse(
@@ -21,6 +29,8 @@ const FIXTURE = JSON.parse(
 
 /** Every golden case for this mirror, as the generator emitted them. */
 const CASES = FIXTURE.cases.filter((item) => item.mirror === 'meter-layout-blocks');
+const COLOR_CASES = FIXTURE.cases.filter((item) => item.mirror === 'meter-candidate-colors');
+const RENDER_CASES = FIXTURE.cases.filter((item) => item.mirror === 'meter-block-renders');
 
 /** One case by the source line that names it. */
 function shaped(name) {
@@ -112,4 +122,91 @@ test('a tongue reaching the meter its own edge stays square', () => {
 
 test('an unscored race lays out no blocks at all', () => {
   assert.deepEqual(meterLayoutBlocks([]), []);
+});
+
+// docs/METER_V2.md, Color: a pool that runs out steps toward the track rather
+// than repeating a swatch, so two candidates in one meter never share a color.
+// `mirror-parity.test.mjs` proves the byte-identical string for every fixture
+// case already; what this adds is the property the stepping exists for.
+test('color-pool exhaustion never repeats a swatch', () => {
+  for (const item of COLOR_CASES) {
+    const colors = meterCandidateColors(
+      item.input.standings,
+      new Set(item.input.leaderIds),
+      item.input.hasMajority,
+    );
+    assert.equal(
+      new Set(colors.values()).size,
+      colors.size,
+      `${item.source}: two candidates share one color`,
+    );
+  }
+});
+
+test('a solid block reads Endorsed; a split states the share by name', () => {
+  const labels = new Map([
+    ['jamie', 'Jamie Pedersen'],
+    ['hawk', 'Jaime Michelle Hawk'],
+    ['diaz', 'Mike Diaz'],
+    ['third', 'A Third Candidate'],
+  ]);
+  assert.equal(
+    meterBlockDecision({ type: 'solid', candidate_ids: ['jamie'] }, labels),
+    'Endorsed Jamie Pedersen',
+  );
+  assert.equal(
+    meterBlockDecision({ type: 'split', candidate_ids: ['hawk', 'diaz'] }, labels),
+    'Split: Jaime Michelle Hawk + Mike Diaz — ½ each',
+  );
+  // Decision log #21: an n-way split beyond two states the literal ratio, not
+  // a vulgar-fraction glyph — the tooltip names the split, it does not restate
+  // the caption's exact arithmetic.
+  assert.equal(
+    meterBlockDecision({ type: 'split', candidate_ids: ['hawk', 'diaz', 'third'] }, labels),
+    'Split: Jaime Michelle Hawk + Mike Diaz + A Third Candidate — 1/3 each',
+  );
+});
+
+test('the N/A state has no standings and its own accessible name', () => {
+  assert.equal(meterAccessibleLabel([], new Map(), new Map()), 'No endorsements recorded');
+});
+
+test('every block render is byte-identical to its golden, style string included', () => {
+  for (const item of RENDER_CASES) {
+    const colors = new Map(Object.entries(item.input.colors));
+    const labels = new Map(Object.entries(item.input.labels));
+    assert.equal(
+      JSON.stringify(meterBlockRenders(item.input.blocks, colors, labels), null, 2),
+      JSON.stringify(item.expected, null, 2),
+      `${item.source} serializes differently on the client. ${item.note}`,
+    );
+  }
+});
+
+// `meterEndorsementsFromCells` is the client's own side of the admission rule
+// (`meter_endorsements` in `rendering/context.py`, docs/METER_V2.md § Counting
+// and the denominator): it has no server counterpart of the same shape — the
+// server resolves a `SourceCell`, the client resolves a scored `MeterCell` —
+// so this is exercised directly rather than through the fixture.
+test('a scored cell resolves to a MeterEndorsement by its code and candidate ids', () => {
+  const sourceNameByCode = new Map([['strn', 'The Stranger']]);
+  const candidateLabelById = new Map([['jenks', 'Nilu Jenks']]);
+  const endorsements = meterEndorsementsFromCells(
+    [{ source_code: 'strn', candidate_ids: ['jenks'] }],
+    sourceNameByCode,
+    candidateLabelById,
+  );
+  assert.deepEqual(endorsements, [
+    { source_label: 'The Stranger', candidate_ids: ['jenks'], candidate_labels: ['Nilu Jenks'] },
+  ]);
+});
+
+test('a no-endorsement cell carries no candidates and so no block or weight', () => {
+  const endorsements = meterEndorsementsFromCells(
+    [{ source_code: 'strn', candidate_ids: [] }],
+    new Map([['strn', 'The Stranger']]),
+    new Map(),
+  );
+  assert.deepEqual(meterStandings(endorsements), []);
+  assert.deepEqual(meterLayoutBlocks(endorsements), []);
 });

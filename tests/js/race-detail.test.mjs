@@ -2,11 +2,15 @@
 // state (docs/FRONTEND.md § Rendering).
 //
 // `race-markup-parity.test.mjs` holds this template to the Jinja one for every
-// shape the published ballot actually contains. What is here is the rest: the
-// four branches no race on that ballot reaches — an absent share, a low fill, a
-// row with no receipt, and the not-counted marking a lens produces — plus the
+// shape the published ballot actually contains. What is here is the rest: a
+// row with no receipt and the not-counted marking a lens produces, plus the
 // keyed-rendering claim, which needs a render that *changes* the list and so
 // cannot be made against a fixture at all.
+//
+// v1's per-candidate mini-meter — the branches this file used to cover for an
+// absent share, a low fill, and a no-majority tone — retired with meter v2
+// (docs/METER_V2.md, Chrome geometry; #315 replaces its job on the shared
+// headline bar), so `CandidateSectionView` carries no `meter` any more.
 
 import assert from 'node:assert/strict';
 import test from 'node:test';
@@ -18,7 +22,6 @@ const { render } = await import('lit-html');
 const { candidateSectionsTemplate } = await import(
   '../../src/election_guide/rendering/templates/race-detail.mjs'
 );
-const { meterView } = await import('../../src/election_guide/rendering/templates/guide-card.mjs');
 
 /**
  * @param {Partial<import('../../src/election_guide/rendering/templates/race-detail.mjs').SourceRowView>} overrides
@@ -47,8 +50,6 @@ function candidate(overrides = {}) {
     label: 'Ada Lovelace',
     isLeader: true,
     kicker: 'Leading choice',
-    count: '1 of 1 endorsing sources',
-    meter: meterView('3/4'),
     rows: [row()],
     ...overrides,
   };
@@ -61,58 +62,18 @@ function draw(candidates) {
   return host;
 }
 
-test('a leader draws the meter, its tone, and its spoken label together', () => {
+test('a leading choice carries its kicker, and no meter of its own', () => {
   const host = draw([candidate()]);
-  const meter = host.querySelector('.race-detail-meter');
 
-  assert.ok(meter);
-  assert.equal(meter.getAttribute('style'), '--meter-fill: 75%');
-  assert.equal(meter.querySelector('strong').textContent, '75%');
-  assert.equal(
-    meter.getAttribute('aria-label'),
-    'Consensus among explicitly endorsing sources: 75%',
-  );
   assert.equal(host.querySelector('.race-detail-candidate-title p').textContent, 'Leading choice');
+  assert.equal(host.querySelector('.race-detail-meter'), null);
+  assert.equal(host.querySelector('.race-detail-candidate-metrics'), null);
 });
 
-// The audited template writes no `style` attribute at all when there is no
-// share, so neither may this one.
-test('an absent share draws the N/A chrome and no fill', () => {
-  const host = draw([candidate({ meter: meterView(null) })]);
-  const meter = host.querySelector('.race-detail-meter');
-
-  assert.equal(meter.getAttribute('class'), 'race-detail-meter race-detail-meter-na');
-  assert.equal(meter.hasAttribute('style'), false);
-  assert.equal(meter.querySelector('strong').textContent, 'N/A');
-  // The visible abbreviation is not what a screen reader should hear.
-  assert.equal(
-    meter.getAttribute('aria-label'),
-    'Consensus among explicitly endorsing sources: not available',
-  );
-});
-
-// I41: below ~30% fill the label rides past the fill onto the pale track, so
-// the guard renders it after the fill in muted ink instead.
-test('a low fill and a no-majority share each carry their own class', () => {
-  assert.equal(
-    draw([candidate({ meter: meterView('1/5') })])
-      .querySelector('.race-detail-meter')
-      .getAttribute('class'),
-    'race-detail-meter meter-no-majority meter-low-fill',
-  );
-  assert.equal(
-    draw([candidate({ meter: meterView('1/2') })])
-      .querySelector('.race-detail-meter')
-      .getAttribute('class'),
-    'race-detail-meter meter-no-majority',
-  );
-});
-
-test('a candidate who is not leading renders neither kicker nor meter', () => {
-  const host = draw([candidate({ isLeader: false, kicker: null, meter: null })]);
+test('a candidate who is not leading renders no kicker', () => {
+  const host = draw([candidate({ isLeader: false, kicker: null })]);
 
   assert.equal(host.querySelector('.race-detail-candidate-title p'), null);
-  assert.equal(host.querySelector('.race-detail-meter'), null);
   assert.equal(
     host.querySelector('section').getAttribute('class'),
     'race-detail-candidate',
@@ -181,7 +142,6 @@ test('reordering the candidates keeps each section the same element', () => {
     label: 'Blaise Pascal',
     isLeader: false,
     kicker: null,
-    meter: null,
     rows: [row({ code: 'mlkl', name: 'MLK Labor' })],
   });
 

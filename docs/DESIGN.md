@@ -292,18 +292,34 @@ then any sticky strip, then content.
   "8 of 11" — which is the drift a single heading makes impossible.)*
 - **Agree tone claims a favourite, so a tie never wears it.** A tie is a
   warning that the reader has to choose, not a recommendation to accept:
-  every tied candidate takes the differ family, in its own section, each with
-  its own meter. Green would say the opposite of what a tie means.
-  *(2026-08-04, issue 136 follow-up.)*
+  every tied candidate takes the differ family, in its own section, marked
+  with a "Tied for lead" kicker. Green would say the opposite of what a tie
+  means. *(2026-08-04, issue 136 follow-up.)*
 - **Don't count a list the reader is looking at.** A heading above a list of
   endorsing sources states no number of them; the count is the list. It
   survives in the visually-hidden accessible summary, because a reader who
   cannot see the rows cannot count them. *(2026-08-04, issue 136 follow-up.)*
-- **One meter.** A single chrome everywhere, left-anchored fill matching
-  the brand icon, label riding the fill (falling back to muted ink beside
-  a low fill). The meter's replacement is designed — meter v2, the
-  segmented meter, specified in `docs/METER_V2.md` — but not yet
-  implemented: until it lands, maintain this one, don't extend it.
+- **One meter.** A single chrome everywhere: a constant-width bar of
+  equal-width blocks, one per endorsement, grouped into candidate runs in
+  standings order — leader first, the site's own teal for a majority,
+  ambers for a tie or a sole leader short of one, muted slate/taupe/plum for
+  trailing candidates. At rest on a pointer device the seams between blocks
+  are invisible and a left-aligned percentage rides the leader's fill, so
+  the meter reads almost exactly like the v1 pill it replaced; hover or
+  keyboard focus trades that percentage for hairline seams and per-block
+  tooltips, and touch shows the seams always and the percentage never. The
+  full design — color, seams, splits, edge states, motion, and
+  accessibility — is `docs/METER_V2.md`; where this line and that document
+  disagree, the document wins. Landed #314 (2026-08-04); the v1 gradient
+  pill it replaced is gone from every chrome that draws a meter except the
+  social card, which is its own child ticket.
+- **The meter's own caption states a count, not a percentage.** "Nilu
+  Jenks — 21½ of 23 endorsements," using the same formatter the meter's
+  split blocks make honest: a co-endorsement's half is a divided block, so
+  the caption's fraction is no longer invented after the fact. A tie or a
+  race with no single recommended choice has no one count to lead with, so
+  the caption falls back to naming only the denominator, exactly as it did
+  before the count-caption existed. *(2026-08-04, meter v2 / #314.)*
 - **Alternative signals share one quiet component.** Anything that is an
   *alternative* to the result the reader asked for — today, the full-panel
   baseline under a lens — renders as a tone-tinted info bar. No pills, no

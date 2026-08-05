@@ -15,6 +15,7 @@
 // surface reads one spelling wherever a block reaches it (docs/FRONTEND.md, The
 // data contract: one identifier space).
 
+import { endorsementCountLabel } from './guide-format.mjs';
 import { Rational } from './lens-score.mjs';
 
 /**
@@ -84,40 +85,106 @@ function compareMembership(left, right, rank) {
 }
 
 /**
+ * Each candidate's exact endorsement tally: 1/n to each candidate a split
+ * names (docs/METER_V2.md, Counting and the denominator). Units, not source
+ * counts, and never a float.
+ *
+ * Mirrors `meter_units` in `rendering/context.py`. Public because the meter's
+ * caption and its accessible name both need one candidate's exact tally
+ * without walking the block list back apart.
+ *
+ * @param {MeterEndorsement[]} endorsements
+ * @returns {Map<string, Rational>}
+ */
+export function meterUnits(endorsements) {
+  /** @type {Map<string, Rational>} */
+  const units = new Map();
+  for (const endorsement of endorsements) {
+    if (endorsement.candidate_ids.length === 0) continue;
+    const share = new Rational(1n, BigInt(endorsement.candidate_ids.length));
+    for (const candidateId of endorsement.candidate_ids) {
+      const running = units.get(candidateId);
+      units.set(candidateId, running ? running.add(share) : share);
+    }
+  }
+  return units;
+}
+
+/**
+ * Each candidate's display label, as the cells that name them spell it.
+ *
+ * Mirrors `meter_candidate_labels` in `rendering/context.py`.
+ *
+ * @param {MeterEndorsement[]} endorsements
+ * @returns {Map<string, string>}
+ */
+export function meterCandidateLabels(endorsements) {
+  /** @type {Map<string, string>} */
+  const labels = new Map();
+  for (const endorsement of endorsements) {
+    endorsement.candidate_ids.forEach((candidateId, position) => {
+      labels.set(candidateId, endorsement.candidate_labels[position]);
+    });
+  }
+  return labels;
+}
+
+/**
  * The endorsed candidates, leader first, as the meter orders their runs.
  *
- * Units, not source counts: a split allocates 1/n to each candidate it names,
- * so the tally is exact rational arithmetic and never a float. Equal units are
- * broken by display label and then by id, using the plain comparison above
- * rather than a locale collation — the tie-break exists so two implementations
- * reach one run order, so it has to be an order both of them spell the same
- * way.
+ * Units, not source counts (see `meterUnits`): a split allocates 1/n to each
+ * candidate it names, so the tally is exact rational arithmetic and never a
+ * float. Equal units are broken by display label and then by id, using the
+ * plain comparison above rather than a locale collation — the tie-break
+ * exists so two implementations reach one run order, so it has to be an order
+ * both of them spell the same way.
+ *
+ * Mirrors `meter_standings` in `rendering/context.py`. Public — beyond block
+ * layout, this is also the meter's color assignment's and accessible name's
+ * own rank order, so every consumer reads one order rather than three.
  *
  * @param {MeterEndorsement[]} endorsements
  * @returns {string[]}
  */
-function meterStandings(endorsements) {
-  /** @type {Map<string, {units: Rational, label: string}>} */
-  const tally = new Map();
-  for (const endorsement of endorsements) {
-    if (endorsement.candidate_ids.length === 0) continue;
-    const share = new Rational(1n, BigInt(endorsement.candidate_ids.length));
-    endorsement.candidate_ids.forEach((candidateId, position) => {
-      const running = tally.get(candidateId);
-      tally.set(candidateId, {
-        units: running ? running.units.add(share) : share,
-        label: endorsement.candidate_labels[position],
-      });
-    });
-  }
-  return [...tally.entries()]
-    .sort(
-      ([leftId, left], [rightId, right]) =>
-        right.units.compare(left.units) ||
-        compareText(left.label, right.label) ||
-        compareText(leftId, rightId),
-    )
-    .map(([candidateId]) => candidateId);
+export function meterStandings(endorsements) {
+  const units = meterUnits(endorsements);
+  const labels = meterCandidateLabels(endorsements);
+  return [...units.keys()].sort(
+    (leftId, rightId) =>
+      /** @type {Rational} */ (units.get(rightId)).compare(
+        /** @type {Rational} */ (units.get(leftId)),
+      ) ||
+      compareText(
+        /** @type {string} */ (labels.get(leftId)),
+        /** @type {string} */ (labels.get(rightId)),
+      ) ||
+      compareText(leftId, rightId),
+  );
+}
+
+/**
+ * One race's cells, as the segmented meter counts them — the client's side of
+ * the admission rule `meter_endorsements` in `rendering/context.py` names
+ * (`RaceScore.meterCells`, built from `METER_COUNTED_STATES` in
+ * `lens-score.mjs`). `sourceNameByCode` and `candidateLabelById` resolve the
+ * identifiers a cell carries (`source_code`, `candidate_ids`) to the display
+ * strings a block and its tooltip need — a cell does not carry them itself,
+ * the same reason `meter_endorsements` looks a source's name up rather than
+ * finding it on the cell (docs/FRONTEND.md, The data contract).
+ *
+ * @param {import('./lens-score.mjs').MeterCell[]} cells
+ * @param {ReadonlyMap<string, string>} sourceNameByCode
+ * @param {ReadonlyMap<string, string>} candidateLabelById
+ * @returns {MeterEndorsement[]}
+ */
+export function meterEndorsementsFromCells(cells, sourceNameByCode, candidateLabelById) {
+  return cells.map((cell) => ({
+    source_label: sourceNameByCode.get(cell.source_code) ?? cell.source_code,
+    candidate_ids: cell.candidate_ids,
+    candidate_labels: cell.candidate_ids.map(
+      (candidateId) => candidateLabelById.get(candidateId) ?? candidateId,
+    ),
+  }));
 }
 
 /**
@@ -211,4 +278,237 @@ export function meterLayoutBlocks(endorsements) {
     });
   }
   return blocks;
+}
+
+/**
+ * One block, with everything a template needs to paint it.
+ *
+ * @typedef {object} MeterBlockRender
+ * @property {string} type
+ * @property {number} width
+ * @property {string} style
+ * @property {boolean} band_start
+ * @property {boolean} band_end
+ * @property {boolean} tongue_corner_start
+ * @property {boolean} tongue_corner_end
+ * @property {string} source_label
+ * @property {string} decision
+ */
+
+// Color (docs/METER_V2.md, Color): every value below is a CSS value string,
+// not a literal color, so a block's paint is always a reference to a
+// `base.css` token.
+const METER_TIE_COLORS = ['var(--amber)', 'var(--meter-tie-deep)'];
+const METER_TRAIL_COLORS = [
+  'var(--meter-trail-slate)',
+  'var(--meter-trail-taupe)',
+  'var(--meter-trail-plum)',
+];
+
+/**
+ * A color from a fixed pool, or — once the pool runs out — the pool's last
+ * color stepped progressively toward the track, so two candidates in one
+ * meter never share a swatch (docs/METER_V2.md, Color).
+ *
+ * Mirrors `_meter_stepped_color` in `rendering/context.py`.
+ *
+ * @param {readonly string[]} pool
+ * @param {number} index
+ * @returns {string}
+ */
+function meterSteppedColor(pool, index) {
+  if (index < pool.length) return pool[index];
+  const step = index - pool.length + 1;
+  const percent = Math.max(30, 100 - 22 * step);
+  return `color-mix(in srgb, ${pool[pool.length - 1]} ${percent}%, var(--meter-track))`;
+}
+
+/**
+ * Each standing candidate's block color (docs/METER_V2.md, Color).
+ *
+ * Mirrors `meter_candidate_colors` in `rendering/context.py`. `leaderIds` is
+ * the tie-aware leader set the scoring engine already decided (the audited
+ * `support_leader_candidate_ids`, or a scored race's `winnerIds`), reused
+ * rather than re-derived from `standings` so the meter's colors cannot
+ * disagree with the race's own no-majority/tie decision (I56).
+ *
+ * @param {readonly string[]} standings
+ * @param {ReadonlySet<string>} leaderIds
+ * @param {boolean} hasMajority
+ * @returns {Map<string, string>}
+ */
+export function meterCandidateColors(standings, leaderIds, hasMajority) {
+  /** @type {Map<string, string>} */
+  const colors = new Map();
+  let tieIndex = 0;
+  let trailIndex = 0;
+  for (const candidateId of standings) {
+    if (leaderIds.has(candidateId)) {
+      if (leaderIds.size > 1) {
+        colors.set(candidateId, meterSteppedColor(METER_TIE_COLORS, tieIndex));
+        tieIndex += 1;
+      } else {
+        colors.set(candidateId, hasMajority ? 'var(--teal)' : 'var(--amber)');
+      }
+    } else {
+      colors.set(candidateId, meterSteppedColor(METER_TRAIL_COLORS, trailIndex));
+      trailIndex += 1;
+    }
+  }
+  return colors;
+}
+
+/**
+ * One block's tooltip decision line (docs/METER_V2.md, The discovery model).
+ *
+ * Mirrors `meter_block_decision` in `rendering/context.py`.
+ *
+ * @param {MeterBlock} block
+ * @param {ReadonlyMap<string, string>} labels
+ * @returns {string}
+ */
+export function meterBlockDecision(block, labels) {
+  const names = block.candidate_ids.map((candidateId) => labels.get(candidateId) ?? candidateId);
+  if (block.type === 'solid') return `Endorsed ${names[0]}`;
+  const share = names.length === 2 ? '½ each' : `1/${names.length} each`;
+  return `Split: ${names.join(' + ')} — ${share}`;
+}
+
+/**
+ * A same-candidate seam: the fill mixed 88% with the seam pole
+ * (docs/METER_V2.md, Seams). Mirrors `_meter_seam_tint`.
+ *
+ * @param {string} color
+ * @returns {string}
+ */
+function meterSeamTint(color) {
+  return `color-mix(in srgb, ${color} 88%, var(--meter-seam-pole))`;
+}
+
+/**
+ * A cross-candidate seam: the 50/50 blend of the two facing colors, mixed 86%
+ * with the seam pole (docs/METER_V2.md, Seams). Mirrors `_meter_seam_bridge`.
+ *
+ * @param {string} left
+ * @param {string} right
+ * @returns {string}
+ */
+function meterSeamBridge(left, right) {
+  return (
+    `color-mix(in srgb, color-mix(in srgb, ${left} 50%, ${right} 50%) 86%, ` +
+    'var(--meter-seam-pole))'
+  );
+}
+
+/**
+ * The color a block's left-hand seam reads against: a solid block's own
+ * color, or a split's higher-ranked (top) half. Mirrors
+ * `_meter_block_leading_color`.
+ *
+ * @param {MeterBlock} block
+ * @param {ReadonlyMap<string, string>} colors
+ * @returns {string}
+ */
+function meterBlockLeadingColor(block, colors) {
+  return /** @type {string} */ (colors.get(block.candidate_ids[0]));
+}
+
+/**
+ * Every block's paint, seam, and tooltip data, in rendered order
+ * (docs/METER_V2.md, Splits: placement and the tongue rule; Seams).
+ *
+ * Mirrors `meter_block_renders` in `rendering/context.py`; see
+ * `MeterBlockRender` there for why `style` is the complete inline attribute
+ * value rather than a set of parts a template assembles itself.
+ *
+ * @param {MeterBlock[]} blocks
+ * @param {ReadonlyMap<string, string>} colors
+ * @param {ReadonlyMap<string, string>} labels
+ * @returns {MeterBlockRender[]}
+ */
+export function meterBlockRenders(blocks, colors, labels) {
+  /** @type {MeterBlockRender[]} */
+  const renders = [];
+  /** @type {MeterBlock|null} */
+  let previous = null;
+  for (const block of blocks) {
+    const declarations = [`--meter-w:${block.width}`];
+    /** @type {string} */
+    let rest;
+    if (block.type === 'solid') {
+      const color = /** @type {string} */ (colors.get(block.candidate_ids[0]));
+      declarations.push(`--meter-c:${color}`);
+      rest = color;
+    } else {
+      const topColor = /** @type {string} */ (colors.get(block.candidate_ids[0]));
+      const bottomColor = /** @type {string} */ (colors.get(block.candidate_ids[1]));
+      declarations.push(`--meter-ca:${topColor}`);
+      declarations.push(`--meter-cb:${bottomColor}`);
+      declarations.push(`--meter-splitline-rest:${bottomColor}`);
+      declarations.push(`--meter-splitline-hover:${meterSeamBridge(topColor, bottomColor)}`);
+      if (block.tongue_corner_start && block.tongue_corner_end) {
+        declarations.push(
+          `--meter-tongue-bg:linear-gradient(90deg, ${topColor} 0 50%, ${bottomColor} 50% 100%)`,
+        );
+      } else if (block.tongue_corner_start) {
+        declarations.push(`--meter-tongue-bg:${topColor}`);
+      } else if (block.tongue_corner_end) {
+        declarations.push(`--meter-tongue-bg:${bottomColor}`);
+      }
+      rest = block.band_start && previous !== null ? bottomColor : topColor;
+    }
+    if (previous !== null) {
+      const previousLeading = meterBlockLeadingColor(previous, colors);
+      const currentLeading = meterBlockLeadingColor(block, colors);
+      const seamRest = block.band_start ? previousLeading : rest;
+      const seamHover =
+        previousLeading === currentLeading
+          ? meterSeamTint(previousLeading)
+          : meterSeamBridge(previousLeading, currentLeading);
+      declarations.push(`--meter-seam-rest:${seamRest}`);
+      declarations.push(`--meter-seam-hover:${seamHover}`);
+    }
+    renders.push({
+      type: block.type,
+      width: block.width,
+      style: declarations.join('; '),
+      band_start: block.band_start,
+      band_end: block.band_end,
+      tongue_corner_start: block.tongue_corner_start,
+      tongue_corner_end: block.tongue_corner_end,
+      source_label: block.source_label,
+      decision: meterBlockDecision(block, labels),
+    });
+    previous = block;
+  }
+  return renders;
+}
+
+/**
+ * The meter's spoken name: the full standings, not the resting percentage
+ * (docs/METER_V2.md, The discovery model's accessibility model). Empty
+ * standings is the N/A state's own name.
+ *
+ * Mirrors `meter_accessible_label` in `rendering/context.py`.
+ *
+ * @param {readonly string[]} standings
+ * @param {ReadonlyMap<string, Rational>} units
+ * @param {ReadonlyMap<string, string>} labels
+ * @returns {string}
+ */
+export function meterAccessibleLabel(standings, units, labels) {
+  if (standings.length === 0) return 'No endorsements recorded';
+  let total = Rational.zero();
+  for (const candidateId of standings) {
+    total = total.add(/** @type {Rational} */ (units.get(candidateId)));
+  }
+  return standings
+    .map((candidateId) => {
+      const candidateUnits = /** @type {Rational} */ (units.get(candidateId));
+      return (
+        `${labels.get(candidateId)} ${endorsementCountLabel(candidateUnits.toString())} of ` +
+        `${endorsementCountLabel(total.toString())} endorsements`
+      );
+    })
+    .join('; ');
 }

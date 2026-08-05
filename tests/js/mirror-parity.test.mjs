@@ -30,12 +30,18 @@ import {
   raceDetailAccessibleSummary,
   raceDetailSupportSummary,
   recommendationLabel,
-  shareAccessibleLabel,
   supportSummary,
   supportSummaryCompact,
 } from '../../src/election_guide/rendering/templates/guide-format.mjs';
+import { Rational } from '../../src/election_guide/rendering/templates/lens-score.mjs';
 import { tallyingSourceCodes } from '../../src/election_guide/rendering/templates/lens-selection.mjs';
-import { meterLayoutBlocks } from '../../src/election_guide/rendering/templates/meter-layout.mjs';
+import {
+  meterAccessibleLabel,
+  meterBlockRenders,
+  meterCandidateColors,
+  meterLayoutBlocks,
+  meterStandings,
+} from '../../src/election_guide/rendering/templates/meter-layout.mjs';
 
 const FIXTURE = JSON.parse(
   readFileSync(fileURLToPath(new URL('./fixtures/mirror-parity.json', import.meta.url)), 'utf8'),
@@ -52,6 +58,13 @@ const scored = (fields) => /** @type {any} */ ({ standings: [], ...fields });
 
 /** @param {Record<string, string>} labels */
 const labelMap = (labels) => new Map(Object.entries(labels));
+
+/** @param {string|null} value */
+const rational = (value) => (value === null ? null : Rational.parse(value));
+
+/** @param {Record<string, string>} units */
+const unitsMap = (units) =>
+  new Map(Object.entries(units).map(([id, value]) => [id, Rational.parse(value)]));
 
 /**
  * The payload the server embedded in one of the committed audited pages, read
@@ -81,10 +94,18 @@ const RUNNERS = {
   'meter-unavailable-label': ({ share }) => percentageLabel(share),
   'endorsement-count-label': ({ count }) => endorsementCountLabel(count),
   'meter-layout-blocks': ({ endorsements }) => meterLayoutBlocks(endorsements),
+  'meter-standings': ({ endorsements }) => meterStandings(endorsements),
+  'meter-accessible-label': ({ standings, units, labels }) =>
+    meterAccessibleLabel(standings, unitsMap(units), labelMap(labels)),
+  'meter-candidate-colors': ({ standings, leaderIds, hasMajority }) =>
+    Object.fromEntries(meterCandidateColors(standings, new Set(leaderIds), hasMajority)),
+  'meter-block-renders': ({ blocks, colors, labels }) =>
+    meterBlockRenders(blocks, new Map(Object.entries(colors)), labelMap(labels)),
   'no-majority': ({ share }) => hasNoMajority(share),
-  'share-accessible-label': ({ share }) => shareAccessibleLabel(share),
-  'support-summary': ({ scored: race }) => supportSummary(scored(race)),
-  'support-summary-compact': ({ scored: race }) => supportSummaryCompact(scored(race)),
+  'support-summary': ({ recommendation, leaderUnits, explicitCount }) =>
+    supportSummary(recommendation, rational(leaderUnits), explicitCount),
+  'support-summary-compact': ({ leaderUnits, explicitCount }) =>
+    supportSummaryCompact(rational(leaderUnits), explicitCount),
   'recommendation-label': ({ scored: race, labels }) =>
     recommendationLabel(scored(race), labelMap(labels)),
   'race-detail-support-summary': ({ scored: race, leaderCount }) =>
