@@ -127,10 +127,45 @@ Stop and flag a human when:
 
 *(Appended after each execution; this section is why the next cycle is easier than this one.)*
 
-- Not yet executed. First execution: `wa-2026-primary`, due 2026-08-04. Expected discoveries:
-  the canonical results URL pattern and which export formats King County actually publishes.
 - 2026-08-03 (pre-execution review): `evidence capture` accepts only registered endorsement
   sources, and King County Elections is an authority, not an endorsement source — decided not
   to force it into the panel registry. The authority capture lane is #281; until it lands,
   step 3's interim manual form applies, and #281 backfills manifests from the retained
   content-addressed bytes.
+- **2026-08-04 execution (`wa-2026-primary`, first count).** King County's page listed "Last
+  updated: 8/4/2026 08:30 PM"; capture ran ~10:02 p.m. Pacific (2026-08-05T05:02Z–05:04Z UTC).
+  Four artifacts captured in the interim manual form (no manifests yet — #281):
+
+  | Artifact | Requested URL | Final URL | Retrieved (UTC) | Status | Media type | Bytes | sha256 |
+  |---|---|---|---|---|---|---|---|
+  | King County rendered results page | `https://kingcounty.gov/en/dept/elections/results/2026/august-primary-election` | same (no redirect) | 2026-08-05T05:02:45Z | 200 | `text/html; charset=utf-8` | 53270 | `5a8d5265e24349d43bc2befa8dbd39a89e63022bdd4b27c92f6e8131eb691f0f` |
+  | King County results PDF | `https://election-results-pdf.kingcounty.gov/` | `https://election-results-01.kingcounty.gov/results.pdf` | 2026-08-05T05:02:25Z | 200 | `application/pdf` | 66021 | `de727e01e4d5c6d8b9ac244a7aa9be9daba1d7103b4f553400ad57748be9681a` |
+  | King County results CSV | `https://election-results-csv.kingcounty.gov/` | `https://election-results-01.kingcounty.gov/webresults.csv` | 2026-08-05T05:02:25Z | 200 | `application/vnd.ms-excel` | 53262 | `3e240a3c0012635c21bf31ee6c1c89d73371cee5665c4198d09f71521c2de7ed` |
+  | WA Secretary of State results JSON (statewide, corroborating) | `https://results.votewa.gov/results/public/api/elections/washington/20260804/data` | same (no redirect) | 2026-08-05T05:04:45Z | 200 | `application/json; charset=utf-8` | 430835 | `a110484467bd178f124d53746786292bae65ae10413c681bbde10893ca22fa40` |
+
+  Titles follow the template: "2026 Washington August Primary election-night results
+  (King County rendered results page)", "(King County PDF)", "(King County CSV)", and
+  "(WA Secretary of State JSON, statewide)" respectively. All four stored at
+  `data/snapshots/sha256/<first two chars>/<full sha256>`; every stored file's sha256 and byte
+  length recomputed and matched (step 5).
+
+  Discoveries for the next cycle:
+  - King County's landing page links to the PDF and CSV via **client-side meta-refresh**
+    (`<meta http-equiv="refresh">`), not an HTTP redirect — `curl -L` does not follow it. The
+    canonical bytes live on a separate `election-results-01.kingcounty.gov` Azure-blob host;
+    resolve the meta-refresh target and fetch that URL directly.
+  - No XML export is offered; only the rendered page, one PDF, and one CSV.
+  - King County serves the CSV with `Content-Type: application/vnd.ms-excel`, not `text/csv`,
+    even though the content is plain CSV — recorded the observed media type as-is rather than
+    normalizing it.
+  - The King County landing page itself carries real evidence (turnout stats, validation
+    requirements) distinct from the PDF/CSV, so it was captured as its own artifact rather than
+    treated as mere navigation.
+  - `results.votewa.gov` is a client-rendered SPA — the server-delivered HTML shell carries no
+    results data. The actual data is a public, unauthenticated JSON export at
+    `/results/public/api/elections/washington/<election-yyyymmdd>/data`, directly fetchable
+    without a browser; captured that instead of the empty shell. This dataset is statewide, not
+    Seattle/King-County-scoped.
+  - All four fetches used a direct HTTP GET (`curl`) rather than the CLI, consistent with the
+    interim form; no `browser_required` escalation was needed since every artifact was reachable
+    without JS interaction once the canonical URLs were resolved.
