@@ -147,7 +147,7 @@ def test_a_second_run_creates_nothing() -> None:
 
 
 def test_a_closed_issue_still_suppresses_a_duplicate() -> None:
-    """existing_markers reads closed issues too; the plan must honor that."""
+    """The listing reads closed issues too; the plan must honor that."""
     as_of = date(2027, 11, 2)
     marker = milestone_marker("wa-2027-general", "election-day")
 
@@ -211,7 +211,7 @@ def test_every_planned_issue_embeds_its_own_marker() -> None:
         assert request.body.rstrip().endswith(request.marker)
 
 
-def test_markers_are_read_back_out_of_issue_bodies() -> None:
+def test_markers_are_read_back_out_of_the_listing() -> None:
     """The round trip that makes a second run idempotent."""
     request = _plan(date(2027, 11, 2), 0)[0]
     payload = json.dumps([{"body": request.body}])
@@ -250,7 +250,7 @@ def _nothing_tracked(self: GitHubIssueTracker) -> TrackedIssues:
     return TrackedIssues(markers=frozenset(), titles=())
 
 
-def test_existing_markers_lists_by_label_across_open_and_closed_issues(
+def test_the_listing_reads_every_issue_open_and_closed(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     recorded: dict[str, Any] = {}
@@ -265,18 +265,20 @@ def test_existing_markers_lists_by_label_across_open_and_closed_issues(
     assert GitHubIssueTracker("owner/repo").read_tracked_issues().markers == {marker}
     command = recorded["command"]
     assert command[:3] == ["gh", "issue", "list"]
-    # Closed issues count, and the filter is the label rather than a text search.
+    # Closed issues count: a milestone whose issue was completed must not be
+    # reopened as a duplicate.
     assert "--state" in command and command[command.index("--state") + 1] == "all"
     # Every issue, not a labelled subset: a generated issue that loses its
     # label must still be seen, or its milestone reopens on every run.
     assert "--label" not in command
     assert "--search" not in command
-    # The body is what carries the marker back; any other field reads as empty.
+    # The body carries the marker back, and the title is what the collision
+    # check compares — narrowing this to `body` would disable that guard.
     assert command[command.index("--json") + 1] == "title,body"
     assert str(ISSUE_QUERY_LIMIT) in command
 
 
-def test_existing_markers_refuses_a_truncated_listing(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_the_listing_refuses_to_truncate(monkeypatch: pytest.MonkeyPatch) -> None:
     """A dropped marker is a duplicate issue, so the read fails instead."""
     payload = json.dumps([{"body": "x"} for _ in range(ISSUE_QUERY_LIMIT)])
 
