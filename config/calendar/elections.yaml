@@ -384,8 +384,8 @@ milestones:
   - election_id: wa-2027-general
     id: guide-publishes
     kind: guide_publishes
-    offset_days: -19
-    revision: 2
+    offset_days: -18
+    revision: 3
     workflow: release build
     reference: docs/RELEASE.md
     public: true
