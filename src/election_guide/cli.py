@@ -17,7 +17,7 @@ import typer
 from pydantic import ValidationError
 
 from election_guide import __version__
-from election_guide.calendar import plan_issues, read_election_calendar
+from election_guide.calendar import plan_issues, read_election_calendar, unmarked_collisions
 from election_guide.calendar.github_tracker import GitHubIssueTracker
 from election_guide.collection import read_adapter_spec, refresh_source, validate_adapter
 from election_guide.collection.http import fetch_http
@@ -273,15 +273,23 @@ def calendar_track(
         calendar = read_election_calendar(calendar_path)
         today = date.fromisoformat(as_of) if as_of is not None else datetime.now(UTC).date()
         tracker = GitHubIssueTracker(repository)
-        # A dry run still reads existing markers. Printing milestones that
+        # A dry run still reads existing state. Printing milestones that
         # already have issues would report work the real run would skip.
+        tracked = tracker.read_tracked_issues()
         planned = plan_issues(
             calendar,
             as_of=today,
             lead_days=lead_days,
-            existing_markers=tracker.existing_markers(),
+            existing_markers=set(tracked.markers),
         )
+        # A milestone reaching the plan means no marker was read for it. If a
+        # title says otherwise the two disagree, and opening another issue
+        # would repeat that every run — so skip it and end loudly instead.
+        collisions = unmarked_collisions(planned, tracked.titles)
+        contradicted = {request.marker for request, _ in collisions}
         for request in planned:
+            if request.marker in contradicted:
+                continue
             if dry_run:
                 typer.echo(f"would create: {request.title} [{request.marker}]")
             else:
@@ -290,7 +298,19 @@ def calendar_track(
         typer.echo(f"calendar tracking failed: {error}", err=True)
         raise typer.Exit(code=1) from error
     verb = "would be opened" if dry_run else "opened"
-    typer.echo(f"calendar tracking: {len(planned)} {verb}, window {lead_days} days from {today}")
+    typer.echo(
+        f"calendar tracking: {len(planned) - len(collisions)} {verb}, "
+        f"window {lead_days} days from {today}"
+    )
+    for request, title in collisions:
+        typer.echo(
+            f"calendar tracking: skipped {request.marker!r} — an issue titled {title!r} "
+            "already claims that milestone but carries no readable marker; an edit may have "
+            "moved it off the body's last line",
+            err=True,
+        )
+    if collisions:
+        raise typer.Exit(code=1)
 
 
 @election_app.command("init")
