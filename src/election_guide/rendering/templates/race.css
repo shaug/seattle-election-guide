@@ -61,23 +61,28 @@
 .race-detail-candidate-tied .race-detail-candidate-title p { margin: 0 0 .05rem; color: var(--tone-differ-text); font-size: .62rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 .race-detail-candidate-title h4 { min-width: 0; margin: 0; color: var(--navy); font-size: 1.05rem; line-height: 1.1; overflow-wrap: anywhere; }
 /* Every candidate's own section meter (docs/METER_V2.md, Chrome geometry:
-   "The headline meter's own fate"; #325): a fixed-width track, left-adjusted
-   — every row's bar occupies the same physical width for scannability, the
-   job the card-width headline meter used to do — beside a flexible,
-   right-adjusted label carrying the count and percent the meter no longer
-   shows inside itself (Decision: "Resting label"). `.screen-meter-section`
-   overrides `.screen-meter`'s own fixed 11rem/8.75rem width (guide-race.css,
-   shared with the card and the retired headline) with a share of this row's
-   own, much wider, width — a candidate section spans nearly the full content
-   column, not a fixed card track, so the meter can afford to as well.
-   Horizontal padding matches `.race-detail-candidate-heading`'s own
-   (`.75rem`) and the top margin is deliberately small: this row reads as the
-   second line of that heading, immediately under the candidate's name, not
-   as the first row of the source list below it (found live: the row read as
-   coupled to the first endorsement instead of the candidate). */
+   "The headline meter's own fate"; #325): left-adjusted, growing to fill
+   the row (capped, not literally unbounded), beside a right-adjusted label
+   sized to its own count/percent text (Decision: "Resting label") rather
+   than the reverse. `.screen-meter-section` overrides `.screen-meter`'s own
+   fixed 11rem/8.75rem width (guide-race.css, shared with the card and the
+   retired headline) — a candidate section spans nearly the full content
+   column, not a fixed card track, so the meter can use most of it, found
+   live to matter more here than the card-width meter's own row-to-row
+   scannability goal did. Horizontal padding matches
+   `.race-detail-candidate-heading`'s own (`.75rem`) and the top margin is
+   deliberately small: this row reads as the second line of that heading,
+   immediately under the candidate's name, not as the first row of the
+   source list below it (found live: the row read as coupled to the first
+   endorsement instead of the candidate). */
 .race-detail-candidate-meter { display: flex; align-items: center; gap: 1rem; margin: .15rem 0 .5rem; padding: 0 .75rem; }
-.screen-meter-section { flex: 0 0 60%; max-width: 34rem; width: auto; }
-.race-detail-candidate-count { flex: 1 1 auto; min-width: 0; text-align: right; color: var(--muted); font-size: .85rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+/* The meter grows to fill the row (capped, so it doesn't run absurd on an
+   ultra-wide viewport); the count takes only what its own text needs
+   instead of the reverse — found live: at flex:1 1 auto the count box
+   claimed ~530px for ~170px of actual text, starving the meter down to a
+   fraction of the row's real width even after the fixed-16rem fix above. */
+.screen-meter-section { flex: 1 1 auto; max-width: 48rem; width: auto; }
+.race-detail-candidate-count { flex: 0 0 auto; text-align: right; color: var(--muted); font-size: .85rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .race-detail-candidate-count b { color: var(--navy); font-weight: 700; }
 .race-detail-candidate-pct { margin-left: .4rem; color: var(--faint); }
 /* Per-candidate coloring (docs/METER_V2.md, Color: "Selected candidate: bold;
