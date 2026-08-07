@@ -298,7 +298,20 @@ export function wireRacePage(payload) {
     // when there is one. A lens can create that leader or dissolve it into a
     // tie, which is why the element is always in the document and only ever
     // shown or hidden — there would otherwise be nothing here to fill.
-    if (headline) headline.hidden = !sections.some((section) => section.inHeadline);
+    const hasSoleLeader = sections.some((section) => section.inHeadline);
+    if (headline) {
+      headline.hidden = !hasSoleLeader;
+      // `race-headline-heads-section` (race.css) is what makes the headline
+      // read as one seamless block with its sole leader's own candidate
+      // section below it — no border, shadow, or padding between them
+      // (found live: without this, a race whose *audited default* has no
+      // sole leader still lacked the class after a lens resolved one,
+      // since only `hidden` was kept in sync here; the class, set once by
+      // the server from the audited default alone, never was). Keyed off
+      // the same `hasSoleLeader` the visibility toggle just used, so the
+      // two can never disagree.
+      headline.classList.toggle('race-headline-heads-section', hasSoleLeader);
+    }
     if (summary) {
       const leaderRows =
         sections.find((section) => section.candidateId === scored.winnerId)?.rows ?? [];

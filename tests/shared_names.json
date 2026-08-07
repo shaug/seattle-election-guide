@@ -756,6 +756,12 @@
       "python",
       "test"
     ],
+    "race-headline-heads-section": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
     "race-office": [
       "template",
       "stylesheet",

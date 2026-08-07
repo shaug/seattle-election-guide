@@ -2945,6 +2945,18 @@ def test_race_page_no_majority_state_appears_and_dissolves_with_the_selected_sou
             const candidateSections = document.querySelectorAll('[data-race-detail-candidate-id]');
             return {{
               headlineHidden: headline.hidden,
+              // `race-headline-heads-section` (race.css) is what makes the
+              // headline read as one seamless block with its sole leader's
+              // own candidate section below it — found live: only
+              // `headline.hidden` was kept in sync with the active lens
+              // (race-client.mjs), so a race whose *audited default* has no
+              // sole leader still lacked this class once a lens resolved
+              // one, reproducing a border/shadow seam the class exists to
+              // remove. This must track `headlineHidden` exactly (present
+              // whenever the headline is shown, absent whenever it is
+              // hidden) under every lens selection, not only the audited
+              // default.
+              headlineHeadsSection: headline.classList.contains('race-headline-heads-section'),
               pillHidden: pill.hidden,
               kicker: kicker?.textContent ?? null,
               // Every standing candidate's own section meter reflects the
@@ -2977,6 +2989,7 @@ def test_race_page_no_majority_state_appears_and_dissolves_with_the_selected_sou
     split_accessible_names = result["split"].pop("accessibleNames")
     assert result["split"] == {
         "headlineHidden": True,
+        "headlineHeadsSection": False,
         "pillHidden": False,
         "kicker": "Tied for lead",
         "anyAmberBlock": True,
@@ -2990,6 +3003,10 @@ def test_race_page_no_majority_state_appears_and_dissolves_with_the_selected_sou
         assert re.match(r".+: ½ of 1 endorsements$", name)
     # A majority resolves the tie: the headline returns and nothing is marked.
     assert result["majority"]["headlineHidden"] is False
+    # The headline reads as one seamless block with its now-revealed sole
+    # leader's own section, exactly as an audited-default sole leader already
+    # does (found live: this lens-created leader started out untied).
+    assert result["majority"]["headlineHeadsSection"] is True
     assert result["majority"]["pillHidden"] is True
     assert result["majority"]["anyAmberBlock"] is False
     assert result["majority"]["everyCandidateHasOneMeter"] is True
