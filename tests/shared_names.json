@@ -237,6 +237,11 @@
       "client",
       "test"
     ],
+    "data-meter-candidate-id": [
+      "template",
+      "client",
+      "test"
+    ],
     "data-meter-decision": [
       "template",
       "client",
@@ -550,6 +555,12 @@
       "client",
       "test"
     ],
+    "meter-block-context": [
+      "stylesheet",
+      "client",
+      "python",
+      "test"
+    ],
     "meter-degraded": [
       "template",
       "stylesheet",
@@ -564,6 +575,18 @@
     ],
     "meter-half-bottom": [
       "template",
+      "stylesheet",
+      "client",
+      "python",
+      "test"
+    ],
+    "meter-half-context": [
+      "stylesheet",
+      "client",
+      "python",
+      "test"
+    ],
+    "meter-half-recede": [
       "stylesheet",
       "client",
       "python",
@@ -641,6 +664,12 @@
       "client",
       "test"
     ],
+    "race-detail-candidate-count": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
     "race-detail-candidate-heading": [
       "template",
       "stylesheet",
@@ -657,6 +686,18 @@
       "template",
       "stylesheet",
       "client"
+    ],
+    "race-detail-candidate-meter": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "race-detail-candidate-pct": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
     ],
     "race-detail-candidate-tied": [
       "template",
@@ -715,6 +756,12 @@
       "python",
       "test"
     ],
+    "race-headline-heads-section": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
     "race-office": [
       "template",
       "stylesheet",
@@ -729,6 +776,12 @@
       "test"
     ],
     "screen-meter-na": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "screen-meter-section": [
       "template",
       "stylesheet",
       "client",

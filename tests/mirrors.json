@@ -31,8 +31,10 @@
       "client": "guide-format.mjs percentageLabel",
       "server": "publication/models.py _percentage_whole, via builder.py percentage_label",
       "proof": "parity-fixture",
-      "evidence": [],
-      "note": "A whole percentage over exact integer arithmetic on both sides. Shares no words with its server half, so only the fixture can see it drift; the fixture's boundary shares are the exact halves a float round would land on the wrong side of."
+      "evidence": [
+        "symbol:percentageLabel"
+      ],
+      "note": "A whole percentage over exact integer arithmetic on both sides. Shares no words with its server half, so only the fixture can see it drift; the fixture's boundary shares are the exact halves a float round would land on the wrong side of. `meter_candidate_percentage` (#325) names this function's own half-up rounding rule in its docstring as the precedent it follows for a section meter's own percent, which is what the symbol evidence now catches — it is a citation of the rule, not a second call site, so it earns no new fixture case here."
     },
     "endorsement-count-label": {
       "client": "guide-format.mjs endorsementCountLabel",
@@ -124,16 +126,45 @@
       ],
       "note": "Every block's complete paint (the inline `style` value MeterBlockRender carries, built once so a Jinja macro and a lit-html template both merely write it rather than assembling it twice) and tooltip decision text (docs/METER_V2.md, The discovery model). `meter_block_decision`'s own text — 'Endorsed', the split phrasing, the two-way glyph and the literal n-way ratio — is folded in here rather than given its own entry, because every case that reaches a decision branch reaches it by rendering blocks. A seam is two half colors (top, bottom), not one — a boundary between two different splits in one band shares its top half's color but not its bottom half's, which a single shared seam color painted wrong until this function paired the halves; `--{prefix}-color`/`--{prefix}-image` (a flat, transitionable color when both halves agree, a two-stop border-image gradient when they do not) is what the derivation's `--•-color:`/`--•-image:...` entries name. That two-split-band case, the n-way share, and the color-mix seam blends are only reachable through meter-layout-blocks' hand-built shapes (a three-way split, adjacent bands), which this fixture reuses for the same reason that entry does."
     },
+    "meter-candidate-block-contexts": {
+      "client": "meter-layout.mjs meterCandidateBlockContexts",
+      "server": "rendering/context.py meter_candidate_block_contexts",
+      "proof": "parity-fixture",
+      "evidence": [
+        "symbol:meter_candidate_block_contexts"
+      ],
+      "note": "One candidate's bold/recede class-name suffixes for every block of the shared, once-per-race layout (docs/METER_V2.md, Color; #325): the race-detail page's per-candidate section meter reads these alongside meter-block-renders' own style, never re-deriving which blocks name a candidate. Shares no display text with its server half — the values are CSS class-name fragments, not words a reader sees — so only the fixture, exercised against meter-layout-blocks' own hand-built shapes (a three-way split, adjacent bands, a non-adjacent split), can see the two sides disagree about which half bolds and which recedes."
+    },
+    "meter-candidate-accessible-label": {
+      "client": "meter-layout.mjs meterCandidateAccessibleLabel",
+      "server": "rendering/context.py meter_candidate_accessible_label",
+      "proof": "parity-fixture",
+      "evidence": [
+        "symbol:meter_candidate_accessible_label",
+        "text:: • of • endorsements"
+      ],
+      "note": "One candidate's own section meter's spoken name (docs/METER_V2.md, The discovery model's accessibility model, extended to the per-candidate meter in #325): '<name>: 21½ of 23 endorsements', this candidate's own exact count against the race's whole denominator — not the full-standings sentence meter-accessible-label states for the (now retired) shared headline bar. The colon-led template is the one piece of literal text the derivation can see; the count itself is built from endorsement_count_label output, which shares no further words across languages."
+    },
+    "meter-candidate-percentage": {
+      "client": "meter-layout.mjs meterCandidatePercentage",
+      "server": "rendering/context.py meter_candidate_percentage",
+      "proof": "parity-fixture",
+      "evidence": [
+        "symbol:meter_candidate_percentage"
+      ],
+      "note": "One candidate's own resting percent (docs/METER_V2.md, Resting label; #325's own decision log), rounded half-up on exact rational arithmetic — the same whole-percent rounding rule share-percentage-label already proves at the race's own leader-share boundaries, applied here to any standing candidate's own denominator instead of only the race's overall winner share. A bare number, not a labeled string, so it shares no words with its server half; only the fixture's boundary shares can see the two sides round one differently."
+    },
     "meter-markup": {
       "client": "guide-card.mjs raceResultTemplate and meterBlockTemplate",
       "server": "_meter.html.j2 segmented_meter and meter_block macros",
       "proof": "markup-parity",
       "evidence": [
         "symbol:raceResultTemplate",
+        "symbol:meterBlockTemplate",
         "text:meter-block meter-block-",
         "text:screen-meter screen-meter-na"
       ],
-      "note": "The meter's own markup shape — the container's class list and the block class list — held together by guide-markup-parity.test.mjs and race-markup-parity.test.mjs, which diff the audited page's [data-lens-result] region against the lit render node for node. Both renderers read one precomputed MeterView/MeterBlockRender rather than deciding a class list twice; this entry is what a Jinja macro naming a lit template by name puts in the inventory."
+      "note": "The meter's own markup shape — the container's class list and the block class list — held together by guide-markup-parity.test.mjs and race-markup-parity.test.mjs, which diff the audited page's [data-lens-result] region against the lit render node for node. Both renderers read one precomputed MeterView/MeterBlockRender rather than deciding a class list twice; this entry is what a Jinja macro naming a lit template by name puts in the inventory. `meterBlockTemplate` became a second, directly named export in #325, when the race-detail page's per-candidate section meter (`candidate_meter` in `_meter.html.j2`) started reusing the exact same block markup rather than a second implementation — held by the same region diff, since a candidate section is inside `[data-race-candidates]`, the fourth region `race-markup-parity.test.mjs` already covers."
     },
     "support-summary": {
       "client": "guide-format.mjs supportSummary",

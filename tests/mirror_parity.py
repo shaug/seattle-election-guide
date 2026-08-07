@@ -635,6 +635,14 @@ def _block_render_json(render: context.MeterBlockRender) -> dict[str, Any]:
     }
 
 
+def _block_context_json(item: context.MeterBlockContext) -> dict[str, Any]:
+    return {
+        "block_class": item.block_class,
+        "half_top_class": item.half_top_class,
+        "half_bottom_class": item.half_bottom_class,
+    }
+
+
 def _synthetic_leader_ids(standings: list[str], units: dict[str, Fraction]) -> frozenset[str]:
     """The candidates tied for first, from units alone.
 
@@ -720,7 +728,75 @@ def _meter_layout_case(
             "note": note,
             "source": source,
         },
+        # #325's own per-candidate mirrors: one candidate's bold/recede
+        # context, spoken name, and resting percent, for every standing
+        # candidate this shape names — the same shapes that exercise every
+        # other meter mirror's edge cases (a three-way split, adjacent
+        # bands, a non-adjacent split) are what exercise the per-half
+        # bold/recede fix too.
+        *_meter_candidate_cases(blocks, standings, units, labels, note, source),
     ]
+
+
+def _meter_candidate_cases(
+    blocks: list[context.MeterBlock],
+    standings: list[str],
+    units: dict[str, Fraction],
+    labels: dict[str, str],
+    note: str,
+    source: str,
+) -> list[dict[str, Any]]:
+    """One candidate's own section-meter mirrors, for every standing
+    candidate a layout shape names (docs/METER_V2.md, Color; Resting label;
+    #325). `total_count` mirrors `race.explicit_endorsement_count` the
+    production call site (`race_candidate_meter_views`) reads directly: for
+    a hand-built shape with no `PublicationRace` to read it from, the sum of
+    every standing candidate's own units is the same integer (one unit is
+    admitted per counted cell, split n ways summing back to 1)."""
+    if not standings:
+        return []
+    total_count = int(sum(units.values(), Fraction(0)))
+    total_label = str(total_count)
+    cases: list[dict[str, Any]] = []
+    blocks_json = [_block_json(block) for block in blocks]
+    for candidate_id in standings:
+        cases.append(
+            {
+                "mirror": "meter-candidate-block-contexts",
+                "input": {"blocks": blocks_json, "candidateId": candidate_id},
+                "expected": [
+                    _block_context_json(item)
+                    for item in context.meter_candidate_block_contexts(blocks, candidate_id)
+                ],
+                "note": note,
+                "source": source,
+            }
+        )
+        cases.append(
+            {
+                "mirror": "meter-candidate-accessible-label",
+                "input": {
+                    "label": labels[candidate_id],
+                    "candidateUnits": str(units[candidate_id]),
+                    "totalLabel": total_label,
+                },
+                "expected": context.meter_candidate_accessible_label(
+                    labels[candidate_id], units[candidate_id], total_label
+                ),
+                "note": note,
+                "source": source,
+            }
+        )
+        cases.append(
+            {
+                "mirror": "meter-candidate-percentage",
+                "input": {"candidateUnits": str(units[candidate_id]), "total": total_count},
+                "expected": context.meter_candidate_percentage(units[candidate_id], total_count),
+                "note": note,
+                "source": source,
+            }
+        )
+    return cases
 
 
 def _meter_layout_cases(

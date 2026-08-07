@@ -553,3 +553,97 @@ export function meterAccessibleLabel(standings, units, labels) {
     })
     .join('; ');
 }
+
+/**
+ * One candidate's bold/recede context for every block, matched by
+ * `MeterBlockContext`'s own vocabulary (docs/METER_V2.md, Color; #325).
+ *
+ * @typedef {object} MeterBlockContext
+ * @property {string} block_class
+ * @property {string} half_top_class
+ * @property {string} half_bottom_class
+ */
+
+// Context (docs/METER_V2.md, Color): the same literal class-name suffixes
+// `meter_candidate_block_contexts` (rendering/context.py) writes, so a Jinja
+// macro and a lit-html template read one vocabulary rather than each
+// inventing their own.
+const METER_CONTEXT_BLOCK_CLASS = ' meter-block-context';
+const METER_CONTEXT_HALF_CLASS = ' meter-half-context';
+const METER_RECEDE_HALF_CLASS = ' meter-half-recede';
+/** @type {MeterBlockContext} */
+const METER_NO_CONTEXT = { block_class: '', half_top_class: '', half_bottom_class: '' };
+
+/**
+ * One candidate's bold/recede treatment for every block of the shared,
+ * once-per-race layout `meterLayoutBlocks` returns, in rendered order
+ * (docs/METER_V2.md, Color; #325). `candidateId` need not appear in `blocks`
+ * at all — a candidate with nothing to show under the current selection
+ * simply receives no context anywhere, which recedes the whole bar rather
+ * than raising.
+ *
+ * Mirrors `meter_candidate_block_contexts` in `rendering/context.py`.
+ *
+ * @param {MeterBlock[]} blocks
+ * @param {string} candidateId
+ * @returns {MeterBlockContext[]}
+ */
+export function meterCandidateBlockContexts(blocks, candidateId) {
+  return blocks.map((block) => {
+    if (block.type === 'solid') {
+      return block.candidate_ids[0] === candidateId
+        ? { block_class: METER_CONTEXT_BLOCK_CLASS, half_top_class: '', half_bottom_class: '' }
+        : METER_NO_CONTEXT;
+    }
+    // An n-way split (n > 2, Decision log #21) still paints only two halves
+    // — that block's own rendered geometry, unchanged by this function — so
+    // a candidate named third or later matches the block as a whole (it is
+    // not receded) without matching either half specifically.
+    if (!block.candidate_ids.includes(candidateId)) return METER_NO_CONTEXT;
+    const topHit = block.candidate_ids[0] === candidateId;
+    const bottomHit = block.candidate_ids[1] === candidateId;
+    return {
+      block_class: METER_CONTEXT_BLOCK_CLASS,
+      half_top_class: topHit ? METER_CONTEXT_HALF_CLASS : METER_RECEDE_HALF_CLASS,
+      half_bottom_class: bottomHit ? METER_CONTEXT_HALF_CLASS : METER_RECEDE_HALF_CLASS,
+    };
+  });
+}
+
+/**
+ * One candidate's own section meter's spoken name (docs/METER_V2.md, The
+ * discovery model's accessibility model, extended in #325 to the
+ * per-candidate meter): "Nilu Jenks: 21½ of 23 endorsements".
+ *
+ * Mirrors `meter_candidate_accessible_label` in `rendering/context.py`.
+ *
+ * @param {string} label
+ * @param {Rational} candidateUnits
+ * @param {string} totalLabel
+ * @returns {string}
+ */
+export function meterCandidateAccessibleLabel(label, candidateUnits, totalLabel) {
+  const count = endorsementCountLabel(candidateUnits.toString());
+  return `${label}: ${count} of ${totalLabel} endorsements`;
+}
+
+/**
+ * One candidate's share of the meter's own denominator, rounded half-up on
+ * exact rational arithmetic — the same whole-percent rounding rule
+ * `percentageLabel` already uses for the race's own leader percentage,
+ * applied here to any standing candidate's own section meter
+ * (docs/METER_V2.md, Resting label; #325's own decision log). `total` is a
+ * plain integer count, matching `race.explicit_endorsement_count` on the
+ * server side — never zero for a standing candidate.
+ *
+ * Mirrors `meter_candidate_percentage` in `rendering/context.py`.
+ *
+ * @param {Rational} candidateUnits
+ * @param {number} total
+ * @returns {number}
+ */
+export function meterCandidatePercentage(candidateUnits, total) {
+  const scaledNumerator = candidateUnits.numerator * 100n;
+  const scaledDenominator = candidateUnits.denominator * BigInt(total);
+  return Number((scaledNumerator * 2n + scaledDenominator) / (2n * scaledDenominator));
+}

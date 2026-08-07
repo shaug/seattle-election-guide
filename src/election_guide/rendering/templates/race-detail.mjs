@@ -18,6 +18,7 @@
 
 import { html, nothing } from 'lit-html';
 import { repeat } from 'lit-html/directives/repeat.js';
+import { candidateMeterTemplate } from './guide-card.mjs';
 
 /**
  * One endorsing source's row, as the payload publishes it plus whether the
@@ -44,11 +45,7 @@ import { repeat } from 'lit-html/directives/repeat.js';
  * One candidate's section.
  *
  * `kicker` is non-null on exactly the tied leaders, which is what the audited
- * template expresses by rendering it for nobody else. v1's per-candidate
- * mini-meter used to sit beside it; meter v2 retires that chrome — the
- * candidate-context treatment on the shared headline bar replaces its job
- * (docs/METER_V2.md, Chrome geometry; #315) — so the kicker alone marks a tie
- * here now.
+ * template expresses by rendering it for nobody else.
  *
  * `inHeadline` marks the one candidate the page headline already names, which
  * is the sole leader when there is one. That section renders no heading at all,
@@ -56,9 +53,14 @@ import { repeat } from 'lit-html/directives/repeat.js';
  * has no such candidate: every tied leader renders here instead, each with the
  * `kicker` that marks it, and none of them in the headline's green.
  *
- * No section carries a count. The sources that endorsed this candidate are the
- * rows directly below the heading, so a number naming how many of them there
- * are would restate the list it sits on.
+ * `meter` is this candidate's own section meter — the race's own headline
+ * meter retired, and every candidate's section gained one of its own instead
+ * (docs/METER_V2.md, Chrome geometry: "The headline meter's own fate"; #325).
+ * v1's per-candidate mini-meter used to sit beside the tied-leader kicker;
+ * meter v2 retired that chrome, and #315's shared-bar candidate-context
+ * treatment that was meant to replace its job shipped, then was found
+ * information-design incoherent and unshipped — this section's own static
+ * meter is what #325 settled on instead.
  *
  * @typedef {object} CandidateSectionView
  * @property {string} candidateId
@@ -66,6 +68,7 @@ import { repeat } from 'lit-html/directives/repeat.js';
  * @property {boolean} isLeader
  * @property {boolean} inHeadline
  * @property {string|null} kicker
+ * @property {import('./guide-card.mjs').CandidateMeterView} meter
  * @property {readonly SourceRowView[]} rows
  */
 
@@ -119,6 +122,23 @@ function sourceRowTemplate(candidateId, row) {
 }
 
 /**
+ * One candidate's own meter row: the section-scoped meter itself, left, and
+ * the count/percent label the meter no longer carries beside it, right
+ * (docs/METER_V2.md, Resting label; #325).
+ *
+ * @param {CandidateSectionView} candidate
+ */
+function candidateMeterRowTemplate(candidate) {
+  const { meter } = candidate;
+  return html`<div class="race-detail-candidate-meter"
+    >${candidateMeterTemplate(candidate.candidateId, meter)}<span
+      class="race-detail-candidate-count"
+    ><b>${meter.countLabel}</b> of ${meter.totalLabel} endorsements<span
+      class="race-detail-candidate-pct"
+    >${meter.percentageLabel}</span></span></div>`;
+}
+
+/**
  * @param {CandidateSectionView} candidate
  */
 function candidateSectionTemplate(candidate) {
@@ -131,15 +151,13 @@ function candidateSectionTemplate(candidate) {
           : 'race-detail-candidate'
     }
     data-race-detail-candidate-id=${candidate.candidateId}
-  >${
+  ><div class="race-detail-candidate-heading">${
     candidate.inHeadline
       ? nothing
-      : html`<div class="race-detail-candidate-heading"><div
-            class="race-detail-candidate-title"
-          >${
-            candidate.kicker === null ? nothing : html`<p>${candidate.kicker}</p>`
-          }<h4>${candidate.label}</h4></div></div>`
-  }<ul class="race-detail-source-list">${repeat(
+      : html`<div class="race-detail-candidate-title">${
+          candidate.kicker === null ? nothing : html`<p>${candidate.kicker}</p>`
+        }<h4>${candidate.label}</h4></div>`
+  }${candidateMeterRowTemplate(candidate)}</div><ul class="race-detail-source-list">${repeat(
     candidate.rows,
     (row) => row.code,
     (row) => sourceRowTemplate(candidate.candidateId, row),

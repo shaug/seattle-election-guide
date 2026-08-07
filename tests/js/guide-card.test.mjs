@@ -18,9 +18,13 @@ import { assertModuleGuard } from './support/module-guards.mjs';
 // The DOM first, then lit-html and anything that reaches it: see dom.mjs.
 const document = installDom();
 const { render } = await import('lit-html');
-const { raceContextTemplate, raceFootTemplate, raceResultTemplate } = await import(
-  '../../src/election_guide/rendering/templates/guide-card.mjs'
-);
+const {
+  candidateMeterTemplate,
+  candidateMeterViews,
+  raceContextTemplate,
+  raceFootTemplate,
+  raceResultTemplate,
+} = await import('../../src/election_guide/rendering/templates/guide-card.mjs');
 
 /** @param {unknown} template */
 function rendered(template) {
@@ -192,6 +196,131 @@ test('an agreeing reference bar takes the agree tone', () => {
 
   assert.equal(bar.getAttribute('class'), 'lens-comparison lens-comparison-agrees');
   assert.match(bar.getAttribute('aria-label'), /^All sources agree with your selection\./);
+});
+
+// #325's own per-candidate section meter: docs/METER_V2.md, Chrome geometry
+// ("The headline meter's own fate") and Color ("Selected candidate: bold;
+// everything else recedes" — applied statically here, per section).
+test('a candidate section meter bolds its own solid block, recedes another candidate’s, and splits a shared block’s two halves', () => {
+  const view = {
+    na: false,
+    accessibleLabel: 'Ada Lovelace: 1½ of 2 endorsements',
+    countLabel: '1½',
+    totalLabel: '2',
+    percentageLabel: '75%',
+    blocks: [
+      {
+        type: 'solid',
+        width: 1,
+        style: '--meter-w:1; --meter-c:var(--teal)',
+        band_start: false,
+        band_end: false,
+        tongue_corner_start: false,
+        tongue_corner_end: false,
+        source_label: 'The Stranger',
+        decision: 'Endorsed Ada Lovelace',
+      },
+      {
+        type: 'split',
+        width: 1,
+        style: '--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--amber)',
+        band_start: true,
+        band_end: true,
+        tongue_corner_start: false,
+        tongue_corner_end: false,
+        source_label: 'The Urbanist',
+        decision: 'Split: Ada Lovelace + Blaise Pascal — ½ each',
+      },
+    ],
+    contexts: [
+      // The first block is this section's own candidate: bold, whole block.
+      { block_class: ' meter-block-context', half_top_class: '', half_bottom_class: '' },
+      // The second is a split this candidate's top half belongs to: the
+      // block itself is not receded as one piece, but only the matching
+      // half bolds — the per-half fix docs/METER_V2.md Decision #23
+      // recorded for seam colors, extended here to a section's own
+      // bold/recede paint.
+      {
+        block_class: ' meter-block-context',
+        half_top_class: ' meter-half-context',
+        half_bottom_class: ' meter-half-recede',
+      },
+    ],
+  };
+  const host = rendered(candidateMeterTemplate('ada', view));
+  const box = host.querySelector('.screen-meter-section');
+
+  assert.equal(box.getAttribute('class'), 'screen-meter screen-meter-section');
+  assert.equal(box.getAttribute('role'), 'img');
+  assert.equal(box.getAttribute('data-display-role'), 'candidate-share');
+  assert.equal(box.getAttribute('data-meter-candidate-id'), 'ada');
+  assert.equal(box.getAttribute('aria-label'), 'Ada Lovelace: 1½ of 2 endorsements');
+  // No resting percentage inside the track any more (docs/METER_V2.md,
+  // Resting label; #325) — the count and percent ride beside it instead.
+  assert.equal(box.querySelector('strong'), null);
+
+  const blocks = box.querySelectorAll('.meter-block');
+  assert.equal(
+    blocks[0].getAttribute('class'),
+    'meter-block meter-block-solid meter-block-context',
+  );
+  const halves = blocks[1].querySelectorAll('.meter-half');
+  assert.equal(halves[0].getAttribute('class'), 'meter-half meter-half-top meter-half-context');
+  assert.equal(halves[1].getAttribute('class'), 'meter-half meter-half-bottom meter-half-recede');
+});
+
+test('a candidate with nothing to show under the active lens renders the empty N/A track', () => {
+  const host = rendered(
+    candidateMeterTemplate('blaise', {
+      na: true,
+      blocks: [],
+      contexts: [],
+      accessibleLabel: 'Blaise Pascal: No endorsements recorded',
+      countLabel: '0',
+      totalLabel: '2',
+      percentageLabel: '0%',
+    }),
+  );
+  const box = host.querySelector('.screen-meter-section');
+
+  assert.equal(box.getAttribute('class'), 'screen-meter screen-meter-section screen-meter-na');
+  assert.equal(box.querySelector('strong').textContent, 'N/A');
+  assert.equal(box.querySelectorAll('.meter-block').length, 0);
+});
+
+test('candidateMeterViews builds one section meter per standing candidate, sharing the same block list', () => {
+  const endorsements = [
+    { source_label: 'The Stranger', candidate_ids: ['ada'], candidate_labels: ['Ada Lovelace'] },
+    {
+      source_label: 'The Urbanist',
+      candidate_ids: ['ada', 'blaise'],
+      candidate_labels: ['Ada Lovelace', 'Blaise Pascal'],
+    },
+  ];
+  const { views, totalLabel } = candidateMeterViews(endorsements, new Set(['ada']), true);
+
+  assert.equal(totalLabel, '2');
+  assert.equal(views.size, 2);
+  const ada = views.get('ada');
+  const blaise = views.get('blaise');
+  // Every candidate's own view reads the exact same block list — computed
+  // once per race, never rederived per section (docs/METER_V2.md, Chrome
+  // geometry; #325).
+  assert.equal(ada.blocks, blaise.blocks);
+  assert.equal(ada.countLabel, '1½');
+  assert.equal(ada.percentageLabel, '75%');
+  assert.equal(blaise.countLabel, '½');
+  assert.equal(blaise.percentageLabel, '25%');
+  // Ada's own solid block bolds; the split's top half (Ada) bolds and its
+  // bottom half (Blaise) recedes, on Ada's own view.
+  assert.equal(ada.contexts[0].block_class, ' meter-block-context');
+  assert.equal(ada.contexts[1].half_top_class, ' meter-half-context');
+  assert.equal(ada.contexts[1].half_bottom_class, ' meter-half-recede');
+  // The same split's bottom half (Blaise) bolds on Blaise's own view instead,
+  // and Ada's solo solid block recedes as a whole rather than half.
+  assert.equal(blaise.contexts[0].block_class, '');
+  assert.equal(blaise.contexts[1].half_top_class, ' meter-half-recede');
+  assert.equal(blaise.contexts[1].half_bottom_class, ' meter-half-context');
 });
 
 test('the module keeps client state out of storage, and stays a computing module', () => {

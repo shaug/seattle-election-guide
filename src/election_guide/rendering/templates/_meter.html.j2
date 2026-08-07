@@ -37,13 +37,38 @@
 {%- endif %}</div>
 {%- endmacro %}
 
-{% macro meter_block(block) -%}
+{# `context` (a `context.MeterBlockContext`) is the bold/recede treatment a
+   candidate's own section meter applies on top of the shared paint
+   (docs/METER_V2.md, Color; #325) — `none` everywhere else, which is every
+   meter chrome this macro drew before that ticket. Its three fields are
+   already-complete class-name suffixes (leading space included, or empty),
+   the same reason `block.style` is a complete attribute value rather than
+   parts this macro assembles: a Jinja macro and a lit-html template that
+   both merely write the class list cannot spell one block's context two
+   ways (`guide-card.mjs`'s `meterBlockClasses`/`meterBlockTemplate`). #}
+{% macro meter_block(block, context=none) -%}
 <span class="{{ 'meter-block meter-block-' ~ block.type
     ~ (' meter-tongue-start' if block.tongue_corner_start else '')
-    ~ (' meter-tongue-end' if block.tongue_corner_end else '') }}"
+    ~ (' meter-tongue-end' if block.tongue_corner_end else '')
+    ~ (context.block_class if context else '') }}"
   style="{{ block.style }}" data-meter-source="{{ block.source_label }}"
   data-meter-decision="{{ block.decision }}"
 >{% if block.type == 'split' -%}
-<span class="meter-half meter-half-top"></span><span class="meter-half meter-half-bottom"></span>
+<span class="meter-half meter-half-top{{ context.half_top_class if context else '' }}"></span><span class="meter-half meter-half-bottom{{ context.half_bottom_class if context else '' }}"></span>
 {%- endif %}</span>
+{%- endmacro %}
+
+{# One candidate's own section meter (docs/METER_V2.md, Chrome geometry: "The
+   headline meter's own fate"; #325) — the race-detail page's per-candidate
+   replacement for the single shared headline meter `segmented_meter` above
+   used to draw there. `view` is one `context.CandidateMeterView`: the same
+   shared, once-per-race blocks every candidate's section reuses verbatim,
+   paired index-for-index with this candidate's own `contexts`. No resting
+   percentage renders inside the track — the count and percent the meter no
+   longer carries ride beside it instead (Decision: "Resting label"), which
+   `race.html.j2`'s own candidate-section markup writes, not this macro. #}
+{% macro candidate_meter(candidate_id, view) -%}
+<div class="screen-meter screen-meter-section" role="img" data-display-role="candidate-share"
+  data-meter-candidate-id="{{ candidate_id }}" aria-label="{{ view.accessible_label }}" tabindex="0"
+>{% for block in view.blocks %}{{ meter_block(block, view.contexts[loop.index0]) }}{% endfor %}</div>
 {%- endmacro %}

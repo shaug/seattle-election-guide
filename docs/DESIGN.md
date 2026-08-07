@@ -299,21 +299,36 @@ then any sticky strip, then content.
   endorsing sources states no number of them; the count is the list. It
   survives in the visually-hidden accessible summary, because a reader who
   cannot see the rows cannot count them. *(2026-08-04, issue 136 follow-up.)*
-- **One meter.** A single chrome everywhere: a constant-width bar of
+- **One meter — scoped per page.** One chrome, a constant-width bar of
   equal-width blocks, one per endorsement, grouped into candidate runs in
   standings order — leader first, the site's own teal for a majority,
   ambers for a tie or a sole leader short of one, muted slate/taupe/plum for
-  trailing candidates. At rest on a pointer device the seams between blocks
-  are invisible and a left-aligned percentage rides the leader's fill, so
-  the meter reads almost exactly like the v1 pill it replaced; hover or
-  keyboard focus trades that percentage for hairline seams and per-block
-  tooltips, and touch shows the seams always and the percentage never. The
-  full design — color, seams, splits, edge states, motion, and
-  accessibility — is `docs/METER_V2.md`; where this line and that document
-  disagree, the document wins. Landed #314 (2026-08-04); the v1 gradient
-  pill it replaced is gone from every chrome that draws a meter, the social
-  card included (#316, 2026-08-05, `rendering/og_image.py`) — a static image
-  has no hover to trade the percentage for seams, so it renders the resting
+  trailing candidates — but not one *instance* everywhere: the guide and
+  ballot overview render one shared meter per race, and the race-detail page
+  renders one per candidate, each colorized and context-marked for that one
+  candidate. The blanket "a single chrome everywhere" rule held while a
+  meter was expensive enough that only one per race made sense; #325
+  (2026-08-05) found the platform could compute and render one per candidate
+  from the same once-per-race block layout at negligible cost, at which
+  point a page whose whole subject is comparing candidates gained more from
+  a meter beside each name than from one meter borrowed via clickable chips
+  — which is what #315 tried first, shipped, and then had to retract when
+  live testing showed the chips could highlight one candidate's share inside
+  a *different* candidate's own card. At rest on a pointer device the seams
+  between blocks are invisible and a left-aligned percentage rides the
+  leader's fill, so a shared meter reads almost exactly like the v1 pill it
+  replaced; hover or keyboard focus trades that percentage for hairline
+  seams and per-block tooltips, and touch shows the seams always and the
+  percentage never. A candidate section's own meter states no resting
+  percentage inside the track at all — its count and percent ride in a
+  label beside the meter instead, since a percentage does not fit inside a
+  half-endorsement sliver of highlighted bar. The full design — color,
+  seams, splits, edge states, motion, and accessibility — is
+  `docs/METER_V2.md`; where this line and that document disagree, the
+  document wins. Landed #314 (2026-08-04); the v1 gradient pill it replaced
+  is gone from every chrome that draws a meter, the social card included
+  (#316, 2026-08-05, `rendering/og_image.py`) — a static image has no hover
+  to trade the percentage for seams, so it renders the resting
   pointer-device state permanently rather than the print row's static-both
   one (docs/METER_V2.md, Decision log #23).
 - **The meter's own caption states a count, not a percentage — and never the
