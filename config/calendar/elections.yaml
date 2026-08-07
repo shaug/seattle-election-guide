@@ -385,6 +385,7 @@ milestones:
     id: guide-publishes
     kind: guide_publishes
     offset_days: -18
+    revision: 3
     workflow: release build
     reference: docs/RELEASE.md
     public: true

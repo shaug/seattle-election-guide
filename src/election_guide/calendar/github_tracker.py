@@ -9,15 +9,20 @@ from __future__ import annotations
 
 import json
 import subprocess
+from dataclasses import dataclass
 from typing import Any, cast
 
-from election_guide.calendar.tracking import MARKER_PREFIX, TRACKING_LABEL, IssueRequest
+from election_guide.calendar.tracking import MARKER_PREFIX, IssueRequest
 
-# Every issue this tool has ever opened has to be readable in one listing, so
-# the bound is the repository's lifetime count of labeled issues, not the lead
-# window. The read fails loudly rather than truncating, because a silently
-# dropped marker is a duplicate issue.
-ISSUE_QUERY_LIMIT = 1000
+# Every issue in the repository has to be readable in one listing, so the bound
+# is its lifetime issue count — not the lead window, and no longer the far
+# smaller set that carried a tracking label. This repository opened its first
+# 174 issues in 17 days, so a four-figure bound is months of headroom rather
+# than years; `gh issue list` paginates to this without extra code. The read
+# fails loudly rather than truncating, because a silently dropped marker is a
+# duplicate issue — and because tripping it stops the run opening anything at
+# all.
+ISSUE_QUERY_LIMIT = 10000
 
 
 def _run(command: list[str], failure: str) -> str:
@@ -34,32 +39,53 @@ def _run(command: list[str], failure: str) -> str:
     return completed.stdout
 
 
-def issue_bodies(payload: str) -> list[str]:
-    """Extract issue bodies from `gh issue list --json body` output."""
+@dataclass(frozen=True)
+class TrackedIssues:
+    """What the repository already says about calendar milestones.
+
+    `markers` is the identity the tracker acts on. `titles` is only used to
+    notice that a title and the markers disagree; it never establishes that a
+    milestone is tracked.
+    """
+
+    markers: frozenset[str]
+    titles: tuple[str, ...]
+
+
+def issue_records(payload: str) -> list[tuple[str, str]]:
+    """Extract (title, body) from `gh issue list --json title,body` output."""
     issues: Any = json.loads(payload)
     if not isinstance(issues, list):
         raise ValueError("GitHub CLI returned an issue list that is not an array")
-    bodies: list[str] = []
+    records: list[tuple[str, str]] = []
     for entry in cast(list[Any], issues):
         if not isinstance(entry, dict):
             raise ValueError("GitHub CLI returned an issue that is not an object")
-        body = cast(dict[str, Any], entry).get("body")
-        bodies.append(body if isinstance(body, str) else "")
-    return bodies
+        issue = cast(dict[str, Any], entry)
+        title, body = issue.get("title"), issue.get("body")
+        records.append(
+            (title if isinstance(title, str) else "", body if isinstance(body, str) else "")
+        )
+    return records
 
 
 def markers_in_issues(bodies: list[str]) -> set[str]:
-    """Collect every calendar marker present in the given issue bodies.
+    """Collect the calendar marker each issue body ends with, if any.
 
     Public because this parse is the idempotence contract: a marker that is
     written but not read back opens a duplicate on the next run.
+
+    Only the final non-empty line counts. Generated issues always end with
+    their marker, so nothing is missed — and an issue that merely quotes one
+    while discussing this system cannot suppress a real milestone.
     """
-    return {
-        stripped
-        for body in bodies
-        for line in body.splitlines()
-        if (stripped := line.strip()).startswith(MARKER_PREFIX)
-    }
+    markers: set[str] = set()
+    for body in bodies:
+        lines = [line.strip() for line in body.splitlines()]
+        tail = next((line for line in reversed(lines) if line), "")
+        if tail.startswith(MARKER_PREFIX):
+            markers.add(tail)
+    return markers
 
 
 class GitHubIssueTracker:
@@ -68,18 +94,22 @@ class GitHubIssueTracker:
     def __init__(self, repository: str) -> None:
         self.repository = repository
 
-    def existing_markers(self) -> set[str]:
-        """Read markers from every issue this tool has opened, open or closed.
+    def read_tracked_issues(self) -> TrackedIssues:
+        """Read every issue in the repository, open or closed.
 
         Closed issues count. A milestone whose issue was opened and completed
         must not be reopened as a duplicate on the next run.
 
-        The listing filters by the label the tool applies, not by a text search
-        for the marker. GitHub's issue search is a relevance-ranked full-text
-        query over an eventually consistent index: it would match unrelated
-        issues that merely contain the marker's words, and it can omit an issue
-        created moments earlier — precisely when a second run would duplicate
-        it.
+        Every issue, not a labelled subset: a generated issue that loses its
+        `type: ops` label during ordinary triage would otherwise become
+        invisible, and the next run would reopen its milestone once per run
+        forever. Idempotence should not depend on anyone's triage habits.
+
+        The listing is also not a text search. GitHub's issue search is a
+        relevance-ranked full-text query over an eventually consistent index:
+        it would match unrelated issues that merely contain the marker's words,
+        and it can omit an issue created moments earlier — precisely when a
+        second run would duplicate it.
         """
         payload = _run(
             [
@@ -90,22 +120,23 @@ class GitHubIssueTracker:
                 self.repository,
                 "--state",
                 "all",
-                "--label",
-                TRACKING_LABEL,
                 "--limit",
                 str(ISSUE_QUERY_LIMIT),
                 "--json",
-                "body",
+                "title,body",
             ],
             "could not list existing calendar issues",
         )
-        bodies = issue_bodies(payload)
-        if len(bodies) >= ISSUE_QUERY_LIMIT:
+        records = issue_records(payload)
+        if len(records) >= ISSUE_QUERY_LIMIT:
             raise ValueError(
                 f"reached the {ISSUE_QUERY_LIMIT}-issue listing limit, so a marker may have been "
                 "dropped; raise ISSUE_QUERY_LIMIT before running again"
             )
-        return markers_in_issues(bodies)
+        return TrackedIssues(
+            markers=frozenset(markers_in_issues([body for _, body in records])),
+            titles=tuple(title for title, _ in records),
+        )
 
     def ensure_milestone(self, title: str) -> None:
         """Create the per-election GitHub milestone unless it already exists."""

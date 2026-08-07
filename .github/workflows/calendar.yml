@@ -1,11 +1,18 @@
 name: Calendar
 
-# Milestones are known years ahead, so this only has to notice one coming due.
-# A daily run with a three-week lead window means a missed day costs nothing:
-# the milestone stays inside the window until it is opened.
+# Milestones are known years ahead, so this only has to notice one coming due —
+# but it has to notice on the day. The lead window keeps a milestone eligible
+# for three weeks, which protects the issue eventually existing; it does not
+# protect the reminder arriving in time. An election-night capture noticed the
+# morning after is worthless.
+#
+# GitHub's schedules are best effort and are delayed or dropped under load, and
+# the top of the hour is the most congested slot there is (a run in that slot
+# once fired 45 minutes late). So: every six hours, and never on the hour.
+# Re-running is free, because the run is idempotent.
 on:
   schedule:
-    - cron: "0 15 * * *"
+    - cron: "17 3,9,15,21 * * *"
   workflow_dispatch:
     inputs:
       lead_days:
