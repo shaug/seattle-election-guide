@@ -67,9 +67,16 @@
    right-adjusted label carrying the count and percent the meter no longer
    shows inside itself (Decision: "Resting label"). `.screen-meter-section`
    overrides `.screen-meter`'s own fixed 11rem/8.75rem width (guide-race.css,
-   shared with the card and the retired headline) with this row's own. */
-.race-detail-candidate-meter { display: flex; align-items: center; gap: 1rem; margin: .5rem 0 .35rem; }
-.screen-meter-section { flex: 0 0 16rem; width: auto; }
+   shared with the card and the retired headline) with a share of this row's
+   own, much wider, width — a candidate section spans nearly the full content
+   column, not a fixed card track, so the meter can afford to as well.
+   Horizontal padding matches `.race-detail-candidate-heading`'s own
+   (`.75rem`) and the top margin is deliberately small: this row reads as the
+   second line of that heading, immediately under the candidate's name, not
+   as the first row of the source list below it (found live: the row read as
+   coupled to the first endorsement instead of the candidate). */
+.race-detail-candidate-meter { display: flex; align-items: center; gap: 1rem; margin: .15rem 0 .5rem; padding: 0 .75rem; }
+.screen-meter-section { flex: 0 0 60%; max-width: 34rem; width: auto; }
 .race-detail-candidate-count { flex: 1 1 auto; min-width: 0; text-align: right; color: var(--muted); font-size: .85rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .race-detail-candidate-count b { color: var(--navy); font-weight: 700; }
 .race-detail-candidate-pct { margin-left: .4rem; color: var(--faint); }
@@ -88,6 +95,18 @@
 .screen-meter-section .meter-block-context:not(.meter-block-split) { filter: saturate(1.5) brightness(.9); }
 .screen-meter-section .meter-half-context { filter: saturate(1.5) brightness(.9); }
 .screen-meter-section .meter-half-recede { opacity: .3; }
+/* This meter has no rest/hover distinction of its own — no click, no
+   pointer engagement, nothing to reveal on. Its whole reason to exist is
+   showing this candidate's own endorsements as individually countable
+   blocks (docs/METER_V2.md, Chrome geometry), so it always paints the seams
+   the shared meter otherwise only shows on hover or touch
+   (guide-race.css's `@media (hover: hover)`/`(hover: none)` split) — found
+   live: without this, a `screen-meter-section` rendered in "segmented
+   mode" carrying no visible segments at all, since the rest-state seam a
+   plain `.meter-block` draws is deliberately near-invisible by design
+   (docs/METER_V2.md, Seams: "invisible by construction"). */
+.screen-meter-section .meter-block { border-left-color: var(--meter-seam-hover-color, transparent); border-image-source: var(--meter-seam-hover-image, none); }
+.screen-meter-section .meter-half-bottom { border-top-color: var(--meter-splitline-hover, transparent); }
 .race-detail-outcome-unverified { border-left-color: var(--red); }
 .race-detail-outcome-heading { display: flex; align-items: baseline; justify-content: space-between; gap: .5rem 1rem; padding: .5rem .75rem; background: var(--tone-neutral-bg); }
 .race-detail-outcome-heading h4 { margin: 0; color: var(--navy); font-size: .86rem; }
