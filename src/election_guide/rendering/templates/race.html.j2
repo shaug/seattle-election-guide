@@ -175,8 +175,19 @@
 
       <div class="race-detail-outcomes">
         {# `display: contents` (race.css), so lit owns one region without the
-           sections below losing the grid gap between them. #}
-        <div class="race-detail-candidates" data-race-candidates>
+           sections below losing the grid gap between them.
+
+           `--count-chars`/`--pct-chars` (race.css) reserve this race's own
+           widest count/percent label width once here, inherited by every
+           candidate row below — so every section's meter renders at the
+           same width within this page (found live: it otherwise varies
+           row to row, since each row's flex layout has no way to see what
+           its siblings' own count text needs) without capping the meter to
+           a width that's the same across every race's page too, which is
+           not what was wanted either. #}
+        {% set candidate_meter_view_list = candidate_meter_views.values() | list %}
+        <div class="race-detail-candidates" data-race-candidates{% if candidate_meter_view_list %}
+          style="--count-chars: {{ candidate_meter_view_list | map(attribute='count_label') | map('length') | max }}; --pct-chars: {{ candidate_meter_view_list | map(attribute='percentage_label') | map('length') | max }}"{% endif %}>
           {{ candidate_sections(headline_candidate_id) }}
         </div>
         {% for group_key in source_cell_group_keys %}

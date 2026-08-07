@@ -2290,7 +2290,12 @@ def test_the_guide_glue_reads_no_state_out_of_rendered_markup(tmp_path: Path) ->
         assert [candidate.candidate_id for candidate in race_payload.race.candidates] == [
             candidate.candidate_id for candidate in race.candidates
         ]
-        detail = race_html.split("data-race-candidates>")[1].split("</main>")[0]
+        # Split on the bare attribute name, then past the rest of that opening
+        # tag's own attributes (`--count-chars`/`--pct-chars`, race.html.j2,
+        # can follow `data-race-candidates` here) to the tag's closing `>`,
+        # rather than assuming `data-race-candidates` is always immediately
+        # followed by one.
+        detail = race_html.split("data-race-candidates")[1].split(">", 1)[1].split("</main>")[0]
         rendered_order = re.findall(r'data-race-detail-candidate-id="([^"]+)"', detail)
         assert rendered_order == [candidate.candidate_id for candidate in race.candidates]
         # The payload carries the text; the template escapes it on the way out

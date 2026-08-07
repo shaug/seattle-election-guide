@@ -93,23 +93,29 @@
 .race-detail-candidate-tied .race-detail-candidate-title p { margin: 0 0 .05rem; color: var(--tone-differ-text); font-size: .62rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 .race-detail-candidate-title h4 { min-width: 0; margin: 0; color: var(--navy); font-size: 1.05rem; line-height: 1.1; overflow-wrap: anywhere; }
 /* Every candidate's own section meter (docs/METER_V2.md, Chrome geometry:
-   "The headline meter's own fate"; #325; Decision #24, "Section chrome and
-   sizing"): a fixed 16rem track (9rem under 720px, in the mobile breakpoint
-   below), left-adjusted, beside a flexible, right-adjusted label sized to
-   its own count/percent text (Decision: "Resting label"). Every row's bar
-   is the same physical width for exactly the row-to-row scannability
-   Decision #24 states — an earlier `flex: 1 1 auto; width: auto` here
-   deliberately traded that away to let the meter use whatever space a
-   row's own count text happened to leave, reasoning the fuller-width bar
-   mattered more; found live it does not: two candidates in the very same
-   race, with count labels of different lengths ("2½ of 11 endorsements
-   23%" vs "½ of 11 endorsements 5%"), rendered their meters at visibly
-   different widths, undermining the one thing a fixed track buys a reader
-   — comparing two bars by eye. `justify-content: space-between` on the row
-   below is what pushes the label to the far right of whatever space the
-   fixed track leaves, so the label's own width still comes from its own
-   text (Decision: "Resting label") without needing `flex-grow` on the
-   label itself.
+   "The headline meter's own fate"; #325): left-adjusted, growing to fill
+   the row, beside a right-adjusted label sized to its own count/percent
+   text (Decision: "Resting label") rather than the reverse — a candidate
+   section spans nearly the full content column, not a fixed card track,
+   so the meter uses most of it.
+
+   Every candidate's bar within *one* race is still the same physical
+   width, though — found live: two candidates in the same race, with count
+   labels of different lengths ("2½ of 11 endorsements 23%" vs "½ of 11
+   endorsements 5%"), rendered their meters at visibly different widths,
+   since each row's own flex layout has no way to know what its *sibling*
+   rows' labels need. `--count-chars`/`--pct-chars` (set once, on
+   `.race-detail-candidates` below, from every candidate's own label in
+   that race — inherited from there by every row) fix that without capping
+   the meter to a small constant width the way a first attempt at this fix
+   did: reserving the *race's own* widest count/percent width (not a
+   generic fixed-width track) is what lets every row size identically
+   within this page while still varying, correctly, from one race's page
+   to the next, since a race with more digits in its counts reserves more
+   room than one that never needs it. `total_label` and the surrounding "of
+   … endorsements" words are identical for every candidate in a race
+   already (the same denominator), so equalizing only the two genuinely
+   variable numbers is enough to equalize the whole label's rendered width.
 
    This row lives *inside* `.race-detail-candidate-heading` now, not beside
    it: a margin-only nudge toward the name above it still read, live, as
@@ -118,19 +124,14 @@
    forces it onto its own wrapped line under the title (the heading's own
    `flex-wrap`), so it inherits the heading's padding and inter-line gap
    rather than carrying its own. */
-.race-detail-candidate-meter { display: flex; flex: 1 1 100%; align-items: center; justify-content: space-between; gap: 1rem; }
-/* Fixed, not flex-grow: the meter's own width must never depend on how long
-   its row's count text happens to be (found live, see above) — every row's
-   track is the same width regardless of what candidate or race it belongs
-   to. The count itself stays sized to its own content (`flex: 0 0 auto`
-   below) rather than stretching to fill the row: an earlier `flex: 1 1
-   auto` on the count claimed ~530px for ~170px of actual text once the
-   meter itself was fixed-width, which `justify-content: space-between`
-   above avoids without needing the count to grow at all. */
-.screen-meter-section { flex: 0 0 16rem; width: 16rem; }
+.race-detail-candidate-meter { display: flex; flex: 1 1 100%; align-items: center; gap: 1rem; }
+/* The meter grows to fill whatever the row leaves once the count and the
+   gap between them are subtracted — no cap of its own; the row's own width
+   is already bounded by the page's content column. */
+.screen-meter-section { flex: 1 1 auto; width: auto; }
 .race-detail-candidate-count { flex: 0 0 auto; text-align: right; color: var(--muted); font-size: .85rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.race-detail-candidate-count b { color: var(--navy); font-weight: 700; }
-.race-detail-candidate-pct { margin-left: .4rem; color: var(--faint); font-weight: 700; }
+.race-detail-candidate-count b { display: inline-block; min-width: calc(var(--count-chars, 1) * 1ch); color: var(--navy); font-weight: 700; text-align: right; }
+.race-detail-candidate-pct { display: inline-block; min-width: calc(var(--pct-chars, 1) * 1ch); margin-left: .4rem; color: var(--faint); font-weight: 700; text-align: right; }
 /* Per-candidate coloring (docs/METER_V2.md, Color: "Selected candidate: bold;
    everything else recedes" — #325 applies it statically, to this section's
    own candidate, in place of the click-driven engaged state a shared

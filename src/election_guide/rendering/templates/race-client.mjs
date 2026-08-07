@@ -293,7 +293,24 @@ export function wireRacePage(payload) {
       const view = candidateView(candidateId, scored, counted, meters);
       if (view !== null) sections.push(view);
     }
-    if (candidatesRegion) render(candidateSectionsTemplate(sections), candidatesRegion);
+    if (candidatesRegion) {
+      render(candidateSectionsTemplate(sections), candidatesRegion);
+      // `--count-chars`/`--pct-chars` (race.css) — mirrors the same
+      // reservation race.html.j2 sets for the audited default, recomputed
+      // here since an active lens can change which sources count, and so
+      // the exact digits every candidate's own count/percent label needs
+      // (docs/METER_V2.md, Chrome geometry; #325). `render()` only patches
+      // this element's children, never its own attributes, so this has to
+      // be set here explicitly rather than living inside the template.
+      if (sections.length > 0) {
+        const countChars = Math.max(...sections.map((section) => section.meter.countLabel.length));
+        const pctChars = Math.max(
+          ...sections.map((section) => section.meter.percentageLabel.length),
+        );
+        candidatesRegion.style.setProperty('--count-chars', String(countChars));
+        candidatesRegion.style.setProperty('--pct-chars', String(pctChars));
+      }
+    }
     // The headline is the sole leader's heading, so it is on screen exactly
     // when there is one. A lens can create that leader or dissolve it into a
     // tie, which is why the element is always in the document and only ever
