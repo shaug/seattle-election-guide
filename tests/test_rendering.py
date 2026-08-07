@@ -2801,9 +2801,13 @@ def test_phone_race_page_keeps_its_metrics_and_its_longest_title_inside_the_scre
           const meterRow = document.querySelector('.race-detail-candidate-meter');
           const meterRowBox = box(meterRow);
           // A tied candidate's heading sits beside a name that can be as long
-          // as the one written in above.
-          const tiedHeading = document.querySelector('.race-detail-candidate-heading');
-          tiedHeading.querySelector('h4').textContent = 'Sharon Tomiko Santos / Kelabe Tewolde';
+          // as the one written in above. `.race-detail-candidate-heading` now
+          // wraps every candidate's meter row too (#325), including the
+          // headline's own title-less one, so this reaches for the name
+          // itself rather than the first heading on the page.
+          const nameHeading = document.querySelector('.race-detail-candidate-heading h4');
+          nameHeading.textContent = 'Sharon Tomiko Santos / Kelabe Tewolde';
+          const tiedHeading = nameHeading.closest('.race-detail-candidate-heading');
           const headingBox = box(tiedHeading);
           const titleBox = box(title);
           const heading = document.querySelector('.page-head h1');
@@ -3838,7 +3842,8 @@ def test_race_page_reflects_the_active_lens_leader_not_the_audited_default(
           const sections = [...document.querySelectorAll('[data-race-detail-candidate-id]')];
           const domOrder = sections.map((section) => section.dataset.raceDetailCandidateId);
           // The leading choice's section is the one the headline heads, which
-          // is why it renders no heading of its own.
+          // is why it renders no *name* of its own — `.race-detail-candidate-heading`
+          // itself still renders, to hold that section's own meter row (#325).
           const leaderSection = sections.find(
             (section) => section.classList.contains('race-detail-candidate-headlined'),
           );
@@ -3853,7 +3858,7 @@ def test_race_page_reflects_the_active_lens_leader_not_the_audited_default(
             domOrder,
             leaderCandidateId: leaderSection?.dataset.raceDetailCandidateId ?? null,
             leaderHasHeading:
-              leaderSection?.querySelector('.race-detail-candidate-heading') !== null,
+              leaderSection?.querySelector('.race-detail-candidate-heading h4') !== null,
             meters,
             barAtHeadlineFoot:
               document.querySelector('[data-lens-foot] .lens-comparison') !== null,
@@ -3877,7 +3882,7 @@ def test_race_page_reflects_the_active_lens_leader_not_the_audited_default(
     assert result["domOrder"][0] == result["leaderCandidateId"]
     assert result["domOrder"][0].endswith("ashley-fedan")
     # The leading choice is named once: the headline is its heading, so its own
-    # section renders none.
+    # section's heading renders no name of its own.
     assert result["leaderHasHeading"] is False
     # Item 4: the share is stated once too, in that headline. No candidate
     # section renders a meter of its own — v1's per-candidate mini-meter

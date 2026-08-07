@@ -151,15 +151,13 @@ function candidateSectionTemplate(candidate) {
           : 'race-detail-candidate'
     }
     data-race-detail-candidate-id=${candidate.candidateId}
-  >${
+  ><div class="race-detail-candidate-heading">${
     candidate.inHeadline
       ? nothing
-      : html`<div class="race-detail-candidate-heading"><div
-            class="race-detail-candidate-title"
-          >${
-            candidate.kicker === null ? nothing : html`<p>${candidate.kicker}</p>`
-          }<h4>${candidate.label}</h4></div></div>`
-  }${candidateMeterRowTemplate(candidate)}<ul class="race-detail-source-list">${repeat(
+      : html`<div class="race-detail-candidate-title">${
+          candidate.kicker === null ? nothing : html`<p>${candidate.kicker}</p>`
+        }<h4>${candidate.label}</h4></div>`
+  }${candidateMeterRowTemplate(candidate)}</div><ul class="race-detail-source-list">${repeat(
     candidate.rows,
     (row) => row.code,
     (row) => sourceRowTemplate(candidate.candidateId, row),

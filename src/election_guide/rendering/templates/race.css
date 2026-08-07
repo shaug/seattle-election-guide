@@ -39,9 +39,32 @@
 /* When the headline is a candidate's heading, it and that candidate's rows read
    as one block: no gap between them, and the section drops the top border the
    headline already draws. The template sets the class, because it is the side
-   that knows whether the headline named a single candidate. */
-.race-headline-heads-section { margin-bottom: 0; }
-.race-detail-candidate-headlined { border-top: 0; }
+   that knows whether the headline named a single candidate.
+
+   Matching backgrounds (`.race-detail-candidate-headlined .race-detail-candidate-heading`,
+   above) wasn't enough on its own — found live: `.race-headline`'s own
+   bottom border, shadow, and full 1.15rem padding are a self-contained
+   card's edge, not a shared one, so a visible seam and an oversized gap
+   both survived even once the two boxes agreed on color. Zeroing all three
+   here, the same way the section below already zeroes its own top border,
+   lets the candidate's own heading (its top padding, unchanged) supply the
+   only gap that remains — the same modest amount every other candidate's
+   name-to-meter gap already is, since nothing here is a boundary to pad
+   against anymore.
+
+   The section's own top border turned out to still be there, though: the
+   compound selector below is `.race-detail-candidate-headlined` alone,
+   equal specificity to `.race-detail-candidate, .race-detail-outcome`
+   (base) and `.race-detail-candidate-leader` further down, both of which
+   restate `border`/`border-color` and both of which sit later in the file
+   — so the later, equally-specific declaration was winning the tie, and
+   this rule's `border-top: 0` never actually applied (found live, once
+   the color and gap fixes above made the leftover teal hairline obvious
+   against a now-matching background). Stacking both of the element's own
+   classes wins on specificity instead of on source order, which is what
+   the comment above already claimed was happening. */
+.race-detail-candidate.race-detail-candidate-headlined { border-top: 0; }
+.race-headline-heads-section { margin-bottom: 0; padding-bottom: 0; border-bottom: 0; box-shadow: none; }
 /* Like the card foot, and for the same reason: lit needs one region to own
    without it becoming a box that opens a gap when it is empty. */
 .race-headline-foot { display: contents; }
@@ -56,6 +79,15 @@
    confidence). What marks it instead is its "Tied for lead" eyebrow. */
 .race-detail-candidate-leader { border-color: #9fcfc5; border-left-color: var(--teal); }
 .race-detail-candidate-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem 1.25rem; padding: .55rem .75rem; background: var(--tone-differ-bg); }
+/* The headlined candidate's own heading carries no name (the headline above
+   already is it), only its meter — and the generic amber every other
+   heading wears read as a third, unrelated box wedged between the green
+   `.race-headline` above and the white source list below, rather than as
+   that same header continuing (found live). `.race-headline`'s own tone,
+   with no seam between the two — `.race-detail-candidate-headlined` already
+   drops its section's top border for exactly this join — carries the
+   header's color straight through to the meter instead. */
+.race-detail-candidate-headlined .race-detail-candidate-heading { background: var(--tone-agree-bg); }
 .race-detail-candidate-title { min-width: 0; }
 /* Only a tied leader has this eyebrow, and it takes the amber its box wears. */
 .race-detail-candidate-tied .race-detail-candidate-title p { margin: 0 0 .05rem; color: var(--tone-differ-text); font-size: .62rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
@@ -69,13 +101,16 @@
    retired headline) — a candidate section spans nearly the full content
    column, not a fixed card track, so the meter can use most of it, found
    live to matter more here than the card-width meter's own row-to-row
-   scannability goal did. Horizontal padding matches
-   `.race-detail-candidate-heading`'s own (`.75rem`) and the top margin is
-   deliberately small: this row reads as the second line of that heading,
-   immediately under the candidate's name, not as the first row of the
-   source list below it (found live: the row read as coupled to the first
-   endorsement instead of the candidate). */
-.race-detail-candidate-meter { display: flex; align-items: center; gap: 1rem; margin: .15rem 0 .5rem; padding: 0 .75rem; }
+   scannability goal did.
+
+   This row lives *inside* `.race-detail-candidate-heading` now, not beside
+   it: a margin-only nudge toward the name above it still read, live, as
+   coupled to the first endorsement below rather than to the candidate — a
+   spacing hint isn't the same claim as one DOM parent. `flex: 1 1 100%`
+   forces it onto its own wrapped line under the title (the heading's own
+   `flex-wrap`), so it inherits the heading's padding and inter-line gap
+   rather than carrying its own. */
+.race-detail-candidate-meter { display: flex; flex: 1 1 100%; align-items: center; gap: 1rem; }
 /* The meter grows to fill whatever the row leaves once the count and the
    gap between them are subtracted — no cap of its own; the row's own width
    is already bounded by the page's content column. The count takes only
@@ -87,7 +122,7 @@
 .screen-meter-section { flex: 1 1 auto; width: auto; }
 .race-detail-candidate-count { flex: 0 0 auto; text-align: right; color: var(--muted); font-size: .85rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .race-detail-candidate-count b { color: var(--navy); font-weight: 700; }
-.race-detail-candidate-pct { margin-left: .4rem; color: var(--faint); }
+.race-detail-candidate-pct { margin-left: .4rem; color: var(--faint); font-weight: 700; }
 /* Per-candidate coloring (docs/METER_V2.md, Color: "Selected candidate: bold;
    everything else recedes" — #325 applies it statically, to this section's
    own candidate, in place of the click-driven engaged state a shared
@@ -102,19 +137,66 @@
 .screen-meter-section .meter-block:not(.meter-block-context) { opacity: .3; }
 .screen-meter-section .meter-block-context:not(.meter-block-split) { filter: saturate(1.5) brightness(.9); }
 .screen-meter-section .meter-half-context { filter: saturate(1.5) brightness(.9); }
-.screen-meter-section .meter-half-recede { opacity: .3; }
+/* A split block's own container paints `--meter-tongue-bg` across the
+   *whole* block, behind both halves at once — the tongue notch's corner
+   cutout only decides where that full-block paint peeks through, not how
+   much of it is exposed elsewhere. That's never a problem on the page this
+   markup was built for (`guide.html.j2`), where nothing is ever
+   translucent. This section is the first place any block renders below
+   full opacity, and an `opacity`-based fade reveals whatever is painted
+   behind it across its *entire* box, not just the notch — so whichever
+   half receded, the other half's true color (painted underneath as the
+   container's own background) showed straight through the faded half
+   everywhere, not merely at the intended corner peek (found live twice:
+   once as full-strength bleed when the container color matched the faded
+   half's own color, once as a wrong teal-tinted blend when it didn't). A
+   flat, pre-mixed background sidesteps translucency entirely — nothing can
+   show through an opaque fill. The notch itself still needs a real color
+   to peek through, so it gets the same treatment as any other receded
+   paint: true color when it belongs to the section's own bold candidate
+   (tongue-start exposes the top half's color, tongue-end the bottom
+   half's — docs/METER_V2.md, Splits: placement and the tongue rule),
+   the same muted blend as its own half when it doesn't. */
+.screen-meter-section .meter-half-top.meter-half-recede { background: color-mix(in srgb, var(--meter-ca) 30%, var(--meter-track)); }
+.screen-meter-section .meter-half-bottom.meter-half-recede { background: color-mix(in srgb, var(--meter-cb) 30%, var(--meter-track)); }
+.screen-meter-section .meter-block-split.meter-tongue-start:has(.meter-half-top.meter-half-recede) {
+  --meter-tongue-bg: color-mix(in srgb, var(--meter-ca) 30%, var(--meter-track)) !important;
+}
+.screen-meter-section .meter-block-split.meter-tongue-end:has(.meter-half-bottom.meter-half-recede) {
+  --meter-tongue-bg: color-mix(in srgb, var(--meter-cb) 30%, var(--meter-track)) !important;
+}
 /* This meter has no rest/hover distinction of its own — no click, no
    pointer engagement, nothing to reveal on. Its whole reason to exist is
    showing this candidate's own endorsements as individually countable
-   blocks (docs/METER_V2.md, Chrome geometry), so it always paints the seams
-   the shared meter otherwise only shows on hover or touch
-   (guide-race.css's `@media (hover: hover)`/`(hover: none)` split) — found
-   live: without this, a `screen-meter-section` rendered in "segmented
-   mode" carrying no visible segments at all, since the rest-state seam a
-   plain `.meter-block` draws is deliberately near-invisible by design
-   (docs/METER_V2.md, Seams: "invisible by construction"). */
-.screen-meter-section .meter-block { border-left-color: var(--meter-seam-hover-color, transparent); border-image-source: var(--meter-seam-hover-image, none); }
-.screen-meter-section .meter-half-bottom { border-top-color: var(--meter-splitline-hover, transparent); }
+   blocks (docs/METER_V2.md, Chrome geometry), so it needs a seam always
+   visible where the shared meter otherwise only shows one on hover or
+   touch (guide-race.css's `@media (hover: hover)`/`(hover: none)` split) —
+   found live: without this, a `screen-meter-section` rendered in
+   "segmented mode" carrying no visible segments at all, since the
+   rest-state seam a plain `.meter-block` draws is deliberately
+   near-invisible by design (docs/METER_V2.md, Seams: "invisible by
+   construction"). The shared hover-tier seam and splitline colors aren't
+   an option here, though: both are computed once per race from each
+   block's *true* full-brightness neighbor colors (`meter_block_renders`),
+   with no notion of which candidate's section is asking — and unlike the
+   tongue notch, a seam's color depends on the *previous* block's own
+   context, which CSS has no selector for (`:has()` only looks forward).
+   A flat neutral divider (the same one `race-detail-source-list` rows
+   already use) sidesteps the whole problem: found live as a vivid,
+   context-blind line cutting across a muted run wherever a seam or
+   splitline happened to sit between two receded candidates.
+
+   `!important` is required, not decorative: this element carries both
+   `.screen-meter` and `.screen-meter-section`, so it also matches
+   guide-race.css's own hover/focus-within and print rules, which paint
+   the same context-blind colors back on — found live, again, as the seam
+   reverting to its broken look on hover. Those rules are more specific
+   than a plain descendant selector on `:hover`/`:focus-within`, and the
+   print rule already carries its own `!important`, so only `!important`
+   (not added specificity) reliably wins against both regardless of
+   media state or source order. */
+.screen-meter-section .meter-block { border-left-color: var(--row-separator) !important; border-image-source: none !important; }
+.screen-meter-section .meter-half-bottom { border-top-color: var(--row-separator) !important; }
 .race-detail-outcome-unverified { border-left-color: var(--red); }
 .race-detail-outcome-heading { display: flex; align-items: baseline; justify-content: space-between; gap: .5rem 1rem; padding: .5rem .75rem; background: var(--tone-neutral-bg); }
 .race-detail-outcome-heading h4 { margin: 0; color: var(--navy); font-size: .86rem; }
