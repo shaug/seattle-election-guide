@@ -62,7 +62,7 @@
 .race-detail-candidate-title h4 { min-width: 0; margin: 0; color: var(--navy); font-size: 1.05rem; line-height: 1.1; overflow-wrap: anywhere; }
 /* Every candidate's own section meter (docs/METER_V2.md, Chrome geometry:
    "The headline meter's own fate"; #325): left-adjusted, growing to fill
-   the row (capped, not literally unbounded), beside a right-adjusted label
+   the row, beside a right-adjusted label
    sized to its own count/percent text (Decision: "Resting label") rather
    than the reverse. `.screen-meter-section` overrides `.screen-meter`'s own
    fixed 11rem/8.75rem width (guide-race.css, shared with the card and the
@@ -76,12 +76,15 @@
    source list below it (found live: the row read as coupled to the first
    endorsement instead of the candidate). */
 .race-detail-candidate-meter { display: flex; align-items: center; gap: 1rem; margin: .15rem 0 .5rem; padding: 0 .75rem; }
-/* The meter grows to fill the row (capped, so it doesn't run absurd on an
-   ultra-wide viewport); the count takes only what its own text needs
-   instead of the reverse — found live: at flex:1 1 auto the count box
-   claimed ~530px for ~170px of actual text, starving the meter down to a
-   fraction of the row's real width even after the fixed-16rem fix above. */
-.screen-meter-section { flex: 1 1 auto; max-width: 48rem; width: auto; }
+/* The meter grows to fill whatever the row leaves once the count and the
+   gap between them are subtracted — no cap of its own; the row's own width
+   is already bounded by the page's content column. The count takes only
+   what its own text needs, not the reverse — found live: at flex:1 1 auto
+   the count box claimed ~530px for ~170px of actual text, starving the
+   meter down to a fraction of the row's real width even after the
+   fixed-16rem fix above (and, briefly, an over-conservative 48rem cap on
+   the meter itself, also found live and removed the same way). */
+.screen-meter-section { flex: 1 1 auto; width: auto; }
 .race-detail-candidate-count { flex: 0 0 auto; text-align: right; color: var(--muted); font-size: .85rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .race-detail-candidate-count b { color: var(--navy); font-weight: 700; }
 .race-detail-candidate-pct { margin-left: .4rem; color: var(--faint); }
