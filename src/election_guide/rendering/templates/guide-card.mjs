@@ -22,13 +22,16 @@
 // `rendering/context.py` and is tested against it.
 
 import { html, nothing } from 'lit-html';
-import { hasNoMajority, percentageLabel } from './guide-format.mjs';
+import { endorsementCountLabel, hasNoMajority, percentageLabel } from './guide-format.mjs';
 import { Rational } from './lens-score.mjs';
 import {
   meterAccessibleLabel,
   meterBlockRenders,
+  meterCandidateAccessibleLabel,
+  meterCandidateBlockContexts,
   meterCandidateColors,
   meterCandidateLabels,
+  meterCandidatePercentage,
   meterLayoutBlocks,
   meterStandings,
   meterUnits,
@@ -186,14 +189,21 @@ function meterClasses(meter) {
 /**
  * One block's class list, in the order the audited template writes it.
  *
+ * `blockContext` is the bold/recede treatment a candidate's own section meter
+ * applies on top of the shared paint (docs/METER_V2.md, Color; #325) — `null`
+ * everywhere else, which is every meter chrome this function drew before that
+ * ticket.
+ *
  * @param {import('./meter-layout.mjs').MeterBlockRender} block
+ * @param {import('./meter-layout.mjs').MeterBlockContext|null} blockContext
  * @returns {string}
  */
-function meterBlockClasses(block) {
+function meterBlockClasses(block, blockContext) {
   return (
     `meter-block meter-block-${block.type}` +
     (block.tongue_corner_start ? ' meter-tongue-start' : '') +
-    (block.tongue_corner_end ? ' meter-tongue-end' : '')
+    (block.tongue_corner_end ? ' meter-tongue-end' : '') +
+    (blockContext === null ? '' : blockContext.block_class)
   );
 }
 
@@ -204,19 +214,27 @@ function meterBlockClasses(block) {
  * attributes rather than from static text, so the meter's spoken text stays
  * exactly the resting percent (or "N/A") and nothing more.
  *
+ * Exported so `race-detail.mjs` can reuse it verbatim for a candidate's own
+ * section meter (#325) rather than a second block-markup implementation —
+ * the same reuse `_meter.html.j2`'s `meter_block` macro makes of itself for
+ * `candidate_meter`.
+ *
  * @param {import('./meter-layout.mjs').MeterBlockRender} block
+ * @param {import('./meter-layout.mjs').MeterBlockContext|null} [blockContext]
  */
-function meterBlockTemplate(block) {
+export function meterBlockTemplate(block, blockContext = null) {
+  const topClass = blockContext === null ? '' : blockContext.half_top_class;
+  const bottomClass = blockContext === null ? '' : blockContext.half_bottom_class;
   return html`<span
-    class=${meterBlockClasses(block)}
+    class=${meterBlockClasses(block, blockContext)}
     style=${block.style}
     data-meter-source=${block.source_label}
     data-meter-decision=${block.decision}
   >${
     block.type === 'split'
-      ? html`<span class="meter-half meter-half-top"></span><span
-          class="meter-half meter-half-bottom"
-        ></span>`
+      ? html`<span class=${`meter-half meter-half-top${topClass}`}></span><span
+            class=${`meter-half meter-half-bottom${bottomClass}`}
+          ></span>`
       : nothing
   }</span>`;
 }
@@ -248,13 +266,27 @@ export function allSourcesAccessibleLabel(view) {
 }
 
 /**
+ * The result heading alone, without a meter beside it — what a race page's
+ * own headline shows now that the meter moved into every candidate's own
+ * section (docs/METER_V2.md, Chrome geometry: "The headline meter's own
+ * fate"; #325). `raceResultTemplate` below, which the guide card still uses
+ * for both the heading and its meter, composes this same template rather
+ * than repeating the heading's markup.
+ *
+ * @param {string} recommendation
+ */
+export function raceHeadlineTemplate(recommendation) {
+  return html`<h3 data-display-role="recommendation">${recommendation}</h3>`;
+}
+
+/**
  * The card's primary block: the headline result and the share meter.
  *
  * @param {RaceResultView} view
  */
 export function raceResultTemplate(view) {
   const { meter } = view;
-  return html`<h3 data-display-role="recommendation">${view.recommendation}</h3><div
+  return html`${raceHeadlineTemplate(view.recommendation)}<div
     class=${meterClasses(meter)}
     style=${meter.fillPercent === null ? nothing : `--meter-fill: ${meter.fillPercent}%`}
     role="img"
@@ -264,7 +296,114 @@ export function raceResultTemplate(view) {
   >${
     meter.fillPercent === null
       ? html`<strong>N/A</strong>`
-      : html`${meter.blocks.map(meterBlockTemplate)}<strong>${meter.label}</strong>`
+      : html`${meter.blocks.map((block) => meterBlockTemplate(block))}<strong
+            >${meter.label}</strong
+          >`
+  }</div>`;
+}
+
+/**
+ * One candidate's own section meter, as the race-detail page renders it
+ * (docs/METER_V2.md, Chrome geometry; #325). `na` marks a candidate who has
+ * nothing to show under the *current* selection — every audited candidate
+ * always has units, so this only reaches `race-client.mjs`'s personalized
+ * path; the server's own per-candidate meter-view builder in
+ * `rendering/context.py` never has to reach it because it renders only the
+ * audited default.
+ *
+ * @typedef {object} CandidateMeterView
+ * @property {boolean} na
+ * @property {import('./meter-layout.mjs').MeterBlockRender[]} blocks
+ * @property {import('./meter-layout.mjs').MeterBlockContext[]} contexts
+ * @property {string} accessibleLabel
+ * @property {string} countLabel
+ * @property {string} totalLabel
+ * @property {string} percentageLabel
+ */
+
+/**
+ * Every standing candidate's own section meter, keyed by candidate id — the
+ * client's counterpart to the per-candidate meter-view builder
+ * `rendering/context.py` composes for the audited render (docs/METER_V2.md,
+ * Chrome geometry; #325). The block layout and its paint are computed once,
+ * from whichever `endorsements` the caller's active lens currently selects,
+ * and reused for every candidate rather than each section deriving its own
+ * copy.
+ *
+ * A candidate with no current units — reachable only under a personalized
+ * lens that deselects every one of their endorsers — is simply absent from
+ * the returned map; `totalLabel` is returned alongside it so a caller can
+ * still build that candidate's own (N/A) view without a second pass over
+ * `endorsements`.
+ *
+ * @param {import('./meter-layout.mjs').MeterEndorsement[]} endorsements
+ * @param {ReadonlySet<string>} leaderIds
+ * @param {boolean} hasMajority
+ * @returns {{ views: Map<string, CandidateMeterView>, totalLabel: string }}
+ */
+export function candidateMeterViews(endorsements, leaderIds, hasMajority) {
+  const standings = meterStandings(endorsements);
+  const units = meterUnits(endorsements);
+  const labels = meterCandidateLabels(endorsements);
+  const colors = meterCandidateColors(standings, leaderIds, hasMajority);
+  const layoutBlocks = meterLayoutBlocks(endorsements);
+  const renders = meterBlockRenders(layoutBlocks, colors, labels);
+  let total = Rational.zero();
+  for (const candidateId of standings) {
+    total = total.add(/** @type {Rational} */ (units.get(candidateId)));
+  }
+  // Every standing candidate's units sum to a whole number — one unit is
+  // admitted per counted cell (`meterUnits`), split n ways summing back to
+  // 1 — matching `race.explicit_endorsement_count` exactly. The server's own
+  // mirror reads that field directly; the client has no such field on the
+  // scored payload, so it re-derives the same integer from the units it
+  // already computed instead.
+  const totalLabel = String(total.numerator / total.denominator);
+  /** @type {Map<string, CandidateMeterView>} */
+  const views = new Map();
+  for (const candidateId of standings) {
+    const candidateUnits = /** @type {Rational} */ (units.get(candidateId));
+    views.set(candidateId, {
+      na: false,
+      blocks: renders,
+      contexts: meterCandidateBlockContexts(layoutBlocks, candidateId),
+      accessibleLabel: meterCandidateAccessibleLabel(
+        /** @type {string} */ (labels.get(candidateId)),
+        candidateUnits,
+        totalLabel,
+      ),
+      countLabel: endorsementCountLabel(candidateUnits.toString()),
+      totalLabel,
+      percentageLabel: `${meterCandidatePercentage(candidateUnits, Number(totalLabel))}%`,
+    });
+  }
+  return { views, totalLabel };
+}
+
+/**
+ * One candidate's own section meter — the fixed-track bar (docs/METER_V2.md,
+ * Chrome geometry; #325), reusing the exact block markup `meterBlockTemplate`
+ * writes for every other meter v2 chrome, extended with this candidate's own
+ * bold/recede context. Mirrors `_meter.html.j2`'s `candidate_meter` macro.
+ *
+ * @param {string} candidateId
+ * @param {CandidateMeterView} meter
+ */
+export function candidateMeterTemplate(candidateId, meter) {
+  const classes = meter.na
+    ? 'screen-meter screen-meter-section screen-meter-na'
+    : 'screen-meter screen-meter-section';
+  return html`<div
+    class=${classes}
+    role="img"
+    data-display-role="candidate-share"
+    data-meter-candidate-id=${candidateId}
+    aria-label=${meter.accessibleLabel}
+    tabindex="0"
+  >${
+    meter.na
+      ? html`<strong>N/A</strong>`
+      : meter.blocks.map((block, index) => meterBlockTemplate(block, meter.contexts[index]))
   }</div>`;
 }
 

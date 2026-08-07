@@ -86,9 +86,41 @@ def validate_rendered_guide(
         # `_html_semantic_values`'s "share" role already checks.
         if parser.meter_block_counts.get(race.id, 0) != len(meter.blocks):
             mismatched_html_roles.append(f"{race.id}/share-block-count")
-        # The race page renders the same meter as its own headline.
-        if race_parser.meter_block_counts.get(race.id, 0) != len(meter.blocks):
-            mismatched_html_roles.append(f"{race.id}/race-page-share-block-count")
+        # The race page's own headline no longer draws a meter at all
+        # (docs/METER_V2.md, Chrome geometry: "The headline meter's own
+        # fate"; #325) — every standing candidate's own section draws one
+        # instead, each rendering the exact same shared block list, so the
+        # page's total block count is that one race-wide block count times
+        # the number of standing candidates. Deliberately not `meter.blocks`
+        # above: that list is the retired headline's own N/A-gated
+        # computation (`race.percentage_whole is None` forces it empty even
+        # when the underlying cells still name real candidates), while a
+        # candidate's own share is always computable directly from the
+        # cells, so the two can legitimately disagree in length.
+        candidate_meter_views = context.race_candidate_meter_views(race, source_by_id)
+        per_candidate_block_count = (
+            len(next(iter(candidate_meter_views.values())).blocks) if candidate_meter_views else 0
+        )
+        expected_candidate_block_total = per_candidate_block_count * len(candidate_meter_views)
+        if race_parser.meter_block_counts.get(race.id, 0) != expected_candidate_block_total:
+            mismatched_html_roles.append(f"{race.id}/race-page-candidate-share-block-count")
+        # Every standing candidate states their own count and share, not the
+        # race's full standings the retired headline meter spoke — proving
+        # each section names its own candidate rather than repeating the
+        # race's own summary in every one of them. Sorted rather than keyed by
+        # candidate id: each label already names its own candidate, so it is
+        # unique, and the generic display-role tracking `_GuideHTMLParser`
+        # already carries needs no candidate-scoped extension to prove this.
+        expected_candidate_labels = sorted(
+            view.accessible_label for view in candidate_meter_views.values()
+        )
+        observed_candidate_labels = sorted(
+            name
+            for name in race_parser.display_accessible_names.get((race.id, "candidate-share"), [])
+            if name is not None
+        )
+        if observed_candidate_labels != expected_candidate_labels:
+            mismatched_html_roles.append(f"{race.id}/candidate-share-accessible-name")
     missing_evidence_rows: list[str] = []
     category_label_by_key = {
         category.category: category.label for category in view_model.methodology.source_categories

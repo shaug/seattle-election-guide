@@ -272,7 +272,11 @@ def render_race_document(
         screen_support_summary_compact=partial(
             context.screen_support_summary_compact, sources=source_by_id
         ),
-        meter_view=partial(context.meter_view, sources=source_by_id),
+        # The race's own headline meter retired (docs/METER_V2.md, Chrome
+        # geometry: "The headline meter's own fate"; #325); every candidate's
+        # own section carries one instead, computed once here rather than once
+        # per section.
+        candidate_meter_views=context.race_candidate_meter_views(race, source_by_id),
         race_detail_accessible_summary=context.race_detail_accessible_summary,
         source_cell_group_label=context.source_cell_group_label,
         source_cell_group_keys=("no_endorsement", "unverified"),

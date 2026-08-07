@@ -858,10 +858,20 @@ def test_no_majority_uses_the_exact_unrounded_share_across_the_card_and_the_race
 
     # The same exact share, on the page the card links to (issue #136). The
     # qualifier is the headline's own pill there rather than a word in the
-    # eyebrow, because the headline is the leading choice's heading.
+    # eyebrow, because the headline is the leading choice's heading — the
+    # headline itself carries no meter of its own any more (docs/METER_V2.md,
+    # Chrome geometry: "The headline meter's own fate"; #325), so the
+    # no-majority color is read from a candidate section's own meter block
+    # style instead of a single shared `.meter-no-majority` class. Matched as
+    # `--meter-c(a)?:var(--amber)` rather than the bare literal: the page's
+    # own embedded stylesheet already references `var(--amber)` in an
+    # unrelated static rule (`.race-detail-candidate`'s default border), so a
+    # bare substring match would pass on every race regardless of any block's
+    # actual color.
+    amber_block = re.compile(r"--meter-c[a]?:var\(--amber\)")
     race_html = _race_html(view_model, target.id)
     assert re.search(r'<p class="no-majority-pill"[^>]*>No majority</p>', race_html)
-    assert 'class="screen-meter meter-no-majority"' in race_html
+    assert amber_block.search(race_html)
 
     target.winner_share = "5001/10000"
     assert has_no_majority(target) is False
@@ -873,7 +883,7 @@ def test_no_majority_uses_the_exact_unrounded_share_across_the_card_and_the_race
     assert 'class="screen-meter meter-no-majority"' not in above_half_card
     above_half_race = _race_html(view_model, target.id)
     assert re.search(r'<p class="no-majority-pill" hidden[^>]*>No majority</p>', above_half_race)
-    assert 'class="screen-meter meter-no-majority"' not in above_half_race
+    assert not amber_block.search(above_half_race)
 
 
 def test_the_no_majority_pill_sits_under_the_name_and_displaces_nothing(
@@ -1322,9 +1332,10 @@ def test_round4_card_anatomy_and_data_ink_cleanup(tmp_path: Path) -> None:
         "font-weight: 600; text-align: right; }" in race_stylesheet
     )
     # v1's per-candidate mini-meter (`.race-detail-meter`) retired with meter
-    # v2 — the candidate-context treatment on the shared headline bar replaces
-    # its job (docs/METER_V2.md, Chrome geometry; #315) — so its whole chrome
-    # is gone from the race page's own stylesheet, not merely from the guide's.
+    # v2 — every candidate's own section carries a meter v2 chrome of its own
+    # instead now (docs/METER_V2.md, Chrome geometry: "The headline meter's
+    # own fate"; #325) — so its whole chrome is gone from the race page's own
+    # stylesheet, not merely from the guide's.
     assert ".race-detail-meter" not in race_stylesheet
     # I41's guard now applies to the one meter chrome both pages share.
     assert ".screen-meter.meter-low-fill strong { padding-left:" in html
@@ -2754,10 +2765,12 @@ def test_phone_race_page_keeps_its_metrics_and_its_longest_title_inside_the_scre
     measure is what a reader on a phone can actually lose: a metrics column
     pushed off the side, and a race title long enough to pan the page.
 
-    The metrics measured here are the headline's, because the headline is the
-    leading choice's own heading now that the two are one block. The longest
-    values are written in rather than chosen from the fixture, so the claim is
-    about the layout and not about which races this dataset happens to hold.
+    The metrics measured here are a candidate section's own meter row — the
+    race's own headline carries no meter at all now that every candidate's
+    section has one of its own instead (docs/METER_V2.md, Chrome geometry:
+    "The headline meter's own fate"; #325). The longest values are written in
+    rather than chosen from the fixture, so the claim is about the layout and
+    not about which races this dataset happens to hold.
     """
     view_model = _personalization_enabled_view_model(tmp_path)
     race = max(
@@ -2781,9 +2794,14 @@ def test_phone_race_page_keeps_its_metrics_and_its_longest_title_inside_the_scre
           const box = (element) => element.getBoundingClientRect();
           const page = document.querySelector('.race-detail');
           const pageBox = box(page);
-          const meterBox = box(headline.querySelector('.screen-meter'));
-          // A tied candidate's heading carries the other meter on this page,
-          // beside a name that can be as long as the one written in above.
+          // Every candidate section's own meter row (docs/METER_V2.md, Chrome
+          // geometry; #325) — the fixed track plus its count/percent label —
+          // is what could now escape the page on a narrow phone; the headline
+          // itself carries no meter to measure any more.
+          const meterRow = document.querySelector('.race-detail-candidate-meter');
+          const meterRowBox = box(meterRow);
+          // A tied candidate's heading sits beside a name that can be as long
+          // as the one written in above.
           const tiedHeading = document.querySelector('.race-detail-candidate-heading');
           tiedHeading.querySelector('h4').textContent = 'Sharon Tomiko Santos / Kelabe Tewolde';
           const headingBox = box(tiedHeading);
@@ -2794,7 +2812,8 @@ def test_phone_race_page_keeps_its_metrics_and_its_longest_title_inside_the_scre
             'Seattle Proposition 1 — Property Tax Levy for Seattle Public Library';
           return JSON.stringify({
             titleWidth: titleBox.width,
-            meterWithin: meterBox.left >= pageBox.left && meterBox.right <= pageBox.right + 1,
+            meterRowWithin:
+              meterRowBox.left >= pageBox.left && meterRowBox.right <= pageBox.right + 1,
             headingWithin:
               headingBox.left >= pageBox.left && headingBox.right <= pageBox.right + 1,
             headingWraps: box(heading).height >
@@ -2810,7 +2829,7 @@ def test_phone_race_page_keeps_its_metrics_and_its_longest_title_inside_the_scre
     )
 
     assert result["titleWidth"] >= 100
-    assert result["meterWithin"] is True
+    assert result["meterRowWithin"] is True
     assert result["headingWithin"] is True
     # The longest race name on the ballot wraps rather than panning the page.
     assert result["headingWraps"] is True
@@ -2891,11 +2910,11 @@ def test_race_page_no_majority_state_appears_and_dissolves_with_the_selected_sou
     leading choice, so it renders no headline and marks each tied candidate in
     amber instead; a majority restores the headline and leaves the sections
     unmarked. Both directions are exercised here, because the headline is shown
-    and hidden rather than rendered and removed. v1's per-candidate mini-meter
-    — the second meter this test used to hold to the headline's own spoken
-    share — retired with meter v2 (docs/METER_V2.md, Chrome geometry; #315
-    replaces its job), so a tied candidate's own section carries only its
-    kicker now.
+    and hidden rather than rendered and removed. The race's own headline meter
+    retired with #325 (docs/METER_V2.md, Chrome geometry: "The headline
+    meter's own fate"); every candidate's own section carries one instead,
+    so the amber/teal check below reads a section's own meter blocks rather
+    than a single shared one.
     """
     view_model = _personalization_enabled_view_model(tmp_path)
     source_code_by_id = {source.id: source.code for source in view_model.personalization.sources}
@@ -2916,17 +2935,28 @@ def test_race_page_no_majority_state_appears_and_dissolves_with_the_selected_sou
           const pause = () => new Promise((resolve) => setTimeout(resolve, 100));
           const snapshot = () => {{
             const headline = document.querySelector('[data-race-headline]');
-            const meter = document.querySelector('[data-lens-result] .screen-meter');
             const pill = document.querySelector('[data-lens-context] .no-majority-pill');
             const kicker = document.querySelector('.race-detail-candidate-title p');
+            const sectionMeters = [...document.querySelectorAll('.screen-meter-section')];
+            const candidateSections = document.querySelectorAll('[data-race-detail-candidate-id]');
             return {{
               headlineHidden: headline.hidden,
               pillHidden: pill.hidden,
-              amberMeter: meter.classList.contains('meter-no-majority'),
-              accessibleName: meter.getAttribute('aria-label'),
               kicker: kicker?.textContent ?? null,
-              // v1's per-candidate mini-meter retired with meter v2.
-              noDetailMeter: document.querySelector('.race-detail-meter') === null,
+              // Every standing candidate's own section meter reflects the
+              // race's current majority state in its own blocks' colors
+              // (docs/METER_V2.md, Color) — amber somewhere exactly when the
+              // leader (or tied leaders) lacks a majority, never once one
+              // exists.
+              anyAmberBlock: sectionMeters.some((meter) =>
+                [...meter.querySelectorAll('.meter-block')].some((block) =>
+                  (block.getAttribute('style') ?? '').includes('var(--amber)'),
+                ),
+              ),
+              accessibleNames: sectionMeters.map((meter) => meter.getAttribute('aria-label')),
+              // Every candidate section carries exactly one meter of its own
+              // now (docs/METER_V2.md, Chrome geometry; #325).
+              everyCandidateHasOneMeter: sectionMeters.length === candidateSections.length,
             }};
           }};
           await pause();
@@ -2940,26 +2970,29 @@ def test_race_page_no_majority_state_appears_and_dissolves_with_the_selected_sou
     )
 
     # Tied: no headline, and each tied candidate marked amber in its own right.
-    split_accessible_name = result["split"].pop("accessibleName")
+    split_accessible_names = result["split"].pop("accessibleNames")
     assert result["split"] == {
         "headlineHidden": True,
         "pillHidden": False,
-        "amberMeter": True,
         "kicker": "Tied for lead",
-        "noDetailMeter": True,
+        "anyAmberBlock": True,
+        "everyCandidateHasOneMeter": True,
     }
-    # docs/METER_V2.md, The discovery model's accessibility model: the meter's
-    # spoken name is the full standings, not a restatement of the percentage.
-    assert re.match(r".+ ½ of 1 endorsements; .+ ½ of 1 endorsements$", split_accessible_name)
+    # docs/METER_V2.md, The discovery model's accessibility model, extended to
+    # the per-candidate meter in #325: each tied candidate's own spoken name
+    # states their own exact count, never a restatement of the percentage.
+    assert len(split_accessible_names) == 2
+    for name in split_accessible_names:
+        assert re.match(r".+: ½ of 1 endorsements$", name)
     # A majority resolves the tie: the headline returns and nothing is marked.
     assert result["majority"]["headlineHidden"] is False
     assert result["majority"]["pillHidden"] is True
-    assert result["majority"]["amberMeter"] is False
-    assert re.search(r"of \d+.* endorsements", result["majority"]["accessibleName"])
-    # A sole leader's section has neither eyebrow nor meter: the headline is its
-    # heading, and its share is stated there once.
+    assert result["majority"]["anyAmberBlock"] is False
+    assert result["majority"]["everyCandidateHasOneMeter"] is True
+    for name in result["majority"]["accessibleNames"]:
+        assert re.search(r": .+ of \d+.* endorsements$", name)
+    # A sole leader's section has no eyebrow: the headline is its heading.
     assert result["majority"]["kicker"] is None
-    assert result["majority"]["noDetailMeter"] is True
 
 
 def test_full_race_card_stacks_name_and_meter_below_480px(tmp_path: Path) -> None:
@@ -3693,22 +3726,22 @@ def test_personalization_divergent_race_discloses_a_compact_comparison_on_its_ca
         f"""
         (() => {{
           const selectedCodes = new Set({selected_codes_json});
-          const shown = (el) => el !== null && getComputedStyle(el).display !== 'none';
           const sections = [...document.querySelectorAll('[data-race-detail-candidate-id]')];
-          // I56 hard invariant: every visible per-candidate meter equals the
-          // headline's own lens share — no quantity appears with two values.
-          // v1's per-candidate mini-meter retired with meter v2
-          // (docs/METER_V2.md, Chrome geometry; #315), so `visibleMeterShares`
-          // is always empty now and the loop that reads it below is vacuous —
-          // kept rather than deleted so a meter that somehow reappeared here
-          // would still be held to this invariant.
-          const headlineShare = document.querySelector(
-            '[data-lens-result] .screen-meter strong',
-          )?.textContent;
-          const visibleMeterShares = sections
-            .map((section) => section.querySelector('.race-detail-meter'))
-            .filter((meter) => shown(meter))
-            .map((meter) => meter.querySelector('strong')?.textContent);
+          // I56 hard invariant, extended to #325's per-candidate meters: a
+          // section's own visible count (`.race-detail-candidate-count`) and
+          // its meter's own spoken name (`aria-label`) state the same exact
+          // count — one number, not two computed by two different paths that
+          // could drift. The race's own headline carries no meter to compare
+          // against any more (docs/METER_V2.md, Chrome geometry: "The
+          // headline meter's own fate"; #325) — each section is now the sole
+          // source of its own candidate's share.
+          const candidateMeterConsistent = sections.every((section) => {{
+            const meter = section.querySelector('.screen-meter-section');
+            const count = section.querySelector('.race-detail-candidate-count b');
+            const countText = count?.textContent ?? '';
+            if (!meter || !countText) return false;
+            return (meter.getAttribute('aria-label') ?? '').includes(countText);
+          }});
           // I56: an unselected source's row stays in place, visibly
           // de-emphasized and marked "Not counted"; a selected source's row
           // never carries that mark. Checked against every actual row rather
@@ -3729,8 +3762,7 @@ def test_personalization_divergent_race_discloses_a_compact_comparison_on_its_ca
             ),
             twinsAbsent: document.querySelectorAll(
               '[data-lens-only],[data-lens-hidden]').length === 0,
-            headlineShare,
-            visibleMeterShares,
+            candidateMeterConsistent,
             rowMarkingCorrect,
             candidateSectionCount: sections.length,
             // Item 3 of #141: the reference bar sits at the headline's foot,
@@ -3751,12 +3783,11 @@ def test_personalization_divergent_race_discloses_a_compact_comparison_on_its_ca
     assert detail["barAtHeadlineFoot"] is True
     assert "All sources:" in detail["barText"]
     assert detail["barNotInOutcomes"] is True
-    # A sole leading choice states its share once, in the headline: its section
-    # carries no meter that could disagree. Where a lens produces a tie instead,
-    # every tied candidate carries one, and each states the headline's share.
-    assert detail["headlineShare"]
-    for share_text in detail["visibleMeterShares"]:
-        assert share_text == detail["headlineShare"]
+    # Every candidate section is now the sole source of its own candidate's
+    # share (docs/METER_V2.md, Chrome geometry: "The headline meter's own
+    # fate"; #325): its own visible count and its own meter's spoken name
+    # never disagree (I56).
+    assert detail["candidateMeterConsistent"] is True
 
 
 def test_race_page_reflects_the_active_lens_leader_not_the_audited_default(

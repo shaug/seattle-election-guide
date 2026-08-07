@@ -21,11 +21,15 @@
 .screen-race .page-head h1 { max-width: none; }
 .race-detail { min-width: 0; padding: 1rem clamp(1rem, 4vw, 3rem) 4rem; }
 .race-detail :focus-visible { outline: .2rem solid var(--focus); outline-offset: .15rem; }
-/* The headline: the recommendation and its meter, then the caption row, then
-   the reference bar when a lens diverges — the same order and the same
-   components the card puts them in, so a reader arriving from a card sees the
-   quantity they clicked, larger. */
+/* The headline: the recommendation's name, then the caption row, then the
+   reference bar when a lens diverges. The name is the whole of the result
+   row now — its own meter retired in favor of one in every candidate's own
+   section below (docs/METER_V2.md, Chrome geometry: "The headline meter's
+   own fate"; #325) — so the shared `.screen-race-result` grid's fixed meter
+   column (guide-race.css, shared with the card, which keeps its own meter)
+   collapses on this page only. */
 .race-headline { display: grid; gap: .55rem; margin-bottom: 1.25rem; padding: 1.15rem; background: var(--tone-agree-bg); border: 1px solid #9fcfc5; border-left: .3rem solid var(--teal); box-shadow: 0 .2rem .8rem rgba(16,42,67,.08); }
+.screen-race .screen-race-result { grid-template-columns: minmax(0, 1fr); }
 /* `display` beats the UA sheet's `[hidden]`, so every block that hides itself
    restates it — the same line `.lens-banner` and `.race-card` carry. */
 .race-headline[hidden] { display: none; }
@@ -49,16 +53,41 @@
    A tied leader keeps the amber every other candidate wears: the green would
    read as "this is the answer", and the reason a tie is worth marking is that
    it is not (docs/DESIGN.md, Data display — default styling never overstates
-   confidence). What marks it instead is its "Tied for lead" eyebrow — v1's
-   per-candidate mini-meter used to sit beside that eyebrow too, but meter v2
-   retires it; the candidate-context treatment on the shared headline bar
-   replaces its job (docs/METER_V2.md, Chrome geometry; #315). */
+   confidence). What marks it instead is its "Tied for lead" eyebrow. */
 .race-detail-candidate-leader { border-color: #9fcfc5; border-left-color: var(--teal); }
 .race-detail-candidate-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem 1.25rem; padding: .55rem .75rem; background: var(--tone-differ-bg); }
 .race-detail-candidate-title { min-width: 0; }
 /* Only a tied leader has this eyebrow, and it takes the amber its box wears. */
 .race-detail-candidate-tied .race-detail-candidate-title p { margin: 0 0 .05rem; color: var(--tone-differ-text); font-size: .62rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 .race-detail-candidate-title h4 { min-width: 0; margin: 0; color: var(--navy); font-size: 1.05rem; line-height: 1.1; overflow-wrap: anywhere; }
+/* Every candidate's own section meter (docs/METER_V2.md, Chrome geometry:
+   "The headline meter's own fate"; #325): a fixed-width track, left-adjusted
+   — every row's bar occupies the same physical width for scannability, the
+   job the card-width headline meter used to do — beside a flexible,
+   right-adjusted label carrying the count and percent the meter no longer
+   shows inside itself (Decision: "Resting label"). `.screen-meter-section`
+   overrides `.screen-meter`'s own fixed 11rem/8.75rem width (guide-race.css,
+   shared with the card and the retired headline) with this row's own. */
+.race-detail-candidate-meter { display: flex; align-items: center; gap: 1rem; margin: .5rem 0 .35rem; }
+.screen-meter-section { flex: 0 0 16rem; width: auto; }
+.race-detail-candidate-count { flex: 1 1 auto; min-width: 0; text-align: right; color: var(--muted); font-size: .85rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.race-detail-candidate-count b { color: var(--navy); font-weight: 700; }
+.race-detail-candidate-pct { margin-left: .4rem; color: var(--faint); }
+/* Per-candidate coloring (docs/METER_V2.md, Color: "Selected candidate: bold;
+   everything else recedes" — #325 applies it statically, to this section's
+   own candidate, in place of the click-driven engaged state a shared
+   headline meter used to enter on a chip press). A split block's two halves
+   can each belong to a different candidate, so the whole-block bold filter
+   is scoped off a split block (`:not(.meter-block-split)`) and applied per
+   half instead — a flat whole-block bold would otherwise brighten a
+   section's own candidate's competing partner right along with them, the
+   per-half fix docs/METER_V2.md Decision #23 recorded for the seam colors
+   too. `meter_candidate_block_contexts` (`rendering/context.py`) computes
+   which class each block or half carries; this only reads them. */
+.screen-meter-section .meter-block:not(.meter-block-context) { opacity: .3; }
+.screen-meter-section .meter-block-context:not(.meter-block-split) { filter: saturate(1.5) brightness(.9); }
+.screen-meter-section .meter-half-context { filter: saturate(1.5) brightness(.9); }
+.screen-meter-section .meter-half-recede { opacity: .3; }
 .race-detail-outcome-unverified { border-left-color: var(--red); }
 .race-detail-outcome-heading { display: flex; align-items: baseline; justify-content: space-between; gap: .5rem 1rem; padding: .5rem .75rem; background: var(--tone-neutral-bg); }
 .race-detail-outcome-heading h4 { margin: 0; color: var(--navy); font-size: .86rem; }
@@ -92,10 +121,16 @@ html.lens-personalized .race-detail-source-row-not-counted > .race-detail-source
   .race-detail { padding-right: 1rem; padding-left: 1rem; }
   .race-headline { padding: .85rem; }
   .race-detail-candidate-heading { align-items: flex-start; }
+  .screen-meter-section { flex-basis: 9rem; }
+  .race-detail-candidate-count { font-size: .76rem; }
   .race-detail-source-row { grid-template-columns: 1fr; gap: .25rem; }
   .race-detail-source-meta { justify-content: flex-start; }
   .race-detail-category-badge { text-align: left; }
   .race-detail-source-status { text-align: left; }
+}
+
+@media (max-width: 479px) {
+  .race-detail-candidate-meter { flex-wrap: wrap; row-gap: .3rem; }
 }
 
 /* Ctrl+P prints the page the reader is on, as everywhere else on the site

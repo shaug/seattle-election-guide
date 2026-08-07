@@ -4411,6 +4411,2428 @@
       "note": "District sources cover only their own races, so most races have no endorsing source and the rest have exactly one."
     },
     {
+      "mirror": "meter-candidate-accessible-label",
+      "input": {
+        "label": "Ada Ames",
+        "candidateUnits": "1",
+        "totalLabel": "2"
+      },
+      "expected": "Ada Ames: 1 of 2 endorsements",
+      "note": "Equal units, so the display label breaks the tie and Ada Ames leads. Both the ids and the source labels run the other way, so neither can be what produced this order.",
+      "source": "meter_layout_blocks on the label tie-break shape"
+    },
+    {
+      "mirror": "meter-candidate-accessible-label",
+      "input": {
+        "label": "Ashley Fedan",
+        "candidateUnits": "1",
+        "totalLabel": "1"
+      },
+      "expected": "Ashley Fedan: 1 of 1 endorsements",
+      "note": "Two sources split some races, which is where a half share and a tie both become reachable.",
+      "source": "published race ld-11-state-representative-1 on the two-sources panel"
+    },
+    {
+      "mirror": "meter-candidate-accessible-label",
+      "input": {
+        "label": "Bridge Brooks",
+        "candidateUnits": "1",
+        "totalLabel": "4"
+      },
+      "expected": "Bridge Brooks: 1 of 4 endorsements",
+      "note": "Bridge Brooks is supported only by split halves, so that run has no solid block and the two bands sit side by side. Each is its own band, which the mockup's neighbour-type heuristic cannot see. The last block ends at the meter's own edge, so its tongue stays square.",
+      "source": "meter_layout_blocks on the run-aware band edges shape"
+    },
+    {
+      "mirror": "meter-candidate-accessible-label",
+      "input": {
+        "label": "Danica Noble",
+        "candidateUnits": "1",
+        "totalLabel": "2"
+      },
+      "expected": "Danica Noble: 1 of 2 endorsements",
+      "note": "Two sources split some races, which is where a half share and a tie both become reachable.",
+      "source": "published race ld-32-state-representative-1 on the two-sources panel"
+    },
+    {
+      "mirror": "meter-candidate-accessible-label",
+      "input": {
+        "label": "Keith Scully",
+        "candidateUnits": "1",
+        "totalLabel": "2"
+      },
+      "expected": "Keith Scully: 1 of 2 endorsements",
+      "note": "Two sources split some races, which is where a half share and a tie both become reachable.",
+      "source": "published race ld-32-state-representative-1 on the two-sources panel"
+    },
+    {
+      "mirror": "meter-candidate-accessible-label",
+      "input": {
+        "label": "Zeta Zhang",
+        "candidateUnits": "1",
+        "totalLabel": "2"
+      },
+      "expected": "Zeta Zhang: 1 of 2 endorsements",
+      "note": "Equal units, so the display label breaks the tie and Ada Ames leads. Both the ids and the source labels run the other way, so neither can be what produced this order.",
+      "source": "meter_layout_blocks on the label tie-break shape"
+    },
+    {
+      "mirror": "meter-candidate-accessible-label",
+      "input": {
+        "label": "Ashley Fedan",
+        "candidateUnits": "1/2",
+        "totalLabel": "1"
+      },
+      "expected": "Ashley Fedan: ½ of 1 endorsements",
+      "note": "District sources cover only their own races, so most races have no endorsing source and the rest have exactly one.",
+      "source": "published race ld-11-state-representative-1 on the district-sources panel"
+    },
+    {
+      "mirror": "meter-candidate-accessible-label",
+      "input": {
+        "label": "Cho Diaz",
+        "candidateUnits": "1/2",
+        "totalLabel": "5"
+      },
+      "expected": "Cho Diaz: ½ of 5 endorsements",
+      "note": "Both splits sit at the end of the leader's run, farthest partner first, so the split whose partner's run comes next is the one touching it.",
+      "source": "meter_layout_blocks on the non-adjacent split shape"
+    },
+    {
+      "mirror": "meter-candidate-accessible-label",
+      "input": {
+        "label": "David Hackney",
+        "candidateUnits": "1/2",
+        "totalLabel": "1"
+      },
+      "expected": "David Hackney: ½ of 1 endorsements",
+      "note": "District sources cover only their own races, so most races have no endorsing source and the rest have exactly one.",
+      "source": "published race ld-11-state-representative-1 on the district-sources panel"
+    },
+    {
+      "mirror": "meter-candidate-accessible-label",
+      "input": {
+        "label": "Tail Cho",
+        "candidateUnits": "1/2",
+        "totalLabel": "4"
+      },
+      "expected": "Tail Cho: ½ of 4 endorsements",
+      "note": "Bridge Brooks is supported only by split halves, so that run has no solid block and the two bands sit side by side. Each is its own band, which the mockup's neighbour-type heuristic cannot see. The last block ends at the meter's own edge, so its tongue stays square.",
+      "source": "meter_layout_blocks on the run-aware band edges shape"
+    },
+    {
+      "mirror": "meter-candidate-accessible-label",
+      "input": {
+        "label": "Cho Diaz",
+        "candidateUnits": "1/3",
+        "totalLabel": "3"
+      },
+      "expected": "Cho Diaz: ⅓ of 3 endorsements",
+      "note": "Two sources publishing under one display name, both splitting at the same boundary: the partner ties and the source label ties, so the split's own membership is what finishes the order. Without it the band would keep whichever order the cells arrived in, and the two renderers receive them in different orders.",
+      "source": "meter_layout_blocks on the splits sharing a partner and a source label shape"
+    },
+    {
+      "mirror": "meter-candidate-accessible-label",
+      "input": {
+        "label": "Cho Diaz",
+        "candidateUnits": "1/3",
+        "totalLabel": "4"
+      },
+      "expected": "Cho Diaz: ⅓ of 4 endorsements",
+      "note": "One block naming three candidates carries them in standings order, top to bottom, not in the order the cell happened to list them.",
+      "source": "meter_layout_blocks on the n-way split shape"
+    },
+    {
+      "mirror": "meter-candidate-accessible-label",
+      "input": {
+        "label": "Alpha Ames",
+        "candidateUnits": "11/6",
+        "totalLabel": "3"
+      },
+      "expected": "Alpha Ames: 1⅚ of 3 endorsements",
+      "note": "Two sources publishing under one display name, both splitting at the same boundary: the partner ties and the source label ties, so the split's own membership is what finishes the order. Without it the band would keep whichever order the cells arrived in, and the two renderers receive them in different orders.",
+      "source": "meter_layout_blocks on the splits sharing a partner and a source label shape"
+    },
+    {
+      "mirror": "meter-candidate-accessible-label",
+      "input": {
+        "label": "Alpha Ames",
+        "candidateUnits": "2",
+        "totalLabel": "2"
+      },
+      "expected": "Alpha Ames: 2 of 2 endorsements",
+      "note": "Two sources looked and declined: no block, and no denominator weight either, so the meter is two blocks wide rather than four. Every other candidate on the ballot is named by no cell and so has no run at all.",
+      "source": "meter_layout_blocks on the declining sources shape"
+    },
+    {
+      "mirror": "meter-candidate-accessible-label",
+      "input": {
+        "label": "Bravo Brooks",
+        "candidateUnits": "2",
+        "totalLabel": "5"
+      },
+      "expected": "Bravo Brooks: 2 of 5 endorsements",
+      "note": "Two splits naming the same pair are the same distance apart, so the source label decides which comes first — without it the band would keep whichever order the cells arrived in, and the two renderers receive them in different orders.",
+      "source": "meter_layout_blocks on the splits sharing a partner shape"
+    },
+    {
+      "mirror": "meter-candidate-accessible-label",
+      "input": {
+        "label": "Alpha Ames",
+        "candidateUnits": "3",
+        "totalLabel": "5"
+      },
+      "expected": "Alpha Ames: 3 of 5 endorsements",
+      "note": "Both splits sit at the end of the leader's run, farthest partner first, so the split whose partner's run comes next is the one touching it.",
+      "source": "meter_layout_blocks on the non-adjacent split shape"
+    },
+    {
+      "mirror": "meter-candidate-accessible-label",
+      "input": {
+        "label": "Bravo Brooks",
+        "candidateUnits": "3/2",
+        "totalLabel": "5"
+      },
+      "expected": "Bravo Brooks: 1½ of 5 endorsements",
+      "note": "Both splits sit at the end of the leader's run, farthest partner first, so the split whose partner's run comes next is the one touching it.",
+      "source": "meter_layout_blocks on the non-adjacent split shape"
+    },
+    {
+      "mirror": "meter-candidate-accessible-label",
+      "input": {
+        "label": "Jenna Nand",
+        "candidateUnits": "3/2",
+        "totalLabel": "12"
+      },
+      "expected": "Jenna Nand: 1½ of 12 endorsements",
+      "note": "The published panel: the shares, grades, and captions the guide ships.",
+      "source": "published race ld-32-state-representative-1 on the audited panel"
+    },
+    {
+      "mirror": "meter-candidate-accessible-label",
+      "input": {
+        "label": "Bravo Brooks",
+        "candidateUnits": "4/3",
+        "totalLabel": "4"
+      },
+      "expected": "Bravo Brooks: 1⅓ of 4 endorsements",
+      "note": "One block naming three candidates carries them in standings order, top to bottom, not in the order the cell happened to list them.",
+      "source": "meter_layout_blocks on the n-way split shape"
+    },
+    {
+      "mirror": "meter-candidate-accessible-label",
+      "input": {
+        "label": "Anchor Ames",
+        "candidateUnits": "5/2",
+        "totalLabel": "4"
+      },
+      "expected": "Anchor Ames: 2½ of 4 endorsements",
+      "note": "Bridge Brooks is supported only by split halves, so that run has no solid block and the two bands sit side by side. Each is its own band, which the mockup's neighbour-type heuristic cannot see. The last block ends at the meter's own edge, so its tongue stays square.",
+      "source": "meter_layout_blocks on the run-aware band edges shape"
+    },
+    {
+      "mirror": "meter-candidate-accessible-label",
+      "input": {
+        "label": "Keith Scully",
+        "candidateUnits": "5/2",
+        "totalLabel": "12"
+      },
+      "expected": "Keith Scully: 2½ of 12 endorsements",
+      "note": "The published panel: the shares, grades, and captions the guide ships.",
+      "source": "published race ld-32-state-representative-1 on the audited panel"
+    },
+    {
+      "mirror": "meter-candidate-accessible-label",
+      "input": {
+        "label": "Bravo Brooks",
+        "candidateUnits": "5/6",
+        "totalLabel": "3"
+      },
+      "expected": "Bravo Brooks: ⅚ of 3 endorsements",
+      "note": "Two sources publishing under one display name, both splitting at the same boundary: the partner ties and the source label ties, so the split's own membership is what finishes the order. Without it the band would keep whichever order the cells arrived in, and the two renderers receive them in different orders.",
+      "source": "meter_layout_blocks on the splits sharing a partner and a source label shape"
+    },
+    {
+      "mirror": "meter-candidate-accessible-label",
+      "input": {
+        "label": "Alpha Ames",
+        "candidateUnits": "7/3",
+        "totalLabel": "4"
+      },
+      "expected": "Alpha Ames: 2⅓ of 4 endorsements",
+      "note": "One block naming three candidates carries them in standings order, top to bottom, not in the order the cell happened to list them.",
+      "source": "meter_layout_blocks on the n-way split shape"
+    },
+    {
+      "mirror": "meter-candidate-accessible-label",
+      "input": {
+        "label": "Danica Noble",
+        "candidateUnits": "8",
+        "totalLabel": "12"
+      },
+      "expected": "Danica Noble: 8 of 12 endorsements",
+      "note": "The published panel: the shares, grades, and captions the guide ships.",
+      "source": "published race ld-32-state-representative-1 on the audited panel"
+    },
+    {
+      "mirror": "meter-candidate-block-contexts",
+      "input": {
+        "blocks": [
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "band--anchor"
+            ],
+            "source_label": "Alpha Assembly",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "band--anchor"
+            ],
+            "source_label": "Beta Board",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "split",
+            "width": 1,
+            "candidate_ids": [
+              "band--anchor",
+              "band--bridge"
+            ],
+            "source_label": "Gamma Guild",
+            "band_start": true,
+            "band_end": true,
+            "tongue_corner_start": true,
+            "tongue_corner_end": true
+          },
+          {
+            "type": "split",
+            "width": 1,
+            "candidate_ids": [
+              "band--bridge",
+              "band--tail"
+            ],
+            "source_label": "Delta Digest",
+            "band_start": true,
+            "band_end": true,
+            "tongue_corner_start": true,
+            "tongue_corner_end": false
+          }
+        ],
+        "candidateId": "band--anchor"
+      },
+      "expected": [
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": " meter-half-context",
+          "half_bottom_class": " meter-half-recede"
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        }
+      ],
+      "note": "Bridge Brooks is supported only by split halves, so that run has no solid block and the two bands sit side by side. Each is its own band, which the mockup's neighbour-type heuristic cannot see. The last block ends at the meter's own edge, so its tongue stays square.",
+      "source": "meter_layout_blocks on the run-aware band edges shape"
+    },
+    {
+      "mirror": "meter-candidate-block-contexts",
+      "input": {
+        "blocks": [
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "band--anchor"
+            ],
+            "source_label": "Alpha Assembly",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "band--anchor"
+            ],
+            "source_label": "Beta Board",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "split",
+            "width": 1,
+            "candidate_ids": [
+              "band--anchor",
+              "band--bridge"
+            ],
+            "source_label": "Gamma Guild",
+            "band_start": true,
+            "band_end": true,
+            "tongue_corner_start": true,
+            "tongue_corner_end": true
+          },
+          {
+            "type": "split",
+            "width": 1,
+            "candidate_ids": [
+              "band--bridge",
+              "band--tail"
+            ],
+            "source_label": "Delta Digest",
+            "band_start": true,
+            "band_end": true,
+            "tongue_corner_start": true,
+            "tongue_corner_end": false
+          }
+        ],
+        "candidateId": "band--bridge"
+      },
+      "expected": [
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": " meter-half-recede",
+          "half_bottom_class": " meter-half-context"
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": " meter-half-context",
+          "half_bottom_class": " meter-half-recede"
+        }
+      ],
+      "note": "Bridge Brooks is supported only by split halves, so that run has no solid block and the two bands sit side by side. Each is its own band, which the mockup's neighbour-type heuristic cannot see. The last block ends at the meter's own edge, so its tongue stays square.",
+      "source": "meter_layout_blocks on the run-aware band edges shape"
+    },
+    {
+      "mirror": "meter-candidate-block-contexts",
+      "input": {
+        "blocks": [
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "band--anchor"
+            ],
+            "source_label": "Alpha Assembly",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "band--anchor"
+            ],
+            "source_label": "Beta Board",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "split",
+            "width": 1,
+            "candidate_ids": [
+              "band--anchor",
+              "band--bridge"
+            ],
+            "source_label": "Gamma Guild",
+            "band_start": true,
+            "band_end": true,
+            "tongue_corner_start": true,
+            "tongue_corner_end": true
+          },
+          {
+            "type": "split",
+            "width": 1,
+            "candidate_ids": [
+              "band--bridge",
+              "band--tail"
+            ],
+            "source_label": "Delta Digest",
+            "band_start": true,
+            "band_end": true,
+            "tongue_corner_start": true,
+            "tongue_corner_end": false
+          }
+        ],
+        "candidateId": "band--tail"
+      },
+      "expected": [
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": " meter-half-recede",
+          "half_bottom_class": " meter-half-context"
+        }
+      ],
+      "note": "Bridge Brooks is supported only by split halves, so that run has no solid block and the two bands sit side by side. Each is its own band, which the mockup's neighbour-type heuristic cannot see. The last block ends at the meter's own edge, so its tongue stays square.",
+      "source": "meter_layout_blocks on the run-aware band edges shape"
+    },
+    {
+      "mirror": "meter-candidate-block-contexts",
+      "input": {
+        "blocks": [
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "both--alpha"
+            ],
+            "source_label": "Alpha Assembly",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "split",
+            "width": 1,
+            "candidate_ids": [
+              "both--alpha",
+              "both--bravo"
+            ],
+            "source_label": "Civic Wire",
+            "band_start": true,
+            "band_end": false,
+            "tongue_corner_start": true,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "split",
+            "width": 1,
+            "candidate_ids": [
+              "both--alpha",
+              "both--bravo",
+              "both--cho"
+            ],
+            "source_label": "Civic Wire",
+            "band_start": false,
+            "band_end": true,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          }
+        ],
+        "candidateId": "both--alpha"
+      },
+      "expected": [
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": " meter-half-context",
+          "half_bottom_class": " meter-half-recede"
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": " meter-half-context",
+          "half_bottom_class": " meter-half-recede"
+        }
+      ],
+      "note": "Two sources publishing under one display name, both splitting at the same boundary: the partner ties and the source label ties, so the split's own membership is what finishes the order. Without it the band would keep whichever order the cells arrived in, and the two renderers receive them in different orders.",
+      "source": "meter_layout_blocks on the splits sharing a partner and a source label shape"
+    },
+    {
+      "mirror": "meter-candidate-block-contexts",
+      "input": {
+        "blocks": [
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "both--alpha"
+            ],
+            "source_label": "Alpha Assembly",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "split",
+            "width": 1,
+            "candidate_ids": [
+              "both--alpha",
+              "both--bravo"
+            ],
+            "source_label": "Civic Wire",
+            "band_start": true,
+            "band_end": false,
+            "tongue_corner_start": true,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "split",
+            "width": 1,
+            "candidate_ids": [
+              "both--alpha",
+              "both--bravo",
+              "both--cho"
+            ],
+            "source_label": "Civic Wire",
+            "band_start": false,
+            "band_end": true,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          }
+        ],
+        "candidateId": "both--bravo"
+      },
+      "expected": [
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": " meter-half-recede",
+          "half_bottom_class": " meter-half-context"
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": " meter-half-recede",
+          "half_bottom_class": " meter-half-context"
+        }
+      ],
+      "note": "Two sources publishing under one display name, both splitting at the same boundary: the partner ties and the source label ties, so the split's own membership is what finishes the order. Without it the band would keep whichever order the cells arrived in, and the two renderers receive them in different orders.",
+      "source": "meter_layout_blocks on the splits sharing a partner and a source label shape"
+    },
+    {
+      "mirror": "meter-candidate-block-contexts",
+      "input": {
+        "blocks": [
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "both--alpha"
+            ],
+            "source_label": "Alpha Assembly",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "split",
+            "width": 1,
+            "candidate_ids": [
+              "both--alpha",
+              "both--bravo"
+            ],
+            "source_label": "Civic Wire",
+            "band_start": true,
+            "band_end": false,
+            "tongue_corner_start": true,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "split",
+            "width": 1,
+            "candidate_ids": [
+              "both--alpha",
+              "both--bravo",
+              "both--cho"
+            ],
+            "source_label": "Civic Wire",
+            "band_start": false,
+            "band_end": true,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          }
+        ],
+        "candidateId": "both--cho"
+      },
+      "expected": [
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": " meter-half-recede",
+          "half_bottom_class": " meter-half-recede"
+        }
+      ],
+      "note": "Two sources publishing under one display name, both splitting at the same boundary: the partner ties and the source label ties, so the split's own membership is what finishes the order. Without it the band would keep whichever order the cells arrived in, and the two renderers receive them in different orders.",
+      "source": "meter_layout_blocks on the splits sharing a partner and a source label shape"
+    },
+    {
+      "mirror": "meter-candidate-block-contexts",
+      "input": {
+        "blocks": [
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "gap--alpha"
+            ],
+            "source_label": "Alpha Assembly",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "gap--alpha"
+            ],
+            "source_label": "Beta Board",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "split",
+            "width": 1,
+            "candidate_ids": [
+              "gap--alpha",
+              "gap--cho"
+            ],
+            "source_label": "Delta Digest",
+            "band_start": true,
+            "band_end": false,
+            "tongue_corner_start": true,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "split",
+            "width": 1,
+            "candidate_ids": [
+              "gap--alpha",
+              "gap--bravo"
+            ],
+            "source_label": "Echo Examiner",
+            "band_start": false,
+            "band_end": true,
+            "tongue_corner_start": false,
+            "tongue_corner_end": true
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "gap--bravo"
+            ],
+            "source_label": "Civic Circle",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          }
+        ],
+        "candidateId": "gap--alpha"
+      },
+      "expected": [
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": " meter-half-context",
+          "half_bottom_class": " meter-half-recede"
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": " meter-half-context",
+          "half_bottom_class": " meter-half-recede"
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        }
+      ],
+      "note": "Both splits sit at the end of the leader's run, farthest partner first, so the split whose partner's run comes next is the one touching it.",
+      "source": "meter_layout_blocks on the non-adjacent split shape"
+    },
+    {
+      "mirror": "meter-candidate-block-contexts",
+      "input": {
+        "blocks": [
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "gap--alpha"
+            ],
+            "source_label": "Alpha Assembly",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "gap--alpha"
+            ],
+            "source_label": "Beta Board",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "split",
+            "width": 1,
+            "candidate_ids": [
+              "gap--alpha",
+              "gap--cho"
+            ],
+            "source_label": "Delta Digest",
+            "band_start": true,
+            "band_end": false,
+            "tongue_corner_start": true,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "split",
+            "width": 1,
+            "candidate_ids": [
+              "gap--alpha",
+              "gap--bravo"
+            ],
+            "source_label": "Echo Examiner",
+            "band_start": false,
+            "band_end": true,
+            "tongue_corner_start": false,
+            "tongue_corner_end": true
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "gap--bravo"
+            ],
+            "source_label": "Civic Circle",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          }
+        ],
+        "candidateId": "gap--bravo"
+      },
+      "expected": [
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": " meter-half-recede",
+          "half_bottom_class": " meter-half-context"
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        }
+      ],
+      "note": "Both splits sit at the end of the leader's run, farthest partner first, so the split whose partner's run comes next is the one touching it.",
+      "source": "meter_layout_blocks on the non-adjacent split shape"
+    },
+    {
+      "mirror": "meter-candidate-block-contexts",
+      "input": {
+        "blocks": [
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "gap--alpha"
+            ],
+            "source_label": "Alpha Assembly",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "gap--alpha"
+            ],
+            "source_label": "Beta Board",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "split",
+            "width": 1,
+            "candidate_ids": [
+              "gap--alpha",
+              "gap--cho"
+            ],
+            "source_label": "Delta Digest",
+            "band_start": true,
+            "band_end": false,
+            "tongue_corner_start": true,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "split",
+            "width": 1,
+            "candidate_ids": [
+              "gap--alpha",
+              "gap--bravo"
+            ],
+            "source_label": "Echo Examiner",
+            "band_start": false,
+            "band_end": true,
+            "tongue_corner_start": false,
+            "tongue_corner_end": true
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "gap--bravo"
+            ],
+            "source_label": "Civic Circle",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          }
+        ],
+        "candidateId": "gap--cho"
+      },
+      "expected": [
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": " meter-half-recede",
+          "half_bottom_class": " meter-half-context"
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        }
+      ],
+      "note": "Both splits sit at the end of the leader's run, farthest partner first, so the split whose partner's run comes next is the one touching it.",
+      "source": "meter_layout_blocks on the non-adjacent split shape"
+    },
+    {
+      "mirror": "meter-candidate-block-contexts",
+      "input": {
+        "blocks": [
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-11-state-representative-1--ashley-fedan"
+            ],
+            "source_label": "The Stranger Election Control Board",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          }
+        ],
+        "candidateId": "ld-11-state-representative-1--ashley-fedan"
+      },
+      "expected": [
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        }
+      ],
+      "note": "Two sources split some races, which is where a half share and a tie both become reachable.",
+      "source": "published race ld-11-state-representative-1 on the two-sources panel"
+    },
+    {
+      "mirror": "meter-candidate-block-contexts",
+      "input": {
+        "blocks": [
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--danica-noble"
+            ],
+            "source_label": "AFT Washington",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--danica-noble"
+            ],
+            "source_label": "Alliance for Gun Responsibility Victory Fund",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--danica-noble"
+            ],
+            "source_label": "Tech 4 Taxes",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--danica-noble"
+            ],
+            "source_label": "The Urbanist Elections Committee",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--danica-noble"
+            ],
+            "source_label": "Transit Riders Union",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--danica-noble"
+            ],
+            "source_label": "UFCW 3000",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--danica-noble"
+            ],
+            "source_label": "Washington State Labor Council, AFL-CIO",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "split",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--danica-noble",
+              "ld-32-state-representative-1--jenna-nand"
+            ],
+            "source_label": "National Women's Political Caucus of Washington",
+            "band_start": true,
+            "band_end": false,
+            "tongue_corner_start": true,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "split",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--danica-noble",
+              "ld-32-state-representative-1--keith-scully"
+            ],
+            "source_label": "Washington Housing Alliance",
+            "band_start": false,
+            "band_end": true,
+            "tongue_corner_start": false,
+            "tongue_corner_end": true
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--keith-scully"
+            ],
+            "source_label": "Sierra Club Washington State Chapter",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--keith-scully"
+            ],
+            "source_label": "The Stranger Election Control Board",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--jenna-nand"
+            ],
+            "source_label": "Washington Education Association",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          }
+        ],
+        "candidateId": "ld-32-state-representative-1--danica-noble"
+      },
+      "expected": [
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": " meter-half-context",
+          "half_bottom_class": " meter-half-recede"
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": " meter-half-context",
+          "half_bottom_class": " meter-half-recede"
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        }
+      ],
+      "note": "The published panel: the shares, grades, and captions the guide ships.",
+      "source": "published race ld-32-state-representative-1 on the audited panel"
+    },
+    {
+      "mirror": "meter-candidate-block-contexts",
+      "input": {
+        "blocks": [
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--danica-noble"
+            ],
+            "source_label": "AFT Washington",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--danica-noble"
+            ],
+            "source_label": "Alliance for Gun Responsibility Victory Fund",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--danica-noble"
+            ],
+            "source_label": "Tech 4 Taxes",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--danica-noble"
+            ],
+            "source_label": "The Urbanist Elections Committee",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--danica-noble"
+            ],
+            "source_label": "Transit Riders Union",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--danica-noble"
+            ],
+            "source_label": "UFCW 3000",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--danica-noble"
+            ],
+            "source_label": "Washington State Labor Council, AFL-CIO",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "split",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--danica-noble",
+              "ld-32-state-representative-1--jenna-nand"
+            ],
+            "source_label": "National Women's Political Caucus of Washington",
+            "band_start": true,
+            "band_end": false,
+            "tongue_corner_start": true,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "split",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--danica-noble",
+              "ld-32-state-representative-1--keith-scully"
+            ],
+            "source_label": "Washington Housing Alliance",
+            "band_start": false,
+            "band_end": true,
+            "tongue_corner_start": false,
+            "tongue_corner_end": true
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--keith-scully"
+            ],
+            "source_label": "Sierra Club Washington State Chapter",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--keith-scully"
+            ],
+            "source_label": "The Stranger Election Control Board",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--jenna-nand"
+            ],
+            "source_label": "Washington Education Association",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          }
+        ],
+        "candidateId": "ld-32-state-representative-1--jenna-nand"
+      },
+      "expected": [
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": " meter-half-recede",
+          "half_bottom_class": " meter-half-context"
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        }
+      ],
+      "note": "The published panel: the shares, grades, and captions the guide ships.",
+      "source": "published race ld-32-state-representative-1 on the audited panel"
+    },
+    {
+      "mirror": "meter-candidate-block-contexts",
+      "input": {
+        "blocks": [
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--danica-noble"
+            ],
+            "source_label": "AFT Washington",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--danica-noble"
+            ],
+            "source_label": "Alliance for Gun Responsibility Victory Fund",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--danica-noble"
+            ],
+            "source_label": "Tech 4 Taxes",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--danica-noble"
+            ],
+            "source_label": "The Urbanist Elections Committee",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--danica-noble"
+            ],
+            "source_label": "Transit Riders Union",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--danica-noble"
+            ],
+            "source_label": "UFCW 3000",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--danica-noble"
+            ],
+            "source_label": "Washington State Labor Council, AFL-CIO",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "split",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--danica-noble",
+              "ld-32-state-representative-1--jenna-nand"
+            ],
+            "source_label": "National Women's Political Caucus of Washington",
+            "band_start": true,
+            "band_end": false,
+            "tongue_corner_start": true,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "split",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--danica-noble",
+              "ld-32-state-representative-1--keith-scully"
+            ],
+            "source_label": "Washington Housing Alliance",
+            "band_start": false,
+            "band_end": true,
+            "tongue_corner_start": false,
+            "tongue_corner_end": true
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--keith-scully"
+            ],
+            "source_label": "Sierra Club Washington State Chapter",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--keith-scully"
+            ],
+            "source_label": "The Stranger Election Control Board",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--jenna-nand"
+            ],
+            "source_label": "Washington Education Association",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          }
+        ],
+        "candidateId": "ld-32-state-representative-1--keith-scully"
+      },
+      "expected": [
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": " meter-half-recede",
+          "half_bottom_class": " meter-half-context"
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        }
+      ],
+      "note": "The published panel: the shares, grades, and captions the guide ships.",
+      "source": "published race ld-32-state-representative-1 on the audited panel"
+    },
+    {
+      "mirror": "meter-candidate-block-contexts",
+      "input": {
+        "blocks": [
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--danica-noble"
+            ],
+            "source_label": "The Urbanist Elections Committee",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--keith-scully"
+            ],
+            "source_label": "The Stranger Election Control Board",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          }
+        ],
+        "candidateId": "ld-32-state-representative-1--danica-noble"
+      },
+      "expected": [
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        }
+      ],
+      "note": "Two sources split some races, which is where a half share and a tie both become reachable.",
+      "source": "published race ld-32-state-representative-1 on the two-sources panel"
+    },
+    {
+      "mirror": "meter-candidate-block-contexts",
+      "input": {
+        "blocks": [
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--danica-noble"
+            ],
+            "source_label": "The Urbanist Elections Committee",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "ld-32-state-representative-1--keith-scully"
+            ],
+            "source_label": "The Stranger Election Control Board",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          }
+        ],
+        "candidateId": "ld-32-state-representative-1--keith-scully"
+      },
+      "expected": [
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        }
+      ],
+      "note": "Two sources split some races, which is where a half share and a tie both become reachable.",
+      "source": "published race ld-32-state-representative-1 on the two-sources panel"
+    },
+    {
+      "mirror": "meter-candidate-block-contexts",
+      "input": {
+        "blocks": [
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "nway--alpha"
+            ],
+            "source_label": "Alpha Assembly",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "nway--alpha"
+            ],
+            "source_label": "Beta Board",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "split",
+            "width": 1,
+            "candidate_ids": [
+              "nway--alpha",
+              "nway--bravo",
+              "nway--cho"
+            ],
+            "source_label": "Delta Digest",
+            "band_start": true,
+            "band_end": true,
+            "tongue_corner_start": true,
+            "tongue_corner_end": true
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "nway--bravo"
+            ],
+            "source_label": "Civic Circle",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          }
+        ],
+        "candidateId": "nway--alpha"
+      },
+      "expected": [
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": " meter-half-context",
+          "half_bottom_class": " meter-half-recede"
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        }
+      ],
+      "note": "One block naming three candidates carries them in standings order, top to bottom, not in the order the cell happened to list them.",
+      "source": "meter_layout_blocks on the n-way split shape"
+    },
+    {
+      "mirror": "meter-candidate-block-contexts",
+      "input": {
+        "blocks": [
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "nway--alpha"
+            ],
+            "source_label": "Alpha Assembly",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "nway--alpha"
+            ],
+            "source_label": "Beta Board",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "split",
+            "width": 1,
+            "candidate_ids": [
+              "nway--alpha",
+              "nway--bravo",
+              "nway--cho"
+            ],
+            "source_label": "Delta Digest",
+            "band_start": true,
+            "band_end": true,
+            "tongue_corner_start": true,
+            "tongue_corner_end": true
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "nway--bravo"
+            ],
+            "source_label": "Civic Circle",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          }
+        ],
+        "candidateId": "nway--bravo"
+      },
+      "expected": [
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": " meter-half-recede",
+          "half_bottom_class": " meter-half-context"
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        }
+      ],
+      "note": "One block naming three candidates carries them in standings order, top to bottom, not in the order the cell happened to list them.",
+      "source": "meter_layout_blocks on the n-way split shape"
+    },
+    {
+      "mirror": "meter-candidate-block-contexts",
+      "input": {
+        "blocks": [
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "nway--alpha"
+            ],
+            "source_label": "Alpha Assembly",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "nway--alpha"
+            ],
+            "source_label": "Beta Board",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "split",
+            "width": 1,
+            "candidate_ids": [
+              "nway--alpha",
+              "nway--bravo",
+              "nway--cho"
+            ],
+            "source_label": "Delta Digest",
+            "band_start": true,
+            "band_end": true,
+            "tongue_corner_start": true,
+            "tongue_corner_end": true
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "nway--bravo"
+            ],
+            "source_label": "Civic Circle",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          }
+        ],
+        "candidateId": "nway--cho"
+      },
+      "expected": [
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": " meter-half-recede",
+          "half_bottom_class": " meter-half-recede"
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        }
+      ],
+      "note": "One block naming three candidates carries them in standings order, top to bottom, not in the order the cell happened to list them.",
+      "source": "meter_layout_blocks on the n-way split shape"
+    },
+    {
+      "mirror": "meter-candidate-block-contexts",
+      "input": {
+        "blocks": [
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "pair--alpha"
+            ],
+            "source_label": "Alpha Assembly",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "pair--alpha"
+            ],
+            "source_label": "Beta Board",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "split",
+            "width": 1,
+            "candidate_ids": [
+              "pair--alpha",
+              "pair--bravo"
+            ],
+            "source_label": "Yardley Yearbook",
+            "band_start": true,
+            "band_end": false,
+            "tongue_corner_start": true,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "split",
+            "width": 1,
+            "candidate_ids": [
+              "pair--alpha",
+              "pair--bravo"
+            ],
+            "source_label": "Zenith Ledger",
+            "band_start": false,
+            "band_end": true,
+            "tongue_corner_start": false,
+            "tongue_corner_end": true
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "pair--bravo"
+            ],
+            "source_label": "Civic Circle",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          }
+        ],
+        "candidateId": "pair--alpha"
+      },
+      "expected": [
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": " meter-half-context",
+          "half_bottom_class": " meter-half-recede"
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": " meter-half-context",
+          "half_bottom_class": " meter-half-recede"
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        }
+      ],
+      "note": "Two splits naming the same pair are the same distance apart, so the source label decides which comes first — without it the band would keep whichever order the cells arrived in, and the two renderers receive them in different orders.",
+      "source": "meter_layout_blocks on the splits sharing a partner shape"
+    },
+    {
+      "mirror": "meter-candidate-block-contexts",
+      "input": {
+        "blocks": [
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "pair--alpha"
+            ],
+            "source_label": "Alpha Assembly",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "pair--alpha"
+            ],
+            "source_label": "Beta Board",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "split",
+            "width": 1,
+            "candidate_ids": [
+              "pair--alpha",
+              "pair--bravo"
+            ],
+            "source_label": "Yardley Yearbook",
+            "band_start": true,
+            "band_end": false,
+            "tongue_corner_start": true,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "split",
+            "width": 1,
+            "candidate_ids": [
+              "pair--alpha",
+              "pair--bravo"
+            ],
+            "source_label": "Zenith Ledger",
+            "band_start": false,
+            "band_end": true,
+            "tongue_corner_start": false,
+            "tongue_corner_end": true
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "pair--bravo"
+            ],
+            "source_label": "Civic Circle",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          }
+        ],
+        "candidateId": "pair--bravo"
+      },
+      "expected": [
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": " meter-half-recede",
+          "half_bottom_class": " meter-half-context"
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": " meter-half-recede",
+          "half_bottom_class": " meter-half-context"
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        }
+      ],
+      "note": "Two splits naming the same pair are the same distance apart, so the source label decides which comes first — without it the band would keep whichever order the cells arrived in, and the two renderers receive them in different orders.",
+      "source": "meter_layout_blocks on the splits sharing a partner shape"
+    },
+    {
+      "mirror": "meter-candidate-block-contexts",
+      "input": {
+        "blocks": [
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "solo--alpha"
+            ],
+            "source_label": "Alpha Assembly",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "solo--alpha"
+            ],
+            "source_label": "Beta Board",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          }
+        ],
+        "candidateId": "solo--alpha"
+      },
+      "expected": [
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        }
+      ],
+      "note": "Two sources looked and declined: no block, and no denominator weight either, so the meter is two blocks wide rather than four. Every other candidate on the ballot is named by no cell and so has no run at all.",
+      "source": "meter_layout_blocks on the declining sources shape"
+    },
+    {
+      "mirror": "meter-candidate-block-contexts",
+      "input": {
+        "blocks": [
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "tie--second"
+            ],
+            "source_label": "Bellwether Board",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "tie--first"
+            ],
+            "source_label": "Ashland Assembly",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          }
+        ],
+        "candidateId": "tie--first"
+      },
+      "expected": [
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        }
+      ],
+      "note": "Equal units, so the display label breaks the tie and Ada Ames leads. Both the ids and the source labels run the other way, so neither can be what produced this order.",
+      "source": "meter_layout_blocks on the label tie-break shape"
+    },
+    {
+      "mirror": "meter-candidate-block-contexts",
+      "input": {
+        "blocks": [
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "tie--second"
+            ],
+            "source_label": "Bellwether Board",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          },
+          {
+            "type": "solid",
+            "width": 1,
+            "candidate_ids": [
+              "tie--first"
+            ],
+            "source_label": "Ashland Assembly",
+            "band_start": false,
+            "band_end": false,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          }
+        ],
+        "candidateId": "tie--second"
+      },
+      "expected": [
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        },
+        {
+          "block_class": "",
+          "half_top_class": "",
+          "half_bottom_class": ""
+        }
+      ],
+      "note": "Equal units, so the display label breaks the tie and Ada Ames leads. Both the ids and the source labels run the other way, so neither can be what produced this order.",
+      "source": "meter_layout_blocks on the label tie-break shape"
+    },
+    {
+      "mirror": "meter-candidate-block-contexts",
+      "input": {
+        "blocks": [
+          {
+            "type": "split",
+            "width": 1,
+            "candidate_ids": [
+              "ld-11-state-representative-1--ashley-fedan",
+              "ld-11-state-representative-1--david-hackney"
+            ],
+            "source_label": "11th Legislative District Democrats",
+            "band_start": true,
+            "band_end": true,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          }
+        ],
+        "candidateId": "ld-11-state-representative-1--ashley-fedan"
+      },
+      "expected": [
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": " meter-half-context",
+          "half_bottom_class": " meter-half-recede"
+        }
+      ],
+      "note": "District sources cover only their own races, so most races have no endorsing source and the rest have exactly one.",
+      "source": "published race ld-11-state-representative-1 on the district-sources panel"
+    },
+    {
+      "mirror": "meter-candidate-block-contexts",
+      "input": {
+        "blocks": [
+          {
+            "type": "split",
+            "width": 1,
+            "candidate_ids": [
+              "ld-11-state-representative-1--ashley-fedan",
+              "ld-11-state-representative-1--david-hackney"
+            ],
+            "source_label": "11th Legislative District Democrats",
+            "band_start": true,
+            "band_end": true,
+            "tongue_corner_start": false,
+            "tongue_corner_end": false
+          }
+        ],
+        "candidateId": "ld-11-state-representative-1--david-hackney"
+      },
+      "expected": [
+        {
+          "block_class": " meter-block-context",
+          "half_top_class": " meter-half-recede",
+          "half_bottom_class": " meter-half-context"
+        }
+      ],
+      "note": "District sources cover only their own races, so most races have no endorsing source and the rest have exactly one.",
+      "source": "published race ld-11-state-representative-1 on the district-sources panel"
+    },
+    {
       "mirror": "meter-candidate-colors",
       "input": {
         "standings": [
@@ -4910,6 +7332,206 @@
       "expected": {},
       "source": "published race ld-11-state-representative-2 on the single-source panel",
       "note": "One source falls below the explicit-source floor, so every race is insufficient and the races it did not cover have no share at all."
+    },
+    {
+      "mirror": "meter-candidate-percentage",
+      "input": {
+        "candidateUnits": "1",
+        "total": 1
+      },
+      "expected": 100,
+      "note": "Two sources split some races, which is where a half share and a tie both become reachable.",
+      "source": "published race ld-11-state-representative-1 on the two-sources panel"
+    },
+    {
+      "mirror": "meter-candidate-percentage",
+      "input": {
+        "candidateUnits": "1",
+        "total": 2
+      },
+      "expected": 50,
+      "note": "Two sources split some races, which is where a half share and a tie both become reachable.",
+      "source": "published race ld-32-state-representative-1 on the two-sources panel"
+    },
+    {
+      "mirror": "meter-candidate-percentage",
+      "input": {
+        "candidateUnits": "1",
+        "total": 4
+      },
+      "expected": 25,
+      "note": "Bridge Brooks is supported only by split halves, so that run has no solid block and the two bands sit side by side. Each is its own band, which the mockup's neighbour-type heuristic cannot see. The last block ends at the meter's own edge, so its tongue stays square.",
+      "source": "meter_layout_blocks on the run-aware band edges shape"
+    },
+    {
+      "mirror": "meter-candidate-percentage",
+      "input": {
+        "candidateUnits": "1/2",
+        "total": 1
+      },
+      "expected": 50,
+      "note": "District sources cover only their own races, so most races have no endorsing source and the rest have exactly one.",
+      "source": "published race ld-11-state-representative-1 on the district-sources panel"
+    },
+    {
+      "mirror": "meter-candidate-percentage",
+      "input": {
+        "candidateUnits": "1/2",
+        "total": 4
+      },
+      "expected": 13,
+      "note": "Bridge Brooks is supported only by split halves, so that run has no solid block and the two bands sit side by side. Each is its own band, which the mockup's neighbour-type heuristic cannot see. The last block ends at the meter's own edge, so its tongue stays square.",
+      "source": "meter_layout_blocks on the run-aware band edges shape"
+    },
+    {
+      "mirror": "meter-candidate-percentage",
+      "input": {
+        "candidateUnits": "1/2",
+        "total": 5
+      },
+      "expected": 10,
+      "note": "Both splits sit at the end of the leader's run, farthest partner first, so the split whose partner's run comes next is the one touching it.",
+      "source": "meter_layout_blocks on the non-adjacent split shape"
+    },
+    {
+      "mirror": "meter-candidate-percentage",
+      "input": {
+        "candidateUnits": "1/3",
+        "total": 3
+      },
+      "expected": 11,
+      "note": "Two sources publishing under one display name, both splitting at the same boundary: the partner ties and the source label ties, so the split's own membership is what finishes the order. Without it the band would keep whichever order the cells arrived in, and the two renderers receive them in different orders.",
+      "source": "meter_layout_blocks on the splits sharing a partner and a source label shape"
+    },
+    {
+      "mirror": "meter-candidate-percentage",
+      "input": {
+        "candidateUnits": "1/3",
+        "total": 4
+      },
+      "expected": 8,
+      "note": "One block naming three candidates carries them in standings order, top to bottom, not in the order the cell happened to list them.",
+      "source": "meter_layout_blocks on the n-way split shape"
+    },
+    {
+      "mirror": "meter-candidate-percentage",
+      "input": {
+        "candidateUnits": "11/6",
+        "total": 3
+      },
+      "expected": 61,
+      "note": "Two sources publishing under one display name, both splitting at the same boundary: the partner ties and the source label ties, so the split's own membership is what finishes the order. Without it the band would keep whichever order the cells arrived in, and the two renderers receive them in different orders.",
+      "source": "meter_layout_blocks on the splits sharing a partner and a source label shape"
+    },
+    {
+      "mirror": "meter-candidate-percentage",
+      "input": {
+        "candidateUnits": "2",
+        "total": 2
+      },
+      "expected": 100,
+      "note": "Two sources looked and declined: no block, and no denominator weight either, so the meter is two blocks wide rather than four. Every other candidate on the ballot is named by no cell and so has no run at all.",
+      "source": "meter_layout_blocks on the declining sources shape"
+    },
+    {
+      "mirror": "meter-candidate-percentage",
+      "input": {
+        "candidateUnits": "2",
+        "total": 5
+      },
+      "expected": 40,
+      "note": "Two splits naming the same pair are the same distance apart, so the source label decides which comes first — without it the band would keep whichever order the cells arrived in, and the two renderers receive them in different orders.",
+      "source": "meter_layout_blocks on the splits sharing a partner shape"
+    },
+    {
+      "mirror": "meter-candidate-percentage",
+      "input": {
+        "candidateUnits": "3",
+        "total": 5
+      },
+      "expected": 60,
+      "note": "Both splits sit at the end of the leader's run, farthest partner first, so the split whose partner's run comes next is the one touching it.",
+      "source": "meter_layout_blocks on the non-adjacent split shape"
+    },
+    {
+      "mirror": "meter-candidate-percentage",
+      "input": {
+        "candidateUnits": "3/2",
+        "total": 12
+      },
+      "expected": 13,
+      "note": "The published panel: the shares, grades, and captions the guide ships.",
+      "source": "published race ld-32-state-representative-1 on the audited panel"
+    },
+    {
+      "mirror": "meter-candidate-percentage",
+      "input": {
+        "candidateUnits": "3/2",
+        "total": 5
+      },
+      "expected": 30,
+      "note": "Both splits sit at the end of the leader's run, farthest partner first, so the split whose partner's run comes next is the one touching it.",
+      "source": "meter_layout_blocks on the non-adjacent split shape"
+    },
+    {
+      "mirror": "meter-candidate-percentage",
+      "input": {
+        "candidateUnits": "4/3",
+        "total": 4
+      },
+      "expected": 33,
+      "note": "One block naming three candidates carries them in standings order, top to bottom, not in the order the cell happened to list them.",
+      "source": "meter_layout_blocks on the n-way split shape"
+    },
+    {
+      "mirror": "meter-candidate-percentage",
+      "input": {
+        "candidateUnits": "5/2",
+        "total": 12
+      },
+      "expected": 21,
+      "note": "The published panel: the shares, grades, and captions the guide ships.",
+      "source": "published race ld-32-state-representative-1 on the audited panel"
+    },
+    {
+      "mirror": "meter-candidate-percentage",
+      "input": {
+        "candidateUnits": "5/2",
+        "total": 4
+      },
+      "expected": 63,
+      "note": "Bridge Brooks is supported only by split halves, so that run has no solid block and the two bands sit side by side. Each is its own band, which the mockup's neighbour-type heuristic cannot see. The last block ends at the meter's own edge, so its tongue stays square.",
+      "source": "meter_layout_blocks on the run-aware band edges shape"
+    },
+    {
+      "mirror": "meter-candidate-percentage",
+      "input": {
+        "candidateUnits": "5/6",
+        "total": 3
+      },
+      "expected": 28,
+      "note": "Two sources publishing under one display name, both splitting at the same boundary: the partner ties and the source label ties, so the split's own membership is what finishes the order. Without it the band would keep whichever order the cells arrived in, and the two renderers receive them in different orders.",
+      "source": "meter_layout_blocks on the splits sharing a partner and a source label shape"
+    },
+    {
+      "mirror": "meter-candidate-percentage",
+      "input": {
+        "candidateUnits": "7/3",
+        "total": 4
+      },
+      "expected": 58,
+      "note": "One block naming three candidates carries them in standings order, top to bottom, not in the order the cell happened to list them.",
+      "source": "meter_layout_blocks on the n-way split shape"
+    },
+    {
+      "mirror": "meter-candidate-percentage",
+      "input": {
+        "candidateUnits": "8",
+        "total": 12
+      },
+      "expected": 67,
+      "note": "The published panel: the shares, grades, and captions the guide ships.",
+      "source": "published race ld-32-state-representative-1 on the audited panel"
     },
     {
       "mirror": "meter-layout-blocks",

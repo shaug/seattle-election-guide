@@ -10,13 +10,17 @@
 //
 // Four regions are lit's, each one an element the server already renders whose
 // children lit takes over the first time the reader's selection stops being the
-// audited default: the headline's result, caption, and foot — the guide card's
-// own components, from `guide-card.mjs`, because a race page shows the same
-// quantities the card showed — and the candidate sections, from
-// `race-detail.mjs`. Takeover is lazy and one-way, as § Rendering's idiom
-// requires for a region whose content is a projection of state: an ordinary
-// visit does no DOM work at all, and `race-markup-parity.test.mjs` is what makes
-// the audited restore a render rather than a saved copy of the server's markup.
+// audited default: the headline's result (just the recommendation's name now —
+// its own meter retired in favor of one in every candidate's section,
+// docs/METER_V2.md, Chrome geometry; #325), caption, and foot — the guide
+// card's own components, from `guide-card.mjs`, because a race page shows the
+// same quantities the card showed — and the candidate sections, from
+// `race-detail.mjs`, each carrying its own section meter built by this
+// module's `candidateMeterViews` call below. Takeover is lazy and one-way, as
+// § Rendering's idiom requires for a region whose content is a projection of
+// state: an ordinary visit does no DOM work at all, and
+// `race-markup-parity.test.mjs` is what makes the audited restore a render
+// rather than a saved copy of the server's markup.
 //
 // Three further elements stay the server's for the life of the page and take
 // only their text from lit: the strip's banner status, the link notice, and the
@@ -30,7 +34,7 @@
 // mirrors.
 
 import { html, nothing, render } from 'lit-html';
-import { meterView, raceFootTemplate, raceResultTemplate } from './guide-card.mjs';
+import { candidateMeterViews, raceFootTemplate, raceHeadlineTemplate } from './guide-card.mjs';
 import {
   allSourcesSummary,
   countingSummary,
@@ -127,15 +131,37 @@ export function wireRacePage(payload) {
   /** Whether lit has taken the four regions over from the server. One-way. */
   let takenOver = false;
 
+  /** A candidate with nothing to show under the current selection: the shared
+   * empty-track state (docs/METER_V2.md, Edge states), scoped to this one
+   * candidate rather than the whole race. Reachable only under a
+   * personalized lens that deselects every one of this candidate's
+   * endorsers — the audited default always has units for every candidate
+   * `race.candidates` names.
+   *
+   * @param {string} label
+   * @param {string} totalLabel
+   * @returns {import('./guide-card.mjs').CandidateMeterView}
+   */
+  const naMeterView = (label, totalLabel) => ({
+    na: true,
+    blocks: [],
+    contexts: [],
+    accessibleLabel: `${label}: No endorsements recorded`,
+    countLabel: '0',
+    totalLabel,
+    percentageLabel: '0%',
+  });
+
   /**
    * One candidate's section, as `race-detail.mjs` renders it.
    *
    * @param {string} candidateId
    * @param {import('./lens-score.mjs').RaceScore} scored
    * @param {ReadonlySet<string>} counted
+   * @param {{ views: Map<string, import('./guide-card.mjs').CandidateMeterView>, totalLabel: string }} meters
    * @returns {import('./race-detail.mjs').CandidateSectionView|null}
    */
-  const candidateView = (candidateId, scored, counted) => {
+  const candidateView = (candidateId, scored, counted, meters) => {
     const candidate = candidatesById.get(candidateId);
     if (candidate === undefined) return null;
     const isLeader = scored.winnerIds.includes(candidateId);
@@ -157,10 +183,7 @@ export function wireRacePage(payload) {
     // A tied leader is every leader the headline does not name. The headline
     // names the sole leader and nobody else, so a tie leaves all of them here —
     // each once, and none of them in the headline's green, which claims a
-    // favourite a tie does not have. The per-candidate mini-meter v1 drew
-    // beside this kicker retired with meter v2 — the candidate-context
-    // treatment on the shared headline bar replaces its job
-    // (docs/METER_V2.md, Chrome geometry; #315).
+    // favourite a tie does not have.
     const tied = isLeader && !soleLeader;
     return {
       candidateId,
@@ -168,6 +191,7 @@ export function wireRacePage(payload) {
       isLeader,
       inHeadline: soleLeader,
       kicker: tied ? 'Tied for lead' : null,
+      meter: meters.views.get(candidateId) ?? naMeterView(candidate.label, meters.totalLabel),
       rows,
     };
   };
@@ -218,14 +242,7 @@ export function wireRacePage(payload) {
       takenOver = true;
     }
     if (resultRegion) {
-      const endorsements = meterEndorsementsFromCells(scored.meterCells, sourceNameByCode, labels);
-      render(
-        raceResultTemplate({
-          recommendation: recommendationLabel(scored, labels),
-          meter: meterView(scored.winnerShare, endorsements, new Set(scored.winnerIds)),
-        }),
-        resultRegion,
-      );
+      render(raceHeadlineTemplate(recommendationLabel(scored, labels)), resultRegion);
     }
     if (contextRegion) {
       // Not the card's `raceContextTemplate`: a card carries a caption because
@@ -257,13 +274,23 @@ export function wireRacePage(payload) {
     // differently: `candidate_endorsement_groups` orders equal support by
     // display label, while `standings` orders it by ballot position.
     const order = isAudited ? auditedOrder : candidateOrder(scored);
+    // Every candidate's own section meter reads the same shared, once-per-race
+    // block layout and paint (docs/METER_V2.md, Chrome geometry; #325) — built
+    // here, once, from whichever cells the active lens currently selects,
+    // rather than once per section.
+    const endorsements = meterEndorsementsFromCells(scored.meterCells, sourceNameByCode, labels);
+    const meters = candidateMeterViews(
+      endorsements,
+      new Set(scored.winnerIds),
+      !hasNoMajority(scored.winnerShare),
+    );
     // Built by pushing rather than mapped and filtered, because `filter` does
     // not narrow away the null and the cast that would has to name this
     // module's sibling — which esbuild keeps in the bundle as a comment, where
     // `tests/test_frontend_bundle.py` reads it as a surviving import specifier.
     const sections = [];
     for (const candidateId of order) {
-      const view = candidateView(candidateId, scored, counted);
+      const view = candidateView(candidateId, scored, counted, meters);
       if (view !== null) sections.push(view);
     }
     if (candidatesRegion) render(candidateSectionsTemplate(sections), candidatesRegion);

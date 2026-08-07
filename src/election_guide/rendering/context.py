@@ -180,6 +180,42 @@ class MeterView:
     blocks: tuple[MeterBlockRender, ...]
 
 
+@dataclass(frozen=True)
+class MeterBlockContext:
+    """Which parts of one shared meter block belong to one candidate's own
+    section meter (docs/METER_V2.md, Color: "Selected candidate: bold;
+    everything else recedes" — #325 applies that rule statically, per
+    candidate's own section, in place of the click-driven engaged state a
+    shared headline meter used to enter).
+
+    `block_class` is the whole-block modifier: `" meter-block-context"` for a
+    solid block naming this candidate, or a split block naming this candidate
+    on either half — set so the outer span is not receded as one piece,
+    letting its two halves carry their own treatment instead — and empty for
+    a block that names this candidate nowhere, which CSS then recedes as a
+    whole (`:not(.meter-block-context)`).
+
+    `half_top_class`/`half_bottom_class` matter only for a split block whose
+    `block_class` is set: exactly one is `" meter-half-context"` (bold) and
+    the other `" meter-half-recede"` (muted on its own), rather than the
+    whole block bolding just because it names this section's candidate once
+    — the per-half split fix docs/METER_V2.md Decision #23 recorded for the
+    seam colors, extended here to a section meter's own bold/recede paint.
+    Both are empty when `block_class` itself is empty, since the whole block
+    already recedes together.
+
+    Every field is a literal class-name suffix (leading space included, or
+    empty) rather than a boolean a template branches on, matching
+    `MeterBlockRender.style`'s own reasoning: a Jinja macro and a lit-html
+    template that both merely write the class list cannot spell one block's
+    context two ways.
+    """
+
+    block_class: str
+    half_top_class: str
+    half_bottom_class: str
+
+
 def personalization_lookup_context(view_model: PublicationViewModel) -> dict[str, Any]:
     """Derived views over the personalization contract shared by every page that
     renders it (the guide and the standalone sources page): a code -> identity
@@ -1087,6 +1123,88 @@ def meter_accessible_label(
     )
 
 
+# Context (docs/METER_V2.md, Color): the same bold/recede treatment the
+# original "selected candidate" rule described, spelled once as the literal
+# class-name suffixes below so `meter_candidate_block_contexts` and its JS
+# mirror both write one vocabulary rather than each inventing their own.
+_METER_CONTEXT_BLOCK_CLASS = " meter-block-context"
+_METER_CONTEXT_HALF_CLASS = " meter-half-context"
+_METER_RECEDE_HALF_CLASS = " meter-half-recede"
+_METER_NO_CONTEXT = MeterBlockContext(block_class="", half_top_class="", half_bottom_class="")
+
+
+def meter_candidate_block_contexts(
+    blocks: Sequence[MeterBlock], candidate_id: str
+) -> list[MeterBlockContext]:
+    """One candidate's bold/recede treatment for every block of the shared,
+    once-per-race layout `meter_layout_blocks` returns, in rendered order —
+    the same reuse #313's layout function and #314's paint function
+    (`meter_block_renders`) already make, extended here to the per-candidate
+    context a section meter statically renders (docs/METER_V2.md, Color;
+    #325). `candidate_id` need not appear in `blocks` at all — a candidate
+    with nothing to show under the current selection simply receives no
+    context anywhere, which recedes the whole bar rather than raising.
+
+    Indexed rather than destructured, matching `_meter_block_facing`'s own
+    reading of a split's `candidate_ids`: an n-way split (n > 2, Decision log
+    #21) still paints only two halves — that block's own rendered geometry,
+    unchanged by this function — so a candidate named third or later matches
+    the block as a whole (it is not receded) without matching either half
+    specifically.
+    """
+    contexts: list[MeterBlockContext] = []
+    for block in blocks:
+        if block.type == "solid":
+            contexts.append(
+                MeterBlockContext(_METER_CONTEXT_BLOCK_CLASS, "", "")
+                if block.candidate_ids[0] == candidate_id
+                else _METER_NO_CONTEXT
+            )
+            continue
+        if candidate_id not in block.candidate_ids:
+            contexts.append(_METER_NO_CONTEXT)
+            continue
+        top_hit = block.candidate_ids[0] == candidate_id
+        bottom_hit = block.candidate_ids[1] == candidate_id
+        contexts.append(
+            MeterBlockContext(
+                block_class=_METER_CONTEXT_BLOCK_CLASS,
+                half_top_class=(_METER_CONTEXT_HALF_CLASS if top_hit else _METER_RECEDE_HALF_CLASS),
+                half_bottom_class=(
+                    _METER_CONTEXT_HALF_CLASS if bottom_hit else _METER_RECEDE_HALF_CLASS
+                ),
+            )
+        )
+    return contexts
+
+
+def meter_candidate_accessible_label(
+    label: str, candidate_units: Fraction, total_label: str
+) -> str:
+    """One candidate's own section meter's spoken name (docs/METER_V2.md, The
+    discovery model's accessibility model, extended in #325 to the
+    per-candidate meter): "Nilu Jenks: 21½ of 23 endorsements" — this
+    candidate's own count against the race's whole endorsement total, not the
+    full standings `meter_accessible_label` states for the (now retired)
+    shared headline bar."""
+    return f"{label}: {endorsement_count_label(candidate_units)} of {total_label} endorsements"
+
+
+def meter_candidate_percentage(candidate_units: Fraction, total: int) -> int:
+    """One candidate's share of the meter's own denominator, rounded half-up
+    on exact rational arithmetic — the same whole-percent rounding rule
+    `percentageLabel` (`guide-format.mjs`) and `_percentage_whole`
+    (`publication/models.py`) already use for the race's own leader
+    percentage, applied here to any standing candidate's own section meter
+    (docs/METER_V2.md, Resting label; #325's own decision log). Never a float
+    (docs/METER_V2.md, Counting and the denominator). `total` is
+    `race.explicit_endorsement_count`, never zero for a standing candidate —
+    a candidate with no endorsement has no section and is never passed here.
+    """
+    scaled = candidate_units / total * 100
+    return (scaled.numerator * 2 + scaled.denominator) // (2 * scaled.denominator)
+
+
 # Minimum block width (docs/METER_V2.md, Edge states): below ~3px per block,
 # per-block seams drop and the meter degrades to plain candidate runs. The
 # site's four chromes span a fixed 7.5rem (print) to a fluid 100% (compact
@@ -1146,6 +1264,74 @@ def meter_view(race: PublicationRace, sources: dict[str, PublicationSource]) -> 
         accessible_label=meter_accessible_label(standings, units, labels),
         blocks=tuple(meter_block_renders(blocks, colors, labels)),
     )
+
+
+@dataclass(frozen=True)
+class CandidateMeterView:
+    """One candidate's own section meter (docs/METER_V2.md, Chrome geometry:
+    "The headline meter's own fate"; #325): the shared, once-per-race block
+    layout and paint, colorized and context-marked for this one candidate,
+    plus the label a section renders beside the fixed track — count,
+    denominator, and percent, all outside the meter itself now (Decision:
+    "Resting label"). `blocks` and its own paint are identical across every
+    candidate in one race (the same `MeterBlockRender` tuple `meter_view`
+    would have used for the retired headline); only `contexts` differs.
+    """
+
+    blocks: tuple[MeterBlockRender, ...]
+    contexts: tuple[MeterBlockContext, ...]
+    accessible_label: str
+    count_label: str
+    total_label: str
+    percentage_label: str
+
+
+def race_candidate_meter_views(
+    race: PublicationRace, sources: dict[str, PublicationSource]
+) -> dict[str, CandidateMeterView]:
+    """Every standing candidate's own section meter, keyed by candidate id —
+    the race-detail page's per-candidate replacement for the single shared
+    headline meter `meter_view` used to build (docs/METER_V2.md, Chrome
+    geometry; #325). The block layout and its paint are computed exactly
+    once and reused for every candidate — the same reuse #313's own layout
+    function and #314's own paint function already establish for every
+    other meter v2 chrome — and this only adds each candidate's own
+    bold/recede context and label on top, never a second derivation of the
+    shared blocks.
+
+    A zero-endorsement candidate is never a key here: `standings` (from
+    `meter_standings`) only names candidates `meter_units` gave a positive
+    tally, which is the same admission rule `race_detail.candidates`
+    (`candidate_endorsement_groups`) already applies — the two lists name the
+    same candidates, so every key here has a matching section to put it in
+    (docs/METER_V2.md, "Zero-endorsement candidates").
+    """
+    endorsements = meter_endorsements(race, sources)
+    standings = meter_standings(endorsements)
+    units = meter_units(endorsements)
+    labels = meter_candidate_labels(endorsements)
+    colors = meter_candidate_colors(
+        standings,
+        frozenset(race.support_leader_candidate_ids),
+        has_majority=not has_no_majority(race),
+    )
+    layout_blocks = meter_layout_blocks(endorsements)
+    renders = tuple(meter_block_renders(layout_blocks, colors, labels))
+    total_label = str(race.explicit_endorsement_count)
+    explicit_count = race.explicit_endorsement_count
+    return {
+        candidate_id: CandidateMeterView(
+            blocks=renders,
+            contexts=tuple(meter_candidate_block_contexts(layout_blocks, candidate_id)),
+            accessible_label=meter_candidate_accessible_label(
+                labels[candidate_id], units[candidate_id], total_label
+            ),
+            count_label=endorsement_count_label(units[candidate_id]),
+            total_label=total_label,
+            percentage_label=f"{meter_candidate_percentage(units[candidate_id], explicit_count)}%",
+        )
+        for candidate_id in standings
+    }
 
 
 def source_cell_group(

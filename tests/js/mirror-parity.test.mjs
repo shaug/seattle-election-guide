@@ -38,7 +38,10 @@ import { tallyingSourceCodes } from '../../src/election_guide/rendering/template
 import {
   meterAccessibleLabel,
   meterBlockRenders,
+  meterCandidateAccessibleLabel,
+  meterCandidateBlockContexts,
   meterCandidateColors,
+  meterCandidatePercentage,
   meterLayoutBlocks,
   meterStandings,
 } from '../../src/election_guide/rendering/templates/meter-layout.mjs';
@@ -101,6 +104,12 @@ const RUNNERS = {
     Object.fromEntries(meterCandidateColors(standings, new Set(leaderIds), hasMajority)),
   'meter-block-renders': ({ blocks, colors, labels }) =>
     meterBlockRenders(blocks, new Map(Object.entries(colors)), labelMap(labels)),
+  'meter-candidate-block-contexts': ({ blocks, candidateId }) =>
+    meterCandidateBlockContexts(blocks, candidateId),
+  'meter-candidate-accessible-label': ({ label, candidateUnits, totalLabel }) =>
+    meterCandidateAccessibleLabel(label, rational(candidateUnits), totalLabel),
+  'meter-candidate-percentage': ({ candidateUnits, total }) =>
+    meterCandidatePercentage(rational(candidateUnits), total),
   'no-majority': ({ share }) => hasNoMajority(share),
   'support-summary': ({ leaderUnits, explicitCount }) =>
     supportSummary(rational(leaderUnits), explicitCount),

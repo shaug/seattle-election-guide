@@ -7,10 +7,12 @@
 // keyed-rendering claim, which needs a render that *changes* the list and so
 // cannot be made against a fixture at all.
 //
-// v1's per-candidate mini-meter — the branches this file used to cover for an
-// absent share, a low fill, and a no-majority tone — retired with meter v2
-// (docs/METER_V2.md, Chrome geometry; #315 replaces its job on the shared
-// headline bar), so `CandidateSectionView` carries no `meter` any more.
+// `CandidateSectionView` now carries its own `meter` — the race's own
+// headline meter retired, and every candidate's own section gained one
+// instead (docs/METER_V2.md, Chrome geometry: "The headline meter's own
+// fate"; #325). `candidateMeterTemplate` (guide-card.mjs), which draws it, is
+// its own module's test's claim (guide-card.test.mjs); what is pinned here is
+// only that this template wires it into each section correctly.
 
 import assert from 'node:assert/strict';
 import test from 'node:test';
@@ -42,6 +44,22 @@ function row(overrides = {}) {
 }
 
 /**
+ * @param {Partial<import('../../src/election_guide/rendering/templates/guide-card.mjs').CandidateMeterView>} overrides
+ */
+function meter(overrides = {}) {
+  return {
+    na: false,
+    blocks: [],
+    contexts: [],
+    accessibleLabel: 'Ada Lovelace: 1 of 1 endorsements',
+    countLabel: '1',
+    totalLabel: '1',
+    percentageLabel: '100%',
+    ...overrides,
+  };
+}
+
+/**
  * @param {Partial<import('../../src/election_guide/rendering/templates/race-detail.mjs').CandidateSectionView>} overrides
  */
 function candidate(overrides = {}) {
@@ -50,6 +68,7 @@ function candidate(overrides = {}) {
     label: 'Ada Lovelace',
     isLeader: true,
     kicker: 'Leading choice',
+    meter: meter(),
     rows: [row()],
     ...overrides,
   };
@@ -62,12 +81,20 @@ function draw(candidates) {
   return host;
 }
 
-test('a leading choice carries its kicker, and no meter of its own', () => {
+test('a leading choice carries its kicker and its own section meter', () => {
   const host = draw([candidate()]);
 
   assert.equal(host.querySelector('.race-detail-candidate-title p').textContent, 'Leading choice');
+  // v1's per-candidate mini-meter never comes back — meter v2's own section
+  // meter (below) replaced its job (docs/METER_V2.md, Chrome geometry; #325).
   assert.equal(host.querySelector('.race-detail-meter'), null);
   assert.equal(host.querySelector('.race-detail-candidate-metrics'), null);
+  const meterEl = host.querySelector('.race-detail-candidate-meter .screen-meter-section');
+  assert.ok(meterEl, 'every candidate section carries its own meter now');
+  assert.equal(meterEl.getAttribute('data-meter-candidate-id'), 'ada');
+  assert.equal(meterEl.getAttribute('aria-label'), 'Ada Lovelace: 1 of 1 endorsements');
+  assert.equal(host.querySelector('.race-detail-candidate-count b').textContent, '1');
+  assert.equal(host.querySelector('.race-detail-candidate-pct').textContent, '100%');
 });
 
 test('a candidate who is not leading renders no kicker', () => {

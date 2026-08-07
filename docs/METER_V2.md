@@ -4,14 +4,21 @@ Design ratified August 4, 2026. This document records the full design and the re
 each decision so that implementation tickets and future tweaks have one place to resolve
 ambiguity. The canonical reference rendering — built from real `wa-2026-primary` data — lives at
 `docs/design/METER_V2_2026-08-04.html`; open it in a browser, hover the meters, and click the
-candidate chips. Where that mockup and this prose disagree, the mockup is the spec.
+candidate chips. `docs/design/METER_V2_CANDIDATE_SECTIONS_2026-08-05.html` (landed via #326) is
+the companion reference for the race-detail page's own candidate sections specifically — the role
+`METER_V2_2026-08-04.html` played for #312–#314, now played for #325. Where either mockup and this
+prose disagree, the mockup is the spec.
 
 Status: implemented on the guide card, the compact ballot, print, the race headline (#314,
-2026-08-04), and the social card (#316, `rendering/og_image.py`, 2026-08-05) — `docs/DESIGN.md`'s
-"One meter" rules now describe this document's design rather than the retired v1 pill on every
-surface except the race page's own candidate-context treatment. One surface remains: #315's
-candidate-context treatment was closed as not-planned after live testing found its spec
-information-design incoherent, superseded by draft issue #325.
+2026-08-04), the social card (#316, `rendering/og_image.py`, 2026-08-05), and the race-detail
+page's own candidate sections (#325, 2026-08-05) — `docs/DESIGN.md`'s "One meter" rules now
+describe this document's design rather than the retired v1 pill on every surface. #315's own
+candidate-context treatment (one shared headline meter, chips borrowing its context into every
+candidate's own section) shipped, then was closed as not-planned after live testing found its
+spec information-design incoherent — a trailing candidate's chip highlighted their share inside a
+*different* candidate's card. #325 replaced it outright: the race-detail page's headline carries
+no meter of its own at all now, and every candidate's own section carries a static meter instead,
+colorized and context-marked for that one candidate.
 
 Ratified August 4, 2026; the same day an adversarial review pass (four independent read-only
 reviewers) corrected the factual claims below and added the Edge states section — those
@@ -104,7 +111,7 @@ Exactly three color commitments carry meaning; no other hue does:
 | Majority leader | The site's own teal `#087f73` (`base.css --teal`) — the same fill v1 uses |
 | Tied leaders | Variations of amber: `#d99000` (`base.css --amber`) and `#8a5d12` (`--meter-tie-deep`) |
 | Sole leader without a majority | Amber `#d99000` — v1's no-majority semantic, unchanged |
-| Selected candidate (race-page context) | The candidate's color, bold — `saturate(1.5) brightness(.9)` in the mockup; other blocks recede to 30% opacity and the resting percent hides |
+| Selected candidate (race-page context) | The candidate's color, bold — `saturate(1.5) brightness(.9)` in the mockup; other blocks recede to 30% opacity. Static per #325: every candidate's own section applies this to that one candidate always, not a hover- or click-driven engaged state on a shared bar (entry 27) |
 | Trailing candidates | The muted set, by rank: slate `#7d95ad` (`--meter-trail-slate`), taupe `#a99e8a` (`--meter-trail-taupe`), plum `#a08296` (`--meter-trail-plum`) |
 
 When a pool runs out — a fourth trailing candidate, a third tied leader — subsequent candidates
@@ -238,10 +245,11 @@ All ratified with the rest of the design (added in the August 4 review pass):
   ~3px per block, per-block seams are dropped and the meter degrades to plain candidate runs
   (boundaries and split bands only). Countability yields before legibility does.
 - **Chrome geometry.** v2 inherits each chrome's existing footprint: card 11rem × 2rem
-  (8.75rem under 720px), compact ballot 100% × 1.6rem, print 7.5rem × 1.2rem, race headline
-  full-width. Print renders the static percent-plus-seams state. The race page's leader-only
-  mini-meter (v1's "per-candidate meter") **retires**: the candidate-context treatment on the
-  shared bar — selected candidate bold, everything else receding — replaces it.
+  (8.75rem under 720px), compact ballot 100% × 1.6rem, print 7.5rem × 1.2rem. Print renders the
+  static percent-plus-seams state. The race-detail page's own headline carries no meter at all
+  (Decision log #27): every candidate's own section carries one instead, at its own fixed 16rem
+  track (9rem under 720px, Decision log #24) — the race-detail page's replacement for both v1's
+  leader-only mini-meter and #315's own unshipped candidate-context treatment on a shared bar.
 
 ## Implementation notes (pointers, not bindings)
 
@@ -296,6 +304,22 @@ All ratified with the rest of the design (added in the August 4 review pass):
   is not a caption at all: it states the full standings (§ The discovery model's accessibility
   model), replacing v1's `screen_share_accessible_label`/`shareAccessibleLabel`, which #314
   deleted.
+- **Candidate sections, ruled in #325** (Decision log #24–28): `race.html.j2`'s headline drops
+  its `segmented_meter(meter_view(race))` call outright; every candidate's own section in
+  `race_detail.candidates`/`race-detail.mjs`'s `CandidateSectionView` gains a meter instead,
+  reusing #313's `meter_layout_blocks` — computed once per race, not once per candidate — and
+  extending #314's `meter_block_renders` with a new sibling function,
+  `meter_candidate_block_contexts`/`meterCandidateBlockContexts`, which decides only the
+  bold/recede class suffixes a section's own candidate context adds on top of the shared paint.
+  A new Jinja macro, `candidate_meter` (`_meter.html.j2`), and its lit-html counterpart,
+  `candidateMeterTemplate` (`guide-card.mjs`), reuse the existing `meter_block`/`meterBlockTemplate`
+  block markup verbatim rather than a second implementation, extended with an optional `context`
+  parameter for the new bold/recede classes. The per-half split fix Decision #23 recorded for
+  seam colors — only the matching half of a split block bolds, its competing half recedes on its
+  own — is the same shape this ticket's own per-candidate context reuses, now applied to a
+  section's own bold/recede paint rather than a shared bar's hover state. `docs/DESIGN.md`'s
+  "One meter" rule is amended in the same change to state its own per-page scoping explicitly:
+  one shared meter on the guide/ballot overview, one meter per candidate on the race-detail page.
 
 ## The platform
 
@@ -309,7 +333,8 @@ symbol; meter v2 is what the symbol opens into.
 
 ## Decision log
 
-Entries 1–22 ratified August 4, 2026; entry 23 confirmed August 5, 2026 during #316.
+Entries 1–22 ratified August 4, 2026; entry 23 confirmed August 5, 2026 during #316; entries
+24–28 ratified August 5, 2026 during #325.
 
 | # | Decision | Ruling |
 | --- | --- | --- |
@@ -332,7 +357,12 @@ Entries 1–22 ratified August 4, 2026; entry 23 confirmed August 5, 2026 during
 | 17 | Insufficient grade | Meter renders; the grade label and count caption carry the insufficiency |
 | 18 | Color-pool exhaustion | Overflow candidates step toward the track; never a shared swatch |
 | 19 | Minimum block width | Below ~3px per block, degrade to plain candidate runs |
-| 20 | Per-candidate mini-meter | Retired; the candidate-context treatment on the shared bar replaces it |
+| 20 | Per-candidate mini-meter | Retired; superseded by entry 27's static per-section meter (a shared-bar candidate-context treatment shipped in #315 first, then was closed as not-planned) |
 | 21 | n-way splits | n stacked bands in one block, standings order, "1/n each" |
 | 22 | Caption matrix | The recommended choice's own count replaces the bare denominator, audited and personalized alike, but never the choice's own name — the card's headline already states it, so the caption states only the count; a tie or no single choice falls back to the pre-v2 sentence; the accessible name is a separate, unrelated string (the full standings) |
 | 23 | Social-card seams and tongue tips | Seams dropped, tongue tips kept, at the social card's own 420×56px chrome (`rendering/og_image.py`) |
+| 24 | Section chrome and sizing | Full section width, but the meter itself stays a fixed 16rem track (9rem under 720px), left-adjusted — every row's bar occupies the same physical width for scannability, the job the card-width headline meter used to do; the freed space at full width goes to a flexible, right-adjusted label |
+| 25 | Zero-endorsement candidates | No section, in either model — the page is about who *should* be voted for, not who *can* be |
+| 26 | Section resting label | Retained, but moved outside the meter into the flexible label — a percentage that would need to fit inside a half-endorsement sliver of highlighted bar doesn't fit there; count stays the label's lead (Decision #6), percentage rides beside it |
+| 27 | The headline meter's own fate | Retired outright on the race-detail page: the race itself gets no meter there. Every candidate's own section gets one instead, colorized for that one candidate, same width and block layout throughout, replacing both v1's per-candidate mini-meter (entry 20) and #315's own unshipped shared-bar candidate-context treatment. The guide/ballot overview's own race-level meter is untouched — a different page, a different consumer of the same `meter_view`/`meterView`. |
+| 28 | Comparisons and social cards | No change. Both already draw the single plain resting-state meter for a race, never in candidate context; #325 only touches the race-detail page's per-candidate sections |

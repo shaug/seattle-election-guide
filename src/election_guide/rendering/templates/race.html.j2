@@ -7,18 +7,21 @@
 
    Server rendered in full, so the page stands alone for a crawler and for a
    reader without JavaScript. Three regions are lit's while a lens is active:
-   the headline's result, caption, and foot (the guide card's own components,
-   from `guide-card.mjs`), and the candidate sections (`race-detail.mjs`). Each
-   is one element the server already renders, whose children lit takes over
-   once the reader's selection stops being the audited default
-   (docs/FRONTEND.md § Rendering). #}
+   the headline's result (the recommendation's name; its own meter retired in
+   favor of one in every candidate's section, docs/METER_V2.md, Chrome
+   geometry: "The headline meter's own fate"; #325), caption, and foot (the
+   guide card's own components, from `guide-card.mjs`), and the candidate
+   sections (`race-detail.mjs`), each carrying its own section meter built by
+   `context.race_candidate_meter_views`. Each is one element the server
+   already renders, whose children lit takes over once the reader's selection
+   stops being the audited default (docs/FRONTEND.md § Rendering). #}
 {% extends 'base.html.j2' %}
 {% block head_meta %}
   {% set canonical_url = public_site_url ~ race_path %}
   {{ shell.social_meta(document_title, page_description, canonical_url) }}
 {% endblock %}
 {% block body %}
-  {% from '_meter.html.j2' import segmented_meter %}
+  {% from '_meter.html.j2' import candidate_meter %}
   {% macro source_badge(row) -%}
     <span class="race-detail-category-badge">{{ row.category_label }}</span>
   {%- endmacro %}
@@ -55,19 +58,22 @@
   {% macro candidate_sections(headline_candidate_id) -%}
     {% for candidate in race_detail.candidates %}
     {% set is_leader = candidate.candidate_id in race.support_leader_candidate_ids %}
-    {# Two treatments, and a candidate takes exactly one of them:
+    {# Two heading treatments, and a candidate takes exactly one of them:
 
        - the headline's own candidate renders no heading, because the headline
          above is its heading and a page names a candidate once; and
        - everyone else renders an amber heading with their name — a tied
          leader's heading also carries a "Tied for lead" eyebrow, because a tie
          is a warning to choose rather than a favourite to endorse, and every
-         tied candidate is equally the answer. v1's per-candidate mini-meter
-         used to sit beside that eyebrow; meter v2 retires it — the
-         candidate-context treatment on the shared headline bar replaces its
-         job (docs/METER_V2.md, Chrome geometry; #315). #}
+         tied candidate is equally the answer.
+
+       Every candidate gets a meter row regardless of which heading treatment
+       applies — the race's own headline meter retired, and every candidate's
+       own section gained one of its own instead (docs/METER_V2.md, Chrome
+       geometry: "The headline meter's own fate"; #325). #}
     {% set in_headline = candidate.candidate_id == headline_candidate_id %}
     {% set tied = is_leader and not in_headline %}
+    {% set meter_view = candidate_meter_views[candidate.candidate_id] %}
     <section class="race-detail-candidate{% if in_headline %} race-detail-candidate-leader race-detail-candidate-headlined{% elif tied %} race-detail-candidate-tied{% endif %}"
       data-race-detail-candidate-id="{{ candidate.candidate_id }}">
       {% if not in_headline %}
@@ -80,6 +86,10 @@
         </div>
       </div>
       {% endif %}
+      <div class="race-detail-candidate-meter">
+        {{ candidate_meter(candidate.candidate_id, meter_view) }}
+        <span class="race-detail-candidate-count"><b>{{ meter_view.count_label }}</b> of {{ meter_view.total_label }} endorsements<span class="race-detail-candidate-pct">{{ meter_view.percentage_label }}</span></span>
+      </div>
       <ul class="race-detail-source-list">
         {% for row in candidate.endorsers %}{{ source_row(row, 'candidate', candidate.candidate_id) }}{% endfor %}
       </ul>
@@ -138,7 +148,6 @@
         <p class="race-headline-eyebrow">Leading choice</p>
         <div class="screen-race-result" data-lens-result>
           <h3 data-display-role="recommendation">{{ race.recommendation_label }}</h3>
-          {{ segmented_meter(meter_view(race)) }}
         </div>
         {# The card's caption is not repeated here for the same reason the
            sections carry no count: this candidate's endorsing sources are
