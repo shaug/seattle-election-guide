@@ -1303,6 +1303,12 @@ class RaceResultsView:
     month_day_year`'s full-month "August 19, 2026" the banner and the race
     card's own counting note use."""
     ballots_counted: int
+    ballots_counted_label: str
+    """"61,234" -- the ratified mockup's own thousands-grouped grammar
+    (docs/design/RESULTS_FINALIZATION_2026-08-02.html, the provenance line:
+    "61,234 ballots"). A real race's ballot count reaches six figures
+    (`tests/test_results.py`), where an ungrouped integer is a legibility
+    regression, not a cosmetic one."""
     authority: str
     capture_url: str | None
     outcomes: tuple[RaceResultOutcomeView, ...]
@@ -1341,6 +1347,7 @@ def race_results_view(
     return RaceResultsView(
         certified_on_label=f"{certified_on:%b} {certified_on.day}, {certified_on:%Y}",
         ballots_counted=outcome_set.ballots_counted,
+        ballots_counted_label=f"{outcome_set.ballots_counted:,}",
         authority=results.authority,
         capture_url=capture_url,
         outcomes=tuple(

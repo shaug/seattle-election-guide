@@ -153,7 +153,7 @@
                 </div>
                 {% endfor %}
               </div>
-              <p class="race-results-provenance">{{ results.ballots_counted }} ballots · {{ results.authority }}{% if results.capture_url %} · <a href="{{ results.capture_url }}"{{ external_link_attributes }}>capture</a>{% endif %}</p>
+              <p class="race-results-provenance">{{ results.ballots_counted_label }} ballots · {{ results.authority }}{% if results.capture_url %} · <a href="{{ results.capture_url }}"{{ external_link_attributes }}>capture</a>{% endif %}</p>
             </div>
             {% elif race.race_type != 'measure' and not guide.results and certification_date_full %}
             {# Counting: no results file exists to gate on during this

@@ -1660,6 +1660,16 @@ def _write_release_bundle(
             # bundles, which predate the optional structured naming fields.
             view_model_payload["metadata"].pop("election_type")
             view_model_payload["metadata"].pop("state")
+            # ...and schema-1.11 bundles, which predate #286's race_type and
+            # candidates (docs/RESULTS.md, Rendering § Race cards): a
+            # historical bundle's frozen JSON is re-validated against the
+            # *current* PublicationViewModel by `_verify_bundle` below, so a
+            # field #286 forgot to make optional would break loading every
+            # bundle published before it existed.
+            for section in view_model_payload["sections"]:
+                for race in section["races"]:
+                    race.pop("race_type")
+                    race.pop("candidates")
             path.write_bytes(canonical_json_bytes(view_model_payload))
         else:
             path.write_text(f"fixture for {relative}\n", encoding="utf-8")

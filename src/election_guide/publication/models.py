@@ -320,12 +320,20 @@ class PublicationRace(PublicationModel):
     section_label: str
     jurisdiction_id: str
     race_label: str
-    race_type: Literal["candidate", "measure", "party_office"]
+    race_type: Literal["candidate", "measure", "party_office"] | None = None
     """The inventory's own race type (`inventory.models.Race.race_type`),
     carried through so a rendering pass can gate a race-type-scoped feature
     without reaching back into the inventory it was not otherwise handed
     (docs/RESULTS.md, Rendering § Race cards; #286: the results strip is
-    candidate-races-only until `#289` ratifies measure presentation)."""
+    candidate-races-only until `#289` ratifies measure presentation).
+    Optional, like `PublicationMetadata.certification_date` and every prior
+    schema field this model has added (docs/HOSTING.md, "Historical
+    bundles": `hosting/pages.py::_verify_bundle` re-validates every declared
+    election's frozen `publication_view_model.json` -- including one
+    published before this field existed -- against the *current*
+    `PublicationViewModel`, so a required field here would break loading a
+    historical bundle it never applies to (that surface byte-copies the
+    guide page rather than re-rendering it)."""
     is_contested: bool
     filter_tokens: list[str]
     support_leader_candidate_ids: list[str]
@@ -352,11 +360,15 @@ class PublicationRace(PublicationModel):
     warning_codes: list[str]
     warning_messages: list[str]
     source_cells: list[SourceCell]
-    candidates: list[PublicationRaceCandidate] = Field(min_length=1)
+    candidates: list[PublicationRaceCandidate] = Field(
+        default_factory=list[PublicationRaceCandidate]
+    )
     """Every ballot choice this race named, in ballot order — the roster
     `rendering.context.race_results_view` (#286) resolves a certified
     outcome's `choice_id` against, independent of which candidates any
-    source endorsed."""
+    source endorsed. Defaults empty for the same backward-compatibility
+    reason `race_type` is optional, above; every freshly built bundle
+    populates it unconditionally (`publication.builder`)."""
 
     @model_validator(mode="after")
     def validate_display_semantics(self) -> PublicationRace:

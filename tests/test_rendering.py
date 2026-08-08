@@ -871,7 +871,7 @@ def test_certified_results_grow_a_results_strip_on_the_candidate_race_card(
     assert '<i style="width:32.0%"></i>' in card
     assert '<i style="width:16.0%"></i>' in card
     # The provenance line: ballots counted, authority, capture link.
-    assert "61234 ballots" in card
+    assert "61,234 ballots" in card
     assert "King County Elections" in card
     # No results file yet ingested for capture-url resolution in this unit
     # test (that seam is `release.builder.build_release`'s own, exercised in
@@ -2651,7 +2651,7 @@ def test_the_guide_glue_reads_no_state_out_of_rendered_markup(tmp_path: Path) ->
     # The two reads issue #239 removed, and where their values come from now.
     for race in payload.races:
         assert race.race_label
-        card = html.split(f'id="race-{race.race_id}"')[1].split("</article>")[0]
+        card = _race_card_html(html, race.race_id)
         assert f'data-display-role="race-label">{escape(race.race_label, quote=False)}<' in card
 
     # One generator for the Ballot filter: the payload publishes exactly the
