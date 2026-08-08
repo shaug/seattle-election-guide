@@ -2,6 +2,7 @@
 (docs/RESULTS.md)."""
 
 from election_guide.results.ingest import (
+    ContestRows,
     ResultsIngestError,
     build_election_results,
     parse_certified_csv,
@@ -17,6 +18,7 @@ from election_guide.results.models import ElectionResults, RaceOutcome, RaceResu
 from election_guide.results.validation import validate_results_evidence, validate_results_inventory
 
 __all__ = [
+    "ContestRows",
     "ElectionResults",
     "RaceOutcome",
     "RaceResults",

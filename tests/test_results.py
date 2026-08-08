@@ -432,14 +432,18 @@ def _capture_certified_csv(root: Path) -> Path:
 def test_parse_certified_csv_reads_every_contest_row() -> None:
     by_contest = parse_certified_csv(CERTIFIED_CSV_PATH.read_bytes())
 
-    assert by_contest["Assessor (Vote for 1)"] == [
+    assert by_contest["Assessor (Vote for 1)"].ballots_with_contest == 495336
+    assert by_contest["Assessor (Vote for 1)"].choices == [
         ("Dominique M Scarimbolo", 87507),
         ("Christopher Roberts", 85320),
         ("Rob Foxcurran", 214135),
         ("Al Dams", 68224),
         ("Write-in", 1353),
     ]
-    assert by_contest["City of Seattle Proposition No. 1 (Vote for 1)"] == [
+    assert by_contest["City of Seattle Proposition No. 1 (Vote for 1)"].ballots_with_contest == (
+        195237
+    )
+    assert by_contest["City of Seattle Proposition No. 1 (Vote for 1)"].choices == [
         ("Yes", 143828),
         ("No", 47882),
     ]
@@ -451,14 +455,27 @@ def test_parse_certified_csv_rejects_missing_columns() -> None:
 
 
 def test_parse_certified_csv_rejects_non_numeric_votes() -> None:
-    content = b'"Contest","Choice","Votes"\n"Assessor (Vote for 1)","Al Dams","not-a-number"\n'
+    content = (
+        b'"Contest","Choice","Votes","BallotsWith Contest"\n'
+        b'"Assessor (Vote for 1)","Al Dams","not-a-number","1,000"\n'
+    )
     with pytest.raises(ResultsIngestError, match="non-numeric vote count"):
         parse_certified_csv(content)
 
 
 def test_parse_certified_csv_rejects_an_empty_export() -> None:
     with pytest.raises(ResultsIngestError, match="no contest rows"):
-        parse_certified_csv(b'"Contest","Choice","Votes"\n')
+        parse_certified_csv(b'"Contest","Choice","Votes","BallotsWith Contest"\n')
+
+
+def test_parse_certified_csv_rejects_inconsistent_ballots_with_contest() -> None:
+    content = (
+        b'"Contest","Choice","Votes","BallotsWith Contest"\n'
+        b'"Assessor (Vote for 1)","Al Dams","500","1,000"\n'
+        b'"Assessor (Vote for 1)","Rob Foxcurran","500","1,001"\n'
+    )
+    with pytest.raises(ResultsIngestError, match="two different ballots-with-contest counts"):
+        parse_certified_csv(content)
 
 
 def test_resolve_race_matches_the_real_assessor_contest() -> None:
@@ -654,16 +671,19 @@ def test_build_election_results_from_the_fixture_csv(tmp_path: Path) -> None:
     assert {race.race_id for race in results.races} == {ASSESSOR_ID, PROPOSITION_ID}
 
     assessor = next(race for race in results.races if race.race_id == ASSESSOR_ID)
-    assert assessor.ballots_counted == 87507 + 85320 + 214135 + 68224 + 1353
+    # `ballots_counted` is the export's own `BallotsWith Contest` figure (the
+    # fixture's real recorded value), not a re-derived vote sum -- it
+    # legitimately exceeds the sum of recorded votes (overvotes/undervotes).
+    assert assessor.ballots_counted == 495336
     outcomes_by_choice = {outcome.choice_id: outcome for outcome in assessor.outcomes}
     assert outcomes_by_choice[f"{ASSESSOR_ID}--rob-foxcurran"].votes == 214135
     assert outcomes_by_choice[f"{ASSESSOR_ID}--rob-foxcurran"].advanced is True
     assert outcomes_by_choice[f"{ASSESSOR_ID}--dominique-m-scarimbolo"].advanced is True
     assert outcomes_by_choice[f"{ASSESSOR_ID}--christopher-roberts"].advanced is False
     assert outcomes_by_choice[f"{ASSESSOR_ID}--al-dams"].advanced is False
-    # `share` is votes over the *declared* (non-write-in) total, while
-    # `ballots_counted` above is the write-in-inclusive one -- two totals
-    # doing two jobs (docs/RESULTS.md, "Ingestion mechanics").
+    # `share` is votes over the *declared* (non-write-in) total -- a third
+    # total, distinct from both `ballots_counted` and the raw vote sum
+    # (docs/RESULTS.md, "Ingestion mechanics").
     assert outcomes_by_choice[f"{ASSESSOR_ID}--rob-foxcurran"].share == pytest.approx(
         214135 / (87507 + 85320 + 214135 + 68224), abs=1e-4
     )
@@ -672,7 +692,7 @@ def test_build_election_results_from_the_fixture_csv(tmp_path: Path) -> None:
     assert len(assessor.outcomes) == 4
 
     proposition = next(race for race in results.races if race.race_id == PROPOSITION_ID)
-    assert proposition.ballots_counted == 143828 + 47882
+    assert proposition.ballots_counted == 195237
     prop_outcomes = {outcome.choice_id: outcome for outcome in proposition.outcomes}
     assert prop_outcomes[f"{PROPOSITION_ID}--yes"].advanced is True
     assert prop_outcomes[f"{PROPOSITION_ID}--no"].advanced is False
@@ -739,11 +759,11 @@ def test_build_election_results_handles_a_large_write_in_share_on_an_unopposed_r
     # `ballots_counted` still reports every vote the contest recorded.
     inventory = _inventory()
     csv_content = (
-        b'"Contest","Choice","Votes"\n'
+        b'"Contest","Choice","Votes","BallotsWith Contest"\n'
         b'"Legislative District No. 36 Representative Position No. 2 (Vote for 1)"'
-        b',"Liz Berry","5,000"\n'
+        b',"Liz Berry","5,000","6,200"\n'
         b'"Legislative District No. 36 Representative Position No. 2 (Vote for 1)"'
-        b',"Write-in","1,000"\n'
+        b',"Write-in","1,000","6,200"\n'
     )
     captures = [
         ResultsCapture(
@@ -764,8 +784,9 @@ def test_build_election_results_handles_a_large_write_in_share_on_an_unopposed_r
 
     validate_results_inventory(results, inventory)
     race = next(race for race in results.races if race.race_id == UNOPPOSED_RACE_ID)
-    # A 16.7% write-in share -- well past the one-point tolerance.
-    assert race.ballots_counted == 6000
+    # `ballots_counted` is the export's own `BallotsWith Contest` figure, not
+    # a re-derived vote sum -- it legitimately differs from 5,000 + 1,000.
+    assert race.ballots_counted == 6200
     assert len(race.outcomes) == 1
     outcome = race.outcomes[0]
     assert outcome.choice_id == f"{UNOPPOSED_RACE_ID}--liz-berry"
@@ -781,11 +802,11 @@ def test_build_election_results_aborts_when_only_write_ins_carry_votes(tmp_path:
     # (docs/runbooks/results-certified-ingest.md, Escalation).
     inventory = _inventory()
     csv_content = (
-        b'"Contest","Choice","Votes"\n'
+        b'"Contest","Choice","Votes","BallotsWith Contest"\n'
         b'"Legislative District No. 36 Representative Position No. 2 (Vote for 1)"'
-        b',"Liz Berry","0"\n'
+        b',"Liz Berry","0","1,200"\n'
         b'"Legislative District No. 36 Representative Position No. 2 (Vote for 1)"'
-        b',"Write-in","1,000"\n'
+        b',"Write-in","1,000","1,200"\n'
     )
     captures = [
         ResultsCapture(
@@ -817,9 +838,9 @@ def test_build_election_results_advances_the_winning_choice_of_a_rejected_measur
     # only covers an approved measure, so this inverts its two tallies.
     inventory = _inventory()
     csv_content = (
-        b'"Contest","Choice","Votes"\n'
-        b'"City of Seattle Proposition No. 1 (Vote for 1)","Yes","47,882"\n'
-        b'"City of Seattle Proposition No. 1 (Vote for 1)","No","143,828"\n'
+        b'"Contest","Choice","Votes","BallotsWith Contest"\n'
+        b'"City of Seattle Proposition No. 1 (Vote for 1)","Yes","47,882","195,237"\n'
+        b'"City of Seattle Proposition No. 1 (Vote for 1)","No","143,828","195,237"\n'
     )
     captures = [
         ResultsCapture(

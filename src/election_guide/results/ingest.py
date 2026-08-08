@@ -40,12 +40,27 @@ from __future__ import annotations
 import csv
 import io
 import re
+from dataclasses import dataclass
 from datetime import date
 
 from election_guide.inventory.models import BallotChoice, Inventory, Race
 from election_guide.results.models import ElectionResults, RaceOutcome, RaceResults, ResultsCapture
 
-REQUIRED_CSV_COLUMNS = frozenset({"Contest", "Choice", "Votes"})
+REQUIRED_CSV_COLUMNS = frozenset({"Contest", "Choice", "Votes", "BallotsWith Contest"})
+
+
+@dataclass(frozen=True)
+class ContestRows:
+    """One contest's rows plus the export's own count of ballots that
+    carried it — a different, authority-reported quantity from the sum of
+    this adapter's own vote tallies (overvotes and undervotes are ballots
+    the contest recorded that no candidate's vote count reflects), and the
+    one `_build_race_results` uses for `ballots_counted`
+    (docs/RESULTS.md, Data model)."""
+
+    ballots_with_contest: int
+    choices: list[tuple[str, int]]
+
 
 # Matches the Unicode hyphen/dash block (U+2010 HYPHEN through U+2015
 # HORIZONTAL BAR) plus the ASCII hyphen-minus, so an inventory display name
@@ -62,12 +77,13 @@ class ResultsIngestError(ValueError):
     inventory without guessing (docs/RESULTS.md, docs/COLLECTION.md)."""
 
 
-def parse_certified_csv(content: bytes) -> dict[str, list[tuple[str, int]]]:
-    """Parse a King County certified CSV export into `{contest: [(choice,
-    votes), ...]}`, preserving every row exactly as declared — including
-    write-in rows, whose votes still belong in a race's `ballots_counted`
-    total even though they are excluded from ballot-choice resolution and
-    from the `share` denominator (see `resolve_choice`, `_build_race_results`).
+def parse_certified_csv(content: bytes) -> dict[str, ContestRows]:
+    """Parse a King County certified CSV export into `{contest: ContestRows}`,
+    preserving every row exactly as declared — including write-in rows,
+    whose votes are excluded from ballot-choice resolution and from the
+    `share` denominator, but not from `ballots_with_contest`, the export's
+    own count of ballots that carried the contest (see `resolve_choice`,
+    `_build_race_results`).
     """
     try:
         text = content.decode("utf-8-sig")
@@ -80,30 +96,51 @@ def parse_certified_csv(content: bytes) -> dict[str, list[tuple[str, int]]]:
             f"certified CSV export is missing required columns {sorted(REQUIRED_CSV_COLUMNS)}; "
             f"found {sorted(fieldnames)}"
         )
-    by_contest: dict[str, list[tuple[str, int]]] = {}
+    choices_by_contest: dict[str, list[tuple[str, int]]] = {}
+    ballots_with_contest_by_contest: dict[str, int] = {}
     for row in reader:
         contest = (row["Contest"] or "").strip()
         choice = (row["Choice"] or "").strip()
         votes_raw = (row["Votes"] or "").strip()
+        ballots_raw = (row["BallotsWith Contest"] or "").strip()
         if not contest or not choice:
             raise ResultsIngestError(
                 f"certified CSV export has a row with a blank contest or choice: {row!r}"
             )
-        try:
-            votes = int(votes_raw.replace(",", ""))
-        except ValueError as error:
-            raise ResultsIngestError(
-                f"certified CSV export has a non-numeric vote count {votes_raw!r} for "
-                f"{choice!r} in {contest!r}"
-            ) from error
-        if votes < 0:
-            raise ResultsIngestError(
-                f"certified CSV export has a negative vote count for {choice!r} in {contest!r}"
-            )
-        by_contest.setdefault(contest, []).append((choice, votes))
-    if not by_contest:
+        votes = _parse_export_int(votes_raw, f"vote count for {choice!r} in {contest!r}")
+        ballots_with_contest = _parse_export_int(
+            ballots_raw, f"ballots-with-contest count for {contest!r}"
+        )
+        if contest in ballots_with_contest_by_contest:
+            if ballots_with_contest_by_contest[contest] != ballots_with_contest:
+                raise ResultsIngestError(
+                    f"certified CSV export reports two different ballots-with-contest counts "
+                    f"for {contest!r}: {ballots_with_contest_by_contest[contest]} and "
+                    f"{ballots_with_contest}"
+                )
+        else:
+            ballots_with_contest_by_contest[contest] = ballots_with_contest
+        choices_by_contest.setdefault(contest, []).append((choice, votes))
+    if not choices_by_contest:
         raise ResultsIngestError("certified CSV export contained no contest rows")
-    return by_contest
+    return {
+        contest: ContestRows(
+            ballots_with_contest=ballots_with_contest_by_contest[contest], choices=rows
+        )
+        for contest, rows in choices_by_contest.items()
+    }
+
+
+def _parse_export_int(raw: str, label: str) -> int:
+    try:
+        value = int(raw.replace(",", ""))
+    except ValueError as error:
+        raise ResultsIngestError(
+            f"certified CSV export has a non-numeric {label}: {raw!r}"
+        ) from error
+    if value < 0:
+        raise ResultsIngestError(f"certified CSV export has a negative {label}: {value}")
+    return value
 
 
 def _normalize_contest_text(text: str) -> str:
@@ -251,7 +288,7 @@ def build_election_results(
     by_contest = parse_certified_csv(csv_content)
     race_results: list[RaceResults] = []
     seen_contest_by_race: dict[str, str] = {}
-    for contest_text, rows in by_contest.items():
+    for contest_text, contest_rows in by_contest.items():
         race = resolve_race(contest_text, candidate_races)
         if race is None:
             continue
@@ -261,7 +298,7 @@ def build_election_results(
                 f"{contest_text!r} both resolved to race {race.id!r}"
             )
         seen_contest_by_race[race.id] = contest_text
-        race_results.append(_build_race_results(race, rows))
+        race_results.append(_build_race_results(race, contest_rows))
 
     missing = expected_race_ids - seen_contest_by_race.keys()
     if missing:
@@ -279,27 +316,33 @@ def build_election_results(
     )
 
 
-def _build_race_results(race: Race, rows: list[tuple[str, int]]) -> RaceResults:
-    """One race's tallies, with two different vote totals doing two jobs.
+def _build_race_results(race: Race, contest_rows: ContestRows) -> RaceResults:
+    """One race's tallies, with two different counts doing two jobs.
 
-    `ballots_counted` is every vote the contest recorded, write-ins included
-    — that is what "ballots counted" means in the published data model
-    (docs/RESULTS.md, Data model), and it is the number the provenance line
-    renders. Each declared choice's `share`, though, is its votes over the
-    *declared* (non-write-in) total, so a race's declared shares sum to ~1 by
-    construction however large its write-in tally is;
+    `ballots_counted` is `ballots_with_contest` — King County's own count of
+    ballots whose ballot style carried this contest, straight from the
+    export's `BallotsWith Contest` column, not derived from this adapter's
+    own vote sum. That is a materially different, larger quantity than the
+    sum of recorded votes: it includes every overvoted and undervoted
+    ballot, the ones the contest recorded but no vote count reflects
+    (docs/RESULTS.md, Data model — the race card's provenance line and the
+    endorsements-dialog certified strip both render "ballots counted", the
+    authority's own figure, not a re-derivation of it).
+
+    Each declared choice's `share`, by contrast, is its votes over the
+    *declared* (non-write-in) vote total, so a race's declared shares sum to
+    ~1 by construction however large its write-in tally is;
     `RaceResults.SHARE_SUM_TOLERANCE` (`results/models.py`) then only ever
-    absorbs the fourth-decimal rounding applied below.
-
-    A write-in-inclusive `share` denominator would instead have made declared
-    shares sum to exactly one minus the write-in share, aborting the *whole*
-    multi-race ingest run whenever any one race's write-ins passed a single
-    point of its total. That is the ordinary case, not an anomaly, for the six
-    wa-2026-primary races whose ballot carries exactly one declared candidate
+    absorbs the fourth-decimal rounding applied below. A write-in-inclusive
+    `share` denominator would instead have made declared shares sum to
+    exactly one minus the write-in share, aborting the *whole* multi-race
+    ingest run whenever any one race's write-ins passed a single point of its
+    total — the ordinary case, not an anomaly, for the six wa-2026-primary
+    races whose ballot carries exactly one declared candidate
     (`ld-11-state-representative-2`, `ld-34-state-representative-1`,
     `ld-34-state-senator`, `ld-36-state-representative-1`,
-    `ld-36-state-representative-2`, `ld-43-state-representative-2`), where the
-    write-in row is a voter's only alternative to that candidate.
+    `ld-36-state-representative-2`, `ld-43-state-representative-2`), where
+    the write-in row is a voter's only alternative to that candidate.
 
     The top two vote-getters advance in a candidate race (top-two primary); a
     measure's single winning choice — whichever of its two declared outcomes
@@ -310,10 +353,8 @@ def _build_race_results(race: Race, rows: list[tuple[str, int]]) -> RaceResults:
     `#285`'s decision, not this adapter's.
     """
     tallies: list[tuple[BallotChoice, int]] = []
-    total_votes = 0
     declared_votes = 0
-    for candidate_text, votes in rows:
-        total_votes += votes
+    for candidate_text, votes in contest_rows.choices:
         choice = resolve_choice(candidate_text, race)
         if choice is None:
             continue
@@ -323,8 +364,10 @@ def _build_race_results(race: Race, rows: list[tuple[str, int]]) -> RaceResults:
         raise ResultsIngestError(
             f"certified export has no resolvable ballot choices for race {race.id!r}"
         )
-    if total_votes <= 0:
-        raise ResultsIngestError(f"certified export reports zero total votes for race {race.id!r}")
+    if contest_rows.ballots_with_contest <= 0:
+        raise ResultsIngestError(
+            f"certified export reports zero ballots-with-contest for race {race.id!r}"
+        )
     if declared_votes <= 0:
         raise ResultsIngestError(
             f"certified export reports zero votes for every declared ballot choice in race "
@@ -343,4 +386,8 @@ def _build_race_results(race: Race, rows: list[tuple[str, int]]) -> RaceResults:
         )
         for choice, votes in sorted(tallies, key=lambda item: item[0].ballot_order)
     ]
-    return RaceResults(race_id=race.id, ballots_counted=total_votes, outcomes=outcomes)
+    return RaceResults(
+        race_id=race.id,
+        ballots_counted=contest_rows.ballots_with_contest,
+        outcomes=outcomes,
+    )

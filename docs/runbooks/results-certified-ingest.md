@@ -30,8 +30,12 @@ it should stay human-launched at least through the first full cycle.
 
 - The certification milestone has passed and King County has published certified results —
   confirm the results page states certified/final status, not an interim count.
-- The election-night capture runbook ran; its manifests exist (phase 2's format assumptions
-  come from them).
+- The election-night capture runbook ran and its manifests exist, **if** it ran for this
+  election. For `wa-2026-primary` it did not: the 2026-08-04 capture's bytes are not present in
+  this checkout (established investigating #281 — never re-fetched to avoid asserting a stale
+  count as if it were fresh) and no manifest exists to cite. `--election-night-capture` in step 4
+  is optional for exactly this reason; omit it for `wa-2026-primary`'s run rather than inventing a
+  manifest path.
 
 ## Procedure
 
@@ -56,7 +60,9 @@ it should stay human-launched at least through the first full cycle.
    King County's canvass alone can state the true total for
    (`docs/RESULTS.md`, "Ingestion mechanics," County scope); for `wa-2026-primary` that is
    every publication-eligible race except Legislative District 32, Congressional District 9,
-   and the four Supreme Court Justice positions:
+   and the four Supreme Court Justice positions. Omit `--election-night-capture` — there is no
+   `wa-2026-primary` election-night manifest to cite (Preconditions, above); pass it only for a
+   future election whose election-night runbook actually ran and produced one:
 
    ```bash
    uv run election-guide results ingest \
@@ -64,7 +70,6 @@ it should stay human-launched at least through the first full cycle.
      --authority-id king-county-elections \
      --certified-on 2026-08-19 \
      --certified-capture data/manifests/evidence/<certified-capture-id>.json \
-     --election-night-capture data/manifests/evidence/<election-night-capture-id>.json \
      --race-id king-county-assessor --race-id king-county-council-2 \
      --race-id king-county-council-8 --race-id ld-11-state-representative-1 \
      --race-id ld-11-state-representative-2 --race-id ld-34-state-representative-1 \
@@ -108,8 +113,8 @@ it should stay human-launched at least through the first full cycle.
 - `results ingest` aborts on an unmatched, ambiguous, or missing race or candidate name —
   never force a mapping; bring the discrepancy to a human with both spellings. Recheck the
   export's column names too: the adapter's parse target assumes King County keeps its current
-  `Contest`/`Choice`/`Votes` CSV columns (`docs/RESULTS.md`, "Ingestion mechanics"); a real
-  schema change there is a design conversation, not a silent adapter patch.
+  `Contest`/`Choice`/`Votes`/`BallotsWith Contest` CSV columns (`docs/RESULTS.md`, "Ingestion
+  mechanics"); a real schema change there is a design conversation, not a silent adapter patch.
 - A race outside the `--race-id` list above (Legislative District 32, Congressional District 9,
   a Supreme Court Justice position) needs to ship: its true total requires the Secretary of
   State's export, which this adapter does not yet parse (`docs/RESULTS.md`, open questions) —
@@ -117,13 +122,17 @@ it should stay human-launched at least through the first full cycle.
 - A race's write-in tally is large — including the unopposed races above, where a write-in is a
   voter's only alternative to the single declared candidate. This is expected and needs no
   action: `share` is computed against the declared (non-write-in) total, so declared shares sum
-  to ~1 regardless, while `ballots_counted` still reports every vote the contest recorded
-  (`docs/RESULTS.md`, "Ingestion mechanics," Write-in votes). No race is ever dropped from the
-  run for this.
+  to ~1 regardless, while `ballots_counted` is always King County's own `BallotsWith Contest`
+  figure for the race, untouched by any of this (`docs/RESULTS.md`, "Ingestion mechanics,"
+  Write-in votes). No race is ever dropped from the run for this.
 - `results ingest` aborts with `zero votes for every declared ballot choice in race ...`: the
   export gave that race's named candidates no votes at all while write-ins carried some. Treat it
   as a capture or export problem — re-check the captured file for the race before anything else,
   and bring it to a human. Do not hand-edit the results file.
+- `results ingest` aborts with `zero ballots-with-contest for race ...` or `two different
+  ballots-with-contest counts for ...`: the export's own `BallotsWith Contest` column was zero or
+  inconsistent across a contest's rows for that race. This points at a malformed or truncated
+  capture, not a data judgment call — re-check the captured file and bring it to a human.
 - `results ingest` aborts the whole run with `shares sum to ..., not ~1` for one race: after the
   declared-total share fix this should be unreachable from a normal ingest (the shares the
   adapter writes sum to one within a few ten-thousandths, far inside

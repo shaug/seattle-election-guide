@@ -78,9 +78,10 @@ races:
         advanced: true     # the choice that prevailed (see below)
 ```
 
-`ballots_counted` is every vote the contest recorded, write-ins included; `share` is a choice's
-votes over the *declared* (non-write-in) total, so a race's shares sum to ~1 whatever its write-in
-tally is.
+`ballots_counted` is the authority's own count of ballots that carried the contest (its
+`BallotsWith Contest` figure, for King County's certified CSV export); `share` is a choice's votes
+over the *declared* (non-write-in) vote total, so a race's shares sum to ~1 whatever its write-in
+tally is. See "Ingestion mechanics," Write-in votes, for why these are three separate totals.
 
 `advanced` marks the choice that prevailed, for every race type — the rendered label is read off
 it together with the race type and with *which* choice carries it: a primary's "Advances", a
@@ -220,10 +221,10 @@ and an export's *shape* (columns, structure) is stable across a count in progres
 
 - King County's certified export is a quoted CSV (`webresults-<date>.csv`, e.g.
   `https://cdn.kingcounty.gov/-/media/king-county/depts/elections/results/2026/08/webresults-<date>.csv`)
-  with one row per contest/choice pair and columns `Contest`, `Choice`, and `Votes` (among others).
-  Vote counts are comma-thousands-formatted strings (`"214,135"`); a `Write-in` choice row is
-  always present and is excluded from ballot-choice resolution, though its votes still count
-  toward `ballots_counted` (see "Write-in votes" below). This is the adapter's parse target: it is
+  with one row per contest/choice pair and columns `Contest`, `Choice`, `Votes`, and
+  `BallotsWith Contest` (among others). Vote and ballot counts are comma-thousands-formatted
+  strings (`"214,135"`); a `Write-in` choice row is always present and is excluded from
+  ballot-choice resolution (see "Write-in votes" below). This is the adapter's parse target: it is
   directly machine-readable, requires no PDF text extraction or rendered-page scraping, and each
   of the 32 publication-eligible wa-2026-primary races' contest labels observed in that live
   export resolves correctly. Those observed labels are committed in
@@ -265,12 +266,21 @@ Secretary-of-State-scoped adapter exists to state their true totals, tracked as 
 rather than fabricated here.
 
 **Write-in votes.** A write-in row is never a ballot choice — this schema enumerates only the
-choices the frozen inventory carries — so the two totals a race needs are computed separately:
-`ballots_counted` includes the write-in row (it is what the contest recorded, and what the
-provenance line states), while each choice's `share` is its votes over the declared, non-write-in
-total. Declared shares therefore sum to ~1 by construction, and `SHARE_SUM_TOLERANCE`
-(`results/models.py`) only ever absorbs the adapter's own fourth-decimal rounding. The
-alternative — dividing by the write-in-inclusive total — would make declared shares sum to one
+choices the frozen inventory carries. The adapter keeps three totals distinct rather than
+collapsing them into one:
+
+- `ballots_counted` is King County's own `BallotsWith Contest` figure for the contest, taken
+  directly from the export column of that name — the number of ballots whose ballot style
+  carried the contest, not a re-derivation from the vote rows. It is larger than the sum of
+  recorded votes whenever the contest had any overvoted or undervoted ballot, which every real
+  contest does; the race-card provenance line and the endorsements-dialog certified strip (both
+  above) render this figure, King County's own count, unchanged by this adapter.
+- Each declared choice's `share` is its votes over the *declared* (non-write-in) vote total —
+  a third total, distinct from both `ballots_counted` and the raw vote sum.
+
+Declared shares therefore sum to ~1 by construction, and `SHARE_SUM_TOLERANCE`
+(`results/models.py`) only ever absorbs the adapter's own fourth-decimal rounding. Computing
+`share` against a write-in-inclusive vote total instead would make declared shares sum to one
 minus the write-in share, so any race whose write-ins passed a single point would fail the
 schema's tolerance and abort the entire multi-race ingest run. That is not a rare anomaly: six of
 this election's publication-eligible races (`ld-11-state-representative-2`,
