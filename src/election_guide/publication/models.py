@@ -10,6 +10,7 @@ from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, model_validato
 
 from election_guide.publication.comparisons import ComparisonsContract
 from election_guide.publication.personalization import PersonalizationContract
+from election_guide.results.models import ElectionResults
 from election_guide.scoring.models import ComparisonStatus, Grade
 
 HASH_PATTERN = r"^[0-9a-f]{64}$"
@@ -503,13 +504,20 @@ class PublicationMetadata(PublicationModel):
 
 
 class PublicationViewModel(PublicationModel):
-    schema_version: Literal["1.9"] = "1.9"
+    schema_version: Literal["1.10"] = "1.10"
     metadata: PublicationMetadata
     sources: list[PublicationSource]
     sections: list[PublicationSection]
     methodology: PublicationMethodology
     personalization: PersonalizationContract
     comparisons: ComparisonsContract
+    results: ElectionResults | None = None
+    """Certified or amended post-election results for this election, or `None`
+    while none is committed (docs/RESULTS.md, Rendering: "results render as a
+    state, not an option"). `#285`-`#288` read this instead of each loading
+    and validating `data/results/` themselves; nothing in this module or the
+    rendering pipeline yet reads it back out — no surface renders from it
+    until those tickets land (issue #283)."""
 
     @model_validator(mode="after")
     def validate_topology(self) -> PublicationViewModel:

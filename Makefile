@@ -1,4 +1,4 @@
-.PHONY: sync format check check-js check-changelog changelog types test release-verify hosting-stage hosting-serve hosting-deploy
+.PHONY: sync format check check-results check-js check-changelog changelog types test release-verify hosting-stage hosting-serve hosting-deploy
 
 sync:
 	uv sync --frozen
@@ -18,8 +18,18 @@ check:
 	uv run election-guide sources validate config/sources/default.yaml
 	uv run election-guide calendar validate config/calendar/elections.yaml
 	uv run election-guide release verify data/releases/wa-2026-primary/source-decisions.yaml
+	$(MAKE) check-results
 	$(MAKE) check-js
 	$(MAKE) check-changelog
+
+# Validate every committed results file (issue #283). No file is committed
+# there yet -- #284 owns ingestion -- so this is a no-op until one lands, but
+# every file that does land is enforced from here on.
+check-results:
+	for results_file in data/results/*.yaml; do \
+		[ -e "$$results_file" ] || continue; \
+		uv run election-guide results validate "$$results_file" || exit 1; \
+	done
 
 changelog:
 	npm run changelog

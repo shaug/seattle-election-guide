@@ -100,6 +100,7 @@ from tests.test_publication import (
     _publication_dataset,  # pyright: ignore[reportPrivateUsage]
     _snapshot_store,  # pyright: ignore[reportPrivateUsage]
 )
+from tests.test_results import _valid_results  # pyright: ignore[reportPrivateUsage]
 from tests.test_scoring import (
     NOW,
     _configuration,  # pyright: ignore[reportPrivateUsage]
@@ -629,6 +630,24 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert ".state-action-strip, .sticky-header, .filter-control-bar { display: none" in html
     assert "html .race-grid, html.compact-ballot-mode .race-grid" in html
     assert 'style="--meter-fill: ' in html
+
+
+def test_results_hook_does_not_change_rendered_output(tmp_path: Path) -> None:
+    """Issue #283's rendering hook is plumbing only: attaching certified
+    results to the view model must not change one byte of rendered output.
+    `#285`-`#288` are the tickets that make any surface actually read
+    `view_model.results`."""
+    configuration = read_rendering_configuration(RENDERING_CONFIG)
+    without_results = _view_model(tmp_path / "without-results")
+    results_root = tmp_path / "with-results"
+    results_root.mkdir()
+    with_results = without_results.model_copy(update={"results": _valid_results(results_root)})
+
+    assert without_results.results is None
+    assert with_results.results is not None
+    assert render_html_document(without_results, configuration) == render_html_document(
+        with_results, configuration
+    )
 
 
 PUBLIC_SITE_URL = "https://seattleelections.guide"
