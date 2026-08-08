@@ -7,7 +7,7 @@ boundaries that keep the feature small. Rendered mockups for every surface descr
 
 Ingestion mechanics — the adapter that turns an official results publication into
 `data/results/` — are deliberately not designed here. That is the next design step, and the data
-model below is its contract.
+model below is its contract. That step landed with #284 (below).
 
 ## Posture: close the record
 
@@ -189,10 +189,68 @@ and that citation is the page's entry. Tagline: *"We get it right, eventually."*
 - The pre-election banner is untouched; new banner states are terse (two lines, whole sentences,
   named links, exactly one date).
 
+## Ingestion mechanics (2026-08-07 addendum, #284)
+
+The adapter turning a captured certified export into `data/results/<election-id>.yaml` is
+`election_guide.results.ingest` (`uv run election-guide results ingest`), following
+`docs/COLLECTION.md`'s fixture-first, provenance-carrying discipline via the same evidence-capture
+layer as endorsement collection (`docs/EVIDENCE_CAPTURE.md`; `election_guide.authorities`, #281).
+Two decisions this ticket's scope named:
+
+**Parse target.** The retained 2026-08-04 election-night capture bytes this ticket's own
+precondition pointed to are not present in this checkout (established investigating #281; every
+file actually under `data/snapshots/sha256/` predates the capture and belongs to unrelated
+endorsement evidence). Rather than re-run that investigation, this session settled the parse
+target with a live re-fetch for design purposes only (distinct from this PR's own fixture test,
+which runs offline against committed bytes) — `wa-2026-primary` was still counting as of
+2026-08-07, so King County's and the Secretary of State's results pages were live and fetchable,
+and an export's *shape* (columns, structure) is stable across a count in progress even though its
+*numbers* are not. That fetch confirmed and extended the election-night postmortem's discoveries
+(`docs/runbooks/results-capture-election-night.md`):
+
+- King County's certified export is a quoted CSV (`webresults-<date>.csv`, e.g.
+  `https://cdn.kingcounty.gov/-/media/king-county/depts/elections/results/2026/08/webresults-<date>.csv`)
+  with one row per contest/choice pair and columns `Contest`, `Choice`, and `Votes` (among others).
+  Vote counts are comma-thousands-formatted strings (`"214,135"`); a `Write-in` choice row is
+  always present and is excluded from ballot-choice resolution, but its votes still count toward
+  the race's total. This is the adapter's parse target: it is directly machine-readable, requires
+  no PDF text extraction or rendered-page scraping, and every publication-eligible
+  wa-2026-primary race resolves against it correctly (verified against the complete live export,
+  151 contests, while designing the resolver below).
+- The Secretary of State's `results.votewa.gov` JSON export
+  (`/results/public/api/elections/washington/<election-yyyymmdd>/data`) remains live and
+  structured as the postmortem described. This adapter does not parse it — see "County scope"
+  below for why that is deferred rather than silently worked around.
+- Resolving a CSV contest label to a race ID cannot use fuzzy text similarity
+  (`election_guide.normalization.matching`, built for endorsement-claim matching): King County's
+  own contest names differ only by an embedded district number ("Legislative District No. 1
+  Representative Position No. 1" vs "No. 11" vs "No. 32"), and fuzzy scoring rates those as close
+  matches. The adapter instead builds an exact, normalized phrase set per race from the
+  inventory's own office/district/position fields and aliases and requires one exact match;
+  verified this resolves all 32 publication-eligible wa-2026-primary races and every candidate
+  name with zero ambiguous or unmatched results against the live export. An export contest that
+  matches zero or more than one race is never guessed at — the adapter aborts.
+
+**County scope.** King County's certified canvass states King County's own tally for a contest,
+not that contest's true total. That is the same total for every race whose district lies wholly
+within King County — every county and city race in the inventory, the legislative districts fully
+contained in King County (11, 34, 36, 37, 43, 46), and Congressional District 7. It is **not** the
+true total for a race whose district crosses a county line: the four statewide Washington Supreme
+Court Justice positions, Legislative District 32 (the state's 2021 redistricting maps place it
+partly in King County and partly in Snohomish County), and Congressional District 9 (King, Pierce,
+and Thurston counties). For those specific races, the Secretary of State's results are the
+true-total source, and parsing its JSON export is real, separate work this ticket does not do (no
+acceptance criterion here needs a cross-county race's true total). The adapter therefore takes an
+explicit `--race-id` allowlist (`results ingest`, defaulting to every publication-eligible race)
+rather than silently including whatever a King-County-sourced capture happens to contain: the live
+wa-2026-primary run omits the cross-county races from the King-County-sourced ingest until a
+Secretary-of-State-scoped adapter exists to state their true totals, tracked as a follow-up
+rather than fabricated here.
+
 ## Open questions
 
-- **Ingestion mechanics** — the next design step. What King County and the Secretary of State
-  publish, in what formats, and how a results adapter fits the collection architecture's
-  fixture-first, provenance-carrying discipline.
+- **Secretary of State ingestion** — parsing `results.votewa.gov`'s JSON export for the races
+  King County's canvass cannot state the true total for (Legislative District 32, Congressional
+  District 9, and the four Supreme Court Justice positions). Filed as a follow-up to #284.
 - **Ballot measures** — a small mockup pass (approve-share bar, validation thresholds).
 - **Amended flow detail** — decided concretely when a recount first happens.

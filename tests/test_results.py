@@ -13,6 +13,13 @@ from election_guide.evidence.models import CaptureRequest
 from election_guide.evidence.storage import record_capture
 from election_guide.inventory.importer import read_inventory
 from election_guide.inventory.models import Inventory
+from election_guide.results.ingest import (
+    ResultsIngestError,
+    build_election_results,
+    parse_certified_csv,
+    resolve_choice,
+    resolve_race,
+)
 from election_guide.results.loader import (
     load_rendering_results,
     read_results,
@@ -24,6 +31,19 @@ from election_guide.results.validation import validate_results_evidence, validat
 PROJECT_ROOT = Path(__file__).parents[1]
 INVENTORY_PATH = PROJECT_ROOT / "data/normalized/wa-2026-primary-inventory.json"
 RACE_ID = "king-county-assessor"
+
+# A trimmed excerpt of King County's real `webresults-<date>.csv` certified
+# export, captured live on 2026-08-07 while designing this adapter (the
+# wa-2026-primary election was still counting; certification is due
+# ~2026-08-19). The vote counts are therefore an in-progress snapshot, not a
+# certified result -- this fixture exists only to prove the adapter parses
+# the export's real shape (quoted CSV, comma-thousands vote counts, a
+# write-in row, an unrelated jurisdiction's contest) and resolves real
+# official names, never to assert an election outcome.
+CERTIFIED_CSV_PATH = (
+    PROJECT_ROOT / "tests" / "fixtures" / "results" / "wa-2026-primary-certified.csv"
+)
+AUTHORITY_REGISTRY_PATH = PROJECT_ROOT / "config" / "authorities" / "default.yaml"
 
 
 def _inventory() -> Inventory:
@@ -366,3 +386,321 @@ def test_cli_results_validate_rejects_an_unmatched_choice_id(
 
     assert result.exit_code == 1
     assert "unknown ballot choice" in result.output
+
+
+# --- The certified-CSV adapter (results/ingest.py) --------------------------
+
+ASSESSOR_ID = "king-county-assessor"
+PROPOSITION_ID = "seattle-proposition-1-library-levy"
+
+
+def _capture_certified_csv(root: Path) -> Path:
+    """Capture the real fixture CSV through the same evidence pipeline a
+    live certified ingest uses, and return the manifest path.
+
+    Copies the committed fixture into `root` (outside the checkout) before
+    capture: a restricted capture's input must already be committed or
+    Git-ignored (`evidence/storage.py`, `docs/COLLECTION.md`), and this
+    fixture may be neither yet in a working tree mid-edit."""
+    staged_input = root / "wa-2026-primary-certified.csv"
+    staged_input.write_bytes(CERTIFIED_CSV_PATH.read_bytes())
+    request = CaptureRequest.model_validate(
+        {
+            "source_id": "king-county-elections",
+            "requested_url": "https://cdn.kingcounty.gov/results/webresults-fixture.csv",
+            "canonical_url": "https://cdn.kingcounty.gov/results/webresults-fixture.csv",
+            "retrieved_at": datetime(2026, 8, 20, 16, 5, tzinfo=UTC),
+            "media_type": "text/csv",
+            "title": "2026 Washington August Primary certified results (King County CSV)",
+            "capture_method": "manual_upload",
+            "redistribution": "restricted",
+            "redistribution_note": "Official results retained locally; manifest public.",
+        }
+    )
+    return record_capture(
+        request,
+        staged_input,
+        root / "snapshots",
+        root / "data/manifests/evidence",
+    )
+
+
+def test_parse_certified_csv_reads_every_contest_row() -> None:
+    by_contest = parse_certified_csv(CERTIFIED_CSV_PATH.read_bytes())
+
+    assert by_contest["Assessor (Vote for 1)"] == [
+        ("Dominique M Scarimbolo", 87507),
+        ("Christopher Roberts", 85320),
+        ("Rob Foxcurran", 214135),
+        ("Al Dams", 68224),
+        ("Write-in", 1353),
+    ]
+    assert by_contest["City of Seattle Proposition No. 1 (Vote for 1)"] == [
+        ("Yes", 143828),
+        ("No", 47882),
+    ]
+
+
+def test_parse_certified_csv_rejects_missing_columns() -> None:
+    with pytest.raises(ResultsIngestError, match="missing required columns"):
+        parse_certified_csv(b'"Contest","Choice"\n"Race","A"\n')
+
+
+def test_parse_certified_csv_rejects_non_numeric_votes() -> None:
+    content = b'"Contest","Choice","Votes"\n"Assessor (Vote for 1)","Al Dams","not-a-number"\n'
+    with pytest.raises(ResultsIngestError, match="non-numeric vote count"):
+        parse_certified_csv(content)
+
+
+def test_parse_certified_csv_rejects_an_empty_export() -> None:
+    with pytest.raises(ResultsIngestError, match="no contest rows"):
+        parse_certified_csv(b'"Contest","Choice","Votes"\n')
+
+
+def test_resolve_race_matches_the_real_assessor_contest() -> None:
+    inventory = _inventory()
+    races = [race for race in inventory.races if race.publication_eligible]
+
+    race = resolve_race("Assessor (Vote for 1)", races)
+
+    assert race is not None
+    assert race.id == ASSESSOR_ID
+
+
+def test_resolve_race_disambiguates_near_identical_legislative_district_names() -> None:
+    # Regression: naive fuzzy text similarity confuses "Legislative District
+    # No. 1 Representative Position No. 1" with "No. 11" and "No. 32" because
+    # they differ only by an embedded digit. Exact normalized-phrase
+    # matching must not make that mistake.
+    inventory = _inventory()
+    races = [race for race in inventory.races if race.publication_eligible]
+
+    race_11 = resolve_race(
+        "Legislative District No. 11 Representative Position No. 1 (Vote for 1)", races
+    )
+    race_32 = resolve_race(
+        "Legislative District No. 32 Representative Position No. 1 (Vote for 1)", races
+    )
+
+    assert race_11 is not None
+    assert race_32 is not None
+    assert race_11.id == "ld-11-state-representative-1"
+    assert race_32.id == "ld-32-state-representative-1"
+
+
+def test_resolve_race_returns_none_for_a_contest_outside_the_inventory() -> None:
+    inventory = _inventory()
+    races = [race for race in inventory.races if race.publication_eligible]
+
+    assert resolve_race("City of Black Diamond Proposition No. 1 (Vote for 1)", races) is None
+
+
+def test_resolve_choice_skips_a_write_in_row() -> None:
+    inventory = _inventory()
+    race = next(race for race in inventory.races if race.id == ASSESSOR_ID)
+
+    assert resolve_choice("Write-in", race) is None
+
+
+def test_resolve_choice_matches_the_official_name() -> None:
+    inventory = _inventory()
+    race = next(race for race in inventory.races if race.id == ASSESSOR_ID)
+
+    choice = resolve_choice("Rob Foxcurran", race)
+
+    assert choice is not None
+    assert choice.id == f"{ASSESSOR_ID}--rob-foxcurran"
+
+
+def test_resolve_choice_aborts_on_an_unmatched_candidate() -> None:
+    inventory = _inventory()
+    race = next(race for race in inventory.races if race.id == ASSESSOR_ID)
+
+    with pytest.raises(ResultsIngestError, match="matched 0 ballot choices"):
+        resolve_choice("Someone Not On The Ballot", race)
+
+
+def test_build_election_results_from_the_fixture_csv(tmp_path: Path) -> None:
+    inventory = _inventory()
+    certified_manifest_path = _capture_certified_csv(tmp_path)
+    captures = [
+        ResultsCapture(
+            kind="certified",
+            captured_at=datetime(2026, 8, 20, 16, 5, tzinfo=UTC),
+            evidence=str(certified_manifest_path.relative_to(tmp_path)),
+        )
+    ]
+
+    results = build_election_results(
+        CERTIFIED_CSV_PATH.read_bytes(),
+        inventory,
+        authority="King County Elections",
+        certified_on=datetime(2026, 8, 19).date(),
+        captures=captures,
+        expected_race_ids=frozenset({ASSESSOR_ID, PROPOSITION_ID}),
+    )
+
+    # The produced file is itself a valid, schema- and inventory-conformant
+    # results file -- the fixture-driven acceptance criterion this ticket
+    # names ("captured export in, valid results file out, no network").
+    validate_results_inventory(results, inventory)
+    validate_results_evidence(results, repository_root=tmp_path)
+
+    assert results.election_id == "wa-2026-primary"
+    assert results.status == "certified"
+    assert {race.race_id for race in results.races} == {ASSESSOR_ID, PROPOSITION_ID}
+
+    assessor = next(race for race in results.races if race.race_id == ASSESSOR_ID)
+    assert assessor.ballots_counted == 87507 + 85320 + 214135 + 68224 + 1353
+    outcomes_by_choice = {outcome.choice_id: outcome for outcome in assessor.outcomes}
+    assert outcomes_by_choice[f"{ASSESSOR_ID}--rob-foxcurran"].votes == 214135
+    assert outcomes_by_choice[f"{ASSESSOR_ID}--rob-foxcurran"].advanced is True
+    assert outcomes_by_choice[f"{ASSESSOR_ID}--dominique-m-scarimbolo"].advanced is True
+    assert outcomes_by_choice[f"{ASSESSOR_ID}--christopher-roberts"].advanced is False
+    assert outcomes_by_choice[f"{ASSESSOR_ID}--al-dams"].advanced is False
+    assert outcomes_by_choice[f"{ASSESSOR_ID}--rob-foxcurran"].share == pytest.approx(
+        214135 / (87507 + 85320 + 214135 + 68224 + 1353), abs=1e-4
+    )
+    # No write-in choice_id was invented -- the write-in row is excluded.
+    assert len(assessor.outcomes) == 4
+
+    proposition = next(race for race in results.races if race.race_id == PROPOSITION_ID)
+    assert proposition.ballots_counted == 143828 + 47882
+    prop_outcomes = {outcome.choice_id: outcome for outcome in proposition.outcomes}
+    assert prop_outcomes[f"{PROPOSITION_ID}--yes"].advanced is True
+    assert prop_outcomes[f"{PROPOSITION_ID}--no"].advanced is False
+    assert prop_outcomes[f"{PROPOSITION_ID}--yes"].share == pytest.approx(
+        143828 / (143828 + 47882), abs=1e-4
+    )
+
+
+def test_build_election_results_aborts_when_an_expected_race_is_missing(tmp_path: Path) -> None:
+    inventory = _inventory()
+    certified_manifest_path = _capture_certified_csv(tmp_path)
+    captures = [
+        ResultsCapture(
+            kind="certified",
+            captured_at=datetime(2026, 8, 20, 16, 5, tzinfo=UTC),
+            evidence=str(certified_manifest_path.relative_to(tmp_path)),
+        )
+    ]
+
+    with pytest.raises(ResultsIngestError, match="did not include 1 expected race"):
+        build_election_results(
+            CERTIFIED_CSV_PATH.read_bytes(),
+            inventory,
+            authority="King County Elections",
+            certified_on=datetime(2026, 8, 19).date(),
+            captures=captures,
+            expected_race_ids=frozenset({ASSESSOR_ID, "king-county-council-8"}),
+        )
+
+
+def test_build_election_results_rejects_a_non_publication_eligible_expected_race(
+    tmp_path: Path,
+) -> None:
+    inventory = _inventory()
+    captures = [
+        ResultsCapture(
+            kind="certified",
+            captured_at=datetime(2026, 8, 20, 16, 5, tzinfo=UTC),
+            evidence=_evidence_reference(tmp_path, "certified"),
+        )
+    ]
+
+    with pytest.raises(ResultsIngestError, match="not publication-eligible"):
+        build_election_results(
+            CERTIFIED_CSV_PATH.read_bytes(),
+            inventory,
+            authority="King County Elections",
+            certified_on=datetime(2026, 8, 19).date(),
+            captures=captures,
+            expected_race_ids=frozenset({"not-a-real-race"}),
+        )
+
+
+# --- CLI (`election-guide results ingest`) -----------------------------------
+
+
+def test_cli_results_ingest_produces_a_valid_results_file(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.chdir(tmp_path)
+    certified_manifest_path = _capture_certified_csv(tmp_path)
+    output_dir = tmp_path / "data" / "results"
+
+    result = CliRunner().invoke(
+        app,
+        [
+            "results",
+            "ingest",
+            "--election-id",
+            "wa-2026-primary",
+            "--authority-id",
+            "king-county-elections",
+            "--certified-on",
+            "2026-08-19",
+            "--certified-capture",
+            str(certified_manifest_path),
+            "--race-id",
+            ASSESSOR_ID,
+            "--race-id",
+            PROPOSITION_ID,
+            "--inventory-path",
+            str(INVENTORY_PATH),
+            "--authority-registry-path",
+            str(AUTHORITY_REGISTRY_PATH),
+            "--storage-root",
+            str(tmp_path / "snapshots"),
+            "--output-dir",
+            str(output_dir),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    output_path = output_dir / "wa-2026-primary.yaml"
+    assert output_path.is_file()
+    results = read_results(output_path)
+    reject_committed_counting_status(results)
+    inventory = _inventory()
+    validate_results_inventory(results, inventory)
+    validate_results_evidence(results, repository_root=tmp_path)
+    assert {race.race_id for race in results.races} == {ASSESSOR_ID, PROPOSITION_ID}
+
+
+def test_cli_results_ingest_fails_for_an_unknown_authority(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.chdir(tmp_path)
+    certified_manifest_path = _capture_certified_csv(tmp_path)
+
+    result = CliRunner().invoke(
+        app,
+        [
+            "results",
+            "ingest",
+            "--election-id",
+            "wa-2026-primary",
+            "--authority-id",
+            "not-a-real-authority",
+            "--certified-on",
+            "2026-08-19",
+            "--certified-capture",
+            str(certified_manifest_path),
+            "--race-id",
+            ASSESSOR_ID,
+            "--race-id",
+            PROPOSITION_ID,
+            "--inventory-path",
+            str(INVENTORY_PATH),
+            "--authority-registry-path",
+            str(AUTHORITY_REGISTRY_PATH),
+            "--storage-root",
+            str(tmp_path / "snapshots"),
+            "--output-dir",
+            str(tmp_path / "data" / "results"),
+        ],
+    )
+
+    assert result.exit_code == 1
+    assert "unknown authority id" in result.output

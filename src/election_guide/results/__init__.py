@@ -1,5 +1,13 @@
-"""Post-election results: schema, loader, and validator (docs/RESULTS.md)."""
+"""Post-election results: schema, loader, adapter, and validator
+(docs/RESULTS.md)."""
 
+from election_guide.results.ingest import (
+    ResultsIngestError,
+    build_election_results,
+    parse_certified_csv,
+    resolve_choice,
+    resolve_race,
+)
 from election_guide.results.loader import (
     load_rendering_results,
     read_results,
@@ -13,9 +21,14 @@ __all__ = [
     "RaceOutcome",
     "RaceResults",
     "ResultsCapture",
+    "ResultsIngestError",
+    "build_election_results",
     "load_rendering_results",
+    "parse_certified_csv",
     "read_results",
     "reject_committed_counting_status",
+    "resolve_choice",
+    "resolve_race",
     "validate_results_evidence",
     "validate_results_inventory",
 ]

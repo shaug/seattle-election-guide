@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import Annotated, Any, cast
 
 import typer
+import yaml
 from pydantic import ValidationError
 
 from election_guide import __version__
@@ -28,7 +29,7 @@ from election_guide.evidence.manual import (
     read_manual_draft,
     validate_manual_draft,
 )
-from election_guide.evidence.models import CaptureRequest, UnavailableRequest
+from election_guide.evidence.models import CapturedManifest, CaptureRequest, UnavailableRequest
 from election_guide.evidence.storage import (
     read_capture_manifest,
     record_capture,
@@ -88,10 +89,12 @@ from election_guide.release import (
     verify_release_compilation,
 )
 from election_guide.rendering import build_rendered_guide
+from election_guide.results.ingest import ResultsIngestError, build_election_results
 from election_guide.results.loader import (
     read_results,
     reject_committed_counting_status,
 )
+from election_guide.results.models import ResultsCapture
 from election_guide.results.validation import validate_results_evidence, validate_results_inventory
 from election_guide.scoring import (
     ConsensusReport,
@@ -1297,6 +1300,110 @@ def results_validate(
     )
 
 
+@results_app.command("ingest")
+def results_ingest(
+    election_id: Annotated[str, typer.Option()],
+    authority_id: Annotated[str, typer.Option(help="Id in the counting-authority registry.")],
+    certified_on: Annotated[str, typer.Option(help="Certification date, ISO 8601 (YYYY-MM-DD).")],
+    certified_capture: Annotated[
+        Path,
+        typer.Option(
+            exists=True,
+            dir_okay=False,
+            readable=True,
+            help="Evidence manifest for the captured certified CSV export.",
+        ),
+    ],
+    election_night_capture: Annotated[
+        Path | None,
+        typer.Option(
+            exists=True, dir_okay=False, readable=True, help="Optional evidence manifest."
+        ),
+    ] = None,
+    race_id: Annotated[
+        list[str] | None,
+        typer.Option(
+            "--race-id",
+            help=(
+                "Restrict ingestion to exactly these publication-eligible race IDs; every one "
+                "must be found in the export. Defaults to every publication-eligible race in "
+                "the inventory. Pass a narrower set to honor the county-scope decision "
+                "(docs/RESULTS.md) when this capture cannot state a race's true total."
+            ),
+        ),
+    ] = None,
+    inventory_path: Annotated[
+        Path, typer.Option(exists=True, dir_okay=False, readable=True)
+    ] = Path("data/normalized/wa-2026-primary-inventory.json"),
+    authority_registry_path: Annotated[
+        Path, typer.Option(exists=True, dir_okay=False, readable=True)
+    ] = Path("config/authorities/default.yaml"),
+    storage_root: Annotated[Path, typer.Option(file_okay=False)] = Path("data/snapshots"),
+    output_dir: Annotated[Path, typer.Option(file_okay=False)] = Path("data/results"),
+) -> None:
+    """Produce `data/results/<election-id>.yaml` from a captured certified export.
+
+    Reads the certified CSV's bytes from already-captured, hash-verified
+    evidence — the same evidence-capture and provenance discipline as
+    endorsement collection (docs/COLLECTION.md) — rather than an arbitrary
+    unverified file. Never fetches the network itself.
+    """
+    try:
+        inventory = read_inventory(inventory_path)
+        if inventory.election.id != election_id:
+            raise ValueError(f"inventory belongs to {inventory.election.id!r}, not {election_id!r}")
+        authority_registry = read_authority_registry(authority_registry_path)
+        authority = next(
+            (item for item in authority_registry.authorities if item.id == authority_id), None
+        )
+        if authority is None:
+            raise ValueError(f"unknown authority id {authority_id!r}")
+
+        certified_manifest = read_capture_manifest(certified_capture)
+        if not isinstance(certified_manifest, CapturedManifest):
+            raise ValueError("certified capture must be a captured, not unavailable, manifest")
+        verify_capture(certified_manifest, storage_root)
+        csv_content = (storage_root / certified_manifest.storage_reference).read_bytes()
+
+        captures = [
+            ResultsCapture(
+                kind="certified",
+                captured_at=certified_manifest.retrieved_at,
+                evidence=str(certified_capture),
+            )
+        ]
+        if election_night_capture is not None:
+            election_night_manifest = read_capture_manifest(election_night_capture)
+            captures.insert(
+                0,
+                ResultsCapture(
+                    kind="election_night",
+                    captured_at=election_night_manifest.retrieved_at,
+                    evidence=str(election_night_capture),
+                ),
+            )
+
+        results = build_election_results(
+            csv_content,
+            inventory,
+            authority=authority.name,
+            certified_on=date.fromisoformat(certified_on),
+            captures=captures,
+            expected_race_ids=frozenset(race_id) if race_id else None,
+        )
+        validate_results_inventory(results, inventory)
+        validate_results_evidence(results)
+        output_path = output_dir / f"{election_id}.yaml"
+        _write_generated_yaml(output_path, results.model_dump(mode="json"))
+    except (OSError, ValidationError, ValueError, ResultsIngestError) as error:
+        typer.echo(f"results ingest failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    typer.echo(
+        f"results: {output_path} ({results.election_id}, {results.status}, "
+        f"{len(results.races)} races)"
+    )
+
+
 @normalize_app.command("validate")
 def normalize_validate(
     dataset_path: Annotated[Path, typer.Argument(exists=True, dir_okay=False, readable=True)],
@@ -1654,6 +1761,23 @@ def _write_generated_json(path: Path, value: object) -> None:
         with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as temporary:
             temporary_path = Path(temporary.name)
             temporary.write(canonical_json_bytes(value))
+            temporary.flush()
+            os.fsync(temporary.fileno())
+        os.replace(temporary_path, path)
+        temporary_path = None
+    finally:
+        if temporary_path is not None:
+            temporary_path.unlink(missing_ok=True)
+
+
+def _write_generated_yaml(path: Path, value: object) -> None:
+    payload = yaml.safe_dump(value, sort_keys=True).encode()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary_path: Path | None = None
+    try:
+        with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as temporary:
+            temporary_path = Path(temporary.name)
+            temporary.write(payload)
             temporary.flush()
             os.fsync(temporary.fileno())
         os.replace(temporary_path, path)
