@@ -1363,10 +1363,7 @@ def results_ingest(
         if authority is None:
             raise ValueError(f"unknown authority id {authority_id!r}")
 
-        certified_manifest = read_capture_manifest(certified_capture)
-        if not isinstance(certified_manifest, CapturedManifest):
-            raise ValueError("certified capture must be a captured, not unavailable, manifest")
-        verify_capture(certified_manifest, storage_root)
+        certified_manifest = _admit_captured_manifest(certified_capture, storage_root, "certified")
         csv_content = (storage_root / certified_manifest.storage_reference).read_bytes()
 
         captures = [
@@ -1377,12 +1374,9 @@ def results_ingest(
             )
         ]
         if election_night_capture is not None:
-            election_night_manifest = read_capture_manifest(election_night_capture)
-            if not isinstance(election_night_manifest, CapturedManifest):
-                raise ValueError(
-                    "election-night capture must be a captured, not unavailable, manifest"
-                )
-            verify_capture(election_night_manifest, storage_root)
+            election_night_manifest = _admit_captured_manifest(
+                election_night_capture, storage_root, "election-night"
+            )
             captures.insert(
                 0,
                 ResultsCapture(
@@ -1411,6 +1405,21 @@ def results_ingest(
         f"results: {output_path} ({results.election_id}, {results.status}, "
         f"{len(results.races)} races)"
     )
+
+
+def _admit_captured_manifest(path: Path, storage_root: Path, label: str) -> CapturedManifest:
+    """Read and hash-verify one evidence manifest for `results ingest`,
+    rejecting an "unavailable" record — the lane's own admission that
+    nothing was captured, which a results file may never cite as if it were
+    real evidence. Shared by the certified and optional election-night
+    capture paths so both are guarded identically; the duplication this
+    replaced is exactly how the election-night path went unverified for a
+    fix cycle."""
+    manifest = read_capture_manifest(path)
+    if not isinstance(manifest, CapturedManifest):
+        raise ValueError(f"{label} capture must be a captured, not unavailable, manifest")
+    verify_capture(manifest, storage_root)
+    return manifest
 
 
 @normalize_app.command("validate")
@@ -1764,23 +1773,16 @@ def _git_commit() -> str:
 
 
 def _write_generated_json(path: Path, value: object) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temporary_path: Path | None = None
-    try:
-        with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as temporary:
-            temporary_path = Path(temporary.name)
-            temporary.write(canonical_json_bytes(value))
-            temporary.flush()
-            os.fsync(temporary.fileno())
-        os.replace(temporary_path, path)
-        temporary_path = None
-    finally:
-        if temporary_path is not None:
-            temporary_path.unlink(missing_ok=True)
+    _write_generated_bytes(path, canonical_json_bytes(value))
 
 
 def _write_generated_yaml(path: Path, value: object) -> None:
-    payload = yaml.safe_dump(value, sort_keys=True).encode()
+    _write_generated_bytes(path, yaml.safe_dump(value, sort_keys=True).encode())
+
+
+def _write_generated_bytes(path: Path, payload: bytes) -> None:
+    """Write generated output atomically: stage in the destination directory,
+    fsync, then `os.replace` so a reader never observes a partial file."""
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary_path: Path | None = None
     try:
