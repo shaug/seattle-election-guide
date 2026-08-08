@@ -16,6 +16,7 @@ import yaml
 import election_guide.release.builder as release_builder
 from election_guide.normalization.models import CanonicalDataset
 from election_guide.release import (
+    ReleaseResult,
     build_release,
     compile_release_dataset,
     verify_release_compilation,
@@ -333,35 +334,9 @@ def test_release_build_packages_complete_deterministic_public_bundle(
     ledger, dataset_path, snapshots = _compiled_release_inputs(tmp_path)
     _stub_release_render(monkeypatch)
     output = tmp_path / "release"
-    first = build_release(
-        ledger_path=ledger,
-        inventory_path=INVENTORY,
-        registry_path=REGISTRY,
-        dataset_path=dataset_path,
-        scoring_config_path=SCORING,
-        rendering_config_path=RENDERING,
-        snapshot_root=snapshots,
-        manifest_dir=tmp_path / "manifests",
-        output_dir=output,
-        release_version="2026-primary.1",
-        generated_at=GENERATED_AT,
-        git_commit="a" * 40,
-    )
+    first = _build_release(ledger, dataset_path, snapshots, tmp_path, output)
     first_hash = hashlib.sha256(first.archive_path.read_bytes()).hexdigest()
-    second = build_release(
-        ledger_path=ledger,
-        inventory_path=INVENTORY,
-        registry_path=REGISTRY,
-        dataset_path=dataset_path,
-        scoring_config_path=SCORING,
-        rendering_config_path=RENDERING,
-        snapshot_root=snapshots,
-        manifest_dir=tmp_path / "manifests",
-        output_dir=output,
-        release_version="2026-primary.1",
-        generated_at=GENERATED_AT,
-        git_commit="a" * 40,
-    )
+    second = _build_release(ledger, dataset_path, snapshots, tmp_path, output)
 
     assert hashlib.sha256(second.archive_path.read_bytes()).hexdigest() == first_hash
     assert second.status.validation_reports == {"publication": True, "rendering": True}
@@ -407,19 +382,12 @@ def test_release_build_wires_a_committed_results_file_into_the_view_model(
     )
 
     output = tmp_path / "release"
-    release = build_release(
-        ledger_path=ledger,
-        inventory_path=INVENTORY,
-        registry_path=REGISTRY,
-        dataset_path=dataset_path,
-        scoring_config_path=SCORING,
-        rendering_config_path=RENDERING,
-        snapshot_root=snapshots,
-        manifest_dir=tmp_path / "manifests",
-        output_dir=output,
-        release_version="2026-primary.1",
-        generated_at=GENERATED_AT,
-        git_commit="a" * 40,
+    release = _build_release(
+        ledger,
+        dataset_path,
+        snapshots,
+        tmp_path,
+        output,
         results_dir=results_dir,
         repository_root=results_root,
     )
@@ -434,19 +402,12 @@ def test_release_build_wires_a_committed_results_file_into_the_view_model(
     # The default `results_dir` (no committed file) leaves the release exactly
     # as it was before this hook existed.
     second_output = tmp_path / "release-without-results"
-    without_results = build_release(
-        ledger_path=ledger,
-        inventory_path=INVENTORY,
-        registry_path=REGISTRY,
-        dataset_path=dataset_path,
-        scoring_config_path=SCORING,
-        rendering_config_path=RENDERING,
-        snapshot_root=snapshots,
-        manifest_dir=tmp_path / "manifests",
-        output_dir=second_output,
-        release_version="2026-primary.1",
-        generated_at=GENERATED_AT,
-        git_commit="a" * 40,
+    without_results = _build_release(
+        ledger,
+        dataset_path,
+        snapshots,
+        tmp_path,
+        second_output,
         results_dir=tmp_path / "no-such-results-directory",
     )
     published_without_results = json.loads(
@@ -473,20 +434,7 @@ def test_release_build_wires_the_certification_date_into_the_view_model(
     # The real, committed calendar declares `wa-2026-primary`'s certification
     # 15 days after its election day (config/calendar/elections.yaml).
     output = tmp_path / "release"
-    release = build_release(
-        ledger_path=ledger,
-        inventory_path=INVENTORY,
-        registry_path=REGISTRY,
-        dataset_path=dataset_path,
-        scoring_config_path=SCORING,
-        rendering_config_path=RENDERING,
-        snapshot_root=snapshots,
-        manifest_dir=tmp_path / "manifests",
-        output_dir=output,
-        release_version="2026-primary.1",
-        generated_at=GENERATED_AT,
-        git_commit="a" * 40,
-    )
+    release = _build_release(ledger, dataset_path, snapshots, tmp_path, output)
     published = json.loads(
         (release.bundle_dir / "data" / "publication_view_model.json").read_text(encoding="utf-8")
     )
@@ -495,19 +443,12 @@ def test_release_build_wires_the_certification_date_into_the_view_model(
     # A calendar path that resolves to nothing -- missing entirely -- is a
     # silent no-op, matching `results_dir`'s own "no committed file" grace.
     second_output = tmp_path / "release-without-calendar"
-    without_calendar = build_release(
-        ledger_path=ledger,
-        inventory_path=INVENTORY,
-        registry_path=REGISTRY,
-        dataset_path=dataset_path,
-        scoring_config_path=SCORING,
-        rendering_config_path=RENDERING,
-        snapshot_root=snapshots,
-        manifest_dir=tmp_path / "manifests",
-        output_dir=second_output,
-        release_version="2026-primary.1",
-        generated_at=GENERATED_AT,
-        git_commit="a" * 40,
+    without_calendar = _build_release(
+        ledger,
+        dataset_path,
+        snapshots,
+        tmp_path,
+        second_output,
         calendar_path=tmp_path / "no-such-calendar.yaml",
     )
     published_without_calendar = json.loads(
@@ -682,6 +623,35 @@ def _stub_release_render(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr("election_guide.release.builder.build_rendered_guide", fake_render)
     monkeypatch.setattr(
         "election_guide.release.builder._verify_checkout_identity", accept_test_checkout
+    )
+
+
+def _build_release(
+    ledger: Path,
+    dataset_path: Path,
+    snapshots: Path,
+    tmp_path: Path,
+    output_dir: Path,
+    **overrides: object,
+) -> ReleaseResult:
+    """One `build_release` call carrying this file's fixed test fixture
+    arguments, varying only what each call site actually varies (`output_dir`
+    plus whatever `overrides` supplies -- `results_dir`, `repository_root`,
+    `calendar_path`)."""
+    return build_release(
+        ledger_path=ledger,
+        inventory_path=INVENTORY,
+        registry_path=REGISTRY,
+        dataset_path=dataset_path,
+        scoring_config_path=SCORING,
+        rendering_config_path=RENDERING,
+        snapshot_root=snapshots,
+        manifest_dir=tmp_path / "manifests",
+        output_dir=output_dir,
+        release_version="2026-primary.1",
+        generated_at=GENERATED_AT,
+        git_commit="a" * 40,
+        **overrides,  # type: ignore[arg-type]
     )
 
 

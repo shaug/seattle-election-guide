@@ -329,14 +329,19 @@ def test_election_day_banner_states_a_truth_that_survives_the_election() -> None
     assert HOW_TO_VOTE_HREF in banner
 
 
-def test_election_day_banner_with_no_certification_date_is_unchanged_by_285() -> None:
-    """#285's acceptance criterion: before election day and with no results
-    data, output is byte-identical to today. `certification_date` and
-    `certified_on` both default to `None` -- an immutable older bundle, or an
-    election the calendar has not scheduled certification for -- and that is
-    exactly the baseline every existing caller of this function (and every
-    existing test fixture) still renders with, so this pins the two calls
-    equal rather than just asserting on substrings."""
+def test_election_day_banner_certification_kwargs_default_to_none() -> None:
+    """A narrow signature guard, not #285's byte-identity acceptance criterion
+    itself -- that is pinned at the document level by
+    `test_no_results_and_no_certification_date_is_byte_identical_to_before_285`
+    and at this function's own level by
+    `test_election_day_banner_states_a_truth_that_survives_the_election`,
+    both of which call `election_day_banner_html` with zero #285 parameters,
+    exactly as every pre-#285 caller does. What this test alone pins is
+    narrower: that `certification_date` and `certified_on` both default to
+    `None` -- an immutable older bundle, or an election the calendar has not
+    scheduled certification for, sees no #285 markup at all -- so a change
+    to either default would be caught here even before it reached a caller
+    that omits the keyword."""
     assert election_day_banner_html("2026-08-04") == election_day_banner_html(
         "2026-08-04", certification_date=None, certified_on=None
     )

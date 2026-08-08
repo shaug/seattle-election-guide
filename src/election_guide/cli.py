@@ -582,7 +582,9 @@ def release_build(
     calendar_path: Annotated[
         Path,
         typer.Option(
+            exists=True,
             dir_okay=False,
+            readable=True,
             help="Declared election operations calendar, for the certification milestone date.",
         ),
     ] = Path("config/calendar/elections.yaml"),
