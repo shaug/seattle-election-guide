@@ -104,6 +104,14 @@ toggle and no new filter control. When a results file with `status: certified` (
 exists for the election, the surfaces below render it; before that, they don't. One new rendering
 state to test, not a combinatorial option.
 
+**The election-day banner's counting state is the one exception, and it is deliberate, not a
+gap.** The counting window ingests nothing (Posture: close the record), so no counting-status file
+ever exists to gate on — a rendering rule keyed on file existence alone would leave that window
+with nothing to render. The banner's counting state instead derives from dates the page already
+carries: election day has passed (the shipped #192 past-rewrite condition) and the calendar's
+certification date has not yet been reached. Every other surface, and the banner's own certified
+state, still gate on the results file exactly as above (#285, "The election-day banner").
+
 Vote share and endorsement share never share a component. The endorsement meter keeps its
 meaning everywhere; vote share is always a slim navy-on-track tally bar, and every bar in a view
 runs on the same full-width scale so shares compare honestly across candidates.
@@ -129,14 +137,27 @@ a line, the chip wraps beneath the name.
 
 The shipped banner (#192: tense-neutral server rendering, amber escalation inside seven days,
 past-tense rewrite — `shell.py`, `election-day.mjs`) is **out of scope and unchanged**. With no
-results file, the existing past rewrite remains forever. The two new states extend the same
-element and the same two color surfaces, activating only when the results file exists:
+results file and no certification date known, the existing past rewrite remains forever. The two
+new states extend the same element and the same two color surfaces, but they activate on two
+different triggers (#285, "Trigger model"), not on the results file alone:
 
-- **Counting** (amber attention family):
+- **Counting** (amber attention family) — no file to gate on, so this one derives from dates the
+  page already carries: election day has passed (the existing #192 past-rewrite condition) and the
+  calendar's certification date has not yet been reached. If that date passes with still no
+  certified file, the banner falls back to the existing past rewrite rather than a stale counting
+  promise:
   "**Ballots are being counted** — see the count at King County Elections." /
   "Results certify August 19, 2026."
-- **Certified** (muted past family):
+- **Certified** (muted past family) — gates on the certified results file existing, as every other
+  surface in this document does:
   "**This election is complete.**" / "Results were certified August 19, 2026."
+
+**Trigger model.** The certification date comes from the calendar's `certification` milestone for
+this election (`config/calendar/elections.yaml`), carried into the page the same way `election_date`
+already is (`PublicationMetadata.certification_date`). The certified state's date is the results
+file's own `certified_on`, not the calendar date — the two usually agree, but only the file's date
+is ever displayed once it exists. Ratified with the maintainer at implementation time (#285); this
+is the settled answer to the gap the design review found, not an open question.
 
 New-state banner text follows four rules: at most two lines; a line never breaks mid-sentence —
 each line is a complete thought; links name their destination; and exactly one date appears — the

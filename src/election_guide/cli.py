@@ -579,6 +579,15 @@ def release_build(
             help="Certified or amended post-election results, if any have been committed.",
         ),
     ] = Path("data/results"),
+    calendar_path: Annotated[
+        Path,
+        typer.Option(
+            exists=True,
+            dir_okay=False,
+            readable=True,
+            help="Declared election operations calendar, for the certification milestone date.",
+        ),
+    ] = Path("config/calendar/elections.yaml"),
 ) -> None:
     """Run scoring, export, rendering, final audit, and deterministic packaging."""
     try:
@@ -597,6 +606,7 @@ def release_build(
             git_commit=git_commit or _git_commit(),
             chrome_path=chrome_path,
             results_dir=results_dir,
+            calendar_path=calendar_path,
         )
     except (
         OSError,

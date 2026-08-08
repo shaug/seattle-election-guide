@@ -74,6 +74,7 @@ from election_guide.rendering.payload import (
 )
 from election_guide.rendering.shell import (
     HOW_TO_VOTE_HREF,
+    KING_COUNTY_RESULTS_HREF,
     election_day_banner_html,
     election_names,
 )
@@ -327,6 +328,61 @@ def test_election_day_banner_states_a_truth_that_survives_the_election() -> None
     assert "Election day is" not in banner
     assert 'data-election-day-short="Tuesday, August 4"' in banner
     assert HOW_TO_VOTE_HREF in banner
+
+
+def test_election_day_banner_certification_kwargs_default_to_none() -> None:
+    """A narrow signature guard, not #285's byte-identity acceptance criterion
+    itself -- that is pinned at the document level by
+    `test_no_results_and_no_certification_date_is_byte_identical_to_before_285`
+    and at this function's own level by
+    `test_election_day_banner_states_a_truth_that_survives_the_election`,
+    both of which call `election_day_banner_html` with zero #285 parameters,
+    exactly as every pre-#285 caller does. What this test alone pins is
+    narrower: that `certification_date` and `certified_on` both default to
+    `None` -- an immutable older bundle, or an election the calendar has not
+    scheduled certification for, sees no #285 markup at all -- so a change
+    to either default would be caught here even before it reached a caller
+    that omits the keyword."""
+    assert election_day_banner_html("2026-08-04") == election_day_banner_html(
+        "2026-08-04", certification_date=None, certified_on=None
+    )
+
+
+def test_election_day_banner_carries_the_certification_date_for_the_script_to_read() -> None:
+    """With a certification date known but no results file yet, the server
+    still writes the same tense-neutral statement (#192) -- the reader's own
+    clock decides soon/default/past/counting -- but now carries the extra
+    facts `election-day.mjs` needs to render the counting state once the
+    reader is past election day."""
+    banner = election_day_banner_html("2026-08-04", certification_date="2026-08-19")
+
+    # Everything #192 shipped is still here, byte-for-byte.
+    assert 'data-election-day="2026-08-04"' in banner
+    assert "<b>Election day:</b> Tuesday, August 4, 2026" in banner
+    assert 'data-election-day-short="Tuesday, August 4"' in banner
+    assert HOW_TO_VOTE_HREF in banner
+    # Plus the new facts, gated together on the one new parameter.
+    assert 'data-election-certification-date="2026-08-19"' in banner
+    assert 'data-election-certification-date-full="August 19, 2026"' in banner
+    assert KING_COUNTY_RESULTS_HREF in banner
+
+
+def test_election_day_banner_renders_the_certified_state_directly() -> None:
+    """Once results are certified, the fact does not depend on the reader's
+    clock, so the server renders the final state directly rather than
+    leaving it to `election-day.mjs` -- and the banner drops its
+    `data-election-day` marker entirely, so the script's `querySelector`
+    finds nothing and never runs."""
+    banner = election_day_banner_html(
+        "2026-08-04", certification_date="2026-08-19", certified_on="2026-08-19"
+    )
+
+    assert "data-election-day" not in banner
+    assert "This election is complete." in banner
+    assert "Results were certified August 19, 2026." in banner
+    assert "How to vote" not in banner
+    assert HOW_TO_VOTE_HREF not in banner
+    assert 'class="election-day election-day-past"' in banner
 
 
 def test_shared_site_band_names_the_methodology_path_for_what_it_does() -> None:
@@ -632,22 +688,92 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert 'style="--meter-fill: ' in html
 
 
-def test_results_hook_does_not_change_rendered_output(tmp_path: Path) -> None:
-    """Issue #283's rendering hook is plumbing only: attaching certified
-    results to the view model must not change one byte of rendered output.
-    `#285`-`#288` are the tickets that make any surface actually read
-    `view_model.results`."""
+_ELECTION_DAY_BANNER = re.compile(r'<p class="election-day[^>]*>.*?</p>')
+
+
+def test_no_results_and_no_certification_date_is_byte_identical_to_before_285(
+    tmp_path: Path,
+) -> None:
+    """#285's acceptance criterion: before election day and with no results
+    data, output is byte-identical to today. `_view_model` attaches neither
+    `results` nor `metadata.certification_date` (both still default to
+    `None`, exactly as every bundle built before #285 left them), so the
+    banner embedded in the full document must be exactly what the shipped
+    #192 function alone -- with no #285 parameters supplied at all -- would
+    have rendered. `#286`-`#288` are the tickets that make any *other*
+    surface actually read `view_model.results`; #285's own banner is the one
+    surface that reads it once results exist, covered by
+    `test_certified_results_settle_the_banner_into_its_permanent_state`
+    below."""
+    configuration = read_rendering_configuration(RENDERING_CONFIG)
+    view_model = _view_model(tmp_path / "without-results")
+
+    assert view_model.results is None
+    assert view_model.metadata.certification_date is None
+    html = render_html_document(view_model, configuration)
+    shipped_banner = election_day_banner_html(view_model.metadata.election_date)
+    assert shipped_banner in html
+    assert _ELECTION_DAY_BANNER.search(html).group() == shipped_banner  # type: ignore[union-attr]
+
+
+def test_certified_results_settle_the_banner_into_its_permanent_state(tmp_path: Path) -> None:
+    """Once a certified or amended results file is attached, the banner is the
+    one surface (#285) that renders differently -- everything else about the
+    page is unchanged, which is what #283's original byte-identity test
+    proved about the hook before any ticket read it back out."""
     configuration = read_rendering_configuration(RENDERING_CONFIG)
     without_results = _view_model(tmp_path / "without-results")
     results_root = tmp_path / "with-results"
     results_root.mkdir()
     with_results = without_results.model_copy(update={"results": _valid_results(results_root)})
 
-    assert without_results.results is None
-    assert with_results.results is not None
-    assert render_html_document(without_results, configuration) == render_html_document(
-        with_results, configuration
+    without_html = render_html_document(without_results, configuration)
+    with_html = render_html_document(with_results, configuration)
+
+    assert with_html != without_html
+    # Stripping each document's own banner element leaves byte-identical
+    # documents: the certified state is the only thing #285 changes.
+    assert _ELECTION_DAY_BANNER.sub("", without_html, count=1) == _ELECTION_DAY_BANNER.sub(
+        "", with_html, count=1
     )
+    assert (
+        '<p class="election-day election-day-past">'
+        '<span class="election-day-when"><b>This election is complete.</b>'
+        "<br>Results were certified August 19, 2026.</span></p>" in with_html
+    )
+    # The certified state carries no link at all (docs/RESULTS.md, "The
+    # election-day banner"), so "How to vote" -- irrelevant once the election
+    # is over -- goes with it.
+    assert "How to vote" not in with_html
+    assert HOW_TO_VOTE_HREF not in with_html
+
+
+def test_certification_date_reaches_the_document_for_the_script_to_read(tmp_path: Path) -> None:
+    """`_election_day_banner` (rendering/documents.py) is the one seam
+    carrying `metadata.certification_date` from the view model into every
+    document's banner. With no results yet but a certification date known
+    (the calendar-wired case `build_release` produces once #285 ships), the
+    full document must still carry the three data attributes
+    `election-day.mjs` needs to compute the counting transition -- not just
+    the standalone `election_day_banner_html` unit already proven above."""
+    configuration = read_rendering_configuration(RENDERING_CONFIG)
+    without_results = _view_model(tmp_path / "without-results")
+    view_model = without_results.model_copy(
+        update={
+            "metadata": without_results.metadata.model_copy(
+                update={"certification_date": "2026-08-19"}
+            )
+        }
+    )
+
+    html = render_html_document(view_model, configuration)
+
+    assert 'data-election-certification-date="2026-08-19"' in html
+    assert 'data-election-certification-date-full="August 19, 2026"' in html
+    assert "data-election-results-href=" in html
+    # No results file yet, so the tense-neutral #192 markup is still what
+    # renders -- only the extra data attributes are new.
+    assert "<b>Election day:</b>" in html
 
 
 PUBLIC_SITE_URL = "https://seattleelections.guide"

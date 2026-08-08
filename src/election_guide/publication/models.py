@@ -478,6 +478,14 @@ class PublicationMetadata(PublicationModel):
     # naming and data-cutoff inputs.
     election_type: Literal["primary", "general", "special"] | None = None
     state: str | None = Field(default=None, pattern=r"^[A-Z]{2}$")
+    certification_date: str | None = None
+    """The calendar's `certification` milestone date for this election
+    (ISO `YYYY-MM-DD`), carried into the page the same way `election_date`
+    is. `None` for an immutable older bundle, or when the calendar declares
+    no certification milestone for this election. The post-election banner
+    (docs/RESULTS.md, "The election-day banner"; #285) reads this to know
+    when its counting window ends -- with no results file, `None` leaves the
+    banner exactly as the shipped #192 states left it."""
     generated_at: AwareDatetime
     data_as_of: AwareDatetime | None = None
     data_version: str
@@ -504,7 +512,7 @@ class PublicationMetadata(PublicationModel):
 
 
 class PublicationViewModel(PublicationModel):
-    schema_version: Literal["1.10"] = "1.10"
+    schema_version: Literal["1.11"] = "1.11"
     metadata: PublicationMetadata
     sources: list[PublicationSource]
     sections: list[PublicationSection]

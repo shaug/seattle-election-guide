@@ -99,6 +99,24 @@ def test_2026_primary_declares_only_the_windows_still_ahead_of_it() -> None:
     assert scheduled["results_capture_post_certification"] == date(2026, 8, 20)
 
 
+def test_certification_date_resolves_the_certification_milestone() -> None:
+    """#285's banner reads this to know when its counting window ends."""
+    calendar = read_election_calendar(CALENDAR_PATH)
+
+    assert calendar.certification_date("wa-2026-primary") == date(2026, 8, 19)
+    assert calendar.certification_date("wa-2026-general") == date(2026, 11, 24)
+
+
+def test_certification_date_is_none_without_a_declared_milestone() -> None:
+    """An undeclared election id is not an error here -- callers with an
+    election the calendar has not scheduled yet get a graceful `None`, the
+    same way a committed results file's absence is a graceful `None`
+    (`election_guide.results.loader.load_rendering_results`)."""
+    calendar = read_election_calendar(CALENDAR_PATH)
+
+    assert calendar.certification_date("not-a-declared-election") is None
+
+
 def test_calendar_coverage_starts_at_the_soonest_election_day() -> None:
     calendar = read_election_calendar(CALENDAR_PATH)
 

@@ -13,6 +13,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 
+from election_guide.calendar import read_election_calendar
 from election_guide.evidence.models import CapturedManifest
 from election_guide.normalization.models import CanonicalDataset
 from election_guide.publication import build_publication_bundle, write_publication_bundle
@@ -57,6 +58,7 @@ def build_release(
     chrome_path: Path | None = None,
     results_dir: Path = Path("data/results"),
     repository_root: Path = Path("."),
+    calendar_path: Path = Path("config/calendar/elections.yaml"),
 ) -> ReleaseResult:
     """Run the complete publication pipeline and atomically publish one release directory.
 
@@ -70,6 +72,15 @@ def build_release(
     `repository_root` resolves that file's own evidence-manifest references
     (`data/manifests/evidence/...`) and defaults to the current working
     directory, matching every other repo-relative default in this pipeline.
+
+    `calendar_path` is the declared election operations calendar
+    (docs/RESULTS.md, "The election-day banner"; #285): this election's
+    `certification` milestone date is read from it and carried into
+    `PublicationMetadata.certification_date`, the same way `election_date`
+    already is, so the post-election banner knows when its counting window
+    ends. A missing calendar file, or a calendar with no certification
+    milestone declared for this election yet, is a silent no-op -- the
+    release is unchanged from before this parameter existed.
     """
     if generated_at.tzinfo is None or generated_at.utcoffset() is None:
         raise ValueError("release generated_at must include a UTC offset")
@@ -98,6 +109,11 @@ def build_release(
         results_dir=results_dir,
         repository_root=repository_root,
     )
+    certification_date: str | None = None
+    if calendar_path.is_file():
+        calendar = read_election_calendar(calendar_path)
+        scheduled = calendar.certification_date(dataset.inventory.election.id)
+        certification_date = scheduled.isoformat() if scheduled is not None else None
 
     output_dir.parent.mkdir(parents=True, exist_ok=True)
     stage = Path(tempfile.mkdtemp(prefix=f".{output_dir.name}.staging-", dir=output_dir.parent))
@@ -112,6 +128,7 @@ def build_release(
             snapshot_root=snapshot_root,
             data_as_of=ledger.data_as_of,
             results=results,
+            certification_date=certification_date,
         )
         write_publication_bundle(publication, data_dir)
         (data_dir / "canonical-dataset.json").write_bytes(

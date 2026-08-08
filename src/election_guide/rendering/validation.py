@@ -193,9 +193,6 @@ def validate_rendered_guide(
         # rather than to `/`, which only redirects there (issue 192); that link
         # target is also what the extended-masthead dial keys off.
         f"/e/{view_model.metadata.election_id}/",
-        # Slot 4's "How to vote" (issue 192). King County Elections administers
-        # Seattle's ballots and is already this repository's cited authority.
-        HOW_TO_VOTE_HREF,
         f"/e/{view_model.metadata.election_id}/sources/",
         "mailto:seattle-elections@dobravoda.dev",
         "/about/",
@@ -207,6 +204,13 @@ def validate_rendered_guide(
         # (issue #136), where the evidence links now live.
         *(race_page_path(view_model.metadata.election_id, race.id) for race in expected_races),
     }
+    if view_model.results is None:
+        # Slot 4's "How to vote" (issue 192). King County Elections administers
+        # Seattle's ballots and is already this repository's cited authority.
+        # Once results are certified the banner settles into its own permanent
+        # state and drops this link entirely (docs/RESULTS.md, "The
+        # election-day banner"; #285) -- there is nothing left to vote on.
+        expected_html_links.add(HOW_TO_VOTE_HREF)
     if view_model.comparisons.policy.enabled:
         expected_html_links.add(f"/e/{view_model.metadata.election_id}/comparisons/")
     canonical_url = f"{configuration.public_site_url}/e/{view_model.metadata.election_id}/"

@@ -165,6 +165,16 @@
       "python",
       "test"
     ],
+    "data-election-certification-date": [
+      "client",
+      "python",
+      "test"
+    ],
+    "data-election-certification-date-full": [
+      "client",
+      "python",
+      "test"
+    ],
     "data-election-day": [
       "client",
       "python",
@@ -172,7 +182,8 @@
     ],
     "data-election-day-full": [
       "client",
-      "python"
+      "python",
+      "test"
     ],
     "data-election-day-short": [
       "client",
@@ -181,7 +192,13 @@
     ],
     "data-election-day-when": [
       "client",
-      "python"
+      "python",
+      "test"
+    ],
+    "data-election-results-href": [
+      "client",
+      "python",
+      "test"
     ],
     "data-endorsed-candidate-id": [
       "template",
@@ -511,9 +528,16 @@
       "python",
       "test"
     ],
+    "election-day-counting": [
+      "stylesheet",
+      "client",
+      "test"
+    ],
     "election-day-past": [
       "stylesheet",
-      "client"
+      "client",
+      "python",
+      "test"
     ],
     "election-day-soon": [
       "stylesheet",

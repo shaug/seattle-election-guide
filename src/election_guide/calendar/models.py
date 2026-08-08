@@ -147,6 +147,27 @@ class ElectionCalendar(CalendarModel):
         """List one election's milestones in declaration order."""
         return [item for item in self.milestones if item.election_id == election_id]
 
+    def certification_date(self, election_id: str) -> date | None:
+        """The scheduled date of one election's `certification` milestone, or
+        `None` when that election declares no such milestone yet (an
+        undeclared election, or one whose runway has not reached it).
+
+        The post-election banner (docs/RESULTS.md, "The election-day
+        banner"; #285) reads this to know when its counting window ends: the
+        counting state renders between election day and this date, and falls
+        back to the past rewrite once this date has passed with no certified
+        results file ingested.
+        """
+        milestone = next(
+            (
+                item
+                for item in self.election_milestones(election_id)
+                if item.kind == "certification"
+            ),
+            None,
+        )
+        return self.scheduled_date(milestone) if milestone is not None else None
+
     def public_milestones(self) -> list[CalendarMilestone]:
         """List every milestone a voter should see, soonest first."""
         public = [item for item in self.milestones if item.public]
