@@ -133,6 +133,11 @@ it should stay human-launched at least through the first full cycle.
   ballots-with-contest counts for ...`: the export's own `BallotsWith Contest` column was zero or
   inconsistent across a contest's rows for that race. This points at a malformed or truncated
   capture, not a data judgment call — re-check the captured file and bring it to a human.
+- `results ingest` aborts with `is missing N declared ballot choice(s): [...]`: the frozen
+  inventory names a candidate or option for this race that has no row anywhere in the captured
+  export — a truncated or malformed capture, not something to guess past (a dropped choice would
+  otherwise silently inflate the remaining choices' shares to fill the gap). Re-capture the
+  export and confirm every printed name for the race appears in it before re-running.
 - `results ingest` aborts the whole run with `shares sum to ..., not ~1` for one race: after the
   declared-total share fix this should be unreachable from a normal ingest (the shares the
   adapter writes sum to one within a few ten-thousandths, far inside

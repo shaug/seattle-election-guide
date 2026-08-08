@@ -9,8 +9,8 @@ from pydantic import ValidationError
 from typer.testing import CliRunner
 
 from election_guide.cli import app
-from election_guide.evidence.models import CaptureRequest
-from election_guide.evidence.storage import record_capture
+from election_guide.evidence.models import CaptureRequest, UnavailableRequest
+from election_guide.evidence.storage import record_capture, record_unavailable
 from election_guide.inventory.importer import read_inventory
 from election_guide.inventory.models import Inventory
 from election_guide.results.ingest import (
@@ -827,6 +827,46 @@ def test_build_election_results_aborts_when_only_write_ins_carry_votes(tmp_path:
         )
 
 
+def test_build_election_results_aborts_when_the_export_drops_a_declared_choice(
+    tmp_path: Path,
+) -> None:
+    # Regression for a review finding: the resolution loop only ever checks
+    # that every *exported* row resolves to a known choice -- a choice the
+    # inventory declares but whose row is missing entirely from a truncated
+    # or malformed export was invisible to it, silently renormalizing
+    # `share` over the survivors (the schema's "shares sum to ~1" invariant
+    # is satisfied either way). Every declared ballot choice must appear in
+    # the export or this aborts loudly -- never guessed.
+    inventory = _inventory()
+    csv_content = (
+        b'"Contest","Choice","Votes","BallotsWith Contest"\n'
+        b'"Assessor (Vote for 1)","Dominique M Scarimbolo","87,507","495,336"\n'
+        b'"Assessor (Vote for 1)","Christopher Roberts","85,320","495,336"\n'
+        b'"Assessor (Vote for 1)","Rob Foxcurran","214,135","495,336"\n'
+        b'"Assessor (Vote for 1)","Write-in","1,353","495,336"\n'
+    )
+    captures = [
+        ResultsCapture(
+            kind="certified",
+            captured_at=datetime(2026, 8, 20, 16, 5, tzinfo=UTC),
+            evidence=_evidence_reference(tmp_path, "certified"),
+        )
+    ]
+
+    with pytest.raises(
+        ResultsIngestError,
+        match=r"missing 1 declared ballot choice\(s\).*al-dams",
+    ):
+        build_election_results(
+            csv_content,
+            inventory,
+            authority="King County Elections",
+            certified_on=datetime(2026, 8, 19).date(),
+            captures=captures,
+            expected_race_ids=frozenset({ASSESSOR_ID}),
+        )
+
+
 def test_build_election_results_advances_the_winning_choice_of_a_rejected_measure(
     tmp_path: Path,
 ) -> None:
@@ -920,6 +960,108 @@ def test_cli_results_ingest_produces_a_valid_results_file(
     validate_results_inventory(results, inventory)
     validate_results_evidence(results, repository_root=tmp_path)
     assert {race.race_id for race in results.races} == {ASSESSOR_ID, PROPOSITION_ID}
+
+
+def test_cli_results_ingest_accepts_an_election_night_capture(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.chdir(tmp_path)
+    certified_manifest_path = _capture_certified_csv(tmp_path)
+    election_night_manifest_path = tmp_path / _evidence_reference(tmp_path, "election-night")
+    output_dir = tmp_path / "data" / "results"
+
+    result = CliRunner().invoke(
+        app,
+        [
+            "results",
+            "ingest",
+            "--election-id",
+            "wa-2026-primary",
+            "--authority-id",
+            "king-county-elections",
+            "--certified-on",
+            "2026-08-19",
+            "--certified-capture",
+            str(certified_manifest_path),
+            "--election-night-capture",
+            str(election_night_manifest_path),
+            "--race-id",
+            ASSESSOR_ID,
+            "--race-id",
+            PROPOSITION_ID,
+            "--inventory-path",
+            str(INVENTORY_PATH),
+            "--authority-registry-path",
+            str(AUTHORITY_REGISTRY_PATH),
+            "--storage-root",
+            str(tmp_path / "snapshots"),
+            "--output-dir",
+            str(output_dir),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    results = read_results(output_dir / "wa-2026-primary.yaml")
+    kinds = {capture.kind for capture in results.captures}
+    assert kinds == {"election_night", "certified"}
+
+
+def test_cli_results_ingest_rejects_an_unavailable_election_night_capture(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # Regression for a review finding: an "unavailable" manifest -- the
+    # evidence lane's own record that nothing was captured -- previously
+    # flowed unchallenged into a committed results file when passed as
+    # `--election-night-capture` (the certified capture was already guarded
+    # the same way `read_capture_manifest`/`isinstance`/`verify_capture` now
+    # guards both).
+    monkeypatch.chdir(tmp_path)
+    certified_manifest_path = _capture_certified_csv(tmp_path)
+    manifest_dir = tmp_path / "data/manifests/evidence"
+    unavailable_request = UnavailableRequest.model_validate(
+        {
+            "source_id": "king-county-elections",
+            "requested_url": "https://example.org/results/election-night",
+            "retrieved_at": datetime(2026, 8, 4, 20, 35, tzinfo=UTC),
+            "unavailable_reason": "Not retained in this checkout.",
+            "redistribution": "restricted",
+            "redistribution_note": "Nothing was captured.",
+        }
+    )
+    unavailable_manifest_path = record_unavailable(unavailable_request, manifest_dir)
+
+    result = CliRunner().invoke(
+        app,
+        [
+            "results",
+            "ingest",
+            "--election-id",
+            "wa-2026-primary",
+            "--authority-id",
+            "king-county-elections",
+            "--certified-on",
+            "2026-08-19",
+            "--certified-capture",
+            str(certified_manifest_path),
+            "--election-night-capture",
+            str(unavailable_manifest_path),
+            "--race-id",
+            ASSESSOR_ID,
+            "--race-id",
+            PROPOSITION_ID,
+            "--inventory-path",
+            str(INVENTORY_PATH),
+            "--authority-registry-path",
+            str(AUTHORITY_REGISTRY_PATH),
+            "--storage-root",
+            str(tmp_path / "snapshots"),
+            "--output-dir",
+            str(tmp_path / "data" / "results"),
+        ],
+    )
+
+    assert result.exit_code == 1
+    assert "election-night capture must be a captured, not unavailable, manifest" in result.output
 
 
 def test_cli_results_ingest_fails_for_an_unknown_authority(

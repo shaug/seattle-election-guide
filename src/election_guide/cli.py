@@ -1378,6 +1378,11 @@ def results_ingest(
         ]
         if election_night_capture is not None:
             election_night_manifest = read_capture_manifest(election_night_capture)
+            if not isinstance(election_night_manifest, CapturedManifest):
+                raise ValueError(
+                    "election-night capture must be a captured, not unavailable, manifest"
+                )
+            verify_capture(election_night_manifest, storage_root)
             captures.insert(
                 0,
                 ResultsCapture(

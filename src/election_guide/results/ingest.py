@@ -364,6 +364,23 @@ def _build_race_results(race: Race, contest_rows: ContestRows) -> RaceResults:
         raise ResultsIngestError(
             f"certified export has no resolvable ballot choices for race {race.id!r}"
         )
+    # The loop above only ever proves that every *exported* row resolves to
+    # a known choice; a row missing entirely from a truncated or malformed
+    # export is invisible to it. Without this check a missing choice would
+    # silently renormalize `share` over the survivors -- the schema's
+    # "shares sum to ~1" invariant (results/models.py) is satisfied either
+    # way, so nothing downstream would ever catch it (verified: dropping one
+    # of the fixture's four Assessor candidates still produces a
+    # `results validate`-clean file, with the remaining candidates' shares
+    # inflated to fill the gap). Every declared ballot choice the inventory
+    # names for this race must appear in the export, or this aborts.
+    resolved_ids = {choice.id for choice, _ in tallies}
+    missing_choice_ids = {choice.id for choice in race.choices} - resolved_ids
+    if missing_choice_ids:
+        raise ResultsIngestError(
+            f"certified export for race {race.id!r} is missing "
+            f"{len(missing_choice_ids)} declared ballot choice(s): {sorted(missing_choice_ids)}"
+        )
     if contest_rows.ballots_with_contest <= 0:
         raise ResultsIngestError(
             f"certified export reports zero ballots-with-contest for race {race.id!r}"
