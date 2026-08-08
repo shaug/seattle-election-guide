@@ -743,6 +743,34 @@ def test_certified_results_settle_the_banner_into_its_permanent_state(tmp_path: 
     assert HOW_TO_VOTE_HREF not in with_html
 
 
+def test_certification_date_reaches_the_document_for_the_script_to_read(tmp_path: Path) -> None:
+    """`_election_day_banner` (rendering/documents.py) is the one seam
+    carrying `metadata.certification_date` from the view model into every
+    document's banner. With no results yet but a certification date known
+    (the calendar-wired case `build_release` produces once #285 ships), the
+    full document must still carry the three data attributes
+    `election-day.mjs` needs to compute the counting transition -- not just
+    the standalone `election_day_banner_html` unit already proven above."""
+    configuration = read_rendering_configuration(RENDERING_CONFIG)
+    without_results = _view_model(tmp_path / "without-results")
+    view_model = without_results.model_copy(
+        update={
+            "metadata": without_results.metadata.model_copy(
+                update={"certification_date": "2026-08-19"}
+            )
+        }
+    )
+
+    html = render_html_document(view_model, configuration)
+
+    assert 'data-election-certification-date="2026-08-19"' in html
+    assert 'data-election-certification-date-full="August 19, 2026"' in html
+    assert "data-election-results-href=" in html
+    # No results file yet, so the tense-neutral #192 markup is still what
+    # renders -- only the extra data attributes are new.
+    assert "<b>Election day:</b>" in html
+
+
 PUBLIC_SITE_URL = "https://seattleelections.guide"
 
 

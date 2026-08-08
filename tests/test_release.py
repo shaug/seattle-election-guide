@@ -330,48 +330,8 @@ def test_release_build_packages_complete_deterministic_public_bundle(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    ledger = _write_ledger(tmp_path)
-    dataset_path = tmp_path / "canonical-dataset.json"
-    snapshots = tmp_path / "snapshots"
-    compile_release_dataset(
-        ledger,
-        INVENTORY,
-        REGISTRY,
-        dataset_path,
-        snapshots,
-        tmp_path / "manifests",
-    )
-
-    def fake_render(
-        view_model_path: Path,
-        config_path: Path,
-        output_dir: Path,
-        **_: object,
-    ) -> SimpleNamespace:
-        assert view_model_path.is_file()
-        assert config_path == RENDERING
-        output_dir.mkdir(parents=True, exist_ok=True)
-        html = output_dir / "seattle-2026-primary-guide.html"
-        screenshot = output_dir / "screenshots/desktop.png"
-        validation = output_dir / "rendering_validation_report.json"
-        screenshot.parent.mkdir(parents=True)
-        html.write_text("<!doctype html><title>Guide</title>", encoding="utf-8")
-        screenshot.write_bytes(b"desktop screenshot")
-        validation.write_text('{"passed":true}\n', encoding="utf-8")
-        return SimpleNamespace(
-            html_path=html,
-            validation_path=validation,
-            screenshots=[screenshot],
-            validation_report=SimpleNamespace(passed=True),
-        )
-
-    def accept_test_checkout(_: str) -> None:
-        return None
-
-    monkeypatch.setattr("election_guide.release.builder.build_rendered_guide", fake_render)
-    monkeypatch.setattr(
-        "election_guide.release.builder._verify_checkout_identity", accept_test_checkout
-    )
+    ledger, dataset_path, snapshots = _compiled_release_inputs(tmp_path)
+    _stub_release_render(monkeypatch)
     output = tmp_path / "release"
     first = build_release(
         ledger_path=ledger,
@@ -435,48 +395,8 @@ def test_release_build_wires_a_committed_results_file_into_the_view_model(
     `build_publication_bundle` call -- must load and attach a committed
     certified results file, or the rendering hook never reaches a published
     guide."""
-    ledger = _write_ledger(tmp_path)
-    dataset_path = tmp_path / "canonical-dataset.json"
-    snapshots = tmp_path / "snapshots"
-    compile_release_dataset(
-        ledger,
-        INVENTORY,
-        REGISTRY,
-        dataset_path,
-        snapshots,
-        tmp_path / "manifests",
-    )
-
-    def fake_render(
-        view_model_path: Path,
-        config_path: Path,
-        output_dir: Path,
-        **_: object,
-    ) -> SimpleNamespace:
-        assert view_model_path.is_file()
-        assert config_path == RENDERING
-        output_dir.mkdir(parents=True, exist_ok=True)
-        html = output_dir / "seattle-2026-primary-guide.html"
-        screenshot = output_dir / "screenshots/desktop.png"
-        validation = output_dir / "rendering_validation_report.json"
-        screenshot.parent.mkdir(parents=True)
-        html.write_text("<!doctype html><title>Guide</title>", encoding="utf-8")
-        screenshot.write_bytes(b"desktop screenshot")
-        validation.write_text('{"passed":true}\n', encoding="utf-8")
-        return SimpleNamespace(
-            html_path=html,
-            validation_path=validation,
-            screenshots=[screenshot],
-            validation_report=SimpleNamespace(passed=True),
-        )
-
-    def accept_test_checkout(_: str) -> None:
-        return None
-
-    monkeypatch.setattr("election_guide.release.builder.build_rendered_guide", fake_render)
-    monkeypatch.setattr(
-        "election_guide.release.builder._verify_checkout_identity", accept_test_checkout
-    )
+    ledger, dataset_path, snapshots = _compiled_release_inputs(tmp_path)
+    _stub_release_render(monkeypatch)
 
     results_root = tmp_path / "results-repository-root"
     results_dir = results_root / "data" / "results"
@@ -547,48 +467,8 @@ def test_release_build_wires_the_certification_date_into_the_view_model(
     already reaches the view model -- so the banner's counting state can
     actually trigger for a real release, not only a direct
     `build_publication_bundle` call."""
-    ledger = _write_ledger(tmp_path)
-    dataset_path = tmp_path / "canonical-dataset.json"
-    snapshots = tmp_path / "snapshots"
-    compile_release_dataset(
-        ledger,
-        INVENTORY,
-        REGISTRY,
-        dataset_path,
-        snapshots,
-        tmp_path / "manifests",
-    )
-
-    def fake_render(
-        view_model_path: Path,
-        config_path: Path,
-        output_dir: Path,
-        **_: object,
-    ) -> SimpleNamespace:
-        assert view_model_path.is_file()
-        assert config_path == RENDERING
-        output_dir.mkdir(parents=True, exist_ok=True)
-        html = output_dir / "seattle-2026-primary-guide.html"
-        screenshot = output_dir / "screenshots/desktop.png"
-        validation = output_dir / "rendering_validation_report.json"
-        screenshot.parent.mkdir(parents=True)
-        html.write_text("<!doctype html><title>Guide</title>", encoding="utf-8")
-        screenshot.write_bytes(b"desktop screenshot")
-        validation.write_text('{"passed":true}\n', encoding="utf-8")
-        return SimpleNamespace(
-            html_path=html,
-            validation_path=validation,
-            screenshots=[screenshot],
-            validation_report=SimpleNamespace(passed=True),
-        )
-
-    def accept_test_checkout(_: str) -> None:
-        return None
-
-    monkeypatch.setattr("election_guide.release.builder.build_rendered_guide", fake_render)
-    monkeypatch.setattr(
-        "election_guide.release.builder._verify_checkout_identity", accept_test_checkout
-    )
+    ledger, dataset_path, snapshots = _compiled_release_inputs(tmp_path)
+    _stub_release_render(monkeypatch)
 
     # The real, committed calendar declares `wa-2026-primary`'s certification
     # 15 days after its election day (config/calendar/elections.yaml).
@@ -748,6 +628,61 @@ def _write_ledger(tmp_path: Path) -> Path:
     path = tmp_path / "release-ledger.yaml"
     path.write_text(yaml.safe_dump(_ledger_payload(), sort_keys=False), encoding="utf-8")
     return path
+
+
+def _compiled_release_inputs(tmp_path: Path) -> tuple[Path, Path, Path]:
+    """A release ledger and a compiled canonical dataset ready for
+    `build_release`: the ledger path, the dataset path, and the snapshot
+    root every `build_release` test needs."""
+    ledger = _write_ledger(tmp_path)
+    dataset_path = tmp_path / "canonical-dataset.json"
+    snapshots = tmp_path / "snapshots"
+    compile_release_dataset(
+        ledger,
+        INVENTORY,
+        REGISTRY,
+        dataset_path,
+        snapshots,
+        tmp_path / "manifests",
+    )
+    return ledger, dataset_path, snapshots
+
+
+def _stub_release_render(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Stub the rendering and checkout-identity steps `build_release` calls,
+    so a test can exercise the rest of the pipeline without a real browser or
+    a real Git checkout."""
+
+    def fake_render(
+        view_model_path: Path,
+        config_path: Path,
+        output_dir: Path,
+        **_: object,
+    ) -> SimpleNamespace:
+        assert view_model_path.is_file()
+        assert config_path == RENDERING
+        output_dir.mkdir(parents=True, exist_ok=True)
+        html = output_dir / "seattle-2026-primary-guide.html"
+        screenshot = output_dir / "screenshots/desktop.png"
+        validation = output_dir / "rendering_validation_report.json"
+        screenshot.parent.mkdir(parents=True)
+        html.write_text("<!doctype html><title>Guide</title>", encoding="utf-8")
+        screenshot.write_bytes(b"desktop screenshot")
+        validation.write_text('{"passed":true}\n', encoding="utf-8")
+        return SimpleNamespace(
+            html_path=html,
+            validation_path=validation,
+            screenshots=[screenshot],
+            validation_report=SimpleNamespace(passed=True),
+        )
+
+    def accept_test_checkout(_: str) -> None:
+        return None
+
+    monkeypatch.setattr("election_guide.release.builder.build_rendered_guide", fake_render)
+    monkeypatch.setattr(
+        "election_guide.release.builder._verify_checkout_identity", accept_test_checkout
+    )
 
 
 def _tree_bytes(root: Path) -> dict[str, bytes]:
