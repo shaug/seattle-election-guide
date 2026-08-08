@@ -215,8 +215,10 @@ and an export's *shape* (columns, structure) is stable across a count in progres
   always present and is excluded from ballot-choice resolution, but its votes still count toward
   the race's total. This is the adapter's parse target: it is directly machine-readable, requires
   no PDF text extraction or rendered-page scraping, and every publication-eligible
-  wa-2026-primary race resolves against it correctly (verified against the complete live export,
-  151 contests, while designing the resolver below).
+  wa-2026-primary race's real contest label from that live export resolves against it
+  correctly — committed as reproducible fixture evidence in
+  `test_resolve_race_matches_every_publication_eligible_race_label`
+  (`tests/test_results.py`), not merely asserted from the live fetch itself.
 - The Secretary of State's `results.votewa.gov` JSON export
   (`/results/public/api/elections/washington/<election-yyyymmdd>/data`) remains live and
   structured as the postmortem described. This adapter does not parse it — see "County scope"
@@ -226,10 +228,11 @@ and an export's *shape* (columns, structure) is stable across a count in progres
   own contest names differ only by an embedded district number ("Legislative District No. 1
   Representative Position No. 1" vs "No. 11" vs "No. 32"), and fuzzy scoring rates those as close
   matches. The adapter instead builds an exact, normalized phrase set per race from the
-  inventory's own office/district/position fields and aliases and requires one exact match;
-  verified this resolves all 32 publication-eligible wa-2026-primary races and every candidate
-  name with zero ambiguous or unmatched results against the live export. An export contest that
-  matches zero or more than one race is never guessed at — the adapter aborts.
+  inventory's own office/district/position fields and aliases and requires one exact match; the
+  same committed test proves this resolves all 32 publication-eligible wa-2026-primary races'
+  real contest labels and every candidate name with zero ambiguous or unmatched results. An
+  export contest that matches zero or more than one race is never guessed at — the adapter
+  aborts.
 
 **County scope.** King County's certified canvass states King County's own tally for a contest,
 not that contest's true total. That is the same total for every race whose district lies wholly

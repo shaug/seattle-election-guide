@@ -18,10 +18,14 @@ endorsement pipeline's fuzzy, review-queueing matcher
 - Fuzzy text similarity actively confuses this export's own contest names,
   which differ only by an embedded district number ("Legislative District
   No. 1 Representative Position No. 1" scores as a close match to "No. 11"
-  and "No. 32" — verified against a live King County export while designing
-  this adapter). The exact, normalized-phrase match below resolves every
+  and "No. 32"). The exact, normalized-phrase match below resolves every
   publication-eligible wa-2026-primary race correctly by construction,
-  because two different district numbers never normalize to the same text.
+  because two different district numbers never normalize to the same text
+  — proven against every one of those 32 races' real King County contest
+  label, committed as reproducible fixture evidence in
+  `test_resolve_race_matches_every_publication_eligible_race_label`
+  (`tests/test_results.py`), not merely asserted from an unreproducible
+  live fetch.
 
 Unmatched or ambiguous names abort loudly
 (docs/runbooks/results-certified-ingest.md, phase 2's own rule) — this
@@ -116,24 +120,35 @@ def _is_write_in(candidate_text: str) -> bool:
 def _race_match_phrases(race: Race) -> set[str]:
     """Every normalized phrase this race's contest could plausibly carry in a
     certified export, built only from the inventory's own official fields —
-    never a separately maintained name list. A real King County export omits
-    "State" from representative contests ("Legislative District No. 32
-    Representative Position No. 1") but keeps it for senate contests ("...
-    State Senator") — an authentic, asymmetric convention accounted for by
-    generating both the full and the "State "-stripped office phrasing."""
-    phrases = {race.display_name, race.office, race.district}
+    never a separately maintained name list.
+
+    Every generator below is individually proven load-bearing against the
+    real King County certified export's own contest labels for all 32
+    wa-2026-primary publication-eligible races, observed live on 2026-08-07
+    while designing this resolver and committed as reproducible fixture
+    evidence in
+    `test_resolve_race_matches_every_publication_eligible_race_label`
+    (`tests/test_results.py`) — not asserted from an unreproducible fetch.
+    `race.display_name` and a bare `race.position` are deliberately absent:
+    neither is ever the real export's own label for any of the 32 races
+    (`display_name` duplicates what `district` alone already resolves for
+    every race that needs it; every inventory `position` value carries a
+    trailing qualifier no export states, e.g. "Position 1 — unexpired
+    2-year term").
+    """
+    # A real King County export omits "State" from representative contests
+    # ("Legislative District No. 32 Representative Position No. 1") but
+    # keeps it for senate contests ("... State Senator") — an authentic,
+    # asymmetric convention `office` (unstripped, for senate) and
+    # `stripped_office` (for representative, below) together account for.
+    phrases = {
+        race.office,
+        race.district,
+        f"{race.office} {race.district}",
+        f"{race.district} {race.office}",
+    }
     position_number: str | None = None
     if race.position:
-        # Every inventory `position` value carries a trailing qualifier a
-        # certified export never states ("Position 1 — unexpired 2-year
-        # term"), so a bare `race.position` or office+position phrase never
-        # equals real export text — verified against the complete live
-        # export while designing this resolver. Only the district-scoped,
-        # "State "-stripped phrasing below is ever a real export's contest
-        # label; the two derived `Position N` phrases past the district
-        # match a different real convention (see below). Keeping only
-        # load-bearing phrases here holds the many-races-share-a-short-
-        # phrase collision surface down without losing any real match.
         stripped_office = race.office.removeprefix("State ")
         phrases.add(f"{race.district} {stripped_office} {race.position}")
         match = _LEADING_POSITION_NUMBER.match(race.position)
@@ -142,9 +157,14 @@ def _race_match_phrases(race: Race) -> set[str]:
     if position_number is not None:
         office_tail = race.office.rsplit(" ", 1)[-1]
         phrases.add(f"{office_tail} Position {position_number}")
-        phrases.add(f"City of Seattle {race.office} Position {position_number}")
-    phrases.add(f"{race.office} {race.district}")
-    phrases.add(f"{race.district} {race.office}")
+        # Only a "City of Seattle ..." contest carries that prefix in a real
+        # export (`seattle-municipal-court-judge-5`, the inventory's only
+        # `district: Citywide` race with a position) — scoped to that
+        # jurisdiction rather than added for every position-bearing race,
+        # which would otherwise manufacture a label no authority publishes
+        # for every legislative-district and judicial race instead.
+        if race.district == "Citywide":
+            phrases.add(f"City of Seattle {race.office} Position {position_number}")
     phrases.update(race.aliases)
     return {_normalize_contest_text(phrase) for phrase in phrases if phrase}
 

@@ -488,6 +488,105 @@ def test_resolve_race_disambiguates_near_identical_legislative_district_names() 
     assert race_32.id == "ld-32-state-representative-1"
 
 
+# Every publication-eligible wa-2026-primary race's real King County
+# certified-export contest label, observed live on 2026-08-07 while
+# designing this resolver (docs/RESULTS.md, "Ingestion mechanics"). This is
+# committed, offline-reproducible evidence for the resolver's own design
+# claim -- not a re-assertion of an unreproducible live fetch: every one of
+# these 32 labels is a real string King County's export used for this
+# contest at capture time, exercising every phrase-generation rule
+# `_race_match_phrases` (`results/ingest.py`) carries. The first 24 are the
+# races `docs/runbooks/results-certified-ingest.md` phase 2 names for the
+# live wa-2026-primary ingest (King County's canvass suffices for their true
+# total); the last 8 are the races that need the Secretary of State's data
+# instead (docs/RESULTS.md, County scope) -- resolved here too, since the
+# resolver itself is race-agnostic and a future Secretary-of-State-scoped
+# adapter will need the same race IDs.
+REAL_CONTEST_LABEL_BY_RACE_ID: dict[str, str] = {
+    "king-county-assessor": "Assessor (Vote for 1)",
+    "king-county-council-2": "Metropolitan King County Council District No. 2 (Vote for 1)",
+    "king-county-council-8": "Metropolitan King County Council District No. 8 (Vote for 1)",
+    "ld-11-state-representative-1": (
+        "Legislative District No. 11 Representative Position No. 1 (Vote for 1)"
+    ),
+    "ld-11-state-representative-2": (
+        "Legislative District No. 11 Representative Position No. 2 (Vote for 1)"
+    ),
+    "ld-34-state-representative-1": (
+        "Legislative District No. 34 Representative Position No. 1 (Vote for 1)"
+    ),
+    "ld-34-state-representative-2": (
+        "Legislative District No. 34 Representative Position No. 2 (Vote for 1)"
+    ),
+    "ld-34-state-senator": "Legislative District No. 34 State Senator (Vote for 1)",
+    "ld-36-state-representative-1": (
+        "Legislative District No. 36 Representative Position No. 1 (Vote for 1)"
+    ),
+    "ld-36-state-representative-2": (
+        "Legislative District No. 36 Representative Position No. 2 (Vote for 1)"
+    ),
+    "ld-36-state-senator": "Legislative District No. 36 State Senator (Vote for 1)",
+    "ld-37-state-representative-1": (
+        "Legislative District No. 37 Representative Position No. 1 (Vote for 1)"
+    ),
+    "ld-37-state-representative-2": (
+        "Legislative District No. 37 Representative Position No. 2 (Vote for 1)"
+    ),
+    "ld-37-state-senator": "Legislative District No. 37 State Senator (Vote for 1)",
+    "ld-43-state-representative-1": (
+        "Legislative District No. 43 Representative Position No. 1 (Vote for 1)"
+    ),
+    "ld-43-state-representative-2": (
+        "Legislative District No. 43 Representative Position No. 2 (Vote for 1)"
+    ),
+    "ld-43-state-senator": "Legislative District No. 43 State Senator (Vote for 1)",
+    "ld-46-state-representative-1": (
+        "Legislative District No. 46 Representative Position No. 1 (Vote for 1)"
+    ),
+    "ld-46-state-representative-2": (
+        "Legislative District No. 46 Representative Position No. 2 (Vote for 1)"
+    ),
+    "ld-46-state-senator": "Legislative District No. 46 State Senator (Vote for 1)",
+    "seattle-city-council-5": "Seattle City Council District No. 5 (Vote for 1)",
+    "seattle-municipal-court-judge-5": (
+        "City of Seattle Municipal Court Judge Position No. 5 (Vote for 1)"
+    ),
+    "seattle-proposition-1-library-levy": "City of Seattle Proposition No. 1 (Vote for 1)",
+    "us-house-7": "U.S. Representative, Congressional District No. 7 (Vote for 1)",
+    # Races King County's canvass alone cannot state the true total for
+    # (docs/RESULTS.md, County scope) -- omitted from the runbook's live
+    # `--race-id` list, but still real, resolvable contest labels.
+    "supreme-court-justice-1": "Justice Position No. 1 (Vote for 1)",
+    "supreme-court-justice-3": "Justice Position No. 3 (Vote for 1)",
+    "supreme-court-justice-5": "Justice Position No. 5 (Vote for 1)",
+    "supreme-court-justice-7": "Justice Position No. 7 (Vote for 1)",
+    "ld-32-state-representative-1": (
+        "Legislative District No. 32 Representative Position No. 1 (Vote for 1)"
+    ),
+    "ld-32-state-representative-2": (
+        "Legislative District No. 32 Representative Position No. 2 (Vote for 1)"
+    ),
+    "ld-32-state-senator": "Legislative District No. 32 State Senator (Vote for 1)",
+    "us-house-9": "U.S. Representative Congressional District No. 9 (Vote for 1)",
+}
+
+
+def test_resolve_race_matches_every_publication_eligible_race_label() -> None:
+    inventory = _inventory()
+    races = [race for race in inventory.races if race.publication_eligible]
+    pub_eligible_ids = {race.id for race in races}
+
+    # The fixture table itself must stay in sync with the inventory: no
+    # publication-eligible race silently missing from this evidence, and no
+    # stale entry for a race the inventory no longer carries.
+    assert set(REAL_CONTEST_LABEL_BY_RACE_ID) == pub_eligible_ids
+
+    for race_id, contest_label in REAL_CONTEST_LABEL_BY_RACE_ID.items():
+        race = resolve_race(contest_label, races)
+        assert race is not None, f"{contest_label!r} did not resolve to any race"
+        assert race.id == race_id, f"{contest_label!r} resolved to {race.id!r}, not {race_id!r}"
+
+
 def test_resolve_race_returns_none_for_a_contest_outside_the_inventory() -> None:
     inventory = _inventory()
     races = [race for race in inventory.races if race.publication_eligible]
