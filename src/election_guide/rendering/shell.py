@@ -24,11 +24,15 @@ CONTACT_HREF = "mailto:seattle-elections@dobravoda.dev"
 # repository's cited authority for the sample ballot, candidate filings, and
 # precinct maps (config/elections/*-inventory.yaml).
 HOW_TO_VOTE_HREF = "https://kingcounty.gov/en/dept/elections/how-to-vote"
-# Same authority, its results page instead of its how-to-vote page. The
-# post-election banner's counting state names this as its one link
+# Same authority, its results hub instead of its how-to-vote page -- the
+# election-agnostic page listing every year's results, not the per-election
+# address `docs/EVIDENCE_CAPTURE.md` and `docs/runbooks/` capture as
+# evidence, because this constant serves every election's guide, not only
+# one. The post-election banner's counting state names this as its one link
 # (docs/RESULTS.md, "The election-day banner"; #285): the site links out to
-# the count rather than tracking it itself.
-KING_COUNTY_RESULTS_HREF = "https://kingcounty.gov/en/dept/elections/results-center"
+# the count rather than tracking it itself. Verified live (not a 404) at
+# review time for #285; re-verify if King County restructures their site.
+KING_COUNTY_RESULTS_HREF = "https://kingcounty.gov/en/dept/elections/results"
 
 # Every link that leaves the site opens in a new tab, so a reader checking a
 # receipt — an endorsement's evidence, the source files, how to vote — keeps

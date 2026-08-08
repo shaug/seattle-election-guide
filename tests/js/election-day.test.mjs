@@ -10,7 +10,7 @@ const { electionDayStatement, wireElectionDay } = await import(
 );
 
 const NAMES = { full: 'Tuesday, August 4, 2026', short: 'Tuesday, August 4' };
-const RESULTS_HREF = 'https://kingcounty.gov/en/dept/elections/results-center';
+const RESULTS_HREF = 'https://kingcounty.gov/en/dept/elections/results';
 const COUNTING = { daysUntil: 5, full: 'August 19, 2026', resultsHref: RESULTS_HREF };
 
 test('far from the election the server rendering already stands', () => {

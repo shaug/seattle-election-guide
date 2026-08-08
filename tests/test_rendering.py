@@ -74,6 +74,7 @@ from election_guide.rendering.payload import (
 )
 from election_guide.rendering.shell import (
     HOW_TO_VOTE_HREF,
+    KING_COUNTY_RESULTS_HREF,
     election_day_banner_html,
     election_names,
 )
@@ -363,8 +364,7 @@ def test_election_day_banner_carries_the_certification_date_for_the_script_to_re
     # Plus the new facts, gated together on the one new parameter.
     assert 'data-election-certification-date="2026-08-19"' in banner
     assert 'data-election-certification-date-full="August 19, 2026"' in banner
-    assert "kingcounty.gov" in banner
-    assert "results-center" in banner
+    assert KING_COUNTY_RESULTS_HREF in banner
 
 
 def test_election_day_banner_renders_the_certified_state_directly() -> None:
