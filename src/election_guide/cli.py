@@ -87,6 +87,11 @@ from election_guide.release import (
     verify_release_compilation,
 )
 from election_guide.rendering import build_rendered_guide
+from election_guide.results.loader import (
+    read_results,
+    reject_committed_counting_status,
+)
+from election_guide.results.validation import validate_results_evidence, validate_results_inventory
 from election_guide.scoring import (
     ConsensusReport,
     PublicationBlockedError,
@@ -122,6 +127,7 @@ render_app = typer.Typer(help="Render and validate the responsive HTML guide.")
 release_app = typer.Typer(help="Compile, audit, and package a versioned public release.")
 collect_app = typer.Typer(help="Refresh source-specific endorsement adapters.")
 hosting_app = typer.Typer(help="Stage validated release artifacts for static hosting.")
+results_app = typer.Typer(help="Validate committed post-election results against the inventory.")
 app.add_typer(inventory_app, name="inventory")
 app.add_typer(calendar_app, name="calendar")
 app.add_typer(election_app, name="election")
@@ -134,6 +140,7 @@ app.add_typer(render_app, name="render")
 app.add_typer(release_app, name="release")
 app.add_typer(collect_app, name="collect")
 app.add_typer(hosting_app, name="hosting")
+app.add_typer(results_app, name="results")
 evidence_app.add_typer(manual_app, name="manual")
 
 
@@ -1238,6 +1245,36 @@ def inventory_validate(
     typer.echo(
         f"inventory: valid ({len(inventory.races)} races, "
         f"{sum(len(race.choices) for race in inventory.races)} choices)"
+    )
+
+
+@results_app.command("validate")
+def results_validate(
+    results_path: Annotated[
+        Path,
+        typer.Argument(exists=True, dir_okay=False, readable=True),
+    ],
+    inventory_path: Annotated[
+        Path, typer.Option(exists=True, dir_okay=False, readable=True)
+    ] = Path("data/normalized/wa-2026-primary-inventory.json"),
+) -> None:
+    """Validate one committed results file: schema, inventory, and evidence.
+
+    Committed results files are only ever `certified` or `amended`
+    (docs/RESULTS.md, Data model) — a `counting`-status file fails here even
+    though the schema itself allows it for forward compatibility.
+    """
+    try:
+        results = read_results(results_path)
+        reject_committed_counting_status(results)
+        inventory = read_inventory(inventory_path)
+        validate_results_inventory(results, inventory)
+        validate_results_evidence(results)
+    except (OSError, ValidationError, ValueError) as error:
+        typer.echo(f"results invalid: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    typer.echo(
+        f"results: valid ({results.election_id}, {results.status}, {len(results.races)} races)"
     )
 
 

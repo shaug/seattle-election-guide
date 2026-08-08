@@ -69,6 +69,7 @@ from election_guide.publication.personalization import (
     PersonalizationScoring,
     PersonalizationSource,
 )
+from election_guide.results.models import ElectionResults
 from election_guide.scoring.models import ConsensusReport, RaceConsensus
 from election_guide.serialization import canonical_json_bytes
 from election_guide.sources.models import Source
@@ -116,11 +117,23 @@ def build_publication_bundle(
     git_commit: str,
     snapshot_root: Path,
     data_as_of: datetime | None = None,
+    results: ElectionResults | None = None,
 ) -> PublicationBundle:
-    """Compute every issue-7 artifact from canonical data and one consensus report."""
+    """Compute every issue-7 artifact from canonical data and one consensus report.
+
+    `results` is the rendering pipeline's one hook onto post-election results
+    (issue #283): a caller that has already loaded and validated a certified
+    or amended results file (`election_guide.results.load_rendering_results`)
+    passes it through here so it reaches the published view model. Omitted or
+    `None`, the bundle is unchanged from before this hook existed.
+    """
     stripped_commit = git_commit.strip()
     if not stripped_commit:
         raise ValueError("git_commit must not be blank")
+    if results is not None and results.election_id != dataset.inventory.election.id:
+        raise ValueError(
+            f"results belong to {results.election_id!r}, not {dataset.inventory.election.id!r}"
+        )
     for capture in dataset.captures:
         verify_capture(capture, snapshot_root)
     validated_consensus = ConsensusReport.model_validate(
@@ -136,6 +149,7 @@ def build_publication_bundle(
         unresolved,
         stripped_commit,
         data_as_of or validated_consensus.computed_at,
+        results,
     )
     checks = _validate_publication(dataset, validated_consensus, view_model)
     validation_report = ValidationReport(
@@ -265,6 +279,7 @@ def _build_view_model(
     unresolved: list[ReviewItem],
     git_commit: str,
     data_as_of: datetime,
+    results: ElectionResults | None,
 ) -> PublicationViewModel:
     active_sources = [
         source for source in dataset.source_registry.sources if source.panel_role != "excluded"
@@ -473,6 +488,7 @@ def _build_view_model(
         methodology=_methodology(dataset, consensus),
         personalization=_personalization(dataset, consensus, sources, sections),
         comparisons=_comparisons(dataset, sections),
+        results=results,
     )
 
 
