@@ -10,7 +10,7 @@ import yaml
 from pydantic import ValidationError
 
 from election_guide.inventory.models import Inventory
-from election_guide.results.models import ElectionResults
+from election_guide.results.models import ElectionResults, ResultsCapture
 from election_guide.results.validation import validate_results_evidence, validate_results_inventory
 from election_guide.serialization import read_yaml
 
@@ -69,3 +69,19 @@ def load_rendering_results(
     validate_results_inventory(results, inventory)
     validate_results_evidence(results, repository_root=repository_root)
     return results
+
+
+def current_results_capture(results: ElectionResults) -> ResultsCapture | None:
+    """The evidence capture behind this file's currently-published state
+    (docs/RESULTS.md, Data model; #286's own provenance-line "capture link").
+
+    `election_night` is evidence only and never rendered or linked
+    (docs/RESULTS.md, "The results lifecycle"), so it is excluded here.
+    Captures are recorded in the order they were made (docs/RESULTS.md's own
+    `data/results/*.yaml` example lists `election_night` before `certified`),
+    so the last remaining entry is the most recent: a certified file's own
+    certified capture, or an amended file's superseding amended capture.
+    `None` when a file (defensively) carries no non-`election_night` capture
+    at all -- `ElectionResults` does not itself require one."""
+    current = [capture for capture in results.captures if capture.kind != "election_night"]
+    return current[-1] if current else None

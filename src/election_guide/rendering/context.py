@@ -33,6 +33,7 @@ from election_guide.rendering.payload import (
     RaceDisplay,
     RaceSourceRow,
 )
+from election_guide.results.models import ElectionResults
 
 
 @dataclass(frozen=True)
@@ -1263,6 +1264,95 @@ def meter_view(race: PublicationRace, sources: dict[str, PublicationSource]) -> 
         percentage_label=race.percentage_label,
         accessible_label=meter_accessible_label(standings, units, labels),
         blocks=tuple(meter_block_renders(blocks, colors, labels)),
+    )
+
+
+@dataclass(frozen=True)
+class RaceResultOutcomeView:
+    """One candidate's certified tally on a race card's results strip
+    (docs/RESULTS.md, Rendering § Race cards; #286).
+
+    Distinct from `MeterEndorsement`/`PublicationAlternative`, which state
+    *endorsement* support: this states the county's own certified *vote*
+    share, so it formats to one decimal place (`54.2%`), not the
+    whole-percentage grammar the endorsement meter uses (docs/RESULTS.md,
+    Rendering: "Vote share and endorsement share never share a component").
+    """
+
+    candidate_id: str
+    candidate_label: str
+    percentage_label: str
+    advanced: bool
+    chip_label: str | None
+    """"Advances" or "Elected" (docs/RESULTS.md, "The results chip"), present
+    exactly when `advanced` is true. `None` for a trailing outcome: the chip
+    marks an outcome, not every candidate."""
+
+
+@dataclass(frozen=True)
+class RaceResultsView:
+    """A candidate race's certified results strip (docs/RESULTS.md, Rendering
+    § Race cards; #286): per-candidate tally rows, leader to trailing, plus
+    the provenance line (ballots counted, authority, capture link). Built
+    once per race per render by `race_results_view`, exactly as `MeterView`
+    is for the endorsement meter."""
+
+    certified_on_label: str
+    """"Aug 19, 2026" -- the ratified mockup's own abbreviated grammar for
+    the results-strip head badge, distinct from `rendering.shell.
+    month_day_year`'s full-month "August 19, 2026" the banner and the race
+    card's own counting note use."""
+    ballots_counted: int
+    authority: str
+    capture_url: str | None
+    outcomes: tuple[RaceResultOutcomeView, ...]
+
+
+def race_results_view(
+    race: PublicationRace,
+    results: ElectionResults | None,
+    *,
+    election_type: str | None,
+    capture_url: str | None,
+) -> RaceResultsView | None:
+    """The certified results strip for one race, or `None` while none is
+    committed, this race's ingested file names no entry for it, or
+    `race.race_type` is `measure` (out of scope pending #289) -- results
+    render as a state, not an option, exactly like `view_model.results`
+    itself (docs/RESULTS.md, Rendering).
+
+    `election_type` picks the outcome chip's label: "Advances" for a primary,
+    "Elected" otherwise (docs/RESULTS.md, "The results chip" names only
+    primary/general; a `special` election reads as a one-round contest with a
+    single winner, so it takes the general's "Elected" rather than inventing
+    a third label undocumented anywhere). `capture_url` is `view_model.
+    metadata.results_capture_url`, resolved once for the whole election
+    (`release.builder.build_release`) rather than reached for here.
+    """
+    if race.race_type == "measure" or results is None:
+        return None
+    outcome_set = next((item for item in results.races if item.race_id == race.id), None)
+    certified_on = results.certified_on
+    if outcome_set is None or certified_on is None:
+        return None
+    labels = {candidate.id: candidate.label for candidate in race.candidates}
+    chip_label = "Advances" if election_type == "primary" else "Elected"
+    sorted_outcomes = sorted(outcome_set.outcomes, key=lambda outcome: outcome.share, reverse=True)
+    return RaceResultsView(
+        certified_on_label=f"{certified_on:%b} {certified_on.day}, {certified_on:%Y}",
+        ballots_counted=outcome_set.ballots_counted,
+        authority=results.authority,
+        capture_url=capture_url,
+        outcomes=tuple(
+            RaceResultOutcomeView(
+                candidate_id=outcome.choice_id,
+                candidate_label=labels[outcome.choice_id],
+                percentage_label=f"{outcome.share * 100:.1f}%",
+                advanced=outcome.advanced,
+                chip_label=chip_label if outcome.advanced else None,
+            )
+            for outcome in sorted_outcomes
+        ),
     )
 
 

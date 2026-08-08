@@ -5,7 +5,7 @@ import { assertModuleGuard } from './support/module-guards.mjs';
 
 // The DOM first, then the module under test: see dom.mjs.
 const document = installDom();
-const { electionDayStatement, wireElectionDay } = await import(
+const { electionDayStatement, wireElectionDay, wireRaceResultsCounting } = await import(
   '../../src/election_guide/rendering/templates/election-day.mjs'
 );
 
@@ -169,6 +169,63 @@ test('wireElectionDay leaves a certified banner alone', () => {
   assert.doesNotThrow(() => wireElectionDay(new Date(2026, 7, 25)));
   assert.equal(document.querySelector('[data-election-day]'), null);
   assert.match(/** @type {string} */ (document.body.innerHTML), /This election is complete\./);
+});
+
+const RACE_COUNTING_SLOT =
+  '<p class="race-results-counting" data-race-counting hidden>' +
+  '<span class="race-results-status race-results-status-counting">Counting</span>' +
+  ' Results certify August 19, 2026.</p>';
+
+test('wireRaceResultsCounting reveals every note inside the counting window', () => {
+  installBanner(COUNTING_ELIGIBLE_BANNER + RACE_COUNTING_SLOT + RACE_COUNTING_SLOT);
+  wireRaceResultsCounting(new Date(2026, 7, 10)); // August 10, 2026: past election day, before certification
+
+  const slots = document.querySelectorAll('[data-race-counting]');
+  assert.equal(slots.length, 2);
+  for (const slot of slots) assert.equal(slot.hidden, false);
+});
+
+test('wireRaceResultsCounting leaves every note hidden before election day', () => {
+  installBanner(
+    '<p class="election-day" data-election-day="2026-08-04"' +
+      ' data-election-day-full="Tuesday, August 4, 2026"' +
+      ' data-election-day-short="Tuesday, August 4">' +
+      '<span class="election-day-when" data-election-day-when>' +
+      '<b>Election day:</b> Tuesday, August 4, 2026</span></p>' +
+      RACE_COUNTING_SLOT,
+  );
+  wireRaceResultsCounting(new Date(2026, 6, 1)); // July 1, 2026: before election day
+  assert.equal(document.querySelector('[data-race-counting]').hidden, true);
+});
+
+test('wireRaceResultsCounting leaves every note hidden once certification has passed', () => {
+  // Never a stale counting promise once the calendar's own certification
+  // date has come and gone with still no results file -- the same fallback
+  // `electionDayStatement`'s own counting branch takes for the banner.
+  installBanner(COUNTING_ELIGIBLE_BANNER + RACE_COUNTING_SLOT);
+  wireRaceResultsCounting(new Date(2026, 7, 25)); // August 25, 2026: past the certification date
+  assert.equal(document.querySelector('[data-race-counting]').hidden, true);
+});
+
+test('wireRaceResultsCounting is a no-op with no counting note on the page', () => {
+  installBanner(COUNTING_ELIGIBLE_BANNER);
+  assert.doesNotThrow(() => wireRaceResultsCounting(new Date(2026, 7, 10)));
+});
+
+test('wireRaceResultsCounting is a no-op once results are certified', () => {
+  // `shell.election_day_banner_html` drops `data-election-day` entirely in
+  // the certified state, so there is nothing to read a window from -- and
+  // `guide.html.j2` never renders a counting note once `race.results` exists
+  // for a race, so this guards a page with a certified banner but a stray
+  // note somehow still present.
+  installBanner(
+    '<p class="election-day election-day-past">' +
+      '<span class="election-day-when"><b>This election is complete.</b>' +
+      '<br>Results were certified August 19, 2026.</span></p>' +
+      RACE_COUNTING_SLOT,
+  );
+  wireRaceResultsCounting(new Date(2026, 7, 25));
+  assert.equal(document.querySelector('[data-race-counting]').hidden, true);
 });
 
 test('the module keeps client state out of storage', () => {

@@ -15,6 +15,13 @@
 // because that fact does not depend on today's date the way "how far from
 // election day" does.
 //
+// Issue #286 reuses this exact same trigger for a second surface: a
+// candidate race card's own counting note. It is not a second banner and
+// carries no election-day/certification-date attributes of its own --
+// `wireRaceResultsCounting` below reads the banner's already-rendered
+// attributes and only ever toggles each note's `hidden` attribute, because
+// every race card on one page shares the one election-wide window.
+//
 // `Intl.RelativeTimeFormat` is the platform's own friendly-date formatter. This
 // project ships hand-written ES modules with no bundler, and should not gain a
 // dependency for a job the browser already does.
@@ -142,4 +149,35 @@ export function wireElectionDay(now = new Date()) {
     banner.querySelector('.election-day-action')?.remove();
     banner.querySelector('.election-day-separator')?.remove();
   }
+}
+
+/**
+ * Reveal every candidate race card's counting note (issue #286) once the
+ * reader's own clock falls inside the same counting window `wireElectionDay`
+ * computes for the banner above -- election day passed, the calendar's
+ * certification date not yet reached (docs/RESULTS.md, Rendering § Race
+ * cards). The server renders each note's full text unconditionally inside a
+ * `hidden` wrapper only when it is possibly correct (no results file yet, a
+ * known certification date, a candidate race -- `guide.html.j2`), so this
+ * never injects text, only decides whether today says the window is open.
+ * One election per guide page, so one decision reveals every card's note.
+ *
+ * @param {Date} [now]
+ */
+export function wireRaceResultsCounting(now = new Date()) {
+  const slots = document.querySelectorAll('[data-race-counting]');
+  if (slots.length === 0) return;
+  // The banner's own attributes (`election_day_banner_html`), not a second
+  // copy on every card: `data-election-certification-date` is present only
+  // when the calendar knows a certification date and no results file has
+  // rendered the certified banner state instead -- exactly the two facts
+  // `guide.html.j2` already checked before rendering any note to reveal.
+  const banner = document.querySelector('[data-election-day]');
+  const electionDay = banner?.getAttribute('data-election-day') ?? null;
+  const certificationDate = banner?.getAttribute('data-election-certification-date') ?? null;
+  if (electionDay === null || certificationDate === null) return;
+  const isCounting =
+    calendarDaysUntil(electionDay, now) < 0 && calendarDaysUntil(certificationDate, now) >= 0;
+  if (!isCounting) return;
+  for (const slot of slots) /** @type {HTMLElement} */ (slot).hidden = false;
 }

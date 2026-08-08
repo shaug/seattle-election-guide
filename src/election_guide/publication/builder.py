@@ -48,6 +48,7 @@ from election_guide.publication.models import (
     PublicationMetadata,
     PublicationMethodology,
     PublicationRace,
+    PublicationRaceCandidate,
     PublicationSection,
     PublicationSource,
     PublicationViewModel,
@@ -119,6 +120,7 @@ def build_publication_bundle(
     data_as_of: datetime | None = None,
     results: ElectionResults | None = None,
     certification_date: str | None = None,
+    results_capture_url: str | None = None,
 ) -> PublicationBundle:
     """Compute every issue-7 artifact from canonical data and one consensus report.
 
@@ -132,6 +134,15 @@ def build_publication_bundle(
     milestone date for this election (docs/RESULTS.md; #285), carried into
     `PublicationMetadata` the same way `election_date` is. Omitted or `None`,
     the post-election banner is unchanged from before this parameter existed.
+
+    `results_capture_url` (docs/RESULTS.md, Rendering § Race cards; #286) is
+    the certified-or-amended capture's own resolved `canonical_url` -- a
+    caller that has already read the evidence manifest
+    (`election_guide.results.current_results_capture`,
+    `election_guide.evidence.storage.read_capture_manifest`) passes it
+    through here so every candidate race's results strip can link its
+    provenance line's "capture" receipt. Omitted, `None`, or `results` itself
+    `None`, no race card carries a capture link.
     """
     stripped_commit = git_commit.strip()
     if not stripped_commit:
@@ -157,6 +168,7 @@ def build_publication_bundle(
         data_as_of or validated_consensus.computed_at,
         results,
         certification_date,
+        results_capture_url,
     )
     checks = _validate_publication(dataset, validated_consensus, view_model)
     validation_report = ValidationReport(
@@ -288,6 +300,7 @@ def _build_view_model(
     data_as_of: datetime,
     results: ElectionResults | None,
     certification_date: str | None = None,
+    results_capture_url: str | None = None,
 ) -> PublicationViewModel:
     active_sources = [
         source for source in dataset.source_registry.sources if source.panel_role != "excluded"
@@ -346,6 +359,7 @@ def _build_view_model(
             section_label=section_label,
             jurisdiction_id=race.jurisdiction_id,
             race_label=race.display_name,
+            race_type=race.race_type,
             is_contested=len(race.choices) > 1,
             filter_tokens=sorted(
                 {
@@ -422,6 +436,10 @@ def _build_view_model(
             warning_codes=[warning.code for warning in result.warnings],
             warning_messages=[warning.message for warning in result.warnings],
             source_cells=cells,
+            candidates=[
+                PublicationRaceCandidate(id=choice.id, label=choice.display_name)
+                for choice in race.choices
+            ],
         )
         section_races[section_id].append(publication_race)
     sections = [
@@ -476,6 +494,7 @@ def _build_view_model(
             election_type=dataset.inventory.election.election_type,
             state=dataset.inventory.election.state,
             certification_date=certification_date,
+            results_capture_url=results_capture_url,
             generated_at=consensus.computed_at,
             data_as_of=data_as_of,
             data_version=consensus.input_hash[:12],

@@ -10,6 +10,7 @@ from election_guide.results.ingest import (
     resolve_race,
 )
 from election_guide.results.loader import (
+    current_results_capture,
     load_rendering_results,
     read_results,
     reject_committed_counting_status,
@@ -25,6 +26,7 @@ __all__ = [
     "ResultsCapture",
     "ResultsIngestError",
     "build_election_results",
+    "current_results_capture",
     "load_rendering_results",
     "parse_certified_csv",
     "read_results",

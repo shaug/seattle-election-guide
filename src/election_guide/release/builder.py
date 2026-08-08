@@ -15,6 +15,7 @@ from pathlib import Path
 
 from election_guide.calendar import read_election_calendar
 from election_guide.evidence.models import CapturedManifest
+from election_guide.evidence.storage import read_capture_manifest
 from election_guide.normalization.models import CanonicalDataset
 from election_guide.publication import build_publication_bundle, write_publication_bundle
 from election_guide.release.compiler import read_release_ledger, verify_release_compilation
@@ -27,7 +28,7 @@ from election_guide.release.models import (
     release_archive_name,
 )
 from election_guide.rendering import build_rendered_guide
-from election_guide.results.loader import load_rendering_results
+from election_guide.results.loader import current_results_capture, load_rendering_results
 from election_guide.scoring import ConsensusReport, read_scoring_configuration, score_dataset
 from election_guide.serialization import canonical_json_bytes
 from election_guide.sources.registry import source_registry_hash
@@ -81,6 +82,17 @@ def build_release(
     ends. A missing calendar file, or a calendar with no certification
     milestone declared for this election yet, is a silent no-op -- the
     release is unchanged from before this parameter existed.
+
+    When `results` resolves, its current capture's (`results.
+    current_results_capture`) evidence manifest is read from `repository_root`
+    to resolve `results_capture_url` (docs/RESULTS.md, Rendering § Race
+    cards; #286): every candidate race's results strip provenance line links
+    it. `load_rendering_results` above has already required every capture
+    reference in this same file to resolve (`validate_results_evidence`), so
+    re-reading it here is expected to always succeed; a results file with no
+    non-`election_night` capture at all (schema-legal but never produced by
+    the shipped adapter) leaves the provenance line without a capture link
+    rather than inventing one.
     """
     if generated_at.tzinfo is None or generated_at.utcoffset() is None:
         raise ValueError("release generated_at must include a UTC offset")
@@ -114,6 +126,13 @@ def build_release(
         calendar = read_election_calendar(calendar_path)
         scheduled = calendar.certification_date(dataset.inventory.election.id)
         certification_date = scheduled.isoformat() if scheduled is not None else None
+    results_capture_url: str | None = None
+    if results is not None:
+        capture = current_results_capture(results)
+        if capture is not None:
+            manifest = read_capture_manifest(repository_root / capture.evidence)
+            if isinstance(manifest, CapturedManifest):
+                results_capture_url = manifest.canonical_url
 
     output_dir.parent.mkdir(parents=True, exist_ok=True)
     stage = Path(tempfile.mkdtemp(prefix=f".{output_dir.name}.staging-", dir=output_dir.parent))
@@ -129,6 +148,7 @@ def build_release(
             data_as_of=ledger.data_as_of,
             results=results,
             certification_date=certification_date,
+            results_capture_url=results_capture_url,
         )
         write_publication_bundle(publication, data_dir)
         (data_dir / "canonical-dataset.json").write_bytes(

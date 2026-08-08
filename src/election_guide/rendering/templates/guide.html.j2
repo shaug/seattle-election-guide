@@ -127,6 +127,49 @@
                 Too few endorsements to measure agreement.</div>
               {% endif %}
             </div>
+            {# The results strip (docs/RESULTS.md, Rendering § Race cards;
+               #286): outside every lens region above, because a certified
+               result is a permanent fact the reader's source selection never
+               changes. `race_results(race)` (rendering/context.py) already
+               gates candidate-races-only -- a measure's presentation stays
+               #289's undecided question -- so `results` alone decides the
+               certified branch below. #}
+            {% set results = race_results(race) %}
+            {% if results %}
+            {# Certified: a permanent fact once ingested, so it renders
+               directly and unconditionally -- no script involvement needed,
+               exactly like the banner's own certified state. #}
+            <div class="race-results">
+              <div class="race-results-head">
+                <span class="race-results-eyebrow">Result</span>
+                <span class="race-results-status">Certified · {{ results.certified_on_label }}</span>
+              </div>
+              <div class="race-results-tally">
+                {% for outcome in results.outcomes %}
+                <div class="race-results-row{{ '' if outcome.advanced else ' race-results-row-trailing' }}">
+                  <span class="race-results-name">{{ outcome.candidate_label }}{% if outcome.chip_label %} <span class="race-results-chip">{{ outcome.chip_label }}</span>{% endif %}</span>
+                  <span class="race-results-share">{{ outcome.percentage_label }}</span>
+                  <span class="race-results-bar"><i style="width:{{ outcome.percentage_label }}"></i></span>
+                </div>
+                {% endfor %}
+              </div>
+              <p class="race-results-provenance">{{ results.ballots_counted }} ballots · {{ results.authority }}{% if results.capture_url %} · <a href="{{ results.capture_url }}"{{ external_link_attributes }}>capture</a>{% endif %}</p>
+            </div>
+            {% elif race.race_type != 'measure' and not guide.results and certification_date_full %}
+            {# Counting: no results file exists to gate on during this
+               window (docs/RESULTS.md, "The election day banner's counting
+               state is the one exception"), so the reader's own clock
+               decides, exactly like the banner's own counting state (the
+               shipped #192 module this page's script bundle also wires).
+               The full text renders unconditionally here and starts hidden;
+               the script only ever toggles `hidden`, never writes text, so
+               a reader with no JavaScript sees the card exactly as it
+               rendered before this feature. #}
+            <p class="race-results-counting" data-race-counting hidden>
+              <span class="race-results-status race-results-status-counting">Counting</span>
+              Results certify {{ certification_date_full }}.
+            </p>
+            {% endif %}
           </article>
           {% endfor %}
         </div>

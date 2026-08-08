@@ -101,6 +101,7 @@ from tests.test_publication import (
     _publication_dataset,  # pyright: ignore[reportPrivateUsage]
     _snapshot_store,  # pyright: ignore[reportPrivateUsage]
 )
+from tests.test_results import RACE_ID as RESULTS_RACE_ID
 from tests.test_results import _valid_results  # pyright: ignore[reportPrivateUsage]
 from tests.test_scoring import (
     NOW,
@@ -716,11 +717,25 @@ def test_no_results_and_no_certification_date_is_byte_identical_to_before_285(
     assert _ELECTION_DAY_BANNER.search(html).group() == shipped_banner  # type: ignore[union-attr]
 
 
+def _strip_race_card(html: str, race_id: str) -> str:
+    """One document with a single race card's whole `<article>...</article>`
+    removed, so a byte-identity comparison can isolate everything else."""
+    marker = f'id="race-{race_id}"'
+    marker_index = html.index(marker)
+    start = html.rindex("<article", 0, marker_index)
+    end = html.index("</article>", marker_index) + len("</article>")
+    return html[:start] + html[end:]
+
+
 def test_certified_results_settle_the_banner_into_its_permanent_state(tmp_path: Path) -> None:
-    """Once a certified or amended results file is attached, the banner is the
-    one surface (#285) that renders differently -- everything else about the
-    page is unchanged, which is what #283's original byte-identity test
-    proved about the hook before any ticket read it back out."""
+    """Once a certified or amended results file is attached, the banner (#285)
+    and the certified race's own card (#286, `PublicationRace.race_type`
+    `RESULTS_RACE_ID`'s results strip) are the two surfaces that render
+    differently -- everything else about the page is unchanged, which is what
+    #283's original byte-identity test proved about the hook before any
+    ticket read it back out. The results strip's own semantics are covered by
+    `test_certified_results_grow_a_results_strip_on_the_candidate_race_card`
+    below; this test isolates the banner's own contribution."""
     configuration = read_rendering_configuration(RENDERING_CONFIG)
     without_results = _view_model(tmp_path / "without-results")
     results_root = tmp_path / "with-results"
@@ -731,11 +746,16 @@ def test_certified_results_settle_the_banner_into_its_permanent_state(tmp_path: 
     with_html = render_html_document(with_results, configuration)
 
     assert with_html != without_html
-    # Stripping each document's own banner element leaves byte-identical
-    # documents: the certified state is the only thing #285 changes.
-    assert _ELECTION_DAY_BANNER.sub("", without_html, count=1) == _ELECTION_DAY_BANNER.sub(
-        "", with_html, count=1
+    # Stripping each document's own banner element and the one race #286
+    # grows a results strip on leaves byte-identical documents: those two
+    # surfaces are the only things a results file changes.
+    without_stripped = _strip_race_card(
+        _ELECTION_DAY_BANNER.sub("", without_html, count=1), RESULTS_RACE_ID
     )
+    with_stripped = _strip_race_card(
+        _ELECTION_DAY_BANNER.sub("", with_html, count=1), RESULTS_RACE_ID
+    )
+    assert without_stripped == with_stripped
     assert (
         '<p class="election-day election-day-past">'
         '<span class="election-day-when"><b>This election is complete.</b>'
@@ -774,6 +794,163 @@ def test_certification_date_reaches_the_document_for_the_script_to_read(tmp_path
     # No results file yet, so the tense-neutral #192 markup is still what
     # renders -- only the extra data attributes are new.
     assert "<b>Election day:</b>" in html
+
+
+MEASURE_RACE_ID = "seattle-proposition-1-library-levy"
+
+
+def _race_card_html(html: str, race_id: str) -> str:
+    """One race card's own markup, the same slice `id="race-<id>"` idiom
+    other guide tests already use."""
+    return html.split(f'id="race-{race_id}"')[1].split("</article>")[0]
+
+
+def test_no_results_and_no_certification_date_leaves_race_cards_untouched(
+    tmp_path: Path,
+) -> None:
+    """#286's own acceptance criterion (a): before election day and outside
+    the counting window, with no results data, cards are byte-identical to
+    today. `_view_model` attaches neither `results` nor `metadata.
+    certification_date` (both default `None`, exactly as every bundle built
+    before #286 left them), so no race card should carry a trace of the new
+    markup -- the same "nothing wired yet" baseline #285's own equivalent
+    test proves for the banner."""
+    configuration = read_rendering_configuration(RENDERING_CONFIG)
+    view_model = _view_model(tmp_path / "without-results")
+
+    assert view_model.results is None
+    assert view_model.metadata.certification_date is None
+    html = render_html_document(view_model, configuration)
+    # Markup only -- the inlined stylesheet (guide.css) and the bundled
+    # script (election-day.mjs's own `[data-race-counting]` selector)
+    # legitimately name these strings whether or not any card ever renders
+    # them, so the check is scoped to the race grid itself.
+    race_grid = html.split('<div id="guide-races"', 1)[1].split("<footer", 1)[0]
+    assert '<div class="race-results">' not in race_grid
+    assert "race-results-counting" not in race_grid
+    assert "data-race-counting" not in race_grid
+
+
+def test_certified_results_grow_a_results_strip_on_the_candidate_race_card(
+    tmp_path: Path,
+) -> None:
+    """#286's own acceptance criterion (b): a certified card matches the
+    ratified mockup semantics -- shared bar scale, chip after name,
+    fact-toned -- for `king-county-assessor`, the race `tests.test_results.
+    _valid_results` certifies with four candidates, the top two advancing in
+    this primary."""
+    configuration = read_rendering_configuration(RENDERING_CONFIG)
+    without_results = _view_model(tmp_path / "without-results")
+    results_root = tmp_path / "with-results"
+    results_root.mkdir()
+    with_results = without_results.model_copy(update={"results": _valid_results(results_root)})
+
+    html = render_html_document(with_results, configuration)
+    card = _race_card_html(html, RESULTS_RACE_ID)
+
+    assert '<div class="race-results">' in card
+    assert "Result" in card
+    assert "Certified · Aug 19, 2026" in card
+    # Four tally rows, leader to trailing, each on the one shared full-width
+    # bar scale -- the same `width:<percentage_label>` idiom for every row,
+    # never a per-candidate rescaled track.
+    assert card.count('<div class="race-results-row') == 4
+    assert card.index("Dominique M Scarimbolo") < card.index("Christopher Roberts")
+    assert card.index("Christopher Roberts") < card.index("Rob Foxcurran")
+    assert card.index("Rob Foxcurran") < card.index("Al Dams")
+    # The outcome chip -- sky-on-navy, immediately after the candidate's name
+    # -- on exactly the two advancing candidates in this primary.
+    assert card.count('<span class="race-results-chip">Advances</span>') == 2
+    assert (
+        '<span class="race-results-name">Dominique M Scarimbolo '
+        '<span class="race-results-chip">Advances</span></span>' in card
+    )
+    assert (
+        '<span class="race-results-name">Al Dams</span>' in card
+    )  # the trailing candidate carries no chip
+    assert '<i style="width:32.0%"></i>' in card
+    assert '<i style="width:16.0%"></i>' in card
+    # The provenance line: ballots counted, authority, capture link.
+    assert "61234 ballots" in card
+    assert "King County Elections" in card
+    # No results file yet ingested for capture-url resolution in this unit
+    # test (that seam is `release.builder.build_release`'s own, exercised in
+    # tests/test_release.py), so no capture link renders here -- the
+    # provenance line degrades gracefully rather than inventing one.
+    assert "capture</a>" not in card
+    # The counting scaffold never coexists with a certified strip.
+    assert "data-race-counting" not in card
+
+
+def test_counting_state_renders_the_single_line_dated_from_the_calendar(
+    tmp_path: Path,
+) -> None:
+    """#286's own acceptance criterion (c): during the counting window (no
+    results yet, a calendar certification date known), the results slot
+    renders the single "Counting -- results certify <date>" line, dated from
+    the calendar milestone, and no numbers -- starting `hidden`, revealed
+    only by the reader's own clock (`wireRaceResultsCounting`,
+    election-day.mjs, tested in tests/js/election-day.test.mjs)."""
+    configuration = read_rendering_configuration(RENDERING_CONFIG)
+    without_results = _view_model(tmp_path / "without-results")
+    view_model = without_results.model_copy(
+        update={
+            "metadata": without_results.metadata.model_copy(
+                update={"certification_date": "2026-08-19"}
+            )
+        }
+    )
+    assert view_model.results is None
+
+    html = render_html_document(view_model, configuration)
+    card = _race_card_html(html, RESULTS_RACE_ID)
+
+    assert '<p class="race-results-counting" data-race-counting hidden>' in card
+    assert "Counting" in card
+    assert "Results certify August 19, 2026." in card
+    # No numbers: the counting state never shows a tally.
+    assert "race-results-tally" not in card
+    assert "race-results-bar" not in card
+    assert '<div class="race-results">' not in card
+
+
+def test_measure_races_render_exactly_as_today_regardless_of_results_state(
+    tmp_path: Path,
+) -> None:
+    """#286's own acceptance criterion (d): measure races render exactly as
+    today (untouched), pending #289 -- neither a certified results strip nor
+    a counting note ever reaches a measure race's own card, even while both
+    are active for the election's candidate races."""
+    configuration = read_rendering_configuration(RENDERING_CONFIG)
+    without_results = _view_model(tmp_path / "without-results")
+
+    # The counting state: a certification date known, no results file yet.
+    counting_view_model = without_results.model_copy(
+        update={
+            "metadata": without_results.metadata.model_copy(
+                update={"certification_date": "2026-08-19"}
+            )
+        }
+    )
+    counting_html = render_html_document(counting_view_model, configuration)
+    counting_card = _race_card_html(counting_html, MEASURE_RACE_ID)
+    assert "race-results" not in counting_card
+    assert "data-race-counting" not in counting_card
+    # The election overall does carry a counting note -- for its candidate
+    # races -- so this proves the measure is excluded, not that the fixture
+    # never activates the feature at all.
+    assert "data-race-counting" in counting_html
+
+    # The certified state: a results file exists for the election.
+    results_root = tmp_path / "with-results"
+    results_root.mkdir()
+    certified_view_model = without_results.model_copy(
+        update={"results": _valid_results(results_root)}
+    )
+    certified_html = render_html_document(certified_view_model, configuration)
+    certified_card = _race_card_html(certified_html, MEASURE_RACE_ID)
+    assert "race-results" not in certified_card
+    assert '<div class="race-results">' in certified_html  # active for the assessor race
 
 
 PUBLIC_SITE_URL = "https://seattleelections.guide"
