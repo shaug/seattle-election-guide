@@ -285,6 +285,24 @@ class PublicationCategoryAnalysis(PublicationModel):
         return self
 
 
+class PublicationRaceCandidate(PublicationModel):
+    """One ballot choice's identity: `PublicationRace`'s own full roster, in
+    ballot order (docs/RESULTS.md, Rendering § Race cards; #286).
+
+    Nothing else in this module already carries every candidate a race's
+    ballot named regardless of endorsement coverage — `endorsement_groups`,
+    `alternatives`, and `source_cells` each name only candidates some source
+    took a position on. A results file cites a certified outcome by
+    `choice_id` alone (`results.models.RaceOutcome`), so resolving it to a
+    display label — "fail loudly, never guessed" (docs/RESULTS.md, Data
+    model) — needs this roster; `rendering.context.race_results_view` is its
+    one reader.
+    """
+
+    id: str = Field(min_length=1)
+    label: str = Field(min_length=1)
+
+
 class PublicationRace(PublicationModel):
     id: str = Field(pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
     """A slug, because issue #136 made it an address.
@@ -302,6 +320,20 @@ class PublicationRace(PublicationModel):
     section_label: str
     jurisdiction_id: str
     race_label: str
+    race_type: Literal["candidate", "measure", "party_office"] | None = None
+    """The inventory's own race type (`inventory.models.Race.race_type`),
+    carried through so a rendering pass can gate a race-type-scoped feature
+    without reaching back into the inventory it was not otherwise handed
+    (docs/RESULTS.md, Rendering § Race cards; #286: the results strip is
+    candidate-races-only until `#289` ratifies measure presentation).
+    Optional, like `PublicationMetadata.certification_date` and every prior
+    schema field this model has added (docs/HOSTING.md, "Historical
+    bundles": `hosting/pages.py::_verify_bundle` re-validates every declared
+    election's frozen `publication_view_model.json` -- including one
+    published before this field existed -- against the *current*
+    `PublicationViewModel`, so a required field here would break loading a
+    historical bundle it never applies to (that surface byte-copies the
+    guide page rather than re-rendering it)."""
     is_contested: bool
     filter_tokens: list[str]
     support_leader_candidate_ids: list[str]
@@ -328,9 +360,21 @@ class PublicationRace(PublicationModel):
     warning_codes: list[str]
     warning_messages: list[str]
     source_cells: list[SourceCell]
+    candidates: list[PublicationRaceCandidate] = Field(
+        default_factory=list[PublicationRaceCandidate]
+    )
+    """Every ballot choice this race named, in ballot order — the roster
+    `rendering.context.race_results_view` (#286) resolves a certified
+    outcome's `choice_id` against, independent of which candidates any
+    source endorsed. Defaults empty for the same backward-compatibility
+    reason `race_type` is optional, above; every freshly built bundle
+    populates it unconditionally (`publication.builder`)."""
 
     @model_validator(mode="after")
     def validate_display_semantics(self) -> PublicationRace:
+        candidate_ids = [candidate.id for candidate in self.candidates]
+        if len(set(candidate_ids)) != len(candidate_ids):
+            raise ValueError("race candidate roster IDs must be unique")
         if len(set(self.support_leader_candidate_ids)) != len(self.support_leader_candidate_ids):
             raise ValueError("support leader candidate IDs must be unique")
         if len(self.support_leader_candidate_ids) != len(self.support_leader_candidate_labels):
@@ -486,6 +530,15 @@ class PublicationMetadata(PublicationModel):
     (docs/RESULTS.md, "The election-day banner"; #285) reads this to know
     when its counting window ends -- with no results file, `None` leaves the
     banner exactly as the shipped #192 states left it."""
+    results_capture_url: str | None = None
+    """The certified-or-amended results capture's own resolved
+    `canonical_url` (docs/RESULTS.md, Rendering § Race cards; #286), when the
+    release pipeline could read one (`release.builder.build_release`,
+    `results.current_results_capture`). Every candidate race's results strip
+    provenance line links it (`rendering.context.race_results_view`); `None`
+    omits the link rather than rendering a broken one. Independent of
+    `certification_date`: this requires a results file to exist at all,
+    which the counting window's own certification date does not."""
     generated_at: AwareDatetime
     data_as_of: AwareDatetime | None = None
     data_version: str
@@ -512,7 +565,7 @@ class PublicationMetadata(PublicationModel):
 
 
 class PublicationViewModel(PublicationModel):
-    schema_version: Literal["1.11"] = "1.11"
+    schema_version: Literal["1.12"] = "1.12"
     metadata: PublicationMetadata
     sources: list[PublicationSource]
     sections: list[PublicationSection]
@@ -523,9 +576,9 @@ class PublicationViewModel(PublicationModel):
     """Certified or amended post-election results for this election, or `None`
     while none is committed (docs/RESULTS.md, Rendering: "results render as a
     state, not an option"). `#285`-`#288` read this instead of each loading
-    and validating `data/results/` themselves; nothing in this module or the
-    rendering pipeline yet reads it back out — no surface renders from it
-    until those tickets land (issue #283)."""
+    and validating `data/results/` themselves. `#285`'s election-day banner
+    was the first surface to render from it; `#286` (race cards, via each
+    `PublicationRace.results`) is the second."""
 
     @model_validator(mode="after")
     def validate_topology(self) -> PublicationViewModel:

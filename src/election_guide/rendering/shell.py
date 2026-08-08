@@ -226,10 +226,12 @@ def site_icon_svg(size: int | None = 22, *, on_dark: bool = False) -> Markup:
     )
 
 
-def _month_day_year(value: date) -> str:
+def month_day_year(value: date) -> str:
     """ "August 19, 2026" — the one-date grammar the post-election banner states
     use (docs/RESULTS.md, "The election-day banner"; #285), distinct from the
-    weekday-carrying `full`/`short` forms the pre-election states use."""
+    weekday-carrying `full`/`short` forms the pre-election states use. Public
+    because `rendering/documents.py` reuses it for the race card's own
+    counting-line date (#286), rather than a second date formatter."""
     return f"{value:%B} {value.day}, {value:%Y}"
 
 
@@ -286,7 +288,7 @@ def election_day_banner_html(
     """
 
     if certified_on is not None:
-        certified_full = _month_day_year(date.fromisoformat(certified_on))
+        certified_full = month_day_year(date.fromisoformat(certified_on))
         return (
             '<p class="election-day election-day-past">'
             '<span class="election-day-when">'
@@ -302,7 +304,7 @@ def election_day_banner_html(
 
     counting_attrs = ""
     if certification_date is not None:
-        certification_full = _month_day_year(date.fromisoformat(certification_date))
+        certification_full = month_day_year(date.fromisoformat(certification_date))
         escaped_certification_full = html.escape(certification_full, quote=True)
         counting_attrs = (
             f' data-election-certification-date="{html.escape(certification_date, quote=True)}"'

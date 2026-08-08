@@ -8,6 +8,7 @@ from `rendering/context.py`; this module only assembles them into a document.
 
 from __future__ import annotations
 
+from datetime import date
 from functools import partial
 from typing import Any, cast
 from urllib.parse import urlsplit
@@ -36,6 +37,7 @@ from election_guide.rendering.shell import (
     envelope_icon_svg,
     github_icon_svg,
     info_icon_svg,
+    month_day_year,
     page_title,
     race_og_image_path,
     race_page_path,
@@ -59,6 +61,21 @@ def _election_day_banner(view_model: PublicationViewModel) -> str:
         certification_date=view_model.metadata.certification_date,
         certified_on=certified_on.isoformat() if certified_on is not None else None,
     )
+
+
+def _certification_date_full(view_model: PublicationViewModel) -> str | None:
+    """ "August 19, 2026", the same formatted certification date the banner's
+    own counting state carries as `data-election-certification-date-full`
+    (`rendering/shell.py::election_day_banner_html`) -- a candidate race
+    card's own counting note (docs/RESULTS.md, Rendering § Race cards; #286)
+    states the identical date, so it is computed once here rather than
+    reimplemented in the template. `None` when the calendar has not declared
+    a certification milestone for this election, exactly like the banner's
+    own gate."""
+    certification_date = view_model.metadata.certification_date
+    if certification_date is None:
+        return None
+    return month_day_year(date.fromisoformat(certification_date))
 
 
 def template_environment() -> Environment:
@@ -165,6 +182,11 @@ def render_html_document(
             f"{guide_path}comparisons/" if view_model.comparisons.policy.enabled else None
         ),
         election_day_banner=_election_day_banner(view_model),
+        # Race cards' own counting note (docs/RESULTS.md, Rendering § Race
+        # cards; #286) states the identical certification date the banner's
+        # counting state does, computed once here for every card rather than
+        # per-card in the template.
+        certification_date_full=_certification_date_full(view_model),
         canonical_origin=configuration.public_site_url,
         project_url=configuration.project_url,
         **context.footer_update_context(view_model),
@@ -175,6 +197,16 @@ def render_html_document(
             context.screen_support_summary_compact, sources=sources_by_id
         ),
         meter_view=partial(context.meter_view, sources=sources_by_id),
+        # The certified results strip (docs/RESULTS.md, Rendering § Race
+        # cards; #286), one function bound to this election's own results and
+        # capture link so the template calls it per race exactly like
+        # `meter_view` above.
+        race_results=partial(
+            context.race_results_view,
+            results=view_model.results,
+            election_type=view_model.metadata.election_type,
+            capture_url=view_model.metadata.results_capture_url,
+        ),
     )
 
 
