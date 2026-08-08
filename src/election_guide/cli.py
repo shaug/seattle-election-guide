@@ -1325,10 +1325,12 @@ def results_ingest(
         typer.Option(
             "--race-id",
             help=(
-                "Restrict ingestion to exactly these publication-eligible race IDs; every one "
-                "must be found in the export. Defaults to every publication-eligible race in "
-                "the inventory. Pass a narrower set to honor the county-scope decision "
-                "(docs/RESULTS.md) when this capture cannot state a race's true total."
+                "Required. Restrict ingestion to exactly these publication-eligible race IDs; "
+                "every one must be found in the export. Deliberately has no "
+                "every-publication-eligible-race default: name exactly the races this capture "
+                "can state the true total for, honoring the county-scope decision "
+                "(docs/RESULTS.md) rather than silently publishing a partial county tally as "
+                "final for a race whose district crosses a county line."
             ),
         ),
     ] = None,
@@ -1349,6 +1351,8 @@ def results_ingest(
     unverified file. Never fetches the network itself.
     """
     try:
+        if not race_id:
+            raise ValueError("results ingest requires at least one --race-id")
         inventory = read_inventory(inventory_path)
         if inventory.election.id != election_id:
             raise ValueError(f"inventory belongs to {inventory.election.id!r}, not {election_id!r}")
@@ -1389,7 +1393,7 @@ def results_ingest(
             authority=authority.name,
             certified_on=date.fromisoformat(certified_on),
             captures=captures,
-            expected_race_ids=frozenset(race_id) if race_id else None,
+            expected_race_ids=frozenset(race_id),
         )
         validate_results_inventory(results, inventory)
         validate_results_evidence(results)

@@ -124,10 +124,16 @@ def _race_match_phrases(race: Race) -> set[str]:
     phrases = {race.display_name, race.office, race.district}
     position_number: str | None = None
     if race.position:
-        phrases.add(race.position)
-        phrases.add(f"{race.office} {race.position}")
-        phrases.add(f"{race.district} {race.office} {race.position}")
-        phrases.add(f"{race.district} {race.position}")
+        # Every inventory `position` value carries a trailing qualifier a
+        # certified export never states ("Position 1 — unexpired 2-year
+        # term"), so a bare `race.position` or office+position phrase never
+        # equals real export text — verified against the complete live
+        # export while designing this resolver. Only the district-scoped,
+        # "State "-stripped phrasing below is ever a real export's contest
+        # label; the two derived `Position N` phrases past the district
+        # match a different real convention (see below). Keeping only
+        # load-bearing phrases here holds the many-races-share-a-short-
+        # phrase collision surface down without losing any real match.
         stripped_office = race.office.removeprefix("State ")
         phrases.add(f"{race.district} {stripped_office} {race.position}")
         match = _LEADING_POSITION_NUMBER.match(race.position)
@@ -191,24 +197,24 @@ def build_election_results(
     authority: str,
     certified_on: date,
     captures: list[ResultsCapture],
-    expected_race_ids: frozenset[str] | None = None,
+    expected_race_ids: frozenset[str],
 ) -> ElectionResults:
     """Turn a captured certified CSV export into a validated `ElectionResults`.
 
     `expected_race_ids` names exactly the races this ingest run must resolve
     from the export — every one is required, and every other publication-
     eligible race is ignored even if its contest appears in the export.
-    Defaults to every publication-eligible race in the inventory. Passing a
-    narrower set is how an operator honors the county-scope decision
-    (docs/RESULTS.md, "Ingestion mechanics"): King County's own certified
-    canvass states King County's own tally for a race whose district crosses
-    a county line, not that race's true total, so a King-County-sourced
-    ingest excludes those specific races rather than silently publishing a
-    partial count as final.
+
+    There is deliberately no "every publication-eligible race" default: an
+    election almost always has at least one race a given authority's export
+    cannot state the true total for (docs/RESULTS.md, "Ingestion mechanics,"
+    County scope — for wa-2026-primary, King County's own canvass does not
+    suffice for a race whose district crosses a county line). A silent
+    default would let an ordinary King-County-sourced run publish those
+    races' partial county tallies as if they were final; naming the expected
+    races explicitly is how an operator honors that decision instead.
     """
     eligible_races = {race.id: race for race in inventory.races if race.publication_eligible}
-    if expected_race_ids is None:
-        expected_race_ids = frozenset(eligible_races)
     unknown_expected = expected_race_ids - eligible_races.keys()
     if unknown_expected:
         raise ResultsIngestError(
@@ -255,9 +261,16 @@ def _build_race_results(race: Race, rows: list[tuple[str, int]]) -> RaceResults:
     the contest, including write-ins, so `share` (votes / ballots_counted)
     for the declared choices sums to ~1 minus any write-in share — exactly
     the slack `RaceResults.SHARE_SUM_TOLERANCE` exists to absorb
-    (`results/models.py`). The top two vote-getters advance in a
-    candidate race (top-two primary); a measure's single winning choice
-    advances (Approved/Rejected)."""
+    (`results/models.py`) — an outsized write-in share (well beyond ordinary
+    noise) fails that invariant and aborts the whole ingest run loudly
+    rather than publishing an understated share
+    (docs/runbooks/results-certified-ingest.md, Escalation). The top two
+    vote-getters advance in a candidate race (top-two primary); a measure's
+    single winning choice — whichever of its two declared outcomes drew
+    more votes, `Yes` or `No` — advances. This module marks only the
+    winning choice `advanced: true`; it does not decide whether a rendered
+    "Approved"/"Rejected" label attaches to the outcome or to the measure
+    as a whole — that is `#285`'s rendering decision, not this adapter's."""
     tallies: list[tuple[BallotChoice, int]] = []
     total_votes = 0
     for candidate_text, votes in rows:

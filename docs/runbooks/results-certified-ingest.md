@@ -9,9 +9,11 @@ with #284, informed by the formats the election-night capture observed
 (`docs/RESULTS.md`, "Ingestion mechanics"). Phase 2 currently ingests King County's certified CSV
 export only; the races whose true totals require the Secretary of State's results (Legislative
 District 32, Congressional District 9, and the four Supreme Court Justice positions — see
-`docs/RESULTS.md`, "Ingestion mechanics," County scope) are named explicitly in step 5's
+`docs/RESULTS.md`, "Ingestion mechanics," County scope) are named explicitly in step 4's
 `--race-id` list and omitted from a King-County-sourced ingest rather than silently published
 from a partial count. Ingesting those races' true totals is a follow-up, not yet built.
+`results ingest` requires `--race-id` — there is no every-publication-eligible-race default — so
+omitting a cross-county race here is the only way to run it, never an accident.
 
 ## Trigger
 
@@ -112,6 +114,15 @@ it should stay human-launched at least through the first full cycle.
   a Supreme Court Justice position) needs to ship: its true total requires the Secretary of
   State's export, which this adapter does not yet parse (`docs/RESULTS.md`, open questions) —
   file or pick up that follow-up rather than ingesting King County's partial count for it.
+- `results ingest` aborts the whole run with `shares sum to ..., not ~1` for one race: that
+  race's declared (non-write-in) shares alone fell more than one point short of 100% of its
+  total votes, most plausibly an unusually large write-in share
+  (`src/election_guide/results/models.py`'s `SHARE_SUM_TOLERANCE` is deliberately tight, sized
+  for ordinary write-in noise, not a real write-in campaign). Investigate the named race's own
+  write-in tally in the captured export before doing anything else. If it is a genuine, unusually
+  large write-in share and not a data error, re-run `results ingest` with that one race dropped
+  from `--race-id` so every other race still ships on schedule, and bring the excluded race to a
+  human rather than forcing it through.
 - A recount is announced after ingest: the eventual amended flow (`docs/RESULTS.md`,
   open questions) is decided then — do not overwrite the certified file ad hoc.
 

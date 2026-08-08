@@ -240,9 +240,11 @@ Court Justice positions, Legislative District 32 (the state's 2021 redistricting
 partly in King County and partly in Snohomish County), and Congressional District 9 (King, Pierce,
 and Thurston counties). For those specific races, the Secretary of State's results are the
 true-total source, and parsing its JSON export is real, separate work this ticket does not do (no
-acceptance criterion here needs a cross-county race's true total). The adapter therefore takes an
-explicit `--race-id` allowlist (`results ingest`, defaulting to every publication-eligible race)
-rather than silently including whatever a King-County-sourced capture happens to contain: the live
+acceptance criterion here needs a cross-county race's true total). The adapter therefore requires
+an explicit `--race-id` allowlist (`results ingest` refuses to run without one — there is
+deliberately no every-publication-eligible-race default, so an operator cannot omit the flag and
+get a silent partial-county tally) rather than including whatever a King-County-sourced capture
+happens to contain: the live
 wa-2026-primary run omits the cross-county races from the King-County-sourced ingest until a
 Secretary-of-State-scoped adapter exists to state their true totals, tracked as a follow-up
 rather than fabricated here.

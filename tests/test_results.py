@@ -619,6 +619,44 @@ def test_build_election_results_rejects_a_non_publication_eligible_expected_race
         )
 
 
+def test_build_election_results_aborts_loudly_on_an_outsized_write_in_share(
+    tmp_path: Path,
+) -> None:
+    # Regression for a review finding: `ballots_counted` includes write-in
+    # votes (docs/RESULTS.md's own SHARE_SUM_TOLERANCE is sized to absorb
+    # "ordinary" write-in noise, results/models.py), so an unusually large
+    # write-in share -- most plausible on a race with few named
+    # candidates -- must abort loudly with a clear cause, not silently
+    # publish an understated share. This never reaches the schema's own
+    # tolerance-violation path silently: it is a real pydantic
+    # `ValidationError`, which the CLI already catches and reports
+    # (`results ingest failed: ...`, exit 1) -- see the runbook's own
+    # escalation entry for this exact scenario.
+    inventory = _inventory()
+    csv_content = (
+        b'"Contest","Choice","Votes"\n'
+        b'"Assessor (Vote for 1)","Dominique M Scarimbolo","5000"\n'
+        b'"Assessor (Vote for 1)","Write-in","200"\n'
+    )
+    captures = [
+        ResultsCapture(
+            kind="certified",
+            captured_at=datetime(2026, 8, 20, 16, 5, tzinfo=UTC),
+            evidence=_evidence_reference(tmp_path, "certified"),
+        )
+    ]
+
+    with pytest.raises(ValidationError, match="not ~1"):
+        build_election_results(
+            csv_content,
+            inventory,
+            authority="King County Elections",
+            certified_on=datetime(2026, 8, 19).date(),
+            captures=captures,
+            expected_race_ids=frozenset({ASSESSOR_ID}),
+        )
+
+
 # --- CLI (`election-guide results ingest`) -----------------------------------
 
 
@@ -704,3 +742,41 @@ def test_cli_results_ingest_fails_for_an_unknown_authority(
 
     assert result.exit_code == 1
     assert "unknown authority id" in result.output
+
+
+def test_cli_results_ingest_requires_at_least_one_race_id(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # Regression: there is deliberately no every-publication-eligible-race
+    # default (a silent default could publish a King-County-only partial
+    # tally for a race that needs the Secretary of State's true total).
+    monkeypatch.chdir(tmp_path)
+    certified_manifest_path = _capture_certified_csv(tmp_path)
+
+    result = CliRunner().invoke(
+        app,
+        [
+            "results",
+            "ingest",
+            "--election-id",
+            "wa-2026-primary",
+            "--authority-id",
+            "king-county-elections",
+            "--certified-on",
+            "2026-08-19",
+            "--certified-capture",
+            str(certified_manifest_path),
+            "--inventory-path",
+            str(INVENTORY_PATH),
+            "--authority-registry-path",
+            str(AUTHORITY_REGISTRY_PATH),
+            "--storage-root",
+            str(tmp_path / "snapshots"),
+            "--output-dir",
+            str(tmp_path / "data" / "results"),
+        ],
+    )
+
+    assert result.exit_code == 1
+    assert "requires at least one --race-id" in result.output
+    assert not (tmp_path / "data" / "results" / "wa-2026-primary.yaml").exists()
