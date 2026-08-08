@@ -17,6 +17,7 @@ import typer
 from pydantic import ValidationError
 
 from election_guide import __version__
+from election_guide.authorities.registry import read_authority_registry
 from election_guide.calendar import plan_issues, read_election_calendar, unmarked_collisions
 from election_guide.calendar.github_tracker import GitHubIssueTracker
 from election_guide.collection import read_adapter_spec, refresh_source, validate_adapter
@@ -933,12 +934,17 @@ def evidence_capture(
     registry_path: Annotated[Path, typer.Option(exists=True, dir_okay=False, readable=True)] = Path(
         "config/sources/default.yaml"
     ),
+    authority_registry_path: Annotated[
+        Path, typer.Option(exists=True, dir_okay=False, readable=True)
+    ] = Path("config/authorities/default.yaml"),
     storage_root: Annotated[Path, typer.Option(file_okay=False)] = Path("data/snapshots"),
     manifest_dir: Annotated[Path, typer.Option(file_okay=False)] = Path("data/manifests/evidence"),
 ) -> None:
     """Ingest a local artifact into immutable content-addressed storage."""
     try:
-        _require_registered_source(source_id, registry_path)
+        _require_registered_source(
+            source_id, registry_path, authority_registry_path=authority_registry_path
+        )
         request = CaptureRequest.model_validate(
             {
                 "source_id": source_id,
@@ -980,11 +986,16 @@ def evidence_unavailable(
     registry_path: Annotated[Path, typer.Option(exists=True, dir_okay=False, readable=True)] = Path(
         "config/sources/default.yaml"
     ),
+    authority_registry_path: Annotated[
+        Path, typer.Option(exists=True, dir_okay=False, readable=True)
+    ] = Path("config/authorities/default.yaml"),
     manifest_dir: Annotated[Path, typer.Option(file_okay=False)] = Path("data/manifests/evidence"),
 ) -> None:
     """Record a source that could not be captured without bypassing access controls."""
     try:
-        _require_registered_source(source_id, registry_path)
+        _require_registered_source(
+            source_id, registry_path, authority_registry_path=authority_registry_path
+        )
         request = UnavailableRequest.model_validate(
             {
                 "source_id": source_id,
@@ -1507,10 +1518,24 @@ def review_override(
     typer.echo(f"review override: {output}")
 
 
-def _require_registered_source(source_id: str, registry_path: Path) -> None:
+def _require_registered_source(
+    source_id: str,
+    registry_path: Path,
+    *,
+    authority_registry_path: Path | None = None,
+) -> None:
+    """Accept an id registered as either an endorsement source or a counting
+    authority (docs/EVIDENCE_CAPTURE.md, "Counting authorities") — the two
+    registries are deliberately separate, so this is the only place either
+    is consulted for capture eligibility."""
     registry = read_source_registry(registry_path)
-    if source_id not in {source.id for source in registry.sources}:
-        raise ValueError(f"unknown source id {source_id!r}")
+    if source_id in {source.id for source in registry.sources}:
+        return
+    if authority_registry_path is not None and authority_registry_path.exists():
+        authority_registry = read_authority_registry(authority_registry_path)
+        if source_id in authority_registry.authority_ids():
+            return
+    raise ValueError(f"unknown source id {source_id!r}")
 
 
 def _read_review_item(record_id: str, queue_dir: Path) -> ReviewItem:

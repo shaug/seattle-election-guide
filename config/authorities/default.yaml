@@ -1,0 +1,23 @@
+# Counting-authority identity registry (docs/EVIDENCE_CAPTURE.md).
+#
+# Distinct from config/sources/default.yaml, the endorsement-source panel: an
+# authority tabulates and certifies election results. It has no panel role,
+# reporting category, or endorsement eligibility, so it lives here instead of
+# in the source panel, which would corrupt what "source" means there.
+schema_version: "1.0"
+authorities:
+  - id: king-county-elections
+    name: King County Elections
+    organization_url: https://kingcounty.gov/en/dept/elections
+    notes: >
+      The counting authority for wa-2026-primary's Seattle-area races. Some
+      legislative districts cross county lines and additionally require the
+      Secretary of State's certified results for their true totals
+      (docs/RESULTS.md).
+  - id: wa-secretary-of-state
+    name: Washington Secretary of State
+    organization_url: https://www.sos.wa.gov/elections
+    notes: >
+      Statewide corroborating authority, captured alongside King County's
+      results for races that cross county lines
+      (docs/runbooks/results-capture-election-night.md).

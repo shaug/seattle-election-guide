@@ -120,6 +120,108 @@ def test_evidence_capture_and_verify_commands(tmp_path: Path) -> None:
     assert "evidence: valid" in verified.stdout
 
 
+def test_evidence_capture_accepts_a_registered_authority_without_a_source_panel_entry(
+    tmp_path: Path,
+) -> None:
+    """A counting authority (config/authorities/default.yaml) captures and verifies
+    identically to an endorsement source, with no entry required in
+    config/sources/default.yaml — issue #281's authority evidence capture lane."""
+    registry = read_source_registry(Path("config/sources/default.yaml"))
+    assert "king-county-elections" not in {source.id for source in registry.sources}
+
+    storage_root = tmp_path / "snapshots"
+    manifest_dir = tmp_path / "manifests"
+    fixture = Path("tests/fixtures/evidence/static.html")
+    result = runner.invoke(
+        app,
+        [
+            "evidence",
+            "capture",
+            str(fixture),
+            "--source-id",
+            "king-county-elections",
+            "--requested-url",
+            "https://kingcounty.gov/en/dept/elections/results/2026/august-primary-election",
+            "--canonical-url",
+            "https://kingcounty.gov/en/dept/elections/results/2026/august-primary-election",
+            "--retrieved-at",
+            "2026-08-05T05:02:45Z",
+            "--media-type",
+            "text/html",
+            "--title",
+            "2026 Washington August Primary election-night results "
+            "(King County rendered results page)",
+            "--capture-method",
+            "static_html",
+            "--http-status",
+            "200",
+            "--redistribution",
+            "restricted",
+            "--redistribution-note",
+            "Official results retained locally; manifest public.",
+            "--storage-root",
+            str(storage_root),
+            "--manifest-dir",
+            str(manifest_dir),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    manifest_path = next(manifest_dir.glob("*.json"))
+    manifest = read_capture_manifest(manifest_path)
+    assert manifest.source_id == "king-county-elections"
+    assert manifest.title == (
+        "2026 Washington August Primary election-night results (King County rendered results page)"
+    )
+
+    verified = runner.invoke(
+        app,
+        ["evidence", "verify", str(manifest_path), "--storage-root", str(storage_root)],
+    )
+    assert verified.exit_code == 0, verified.output
+    assert "evidence: valid" in verified.stdout
+
+
+def test_evidence_capture_rejects_an_id_registered_in_neither_registry(tmp_path: Path) -> None:
+    fixture = Path("tests/fixtures/evidence/static.html")
+    result = runner.invoke(
+        app,
+        [
+            "evidence",
+            "capture",
+            str(fixture),
+            "--source-id",
+            "not-a-registered-identity",
+            "--requested-url",
+            "https://example.org/results",
+            "--canonical-url",
+            "https://example.org/results",
+            "--retrieved-at",
+            "2026-08-05T05:02:45Z",
+            "--media-type",
+            "text/html",
+            "--title",
+            "Unregistered capture attempt",
+            "--capture-method",
+            "static_html",
+            "--http-status",
+            "200",
+            "--redistribution",
+            "permitted",
+            "--redistribution-note",
+            "Should never be written.",
+            "--storage-root",
+            str(tmp_path / "snapshots"),
+            "--manifest-dir",
+            str(tmp_path / "manifests"),
+        ],
+    )
+
+    assert result.exit_code == 1
+    assert "unknown source id 'not-a-registered-identity'" in result.output
+    assert not (tmp_path / "manifests").exists() or not list((tmp_path / "manifests").glob("*"))
+
+
 def test_collect_refresh_runs_offline_and_reuses_unchanged_content(tmp_path: Path) -> None:
     source = tmp_path / "transit-riders-union.html"
     source.write_bytes(Path("tests/fixtures/collection/transit-riders-union.html").read_bytes())
