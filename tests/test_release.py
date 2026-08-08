@@ -537,6 +537,107 @@ def test_release_build_wires_a_committed_results_file_into_the_view_model(
     assert published_without_results["results"] is None
 
 
+def test_release_build_wires_the_certification_date_into_the_view_model(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Issue #285: the real release pipeline reads the declared calendar's
+    `certification` milestone for this election and carries it into
+    `PublicationMetadata.certification_date`, the same way `election_date`
+    already reaches the view model -- so the banner's counting state can
+    actually trigger for a real release, not only a direct
+    `build_publication_bundle` call."""
+    ledger = _write_ledger(tmp_path)
+    dataset_path = tmp_path / "canonical-dataset.json"
+    snapshots = tmp_path / "snapshots"
+    compile_release_dataset(
+        ledger,
+        INVENTORY,
+        REGISTRY,
+        dataset_path,
+        snapshots,
+        tmp_path / "manifests",
+    )
+
+    def fake_render(
+        view_model_path: Path,
+        config_path: Path,
+        output_dir: Path,
+        **_: object,
+    ) -> SimpleNamespace:
+        assert view_model_path.is_file()
+        assert config_path == RENDERING
+        output_dir.mkdir(parents=True, exist_ok=True)
+        html = output_dir / "seattle-2026-primary-guide.html"
+        screenshot = output_dir / "screenshots/desktop.png"
+        validation = output_dir / "rendering_validation_report.json"
+        screenshot.parent.mkdir(parents=True)
+        html.write_text("<!doctype html><title>Guide</title>", encoding="utf-8")
+        screenshot.write_bytes(b"desktop screenshot")
+        validation.write_text('{"passed":true}\n', encoding="utf-8")
+        return SimpleNamespace(
+            html_path=html,
+            validation_path=validation,
+            screenshots=[screenshot],
+            validation_report=SimpleNamespace(passed=True),
+        )
+
+    def accept_test_checkout(_: str) -> None:
+        return None
+
+    monkeypatch.setattr("election_guide.release.builder.build_rendered_guide", fake_render)
+    monkeypatch.setattr(
+        "election_guide.release.builder._verify_checkout_identity", accept_test_checkout
+    )
+
+    # The real, committed calendar declares `wa-2026-primary`'s certification
+    # 15 days after its election day (config/calendar/elections.yaml).
+    output = tmp_path / "release"
+    release = build_release(
+        ledger_path=ledger,
+        inventory_path=INVENTORY,
+        registry_path=REGISTRY,
+        dataset_path=dataset_path,
+        scoring_config_path=SCORING,
+        rendering_config_path=RENDERING,
+        snapshot_root=snapshots,
+        manifest_dir=tmp_path / "manifests",
+        output_dir=output,
+        release_version="2026-primary.1",
+        generated_at=GENERATED_AT,
+        git_commit="a" * 40,
+    )
+    published = json.loads(
+        (release.bundle_dir / "data" / "publication_view_model.json").read_text(encoding="utf-8")
+    )
+    assert published["metadata"]["certification_date"] == "2026-08-19"
+
+    # A calendar path that resolves to nothing -- missing entirely -- is a
+    # silent no-op, matching `results_dir`'s own "no committed file" grace.
+    second_output = tmp_path / "release-without-calendar"
+    without_calendar = build_release(
+        ledger_path=ledger,
+        inventory_path=INVENTORY,
+        registry_path=REGISTRY,
+        dataset_path=dataset_path,
+        scoring_config_path=SCORING,
+        rendering_config_path=RENDERING,
+        snapshot_root=snapshots,
+        manifest_dir=tmp_path / "manifests",
+        output_dir=second_output,
+        release_version="2026-primary.1",
+        generated_at=GENERATED_AT,
+        git_commit="a" * 40,
+        calendar_path=tmp_path / "no-such-calendar.yaml",
+    )
+    published_without_calendar = json.loads(
+        (without_calendar.bundle_dir / "data" / "publication_view_model.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert published_without_calendar["metadata"]["certification_date"] is None
+
+
 @pytest.mark.parametrize(
     ("update", "message"),
     [

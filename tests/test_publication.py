@@ -428,7 +428,7 @@ def test_methodology_publishes_possible_overlap_without_deduplicating(tmp_path: 
     )
 
     methodology = bundle.view_model.methodology
-    assert bundle.view_model.schema_version == "1.10"
+    assert bundle.view_model.schema_version == "1.11"
     assert bundle.view_model.metadata.source_panel_id == dataset.source_registry.id
     assert len(bundle.view_model.metadata.source_panel_hash) == 64
     coverage_gaps = [
@@ -522,6 +522,42 @@ def test_methodology_publishes_possible_overlap_without_deduplicating(tmp_path: 
     mutated_support.support_points = "1"
     with pytest.raises(ValidationError, match="category candidate support"):
         PublicationViewModel.model_validate(mutated.model_dump(mode="json"))
+
+
+def test_certification_date_reaches_the_view_model_the_same_way_election_date_does(
+    tmp_path: Path,
+) -> None:
+    """Issue #285: `build_publication_bundle`'s `certification_date` parameter
+    is the rendering pipeline's other hook onto post-election state (the
+    calendar's, alongside #283's results hook), threaded into
+    `PublicationMetadata.certification_date` the same way `election_date`
+    already reaches it. Omitted, the bundle is unchanged from before this
+    parameter existed."""
+    dataset = _publication_dataset(tmp_path)
+    snapshot_root = _snapshot_store(tmp_path, dataset)
+    report = score_dataset(
+        dataset,
+        _configuration(),
+        computed_at=NOW,
+        allow_unresolved=True,
+    )
+
+    without_certification_date = build_publication_bundle(
+        dataset,
+        report,
+        git_commit="abc123",
+        snapshot_root=snapshot_root,
+    )
+    assert without_certification_date.view_model.metadata.certification_date is None
+
+    with_certification_date = build_publication_bundle(
+        dataset,
+        report,
+        git_commit="abc123",
+        snapshot_root=snapshot_root,
+        certification_date="2026-08-19",
+    )
+    assert with_certification_date.view_model.metadata.certification_date == "2026-08-19"
 
 
 def test_writer_and_cli_emit_the_same_canonical_bundle(tmp_path: Path) -> None:

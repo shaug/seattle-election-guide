@@ -118,6 +118,7 @@ def build_publication_bundle(
     snapshot_root: Path,
     data_as_of: datetime | None = None,
     results: ElectionResults | None = None,
+    certification_date: str | None = None,
 ) -> PublicationBundle:
     """Compute every issue-7 artifact from canonical data and one consensus report.
 
@@ -126,6 +127,11 @@ def build_publication_bundle(
     or amended results file (`election_guide.results.load_rendering_results`)
     passes it through here so it reaches the published view model. Omitted or
     `None`, the bundle is unchanged from before this hook existed.
+
+    `certification_date` (ISO `YYYY-MM-DD`) is the calendar's `certification`
+    milestone date for this election (docs/RESULTS.md; #285), carried into
+    `PublicationMetadata` the same way `election_date` is. Omitted or `None`,
+    the post-election banner is unchanged from before this parameter existed.
     """
     stripped_commit = git_commit.strip()
     if not stripped_commit:
@@ -150,6 +156,7 @@ def build_publication_bundle(
         stripped_commit,
         data_as_of or validated_consensus.computed_at,
         results,
+        certification_date,
     )
     checks = _validate_publication(dataset, validated_consensus, view_model)
     validation_report = ValidationReport(
@@ -280,6 +287,7 @@ def _build_view_model(
     git_commit: str,
     data_as_of: datetime,
     results: ElectionResults | None,
+    certification_date: str | None = None,
 ) -> PublicationViewModel:
     active_sources = [
         source for source in dataset.source_registry.sources if source.panel_role != "excluded"
@@ -467,6 +475,7 @@ def _build_view_model(
             election_date=dataset.inventory.election.election_date.isoformat(),
             election_type=dataset.inventory.election.election_type,
             state=dataset.inventory.election.state,
+            certification_date=certification_date,
             generated_at=consensus.computed_at,
             data_as_of=data_as_of,
             data_version=consensus.input_hash[:12],

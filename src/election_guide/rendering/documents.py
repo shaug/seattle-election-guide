@@ -45,6 +45,22 @@ from election_guide.rendering.shell import (
 from election_guide.rendering.stylesheets import page_stylesheet
 
 
+def _election_day_banner(view_model: PublicationViewModel) -> str:
+    """The election-day banner, with the post-election state facts every
+    document renders it with (docs/RESULTS.md, "The election-day banner";
+    #285). `view_model.results` is only ever `certified` or `amended`
+    (`election_guide.results.load_rendering_results`), and both statuses
+    require `certified_on`, so its mere presence is the "results exist"
+    signal `election_day_banner_html` gates its certified state on."""
+    results = view_model.results
+    certified_on = results.certified_on if results is not None else None
+    return election_day_banner_html(
+        view_model.metadata.election_date,
+        certification_date=view_model.metadata.certification_date,
+        certified_on=certified_on.isoformat() if certified_on is not None else None,
+    )
+
+
 def template_environment() -> Environment:
     """The one Jinja environment every full HTML document renders through.
 
@@ -148,7 +164,7 @@ def render_html_document(
         compare_href=(
             f"{guide_path}comparisons/" if view_model.comparisons.policy.enabled else None
         ),
-        election_day_banner=election_day_banner_html(view_model.metadata.election_date),
+        election_day_banner=_election_day_banner(view_model),
         canonical_origin=configuration.public_site_url,
         project_url=configuration.project_url,
         **context.footer_update_context(view_model),
@@ -257,7 +273,7 @@ def render_race_document(
         consensus_source_count=sum(
             source.panel_role == "consensus" for source in contributing_sources
         ),
-        election_day_banner=election_day_banner_html(view_model.metadata.election_date),
+        election_day_banner=_election_day_banner(view_model),
         canonical_origin=public_site_url,
         project_url=project_url,
         **context.footer_update_context(view_model),
@@ -345,7 +361,7 @@ def render_sources_document(
         ),
         compare_href=compare_href,
         guide_path=guide_path,
-        election_day_banner=election_day_banner_html(view_model.metadata.election_date),
+        election_day_banner=_election_day_banner(view_model),
         canonical_origin=public_site_url,
         project_url=project_url,
         **context.footer_update_context(view_model),
@@ -399,7 +415,7 @@ def render_comparison_document(
         stylesheet=stylesheet,
         compare_entry_script=compare_entry_script,
         guide_path=guide_path,
-        election_day_banner=election_day_banner_html(view_model.metadata.election_date),
+        election_day_banner=_election_day_banner(view_model),
         canonical_origin=public_site_url,
         project_url=project_url,
         **context.footer_update_context(view_model),

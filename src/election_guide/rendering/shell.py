@@ -24,6 +24,11 @@ CONTACT_HREF = "mailto:seattle-elections@dobravoda.dev"
 # repository's cited authority for the sample ballot, candidate filings, and
 # precinct maps (config/elections/*-inventory.yaml).
 HOW_TO_VOTE_HREF = "https://kingcounty.gov/en/dept/elections/how-to-vote"
+# Same authority, its results page instead of its how-to-vote page. The
+# post-election banner's counting state names this as its one link
+# (docs/RESULTS.md, "The election-day banner"; #285): the site links out to
+# the count rather than tracking it itself.
+KING_COUNTY_RESULTS_HREF = "https://kingcounty.gov/en/dept/elections/results-center"
 
 # Every link that leaves the site opens in a new tab, so a reader checking a
 # receipt — an endorsement's evidence, the source files, how to vote — keeps
@@ -217,10 +222,20 @@ def site_icon_svg(size: int | None = 22, *, on_dark: bool = False) -> Markup:
     )
 
 
+def _month_day_year(value: date) -> str:
+    """ "August 19, 2026" — the one-date grammar the post-election banner states
+    use (docs/RESULTS.md, "The election-day banner"; #285), distinct from the
+    weekday-carrying `full`/`short` forms the pre-election states use."""
+    return f"{value:%B} {value.day}, {value:%Y}"
+
+
 def election_day_banner_html(
     election_date: str,
     *,
     how_to_vote_href: str = HOW_TO_VOTE_HREF,
+    results_href: str = KING_COUNTY_RESULTS_HREF,
+    certification_date: str | None = None,
+    certified_on: str | None = None,
 ) -> str:
     """Slot 4 of the shell grammar (issue 192): the election-day banner.
 
@@ -239,15 +254,63 @@ def election_day_banner_html(
 
     Replaces the guide hero's old "ELECTION DAY · AUGUST 4" kicker, which stated
     the same fact in permanent chrome that could never retire it.
+
+    Two more states extend this element (docs/RESULTS.md, "The election-day
+    banner"; #285), both gated on facts the page already carries rather than
+    a live count this site never keeps:
+
+    - `certified_on` (the results file's own certification date, present only
+      when a certified or amended results file has been ingested for this
+      election — `election_guide.results.load_rendering_results`) renders the
+      **certified** state directly, here, unconditionally: once results are
+      certified that fact never depends on the reader's clock, so no script
+      involvement is needed. The banner drops its `data-election-day` marker
+      entirely in this state, so `election-day.mjs` leaves it alone.
+    - `certification_date` (the calendar's `certification` milestone date,
+      carried into the page the same way `election_date` is) is written as
+      extra data attributes on the otherwise-unchanged tense-neutral markup,
+      omitted entirely when `None`. `election-day.mjs` reads them to decide,
+      from the reader's own clock, whether the election has passed election
+      day but not yet reached certification — the **counting** state — or
+      certification has passed with still no results file, which falls back
+      to the existing past rewrite rather than a stale counting promise.
+
+    With `certification_date` and `certified_on` both `None` (an immutable
+    older bundle, or an election the calendar has not yet scheduled
+    certification for), this renders byte-identical to before either
+    parameter existed.
     """
+
+    if certified_on is not None:
+        certified_full = _month_day_year(date.fromisoformat(certified_on))
+        return (
+            '<p class="election-day election-day-past">'
+            '<span class="election-day-when">'
+            "<b>This election is complete.</b>"
+            f"<br>Results were certified {html.escape(certified_full)}."
+            "</span>"
+            "</p>"
+        )
 
     parsed = date.fromisoformat(election_date)
     full = f"{parsed:%A}, {parsed:%B} {parsed.day}, {parsed:%Y}"
     short = f"{parsed:%A}, {parsed:%B} {parsed.day}"
+
+    counting_attrs = ""
+    if certification_date is not None:
+        certification_full = _month_day_year(date.fromisoformat(certification_date))
+        escaped_certification_full = html.escape(certification_full, quote=True)
+        counting_attrs = (
+            f' data-election-certification-date="{html.escape(certification_date, quote=True)}"'
+            f' data-election-certification-date-full="{escaped_certification_full}"'
+            f' data-election-results-href="{html.escape(results_href, quote=True)}"'
+        )
+
     return (
         f'<p class="election-day" data-election-day="{html.escape(election_date, quote=True)}"'
         f' data-election-day-full="{html.escape(full, quote=True)}"'
-        f' data-election-day-short="{html.escape(short, quote=True)}">'
+        f' data-election-day-short="{html.escape(short, quote=True)}"'
+        f"{counting_attrs}>"
         f'<span class="election-day-when" data-election-day-when>'
         f"<b>Election day:</b> {html.escape(full)}</span>"
         '<span class="election-day-separator" aria-hidden="true"> · </span>'

@@ -6,6 +6,15 @@
 // election has happened, so an archived guide stops issuing a call to action
 // while still saying which election it is.
 //
+// Issue #285 adds one more transition, still driven by the reader's own clock
+// rather than any live count: once election day has passed, if the calendar's
+// certification date has not yet been reached, the banner reads as "counting"
+// instead of falling straight to the past rewrite. The certified state itself
+// needs no client logic at all -- `shell.election_day_banner_html` renders it
+// directly, server-side, once a certified or amended results file exists,
+// because that fact does not depend on today's date the way "how far from
+// election day" does.
+//
 // `Intl.RelativeTimeFormat` is the platform's own friendly-date formatter. This
 // project ships hand-written ES modules with no bundler, and should not gain a
 // dependency for a job the browser already does.
@@ -15,20 +24,26 @@
 // hue is introduced; past this window the banner stays on the neutral surface.
 const ESCALATION_WINDOW_DAYS = 7;
 
+// Every off-site link this module writes opens in a new tab and keeps the
+// referrer, matching `shell.EXTERNAL_LINK_ATTRIBUTES` -- the site's one rule
+// for links that leave it, so a reader checking the count keeps their place
+// in the guide.
+const EXTERNAL_LINK_ATTRIBUTES = ' target="_blank" rel="noopener"';
+
 /**
- * @param {string} electionIso
+ * @param {string} iso
  * @param {Date} now
  * @returns {number}
  */
-function calendarDaysUntil(electionIso, now) {
+function calendarDaysUntil(iso, now) {
   // Compare calendar days in local time, not elapsed hours: "today" must mean
-  // the reader's today, and an election 20 hours away is still tomorrow.
-  const [year, month, day] = electionIso.split('-').map(Number);
-  const election = new Date(year, month - 1, day);
+  // the reader's today, and a date 20 hours away is still tomorrow.
+  const [year, month, day] = iso.split('-').map(Number);
+  const target = new Date(year, month - 1, day);
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   // `getTime()` rather than subtracting the dates directly: identical at
   // runtime (subtraction calls `valueOf`), but the arithmetic is declared.
-  return Math.round((election.getTime() - today.getTime()) / 86400000);
+  return Math.round((target.getTime() - today.getTime()) / 86400000);
 }
 
 /**
@@ -36,10 +51,31 @@ function calendarDaysUntil(electionIso, now) {
  *
  * @param {number} daysUntil
  * @param {{ full: string, short: string }} phrasing
- * @returns {{ tone: 'past'|'soon'|'default', html: string|null, action: boolean }}
+ * @param {{ daysUntil: number, full: string, resultsHref: string }|null} [counting]
+ *   The certification window, when the page carries a calendar certification
+ *   date and no results file has been ingested yet (`null` otherwise, e.g. an
+ *   immutable older bundle or an election the calendar has not scheduled
+ *   certification for). `daysUntil` is the reader's distance from that date,
+ *   computed the same way as the election-day `daysUntil` above.
+ * @returns {{ tone: 'past'|'soon'|'default'|'counting', html: string|null, action: boolean }}
  */
-export function electionDayStatement(daysUntil, { full, short }) {
+export function electionDayStatement(daysUntil, { full, short }, counting = null) {
   if (daysUntil < 0) {
+    // The certification date has not yet been reached: ballots are still
+    // being counted, and the site links out rather than tracking them
+    // (docs/RESULTS.md, "The results lifecycle"). Once that date passes with
+    // still no results file, this falls through to the past rewrite below --
+    // never a stale counting promise.
+    if (counting !== null && counting.daysUntil >= 0) {
+      return {
+        tone: 'counting',
+        html:
+          '<b>Ballots are being counted</b> &mdash; see the count at ' +
+          `<a href="${counting.resultsHref}"${EXTERNAL_LINK_ATTRIBUTES}>King County Elections</a>.` +
+          `<br>Results certify ${counting.full}.`,
+        action: false,
+      };
+    }
     return { tone: 'past', html: `<b>This election was held ${full}.</b>`, action: false };
   }
   if (daysUntil === 0) {
@@ -67,20 +103,35 @@ export function electionDayStatement(daysUntil, { full, short }) {
 /** @param {Date} [now] */
 export function wireElectionDay(now = new Date()) {
   const banner = document.querySelector('[data-election-day]');
+  // Absent entirely once results are certified (`shell.election_day_banner_html`
+  // renders that state directly): nothing here needs to run, since a certified
+  // fact does not change with the reader's clock.
   if (!banner) return;
   // The three attributes are written together by the banner's Jinja template,
   // so a rendered banner always carries all of them. Asserted rather than
   // coerced: a banner missing them is a template defect that should keep
   // throwing here, not quietly format the string "null".
+  const certificationDate = banner.getAttribute('data-election-certification-date');
+  const counting =
+    certificationDate === null
+      ? null
+      : {
+          daysUntil: calendarDaysUntil(certificationDate, now),
+          full: /** @type {string} */ (
+            banner.getAttribute('data-election-certification-date-full')
+          ),
+          resultsHref: /** @type {string} */ (banner.getAttribute('data-election-results-href')),
+        };
   const statement = electionDayStatement(
     calendarDaysUntil(/** @type {string} */ (banner.getAttribute('data-election-day')), now),
     {
       full: /** @type {string} */ (banner.getAttribute('data-election-day-full')),
       short: /** @type {string} */ (banner.getAttribute('data-election-day-short')),
     },
+    counting,
   );
 
-  banner.classList.remove('election-day-soon', 'election-day-past');
+  banner.classList.remove('election-day-soon', 'election-day-past', 'election-day-counting');
   if (statement.tone !== 'default') banner.classList.add(`election-day-${statement.tone}`);
 
   if (statement.html !== null) {

@@ -405,6 +405,16 @@
       ],
       "note": "The audited dataset grades no race insufficient, so no markup diff can render this note. Its words are the whole mirror, so the derivation is the check."
     },
+    "election-day-external-link-attributes": {
+      "client": "election-day.mjs EXTERNAL_LINK_ATTRIBUTES, the counting state's King County Elections link",
+      "server": "rendering/shell.py EXTERNAL_LINK_ATTRIBUTES",
+      "proof": "shared-literal",
+      "evidence": [
+        "text:target=\"_blank\" rel=\"noopener\"",
+        "symbol:election_day_banner_html"
+      ],
+      "note": "#285's counting state is the one link election-day.mjs ever writes itself, so it restates the site's one external-link convention rather than importing it -- these are hand-written ES modules with no bundler (election-day.mjs's own module comment). The symbol reference is a comment, not a second implementation: election_day_banner_html renders the certified state directly and drops data-election-day entirely once results exist, so wireElectionDay's querySelector finds nothing and the two states never run the same code. 'election-day phrasing' (deleted, above) still holds for the dates themselves -- shell.py formats every date the counting state shows; the client chooses copy and links, never a date."
+    },
     "filter-scope-fallback-label": {
       "client": "guide-filters.mjs scope label fallback",
       "server": "rendering/context.py filter_scope_groups first option",

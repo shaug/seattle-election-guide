@@ -129,13 +129,18 @@ a { color: var(--blue); text-underline-offset: .15em; }
 /* Slot 4: the election-day banner. Two surfaces only — neutral by default,
    the existing differ/amber family once the date is close. Election day itself
    escalates its words, not its color. `election-day-past` is what an archived
-   guide settles into, and is where results belong later. */
+   guide settles into by default, and what it settles into for good once
+   results are certified (issue #285). `election-day-counting` is the one
+   state between election day and certification — same amber attention
+   surface as `election-day-soon`, because it is still "give this your
+   attention", just a different reason (docs/RESULTS.md, "The election-day
+   banner"). */
 .election-day { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: center; gap: .1rem .1rem; margin: 0; padding: .5rem clamp(1rem, 4vw, 3rem); border-bottom: 1px solid var(--tone-neutral-border); background: var(--tone-neutral-bg); color: var(--tone-neutral-text); font-size: .88rem; text-align: center; }
 .election-day b { color: var(--navy); font-weight: 800; }
 .election-day a { color: inherit; font-weight: 700; text-underline-offset: .15em; }
 .election-day a:focus-visible { outline: .2rem solid var(--focus); outline-offset: .15rem; }
-.election-day-soon { border-bottom-color: var(--tone-differ-border); background: var(--tone-differ-bg); color: var(--tone-differ-text); }
-.election-day-soon b { color: var(--tone-differ-text); }
+.election-day-soon, .election-day-counting { border-bottom-color: var(--tone-differ-border); background: var(--tone-differ-bg); color: var(--tone-differ-text); }
+.election-day-soon b, .election-day-counting b { color: var(--tone-differ-text); }
 .election-day-past { color: var(--muted); }
 .election-day-past b { color: var(--muted); font-weight: 700; }
 /* The one frame every page renders at (UI polish round 4, item L53),
