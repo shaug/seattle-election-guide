@@ -60,10 +60,14 @@ class ResultsCapture(ResultsModel):
 class RaceOutcome(ResultsModel):
     """One ballot choice's certified outcome.
 
-    `advanced` is the one boolean field name for every race type — a primary's
-    "Advances", a general's "Elected", or a measure's "Approved" — because the
-    rendered label depends on race type, which this schema does not carry
-    (docs/RESULTS.md, "The results chip"; that labeling is `#285`'s job).
+    `advanced` marks the choice that prevailed in its race — nothing more. One
+    boolean serves every race type because the rendered label depends on the
+    race type *and* on which choice carries the flag, neither of which this
+    schema states: a primary's "Advances", a general's "Elected", and a
+    measure's "Approved" or "Rejected" (a rejected measure is the one whose
+    `No` choice carries `advanced: true` — no separate rejection field exists,
+    or is needed) are all read off the same boolean (docs/RESULTS.md, "The
+    results chip"; that labeling is `#285`'s job).
     """
 
     choice_id: str = Field(min_length=1)

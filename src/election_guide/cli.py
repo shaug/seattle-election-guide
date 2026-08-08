@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import Annotated, Any, cast
 
 import typer
+import yaml
 from pydantic import ValidationError
 
 from election_guide import __version__
@@ -28,7 +29,7 @@ from election_guide.evidence.manual import (
     read_manual_draft,
     validate_manual_draft,
 )
-from election_guide.evidence.models import CaptureRequest, UnavailableRequest
+from election_guide.evidence.models import CapturedManifest, CaptureRequest, UnavailableRequest
 from election_guide.evidence.storage import (
     read_capture_manifest,
     record_capture,
@@ -88,10 +89,12 @@ from election_guide.release import (
     verify_release_compilation,
 )
 from election_guide.rendering import build_rendered_guide
+from election_guide.results.ingest import ResultsIngestError, build_election_results
 from election_guide.results.loader import (
     read_results,
     reject_committed_counting_status,
 )
+from election_guide.results.models import ResultsCapture
 from election_guide.results.validation import validate_results_evidence, validate_results_inventory
 from election_guide.scoring import (
     ConsensusReport,
@@ -1297,6 +1300,128 @@ def results_validate(
     )
 
 
+@results_app.command("ingest")
+def results_ingest(
+    election_id: Annotated[str, typer.Option()],
+    authority_id: Annotated[str, typer.Option(help="Id in the counting-authority registry.")],
+    certified_on: Annotated[str, typer.Option(help="Certification date, ISO 8601 (YYYY-MM-DD).")],
+    certified_capture: Annotated[
+        Path,
+        typer.Option(
+            exists=True,
+            dir_okay=False,
+            readable=True,
+            help="Evidence manifest for the captured certified CSV export.",
+        ),
+    ],
+    election_night_capture: Annotated[
+        Path | None,
+        typer.Option(
+            exists=True, dir_okay=False, readable=True, help="Optional evidence manifest."
+        ),
+    ] = None,
+    race_id: Annotated[
+        list[str] | None,
+        typer.Option(
+            "--race-id",
+            help=(
+                "Required. Restrict ingestion to exactly these publication-eligible race IDs; "
+                "every one must be found in the export. Deliberately has no "
+                "every-publication-eligible-race default: name exactly the races this capture "
+                "can state the true total for, honoring the county-scope decision "
+                "(docs/RESULTS.md) rather than silently publishing a partial county tally as "
+                "final for a race whose district crosses a county line."
+            ),
+        ),
+    ] = None,
+    inventory_path: Annotated[
+        Path, typer.Option(exists=True, dir_okay=False, readable=True)
+    ] = Path("data/normalized/wa-2026-primary-inventory.json"),
+    authority_registry_path: Annotated[
+        Path, typer.Option(exists=True, dir_okay=False, readable=True)
+    ] = Path("config/authorities/default.yaml"),
+    storage_root: Annotated[Path, typer.Option(file_okay=False)] = Path("data/snapshots"),
+    output_dir: Annotated[Path, typer.Option(file_okay=False)] = Path("data/results"),
+) -> None:
+    """Produce `data/results/<election-id>.yaml` from a captured certified export.
+
+    Reads the certified CSV's bytes from already-captured, hash-verified
+    evidence — the same evidence-capture and provenance discipline as
+    endorsement collection (docs/COLLECTION.md) — rather than an arbitrary
+    unverified file. Never fetches the network itself.
+    """
+    try:
+        if not race_id:
+            raise ValueError("results ingest requires at least one --race-id")
+        inventory = read_inventory(inventory_path)
+        if inventory.election.id != election_id:
+            raise ValueError(f"inventory belongs to {inventory.election.id!r}, not {election_id!r}")
+        authority_registry = read_authority_registry(authority_registry_path)
+        authority = next(
+            (item for item in authority_registry.authorities if item.id == authority_id), None
+        )
+        if authority is None:
+            raise ValueError(f"unknown authority id {authority_id!r}")
+
+        certified_manifest = _admit_captured_manifest(certified_capture, storage_root, "certified")
+        csv_content = (storage_root / certified_manifest.storage_reference).read_bytes()
+
+        captures = [
+            ResultsCapture(
+                kind="certified",
+                captured_at=certified_manifest.retrieved_at,
+                evidence=str(certified_capture),
+            )
+        ]
+        if election_night_capture is not None:
+            election_night_manifest = _admit_captured_manifest(
+                election_night_capture, storage_root, "election-night"
+            )
+            captures.insert(
+                0,
+                ResultsCapture(
+                    kind="election_night",
+                    captured_at=election_night_manifest.retrieved_at,
+                    evidence=str(election_night_capture),
+                ),
+            )
+
+        results = build_election_results(
+            csv_content,
+            inventory,
+            authority=authority.name,
+            certified_on=date.fromisoformat(certified_on),
+            captures=captures,
+            expected_race_ids=frozenset(race_id),
+        )
+        validate_results_inventory(results, inventory)
+        validate_results_evidence(results)
+        output_path = output_dir / f"{election_id}.yaml"
+        _write_generated_yaml(output_path, results.model_dump(mode="json"))
+    except (OSError, ValidationError, ValueError, ResultsIngestError) as error:
+        typer.echo(f"results ingest failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    typer.echo(
+        f"results: {output_path} ({results.election_id}, {results.status}, "
+        f"{len(results.races)} races)"
+    )
+
+
+def _admit_captured_manifest(path: Path, storage_root: Path, label: str) -> CapturedManifest:
+    """Read and hash-verify one evidence manifest for `results ingest`,
+    rejecting an "unavailable" record — the lane's own admission that
+    nothing was captured, which a results file may never cite as if it were
+    real evidence. Shared by the certified and optional election-night
+    capture paths so both are guarded identically; the duplication this
+    replaced is exactly how the election-night path went unverified for a
+    fix cycle."""
+    manifest = read_capture_manifest(path)
+    if not isinstance(manifest, CapturedManifest):
+        raise ValueError(f"{label} capture must be a captured, not unavailable, manifest")
+    verify_capture(manifest, storage_root)
+    return manifest
+
+
 @normalize_app.command("validate")
 def normalize_validate(
     dataset_path: Annotated[Path, typer.Argument(exists=True, dir_okay=False, readable=True)],
@@ -1648,12 +1773,22 @@ def _git_commit() -> str:
 
 
 def _write_generated_json(path: Path, value: object) -> None:
+    _write_generated_bytes(path, canonical_json_bytes(value))
+
+
+def _write_generated_yaml(path: Path, value: object) -> None:
+    _write_generated_bytes(path, yaml.safe_dump(value, sort_keys=True).encode())
+
+
+def _write_generated_bytes(path: Path, payload: bytes) -> None:
+    """Write generated output atomically: stage in the destination directory,
+    fsync, then `os.replace` so a reader never observes a partial file."""
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary_path: Path | None = None
     try:
         with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as temporary:
             temporary_path = Path(temporary.name)
-            temporary.write(canonical_json_bytes(value))
+            temporary.write(payload)
             temporary.flush()
             os.fsync(temporary.fileno())
         os.replace(temporary_path, path)
