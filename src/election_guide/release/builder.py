@@ -26,6 +26,7 @@ from election_guide.release.models import (
     release_archive_name,
 )
 from election_guide.rendering import build_rendered_guide
+from election_guide.results.loader import load_rendering_results
 from election_guide.scoring import ConsensusReport, read_scoring_configuration, score_dataset
 from election_guide.serialization import canonical_json_bytes
 from election_guide.sources.registry import source_registry_hash
@@ -54,8 +55,22 @@ def build_release(
     generated_at: datetime,
     git_commit: str,
     chrome_path: Path | None = None,
+    results_dir: Path = Path("data/results"),
+    repository_root: Path = Path("."),
 ) -> ReleaseResult:
-    """Run the complete publication pipeline and atomically publish one release directory."""
+    """Run the complete publication pipeline and atomically publish one release directory.
+
+    `results_dir` is where a certified or amended post-election results file
+    would live, if one has been committed for this election (issue #283). It
+    is loaded and validated here -- the release build is the one production
+    pipeline that produces the published `publication_view_model.json` -- so
+    the rendering hook actually reaches a real release rather than only ever
+    being exercised directly in tests. With no committed file, this is a
+    silent no-op and the release is unchanged from before this hook existed.
+    `repository_root` resolves that file's own evidence-manifest references
+    (`data/manifests/evidence/...`) and defaults to the current working
+    directory, matching every other repo-relative default in this pipeline.
+    """
     if generated_at.tzinfo is None or generated_at.utcoffset() is None:
         raise ValueError("release generated_at must include a UTC offset")
     if not re.fullmatch(r"[0-9a-f]{40}", git_commit):
@@ -77,6 +92,12 @@ def build_release(
 
     scoring_config = read_scoring_configuration(scoring_config_path)
     consensus = score_dataset(dataset, scoring_config, computed_at=generated_at)
+    results = load_rendering_results(
+        dataset.inventory.election.id,
+        dataset.inventory,
+        results_dir=results_dir,
+        repository_root=repository_root,
+    )
 
     output_dir.parent.mkdir(parents=True, exist_ok=True)
     stage = Path(tempfile.mkdtemp(prefix=f".{output_dir.name}.staging-", dir=output_dir.parent))
@@ -90,6 +111,7 @@ def build_release(
             git_commit=git_commit,
             snapshot_root=snapshot_root,
             data_as_of=ledger.data_as_of,
+            results=results,
         )
         write_publication_bundle(publication, data_dir)
         (data_dir / "canonical-dataset.json").write_bytes(

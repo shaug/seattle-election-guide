@@ -22,6 +22,7 @@ from election_guide.release import (
 )
 from election_guide.release.models import REQUIRED_RELEASE_ARTIFACTS, ReleaseStatus
 from election_guide.serialization import read_json
+from tests.test_results import _valid_results  # pyright: ignore[reportPrivateUsage]
 
 PROJECT_ROOT = Path(__file__).parents[1]
 INVENTORY = PROJECT_ROOT / "data/normalized/wa-2026-primary-inventory.json"
@@ -424,6 +425,116 @@ def test_release_build_packages_complete_deterministic_public_bundle(
     )
     assert "release-status.json" in release_manifest["artifact_hashes"]
     assert "RELEASE_NOTES.md" in release_manifest["artifact_hashes"]
+
+
+def test_release_build_wires_a_committed_results_file_into_the_view_model(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Issue #283: the real release pipeline -- not only a direct
+    `build_publication_bundle` call -- must load and attach a committed
+    certified results file, or the rendering hook never reaches a published
+    guide."""
+    ledger = _write_ledger(tmp_path)
+    dataset_path = tmp_path / "canonical-dataset.json"
+    snapshots = tmp_path / "snapshots"
+    compile_release_dataset(
+        ledger,
+        INVENTORY,
+        REGISTRY,
+        dataset_path,
+        snapshots,
+        tmp_path / "manifests",
+    )
+
+    def fake_render(
+        view_model_path: Path,
+        config_path: Path,
+        output_dir: Path,
+        **_: object,
+    ) -> SimpleNamespace:
+        assert view_model_path.is_file()
+        assert config_path == RENDERING
+        output_dir.mkdir(parents=True, exist_ok=True)
+        html = output_dir / "seattle-2026-primary-guide.html"
+        screenshot = output_dir / "screenshots/desktop.png"
+        validation = output_dir / "rendering_validation_report.json"
+        screenshot.parent.mkdir(parents=True)
+        html.write_text("<!doctype html><title>Guide</title>", encoding="utf-8")
+        screenshot.write_bytes(b"desktop screenshot")
+        validation.write_text('{"passed":true}\n', encoding="utf-8")
+        return SimpleNamespace(
+            html_path=html,
+            validation_path=validation,
+            screenshots=[screenshot],
+            validation_report=SimpleNamespace(passed=True),
+        )
+
+    def accept_test_checkout(_: str) -> None:
+        return None
+
+    monkeypatch.setattr("election_guide.release.builder.build_rendered_guide", fake_render)
+    monkeypatch.setattr(
+        "election_guide.release.builder._verify_checkout_identity", accept_test_checkout
+    )
+
+    results_root = tmp_path / "results-repository-root"
+    results_dir = results_root / "data" / "results"
+    results_dir.mkdir(parents=True)
+    results = _valid_results(results_root)
+    (results_dir / "wa-2026-primary.yaml").write_text(
+        yaml.safe_dump(results.model_dump(mode="json")), encoding="utf-8"
+    )
+
+    output = tmp_path / "release"
+    release = build_release(
+        ledger_path=ledger,
+        inventory_path=INVENTORY,
+        registry_path=REGISTRY,
+        dataset_path=dataset_path,
+        scoring_config_path=SCORING,
+        rendering_config_path=RENDERING,
+        snapshot_root=snapshots,
+        manifest_dir=tmp_path / "manifests",
+        output_dir=output,
+        release_version="2026-primary.1",
+        generated_at=GENERATED_AT,
+        git_commit="a" * 40,
+        results_dir=results_dir,
+        repository_root=results_root,
+    )
+
+    published = json.loads(
+        (release.bundle_dir / "data" / "publication_view_model.json").read_text(encoding="utf-8")
+    )
+    assert published["results"] is not None
+    assert published["results"]["election_id"] == "wa-2026-primary"
+    assert published["results"]["status"] == "certified"
+
+    # The default `results_dir` (no committed file) leaves the release exactly
+    # as it was before this hook existed.
+    second_output = tmp_path / "release-without-results"
+    without_results = build_release(
+        ledger_path=ledger,
+        inventory_path=INVENTORY,
+        registry_path=REGISTRY,
+        dataset_path=dataset_path,
+        scoring_config_path=SCORING,
+        rendering_config_path=RENDERING,
+        snapshot_root=snapshots,
+        manifest_dir=tmp_path / "manifests",
+        output_dir=second_output,
+        release_version="2026-primary.1",
+        generated_at=GENERATED_AT,
+        git_commit="a" * 40,
+        results_dir=tmp_path / "no-such-results-directory",
+    )
+    published_without_results = json.loads(
+        (without_results.bundle_dir / "data" / "publication_view_model.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert published_without_results["results"] is None
 
 
 @pytest.mark.parametrize(

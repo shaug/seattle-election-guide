@@ -568,6 +568,13 @@ def release_build(
     chrome_path: Annotated[
         Path | None, typer.Option(exists=True, dir_okay=False, readable=True)
     ] = None,
+    results_dir: Annotated[
+        Path,
+        typer.Option(
+            file_okay=False,
+            help="Certified or amended post-election results, if any have been committed.",
+        ),
+    ] = Path("data/results"),
 ) -> None:
     """Run scoring, export, rendering, final audit, and deterministic packaging."""
     try:
@@ -585,6 +592,7 @@ def release_build(
             generated_at=_parse_aware_datetime(generated_at),
             git_commit=git_commit or _git_commit(),
             chrome_path=chrome_path,
+            results_dir=results_dir,
         )
     except (
         OSError,

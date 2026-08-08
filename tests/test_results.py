@@ -40,6 +40,7 @@ def _evidence_reference(root: Path, name: str, *, manifest_root: Path | None = N
     to `root` (or `manifest_root`'s own base when the manifest is stored
     somewhere other than `root` itself)."""
     base = manifest_root or root
+    root.mkdir(parents=True, exist_ok=True)
     artifact = root / f"{name}.html"
     artifact.write_text(f"<html>{name}</html>", encoding="utf-8")
     request = CaptureRequest.model_validate(
