@@ -67,24 +67,53 @@ jobs:
         run: uv run election-guide release verify data/releases/wa-2026-primary/source-decisions.yaml
       - name: Build and verify deterministic primary release
         run: |
+          # TEMPORARY DIAGNOSTIC LOOP for issue #341 -- will be reverted before
+          # the real fix PR. Repeats the build-and-cmp pair many times in the
+          # real CI environment (local/docker repro attempts did not
+          # reproduce the failure) and preserves the differing artifacts.
           SITE_UPDATED_AT="$(git show -s --format=%cI "$GITHUB_SHA")"
-          uv run election-guide release build data/releases/wa-2026-primary/source-decisions.yaml \
-              --release-version 2026-primary.2 \
-              --generated-at "$SITE_UPDATED_AT" \
-            --output-dir dist/ci-release-a
-          uv run election-guide release build data/releases/wa-2026-primary/source-decisions.yaml \
-              --release-version 2026-primary.2 \
-              --generated-at "$SITE_UPDATED_AT" \
-            --output-dir dist/ci-release-b
-          cmp \
-            dist/ci-release-a/seattle-election-guide-2026-primary.2.zip \
-            dist/ci-release-b/seattle-election-guide-2026-primary.2.zip
+          mkdir -p /tmp/repro-artifacts
+          FAILURES=0
+          for i in $(seq 1 20); do
+            echo "=== iteration $i ==="
+            rm -rf dist/ci-release-a dist/ci-release-b
+            uv run election-guide release build data/releases/wa-2026-primary/source-decisions.yaml \
+                --release-version 2026-primary.2 \
+                --generated-at "$SITE_UPDATED_AT" \
+              --output-dir dist/ci-release-a
+            uv run election-guide release build data/releases/wa-2026-primary/source-decisions.yaml \
+                --release-version 2026-primary.2 \
+                --generated-at "$SITE_UPDATED_AT" \
+              --output-dir dist/ci-release-b
+            if cmp dist/ci-release-a/seattle-election-guide-2026-primary.2.zip \
+                    dist/ci-release-b/seattle-election-guide-2026-primary.2.zip; then
+              echo "iteration $i: IDENTICAL"
+            else
+              echo "iteration $i: DIFFERS"
+              FAILURES=$((FAILURES+1))
+              mkdir -p "/tmp/repro-artifacts/iter-$i/a" "/tmp/repro-artifacts/iter-$i/b"
+              cp dist/ci-release-a/seattle-election-guide-2026-primary.2.zip "/tmp/repro-artifacts/iter-$i/a.zip"
+              cp dist/ci-release-b/seattle-election-guide-2026-primary.2.zip "/tmp/repro-artifacts/iter-$i/b.zip"
+              (cd "/tmp/repro-artifacts/iter-$i/a" && unzip -q ../a.zip)
+              (cd "/tmp/repro-artifacts/iter-$i/b" && unzip -q ../b.zip)
+              diff -rq "/tmp/repro-artifacts/iter-$i/a" "/tmp/repro-artifacts/iter-$i/b" | tee "/tmp/repro-artifacts/iter-$i/diff-summary.txt" || true
+            fi
+          done
+          echo "TOTAL_FAILURES=$FAILURES"
           unzip -t dist/ci-release-a/seattle-election-guide-2026-primary.2.zip
           unzip -Z1 dist/ci-release-a/seattle-election-guide-2026-primary.2.zip \
             | grep -Fx 'seattle-election-guide/validation/rendering/rendering_validation_report.json'
           unzip -Z1 dist/ci-release-a/seattle-election-guide-2026-primary.2.zip \
             | grep -Fx 'seattle-election-guide/validation/rendering/screenshots/desktop.png'
           test "$(stat -c '%a' dist/ci-release-a)" = 755
+      - name: Upload diagnostic artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: repro-341-artifacts
+          path: /tmp/repro-artifacts
+          if-no-files-found: ignore
+          retention-days: 3
       # Only the current election is built from source above. Any other declared
       # election is resolved from the release that published it, because a
       # historical bundle cannot be rebuilt (docs/HOSTING.md, Historical bundles).
