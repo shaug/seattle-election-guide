@@ -292,6 +292,8 @@ candidate, and a write-in is a voter's only alternative there.
 
 - **Secretary of State ingestion** — parsing `results.votewa.gov`'s JSON export for the races
   King County's canvass cannot state the true total for (Legislative District 32, Congressional
-  District 9, and the four Supreme Court Justice positions). Filed as a follow-up to #284.
+  District 9, and the four Supreme Court Justice positions). Not built by #284 and no tracked
+  issue exists yet for it — file or pick up that follow-up before those races' true totals are
+  needed (`docs/runbooks/results-certified-ingest.md`, Escalation).
 - **Ballot measures** — a small mockup pass (approve-share bar, validation thresholds).
 - **Amended flow detail** — decided concretely when a recount first happens.

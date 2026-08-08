@@ -30,6 +30,16 @@ endorsement pipeline's fuzzy, review-queueing matcher
   strings' fidelity to King County's own export rests on the capture-time
   observation recorded beside them, not on the test.
 
+Only the fuzzy `SequenceMatcher` scoring tier of `normalization.matching` is
+rejected above; the underlying exact-equality primitive it and every other
+label-matching surface in this repository share,
+`normalization.text.normalize_match_text`, is reused directly here — it
+strips accents and collapses punctuation more thoroughly than a hand-rolled
+rule ever would (e.g. "Rebecca Saldaña" == "Rebecca Saldana" after
+normalization), and every publication-eligible race and ballot choice
+resolves identically under it, verified against the same committed evidence
+above.
+
 Unmatched or ambiguous names abort loudly
 (docs/runbooks/results-certified-ingest.md, phase 2's own rule) — this
 module never guesses a mapping.
@@ -44,6 +54,7 @@ from dataclasses import dataclass
 from datetime import date
 
 from election_guide.inventory.models import BallotChoice, Inventory, Race
+from election_guide.normalization.text import normalize_match_text
 from election_guide.results.models import ElectionResults, RaceOutcome, RaceResults, ResultsCapture
 
 REQUIRED_CSV_COLUMNS = frozenset({"Contest", "Choice", "Votes", "BallotsWith Contest"})
@@ -62,11 +73,6 @@ class ContestRows:
     choices: list[tuple[str, int]]
 
 
-# Matches the Unicode hyphen/dash block (U+2010 HYPHEN through U+2015
-# HORIZONTAL BAR) plus the ASCII hyphen-minus, so an inventory display name
-# built with an em dash ("Metropolitan King County Council — District 8")
-# normalizes the same way as the export's own plain-ASCII punctuation.
-_DASH_OR_PUNCTUATION = re.compile(r"[.,\u2010-\u2015-]")
 _VOTE_FOR_SUFFIX = re.compile(r"\(Vote for \d+\)", re.IGNORECASE)
 _ORDINAL_NO = re.compile(r"\bNo\.\s*(\d+)", re.IGNORECASE)
 _LEADING_POSITION_NUMBER = re.compile(r"Position\s+(\d+)")
@@ -144,14 +150,14 @@ def _parse_export_int(raw: str, label: str) -> int:
 
 
 def _normalize_contest_text(text: str) -> str:
+    """Strip the export's own vote-for/ordinal-number conventions, then hand
+    off to the repository's shared exact-equality normalizer
+    (`normalization.text.normalize_match_text`) for accent-folding and
+    punctuation collapse — the same primitive every other label-matching
+    surface in this repository uses."""
     text = _VOTE_FOR_SUFFIX.sub("", text)
     text = _ORDINAL_NO.sub(r"\1", text)
-    text = _DASH_OR_PUNCTUATION.sub(" ", text)
-    return " ".join(text.casefold().split())
-
-
-def _normalize_candidate_text(text: str) -> str:
-    return " ".join(text.casefold().split())
+    return normalize_match_text(text)
 
 
 def _is_write_in(candidate_text: str) -> bool:
@@ -211,7 +217,7 @@ def _race_match_phrases(race: Race) -> set[str]:
 
 def _candidate_match_terms(choice: BallotChoice) -> set[str]:
     terms = {choice.official_name, choice.display_name, *choice.aliases}
-    return {_normalize_candidate_text(term) for term in terms if term}
+    return {normalize_match_text(term) for term in terms if term}
 
 
 def resolve_race(contest_text: str, races: list[Race]) -> Race | None:
@@ -240,7 +246,7 @@ def resolve_choice(candidate_text: str, race: Race) -> BallotChoice | None:
     else that is unresolved or ambiguous."""
     if _is_write_in(candidate_text):
         return None
-    normalized = _normalize_candidate_text(candidate_text)
+    normalized = normalize_match_text(candidate_text)
     hits = [choice for choice in race.choices if normalized in _candidate_match_terms(choice)]
     if len(hits) != 1:
         raise ResultsIngestError(
