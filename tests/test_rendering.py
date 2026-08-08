@@ -2201,6 +2201,59 @@ def test_responsive_tablet_layout_renders(tmp_path: Path) -> None:
     )
 
 
+def test_the_persistent_action_strip_renders_at_a_whole_pixel_height(tmp_path: Path) -> None:
+    """Issue #341: `main`'s "Build and verify deterministic primary release" CI
+    check builds `wa-2026-primary` twice with the same `--generated-at` and
+    requires the two output zips to be byte-identical -- including the
+    headless-Chrome desktop screenshot the release archive carries
+    (docs/RENDERING.md). That check started failing nondeterministically after
+    #286 (~45% of paired builds, reproduced directly against the real CI
+    runner: https://github.com/shaug/seattle-election-guide/actions/runs/31280709477).
+
+    Root cause, isolated by diffing the two screenshots' actual pixels: before
+    this fix, `.state-action-strip` (the navy "Counting all N sources" band
+    `guide.html.j2`'s `.lens-banner` renders when personalization is enabled --
+    distinct from the certified-results band #286/#340 added, `.race-results`)
+    had no explicit height -- its box was however tall its own padding plus this
+    element's own content-flow line height happened to compute, a fractional
+    CSS-pixel value (measured directly via CDP `getBoundingClientRect()`:
+    38.46875px). Painting that fractional edge is not guaranteed to snap to
+    the same device pixel on every headless-Chrome renderer-process launch --
+    two builds of the exact same input produced screenshots differing by
+    exactly one device pixel at that band's bottom edge. This is not a
+    client-side timing race (`wireRaceResultsCounting`/`wireElectionDay` are
+    fully synchronous -- see `election-day.mjs`); it is a rendering-layer
+    layout-determinism gap independent of wall-clock timing, so a live-race
+    retry cannot pin it down deterministically. What can: whether this box's
+    own height is content-derived (fractional, unstable) or an explicit whole
+    pixel (stable) is a structural, machine-independent property, true or
+    false on every run -- exactly what this test asserts, without needing to
+    catch the race live. Red before the `min-height: 2.5rem` fix
+    (`base.css`), green after -- verified by re-running the real CI build-pair
+    loop 20 more times post-fix with zero failures.
+    """
+    view_model = _lens_enabled(_view_model(tmp_path / "fixture"))
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+
+    expression = """
+      JSON.stringify((() => {
+        const strip = document.querySelector('.state-action-strip');
+        const height = strip.getBoundingClientRect().height;
+        return {height};
+      })())
+    """
+    measured = _evaluate_in_chrome(html_path, expression, viewport=(1440, 1200))
+
+    assert measured["height"] == round(measured["height"]), (
+        "the persistent action strip's rendered height must be a whole pixel, not "
+        f"a content-flow-derived fraction ({measured['height']})"
+    )
+
+
 def _dense_view_model(view_model: PublicationViewModel) -> PublicationViewModel:
     races = [race for section in view_model.sections for race in section.races]
     example = next(race for race in races if race.recommendation_candidate_labels)
