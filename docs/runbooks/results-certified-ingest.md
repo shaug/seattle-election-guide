@@ -40,8 +40,7 @@ it should stay human-launched at least through the first full cycle.
    that these numbers are final.
 2. Capture and verify each artifact exactly as in
    `results-capture-election-night.md` steps 3 and 5 (same authority identity, same
-   restricted redistribution default, same interim-versus-target split until #281 lands),
-   with titles naming the certified status.
+   restricted redistribution default), with titles naming the certified status.
 3. Capture the Secretary of State's certified results for state-level races as corroboration.
 
 ### Phase 2 — ingest (blocked on #208's ingestion tooling)

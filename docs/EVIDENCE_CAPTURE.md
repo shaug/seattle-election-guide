@@ -76,6 +76,54 @@ validates the record without pretending an artifact exists.
 `--canonical-url` is optional for this command because access-restricted discovery may not reach a
 canonical publication URL.
 
+## Counting authorities
+
+`--source-id` accepts two kinds of registered identity: an endorsement source
+from `config/sources/default.yaml`, or a counting authority from
+`config/authorities/default.yaml` (`--authority-registry-path` to override
+either). This is a separate, deliberately minimal registry (issue #281), not
+an extension of the endorsement-source panel. King County Elections and the
+Secretary of State publish election results, not endorsements — they carry no
+panel role, reporting category, or endorsement eligibility, and forcing them
+into the source panel to satisfy the CLI would corrupt what "source" means in
+this repository. An `Authority` entry is just an `id`, `name`,
+`organization_url`, and optional `notes` (`election_guide.authorities`).
+
+Capture mechanics are identical either way — methods, media-type pairing,
+redirect chains, and redistribution defaults are unchanged; only identity and
+naming differ:
+
+```bash
+uv run election-guide evidence capture tmp/kc-results.html \
+  --source-id king-county-elections \
+  --requested-url https://kingcounty.gov/en/dept/elections/results/2026/august-primary-election \
+  --canonical-url https://kingcounty.gov/en/dept/elections/results/2026/august-primary-election \
+  --retrieved-at 2026-08-05T05:02:45Z \
+  --http-status 200 \
+  --media-type text/html \
+  --title "2026 Washington August Primary election-night results (King County rendered results page)" \
+  --capture-method static_html \
+  --redistribution restricted \
+  --redistribution-note "Official results retained locally; manifest public."
+```
+
+An authority capture identifies its election through the title convention
+above — `"<election> <capture kind> results (<representation>)"` — rather
+than a new structured field. A dedicated `election_id` field was tried and
+reverted: because every already-committed manifest (and every derived
+artifact that hashes a full manifest dump — the canonical dataset, scoring
+impact reports, cross-language mirror-parity fixtures) embeds the complete
+capture record, adding a new field to `CaptureMetadata` changes what every one
+of those existing records serializes to, regardless of whether the new field
+is populated. That is a large, unjustified blast radius for what is, in the
+end, an optional label. The title convention is free: it costs nothing beyond
+what the runbooks already do, needs no manifest-shape or fingerprint change,
+and issue #279's artifact check already treats it as an accepted matching
+strategy alongside a structured field it explicitly does not require.
+
+`evidence verify` needs no changes for either kind of identity: verification
+only resolves content addresses and never consults either registry.
+
 ## Verify integrity
 
 ```bash

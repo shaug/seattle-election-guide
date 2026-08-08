@@ -24,11 +24,10 @@ execution has recorded the authority's real page and export structure below.
 - `config/elections/<election-id>.yaml` exists; its `ballot_data_sources` entry names the
   authority's election page (for `wa-2026-primary`:
   <https://kingcounty.gov/en/dept/elections/election-information/2026/august-primary>).
-- Known limitation, tracked as #281: `evidence capture` validates source ids against the
-  endorsement source registry, and King County Elections is an authority, not an endorsement
-  source — it does not belong in that registry. Until the authority capture lane lands,
-  step 3 runs in its interim manual form; the bytes are stored content-addressed, so formal
-  manifests are backfilled verifiably afterward.
+- The counting authorities are registered in `config/authorities/default.yaml`
+  (`king-county-elections`, `wa-secretary-of-state`) — a separate identity registry from the
+  endorsement-source panel (`docs/EVIDENCE_CAPTURE.md`, "Counting authorities"), since neither
+  authority carries a panel role, reporting category, or endorsement eligibility.
 - A working directory under the Git-ignored `tmp/` for downloaded artifacts.
 
 ## Procedure
@@ -40,25 +39,7 @@ execution has recorded the authority's real page and export structure below.
    machine-readable export the authority publishes (CSV, XML, JSON — whatever is offered).
    Bytes first, judgment later: capture formats even if they look redundant; the ingestion
    design will decide which one matters.
-3. **Capture each artifact.**
-
-   **Interim form (until #281 lands — including the 2026-08-04 first execution).** King County
-   Elections is an authority, not an endorsement source, and `evidence capture` currently
-   accepts only registered endorsement sources, so capture manually and preserve exactly what
-   a manifest would record. Per artifact:
-
-   - compute the hash (`shasum -a 256 <artifact>`) and store the bytes at
-     `data/snapshots/sha256/<first two hash characters>/<full sha256>` — the standard
-     Git-ignored storage boundary;
-   - record, in the capture PR and the postmortem notes: requested and final URLs (and the
-     redirect chain when they differ), retrieval time in UTC, HTTP status, media type, byte
-     length, the sha256, and the title per the target form's template ("<election>
-     election-night results (<representation>)") — every field a backfilled manifest requires.
-
-   Because storage is content-addressed, #281 backfills real manifests from these bytes and
-   this metadata, and `evidence verify` proves the backfill honest.
-
-   **Target form (after #281).** The capture method must match the artifact — the CLI's
+3. **Capture each artifact.** The capture method must match the artifact — the CLI's
    `CaptureRequest` validation rejects mismatches: `static_html` only for the rendered HTML
    results page; `pdf` only for PDF documents; `manual_upload` for the machine-readable
    exports (CSV, XML, JSON) — the CLI's honest category for bytes the caller fetched itself,
@@ -71,7 +52,7 @@ execution has recorded the authority's real page and export structure below.
 
    ```bash
    uv run election-guide evidence capture tmp/<artifact> \
-     --source-id <authority id per #281> \
+     --source-id king-county-elections \
      --requested-url <url followed> \
      --canonical-url <final url> \
      --retrieved-at <UTC timestamp of the fetch> \
@@ -82,34 +63,28 @@ execution has recorded the authority's real page and export structure below.
      --redistribution-note "Official results retained locally; manifest public."
    ```
 
-   In both forms, follow the repository default for raw official artifacts
-   (`docs/COLLECTION.md`): restricted, local-only bytes with a public record of provenance,
-   even though results are public records — relaxing that is a separate decision, not a
-   capture-time judgment call.
+   Follow the repository default for raw official artifacts (`docs/COLLECTION.md`): restricted,
+   local-only bytes with a public record of provenance, even though results are public records —
+   relaxing that is a separate decision, not a capture-time judgment call.
 4. **Repeat for the Secretary of State** (<https://results.vote.wa.gov>) for the same election,
-   as corroborating evidence for state-level races. Secondary: skip rather than escalate if it
-   is unavailable, and note the skip.
-5. **Verify every capture.** Interim form: recompute each stored file's sha256 from its
-   content-addressed path and confirm it matches the recorded hash and byte length. Target
-   form:
+   as corroborating evidence for state-level races, using `--source-id wa-secretary-of-state`.
+   Secondary: skip rather than escalate if it is unavailable, and note the skip.
+5. **Verify every capture.**
 
    ```bash
    uv run election-guide evidence verify data/manifests/evidence/<capture-id>.json
    ```
 
-6. **Open a pull request** with the capture record: in the interim form, the recorded
-   provenance metadata (in the postmortem notes) with no manifests yet; in the target form,
-   the new manifests. The PR body lists what was captured, the artifacts' formats, and any
-   observations about structure — those observations are input to the ingestion adapter
-   design (#208).
+6. **Open a pull request** with the new manifests. The PR body lists what was captured, the
+   artifacts' formats, and any observations about structure — those observations are input to
+   the ingestion adapter design (#208).
 
 ## Verification
 
-- Every capture verifies (step 5): hashes and byte lengths recompute cleanly from the stored
-  bytes — against the recorded metadata in the interim form, via `evidence verify` in the
-  target form.
+- Every capture verifies (step 5): `evidence verify` recomputes the SHA-256 and byte length from
+  the stored bytes and confirms they match the manifest.
 - The recorded retrieval times fall on election night, Pacific time.
-- The PR contains only provenance records (and this runbook's postmortem notes); no bytes, no
+- The PR contains only the new manifests (and this runbook's postmortem notes); no bytes, no
   `data/results/` changes — ingestion happens at certification, not tonight.
 
 ## Escalation
@@ -118,10 +93,9 @@ Stop and flag a human when:
 
 - No results publication is discoverable from the official election page by 9:00 p.m. Pacific.
   Retry hourly; do not guess at URLs beyond the authority's own navigation.
-- The authority's page requires interaction (not static fetchable content) — in the interim
-  form, note the fact and save what the browser delivered; in the target form, switch to the
-  `browser` method with `--browser-required`, keeping `--http-status` (browser is also a
-  direct method), and note the change here.
+- The authority's page requires interaction (not static fetchable content) — switch to the
+  `browser` method with `--browser-required`, keeping `--http-status` (browser is also a direct
+  method), and note the change here.
 
 ## Postmortem notes
 
@@ -169,3 +143,24 @@ Stop and flag a human when:
   - All four fetches used a direct HTTP GET (`curl`) rather than the CLI, consistent with the
     interim form; no `browser_required` escalation was needed since every artifact was reachable
     without JS interaction once the canonical URLs were resolved.
+- **#281 landed** (authority evidence capture lane): `config/authorities/default.yaml` registers
+  `king-county-elections` and `wa-secretary-of-state`; `evidence capture`/`evidence unavailable`
+  accept either registry via `--authority-registry-path`. An election is identified by the title
+  convention (`docs/EVIDENCE_CAPTURE.md`, "Counting authorities") rather than a new manifest
+  field — a structured field was tried and reverted there because it changed the serialized shape
+  of every already-committed evidence manifest. Step 3 above now shows only the target form; this
+  and the 2026-08-03/2026-08-04 entries above are the retired interim form's permanent record.
+  - **Backfill attempted, bytes unavailable.** Per this ticket's own scope ("if the bytes are
+    unavailable or the capture never ran, land the lane without backfill and file the gap
+    honestly — never fabricate manifests"): the implementing session located
+    `data/snapshots/sha256/` on the operator's primary checkout (reachable, populated with 43
+    files) but none of the four hashes recorded above
+    (`5a8d5265…`, `de727e01…`, `3e240a3c…`, `a110484467…`) were present there, and every present
+    file's modification time predates the 2026-08-04/05 capture by two weeks — they are
+    unrelated endorsement-source evidence, not the retained election-night bytes. The retained
+    bytes described in PR #322 and above are not reachable from any environment available to
+    this implementation. No manifests were fabricated. **Next action**: whoever holds the actual
+    retained bytes (or can re-derive them, e.g. from the King County/SoS pages' first-count
+    history if still available) should run the step-3 command above against them to produce the
+    four backfilled manifests; until then, this election's first-count capture has a documented
+    provenance record (this table) but no formal manifest.
