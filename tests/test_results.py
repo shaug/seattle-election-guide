@@ -392,6 +392,10 @@ def test_cli_results_validate_rejects_an_unmatched_choice_id(
 
 ASSESSOR_ID = "king-county-assessor"
 PROPOSITION_ID = "seattle-proposition-1-library-levy"
+# One of the six publication-eligible races whose ballot carries exactly one
+# declared candidate, where the write-in row is a voter's only alternative
+# (`results/ingest.py`, `_build_race_results`).
+UNOPPOSED_RACE_ID = "ld-36-state-representative-2"
 
 
 def _capture_certified_csv(root: Path) -> Path:
@@ -490,11 +494,11 @@ def test_resolve_race_disambiguates_near_identical_legislative_district_names() 
 
 # Every publication-eligible wa-2026-primary race's real King County
 # certified-export contest label, observed live on 2026-08-07 while
-# designing this resolver (docs/RESULTS.md, "Ingestion mechanics"). This is
-# committed, offline-reproducible evidence for the resolver's own design
-# claim -- not a re-assertion of an unreproducible live fetch: every one of
-# these 32 labels is a real string King County's export used for this
-# contest at capture time, exercising every phrase-generation rule
+# designing this resolver (docs/RESULTS.md, "Ingestion mechanics"). The
+# provenance of each string is that capture-time observation, recorded here
+# so it survives the fetch; what the test below proves is the separate,
+# offline-reproducible half -- that the resolver maps these 32 strings to the
+# right races, exercising every phrase-generation rule
 # `_race_match_phrases` (`results/ingest.py`) carries. The first 24 are the
 # races `docs/runbooks/results-certified-ingest.md` phase 2 names for the
 # live wa-2026-primary ingest (King County's canvass suffices for their true
@@ -657,9 +661,13 @@ def test_build_election_results_from_the_fixture_csv(tmp_path: Path) -> None:
     assert outcomes_by_choice[f"{ASSESSOR_ID}--dominique-m-scarimbolo"].advanced is True
     assert outcomes_by_choice[f"{ASSESSOR_ID}--christopher-roberts"].advanced is False
     assert outcomes_by_choice[f"{ASSESSOR_ID}--al-dams"].advanced is False
+    # `share` is votes over the *declared* (non-write-in) total, while
+    # `ballots_counted` above is the write-in-inclusive one -- two totals
+    # doing two jobs (docs/RESULTS.md, "Ingestion mechanics").
     assert outcomes_by_choice[f"{ASSESSOR_ID}--rob-foxcurran"].share == pytest.approx(
-        214135 / (87507 + 85320 + 214135 + 68224 + 1353), abs=1e-4
+        214135 / (87507 + 85320 + 214135 + 68224), abs=1e-4
     )
+    assert sum(outcome.share for outcome in assessor.outcomes) == pytest.approx(1.0, abs=1e-4)
     # No write-in choice_id was invented -- the write-in row is excluded.
     assert len(assessor.outcomes) == 4
 
@@ -718,24 +726,24 @@ def test_build_election_results_rejects_a_non_publication_eligible_expected_race
         )
 
 
-def test_build_election_results_aborts_loudly_on_an_outsized_write_in_share(
+def test_build_election_results_handles_a_large_write_in_share_on_an_unopposed_race(
     tmp_path: Path,
 ) -> None:
-    # Regression for a review finding: `ballots_counted` includes write-in
-    # votes (docs/RESULTS.md's own SHARE_SUM_TOLERANCE is sized to absorb
-    # "ordinary" write-in noise, results/models.py), so an unusually large
-    # write-in share -- most plausible on a race with few named
-    # candidates -- must abort loudly with a clear cause, not silently
-    # publish an understated share. This never reaches the schema's own
-    # tolerance-violation path silently: it is a real pydantic
-    # `ValidationError`, which the CLI already catches and reports
-    # (`results ingest failed: ...`, exit 1) -- see the runbook's own
-    # escalation entry for this exact scenario.
+    # Regression for a review finding: six of this election's 32
+    # publication-eligible races carry exactly one declared candidate, so the
+    # write-in row is a voter's only alternative and a write-in share past
+    # `SHARE_SUM_TOLERANCE`'s single point is the ordinary case there, not an
+    # anomaly. Computing `share` against the write-in-inclusive total made
+    # every such race abort the whole multi-race run; against the declared
+    # total the declared shares sum to ~1 by construction, while
+    # `ballots_counted` still reports every vote the contest recorded.
     inventory = _inventory()
     csv_content = (
         b'"Contest","Choice","Votes"\n'
-        b'"Assessor (Vote for 1)","Dominique M Scarimbolo","5000"\n'
-        b'"Assessor (Vote for 1)","Write-in","200"\n'
+        b'"Legislative District No. 36 Representative Position No. 2 (Vote for 1)"'
+        b',"Liz Berry","5,000"\n'
+        b'"Legislative District No. 36 Representative Position No. 2 (Vote for 1)"'
+        b',"Write-in","1,000"\n'
     )
     captures = [
         ResultsCapture(
@@ -745,15 +753,103 @@ def test_build_election_results_aborts_loudly_on_an_outsized_write_in_share(
         )
     ]
 
-    with pytest.raises(ValidationError, match="not ~1"):
+    results = build_election_results(
+        csv_content,
+        inventory,
+        authority="King County Elections",
+        certified_on=datetime(2026, 8, 19).date(),
+        captures=captures,
+        expected_race_ids=frozenset({UNOPPOSED_RACE_ID}),
+    )
+
+    validate_results_inventory(results, inventory)
+    race = next(race for race in results.races if race.race_id == UNOPPOSED_RACE_ID)
+    # A 16.7% write-in share -- well past the one-point tolerance.
+    assert race.ballots_counted == 6000
+    assert len(race.outcomes) == 1
+    outcome = race.outcomes[0]
+    assert outcome.choice_id == f"{UNOPPOSED_RACE_ID}--liz-berry"
+    assert outcome.votes == 5000
+    assert outcome.share == pytest.approx(1.0, abs=1e-4)
+    assert outcome.advanced is True
+
+
+def test_build_election_results_aborts_when_only_write_ins_carry_votes(tmp_path: Path) -> None:
+    # The one remaining way a race has no declared vote to compute a share
+    # against: every declared choice at zero. That is a data problem to
+    # escalate, not a division by zero
+    # (docs/runbooks/results-certified-ingest.md, Escalation).
+    inventory = _inventory()
+    csv_content = (
+        b'"Contest","Choice","Votes"\n'
+        b'"Legislative District No. 36 Representative Position No. 2 (Vote for 1)"'
+        b',"Liz Berry","0"\n'
+        b'"Legislative District No. 36 Representative Position No. 2 (Vote for 1)"'
+        b',"Write-in","1,000"\n'
+    )
+    captures = [
+        ResultsCapture(
+            kind="certified",
+            captured_at=datetime(2026, 8, 20, 16, 5, tzinfo=UTC),
+            evidence=_evidence_reference(tmp_path, "certified"),
+        )
+    ]
+
+    with pytest.raises(ResultsIngestError, match="zero votes for every declared ballot choice"):
         build_election_results(
             csv_content,
             inventory,
             authority="King County Elections",
             certified_on=datetime(2026, 8, 19).date(),
             captures=captures,
-            expected_race_ids=frozenset({ASSESSOR_ID}),
+            expected_race_ids=frozenset({UNOPPOSED_RACE_ID}),
         )
+
+
+def test_build_election_results_advances_the_winning_choice_of_a_rejected_measure(
+    tmp_path: Path,
+) -> None:
+    # Regression for a review finding: `advanced` marks the choice that
+    # prevailed, not an approval. A rejected measure is the one whose `No`
+    # choice carries `advanced: true` -- there is no separate rejection field,
+    # and `#285` derives the "Approved"/"Rejected" chip from which choice
+    # advanced (docs/RESULTS.md, "The results chip"). The committed fixture
+    # only covers an approved measure, so this inverts its two tallies.
+    inventory = _inventory()
+    csv_content = (
+        b'"Contest","Choice","Votes"\n'
+        b'"City of Seattle Proposition No. 1 (Vote for 1)","Yes","47,882"\n'
+        b'"City of Seattle Proposition No. 1 (Vote for 1)","No","143,828"\n'
+    )
+    captures = [
+        ResultsCapture(
+            kind="certified",
+            captured_at=datetime(2026, 8, 20, 16, 5, tzinfo=UTC),
+            evidence=_evidence_reference(tmp_path, "certified"),
+        )
+    ]
+
+    results = build_election_results(
+        csv_content,
+        inventory,
+        authority="King County Elections",
+        certified_on=datetime(2026, 8, 19).date(),
+        captures=captures,
+        expected_race_ids=frozenset({PROPOSITION_ID}),
+    )
+
+    validate_results_inventory(results, inventory)
+    outcomes = {
+        outcome.choice_id: outcome
+        for race in results.races
+        if race.race_id == PROPOSITION_ID
+        for outcome in race.outcomes
+    }
+    assert outcomes[f"{PROPOSITION_ID}--no"].advanced is True
+    assert outcomes[f"{PROPOSITION_ID}--yes"].advanced is False
+    assert outcomes[f"{PROPOSITION_ID}--no"].share == pytest.approx(
+        143828 / (143828 + 47882), abs=1e-4
+    )
 
 
 # --- CLI (`election-guide results ingest`) -----------------------------------

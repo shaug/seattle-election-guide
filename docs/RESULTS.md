@@ -75,8 +75,18 @@ races:
       - choice_id: king-county-council-8--teresa-mosqueda
         votes: 33189
         share: 0.542
-        advanced: true     # `elected` in a general; `approved` on measures
+        advanced: true     # the choice that prevailed (see below)
 ```
+
+`ballots_counted` is every vote the contest recorded, write-ins included; `share` is a choice's
+votes over the *declared* (non-write-in) total, so a race's shares sum to ~1 whatever its write-in
+tally is.
+
+`advanced` marks the choice that prevailed, for every race type — the rendered label is read off
+it together with the race type and with *which* choice carries it: a primary's "Advances", a
+general's "Elected", a measure's "Approved" when its `Yes` choice carries the flag and "Rejected"
+when its `No` choice does. There is deliberately no separate rejection field; a rejected measure
+is simply one whose `No` prevailed.
 
 Validation asserts every `choice_id` exists in the frozen ballot inventory, shares sum to ~1 per
 race, and an `amended` file cites the capture it supersedes — which is what feeds the corrections
@@ -212,13 +222,16 @@ and an export's *shape* (columns, structure) is stable across a count in progres
   `https://cdn.kingcounty.gov/-/media/king-county/depts/elections/results/2026/08/webresults-<date>.csv`)
   with one row per contest/choice pair and columns `Contest`, `Choice`, and `Votes` (among others).
   Vote counts are comma-thousands-formatted strings (`"214,135"`); a `Write-in` choice row is
-  always present and is excluded from ballot-choice resolution, but its votes still count toward
-  the race's total. This is the adapter's parse target: it is directly machine-readable, requires
-  no PDF text extraction or rendered-page scraping, and every publication-eligible
-  wa-2026-primary race's real contest label from that live export resolves against it
-  correctly — committed as reproducible fixture evidence in
+  always present and is excluded from ballot-choice resolution, though its votes still count
+  toward `ballots_counted` (see "Write-in votes" below). This is the adapter's parse target: it is
+  directly machine-readable, requires no PDF text extraction or rendered-page scraping, and each
+  of the 32 publication-eligible wa-2026-primary races' contest labels observed in that live
+  export resolves correctly. Those observed labels are committed in
+  `REAL_CONTEST_LABEL_BY_RACE_ID` and re-run offline by
   `test_resolve_race_matches_every_publication_eligible_race_label`
-  (`tests/test_results.py`), not merely asserted from the live fetch itself.
+  (`tests/test_results.py`): the test proves the resolver maps them to the right races, while
+  their fidelity to King County's export rests on the capture-time observation recorded with
+  them.
 - The Secretary of State's `results.votewa.gov` JSON export
   (`/results/public/api/elections/washington/<election-yyyymmdd>/data`) remains live and
   structured as the postmortem described. This adapter does not parse it — see "County scope"
@@ -229,10 +242,9 @@ and an export's *shape* (columns, structure) is stable across a count in progres
   Representative Position No. 1" vs "No. 11" vs "No. 32"), and fuzzy scoring rates those as close
   matches. The adapter instead builds an exact, normalized phrase set per race from the
   inventory's own office/district/position fields and aliases and requires one exact match; the
-  same committed test proves this resolves all 32 publication-eligible wa-2026-primary races'
-  real contest labels and every candidate name with zero ambiguous or unmatched results. An
-  export contest that matches zero or more than one race is never guessed at — the adapter
-  aborts.
+  same committed test resolves all 32 of the observed labels, and the fixture test resolves every
+  candidate name in the captured excerpt, with zero ambiguous or unmatched results. An export
+  contest that matches zero or more than one race is never guessed at — the adapter aborts.
 
 **County scope.** King County's certified canvass states King County's own tally for a contest,
 not that contest's true total. That is the same total for every race whose district lies wholly
@@ -251,6 +263,20 @@ happens to contain: the live
 wa-2026-primary run omits the cross-county races from the King-County-sourced ingest until a
 Secretary-of-State-scoped adapter exists to state their true totals, tracked as a follow-up
 rather than fabricated here.
+
+**Write-in votes.** A write-in row is never a ballot choice — this schema enumerates only the
+choices the frozen inventory carries — so the two totals a race needs are computed separately:
+`ballots_counted` includes the write-in row (it is what the contest recorded, and what the
+provenance line states), while each choice's `share` is its votes over the declared, non-write-in
+total. Declared shares therefore sum to ~1 by construction, and `SHARE_SUM_TOLERANCE`
+(`results/models.py`) only ever absorbs the adapter's own fourth-decimal rounding. The
+alternative — dividing by the write-in-inclusive total — would make declared shares sum to one
+minus the write-in share, so any race whose write-ins passed a single point would fail the
+schema's tolerance and abort the entire multi-race ingest run. That is not a rare anomaly: six of
+this election's publication-eligible races (`ld-11-state-representative-2`,
+`ld-34-state-representative-1`, `ld-34-state-senator`, `ld-36-state-representative-1`,
+`ld-36-state-representative-2`, `ld-43-state-representative-2`) have exactly one declared
+candidate, and a write-in is a voter's only alternative there.
 
 ## Open questions
 

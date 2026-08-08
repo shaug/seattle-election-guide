@@ -20,12 +20,15 @@ endorsement pipeline's fuzzy, review-queueing matcher
   No. 1 Representative Position No. 1" scores as a close match to "No. 11"
   and "No. 32"). The exact, normalized-phrase match below resolves every
   publication-eligible wa-2026-primary race correctly by construction,
-  because two different district numbers never normalize to the same text
-  — proven against every one of those 32 races' real King County contest
-  label, committed as reproducible fixture evidence in
-  `test_resolve_race_matches_every_publication_eligible_race_label`
-  (`tests/test_results.py`), not merely asserted from an unreproducible
-  live fetch.
+  because two different district numbers never normalize to the same text.
+  `REAL_CONTEST_LABEL_BY_RACE_ID` (`tests/test_results.py`) records all 32
+  of those races' King County contest labels as observed live on
+  2026-08-07, and
+  `test_resolve_race_matches_every_publication_eligible_race_label` runs
+  the resolver against every one of them offline. That committed test
+  proves the resolver maps those 32 strings to the right races; the
+  strings' fidelity to King County's own export rests on the capture-time
+  observation recorded beside them, not on the test.
 
 Unmatched or ambiguous names abort loudly
 (docs/runbooks/results-certified-ingest.md, phase 2's own rule) — this
@@ -62,8 +65,9 @@ class ResultsIngestError(ValueError):
 def parse_certified_csv(content: bytes) -> dict[str, list[tuple[str, int]]]:
     """Parse a King County certified CSV export into `{contest: [(choice,
     votes), ...]}`, preserving every row exactly as declared — including
-    write-in rows, whose votes still belong in a race's total even though
-    they are excluded from ballot-choice resolution (see `resolve_choice`).
+    write-in rows, whose votes still belong in a race's `ballots_counted`
+    total even though they are excluded from ballot-choice resolution and
+    from the `share` denominator (see `resolve_choice`, `_build_race_results`).
     """
     try:
         text = content.decode("utf-8-sig")
@@ -122,15 +126,14 @@ def _race_match_phrases(race: Race) -> set[str]:
     certified export, built only from the inventory's own official fields —
     never a separately maintained name list.
 
-    Every generator below is individually proven load-bearing against the
-    real King County certified export's own contest labels for all 32
-    wa-2026-primary publication-eligible races, observed live on 2026-08-07
-    while designing this resolver and committed as reproducible fixture
-    evidence in
+    Every generator below is individually load-bearing for at least one of
+    the 32 publication-eligible wa-2026-primary races' King County contest
+    labels as observed live on 2026-08-07 while designing this resolver, and
     `test_resolve_race_matches_every_publication_eligible_race_label`
-    (`tests/test_results.py`) — not asserted from an unreproducible fetch.
+    (`tests/test_results.py`) re-runs the resolver against that committed
+    table of labels offline on every test run.
     `race.display_name` and a bare `race.position` are deliberately absent:
-    neither is ever the real export's own label for any of the 32 races
+    neither matched any of those 32 observed labels
     (`display_name` duplicates what `district` alone already resolves for
     every race that needs it; every inventory `position` value carries a
     trailing qualifier no export states, e.g. "Position 1 — unexpired
@@ -277,27 +280,44 @@ def build_election_results(
 
 
 def _build_race_results(race: Race, rows: list[tuple[str, int]]) -> RaceResults:
-    """One race's tallies: `ballots_counted` is the total votes recorded for
-    the contest, including write-ins, so `share` (votes / ballots_counted)
-    for the declared choices sums to ~1 minus any write-in share — exactly
-    the slack `RaceResults.SHARE_SUM_TOLERANCE` exists to absorb
-    (`results/models.py`) — an outsized write-in share (well beyond ordinary
-    noise) fails that invariant and aborts the whole ingest run loudly
-    rather than publishing an understated share
-    (docs/runbooks/results-certified-ingest.md, Escalation). The top two
-    vote-getters advance in a candidate race (top-two primary); a measure's
-    single winning choice — whichever of its two declared outcomes drew
-    more votes, `Yes` or `No` — advances. This module marks only the
-    winning choice `advanced: true`; it does not decide whether a rendered
-    "Approved"/"Rejected" label attaches to the outcome or to the measure
-    as a whole — that is `#285`'s rendering decision, not this adapter's."""
+    """One race's tallies, with two different vote totals doing two jobs.
+
+    `ballots_counted` is every vote the contest recorded, write-ins included
+    — that is what "ballots counted" means in the published data model
+    (docs/RESULTS.md, Data model), and it is the number the provenance line
+    renders. Each declared choice's `share`, though, is its votes over the
+    *declared* (non-write-in) total, so a race's declared shares sum to ~1 by
+    construction however large its write-in tally is;
+    `RaceResults.SHARE_SUM_TOLERANCE` (`results/models.py`) then only ever
+    absorbs the fourth-decimal rounding applied below.
+
+    A write-in-inclusive `share` denominator would instead have made declared
+    shares sum to exactly one minus the write-in share, aborting the *whole*
+    multi-race ingest run whenever any one race's write-ins passed a single
+    point of its total. That is the ordinary case, not an anomaly, for the six
+    wa-2026-primary races whose ballot carries exactly one declared candidate
+    (`ld-11-state-representative-2`, `ld-34-state-representative-1`,
+    `ld-34-state-senator`, `ld-36-state-representative-1`,
+    `ld-36-state-representative-2`, `ld-43-state-representative-2`), where the
+    write-in row is a voter's only alternative to that candidate.
+
+    The top two vote-getters advance in a candidate race (top-two primary); a
+    measure's single winning choice — whichever of its two declared outcomes
+    drew more votes, `Yes` or `No` — advances. `advanced` marks the choice
+    that prevailed, not the choice a reader would call a good outcome: on a
+    rejected measure it is the `No` choice that carries it. Deriving a
+    rendered "Approved"/"Rejected" label from *which* choice advanced is
+    `#285`'s decision, not this adapter's.
+    """
     tallies: list[tuple[BallotChoice, int]] = []
     total_votes = 0
+    declared_votes = 0
     for candidate_text, votes in rows:
         total_votes += votes
         choice = resolve_choice(candidate_text, race)
         if choice is None:
             continue
+        declared_votes += votes
         tallies.append((choice, votes))
     if not tallies:
         raise ResultsIngestError(
@@ -305,6 +325,11 @@ def _build_race_results(race: Race, rows: list[tuple[str, int]]) -> RaceResults:
         )
     if total_votes <= 0:
         raise ResultsIngestError(f"certified export reports zero total votes for race {race.id!r}")
+    if declared_votes <= 0:
+        raise ResultsIngestError(
+            f"certified export reports zero votes for every declared ballot choice in race "
+            f"{race.id!r}; only write-in rows carry votes"
+        )
 
     top_count = 1 if race.race_type == "measure" else 2
     ranked = sorted(tallies, key=lambda item: (-item[1], item[0].ballot_order))
@@ -313,7 +338,7 @@ def _build_race_results(race: Race, rows: list[tuple[str, int]]) -> RaceResults:
         RaceOutcome(
             choice_id=choice.id,
             votes=votes,
-            share=round(votes / total_votes, 4),
+            share=round(votes / declared_votes, 4),
             advanced=choice.id in advancing_ids,
         )
         for choice, votes in sorted(tallies, key=lambda item: item[0].ballot_order)

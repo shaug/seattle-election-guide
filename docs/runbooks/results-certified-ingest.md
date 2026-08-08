@@ -114,15 +114,23 @@ it should stay human-launched at least through the first full cycle.
   a Supreme Court Justice position) needs to ship: its true total requires the Secretary of
   State's export, which this adapter does not yet parse (`docs/RESULTS.md`, open questions) —
   file or pick up that follow-up rather than ingesting King County's partial count for it.
-- `results ingest` aborts the whole run with `shares sum to ..., not ~1` for one race: that
-  race's declared (non-write-in) shares alone fell more than one point short of 100% of its
-  total votes, most plausibly an unusually large write-in share
-  (`src/election_guide/results/models.py`'s `SHARE_SUM_TOLERANCE` is deliberately tight, sized
-  for ordinary write-in noise, not a real write-in campaign). Investigate the named race's own
-  write-in tally in the captured export before doing anything else. If it is a genuine, unusually
-  large write-in share and not a data error, re-run `results ingest` with that one race dropped
-  from `--race-id` so every other race still ships on schedule, and bring the excluded race to a
-  human rather than forcing it through.
+- A race's write-in tally is large — including the unopposed races above, where a write-in is a
+  voter's only alternative to the single declared candidate. This is expected and needs no
+  action: `share` is computed against the declared (non-write-in) total, so declared shares sum
+  to ~1 regardless, while `ballots_counted` still reports every vote the contest recorded
+  (`docs/RESULTS.md`, "Ingestion mechanics," Write-in votes). No race is ever dropped from the
+  run for this.
+- `results ingest` aborts with `zero votes for every declared ballot choice in race ...`: the
+  export gave that race's named candidates no votes at all while write-ins carried some. Treat it
+  as a capture or export problem — re-check the captured file for the race before anything else,
+  and bring it to a human. Do not hand-edit the results file.
+- `results ingest` aborts the whole run with `shares sum to ..., not ~1` for one race: after the
+  declared-total share fix this should be unreachable from a normal ingest (the shares the
+  adapter writes sum to one within a few ten-thousandths, far inside
+  `src/election_guide/results/models.py`'s `SHARE_SUM_TOLERANCE`), so seeing it means the adapter
+  itself is wrong, not the data. Stop, keep the capture, and escalate to a human — do not drop
+  races or edit numbers to get a run through. The same error from `results validate` on a
+  hand-edited or amended file is instead a defect in that file.
 - A recount is announced after ingest: the eventual amended flow (`docs/RESULTS.md`,
   open questions) is decided then — do not overwrite the certified file ad hoc.
 
