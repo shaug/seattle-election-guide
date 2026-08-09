@@ -161,18 +161,37 @@ function isReservedToken(token) {
 }
 
 /**
+ * Whether `gres` resolves at one position in the configured column order —
+ * one statement of the rule for the codec here and the migration path
+ * (`compare-migrate.mjs` `resolveColumn`), which must agree or a link the
+ * codec admits could migrate to a column the picker never offers.
+ *
+ * Two conditions. A certified results file must exist for the election
+ * (`CompareContext.resultsAvailable`) — the same "state, not option" gate
+ * every other results surface applies (docs/RESULTS.md, Rendering § The
+ * comparison view). And the position must not be the reference at index 0:
+ * the result column states a fact and is excluded from agreement, but every
+ * other column is scored *against* the reference (`compare-signals.mjs`
+ * `cellAgreement`/`rowDiffers`) — since `isDataCell` excludes every `result`
+ * cell outright, a `gres` reference would make `isDataCell(reference)` false
+ * for every row and silently neutralize every other column's agreement too,
+ * not just this column's own. Refusing the position is what keeps that
+ * failure structurally unreachable, rather than trusting every future caller
+ * of `cellAgreement` to special-case it.
+ *
+ * @param {boolean} resultsAvailable
+ * @param {number} index Position in the configured column order.
+ * @returns {boolean}
+ */
+export function certifiedResultCurrentAt(resultsAvailable, index) {
+  return resultsAvailable && index !== 0;
+}
+
+/**
  * @param {string} token
  * @param {CompareContext} context
- * @param {number} index Position in the configured column order. `gres` is
- *   refused at `0`: the result column states a fact and is excluded from
- *   agreement (docs/RESULTS.md, Rendering § The comparison view), but every
- *   other column is scored *against* the reference at index 0
- *   (`compare-signals.mjs` `cellAgreement`/`rowDiffers`) — since `isDataCell`
- *   excludes every `result` cell outright, a `gres` reference would make
- *   `isDataCell(reference)` false for every row and silently neutralize
- *   every other column's agreement too, not just this column's own. Refusing
- *   the position is what keeps that failure structurally unreachable, rather
- *   than trusting every future caller of `cellAgreement` to special-case it.
+ * @param {number} index Position in the configured column order; `gres` is
+ *   admitted only where `certifiedResultCurrentAt` holds.
  * @returns {import('./fragment-codec.mjs').CodecTokenClassification
  *   | { ok: false, reason: 'reserved_token'|'forbidden_token', token: string }}
  */
@@ -180,14 +199,11 @@ function classifyToken(token, context, index) {
   if (!isWellFormedToken(token)) return { ok: false, reason: 'malformed_token', token };
   if (token === ALL_SOURCES_TOKEN) return { ok: true, token };
   if (token === CERTIFIED_RESULT_TOKEN) {
-    // Reserved, but only admitted while a certified results file exists — the
-    // same "state, not option" gate every other results surface applies
-    // (docs/RESULTS.md, Rendering). A link naming it from before results
-    // existed, after a correction somehow withdrew them, or at the reference
-    // position is refused the same way an unselectable catalog entry is:
-    // `forbidden_token`, not `unknown_token` -- the identity is real, just
-    // not currently offered there.
-    return context.resultsAvailable && index !== 0
+    // A link naming it from before results existed, after a correction somehow
+    // withdrew them, or at the reference position is refused the same way an
+    // unselectable catalog entry is: `forbidden_token`, not `unknown_token` --
+    // the identity is real, just not currently offered there.
+    return certifiedResultCurrentAt(context.resultsAvailable, index)
       ? { ok: true, token }
       : { ok: false, reason: 'forbidden_token', token };
   }

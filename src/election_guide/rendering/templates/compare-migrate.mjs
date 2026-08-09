@@ -1,4 +1,8 @@
-import { ALL_SOURCES_TOKEN, CERTIFIED_RESULT_TOKEN } from './compare-url.mjs';
+import {
+  ALL_SOURCES_TOKEN,
+  CERTIFIED_RESULT_TOKEN,
+  certifiedResultCurrentAt,
+} from './compare-url.mjs';
 
 // Deterministic cross-version migration for comparison fragments. This module
 // only resolves column identities and filters. It never scores a migrated or
@@ -50,22 +54,22 @@ function retiredEntry(personalization, kind, code) {
  * @param {PersonalizationContract} personalization
  * @param {boolean} resultsAvailable
  * @param {number} index Position in the configured column order; see
- *   `compare-url.mjs` `classifyToken`'s own `index` parameter for why `gres`
- *   never resolves as current at the reference position (index `0`).
+ *   `compare-url.mjs` `certifiedResultCurrentAt` for why `gres` never resolves
+ *   as current at the reference position (index `0`).
  * @returns {ColumnResolution}
  */
 function resolveColumn(code, personalization, resultsAvailable, index) {
   if (code === ALL_SOURCES_TOKEN) return { code, kind: 'aggregate', status: 'current' };
   if (code === CERTIFIED_RESULT_TOKEN) {
-    // Reserved like `gall`, but its availability is a data fact rather than
-    // a catalog membership: current while the election's certified results
-    // file exists and it is not the reference column, unresolved (not
-    // unknown -- the identity is real) otherwise (docs/RESULTS.md, Rendering
-    // § The comparison view).
+    // Reserved like `gall`, but its availability is a data fact rather than a
+    // catalog membership, so it resolves on the codec's own admission rule
+    // rather than a second reading of it. Where that rule does not hold the
+    // column is unresolved, not unknown -- the identity is real
+    // (docs/RESULTS.md, Rendering § The comparison view).
     return {
       code,
       kind: 'aggregate',
-      status: resultsAvailable && index !== 0 ? 'current' : 'unresolved',
+      status: certifiedResultCurrentAt(resultsAvailable, index) ? 'current' : 'unresolved',
     };
   }
   if (code.startsWith('G')) {
