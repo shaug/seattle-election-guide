@@ -403,8 +403,16 @@ export function wireComparisons() {
     ];
     // The state gate (docs/RESULTS.md, Rendering § The comparison view): the
     // picker offers "Certified result" only while the election's certified
-    // results file exists, exactly like every other results surface.
-    if (payload.results_available) {
+    // results file exists, exactly like every other results surface. Never
+    // at the reference position (`editingColumn === 0`, the index this
+    // picker is always rendered for -- `headView` only calls `groupsFor`
+    // when `editingColumn === index`): every other column is scored
+    // *against* the reference, and a `result`-kind cell is never a
+    // `DataCell` (compare-signals.mjs `isDataCell`), so a `gres` reference
+    // would silently neutralize agreement for the whole row, not just its
+    // own column. `compare-url.mjs`'s codec enforces the same restriction,
+    // so a crafted or previously shared link cannot reach it either.
+    if (payload.results_available && editingColumn !== 0) {
       groups.push({
         label: 'Certified result',
         options: [option(CERTIFIED_RESULT_TOKEN, 'Certified result')],

@@ -1398,6 +1398,75 @@ def test_compare_picker_offers_certified_result_only_once_a_file_exists(
     assert with_results["resultLabel"] == "Certified result"
 
 
+def test_compare_certified_result_never_reaches_the_reference_position(
+    tmp_path: Path,
+) -> None:
+    """A result cell is never a `DataCell` (compare-signals.mjs `isDataCell`),
+    so a "Certified result" reference column would make every other column's
+    `cellAgreement` against it return `neutral` too -- silently breaking
+    agreement/Differs for the whole row, not just this column's own (the
+    excluded-from-agreement rule docs/RESULTS.md, Rendering § The comparison
+    view actually asks for). The picker never offers it at the reference
+    position, and a link or a column removal that would promote it there is
+    refused by the same codec gate a link the codec cannot write always is."""
+    html_path = _comparison_html_path_with_results(tmp_path)
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          const wait = () => new Promise((resolve) => setTimeout(resolve, 120));
+
+          // The reference picker (index 0) never offers "Certified result".
+          document.querySelector('[data-comparison-title="0"]').click();
+          const referencePicker = document.querySelector('[data-comparison-column="0"]');
+          const referenceOffersResult = [...referencePicker.options]
+            .some((option) => option.value === 'gres');
+          referencePicker.dispatchEvent(
+            new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }),
+          );
+          await wait();
+
+          // Put "Certified result" in the middle column, then remove the
+          // reference column -- which would otherwise promote it to index 0.
+          document.querySelector('[data-comparison-title="1"]').click();
+          const middlePicker = document.querySelector('[data-comparison-column="1"]');
+          middlePicker.value = 'gres';
+          middlePicker.dispatchEvent(new Event('change', { bubbles: true }));
+          await wait();
+          const columnsBeforeRemove = [...document.querySelectorAll(
+            '[data-comparison-head] [data-column-signal]',
+          )].map((heading) => heading.dataset.columnSignal);
+          const hashBeforeRemove = location.hash;
+
+          document.querySelector('[data-comparison-remove="0"]').click();
+          await wait();
+
+          return JSON.stringify({
+            referenceOffersResult,
+            columnsBeforeRemove,
+            columnsAfterRemove: [...document.querySelectorAll(
+              '[data-comparison-head] [data-column-signal]',
+            )].map((heading) => heading.dataset.columnSignal),
+            hashUnchanged: location.hash === hashBeforeRemove,
+            notice: document.querySelector('[data-comparison-hidden-notice]').textContent,
+            noticeHidden: document.querySelector('[data-comparison-hidden-notice]').hidden,
+          });
+        })()
+        """,
+    )
+    assert result["referenceOffersResult"] is False
+    assert result["columnsBeforeRemove"][1] == "gres"
+    # The removal that would have promoted "Certified result" to the
+    # reference position never took: the columns and the address bar are
+    # exactly what they were before the click, and the reader is told why.
+    assert result["columnsAfterRemove"] == result["columnsBeforeRemove"]
+    assert result["hashUnchanged"] is True
+    assert result["notice"] == (
+        "That change could not be put into a shareable link, so the comparison is unchanged."
+    )
+    assert result["noticeHidden"] is False
+
+
 def test_compare_result_column_carries_no_agreement_and_never_affects_differs(
     tmp_path: Path,
 ) -> None:

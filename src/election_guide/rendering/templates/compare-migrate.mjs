@@ -49,16 +49,24 @@ function retiredEntry(personalization, kind, code) {
  * @param {string} code
  * @param {PersonalizationContract} personalization
  * @param {boolean} resultsAvailable
+ * @param {number} index Position in the configured column order; see
+ *   `compare-url.mjs` `classifyToken`'s own `index` parameter for why `gres`
+ *   never resolves as current at the reference position (index `0`).
  * @returns {ColumnResolution}
  */
-function resolveColumn(code, personalization, resultsAvailable) {
+function resolveColumn(code, personalization, resultsAvailable, index) {
   if (code === ALL_SOURCES_TOKEN) return { code, kind: 'aggregate', status: 'current' };
   if (code === CERTIFIED_RESULT_TOKEN) {
     // Reserved like `gall`, but its availability is a data fact rather than
     // a catalog membership: current while the election's certified results
-    // file exists, unresolved (not unknown -- the identity is real) while it
-    // does not (docs/RESULTS.md, Rendering § The comparison view).
-    return { code, kind: 'aggregate', status: resultsAvailable ? 'current' : 'unresolved' };
+    // file exists and it is not the reference column, unresolved (not
+    // unknown -- the identity is real) otherwise (docs/RESULTS.md, Rendering
+    // § The comparison view).
+    return {
+      code,
+      kind: 'aggregate',
+      status: resultsAvailable && index !== 0 ? 'current' : 'unresolved',
+    };
   }
   if (code.startsWith('G')) {
     const current = personalization.categories.find((item) => item.code === code);
@@ -128,8 +136,8 @@ export function migrateCompareState(staleDecode, personalization, context) {
   if (staleDecode.status !== 'stale_version') {
     return { status: 'rejected', reason: 'not_stale_version' };
   }
-  const columnResults = staleDecode.state.columns.map((code) =>
-    resolveColumn(code, personalization, context.resultsAvailable),
+  const columnResults = staleDecode.state.columns.map((code, index) =>
+    resolveColumn(code, personalization, context.resultsAvailable, index),
   );
   const unavailableCategory = columnResults.find(
     (result) => result.kind === 'category' && result.status !== 'current',
@@ -173,8 +181,8 @@ export function migrateCompareState(staleDecode, personalization, context) {
     };
   }
 
-  const defaults = context.defaultColumns.map((code) =>
-    resolveColumn(code, personalization, context.resultsAvailable),
+  const defaults = context.defaultColumns.map((code, index) =>
+    resolveColumn(code, personalization, context.resultsAvailable, index),
   );
   if (
     defaults.length < 2 ||

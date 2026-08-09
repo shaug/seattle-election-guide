@@ -163,20 +163,31 @@ function isReservedToken(token) {
 /**
  * @param {string} token
  * @param {CompareContext} context
+ * @param {number} index Position in the configured column order. `gres` is
+ *   refused at `0`: the result column states a fact and is excluded from
+ *   agreement (docs/RESULTS.md, Rendering § The comparison view), but every
+ *   other column is scored *against* the reference at index 0
+ *   (`compare-signals.mjs` `cellAgreement`/`rowDiffers`) — since `isDataCell`
+ *   excludes every `result` cell outright, a `gres` reference would make
+ *   `isDataCell(reference)` false for every row and silently neutralize
+ *   every other column's agreement too, not just this column's own. Refusing
+ *   the position is what keeps that failure structurally unreachable, rather
+ *   than trusting every future caller of `cellAgreement` to special-case it.
  * @returns {import('./fragment-codec.mjs').CodecTokenClassification
  *   | { ok: false, reason: 'reserved_token'|'forbidden_token', token: string }}
  */
-function classifyToken(token, context) {
+function classifyToken(token, context, index) {
   if (!isWellFormedToken(token)) return { ok: false, reason: 'malformed_token', token };
   if (token === ALL_SOURCES_TOKEN) return { ok: true, token };
   if (token === CERTIFIED_RESULT_TOKEN) {
     // Reserved, but only admitted while a certified results file exists — the
     // same "state, not option" gate every other results surface applies
     // (docs/RESULTS.md, Rendering). A link naming it from before results
-    // existed, or after a correction somehow withdrew them, is refused the
-    // same way an unselectable catalog entry is: `forbidden_token`, not
-    // `unknown_token` -- the identity is real, just not currently offered.
-    return context.resultsAvailable
+    // existed, after a correction somehow withdrew them, or at the reference
+    // position is refused the same way an unselectable catalog entry is:
+    // `forbidden_token`, not `unknown_token` -- the identity is real, just
+    // not currently offered there.
+    return context.resultsAvailable && index !== 0
       ? { ok: true, token }
       : { ok: false, reason: 'forbidden_token', token };
   }
@@ -281,8 +292,8 @@ export function decodeCompareFragment(fragment, context) {
   const state = { columns: parsedColumns.columns, ...parsedFilters.state };
   if (!isCurrentBinding(binding, context)) return { status: 'stale_version', state, binding };
 
-  for (const token of state.columns) {
-    const classified = classifyToken(token, context);
+  for (const [index, token] of state.columns.entries()) {
+    const classified = classifyToken(token, context, index);
     if (!classified.ok) return invalid(classified.reason, { token: classified.token });
   }
   if (state.section !== 'all' && !context.sectionIds.has(state.section)) {
@@ -302,8 +313,8 @@ export function encodeCompareFragment(state, context) {
   const columns = orderedUnique(state.columns ?? []);
   const countError = validateColumnCount(columns, rejected);
   if (countError) return countError;
-  for (const token of columns) {
-    const classified = classifyToken(token, context);
+  for (const [index, token] of columns.entries()) {
+    const classified = classifyToken(token, context, index);
     if (!classified.ok) return rejected(classified.reason, { token: classified.token });
   }
   for (const [key, value] of [
