@@ -6,6 +6,7 @@ import {
   BLANK_CELL,
   cellAgreement,
   createColumnSignalEngine,
+  isDataCell,
   leadSetsIntersect,
   OUTSIDE_SCOPE_CELL,
   rowDiffers,
@@ -191,6 +192,64 @@ test('all four non-affirmative states resolve to the identical blank cell', () =
   for (const code of ['nend', 'ncov', 'unav', 'unvr']) {
     assert.strictEqual(engine.resolveColumn(code, race), BLANK_CELL);
   }
+});
+
+test('gres resolves every advancing outcome, most-share-first, and stays out of agreement', () => {
+  const resultsEngine = createColumnSignalEngine(
+    personalization,
+    comparisons,
+    new Map([
+      [
+        race.race_id,
+        [
+          {
+            candidate_id: 'beta',
+            percentage_label: '32.0%',
+            advanced: true,
+            chip_label: 'Advances',
+          },
+          {
+            candidate_id: 'alpha',
+            percentage_label: '29.0%',
+            advanced: true,
+            chip_label: 'Advances',
+          },
+          { candidate_id: 'gamma', percentage_label: '23.0%', advanced: false, chip_label: null },
+        ],
+      ],
+    ]),
+  );
+  const resultCell = resultsEngine.resolveColumn('gres', race);
+  assert.deepEqual(resultCell, {
+    kind: 'result',
+    leadingPickIds: ['beta', 'alpha'],
+    meta: '32.0% · 29.0% · Advances',
+  });
+  // Excluded from agreement (docs/RESULTS.md, Rendering § The comparison
+  // view: "excluded from agreement"), even though it carries a real lead set
+  // that overlaps the reference's own.
+  assert.equal(isDataCell(resultCell), false);
+  const reference = { kind: 'baseline', leadingPickIds: ['beta'] };
+  assert.equal(cellAgreement(resultCell, reference), 'neutral');
+  assert.equal(cellAgreement(reference, resultCell), 'neutral');
+  const differing = { kind: 'direct', leadingPickIds: ['gamma'] };
+  assert.equal(rowDiffers([reference, resultCell]), false);
+  assert.equal(rowDiffers([reference, resultCell, differing]), true);
+});
+
+test('gres resolves to the blank cell with no certified outcome or no advancing choice', () => {
+  assert.strictEqual(engine.resolveColumn('gres', race), BLANK_CELL);
+  const nobodyAdvancedEngine = createColumnSignalEngine(
+    personalization,
+    comparisons,
+    new Map([
+      [
+        race.race_id,
+        [{ candidate_id: 'beta', percentage_label: '54.2%', advanced: false, chip_label: null }],
+      ],
+    ]),
+  );
+  assert.strictEqual(nobodyAdvancedEngine.resolveColumn('gres', race), BLANK_CELL);
 });
 
 test('lead-set agreement handles overlap, disjoint sets, and neutral cells', () => {

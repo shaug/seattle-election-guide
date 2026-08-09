@@ -27,6 +27,7 @@ from election_guide.publication.personalization import (
     PersonalizationSource,
 )
 from election_guide.rendering.payload import (
+    ComparisonResultOutcome,
     FilterScope,
     RaceCandidateDisplay,
     RaceCandidateEndorsements,
@@ -529,6 +530,44 @@ def comparison_percentage_label(value: str | None) -> str:
     if percentage.denominator == 1:
         return f"{percentage.numerator}%"
     return f"{float(percentage):.1f}%"
+
+
+def comparison_result_outcomes(
+    view_model: PublicationViewModel,
+) -> dict[str, list[ComparisonResultOutcome]]:
+    """Certified outcomes for the comparison page's own "Certified result"
+    column (docs/RESULTS.md, Rendering § The comparison view; #288), keyed by
+    race id and share-descending like `RaceResultsView.outcomes`.
+
+    Reuses `race_results_view`'s own computation (#286) rather than a second
+    one, exactly as `race_result_outcomes_by_candidate_id` (#287) already does
+    for the endorsements dialog. A race is absent from the returned mapping
+    while no results file exists, this race's ingested file names no entry
+    for it, or the race is a measure -- `race_results_view`'s own `None` gate,
+    which is also what keeps a measure race's result column empty pending
+    #289.
+    """
+    race_by_id = {race.id: race for section in view_model.sections for race in section.races}
+    outcomes_by_race: dict[str, list[ComparisonResultOutcome]] = {}
+    for display in view_model.comparisons.display_index:
+        results = race_results_view(
+            race_by_id[display.race_id],
+            results=view_model.results,
+            election_type=view_model.metadata.election_type,
+            capture_url=view_model.metadata.results_capture_url,
+        )
+        if results is None:
+            continue
+        outcomes_by_race[display.race_id] = [
+            ComparisonResultOutcome(
+                candidate_id=outcome.candidate_id,
+                percentage_label=outcome.percentage_label,
+                advanced=outcome.advanced,
+                chip_label=outcome.chip_label,
+            )
+            for outcome in results.outcomes
+        ]
+    return outcomes_by_race
 
 
 def _filter_options(view_model: PublicationViewModel) -> list[str]:

@@ -455,7 +455,12 @@ def render_comparison_document(
         election_id=view_model.metadata.election_id,
     )
     document_title = page_title(page="Comparisons", election=election_display_name)
-    payload = comparisons_payload(view_model, default_columns=["gall", "strn", "stim"])
+    payload = comparisons_payload(
+        view_model,
+        default_columns=["gall", "strn", "stim"],
+        results_available=view_model.results is not None,
+        race_results=context.comparison_result_outcomes(view_model),
+    )
     preset_fragments = [
         (
             "The Stranger and The Times",

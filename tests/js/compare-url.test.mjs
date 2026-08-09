@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   ALL_SOURCES_TOKEN,
+  CERTIFIED_RESULT_TOKEN,
   COMPARE_SCHEMA_VERSION,
   compareContext,
   decodeCompareFragment,
@@ -49,6 +50,12 @@ function comparisons() {
 function context(overrides = {}) {
   const payload = personalization(overrides);
   return compareContext(payload, 'd119ee3107bb', comparisons());
+}
+
+/** A context published while a certified results file exists for the election. */
+function contextWithResults(overrides = {}) {
+  const payload = personalization(overrides);
+  return compareContext(payload, 'd119ee3107bb', comparisons(), undefined, true);
 }
 
 function encoded(state, ctx = context()) {
@@ -164,6 +171,55 @@ test('gmin and every other lowercase-g token reject distinctly as reserved', () 
     assert.equal(encode.status, 'rejected');
     assert.equal(encode.reason, 'reserved_token');
   }
+});
+
+test('gres is forbidden until certified results exist, then admits like gall', () => {
+  assert.equal(CERTIFIED_RESULT_TOKEN, 'gres');
+  const withoutResults = context();
+  const decodedWithout = decodeCompareFragment(
+    encoded({ columns: ['gall', 'strn'] }).replace('gallstrn', 'gallgres'),
+    withoutResults,
+  );
+  assert.equal(decodedWithout.status, 'malformed');
+  assert.equal(decodedWithout.reason, 'forbidden_token');
+  assert.equal(decodedWithout.token, 'gres');
+  const encodedWithout = encodeCompareFragment({ columns: ['gall', 'gres'] }, withoutResults);
+  assert.equal(encodedWithout.status, 'rejected');
+  assert.equal(encodedWithout.reason, 'forbidden_token');
+
+  const withResults = contextWithResults();
+  const fragment = encoded({ columns: ['gall', 'gres'] }, withResults);
+  assert.ok(fragment.includes('cols=gallgres'), fragment);
+  const decoded = decodeCompareFragment(fragment, withResults);
+  assert.equal(decoded.status, 'valid');
+  assert.deepEqual(decoded.state.columns, ['gall', 'gres']);
+});
+
+test('gres is refused at the reference position even while results exist', () => {
+  // Every other column is scored against the reference (index 0), but a
+  // result cell is never a DataCell (compare-signals.mjs isDataCell), so a
+  // gres reference would silently neutralize agreement for the whole row --
+  // not just its own column. The codec is the one place that can make that
+  // structurally unreachable, so it refuses `gres` at index 0 regardless of
+  // `resultsAvailable`.
+  const withResults = contextWithResults();
+  const decoded = decodeCompareFragment(
+    encoded({ columns: ['gall', 'strn'] }, withResults).replace('gallstrn', 'gresstrn'),
+    withResults,
+  );
+  assert.equal(decoded.status, 'malformed');
+  assert.equal(decoded.reason, 'forbidden_token');
+  assert.equal(decoded.token, 'gres');
+
+  const encodedAsReference = encodeCompareFragment({ columns: ['gres', 'strn'] }, withResults);
+  assert.equal(encodedAsReference.status, 'rejected');
+  assert.equal(encodedAsReference.reason, 'forbidden_token');
+
+  // Unaffected everywhere else in the order.
+  const asSecondColumn = encodeCompareFragment({ columns: ['gall', 'gres'] }, withResults);
+  assert.equal(asSecondColumn.status, 'ok');
+  const asThirdColumn = encodeCompareFragment({ columns: ['gall', 'strn', 'gres'] }, withResults);
+  assert.equal(asThirdColumn.status, 'ok');
 });
 
 test('unknown, case-confusable, forbidden, malformed, and ragged tokens reject deterministically', () => {

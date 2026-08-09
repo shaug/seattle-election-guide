@@ -8,12 +8,18 @@
 import { scoreRace } from './lens-score.mjs';
 
 const ALL_SOURCES_SIGNAL = 'gall';
+const CERTIFIED_RESULT_SIGNAL = 'gres';
 const AFFIRMATIVE_STATES = new Set(['endorsement', 'multi_endorsement']);
 
 /**
- * One resolved table cell. The five kinds are disjoint: `blank` and
- * `outside_scope` carry no data and are never compared, while `direct`,
- * `comparison`, `aggregate`, and `baseline` all carry a lead set.
+ * One resolved table cell. The six kinds are disjoint: `blank` and
+ * `outside_scope` carry no data and are never compared; `direct`,
+ * `comparison`, `aggregate`, and `baseline` carry a lead set and are compared
+ * against the reference column; `result` carries a lead set for its own picks
+ * line but is never compared — `isDataCell` excludes it outright, which is
+ * what keeps the certified-result column from tinting agree/differ or
+ * counting toward a row's Differs marker (docs/RESULTS.md, Rendering § The
+ * comparison view: "excluded from agreement").
  *
  * Consumers probe `leadingPickIds`, `share`, `endorsingCount`, and
  * `memberCount` before narrowing by kind — `isDataCell` decides the kind from
@@ -60,7 +66,27 @@ const AFFIRMATIVE_STATES = new Set(['endorsement', 'multi_endorsement']);
  * @property {undefined} [memberCount]
  */
 
-/** @typedef {EmptyCell|DirectCell|AggregateCell|BaselineCell} ComparisonCell */
+/**
+ * The certified-result column's own cell (docs/RESULTS.md, Rendering § The
+ * comparison view; #288). `leadingPickIds` names every advancing choice — one
+ * for a general election, usually two for a top-two primary — so the picks
+ * line reads the same way every other column's does. `meta` is carried
+ * pre-formatted rather than derived from `share`/`endorsingCount` like an
+ * `aggregate` cell's is: a result's meta line joins each advancing choice's
+ * own vote share with the race's certification status (docs/RESULTS.md, "the
+ * certification status on the meta line"), which is not the
+ * share-then-source-count grammar every other kind's meta line shares.
+ *
+ * @typedef {object} ResultCell
+ * @property {'result'} kind
+ * @property {string[]} leadingPickIds
+ * @property {string} meta
+ * @property {undefined} [share]
+ * @property {undefined} [endorsingCount]
+ * @property {undefined} [memberCount]
+ */
+
+/** @typedef {EmptyCell|DirectCell|AggregateCell|BaselineCell|ResultCell} ComparisonCell */
 
 /** A cell that carries a lead set, and so can agree or differ. */
 /** @typedef {DirectCell|AggregateCell|BaselineCell} DataCell */
@@ -69,6 +95,24 @@ const AFFIRMATIVE_STATES = new Set(['endorsement', 'multi_endorsement']);
 export const BLANK_CELL = Object.freeze({ kind: 'blank' });
 /** @type {EmptyCell} */
 export const OUTSIDE_SCOPE_CELL = Object.freeze({ kind: 'outside_scope' });
+
+/**
+ * @param {readonly ComparisonResultOutcome[] | undefined} outcomes
+ * @returns {ResultCell|EmptyCell}
+ */
+function resultCell(outcomes) {
+  if (outcomes === undefined || outcomes.length === 0) return BLANK_CELL;
+  const advancing = outcomes.filter((outcome) => outcome.advanced);
+  if (advancing.length === 0) return BLANK_CELL;
+  return {
+    kind: 'result',
+    leadingPickIds: advancing.map((outcome) => outcome.candidate_id),
+    meta: [
+      ...advancing.map((outcome) => outcome.percentage_label),
+      /** @type {string} */ (advancing[0].chip_label),
+    ].join(' · '),
+  };
+}
 
 /**
  * @param {PersonalizationCell} cell
@@ -136,13 +180,18 @@ function aggregateCell(category, race, personalization) {
  *
  * The returned resolveColumn(signal, race) method is the downstream contract:
  * race is one entry from personalization.races and signal is a current source
- * code, category code, or the reserved `gall` sentinel.
+ * code, category code, or one of the reserved `gall`/`gres` sentinels.
  *
  * @param {PersonalizationContract} personalization
  * @param {ComparisonsContract} comparisons
+ * @param {ReadonlyMap<string, readonly ComparisonResultOutcome[]>} [results]
+ *   Certified outcomes by race id, as published in `payload.race_results`
+ *   (docs/RESULTS.md, Rendering § The comparison view). Defaults to empty, so
+ *   a caller that never resolves `gres` — every test fixture before this
+ *   election certified, for instance — need not supply it.
  * @returns {{ resolveColumn: (signal: string, race: PersonalizationRace) => ComparisonCell }}
  */
-export function createColumnSignalEngine(personalization, comparisons) {
+export function createColumnSignalEngine(personalization, comparisons, results = new Map()) {
   const sources = new Map(personalization.sources.map((source) => [source.code, source]));
   const categories = new Map(
     personalization.categories.map((category) => [category.code, category]),
@@ -168,6 +217,9 @@ export function createColumnSignalEngine(personalization, comparisons) {
         share: display.baseline.share,
         endorsingCount: display.baseline.explicit_source_count,
       };
+    }
+    if (signal === CERTIFIED_RESULT_SIGNAL) {
+      return resultCell(results.get(race.race_id));
     }
 
     const category = categories.get(signal);
@@ -200,7 +252,16 @@ export function createColumnSignalEngine(personalization, comparisons) {
  * @returns {cell is DataCell}
  */
 export function isDataCell(cell) {
-  return Array.isArray(cell.leadingPickIds) && cell.leadingPickIds.length > 0;
+  // `result` carries a lead set too, for its own picks line, but it is never
+  // a `DataCell`: excluding it here is what keeps the certified-result
+  // column out of agreement computation everywhere `isDataCell` gates it —
+  // `leadSetsIntersect`, `cellAgreement`, and therefore `rowDiffers` — rather
+  // than requiring each of those to special-case the kind on its own
+  // (docs/RESULTS.md, Rendering § The comparison view: "excluded from
+  // agreement").
+  return (
+    cell.kind !== 'result' && Array.isArray(cell.leadingPickIds) && cell.leadingPickIds.length > 0
+  );
 }
 
 /**
@@ -217,8 +278,11 @@ export function leadSetsIntersect(left, right) {
 /**
  * Compare one cell with the configured reference.
  *
- * Blank and outside-scope cells are neutral: they never claim agreement and
- * never create a difference.
+ * Blank, outside-scope, and result cells are neutral: they never claim
+ * agreement and never create a difference — a result cell not because it
+ * carries no data, but because `isDataCell` excludes its kind outright
+ * (docs/RESULTS.md, Rendering § The comparison view: "excluded from
+ * agreement").
  *
  * @param {ComparisonCell} cell
  * @param {ComparisonCell} reference

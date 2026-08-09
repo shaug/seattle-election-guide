@@ -9,8 +9,8 @@
 // four version bindings, the sharing limit — live in `fragment-codec.mjs`.
 // What stays here is what makes this fragment Comparisons': ordered columns,
 // the two-to-three column bound, the reserved lowercase-`g` namespace whose
-// only member so far is `gall`, the filter parameters, and the refusal to read
-// a lens link.
+// two members are `gall` and `gres`, the filter parameters, and the refusal
+// to read a lens link.
 
 import {
   classifyCatalogToken,
@@ -29,8 +29,15 @@ import {
 
 export const COMPARE_SCHEMA_VERSION = '1';
 export const ALL_SOURCES_TOKEN = 'gall';
+export const CERTIFIED_RESULT_TOKEN = 'gres';
 
 const RESERVED_PREFIX = 'g';
+// Every reserved token this page defines itself, as opposed to one the
+// personalization catalogs publish. `gall` always resolves; `gres` resolves
+// only while the election's certified results file exists
+// (`CompareContext.resultsAvailable`, set from `payload.results_available` —
+// docs/RESULTS.md, Rendering § The comparison view).
+const RESERVED_TOKENS = new Set([ALL_SOURCES_TOKEN, CERTIFIED_RESULT_TOKEN]);
 const MIN_COLUMNS = 2;
 const MAX_COLUMNS = 3;
 
@@ -39,7 +46,8 @@ const MAX_COLUMNS = 3;
  * fragment is read and written against.
  *
  * @typedef {import('./fragment-codec.mjs').CodecContext
- *   & { sectionIds: Set<string>, defaultColumns: string[] }} CompareContext
+ *   & { sectionIds: Set<string>, defaultColumns: string[], resultsAvailable: boolean }
+ * } CompareContext
  */
 
 /**
@@ -98,6 +106,7 @@ const MAX_COLUMNS = 3;
  * @param {string} dataVersion
  * @param {ComparisonsContract} comparisons
  * @param {string[]} [defaultColumns]
+ * @param {boolean} [resultsAvailable]
  * @returns {CompareContext}
  */
 export function compareContext(
@@ -105,6 +114,7 @@ export function compareContext(
   dataVersion,
   comparisons,
   defaultColumns = [ALL_SOURCES_TOKEN, 'strn', 'stim'],
+  resultsAvailable = false,
 ) {
   /** @type {Set<string>} */
   const sectionIds = new Set();
@@ -113,6 +123,7 @@ export function compareContext(
     ...codecContext(personalization, dataVersion),
     sectionIds,
     defaultColumns: [...defaultColumns],
+    resultsAvailable,
   };
 }
 
@@ -138,26 +149,64 @@ function rejected(reason, detail = {}) {
  * Whether a token is this page's own rather than the catalogs'.
  *
  * Lowercase `g` is reserved for aggregate columns the page defines itself.
- * `gall` is the only one so far; every other spelling is refused rather than
- * looked up, so adding a second aggregate never has to reinterpret a link that
+ * `gall` and `gres` are the only two; every other spelling is refused rather
+ * than looked up, so adding a third never has to reinterpret a link that
  * already guessed at its name.
  *
  * @param {string} token
  * @returns {boolean}
  */
 function isReservedToken(token) {
-  return token.startsWith(RESERVED_PREFIX) && token !== ALL_SOURCES_TOKEN;
+  return token.startsWith(RESERVED_PREFIX) && !RESERVED_TOKENS.has(token);
+}
+
+/**
+ * Whether `gres` resolves at one position in the configured column order —
+ * one statement of the rule for the codec here and the migration path
+ * (`compare-migrate.mjs` `resolveColumn`), which must agree or a link the
+ * codec admits could migrate to a column the picker never offers.
+ *
+ * Two conditions. A certified results file must exist for the election
+ * (`CompareContext.resultsAvailable`) — the same "state, not option" gate
+ * every other results surface applies (docs/RESULTS.md, Rendering § The
+ * comparison view). And the position must not be the reference at index 0:
+ * the result column states a fact and is excluded from agreement, but every
+ * other column is scored *against* the reference (`compare-signals.mjs`
+ * `cellAgreement`/`rowDiffers`) — since `isDataCell` excludes every `result`
+ * cell outright, a `gres` reference would make `isDataCell(reference)` false
+ * for every row and silently neutralize every other column's agreement too,
+ * not just this column's own. Refusing the position is what keeps that
+ * failure structurally unreachable, rather than trusting every future caller
+ * of `cellAgreement` to special-case it.
+ *
+ * @param {boolean} resultsAvailable
+ * @param {number} index Position in the configured column order.
+ * @returns {boolean}
+ */
+export function certifiedResultCurrentAt(resultsAvailable, index) {
+  return resultsAvailable && index !== 0;
 }
 
 /**
  * @param {string} token
  * @param {CompareContext} context
+ * @param {number} index Position in the configured column order; `gres` is
+ *   admitted only where `certifiedResultCurrentAt` holds.
  * @returns {import('./fragment-codec.mjs').CodecTokenClassification
- *   | { ok: false, reason: 'reserved_token', token: string }}
+ *   | { ok: false, reason: 'reserved_token'|'forbidden_token', token: string }}
  */
-function classifyToken(token, context) {
+function classifyToken(token, context, index) {
   if (!isWellFormedToken(token)) return { ok: false, reason: 'malformed_token', token };
   if (token === ALL_SOURCES_TOKEN) return { ok: true, token };
+  if (token === CERTIFIED_RESULT_TOKEN) {
+    // A link naming it from before results existed, after a correction somehow
+    // withdrew them, or at the reference position is refused the same way an
+    // unselectable catalog entry is: `forbidden_token`, not `unknown_token` --
+    // the identity is real, just not currently offered there.
+    return certifiedResultCurrentAt(context.resultsAvailable, index)
+      ? { ok: true, token }
+      : { ok: false, reason: 'forbidden_token', token };
+  }
   if (isReservedToken(token)) return { ok: false, reason: 'reserved_token', token };
   return classifyCatalogToken(token, context);
 }
@@ -259,8 +308,8 @@ export function decodeCompareFragment(fragment, context) {
   const state = { columns: parsedColumns.columns, ...parsedFilters.state };
   if (!isCurrentBinding(binding, context)) return { status: 'stale_version', state, binding };
 
-  for (const token of state.columns) {
-    const classified = classifyToken(token, context);
+  for (const [index, token] of state.columns.entries()) {
+    const classified = classifyToken(token, context, index);
     if (!classified.ok) return invalid(classified.reason, { token: classified.token });
   }
   if (state.section !== 'all' && !context.sectionIds.has(state.section)) {
@@ -280,8 +329,8 @@ export function encodeCompareFragment(state, context) {
   const columns = orderedUnique(state.columns ?? []);
   const countError = validateColumnCount(columns, rejected);
   if (countError) return countError;
-  for (const token of columns) {
-    const classified = classifyToken(token, context);
+  for (const [index, token] of columns.entries()) {
+    const classified = classifyToken(token, context, index);
     if (!classified.ok) return rejected(classified.reason, { token: classified.token });
   }
   for (const [key, value] of [
