@@ -27,6 +27,18 @@
    this heading outside any card. Maximum weight belongs to data
    (docs/DESIGN.md, Typography). */
 .screen-race-result h3 { min-width: 0; margin: 0; color: var(--navy); font: 800 1.5rem/1.08 var(--screen-sans); letter-spacing: -.02em; overflow-wrap: anywhere; }
+/* The results chip (docs/RESULTS.md, "The results chip"; #287): sky on navy,
+   immediately after the candidate's name in every heading that names one —
+   a candidate's own section title (race.css `.race-detail-candidate-title
+   h4`) or, for the sole leading choice, this row's own `h3` above; the
+   guide's own certified results strip (guide.css `.race-results-name`)
+   renders the same chip beside the same kind of name. Ordinary inline
+   content after the name rather than a flex layout of its own: a heading too
+   narrow for both wraps the chip beneath the name from plain text flow
+   alone, with no separate narrow-width rule needed (the ratified mobile
+   accommodation). `vertical-align` is inert inside `.race-results-name`'s
+   flex row, so the one rule serves both contexts unchanged. */
+.race-detail-result-chip { display: inline-block; padding: .06rem .5rem; border-radius: 1rem; background: var(--sky); color: var(--navy); font-size: .64rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; vertical-align: middle; }
 /* Meter v2, the segmented meter (docs/METER_V2.md). Frame: 2rem tall, a
    `.4rem` corner radius — a nod to the pill, nothing more; the bar is a bare
    flex row of blocks, each sized by its own `--meter-w` weight rather than a

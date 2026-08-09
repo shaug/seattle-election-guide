@@ -148,7 +148,7 @@
               <div class="race-results-tally">
                 {% for outcome in results.outcomes %}
                 <div class="race-results-row{{ '' if outcome.advanced else ' race-results-row-trailing' }}">
-                  <span class="race-results-name">{{ outcome.candidate_label }}{% if outcome.chip_label %} <span class="race-results-chip">{{ outcome.chip_label }}</span>{% endif %}</span>
+                  <span class="race-results-name">{{ outcome.candidate_label }}{% if outcome.chip_label %} <span class="race-detail-result-chip">{{ outcome.chip_label }}</span>{% endif %}</span>
                   <span class="race-results-share">{{ outcome.percentage_label }}</span>
                   <span class="race-results-bar"><i style="width:{{ outcome.percentage_label }}"></i></span>
                 </div>

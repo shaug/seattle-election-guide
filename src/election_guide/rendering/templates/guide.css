@@ -87,13 +87,12 @@ html.compact-ballot-mode .insufficient-note { padding: .38rem .48rem; font-size:
 .race-results-status { display: inline-block; padding: .08rem .5rem; border: 1px solid var(--tone-agree-border); border-radius: 1rem; background: var(--tone-agree-bg); color: var(--tone-agree-text); font-size: .68rem; font-weight: 700; letter-spacing: .02em; }
 .race-results-tally { display: grid; gap: .3rem; }
 .race-results-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .15rem .6rem; }
-/* The outcome chip (docs/RESULTS.md, "The results chip"): sky on navy,
+/* The outcome chip is the shared `.race-detail-result-chip` (guide-race.css),
    deliberately outside the agree/differ tone families -- neither good nor
    bad, fact. Wraps under the name at narrow widths rather than forcing a
    second layout, the same accommodation the endorsements dialog's own
    candidate heading uses. */
 .race-results-name { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: .1rem .5rem; font-size: .92rem; font-weight: 600; color: var(--ink); }
-.race-results-chip { display: inline-block; padding: .06rem .5rem; border-radius: 1rem; background: var(--sky); color: var(--navy); font-size: .64rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
 .race-results-share { color: var(--ink); font-size: .92rem; font-weight: 700; font-variant-numeric: tabular-nums; }
 /* One shared full-width scale (docs/RESULTS.md, Rendering): every bar in the
    card runs the same track width, so shares compare honestly across
