@@ -336,9 +336,11 @@ that question — there is no threshold field to source, so no #283 schema follo
 
 Same provenance line (ballots counted · authority · capture link) and same "Certified ·
 `<date>`" badge as candidate cards — nothing measure-specific there either. This applies
-identically wherever the tally-row component is consumed: the race card ("Race cards" above,
-#286), the endorsements dialog ("The endorsements dialog" above, #287), and the comparison column
-("The comparison view" above, #288) — reuse everywhere, not race-card-only.
+identically wherever the certified results data renders: the race card and the endorsements
+dialog render it through the shared tally-row component exactly as above ("Race cards", #286;
+"The endorsements dialog", #287); the comparison column renders the same underlying data through
+its own cell grammar rather than the tally-row markup ("The comparison view" above, #288) — reuse
+everywhere, not race-card-only, but each surface keeps its own established presentation idiom.
 
 Implementation is tracked as a follow-up sub-issue of #208 rather than in this design pass (see
 that issue for the concrete code shape: `race_results_view`'s `race.race_type == "measure"`
