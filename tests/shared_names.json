@@ -737,7 +737,8 @@
     "race-detail-candidate-result-trailing": [
       "template",
       "stylesheet",
-      "client"
+      "client",
+      "test"
     ],
     "race-detail-candidate-tied": [
       "template",
@@ -778,7 +779,8 @@
       "template",
       "stylesheet",
       "client",
-      "python"
+      "python",
+      "test"
     ],
     "race-detail-source-meta": [
       "template",

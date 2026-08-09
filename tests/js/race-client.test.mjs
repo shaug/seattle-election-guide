@@ -116,6 +116,14 @@ function payload(personalization = personalizationContract()) {
               evidence_url: 'https://example.test/stranger',
             },
           ],
+          // A certified result (docs/RESULTS.md, Rendering § The endorsements
+          // dialog; #287): selection-independent, so it is unaffected by
+          // whichever candidate a lens currently recommends. Ada's own
+          // outcome advanced; Blaise's did not — deliberately the opposite of
+          // the audited tie, so a test that narrows the selection to Blaise
+          // alone (making Blaise the *scored* leader) can prove the headline
+          // chip follows the *certified* outcome, not the current selection.
+          result: { percentage_label: '54.2%', advanced: true, chip_label: 'Advances' },
         },
         {
           candidate_id: 'blaise',
@@ -132,6 +140,7 @@ function payload(personalization = personalizationContract()) {
               evidence_url: 'https://example.test/mlk',
             },
           ],
+          result: { percentage_label: '45.8%', advanced: false, chip_label: null },
         },
       ],
     },
@@ -245,6 +254,54 @@ test('a narrowed selection rescores the race and says what it is counting', () =
     ),
     ['blaise', 'ada'],
   );
+});
+
+// The certified vote-share row and heading chip (docs/RESULTS.md, Rendering §
+// The endorsements dialog; #287) are selection-independent, so a personalized
+// re-render has to reproduce them exactly as `race-detail.mjs`'s own coverage
+// proves in isolation — this is the end-to-end wiring through `wireRacePage`,
+// including the payload's snake_case-to-camelCase reshape and the headline
+// chip lookup that has to follow whichever candidate a lens currently scores
+// as the sole leader, not always the one the certified result favors.
+test('a selection can headline the candidate whose own certified result did not advance', () => {
+  build(lensFragment(['mlkl']));
+
+  // Blaise is the *scored* leader under this selection (proven above), but
+  // Blaise's own certified result never advanced — the headline carries no
+  // chip at all, exactly as the audited render would for this candidate.
+  assert.equal(
+    document.querySelector('[data-lens-result] h3').textContent,
+    'Blaise Pascal',
+    'no chip text appended for a non-advancing headline candidate',
+  );
+  assert.equal(document.querySelector('[data-lens-result] .race-detail-result-chip'), null);
+
+  // Every section still carries its own fixed vote-share row and chip,
+  // unaffected by which sources are selected: Ada's own certified 54.2%
+  // "Advances" outcome renders in her own section regardless of her not
+  // being scored the leader here.
+  const adaSection = document.querySelector('[data-race-detail-candidate-id="ada"]');
+  const adaChip = adaSection.querySelector('.race-detail-result-chip');
+  assert.ok(adaChip, "a candidate's own result renders regardless of the active selection");
+  assert.equal(adaChip.textContent, 'Advances');
+  assert.equal(adaSection.querySelector('.race-detail-result-share').textContent, '54.2%');
+
+  const blaiseSection = document.querySelector('[data-race-detail-candidate-id="blaise"]');
+  assert.equal(blaiseSection.querySelector('.race-detail-result-chip'), null);
+  assert.equal(
+    blaiseSection.querySelector('.race-detail-candidate-result').getAttribute('class'),
+    'race-detail-candidate-result race-detail-candidate-result-trailing',
+  );
+
+  // Clearing the lens restores the audited tie headline, still with no chip
+  // (a tie names two candidates, so no single candidate's own result could
+  // attach to it even though Ada's own result did advance).
+  goTo(lensFragment(['strn', 'mlkl']));
+  assert.equal(
+    document.querySelector('[data-lens-result] h3').textContent,
+    'Ada Lovelace / Blaise Pascal',
+  );
+  assert.equal(document.querySelector('[data-lens-result] .race-detail-result-chip'), null);
 });
 
 // I56: an unselected source stays visible as evidence, marked as not counted,
