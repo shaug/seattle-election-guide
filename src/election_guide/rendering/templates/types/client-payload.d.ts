@@ -289,6 +289,7 @@ interface RaceCandidateEndorsements {
   candidate_id: string;
   label: string;
   endorsers: RaceSourceRow[];
+  result: RaceCandidateResult | null;
 }
 /**
  * One endorsing source's evidence row, as the race page renders it.
@@ -310,6 +311,24 @@ interface RaceSourceRow {
   panel_role: "consensus" | "comparison";
   detail_label: string | null;
   evidence_url: string | null;
+}
+/**
+ * One candidate's certified vote-share result, as the race page's
+ * vote-share row and heading chip render it (docs/RESULTS.md, Rendering §
+ * The endorsements dialog; #287).
+ *
+ * Selection-independent: a certified outcome is a fixed historical fact,
+ * never affected by which sources an active lens counts, so this is a
+ * static passthrough for lit's own re-render — exactly what the endorsing
+ * rows above already are — rather than something the client recomputes
+ * (docs/FRONTEND.md, The data contract). `rendering.context.
+ * race_result_outcomes_by_candidate_id` (#287) is this field's one source,
+ * mirroring `RaceResultOutcomeView` (rendering/context.py).
+ */
+interface RaceCandidateResult {
+  percentage_label: string;
+  advanced: boolean;
+  chip_label: string | null;
 }
 /**
  * The standalone sources editor's payload.

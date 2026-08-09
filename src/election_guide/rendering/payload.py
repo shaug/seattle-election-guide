@@ -161,10 +161,34 @@ class RaceSourceRow(ClientPayloadModel):
     block rather than a link."""
 
 
+class RaceCandidateResult(ClientPayloadModel):
+    """One candidate's certified vote-share result, as the race page's
+    vote-share row and heading chip render it (docs/RESULTS.md, Rendering §
+    The endorsements dialog; #287).
+
+    Selection-independent: a certified outcome is a fixed historical fact,
+    never affected by which sources an active lens counts, so this is a
+    static passthrough for lit's own re-render — exactly what the endorsing
+    rows above already are — rather than something the client recomputes
+    (docs/FRONTEND.md, The data contract). `rendering.context.
+    race_result_outcomes_by_candidate_id` (#287) is this field's one source,
+    mirroring `RaceResultOutcomeView` (rendering/context.py).
+    """
+
+    percentage_label: str
+    advanced: bool
+    chip_label: str | None
+
+
 class RaceCandidateEndorsements(RaceCandidateDisplay):
     """One candidate's section on the race page: identity, plus its rows."""
 
     endorsers: list[RaceSourceRow]
+    result: RaceCandidateResult | None
+    """This candidate's certified outcome, or null while no results file
+    covers this race (docs/RESULTS.md, Rendering: "a state, not an
+    option") -- the endorsements dialog's own gate, independent of whether
+    the race itself renders a card-side results strip."""
 
 
 class FilterScope(ClientPayloadModel):

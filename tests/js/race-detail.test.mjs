@@ -70,6 +70,7 @@ function candidate(overrides = {}) {
     kicker: 'Leading choice',
     meter: meter(),
     rows: [row()],
+    result: null,
     ...overrides,
   };
 }

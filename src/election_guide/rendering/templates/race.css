@@ -19,6 +19,22 @@
    width still empty. A record's name is one unit: it takes the width it needs
    and wraps only where the viewport makes it. */
 .screen-race .page-head h1 { max-width: none; }
+/* The certified strip (docs/RESULTS.md, Rendering § The endorsements dialog;
+   #287): one centered line of certification facts under the page head,
+   above every candidate section -- the same tone family the race card's own
+   "Result" badge (guide.css `.race-results-status`) and the counting-window
+   banner both use, laid out as a full-width strip rather than an inline
+   pill since this page has no card frame to sit beside.
+
+   `min-height` pins the box to a whole rem multiple rather than letting it
+   fall out of padding plus this element's own content-flow line height
+   (issue #341's own lesson, applied even though this page is never
+   screenshotted by the release build -- `rendering/pipeline.py` captures
+   only the guide document's `desktop.png`/`mobile.png` -- because a
+   text-flow height is not guaranteed stable across renderer versions
+   regardless, and a future screenshot target is one config line away). */
+.race-detail-certified-strip { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .2rem .5rem; min-height: 2rem; padding: .4rem clamp(1rem, 4vw, 3rem); border-bottom: 1px solid var(--tone-neutral-border); background: var(--tone-neutral-bg); color: var(--tone-neutral-text); font-size: .8rem; text-align: center; }
+.race-detail-certified-strip b { color: var(--navy); }
 .race-detail { min-width: 0; padding: 1rem clamp(1rem, 4vw, 3rem) 4rem; }
 .race-detail :focus-visible { outline: .2rem solid var(--focus); outline-offset: .15rem; }
 /* The headline: the recommendation's name, then the caption row, then the
@@ -92,6 +108,15 @@
 /* Only a tied leader has this eyebrow, and it takes the amber its box wears. */
 .race-detail-candidate-tied .race-detail-candidate-title p { margin: 0 0 .05rem; color: var(--tone-differ-text); font-size: .62rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 .race-detail-candidate-title h4 { min-width: 0; margin: 0; color: var(--navy); font-size: 1.05rem; line-height: 1.1; overflow-wrap: anywhere; }
+/* The results chip (docs/RESULTS.md, "The results chip"; #287): sky on navy,
+   immediately after the candidate's name in every heading that names one —
+   a candidate's own section title (`h4`, above) or, for the sole leading
+   choice, the page's own recommendation headline (`.screen-race-result`'s
+   `h3`, guide-race.css). Ordinary inline content after the name rather than
+   a flex layout of its own: a heading too narrow for both wraps the chip
+   beneath the name from plain text flow alone, with no separate
+   narrow-width rule needed (the ratified mobile accommodation). */
+.race-detail-result-chip { display: inline-block; padding: .06rem .5rem; border-radius: 1rem; background: var(--sky); color: var(--navy); font-size: .64rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; vertical-align: middle; }
 /* Every candidate's own section meter (docs/METER_V2.md, Chrome geometry:
    "The headline meter's own fate"; #325): left-adjusted, growing to fill
    the row, beside a right-adjusted label sized to its own count/percent
@@ -206,6 +231,26 @@
    media state or source order. */
 .screen-meter-section .meter-block { border-left-color: var(--row-separator) !important; border-image-source: none !important; }
 .screen-meter-section .meter-half-bottom { border-top-color: var(--row-separator) !important; }
+/* The vote-share row (docs/RESULTS.md, Rendering § The endorsements dialog;
+   #287): one candidate's own certified share, between their heading and
+   source list — the same navy-on-track tally bar the race card's own
+   results strip renders (guide.css `.race-results-bar`), reused here at the
+   scale of a single row rather than the card's grid of every candidate's
+   row at once, since a candidate's own section already names only them.
+
+   The bar's `.45rem` height is a literal declared value, not a sum of
+   padding and content-flow line height, so — unlike issue #341's
+   `.state-action-strip` regression — it resolves to the identical fractional
+   device-pixel value on every render rather than an emergent one a renderer
+   process could round two different ways; the guide card's own
+   `.race-results-bar` already ships this same literal height in production
+   without reproducing #341's nondeterminism. */
+.race-detail-candidate-result { display: flex; align-items: center; gap: .6rem; height: 2.4rem; padding: 0 .75rem; border-bottom: 1px solid var(--row-separator); background: var(--white); }
+.race-detail-result-bar { flex: 1 1 auto; height: .45rem; border-radius: .25rem; background: var(--meter-track); overflow: hidden; }
+.race-detail-result-bar i { display: block; height: 100%; background: var(--navy); border-radius: .25rem; }
+.race-detail-candidate-result-trailing .race-detail-result-bar i { background: var(--line-strong); }
+.race-detail-result-share { flex: 0 0 auto; color: var(--ink); font-size: .88rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.race-detail-candidate-result-trailing .race-detail-result-share { color: var(--muted); font-weight: 600; }
 .race-detail-outcome-unverified { border-left-color: var(--red); }
 .race-detail-outcome-heading { display: flex; align-items: baseline; justify-content: space-between; gap: .5rem 1rem; padding: .5rem .75rem; background: var(--tone-neutral-bg); }
 .race-detail-outcome-heading h4 { margin: 0; color: var(--navy); font-size: .86rem; }

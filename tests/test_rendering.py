@@ -692,6 +692,20 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
 _ELECTION_DAY_BANNER = re.compile(r'<p class="election-day[^>]*>.*?</p>')
 
 
+def _body_only(html: str) -> str:
+    """One document's rendered markup alone -- its inlined `<style>` element
+    and bundled `<script type="module">` entry both removed.
+
+    A class name legitimately appears in the inlined stylesheet, and the
+    bundled client script's own source comments and template literals
+    legitimately name the same class strings, whether or not any element on
+    the page actually renders them -- so a markup-only check
+    (`race-detail-certified-strip not in ...`) has to search the rendered
+    body alone, the same scoping `test_no_results_and_no_certification_date_
+    leaves_race_cards_untouched` applies to the race grid."""
+    return html.split("</style>", 1)[1].split('<script type="module">', 1)[0]
+
+
 def test_no_results_and_no_certification_date_is_byte_identical_to_before_285(
     tmp_path: Path,
 ) -> None:
@@ -979,6 +993,166 @@ def _write_race_html(tmp_path: Path, view_model: PublicationViewModel, race_id: 
     path = tmp_path / f"race-{race_id}.html"
     path.write_text(_race_html(view_model, race_id), encoding="utf-8")
     return path
+
+
+def test_no_results_leaves_the_endorsements_dialog_byte_identical_to_before_287(
+    tmp_path: Path,
+) -> None:
+    """#287's own acceptance criterion (a): with no results data, the race
+    page carries no trace of the certified strip, the vote-share row, or the
+    results chip. `_view_model` attaches no `results` (defaults `None`,
+    exactly as every bundle built before #287 left it), so this is the same
+    "nothing wired yet" baseline `test_no_results_and_no_certification_date_
+    leaves_race_cards_untouched` proves for #286's own card strip."""
+    view_model = _view_model(tmp_path)
+    assert view_model.results is None
+
+    body = _body_only(_race_html(view_model, RESULTS_RACE_ID))
+
+    assert "race-detail-certified-strip" not in body
+    assert "race-detail-candidate-result" not in body
+    assert "race-detail-result-chip" not in body
+
+
+def test_certified_results_render_the_endorsements_dialogs_certified_strip_and_vote_share_rows(
+    tmp_path: Path,
+) -> None:
+    """#287's own acceptance criteria (b): the certified strip carries the
+    certification date, authority, and ballots counted; each candidate with a
+    certified outcome carries a vote-share row (tally bar + share) between
+    its heading and its source list, and the two advancing candidates in
+    `tests.test_results._valid_results`' `king-county-assessor` fixture carry
+    the "Advances" chip immediately after their name. Candidate order stays
+    endorsement order (Dominique Scarimbolo, then Christopher Roberts; Rob
+    Foxcurran and Al Dams have no endorsing sources at all and so render no
+    section on this page, unaffected by results) -- never the outcome's own
+    share-descending order."""
+    without_results = _view_model(tmp_path / "without-results")
+    results_root = tmp_path / "with-results"
+    results_root.mkdir()
+    with_results = without_results.model_copy(update={"results": _valid_results(results_root)})
+
+    html = _race_html(with_results, RESULTS_RACE_ID)
+
+    assert '<div class="race-detail-certified-strip">' in html
+    assert "Certified result" in html
+    # The full-month grammar the ratified mockup uses for the dialog's own
+    # strip, distinct from the race card's abbreviated badge ("Aug 19, 2026").
+    assert "August 19, 2026" in html
+    assert "King County Elections" in html
+    assert "61,234 ballots" in html
+
+    # Candidate order: the headline names the leader, and the leader's own
+    # name appears before the second candidate's section in source order.
+    assert html.index("Dominique M Scarimbolo") < html.index("Christopher Roberts")
+
+    # The headlined leader's chip renders in the page headline itself, not a
+    # section heading -- `race.recommendation_label` is that candidate's own
+    # name, and no separate `.race-detail-candidate-title` renders for them.
+    assert (
+        '<h3 data-display-role="recommendation">Dominique M Scarimbolo '
+        '<span class="race-detail-result-chip">Advances</span></h3>' in html
+    )
+    # The second candidate's own section heading carries the same chip.
+    assert (
+        '<h4>Christopher Roberts <span class="race-detail-result-chip">Advances</span></h4>' in html
+    )
+
+    # Every candidate with a section and a certified outcome gets a vote-share
+    # row, sharing the same full-width bar scale the race card's own results
+    # strip uses -- the ratified rule that vote share and endorsement share
+    # never share a component (docs/RESULTS.md, Rendering).
+    assert (
+        '<div class="race-detail-candidate-result">\n'
+        '        <span class="race-detail-result-bar"><i style="width:32.0%"></i></span>\n'
+        '        <span class="race-detail-result-share">32.0%</span>\n'
+        "      </div>" in html
+    )
+    assert (
+        '<div class="race-detail-candidate-result">\n'
+        '        <span class="race-detail-result-bar"><i style="width:29.0%"></i></span>\n'
+        '        <span class="race-detail-result-share">29.0%</span>\n'
+        "      </div>" in html
+    )
+    # The endorsement meter and the vote-share bar are distinct components,
+    # never one element: the exact vote-share blocks matched above sit in
+    # their own `.race-detail-candidate-result` div, entirely apart from the
+    # candidate's `.race-detail-candidate-meter`/`.screen-meter-section`
+    # endorsement meter -- no element carries both a meter class and
+    # `race-detail-result-bar`.
+    assert '<div class="race-detail-candidate-meter race-detail-result-bar' not in html
+    assert '<div class="screen-meter-section race-detail-result-bar' not in html
+
+
+def test_the_results_chip_wraps_beneath_a_narrow_headings_name(tmp_path: Path) -> None:
+    """#287's own acceptance criterion (c): the ratified mobile accommodation
+    -- "when the name and chip cannot share a line, the chip wraps beneath
+    the name" (docs/RESULTS.md, "The results chip") -- covered here by a
+    real headless-Chrome geometry check rather than a manual note, mirroring
+    this file's own established narrow-viewport idiom (`_evaluate_in_chrome`,
+    `mobile_width`).
+
+    No new CSS governs the wrap itself (`race.css`'s own comment on
+    `.race-detail-result-chip`): the chip is ordinary inline content after
+    the candidate's name, so a heading too narrow for both wraps it from
+    plain text flow alone. This proves that claim rather than assuming it:
+    the page headline's name ("Dominique M Scarimbolo") is long enough that
+    320px forces the wrap CSS alone cannot avoid, while at the page's normal
+    width the same heading fits on one line."""
+    without_results = _view_model(tmp_path / "without-results")
+    results_root = tmp_path / "with-results"
+    results_root.mkdir()
+    with_results = without_results.model_copy(update={"results": _valid_results(results_root)})
+    html_path = tmp_path / "race.html"
+    html_path.write_text(_race_html(with_results, RESULTS_RACE_ID), encoding="utf-8")
+
+    expression = """
+      (() => {
+        const heading = document.querySelector('h3[data-display-role="recommendation"]');
+        const chip = heading.querySelector('.race-detail-result-chip');
+        return JSON.stringify({
+          headingHeight: heading.getBoundingClientRect().height,
+          chipTop: chip.getBoundingClientRect().top,
+          headingTop: heading.getBoundingClientRect().top,
+        });
+      })()
+    """
+    screen = _evaluate_in_chrome(html_path, expression)
+    phone = _evaluate_in_chrome(html_path, expression, mobile_width=320)
+
+    # At the page's own width the name and its chip share one line: the
+    # heading's box is a single line tall, and the chip's own top edge sits
+    # inside that one line rather than on a line of its own.
+    assert phone["headingHeight"] > screen["headingHeight"] * 1.5, (
+        "320px must force the heading onto more lines than its own width does, or this test "
+        "proves nothing about the wrap"
+    )
+    # At 320px the heading grew taller (wrapped) and the chip's own top now
+    # sits well past where the single-line heading's text alone would have
+    # ended, i.e. the chip is on a line of its own beneath the name.
+    assert phone["chipTop"] - phone["headingTop"] > screen["chipTop"] - screen["headingTop"]
+
+
+def test_measure_races_render_the_endorsements_dialog_exactly_as_today(tmp_path: Path) -> None:
+    """#287's own acceptance criterion (d): a measure race's own page carries
+    neither a certified strip nor a vote-share row nor a chip, pending #289 --
+    `race_results_view`'s own `race.race_type == "measure"` gate, the same one
+    #286's card-side test proves, applied here to the endorsements dialog."""
+    results_root = tmp_path / "with-results"
+    results_root.mkdir()
+    without_results = _view_model(tmp_path / "without-results")
+    with_results = without_results.model_copy(update={"results": _valid_results(results_root)})
+
+    # The certified state is active for the election (the candidate race's own
+    # page carries the strip), but the measure race's own page carries none of
+    # it.
+    candidate_html = _race_html(with_results, RESULTS_RACE_ID)
+    assert '<div class="race-detail-certified-strip">' in candidate_html
+
+    measure_body = _body_only(_race_html(with_results, MEASURE_RACE_ID))
+    assert "race-detail-certified-strip" not in measure_body
+    assert "race-detail-candidate-result" not in measure_body
+    assert "race-detail-result-chip" not in measure_body
 
 
 def test_race_page_renders_the_whole_race_from_one_view_model(tmp_path: Path) -> None:

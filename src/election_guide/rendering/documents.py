@@ -268,11 +268,25 @@ def render_race_document(
     category_label_by_key = {
         category.category: category.label for category in view_model.methodology.source_categories
     }
+    # The endorsements dialog's certified strip and per-candidate vote-share
+    # row (docs/RESULTS.md, Rendering § The endorsements dialog; #287),
+    # computed once here so both the audited template and `race_detail`'s own
+    # payload-bound candidates (below) read the identical outcome data.
+    race_results = context.race_results_view(
+        race,
+        results=view_model.results,
+        election_type=view_model.metadata.election_type,
+        capture_url=view_model.metadata.results_capture_url,
+    )
+    race_result_outcomes_by_candidate_id = context.race_result_outcomes_by_candidate_id(
+        race_results
+    )
     race_detail = context.race_detail_display(
         race,
         source_by_id,
         source_code_by_id=source_code_by_id,
         category_label_by_key=category_label_by_key,
+        result_outcomes_by_candidate_id=race_result_outcomes_by_candidate_id,
     )
     contributing_sources = [
         source for source in view_model.sources if source.contribution_status == "contributing"
@@ -282,6 +296,8 @@ def render_race_document(
         guide=view_model,
         race=race,
         race_detail=race_detail,
+        race_results=race_results,
+        race_result_outcomes_by_candidate_id=race_result_outcomes_by_candidate_id,
         public_site_url=public_site_url,
         # DESIGN.md's title grammar for an election-scoped page, with the race
         # itself as the page's own name: `<page> — <election> — <site>`.

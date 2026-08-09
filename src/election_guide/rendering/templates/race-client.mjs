@@ -193,6 +193,27 @@ export function wireRacePage(payload) {
       kicker: tied ? 'Tied for lead' : null,
       meter: meters.views.get(candidateId) ?? naMeterView(candidate.label, meters.totalLabel),
       rows,
+      result: candidateResultView(candidateId),
+    };
+  };
+
+  /**
+   * One candidate's certified result, reshaped from the payload's snake_case
+   * fields (docs/RESULTS.md, Rendering § The endorsements dialog; #287).
+   * Selection-independent — every candidate carries the same result whatever
+   * the active lens counts — so this is a plain lookup, not something scored
+   * state feeds.
+   *
+   * @param {string} candidateId
+   * @returns {import('./race-detail.mjs').CandidateResultView|null}
+   */
+  const candidateResultView = (candidateId) => {
+    const result = candidatesById.get(candidateId)?.result ?? null;
+    if (result === null) return null;
+    return {
+      percentageLabel: result.percentage_label,
+      advanced: result.advanced,
+      chipLabel: result.chip_label,
     };
   };
 
@@ -242,7 +263,17 @@ export function wireRacePage(payload) {
       takenOver = true;
     }
     if (resultRegion) {
-      render(raceHeadlineTemplate(recommendationLabel(scored, labels)), resultRegion);
+      // The one candidate the headline names, mirroring `candidateView`'s own
+      // `soleLeader` condition (docs/RESULTS.md, "The results chip"; #287) —
+      // this candidate's own chip renders here, in the headline, rather than
+      // in a section of its own (`candidate.inHeadline` renders no heading).
+      const headlineCandidateId =
+        scored.grade !== 'Insufficient' && !scored.isTied ? scored.winnerId : null;
+      const headlineChip =
+        headlineCandidateId === null
+          ? null
+          : (candidateResultView(headlineCandidateId)?.chipLabel ?? null);
+      render(raceHeadlineTemplate(recommendationLabel(scored, labels), headlineChip), resultRegion);
     }
     if (contextRegion) {
       // Not the card's `raceContextTemplate`: a card carries a caption because
