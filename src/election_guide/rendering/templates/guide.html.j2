@@ -155,20 +155,6 @@
               </div>
               <p class="race-results-provenance">{{ results.ballots_counted_label }} ballots · {{ results.authority }}{% if results.capture_url %} · <a href="{{ results.capture_url }}"{{ external_link_attributes }}>capture</a>{% endif %}</p>
             </div>
-            {% elif race.race_type != 'measure' and not guide.results and certification_date_full %}
-            {# Counting: no results file exists to gate on during this
-               window (docs/RESULTS.md, "The election day banner's counting
-               state is the one exception"), so the reader's own clock
-               decides, exactly like the banner's own counting state (the
-               shipped #192 module this page's script bundle also wires).
-               The full text renders unconditionally here and starts hidden;
-               the script only ever toggles `hidden`, never writes text, so
-               a reader with no JavaScript sees the card exactly as it
-               rendered before this feature. #}
-            <p class="race-results-counting" data-race-counting hidden>
-              <span class="race-results-status race-results-status-counting">Counting</span>
-              Results certify {{ certification_date_full }}.
-            </p>
             {% endif %}
           </article>
           {% endfor %}
