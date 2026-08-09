@@ -75,13 +75,18 @@
     {% set tied = is_leader and not in_headline %}
     {% set meter_view = candidate_meter_views[candidate.candidate_id] %}
     {# The certified vote-share row and heading chip (docs/RESULTS.md,
-       Rendering § The endorsements dialog; #287): `None` while no results
-       cover this candidate -- no results file yet, a measure race
+       Rendering § The endorsements dialog; #287): `race_detail.candidates`
+       already carries each candidate's own result (`RaceDetailDisplay`,
+       payload.py) -- the same payload the client reads, so the template
+       reads it directly here rather than re-deriving it from
+       `race_result_outcomes_by_candidate_id` a second time. `None` while no
+       results cover this candidate -- no results file yet, a measure race
        (`race_results_view`'s own gate), or a roster candidate a results file
        names no outcome for. The headlined candidate's own chip renders in
        the page headline below instead, since its name renders there, not
-       here (see `headline_outcome`). #}
-    {% set outcome = race_result_outcomes_by_candidate_id.get(candidate.candidate_id) %}
+       here (see `headline_outcome`, which still needs the dict: nothing
+       else in that scope names the headline candidate's own object). #}
+    {% set outcome = candidate.result %}
     <section class="race-detail-candidate{% if in_headline %} race-detail-candidate-leader race-detail-candidate-headlined{% elif tied %} race-detail-candidate-tied{% endif %}"
       data-race-detail-candidate-id="{{ candidate.candidate_id }}">
       <div class="race-detail-candidate-heading">
