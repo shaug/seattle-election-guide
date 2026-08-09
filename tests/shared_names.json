@@ -286,11 +286,6 @@
       "client",
       "test"
     ],
-    "data-race-counting": [
-      "template",
-      "client",
-      "test"
-    ],
     "data-race-detail-candidate-id": [
       "template",
       "client",

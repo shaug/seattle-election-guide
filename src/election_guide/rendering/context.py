@@ -1370,8 +1370,7 @@ class RaceResultsView:
     certified_on_label: str
     """"Aug 19, 2026" -- the ratified mockup's own abbreviated grammar for
     the results-strip head badge, distinct from `rendering.shell.
-    month_day_year`'s full-month "August 19, 2026" the banner and the race
-    card's own counting note use."""
+    month_day_year`'s full-month "August 19, 2026" the banner uses."""
     certified_on_full_label: str
     """"August 19, 2026" -- `rendering.shell.month_day_year`'s full-month
     grammar, the ratified mockup's own choice for the endorsements dialog's

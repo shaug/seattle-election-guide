@@ -82,11 +82,9 @@ html.compact-ballot-mode .insufficient-note { padding: .38rem .48rem; font-size:
 .race-results { margin-top: .2rem; padding-top: .65rem; border-top: 1px solid var(--row-separator); }
 .race-results-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: .3rem .5rem; margin-bottom: .5rem; }
 .race-results-eyebrow { color: var(--muted); font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
-/* Certified reads on the agree-tone family (a settled fact); the counting
-   note below reuses the differ/amber family, matching the banner's own two
-   post-election surfaces (docs/RESULTS.md, "The election-day banner"). */
+/* Certified reads on the agree-tone family (a settled fact) -- the only
+   state this badge renders (docs/RESULTS.md, Rendering § Race cards). */
 .race-results-status { display: inline-block; padding: .08rem .5rem; border: 1px solid var(--tone-agree-border); border-radius: 1rem; background: var(--tone-agree-bg); color: var(--tone-agree-text); font-size: .68rem; font-weight: 700; letter-spacing: .02em; }
-.race-results-status-counting { border-color: var(--tone-differ-border); background: var(--tone-differ-bg); color: var(--tone-differ-text); }
 .race-results-tally { display: grid; gap: .3rem; }
 .race-results-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .15rem .6rem; }
 /* The outcome chip (docs/RESULTS.md, "The results chip"): sky on navy,
@@ -106,14 +104,6 @@ html.compact-ballot-mode .insufficient-note { padding: .38rem .48rem; font-size:
 .race-results-row-trailing .race-results-bar i { background: var(--line-strong); }
 .race-results-provenance { margin: .55rem 0 0; color: var(--faint); font-size: .72rem; }
 .race-results-provenance a { color: var(--blue); }
-/* Counting: starts hidden (rendered by the server, revealed only once the
-   reader's own clock says the window is open -- guide-entry.mjs's
-   `wireRaceResultsCounting`, extending election-day.mjs). `hidden` is the
-   no-JavaScript default: a reader with no script sees the card exactly as it
-   rendered before this feature, the same posture `[hidden]` gives every
-   other progressive-enhancement seam on this page. */
-.race-results-counting { margin: .2rem 0 0; padding-top: .65rem; border-top: 1px solid var(--row-separator); color: var(--muted); font-size: .82rem; }
-.race-results-counting .race-results-status { margin-right: .4rem; }
 
 /* The shared footer band/audit classes (.site-footer, .site-footer-band,
    .site-footer-audit, ...) live in base.css alongside .site-band, since About

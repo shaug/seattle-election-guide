@@ -415,15 +415,6 @@
       ],
       "note": "#285's counting state is the one link election-day.mjs ever writes itself, so it restates the site's one external-link convention rather than importing it -- these are hand-written ES modules with no bundler (election-day.mjs's own module comment). The symbol reference is a comment, not a second implementation: election_day_banner_html renders the certified state directly and drops data-election-day entirely once results exist, so wireElectionDay's querySelector finds nothing and the two states never run the same code. 'election-day phrasing' (deleted, above) still holds for the dates themselves -- shell.py formats every date the counting state shows; the client chooses copy and links, never a date."
     },
-    "race-results-counting-text": {
-      "client": "election-day.mjs, the banner's own counting-state sentence",
-      "server": "guide.html.j2, a candidate race card's own counting note",
-      "proof": "shared-literal",
-      "evidence": [
-        "text:Results certify •."
-      ],
-      "note": "#286 deliberately reuses the banner's own counting-state wording (docs/RESULTS.md, Rendering § Race cards: 'per #285's trigger model') for the race card's own note, so the two surfaces spell one sentence rather than inventing a second one for the same fact. They are not one implementation, though: the banner's copy is composed in JavaScript from data attributes once the reader's clock says the window is open (wireElectionDay), while the race card's copy is written once, server-side, by rendering/documents.py's _certification_date_full and revealed by toggling `hidden` (wireRaceResultsCounting) -- no client-side text composition at all. The derivation is what holds the wording itself to one sentence; a reviewer moving one copy without the other is what this entry is for."
-    },
     "filter-scope-fallback-label": {
       "client": "guide-filters.mjs scope label fallback",
       "server": "rendering/context.py filter_scope_groups first option",

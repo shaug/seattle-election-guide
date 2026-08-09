@@ -168,8 +168,11 @@ counts update; that is not how this site works.
 
 A certified race card keeps its identity — office, recommendation, consensus meter — and grows a
 results strip below a rule: per-candidate tally rows (name, chip, share, bar) and a provenance
-line (ballots counted, authority, capture link). Between election day and certification the same
-slot renders one line — a "Counting — results certify …" chip — and no numbers.
+line (ballots counted, authority, capture link). Between election day and certification, a
+candidate race card renders unchanged — no counting indicator of any kind. The election-day
+banner alone carries the counting-window message (see "The election-day banner" above); repeating
+it on every race card was redundant, not reinforcing, and #344 removed the interim per-card note
+this section originally described.
 
 ### The endorsements dialog
 
