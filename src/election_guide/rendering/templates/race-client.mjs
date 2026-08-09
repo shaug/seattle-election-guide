@@ -153,6 +153,19 @@ export function wireRacePage(payload) {
   });
 
   /**
+   * The one candidate the headline names: a sole leader — neither tied nor
+   * unscored — matching the audited template's own condition. Null when the
+   * race has no such candidate, which is what makes the headline a heading a
+   * lens can dissolve. One definition, because both the section view and the
+   * headline's own chip ask the same question.
+   *
+   * @param {import('./lens-score.mjs').RaceScore} scored
+   * @returns {string|null}
+   */
+  const soleLeaderId = (scored) =>
+    scored.grade !== 'Insufficient' && !scored.isTied ? scored.winnerId : null;
+
+  /**
    * One candidate's section, as `race-detail.mjs` renders it.
    *
    * @param {string} candidateId
@@ -165,10 +178,7 @@ export function wireRacePage(payload) {
     const candidate = candidatesById.get(candidateId);
     if (candidate === undefined) return null;
     const isLeader = scored.winnerIds.includes(candidateId);
-    // A sole leader — neither tied nor unscored — is the one candidate the
-    // headline names, matching the audited template's own condition.
-    const soleLeader =
-      scored.grade !== 'Insufficient' && !scored.isTied && scored.winnerId === candidateId;
+    const soleLeader = soleLeaderId(scored) === candidateId;
     const rows = candidate.endorsers.map((row) => ({
       code: row.code,
       name: row.name,
@@ -263,12 +273,11 @@ export function wireRacePage(payload) {
       takenOver = true;
     }
     if (resultRegion) {
-      // The one candidate the headline names, mirroring `candidateView`'s own
-      // `soleLeader` condition (docs/RESULTS.md, "The results chip"; #287) —
-      // this candidate's own chip renders here, in the headline, rather than
-      // in a section of its own (`candidate.inHeadline` renders no heading).
-      const headlineCandidateId =
-        scored.grade !== 'Insufficient' && !scored.isTied ? scored.winnerId : null;
+      // The one candidate the headline names (docs/RESULTS.md, "The results
+      // chip"; #287) — this candidate's own chip renders here, in the
+      // headline, rather than in a section of its own (`candidate.inHeadline`
+      // renders no heading).
+      const headlineCandidateId = soleLeaderId(scored);
       const headlineChip =
         headlineCandidateId === null
           ? null
