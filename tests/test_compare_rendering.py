@@ -287,24 +287,23 @@ def test_comparisons_payload_omits_certified_results_until_a_file_exists() -> No
     assert payload["race_results"] == {}
 
 
-def test_comparisons_payload_carries_certified_outcomes_for_candidate_races_only() -> None:
-    """#288's own acceptance criterion (d): certified outcomes reach the
-    client payload for the candidate race `tests.test_results._valid_results`
-    certifies, and never for a measure race (out of scope pending #289),
-    even when the results file explicitly certifies one too -- proving the
-    measure exclusion is `race_results_view`'s own `race_type` gate
-    (rendering/context.py), not merely an accident of the fixture naming no
-    measure outcome."""
+def test_comparisons_payload_carries_certified_outcomes_for_measure_races_too() -> None:
+    """#348's own acceptance criterion: certified outcomes reach the client
+    payload for both the candidate race `tests.test_results._valid_results`
+    certifies and a measure race certified alongside it in the same file --
+    proving `comparison_result_outcomes` (rendering/context.py) reuses
+    `race_results_view`'s own computation for every race type identically
+    (#348 removed the `race_type == "measure"` short-circuit #288 shipped
+    against), not a candidate-races-only mapping."""
     measure_race_id = "seattle-proposition-1-library-levy"
     view_model = _enabled_view_model()
     assert any(
         display.race_id == measure_race_id for display in view_model.comparisons.display_index
-    ), "fixture no longer includes the measure race this test excludes on purpose"
+    ), "fixture no longer includes the measure race this test covers"
 
     with tempfile.TemporaryDirectory() as tmp_dir:
         results = _valid_results(Path(tmp_dir))
-        # Extend the certified file with an outcome for the measure race too,
-        # so a passing test proves the *type* gate, not just data absence.
+        # Extend the certified file with an outcome for the measure race too.
         measure_outcomes = RaceResults(
             race_id=measure_race_id,
             ballots_counted=50000,
@@ -333,7 +332,7 @@ def test_comparisons_payload_carries_certified_outcomes_for_candidate_races_only
     assert payload_match is not None
     payload = json.loads(payload_match.group(1))
     assert payload["results_available"] is True
-    assert measure_race_id not in payload["race_results"]
+
     outcomes = payload["race_results"][RESULTS_RACE_ID]
     assert [outcome["advanced"] for outcome in outcomes] == [True, True, False, False]
     assert [outcome["percentage_label"] for outcome in outcomes] == [
@@ -344,6 +343,18 @@ def test_comparisons_payload_carries_certified_outcomes_for_candidate_races_only
     ]
     assert {outcome["chip_label"] for outcome in outcomes if outcome["advanced"]} == {"Advances"}
     assert all(outcome["chip_label"] is None for outcome in outcomes if not outcome["advanced"])
+
+    # The measure race: a "Yes"-wins outcome carries the Approved chip
+    # (docs/RESULTS.md, "The results chip"), not the candidate-race
+    # "Advances"/"Elected" vocabulary.
+    measure_outcome_payloads = payload["race_results"][measure_race_id]
+    assert [outcome["advanced"] for outcome in measure_outcome_payloads] == [True, False]
+    assert [outcome["percentage_label"] for outcome in measure_outcome_payloads] == [
+        "60.0%",
+        "40.0%",
+    ]
+    assert measure_outcome_payloads[0]["chip_label"] == "Approved"
+    assert measure_outcome_payloads[1]["chip_label"] is None
 
 
 def test_server_row_differences_are_relative_only_to_the_reference() -> None:
@@ -1520,6 +1531,83 @@ def test_compare_result_column_carries_no_agreement_and_never_affects_differs(
     # still `gall`, and the result column never enters that computation.
     assert result["after"] == result["before"]
     assert result["columnTitle"] == "Certified result"
+
+
+def _comparison_html_path_with_measure_results(tmp_path: Path) -> Path:
+    """The comparisons page with a certified results file that also certifies
+    the fixture election's own measure race (#348), a "No"-wins outcome so
+    this test and the payload-level
+    `test_comparisons_payload_carries_certified_outcomes_for_measure_races_too`
+    together exercise both the Approved and Rejected chip branches."""
+    measure_race_id = "seattle-proposition-1-library-levy"
+    results_root = tmp_path / "measure-results-evidence"
+    results_root.mkdir()
+    base_results = _valid_results(results_root)
+    measure_outcomes = RaceResults(
+        race_id=measure_race_id,
+        ballots_counted=45000,
+        outcomes=[
+            RaceOutcome(
+                choice_id=f"{measure_race_id}--yes", votes=18000, share=0.4, advanced=False
+            ),
+            RaceOutcome(choice_id=f"{measure_race_id}--no", votes=27000, share=0.6, advanced=True),
+        ],
+    )
+    results = base_results.model_copy(update={"races": [*base_results.races, measure_outcomes]})
+    with_results = _enabled_view_model().model_copy(update={"results": results})
+    path = tmp_path / "compare-with-measure-results.html"
+    path.write_text(
+        render_comparison_document(
+            with_results,
+            public_site_url="https://seattleelections.guide",
+            project_url="https://github.com/shaug/seattle-election-guide",
+        ),
+        encoding="utf-8",
+    )
+    return path
+
+
+def test_compare_result_column_states_a_measures_approved_or_rejected_outcome(
+    tmp_path: Path,
+) -> None:
+    """#348's own acceptance criterion: the certified-result column renders a
+    measure race's own outcome through the identical cell grammar #288 built
+    for candidate races -- choice label on the picks line, share and the
+    ratified chip on the meta line (docs/RESULTS.md, Rendering § The
+    comparison view) -- once `race_results_view` stops excluding measures.
+    Exercised against `seattle-proposition-1-library-levy` with a "No"-wins
+    outcome, the ticket's own real fixture race, matching docs/RESULTS.md's
+    ratified "a rejected measure ... No choice carries advanced: true" rule."""
+    measure_race_id = "seattle-proposition-1-library-levy"
+    html_path = _comparison_html_path_with_measure_results(tmp_path)
+    result = _evaluate_in_chrome(
+        html_path,
+        f"""
+        (async () => {{
+          const wait = () => new Promise((resolve) => setTimeout(resolve, 120));
+
+          document.querySelector('[data-comparison-title="1"]').click();
+          const picker = document.querySelector('[data-comparison-column="1"]');
+          picker.value = 'gres';
+          picker.dispatchEvent(new Event('change', {{ bubbles: true }}));
+          await wait();
+
+          const cell = document.querySelector(
+            '[data-comparison-race="{measure_race_id}"] [data-column-signal="gres"]',
+          );
+          return JSON.stringify({{
+            cellKind: cell.dataset.cellKind,
+            agreement: cell.dataset.agreement,
+            picks: cell.querySelector('.comparison-cell-picks').textContent.trim(),
+            meta: cell.querySelector('.comparison-cell-meta')?.textContent.trim(),
+          }});
+        }})()
+        """,
+    )
+    assert result["cellKind"] == "result"
+    assert result["agreement"] == "neutral"
+    assert result["picks"] == "No"
+    assert result["meta"] == "60.0% · Rejected"
 
 
 def test_compare_client_mobile_budget_and_focus_have_layout_evidence(tmp_path: Path) -> None:

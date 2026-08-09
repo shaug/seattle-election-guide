@@ -78,9 +78,11 @@ from election_guide.rendering.shell import (
     election_day_banner_html,
     election_names,
 )
+from election_guide.results.models import RaceOutcome, RaceResults
 from election_guide.scoring import score_dataset
 from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
 from election_guide.sources.registry import read_source_registry
+from tests.compare_parity import enabled_view_model as _enabled_view_model
 from tests.mirror_parity import LAYOUT_SHAPES
 from tests.page_parity import (
     FIXTURE_DIR,
@@ -931,10 +933,16 @@ def test_counting_state_renders_the_single_line_dated_from_the_calendar(
 def test_measure_races_render_exactly_as_today_regardless_of_results_state(
     tmp_path: Path,
 ) -> None:
-    """#286's own acceptance criterion (d): measure races render exactly as
-    today (untouched), pending #289 -- neither a certified results strip nor
-    a counting note ever reaches a measure race's own card, even while both
-    are active for the election's candidate races."""
+    """#286's own acceptance criterion (d), and #348's own non-regression
+    acceptance criterion: with no certified outcome on record for this
+    particular measure race, neither a results strip nor a counting note
+    reaches its card, even while both are active for the election's
+    candidate races -- unaffected by #348 having since removed the
+    type-based exclusion that used to make every measure race read this
+    way regardless of its own data.
+    `test_certified_measure_results_grow_a_results_strip_on_the_race_card`
+    below covers the complementary case: a measure race that *does* have a
+    certified outcome on record."""
     configuration = read_rendering_configuration(RENDERING_CONFIG)
     without_results = _view_model(tmp_path / "without-results")
 
@@ -965,6 +973,77 @@ def test_measure_races_render_exactly_as_today_regardless_of_results_state(
     certified_card = _race_card_html(certified_html, MEASURE_RACE_ID)
     assert "race-results" not in certified_card
     assert '<div class="race-results">' in certified_html  # active for the assessor race
+
+
+def _measure_outcomes(*, yes_votes: int, no_votes: int, ballots_counted: int) -> RaceResults:
+    """One certified `RaceResults` entry for the fixture measure race
+    (`seattle-proposition-1-library-levy`, #348's own real fixture data:
+    choice ids follow `<race-id>--yes`/`<race-id>--no`)."""
+    total_votes = yes_votes + no_votes
+    return RaceResults(
+        race_id=MEASURE_RACE_ID,
+        ballots_counted=ballots_counted,
+        outcomes=[
+            RaceOutcome(
+                choice_id=f"{MEASURE_RACE_ID}--yes",
+                votes=yes_votes,
+                share=yes_votes / total_votes,
+                advanced=yes_votes > no_votes,
+            ),
+            RaceOutcome(
+                choice_id=f"{MEASURE_RACE_ID}--no",
+                votes=no_votes,
+                share=no_votes / total_votes,
+                advanced=no_votes > yes_votes,
+            ),
+        ],
+    )
+
+
+def test_certified_measure_results_grow_a_results_strip_on_the_race_card(
+    tmp_path: Path,
+) -> None:
+    """#348's own acceptance criterion: a certified measure race's card
+    renders the Yes/No tally with the Approved chip on the winning row,
+    through the exact same tally-row markup and CSS classes
+    `test_certified_results_grow_a_results_strip_on_the_candidate_race_card`
+    above already proves for a candidate race -- no measure-specific markup,
+    per #289's own ratified "reuse everywhere" design (docs/RESULTS.md,
+    "Ballot measures")."""
+    configuration = read_rendering_configuration(RENDERING_CONFIG)
+    without_results = _view_model(tmp_path / "without-results")
+    results_root = tmp_path / "with-results"
+    results_root.mkdir()
+    results = _valid_results(results_root)
+    results = results.model_copy(
+        update={
+            "races": [
+                *results.races,
+                _measure_outcomes(yes_votes=30000, no_votes=20000, ballots_counted=50000),
+            ]
+        }
+    )
+    with_results = without_results.model_copy(update={"results": results})
+
+    html = render_html_document(with_results, configuration)
+    card = _race_card_html(html, MEASURE_RACE_ID)
+
+    assert '<div class="race-results">' in card
+    assert "Certified · Aug 19, 2026" in card
+    # Two tally rows -- Yes and No -- on the shared bar scale, Yes leading
+    # (60% share sorts above 40%).
+    assert card.count('<div class="race-results-row') == 2
+    approved_index = card.index(
+        '<span class="race-results-name">Yes <span class="race-results-chip">Approved</span></span>'
+    )
+    trailing_index = card.index('<span class="race-results-name">No</span>')
+    assert approved_index < trailing_index
+    assert '<i style="width:60.0%"></i>' in card
+    assert '<i style="width:40.0%"></i>' in card
+    assert "50,000 ballots" in card
+    # The counting scaffold never coexists with a certified strip -- the same
+    # invariant the candidate-race test above proves.
+    assert "data-race-counting" not in card
 
 
 PUBLIC_SITE_URL = "https://seattleelections.guide"
@@ -1134,10 +1213,15 @@ def test_the_results_chip_wraps_beneath_a_narrow_headings_name(tmp_path: Path) -
 
 
 def test_measure_races_render_the_endorsements_dialog_exactly_as_today(tmp_path: Path) -> None:
-    """#287's own acceptance criterion (d): a measure race's own page carries
-    neither a certified strip nor a vote-share row nor a chip, pending #289 --
-    `race_results_view`'s own `race.race_type == "measure"` gate, the same one
-    #286's card-side test proves, applied here to the endorsements dialog."""
+    """#287's own acceptance criterion (d), and #348's own non-regression
+    acceptance criterion: with no certified outcome on record for this
+    particular measure race, its own page carries neither a certified strip
+    nor a vote-share row nor a chip -- `race_results_view`'s own `None` gate
+    for a race no results file names an entry for, the same one #286's
+    card-side test proves, applied here to the endorsements dialog.
+    `test_certified_measure_results_render_the_endorsements_dialog_strip_and_vote_share_rows`
+    below covers the complementary case: a measure race that *does* have a
+    certified outcome on record."""
     results_root = tmp_path / "with-results"
     results_root.mkdir()
     without_results = _view_model(tmp_path / "without-results")
@@ -1153,6 +1237,76 @@ def test_measure_races_render_the_endorsements_dialog_exactly_as_today(tmp_path:
     assert "race-detail-certified-strip" not in measure_body
     assert "race-detail-candidate-result" not in measure_body
     assert "race-detail-result-chip" not in measure_body
+
+
+def test_certified_measure_results_render_the_endorsements_dialog_strip_and_vote_share_rows(
+    tmp_path: Path,
+) -> None:
+    """#348's own acceptance criterion: a certified measure race's own page
+    carries the certified strip and the winning choice's own vote-share row
+    and Approved/Rejected chip -- the same surfaces
+    `test_certified_results_render_the_endorsements_dialogs_certified_strip_and_vote_share_rows`
+    above already proves for a candidate race, applied here to a measure.
+
+    `tests.test_rendering._view_model`'s own fixture dataset carries no
+    endorsement coverage at all for `seattle-proposition-1-library-levy` (see
+    `test_measure_races_render_the_endorsements_dialog_exactly_as_today`
+    above -- "5 sources did not cover this race"), so a candidate section
+    never reaches this measure's own page under that fixture regardless of
+    results. `tests.compare_parity.enabled_view_model`'s dataset does carry
+    real endorsement coverage for it (`tests/test_compare_rendering.py`'s own
+    established source for `seattle-proposition-1-library-levy` fixture
+    data), so this test reuses it instead -- the same substitution
+    `test_compare_rendering.py` already made for the identical reason on the
+    comparison surface.
+
+    That dataset's own coverage is "Yes"-only (9 endorsing sources; "No" has
+    none), so this test demonstrates the winning choice's own vote-share row
+    and chip, not a second row for the losing choice -- `race_detail.
+    candidates` (`context.race_detail_display`) only ever carries a section
+    for a choice with at least one endorsing source, identically for every
+    ordinary candidate race today (an unopposed or lightly-covered race's
+    trailing candidates already render no section either), unmodified by
+    this ticket. A choice's own vote-share row is data-driven off
+    `race_result_outcomes_by_candidate_id` regardless of race type, so a
+    future fixture that covers both "Yes" and "No" would render both rows
+    through this identical mechanism -- nothing here is measure-specific."""
+    view_model = _enabled_view_model()
+    results_root = tmp_path / "with-results"
+    results_root.mkdir()
+    results = _valid_results(results_root)
+    results = results.model_copy(
+        update={
+            "races": [
+                *results.races,
+                _measure_outcomes(yes_votes=30000, no_votes=20000, ballots_counted=50000),
+            ]
+        }
+    )
+    with_results = view_model.model_copy(update={"results": results})
+
+    html = _race_html(with_results, MEASURE_RACE_ID)
+    body = _body_only(html)
+
+    assert '<div class="race-detail-certified-strip">' in body
+    assert "August 19, 2026" in body
+    assert "King County Elections" in body
+    assert "50,000 ballots" in body
+
+    # "Yes" is this fixture's sole recommendation (100% of its endorsing
+    # sources), so its own chip renders in the page headline rather than a
+    # section heading -- the same headline-vs-section split the candidate
+    # race's own test proves.
+    assert (
+        '<h3 data-display-role="recommendation">Yes '
+        '<span class="race-detail-result-chip">Approved</span></h3>' in body
+    )
+    assert (
+        '<div class="race-detail-candidate-result">\n'
+        '        <span class="race-detail-result-bar"><i style="width:60.0%"></i></span>\n'
+        '        <span class="race-detail-result-share">60.0%</span>\n'
+        "      </div>" in body
+    )
 
 
 def test_race_page_renders_the_whole_race_from_one_view_model(tmp_path: Path) -> None:
