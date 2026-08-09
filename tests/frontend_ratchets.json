@@ -58,6 +58,7 @@
     "about.html.j2": 1,
     "archive.html.j2": 1,
     "compare.html.j2": 1,
+    "corrections.html.j2": 1,
     "guide.html.j2": 1,
     "not-found.html.j2": 0,
     "race.html.j2": 1,
@@ -72,6 +73,9 @@
     ],
     "compare.html.j2": [
       "compare_entry_script"
+    ],
+    "corrections.html.j2": [
+      "shell_entry_script"
     ],
     "guide.html.j2": [
       "guide_entry_script"

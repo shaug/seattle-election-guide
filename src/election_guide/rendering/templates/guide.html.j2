@@ -12,7 +12,7 @@
   <a class="skip-link" href="#guide-races">Skip to recommendations</a>
 
   <main class="page screen-guide">
-    {{ shell.band(guide_href=guide_path, sources_href=sources_page_url, compare_href=compare_href, current='endorsements', sources_link_data_attribute=true) }}
+    {{ shell.band(guide_href=guide_path, sources_href=sources_page_url, compare_href=compare_href, corrections_href=corrections_href, current='endorsements', sources_link_data_attribute=true) }}
     {%+ call shell.page_head('Endorsements', eyebrow=election_display_name, mode='extended') %}Seattle&rsquo;s progressive voices, distilled.{% endcall +%}
     <div class="page-band-rule"></div>
     {{ election_day_banner | safe }}

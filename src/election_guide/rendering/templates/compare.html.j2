@@ -9,7 +9,7 @@
   <a class="skip-link" href="#comparison-main">Skip to content</a>
   <div class="page" data-comparison-page data-election-id="{{ guide.metadata.election_id }}">
     <header>
-      {{ shell.band(guide_href=guide_path, sources_href=guide_path ~ 'sources/', compare_href=guide_path ~ 'comparisons/', current='comparisons') }}
+      {{ shell.band(guide_href=guide_path, sources_href=guide_path ~ 'sources/', compare_href=guide_path ~ 'comparisons/', corrections_href=corrections_href, current='comparisons') }}
       <div class="page-band-rule"></div>
     </header>
     {{ election_day_banner | safe }}

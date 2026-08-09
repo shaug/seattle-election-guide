@@ -14,6 +14,7 @@ from datetime import datetime
 from pathlib import Path
 
 from election_guide.calendar import read_election_calendar
+from election_guide.corrections.loader import load_rendering_corrections
 from election_guide.evidence.models import CapturedManifest
 from election_guide.evidence.storage import read_capture_manifest
 from election_guide.normalization.models import CanonicalDataset
@@ -60,6 +61,7 @@ def build_release(
     results_dir: Path = Path("data/results"),
     repository_root: Path = Path("."),
     calendar_path: Path = Path("config/calendar/elections.yaml"),
+    corrections_dir: Path = Path("data/corrections"),
 ) -> ReleaseResult:
     """Run the complete publication pipeline and atomically publish one release directory.
 
@@ -93,6 +95,13 @@ def build_release(
     non-`election_night` capture at all (schema-legal but never produced by
     the shipped adapter) leaves the provenance line without a capture link
     rather than inventing one.
+
+    `corrections_dir` is where this election's corrections file would
+    live, if one has been committed (docs/RESULTS.md, "The corrections page";
+    issue #290) -- loaded and validated here the same way `results_dir` is,
+    so the corrections page's rendering hook reaches a real release. With no
+    committed file, this is a silent no-op and the release is unchanged from
+    before this hook existed.
     """
     if generated_at.tzinfo is None or generated_at.utcoffset() is None:
         raise ValueError("release generated_at must include a UTC offset")
@@ -120,6 +129,10 @@ def build_release(
         dataset.inventory,
         results_dir=results_dir,
         repository_root=repository_root,
+    )
+    corrections = load_rendering_corrections(
+        dataset.inventory.election.id,
+        corrections_dir=corrections_dir,
     )
     certification_date: str | None = None
     if calendar_path.is_file():
@@ -149,6 +162,7 @@ def build_release(
             results=results,
             certification_date=certification_date,
             results_capture_url=results_capture_url,
+            corrections=corrections,
         )
         write_publication_bundle(publication, data_dir)
         (data_dir / "canonical-dataset.json").write_bytes(

@@ -10,7 +10,7 @@
   <a class="skip-link" href="#about-main">Skip to content</a>
   <div class="page">
     <header>
-      {{ shell.band(guide_href=current_path, sources_href=current_path ~ 'sources/', compare_href=compare_href, current='about') }}
+      {{ shell.band(guide_href=current_path, sources_href=current_path ~ 'sources/', compare_href=compare_href, corrections_href=corrections_href, current='about') }}
       <div class="page-band-rule"></div>
     </header>
     {%+ call shell.page_head('How this works', mode='measured') %}{{ page_description }}{% endcall +%}

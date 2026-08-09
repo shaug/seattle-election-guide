@@ -13,6 +13,7 @@ from dataclasses import dataclass
 from fractions import Fraction
 from typing import Any
 
+from election_guide.corrections.models import ElectionCorrections
 from election_guide.publication.models import (
     PublicationChoiceEndorsements,
     PublicationRace,
@@ -1548,3 +1549,57 @@ def _source_cell_status_label(cell: SourceCell) -> str:
         "unverified": "Could not verify an endorsement",
         "not_applicable": "Outside this source's district",
     }[cell.state]
+
+
+@dataclass(frozen=True)
+class CorrectionProvenanceLinkView:
+    """One provenance citation on a correction entry's own line
+    (docs/RESULTS.md, "The corrections page"; issue #290)."""
+
+    label: str
+    url: str
+
+
+@dataclass(frozen=True)
+class CorrectionEntryView:
+    """One corrections-page entry, ready to render (docs/RESULTS.md, "The
+    corrections page"; issue #290). Built once per render by
+    `corrections_entries_view`, exactly as `RaceResultsView` is for the
+    results strip."""
+
+    date_label: str
+    """"August 27, 2026" -- `rendering.shell.month_day_year`'s full-month
+    grammar, the ratified mockup's own choice for a corrections entry's
+    date (`docs/design/RESULTS_FINALIZATION_2026-08-02.html`, "The
+    corrections log")."""
+    headline: str
+    body: str
+    provenance: tuple[CorrectionProvenanceLinkView, ...]
+
+
+def corrections_entries_view(
+    corrections: ElectionCorrections | None,
+) -> tuple[CorrectionEntryView, ...]:
+    """Every entry on this election's corrections page, newest first
+    (`docs/design/RESULTS_FINALIZATION_2026-08-02.html`, "The corrections
+    log" orders its two example entries August 27 before July 22).
+
+    `()` while no corrections file is committed or it carries no entries --
+    the same "state, not option" gate that decides whether the page exists at
+    all (`hosting.pages`, docs/RESULTS.md, Rendering).
+    """
+    if corrections is None:
+        return ()
+    ordered = sorted(corrections.entries, key=lambda entry: entry.corrected_on, reverse=True)
+    return tuple(
+        CorrectionEntryView(
+            date_label=month_day_year(entry.corrected_on),
+            headline=entry.headline,
+            body=entry.body,
+            provenance=tuple(
+                CorrectionProvenanceLinkView(label=link.label, url=link.url)
+                for link in entry.provenance
+            ),
+        )
+        for entry in ordered
+    )
