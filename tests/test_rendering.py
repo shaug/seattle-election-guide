@@ -824,27 +824,60 @@ def _race_card_html(html: str, race_id: str) -> str:
 def test_no_results_and_no_certification_date_leaves_race_cards_untouched(
     tmp_path: Path,
 ) -> None:
-    """#286's own acceptance criterion (a): before election day and outside
-    the counting window, with no results data, cards are byte-identical to
-    today. `_view_model` attaches neither `results` nor `metadata.
-    certification_date` (both default `None`, exactly as every bundle built
-    before #286 left them), so no race card should carry a trace of the new
-    markup -- the same "nothing wired yet" baseline #285's own equivalent
-    test proves for the banner."""
+    """#286's own acceptance criterion (a): before election day, with no
+    results data, cards are byte-identical to today. `_view_model` attaches
+    neither `results` nor `metadata.certification_date` (both default
+    `None`, exactly as every bundle built before #286 left them), so no race
+    card should carry a trace of the results-strip markup -- the same
+    "nothing wired yet" baseline #285's own equivalent test proves for the
+    banner. #344 later removed #286's interim counting-window note entirely,
+    so a candidate race card outside the certified state renders no results
+    markup of any kind, regardless of a known certification date."""
     configuration = read_rendering_configuration(RENDERING_CONFIG)
     view_model = _view_model(tmp_path / "without-results")
 
     assert view_model.results is None
     assert view_model.metadata.certification_date is None
     html = render_html_document(view_model, configuration)
-    # Markup only -- the inlined stylesheet (guide.css) and the bundled
-    # script (election-day.mjs's own `[data-race-counting]` selector)
-    # legitimately name these strings whether or not any card ever renders
-    # them, so the check is scoped to the race grid itself.
     race_grid = html.split('<div id="guide-races"', 1)[1].split("<footer", 1)[0]
     assert '<div class="race-results">' not in race_grid
-    assert "race-results-counting" not in race_grid
-    assert "data-race-counting" not in race_grid
+
+
+def test_counting_window_leaves_candidate_race_cards_byte_identical(tmp_path: Path) -> None:
+    """#344's own acceptance criterion: during the counting window (election
+    day passed, a calendar certification date known, no results file yet --
+    the exact view model #286 originally grew a "Counting -- results certify
+    <date>" note for), a candidate race card renders byte-identical to how it
+    renders with no certification date known at all -- no counting note, no
+    `data-race-counting` markup anywhere. The banner alone (docs/RESULTS.md,
+    "The election-day banner") carries the counting-window message now;
+    `test_certification_date_reaches_the_document_for_the_script_to_read`
+    above already proves the banner still gets its own data attributes."""
+    configuration = read_rendering_configuration(RENDERING_CONFIG)
+    without_results = _view_model(tmp_path / "without-results")
+    counting_view_model = without_results.model_copy(
+        update={
+            "metadata": without_results.metadata.model_copy(
+                update={"certification_date": "2026-08-19"}
+            )
+        }
+    )
+    assert counting_view_model.results is None
+
+    baseline_html = render_html_document(without_results, configuration)
+    counting_html = render_html_document(counting_view_model, configuration)
+    baseline_card = _race_card_html(baseline_html, RESULTS_RACE_ID)
+    counting_card = _race_card_html(counting_html, RESULTS_RACE_ID)
+
+    assert counting_card == baseline_card
+    assert "race-results-counting" not in counting_card
+    assert "data-race-counting" not in counting_card
+    assert "Counting" not in counting_card
+    # And the same holds document-wide, not just within the one card's own
+    # markup -- no inlined stylesheet or bundled script name survives either.
+    assert "race-results-counting" not in counting_html
+    assert "data-race-counting" not in counting_html
+    assert "wireRaceResultsCounting" not in counting_html
 
 
 def test_certified_results_grow_a_results_strip_on_the_candidate_race_card(
@@ -898,46 +931,16 @@ def test_certified_results_grow_a_results_strip_on_the_candidate_race_card(
     assert "data-race-counting" not in card
 
 
-def test_counting_state_renders_the_single_line_dated_from_the_calendar(
-    tmp_path: Path,
-) -> None:
-    """#286's own acceptance criterion (c): during the counting window (no
-    results yet, a calendar certification date known), the results slot
-    renders the single "Counting -- results certify <date>" line, dated from
-    the calendar milestone, and no numbers -- starting `hidden`, revealed
-    only by the reader's own clock (`wireRaceResultsCounting`,
-    election-day.mjs, tested in tests/js/election-day.test.mjs)."""
-    configuration = read_rendering_configuration(RENDERING_CONFIG)
-    without_results = _view_model(tmp_path / "without-results")
-    view_model = without_results.model_copy(
-        update={
-            "metadata": without_results.metadata.model_copy(
-                update={"certification_date": "2026-08-19"}
-            )
-        }
-    )
-    assert view_model.results is None
-
-    html = render_html_document(view_model, configuration)
-    card = _race_card_html(html, RESULTS_RACE_ID)
-
-    assert '<p class="race-results-counting" data-race-counting hidden>' in card
-    assert "Counting" in card
-    assert "Results certify August 19, 2026." in card
-    # No numbers: the counting state never shows a tally.
-    assert "race-results-tally" not in card
-    assert "race-results-bar" not in card
-    assert '<div class="race-results">' not in card
-
-
 def test_measure_races_render_exactly_as_today_regardless_of_results_state(
     tmp_path: Path,
 ) -> None:
     """#286's own acceptance criterion (d), and #348's own non-regression
     acceptance criterion: with no certified outcome on record for this
-    particular measure race, neither a results strip nor a counting note
-    reaches its card, even while both are active for the election's
-    candidate races -- unaffected by #348 having since removed the
+    particular measure race, no results markup of any kind reaches its
+    card -- #344 removed the per-card counting note entirely, so the
+    counting-window view model here is included as a plain
+    no-results-markup check, not a differential proof against a candidate
+    race's own card. Unaffected by #348 having since removed the
     type-based exclusion that used to make every measure race read this
     way regardless of its own data.
     `test_certified_measure_results_grow_a_results_strip_on_the_race_card`
@@ -946,7 +949,8 @@ def test_measure_races_render_exactly_as_today_regardless_of_results_state(
     configuration = read_rendering_configuration(RENDERING_CONFIG)
     without_results = _view_model(tmp_path / "without-results")
 
-    # The counting state: a certification date known, no results file yet.
+    # The counting-window view model: a certification date known, no results
+    # file yet.
     counting_view_model = without_results.model_copy(
         update={
             "metadata": without_results.metadata.model_copy(
@@ -957,11 +961,7 @@ def test_measure_races_render_exactly_as_today_regardless_of_results_state(
     counting_html = render_html_document(counting_view_model, configuration)
     counting_card = _race_card_html(counting_html, MEASURE_RACE_ID)
     assert "race-results" not in counting_card
-    assert "data-race-counting" not in counting_card
-    # The election overall does carry a counting note -- for its candidate
-    # races -- so this proves the measure is excluded, not that the fixture
-    # never activates the feature at all.
-    assert "data-race-counting" in counting_html
+    assert "data-race-counting" not in counting_html
 
     # The certified state: a results file exists for the election.
     results_root = tmp_path / "with-results"
