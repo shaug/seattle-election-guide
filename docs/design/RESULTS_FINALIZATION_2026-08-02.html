@@ -481,6 +481,91 @@
     chip in the amber family, with no tally rows. The card never shows a number the county could
     contradict tomorrow.</p>
 
+  <h3>2a · A certified measure race card <span class="chip chip-pick">Ratified · Aug 8, 2026</span></h3>
+  <p>A ballot measure reuses this exact tally-row component — no new UI mechanism, no new template
+    block, no new CSS class. Its two choices, <em>Yes</em> and <em>No</em>, are simply its
+    outcomes: two tally rows on the same navy/gray bar scale, sorted by share descending, exactly
+    like a candidate race with two candidates. The winning row carries the same chip shown in
+    "Chip vocabulary" below — <strong>Approved</strong> when Yes wins, <strong>Rejected</strong>
+    when No wins — never red/green valence, the same fact-toned sky-on-navy as every other results
+    chip. A rejected measure's "No" row therefore sorts <em>above</em> "Yes," the same
+    share-descending rule a candidate race uses. <strong>No validation threshold is ever
+    rendered</strong>, and none is added to the data model: the chip states a fact taken directly
+    from the certification, the same posture <code style="font-family:var(--mono);font-size:.85em">advanced</code>
+    already carries for candidate races.</p>
+
+  <figure class="mockframe">
+    <figcaption><b>Race card, certified state — ballot measure</b> — Seattle Proposition 1,
+      Property Tax Levy for Seattle Public Library. Same card, same tally-row component, two
+      outcomes instead of three; both certification outcomes stacked here for comparison.</figcaption>
+    <div class="mock">
+      <div class="m-cardwrap">
+        <div class="m-race-card">
+          <p class="m-office">Ballot Measure · City of Seattle</p>
+          <div class="m-result-row">
+            <h5>Yes</h5>
+            <div class="m-meter"><strong>12 of 14</strong></div>
+          </div>
+          <div class="m-outcome">
+            <div class="m-outcome-head">
+              <span>Result</span>
+              <span class="m-cert">Certified · Aug 19, 2026</span>
+            </div>
+            <div class="m-tally">
+              <div class="m-tally-row">
+                <span class="m-tally-name">Yes <span class="adv">Approved</span></span>
+                <span class="m-tally-share">61.4%</span>
+                <span class="m-tally-bar"><i style="width:61.4%"></i></span>
+              </div>
+              <div class="m-tally-row trailing">
+                <span class="m-tally-name">No</span>
+                <span class="m-tally-share">38.6%</span>
+                <span class="m-tally-bar"><i style="width:38.6%"></i></span>
+              </div>
+            </div>
+            <p class="m-provenance">142,880 ballots · King County Elections · <a href="#">capture 9f3c…e2</a></p>
+          </div>
+        </div>
+      </div>
+      <div class="banner-label">A No-wins case — the "No" row sorts above "Yes" by share, the same rule as any race; flagged and ratified, not overlooked</div>
+      <div class="m-cardwrap">
+        <div class="m-race-card">
+          <p class="m-office">Ballot Measure · City of Seattle</p>
+          <div class="m-result-row">
+            <h5>Yes</h5>
+            <div class="m-meter"><strong>12 of 14</strong></div>
+          </div>
+          <div class="m-outcome">
+            <div class="m-outcome-head">
+              <span>Result</span>
+              <span class="m-cert">Certified · Aug 19, 2026</span>
+            </div>
+            <div class="m-tally">
+              <div class="m-tally-row">
+                <span class="m-tally-name">No <span class="adv">Rejected</span></span>
+                <span class="m-tally-share">54.7%</span>
+                <span class="m-tally-bar"><i style="width:54.7%"></i></span>
+              </div>
+              <div class="m-tally-row trailing">
+                <span class="m-tally-name">Yes</span>
+                <span class="m-tally-share">45.3%</span>
+                <span class="m-tally-bar"><i style="width:45.3%"></i></span>
+              </div>
+            </div>
+            <p class="m-provenance">142,880 ballots · King County Elections · <a href="#">capture 9f3c…e2</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </figure>
+
+  <p>This applies identically everywhere certified results render — "reuse everywhere," not
+    "race-card-only." The race card above and the endorsements dialog below share the tally-row
+    component exactly as they already do for candidates; the comparison column renders the same
+    underlying data through its own cell grammar, not the tally-row markup, matching section 4's
+    own "Cells speak the table's own language." No implementation lands in this design pass; it is
+    tracked as a follow-up sub-issue of #208.</p>
+
   <h3>3 · The endorsements view</h3>
   <p>The race-detail dialog is where a reader compares candidates source by source, so results
     belong here too — but as a <strong>state, not an option</strong>. No toggle, no new filter
@@ -655,7 +740,7 @@
               </tr>
               <tr class="sec"><th colspan="4">City of Seattle</th></tr>
               <tr>
-                <th>Proposition 1 · Social housing levy</th>
+                <th>Proposition 1 · Library levy</th>
                 <td class="agree"><span class="picks">Yes</span></td>
                 <td class="agree"><span class="picks">Yes</span><span class="meta">12 of 14 sources</span></td>
                 <td><span class="picks">Approved</span><span class="meta">61.4% yes</span></td>
@@ -768,9 +853,29 @@
       name their destination; exactly one date — the most important next one, or the last once the
       election is over. Nothing about count-update cadence.</span></div>
     <div class="decision"><b>Still open</b>
-      <span>A small mockup pass for ballot measures (approve-share bar, validation thresholds);
-      "Elected" as the general-race chip label (standing proposal, unobjected); the exact
+      <span>"Elected" as the general-race chip label (standing proposal, unobjected); the exact
       amended-result flow, decided when a recount first happens.</span></div>
+  </div>
+
+  <h2>Ballot measures<span class="sec-note">Ratified August 8, 2026 · #289</span></h2>
+  <div class="decisions">
+    <div class="decision"><b>Measures reuse the candidate tally-row component, unmodified.</b>
+      <span>No new UI mechanism, template block, or CSS class: a measure's Yes/No choices are just
+      its outcomes, rendered on the same navy/gray bar scale, sorted by share descending like any
+      race.</span></div>
+    <div class="decision"><b>The winning row carries Approved / Rejected, same fact-toned chip.</b>
+      <span>Approved when Yes wins, Rejected when No wins — the same sky-on-navy tone as every
+      other results chip, never red/green valence. A rejected measure's "No" row sorts above
+      "Yes" by the same share rule; flagged and accepted, not overlooked.</span></div>
+    <div class="decision"><b>No validation thresholds are rendered, and none are added to the
+      schema.</b>
+      <span>The chip states a fact taken directly from the certification, the same posture
+      <code style="font-family:var(--mono);font-size:.85em">advanced</code> already carries for
+      candidate races — closing this design's own "if thresholds are to be rendered" branch
+      without a schema follow-up.</span></div>
+    <div class="decision"><b>Reuse everywhere, not race-card-only.</b>
+      <span>Applies identically to the race card, the endorsements dialog, and the comparison
+      column's own cell rendering.</span></div>
   </div>
 
   <footer class="doc-foot">
