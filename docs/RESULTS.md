@@ -309,6 +309,42 @@ this election's publication-eligible races (`ld-11-state-representative-2`,
 `ld-36-state-representative-2`, `ld-43-state-representative-2`) have exactly one declared
 candidate, and a write-in is a voter's only alternative there.
 
+## Ballot measures (2026-08-08 addendum, #289)
+
+Ratified with the maintainer against live-rendered mockups extending
+`docs/design/RESULTS_FINALIZATION_2026-08-02.html` (a Yes-wins "Approved" case and a No-wins
+"Rejected" case, both shown and signed off).
+
+A measure's two choices — `Yes` and `No` — render through the **exact same tally-row component**
+every candidate race already uses ("Race cards" above): two rows on the shared navy/gray bar
+scale, sorted by share descending, identically to a candidate race with two choices. There is no
+new UI mechanism, no new template block, and no new CSS class for measures.
+
+The winning row (`advanced: true`) carries the same chip already named in "The results chip":
+**Approved** when the winning choice is "Yes", **Rejected** when the winning choice is "No" — both
+in the same neutral sky-on-navy tone as every other results chip, never red/green valence,
+consistent with the site's "neither good nor bad, fact" framing. A rejected measure's "No" row
+therefore sorts above "Yes" by the same share-descending rule a candidate race uses — flagged and
+accepted as part of ratification, not an oversight.
+
+**No validation thresholds are rendered anywhere, and no threshold data is added to the schema.**
+The Approved/Rejected chip states a fact taken directly from the authority's own certification —
+the same posture already used for `advanced` on candidate races: the site states what the county
+certified, not what supermajority or threshold rule produced it. This resolves the "Ballot
+measures" open question below without exercising the "if thresholds are to be rendered" branch of
+that question — there is no threshold field to source, so no #283 schema follow-up is needed.
+
+Same provenance line (ballots counted · authority · capture link) and same "Certified ·
+`<date>`" badge as candidate cards — nothing measure-specific there either. This applies
+identically wherever the tally-row component is consumed: the race card ("Race cards" above,
+#286), the endorsements dialog ("The endorsements dialog" above, #287), and the comparison column
+("The comparison view" above, #288) — reuse everywhere, not race-card-only.
+
+Implementation is tracked as a follow-up sub-issue of #208 rather than in this design pass (see
+that issue for the concrete code shape: `race_results_view`'s `race.race_type == "measure"`
+short-circuit is removed, and a measure-specific chip-label branch is added alongside the existing
+primary/general branch).
+
 ## Open questions
 
 - **Secretary of State ingestion** — parsing `results.votewa.gov`'s JSON export for the races
@@ -316,5 +352,4 @@ candidate, and a write-in is a voter's only alternative there.
   District 9, and the four Supreme Court Justice positions). Not built by #284 and no tracked
   issue exists yet for it — file or pick up that follow-up before those races' true totals are
   needed (`docs/runbooks/results-certified-ingest.md`, Escalation).
-- **Ballot measures** — a small mockup pass (approve-share bar, validation thresholds).
 - **Amended flow detail** — decided concretely when a recount first happens.
