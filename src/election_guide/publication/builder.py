@@ -16,6 +16,7 @@ from typing import Literal, cast
 
 from pydantic import BaseModel
 
+from election_guide.corrections.models import ElectionCorrections
 from election_guide.evidence.models import CapturedManifest, CaptureManifest
 from election_guide.evidence.storage import verify_capture
 from election_guide.inventory.models import Race
@@ -121,6 +122,7 @@ def build_publication_bundle(
     results: ElectionResults | None = None,
     certification_date: str | None = None,
     results_capture_url: str | None = None,
+    corrections: ElectionCorrections | None = None,
 ) -> PublicationBundle:
     """Compute every issue-7 artifact from canonical data and one consensus report.
 
@@ -143,6 +145,14 @@ def build_publication_bundle(
     through here so every candidate race's results strip can link its
     provenance line's "capture" receipt. Omitted, `None`, or `results` itself
     `None`, no race card carries a capture link.
+
+    `corrections` is the rendering pipeline's one hook onto per-election
+    corrections (docs/RESULTS.md, "The corrections page"; issue #290): a
+    caller that has already loaded and validated a corrections file
+    (`election_guide.corrections.load_rendering_corrections`) passes it
+    through here so it reaches the published view model. Omitted or `None`,
+    the bundle is unchanged from before this hook existed, and the
+    corrections page renders nowhere (`hosting.pages`).
     """
     stripped_commit = git_commit.strip()
     if not stripped_commit:
@@ -150,6 +160,11 @@ def build_publication_bundle(
     if results is not None and results.election_id != dataset.inventory.election.id:
         raise ValueError(
             f"results belong to {results.election_id!r}, not {dataset.inventory.election.id!r}"
+        )
+    if corrections is not None and corrections.election_id != dataset.inventory.election.id:
+        raise ValueError(
+            f"corrections belong to {corrections.election_id!r}, not "
+            f"{dataset.inventory.election.id!r}"
         )
     for capture in dataset.captures:
         verify_capture(capture, snapshot_root)
@@ -169,6 +184,7 @@ def build_publication_bundle(
         results,
         certification_date,
         results_capture_url,
+        corrections,
     )
     checks = _validate_publication(dataset, validated_consensus, view_model)
     validation_report = ValidationReport(
@@ -301,6 +317,7 @@ def _build_view_model(
     results: ElectionResults | None,
     certification_date: str | None = None,
     results_capture_url: str | None = None,
+    corrections: ElectionCorrections | None = None,
 ) -> PublicationViewModel:
     active_sources = [
         source for source in dataset.source_registry.sources if source.panel_role != "excluded"
@@ -517,6 +534,7 @@ def _build_view_model(
         personalization=_personalization(dataset, consensus, sources, sections),
         comparisons=_comparisons(dataset, sections),
         results=results,
+        corrections=corrections,
     )
 
 

@@ -17,7 +17,7 @@
 {% block body %}
   <div class="page">
     <header>
-      {{ shell.band(guide_href=current_path, sources_href=current_path ~ 'sources/', compare_href=compare_href, shareable=false) }}
+      {{ shell.band(guide_href=current_path, sources_href=current_path ~ 'sources/', compare_href=compare_href, corrections_href=corrections_href, shareable=false) }}
       <div class="page-band-rule"></div>
     </header>
     {%+ call shell.page_head('Page not found', mode='measured') %}That page doesn&rsquo;t exist. Try the <a href="{{ current_path }}">current guide</a>, or the <a href="/e/">archive of past guides</a>.{% endcall +%}

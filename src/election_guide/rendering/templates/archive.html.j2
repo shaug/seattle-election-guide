@@ -10,7 +10,7 @@
   <a class="skip-link" href="#archive-main">Skip to content</a>
   <div class="page">
     <header>
-      {{ shell.band(guide_href=current_path, sources_href=current_path ~ 'sources/', compare_href=compare_href) }}
+      {{ shell.band(guide_href=current_path, sources_href=current_path ~ 'sources/', compare_href=compare_href, corrections_href=corrections_href) }}
       <div class="page-band-rule"></div>
     </header>
     {%+ call shell.page_head('Guide archive', mode='measured') %}Every guide stays up after its election &mdash; unchanged, at the same address.{% endcall +%}

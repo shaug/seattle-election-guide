@@ -63,6 +63,19 @@ def _election_day_banner(view_model: PublicationViewModel) -> str:
     )
 
 
+def _corrections_href(view_model: PublicationViewModel, guide_path: str) -> str | None:
+    """The election's corrections page address, or `None` while it carries no
+    corrections (docs/RESULTS.md, "The corrections page"; issue #290) -- the
+    same "state, not option" gate `compare_href` follows for Comparisons
+    (`view_model.comparisons.policy.enabled`) below. Every full document's
+    nav renders this exactly like `compare_href`, and `hosting.pages` stages
+    the page itself under the same condition."""
+    corrections = view_model.corrections
+    if corrections is None or not corrections.entries:
+        return None
+    return f"{guide_path}corrections/"
+
+
 def _certification_date_full(view_model: PublicationViewModel) -> str | None:
     """ "August 19, 2026", the same formatted certification date the banner's
     own counting state carries as `data-election-certification-date-full`
@@ -181,6 +194,7 @@ def render_html_document(
         compare_href=(
             f"{guide_path}comparisons/" if view_model.comparisons.policy.enabled else None
         ),
+        corrections_href=_corrections_href(view_model, guide_path),
         election_day_banner=_election_day_banner(view_model),
         # Race cards' own counting note (docs/RESULTS.md, Rendering § Race
         # cards; #286) states the identical certification date the banner's
@@ -318,6 +332,7 @@ def render_race_document(
         compare_href=(
             f"{guide_path}comparisons/" if view_model.comparisons.policy.enabled else None
         ),
+        corrections_href=_corrections_href(view_model, guide_path),
         consensus_source_count=sum(
             source.panel_role == "consensus" for source in contributing_sources
         ),
@@ -408,6 +423,7 @@ def render_sources_document(
             {source.code for category in payload.tree for source in category.sources}
         ),
         compare_href=compare_href,
+        corrections_href=_corrections_href(view_model, guide_path),
         guide_path=guide_path,
         election_day_banner=_election_day_banner(view_model),
         canonical_origin=public_site_url,
@@ -463,6 +479,7 @@ def render_comparison_document(
         stylesheet=stylesheet,
         compare_entry_script=compare_entry_script,
         guide_path=guide_path,
+        corrections_href=_corrections_href(view_model, guide_path),
         election_day_banner=_election_day_banner(view_model),
         canonical_origin=public_site_url,
         project_url=project_url,
@@ -476,6 +493,62 @@ def render_comparison_document(
         comparison_source_labels=payload.source_labels,
         comparison_presets=preset_fragments,
         comparison_percentage_label=context.comparison_percentage_label,
+    )
+
+
+def render_corrections_document(
+    view_model: PublicationViewModel,
+    *,
+    public_site_url: str,
+    project_url: str | None = None,
+) -> str:
+    """Render the per-election corrections page (docs/RESULTS.md, "The
+    corrections page"; issue #290).
+
+    A caller must gate on this election actually having corrections before
+    calling this -- `hosting.pages` (the one production caller) stages it,
+    and links it in the nav, only when `view_model.corrections` is not `None`
+    and carries at least one entry, exactly like `render_comparison_document`
+    is gated on its own policy flag above. This function itself raises
+    rather than silently rendering an empty log, so a caller that skips that
+    gate fails loudly instead of publishing a page with nothing on it.
+    """
+    if view_model.corrections is None or not view_model.corrections.entries:
+        raise ValueError("corrections page cannot render while the election has no corrections")
+
+    entries = context.corrections_entries_view(view_model.corrections)
+    for entry in entries:
+        for link in entry.provenance:
+            _require_web_url(link.url)
+
+    environment = template_environment()
+    template = environment.get_template("corrections.html.j2")
+    stylesheet = page_stylesheet("corrections")
+    guide_path = f"/e/{view_model.metadata.election_id}/"
+    election_display_name, _ = election_names(
+        view_model.metadata.election_date,
+        view_model.metadata.election_type,
+        view_model.metadata.state,
+        legacy_name=view_model.metadata.election_name,
+        election_id=view_model.metadata.election_id,
+    )
+    document_title = page_title(page="Corrections", election=election_display_name)
+    compare_href = f"{guide_path}comparisons/" if view_model.comparisons.policy.enabled else None
+    return template.render(
+        guide=view_model,
+        public_site_url=public_site_url,
+        document_title=document_title,
+        election_display_name=election_display_name,
+        stylesheet=stylesheet,
+        shell_entry_script=bundle_entry("shell-entry.mjs", global_name="ShellPage"),
+        corrections_entries=entries,
+        compare_href=compare_href,
+        corrections_href=f"{guide_path}corrections/",
+        guide_path=guide_path,
+        election_day_banner=_election_day_banner(view_model),
+        canonical_origin=public_site_url,
+        project_url=project_url,
+        **context.footer_update_context(view_model),
     )
 
 

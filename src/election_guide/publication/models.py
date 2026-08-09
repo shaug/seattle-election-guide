@@ -8,6 +8,7 @@ from typing import Literal
 
 from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, model_validator
 
+from election_guide.corrections.models import ElectionCorrections
 from election_guide.publication.comparisons import ComparisonsContract
 from election_guide.publication.personalization import PersonalizationContract
 from election_guide.results.models import ElectionResults
@@ -565,7 +566,7 @@ class PublicationMetadata(PublicationModel):
 
 
 class PublicationViewModel(PublicationModel):
-    schema_version: Literal["1.12"] = "1.12"
+    schema_version: Literal["1.13"] = "1.13"
     metadata: PublicationMetadata
     sources: list[PublicationSource]
     sections: list[PublicationSection]
@@ -579,6 +580,12 @@ class PublicationViewModel(PublicationModel):
     and validating `data/results/` themselves. `#285`'s election-day banner
     was the first surface to render from it; `#286` (race cards, via each
     `PublicationRace.results`) is the second."""
+    corrections: ElectionCorrections | None = None
+    """This election's corrections-page entries, or `None` while the election
+    carries no corrections (docs/RESULTS.md, "The corrections page"; issue
+    #290) -- the same "state, not option" posture `results` above follows.
+    `#290`'s corrections page, and every page's nav link to it, render only
+    when this is not `None` and carries at least one entry."""
 
     @model_validator(mode="after")
     def validate_topology(self) -> PublicationViewModel:

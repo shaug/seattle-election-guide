@@ -25,6 +25,7 @@ from election_guide.release.models import ReleaseManifest, ReleaseStatus
 from election_guide.rendering.bundler import bundle_entry
 from election_guide.rendering.documents import (
     render_comparison_document,
+    render_corrections_document,
     render_race_document,
     render_sources_document,
     template_environment,
@@ -176,6 +177,11 @@ def stage_pages_site(
             if current.view_model.comparisons.policy.enabled
             else None
         )
+        current_corrections_href = (
+            f"/e/{current.declaration.election_id}/corrections/"
+            if current.view_model.corrections is not None and current.view_model.corrections.entries
+            else None
+        )
         archive_path = stage / "e" / "index.html"
         archive_path.write_text(
             _archive_html(
@@ -196,6 +202,7 @@ def stage_pages_site(
                 git_commit=current_git_commit,
                 data_href=current_release_manifest_href,
                 compare_href=current_compare_href,
+                corrections_href=current_corrections_href,
             ),
             encoding="utf-8",
         )
@@ -212,6 +219,7 @@ def stage_pages_site(
                 git_commit=current_git_commit,
                 data_href=current_release_manifest_href,
                 compare_href=current_compare_href,
+                corrections_href=current_corrections_href,
             ),
             encoding="utf-8",
         )
@@ -255,6 +263,7 @@ def stage_pages_site(
                 git_commit=current_git_commit,
                 data_href=current_release_manifest_href,
                 compare_href=current_compare_href,
+                corrections_href=current_corrections_href,
             ),
             encoding="utf-8",
         )
@@ -373,6 +382,9 @@ def _verify_staged_pages_site(
         compare_asset = f"e/{declared.election_id}/comparisons/index.html"
         if declared.comparison_route_preview or compare_asset in deployment.assets:
             required_assets.add(compare_asset)
+        corrections_asset = f"e/{declared.election_id}/corrections/index.html"
+        if corrections_asset in deployment.assets:
+            required_assets.add(corrections_asset)
         required_assets.update(_required_race_assets(declared.election_id, deployment.assets))
 
     current = next(
@@ -564,6 +576,14 @@ def _stage_verified_bundles(
                 encoding="utf-8",
             )
             public_paths.update({f"{root_path}comparisons/", f"{root_path}comparisons/index.html"})
+        if bundle.view_model.corrections is not None and bundle.view_model.corrections.entries:
+            corrections_dir = election_root / "corrections"
+            corrections_dir.mkdir()
+            (corrections_dir / "index.html").write_text(
+                _corrections_html(bundle.view_model, canonical_origin),
+                encoding="utf-8",
+            )
+            public_paths.update({f"{root_path}corrections/", f"{root_path}corrections/index.html"})
         public_paths.update(f"{root_path}{name}" for name in names)
     return public_paths
 
@@ -652,6 +672,18 @@ def _comparison_html(view_model: PublicationViewModel, canonical_origin: str) ->
     )
 
 
+def _corrections_html(view_model: PublicationViewModel, canonical_origin: str) -> str:
+    """Render the per-election corrections page (docs/RESULTS.md, "The
+    corrections page"; issue #290) after `_stage_verified_bundles` has
+    already gated its existence on this election carrying at least one
+    entry."""
+    return render_corrections_document(
+        view_model,
+        public_site_url=canonical_origin,
+        project_url=PROJECT_URL,
+    )
+
+
 def _site_document(page: str, **context: object) -> str:
     """Render one of the three site-wide documents through the shared layout.
 
@@ -688,6 +720,7 @@ def _archive_html(
     git_commit: str,
     data_href: str,
     compare_href: str | None = None,
+    corrections_href: str | None = None,
 ) -> str:
     return _site_document(
         "archive",
@@ -700,6 +733,7 @@ def _archive_html(
         elections=site_manifest.elections,
         election_names_by_id=election_names_by_id,
         compare_href=compare_href,
+        corrections_href=corrections_href,
         shell_entry_script=bundle_entry("shell-entry.mjs", global_name="ShellPage"),
         data_updated_date=data_updated_date,
         site_updated_date=site_updated_date,
@@ -724,6 +758,7 @@ def _about_html(
     git_commit: str,
     data_href: str,
     compare_href: str | None = None,
+    corrections_href: str | None = None,
 ) -> str:
     current_path = f"/e/{site_manifest.current_election_id}/"
     return _site_document(
@@ -734,6 +769,7 @@ def _about_html(
         canonical_origin=site_manifest.canonical_origin,
         current_path=current_path,
         compare_href=compare_href,
+        corrections_href=corrections_href,
         project_url_label=PROJECT_URL.removeprefix("https://"),
         shell_entry_script=bundle_entry("shell-entry.mjs", global_name="ShellPage"),
         data_updated_date=data_updated_date,
@@ -753,6 +789,7 @@ def _not_found_html(
     git_commit: str,
     data_href: str,
     compare_href: str | None = None,
+    corrections_href: str | None = None,
 ) -> str:
     """The worker's branded 404 with the shared global-page footer."""
     return _site_document(
@@ -762,6 +799,7 @@ def _not_found_html(
         shareable=False,
         current_path=f"/e/{site_manifest.current_election_id}/",
         compare_href=compare_href,
+        corrections_href=corrections_href,
         data_updated_date=data_updated_date,
         site_updated_date=site_updated_date,
         data_version=data_version,
@@ -780,6 +818,7 @@ def _pages_worker(
     git_commit: str,
     data_href: str,
     compare_href: str | None = None,
+    corrections_href: str | None = None,
 ) -> str:
     current_path = f"/e/{site_manifest.current_election_id}/"
     election_roots = [f"/e/{election.election_id}/" for election in site_manifest.elections]
@@ -812,6 +851,7 @@ def _pages_worker(
         git_commit=git_commit,
         data_href=data_href,
         compare_href=compare_href,
+        corrections_href=corrections_href,
     )
     return f"""const CANONICAL_HOST = {json.dumps(site_manifest.canonical_origin.removeprefix("https://"))};
 const LEGACY_HOSTS = new Set({json.dumps(list(LEGACY_HOSTS))});

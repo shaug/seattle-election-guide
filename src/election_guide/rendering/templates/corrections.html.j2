@@ -1,0 +1,50 @@
+{# The per-election Corrections page (docs/RESULTS.md, "The corrections
+   page"; issue #290). Full page affordances, the same election-scoped shell
+   Sources and Comparisons render -- but no interactive client region:
+   corrections are authored, dated prose, so this page carries only the
+   shared shell script every static site-wide page does (`shell_entry_script`,
+   `about.html.j2`/`archive.html.j2`), not a dedicated entry module.
+
+   `render_corrections_document` (rendering/documents.py) only ever renders
+   this once the election's corrections file exists and carries at least one
+   entry, so `corrections_entries` is never empty here -- `hosting.pages`
+   stages this page, and links it in the nav, under the identical gate. #}
+{% extends 'base.html.j2' %}
+{% block head_meta %}
+  {% set canonical_url = public_site_url ~ guide_path ~ 'corrections/' %}
+  {% set page_description = election_display_name ~ ' corrections: what changed after publication, and why.' %}
+  {{ shell.social_meta(document_title, page_description, canonical_url) }}
+{% endblock %}
+{% block body %}
+  <a class="skip-link" href="#corrections-main">Skip to content</a>
+  <div class="page">
+    <header>
+      {{ shell.band(guide_href=guide_path, sources_href=guide_path ~ 'sources/', compare_href=compare_href, corrections_href=corrections_href, current='corrections') }}
+      <div class="page-band-rule"></div>
+    </header>
+    {{ election_day_banner | safe }}
+    {%+ call shell.page_head('Corrections', eyebrow=election_display_name, mode='measured') %}We get it right, eventually.{% endcall +%}
+    <main id="corrections-main" class="narrow-main">
+      <div class="corrections-log">
+        {% for entry in corrections_entries %}
+        <article class="corrections-entry">
+          <p class="corrections-date">{{ entry.date_label }}</p>
+          <p class="corrections-body"><strong>{{ entry.headline }}</strong> {{ entry.body }}</p>
+          {% if entry.provenance %}
+          <p class="corrections-provenance">{% for link in entry.provenance %}<a href="{{ link.url }}"{{ external_link_attributes }}>{{ link.label }}</a>{% if not loop.last %} → {% endif %}{% endfor %}</p>
+          {% endif %}
+        </article>
+        {% endfor %}
+      </div>
+    </main>
+    <footer class="site-footer">
+      {% if project_url is not none %}{{ shell.election_footer_band(project_url, guide.metadata, guide_path, footer_data_updated_date, footer_site_updated_date) }}{% endif %}
+    </footer>
+  </div>
+{% endblock %}
+{% block scripts %}
+  <script type="module">
+{{ shell_entry_script | safe }}
+    ShellPage.boot();
+  </script>
+{% endblock %}

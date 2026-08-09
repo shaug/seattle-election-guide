@@ -348,6 +348,56 @@ that issue for the concrete code shape: `race_results_view`'s `race.race_type ==
 short-circuit is removed, and a measure-specific chip-label branch is added alongside the existing
 primary/general branch).
 
+## The corrections page's implementation (2026-08-08 addendum, #290)
+
+Storage path (decided by this ticket, per its own scope no separate ratification needed):
+**one file per election at `data/corrections/<election-id>.yaml`**, loaded by
+`election_guide.corrections.load_rendering_corrections` the same way `data/results/<election-id>
+.yaml` is loaded by `election_guide.results.load_rendering_results` (`election_guide.corrections`,
+`docs/RESULTS.md`, "Data model" above). Each entry carries a `corrected_on` date, a `headline`,
+a `body`, and an optional list of `provenance` `{label, url}` links, rendered newest first:
+
+```yaml
+# data/corrections/wa-2026-primary.yaml
+schema_version: "1.0"
+election_id: wa-2026-primary
+entries:
+  - corrected_on: 2026-08-27
+    headline: "Amended result, State Representative (LD 32, Pos. 1)."
+    body: >-
+      The county's amended canvass moved the second advancing candidate after a machine
+      recount. The certified figures published August 19 have been replaced; both captures
+      remain in the archive.
+    provenance:
+      - label: "capture 9f3c…e2"
+        url: https://…
+      - label: "capture 41ab…77"
+        url: https://…
+  - corrected_on: 2026-07-22
+    headline: "Corrected an endorsement attribution."
+    body: >-
+      The 46th District Democrats' sole endorsement in the County Assessor race was
+      attributed to the wrong candidate for roughly six hours on July 21. The guide's
+      recommendation was unaffected.
+```
+
+`provenance` is deliberately a generic labeled-link list rather than a structure naming
+"capture" or "supersedes": the amended-results auto-entry that consumes #283's own
+`ElectionResults.supersedes` citation is an explicit follow-up **after** #283 lands, not built
+here (endorsement-correction entries need no results data). A generic `{label, url}` pair is
+exactly the shape that follow-up can populate with two capture links without this schema
+changing shape underneath it.
+
+`PublicationViewModel` grows an optional `corrections` field (schema version 1.12 → 1.13), loaded
+by `release.builder.build_release` the same way `results` is. The corrections page renders — and
+is linked in the nav, right after Comparisons — only while the election's file exists and carries
+at least one entry: the same "state, not option" posture every other results-era surface in this
+document follows. `hosting.pages` stages `e/<election-id>/corrections/index.html` under that same
+gate; no file, no page, no link. The page itself is a full page in the election's own chrome
+(same shell, same election-scoped footer) with no interactive client region — corrections are
+authored, dated prose, so it carries the same shared shell script every static site-wide page
+does rather than a dedicated client entry module.
+
 ## Open questions
 
 - **Secretary of State ingestion** — parsing `results.votewa.gov`'s JSON export for the races
