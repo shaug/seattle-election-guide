@@ -909,10 +909,10 @@ def test_certified_results_grow_a_results_strip_on_the_candidate_race_card(
     assert card.index("Rob Foxcurran") < card.index("Al Dams")
     # The outcome chip -- sky-on-navy, immediately after the candidate's name
     # -- on exactly the two advancing candidates in this primary.
-    assert card.count('<span class="race-results-chip">Advances</span>') == 2
+    assert card.count('<span class="race-detail-result-chip">Advances</span>') == 2
     assert (
         '<span class="race-results-name">Dominique M Scarimbolo '
-        '<span class="race-results-chip">Advances</span></span>' in card
+        '<span class="race-detail-result-chip">Advances</span></span>' in card
     )
     assert (
         '<span class="race-results-name">Al Dams</span>' in card
@@ -1034,7 +1034,8 @@ def test_certified_measure_results_grow_a_results_strip_on_the_race_card(
     # (60% share sorts above 40%).
     assert card.count('<div class="race-results-row') == 2
     approved_index = card.index(
-        '<span class="race-results-name">Yes <span class="race-results-chip">Approved</span></span>'
+        '<span class="race-results-name">Yes '
+        '<span class="race-detail-result-chip">Approved</span></span>'
     )
     trailing_index = card.index('<span class="race-results-name">No</span>')
     assert approved_index < trailing_index

@@ -108,15 +108,10 @@
 /* Only a tied leader has this eyebrow, and it takes the amber its box wears. */
 .race-detail-candidate-tied .race-detail-candidate-title p { margin: 0 0 .05rem; color: var(--tone-differ-text); font-size: .62rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 .race-detail-candidate-title h4 { min-width: 0; margin: 0; color: var(--navy); font-size: 1.05rem; line-height: 1.1; overflow-wrap: anywhere; }
-/* The results chip (docs/RESULTS.md, "The results chip"; #287): sky on navy,
-   immediately after the candidate's name in every heading that names one —
-   a candidate's own section title (`h4`, above) or, for the sole leading
-   choice, the page's own recommendation headline (`.screen-race-result`'s
-   `h3`, guide-race.css). Ordinary inline content after the name rather than
-   a flex layout of its own: a heading too narrow for both wraps the chip
-   beneath the name from plain text flow alone, with no separate
-   narrow-width rule needed (the ratified mobile accommodation). */
-.race-detail-result-chip { display: inline-block; padding: .06rem .5rem; border-radius: 1rem; background: var(--sky); color: var(--navy); font-size: .64rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; vertical-align: middle; }
+/* The results chip itself is a guide+race shared rule (guide-race.css,
+   `.race-detail-result-chip`) — this heading is one more place it renders,
+   immediately after the candidate's name, alongside the guide's own results
+   strip and the endorsements dialog's candidate heading. */
 /* Every candidate's own section meter (docs/METER_V2.md, Chrome geometry:
    "The headline meter's own fate"; #325): left-adjusted, growing to fill
    the row, beside a right-adjusted label sized to its own count/percent
