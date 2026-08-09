@@ -37,6 +37,7 @@ import {
 import {
   ALL_SOURCES_TOKEN,
   CERTIFIED_RESULT_TOKEN,
+  certifiedResultCurrentAt,
   compareContext,
   decodeCompareFragment,
   encodeCompareFragment,
@@ -401,18 +402,17 @@ export function wireComparisons() {
     const groups = [
       { label: 'Published result', options: [option(ALL_SOURCES_TOKEN, 'All sources')] },
     ];
-    // The state gate (docs/RESULTS.md, Rendering § The comparison view): the
-    // picker offers "Certified result" only while the election's certified
-    // results file exists, exactly like every other results surface. Never
-    // at the reference position (`editingColumn === 0`, the index this
+    // The same rule the codec and the migration path enforce
+    // (`certifiedResultCurrentAt`, compare-url.mjs): the picker offers
+    // "Certified result" only while a certified results file exists, and
+    // never at the reference position (`editingColumn === 0`, the index this
     // picker is always rendered for -- `headView` only calls `groupsFor`
-    // when `editingColumn === index`): every other column is scored
-    // *against* the reference, and a `result`-kind cell is never a
-    // `DataCell` (compare-signals.mjs `isDataCell`), so a `gres` reference
-    // would silently neutralize agreement for the whole row, not just its
-    // own column. `compare-url.mjs`'s codec enforces the same restriction,
-    // so a crafted or previously shared link cannot reach it either.
-    if (payload.results_available && editingColumn !== 0) {
+    // when `editingColumn === index`, so it is never `null` here). One
+    // shared predicate rather than a third hand-written copy of it.
+    if (
+      editingColumn !== null &&
+      certifiedResultCurrentAt(payload.results_available, editingColumn)
+    ) {
       groups.push({
         label: 'Certified result',
         options: [option(CERTIFIED_RESULT_TOKEN, 'Certified result')],
