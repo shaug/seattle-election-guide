@@ -325,8 +325,10 @@ class PublicationRace(PublicationModel):
     """The inventory's own race type (`inventory.models.Race.race_type`),
     carried through so a rendering pass can gate a race-type-scoped feature
     without reaching back into the inventory it was not otherwise handed
-    (docs/RESULTS.md, Rendering § Race cards; #286: the results strip is
-    candidate-races-only until `#289` ratifies measure presentation).
+    (docs/RESULTS.md, Rendering § Race cards; #286, extended to measures by
+    #348: `race_results_view` reads this to choose a measure's own
+    Approved/Rejected chip label, and the race card's "Counting" note
+    (`guide.html.j2`, #344) still reads it to stay measure-excluded).
     Optional, like `PublicationMetadata.certification_date` and every prior
     schema field this model has added (docs/HOSTING.md, "Historical
     bundles": `hosting/pages.py::_verify_bundle` re-validates every declared

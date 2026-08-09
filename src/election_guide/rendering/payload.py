@@ -356,14 +356,14 @@ class ComparisonsPayload(ClientPayloadModel):
     (docs/RESULTS.md, Rendering § The comparison view: "the column picker
     offers 'Certified result' only when the results file exists"). Carried
     as its own flag rather than inferred from `race_results` being non-empty,
-    because a results file that certifies only measure races (out of scope
-    pending #289) would otherwise leave `race_results` empty while the file
-    still exists."""
+    because a results file that certifies no race this election's comparison
+    display index names yet would otherwise leave `race_results` empty while
+    the file still exists."""
     race_results: dict[str, list[ComparisonResultOutcome]]
-    """Certified outcomes for every candidate race with one on record, keyed
-    by race id and share-descending like `RaceResultsView.outcomes`. Empty
-    for a measure race (out of scope pending #289) or a race with no
-    certified outcome, mirroring `race_results_view`'s own gate."""
+    """Certified outcomes for every race (candidate or measure, #348) with one
+    on record, keyed by race id and share-descending like
+    `RaceResultsView.outcomes`. Empty for a race with no certified outcome,
+    mirroring `race_results_view`'s own gate."""
 
 
 class ComputedGrade(RootModel[Grade]):

@@ -541,11 +541,11 @@ def comparison_result_outcomes(
 
     Reuses `race_results_view`'s own computation (#286) rather than a second
     one, exactly as `race_result_outcomes_by_candidate_id` (#287) already does
-    for the endorsements dialog. A race is absent from the returned mapping
-    while no results file exists, this race's ingested file names no entry
-    for it, or the race is a measure -- `race_results_view`'s own `None` gate,
-    which is also what keeps a measure race's result column empty pending
-    #289.
+    for the endorsements dialog -- including for a measure race, whose
+    outcomes and Approved/Rejected chip label reach this column exactly the
+    same way (#348). A race is absent from the returned mapping only while no
+    results file exists or this race's ingested file names no entry for it --
+    `race_results_view`'s own `None` gate.
     """
     race_by_id = {race.id: race for section in view_model.sections for race in section.races}
     outcomes_by_race: dict[str, list[ComparisonResultOutcome]] = {}
@@ -1353,9 +1353,10 @@ class RaceResultOutcomeView:
     percentage_label: str
     advanced: bool
     chip_label: str | None
-    """"Advances" or "Elected" (docs/RESULTS.md, "The results chip"), present
-    exactly when `advanced` is true. `None` for a trailing outcome: the chip
-    marks an outcome, not every candidate."""
+    """"Advances"/"Elected" for a candidate race, or "Approved"/"Rejected" for
+    a measure (docs/RESULTS.md, "The results chip"; #348), present exactly
+    when `advanced` is true. `None` for a trailing outcome: the chip marks an
+    outcome, not every candidate."""
 
 
 @dataclass(frozen=True)
@@ -1397,27 +1398,38 @@ def race_results_view(
     capture_url: str | None,
 ) -> RaceResultsView | None:
     """The certified results strip for one race, or `None` while none is
-    committed, this race's ingested file names no entry for it, or
-    `race.race_type` is `measure` (out of scope pending #289) -- results
+    committed or this race's ingested file names no entry for it -- results
     render as a state, not an option, exactly like `view_model.results`
     itself (docs/RESULTS.md, Rendering).
 
-    `election_type` picks the outcome chip's label: "Advances" for a primary,
-    "Elected" otherwise (docs/RESULTS.md, "The results chip" names only
-    primary/general; a `special` election reads as a one-round contest with a
-    single winner, so it takes the general's "Elected" rather than inventing
-    a third label undocumented anywhere). `capture_url` is `view_model.
-    metadata.results_capture_url`, resolved once for the whole election
-    (`release.builder.build_release`) rather than reached for here.
+    `election_type` picks a candidate race's outcome chip label: "Advances"
+    for a primary, "Elected" otherwise (docs/RESULTS.md, "The results chip"
+    names only primary/general; a `special` election reads as a one-round
+    contest with a single winner, so it takes the general's "Elected" rather
+    than inventing a third label undocumented anywhere). A measure race
+    (`race.race_type == "measure"`) ignores `election_type` entirely and
+    instead reads the winning choice's own label off the ratified chip
+    vocabulary: "Approved" when the winning choice is "Yes", "Rejected" when
+    it is "No" (docs/RESULTS.md, "Ballot measures"; #348) -- reusing this same
+    function and shape rather than a second one, exactly as #289 ratified.
+    `capture_url` is `view_model.metadata.results_capture_url`, resolved once
+    for the whole election (`release.builder.build_release`) rather than
+    reached for here.
     """
-    if race.race_type == "measure" or results is None:
+    if results is None:
         return None
     outcome_set = next((item for item in results.races if item.race_id == race.id), None)
     certified_on = results.certified_on
     if outcome_set is None or certified_on is None:
         return None
     labels = {candidate.id: candidate.label for candidate in race.candidates}
-    chip_label = "Advances" if election_type == "primary" else "Elected"
+    if race.race_type == "measure":
+        winning_outcome = next(outcome for outcome in outcome_set.outcomes if outcome.advanced)
+        chip_label = (
+            "Approved" if labels[winning_outcome.choice_id].strip().lower() == "yes" else "Rejected"
+        )
+    else:
+        chip_label = "Advances" if election_type == "primary" else "Elected"
     sorted_outcomes = sorted(outcome_set.outcomes, key=lambda outcome: outcome.share, reverse=True)
     return RaceResultsView(
         certified_on_label=f"{certified_on:%b} {certified_on.day}, {certified_on:%Y}",

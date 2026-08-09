@@ -343,10 +343,10 @@ dialog render it through the shared tally-row component exactly as above ("Race 
 its own cell grammar rather than the tally-row markup ("The comparison view" above, #288) — reuse
 everywhere, not race-card-only, but each surface keeps its own established presentation idiom.
 
-Implementation is tracked as a follow-up sub-issue of #208 rather than in this design pass (see
-that issue for the concrete code shape: `race_results_view`'s `race.race_type == "measure"`
-short-circuit is removed, and a measure-specific chip-label branch is added alongside the existing
-primary/general branch).
+Implemented by #348: `race_results_view`'s former `race.race_type == "measure"` short-circuit is
+removed, and a measure-specific chip-label branch (reading the winning choice's own label off the
+outcome set) sits alongside the existing primary/general branch — reusing every surface's existing
+rendering path exactly as ratified above, with no new UI mechanism on any of the three surfaces.
 
 ## The corrections page's implementation (2026-08-08 addendum, #290)
 
