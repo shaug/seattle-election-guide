@@ -330,9 +330,10 @@ accepted as part of ratification, not an oversight.
 **No validation thresholds are rendered anywhere, and no threshold data is added to the schema.**
 The Approved/Rejected chip states a fact taken directly from the authority's own certification —
 the same posture already used for `advanced` on candidate races: the site states what the county
-certified, not what supermajority or threshold rule produced it. This resolves the "Ballot
-measures" open question below without exercising the "if thresholds are to be rendered" branch of
-that question — there is no threshold field to source, so no #283 schema follow-up is needed.
+certified, not what supermajority or threshold rule produced it. This resolves what "Open
+questions" previously tracked as the ballot-measures mockup pass (now removed from that list
+below), without exercising the "if thresholds are to be rendered" branch of #289's own scope note
+— there is no threshold field to source, so no #283 schema follow-up is needed.
 
 Same provenance line (ballots counted · authority · capture link) and same "Certified ·
 `<date>`" badge as candidate cards — nothing measure-specific there either. This applies

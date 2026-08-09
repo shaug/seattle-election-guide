@@ -504,7 +504,7 @@
           <p class="m-office">Ballot Measure · City of Seattle</p>
           <div class="m-result-row">
             <h5>Yes</h5>
-            <div class="m-meter"><strong>9 of 12</strong></div>
+            <div class="m-meter"><strong>12 of 14</strong></div>
           </div>
           <div class="m-outcome">
             <div class="m-outcome-head">
@@ -533,7 +533,7 @@
           <p class="m-office">Ballot Measure · City of Seattle</p>
           <div class="m-result-row">
             <h5>Yes</h5>
-            <div class="m-meter"><strong>9 of 12</strong></div>
+            <div class="m-meter"><strong>12 of 14</strong></div>
           </div>
           <div class="m-outcome">
             <div class="m-outcome-head">
@@ -559,10 +559,12 @@
     </div>
   </figure>
 
-  <p>This applies identically wherever the tally-row component is consumed — the race card above,
-    the endorsements dialog below, and the comparison column's own cell rendering — "reuse
-    everywhere," not "race-card-only." No implementation lands in this design pass; it is tracked
-    as a follow-up sub-issue of #208.</p>
+  <p>This applies identically everywhere certified results render — "reuse everywhere," not
+    "race-card-only." The race card above and the endorsements dialog below share the tally-row
+    component exactly as they already do for candidates; the comparison column renders the same
+    underlying data through its own cell grammar, not the tally-row markup, matching section 4's
+    own "Cells speak the table's own language." No implementation lands in this design pass; it is
+    tracked as a follow-up sub-issue of #208.</p>
 
   <h3>3 · The endorsements view</h3>
   <p>The race-detail dialog is where a reader compares candidates source by source, so results
