@@ -6,6 +6,7 @@ import hashlib
 import html
 import json
 import re
+import tempfile
 from html import unescape
 from pathlib import Path
 from urllib.parse import parse_qs, urlencode
@@ -20,6 +21,7 @@ from election_guide.rendering.documents import (
     render_html_document,
     render_sources_document,
 )
+from election_guide.results.models import RaceOutcome, RaceResults
 from tests.compare_parity import (
     AUDITED_PAGE_PATH,
     build_audited_comparison_page,
@@ -27,6 +29,8 @@ from tests.compare_parity import (
 from tests.compare_parity import enabled_view_model as _enabled_view_model
 from tests.test_comparisons import _bundle  # pyright: ignore[reportPrivateUsage]
 from tests.test_rendering import _evaluate_in_chrome  # pyright: ignore[reportPrivateUsage]
+from tests.test_results import RACE_ID as RESULTS_RACE_ID
+from tests.test_results import _valid_results  # pyright: ignore[reportPrivateUsage]
 
 PROJECT_ROOT = Path(__file__).parents[1]
 DEFAULT_DIFFERENCE_ORACLE = PROJECT_ROOT / "tests/fixtures/comparison-default-differences.json"
@@ -260,6 +264,88 @@ def test_compare_document_refuses_disabled_policy() -> None:
         )
 
 
+def test_comparisons_payload_omits_certified_results_until_a_file_exists() -> None:
+    """#288's own state gate: the client payload names no certified results at
+    all -- not merely an empty `race_results` -- while `view_model.results` is
+    `None`, exactly like every other results surface (docs/RESULTS.md,
+    Rendering: "results render as a state, not an option")."""
+    view_model = _enabled_view_model()
+    assert view_model.results is None
+
+    rendered = render_comparison_document(
+        view_model,
+        public_site_url="https://seattleelections.guide",
+    )
+    payload_match = re.search(
+        r'<script type="application/json" data-client-payload>(.*?)</script>',
+        rendered,
+        flags=re.DOTALL,
+    )
+    assert payload_match is not None
+    payload = json.loads(payload_match.group(1))
+    assert payload["results_available"] is False
+    assert payload["race_results"] == {}
+
+
+def test_comparisons_payload_carries_certified_outcomes_for_candidate_races_only() -> None:
+    """#288's own acceptance criterion (d): certified outcomes reach the
+    client payload for the candidate race `tests.test_results._valid_results`
+    certifies, and never for a measure race (out of scope pending #289),
+    even when the results file explicitly certifies one too -- proving the
+    measure exclusion is `race_results_view`'s own `race_type` gate
+    (rendering/context.py), not merely an accident of the fixture naming no
+    measure outcome."""
+    measure_race_id = "seattle-proposition-1-library-levy"
+    view_model = _enabled_view_model()
+    assert any(
+        display.race_id == measure_race_id for display in view_model.comparisons.display_index
+    ), "fixture no longer includes the measure race this test excludes on purpose"
+
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        results = _valid_results(Path(tmp_dir))
+        # Extend the certified file with an outcome for the measure race too,
+        # so a passing test proves the *type* gate, not just data absence.
+        measure_outcomes = RaceResults(
+            race_id=measure_race_id,
+            ballots_counted=50000,
+            outcomes=[
+                RaceOutcome(
+                    choice_id=f"{measure_race_id}--yes", votes=30000, share=0.6, advanced=True
+                ),
+                RaceOutcome(
+                    choice_id=f"{measure_race_id}--no", votes=20000, share=0.4, advanced=False
+                ),
+            ],
+        )
+        results = results.model_copy(update={"races": [*results.races, measure_outcomes]})
+        with_results = view_model.model_copy(update={"results": results})
+
+        rendered = render_comparison_document(
+            with_results,
+            public_site_url="https://seattleelections.guide",
+        )
+
+    payload_match = re.search(
+        r'<script type="application/json" data-client-payload>(.*?)</script>',
+        rendered,
+        flags=re.DOTALL,
+    )
+    assert payload_match is not None
+    payload = json.loads(payload_match.group(1))
+    assert payload["results_available"] is True
+    assert measure_race_id not in payload["race_results"]
+    outcomes = payload["race_results"][RESULTS_RACE_ID]
+    assert [outcome["advanced"] for outcome in outcomes] == [True, True, False, False]
+    assert [outcome["percentage_label"] for outcome in outcomes] == [
+        "32.0%",
+        "29.0%",
+        "23.0%",
+        "16.0%",
+    ]
+    assert {outcome["chip_label"] for outcome in outcomes if outcome["advanced"]} == {"Advances"}
+    assert all(outcome["chip_label"] is None for outcome in outcomes if not outcome["advanced"])
+
+
 def test_server_row_differences_are_relative_only_to_the_reference() -> None:
     def cell(*picks: str) -> ComparisonCellView:
         return ComparisonCellView(
@@ -279,6 +365,29 @@ def _comparison_html_path(tmp_path: Path) -> Path:
     path.write_text(
         render_comparison_document(
             _enabled_view_model(),
+            public_site_url="https://seattleelections.guide",
+            project_url="https://github.com/shaug/seattle-election-guide",
+        ),
+        encoding="utf-8",
+    )
+    return path
+
+
+def _comparison_html_path_with_results(tmp_path: Path) -> Path:
+    """The comparisons page with a certified results file attached
+    (docs/RESULTS.md, Rendering § The comparison view; #288) -- the same
+    `tests.test_results._valid_results` fixture #286/#287's own certified-
+    surface tests use, so this ticket's own test proves the column against
+    the identical certified data those already-shipped surfaces render."""
+    results_root = tmp_path / "results-evidence"
+    results_root.mkdir()
+    with_results = _enabled_view_model().model_copy(
+        update={"results": _valid_results(results_root)}
+    )
+    path = tmp_path / "compare-with-results.html"
+    path.write_text(
+        render_comparison_document(
+            with_results,
             public_site_url="https://seattleelections.guide",
             project_url="https://github.com/shaug/seattle-election-guide",
         ),
@@ -1247,6 +1356,101 @@ def test_compare_client_labels_comparison_category_truthfully(tmp_path: Path) ->
     assert result["referenceTitle"] == "All sources"
     assert result["referencePickerAtRest"] is False
     assert result["referenceTitleLabel"] == "Change reference, currently All sources"
+
+
+def test_compare_picker_offers_certified_result_only_once_a_file_exists(
+    tmp_path: Path,
+) -> None:
+    """#288's own acceptance criterion (a): the picker names no "Certified
+    result" option while no certified results file exists for the election,
+    and offers exactly one once it does (docs/RESULTS.md, Rendering § The
+    comparison view: "the column picker offers 'Certified result' only when
+    the results file exists")."""
+    without_results = _evaluate_in_chrome(
+        _comparison_html_path(tmp_path),
+        """
+        (() => {
+          document.querySelector('[data-comparison-title="1"]').click();
+          const picker = document.querySelector('[data-comparison-column="1"]');
+          return JSON.stringify({
+            options: [...picker.options].map((option) => option.value),
+          });
+        })()
+        """,
+    )
+    assert "gres" not in without_results["options"]
+
+    with_results = _evaluate_in_chrome(
+        _comparison_html_path_with_results(tmp_path),
+        """
+        (() => {
+          document.querySelector('[data-comparison-title="1"]').click();
+          const picker = document.querySelector('[data-comparison-column="1"]');
+          const resultOption = [...picker.options].find((option) => option.value === 'gres');
+          return JSON.stringify({
+            options: [...picker.options].map((option) => option.value),
+            resultLabel: resultOption?.textContent,
+          });
+        })()
+        """,
+    )
+    assert with_results["options"].count("gres") == 1
+    assert with_results["resultLabel"] == "Certified result"
+
+
+def test_compare_result_column_carries_no_agreement_and_never_affects_differs(
+    tmp_path: Path,
+) -> None:
+    """#288's own acceptance criteria (b) and (c): the certified-result
+    column's cells never tint agree/differ, never move a row's Differs
+    marker, and speak the table's own language -- choice labels on the picks
+    line, shares and certification status on the meta line
+    (docs/RESULTS.md, Rendering § The comparison view). Exercised against
+    `king-county-assessor`, the same race `tests.test_results._valid_results`
+    certifies with the top two of four candidates advancing."""
+    html_path = _comparison_html_path_with_results(tmp_path)
+    result = _evaluate_in_chrome(
+        html_path,
+        f"""
+        (async () => {{
+          const wait = () => new Promise((resolve) => setTimeout(resolve, 120));
+          const rowDiffers = () => document.querySelector(
+            '[data-comparison-race="{RESULTS_RACE_ID}"]',
+          ).dataset.rowDiffers;
+          const before = rowDiffers();
+
+          document.querySelector('[data-comparison-title="1"]').click();
+          const picker = document.querySelector('[data-comparison-column="1"]');
+          picker.value = 'gres';
+          picker.dispatchEvent(new Event('change', {{ bubbles: true }}));
+          await wait();
+
+          const cell = document.querySelector(
+            '[data-comparison-race="{RESULTS_RACE_ID}"] [data-column-signal="gres"]',
+          );
+          return JSON.stringify({{
+            before,
+            after: rowDiffers(),
+            cellKind: cell.dataset.cellKind,
+            agreement: cell.dataset.agreement,
+            picks: cell.querySelector('.comparison-cell-picks').textContent.trim(),
+            meta: cell.querySelector('.comparison-cell-meta')?.textContent.trim(),
+            columnTitle: document.querySelector(
+              '[data-column-signal="gres"] .comparison-column-title',
+            )?.textContent,
+          }});
+        }})()
+        """,
+    )
+    assert result["cellKind"] == "result"
+    assert result["agreement"] == "neutral"
+    # Both advancing candidates in this primary, most-share-first.
+    assert result["picks"] == "Dominique M Scarimbolo / Christopher Roberts"
+    assert result["meta"] == "32.0% · 29.0% · Advances"
+    # Adding the column changes no row's Differs marker -- the reference is
+    # still `gall`, and the result column never enters that computation.
+    assert result["after"] == result["before"]
+    assert result["columnTitle"] == "Certified result"
 
 
 def test_compare_client_mobile_budget_and_focus_have_layout_evidence(tmp_path: Path) -> None:

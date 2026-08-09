@@ -180,6 +180,21 @@ class RaceCandidateResult(ClientPayloadModel):
     chip_label: str | None
 
 
+class ComparisonResultOutcome(ClientPayloadModel):
+    """One candidate's certified outcome for the comparison page's own
+    "Certified result" column (docs/RESULTS.md, Rendering § The comparison
+    view; #288), mirroring `RaceResultOutcomeView` (rendering/context.py) the
+    same way `RaceCandidateResult` above does for the endorsements dialog —
+    a static passthrough of #286's one computation, never something the
+    client's column-resolution engine (`compare-signals.mjs`) recomputes.
+    """
+
+    candidate_id: str
+    percentage_label: str
+    advanced: bool
+    chip_label: str | None
+
+
 class RaceCandidateEndorsements(RaceCandidateDisplay):
     """One candidate's section on the race page: identity, plus its rows."""
 
@@ -335,6 +350,20 @@ class ComparisonsPayload(ClientPayloadModel):
     comparisons: ComparisonsContract
     source_labels: dict[str, str]
     contested_race_ids: list[str]
+    results_available: bool
+    """Whether a certified results file exists for this election — the
+    column picker's own gate for the "Certified result" column
+    (docs/RESULTS.md, Rendering § The comparison view: "the column picker
+    offers 'Certified result' only when the results file exists"). Carried
+    as its own flag rather than inferred from `race_results` being non-empty,
+    because a results file that certifies only measure races (out of scope
+    pending #289) would otherwise leave `race_results` empty while the file
+    still exists."""
+    race_results: dict[str, list[ComparisonResultOutcome]]
+    """Certified outcomes for every candidate race with one on record, keyed
+    by race id and share-descending like `RaceResultsView.outcomes`. Empty
+    for a measure race (out of scope pending #289) or a race with no
+    certified outcome, mirroring `race_results_view`'s own gate."""
 
 
 class ComputedGrade(RootModel[Grade]):
@@ -560,8 +589,19 @@ def comparisons_payload(
     view_model: PublicationViewModel,
     *,
     default_columns: list[str],
+    results_available: bool,
+    race_results: dict[str, list[ComparisonResultOutcome]],
 ) -> ComparisonsPayload:
-    """Build the Comparisons page's payload."""
+    """Build the Comparisons page's payload.
+
+    `results_available` and `race_results` come from the renderer, for the
+    same reason `guide_payload`/`race_payload` take their own precomputed
+    values rather than reaching for them here: `rendering.context.
+    comparison_result_outcomes` (#288) is built from `race_results_view`
+    (#286), and `context` already depends on this module's own models, so
+    computing it here too would be a cycle rather than a second
+    implementation.
+    """
     name_by_id = {source.id: source.name for source in view_model.sources}
     race_by_id = {race.id: race for section in view_model.sections for race in section.races}
     return ComparisonsPayload(
@@ -578,6 +618,8 @@ def comparisons_payload(
             for display in view_model.comparisons.display_index
             if race_by_id[display.race_id].is_contested
         ],
+        results_available=results_available,
+        race_results=race_results,
     )
 
 

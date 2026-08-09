@@ -432,6 +432,15 @@
         "text:All Seattle ballot races"
       ],
       "note": "The payload publishes every scope label from the same generator the template renders, so the client reads the label rather than composing it. The literal that remains is a fallback for a select value the payload does not know, which the rendered markup cannot produce."
+    },
+    "comparison-certified-result-column-label": {
+      "client": "compare-client.mjs labelFor / groupsFor",
+      "server": "race.html.j2 endorsements dialog certified strip",
+      "proof": "shared-literal",
+      "evidence": [
+        "text:Certified result"
+      ],
+      "note": "Two different features coincidentally choosing the same two words, not one implementation: #287's endorsements dialog names its certified strip 'Certified result' server-side, and #288's Comparisons column picker names its addable column the same way, entirely client-side (the server never renders this column -- it is not one of compare.html.j2's three default columns, so no server occurrence of the phrase exists for the comparison page itself). Kept consistent on purpose, the same reasoning view-toggle-labels records for 'Full'/'Compact'."
     }
   },
   "deleted": {

@@ -1,4 +1,4 @@
-import { ALL_SOURCES_TOKEN } from './compare-url.mjs';
+import { ALL_SOURCES_TOKEN, CERTIFIED_RESULT_TOKEN } from './compare-url.mjs';
 
 // Deterministic cross-version migration for comparison fragments. This module
 // only resolves column identities and filters. It never scores a migrated or
@@ -48,10 +48,18 @@ function retiredEntry(personalization, kind, code) {
 /**
  * @param {string} code
  * @param {PersonalizationContract} personalization
+ * @param {boolean} resultsAvailable
  * @returns {ColumnResolution}
  */
-function resolveColumn(code, personalization) {
+function resolveColumn(code, personalization, resultsAvailable) {
   if (code === ALL_SOURCES_TOKEN) return { code, kind: 'aggregate', status: 'current' };
+  if (code === CERTIFIED_RESULT_TOKEN) {
+    // Reserved like `gall`, but its availability is a data fact rather than
+    // a catalog membership: current while the election's certified results
+    // file exists, unresolved (not unknown -- the identity is real) while it
+    // does not (docs/RESULTS.md, Rendering § The comparison view).
+    return { code, kind: 'aggregate', status: resultsAvailable ? 'current' : 'unresolved' };
+  }
   if (code.startsWith('G')) {
     const current = personalization.categories.find((item) => item.code === code);
     if (current?.selectable) {
@@ -121,7 +129,7 @@ export function migrateCompareState(staleDecode, personalization, context) {
     return { status: 'rejected', reason: 'not_stale_version' };
   }
   const columnResults = staleDecode.state.columns.map((code) =>
-    resolveColumn(code, personalization),
+    resolveColumn(code, personalization, context.resultsAvailable),
   );
   const unavailableCategory = columnResults.find(
     (result) => result.kind === 'category' && result.status !== 'current',
@@ -165,7 +173,9 @@ export function migrateCompareState(staleDecode, personalization, context) {
     };
   }
 
-  const defaults = context.defaultColumns.map((code) => resolveColumn(code, personalization));
+  const defaults = context.defaultColumns.map((code) =>
+    resolveColumn(code, personalization, context.resultsAvailable),
+  );
   if (
     defaults.length < 2 ||
     defaults.length > 3 ||

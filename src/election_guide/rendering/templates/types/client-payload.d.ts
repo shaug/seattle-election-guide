@@ -385,6 +385,10 @@ interface ComparisonsPayload {
     [k: string]: string;
   };
   contested_race_ids: string[];
+  results_available: boolean;
+  race_results: {
+    [k: string]: ComparisonResultOutcome[];
+  };
 }
 /**
  * The versioned, display-only payload consumed by comparison features.
@@ -429,4 +433,18 @@ interface ComparisonBaseline {
   leading_pick_ids: string[];
   share: string | null;
   explicit_source_count: number;
+}
+/**
+ * One candidate's certified outcome for the comparison page's own
+ * "Certified result" column (docs/RESULTS.md, Rendering § The comparison
+ * view; #288), mirroring `RaceResultOutcomeView` (rendering/context.py) the
+ * same way `RaceCandidateResult` above does for the endorsements dialog —
+ * a static passthrough of #286's one computation, never something the
+ * client's column-resolution engine (`compare-signals.mjs`) recomputes.
+ */
+interface ComparisonResultOutcome {
+  candidate_id: string;
+  percentage_label: string;
+  advanced: boolean;
+  chip_label: string | null;
 }

@@ -9,8 +9,8 @@
 // four version bindings, the sharing limit — live in `fragment-codec.mjs`.
 // What stays here is what makes this fragment Comparisons': ordered columns,
 // the two-to-three column bound, the reserved lowercase-`g` namespace whose
-// only member so far is `gall`, the filter parameters, and the refusal to read
-// a lens link.
+// two members are `gall` and `gres`, the filter parameters, and the refusal
+// to read a lens link.
 
 import {
   classifyCatalogToken,
@@ -29,8 +29,15 @@ import {
 
 export const COMPARE_SCHEMA_VERSION = '1';
 export const ALL_SOURCES_TOKEN = 'gall';
+export const CERTIFIED_RESULT_TOKEN = 'gres';
 
 const RESERVED_PREFIX = 'g';
+// Every reserved token this page defines itself, as opposed to one the
+// personalization catalogs publish. `gall` always resolves; `gres` resolves
+// only while the election's certified results file exists
+// (`CompareContext.resultsAvailable`, set from `payload.results_available` —
+// docs/RESULTS.md, Rendering § The comparison view).
+const RESERVED_TOKENS = new Set([ALL_SOURCES_TOKEN, CERTIFIED_RESULT_TOKEN]);
 const MIN_COLUMNS = 2;
 const MAX_COLUMNS = 3;
 
@@ -39,7 +46,8 @@ const MAX_COLUMNS = 3;
  * fragment is read and written against.
  *
  * @typedef {import('./fragment-codec.mjs').CodecContext
- *   & { sectionIds: Set<string>, defaultColumns: string[] }} CompareContext
+ *   & { sectionIds: Set<string>, defaultColumns: string[], resultsAvailable: boolean }
+ * } CompareContext
  */
 
 /**
@@ -98,6 +106,7 @@ const MAX_COLUMNS = 3;
  * @param {string} dataVersion
  * @param {ComparisonsContract} comparisons
  * @param {string[]} [defaultColumns]
+ * @param {boolean} [resultsAvailable]
  * @returns {CompareContext}
  */
 export function compareContext(
@@ -105,6 +114,7 @@ export function compareContext(
   dataVersion,
   comparisons,
   defaultColumns = [ALL_SOURCES_TOKEN, 'strn', 'stim'],
+  resultsAvailable = false,
 ) {
   /** @type {Set<string>} */
   const sectionIds = new Set();
@@ -113,6 +123,7 @@ export function compareContext(
     ...codecContext(personalization, dataVersion),
     sectionIds,
     defaultColumns: [...defaultColumns],
+    resultsAvailable,
   };
 }
 
@@ -138,26 +149,37 @@ function rejected(reason, detail = {}) {
  * Whether a token is this page's own rather than the catalogs'.
  *
  * Lowercase `g` is reserved for aggregate columns the page defines itself.
- * `gall` is the only one so far; every other spelling is refused rather than
- * looked up, so adding a second aggregate never has to reinterpret a link that
+ * `gall` and `gres` are the only two; every other spelling is refused rather
+ * than looked up, so adding a third never has to reinterpret a link that
  * already guessed at its name.
  *
  * @param {string} token
  * @returns {boolean}
  */
 function isReservedToken(token) {
-  return token.startsWith(RESERVED_PREFIX) && token !== ALL_SOURCES_TOKEN;
+  return token.startsWith(RESERVED_PREFIX) && !RESERVED_TOKENS.has(token);
 }
 
 /**
  * @param {string} token
  * @param {CompareContext} context
  * @returns {import('./fragment-codec.mjs').CodecTokenClassification
- *   | { ok: false, reason: 'reserved_token', token: string }}
+ *   | { ok: false, reason: 'reserved_token'|'forbidden_token', token: string }}
  */
 function classifyToken(token, context) {
   if (!isWellFormedToken(token)) return { ok: false, reason: 'malformed_token', token };
   if (token === ALL_SOURCES_TOKEN) return { ok: true, token };
+  if (token === CERTIFIED_RESULT_TOKEN) {
+    // Reserved, but only admitted while a certified results file exists — the
+    // same "state, not option" gate every other results surface applies
+    // (docs/RESULTS.md, Rendering). A link naming it from before results
+    // existed, or after a correction somehow withdrew them, is refused the
+    // same way an unselectable catalog entry is: `forbidden_token`, not
+    // `unknown_token` -- the identity is real, just not currently offered.
+    return context.resultsAvailable
+      ? { ok: true, token }
+      : { ok: false, reason: 'forbidden_token', token };
+  }
   if (isReservedToken(token)) return { ok: false, reason: 'reserved_token', token };
   return classifyCatalogToken(token, context);
 }

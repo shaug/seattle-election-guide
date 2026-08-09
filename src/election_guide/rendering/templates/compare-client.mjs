@@ -36,6 +36,7 @@ import {
 } from './compare-table.mjs';
 import {
   ALL_SOURCES_TOKEN,
+  CERTIFIED_RESULT_TOKEN,
   compareContext,
   decodeCompareFragment,
   encodeCompareFragment,
@@ -93,8 +94,10 @@ export function wireComparisons() {
     payload.data_version,
     comparisons,
     payload.default_columns,
+    payload.results_available,
   );
-  const engine = createColumnSignalEngine(personalization, comparisons);
+  const raceResults = new Map(Object.entries(payload.race_results));
+  const engine = createColumnSignalEngine(personalization, comparisons, raceResults);
   /** @type {HTMLTableElement} */
   const table = required('[data-comparison-table]');
   /** @type {HTMLElement} */
@@ -157,6 +160,7 @@ export function wireComparisons() {
   /** @param {string} signal */
   const labelFor = (signal) => {
     if (signal === ALL_SOURCES_TOKEN) return 'All sources';
+    if (signal === CERTIFIED_RESULT_TOKEN) return 'Certified result';
     return (
       categories.find((category) => category.code === signal)?.label ??
       payload.source_labels[signal] ??
@@ -396,16 +400,25 @@ export function wireComparisons() {
 
     const groups = [
       { label: 'Published result', options: [option(ALL_SOURCES_TOKEN, 'All sources')] },
-      {
-        label: 'Categories',
-        options: categories.map((category) =>
-          option(
-            category.code,
-            `${category.label}${isComparison(category.code) ? ' (Comparison only)' : ''}`,
-          ),
-        ),
-      },
     ];
+    // The state gate (docs/RESULTS.md, Rendering § The comparison view): the
+    // picker offers "Certified result" only while the election's certified
+    // results file exists, exactly like every other results surface.
+    if (payload.results_available) {
+      groups.push({
+        label: 'Certified result',
+        options: [option(CERTIFIED_RESULT_TOKEN, 'Certified result')],
+      });
+    }
+    groups.push({
+      label: 'Categories',
+      options: categories.map((category) =>
+        option(
+          category.code,
+          `${category.label}${isComparison(category.code) ? ' (Comparison only)' : ''}`,
+        ),
+      ),
+    });
     for (const category of categories) {
       const members = category.member_source_codes
         .filter((code) => sources.has(code))
@@ -554,14 +567,20 @@ export function wireComparisons() {
     const labels = candidateLabels(display);
     const leadingPickIds = cell.leadingPickIds ?? [];
     const share = cell.share ?? null;
+    // A result cell's meta line is pre-formatted by `resultCell`
+    // (compare-signals.mjs): its own vote shares and certification status,
+    // not the share-then-source-count grammar every other kind's meta line
+    // shares (docs/RESULTS.md, Rendering § The comparison view).
     const meta =
-      share === null
-        ? null
-        : `${comparisonPercentageLabel(share)} · ${
-            cell.kind === 'aggregate'
-              ? `${cell.endorsingCount} of ${cell.memberCount} sources`
-              : `${cell.endorsingCount} sources`
-          }`;
+      cell.kind === 'result'
+        ? cell.meta
+        : share === null
+          ? null
+          : `${comparisonPercentageLabel(share)} · ${
+              cell.kind === 'aggregate'
+                ? `${cell.endorsingCount} of ${cell.memberCount} sources`
+                : `${cell.endorsingCount} sources`
+            }`;
     return {
       signal,
       columnLabel: labelFor(signal),
