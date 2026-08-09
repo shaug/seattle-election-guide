@@ -1424,6 +1424,13 @@ def race_results_view(
         return None
     labels = {candidate.id: candidate.label for candidate in race.candidates}
     if race.race_type == "measure":
+        # No default: relies on `RaceOutcome`'s own documented invariant
+        # (results/models.py) that exactly one outcome per certified race
+        # carries `advanced: true` -- ingestion (`results/ingest.py`)
+        # guarantees it for a measure's two choices, the same "fail loudly,
+        # never guessed" posture `race_detail_support_summary`'s own bare
+        # `next(...)` above already takes for its own upstream-guaranteed
+        # invariant.
         winning_outcome = next(outcome for outcome in outcome_set.outcomes if outcome.advanced)
         chip_label = (
             "Approved" if labels[winning_outcome.choice_id].strip().lower() == "yes" else "Rejected"

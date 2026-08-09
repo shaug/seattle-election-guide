@@ -1258,7 +1258,19 @@ def test_certified_measure_results_render_the_endorsements_dialog_strip_and_vote
     established source for `seattle-proposition-1-library-levy` fixture
     data), so this test reuses it instead -- the same substitution
     `test_compare_rendering.py` already made for the identical reason on the
-    comparison surface."""
+    comparison surface.
+
+    That dataset's own coverage is "Yes"-only (9 endorsing sources; "No" has
+    none), so this test demonstrates the winning choice's own vote-share row
+    and chip, not a second row for the losing choice -- `race_detail.
+    candidates` (`context.race_detail_display`) only ever carries a section
+    for a choice with at least one endorsing source, identically for every
+    ordinary candidate race today (an unopposed or lightly-covered race's
+    trailing candidates already render no section either), unmodified by
+    this ticket. A choice's own vote-share row is data-driven off
+    `race_result_outcomes_by_candidate_id` regardless of race type, so a
+    future fixture that covers both "Yes" and "No" would render both rows
+    through this identical mechanism -- nothing here is measure-specific."""
     view_model = _enabled_view_model()
     results_root = tmp_path / "with-results"
     results_root.mkdir()
