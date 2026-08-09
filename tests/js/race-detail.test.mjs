@@ -60,6 +60,18 @@ function meter(overrides = {}) {
 }
 
 /**
+ * @param {Partial<import('../../src/election_guide/rendering/templates/race-detail.mjs').CandidateResultView>} overrides
+ */
+function result(overrides = {}) {
+  return {
+    percentageLabel: '54.2%',
+    advanced: true,
+    chipLabel: 'Advances',
+    ...overrides,
+  };
+}
+
+/**
  * @param {Partial<import('../../src/election_guide/rendering/templates/race-detail.mjs').CandidateSectionView>} overrides
  */
 function candidate(overrides = {}) {
@@ -70,6 +82,7 @@ function candidate(overrides = {}) {
     kicker: 'Leading choice',
     meter: meter(),
     rows: [row()],
+    result: null,
     ...overrides,
   };
 }
@@ -106,6 +119,86 @@ test('a candidate who is not leading renders no kicker', () => {
     'race-detail-candidate',
     'only the leading candidate takes the leader treatment',
   );
+});
+
+// The certified vote-share row and heading chip (docs/RESULTS.md, Rendering §
+// The endorsements dialog; #287) — not reachable via the committed
+// race-markup-parity fixture, since no results file is committed yet (#284's
+// own scope), so this module's hand-built coverage is the only place a
+// non-null `result` renders at all until then.
+test('an advancing candidate carries a vote-share row and a chip after its name', () => {
+  const host = draw([
+    candidate({ isLeader: false, kicker: null, result: result({ percentageLabel: '54.2%' }) }),
+  ]);
+
+  const chip = host.querySelector('.race-detail-candidate-title h4 .race-detail-result-chip');
+  assert.ok(chip, 'the chip renders immediately in the section heading, after the name');
+  assert.equal(chip.textContent, 'Advances');
+  assert.equal(
+    host.querySelector('.race-detail-candidate-title h4').textContent.trim(),
+    'Ada Lovelace Advances',
+    'the chip follows the name, not the other way around',
+  );
+
+  const row = host.querySelector('.race-detail-candidate-result');
+  assert.ok(row, 'an advancing candidate carries a vote-share row');
+  assert.equal(row.getAttribute('class'), 'race-detail-candidate-result');
+  assert.equal(row.querySelector('.race-detail-result-bar i').style.width, '54.2%');
+  assert.equal(row.querySelector('.race-detail-result-share').textContent, '54.2%');
+
+  // The row sits between the heading and the source list, not nested inside
+  // either.
+  const heading = host.querySelector('.race-detail-candidate-heading');
+  const list = host.querySelector('.race-detail-source-list');
+  assert.equal(row.previousElementSibling, heading);
+  assert.equal(row.nextElementSibling, list);
+});
+
+test('a trailing candidate carries a muted vote-share row and no chip', () => {
+  const host = draw([
+    candidate({
+      isLeader: false,
+      kicker: null,
+      result: result({ percentageLabel: '17.4%', advanced: false, chipLabel: null }),
+    }),
+  ]);
+
+  assert.equal(
+    host.querySelector('.race-detail-result-chip'),
+    null,
+    'a trailing outcome has no chip',
+  );
+  assert.equal(
+    host.querySelector('.race-detail-candidate-title h4').textContent.trim(),
+    'Ada Lovelace',
+  );
+
+  const row = host.querySelector('.race-detail-candidate-result');
+  assert.equal(
+    row.getAttribute('class'),
+    'race-detail-candidate-result race-detail-candidate-result-trailing',
+  );
+  assert.equal(row.querySelector('.race-detail-result-bar i').style.width, '17.4%');
+});
+
+test('a candidate with no certified result carries no vote-share row', () => {
+  const host = draw([candidate({ isLeader: false, kicker: null, result: null })]);
+
+  assert.equal(host.querySelector('.race-detail-candidate-result'), null);
+  assert.equal(host.querySelector('.race-detail-result-chip'), null);
+});
+
+test('the headlined candidate carries its own vote-share row, with no section heading', () => {
+  // `inHeadline` renders no `.race-detail-candidate-title` at all — the page
+  // headline is that candidate's own heading — but the vote-share row still
+  // renders in this candidate's own section, sibling to the (empty) heading
+  // div and the source list, exactly as it does for every other candidate.
+  const host = draw([candidate({ inHeadline: true, kicker: null, result: result() })]);
+
+  assert.equal(host.querySelector('.race-detail-candidate-title'), null);
+  const row = host.querySelector('.race-detail-candidate-result');
+  assert.ok(row, 'the headlined candidate still gets its own vote-share row');
+  assert.equal(row.querySelector('.race-detail-result-share').textContent, '54.2%');
 });
 
 // A cell with no linkable receipt renders as a plain block, so nothing on the

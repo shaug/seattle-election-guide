@@ -728,6 +728,18 @@
       "client",
       "test"
     ],
+    "race-detail-candidate-result": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "race-detail-candidate-result-trailing": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
     "race-detail-candidate-tied": [
       "template",
       "stylesheet",
@@ -745,11 +757,30 @@
       "client",
       "test"
     ],
+    "race-detail-result-bar": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "race-detail-result-chip": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "race-detail-result-share": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
     "race-detail-source-list": [
       "template",
       "stylesheet",
       "client",
-      "python"
+      "python",
+      "test"
     ],
     "race-detail-source-meta": [
       "template",

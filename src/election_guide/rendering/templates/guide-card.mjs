@@ -273,10 +273,22 @@ export function allSourcesAccessibleLabel(view) {
  * for both the heading and its meter, composes this same template rather
  * than repeating the heading's markup.
  *
+ * `resultChip` is the endorsements dialog's own certified-result chip
+ * (docs/RESULTS.md, "The results chip"; #287) — null on every card call
+ * site, since a card's own chip renders only in its results strip below,
+ * never merged into this heading (`race-detail.mjs`'s per-candidate section
+ * heading carries the same chip for every candidate this headline does not
+ * name).
+ *
  * @param {string} recommendation
+ * @param {string|null} [resultChip]
  */
-export function raceHeadlineTemplate(recommendation) {
-  return html`<h3 data-display-role="recommendation">${recommendation}</h3>`;
+export function raceHeadlineTemplate(recommendation, resultChip = null) {
+  return html`<h3 data-display-role="recommendation">${recommendation}${
+    resultChip === null
+      ? nothing
+      : html` <span class="race-detail-result-chip">${resultChip}</span>`
+  }</h3>`;
 }
 
 /**

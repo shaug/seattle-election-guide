@@ -153,6 +153,19 @@ export function wireRacePage(payload) {
   });
 
   /**
+   * The one candidate the headline names: a sole leader — neither tied nor
+   * unscored — matching the audited template's own condition. Null when the
+   * race has no such candidate, which is what makes the headline a heading a
+   * lens can dissolve. One definition, because both the section view and the
+   * headline's own chip ask the same question.
+   *
+   * @param {import('./lens-score.mjs').RaceScore} scored
+   * @returns {string|null}
+   */
+  const soleLeaderId = (scored) =>
+    scored.grade !== 'Insufficient' && !scored.isTied ? scored.winnerId : null;
+
+  /**
    * One candidate's section, as `race-detail.mjs` renders it.
    *
    * @param {string} candidateId
@@ -165,10 +178,7 @@ export function wireRacePage(payload) {
     const candidate = candidatesById.get(candidateId);
     if (candidate === undefined) return null;
     const isLeader = scored.winnerIds.includes(candidateId);
-    // A sole leader — neither tied nor unscored — is the one candidate the
-    // headline names, matching the audited template's own condition.
-    const soleLeader =
-      scored.grade !== 'Insufficient' && !scored.isTied && scored.winnerId === candidateId;
+    const soleLeader = soleLeaderId(scored) === candidateId;
     const rows = candidate.endorsers.map((row) => ({
       code: row.code,
       name: row.name,
@@ -193,6 +203,27 @@ export function wireRacePage(payload) {
       kicker: tied ? 'Tied for lead' : null,
       meter: meters.views.get(candidateId) ?? naMeterView(candidate.label, meters.totalLabel),
       rows,
+      result: candidateResultView(candidateId),
+    };
+  };
+
+  /**
+   * One candidate's certified result, reshaped from the payload's snake_case
+   * fields (docs/RESULTS.md, Rendering § The endorsements dialog; #287).
+   * Selection-independent — every candidate carries the same result whatever
+   * the active lens counts — so this is a plain lookup, not something scored
+   * state feeds.
+   *
+   * @param {string} candidateId
+   * @returns {import('./race-detail.mjs').CandidateResultView|null}
+   */
+  const candidateResultView = (candidateId) => {
+    const result = candidatesById.get(candidateId)?.result ?? null;
+    if (result === null) return null;
+    return {
+      percentageLabel: result.percentage_label,
+      advanced: result.advanced,
+      chipLabel: result.chip_label,
     };
   };
 
@@ -242,7 +273,16 @@ export function wireRacePage(payload) {
       takenOver = true;
     }
     if (resultRegion) {
-      render(raceHeadlineTemplate(recommendationLabel(scored, labels)), resultRegion);
+      // The one candidate the headline names (docs/RESULTS.md, "The results
+      // chip"; #287) — this candidate's own chip renders here, in the
+      // headline, rather than in a section of its own (`candidate.inHeadline`
+      // renders no heading).
+      const headlineCandidateId = soleLeaderId(scored);
+      const headlineChip =
+        headlineCandidateId === null
+          ? null
+          : (candidateResultView(headlineCandidateId)?.chipLabel ?? null);
+      render(raceHeadlineTemplate(recommendationLabel(scored, labels), headlineChip), resultRegion);
     }
     if (contextRegion) {
       // Not the card's `raceContextTemplate`: a card carries a caption because
