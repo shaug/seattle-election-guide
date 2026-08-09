@@ -610,6 +610,91 @@ def test_disabled_comparisons_stage_no_page_or_nav_exposure(tmp_path: Path) -> N
     assert "/comparisons/" not in (output / "e" / "index.html").read_text(encoding="utf-8")
 
 
+def test_enabled_corrections_stage_verify_and_route_exact_asset(tmp_path: Path) -> None:
+    """Issue #290: an election with corrections entries stages a real page at
+    its own address, hashed and verified like every other staged asset, and
+    linked from the nav on every other election-scoped and site-wide page --
+    exactly the coverage `test_enabled_comparisons_stage_verify_and_route_exact_asset`
+    above already holds Comparisons to."""
+    current, older = _write_archive_bundles(tmp_path)
+    _enable_corrections(current)
+    manifest = _write_site_manifest(tmp_path, current_first=True)
+    output = tmp_path / "site"
+
+    stage_pages_site(
+        manifest,
+        {CURRENT_BUNDLE_ID: current, OLDER_BUNDLE_ID: older},
+        output,
+    )
+    verified = verify_staged_pages_site(output, manifest)
+
+    corrections_relative = f"e/{CURRENT_ID}/corrections/index.html"
+    corrections_path = output / corrections_relative
+    assert corrections_path.is_file()
+    assert (
+        verified.assets[corrections_relative]
+        == hashlib.sha256(corrections_path.read_bytes()).hexdigest()
+    )
+    assert not (output / "e" / OLDER_ID / "corrections").exists()
+
+    corrections_html = corrections_path.read_text(encoding="utf-8")
+    assert "<h1>Corrections</h1>" in corrections_html
+    assert '<p class="page-tagline">We get it right, eventually.</p>' in corrections_html
+    assert (
+        f'href="/e/{CURRENT_ID}/corrections/" aria-current="page">Corrections</a>'
+        in corrections_html
+    )
+    assert "Corrected an endorsement attribution." in corrections_html
+
+    nav_link = f'href="/e/{CURRENT_ID}/corrections/">Corrections</a>'
+    sources_html = (output / "e" / CURRENT_ID / "sources" / "index.html").read_text(
+        encoding="utf-8"
+    )
+    assert nav_link in sources_html
+    assert nav_link in (output / "about" / "index.html").read_text(encoding="utf-8")
+    assert nav_link in (output / "e" / "index.html").read_text(encoding="utf-8")
+    # The older, un-enabled election's own pages carry no corrections link.
+    assert "Corrections</a>" not in (output / "e" / OLDER_ID / "sources" / "index.html").read_text(
+        encoding="utf-8"
+    )
+
+    results = _run_worker(
+        output / "_worker.js",
+        [
+            f"https://seattleelections.guide/e/{CURRENT_ID}/corrections",
+            f"https://seattleelections.guide/e/{CURRENT_ID}/corrections/",
+            "https://seattleelections.guide/e/not-an-election/corrections/",
+        ],
+    )
+    assert results[0]["status"] == 308
+    assert results[0]["location"] == f"https://seattleelections.guide/e/{CURRENT_ID}/corrections/"
+    assert results[1]["body"] == f"asset:/e/{CURRENT_ID}/corrections/"
+    assert results[2]["status"] == 404
+
+
+def test_disabled_corrections_stage_no_page_or_nav_exposure(tmp_path: Path) -> None:
+    """Issue #290, acceptance criterion 1: an election with no corrections
+    file renders no page and no nav link -- the default fixture bundle
+    carries none."""
+    current, older = _write_archive_bundles(tmp_path)
+    manifest = _write_site_manifest(tmp_path, current_first=True)
+    output = tmp_path / "site"
+
+    stage_pages_site(
+        manifest,
+        {CURRENT_BUNDLE_ID: current, OLDER_BUNDLE_ID: older},
+        output,
+    )
+
+    assert not (output / "e" / CURRENT_ID / "corrections").exists()
+    assert not (output / "e" / OLDER_ID / "corrections").exists()
+    assert "Corrections</a>" not in (
+        output / "e" / CURRENT_ID / "sources" / "index.html"
+    ).read_text(encoding="utf-8")
+    assert "Corrections</a>" not in (output / "about" / "index.html").read_text(encoding="utf-8")
+    assert "Corrections</a>" not in (output / "e" / "index.html").read_text(encoding="utf-8")
+
+
 def test_bundle_drift_does_not_replace_existing_output(tmp_path: Path) -> None:
     current, older = _write_archive_bundles(tmp_path)
     output = tmp_path / "site"
@@ -1724,6 +1809,35 @@ def _enable_comparisons(bundle: Path) -> None:
     view_model_path = bundle / "data" / "publication_view_model.json"
     view_model = json.loads(view_model_path.read_text(encoding="utf-8"))
     view_model["comparisons"]["policy"]["enabled"] = True
+    view_model_path.write_bytes(canonical_json_bytes(view_model))
+
+    manifest_path = bundle / "release-manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["artifact_hashes"]["data/publication_view_model.json"] = hashlib.sha256(
+        view_model_path.read_bytes()
+    ).hexdigest()
+    manifest_path.write_bytes(canonical_json_bytes(manifest))
+
+
+def _enable_corrections(bundle: Path) -> None:
+    """Give a fixture bundle's view model one corrections entry (issue #290),
+    mirroring `_enable_comparisons` above: mutate the staged view model
+    in place, then rehash it into the release manifest so the bundle stays
+    internally consistent for `_verify_bundle`."""
+    view_model_path = bundle / "data" / "publication_view_model.json"
+    view_model = json.loads(view_model_path.read_text(encoding="utf-8"))
+    view_model["corrections"] = {
+        "schema_version": "1.0",
+        "election_id": view_model["metadata"]["election_id"],
+        "entries": [
+            {
+                "corrected_on": "2026-07-22",
+                "headline": "Corrected an endorsement attribution.",
+                "body": "The guide's recommendation was unaffected.",
+                "provenance": [],
+            }
+        ],
+    }
     view_model_path.write_bytes(canonical_json_bytes(view_model))
 
     manifest_path = bundle / "release-manifest.json"
