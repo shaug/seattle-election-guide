@@ -14,7 +14,7 @@ from typing import Any, cast
 from urllib.parse import urlencode
 
 import pytest
-from PIL import Image
+from PIL import Image, ImageDraw
 from pydantic import ValidationError
 from websocket import create_connection  # pyright: ignore[reportUnknownVariableType]
 
@@ -96,6 +96,7 @@ from tests.page_parity import (
     race_page_fixture_path,
     race_parity_fixture_ids,
 )
+from tests.test_corrections import _valid_corrections  # pyright: ignore[reportPrivateUsage]
 from tests.test_personalization import (
     _bundle as _production_bundle,  # pyright: ignore[reportPrivateUsage]
 )
@@ -2510,6 +2511,71 @@ def test_chromium_build_is_semantically_faithful_and_visually_safe(tmp_path: Pat
             check for check in broken_unavailable_report.checks if check.id == "html-display-values"
         )
         assert not broken_unavailable_check.passed
+
+
+def _inked_screenshot(path: Path, width: int, height: int) -> Path:
+    """A real, non-blank PNG at an exact size -- enough for
+    `image_ink_fraction` to read real ink without a Chromium capture."""
+    image = Image.new("RGB", (width, height), "white")
+    ImageDraw.Draw(image).rectangle((0, 0, width, height // 2), fill="black")
+    image.save(path)
+    return path
+
+
+def test_release_validation_accounts_for_the_results_capture_and_corrections_links(
+    tmp_path: Path,
+) -> None:
+    """Issue #353: `validate_rendered_guide`'s `expected_html_links` never
+    accounted for the results-strip provenance "capture" link (#286) or the
+    band's Corrections nav link (#290) -- both real links the templates
+    render once `metadata.results_capture_url` resolves or `corrections`
+    carries entries, but no existing test's fixture set either field at the
+    same time as running this validator. Confirmed root cause: a real
+    `build_release` against a committed results file with a resolving
+    capture manifest failed this exact validator with "document: unexpected
+    or missing links" because neither conditional clause existed."""
+    configuration = read_rendering_configuration(RENDERING_CONFIG)
+    results_root = tmp_path / "results"
+    results_root.mkdir()
+    with_results = _view_model(tmp_path / "fixture").model_copy(
+        update={"results": _valid_results(results_root)}
+    )
+    capture_url = "https://example.org/results/certified"
+    view_model = with_results.model_copy(
+        update={
+            "metadata": with_results.metadata.model_copy(
+                update={"results_capture_url": capture_url}
+            ),
+            "corrections": _valid_corrections(election_id=with_results.metadata.election_id),
+        }
+    )
+    corrections_href = f"/e/{view_model.metadata.election_id}/corrections/"
+
+    html = render_html_document(view_model, configuration)
+    # Both links this fix accounts for are really on the page -- otherwise
+    # the assertions below would trivially pass with nothing to catch.
+    assert f'href="{capture_url}"' in html
+    assert f'href="{corrections_href}">Corrections</a>' in html
+
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(html, encoding="utf-8")
+    screenshots = [
+        _inked_screenshot(
+            tmp_path / "desktop.png", configuration.desktop_width, configuration.screenshot_height
+        ),
+        _inked_screenshot(
+            tmp_path / "mobile.png", configuration.mobile_width, configuration.screenshot_height
+        ),
+    ]
+    race_documents = _race_documents(view_model)
+
+    report = validate_rendered_guide(
+        view_model, configuration, html_path, screenshots, race_documents
+    )
+
+    link_check = next(check for check in report.checks if check.id == "html-source-evidence")
+    assert link_check.passed, link_check.message
+    assert report.passed, [check for check in report.checks if not check.passed]
 
 
 def test_responsive_tablet_layout_renders(tmp_path: Path) -> None:
