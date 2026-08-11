@@ -23,6 +23,7 @@ from election_guide.release import (
 )
 from election_guide.release.models import REQUIRED_RELEASE_ARTIFACTS, ReleaseStatus
 from election_guide.serialization import read_json
+from tests.test_corrections import _valid_corrections  # pyright: ignore[reportPrivateUsage]
 from tests.test_results import _valid_results  # pyright: ignore[reportPrivateUsage]
 
 PROJECT_ROOT = Path(__file__).parents[1]
@@ -512,6 +513,70 @@ def test_release_build_resolves_the_results_capture_url_into_the_view_model(
         )
     )
     assert published_without_results["metadata"]["results_capture_url"] is None
+
+
+def test_release_build_succeeds_with_a_real_results_capture_and_corrections_link(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Issue #353: `build_release`'s real rendering step -- not a stubbed one
+    -- must actually succeed once a committed results file resolves a real
+    capture URL and a committed corrections file is present, exactly the
+    reproduction the issue walked through by hand
+    (`election-guide evidence capture` + `results ingest` + `release build`).
+    Before the fix, this failed with `release build failed: rendered guide
+    validation failed: html-source-evidence: HTML source-detail rows are
+    incomplete: document: unexpected or missing links`, because
+    `validate_rendered_guide`'s own `expected_html_links` accounted for
+    neither the results-strip provenance link (#286) nor the Corrections nav
+    link (#290). Only checkout identity is stubbed here (no real Git commit
+    backs this fixture); rendering runs for real, the same real Chromium path
+    `test_chromium_build_is_semantically_faithful_and_visually_safe` proves
+    elsewhere."""
+
+    def accept_test_checkout(_: str) -> None:
+        return None
+
+    monkeypatch.setattr(release_builder, "_verify_checkout_identity", accept_test_checkout)
+    ledger, dataset_path, snapshots = _compiled_release_inputs(tmp_path)
+
+    results_root = tmp_path / "results-repository-root"
+    results_dir = results_root / "data" / "results"
+    results_dir.mkdir(parents=True)
+    results = _valid_results(results_root)
+    (results_dir / "wa-2026-primary.yaml").write_text(
+        yaml.safe_dump(results.model_dump(mode="json")), encoding="utf-8"
+    )
+
+    corrections_dir = tmp_path / "corrections"
+    corrections_dir.mkdir()
+    (corrections_dir / "wa-2026-primary.yaml").write_text(
+        yaml.safe_dump(_valid_corrections().model_dump(mode="json")), encoding="utf-8"
+    )
+
+    output = tmp_path / "release"
+    release = _build_release(
+        ledger,
+        dataset_path,
+        snapshots,
+        tmp_path,
+        output,
+        results_dir=results_dir,
+        repository_root=results_root,
+        corrections_dir=corrections_dir,
+    )
+
+    assert release.status.validation_reports == {"publication": True, "rendering": True}
+    published = json.loads(
+        (release.bundle_dir / "data" / "publication_view_model.json").read_text(encoding="utf-8")
+    )
+    capture_url = published["metadata"]["results_capture_url"]
+    assert capture_url == "https://example.org/results/certified"
+    guide_html = (release.bundle_dir / release.status.guide_html_artifact).read_text(
+        encoding="utf-8"
+    )
+    assert f'href="{capture_url}"' in guide_html
+    assert 'href="/e/wa-2026-primary/corrections/">Corrections</a>' in guide_html
 
 
 @pytest.mark.parametrize(
