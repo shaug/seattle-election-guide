@@ -374,13 +374,7 @@ def test_release_build_wires_a_committed_results_file_into_the_view_model(
     ledger, dataset_path, snapshots = _compiled_release_inputs(tmp_path)
     _stub_release_render(monkeypatch)
 
-    results_root = tmp_path / "results-repository-root"
-    results_dir = results_root / "data" / "results"
-    results_dir.mkdir(parents=True)
-    results = _valid_results(results_root)
-    (results_dir / "wa-2026-primary.yaml").write_text(
-        yaml.safe_dump(results.model_dump(mode="json")), encoding="utf-8"
-    )
+    results_dir, results_root = _committed_results(tmp_path)
 
     output = tmp_path / "release"
     release = _build_release(
@@ -473,13 +467,7 @@ def test_release_build_resolves_the_results_capture_url_into_the_view_model(
     ledger, dataset_path, snapshots = _compiled_release_inputs(tmp_path)
     _stub_release_render(monkeypatch)
 
-    results_root = tmp_path / "results-repository-root"
-    results_dir = results_root / "data" / "results"
-    results_dir.mkdir(parents=True)
-    results = _valid_results(results_root)
-    (results_dir / "wa-2026-primary.yaml").write_text(
-        yaml.safe_dump(results.model_dump(mode="json")), encoding="utf-8"
-    )
+    results_dir, results_root = _committed_results(tmp_path)
 
     output = tmp_path / "release"
     release = _build_release(
