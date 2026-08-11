@@ -539,14 +539,7 @@ def test_release_build_succeeds_with_a_real_results_capture_and_corrections_link
 
     monkeypatch.setattr(release_builder, "_verify_checkout_identity", accept_test_checkout)
     ledger, dataset_path, snapshots = _compiled_release_inputs(tmp_path)
-
-    results_root = tmp_path / "results-repository-root"
-    results_dir = results_root / "data" / "results"
-    results_dir.mkdir(parents=True)
-    results = _valid_results(results_root)
-    (results_dir / "wa-2026-primary.yaml").write_text(
-        yaml.safe_dump(results.model_dump(mode="json")), encoding="utf-8"
-    )
+    results_dir, results_root = _committed_results(tmp_path)
 
     corrections_dir = tmp_path / "corrections"
     corrections_dir.mkdir()
@@ -689,6 +682,20 @@ def _write_ledger(tmp_path: Path) -> Path:
     path = tmp_path / "release-ledger.yaml"
     path.write_text(yaml.safe_dump(_ledger_payload(), sort_keys=False), encoding="utf-8")
     return path
+
+
+def _committed_results(tmp_path: Path) -> tuple[Path, Path]:
+    """A committed certified results file under its own `results_dir`, ready
+    for `build_release`'s `results_dir=`/`repository_root=` overrides: the
+    results directory and its repository root."""
+    results_root = tmp_path / "results-repository-root"
+    results_dir = results_root / "data" / "results"
+    results_dir.mkdir(parents=True)
+    results = _valid_results(results_root)
+    (results_dir / "wa-2026-primary.yaml").write_text(
+        yaml.safe_dump(results.model_dump(mode="json")), encoding="utf-8"
+    )
+    return results_dir, results_root
 
 
 def _compiled_release_inputs(tmp_path: Path) -> tuple[Path, Path, Path]:

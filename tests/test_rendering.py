@@ -6,7 +6,6 @@ import shutil
 import subprocess
 import sys
 import tempfile
-from datetime import date
 from fractions import Fraction
 from html import escape, unescape
 from pathlib import Path
@@ -19,7 +18,6 @@ from PIL import Image, ImageDraw
 from pydantic import ValidationError
 from websocket import create_connection  # pyright: ignore[reportUnknownVariableType]
 
-from election_guide.corrections.models import CorrectionEntry, ElectionCorrections
 from election_guide.publication import build_publication_bundle
 from election_guide.publication.builder import (
     reprojected_comparisons,
@@ -98,6 +96,7 @@ from tests.page_parity import (
     race_page_fixture_path,
     race_parity_fixture_ids,
 )
+from tests.test_corrections import _valid_corrections  # pyright: ignore[reportPrivateUsage]
 from tests.test_personalization import (
     _bundle as _production_bundle,  # pyright: ignore[reportPrivateUsage]
 )
@@ -2547,16 +2546,7 @@ def test_release_validation_accounts_for_the_results_capture_and_corrections_lin
             "metadata": with_results.metadata.model_copy(
                 update={"results_capture_url": capture_url}
             ),
-            "corrections": ElectionCorrections(
-                election_id=with_results.metadata.election_id,
-                entries=[
-                    CorrectionEntry(
-                        corrected_on=date(2026, 7, 22),
-                        headline="Corrected an endorsement attribution.",
-                        body="The guide's recommendation was unaffected.",
-                    )
-                ],
-            ),
+            "corrections": _valid_corrections(election_id=with_results.metadata.election_id),
         }
     )
     corrections_href = f"/e/{view_model.metadata.election_id}/corrections/"
