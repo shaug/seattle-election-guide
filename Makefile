@@ -64,9 +64,14 @@ test:
 release-verify:
 	uv run election-guide release verify data/releases/wa-2026-primary/source-decisions.yaml
 
+# Only the current election is built from source; every other declared election
+# resolves from the release that published it, exactly as CI stages (issue 271,
+# docs/HOSTING.md, Historical bundles). Supplying every declared bundle locally
+# downloads nothing, so this is inert while one election is declared.
 hosting-stage:
 	uv run election-guide hosting stage config/hosting/site.yaml \
 		--bundle wa-2026-primary-2026-primary.2=dist/primary-release/bundle \
+		--released-bundle-dir dist/released-bundles \
 		--expected-git-commit "$$(git rev-parse HEAD)"
 
 hosting-serve: hosting-stage

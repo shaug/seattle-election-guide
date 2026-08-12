@@ -1473,6 +1473,43 @@ def test_wrangler_and_workflow_keep_deployment_pinned_and_gated() -> None:
     assert "--expected-git-commit=" in verify_step["run"]
 
 
+def test_local_staging_resolves_released_bundles_the_same_way_ci_does() -> None:
+    """Issue 271: a second declared election must not stage in CI and fail locally.
+
+    Only the current election is built from source, so every other declared
+    election has to be resolved from the release that published it. Asking make
+    what it would run, rather than reading the recipe, tests the command the
+    operator actually gets.
+    """
+    recipe = subprocess.run(
+        ["make", "-n", "hosting-stage"],
+        cwd=PROJECT_ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout
+    ci_stage = next(
+        step
+        for step in yaml.load(
+            (PROJECT_ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8"),
+            Loader=yaml.BaseLoader,
+        )["jobs"]["check"]["steps"]
+        if step.get("name") == "Stage verified Cloudflare Pages site"
+    )["run"]
+
+    assert "election-guide hosting stage config/hosting/site.yaml" in recipe
+    # The current election is the only one built from source, so it is the only
+    # bundle either side supplies locally.
+    assert "--bundle wa-2026-primary-2026-primary.2=" in recipe
+    # Comparing against CI's own option rather than a second literal is what
+    # keeps the two from drifting apart again: `hosting-serve` and
+    # `hosting-deploy` both build on this target, so local preview and local
+    # deploy fail with it.
+    released_option = "--released-bundle-dir dist/released-bundles"
+    assert released_option in ci_stage
+    assert released_option in recipe
+
+
 def test_pr_preview_workflow_is_label_gated_fork_safe_and_head_bound() -> None:
     workflow = yaml.load(
         (PROJECT_ROOT / ".github/workflows/deploy-pr-preview.yml").read_text(encoding="utf-8"),
