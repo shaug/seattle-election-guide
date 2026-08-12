@@ -76,12 +76,10 @@ jobs:
               --release-version 2026-primary.2 \
               --generated-at "$SITE_UPDATED_AT" \
             --output-dir dist/ci-release-b
-          # Not `cmp`: the archive holds two browser-rasterized screenshots
-          # beside artifacts the pipeline computes, and one comparison cannot
-          # be right for both. `release compare` holds every computed artifact
-          # to its exact bytes and the two captures to stated ceilings, and
-          # names the artifact that moved instead of a byte offset (issue #367,
-          # docs/RELEASE.md, Reproducibility).
+          # Not `cmp`: it printed one offset into compressed data, which named
+          # nothing. `release compare` holds every artifact to the same exact
+          # bytes and names the one that moved (issue #367, docs/RELEASE.md,
+          # Reproducibility).
           uv run election-guide release compare \
             dist/ci-release-a/seattle-election-guide-2026-primary.2.zip \
             dist/ci-release-b/seattle-election-guide-2026-primary.2.zip

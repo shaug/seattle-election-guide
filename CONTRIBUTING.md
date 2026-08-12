@@ -41,21 +41,14 @@ make check-release-reproducible
 It commits nothing and takes about half a minute. Nothing else here needs it —
 a docs-only change cannot move the release build.
 
-**When CI fails this gate.** The failure names the artifact that differs and how
-far it moved. Two shapes mean different things:
+**When CI fails this gate.** The failure names the artifact whose bytes differ
+between the two builds. Every artifact is held to exact bytes, so a difference
+means something in the pipeline is not a pure function of its inputs — an
+unordered iteration, a clock read, a filesystem order — or, if it is one of the
+two screenshots, that the rendered page itself moved. Both reproduce locally
+with the command above.
 
-- A *computed* artifact (`data/…`, the guide HTML, a manifest, the validation
-  report) differs. Something in the pipeline is not a pure function of its
-  inputs — an unordered iteration, a clock read, a filesystem order. This is a
-  real defect and reproduces locally with the command above.
-- A *screenshot* differs in a way a one-device-pixel snap does not explain. The
-  page moved, not the renderer: something reflowed, changed state, failed to
-  draw, or resized. This was once the whole gate's failure mode, reported only
-  as a byte offset into the ZIP (issue #367); it now reports how many
-  pixels are unexplained and where. What is tolerated, and the one gap the
-  comparison knows it has, are stated in docs/RELEASE.md, Reproducibility.
-
-Neither is a flake to re-run past. If a re-run goes green without a change,
+It is not a flake to re-run past. If a re-run goes green without a change,
 say so on the pull request rather than merging on the second attempt.
 
 ## Pull requests

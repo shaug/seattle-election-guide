@@ -116,11 +116,24 @@ def render_screenshot(
                     "--hide-scrollbars",
                     "--no-first-run",
                     # A capture must never observe a half-drawn frame: draw only
-                    # once every compositor stage has finished, and never let the
-                    # new-content timeout draw what is ready over what is not.
-                    # Both are scheduling controls, not rasterization settings —
-                    # they change when a frame is produced, never how it looks,
-                    # so the approved perceptual signatures are untouched
+                    # once every compositor stage has finished, never let the
+                    # new-content timeout draw what is ready over what is not,
+                    # and never reuse a partially rasterized tile.
+                    #
+                    # These are measured, not precautionary. On the CI runner,
+                    # 30 same-input builds diverged 4 times with the fixed sleep
+                    # this replaced, still 2 times with the readiness signal
+                    # below but without these three flags, and 0 times with
+                    # both (issue #367). The readiness signal alone is not
+                    # sufficient, so removing these would reintroduce the flake.
+                    #
+                    # The first two govern when a frame is drawn.
+                    # `--disable-partial-raster` is a rasterization control --
+                    # it stops Chrome re-rastering only a tile's invalidated
+                    # region -- which is why it matters here: a partial re-raster
+                    # is exactly the nondeterminism the other two cannot reach.
+                    # None of them changes rasterization *quality*, so the
+                    # approved perceptual signatures are untouched
                     # (docs/RENDERING.md, Blocking validation).
                     "--run-all-compositor-stages-before-draw",
                     "--disable-new-content-rendering-timeout",

@@ -1,11 +1,9 @@
-"""What "the same release, built twice" is allowed to mean.
+"""What "the same release, built twice" means.
 
 The gate these cover replaced a `cmp` of two archives that failed roughly one CI
-run in seven and reported nothing but a byte offset (issue #367, the recurrence
-of #341 that #343 did not close). Every test here
-is about the seam that replaced it: computed artifacts stay byte-exact, and the
-two browser-rasterized screenshots are the same capture when every pixel that
-differs is explained by an edge snapping one device pixel vertically.
+run in seven and reported nothing but a byte offset (issue #367). Every artifact
+is still held to its exact bytes, screenshots included; what the replacement adds
+is the ability to say which artifact moved.
 """
 
 from __future__ import annotations
@@ -22,55 +20,19 @@ from election_guide.release import compare_release_archives
 from election_guide.release.builder import (
     _write_deterministic_zip,  # pyright: ignore[reportPrivateUsage]
 )
-from election_guide.release.reproducibility import (
-    MAX_SNAPPED_PIXEL_FRACTION,
-    MAX_UNEXPLAINED_PIXELS,
-    RASTER_ARTIFACTS,
-)
 from election_guide.serialization import canonical_json_bytes
 
 GENERATED_AT = datetime(2026, 8, 12, tzinfo=UTC)
-CAPTURE_SIZE = (720, 600)
-CAPTURE_PIXELS = CAPTURE_SIZE[0] * CAPTURE_SIZE[1]
-
-
-def _encoded(image: Image.Image) -> bytes:
-    buffer = BytesIO()
-    image.save(buffer, format="PNG")
-    return buffer.getvalue()
-
-
-def _painted(*, band_top: int = 40) -> Image.Image:
-    """A stand-in screenshot: one filled band on a light field.
-
-    A horizontal edge is the whole subject here -- the real divergence is an
-    edge that snapped a device pixel -- so the fixture is the smallest thing
-    that has one. Sized in the real capture's proportions, because one of the
-    ceilings is a share of the capture: a full-width edge is 0.33% of this
-    fixture and 0.19% of the 1440x1200 desktop capture, so a fixture small
-    enough to make one edge look like a wholesale change would test arithmetic
-    the real gate never performs.
-    """
-    image = Image.new("RGB", CAPTURE_SIZE, (251, 250, 246))
-    image.paste(Image.new("RGB", (CAPTURE_SIZE[0], 30), (16, 42, 67)), (0, band_top))
-    return image
-
-
-def _striped() -> Image.Image:
-    """A capture with an edge on every other row: shifting it moves everything.
-
-    The band fixture cannot express a wholesale shift -- most of it is flat
-    field, which shifts onto itself -- so the one test about moving the whole
-    page brings its own texture.
-    """
-    image = Image.new("RGB", CAPTURE_SIZE, (251, 250, 246))
-    for row in range(0, CAPTURE_SIZE[1], 2):
-        image.paste(Image.new("RGB", (CAPTURE_SIZE[0], 1), (16, 42, 67)), (0, row))
-    return image
+CAPTURE_SIZE = (200, 150)
 
 
 def _capture(*, band_top: int = 40) -> bytes:
-    return _encoded(_painted(band_top=band_top))
+    """A stand-in screenshot: a real PNG, which the comparison reads as bytes."""
+    image = Image.new("RGB", CAPTURE_SIZE, (251, 250, 246))
+    image.paste(Image.new("RGB", (CAPTURE_SIZE[0], 30), (16, 42, 67)), (0, band_top))
+    buffer = BytesIO()
+    image.save(buffer, format="PNG")
+    return buffer.getvalue()
 
 
 def _bundle(**overrides: bytes) -> dict[str, bytes]:
@@ -133,131 +95,32 @@ def test_two_identical_builds_are_the_same_release(tmp_path: Path) -> None:
         "release-status.json",
         "validation/rendering/rendering_validation_report.json",
         "RELEASE_NOTES.md",
+        "validation/rendering/screenshots/desktop.png",
+        "validation/rendering/screenshots/mobile.png",
     ],
 )
-def test_a_computed_artifact_is_still_held_to_its_exact_bytes(
+def test_a_drifted_artifact_is_named_rather_than_located_by_byte_offset(
     tmp_path: Path, artifact: str
 ) -> None:
-    """The tolerance is for rasters alone. Nothing the pipeline computes may
-    drift by so much as a byte, which is the property the old `cmp` had and the
-    one this gate must not lose."""
+    """The reason this replaced `cmp`, and the property it kept.
+
+    Every artifact is held to its exact bytes -- the screenshots on this list
+    exactly as strictly as the JSON. What is new is the answer: `cmp` printed
+    one offset into the compressed archive, which named nothing, because the
+    first byte to differ belongs to whichever entry's header the deflate stream
+    reached first. Each artifact that moved is named here, alongside the
+    manifest that hashes it.
+    """
+    drifted = _capture(band_top=41) if artifact.endswith(".png") else b"drifted\n"
     left = _archive(tmp_path, "a", _bundle())
-    right = _archive(tmp_path, "b", _bundle(**{artifact: b"drifted\n"}))
+    right = _archive(tmp_path, "b", _bundle(**{artifact: drifted}))
 
     report = compare_release_archives(left, right)
 
     assert not report.passed
-    # Both the artifact and the manifest that hashes it: the manifest entry is
-    # corroboration, and the named artifact is the answer the old byte offset
-    # never gave.
     assert sorted((item.artifact, item.kind) for item in report.differences) == sorted(
         [(artifact, "bytes"), ("release-manifest.json", "bytes")]
     )
-
-
-def test_an_edge_that_snapped_one_device_pixel_is_the_same_capture(tmp_path: Path) -> None:
-    """The whole point of the seam. This is the real divergence in miniature:
-    the band's painted edges land one row lower, nothing else about the capture
-    changed, and its changed manifest hash does not make it a different
-    release."""
-    left = _archive(tmp_path, "a", _bundle())
-    right = _archive(
-        tmp_path,
-        "b",
-        _bundle(**{"validation/rendering/screenshots/desktop.png": _capture(band_top=41)}),
-    )
-
-    report = compare_release_archives(left, right)
-
-    assert report.passed, report.differences
-
-
-def test_a_region_that_failed_to_rasterize_is_never_a_snap(tmp_path: Path) -> None:
-    """A lost tile moves few enough pixels that a pixel budget would wave it
-    through. It is not a snap: those pixels do not appear one row away, they
-    stopped existing."""
-    lost = _painted()
-    lost.paste(Image.new("RGB", (40, 20), (255, 255, 255)), (30, 45))
-    left = _archive(tmp_path, "a", _bundle())
-    right = _archive(
-        tmp_path,
-        "b",
-        _bundle(**{"validation/rendering/screenshots/desktop.png": _encoded(lost)}),
-    )
-
-    report = compare_release_archives(left, right)
-
-    assert not report.passed
-    assert report.differences[0].kind == "raster"
-    assert "not explained by a one-device-pixel snap" in report.differences[0].detail
-
-
-def test_a_capture_that_snapped_everywhere_at_once_is_a_layout_change(tmp_path: Path) -> None:
-    """Every pixel of a wholesale shift is individually "explained" by a snap,
-    so the share of the capture allowed to participate is bounded separately --
-    otherwise a real regression that moved the whole page could hide behind the
-    same rule that lets one edge move."""
-    shifted = Image.new("RGB", CAPTURE_SIZE, (251, 250, 246))
-    shifted.paste(_striped(), (0, 1))
-    left = _archive(
-        tmp_path,
-        "a",
-        _bundle(**{"validation/rendering/screenshots/desktop.png": _encoded(_striped())}),
-    )
-    right = _archive(
-        tmp_path,
-        "b",
-        _bundle(**{"validation/rendering/screenshots/desktop.png": _encoded(shifted)}),
-    )
-
-    report = compare_release_archives(left, right)
-
-    assert not report.passed
-    assert report.differences[0].kind == "raster"
-    assert "too much of the capture moved at once" in report.differences[0].detail
-    assert f"ceiling {MAX_SNAPPED_PIXEL_FRACTION:.4%}" in report.differences[0].detail
-
-
-def test_the_unexplained_ceiling_is_the_ratchet_it_claims_to_be() -> None:
-    """Both raster ceilings are ratchets (AGENTS.md, Working rules), so their
-    values are asserted here: loosening either is a deliberate act that has to
-    change this test too."""
-    assert MAX_UNEXPLAINED_PIXELS == 64
-    assert MAX_SNAPPED_PIXEL_FRACTION == 0.01
-
-
-def test_a_resized_capture_is_never_within_tolerance(tmp_path: Path) -> None:
-    """Dimensions are the one raster property with no tolerance at all: a
-    capture at a different viewport is a different check, not a drifted one."""
-    resized = Image.new("RGB", (CAPTURE_SIZE[0], CAPTURE_SIZE[1] + 1), (255, 255, 255))
-    buffer = BytesIO()
-    resized.save(buffer, format="PNG")
-    left = _archive(tmp_path, "a", _bundle())
-    right = _archive(
-        tmp_path,
-        "b",
-        _bundle(**{"validation/rendering/screenshots/desktop.png": buffer.getvalue()}),
-    )
-
-    report = compare_release_archives(left, right)
-
-    assert not report.passed
-    assert report.differences[0].kind == "dimensions"
-
-
-def test_an_unreadable_capture_is_reported_rather_than_raised(tmp_path: Path) -> None:
-    left = _archive(tmp_path, "a", _bundle())
-    right = _archive(
-        tmp_path,
-        "b",
-        _bundle(**{"validation/rendering/screenshots/desktop.png": b"\x89PNG\r\n\x1a\nrubbish"}),
-    )
-
-    report = compare_release_archives(left, right)
-
-    assert not report.passed
-    assert report.differences[0].kind == "raster"
-    assert "not a readable image" in report.differences[0].detail
 
 
 def test_dropping_an_artifact_is_a_membership_failure(tmp_path: Path) -> None:
@@ -269,58 +132,23 @@ def test_dropping_an_artifact_is_a_membership_failure(tmp_path: Path) -> None:
     report = compare_release_archives(left, right)
 
     assert not report.passed
-    assert report.differences[0].kind == "membership"
+    assert [item.kind for item in report.differences] == ["membership"]
     assert "data/consensus.json" in report.differences[0].detail
 
 
-def test_a_manifest_that_stops_hashing_a_screenshot_cannot_pass_by_omission(
-    tmp_path: Path,
-) -> None:
-    """Excluding the raster hashes from the manifest comparison must not become
-    a way to publish a release that no longer hashes its captures at all."""
-    left = _archive(tmp_path, "a", _bundle())
-    right = _archive(tmp_path, "b", _bundle())
-    manifest_path = tmp_path / "b/release-manifest.json"
-    import json
-
-    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    del manifest["artifact_hashes"]["validation/rendering/screenshots/mobile.png"]
-    manifest_path.write_bytes(canonical_json_bytes(manifest))
-    right = tmp_path / "b-tampered.zip"
-    _write_deterministic_zip(tmp_path / "b", right, GENERATED_AT)
+def test_a_membership_failure_is_reported_once_rather_than_per_entry(tmp_path: Path) -> None:
+    """A renamed directory moves every entry under it. One membership difference
+    names the set; it does not restate itself once per file."""
+    complete = _bundle()
+    moved = {
+        key.replace("validation/rendering/", "validation/render/"): value
+        for key, value in complete.items()
+    }
+    left = _archive(tmp_path, "a", complete)
+    right = _archive(tmp_path, "b", moved)
 
     report = compare_release_archives(left, right)
 
     assert not report.passed
+    assert len(report.differences) == 1
     assert report.differences[0].kind == "membership"
-    assert "does not hash every rasterized artifact" in report.differences[0].detail
-
-
-def test_a_manifest_that_drifts_beyond_its_raster_hashes_fails(tmp_path: Path) -> None:
-    left = _archive(tmp_path, "a", _bundle())
-    _archive(tmp_path, "b", _bundle())
-    manifest_path = tmp_path / "b/release-manifest.json"
-    import json
-
-    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    manifest["generated_at"] = "2026-08-13T00:00:00Z"
-    manifest_path.write_bytes(canonical_json_bytes(manifest))
-    right = tmp_path / "b-drifted.zip"
-    _write_deterministic_zip(tmp_path / "b", right, GENERATED_AT)
-
-    report = compare_release_archives(left, right)
-
-    assert not report.passed
-    assert [(item.artifact, item.kind) for item in report.differences] == [
-        ("release-manifest.json", "bytes")
-    ]
-
-
-def test_the_tolerated_artifacts_are_exactly_the_two_browser_captures() -> None:
-    """A ratchet guard: this set is what the byte-for-byte rule is relaxed for,
-    so growing it is a deliberate act that has to change this test too
-    (AGENTS.md, Working rules)."""
-    assert {
-        "validation/rendering/screenshots/desktop.png",
-        "validation/rendering/screenshots/mobile.png",
-    } == RASTER_ARTIFACTS
