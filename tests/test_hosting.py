@@ -4,10 +4,11 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import shutil
 import subprocess
 from pathlib import Path
-from typing import cast
+from typing import NamedTuple, cast
 
 import pytest
 import yaml
@@ -1473,41 +1474,111 @@ def test_wrangler_and_workflow_keep_deployment_pinned_and_gated() -> None:
     assert "--expected-git-commit=" in verify_step["run"]
 
 
-def test_local_staging_resolves_released_bundles_the_same_way_ci_does() -> None:
-    """Issue 271: a second declared election must not stage in CI and fail locally.
+STAGE_COMMAND = "election-guide hosting stage"
+
+
+class _StagingSurface(NamedTuple):
+    """One executable `hosting stage` invocation, with the environment it runs under."""
+
+    surface: str
+    command: str
+    # None for the Makefile, which has no step-level environment. A workflow
+    # step that declares none is an empty mapping, not None -- the difference is
+    # what lets the GH_TOKEN assertion below name a real omission.
+    env: dict[str, str] | None
+
+
+def _makefile_staging_surfaces() -> list[_StagingSurface]:
+    """Every Make target whose own recipe stages, asked what it would actually run.
+
+    A prerequisite does not count: `hosting-serve` and `hosting-deploy` both
+    build on `hosting-stage`, and attributing its command to them would report
+    three Makefile surfaces where one exists.
+    """
+    target: str | None = None
+    recipes: dict[str, list[str]] = {}
+    for line in (PROJECT_ROOT / "Makefile").read_text(encoding="utf-8").splitlines():
+        if line.startswith("\t"):
+            if target is not None:
+                recipes[target].append(line)
+            continue
+        match = re.match(r"^([A-Za-z0-9_./-]+)\s*:(?!=)", line)
+        target = match.group(1) if match else None
+        if target is not None:
+            recipes.setdefault(target, [])
+
+    surfaces: list[_StagingSurface] = []
+    for name, recipe in recipes.items():
+        if not any(STAGE_COMMAND in line for line in recipe):
+            continue
+        # Asking make what it would run, rather than reading the recipe, tests
+        # the command the operator actually gets (issue 271).
+        surfaces.append(
+            _StagingSurface(
+                surface="Makefile",
+                command=subprocess.run(
+                    ["make", "-n", name],
+                    cwd=PROJECT_ROOT,
+                    capture_output=True,
+                    text=True,
+                    check=True,
+                ).stdout,
+                env=None,
+            )
+        )
+    return surfaces
+
+
+def _workflow_staging_surfaces() -> list[_StagingSurface]:
+    """Every workflow step that stages, across every workflow rather than a named few."""
+    surfaces: list[_StagingSurface] = []
+    for path in sorted((PROJECT_ROOT / ".github/workflows").glob("*.yml")):
+        workflow = yaml.load(path.read_text(encoding="utf-8"), Loader=yaml.BaseLoader)
+        for job in workflow.get("jobs", {}).values():
+            for step in job.get("steps", []):
+                if STAGE_COMMAND in step.get("run", ""):
+                    surfaces.append(
+                        _StagingSurface(
+                            surface=path.name,
+                            command=step["run"],
+                            env=step.get("env", {}),
+                        )
+                    )
+    return surfaces
+
+
+def test_every_staging_surface_resolves_released_bundles_the_same_way() -> None:
+    """Issue 361: no staging surface may stay on the pre-215 single-bundle model.
 
     Only the current election is built from source, so every other declared
-    election has to be resolved from the release that published it. Asking make
-    what it would run, rather than reading the recipe, tests the command the
-    operator actually gets.
+    election has to be resolved from the release that published it. The option
+    pair reached the three surfaces one ticket at a time -- 215 for CI, 271 for
+    local, 361 for the preview -- so this discovers the invocations instead of
+    naming them, and a fourth surface is covered the day it is added.
     """
-    recipe = subprocess.run(
-        ["make", "-n", "hosting-stage"],
-        cwd=PROJECT_ROOT,
-        capture_output=True,
-        text=True,
-        check=True,
-    ).stdout
-    ci_stage = next(
-        step
-        for step in yaml.load(
-            (PROJECT_ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8"),
-            Loader=yaml.BaseLoader,
-        )["jobs"]["check"]["steps"]
-        if step.get("name") == "Stage verified Cloudflare Pages site"
-    )["run"]
+    surfaces = _makefile_staging_surfaces() + _workflow_staging_surfaces()
 
-    assert "election-guide hosting stage config/hosting/site.yaml" in recipe
-    # The current election is the only one built from source, so it is the only
-    # bundle either side supplies locally.
-    assert "--bundle wa-2026-primary-2026-primary.2=" in recipe
-    # Comparing against CI's own option rather than a second literal is what
-    # keeps the two from drifting apart again: `hosting-serve` and
-    # `hosting-deploy` both build on this target, so local preview and local
-    # deploy fail with it.
-    released_option = "--released-bundle-dir dist/released-bundles"
-    assert released_option in ci_stage
-    assert released_option in recipe
+    # A surface that disappears has to fail rather than silently shrink the run
+    # to nothing. Deliberately a subset rather than an equality: a new staging
+    # surface that already carries the option pair should pass untouched, and
+    # one that omits it should fail on the option below by name -- an equality
+    # check would fail both alike, and reporting a compliant addition as a
+    # missing-surface error is what makes a test get edited rather than heeded.
+    assert {"Makefile", "ci.yml", "deploy-pr-preview.yml"} <= {
+        surface.surface for surface in surfaces
+    }
+    for surface in surfaces:
+        assert f"{STAGE_COMMAND} config/hosting/site.yaml" in surface.command, surface.surface
+        # The current election is the only one built from source, so it is the
+        # only bundle any surface supplies locally.
+        assert "--bundle wa-2026-primary-2026-primary.2=" in surface.command, surface.surface
+        assert "--released-bundle-dir dist/released-bundles" in surface.command, surface.surface
+        # Resolving a historical bundle downloads a published release through
+        # the GitHub CLI, so a workflow surface needs the read-only job token.
+        # It is not a deployment credential: the fork-gated preview job and the
+        # fork-reachable CI job both run with it.
+        if surface.env is not None:
+            assert surface.env == {"GH_TOKEN": "${{ github.token }}"}, surface.surface
 
 
 def test_pr_preview_workflow_is_label_gated_fork_safe_and_head_bound() -> None:
@@ -1569,6 +1640,12 @@ def test_pr_preview_workflow_is_label_gated_fork_safe_and_head_bound() -> None:
         step for step in deploy["steps"] if step.get("name") == "Stage and verify the Pages site"
     )
     assert '--expected-git-commit "$HEAD_SHA"' in stage_step["run"]
+    # Any election not built from source above is resolved from its published
+    # release, which reads GitHub with the same read-only job token CI uses
+    # (issues 215 and 361). The token is bounded by this job's `contents: read`
+    # and is not a deployment credential, so it does not weaken the fork guard.
+    assert "--released-bundle-dir dist/released-bundles" in stage_step["run"]
+    assert stage_step["env"] == {"GH_TOKEN": "${{ github.token }}"}
     # Staging is verified before anything is uploaded, exactly as production is.
     assert "hosting verify" in stage_step["run"]
     assert deploy["steps"].index(stage_step) < deploy["steps"].index(

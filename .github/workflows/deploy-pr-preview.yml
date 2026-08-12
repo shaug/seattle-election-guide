@@ -86,16 +86,27 @@ jobs:
               --generated-at "$SITE_UPDATED_AT" \
               --git-commit "$HEAD_SHA" \
             --output-dir dist/pr-release
+      # Only the election built from source above is supplied locally. Any other
+      # declared election is resolved from the release that published it,
+      # exactly as CI stages it -- a historical bundle cannot be rebuilt
+      # (docs/HOSTING.md, Historical bundles).
       - name: Stage and verify the Pages site
         run: |
           uv run election-guide hosting stage config/hosting/site.yaml \
             --bundle wa-2026-primary-2026-primary.2=dist/pr-release/bundle \
+            --released-bundle-dir dist/released-bundles \
             --expected-git-commit "$HEAD_SHA" \
             --output-dir dist/cloudflare-site
           uv run election-guide hosting verify \
             config/hosting/site.yaml \
             dist/cloudflare-site \
             --expected-git-commit "$HEAD_SHA"
+        env:
+          # Downloading a historical bundle reads a published release. The
+          # read-only job token, bounded by this job's `contents: read` -- not a
+          # deployment credential, and the same token the comment step below
+          # already uses.
+          GH_TOKEN: ${{ github.token }}
       # The alias is derived from the pull request number rather than the branch
       # name, so it is stable across pushes and immune to the mangling real
       # branch names get.
