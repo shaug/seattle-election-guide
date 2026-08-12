@@ -68,10 +68,13 @@ take time after either hostname is attached or repointed.
 
 `config/hosting/site.yaml` is the versioned source of truth for the site. Its ordered election list
 declares the current election first and binds every public election ID to a logical bundle ID,
-release version, and source-panel identity/hash. Optional Git commit, release-manifest hash, and
-complete bundle hash fields can pin older immutable inputs more tightly. The staging command
-resolves each logical bundle ID to a local verified release bundle; it never infers the current
-election from dates, filenames, directory order, or an earlier deployment.
+release version, and source-panel identity/hash. Git commit, release-manifest hash, and complete
+bundle hash fields pin older immutable inputs more tightly. All three are optional for a bundle
+supplied from a local build, but `bundle_sha256` is required for one resolved from a published
+release, and staging refuses to resolve it without one — see
+[Historical bundles](#historical-bundles). The staging command resolves each logical bundle ID to a
+verified release bundle, supplied locally or downloaded from the release that published it; it never
+infers the current election from dates, filenames, directory order, or an earlier deployment.
 
 The public route contract is:
 
@@ -203,12 +206,16 @@ Build the audited release as described in [RELEASE.md](RELEASE.md), then stage i
 make hosting-stage
 ```
 
-The Make target resolves the current manifest bundle as
-`wa-2026-primary-2026-primary.2=dist/primary-release/bundle`. When another election is added, prepare
-each declared bundle and pass one `--bundle BUNDLE_ID=PATH` option for each. Staging verifies all
-declared identities, each release status, every release-manifest artifact hash, and the current
-bundle's exact Git revision before it changes the existing output. It then atomically replaces
-`dist/cloudflare-site/` with:
+The Make target supplies the current election's bundle as
+`wa-2026-primary-2026-primary.2=dist/primary-release/bundle` and passes
+`--released-bundle-dir dist/released-bundles`, which is the pair CI stages with. The current election
+is the only one built from source, so when another election is declared it resolves from the release
+that published it rather than from anything prepared locally — see
+[Historical bundles](#historical-bundles). That download reads GitHub, so `gh` must be installed and
+authenticated; while one election is declared there is nothing to resolve and nothing is downloaded.
+Staging verifies all declared identities, each release status, every release-manifest artifact hash,
+and the current bundle's exact Git revision before it changes the existing output. It then
+atomically replaces `dist/cloudflare-site/` with:
 
 - `e/index.html`, generated from the manifest;
 - each guide at `e/<election-id>/index.html`, copied byte-for-byte from its validated release;
