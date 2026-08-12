@@ -529,10 +529,16 @@ def _verify_bundle(declaration: PublishedElection, bundle_dir: Path) -> _Verifie
     if set(manifest.artifact_hashes) != expected_artifacts:
         raise ValueError("release manifest does not cover the complete release artifact set")
     _verify_artifact_hashes(bundle_dir, manifest.artifact_hashes)
-    if declaration.bundle_sha256 is not None and declaration.bundle_sha256 != _bundle_hash(
-        bundle_dir
-    ):
-        raise ValueError(f"bundle {declaration.bundle_id!r} bundle hash differs")
+    if declaration.bundle_sha256 is not None:
+        # Naming both digests is what makes a drifted pin actionable: the fix is
+        # to recompute it with `hosting bundle-hash` and review the difference,
+        # which needs the value the archive actually hashed to (issue 270).
+        found = bundle_hash(bundle_dir)
+        if declaration.bundle_sha256 != found:
+            raise ValueError(
+                f"bundle {declaration.bundle_id!r} bundle hash differs: "
+                f"expected {declaration.bundle_sha256}, found {found}"
+            )
     return _VerifiedBundle(declaration, bundle_dir, status, manifest, view_model)
 
 
@@ -952,7 +958,14 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def _bundle_hash(root: Path) -> str:
+def bundle_hash(root: Path) -> str:
+    """The `bundle_sha256` a released bundle must be pinned to: a hash of its whole tree.
+
+    Length-prefixing each relative path and each body keeps two different trees
+    from concatenating to the same bytes. This is the value `site.yaml` declares
+    for a historical election, so it is public: obtaining it must not require
+    reaching into this module (issue 270).
+    """
     digest = hashlib.sha256()
     for path in sorted(path for path in root.rglob("*") if path.is_file()):
         relative = path.relative_to(root).as_posix().encode()
