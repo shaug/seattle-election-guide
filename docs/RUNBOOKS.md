@@ -95,3 +95,4 @@ Each runbook's autonomy level is declared in the runbook itself — its single o
 | `runbooks/results-capture-election-night.md`  | `results_capture_election_night`     |
 | `runbooks/results-certified-ingest.md`        | `results_capture_post_certification` |
 | `runbooks/endorsement-discovery-sweep.md`     | `collection_opens` → `refresh`       |
+| `runbooks/production-rollback.md`             | condition: production is serving a wrong, broken, or stale build |
