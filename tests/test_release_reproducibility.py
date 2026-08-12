@@ -12,6 +12,7 @@ import hashlib
 from datetime import UTC, datetime
 from io import BytesIO
 from pathlib import Path
+from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
 
 import pytest
 from PIL import Image
@@ -134,6 +135,56 @@ def test_dropping_an_artifact_is_a_membership_failure(tmp_path: Path) -> None:
     assert not report.passed
     assert [item.kind for item in report.differences] == ["membership"]
     assert "data/consensus.json" in report.differences[0].detail
+
+
+def test_an_order_only_mismatch_says_what_actually_differs(tmp_path: Path) -> None:
+    """Same entries, different order. The set differences are both empty, so
+    reporting them would print two empty lists and tell the reader nothing."""
+    artifacts = _bundle()
+    left = _archive(tmp_path, "a", artifacts)
+    reordered = tmp_path / "b"
+    for relative, content in artifacts.items():
+        path = reordered / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(content)
+    (reordered / "release-manifest.json").write_bytes(
+        (tmp_path / "a/release-manifest.json").read_bytes()
+    )
+    right = tmp_path / "b.zip"
+    with ZipFile(right, "w", compression=ZIP_DEFLATED) as archive:
+        for path in sorted(reordered.rglob("*"), reverse=True):
+            if path.is_file():
+                info = ZipInfo(
+                    f"seattle-election-guide/{path.relative_to(reordered).as_posix()}",
+                    date_time=GENERATED_AT.timetuple()[:6],
+                )
+                info.external_attr = 0o100644 << 16
+                info.create_system = 3
+                archive.writestr(info, path.read_bytes(), compress_type=ZIP_DEFLATED)
+
+    report = compare_release_archives(left, right)
+
+    assert not report.passed
+    assert report.differences[0].kind == "membership"
+    assert "different order" in report.differences[0].detail
+    assert "[]" not in report.differences[0].detail
+
+
+def test_a_corrupt_member_is_rejected_rather_than_raised_as_a_traceback(
+    tmp_path: Path,
+) -> None:
+    """A corrupt deflated member raises `zlib.error`, which is not an `OSError`
+    or a `ValueError`, so it would otherwise escape the command as a traceback
+    (the policy `hosting/releases.py` already applies to a downloaded bundle)."""
+    left = _archive(tmp_path, "a", _bundle())
+    corrupt = tmp_path / "corrupt.zip"
+    raw = bytearray(left.read_bytes())
+    # Well past the first local header, inside a deflated member body.
+    raw[len(raw) // 2] ^= 0xFF
+    corrupt.write_bytes(bytes(raw))
+
+    with pytest.raises(ValueError, match="not a readable ZIP archive"):
+        compare_release_archives(left, corrupt)
 
 
 def test_a_membership_failure_is_reported_once_rather_than_per_entry(tmp_path: Path) -> None:

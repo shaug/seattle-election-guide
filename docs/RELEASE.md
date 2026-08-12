@@ -99,9 +99,10 @@ frame existed. It now waits on a readiness signal — fonts loaded, every animat
 frames produced — asserts the page settled rather than assuming it, and runs Chrome with the
 compositor and rasterization controls that keep a half-drawn or partially rastered frame from being
 captured. Measured on the CI runner, 30 same-input builds diverged 4 times before the change, 2
-times with the readiness signal but without those flags, and 0 times with both: each half is
-necessary and neither alone is sufficient. No tolerance is applied to a screenshot, because none is
-needed, and one would have hidden the defect instead of fixing it.
+times with the readiness signal but without those flags, and 0 times with both. The readiness signal
+alone is therefore not sufficient; the flags were not measured on their own, so neither is credited
+with the result independently. No tolerance is applied to a screenshot, because none is needed, and
+one would have hidden the defect instead of fixing it.
 
 Inspect the desktop and mobile screenshots, all machine validation reports, and
 `RELEASE_NOTES.md`. Test the archive before publication:

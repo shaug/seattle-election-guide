@@ -7,7 +7,6 @@ import os
 import re
 import subprocess
 import tempfile
-import zipfile
 from collections.abc import Generator
 from contextlib import contextmanager
 from datetime import UTC, date, datetime
@@ -693,7 +692,9 @@ def release_compare(
     """Check that two builds of one release are the same release."""
     try:
         report = compare_release_archives(left, right)
-    except (OSError, ValidationError, ValueError, zipfile.BadZipFile) as error:
+    except (OSError, ValueError) as error:
+        # `compare_release_archives` turns every archive-level failure into a
+        # ValueError itself, so this guards the file system and that.
         typer.echo(f"release comparison failed: {error}", err=True)
         raise typer.Exit(code=1) from error
     if not report.passed:

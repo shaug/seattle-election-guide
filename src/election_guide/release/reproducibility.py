@@ -21,6 +21,7 @@ comparison that tolerated a difference would only have hidden that.
 from __future__ import annotations
 
 import zipfile
+import zlib
 from pathlib import Path
 from typing import Literal
 
@@ -55,18 +56,25 @@ def compare_release_archives(left: Path, right: Path) -> ReproducibilityReport:
         # Reported alone rather than as a cascade of per-entry noise: every
         # later comparison is keyed by name, so a membership mismatch would
         # otherwise restate itself once per entry that moved.
+        missing_right = sorted(set(left_members) - set(right_members))
+        missing_left = sorted(set(right_members) - set(left_members))
+        detail = (
+            # Same entries, different order. Saying "only in A: []; only in B: []"
+            # would be literally true and tell the reader nothing.
+            f"archives contain the same entries in a different order: "
+            f"{left.name} begins {list(left_members)[:3]}, "
+            f"{right.name} begins {list(right_members)[:3]}"
+            if not missing_right and not missing_left
+            else (
+                "archives do not contain the same entries: "
+                f"only in {left.name}: {missing_right}; "
+                f"only in {right.name}: {missing_left}"
+            )
+        )
         return ReproducibilityReport(
             compared_artifact_count=0,
             differences=[
-                ArtifactDifference(
-                    artifact="<archive>",
-                    kind="membership",
-                    detail=(
-                        "archives do not contain the same entries in the same order: "
-                        f"only in {left.name}: {sorted(set(left_members) - set(right_members))}; "
-                        f"only in {right.name}: {sorted(set(right_members) - set(left_members))}"
-                    ),
-                )
+                ArtifactDifference(artifact="<archive>", kind="membership", detail=detail)
             ],
         )
 
@@ -87,19 +95,31 @@ def compare_release_archives(left: Path, right: Path) -> ReproducibilityReport:
 
 
 def _read_archive(path: Path) -> dict[str, bytes]:
-    """Bundle-relative entry name to content, in the archive's own order."""
-    with zipfile.ZipFile(path) as archive:
-        members: dict[str, bytes] = {}
-        for info in archive.infolist():
-            if info.is_dir():
-                continue
-            prefix = f"{ARCHIVE_ROOT_DIR}/"
-            if not info.filename.startswith(prefix):
-                raise ValueError(
-                    f"{path.name} contains an entry outside the bundle root: {info.filename}"
-                )
-            members[info.filename[len(prefix) :]] = archive.read(info)
-        return members
+    """Bundle-relative entry name to content, in the archive's own order.
+
+    A damaged archive fails in several ways, none of them a `ValueError`, so any
+    of them would escape the command's error handling as a traceback. This is
+    the same policy, for the same reasons, that `hosting/releases.py` already
+    applies when it reads a downloaded bundle: whole-file damage raises
+    `BadZipFile`; a corrupt member body raises `zlib.error`, which matters most
+    because the packer deflates every entry; an encrypted member raises
+    `RuntimeError` and an unknown compression method `NotImplementedError`.
+    """
+    try:
+        with zipfile.ZipFile(path) as archive:
+            members: dict[str, bytes] = {}
+            for info in archive.infolist():
+                if info.is_dir():
+                    continue
+                prefix = f"{ARCHIVE_ROOT_DIR}/"
+                if not info.filename.startswith(prefix):
+                    raise ValueError(
+                        f"{path.name} contains an entry outside the bundle root: {info.filename}"
+                    )
+                members[info.filename[len(prefix) :]] = archive.read(info)
+            return members
+    except (zipfile.BadZipFile, zlib.error, RuntimeError, NotImplementedError) as error:
+        raise ValueError(f"{path.name} is not a readable ZIP archive: {error}") from error
 
 
 def _first_difference(left: bytes, right: bytes) -> int:

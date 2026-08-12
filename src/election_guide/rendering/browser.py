@@ -56,8 +56,8 @@ EXPECTED_SCREEN_CONTROL_COUNT = 5
 
 # How long a settle may wait for the page's own work to finish. Every animation
 # the guide declares is a .15s transition (guide-race.css, guide.css), so this
-# is two orders of magnitude of headroom; reaching it means something animates
-# forever, which is a defect to report rather than a capture to retry.
+# is more than ten times the longest of them; reaching it means something
+# animates forever, which is a defect to report rather than a capture to retry.
 SETTLE_TIMEOUT_MS = 2000
 
 # Wait for the page to stop moving, then prove it stopped.
