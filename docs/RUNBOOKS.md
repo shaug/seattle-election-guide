@@ -82,8 +82,8 @@ The recurring workflows differ in profile but share the contract:
   `results-capture-election-night.md`, `results-certified-ingest.md`.
 - **Endorsements** (per election): an unbounded window across many sources with unknown
   publication times. Judgment-heavy, timing-tolerant — cadence belongs to the source registry,
-  and the runbook's weight is in decision criteria. Runbook: planned; it should be written when
-  the 2026 general's collection window opens, from the procedures the primary's collection
+  and the runbook's weight is in decision criteria. Runbook:
+  `endorsement-discovery-sweep.md`, written from the procedures the 2026 primary's collection
   actually followed.
 
 ## Index
@@ -94,4 +94,4 @@ Each runbook's autonomy level is declared in the runbook itself — its single o
 | --------------------------------------------- | ------------------------------------ |
 | `runbooks/results-capture-election-night.md`  | `results_capture_election_night`     |
 | `runbooks/results-certified-ingest.md`        | `results_capture_post_certification` |
-| Endorsement discovery sweep — planned; write at the general's `collection_opens` | `collection_opens` → `refresh` |
+| `runbooks/endorsement-discovery-sweep.md`     | `collection_opens` → `refresh`       |
