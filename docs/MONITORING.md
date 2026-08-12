@@ -30,15 +30,27 @@ Confirmed live against production on 2026-08-11 (Previous 24 hours, 506 total re
 
 - **Request volume and visitors.** 506 requests, 50 visits, 31.82% cache hit rate, 7.5 MB
   transferred.
-- **Status codes.** 2xx 303, 3xx 89, 4xx 107, 5xx 7 — the 3xx bucket is edge-generated redirects
-  (the `/`, slashless-path, legacy-host, and retired-PDF-path redirects in `docs/HOSTING.md`),
-  none of which execute page JavaScript or fire a client beacon.
+- **Status codes**, down to the exact code via `Group by: Edge status code` — not just the 2xx/
+  3xx/4xx/5xx buckets the Traffic overview dashboard shows by default. A 12-hour sample read: 200
+  OK 145, 404 Not Found 72, 307 Temporary Redirect 29, 204 No Content 17, 403 Forbidden 13, 301
+  Moved Permanently 11, 304 Not Modified 2. The 307/301 codes are the edge-generated redirects
+  documented in `docs/HOSTING.md` (the `/`, slashless-path, legacy-host, and retired-PDF-path
+  rules); the 304s are conditional-GET responses from the site's `Cache-Control: public,
+  max-age=0, must-revalidate` policy (`src/election_guide/hosting/pages.py`), not redirects. Both
+  kinds are edge-level responses that never execute page JavaScript or fire a client beacon — the
+  3xx bucket as a whole, not only its redirect share, is something no client beacon can observe.
 - **Top paths**, including non-HTML assets a client beacon cannot observe because no page ever
   renders: `/favicon-32.png` (60), `/robots.txt` (29), `/apple-touch-icon.png` (23),
   `/favicon.ico` (19), `/sitemap.xml` (16), `/og-image.png` (43), alongside HTML paths like `/`
   (110) and `/e/wa-2026-primary/` (63).
-- **Top hosts** (`seattleelections.guide` vs. `www.seattleelections.guide`) and **top client
-  IPs**.
+- **Top hosts** and **top client IPs**. The sample window's top hosts were
+  `seattleelections.guide` (478) and `www.seattleelections.guide` (28) — but `www` is not a
+  documented or intentional site host. It is not in `docs/HOSTING.md`'s custom-domains list, not
+  in the worker's `LEGACY_HOSTS` (`src/election_guide/hosting/pages.py`), and not attached to the
+  Pages project; DNS shows it as a separate, proxied `A` record pointing to a static IP unrelated
+  to `seattle-elections.pages.dev`. Zone analytics counts its traffic because Cloudflare proxies
+  it, not because it's part of this site's hosting configuration — worth a look under the hosting
+  epic (#202/#203), not something this ticket resolves.
 - **Country and device-type breakdown** (Desktop 299, Mobile 207, Tablet 0 in the sample window).
 
 This satisfies the ticket's acceptance criterion directly: request counts for paths and response
