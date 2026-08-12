@@ -357,3 +357,56 @@ waiting: while Cloudflare credentials are rotated, while the Pages project is re
 freeze approaching the seven-day artifact window. While it is unset the `deploy` job never runs, so
 there is no deployment to expire or approve by mistake, and restoring publication takes a deliberate
 settings change rather than a click.
+
+## Credential and hosting ownership
+
+[One-time setup](#one-time-setup) covers standing the deploy path up once. This section covers its
+ongoing custody: everything the live site depends on, who owns it, and how to recover it. There is
+one maintainer today, so every row below has the same owner — the point of writing it down is
+recovery speed under pressure, not division of labor. Election day is the worst possible time to
+discover an expired token or a DNS record nobody remembers configuring.
+
+No secret values live here or anywhere else in this repository. Tokens and account identifiers are
+named by purpose only; their values live in the Cloudflare dashboard and GitHub's encrypted secret
+store, never in git history.
+
+| Dependency | Where it lives | Purpose | Recovery path |
+| --- | --- | --- | --- |
+| Cloudflare account | Cloudflare dashboard | Owns the `seattle-elections` Pages project, the `seattleelections.guide` zone, and the API token below. | Account recovery through Cloudflare support using the maintainer's registered email. |
+| Cloudflare API token | GitHub Actions secret `CLOUDFLARE_API_TOKEN` | Scoped to **Account / Cloudflare Pages / Edit**; authorizes the `wrangler pages deploy` upload in `deploy` (production) and `deploy-pr-preview.yml` (previews). | See [Rotating the Cloudflare API token](#rotating-the-cloudflare-api-token). Until a new token is in place, set `CLOUDFLARE_PAGES_ENABLED` to anything but `true` — see [Kill switch](#kill-switch) — so a broken or revoked token fails closed instead of failing every deploy job loudly. |
+| Cloudflare account ID | GitHub Actions secret `CLOUDFLARE_ACCOUNT_ID` | Identifies which Cloudflare account the token above acts on; required by every `wrangler pages` invocation. | Stable for the account's lifetime. Re-read from the Cloudflare dashboard sidebar and update the secret if the account is ever recreated. |
+| Publication switch | GitHub Actions variable `CLOUDFLARE_PAGES_ENABLED` | The durable kill switch described in [Which one to use](#which-one-to-use). | Not a credential; reset to `true` once the dependency it was protecting is healthy again. |
+| Apex DNS (`seattleelections.guide`) | Cloudflare nameservers | Canonical hostname's DNS and TLS termination; required before Pages can attach a custom domain to it. | Domain registrar account controls which nameservers are authoritative. If Cloudflare nameserver delegation is ever lost, the canonical hostname stops resolving until it is restored — this is the single highest-impact entry in this table. |
+| Apex DNS (`seattle-elections.guide`, legacy) | Cloudflare nameservers | DNS and TLS termination for the hyphenated legacy hostname redirected to canonical — see [Custom domains](#custom-domains). Requires Cloudflare nameservers for the same reason the canonical apex does. | Domain registrar account controls which nameservers are authoritative. Losing this delegation breaks only this hostname's redirect; the canonical hostname is unaffected. |
+| Legacy DNS (`seattle-elections.dobravoda.dev`) | Namecheap | Publishes the CNAME to `seattle-elections.pages.dev` documented in [Custom domains](#custom-domains), keeping the retired hostname's redirect alive. | Namecheap account recovery through the maintainer's registered email. Losing this record breaks the legacy redirect only; the canonical hostname is unaffected. |
+| GitHub `production` environment | Repository Settings → Environments | Carries the required-reviewer and `main`-only branch policy described in [Deployment gate](#deployment-gate). | Repository admin access recreates it from [One-time setup](#one-time-setup) if it is ever deleted. |
+
+### Rotating the Cloudflare API token
+
+1. In the Cloudflare dashboard, create a replacement custom token with the same **Account /
+   Cloudflare Pages / Edit** permission the original carries — see [One-time
+   setup](#one-time-setup).
+2. Update the `CLOUDFLARE_API_TOKEN` GitHub Actions secret with the new value. This takes effect
+   on the next workflow run; nothing else in the repository names the token.
+3. Confirm the rotation before revoking anything: run the **CI** workflow manually on `main`, or
+   wait for the next scheduled preview build, and check that the `deploy` (or preview) job
+   authenticates successfully.
+4. Revoke the old token from the Cloudflare dashboard once step 3 has confirmed the new one works.
+   Revoking first would leave no working token if step 2 had a typo.
+
+If a token is compromised rather than routinely rotated, reverse steps 4 and 1: revoke the
+compromised token immediately, then create and install its replacement. A dead token fails deploys
+loudly; a live compromised one fails silently.
+
+### Rotation milestone
+
+Cloudflare custom API tokens carry no forced expiry unless one is set explicitly at creation, and
+nothing in this repository or GitHub's secret store records whether this project's token has one —
+that detail lives only in the Cloudflare dashboard. Confirm it there before the first scheduled
+review; if an expiry is set, move the milestone below to precede it. Absent a known expiry, or
+until it is confirmed, rotation should not wait for a compromise: a recurring annual review is tracked
+as a GitHub milestone due one year from the token's creation date (2026-07-21), with a tracking
+issue attached so the review is not silently missed: [Cloudflare API token rotation review
+2027](https://github.com/shaug/seattle-election-guide/milestone/6), tracked by issue
+[#365](https://github.com/shaug/seattle-election-guide/issues/365). Closing that issue and rolling
+the milestone forward one year is part of completing the rotation.
