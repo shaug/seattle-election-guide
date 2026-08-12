@@ -155,6 +155,30 @@ def test_every_retrospective_milestone_references_the_checklist() -> None:
         assert milestone.reference == "docs/POST_ELECTION_RETROSPECTIVE.md"
 
 
+def test_the_general_endorsement_windows_reference_the_discovery_sweep_runbook() -> None:
+    """The sweep is one procedure spanning three milestones (issue 292).
+
+    `collection_opens` opens the window and each `refresh` re-runs it, so all
+    three hand their work to the same runbook rather than to the CLI reference
+    for `collect refresh` alone.
+    """
+    calendar = read_election_calendar(CALENDAR_PATH)
+
+    windows = [
+        item
+        for item in calendar.election_milestones("wa-2026-general")
+        if item.kind in {"collection_opens", "refresh"}
+    ]
+    assert [item.id for item in windows] == [
+        "collection-opens",
+        "refresh-mid-ballot",
+        "refresh-final",
+    ]
+    for milestone in windows:
+        assert milestone.workflow == "collect refresh"
+        assert milestone.reference == "docs/runbooks/endorsement-discovery-sweep.md"
+
+
 def test_committed_milestone_references_point_at_existing_documents() -> None:
     calendar = read_election_calendar(CALENDAR_PATH)
 

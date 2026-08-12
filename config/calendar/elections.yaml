@@ -92,7 +92,7 @@ milestones:
     kind: collection_opens
     offset_days: -56
     workflow: collect refresh
-    reference: docs/COLLECTION.md
+    reference: docs/runbooks/endorsement-discovery-sweep.md
   - election_id: wa-2026-general
     id: ballots-mail
     kind: ballots_mail
@@ -110,13 +110,13 @@ milestones:
     kind: refresh
     offset_days: -11
     workflow: collect refresh
-    reference: docs/COLLECTION.md
+    reference: docs/runbooks/endorsement-discovery-sweep.md
   - election_id: wa-2026-general
     id: refresh-final
     kind: refresh
     offset_days: -4
     workflow: collect refresh
-    reference: docs/COLLECTION.md
+    reference: docs/runbooks/endorsement-discovery-sweep.md
   - election_id: wa-2026-general
     id: election-day
     kind: election_day
