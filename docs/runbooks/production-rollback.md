@@ -54,6 +54,14 @@ continuity risk #227 exists to record; it is not resolved here.
 
 - **`gh` authenticated, and the ability to approve the `production` environment**, for path B only.
 
+- **`CLOUDFLARE_PAGES_ENABLED` set to exactly `true`**, for path B only. The `deploy` job is
+  guarded on `vars.CLOUDFLARE_PAGES_ENABLED == 'true'`, so with the switch off a re-run completes
+  green with `deploy` skipped outright and no approval is ever queued. Check it before you start:
+
+  ```bash
+  gh variable list | grep CLOUDFLARE_PAGES_ENABLED
+  ```
+
 - **Nothing else in flight.** A production deployment waiting for approval will publish whatever it
   carries the moment someone approves it, which may undo the rollback you are about to perform.
   Check the repository's Actions page and reject anything queued before you start.
@@ -71,11 +79,13 @@ Use **path B** only when path A cannot reach the state you need:
 - the known-good state is a commit that was never deployed to production — a fresh revert, for
   example;
 - the target deployment has aged out of the retained deployment history; or
-- `CLOUDFLARE_PAGES_ENABLED` is unset and you want publication to resume through the normal gate
-  rather than as an alias re-point.
+- publication is frozen and you want it to resume through the normal gate rather than to leave
+  production standing on an alias re-point.
 
-Note the asymmetry in the last case: path A works while the kill switch is off, because it happens
-entirely inside Cloudflare and never involves GitHub Actions. Path B does not.
+Note the asymmetry in that last case, because it cuts the opposite way from how it reads. Path A
+works *while* the kill switch is off: it happens entirely inside Cloudflare and never involves
+GitHub Actions. Path B does not work at all until the switch is back on — restoring it is path B's
+first step, not a detail.
 
 **Expected time to recover.**
 
@@ -135,27 +145,39 @@ This path publishes a chosen commit through the normal CI-and-approval route, wh
 mechanism `docs/HOSTING.md` already names: "Re-running CI on the exact commit you want is the
 dependable way to produce a deployment for it."
 
-1. Find the CI run for the target commit:
+1. **Confirm publication is enabled.** The `deploy` job is guarded on
+   `vars.CLOUDFLARE_PAGES_ENABLED == 'true'`. If the kill switch is off, turn it back on before
+   re-running anything — otherwise every step below appears to succeed and publishes nothing:
+
+   ```bash
+   gh variable list | grep CLOUDFLARE_PAGES_ENABLED
+   gh variable set CLOUDFLARE_PAGES_ENABLED --body true   # only if it is not already `true`
+   ```
+
+2. Find the CI run for the target commit:
 
    ```bash
    gh run list --workflow=ci.yml --branch main --limit 20 \
      --json databaseId,headSha,conclusion,displayTitle
    ```
 
-2. Re-run it. This rebuilds deterministically at that commit and stages a fresh artifact, which
+3. Re-run it. This rebuilds deterministically at that commit and stages a fresh artifact, which
    matters because Actions artifacts expire after seven days:
 
    ```bash
    gh run rerun <run-id>
    ```
 
-3. When `check` completes, the `deploy` job queues in a waiting state. Approve it from the workflow
+4. When `check` completes, the `deploy` job queues in a waiting state. Approve it from the workflow
    run page. Approving is deliberately a human moment; do it from the run page rather than
    scripting it.
 
-4. Verify, using [Verification](#verification) below.
+   If no approval prompt appears and the run simply goes green, `deploy` was skipped rather than
+   queued. Return to step 1 — the guard is the only thing that skips it.
 
-5. Revert on `main` — [Step 2](#step-2--revert-on-main), unless the commit you just published *is*
+5. Verify, using [Verification](#verification) below.
+
+6. Revert on `main` — [Step 2](#step-2--revert-on-main), unless the commit you just published *is*
    the head of `main`.
 
 **When O4 lands**, this path collapses into a single `workflow_dispatch` with a `git_ref` input
@@ -185,11 +207,17 @@ The rollback is not done until all three of these hold:
      | jq -r '.current_election_id as $c | .elections[] | select(.election_id == $c) | .git_commit'
    ```
 
-2. **The guide actually serves.** A manifest is not a page:
+2. **The public routes actually serve.** A manifest is not a page, and the route contract in
+   `docs/HOSTING.md` is wider than the guide itself:
 
    ```bash
-   curl -sS -o /dev/null -w '%{http_code}\n' https://seattleelections.guide/e/
+   for p in / /e/ /about/ /calendar.ics; do
+     printf '%s -> ' "$p"
+     curl -sS -o /dev/null -w '%{http_code}\n' "https://seattleelections.guide$p"
+   done
    ```
+
+   Expect `307` for `/` — it redirects to the current election — and `200` for the other three.
 
 3. **The dashboard agrees.** The **Production** panel names the deployment you promoted. A
    disagreement between the panel and check 1 means the custom domain is not following the
@@ -202,9 +230,11 @@ you a rollback drifted back.
 
 Stop and get help rather than deploying repeatedly when:
 
-- **The manifest still reports the wrong commit** after two checks a few minutes apart. The
-  deployment is not the problem — suspect the custom domain binding or an edge cache. Repeated
-  rollbacks will not fix either, and each one adds noise to the deployment log.
+- **The manifest still reports the wrong commit** after two checks a few minutes apart. On path B,
+  check first whether `deploy` was skipped rather than queued — a kill switch that is off produces
+  exactly this symptom and a green run to go with it. If `deploy` genuinely ran, the deployment is
+  not the problem: suspect the custom domain binding or an edge cache. Repeated rollbacks will not
+  fix either, and each one adds noise to the deployment log.
 - **The target deployment's manifest does not carry the commit you expected.** Do not promote it.
   Find the deployment that does, or use path B.
 - **No deployment in the retained history carries a good commit.** Path A has nothing to reach for;
@@ -242,9 +272,14 @@ bound rather than a duration: **propagation is not the cost.** Time to recover i
 human noticing, deciding, opening the dashboard, and identifying the right row. Budget a couple of
 minutes end to end and treat the promotion itself as instantaneous.
 
-The 40-second figure is the deliberate gap between the two legs, which included running all four
+The 40-second figure is the deliberate gap between the two legs, which included running all three
 verification checks. It is not a recovery time; it is evidence that the checks themselves are fast
 enough to run before declaring the rollback done.
+
+Check 2 was widened to the full route contract as a result of this rehearsal. The rehearsal probed
+`/`, `/e/`, `/about/`, and `/calendar.ics` and got `307`, `200`, `200`, `200`; the check as first
+drafted asked only for `/e/`, which would not have noticed a rollback that broke the calendar feed
+or the About page.
 
 **Observations.**
 
