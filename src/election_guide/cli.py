@@ -232,21 +232,18 @@ def hosting_bundle_hash(
     bundle_dir: Annotated[Path, typer.Argument(exists=True, file_okay=False, readable=True)],
 ) -> None:
     """Print the `bundle_sha256` a historical election must declare for this bundle."""
+    try:
+        if not (bundle_dir / "release-status.json").is_file():
+            raise ValueError(
+                f"{bundle_dir} has no release-status.json; it does not look like a release bundle"
+            )
+        digest = bundle_hash(bundle_dir)
+    except (OSError, ValueError) as error:
+        typer.echo(f"hosting bundle-hash failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
     # Bare digest on stdout: the value exists to be pasted into `site.yaml` or
     # captured in a shell substitution, so nothing else is printed to standard
     # output. Reads the tree and writes nothing.
-    if not (bundle_dir / "release-status.json").is_file():
-        typer.echo(
-            f"hosting bundle-hash failed: {bundle_dir} has no release-status.json; "
-            "it does not look like a release bundle",
-            err=True,
-        )
-        raise typer.Exit(code=1)
-    try:
-        digest = bundle_hash(bundle_dir)
-    except OSError as error:
-        typer.echo(f"hosting bundle-hash failed: {error}", err=True)
-        raise typer.Exit(code=1) from error
     typer.echo(digest)
 
 
