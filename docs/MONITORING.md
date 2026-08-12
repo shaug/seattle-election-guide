@@ -34,8 +34,10 @@ Confirmed live against production on 2026-08-11 (Previous 24 hours, 506 total re
   3xx/4xx/5xx buckets the Traffic overview dashboard shows by default. A 12-hour sample read: 200
   OK 145, 404 Not Found 72, 307 Temporary Redirect 29, 204 No Content 17, 403 Forbidden 13, 301
   Moved Permanently 11, 304 Not Modified 2. The 307/301 codes are the edge-generated redirects
-  documented in `docs/HOSTING.md` (the `/`, slashless-path, legacy-host, and retired-PDF-path
-  rules); the 304s are conditional-GET responses from the site's `Cache-Control: public,
+  documented in `docs/HOSTING.md` (`/` is a 307 to the current election; legacy hosts and the
+  retired PDF path are 301s). Slashless paths are a separate redirect rule and a permanent `308`
+  rather than a 307 or 301 — none appeared in this particular sample window. The 304s are
+  conditional-GET responses from the site's `Cache-Control: public,
   max-age=0, must-revalidate` policy (`src/election_guide/hosting/pages.py`), not redirects. Both
   kinds are edge-level responses that never execute page JavaScript or fire a client beacon — the
   3xx bucket as a whole, not only its redirect share, is something no client beacon can observe.
@@ -49,8 +51,9 @@ Confirmed live against production on 2026-08-11 (Previous 24 hours, 506 total re
   in the worker's `LEGACY_HOSTS` (`src/election_guide/hosting/pages.py`), and not attached to the
   Pages project; DNS shows it as a separate, proxied `A` record pointing to a static IP unrelated
   to `seattle-elections.pages.dev`. Zone analytics counts its traffic because Cloudflare proxies
-  it, not because it's part of this site's hosting configuration — worth a look under the hosting
-  epic (#202/#203), not something this ticket resolves.
+  it, not because it's part of this site's hosting configuration — worth a look under #227 (O19,
+  "Document credential and hosting ownership," part of epic #207), which already scopes DNS
+  dependencies; not something this ticket resolves.
 - **Country and device-type breakdown** (Desktop 299, Mobile 207, Tablet 0 in the sample window).
 
 This satisfies the ticket's acceptance criterion directly: request counts for paths and response
