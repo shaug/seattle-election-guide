@@ -1530,9 +1530,17 @@ def _makefile_staging_surfaces() -> list[_StagingSurface]:
 
 
 def _workflow_staging_surfaces() -> list[_StagingSurface]:
-    """Every workflow step that stages, across every workflow rather than a named few."""
+    """Every workflow step that stages, across every workflow rather than a named few.
+
+    Both extensions, because GitHub Actions runs `.yaml` and `.yml` alike: a
+    surface this missed would be invisible here and still stage in a runner,
+    which is the one failure direction a discovery test must not have.
+    """
+    workflow_dir = PROJECT_ROOT / ".github/workflows"
     surfaces: list[_StagingSurface] = []
-    for path in sorted((PROJECT_ROOT / ".github/workflows").glob("*.yml")):
+    for path in sorted(
+        path for suffix in ("*.yml", "*.yaml") for path in workflow_dir.glob(suffix)
+    ):
         workflow = yaml.load(path.read_text(encoding="utf-8"), Loader=yaml.BaseLoader)
         for job in workflow.get("jobs", {}).values():
             for step in job.get("steps", []):
@@ -1641,9 +1649,11 @@ def test_pr_preview_workflow_is_label_gated_fork_safe_and_head_bound() -> None:
     )
     assert '--expected-git-commit "$HEAD_SHA"' in stage_step["run"]
     # Any election not built from source above is resolved from its published
-    # release, which reads GitHub with the same read-only job token CI uses
-    # (issues 215 and 361). The token is bounded by this job's `contents: read`
-    # and is not a deployment credential, so it does not weaken the fork guard.
+    # release, which reads GitHub with the same automatic job token CI uses
+    # (issues 215 and 361). It is scoped by this job's own `permissions:` block,
+    # grants nothing outside this repository, and is not a Cloudflare
+    # credential, so it does not weaken the fork guard asserted above -- that
+    # guard, not the token's scope, is what keeps a fork out of this job.
     assert "--released-bundle-dir dist/released-bundles" in stage_step["run"]
     assert stage_step["env"] == {"GH_TOKEN": "${{ github.token }}"}
     # Staging is verified before anything is uploaded, exactly as production is.

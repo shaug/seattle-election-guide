@@ -103,9 +103,11 @@ jobs:
             --expected-git-commit "$HEAD_SHA"
         env:
           # Downloading a historical bundle reads a published release. The
-          # read-only job token, bounded by this job's `contents: read` -- not a
-          # deployment credential, and the same token the comment step below
-          # already uses.
+          # automatic job token, scoped by this job's `permissions:` block
+          # above, of which the download needs only `contents: read`. It is not
+          # a Cloudflare credential and grants nothing outside this repository;
+          # what keeps a fork out of this job is the head-repository guard, not
+          # this token's scope. The comment step below already carries it.
           GH_TOKEN: ${{ github.token }}
       # The alias is derived from the pull request number rather than the branch
       # name, so it is stable across pushes and immune to the mangling real
