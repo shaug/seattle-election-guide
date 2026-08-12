@@ -37,6 +37,7 @@ from election_guide.evidence.storage import (
     verify_capture,
 )
 from election_guide.hosting import (
+    bundle_hash,
     published_release_tags,
     read_site_manifest,
     stage_pages_site,
@@ -224,6 +225,26 @@ def hosting_verify(
         f"Pages site: verified ({len(result.elections)} elections; "
         f"current {result.current_election_id}; {len(result.assets)} assets)"
     )
+
+
+@hosting_app.command("bundle-hash")
+def hosting_bundle_hash(
+    bundle_dir: Annotated[Path, typer.Argument(exists=True, file_okay=False, readable=True)],
+) -> None:
+    """Print the `bundle_sha256` a historical election must declare for this bundle."""
+    try:
+        if not (bundle_dir / "release-status.json").is_file():
+            raise ValueError(
+                f"{bundle_dir} has no release-status.json; it does not look like a release bundle"
+            )
+        digest = bundle_hash(bundle_dir)
+    except (OSError, ValueError) as error:
+        typer.echo(f"hosting bundle-hash failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    # Bare digest on stdout: the value exists to be pasted into `site.yaml` or
+    # captured in a shell substitution, so nothing else is printed to standard
+    # output. Reads the tree and writes nothing.
+    typer.echo(digest)
 
 
 @hosting_app.command("verify-releases")

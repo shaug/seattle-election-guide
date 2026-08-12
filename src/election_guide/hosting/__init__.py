@@ -8,6 +8,7 @@ from election_guide.hosting.models import (
 )
 from election_guide.hosting.pages import (
     StagedPagesSite,
+    bundle_hash,
     read_site_manifest,
     stage_pages_site,
     verify_staged_pages_site,
@@ -25,6 +26,7 @@ __all__ = [
     "PublishedElection",
     "SiteManifest",
     "StagedPagesSite",
+    "bundle_hash",
     "download_release_archive",
     "materialize_released_bundle",
     "published_release_tags",

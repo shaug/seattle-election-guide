@@ -18,9 +18,13 @@ import yaml
 from typer.testing import CliRunner
 
 from election_guide import cli
-from election_guide.hosting import releases, stage_pages_site, verify_staged_pages_site
+from election_guide.hosting import (
+    bundle_hash,
+    releases,
+    stage_pages_site,
+    verify_staged_pages_site,
+)
 from election_guide.hosting.models import PublishedElection, SiteManifest
-from election_guide.hosting.pages import _bundle_hash  # pyright: ignore[reportPrivateUsage]
 from election_guide.hosting.releases import (
     RELEASE_QUERY_LIMIT,
     _extract_bundle,  # pyright: ignore[reportPrivateUsage]
@@ -247,7 +251,7 @@ def test_two_election_manifest_stages_and_verifies_from_a_published_release(
     current, older = _write_archive_bundles(tmp_path / "bundles")
     archive = _released_archive(older, "general.1", tmp_path / "published")
     manifest_path = _write_site_manifest(
-        tmp_path, current_first=True, older_bundle_sha256=_bundle_hash(older)
+        tmp_path, current_first=True, older_bundle_sha256=bundle_hash(older)
     )
     monkeypatch.setattr(releases, "download_release_archive", _delivering_download(archive))
     output = tmp_path / "site"
@@ -273,7 +277,7 @@ def test_a_tampered_historical_archive_fails_the_build(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     current, older = _write_archive_bundles(tmp_path / "bundles")
-    pinned = _bundle_hash(older)
+    pinned = bundle_hash(older)
     (older / "guide" / "guide.html").write_bytes(b"tampered\n")
     archive = _released_archive(older, "general.1", tmp_path / "published")
     manifest_path = _write_site_manifest(tmp_path, current_first=True, older_bundle_sha256=pinned)
@@ -295,7 +299,7 @@ def test_tampering_that_also_rewrites_the_release_manifest_is_caught_by_the_pin(
 ) -> None:
     """The archive's own manifest cannot vouch for it, which is why the pin exists."""
     current, older = _write_archive_bundles(tmp_path / "bundles")
-    pinned = _bundle_hash(older)
+    pinned = bundle_hash(older)
     tampered = b"tampered\n"
     (older / "guide" / "guide.html").write_bytes(tampered)
     manifest_path_in_bundle = older / "release-manifest.json"
@@ -324,7 +328,7 @@ def test_a_missing_historical_archive_fails_the_build(
 ) -> None:
     current, older = _write_archive_bundles(tmp_path / "bundles")
     manifest_path = _write_site_manifest(
-        tmp_path, current_first=True, older_bundle_sha256=_bundle_hash(older)
+        tmp_path, current_first=True, older_bundle_sha256=bundle_hash(older)
     )
 
     def _failing_gh(command: list[str], **kwargs: Any) -> subprocess.CompletedProcess[str]:
@@ -407,7 +411,7 @@ def test_the_cli_reports_an_unreadable_archive_without_a_traceback(
     archive = published / release_archive_name("general.1")
     archive.write_bytes(b"404: Not Found\n")
     manifest_path = _write_site_manifest(
-        tmp_path, current_first=True, older_bundle_sha256=_bundle_hash(older)
+        tmp_path, current_first=True, older_bundle_sha256=bundle_hash(older)
     )
     monkeypatch.setattr(releases, "download_release_archive", _delivering_download(archive))
 
@@ -471,3 +475,70 @@ def test_an_encrypted_archive_member_fails_with_a_clear_message(tmp_path: Path) 
 
     with pytest.raises(ValueError, match="is not a readable ZIP archive"):
         _extract_bundle(archive_path, tmp_path / "out", declaration)
+
+
+def test_the_cli_prints_the_pin_a_historical_election_must_declare(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Issue 270: the one value `site.yaml` must carry, obtainable without private API."""
+    current, older = _write_archive_bundles(tmp_path / "bundles")
+    archive = _released_archive(older, "general.1", tmp_path / "published")
+
+    printed = CliRunner().invoke(cli.app, ["hosting", "bundle-hash", str(older)])
+
+    assert printed.exit_code == 0
+    pin = printed.output.strip()
+    assert re.fullmatch(r"[0-9a-f]{64}", pin), pin
+    manifest_path = _write_site_manifest(tmp_path, current_first=True, older_bundle_sha256=pin)
+    monkeypatch.setattr(releases, "download_release_archive", _delivering_download(archive))
+
+    result = stage_pages_site(
+        manifest_path,
+        {CURRENT_BUNDLE_ID: current},
+        tmp_path / "site",
+        expected_current_git_commit=COMMIT,
+        released_bundle_dir=tmp_path / "released",
+    )
+
+    assert result.election_paths == (
+        tmp_path / "site" / "e" / CURRENT_ID,
+        tmp_path / "site" / "e" / OLDER_ID,
+    )
+
+
+def test_the_cli_refuses_a_directory_that_is_not_a_release_bundle(tmp_path: Path) -> None:
+    """A pin computed from the wrong tree is wrong silently, which is worse than no pin."""
+    elsewhere = tmp_path / "elsewhere"
+    elsewhere.mkdir()
+    (elsewhere / "notes.txt").write_text("nothing to do with a release", encoding="utf-8")
+
+    result = CliRunner().invoke(cli.app, ["hosting", "bundle-hash", str(elsewhere)])
+
+    assert result.exit_code == 1
+    assert "hosting bundle-hash failed" in result.output
+    assert "release-status.json" in result.output
+
+
+def test_a_mismatched_pin_names_both_the_declared_and_the_computed_digest(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Issue 270: a mismatch that withholds what it found leaves nothing to act on."""
+    current, older = _write_archive_bundles(tmp_path / "bundles")
+    computed = bundle_hash(older)
+    archive = _released_archive(older, "general.1", tmp_path / "published")
+    declared = "d" * 64
+    manifest_path = _write_site_manifest(tmp_path, current_first=True, older_bundle_sha256=declared)
+    monkeypatch.setattr(releases, "download_release_archive", _delivering_download(archive))
+
+    with pytest.raises(ValueError) as error:
+        stage_pages_site(
+            manifest_path,
+            {CURRENT_BUNDLE_ID: current},
+            tmp_path / "site",
+            released_bundle_dir=tmp_path / "released",
+        )
+
+    message = str(error.value)
+    assert "bundle hash differs" in message
+    assert declared in message
+    assert computed in message

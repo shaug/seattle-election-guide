@@ -175,6 +175,26 @@ it: whatever could replace the artifacts could replace their recorded hashes too
 not control. Archive entries outside the bundle root, or with parent-directory segments, are
 rejected before anything is written.
 
+### Computing the pin
+
+`hosting bundle-hash` prints that value for one bundle directory, and prints nothing else, so it can
+be pasted into `site.yaml` or captured directly. Compute it from the published archive rather than
+from a local build directory: the archive is what staging downloads, and a local directory can pick
+up files the archive never carried.
+
+```bash
+gh release download 2026-primary.2 \
+  --pattern 'seattle-election-guide-*.zip' --dir dist/pin
+unzip -q dist/pin/seattle-election-guide-2026-primary.2.zip -d dist/pin
+uv run election-guide hosting bundle-hash dist/pin/seattle-election-guide
+```
+
+The digest covers every file in the tree, each path and body length-prefixed so two different trees
+cannot concatenate to the same bytes. The command reads the tree and writes nothing; it refuses a
+directory with no `release-status.json`, because a pin computed from the wrong tree is wrong
+silently. When a declared pin and the downloaded archive disagree, staging names both digests —
+`expected <declared>, found <computed>` — so the difference can be reviewed rather than guessed at.
+
 ## Local staging and preview
 
 Build the audited release as described in [RELEASE.md](RELEASE.md), then stage it:
