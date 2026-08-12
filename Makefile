@@ -1,4 +1,4 @@
-.PHONY: sync format check check-results check-js check-changelog changelog types test release-verify hosting-stage hosting-serve hosting-deploy
+.PHONY: sync format check check-results check-js check-changelog check-release-reproducible changelog types test release-verify hosting-stage hosting-serve hosting-deploy
 
 sync:
 	uv sync --frozen
@@ -63,6 +63,29 @@ test:
 
 release-verify:
 	uv run election-guide release verify data/releases/wa-2026-primary/source-decisions.yaml
+
+# The same gate CI runs, runnable here (issue #367). It is deliberately not part
+# of `make check`: `release build` refuses a dirty checkout, so on the tree a
+# contributor actually runs `make check` against it could only fail for a reason
+# that has nothing to do with their diff. Run it on a clean tree before pushing
+# -- CONTRIBUTING.md, Local checks, says when that is worth doing.
+#
+# The build timestamp comes from the commit, exactly as CI derives it, because
+# `generated_at` is recorded in the bundle, so two different values would
+# produce two legitimately different releases.
+check-release-reproducible:
+	rm -rf dist/reproducibility-a dist/reproducibility-b
+	uv run election-guide release build data/releases/wa-2026-primary/source-decisions.yaml \
+		--release-version 2026-primary.2 \
+		--generated-at "$$(git show -s --format=%cI HEAD)" \
+		--output-dir dist/reproducibility-a
+	uv run election-guide release build data/releases/wa-2026-primary/source-decisions.yaml \
+		--release-version 2026-primary.2 \
+		--generated-at "$$(git show -s --format=%cI HEAD)" \
+		--output-dir dist/reproducibility-b
+	uv run election-guide release compare \
+		dist/reproducibility-a/seattle-election-guide-2026-primary.2.zip \
+		dist/reproducibility-b/seattle-election-guide-2026-primary.2.zip
 
 # Only the current election is built from source; every other declared election
 # resolves from the release that published it, exactly as CI stages (issue 271,

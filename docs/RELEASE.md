@@ -74,8 +74,47 @@ contains:
 - release notes that state source-access failures, incomplete coverage, review counts, data time,
   and code revision.
 
-The ZIP uses stable entry ordering, timestamps, permissions, and compression settings. Repeating a
-build with identical inputs produces identical archive bytes.
+The ZIP uses stable entry ordering, timestamps, permissions, and compression settings.
+
+## Reproducibility
+
+Repeating a build with identical inputs produces the same release. That is checked, on every pull
+request and on demand locally, by building twice with one `--generated-at` and comparing the two
+archives:
+
+```bash
+make check-release-reproducible
+```
+
+"The same release" does not mean the same bytes everywhere, and until issue #367 rewrote this gate
+it assumed it did. Every artifact the pipeline *computes* — the canonical data, the guide HTML, the
+manifests, the release status, the rendering validation report — is a pure function of its inputs
+and is compared byte for byte, exactly as before. The two screenshots are not computed but
+*rasterized*, and the one way they are observed to differ is now understood exactly.
+
+The guide's vertical rhythm is rem-derived, so most boxes have fractional CSS-pixel heights and sit
+at fractional offsets — `.site-band` measures 43.2188px tall, and everything beneath inherits that
+fraction. Painting an edge that falls between two device pixels is not guaranteed to snap the same
+way on every headless-Chrome renderer-process launch. That is the finding of issue #341, which #343
+fixed for one element by pinning it to a whole pixel; pinning does not generalize, because the
+fraction accumulates from the top of the page, so a child with a whole height still starts at a
+fractional origin. Verified against the real runner: pinning `.segmented-control` and
+`.filter-select` to whole pixels left the divergence bit-for-bit unchanged.
+
+So a screenshot's contract is the shape of the difference, not a pixel budget: **two captures are
+the same capture when every pixel that differs is explained by an edge snapping one device pixel
+vertically.** On the real divergence, 3306 of 3326 differing pixels are explained that way; the 20
+that are not are the corner antialiasing of two rounded rectangles that moved with it. A capture
+that reflowed a line, moved a card, lost a tile, failed to decode, or drew a control in a different
+state changes which pixels exist rather than which row an edge rounds to, so it fails here exactly
+as a byte comparison would have. The comparison's own known gap — vertical movement of more than one
+pixel through rows holding the same colours — is stated in `release/reproducibility.py`, along with
+what else covers it. Both ceilings are ratchets: a pull request may tighten them, never loosen them
+(AGENTS.md, Working rules). `release compare` names the artifact that moved and how, rather than
+reporting an offset into the ZIP.
+
+This check requires a clean checkout, because `release build` does; it is therefore not part of
+`make check` (CONTRIBUTING.md, Local checks).
 
 Inspect the desktop and mobile screenshots, all machine validation reports, and
 `RELEASE_NOTES.md`. Test the archive before publication:

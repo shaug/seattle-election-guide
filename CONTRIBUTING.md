@@ -25,6 +25,39 @@ models (docs/FRONTEND.md, The data contract). Run it after changing anything
 the payload publishes and commit the result; `make check` fails while the
 committed declarations and the models disagree.
 
+### One gate `make check` does not run
+
+CI builds the primary release twice and checks that both builds are the same
+release. `make check` does not, and cannot: `election-guide release build`
+refuses a dirty checkout, so on the tree you actually run `make check` against
+it would fail for a reason unrelated to your diff. Run it yourself, on a clean
+tree, before pushing anything that touches rendering, templates, CSS, the client
+modules, or the release builder:
+
+```bash
+make check-release-reproducible
+```
+
+It commits nothing and takes about half a minute. Nothing else here needs it —
+a docs-only change cannot move the release build.
+
+**When CI fails this gate.** The failure names the artifact that differs and how
+far it moved. Two shapes mean different things:
+
+- A *computed* artifact (`data/…`, the guide HTML, a manifest, the validation
+  report) differs. Something in the pipeline is not a pure function of its
+  inputs — an unordered iteration, a clock read, a filesystem order. This is a
+  real defect and reproduces locally with the command above.
+- A *screenshot* differs in a way a one-device-pixel snap does not explain. The
+  page moved, not the renderer: something reflowed, changed state, failed to
+  draw, or resized. This was once the whole gate's failure mode, reported only
+  as a byte offset into the ZIP (issue #367); it now reports how many
+  pixels are unexplained and where. What is tolerated, and the one gap the
+  comparison knows it has, are stated in docs/RELEASE.md, Reproducibility.
+
+Neither is a flake to re-run past. If a re-run goes green without a change,
+say so on the pull request rather than merging on the second attempt.
+
 ## Pull requests
 
 - Link the issue that defines the scope.
