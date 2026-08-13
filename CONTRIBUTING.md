@@ -25,6 +25,33 @@ models (docs/FRONTEND.md, The data contract). Run it after changing anything
 the payload publishes and commit the result; `make check` fails while the
 committed declarations and the models disagree.
 
+### One gate `make check` does not run
+
+CI builds the primary release twice and checks that both builds are the same
+release. `make check` does not, and cannot: `election-guide release build`
+refuses a dirty checkout, so on the tree you actually run `make check` against
+it would fail for a reason unrelated to your diff. Run it yourself, on a clean
+tree, before pushing anything that touches rendering, templates, CSS, the client
+modules, or the release builder:
+
+```bash
+make check-release-reproducible
+```
+
+It commits nothing and takes about half a minute. Nothing else here needs it —
+a docs-only change cannot move the release build.
+
+**When CI fails this gate.** `diff -rq` names the artifact whose bytes differ
+between the two builds; if it passes and `cmp` still fails, the difference is in
+the archive container rather than its contents. Every artifact is held to exact
+bytes, so a difference means something in the pipeline is not a pure function of
+its inputs — an unordered iteration, a clock read, a filesystem order — or, if
+it is one of the two screenshots, that the rendered page itself moved. It
+reproduces locally with the command above, which is the same target CI runs.
+
+It is not a flake to re-run past. If a re-run goes green without a change,
+say so on the pull request rather than merging on the second attempt.
+
 ## Pull requests
 
 - Link the issue that defines the scope.

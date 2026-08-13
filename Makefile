@@ -1,4 +1,4 @@
-.PHONY: sync format check check-results check-js check-changelog changelog types test release-verify hosting-stage hosting-serve hosting-deploy
+.PHONY: sync format check check-results check-js check-changelog check-release-reproducible changelog types test release-verify hosting-stage hosting-serve hosting-deploy
 
 sync:
 	uv sync --frozen
@@ -63,6 +63,37 @@ test:
 
 release-verify:
 	uv run election-guide release verify data/releases/wa-2026-primary/source-decisions.yaml
+
+# The release-reproducibility gate, defined once here and invoked by CI, the way
+# check-js and check-changelog already are (issue #367). Two builds of one
+# commit must produce one release.
+#
+# Two comparisons, because they cover different things. `diff -rq` walks the
+# unpacked bundles and names the artifact that differs -- which is the whole
+# reason this replaced a bare `cmp`, whose single offset into compressed data
+# named nothing. `cmp` then holds the archive itself to its exact bytes,
+# covering what the bundles cannot show: entry order, timestamps, permissions,
+# and compression settings.
+#
+# Not part of `make check`: `release build` refuses a dirty checkout, so on the
+# tree a contributor runs `make check` against it could only fail for a reason
+# unrelated to their diff (CONTRIBUTING.md, Local checks). CI runs this exact
+# target with no arguments, so what it checks and what a contributor checks
+# cannot drift apart. The build timestamp comes from the commit, exactly as CI
+# derives it, and is read once for both builds: `generated_at` is recorded in
+# the bundle, so two reads straddling a concurrent commit would report a
+# reproducibility failure that is not one.
+check-release-reproducible:
+	rm -rf dist/reproducibility-a dist/reproducibility-b
+	generated_at="$$(git show -s --format=%cI HEAD)"; \
+	for build in a b; do \
+		uv run election-guide release build data/releases/wa-2026-primary/source-decisions.yaml \
+			--release-version 2026-primary.2 \
+			--generated-at "$$generated_at" \
+			--output-dir "dist/reproducibility-$$build" || exit 1; \
+	done
+	diff -rq dist/reproducibility-a/bundle dist/reproducibility-b/bundle
+	cmp dist/reproducibility-a/seattle-election-guide-2026-primary.2.zip dist/reproducibility-b/seattle-election-guide-2026-primary.2.zip
 
 # Only the current election is built from source; every other declared election
 # resolves from the release that published it, exactly as CI stages (issue 271,

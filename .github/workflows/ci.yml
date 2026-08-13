@@ -65,33 +65,26 @@ jobs:
           GH_TOKEN: ${{ github.token }}
       - name: Verify reproducible primary release inputs
         run: uv run election-guide release verify data/releases/wa-2026-primary/source-decisions.yaml
+      # The gate itself is defined once, in the Makefile, and invoked here with
+      # no arguments the same way check-js and check-changelog are (issue #367),
+      # so the procedure CI runs and the one a contributor runs cannot drift
+      # apart. The staging step below consumes the first of its two builds.
       - name: Build and verify deterministic primary release
         run: |
-          SITE_UPDATED_AT="$(git show -s --format=%cI "$GITHUB_SHA")"
-          uv run election-guide release build data/releases/wa-2026-primary/source-decisions.yaml \
-              --release-version 2026-primary.2 \
-              --generated-at "$SITE_UPDATED_AT" \
-            --output-dir dist/ci-release-a
-          uv run election-guide release build data/releases/wa-2026-primary/source-decisions.yaml \
-              --release-version 2026-primary.2 \
-              --generated-at "$SITE_UPDATED_AT" \
-            --output-dir dist/ci-release-b
-          cmp \
-            dist/ci-release-a/seattle-election-guide-2026-primary.2.zip \
-            dist/ci-release-b/seattle-election-guide-2026-primary.2.zip
-          unzip -t dist/ci-release-a/seattle-election-guide-2026-primary.2.zip
-          unzip -Z1 dist/ci-release-a/seattle-election-guide-2026-primary.2.zip \
+          make check-release-reproducible
+          unzip -t dist/reproducibility-a/seattle-election-guide-2026-primary.2.zip
+          unzip -Z1 dist/reproducibility-a/seattle-election-guide-2026-primary.2.zip \
             | grep -Fx 'seattle-election-guide/validation/rendering/rendering_validation_report.json'
-          unzip -Z1 dist/ci-release-a/seattle-election-guide-2026-primary.2.zip \
+          unzip -Z1 dist/reproducibility-a/seattle-election-guide-2026-primary.2.zip \
             | grep -Fx 'seattle-election-guide/validation/rendering/screenshots/desktop.png'
-          test "$(stat -c '%a' dist/ci-release-a)" = 755
+          test "$(stat -c '%a' dist/reproducibility-a)" = 755
       # Only the current election is built from source above. Any other declared
       # election is resolved from the release that published it, because a
       # historical bundle cannot be rebuilt (docs/HOSTING.md, Historical bundles).
       - name: Stage verified Cloudflare Pages site
         run: |
           uv run election-guide hosting stage config/hosting/site.yaml \
-            --bundle wa-2026-primary-2026-primary.2=dist/ci-release-a/bundle \
+            --bundle wa-2026-primary-2026-primary.2=dist/reproducibility-a/bundle \
             --released-bundle-dir dist/released-bundles \
             --expected-git-commit "$GITHUB_SHA" \
             --output-dir dist/cloudflare-site

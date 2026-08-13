@@ -54,6 +54,43 @@ def find_chrome() -> Path:
 # no longer a Customize button here.
 EXPECTED_SCREEN_CONTROL_COUNT = 5
 
+# How long a settle may wait for the page's own work to finish. Every animation
+# the guide declares is a .15s transition (guide-race.css, guide.css), so this
+# is more than ten times the longest of them; reaching it means something
+# animates forever, which is a defect to report rather than a capture to retry.
+SETTLE_TIMEOUT_MS = 2000
+
+# Wait for the page to stop moving, then prove it stopped.
+#
+# A fixed sleep cannot express this: it is either longer than the work or
+# shorter than it, and on a loaded runner it is shorter. Three conditions have
+# to hold before a capture means anything, and the value this returns is what
+# lets the caller check they did rather than assume it (docs/RENDERING.md).
+_SETTLE_EXPRESSION = (
+    "(async()=>{"
+    "const deadline=new Promise(resolve=>setTimeout("
+    f"()=>resolve('timeout'),{SETTLE_TIMEOUT_MS}));"
+    # Font loading relayouts text under it. The guide ships no @font-face, so
+    # this resolves immediately today; it is here because a screenshot taken
+    # mid-swap is exactly the failure a future webfont would introduce.
+    "const fonts=document.fonts.ready;"
+    # Transitions started by the interaction probe's own clicks are .15s of
+    # easing. Capturing at a fixed 120ms freezes them partway, and where they
+    # land depends on how loaded the machine is.
+    "const animations=Promise.all(document.getAnimations().map("
+    "animation=>animation.finished.catch(()=>{})));"
+    "const settled=Promise.all([fonts,animations]).then(()=>'settled');"
+    "const outcome=await Promise.race([settled,deadline]);"
+    # Two frames, not one: the first commits the style and layout the awaits
+    # above settled, and the second cannot run until that frame was produced.
+    "await new Promise(resolve=>requestAnimationFrame("
+    "()=>requestAnimationFrame(resolve)));"
+    "return JSON.stringify({outcome,running:document.getAnimations()"
+    ".filter(animation=>animation.playState==='running')"
+    ".map(animation=>animation.effect?.target?.className??'?')});"
+    "})()"
+)
+
 
 def render_screenshot(
     html_path: Path,
@@ -78,6 +115,30 @@ def render_screenshot(
                     "--disable-extensions",
                     "--hide-scrollbars",
                     "--no-first-run",
+                    # A capture must never observe a half-drawn frame: draw only
+                    # once every compositor stage has finished, never let the
+                    # new-content timeout draw what is ready over what is not,
+                    # and never reuse a partially rasterized tile.
+                    #
+                    # The set is measured, not precautionary. On the CI runner,
+                    # 30 same-input builds diverged 4 times with the fixed sleep
+                    # this replaced, still 2 times with the readiness signal
+                    # below but without these three flags, and 0 times with
+                    # both (issue #367). The readiness signal alone is therefore
+                    # not sufficient, so dropping the set reintroduces the flake.
+                    #
+                    # What each does, since they are not all the same kind of
+                    # control: the first two govern when a frame is drawn, while
+                    # `--disable-partial-raster` governs rasterization -- it
+                    # stops Chrome re-rastering only a tile's invalidated region.
+                    # No arm isolates an individual flag, so none of them is
+                    # credited with the result on its own; what was measured is
+                    # the set. None changes rasterization *quality*, so the
+                    # approved perceptual signatures are untouched
+                    # (docs/RENDERING.md, Blocking validation).
+                    "--run-all-compositor-stages-before-draw",
+                    "--disable-new-content-rendering-timeout",
+                    "--disable-partial-raster",
                     "--allow-file-access-from-files",
                     f"--user-data-dir={profile}",
                     "--remote-debugging-port=0",
@@ -213,7 +274,7 @@ def _capture_emulated_viewport(
         if residue_metrics != expected_residue:
             raise ValueError(f"comparison removal validation failed: {residue_metrics}")
 
-        time.sleep(0.2)
+        _settle(cdp, session_id)
         evaluated = cdp.command(
             "Runtime.evaluate",
             {
@@ -369,6 +430,10 @@ def _capture_emulated_viewport(
         }
         if metrics != expected_metrics:
             raise ValueError(f"responsive layout overflowed its viewport: {metrics}")
+        # The interaction probe above ends by resetting every control, which
+        # restarts the same transitions it started. Settling once after load is
+        # not enough; what has to be still is the frame being captured.
+        _settle(cdp, session_id)
         captured = cdp.command(
             "Page.captureScreenshot",
             {"format": "png", "fromSurface": True, "captureBeyondViewport": False},
@@ -380,6 +445,26 @@ def _capture_emulated_viewport(
             raise ValueError("responsive screenshot is blank")
     finally:
         websocket.close()
+
+
+def _settle(cdp: _CdpSocket, session_id: str) -> None:
+    """Block until the page has stopped moving, and fail if it has not.
+
+    Raises rather than returning a flag: a capture taken over unfinished work is
+    not a slightly worse screenshot, it is a screenshot of a state the guide
+    never actually shows a reader.
+    """
+    evaluated = cdp.command(
+        "Runtime.evaluate",
+        {"expression": _SETTLE_EXPRESSION, "returnByValue": True, "awaitPromise": True},
+        session_id=session_id,
+    )
+    result = cast(dict[str, Any], evaluated["result"])
+    if "value" not in result:
+        raise ValueError(f"settling the page failed: {evaluated}")
+    settled = cast(dict[str, object], json.loads(cast(str, result["value"])))
+    if settled != {"outcome": "settled", "running": []}:
+        raise ValueError(f"page never settled before capture: {settled}")
 
 
 def _wait_for_devtools_endpoint(process: subprocess.Popen[bytes], profile: Path) -> tuple[int, str]:

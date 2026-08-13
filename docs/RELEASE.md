@@ -74,8 +74,7 @@ contains:
 - release notes that state source-access failures, incomplete coverage, review counts, data time,
   and code revision.
 
-The ZIP uses stable entry ordering, timestamps, permissions, and compression settings. Repeating a
-build with identical inputs produces identical archive bytes.
+The ZIP uses stable entry ordering, timestamps, permissions, and compression settings.
 
 Inspect the desktop and mobile screenshots, all machine validation reports, and
 `RELEASE_NOTES.md`. Test the archive before publication:
@@ -83,6 +82,39 @@ Inspect the desktop and mobile screenshots, all machine validation reports, and
 ```bash
 unzip -t dist/primary-release/seattle-election-guide-2026-primary.2.zip
 ```
+
+## Reproducibility
+
+Repeating a build with identical inputs produces the same release. That is checked, on every pull
+request and on demand locally, by building twice with one `--generated-at` and comparing the two
+archives:
+
+```bash
+make check-release-reproducible
+```
+
+Every artifact is held to its exact bytes, the two rendered screenshots included. What issue #367
+changed is not that contract but what a failure can say. `cmp` alone printed a single offset into
+compressed data, which named nothing: the first byte to differ belongs to whichever entry's header
+the deflate stream reached first, so a moved screenshot surfaced as an offset inside
+`release-manifest.json`. The gate now runs two comparisons, because they cover different things —
+`diff -rq` over the two unpacked bundles names the artifact that differs, and `cmp` over the two
+archives holds the container itself to its exact bytes, covering what the bundles cannot show: entry
+order, timestamps, permissions, and compression settings.
+
+The gate is defined once, in the `Makefile`, and CI invokes that target rather than restating it, so
+the command a contributor runs locally cannot drift from the one CI runs.
+
+That gate used to fail roughly one run in seven on same-input builds. The cause was in the capture,
+not the comparison: `rendering/browser.py` waited a fixed interval and then photographed whichever
+frame existed. It now waits on a readiness signal — fonts loaded, every animation finished, two
+frames produced — asserts the page settled rather than assuming it, and runs Chrome with the
+compositor and rasterization controls that keep a half-drawn or partially rastered frame from being
+captured. Measured on the CI runner, 30 same-input builds diverged 4 times before the change, 2
+times with the readiness signal but without those flags, and 0 times with both. The readiness signal
+alone is therefore not sufficient; the flags were not measured on their own, so neither is credited
+with the result independently. No tolerance is applied to a screenshot, because none is needed, and
+one would have hidden the defect instead of fixing it.
 
 ## GitHub Release
 

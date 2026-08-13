@@ -2596,6 +2596,53 @@ def test_responsive_tablet_layout_renders(tmp_path: Path) -> None:
     )
 
 
+def test_capturing_one_document_twice_produces_the_same_bytes(tmp_path: Path) -> None:
+    """The property the release-reproducibility gate depends on (issue #367).
+
+    That gate builds the release twice and requires both screenshots to be
+    byte-identical. It failed roughly one CI run in seven because
+    `render_screenshot` waited a fixed interval and then photographed whichever
+    frame existed; it now waits on a readiness signal and runs Chrome with the
+    compositor and rasterization controls that keep a half-drawn frame out of a
+    capture. Measured on the CI runner, 30 same-input builds diverged 4 times
+    before that change, 2 times with the readiness signal but without those
+    flags, and 0 times with both.
+
+    Asserted here, one Chrome launch per capture, because the gate that would
+    otherwise catch a regression lives only in CI: `make check` cannot run it
+    (`release build` refuses a dirty checkout, CONTRIBUTING.md), so without this
+    the whole property is unowned locally. This function needs no clean
+    checkout, so it belongs to the suite that does run locally. Two separate
+    launches deliberately, not two captures in one session: the divergence was
+    only ever observed across renderer processes.
+    """
+    view_model = _view_model(tmp_path / "fixture")
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    expected_race_count = sum(len(section.races) for section in view_model.sections)
+
+    captures = [
+        render_screenshot(
+            html_path,
+            tmp_path / f"capture-{index}.png",
+            find_chrome(),
+            width=1440,
+            height=1200,
+            expected_race_count=expected_race_count,
+        ).read_bytes()
+        for index in range(2)
+    ]
+
+    assert captures[0] == captures[1], (
+        "two captures of one unchanged document must be byte-identical; the "
+        "release-reproducibility gate compares exactly these bytes "
+        f"({len(captures[0])} vs {len(captures[1])} bytes)"
+    )
+
+
 def test_the_persistent_action_strip_renders_at_a_whole_pixel_height(tmp_path: Path) -> None:
     """Issue #341: `main`'s "Build and verify deterministic primary release" CI
     check builds `wa-2026-primary` twice with the same `--generated-at` and
