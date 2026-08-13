@@ -61,13 +61,15 @@ def record_capture(
     input_path: Path,
     storage_root: Path,
     manifest_dir: Path,
+    *,
+    repository_storage_root: Path = REPOSITORY_STORAGE_ROOT,
 ) -> Path:
     """Store an artifact by hash and write its immutable public manifest."""
     if not input_path.is_file():
         raise ValueError(f"capture input is not a file: {input_path}")
     _validate_storage_boundary(request, input_path, storage_root, manifest_dir)
-    storage_scope = _resolve_storage_scope(storage_root)
-    _validate_storage_durability(storage_root, storage_scope)
+    storage_scope = _resolve_storage_scope(storage_root, repository_storage_root)
+    _validate_storage_durability(storage_root)
     digest, byte_length, storage_reference = _store_artifact(input_path, storage_root, request)
     manifest_payload = {
         **request.model_dump(mode="json"),
@@ -200,33 +202,46 @@ def survey_byte_presence(
     return survey
 
 
-def _resolve_storage_scope(storage_root: Path) -> StorageScope:
-    """Derive where bytes written to this root will actually live."""
-    repository = _find_repository_root(storage_root)
-    if repository is None:
-        return "local_only"
-    if not storage_root.resolve().is_relative_to(repository):
-        return "local_only"
-    return (
-        "local_only" if _git_path_is_ignored(repository, storage_root.resolve()) else "repository"
-    )
+def _resolve_storage_scope(storage_root: Path, repository_storage_root: Path) -> StorageScope:
+    """Derive scope from the one designated official store.
+
+    Deliberately keyed on that store rather than on "inside the repository and
+    not Git-ignored". A trackedness rule would sweep in every other unignored
+    in-repository root a caller passes — `release compile` stages its captures
+    under `output_path.parent`, `data/normalized/` by default — and because
+    this value feeds the capture-ID fingerprint, that would hand those captures
+    new IDs and silently rewrite the identity of all 41 release manifests
+    already committed.
+    """
+    official = repository_storage_root.resolve()
+    root = storage_root.resolve()
+    return "repository" if root == official or root.is_relative_to(official) else "local_only"
 
 
-def _validate_storage_durability(storage_root: Path, storage_scope: StorageScope) -> None:
+def _validate_storage_durability(storage_root: Path) -> None:
     """Refuse a capture whose bytes would die with the working tree that wrote them.
 
     Bytes written to a Git-ignored path inside a linked worktree are held by
     nothing: no commit references them, no other checkout has them, and
     removing the worktree deletes them. That is exactly how the 2026-08-04
     election-night capture was lost — it verified at capture time and was gone
-    once the worktree went (issue #357). A `repository`-scope root is safe
-    because the bytes are committed, and a root outside the repository is the
-    operator's own durable store.
+    once the worktree went (issue #357). Ignoredness is asked here directly
+    rather than read off the storage scope: the two answer different questions,
+    and only this one is about durability.
+
+    Only the ignored case is refused, because Git itself already guards the
+    other one. `git worktree remove` deletes a worktree holding nothing but
+    ignored files silently, taking those bytes with it; the moment an unignored
+    file is present it refuses with "contains modified or untracked files, use
+    --force". So bytes at an unignored path — committed or merely staged for
+    commit — cannot vanish without the operator overriding a warning, while
+    ignored bytes vanish without one. A root outside the repository is likewise
+    the operator's own durable store.
     """
-    if storage_scope == "repository":
-        return
     repository = _find_repository_root(storage_root)
     if repository is None or not _git_is_linked_worktree(repository):
+        return
+    if not _git_path_is_ignored(repository, storage_root.resolve()):
         return
     raise ValueError(
         f"Git-ignored artifact storage inside a linked worktree does not outlive it: "

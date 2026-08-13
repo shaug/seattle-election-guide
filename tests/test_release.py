@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import subprocess
 from datetime import UTC, datetime
 from pathlib import Path
 from types import SimpleNamespace
@@ -14,6 +15,7 @@ import pytest
 import yaml
 
 import election_guide.release.builder as release_builder
+from election_guide.evidence.models import CapturedManifest
 from election_guide.normalization.models import CanonicalDataset
 from election_guide.release import (
     ReleaseResult,
@@ -31,7 +33,43 @@ INVENTORY = PROJECT_ROOT / "data/normalized/wa-2026-primary-inventory.json"
 REGISTRY = PROJECT_ROOT / "config/sources/default.yaml"
 SCORING = PROJECT_ROOT / "config/scoring/default.yaml"
 RENDERING = PROJECT_ROOT / "config/rendering/guide.yaml"
+COMMITTED_RELEASE_MANIFESTS = PROJECT_ROOT / "data/releases/wa-2026-primary/manifests"
 GENERATED_AT = datetime(2026, 8, 5, 0, 20, tzinfo=UTC)
+
+
+def test_release_compile_inside_a_repository_reproduces_committed_capture_ids(
+    tmp_path: Path,
+) -> None:
+    """Compilation stages under `output_path.parent`, so its captures are
+    written to an unignored in-repository path whenever an operator runs
+    `release compile` at its documented default. Capture identity must not
+    depend on that: `storage_scope` feeds the capture-ID fingerprint, so a
+    scope derived from Git-trackedness rather than from the one official store
+    would rewrite every already-committed release manifest, and `release
+    verify` recompiles in a system temp directory outside any repository, where
+    it could never notice (issue #357)."""
+    repository = tmp_path / "repository"
+    (repository / "data" / "normalized").mkdir(parents=True)
+    subprocess.run(["git", "init", "--quiet", str(repository)], check=True)
+
+    dataset = compile_release_dataset(
+        PROJECT_ROOT / "data/releases/wa-2026-primary/source-decisions.yaml",
+        INVENTORY,
+        REGISTRY,
+        repository / "data" / "normalized" / "canonical-dataset.json",
+        repository / "snapshots",
+        repository / "manifests",
+    )
+
+    committed = {path.name for path in COMMITTED_RELEASE_MANIFESTS.glob("*.json")}
+    recompiled = {f"{capture.id}.json" for capture in dataset.captures}
+    assert recompiled == committed
+    scopes = {
+        capture.storage_scope
+        for capture in dataset.captures
+        if isinstance(capture, CapturedManifest)
+    }
+    assert scopes == {"local_only"}
 
 
 def test_release_compiler_builds_permitted_provenance_and_resolves_multi_pick(

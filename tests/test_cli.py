@@ -297,9 +297,9 @@ def test_evidence_unavailable_command_writes_metadata_only_manifest(tmp_path: Pa
 def _official_capture(tmp_path: Path, storage_root: Path, manifest_dir: Path) -> Path:
     """Capture a fixture as a permitted official-authority artifact (issue #357).
 
-    Initializes a repository around the storage root so the capture records
-    `storage_scope: repository` — the scope is derived from whether the root is
-    Git-ignored, not asserted (`evidence/storage.py`)."""
+    Names `storage_root` as the official store so the capture records
+    `storage_scope: repository` — the scope is derived from that store, not
+    asserted by the caller (`evidence/storage.py`)."""
     subprocess.run(["git", "init", "--quiet", str(tmp_path)], check=True)
     return record_capture(
         CaptureRequest.model_validate(
@@ -319,6 +319,7 @@ def _official_capture(tmp_path: Path, storage_root: Path, manifest_dir: Path) ->
         Path("tests/fixtures/evidence/static.html"),
         storage_root,
         manifest_dir,
+        repository_storage_root=storage_root,
     )
 
 
@@ -367,6 +368,47 @@ def test_evidence_verify_all_reports_present_and_expected_absent(tmp_path: Path)
     assert result.exit_code == 0, result.output
     assert "present" in result.stdout
     assert "no-artifact" in result.stdout
+
+
+def test_evidence_verify_all_require_local_fails_on_an_absent_restricted_store(
+    tmp_path: Path,
+) -> None:
+    manifest_dir = tmp_path / "manifests"
+    record_capture(
+        CaptureRequest.model_validate(
+            {
+                "source_id": "the-stranger",
+                "requested_url": "https://example.org/endorsements",
+                "canonical_url": "https://example.org/endorsements",
+                "retrieved_at": datetime(2026, 7, 19, 12, tzinfo=UTC),
+                "http_status": 200,
+                "media_type": "text/html",
+                "title": "Fixture 2026 Primary Endorsements",
+                "capture_method": "static_html",
+                "redistribution": "restricted",
+                "redistribution_note": "Fixture content created for repository tests.",
+            }
+        ),
+        Path("tests/fixtures/evidence/static.html"),
+        tmp_path / "snapshots",
+        manifest_dir,
+    )
+
+    arguments = [
+        "evidence",
+        "verify-all",
+        "--manifest-dir",
+        str(manifest_dir),
+        "--storage-root",
+        str(tmp_path / "absent-snapshots"),
+        "--repository-storage-root",
+        str(tmp_path / "official"),
+    ]
+
+    assert runner.invoke(app, arguments).exit_code == 0
+    required = runner.invoke(app, [*arguments, "--require-local"])
+    assert required.exit_code == 1
+    assert "missing" in required.output
 
 
 def test_evidence_verify_all_fails_when_an_official_artifact_is_lost(tmp_path: Path) -> None:

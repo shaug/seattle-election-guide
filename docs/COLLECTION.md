@@ -84,9 +84,15 @@ class nobody had distinguished rather than relaxing it. The volume is small — 
 artifacts totalled roughly 600 KB.
 
 Storage scope is derived, never asserted. `evidence capture` records `storage_scope: repository`
-when the storage root is inside the repository and not Git-ignored, and `local_only` otherwise;
-the command already refuses to put a restricted artifact at an unignored repository path, so a
+when the storage root is the official store above (or inside it), and `local_only` otherwise. The
+command already refuses to put a restricted artifact at an unignored repository path, so a
 committed artifact is a permitted one by construction.
+
+Scope keys on that one named store rather than on "tracked by Git" for a specific reason: the
+scope feeds the capture-ID fingerprint, and other commands write captures to unignored
+in-repository paths for their own reasons — `release compile` stages under `data/normalized/`. A
+trackedness rule would hand those captures new identities and silently rewrite every release
+manifest already committed.
 
 Two rules follow, and both are enforced rather than documented-only:
 

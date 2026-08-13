@@ -976,6 +976,9 @@ def evidence_capture(
         Path, typer.Option(exists=True, dir_okay=False, readable=True)
     ] = Path("config/authorities/default.yaml"),
     storage_root: Annotated[Path, typer.Option(file_okay=False)] = Path("data/snapshots"),
+    repository_storage_root: Annotated[
+        Path, typer.Option(file_okay=False)
+    ] = REPOSITORY_STORAGE_ROOT,
     manifest_dir: Annotated[Path, typer.Option(file_okay=False)] = Path("data/manifests/evidence"),
 ) -> None:
     """Ingest a local artifact into immutable content-addressed storage."""
@@ -1001,7 +1004,13 @@ def evidence_capture(
                 "redistribution_note": redistribution_note,
             }
         )
-        output = record_capture(request, input_path, storage_root, manifest_dir)
+        output = record_capture(
+            request,
+            input_path,
+            storage_root,
+            manifest_dir,
+            repository_storage_root=repository_storage_root,
+        )
     except (OSError, ValidationError, ValueError) as error:
         typer.echo(f"evidence capture failed: {error}", err=True)
         raise typer.Exit(code=1) from error

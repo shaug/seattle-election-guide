@@ -834,6 +834,7 @@ def test_permitted_capture_into_a_tracked_root_records_repository_scope(tmp_path
             FIXTURES / "static.html",
             storage_root,
             repository / "manifests",
+            repository_storage_root=storage_root,
         )
     )
 
@@ -890,6 +891,7 @@ def test_tracked_capture_inside_a_linked_worktree_is_allowed(tmp_path: Path) -> 
             FIXTURES / "static.html",
             storage_root,
             tmp_path / "manifests",
+            repository_storage_root=storage_root,
         )
     )
 
@@ -955,6 +957,7 @@ def test_presence_survey_reports_every_manifest_by_scope(tmp_path: Path) -> None
         FIXTURES / "endorsements.pdf",
         repository_root,
         manifest_dir,
+        repository_storage_root=repository_root,
     )
     record_unavailable(
         UnavailableRequest.model_validate(read_yaml(FIXTURES / "unavailable-request.yaml")),
@@ -983,6 +986,7 @@ def test_presence_survey_reports_a_lost_repository_artifact_as_missing(tmp_path:
             FIXTURES / "static.html",
             repository_root,
             manifest_dir,
+            repository_storage_root=repository_root,
         )
     )
     assert isinstance(manifest, CapturedManifest)
@@ -1010,6 +1014,7 @@ def test_presence_survey_reports_tampered_bytes_as_corrupt(tmp_path: Path) -> No
             FIXTURES / "static.html",
             repository_root,
             manifest_dir,
+            repository_storage_root=repository_root,
         )
     )
     assert isinstance(manifest, CapturedManifest)
@@ -1046,6 +1051,36 @@ def test_presence_survey_calls_a_restricted_artifact_expected_absent_without_its
     )
 
     assert [entry.status for entry in survey] == ["expected-absent"]
+
+
+def test_presence_survey_require_local_drops_the_absent_store_exemption(tmp_path: Path) -> None:
+    """The exemption exists for CI, which can never hold restricted bytes. An
+    operator auditing a machine that is supposed to hold everything asks for it
+    to be dropped, and then an absent store is a failure like any other."""
+    manifest_dir = tmp_path / "manifests"
+    local_root = tmp_path / "snapshots"
+    record_capture(
+        _capture_request(redistribution="restricted"),
+        FIXTURES / "static.html",
+        local_root,
+        manifest_dir,
+    )
+    shutil.rmtree(local_root)
+
+    exempt = survey_byte_presence(
+        manifest_dir,
+        local_storage_root=local_root,
+        repository_storage_root=tmp_path / "official",
+    )
+    required = survey_byte_presence(
+        manifest_dir,
+        local_storage_root=local_root,
+        repository_storage_root=tmp_path / "official",
+        require_local=True,
+    )
+
+    assert [entry.status for entry in exempt] == ["expected-absent"]
+    assert [entry.status for entry in required] == ["missing"]
 
 
 def test_presence_survey_reports_a_lost_restricted_artifact_where_its_store_exists(

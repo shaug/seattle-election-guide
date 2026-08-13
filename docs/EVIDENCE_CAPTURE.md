@@ -28,11 +28,15 @@ as well as an uncommitted restricted input left at an unignored repository path.
 inputs under the ignored `tmp/` directory or outside the checkout.
 
 `storage_scope` says which root holds the bytes, and the command derives it from the root rather
-than accepting it from the caller: `repository` when the root is inside the repository and not
-Git-ignored, `local_only` otherwise. `local_only` remains the default value, so every manifest
-committed before this distinction existed serializes — and therefore hashes to the same capture
-ID — exactly as it did. Because the restricted-storage rule above already forbids an unignored
-repository root, a `repository`-scope artifact is a permitted one by construction.
+than accepting it from the caller: `repository` when the root is the official store above (or
+inside it), `local_only` otherwise. It keys on that one named store rather than on Git
+trackedness, because the scope feeds the capture-ID fingerprint and other commands legitimately
+write captures to unignored in-repository paths — `release compile` stages under
+`data/normalized/`, and a trackedness rule would give all 41 committed release manifests new IDs.
+`local_only` remains the default value, so every manifest committed before this distinction
+existed serializes — and therefore hashes to the same capture ID — exactly as it did. Because the
+restricted-storage rule above already forbids an unignored repository root, a `repository`-scope
+artifact is a permitted one by construction.
 
 `docs/COLLECTION.md` owns *which* artifacts go where and why. The short version: official-authority
 results are public records, so their bytes are committed and survive by the same mechanism as the
@@ -51,6 +55,12 @@ Git-ignored artifact storage inside a linked worktree does not outlive it: ...
 
 Capture from the primary checkout, store the bytes at a tracked path, or point `--storage-root`
 outside the repository.
+
+Only the Git-ignored case is refused, because Git guards the other one already: `git worktree
+remove` deletes a worktree holding nothing but ignored files silently, but refuses the moment an
+unignored file is present ("contains modified or untracked files, use `--force`"). Bytes at an
+unignored path therefore cannot vanish without the operator overriding a warning. Ignored bytes
+vanish without one — which is what happened on 2026-08-04.
 
 ## Sweep every manifest
 

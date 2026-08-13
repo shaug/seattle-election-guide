@@ -991,6 +991,7 @@ def test_cli_results_ingest_reads_a_repository_scope_certified_capture(
         staged_input,
         official_root,
         tmp_path / "data/manifests/evidence",
+        repository_storage_root=official_root,
     )
     output_dir = tmp_path / "data" / "results"
 
