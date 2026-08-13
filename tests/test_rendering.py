@@ -1117,8 +1117,9 @@ def test_certified_results_render_the_race_detail_pages_certified_strip_and_vote
 
     assert '<div class="race-detail-certified-strip">' in html
     assert "Certified result" in html
-    # The full-month grammar the ratified mockup uses for the dialog's own
-    # strip, distinct from the race card's abbreviated badge ("Aug 19, 2026").
+    # The full-month grammar the ratified mockup uses for the race-detail
+    # page's own strip, distinct from the race card's abbreviated badge
+    # ("Aug 19, 2026").
     assert "August 19, 2026" in html
     assert "King County Elections" in html
     assert "61,234 ballots" in html

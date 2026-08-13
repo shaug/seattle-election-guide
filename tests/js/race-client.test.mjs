@@ -116,8 +116,8 @@ function payload(personalization = personalizationContract()) {
               evidence_url: 'https://example.test/stranger',
             },
           ],
-          // A certified result (docs/RESULTS.md, Rendering § The endorsements
-          // dialog; #287): selection-independent, so it is unaffected by
+          // A certified result (docs/RESULTS.md, Rendering § The race-detail
+          // page; #287): selection-independent, so it is unaffected by
           // whichever candidate a lens currently recommends. Ada's own
           // outcome advanced; Blaise's did not — deliberately the opposite of
           // the audited tie, so a test that narrows the selection to Blaise
