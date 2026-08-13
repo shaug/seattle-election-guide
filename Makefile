@@ -77,27 +77,28 @@ release-verify:
 #
 # Not part of `make check`: `release build` refuses a dirty checkout, so on the
 # tree a contributor runs `make check` against it could only fail for a reason
-# unrelated to their diff (CONTRIBUTING.md, Local checks). The build timestamp
-# comes from the commit, exactly as CI derives it, because `generated_at` is
-# recorded in the bundle and two different values would produce two
-# legitimately different releases.
-RELEASE_A ?= dist/reproducibility-a
-RELEASE_B ?= dist/reproducibility-b
-RELEASE_ARCHIVE = seattle-election-guide-2026-primary.2.zip
-
+# unrelated to their diff (CONTRIBUTING.md, Local checks). CI runs this exact
+# target with no arguments, so what it checks and what a contributor checks
+# cannot drift apart. The build timestamp comes from the commit, exactly as CI
+# derives it, because `generated_at` is recorded in the bundle and two different
+# values would produce two legitimately different releases.
 check-release-reproducible:
-	rm -rf $(RELEASE_A) $(RELEASE_B)
+	rm -rf dist/reproducibility-a dist/reproducibility-b
 	uv run election-guide release build data/releases/wa-2026-primary/source-decisions.yaml \
 		--release-version 2026-primary.2 \
 		--generated-at "$$(git show -s --format=%cI HEAD)" \
-		--output-dir $(RELEASE_A)
+		--output-dir dist/reproducibility-a
 	uv run election-guide release build data/releases/wa-2026-primary/source-decisions.yaml \
 		--release-version 2026-primary.2 \
 		--generated-at "$$(git show -s --format=%cI HEAD)" \
-		--output-dir $(RELEASE_B)
-	diff -rq $(RELEASE_A)/bundle $(RELEASE_B)/bundle
-	cmp $(RELEASE_A)/$(RELEASE_ARCHIVE) $(RELEASE_B)/$(RELEASE_ARCHIVE)
+		--output-dir dist/reproducibility-b
+	diff -rq dist/reproducibility-a/bundle dist/reproducibility-b/bundle
+	cmp dist/reproducibility-a/seattle-election-guide-2026-primary.2.zip dist/reproducibility-b/seattle-election-guide-2026-primary.2.zip
 
+# Only the current election is built from source; every other declared election
+# resolves from the release that published it, exactly as CI stages (issue 271,
+# docs/HOSTING.md, Historical bundles). Supplying every declared bundle locally
+# downloads nothing, so this is inert while one election is declared.
 hosting-stage:
 	uv run election-guide hosting stage config/hosting/site.yaml \
 		--bundle wa-2026-primary-2026-primary.2=dist/primary-release/bundle \

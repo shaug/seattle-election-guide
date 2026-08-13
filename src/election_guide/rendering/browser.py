@@ -120,19 +120,20 @@ def render_screenshot(
                     # new-content timeout draw what is ready over what is not,
                     # and never reuse a partially rasterized tile.
                     #
-                    # These are measured, not precautionary. On the CI runner,
+                    # The set is measured, not precautionary. On the CI runner,
                     # 30 same-input builds diverged 4 times with the fixed sleep
                     # this replaced, still 2 times with the readiness signal
                     # below but without these three flags, and 0 times with
-                    # both (issue #367). The readiness signal alone is not
-                    # sufficient, so removing these would reintroduce the flake.
+                    # both (issue #367). The readiness signal alone is therefore
+                    # not sufficient, so dropping the set reintroduces the flake.
                     #
-                    # The first two govern when a frame is drawn.
-                    # `--disable-partial-raster` is a rasterization control --
-                    # it stops Chrome re-rastering only a tile's invalidated
-                    # region -- which is why it matters here: a partial re-raster
-                    # is exactly the nondeterminism the other two cannot reach.
-                    # None of them changes rasterization *quality*, so the
+                    # What each does, since they are not all the same kind of
+                    # control: the first two govern when a frame is drawn, while
+                    # `--disable-partial-raster` governs rasterization -- it
+                    # stops Chrome re-rastering only a tile's invalidated region.
+                    # No arm isolates an individual flag, so none of them is
+                    # credited with the result on its own; what was measured is
+                    # the set. None changes rasterization *quality*, so the
                     # approved perceptual signatures are untouched
                     # (docs/RENDERING.md, Blocking validation).
                     "--run-all-compositor-stages-before-draw",
