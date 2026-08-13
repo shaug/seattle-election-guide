@@ -102,7 +102,8 @@ Two rules follow, and both are enforced rather than documented-only:
   outside the repository.
 - **Byte presence is swept, not assumed.** `election-guide evidence verify-all` verifies every
   manifest in `data/manifests/evidence/` against its bytes and reports each as `present`,
-  `missing`, `corrupt`, `expected-absent`, or `no-artifact`. `make check` runs it.
+  `missing`, `corrupt`, `expected-absent`, or `no-artifact`. `make check` and CI both run it, so
+  a manifest committed without its official-authority bytes fails the pull request.
 
 `expected-absent` is the one status that needs stating explicitly, because it is where the sweep
 deliberately does not fail. Restricted bytes are never in CI, so a CI sweep that demanded them

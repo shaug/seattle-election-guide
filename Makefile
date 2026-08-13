@@ -27,9 +27,13 @@ check:
 # artifact nobody holds is not intact evidence, and that is exactly how the
 # 2026-08-04 election-night capture was lost -- it verified at capture time and
 # died with the worktree that wrote it. Official-authority bytes are tracked, so
-# this gate is real in CI; restricted bytes never reach CI, so those report
-# `expected-absent` rather than failing (docs/COLLECTION.md). An operator
-# checking a machine that should hold everything adds `--require-local`.
+# a manifest committed without them fails here; restricted bytes never reach CI,
+# so those report `expected-absent` rather than failing (docs/COLLECTION.md). An
+# operator checking a machine that should hold everything adds `--require-local`.
+#
+# Defined once here and invoked by CI with no arguments, the way check-js and
+# check-changelog are (issue #367), so what CI checks and what a contributor
+# checks cannot drift apart.
 check-evidence:
 	uv run election-guide evidence verify-all
 
