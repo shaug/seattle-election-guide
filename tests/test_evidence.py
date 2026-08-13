@@ -29,6 +29,7 @@ from election_guide.evidence.storage import (
     read_capture_manifest,
     record_capture,
     record_unavailable,
+    survey_byte_presence,
     verify_capture,
 )
 from election_guide.serialization import read_yaml
@@ -793,6 +794,285 @@ def test_yaml_rejects_merge_keys_and_semantic_duplicates(tmp_path: Path) -> None
         read_yaml(merge)
     with pytest.raises(yaml.YAMLError, match="duplicate mapping key"):
         read_yaml(duplicate)
+
+
+# --- Byte durability and the presence sweep (issue #357) ---------------------
+#
+# The 2026-08-04 election-night capture verified at capture time and then
+# vanished with the disposable worktree that wrote it, because its bytes went
+# to a Git-ignored path nothing else held. These cover the two halves of the
+# fix: durable storage scope at capture time, and a detector that runs across
+# every manifest afterward.
+
+
+def _worktree_repository(tmp_path: Path) -> tuple[Path, Path]:
+    """Create a primary checkout with one commit and one linked worktree."""
+    primary = tmp_path / "primary"
+    primary.mkdir()
+    subprocess.run(["git", "init", "--quiet", str(primary)], check=True)
+    (primary / ".gitignore").write_text("snapshots/\n", encoding="utf-8")
+    for arguments in (
+        ["config", "user.email", "fixture@example.org"],
+        ["config", "user.name", "Fixture"],
+        ["add", ".gitignore"],
+        ["commit", "--quiet", "--message", "base"],
+        ["worktree", "add", "--quiet", "-b", "feature", str(tmp_path / "linked")],
+    ):
+        subprocess.run(["git", "-C", str(primary), *arguments], check=True)
+    return primary, tmp_path / "linked"
+
+
+def test_permitted_capture_into_a_tracked_root_records_repository_scope(tmp_path: Path) -> None:
+    repository = tmp_path / "repository"
+    repository.mkdir()
+    subprocess.run(["git", "init", "--quiet", str(repository)], check=True)
+    storage_root = repository / "data" / "evidence" / "official"
+
+    manifest = read_capture_manifest(
+        record_capture(
+            _capture_request(redistribution="permitted"),
+            FIXTURES / "static.html",
+            storage_root,
+            repository / "manifests",
+        )
+    )
+
+    assert isinstance(manifest, CapturedManifest)
+    assert manifest.storage_scope == "repository"
+    assert (storage_root / manifest.storage_reference).is_file()
+
+
+def test_restricted_capture_into_an_ignored_root_stays_local_only(tmp_path: Path) -> None:
+    repository = tmp_path / "repository"
+    repository.mkdir()
+    subprocess.run(["git", "init", "--quiet", str(repository)], check=True)
+    (repository / ".gitignore").write_text("snapshots/\n", encoding="utf-8")
+
+    manifest = read_capture_manifest(
+        record_capture(
+            _capture_request(redistribution="restricted"),
+            FIXTURES / "static.html",
+            repository / "snapshots",
+            tmp_path / "manifests",
+        )
+    )
+
+    assert isinstance(manifest, CapturedManifest)
+    assert manifest.storage_scope == "local_only"
+
+
+def test_ignored_capture_inside_a_linked_worktree_fails_before_reporting_success(
+    tmp_path: Path,
+) -> None:
+    _, linked = _worktree_repository(tmp_path)
+    storage_root = linked / "snapshots"
+    manifest_dir = tmp_path / "manifests"
+
+    with pytest.raises(ValueError, match="does not outlive"):
+        record_capture(
+            _capture_request(redistribution="restricted"),
+            FIXTURES / "static.html",
+            storage_root,
+            manifest_dir,
+        )
+
+    assert not storage_root.exists()
+    assert not manifest_dir.exists()
+
+
+def test_tracked_capture_inside_a_linked_worktree_is_allowed(tmp_path: Path) -> None:
+    _, linked = _worktree_repository(tmp_path)
+    storage_root = linked / "data" / "evidence" / "official"
+
+    manifest = read_capture_manifest(
+        record_capture(
+            _capture_request(redistribution="permitted"),
+            FIXTURES / "static.html",
+            storage_root,
+            tmp_path / "manifests",
+        )
+    )
+
+    assert isinstance(manifest, CapturedManifest)
+    assert manifest.storage_scope == "repository"
+    assert (storage_root / manifest.storage_reference).is_file()
+
+
+def test_capture_from_a_linked_worktree_into_the_primary_checkout_is_allowed(
+    tmp_path: Path,
+) -> None:
+    primary, linked = _worktree_repository(tmp_path)
+    input_path = linked / "page.html"
+    input_path.write_bytes((FIXTURES / "static.html").read_bytes())
+    subprocess.run(["git", "-C", str(linked), "add", "page.html"], check=True)
+    subprocess.run(["git", "-C", str(linked), "commit", "--quiet", "--message", "page"], check=True)
+
+    manifest = read_capture_manifest(
+        record_capture(
+            _capture_request(capture_method="manual_upload", redistribution="restricted"),
+            input_path,
+            primary / "snapshots",
+            tmp_path / "manifests",
+        )
+    )
+
+    assert isinstance(manifest, CapturedManifest)
+    assert manifest.storage_scope == "local_only"
+    assert (primary / "snapshots" / manifest.storage_reference).is_file()
+
+
+def test_capture_outside_any_repository_is_allowed(tmp_path: Path) -> None:
+    manifest = read_capture_manifest(
+        record_capture(
+            _capture_request(redistribution="restricted"),
+            FIXTURES / "static.html",
+            tmp_path / "external-store",
+            tmp_path / "manifests",
+        )
+    )
+
+    assert isinstance(manifest, CapturedManifest)
+    assert manifest.storage_scope == "local_only"
+
+
+def test_presence_survey_reports_every_manifest_by_scope(tmp_path: Path) -> None:
+    repository = tmp_path / "repository"
+    repository.mkdir()
+    subprocess.run(["git", "init", "--quiet", str(repository)], check=True)
+    (repository / ".gitignore").write_text("snapshots/\n", encoding="utf-8")
+    manifest_dir = repository / "manifests"
+    local_root = repository / "snapshots"
+    repository_root = repository / "data" / "evidence" / "official"
+
+    record_capture(
+        _capture_request(redistribution="restricted"),
+        FIXTURES / "static.html",
+        local_root,
+        manifest_dir,
+    )
+    record_capture(
+        _capture_request(capture_method="pdf", media_type="application/pdf"),
+        FIXTURES / "endorsements.pdf",
+        repository_root,
+        manifest_dir,
+    )
+    record_unavailable(
+        UnavailableRequest.model_validate(read_yaml(FIXTURES / "unavailable-request.yaml")),
+        manifest_dir,
+    )
+
+    survey = survey_byte_presence(
+        manifest_dir,
+        local_storage_root=local_root,
+        repository_storage_root=repository_root,
+    )
+
+    assert {entry.status for entry in survey} == {"present", "no-artifact"}
+    assert len(survey) == 3
+
+
+def test_presence_survey_reports_a_lost_repository_artifact_as_missing(tmp_path: Path) -> None:
+    repository = tmp_path / "repository"
+    repository.mkdir()
+    subprocess.run(["git", "init", "--quiet", str(repository)], check=True)
+    manifest_dir = tmp_path / "manifests"
+    repository_root = repository / "official"
+    manifest = read_capture_manifest(
+        record_capture(
+            _capture_request(redistribution="permitted"),
+            FIXTURES / "static.html",
+            repository_root,
+            manifest_dir,
+        )
+    )
+    assert isinstance(manifest, CapturedManifest)
+    assert manifest.storage_scope == "repository"
+    (repository_root / manifest.storage_reference).unlink()
+
+    survey = survey_byte_presence(
+        manifest_dir,
+        local_storage_root=tmp_path / "snapshots",
+        repository_storage_root=repository_root,
+    )
+
+    assert [entry.status for entry in survey] == ["missing"]
+
+
+def test_presence_survey_reports_tampered_bytes_as_corrupt(tmp_path: Path) -> None:
+    repository = tmp_path / "repository"
+    repository.mkdir()
+    subprocess.run(["git", "init", "--quiet", str(repository)], check=True)
+    manifest_dir = tmp_path / "manifests"
+    repository_root = repository / "official"
+    manifest = read_capture_manifest(
+        record_capture(
+            _capture_request(redistribution="permitted"),
+            FIXTURES / "static.html",
+            repository_root,
+            manifest_dir,
+        )
+    )
+    assert isinstance(manifest, CapturedManifest)
+    (repository_root / manifest.storage_reference).write_text("tampered", encoding="utf-8")
+
+    survey = survey_byte_presence(
+        manifest_dir,
+        local_storage_root=tmp_path / "snapshots",
+        repository_storage_root=repository_root,
+    )
+
+    assert [entry.status for entry in survey] == ["corrupt"]
+
+
+def test_presence_survey_calls_a_restricted_artifact_expected_absent_without_its_store(
+    tmp_path: Path,
+) -> None:
+    """CI can never hold restricted bytes, so an absent local store is the
+    documented, non-failing state rather than a silent pass or a false alarm."""
+    manifest_dir = tmp_path / "manifests"
+    local_root = tmp_path / "snapshots"
+    record_capture(
+        _capture_request(redistribution="restricted"),
+        FIXTURES / "static.html",
+        local_root,
+        manifest_dir,
+    )
+    shutil.rmtree(local_root)
+
+    survey = survey_byte_presence(
+        manifest_dir,
+        local_storage_root=local_root,
+        repository_storage_root=tmp_path / "official",
+    )
+
+    assert [entry.status for entry in survey] == ["expected-absent"]
+
+
+def test_presence_survey_reports_a_lost_restricted_artifact_where_its_store_exists(
+    tmp_path: Path,
+) -> None:
+    """The store is present, so absent bytes are a real loss, not this
+    environment's expected inability to hold them."""
+    manifest_dir = tmp_path / "manifests"
+    local_root = tmp_path / "snapshots"
+    manifest = read_capture_manifest(
+        record_capture(
+            _capture_request(redistribution="restricted"),
+            FIXTURES / "static.html",
+            local_root,
+            manifest_dir,
+        )
+    )
+    assert isinstance(manifest, CapturedManifest)
+    (local_root / manifest.storage_reference).unlink()
+
+    survey = survey_byte_presence(
+        manifest_dir,
+        local_storage_root=local_root,
+        repository_storage_root=tmp_path / "official",
+    )
+
+    assert [entry.status for entry in survey] == ["missing"]
 
 
 def _capture_request(

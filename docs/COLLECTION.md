@@ -61,5 +61,48 @@ duplicate raw capture. Corrected OCR text or confidence similarly creates a new 
 duplicating identical image bytes. Per-source locking, strictly increasing refresh times, and
 event-linked heads keep concurrent and interrupted runs from promoting an incomplete snapshot.
 
-Raw official-source artifacts default to restricted, local-only storage. Keep `data/snapshots/`
+## Where captured bytes live
+
+Raw third-party artifacts default to restricted, local-only storage. Keep `data/snapshots/`
 ignored and publish only permitted excerpts and provenance records under the repository policy.
+
+**Official-authority artifacts are the exception: their bytes are committed.** A capture from a
+counting authority — King County Elections, the Secretary of State — is `redistribution: permitted`
+and is stored in the tracked `data/evidence/official/` root.
+
+The reason is that redistribution and durability are two decisions, and treating them as one lost
+real evidence. The 2026-08-04 election-night capture verified at capture time, recorded four
+sha256 values in `docs/runbooks/results-capture-election-night.md`, and then vanished: its bytes
+went to the Git-ignored `data/snapshots/` inside a disposable worktree, so nothing tracked them,
+nothing pushed them, and removing the worktree deleted them. Those four hashes now describe
+artifacts that exist nowhere, and the capture cannot be re-fetched — those URLs serve a later drop
+(issue #357). The restricted default that sent them there was never a judgment about *these*
+bytes. Election results published by a government counting authority are public records: not
+paywalled, not copyrighted, not access-controlled. `DECISIONS.md` already permits committing a
+full capture when "redistribution is clearly permitted," so this applies the existing rule to a
+class nobody had distinguished rather than relaxing it. The volume is small — the four lost
+artifacts totalled roughly 600 KB.
+
+Storage scope is derived, never asserted. `evidence capture` records `storage_scope: repository`
+when the storage root is inside the repository and not Git-ignored, and `local_only` otherwise;
+the command already refuses to put a restricted artifact at an unignored repository path, so a
+committed artifact is a permitted one by construction.
+
+Two rules follow, and both are enforced rather than documented-only:
+
+- **A capture that cannot outlive its session fails before reporting success.** `evidence capture`
+  refuses a Git-ignored storage root inside a linked worktree — the exact 2026-08-04 mechanism.
+  Capture from the primary checkout, store the bytes at a tracked path, or use a storage root
+  outside the repository.
+- **Byte presence is swept, not assumed.** `election-guide evidence verify-all` verifies every
+  manifest in `data/manifests/evidence/` against its bytes and reports each as `present`,
+  `missing`, `corrupt`, `expected-absent`, or `no-artifact`. `make check` runs it.
+
+`expected-absent` is the one status that needs stating explicitly, because it is where the sweep
+deliberately does not fail. Restricted bytes are never in CI, so a CI sweep that demanded them
+would fail on every restricted artifact — the tension that made this a single decision rather than
+two. So a `local_only` artifact whose store is not present in this environment at all is reported
+`expected-absent` and passes. When that store *does* exist, absent bytes are a real loss and the
+sweep fails. An operator auditing a machine that is supposed to hold everything passes
+`--require-local` to drop the exemption. A `repository`-scope artifact is never exempt: its bytes
+travel with history, so anywhere the repository is, they must be.

@@ -7,12 +7,13 @@ stores the bytes locally by SHA-256, and writes a public, immutable manifest.
 
 ## Storage boundary
 
-The default artifact root is `data/snapshots/`, which is ignored by Git. Captured bytes are
-stored at:
+There are two artifact roots, both content-addressed as
+`sha256/<first two hash characters>/<full sha256>`:
 
-```text
-data/snapshots/sha256/<first two hash characters>/<full sha256>
-```
+| Root | Git | Holds |
+|---|---|---|
+| `data/snapshots/` | ignored | restricted third-party artifacts (the default) |
+| `data/evidence/official/` | tracked | permitted official-authority artifacts |
 
 The corresponding JSON manifest is written to `data/manifests/evidence/`. It records the source,
 requested and canonical URLs, redirects, retrieval time, HTTP status, media type, title,
@@ -25,6 +26,45 @@ auditable in Git, while their bytes remain in the ignored local store or another
 The command rejects a restricted storage root that is inside the repository but not Git-ignored,
 as well as an uncommitted restricted input left at an unignored repository path. Keep temporary
 inputs under the ignored `tmp/` directory or outside the checkout.
+
+`storage_scope` says which root holds the bytes, and the command derives it from the root rather
+than accepting it from the caller: `repository` when the root is inside the repository and not
+Git-ignored, `local_only` otherwise. `local_only` remains the default value, so every manifest
+committed before this distinction existed serializes — and therefore hashes to the same capture
+ID — exactly as it did. Because the restricted-storage rule above already forbids an unignored
+repository root, a `repository`-scope artifact is a permitted one by construction.
+
+`docs/COLLECTION.md` owns *which* artifacts go where and why. The short version: official-authority
+results are public records, so their bytes are committed and survive by the same mechanism as the
+rest of the repository.
+
+## Durability
+
+Bytes written to a Git-ignored path inside a linked worktree are held by nothing — no commit
+references them, no other checkout has them, and removing the worktree deletes them. `evidence
+capture` refuses that combination outright rather than reporting a success whose evidence is
+already doomed:
+
+```text
+Git-ignored artifact storage inside a linked worktree does not outlive it: ...
+```
+
+Capture from the primary checkout, store the bytes at a tracked path, or point `--storage-root`
+outside the repository.
+
+## Sweep every manifest
+
+`evidence verify` checks one manifest. `evidence verify-all` checks all of them, which is what
+catches an artifact that quietly stopped existing:
+
+```bash
+uv run election-guide evidence verify-all
+```
+
+Each manifest reports `present`, `missing`, `corrupt`, `expected-absent`, or `no-artifact`, and
+the command exits non-zero on `missing` or `corrupt`. `make check` runs it. A restricted artifact
+whose store is absent from this environment is `expected-absent` and passes — CI can never hold
+those bytes; add `--require-local` when auditing a machine that should hold them.
 
 ## Capture an artifact
 
@@ -89,9 +129,10 @@ into the source panel to satisfy the CLI would corrupt what "source" means in
 this repository. An `Authority` entry is just an `id`, `name`,
 `organization_url`, and optional `notes` (`election_guide.authorities`).
 
-Capture mechanics are identical either way — methods, media-type pairing,
-redirect chains, and redistribution defaults are unchanged; only identity and
-naming differ:
+Capture mechanics are identical either way — methods, media-type pairing, and
+redirect chains are unchanged. Two things differ: identity and naming, and
+where the bytes go. An authority artifact is a public record, so it is captured
+as `permitted` into the tracked official store (`docs/COLLECTION.md`):
 
 ```bash
 uv run election-guide evidence capture tmp/kc-results.html \
@@ -103,8 +144,9 @@ uv run election-guide evidence capture tmp/kc-results.html \
   --media-type text/html \
   --title "2026 Washington August Primary election-night results (King County rendered results page)" \
   --capture-method static_html \
-  --redistribution restricted \
-  --redistribution-note "Official results retained locally; manifest public."
+  --storage-root data/evidence/official \
+  --redistribution permitted \
+  --redistribution-note "Official public record; bytes retained in the repository."
 ```
 
 An authority capture identifies its election through the title convention
@@ -130,8 +172,9 @@ only resolves content addresses and never consults either registry.
 uv run election-guide evidence verify data/manifests/evidence/<capture-id>.json
 ```
 
-Verification resolves the content address within the configured local root and recomputes both
-the SHA-256 and byte length. Missing or modified evidence fails loudly.
+Verification resolves the content address within the root the manifest's own `storage_scope`
+names, then recomputes both the SHA-256 and byte length. Missing or modified evidence fails
+loudly.
 
 ## Manual-entry adapter
 

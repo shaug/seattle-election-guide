@@ -7,6 +7,7 @@ import os
 import re
 import subprocess
 import tempfile
+from collections import Counter
 from collections.abc import Generator
 from contextlib import contextmanager
 from datetime import UTC, date, datetime
@@ -31,9 +32,12 @@ from election_guide.evidence.manual import (
 )
 from election_guide.evidence.models import CapturedManifest, CaptureRequest, UnavailableRequest
 from election_guide.evidence.storage import (
+    REPOSITORY_STORAGE_ROOT,
     read_capture_manifest,
     record_capture,
     record_unavailable,
+    storage_root_for,
+    survey_byte_presence,
     verify_capture,
 )
 from election_guide.hosting import (
@@ -1058,15 +1062,65 @@ def evidence_unavailable(
 def evidence_verify(
     manifest_path: Annotated[Path, typer.Argument(exists=True, dir_okay=False, readable=True)],
     storage_root: Annotated[Path, typer.Option(file_okay=False)] = Path("data/snapshots"),
+    repository_storage_root: Annotated[
+        Path, typer.Option(file_okay=False)
+    ] = REPOSITORY_STORAGE_ROOT,
 ) -> None:
     """Verify captured evidence bytes against an immutable manifest."""
     try:
         manifest = read_capture_manifest(manifest_path)
-        verify_capture(manifest, storage_root)
+        root = (
+            storage_root_for(manifest, storage_root, repository_storage_root)
+            if isinstance(manifest, CapturedManifest)
+            else storage_root
+        )
+        verify_capture(manifest, root)
     except (OSError, ValueError) as error:
         typer.echo(f"evidence verification failed: {error}", err=True)
         raise typer.Exit(code=1) from error
     typer.echo(f"evidence: valid ({manifest.id}, {manifest.availability})")
+
+
+@evidence_app.command("verify-all")
+def evidence_verify_all(
+    manifest_dir: Annotated[Path, typer.Option(file_okay=False)] = Path("data/manifests/evidence"),
+    storage_root: Annotated[Path, typer.Option(file_okay=False)] = Path("data/snapshots"),
+    repository_storage_root: Annotated[
+        Path, typer.Option(file_okay=False)
+    ] = REPOSITORY_STORAGE_ROOT,
+    require_local: Annotated[
+        bool,
+        typer.Option(help="Also require restricted bytes, for a machine that should hold them."),
+    ] = False,
+) -> None:
+    """Report every manifest's bytes as present or missing (issue #357).
+
+    A manifest whose artifact nobody still holds is not intact evidence, and
+    verifying one manifest at a time never revealed that. Fails on a lost or
+    corrupt artifact; reports a restricted artifact whose store is absent from
+    this environment as `expected-absent`, since CI can never hold those bytes
+    (`docs/COLLECTION.md`).
+    """
+    try:
+        survey = survey_byte_presence(
+            manifest_dir,
+            local_storage_root=storage_root,
+            repository_storage_root=repository_storage_root,
+            require_local=require_local,
+        )
+    except (OSError, ValueError) as error:
+        typer.echo(f"evidence sweep failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+
+    for entry in survey:
+        detail = f" — {entry.detail}" if entry.detail else ""
+        typer.echo(f"{entry.status:<15} {entry.capture_id}{detail}")
+
+    counts = Counter(entry.status for entry in survey)
+    summary = ", ".join(f"{count} {status}" for status, count in sorted(counts.items()))
+    typer.echo(f"evidence: {len(survey)} manifests ({summary or 'none'})")
+    if counts["missing"] or counts["corrupt"]:
+        raise typer.Exit(code=1)
 
 
 @manual_app.command("validate")
@@ -1372,6 +1426,9 @@ def results_ingest(
         Path, typer.Option(exists=True, dir_okay=False, readable=True)
     ] = Path("config/authorities/default.yaml"),
     storage_root: Annotated[Path, typer.Option(file_okay=False)] = Path("data/snapshots"),
+    repository_storage_root: Annotated[
+        Path, typer.Option(file_okay=False)
+    ] = REPOSITORY_STORAGE_ROOT,
     output_dir: Annotated[Path, typer.Option(file_okay=False)] = Path("data/results"),
 ) -> None:
     """Produce `data/results/<election-id>.yaml` from a captured certified export.
@@ -1394,8 +1451,13 @@ def results_ingest(
         if authority is None:
             raise ValueError(f"unknown authority id {authority_id!r}")
 
-        certified_manifest = _admit_captured_manifest(certified_capture, storage_root, "certified")
-        csv_content = (storage_root / certified_manifest.storage_reference).read_bytes()
+        certified_manifest = _admit_captured_manifest(
+            certified_capture, storage_root, repository_storage_root, "certified"
+        )
+        csv_content = (
+            storage_root_for(certified_manifest, storage_root, repository_storage_root)
+            / certified_manifest.storage_reference
+        ).read_bytes()
 
         captures = [
             ResultsCapture(
@@ -1406,7 +1468,7 @@ def results_ingest(
         ]
         if election_night_capture is not None:
             election_night_manifest = _admit_captured_manifest(
-                election_night_capture, storage_root, "election-night"
+                election_night_capture, storage_root, repository_storage_root, "election-night"
             )
             captures.insert(
                 0,
@@ -1438,18 +1500,21 @@ def results_ingest(
     )
 
 
-def _admit_captured_manifest(path: Path, storage_root: Path, label: str) -> CapturedManifest:
+def _admit_captured_manifest(
+    path: Path, storage_root: Path, repository_storage_root: Path, label: str
+) -> CapturedManifest:
     """Read and hash-verify one evidence manifest for `results ingest`,
     rejecting an "unavailable" record — the lane's own admission that
     nothing was captured, which a results file may never cite as if it were
     real evidence. Shared by the certified and optional election-night
     capture paths so both are guarded identically; the duplication this
     replaced is exactly how the election-night path went unverified for a
-    fix cycle."""
+    fix cycle. Official-authority captures live in the tracked repository
+    store (issue #357), so the root comes from the manifest's own scope."""
     manifest = read_capture_manifest(path)
     if not isinstance(manifest, CapturedManifest):
         raise ValueError(f"{label} capture must be a captured, not unavailable, manifest")
-    verify_capture(manifest, storage_root)
+    verify_capture(manifest, storage_root_for(manifest, storage_root, repository_storage_root))
     return manifest
 
 

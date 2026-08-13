@@ -155,7 +155,14 @@ class CapturedManifest(CaptureRequest):
     availability: Literal["captured"] = "captured"
     content_sha256: str = Field(pattern=SHA256_PATTERN)
     byte_length: int = Field(gt=0)
-    storage_scope: Literal["local_only"] = "local_only"
+    # Where the bytes live, derived at capture time from the storage root
+    # rather than asserted by the caller (`evidence/storage.py`). `repository`
+    # means the root is inside the repository and not Git-ignored, so the bytes
+    # travel with history; `local_only` means a Git-ignored or external store
+    # that only the capturing machine holds. `local_only` remains the default,
+    # so every manifest committed before issue #357 serializes — and therefore
+    # hashes to the same capture ID — exactly as it did.
+    storage_scope: Literal["local_only", "repository"] = "local_only"
     storage_reference: str
 
     @model_validator(mode="after")

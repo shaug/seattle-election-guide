@@ -1,4 +1,5 @@
 import json
+import subprocess
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -6,7 +7,7 @@ from typer.testing import CliRunner
 
 from election_guide import __version__
 from election_guide.cli import app
-from election_guide.evidence.models import CaptureRequest
+from election_guide.evidence.models import CapturedManifest, CaptureRequest
 from election_guide.evidence.storage import read_capture_manifest, record_capture
 from election_guide.inventory.importer import read_inventory
 from election_guide.normalization.matching import match_claim
@@ -291,6 +292,107 @@ def test_evidence_unavailable_command_writes_metadata_only_manifest(tmp_path: Pa
     assert '"availability": "unavailable"' in payload
     assert '"canonical_url": null' in payload
     assert "content_sha256" not in payload
+
+
+def _official_capture(tmp_path: Path, storage_root: Path, manifest_dir: Path) -> Path:
+    """Capture a fixture as a permitted official-authority artifact (issue #357).
+
+    Initializes a repository around the storage root so the capture records
+    `storage_scope: repository` — the scope is derived from whether the root is
+    Git-ignored, not asserted (`evidence/storage.py`)."""
+    subprocess.run(["git", "init", "--quiet", str(tmp_path)], check=True)
+    return record_capture(
+        CaptureRequest.model_validate(
+            {
+                "source_id": "king-county-elections",
+                "requested_url": "https://kingcounty.gov/results",
+                "canonical_url": "https://kingcounty.gov/results",
+                "retrieved_at": datetime(2026, 8, 5, 5, 2, 45, tzinfo=UTC),
+                "http_status": 200,
+                "media_type": "text/html",
+                "title": "2026 Washington August Primary election-night results (fixture)",
+                "capture_method": "static_html",
+                "redistribution": "permitted",
+                "redistribution_note": "Official public record; bytes retained in the repository.",
+            }
+        ),
+        Path("tests/fixtures/evidence/static.html"),
+        storage_root,
+        manifest_dir,
+    )
+
+
+def test_evidence_verify_all_reports_present_and_expected_absent(tmp_path: Path) -> None:
+    manifest_dir = tmp_path / "manifests"
+    official_root = tmp_path / "official"
+    _official_capture(tmp_path, official_root, manifest_dir)
+    runner.invoke(
+        app,
+        [
+            "evidence",
+            "unavailable",
+            "--source-id",
+            "seattle-times-editorial-board",
+            "--requested-url",
+            "https://www.seattletimes.com/opinion/editorials/",
+            "--retrieved-at",
+            "2026-07-19T12:00:00Z",
+            "--http-status",
+            "403",
+            "--media-type",
+            "text/html",
+            "--unavailable-reason",
+            "The official page denied unattended access.",
+            "--redistribution-note",
+            "No page content was retained or redistributed.",
+            "--manifest-dir",
+            str(manifest_dir),
+        ],
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "evidence",
+            "verify-all",
+            "--manifest-dir",
+            str(manifest_dir),
+            "--storage-root",
+            str(tmp_path / "absent-snapshots"),
+            "--repository-storage-root",
+            str(official_root),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "present" in result.stdout
+    assert "no-artifact" in result.stdout
+
+
+def test_evidence_verify_all_fails_when_an_official_artifact_is_lost(tmp_path: Path) -> None:
+    manifest_dir = tmp_path / "manifests"
+    official_root = tmp_path / "official"
+    manifest_path = _official_capture(tmp_path, official_root, manifest_dir)
+    manifest = read_capture_manifest(manifest_path)
+    assert isinstance(manifest, CapturedManifest)
+    (official_root / manifest.storage_reference).unlink()
+
+    result = runner.invoke(
+        app,
+        [
+            "evidence",
+            "verify-all",
+            "--manifest-dir",
+            str(manifest_dir),
+            "--storage-root",
+            str(tmp_path / "snapshots"),
+            "--repository-storage-root",
+            str(official_root),
+        ],
+    )
+
+    assert result.exit_code == 1
+    assert "missing" in result.output
 
 
 def test_normalize_match_writes_a_safe_canonical_endorsement(tmp_path: Path) -> None:

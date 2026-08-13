@@ -48,8 +48,27 @@ it should stay human-launched at least through the first full cycle.
    `https://cdn.kingcounty.gov/-/media/king-county/depts/elections/results/<year>/<month>/webresults-<date>.csv`
    (`docs/RESULTS.md`, "Ingestion mechanics") — the adapter's parse target.
 2. Capture and verify each artifact exactly as in
-   `results-capture-election-night.md` steps 3 and 5 (same authority identity, same
-   restricted redistribution default), with titles naming the certified status.
+   `results-capture-election-night.md` steps 3 and 5 — same authority identity, same storage
+   rule — with titles naming the certified status.
+
+   **Where the bytes must live:** the tracked `data/evidence/official/` root, captured with
+   `--storage-root data/evidence/official --redistribution permitted`. Official results are
+   public records, so the bytes are committed and travel with history rather than living in the
+   ignored `data/snapshots/`, which is how the 2026-08-04 election-night capture was lost
+   (`docs/COLLECTION.md`, issue #357). Run this from the primary checkout: `evidence capture`
+   refuses a Git-ignored storage root inside a linked worktree.
+
+   **Confirm they survived the session** before moving to phase 2:
+
+   ```bash
+   uv run election-guide evidence verify-all
+   git status --short data/evidence/official
+   ```
+
+   Every new artifact must appear as an untracked file ready to commit, and `verify-all` must
+   report each official artifact `present`. If `data/evidence/official/` shows nothing, the bytes
+   are not in the repository and phase 2 will have nothing durable to cite — re-capture before
+   continuing.
 3. Capture the Secretary of State's certified results for state-level races as corroboration.
 
 ### Phase 2 — ingest
@@ -99,10 +118,14 @@ it should stay human-launched at least through the first full cycle.
 
 ## Verification
 
-- Phase 1: every capture ID verifies; the captured pages state certified status.
+- Phase 1: every capture ID verifies; the captured pages state certified status;
+  `evidence verify-all` reports each official artifact `present`, and `git status` shows its
+  bytes staged under `data/evidence/official/`. Restricted endorsement artifacts reporting
+  `expected-absent` is the documented passing state, not a failure (`docs/COLLECTION.md`).
 - Phase 2: `results ingest` and `results validate` both succeed; the rendered guide shows
   certified results with the certification date; the diff contains
-  `data/results/<election-id>.yaml`, manifests, and rendering output only.
+  `data/results/<election-id>.yaml`, manifests, the captured official bytes, and rendering
+  output only.
 - One pull request per phase (or one combined, if phase 2 is same-day); production deploy
   approval remains with the human reviewer.
 

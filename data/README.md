@@ -3,6 +3,9 @@
 The data pipeline will use these logical areas:
 
 - `raw/`, `snapshots/`, and `imports/`: local or controlled evidence; ignored by Git.
+- `evidence/official/`: content-addressed bytes of official-authority captures; tracked, because
+  election results published by a counting authority are public records and their durability is
+  the point (`docs/COLLECTION.md`).
 - `extracted/`: evidence-linked claims suitable for review.
 - `review/queue/`: immutable unresolved ambiguity records.
 - `review/decisions/`: append-only approvals and rejections; one terminal decision per item.
@@ -15,7 +18,9 @@ The data pipeline will use these logical areas:
 Directories are created by the relevant pipeline commands rather than committed empty. Public
 records must not embed third-party material that the project lacks permission to redistribute.
 `manifests/README.md` is retained to document the tracked-manifest boundary. Evidence capture
-writes local bytes beneath `snapshots/sha256/` and metadata beneath `manifests/evidence/`.
+writes metadata beneath `manifests/evidence/` and bytes beneath `snapshots/sha256/` for restricted
+artifacts or `evidence/official/sha256/` for permitted official-authority ones; the manifest's
+`storage_scope` records which.
 
 The current canonical election inventory is
 `normalized/wa-2026-primary-inventory.json`. Its source manifest records the official URLs and

@@ -1,4 +1,4 @@
-.PHONY: sync format check check-results check-js check-changelog check-release-reproducible changelog types test release-verify hosting-stage hosting-serve hosting-deploy
+.PHONY: sync format check check-evidence check-results check-js check-changelog check-release-reproducible changelog types test release-verify hosting-stage hosting-serve hosting-deploy
 
 sync:
 	uv sync --frozen
@@ -18,9 +18,20 @@ check:
 	uv run election-guide sources validate config/sources/default.yaml
 	uv run election-guide calendar validate config/calendar/elections.yaml
 	uv run election-guide release verify data/releases/wa-2026-primary/source-decisions.yaml
+	$(MAKE) check-evidence
 	$(MAKE) check-results
 	$(MAKE) check-js
 	$(MAKE) check-changelog
+
+# Every manifest's bytes must still exist (issue #357). A manifest whose
+# artifact nobody holds is not intact evidence, and that is exactly how the
+# 2026-08-04 election-night capture was lost -- it verified at capture time and
+# died with the worktree that wrote it. Official-authority bytes are tracked, so
+# this gate is real in CI; restricted bytes never reach CI, so those report
+# `expected-absent` rather than failing (docs/COLLECTION.md). An operator
+# checking a machine that should hold everything adds `--require-local`.
+check-evidence:
+	uv run election-guide evidence verify-all
 
 # Validate every committed results file (issue #283). No file is committed
 # there yet -- #284 owns ingestion -- so this is a no-op until one lands, but

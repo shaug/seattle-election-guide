@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import subprocess
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -959,6 +960,72 @@ def test_cli_results_ingest_produces_a_valid_results_file(
     inventory = _inventory()
     validate_results_inventory(results, inventory)
     validate_results_evidence(results, repository_root=tmp_path)
+    assert {race.race_id for race in results.races} == {ASSESSOR_ID, PROPOSITION_ID}
+
+
+def test_cli_results_ingest_reads_a_repository_scope_certified_capture(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The certified capture the 2026-08-20 runbook produces is stored in the
+    tracked official store, not the ignored one (issue #357, `docs/COLLECTION.md`).
+    Ingest has to resolve its bytes from the manifest's own recorded scope."""
+    monkeypatch.chdir(tmp_path)
+    subprocess.run(["git", "init", "--quiet", str(tmp_path)], check=True)
+    official_root = tmp_path / "data" / "evidence" / "official"
+    staged_input = tmp_path / "webresults-certified.csv"
+    staged_input.write_bytes(CERTIFIED_CSV_PATH.read_bytes())
+    certified_manifest_path = record_capture(
+        CaptureRequest.model_validate(
+            {
+                "source_id": "king-county-elections",
+                "requested_url": "https://cdn.kingcounty.gov/results/webresults-fixture.csv",
+                "canonical_url": "https://cdn.kingcounty.gov/results/webresults-fixture.csv",
+                "retrieved_at": datetime(2026, 8, 20, 16, 5, tzinfo=UTC),
+                "media_type": "text/csv",
+                "title": "2026 Washington August Primary certified results (King County CSV)",
+                "capture_method": "manual_upload",
+                "redistribution": "permitted",
+                "redistribution_note": "Official public record; bytes retained in the repository.",
+            }
+        ),
+        staged_input,
+        official_root,
+        tmp_path / "data/manifests/evidence",
+    )
+    output_dir = tmp_path / "data" / "results"
+
+    result = CliRunner().invoke(
+        app,
+        [
+            "results",
+            "ingest",
+            "--election-id",
+            "wa-2026-primary",
+            "--authority-id",
+            "king-county-elections",
+            "--certified-on",
+            "2026-08-19",
+            "--certified-capture",
+            str(certified_manifest_path),
+            "--race-id",
+            ASSESSOR_ID,
+            "--race-id",
+            PROPOSITION_ID,
+            "--inventory-path",
+            str(INVENTORY_PATH),
+            "--authority-registry-path",
+            str(AUTHORITY_REGISTRY_PATH),
+            "--storage-root",
+            str(tmp_path / "data" / "snapshots"),
+            "--repository-storage-root",
+            str(official_root),
+            "--output-dir",
+            str(output_dir),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    results = read_results(output_dir / "wa-2026-primary.yaml")
     assert {race.race_id for race in results.races} == {ASSESSOR_ID, PROPOSITION_ID}
 
 
