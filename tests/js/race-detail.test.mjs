@@ -122,7 +122,7 @@ test('a candidate who is not leading renders no kicker', () => {
 });
 
 // The certified vote-share row and heading chip (docs/RESULTS.md, Rendering §
-// The endorsements dialog; #287) — not reachable via the committed
+// The race-detail page; #287) — not reachable via the committed
 // race-markup-parity fixture, since no results file is committed yet (#284's
 // own scope), so this module's hand-built coverage is the only place a
 // non-null `result` renders at all until then.

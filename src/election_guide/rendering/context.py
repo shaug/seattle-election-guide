@@ -280,7 +280,7 @@ def race_detail_display(
     `result_outcomes_by_candidate_id` (`race_result_outcomes_by_candidate_id`,
     below; #287) carries each candidate's certified vote-share result the
     same way -- selection-independent, so it publishes verbatim rather than
-    something lit recomputes -- for the endorsements dialog's vote-share row
+    something lit recomputes -- for the race-detail page's vote-share row
     and heading chip. Empty or omitted while no results cover this race,
     exactly like `race_results_view`'s own `None` gate.
     """
@@ -541,7 +541,7 @@ def comparison_result_outcomes(
 
     Reuses `race_results_view`'s own computation (#286) rather than a second
     one, exactly as `race_result_outcomes_by_candidate_id` (#287) already does
-    for the endorsements dialog -- including for a measure race, whose
+    for the race-detail page -- including for a measure race, whose
     outcomes and Approved/Rejected chip label reach this column exactly the
     same way (#348). A race is absent from the returned mapping only while no
     results file exists or this race's ingested file names no entry for it --
@@ -1373,8 +1373,8 @@ class RaceResultsView:
     month_day_year`'s full-month "August 19, 2026" the banner uses."""
     certified_on_full_label: str
     """"August 19, 2026" -- `rendering.shell.month_day_year`'s full-month
-    grammar, the ratified mockup's own choice for the endorsements dialog's
-    certified strip (docs/RESULTS.md, Rendering § The endorsements dialog;
+    grammar, the ratified mockup's own choice for the race-detail page's
+    certified strip (docs/RESULTS.md, Rendering § The race-detail page;
     #287), distinct from `certified_on_label`'s abbreviated badge grammar
     above."""
     ballots_counted: int
@@ -1461,10 +1461,10 @@ def race_result_outcomes_by_candidate_id(
     results: RaceResultsView | None,
 ) -> dict[str, RaceResultOutcomeView]:
     """Certified per-candidate outcomes keyed by candidate id, for the
-    endorsements dialog's vote-share row and heading chip (docs/RESULTS.md,
-    Rendering § The endorsements dialog; #287).
+    race-detail page's vote-share row and heading chip (docs/RESULTS.md,
+    Rendering § The race-detail page; #287).
 
-    The dialog's candidate sections render in endorsement order
+    The page's candidate sections render in endorsement order
     (`race_detail_display`/`candidate_endorsement_groups`), not
     `RaceResultsView.outcomes`'s share-descending order, so each section
     looks its own outcome up by id here rather than zipping the two lists

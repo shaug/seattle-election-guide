@@ -257,7 +257,7 @@ test('a narrowed selection rescores the race and says what it is counting', () =
 });
 
 // The certified vote-share row and heading chip (docs/RESULTS.md, Rendering §
-// The endorsements dialog; #287) are selection-independent, so a personalized
+// The race-detail page; #287) are selection-independent, so a personalized
 // re-render has to reproduce them exactly as `race-detail.mjs`'s own coverage
 // proves in isolation — this is the end-to-end wiring through `wireRacePage`,
 // including the payload's snake_case-to-camelCase reshape and the headline

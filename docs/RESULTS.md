@@ -174,11 +174,14 @@ banner alone carries the counting-window message (see "The election-day banner" 
 it on every race card was redundant, not reinforcing, and #344 removed the interim per-card note
 this section originally described.
 
-### The endorsements dialog
+### The race-detail page
+
+Ratified when this surface was still the guide's own endorsements dialog; #136 moved it to its own
+address, and it is named for what it is now. The design is unchanged by the move.
 
 Two additions, no reordering — candidate order remains endorsement order, not finish order:
 
-- A **certified strip** under the dialog header: certification date, authority, ballots counted.
+- A **certified strip** under the page header: certification date, authority, ballots counted.
 - A **vote-share row** per candidate between the heading and its source list: tally bar and
   share, with the chip in the candidate heading after the name. No per-source annotations.
 
@@ -213,7 +216,8 @@ and that citation is the page's entry. Tagline: *"We get it right, eventually."*
 - Election-night numbers are captured as evidence and rendered nowhere.
 - Outcomes never displace recommendations.
 - Results render as a state, not an option — no new controls.
-- Endorsements dialog: certified strip plus per-candidate vote row; no per-source annotations.
+- Endorsements dialog (the race-detail page, since #136): certified strip plus per-candidate vote
+  row; no per-source annotations.
 - Results join the comparison view as an addable column, excluded from agreement computation.
 - Measures say Approved / Rejected.
 - Corrections are per-election top-line pages, existing only when corrections exist;
@@ -297,7 +301,7 @@ collapsing them into one:
   directly from the export column of that name — the number of ballots whose ballot style
   carried the contest, not a re-derivation from the vote rows. It is larger than the sum of
   recorded votes whenever the contest had any overvoted or undervoted ballot, which every real
-  contest does; the race-card provenance line and the endorsements-dialog certified strip (both
+  contest does; the race-card provenance line and the race-detail page's certified strip (both
   above) render this figure, King County's own count, unchanged by this adapter.
 - Each declared choice's `share` is its votes over the *declared* (non-write-in) vote total —
   a third total, distinct from both `ballots_counted` and the raw vote sum.
@@ -340,9 +344,9 @@ below), without exercising the "if thresholds are to be rendered" branch of #289
 
 Same provenance line (ballots counted · authority · capture link) and same "Certified ·
 `<date>`" badge as candidate cards — nothing measure-specific there either. This applies
-identically wherever the certified results data renders: the race card and the endorsements
-dialog render it through the shared tally-row component exactly as above ("Race cards", #286;
-"The endorsements dialog", #287); the comparison column renders the same underlying data through
+identically wherever the certified results data renders: the race card and the race-detail
+page render it through the shared tally-row component exactly as above ("Race cards", #286;
+"The race-detail page", #287); the comparison column renders the same underlying data through
 its own cell grammar rather than the tally-row markup ("The comparison view" above, #288) — reuse
 everywhere, not race-card-only, but each surface keeps its own established presentation idiom.
 

@@ -19,7 +19,7 @@
    width still empty. A record's name is one unit: it takes the width it needs
    and wraps only where the viewport makes it. */
 .screen-race .page-head h1 { max-width: none; }
-/* The certified strip (docs/RESULTS.md, Rendering § The endorsements dialog;
+/* The certified strip (docs/RESULTS.md, Rendering § The race-detail page;
    #287): one centered line of certification facts under the page head,
    above every candidate section -- the same tone family the race card's own
    "Result" badge (guide.css `.race-results-status`) and the counting-window
@@ -111,7 +111,7 @@
 /* The results chip itself is a guide+race shared rule (guide-race.css,
    `.race-detail-result-chip`) — this heading is one more place it renders,
    immediately after the candidate's name, alongside the guide's own results
-   strip and the endorsements dialog's candidate heading. */
+   strip and the race-detail page's candidate heading. */
 /* Every candidate's own section meter (docs/METER_V2.md, Chrome geometry:
    "The headline meter's own fate"; #325): left-adjusted, growing to fill
    the row, beside a right-adjusted label sized to its own count/percent
@@ -226,7 +226,7 @@
    media state or source order. */
 .screen-meter-section .meter-block { border-left-color: var(--row-separator) !important; border-image-source: none !important; }
 .screen-meter-section .meter-half-bottom { border-top-color: var(--row-separator) !important; }
-/* The vote-share row (docs/RESULTS.md, Rendering § The endorsements dialog;
+/* The vote-share row (docs/RESULTS.md, Rendering § The race-detail page;
    #287): one candidate's own certified share, between their heading and
    source list — the same navy-on-track tally bar the race card's own
    results strip renders (guide.css `.race-results-bar`), reused here at the

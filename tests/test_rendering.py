@@ -1076,7 +1076,7 @@ def _write_race_html(tmp_path: Path, view_model: PublicationViewModel, race_id: 
     return path
 
 
-def test_no_results_leaves_the_endorsements_dialog_byte_identical_to_before_287(
+def test_no_results_leaves_the_race_detail_page_byte_identical_to_before_287(
     tmp_path: Path,
 ) -> None:
     """#287's own acceptance criterion (a): with no results data, the race
@@ -1095,7 +1095,7 @@ def test_no_results_leaves_the_endorsements_dialog_byte_identical_to_before_287(
     assert "race-detail-result-chip" not in body
 
 
-def test_certified_results_render_the_endorsements_dialogs_certified_strip_and_vote_share_rows(
+def test_certified_results_render_the_race_detail_pages_certified_strip_and_vote_share_rows(
     tmp_path: Path,
 ) -> None:
     """#287's own acceptance criteria (b): the certified strip carries the
@@ -1214,14 +1214,14 @@ def test_the_results_chip_wraps_beneath_a_narrow_headings_name(tmp_path: Path) -
     assert phone["chipTop"] - phone["headingTop"] > screen["chipTop"] - screen["headingTop"]
 
 
-def test_measure_races_render_the_endorsements_dialog_exactly_as_today(tmp_path: Path) -> None:
+def test_measure_races_render_the_race_detail_page_exactly_as_today(tmp_path: Path) -> None:
     """#287's own acceptance criterion (d), and #348's own non-regression
     acceptance criterion: with no certified outcome on record for this
     particular measure race, its own page carries neither a certified strip
     nor a vote-share row nor a chip -- `race_results_view`'s own `None` gate
     for a race no results file names an entry for, the same one #286's
-    card-side test proves, applied here to the endorsements dialog.
-    `test_certified_measure_results_render_the_endorsements_dialog_strip_and_vote_share_rows`
+    card-side test proves, applied here to the race-detail page.
+    `test_certified_measure_results_render_the_race_detail_page_strip_and_vote_share_rows`
     below covers the complementary case: a measure race that *does* have a
     certified outcome on record."""
     results_root = tmp_path / "with-results"
@@ -1241,18 +1241,18 @@ def test_measure_races_render_the_endorsements_dialog_exactly_as_today(tmp_path:
     assert "race-detail-result-chip" not in measure_body
 
 
-def test_certified_measure_results_render_the_endorsements_dialog_strip_and_vote_share_rows(
+def test_certified_measure_results_render_the_race_detail_page_strip_and_vote_share_rows(
     tmp_path: Path,
 ) -> None:
     """#348's own acceptance criterion: a certified measure race's own page
     carries the certified strip and the winning choice's own vote-share row
     and Approved/Rejected chip -- the same surfaces
-    `test_certified_results_render_the_endorsements_dialogs_certified_strip_and_vote_share_rows`
+    `test_certified_results_render_the_race_detail_pages_certified_strip_and_vote_share_rows`
     above already proves for a candidate race, applied here to a measure.
 
     `tests.test_rendering._view_model`'s own fixture dataset carries no
     endorsement coverage at all for `seattle-proposition-1-library-levy` (see
-    `test_measure_races_render_the_endorsements_dialog_exactly_as_today`
+    `test_measure_races_render_the_race_detail_page_exactly_as_today`
     above -- "5 sources did not cover this race"), so a candidate section
     never reaches this measure's own page under that fixture regardless of
     results. `tests.compare_parity.enabled_view_model`'s dataset does carry

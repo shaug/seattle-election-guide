@@ -332,7 +332,7 @@ def _build_race_results(race: Race, contest_rows: ContestRows) -> RaceResults:
     sum of recorded votes: it includes every overvoted and undervoted
     ballot, the ones the contest recorded but no vote count reflects
     (docs/RESULTS.md, Data model — the race card's provenance line and the
-    endorsements-dialog certified strip both render "ballots counted", the
+    race-detail-page certified strip both render "ballots counted", the
     authority's own figure, not a re-derivation of it).
 
     Each declared choice's `share`, by contrast, is its votes over the

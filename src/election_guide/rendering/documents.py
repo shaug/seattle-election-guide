@@ -260,8 +260,8 @@ def render_race_document(
     category_label_by_key = {
         category.category: category.label for category in view_model.methodology.source_categories
     }
-    # The endorsements dialog's certified strip and per-candidate vote-share
-    # row (docs/RESULTS.md, Rendering § The endorsements dialog; #287),
+    # The race-detail page's certified strip and per-candidate vote-share
+    # row (docs/RESULTS.md, Rendering § The race-detail page; #287),
     # computed once here so both the audited template and `race_detail`'s own
     # payload-bound candidates (below) read the identical outcome data.
     race_results = context.race_results_view(

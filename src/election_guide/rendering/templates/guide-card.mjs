@@ -273,7 +273,7 @@ export function allSourcesAccessibleLabel(view) {
  * for both the heading and its meter, composes this same template rather
  * than repeating the heading's markup.
  *
- * `resultChip` is the endorsements dialog's own certified-result chip
+ * `resultChip` is the race-detail page's own certified-result chip
  * (docs/RESULTS.md, "The results chip"; #287) — null on every card call
  * site, since a card's own chip renders only in its results strip below,
  * never merged into this heading (`race-detail.mjs`'s per-candidate section

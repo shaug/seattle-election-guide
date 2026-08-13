@@ -209,7 +209,7 @@ export function wireRacePage(payload) {
 
   /**
    * One candidate's certified result, reshaped from the payload's snake_case
-   * fields (docs/RESULTS.md, Rendering § The endorsements dialog; #287).
+   * fields (docs/RESULTS.md, Rendering § The race-detail page; #287).
    * Selection-independent — every candidate carries the same result whatever
    * the active lens counts — so this is a plain lookup, not something scored
    * state feeds.
