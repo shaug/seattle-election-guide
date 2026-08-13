@@ -847,6 +847,19 @@ body.mockup { margin: 0; background: #eef1f4; color: var(--ink); }
 .mock-legend { display: inline-block; margin: 0 0 .2rem; padding: .1rem .5rem; border-radius: 1rem;
   background: var(--navy); color: var(--white); font-size: .66rem; font-weight: 800;
   letter-spacing: .08em; text-transform: uppercase; }
+.mock-ruled, .mock-chosen { display: inline-block; margin-left: .5rem; padding: .08rem .5rem;
+  border-radius: 1rem; font-size: .62rem; font-weight: 800; letter-spacing: .08em;
+  text-transform: uppercase; vertical-align: middle; }
+.mock-ruled { background: #e7ecf1; color: var(--muted); }
+.mock-chosen { background: var(--sky); color: var(--navy); }
+.mock-decision { margin: .8rem 0 0; padding: 1rem 1.15rem; border-left: 3px solid var(--navy);
+  background: var(--white); }
+.mock-decision p { margin: .5rem 0; }
+.mock-decision p:first-child { margin-top: 0; }
+.mock-decision ul { margin: .5rem 0 0; padding-left: 1.1rem; max-width: 44rem; }
+.mock-decision li { margin: .3rem 0; line-height: 1.5; font-size: .93rem; }
+.mock-open { max-width: 44rem; margin: .5rem 0 0; padding-left: 1.1rem; }
+.mock-open li { margin: .45rem 0; line-height: 1.55; font-size: .93rem; }
 
 /* ---- A: the row keeps its place, wearing the certified band + eyebrow ---- */
 .v-a .race-detail-candidate-result { gap: .75rem; background: var(--tone-neutral-bg);
@@ -975,9 +988,13 @@ immediately after the name. Candidate order stays endorsement order.</p>
 <p><b>And one requirement settled after the first three mockups.</b> The page has to state
 <i>every</i> result, not only the endorsed candidates' &mdash; a candidate nobody endorsed can win,
 and today that winner would not appear on the page at all. There is no point publishing results at
-all if the winner might be missing from them. "Showing every result" below is that problem and
-three answers to it, and it changes the shape of the decision: read the three treatments first,
-then that section, because one of its options removes the treatment question entirely.</p>
+all if the winner might be missing from them.</p>
+<p><b>Read this as a record, not a menu.</b> The three treatments below were drawn first, and then
+the completeness requirement changed the shape of the problem: the answer it landed on
+("Showing every result," option 3) removes the per-candidate vote row entirely, and with it the
+question A, B, and C were three answers to. They are kept here because what was considered is part
+of the record, and because if the direction is reversed they are where it reverses to. The
+reasoning is under "Where this landed" at the end.</p>
 
 
 <div class="mock-rule"></div>
@@ -1315,9 +1332,11 @@ answering a different question. Nothing on screen says so.</p>
 
 
 <div class="mock-rule"></div>
-<h2>The three alternatives</h2>
-<p>All three leave the top certified strip and the heading chip where they are. They differ in what
-they do with the vote-share row, which is where the confusion actually lands.</p>
+<h2>The three treatments <span class="mock-ruled">superseded</span></h2>
+<p>All three leave the top certified strip and the heading chip where they are, and differ in what
+they do with the vote-share row. That row does not survive the direction this pass landed on, so
+none of these is live &mdash; they are the record of what was weighed, and the fallback if the
+direction reverses.</p>
 
 <h3>A &middot; Certified band</h3><p class="lede">The row stays exactly where it is and gains two things: the card's own RESULT eyebrow, and the tone band the certified strip at the top of the page already wears. The band is the recognition cue &mdash; a reader who has scrolled past the strip has already learned that this tint means <i>certified fact</i> &mdash; and the eyebrow names it outright.</p><div class="mock-surface v-a"><div class="page screen-race"><header class="page-head"><p class="page-eyebrow">August 2026 Primary</p><h1>Seattle City Council — District 5</h1><p class="page-tagline">Every endorsement that matters, with receipts.</p></header><div class="race-detail-certified-strip">
       <b>Certified result</b> · August 19, 2026 · King County Elections · 39,204 ballots
@@ -2724,7 +2743,7 @@ card from the same build, and it names Dimitri first:</p>
 <p class="mock-caption">The race card's own RESULT block, lifted verbatim from the rendered
 guide.</p>
 
-<h3>Option 1 &middot; A section for every candidate</h3>
+<h3>Option 1 &middot; A section for every candidate <span class="mock-ruled">ruled out</span></h3>
 <p>Post-certification, every ballot choice gets a section. An unendorsed candidate's carries their
 name, their chip, their result, and a line where the meter would be. One grammar, one name per
 page, complete by construction.</p>
@@ -3053,7 +3072,7 @@ also no meter to draw &mdash; <code>race_candidate_meter_views</code> deliberate
 zero-endorsement candidate &mdash; so the meter's slot needs the new treatment shown here. And the
 winner sits below three candidates who lost.</p>
 
-<h3>Option 2 &middot; "Also on the ballot"</h3>
+<h3>Option 2 &middot; "Also on the ballot" <span class="mock-ruled">ruled out</span></h3>
 <p>Endorsed candidates keep their sections; everyone else appears after them as the race card's own
 tally rows, quoted verbatim. Nothing about the endorsement stack changes, and decision 25 stands
 &mdash; these are rows, not sections.</p>
@@ -3382,7 +3401,8 @@ tally rows, quoted verbatim. Nothing about the endorsement stack changes, and de
 for endorsed candidates, a card row for everyone else. And the winner is at the bottom, under a
 heading that describes him by what he lacks.</p>
 
-<h3>Option 3 &middot; The complete result under the race header</h3>
+<h3>Option 3 &middot; The complete result under the race header
+<span class="mock-chosen">the direction</span></h3>
 <p><b>The certified strip grows into the complete result</b>, in the position it already holds:
 under the race header, above the "Counting all 40 sources" bar, above every candidate. It absorbs
 the strip's own date, authority, and ballot count &mdash; those become the block's provenance line
@@ -3744,40 +3764,67 @@ away with the header in ordinary flow &mdash; it costs its height once, not perm
 treating it: there is no longer an unlabeled bar beneath the endorsement meter, because the vote
 share no longer lives in the candidate stack at all. Each candidate section goes back to being
 purely what sources said.</p>
-<p class="mock-note cost"><b>Cost, and the one real objection.</b> The complete result now precedes
-the recommendation in reading order, and <code>docs/RESULTS.md</code> says outcomes are "rendered
-as context beneath the recommendation, never as the headline." The band is chrome rather than a
-headline &mdash; it is neutral-toned, small, and the race name in the header above still leads the
-page &mdash; and the certified strip already occupies this exact slot today. But today's strip
-names nobody, and this one names a winner. Ratifying this means reading that rule as "never
-<i>as</i> the headline" rather than "never above it," and saying so in the amendment.</p>
-<p class="mock-note cost">Also: every candidate with both a section and a tally row is named twice
-on one page. The race card already does this and reads fine, but the card is one compact block and
-this page is long. Worth a live click-through before ratification.</p>
+<p class="mock-note"><b>The objection this raises, and its answer.</b> The complete result now
+precedes the recommendation in reading order, and <code>docs/RESULTS.md</code> says outcomes are
+"rendered as context beneath the recommendation, never as the headline." Answered under "Where this
+landed" below: the result precedes the recommendation without replacing it, and the two regions are
+different in kind &mdash; one is the same for every reader, the other changes with the reader's
+own source selection. The amendment has to say so explicitly rather than let the placement imply
+it.</p>
+<p class="mock-note cost"><b>The cost that stands.</b> Every candidate with both a section and a
+tally row is named twice on one page. The race card already does this and reads fine, but the card
+is one compact block and this page is long. Worth a live click-through before ratification.</p>
 
 
 <div class="mock-rule"></div>
-<h2>Recommendation</h2>
-<p><b>Showing the complete result is settled &mdash; there is no point publishing results at all if
-the winner might not appear.</b> What is left is where the complete result goes, and that choice
-can answer the labeling question by removing it: options 1 and 2 keep the per-candidate vote-share
-row and still need A, B, or C on top; option 3 deletes that row, and with it the thing #354 was
-filed about.</p>
-<p><b>Option 3.</b> It is the only one of the three where the winner's position is decided by the
-result rather than by whether anyone endorsed them &mdash; it names Dimitri first, where the other
-two put him last, under a heading describing what he lacks. It states each share exactly once, in
-the slot the certified strip already holds, in the card's own vocabulary. And it hands the
-candidate sections back to endorsements, which is what the page is for.</p>
-<p>Its one real objection is the reading-order rule quoted above, and that is the maintainer's call
-rather than mine. If that rule is read strictly, then <b>option 2 with treatment B</b>: option 1
-buys its single grammar by amending a blessed meter decision and still buries the winner, which is
-option 2's cost without option 2's smaller footprint.</p>
-<h3>Open, and not answered here</h3>
-<p>The complete tally runs in <b>finish order</b> &mdash; the card's own order. The candidate
-sections below it run in <b>endorsement order</b>, which #287 ratified and this pass does not
-touch. Under option 3 both orders are visible on one page at once. That reads as honest to me (they
-are different questions, ordered by their own answers) but it is a real editorial call, and it is
-the maintainer's.</p>
+<h2>Where this landed</h2>
+<div class="mock-decision">
+<p><b>Option 3, on the maintainer's reasoning</b> (August 13, 2026) &mdash; recorded here, not yet
+ratified into <code>docs/RESULTS.md</code>:</p>
+<p><b>Once the election is over and the results are in, the results supersede endorsements on the
+race page.</b> On the guide, a race card can show its recommendation and meter above its result,
+because a card is compact and nothing is buried. The race page is long: put the result after the
+endorsements and the one thing a reader most needs &mdash; who actually won &mdash; is the one
+thing they cannot see when the page loads.</p>
+<p>And the reading-order objection does not survive contact with what the two regions actually are.
+<b>The endorsement content does not need to be complete</b>: it shows who was endorsed by the
+sources the reader cares about, and a lens changes it. <b>The result is not source-specific and not
+endorsement-agnostic by accident</b> &mdash; it is the same fact for every reader. The page already
+encodes exactly this: <code>race.html.j2</code> renders the certified strip outside every
+lens-owned region because it is "a permanent fact the reader's source selection never changes,"
+gated on <code>race_results</code> alone rather than on the personalization policy.</p>
+<p>Which gives the page a real organizing principle rather than a placement preference:</p>
+<ul>
+<li><b>Above the lens bar</b> &mdash; facts no reader's selection can change: the race, the
+certified result, its provenance.</li>
+<li><b>Below the lens bar</b> &mdash; what the reader's chosen sources said, complete only with
+respect to that selection.</li>
+</ul>
+<p>"Outcomes never displace recommendations" survives intact under that reading: the result
+precedes the recommendation, it does not replace it. The "Leading choice" headline keeps its
+position, its tone, and its meter, directly under the bar.</p>
+</div>
+<h3>What the amendment still has to decide</h3>
+<p>Sub-decisions option 3 forces, none of which this pass should settle on its own:</p>
+<ul class="mock-open">
+<li><b>The chip in the candidate headings.</b> #287 put "Advances" after each candidate's name in
+the endorsement stack. Under the new boundary that is result information below the lens bar. Keep
+it (it ties the two regions together for a reader scanning names) or drop it (the tally above
+already states it)? The mockups above keep it.</li>
+<li><b>Two orders on one page.</b> The tally runs in finish order; the sections below run in
+endorsement order, which #287 ratified. Both are now visible at once. Honest &mdash; different
+questions, each ordered by its own answer &mdash; but it should be stated deliberately rather than
+inherited.</li>
+<li><b>The counting window.</b> Between election day and certification there is no results file, so
+the block does not render and the strip does not either. The page is unchanged; the election-day
+banner alone carries the counting message (#344). Worth restating in the amendment so the gap is
+recorded, not rediscovered.</li>
+<li><b>Where the shared CSS lives.</b> The tally's head rules are in <code>guide.css</code>, which
+race pages do not ship; a real implementation moves them into <code>guide-race.css</code>, the
+sheet both pages already share.</li>
+</ul>
+<p>Out of scope here, noted in passing: the lens bar is not <code>position: sticky</code> on this
+page, unlike the comparison and sources pages. Making it match is its own issue.</p>
 <p class="mock-caption">Nothing here is ratified. This page is the artifact for that
 conversation.</p>
 
