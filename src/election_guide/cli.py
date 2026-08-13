@@ -86,7 +86,6 @@ from election_guide.publication.lens_parity import (
 )
 from election_guide.release import (
     build_release,
-    compare_release_archives,
     compile_release_dataset,
     verify_release_compilation,
 )
@@ -682,31 +681,6 @@ def release_verify(
         f"release inputs: reproducible "
         f"({len(dataset.captures)} sources, {len(dataset.endorsements)} decisions)"
     )
-
-
-@release_app.command("compare")
-def release_compare(
-    left: Annotated[Path, typer.Argument(exists=True, dir_okay=False, readable=True)],
-    right: Annotated[Path, typer.Argument(exists=True, dir_okay=False, readable=True)],
-) -> None:
-    """Check that two builds of one release are the same release."""
-    try:
-        report = compare_release_archives(left, right)
-    except (OSError, ValueError) as error:
-        # `compare_release_archives` turns every archive-level failure into a
-        # ValueError itself, so this guards the file system and that.
-        typer.echo(f"release comparison failed: {error}", err=True)
-        raise typer.Exit(code=1) from error
-    if not report.passed:
-        for difference in report.differences:
-            typer.echo(f"{difference.artifact} [{difference.kind}]: {difference.detail}", err=True)
-        typer.echo(
-            f"release is not reproducible: {len(report.differences)} of "
-            f"{report.compared_artifact_count} artifacts differ",
-            err=True,
-        )
-        raise typer.Exit(code=1)
-    typer.echo(f"release: reproducible ({report.compared_artifact_count} artifacts compared)")
 
 
 @app.command()

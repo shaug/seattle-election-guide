@@ -65,24 +65,15 @@ jobs:
           GH_TOKEN: ${{ github.token }}
       - name: Verify reproducible primary release inputs
         run: uv run election-guide release verify data/releases/wa-2026-primary/source-decisions.yaml
+      # The gate itself is defined once, in the Makefile, and invoked here the
+      # same way check-js and check-changelog are (issue #367) -- so a change to
+      # the procedure cannot leave the local target and CI running different
+      # checks. The output directories are overridden because the staging step
+      # below consumes this build's bundle.
       - name: Build and verify deterministic primary release
         run: |
-          SITE_UPDATED_AT="$(git show -s --format=%cI "$GITHUB_SHA")"
-          uv run election-guide release build data/releases/wa-2026-primary/source-decisions.yaml \
-              --release-version 2026-primary.2 \
-              --generated-at "$SITE_UPDATED_AT" \
-            --output-dir dist/ci-release-a
-          uv run election-guide release build data/releases/wa-2026-primary/source-decisions.yaml \
-              --release-version 2026-primary.2 \
-              --generated-at "$SITE_UPDATED_AT" \
-            --output-dir dist/ci-release-b
-          # Not `cmp`: it printed one offset into compressed data, which named
-          # nothing. `release compare` holds every artifact to the same exact
-          # bytes and names the one that moved (issue #367, docs/RELEASE.md,
-          # Reproducibility).
-          uv run election-guide release compare \
-            dist/ci-release-a/seattle-election-guide-2026-primary.2.zip \
-            dist/ci-release-b/seattle-election-guide-2026-primary.2.zip
+          make check-release-reproducible \
+            RELEASE_A=dist/ci-release-a RELEASE_B=dist/ci-release-b
           unzip -t dist/ci-release-a/seattle-election-guide-2026-primary.2.zip
           unzip -Z1 dist/ci-release-a/seattle-election-guide-2026-primary.2.zip \
             | grep -Fx 'seattle-election-guide/validation/rendering/rendering_validation_report.json'

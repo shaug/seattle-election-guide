@@ -64,33 +64,40 @@ test:
 release-verify:
 	uv run election-guide release verify data/releases/wa-2026-primary/source-decisions.yaml
 
-# The same gate CI runs, runnable here (issue #367). It is deliberately not part
-# of `make check`: `release build` refuses a dirty checkout, so on the tree a
-# contributor actually runs `make check` against it could only fail for a reason
-# that has nothing to do with their diff. Run it on a clean tree before pushing
-# -- CONTRIBUTING.md, Local checks, says when that is worth doing.
+# The release-reproducibility gate, defined once here and invoked by CI, the way
+# check-js and check-changelog already are (issue #367). Two builds of one
+# commit must produce one release.
 #
-# The build timestamp comes from the commit, exactly as CI derives it, because
-# `generated_at` is recorded in the bundle, so two different values would
-# produce two legitimately different releases.
-check-release-reproducible:
-	rm -rf dist/reproducibility-a dist/reproducibility-b
-	uv run election-guide release build data/releases/wa-2026-primary/source-decisions.yaml \
-		--release-version 2026-primary.2 \
-		--generated-at "$$(git show -s --format=%cI HEAD)" \
-		--output-dir dist/reproducibility-a
-	uv run election-guide release build data/releases/wa-2026-primary/source-decisions.yaml \
-		--release-version 2026-primary.2 \
-		--generated-at "$$(git show -s --format=%cI HEAD)" \
-		--output-dir dist/reproducibility-b
-	uv run election-guide release compare \
-		dist/reproducibility-a/seattle-election-guide-2026-primary.2.zip \
-		dist/reproducibility-b/seattle-election-guide-2026-primary.2.zip
+# Two comparisons, because they cover different things. `diff -rq` walks the
+# unpacked bundles and names the artifact that differs -- which is the whole
+# reason this replaced a bare `cmp`, whose single offset into compressed data
+# named nothing. `cmp` then holds the archive itself to its exact bytes,
+# covering what the bundles cannot show: entry order, timestamps, permissions,
+# and compression settings.
+#
+# Not part of `make check`: `release build` refuses a dirty checkout, so on the
+# tree a contributor runs `make check` against it could only fail for a reason
+# unrelated to their diff (CONTRIBUTING.md, Local checks). The build timestamp
+# comes from the commit, exactly as CI derives it, because `generated_at` is
+# recorded in the bundle and two different values would produce two
+# legitimately different releases.
+RELEASE_A ?= dist/reproducibility-a
+RELEASE_B ?= dist/reproducibility-b
+RELEASE_ARCHIVE = seattle-election-guide-2026-primary.2.zip
 
-# Only the current election is built from source; every other declared election
-# resolves from the release that published it, exactly as CI stages (issue 271,
-# docs/HOSTING.md, Historical bundles). Supplying every declared bundle locally
-# downloads nothing, so this is inert while one election is declared.
+check-release-reproducible:
+	rm -rf $(RELEASE_A) $(RELEASE_B)
+	uv run election-guide release build data/releases/wa-2026-primary/source-decisions.yaml \
+		--release-version 2026-primary.2 \
+		--generated-at "$$(git show -s --format=%cI HEAD)" \
+		--output-dir $(RELEASE_A)
+	uv run election-guide release build data/releases/wa-2026-primary/source-decisions.yaml \
+		--release-version 2026-primary.2 \
+		--generated-at "$$(git show -s --format=%cI HEAD)" \
+		--output-dir $(RELEASE_B)
+	diff -rq $(RELEASE_A)/bundle $(RELEASE_B)/bundle
+	cmp $(RELEASE_A)/$(RELEASE_ARCHIVE) $(RELEASE_B)/$(RELEASE_ARCHIVE)
+
 hosting-stage:
 	uv run election-guide hosting stage config/hosting/site.yaml \
 		--bundle wa-2026-primary-2026-primary.2=dist/primary-release/bundle \

@@ -86,12 +86,17 @@ archives:
 make check-release-reproducible
 ```
 
-Every artifact in the bundle is held to its exact bytes, the two rendered screenshots included.
-What issue #367 changed is not that contract but what a failure can say. `cmp` on the two archives
-printed a single offset into compressed data, which named nothing: the first byte to differ belongs
-to whichever entry's header the deflate stream reached first, so a moved screenshot surfaced as an
-offset inside `release-manifest.json`. `release compare` walks the archives entry by entry and names
-the artifact.
+Every artifact is held to its exact bytes, the two rendered screenshots included. What issue #367
+changed is not that contract but what a failure can say. `cmp` alone printed a single offset into
+compressed data, which named nothing: the first byte to differ belongs to whichever entry's header
+the deflate stream reached first, so a moved screenshot surfaced as an offset inside
+`release-manifest.json`. The gate now runs two comparisons, because they cover different things —
+`diff -rq` over the two unpacked bundles names the artifact that differs, and `cmp` over the two
+archives holds the container itself to its exact bytes, covering what the bundles cannot show: entry
+order, timestamps, permissions, and compression settings.
+
+The gate is defined once, in the `Makefile`, and CI invokes that target rather than restating it, so
+the command a contributor runs locally cannot drift from the one CI runs.
 
 That gate used to fail roughly one run in seven on same-input builds. The cause was in the capture,
 not the comparison: `rendering/browser.py` waited a fixed interval and then photographed whichever
