@@ -519,7 +519,7 @@ a { color: var(--blue); text-underline-offset: .15em; }
    width still empty. A record's name is one unit: it takes the width it needs
    and wraps only where the viewport makes it. */
 .screen-race .page-head h1 { max-width: none; }
-/* The certified strip (docs/RESULTS.md, Rendering § The endorsements dialog;
+/* The certified strip (docs/RESULTS.md, Rendering § The race-detail page;
    #287): one centered line of certification facts under the page head,
    above every candidate section -- the same tone family the race card's own
    "Result" badge (guide.css `.race-results-status`) and the counting-window
@@ -611,7 +611,7 @@ a { color: var(--blue); text-underline-offset: .15em; }
 /* The results chip itself is a guide+race shared rule (guide-race.css,
    `.race-detail-result-chip`) — this heading is one more place it renders,
    immediately after the candidate's name, alongside the guide's own results
-   strip and the endorsements dialog's candidate heading. */
+   strip and the race-detail page's candidate heading. */
 /* Every candidate's own section meter (docs/METER_V2.md, Chrome geometry:
    "The headline meter's own fate"; #325): left-adjusted, growing to fill
    the row, beside a right-adjusted label sized to its own count/percent
@@ -726,7 +726,7 @@ a { color: var(--blue); text-underline-offset: .15em; }
    media state or source order. */
 .screen-meter-section .meter-block { border-left-color: var(--row-separator) !important; border-image-source: none !important; }
 .screen-meter-section .meter-half-bottom { border-top-color: var(--row-separator) !important; }
-/* The vote-share row (docs/RESULTS.md, Rendering § The endorsements dialog;
+/* The vote-share row (docs/RESULTS.md, Rendering § The race-detail page;
    #287): one candidate's own certified share, between their heading and
    source list — the same navy-on-track tally bar the race card's own
    results strip renders (guide.css `.race-results-bar`), reused here at the
@@ -865,6 +865,64 @@ body.mockup { margin: 0; background: #eef1f4; color: var(--ink); }
   letter-spacing: .1em; text-transform: uppercase; }
 .v-b .race-detail-result-bar { display: block; }
 
+/* ---- Completeness: every outcome, not only the endorsed ones ---- */
+/* A section for a candidate no source endorsed. The amber every unendorsed
+   section would wear is the guide's "differ" tone and would claim this
+   candidate is a contested choice; a plain neutral rail says only that this
+   is someone on the ballot. */
+.mock-roster-section { border-color: #dbe2e8; border-left-color: var(--line-strong); }
+.mock-roster-section .race-detail-candidate-heading { background: var(--tone-neutral-bg); }
+.mock-no-meter { flex: 1 1 100%; color: var(--faint); font-size: .8rem; font-style: italic; }
+/* The tail block quotes the race card's own tally rows, so it inherits the
+   card's grid: name and share on one line, bar spanning beneath. */
+.mock-also .race-results-tally { display: grid; gap: .45rem; padding: .6rem .75rem .75rem;
+  background: var(--white); }
+.mock-also .race-results-row { display: grid; grid-template-columns: minmax(0, 1fr) auto;
+  gap: .15rem .6rem; }
+.mock-also .race-results-bar { grid-column: 1 / -1; height: .45rem; border-radius: .25rem;
+  background: var(--meter-track); overflow: hidden; }
+.mock-also .race-results-bar i { display: block; height: 100%; background: var(--navy);
+  border-radius: .25rem; }
+.mock-also .race-results-row-trailing .race-results-bar i { background: var(--line-strong); }
+.mock-also .race-results-name { font-size: .92rem; font-weight: 600; color: var(--ink); }
+.mock-also .race-results-share { font-size: .92rem; font-weight: 700; color: var(--ink);
+  font-variant-numeric: tabular-nums; }
+.mock-also .race-results-row-trailing .race-results-name,
+.mock-also .race-results-row-trailing .race-results-share { color: var(--muted);
+  font-weight: 500; }
+/* The card's whole RESULT block, quoted onto the page under the headline.
+   Its head rules live in guide.css, which a race page does not ship, so the
+   quoted markup carries copies of them here rather than pulling a second
+   stylesheet into the comparison. A real implementation would move these
+   into guide-race.css, the sheet both pages already share. */
+.mock-page-tally { padding: .1rem clamp(1rem, 4vw, 3rem) 1.1rem; }
+.mock-page-tally .race-results { margin-top: 0; padding-top: .7rem;
+  border-top: 1px solid var(--row-separator); }
+.mock-page-tally .race-results-head { display: flex; align-items: baseline; flex-wrap: wrap;
+  gap: .3rem .5rem; margin-bottom: .55rem; }
+.mock-page-tally .race-results-eyebrow { color: var(--muted); font-size: .68rem; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase; }
+.mock-page-tally .race-results-status { display: inline-block; padding: .08rem .5rem;
+  border: 1px solid var(--tone-agree-border); border-radius: 1rem; background: var(--tone-agree-bg);
+  color: var(--tone-agree-text); font-size: .68rem; font-weight: 700; letter-spacing: .02em; }
+.mock-page-tally .race-results-tally { display: grid; gap: .45rem; }
+.mock-page-tally .race-results-row { display: grid; grid-template-columns: minmax(0, 1fr) auto;
+  gap: .15rem .6rem; }
+.mock-page-tally .race-results-bar { grid-column: 1 / -1; height: .45rem; border-radius: .25rem;
+  background: var(--meter-track); overflow: hidden; }
+.mock-page-tally .race-results-bar i { display: block; height: 100%; background: var(--navy);
+  border-radius: .25rem; }
+.mock-page-tally .race-results-row-trailing .race-results-bar i { background: var(--line-strong); }
+.mock-page-tally .race-results-name { font-size: .95rem; font-weight: 600; color: var(--ink); }
+.mock-page-tally .race-results-share { font-size: .95rem; font-weight: 700; color: var(--ink);
+  font-variant-numeric: tabular-nums; }
+.mock-page-tally .race-results-row-trailing .race-results-name,
+.mock-page-tally .race-results-row-trailing .race-results-share { color: var(--muted);
+  font-weight: 500; }
+.mock-page-tally .race-results-provenance { margin: .55rem 0 0; color: var(--faint);
+  font-size: .72rem; }
+.mock-page-tally .race-results-provenance a { color: var(--blue); }
+
 /* ---- C: both measures labeled, paired inside the candidate heading ---- */
 /* One grid for both rows, not one per row, so the two bars share a right edge
    and the two labels share a left one -- the whole point of the pairing. */
@@ -901,6 +959,11 @@ nothing saying that one counts organizations and the other counts voters.</p>
 inventing a second one. Results stay a state, not an option. Vote share and endorsement share
 never share a component. Every vote bar runs one full-width scale. The chip stays sky-on-navy,
 immediately after the name. Candidate order stays endorsement order.</p>
+<p><b>And one requirement added after the first three mockups.</b> The page has to state
+<i>every</i> result, not only the endorsed candidates' &mdash; a candidate nobody endorsed can win,
+and today that winner would not appear on the page at all. "Showing every result" below is that
+problem and three answers to it. It changes the shape of the decision: read the three treatments
+first, then that section, because one of its options removes the treatment question entirely.</p>
 
 
 <div class="mock-rule"></div>
@@ -2267,32 +2330,1402 @@ the one that needs a stated fallback: the label column has to collapse above its
 30rem, or the meter is squeezed to nothing.</p>
 
 <div class="mock-rule"></div>
-<h2>One thing none of the three fixes</h2>
-<p>Found while rendering the measure case above, and surfaced here rather than silently resolved:
-<b>this page never states the whole tally.</b> A candidate section exists only for a candidate some
-source endorsed, so a certified share renders only for endorsed choices. In the measure page above,
-"Yes" carries 60.2% and <b>"No" &mdash; 39.8% of the same certified count &mdash; appears nowhere on
-the page at all.</b> The same is true of the candidate race: Dimitri Georgakopoulos took 10.8% and
-has no section, because no source endorsed him.</p>
-<p>The race card does not have this problem: its RESULT block lists every outcome, endorsed or not.
-So the card states a complete result and the page states a partial one &mdash; which is arguably a
-second, larger sense in which this page's results read as decoupled from the card's.</p>
-<p>This is out of #354's own scope as filed, and none of A, B, or C addresses it: all three restyle
-a row that only exists where a section already does. It needs its own decision &mdash; either the
-page accepts that it annotates endorsed candidates only, or it gains a complete tally somewhere
-(the certified strip is the natural host). Worth settling at the same sitting, and filing
-separately.</p>
+<h2>Showing every result</h2>
+<p><b>A candidate section exists only for a candidate some source endorsed</b>
+(<code>candidate_endorsement_groups</code>, and <code>docs/METER_V2.md</code> decision 25: "no
+section, in either model"). A certified share therefore renders only for endorsed choices &mdash;
+and the choice nobody endorsed can be the one that won.</p>
+<p>Below is that case, rendered from the same real page: Dimitri Georgakopoulos takes 40.1% and
+advances. No source endorsed him, so he has no section, and <b>the page does not name the winner
+anywhere.</b> The headline still reads "Leading choice: Nilu Jenks," which is correct &mdash; it is
+the recommendation, and outcomes never displace recommendations &mdash; but a reader has no way to
+learn who actually won. The measure page has the same hole: a rejected levy's winning "No" never
+appears.</p>
+<div class="mock-surface v-b"><div class="page screen-race"><div class="race-detail-certified-strip">
+      <b>Certified result</b> · August 19, 2026 · King County Elections · 39,204 ballots
+    </div><main class="race-detail"><div class="race-headline race-headline-heads-section"
+        role="group" aria-label="Consensus result"
+        aria-describedby="race-consensus-summary" data-race-headline>
+        <p class="race-headline-eyebrow">Leading choice</p>
+        <div class="screen-race-result" data-lens-result>
+          <h3 data-display-role="recommendation">Nilu Jenks <span class="race-detail-result-chip">Advances</span></h3>
+        </div>
+        <div class="screen-race-context" data-lens-context>
+          <p class="no-majority-pill" hidden>No majority</p>
+        </div>
+      </div><div class="race-detail-outcomes"><div class="race-detail-candidates" data-race-candidates          style="--count-chars: 3; --pct-chars: 3"><section class="race-detail-candidate race-detail-candidate-leader race-detail-candidate-headlined"
+      data-race-detail-candidate-id="seattle-city-council-5--nilu-jenks">
+      <div class="race-detail-candidate-heading">
+        <div class="race-detail-candidate-meter">
+          <div class="screen-meter screen-meter-section" role="img" data-display-role="candidate-share"
+  data-meter-candidate-id="seattle-city-council-5--nilu-jenks" aria-label="Nilu Jenks: 21½ of 23 endorsements" tabindex="0"
+><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal)" data-meter-source="36th Legislative District Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="46th Legislative District Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Alliance for Gun Responsibility Victory Fund"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="King County Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="OneAmerica Votes"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="PROTEC17"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="SEIU 775"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Sage Leaders"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Seattle Gay News Editorial Board"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Tech 4 Taxes"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="The Stranger Election Control Board"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="The Urbanist Elections Committee"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="The Washington Bus"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Transit Riders Union"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="UFCW 3000"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington Bikes"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington Conservation Action"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington State Stonewall Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington Working Families Party"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington for Peace and Justice"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-split meter-tongue-start meter-block-context"
+  style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-taupe); --meter-splitline-rest:var(--meter-trail-taupe); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-taupe) 50%) 86%, var(--meter-seam-pole)); --meter-tongue-bg:var(--teal); --meter-seam-rest-color:var(--teal); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-taupe) 50%) 86%, var(--meter-seam-pole)) 50% 100%)" data-meter-source="SEIU 925"
+  data-meter-decision="Split: Nilu Jenks + Silas James — ½ each"
+><span class="meter-half meter-half-top meter-half-context"></span><span class="meter-half meter-half-bottom meter-half-recede"></span></span><span class="meter-block meter-block-split meter-block-context"
+  style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-slate); --meter-splitline-rest:var(--meter-trail-slate); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)); --meter-seam-rest-image:linear-gradient(180deg, var(--teal) 0 50%, var(--meter-trail-slate) 50% 100%); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, color-mix(in srgb, var(--meter-trail-taupe) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)) 50% 100%)" data-meter-source="32nd Legislative District Democrats"
+  data-meter-decision="Split: Nilu Jenks + Julie Kang — ½ each"
+><span class="meter-half meter-half-top meter-half-context"></span><span class="meter-half meter-half-bottom meter-half-recede"></span></span><span class="meter-block meter-block-split meter-block-context"
+  style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-slate); --meter-splitline-rest:var(--meter-trail-slate); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)); --meter-seam-rest-image:linear-gradient(180deg, var(--teal) 0 50%, var(--meter-trail-slate) 50% 100%); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, var(--meter-trail-slate) 88%, var(--meter-seam-pole)) 50% 100%)" data-meter-source="National Women&#39;s Political Caucus of Washington"
+  data-meter-decision="Split: Nilu Jenks + Julie Kang — ½ each"
+><span class="meter-half meter-half-top meter-half-context"></span><span class="meter-half meter-half-bottom meter-half-recede"></span></span></div>
+          <span class="race-detail-candidate-count"><b>21½</b> of 23 endorsements<span class="race-detail-candidate-pct">93%</span></span>
+        </div>
+      </div>
+      <div class="race-detail-candidate-result"><div class="race-detail-result-head"><span class="race-detail-result-eyebrow">Result</span><span class="race-detail-result-share">30.0%</span></div><span class="race-detail-result-bar"><i style="width:30.0%"></i></span></div>
+      <ul class="race-detail-source-list"><li data-race-detail-source-code="strn"
+      data-source-category="progressive_general" data-source-state="endorsement"
+      data-source-role="consensus" data-source-group="candidate" data-endorsed-candidate-id="seattle-city-council-5--nilu-jenks">
+<a class="race-detail-source-row" href="https://www.thestranger.com/endorsements/the-strangers-2026-primary-election-endorsements/" target="_blank" rel="noopener">
+        <strong>The Stranger Election Control Board</strong>
+        <div class="race-detail-source-meta">
+          <span class="race-detail-category-badge">Progressive editorial and general</span>
+        </div>
+</a>    </li>
+<li data-race-detail-source-code="urbn"
+      data-source-category="progressive_general" data-source-state="endorsement"
+      data-source-role="consensus" data-source-group="candidate" data-endorsed-candidate-id="seattle-city-council-5--nilu-jenks">
+<a class="race-detail-source-row" href="https://www.theurbanist.org/2026-primary-election-endorsements/" target="_blank" rel="noopener">
+        <strong>The Urbanist Elections Committee</strong>
+        <div class="race-detail-source-meta">
+          <span class="race-detail-category-badge">Progressive editorial and general</span>
+        </div>
+</a>    </li>
+<li data-race-detail-source-code="t4tx"
+      data-source-category="progressive_general" data-source-state="endorsement"
+      data-source-role="consensus" data-source-group="candidate" data-endorsed-candidate-id="seattle-city-council-5--nilu-jenks">
+<a class="race-detail-source-row" href="https://tech4taxes.org/endorsements" target="_blank" rel="noopener">
+        <strong>Tech 4 Taxes</strong>
+        <div class="race-detail-source-meta">
+          <span class="race-detail-category-badge">Progressive editorial and general</span>
+        </div>
+</a>    </li><li class="mock-elision"><div class="race-detail-source-row"><strong>+ 20 more sources</strong></div></li></ul>
+    </section><section class="race-detail-candidate"
+      data-race-detail-candidate-id="seattle-city-council-5--julie-kang">
+      <div class="race-detail-candidate-heading">
+        <div class="race-detail-candidate-title">
+          <h4>Julie Kang</h4>
+        </div>
+        <div class="race-detail-candidate-meter">
+          <div class="screen-meter screen-meter-section" role="img" data-display-role="candidate-share"
+  data-meter-candidate-id="seattle-city-council-5--julie-kang" aria-label="Julie Kang: 1 of 23 endorsements" tabindex="0"
+><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal)" data-meter-source="36th Legislative District Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="46th Legislative District Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Alliance for Gun Responsibility Victory Fund"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="King County Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="OneAmerica Votes"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="PROTEC17"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="SEIU 775"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Sage Leaders"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Seattle Gay News Editorial Board"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Tech 4 Taxes"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="The Stranger Election Control Board"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="The Urbanist Elections Committee"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="The Washington Bus"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Transit Riders Union"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="UFCW 3000"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington Bikes"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington Conservation Action"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington State Stonewall Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington Working Families Party"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington for Peace and Justice"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-split meter-tongue-start"
+  style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-taupe); --meter-splitline-rest:var(--meter-trail-taupe); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-taupe) 50%) 86%, var(--meter-seam-pole)); --meter-tongue-bg:var(--teal); --meter-seam-rest-color:var(--teal); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-taupe) 50%) 86%, var(--meter-seam-pole)) 50% 100%)" data-meter-source="SEIU 925"
+  data-meter-decision="Split: Nilu Jenks + Silas James — ½ each"
+><span class="meter-half meter-half-top"></span><span class="meter-half meter-half-bottom"></span></span><span class="meter-block meter-block-split meter-block-context"
+  style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-slate); --meter-splitline-rest:var(--meter-trail-slate); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)); --meter-seam-rest-image:linear-gradient(180deg, var(--teal) 0 50%, var(--meter-trail-slate) 50% 100%); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, color-mix(in srgb, var(--meter-trail-taupe) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)) 50% 100%)" data-meter-source="32nd Legislative District Democrats"
+  data-meter-decision="Split: Nilu Jenks + Julie Kang — ½ each"
+><span class="meter-half meter-half-top meter-half-recede"></span><span class="meter-half meter-half-bottom meter-half-context"></span></span><span class="meter-block meter-block-split meter-block-context"
+  style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-slate); --meter-splitline-rest:var(--meter-trail-slate); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)); --meter-seam-rest-image:linear-gradient(180deg, var(--teal) 0 50%, var(--meter-trail-slate) 50% 100%); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, var(--meter-trail-slate) 88%, var(--meter-seam-pole)) 50% 100%)" data-meter-source="National Women&#39;s Political Caucus of Washington"
+  data-meter-decision="Split: Nilu Jenks + Julie Kang — ½ each"
+><span class="meter-half meter-half-top meter-half-recede"></span><span class="meter-half meter-half-bottom meter-half-context"></span></span></div>
+          <span class="race-detail-candidate-count"><b>1</b> of 23 endorsements<span class="race-detail-candidate-pct">4%</span></span>
+        </div>
+      </div>
+      <div class="race-detail-candidate-result race-detail-candidate-result-trailing"><div class="race-detail-result-head"><span class="race-detail-result-eyebrow">Result</span><span class="race-detail-result-share">19.1%</span></div><span class="race-detail-result-bar"><i style="width:19.1%"></i></span></div>
+      <ul class="race-detail-source-list">
+<li data-race-detail-source-code="ld32"
+      data-source-category="democratic_party" data-source-state="multi_endorsement"
+      data-source-role="consensus" data-source-group="candidate" data-endorsed-candidate-id="seattle-city-council-5--julie-kang">
+<a class="race-detail-source-row" href="https://32democrats.org/2026-endorsements/" target="_blank" rel="noopener">
+        <strong>32nd Legislative District Democrats</strong>
+        <div class="race-detail-source-meta">
+          <span class="race-detail-category-badge">Democratic Party</span>
+<span class="race-detail-source-status">Co-endorsed</span>        </div>
+</a>    </li><li data-race-detail-source-code="nwpc"
+      data-source-category="rights_representation" data-source-state="multi_endorsement"
+      data-source-role="consensus" data-source-group="candidate" data-endorsed-candidate-id="seattle-city-council-5--julie-kang">
+<a class="race-detail-source-row" href="https://www.nwpcwa.org/endorsements_2026" target="_blank" rel="noopener">
+        <strong>National Women&#39;s Political Caucus of Washington</strong>
+        <div class="race-detail-source-meta">
+          <span class="race-detail-category-badge">Rights and representation</span>
+<span class="race-detail-source-status">Co-endorsed</span>        </div>
+</a>    </li>      </ul>
+    </section><section class="race-detail-candidate"
+      data-race-detail-candidate-id="seattle-city-council-5--silas-james">
+      <div class="race-detail-candidate-heading">
+        <div class="race-detail-candidate-title">
+          <h4>Silas James</h4>
+        </div>
+        <div class="race-detail-candidate-meter">
+          <div class="screen-meter screen-meter-section" role="img" data-display-role="candidate-share"
+  data-meter-candidate-id="seattle-city-council-5--silas-james" aria-label="Silas James: ½ of 23 endorsements" tabindex="0"
+><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal)" data-meter-source="36th Legislative District Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="46th Legislative District Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Alliance for Gun Responsibility Victory Fund"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="King County Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="OneAmerica Votes"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="PROTEC17"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="SEIU 775"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Sage Leaders"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Seattle Gay News Editorial Board"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Tech 4 Taxes"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="The Stranger Election Control Board"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="The Urbanist Elections Committee"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="The Washington Bus"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Transit Riders Union"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="UFCW 3000"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington Bikes"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington Conservation Action"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington State Stonewall Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington Working Families Party"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington for Peace and Justice"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-split meter-tongue-start meter-block-context"
+  style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-taupe); --meter-splitline-rest:var(--meter-trail-taupe); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-taupe) 50%) 86%, var(--meter-seam-pole)); --meter-tongue-bg:var(--teal); --meter-seam-rest-color:var(--teal); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-taupe) 50%) 86%, var(--meter-seam-pole)) 50% 100%)" data-meter-source="SEIU 925"
+  data-meter-decision="Split: Nilu Jenks + Silas James — ½ each"
+><span class="meter-half meter-half-top meter-half-recede"></span><span class="meter-half meter-half-bottom meter-half-context"></span></span><span class="meter-block meter-block-split"
+  style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-slate); --meter-splitline-rest:var(--meter-trail-slate); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)); --meter-seam-rest-image:linear-gradient(180deg, var(--teal) 0 50%, var(--meter-trail-slate) 50% 100%); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, color-mix(in srgb, var(--meter-trail-taupe) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)) 50% 100%)" data-meter-source="32nd Legislative District Democrats"
+  data-meter-decision="Split: Nilu Jenks + Julie Kang — ½ each"
+><span class="meter-half meter-half-top"></span><span class="meter-half meter-half-bottom"></span></span><span class="meter-block meter-block-split"
+  style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-slate); --meter-splitline-rest:var(--meter-trail-slate); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)); --meter-seam-rest-image:linear-gradient(180deg, var(--teal) 0 50%, var(--meter-trail-slate) 50% 100%); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, var(--meter-trail-slate) 88%, var(--meter-seam-pole)) 50% 100%)" data-meter-source="National Women&#39;s Political Caucus of Washington"
+  data-meter-decision="Split: Nilu Jenks + Julie Kang — ½ each"
+><span class="meter-half meter-half-top"></span><span class="meter-half meter-half-bottom"></span></span></div>
+          <span class="race-detail-candidate-count"><b>½</b> of 23 endorsements<span class="race-detail-candidate-pct">2%</span></span>
+        </div>
+      </div>
+      <div class="race-detail-candidate-result race-detail-candidate-result-trailing"><div class="race-detail-result-head"><span class="race-detail-result-eyebrow">Result</span><span class="race-detail-result-share">10.8%</span></div><span class="race-detail-result-bar"><i style="width:10.8%"></i></span></div>
+      <ul class="race-detail-source-list">
+<li data-race-detail-source-code="s925"
+      data-source-category="labor" data-source-state="multi_endorsement"
+      data-source-role="consensus" data-source-group="candidate" data-endorsed-candidate-id="seattle-city-council-5--silas-james">
+<a class="race-detail-source-row" href="https://www.seiu925.org/2026endorsements/" target="_blank" rel="noopener">
+        <strong>SEIU 925</strong>
+        <div class="race-detail-source-meta">
+          <span class="race-detail-category-badge">Labor</span>
+<span class="race-detail-source-status">Co-endorsed</span>        </div>
+</a>    </li>      </ul>
+    </section></div></div></main></div></div>
+<p class="mock-caption">The winner-had-no-endorsements case, under treatment B. Every share on the
+page belongs to someone who lost.</p>
+<p>The data is not missing &mdash; the race card already states it in full. This is the same race's
+card from the same build, and it names Dimitri first:</p>
+<div class="mock-surface"><div class="page screen-race"><div class="mock-page-tally">
+<div class="race-results">
+              <div class="race-results-head">
+                <span class="race-results-eyebrow">Result</span>
+                <span class="race-results-status">Certified · Aug 19, 2026</span>
+              </div>
+              <div class="race-results-tally">
+                <div class="race-results-row">
+                  <span class="race-results-name">Dimitri Georgakopoulos <span class="race-detail-result-chip">Advances</span></span>
+                  <span class="race-results-share">40.1%</span>
+                  <span class="race-results-bar"><i style="width:40.1%"></i></span>
+                </div>
+                <div class="race-results-row">
+                  <span class="race-results-name">Nilu Jenks <span class="race-detail-result-chip">Advances</span></span>
+                  <span class="race-results-share">30.0%</span>
+                  <span class="race-results-bar"><i style="width:30.0%"></i></span>
+                </div>
+                <div class="race-results-row race-results-row-trailing">
+                  <span class="race-results-name">Julie Kang</span>
+                  <span class="race-results-share">19.1%</span>
+                  <span class="race-results-bar"><i style="width:19.1%"></i></span>
+                </div>
+                <div class="race-results-row race-results-row-trailing">
+                  <span class="race-results-name">Silas James</span>
+                  <span class="race-results-share">10.8%</span>
+                  <span class="race-results-bar"><i style="width:10.8%"></i></span>
+                </div>
+              </div>
+              <p class="race-results-provenance">39,204 ballots · King County Elections · <a href="https://kingcounty.gov/elections/results" target="_blank" rel="noopener">capture</a></p>
+            </div></div></div></div>
+<p class="mock-caption">The race card's own RESULT block, lifted verbatim from the rendered
+guide.</p>
+
+<h3>Option 1 &middot; A section for every candidate</h3>
+<p>Post-certification, every ballot choice gets a section. An unendorsed candidate's carries their
+name, their chip, their result, and a line where the meter would be. One grammar, one name per
+page, complete by construction.</p>
+<div class="mock-surface v-b k-roster"><div class="page screen-race"><div class="race-detail-certified-strip">
+      <b>Certified result</b> · August 19, 2026 · King County Elections · 39,204 ballots
+    </div><main class="race-detail"><div class="race-headline race-headline-heads-section"
+        role="group" aria-label="Consensus result"
+        aria-describedby="race-consensus-summary" data-race-headline>
+        <p class="race-headline-eyebrow">Leading choice</p>
+        <div class="screen-race-result" data-lens-result>
+          <h3 data-display-role="recommendation">Nilu Jenks <span class="race-detail-result-chip">Advances</span></h3>
+        </div>
+        <div class="screen-race-context" data-lens-context>
+          <p class="no-majority-pill" hidden>No majority</p>
+        </div>
+      </div><div class="race-detail-outcomes"><div class="race-detail-candidates" data-race-candidates          style="--count-chars: 3; --pct-chars: 3"><section class="race-detail-candidate race-detail-candidate-leader race-detail-candidate-headlined"
+      data-race-detail-candidate-id="seattle-city-council-5--nilu-jenks">
+      <div class="race-detail-candidate-heading">
+        <div class="race-detail-candidate-meter">
+          <div class="screen-meter screen-meter-section" role="img" data-display-role="candidate-share"
+  data-meter-candidate-id="seattle-city-council-5--nilu-jenks" aria-label="Nilu Jenks: 21½ of 23 endorsements" tabindex="0"
+><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal)" data-meter-source="36th Legislative District Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="46th Legislative District Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Alliance for Gun Responsibility Victory Fund"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="King County Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="OneAmerica Votes"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="PROTEC17"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="SEIU 775"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Sage Leaders"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Seattle Gay News Editorial Board"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Tech 4 Taxes"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="The Stranger Election Control Board"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="The Urbanist Elections Committee"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="The Washington Bus"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Transit Riders Union"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="UFCW 3000"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington Bikes"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington Conservation Action"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington State Stonewall Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington Working Families Party"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington for Peace and Justice"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-split meter-tongue-start meter-block-context"
+  style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-taupe); --meter-splitline-rest:var(--meter-trail-taupe); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-taupe) 50%) 86%, var(--meter-seam-pole)); --meter-tongue-bg:var(--teal); --meter-seam-rest-color:var(--teal); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-taupe) 50%) 86%, var(--meter-seam-pole)) 50% 100%)" data-meter-source="SEIU 925"
+  data-meter-decision="Split: Nilu Jenks + Silas James — ½ each"
+><span class="meter-half meter-half-top meter-half-context"></span><span class="meter-half meter-half-bottom meter-half-recede"></span></span><span class="meter-block meter-block-split meter-block-context"
+  style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-slate); --meter-splitline-rest:var(--meter-trail-slate); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)); --meter-seam-rest-image:linear-gradient(180deg, var(--teal) 0 50%, var(--meter-trail-slate) 50% 100%); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, color-mix(in srgb, var(--meter-trail-taupe) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)) 50% 100%)" data-meter-source="32nd Legislative District Democrats"
+  data-meter-decision="Split: Nilu Jenks + Julie Kang — ½ each"
+><span class="meter-half meter-half-top meter-half-context"></span><span class="meter-half meter-half-bottom meter-half-recede"></span></span><span class="meter-block meter-block-split meter-block-context"
+  style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-slate); --meter-splitline-rest:var(--meter-trail-slate); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)); --meter-seam-rest-image:linear-gradient(180deg, var(--teal) 0 50%, var(--meter-trail-slate) 50% 100%); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, var(--meter-trail-slate) 88%, var(--meter-seam-pole)) 50% 100%)" data-meter-source="National Women&#39;s Political Caucus of Washington"
+  data-meter-decision="Split: Nilu Jenks + Julie Kang — ½ each"
+><span class="meter-half meter-half-top meter-half-context"></span><span class="meter-half meter-half-bottom meter-half-recede"></span></span></div>
+          <span class="race-detail-candidate-count"><b>21½</b> of 23 endorsements<span class="race-detail-candidate-pct">93%</span></span>
+        </div>
+      </div>
+      <div class="race-detail-candidate-result"><div class="race-detail-result-head"><span class="race-detail-result-eyebrow">Result</span><span class="race-detail-result-share">30.0%</span></div><span class="race-detail-result-bar"><i style="width:30.0%"></i></span></div>
+      <ul class="race-detail-source-list"><li data-race-detail-source-code="strn"
+      data-source-category="progressive_general" data-source-state="endorsement"
+      data-source-role="consensus" data-source-group="candidate" data-endorsed-candidate-id="seattle-city-council-5--nilu-jenks">
+<a class="race-detail-source-row" href="https://www.thestranger.com/endorsements/the-strangers-2026-primary-election-endorsements/" target="_blank" rel="noopener">
+        <strong>The Stranger Election Control Board</strong>
+        <div class="race-detail-source-meta">
+          <span class="race-detail-category-badge">Progressive editorial and general</span>
+        </div>
+</a>    </li>
+<li data-race-detail-source-code="urbn"
+      data-source-category="progressive_general" data-source-state="endorsement"
+      data-source-role="consensus" data-source-group="candidate" data-endorsed-candidate-id="seattle-city-council-5--nilu-jenks">
+<a class="race-detail-source-row" href="https://www.theurbanist.org/2026-primary-election-endorsements/" target="_blank" rel="noopener">
+        <strong>The Urbanist Elections Committee</strong>
+        <div class="race-detail-source-meta">
+          <span class="race-detail-category-badge">Progressive editorial and general</span>
+        </div>
+</a>    </li>
+<li data-race-detail-source-code="t4tx"
+      data-source-category="progressive_general" data-source-state="endorsement"
+      data-source-role="consensus" data-source-group="candidate" data-endorsed-candidate-id="seattle-city-council-5--nilu-jenks">
+<a class="race-detail-source-row" href="https://tech4taxes.org/endorsements" target="_blank" rel="noopener">
+        <strong>Tech 4 Taxes</strong>
+        <div class="race-detail-source-meta">
+          <span class="race-detail-category-badge">Progressive editorial and general</span>
+        </div>
+</a>    </li><li class="mock-elision"><div class="race-detail-source-row"><strong>+ 20 more sources</strong></div></li></ul>
+    </section><section class="race-detail-candidate"
+      data-race-detail-candidate-id="seattle-city-council-5--julie-kang">
+      <div class="race-detail-candidate-heading">
+        <div class="race-detail-candidate-title">
+          <h4>Julie Kang</h4>
+        </div>
+        <div class="race-detail-candidate-meter">
+          <div class="screen-meter screen-meter-section" role="img" data-display-role="candidate-share"
+  data-meter-candidate-id="seattle-city-council-5--julie-kang" aria-label="Julie Kang: 1 of 23 endorsements" tabindex="0"
+><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal)" data-meter-source="36th Legislative District Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="46th Legislative District Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Alliance for Gun Responsibility Victory Fund"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="King County Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="OneAmerica Votes"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="PROTEC17"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="SEIU 775"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Sage Leaders"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Seattle Gay News Editorial Board"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Tech 4 Taxes"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="The Stranger Election Control Board"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="The Urbanist Elections Committee"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="The Washington Bus"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Transit Riders Union"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="UFCW 3000"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington Bikes"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington Conservation Action"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington State Stonewall Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington Working Families Party"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington for Peace and Justice"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-split meter-tongue-start"
+  style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-taupe); --meter-splitline-rest:var(--meter-trail-taupe); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-taupe) 50%) 86%, var(--meter-seam-pole)); --meter-tongue-bg:var(--teal); --meter-seam-rest-color:var(--teal); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-taupe) 50%) 86%, var(--meter-seam-pole)) 50% 100%)" data-meter-source="SEIU 925"
+  data-meter-decision="Split: Nilu Jenks + Silas James — ½ each"
+><span class="meter-half meter-half-top"></span><span class="meter-half meter-half-bottom"></span></span><span class="meter-block meter-block-split meter-block-context"
+  style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-slate); --meter-splitline-rest:var(--meter-trail-slate); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)); --meter-seam-rest-image:linear-gradient(180deg, var(--teal) 0 50%, var(--meter-trail-slate) 50% 100%); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, color-mix(in srgb, var(--meter-trail-taupe) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)) 50% 100%)" data-meter-source="32nd Legislative District Democrats"
+  data-meter-decision="Split: Nilu Jenks + Julie Kang — ½ each"
+><span class="meter-half meter-half-top meter-half-recede"></span><span class="meter-half meter-half-bottom meter-half-context"></span></span><span class="meter-block meter-block-split meter-block-context"
+  style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-slate); --meter-splitline-rest:var(--meter-trail-slate); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)); --meter-seam-rest-image:linear-gradient(180deg, var(--teal) 0 50%, var(--meter-trail-slate) 50% 100%); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, var(--meter-trail-slate) 88%, var(--meter-seam-pole)) 50% 100%)" data-meter-source="National Women&#39;s Political Caucus of Washington"
+  data-meter-decision="Split: Nilu Jenks + Julie Kang — ½ each"
+><span class="meter-half meter-half-top meter-half-recede"></span><span class="meter-half meter-half-bottom meter-half-context"></span></span></div>
+          <span class="race-detail-candidate-count"><b>1</b> of 23 endorsements<span class="race-detail-candidate-pct">4%</span></span>
+        </div>
+      </div>
+      <div class="race-detail-candidate-result race-detail-candidate-result-trailing"><div class="race-detail-result-head"><span class="race-detail-result-eyebrow">Result</span><span class="race-detail-result-share">19.1%</span></div><span class="race-detail-result-bar"><i style="width:19.1%"></i></span></div>
+      <ul class="race-detail-source-list">
+<li data-race-detail-source-code="ld32"
+      data-source-category="democratic_party" data-source-state="multi_endorsement"
+      data-source-role="consensus" data-source-group="candidate" data-endorsed-candidate-id="seattle-city-council-5--julie-kang">
+<a class="race-detail-source-row" href="https://32democrats.org/2026-endorsements/" target="_blank" rel="noopener">
+        <strong>32nd Legislative District Democrats</strong>
+        <div class="race-detail-source-meta">
+          <span class="race-detail-category-badge">Democratic Party</span>
+<span class="race-detail-source-status">Co-endorsed</span>        </div>
+</a>    </li><li data-race-detail-source-code="nwpc"
+      data-source-category="rights_representation" data-source-state="multi_endorsement"
+      data-source-role="consensus" data-source-group="candidate" data-endorsed-candidate-id="seattle-city-council-5--julie-kang">
+<a class="race-detail-source-row" href="https://www.nwpcwa.org/endorsements_2026" target="_blank" rel="noopener">
+        <strong>National Women&#39;s Political Caucus of Washington</strong>
+        <div class="race-detail-source-meta">
+          <span class="race-detail-category-badge">Rights and representation</span>
+<span class="race-detail-source-status">Co-endorsed</span>        </div>
+</a>    </li>      </ul>
+    </section><section class="race-detail-candidate"
+      data-race-detail-candidate-id="seattle-city-council-5--silas-james">
+      <div class="race-detail-candidate-heading">
+        <div class="race-detail-candidate-title">
+          <h4>Silas James</h4>
+        </div>
+        <div class="race-detail-candidate-meter">
+          <div class="screen-meter screen-meter-section" role="img" data-display-role="candidate-share"
+  data-meter-candidate-id="seattle-city-council-5--silas-james" aria-label="Silas James: ½ of 23 endorsements" tabindex="0"
+><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal)" data-meter-source="36th Legislative District Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="46th Legislative District Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Alliance for Gun Responsibility Victory Fund"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="King County Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="OneAmerica Votes"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="PROTEC17"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="SEIU 775"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Sage Leaders"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Seattle Gay News Editorial Board"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Tech 4 Taxes"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="The Stranger Election Control Board"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="The Urbanist Elections Committee"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="The Washington Bus"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Transit Riders Union"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="UFCW 3000"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington Bikes"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington Conservation Action"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington State Stonewall Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington Working Families Party"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington for Peace and Justice"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-split meter-tongue-start meter-block-context"
+  style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-taupe); --meter-splitline-rest:var(--meter-trail-taupe); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-taupe) 50%) 86%, var(--meter-seam-pole)); --meter-tongue-bg:var(--teal); --meter-seam-rest-color:var(--teal); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-taupe) 50%) 86%, var(--meter-seam-pole)) 50% 100%)" data-meter-source="SEIU 925"
+  data-meter-decision="Split: Nilu Jenks + Silas James — ½ each"
+><span class="meter-half meter-half-top meter-half-recede"></span><span class="meter-half meter-half-bottom meter-half-context"></span></span><span class="meter-block meter-block-split"
+  style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-slate); --meter-splitline-rest:var(--meter-trail-slate); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)); --meter-seam-rest-image:linear-gradient(180deg, var(--teal) 0 50%, var(--meter-trail-slate) 50% 100%); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, color-mix(in srgb, var(--meter-trail-taupe) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)) 50% 100%)" data-meter-source="32nd Legislative District Democrats"
+  data-meter-decision="Split: Nilu Jenks + Julie Kang — ½ each"
+><span class="meter-half meter-half-top"></span><span class="meter-half meter-half-bottom"></span></span><span class="meter-block meter-block-split"
+  style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-slate); --meter-splitline-rest:var(--meter-trail-slate); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)); --meter-seam-rest-image:linear-gradient(180deg, var(--teal) 0 50%, var(--meter-trail-slate) 50% 100%); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, var(--meter-trail-slate) 88%, var(--meter-seam-pole)) 50% 100%)" data-meter-source="National Women&#39;s Political Caucus of Washington"
+  data-meter-decision="Split: Nilu Jenks + Julie Kang — ½ each"
+><span class="meter-half meter-half-top"></span><span class="meter-half meter-half-bottom"></span></span></div>
+          <span class="race-detail-candidate-count"><b>½</b> of 23 endorsements<span class="race-detail-candidate-pct">2%</span></span>
+        </div>
+      </div>
+      <div class="race-detail-candidate-result race-detail-candidate-result-trailing"><div class="race-detail-result-head"><span class="race-detail-result-eyebrow">Result</span><span class="race-detail-result-share">10.8%</span></div><span class="race-detail-result-bar"><i style="width:10.8%"></i></span></div>
+      <ul class="race-detail-source-list">
+<li data-race-detail-source-code="s925"
+      data-source-category="labor" data-source-state="multi_endorsement"
+      data-source-role="consensus" data-source-group="candidate" data-endorsed-candidate-id="seattle-city-council-5--silas-james">
+<a class="race-detail-source-row" href="https://www.seiu925.org/2026endorsements/" target="_blank" rel="noopener">
+        <strong>SEIU 925</strong>
+        <div class="race-detail-source-meta">
+          <span class="race-detail-category-badge">Labor</span>
+<span class="race-detail-source-status">Co-endorsed</span>        </div>
+</a>    </li>      </ul>
+    </section><section class="race-detail-candidate mock-roster-section"><div class="race-detail-candidate-heading"><div class="race-detail-candidate-title"><h4>Dimitri Georgakopoulos <span class="race-detail-result-chip">Advances</span></h4></div><div class="race-detail-candidate-meter"><span class="mock-no-meter">No source endorsed this candidate</span></div></div><div class="race-detail-candidate-result"><div class="race-detail-result-head"><span class="race-detail-result-eyebrow">Result</span><span class="race-detail-result-share">40.1%</span></div><span class="race-detail-result-bar"><i style="width:40.1%"></i></span></div></section></div></div></main></div></div>
+<p class="mock-note cost"><b>Cost.</b> This contradicts a blessed decision:
+<code>docs/METER_V2.md</code> 25 says a zero-endorsement candidate gets no section, "the page is
+about who <i>should</i> be voted for, not who <i>can</i> be." That reasoning was written for a page
+that only knew endorsements; ratifying this means amending it for the certified state. There is
+also no meter to draw &mdash; <code>race_candidate_meter_views</code> deliberately has no key for a
+zero-endorsement candidate &mdash; so the meter's slot needs the new treatment shown here. And the
+winner sits below three candidates who lost.</p>
+
+<h3>Option 2 &middot; "Also on the ballot"</h3>
+<p>Endorsed candidates keep their sections; everyone else appears after them as the race card's own
+tally rows, quoted verbatim. Nothing about the endorsement stack changes, and decision 25 stands
+&mdash; these are rows, not sections.</p>
+<div class="mock-surface v-b k-tail"><div class="page screen-race"><div class="race-detail-certified-strip">
+      <b>Certified result</b> · August 19, 2026 · King County Elections · 39,204 ballots
+    </div><main class="race-detail"><div class="race-headline race-headline-heads-section"
+        role="group" aria-label="Consensus result"
+        aria-describedby="race-consensus-summary" data-race-headline>
+        <p class="race-headline-eyebrow">Leading choice</p>
+        <div class="screen-race-result" data-lens-result>
+          <h3 data-display-role="recommendation">Nilu Jenks <span class="race-detail-result-chip">Advances</span></h3>
+        </div>
+        <div class="screen-race-context" data-lens-context>
+          <p class="no-majority-pill" hidden>No majority</p>
+        </div>
+      </div><div class="race-detail-outcomes"><div class="race-detail-candidates" data-race-candidates          style="--count-chars: 3; --pct-chars: 3"><section class="race-detail-candidate race-detail-candidate-leader race-detail-candidate-headlined"
+      data-race-detail-candidate-id="seattle-city-council-5--nilu-jenks">
+      <div class="race-detail-candidate-heading">
+        <div class="race-detail-candidate-meter">
+          <div class="screen-meter screen-meter-section" role="img" data-display-role="candidate-share"
+  data-meter-candidate-id="seattle-city-council-5--nilu-jenks" aria-label="Nilu Jenks: 21½ of 23 endorsements" tabindex="0"
+><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal)" data-meter-source="36th Legislative District Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="46th Legislative District Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Alliance for Gun Responsibility Victory Fund"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="King County Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="OneAmerica Votes"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="PROTEC17"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="SEIU 775"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Sage Leaders"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Seattle Gay News Editorial Board"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Tech 4 Taxes"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="The Stranger Election Control Board"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="The Urbanist Elections Committee"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="The Washington Bus"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Transit Riders Union"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="UFCW 3000"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington Bikes"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington Conservation Action"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington State Stonewall Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington Working Families Party"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington for Peace and Justice"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-split meter-tongue-start meter-block-context"
+  style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-taupe); --meter-splitline-rest:var(--meter-trail-taupe); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-taupe) 50%) 86%, var(--meter-seam-pole)); --meter-tongue-bg:var(--teal); --meter-seam-rest-color:var(--teal); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-taupe) 50%) 86%, var(--meter-seam-pole)) 50% 100%)" data-meter-source="SEIU 925"
+  data-meter-decision="Split: Nilu Jenks + Silas James — ½ each"
+><span class="meter-half meter-half-top meter-half-context"></span><span class="meter-half meter-half-bottom meter-half-recede"></span></span><span class="meter-block meter-block-split meter-block-context"
+  style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-slate); --meter-splitline-rest:var(--meter-trail-slate); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)); --meter-seam-rest-image:linear-gradient(180deg, var(--teal) 0 50%, var(--meter-trail-slate) 50% 100%); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, color-mix(in srgb, var(--meter-trail-taupe) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)) 50% 100%)" data-meter-source="32nd Legislative District Democrats"
+  data-meter-decision="Split: Nilu Jenks + Julie Kang — ½ each"
+><span class="meter-half meter-half-top meter-half-context"></span><span class="meter-half meter-half-bottom meter-half-recede"></span></span><span class="meter-block meter-block-split meter-block-context"
+  style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-slate); --meter-splitline-rest:var(--meter-trail-slate); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)); --meter-seam-rest-image:linear-gradient(180deg, var(--teal) 0 50%, var(--meter-trail-slate) 50% 100%); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, var(--meter-trail-slate) 88%, var(--meter-seam-pole)) 50% 100%)" data-meter-source="National Women&#39;s Political Caucus of Washington"
+  data-meter-decision="Split: Nilu Jenks + Julie Kang — ½ each"
+><span class="meter-half meter-half-top meter-half-context"></span><span class="meter-half meter-half-bottom meter-half-recede"></span></span></div>
+          <span class="race-detail-candidate-count"><b>21½</b> of 23 endorsements<span class="race-detail-candidate-pct">93%</span></span>
+        </div>
+      </div>
+      <div class="race-detail-candidate-result"><div class="race-detail-result-head"><span class="race-detail-result-eyebrow">Result</span><span class="race-detail-result-share">30.0%</span></div><span class="race-detail-result-bar"><i style="width:30.0%"></i></span></div>
+      <ul class="race-detail-source-list"><li data-race-detail-source-code="strn"
+      data-source-category="progressive_general" data-source-state="endorsement"
+      data-source-role="consensus" data-source-group="candidate" data-endorsed-candidate-id="seattle-city-council-5--nilu-jenks">
+<a class="race-detail-source-row" href="https://www.thestranger.com/endorsements/the-strangers-2026-primary-election-endorsements/" target="_blank" rel="noopener">
+        <strong>The Stranger Election Control Board</strong>
+        <div class="race-detail-source-meta">
+          <span class="race-detail-category-badge">Progressive editorial and general</span>
+        </div>
+</a>    </li>
+<li data-race-detail-source-code="urbn"
+      data-source-category="progressive_general" data-source-state="endorsement"
+      data-source-role="consensus" data-source-group="candidate" data-endorsed-candidate-id="seattle-city-council-5--nilu-jenks">
+<a class="race-detail-source-row" href="https://www.theurbanist.org/2026-primary-election-endorsements/" target="_blank" rel="noopener">
+        <strong>The Urbanist Elections Committee</strong>
+        <div class="race-detail-source-meta">
+          <span class="race-detail-category-badge">Progressive editorial and general</span>
+        </div>
+</a>    </li>
+<li data-race-detail-source-code="t4tx"
+      data-source-category="progressive_general" data-source-state="endorsement"
+      data-source-role="consensus" data-source-group="candidate" data-endorsed-candidate-id="seattle-city-council-5--nilu-jenks">
+<a class="race-detail-source-row" href="https://tech4taxes.org/endorsements" target="_blank" rel="noopener">
+        <strong>Tech 4 Taxes</strong>
+        <div class="race-detail-source-meta">
+          <span class="race-detail-category-badge">Progressive editorial and general</span>
+        </div>
+</a>    </li><li class="mock-elision"><div class="race-detail-source-row"><strong>+ 20 more sources</strong></div></li></ul>
+    </section><section class="race-detail-candidate"
+      data-race-detail-candidate-id="seattle-city-council-5--julie-kang">
+      <div class="race-detail-candidate-heading">
+        <div class="race-detail-candidate-title">
+          <h4>Julie Kang</h4>
+        </div>
+        <div class="race-detail-candidate-meter">
+          <div class="screen-meter screen-meter-section" role="img" data-display-role="candidate-share"
+  data-meter-candidate-id="seattle-city-council-5--julie-kang" aria-label="Julie Kang: 1 of 23 endorsements" tabindex="0"
+><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal)" data-meter-source="36th Legislative District Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="46th Legislative District Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Alliance for Gun Responsibility Victory Fund"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="King County Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="OneAmerica Votes"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="PROTEC17"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="SEIU 775"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Sage Leaders"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Seattle Gay News Editorial Board"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Tech 4 Taxes"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="The Stranger Election Control Board"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="The Urbanist Elections Committee"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="The Washington Bus"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Transit Riders Union"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="UFCW 3000"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington Bikes"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington Conservation Action"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington State Stonewall Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington Working Families Party"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington for Peace and Justice"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-split meter-tongue-start"
+  style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-taupe); --meter-splitline-rest:var(--meter-trail-taupe); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-taupe) 50%) 86%, var(--meter-seam-pole)); --meter-tongue-bg:var(--teal); --meter-seam-rest-color:var(--teal); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-taupe) 50%) 86%, var(--meter-seam-pole)) 50% 100%)" data-meter-source="SEIU 925"
+  data-meter-decision="Split: Nilu Jenks + Silas James — ½ each"
+><span class="meter-half meter-half-top"></span><span class="meter-half meter-half-bottom"></span></span><span class="meter-block meter-block-split meter-block-context"
+  style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-slate); --meter-splitline-rest:var(--meter-trail-slate); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)); --meter-seam-rest-image:linear-gradient(180deg, var(--teal) 0 50%, var(--meter-trail-slate) 50% 100%); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, color-mix(in srgb, var(--meter-trail-taupe) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)) 50% 100%)" data-meter-source="32nd Legislative District Democrats"
+  data-meter-decision="Split: Nilu Jenks + Julie Kang — ½ each"
+><span class="meter-half meter-half-top meter-half-recede"></span><span class="meter-half meter-half-bottom meter-half-context"></span></span><span class="meter-block meter-block-split meter-block-context"
+  style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-slate); --meter-splitline-rest:var(--meter-trail-slate); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)); --meter-seam-rest-image:linear-gradient(180deg, var(--teal) 0 50%, var(--meter-trail-slate) 50% 100%); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, var(--meter-trail-slate) 88%, var(--meter-seam-pole)) 50% 100%)" data-meter-source="National Women&#39;s Political Caucus of Washington"
+  data-meter-decision="Split: Nilu Jenks + Julie Kang — ½ each"
+><span class="meter-half meter-half-top meter-half-recede"></span><span class="meter-half meter-half-bottom meter-half-context"></span></span></div>
+          <span class="race-detail-candidate-count"><b>1</b> of 23 endorsements<span class="race-detail-candidate-pct">4%</span></span>
+        </div>
+      </div>
+      <div class="race-detail-candidate-result race-detail-candidate-result-trailing"><div class="race-detail-result-head"><span class="race-detail-result-eyebrow">Result</span><span class="race-detail-result-share">19.1%</span></div><span class="race-detail-result-bar"><i style="width:19.1%"></i></span></div>
+      <ul class="race-detail-source-list">
+<li data-race-detail-source-code="ld32"
+      data-source-category="democratic_party" data-source-state="multi_endorsement"
+      data-source-role="consensus" data-source-group="candidate" data-endorsed-candidate-id="seattle-city-council-5--julie-kang">
+<a class="race-detail-source-row" href="https://32democrats.org/2026-endorsements/" target="_blank" rel="noopener">
+        <strong>32nd Legislative District Democrats</strong>
+        <div class="race-detail-source-meta">
+          <span class="race-detail-category-badge">Democratic Party</span>
+<span class="race-detail-source-status">Co-endorsed</span>        </div>
+</a>    </li><li data-race-detail-source-code="nwpc"
+      data-source-category="rights_representation" data-source-state="multi_endorsement"
+      data-source-role="consensus" data-source-group="candidate" data-endorsed-candidate-id="seattle-city-council-5--julie-kang">
+<a class="race-detail-source-row" href="https://www.nwpcwa.org/endorsements_2026" target="_blank" rel="noopener">
+        <strong>National Women&#39;s Political Caucus of Washington</strong>
+        <div class="race-detail-source-meta">
+          <span class="race-detail-category-badge">Rights and representation</span>
+<span class="race-detail-source-status">Co-endorsed</span>        </div>
+</a>    </li>      </ul>
+    </section><section class="race-detail-candidate"
+      data-race-detail-candidate-id="seattle-city-council-5--silas-james">
+      <div class="race-detail-candidate-heading">
+        <div class="race-detail-candidate-title">
+          <h4>Silas James</h4>
+        </div>
+        <div class="race-detail-candidate-meter">
+          <div class="screen-meter screen-meter-section" role="img" data-display-role="candidate-share"
+  data-meter-candidate-id="seattle-city-council-5--silas-james" aria-label="Silas James: ½ of 23 endorsements" tabindex="0"
+><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal)" data-meter-source="36th Legislative District Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="46th Legislative District Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Alliance for Gun Responsibility Victory Fund"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="King County Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="OneAmerica Votes"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="PROTEC17"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="SEIU 775"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Sage Leaders"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Seattle Gay News Editorial Board"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Tech 4 Taxes"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="The Stranger Election Control Board"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="The Urbanist Elections Committee"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="The Washington Bus"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Transit Riders Union"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="UFCW 3000"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington Bikes"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington Conservation Action"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington State Stonewall Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington Working Families Party"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington for Peace and Justice"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-split meter-tongue-start meter-block-context"
+  style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-taupe); --meter-splitline-rest:var(--meter-trail-taupe); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-taupe) 50%) 86%, var(--meter-seam-pole)); --meter-tongue-bg:var(--teal); --meter-seam-rest-color:var(--teal); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-taupe) 50%) 86%, var(--meter-seam-pole)) 50% 100%)" data-meter-source="SEIU 925"
+  data-meter-decision="Split: Nilu Jenks + Silas James — ½ each"
+><span class="meter-half meter-half-top meter-half-recede"></span><span class="meter-half meter-half-bottom meter-half-context"></span></span><span class="meter-block meter-block-split"
+  style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-slate); --meter-splitline-rest:var(--meter-trail-slate); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)); --meter-seam-rest-image:linear-gradient(180deg, var(--teal) 0 50%, var(--meter-trail-slate) 50% 100%); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, color-mix(in srgb, var(--meter-trail-taupe) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)) 50% 100%)" data-meter-source="32nd Legislative District Democrats"
+  data-meter-decision="Split: Nilu Jenks + Julie Kang — ½ each"
+><span class="meter-half meter-half-top"></span><span class="meter-half meter-half-bottom"></span></span><span class="meter-block meter-block-split"
+  style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-slate); --meter-splitline-rest:var(--meter-trail-slate); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)); --meter-seam-rest-image:linear-gradient(180deg, var(--teal) 0 50%, var(--meter-trail-slate) 50% 100%); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, var(--meter-trail-slate) 88%, var(--meter-seam-pole)) 50% 100%)" data-meter-source="National Women&#39;s Political Caucus of Washington"
+  data-meter-decision="Split: Nilu Jenks + Julie Kang — ½ each"
+><span class="meter-half meter-half-top"></span><span class="meter-half meter-half-bottom"></span></span></div>
+          <span class="race-detail-candidate-count"><b>½</b> of 23 endorsements<span class="race-detail-candidate-pct">2%</span></span>
+        </div>
+      </div>
+      <div class="race-detail-candidate-result race-detail-candidate-result-trailing"><div class="race-detail-result-head"><span class="race-detail-result-eyebrow">Result</span><span class="race-detail-result-share">10.8%</span></div><span class="race-detail-result-bar"><i style="width:10.8%"></i></span></div>
+      <ul class="race-detail-source-list">
+<li data-race-detail-source-code="s925"
+      data-source-category="labor" data-source-state="multi_endorsement"
+      data-source-role="consensus" data-source-group="candidate" data-endorsed-candidate-id="seattle-city-council-5--silas-james">
+<a class="race-detail-source-row" href="https://www.seiu925.org/2026endorsements/" target="_blank" rel="noopener">
+        <strong>SEIU 925</strong>
+        <div class="race-detail-source-meta">
+          <span class="race-detail-category-badge">Labor</span>
+<span class="race-detail-source-status">Co-endorsed</span>        </div>
+</a>    </li>      </ul>
+    </section></div><section class="race-detail-outcome mock-also"><div class="race-detail-outcome-heading"><h4>Also on the ballot</h4><span>1 candidate with no endorsements</span></div><div class="race-results-tally mock-also-tally"><div class="race-results-row">
+                  <span class="race-results-name">Dimitri Georgakopoulos <span class="race-detail-result-chip">Advances</span></span>
+                  <span class="race-results-share">40.1%</span>
+                  <span class="race-results-bar"><i style="width:40.1%"></i></span>
+                </div></div></section></div></main></div></div>
+<p class="mock-note cost"><b>Cost.</b> The same fact renders two ways on one page: a labeled block
+for endorsed candidates, a card row for everyone else. And the winner is at the bottom, under a
+heading that describes him by what he lacks.</p>
+
+<h3>Option 3 &middot; The complete tally on the page</h3>
+<p>The card's RESULT block moves onto the page, under the headline and above the candidate
+sections, stating every outcome once in finish order. The per-candidate rows then go away entirely
+&mdash; they would restate a subset of the same numbers &mdash; and each candidate section keeps
+only its chip.</p>
+<div class="mock-surface v-b k-tally"><div class="page screen-race"><div class="race-detail-certified-strip">
+      <b>Certified result</b> · August 19, 2026 · King County Elections · 39,204 ballots
+    </div><main class="race-detail"><div class="race-headline race-headline-heads-section"
+        role="group" aria-label="Consensus result"
+        aria-describedby="race-consensus-summary" data-race-headline>
+        <p class="race-headline-eyebrow">Leading choice</p>
+        <div class="screen-race-result" data-lens-result>
+          <h3 data-display-role="recommendation">Nilu Jenks <span class="race-detail-result-chip">Advances</span></h3>
+        </div>
+        <div class="screen-race-context" data-lens-context>
+          <p class="no-majority-pill" hidden>No majority</p>
+        </div>
+      </div><div class="mock-page-tally"><div class="race-results">
+              <div class="race-results-head">
+                <span class="race-results-eyebrow">Result</span>
+                <span class="race-results-status">Certified · Aug 19, 2026</span>
+              </div>
+              <div class="race-results-tally">
+                <div class="race-results-row">
+                  <span class="race-results-name">Dimitri Georgakopoulos <span class="race-detail-result-chip">Advances</span></span>
+                  <span class="race-results-share">40.1%</span>
+                  <span class="race-results-bar"><i style="width:40.1%"></i></span>
+                </div>
+                <div class="race-results-row">
+                  <span class="race-results-name">Nilu Jenks <span class="race-detail-result-chip">Advances</span></span>
+                  <span class="race-results-share">30.0%</span>
+                  <span class="race-results-bar"><i style="width:30.0%"></i></span>
+                </div>
+                <div class="race-results-row race-results-row-trailing">
+                  <span class="race-results-name">Julie Kang</span>
+                  <span class="race-results-share">19.1%</span>
+                  <span class="race-results-bar"><i style="width:19.1%"></i></span>
+                </div>
+                <div class="race-results-row race-results-row-trailing">
+                  <span class="race-results-name">Silas James</span>
+                  <span class="race-results-share">10.8%</span>
+                  <span class="race-results-bar"><i style="width:10.8%"></i></span>
+                </div>
+              </div>
+              <p class="race-results-provenance">39,204 ballots · King County Elections · <a href="https://kingcounty.gov/elections/results" target="_blank" rel="noopener">capture</a></p>
+            </div></div><div class="race-detail-outcomes"><div class="race-detail-candidates" data-race-candidates          style="--count-chars: 3; --pct-chars: 3"><section class="race-detail-candidate race-detail-candidate-leader race-detail-candidate-headlined"
+      data-race-detail-candidate-id="seattle-city-council-5--nilu-jenks">
+      <div class="race-detail-candidate-heading">
+        <div class="race-detail-candidate-meter">
+          <div class="screen-meter screen-meter-section" role="img" data-display-role="candidate-share"
+  data-meter-candidate-id="seattle-city-council-5--nilu-jenks" aria-label="Nilu Jenks: 21½ of 23 endorsements" tabindex="0"
+><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal)" data-meter-source="36th Legislative District Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="46th Legislative District Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Alliance for Gun Responsibility Victory Fund"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="King County Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="OneAmerica Votes"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="PROTEC17"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="SEIU 775"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Sage Leaders"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Seattle Gay News Editorial Board"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Tech 4 Taxes"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="The Stranger Election Control Board"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="The Urbanist Elections Committee"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="The Washington Bus"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Transit Riders Union"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="UFCW 3000"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington Bikes"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington Conservation Action"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington State Stonewall Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington Working Families Party"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid meter-block-context"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington for Peace and Justice"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-split meter-tongue-start meter-block-context"
+  style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-taupe); --meter-splitline-rest:var(--meter-trail-taupe); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-taupe) 50%) 86%, var(--meter-seam-pole)); --meter-tongue-bg:var(--teal); --meter-seam-rest-color:var(--teal); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-taupe) 50%) 86%, var(--meter-seam-pole)) 50% 100%)" data-meter-source="SEIU 925"
+  data-meter-decision="Split: Nilu Jenks + Silas James — ½ each"
+><span class="meter-half meter-half-top meter-half-context"></span><span class="meter-half meter-half-bottom meter-half-recede"></span></span><span class="meter-block meter-block-split meter-block-context"
+  style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-slate); --meter-splitline-rest:var(--meter-trail-slate); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)); --meter-seam-rest-image:linear-gradient(180deg, var(--teal) 0 50%, var(--meter-trail-slate) 50% 100%); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, color-mix(in srgb, var(--meter-trail-taupe) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)) 50% 100%)" data-meter-source="32nd Legislative District Democrats"
+  data-meter-decision="Split: Nilu Jenks + Julie Kang — ½ each"
+><span class="meter-half meter-half-top meter-half-context"></span><span class="meter-half meter-half-bottom meter-half-recede"></span></span><span class="meter-block meter-block-split meter-block-context"
+  style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-slate); --meter-splitline-rest:var(--meter-trail-slate); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)); --meter-seam-rest-image:linear-gradient(180deg, var(--teal) 0 50%, var(--meter-trail-slate) 50% 100%); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, var(--meter-trail-slate) 88%, var(--meter-seam-pole)) 50% 100%)" data-meter-source="National Women&#39;s Political Caucus of Washington"
+  data-meter-decision="Split: Nilu Jenks + Julie Kang — ½ each"
+><span class="meter-half meter-half-top meter-half-context"></span><span class="meter-half meter-half-bottom meter-half-recede"></span></span></div>
+          <span class="race-detail-candidate-count"><b>21½</b> of 23 endorsements<span class="race-detail-candidate-pct">93%</span></span>
+        </div>
+      </div>
+      
+      <ul class="race-detail-source-list"><li data-race-detail-source-code="strn"
+      data-source-category="progressive_general" data-source-state="endorsement"
+      data-source-role="consensus" data-source-group="candidate" data-endorsed-candidate-id="seattle-city-council-5--nilu-jenks">
+<a class="race-detail-source-row" href="https://www.thestranger.com/endorsements/the-strangers-2026-primary-election-endorsements/" target="_blank" rel="noopener">
+        <strong>The Stranger Election Control Board</strong>
+        <div class="race-detail-source-meta">
+          <span class="race-detail-category-badge">Progressive editorial and general</span>
+        </div>
+</a>    </li>
+<li data-race-detail-source-code="urbn"
+      data-source-category="progressive_general" data-source-state="endorsement"
+      data-source-role="consensus" data-source-group="candidate" data-endorsed-candidate-id="seattle-city-council-5--nilu-jenks">
+<a class="race-detail-source-row" href="https://www.theurbanist.org/2026-primary-election-endorsements/" target="_blank" rel="noopener">
+        <strong>The Urbanist Elections Committee</strong>
+        <div class="race-detail-source-meta">
+          <span class="race-detail-category-badge">Progressive editorial and general</span>
+        </div>
+</a>    </li>
+<li data-race-detail-source-code="t4tx"
+      data-source-category="progressive_general" data-source-state="endorsement"
+      data-source-role="consensus" data-source-group="candidate" data-endorsed-candidate-id="seattle-city-council-5--nilu-jenks">
+<a class="race-detail-source-row" href="https://tech4taxes.org/endorsements" target="_blank" rel="noopener">
+        <strong>Tech 4 Taxes</strong>
+        <div class="race-detail-source-meta">
+          <span class="race-detail-category-badge">Progressive editorial and general</span>
+        </div>
+</a>    </li><li class="mock-elision"><div class="race-detail-source-row"><strong>+ 20 more sources</strong></div></li></ul>
+    </section><section class="race-detail-candidate"
+      data-race-detail-candidate-id="seattle-city-council-5--julie-kang">
+      <div class="race-detail-candidate-heading">
+        <div class="race-detail-candidate-title">
+          <h4>Julie Kang</h4>
+        </div>
+        <div class="race-detail-candidate-meter">
+          <div class="screen-meter screen-meter-section" role="img" data-display-role="candidate-share"
+  data-meter-candidate-id="seattle-city-council-5--julie-kang" aria-label="Julie Kang: 1 of 23 endorsements" tabindex="0"
+><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal)" data-meter-source="36th Legislative District Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="46th Legislative District Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Alliance for Gun Responsibility Victory Fund"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="King County Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="OneAmerica Votes"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="PROTEC17"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="SEIU 775"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Sage Leaders"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Seattle Gay News Editorial Board"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Tech 4 Taxes"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="The Stranger Election Control Board"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="The Urbanist Elections Committee"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="The Washington Bus"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Transit Riders Union"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="UFCW 3000"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington Bikes"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington Conservation Action"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington State Stonewall Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington Working Families Party"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington for Peace and Justice"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-split meter-tongue-start"
+  style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-taupe); --meter-splitline-rest:var(--meter-trail-taupe); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-taupe) 50%) 86%, var(--meter-seam-pole)); --meter-tongue-bg:var(--teal); --meter-seam-rest-color:var(--teal); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-taupe) 50%) 86%, var(--meter-seam-pole)) 50% 100%)" data-meter-source="SEIU 925"
+  data-meter-decision="Split: Nilu Jenks + Silas James — ½ each"
+><span class="meter-half meter-half-top"></span><span class="meter-half meter-half-bottom"></span></span><span class="meter-block meter-block-split meter-block-context"
+  style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-slate); --meter-splitline-rest:var(--meter-trail-slate); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)); --meter-seam-rest-image:linear-gradient(180deg, var(--teal) 0 50%, var(--meter-trail-slate) 50% 100%); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, color-mix(in srgb, var(--meter-trail-taupe) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)) 50% 100%)" data-meter-source="32nd Legislative District Democrats"
+  data-meter-decision="Split: Nilu Jenks + Julie Kang — ½ each"
+><span class="meter-half meter-half-top meter-half-recede"></span><span class="meter-half meter-half-bottom meter-half-context"></span></span><span class="meter-block meter-block-split meter-block-context"
+  style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-slate); --meter-splitline-rest:var(--meter-trail-slate); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)); --meter-seam-rest-image:linear-gradient(180deg, var(--teal) 0 50%, var(--meter-trail-slate) 50% 100%); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, var(--meter-trail-slate) 88%, var(--meter-seam-pole)) 50% 100%)" data-meter-source="National Women&#39;s Political Caucus of Washington"
+  data-meter-decision="Split: Nilu Jenks + Julie Kang — ½ each"
+><span class="meter-half meter-half-top meter-half-recede"></span><span class="meter-half meter-half-bottom meter-half-context"></span></span></div>
+          <span class="race-detail-candidate-count"><b>1</b> of 23 endorsements<span class="race-detail-candidate-pct">4%</span></span>
+        </div>
+      </div>
+      
+      <ul class="race-detail-source-list">
+<li data-race-detail-source-code="ld32"
+      data-source-category="democratic_party" data-source-state="multi_endorsement"
+      data-source-role="consensus" data-source-group="candidate" data-endorsed-candidate-id="seattle-city-council-5--julie-kang">
+<a class="race-detail-source-row" href="https://32democrats.org/2026-endorsements/" target="_blank" rel="noopener">
+        <strong>32nd Legislative District Democrats</strong>
+        <div class="race-detail-source-meta">
+          <span class="race-detail-category-badge">Democratic Party</span>
+<span class="race-detail-source-status">Co-endorsed</span>        </div>
+</a>    </li><li data-race-detail-source-code="nwpc"
+      data-source-category="rights_representation" data-source-state="multi_endorsement"
+      data-source-role="consensus" data-source-group="candidate" data-endorsed-candidate-id="seattle-city-council-5--julie-kang">
+<a class="race-detail-source-row" href="https://www.nwpcwa.org/endorsements_2026" target="_blank" rel="noopener">
+        <strong>National Women&#39;s Political Caucus of Washington</strong>
+        <div class="race-detail-source-meta">
+          <span class="race-detail-category-badge">Rights and representation</span>
+<span class="race-detail-source-status">Co-endorsed</span>        </div>
+</a>    </li>      </ul>
+    </section><section class="race-detail-candidate"
+      data-race-detail-candidate-id="seattle-city-council-5--silas-james">
+      <div class="race-detail-candidate-heading">
+        <div class="race-detail-candidate-title">
+          <h4>Silas James</h4>
+        </div>
+        <div class="race-detail-candidate-meter">
+          <div class="screen-meter screen-meter-section" role="img" data-display-role="candidate-share"
+  data-meter-candidate-id="seattle-city-council-5--silas-james" aria-label="Silas James: ½ of 23 endorsements" tabindex="0"
+><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal)" data-meter-source="36th Legislative District Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="46th Legislative District Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Alliance for Gun Responsibility Victory Fund"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="King County Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="OneAmerica Votes"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="PROTEC17"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="SEIU 775"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Sage Leaders"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Seattle Gay News Editorial Board"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Tech 4 Taxes"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="The Stranger Election Control Board"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="The Urbanist Elections Committee"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="The Washington Bus"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Transit Riders Union"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="UFCW 3000"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington Bikes"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington Conservation Action"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington State Stonewall Democrats"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington Working Families Party"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-solid"
+  style="--meter-w:1; --meter-c:var(--teal); --meter-seam-hover-color:color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole))" data-meter-source="Washington for Peace and Justice"
+  data-meter-decision="Endorsed Nilu Jenks"
+></span><span class="meter-block meter-block-split meter-tongue-start meter-block-context"
+  style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-taupe); --meter-splitline-rest:var(--meter-trail-taupe); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-taupe) 50%) 86%, var(--meter-seam-pole)); --meter-tongue-bg:var(--teal); --meter-seam-rest-color:var(--teal); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-taupe) 50%) 86%, var(--meter-seam-pole)) 50% 100%)" data-meter-source="SEIU 925"
+  data-meter-decision="Split: Nilu Jenks + Silas James — ½ each"
+><span class="meter-half meter-half-top meter-half-recede"></span><span class="meter-half meter-half-bottom meter-half-context"></span></span><span class="meter-block meter-block-split"
+  style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-slate); --meter-splitline-rest:var(--meter-trail-slate); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)); --meter-seam-rest-image:linear-gradient(180deg, var(--teal) 0 50%, var(--meter-trail-slate) 50% 100%); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, color-mix(in srgb, var(--meter-trail-taupe) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)) 50% 100%)" data-meter-source="32nd Legislative District Democrats"
+  data-meter-decision="Split: Nilu Jenks + Julie Kang — ½ each"
+><span class="meter-half meter-half-top"></span><span class="meter-half meter-half-bottom"></span></span><span class="meter-block meter-block-split"
+  style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-slate); --meter-splitline-rest:var(--meter-trail-slate); --meter-splitline-hover:color-mix(in srgb, color-mix(in srgb, var(--teal) 50%, var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)); --meter-seam-rest-image:linear-gradient(180deg, var(--teal) 0 50%, var(--meter-trail-slate) 50% 100%); --meter-seam-hover-image:linear-gradient(180deg, color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%, color-mix(in srgb, var(--meter-trail-slate) 88%, var(--meter-seam-pole)) 50% 100%)" data-meter-source="National Women&#39;s Political Caucus of Washington"
+  data-meter-decision="Split: Nilu Jenks + Julie Kang — ½ each"
+><span class="meter-half meter-half-top"></span><span class="meter-half meter-half-bottom"></span></span></div>
+          <span class="race-detail-candidate-count"><b>½</b> of 23 endorsements<span class="race-detail-candidate-pct">2%</span></span>
+        </div>
+      </div>
+      
+      <ul class="race-detail-source-list">
+<li data-race-detail-source-code="s925"
+      data-source-category="labor" data-source-state="multi_endorsement"
+      data-source-role="consensus" data-source-group="candidate" data-endorsed-candidate-id="seattle-city-council-5--silas-james">
+<a class="race-detail-source-row" href="https://www.seiu925.org/2026endorsements/" target="_blank" rel="noopener">
+        <strong>SEIU 925</strong>
+        <div class="race-detail-source-meta">
+          <span class="race-detail-category-badge">Labor</span>
+<span class="race-detail-source-status">Co-endorsed</span>        </div>
+</a>    </li>      </ul>
+    </section></div></div></main></div></div>
+<p class="mock-note"><b>What this also does.</b> It dissolves #354's original complaint rather than
+treating it: there is no longer an unlabeled bar beneath the endorsement meter, because the vote
+share no longer lives in the candidate stack at all. The recommendation still leads the page; the
+result follows it, complete, in the card's own vocabulary.</p>
+<p class="mock-note cost"><b>Cost.</b> It reverses the "keep it distributed" call this pass started
+from, and every candidate who has both an endorsement section and a tally row is named twice on one
+page &mdash; which the race card already does, but this page has so far avoided
+(<code>docs/DESIGN.md</code>, "A name appears once per page"). It also puts a block of results
+between the recommendation and the evidence for it.</p>
 
 
 <div class="mock-rule"></div>
 <h2>Recommendation</h2>
-<p><b>B.</b> The failure this ticket describes is a legibility failure &mdash; "you could be
-forgiven to not know what that represents" &mdash; and a label is the only thing that fixes
-legibility directly. A signals difference without naming it; C names both but pays for the pairing
-by narrowing the meter and reaching into structure #325 just settled. B says the word, in the
-vocabulary the card already taught, for the price of one line per candidate.</p>
-<p>If B's vertical cost proves too high in live review, <b>A</b> is the fallback that keeps the
-label and gives up the bounded zone.</p>
+<p><b>Decide completeness first &mdash; it can settle the labeling question by removing it.</b>
+Options 1 and 2 keep the per-candidate vote-share row, so they still need A, B, or C on top of
+them. Option 3 deletes that row, and with it the thing #354 was filed about.</p>
+<p><b>Option 3, the complete tally on the page.</b> It is the only one of the three where the
+winner's position is determined by the result rather than by whether anyone endorsed them &mdash;
+in the case above it names Dimitri first, where the other two put him last. It states each share
+exactly once. It reuses the card's block whole, which is what "the page adopts the card's
+vocabulary" meant in the first place. And it leaves the candidate sections as pure endorsement
+content, which is what the page is otherwise for.</p>
+<p>Its two real costs, both of which the maintainer should weigh rather than take from me: it
+reverses the "keep it distributed" call this pass opened with, and it names endorsed candidates
+twice on one page. The second is worth testing live &mdash; the card does exactly this and reads
+fine, but the card is one compact block and this page is long.</p>
+<p>If the tally stays off the page, then <b>2 for completeness and B for labeling</b>: option 1
+buys its one grammar by amending a blessed meter decision and still buries the winner, which is
+most of option 2's cost without option 2's smaller footprint.</p>
+<h3>Open, and not answered here</h3>
+<p>The complete tally runs in <b>finish order</b> &mdash; the card's own order. The candidate
+sections below it run in <b>endorsement order</b>, which #287 ratified and this pass does not
+touch. Under option 3 both orders are visible on one page at once. That reads as honest to me (they
+are different questions, ordered by their own answers) but it is a real editorial call, and it is
+the maintainer's.</p>
 <p class="mock-caption">Nothing here is ratified. This page is the artifact for that
 conversation.</p>
 
