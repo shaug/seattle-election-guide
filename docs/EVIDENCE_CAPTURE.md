@@ -72,10 +72,12 @@ uv run election-guide evidence verify-all
 ```
 
 Each manifest reports `present`, `missing`, `corrupt`, `expected-absent`, or `no-artifact`, and
-the command exits non-zero on `missing` or `corrupt`. `make check` and CI both run it. A
-restricted artifact whose store is absent from this environment is `expected-absent` and passes —
-CI can never hold those bytes; add `--require-local` when auditing a machine that should hold
-them.
+the command exits non-zero on `missing` or `corrupt`. `make check` and CI both run it.
+
+An absent restricted artifact is `expected-absent` and passes — no environment but the capturing
+machine holds those bytes. Add `--require-local` when auditing a machine that should hold them;
+that is the loud check for restricted evidence. An absent official-authority artifact always
+fails, and bytes present but not matching their manifest are always `corrupt`.
 
 ## Capture an artifact
 

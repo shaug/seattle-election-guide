@@ -49,9 +49,7 @@ class ImmutableRecordError(ValueError):
 class BytePresence:
     """One manifest's verdict from a byte-presence sweep."""
 
-    manifest_path: Path
     capture_id: str
-    storage_scope: StorageScope | None
     status: PresenceStatus
     detail: str | None = None
 
@@ -123,11 +121,24 @@ def read_capture_manifest(path: Path) -> CaptureManifest:
         raise ValueError(str(error)) from error
 
 
-def verify_capture(manifest: CaptureManifest, storage_root: Path) -> None:
-    """Verify stored bytes against a capture manifest."""
+def verify_capture(
+    manifest: CaptureManifest,
+    storage_root: Path,
+    *,
+    repository_storage_root: Path = REPOSITORY_STORAGE_ROOT,
+) -> None:
+    """Verify stored bytes against a capture manifest.
+
+    Chooses the root from the manifest's own scope, so a caller passes only the
+    local root it already knows about. Selecting the root here rather than at
+    each call site is what keeps a `repository`-scope manifest from being
+    looked up in the wrong store by any caller that has not heard of the
+    official store yet (issue #357).
+    """
     if isinstance(manifest, UnavailableManifest):
         return
-    artifact = _resolve_storage_reference(storage_root, manifest.storage_reference)
+    root = storage_root_for(manifest, storage_root, repository_storage_root)
+    artifact = _resolve_storage_reference(root, manifest.storage_reference)
     if not artifact.is_file():
         raise ValueError(f"captured evidence is missing: {manifest.storage_reference}")
     digest, byte_length = _hash_file(artifact)
@@ -158,47 +169,46 @@ def survey_byte_presence(
     """Verify every manifest's bytes, reporting each one's presence.
 
     A `repository`-scope artifact must always be present: its bytes travel with
-    history, so absence is a real loss. A `local_only` artifact is reported
-    `expected-absent` when its store is not on this machine at all — the
-    ordinary state in CI, which can never hold restricted bytes — but `missing`
-    when the store exists and the bytes do not, because that is the loss issue
-    #357 exists to catch. `require_local` removes the exemption for an operator
-    checking a machine that is supposed to hold everything.
+    history, so anywhere the repository is, they must be, and absence is a real
+    loss. A `local_only` artifact's bytes are exempt when absent, because no
+    environment but the capturing machine ever holds them — CI never does, and
+    neither does a second checkout. `require_local` drops that exemption for an
+    operator auditing a machine that is supposed to hold everything.
+
+    The exemption is decided per artifact rather than by probing for the store
+    directory. Probing looked equivalent and is not: the first local capture
+    creates `data/snapshots/`, which the endorsement sweep runbook has an
+    operator do routinely, and from then on a store-shaped test reports every
+    artifact that machine never held as a loss — turning `make check`, the
+    mandated gate, red on evidence nothing is actually wrong with.
+
+    Bytes that are present but do not match their manifest are `corrupt` under
+    either scope, and never exempt.
     """
     survey: list[BytePresence] = []
     for manifest_path in sorted(manifest_dir.glob("*.json")):
         manifest = read_capture_manifest(manifest_path)
         if not isinstance(manifest, CapturedManifest):
-            survey.append(BytePresence(manifest_path, manifest.id, None, "no-artifact"))
+            survey.append(BytePresence(manifest.id, "no-artifact"))
             continue
         root = storage_root_for(manifest, local_storage_root, repository_storage_root)
-        if manifest.storage_scope == "local_only" and not require_local and not root.is_dir():
+        artifact = _resolve_storage_reference(root, manifest.storage_reference)
+        if not artifact.is_file():
+            exempt = manifest.storage_scope == "local_only" and not require_local
             survey.append(
                 BytePresence(
-                    manifest_path,
                     manifest.id,
-                    manifest.storage_scope,
-                    "expected-absent",
-                    f"restricted store not present in this environment: {root}",
+                    "expected-absent" if exempt else "missing",
+                    f"no bytes at {artifact}",
                 )
             )
             continue
         try:
-            verify_capture(manifest, root)
+            verify_capture(manifest, root, repository_storage_root=repository_storage_root)
         except (OSError, ValueError) as error:
-            artifact = root / manifest.storage_reference
-            status: PresenceStatus = "present" if artifact.is_file() else "missing"
-            survey.append(
-                BytePresence(
-                    manifest_path,
-                    manifest.id,
-                    manifest.storage_scope,
-                    "corrupt" if status == "present" else "missing",
-                    str(error),
-                )
-            )
+            survey.append(BytePresence(manifest.id, "corrupt", str(error)))
             continue
-        survey.append(BytePresence(manifest_path, manifest.id, manifest.storage_scope, "present"))
+        survey.append(BytePresence(manifest.id, "present"))
     return survey
 
 

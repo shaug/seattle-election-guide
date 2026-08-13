@@ -3,6 +3,7 @@ import subprocess
 from datetime import UTC, datetime
 from pathlib import Path
 
+import pytest
 from typer.testing import CliRunner
 
 from election_guide import __version__
@@ -18,6 +19,7 @@ from election_guide.normalization.records import (
 )
 from election_guide.sources.registry import read_source_registry
 
+PROJECT_ROOT = Path(__file__).parents[1]
 runner = CliRunner()
 
 
@@ -294,12 +296,15 @@ def test_evidence_unavailable_command_writes_metadata_only_manifest(tmp_path: Pa
     assert "content_sha256" not in payload
 
 
+OFFICIAL_STORE = Path("data/evidence/official")
+
+
 def _official_capture(tmp_path: Path, storage_root: Path, manifest_dir: Path) -> Path:
     """Capture a fixture as a permitted official-authority artifact (issue #357).
 
-    Names `storage_root` as the official store so the capture records
-    `storage_scope: repository` — the scope is derived from that store, not
-    asserted by the caller (`evidence/storage.py`)."""
+    Stores into the official root, which is what makes the capture record
+    `storage_scope: repository` — the scope is derived from that one designated
+    store, not asserted by the caller (`evidence/storage.py`)."""
     subprocess.run(["git", "init", "--quiet", str(tmp_path)], check=True)
     return record_capture(
         CaptureRequest.model_validate(
@@ -316,18 +321,20 @@ def _official_capture(tmp_path: Path, storage_root: Path, manifest_dir: Path) ->
                 "redistribution_note": "Official public record; bytes retained in the repository.",
             }
         ),
-        Path("tests/fixtures/evidence/static.html"),
+        PROJECT_ROOT / "tests/fixtures/evidence/static.html",
         storage_root,
         manifest_dir,
         repository_storage_root=storage_root,
     )
 
 
-def test_evidence_verify_all_reports_present_and_expected_absent(tmp_path: Path) -> None:
+def test_evidence_verify_all_reports_present_and_expected_absent(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     manifest_dir = tmp_path / "manifests"
-    official_root = tmp_path / "official"
+    official_root = tmp_path / OFFICIAL_STORE
     _official_capture(tmp_path, official_root, manifest_dir)
-    runner.invoke(
+    unavailable = runner.invoke(
         app,
         [
             "evidence",
@@ -350,6 +357,8 @@ def test_evidence_verify_all_reports_present_and_expected_absent(tmp_path: Path)
             str(manifest_dir),
         ],
     )
+    assert unavailable.exit_code == 0, unavailable.output
+    monkeypatch.chdir(tmp_path)
 
     result = runner.invoke(
         app,
@@ -360,8 +369,6 @@ def test_evidence_verify_all_reports_present_and_expected_absent(tmp_path: Path)
             str(manifest_dir),
             "--storage-root",
             str(tmp_path / "absent-snapshots"),
-            "--repository-storage-root",
-            str(official_root),
         ],
     )
 
@@ -401,8 +408,6 @@ def test_evidence_verify_all_require_local_fails_on_an_absent_restricted_store(
         str(manifest_dir),
         "--storage-root",
         str(tmp_path / "absent-snapshots"),
-        "--repository-storage-root",
-        str(tmp_path / "official"),
     ]
 
     assert runner.invoke(app, arguments).exit_code == 0
@@ -411,10 +416,13 @@ def test_evidence_verify_all_require_local_fails_on_an_absent_restricted_store(
     assert "missing" in required.output
 
 
-def test_evidence_verify_all_fails_when_an_official_artifact_is_lost(tmp_path: Path) -> None:
+def test_evidence_verify_all_fails_when_an_official_artifact_is_lost(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     manifest_dir = tmp_path / "manifests"
-    official_root = tmp_path / "official"
+    official_root = tmp_path / OFFICIAL_STORE
     manifest_path = _official_capture(tmp_path, official_root, manifest_dir)
+    monkeypatch.chdir(tmp_path)
     manifest = read_capture_manifest(manifest_path)
     assert isinstance(manifest, CapturedManifest)
     (official_root / manifest.storage_reference).unlink()
@@ -428,8 +436,6 @@ def test_evidence_verify_all_fails_when_an_official_artifact_is_lost(tmp_path: P
             str(manifest_dir),
             "--storage-root",
             str(tmp_path / "snapshots"),
-            "--repository-storage-root",
-            str(official_root),
         ],
     )
 

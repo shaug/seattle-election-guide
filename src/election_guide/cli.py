@@ -32,7 +32,6 @@ from election_guide.evidence.manual import (
 )
 from election_guide.evidence.models import CapturedManifest, CaptureRequest, UnavailableRequest
 from election_guide.evidence.storage import (
-    REPOSITORY_STORAGE_ROOT,
     read_capture_manifest,
     record_capture,
     record_unavailable,
@@ -976,9 +975,6 @@ def evidence_capture(
         Path, typer.Option(exists=True, dir_okay=False, readable=True)
     ] = Path("config/authorities/default.yaml"),
     storage_root: Annotated[Path, typer.Option(file_okay=False)] = Path("data/snapshots"),
-    repository_storage_root: Annotated[
-        Path, typer.Option(file_okay=False)
-    ] = REPOSITORY_STORAGE_ROOT,
     manifest_dir: Annotated[Path, typer.Option(file_okay=False)] = Path("data/manifests/evidence"),
 ) -> None:
     """Ingest a local artifact into immutable content-addressed storage."""
@@ -1004,13 +1000,7 @@ def evidence_capture(
                 "redistribution_note": redistribution_note,
             }
         )
-        output = record_capture(
-            request,
-            input_path,
-            storage_root,
-            manifest_dir,
-            repository_storage_root=repository_storage_root,
-        )
+        output = record_capture(request, input_path, storage_root, manifest_dir)
     except (OSError, ValidationError, ValueError) as error:
         typer.echo(f"evidence capture failed: {error}", err=True)
         raise typer.Exit(code=1) from error
@@ -1071,19 +1061,11 @@ def evidence_unavailable(
 def evidence_verify(
     manifest_path: Annotated[Path, typer.Argument(exists=True, dir_okay=False, readable=True)],
     storage_root: Annotated[Path, typer.Option(file_okay=False)] = Path("data/snapshots"),
-    repository_storage_root: Annotated[
-        Path, typer.Option(file_okay=False)
-    ] = REPOSITORY_STORAGE_ROOT,
 ) -> None:
     """Verify captured evidence bytes against an immutable manifest."""
     try:
         manifest = read_capture_manifest(manifest_path)
-        root = (
-            storage_root_for(manifest, storage_root, repository_storage_root)
-            if isinstance(manifest, CapturedManifest)
-            else storage_root
-        )
-        verify_capture(manifest, root)
+        verify_capture(manifest, storage_root)
     except (OSError, ValueError) as error:
         typer.echo(f"evidence verification failed: {error}", err=True)
         raise typer.Exit(code=1) from error
@@ -1094,9 +1076,6 @@ def evidence_verify(
 def evidence_verify_all(
     manifest_dir: Annotated[Path, typer.Option(file_okay=False)] = Path("data/manifests/evidence"),
     storage_root: Annotated[Path, typer.Option(file_okay=False)] = Path("data/snapshots"),
-    repository_storage_root: Annotated[
-        Path, typer.Option(file_okay=False)
-    ] = REPOSITORY_STORAGE_ROOT,
     require_local: Annotated[
         bool,
         typer.Option(help="Also require restricted bytes, for a machine that should hold them."),
@@ -1114,7 +1093,6 @@ def evidence_verify_all(
         survey = survey_byte_presence(
             manifest_dir,
             local_storage_root=storage_root,
-            repository_storage_root=repository_storage_root,
             require_local=require_local,
         )
     except (OSError, ValueError) as error:
@@ -1435,9 +1413,6 @@ def results_ingest(
         Path, typer.Option(exists=True, dir_okay=False, readable=True)
     ] = Path("config/authorities/default.yaml"),
     storage_root: Annotated[Path, typer.Option(file_okay=False)] = Path("data/snapshots"),
-    repository_storage_root: Annotated[
-        Path, typer.Option(file_okay=False)
-    ] = REPOSITORY_STORAGE_ROOT,
     output_dir: Annotated[Path, typer.Option(file_okay=False)] = Path("data/results"),
 ) -> None:
     """Produce `data/results/<election-id>.yaml` from a captured certified export.
@@ -1460,11 +1435,9 @@ def results_ingest(
         if authority is None:
             raise ValueError(f"unknown authority id {authority_id!r}")
 
-        certified_manifest = _admit_captured_manifest(
-            certified_capture, storage_root, repository_storage_root, "certified"
-        )
+        certified_manifest = _admit_captured_manifest(certified_capture, storage_root, "certified")
         csv_content = (
-            storage_root_for(certified_manifest, storage_root, repository_storage_root)
+            storage_root_for(certified_manifest, storage_root)
             / certified_manifest.storage_reference
         ).read_bytes()
 
@@ -1477,7 +1450,7 @@ def results_ingest(
         ]
         if election_night_capture is not None:
             election_night_manifest = _admit_captured_manifest(
-                election_night_capture, storage_root, repository_storage_root, "election-night"
+                election_night_capture, storage_root, "election-night"
             )
             captures.insert(
                 0,
@@ -1509,9 +1482,7 @@ def results_ingest(
     )
 
 
-def _admit_captured_manifest(
-    path: Path, storage_root: Path, repository_storage_root: Path, label: str
-) -> CapturedManifest:
+def _admit_captured_manifest(path: Path, storage_root: Path, label: str) -> CapturedManifest:
     """Read and hash-verify one evidence manifest for `results ingest`,
     rejecting an "unavailable" record — the lane's own admission that
     nothing was captured, which a results file may never cite as if it were
@@ -1519,11 +1490,12 @@ def _admit_captured_manifest(
     capture paths so both are guarded identically; the duplication this
     replaced is exactly how the election-night path went unverified for a
     fix cycle. Official-authority captures live in the tracked repository
-    store (issue #357), so the root comes from the manifest's own scope."""
+    store (issue #357); `verify_capture` resolves that from the manifest's own
+    scope, so only the local root is passed here."""
     manifest = read_capture_manifest(path)
     if not isinstance(manifest, CapturedManifest):
         raise ValueError(f"{label} capture must be a captured, not unavailable, manifest")
-    verify_capture(manifest, storage_root_for(manifest, storage_root, repository_storage_root))
+    verify_capture(manifest, storage_root)
     return manifest
 
 

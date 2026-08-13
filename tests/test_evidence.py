@@ -1083,11 +1083,15 @@ def test_presence_survey_require_local_drops_the_absent_store_exemption(tmp_path
     assert [entry.status for entry in required] == ["missing"]
 
 
-def test_presence_survey_reports_a_lost_restricted_artifact_where_its_store_exists(
+def test_presence_survey_exemption_does_not_depend_on_the_store_existing(
     tmp_path: Path,
 ) -> None:
-    """The store is present, so absent bytes are a real loss, not this
-    environment's expected inability to hold them."""
+    """The exemption is per artifact, not per store directory.
+
+    Probing for the directory looked equivalent and was not: the first local
+    capture creates it, which the endorsement sweep runbook has an operator do
+    routinely, and from then on every artifact that machine never held would
+    report as a loss — turning `make check` red on nothing (issue #357)."""
     manifest_dir = tmp_path / "manifests"
     local_root = tmp_path / "snapshots"
     manifest = read_capture_manifest(
@@ -1100,14 +1104,22 @@ def test_presence_survey_reports_a_lost_restricted_artifact_where_its_store_exis
     )
     assert isinstance(manifest, CapturedManifest)
     (local_root / manifest.storage_reference).unlink()
+    assert local_root.is_dir()
 
     survey = survey_byte_presence(
         manifest_dir,
         local_storage_root=local_root,
         repository_storage_root=tmp_path / "official",
     )
+    required = survey_byte_presence(
+        manifest_dir,
+        local_storage_root=local_root,
+        repository_storage_root=tmp_path / "official",
+        require_local=True,
+    )
 
-    assert [entry.status for entry in survey] == ["missing"]
+    assert [entry.status for entry in survey] == ["expected-absent"]
+    assert [entry.status for entry in required] == ["missing"]
 
 
 def _capture_request(

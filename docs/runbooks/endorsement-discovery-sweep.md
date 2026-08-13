@@ -111,6 +111,17 @@ checkout (see Preconditions). In a linked worktree it refuses with "Git-ignored 
 inside a linked worktree does not outlive it" rather than writing bytes that die with the
 worktree.
 
+These bytes are restricted, so they exist only on this machine and no gate can require them
+elsewhere. Confirm this machine still holds every one of them before finishing the sweep:
+
+```bash
+uv run election-guide evidence verify-all --require-local
+```
+
+Without `--require-local` an absent restricted artifact is `expected-absent` and passes, which is
+what keeps CI and other checkouts green (`docs/COLLECTION.md`). This is the run that would tell
+you a capture went missing.
+
 When the page cannot be reached without bypassing an access control, record the metadata-only
 form instead and move on. Do not work around the control:
 

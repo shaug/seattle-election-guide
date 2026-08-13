@@ -1018,8 +1018,6 @@ def test_cli_results_ingest_reads_a_repository_scope_certified_capture(
             str(AUTHORITY_REGISTRY_PATH),
             "--storage-root",
             str(tmp_path / "data" / "snapshots"),
-            "--repository-storage-root",
-            str(official_root),
             "--output-dir",
             str(output_dir),
         ],

@@ -106,10 +106,19 @@ Two rules follow, and both are enforced rather than documented-only:
   a manifest committed without its official-authority bytes fails the pull request.
 
 `expected-absent` is the one status that needs stating explicitly, because it is where the sweep
-deliberately does not fail. Restricted bytes are never in CI, so a CI sweep that demanded them
-would fail on every restricted artifact — the tension that made this a single decision rather than
-two. So a `local_only` artifact whose store is not present in this environment at all is reported
-`expected-absent` and passes. When that store *does* exist, absent bytes are a real loss and the
-sweep fails. An operator auditing a machine that is supposed to hold everything passes
-`--require-local` to drop the exemption. A `repository`-scope artifact is never exempt: its bytes
-travel with history, so anywhere the repository is, they must be.
+deliberately does not fail. Restricted bytes are never in CI, so a sweep that demanded them would
+fail on every restricted artifact — the tension that made this a single decision rather than two.
+So an absent `local_only` artifact is reported `expected-absent` and passes: no environment but
+the capturing machine ever holds those bytes, and a second checkout holds none of them. An
+operator auditing a machine that is supposed to hold everything passes `--require-local` to drop
+the exemption, which is the loud check for restricted evidence.
+
+The exemption is decided per artifact, not by checking whether the store directory exists. Those
+look equivalent and are not: the first local capture creates `data/snapshots/`, which the
+endorsement sweep runbook has an operator do routinely, and a store-shaped test would from then on
+report every artifact that machine never held as a loss — turning `make check` red on evidence
+nothing is wrong with, which is how a mandated gate gets ignored.
+
+Two things are never exempt. A `repository`-scope artifact must be present, because its bytes
+travel with history: anywhere the repository is, they are. And bytes that are present but do not
+match their manifest are `corrupt` under either scope.
