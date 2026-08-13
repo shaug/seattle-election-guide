@@ -890,6 +890,19 @@ body.mockup { margin: 0; background: #eef1f4; color: var(--ink); }
 .mock-also .race-results-row-trailing .race-results-name,
 .mock-also .race-results-row-trailing .race-results-share { color: var(--muted);
   font-weight: 500; }
+/* The certified strip carrying the complete result. It keeps the strip's own
+   full-bleed neutral band and border, and trades the strip's single centered
+   line for a left-aligned block in a column narrow enough that a share bar
+   stays readable on a wide page. */
+.race-detail-certified-result { display: block; padding: .85rem clamp(1rem, 4vw, 3rem) .95rem;
+  text-align: left; }
+/* Left-adjusted, not centered: the strip's own horizontal padding is the
+   page head's (`clamp(1rem, 4vw, 3rem)`, base.css), so `margin: 0` puts the
+   eyebrow on exactly the race name's left edge. Capped so a share bar stays
+   readable rather than running the full width of a wide page. */
+.race-detail-certified-result .mock-page-tally { max-width: 44rem; margin: 0; padding: 0; }
+.race-detail-certified-result .race-results { padding-top: 0; border-top: 0; }
+
 /* The card's whole RESULT block, quoted onto the page under the headline.
    Its head rules live in guide.css, which a race page does not ship, so the
    quoted markup carries copies of them here rather than pulling a second
@@ -959,11 +972,12 @@ nothing saying that one counts organizations and the other counts voters.</p>
 inventing a second one. Results stay a state, not an option. Vote share and endorsement share
 never share a component. Every vote bar runs one full-width scale. The chip stays sky-on-navy,
 immediately after the name. Candidate order stays endorsement order.</p>
-<p><b>And one requirement added after the first three mockups.</b> The page has to state
+<p><b>And one requirement settled after the first three mockups.</b> The page has to state
 <i>every</i> result, not only the endorsed candidates' &mdash; a candidate nobody endorsed can win,
-and today that winner would not appear on the page at all. "Showing every result" below is that
-problem and three answers to it. It changes the shape of the decision: read the three treatments
-first, then that section, because one of its options removes the treatment question entirely.</p>
+and today that winner would not appear on the page at all. There is no point publishing results at
+all if the winner might be missing from them. "Showing every result" below is that problem and
+three answers to it, and it changes the shape of the decision: read the three treatments first,
+then that section, because one of its options removes the treatment question entirely.</p>
 
 
 <div class="mock-rule"></div>
@@ -971,8 +985,11 @@ first, then that section, because one of its options removes the treatment quest
 <p>Nilu Jenks carries <b>21&frac12; of 23 endorsements, 93%</b>. The bar directly below is her
 <b>40.1% certified vote share</b> &mdash; a different measurement, from a different body,
 answering a different question. Nothing on screen says so.</p>
-<div class="mock-surface v-today"><div class="page screen-race"><div class="race-detail-certified-strip">
+<div class="mock-surface v-today"><div class="page screen-race"><header class="page-head"><p class="page-eyebrow">August 2026 Primary</p><h1>Seattle City Council — District 5</h1><p class="page-tagline">Every endorsement that matters, with receipts.</p></header><div class="race-detail-certified-strip">
       <b>Certified result</b> · August 19, 2026 · King County Elections · 39,204 ballots
+    </div><div class="lens-banner state-action-strip" data-lens-banner>
+      <span data-lens-banner-status role="status" aria-live="polite">Counting all 40 sources.</span>
+      <a data-sources-link href="/e/wa-2026-primary/sources/">Edit sources</a>
     </div><main class="race-detail"><div class="race-headline race-headline-heads-section"
         role="group" aria-label="Consensus result"
         aria-describedby="race-consensus-summary" data-race-headline>
@@ -1302,8 +1319,11 @@ answering a different question. Nothing on screen says so.</p>
 <p>All three leave the top certified strip and the heading chip where they are. They differ in what
 they do with the vote-share row, which is where the confusion actually lands.</p>
 
-<h3>A &middot; Certified band</h3><p class="lede">The row stays exactly where it is and gains two things: the card's own RESULT eyebrow, and the tone band the certified strip at the top of the page already wears. The band is the recognition cue &mdash; a reader who has scrolled past the strip has already learned that this tint means <i>certified fact</i> &mdash; and the eyebrow names it outright.</p><div class="mock-surface v-a"><div class="page screen-race"><div class="race-detail-certified-strip">
+<h3>A &middot; Certified band</h3><p class="lede">The row stays exactly where it is and gains two things: the card's own RESULT eyebrow, and the tone band the certified strip at the top of the page already wears. The band is the recognition cue &mdash; a reader who has scrolled past the strip has already learned that this tint means <i>certified fact</i> &mdash; and the eyebrow names it outright.</p><div class="mock-surface v-a"><div class="page screen-race"><header class="page-head"><p class="page-eyebrow">August 2026 Primary</p><h1>Seattle City Council — District 5</h1><p class="page-tagline">Every endorsement that matters, with receipts.</p></header><div class="race-detail-certified-strip">
       <b>Certified result</b> · August 19, 2026 · King County Elections · 39,204 ballots
+    </div><div class="lens-banner state-action-strip" data-lens-banner>
+      <span data-lens-banner-status role="status" aria-live="polite">Counting all 40 sources.</span>
+      <a data-sources-link href="/e/wa-2026-primary/sources/">Edit sources</a>
     </div><main class="race-detail"><div class="race-headline race-headline-heads-section"
         role="group" aria-label="Consensus result"
         aria-describedby="race-consensus-summary" data-race-headline>
@@ -1617,8 +1637,11 @@ they do with the vote-share row, which is where the confusion actually lands.</p
 </a>    </li>      </ul>
     </section></div></div></main></div></div><p class="mock-note cost"><b>Cost.</b> One row height, unchanged. The tinted band inside an otherwise white section reads as a horizontal rule through the candidate; on a section with few sources it can dominate. Cheapest to build: markup gains one span, CSS gains one rule.</p>
 
-<h3>B &middot; The card's RESULT block, per candidate</h3><p class="lede">The row becomes the race card's own anatomy at candidate scale: a rule, a RESULT eyebrow with the share opposite it, and the bar beneath. Each candidate section then reads as two labeled zones &mdash; what sources said above, what voters decided below &mdash; using the exact vocabulary the card taught on the guide page.</p><div class="mock-surface v-b"><div class="page screen-race"><div class="race-detail-certified-strip">
+<h3>B &middot; The card's RESULT block, per candidate</h3><p class="lede">The row becomes the race card's own anatomy at candidate scale: a rule, a RESULT eyebrow with the share opposite it, and the bar beneath. Each candidate section then reads as two labeled zones &mdash; what sources said above, what voters decided below &mdash; using the exact vocabulary the card taught on the guide page.</p><div class="mock-surface v-b"><div class="page screen-race"><header class="page-head"><p class="page-eyebrow">August 2026 Primary</p><h1>Seattle City Council — District 5</h1><p class="page-tagline">Every endorsement that matters, with receipts.</p></header><div class="race-detail-certified-strip">
       <b>Certified result</b> · August 19, 2026 · King County Elections · 39,204 ballots
+    </div><div class="lens-banner state-action-strip" data-lens-banner>
+      <span data-lens-banner-status role="status" aria-live="polite">Counting all 40 sources.</span>
+      <a data-sources-link href="/e/wa-2026-primary/sources/">Edit sources</a>
     </div><main class="race-detail"><div class="race-headline race-headline-heads-section"
         role="group" aria-label="Consensus result"
         aria-describedby="race-consensus-summary" data-race-headline>
@@ -1932,8 +1955,11 @@ they do with the vote-share row, which is where the confusion actually lands.</p
 </a>    </li>      </ul>
     </section></div></div></main></div></div><p class="mock-note cost"><b>Cost.</b> One extra line per candidate, so a four-candidate race grows by roughly 80px. The eyebrow repeats once per section rather than once per page, which is the same repetition the card accepts and this page has so far avoided.</p>
 
-<h3>C &middot; Both measures labeled, paired in the heading</h3><p class="lede">The opposite move: instead of separating the two numbers, admit they are adjacent and label both. The vote bar moves up into the candidate heading directly under the endorsement meter, each on its own labeled row with a shared label column, so the bars align and the pair reads as one comparison &mdash; organizations, then voters.</p><div class="mock-surface v-c"><div class="page screen-race"><div class="race-detail-certified-strip">
+<h3>C &middot; Both measures labeled, paired in the heading</h3><p class="lede">The opposite move: instead of separating the two numbers, admit they are adjacent and label both. The vote bar moves up into the candidate heading directly under the endorsement meter, each on its own labeled row with a shared label column, so the bars align and the pair reads as one comparison &mdash; organizations, then voters.</p><div class="mock-surface v-c"><div class="page screen-race"><header class="page-head"><p class="page-eyebrow">August 2026 Primary</p><h1>Seattle City Council — District 5</h1><p class="page-tagline">Every endorsement that matters, with receipts.</p></header><div class="race-detail-certified-strip">
       <b>Certified result</b> · August 19, 2026 · King County Elections · 39,204 ballots
+    </div><div class="lens-banner state-action-strip" data-lens-banner>
+      <span data-lens-banner-status role="status" aria-live="polite">Counting all 40 sources.</span>
+      <a data-sources-link href="/e/wa-2026-primary/sources/">Edit sources</a>
     </div><main class="race-detail"><div class="race-headline race-headline-heads-section"
         role="group" aria-label="Consensus result"
         aria-describedby="race-consensus-summary" data-race-headline>
@@ -2248,8 +2274,11 @@ markup that only exists when a certified outcome does.</p>
 <h3>A ballot measure</h3>
 <p>A measure's Yes/No choices render through the same component, so a measure page inherits
 whichever treatment is chosen. Shown under B.</p>
-<div class="mock-surface v-b"><div class="page screen-race"><div class="race-detail-certified-strip">
+<div class="mock-surface v-b"><div class="page screen-race"><header class="page-head"><p class="page-eyebrow">August 2026 Primary</p><h1>Seattle Proposition 1 — Property Tax Levy for Seattle Public Library</h1><p class="page-tagline">Every endorsement that matters, with receipts.</p></header><div class="race-detail-certified-strip">
       <b>Certified result</b> · August 19, 2026 · King County Elections · 71,028 ballots
+    </div><div class="lens-banner state-action-strip" data-lens-banner>
+      <span data-lens-banner-status role="status" aria-live="polite">Counting all 40 sources.</span>
+      <a data-sources-link href="/e/wa-2026-primary/sources/">Edit sources</a>
     </div><main class="race-detail"><div class="race-headline race-headline-heads-section"
         role="group" aria-label="Consensus result"
         aria-describedby="race-consensus-summary" data-race-headline>
@@ -2341,8 +2370,11 @@ anywhere.</b> The headline still reads "Leading choice: Nilu Jenks," which is co
 the recommendation, and outcomes never displace recommendations &mdash; but a reader has no way to
 learn who actually won. The measure page has the same hole: a rejected levy's winning "No" never
 appears.</p>
-<div class="mock-surface v-b"><div class="page screen-race"><div class="race-detail-certified-strip">
+<div class="mock-surface v-b"><div class="page screen-race"><header class="page-head"><p class="page-eyebrow">August 2026 Primary</p><h1>Seattle City Council — District 5</h1><p class="page-tagline">Every endorsement that matters, with receipts.</p></header><div class="race-detail-certified-strip">
       <b>Certified result</b> · August 19, 2026 · King County Elections · 39,204 ballots
+    </div><div class="lens-banner state-action-strip" data-lens-banner>
+      <span data-lens-banner-status role="status" aria-live="polite">Counting all 40 sources.</span>
+      <a data-sources-link href="/e/wa-2026-primary/sources/">Edit sources</a>
     </div><main class="race-detail"><div class="race-headline race-headline-heads-section"
         role="group" aria-label="Consensus result"
         aria-describedby="race-consensus-summary" data-race-headline>
@@ -2696,8 +2728,11 @@ guide.</p>
 <p>Post-certification, every ballot choice gets a section. An unendorsed candidate's carries their
 name, their chip, their result, and a line where the meter would be. One grammar, one name per
 page, complete by construction.</p>
-<div class="mock-surface v-b k-roster"><div class="page screen-race"><div class="race-detail-certified-strip">
+<div class="mock-surface v-b k-roster"><div class="page screen-race"><header class="page-head"><p class="page-eyebrow">August 2026 Primary</p><h1>Seattle City Council — District 5</h1><p class="page-tagline">Every endorsement that matters, with receipts.</p></header><div class="race-detail-certified-strip">
       <b>Certified result</b> · August 19, 2026 · King County Elections · 39,204 ballots
+    </div><div class="lens-banner state-action-strip" data-lens-banner>
+      <span data-lens-banner-status role="status" aria-live="polite">Counting all 40 sources.</span>
+      <a data-sources-link href="/e/wa-2026-primary/sources/">Edit sources</a>
     </div><main class="race-detail"><div class="race-headline race-headline-heads-section"
         role="group" aria-label="Consensus result"
         aria-describedby="race-consensus-summary" data-race-headline>
@@ -3022,8 +3057,11 @@ winner sits below three candidates who lost.</p>
 <p>Endorsed candidates keep their sections; everyone else appears after them as the race card's own
 tally rows, quoted verbatim. Nothing about the endorsement stack changes, and decision 25 stands
 &mdash; these are rows, not sections.</p>
-<div class="mock-surface v-b k-tail"><div class="page screen-race"><div class="race-detail-certified-strip">
+<div class="mock-surface v-b k-tail"><div class="page screen-race"><header class="page-head"><p class="page-eyebrow">August 2026 Primary</p><h1>Seattle City Council — District 5</h1><p class="page-tagline">Every endorsement that matters, with receipts.</p></header><div class="race-detail-certified-strip">
       <b>Certified result</b> · August 19, 2026 · King County Elections · 39,204 ballots
+    </div><div class="lens-banner state-action-strip" data-lens-banner>
+      <span data-lens-banner-status role="status" aria-live="polite">Counting all 40 sources.</span>
+      <a data-sources-link href="/e/wa-2026-primary/sources/">Edit sources</a>
     </div><main class="race-detail"><div class="race-headline race-headline-heads-section"
         role="group" aria-label="Consensus result"
         aria-describedby="race-consensus-summary" data-race-headline>
@@ -3344,24 +3382,20 @@ tally rows, quoted verbatim. Nothing about the endorsement stack changes, and de
 for endorsed candidates, a card row for everyone else. And the winner is at the bottom, under a
 heading that describes him by what he lacks.</p>
 
-<h3>Option 3 &middot; The complete tally on the page</h3>
-<p>The card's RESULT block moves onto the page, under the headline and above the candidate
-sections, stating every outcome once in finish order. The per-candidate rows then go away entirely
-&mdash; they would restate a subset of the same numbers &mdash; and each candidate section keeps
-only its chip.</p>
-<div class="mock-surface v-b k-tally"><div class="page screen-race"><div class="race-detail-certified-strip">
-      <b>Certified result</b> · August 19, 2026 · King County Elections · 39,204 ballots
-    </div><main class="race-detail"><div class="race-headline race-headline-heads-section"
-        role="group" aria-label="Consensus result"
-        aria-describedby="race-consensus-summary" data-race-headline>
-        <p class="race-headline-eyebrow">Leading choice</p>
-        <div class="screen-race-result" data-lens-result>
-          <h3 data-display-role="recommendation">Nilu Jenks <span class="race-detail-result-chip">Advances</span></h3>
-        </div>
-        <div class="screen-race-context" data-lens-context>
-          <p class="no-majority-pill" hidden>No majority</p>
-        </div>
-      </div><div class="mock-page-tally"><div class="race-results">
+<h3>Option 3 &middot; The complete result under the race header</h3>
+<p><b>The certified strip grows into the complete result</b>, in the position it already holds:
+under the race header, above the "Counting all 40 sources" bar, above every candidate. It absorbs
+the strip's own date, authority, and ballot count &mdash; those become the block's provenance line
+&mdash; so nothing is stated twice, and the strip does not survive alongside it. The per-candidate
+rows go away entirely; each candidate section keeps only its chip.</p>
+<p>Placement is the whole argument here, and there is exactly one seam it can use.
+<b>Nothing can go between the headline and the first candidate section</b>, because those two are
+one candidate's heading and body: the headline <i>is</i> the leading choice's heading
+(<code>docs/DESIGN.md</code>, "A name appears once per page"), and their meter opens the section
+below it. A block dropped there splits a name from its own meter. That leaves the page chrome above
+the headline, or the very bottom of the page &mdash; and the bottom is where option 2 already
+shows the winner going.</p>
+<div class="mock-surface v-b k-strip"><div class="page screen-race"><header class="page-head"><p class="page-eyebrow">August 2026 Primary</p><h1>Seattle City Council — District 5</h1><p class="page-tagline">Every endorsement that matters, with receipts.</p></header><div class="race-detail-certified-strip race-detail-certified-result"><div class="mock-page-tally"><div class="race-results">
               <div class="race-results-head">
                 <span class="race-results-eyebrow">Result</span>
                 <span class="race-results-status">Certified · Aug 19, 2026</span>
@@ -3389,7 +3423,20 @@ only its chip.</p>
                 </div>
               </div>
               <p class="race-results-provenance">39,204 ballots · King County Elections · <a href="https://kingcounty.gov/elections/results" target="_blank" rel="noopener">capture</a></p>
-            </div></div><div class="race-detail-outcomes"><div class="race-detail-candidates" data-race-candidates          style="--count-chars: 3; --pct-chars: 3"><section class="race-detail-candidate race-detail-candidate-leader race-detail-candidate-headlined"
+            </div></div></div><div class="lens-banner state-action-strip" data-lens-banner>
+      <span data-lens-banner-status role="status" aria-live="polite">Counting all 40 sources.</span>
+      <a data-sources-link href="/e/wa-2026-primary/sources/">Edit sources</a>
+    </div><main class="race-detail"><div class="race-headline race-headline-heads-section"
+        role="group" aria-label="Consensus result"
+        aria-describedby="race-consensus-summary" data-race-headline>
+        <p class="race-headline-eyebrow">Leading choice</p>
+        <div class="screen-race-result" data-lens-result>
+          <h3 data-display-role="recommendation">Nilu Jenks <span class="race-detail-result-chip">Advances</span></h3>
+        </div>
+        <div class="screen-race-context" data-lens-context>
+          <p class="no-majority-pill" hidden>No majority</p>
+        </div>
+      </div><div class="race-detail-outcomes"><div class="race-detail-candidates" data-race-candidates          style="--count-chars: 3; --pct-chars: 3"><section class="race-detail-candidate race-detail-candidate-leader race-detail-candidate-headlined"
       data-race-detail-candidate-id="seattle-city-council-5--nilu-jenks">
       <div class="race-detail-candidate-heading">
         <div class="race-detail-candidate-meter">
@@ -3691,35 +3738,40 @@ only its chip.</p>
 <span class="race-detail-source-status">Co-endorsed</span>        </div>
 </a>    </li>      </ul>
     </section></div></div></main></div></div>
+<p class="mock-caption">Nothing on this page is <code>position: sticky</code>, so the block scrolls
+away with the header in ordinary flow &mdash; it costs its height once, not permanently.</p>
 <p class="mock-note"><b>What this also does.</b> It dissolves #354's original complaint rather than
 treating it: there is no longer an unlabeled bar beneath the endorsement meter, because the vote
-share no longer lives in the candidate stack at all. The recommendation still leads the page; the
-result follows it, complete, in the card's own vocabulary.</p>
-<p class="mock-note cost"><b>Cost.</b> It reverses the "keep it distributed" call this pass started
-from, and every candidate who has both an endorsement section and a tally row is named twice on one
-page &mdash; which the race card already does, but this page has so far avoided
-(<code>docs/DESIGN.md</code>, "A name appears once per page"). It also puts a block of results
-between the recommendation and the evidence for it.</p>
+share no longer lives in the candidate stack at all. Each candidate section goes back to being
+purely what sources said.</p>
+<p class="mock-note cost"><b>Cost, and the one real objection.</b> The complete result now precedes
+the recommendation in reading order, and <code>docs/RESULTS.md</code> says outcomes are "rendered
+as context beneath the recommendation, never as the headline." The band is chrome rather than a
+headline &mdash; it is neutral-toned, small, and the race name in the header above still leads the
+page &mdash; and the certified strip already occupies this exact slot today. But today's strip
+names nobody, and this one names a winner. Ratifying this means reading that rule as "never
+<i>as</i> the headline" rather than "never above it," and saying so in the amendment.</p>
+<p class="mock-note cost">Also: every candidate with both a section and a tally row is named twice
+on one page. The race card already does this and reads fine, but the card is one compact block and
+this page is long. Worth a live click-through before ratification.</p>
 
 
 <div class="mock-rule"></div>
 <h2>Recommendation</h2>
-<p><b>Decide completeness first &mdash; it can settle the labeling question by removing it.</b>
-Options 1 and 2 keep the per-candidate vote-share row, so they still need A, B, or C on top of
-them. Option 3 deletes that row, and with it the thing #354 was filed about.</p>
-<p><b>Option 3, the complete tally on the page.</b> It is the only one of the three where the
-winner's position is determined by the result rather than by whether anyone endorsed them &mdash;
-in the case above it names Dimitri first, where the other two put him last. It states each share
-exactly once. It reuses the card's block whole, which is what "the page adopts the card's
-vocabulary" meant in the first place. And it leaves the candidate sections as pure endorsement
-content, which is what the page is otherwise for.</p>
-<p>Its two real costs, both of which the maintainer should weigh rather than take from me: it
-reverses the "keep it distributed" call this pass opened with, and it names endorsed candidates
-twice on one page. The second is worth testing live &mdash; the card does exactly this and reads
-fine, but the card is one compact block and this page is long.</p>
-<p>If the tally stays off the page, then <b>2 for completeness and B for labeling</b>: option 1
-buys its one grammar by amending a blessed meter decision and still buries the winner, which is
-most of option 2's cost without option 2's smaller footprint.</p>
+<p><b>Showing the complete result is settled &mdash; there is no point publishing results at all if
+the winner might not appear.</b> What is left is where the complete result goes, and that choice
+can answer the labeling question by removing it: options 1 and 2 keep the per-candidate vote-share
+row and still need A, B, or C on top; option 3 deletes that row, and with it the thing #354 was
+filed about.</p>
+<p><b>Option 3.</b> It is the only one of the three where the winner's position is decided by the
+result rather than by whether anyone endorsed them &mdash; it names Dimitri first, where the other
+two put him last, under a heading describing what he lacks. It states each share exactly once, in
+the slot the certified strip already holds, in the card's own vocabulary. And it hands the
+candidate sections back to endorsements, which is what the page is for.</p>
+<p>Its one real objection is the reading-order rule quoted above, and that is the maintainer's call
+rather than mine. If that rule is read strictly, then <b>option 2 with treatment B</b>: option 1
+buys its single grammar by amending a blessed meter decision and still buries the winner, which is
+option 2's cost without option 2's smaller footprint.</p>
 <h3>Open, and not answered here</h3>
 <p>The complete tally runs in <b>finish order</b> &mdash; the card's own order. The candidate
 sections below it run in <b>endorsement order</b>, which #287 ratified and this pass does not
