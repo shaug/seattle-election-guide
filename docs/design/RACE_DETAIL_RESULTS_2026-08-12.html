@@ -3804,27 +3804,39 @@ respect to that selection.</li>
 precedes the recommendation, it does not replace it. The "Leading choice" headline keeps its
 position, its tone, and its meter, directly under the bar.</p>
 </div>
-<h3>What the amendment still has to decide</h3>
-<p>Sub-decisions option 3 forces, none of which this pass should settle on its own:</p>
+<h3>The four sub-decisions, answered</h3>
+<p>Settled with the maintainer, August 13, 2026:</p>
 <ul class="mock-open">
-<li><b>The chip in the candidate headings.</b> #287 put "Advances" after each candidate's name in
-the endorsement stack. Under the new boundary that is result information below the lens bar. Keep
-it (it ties the two regions together for a reader scanning names) or drop it (the tally above
-already states it)? The mockups above keep it.</li>
-<li><b>Two orders on one page.</b> The tally runs in finish order; the sections below run in
-endorsement order, which #287 ratified. Both are now visible at once. Honest &mdash; different
-questions, each ordered by its own answer &mdash; but it should be stated deliberately rather than
-inherited.</li>
-<li><b>The counting window.</b> Between election day and certification there is no results file, so
-the block does not render and the strip does not either. The page is unchanged; the election-day
-banner alone carries the counting message (#344). Worth restating in the amendment so the gap is
-recorded, not rediscovered.</li>
-<li><b>Where the shared CSS lives.</b> The tally's head rules are in <code>guide.css</code>, which
-race pages do not ship; a real implementation moves them into <code>guide-race.css</code>, the
-sheet both pages already share.</li>
+<li><b>The chip renders in both regions.</b> "Advances" stays after each candidate's name in the
+endorsement stack as #287 ratified it, and also rides its row in the tally above. The boundary
+sorts <i>what can change with a lens</i>, not <i>what may be mentioned twice</i>; a reader scanning
+names below the bar should not have to scroll back up to learn who advanced.</li>
+<li><b>The two orders stand.</b> The tally runs in finish order, the sections in endorsement order.
+More than ordering differs: <b>the tally can name candidates who have no section at all below it</b>
+&mdash; that is the whole point of it, and the winner-with-no-endorsements case above is exactly
+that. The two regions answer different questions and are not expected to line up.</li>
+<li><b>The counting window needs nothing.</b> No results file exists, so neither the block nor
+today's strip renders and the page reads as it did before election day. Intermediate results would
+change that, and the site does not publish them (<code>docs/RESULTS.md</code>, "Posture: close the
+record"); if that is ever revisited, this is one of the surfaces it reopens.</li>
+<li><b>Shared CSS moves to <code>guide-race.css</code>.</b> The tally's head rules
+(<code>.race-results-head</code>, <code>-eyebrow</code>, <code>-status</code>) and its row, bar,
+name, and share rules live in <code>guide.css</code> today, which race pages do not ship. They move
+to <code>guide-race.css</code>, the sheet both pages already render
+(<code>stylesheets.py</code>). This is a correction rather than a new home: that module's own
+docstring already describes <code>guide-race.css</code> as "the narrower group only the guide and a
+race page render &mdash; <b>the result block</b>, the one meter, the reference bar," and
+<code>.race-detail-result-chip</code> already sits there for exactly this reason. Duplicating the
+rules into <code>race.css</code> instead would put two copies of one component's paint in two
+sheets. The card's own markup is untouched by the move.</li>
 </ul>
-<p>Out of scope here, noted in passing: the lens bar is not <code>position: sticky</code> on this
-page, unlike the comparison and sources pages. Making it match is its own issue.</p>
+<h3>Raised and routed elsewhere</h3>
+<ul class="mock-open">
+<li>The race page's lens bar is not <code>position: sticky</code>, unlike the guide's own identical
+strip. Filed as <b>#369</b>; not this pass's work. The two do not conflict &mdash; the result block
+is meant to scroll away, the strip is not.</li>
+<li>A date bar on the race page, like the guide's. Not designed, not proposed here.</li>
+</ul>
 <p class="mock-caption">Nothing here is ratified. This page is the artifact for that
 conversation.</p>
 
