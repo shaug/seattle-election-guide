@@ -315,7 +315,7 @@ interface RaceSourceRow {
 /**
  * One candidate's certified vote-share result, as the race page's
  * vote-share row and heading chip render it (docs/RESULTS.md, Rendering §
- * The endorsements dialog; #287).
+ * The race-detail page; #287).
  *
  * Selection-independent: a certified outcome is a fixed historical fact,
  * never affected by which sources an active lens counts, so this is a
@@ -438,7 +438,7 @@ interface ComparisonBaseline {
  * One candidate's certified outcome for the comparison page's own
  * "Certified result" column (docs/RESULTS.md, Rendering § The comparison
  * view; #288), mirroring `RaceResultOutcomeView` (rendering/context.py) the
- * same way `RaceCandidateResult` above does for the endorsements dialog —
+ * same way `RaceCandidateResult` above does for the race-detail page —
  * a static passthrough of #286's one computation, never something the
  * client's column-resolution engine (`compare-signals.mjs`) recomputes.
  */

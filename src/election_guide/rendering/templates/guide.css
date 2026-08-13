@@ -90,7 +90,7 @@ html.compact-ballot-mode .insufficient-note { padding: .38rem .48rem; font-size:
 /* The outcome chip is the shared `.race-detail-result-chip` (guide-race.css),
    deliberately outside the agree/differ tone families -- neither good nor
    bad, fact. Wraps under the name at narrow widths rather than forcing a
-   second layout, the same accommodation the endorsements dialog's own
+   second layout, the same accommodation the race-detail page's own
    candidate heading uses. */
 .race-results-name { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: .1rem .5rem; font-size: .92rem; font-weight: 600; color: var(--ink); }
 .race-results-share { color: var(--ink); font-size: .92rem; font-weight: 700; font-variant-numeric: tabular-nums; }

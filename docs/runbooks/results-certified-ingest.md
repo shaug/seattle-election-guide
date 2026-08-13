@@ -94,7 +94,7 @@ it should stay human-launched at least through the first full cycle.
    uv run election-guide results validate data/results/wa-2026-primary.yaml
    ```
 6. Rebuild and confirm the results surfaces render: banner in its certified state, race-card
-   results strips, endorsements-dialog vote rows, compare column offered, corrections page
+   results strips, race-detail-page vote rows, compare column offered, corrections page
    only if this election has corrections.
 
 ## Verification

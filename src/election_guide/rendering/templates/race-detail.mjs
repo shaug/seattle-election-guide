@@ -63,7 +63,7 @@ import { candidateMeterTemplate } from './guide-card.mjs';
  * meter is what #325 settled on instead.
  *
  * `result` is this candidate's certified vote-share result (docs/RESULTS.md,
- * Rendering § The endorsements dialog; #287), or null while no results cover
+ * Rendering § The race-detail page; #287), or null while no results cover
  * this race or this candidate. Selection-independent, so it is a static
  * passthrough from the payload rather than something this module computes —
  * the same reason `rows` above carries every value its markup needs instead
@@ -154,7 +154,7 @@ function candidateMeterRowTemplate(candidate) {
 
 /**
  * The certified vote-share row (docs/RESULTS.md, Rendering § The
- * endorsements dialog; #287): the same navy-on-track tally bar the race
+ * race-detail page; #287): the same navy-on-track tally bar the race
  * card's own results strip renders, at the scale of this one candidate's own
  * share. Null when this candidate carries no certified result, exactly like
  * the audited template's own `{% if outcome %}` gate (race.html.j2).

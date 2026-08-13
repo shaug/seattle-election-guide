@@ -75,7 +75,7 @@
     {% set tied = is_leader and not in_headline %}
     {% set meter_view = candidate_meter_views[candidate.candidate_id] %}
     {# The certified vote-share row and heading chip (docs/RESULTS.md,
-       Rendering § The endorsements dialog; #287, extended to measures by
+       Rendering § The race-detail page; #287, extended to measures by
        #348): `race_detail.candidates` already carries each candidate's own
        result (`RaceDetailDisplay`, payload.py) -- the same payload the
        client reads, so the template reads it directly here rather than
@@ -124,7 +124,7 @@
   {% set headline_candidate_id = race.recommendation_candidate_ids[0]
      if race.recommendation_candidate_ids | length == 1 else none %}
   {# The headlined candidate's own certified outcome (docs/RESULTS.md,
-     Rendering § The endorsements dialog; #287): `none` for a tie (no single
+     Rendering § The race-detail page; #287): `none` for a tie (no single
      headline candidate to look up) or while this candidate carries no
      certified outcome. Looked up once here because the headline renders the
      name outside `candidate_sections` -- `race_result_outcomes_by_
@@ -142,8 +142,8 @@
     {{ election_day_banner | safe }}
     {%+ call shell.page_head(race.race_label, eyebrow=election_display_name) %}Every endorsement that matters, with receipts.{% endcall +%}
 
-    {# The certified strip (docs/RESULTS.md, Rendering § The endorsements
-       dialog; #287): certification date, authority, ballots counted, under
+    {# The certified strip (docs/RESULTS.md, Rendering § The race-detail
+       page; #287): certification date, authority, ballots counted, under
        the page head and above every candidate section. A permanent fact the
        reader's source selection never changes, so — like the race card's own
        results strip (guide.html.j2; #286) — it renders directly here rather

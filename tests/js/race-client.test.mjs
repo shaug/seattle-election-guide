@@ -116,8 +116,8 @@ function payload(personalization = personalizationContract()) {
               evidence_url: 'https://example.test/stranger',
             },
           ],
-          // A certified result (docs/RESULTS.md, Rendering § The endorsements
-          // dialog; #287): selection-independent, so it is unaffected by
+          // A certified result (docs/RESULTS.md, Rendering § The race-detail
+          // page; #287): selection-independent, so it is unaffected by
           // whichever candidate a lens currently recommends. Ada's own
           // outcome advanced; Blaise's did not — deliberately the opposite of
           // the audited tie, so a test that narrows the selection to Blaise
@@ -257,7 +257,7 @@ test('a narrowed selection rescores the race and says what it is counting', () =
 });
 
 // The certified vote-share row and heading chip (docs/RESULTS.md, Rendering §
-// The endorsements dialog; #287) are selection-independent, so a personalized
+// The race-detail page; #287) are selection-independent, so a personalized
 // re-render has to reproduce them exactly as `race-detail.mjs`'s own coverage
 // proves in isolation — this is the end-to-end wiring through `wireRacePage`,
 // including the payload's snake_case-to-camelCase reshape and the headline

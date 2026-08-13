@@ -27,6 +27,12 @@ Two framing constraints bind everything this design renders:
 - **Outcomes never displace recommendations.** The site is about who *should* win — and should
   have won. Reality is a secondary consideration, rendered as context beneath the
   recommendation, never as the headline. An archived guide records what the guide said.
+  *(Clarified 2026-08-13 by #354: "beneath the recommendation" governs standing, not document
+  order. The race-detail page states the complete certified result above its recommendation
+  because that result is the one fact on the page no reader's source selection can change —
+  and the recommendation still keeps its own heading, tone, and meter, and the result never
+  becomes the page's headline. Nothing about which of the two the site is for has moved. See
+  "The race-detail page's certified result" below.)*
 
 ## The results lifecycle
 
@@ -174,13 +180,23 @@ banner alone carries the counting-window message (see "The election-day banner" 
 it on every race card was redundant, not reinforcing, and #344 removed the interim per-card note
 this section originally described.
 
-### The endorsements dialog
+### The race-detail page
 
-Two additions, no reordering — candidate order remains endorsement order, not finish order:
+Ratified when this surface was still the guide's own endorsements dialog; #136 moved it to its own
+address, and it is named for what it is now.
 
-- A **certified strip** under the dialog header: certification date, authority, ballots counted.
-- A **vote-share row** per candidate between the heading and its source list: tally bar and
-  share, with the chip in the candidate heading after the name. No per-source annotations.
+The page states **the complete certified result once, under the race header and above the lens
+bar** — every choice on the ballot in finish order, each with its share, its bar, and its chip,
+over the provenance line. Below the lens bar the page is endorsements, unchanged: the recommendation
+headline, then one section per endorsed candidate in endorsement order, each carrying its own meter,
+its own source list, and its chip after the name. No per-source annotations.
+
+This supersedes the original ratification's two additions — a one-line certified strip plus a
+vote-share row inside each candidate's section (#287) — which #354 replaced once it was found that
+a candidate no source endorsed has no section to carry a result, so a winner nobody endorsed
+appeared nowhere on the page at all. The strip does not survive alongside the block; its date,
+authority, and ballot count are the block's own provenance line. See "The race-detail page's
+certified result" below for the reasoning and the decisions it settles.
 
 ### The comparison view
 
@@ -213,7 +229,10 @@ and that citation is the page's entry. Tagline: *"We get it right, eventually."*
 - Election-night numbers are captured as evidence and rendered nowhere.
 - Outcomes never displace recommendations.
 - Results render as a state, not an option — no new controls.
-- Endorsements dialog: certified strip plus per-candidate vote row; no per-source annotations.
+- Endorsements dialog (the race-detail page, since #136): certified strip plus per-candidate vote
+  row; no per-source annotations. *(Superseded 2026-08-13 by #354 — the strip and the vote row
+  became one complete result block above the lens bar; see that addendum below. The "no per-source
+  annotations" half stands.)*
 - Results join the comparison view as an addable column, excluded from agreement computation.
 - Measures say Approved / Rejected.
 - Corrections are per-election top-line pages, existing only when corrections exist;
@@ -297,8 +316,8 @@ collapsing them into one:
   directly from the export column of that name — the number of ballots whose ballot style
   carried the contest, not a re-derivation from the vote rows. It is larger than the sum of
   recorded votes whenever the contest had any overvoted or undervoted ballot, which every real
-  contest does; the race-card provenance line and the endorsements-dialog certified strip (both
-  above) render this figure, King County's own count, unchanged by this adapter.
+  contest does; both provenance lines — the race card's and the race-detail page's result block
+  (both above) — render this figure, King County's own count, unchanged by this adapter.
 - Each declared choice's `share` is its votes over the *declared* (non-write-in) vote total —
   a third total, distinct from both `ballots_counted` and the raw vote sum.
 
@@ -340,9 +359,9 @@ below), without exercising the "if thresholds are to be rendered" branch of #289
 
 Same provenance line (ballots counted · authority · capture link) and same "Certified ·
 `<date>`" badge as candidate cards — nothing measure-specific there either. This applies
-identically wherever the certified results data renders: the race card and the endorsements
-dialog render it through the shared tally-row component exactly as above ("Race cards", #286;
-"The endorsements dialog", #287); the comparison column renders the same underlying data through
+identically wherever the certified results data renders: the race card and the race-detail
+page render it through the shared tally-row component exactly as above ("Race cards", #286;
+"The race-detail page", #287); the comparison column renders the same underlying data through
 its own cell grammar rather than the tally-row markup ("The comparison view" above, #288) — reuse
 everywhere, not race-card-only, but each surface keeps its own established presentation idiom.
 
@@ -350,6 +369,83 @@ Implemented by #348: `race_results_view`'s former `race.race_type == "measure"` 
 removed, and a measure-specific chip-label branch (reading the winning choice's own label off the
 outcome set) sits alongside the existing primary/general branch — reusing every surface's existing
 rendering path exactly as ratified above, with no new UI mechanism on any of the three surfaces.
+
+## The race-detail page's certified result (2026-08-13 addendum, #354)
+
+Ratified with the maintainer against live-rendered mockups built from real committed data with a
+synthesized results file attached, so every surface compared was the production DOM rather than a
+drawing: `docs/design/RACE_DETAIL_RESULTS_2026-08-12.html`.
+
+**The defect.** A candidate section exists only for a candidate some source endorsed
+(`candidate_endorsement_groups`; `docs/METER_V2.md` decision 25, "no section, in either model"), and
+#287 hung each certified share inside one of those sections. A choice nobody endorsed therefore had
+nowhere to render its result — so a race whose winner drew no endorsement stated three losing
+shares and never named the winner, and a rejected measure's winning "No" never appeared. There is
+no point publishing results at all if the winner might be missing from them.
+
+**The design.** The certified strip grows into the complete result, in the slot it already held:
+under the race header, above the lens bar, above every candidate. It is the race card's own RESULT
+block (`.race-results`, "Race cards" above) — eyebrow, "Certified · `<date>`" badge, one tally
+row per outcome in finish order with chip, share, and bar on one shared full-width scale, then the
+provenance line (ballots counted, authority, capture link). The per-candidate vote-share row is
+removed; each candidate section keeps its chip. The block is left-adjusted on the race name's own
+edge and capped so a bar stays readable on a wide page.
+
+**Why above the recommendation, and why that does not break "outcomes never displace
+recommendations."** The result precedes the recommendation without replacing it: the "Leading
+choice" headline keeps its position, tone, and meter directly under the lens bar. Placement is
+forced from both sides. A race card can carry its result below its meter because a card is compact
+and nothing is buried; the race page is long, and a result placed after the endorsements hides the
+one thing a reader most needs. And nothing can be inserted between the headline and the first
+candidate section, because those two are one candidate's heading and body — the headline *is* the
+leading choice's heading (`docs/DESIGN.md`, "A name appears once per page") and their meter opens
+the section below it.
+
+**The organizing principle this settles**, which the page already encoded before it was named:
+`race.html.j2` renders the certified strip outside every lens-owned region, gated on `race_results`
+alone rather than on the personalization policy, because it is "a permanent fact the reader's source
+selection never changes." The lens bar is therefore a real boundary, and results belong above it:
+
+- **Above the lens bar** — facts no reader's selection can change: the race, the complete
+  certified result, its provenance.
+- **Below the lens bar** — what the reader's chosen sources said, complete only with respect to
+  that selection.
+
+The endorsement region does not need to be complete; it shows who was endorsed by the sources the
+reader cares about. The result is the same fact for every reader. That difference in kind, not a
+placement preference, is why the two regions sit where they do.
+
+**Decisions this settles:**
+
+- **The chip renders in both regions.** It rides its tally row above the bar and stays after each
+  candidate's name below it, as #287 ratified. The boundary sorts what a lens can change, not what
+  may be stated twice; a reader scanning names below the bar should not have to scroll back up to
+  learn who advanced.
+- **Two orders, deliberately.** The tally runs in finish order, the sections in endorsement order,
+  and both are visible at once. More than the order differs: **the tally names choices that have no
+  section below it at all**, which is the entire reason it exists.
+- **Named twice is accepted.** A candidate with both a tally row and a section appears twice on one
+  page. `docs/DESIGN.md`'s rule is about *headings* — the headline remains the sole heading for
+  the leading choice, and a tally row is not a heading — and the race card already does this.
+- **The counting window needs nothing.** No results file exists, so neither the block nor the strip
+  renders and the page reads as it did before election day; the election-day banner alone carries
+  the counting message (#344). Intermediate results would reopen this, and the site does not publish
+  them ("Posture: close the record").
+- **Measures inherit it unchanged.** A measure's Yes/No choices are its outcomes, so both render as
+  tally rows in the block with Approved/Rejected on the winner ("Ballot measures" above, #289/#348).
+  The rejected side is now stated, which it was not before.
+
+**Implementation note.** The block's rules (`.race-results*`) live in `guide.css` today, which race
+pages do not ship. They move to `guide-race.css` — a correction rather than a new home:
+`rendering/stylesheets.py`'s own docstring already describes that sheet as the group only the guide
+and a race page render, "the result block, the one meter, the reference bar," and
+`.race-detail-result-chip` already sits there for the same reason. Duplicating them into `race.css`
+would put one component's paint in two sheets. Because `guide-race.css` composes *before*
+`guide.css`, the move changes cascade order, so the guide's own rendered output has to be verified
+unchanged rather than assumed.
+
+**Out of scope, raised alongside:** the race page's lens bar is not `position: sticky`, unlike the
+guide's own identical strip (#369). A race-page date bar was raised and is undesigned.
 
 ## The corrections page's implementation (2026-08-08 addendum, #290)
 
