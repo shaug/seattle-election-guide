@@ -27,6 +27,12 @@ Two framing constraints bind everything this design renders:
 - **Outcomes never displace recommendations.** The site is about who *should* win — and should
   have won. Reality is a secondary consideration, rendered as context beneath the
   recommendation, never as the headline. An archived guide records what the guide said.
+  *(Clarified 2026-08-13 by #354: "beneath the recommendation" governs standing, not document
+  order. The race-detail page states the complete certified result above its recommendation
+  because that result is the one fact on the page no reader's source selection can change —
+  and the recommendation still keeps its own heading, tone, and meter, and the result never
+  becomes the page's headline. Nothing about which of the two the site is for has moved. See
+  "The race-detail page's certified result" below.)*
 
 ## The results lifecycle
 
