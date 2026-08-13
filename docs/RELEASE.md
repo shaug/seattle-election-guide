@@ -76,6 +76,13 @@ contains:
 
 The ZIP uses stable entry ordering, timestamps, permissions, and compression settings.
 
+Inspect the desktop and mobile screenshots, all machine validation reports, and
+`RELEASE_NOTES.md`. Test the archive before publication:
+
+```bash
+unzip -t dist/primary-release/seattle-election-guide-2026-primary.2.zip
+```
+
 ## Reproducibility
 
 Repeating a build with identical inputs produces the same release. That is checked, on every pull
@@ -108,13 +115,6 @@ times with the readiness signal but without those flags, and 0 times with both. 
 alone is therefore not sufficient; the flags were not measured on their own, so neither is credited
 with the result independently. No tolerance is applied to a screenshot, because none is needed, and
 one would have hidden the defect instead of fixing it.
-
-Inspect the desktop and mobile screenshots, all machine validation reports, and
-`RELEASE_NOTES.md`. Test the archive before publication:
-
-```bash
-unzip -t dist/primary-release/seattle-election-guide-2026-primary.2.zip
-```
 
 ## GitHub Release
 
