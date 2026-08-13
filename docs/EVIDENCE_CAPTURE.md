@@ -28,8 +28,9 @@ as well as an uncommitted restricted input left at an unignored repository path.
 inputs under the ignored `tmp/` directory or outside the checkout.
 
 `storage_scope` says which root holds the bytes, and the command derives it from the root rather
-than accepting it from the caller: `repository` when the root is the official store above (or
-inside it), `local_only` otherwise. It keys on that one named store rather than on Git
+than accepting it from the caller: `repository` when the root is exactly the official store
+above, `local_only` otherwise. A subdirectory of it is refused at capture: a manifest records only
+a content address, so bytes stored one level down could never be found again. It keys on that one named store rather than on Git
 trackedness, because the scope feeds the capture-ID fingerprint and other commands legitimately
 write captures to unignored in-repository paths — `release compile` stages under
 `data/normalized/`, and a trackedness rule would give all 41 committed release manifests new IDs.

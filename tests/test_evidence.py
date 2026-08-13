@@ -843,6 +843,31 @@ def test_permitted_capture_into_a_tracked_root_records_repository_scope(tmp_path
     assert (storage_root / manifest.storage_reference).is_file()
 
 
+def test_capture_into_a_subdirectory_of_the_official_store_is_refused(tmp_path: Path) -> None:
+    """A manifest records only a content address, never which root holds it, so
+    `storage_root_for` can return only the official root itself. Bytes one level
+    down would be written, verified once, and then report `missing` forever — in
+    the same words as a genuine loss (issue #357). Refuse before writing."""
+    repository = tmp_path / "repository"
+    repository.mkdir()
+    subprocess.run(["git", "init", "--quiet", str(repository)], check=True)
+    official = repository / "data" / "evidence" / "official"
+    subroot = official / "wa-2026-primary"
+    manifest_dir = repository / "manifests"
+
+    with pytest.raises(ValueError, match="must be exactly"):
+        record_capture(
+            _capture_request(redistribution="permitted"),
+            FIXTURES / "static.html",
+            subroot,
+            manifest_dir,
+            repository_storage_root=official,
+        )
+
+    assert not subroot.exists()
+    assert not manifest_dir.exists()
+
+
 def test_restricted_capture_into_an_ignored_root_stays_local_only(tmp_path: Path) -> None:
     repository = tmp_path / "repository"
     repository.mkdir()

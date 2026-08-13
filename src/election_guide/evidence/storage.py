@@ -225,7 +225,20 @@ def _resolve_storage_scope(storage_root: Path, repository_storage_root: Path) ->
     """
     official = repository_storage_root.resolve()
     root = storage_root.resolve()
-    return "repository" if root == official or root.is_relative_to(official) else "local_only"
+    if root == official:
+        return "repository"
+    if root.is_relative_to(official):
+        # A manifest records only a content address, never which root holds it,
+        # so `storage_root_for` can hand back only the official root itself.
+        # Bytes under a subdirectory would be written, verified once, and then
+        # be unfindable forever -- reported `missing` in the same words as a
+        # genuine loss. Refuse before anything is written rather than accept a
+        # root that cannot round-trip.
+        raise ValueError(
+            f"official evidence storage must be exactly {repository_storage_root}, not a "
+            f"subdirectory of it: {storage_root}"
+        )
+    return "local_only"
 
 
 def _validate_storage_durability(storage_root: Path) -> None:

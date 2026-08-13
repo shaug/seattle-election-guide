@@ -84,7 +84,7 @@ class nobody had distinguished rather than relaxing it. The volume is small — 
 artifacts totalled roughly 600 KB.
 
 Storage scope is derived, never asserted. `evidence capture` records `storage_scope: repository`
-when the storage root is the official store above (or inside it), and `local_only` otherwise. The
+when the storage root is exactly the official store above, and `local_only` otherwise. The
 command already refuses to put a restricted artifact at an unignored repository path, so a
 committed artifact is a permitted one by construction.
 

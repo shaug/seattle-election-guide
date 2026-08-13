@@ -1074,7 +1074,13 @@ def evidence_verify(
 
 @evidence_app.command("verify-all")
 def evidence_verify_all(
-    manifest_dir: Annotated[Path, typer.Option(file_okay=False)] = Path("data/manifests/evidence"),
+    # `exists=True` matches `release verify`, the other read-only sweep: a
+    # manifest directory that is not there must fail, not report a green zero
+    # manifests, which is the same "reads as intact evidence" failure this
+    # command exists to catch.
+    manifest_dir: Annotated[Path, typer.Option(exists=True, file_okay=False, readable=True)] = Path(
+        "data/manifests/evidence"
+    ),
     storage_root: Annotated[Path, typer.Option(file_okay=False)] = Path("data/snapshots"),
     require_local: Annotated[
         bool,
