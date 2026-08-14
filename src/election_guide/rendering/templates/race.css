@@ -36,10 +36,13 @@
    than run to the full width of a wide page, where a share bar stops being
    readable as a length.
 
-   This band is the whole of the separation: the block carries no frame of
-   its own (guide-race.css), so there is nothing here to undo. */
+   This band is the whole of the separation, so the block's own default
+   frame — the rule a race card draws above it — is switched off here.
+   guide-race.css's own comment records why that default lives on the block
+   rather than being scoped to the card: both tidier placements weaken one
+   of two checks, and this undo is what keeps them at full strength. */
 .race-detail-certified-result { padding: .85rem clamp(1rem, 4vw, 3rem) .95rem; border-bottom: 1px solid var(--tone-neutral-border); background: var(--tone-neutral-bg); color: var(--tone-neutral-text); }
-.race-detail-certified-result .race-results { max-width: 44rem; }
+.race-detail-certified-result .race-results { max-width: 44rem; margin-top: 0; padding-top: 0; border-top: 0; }
 .race-detail { min-width: 0; padding: 1rem clamp(1rem, 4vw, 3rem) 4rem; }
 .race-detail :focus-visible { outline: .2rem solid var(--focus); outline-offset: .15rem; }
 /* The headline: the recommendation's name, then the caption row, then the

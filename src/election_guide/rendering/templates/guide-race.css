@@ -57,12 +57,25 @@
    Separating the block from whatever sits above it is each surface's own
    job, and the two answer differently: a card draws a rule above it, a race
    page wears a tone band around the whole thing
-   (`.race-detail-certified-result`, race.css). So the card's rule below is
-   scoped to the card rather than set on the block and then undone by the
-   page — the frame belongs to a surface even though it is declared here, in
-   the part both surfaces read (rendering/stylesheets.py, whose own check
-   holds a rule group to the pages that render it). */
-.race-card .race-results { margin-top: .2rem; padding-top: .65rem; border-top: 1px solid var(--row-separator); }
+   (`.race-detail-certified-result`, race.css). The card's answer is the
+   block's default below, which the page then switches off — deliberately,
+   as the least-bad of three, because the two tidier shapes each break a
+   rule this repository states outright:
+
+   - `.race-card .race-results` in guide.css scopes the frame to its own
+     surface with nothing to undo, but `race-results` then belongs to a
+     guide-exclusive part while race.css declares it too, which is exactly
+     the leak `test_no_page_ships_a_rule_group_only_another_page_renders`
+     fails on.
+   - `.race-card .race-results` *here* passes that check, but only by
+     putting `race-card` into `_shared_classes()`, the set the check
+     subtracts before looking for a leak — so a later `.race-card` rule in
+     any page's own sheet would stop being flagged. That is a ratchet
+     widening, and ratchets only move one way (AGENTS.md).
+
+   So the undo in race.css is the price of leaving both checks at full
+   strength, not an oversight. */
+.race-results { margin-top: .2rem; padding-top: .65rem; border-top: 1px solid var(--row-separator); }
 .race-results-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: .3rem .5rem; margin-bottom: .5rem; }
 .race-results-eyebrow { color: var(--muted); font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
 /* Certified reads on the agree-tone family (a settled fact) -- the only

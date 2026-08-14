@@ -18,10 +18,10 @@
    page it is the entire reason the block exists, since a winner nobody
    endorsed has no candidate section to carry a result.
 
-   Each page keeps its own frame around this markup — the card's rule
-   (`.race-card .race-results`, guide-race.css, scoped to the card rather
-   than set on the block) and the page's tone band
-   (`.race-detail-certified-result`, race.css) — and its own
+   Each page keeps its own frame around this markup — the card's rule, which
+   is the block's own default (guide-race.css), and the page's tone band,
+   which switches that default off (`.race-detail-certified-result`,
+   race.css) — and its own
    `{% raw %}{% if %}{% endraw %}` gate, because the frame is the page's and the gate is where
    each page decides it has a result to state.
 
