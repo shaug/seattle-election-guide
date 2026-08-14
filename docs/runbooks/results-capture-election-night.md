@@ -29,6 +29,10 @@ execution has recorded the authority's real page and export structure below.
   endorsement-source panel (`docs/EVIDENCE_CAPTURE.md`, "Counting authorities"), since neither
   authority carries a panel role, reporting category, or endorsement eligibility.
 - A working directory under the Git-ignored `tmp/` for downloaded artifacts.
+- **Run from the primary checkout, not a disposable worktree.** Captured bytes go to the tracked
+  `data/evidence/official/` root and are committed with the manifests, so they survive; the
+  command refuses a Git-ignored storage root inside a linked worktree, because that is exactly
+  how the 2026-08-04 capture was lost (`docs/COLLECTION.md`, issue #357).
 
 ## Procedure
 
@@ -59,33 +63,50 @@ execution has recorded the authority's real page and export structure below.
      --media-type <text/html | text/csv | text/xml | application/json | application/pdf> \
      --capture-method <static_html | pdf | manual_upload> \
      --title "<election> election-night results (<representation>)" \
-     --redistribution restricted \
-     --redistribution-note "Official results retained locally; manifest public."
+     --storage-root data/evidence/official \
+     --redistribution permitted \
+     --redistribution-note "Official public record; bytes retained in the repository."
    ```
 
-   Follow the repository default for raw official artifacts (`docs/COLLECTION.md`): restricted,
-   local-only bytes with a public record of provenance, even though results are public records —
-   relaxing that is a separate decision, not a capture-time judgment call.
+   **Where the bytes must live:** the tracked `data/evidence/official/` root, not the ignored
+   `data/snapshots/`. Official results are public records, so their bytes are committed and
+   survive by the same mechanism as the rest of the repository (`docs/COLLECTION.md`). The
+   manifest records `storage_scope: repository`; the command derives that from the root, so
+   passing `--storage-root` is what makes it true.
 4. **Repeat for the Secretary of State** (<https://results.vote.wa.gov>) for the same election,
    as corroborating evidence for state-level races, using `--source-id wa-secretary-of-state`.
    Secondary: skip rather than escalate if it is unavailable, and note the skip.
-5. **Verify every capture.**
+5. **Verify every capture, then confirm the bytes survived the session.**
 
    ```bash
    uv run election-guide evidence verify data/manifests/evidence/<capture-id>.json
+   uv run election-guide evidence verify-all
+   git status --short data/evidence/official
    ```
 
-6. **Open a pull request** with the new manifests. The PR body lists what was captured, the
-   artifacts' formats, and any observations about structure — those observations are input to
-   the ingestion adapter design (#208).
+   `verify` proves each artifact matches its manifest. `verify-all` proves no manifest anywhere
+   references bytes nobody holds. `git status` is the survival check the 2026-08-04 run did not
+   have: every new artifact must appear as an untracked file ready to commit. If
+   `data/evidence/official/` is empty or shows nothing, the bytes are not in the repository and
+   will not survive — stop and re-capture with `--storage-root data/evidence/official` before
+   going further.
+6. **Open a pull request** with the new manifests **and their bytes**. The PR body lists what was
+   captured, the artifacts' formats, and any observations about structure — those observations
+   are input to the ingestion adapter design (#208).
 
 ## Verification
 
 - Every capture verifies (step 5): `evidence verify` recomputes the SHA-256 and byte length from
   the stored bytes and confirms they match the manifest.
+- `evidence verify-all` reports every official artifact `present`. Restricted endorsement
+  artifacts report `expected-absent` when their ignored store is not on this machine; that is
+  the documented passing state, not a failure (`docs/COLLECTION.md`).
 - The recorded retrieval times fall on election night, Pacific time.
-- The PR contains only the new manifests (and this runbook's postmortem notes); no bytes, no
-  `data/results/` changes — ingestion happens at certification, not tonight.
+- The PR contains the new manifests, the new bytes under `data/evidence/official/`, and this
+  runbook's postmortem notes; no `data/results/` changes — ingestion happens at certification,
+  not tonight.
+- After the PR merges, the bytes are on `main`. That, not a passing capture-time verification, is
+  what makes the capture durable.
 
 ## Escalation
 
@@ -164,3 +185,14 @@ Stop and flag a human when:
     history if still available) should run the step-3 command above against them to produce the
     four backfilled manifests; until then, this election's first-count capture has a documented
     provenance record (this table) but no formal manifest.
+- **#357 changed where bytes live, so this cannot recur silently.** The loss above was never a
+  redistribution judgment — it was a durability one that the restricted default made for us.
+  Official-authority artifacts are now `redistribution: permitted`, stored in the tracked
+  `data/evidence/official/` root, and committed alongside their manifests
+  (`docs/COLLECTION.md`). Three things now enforce what this postmortem could only describe:
+  `evidence capture` refuses a Git-ignored storage root inside a linked worktree — the exact
+  mechanism that lost these bytes; `evidence verify-all` sweeps every manifest for byte presence
+  and runs in `make check`; and step 5 now ends in a `git status` survival check rather than a
+  capture-time verification that was already true at the moment the bytes died. The four
+  artifacts above remain unrecoverable — those URLs serve a later drop — so this table stays
+  their only record.

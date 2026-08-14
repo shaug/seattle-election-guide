@@ -15,7 +15,10 @@ build/
 dist/
 output/
 
-# Raw and restricted evidence is not published through Git.
+# Raw and restricted evidence is not published through Git. Permitted
+# official-authority bytes are deliberately NOT listed here: they live in the
+# tracked data/evidence/official/ store so they outlive the session that
+# captured them (docs/COLLECTION.md, issue #357).
 data/raw/
 data/snapshots/
 data/imports/

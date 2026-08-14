@@ -10,9 +10,10 @@ import shutil
 import subprocess
 import tempfile
 from contextlib import suppress
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 from xml.etree import ElementTree
 
 from pydantic import ValidationError
@@ -31,9 +32,26 @@ from election_guide.validation import media_type_essence
 
 CHUNK_SIZE = 1024 * 1024
 
+#: Tracked store for redistributable official-authority bytes (issue #357).
+#: Kept here rather than beside the CLI defaults because the durability rule
+#: and the root it points at are one decision (`docs/COLLECTION.md`).
+REPOSITORY_STORAGE_ROOT = Path("data/evidence/official")
+
+StorageScope = Literal["local_only", "repository"]
+PresenceStatus = Literal["present", "missing", "corrupt", "expected-absent", "no-artifact"]
+
 
 class ImmutableRecordError(ValueError):
     """Raised when an operation would overwrite historical evidence metadata."""
+
+
+@dataclass(frozen=True)
+class BytePresence:
+    """One manifest's verdict from a byte-presence sweep."""
+
+    capture_id: str
+    status: PresenceStatus
+    detail: str | None = None
 
 
 def record_capture(
@@ -41,17 +59,21 @@ def record_capture(
     input_path: Path,
     storage_root: Path,
     manifest_dir: Path,
+    *,
+    repository_storage_root: Path = REPOSITORY_STORAGE_ROOT,
 ) -> Path:
     """Store an artifact by hash and write its immutable public manifest."""
     if not input_path.is_file():
         raise ValueError(f"capture input is not a file: {input_path}")
     _validate_storage_boundary(request, input_path, storage_root, manifest_dir)
+    storage_scope = _resolve_storage_scope(storage_root, repository_storage_root)
+    _validate_storage_durability(storage_root)
     digest, byte_length, storage_reference = _store_artifact(input_path, storage_root, request)
     manifest_payload = {
         **request.model_dump(mode="json"),
         "content_sha256": digest,
         "byte_length": byte_length,
-        "storage_scope": "local_only",
+        "storage_scope": storage_scope,
         "storage_reference": storage_reference,
     }
     manifest = CapturedManifest.model_validate(
@@ -99,11 +121,25 @@ def read_capture_manifest(path: Path) -> CaptureManifest:
         raise ValueError(str(error)) from error
 
 
-def verify_capture(manifest: CaptureManifest, storage_root: Path) -> None:
-    """Verify stored bytes against a capture manifest."""
+def verify_capture(
+    manifest: CaptureManifest,
+    storage_root: Path,
+    *,
+    repository_storage_root: Path = REPOSITORY_STORAGE_ROOT,
+) -> None:
+    """Verify stored bytes against a capture manifest.
+
+    Chooses the root from the manifest's own scope, so a caller passes only the
+    local root it already knows about. Selecting the root here rather than at
+    each call site is what keeps a `repository`-scope manifest from being
+    looked up in the wrong store by any caller that has not heard of the
+    official store yet (issue #357).
+    """
     if isinstance(manifest, UnavailableManifest):
         return
-    artifact = _resolve_storage_reference(storage_root, manifest.storage_reference)
+    artifact = captured_artifact_path(
+        manifest, storage_root, repository_storage_root=repository_storage_root
+    )
     if not artifact.is_file():
         raise ValueError(f"captured evidence is missing: {manifest.storage_reference}")
     digest, byte_length = _hash_file(artifact)
@@ -113,6 +149,159 @@ def verify_capture(manifest: CaptureManifest, storage_root: Path) -> None:
         raise ValueError(
             f"capture length mismatch: expected {manifest.byte_length}, got {byte_length}"
         )
+
+
+def captured_artifact_path(
+    manifest: CapturedManifest,
+    local_storage_root: Path,
+    *,
+    repository_storage_root: Path = REPOSITORY_STORAGE_ROOT,
+) -> Path:
+    """Resolve where one manifest's bytes are, from its own recorded scope.
+
+    The single answer to "where does this artifact live". Callers pass only the
+    local root they already know about; the official store stays inside this
+    module, and the reference is joined through the same guarded join every
+    verification uses rather than by hand at each call site.
+    """
+    root = _storage_root_for(manifest, local_storage_root, repository_storage_root)
+    return _resolve_storage_reference(root, manifest.storage_reference)
+
+
+def _storage_root_for(
+    manifest: CapturedManifest,
+    local_storage_root: Path,
+    repository_storage_root: Path,
+) -> Path:
+    return repository_storage_root if manifest.storage_scope == "repository" else local_storage_root
+
+
+def survey_byte_presence(
+    manifest_dir: Path,
+    *,
+    local_storage_root: Path,
+    repository_storage_root: Path = REPOSITORY_STORAGE_ROOT,
+    require_local: bool = False,
+) -> list[BytePresence]:
+    """Verify every manifest's bytes, reporting each one's presence.
+
+    A `repository`-scope artifact must always be present: its bytes travel with
+    history, so anywhere the repository is, they must be, and absence is a real
+    loss. A `local_only` artifact's bytes are exempt when absent, because no
+    environment but the capturing machine ever holds them — CI never does, and
+    neither does a second checkout. `require_local` drops that exemption for an
+    operator auditing a machine that is supposed to hold everything.
+
+    The exemption is decided per artifact rather than by probing for the store
+    directory. Probing looked equivalent and is not: the first local capture
+    creates `data/snapshots/`, which the endorsement sweep runbook has an
+    operator do routinely, and from then on a store-shaped test reports every
+    artifact that machine never held as a loss — turning `make check`, the
+    mandated gate, red on evidence nothing is actually wrong with.
+
+    Bytes that are present but do not match their manifest are `corrupt` under
+    either scope, and never exempt.
+    """
+    survey: list[BytePresence] = []
+    for manifest_path in sorted(manifest_dir.glob("*.json")):
+        manifest = read_capture_manifest(manifest_path)
+        if not isinstance(manifest, CapturedManifest):
+            survey.append(BytePresence(manifest.id, "no-artifact"))
+            continue
+        artifact = captured_artifact_path(
+            manifest, local_storage_root, repository_storage_root=repository_storage_root
+        )
+        if not artifact.is_file():
+            exempt = manifest.storage_scope == "local_only" and not require_local
+            survey.append(
+                BytePresence(
+                    manifest.id,
+                    "expected-absent" if exempt else "missing",
+                    f"no bytes at {artifact}",
+                )
+            )
+            continue
+        try:
+            verify_capture(
+                manifest, local_storage_root, repository_storage_root=repository_storage_root
+            )
+        except (OSError, ValueError) as error:
+            survey.append(BytePresence(manifest.id, "corrupt", str(error)))
+            continue
+        survey.append(BytePresence(manifest.id, "present"))
+    return survey
+
+
+def _resolve_storage_scope(storage_root: Path, repository_storage_root: Path) -> StorageScope:
+    """Derive scope from the one designated official store.
+
+    Deliberately keyed on that store rather than on "inside the repository and
+    not Git-ignored". A trackedness rule would sweep in every other unignored
+    in-repository root a caller passes — `release compile` stages its captures
+    under `output_path.parent`, `data/normalized/` by default — and because
+    this value feeds the capture-ID fingerprint, that would hand those captures
+    new IDs and silently rewrite the identity of all 41 release manifests
+    already committed.
+    """
+    official = repository_storage_root.resolve()
+    root = storage_root.resolve()
+    if root == official:
+        return "repository"
+    if root.is_relative_to(official):
+        # A manifest records only a content address, never which root holds it,
+        # so `captured_artifact_path` can resolve only against the official
+        # root itself.
+        # Bytes under a subdirectory would be written, verified once, and then
+        # be unfindable forever -- reported `missing` in the same words as a
+        # genuine loss. Refuse before anything is written rather than accept a
+        # root that cannot round-trip.
+        raise ValueError(
+            f"official evidence storage must be exactly {repository_storage_root}, not a "
+            f"subdirectory of it: {storage_root}"
+        )
+    return "local_only"
+
+
+def _validate_storage_durability(storage_root: Path) -> None:
+    """Refuse a capture whose bytes would die with the working tree that wrote them.
+
+    Bytes written to a Git-ignored path inside a linked worktree are held by
+    nothing: no commit references them, no other checkout has them, and
+    removing the worktree deletes them. That is exactly how the 2026-08-04
+    election-night capture was lost — it verified at capture time and was gone
+    once the worktree went (issue #357). Ignoredness is asked here directly
+    rather than read off the storage scope: the two answer different questions,
+    and only this one is about durability.
+
+    Only the ignored case is refused, because Git itself already guards the
+    other one. `git worktree remove` deletes a worktree holding nothing but
+    ignored files silently, taking those bytes with it; the moment an unignored
+    file is present it refuses with "contains modified or untracked files, use
+    --force". So bytes at an unignored path — committed or merely staged for
+    commit — cannot vanish without the operator overriding a warning, while
+    ignored bytes vanish without one. A root outside the repository is likewise
+    the operator's own durable store.
+    """
+    repository = _find_repository_root(storage_root)
+    if repository is None or not _git_is_linked_worktree(repository):
+        return
+    if not _git_path_is_ignored(repository, storage_root.resolve()):
+        return
+    raise ValueError(
+        f"Git-ignored artifact storage inside a linked worktree does not outlive it: "
+        f"{storage_root}; capture from the primary checkout, store the bytes at a tracked "
+        f"path such as {REPOSITORY_STORAGE_ROOT}, or use a storage root outside the repository"
+    )
+
+
+def _git_is_linked_worktree(repository: Path) -> bool:
+    git_dir = _git_output(repository, ["rev-parse", "--absolute-git-dir"])
+    common_dir = _git_output(
+        repository, ["rev-parse", "--path-format=absolute", "--git-common-dir"]
+    )
+    if git_dir is None or common_dir is None:
+        return False
+    return Path(git_dir).resolve() != Path(common_dir).resolve()
 
 
 def _store_artifact(

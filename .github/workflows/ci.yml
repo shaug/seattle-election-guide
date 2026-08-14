@@ -65,6 +65,17 @@ jobs:
           GH_TOKEN: ${{ github.token }}
       - name: Verify reproducible primary release inputs
         run: uv run election-guide release verify data/releases/wa-2026-primary/source-decisions.yaml
+      # A manifest whose bytes nobody holds is not intact evidence, and one-at-
+      # a-time verification never revealed that -- the 2026-08-04 election-night
+      # capture verified at capture time and died with the worktree that wrote
+      # it (issue #357). Official-authority bytes are tracked, so this is a real
+      # gate here: a manifest committed without its bytes fails the pull
+      # request. Restricted bytes never reach CI, so those report
+      # `expected-absent` and pass (docs/COLLECTION.md). Defined once in the
+      # Makefile and invoked with no arguments, the same way check-js and
+      # check-changelog are, so CI and a contributor cannot drift apart.
+      - name: Verify captured evidence bytes are present
+        run: make check-evidence
       # The gate itself is defined once, in the Makefile, and invoked here with
       # no arguments the same way check-js and check-changelog are (issue #367),
       # so the procedure CI runs and the one a contributor runs cannot drift

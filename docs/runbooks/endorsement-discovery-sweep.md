@@ -56,6 +56,12 @@ Verify each from the repository alone:
   (`METHODOLOGY.md`).
 - A working directory under the Git-ignored `tmp/` for downloaded artifacts. Never leave a
   restricted input at an unignored repository path — `evidence capture` rejects it.
+- **Run from the primary checkout, not a linked worktree.** These captures are restricted, so
+  their bytes go to the Git-ignored `data/snapshots/`, and a Git-ignored store inside a linked
+  worktree is deleted with that worktree — silently, since `git worktree remove` only warns about
+  unignored files. `evidence capture` refuses that combination outright (`docs/COLLECTION.md`,
+  issue #357), so step 3 fails rather than losing the capture. Capture from the primary checkout,
+  or point `--storage-root` at a store outside the repository.
 
 ## Procedure
 
@@ -99,6 +105,22 @@ uv run election-guide evidence capture tmp/<artifact> \
 Capture methods and their constraints are in `docs/EVIDENCE_CAPTURE.md`: direct methods require
 the observed 2xx, a browser capture must record `--browser-required`, and a changed canonical
 URL needs the full `--redirect-url` chain beginning at the requested URL.
+
+The command writes to the ignored `data/snapshots/` default, so it must run from the primary
+checkout (see Preconditions). In a linked worktree it refuses with "Git-ignored artifact storage
+inside a linked worktree does not outlive it" rather than writing bytes that die with the
+worktree.
+
+These bytes are restricted, so they exist only on this machine and no gate can require them
+elsewhere. Confirm this machine still holds every one of them before finishing the sweep:
+
+```bash
+uv run election-guide evidence verify-all --require-local
+```
+
+Without `--require-local` an absent restricted artifact is `expected-absent` and passes, which is
+what keeps CI and other checkouts green (`docs/COLLECTION.md`). This is the run that would tell
+you a capture went missing.
 
 When the page cannot be reached without bypassing an access control, record the metadata-only
 form instead and move on. Do not work around the control:

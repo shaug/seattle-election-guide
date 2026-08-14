@@ -7,6 +7,7 @@ import os
 import re
 import subprocess
 import tempfile
+from collections import Counter
 from collections.abc import Generator
 from contextlib import contextmanager
 from datetime import UTC, date, datetime
@@ -31,9 +32,11 @@ from election_guide.evidence.manual import (
 )
 from election_guide.evidence.models import CapturedManifest, CaptureRequest, UnavailableRequest
 from election_guide.evidence.storage import (
+    captured_artifact_path,
     read_capture_manifest,
     record_capture,
     record_unavailable,
+    survey_byte_presence,
     verify_capture,
 )
 from election_guide.hosting import (
@@ -1069,6 +1072,50 @@ def evidence_verify(
     typer.echo(f"evidence: valid ({manifest.id}, {manifest.availability})")
 
 
+@evidence_app.command("verify-all")
+def evidence_verify_all(
+    # `exists=True` matches `release verify`, the other read-only sweep: a
+    # manifest directory that is not there must fail, not report a green zero
+    # manifests, which is the same "reads as intact evidence" failure this
+    # command exists to catch.
+    manifest_dir: Annotated[Path, typer.Option(exists=True, file_okay=False, readable=True)] = Path(
+        "data/manifests/evidence"
+    ),
+    storage_root: Annotated[Path, typer.Option(file_okay=False)] = Path("data/snapshots"),
+    require_local: Annotated[
+        bool,
+        typer.Option(help="Also require restricted bytes, for a machine that should hold them."),
+    ] = False,
+) -> None:
+    """Report every manifest's bytes as present or missing (issue #357).
+
+    A manifest whose artifact nobody still holds is not intact evidence, and
+    verifying one manifest at a time never revealed that. Fails on a lost or
+    corrupt artifact; reports a restricted artifact whose store is absent from
+    this environment as `expected-absent`, since CI can never hold those bytes
+    (`docs/COLLECTION.md`).
+    """
+    try:
+        survey = survey_byte_presence(
+            manifest_dir,
+            local_storage_root=storage_root,
+            require_local=require_local,
+        )
+    except (OSError, ValueError) as error:
+        typer.echo(f"evidence sweep failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+
+    for entry in survey:
+        detail = f" — {entry.detail}" if entry.detail else ""
+        typer.echo(f"{entry.status:<15} {entry.capture_id}{detail}")
+
+    counts = Counter(entry.status for entry in survey)
+    summary = ", ".join(f"{count} {status}" for status, count in sorted(counts.items()))
+    typer.echo(f"evidence: {len(survey)} manifests ({summary or 'none'})")
+    if counts["missing"] or counts["corrupt"]:
+        raise typer.Exit(code=1)
+
+
 @manual_app.command("validate")
 def manual_validate(
     draft_path: Annotated[Path, typer.Argument(exists=True, dir_okay=False, readable=True)],
@@ -1395,7 +1442,7 @@ def results_ingest(
             raise ValueError(f"unknown authority id {authority_id!r}")
 
         certified_manifest = _admit_captured_manifest(certified_capture, storage_root, "certified")
-        csv_content = (storage_root / certified_manifest.storage_reference).read_bytes()
+        csv_content = captured_artifact_path(certified_manifest, storage_root).read_bytes()
 
         captures = [
             ResultsCapture(
@@ -1445,7 +1492,9 @@ def _admit_captured_manifest(path: Path, storage_root: Path, label: str) -> Capt
     real evidence. Shared by the certified and optional election-night
     capture paths so both are guarded identically; the duplication this
     replaced is exactly how the election-night path went unverified for a
-    fix cycle."""
+    fix cycle. Official-authority captures live in the tracked repository
+    store (issue #357); `verify_capture` resolves that from the manifest's own
+    scope, so only the local root is passed here."""
     manifest = read_capture_manifest(path)
     if not isinstance(manifest, CapturedManifest):
         raise ValueError(f"{label} capture must be a captured, not unavailable, manifest")

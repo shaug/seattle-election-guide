@@ -39,6 +39,12 @@ The default implementation stores artifact bytes by SHA-256 beneath the Git-igno
 absolute paths. Manual transcriptions are stored separately under `data/review/manual/` and must
 reference a verified capture.
 
+Official-authority artifacts — election results published by a counting authority — are the one
+class whose bytes are committed, beneath the tracked `data/evidence/official/` directory. They are
+public records, so the paragraph above's prohibitions do not reach them, and committing them is
+what keeps them from dying with the session that captured them. `docs/COLLECTION.md` records the
+decision and its rationale.
+
 Collection must not bypass authentication, paywalls, robots controls, or other access controls.
 An inaccessible source receives an explicit status and may enter the manual review path.
 
