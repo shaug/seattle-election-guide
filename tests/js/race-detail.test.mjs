@@ -140,24 +140,18 @@ test('an advancing candidate carries a chip after its name', () => {
   assert.equal(host.querySelector('.race-detail-result-share'), null);
 });
 
-test('a trailing candidate carries no chip', () => {
+// One null, not three: a trailing outcome, a candidate a results file names
+// no outcome for, and no results file at all all arrive here as
+// `resultChipLabel: null` and all render nothing, so this section's view has
+// no way to tell them apart and neither does this test (#370).
+test('a candidate with no chip to render carries none', () => {
   const host = draw([candidate({ isLeader: false, kicker: null, resultChipLabel: null })]);
 
-  assert.equal(
-    host.querySelector('.race-detail-result-chip'),
-    null,
-    'a trailing outcome has no chip',
-  );
+  assert.equal(host.querySelector('.race-detail-result-chip'), null);
   assert.equal(
     host.querySelector('.race-detail-candidate-title h4').textContent.trim(),
     'Ada Lovelace',
   );
-});
-
-test('a candidate with no certified result carries no chip', () => {
-  const host = draw([candidate({ isLeader: false, kicker: null, resultChipLabel: null })]);
-
-  assert.equal(host.querySelector('.race-detail-result-chip'), null);
   assert.equal(host.querySelector('.race-detail-candidate-result'), null);
 });
 

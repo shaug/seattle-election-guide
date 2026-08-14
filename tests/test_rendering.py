@@ -1191,8 +1191,12 @@ def test_certified_results_render_the_race_detail_pages_complete_result_block(
     )
 
     # Candidate sections keep endorsement order, untouched by the finish order
-    # the block above runs in (#287).
-    assert body.index("Dominique M Scarimbolo") < body.index("Christopher Roberts")
+    # the block above runs in (#287) -- read inside the sections region alone,
+    # since the block now sits above every other occurrence of a name and a
+    # whole-body index comparison would be satisfied by its finish order
+    # instead, testing nothing.
+    sections = body.split('<div class="race-detail-candidates"')[1]
+    assert sections.index("Dominique M Scarimbolo") < sections.index("Christopher Roberts")
 
     # The two markup shapes the block replaces are gone from the page.
     assert "race-detail-certified-strip" not in body
