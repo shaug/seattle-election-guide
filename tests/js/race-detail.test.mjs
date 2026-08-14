@@ -158,7 +158,7 @@ test('a candidate with no chip to render carries none', () => {
 test('the headlined candidate renders no section heading, and so no chip of its own', () => {
   // `inHeadline` renders no `.race-detail-candidate-title` at all — the page
   // headline is that candidate's own heading, and their chip renders there
-  // (race.html.j2's `headline_outcome`), not in this section.
+  // (race.html.j2's `headline_chip_label`), not in this section.
   const host = draw([candidate({ inHeadline: true, kicker: null, resultChipLabel: 'Advances' })]);
 
   assert.equal(host.querySelector('.race-detail-candidate-title'), null);
