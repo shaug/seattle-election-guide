@@ -46,17 +46,23 @@
    grows it below a rule; a race page renders the same block under its own
    header, above the lens bar, where the one-line certified strip used to be.
    Two surfaces, one component — which is why these rules sit in this shared
-   part rather than in either page's own sheet. Each surface's own frame is
-   still page-local: the card's rule above the block is here, and the race
-   page's tone band around it is race.css's
-   `.race-detail-certified-result`.
+   part rather than in either page's own sheet.
 
    Outside every lens region on both surfaces (screen-race-result/-context/
    -foot on the card, everything under `main` on the page): a certified
    result is a permanent fact the reader's own source selection never
    changes, so it is never re-rendered by guide-card.mjs the way the
-   recommendation area is, and race-detail.mjs never sees it at all. */
-.race-results { margin-top: .2rem; padding-top: .65rem; border-top: 1px solid var(--row-separator); }
+   recommendation area is, and race-detail.mjs never sees it at all.
+
+   Separating the block from whatever sits above it is each surface's own
+   job, and the two answer differently: a card draws a rule above it, a race
+   page wears a tone band around the whole thing
+   (`.race-detail-certified-result`, race.css). So the card's rule below is
+   scoped to the card rather than set on the block and then undone by the
+   page — the frame belongs to a surface even though it is declared here, in
+   the part both surfaces read (rendering/stylesheets.py, whose own check
+   holds a rule group to the pages that render it). */
+.race-card .race-results { margin-top: .2rem; padding-top: .65rem; border-top: 1px solid var(--row-separator); }
 .race-results-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: .3rem .5rem; margin-bottom: .5rem; }
 .race-results-eyebrow { color: var(--muted); font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
 /* Certified reads on the agree-tone family (a settled fact) -- the only

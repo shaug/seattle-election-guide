@@ -18,14 +18,23 @@
    page it is the entire reason the block exists, since a winner nobody
    endorsed has no candidate section to carry a result.
 
-   Each page keeps its own frame around this markup — the card's rule and the
-   page's tone band — and its own `{% raw %}{% if %}{% endraw %}` gate, because the frame is the
-   page's and the gate is where each page decides it has a result to state.
+   Each page keeps its own frame around this markup — the card's rule
+   (`.race-card .race-results`, guide.css) and the page's tone band
+   (`.race-detail-certified-result`, race.css) — and its own
+   `{% raw %}{% if %}{% endraw %}` gate, because the frame is the page's and the gate is where
+   each page decides it has a result to state.
 
-   The indentation below is the guide card's own, which is what the committed
-   parity fixture (`tests/js/fixtures/guide-audited-page.html`) and the
-   release screenshots pin. #}
-{% macro result_block(view, external_link_attributes='') -%}
+   `external_link_attributes` is read from the environment globals rather than
+   passed in, the convention `_shell.html.j2` states and its own macros
+   follow: passing it per call would silently cover only the callers that
+   remembered to.
+
+   The indentation below is the guide card's own, so that extracting this
+   macro left the guide's rendered bytes alone. Nothing pins that — no
+   results file is committed, so the guide's parity fixture carries no
+   `.race-results` at all and the release screenshots cannot see whitespace;
+   it is a courtesy to the diff, not a checked invariant. #}
+{% macro result_block(view) -%}
 <div class="race-results">
               <div class="race-results-head">
                 <span class="race-results-eyebrow">Result</span>

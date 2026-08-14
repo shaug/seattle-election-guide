@@ -87,9 +87,8 @@
        carries none. A measure's own "candidates" are its Yes/No choices, so
        this renders their chip identically to a candidate race's. The
        headlined candidate's own chip renders in the page headline below
-       instead, since its name renders there, not here (see
-       `headline_outcome`, which still needs the dict: nothing else in that
-       scope names the headline candidate's own object).
+       instead, since its name renders there, not here -- off this same
+       field (see `headline_chip_label`), because one fact has one source.
 
        The share and its bar are not here any more: they ride the complete
        result block above the lens bar, which states every choice rather
@@ -122,13 +121,15 @@
      single section is the headline's and each keeps its heading. #}
   {% set headline_candidate_id = race.recommendation_candidate_ids[0]
      if race.recommendation_candidate_ids | length == 1 else none %}
-  {# The headlined candidate's own certified outcome (docs/RESULTS.md,
-     Rendering § The race-detail page; #287): `none` for a tie (no single
-     headline candidate to look up) or while this candidate carries no
-     certified outcome. Looked up once here because the headline renders the
-     name outside `candidate_sections` -- `race_result_outcomes_by_
-     candidate_id` is the same dict that macro reads per section. #}
-  {% set headline_outcome = race_result_outcomes_by_candidate_id.get(headline_candidate_id)
+  {# The headlined candidate's own certified chip (docs/RESULTS.md, Rendering
+     § The race-detail page; #287): `none` for a tie (no single headline
+     candidate to look up) or when that candidate has no chip to render.
+     Looked up once here because the headline renders the name outside
+     `candidate_sections`, off the same `race_detail.candidates` field that
+     macro reads per section -- one source for one fact. #}
+  {% set headline_chip_label = (race_detail.candidates
+     | selectattr('candidate_id', 'equalto', headline_candidate_id)
+     | map(attribute='result_chip_label') | first | default(none))
      if headline_candidate_id is not none else none %}
 
   <a class="skip-link" href="#race-detail">Skip to endorsements</a>
@@ -162,7 +163,7 @@
        below) decides whether it renders at all. #}
     {% if race_results %}
     <div class="race-detail-certified-result">
-      {{ result_block(race_results, external_link_attributes) }}
+      {{ result_block(race_results) }}
     </div>
     {% endif %}
     {# The same strip the guide renders, for the same reason: a reader who
@@ -199,7 +200,7 @@
         {%- if headline_candidate_id is none %} hidden{% endif %}>
         <p class="race-headline-eyebrow">Leading choice</p>
         <div class="screen-race-result" data-lens-result>
-          <h3 data-display-role="recommendation">{{ race.recommendation_label }}{% if headline_outcome and headline_outcome.chip_label %} <span class="race-detail-result-chip">{{ headline_outcome.chip_label }}</span>{% endif %}</h3>
+          <h3 data-display-role="recommendation">{{ race.recommendation_label }}{% if headline_chip_label %} <span class="race-detail-result-chip">{{ headline_chip_label }}</span>{% endif %}</h3>
         </div>
         {# The card's caption is not repeated here for the same reason the
            sections carry no count: this candidate's endorsing sources are

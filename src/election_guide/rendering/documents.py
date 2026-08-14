@@ -289,7 +289,6 @@ def render_race_document(
         race=race,
         race_detail=race_detail,
         race_results=race_results,
-        race_result_outcomes_by_candidate_id=race_result_outcomes_by_candidate_id,
         public_site_url=public_site_url,
         # DESIGN.md's title grammar for an election-scoped page, with the race
         # itself as the page's own name: `<page> — <election> — <site>`.

@@ -36,11 +36,10 @@
    than run to the full width of a wide page, where a share bar stops being
    readable as a length.
 
-   The card's rule above the block is the card's frame, not the block's, so
-   it is dropped here along with the margin that goes with it -- this band's
-   own edge is the separation. */
+   This band is the whole of the separation: the block carries no frame of
+   its own (guide-race.css), so there is nothing here to undo. */
 .race-detail-certified-result { padding: .85rem clamp(1rem, 4vw, 3rem) .95rem; border-bottom: 1px solid var(--tone-neutral-border); background: var(--tone-neutral-bg); color: var(--tone-neutral-text); }
-.race-detail-certified-result .race-results { max-width: 44rem; margin-top: 0; padding-top: 0; border-top: 0; }
+.race-detail-certified-result .race-results { max-width: 44rem; }
 .race-detail { min-width: 0; padding: 1rem clamp(1rem, 4vw, 3rem) 4rem; }
 .race-detail :focus-visible { outline: .2rem solid var(--focus); outline-offset: .15rem; }
 /* The headline: the recommendation's name, then the caption row, then the
