@@ -1115,6 +1115,24 @@ def _collapse_whitespace(markup: str) -> str:
     return re.sub(r"\s+", " ", markup)
 
 
+def _section_order(body: str) -> list[str]:
+    """The candidate ids of a race page's sections, in rendered order.
+
+    `data-race-detail-candidate-id` is written once per section and by
+    nothing else on the page, so it is the one marker that reads as a
+    section boundary -- a candidate's *name* appears in the RESULT block
+    above and in every section's meter attributes, not just their own.
+    """
+    sections = body.split('<div class="race-detail-candidates"')[1]
+    return re.findall(r'data-race-detail-candidate-id="([^"]+)"', sections)
+
+
+def _block_order(body: str) -> list[str]:
+    """The choice labels of the RESULT block's tally rows, in rendered order."""
+    tally = body.split('<div class="race-results-tally">')[1].split('<p class="race-results')[0]
+    return re.findall(r'race-results-name">([^<]+?)(?: <span|</span)', tally)
+
+
 def _with_results(tmp_path: Path, results: ElectionResults | None = None) -> PublicationViewModel:
     """The fixture view model with a certified results file attached, built
     the way every results-era test in this file builds one."""
@@ -1191,12 +1209,46 @@ def test_certified_results_render_the_race_detail_pages_complete_result_block(
     )
 
     # Candidate sections keep endorsement order, untouched by the finish order
-    # the block above runs in (#287) -- read inside the sections region alone,
-    # since the block now sits above every other occurrence of a name and a
-    # whole-body index comparison would be satisfied by its finish order
-    # instead, testing nothing.
-    sections = body.split('<div class="race-detail-candidates"')[1]
-    assert sections.index("Dominique M Scarimbolo") < sections.index("Christopher Roberts")
+    # the block above runs in (#287).
+    #
+    # Read off each section's own id attribute rather than by finding a name:
+    # a name is not a section boundary. The block above states every name, and
+    # so does *every* section's meter, which spells `data-meter-decision`
+    # ("Endorsed <name>") for every block in the race rather than only its own
+    # candidate's (`_meter.html.j2`, `race_candidate_meter_views`) -- so a
+    # by-name index comparison, whether over the whole body or over the
+    # sections region alone, resolves inside the first section either way and
+    # cannot fail when the order it names regresses.
+    endorsement_order = [
+        f"{RESULTS_RACE_ID}--dominique-m-scarimbolo",
+        f"{RESULTS_RACE_ID}--christopher-roberts",
+    ]
+    assert _section_order(body) == endorsement_order
+
+    # And they are two orders, not one that happens to agree: invert the
+    # finish order and the block follows while the sections do not. Without
+    # this the assertion above passes on a page that had simply sorted its
+    # sections by share, which is the regression #354's "two orders,
+    # deliberately" exists to prevent.
+    inverted = _valid_results(tmp_path / "inverted")
+    flipped = inverted.races[0].model_copy(
+        update={
+            "outcomes": [
+                outcome.model_copy(update={"share": 0.32 if index == 1 else 0.29})
+                if index in (0, 1)
+                else outcome
+                for index, outcome in enumerate(inverted.races[0].outcomes)
+            ]
+        }
+    )
+    inverted_body = _body_only(
+        _race_html(
+            _with_results(tmp_path, inverted.model_copy(update={"races": [flipped]})),
+            RESULTS_RACE_ID,
+        )
+    )
+    assert _block_order(inverted_body)[:2] == ["Christopher Roberts", "Dominique M Scarimbolo"]
+    assert _section_order(inverted_body) == endorsement_order
 
     # The two markup shapes the block replaces are gone from the page.
     assert "race-detail-certified-strip" not in body

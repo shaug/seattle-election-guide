@@ -436,8 +436,8 @@ placement preference, is why the two regions sit where they do.
   tally rows in the block with Approved/Rejected on the winner ("Ballot measures" above, #289/#348).
   The rejected side is now stated, which it was not before.
 
-**Implementation note.** The block's rules (`.race-results*`) live in `guide.css` today, which race
-pages do not ship. They move to `guide-race.css` — a correction rather than a new home:
+**Implementation note.** The block's rules (`.race-results*`) lived in `guide.css`, which race
+pages do not ship. They moved to `guide-race.css` (#370) — a correction rather than a new home:
 `rendering/stylesheets.py`'s own docstring already describes that sheet as the group only the guide
 and a race page render, "the result block, the one meter, the reference bar," and
 `.race-detail-result-chip` already sits there for the same reason. Duplicating them into `race.css`

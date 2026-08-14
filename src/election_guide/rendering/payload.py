@@ -168,9 +168,12 @@ class ComparisonResultOutcome(ClientPayloadModel):
     a static passthrough of #286's one computation, never something the
     client's column-resolution engine (`compare-signals.mjs`) recomputes.
 
-    Still a whole outcome, unlike the race-detail page's own
-    `result_chip_label` below: this column's cells state the share and the
-    certification status themselves, in the table's own grammar.
+    Still a whole outcome, unlike
+    `RaceCandidateEndorsements.result_chip_label`: this column's cells state
+    the share and the certification status themselves, in the table's own
+    grammar. (Named rather than placed: the generated declarations emit these
+    two in the opposite order to this file, so "above"/"below" is wrong in
+    one of them whichever way it is written.)
     """
 
     candidate_id: str
