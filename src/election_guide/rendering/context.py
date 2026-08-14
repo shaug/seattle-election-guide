@@ -31,7 +31,6 @@ from election_guide.rendering.payload import (
     FilterScope,
     RaceCandidateDisplay,
     RaceCandidateEndorsements,
-    RaceCandidateResult,
     RaceDetailDisplay,
     RaceDisplay,
     RaceSourceRow,
@@ -305,25 +304,16 @@ def race_detail_display(
                     )
                     for endorser in group.endorsers
                 ],
-                result=_race_candidate_result(outcomes.get(group.candidate_id)),
+                result_chip_label=(
+                    outcome.chip_label
+                    if (outcome := outcomes.get(group.candidate_id)) is not None
+                    else None
+                ),
             )
             for group in candidate_endorsement_groups(race)
         ],
         audited_accessible_summary=race_detail_accessible_summary(race),
     )
-
-
-def _race_candidate_result(
-    outcome: RaceResultOutcomeView | None,
-) -> RaceCandidateResult | None:
-    """One candidate's payload-shaped certified outcome (#287), or `None`
-    when `race_result_outcomes_by_candidate_id` names no outcome for them --
-    the roster a results file's own choice ids may not fully cover (a
-    zero-endorsement candidate never gets a section to begin with, but a
-    defensive lookup miss here renders no chip rather than raising)."""
-    if outcome is None:
-        return None
-    return RaceCandidateResult(chip_label=outcome.chip_label)
 
 
 def race_source_group_rows(

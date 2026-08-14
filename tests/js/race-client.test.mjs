@@ -126,7 +126,7 @@ function payload(personalization = personalizationContract()) {
           // The chip is the whole payload shape now: #370 moved the share
           // and its bar into the page's own RESULT block, which the server
           // renders above the lens bar and no client module reads.
-          result: { chip_label: 'Advances' },
+          result_chip_label: 'Advances',
         },
         {
           candidate_id: 'blaise',
@@ -143,7 +143,7 @@ function payload(personalization = personalizationContract()) {
               evidence_url: 'https://example.test/mlk',
             },
           ],
-          result: { chip_label: null },
+          result_chip_label: null,
         },
       ],
     },

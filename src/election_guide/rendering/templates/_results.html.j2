@@ -1,0 +1,45 @@
+{# The certified RESULT block (docs/RESULTS.md, Rendering § Race cards, #286;
+   § The race-detail page, #370), rendered from one `context.RaceResultsView`
+   — built by `race_results_view(race, ...)` — the same way the segmented
+   meter is rendered from one `MeterView` (`_meter.html.j2`).
+
+   Both pages that render it (`guide.html.j2`'s race card, below its own rule;
+   `race.html.j2`'s race page, under the race header and above the lens bar)
+   import this macro rather than carrying their own copy. They carried
+   identical copies for exactly as long as it took to write the second one:
+   the block is one component stating one fact, its paint is single-sourced
+   in `guide-race.css`, and a one-sided edit here would ship a silent
+   card-versus-page divergence that no check in this repository can see —
+   `race-markup-parity.test.mjs` diffs the server against lit, and no client
+   module renders `.race-results` at all.
+
+   `view.outcomes` is every choice on the ballot in finish order, not only the
+   endorsed ones. On a race card that is simply the whole tally; on a race
+   page it is the entire reason the block exists, since a winner nobody
+   endorsed has no candidate section to carry a result.
+
+   Each page keeps its own frame around this markup — the card's rule and the
+   page's tone band — and its own `{% raw %}{% if %}{% endraw %}` gate, because the frame is the
+   page's and the gate is where each page decides it has a result to state.
+
+   The indentation below is the guide card's own, which is what the committed
+   parity fixture (`tests/js/fixtures/guide-audited-page.html`) and the
+   release screenshots pin. #}
+{% macro result_block(view, external_link_attributes='') -%}
+<div class="race-results">
+              <div class="race-results-head">
+                <span class="race-results-eyebrow">Result</span>
+                <span class="race-results-status">Certified · {{ view.certified_on_label }}</span>
+              </div>
+              <div class="race-results-tally">
+                {% for outcome in view.outcomes %}
+                <div class="race-results-row{{ '' if outcome.advanced else ' race-results-row-trailing' }}">
+                  <span class="race-results-name">{{ outcome.candidate_label }}{% if outcome.chip_label %} <span class="race-detail-result-chip">{{ outcome.chip_label }}</span>{% endif %}</span>
+                  <span class="race-results-share">{{ outcome.percentage_label }}</span>
+                  <span class="race-results-bar"><i style="width:{{ outcome.percentage_label }}"></i></span>
+                </div>
+                {% endfor %}
+              </div>
+              <p class="race-results-provenance">{{ view.ballots_counted_label }} ballots · {{ view.authority }}{% if view.capture_url %} · <a href="{{ view.capture_url }}"{{ external_link_attributes }}>capture</a>{% endif %}</p>
+            </div>
+{%- endmacro %}

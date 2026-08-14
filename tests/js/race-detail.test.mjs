@@ -60,16 +60,6 @@ function meter(overrides = {}) {
 }
 
 /**
- * @param {Partial<import('../../src/election_guide/rendering/templates/race-detail.mjs').CandidateResultView>} overrides
- */
-function result(overrides = {}) {
-  return {
-    chipLabel: 'Advances',
-    ...overrides,
-  };
-}
-
-/**
  * @param {Partial<import('../../src/election_guide/rendering/templates/race-detail.mjs').CandidateSectionView>} overrides
  */
 function candidate(overrides = {}) {
@@ -80,7 +70,7 @@ function candidate(overrides = {}) {
     kicker: 'Leading choice',
     meter: meter(),
     rows: [row()],
-    result: null,
+    resultChipLabel: null,
     ...overrides,
   };
 }
@@ -130,7 +120,7 @@ test('a candidate who is not leading renders no kicker', () => {
 // bar and outside every lens region, which the server renders once and this
 // module never sees. A section renders the chip and nothing else of a result.
 test('an advancing candidate carries a chip after its name', () => {
-  const host = draw([candidate({ isLeader: false, kicker: null, result: result() })]);
+  const host = draw([candidate({ isLeader: false, kicker: null, resultChipLabel: 'Advances' })]);
 
   const chip = host.querySelector('.race-detail-candidate-title h4 .race-detail-result-chip');
   assert.ok(chip, 'the chip renders immediately in the section heading, after the name');
@@ -151,9 +141,7 @@ test('an advancing candidate carries a chip after its name', () => {
 });
 
 test('a trailing candidate carries no chip', () => {
-  const host = draw([
-    candidate({ isLeader: false, kicker: null, result: result({ chipLabel: null }) }),
-  ]);
+  const host = draw([candidate({ isLeader: false, kicker: null, resultChipLabel: null })]);
 
   assert.equal(
     host.querySelector('.race-detail-result-chip'),
@@ -167,7 +155,7 @@ test('a trailing candidate carries no chip', () => {
 });
 
 test('a candidate with no certified result carries no chip', () => {
-  const host = draw([candidate({ isLeader: false, kicker: null, result: null })]);
+  const host = draw([candidate({ isLeader: false, kicker: null, resultChipLabel: null })]);
 
   assert.equal(host.querySelector('.race-detail-result-chip'), null);
   assert.equal(host.querySelector('.race-detail-candidate-result'), null);
@@ -177,7 +165,7 @@ test('the headlined candidate renders no section heading, and so no chip of its 
   // `inHeadline` renders no `.race-detail-candidate-title` at all — the page
   // headline is that candidate's own heading, and their chip renders there
   // (race.html.j2's `headline_outcome`), not in this section.
-  const host = draw([candidate({ inHeadline: true, kicker: null, result: result() })]);
+  const host = draw([candidate({ inHeadline: true, kicker: null, resultChipLabel: 'Advances' })]);
 
   assert.equal(host.querySelector('.race-detail-candidate-title'), null);
   assert.equal(host.querySelector('.race-detail-result-chip'), null);

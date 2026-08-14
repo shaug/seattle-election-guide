@@ -161,35 +161,16 @@ class RaceSourceRow(ClientPayloadModel):
     block rather than a link."""
 
 
-class RaceCandidateResult(ClientPayloadModel):
-    """One candidate's certified outcome, as the race page's heading chip
-    renders it (docs/RESULTS.md, Rendering § The race-detail page; #287).
-
-    The chip is the whole of it. #370 moved the share and its bar out of
-    each candidate's section and into the page's own complete RESULT block,
-    which the server renders once above the lens bar and no lens re-renders,
-    so neither `percentage_label` nor `advanced` reaches a client consumer
-    any more and neither is published.
-
-    Selection-independent: a certified outcome is a fixed historical fact,
-    never affected by which sources an active lens counts, so this is a
-    static passthrough for lit's own re-render — exactly what the endorsing
-    rows above already are — rather than something the client recomputes
-    (docs/FRONTEND.md, The data contract). `rendering.context.
-    race_result_outcomes_by_candidate_id` (#287) is this field's one source,
-    mirroring `RaceResultOutcomeView` (rendering/context.py).
-    """
-
-    chip_label: str | None
-
-
 class ComparisonResultOutcome(ClientPayloadModel):
     """One candidate's certified outcome for the comparison page's own
     "Certified result" column (docs/RESULTS.md, Rendering § The comparison
-    view; #288), mirroring `RaceResultOutcomeView` (rendering/context.py) the
-    same way `RaceCandidateResult` above does for the race-detail page —
+    view; #288), mirroring `RaceResultOutcomeView` (rendering/context.py) —
     a static passthrough of #286's one computation, never something the
     client's column-resolution engine (`compare-signals.mjs`) recomputes.
+
+    Still a whole outcome, unlike the race-detail page's own
+    `result_chip_label` below: this column's cells state the share and the
+    certification status themselves, in the table's own grammar.
     """
 
     candidate_id: str
@@ -202,11 +183,24 @@ class RaceCandidateEndorsements(RaceCandidateDisplay):
     """One candidate's section on the race page: identity, plus its rows."""
 
     endorsers: list[RaceSourceRow]
-    result: RaceCandidateResult | None
-    """This candidate's certified outcome, or null while no results file
-    covers this race (docs/RESULTS.md, Rendering: "a state, not an
-    option") -- the race-detail page's own gate, independent of whether
-    the race itself renders a card-side results strip."""
+    result_chip_label: str | None
+    """This candidate's certified outcome chip ("Advances", "Elected",
+    "Approved", "Rejected"), or null -- no results file covers this race
+    (docs/RESULTS.md, Rendering: "a state, not an option"), the file names no
+    outcome for this candidate, or the outcome is a trailing one, which
+    carries no chip. All three render nothing, so they are one null rather
+    than a wrapper object distinguishing states no consumer acts on
+    differently.
+
+    The chip is the whole of a result a candidate section renders: #370 moved
+    the share and its bar into the page's own RESULT block, which the server
+    renders once above the lens bar and no lens re-renders. Selection-
+    independent -- a certified outcome is a fixed historical fact, never
+    affected by which sources an active lens counts -- so this is a static
+    passthrough for lit's own re-render, exactly what the endorsing rows
+    above already are, rather than something the client recomputes
+    (docs/FRONTEND.md, The data contract). `rendering.context.
+    race_result_outcomes_by_candidate_id` (#287) is its one source."""
 
 
 class FilterScope(ClientPayloadModel):

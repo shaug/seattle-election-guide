@@ -289,7 +289,7 @@ interface RaceCandidateEndorsements {
   candidate_id: string;
   label: string;
   endorsers: RaceSourceRow[];
-  result: RaceCandidateResult | null;
+  result_chip_label: string | null;
 }
 /**
  * One endorsing source's evidence row, as the race page renders it.
@@ -311,27 +311,6 @@ interface RaceSourceRow {
   panel_role: "consensus" | "comparison";
   detail_label: string | null;
   evidence_url: string | null;
-}
-/**
- * One candidate's certified outcome, as the race page's heading chip
- * renders it (docs/RESULTS.md, Rendering § The race-detail page; #287).
- *
- * The chip is the whole of it. #370 moved the share and its bar out of
- * each candidate's section and into the page's own complete RESULT block,
- * which the server renders once above the lens bar and no lens re-renders,
- * so neither `percentage_label` nor `advanced` reaches a client consumer
- * any more and neither is published.
- *
- * Selection-independent: a certified outcome is a fixed historical fact,
- * never affected by which sources an active lens counts, so this is a
- * static passthrough for lit's own re-render — exactly what the endorsing
- * rows above already are — rather than something the client recomputes
- * (docs/FRONTEND.md, The data contract). `rendering.context.
- * race_result_outcomes_by_candidate_id` (#287) is this field's one source,
- * mirroring `RaceResultOutcomeView` (rendering/context.py).
- */
-interface RaceCandidateResult {
-  chip_label: string | null;
 }
 /**
  * The standalone sources editor's payload.
@@ -440,10 +419,13 @@ interface ComparisonBaseline {
 /**
  * One candidate's certified outcome for the comparison page's own
  * "Certified result" column (docs/RESULTS.md, Rendering § The comparison
- * view; #288), mirroring `RaceResultOutcomeView` (rendering/context.py) the
- * same way `RaceCandidateResult` above does for the race-detail page —
+ * view; #288), mirroring `RaceResultOutcomeView` (rendering/context.py) —
  * a static passthrough of #286's one computation, never something the
  * client's column-resolution engine (`compare-signals.mjs`) recomputes.
+ *
+ * Still a whole outcome, unlike the race-detail page's own
+ * `result_chip_label` below: this column's cells state the share and the
+ * certification status themselves, in the table's own grammar.
  */
 interface ComparisonResultOutcome {
   candidate_id: string;

@@ -203,26 +203,15 @@ export function wireRacePage(payload) {
       kicker: tied ? 'Tied for lead' : null,
       meter: meters.views.get(candidateId) ?? naMeterView(candidate.label, meters.totalLabel),
       rows,
-      result: candidateResultView(candidateId),
+      // The certified outcome chip (docs/RESULTS.md, Rendering § The
+      // race-detail page; #287), selection-independent — every candidate
+      // carries the same one whatever the active lens counts — so it is a
+      // plain passthrough, not something scored state feeds. It is all of a
+      // result a section renders: the share and its bar are the page's own
+      // RESULT block, which the server renders above the lens bar and no
+      // lens re-renders (#370).
+      resultChipLabel: candidate.result_chip_label,
     };
-  };
-
-  /**
-   * One candidate's certified result, reshaped from the payload's snake_case
-   * fields (docs/RESULTS.md, Rendering § The race-detail page; #287).
-   * Selection-independent — every candidate carries the same result whatever
-   * the active lens counts — so this is a plain lookup, not something scored
-   * state feeds. The chip is all of it that a candidate section renders: the
-   * share and its bar are the page's own complete RESULT block, which the
-   * server renders above the lens bar and no lens re-renders (#370).
-   *
-   * @param {string} candidateId
-   * @returns {import('./race-detail.mjs').CandidateResultView|null}
-   */
-  const candidateResultView = (candidateId) => {
-    const result = candidatesById.get(candidateId)?.result ?? null;
-    if (result === null) return null;
-    return { chipLabel: result.chip_label };
   };
 
   /**
@@ -279,7 +268,7 @@ export function wireRacePage(payload) {
       const headlineChip =
         headlineCandidateId === null
           ? null
-          : (candidateResultView(headlineCandidateId)?.chipLabel ?? null);
+          : (candidatesById.get(headlineCandidateId)?.result_chip_label ?? null);
       render(raceHeadlineTemplate(recommendationLabel(scored, labels), headlineChip), resultRegion);
     }
     if (contextRegion) {

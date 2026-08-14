@@ -22,6 +22,7 @@
 {% endblock %}
 {% block body %}
   {% from '_meter.html.j2' import candidate_meter %}
+  {% from '_results.html.j2' import result_block %}
   {% macro source_badge(row) -%}
     <span class="race-detail-category-badge">{{ row.category_label }}</span>
   {%- endmacro %}
@@ -74,15 +75,16 @@
     {% set in_headline = candidate.candidate_id == headline_candidate_id %}
     {% set tied = is_leader and not in_headline %}
     {% set meter_view = candidate_meter_views[candidate.candidate_id] %}
-    {# The certified heading chip (docs/RESULTS.md, Rendering § The
+    {# The certified heading chip below (docs/RESULTS.md, Rendering § The
        race-detail page; #287, extended to measures by #348, narrowed to the
        chip alone by #370): `race_detail.candidates` already carries each
-       candidate's own result (`RaceDetailDisplay`, payload.py) -- the same
-       payload the client reads, so the template reads it directly here
-       rather than re-deriving it from `race_result_outcomes_by_candidate_id`
-       a second time. `None` while no results cover this candidate -- no
-       results file yet, or a roster candidate a results file names no
-       outcome for; a measure's own "candidates" are its Yes/No choices, so
+       candidate's own `result_chip_label` (`RaceDetailDisplay`, payload.py)
+       -- the same payload the client reads, so the template reads it
+       directly rather than re-deriving it from
+       `race_result_outcomes_by_candidate_id` a second time. `None` when
+       there is no chip to render -- no results file yet, a roster candidate
+       a results file names no outcome for, or a trailing outcome, which
+       carries none. A measure's own "candidates" are its Yes/No choices, so
        this renders their chip identically to a candidate race's. The
        headlined candidate's own chip renders in the page headline below
        instead, since its name renders there, not here (see
@@ -92,7 +94,6 @@
        The share and its bar are not here any more: they ride the complete
        result block above the lens bar, which states every choice rather
        than only the endorsed ones (#370). #}
-    {% set outcome = candidate.result %}
     <section class="race-detail-candidate{% if in_headline %} race-detail-candidate-leader race-detail-candidate-headlined{% elif tied %} race-detail-candidate-tied{% endif %}"
       data-race-detail-candidate-id="{{ candidate.candidate_id }}">
       <div class="race-detail-candidate-heading">
@@ -101,7 +102,7 @@
           {% if tied %}
           <p>Tied for lead</p>
           {% endif %}
-          <h4>{{ candidate.label }}{% if outcome and outcome.chip_label %} <span class="race-detail-result-chip">{{ outcome.chip_label }}</span>{% endif %}</h4>
+          <h4>{{ candidate.label }}{% if candidate.result_chip_label %} <span class="race-detail-result-chip">{{ candidate.result_chip_label }}</span>{% endif %}</h4>
         </div>
         {% endif %}
         <div class="race-detail-candidate-meter">
@@ -161,22 +162,7 @@
        below) decides whether it renders at all. #}
     {% if race_results %}
     <div class="race-detail-certified-result">
-      <div class="race-results">
-        <div class="race-results-head">
-          <span class="race-results-eyebrow">Result</span>
-          <span class="race-results-status">Certified · {{ race_results.certified_on_label }}</span>
-        </div>
-        <div class="race-results-tally">
-          {% for outcome in race_results.outcomes %}
-          <div class="race-results-row{{ '' if outcome.advanced else ' race-results-row-trailing' }}">
-            <span class="race-results-name">{{ outcome.candidate_label }}{% if outcome.chip_label %} <span class="race-detail-result-chip">{{ outcome.chip_label }}</span>{% endif %}</span>
-            <span class="race-results-share">{{ outcome.percentage_label }}</span>
-            <span class="race-results-bar"><i style="width:{{ outcome.percentage_label }}"></i></span>
-          </div>
-          {% endfor %}
-        </div>
-        <p class="race-results-provenance">{{ race_results.ballots_counted_label }} ballots · {{ race_results.authority }}{% if race_results.capture_url %} · <a href="{{ race_results.capture_url }}"{{ external_link_attributes }}>capture</a>{% endif %}</p>
-      </div>
+      {{ result_block(race_results, external_link_attributes) }}
     </div>
     {% endif %}
     {# The same strip the guide renders, for the same reason: a reader who

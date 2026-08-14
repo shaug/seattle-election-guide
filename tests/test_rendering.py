@@ -1100,6 +1100,21 @@ def test_no_results_leaves_the_race_detail_page_byte_identical_to_before_370(
     assert "race-detail-candidate-result" not in body
 
 
+def _collapse_whitespace(markup: str) -> str:
+    """One rendered fragment with every run of whitespace between elements
+    collapsed to a single space.
+
+    The RESULT block is one shared macro (`_results.html.j2`) both the race
+    card and the race page call, so its markup carries the macro's own
+    indentation rather than either caller's. These tests are about what the
+    block states and in what order, never about how far it is indented --
+    the guide's own exact bytes are pinned by its committed parity fixture
+    (`test_committed_lens_page_fixtures_match_a_fresh_render`), which is the
+    right place for that claim.
+    """
+    return re.sub(r"\s+", " ", markup)
+
+
 def _with_results(tmp_path: Path, results: ElectionResults | None = None) -> PublicationViewModel:
     """The fixture view model with a certified results file attached, built
     the way every results-era test in this file builds one."""
@@ -1138,9 +1153,10 @@ def test_certified_results_render_the_race_detail_pages_complete_result_block(
     assert body.count('<div class="race-results-row') == 4
     assert (
         '<span class="race-results-name">Dominique M Scarimbolo '
-        '<span class="race-detail-result-chip">Advances</span></span>\n'
-        '            <span class="race-results-share">32.0%</span>\n'
-        '            <span class="race-results-bar"><i style="width:32.0%"></i></span>' in body
+        '<span class="race-detail-result-chip">Advances</span></span> '
+        '<span class="race-results-share">32.0%</span> '
+        '<span class="race-results-bar"><i style="width:32.0%"></i></span>'
+        in _collapse_whitespace(body)
     )
     assert (
         '<span class="race-results-name">Christopher Roberts '
@@ -1344,8 +1360,8 @@ def test_certified_measure_results_render_both_choices_as_tally_rows(
     # source, so it has no section on this page at all.
     assert (
         '<span class="race-results-name">No '
-        '<span class="race-detail-result-chip">Rejected</span></span>\n'
-        '            <span class="race-results-share">60.0%</span>' in body
+        '<span class="race-detail-result-chip">Rejected</span></span> '
+        '<span class="race-results-share">60.0%</span>' in _collapse_whitespace(body)
     )
     assert '<span class="race-results-name">Yes</span>' in body
     assert body.index('"race-results-name">No ') < body.index('"race-results-name">Yes<')
