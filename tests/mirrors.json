@@ -423,15 +423,6 @@
         "text:All Seattle ballot races"
       ],
       "note": "The payload publishes every scope label from the same generator the template renders, so the client reads the label rather than composing it. The literal that remains is a fallback for a select value the payload does not know, which the rendered markup cannot produce."
-    },
-    "comparison-certified-result-column-label": {
-      "client": "compare-client.mjs labelFor / groupsFor",
-      "server": "race.html.j2 race-detail page certified strip",
-      "proof": "shared-literal",
-      "evidence": [
-        "text:Certified result"
-      ],
-      "note": "Two different features coincidentally choosing the same two words, not one implementation: #287's race-detail page names its certified strip 'Certified result' server-side, and #288's Comparisons column picker names its addable column the same way, entirely client-side (the server never renders this column -- it is not one of compare.html.j2's three default columns, so no server occurrence of the phrase exists for the comparison page itself). Kept consistent on purpose, the same reasoning view-toggle-labels records for 'Full'/'Compact'."
     }
   },
   "deleted": {
@@ -447,6 +438,7 @@
     "source participation label": "rendering/payload.py source_participation_label feeds the template and the payload from one definition, replacing a Jinja macro.",
     "race-detail-lens-count": "Deleted with the counts it mirrored. A candidate heading no longer states how many sources endorsed them, because those sources are the rows listed directly below it — so neither side spells 'of N endorsing sources' or its co-endorsement parenthetical.",
     "share-accessible-label": "#314 replaced the meter's spoken label with meter-accessible-label: the full standings (docs/METER_V2.md, The discovery model's accessibility model), not a restatement of the resting percentage. screen_share_accessible_label and shareAccessibleLabel are both deleted; nothing calls either.",
-    "race-detail-mini-meter": "The race page's per-candidate mini-meter (v1's own per-candidate meter, beside a tied leader's 'Tied for lead' kicker) retired with meter v2 (docs/METER_V2.md, Chrome geometry; Decision log #20) — the candidate-context treatment on the shared headline bar replaces its job in #315. race-detail.mjs's detailMeterClasses/detailMeterTemplate and race.html.j2's matching block are deleted; the kicker text alone survives."
+    "race-detail-mini-meter": "The race page's per-candidate mini-meter (v1's own per-candidate meter, beside a tied leader's 'Tied for lead' kicker) retired with meter v2 (docs/METER_V2.md, Chrome geometry; Decision log #20) — the candidate-context treatment on the shared headline bar replaces its job in #315. race-detail.mjs's detailMeterClasses/detailMeterTemplate and race.html.j2's matching block are deleted; the kicker text alone survives.",
+    "comparison-certified-result-column-label": "Never one implementation — two features coincidentally choosing the same two words, and only one of them is left. #370 removed the race-detail page's one-line certified strip, which was the sole server-side occurrence of 'Certified result'; the complete result block that replaced it says 'Result' and 'Certified · <date>' instead. #288's Comparisons column picker still names its addable column 'Certified result', entirely client-side, with nothing on the other side to drift from."
   }
 }

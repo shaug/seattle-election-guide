@@ -537,9 +537,10 @@ class PublicationMetadata(PublicationModel):
     """The certified-or-amended results capture's own resolved
     `canonical_url` (docs/RESULTS.md, Rendering § Race cards; #286), when the
     release pipeline could read one (`release.builder.build_release`,
-    `results.current_results_capture`). Every candidate race's results strip
-    provenance line links it (`rendering.context.race_results_view`); `None`
-    omits the link rather than rendering a broken one. Independent of
+    `results.current_results_capture`). Every RESULT block's own provenance
+    line links it -- a race card's strip and a race page's own block alike
+    (`rendering.context.race_results_view`); `None` omits the link rather
+    than rendering a broken one. Independent of
     `certification_date`: this requires a results file to exist at all,
     which the counting window's own certification date does not."""
     generated_at: AwareDatetime

@@ -313,9 +313,14 @@ interface RaceSourceRow {
   evidence_url: string | null;
 }
 /**
- * One candidate's certified vote-share result, as the race page's
- * vote-share row and heading chip render it (docs/RESULTS.md, Rendering §
- * The race-detail page; #287).
+ * One candidate's certified outcome, as the race page's heading chip
+ * renders it (docs/RESULTS.md, Rendering § The race-detail page; #287).
+ *
+ * The chip is the whole of it. #370 moved the share and its bar out of
+ * each candidate's section and into the page's own complete RESULT block,
+ * which the server renders once above the lens bar and no lens re-renders,
+ * so neither `percentage_label` nor `advanced` reaches a client consumer
+ * any more and neither is published.
  *
  * Selection-independent: a certified outcome is a fixed historical fact,
  * never affected by which sources an active lens counts, so this is a
@@ -326,8 +331,6 @@ interface RaceSourceRow {
  * mirroring `RaceResultOutcomeView` (rendering/context.py).
  */
 interface RaceCandidateResult {
-  percentage_label: string;
-  advanced: boolean;
   chip_label: string | null;
 }
 /**

@@ -31,14 +31,55 @@
    immediately after the candidate's name in every heading that names one —
    a candidate's own section title (race.css `.race-detail-candidate-title
    h4`) or, for the sole leading choice, this row's own `h3` above; the
-   guide's own certified results strip (guide.css `.race-results-name`)
-   renders the same chip beside the same kind of name. Ordinary inline
-   content after the name rather than a flex layout of its own: a heading too
-   narrow for both wraps the chip beneath the name from plain text flow
-   alone, with no separate narrow-width rule needed (the ratified mobile
-   accommodation). `vertical-align` is inert inside `.race-results-name`'s
-   flex row, so the one rule serves both contexts unchanged. */
+   RESULT block's own tally row (`.race-results-name` below) renders the same
+   chip beside the same kind of name, on a race card and a race page alike.
+   Ordinary inline content after the name rather than a flex layout of its
+   own: a heading too narrow for both wraps the chip beneath the name from
+   plain text flow alone, with no separate narrow-width rule needed (the
+   ratified mobile accommodation). `vertical-align` is inert inside
+   `.race-results-name`'s flex row, so the one rule serves both contexts
+   unchanged. */
 .race-detail-result-chip { display: inline-block; padding: .06rem .5rem; border-radius: 1rem; background: var(--sky); color: var(--navy); font-size: .64rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; vertical-align: middle; }
+/* The RESULT block (docs/RESULTS.md, Rendering § Race cards, #286; § The
+   race-detail page, #370): one tally row per outcome in finish order, on one
+   shared full-width scale, over a provenance line. A certified race card
+   grows it below a rule; a race page renders the same block under its own
+   header, above the lens bar, where the one-line certified strip used to be.
+   Two surfaces, one component — which is why these rules sit in this shared
+   part rather than in either page's own sheet. Each surface's own frame is
+   still page-local: the card's rule above the block is here, and the race
+   page's tone band around it is race.css's
+   `.race-detail-certified-result`.
+
+   Outside every lens region on both surfaces (screen-race-result/-context/
+   -foot on the card, everything under `main` on the page): a certified
+   result is a permanent fact the reader's own source selection never
+   changes, so it is never re-rendered by guide-card.mjs the way the
+   recommendation area is, and race-detail.mjs never sees it at all. */
+.race-results { margin-top: .2rem; padding-top: .65rem; border-top: 1px solid var(--row-separator); }
+.race-results-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: .3rem .5rem; margin-bottom: .5rem; }
+.race-results-eyebrow { color: var(--muted); font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+/* Certified reads on the agree-tone family (a settled fact) -- the only
+   state this badge renders (docs/RESULTS.md, Rendering § Race cards). */
+.race-results-status { display: inline-block; padding: .08rem .5rem; border: 1px solid var(--tone-agree-border); border-radius: 1rem; background: var(--tone-agree-bg); color: var(--tone-agree-text); font-size: .68rem; font-weight: 700; letter-spacing: .02em; }
+.race-results-tally { display: grid; gap: .3rem; }
+.race-results-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .15rem .6rem; }
+/* The outcome chip is the shared `.race-detail-result-chip` above,
+   deliberately outside the agree/differ tone families -- neither good nor
+   bad, fact. Wraps under the name at narrow widths rather than forcing a
+   second layout, the same accommodation the race-detail page's own
+   candidate heading uses. */
+.race-results-name { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: .1rem .5rem; font-size: .92rem; font-weight: 600; color: var(--ink); }
+.race-results-share { color: var(--ink); font-size: .92rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+/* One shared full-width scale (docs/RESULTS.md, Rendering): every bar in the
+   block runs the same track width, so shares compare honestly across
+   candidates -- vote share never borrows the endorsement meter's component. */
+.race-results-bar { grid-column: 1 / -1; height: .45rem; border-radius: .25rem; background: var(--meter-track); overflow: hidden; }
+.race-results-bar i { display: block; height: 100%; background: var(--navy); border-radius: .25rem; }
+.race-results-row-trailing .race-results-name, .race-results-row-trailing .race-results-share { color: var(--muted); font-weight: 500; }
+.race-results-row-trailing .race-results-bar i { background: var(--line-strong); }
+.race-results-provenance { margin: .55rem 0 0; color: var(--faint); font-size: .72rem; }
+.race-results-provenance a { color: var(--blue); }
 /* Meter v2, the segmented meter (docs/METER_V2.md). Frame: 2rem tall, a
    `.4rem` corner radius — a nod to the pill, nothing more; the bar is a bare
    flex row of blocks, each sized by its own `--meter-w` weight rather than a

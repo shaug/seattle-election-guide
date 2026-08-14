@@ -402,9 +402,10 @@ leading choice's heading (`docs/DESIGN.md`, "A name appears once per page") and 
 the section below it.
 
 **The organizing principle this settles**, which the page already encoded before it was named:
-`race.html.j2` renders the certified strip outside every lens-owned region, gated on `race_results`
+`race.html.j2` rendered the certified strip outside every lens-owned region, gated on `race_results`
 alone rather than on the personalization policy, because it is "a permanent fact the reader's source
-selection never changes." The lens bar is therefore a real boundary, and results belong above it:
+selection never changes" — and the block that replaced it (#370) is gated exactly the same way. The
+lens bar is therefore a real boundary, and results belong above it:
 
 - **Above the lens bar** — facts no reader's selection can change: the race, the complete
   certified result, its provenance.

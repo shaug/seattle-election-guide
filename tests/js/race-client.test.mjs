@@ -123,7 +123,10 @@ function payload(personalization = personalizationContract()) {
           // the audited tie, so a test that narrows the selection to Blaise
           // alone (making Blaise the *scored* leader) can prove the headline
           // chip follows the *certified* outcome, not the current selection.
-          result: { percentage_label: '54.2%', advanced: true, chip_label: 'Advances' },
+          // The chip is the whole payload shape now: #370 moved the share
+          // and its bar into the page's own RESULT block, which the server
+          // renders above the lens bar and no client module reads.
+          result: { chip_label: 'Advances' },
         },
         {
           candidate_id: 'blaise',
@@ -140,7 +143,7 @@ function payload(personalization = personalizationContract()) {
               evidence_url: 'https://example.test/mlk',
             },
           ],
-          result: { percentage_label: '45.8%', advanced: false, chip_label: null },
+          result: { chip_label: null },
         },
       ],
     },
@@ -256,13 +259,13 @@ test('a narrowed selection rescores the race and says what it is counting', () =
   );
 });
 
-// The certified vote-share row and heading chip (docs/RESULTS.md, Rendering §
-// The race-detail page; #287) are selection-independent, so a personalized
-// re-render has to reproduce them exactly as `race-detail.mjs`'s own coverage
-// proves in isolation — this is the end-to-end wiring through `wireRacePage`,
-// including the payload's snake_case-to-camelCase reshape and the headline
-// chip lookup that has to follow whichever candidate a lens currently scores
-// as the sole leader, not always the one the certified result favors.
+// The certified heading chip (docs/RESULTS.md, Rendering § The race-detail
+// page; #287) is selection-independent, so a personalized re-render has to
+// reproduce it exactly as `race-detail.mjs`'s own coverage proves in
+// isolation — this is the end-to-end wiring through `wireRacePage`, including
+// the payload's snake_case-to-camelCase reshape and the headline chip lookup
+// that has to follow whichever candidate a lens currently scores as the sole
+// leader, not always the one the certified result favors.
 test('a selection can headline the candidate whose own certified result did not advance', () => {
   build(lensFragment(['mlkl']));
 
@@ -276,22 +279,20 @@ test('a selection can headline the candidate whose own certified result did not 
   );
   assert.equal(document.querySelector('[data-lens-result] .race-detail-result-chip'), null);
 
-  // Every section still carries its own fixed vote-share row and chip,
-  // unaffected by which sources are selected: Ada's own certified 54.2%
-  // "Advances" outcome renders in her own section regardless of her not
-  // being scored the leader here.
+  // Every section still carries its own fixed chip, unaffected by which
+  // sources are selected: Ada's own certified "Advances" outcome renders in
+  // her own section regardless of her not being scored the leader here.
   const adaSection = document.querySelector('[data-race-detail-candidate-id="ada"]');
   const adaChip = adaSection.querySelector('.race-detail-result-chip');
   assert.ok(adaChip, "a candidate's own result renders regardless of the active selection");
   assert.equal(adaChip.textContent, 'Advances');
-  assert.equal(adaSection.querySelector('.race-detail-result-share').textContent, '54.2%');
 
   const blaiseSection = document.querySelector('[data-race-detail-candidate-id="blaise"]');
   assert.equal(blaiseSection.querySelector('.race-detail-result-chip'), null);
-  assert.equal(
-    blaiseSection.querySelector('.race-detail-candidate-result').getAttribute('class'),
-    'race-detail-candidate-result race-detail-candidate-result-trailing',
-  );
+  // The share and its bar are the server's own RESULT block above the lens
+  // bar, never a section's, so a re-render renders neither (#370).
+  assert.equal(adaSection.querySelector('.race-detail-candidate-result'), null);
+  assert.equal(blaiseSection.querySelector('.race-detail-candidate-result'), null);
 
   // Clearing the lens restores the audited tie headline, still with no chip
   // (a tie names two candidates, so no single candidate's own result could

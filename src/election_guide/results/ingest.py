@@ -331,9 +331,9 @@ def _build_race_results(race: Race, contest_rows: ContestRows) -> RaceResults:
     own vote sum. That is a materially different, larger quantity than the
     sum of recorded votes: it includes every overvoted and undervoted
     ballot, the ones the contest recorded but no vote count reflects
-    (docs/RESULTS.md, Data model — the race card's provenance line and the
-    race-detail-page certified strip both render "ballots counted", the
-    authority's own figure, not a re-derivation of it).
+    (docs/RESULTS.md, Data model — the RESULT block's own provenance line
+    renders "ballots counted" on the race card and the race-detail page
+    alike, the authority's own figure, not a re-derivation of it).
 
     Each declared choice's `share`, by contrast, is its votes over the
     *declared* (non-write-in) vote total, so a race's declared shares sum to

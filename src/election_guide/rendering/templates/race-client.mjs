@@ -212,7 +212,9 @@ export function wireRacePage(payload) {
    * fields (docs/RESULTS.md, Rendering § The race-detail page; #287).
    * Selection-independent — every candidate carries the same result whatever
    * the active lens counts — so this is a plain lookup, not something scored
-   * state feeds.
+   * state feeds. The chip is all of it that a candidate section renders: the
+   * share and its bar are the page's own complete RESULT block, which the
+   * server renders above the lens bar and no lens re-renders (#370).
    *
    * @param {string} candidateId
    * @returns {import('./race-detail.mjs').CandidateResultView|null}
@@ -220,11 +222,7 @@ export function wireRacePage(payload) {
   const candidateResultView = (candidateId) => {
     const result = candidatesById.get(candidateId)?.result ?? null;
     if (result === null) return null;
-    return {
-      percentageLabel: result.percentage_label,
-      advanced: result.advanced,
-      chipLabel: result.chip_label,
-    };
+    return { chipLabel: result.chip_label };
   };
 
   /**

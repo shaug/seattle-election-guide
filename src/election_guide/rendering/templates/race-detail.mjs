@@ -62,17 +62,17 @@ import { candidateMeterTemplate } from './guide-card.mjs';
  * information-design incoherent and unshipped — this section's own static
  * meter is what #325 settled on instead.
  *
- * `result` is this candidate's certified vote-share result (docs/RESULTS.md,
- * Rendering § The race-detail page; #287), or null while no results cover
- * this race or this candidate. Selection-independent, so it is a static
- * passthrough from the payload rather than something this module computes —
- * the same reason `rows` above carries every value its markup needs instead
- * of reading it back off the server's copy (docs/FRONTEND.md, The data
- * contract).
+ * `result` is this candidate's certified outcome (docs/RESULTS.md, Rendering
+ * § The race-detail page; #287), or null while no results cover this race or
+ * this candidate. It carries the chip alone: the share and its bar belong to
+ * the page's own complete RESULT block, above the lens bar and outside every
+ * lens region, which the server renders once and this module never sees
+ * (#370). Selection-independent, so it is a static passthrough from the
+ * payload rather than something this module computes — the same reason `rows`
+ * above carries every value its markup needs instead of reading it back off
+ * the server's copy (docs/FRONTEND.md, The data contract).
  *
  * @typedef {object} CandidateResultView
- * @property {string} percentageLabel
- * @property {boolean} advanced
  * @property {string|null} chipLabel
  *
  * @typedef {object} CandidateSectionView
@@ -153,27 +153,6 @@ function candidateMeterRowTemplate(candidate) {
 }
 
 /**
- * The certified vote-share row (docs/RESULTS.md, Rendering § The
- * race-detail page; #287): the same navy-on-track tally bar the race
- * card's own results strip renders, at the scale of this one candidate's own
- * share. Null when this candidate carries no certified result, exactly like
- * the audited template's own `{% if outcome %}` gate (race.html.j2).
- *
- * @param {CandidateResultView|null} result
- */
-function candidateResultTemplate(result) {
-  if (result === null) return nothing;
-  return html`<div
-    class=${
-      result.advanced
-        ? 'race-detail-candidate-result'
-        : 'race-detail-candidate-result race-detail-candidate-result-trailing'
-    }
-  ><span class="race-detail-result-bar"><i style=${`width:${result.percentageLabel}`}></i></span
-    ><span class="race-detail-result-share">${result.percentageLabel}</span></div>`;
-}
-
-/**
  * The results chip alone (docs/RESULTS.md, "The results chip"; #287),
  * immediately after a candidate's name in whichever heading names them. Null
  * when the result carries no chip — a trailing outcome, or no result at all.
@@ -204,9 +183,7 @@ function candidateSectionTemplate(candidate) {
       : html`<div class="race-detail-candidate-title">${
           candidate.kicker === null ? nothing : html`<p>${candidate.kicker}</p>`
         }<h4>${candidate.label}${resultChipTemplate(candidate.result)}</h4></div>`
-  }${candidateMeterRowTemplate(candidate)}</div>${candidateResultTemplate(
-    candidate.result,
-  )}<ul class="race-detail-source-list">${repeat(
+  }${candidateMeterRowTemplate(candidate)}</div><ul class="race-detail-source-list">${repeat(
     candidate.rows,
     (row) => row.code,
     (row) => sourceRowTemplate(candidate.candidateId, row),
