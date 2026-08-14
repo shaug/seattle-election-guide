@@ -137,8 +137,9 @@ def verify_capture(
     """
     if isinstance(manifest, UnavailableManifest):
         return
-    root = storage_root_for(manifest, storage_root, repository_storage_root)
-    artifact = _resolve_storage_reference(root, manifest.storage_reference)
+    artifact = captured_artifact_path(
+        manifest, storage_root, repository_storage_root=repository_storage_root
+    )
     if not artifact.is_file():
         raise ValueError(f"captured evidence is missing: {manifest.storage_reference}")
     digest, byte_length = _hash_file(artifact)
@@ -150,12 +151,28 @@ def verify_capture(
         )
 
 
-def storage_root_for(
+def captured_artifact_path(
     manifest: CapturedManifest,
     local_storage_root: Path,
+    *,
     repository_storage_root: Path = REPOSITORY_STORAGE_ROOT,
 ) -> Path:
-    """Pick the root that holds one manifest's bytes, by its recorded scope."""
+    """Resolve where one manifest's bytes are, from its own recorded scope.
+
+    The single answer to "where does this artifact live". Callers pass only the
+    local root they already know about; the official store stays inside this
+    module, and the reference is joined through the same guarded join every
+    verification uses rather than by hand at each call site.
+    """
+    root = _storage_root_for(manifest, local_storage_root, repository_storage_root)
+    return _resolve_storage_reference(root, manifest.storage_reference)
+
+
+def _storage_root_for(
+    manifest: CapturedManifest,
+    local_storage_root: Path,
+    repository_storage_root: Path,
+) -> Path:
     return repository_storage_root if manifest.storage_scope == "repository" else local_storage_root
 
 
@@ -191,8 +208,9 @@ def survey_byte_presence(
         if not isinstance(manifest, CapturedManifest):
             survey.append(BytePresence(manifest.id, "no-artifact"))
             continue
-        root = storage_root_for(manifest, local_storage_root, repository_storage_root)
-        artifact = _resolve_storage_reference(root, manifest.storage_reference)
+        artifact = captured_artifact_path(
+            manifest, local_storage_root, repository_storage_root=repository_storage_root
+        )
         if not artifact.is_file():
             exempt = manifest.storage_scope == "local_only" and not require_local
             survey.append(
@@ -204,7 +222,9 @@ def survey_byte_presence(
             )
             continue
         try:
-            verify_capture(manifest, root, repository_storage_root=repository_storage_root)
+            verify_capture(
+                manifest, local_storage_root, repository_storage_root=repository_storage_root
+            )
         except (OSError, ValueError) as error:
             survey.append(BytePresence(manifest.id, "corrupt", str(error)))
             continue
@@ -229,7 +249,8 @@ def _resolve_storage_scope(storage_root: Path, repository_storage_root: Path) ->
         return "repository"
     if root.is_relative_to(official):
         # A manifest records only a content address, never which root holds it,
-        # so `storage_root_for` can hand back only the official root itself.
+        # so `captured_artifact_path` can resolve only against the official
+        # root itself.
         # Bytes under a subdirectory would be written, verified once, and then
         # be unfindable forever -- reported `missing` in the same words as a
         # genuine loss. Refuse before anything is written rather than accept a

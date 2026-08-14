@@ -32,10 +32,10 @@ from election_guide.evidence.manual import (
 )
 from election_guide.evidence.models import CapturedManifest, CaptureRequest, UnavailableRequest
 from election_guide.evidence.storage import (
+    captured_artifact_path,
     read_capture_manifest,
     record_capture,
     record_unavailable,
-    storage_root_for,
     survey_byte_presence,
     verify_capture,
 )
@@ -1442,10 +1442,7 @@ def results_ingest(
             raise ValueError(f"unknown authority id {authority_id!r}")
 
         certified_manifest = _admit_captured_manifest(certified_capture, storage_root, "certified")
-        csv_content = (
-            storage_root_for(certified_manifest, storage_root)
-            / certified_manifest.storage_reference
-        ).read_bytes()
+        csv_content = captured_artifact_path(certified_manifest, storage_root).read_bytes()
 
         captures = [
             ResultsCapture(

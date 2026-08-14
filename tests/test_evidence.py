@@ -845,7 +845,7 @@ def test_permitted_capture_into_a_tracked_root_records_repository_scope(tmp_path
 
 def test_capture_into_a_subdirectory_of_the_official_store_is_refused(tmp_path: Path) -> None:
     """A manifest records only a content address, never which root holds it, so
-    `storage_root_for` can return only the official root itself. Bytes one level
+    `captured_artifact_path` can resolve only against the official root. Bytes one level
     down would be written, verified once, and then report `missing` forever — in
     the same words as a genuine loss (issue #357). Refuse before writing."""
     repository = tmp_path / "repository"
@@ -1054,34 +1054,12 @@ def test_presence_survey_reports_tampered_bytes_as_corrupt(tmp_path: Path) -> No
     assert [entry.status for entry in survey] == ["corrupt"]
 
 
-def test_presence_survey_calls_a_restricted_artifact_expected_absent_without_its_store(
-    tmp_path: Path,
-) -> None:
-    """CI can never hold restricted bytes, so an absent local store is the
-    documented, non-failing state rather than a silent pass or a false alarm."""
-    manifest_dir = tmp_path / "manifests"
-    local_root = tmp_path / "snapshots"
-    record_capture(
-        _capture_request(redistribution="restricted"),
-        FIXTURES / "static.html",
-        local_root,
-        manifest_dir,
-    )
-    shutil.rmtree(local_root)
-
-    survey = survey_byte_presence(
-        manifest_dir,
-        local_storage_root=local_root,
-        repository_storage_root=tmp_path / "official",
-    )
-
-    assert [entry.status for entry in survey] == ["expected-absent"]
-
-
 def test_presence_survey_require_local_drops_the_absent_store_exemption(tmp_path: Path) -> None:
-    """The exemption exists for CI, which can never hold restricted bytes. An
-    operator auditing a machine that is supposed to hold everything asks for it
-    to be dropped, and then an absent store is a failure like any other."""
+    """An absent restricted store is the documented, non-failing state: no
+    environment but the capturing machine holds those bytes, and CI holds none
+    of them. An operator auditing a machine that is supposed to hold everything
+    asks for the exemption to be dropped, and then it fails like anything
+    else."""
     manifest_dir = tmp_path / "manifests"
     local_root = tmp_path / "snapshots"
     record_capture(
