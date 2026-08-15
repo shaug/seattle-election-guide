@@ -4586,6 +4586,142 @@ def test_race_page_restores_an_active_lens_from_its_own_link(tmp_path: Path) -> 
     assert f"race=race-{race.id}" in result["sourcesHref"]
 
 
+def test_race_page_pins_the_lens_strip_the_way_the_guide_pins_its_own(tmp_path: Path) -> None:
+    """Issue #369: `guide.html.j2` wraps its lens strip in `.sticky-header`
+    (`position: sticky; top: 0`, base.css) so a reader who scrolls into the
+    endorsement list keeps seeing what is being counted. The race page rendered
+    the same strip with no such wrapper, so it scrolled away with the header —
+    on the one page where the per-source detail below makes that context most
+    relevant.
+
+    This scrolls a real page in headless Chrome and reads the strip's own
+    `getBoundingClientRect().top` after the scroll, rather than asserting a CSS
+    property, because a `position: sticky` declaration alone proves nothing
+    about whether the element actually stuck (a non-scrolling ancestor, a
+    clipped overflow context, or a missing `top` value would all leave the
+    property declared but inert).
+
+    Built with both certified results and personalization on, so the same
+    render also exercises the ticket's scope note: the certified-result block
+    sits above the lens strip and is expected to scroll away beneath it, since
+    it is a permanent fact rather than something the lens strip's own pinned
+    region governs.
+    """
+    without_results = _view_model(tmp_path / "without-results")
+    policy = without_results.personalization.policy.model_copy(update={"enabled": True})
+    personalized = without_results.model_copy(
+        update={
+            "personalization": without_results.personalization.model_copy(update={"policy": policy})
+        }
+    )
+    results_root = tmp_path / "with-results"
+    results_root.mkdir()
+    view_model = _revalidated(
+        personalized.model_copy(
+            update={"results": _revalidated_results(_valid_results(results_root))}
+        )
+    )
+    html_path = _write_race_html(tmp_path, view_model, RESULTS_RACE_ID)
+
+    expression = """
+      (async () => {
+        const before = document.querySelector('[data-lens-banner]').getBoundingClientRect();
+        const certifiedBefore = document.querySelector('.race-detail-certified-result')
+          .getBoundingClientRect();
+        window.scrollTo(0, 4000);
+        await new Promise((resolve) => setTimeout(resolve, 60));
+        const banner = document.querySelector('[data-lens-banner]');
+        const sticky = banner.closest('.sticky-header');
+        const notice = document.querySelector('[data-lens-notice]');
+        const payloadNotice = document.querySelector('[data-payload-notice]');
+        return JSON.stringify({
+          scrolled: window.scrollY > 0,
+          bannerTopBeforeScroll: before.top,
+          stickyPresent: sticky !== null,
+          noticeInsideSameSticky: notice.closest('.sticky-header') === sticky,
+          payloadNoticeInsideSameSticky: payloadNotice.closest('.sticky-header') === sticky,
+          bannerTopAfterScroll: banner.getBoundingClientRect().top,
+          certifiedResultScrolledAway: document.querySelector('.race-detail-certified-result')
+            .getBoundingClientRect().bottom < 0,
+          certifiedResultWasBelowTopBeforeScroll: certifiedBefore.top >= 0,
+        });
+      })()
+    """
+    result = _evaluate_in_chrome(html_path, expression, viewport=(1024, 700))
+
+    assert result["scrolled"] is True, (
+        "the fixture page must be tall enough to scroll, or this proves nothing"
+    )
+    assert result["certifiedResultWasBelowTopBeforeScroll"] is True
+    # Before scrolling the strip sits in normal flow, well below the viewport
+    # top (under the page head and the certified-result block). Before the fix
+    # this element had no sticky ancestor at all, so scrolling past it would
+    # carry it out of the viewport entirely, same as `certifiedResultScrolledAway`
+    # below; pinned, `top: 0` holds it at the viewport's own top instead.
+    assert result["bannerTopBeforeScroll"] > 50
+    assert result["stickyPresent"] is True
+    assert result["noticeInsideSameSticky"] is True
+    assert result["payloadNoticeInsideSameSticky"] is True
+    assert result["bannerTopAfterScroll"] == pytest.approx(0, abs=1)
+    assert result["certifiedResultScrolledAway"] is True
+
+
+def test_race_page_with_personalization_disabled_renders_unchanged(tmp_path: Path) -> None:
+    """Issue #369 acceptance criterion: pinning the lens strip must not affect
+    a page where the strip itself never renders. With the policy disabled the
+    template's `{% if %}` still drops `.lens-banner` entirely (unchanged by
+    this fix, `test_certified_...` and the guide's own equivalent both pin the
+    same way), so the only structural change here is the two always-present,
+    always-`hidden` notice paragraphs gaining a `.sticky-header` ancestor —
+    which is not observable, since a hidden element has no box to stick."""
+    disabled = _personalization_disabled_view_model(tmp_path)
+    html_path = _write_race_html(tmp_path, disabled, RESULTS_RACE_ID)
+
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        JSON.stringify({
+          bannerPresent: document.querySelector('[data-lens-banner]') !== null,
+          noticeHidden: document.querySelector('[data-lens-notice]').hidden,
+          payloadNoticeHidden: document.querySelector('[data-payload-notice]').hidden,
+          stickyHeaderHeight: document.querySelector('.sticky-header')
+            .getBoundingClientRect().height,
+        })
+        """,
+    )
+
+    assert result["bannerPresent"] is False
+    assert result["noticeHidden"] is True
+    assert result["payloadNoticeHidden"] is True
+    # A wrapper around two hidden elements occupies no box of its own.
+    assert result["stickyHeaderHeight"] == 0
+
+
+def test_race_page_sticky_strip_is_hidden_when_printed(tmp_path: Path) -> None:
+    """Issue #369 acceptance criterion: the printable edition is unchanged.
+
+    base.css's print rule already names `.sticky-header` and `.state-action-
+    strip` (asserted textually by
+    `test_html_uses_one_view_model_for_screen_print_filters_and_evidence`),
+    but that only proves the selector text exists in the stylesheet, not that
+    it actually applies to this page's new wrapper. This renders the race
+    page under `media="print"` and reads the wrapper's own computed style."""
+    view_model = _personalization_enabled_view_model(tmp_path)
+    html_path = _write_race_html(tmp_path, view_model, RESULTS_RACE_ID)
+
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        JSON.stringify({
+          stickyHeaderDisplay: getComputedStyle(document.querySelector('.sticky-header')).display,
+        })
+        """,
+        media="print",
+    )
+
+    assert result["stickyHeaderDisplay"] == "none"
+
+
 def test_a_race_page_shares_its_own_canonical_address(tmp_path: Path) -> None:
     """Issue #136 item 7: sharing a race produces that race's own link.
 
