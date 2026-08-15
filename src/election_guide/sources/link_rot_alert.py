@@ -21,7 +21,7 @@ from election_guide.sources.link_check_state import LinkCheckState
 
 MARKER = "link-rot-check:monitor"
 ISSUE_TITLE = "Cited source links are unreachable"
-ISSUE_LABELS: tuple[str, ...] = ("type: ops", "data: endorsements")
+ISSUE_LABELS: tuple[str, ...] = ("type: ops", "area: operations")
 
 
 class AlertAction(Enum):
