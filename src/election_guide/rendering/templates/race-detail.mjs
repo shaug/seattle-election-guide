@@ -175,6 +175,7 @@ function candidateSectionTemplate(candidate) {
           ? 'race-detail-candidate race-detail-candidate-tied'
           : 'race-detail-candidate'
     }
+    id=${`candidate-${candidate.candidateId}`}
     data-race-detail-candidate-id=${candidate.candidateId}
   ><div class="race-detail-candidate-heading">${
     candidate.inHeadline

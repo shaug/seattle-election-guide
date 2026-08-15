@@ -93,7 +93,13 @@
        The share and its bar are not here any more: they ride the complete
        result block above the lens bar, which states every choice rather
        than only the endorsed ones (#370). #}
+    {# `id` is the anchor the RESULT block's own tally row links down to
+       (`_results.html.j2`), so a reader who finds a name above the lens bar
+       can reach that candidate's endorsements. Distinct from the
+       `data-` attribute beside it, which is the client's addressing space
+       and never a link target (docs/FRONTEND.md, The data contract). #}
     <section class="race-detail-candidate{% if in_headline %} race-detail-candidate-leader race-detail-candidate-headlined{% elif tied %} race-detail-candidate-tied{% endif %}"
+      id="candidate-{{ candidate.candidate_id }}"
       data-race-detail-candidate-id="{{ candidate.candidate_id }}">
       <div class="race-detail-candidate-heading">
         {% if not in_headline %}
@@ -163,7 +169,7 @@
        below) decides whether it renders at all. #}
     {% if race_results %}
     <div class="race-detail-certified-result">
-      {{ result_block(race_results) }}
+      {{ result_block(race_results, race_detail.candidates | map(attribute='candidate_id') | list) }}
     </div>
     {% endif %}
     {# The same strip the guide renders, for the same reason: a reader who

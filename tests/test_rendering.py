@@ -1128,9 +1128,18 @@ def _section_order(body: str) -> list[str]:
 
 
 def _block_order(body: str) -> list[str]:
-    """The choice labels of the RESULT block's tally rows, in rendered order."""
+    """The choice labels of the RESULT block's tally rows, in rendered order.
+
+    A label is wrapped in an anchor when that choice has a section to link
+    down to and bare when it does not, so this reads the name span's text
+    rather than matching either shape.
+    """
     tally = body.split('<div class="race-results-tally">')[1].split('<p class="race-results')[0]
-    return re.findall(r'race-results-name">([^<]+?)(?: <span|</span)', tally)
+    names = re.findall(r'<span class="race-results-name">(.*?)</span>\n', tally, re.DOTALL)
+    without_chip = [
+        re.sub(r'<span class="race-detail-result-chip">.*?</span>', "", name) for name in names
+    ]
+    return [re.sub(r"<[^>]+>", "", name).strip() for name in without_chip]
 
 
 def _with_results(tmp_path: Path, results: ElectionResults | None = None) -> PublicationViewModel:
@@ -1170,18 +1179,21 @@ def test_certified_results_render_the_race_detail_pages_complete_result_block(
     # Every outcome, in finish order, each on the one shared full-width scale.
     assert body.count('<div class="race-results-row') == 4
     assert (
-        '<span class="race-results-name">Dominique M Scarimbolo '
+        '<span class="race-results-name"><a href="#candidate-king-county-assessor'
+        '--dominique-m-scarimbolo">Dominique M Scarimbolo</a> '
         '<span class="race-detail-result-chip">Advances</span></span> '
         '<span class="race-results-share">32.0%</span> '
         '<span class="race-results-bar"><i style="width:32.0%"></i></span>'
         in _collapse_whitespace(body)
     )
     assert (
-        '<span class="race-results-name">Christopher Roberts '
-        '<span class="race-detail-result-chip">Advances</span></span>' in body
+        '<a href="#candidate-king-county-assessor--christopher-roberts">'
+        "Christopher Roberts</a> "
+        '<span class="race-detail-result-chip">Advances</span>' in body
     )
-    # The two choices no source endorsed, which have no section below the bar
-    # at all, are stated here -- trailing, so no chip.
+    # The two choices no source endorsed have no section below the bar to
+    # scroll to, so their names are plain text rather than a link that would
+    # go nowhere -- trailing, so no chip either.
     assert '<span class="race-results-name">Rob Foxcurran</span>' in body
     assert '<span class="race-results-name">Al Dams</span>' in body
     assert body.index("Rob Foxcurran") < body.index("Al Dams")
@@ -1255,6 +1267,55 @@ def test_certified_results_render_the_race_detail_pages_complete_result_block(
     assert "race-detail-candidate-result" not in body
     assert "race-detail-result-bar" not in body
     assert "race-detail-result-share" not in body
+
+
+def test_a_tally_row_links_to_the_candidates_own_section(tmp_path: Path) -> None:
+    """A reader who finds a name in the block can reach that candidate's
+    endorsements without hunting for them: the tally row's name is a link to
+    the section below, and the section carries the id it targets.
+
+    Only for a choice that has a section. A choice no source endorsed has
+    none (`candidate_endorsement_groups`), which is the whole reason the
+    block states every choice -- so its name stays plain text rather than a
+    link to an anchor that is not on the page."""
+    body = _body_only(_race_html(_with_results(tmp_path), RESULTS_RACE_ID))
+
+    linked = re.findall(r'<span class="race-results-name"><a href="#([^"]+)"', body)
+    assert linked == [
+        f"candidate-{RESULTS_RACE_ID}--dominique-m-scarimbolo",
+        f"candidate-{RESULTS_RACE_ID}--christopher-roberts",
+    ], "exactly the two choices with a section, in the block's own finish order"
+
+    # Every anchor the block points at is an id on that candidate's own
+    # section -- the link resolves rather than scrolling nowhere.
+    sections = body.split('<div class="race-detail-candidates"')[1]
+    section_anchors = dict(
+        re.findall(
+            r'id="(candidate-[^"]+)"\s+data-race-detail-candidate-id="([^"]+)"',
+            sections,
+        )
+    )
+    for anchor in linked:
+        assert anchor in section_anchors, f"{anchor} is not an id on the page"
+        assert section_anchors[anchor] == anchor.removeprefix("candidate-"), (
+            f"{anchor} is an id on some other candidate's section"
+        )
+
+
+def test_the_race_cards_tally_rows_carry_no_section_links(tmp_path: Path) -> None:
+    """The same block on a race card links nothing: the guide has no
+    candidate sections to scroll to, and an anchor into another page is not
+    what the card's own name means. The card's whole recommendation area is
+    already one link to the race's page (`.race-card-primary`), so a second
+    link nested inside it would be a link inside a link."""
+    with_results = _with_results(tmp_path)
+
+    configuration = read_rendering_configuration(RENDERING_CONFIG)
+    card = _race_card_html(render_html_document(with_results, configuration), RESULTS_RACE_ID)
+
+    assert '<div class="race-results">' in card, "the card renders the block at all"
+    assert '<span class="race-results-name">Dominique M Scarimbolo ' in card
+    assert '<a href="#candidate-' not in card
 
 
 def test_the_result_block_names_a_winner_no_source_endorsed(tmp_path: Path) -> None:
@@ -1419,8 +1480,10 @@ def test_certified_measure_results_render_both_choices_as_tally_rows(
         '<span class="race-detail-result-chip">Rejected</span></span> '
         '<span class="race-results-share">60.0%</span>' in _collapse_whitespace(body)
     )
-    assert '<span class="race-results-name">Yes</span>' in body
-    assert body.index('"race-results-name">No ') < body.index('"race-results-name">Yes<')
+    # "Yes" is the endorsed side in this dataset, so it has a section and its
+    # tally row links down to it; "No" has none and stays plain text.
+    assert '<a href="#candidate-' + MEASURE_RACE_ID + '--yes">Yes</a>' in body
+    assert body.index('"race-results-name">No ') < body.index('race-results-name"><a href')
     assert '<p class="race-results-provenance">50,000 ballots · King County Elections</p>' in body
 
 

@@ -18,6 +18,15 @@
    page it is the entire reason the block exists, since a winner nobody
    endorsed has no candidate section to carry a result.
 
+   `section_candidate_ids` names the choices that have a section on this page,
+   whose tally row then links down to it. Empty by default, which is the race
+   card: the guide has no candidate sections to reach, and the card's whole
+   recommendation area is already one link to the race's page, so a link here
+   would nest inside it. The same emptiness is why the parameter names the
+   choices rather than the page — a choice nobody endorsed has no section on
+   either surface, and its name stays plain rather than pointing at an anchor
+   that is not there.
+
    Each page keeps its own frame around this markup — the card's rule, which
    is the block's own default (guide-race.css), and the page's tone band,
    which switches that default off (`.race-detail-certified-result`,
@@ -35,7 +44,7 @@
    results file is committed, so the guide's parity fixture carries no
    `.race-results` at all and the release screenshots cannot see whitespace;
    it is a courtesy to the diff, not a checked invariant. #}
-{% macro result_block(view) -%}
+{% macro result_block(view, section_candidate_ids=()) -%}
 <div class="race-results">
               <div class="race-results-head">
                 <span class="race-results-eyebrow">Result</span>
@@ -43,8 +52,9 @@
               </div>
               <div class="race-results-tally">
                 {% for outcome in view.outcomes %}
+                {% set linked = outcome.candidate_id in section_candidate_ids %}
                 <div class="race-results-row{{ '' if outcome.advanced else ' race-results-row-trailing' }}">
-                  <span class="race-results-name">{{ outcome.candidate_label }}{% if outcome.chip_label %} <span class="race-detail-result-chip">{{ outcome.chip_label }}</span>{% endif %}</span>
+                  <span class="race-results-name">{% if linked %}<a href="#candidate-{{ outcome.candidate_id }}">{{ outcome.candidate_label }}</a>{% else %}{{ outcome.candidate_label }}{% endif %}{% if outcome.chip_label %} <span class="race-detail-result-chip">{{ outcome.chip_label }}</span>{% endif %}</span>
                   <span class="race-results-share">{{ outcome.percentage_label }}</span>
                   <span class="race-results-bar"><i style="width:{{ outcome.percentage_label }}"></i></span>
                 </div>

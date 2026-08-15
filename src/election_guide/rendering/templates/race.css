@@ -31,10 +31,13 @@
    endorsements below it.
 
    Left-adjusted, not centered: this band's horizontal padding is the page
-   head's own (`clamp(1rem, 4vw, 3rem)`, base.css), so the block's eyebrow
-   lands on exactly the race name's left edge. The block is capped rather
-   than run to the full width of a wide page, where a share bar stops being
-   readable as a length.
+   head's own (`clamp(1rem, 4vw, 3rem)`, base.css), so the block runs the
+   same measure as the endorsement sections below it — eyebrow on the race
+   name's left edge, bars ending where the sections end. #354 ratified a
+   narrower cap here, on the reasoning that a share bar stops reading as a
+   length once it runs too wide; live review found the opposite, that a
+   capped block reads as unfinished against the full-width content beneath
+   it, and the cap came off (#370).
 
    This band is the whole of the separation, so the block's own default
    frame — the rule a race card draws above it — is switched off here.
@@ -42,7 +45,16 @@
    rather than being scoped to the card: both tidier placements weaken one
    of two checks, and this undo is what keeps them at full strength. */
 .race-detail-certified-result { padding: .85rem clamp(1rem, 4vw, 3rem) .95rem; border-bottom: 1px solid var(--tone-neutral-border); background: var(--tone-neutral-bg); color: var(--tone-neutral-text); }
-.race-detail-certified-result .race-results { max-width: 44rem; margin-top: 0; padding-top: 0; border-top: 0; }
+.race-detail-certified-result .race-results { margin-top: 0; padding-top: 0; border-top: 0; }
+/* A tally row's name is a link down to that candidate's own section (#370,
+   live review). It keeps the row's own ink rather than taking the site's
+   link blue -- the block is a table of facts, and a row of blue names would
+   read as the page's primary navigation rather than as a shortcut past the
+   lens bar. The underline on hover is the same affordance an evidence row
+   already uses (`a.race-detail-source-row:hover strong`). */
+.race-results-name a { color: inherit; text-decoration: none; }
+.race-results-name a:hover { text-decoration: underline; text-underline-offset: .15em; }
+.race-results-name a:focus-visible { outline: .2rem solid var(--focus); outline-offset: .15rem; }
 .race-detail { min-width: 0; padding: 1rem clamp(1rem, 4vw, 3rem) 4rem; }
 .race-detail :focus-visible { outline: .2rem solid var(--focus); outline-offset: .15rem; }
 /* The headline: the recommendation's name, then the caption row, then the
