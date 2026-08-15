@@ -1142,13 +1142,30 @@ def _block_order(body: str) -> list[str]:
     return [re.sub(r"<[^>]+>", "", name).strip() for name in without_chip]
 
 
+def _revalidated_results(results: ElectionResults) -> ElectionResults:
+    """One results file re-run through its own schema.
+
+    `model_copy(update=...)` does not re-run validators, so a test that
+    synthesizes an outcome set by copying one gets no check at all -- and
+    `RaceResults` carries a real invariant a rendering test can silently
+    violate: declared shares sum to ~1 (`SHARE_SUM_TOLERANCE`,
+    `results/models.py`). A fixture that breaks it renders percentages no
+    certified canvass could produce, which is worse than useless in a
+    screenshot handed to a human for review. Every synthesized fixture here
+    goes through this, so an impossible race fails the test that built it
+    rather than reaching a page.
+    """
+    return ElectionResults.model_validate(results.model_dump(mode="json"))
+
+
 def _with_results(tmp_path: Path, results: ElectionResults | None = None) -> PublicationViewModel:
     """The fixture view model with a certified results file attached, built
     the way every results-era test in this file builds one."""
     without_results = _view_model(tmp_path / "without-results")
     results_root = tmp_path / "with-results"
     results_root.mkdir(exist_ok=True)
-    return without_results.model_copy(update={"results": results or _valid_results(results_root)})
+    attached = results or _valid_results(results_root)
+    return without_results.model_copy(update={"results": _revalidated_results(attached)})
 
 
 def test_certified_results_render_the_race_detail_pages_complete_result_block(
@@ -1331,12 +1348,24 @@ def test_the_result_block_names_a_winner_no_source_endorsed(tmp_path: Path) -> N
     results_root = tmp_path / "with-results"
     results_root.mkdir()
     certified = _valid_results(results_root)
+    # Al Dams takes the race; the other three split what is left. The shares
+    # sum to 1 because a certified race's do -- `_revalidated_results` holds
+    # this fixture to the same invariant `results ingest` produces.
+    losing_shares = {
+        f"{RESULTS_RACE_ID}--dominique-m-scarimbolo": 0.21,
+        f"{RESULTS_RACE_ID}--christopher-roberts": 0.20,
+        f"{RESULTS_RACE_ID}--rob-foxcurran": 0.18,
+    }
     unendorsed_winner = certified.races[0].model_copy(
         update={
             "outcomes": [
                 outcome.model_copy(
                     update={
-                        "share": 0.41 if outcome.choice_id.endswith("al-dams") else 0.21,
+                        "share": (
+                            0.41
+                            if outcome.choice_id.endswith("al-dams")
+                            else losing_shares[outcome.choice_id]
+                        ),
                         "advanced": outcome.choice_id.endswith("al-dams"),
                     }
                 )
