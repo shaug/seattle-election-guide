@@ -91,11 +91,56 @@ that export is not built here: the follow-up is a scheduled pull against the Gra
 API (same `httpRequestsAdaptiveGroups` dataset, queryable with a scoped API token) that archives
 daily rollups before they age out of the dashboard's window.
 
-## Client-side beacon (O10, not this ticket)
+## Client-side beacon (O10)
 
-`Analytics → Web analytics` is already collecting real Core Web Vitals data (LCP/INP/CLS) for
-specific `/e/wa-2026-primary/...` page URLs, and `/cdn-cgi/rum` shows up in the zone's top-paths
-report. Whether this is Cloudflare Pages' automatic beacon injection or something else, and
-whether it's compatible with the artifact-integrity chain described in #205, is #218's
-investigation, not this ticket's — noted here only because it bears on "what traffic data lives
-where."
+**Answer: Cloudflare Pages' automatic Web Analytics beacon injection works for this project's
+advanced-mode `_worker.js`, and it is already enabled and reporting.** No repository change was
+needed, so the worker-side-injection question this ticket raised — and the auditability trade-off
+attached to it — never had to be decided.
+
+`Analytics → Web analytics` (dashboard, not the zone-level `HTTP Traffic` view O9 documented)
+lists a site for `seattleelections.guide`, created 2026-07-22, with **Automatic setup** and Real
+User Measurements set to **"Enable, excluding visitor data in the EU"** — meaning Cloudflare
+injects the beacon `<script>` itself; nothing in this repository requests or renders it.
+
+That configuration predates this ticket, so the open question was whether it actually still works
+now that the site ships an advanced-mode `_worker.js` that owns every response. Two checks
+resolved it:
+
+- **`curl` (even with a spoofed Chrome user agent, cache-busted, from a non-EU US IP) never
+  receives the beacon.** Checked against `/`, `/about/`, and `/e/wa-2026-primary/`. The response
+  does contain other Cloudflare edge-injected content on the same request — the
+  `/cdn-cgi/scripts/.../email-decode.min.js` tag from Email Address Obfuscation — proving the edge
+  still rewrites this worker's HTML in flight; the beacon specifically is just absent.
+- **A real Chrome session loading the same URL does receive it.** DOM inspection showed a
+  `<script src="https://static.cloudflareinsights.com/beacon.min.js/...">` tag, and the page fired
+  a request to it. The likely explanation is that Cloudflare's RUM injector skips requests it
+  scores as non-browser/bot traffic — unsurprising for a bare `curl`, spoofed UA notwithstanding —
+  rather than skipping the worker's responses generally.
+
+So the mechanism does work through the advanced-mode worker; only synthetic, bot-scored requests
+miss it. Live data confirms it, last 21 days (2026-07-25 to 2026-08-15, bots excluded):
+
+- **2.24k visits, 3.25k page views**, broken down per page URL (top: the primary election's
+  comparisons page, individual race pages, `/about/`).
+- **Referrers**: None/direct 1.27k, self-referral (internal navigation) 1.01k, `l.threads.com` 920,
+  `www.bing.com` 10, `search.yahoo.com` 10. This is the one dimension O9's zone analytics could not
+  answer at all — RUM fills exactly that gap, and surfaces Threads as a real, previously invisible
+  traffic source.
+- **Device mix**: Mobile ~2.28k, Desktop 960, Tablet 10.
+- **Country**: United States 3.24k, Canada 10 — negligible EU traffic today, so the "excluding
+  visitor data in the EU" setting has no material effect on current coverage.
+- **Core Web Vitals** (LCP/INP/CLS): Good on all three, consistent with O9's separate finding that
+  `Analytics → Web analytics` was already surfacing real vitals data before this investigation.
+
+**On the auditability concern.** The ticket's caution against worker-side injection was that
+`hosting verify`'s hash checks cover the staged bundle this repository builds and uploads, so a
+worker that rewrote HTML in flight would make served bytes diverge from anything the manifest
+attests to. Cloudflare's own automatic beacon injection has the same effect on served bytes — it
+just isn't code this repository authors, ships, or reviews. `hosting verify` was never able to
+attest to what Cloudflare's edge does to a response after it leaves this repository's build
+output; Email Address Obfuscation was already proof of that before this ticket. Automatic Web
+Analytics doesn't narrow that boundary any further, so it didn't need the same explicit yes/no as
+writing the equivalent behavior into `_worker.js` would have.
+
+No change to rendered guide output was made or is needed in either outcome.
