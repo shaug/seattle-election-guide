@@ -14,9 +14,9 @@ dependencies = [
   "jinja2>=3.1,<4",
   "pillow>=11,<13",
   "pydantic>=2.10,<3",
-  "pypdf>=5,<7",
+  "pypdf>=6.15.0,<7",
   "pyyaml>=6.0,<7",
-  "typer>=0.15,<1",
+  "typer>=0.27.1,<1",
   "websocket-client>=1.8,<2",
 ]
 
@@ -27,7 +27,7 @@ election-guide = "election_guide.cli:app"
 dev = [
   "pyright>=1.1.390",
   "pytest>=8.3",
-  "ruff>=0.9",
+  "ruff>=0.16.2",
 ]
 
 [tool.hatch.build.targets.wheel]
