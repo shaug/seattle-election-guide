@@ -10,6 +10,7 @@ here for the same reason.
 
 from __future__ import annotations
 
+import http.client
 import urllib.error
 import urllib.request
 from urllib.parse import urljoin, urlsplit
@@ -89,7 +90,11 @@ def fetch_manifest_body(base_url: str, *, timeout: float) -> tuple[Observation, 
         return Observation(
             status=error.code, location=_location_path(error.headers.get("Location"))
         ), None
-    except (urllib.error.URLError, TimeoutError, OSError) as error:
+    except (urllib.error.URLError, TimeoutError, OSError, http.client.HTTPException) as error:
+        # http.client.HTTPException (e.g. IncompleteRead, raised by
+        # response.read() below the declared Content-Length) is not an
+        # OSError or URLError, so a truncated response needs its own arm
+        # here — unlike probe(), which never reads a body and cannot hit it.
         return Observation(error=str(error)), None
 
 

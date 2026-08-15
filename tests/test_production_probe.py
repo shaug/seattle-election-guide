@@ -74,6 +74,20 @@ class _BrokenManifestHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
 
+class _TruncatedManifestHandler(BaseHTTPRequestHandler):
+    """Declares a body longer than it sends, then drops the connection."""
+
+    def log_message(self, format: str, *args: object) -> None:
+        pass
+
+    def do_GET(self) -> None:
+        self.send_response(200)
+        self.send_header("Content-Length", "1000")
+        self.end_headers()
+        self.wfile.write(b"short")
+        self.close_connection = True
+
+
 def _start(handler: type[BaseHTTPRequestHandler]) -> Iterator[str]:
     httpd = HTTPServer(("127.0.0.1", 0), handler)
     thread = threading.Thread(target=httpd.serve_forever, daemon=True)
@@ -93,6 +107,11 @@ def server() -> Iterator[str]:
 @pytest.fixture
 def broken_manifest_server() -> Iterator[str]:
     yield from _start(_BrokenManifestHandler)
+
+
+@pytest.fixture
+def truncated_manifest_server() -> Iterator[str]:
+    yield from _start(_TruncatedManifestHandler)
 
 
 def test_probe_observes_a_redirect_without_following_it(server: str) -> None:
@@ -180,6 +199,19 @@ def test_fetch_manifest_body_reports_a_non_200_without_a_body(broken_manifest_se
 
 def test_fetch_manifest_body_reports_a_connection_failure() -> None:
     observation, body = fetch_manifest_body("http://127.0.0.1:1", timeout=1)
+
+    assert observation.status is None
+    assert observation.error is not None
+    assert body is None
+
+
+def test_fetch_manifest_body_reports_a_truncated_response_instead_of_crashing(
+    truncated_manifest_server: str,
+) -> None:
+    """A response shorter than its own declared Content-Length raises
+    http.client.IncompleteRead — not an OSError or URLError — and must
+    still come back as a reported failure rather than an uncaught raise."""
+    observation, body = fetch_manifest_body(truncated_manifest_server, timeout=5)
 
     assert observation.status is None
     assert observation.error is not None

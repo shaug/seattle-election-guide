@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, ValidationError
+from pydantic import BaseModel, ConfigDict, Field
 
 from election_guide.hosting.models import DeploymentManifest
 
@@ -133,8 +133,13 @@ def evaluate_manifest(
     if not result.ok or body is None:
         return result, None, None
     try:
+        # ValueError covers json.JSONDecodeError, ValidationError, and a
+        # non-UTF-8 body's UnicodeDecodeError (json.loads decodes bytes
+        # itself) in one catch — all three are ValueError subclasses, and a
+        # production response that fails any of them should FAIL this check,
+        # not crash the caller uncaught.
         manifest = DeploymentManifest.model_validate(json.loads(body))
-    except (json.JSONDecodeError, ValidationError) as error:
+    except ValueError as error:
         return result, None, str(error)
     return result, manifest, None
 

@@ -142,6 +142,18 @@ def test_evaluate_manifest_reports_unparseable_json_on_an_otherwise_ok_response(
     assert error is not None
 
 
+def test_evaluate_manifest_reports_a_non_utf8_body_instead_of_crashing() -> None:
+    """`json.loads` decodes bytes itself; a non-UTF-8 body must FAIL the
+    check, not raise an uncaught UnicodeDecodeError past this function."""
+    observation = Observation(status=200)
+
+    result, manifest, error = evaluate_manifest(observation, b"\xff\xfe not utf-8 at all")
+
+    assert result.ok
+    assert manifest is None
+    assert error is not None
+
+
 def test_evaluate_manifest_reports_a_schema_violation() -> None:
     observation = Observation(status=200)
     body = json.dumps({"schema_version": "2.0"}).encode("utf-8")
