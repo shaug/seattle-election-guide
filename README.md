@@ -73,8 +73,10 @@ six-source evaluation and deterministic scoring impact,
 publication view model, and [docs/RENDERING.md](docs/RENDERING.md) for HTML generation and visual
 inspection. [docs/RELEASE.md](docs/RELEASE.md) documents final audit and versioned GitHub
 Release publication, and [docs/HOSTING.md](docs/HOSTING.md) documents automatic Cloudflare Pages
-deployment with Wrangler. Deterministic JSON and CSV exports, provenance and build manifests, the
-complete source matrix, and the single renderer-facing view model are implemented.
+deployment with Wrangler. [docs/DEPENDENCY_UPDATES.md](docs/DEPENDENCY_UPDATES.md) documents the
+scheduled, grouped Dependabot updates and the election-window exclusion. Deterministic JSON and
+CSV exports, provenance and build manifests, the complete source matrix, and the single
+renderer-facing view model are implemented.
 
 ## Development
 

@@ -1,0 +1,40 @@
+# Update PRs, not silent drift or auto-merge. `make check` (CI) is the gate
+# that decides whether an update is safe, exactly as it gates a human's PR —
+# see docs/DEPENDENCY_UPDATES.md for the schedule and the election-window
+# exclusion.
+version: 2
+
+updates:
+  - package-ecosystem: "uv"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/Los_Angeles"
+    groups:
+      python-dependencies:
+        patterns:
+          - "*"
+    labels:
+      - "area: operations"
+      - "type: ops"
+    commit-message:
+      prefix: "chore(deps)"
+
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/Los_Angeles"
+    groups:
+      npm-dependencies:
+        patterns:
+          - "*"
+    labels:
+      - "area: operations"
+      - "type: ops"
+    commit-message:
+      prefix: "chore(deps)"
