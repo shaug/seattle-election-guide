@@ -9,11 +9,15 @@ name: Verify production
 # minutes unconditionally and a first step decides whether the run is
 # actually due: always, inside the pre-election window (`calendar
 # in-window`, D5 — election timing has exactly one source of truth), and
-# otherwise only on the hour. That keeps one workflow at one file rather than
-# a second, differently-scheduled copy, mirroring calendar.yml's own
-# off-the-hour self-throttling. As with that workflow, GitHub's schedules are
-# best effort and can be delayed or dropped under load; re-running is free,
-# because a scheduled check is idempotent by nature.
+# otherwise once an hour, at :15 rather than :00 — calendar.yml's own comment
+# names the top of the hour as GitHub's most congested slot, where a run once
+# fired 45 minutes late; a delayed :00 tick would then read past its own
+# minute and skip that hour's baseline check entirely. That keeps one
+# workflow at one file rather than a second, differently-scheduled copy,
+# mirroring calendar.yml's off-the-hour self-throttling in effect if not in
+# exact minute. As with that workflow, GitHub's schedules are best effort and
+# can be delayed or dropped under load; re-running is free, because a
+# scheduled check is idempotent by nature.
 on:
   schedule:
     - cron: "*/15 * * * *"
@@ -53,7 +57,7 @@ jobs:
           if uv run election-guide calendar in-window config/calendar/elections.yaml \
               --before-days 7; then
             echo "due=true" >> "$GITHUB_OUTPUT"
-          elif [ "$(date -u +%M)" = "00" ]; then
+          elif [ "$(date -u +%M)" = "15" ]; then
             echo "due=true" >> "$GITHUB_OUTPUT"
           else
             echo "due=false" >> "$GITHUB_OUTPUT"

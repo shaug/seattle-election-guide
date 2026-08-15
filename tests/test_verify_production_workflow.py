@@ -58,6 +58,17 @@ def test_the_cadence_step_consults_the_pre_election_window() -> None:
     assert "config/calendar/elections.yaml" in cadence_step["run"]
 
 
+def test_the_hourly_fallback_avoids_the_congested_top_of_the_hour() -> None:
+    """calendar.yml documents the top of the hour as GitHub's most congested
+    cron slot — a run there once fired 45 minutes late, which would make a
+    :00 fallback silently skip its own hour by the time it finally executes."""
+    workflow = _workflow()
+    steps = _steps(workflow)
+    cadence_step = next(step for step in steps if step.get("id") == "cadence")
+
+    assert '"$(date -u +%M)" = "00"' not in cadence_step["run"]
+
+
 def test_the_verify_step_compares_against_the_current_main_commit() -> None:
     workflow = _workflow()
     steps = _steps(workflow)

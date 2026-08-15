@@ -29,20 +29,31 @@ MANIFEST_BODY = (
 
 
 class _Handler(BaseHTTPRequestHandler):
+    """Redirects with an absolute URL, matching the deployed Pages worker.
+
+    `_pages_worker`'s `redirectPath` calls `Response.redirect(target.toString(), status)`,
+    which always emits an absolute URL — confirmed live against production.
+    A fixture that sent a bare path here previously masked
+    `production_probe`'s comparison bug (issue #222 review).
+    """
+
     def log_message(self, format: str, *args: object) -> None:
         pass
+
+    def _absolute(self, path: str) -> str:
+        return f"http://{self.headers.get('Host')}{path}"
 
     def do_GET(self) -> None:
         if self.path == "/":
             self.send_response(307)
-            self.send_header("Location", "/e/wa-2026-primary/")
+            self.send_header("Location", self._absolute("/e/wa-2026-primary/"))
             self.end_headers()
         elif self.path == "/e/wa-2026-primary/":
             self.send_response(200)
             self.end_headers()
         elif self.path == "/e/wa-2026-primary/voter-guide.pdf":
             self.send_response(301)
-            self.send_header("Location", "/e/wa-2026-primary/")
+            self.send_header("Location", self._absolute("/e/wa-2026-primary/"))
             self.end_headers()
         elif self.path == "/deployment-manifest.json":
             self.send_response(200)
@@ -94,6 +105,21 @@ def test_probe_observes_a_redirect_without_following_it(server: str) -> None:
     assert observed.status == 307
     assert observed.location == "/e/wa-2026-primary/"
     assert observed.error is None
+
+
+def test_probe_normalizes_an_absolute_location_to_a_bare_path(server: str) -> None:
+    """The deployed worker always redirects with an absolute URL; a route
+    check's `expected_location` is path-only, so the observed location must
+    be reduced to a path before either side can be compared."""
+    check = RouteCheck(
+        name="home redirect", path="/", expected_status=307, expected_location="/e/wa-2026-primary/"
+    )
+
+    observed = probe(server, check, timeout=5)
+
+    assert observed.location is not None
+    assert not observed.location.startswith("http")
+    assert observed.location == "/e/wa-2026-primary/"
 
 
 def test_probe_observes_a_permanent_redirect(server: str) -> None:

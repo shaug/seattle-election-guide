@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import urllib.error
 import urllib.request
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlsplit
 
 from election_guide.hosting.production_check import (
     MANIFEST_PATH,
@@ -44,14 +44,33 @@ def _request(url: str) -> urllib.request.Request:
     return urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
 
 
+def _location_path(location: str | None) -> str | None:
+    """Reduce a `Location` header to its path, absolute or relative alike.
+
+    The deployed Pages worker always redirects with an absolute URL
+    (`_pages_worker`'s `redirectPath` calls `target.toString()`), confirmed
+    live against production — `curl -I https://seattleelections.guide/`
+    returns `location: https://seattleelections.guide/e/.../`, never a bare
+    path. `RouteCheck.expected_location` is path-only, so comparing the raw
+    header would fail every redirect check unconditionally.
+    """
+    if location is None:
+        return None
+    return urlsplit(location).path
+
+
 def probe(base_url: str, check: RouteCheck, *, timeout: float) -> Observation:
     """Make one unfollowed request and report exactly what came back."""
     url = urljoin(base_url, check.path)
     try:
         with _OPENER.open(_request(url), timeout=timeout) as response:
-            return Observation(status=response.status, location=response.headers.get("Location"))
+            return Observation(
+                status=response.status, location=_location_path(response.headers.get("Location"))
+            )
     except urllib.error.HTTPError as error:
-        return Observation(status=error.code, location=error.headers.get("Location"))
+        return Observation(
+            status=error.code, location=_location_path(error.headers.get("Location"))
+        )
     except (urllib.error.URLError, TimeoutError, OSError) as error:
         return Observation(error=str(error))
 
@@ -63,11 +82,13 @@ def fetch_manifest_body(base_url: str, *, timeout: float) -> tuple[Observation, 
         with _OPENER.open(_request(url), timeout=timeout) as response:
             body = response.read()
             observation = Observation(
-                status=response.status, location=response.headers.get("Location")
+                status=response.status, location=_location_path(response.headers.get("Location"))
             )
             return observation, body
     except urllib.error.HTTPError as error:
-        return Observation(status=error.code, location=error.headers.get("Location")), None
+        return Observation(
+            status=error.code, location=_location_path(error.headers.get("Location"))
+        ), None
     except (urllib.error.URLError, TimeoutError, OSError) as error:
         return Observation(error=str(error)), None
 
