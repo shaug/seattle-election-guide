@@ -166,6 +166,11 @@ def test_evaluate_manifest_reports_a_schema_violation() -> None:
 
 
 def _healthy_report() -> ProductionCheckReport:
+    """Shared across test_production_check.py, test_production_alert.py, and
+    test_hosting_check_production_cli.py — imported by the other two rather
+    than redefined, matching this repository's cross-file private-import
+    convention (e.g. `tests/test_compare_rendering.py` importing `_bundle`
+    from `tests/test_comparisons.py`)."""
     manifest_result = RouteCheckResult(check=MANIFEST_CHECK, observed=Observation(status=200))
     route_results = tuple(
         RouteCheckResult(
@@ -182,8 +187,19 @@ def _healthy_report() -> ProductionCheckReport:
     )
 
 
+def _failing_report() -> ProductionCheckReport:
+    """Shared the same way as `_healthy_report` above."""
+    return _healthy_report().model_copy(
+        update={"commit": CommitCheck(expected=COMMIT, observed="f" * 40)}
+    )
+
+
 def test_a_fully_healthy_report_is_ok() -> None:
     assert _healthy_report().ok
+
+
+def test_a_failing_report_is_not_ok() -> None:
+    assert not _failing_report().ok
 
 
 def test_a_report_is_not_ok_when_the_manifest_itself_failed() -> None:

@@ -12,40 +12,12 @@ from typer.testing import CliRunner
 
 from election_guide import cli
 from election_guide.hosting.production_alert import ProductionAlertTracker
-from election_guide.hosting.production_check import (
-    MANIFEST_CHECK,
-    CommitCheck,
-    Observation,
-    ProductionCheckReport,
-    RouteCheckResult,
-    plan_route_checks,
+from election_guide.hosting.production_check import ProductionCheckReport
+from tests.test_production_check import (
+    COMMIT,
+    _failing_report,  # pyright: ignore[reportPrivateUsage]
+    _healthy_report,  # pyright: ignore[reportPrivateUsage]
 )
-
-CURRENT_ID = "wa-2026-primary"
-COMMIT = "a" * 40
-
-
-def _healthy_report() -> ProductionCheckReport:
-    manifest_result = RouteCheckResult(check=MANIFEST_CHECK, observed=Observation(status=200))
-    route_results = tuple(
-        RouteCheckResult(
-            check=check,
-            observed=Observation(status=check.expected_status, location=check.expected_location),
-        )
-        for check in plan_route_checks(CURRENT_ID)
-    )
-    return ProductionCheckReport(
-        manifest=manifest_result,
-        current_election_id=CURRENT_ID,
-        route_results=route_results,
-        commit=CommitCheck(expected=COMMIT, observed=COMMIT),
-    )
-
-
-def _failing_report() -> ProductionCheckReport:
-    return _healthy_report().model_copy(
-        update={"commit": CommitCheck(expected=COMMIT, observed="f" * 40)}
-    )
 
 
 def _stub_failing_check(monkeypatch: pytest.MonkeyPatch) -> None:

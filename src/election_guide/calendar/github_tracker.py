@@ -8,35 +8,11 @@ exist and creates the missing issues; deciding what should exist belongs to
 from __future__ import annotations
 
 import json
-import subprocess
 from dataclasses import dataclass
 from typing import Any, cast
 
 from election_guide.calendar.tracking import MARKER_PREFIX, IssueRequest
-
-# Every issue in the repository has to be readable in one listing, so the bound
-# is its lifetime issue count — not the lead window, and no longer the far
-# smaller set that carried a tracking label. This repository opened its first
-# 174 issues in 17 days, so a four-figure bound is months of headroom rather
-# than years; `gh issue list` paginates to this without extra code. The read
-# fails loudly rather than truncating, because a silently dropped marker is a
-# duplicate issue — and because tripping it stops the run opening anything at
-# all.
-ISSUE_QUERY_LIMIT = 10000
-
-
-def _run(command: list[str], failure: str) -> str:
-    try:
-        completed = subprocess.run(command, capture_output=True, text=True, check=False)
-    except OSError as error:
-        raise ValueError(
-            "the GitHub CLI is required to track calendar milestones: install `gh` "
-            "(https://cli.github.com) and authenticate it"
-        ) from error
-    if completed.returncode != 0:
-        detail = completed.stderr.strip() or completed.stdout.strip()
-        raise ValueError(f"{failure}: {detail}")
-    return completed.stdout
+from election_guide.github_cli import ISSUE_QUERY_LIMIT, run_gh, trailing_line
 
 
 @dataclass(frozen=True)
@@ -81,8 +57,7 @@ def markers_in_issues(bodies: list[str]) -> set[str]:
     """
     markers: set[str] = set()
     for body in bodies:
-        lines = [line.strip() for line in body.splitlines()]
-        tail = next((line for line in reversed(lines) if line), "")
+        tail = trailing_line(body)
         if tail.startswith(MARKER_PREFIX):
             markers.add(tail)
     return markers
@@ -111,7 +86,7 @@ class GitHubIssueTracker:
         and it can omit an issue created moments earlier — precisely when a
         second run would duplicate it.
         """
-        payload = _run(
+        payload = run_gh(
             [
                 "gh",
                 "issue",
@@ -140,7 +115,7 @@ class GitHubIssueTracker:
 
     def ensure_milestone(self, title: str) -> None:
         """Create the per-election GitHub milestone unless it already exists."""
-        payload = _run(
+        payload = run_gh(
             [
                 "gh",
                 "api",
@@ -153,7 +128,7 @@ class GitHubIssueTracker:
         )
         if title in {line.strip() for line in payload.splitlines() if line.strip()}:
             return
-        _run(
+        run_gh(
             [
                 "gh",
                 "api",
@@ -184,4 +159,4 @@ class GitHubIssueTracker:
         ]
         for label in request.labels:
             command += ["--label", label]
-        return _run(command, f"could not create issue {request.title!r}").strip()
+        return run_gh(command, f"could not create issue {request.title!r}").strip()

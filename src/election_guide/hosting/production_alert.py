@@ -11,22 +11,16 @@ nothing here reopens a resolved one.
 from __future__ import annotations
 
 import json
-import subprocess
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any, cast
 
+from election_guide.github_cli import ISSUE_QUERY_LIMIT, run_gh, trailing_line
 from election_guide.hosting.production_check import ProductionCheckReport, render_summary_lines
 
 MARKER = "production-check:monitor"
 ISSUE_TITLE = "Production is not serving the expected build"
 ISSUE_LABELS: tuple[str, ...] = ("type: ops", "area: operations")
-
-# Open issues only; a triaged repository keeps this far smaller than the
-# calendar tracker's lifetime-issue-count bound, but the same "fail loudly
-# rather than truncate" reasoning applies: a dropped alert here is a
-# duplicate, not a suppressed reminder.
-ISSUE_QUERY_LIMIT = 10000
 
 
 class AlertAction(Enum):
@@ -66,25 +60,9 @@ class OpenAlert:
     number: int
 
 
-def _run(command: list[str], failure: str) -> str:
-    try:
-        completed = subprocess.run(command, capture_output=True, text=True, check=False)
-    except OSError as error:
-        raise ValueError(
-            "the GitHub CLI is required for the production-check alert: install `gh` "
-            "(https://cli.github.com) and authenticate it"
-        ) from error
-    if completed.returncode != 0:
-        detail = completed.stderr.strip() or completed.stdout.strip()
-        raise ValueError(f"{failure}: {detail}")
-    return completed.stdout
-
-
 def _carries_marker(body: str) -> bool:
     """Only the final non-empty line counts, matching the calendar tracker's convention."""
-    lines = [line.strip() for line in body.splitlines()]
-    tail = next((line for line in reversed(lines) if line), "")
-    return tail == MARKER
+    return trailing_line(body) == MARKER
 
 
 class ProductionAlertTracker:
@@ -94,7 +72,7 @@ class ProductionAlertTracker:
         self.repository = repository
 
     def find_open_alert(self) -> OpenAlert | None:
-        payload = _run(
+        payload = run_gh(
             [
                 "gh",
                 "issue",
@@ -142,16 +120,16 @@ class ProductionAlertTracker:
         ]
         for label in ISSUE_LABELS:
             command += ["--label", label]
-        return _run(command, "could not open the production-check alert issue").strip()
+        return run_gh(command, "could not open the production-check alert issue").strip()
 
     def comment(self, number: int, body: str) -> None:
-        _run(
+        run_gh(
             ["gh", "issue", "comment", str(number), "--repo", self.repository, "--body", body],
             f"could not update production-check alert issue #{number}",
         )
 
     def close(self, number: int, *, comment: str) -> None:
-        _run(
+        run_gh(
             ["gh", "issue", "close", str(number), "--repo", self.repository, "--comment", comment],
             f"could not close production-check alert issue #{number}",
         )
