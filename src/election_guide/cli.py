@@ -20,7 +20,12 @@ from pydantic import ValidationError
 
 from election_guide import __version__
 from election_guide.authorities.registry import read_authority_registry
-from election_guide.calendar import plan_issues, read_election_calendar, unmarked_collisions
+from election_guide.calendar import (
+    due_milestones,
+    plan_issues,
+    read_election_calendar,
+    unmarked_collisions,
+)
 from election_guide.calendar.github_tracker import GitHubIssueTracker
 from election_guide.collection import read_adapter_spec, refresh_source, validate_adapter
 from election_guide.collection.http import fetch_http
@@ -47,6 +52,9 @@ from election_guide.hosting import (
     verify_declared_releases_published,
     verify_staged_pages_site,
 )
+from election_guide.hosting.production_alert import ProductionAlertTracker, reconcile_alert
+from election_guide.hosting.production_check import render_summary_lines
+from election_guide.hosting.production_probe import run_production_check
 from election_guide.initialization import initialize_election, read_election_configuration
 from election_guide.inventory.importer import (
     extract_public_inputs,
@@ -264,6 +272,49 @@ def hosting_verify_releases(
     typer.echo(f"Declared releases: verified ({len(manifest.elections)} declared)")
 
 
+@hosting_app.command("check-production")
+def hosting_check_production(
+    base_url: Annotated[
+        str, typer.Argument(help="Canonical production origin, e.g. https://seattleelections.guide")
+    ],
+    expected_git_commit: Annotated[
+        str, typer.Option(help="The commit production's current-election build must match.")
+    ],
+    repository: Annotated[
+        str, typer.Option(help="GitHub repository as OWNER/NAME, for the alert issue.")
+    ] = "shaug/seattle-election-guide",
+    timeout: Annotated[float, typer.Option(help="Per-request timeout, in seconds.")] = 15.0,
+    dry_run: Annotated[
+        bool,
+        typer.Option(
+            help="Report the result without opening, updating, or closing an alert issue."
+        ),
+    ] = False,
+) -> None:
+    """Verify the deployed site's routes and commit, alerting on failure (O14)."""
+    report = run_production_check(
+        base_url, expected_git_commit=expected_git_commit, timeout=timeout
+    )
+    for line in render_summary_lines(report):
+        typer.echo(line)
+    if dry_run:
+        typer.echo("hosting check-production: dry run, no alert issue changes")
+    else:
+        try:
+            outcome = reconcile_alert(
+                ProductionAlertTracker(repository),
+                report,
+                base_url=base_url,
+                checked_at=datetime.now(UTC).isoformat(),
+            )
+        except ValueError as error:
+            typer.echo(f"hosting check-production failed: {error}", err=True)
+            raise typer.Exit(code=1) from error
+        typer.echo(f"hosting check-production: {outcome}")
+    if not report.ok:
+        raise typer.Exit(code=1)
+
+
 @calendar_app.command("validate")
 def calendar_validate(
     calendar_path: Annotated[
@@ -345,6 +396,42 @@ def calendar_track(
             err=True,
         )
     if collisions:
+        raise typer.Exit(code=1)
+
+
+@calendar_app.command("in-window")
+def calendar_in_window(
+    calendar_path: Annotated[
+        Path,
+        typer.Argument(exists=True, dir_okay=False, readable=True),
+    ] = Path("config/calendar/elections.yaml"),
+    kind: Annotated[
+        str, typer.Option(help="Milestone kind that defines the window, e.g. election_day.")
+    ] = "election_day",
+    before_days: Annotated[
+        int, typer.Option(help="Days before the milestone that count as inside the window.")
+    ] = 7,
+    as_of: Annotated[
+        str | None, typer.Option(help="Evaluate the window from this ISO 8601 date.")
+    ] = None,
+) -> None:
+    """Exit 0 when a KIND milestone falls within BEFORE_DAYS of AS_OF, else 1.
+
+    O14 raises its check cadence inside the pre-election window; this is the
+    deterministic decision a scheduled workflow gates that cadence on, reusing
+    the same due-milestone window calendar tracking already defines (D5:
+    election timing has exactly one source of truth).
+    """
+    try:
+        calendar = read_election_calendar(calendar_path)
+        today = date.fromisoformat(as_of) if as_of is not None else datetime.now(UTC).date()
+        due = due_milestones(calendar, as_of=today, lead_days=before_days)
+    except ValueError as error:
+        typer.echo(f"calendar in-window failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    in_window = any(milestone.kind == kind for milestone, _ in due)
+    typer.echo("true" if in_window else "false")
+    if not in_window:
         raise typer.Exit(code=1)
 
 
