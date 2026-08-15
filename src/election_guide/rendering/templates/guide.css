@@ -73,44 +73,14 @@ html.compact-ballot-mode .insufficient-note { padding: .38rem .48rem; font-size:
 .race-card-primary:hover { background: var(--hover-tint-bg); box-shadow: inset 0 0 0 1px var(--hover-tint-ring); }
 .race-card-primary:focus-visible { outline: .2rem solid var(--focus); outline-offset: .15rem; }
 
-/* The results strip a certified race card grows below a rule
-   (docs/RESULTS.md, Rendering § Race cards; #286): per-candidate tally rows
-   on one shared full-width scale plus a provenance line. Outside every lens
-   region (screen-race-result/-context/-foot): a certified result is a
-   permanent fact the reader's own source selection never changes, so it is
-   never re-rendered by guide-card.mjs the way the recommendation area is. */
-.race-results { margin-top: .2rem; padding-top: .65rem; border-top: 1px solid var(--row-separator); }
-.race-results-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: .3rem .5rem; margin-bottom: .5rem; }
-.race-results-eyebrow { color: var(--muted); font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
-/* Certified reads on the agree-tone family (a settled fact) -- the only
-   state this badge renders (docs/RESULTS.md, Rendering § Race cards). */
-.race-results-status { display: inline-block; padding: .08rem .5rem; border: 1px solid var(--tone-agree-border); border-radius: 1rem; background: var(--tone-agree-bg); color: var(--tone-agree-text); font-size: .68rem; font-weight: 700; letter-spacing: .02em; }
-.race-results-tally { display: grid; gap: .3rem; }
-.race-results-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .15rem .6rem; }
-/* The outcome chip is the shared `.race-detail-result-chip` (guide-race.css),
-   deliberately outside the agree/differ tone families -- neither good nor
-   bad, fact. Wraps under the name at narrow widths rather than forcing a
-   second layout, the same accommodation the race-detail page's own
-   candidate heading uses. */
-.race-results-name { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: .1rem .5rem; font-size: .92rem; font-weight: 600; color: var(--ink); }
-.race-results-share { color: var(--ink); font-size: .92rem; font-weight: 700; font-variant-numeric: tabular-nums; }
-/* One shared full-width scale (docs/RESULTS.md, Rendering): every bar in the
-   card runs the same track width, so shares compare honestly across
-   candidates -- vote share never borrows the endorsement meter's component. */
-.race-results-bar { grid-column: 1 / -1; height: .45rem; border-radius: .25rem; background: var(--meter-track); overflow: hidden; }
-.race-results-bar i { display: block; height: 100%; background: var(--navy); border-radius: .25rem; }
-.race-results-row-trailing .race-results-name, .race-results-row-trailing .race-results-share { color: var(--muted); font-weight: 500; }
-.race-results-row-trailing .race-results-bar i { background: var(--line-strong); }
-.race-results-provenance { margin: .55rem 0 0; color: var(--faint); font-size: .72rem; }
-.race-results-provenance a { color: var(--blue); }
-
 /* The shared footer band/audit classes (.site-footer, .site-footer-band,
    .site-footer-audit, ...) live in base.css alongside .site-band, since About
    and the archive render them too without loading this stylesheet. The
    sources editor's checkbox tree and coverage-gap section moved the other way,
    into sources.css, when each page gained its own stylesheet (issue 246), and
    the race-detail rules moved into race.css when race detail became a page
-   (issue #136). */
+   (issue #136). The RESULT block (`.race-results*`) moved into
+   guide-race.css when a race page started rendering it too (#370). */
 
 @media (max-width: 1050px) {
   html.compact-ballot-mode .race-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }

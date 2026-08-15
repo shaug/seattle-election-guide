@@ -7,6 +7,7 @@
 {% block body %}
   {% from '_filter_controls.html.j2' import election_controls %}
   {% from '_meter.html.j2' import segmented_meter %}
+  {% from '_results.html.j2' import result_block %}
   {% set contributing_sources = guide.sources | selectattr('contribution_status', 'equalto', 'contributing') | list %}
   {% set consensus_source_count = contributing_sources | selectattr('panel_role', 'equalto', 'consensus') | list | length %}
   <a class="skip-link" href="#guide-races">Skip to recommendations</a>
@@ -140,22 +141,7 @@
             {# Certified: a permanent fact once ingested, so it renders
                directly and unconditionally -- no script involvement needed,
                exactly like the banner's own certified state. #}
-            <div class="race-results">
-              <div class="race-results-head">
-                <span class="race-results-eyebrow">Result</span>
-                <span class="race-results-status">Certified · {{ results.certified_on_label }}</span>
-              </div>
-              <div class="race-results-tally">
-                {% for outcome in results.outcomes %}
-                <div class="race-results-row{{ '' if outcome.advanced else ' race-results-row-trailing' }}">
-                  <span class="race-results-name">{{ outcome.candidate_label }}{% if outcome.chip_label %} <span class="race-detail-result-chip">{{ outcome.chip_label }}</span>{% endif %}</span>
-                  <span class="race-results-share">{{ outcome.percentage_label }}</span>
-                  <span class="race-results-bar"><i style="width:{{ outcome.percentage_label }}"></i></span>
-                </div>
-                {% endfor %}
-              </div>
-              <p class="race-results-provenance">{{ results.ballots_counted_label }} ballots · {{ results.authority }}{% if results.capture_url %} · <a href="{{ results.capture_url }}"{{ external_link_attributes }}>capture</a>{% endif %}</p>
-            </div>
+            {{ result_block(results) }}
             {% endif %}
           </article>
           {% endfor %}

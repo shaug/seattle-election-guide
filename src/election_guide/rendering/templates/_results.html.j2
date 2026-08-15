@@ -1,0 +1,65 @@
+{# The certified RESULT block (docs/RESULTS.md, Rendering § Race cards, #286;
+   § The race-detail page, #370), rendered from one `context.RaceResultsView`
+   — built by `race_results_view(race, ...)` — the same way the segmented
+   meter is rendered from one `MeterView` (`_meter.html.j2`).
+
+   Both pages that render it (`guide.html.j2`'s race card, below its own rule;
+   `race.html.j2`'s race page, under the race header and above the lens bar)
+   import this macro rather than carrying their own copy. They carried
+   identical copies for exactly as long as it took to write the second one:
+   the block is one component stating one fact, its paint is single-sourced
+   in `guide-race.css`, and a one-sided edit here would ship a silent
+   card-versus-page divergence that no check in this repository can see —
+   `race-markup-parity.test.mjs` diffs the server against lit, and no client
+   module renders `.race-results` at all.
+
+   `view.outcomes` is every choice on the ballot in finish order, not only the
+   endorsed ones. On a race card that is simply the whole tally; on a race
+   page it is the entire reason the block exists, since a winner nobody
+   endorsed has no candidate section to carry a result.
+
+   `section_candidate_ids` names the choices that have a section on this page,
+   whose tally row then links down to it. Empty by default, which is the race
+   card: the guide has no candidate sections to reach, and the card's whole
+   recommendation area is already one link to the race's page, so a link here
+   would nest inside it. The same emptiness is why the parameter names the
+   choices rather than the page — a choice nobody endorsed has no section on
+   either surface, and its name stays plain rather than pointing at an anchor
+   that is not there.
+
+   Each page keeps its own frame around this markup — the card's rule, which
+   is the block's own default (guide-race.css), and the page's tone band,
+   which switches that default off (`.race-detail-certified-result`,
+   race.css) — and its own
+   `{% raw %}{% if %}{% endraw %}` gate, because the frame is the page's and the gate is where
+   each page decides it has a result to state.
+
+   `external_link_attributes` is read from the environment globals rather than
+   passed in, the convention `_shell.html.j2` states and its own macros
+   follow: passing it per call would silently cover only the callers that
+   remembered to.
+
+   The indentation below is the guide card's own, so that extracting this
+   macro left the guide's rendered bytes alone. Nothing pins that — no
+   results file is committed, so the guide's parity fixture carries no
+   `.race-results` at all and the release screenshots cannot see whitespace;
+   it is a courtesy to the diff, not a checked invariant. #}
+{% macro result_block(view, section_candidate_ids=()) -%}
+<div class="race-results">
+              <div class="race-results-head">
+                <span class="race-results-eyebrow">Result</span>
+                <span class="race-results-status">Certified · {{ view.certified_on_label }}</span>
+              </div>
+              <div class="race-results-tally">
+                {% for outcome in view.outcomes %}
+                {% set linked = outcome.candidate_id in section_candidate_ids %}
+                <div class="race-results-row{{ '' if outcome.advanced else ' race-results-row-trailing' }}">
+                  <span class="race-results-name">{% if linked %}<a href="#candidate-{{ outcome.candidate_id }}">{{ outcome.candidate_label }}</a>{% else %}{{ outcome.candidate_label }}{% endif %}{% if outcome.chip_label %} <span class="race-detail-result-chip">{{ outcome.chip_label }}</span>{% endif %}</span>
+                  <span class="race-results-share">{{ outcome.percentage_label }}</span>
+                  <span class="race-results-bar"><i style="width:{{ outcome.percentage_label }}"></i></span>
+                </div>
+                {% endfor %}
+              </div>
+              <p class="race-results-provenance">{{ view.ballots_counted_label }} ballots · {{ view.authority }}{% if view.capture_url %} · <a href="{{ view.capture_url }}"{{ external_link_attributes }}>capture</a>{% endif %}</p>
+            </div>
+{%- endmacro %}

@@ -78,7 +78,7 @@ from election_guide.rendering.shell import (
     election_day_banner_html,
     election_names,
 )
-from election_guide.results.models import RaceOutcome, RaceResults
+from election_guide.results.models import ElectionResults, RaceOutcome, RaceResults
 from election_guide.scoring import score_dataset
 from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
 from election_guide.sources.registry import read_source_registry
@@ -1076,94 +1076,320 @@ def _write_race_html(tmp_path: Path, view_model: PublicationViewModel, race_id: 
     return path
 
 
-def test_no_results_leaves_the_race_detail_page_byte_identical_to_before_287(
+def test_no_results_leaves_the_race_detail_page_byte_identical_to_before_370(
     tmp_path: Path,
 ) -> None:
-    """#287's own acceptance criterion (a): with no results data, the race
-    page carries no trace of the certified strip, the vote-share row, or the
-    results chip. `_view_model` attaches no `results` (defaults `None`,
-    exactly as every bundle built before #287 left it), so this is the same
-    "nothing wired yet" baseline `test_no_results_and_no_certification_date_
-    leaves_race_cards_untouched` proves for #286's own card strip."""
+    """#370's own acceptance criterion: with no results data, the race page
+    carries no trace of the result block or the results chip. `_view_model`
+    attaches no `results` (defaults `None`, exactly as every bundle built
+    before results were wired left it), so this is the same "nothing wired
+    yet" baseline `test_no_results_and_no_certification_date_leaves_race_
+    cards_untouched` proves for #286's own card strip.
+
+    The two markup shapes #370 retired are named here too, so a revival
+    fails rather than passing quietly under the block's own gate."""
     view_model = _view_model(tmp_path)
     assert view_model.results is None
 
     body = _body_only(_race_html(view_model, RESULTS_RACE_ID))
 
+    assert "race-detail-certified-result" not in body
+    assert "race-results" not in body
+    assert "race-detail-result-chip" not in body
     assert "race-detail-certified-strip" not in body
     assert "race-detail-candidate-result" not in body
-    assert "race-detail-result-chip" not in body
 
 
-def test_certified_results_render_the_race_detail_pages_certified_strip_and_vote_share_rows(
-    tmp_path: Path,
-) -> None:
-    """#287's own acceptance criteria (b): the certified strip carries the
-    certification date, authority, and ballots counted; each candidate with a
-    certified outcome carries a vote-share row (tally bar + share) between
-    its heading and its source list, and the two advancing candidates in
-    `tests.test_results._valid_results`' `king-county-assessor` fixture carry
-    the "Advances" chip immediately after their name. Candidate order stays
-    endorsement order (Dominique Scarimbolo, then Christopher Roberts; Rob
-    Foxcurran and Al Dams have no endorsing sources at all and so render no
-    section on this page, unaffected by results) -- never the outcome's own
-    share-descending order."""
+def _collapse_whitespace(markup: str) -> str:
+    """One rendered fragment with every run of whitespace between elements
+    collapsed to a single space.
+
+    The RESULT block is one shared macro (`_results.html.j2`) both the race
+    card and the race page call, so its markup carries the macro's own
+    indentation rather than either caller's. These tests are about what the
+    block states and in what order, never about how far it is indented --
+    the guide's own exact bytes are pinned by its committed parity fixture
+    (`test_committed_lens_page_fixtures_match_a_fresh_render`), which is the
+    right place for that claim.
+    """
+    return re.sub(r"\s+", " ", markup)
+
+
+def _section_order(body: str) -> list[str]:
+    """The candidate ids of a race page's sections, in rendered order.
+
+    `data-race-detail-candidate-id` is written once per section and by
+    nothing else on the page, so it is the one marker that reads as a
+    section boundary -- a candidate's *name* appears in the RESULT block
+    above and in every section's meter attributes, not just their own.
+    """
+    sections = body.split('<div class="race-detail-candidates"')[1]
+    return re.findall(r'data-race-detail-candidate-id="([^"]+)"', sections)
+
+
+def _block_order(body: str) -> list[str]:
+    """The choice labels of the RESULT block's tally rows, in rendered order.
+
+    A label is wrapped in an anchor when that choice has a section to link
+    down to and bare when it does not, so this reads the name span's text
+    rather than matching either shape.
+    """
+    tally = body.split('<div class="race-results-tally">')[1].split('<p class="race-results')[0]
+    names = re.findall(r'<span class="race-results-name">(.*?)</span>\n', tally, re.DOTALL)
+    without_chip = [
+        re.sub(r'<span class="race-detail-result-chip">.*?</span>', "", name) for name in names
+    ]
+    return [re.sub(r"<[^>]+>", "", name).strip() for name in without_chip]
+
+
+def _revalidated_results(results: ElectionResults) -> ElectionResults:
+    """One results file re-run through its own schema.
+
+    `model_copy(update=...)` does not re-run validators, so a test that
+    synthesizes an outcome set by copying one gets no check at all -- and
+    `RaceResults` carries a real invariant a rendering test can silently
+    violate: declared shares sum to ~1 (`SHARE_SUM_TOLERANCE`,
+    `results/models.py`). A fixture that breaks it renders percentages no
+    certified canvass could produce, which is worse than useless in a
+    screenshot handed to a human for review. Every synthesized fixture here
+    goes through this, so an impossible race fails the test that built it
+    rather than reaching a page.
+    """
+    return ElectionResults.model_validate(results.model_dump(mode="json"))
+
+
+def _with_results(tmp_path: Path, results: ElectionResults | None = None) -> PublicationViewModel:
+    """The fixture view model with a certified results file attached, built
+    the way every results-era test in this file builds one."""
     without_results = _view_model(tmp_path / "without-results")
     results_root = tmp_path / "with-results"
-    results_root.mkdir()
-    with_results = without_results.model_copy(update={"results": _valid_results(results_root)})
+    results_root.mkdir(exist_ok=True)
+    attached = results or _valid_results(results_root)
+    return without_results.model_copy(update={"results": _revalidated_results(attached)})
+
+
+def test_certified_results_render_the_race_detail_pages_complete_result_block(
+    tmp_path: Path,
+) -> None:
+    """#370's own acceptance criterion (a): a certified race page renders one
+    complete result block -- the race card's own `.race-results` markup --
+    listing *every* outcome in finish order with chip, share, and bar over
+    the provenance line.
+
+    `tests.test_results._valid_results`' `king-county-assessor` fixture
+    certifies four choices, and only two of them (Dominique Scarimbolo and
+    Christopher Roberts) draw an endorsement and so render a candidate
+    section at all. The block states all four, which is the entire reason
+    #354 replaced #287's per-section vote-share row with it: Rob Foxcurran
+    and Al Dams had nowhere to render a result before."""
+    with_results = _with_results(tmp_path)
 
     html = _race_html(with_results, RESULTS_RACE_ID)
+    body = _body_only(html)
 
-    assert '<div class="race-detail-certified-strip">' in html
-    assert "Certified result" in html
-    # The full-month grammar the ratified mockup uses for the race-detail
-    # page's own strip, distinct from the race card's abbreviated badge
-    # ("Aug 19, 2026").
-    assert "August 19, 2026" in html
-    assert "King County Elections" in html
-    assert "61,234 ballots" in html
+    assert body.count('<div class="race-results">') == 1
+    assert '<span class="race-results-eyebrow">Result</span>' in body
+    # The abbreviated badge grammar the block's own head carries on every
+    # surface that renders it, card and page alike.
+    assert '<span class="race-results-status">Certified · Aug 19, 2026</span>' in body
 
-    # Candidate order: the headline names the leader, and the leader's own
-    # name appears before the second candidate's section in source order.
-    assert html.index("Dominique M Scarimbolo") < html.index("Christopher Roberts")
+    # Every outcome, in finish order, each on the one shared full-width scale.
+    assert body.count('<div class="race-results-row') == 4
+    assert (
+        '<span class="race-results-name"><a href="#candidate-king-county-assessor'
+        '--dominique-m-scarimbolo">Dominique M Scarimbolo</a> '
+        '<span class="race-detail-result-chip">Advances</span></span> '
+        '<span class="race-results-share">32.0%</span> '
+        '<span class="race-results-bar"><i style="width:32.0%"></i></span>'
+        in _collapse_whitespace(body)
+    )
+    assert (
+        '<a href="#candidate-king-county-assessor--christopher-roberts">'
+        "Christopher Roberts</a> "
+        '<span class="race-detail-result-chip">Advances</span>' in body
+    )
+    # The two choices no source endorsed have no section below the bar to
+    # scroll to, so their names are plain text rather than a link that would
+    # go nowhere -- trailing, so no chip either.
+    assert '<span class="race-results-name">Rob Foxcurran</span>' in body
+    assert '<span class="race-results-name">Al Dams</span>' in body
+    assert body.index("Rob Foxcurran") < body.index("Al Dams")
 
-    # The headlined leader's chip renders in the page headline itself, not a
-    # section heading -- `race.recommendation_label` is that candidate's own
-    # name, and no separate `.race-detail-candidate-title` renders for them.
+    # The strip's own date, authority, and ballot count are the block's
+    # provenance line now; nothing states them twice.
+    assert '<p class="race-results-provenance">61,234 ballots · King County Elections</p>' in body
+    assert "Certified result" not in body
+
+    # Above the lens bar and above every candidate: the block is a permanent
+    # fact no reader's source selection changes (docs/RESULTS.md, "The
+    # race-detail page's certified result").
+    assert body.index("race-detail-certified-result") < body.index("lens-banner")
+    assert body.index("race-detail-certified-result") < body.index("race-headline")
+
+    # The chip still rides each candidate's name below the bar, in the page
+    # headline for the leading choice and in a section heading for everyone
+    # else -- unchanged by #370.
     assert (
         '<h3 data-display-role="recommendation">Dominique M Scarimbolo '
-        '<span class="race-detail-result-chip">Advances</span></h3>' in html
+        '<span class="race-detail-result-chip">Advances</span></h3>' in body
     )
-    # The second candidate's own section heading carries the same chip.
     assert (
-        '<h4>Christopher Roberts <span class="race-detail-result-chip">Advances</span></h4>' in html
+        '<h4>Christopher Roberts <span class="race-detail-result-chip">Advances</span></h4>' in body
     )
 
-    # Every candidate with a section and a certified outcome gets a vote-share
-    # row, sharing the same full-width bar scale the race card's own results
-    # strip uses -- the ratified rule that vote share and endorsement share
-    # never share a component (docs/RESULTS.md, Rendering).
-    assert (
-        '<div class="race-detail-candidate-result">\n'
-        '        <span class="race-detail-result-bar"><i style="width:32.0%"></i></span>\n'
-        '        <span class="race-detail-result-share">32.0%</span>\n'
-        "      </div>" in html
+    # Candidate sections keep endorsement order, untouched by the finish order
+    # the block above runs in (#287).
+    #
+    # Read off each section's own id attribute rather than by finding a name:
+    # a name is not a section boundary. The block above states every name, and
+    # so does *every* section's meter, which spells `data-meter-decision`
+    # ("Endorsed <name>") for every block in the race rather than only its own
+    # candidate's (`_meter.html.j2`, `race_candidate_meter_views`) -- so a
+    # by-name index comparison, whether over the whole body or over the
+    # sections region alone, resolves inside the first section either way and
+    # cannot fail when the order it names regresses.
+    endorsement_order = [
+        f"{RESULTS_RACE_ID}--dominique-m-scarimbolo",
+        f"{RESULTS_RACE_ID}--christopher-roberts",
+    ]
+    assert _section_order(body) == endorsement_order
+
+    # And they are two orders, not one that happens to agree: invert the
+    # finish order and the block follows while the sections do not. Without
+    # this the assertion above passes on a page that had simply sorted its
+    # sections by share, which is the regression #354's "two orders,
+    # deliberately" exists to prevent.
+    inverted = _valid_results(tmp_path / "inverted")
+    flipped = inverted.races[0].model_copy(
+        update={
+            "outcomes": [
+                outcome.model_copy(update={"share": 0.32 if index == 1 else 0.29})
+                if index in (0, 1)
+                else outcome
+                for index, outcome in enumerate(inverted.races[0].outcomes)
+            ]
+        }
     )
-    assert (
-        '<div class="race-detail-candidate-result">\n'
-        '        <span class="race-detail-result-bar"><i style="width:29.0%"></i></span>\n'
-        '        <span class="race-detail-result-share">29.0%</span>\n'
-        "      </div>" in html
+    inverted_body = _body_only(
+        _race_html(
+            _with_results(tmp_path, inverted.model_copy(update={"races": [flipped]})),
+            RESULTS_RACE_ID,
+        )
     )
-    # The endorsement meter and the vote-share bar are distinct components,
-    # never one element: the exact vote-share blocks matched above sit in
-    # their own `.race-detail-candidate-result` div, entirely apart from the
-    # candidate's `.race-detail-candidate-meter`/`.screen-meter-section`
-    # endorsement meter -- no element carries both a meter class and
-    # `race-detail-result-bar`.
-    assert '<div class="race-detail-candidate-meter race-detail-result-bar' not in html
-    assert '<div class="screen-meter-section race-detail-result-bar' not in html
+    assert _block_order(inverted_body)[:2] == ["Christopher Roberts", "Dominique M Scarimbolo"]
+    assert _section_order(inverted_body) == endorsement_order
+
+    # The two markup shapes the block replaces are gone from the page.
+    assert "race-detail-certified-strip" not in body
+    assert "race-detail-candidate-result" not in body
+    assert "race-detail-result-bar" not in body
+    assert "race-detail-result-share" not in body
+
+
+def test_a_tally_row_links_to_the_candidates_own_section(tmp_path: Path) -> None:
+    """A reader who finds a name in the block can reach that candidate's
+    endorsements without hunting for them: the tally row's name is a link to
+    the section below, and the section carries the id it targets.
+
+    Only for a choice that has a section. A choice no source endorsed has
+    none (`candidate_endorsement_groups`), which is the whole reason the
+    block states every choice -- so its name stays plain text rather than a
+    link to an anchor that is not on the page."""
+    body = _body_only(_race_html(_with_results(tmp_path), RESULTS_RACE_ID))
+
+    linked = re.findall(r'<span class="race-results-name"><a href="#([^"]+)"', body)
+    assert linked == [
+        f"candidate-{RESULTS_RACE_ID}--dominique-m-scarimbolo",
+        f"candidate-{RESULTS_RACE_ID}--christopher-roberts",
+    ], "exactly the two choices with a section, in the block's own finish order"
+
+    # Every anchor the block points at is an id on that candidate's own
+    # section -- the link resolves rather than scrolling nowhere.
+    sections = body.split('<div class="race-detail-candidates"')[1]
+    section_anchors = dict(
+        re.findall(
+            r'id="(candidate-[^"]+)"\s+data-race-detail-candidate-id="([^"]+)"',
+            sections,
+        )
+    )
+    for anchor in linked:
+        assert anchor in section_anchors, f"{anchor} is not an id on the page"
+        assert section_anchors[anchor] == anchor.removeprefix("candidate-"), (
+            f"{anchor} is an id on some other candidate's section"
+        )
+
+
+def test_the_race_cards_tally_rows_carry_no_section_links(tmp_path: Path) -> None:
+    """The same block on a race card links nothing: the guide has no
+    candidate sections to scroll to, and an anchor into another page is not
+    what the card's own name means. The card's whole recommendation area is
+    already one link to the race's page (`.race-card-primary`), so a second
+    link nested inside it would be a link inside a link."""
+    with_results = _with_results(tmp_path)
+
+    configuration = read_rendering_configuration(RENDERING_CONFIG)
+    card = _race_card_html(render_html_document(with_results, configuration), RESULTS_RACE_ID)
+
+    assert '<div class="race-results">' in card, "the card renders the block at all"
+    assert '<span class="race-results-name">Dominique M Scarimbolo ' in card
+    assert '<a href="#candidate-' not in card
+
+
+def test_the_result_block_names_a_winner_no_source_endorsed(tmp_path: Path) -> None:
+    """#370's own acceptance criterion (b), and the defect #354 filed this
+    ticket for: a race whose top finisher drew no endorsement from any source
+    names that winner in the block, first, with their chip.
+
+    Al Dams is the fixture's zero-endorsement choice, so `candidate_
+    endorsement_groups` gives him no section at all -- under #287's
+    per-section vote-share row this page stated three losing shares and never
+    named the winner. The block is outside that region entirely, so it names
+    him whether or not anyone endorsed him."""
+    results_root = tmp_path / "with-results"
+    results_root.mkdir()
+    certified = _valid_results(results_root)
+    # Al Dams takes the race; the other three split what is left. The shares
+    # sum to 1 because a certified race's do -- `_revalidated_results` holds
+    # this fixture to the same invariant `results ingest` produces.
+    losing_shares = {
+        f"{RESULTS_RACE_ID}--dominique-m-scarimbolo": 0.21,
+        f"{RESULTS_RACE_ID}--christopher-roberts": 0.20,
+        f"{RESULTS_RACE_ID}--rob-foxcurran": 0.18,
+    }
+    unendorsed_winner = certified.races[0].model_copy(
+        update={
+            "outcomes": [
+                outcome.model_copy(
+                    update={
+                        "share": (
+                            0.41
+                            if outcome.choice_id.endswith("al-dams")
+                            else losing_shares[outcome.choice_id]
+                        ),
+                        "advanced": outcome.choice_id.endswith("al-dams"),
+                    }
+                )
+                for outcome in certified.races[0].outcomes
+            ]
+        }
+    )
+    with_results = _with_results(
+        tmp_path, certified.model_copy(update={"races": [unendorsed_winner]})
+    )
+
+    body = _body_only(_race_html(with_results, RESULTS_RACE_ID))
+
+    tally = body.split('<div class="race-results-tally">')[1].split('<p class="race-results')[0]
+    first_row = tally.split('<div class="race-results-row')[1]
+    assert (
+        '<span class="race-results-name">Al Dams '
+        '<span class="race-detail-result-chip">Advances</span></span>' in first_row
+    ), "the winner is the block's first row, with the chip that marks the outcome"
+    assert '<span class="race-results-share">41.0%</span>' in first_row
+
+    # He has no candidate section, which is exactly why the block has to name
+    # him: the endorsement region below the bar cannot.
+    assert 'data-race-detail-candidate-id="king-county-assessor--al-dams"' not in body
 
 
 def test_the_results_chip_wraps_beneath_a_narrow_headings_name(tmp_path: Path) -> None:
@@ -1216,100 +1442,112 @@ def test_the_results_chip_wraps_beneath_a_narrow_headings_name(tmp_path: Path) -
 
 
 def test_measure_races_render_the_race_detail_page_exactly_as_today(tmp_path: Path) -> None:
-    """#287's own acceptance criterion (d), and #348's own non-regression
-    acceptance criterion: with no certified outcome on record for this
-    particular measure race, its own page carries neither a certified strip
-    nor a vote-share row nor a chip -- `race_results_view`'s own `None` gate
-    for a race no results file names an entry for, the same one #286's
+    """#348's own non-regression acceptance criterion: with no certified
+    outcome on record for this particular measure race, its own page carries
+    neither a result block nor a chip -- `race_results_view`'s own `None`
+    gate for a race no results file names an entry for, the same one #286's
     card-side test proves, applied here to the race-detail page.
-    `test_certified_measure_results_render_the_race_detail_page_strip_and_vote_share_rows`
-    below covers the complementary case: a measure race that *does* have a
+    `test_certified_measure_results_render_both_choices_as_tally_rows` below
+    covers the complementary case: a measure race that *does* have a
     certified outcome on record."""
-    results_root = tmp_path / "with-results"
-    results_root.mkdir()
-    without_results = _view_model(tmp_path / "without-results")
-    with_results = without_results.model_copy(update={"results": _valid_results(results_root)})
+    with_results = _with_results(tmp_path)
 
     # The certified state is active for the election (the candidate race's own
-    # page carries the strip), but the measure race's own page carries none of
+    # page carries the block), but the measure race's own page carries none of
     # it.
-    candidate_html = _race_html(with_results, RESULTS_RACE_ID)
-    assert '<div class="race-detail-certified-strip">' in candidate_html
+    candidate_body = _body_only(_race_html(with_results, RESULTS_RACE_ID))
+    assert '<div class="race-results">' in candidate_body
 
     measure_body = _body_only(_race_html(with_results, MEASURE_RACE_ID))
-    assert "race-detail-certified-strip" not in measure_body
-    assert "race-detail-candidate-result" not in measure_body
+    assert "race-detail-certified-result" not in measure_body
+    assert "race-results" not in measure_body
     assert "race-detail-result-chip" not in measure_body
 
 
-def test_certified_measure_results_render_the_race_detail_page_strip_and_vote_share_rows(
+def test_certified_measure_results_render_both_choices_as_tally_rows(
     tmp_path: Path,
 ) -> None:
-    """#348's own acceptance criterion: a certified measure race's own page
-    carries the certified strip and the winning choice's own vote-share row
-    and Approved/Rejected chip -- the same surfaces
-    `test_certified_results_render_the_race_detail_pages_certified_strip_and_vote_share_rows`
-    above already proves for a candidate race, applied here to a measure.
+    """#370's own acceptance criterion (c): a certified measure race renders
+    both Yes and No as tally rows, with Approved/Rejected on the winner.
+
+    This is the case #354 found unrenderable. The dataset's own endorsement
+    coverage is "Yes"-only (9 endorsing sources; "No" has none), so under
+    #287's per-section vote-share row a rejected measure's winning "No" had
+    no section to appear in and never rendered at all. Both sides render
+    here for the same reason the unendorsed candidate does above: the block
+    is outside the endorsement region entirely, and reads
+    `race_results_view`'s complete outcome set rather than
+    `candidate_endorsement_groups`.
 
     `tests.test_rendering._view_model`'s own fixture dataset carries no
-    endorsement coverage at all for `seattle-proposition-1-library-levy` (see
-    `test_measure_races_render_the_race_detail_page_exactly_as_today`
-    above -- "5 sources did not cover this race"), so a candidate section
-    never reaches this measure's own page under that fixture regardless of
-    results. `tests.compare_parity.enabled_view_model`'s dataset does carry
-    real endorsement coverage for it (`tests/test_compare_rendering.py`'s own
-    established source for `seattle-proposition-1-library-levy` fixture
-    data), so this test reuses it instead -- the same substitution
-    `test_compare_rendering.py` already made for the identical reason on the
-    comparison surface.
-
-    That dataset's own coverage is "Yes"-only (9 endorsing sources; "No" has
-    none), so this test demonstrates the winning choice's own vote-share row
-    and chip, not a second row for the losing choice -- `race_detail.
-    candidates` (`context.race_detail_display`) only ever carries a section
-    for a choice with at least one endorsing source, identically for every
-    ordinary candidate race today (an unopposed or lightly-covered race's
-    trailing candidates already render no section either), unmodified by
-    this ticket. A choice's own vote-share row is data-driven off
-    `race_result_outcomes_by_candidate_id` regardless of race type, so a
-    future fixture that covers both "Yes" and "No" would render both rows
-    through this identical mechanism -- nothing here is measure-specific."""
+    endorsement coverage at all for `seattle-proposition-1-library-levy`, so
+    this test reuses `tests.compare_parity.enabled_view_model`'s dataset --
+    the same substitution `test_compare_rendering.py` already made for the
+    identical reason on the comparison surface."""
     view_model = _enabled_view_model()
     results_root = tmp_path / "with-results"
     results_root.mkdir()
     results = _valid_results(results_root)
-    results = results.model_copy(
+    rejected = results.model_copy(
         update={
             "races": [
                 *results.races,
-                _measure_outcomes(yes_votes=30000, no_votes=20000, ballots_counted=50000),
+                _measure_outcomes(yes_votes=20000, no_votes=30000, ballots_counted=50000),
             ]
         }
     )
-    with_results = view_model.model_copy(update={"results": results})
+    with_results = view_model.model_copy(update={"results": rejected})
 
-    html = _race_html(with_results, MEASURE_RACE_ID)
-    body = _body_only(html)
+    body = _body_only(_race_html(with_results, MEASURE_RACE_ID))
 
-    assert '<div class="race-detail-certified-strip">' in body
-    assert "August 19, 2026" in body
-    assert "King County Elections" in body
-    assert "50,000 ballots" in body
-
-    # "Yes" is this fixture's sole recommendation (100% of its endorsing
-    # sources), so its own chip renders in the page headline rather than a
-    # section heading -- the same headline-vs-section split the candidate
-    # race's own test proves.
+    assert body.count('<div class="race-results-row') == 2
+    # The rejected measure's winning "No" leads the block, with the chip the
+    # ratified measure vocabulary gives it -- and "No" has no endorsing
+    # source, so it has no section on this page at all.
     assert (
-        '<h3 data-display-role="recommendation">Yes '
-        '<span class="race-detail-result-chip">Approved</span></h3>' in body
+        '<span class="race-results-name">No '
+        '<span class="race-detail-result-chip">Rejected</span></span> '
+        '<span class="race-results-share">60.0%</span>' in _collapse_whitespace(body)
     )
-    assert (
-        '<div class="race-detail-candidate-result">\n'
-        '        <span class="race-detail-result-bar"><i style="width:60.0%"></i></span>\n'
-        '        <span class="race-detail-result-share">60.0%</span>\n'
-        "      </div>" in body
+    # "Yes" is the endorsed side in this dataset, so it has a section and its
+    # tally row links down to it; "No" has none and stays plain text.
+    assert '<a href="#candidate-' + MEASURE_RACE_ID + '--yes">Yes</a>' in body
+    assert body.index('"race-results-name">No ') < body.index('race-results-name"><a href')
+    assert '<p class="race-results-provenance">50,000 ballots · King County Elections</p>' in body
+
+
+def test_the_result_block_does_not_change_when_personalization_is_disabled(
+    tmp_path: Path,
+) -> None:
+    """#370's own acceptance criterion (e): the block renders identically with
+    personalization enabled and disabled.
+
+    It gates on `race_results` alone, never on `guide.personalization.policy.
+    enabled` -- the same rule the strip it replaces already followed, and the
+    organizing principle #354 settled: what sits above the lens bar is a fact
+    no reader's source selection can change. The lens bar itself is what the
+    policy gates, so the two documents differ there and nowhere in the
+    block."""
+    enabled = _with_results(tmp_path)
+    disabled = enabled.model_copy(
+        update={
+            "personalization": enabled.personalization.model_copy(
+                update={
+                    "policy": enabled.personalization.policy.model_copy(update={"enabled": False})
+                }
+            )
+        }
     )
+
+    def block(view_model: PublicationViewModel) -> str:
+        body = _body_only(_race_html(view_model, RESULTS_RACE_ID))
+        return body.split('<div class="race-detail-certified-result">')[1].split("</div>\n    <")[0]
+
+    assert enabled.personalization.policy.enabled
+    assert not disabled.personalization.policy.enabled
+    assert "lens-banner" in _body_only(_race_html(enabled, RESULTS_RACE_ID))
+    assert "lens-banner" not in _body_only(_race_html(disabled, RESULTS_RACE_ID))
+    assert block(enabled) == block(disabled)
 
 
 def test_race_page_renders_the_whole_race_from_one_view_model(tmp_path: Path) -> None:

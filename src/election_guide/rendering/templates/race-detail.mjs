@@ -62,18 +62,17 @@ import { candidateMeterTemplate } from './guide-card.mjs';
  * information-design incoherent and unshipped — this section's own static
  * meter is what #325 settled on instead.
  *
- * `result` is this candidate's certified vote-share result (docs/RESULTS.md,
- * Rendering § The race-detail page; #287), or null while no results cover
- * this race or this candidate. Selection-independent, so it is a static
- * passthrough from the payload rather than something this module computes —
- * the same reason `rows` above carries every value its markup needs instead
- * of reading it back off the server's copy (docs/FRONTEND.md, The data
- * contract).
- *
- * @typedef {object} CandidateResultView
- * @property {string} percentageLabel
- * @property {boolean} advanced
- * @property {string|null} chipLabel
+ * `resultChipLabel` is this candidate's certified outcome chip
+ * (docs/RESULTS.md, Rendering § The race-detail page; #287), or null — no
+ * results cover this race or this candidate, or the outcome is a trailing
+ * one, which carries no chip. All three render nothing. It is the whole of a
+ * result a section renders: the share and its bar belong to the page's own
+ * complete RESULT block, above the lens bar and outside every lens region,
+ * which the server renders once and this module never sees (#370).
+ * Selection-independent, so it is a static passthrough from the payload
+ * rather than something this module computes — the same reason `rows` above
+ * carries every value its markup needs instead of reading it back off the
+ * server's copy (docs/FRONTEND.md, The data contract).
  *
  * @typedef {object} CandidateSectionView
  * @property {string} candidateId
@@ -83,7 +82,7 @@ import { candidateMeterTemplate } from './guide-card.mjs';
  * @property {string|null} kicker
  * @property {import('./guide-card.mjs').CandidateMeterView} meter
  * @property {readonly SourceRowView[]} rows
- * @property {CandidateResultView|null} result
+ * @property {string|null} resultChipLabel
  */
 
 /**
@@ -153,36 +152,15 @@ function candidateMeterRowTemplate(candidate) {
 }
 
 /**
- * The certified vote-share row (docs/RESULTS.md, Rendering § The
- * race-detail page; #287): the same navy-on-track tally bar the race
- * card's own results strip renders, at the scale of this one candidate's own
- * share. Null when this candidate carries no certified result, exactly like
- * the audited template's own `{% if outcome %}` gate (race.html.j2).
+ * The results chip (docs/RESULTS.md, "The results chip"; #287), immediately
+ * after a candidate's name in whichever heading names them. Null when there
+ * is no chip to render — a trailing outcome, or no result at all.
  *
- * @param {CandidateResultView|null} result
+ * @param {string|null} chipLabel
  */
-function candidateResultTemplate(result) {
-  if (result === null) return nothing;
-  return html`<div
-    class=${
-      result.advanced
-        ? 'race-detail-candidate-result'
-        : 'race-detail-candidate-result race-detail-candidate-result-trailing'
-    }
-  ><span class="race-detail-result-bar"><i style=${`width:${result.percentageLabel}`}></i></span
-    ><span class="race-detail-result-share">${result.percentageLabel}</span></div>`;
-}
-
-/**
- * The results chip alone (docs/RESULTS.md, "The results chip"; #287),
- * immediately after a candidate's name in whichever heading names them. Null
- * when the result carries no chip — a trailing outcome, or no result at all.
- *
- * @param {CandidateResultView|null} result
- */
-function resultChipTemplate(result) {
-  if (result === null || result.chipLabel === null) return nothing;
-  return html` <span class="race-detail-result-chip">${result.chipLabel}</span>`;
+function resultChipTemplate(chipLabel) {
+  if (chipLabel === null) return nothing;
+  return html` <span class="race-detail-result-chip">${chipLabel}</span>`;
 }
 
 /**
@@ -197,16 +175,15 @@ function candidateSectionTemplate(candidate) {
           ? 'race-detail-candidate race-detail-candidate-tied'
           : 'race-detail-candidate'
     }
+    id=${`candidate-${candidate.candidateId}`}
     data-race-detail-candidate-id=${candidate.candidateId}
   ><div class="race-detail-candidate-heading">${
     candidate.inHeadline
       ? nothing
       : html`<div class="race-detail-candidate-title">${
           candidate.kicker === null ? nothing : html`<p>${candidate.kicker}</p>`
-        }<h4>${candidate.label}${resultChipTemplate(candidate.result)}</h4></div>`
-  }${candidateMeterRowTemplate(candidate)}</div>${candidateResultTemplate(
-    candidate.result,
-  )}<ul class="race-detail-source-list">${repeat(
+        }<h4>${candidate.label}${resultChipTemplate(candidate.resultChipLabel)}</h4></div>`
+  }${candidateMeterRowTemplate(candidate)}</div><ul class="race-detail-source-list">${repeat(
     candidate.rows,
     (row) => row.code,
     (row) => sourceRowTemplate(candidate.candidateId, row),

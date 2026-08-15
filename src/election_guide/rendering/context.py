@@ -31,7 +31,6 @@ from election_guide.rendering.payload import (
     FilterScope,
     RaceCandidateDisplay,
     RaceCandidateEndorsements,
-    RaceCandidateResult,
     RaceDetailDisplay,
     RaceDisplay,
     RaceSourceRow,
@@ -278,11 +277,12 @@ def race_detail_display(
     listed once — the same shape `race_detail_candidate_sections` renders.
 
     `result_outcomes_by_candidate_id` (`race_result_outcomes_by_candidate_id`,
-    below; #287) carries each candidate's certified vote-share result the
-    same way -- selection-independent, so it publishes verbatim rather than
-    something lit recomputes -- for the race-detail page's vote-share row
-    and heading chip. Empty or omitted while no results cover this race,
-    exactly like `race_results_view`'s own `None` gate.
+    below; #287) carries each candidate's certified outcome the same way --
+    selection-independent, so it publishes verbatim rather than something lit
+    recomputes -- for the race-detail page's heading chip, which is all a
+    candidate section renders of a result since #370 moved the share and its
+    bar into the page's own RESULT block. Empty or omitted while no results
+    cover this race, exactly like `race_results_view`'s own `None` gate.
     """
     cells_by_source_id = {cell.source_id: cell for cell in tallying_source_cells(race, sources)}
     outcomes = result_outcomes_by_candidate_id or {}
@@ -304,28 +304,15 @@ def race_detail_display(
                     )
                     for endorser in group.endorsers
                 ],
-                result=_race_candidate_result(outcomes.get(group.candidate_id)),
+                result_chip_label=(
+                    outcome.chip_label
+                    if (outcome := outcomes.get(group.candidate_id)) is not None
+                    else None
+                ),
             )
             for group in candidate_endorsement_groups(race)
         ],
         audited_accessible_summary=race_detail_accessible_summary(race),
-    )
-
-
-def _race_candidate_result(
-    outcome: RaceResultOutcomeView | None,
-) -> RaceCandidateResult | None:
-    """One candidate's payload-shaped certified result (#287), or `None`
-    when `race_result_outcomes_by_candidate_id` names no outcome for them --
-    the roster a results file's own choice ids may not fully cover (a
-    zero-endorsement candidate never gets a section to begin with, but a
-    defensive lookup miss here renders no vote-share row rather than raising)."""
-    if outcome is None:
-        return None
-    return RaceCandidateResult(
-        percentage_label=outcome.percentage_label,
-        advanced=outcome.advanced,
-        chip_label=outcome.chip_label,
     )
 
 
@@ -1338,8 +1325,9 @@ def meter_view(race: PublicationRace, sources: dict[str, PublicationSource]) -> 
 
 @dataclass(frozen=True)
 class RaceResultOutcomeView:
-    """One candidate's certified tally on a race card's results strip
-    (docs/RESULTS.md, Rendering § Race cards; #286).
+    """One choice's certified tally row in the RESULT block (docs/RESULTS.md,
+    Rendering § Race cards, #286; § The race-detail page, #370) -- a race
+    card's results strip and a race page's own block render the same row.
 
     Distinct from `MeterEndorsement`/`PublicationAlternative`, which state
     *endorsement* support: this states the county's own certified *vote*
@@ -1361,22 +1349,22 @@ class RaceResultOutcomeView:
 
 @dataclass(frozen=True)
 class RaceResultsView:
-    """A candidate race's certified results strip (docs/RESULTS.md, Rendering
-    § Race cards; #286): per-candidate tally rows, leader to trailing, plus
-    the provenance line (ballots counted, authority, capture link). Built
-    once per race per render by `race_results_view`, exactly as `MeterView`
-    is for the endorsement meter."""
+    """One race's certified RESULT block (docs/RESULTS.md, Rendering § Race
+    cards, #286; § The race-detail page, #370): one tally row per outcome,
+    leader to trailing, plus the provenance line (ballots counted, authority,
+    capture link). Built once per race per render by `race_results_view`,
+    exactly as `MeterView` is for the endorsement meter.
+
+    `outcomes` is every choice on the ballot, not only the endorsed ones --
+    which is what lets the race-detail page state a complete result even
+    when its winner drew no endorsement and so has no candidate section
+    (docs/RESULTS.md, "The race-detail page's certified result")."""
 
     certified_on_label: str
     """"Aug 19, 2026" -- the ratified mockup's own abbreviated grammar for
-    the results-strip head badge, distinct from `rendering.shell.
-    month_day_year`'s full-month "August 19, 2026" the banner uses."""
-    certified_on_full_label: str
-    """"August 19, 2026" -- `rendering.shell.month_day_year`'s full-month
-    grammar, the ratified mockup's own choice for the race-detail page's
-    certified strip (docs/RESULTS.md, Rendering § The race-detail page;
-    #287), distinct from `certified_on_label`'s abbreviated badge grammar
-    above."""
+    the RESULT block's head badge, on a race card and a race page alike,
+    distinct from `rendering.shell.month_day_year`'s full-month "August 19,
+    2026" the banner uses."""
     ballots_counted: int
     ballots_counted_label: str
     """"61,234" -- the ratified mockup's own thousands-grouped grammar
@@ -1396,7 +1384,8 @@ def race_results_view(
     election_type: str | None,
     capture_url: str | None,
 ) -> RaceResultsView | None:
-    """The certified results strip for one race, or `None` while none is
+    """The certified RESULT block for one race -- the race card's strip and
+    the race-detail page's own block both -- or `None` while none is
     committed or this race's ingested file names no entry for it -- results
     render as a state, not an option, exactly like `view_model.results`
     itself (docs/RESULTS.md, Rendering).
@@ -1439,7 +1428,6 @@ def race_results_view(
     sorted_outcomes = sorted(outcome_set.outcomes, key=lambda outcome: outcome.share, reverse=True)
     return RaceResultsView(
         certified_on_label=f"{certified_on:%b} {certified_on.day}, {certified_on:%Y}",
-        certified_on_full_label=month_day_year(certified_on),
         ballots_counted=outcome_set.ballots_counted,
         ballots_counted_label=f"{outcome_set.ballots_counted:,}",
         authority=results.authority,
@@ -1461,14 +1449,17 @@ def race_result_outcomes_by_candidate_id(
     results: RaceResultsView | None,
 ) -> dict[str, RaceResultOutcomeView]:
     """Certified per-candidate outcomes keyed by candidate id, for the
-    race-detail page's vote-share row and heading chip (docs/RESULTS.md,
-    Rendering § The race-detail page; #287).
+    race-detail page's heading chip (docs/RESULTS.md, Rendering § The
+    race-detail page; #287, narrowed to the chip alone by #370).
 
     The page's candidate sections render in endorsement order
     (`race_detail_display`/`candidate_endorsement_groups`), not
     `RaceResultsView.outcomes`'s share-descending order, so each section
     looks its own outcome up by id here rather than zipping the two lists
-    positionally. Empty when `results` is `None` -- the same "state, not
+    positionally. The page's own RESULT block reads `outcomes` directly
+    instead: it runs in finish order and names every choice on the ballot,
+    including the ones this dict's callers never ask about because they have
+    no section at all. Empty when `results` is `None` -- the same "state, not
     option" gate `race_results_view` itself applies.
     """
     if results is None:

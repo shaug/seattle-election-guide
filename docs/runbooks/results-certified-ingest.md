@@ -113,8 +113,15 @@ it should stay human-launched at least through the first full cycle.
    uv run election-guide results validate data/results/wa-2026-primary.yaml
    ```
 6. Rebuild and confirm the results surfaces render: banner in its certified state, race-card
-   results strips, race-detail-page vote rows, compare column offered, corrections page
-   only if this election has corrections.
+   results strips, the race-detail page's complete result block above its lens bar (every
+   choice in finish order with chip, share, and bar, over the provenance line) plus the chip
+   after each candidate's name, compare column offered, corrections page only if this election
+   has corrections.
+
+   Read the block against the ballot, not just for presence: it is the one surface that states
+   a choice nobody endorsed, so a race whose winner drew no endorsement is where a rendering
+   defect would show (#370). No release screenshot covers a race page — `rendering/pipeline.py`
+   captures the guide document alone — so this step is that page's only check.
 
 ## Verification
 

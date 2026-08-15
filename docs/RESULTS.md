@@ -402,9 +402,10 @@ leading choice's heading (`docs/DESIGN.md`, "A name appears once per page") and 
 the section below it.
 
 **The organizing principle this settles**, which the page already encoded before it was named:
-`race.html.j2` renders the certified strip outside every lens-owned region, gated on `race_results`
+`race.html.j2` rendered the certified strip outside every lens-owned region, gated on `race_results`
 alone rather than on the personalization policy, because it is "a permanent fact the reader's source
-selection never changes." The lens bar is therefore a real boundary, and results belong above it:
+selection never changes" — and the block that replaced it (#370) is gated exactly the same way. The
+lens bar is therefore a real boundary, and results belong above it:
 
 - **Above the lens bar** — facts no reader's selection can change: the race, the complete
   certified result, its provenance.
@@ -435,8 +436,8 @@ placement preference, is why the two regions sit where they do.
   tally rows in the block with Approved/Rejected on the winner ("Ballot measures" above, #289/#348).
   The rejected side is now stated, which it was not before.
 
-**Implementation note.** The block's rules (`.race-results*`) live in `guide.css` today, which race
-pages do not ship. They move to `guide-race.css` — a correction rather than a new home:
+**Implementation note.** The block's rules (`.race-results*`) lived in `guide.css`, which race
+pages do not ship. They moved to `guide-race.css` (#370) — a correction rather than a new home:
 `rendering/stylesheets.py`'s own docstring already describes that sheet as the group only the guide
 and a race page render, "the result block, the one meter, the reference bar," and
 `.race-detail-result-chip` already sits there for the same reason. Duplicating them into `race.css`
