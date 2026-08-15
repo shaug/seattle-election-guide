@@ -40,6 +40,14 @@ class _NoRedirect(urllib.request.HTTPRedirectHandler):
 
 _OPENER = urllib.request.build_opener(_NoRedirect)
 
+# Every way a request can fail short of a response with a status to report.
+# `http.client.HTTPException` subclasses neither `OSError` nor `URLError`, so
+# it has to be named explicitly: `IncompleteRead` when a body stops short of
+# its declared `Content-Length`, and `BadStatusLine` when the reply does not
+# open with a parseable status line — which every request here is exposed to,
+# body-reading or not, since the status line is parsed first.
+_TRANSPORT_ERRORS = (urllib.error.URLError, TimeoutError, OSError, http.client.HTTPException)
+
 
 def _request(url: str) -> urllib.request.Request:
     return urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
@@ -72,7 +80,7 @@ def probe(base_url: str, check: RouteCheck, *, timeout: float) -> Observation:
         return Observation(
             status=error.code, location=_location_path(error.headers.get("Location"))
         )
-    except (urllib.error.URLError, TimeoutError, OSError) as error:
+    except _TRANSPORT_ERRORS as error:
         return Observation(error=str(error))
 
 
@@ -90,11 +98,7 @@ def fetch_manifest_body(base_url: str, *, timeout: float) -> tuple[Observation, 
         return Observation(
             status=error.code, location=_location_path(error.headers.get("Location"))
         ), None
-    except (urllib.error.URLError, TimeoutError, OSError, http.client.HTTPException) as error:
-        # http.client.HTTPException (e.g. IncompleteRead, raised by
-        # response.read() below the declared Content-Length) is not an
-        # OSError or URLError, so a truncated response needs its own arm
-        # here — unlike probe(), which never reads a body and cannot hit it.
+    except _TRANSPORT_ERRORS as error:
         return Observation(error=str(error)), None
 
 

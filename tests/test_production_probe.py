@@ -7,6 +7,7 @@ redirect response is observed at its own hop rather than silently followed.
 
 from __future__ import annotations
 
+import socketserver
 import threading
 from collections.abc import Iterator
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -88,6 +89,20 @@ class _TruncatedManifestHandler(BaseHTTPRequestHandler):
         self.close_connection = True
 
 
+class _MalformedStatusLineHandler(socketserver.StreamRequestHandler):
+    """Answers a well-formed request with bytes that are not HTTP at all.
+
+    Deliberately raw TCP rather than a `BaseHTTPRequestHandler`: that class
+    can only emit a syntactically valid status line, and the failure being
+    reproduced happens while the *client* parses one.
+    """
+
+    def handle(self) -> None:
+        while self.rfile.readline().strip():
+            pass
+        self.wfile.write(b"GARBAGE NOT HTTP\r\n\r\n")
+
+
 def _start(handler: type[BaseHTTPRequestHandler]) -> Iterator[str]:
     httpd = HTTPServer(("127.0.0.1", 0), handler)
     thread = threading.Thread(target=httpd.serve_forever, daemon=True)
@@ -112,6 +127,19 @@ def broken_manifest_server() -> Iterator[str]:
 @pytest.fixture
 def truncated_manifest_server() -> Iterator[str]:
     yield from _start(_TruncatedManifestHandler)
+
+
+@pytest.fixture
+def malformed_status_line_server() -> Iterator[str]:
+    httpd = socketserver.TCPServer(("127.0.0.1", 0), _MalformedStatusLineHandler)
+    thread = threading.Thread(target=httpd.serve_forever, daemon=True)
+    thread.start()
+    try:
+        yield f"http://127.0.0.1:{httpd.socket.getsockname()[1]}"
+    finally:
+        httpd.shutdown()
+        httpd.server_close()
+        thread.join()
 
 
 def test_probe_observes_a_redirect_without_following_it(server: str) -> None:
@@ -178,6 +206,23 @@ def test_probe_reports_a_connection_failure_without_raising() -> None:
     check = RouteCheck(name="current election guide", path="/e/x/", expected_status=200)
 
     observed = probe("http://127.0.0.1:1", check, timeout=1)
+
+    assert observed.status is None
+    assert observed.error is not None
+
+
+def test_probe_reports_a_malformed_status_line_instead_of_crashing(
+    malformed_status_line_server: str,
+) -> None:
+    """A reply that is not HTTP raises http.client.BadStatusLine while the
+    status line is parsed — before any body read, and neither an OSError nor
+    a URLError — and must still come back as a reported failure so the check
+    can raise its alert rather than dying on an uncaught traceback."""
+    check = RouteCheck(
+        name="current election guide", path="/e/wa-2026-primary/", expected_status=200
+    )
+
+    observed = probe(malformed_status_line_server, check, timeout=5)
 
     assert observed.status is None
     assert observed.error is not None
