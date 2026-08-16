@@ -38,6 +38,7 @@ from election_guide.calendar.watch import (
     missing_artifacts,
     plan_escalations,
     read_repository_artifacts,
+    tracked_issue_numbers,
     untracked_milestones,
 )
 
@@ -74,6 +75,7 @@ __all__ = [
     "plan_issues",
     "read_election_calendar",
     "read_repository_artifacts",
+    "tracked_issue_numbers",
     "unmarked_collisions",
     "untracked_milestones",
 ]

@@ -16,6 +16,7 @@ from typer.testing import CliRunner
 from election_guide.calendar import (
     ARTIFACT_WINDOW_DAYS,
     ELECTION_TIMEZONE,
+    STAGE_LABELS,
     STALE_ESCALATION_DAYS,
     CaptureRecord,
     ElectionCalendar,
@@ -661,7 +662,7 @@ def test_escalating_labels_the_issue_before_it_comments(
         ["gh", "issue", "comment"],
     ]
     assert "--add-label" in calls[1]
-    assert calls[1][calls[1].index("--add-label") + 1] == "escalation: overdue"
+    assert calls[1][calls[1].index("--add-label") + 1] == STAGE_LABELS["overdue"].name
     # Nothing here closes or reopens anything: the escalation is a label and a
     # comment, and the milestone's own issue stays whatever state a human left
     # it in.

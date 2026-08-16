@@ -25,12 +25,12 @@ from election_guide.calendar import (
     REFRESH_EVENT_DIR,
     current_election_date,
     due_milestones,
-    milestone_marker,
     missing_artifacts,
     plan_escalations,
     plan_issues,
     read_election_calendar,
     read_repository_artifacts,
+    tracked_issue_numbers,
     unmarked_collisions,
     untracked_milestones,
 )
@@ -475,9 +475,7 @@ def calendar_watch(
         escalated = {
             number: tracker.read_escalation_markers(number)
             for item in missing
-            for number in issue_numbers.get(
-                milestone_marker(item.milestone.election_id, item.milestone.id), ()
-            )
+            for number in tracked_issue_numbers(item, issue_numbers)
         }
         planned = plan_escalations(
             missing, as_of=today, issue_numbers=issue_numbers, escalated=escalated

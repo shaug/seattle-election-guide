@@ -15,16 +15,17 @@ from dataclasses import dataclass
 from typing import Any, cast
 
 from election_guide.calendar.tracking import MARKER_PREFIX, IssueRequest
-from election_guide.calendar.watch import ESCALATION_MARKER_PREFIX, EscalationRequest
+from election_guide.calendar.watch import (
+    ESCALATION_MARKER_PREFIX,
+    LABEL_COLORS,
+    EscalationRequest,
+)
 from election_guide.github_cli import ISSUE_QUERY_LIMIT, run_gh, trailing_line
 
-# How each escalation label presents itself the first time a run needs it.
 # `gh issue edit --add-label` fails on a label the repository does not have, so
 # the run creates them rather than depending on anyone having done it by hand.
-ESCALATION_LABEL_COLORS: dict[str, str] = {
-    "escalation: overdue": "D93F0B",
-    "escalation: stale": "B60205",
-}
+# The colours come from the stage table itself (`watch.LABEL_COLORS`), so a
+# stage can never carry a label this half has no colour for.
 ESCALATION_LABEL_DESCRIPTION = "A calendar milestone's promised artifact never appeared"
 
 # `gh label list` pages at 30 by default, sorted by creation ascending — so the
@@ -271,7 +272,7 @@ class GitHubIssueTracker:
                 "--repo",
                 self.repository,
                 "--color",
-                ESCALATION_LABEL_COLORS[name],
+                LABEL_COLORS[name],
                 "--description",
                 ESCALATION_LABEL_DESCRIPTION,
             ],

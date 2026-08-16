@@ -64,13 +64,31 @@ STAGE_THRESHOLD_DAYS: dict[EscalationStage, int] = {
     "stale": STALE_ESCALATION_DAYS,
 }
 
-# The louder label each stage adds. Labels are the part of an escalation that
-# is visible without opening the issue, which is why the stage shows in the
-# name rather than in a description nobody sees.
-STAGE_LABELS: dict[EscalationStage, str] = {
-    "overdue": "escalation: overdue",
-    "stale": "escalation: stale",
+
+@dataclass(frozen=True)
+class EscalationLabel:
+    """The louder label one stage adds, and how it presents itself.
+
+    Name and colour travel together so they cannot drift into two tables keyed
+    by the same strings — a stage whose colour went missing would raise inside
+    the label creation and kill the run before it posted anything, which is the
+    silent failure this check exists to avoid.
+    """
+
+    name: str
+    color: str
+
+
+# Labels are the part of an escalation visible without opening the issue, which
+# is why the stage shows in the name rather than in a description nobody sees.
+STAGE_LABELS: dict[EscalationStage, EscalationLabel] = {
+    "overdue": EscalationLabel(name="escalation: overdue", color="D93F0B"),
+    "stale": EscalationLabel(name="escalation: stale", color="B60205"),
 }
+
+# Derived, never hand-maintained: every declared stage label has a colour by
+# construction.
+LABEL_COLORS: dict[str, str] = {label.name: label.color for label in STAGE_LABELS.values()}
 
 # Where each kind of promised artifact lives. Declared here rather than at the
 # CLI so the sentence an escalation prints and the directory the check reads
@@ -195,7 +213,7 @@ class ArtifactWindow:
     end: date
 
     def contains(self, moment: datetime) -> bool:
-        return self.start <= moment.astimezone(ZoneInfo(ELECTION_TIMEZONE)).date() <= self.end
+        return self.start <= election_date(moment) <= self.end
 
 
 @dataclass(frozen=True)
@@ -228,19 +246,25 @@ def artifact_window(scheduled: date) -> ArtifactWindow:
     return ArtifactWindow(start=scheduled, end=scheduled + timedelta(days=ARTIFACT_WINDOW_DAYS))
 
 
-def current_election_date(now: datetime) -> date:
-    """Today where the election is, which is the calendar the windows use.
+def election_date(moment: datetime) -> date:
+    """Place one instant on the election's own calendar.
 
-    Both halves of this check have to count days on one calendar. An artifact's
-    timestamp is compared in Pacific, so "has the window closed" must be too —
-    read from UTC instead, the scheduled 03:17 UTC run lands at 19:17 Pacific
-    the previous day and already calls it tomorrow. That would escalate a
-    milestone with hours of its window left, and they are the hours that matter:
-    King County publishes its first count around 8:15 p.m. Pacific, inside the
-    gap. Nothing retracts an escalation once posted, and its marker stops the
-    next run from reconsidering, so the wrong call would be permanent.
+    The single rule every day-count here obeys. Both halves of this check have
+    to agree on what day it is: an artifact's timestamp is compared in Pacific,
+    so "has the window closed" must be too — read from UTC instead, the
+    scheduled 03:17 UTC run lands at 19:17 Pacific the previous day and already
+    calls it tomorrow. That would escalate a milestone with hours of its window
+    left, and they are the hours that matter: King County publishes its first
+    count around 8:15 p.m. Pacific, inside the gap. Nothing retracts an
+    escalation once posted, and its marker stops the next run from
+    reconsidering, so the wrong call would be permanent.
     """
-    return now.astimezone(ZoneInfo(ELECTION_TIMEZONE)).date()
+    return moment.astimezone(ZoneInfo(ELECTION_TIMEZONE)).date()
+
+
+def current_election_date(now: datetime) -> date:
+    """Today where the election is, which is the calendar the windows use."""
+    return election_date(now)
 
 
 def reached_stages(scheduled: date, *, as_of: date) -> tuple[EscalationStage, ...]:
@@ -353,6 +377,21 @@ def _escalation_body(missing: MissingArtifact, stage: EscalationStage, *, as_of:
     )
 
 
+def tracked_issue_numbers(
+    item: MissingArtifact, issue_numbers: Mapping[str, Sequence[int]]
+) -> tuple[int, ...]:
+    """Which issues track this milestone, if any.
+
+    The one place that knows a milestone's marker is how its issues are found.
+    Everything that needs the answer — the plan, the untracked report, and the
+    run that reads each issue's comments — asks here rather than rebuilding the
+    marker itself.
+    """
+    return tuple(
+        issue_numbers.get(milestone_marker(item.milestone.election_id, item.milestone.id), ())
+    )
+
+
 def plan_escalations(
     missing: Iterable[MissingArtifact],
     *,
@@ -373,8 +412,7 @@ def plan_escalations(
     plan: list[EscalationRequest] = []
     for item in missing:
         milestone = item.milestone
-        marker = milestone_marker(milestone.election_id, milestone.id)
-        for number in issue_numbers.get(marker, ()):
+        for number in tracked_issue_numbers(item, issue_numbers):
             posted = escalated.get(number, frozenset())
             for stage in item.stages:
                 escalation = escalation_marker(milestone.election_id, milestone.id, stage)
@@ -385,7 +423,7 @@ def plan_escalations(
                         marker=escalation,
                         milestone=f"{milestone.election_id}/{milestone.id}",
                         stage=stage,
-                        label=STAGE_LABELS[stage],
+                        label=STAGE_LABELS[stage].name,
                         body=_escalation_body(item, stage, as_of=as_of),
                         issue_number=number,
                     )
@@ -402,11 +440,7 @@ def untracked_milestones(
     milestone whose date has passed, so this reports the gap rather than
     creating work nobody can still do.
     """
-    return [
-        item
-        for item in missing
-        if not issue_numbers.get(milestone_marker(item.milestone.election_id, item.milestone.id))
-    ]
+    return [item for item in missing if not tracked_issue_numbers(item, issue_numbers)]
 
 
 def read_repository_artifacts(
