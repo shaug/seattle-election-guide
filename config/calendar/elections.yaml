@@ -56,6 +56,12 @@ milestones:
     offset_days: 0
     workflow: evidence capture
     reference: docs/runbooks/results-capture-election-night.md
+    # This capture ran, and its record is the runbook's postmortem table, not a
+    # manifest: the authority capture lane (#281) did not exist yet, and the
+    # bytes a backfill would have read are gone. The work is done and cannot
+    # produce the artifact the watch looks for, so the record is declared here
+    # rather than escalated forever (docs/ELECTION_CALENDAR.md).
+    artifact_record: docs/runbooks/results-capture-election-night.md
   - election_id: wa-2026-primary
     id: certification
     kind: certification

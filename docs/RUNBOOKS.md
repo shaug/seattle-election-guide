@@ -55,8 +55,11 @@ even when everything around it is automated. The declaration is versioned repo s
 runbook's autonomy is a reviewed change, not a habit.
 
 Levels 1 and 2 are deterministic — a scheduled GitHub Actions job reading the calendar; no agent
-involved. Level 1 is #220 (unchanged in scope); level 2 is its follow-up, #279. Level 3 is
-per-runbook opt-in and needs no new infrastructure design until a runbook wants it.
+involved. Level 1 is #220 and level 2 is its follow-up #279; both ship as steps of the same
+`Calendar` workflow, and `docs/ELECTION_CALENDAR.md` owns their mechanics — which artifact each
+milestone kind promises, how a capture is matched to its window, and how an escalation stays
+idempotent. Level 3 is per-runbook opt-in and needs no new infrastructure design until a runbook
+wants it.
 
 ## Runbook anatomy
 

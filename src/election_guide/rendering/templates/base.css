@@ -155,8 +155,31 @@ a { color: var(--blue); text-underline-offset: .15em; }
 
 /* Shared sticky stack for election controls and any state strip that follows
    them. Guide and task pages use this wrapper so placement is behavioral
-   parity, not a page-local imitation. The tall mobile stack remains in flow. */
-.sticky-header { position: sticky; top: 0; z-index: 5; }
+   parity, not a page-local imitation. The tall mobile stack remains in flow.
+
+   `will-change: transform` is a capture-determinism fix, not a performance
+   hint (issue #341/#343/#368, and the measurement below). A sticky element is
+   promoted to its own compositing layer, and this one's layer origin sits at a
+   fractional device pixel -- 267.734375 at the 1440px capture width -- because
+   every box above it is rem-derived. Which device pixel that layer's contents
+   snap to is then decided per renderer process, so two builds of one unchanged
+   document photograph the control bar one pixel apart and the release
+   reproducibility gate fails on desktop.png. Declaring the promotion makes the
+   layer's rasterization the same on every launch.
+
+   Measured on the CI runner, 25 captures of one document per job, three jobs
+   per arm: the shipped capture diverged 15 times in 75, and 0 times in 75 with
+   this declaration. The three Chrome compositor flags #368 added govern when a
+   frame is drawn, not how a promoted layer snaps, so they cannot reach this:
+   `--deterministic-mode` (9/75), `--num-raster-threads=1` (8/75) and
+   `--disable-checker-imaging` (19/75) all still diverged. `contain: paint`
+   also held at 0/75 but clips this bar's own box-shadow, which is a visible
+   regression rather than a fix.
+
+   This is why the divergence was only ever seen on desktop.png and never on
+   mobile.png: the rule below turns this element static under 721px, and the
+   mobile capture is 390px wide, so no layer is promoted there at all. */
+.sticky-header { position: sticky; top: 0; z-index: 5; will-change: transform; }
 
 /* Shared persistent state/action surface (DESIGN.md: sticky strips are one
    family). */

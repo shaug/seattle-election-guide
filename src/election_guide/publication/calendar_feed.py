@@ -16,7 +16,12 @@ from collections.abc import Collection
 from dataclasses import dataclass
 from datetime import UTC, datetime, time, timedelta
 
-from election_guide.calendar.models import CalendarMilestone, ElectionCalendar, MilestoneKind
+from election_guide.calendar.models import (
+    ELECTION_TIMEZONE,
+    CalendarMilestone,
+    ElectionCalendar,
+    MilestoneKind,
+)
 
 # RFC 5545 §3.1: lines are folded at 75 octets, continued with one leading
 # space. Clients reject longer lines, and Google is stricter than Apple.
@@ -30,8 +35,11 @@ FEED_DESCRIPTION = (
 )
 
 # Washington counts ballots on Pacific time, and a subscriber in another zone
-# must still see the deadline at the hour it actually falls.
-FEED_TIMEZONE = "America/Los_Angeles"
+# must still see the deadline at the hour it actually falls. The zone itself is
+# a fact about the election, not about the feed, so it is declared with the
+# calendar — the artifact watch reads the same one to decide whether a capture
+# stamped at 10 p.m. Pacific fell inside its milestone's window.
+FEED_TIMEZONE = ELECTION_TIMEZONE
 
 # Drop boxes and in-person voting close at 8:00 p.m. on election day. Every
 # other public milestone is a whole day.

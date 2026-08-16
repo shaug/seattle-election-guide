@@ -55,3 +55,18 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           LEAD_DAYS: ${{ inputs.lead_days || '21' }}
           DRY_RUN: ${{ inputs.dry_run && '1' || '' }}
+      # The other half of the same schedule (issue #279). Tracking makes a
+      # milestone visible before it is due; this asks, after the window closed,
+      # whether the work actually landed. It runs even when tracking exited
+      # non-zero — tracking fails on a title that contradicts its markers, and
+      # a milestone whose artifact never appeared is not less urgent because
+      # some other issue was edited.
+      - name: Escalate milestones whose promised artifact never appeared
+        if: ${{ !cancelled() }}
+        run: >-
+          uv run election-guide calendar watch config/calendar/elections.yaml
+          --repository "$GITHUB_REPOSITORY"
+          ${DRY_RUN:+--dry-run}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DRY_RUN: ${{ inputs.dry_run && '1' || '' }}

@@ -49,7 +49,15 @@ it should stay human-launched at least through the first full cycle.
    (`docs/RESULTS.md`, "Ingestion mechanics") — the adapter's parse target.
 2. Capture and verify each artifact exactly as in
    `results-capture-election-night.md` steps 3 and 5 — same authority identity, same storage
-   rule — with titles naming the certified status.
+   rule — with titles naming the certified status:
+   `"<election> certified results (<representation>)"`, for example
+   `"2026 Washington August Primary certified results (King County CSV)"`.
+
+   **The word `certified` in the title is load-bearing.** A manifest declares no election and no
+   capture kind, so the calendar's artifact watch reads that word to tell a certified capture
+   from the same authority's election-night one (`docs/ELECTION_CALENDAR.md`, "Watching for the
+   promised artifact"). A title omitting it leaves this milestone looking unmet, and the watch
+   escalates work that was done.
 
    **Where the bytes must live:** the tracked `data/evidence/official/` root, captured with
    `--storage-root data/evidence/official --redistribution permitted`. Official results are

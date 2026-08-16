@@ -17,6 +17,13 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 ID_PATTERN = r"^[a-z0-9]+(?:-[a-z0-9]+)*$"
 WORKFLOW_PATTERN = r"^[a-z0-9]+(?:-[a-z0-9]+)*(?: [a-z0-9]+(?:-[a-z0-9]+)*)*$"
 
+# Washington counts ballots on Pacific time. Every consumer that has to place a
+# declared date at a real hour reads it from here: the published feed, so a
+# subscriber in another zone sees the deadline when it actually falls, and the
+# artifact watch, so an election-night capture recorded at 10 p.m. Pacific is
+# not mistaken for the next day's work.
+ELECTION_TIMEZONE = "America/Los_Angeles"
+
 MilestonePhase = Literal["before", "on", "after"]
 MilestoneKind = Literal[
     "initialize_election",
@@ -96,6 +103,14 @@ class CalendarMilestone(CalendarModel):
     offset_days: int = Field(ge=-730, le=365)
     workflow: str | None = Field(default=None, pattern=WORKFLOW_PATTERN)
     reference: str | None = Field(default=None, min_length=1)
+    # Where this milestone's promised artifact is recorded, when it exists in a
+    # form the artifact watch cannot check (issue #279). Set only after the
+    # work is done and its record is a document rather than a manifest or a
+    # refresh event: it permanently exempts the milestone from escalation, so
+    # it is a claim a reviewer has to agree with, never a way to quiet a
+    # reminder. `docs/ELECTION_CALENDAR.md` states the one case that has needed
+    # it. Left unset, a milestone is checked against the repository.
+    artifact_record: str | None = Field(default=None, min_length=1)
     # Whether a voter should see this date. Default false, so a new milestone
     # kind is internal until someone decides otherwise: the published feed is
     # opt-in, never opt-out. This marks audience, not presentation — the words
@@ -107,7 +122,7 @@ class CalendarMilestone(CalendarModel):
     # the same input must always produce the same bytes.
     revision: int = Field(default=1, ge=1)
 
-    @field_validator("reference")
+    @field_validator("reference", "artifact_record")
     @classmethod
     def validate_reference(cls, value: str | None) -> str | None:
         if value is None:
