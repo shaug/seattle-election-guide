@@ -24,9 +24,10 @@ from election_guide.calendar import (
 from election_guide.calendar.github_tracker import (
     ISSUE_QUERY_LIMIT,
     GitHubIssueTracker,
+    IssueRecord,
     TrackedIssues,
+    issue_numbers_by_marker,
     issue_records,
-    markers_in_issues,
 )
 from election_guide.calendar.tracking import MARKER_PREFIX, unmarked_collisions
 from election_guide.cli import app
@@ -214,14 +215,14 @@ def test_every_planned_issue_embeds_its_own_marker() -> None:
 def test_markers_are_read_back_out_of_the_listing() -> None:
     """The round trip that makes a second run idempotent."""
     request = _plan(date(2027, 11, 2), 0)[0]
-    payload = json.dumps([{"body": request.body}])
+    payload = json.dumps([{"number": 1, "body": request.body}])
 
-    assert markers_in_issues([body for _, body in issue_records(payload)]) == {request.marker}
+    assert set(issue_numbers_by_marker(issue_records(payload))) == {request.marker}
 
 
 def test_markers_ignores_an_issue_with_no_body() -> None:
-    payload = '[{"body": null}, {"body": "no marker here"}]'
-    assert markers_in_issues([body for _, body in issue_records(payload)]) == set()
+    payload = '[{"number": 1, "body": null}, {"number": 2, "body": "no marker here"}]'
+    assert issue_numbers_by_marker(issue_records(payload)) == {}
 
 
 def test_the_committed_calendar_plans_only_milestones_ahead_of_the_window() -> None:
@@ -247,7 +248,7 @@ def _completed(command: list[str], stdout: str = "", code: int = 0) -> Completed
 
 
 def _nothing_tracked(self: GitHubIssueTracker) -> TrackedIssues:
-    return TrackedIssues(markers=frozenset(), titles=())
+    return TrackedIssues(titles=(), issue_numbers={})
 
 
 def test_the_listing_reads_every_issue_open_and_closed(
@@ -258,11 +259,14 @@ def test_the_listing_reads_every_issue_open_and_closed(
 
     def _run(command: list[str], **kwargs: Any) -> CompletedProcess[str]:
         recorded["command"] = command
-        return _completed(command, json.dumps([{"body": f"anything\n{marker}\n"}]))
+        return _completed(command, json.dumps([{"number": 7, "body": f"anything\n{marker}\n"}]))
 
     monkeypatch.setattr(subprocess, "run", _run)
 
-    assert GitHubIssueTracker("owner/repo").read_tracked_issues().markers == {marker}
+    tracked = GitHubIssueTracker("owner/repo").read_tracked_issues()
+    assert tracked.markers == {marker}
+    # The number is what an escalation needs to reach the issue (issue #279).
+    assert tracked.issue_numbers == {marker: (7,)}
     command = recorded["command"]
     assert command[:3] == ["gh", "issue", "list"]
     # Closed issues count: a milestone whose issue was completed must not be
@@ -272,15 +276,16 @@ def test_the_listing_reads_every_issue_open_and_closed(
     # label must still be seen, or its milestone reopens on every run.
     assert "--label" not in command
     assert "--search" not in command
-    # The body carries the marker back, and the title is what the collision
-    # check compares — narrowing this to `body` would disable that guard.
-    assert command[command.index("--json") + 1] == "title,body"
+    # The body carries the marker back, the title is what the collision check
+    # compares, and the number is what an escalation posts against — narrowing
+    # any of the three would disable one of those.
+    assert command[command.index("--json") + 1] == "number,title,body"
     assert str(ISSUE_QUERY_LIMIT) in command
 
 
 def test_the_listing_refuses_to_truncate(monkeypatch: pytest.MonkeyPatch) -> None:
     """A dropped marker is a duplicate issue, so the read fails instead."""
-    payload = json.dumps([{"body": "x"} for _ in range(ISSUE_QUERY_LIMIT)])
+    payload = json.dumps([{"number": index + 1, "body": "x"} for index in range(ISSUE_QUERY_LIMIT)])
 
     def _run(command: list[str], **kwargs: Any) -> CompletedProcess[str]:
         return _completed(command, payload)
@@ -299,11 +304,17 @@ def test_an_unlabelled_issue_still_suppresses_its_milestone(
 
     def _run(command: list[str], **kwargs: Any) -> CompletedProcess[str]:
         # An issue stripped of every label, carrying only its marker.
-        return _completed(command, json.dumps([{"body": f"triaged\n\n{marker}"}]))
+        return _completed(command, json.dumps([{"number": 8, "body": f"triaged\n\n{marker}"}]))
 
     monkeypatch.setattr(subprocess, "run", _run)
 
     assert GitHubIssueTracker("owner/repo").read_tracked_issues().markers == {marker}
+
+
+def _marked(*bodies: str) -> dict[str, tuple[int, ...]]:
+    return issue_numbers_by_marker(
+        [IssueRecord(number=index + 1, title="", body=body) for index, body in enumerate(bodies)]
+    )
 
 
 def test_a_quoted_marker_does_not_suppress_a_milestone() -> None:
@@ -311,14 +322,21 @@ def test_a_quoted_marker_does_not_suppress_a_milestone() -> None:
     marker = milestone_marker("wa-2027-general", "election-day")
     quoting = f"Every issue ends with a line like\n\n    {marker}\n\nwhich is its identity."
 
-    assert markers_in_issues([quoting]) == set()
-    assert markers_in_issues([f"{quoting}\n\n{marker}"]) == {marker}
+    assert _marked(quoting) == {}
+    assert _marked(f"{quoting}\n\n{marker}") == {marker: (1,)}
 
 
 def test_a_trailing_blank_line_does_not_hide_the_marker() -> None:
     marker = milestone_marker("wa-2027-general", "election-day")
 
-    assert markers_in_issues([f"body\n\n{marker}\n\n"]) == {marker}
+    assert _marked(f"body\n\n{marker}\n\n") == {marker: (1,)}
+
+
+def test_every_issue_carrying_one_marker_is_reported_against_it() -> None:
+    """Duplicates exist in this repository; an escalation must reach them all."""
+    marker = milestone_marker("wa-2027-general", "election-day")
+
+    assert _marked(f"first\n\n{marker}", "unrelated", f"duplicate\n\n{marker}") == {marker: (1, 3)}
 
 
 def test_create_attaches_the_milestone_and_every_label(
@@ -403,6 +421,8 @@ def test_a_malformed_issue_listing_is_rejected() -> None:
         issue_records(json.dumps({"body": "x"}))
     with pytest.raises(ValueError, match="not an object"):
         issue_records(json.dumps(["x"]))
+    with pytest.raises(ValueError, match="without a number"):
+        issue_records(json.dumps([{"body": "x"}]))
 
 
 def test_dry_run_prints_the_plan_and_creates_nothing(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -476,8 +496,15 @@ def test_the_workflow_runs_every_six_hours_off_the_hour() -> None:
 
 
 def _tracked(markers: set[str], titles: tuple[str, ...]) -> object:
+    """A listing where each marker is carried by one issue.
+
+    The numbers are what the markers are read out of, so a fake cannot claim a
+    milestone is tracked without saying which issue tracks it.
+    """
+
     def _read(self: GitHubIssueTracker) -> TrackedIssues:
-        return TrackedIssues(markers=frozenset(markers), titles=titles)
+        numbers = {marker: (index + 1,) for index, marker in enumerate(sorted(markers))}
+        return TrackedIssues(titles=titles, issue_numbers=numbers)
 
     return _read
 

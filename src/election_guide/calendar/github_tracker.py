@@ -1,66 +1,122 @@
 """Fulfil a calendar tracking plan against GitHub Issues.
 
 This is the impure half of milestone tracking. It reads which markers already
-exist and creates the missing issues; deciding what should exist belongs to
-`election_guide.calendar.tracking`.
+exist, creates the missing issues, and escalates the ones whose promised
+artifact never appeared; deciding what should exist and what counts as missing
+belongs to `election_guide.calendar.tracking` and `.watch`.
 """
 
 from __future__ import annotations
 
 import json
+from collections import defaultdict
+from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any, cast
 
 from election_guide.calendar.tracking import MARKER_PREFIX, IssueRequest
+from election_guide.calendar.watch import (
+    ESCALATION_MARKER_PREFIX,
+    LABEL_COLORS,
+    EscalationRequest,
+)
 from election_guide.github_cli import ISSUE_QUERY_LIMIT, run_gh, trailing_line
+
+# `gh issue edit --add-label` fails on a label the repository does not have, so
+# the run creates them rather than depending on anyone having done it by hand.
+# The colours come from the stage table itself (`watch.LABEL_COLORS`), so a
+# stage can never carry a label this half has no colour for.
+ESCALATION_LABEL_DESCRIPTION = "A calendar milestone's promised artifact never appeared"
+
+# `gh label list` pages at 30 by default, sorted by creation ascending — so the
+# newest labels are the first ones dropped, and the two above are the newest
+# this repository has. A truncated read reports an existing label as absent,
+# `gh label create` then fails on it, and the whole watch run dies before
+# posting any escalation. Same failure shape as a dropped issue marker, so it
+# gets the same treatment `ISSUE_QUERY_LIMIT` already gives that: ask for far
+# more than could exist, and fail loudly rather than truncate.
+LABEL_QUERY_LIMIT = 1000
+
+
+@dataclass(frozen=True)
+class IssueRecord:
+    """One existing issue, reduced to what milestone tracking reads."""
+
+    number: int
+    title: str
+    body: str
 
 
 @dataclass(frozen=True)
 class TrackedIssues:
     """What the repository already says about calendar milestones.
 
-    `markers` is the identity the tracker acts on. `titles` is only used to
-    notice that a title and the markers disagree; it never establishes that a
-    milestone is tracked.
+    `issue_numbers` says which issues carry each marker — plural, because a
+    marker is not unique in practice and an escalation that reached only one of
+    them would leave the rest looking untouched. `titles` is only used to notice
+    that a title and the markers disagree; it never establishes that a milestone
+    is tracked.
+
+    The tracked markers are that mapping's key set rather than a field beside
+    it. Stored separately they could be set inconsistently — and then a
+    milestone would read as tracked while yielding no issue to escalate, which
+    is the silent pass this whole system exists to prevent. Deriving it makes
+    that unrepresentable instead of promising it in prose.
     """
 
-    markers: frozenset[str]
     titles: tuple[str, ...]
+    issue_numbers: Mapping[str, tuple[int, ...]]
+
+    @property
+    def markers(self) -> frozenset[str]:
+        """Every calendar marker the repository's issues carry."""
+        return frozenset(self.issue_numbers)
 
 
-def issue_records(payload: str) -> list[tuple[str, str]]:
-    """Extract (title, body) from `gh issue list --json title,body` output."""
+def issue_records(payload: str) -> list[IssueRecord]:
+    """Extract each issue from `gh issue list --json number,title,body` output."""
     issues: Any = json.loads(payload)
     if not isinstance(issues, list):
         raise ValueError("GitHub CLI returned an issue list that is not an array")
-    records: list[tuple[str, str]] = []
+    records: list[IssueRecord] = []
     for entry in cast(list[Any], issues):
         if not isinstance(entry, dict):
             raise ValueError("GitHub CLI returned an issue that is not an object")
         issue = cast(dict[str, Any], entry)
-        title, body = issue.get("title"), issue.get("body")
+        number, title, body = issue.get("number"), issue.get("title"), issue.get("body")
+        if not isinstance(number, int):
+            raise ValueError("GitHub CLI returned an issue without a number")
         records.append(
-            (title if isinstance(title, str) else "", body if isinstance(body, str) else "")
+            IssueRecord(
+                number=number,
+                title=title if isinstance(title, str) else "",
+                body=body if isinstance(body, str) else "",
+            )
         )
     return records
 
 
-def markers_in_issues(bodies: list[str]) -> set[str]:
-    """Collect the calendar marker each issue body ends with, if any.
+def issue_numbers_by_marker(records: list[IssueRecord]) -> dict[str, tuple[int, ...]]:
+    """Group issue numbers by the calendar marker each body ends with.
 
-    Public because this parse is the idempotence contract: a marker that is
-    written but not read back opens a duplicate on the next run.
+    The single place this parse lives, because it is the idempotence contract:
+    a marker that is written but not read back opens a duplicate on the next
+    run. The tracked markers are this mapping's keys rather than a second scan
+    of the same bodies — two scans of one listing could only ever agree, until
+    the day someone refines one of them, and a milestone that read as tracked
+    but yielded no issue number would be the silent pass this system exists to
+    prevent.
 
-    Only the final non-empty line counts. Generated issues always end with
-    their marker, so nothing is missed — and an issue that merely quotes one
-    while discussing this system cannot suppress a real milestone.
+    Only each body's final non-empty line counts. Generated issues always end
+    with their marker, so nothing is missed — and an issue that merely quotes
+    one while discussing this system cannot suppress a real milestone.
     """
-    markers: set[str] = set()
-    for body in bodies:
-        tail = trailing_line(body)
+    grouped: defaultdict[str, list[int]] = defaultdict(list)
+    for record in records:
+        tail = trailing_line(record.body)
         if tail.startswith(MARKER_PREFIX):
-            markers.add(tail)
-    return markers
+            grouped[tail].append(record.number)
+    return {marker: tuple(sorted(numbers)) for marker, numbers in grouped.items()}
 
 
 class GitHubIssueTracker:
@@ -98,7 +154,7 @@ class GitHubIssueTracker:
                 "--limit",
                 str(ISSUE_QUERY_LIMIT),
                 "--json",
-                "title,body",
+                "number,title,body",
             ],
             "could not list existing calendar issues",
         )
@@ -109,8 +165,8 @@ class GitHubIssueTracker:
                 "dropped; raise ISSUE_QUERY_LIMIT before running again"
             )
         return TrackedIssues(
-            markers=frozenset(markers_in_issues([body for _, body in records])),
-            titles=tuple(title for title, _ in records),
+            titles=tuple(record.title for record in records),
+            issue_numbers=issue_numbers_by_marker(records),
         )
 
     def ensure_milestone(self, title: str) -> None:
@@ -139,6 +195,124 @@ class GitHubIssueTracker:
                 f"title={title}",
             ],
             f"could not create milestone {title!r}",
+        )
+
+    def read_escalation_markers(self, number: int) -> frozenset[str]:
+        """Collect the escalation markers one issue's comments already carry.
+
+        Comments rather than the body: the body is the milestone's identity and
+        is never rewritten (`tracking.plan_issues`), so an escalation has to
+        leave its own record. Only each comment's final non-empty line counts,
+        matching the marker convention everywhere else here — a human quoting a
+        marker mid-comment cannot suppress a real escalation.
+        """
+        payload = run_gh(
+            [
+                "gh",
+                "issue",
+                "view",
+                str(number),
+                "--repo",
+                self.repository,
+                "--json",
+                "comments",
+            ],
+            f"could not read comments on issue #{number}",
+        )
+        document: Any = json.loads(payload)
+        if not isinstance(document, dict):
+            raise ValueError("GitHub CLI returned an issue that is not an object")
+        comments = cast(dict[str, Any], document).get("comments")
+        if not isinstance(comments, list):
+            raise ValueError(f"GitHub CLI returned no comment list for issue #{number}")
+        markers: set[str] = set()
+        for entry in cast(list[Any], comments):
+            if not isinstance(entry, dict):
+                raise ValueError("GitHub CLI returned a comment that is not an object")
+            body = cast(dict[str, Any], entry).get("body")
+            if not isinstance(body, str):
+                continue
+            tail = trailing_line(body)
+            if tail.startswith(ESCALATION_MARKER_PREFIX):
+                markers.add(tail)
+        return frozenset(markers)
+
+    def ensure_label(self, name: str) -> None:
+        """Create one escalation label unless the repository already has it."""
+        payload = run_gh(
+            [
+                "gh",
+                "label",
+                "list",
+                "--repo",
+                self.repository,
+                "--limit",
+                str(LABEL_QUERY_LIMIT),
+                "--json",
+                "name",
+                "--jq",
+                ".[].name",
+            ],
+            "could not list repository labels",
+        )
+        existing = {line.strip() for line in payload.splitlines() if line.strip()}
+        if len(existing) >= LABEL_QUERY_LIMIT:
+            raise ValueError(
+                f"reached the {LABEL_QUERY_LIMIT}-label listing limit, so an existing label may "
+                "have been dropped; raise LABEL_QUERY_LIMIT before running again"
+            )
+        if name in existing:
+            return
+        run_gh(
+            [
+                "gh",
+                "label",
+                "create",
+                name,
+                "--repo",
+                self.repository,
+                "--color",
+                LABEL_COLORS[name],
+                "--description",
+                ESCALATION_LABEL_DESCRIPTION,
+            ],
+            f"could not create label {name!r}",
+        )
+
+    def escalate(self, request: EscalationRequest) -> None:
+        """Add the stage's label to one issue and say why, in that order.
+
+        The label first: it is the part visible without opening the issue, and
+        a comment that landed under no label is the quiet outcome this check
+        exists to avoid. The comment carries the marker, so a failure between
+        the two leaves the stage unmarked and the next run retries it.
+        """
+        self.ensure_label(request.label)
+        run_gh(
+            [
+                "gh",
+                "issue",
+                "edit",
+                str(request.issue_number),
+                "--repo",
+                self.repository,
+                "--add-label",
+                request.label,
+            ],
+            f"could not label issue #{request.issue_number}",
+        )
+        run_gh(
+            [
+                "gh",
+                "issue",
+                "comment",
+                str(request.issue_number),
+                "--repo",
+                self.repository,
+                "--body",
+                request.body,
+            ],
+            f"could not comment on issue #{request.issue_number}",
         )
 
     def create(self, request: IssueRequest) -> str:
