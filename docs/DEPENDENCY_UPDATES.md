@@ -11,9 +11,15 @@ only surfaces when a stale dependency breaks or blocks something else.
 - **`uv`** — Python dependencies pinned in `uv.lock`.
 - **`npm`** — Node dependencies pinned in `package-lock.json`, including the exact-pinned
   `wrangler` version in `package.json`. Dependabot has no separate "this one dependency is
-  special" carve-out, and it doesn't need one: an exact pin (`"wrangler": "4.113.0"`, no `^`)
-  still updates like any other `npm` dependency, so a new Wrangler release arrives as an ordinary
+  special" carve-out, and it doesn't need one: an exact pin (a bare `x.y.z`, no `^`) still
+  updates like any other `npm` dependency, so a new Wrangler release arrives as an ordinary
   reviewable PR rather than silently.
+
+  No test asserts which version any dependency is at, and none should. Every install path is
+  `npm ci`, which resolves strictly from `package-lock.json` — the lockfile is the pin, and a
+  spec in `package.json` cannot put a different version on a deploy regardless of its style. A
+  test asserting a version literal duplicates the lockfile's job, and because it fails on the
+  bump itself it stops CI before the checks that would actually judge the new version ever run.
 
 Both ecosystems run **weekly, Monday 09:00 America/Los_Angeles** — a fixed, low-noise cadence
 that lands updates early in the week, ahead of most deploy activity, without being frequent

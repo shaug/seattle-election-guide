@@ -1411,12 +1411,11 @@ def test_sources_page_reset_redirects_with_no_fragment(tmp_path: Path) -> None:
     assert result["reset"] == f"/e/{view_model.metadata.election_id}/"
 
 
-def test_wrangler_and_workflow_keep_deployment_pinned_and_gated() -> None:
+def test_wrangler_and_workflow_keep_deployment_gated() -> None:
     site_manifest = yaml.safe_load(
         (PROJECT_ROOT / "config/hosting/site.yaml").read_text(encoding="utf-8")
     )
     wrangler = json.loads((PROJECT_ROOT / "wrangler.jsonc").read_text(encoding="utf-8"))
-    package = json.loads((PROJECT_ROOT / "package.json").read_text(encoding="utf-8"))
     workflow = yaml.load(
         (PROJECT_ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8"),
         Loader=yaml.BaseLoader,
@@ -1424,7 +1423,11 @@ def test_wrangler_and_workflow_keep_deployment_pinned_and_gated() -> None:
 
     assert wrangler["name"] == "seattle-elections"
     assert wrangler["pages_build_output_dir"] == "./dist/cloudflare-site"
-    assert package["devDependencies"]["wrangler"] == "4.113.0"
+    # Wrangler's version is deliberately not asserted here. Every install path is
+    # `npm ci`, which resolves strictly from package-lock.json, so the lockfile is
+    # the pin and package.json's spec cannot put a different Wrangler on a deploy.
+    # An assertion on the version only duplicated the lockfile's job and failed
+    # every Dependabot bump on its way to the checks that do decide (issue 226).
     current_election = next(
         election
         for election in site_manifest["elections"]
@@ -1683,8 +1686,8 @@ def test_pr_preview_workflow_is_label_gated_fork_safe_and_head_bound() -> None:
     )
     assert "wrangler pages deployment list" in delete_step["run"]
     assert "wrangler pages deployment delete" in delete_step["run"]
-    # Wrangler 4.113.0 does not print the Cloudflare API objects: it maps each
-    # one to {Id, Environment, Branch, Source, Deployment, Status, Build} first.
+    # Wrangler does not print the Cloudflare API objects: it maps each one to
+    # {Id, Environment, Branch, Source, Deployment, Status, Build} first.
     # Selecting on the raw API field names matches nothing, deletes nothing, and
     # still exits 0, so the exact field names are the contract here.
     assert "'.[] | select(.Branch == $branch) | .Id'" in delete_step["run"]
