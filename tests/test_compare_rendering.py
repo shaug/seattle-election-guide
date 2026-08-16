@@ -477,7 +477,14 @@ def test_guide_and_compare_render_the_shared_election_controls_composite() -> No
     ):
         assert selector in base_css
         assert selector not in page_css
-    assert ".sticky-header { position: sticky; top: 0; z-index: 5; }" in base_css
+    # `will-change` rides with the shared rule rather than being restated per
+    # surface: it is what keeps the promoted layer's rasterization identical
+    # across renderer processes, so every page that pins this stack needs it
+    # (base.css, and test_the_sticky_header_declares_its_own_compositing_promotion).
+    assert (
+        ".sticky-header { position: sticky; top: 0; z-index: 5; will-change: transform; }"
+        in base_css
+    )
     assert ".sticky-header { position: static; }" in base_css
     assert ".sticky-header" not in page_css
 
