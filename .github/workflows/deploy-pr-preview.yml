@@ -189,10 +189,17 @@ jobs:
             --json > deployments.json
           # Wrangler does not pass the API objects through: it maps each one to
           # {Id, Environment, Branch, Source, Deployment, Status, Build} before
-          # printing. Selecting on the raw API field names would match nothing
-          # and delete nothing, silently. tests/test_hosting.py pins this filter
-          # by its exact text, which catches an edit but would not catch Wrangler
-          # changing the projection under it.
+          # printing. If that projection ever changes, the selector below matches
+          # nothing, deletes nothing, and still exits 0 — previews then accumulate
+          # with no signal at all. Guard the shape rather than the match count:
+          # zero matches is ordinary (this pull request may never have had a
+          # preview, and the listing spans every branch), but a deployment that
+          # lacks .Branch or .Id means the selector is stale, not the branch.
+          if ! jq -e 'length == 0 or all(.[]; has("Branch") and has("Id"))' \
+            deployments.json > /dev/null; then
+            echo "::error::wrangler pages deployment list no longer exposes .Branch/.Id; the preview-teardown selector is stale."
+            exit 1
+          fi
           ids="$(jq -r --arg branch "$PREVIEW_BRANCH" \
             '.[] | select(.Branch == $branch) | .Id' \
             deployments.json)"
