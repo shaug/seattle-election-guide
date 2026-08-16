@@ -15,12 +15,11 @@ out there.
 
 from __future__ import annotations
 
-import json
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta
 from pathlib import Path
-from typing import Any, Literal, cast
+from typing import Literal
 from zoneinfo import ZoneInfo
 
 from pydantic import Field
@@ -32,6 +31,9 @@ from election_guide.calendar.models import (
     MilestoneKind,
 )
 from election_guide.calendar.tracking import TrackingModel, milestone_marker
+from election_guide.collection.refresh import read_refresh_event
+from election_guide.evidence.models import CapturedManifest
+from election_guide.evidence.storage import read_capture_manifest
 
 # Every escalation comment carries this marker so a later run recognizes its
 # own work, the same way `MARKER_PREFIX` works for the issues themselves. It is
@@ -352,62 +354,37 @@ def untracked_milestones(
 def read_repository_artifacts(*, manifest_dir: Path, refresh_dir: Path) -> RepositoryArtifacts:
     """Read what the repository holds, reduced to what matching needs.
 
-    Deliberately not a second validator: `evidence verify-all` already owns
-    whether a manifest is well formed and its bytes still exist. This reads the
-    two fields that decide whether a milestone's window was filled — and fails
-    loudly on a file it cannot read those from, because a record silently
-    skipped here becomes an escalation against work that was done.
+    Through each format's own reader, never a second parse of the same bytes.
+    Re-deriving `availability` or `status` as string comparisons here would put
+    a copy of those semantics in a file nobody edits when the models change,
+    and both directions of that drift are the operator-visible failure this
+    check exists to prevent: a discriminator this reader stops recognizing
+    empties the repository and escalates completed work, and one it stops
+    rejecting lets a failed refresh count as a landed one.
 
     A directory that does not exist reads as empty. A checkout that has
     captured nothing yet is a real state, not an error.
     """
     captures: list[CaptureRecord] = []
     for path in _artifact_files(manifest_dir, "capture-*.json"):
-        record = _json_object(path)
+        manifest = read_capture_manifest(path)
         # Only a captured manifest is evidence the work landed. An unavailable
         # one records an attempt that found nothing, which is exactly the case
         # a human should still hear about.
-        if record.get("availability") != "captured":
+        if not isinstance(manifest, CapturedManifest):
             continue
         captures.append(
-            CaptureRecord(
-                title=_text(record, "title", path),
-                retrieved_at=_moment(record, "retrieved_at", path),
-            )
+            CaptureRecord(title=manifest.title or "", retrieved_at=manifest.retrieved_at)
         )
     refreshes: list[datetime] = []
     for path in _artifact_files(refresh_dir, "refresh-*.json"):
-        event = _json_object(path)
+        event = read_refresh_event(path)
         # A failed refresh is the record of a refresh that did not happen.
-        if event.get("status") == "failed":
+        if event.status == "failed":
             continue
-        refreshes.append(_moment(event, "checked_at", path))
+        refreshes.append(event.checked_at)
     return RepositoryArtifacts(captures=tuple(captures), refreshes=tuple(refreshes))
 
 
 def _artifact_files(directory: Path, pattern: str) -> list[Path]:
     return sorted(directory.glob(pattern)) if directory.is_dir() else []
-
-
-def _json_object(path: Path) -> dict[str, Any]:
-    payload: Any = json.loads(path.read_text(encoding="utf-8"))
-    if not isinstance(payload, dict):
-        raise ValueError(f"{path} is not a JSON object")
-    return cast(dict[str, Any], payload)
-
-
-def _text(record: dict[str, Any], field: str, path: Path) -> str:
-    value = record.get(field)
-    if not isinstance(value, str) or not value.strip():
-        raise ValueError(f"{path} has no readable {field}")
-    return value
-
-
-def _moment(record: dict[str, Any], field: str, path: Path) -> datetime:
-    try:
-        moment = datetime.fromisoformat(_text(record, field, path))
-    except ValueError as error:
-        raise ValueError(f"{path} has an unreadable {field}: {error}") from error
-    if moment.tzinfo is None:
-        raise ValueError(f"{path} records {field} without a time zone")
-    return moment

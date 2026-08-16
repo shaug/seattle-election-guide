@@ -29,6 +29,13 @@ from election_guide.calendar import (
 )
 from election_guide.calendar.github_tracker import GitHubIssueTracker, TrackedIssues
 from election_guide.cli import app
+from election_guide.collection.models import RefreshEvent
+from election_guide.evidence.models import (
+    CaptureRequest,
+    UnavailableRequest,
+    evidence_fingerprint,
+)
+from election_guide.evidence.storage import record_capture, record_unavailable
 
 PROJECT_ROOT = Path(__file__).parents[1]
 CALENDAR_PATH = PROJECT_ROOT / "config" / "calendar" / "elections.yaml"
@@ -341,39 +348,79 @@ def test_a_milestone_with_no_tracking_issue_is_reported_rather_than_invented() -
     ]
 
 
+def _capture_metadata(**overrides: Any) -> dict[str, Any]:
+    return {
+        "source_id": "king-county-elections",
+        "requested_url": "https://example.org/results",
+        "canonical_url": "https://example.org/results",
+        "retrieved_at": datetime(2027, 11, 3, 6, 2, 45, tzinfo=UTC),
+        "media_type": "text/html",
+        "title": ELECTION_NIGHT_TITLE,
+        "redistribution": "permitted",
+        "redistribution_note": "Official public record; bytes retained in the repository.",
+    } | overrides
+
+
+def _refresh_event(**fields: Any) -> RefreshEvent:
+    """Build a refresh event carrying the content identity its reader demands."""
+    timestamp = fields["checked_at"].astimezone(UTC).strftime("%Y%m%dT%H%M%SZ")
+    prefix = f"refresh-{fields['source_id']}-{timestamp}-"
+    draft = RefreshEvent(id=f"{prefix}000000000000", **fields)
+    fingerprint = evidence_fingerprint(draft.model_dump(mode="json", exclude={"id"}))[:12]
+    return RefreshEvent(id=f"{prefix}{fingerprint}", **fields)
+
+
 def test_repository_artifacts_read_captured_manifests_and_successful_refreshes(
     tmp_path: Path,
 ) -> None:
+    """Written by the real writers, so the reader is held to the real formats.
+
+    Hand-written JSON would pass whatever this reader happens to accept; these
+    records are the ones `evidence capture` and `collect refresh` actually
+    produce.
+    """
     manifest_dir = tmp_path / "manifests"
     refresh_dir = tmp_path / "refreshes"
-    manifest_dir.mkdir()
     refresh_dir.mkdir()
-    (manifest_dir / "capture-king-county-elections-20271103T060245Z-000000000000.json").write_text(
-        json.dumps(
-            {
-                "availability": "captured",
-                "title": ELECTION_NIGHT_TITLE,
-                "retrieved_at": "2027-11-03T06:02:45Z",
-            }
+    artifact = tmp_path / "results.html"
+    artifact.write_text("<html>first count</html>", encoding="utf-8")
+
+    record_capture(
+        CaptureRequest(**_capture_metadata(), http_status=200, capture_method="static_html"),
+        artifact,
+        tmp_path / "snapshots",
+        manifest_dir,
+    )
+    # An attempt that found nothing is not evidence the work landed.
+    record_unavailable(
+        UnavailableRequest(
+            **_capture_metadata(title=None, media_type=None),
+            unavailable_reason="The authority had published nothing yet.",
         ),
-        encoding="utf-8",
+        manifest_dir,
     )
-    (manifest_dir / "capture-king-county-elections-20271103T060245Z-111111111111.json").write_text(
-        json.dumps(
-            {
-                "availability": "unavailable",
-                "title": None,
-                "retrieved_at": "2027-11-03T06:02:45Z",
-            }
+    for event in (
+        _refresh_event(
+            source_id="the-stranger",
+            checked_at=datetime(2027, 10, 29, 15, 0, tzinfo=UTC),
+            status="unchanged",
+            content_changed=False,
+            capture_id="capture-the-stranger-20271029T150000Z-000000000000",
+            snapshot_id="extraction-the-stranger-20271029T150000Z-000000000000",
+            previous_snapshot_id="extraction-the-stranger-20271029T150000Z-000000000000",
         ),
-        encoding="utf-8",
-    )
-    (refresh_dir / "refresh-the-stranger-20271029T150000Z-000000000000.json").write_text(
-        json.dumps({"status": "updated", "checked_at": "2027-10-29T15:00:00Z"}), encoding="utf-8"
-    )
-    (refresh_dir / "refresh-the-stranger-20271029T160000Z-111111111111.json").write_text(
-        json.dumps({"status": "failed", "checked_at": "2027-10-29T16:00:00Z"}), encoding="utf-8"
-    )
+        # A failed refresh is the record of a refresh that did not happen.
+        _refresh_event(
+            source_id="the-stranger",
+            checked_at=datetime(2027, 10, 29, 16, 0, tzinfo=UTC),
+            status="failed",
+            content_changed=None,
+            error="the source did not respond",
+        ),
+    ):
+        (refresh_dir / f"{event.id}.json").write_text(
+            event.model_dump_json(indent=2), encoding="utf-8"
+        )
 
     artifacts = read_repository_artifacts(manifest_dir=manifest_dir, refresh_dir=refresh_dir)
 

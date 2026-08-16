@@ -192,10 +192,20 @@ promises a checkable artifact it decides whether one exists:
 | `results_capture_post_certification` | an evidence manifest in `data/manifests/evidence/`                                    | retrieval date inside the window, title carrying `certified results`      |
 | `refresh`                            | an evidence manifest, **or** a refresh event in `data/collection/refreshes/`          | date inside the window                                                    |
 
-Every other kind is a date to act on rather than work that leaves a record, so
-the check never escalates one. It is deterministic — a scheduled job reading
-the calendar and the tree, with no agent involved — and it neither dispatches
-work nor closes anything.
+The check is deterministic — a scheduled job reading the calendar and the tree,
+with no agent involved — and it neither dispatches work nor closes anything.
+
+Most other kinds are a date to act on rather than work that leaves a record,
+so the check has nothing to look for. **`collection_opens` is the exception,
+and it is deliberately unchecked for now.** It carries the same
+`workflow: collect refresh` and the same runbook as the `refresh` milestones,
+and its sweep is the one with the real deadline
+(`docs/runbooks/endorsement-discovery-sweep.md`) — so an opening sweep that
+never ran still passes silently here. It is left out because a sweep's first
+captures land over the weeks after collection opens rather than inside a
+seven-day window, so checking it on those terms would escalate work that is
+under way. Giving it a window of its own is worth doing; it needs its own
+decision about how wide, which is issue #384.
 
 A refresh accepts either record because a sweep leaves whichever its sources
 allowed. `collect refresh` writes a refresh event, but most of the 2026
