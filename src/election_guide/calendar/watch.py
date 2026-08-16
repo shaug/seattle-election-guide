@@ -228,6 +228,21 @@ def artifact_window(scheduled: date) -> ArtifactWindow:
     return ArtifactWindow(start=scheduled, end=scheduled + timedelta(days=ARTIFACT_WINDOW_DAYS))
 
 
+def current_election_date(now: datetime) -> date:
+    """Today where the election is, which is the calendar the windows use.
+
+    Both halves of this check have to count days on one calendar. An artifact's
+    timestamp is compared in Pacific, so "has the window closed" must be too —
+    read from UTC instead, the scheduled 03:17 UTC run lands at 19:17 Pacific
+    the previous day and already calls it tomorrow. That would escalate a
+    milestone with hours of its window left, and they are the hours that matter:
+    King County publishes its first count around 8:15 p.m. Pacific, inside the
+    gap. Nothing retracts an escalation once posted, and its marker stops the
+    next run from reconsidering, so the wrong call would be permanent.
+    """
+    return now.astimezone(ZoneInfo(ELECTION_TIMEZONE)).date()
+
+
 def reached_stages(scheduled: date, *, as_of: date) -> tuple[EscalationStage, ...]:
     """Every escalation stage a still-missing artifact has passed.
 

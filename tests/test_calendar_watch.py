@@ -8,18 +8,21 @@ from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from subprocess import CompletedProcess
 from typing import Any
+from zoneinfo import ZoneInfo
 
 import pytest
 from typer.testing import CliRunner
 
 from election_guide.calendar import (
     ARTIFACT_WINDOW_DAYS,
+    ELECTION_TIMEZONE,
     STALE_ESCALATION_DAYS,
     CaptureRecord,
     ElectionCalendar,
     EscalationRequest,
     RepositoryArtifacts,
     artifact_window,
+    current_election_date,
     escalation_marker,
     milestone_marker,
     missing_artifacts,
@@ -174,6 +177,31 @@ def test_a_long_past_milestone_reaches_every_stage_it_passed() -> None:
     as_of = date(2027, 11, 2) + timedelta(days=STALE_ESCALATION_DAYS + 1)
 
     assert _stages(as_of, "results-capture-election-night") == ("overdue", "stale")
+
+
+def test_the_run_counts_days_on_the_election_s_own_calendar() -> None:
+    """Both halves of the comparison must use one calendar.
+
+    The scheduled 03:17 UTC run lands at 19:17 Pacific the previous day. Read
+    from UTC, it would already call that tomorrow and escalate a milestone with
+    hours of window left — and they are the hours that matter, since King
+    County publishes its first count around 8:15 p.m. Pacific.
+    """
+    run = datetime(2026, 11, 7, 3, 17, tzinfo=UTC)
+
+    assert run.date() == date(2026, 11, 7)
+    assert current_election_date(run) == date(2026, 11, 6)
+
+
+def test_a_window_closing_tonight_is_not_escalated_from_a_utc_rollover() -> None:
+    """The end-to-end shape of the same bug, at the boundary that bites."""
+    closes = date(2027, 11, 2) + timedelta(days=ARTIFACT_WINDOW_DAYS)
+    run = datetime(
+        closes.year, closes.month, closes.day, 20, 15, tzinfo=ZoneInfo(ELECTION_TIMEZONE)
+    )
+
+    assert run.astimezone(UTC).date() > closes
+    assert "results-capture-election-night" not in _missing_ids(current_election_date(run))
 
 
 def test_a_kind_that_promises_no_checkable_artifact_is_never_escalated() -> None:

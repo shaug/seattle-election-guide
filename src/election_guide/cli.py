@@ -23,6 +23,7 @@ from election_guide.authorities.registry import read_authority_registry
 from election_guide.calendar import (
     EVIDENCE_MANIFEST_DIR,
     REFRESH_EVENT_DIR,
+    current_election_date,
     due_milestones,
     milestone_marker,
     missing_artifacts,
@@ -450,7 +451,14 @@ def calendar_watch(
     """Escalate milestones whose promised artifact never appeared."""
     try:
         calendar = read_election_calendar(calendar_path)
-        today = date.fromisoformat(as_of) if as_of is not None else datetime.now(UTC).date()
+        # The election's own calendar, not UTC: artifact timestamps are
+        # compared in Pacific, so the day count has to be too
+        # (`current_election_date`).
+        today = (
+            date.fromisoformat(as_of)
+            if as_of is not None
+            else current_election_date(datetime.now(UTC))
+        )
         artifacts = read_repository_artifacts(
             manifest_dir=manifest_dir,
             refresh_dir=refresh_dir,
