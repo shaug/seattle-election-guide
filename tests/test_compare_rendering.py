@@ -716,6 +716,16 @@ def test_compare_client_enforces_picker_bounds_and_history(tmp_path: Path) -> No
           const signals = () => [...document.querySelectorAll(
             '[data-comparison-head] [data-column-signal]',
           )].map((heading) => heading.dataset.columnSignal);
+          // history.back()/forward() re-render on a later task than the call,
+          // so poll for that change rather than sleeping a fixed budget a
+          // loaded machine can exhaust.
+          const settled = async (predicate) => {
+            for (let attempt = 0; attempt < 400; attempt += 1) {
+              if (predicate()) return true;
+              await new Promise((resolve) => setTimeout(resolve, 10));
+            }
+            return false;
+          };
           const openPicker = (index) => {
             document.querySelector(`[data-comparison-title="${index}"]`).click();
             return document.querySelector(`[data-comparison-column="${index}"]`);
@@ -769,15 +779,16 @@ def test_compare_client_enforces_picker_bounds_and_history(tmp_path: Path) -> No
           const focusAfterChange = document.activeElement?.dataset.comparisonTitle;
           const changedHash = location.hash;
           history.back();
-          await wait();
+          const backSettled = await settled(() => signals().join() !== changed.join());
           const afterBack = signals();
           history.forward();
-          await wait();
+          const forwardSettled = await settled(() => signals().join() !== afterBack.join());
           const afterForward = signals();
           return JSON.stringify({
             initial, duplicateDisabled, multiCategoryCopies, afterRemove,
             removeButtonsAtMinimum, afterAdd, previous, changed, changedHash,
-            afterBack, afterForward, restingPickerCount, pickerFocused,
+            afterBack, afterForward, backSettled, forwardSettled,
+            restingPickerCount, pickerFocused,
             escapeRestoredTitle, blurClosed, focusAfterRemove, focusAfterAdd,
             focusAfterChange, addAtMinimumEvidence, addedPickerValue, bodyCellCounts,
             hasAddAtMaximum: Boolean(document.querySelector('.comparison-column-add')),
@@ -816,6 +827,10 @@ def test_compare_client_enforces_picker_bounds_and_history(tmp_path: Path) -> No
     assert result["changed"] == ["gall", "Glab", result["afterAdd"][2]]
     assert "cols=gallGlab" in result["changedHash"]
     assert result["focusAfterChange"] == "1"
+    # A timed-out poll would silently read the pre-navigation state and turn
+    # the two assertions below back into the fixed-budget race they replaced.
+    assert result["backSettled"] is True
+    assert result["forwardSettled"] is True
     assert result["afterBack"] == result["afterAdd"]
     assert result["afterForward"] == result["changed"]
     assert result["hasAddAtMaximum"] is False
@@ -916,6 +931,16 @@ def test_compare_client_swaps_the_reference_and_recomputes_relative_state(tmp_pa
           const signals = () => [...document.querySelectorAll(
             '[data-comparison-head] [data-column-signal]',
           )].map((heading) => heading.dataset.columnSignal);
+          // history.back()/forward() re-render on a later task than the call,
+          // so poll for that change rather than sleeping a fixed budget a
+          // loaded machine can exhaust.
+          const settled = async (predicate) => {
+            for (let attempt = 0; attempt < 400; attempt += 1) {
+              if (predicate()) return true;
+              await new Promise((resolve) => setTimeout(resolve, 10));
+            }
+            return false;
+          };
           const differingRows = () => [...document.querySelectorAll('[data-row-differs="true"]')]
             .map((row) => row.dataset.comparisonRace);
           const tintedRows = () => [...new Set([...document.querySelectorAll(
@@ -962,11 +987,12 @@ def test_compare_client_swaps_the_reference_and_recomputes_relative_state(tmp_pa
           picker.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
           await wait();
 
+          const beforeBack = signals();
           history.back();
-          await wait();
+          const backSettled = await settled(() => signals().join() !== beforeBack.join());
           const afterBack = signals();
           history.forward();
-          await wait();
+          const forwardSettled = await settled(() => signals().join() !== afterBack.join());
           const afterForward = signals();
 
           const configuredUrl = location.href;
@@ -978,7 +1004,7 @@ def test_compare_client_swaps_the_reference_and_recomputes_relative_state(tmp_pa
             duplicateDisabled, escapeFocus, blurClosed,
             changedRows, changedTintedRows, changedStatus, changedHash, focusAfterChange,
             referenceAgreement, allSourcesAvailableAfterChange, afterBack, afterForward,
-            configuredUrl,
+            backSettled, forwardSettled, configuredUrl,
             afterRemove: signals(),
             visibleReferenceLabel: Boolean(document.querySelector(
               '[data-column-signal="Genv"] .comparison-column-label',
@@ -1001,6 +1027,10 @@ def test_compare_client_swaps_the_reference_and_recomputes_relative_state(tmp_pa
     assert result["changedRows"] == result["changedTintedRows"]
     assert result["changedRows"] != result["defaultRows"]
     assert result["changedStatus"] != result["defaultStatus"]
+    # A timed-out poll would silently read the pre-navigation state and turn
+    # the two assertions below back into the fixed-budget race they replaced.
+    assert result["backSettled"] is True
+    assert result["forwardSettled"] is True
     assert result["afterBack"] == ["gall", "strn", "stim"]
     assert result["afterForward"] == ["Genv", "strn", "stim"]
     assert result["configuredUrl"].endswith(result["changedHash"])
@@ -1144,7 +1174,17 @@ def test_compare_client_migrates_stale_links_without_promoting_a_new_reference(
         html_path,
         """
         (async () => {
-          const wait = () => new Promise((resolve) => setTimeout(resolve, 250));
+          // history.back() re-renders on a later task than the call, so poll
+          // for the migration disclosure this traversal must raise rather than
+          // sleeping a fixed budget a loaded machine can exhaust.
+          const settled = async (predicate) => {
+            for (let attempt = 0; attempt < 400; attempt += 1) {
+              if (predicate()) return true;
+              await new Promise((resolve) => setTimeout(resolve, 10));
+            }
+            return false;
+          };
+          const notice = () => document.querySelector('[data-comparison-hidden-notice]');
           const current = document.querySelector('.comparison-presets a').hash;
           const parameters = new URLSearchParams(current.slice(1));
           parameters.set('cols', 'zzzzstrn');
@@ -1154,18 +1194,22 @@ def test_compare_client_migrates_stale_links_without_promoting_a_new_reference(
           history.pushState({}, '', stale);
           history.pushState({}, '', current);
           history.back();
-          await wait();
+          const backSettled = await settled(() => !notice().hidden);
           return JSON.stringify({
+            backSettled,
             columns: [...document.querySelectorAll(
               '[data-comparison-head] [data-column-signal]',
             )].map((heading) => heading.dataset.columnSignal),
-            notice: document.querySelector('[data-comparison-hidden-notice]').textContent,
-            noticeHidden: document.querySelector('[data-comparison-hidden-notice]').hidden,
+            notice: notice().textContent,
+            noticeHidden: notice().hidden,
             hash: location.hash,
           });
         })()
         """,
     )
+    # A timed-out poll would silently read the pre-traversal state and turn the
+    # assertions below back into the fixed-budget race they replaced.
+    assert traversed["backSettled"] is True
     assert traversed["columns"] == ["gall", "strn", "stim"]
     assert traversed["notice"] == fallback["notice"]
     assert traversed["noticeHidden"] is False
