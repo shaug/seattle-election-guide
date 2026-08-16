@@ -1691,6 +1691,11 @@ def test_pr_preview_workflow_is_label_gated_fork_safe_and_head_bound() -> None:
     # Selecting on the raw API field names matches nothing, deletes nothing, and
     # still exits 0, so the exact field names are the contract here.
     assert "'.[] | select(.Branch == $branch) | .Id'" in delete_step["run"]
+    # This assertion pins the filter's text, so it catches an edit to the selector
+    # but cannot catch Wrangler changing the projection underneath it. The job
+    # carries its own shape guard for that, which turns a silently-deleted-nothing
+    # run into a failed one; matching no deployment stays ordinary.
+    assert 'all(.[]; has("Branch") and has("Id"))' in delete_step["run"]
 
     # Production keeps its own call site untouched: the script still defaults to
     # main, so `pages:deploy` with no PAGES_BRANCH is byte-identical to before.
