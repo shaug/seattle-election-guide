@@ -1,0 +1,1824 @@
+{
+  "by_country": [
+    {
+      "key": "US",
+      "requests": 420
+    },
+    {
+      "key": "SG",
+      "requests": 364
+    },
+    {
+      "key": "FR",
+      "requests": 40
+    },
+    {
+      "key": "SE",
+      "requests": 22
+    },
+    {
+      "key": "DE",
+      "requests": 18
+    },
+    {
+      "key": "CN",
+      "requests": 8
+    },
+    {
+      "key": "IS",
+      "requests": 8
+    },
+    {
+      "key": "IE",
+      "requests": 7
+    },
+    {
+      "key": "KR",
+      "requests": 7
+    },
+    {
+      "key": "DK",
+      "requests": 6
+    },
+    {
+      "key": "BR",
+      "requests": 4
+    },
+    {
+      "key": "ID",
+      "requests": 3
+    },
+    {
+      "key": "JP",
+      "requests": 3
+    },
+    {
+      "key": "LT",
+      "requests": 3
+    },
+    {
+      "key": "TH",
+      "requests": 3
+    },
+    {
+      "key": "AT",
+      "requests": 1
+    },
+    {
+      "key": "BD",
+      "requests": 1
+    },
+    {
+      "key": "IN",
+      "requests": 1
+    },
+    {
+      "key": "TR",
+      "requests": 1
+    }
+  ],
+  "by_device_type": [
+    {
+      "key": "desktop",
+      "requests": 874
+    },
+    {
+      "key": "mobile",
+      "requests": 164
+    },
+    {
+      "key": "tablet",
+      "requests": 12
+    }
+  ],
+  "by_edge_status_code": [
+    {
+      "key": 200,
+      "requests": 322
+    },
+    {
+      "key": 403,
+      "requests": 285
+    },
+    {
+      "key": 404,
+      "requests": 172
+    },
+    {
+      "key": 307,
+      "requests": 70
+    },
+    {
+      "key": 204,
+      "requests": 37
+    },
+    {
+      "key": 301,
+      "requests": 25
+    },
+    {
+      "key": 304,
+      "requests": 3
+    },
+    {
+      "key": 522,
+      "requests": 3
+    },
+    {
+      "key": 499,
+      "requests": 2
+    },
+    {
+      "key": 308,
+      "requests": 1
+    }
+  ],
+  "by_path": [
+    {
+      "key": "/",
+      "requests": 131
+    },
+    {
+      "key": "/e/wa-2026-primary/",
+      "requests": 95
+    },
+    {
+      "key": "/favicon-32.png",
+      "requests": 49
+    },
+    {
+      "key": "/wp-admin/install.php",
+      "requests": 39
+    },
+    {
+      "key": "/cdn-cgi/rum",
+      "requests": 35
+    },
+    {
+      "key": "/favicon.svg",
+      "requests": 34
+    },
+    {
+      "key": "/og-image.png",
+      "requests": 33
+    },
+    {
+      "key": "/e/wa-2026-primary/comparisons/",
+      "requests": 31
+    },
+    {
+      "key": "/robots.txt",
+      "requests": 29
+    },
+    {
+      "key": "/apple-touch-icon.png",
+      "requests": 24
+    },
+    {
+      "key": "/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js",
+      "requests": 19
+    },
+    {
+      "key": "/sitemap.xml",
+      "requests": 17
+    },
+    {
+      "key": "/apple-touch-icon-precomposed.png",
+      "requests": 8
+    },
+    {
+      "key": "/favicon.ico",
+      "requests": 8
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-32-state-representative-2/",
+      "requests": 4
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-32-state-senator/",
+      "requests": 4
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-43-state-representative-1/",
+      "requests": 4
+    },
+    {
+      "key": "/.env",
+      "requests": 3
+    },
+    {
+      "key": "/e/",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-11-state-representative-1/",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-11-state-representative-2/",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-32-state-representative-1/",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-34-state-representative-1/",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-34-state-representative-2/",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-34-state-senator/",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-36-state-representative-1/",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-36-state-representative-2/",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-36-state-senator/",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-37-state-representative-1/",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/races/us-house-7/",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/races/us-house-9/",
+      "requests": 3
+    },
+    {
+      "key": "/llms.txt",
+      "requests": 3
+    },
+    {
+      "key": "/.env.anthropic",
+      "requests": 2
+    },
+    {
+      "key": "/.ssh/config",
+      "requests": 2
+    },
+    {
+      "key": "//blog/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "//shop/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "//site/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "//test/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "//wordpress/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "//wp1/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/@fs/..%252f..%252f..%252f..%252f..%252fproc/self/environ",
+      "requests": 2
+    },
+    {
+      "key": "/@fs/root/.azure/accessTokens.json",
+      "requests": 2
+    },
+    {
+      "key": "/@fs/root/.ssh/id_rsa",
+      "requests": 2
+    },
+    {
+      "key": "/@fs/src/.env",
+      "requests": 2
+    },
+    {
+      "key": "/_debugbar/open",
+      "requests": 2
+    },
+    {
+      "key": "/aab8",
+      "requests": 2
+    },
+    {
+      "key": "/admin/.env.local",
+      "requests": 2
+    },
+    {
+      "key": "/admin/.env.production",
+      "requests": 2
+    },
+    {
+      "key": "/app/api/.env",
+      "requests": 2
+    },
+    {
+      "key": "/aws.env",
+      "requests": 2
+    },
+    {
+      "key": "/aws.json",
+      "requests": 2
+    },
+    {
+      "key": "/config/aws.yml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//2019/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//shop/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//sito/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//website/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//wordpress/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//wp/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//xmlrpc.php",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/favicon.ico",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/king-county-assessor/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/king-county-council-2/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/king-county-council-8/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-37-state-representative-2/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-37-state-senator/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-43-state-representative-1",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-43-state-representative-2/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-43-state-senator/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-46-state-representative-1/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-46-state-representative-2/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-46-state-senator/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/seattle-city-council-5/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/seattle-municipal-court-judge-5/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/seattle-proposition-1-library-levy/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/supreme-court-justice-1/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/supreme-court-justice-3/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/supreme-court-justice-5/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/supreme-court-justice-7/",
+      "requests": 2
+    },
+    {
+      "key": "/jquery-3.3.1.slim.min.js",
+      "requests": 2
+    },
+    {
+      "key": "/prod/.env",
+      "requests": 2
+    },
+    {
+      "key": "/production/.env",
+      "requests": 2
+    },
+    {
+      "key": "/serviceAccountKey.json",
+      "requests": 2
+    },
+    {
+      "key": "/services/.env",
+      "requests": 2
+    },
+    {
+      "key": "/test/.env",
+      "requests": 2
+    },
+    {
+      "key": "/xmlrpc.php",
+      "requests": 2
+    },
+    {
+      "key": "/.aider.conf.yml",
+      "requests": 1
+    },
+    {
+      "key": "/.anthropic/config.json",
+      "requests": 1
+    },
+    {
+      "key": "/.aws/config",
+      "requests": 1
+    },
+    {
+      "key": "/.aws/credentials",
+      "requests": 1
+    },
+    {
+      "key": "/.aws/credentials.bak",
+      "requests": 1
+    },
+    {
+      "key": "/.aws/credentials.old",
+      "requests": 1
+    },
+    {
+      "key": "/.azure/accessTokens.json",
+      "requests": 1
+    },
+    {
+      "key": "/.azure/azureProfile.json",
+      "requests": 1
+    },
+    {
+      "key": "/.azure/credentials",
+      "requests": 1
+    },
+    {
+      "key": "/.bash_history",
+      "requests": 1
+    },
+    {
+      "key": "/.bash_profile",
+      "requests": 1
+    },
+    {
+      "key": "/.boto",
+      "requests": 1
+    },
+    {
+      "key": "/.claude.json",
+      "requests": 1
+    },
+    {
+      "key": "/.claude/settings.json",
+      "requests": 1
+    },
+    {
+      "key": "/.codex/config.toml",
+      "requests": 1
+    },
+    {
+      "key": "/.config/anthropic/credentials/default.json",
+      "requests": 1
+    },
+    {
+      "key": "/.cursor/mcp.json",
+      "requests": 1
+    },
+    {
+      "key": "/.docker/config.json",
+      "requests": 1
+    },
+    {
+      "key": "/.env.backup",
+      "requests": 1
+    },
+    {
+      "key": "/.env.bak",
+      "requests": 1
+    },
+    {
+      "key": "/.env.development",
+      "requests": 1
+    },
+    {
+      "key": "/.env.docker",
+      "requests": 1
+    },
+    {
+      "key": "/.env.example",
+      "requests": 1
+    },
+    {
+      "key": "/.env.local",
+      "requests": 1
+    },
+    {
+      "key": "/.env.old",
+      "requests": 1
+    },
+    {
+      "key": "/.env.openai",
+      "requests": 1
+    },
+    {
+      "key": "/.env.prod",
+      "requests": 1
+    },
+    {
+      "key": "/.env.production",
+      "requests": 1
+    },
+    {
+      "key": "/.env.staging",
+      "requests": 1
+    },
+    {
+      "key": "/.env.swp",
+      "requests": 1
+    },
+    {
+      "key": "/.env.vault",
+      "requests": 1
+    },
+    {
+      "key": "/.env~",
+      "requests": 1
+    },
+    {
+      "key": "/.flaskenv",
+      "requests": 1
+    },
+    {
+      "key": "/.gcloud/credentials",
+      "requests": 1
+    },
+    {
+      "key": "/.gcloud/credentials.json",
+      "requests": 1
+    },
+    {
+      "key": "/.gcp/credentials.json",
+      "requests": 1
+    },
+    {
+      "key": "/.gcp/service-account.json",
+      "requests": 1
+    },
+    {
+      "key": "/.git-credentials",
+      "requests": 1
+    },
+    {
+      "key": "/.git/HEAD",
+      "requests": 1
+    },
+    {
+      "key": "/.git/config",
+      "requests": 1
+    },
+    {
+      "key": "/.github/.env",
+      "requests": 1
+    },
+    {
+      "key": "/.github/workflows/deploy.yml",
+      "requests": 1
+    },
+    {
+      "key": "/.gitlab-ci.yml",
+      "requests": 1
+    },
+    {
+      "key": "/.gradle/gradle.properties",
+      "requests": 1
+    },
+    {
+      "key": "/.hermes/.env",
+      "requests": 1
+    },
+    {
+      "key": "/.hermes/auth.json",
+      "requests": 1
+    },
+    {
+      "key": "/.hermes/config.yaml",
+      "requests": 1
+    },
+    {
+      "key": "/.kube/config",
+      "requests": 1
+    },
+    {
+      "key": "/.mcp.json",
+      "requests": 1
+    },
+    {
+      "key": "/.openai/config.json",
+      "requests": 1
+    },
+    {
+      "key": "/.openclaw/.env",
+      "requests": 1
+    },
+    {
+      "key": "/.openclaw/openclaw.json",
+      "requests": 1
+    },
+    {
+      "key": "/.s3cfg",
+      "requests": 1
+    },
+    {
+      "key": "/.sendgrid.env",
+      "requests": 1
+    },
+    {
+      "key": "/.ssh/id_dsa",
+      "requests": 1
+    },
+    {
+      "key": "/.ssh/id_ecdsa",
+      "requests": 1
+    },
+    {
+      "key": "/.ssh/id_ed25519",
+      "requests": 1
+    },
+    {
+      "key": "/.ssh/id_rsa",
+      "requests": 1
+    },
+    {
+      "key": "/.streamlit/secrets.toml",
+      "requests": 1
+    },
+    {
+      "key": "/.svn/entries",
+      "requests": 1
+    },
+    {
+      "key": "/.zsh_history",
+      "requests": 1
+    },
+    {
+      "key": "//2020/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "//web/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "//wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "//wp2/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/..%252f..%252f..%252f..%252f..%252fapp/.env",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/..%252f..%252f..%252f..%252f..%252froot/.env",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/.env",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/.env.development",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/.env.local",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/.env.production",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/.env.staging",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/app/.anthropic/config.json",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/app/.aws/credentials",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/app/.env",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/app/.env.local",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/app/.env.production",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/app/.openai/config.json",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/app/.serverless/serverless-state.json",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/app/.terraform/terraform.tfstate",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/app/amplifyconfiguration.json",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/app/aws-exports.js",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/app/credentials.json",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/app/gcp-credentials.json",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/app/rootkey.csv",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/app/serverless.yml",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/app/service-account.json",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/app/terraform.tfstate",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/app/terraform.tfvars",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/etc/apache2/apache2.conf",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/etc/nginx/nginx.conf",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/etc/passwd",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/home/admin/.aws/credentials",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/home/debian/.aws/credentials",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/home/ec2-user/.aws/config",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/home/ec2-user/.aws/credentials",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/home/node/.aws/config",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/home/node/.aws/credentials",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/home/node/.config/gcloud/application_default_credentials.json",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/home/ubuntu/.anthropic/config.json",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/home/ubuntu/.aws/config",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/home/ubuntu/.azure/accessTokens.json",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/home/ubuntu/.azure/credentials",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/home/ubuntu/.config/anthropic/credentials/default.json",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/home/ubuntu/.env",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/home/ubuntu/.oci/config",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/home/ubuntu/.openai/config.json",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/home/ubuntu/.ovh.conf",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/home/www-data/.aws/credentials",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/proc/self/environ",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/root/.anthropic/config.json",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/root/.aws/config",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/root/.aws/credentials",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/root/.aws/credentials.backup",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/root/.aws/credentials.bak",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/root/.aws/sso/cache/",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/root/.azure/credentials",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/root/.claude/settings.json",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/root/.config/anthropic/credentials/default.json",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/root/.config/gcloud/application_default_credentials.json",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/root/.config/gcloud/credentials.db",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/root/.config/hcloud/cli.toml",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/root/.config/linode-cli",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/root/.config/openai/config.json",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/root/.oci/config",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/root/.openai/config.json",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/root/.ovh.conf",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/root/.ssh/id_ed25519",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/root/.vultr-cli.yaml",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/root/rootkey.csv",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/root/terraform.tfstate",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/usr/src/app/.aws/credentials",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/usr/src/app/.env",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/var/run/secrets/kubernetes.io/serviceaccount/token",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/var/www/.aws/credentials",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/var/www/.env",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/var/www/html/.aws/credentials",
+      "requests": 1
+    },
+    {
+      "key": "/@fs/var/www/html/.env",
+      "requests": 1
+    },
+    {
+      "key": "/MWRf",
+      "requests": 1
+    },
+    {
+      "key": "/__/firebase/init.json",
+      "requests": 1
+    },
+    {
+      "key": "/__debug__/",
+      "requests": 1
+    },
+    {
+      "key": "/__env.js",
+      "requests": 1
+    },
+    {
+      "key": "/_ignition/health-check",
+      "requests": 1
+    },
+    {
+      "key": "/_next/.env",
+      "requests": 1
+    },
+    {
+      "key": "/aab9",
+      "requests": 1
+    },
+    {
+      "key": "/actuator/configprops",
+      "requests": 1
+    },
+    {
+      "key": "/actuator/env",
+      "requests": 1
+    },
+    {
+      "key": "/actuator/mappings",
+      "requests": 1
+    },
+    {
+      "key": "/admin/.env",
+      "requests": 1
+    },
+    {
+      "key": "/anthropic.json",
+      "requests": 1
+    },
+    {
+      "key": "/api-keys.json",
+      "requests": 1
+    },
+    {
+      "key": "/api/.aws/credentials",
+      "requests": 1
+    },
+    {
+      "key": "/api/.env",
+      "requests": 1
+    },
+    {
+      "key": "/api/config",
+      "requests": 1
+    },
+    {
+      "key": "/api/config.json",
+      "requests": 1
+    },
+    {
+      "key": "/api/env",
+      "requests": 1
+    },
+    {
+      "key": "/api/graphql",
+      "requests": 1
+    },
+    {
+      "key": "/api/keys.json",
+      "requests": 1
+    },
+    {
+      "key": "/api/openapi.json",
+      "requests": 1
+    },
+    {
+      "key": "/api/settings",
+      "requests": 1
+    },
+    {
+      "key": "/api/v1/config",
+      "requests": 1
+    },
+    {
+      "key": "/api/v1/env",
+      "requests": 1
+    },
+    {
+      "key": "/api/v1/settings",
+      "requests": 1
+    },
+    {
+      "key": "/app-config.json",
+      "requests": 1
+    },
+    {
+      "key": "/app/.aws/credentials",
+      "requests": 1
+    },
+    {
+      "key": "/app/.env",
+      "requests": 1
+    },
+    {
+      "key": "/app/.env.production",
+      "requests": 1
+    },
+    {
+      "key": "/app/backend/.env",
+      "requests": 1
+    },
+    {
+      "key": "/app/config.json",
+      "requests": 1
+    },
+    {
+      "key": "/app/settings.py",
+      "requests": 1
+    },
+    {
+      "key": "/application.env",
+      "requests": 1
+    },
+    {
+      "key": "/application.properties",
+      "requests": 1
+    },
+    {
+      "key": "/application.yml",
+      "requests": 1
+    },
+    {
+      "key": "/application_default_credentials.json",
+      "requests": 1
+    },
+    {
+      "key": "/apps/api/.env",
+      "requests": 1
+    },
+    {
+      "key": "/appsettings.Development.json",
+      "requests": 1
+    },
+    {
+      "key": "/appsettings.Production.json",
+      "requests": 1
+    },
+    {
+      "key": "/appsettings.json",
+      "requests": 1
+    },
+    {
+      "key": "/auth.json",
+      "requests": 1
+    },
+    {
+      "key": "/aws-config.js",
+      "requests": 1
+    },
+    {
+      "key": "/aws-credentials",
+      "requests": 1
+    },
+    {
+      "key": "/aws-credentials.json",
+      "requests": 1
+    },
+    {
+      "key": "/aws/.env",
+      "requests": 1
+    },
+    {
+      "key": "/aws/.env.production",
+      "requests": 1
+    },
+    {
+      "key": "/aws/credentials",
+      "requests": 1
+    },
+    {
+      "key": "/azure-credentials.json",
+      "requests": 1
+    },
+    {
+      "key": "/backend-api/.env",
+      "requests": 1
+    },
+    {
+      "key": "/backend/.aws/credentials",
+      "requests": 1
+    },
+    {
+      "key": "/backend/.env",
+      "requests": 1
+    },
+    {
+      "key": "/backend/.env.local",
+      "requests": 1
+    },
+    {
+      "key": "/backend/.env.production",
+      "requests": 1
+    },
+    {
+      "key": "/backend/api/.env",
+      "requests": 1
+    },
+    {
+      "key": "/backend/aws.json",
+      "requests": 1
+    },
+    {
+      "key": "/backend/config.json",
+      "requests": 1
+    },
+    {
+      "key": "/backend/service-account.json",
+      "requests": 1
+    },
+    {
+      "key": "/backend/settings.py",
+      "requests": 1
+    },
+    {
+      "key": "/backup/.env",
+      "requests": 1
+    },
+    {
+      "key": "/bootstrap.yml",
+      "requests": 1
+    },
+    {
+      "key": "/cdn-cgi/l/email-protection",
+      "requests": 1
+    },
+    {
+      "key": "/cdn-cgi/trace",
+      "requests": 1
+    },
+    {
+      "key": "/client/.env",
+      "requests": 1
+    },
+    {
+      "key": "/client_secret.json",
+      "requests": 1
+    },
+    {
+      "key": "/config.env",
+      "requests": 1
+    },
+    {
+      "key": "/config.js",
+      "requests": 1
+    },
+    {
+      "key": "/config.json",
+      "requests": 1
+    },
+    {
+      "key": "/config.php",
+      "requests": 1
+    },
+    {
+      "key": "/config.php.bak",
+      "requests": 1
+    },
+    {
+      "key": "/config.py",
+      "requests": 1
+    },
+    {
+      "key": "/config.toml",
+      "requests": 1
+    },
+    {
+      "key": "/config.yaml",
+      "requests": 1
+    },
+    {
+      "key": "/config.yml",
+      "requests": 1
+    },
+    {
+      "key": "/config/.env",
+      "requests": 1
+    },
+    {
+      "key": "/config/anthropic.json",
+      "requests": 1
+    },
+    {
+      "key": "/config/application.properties",
+      "requests": 1
+    },
+    {
+      "key": "/config/application.yml",
+      "requests": 1
+    },
+    {
+      "key": "/config/aws.json",
+      "requests": 1
+    },
+    {
+      "key": "/config/aws.php",
+      "requests": 1
+    },
+    {
+      "key": "/config/database.yml",
+      "requests": 1
+    },
+    {
+      "key": "/config/firebase-admin.json",
+      "requests": 1
+    },
+    {
+      "key": "/config/gcp-credentials.json",
+      "requests": 1
+    },
+    {
+      "key": "/config/master.key",
+      "requests": 1
+    },
+    {
+      "key": "/config/openai.json",
+      "requests": 1
+    },
+    {
+      "key": "/config/prod.exs",
+      "requests": 1
+    },
+    {
+      "key": "/config/runtime.exs",
+      "requests": 1
+    },
+    {
+      "key": "/config/secrets.yml",
+      "requests": 1
+    },
+    {
+      "key": "/config/sendgrid.env",
+      "requests": 1
+    },
+    {
+      "key": "/config/service-account.json",
+      "requests": 1
+    },
+    {
+      "key": "/config/settings.py",
+      "requests": 1
+    },
+    {
+      "key": "/config/storage.yml",
+      "requests": 1
+    },
+    {
+      "key": "/config/stripe.json",
+      "requests": 1
+    },
+    {
+      "key": "/configuration.js",
+      "requests": 1
+    },
+    {
+      "key": "/configuration.php.bak",
+      "requests": 1
+    },
+    {
+      "key": "/core/.env",
+      "requests": 1
+    },
+    {
+      "key": "/core/settings.py",
+      "requests": 1
+    },
+    {
+      "key": "/credentials.json",
+      "requests": 1
+    },
+    {
+      "key": "/creds.json",
+      "requests": 1
+    },
+    {
+      "key": "/deploy/service-account.json",
+      "requests": 1
+    },
+    {
+      "key": "/dev/.env",
+      "requests": 1
+    },
+    {
+      "key": "/development/.env",
+      "requests": 1
+    },
+    {
+      "key": "/docker-compose.yaml",
+      "requests": 1
+    },
+    {
+      "key": "/docker-compose.yml",
+      "requests": 1
+    },
+    {
+      "key": "/docker/.env",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary//cms/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary//news/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary//test/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "/email/.env",
+      "requests": 1
+    },
+    {
+      "key": "/env.js",
+      "requests": 1
+    },
+    {
+      "key": "/env.json",
+      "requests": 1
+    },
+    {
+      "key": "/firebase-admin.json",
+      "requests": 1
+    },
+    {
+      "key": "/firebase-adminsdk.json",
+      "requests": 1
+    },
+    {
+      "key": "/firebase-credentials.json",
+      "requests": 1
+    },
+    {
+      "key": "/firebase-service-account.json",
+      "requests": 1
+    },
+    {
+      "key": "/firebase.json",
+      "requests": 1
+    },
+    {
+      "key": "/frontend/.env",
+      "requests": 1
+    },
+    {
+      "key": "/frontend/.env.production",
+      "requests": 1
+    },
+    {
+      "key": "/gc-service.json",
+      "requests": 1
+    },
+    {
+      "key": "/gcp-credentials.json",
+      "requests": 1
+    },
+    {
+      "key": "/gcp-key.json",
+      "requests": 1
+    },
+    {
+      "key": "/gcp-service-account.json",
+      "requests": 1
+    },
+    {
+      "key": "/gcp-service.json",
+      "requests": 1
+    },
+    {
+      "key": "/google-cloud-key.json",
+      "requests": 1
+    },
+    {
+      "key": "/google-credentials.json",
+      "requests": 1
+    },
+    {
+      "key": "/google-service-account.json",
+      "requests": 1
+    },
+    {
+      "key": "/gradle.properties",
+      "requests": 1
+    },
+    {
+      "key": "/graphql",
+      "requests": 1
+    },
+    {
+      "key": "/graphql/console",
+      "requests": 1
+    },
+    {
+      "key": "/host.key",
+      "requests": 1
+    },
+    {
+      "key": "/id_dsa",
+      "requests": 1
+    },
+    {
+      "key": "/id_ecdsa",
+      "requests": 1
+    },
+    {
+      "key": "/id_ed25519",
+      "requests": 1
+    },
+    {
+      "key": "/id_rsa",
+      "requests": 1
+    },
+    {
+      "key": "/instance/config.py",
+      "requests": 1
+    },
+    {
+      "key": "/internal/.env",
+      "requests": 1
+    },
+    {
+      "key": "/j5wF",
+      "requests": 1
+    },
+    {
+      "key": "/jquery-3.3.2.slim.min.js",
+      "requests": 1
+    },
+    {
+      "key": "/key.json",
+      "requests": 1
+    },
+    {
+      "key": "/key.pem",
+      "requests": 1
+    },
+    {
+      "key": "/keyfile.json",
+      "requests": 1
+    },
+    {
+      "key": "/keys/service-account.json",
+      "requests": 1
+    },
+    {
+      "key": "/laravel/.env",
+      "requests": 1
+    },
+    {
+      "key": "/local.settings.json",
+      "requests": 1
+    },
+    {
+      "key": "/localhost.key",
+      "requests": 1
+    },
+    {
+      "key": "/openai.json",
+      "requests": 1
+    },
+    {
+      "key": "/openapi.json",
+      "requests": 1
+    },
+    {
+      "key": "/private-key",
+      "requests": 1
+    },
+    {
+      "key": "/privatekey.key",
+      "requests": 1
+    },
+    {
+      "key": "/public/admin.json",
+      "requests": 1
+    },
+    {
+      "key": "/rclone.conf",
+      "requests": 1
+    },
+    {
+      "key": "/root/.aws/config",
+      "requests": 1
+    },
+    {
+      "key": "/root/.aws/credentials",
+      "requests": 1
+    },
+    {
+      "key": "/runtime-config.js",
+      "requests": 1
+    },
+    {
+      "key": "/s3/.aws/config",
+      "requests": 1
+    },
+    {
+      "key": "/s3/credentials",
+      "requests": 1
+    },
+    {
+      "key": "/sa.json",
+      "requests": 1
+    },
+    {
+      "key": "/secret.json",
+      "requests": 1
+    },
+    {
+      "key": "/secrets.env",
+      "requests": 1
+    },
+    {
+      "key": "/secrets.json",
+      "requests": 1
+    },
+    {
+      "key": "/secrets.yaml",
+      "requests": 1
+    },
+    {
+      "key": "/secrets.yml",
+      "requests": 1
+    },
+    {
+      "key": "/secrets/aws.json",
+      "requests": 1
+    },
+    {
+      "key": "/secrets/gcp.json",
+      "requests": 1
+    },
+    {
+      "key": "/sendgrid/.env",
+      "requests": 1
+    },
+    {
+      "key": "/server.key",
+      "requests": 1
+    },
+    {
+      "key": "/server/.env",
+      "requests": 1
+    },
+    {
+      "key": "/server/.env.local",
+      "requests": 1
+    },
+    {
+      "key": "/server/.env.production",
+      "requests": 1
+    },
+    {
+      "key": "/serverless.yaml",
+      "requests": 1
+    },
+    {
+      "key": "/serverless.yml",
+      "requests": 1
+    },
+    {
+      "key": "/service-account-key.json",
+      "requests": 1
+    },
+    {
+      "key": "/service-principal.json",
+      "requests": 1
+    },
+    {
+      "key": "/service_account.json",
+      "requests": 1
+    },
+    {
+      "key": "/settings.json",
+      "requests": 1
+    },
+    {
+      "key": "/settings.py",
+      "requests": 1
+    },
+    {
+      "key": "/src/.env",
+      "requests": 1
+    },
+    {
+      "key": "/src/.env.local",
+      "requests": 1
+    },
+    {
+      "key": "/src/api/.env",
+      "requests": 1
+    },
+    {
+      "key": "/ssl/localhost.key",
+      "requests": 1
+    },
+    {
+      "key": "/ssl/server.key",
+      "requests": 1
+    },
+    {
+      "key": "/stage/.env",
+      "requests": 1
+    },
+    {
+      "key": "/staging/.env",
+      "requests": 1
+    },
+    {
+      "key": "/stripe.env",
+      "requests": 1
+    },
+    {
+      "key": "/stripe.json",
+      "requests": 1
+    },
+    {
+      "key": "/stripe/.env",
+      "requests": 1
+    },
+    {
+      "key": "/telescope/requests",
+      "requests": 1
+    },
+    {
+      "key": "/terraform.tfstate",
+      "requests": 1
+    },
+    {
+      "key": "/terraform.tfvars",
+      "requests": 1
+    },
+    {
+      "key": "/v1/graphql",
+      "requests": 1
+    },
+    {
+      "key": "/var/www/.env",
+      "requests": 1
+    },
+    {
+      "key": "/var/www/html/.env",
+      "requests": 1
+    },
+    {
+      "key": "/vz58",
+      "requests": 1
+    },
+    {
+      "key": "/web.config",
+      "requests": 1
+    },
+    {
+      "key": "/web/.env",
+      "requests": 1
+    },
+    {
+      "key": "/wp-login.php",
+      "requests": 1
+    }
+  ],
+  "date": "2026-08-09",
+  "page_views": 138,
+  "requests": 920,
+  "schema_version": "1.0",
+  "sources": [
+    "httpRequests1dGroups",
+    "httpRequestsAdaptiveGroups"
+  ],
+  "uniques": 209,
+  "visits": 99
+}

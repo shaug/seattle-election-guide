@@ -1,0 +1,165 @@
+{
+  "by_country": [
+    {
+      "key": "US",
+      "requests": 4642
+    },
+    {
+      "key": "JP",
+      "requests": 50
+    },
+    {
+      "key": "NL",
+      "requests": 40
+    },
+    {
+      "key": "CN",
+      "requests": 24
+    },
+    {
+      "key": "FR",
+      "requests": 13
+    },
+    {
+      "key": "SE",
+      "requests": 13
+    },
+    {
+      "key": "CA",
+      "requests": 12
+    },
+    {
+      "key": "TR",
+      "requests": 12
+    },
+    {
+      "key": "BR",
+      "requests": 9
+    },
+    {
+      "key": "HK",
+      "requests": 9
+    },
+    {
+      "key": "CH",
+      "requests": 8
+    },
+    {
+      "key": "DE",
+      "requests": 8
+    },
+    {
+      "key": "DK",
+      "requests": 6
+    },
+    {
+      "key": "BE",
+      "requests": 5
+    },
+    {
+      "key": "ES",
+      "requests": 5
+    },
+    {
+      "key": "IE",
+      "requests": 5
+    },
+    {
+      "key": "RU",
+      "requests": 5
+    },
+    {
+      "key": "SG",
+      "requests": 5
+    },
+    {
+      "key": "PL",
+      "requests": 4
+    },
+    {
+      "key": "GB",
+      "requests": 3
+    },
+    {
+      "key": "KR",
+      "requests": 3
+    },
+    {
+      "key": "BD",
+      "requests": 2
+    },
+    {
+      "key": "IT",
+      "requests": 2
+    },
+    {
+      "key": "RO",
+      "requests": 2
+    },
+    {
+      "key": "LU",
+      "requests": 1
+    },
+    {
+      "key": "MY",
+      "requests": 1
+    }
+  ],
+  "by_device_type": null,
+  "by_edge_status_code": [
+    {
+      "key": 200,
+      "requests": 2690
+    },
+    {
+      "key": 204,
+      "requests": 1713
+    },
+    {
+      "key": 404,
+      "requests": 229
+    },
+    {
+      "key": 307,
+      "requests": 157
+    },
+    {
+      "key": 301,
+      "requests": 47
+    },
+    {
+      "key": 403,
+      "requests": 40
+    },
+    {
+      "key": 304,
+      "requests": 4
+    },
+    {
+      "key": 522,
+      "requests": 3
+    },
+    {
+      "key": 206,
+      "requests": 2
+    },
+    {
+      "key": 308,
+      "requests": 2
+    },
+    {
+      "key": 499,
+      "requests": 2
+    }
+  ],
+  "by_path": null,
+  "date": "2026-08-03",
+  "page_views": 1125,
+  "requests": 4889,
+  "schema_version": "1.0",
+  "sources": [
+    "httpRequests1dGroups"
+  ],
+  "uniques": 860,
+  "visits": null
+}

@@ -1,0 +1,125 @@
+{
+  "by_country": [
+    {
+      "key": "US",
+      "requests": 405
+    },
+    {
+      "key": "DE",
+      "requests": 56
+    },
+    {
+      "key": "JP",
+      "requests": 21
+    },
+    {
+      "key": "NL",
+      "requests": 19
+    },
+    {
+      "key": "SG",
+      "requests": 16
+    },
+    {
+      "key": "CN",
+      "requests": 15
+    },
+    {
+      "key": "BR",
+      "requests": 9
+    },
+    {
+      "key": "SE",
+      "requests": 8
+    },
+    {
+      "key": "IE",
+      "requests": 7
+    },
+    {
+      "key": "AU",
+      "requests": 4
+    },
+    {
+      "key": "HK",
+      "requests": 4
+    },
+    {
+      "key": "DK",
+      "requests": 3
+    },
+    {
+      "key": "BD",
+      "requests": 2
+    },
+    {
+      "key": "PL",
+      "requests": 2
+    },
+    {
+      "key": "RO",
+      "requests": 2
+    },
+    {
+      "key": "AE",
+      "requests": 1
+    },
+    {
+      "key": "ID",
+      "requests": 1
+    }
+  ],
+  "by_device_type": null,
+  "by_edge_status_code": [
+    {
+      "key": 200,
+      "requests": 341
+    },
+    {
+      "key": 307,
+      "requests": 95
+    },
+    {
+      "key": 204,
+      "requests": 39
+    },
+    {
+      "key": 301,
+      "requests": 37
+    },
+    {
+      "key": 404,
+      "requests": 37
+    },
+    {
+      "key": 403,
+      "requests": 15
+    },
+    {
+      "key": 522,
+      "requests": 5
+    },
+    {
+      "key": 308,
+      "requests": 3
+    },
+    {
+      "key": 500,
+      "requests": 2
+    },
+    {
+      "key": 304,
+      "requests": 1
+    }
+  ],
+  "by_path": null,
+  "date": "2026-08-08",
+  "page_views": 157,
+  "requests": 575,
+  "schema_version": "1.0",
+  "sources": [
+    "httpRequests1dGroups"
+  ],
+  "uniques": 212,
+  "visits": null
+}

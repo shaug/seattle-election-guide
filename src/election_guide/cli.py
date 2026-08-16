@@ -19,6 +19,18 @@ import yaml
 from pydantic import ValidationError
 
 from election_guide import __version__
+from election_guide.analytics import (
+    ARCHIVE_DIR,
+    RETENTION_DAYS,
+    TOKEN_VARIABLE,
+    DailyRollup,
+    archived_dates,
+    missing_dates,
+    newest_complete_day,
+    open_analytics_zone,
+    window_floor,
+    write_rollup,
+)
 from election_guide.authorities.registry import read_authority_registry
 from election_guide.calendar import (
     EVIDENCE_MANIFEST_DIR,
@@ -162,6 +174,7 @@ release_app = typer.Typer(help="Compile, audit, and package a versioned public r
 collect_app = typer.Typer(help="Refresh source-specific endorsement adapters.")
 hosting_app = typer.Typer(help="Stage validated release artifacts for static hosting.")
 results_app = typer.Typer(help="Validate committed post-election results against the inventory.")
+analytics_app = typer.Typer(help="Archive zone analytics before Cloudflare's window drops them.")
 app.add_typer(inventory_app, name="inventory")
 app.add_typer(calendar_app, name="calendar")
 app.add_typer(election_app, name="election")
@@ -175,6 +188,7 @@ app.add_typer(release_app, name="release")
 app.add_typer(collect_app, name="collect")
 app.add_typer(hosting_app, name="hosting")
 app.add_typer(results_app, name="results")
+app.add_typer(analytics_app, name="analytics")
 evidence_app.add_typer(manual_app, name="manual")
 
 
@@ -1736,6 +1750,126 @@ def results_ingest(
     typer.echo(
         f"results: {output_path} ({results.election_id}, {results.status}, "
         f"{len(results.races)} races)"
+    )
+
+
+@analytics_app.command("export")
+def analytics_export(
+    day: Annotated[
+        str | None,
+        typer.Option(
+            "--date",
+            help="Archive exactly this UTC date (YYYY-MM-DD) instead of every missing day.",
+        ),
+    ] = None,
+    as_of: Annotated[str | None, typer.Option(help="Treat this ISO 8601 date as today.")] = None,
+    archive_dir: Annotated[Path, typer.Option(file_okay=False)] = ARCHIVE_DIR,
+) -> None:
+    """Archive every in-window UTC day that is not archived yet (O9 follow-up, #381).
+
+    One command rather than a backfill and a scheduler, because they are the
+    same operation: ask which days are missing, fetch those, write them. That
+    is what makes the schedule self-healing — a run that never fired leaves a
+    gap the next run fills on its own — and it is why re-running is free.
+
+    An already-archived day is never re-fetched. Byte-identity across runs is
+    then a property of not asking again, rather than a bet that Cloudflare
+    returns identical aggregates for a past day forever.
+    """
+    try:
+        today = date.fromisoformat(as_of) if as_of is not None else datetime.now(UTC).date()
+        requested = [date.fromisoformat(day)] if day is not None else None
+        if requested is not None and requested[0] > newest_complete_day(today):
+            raise ValueError(
+                f"{requested[0].isoformat()} is not a complete UTC day yet; "
+                "archiving it would record a partial count"
+            )
+        already = archived_dates(archive_dir)
+        pending = (
+            [candidate for candidate in requested if candidate not in already]
+            if requested is not None
+            else missing_dates(as_of=today, archived=already)
+        )
+    except ValueError as error:
+        typer.echo(f"analytics export failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+
+    if not pending:
+        typer.echo(f"analytics export: 0 archived, {len(already)} already present")
+        return
+
+    written: list[Path] = []
+    # An empty answer is ambiguous: it is what a day outside the retention
+    # window returns, and also what a day with genuinely no traffic returns.
+    # The discriminator is whether some *older* day is known to be readable. If
+    # one is, this day is inside the window and its zero is real, so it is
+    # archived as a zero — a gap there would say "nobody looked" about a day
+    # somebody did look at, and would break the no-gaps contract. If none is,
+    # the day is past the edge of the window and is skipped.
+    #
+    # `RETENTION_DAYS` is a confirmed observation rather than a documented
+    # guarantee (docs/MONITORING.md), so the oldest day or two of any run can
+    # legitimately answer empty. That is the case this exists to absorb.
+    #
+    # Only days inside the *current* window count as that evidence. Seeding
+    # from the whole archive would pin this to the oldest file ever written and
+    # never lower it; since no candidate is ever older than the window floor,
+    # every empty answer would then read as a real zero and the skip could
+    # never fire again. That needs a long schedule outage to surface — which is
+    # exactly when days are aging out unnoticed.
+    aged_out: list[date] = []
+    zeroed: list[date] = []
+    floor = window_floor(today)
+    oldest_with_data = min((day for day in already if day >= floor), default=None)
+    try:
+        # Resolved before the first fetch and before any write, so a missing
+        # or unscoped credential fails with an empty archive, never a partial
+        # one.
+        zone = open_analytics_zone()
+        for candidate in pending:
+            rollup = zone.archive_day(candidate, as_of=today)
+            if rollup is None:
+                if oldest_with_data is None or oldest_with_data >= candidate:
+                    aged_out.append(candidate)
+                    continue
+                zeroed.append(candidate)
+                rollup = DailyRollup.empty(candidate)
+            elif oldest_with_data is None or candidate < oldest_with_data:
+                oldest_with_data = candidate
+            written.append(write_rollup(archive_dir, rollup))
+    except (OSError, ValidationError, ValueError) as error:
+        # The credential is named on every failure, not only the ones this
+        # process can attribute to it: the operator's next move is the same
+        # either way, and a transport error carrying no hint reads as a bug in
+        # the exporter (issue #381).
+        typer.echo(
+            f"analytics export failed: {error} "
+            f"[check {TOKEN_VARIABLE}; {len(written)} day(s) archived before the failure]",
+            err=True,
+        )
+        raise typer.Exit(code=1) from error
+
+    # An operator who named one date gets an exit code about that date; a
+    # scheduled sweep reports and carries on, because one day past the window
+    # is not a reason to abandon the other twenty-nine.
+    for candidate in aged_out:
+        typer.echo(
+            f"analytics export: no data for {candidate.isoformat()}; treating it as older "
+            f"than the {RETENTION_DAYS}-day window",
+            err=True,
+        )
+    if requested is not None and aged_out:
+        typer.echo(
+            f"analytics export failed: {requested[0].isoformat()} was not archived; "
+            "see the reason above",
+            err=True,
+        )
+        raise typer.Exit(code=1)
+
+    typer.echo(
+        f"analytics export: {len(written)} archived ({len(zeroed)} with no traffic), "
+        f"{len(aged_out)} past the window, "
+        f"{len(already)} already present -> {archive_dir}"
     )
 
 

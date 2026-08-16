@@ -1,0 +1,155 @@
+name: Analytics archive
+
+# Cloudflare's retention on this zone is two windows, not one
+# (docs/MONITORING.md, "Correction: the API's window is not the dashboard's"):
+# roughly 30 days of totals, country, and status codes, but only **8 days** of
+# path and device-type detail. A day that ages out of either is gone; there is
+# no recovery path, which is why this runs unattended rather than waiting for
+# anyone to remember.
+#
+# Daily, and deliberately not on the hour: GitHub's schedules are best effort
+# and the top of the hour is the most congested slot there is (see
+# calendar.yml, which learned that the hard way). A single missed run costs
+# nothing, because the export archives every missing in-window day rather than
+# just yesterday, so the next run repairs the gap on its own.
+#
+# A sustained outage does cost something, and sooner than the 30 days might
+# suggest: after 8 days the recovered day is archived permanently without its
+# path and device-type breakdown. Treat a week of red runs as urgent, not a
+# month.
+on:
+  schedule:
+    - cron: "43 7 * * *"
+  workflow_dispatch:
+    inputs:
+      date:
+        description: Archive exactly this UTC date (YYYY-MM-DD) instead of every missing day
+        required: false
+
+# `contents: write` pushes the archive branch; `pull-requests: write` opens the
+# pull request that merges it. Nothing here may push to `main` — it is
+# protected and requires review (CONTRIBUTING.md, "Do not commit directly to
+# `main`"), so a direct push would fail every single day and the archive would
+# freeze while the job reported the failure to nobody.
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  # Two runs archiving the same day would race on the same branch and one
+  # would fail to push. Serializing them keeps re-running free.
+  group: analytics-archive
+  cancel-in-progress: false
+
+env:
+  ARCHIVE_BRANCH: analytics-archive
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # A full history, because this pushes a branch rather than a shallow
+          # snapshot of one.
+          fetch-depth: 0
+      - name: Continue the open archive branch, or start one from main
+        # Continuing it matters: while a previous archive PR is still unmerged,
+        # its days are not on `main`, and starting fresh every run would keep
+        # re-archiving them — or lose them outright once they aged out of
+        # Cloudflare's window in the meantime.
+        #
+        # Merging `main` back in afterwards is not cosmetic: the checkout
+        # replaces the whole tree, not just `data/analytics`, so a branch left
+        # alone would keep running the exporter, the archive model, and the
+        # pre-commit gate frozen at whatever `main` held when it was created.
+        # A later fix to any of them would never reach the unattended run.
+        run: |
+          if git ls-remote --exit-code --heads origin "$ARCHIVE_BRANCH" >/dev/null 2>&1; then
+            git fetch origin "$ARCHIVE_BRANCH"
+            git checkout -B "$ARCHIVE_BRANCH" FETCH_HEAD
+            git fetch origin main
+            git -c user.name="github-actions[bot]" \
+                -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+                merge --no-edit origin/main
+          else
+            git checkout -B "$ARCHIVE_BRANCH"
+          fi
+      - uses: astral-sh/setup-uv@v5
+      - name: Install the pipeline
+        run: uv sync --frozen
+      - name: Archive every in-window day not already committed
+        # Inputs reach the shell through the environment, never through
+        # expression interpolation into the script itself.
+        run: >-
+          uv run election-guide analytics export
+          ${DATE:+--date "$DATE"}
+        env:
+          CLOUDFLARE_ANALYTICS_TOKEN: ${{ secrets.CLOUDFLARE_ANALYTICS_TOKEN }}
+          CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+          DATE: ${{ inputs.date }}
+      - name: Check what the run archived before committing it
+        # The gate has to run here, because it cannot run later. This job
+        # pushes and opens its pull request with `GITHUB_TOKEN`, and GitHub
+        # deliberately starts no workflow run for an event that token
+        # triggered — so `ci.yml`, which fires on `pull_request` and on pushes
+        # to `main`, never sees the archive branch. Without this step the
+        # committed-tree assertions in `tests/test_analytics.py` would first
+        # execute after the merge, against a file already on `main`, reddening
+        # every later pull request that inherits it.
+        #
+        # The whole module rather than a `-k` subset: it runs in about a
+        # second, and naming a subset here is one more thing that can drift
+        # away from what the module actually guards.
+        run: uv run pytest tests/test_analytics.py -q
+      - name: Commit and push whatever the run archived
+        id: commit
+        # Stage first, then ask the index what changed. Every archived day is a
+        # brand-new file and never a modification, so the obvious
+        # `git diff --quiet` check would be blind to all of them: it compares
+        # the worktree against the index for tracked paths only, reports
+        # "nothing to commit" on the very runs that archived something, and
+        # exits 0 — a green run that silently lost the day.
+        #
+        # The check still has to exist. The schedule fires daily forever, and
+        # an empty commit per day would be noise in a repository whose history
+        # is its audit trail.
+        run: |
+          git add data/analytics
+          if git diff --cached --quiet -- data/analytics; then
+            echo "analytics archive: nothing new to commit"
+            echo "pushed=false" >> "${GITHUB_OUTPUT:-/dev/null}"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore(analytics): archive zone rollups through $(date -u +%F)"
+          git push origin "HEAD:refs/heads/$ARCHIVE_BRANCH"
+          echo "pushed=true" >> "${GITHUB_OUTPUT:-/dev/null}"
+      - name: Open a pull request if none is open
+        if: steps.commit.outputs.pushed == 'true'
+        # Reuses the existing PR when one is already open, so a week of daily
+        # runs accumulates into one reviewable pull request rather than seven.
+        run: |
+          if [ -z "$(gh pr list --head "$ARCHIVE_BRANCH" --state open --json number --jq '.[].number')" ]; then
+            gh pr create \
+              --head "$ARCHIVE_BRANCH" \
+              --base main \
+              --title "chore(analytics): archive zone rollups" \
+              --body "$PR_BODY"
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_BODY: |
+            Automated by `.github/workflows/analytics.yml`. Adds one file per UTC day
+            under `data/analytics/`; see docs/MONITORING.md, "The archive".
+
+            **CI will not start on its own.** This pull request was opened by
+            `GITHUB_TOKEN`, and GitHub starts no workflow run for an event that token
+            triggered. Close and reopen it, or push any commit to the branch, to run
+            `check`. The archived days were already checked before they were pushed —
+            the workflow runs `tests/test_analytics.py` against them in the same run
+            that wrote them — so this is about satisfying the required status check,
+            not about unreviewed content.
+
+            Refs #381

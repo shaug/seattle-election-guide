@@ -1,0 +1,141 @@
+{
+  "by_country": [
+    {
+      "key": "US",
+      "requests": 843
+    },
+    {
+      "key": "SE",
+      "requests": 15
+    },
+    {
+      "key": "CN",
+      "requests": 14
+    },
+    {
+      "key": "BR",
+      "requests": 11
+    },
+    {
+      "key": "IE",
+      "requests": 9
+    },
+    {
+      "key": "DK",
+      "requests": 8
+    },
+    {
+      "key": "HK",
+      "requests": 6
+    },
+    {
+      "key": "NL",
+      "requests": 5
+    },
+    {
+      "key": "SG",
+      "requests": 5
+    },
+    {
+      "key": "DE",
+      "requests": 4
+    },
+    {
+      "key": "JP",
+      "requests": 4
+    },
+    {
+      "key": "CA",
+      "requests": 2
+    },
+    {
+      "key": "ID",
+      "requests": 2
+    },
+    {
+      "key": "IN",
+      "requests": 2
+    },
+    {
+      "key": "TR",
+      "requests": 2
+    },
+    {
+      "key": "BD",
+      "requests": 1
+    },
+    {
+      "key": "CO",
+      "requests": 1
+    },
+    {
+      "key": "FR",
+      "requests": 1
+    },
+    {
+      "key": "PK",
+      "requests": 1
+    },
+    {
+      "key": "UA",
+      "requests": 1
+    },
+    {
+      "key": "VN",
+      "requests": 1
+    }
+  ],
+  "by_device_type": null,
+  "by_edge_status_code": [
+    {
+      "key": 200,
+      "requests": 583
+    },
+    {
+      "key": 204,
+      "requests": 124
+    },
+    {
+      "key": 403,
+      "requests": 70
+    },
+    {
+      "key": 307,
+      "requests": 63
+    },
+    {
+      "key": 404,
+      "requests": 39
+    },
+    {
+      "key": 301,
+      "requests": 29
+    },
+    {
+      "key": 308,
+      "requests": 19
+    },
+    {
+      "key": 304,
+      "requests": 5
+    },
+    {
+      "key": 522,
+      "requests": 5
+    },
+    {
+      "key": 499,
+      "requests": 1
+    }
+  ],
+  "by_path": null,
+  "date": "2026-08-06",
+  "page_views": 287,
+  "requests": 938,
+  "schema_version": "1.0",
+  "sources": [
+    "httpRequests1dGroups"
+  ],
+  "uniques": 365,
+  "visits": null
+}

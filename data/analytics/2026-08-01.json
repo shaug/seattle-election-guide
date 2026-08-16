@@ -1,0 +1,145 @@
+{
+  "by_country": [
+    {
+      "key": "US",
+      "requests": 804
+    },
+    {
+      "key": "GB",
+      "requests": 76
+    },
+    {
+      "key": "JP",
+      "requests": 65
+    },
+    {
+      "key": "PL",
+      "requests": 26
+    },
+    {
+      "key": "CN",
+      "requests": 21
+    },
+    {
+      "key": "HK",
+      "requests": 15
+    },
+    {
+      "key": "DE",
+      "requests": 11
+    },
+    {
+      "key": "FR",
+      "requests": 10
+    },
+    {
+      "key": "SG",
+      "requests": 7
+    },
+    {
+      "key": "KR",
+      "requests": 4
+    },
+    {
+      "key": "ES",
+      "requests": 3
+    },
+    {
+      "key": "AU",
+      "requests": 2
+    },
+    {
+      "key": "CL",
+      "requests": 2
+    },
+    {
+      "key": "PT",
+      "requests": 2
+    },
+    {
+      "key": "T1",
+      "requests": 2
+    },
+    {
+      "key": "BR",
+      "requests": 1
+    },
+    {
+      "key": "IN",
+      "requests": 1
+    },
+    {
+      "key": "JO",
+      "requests": 1
+    },
+    {
+      "key": "SA",
+      "requests": 1
+    },
+    {
+      "key": "TH",
+      "requests": 1
+    }
+  ],
+  "by_device_type": null,
+  "by_edge_status_code": [
+    {
+      "key": 200,
+      "requests": 419
+    },
+    {
+      "key": 307,
+      "requests": 214
+    },
+    {
+      "key": 204,
+      "requests": 159
+    },
+    {
+      "key": 404,
+      "requests": 137
+    },
+    {
+      "key": 403,
+      "requests": 83
+    },
+    {
+      "key": 301,
+      "requests": 27
+    },
+    {
+      "key": 522,
+      "requests": 7
+    },
+    {
+      "key": 206,
+      "requests": 2
+    },
+    {
+      "key": 304,
+      "requests": 2
+    },
+    {
+      "key": 308,
+      "requests": 2
+    },
+    {
+      "key": 405,
+      "requests": 2
+    },
+    {
+      "key": 499,
+      "requests": 1
+    }
+  ],
+  "by_path": null,
+  "date": "2026-08-01",
+  "page_views": 304,
+  "requests": 1055,
+  "schema_version": "1.0",
+  "sources": [
+    "httpRequests1dGroups"
+  ],
+  "uniques": 137,
+  "visits": null
+}

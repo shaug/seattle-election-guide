@@ -14,6 +14,9 @@ The data pipeline will use these logical areas:
 - `manifests/`: snapshot, provenance, validation, and build hashes.
 - `published/`: release inputs; bundled outputs are attached to GitHub Releases.
 - `releases/`: reviewed source-decision ledgers and their reproducible permitted snapshots.
+- `analytics/`: one file per UTC day of zone-traffic rollups; tracked, because Cloudflare keeps
+  only about 30 days of totals and 8 days of path detail, and an ignored path is how the
+  2026-08-04 capture bytes were lost (`docs/MONITORING.md`, issue #381).
 
 Directories are created by the relevant pipeline commands rather than committed empty. Public
 records must not embed third-party material that the project lacks permission to redistribute.
@@ -46,6 +49,17 @@ and manual-extract manifests intentionally omit an HTTP status because compilati
 an HTTP request. Ignored full-page captures are never copied into the tracked tree.
 `election-guide release verify` recompiles all three generated areas in temporary storage and
 requires exact path and byte equality.
+
+`analytics/<YYYY-MM-DD>.json` holds aggregate zone traffic for one complete UTC day: total
+requests, page views, and uniques, plus rollups by country and edge status code. `visits`,
+`by_path`, and `by_device_type` come from a dataset Cloudflare keeps for only eight days, so they
+are `null` on any day archived later than that — 18 of the first 25 committed days — and `sources`
+records which datasets answered (`docs/MONITORING.md`, "The archive"). It carries
+no per-visitor data — the `Source IP`, `Source user agent`, and `Source browser` dimensions are
+never requested and the archive model rejects them, because this repository is public and a
+committed identifier would be unretractable from every fork. `election-guide analytics export`
+writes it; see the [monitoring guide](../docs/MONITORING.md) for the retention deadline that
+makes it necessary.
 
 `election-guide export build` writes the complete release bundle to `build/` by default. The
 bundle contains canonical consensus and view-model JSON, race and source CSVs, the full
