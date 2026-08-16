@@ -172,6 +172,104 @@ creates nothing.
 `--dry-run` still queries GitHub, so it prints what the real run would create
 rather than what the calendar contains.
 
+## Watching for the promised artifact
+
+A tracking issue is a reminder, and a reminder nobody acts on closes just as
+quietly as one nobody reads. The other half of the `Calendar` workflow runs on
+the same schedule and asks the opposite question: the window has closed — did
+the work actually land?
+
+```bash
+uv run election-guide calendar watch config/calendar/elections.yaml --dry-run
+```
+
+It reads what the repository holds, and for each past-due milestone whose kind
+promises a checkable artifact it decides whether one exists:
+
+| Milestone kind                       | Promised artifact                                                                  | Recognized by                                                             |
+| ------------------------------------ | ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `results_capture_election_night`     | an evidence manifest in `data/manifests/evidence/`                                    | retrieval date inside the window, title carrying `election-night results` |
+| `results_capture_post_certification` | an evidence manifest in `data/manifests/evidence/`                                    | retrieval date inside the window, title carrying `certified results`      |
+| `refresh`                            | an evidence manifest, **or** a refresh event in `data/collection/refreshes/`          | date inside the window                                                    |
+
+Every other kind is a date to act on rather than work that leaves a record, so
+the check never escalates one. It is deterministic — a scheduled job reading
+the calendar and the tree, with no agent involved — and it neither dispatches
+work nor closes anything.
+
+A refresh accepts either record because a sweep leaves whichever its sources
+allowed. `collect refresh` writes a refresh event, but most of the 2026
+primary's panel was captured directly and left evidence manifests instead —
+`docs/runbooks/endorsement-discovery-sweep.md` writes its own verification
+around those. Demanding the event alone would escalate a sweep that did happen;
+accepting either still catches the window where nothing did.
+
+**Two rules decide identity, because a manifest declares none.** Evidence
+manifests carry no election and no capture-kind field; a structured one was
+tried and reverted, because adding a field to `CaptureMetadata` changes what
+every already-committed manifest serializes to (`docs/EVIDENCE_CAPTURE.md`,
+"Counting authorities"). So the **window** supplies the election — it opens on
+the milestone's own date and closes seven days later, which is far narrower
+than the months between elections — and the **runbooks' title convention**
+supplies the capture kind, which is the only thing separating a first count
+from a certified one.
+
+Windows are compared in Pacific time, not UTC. King County posts its first
+count around 8:15 p.m., so an election-night capture is routinely stamped with
+the following UTC date; comparing UTC dates would call every one of them a day
+late. Only a `captured` manifest counts — an `unavailable` one records an
+attempt that found nothing — and only a refresh event that did not fail.
+
+### Escalation stages
+
+A milestone that passes its window with nothing to show for it escalates its
+tracking issue in two stages: `overdue` after seven days, and `stale` after
+twenty-one. Each stage adds its own label and posts one comment saying what was
+looked for and where.
+
+The comment's last line is its marker —
+`calendar-escalation: <election-id>/<milestone-id> <stage>` — read back exactly
+the way tracking reads its own. That is the whole idempotence mechanism: a
+schedule running four times a day comments once per stage and then stays quiet.
+
+A run emits every stage a milestone has *passed*, not only the one it is in
+now. A watch that first ran weeks late would otherwise skip `overdue` outright,
+which would make what an issue says depend on when the schedule happened to
+fire.
+
+Every issue carrying the milestone's marker is escalated, not one chosen among
+them — a marker is not unique in practice (this repository already holds five
+issues for one milestone), and escalating one would leave the rest looking
+untouched. A past-due milestone with no tracking issue at all is reported on
+stderr rather than given one: opening it is `calendar track`'s job, and that
+command deliberately refuses a date that has passed.
+
+### When the work happened in another form
+
+Some milestones are done and still cannot produce the artifact this check looks
+for. A milestone declares that with `artifact_record`, naming the document that
+holds its provenance instead:
+
+```yaml
+  - election_id: wa-2026-primary
+    id: results-capture-election-night
+    kind: results_capture_election_night
+    offset_days: 0
+    artifact_record: docs/runbooks/results-capture-election-night.md
+```
+
+That is the one case this repository has needed. `wa-2026-primary`'s
+election-night capture ran on 2026-08-04, before the authority capture lane
+(#281) existed, so it produced the runbook's postmortem table rather than
+manifests — and the bytes a backfill would have read are gone
+(`docs/COLLECTION.md`). Escalating it forever would be escalating completed
+work.
+
+`artifact_record` exempts a milestone permanently, so it is a claim a reviewer
+has to agree with, not a way to quiet a reminder. Set it only after the work is
+done and its record is genuinely a document; the tests resolve the path against
+the repository, so a moved document fails the suite.
+
 ## Marking a milestone public
 
 Most milestones are internal: a source-panel freeze or an inventory import means

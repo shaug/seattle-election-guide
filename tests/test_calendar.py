@@ -183,9 +183,21 @@ def test_committed_milestone_references_point_at_existing_documents() -> None:
     calendar = read_election_calendar(CALENDAR_PATH)
 
     for milestone in calendar.milestones:
-        if milestone.reference is None:
-            continue
-        assert (PROJECT_ROOT / milestone.reference).is_file(), milestone.reference
+        for path in (milestone.reference, milestone.artifact_record):
+            if path is None:
+                continue
+            assert (PROJECT_ROOT / path).is_file(), path
+
+
+@pytest.mark.parametrize(
+    "artifact_record", ["/docs/RELEASE.md", "../secrets.yaml", "docs\\RELEASE.md"]
+)
+def test_artifact_record_outside_the_repository_fails_validation(artifact_record: str) -> None:
+    payload = _calendar(_required_milestones())
+    payload["milestones"][0]["artifact_record"] = artifact_record
+
+    with pytest.raises(ValidationError, match="repository-relative path"):
+        ElectionCalendar.model_validate(payload)
 
 
 def test_calendar_schema_declares_no_presentation_fields() -> None:
@@ -195,7 +207,9 @@ def test_calendar_schema_declares_no_presentation_fields() -> None:
     not cross that line. `public` says *whether* a reader should see a date, not
     what they see; the words live in `MILESTONE_COPY` on the rendering side.
     `revision` is a data version a subscriber's client compares, not anything
-    displayed. Neither is a display string, banner semantic, or copy.
+    displayed. `artifact_record` (issue 279) is a repository path, the same
+    shape as `reference`, saying where a milestone's provenance actually
+    landed. None of the three is a display string, banner semantic, or copy.
     """
     declared = set(CalendarElection.model_fields) | set(CalendarMilestone.model_fields)
 
@@ -212,6 +226,7 @@ def test_calendar_schema_declares_no_presentation_fields() -> None:
         "offset_days",
         "workflow",
         "reference",
+        "artifact_record",
     }
 
 

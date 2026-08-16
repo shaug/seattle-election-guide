@@ -21,10 +21,17 @@ from pydantic import ValidationError
 from election_guide import __version__
 from election_guide.authorities.registry import read_authority_registry
 from election_guide.calendar import (
+    EVIDENCE_MANIFEST_DIR,
+    REFRESH_EVENT_DIR,
     due_milestones,
+    milestone_marker,
+    missing_artifacts,
+    plan_escalations,
     plan_issues,
     read_election_calendar,
+    read_repository_artifacts,
     unmarked_collisions,
+    untracked_milestones,
 )
 from election_guide.calendar.github_tracker import GitHubIssueTracker
 from election_guide.collection import read_adapter_spec, refresh_source, validate_adapter
@@ -407,6 +414,79 @@ def calendar_track(
         )
     if collisions:
         raise typer.Exit(code=1)
+
+
+@calendar_app.command("watch")
+def calendar_watch(
+    calendar_path: Annotated[
+        Path,
+        typer.Argument(exists=True, dir_okay=False, readable=True),
+    ] = Path("config/calendar/elections.yaml"),
+    repository: Annotated[
+        str, typer.Option(help="GitHub repository as OWNER/NAME.")
+    ] = "shaug/seattle-election-guide",
+    as_of: Annotated[
+        str | None, typer.Option(help="Evaluate the windows from this ISO 8601 date.")
+    ] = None,
+    manifest_dir: Annotated[
+        Path, typer.Option(file_okay=False, help="Evidence manifests a results capture writes.")
+    ] = EVIDENCE_MANIFEST_DIR,
+    refresh_dir: Annotated[
+        Path, typer.Option(file_okay=False, help="Refresh events a collection refresh writes.")
+    ] = REFRESH_EVENT_DIR,
+    dry_run: Annotated[
+        bool, typer.Option(help="Print what would be escalated without posting anything.")
+    ] = False,
+) -> None:
+    """Escalate milestones whose promised artifact never appeared."""
+    try:
+        calendar = read_election_calendar(calendar_path)
+        today = date.fromisoformat(as_of) if as_of is not None else datetime.now(UTC).date()
+        artifacts = read_repository_artifacts(manifest_dir=manifest_dir, refresh_dir=refresh_dir)
+        missing = missing_artifacts(calendar, as_of=today, artifacts=artifacts)
+        tracker = GitHubIssueTracker(repository)
+        # A dry run still reads existing state, exactly as tracking's does:
+        # printing escalations a real run would skip reports work that is not
+        # there to do.
+        issue_numbers = tracker.read_tracked_issues().issue_numbers
+        escalated = {
+            number: tracker.read_escalation_markers(number)
+            for item in missing
+            for number in issue_numbers.get(
+                milestone_marker(item.milestone.election_id, item.milestone.id), ()
+            )
+        }
+        planned = plan_escalations(
+            missing, as_of=today, issue_numbers=issue_numbers, escalated=escalated
+        )
+        for request in planned:
+            if dry_run:
+                typer.echo(
+                    f"would escalate: {request.milestone} [{request.stage}] "
+                    f"on #{request.issue_number}"
+                )
+            else:
+                tracker.escalate(request)
+                typer.echo(
+                    f"escalated: {request.milestone} [{request.stage}] on #{request.issue_number}"
+                )
+    except (OSError, UnicodeError, json.JSONDecodeError, ValidationError, ValueError) as error:
+        typer.echo(f"calendar watch failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    verb = "would be posted" if dry_run else "posted"
+    typer.echo(
+        f"calendar watch: {len(planned)} {verb}, {len(missing)} milestone(s) missing an "
+        f"artifact, as of {today}"
+    )
+    # Nothing here opens the issue: `calendar track` owns creation and refuses a
+    # milestone whose date has passed, so a missing one is reported rather than
+    # invented.
+    for item in untracked_milestones(missing, issue_numbers=issue_numbers):
+        typer.echo(
+            f"calendar watch: {item.milestone.election_id}/{item.milestone.id} is missing "
+            f"{item.expectation.describe()} and has no tracking issue to escalate",
+            err=True,
+        )
 
 
 @calendar_app.command("in-window")
