@@ -50,18 +50,26 @@ class IssueRecord:
 class TrackedIssues:
     """What the repository already says about calendar milestones.
 
-    `markers` is the identity the tracker acts on, and is exactly
-    `issue_numbers`' key set — one scan produces both, so a milestone can never
-    read as tracked while yielding no issue to escalate. `titles` is only used
-    to notice that a title and the markers disagree; it never establishes that
-    a milestone is tracked. `issue_numbers` is plural per marker, because a
+    `issue_numbers` says which issues carry each marker — plural, because a
     marker is not unique in practice and an escalation that reached only one of
-    them would leave the rest looking untouched.
+    them would leave the rest looking untouched. `titles` is only used to notice
+    that a title and the markers disagree; it never establishes that a milestone
+    is tracked.
+
+    The tracked markers are that mapping's key set rather than a field beside
+    it. Stored separately they could be set inconsistently — and then a
+    milestone would read as tracked while yielding no issue to escalate, which
+    is the silent pass this whole system exists to prevent. Deriving it makes
+    that unrepresentable instead of promising it in prose.
     """
 
-    markers: frozenset[str]
     titles: tuple[str, ...]
     issue_numbers: Mapping[str, tuple[int, ...]]
+
+    @property
+    def markers(self) -> frozenset[str]:
+        """Every calendar marker the repository's issues carry."""
+        return frozenset(self.issue_numbers)
 
 
 def issue_records(payload: str) -> list[IssueRecord]:
@@ -155,11 +163,9 @@ class GitHubIssueTracker:
                 f"reached the {ISSUE_QUERY_LIMIT}-issue listing limit, so a marker may have been "
                 "dropped; raise ISSUE_QUERY_LIMIT before running again"
             )
-        issue_numbers = issue_numbers_by_marker(records)
         return TrackedIssues(
-            markers=frozenset(issue_numbers),
             titles=tuple(record.title for record in records),
-            issue_numbers=issue_numbers,
+            issue_numbers=issue_numbers_by_marker(records),
         )
 
     def ensure_milestone(self, title: str) -> None:

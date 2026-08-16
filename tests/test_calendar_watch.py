@@ -523,7 +523,7 @@ def test_absent_artifact_directories_read_as_empty(tmp_path: Path) -> None:
 
 def _tracked(numbers: dict[str, tuple[int, ...]]) -> Any:
     def _read(self: GitHubIssueTracker) -> TrackedIssues:
-        return TrackedIssues(markers=frozenset(numbers), titles=(), issue_numbers=dict(numbers))
+        return TrackedIssues(titles=(), issue_numbers=dict(numbers))
 
     return _read
 

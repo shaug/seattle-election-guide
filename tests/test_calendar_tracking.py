@@ -248,7 +248,7 @@ def _completed(command: list[str], stdout: str = "", code: int = 0) -> Completed
 
 
 def _nothing_tracked(self: GitHubIssueTracker) -> TrackedIssues:
-    return TrackedIssues(markers=frozenset(), titles=(), issue_numbers={})
+    return TrackedIssues(titles=(), issue_numbers={})
 
 
 def test_the_listing_reads_every_issue_open_and_closed(
@@ -496,8 +496,15 @@ def test_the_workflow_runs_every_six_hours_off_the_hour() -> None:
 
 
 def _tracked(markers: set[str], titles: tuple[str, ...]) -> object:
+    """A listing where each marker is carried by one issue.
+
+    The numbers are what the markers are read out of, so a fake cannot claim a
+    milestone is tracked without saying which issue tracks it.
+    """
+
     def _read(self: GitHubIssueTracker) -> TrackedIssues:
-        return TrackedIssues(markers=frozenset(markers), titles=titles, issue_numbers={})
+        numbers = {marker: (index + 1,) for index, marker in enumerate(sorted(markers))}
+        return TrackedIssues(titles=titles, issue_numbers=numbers)
 
     return _read
 
