@@ -27,6 +27,15 @@ ESCALATION_LABEL_COLORS: dict[str, str] = {
 }
 ESCALATION_LABEL_DESCRIPTION = "A calendar milestone's promised artifact never appeared"
 
+# `gh label list` pages at 30 by default, sorted by creation ascending — so the
+# newest labels are the first ones dropped, and the two above are the newest
+# this repository has. A truncated read reports an existing label as absent,
+# `gh label create` then fails on it, and the whole watch run dies before
+# posting any escalation. Same failure shape as a dropped issue marker, so it
+# gets the same treatment `ISSUE_QUERY_LIMIT` already gives that: ask for far
+# more than could exist, and fail loudly rather than truncate.
+LABEL_QUERY_LIMIT = 1000
+
 
 @dataclass(frozen=True)
 class IssueRecord:
@@ -41,11 +50,13 @@ class IssueRecord:
 class TrackedIssues:
     """What the repository already says about calendar milestones.
 
-    `markers` is the identity the tracker acts on. `titles` is only used to
-    notice that a title and the markers disagree; it never establishes that a
-    milestone is tracked. `issue_numbers` says which issues carry each marker —
-    plural, because a marker is not unique in practice and an escalation that
-    reached only one of them would leave the rest looking untouched.
+    `markers` is the identity the tracker acts on, and is exactly
+    `issue_numbers`' key set — one scan produces both, so a milestone can never
+    read as tracked while yielding no issue to escalate. `titles` is only used
+    to notice that a title and the markers disagree; it never establishes that
+    a milestone is tracked. `issue_numbers` is plural per marker, because a
+    marker is not unique in practice and an escalation that reached only one of
+    them would leave the rest looking untouched.
     """
 
     markers: frozenset[str]
@@ -77,31 +88,26 @@ def issue_records(payload: str) -> list[IssueRecord]:
 
 
 def issue_numbers_by_marker(records: list[IssueRecord]) -> dict[str, tuple[int, ...]]:
-    """Group issue numbers by the calendar marker each body ends with."""
+    """Group issue numbers by the calendar marker each body ends with.
+
+    The single place this parse lives, because it is the idempotence contract:
+    a marker that is written but not read back opens a duplicate on the next
+    run. The tracked markers are this mapping's keys rather than a second scan
+    of the same bodies — two scans of one listing could only ever agree, until
+    the day someone refines one of them, and a milestone that read as tracked
+    but yielded no issue number would be the silent pass this system exists to
+    prevent.
+
+    Only each body's final non-empty line counts. Generated issues always end
+    with their marker, so nothing is missed — and an issue that merely quotes
+    one while discussing this system cannot suppress a real milestone.
+    """
     grouped: defaultdict[str, list[int]] = defaultdict(list)
     for record in records:
         tail = trailing_line(record.body)
         if tail.startswith(MARKER_PREFIX):
             grouped[tail].append(record.number)
     return {marker: tuple(sorted(numbers)) for marker, numbers in grouped.items()}
-
-
-def markers_in_issues(bodies: list[str]) -> set[str]:
-    """Collect the calendar marker each issue body ends with, if any.
-
-    Public because this parse is the idempotence contract: a marker that is
-    written but not read back opens a duplicate on the next run.
-
-    Only the final non-empty line counts. Generated issues always end with
-    their marker, so nothing is missed — and an issue that merely quotes one
-    while discussing this system cannot suppress a real milestone.
-    """
-    markers: set[str] = set()
-    for body in bodies:
-        tail = trailing_line(body)
-        if tail.startswith(MARKER_PREFIX):
-            markers.add(tail)
-    return markers
 
 
 class GitHubIssueTracker:
@@ -149,10 +155,11 @@ class GitHubIssueTracker:
                 f"reached the {ISSUE_QUERY_LIMIT}-issue listing limit, so a marker may have been "
                 "dropped; raise ISSUE_QUERY_LIMIT before running again"
             )
+        issue_numbers = issue_numbers_by_marker(records)
         return TrackedIssues(
-            markers=frozenset(markers_in_issues([record.body for record in records])),
+            markers=frozenset(issue_numbers),
             titles=tuple(record.title for record in records),
-            issue_numbers=issue_numbers_by_marker(records),
+            issue_numbers=issue_numbers,
         )
 
     def ensure_milestone(self, title: str) -> None:
@@ -232,6 +239,8 @@ class GitHubIssueTracker:
                 "list",
                 "--repo",
                 self.repository,
+                "--limit",
+                str(LABEL_QUERY_LIMIT),
                 "--json",
                 "name",
                 "--jq",
@@ -239,7 +248,13 @@ class GitHubIssueTracker:
             ],
             "could not list repository labels",
         )
-        if name in {line.strip() for line in payload.splitlines() if line.strip()}:
+        existing = {line.strip() for line in payload.splitlines() if line.strip()}
+        if len(existing) >= LABEL_QUERY_LIMIT:
+            raise ValueError(
+                f"reached the {LABEL_QUERY_LIMIT}-label listing limit, so an existing label may "
+                "have been dropped; raise LABEL_QUERY_LIMIT before running again"
+            )
+        if name in existing:
             return
         run_gh(
             [

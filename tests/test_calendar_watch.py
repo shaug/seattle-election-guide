@@ -28,7 +28,11 @@ from election_guide.calendar import (
     read_repository_artifacts,
     untracked_milestones,
 )
-from election_guide.calendar.github_tracker import GitHubIssueTracker, TrackedIssues
+from election_guide.calendar.github_tracker import (
+    LABEL_QUERY_LIMIT,
+    GitHubIssueTracker,
+    TrackedIssues,
+)
 from election_guide.cli import app
 from election_guide.collection.models import RefreshEvent
 from election_guide.evidence.models import (
@@ -650,6 +654,26 @@ def test_a_missing_escalation_label_is_created_once(monkeypatch: pytest.MonkeyPa
 
     assert [command[:3] for command in calls] == [_LABEL_LIST, ["gh", "label", "create"]]
     assert "escalation: stale" in calls[1]
+    # `gh label list` pages at 30 by default, newest last, and these two labels
+    # are the newest — a truncated read would report an existing label absent,
+    # `gh label create` would fail on it, and the run would die before posting
+    # anything.
+    assert calls[0][calls[0].index("--limit") + 1] == str(LABEL_QUERY_LIMIT)
+
+
+def test_a_truncated_label_listing_fails_rather_than_recreating(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A dropped label is a failed run, so the read fails instead."""
+    payload = "".join(f"label-{index}\n" for index in range(LABEL_QUERY_LIMIT))
+
+    def _run(command: list[str], **kwargs: Any) -> CompletedProcess[str]:
+        return _completed(command, payload)
+
+    monkeypatch.setattr(subprocess, "run", _run)
+
+    with pytest.raises(ValueError, match="label listing limit"):
+        GitHubIssueTracker("owner/repo").ensure_label("escalation: stale")
 
 
 def test_the_workflow_watches_after_it_tracks() -> None:

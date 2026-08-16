@@ -24,9 +24,10 @@ from election_guide.calendar import (
 from election_guide.calendar.github_tracker import (
     ISSUE_QUERY_LIMIT,
     GitHubIssueTracker,
+    IssueRecord,
     TrackedIssues,
+    issue_numbers_by_marker,
     issue_records,
-    markers_in_issues,
 )
 from election_guide.calendar.tracking import MARKER_PREFIX, unmarked_collisions
 from election_guide.cli import app
@@ -216,12 +217,12 @@ def test_markers_are_read_back_out_of_the_listing() -> None:
     request = _plan(date(2027, 11, 2), 0)[0]
     payload = json.dumps([{"number": 1, "body": request.body}])
 
-    assert markers_in_issues([record.body for record in issue_records(payload)]) == {request.marker}
+    assert set(issue_numbers_by_marker(issue_records(payload))) == {request.marker}
 
 
 def test_markers_ignores_an_issue_with_no_body() -> None:
     payload = '[{"number": 1, "body": null}, {"number": 2, "body": "no marker here"}]'
-    assert markers_in_issues([record.body for record in issue_records(payload)]) == set()
+    assert issue_numbers_by_marker(issue_records(payload)) == {}
 
 
 def test_the_committed_calendar_plans_only_milestones_ahead_of_the_window() -> None:
@@ -310,19 +311,32 @@ def test_an_unlabelled_issue_still_suppresses_its_milestone(
     assert GitHubIssueTracker("owner/repo").read_tracked_issues().markers == {marker}
 
 
+def _marked(*bodies: str) -> dict[str, tuple[int, ...]]:
+    return issue_numbers_by_marker(
+        [IssueRecord(number=index + 1, title="", body=body) for index, body in enumerate(bodies)]
+    )
+
+
 def test_a_quoted_marker_does_not_suppress_a_milestone() -> None:
     """Only the last line counts, so discussing the system is safe."""
     marker = milestone_marker("wa-2027-general", "election-day")
     quoting = f"Every issue ends with a line like\n\n    {marker}\n\nwhich is its identity."
 
-    assert markers_in_issues([quoting]) == set()
-    assert markers_in_issues([f"{quoting}\n\n{marker}"]) == {marker}
+    assert _marked(quoting) == {}
+    assert _marked(f"{quoting}\n\n{marker}") == {marker: (1,)}
 
 
 def test_a_trailing_blank_line_does_not_hide_the_marker() -> None:
     marker = milestone_marker("wa-2027-general", "election-day")
 
-    assert markers_in_issues([f"body\n\n{marker}\n\n"]) == {marker}
+    assert _marked(f"body\n\n{marker}\n\n") == {marker: (1,)}
+
+
+def test_every_issue_carrying_one_marker_is_reported_against_it() -> None:
+    """Duplicates exist in this repository; an escalation must reach them all."""
+    marker = milestone_marker("wa-2027-general", "election-day")
+
+    assert _marked(f"first\n\n{marker}", "unrelated", f"duplicate\n\n{marker}") == {marker: (1, 3)}
 
 
 def test_create_attaches_the_milestone_and_every_label(

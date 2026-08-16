@@ -190,7 +190,7 @@ promises a checkable artifact it decides whether one exists:
 | ------------------------------------ | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
 | `results_capture_election_night`     | an evidence manifest in `data/manifests/evidence/`                             | date in the window, a **counting authority**'s `source_id`, title carrying `election-night results` |
 | `results_capture_post_certification` | an evidence manifest in `data/manifests/evidence/`                             | date in the window, a **counting authority**'s `source_id`, title carrying `certified`            |
-| `refresh`                            | an evidence manifest, **or** a refresh event in `data/collection/refreshes/`   | date in the window, an **endorsement panel** `source_id`                                          |
+| `refresh`                            | an evidence manifest, **or** a refresh event in `data/collection/refreshes/`   | date in the window, a `source_id` that is **not** a counting authority's                          |
 
 The check is deterministic — a scheduled job reading the calendar and the tree,
 with no agent involved — and it neither dispatches work nor closes anything.
@@ -224,8 +224,10 @@ every already-committed manifest serializes to (`docs/EVIDENCE_CAPTURE.md`,
   and closes seven days later, far narrower than the months between elections;
 - the capture's **registry** supplies whose work it was, resolved by looking
   its `source_id` up in `config/authorities/default.yaml`. A results capture
-  comes from a counting authority; a sweep's captures come from the endorsement
-  panel. This is not redundant with the window, because the windows overlap: a
+  must come from a counting authority; a sweep's capture must not — the check
+  reads absence from that registry rather than membership in the endorsement
+  panel, so a source retired from the panel still counts for the windows it
+  worked. This is not redundant with the window, because the windows overlap: a
   final refresh sits four days before election day, so its window contains
   election night, and both kinds of capture land in the same directory. Without
   the registry check, the authority's election-night capture would satisfy a
