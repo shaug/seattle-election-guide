@@ -186,11 +186,11 @@ uv run election-guide calendar watch config/calendar/elections.yaml --dry-run
 It reads what the repository holds, and for each past-due milestone whose kind
 promises a checkable artifact it decides whether one exists:
 
-| Milestone kind                       | Promised artifact                                                                  | Recognized by                                                             |
-| ------------------------------------ | ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| `results_capture_election_night`     | an evidence manifest in `data/manifests/evidence/`                                    | retrieval date inside the window, title carrying `election-night results` |
-| `results_capture_post_certification` | an evidence manifest in `data/manifests/evidence/`                                    | retrieval date inside the window, title carrying `certified results`      |
-| `refresh`                            | an evidence manifest, **or** a refresh event in `data/collection/refreshes/`          | date inside the window                                                    |
+| Milestone kind                       | Promised artifact                                                            | Recognized by                                                                        |
+| ------------------------------------ | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `results_capture_election_night`     | an evidence manifest in `data/manifests/evidence/`                             | date in the window, a **counting authority**'s `source_id`, title carrying `election-night results` |
+| `results_capture_post_certification` | an evidence manifest in `data/manifests/evidence/`                             | date in the window, a **counting authority**'s `source_id`, title carrying `certified`            |
+| `refresh`                            | an evidence manifest, **or** a refresh event in `data/collection/refreshes/`   | date in the window, an **endorsement panel** `source_id`                                          |
 
 The check is deterministic — a scheduled job reading the calendar and the tree,
 with no agent involved — and it neither dispatches work nor closes anything.
@@ -214,15 +214,25 @@ primary's panel was captured directly and left evidence manifests instead —
 around those. Demanding the event alone would escalate a sweep that did happen;
 accepting either still catches the window where nothing did.
 
-**Two rules decide identity, because a manifest declares none.** Evidence
+**Three rules decide identity, because a manifest declares none.** Evidence
 manifests carry no election and no capture-kind field; a structured one was
 tried and reverted, because adding a field to `CaptureMetadata` changes what
 every already-committed manifest serializes to (`docs/EVIDENCE_CAPTURE.md`,
-"Counting authorities"). So the **window** supplies the election — it opens on
-the milestone's own date and closes seven days later, which is far narrower
-than the months between elections — and the **runbooks' title convention**
-supplies the capture kind, which is the only thing separating a first count
-from a certified one.
+"Counting authorities"). So:
+
+- the **window** supplies the election — it opens on the milestone's own date
+  and closes seven days later, far narrower than the months between elections;
+- the capture's **registry** supplies whose work it was, resolved by looking
+  its `source_id` up in `config/authorities/default.yaml`. A results capture
+  comes from a counting authority; a sweep's captures come from the endorsement
+  panel. This is not redundant with the window, because the windows overlap: a
+  final refresh sits four days before election day, so its window contains
+  election night, and both kinds of capture land in the same directory. Without
+  the registry check, the authority's election-night capture would satisfy a
+  sweep that never ran;
+- the **runbooks' title convention** supplies the capture kind, which is the
+  only thing separating a first count from a certified one. Both runbooks pin
+  the template that carries it.
 
 Windows are compared in Pacific time, not UTC. King County posts its first
 count around 8:15 p.m., so an election-night capture is routinely stamped with

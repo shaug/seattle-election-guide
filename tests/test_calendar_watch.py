@@ -19,6 +19,7 @@ from election_guide.calendar import (
     ElectionCalendar,
     EscalationRequest,
     RepositoryArtifacts,
+    artifact_window,
     escalation_marker,
     milestone_marker,
     missing_artifacts,
@@ -114,15 +115,22 @@ def _calendar() -> ElectionCalendar:
     )
 
 
-def _capture(title: str, retrieved_at: str) -> CaptureRecord:
-    return CaptureRecord(title=title, retrieved_at=datetime.fromisoformat(retrieved_at))
+AUTHORITY_IDS = frozenset({"king-county-elections", "wa-secretary-of-state"})
+
+
+def _capture(
+    title: str, retrieved_at: str, *, source_id: str = "king-county-elections"
+) -> CaptureRecord:
+    return CaptureRecord(
+        source_id=source_id, title=title, retrieved_at=datetime.fromisoformat(retrieved_at)
+    )
 
 
 def _artifacts(
     captures: tuple[CaptureRecord, ...] = (),
     refreshes: tuple[datetime, ...] = (),
 ) -> RepositoryArtifacts:
-    return RepositoryArtifacts(captures=captures, refreshes=refreshes)
+    return RepositoryArtifacts(captures=captures, refreshes=refreshes, authority_ids=AUTHORITY_IDS)
 
 
 def _missing_ids(as_of: date, artifacts: RepositoryArtifacts | None = None) -> list[str]:
@@ -225,7 +233,9 @@ def test_a_capture_in_the_window_also_satisfies_a_refresh_milestone() -> None:
     """
     as_of = date(2027, 12, 31)
     artifacts = _artifacts(
-        captures=(_capture("The Stranger endorsements", "2027-10-30T15:00:00Z"),)
+        captures=(
+            _capture("The Stranger endorsements", "2027-10-30T15:00:00Z", source_id="the-stranger"),
+        )
     )
 
     assert "refresh-final" not in _missing_ids(as_of, artifacts)
@@ -234,10 +244,52 @@ def test_a_capture_in_the_window_also_satisfies_a_refresh_milestone() -> None:
 def test_a_capture_outside_the_refresh_window_does_not_satisfy_it() -> None:
     as_of = date(2027, 12, 31)
     artifacts = _artifacts(
-        captures=(_capture("The Stranger endorsements", "2027-09-30T15:00:00Z"),)
+        captures=(
+            _capture("The Stranger endorsements", "2027-09-30T15:00:00Z", source_id="the-stranger"),
+        )
     )
 
     assert "refresh-final" in _missing_ids(as_of, artifacts)
+
+
+def test_an_election_night_capture_cannot_satisfy_the_final_refresh() -> None:
+    """The two windows overlap, and both captures land in the same directory.
+
+    A final refresh sits four days before election day, so its seven-day window
+    contains election night. Matching a sweep on time alone would let the
+    authority's results capture stand in for a sweep that never ran — which is
+    the silent pass this check exists to stop.
+    """
+    as_of = date(2027, 12, 31)
+    election_night = _capture(ELECTION_NIGHT_TITLE, "2027-11-03T06:02:45Z")
+    assert artifact_window(date(2027, 10, 29)).contains(election_night.retrieved_at)
+
+    assert "refresh-final" in _missing_ids(as_of, _artifacts(captures=(election_night,)))
+
+
+def test_a_sweep_capture_cannot_satisfy_a_results_capture_milestone() -> None:
+    """The same rule in the other direction: identity, not just timing."""
+    as_of = date(2027, 12, 31)
+    sweep = _capture(
+        "The Stranger election-night results reaction",
+        "2027-11-03T06:02:45Z",
+        source_id="the-stranger",
+    )
+
+    assert "results-capture-election-night" in _missing_ids(as_of, _artifacts(captures=(sweep,)))
+
+
+def test_a_certified_canvass_title_satisfies_the_post_certification_milestone() -> None:
+    """The certified runbook pins no exact template, only "the certified status"."""
+    as_of = date(2027, 12, 31)
+    canvass = _capture(
+        "2027 Washington November General certified canvass (King County abstract)",
+        "2027-11-24T18:00:00Z",
+    )
+
+    assert "results-capture-post-certification" not in _missing_ids(
+        as_of, _artifacts(captures=(canvass,))
+    )
 
 
 def test_a_milestone_whose_artifact_record_is_declared_is_left_alone() -> None:

@@ -434,6 +434,15 @@ def calendar_watch(
     refresh_dir: Annotated[
         Path, typer.Option(file_okay=False, help="Refresh events a collection refresh writes.")
     ] = REFRESH_EVENT_DIR,
+    authority_registry_path: Annotated[
+        Path,
+        typer.Option(
+            exists=True,
+            dir_okay=False,
+            readable=True,
+            help="Counting authorities, which is what tells a results capture from a sweep's.",
+        ),
+    ] = Path("config/authorities/default.yaml"),
     dry_run: Annotated[
         bool, typer.Option(help="Print what would be escalated without posting anything.")
     ] = False,
@@ -442,7 +451,13 @@ def calendar_watch(
     try:
         calendar = read_election_calendar(calendar_path)
         today = date.fromisoformat(as_of) if as_of is not None else datetime.now(UTC).date()
-        artifacts = read_repository_artifacts(manifest_dir=manifest_dir, refresh_dir=refresh_dir)
+        artifacts = read_repository_artifacts(
+            manifest_dir=manifest_dir,
+            refresh_dir=refresh_dir,
+            authority_ids=frozenset(
+                read_authority_registry(authority_registry_path).authority_ids()
+            ),
+        )
         missing = missing_artifacts(calendar, as_of=today, artifacts=artifacts)
         tracker = GitHubIssueTracker(repository)
         # A dry run still reads existing state, exactly as tracking's does:

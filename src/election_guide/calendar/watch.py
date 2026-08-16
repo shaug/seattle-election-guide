@@ -91,18 +91,32 @@ ARTIFACT_DIRECTORIES: dict[ArtifactKind, Path] = {
 }
 
 
+CaptureSource = Literal["authority", "endorsement"]
+
+
 @dataclass(frozen=True)
 class ArtifactExpectation:
     """What a milestone kind promises, and how the check recognizes it."""
 
     kinds: tuple[ArtifactKind, ...]
+    # Which registry the capture's `source_id` must belong to. Results captures
+    # come from a counting authority; a sweep's captures come from the
+    # endorsement panel. Both land in the same manifest directory, so without
+    # this the two are indistinguishable inside an overlapping window — and
+    # they do overlap: `wa-2026-general`'s final refresh falls four days before
+    # election day, so its window (2026-10-30 through 2026-11-06) contains
+    # election night. The election-night capture would then satisfy a sweep
+    # that never ran, which is exactly the silent pass this check exists to
+    # stop.
+    capture_source: CaptureSource
     # The phrase the runbooks' title convention puts in a capture's title.
     # Evidence manifests carry no election or capture-kind field — a structured
     # one was tried and reverted, because adding a field to `CaptureMetadata`
     # changes what every already-committed manifest serializes to
     # (`docs/EVIDENCE_CAPTURE.md`, "Counting authorities") — so the title is
     # what separates a first count from a certified one. Unset means any
-    # capture in the window counts.
+    # capture from the right registry counts, which is all a sweep can promise:
+    # its titles are the sources' own.
     title_phrase: str | None = None
 
     def describe(self) -> str:
@@ -115,11 +129,17 @@ class ArtifactExpectation:
 ARTIFACT_EXPECTATIONS: dict[MilestoneKind, ArtifactExpectation] = {
     "results_capture_election_night": ArtifactExpectation(
         kinds=("evidence_manifest",),
+        capture_source="authority",
         title_phrase="election-night results",
     ),
+    # `certified`, not `certified results`: the election-night runbook pins an
+    # exact title template, but the certified one asks only for "titles naming
+    # the certified status" (`docs/runbooks/results-certified-ingest.md`), so a
+    # conforming "certified canvass" must not read as a missing capture.
     "results_capture_post_certification": ArtifactExpectation(
         kinds=("evidence_manifest",),
-        title_phrase="certified results",
+        capture_source="authority",
+        title_phrase="certified",
     ),
     # Either, because a sweep leaves whichever its sources allowed. `collect
     # refresh` writes a refresh event, but most of the 2026 primary's panel was
@@ -128,7 +148,9 @@ ARTIFACT_EXPECTATIONS: dict[MilestoneKind, ArtifactExpectation] = {
     # endorsement-discovery-sweep.md`). Demanding the event alone would
     # escalate a sweep that did happen; accepting either still catches the
     # window where nothing did.
-    "refresh": ArtifactExpectation(kinds=("evidence_manifest", "refresh_event")),
+    "refresh": ArtifactExpectation(
+        kinds=("evidence_manifest", "refresh_event"), capture_source="endorsement"
+    ),
 }
 
 
@@ -141,16 +163,23 @@ def escalation_marker(election_id: str, milestone_id: str, stage: EscalationStag
 class CaptureRecord:
     """One captured evidence manifest, reduced to what matching reads."""
 
+    source_id: str
     title: str
     retrieved_at: datetime
 
 
 @dataclass(frozen=True)
 class RepositoryArtifacts:
-    """What the repository holds that a milestone could have promised."""
+    """What the repository holds that a milestone could have promised.
+
+    `authority_ids` is what tells a counting authority's capture apart from an
+    endorsement source's; both kinds land in the same manifest directory and
+    the manifest itself does not say which registry its `source_id` came from.
+    """
 
     captures: tuple[CaptureRecord, ...] = ()
     refreshes: tuple[datetime, ...] = ()
+    authority_ids: frozenset[str] = frozenset()
 
 
 @dataclass(frozen=True)
@@ -211,13 +240,27 @@ def reached_stages(scheduled: date, *, as_of: date) -> tuple[EscalationStage, ..
     return tuple(stage for stage in STAGE_ORDER if elapsed > STAGE_THRESHOLD_DAYS[stage])
 
 
+def _capture_matches(
+    expectation: ArtifactExpectation,
+    capture: CaptureRecord,
+    window: ArtifactWindow,
+    authority_ids: frozenset[str],
+) -> bool:
+    """Whether one capture is the artifact this milestone promised."""
+    if not window.contains(capture.retrieved_at):
+        return False
+    from_authority = capture.source_id in authority_ids
+    if from_authority != (expectation.capture_source == "authority"):
+        return False
+    return (expectation.title_phrase or "").casefold() in capture.title.casefold()
+
+
 def artifact_exists(
     expectation: ArtifactExpectation, window: ArtifactWindow, artifacts: RepositoryArtifacts
 ) -> bool:
     """Whether the repository holds what this milestone promised, in its window."""
-    phrase = (expectation.title_phrase or "").casefold()
     if "evidence_manifest" in expectation.kinds and any(
-        window.contains(capture.retrieved_at) and phrase in capture.title.casefold()
+        _capture_matches(expectation, capture, window, artifacts.authority_ids)
         for capture in artifacts.captures
     ):
         return True
@@ -351,7 +394,9 @@ def untracked_milestones(
     ]
 
 
-def read_repository_artifacts(*, manifest_dir: Path, refresh_dir: Path) -> RepositoryArtifacts:
+def read_repository_artifacts(
+    *, manifest_dir: Path, refresh_dir: Path, authority_ids: frozenset[str] = frozenset()
+) -> RepositoryArtifacts:
     """Read what the repository holds, reduced to what matching needs.
 
     Through each format's own reader, never a second parse of the same bytes.
@@ -374,7 +419,11 @@ def read_repository_artifacts(*, manifest_dir: Path, refresh_dir: Path) -> Repos
         if not isinstance(manifest, CapturedManifest):
             continue
         captures.append(
-            CaptureRecord(title=manifest.title or "", retrieved_at=manifest.retrieved_at)
+            CaptureRecord(
+                source_id=manifest.source_id,
+                title=manifest.title or "",
+                retrieved_at=manifest.retrieved_at,
+            )
         )
     refreshes: list[datetime] = []
     for path in _artifact_files(refresh_dir, "refresh-*.json"):
@@ -383,7 +432,9 @@ def read_repository_artifacts(*, manifest_dir: Path, refresh_dir: Path) -> Repos
         if event.status == "failed":
             continue
         refreshes.append(event.checked_at)
-    return RepositoryArtifacts(captures=tuple(captures), refreshes=tuple(refreshes))
+    return RepositoryArtifacts(
+        captures=tuple(captures), refreshes=tuple(refreshes), authority_ids=authority_ids
+    )
 
 
 def _artifact_files(directory: Path, pattern: str) -> list[Path]:
