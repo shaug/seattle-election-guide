@@ -23,7 +23,7 @@ from election_guide.calendar import (
     EscalationRequest,
     RepositoryArtifacts,
     artifact_window,
-    current_election_date,
+    election_date,
     escalation_marker,
     milestone_marker,
     missing_artifacts,
@@ -191,7 +191,7 @@ def test_the_run_counts_days_on_the_election_s_own_calendar() -> None:
     run = datetime(2026, 11, 7, 3, 17, tzinfo=UTC)
 
     assert run.date() == date(2026, 11, 7)
-    assert current_election_date(run) == date(2026, 11, 6)
+    assert election_date(run) == date(2026, 11, 6)
 
 
 def test_a_window_closing_tonight_is_not_escalated_from_a_utc_rollover() -> None:
@@ -202,7 +202,7 @@ def test_a_window_closing_tonight_is_not_escalated_from_a_utc_rollover() -> None
     )
 
     assert run.astimezone(UTC).date() > closes
-    assert "results-capture-election-night" not in _missing_ids(current_election_date(run))
+    assert "results-capture-election-night" not in _missing_ids(election_date(run))
 
 
 def test_a_kind_that_promises_no_checkable_artifact_is_never_escalated() -> None:

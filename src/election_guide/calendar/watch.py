@@ -56,39 +56,53 @@ STALE_ESCALATION_DAYS = 21
 
 EscalationStage = Literal["overdue", "stale"]
 
-STAGE_ORDER: tuple[EscalationStage, ...] = ("overdue", "stale")
-
-# Days past the milestone's own date at which each stage starts applying.
-STAGE_THRESHOLD_DAYS: dict[EscalationStage, int] = {
-    "overdue": ARTIFACT_WINDOW_DAYS,
-    "stale": STALE_ESCALATION_DAYS,
-}
-
 
 @dataclass(frozen=True)
 class EscalationLabel:
     """The louder label one stage adds, and how it presents itself.
 
-    Name and colour travel together so they cannot drift into two tables keyed
-    by the same strings — a stage whose colour went missing would raise inside
-    the label creation and kill the run before it posted anything, which is the
-    silent failure this check exists to avoid.
+    Labels are the part of an escalation visible without opening the issue,
+    which is why the stage shows in the name rather than in a description
+    nobody sees.
     """
 
     name: str
     color: str
 
 
-# Labels are the part of an escalation visible without opening the issue, which
-# is why the stage shows in the name rather than in a description nobody sees.
-STAGE_LABELS: dict[EscalationStage, EscalationLabel] = {
-    "overdue": EscalationLabel(name="escalation: overdue", color="D93F0B"),
-    "stale": EscalationLabel(name="escalation: stale", color="B60205"),
+@dataclass(frozen=True)
+class EscalationStageSpec:
+    """Everything one stage is: when it applies, and what it says."""
+
+    # Days past the milestone's own date at which this stage starts applying.
+    threshold_days: int
+    label: EscalationLabel
+
+
+# The one declaration of the stages, in order. Thresholds, label names, and
+# label colours all read from here, because each of them keyed on the same two
+# strings in a table of its own before — and a walk over one while reading
+# another is how a stage added to the first and missed in the second would
+# silently never fire. That is exactly the quiet pass this check exists to
+# stop, so everything below is derived rather than kept in step by hand.
+ESCALATION_STAGES: dict[EscalationStage, EscalationStageSpec] = {
+    "overdue": EscalationStageSpec(
+        threshold_days=ARTIFACT_WINDOW_DAYS,
+        label=EscalationLabel(name="escalation: overdue", color="D93F0B"),
+    ),
+    "stale": EscalationStageSpec(
+        threshold_days=STALE_ESCALATION_DAYS,
+        label=EscalationLabel(name="escalation: stale", color="B60205"),
+    ),
 }
 
-# Derived, never hand-maintained: every declared stage label has a colour by
-# construction.
-LABEL_COLORS: dict[str, str] = {label.name: label.color for label in STAGE_LABELS.values()}
+STAGE_ORDER: tuple[EscalationStage, ...] = tuple(ESCALATION_STAGES)
+STAGE_LABELS: dict[EscalationStage, EscalationLabel] = {
+    stage: spec.label for stage, spec in ESCALATION_STAGES.items()
+}
+LABEL_COLORS: dict[str, str] = {
+    spec.label.name: spec.label.color for spec in ESCALATION_STAGES.values()
+}
 
 # Where each kind of promised artifact lives. Declared here rather than at the
 # CLI so the sentence an escalation prints and the directory the check reads
@@ -230,10 +244,10 @@ class MissingArtifact:
 class EscalationRequest(TrackingModel):
     """One escalation the check says an issue should carry."""
 
-    marker: str = Field(min_length=1)
-    # `<election-id>/<milestone-id>`, for the run's own output. The marker
-    # carries the same identity, but reporting should not ask a reader to
-    # parse it back out.
+    # `<election-id>/<milestone-id>`, for the run's own output. The escalation's
+    # own marker is not repeated here: it is already the body's last line, which
+    # is the idempotence contract itself, and a second copy nobody reads could
+    # only ever disagree with it.
     milestone: str = Field(min_length=1)
     stage: EscalationStage
     label: str = Field(min_length=1)
@@ -262,11 +276,6 @@ def election_date(moment: datetime) -> date:
     return moment.astimezone(ZoneInfo(ELECTION_TIMEZONE)).date()
 
 
-def current_election_date(now: datetime) -> date:
-    """Today where the election is, which is the calendar the windows use."""
-    return election_date(now)
-
-
 def reached_stages(scheduled: date, *, as_of: date) -> tuple[EscalationStage, ...]:
     """Every escalation stage a still-missing artifact has passed.
 
@@ -276,7 +285,9 @@ def reached_stages(scheduled: date, *, as_of: date) -> tuple[EscalationStage, ..
     says depend on when the schedule happened to fire.
     """
     elapsed = (as_of - scheduled).days
-    return tuple(stage for stage in STAGE_ORDER if elapsed > STAGE_THRESHOLD_DAYS[stage])
+    return tuple(
+        stage for stage, spec in ESCALATION_STAGES.items() if elapsed > spec.threshold_days
+    )
 
 
 def _capture_matches(
@@ -420,7 +431,6 @@ def plan_escalations(
                     continue
                 plan.append(
                     EscalationRequest(
-                        marker=escalation,
                         milestone=f"{milestone.election_id}/{milestone.id}",
                         stage=stage,
                         label=STAGE_LABELS[stage].name,
