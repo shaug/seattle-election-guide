@@ -1,0 +1,79 @@
+name: Check source links
+
+# O17 (docs/SITE_OPERATIONS_PLAN.md, Epic F): a cited official source URL that
+# starts returning an error is an auditability failure in a project whose
+# central claim is provenance. This requests every URL in the source
+# registry, tolerates redirects, and opens one aggregate issue only once a
+# URL has failed across two consecutive runs -- a `sources check-links`
+# invocation apart -- so a single transient error never raises an alert.
+#
+# The previous run's failing-URL set is the only state carried across runs.
+# It is saved to and restored from the GitHub Actions cache rather than
+# committed, so the check can never mutate source data even by accident.
+# Cache entries are always saved under a fresh, run-id-keyed name and
+# restored by the shared prefix, because a cache key can never be
+# overwritten once written.
+#
+# Daily is frequent enough to catch rot without hammering external sites.
+# GitHub's schedules are best effort and a missed or delayed run is
+# harmless: the next one just compares against whatever the cache last held.
+on:
+  schedule:
+    - cron: "37 14 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Report the result without opening, updating, or closing an alert issue, or saving state
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  # A run still in flight when the next one fires would race the same cache
+  # entry and the same alert issue; queuing rather than canceling keeps every
+  # check's result recorded.
+  group: check-links
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Install the pipeline
+        run: uv sync --frozen
+      - name: Seed an empty state file so a first-ever or crashed run always has one to save
+        run: |
+          mkdir -p .cache
+          [ -f .cache/link-check-state.json ] || echo '{"failing_urls": []}' > .cache/link-check-state.json
+      - name: Restore the previous run's failing-link state
+        uses: actions/cache/restore@v4
+        with:
+          path: .cache/link-check-state.json
+          key: link-check-state-${{ github.run_id }}
+          restore-keys: |
+            link-check-state-
+      - name: Check every cited source link
+        # Inputs reach the shell through the environment, never through
+        # expression interpolation into the script itself.
+        run: >-
+          uv run election-guide sources check-links config/sources/default.yaml
+          --repository "$GITHUB_REPOSITORY"
+          ${DRY_RUN:+--dry-run}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DRY_RUN: ${{ inputs.dry_run && '1' || '' }}
+      - name: Save this run's failing-link state
+        # A dry run never writes the state file (`sources check-links
+        # --dry-run`), so saving here would just re-upload the unchanged
+        # restored state under a new key.
+        if: always() && inputs.dry_run != true
+        uses: actions/cache/save@v4
+        with:
+          path: .cache/link-check-state.json
+          key: link-check-state-${{ github.run_id }}

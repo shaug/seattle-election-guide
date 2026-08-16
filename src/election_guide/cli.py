@@ -122,6 +122,16 @@ from election_guide.sources.catalog import (
     appended_panel_snapshot,
     read_panel_snapshot_catalog,
 )
+from election_guide.sources.link_check import run_link_check
+from election_guide.sources.link_check_state import read_link_check_state, write_link_check_state
+from election_guide.sources.link_rot_alert import (
+    LinkRotAlertTracker,
+    confirmed_failures,
+    next_state,
+)
+from election_guide.sources.link_rot_alert import (
+    reconcile_alert as reconcile_link_rot_alert,
+)
 from election_guide.sources.panel import build_panel_snapshot
 from election_guide.sources.registry import read_source_registry, validate_registry_inventory
 from election_guide.sources.report import render_discovery_report
@@ -1325,6 +1335,66 @@ def sources_report(
         typer.echo(f"source report failed: {error}", err=True)
         raise typer.Exit(code=1) from error
     typer.echo(f"source report: {len(registry.sources)} proposed sources -> {output}")
+
+
+@sources_app.command("check-links")
+def sources_check_links(
+    registry_path: Annotated[
+        Path,
+        typer.Argument(exists=True, dir_okay=False, readable=True),
+    ] = Path("config/sources/default.yaml"),
+    state_path: Annotated[
+        Path,
+        typer.Option(help="Where the previous run's failing URLs are read from and written to."),
+    ] = Path(".cache/link-check-state.json"),
+    repository: Annotated[
+        str, typer.Option(help="GitHub repository as OWNER/NAME, for the alert issue.")
+    ] = "shaug/seattle-election-guide",
+    timeout: Annotated[float, typer.Option(help="Per-request timeout, in seconds.")] = 15.0,
+    delay: Annotated[float, typer.Option(help="Pause between requests, in seconds.")] = 1.0,
+    dry_run: Annotated[
+        bool,
+        typer.Option(
+            help="Report the result without opening, updating, or closing an alert issue, "
+            "or saving state."
+        ),
+    ] = False,
+) -> None:
+    """Probe every cited source URL, alerting on links dead across consecutive runs (O17)."""
+    try:
+        registry = read_source_registry(registry_path)
+    except ValueError as error:
+        typer.echo(f"sources check-links failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+
+    results = run_link_check(registry, timeout_seconds=timeout, delay_seconds=delay)
+    previous = read_link_check_state(state_path)
+    confirmed = confirmed_failures(results, previous)
+
+    failing = [result for result in results if not result.ok]
+    typer.echo(
+        f"sources check-links: checked {len(results)} cited link(s), {len(failing)} unreachable "
+        f"this run, {len(confirmed)} confirmed across consecutive runs"
+    )
+    for result in failing:
+        typer.echo(f"FAIL {result.target.source_id} ({result.target.url}): {result.error}")
+
+    if dry_run:
+        typer.echo("sources check-links: dry run, no alert issue or state changes")
+    else:
+        write_link_check_state(state_path, next_state(results))
+        try:
+            outcome = reconcile_link_rot_alert(
+                LinkRotAlertTracker(repository),
+                confirmed,
+                checked_at=datetime.now(UTC).isoformat(),
+            )
+        except ValueError as error:
+            typer.echo(f"sources check-links failed: {error}", err=True)
+            raise typer.Exit(code=1) from error
+        typer.echo(f"sources check-links: {outcome}")
+    if confirmed:
+        raise typer.Exit(code=1)
 
 
 @inventory_app.command("import")
