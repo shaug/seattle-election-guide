@@ -2935,6 +2935,54 @@ def test_the_persistent_action_strip_renders_at_a_whole_pixel_height(tmp_path: P
     )
 
 
+def test_the_sticky_header_declares_its_own_compositing_promotion(tmp_path: Path) -> None:
+    """Issue #341/#343/#368: the release-reproducibility gate builds
+    `wa-2026-primary` twice and requires byte-identical output, and the byte
+    that differed was always in `validation/rendering/screenshots/desktop.png`
+    -- never `mobile.png`.
+
+    Root cause, isolated by capturing one unchanged document repeatedly rather
+    than by rebuilding releases: layout is not the variable. Twenty captures on
+    the CI runner produced two distinct PNGs but exactly one distinct geometry
+    -- `legend` top measured 281.3125 on every launch -- so the boxes agree and
+    the rasterization does not. `.sticky-header` is the only promoted layer on
+    the page, its origin is a fractional device pixel because every box above it
+    is rem-derived, and which pixel its contents snap to is decided per renderer
+    process. `mobile.png` never diverged because `.sticky-header` is `static`
+    under 721px (base.css) and the mobile capture is 390px wide, so nothing is
+    promoted there.
+
+    Asserted structurally, the way #343's whole-pixel assertion is: whether the
+    promotion is declared is true or false on every run, so this needs no live
+    race to catch a regression. The behavioural guard remains
+    `test_capturing_one_document_twice_produces_the_same_bytes`, which samples
+    the property directly but only catches a regression when the coin lands --
+    on the CI runner the shipped capture diverged 15 times in 75, and 0 times in
+    75 with this declaration.
+    """
+    view_model = _lens_enabled(_view_model(tmp_path / "fixture"))
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+
+    expression = """
+      JSON.stringify((() => {
+        const header = document.querySelector('.sticky-header');
+        const style = getComputedStyle(header);
+        return {position: style.position, willChange: style.willChange};
+      })())
+    """
+    measured = _evaluate_in_chrome(html_path, expression, viewport=(1440, 1200))
+
+    assert measured == {"position": "sticky", "willChange": "transform"}, (
+        "the desktop capture's only promoted layer must declare its promotion, or "
+        "its contents snap to whichever device pixel a given renderer process "
+        f"chooses and the release-reproducibility gate flakes ({measured})"
+    )
+
+
 def _dense_view_model(view_model: PublicationViewModel) -> PublicationViewModel:
     races = [race for section in view_model.sections for race in section.races]
     example = next(race for race in races if race.recommendation_candidate_labels)
