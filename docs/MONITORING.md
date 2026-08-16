@@ -74,6 +74,33 @@ from zone analytics alone, with no code changes.
   present in the chart library but currently show "No data" in the existing Traffic overview
   dashboard. Cause not diagnosed — possibly a population lag, possibly a Free-plan restriction on
   those specific groupings. Worth rechecking once more traffic has accumulated.
+  **Rechecked 2026-08-16 — all six now carry data; see below.**
+
+### The “No data” groupings, rechecked
+
+Checked 2026-08-16 against the GraphQL Analytics API rather than the dashboard: the adaptive
+dataset for 2026-08-14, and the daily dataset for the fortnight ending 2026-08-15. Every one of
+the six returns rows, so the earlier emptiness was a population lag rather than a plan
+restriction (issue #381).
+
+- **Browser** — populates. 21 families over the fortnight; the largest single bucket is
+  `Unknown`, ahead of the named mobile and desktop families.
+- **Operating system** — populates. Six values for one day, again with `Unknown` largest.
+- **User agent** — populates. Twelve distinct strings for one day, including a declared
+  social-media link-preview crawler.
+- **HTTP version** — populates. Four values over the fortnight: HTTP/3 leads at 8.6k requests,
+  then HTTP/2 at 6.3k, HTTP/1.1 at 5.4k, and a residue of HTTP/1.0.
+- **Cache status** — populates. Five values for one day, led by `dynamic`, then `revalidated`
+  and `none`.
+- **Origin status code** — populates. Six values for one day. A `0` bucket leads it, which is
+  what the edge records when it answered without consulting the origin at all.
+
+**None of the six is archived, and three of them never will be.** Browser, operating system, and
+user agent are excluded on privacy grounds whatever they contain: this repository is public, so a
+committed identifier is unretractable from every fork. The other three — HTTP version, cache
+status, and origin status code — are merely out of scope for #381; they are the candidates if the
+archived field set is ever widened. Note that all three of those live only in the eight-day
+adaptive dataset, so adding them later would capture them going forward and could not backfill.
 
 ## Retention
 
@@ -90,6 +117,147 @@ roughly 13 weeks apart — well past what the dashboard window retains. Per this
 that export is not built here: the follow-up is a scheduled pull against the GraphQL Analytics
 API (same `httpRequestsAdaptiveGroups` dataset, queryable with a scoped API token) that archives
 daily rollups before they age out of the dashboard's window.
+
+### Correction: the API's window is not the dashboard's
+
+Two things above are wrong, discovered on 2026-08-16 while building that export (#381) and left
+in place because the reasoning they led to is still worth reading.
+
+**The dashboard and the API do not share a retention window, and the dashboard does not query
+`httpRequestsAdaptiveGroups`.** Measured by walking the boundary a day at a time:
+
+| | `httpRequestsAdaptiveGroups` | `httpRequests1dGroups` |
+| --- | --- | --- |
+| Retention on this zone | **8 days** | ~30 days |
+| Past the edge | hard `quota` error | empty result |
+| Path, device type | yes | **no** |
+| Country, edge status code | yes | yes |
+| Totals | `count`, `visits` | `requests`, `pageViews`, `uniques` |
+| Sampled | yes (`sampleInterval`) | no, pre-aggregated |
+
+So the 30-day figure belongs to `httpRequests1dGroups`, which is what the dashboard's 30-day
+selector reads. The dataset with the useful breakdowns keeps eight days, and refuses older ones
+outright rather than returning nothing.
+
+**This was already too late for the richest form of the primary.** By the time the export was
+built, 2026-08-04 was twelve days old and permanently beyond the adaptive window, so no path or
+device-type breakdown for election day exists or can ever be recovered. Its totals, country
+split, and status-code split were archived from the daily dataset with about eighteen days to
+spare. The deadline was real; only the dataset was misidentified.
+
+One more correction, minor: **referrers are available after all.** The claim above that no
+referrer field exists anywhere came from the dashboard's chart builder. The adaptive dataset
+exposes `clientRequestReferer` and `clientRefererHost`. They are not archived — out of scope for
+#381 — but "zone analytics cannot answer where visitors came from" is untrue of the API, and only
+the last eight days of it are ever reachable.
+
+The export itself is now built — see [The archive](#the-archive).
+
+## The archive
+
+`data/analytics/<YYYY-MM-DD>.json` holds one file per UTC day. Tracked, not ignored —
+`data/raw/`, `data/snapshots/`, and `data/imports/` are gitignored, and an ignored path is exactly
+how the 2026-08-04 election-night capture bytes were lost (#357).
+
+```bash
+uv run election-guide analytics export                     # every missing in-window day
+uv run election-guide analytics export --date 2026-08-14   # exactly one day
+```
+
+**Every day carries both datasets' answers where both are reachable.** The daily dataset is the
+base — totals, country, and edge status code, for roughly thirty days back. The adaptive dataset
+adds `visits`, `by_path`, and `by_device_type` for the eight days it still covers. `sources`
+records which of the two answered, and the three adaptive-only fields are `null` — not empty — on
+older days: empty would claim the site served no paths that day, whereas `null` says the question
+was no longer answerable. **A day therefore gets richer only if it is archived within eight
+days**, which is the strongest argument for the schedule staying healthy.
+
+One command serves both the one-time backfill and the daily schedule, because they are the same
+operation: ask which in-window days are missing, fetch those, write them. Three consequences worth
+knowing:
+
+- **A missed schedule repairs itself, but degrades.** The next run archives every day it lacks,
+  not just yesterday, so no day is ever skipped outright. A day recovered more than eight days
+  late is archived without its path and device-type breakdown, permanently.
+- **Re-running is free and byte-stable.** An already-archived day is never fetched again, so
+  re-running leaves its file byte-identical. That holds by construction rather than by assuming
+  Cloudflare returns identical aggregates for a past day forever. It also means a thin day is
+  never later enriched — the file is written once.
+- **Today is never archived.** A day still accumulating would record a partial count and then
+  never be revisited, so the newest candidate is always yesterday.
+
+The first backfill ran on 2026-08-16 and archived 2026-07-22 through 2026-08-15 — 25 days, no
+gaps. The run's own window floor was 2026-07-17, so the five days below 2026-07-22 returned
+nothing and were skipped rather than recorded as zero-traffic days.
+
+Why those five were empty is not determinable: an aged-out day and a day with no traffic give the
+same empty answer, and the zone's own data appears to begin around 2026-07-22, which would also
+explain it. Both readings are consistent with what the API returned, so the archive skips rather
+than guesses — a zero would have been a claim about the site that nothing supports. The days are
+now outside every window, so nothing is recoverable either way.
+
+### How an archived day reaches `main`
+
+`main` is protected and requires review, so the scheduled run cannot push to it
+(`CONTRIBUTING.md`, "Do not commit directly to `main`"). It commits to an `analytics-archive`
+branch, pushes there, and opens one pull request that later runs reuse — so a week of daily runs
+accumulates into one reviewable pull request rather than seven.
+
+**That pull request will not start CI on its own, and a maintainer has to nudge it.** GitHub
+deliberately starts no workflow run for an event triggered by `GITHUB_TOKEN`, and `ci.yml` fires
+only on `pull_request`, on pushes to `main`, and on manual dispatch. Closing and reopening the
+pull request — or pushing any commit to the branch — starts the required `check`. The pull
+request's own body says so.
+
+This is a required-status-check formality rather than unreviewed content: the archive workflow
+runs `tests/test_analytics.py` against the new days *before* it commits them, so the
+committed-tree guards — no identifying value, no gaps — have already passed in the run that wrote
+them. Doing it the other way round is what would hurt. If detection waited for CI, a value that
+tripped a guard would already be on `main`, and every later pull request would inherit the failure.
+
+The upgrade, if the nudge ever becomes annoying: give the pull-request step a fine-grained
+personal access token or a GitHub App installation token instead of `GITHUB_TOKEN`, and inventory
+it in `docs/HOSTING.md` beside the other credentials. That is a second credential to rotate, which
+is why it was not taken by default.
+
+The credential is `CLOUDFLARE_ANALYTICS_TOKEN`, scoped to **Zone / Analytics / Read**, with
+`CLOUDFLARE_ZONE_ID` naming the zone — both inventoried in `docs/HOSTING.md`. A missing or
+unauthorized token fails the run non-zero and writes nothing, rather than committing an empty
+archive that would look like a day of no traffic.
+
+### What is deliberately not archived
+
+`Source IP`, `Source user agent`, and `Source browser` are excluded and must stay excluded. This
+repository is public, so committed visitor-identifying data would be permanent and unretractable
+from every fork of it, and it would contradict epic #205's stated posture. The exclusion is
+structural rather than a filter: the export never requests those dimensions, and the archive model
+rejects any field outside the vetted set, so storing one would require deleting that rule in a
+visible diff.
+
+**Request paths are stored verbatim, and that is not an exception to the above.** `by_path`
+records the URL somebody asked for, which is the requester's own choice and says nothing about any
+visitor. It matters because the zone is scanned continuously — 271 of the 640 paths archived so
+far are probes like `/.aws/credentials` — so the archive is full of strings no human chose. An
+earlier revision screened stored values against address- and user-agent-shaped patterns; it was
+removed, because against `by_path` such a screen can only produce false positives, and a false
+positive would have skipped the day, left a hole, and tripped the no-gaps check inside the
+workflow's own pre-commit gate — stopping the archive from advancing at all. Structure, not
+pattern-matching, is what keeps visitor data out.
+
+### One condition that needs a human
+
+The export can only archive days inside the retention window, so a schedule outage longer than
+thirty days leaves the missed days permanently unarchivable. The next successful run then writes
+a block of recent days that is not contiguous with the committed tail, and
+`test_committed_archive_has_no_gaps` fails — first in the workflow's pre-commit step, which stops
+the archive committing, and then in `make check` for the repository as a whole.
+
+This is deliberate rather than papered over: a gap in a public audit trail should be explained by
+a person, not silently tolerated by a check. Resolving it means deciding what the archive should
+say about days nobody can recover, and recording that decision — which is a change to this
+document and to the test, not something the exporter can invent on its own. Thirty consecutive
+failed runs is the trigger, and the workflow's own guidance ("treat a week of red runs as urgent")
+is meant to make it unreachable.
 
 ## Client-side beacon (O10)
 

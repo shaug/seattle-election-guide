@@ -1,0 +1,141 @@
+{
+  "by_country": [
+    {
+      "key": "US",
+      "requests": 1348
+    },
+    {
+      "key": "SG",
+      "requests": 72
+    },
+    {
+      "key": "DE",
+      "requests": 58
+    },
+    {
+      "key": "CN",
+      "requests": 47
+    },
+    {
+      "key": "RU",
+      "requests": 28
+    },
+    {
+      "key": "NL",
+      "requests": 15
+    },
+    {
+      "key": "BR",
+      "requests": 14
+    },
+    {
+      "key": "JP",
+      "requests": 11
+    },
+    {
+      "key": "TH",
+      "requests": 11
+    },
+    {
+      "key": "AT",
+      "requests": 9
+    },
+    {
+      "key": "GB",
+      "requests": 7
+    },
+    {
+      "key": "TR",
+      "requests": 6
+    },
+    {
+      "key": "ES",
+      "requests": 5
+    },
+    {
+      "key": "HK",
+      "requests": 5
+    },
+    {
+      "key": "IT",
+      "requests": 4
+    },
+    {
+      "key": "LT",
+      "requests": 4
+    },
+    {
+      "key": "SE",
+      "requests": 4
+    },
+    {
+      "key": "EG",
+      "requests": 3
+    },
+    {
+      "key": "KR",
+      "requests": 3
+    },
+    {
+      "key": "BD",
+      "requests": 2
+    },
+    {
+      "key": "BE",
+      "requests": 2
+    },
+    {
+      "key": "MY",
+      "requests": 2
+    },
+    {
+      "key": "CH",
+      "requests": 1
+    }
+  ],
+  "by_device_type": null,
+  "by_edge_status_code": [
+    {
+      "key": 404,
+      "requests": 1007
+    },
+    {
+      "key": 200,
+      "requests": 296
+    },
+    {
+      "key": 307,
+      "requests": 186
+    },
+    {
+      "key": 204,
+      "requests": 75
+    },
+    {
+      "key": 301,
+      "requests": 75
+    },
+    {
+      "key": 403,
+      "requests": 19
+    },
+    {
+      "key": 522,
+      "requests": 2
+    },
+    {
+      "key": 308,
+      "requests": 1
+    }
+  ],
+  "by_path": null,
+  "date": "2026-07-25",
+  "page_views": 195,
+  "requests": 1661,
+  "schema_version": "1.0",
+  "sources": [
+    "httpRequests1dGroups"
+  ],
+  "uniques": 199,
+  "visits": null
+}
