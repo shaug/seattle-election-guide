@@ -48,7 +48,8 @@ redirects these legacy hostnames to the canonical hostname while preserving the 
 query string:
 
 - `seattle-elections.dobravoda.dev`;
-- `seattle-elections.guide`.
+- `seattle-elections.guide`;
+- `www.seattleelections.guide`.
 
 Every legacy hostname must be associated with the Pages project so Cloudflare can terminate HTTPS
 before the worker redirects the request. The redirect retains the complete election-scoped path and
@@ -63,6 +64,13 @@ The apex `seattle-elections.guide` domain must use Cloudflare nameservers before
 to Pages. A registrar URL-forwarding record is not sufficient because it does not provide the TLS
 endpoint required before an HTTPS redirect can run. Certificate issuance and DNS propagation may
 take time after either hostname is attached or repointed.
+
+`www.seattleelections.guide` is on the same zone as the canonical apex, so it shares the apex's
+Cloudflare nameservers and needs no separate DNS record — only attachment to the Pages project
+(issue #382). Cloudflare's proxied DNS accepts a connection to any hostname on a zone it manages,
+including one that is not yet attached to an origin, so an unattached `www` record fails at the
+edge with a `522` rather than never resolving. Attach it the same way as the other legacy
+hostnames: **Custom domains** on the Pages project.
 
 ## Archive manifest and routes
 
