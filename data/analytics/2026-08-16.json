@@ -1,0 +1,424 @@
+{
+  "by_country": [
+    {
+      "key": "US",
+      "requests": 375
+    },
+    {
+      "key": "HK",
+      "requests": 26
+    },
+    {
+      "key": "CN",
+      "requests": 24
+    },
+    {
+      "key": "SE",
+      "requests": 24
+    },
+    {
+      "key": "DE",
+      "requests": 20
+    },
+    {
+      "key": "FR",
+      "requests": 20
+    },
+    {
+      "key": "SG",
+      "requests": 20
+    },
+    {
+      "key": "BE",
+      "requests": 7
+    },
+    {
+      "key": "TR",
+      "requests": 7
+    },
+    {
+      "key": "BR",
+      "requests": 6
+    },
+    {
+      "key": "KR",
+      "requests": 6
+    },
+    {
+      "key": "IE",
+      "requests": 5
+    },
+    {
+      "key": "ID",
+      "requests": 3
+    },
+    {
+      "key": "DK",
+      "requests": 1
+    },
+    {
+      "key": "IN",
+      "requests": 1
+    },
+    {
+      "key": "MY",
+      "requests": 1
+    },
+    {
+      "key": "PH",
+      "requests": 1
+    },
+    {
+      "key": "TH",
+      "requests": 1
+    }
+  ],
+  "by_device_type": [
+    {
+      "key": "desktop",
+      "requests": 448
+    },
+    {
+      "key": "mobile",
+      "requests": 169
+    },
+    {
+      "key": "tablet",
+      "requests": 2
+    }
+  ],
+  "by_edge_status_code": [
+    {
+      "key": 200,
+      "requests": 281
+    },
+    {
+      "key": 404,
+      "requests": 109
+    },
+    {
+      "key": 307,
+      "requests": 73
+    },
+    {
+      "key": 301,
+      "requests": 29
+    },
+    {
+      "key": 204,
+      "requests": 26
+    },
+    {
+      "key": 403,
+      "requests": 23
+    },
+    {
+      "key": 304,
+      "requests": 3
+    },
+    {
+      "key": 522,
+      "requests": 3
+    },
+    {
+      "key": 499,
+      "requests": 1
+    }
+  ],
+  "by_path": [
+    {
+      "key": "/",
+      "requests": 138
+    },
+    {
+      "key": "/e/wa-2026-primary/",
+      "requests": 88
+    },
+    {
+      "key": "/wp-admin/install.php",
+      "requests": 38
+    },
+    {
+      "key": "/robots.txt",
+      "requests": 33
+    },
+    {
+      "key": "/favicon-32.png",
+      "requests": 29
+    },
+    {
+      "key": "/favicon.svg",
+      "requests": 28
+    },
+    {
+      "key": "/.well-known/cf-custom-hostname-challenge/e737c663-50e6-47c6-928f-8e0e5750e229",
+      "requests": 27
+    },
+    {
+      "key": "/cdn-cgi/rum",
+      "requests": 25
+    },
+    {
+      "key": "/.well-known/acme-challenge/SVjaKNcpHnlJLieLcTYdVe3GXzVCTAigFgay5rx9q_GwwSeehEjfMTpy8lk-DUfL",
+      "requests": 24
+    },
+    {
+      "key": "/sitemap.xml",
+      "requests": 19
+    },
+    {
+      "key": "/og-image.png",
+      "requests": 17
+    },
+    {
+      "key": "/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js",
+      "requests": 16
+    },
+    {
+      "key": "/apple-touch-icon.png",
+      "requests": 13
+    },
+    {
+      "key": "/e/wa-2026-primary/comparisons/",
+      "requests": 12
+    },
+    {
+      "key": "//blog/wp-includes/wlwmanifest.xml",
+      "requests": 4
+    },
+    {
+      "key": "/favicon.ico",
+      "requests": 4
+    },
+    {
+      "key": "/apple-touch-icon-precomposed.png",
+      "requests": 3
+    },
+    {
+      "key": "/cdn-cgi/l/email-protection",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-37-state-representative-1/",
+      "requests": 3
+    },
+    {
+      "key": "/llms.txt",
+      "requests": 3
+    },
+    {
+      "key": "/xmlrpc.php",
+      "requests": 3
+    },
+    {
+      "key": "/.git/HEAD",
+      "requests": 2
+    },
+    {
+      "key": "/.git/config",
+      "requests": 2
+    },
+    {
+      "key": "//wp1/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "//wp2/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/about/",
+      "requests": 2
+    },
+    {
+      "key": "/e/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/${counting.resultsHref}",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/king-county-assessor/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/king-county-council-2/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/king-county-council-8/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-11-state-representative-1/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-32-state-representative-1/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-32-state-representative-2/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-32-state-senator/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-34-state-representative-1/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-34-state-representative-2/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-34-state-senator/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-36-state-representative-1/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-36-state-senator/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-37-state-representative-2/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-37-state-senator/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-43-state-representative-1/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-43-state-representative-2/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-43-state-senator/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-46-state-representative-1/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-46-state-representative-2/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-46-state-senator/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/seattle-municipal-court-judge-5/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/seattle-proposition-1-library-levy/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/supreme-court-justice-1/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/supreme-court-justice-3/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/supreme-court-justice-5/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/supreme-court-justice-7/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/us-house-7/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/release-manifest.json",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/robots.txt",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/sitemap.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/sources/",
+      "requests": 2
+    },
+    {
+      "key": "/wp-login.php",
+      "requests": 2
+    },
+    {
+      "key": "//2018/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "//2019/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "//news/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "//shop/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "//website/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "//wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "//wp/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "/cdn-cgi/trace",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-36-state-representative-2/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/seattle-city-council-5/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/us-house-9/",
+      "requests": 1
+    }
+  ],
+  "date": "2026-08-16",
+  "page_views": 148,
+  "requests": 548,
+  "schema_version": "1.0",
+  "sources": [
+    "httpRequests1dGroups",
+    "httpRequestsAdaptiveGroups"
+  ],
+  "uniques": 173,
+  "visits": 31
+}
