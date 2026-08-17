@@ -23,7 +23,7 @@ build with an overridden origin.
 
 **F2 — Non-canonical hosts are crawlable today.** `PAGES_HEADERS` in
 `src/election_guide/hosting/pages.py` sets no `X-Robots-Tag`, and the generated worker only
-301-redirects the two declared `LEGACY_HOSTS` to canonical. Every other hostname — `*.pages.dev`
+301-redirects the declared `LEGACY_HOSTS` to canonical. Every other hostname — `*.pages.dev`
 and any future preview host — serves the full guide to crawlers. `docs/HOSTING.md` currently
 documents Pages-hostname indexability as a deliberate choice.
 
