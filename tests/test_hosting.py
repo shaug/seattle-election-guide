@@ -340,6 +340,7 @@ def test_generated_worker_enforces_route_contract(tmp_path: Path) -> None:
         f"https://seattleelections.guide/e/{CURRENT_ID}/races/{race_id}?share=1",
         f"https://seattleelections.guide/e/{CURRENT_ID}/races/",
         f"https://seattleelections.guide/e/{CURRENT_ID}/races/not-a-race/",
+        f"https://www.seattleelections.guide/e/{OLDER_ID}/?source=www",
     ]
     results = _run_worker(worker_path, urls)
 
@@ -394,6 +395,9 @@ def test_generated_worker_enforces_route_contract(tmp_path: Path) -> None:
         "robots": None,
         "body": "asset:/about/",
     }
+    # Issue 382: www is routed the same way as the other legacy hosts.
+    assert results[15]["status"] == 301
+    assert results[15]["location"] == (f"https://seattleelections.guide/e/{OLDER_ID}/?source=www")
 
 
 def test_generated_worker_indexes_only_the_canonical_host(tmp_path: Path) -> None:

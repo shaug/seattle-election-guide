@@ -46,14 +46,13 @@ Confirmed live against production on 2026-08-11 (Previous 24 hours, 506 total re
   `/favicon.ico` (19), `/sitemap.xml` (16), `/og-image.png` (43), alongside HTML paths like `/`
   (110) and `/e/wa-2026-primary/` (63).
 - **Top hosts** and **top client IPs**. The sample window's top hosts were
-  `seattleelections.guide` (478) and `www.seattleelections.guide` (28) — but `www` is not a
-  documented or intentional site host. It is not in `docs/HOSTING.md`'s custom-domains list, not
-  in the worker's `LEGACY_HOSTS` (`src/election_guide/hosting/pages.py`), and not attached to the
-  Pages project; DNS shows it as a separate, proxied `A` record pointing to a static IP unrelated
-  to `seattle-elections.pages.dev`. Zone analytics counts its traffic because Cloudflare proxies
-  it, not because it's part of this site's hosting configuration — worth a look under #227 (O19,
-  "Document credential and hosting ownership," part of epic #207), which already scopes DNS
-  dependencies; not something this ticket resolves.
+  `seattleelections.guide` (478) and `www.seattleelections.guide` (28). `www` resolves to the same
+  Cloudflare anycast addresses as the apex, not a separate static IP, but at the time of this
+  sample it was attached to neither the Pages project nor a redirect rule, so Cloudflare's edge
+  accepted the connection and had nothing to serve it — the incomplete configuration issue #382
+  fixed. `www` is now in `docs/HOSTING.md`'s custom-domains list and the worker's `LEGACY_HOSTS`
+  (`src/election_guide/hosting/pages.py`), routed to canonical the same way as the other legacy
+  hosts.
 - **Country and device-type breakdown** (Desktop 299, Mobile 207, Tablet 0 in the sample window).
 
 This satisfies the ticket's acceptance criterion directly: request counts for paths and response

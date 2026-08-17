@@ -64,6 +64,7 @@ PAGES_HEADERS = f"""/*
 LEGACY_HOSTS = (
     "seattle-elections.dobravoda.dev",
     "seattle-elections.guide",
+    "www.seattleelections.guide",
 )
 
 # The public About/FAQ page is site-wide rather than per-release, so it links to
