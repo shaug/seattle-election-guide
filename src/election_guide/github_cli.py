@@ -10,7 +10,9 @@ generated issue's identity this way).
 
 from __future__ import annotations
 
+import json
 import subprocess
+from typing import Any, cast
 
 # Every issue in the repository has to be readable in one listing, so the
 # bound is its lifetime issue count — not any narrower window a specific
@@ -36,6 +38,26 @@ def run_gh(command: list[str], failure: str) -> str:
         detail = completed.stderr.strip() or completed.stdout.strip()
         raise ValueError(f"{failure}: {detail}")
     return completed.stdout
+
+
+def parse_issue_list(payload: str) -> list[dict[str, Any]]:
+    """Validate a `gh issue list --json ...` payload: a JSON array of objects.
+
+    Every caller that lists issues (calendar milestone tracking, the
+    production-check alert, the link-rot alert) shares this same shape
+    requirement before it diverges into its own field extraction, so the
+    check lives here once instead of three times. Field extraction --
+    including which fields are required -- stays with each caller.
+    """
+    issues: Any = json.loads(payload)
+    if not isinstance(issues, list):
+        raise ValueError("GitHub CLI returned an issue list that is not an array")
+    records: list[dict[str, Any]] = []
+    for entry in cast(list[Any], issues):
+        if not isinstance(entry, dict):
+            raise ValueError("GitHub CLI returned an issue that is not an object")
+        records.append(cast(dict[str, Any], entry))
+    return records
 
 
 def trailing_line(body: str) -> str:
