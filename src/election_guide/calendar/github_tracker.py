@@ -20,7 +20,7 @@ from election_guide.calendar.watch import (
     LABEL_COLORS,
     EscalationRequest,
 )
-from election_guide.github_cli import ISSUE_QUERY_LIMIT, run_gh, trailing_line
+from election_guide.github_cli import ISSUE_QUERY_LIMIT, parse_issue_list, run_gh, trailing_line
 
 # `gh issue edit --add-label` fails on a label the repository does not have, so
 # the run creates them rather than depending on anyone having done it by hand.
@@ -75,14 +75,8 @@ class TrackedIssues:
 
 def issue_records(payload: str) -> list[IssueRecord]:
     """Extract each issue from `gh issue list --json number,title,body` output."""
-    issues: Any = json.loads(payload)
-    if not isinstance(issues, list):
-        raise ValueError("GitHub CLI returned an issue list that is not an array")
     records: list[IssueRecord] = []
-    for entry in cast(list[Any], issues):
-        if not isinstance(entry, dict):
-            raise ValueError("GitHub CLI returned an issue that is not an object")
-        issue = cast(dict[str, Any], entry)
+    for issue in parse_issue_list(payload):
         number, title, body = issue.get("number"), issue.get("title"), issue.get("body")
         if not isinstance(number, int):
             raise ValueError("GitHub CLI returned an issue without a number")
