@@ -66,11 +66,12 @@ endpoint required before an HTTPS redirect can run. Certificate issuance and DNS
 take time after either hostname is attached or repointed.
 
 `www.seattleelections.guide` is on the same zone as the canonical apex, so it shares the apex's
-Cloudflare nameservers and needs no separate DNS record — only attachment to the Pages project
-(issue #382). Cloudflare's proxied DNS accepts a connection to any hostname on a zone it manages,
-including one that is not yet attached to an origin, so an unattached `www` record fails at the
-edge with a `522` rather than never resolving. Attach it the same way as the other legacy
-hostnames: **Custom domains** on the Pages project.
+Cloudflare nameservers and needs no separate DNS record — only attachment to the Pages project, the
+same way as the other legacy hostnames: **Custom domains** on the Pages project. That attachment is
+done; `www` now 301-redirects to the apex like the other legacy hosts. Cloudflare's proxied DNS
+accepts a connection to any hostname on a zone it manages, including one that is not attached to an
+origin, so an unattached `www` record used to fail at the edge with a `522` rather than never
+resolving — the failure mode issue #382 fixed.
 
 ## Archive manifest and routes
 
