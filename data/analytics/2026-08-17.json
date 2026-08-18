@@ -1,0 +1,568 @@
+{
+  "by_country": [
+    {
+      "key": "US",
+      "requests": 462
+    },
+    {
+      "key": "CA",
+      "requests": 95
+    },
+    {
+      "key": "NL",
+      "requests": 50
+    },
+    {
+      "key": "DE",
+      "requests": 35
+    },
+    {
+      "key": "SG",
+      "requests": 30
+    },
+    {
+      "key": "CH",
+      "requests": 20
+    },
+    {
+      "key": "HK",
+      "requests": 19
+    },
+    {
+      "key": "CN",
+      "requests": 18
+    },
+    {
+      "key": "IE",
+      "requests": 15
+    },
+    {
+      "key": "BR",
+      "requests": 14
+    },
+    {
+      "key": "FR",
+      "requests": 12
+    },
+    {
+      "key": "JP",
+      "requests": 12
+    },
+    {
+      "key": "KR",
+      "requests": 10
+    },
+    {
+      "key": "TR",
+      "requests": 7
+    },
+    {
+      "key": "AT",
+      "requests": 6
+    },
+    {
+      "key": "SE",
+      "requests": 6
+    },
+    {
+      "key": "IT",
+      "requests": 4
+    },
+    {
+      "key": "TH",
+      "requests": 4
+    },
+    {
+      "key": "EE",
+      "requests": 3
+    },
+    {
+      "key": "PL",
+      "requests": 3
+    },
+    {
+      "key": "VN",
+      "requests": 3
+    },
+    {
+      "key": "BE",
+      "requests": 2
+    },
+    {
+      "key": "AL",
+      "requests": 1
+    },
+    {
+      "key": "DK",
+      "requests": 1
+    },
+    {
+      "key": "FI",
+      "requests": 1
+    },
+    {
+      "key": "ID",
+      "requests": 1
+    },
+    {
+      "key": "IN",
+      "requests": 1
+    },
+    {
+      "key": "KZ",
+      "requests": 1
+    },
+    {
+      "key": "MX",
+      "requests": 1
+    },
+    {
+      "key": "T1",
+      "requests": 1
+    },
+    {
+      "key": "TW",
+      "requests": 1
+    }
+  ],
+  "by_device_type": [
+    {
+      "key": "desktop",
+      "requests": 696
+    },
+    {
+      "key": "mobile",
+      "requests": 265
+    }
+  ],
+  "by_edge_status_code": [
+    {
+      "key": 200,
+      "requests": 437
+    },
+    {
+      "key": 404,
+      "requests": 132
+    },
+    {
+      "key": 307,
+      "requests": 123
+    },
+    {
+      "key": 301,
+      "requests": 78
+    },
+    {
+      "key": 204,
+      "requests": 39
+    },
+    {
+      "key": 403,
+      "requests": 21
+    },
+    {
+      "key": 308,
+      "requests": 3
+    },
+    {
+      "key": 499,
+      "requests": 3
+    },
+    {
+      "key": 522,
+      "requests": 3
+    }
+  ],
+  "by_path": [
+    {
+      "key": "/",
+      "requests": 232
+    },
+    {
+      "key": "/e/wa-2026-primary/",
+      "requests": 196
+    },
+    {
+      "key": "/favicon.svg",
+      "requests": 42
+    },
+    {
+      "key": "/wp-admin/install.php",
+      "requests": 41
+    },
+    {
+      "key": "/cdn-cgi/rum",
+      "requests": 37
+    },
+    {
+      "key": "/favicon-32.png",
+      "requests": 35
+    },
+    {
+      "key": "/robots.txt",
+      "requests": 35
+    },
+    {
+      "key": "/e/wa-2026-primary/comparisons/",
+      "requests": 32
+    },
+    {
+      "key": "/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js",
+      "requests": 31
+    },
+    {
+      "key": "/.well-known/acme-challenge/SVjaKNcpHnlJLieLcTYdVe3GXzVCTAigFgay5rx9q_GwwSeehEjfMTpy8lk-DUfL",
+      "requests": 22
+    },
+    {
+      "key": "/cdn-cgi/l/email-protection",
+      "requests": 22
+    },
+    {
+      "key": "/og-image.png",
+      "requests": 21
+    },
+    {
+      "key": "/apple-touch-icon.png",
+      "requests": 18
+    },
+    {
+      "key": "/sitemap.xml",
+      "requests": 16
+    },
+    {
+      "key": "/favicon.ico",
+      "requests": 11
+    },
+    {
+      "key": "/.well-known/cf-custom-hostname-challenge/e737c663-50e6-47c6-928f-8e0e5750e229",
+      "requests": 10
+    },
+    {
+      "key": "/wp-admin/admin-ajax.php",
+      "requests": 6
+    },
+    {
+      "key": "/wp-login.php",
+      "requests": 5
+    },
+    {
+      "key": "/_internal/api/setup.php",
+      "requests": 4
+    },
+    {
+      "key": "/about/",
+      "requests": 4
+    },
+    {
+      "key": "/apple-touch-icon-precomposed.png",
+      "requests": 4
+    },
+    {
+      "key": "/e/wa-2026-primary//cms/wp-includes/wlwmanifest.xml",
+      "requests": 4
+    },
+    {
+      "key": "/e/wa-2026-primary//media/wp-includes/wlwmanifest.xml",
+      "requests": 4
+    },
+    {
+      "key": "/e/wa-2026-primary//test/wp-includes/wlwmanifest.xml",
+      "requests": 4
+    },
+    {
+      "key": "/e/wa-2026-primary//website/wp-includes/wlwmanifest.xml",
+      "requests": 4
+    },
+    {
+      "key": "/e/wa-2026-primary/release-manifest.json",
+      "requests": 4
+    },
+    {
+      "key": "/setup/",
+      "requests": 4
+    },
+    {
+      "key": "/cdn-cgi/trace",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary//2018/wp-includes/wlwmanifest.xml",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary//wp2/wp-includes/wlwmanifest.xml",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/comparisons",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-11-state-representative-1/",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-11-state-representative-2/",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-32-state-senator/",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/races/supreme-court-justice-7/",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/races/us-house-9/",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/sources/",
+      "requests": 3
+    },
+    {
+      "key": "/wp-json/",
+      "requests": 3
+    },
+    {
+      "key": "/.env",
+      "requests": 2
+    },
+    {
+      "key": "/assets/js/message.js",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//2019/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//news/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//sito/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//web/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//wp/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//xmlrpc.php",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/king-county-council-2/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/king-county-council-8/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-32-state-representative-1/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-32-state-representative-2/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-34-state-representative-1/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-34-state-senator/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-36-state-representative-1/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-36-state-representative-2/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-46-state-representative-2/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-46-state-senator/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/seattle-proposition-1-library-levy/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/us-house-7/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/release-status.json",
+      "requests": 2
+    },
+    {
+      "key": "/js/antibot-client.js",
+      "requests": 2
+    },
+    {
+      "key": "/js/lkk_ch.js",
+      "requests": 2
+    },
+    {
+      "key": "/.amper/challenge/fp.js",
+      "requests": 1
+    },
+    {
+      "key": "/.git/HEAD",
+      "requests": 1
+    },
+    {
+      "key": "/.well-known/",
+      "requests": 1
+    },
+    {
+      "key": "/admin/controller/extension/extension/",
+      "requests": 1
+    },
+    {
+      "key": "/assets/js/qr_modal.js",
+      "requests": 1
+    },
+    {
+      "key": "/calendar.ics",
+      "requests": 1
+    },
+    {
+      "key": "/css/support_parent.css",
+      "requests": 1
+    },
+    {
+      "key": "/deployment-manifest.json",
+      "requests": 1
+    },
+    {
+      "key": "/e/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary//shop/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary//site/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary//wordpress/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary//wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/favicon.ico",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-37-state-representative-2/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-37-state-senator/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-43-state-representative-1/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-43-state-senator/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-46-state-representative-1/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/seattle-city-council-5/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/seattle-municipal-court-judge-5/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/supreme-court-justice-1/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/supreme-court-justice-3/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/voter-guide.pdf",
+      "requests": 1
+    },
+    {
+      "key": "/files/",
+      "requests": 1
+    },
+    {
+      "key": "/images/",
+      "requests": 1
+    },
+    {
+      "key": "/js/twint_ch.js",
+      "requests": 1
+    },
+    {
+      "key": "/licensor.js",
+      "requests": 1
+    },
+    {
+      "key": "/manifest.json",
+      "requests": 1
+    },
+    {
+      "key": "/sites/default/files/",
+      "requests": 1
+    },
+    {
+      "key": "/static/style/protect/index.js",
+      "requests": 1
+    },
+    {
+      "key": "/tracking.php",
+      "requests": 1
+    },
+    {
+      "key": "/uploads/",
+      "requests": 1
+    },
+    {
+      "key": "/wp-admin/css/",
+      "requests": 1
+    }
+  ],
+  "date": "2026-08-17",
+  "page_views": 227,
+  "requests": 839,
+  "schema_version": "1.0",
+  "sources": [
+    "httpRequests1dGroups",
+    "httpRequestsAdaptiveGroups"
+  ],
+  "uniques": 234,
+  "visits": 166
+}
