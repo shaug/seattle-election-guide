@@ -1,0 +1,1032 @@
+{
+  "by_country": [
+    {
+      "key": "HK",
+      "requests": 872
+    },
+    {
+      "key": "US",
+      "requests": 292
+    },
+    {
+      "key": "CN",
+      "requests": 77
+    },
+    {
+      "key": "NL",
+      "requests": 46
+    },
+    {
+      "key": "DE",
+      "requests": 18
+    },
+    {
+      "key": "BR",
+      "requests": 14
+    },
+    {
+      "key": "GB",
+      "requests": 14
+    },
+    {
+      "key": "KR",
+      "requests": 11
+    },
+    {
+      "key": "SG",
+      "requests": 9
+    },
+    {
+      "key": "FI",
+      "requests": 8
+    },
+    {
+      "key": "JP",
+      "requests": 8
+    },
+    {
+      "key": "IE",
+      "requests": 6
+    },
+    {
+      "key": "TR",
+      "requests": 6
+    },
+    {
+      "key": "BE",
+      "requests": 5
+    },
+    {
+      "key": "ID",
+      "requests": 5
+    },
+    {
+      "key": "CH",
+      "requests": 3
+    },
+    {
+      "key": "DK",
+      "requests": 3
+    },
+    {
+      "key": "PL",
+      "requests": 3
+    },
+    {
+      "key": "UA",
+      "requests": 3
+    },
+    {
+      "key": "AT",
+      "requests": 2
+    },
+    {
+      "key": "FR",
+      "requests": 2
+    },
+    {
+      "key": "IT",
+      "requests": 2
+    },
+    {
+      "key": "SE",
+      "requests": 2
+    },
+    {
+      "key": "PK",
+      "requests": 1
+    },
+    {
+      "key": "PY",
+      "requests": 1
+    }
+  ],
+  "by_device_type": [
+    {
+      "key": "mobile",
+      "requests": 994
+    },
+    {
+      "key": "desktop",
+      "requests": 491
+    },
+    {
+      "key": "tablet",
+      "requests": 1
+    }
+  ],
+  "by_edge_status_code": [
+    {
+      "key": 404,
+      "requests": 503
+    },
+    {
+      "key": 301,
+      "requests": 502
+    },
+    {
+      "key": 200,
+      "requests": 276
+    },
+    {
+      "key": 307,
+      "requests": 101
+    },
+    {
+      "key": 403,
+      "requests": 19
+    },
+    {
+      "key": 204,
+      "requests": 12
+    }
+  ],
+  "by_path": [
+    {
+      "key": "/",
+      "requests": 220
+    },
+    {
+      "key": "/e/wa-2026-primary/",
+      "requests": 123
+    },
+    {
+      "key": "/wp-admin/install.php",
+      "requests": 40
+    },
+    {
+      "key": "/favicon-32.png",
+      "requests": 33
+    },
+    {
+      "key": "/robots.txt",
+      "requests": 31
+    },
+    {
+      "key": "/apple-touch-icon.png",
+      "requests": 27
+    },
+    {
+      "key": "/og-image.png",
+      "requests": 25
+    },
+    {
+      "key": "/favicon.svg",
+      "requests": 23
+    },
+    {
+      "key": "/api/currency/quotation_new",
+      "requests": 18
+    },
+    {
+      "key": "/sitemap.xml",
+      "requests": 17
+    },
+    {
+      "key": "/banner.do",
+      "requests": 16
+    },
+    {
+      "key": "/favicon.ico",
+      "requests": 16
+    },
+    {
+      "key": "/Web/js/v1/phone.js",
+      "requests": 14
+    },
+    {
+      "key": "/api/common.publics/configData",
+      "requests": 14
+    },
+    {
+      "key": "/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js",
+      "requests": 14
+    },
+    {
+      "key": "/js/i18n/language_cn.js",
+      "requests": 14
+    },
+    {
+      "key": "/static/diff_worker.js",
+      "requests": 12
+    },
+    {
+      "key": "/api/getWebSiteConfig",
+      "requests": 11
+    },
+    {
+      "key": "/api/user/ismustmobile",
+      "requests": 11
+    },
+    {
+      "key": "/cdn-cgi/rum",
+      "requests": 11
+    },
+    {
+      "key": "/serve_apps/index/home_sapi",
+      "requests": 11
+    },
+    {
+      "key": "/Public/Mobile/ecshe_css/wapmain.css",
+      "requests": 10
+    },
+    {
+      "key": "/Public/Wchat/js/cvphp.js",
+      "requests": 10
+    },
+    {
+      "key": "/Public/home/js/fukuang.js",
+      "requests": 10
+    },
+    {
+      "key": "/api/chashe/accessRecord/access",
+      "requests": 10
+    },
+    {
+      "key": "/api/get/getnotice",
+      "requests": 10
+    },
+    {
+      "key": "/api/lottery/ranking",
+      "requests": 10
+    },
+    {
+      "key": "/api/site/getInfo.do",
+      "requests": 10
+    },
+    {
+      "key": "/im/index/user.html",
+      "requests": 10
+    },
+    {
+      "key": "/memberapi/system/config/get",
+      "requests": 10
+    },
+    {
+      "key": "/selectTempConfig",
+      "requests": 10
+    },
+    {
+      "key": "/static/home/css/feiqi-ee5401a8e6.css",
+      "requests": 10
+    },
+    {
+      "key": "/static/js/common.js",
+      "requests": 10
+    },
+    {
+      "key": "/syn/",
+      "requests": 10
+    },
+    {
+      "key": "/common/member/js/user.util.js",
+      "requests": 9
+    },
+    {
+      "key": "/e/wa-2026-primary/comparisons/",
+      "requests": 9
+    },
+    {
+      "key": "/AppInfo.aspx",
+      "requests": 8
+    },
+    {
+      "key": "/Public/Home/ecshe_css/main.css",
+      "requests": 8
+    },
+    {
+      "key": "/Templates/user/js/global.js",
+      "requests": 8
+    },
+    {
+      "key": "/admin/webadmin.php",
+      "requests": 8
+    },
+    {
+      "key": "/api/",
+      "requests": 8
+    },
+    {
+      "key": "/api/Index/getHome",
+      "requests": 8
+    },
+    {
+      "key": "/api/apps/config",
+      "requests": 8
+    },
+    {
+      "key": "/api/config",
+      "requests": 8
+    },
+    {
+      "key": "/api/configs",
+      "requests": 8
+    },
+    {
+      "key": "/api/product/getAll",
+      "requests": 8
+    },
+    {
+      "key": "/api/seller/index/GetSellerConfigAll",
+      "requests": 8
+    },
+    {
+      "key": "/css/main.css",
+      "requests": 8
+    },
+    {
+      "key": "/data/json/config.json",
+      "requests": 8
+    },
+    {
+      "key": "/friendGroup/list",
+      "requests": 8
+    },
+    {
+      "key": "/home/login.jpg",
+      "requests": 8
+    },
+    {
+      "key": "/html/",
+      "requests": 8
+    },
+    {
+      "key": "/mobile",
+      "requests": 8
+    },
+    {
+      "key": "/mobile/",
+      "requests": 8
+    },
+    {
+      "key": "/static/home/js/rooms.js",
+      "requests": 8
+    },
+    {
+      "key": "/static/wap/js/banner.js",
+      "requests": 8
+    },
+    {
+      "key": "/user/reg.php",
+      "requests": 8
+    },
+    {
+      "key": "/api/app/config",
+      "requests": 7
+    },
+    {
+      "key": "/api/vue/common/config",
+      "requests": 7
+    },
+    {
+      "key": "/index/v3/siteConfig",
+      "requests": 7
+    },
+    {
+      "key": "/static/js/chat-config.js",
+      "requests": 7
+    },
+    {
+      "key": "/S1/js/app.js",
+      "requests": 6
+    },
+    {
+      "key": "/addons/fastim/",
+      "requests": 6
+    },
+    {
+      "key": "/api.php/",
+      "requests": 6
+    },
+    {
+      "key": "/api/Home/videoNew",
+      "requests": 6
+    },
+    {
+      "key": "/api/app/version/check",
+      "requests": 6
+    },
+    {
+      "key": "/api/baseconfig",
+      "requests": 6
+    },
+    {
+      "key": "/api/common/country/country",
+      "requests": 6
+    },
+    {
+      "key": "/api/common/getBaseConfig",
+      "requests": 6
+    },
+    {
+      "key": "/api/currency/getTradeCurrencyList",
+      "requests": 6
+    },
+    {
+      "key": "/api/v6/Comm/getVersionInfoV4",
+      "requests": 6
+    },
+    {
+      "key": "/app/static/picture/star.png",
+      "requests": 6
+    },
+    {
+      "key": "/config",
+      "requests": 6
+    },
+    {
+      "key": "/forerest/user/custSrv/findOne",
+      "requests": 6
+    },
+    {
+      "key": "/images/step-3.webp",
+      "requests": 6
+    },
+    {
+      "key": "/index/aurl",
+      "requests": 6
+    },
+    {
+      "key": "/index/home/login.html",
+      "requests": 6
+    },
+    {
+      "key": "/js/bankCheck.js",
+      "requests": 6
+    },
+    {
+      "key": "/js/post.js/",
+      "requests": 6
+    },
+    {
+      "key": "/op999.js",
+      "requests": 6
+    },
+    {
+      "key": "/public/api/index/config",
+      "requests": 6
+    },
+    {
+      "key": "/public/static/index/picture/img_33.png",
+      "requests": 6
+    },
+    {
+      "key": "/queryVersion.php",
+      "requests": 6
+    },
+    {
+      "key": "/static/cpjy.png",
+      "requests": 6
+    },
+    {
+      "key": "/static/js/download.js",
+      "requests": 6
+    },
+    {
+      "key": "/views/commData/commonSite.js",
+      "requests": 6
+    },
+    {
+      "key": "/Public/home/wap/css/qdgame.css",
+      "requests": 5
+    },
+    {
+      "key": "/addons/ltwl_paibao_dx/core/web/",
+      "requests": 5
+    },
+    {
+      "key": "/api/set/appSysSet/getKeyByParam",
+      "requests": 5
+    },
+    {
+      "key": "/api/sys/info",
+      "requests": 5
+    },
+    {
+      "key": "/h5/",
+      "requests": 5
+    },
+    {
+      "key": "/Public/Qts/Home/js/appAlert.js",
+      "requests": 4
+    },
+    {
+      "key": "/api/banner",
+      "requests": 4
+    },
+    {
+      "key": "/api/config/index",
+      "requests": 4
+    },
+    {
+      "key": "/api/dict/getServiceConfig",
+      "requests": 4
+    },
+    {
+      "key": "/api/publics/text_info",
+      "requests": 4
+    },
+    {
+      "key": "/apple-touch-icon-precomposed.png",
+      "requests": 4
+    },
+    {
+      "key": "/ay-1.html",
+      "requests": 4
+    },
+    {
+      "key": "/dock/system/config/get",
+      "requests": 4
+    },
+    {
+      "key": "/e/wa-2026-primary//2019/wp-includes/wlwmanifest.xml",
+      "requests": 4
+    },
+    {
+      "key": "/e/wa-2026-primary//blog/wp-includes/wlwmanifest.xml",
+      "requests": 4
+    },
+    {
+      "key": "/e/wa-2026-primary//wordpress/wp-includes/wlwmanifest.xml",
+      "requests": 4
+    },
+    {
+      "key": "/e/wa-2026-primary//wp-includes/wlwmanifest.xml",
+      "requests": 4
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-32-state-representative-1/",
+      "requests": 4
+    },
+    {
+      "key": "/index/login",
+      "requests": 4
+    },
+    {
+      "key": "/index/police/index.html",
+      "requests": 4
+    },
+    {
+      "key": "/mobile/lists.html",
+      "requests": 4
+    },
+    {
+      "key": "/static/home/2022/ppaayy.js",
+      "requests": 4
+    },
+    {
+      "key": "/wap-api/banner/list",
+      "requests": 4
+    },
+    {
+      "key": "/wp-admin/admin-ajax.php",
+      "requests": 4
+    },
+    {
+      "key": "/aaabbbccc",
+      "requests": 3
+    },
+    {
+      "key": "/api/api/exchangerateuserconfig!get.action",
+      "requests": 3
+    },
+    {
+      "key": "/api/chat/visitor/channelInfo",
+      "requests": 3
+    },
+    {
+      "key": "/api/common/menus",
+      "requests": 3
+    },
+    {
+      "key": "/api/index/webconfig",
+      "requests": 3
+    },
+    {
+      "key": "/api/room/join",
+      "requests": 3
+    },
+    {
+      "key": "/api/v1/seller/login",
+      "requests": 3
+    },
+    {
+      "key": "/assets/GanjingAbout-Cb73sJYd.js",
+      "requests": 3
+    },
+    {
+      "key": "/cx_platform/conf.json",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary//wp1/wp-includes/wlwmanifest.xml",
+      "requests": 3
+    },
+    {
+      "key": "/fb",
+      "requests": 3
+    },
+    {
+      "key": "/im/h5/",
+      "requests": 3
+    },
+    {
+      "key": "/main.c6d13be3ea6fc9cb.js",
+      "requests": 3
+    },
+    {
+      "key": "/mobile/login.php",
+      "requests": 3
+    },
+    {
+      "key": "/mobile/preference",
+      "requests": 3
+    },
+    {
+      "key": "/res/favicon.ico",
+      "requests": 3
+    },
+    {
+      "key": "/template/920ka/css/lsy.css",
+      "requests": 3
+    },
+    {
+      "key": "/.env",
+      "requests": 2
+    },
+    {
+      "key": "/3/favicon.ico",
+      "requests": 2
+    },
+    {
+      "key": "/Home/Get/getJnd28",
+      "requests": 2
+    },
+    {
+      "key": "/Public/H5/js/h5.js",
+      "requests": 2
+    },
+    {
+      "key": "/Template/Mobile/js/main.js",
+      "requests": 2
+    },
+    {
+      "key": "/about/",
+      "requests": 2
+    },
+    {
+      "key": "/api/Config/getShowConfig",
+      "requests": 2
+    },
+    {
+      "key": "/api/acttempsub/pj/aichat",
+      "requests": 2
+    },
+    {
+      "key": "/api/app/getserviceinfo",
+      "requests": 2
+    },
+    {
+      "key": "/api/im/v2/app/config",
+      "requests": 2
+    },
+    {
+      "key": "/api/index/getBannerList",
+      "requests": 2
+    },
+    {
+      "key": "/api/index/get_setting",
+      "requests": 2
+    },
+    {
+      "key": "/api/user/language_list",
+      "requests": 2
+    },
+    {
+      "key": "/assets/layui/resuser/room.js",
+      "requests": 2
+    },
+    {
+      "key": "/cdn-cgi/l/email-protection",
+      "requests": 2
+    },
+    {
+      "key": "/client/api/findConfigByKey",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//site/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//sito/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//test/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//website/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//wp2/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//xmlrpc.php",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-11-state-representative-1/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-32-state-representative-2/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-32-state-senator/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/us-house-7/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/sources/",
+      "requests": 2
+    },
+    {
+      "key": "/fwc",
+      "requests": 2
+    },
+    {
+      "key": "/home/index",
+      "requests": 2
+    },
+    {
+      "key": "/icons/favicon.ico",
+      "requests": 2
+    },
+    {
+      "key": "/im/",
+      "requests": 2
+    },
+    {
+      "key": "/im/App/config",
+      "requests": 2
+    },
+    {
+      "key": "/images/01.jpg",
+      "requests": 2
+    },
+    {
+      "key": "/images/products/cnpc.png",
+      "requests": 2
+    },
+    {
+      "key": "/index/index/updateUserInfo",
+      "requests": 2
+    },
+    {
+      "key": "/js/mobiletalk.js",
+      "requests": 2
+    },
+    {
+      "key": "/mobile/film/css/index.css",
+      "requests": 2
+    },
+    {
+      "key": "/news5c/assets/images/logo.svg",
+      "requests": 2
+    },
+    {
+      "key": "/public/assets/img/index/pay1.png",
+      "requests": 2
+    },
+    {
+      "key": "/saconfig/secure/yunwei.js",
+      "requests": 2
+    },
+    {
+      "key": "/static/voice/default.wav",
+      "requests": 2
+    },
+    {
+      "key": "/static/wap/css/tipmask.css",
+      "requests": 2
+    },
+    {
+      "key": "/static/wap/js/order.js",
+      "requests": 2
+    },
+    {
+      "key": "/style.css",
+      "requests": 2
+    },
+    {
+      "key": "/wap",
+      "requests": 2
+    },
+    {
+      "key": "/wp-content/uploads/2023/08/logo-gold.png",
+      "requests": 2
+    },
+    {
+      "key": "/xmlrpc.php",
+      "requests": 2
+    },
+    {
+      "key": "/.git/config",
+      "requests": 1
+    },
+    {
+      "key": "/1",
+      "requests": 1
+    },
+    {
+      "key": "/AnMjSjfe87/policy/getVersion",
+      "requests": 1
+    },
+    {
+      "key": "/ads.txt",
+      "requests": 1
+    },
+    {
+      "key": "/api/account/price_rate",
+      "requests": 1
+    },
+    {
+      "key": "/api/app/indexList",
+      "requests": 1
+    },
+    {
+      "key": "/api/index/goods",
+      "requests": 1
+    },
+    {
+      "key": "/api/system/customer-service",
+      "requests": 1
+    },
+    {
+      "key": "/assets/favicon-aOK6_042.ico",
+      "requests": 1
+    },
+    {
+      "key": "/calendar.ics",
+      "requests": 1
+    },
+    {
+      "key": "/common/template/lottery/lecai/css/style.css",
+      "requests": 1
+    },
+    {
+      "key": "/css/nsc/reset.css",
+      "requests": 1
+    },
+    {
+      "key": "/dapp/api/getBanner",
+      "requests": 1
+    },
+    {
+      "key": "/e/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary//news/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary//shop/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary//wp/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-11-state-representative-2/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-37-state-representative-2/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/seattle-proposition-1-library-levy/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/supreme-court-justice-3/",
+      "requests": 1
+    },
+    {
+      "key": "/favicon-32x32.png",
+      "requests": 1
+    },
+    {
+      "key": "/fePublicInfo/",
+      "requests": 1
+    },
+    {
+      "key": "/fzh",
+      "requests": 1
+    },
+    {
+      "key": "/homes/",
+      "requests": 1
+    },
+    {
+      "key": "/iexchange/webtrader/",
+      "requests": 1
+    },
+    {
+      "key": "/instatll",
+      "requests": 1
+    },
+    {
+      "key": "/js/nsc/main.js",
+      "requests": 1
+    },
+    {
+      "key": "/kdata/selectMqUrl",
+      "requests": 1
+    },
+    {
+      "key": "/llms.txt",
+      "requests": 1
+    },
+    {
+      "key": "/mobile/v3/appSuperDownload.do",
+      "requests": 1
+    },
+    {
+      "key": "/page/",
+      "requests": 1
+    },
+    {
+      "key": "/public/js/global.js",
+      "requests": 1
+    },
+    {
+      "key": "/relayApi/api/notice/site_setting",
+      "requests": 1
+    },
+    {
+      "key": "/res/duan/tm.png",
+      "requests": 1
+    },
+    {
+      "key": "/resources/main/common.js",
+      "requests": 1
+    },
+    {
+      "key": "/s_api/basic/download/info",
+      "requests": 1
+    },
+    {
+      "key": "/static/css/reset.css",
+      "requests": 1
+    },
+    {
+      "key": "/static/index/js/lk/order.js",
+      "requests": 1
+    },
+    {
+      "key": "/template/mb/lang/text-zh.json",
+      "requests": 1
+    },
+    {
+      "key": "/v2",
+      "requests": 1
+    },
+    {
+      "key": "/wp-content/uploads/2020/10/official-logo-512x512.png",
+      "requests": 1
+    },
+    {
+      "key": "/wp-content/uploads/2023/02/1677572030-814390417fe413b.png",
+      "requests": 1
+    },
+    {
+      "key": "/wp-login.php",
+      "requests": 1
+    }
+  ],
+  "date": "2026-08-18",
+  "page_views": 132,
+  "requests": 1413,
+  "schema_version": "1.0",
+  "sources": [
+    "httpRequests1dGroups",
+    "httpRequestsAdaptiveGroups"
+  ],
+  "uniques": 178,
+  "visits": 67
+}
