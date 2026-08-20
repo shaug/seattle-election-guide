@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 161724,
+  "canonical_url": "https://cdn.kingcounty.gov/-/media/king-county/depts/elections/results/2026/08/2026aug-ballotreconciliation.pdf",
+  "capture_method": "pdf",
+  "content_sha256": "45283866c7f969005bf2101ddfc50114a2dd9ca0aa8b72e489c9a33c960c6513",
+  "http_status": 200,
+  "id": "capture-king-county-elections-20260819T231340Z-8d8965f7c8b7",
+  "media_type": "application/pdf",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Official public record; bytes retained in the repository.",
+  "requested_url": "https://cdn.kingcounty.gov/-/media/king-county/depts/elections/results/2026/08/2026aug-ballotreconciliation.pdf",
+  "retrieved_at": "2026-08-19T23:13:40Z",
+  "schema_version": "1.0",
+  "source_id": "king-county-elections",
+  "storage_reference": "sha256/45/45283866c7f969005bf2101ddfc50114a2dd9ca0aa8b72e489c9a33c960c6513",
+  "storage_scope": "repository",
+  "title": "2026 Washington August Primary certified results (King County ballot reconciliation report)",
+  "updated_at": null
+}
