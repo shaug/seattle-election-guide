@@ -45,8 +45,17 @@ it should stay human-launched at least through the first full cycle.
    machine-readable exports, and the canvass/certification documents King County publishes
    (abstract of votes, certification letter), which state the thing the site will assert:
    that these numbers are final. King County's certified export is the CSV at
-   `https://cdn.kingcounty.gov/-/media/king-county/depts/elections/results/<year>/<month>/webresults-<date>.csv`
+   `https://cdn.kingcounty.gov/-/media/king-county/depts/elections/results/<year>/<month>/webresults-<date>-final.csv`
    (`docs/RESULTS.md`, "Ingestion mechanics") — the adapter's parse target.
+
+   **The `-final` suffix is load-bearing.** The plain-dated `webresults-<date>.csv` names are the
+   daily interim exports published while counting is still underway; they stop appearing after the
+   last business day before certification and are never the certified capture's target, even when
+   one still 200s. For `wa-2026-primary` the certified export was `webresults-20260818-final.csv`;
+   `webresults-20260817.csv` still 200s as of this writing but is an interim count, and
+   `webresults-20260818.csv` / `webresults-20260819.csv` (the certification date and the day after)
+   404 outright (#408). Confirm the fetched file's own name carries `-final` before treating it as
+   the certified export.
 2. Capture and verify each artifact exactly as in
    `results-capture-election-night.md` steps 3 and 5 — same authority identity, same storage
    rule — with titles naming the certified status:

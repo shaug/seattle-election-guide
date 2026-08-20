@@ -262,8 +262,10 @@ and an export's *shape* (columns, structure) is stable across a count in progres
 *numbers* are not. That fetch confirmed and extended the election-night postmortem's discoveries
 (`docs/runbooks/results-capture-election-night.md`):
 
-- King County's certified export is a quoted CSV (`webresults-<date>.csv`, e.g.
-  `https://cdn.kingcounty.gov/-/media/king-county/depts/elections/results/2026/08/webresults-<date>.csv`)
+- King County's certified export is a quoted CSV (`webresults-<date>-final.csv`, e.g.
+  `https://cdn.kingcounty.gov/-/media/king-county/depts/elections/results/2026/08/webresults-<date>-final.csv`;
+  the plain-dated `webresults-<date>.csv` without `-final` is a daily interim export, never the
+  certified one — #408)
   with one row per contest/choice pair and columns `Contest`, `Choice`, `Votes`, and
   `BallotsWith Contest` (among others). Vote and ballot counts are comma-thousands-formatted
   strings (`"214,135"`); a `Write-in` choice row is always present and is excluded from
