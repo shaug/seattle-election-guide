@@ -1,0 +1,299 @@
+authority: King County Elections
+captures:
+- captured_at: '2026-08-19T23:13:38Z'
+  evidence: data/manifests/evidence/capture-king-county-elections-20260819T231338Z-01494a742bca.json
+  kind: certified
+certified_on: '2026-08-18'
+election_id: wa-2026-primary
+races:
+- ballots_counted: 534500
+  outcomes:
+  - advanced: true
+    choice_id: king-county-assessor--dominique-m-scarimbolo
+    share: 0.1929
+    votes: 94725
+  - advanced: false
+    choice_id: king-county-assessor--christopher-roberts
+    share: 0.1869
+    votes: 91770
+  - advanced: true
+    choice_id: king-county-assessor--rob-foxcurran
+    share: 0.4721
+    votes: 231854
+  - advanced: false
+    choice_id: king-county-assessor--al-dams
+    share: 0.1482
+    votes: 72783
+  race_id: king-county-assessor
+- ballots_counted: 67150
+  outcomes:
+  - advanced: false
+    choice_id: king-county-council-2--miriam-mboya
+    share: 0.0878
+    votes: 5525
+  - advanced: true
+    choice_id: king-county-council-2--toshiko-grace-hasegawa
+    share: 0.3517
+    votes: 22120
+  - advanced: true
+    choice_id: king-county-council-2--rebecca-salda-a
+    share: 0.5604
+    votes: 35247
+  race_id: king-county-council-2
+- ballots_counted: 63690
+  outcomes:
+  - advanced: false
+    choice_id: king-county-council-8--mia-jacobson
+    share: 0.0848
+    votes: 5090
+  - advanced: true
+    choice_id: king-county-council-8--teresa-mosqueda
+    share: 0.6652
+    votes: 39909
+  - advanced: true
+    choice_id: king-county-council-8--nick-duda
+    share: 0.25
+    votes: 15000
+  race_id: king-county-council-8
+- ballots_counted: 26500
+  outcomes:
+  - advanced: true
+    choice_id: ld-11-state-representative-1--ashley-fedan
+    share: 0.32
+    votes: 8298
+  - advanced: false
+    choice_id: ld-11-state-representative-1--christian-rombough
+    share: 0.256
+    votes: 6639
+  - advanced: true
+    choice_id: ld-11-state-representative-1--david-hackney
+    share: 0.4241
+    votes: 10998
+  race_id: ld-11-state-representative-1
+- ballots_counted: 26500
+  outcomes:
+  - advanced: true
+    choice_id: ld-11-state-representative-2--steve-bergquist
+    share: 1.0
+    votes: 19576
+  race_id: ld-11-state-representative-2
+- ballots_counted: 44200
+  outcomes:
+  - advanced: true
+    choice_id: ld-34-state-representative-1--brianna-k-thomas
+    share: 1.0
+    votes: 34217
+  race_id: ld-34-state-representative-1
+- ballots_counted: 44200
+  outcomes:
+  - advanced: true
+    choice_id: ld-34-state-representative-2--joe-fitzgibbon
+    share: 0.7542
+    votes: 30680
+  - advanced: true
+    choice_id: ld-34-state-representative-2--mary-anito
+    share: 0.2458
+    votes: 9999
+  race_id: ld-34-state-representative-2
+- ballots_counted: 44200
+  outcomes:
+  - advanced: true
+    choice_id: ld-34-state-senator--emily-alvarado
+    share: 1.0
+    votes: 34790
+  race_id: ld-34-state-senator
+- ballots_counted: 49976
+  outcomes:
+  - advanced: true
+    choice_id: ld-36-state-representative-1--julia-grant-reed
+    share: 1.0
+    votes: 40696
+  race_id: ld-36-state-representative-1
+- ballots_counted: 49976
+  outcomes:
+  - advanced: true
+    choice_id: ld-36-state-representative-2--liz-berry
+    share: 1.0
+    votes: 40870
+  race_id: ld-36-state-representative-2
+- ballots_counted: 49976
+  outcomes:
+  - advanced: true
+    choice_id: ld-36-state-senator--noel-c-frame
+    share: 0.8787
+    votes: 42548
+  - advanced: true
+    choice_id: ld-36-state-senator--jillian-england
+    share: 0.1213
+    votes: 5876
+  race_id: ld-36-state-senator
+- ballots_counted: 40955
+  outcomes:
+  - advanced: true
+    choice_id: ld-37-state-representative-1--sharon-tomiko-santos
+    share: 0.482
+    votes: 18517
+  - advanced: true
+    choice_id: ld-37-state-representative-1--kelabe-tewolde
+    share: 0.518
+    votes: 19902
+  race_id: ld-37-state-representative-1
+- ballots_counted: 40955
+  outcomes:
+  - advanced: true
+    choice_id: ld-37-state-representative-2--jaelynn-scott
+    share: 0.8905
+    votes: 33678
+  - advanced: true
+    choice_id: ld-37-state-representative-2--evon-mccorkle
+    share: 0.1095
+    votes: 4143
+  race_id: ld-37-state-representative-2
+- ballots_counted: 40955
+  outcomes:
+  - advanced: true
+    choice_id: ld-37-state-senator--chipalo-street
+    share: 0.7435
+    votes: 28196
+  - advanced: true
+    choice_id: ld-37-state-senator--tatiana-brown
+    share: 0.2565
+    votes: 9729
+  race_id: ld-37-state-senator
+- ballots_counted: 39205
+  outcomes:
+  - advanced: true
+    choice_id: ld-43-state-representative-1--nicole-macri
+    share: 0.9255
+    votes: 32872
+  - advanced: true
+    choice_id: ld-43-state-representative-1--alby-clendennin
+    share: 0.0745
+    votes: 2647
+  race_id: ld-43-state-representative-1
+- ballots_counted: 39205
+  outcomes:
+  - advanced: true
+    choice_id: ld-43-state-representative-2--shaun-scott
+    share: 1.0
+    votes: 29474
+  race_id: ld-43-state-representative-2
+- ballots_counted: 39205
+  outcomes:
+  - advanced: true
+    choice_id: ld-43-state-senator--hannah-sabio-howell
+    share: 0.2361
+    votes: 8990
+  - advanced: false
+    choice_id: ld-43-state-senator--heather-marie-wilson
+    share: 0.0955
+    votes: 3638
+  - advanced: true
+    choice_id: ld-43-state-senator--jamie-pedersen
+    share: 0.6684
+    votes: 25454
+  race_id: ld-43-state-senator
+- ballots_counted: 46753
+  outcomes:
+  - advanced: true
+    choice_id: ld-46-state-representative-1--gerry-pollet
+    share: 0.5202
+    votes: 22807
+  - advanced: false
+    choice_id: ld-46-state-representative-1--ron-davis
+    share: 0.1697
+    votes: 7441
+  - advanced: true
+    choice_id: ld-46-state-representative-1--will-dreher
+    share: 0.31
+    votes: 13592
+  race_id: ld-46-state-representative-1
+- ballots_counted: 46753
+  outcomes:
+  - advanced: true
+    choice_id: ld-46-state-representative-2--darya-farivar
+    share: 0.8998
+    votes: 39373
+  - advanced: true
+    choice_id: ld-46-state-representative-2--rodney-star-thornley
+    share: 0.1002
+    votes: 4386
+  race_id: ld-46-state-representative-2
+- ballots_counted: 46753
+  outcomes:
+  - advanced: true
+    choice_id: ld-46-state-senator--javier-valdez
+    share: 0.908
+    votes: 40980
+  - advanced: true
+    choice_id: ld-46-state-senator--sandra-stephens
+    share: 0.092
+    votes: 4153
+  race_id: ld-46-state-senator
+- ballots_counted: 31627
+  outcomes:
+  - advanced: false
+    choice_id: seattle-city-council-5--dimitri-georgakopoulos
+    share: 0.0805
+    votes: 2423
+  - advanced: false
+    choice_id: seattle-city-council-5--silas-james
+    share: 0.0482
+    votes: 1451
+  - advanced: true
+    choice_id: seattle-city-council-5--julie-kang
+    share: 0.3306
+    votes: 9956
+  - advanced: true
+    choice_id: seattle-city-council-5--nilu-jenks
+    share: 0.5408
+    votes: 16287
+  race_id: seattle-city-council-5
+- ballots_counted: 212419
+  outcomes:
+  - advanced: false
+    choice_id: seattle-municipal-court-judge-5--lindsay-calkins
+    share: 0.1724
+    votes: 33291
+  - advanced: true
+    choice_id: seattle-municipal-court-judge-5--garmon-newsom
+    share: 0.2795
+    votes: 53988
+  - advanced: true
+    choice_id: seattle-municipal-court-judge-5--gabe-rothstein
+    share: 0.5481
+    votes: 105878
+  race_id: seattle-municipal-court-judge-5
+- ballots_counted: 212187
+  outcomes:
+  - advanced: true
+    choice_id: seattle-proposition-1-library-levy--yes
+    share: 0.7504
+    votes: 156519
+  - advanced: false
+    choice_id: seattle-proposition-1-library-levy--no
+    share: 0.2496
+    votes: 52055
+  race_id: seattle-proposition-1-library-levy
+- ballots_counted: 221294
+  outcomes:
+  - advanced: false
+    choice_id: us-house-7--david-w-blomstrom
+    share: 0.0199
+    votes: 4294
+  - advanced: true
+    choice_id: us-house-7--pramila-jayapal
+    share: 0.8467
+    votes: 182844
+  - advanced: true
+    choice_id: us-house-7--nirav-sheth
+    share: 0.0986
+    votes: 21282
+  - advanced: false
+    choice_id: us-house-7--gwen-kirkland
+    share: 0.0348
+    votes: 7519
+  race_id: us-house-7
+schema_version: '1.0'
+status: certified
+supersedes: null
