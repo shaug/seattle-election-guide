@@ -465,13 +465,13 @@ def test_release_build_wires_the_certification_date_into_the_view_model(
     _stub_release_render(monkeypatch)
 
     # The real, committed calendar declares `wa-2026-primary`'s certification
-    # 15 days after its election day (config/calendar/elections.yaml).
+    # 14 days after its election day (config/calendar/elections.yaml, RCW 29A.60.190).
     output = tmp_path / "release"
     release = _build_release(ledger, dataset_path, snapshots, tmp_path, output)
     published = json.loads(
         (release.bundle_dir / "data" / "publication_view_model.json").read_text(encoding="utf-8")
     )
-    assert published["metadata"]["certification_date"] == "2026-08-19"
+    assert published["metadata"]["certification_date"] == "2026-08-18"
 
     # A calendar path that resolves to nothing -- missing entirely -- is a
     # silent no-op, matching `results_dir`'s own "no committed file" grace.

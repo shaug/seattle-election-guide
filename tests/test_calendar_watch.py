@@ -534,23 +534,57 @@ def _no_comments(self: GitHubIssueTracker, number: int) -> frozenset[str]:
 
 
 def _watch(
-    *extra: str, monkeypatch: pytest.MonkeyPatch, numbers: dict[str, tuple[int, ...]]
+    *extra: str,
+    monkeypatch: pytest.MonkeyPatch,
+    numbers: dict[str, tuple[int, ...]],
+    artifacts: Path,
 ) -> Any:
+    """Drive the watch against empty artifact directories.
+
+    These three tests assert that a past-due milestone with no artifact
+    escalates. Reading the repository's own committed artifacts would make that
+    assertion depend on work the repository has since done: once
+    `wa-2026-primary`'s certified capture landed (#302), the milestone they use
+    as the past-due example was satisfied and they failed. Empty directories
+    keep the escalation path deterministic; the committed calendar and its
+    artifacts are covered by
+    `test_the_committed_calendar_escalates_nothing_for_the_2026_primary`.
+    """
+    manifests = artifacts / "manifests"
+    refreshes = artifacts / "refresh"
+    manifests.mkdir(parents=True, exist_ok=True)
+    refreshes.mkdir(parents=True, exist_ok=True)
     monkeypatch.setattr(GitHubIssueTracker, "read_tracked_issues", _tracked(numbers))
     monkeypatch.setattr(GitHubIssueTracker, "read_escalation_markers", _no_comments)
     return CliRunner().invoke(
-        app, ["calendar", "watch", str(CALENDAR_PATH), "--as-of", "2026-08-31", *extra]
+        app,
+        [
+            "calendar",
+            "watch",
+            str(CALENDAR_PATH),
+            "--as-of",
+            "2026-08-31",
+            "--manifest-dir",
+            str(manifests),
+            "--refresh-dir",
+            str(refreshes),
+            *extra,
+        ],
     )
 
 
-def test_dry_run_prints_the_plan_and_posts_nothing(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_dry_run_prints_the_plan_and_posts_nothing(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
     def _never(self: GitHubIssueTracker, request: EscalationRequest) -> None:
         raise AssertionError("a dry run must not escalate anything")
 
     monkeypatch.setattr(GitHubIssueTracker, "escalate", _never)
     marker = milestone_marker("wa-2026-primary", "results-capture-post-certification")
 
-    result = _watch("--dry-run", monkeypatch=monkeypatch, numbers={marker: (302,)})
+    result = _watch(
+        "--dry-run", monkeypatch=monkeypatch, numbers={marker: (302,)}, artifacts=tmp_path
+    )
 
     assert result.exit_code == 0
     assert "would escalate: " in result.stdout
@@ -558,7 +592,9 @@ def test_dry_run_prints_the_plan_and_posts_nothing(monkeypatch: pytest.MonkeyPat
     assert "would be posted" in result.stdout
 
 
-def test_a_real_run_escalates_each_planned_stage(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_a_real_run_escalates_each_planned_stage(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
     escalated: list[tuple[int, str]] = []
 
     def _record(self: GitHubIssueTracker, request: EscalationRequest) -> None:
@@ -567,7 +603,7 @@ def test_a_real_run_escalates_each_planned_stage(monkeypatch: pytest.MonkeyPatch
     monkeypatch.setattr(GitHubIssueTracker, "escalate", _record)
     marker = milestone_marker("wa-2026-primary", "results-capture-post-certification")
 
-    result = _watch(monkeypatch=monkeypatch, numbers={marker: (302,)})
+    result = _watch(monkeypatch=monkeypatch, numbers={marker: (302,)}, artifacts=tmp_path)
 
     assert result.exit_code == 0
     assert escalated == [(302, "overdue")]
@@ -575,14 +611,14 @@ def test_a_real_run_escalates_each_planned_stage(monkeypatch: pytest.MonkeyPatch
 
 
 def test_an_untracked_past_due_milestone_is_named_on_stderr(
-    monkeypatch: pytest.MonkeyPatch,
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
     def _never(self: GitHubIssueTracker, request: EscalationRequest) -> None:
         raise AssertionError("nothing should be escalated")
 
     monkeypatch.setattr(GitHubIssueTracker, "escalate", _never)
 
-    result = _watch(monkeypatch=monkeypatch, numbers={})
+    result = _watch(monkeypatch=monkeypatch, numbers={}, artifacts=tmp_path)
 
     assert result.exit_code == 0
     assert "no tracking issue" in result.output

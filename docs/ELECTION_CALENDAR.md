@@ -50,8 +50,8 @@ renamed command or a moved document fails the suite rather than the cycle.
 
 Offsets are counted from election day, which is why the anchor milestone sits
 at zero. Three of them are statutory and should not drift: ballots mail at
-`-18`, certification at `+21` after a general and `+15` after a primary or
-special, and the post-certification capture the day after. The rest are this
+`-18`, certification at `+21` after a general and `+14` after a primary or
+special (RCW 29A.60.190), and the post-certification capture the day after. The rest are this
 project's working-backward conventions, chosen so each step has room before the
 one it feeds:
 

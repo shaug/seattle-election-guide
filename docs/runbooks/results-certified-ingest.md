@@ -18,8 +18,8 @@ omitting a cross-county race here is the only way to run it, never an accident.
 ## Trigger
 
 The `results_capture_post_certification` calendar milestone: the day after certification
-(primary/special: election day +16; general: +22). For `wa-2026-primary`: certification
-2026-08-19, this runbook 2026-08-20.
+(primary/special: election day +15; general: +22). For `wa-2026-primary`: certification
+2026-08-18, this runbook 2026-08-19.
 
 ## Autonomy
 
