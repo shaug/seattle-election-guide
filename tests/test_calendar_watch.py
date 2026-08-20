@@ -13,6 +13,7 @@ from zoneinfo import ZoneInfo
 import pytest
 from typer.testing import CliRunner
 
+from election_guide.authorities.registry import read_authority_registry
 from election_guide.calendar import (
     ARTIFACT_WINDOW_DAYS,
     ELECTION_TIMEZONE,
@@ -625,22 +626,38 @@ def test_an_untracked_past_due_milestone_is_named_on_stderr(
 
 
 def test_the_committed_calendar_escalates_nothing_for_the_2026_primary() -> None:
-    """The one past-due results capture this repository actually has.
+    """The committed results captures satisfy every milestone that promised one.
 
     `wa-2026-primary`'s election-night capture ran on 2026-08-04 and produced a
     documented provenance record rather than manifests — the authority capture
     lane (#281) did not exist yet, and the bytes it would have backfilled from
-    are gone. It is completed work, so the check must leave it alone.
+    are gone. Its post-certification capture ran on 2026-08-19 (#302) and did
+    leave manifests. Both are completed work, so the check must leave them
+    alone.
+
+    `as_of` is past the post-certification window's close, so the milestone has
+    actually reached an escalation stage and its captures have to be matched to
+    clear it: at a date inside the window no stage is reached and the artifacts
+    are never consulted, which would pass whether or not they existed.
+
+    `authority_ids` comes from the real registry because `calendar watch`
+    supplies it that way (`cli.py`). Defaulting it to empty makes
+    `_capture_matches` reject every authority capture, so the committed
+    manifests would go unmatched and the assertion would hold for the wrong
+    reason.
     """
     calendar = read_election_calendar(CALENDAR_PATH)
     artifacts = read_repository_artifacts(
         manifest_dir=PROJECT_ROOT / "data" / "manifests" / "evidence",
         refresh_dir=PROJECT_ROOT / "data" / "collection" / "refreshes",
+        authority_ids=frozenset(
+            read_authority_registry(
+                PROJECT_ROOT / "config" / "authorities" / "default.yaml"
+            ).authority_ids()
+        ),
     )
 
-    # Before the post-certification capture (2026-08-20) is itself past due,
-    # so the only past-due milestone in the window is the election-night one.
-    missing = missing_artifacts(calendar, as_of=date(2026, 8, 19), artifacts=artifacts)
+    missing = missing_artifacts(calendar, as_of=date(2026, 8, 31), artifacts=artifacts)
 
     assert missing == []
 

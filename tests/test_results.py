@@ -966,7 +966,7 @@ def test_cli_results_ingest_produces_a_valid_results_file(
 def test_cli_results_ingest_reads_a_repository_scope_certified_capture(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """The certified capture the 2026-08-20 runbook produces is stored in the
+    """The certified capture the 2026-08-19 runbook produces is stored in the
     tracked official store, not the ignored one (issue #357, `docs/COLLECTION.md`).
     Ingest has to resolve its bytes from the manifest's own recorded scope."""
     monkeypatch.chdir(tmp_path)

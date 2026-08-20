@@ -65,14 +65,14 @@ evidence-capture, hashing, and provenance discipline as endorsements (`docs/EVID
 # data/results/wa-2026-primary.yaml
 election_id: wa-2026-primary
 status: certified          # counting | certified | amended
-certified_on: 2026-08-19
+certified_on: 2026-08-18
 authority: King County Elections
 captures:
   - kind: election_night   # evidence only, never rendered
     captured_at: 2026-08-04T20:35:00-07:00
     evidence: data/manifests/evidence/capture-kc-results-….json
   - kind: certified
-    captured_at: 2026-08-20T16:05:00-07:00
+    captured_at: 2026-08-19T16:05:00-07:00
     evidence: data/manifests/evidence/capture-kc-results-….json
 races:
   - race_id: king-county-council-8
