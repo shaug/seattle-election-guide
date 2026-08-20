@@ -195,6 +195,28 @@ explain it. Both readings are consistent with what the API returned, so the arch
 than guesses — a zero would have been a claim about the site that nothing supports. The days are
 now outside every window, so nothing is recoverable either way.
 
+### Which field to trend
+
+The archive carries four totals and they are not interchangeable. Anything comparing one cycle to
+the next should be built on `page_views`.
+
+- **`requests` counts automation too.** On 2026-08-18 a single Hong Kong source contributed 872 of
+  the day's 1,413 requests — more than any complete day in the surrounding week — while
+  `page_views` stayed at 132, well inside its ordinary range. The burst never rendered a page. The
+  archive records it faithfully, because what the edge served is the fact being archived, but a
+  trend line drawn through `requests` tracks whoever is scraping that week.
+- **`visits` does not span the archive.** It is adaptive-only, so it is `null` on every day
+  archived more than eight days late — 18 of the 28 days held today, including all of the August
+  primary. A cross-cycle series built on it would silently begin in mid-August 2026.
+- **`page_views` and `uniques` come from the daily dataset** and are present on every archived day.
+  `page_views` carries the signal that matters: 1,125 on 2026-08-03 and 1,547 on election day, the
+  two highest in the archive, against 94 to 287 across the week that followed.
+
+**The US share of `by_country` is the cheap contamination check.** Across every other archived day
+it runs 31% to 96%. 2026-08-18 is 21%, the only day below that band, and it is the day of the
+burst. A day whose domestic share falls out of the band is a day whose `requests` total is
+describing something other than readers.
+
 ### How an archived day reaches `main`
 
 `main` is protected and requires review, so the scheduled run cannot push to it
