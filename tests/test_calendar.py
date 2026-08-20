@@ -96,14 +96,14 @@ def test_2026_primary_declares_only_the_windows_still_ahead_of_it() -> None:
     ]
     scheduled = {item.kind: calendar.scheduled_date(item) for item in milestones}
     assert scheduled["results_capture_election_night"] == date(2026, 8, 4)
-    assert scheduled["results_capture_post_certification"] == date(2026, 8, 20)
+    assert scheduled["results_capture_post_certification"] == date(2026, 8, 19)
 
 
 def test_certification_date_resolves_the_certification_milestone() -> None:
     """#285's banner reads this to know when its counting window ends."""
     calendar = read_election_calendar(CALENDAR_PATH)
 
-    assert calendar.certification_date("wa-2026-primary") == date(2026, 8, 19)
+    assert calendar.certification_date("wa-2026-primary") == date(2026, 8, 18)
     assert calendar.certification_date("wa-2026-general") == date(2026, 11, 24)
 
 

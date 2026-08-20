@@ -65,11 +65,11 @@ milestones:
   - election_id: wa-2026-primary
     id: certification
     kind: certification
-    offset_days: 15
+    offset_days: 14
   - election_id: wa-2026-primary
     id: results-capture-post-certification
     kind: results_capture_post_certification
-    offset_days: 16
+    offset_days: 15
     workflow: evidence capture
     reference: docs/runbooks/results-certified-ingest.md
 
@@ -208,11 +208,11 @@ milestones:
   - election_id: wa-2027-february-special
     id: certification
     kind: certification
-    offset_days: 15
+    offset_days: 14
   - election_id: wa-2027-february-special
     id: results-capture-post-certification
     kind: results_capture_post_certification
-    offset_days: 16
+    offset_days: 15
     workflow: evidence capture
     reference: docs/runbooks/results-certified-ingest.md
 
@@ -273,11 +273,11 @@ milestones:
   - election_id: wa-2027-april-special
     id: certification
     kind: certification
-    offset_days: 15
+    offset_days: 14
   - election_id: wa-2027-april-special
     id: results-capture-post-certification
     kind: results_capture_post_certification
-    offset_days: 16
+    offset_days: 15
     workflow: evidence capture
     reference: docs/runbooks/results-certified-ingest.md
 
@@ -349,11 +349,11 @@ milestones:
   - election_id: wa-2027-primary
     id: certification
     kind: certification
-    offset_days: 15
+    offset_days: 14
   - election_id: wa-2027-primary
     id: results-capture-post-certification
     kind: results_capture_post_certification
-    offset_days: 16
+    offset_days: 15
     workflow: evidence capture
     reference: docs/runbooks/results-certified-ingest.md
 

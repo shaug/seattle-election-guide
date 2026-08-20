@@ -18,8 +18,8 @@ omitting a cross-county race here is the only way to run it, never an accident.
 ## Trigger
 
 The `results_capture_post_certification` calendar milestone: the day after certification
-(primary/special: election day +16; general: +22). For `wa-2026-primary`: certification
-2026-08-19, this runbook 2026-08-20.
+(primary/special: election day +15; general: +22). For `wa-2026-primary`: certification
+2026-08-18, this runbook 2026-08-19.
 
 ## Autonomy
 
@@ -95,7 +95,7 @@ it should stay human-launched at least through the first full cycle.
    uv run election-guide results ingest \
      --election-id wa-2026-primary \
      --authority-id king-county-elections \
-     --certified-on 2026-08-19 \
+     --certified-on 2026-08-18 \
      --certified-capture data/manifests/evidence/<certified-capture-id>.json \
      --race-id king-county-assessor --race-id king-county-council-2 \
      --race-id king-county-council-8 --race-id ld-11-state-representative-1 \
@@ -191,5 +191,5 @@ it should stay human-launched at least through the first full cycle.
 - Not yet executed against live data. Phase 2's adapter and validator (`results ingest`,
   `results validate`) landed with #284 and are exercised by that PR's fixture test
   (`tests/test_results.py`, a trimmed real King County CSV excerpt) — no network, offline only.
-  First live execution: `wa-2026-primary`, phase 1 due 2026-08-20, phase 2 the same day per
+  First live execution: `wa-2026-primary`, phase 1 due 2026-08-19, phase 2 the same day per
   the procedure above.

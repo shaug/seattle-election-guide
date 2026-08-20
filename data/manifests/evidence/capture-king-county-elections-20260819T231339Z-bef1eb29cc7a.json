@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 21379416,
+  "canonical_url": "https://cdn.kingcounty.gov/-/media/king-county/depts/elections/results/2026/08/final-results-report.csv",
+  "capture_method": "manual_upload",
+  "content_sha256": "4b497f6433b7dd59e3f4d97b45865e6726efc5ddda8f01a9d435088aca865ba7",
+  "http_status": null,
+  "id": "capture-king-county-elections-20260819T231339Z-bef1eb29cc7a",
+  "media_type": "text/csv",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Official public record; bytes retained in the repository.",
+  "requested_url": "https://cdn.kingcounty.gov/-/media/king-county/depts/elections/results/2026/08/final-results-report.csv",
+  "retrieved_at": "2026-08-19T23:13:39Z",
+  "schema_version": "1.0",
+  "source_id": "king-county-elections",
+  "storage_reference": "sha256/4b/4b497f6433b7dd59e3f4d97b45865e6726efc5ddda8f01a9d435088aca865ba7",
+  "storage_scope": "repository",
+  "title": "2026 Washington August Primary certified results (King County final precinct-level CSV)",
+  "updated_at": null
+}

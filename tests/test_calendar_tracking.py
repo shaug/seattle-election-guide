@@ -231,13 +231,15 @@ def test_the_committed_calendar_plans_only_milestones_ahead_of_the_window() -> N
     plan = plan_issues(calendar, as_of=date(2026, 8, 3), lead_days=21, existing_markers=set())
 
     # Through 2026-08-24. The two 2026-08-04 milestones tie on date and break
-    # by milestone ID; the two on 2026-08-20 break by election ID.
+    # by milestone ID; the rest fall on distinct dates -- certification
+    # 2026-08-18, its capture the day after, the general's initialization
+    # 2026-08-20.
     assert [request.marker for request in plan] == [
         milestone_marker("wa-2026-primary", "election-day"),
         milestone_marker("wa-2026-primary", "results-capture-election-night"),
         milestone_marker("wa-2026-primary", "certification"),
-        milestone_marker("wa-2026-general", "initialize-election"),
         milestone_marker("wa-2026-primary", "results-capture-post-certification"),
+        milestone_marker("wa-2026-general", "initialize-election"),
     ]
     # The general's inventory import is 2026-08-25, one day past the window.
     assert all("official-inventory-import" not in request.marker for request in plan)
