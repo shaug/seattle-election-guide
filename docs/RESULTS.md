@@ -153,10 +153,10 @@ different triggers (#285, "Trigger model"), not on the results file alone:
   certified file, the banner falls back to the existing past rewrite rather than a stale counting
   promise:
   "**Ballots are being counted** — see the count at King County Elections." /
-  "Results certify August 19, 2026."
+  "Results certify August 18, 2026."
 - **Certified** (muted past family) — gates on the certified results file existing, as every other
   surface in this document does:
-  "**This election is complete.**" / "Results were certified August 19, 2026."
+  "**This election is complete.**" / "Results were certified August 18, 2026."
 
 **Trigger model.** The certification date comes from the calendar's `certification` milestone for
 this election (`config/calendar/elections.yaml`), carried into the page the same way `election_date`
@@ -466,7 +466,7 @@ entries:
     headline: "Amended result, State Representative (LD 32, Pos. 1)."
     body: >-
       The county's amended canvass moved the second advancing candidate after a machine
-      recount. The certified figures published August 19 have been replaced; both captures
+      recount. The certified figures published August 18 have been replaced; both captures
       remain in the archive.
     provenance:
       - label: "capture 9f3c…e2"
