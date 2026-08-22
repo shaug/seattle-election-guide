@@ -15,7 +15,11 @@ from election_guide.sources.link_check_state import (
     read_link_check_state,
     write_link_check_state,
 )
-from election_guide.sources.link_rot_alert import LinkRotAlertTracker
+from election_guide.sources.link_rot_alert import LinkRotAlertTracker, next_state
+
+# The strings `check_link` records, in the shape `fetch_http` raises them.
+GONE_404 = "live collection failed: live collection returned HTTP 404"
+GUARDED_403 = "live collection failed: live collection returned HTTP 403"
 
 
 def _result(source_id: str, url: str, *, ok: bool, error: str | None = None) -> LinkCheckResult:
@@ -64,7 +68,7 @@ def test_a_first_time_failure_is_reported_but_not_confirmed_or_alerted(
     def _check(
         registry: Any, *, timeout_seconds: float, delay_seconds: float
     ) -> list[LinkCheckResult]:
-        return [_result("a", "https://a.example", ok=False, error="HTTP 404")]
+        return [_result("a", "https://a.example", ok=False, error=GONE_404)]
 
     def _reconcile(
         tracker: LinkRotAlertTracker, confirmed: list[LinkCheckResult], *, checked_at: str
@@ -78,20 +82,24 @@ def test_a_first_time_failure_is_reported_but_not_confirmed_or_alerted(
     result = _invoke("--state-path", str(state_path), "--repository", "owner/repo")
 
     assert result.exit_code == 0
-    assert "FAIL a (https://a.example): HTTP 404" in result.output
-    assert read_link_check_state(state_path) == LinkCheckState(failing_urls=("https://a.example",))
+    assert f"FAIL a (https://a.example): {GONE_404}" in result.output
+    assert read_link_check_state(state_path) == LinkCheckState(
+        failing_urls=("https://a.example",), rot_confirming_urls=("https://a.example",)
+    )
 
 
 def test_a_failure_repeating_from_the_saved_state_is_confirmed_and_exits_nonzero(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
     state_path = tmp_path / "state.json"
-    write_link_check_state(state_path, LinkCheckState(failing_urls=("https://a.example",)))
+    write_link_check_state(
+        state_path, next_state([_result("a", "https://a.example", ok=False, error=GONE_404)])
+    )
 
     def _check(
         registry: Any, *, timeout_seconds: float, delay_seconds: float
     ) -> list[LinkCheckResult]:
-        return [_result("a", "https://a.example", ok=False, error="HTTP 404")]
+        return [_result("a", "https://a.example", ok=False, error=GONE_404)]
 
     def _reconcile(
         tracker: LinkRotAlertTracker, confirmed: list[LinkCheckResult], *, checked_at: str
@@ -109,17 +117,50 @@ def test_a_failure_repeating_from_the_saved_state_is_confirmed_and_exits_nonzero
     assert "opened alert issue" in result.output
 
 
+def test_a_guarded_url_failing_every_run_is_reported_but_never_confirmed(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """Issue #399's shape end to end: a 403 that repeats forever still prints
+    its `FAIL` line every run, and still exits 0 with nothing to alert on."""
+    state_path = tmp_path / "state.json"
+    guarded = [_result("a", "https://a.example", ok=False, error=GUARDED_403)]
+    write_link_check_state(state_path, next_state(guarded))
+
+    def _check(
+        registry: Any, *, timeout_seconds: float, delay_seconds: float
+    ) -> list[LinkCheckResult]:
+        return guarded
+
+    def _reconcile(
+        tracker: LinkRotAlertTracker, confirmed: list[LinkCheckResult], *, checked_at: str
+    ) -> str:
+        assert confirmed == []
+        return "healthy; closed alert issue 9"
+
+    monkeypatch.setattr(cli, "run_link_check", _check)
+    monkeypatch.setattr(cli, "reconcile_link_rot_alert", _reconcile)
+
+    result = _invoke("--state-path", str(state_path), "--repository", "owner/repo")
+
+    assert result.exit_code == 0
+    assert f"FAIL a (https://a.example): {GUARDED_403}" in result.output
+    assert "1 unreachable this run, 0 confirmed across consecutive runs" in result.output
+    assert "closed alert issue 9" in result.output
+
+
 def test_a_dry_run_never_touches_the_alert_tracker_or_writes_state(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
     state_path = tmp_path / "state.json"
-    write_link_check_state(state_path, LinkCheckState(failing_urls=("https://a.example",)))
+    write_link_check_state(
+        state_path, next_state([_result("a", "https://a.example", ok=False, error=GONE_404)])
+    )
     before = state_path.read_text(encoding="utf-8")
 
     def _check(
         registry: Any, *, timeout_seconds: float, delay_seconds: float
     ) -> list[LinkCheckResult]:
-        return [_result("a", "https://a.example", ok=False, error="HTTP 404")]
+        return [_result("a", "https://a.example", ok=False, error=GONE_404)]
 
     def _never(*args: Any, **kwargs: Any) -> str:
         raise AssertionError("a dry run must not reconcile the alert issue")
@@ -138,12 +179,14 @@ def test_a_reconciliation_failure_is_reported_without_a_traceback(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
     state_path = tmp_path / "state.json"
-    write_link_check_state(state_path, LinkCheckState(failing_urls=("https://a.example",)))
+    write_link_check_state(
+        state_path, next_state([_result("a", "https://a.example", ok=False, error=GONE_404)])
+    )
 
     def _check(
         registry: Any, *, timeout_seconds: float, delay_seconds: float
     ) -> list[LinkCheckResult]:
-        return [_result("a", "https://a.example", ok=False, error="HTTP 404")]
+        return [_result("a", "https://a.example", ok=False, error=GONE_404)]
 
     def _broken(*args: Any, **kwargs: Any) -> str:
         raise ValueError("gh: not authenticated")

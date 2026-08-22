@@ -54,12 +54,72 @@ def _result(source_id: str, url: str, *, ok: bool, error: str | None = None) -> 
     return LinkCheckResult(target=_target(source_id, url), ok=ok, error=error)
 
 
+# --- failure-cause classification ----------------------------------------
+
+# `fetch_http` catches its own failures and re-raises them wrapped, so the
+# string `check_link` records is `f"live collection failed: {cause}"` -- the
+# shape every failure in issue #399 actually took. The bare causes below are
+# how issue #406 quotes them; both forms are exercised, because the bare form
+# is the contract as written and the wrapped form is the one that arrives.
+INCONCLUSIVE_CAUSES = (
+    "live collection returned HTTP 401",
+    "live collection returned HTTP 403",
+    "live collection returned HTTP 429",
+    "live collection returned HTTP 503",
+    "live collection exceeded 10 redirects",
+    "live collection refuses an HTTPS downgrade redirect",
+    # A timeout during DNS resolution that loses the race to the outer
+    # deadline check arrives with its own cause rather than the flat message.
+    "live collection exceeded its total timeout during DNS resolution",
+    # The deadline timer closing the socket under an in-flight operation,
+    # observed live on 2026-08-22 against a page that is not gone.
+    "[Errno 9] Bad file descriptor",
+)
+
+# The outer handler replaces the cause entirely once the deadline has passed,
+# so this one is never wrapped around something else.
+TIMEOUT_ERROR = "live collection failed: total timeout exceeded"
+
+ROT_CONFIRMING_CAUSES = (
+    "live collection returned HTTP 404",
+    "live collection returned HTTP 410",
+    "live collection DNS resolution failed for 'dead.example'",
+    "live collection DNS resolution returned no addresses for 'dead.example'",
+    # `_open_public_connection` re-raises the operating system's own `OSError`,
+    # which carries no recognizable marker of its own.
+    "[Errno 61] Connection refused",
+    "[Errno 65] No route to host",
+)
+
+
+def _wrapped(cause: str) -> str:
+    return f"live collection failed: {cause}"
+
+
+def _confirmed_across(url: str, *causes: str) -> list[LinkCheckResult]:
+    """Drive the real multi-run pipeline: fail, carry state forward, fail again.
+
+    Returns what the final run confirms, having asserted that no earlier run
+    confirmed anything -- the first can never confirm, and an intermediate one
+    that did would make the final result unattributable.
+    """
+    state = LinkCheckState()
+    confirmed: list[LinkCheckResult] = []
+    for index, cause in enumerate(causes):
+        this_run = [_result("a", url, ok=False, error=cause)]
+        confirmed = confirmed_failures(this_run, state)
+        if index < len(causes) - 1:
+            assert confirmed == [], f"run {index + 1} confirmed before the last run"
+        state = next_state(this_run)
+    return confirmed
+
+
 # --- confirmed_failures ------------------------------------------------
 
 
 def test_a_failure_repeating_from_the_previous_run_is_confirmed() -> None:
     results = [_result("a", "https://a.example", ok=False, error="404")]
-    previous = LinkCheckState(failing_urls=("https://a.example",))
+    previous = next_state(results)
 
     assert confirmed_failures(results, previous) == results
 
@@ -71,8 +131,8 @@ def test_a_first_time_failure_is_not_confirmed() -> None:
 
 
 def test_a_recovered_url_is_never_confirmed_even_if_previously_failing() -> None:
+    previous = next_state([_result("a", "https://a.example", ok=False, error="404")])
     results = [_result("a", "https://a.example", ok=True)]
-    previous = LinkCheckState(failing_urls=("https://a.example",))
 
     assert confirmed_failures(results, previous) == []
 
@@ -88,6 +148,79 @@ def test_a_broken_url_is_confirmed_only_after_two_consecutive_failing_runs() -> 
     assert confirmed_failures(run_two, state_after_run_one) == run_two
 
 
+@pytest.mark.parametrize("cause", INCONCLUSIVE_CAUSES)
+def test_an_inconclusive_cause_is_never_confirmed_however_often_it_repeats(cause: str) -> None:
+    """Access control, rate limiting, a redirect loop, a downgrade refusal, and
+    a timeout each say how the site answered a robot, not whether the page is
+    gone. Three runs, not two: the point is that no run count reaches confirmed."""
+    assert _confirmed_across("https://guarded.example", cause, cause, cause) == []
+
+
+@pytest.mark.parametrize("cause", INCONCLUSIVE_CAUSES)
+def test_an_inconclusive_cause_is_never_confirmed_in_the_form_fetch_http_raises_it(
+    cause: str,
+) -> None:
+    wrapped = _wrapped(cause)
+
+    assert _confirmed_across("https://guarded.example", wrapped, wrapped, wrapped) == []
+
+
+def test_a_timeout_is_never_confirmed() -> None:
+    assert _confirmed_across("https://slow.example", TIMEOUT_ERROR, TIMEOUT_ERROR) == []
+
+
+@pytest.mark.parametrize("cause", ROT_CONFIRMING_CAUSES)
+def test_a_rot_confirming_cause_repeating_is_still_confirmed(cause: str) -> None:
+    """Unchanged from before this classification existed: a URL that is gone,
+    unresolvable, or unreachable at the socket still alerts on the second run."""
+    wrapped = _wrapped(cause)
+
+    assert _confirmed_across("https://dead.example", wrapped, wrapped) == [
+        _result("a", "https://dead.example", ok=False, error=wrapped)
+    ]
+
+
+def test_a_cause_that_turns_conclusive_between_runs_is_not_confirmed_from_that_pair() -> None:
+    """One 404 after one 403 is one 404, and one is never enough."""
+    assert (
+        _confirmed_across(
+            "https://flaky.example",
+            _wrapped("live collection returned HTTP 403"),
+            _wrapped("live collection returned HTTP 404"),
+        )
+        == []
+    )
+
+
+def test_a_cause_that_turns_inconclusive_between_runs_is_not_confirmed_from_that_pair() -> None:
+    assert (
+        _confirmed_across(
+            "https://flaky.example",
+            _wrapped("live collection returned HTTP 404"),
+            _wrapped("live collection returned HTTP 403"),
+        )
+        == []
+    )
+
+
+def test_two_rot_confirming_runs_confirm_even_across_different_causes() -> None:
+    """Confirmation asks whether both runs were evidence of rot, not whether
+    they were evidence of the same rot: a 404 that becomes unresolvable is
+    still a page nobody can reach twice running."""
+    assert _confirmed_across(
+        "https://dead.example",
+        _wrapped("live collection returned HTTP 404"),
+        _wrapped("live collection DNS resolution failed for 'dead.example'"),
+    ) == [
+        _result(
+            "a",
+            "https://dead.example",
+            ok=False,
+            error=_wrapped("live collection DNS resolution failed for 'dead.example'"),
+        )
+    ]
+
+
 # --- next_state ----------------------------------------------------------
 
 
@@ -97,7 +230,33 @@ def test_next_state_carries_forward_only_this_runs_failing_urls() -> None:
         _result("b", "https://b.example", ok=True),
     ]
 
-    assert next_state(results) == LinkCheckState(failing_urls=("https://a.example",))
+    assert next_state(results) == LinkCheckState(
+        failing_urls=("https://a.example",), rot_confirming_urls=("https://a.example",)
+    )
+
+
+def test_next_state_still_records_an_inconclusive_failure_among_the_failing_urls() -> None:
+    """The full failing set stays the operator-facing record of the run; only
+    the rot-confirming subset is what the next run confirms against."""
+    results = [
+        _result(
+            "guarded",
+            "https://guarded.example",
+            ok=False,
+            error=_wrapped("live collection returned HTTP 403"),
+        ),
+        _result(
+            "dead",
+            "https://dead.example",
+            ok=False,
+            error=_wrapped("live collection returned HTTP 404"),
+        ),
+    ]
+
+    assert next_state(results) == LinkCheckState(
+        failing_urls=("https://dead.example", "https://guarded.example"),
+        rot_confirming_urls=("https://dead.example",),
+    )
 
 
 # --- plan_alert_action -------------------------------------------------
