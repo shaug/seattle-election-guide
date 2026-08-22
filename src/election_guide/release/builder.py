@@ -29,7 +29,7 @@ from election_guide.release.models import (
     release_archive_name,
 )
 from election_guide.rendering import build_rendered_guide
-from election_guide.results.loader import current_results_capture, load_rendering_results
+from election_guide.results.loader import load_rendering_results
 from election_guide.scoring import ConsensusReport, read_scoring_configuration, score_dataset
 from election_guide.serialization import canonical_json_bytes
 from election_guide.sources.registry import source_registry_hash
@@ -85,16 +85,18 @@ def build_release(
     milestone declared for this election yet, is a silent no-op -- the
     release is unchanged from before this parameter existed.
 
-    When `results` resolves, its current capture's (`results.
-    current_results_capture`) evidence manifest is read from `repository_root`
-    to resolve `results_capture_url` (docs/RESULTS.md, Rendering § Race
-    cards; #286): every candidate race's results strip provenance line links
-    it. `load_rendering_results` above has already required every capture
-    reference in this same file to resolve (`validate_results_evidence`), so
-    re-reading it here is expected to always succeed; a results file with no
-    non-`election_night` capture at all (schema-legal but never produced by
-    the shipped adapter) leaves the provenance line without a capture link
-    rather than inventing one.
+    When `results` resolves, each of its races' own `capture_evidence`
+    manifest is read from `repository_root` to resolve
+    `results_capture_urls` (docs/RESULTS.md, Rendering § Race cards; #286),
+    keyed by race id: every candidate race's results strip provenance line
+    links its own race's entry. A results file can hold races from more than
+    one counting authority (issue #417), so this is resolved per race rather
+    than once for the whole file. `load_rendering_results` above has already
+    required every capture reference in this same file to resolve
+    (`validate_results_evidence`), so re-reading them here is expected to
+    always succeed; a race whose manifest is (defensively) not a captured one
+    is simply absent from the mapping, leaving its provenance line without a
+    link rather than inventing one.
 
     `corrections_dir` is where this election's corrections file would
     live, if one has been committed (docs/RESULTS.md, "The corrections page";
@@ -139,13 +141,20 @@ def build_release(
         calendar = read_election_calendar(calendar_path)
         scheduled = calendar.certification_date(dataset.inventory.election.id)
         certification_date = scheduled.isoformat() if scheduled is not None else None
-    results_capture_url: str | None = None
+    results_capture_urls: dict[str, str] | None = None
     if results is not None:
-        capture = current_results_capture(results)
-        if capture is not None:
+        url_by_evidence: dict[str, str] = {}
+        for capture in results.captures:
+            if capture.kind == "election_night" or capture.evidence in url_by_evidence:
+                continue
             manifest = read_capture_manifest(repository_root / capture.evidence)
-            if isinstance(manifest, CapturedManifest):
-                results_capture_url = manifest.canonical_url
+            if isinstance(manifest, CapturedManifest) and manifest.canonical_url is not None:
+                url_by_evidence[capture.evidence] = manifest.canonical_url
+        results_capture_urls = {
+            race.race_id: url_by_evidence[race.capture_evidence]
+            for race in results.races
+            if race.capture_evidence in url_by_evidence
+        }
 
     output_dir.parent.mkdir(parents=True, exist_ok=True)
     stage = Path(tempfile.mkdtemp(prefix=f".{output_dir.name}.staging-", dir=output_dir.parent))
@@ -161,7 +170,7 @@ def build_release(
             data_as_of=ledger.data_as_of,
             results=results,
             certification_date=certification_date,
-            results_capture_url=results_capture_url,
+            results_capture_urls=results_capture_urls,
             corrections=corrections,
         )
         write_publication_bundle(publication, data_dir)

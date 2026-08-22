@@ -1,9 +1,10 @@
 """Validated post-election results contract (docs/RESULTS.md, Data model).
 
 One results file per election records how a race completed: status, the
-certifying authority, the evidence captures behind it, and each ballot
-choice's exact outcome. Nothing here renders a surface — `#285`-`#288` own
-that — so this module only encodes the shape and the invariants
+evidence captures behind it, and each race's certifying authority and exact
+outcome. A file can hold races from more than one counting authority (issue
+#417); each race states its own. Nothing here renders a surface — `#285`-`#288`
+own that — so this module only encodes the shape and the invariants
 `docs/RESULTS.md` names: every `choice_id` resolves against the frozen ballot
 inventory, shares sum to ~1 per race, and an amended file cites the capture it
 supersedes. Unmatched names fail loudly, never guessed.
@@ -77,10 +78,32 @@ class RaceOutcome(ResultsModel):
 
 
 class RaceResults(ResultsModel):
-    """One race's certified tally."""
+    """One race's certified tally, stated by the authority that counted it.
+
+    `authority` and `capture_evidence` are per-race, not per-file: a results
+    file can hold races from more than one counting authority (issue #417 —
+    King County states its own tally for a race wholly inside the county;
+    the Secretary of State states the true total for one whose district
+    crosses a county line). `capture_evidence` is one of the file's own
+    `ElectionResults.captures[].evidence` references
+    (`validate_results_evidence`, `results/validation.py`), naming which
+    capture this race's own tally came from.
+
+    Exactly one of `ballots_counted` or `votes_counted` is set, never both and
+    never neither -- the two are different quantities with no shared
+    analogue (docs/RESULTS.md's three-distinct-totals rule, extended to a
+    fourth by issue #417): `ballots_counted` is an authority's own count of
+    ballots that carried the contest (larger than the vote sum whenever a
+    ballot over- or under-voted it); `votes_counted` is a vote total
+    including write-ins, for an authority whose export states no
+    ballots-with-contest analogue at all.
+    """
 
     race_id: str = Field(min_length=1)
-    ballots_counted: int = Field(ge=0, strict=True)
+    authority: str = Field(min_length=1)
+    capture_evidence: str = Field(min_length=1)
+    ballots_counted: int | None = Field(default=None, ge=0, strict=True)
+    votes_counted: int | None = Field(default=None, ge=0, strict=True)
     outcomes: list[RaceOutcome] = Field(min_length=1)
 
     @model_validator(mode="after")
@@ -91,6 +114,11 @@ class RaceResults(ResultsModel):
         total_share = sum(outcome.share for outcome in self.outcomes)
         if abs(total_share - 1.0) > SHARE_SUM_TOLERANCE:
             raise ValueError(f"race {self.race_id!r} outcome shares sum to {total_share!r}, not ~1")
+        if (self.ballots_counted is None) == (self.votes_counted is None):
+            raise ValueError(
+                f"race {self.race_id!r} must state exactly one of ballots_counted or "
+                "votes_counted, not both and not neither"
+            )
         return self
 
 
@@ -102,7 +130,6 @@ class ElectionResults(ResultsModel):
     election_id: str = Field(min_length=1)
     status: ResultsStatus
     certified_on: date | None = None
-    authority: str = Field(min_length=1)
     captures: list[ResultsCapture] = Field(min_length=1)
     races: list[RaceResults] = Field(min_length=1)
     supersedes: str | None = Field(

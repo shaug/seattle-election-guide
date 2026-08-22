@@ -920,16 +920,54 @@ def test_certified_results_grow_a_results_strip_on_the_candidate_race_card(
     )  # the trailing candidate carries no chip
     assert '<i style="width:32.0%"></i>' in card
     assert '<i style="width:16.0%"></i>' in card
-    # The provenance line: ballots counted, authority, capture link.
+    # The provenance line: count, authority, evidence link.
     assert "61,234 ballots" in card
     assert "King County Elections" in card
     # No results file yet ingested for capture-url resolution in this unit
     # test (that seam is `release.builder.build_release`'s own, exercised in
-    # tests/test_release.py), so no capture link renders here -- the
+    # tests/test_release.py), so no evidence link renders here -- the
     # provenance line degrades gracefully rather than inventing one.
-    assert "capture</a>" not in card
+    assert "evidence</a>" not in card
     # The counting scaffold never coexists with a certified strip.
     assert "data-race-counting" not in card
+
+
+def test_a_secretary_of_state_sourced_race_renders_a_votes_labeled_provenance_line(
+    tmp_path: Path,
+) -> None:
+    """Issue #417: a race whose export states no ballots-with-contest
+    analogue -- the Secretary of State's statewide export, for the eight
+    races whose district crosses a county line -- renders its provenance
+    line's count labeled `votes`, not `ballots`, and names the Secretary of
+    State as its authority. `RESULTS_RACE_ID`'s own King County race is
+    reused with its authority and count swapped out (`RaceResults.
+    votes_counted` in place of `ballots_counted`) rather than adding a
+    second race to the fixture dataset -- `race_results_view` reads these
+    fields off whichever `RaceResults` entry matches the race id, so the
+    swap alone exercises the votes-labeled branch."""
+    configuration = read_rendering_configuration(RENDERING_CONFIG)
+    without_results = _view_model(tmp_path / "without-results")
+    results_root = tmp_path / "with-results"
+    results_root.mkdir()
+    base_results = _valid_results(results_root)
+    sos_race = base_results.races[0].model_copy(
+        update={
+            "authority": "Washington Secretary of State",
+            "ballots_counted": None,
+            "votes_counted": 142356,
+        }
+    )
+    with_results = without_results.model_copy(
+        update={"results": base_results.model_copy(update={"races": [sos_race]})}
+    )
+
+    html = render_html_document(with_results, configuration)
+    card = _race_card_html(html, RESULTS_RACE_ID)
+
+    assert "142,356 votes" in card
+    assert "61,234 ballots" not in card
+    assert "Washington Secretary of State" in card
+    assert "King County Elections" not in card
 
 
 def test_measure_races_render_exactly_as_today_regardless_of_results_state(
@@ -976,13 +1014,20 @@ def test_measure_races_render_exactly_as_today_regardless_of_results_state(
     assert '<div class="race-results">' in certified_html  # active for the assessor race
 
 
-def _measure_outcomes(*, yes_votes: int, no_votes: int, ballots_counted: int) -> RaceResults:
+def _measure_outcomes(
+    *, yes_votes: int, no_votes: int, ballots_counted: int, authority: str, capture_evidence: str
+) -> RaceResults:
     """One certified `RaceResults` entry for the fixture measure race
     (`seattle-proposition-1-library-levy`, #348's own real fixture data:
-    choice ids follow `<race-id>--yes`/`<race-id>--no`)."""
+    choice ids follow `<race-id>--yes`/`<race-id>--no`). `authority` and
+    `capture_evidence` are the caller's own `_valid_results` fixture's
+    values (issue #417: per-race, and `capture_evidence` must resolve
+    against that same fixture's `captures`), not a fresh evidence record."""
     total_votes = yes_votes + no_votes
     return RaceResults(
         race_id=MEASURE_RACE_ID,
+        authority=authority,
+        capture_evidence=capture_evidence,
         ballots_counted=ballots_counted,
         outcomes=[
             RaceOutcome(
@@ -1020,7 +1065,13 @@ def test_certified_measure_results_grow_a_results_strip_on_the_race_card(
         update={
             "races": [
                 *results.races,
-                _measure_outcomes(yes_votes=30000, no_votes=20000, ballots_counted=50000),
+                _measure_outcomes(
+                    yes_votes=30000,
+                    no_votes=20000,
+                    ballots_counted=50000,
+                    authority=results.races[0].authority,
+                    capture_evidence=results.races[0].capture_evidence,
+                ),
             ]
         }
     )
@@ -1492,7 +1543,13 @@ def test_certified_measure_results_render_both_choices_as_tally_rows(
         update={
             "races": [
                 *results.races,
-                _measure_outcomes(yes_votes=20000, no_votes=30000, ballots_counted=50000),
+                _measure_outcomes(
+                    yes_votes=20000,
+                    no_votes=30000,
+                    ballots_counted=50000,
+                    authority=results.races[0].authority,
+                    capture_evidence=results.races[0].capture_evidence,
+                ),
             ]
         }
     )
@@ -2765,25 +2822,27 @@ def test_release_validation_accounts_for_the_results_capture_and_corrections_lin
     tmp_path: Path,
 ) -> None:
     """Issue #353: `validate_rendered_guide`'s `expected_html_links` never
-    accounted for the results-strip provenance "capture" link (#286) or the
+    accounted for the results-strip provenance "evidence" link (#286) or the
     band's Corrections nav link (#290) -- both real links the templates
-    render once `metadata.results_capture_url` resolves or `corrections`
-    carries entries, but no existing test's fixture set either field at the
-    same time as running this validator. Confirmed root cause: a real
+    render once a race's own `metadata.results_capture_urls` entry resolves
+    (issue #417: per-race, keyed by race id) or `corrections` carries
+    entries, but no existing test's fixture set either field at the same
+    time as running this validator. Confirmed root cause: a real
     `build_release` against a committed results file with a resolving
     capture manifest failed this exact validator with "document: unexpected
     or missing links" because neither conditional clause existed."""
     configuration = read_rendering_configuration(RENDERING_CONFIG)
     results_root = tmp_path / "results"
     results_root.mkdir()
-    with_results = _view_model(tmp_path / "fixture").model_copy(
-        update={"results": _valid_results(results_root)}
-    )
+    results = _valid_results(results_root)
+    with_results = _view_model(tmp_path / "fixture").model_copy(update={"results": results})
     capture_url = "https://example.org/results/certified"
     view_model = with_results.model_copy(
         update={
             "metadata": with_results.metadata.model_copy(
-                update={"results_capture_url": capture_url}
+                update={
+                    "results_capture_urls": {results.races[0].race_id: capture_url},
+                }
             ),
             "corrections": _valid_corrections(election_id=with_results.metadata.election_id),
         }

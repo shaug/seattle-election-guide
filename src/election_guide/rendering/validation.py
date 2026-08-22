@@ -213,11 +213,12 @@ def validate_rendered_guide(
         expected_html_links.add(HOW_TO_VOTE_HREF)
     if view_model.comparisons.policy.enabled:
         expected_html_links.add(f"/e/{view_model.metadata.election_id}/comparisons/")
-    if view_model.metadata.results_capture_url:
-        # The results-strip provenance "capture" link (#286) appears on the
-        # page once `results_capture_url` resolves, so validation needs the
-        # same gate.
-        expected_html_links.add(view_model.metadata.results_capture_url)
+    if view_model.metadata.results_capture_urls:
+        # The results-strip provenance "evidence" link (#286) appears on the
+        # page once a race's own `results_capture_urls` entry resolves, so
+        # validation needs the same gate -- one url per counting authority in
+        # the file (issue #417), not one for the whole page.
+        expected_html_links.update(view_model.metadata.results_capture_urls.values())
     if view_model.corrections is not None and view_model.corrections.entries:
         # The band's nav grows a Corrections link under the same "state, not
         # option" gate `documents.py`'s `_corrections_href` follows (#290).

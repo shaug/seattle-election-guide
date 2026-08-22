@@ -50,6 +50,7 @@ from __future__ import annotations
 import csv
 import io
 import re
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import date
 
@@ -246,14 +247,185 @@ def resolve_choice(candidate_text: str, race: Race) -> BallotChoice | None:
     else that is unresolved or ambiguous."""
     if _is_write_in(candidate_text):
         return None
+    return resolve_ballot_choice(candidate_text, race)
+
+
+def resolve_ballot_choice(candidate_text: str, race: Race) -> BallotChoice:
+    """Match already-known-non-write-in candidate text against exactly one of
+    the race's ballot choices. Shared by every export adapter's own
+    write-in-aware resolver (`resolve_choice` here for King County's
+    name-sniffed write-in rows; `results/ingest_secretary_of_state.py`'s own
+    resolver for the Secretary of State's explicit `isWriteIn` flag) so the
+    "exactly one match, never guessed" resolution itself has one source."""
     normalized = normalize_match_text(candidate_text)
     hits = [choice for choice in race.choices if normalized in _candidate_match_terms(choice)]
     if len(hits) != 1:
         raise ResultsIngestError(
-            f"certified export choice {candidate_text!r} for race {race.id!r} matched "
-            f"{len(hits)} ballot choices, not exactly one"
+            f"export choice {candidate_text!r} for race {race.id!r} matched {len(hits)} ballot "
+            "choices, not exactly one"
         )
     return hits[0]
+
+
+def merge_race_results(
+    existing: ElectionResults,
+    additional_races: list[RaceResults],
+    additional_capture: ResultsCapture,
+) -> ElectionResults:
+    """Merge a second authority's races into an already-committed results
+    file (docs/RESULTS.md, "Ingestion mechanics," County scope; issue #417's
+    own "why this is not a King County ingest"). The existing file's own
+    races, captures, status, and certification date are untouched; the new
+    races and their capture are appended. Aborts rather than silently
+    overwriting if any new race id already exists in the file."""
+    duplicate_ids = {race.race_id for race in existing.races} & {
+        race.race_id for race in additional_races
+    }
+    if duplicate_ids:
+        raise ResultsIngestError(
+            f"results file for {existing.election_id!r} already has race(s): "
+            f"{sorted(duplicate_ids)}"
+        )
+    return existing.model_copy(
+        update={
+            "captures": [*existing.captures, additional_capture],
+            "races": sorted(
+                [*existing.races, *additional_races], key=lambda result: result.race_id
+            ),
+        }
+    )
+
+
+def resolve_expected_races(inventory: Inventory, expected_race_ids: frozenset[str]) -> list[Race]:
+    """Resolve `expected_race_ids` against the inventory's publication-eligible
+    races, aborting if any id is unknown or the set is empty. Shared by every
+    export adapter's own per-run entry point (`build_election_results` here;
+    `results.ingest_secretary_of_state.build_sos_race_results`)."""
+    eligible_races = {race.id: race for race in inventory.races if race.publication_eligible}
+    unknown_expected = expected_race_ids - eligible_races.keys()
+    if unknown_expected:
+        raise ResultsIngestError(
+            f"expected race ids are not publication-eligible in the inventory: "
+            f"{sorted(unknown_expected)}"
+        )
+    if not expected_race_ids:
+        raise ResultsIngestError("no race is expected from this ingest run")
+    return [eligible_races[race_id] for race_id in expected_race_ids]
+
+
+def resolve_and_build_expected_races[RawItem](
+    items: list[tuple[str, RawItem]],
+    candidate_races: list[Race],
+    expected_race_ids: frozenset[str],
+    *,
+    resolve: Callable[[str, list[Race]], Race | None],
+    build: Callable[[Race, RawItem], RaceResults],
+    export_label: str,
+) -> list[RaceResults]:
+    """Resolve each `(contest_name, raw_item)` pair against `candidate_races`
+    via `resolve`, build one `RaceResults` per resolved race via `build`, and
+    abort if two contests resolve to the same race or if any
+    `expected_race_ids` entry is never resolved. Shared by every export
+    adapter's own per-run entry point so the "resolve exactly the expected
+    races, never guessed" policy has one implementation rather than a copy
+    per adapter."""
+    race_results: list[RaceResults] = []
+    seen_contest_by_race: dict[str, str] = {}
+    for contest_name, raw_item in items:
+        race = resolve(contest_name, candidate_races)
+        if race is None:
+            continue
+        if race.id in seen_contest_by_race:
+            raise ResultsIngestError(
+                f"{export_label} contests {seen_contest_by_race[race.id]!r} and "
+                f"{contest_name!r} both resolved to race {race.id!r}"
+            )
+        seen_contest_by_race[race.id] = contest_name
+        race_results.append(build(race, raw_item))
+
+    missing = expected_race_ids - seen_contest_by_race.keys()
+    if missing:
+        raise ResultsIngestError(
+            f"{export_label} did not include {len(missing)} expected race(s): {sorted(missing)}"
+        )
+    return race_results
+
+
+def validate_resolved_tallies(
+    race: Race,
+    resolved_choice_ids: list[str],
+    declared_votes: int,
+    authority_total: int,
+    *,
+    export_label: str,
+    authority_total_label: str,
+) -> None:
+    """Abort unless one race's resolved tallies are complete and countable:
+    the export resolved at least one ballot choice, it resolved *every*
+    declared choice the inventory names, the authority states a positive
+    `authority_total` of its own (`authority_total_label` is that count's
+    name in the export — King County's `ballots-with-contest`, the Secretary
+    of State's `voteTotal`), and the declared choices drew votes at all.
+    `resolved_choice_ids` is each tally row's resolved choice id, in tally
+    order, so an empty list means the export carried no resolvable choice.
+    Shared by every export adapter's own per-race tally construction
+    (`_build_race_results` here;
+    `results.ingest_secretary_of_state._build_sos_race_results`)."""
+    if not resolved_choice_ids:
+        raise ResultsIngestError(
+            f"{export_label} has no resolvable ballot choices for race {race.id!r}"
+        )
+    # Each adapter's own tally loop only ever proves that every *exported*
+    # row resolves to a known choice; a row missing entirely from a truncated
+    # or malformed export is invisible to it. Without this check a missing
+    # choice would silently renormalize `share` over the survivors -- the
+    # schema's "shares sum to ~1" invariant (results/models.py) is satisfied
+    # either way, so nothing downstream would ever catch it (verified:
+    # dropping one of the fixture's four Assessor candidates still produces a
+    # `results validate`-clean file, with the remaining candidates' shares
+    # inflated to fill the gap). Every declared ballot choice the inventory
+    # names for this race must appear in the export, or this aborts.
+    missing_choice_ids = {choice.id for choice in race.choices} - set(resolved_choice_ids)
+    if missing_choice_ids:
+        raise ResultsIngestError(
+            f"{export_label} for race {race.id!r} is missing "
+            f"{len(missing_choice_ids)} declared ballot choice(s): {sorted(missing_choice_ids)}"
+        )
+    if authority_total <= 0:
+        raise ResultsIngestError(
+            f"{export_label} reports zero {authority_total_label} for race {race.id!r}"
+        )
+    if declared_votes <= 0:
+        raise ResultsIngestError(
+            f"{export_label} reports zero votes for every declared ballot choice in race "
+            f"{race.id!r}; only write-in rows carry votes"
+        )
+
+
+def rank_tallies_into_outcomes(
+    tallies: list[tuple[str, int]],
+    ballot_order: dict[str, int],
+    declared_votes: int,
+    *,
+    top_count: int,
+) -> list[RaceOutcome]:
+    """Rank resolved `(choice_id, votes)` tallies by votes descending, ties
+    broken by the ballot's own printed order, and mark the top `top_count` as
+    advancing — top-two for a candidate race, the single winner for a
+    measure's two declared choices. Shared by every export adapter's own
+    per-race tally construction (`_build_race_results` here;
+    `results.ingest_secretary_of_state._build_sos_race_results`)."""
+    ranked = sorted(tallies, key=lambda pair: (-pair[1], ballot_order[pair[0]]))
+    advancing_ids = {choice_id for choice_id, _ in ranked[:top_count]}
+    return [
+        RaceOutcome(
+            choice_id=choice_id,
+            votes=votes,
+            share=round(votes / declared_votes, 4),
+            advanced=choice_id in advancing_ids,
+        )
+        for choice_id, votes in sorted(tallies, key=lambda pair: ballot_order[pair[0]])
+    ]
 
 
 def build_election_results(
@@ -280,49 +452,38 @@ def build_election_results(
     races' partial county tallies as if they were final; naming the expected
     races explicitly is how an operator honors that decision instead.
     """
-    eligible_races = {race.id: race for race in inventory.races if race.publication_eligible}
-    unknown_expected = expected_race_ids - eligible_races.keys()
-    if unknown_expected:
-        raise ResultsIngestError(
-            f"expected race ids are not publication-eligible in the inventory: "
-            f"{sorted(unknown_expected)}"
-        )
-    if not expected_race_ids:
-        raise ResultsIngestError("no race is expected from this ingest run")
-    candidate_races = [eligible_races[race_id] for race_id in expected_race_ids]
+    candidate_races = resolve_expected_races(inventory, expected_race_ids)
+
+    certified_evidence = next(
+        (capture.evidence for capture in captures if capture.kind == "certified"), None
+    )
+    if certified_evidence is None:
+        raise ResultsIngestError("no certified capture was given for this ingest run")
 
     by_contest = parse_certified_csv(csv_content)
-    race_results: list[RaceResults] = []
-    seen_contest_by_race: dict[str, str] = {}
-    for contest_text, contest_rows in by_contest.items():
-        race = resolve_race(contest_text, candidate_races)
-        if race is None:
-            continue
-        if race.id in seen_contest_by_race:
-            raise ResultsIngestError(
-                f"certified export contests {seen_contest_by_race[race.id]!r} and "
-                f"{contest_text!r} both resolved to race {race.id!r}"
-            )
-        seen_contest_by_race[race.id] = contest_text
-        race_results.append(_build_race_results(race, contest_rows))
-
-    missing = expected_race_ids - seen_contest_by_race.keys()
-    if missing:
-        raise ResultsIngestError(
-            f"certified export did not include {len(missing)} expected race(s): {sorted(missing)}"
-        )
+    race_results = resolve_and_build_expected_races(
+        list(by_contest.items()),
+        candidate_races,
+        expected_race_ids,
+        resolve=resolve_race,
+        build=lambda race, contest_rows: _build_race_results(
+            race, contest_rows, authority=authority, capture_evidence=certified_evidence
+        ),
+        export_label="certified export",
+    )
 
     return ElectionResults(
         election_id=inventory.election.id,
         status="certified",
         certified_on=certified_on,
-        authority=authority,
         captures=captures,
         races=sorted(race_results, key=lambda result: result.race_id),
     )
 
 
-def _build_race_results(race: Race, contest_rows: ContestRows) -> RaceResults:
+def _build_race_results(
+    race: Race, contest_rows: ContestRows, *, authority: str, capture_evidence: str
+) -> RaceResults:
     """One race's tallies, with two different counts doing two jobs.
 
     `ballots_counted` is `ballots_with_contest` — King County's own count of
@@ -366,51 +527,27 @@ def _build_race_results(race: Race, contest_rows: ContestRows) -> RaceResults:
             continue
         declared_votes += votes
         tallies.append((choice, votes))
-    if not tallies:
-        raise ResultsIngestError(
-            f"certified export has no resolvable ballot choices for race {race.id!r}"
-        )
-    # The loop above only ever proves that every *exported* row resolves to
-    # a known choice; a row missing entirely from a truncated or malformed
-    # export is invisible to it. Without this check a missing choice would
-    # silently renormalize `share` over the survivors -- the schema's
-    # "shares sum to ~1" invariant (results/models.py) is satisfied either
-    # way, so nothing downstream would ever catch it (verified: dropping one
-    # of the fixture's four Assessor candidates still produces a
-    # `results validate`-clean file, with the remaining candidates' shares
-    # inflated to fill the gap). Every declared ballot choice the inventory
-    # names for this race must appear in the export, or this aborts.
-    resolved_ids = {choice.id for choice, _ in tallies}
-    missing_choice_ids = {choice.id for choice in race.choices} - resolved_ids
-    if missing_choice_ids:
-        raise ResultsIngestError(
-            f"certified export for race {race.id!r} is missing "
-            f"{len(missing_choice_ids)} declared ballot choice(s): {sorted(missing_choice_ids)}"
-        )
-    if contest_rows.ballots_with_contest <= 0:
-        raise ResultsIngestError(
-            f"certified export reports zero ballots-with-contest for race {race.id!r}"
-        )
-    if declared_votes <= 0:
-        raise ResultsIngestError(
-            f"certified export reports zero votes for every declared ballot choice in race "
-            f"{race.id!r}; only write-in rows carry votes"
-        )
+    validate_resolved_tallies(
+        race,
+        [choice.id for choice, _ in tallies],
+        declared_votes,
+        contest_rows.ballots_with_contest,
+        export_label="certified export",
+        authority_total_label="ballots-with-contest",
+    )
 
+    ballot_order = {choice.id: choice.ballot_order for choice in race.choices}
     top_count = 1 if race.race_type == "measure" else 2
-    ranked = sorted(tallies, key=lambda item: (-item[1], item[0].ballot_order))
-    advancing_ids = {choice.id for choice, _ in ranked[:top_count]}
-    outcomes = [
-        RaceOutcome(
-            choice_id=choice.id,
-            votes=votes,
-            share=round(votes / declared_votes, 4),
-            advanced=choice.id in advancing_ids,
-        )
-        for choice, votes in sorted(tallies, key=lambda item: item[0].ballot_order)
-    ]
+    outcomes = rank_tallies_into_outcomes(
+        [(choice.id, votes) for choice, votes in tallies],
+        ballot_order,
+        declared_votes,
+        top_count=top_count,
+    )
     return RaceResults(
         race_id=race.id,
+        authority=authority,
+        capture_evidence=capture_evidence,
         ballots_counted=contest_rows.ballots_with_contest,
         outcomes=outcomes,
     )

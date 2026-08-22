@@ -66,7 +66,6 @@ evidence-capture, hashing, and provenance discipline as endorsements (`docs/EVID
 election_id: wa-2026-primary
 status: certified          # counting | certified | amended
 certified_on: 2026-08-18
-authority: King County Elections
 captures:
   - kind: election_night   # evidence only, never rendered
     captured_at: 2026-08-04T20:35:00-07:00
@@ -76,6 +75,8 @@ captures:
     evidence: data/manifests/evidence/capture-kc-results-….json
 races:
   - race_id: king-county-council-8
+    authority: King County Elections
+    capture_evidence: data/manifests/evidence/capture-kc-results-….json
     ballots_counted: 61234
     outcomes:
       - choice_id: king-county-council-8--teresa-mosqueda
@@ -84,10 +85,17 @@ races:
         advanced: true     # the choice that prevailed (see below)
 ```
 
+`authority` and `capture_evidence` are per race, not per file: a file can hold races from more
+than one counting authority ("Per-race authority and evidence" addendum below, #417).
+`capture_evidence` names one of the file's own `captures[].evidence` entries — never
+`election_night`, which is evidence only and never rendered or linked.
+
 `ballots_counted` is the authority's own count of ballots that carried the contest (its
-`BallotsWith Contest` figure, for King County's certified CSV export); `share` is a choice's votes
-over the *declared* (non-write-in) vote total, so a race's shares sum to ~1 whatever its write-in
-tally is. See "Ingestion mechanics," Write-in votes, for why these are three separate totals.
+`BallotsWith Contest` figure, for King County's certified CSV export) — or, for an authority whose
+export states no such figure, `votes_counted`, a vote total including write-ins (see the addendum
+below). Exactly one of the two is present per race, never both. `share` is a choice's votes over
+the *declared* (non-write-in) vote total, so a race's shares sum to ~1 whatever its write-in tally
+is. See "Ingestion mechanics," Write-in votes, for why these are separate totals.
 
 `advanced` marks the choice that prevailed, for every race type — the rendered label is read off
 it together with the race type and with *which* choice carries it: a primary's "Advances", a
@@ -174,7 +182,7 @@ counts update; that is not how this site works.
 
 A certified race card keeps its identity — office, recommendation, consensus meter — and grows a
 results strip below a rule: per-candidate tally rows (name, chip, share, bar) and a provenance
-line (ballots counted, authority, capture link). Between election day and certification, a
+line (count, authority, evidence link). Between election day and certification, a
 candidate race card renders unchanged — no counting indicator of any kind. The election-day
 banner alone carries the counting-window message (see "The election-day banner" above); repeating
 it on every race card was redundant, not reinforcing, and #344 removed the interim per-card note
@@ -308,7 +316,9 @@ get a silent partial-county tally) rather than including whatever a King-County-
 happens to contain: the live
 wa-2026-primary run omits the cross-county races from the King-County-sourced ingest until a
 Secretary-of-State-scoped adapter exists to state their true totals, tracked as a follow-up
-rather than fabricated here.
+rather than fabricated here. *(Built by #417 — see "Per-race authority and evidence" below. This
+paragraph's own account of #284's scope at the time it landed stands unchanged; the follow-up it
+named is no longer outstanding.)*
 
 **Write-in votes.** A write-in row is never a ballot choice — this schema enumerates only the
 choices the frozen inventory carries. The adapter keeps three totals distinct rather than
@@ -359,7 +369,7 @@ questions" previously tracked as the ballot-measures mockup pass (now removed fr
 below), without exercising the "if thresholds are to be rendered" branch of #289's own scope note
 — there is no threshold field to source, so no #283 schema follow-up is needed.
 
-Same provenance line (ballots counted · authority · capture link) and same "Certified ·
+Same provenance line (count · authority · evidence link) and same "Certified ·
 `<date>`" badge as candidate cards — nothing measure-specific there either. This applies
 identically wherever the certified results data renders: the race card and the race-detail
 page render it through the shared tally-row component exactly as above ("Race cards", #286;
@@ -389,7 +399,7 @@ no point publishing results at all if the winner might be missing from them.
 under the race header, above the lens bar, above every candidate. It is the race card's own RESULT
 block (`.race-results`, "Race cards" above) — eyebrow, "Certified · `<date>`" badge, one tally
 row per outcome in finish order with chip, share, and bar on one shared full-width scale, then the
-provenance line (ballots counted, authority, capture link). The per-candidate vote-share row is
+provenance line (count, authority, evidence link). The per-candidate vote-share row is
 removed; each candidate section keeps its chip. The block is left-adjusted on the race name's own
 edge and capped so a bar stays readable on a wide page.
 
@@ -500,11 +510,56 @@ gate; no file, no page, no link. The page itself is a full page in the election'
 authored, dated prose, so it carries the same shared shell script every static site-wide page
 does rather than a dedicated client entry module.
 
+## Per-race authority and evidence (2026-08-22 addendum, #417)
+
+Ingesting the Secretary of State's statewide export for the eight races whose district crosses a
+county line (Legislative District 32, Congressional District 9, the four Supreme Court Justice
+positions — "Ingestion mechanics," County scope, above) needed two schema changes `ElectionResults`
+could not previously state.
+
+**Authority and capture evidence moved to the race.** `ElectionResults.authority` was a single
+file-level scalar; a results file could name only one counting authority for every race it held.
+`RaceResults` now carries its own `authority` and `capture_evidence` (naming one of the file's
+`captures[].evidence` entries — validated to exist and to be non-`election_night`,
+`results/validation.py`). King County's 24 races and the Secretary of State's eight both live in
+`data/results/wa-2026-primary.yaml`, each stating the authority and capture that actually
+produced its own tally. The provenance line's evidence link (below) is resolved the same way:
+per race, not once for the whole file.
+
+**A fourth distinct total: `votes_counted`.** The Secretary of State's export states no
+ballots-with-contest analogue at all — confirmed against the committed export: per-item `turnout`
+is `null`, `voterTurnout` is `[]`, `ballotItemWithBreakdown` is `null`. Its `voteTotal` is a vote
+count including write-ins, a different and smaller quantity than a ballots-with-contest figure
+(on King County Assessor, where both are known: 534,500 ballots-with-contest against 492,609 total
+votes — 7.8% apart, the gap being the over- and under-voted ballots a vote count structurally
+cannot see). `RaceResults` now carries `votes_counted` alongside `ballots_counted`, exactly one of
+the two present per race, so this schema's existing rule — never collapse two distinct totals
+into one to make two sources look alike — extends to a fourth quantity rather than mislabeling it
+under `ballots_counted`. The eight Secretary-of-State-sourced races render their provenance line
+as `142,356 votes · Washington Secretary of State · evidence`; the 24 King-County-sourced races
+render unchanged, `534,500 ballots · King County Elections · evidence`.
+
+**The provenance link's word changed from `capture` to `evidence`, for all 32 races.** `capture`
+was internal capture-pipeline vocabulary (`capture_id`, `CaptureRequest`,
+`election-guide evidence capture`) that had leaked into this one piece of reader-facing copy with
+no explanation anywhere on the site. `evidence` is already the site's established reader-facing
+term for this exact link — "The source panel is versioned, not frozen forever" (above) already
+tells readers to "use the same evidence links to confirm the exact snapshot behind any race," and
+`evidence_url` is the field name backing every other evidence link on the site (Sources page,
+About page). This is a one-word link-text change in the shared `result_block` macro
+(`rendering/templates/_results.html.j2`); the King County races' underlying data —
+`votes`, `share`, `advanced`, `ballots_counted`, `authority` — is unchanged.
+
+This resolves what "Open questions" previously tracked as Secretary of State ingestion (now
+removed from that list below), via a new sibling adapter,
+`results.ingest_secretary_of_state` — a different source and format from King County's certified
+CSV, so it does not extend `results/ingest.py`, exactly as that module's own docstring anticipated
+("Ingesting them needs an adapter for a different source and a different format"). A new CLI
+command, `results ingest-secretary-of-state`, merges its races into the file `results ingest`
+already produced (`results.merge_race_results`) rather than building one from scratch — there was
+previously no merge path at all, since `results ingest` always builds an entire file from one
+export.
+
 ## Open questions
 
-- **Secretary of State ingestion** — parsing `results.votewa.gov`'s JSON export for the races
-  King County's canvass cannot state the true total for (Legislative District 32, Congressional
-  District 9, and the four Supreme Court Justice positions). Not built by #284 and no tracked
-  issue exists yet for it — file or pick up that follow-up before those races' true totals are
-  needed (`docs/runbooks/results-certified-ingest.md`, Escalation).
 - **Amended flow detail** — decided concretely when a recount first happens.

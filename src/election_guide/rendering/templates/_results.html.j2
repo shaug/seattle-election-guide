@@ -60,6 +60,6 @@
                 </div>
                 {% endfor %}
               </div>
-              <p class="race-results-provenance">{{ view.ballots_counted_label }} ballots · {{ view.authority }}{% if view.capture_url %} · <a href="{{ view.capture_url }}"{{ external_link_attributes }}>capture</a>{% endif %}</p>
+              <p class="race-results-provenance">{{ view.count_label }} · {{ view.authority }}{% if view.capture_url %} · <a href="{{ view.capture_url }}"{{ external_link_attributes }}>evidence</a>{% endif %}</p>
             </div>
 {%- endmacro %}
