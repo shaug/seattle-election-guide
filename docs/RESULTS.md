@@ -316,7 +316,9 @@ get a silent partial-county tally) rather than including whatever a King-County-
 happens to contain: the live
 wa-2026-primary run omits the cross-county races from the King-County-sourced ingest until a
 Secretary-of-State-scoped adapter exists to state their true totals, tracked as a follow-up
-rather than fabricated here.
+rather than fabricated here. *(Built by #417 — see "Per-race authority and evidence" below. This
+paragraph's own account of #284's scope at the time it landed stands unchanged; the follow-up it
+named is no longer outstanding.)*
 
 **Write-in votes.** A write-in row is never a ballot choice — this schema enumerates only the
 choices the frozen inventory carries. The adapter keeps three totals distinct rather than
