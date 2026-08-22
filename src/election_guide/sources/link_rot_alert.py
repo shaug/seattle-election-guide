@@ -20,7 +20,13 @@ from __future__ import annotations
 import errno
 import re
 
-from election_guide.collection.http import MAX_REDIRECTS
+from election_guide.collection.http import (
+    DEADLINE_EXCEEDED,
+    HTTP_STATUS_PREFIX,
+    HTTPS_DOWNGRADE_REFUSED,
+    REDIRECT_LIMIT_EXCEEDED,
+    TOTAL_TIMEOUT_EXCEEDED,
+)
 from election_guide.single_issue_alert import (
     AlertAction,
     OpenAlert,
@@ -39,17 +45,20 @@ ISSUE_LABELS: tuple[str, ...] = ("type: ops", "area: operations")
 # answer describes the request -- who asked, how often, from where.
 _GONE_HTTP_STATUSES = frozenset({404, 410})
 
-_HTTP_STATUS = re.compile(r"live collection returned HTTP (\d+)")
+_HTTP_STATUS = re.compile(re.escape(HTTP_STATUS_PREFIX) + r"(\d+)")
 
 # Causes that say how a site answered a robot rather than whether its page
-# still exists. Matched as substrings because `fetch_http` re-raises each of
-# these wrapped as `f"live collection failed: {cause}"`, and the timeout that
-# trips the outer deadline check arrives as that flat message on its own.
+# still exists. Every one is imported from the module that raises it, never
+# spelled again here: a copy would keep matching its own prose after
+# `fetch_http` reworded the real message, and silently flip that cause back to
+# rot-confirming. Matched as substrings because `fetch_http` re-raises most of
+# these wrapped in its own failure prefix, and the timeout that trips the outer
+# deadline check arrives as that flat message on its own.
 _INCONCLUSIVE_CAUSES = (
-    "live collection failed: total timeout exceeded",
-    "live collection exceeded its total timeout",
-    f"live collection exceeded {MAX_REDIRECTS} redirects",
-    "live collection refuses an HTTPS downgrade redirect",
+    TOTAL_TIMEOUT_EXCEEDED,
+    DEADLINE_EXCEEDED,
+    REDIRECT_LIMIT_EXCEEDED,
+    HTTPS_DOWNGRADE_REFUSED,
     # A timeout in an `OSError`'s clothing. `EBADF` means the socket was
     # closed underneath an in-flight operation, and the only thing that does
     # that here is `fetch_http`'s own `threading.Timer(..., peer.close)`

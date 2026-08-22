@@ -61,6 +61,13 @@ def _result(source_id: str, url: str, *, ok: bool, error: str | None = None) -> 
 # shape every failure in issue #399 actually took. The bare causes below are
 # how issue #406 quotes them; both forms are exercised, because the bare form
 # is the contract as written and the wrapped form is the one that arrives.
+#
+# These are spelled out as prose on purpose, rather than imported from
+# `election_guide.collection.http` the way the classifier itself now is. The
+# classifier follows a reworded constant automatically; only an independent
+# copy of the expected text can notice that the constant no longer says what
+# the check was built to recognize. Rewording one of those constants without
+# meaning to turns this file red, which is the whole point of it.
 INCONCLUSIVE_CAUSES = (
     "live collection returned HTTP 401",
     "live collection returned HTTP 403",
