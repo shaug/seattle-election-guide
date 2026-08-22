@@ -44,7 +44,11 @@ def validate_results_evidence(
 ) -> None:
     """Require every capture reference — and an amendment's superseded
     capture — to resolve to a real, validated evidence manifest
-    (docs/RESULTS.md, Data model; docs/EVIDENCE_CAPTURE.md)."""
+    (docs/RESULTS.md, Data model; docs/EVIDENCE_CAPTURE.md). Also require
+    every race's own `capture_evidence` to name one of this file's
+    non-`election_night` captures (issue #417): `election_night` evidence is
+    retained but never rendered (docs/RESULTS.md, "The results lifecycle"),
+    so it is never a legitimate source for a race's own stated tally."""
     references = [capture.evidence for capture in results.captures]
     if results.supersedes is not None:
         references.append(results.supersedes)
@@ -56,3 +60,12 @@ def validate_results_evidence(
                 f"results evidence reference {reference!r} does not resolve to a valid "
                 f"evidence manifest: {error}"
             ) from error
+    citable_evidence = {
+        capture.evidence for capture in results.captures if capture.kind != "election_night"
+    }
+    for race in results.races:
+        if race.capture_evidence not in citable_evidence:
+            raise ValueError(
+                f"race {race.race_id!r} cites capture evidence {race.capture_evidence!r} that "
+                "is not one of this file's own non-election-night captures"
+            )

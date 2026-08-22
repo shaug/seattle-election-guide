@@ -1,12 +1,16 @@
-authority: King County Elections
 captures:
 - captured_at: '2026-08-19T23:13:38Z'
   evidence: data/manifests/evidence/capture-king-county-elections-20260819T231338Z-01494a742bca.json
   kind: certified
+- captured_at: '2026-08-19T23:16:43Z'
+  evidence: data/manifests/evidence/capture-wa-secretary-of-state-20260819T231643Z-a17ab1addf26.json
+  kind: certified
 certified_on: '2026-08-18'
 election_id: wa-2026-primary
 races:
-- ballots_counted: 534500
+- authority: King County Elections
+  ballots_counted: 534500
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20260819T231338Z-01494a742bca.json
   outcomes:
   - advanced: true
     choice_id: king-county-assessor--dominique-m-scarimbolo
@@ -25,7 +29,10 @@ races:
     share: 0.1482
     votes: 72783
   race_id: king-county-assessor
-- ballots_counted: 67150
+  votes_counted: null
+- authority: King County Elections
+  ballots_counted: 67150
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20260819T231338Z-01494a742bca.json
   outcomes:
   - advanced: false
     choice_id: king-county-council-2--miriam-mboya
@@ -40,7 +47,10 @@ races:
     share: 0.5604
     votes: 35247
   race_id: king-county-council-2
-- ballots_counted: 63690
+  votes_counted: null
+- authority: King County Elections
+  ballots_counted: 63690
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20260819T231338Z-01494a742bca.json
   outcomes:
   - advanced: false
     choice_id: king-county-council-8--mia-jacobson
@@ -55,7 +65,10 @@ races:
     share: 0.25
     votes: 15000
   race_id: king-county-council-8
-- ballots_counted: 26500
+  votes_counted: null
+- authority: King County Elections
+  ballots_counted: 26500
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20260819T231338Z-01494a742bca.json
   outcomes:
   - advanced: true
     choice_id: ld-11-state-representative-1--ashley-fedan
@@ -70,21 +83,92 @@ races:
     share: 0.4241
     votes: 10998
   race_id: ld-11-state-representative-1
-- ballots_counted: 26500
+  votes_counted: null
+- authority: King County Elections
+  ballots_counted: 26500
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20260819T231338Z-01494a742bca.json
   outcomes:
   - advanced: true
     choice_id: ld-11-state-representative-2--steve-bergquist
     share: 1.0
     votes: 19576
   race_id: ld-11-state-representative-2
-- ballots_counted: 44200
+  votes_counted: null
+- authority: Washington Secretary of State
+  ballots_counted: null
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20260819T231643Z-a17ab1addf26.json
+  outcomes:
+  - advanced: false
+    choice_id: ld-32-state-representative-1--jenna-nand
+    share: 0.092
+    votes: 3697
+  - advanced: false
+    choice_id: ld-32-state-representative-1--will-chen
+    share: 0.1098
+    votes: 4415
+  - advanced: true
+    choice_id: ld-32-state-representative-1--keith-scully
+    share: 0.2661
+    votes: 10698
+  - advanced: true
+    choice_id: ld-32-state-representative-1--danica-noble
+    share: 0.2422
+    votes: 9735
+  - advanced: false
+    choice_id: ld-32-state-representative-1--lisa-rezac
+    share: 0.1893
+    votes: 7612
+  - advanced: false
+    choice_id: ld-32-state-representative-1--chris-bloomquist
+    share: 0.1006
+    votes: 4044
+  race_id: ld-32-state-representative-1
+  votes_counted: 40234
+- authority: Washington Secretary of State
+  ballots_counted: null
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20260819T231643Z-a17ab1addf26.json
+  outcomes:
+  - advanced: true
+    choice_id: ld-32-state-representative-2--lauren-davis
+    share: 0.7317
+    votes: 26708
+  - advanced: true
+    choice_id: ld-32-state-representative-2--imraan-siddiqi
+    share: 0.2683
+    votes: 9791
+  race_id: ld-32-state-representative-2
+  votes_counted: 37293
+- authority: Washington Secretary of State
+  ballots_counted: null
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20260819T231643Z-a17ab1addf26.json
+  outcomes:
+  - advanced: true
+    choice_id: ld-32-state-senator--cindy-ryu
+    share: 0.4424
+    votes: 17876
+  - advanced: false
+    choice_id: ld-32-state-senator--ira-mcbee
+    share: 0.1809
+    votes: 7312
+  - advanced: true
+    choice_id: ld-32-state-senator--jesse-salomon
+    share: 0.3767
+    votes: 15221
+  race_id: ld-32-state-senator
+  votes_counted: 40458
+- authority: King County Elections
+  ballots_counted: 44200
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20260819T231338Z-01494a742bca.json
   outcomes:
   - advanced: true
     choice_id: ld-34-state-representative-1--brianna-k-thomas
     share: 1.0
     votes: 34217
   race_id: ld-34-state-representative-1
-- ballots_counted: 44200
+  votes_counted: null
+- authority: King County Elections
+  ballots_counted: 44200
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20260819T231338Z-01494a742bca.json
   outcomes:
   - advanced: true
     choice_id: ld-34-state-representative-2--joe-fitzgibbon
@@ -95,28 +179,40 @@ races:
     share: 0.2458
     votes: 9999
   race_id: ld-34-state-representative-2
-- ballots_counted: 44200
+  votes_counted: null
+- authority: King County Elections
+  ballots_counted: 44200
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20260819T231338Z-01494a742bca.json
   outcomes:
   - advanced: true
     choice_id: ld-34-state-senator--emily-alvarado
     share: 1.0
     votes: 34790
   race_id: ld-34-state-senator
-- ballots_counted: 49976
+  votes_counted: null
+- authority: King County Elections
+  ballots_counted: 49976
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20260819T231338Z-01494a742bca.json
   outcomes:
   - advanced: true
     choice_id: ld-36-state-representative-1--julia-grant-reed
     share: 1.0
     votes: 40696
   race_id: ld-36-state-representative-1
-- ballots_counted: 49976
+  votes_counted: null
+- authority: King County Elections
+  ballots_counted: 49976
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20260819T231338Z-01494a742bca.json
   outcomes:
   - advanced: true
     choice_id: ld-36-state-representative-2--liz-berry
     share: 1.0
     votes: 40870
   race_id: ld-36-state-representative-2
-- ballots_counted: 49976
+  votes_counted: null
+- authority: King County Elections
+  ballots_counted: 49976
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20260819T231338Z-01494a742bca.json
   outcomes:
   - advanced: true
     choice_id: ld-36-state-senator--noel-c-frame
@@ -127,7 +223,10 @@ races:
     share: 0.1213
     votes: 5876
   race_id: ld-36-state-senator
-- ballots_counted: 40955
+  votes_counted: null
+- authority: King County Elections
+  ballots_counted: 40955
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20260819T231338Z-01494a742bca.json
   outcomes:
   - advanced: true
     choice_id: ld-37-state-representative-1--sharon-tomiko-santos
@@ -138,7 +237,10 @@ races:
     share: 0.518
     votes: 19902
   race_id: ld-37-state-representative-1
-- ballots_counted: 40955
+  votes_counted: null
+- authority: King County Elections
+  ballots_counted: 40955
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20260819T231338Z-01494a742bca.json
   outcomes:
   - advanced: true
     choice_id: ld-37-state-representative-2--jaelynn-scott
@@ -149,7 +251,10 @@ races:
     share: 0.1095
     votes: 4143
   race_id: ld-37-state-representative-2
-- ballots_counted: 40955
+  votes_counted: null
+- authority: King County Elections
+  ballots_counted: 40955
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20260819T231338Z-01494a742bca.json
   outcomes:
   - advanced: true
     choice_id: ld-37-state-senator--chipalo-street
@@ -160,7 +265,10 @@ races:
     share: 0.2565
     votes: 9729
   race_id: ld-37-state-senator
-- ballots_counted: 39205
+  votes_counted: null
+- authority: King County Elections
+  ballots_counted: 39205
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20260819T231338Z-01494a742bca.json
   outcomes:
   - advanced: true
     choice_id: ld-43-state-representative-1--nicole-macri
@@ -171,14 +279,20 @@ races:
     share: 0.0745
     votes: 2647
   race_id: ld-43-state-representative-1
-- ballots_counted: 39205
+  votes_counted: null
+- authority: King County Elections
+  ballots_counted: 39205
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20260819T231338Z-01494a742bca.json
   outcomes:
   - advanced: true
     choice_id: ld-43-state-representative-2--shaun-scott
     share: 1.0
     votes: 29474
   race_id: ld-43-state-representative-2
-- ballots_counted: 39205
+  votes_counted: null
+- authority: King County Elections
+  ballots_counted: 39205
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20260819T231338Z-01494a742bca.json
   outcomes:
   - advanced: true
     choice_id: ld-43-state-senator--hannah-sabio-howell
@@ -193,7 +307,10 @@ races:
     share: 0.6684
     votes: 25454
   race_id: ld-43-state-senator
-- ballots_counted: 46753
+  votes_counted: null
+- authority: King County Elections
+  ballots_counted: 46753
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20260819T231338Z-01494a742bca.json
   outcomes:
   - advanced: true
     choice_id: ld-46-state-representative-1--gerry-pollet
@@ -208,7 +325,10 @@ races:
     share: 0.31
     votes: 13592
   race_id: ld-46-state-representative-1
-- ballots_counted: 46753
+  votes_counted: null
+- authority: King County Elections
+  ballots_counted: 46753
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20260819T231338Z-01494a742bca.json
   outcomes:
   - advanced: true
     choice_id: ld-46-state-representative-2--darya-farivar
@@ -219,7 +339,10 @@ races:
     share: 0.1002
     votes: 4386
   race_id: ld-46-state-representative-2
-- ballots_counted: 46753
+  votes_counted: null
+- authority: King County Elections
+  ballots_counted: 46753
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20260819T231338Z-01494a742bca.json
   outcomes:
   - advanced: true
     choice_id: ld-46-state-senator--javier-valdez
@@ -230,7 +353,10 @@ races:
     share: 0.092
     votes: 4153
   race_id: ld-46-state-senator
-- ballots_counted: 31627
+  votes_counted: null
+- authority: King County Elections
+  ballots_counted: 31627
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20260819T231338Z-01494a742bca.json
   outcomes:
   - advanced: false
     choice_id: seattle-city-council-5--dimitri-georgakopoulos
@@ -249,7 +375,10 @@ races:
     share: 0.5408
     votes: 16287
   race_id: seattle-city-council-5
-- ballots_counted: 212419
+  votes_counted: null
+- authority: King County Elections
+  ballots_counted: 212419
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20260819T231338Z-01494a742bca.json
   outcomes:
   - advanced: false
     choice_id: seattle-municipal-court-judge-5--lindsay-calkins
@@ -264,7 +393,10 @@ races:
     share: 0.5481
     votes: 105878
   race_id: seattle-municipal-court-judge-5
-- ballots_counted: 212187
+  votes_counted: null
+- authority: King County Elections
+  ballots_counted: 212187
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20260819T231338Z-01494a742bca.json
   outcomes:
   - advanced: true
     choice_id: seattle-proposition-1-library-levy--yes
@@ -275,7 +407,90 @@ races:
     share: 0.2496
     votes: 52055
   race_id: seattle-proposition-1-library-levy
-- ballots_counted: 221294
+  votes_counted: null
+- authority: Washington Secretary of State
+  ballots_counted: null
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20260819T231643Z-a17ab1addf26.json
+  outcomes:
+  - advanced: true
+    choice_id: supreme-court-justice-1--colleen-melody
+    share: 0.5303
+    votes: 923965
+  - advanced: false
+    choice_id: supreme-court-justice-1--laura-christensen-colberg
+    share: 0.1751
+    votes: 305110
+  - advanced: true
+    choice_id: supreme-court-justice-1--scott-edwards
+    share: 0.2946
+    votes: 513394
+  race_id: supreme-court-justice-1
+  votes_counted: 1746523
+- authority: Washington Secretary of State
+  ballots_counted: null
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20260819T231643Z-a17ab1addf26.json
+  outcomes:
+  - advanced: true
+    choice_id: supreme-court-justice-3--jaime-michelle-hawk
+    share: 0.3337
+    votes: 578979
+  - advanced: true
+    choice_id: supreme-court-justice-3--david-stevens
+    share: 0.3529
+    votes: 612267
+  - advanced: false
+    choice_id: supreme-court-justice-3--mike-diaz
+    share: 0.3134
+    votes: 543721
+  race_id: supreme-court-justice-3
+  votes_counted: 1739993
+- authority: Washington Secretary of State
+  ballots_counted: null
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20260819T231643Z-a17ab1addf26.json
+  outcomes:
+  - advanced: false
+    choice_id: supreme-court-justice-5--greg-miller
+    share: 0.1046
+    votes: 181542
+  - advanced: true
+    choice_id: supreme-court-justice-5--theo-angelis
+    share: 0.3592
+    votes: 623396
+  - advanced: true
+    choice_id: supreme-court-justice-5--dave-larson
+    share: 0.3224
+    votes: 559629
+  - advanced: false
+    choice_id: supreme-court-justice-5--sharonda-amamilo
+    share: 0.2138
+    votes: 371059
+  race_id: supreme-court-justice-5
+  votes_counted: 1739405
+- authority: Washington Secretary of State
+  ballots_counted: null
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20260819T231643Z-a17ab1addf26.json
+  outcomes:
+  - advanced: false
+    choice_id: supreme-court-justice-7--david-r-shelvey
+    share: 0.0625
+    votes: 107635
+  - advanced: true
+    choice_id: supreme-court-justice-7--debra-l-stephens
+    share: 0.545
+    votes: 938584
+  - advanced: false
+    choice_id: supreme-court-justice-7--karim-a-merchant
+    share: 0.1205
+    votes: 207603
+  - advanced: true
+    choice_id: supreme-court-justice-7--todd-a-bloom
+    share: 0.272
+    votes: 468347
+  race_id: supreme-court-justice-7
+  votes_counted: 1726149
+- authority: King County Elections
+  ballots_counted: 221294
+  capture_evidence: data/manifests/evidence/capture-king-county-elections-20260819T231338Z-01494a742bca.json
   outcomes:
   - advanced: false
     choice_id: us-house-7--david-w-blomstrom
@@ -294,6 +509,33 @@ races:
     share: 0.0348
     votes: 7519
   race_id: us-house-7
+  votes_counted: null
+- authority: Washington Secretary of State
+  ballots_counted: null
+  capture_evidence: data/manifests/evidence/capture-wa-secretary-of-state-20260819T231643Z-a17ab1addf26.json
+  outcomes:
+  - advanced: false
+    choice_id: us-house-9--jacob-perasso
+    share: 0.0112
+    votes: 1588
+  - advanced: false
+    choice_id: us-house-9--kshama-sawant
+    share: 0.1729
+    votes: 24583
+  - advanced: false
+    choice_id: us-house-9--melissa-chaudhry
+    share: 0.1253
+    votes: 17811
+  - advanced: true
+    choice_id: us-house-9--doug-basler
+    share: 0.2186
+    votes: 31070
+  - advanced: true
+    choice_id: us-house-9--adam-smith
+    share: 0.472
+    votes: 67095
+  race_id: us-house-9
+  votes_counted: 142356
 schema_version: '1.0'
 status: certified
 supersedes: null

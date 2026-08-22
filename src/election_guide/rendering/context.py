@@ -541,7 +541,7 @@ def comparison_result_outcomes(
             race_by_id[display.race_id],
             results=view_model.results,
             election_type=view_model.metadata.election_type,
-            capture_url=view_model.metadata.results_capture_url,
+            capture_urls=view_model.metadata.results_capture_urls,
         )
         if results is None:
             continue
@@ -1351,9 +1351,9 @@ class RaceResultOutcomeView:
 class RaceResultsView:
     """One race's certified RESULT block (docs/RESULTS.md, Rendering § Race
     cards, #286; § The race-detail page, #370): one tally row per outcome,
-    leader to trailing, plus the provenance line (ballots counted, authority,
-    capture link). Built once per race per render by `race_results_view`,
-    exactly as `MeterView` is for the endorsement meter.
+    leader to trailing, plus the provenance line (count, authority, evidence
+    link). Built once per race per render by `race_results_view`, exactly as
+    `MeterView` is for the endorsement meter.
 
     `outcomes` is every choice on the ballot, not only the endorsed ones --
     which is what lets the race-detail page state a complete result even
@@ -1365,13 +1365,16 @@ class RaceResultsView:
     the RESULT block's head badge, on a race card and a race page alike,
     distinct from `rendering.shell.month_day_year`'s full-month "August 19,
     2026" the banner uses."""
-    ballots_counted: int
-    ballots_counted_label: str
-    """"61,234" -- the ratified mockup's own thousands-grouped grammar
-    (docs/design/RESULTS_FINALIZATION_2026-08-02.html, the provenance line:
-    "61,234 ballots"). A real race's ballot count reaches six figures
-    (`tests/test_results.py`), where an ungrouped integer is a legibility
-    regression, not a cosmetic one."""
+    count_label: str
+    """"61,234 ballots" or "142,356 votes" -- the provenance line's own
+    thousands-grouped count, already carrying its unit word
+    (docs/design/RESULTS_FINALIZATION_2026-08-02.html for the ballots
+    grammar; issue #417 for the votes one, an authority whose export states
+    no ballots-with-contest analogue at all). The two quantities are never
+    interchangeable (docs/RESULTS.md's three-distinct-totals rule, extended
+    to a fourth by #417) so the view states whichever this race's own
+    `RaceResults` carries rather than a bare number the template would have
+    to relabel itself."""
     authority: str
     capture_url: str | None
     outcomes: tuple[RaceResultOutcomeView, ...]
@@ -1382,7 +1385,7 @@ def race_results_view(
     results: ElectionResults | None,
     *,
     election_type: str | None,
-    capture_url: str | None,
+    capture_urls: dict[str, str] | None,
 ) -> RaceResultsView | None:
     """The certified RESULT block for one race -- the race card's strip and
     the race-detail page's own block both -- or `None` while none is
@@ -1400,9 +1403,11 @@ def race_results_view(
     vocabulary: "Approved" when the winning choice is "Yes", "Rejected" when
     it is "No" (docs/RESULTS.md, "Ballot measures"; #348) -- reusing this same
     function and shape rather than a second one, exactly as #289 ratified.
-    `capture_url` is `view_model.metadata.results_capture_url`, resolved once
-    for the whole election (`release.builder.build_release`) rather than
-    reached for here.
+    `capture_urls` is `view_model.metadata.results_capture_urls`, keyed by
+    race id and resolved once for the whole election
+    (`release.builder.build_release`) rather than reached for here -- a
+    results file can hold races from more than one counting authority
+    (issue #417), so the link is per-race, not one value for the whole page.
     """
     if results is None:
         return None
@@ -1426,12 +1431,15 @@ def race_results_view(
     else:
         chip_label = "Advances" if election_type == "primary" else "Elected"
     sorted_outcomes = sorted(outcome_set.outcomes, key=lambda outcome: outcome.share, reverse=True)
+    if outcome_set.ballots_counted is not None:
+        count_label = f"{outcome_set.ballots_counted:,} ballots"
+    else:
+        count_label = f"{outcome_set.votes_counted:,} votes"
     return RaceResultsView(
         certified_on_label=f"{certified_on:%b} {certified_on.day}, {certified_on:%Y}",
-        ballots_counted=outcome_set.ballots_counted,
-        ballots_counted_label=f"{outcome_set.ballots_counted:,}",
-        authority=results.authority,
-        capture_url=capture_url,
+        count_label=count_label,
+        authority=outcome_set.authority,
+        capture_url=(capture_urls or {}).get(race.id),
         outcomes=tuple(
             RaceResultOutcomeView(
                 candidate_id=outcome.choice_id,

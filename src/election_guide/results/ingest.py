@@ -246,14 +246,53 @@ def resolve_choice(candidate_text: str, race: Race) -> BallotChoice | None:
     else that is unresolved or ambiguous."""
     if _is_write_in(candidate_text):
         return None
+    return resolve_ballot_choice(candidate_text, race)
+
+
+def resolve_ballot_choice(candidate_text: str, race: Race) -> BallotChoice:
+    """Match already-known-non-write-in candidate text against exactly one of
+    the race's ballot choices. Shared by every export adapter's own
+    write-in-aware resolver (`resolve_choice` here for King County's
+    name-sniffed write-in rows; `results/ingest_secretary_of_state.py`'s own
+    resolver for the Secretary of State's explicit `isWriteIn` flag) so the
+    "exactly one match, never guessed" resolution itself has one source."""
     normalized = normalize_match_text(candidate_text)
     hits = [choice for choice in race.choices if normalized in _candidate_match_terms(choice)]
     if len(hits) != 1:
         raise ResultsIngestError(
-            f"certified export choice {candidate_text!r} for race {race.id!r} matched "
-            f"{len(hits)} ballot choices, not exactly one"
+            f"export choice {candidate_text!r} for race {race.id!r} matched {len(hits)} ballot "
+            "choices, not exactly one"
         )
     return hits[0]
+
+
+def merge_race_results(
+    existing: ElectionResults,
+    additional_races: list[RaceResults],
+    additional_capture: ResultsCapture,
+) -> ElectionResults:
+    """Merge a second authority's races into an already-committed results
+    file (docs/RESULTS.md, "Ingestion mechanics," County scope; issue #417's
+    own "why this is not a King County ingest"). The existing file's own
+    races, captures, status, and certification date are untouched; the new
+    races and their capture are appended. Aborts rather than silently
+    overwriting if any new race id already exists in the file."""
+    duplicate_ids = {race.race_id for race in existing.races} & {
+        race.race_id for race in additional_races
+    }
+    if duplicate_ids:
+        raise ResultsIngestError(
+            f"results file for {existing.election_id!r} already has race(s): "
+            f"{sorted(duplicate_ids)}"
+        )
+    return existing.model_copy(
+        update={
+            "captures": [*existing.captures, additional_capture],
+            "races": sorted(
+                [*existing.races, *additional_races], key=lambda result: result.race_id
+            ),
+        }
+    )
 
 
 def build_election_results(
@@ -291,6 +330,12 @@ def build_election_results(
         raise ResultsIngestError("no race is expected from this ingest run")
     candidate_races = [eligible_races[race_id] for race_id in expected_race_ids]
 
+    certified_evidence = next(
+        (capture.evidence for capture in captures if capture.kind == "certified"), None
+    )
+    if certified_evidence is None:
+        raise ResultsIngestError("no certified capture was given for this ingest run")
+
     by_contest = parse_certified_csv(csv_content)
     race_results: list[RaceResults] = []
     seen_contest_by_race: dict[str, str] = {}
@@ -304,7 +349,11 @@ def build_election_results(
                 f"{contest_text!r} both resolved to race {race.id!r}"
             )
         seen_contest_by_race[race.id] = contest_text
-        race_results.append(_build_race_results(race, contest_rows))
+        race_results.append(
+            _build_race_results(
+                race, contest_rows, authority=authority, capture_evidence=certified_evidence
+            )
+        )
 
     missing = expected_race_ids - seen_contest_by_race.keys()
     if missing:
@@ -316,13 +365,14 @@ def build_election_results(
         election_id=inventory.election.id,
         status="certified",
         certified_on=certified_on,
-        authority=authority,
         captures=captures,
         races=sorted(race_results, key=lambda result: result.race_id),
     )
 
 
-def _build_race_results(race: Race, contest_rows: ContestRows) -> RaceResults:
+def _build_race_results(
+    race: Race, contest_rows: ContestRows, *, authority: str, capture_evidence: str
+) -> RaceResults:
     """One race's tallies, with two different counts doing two jobs.
 
     `ballots_counted` is `ballots_with_contest` — King County's own count of
@@ -411,6 +461,8 @@ def _build_race_results(race: Race, contest_rows: ContestRows) -> RaceResults:
     ]
     return RaceResults(
         race_id=race.id,
+        authority=authority,
+        capture_evidence=capture_evidence,
         ballots_counted=contest_rows.ballots_with_contest,
         outcomes=outcomes,
     )

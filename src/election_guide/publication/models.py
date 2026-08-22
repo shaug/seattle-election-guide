@@ -533,16 +533,19 @@ class PublicationMetadata(PublicationModel):
     (docs/RESULTS.md, "The election-day banner"; #285) reads this to know
     when its counting window ends -- with no results file, `None` leaves the
     banner exactly as the shipped #192 states left it."""
-    results_capture_url: str | None = None
-    """The certified-or-amended results capture's own resolved
-    `canonical_url` (docs/RESULTS.md, Rendering § Race cards; #286), when the
-    release pipeline could read one (`release.builder.build_release`,
-    `results.current_results_capture`). Every RESULT block's own provenance
-    line links it -- a race card's strip and a race page's own block alike
-    (`rendering.context.race_results_view`); `None` omits the link rather
-    than rendering a broken one. Independent of
-    `certification_date`: this requires a results file to exist at all,
-    which the counting window's own certification date does not."""
+    results_capture_urls: dict[str, str] | None = None
+    """Each race's own certified-or-amended results capture, resolved to its
+    manifest's `canonical_url` and keyed by race id (docs/RESULTS.md,
+    Rendering § Race cards; #286), when the release pipeline could read one
+    (`release.builder.build_release`). A results file can hold races from
+    more than one counting authority (issue #417), so this is per-race
+    rather than one value for the whole election. Every RESULT block's own
+    provenance line links its own race's entry -- a race card's strip and a
+    race page's own block alike (`rendering.context.race_results_view`); a
+    race missing from this mapping omits the link rather than rendering a
+    broken one. Independent of `certification_date`: this requires a results
+    file to exist at all, which the counting window's own certification date
+    does not."""
     generated_at: AwareDatetime
     data_as_of: AwareDatetime | None = None
     data_version: str

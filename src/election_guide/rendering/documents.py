@@ -197,7 +197,7 @@ def render_html_document(
             context.race_results_view,
             results=view_model.results,
             election_type=view_model.metadata.election_type,
-            capture_url=view_model.metadata.results_capture_url,
+            capture_urls=view_model.metadata.results_capture_urls,
         ),
     )
 
@@ -268,7 +268,7 @@ def render_race_document(
         race,
         results=view_model.results,
         election_type=view_model.metadata.election_type,
-        capture_url=view_model.metadata.results_capture_url,
+        capture_urls=view_model.metadata.results_capture_urls,
     )
     race_result_outcomes_by_candidate_id = context.race_result_outcomes_by_candidate_id(
         race_results

@@ -4,16 +4,18 @@ Capture the certified canvass as evidence the day after certification, then prod
 `data/results/<election-id>.yaml` — the one results ingest the design allows
 (`docs/RESULTS.md`: certified results only; the counting window ingests nothing).
 
-**Status: executable.** Both phases are executable now. Phase 2's adapter and validator landed
-with #284, informed by the formats the election-night capture observed
-(`docs/RESULTS.md`, "Ingestion mechanics"). Phase 2 currently ingests King County's certified CSV
+**Status: executable.** Both phases are executable now. Phase 2's King County CSV adapter and
+validator landed with #284, informed by the formats the election-night capture observed
+(`docs/RESULTS.md`, "Ingestion mechanics"). `results ingest` ingests King County's certified CSV
 export only; the races whose true totals require the Secretary of State's results (Legislative
 District 32, Congressional District 9, and the four Supreme Court Justice positions — see
 `docs/RESULTS.md`, "Ingestion mechanics," County scope) are named explicitly in step 4's
-`--race-id` list and omitted from a King-County-sourced ingest rather than silently published
-from a partial count. Ingesting those races' true totals is a follow-up, not yet built.
-`results ingest` requires `--race-id` — there is no every-publication-eligible-race default — so
-omitting a cross-county race here is the only way to run it, never an accident.
+`--race-id` list and omitted from that command rather than silently published from a partial
+county count. `results ingest` requires `--race-id` — there is no every-publication-eligible-race
+default — so omitting a cross-county race here is the only way to run it, never an accident.
+Those eight races' true totals are ingested separately by step 4b's `results
+ingest-secretary-of-state`, which merges the Secretary of State's statewide export into the file
+step 4 already produced (#417).
 
 ## Trigger
 
@@ -124,6 +126,22 @@ it should stay human-launched at least through the first full cycle.
    name resolves ambiguously or not at all, or if the export is missing an expected column —
    the one judgment rule this runbook owns: unmatched candidate or contest names escalate, they
    are never guessed.
+4b. Run the Secretary of State adapter against the captured statewide JSON export to merge the
+   eight cross-county races' true totals into the file step 4 just produced (`docs/RESULTS.md`,
+   "Ingestion mechanics," County scope; #417). This command requires the file to already exist —
+   it merges into it rather than building one from scratch — and aborts if any listed race is
+   already present:
+
+   ```bash
+   uv run election-guide results ingest-secretary-of-state \
+     --election-id wa-2026-primary \
+     --authority-id wa-secretary-of-state \
+     --certified-capture data/manifests/evidence/capture-wa-secretary-of-state-20260819T231643Z-a17ab1addf26.json \
+     --race-id us-house-9 --race-id ld-32-state-senator \
+     --race-id ld-32-state-representative-1 --race-id ld-32-state-representative-2 \
+     --race-id supreme-court-justice-1 --race-id supreme-court-justice-3 \
+     --race-id supreme-court-justice-5 --race-id supreme-court-justice-7
+   ```
 5. Run the validator against the produced file:
 
    ```bash
@@ -162,10 +180,12 @@ it should stay human-launched at least through the first full cycle.
   export's column names too: the adapter's parse target assumes King County keeps its current
   `Contest`/`Choice`/`Votes`/`BallotsWith Contest` CSV columns (`docs/RESULTS.md`, "Ingestion
   mechanics"); a real schema change there is a design conversation, not a silent adapter patch.
-- A race outside the `--race-id` list above (Legislative District 32, Congressional District 9,
-  a Supreme Court Justice position) needs to ship: its true total requires the Secretary of
-  State's export, which this adapter does not yet parse (`docs/RESULTS.md`, open questions) —
-  file or pick up that follow-up rather than ingesting King County's partial count for it.
+- A race outside step 4's `--race-id` list (Legislative District 32, Congressional District 9,
+  a Supreme Court Justice position) needs to ship: run step 4b, `results
+  ingest-secretary-of-state`, rather than ingesting King County's partial count for it. That
+  command aborts the same way step 4 does on an unmatched, ambiguous, or missing race or
+  candidate name, and additionally aborts if the target file does not yet exist (run step 4
+  first) or if the named race is already present in it.
 - A race's write-in tally is large — including the unopposed races above, where a write-in is a
   voter's only alternative to the single declared candidate. This is expected and needs no
   action: `share` is computed against the declared (non-write-in) total, so declared shares sum
@@ -202,3 +222,9 @@ it should stay human-launched at least through the first full cycle.
   (`tests/test_results.py`, a trimmed real King County CSV excerpt) — no network, offline only.
   First live execution: `wa-2026-primary`, phase 1 due 2026-08-19, phase 2 the same day per
   the procedure above.
+- Step 4b's Secretary of State adapter and its `results ingest-secretary-of-state` command
+  (`results.ingest_secretary_of_state`) landed with #417, exercised by that PR's own fixture test
+  (`tests/test_results.py`, a trimmed real Secretary of State statewide JSON excerpt) — no network,
+  offline only. Executed live against `wa-2026-primary`'s already-committed King-County-sourced
+  file and the already-committed Secretary of State capture, both from the 2026-08-19 run above;
+  no new capture was made for this step.

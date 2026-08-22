@@ -306,6 +306,8 @@ def test_comparisons_payload_carries_certified_outcomes_for_measure_races_too() 
         # Extend the certified file with an outcome for the measure race too.
         measure_outcomes = RaceResults(
             race_id=measure_race_id,
+            authority=results.races[0].authority,
+            capture_evidence=results.races[0].capture_evidence,
             ballots_counted=50000,
             outcomes=[
                 RaceOutcome(
@@ -1596,6 +1598,8 @@ def _comparison_html_path_with_measure_results(tmp_path: Path) -> Path:
     base_results = _valid_results(results_root)
     measure_outcomes = RaceResults(
         race_id=measure_race_id,
+        authority=base_results.races[0].authority,
+        capture_evidence=base_results.races[0].capture_evidence,
         ballots_counted=45000,
         outcomes=[
             RaceOutcome(
