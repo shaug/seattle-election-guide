@@ -351,6 +351,57 @@ def resolve_and_build_expected_races[RawItem](
     return race_results
 
 
+def validate_resolved_tallies(
+    race: Race,
+    resolved_choice_ids: list[str],
+    declared_votes: int,
+    authority_total: int,
+    *,
+    export_label: str,
+    authority_total_label: str,
+) -> None:
+    """Abort unless one race's resolved tallies are complete and countable:
+    the export resolved at least one ballot choice, it resolved *every*
+    declared choice the inventory names, the authority states a positive
+    `authority_total` of its own (`authority_total_label` is that count's
+    name in the export — King County's `ballots-with-contest`, the Secretary
+    of State's `voteTotal`), and the declared choices drew votes at all.
+    `resolved_choice_ids` is each tally row's resolved choice id, in tally
+    order, so an empty list means the export carried no resolvable choice.
+    Shared by every export adapter's own per-race tally construction
+    (`_build_race_results` here;
+    `results.ingest_secretary_of_state._build_sos_race_results`)."""
+    if not resolved_choice_ids:
+        raise ResultsIngestError(
+            f"{export_label} has no resolvable ballot choices for race {race.id!r}"
+        )
+    # Each adapter's own tally loop only ever proves that every *exported*
+    # row resolves to a known choice; a row missing entirely from a truncated
+    # or malformed export is invisible to it. Without this check a missing
+    # choice would silently renormalize `share` over the survivors -- the
+    # schema's "shares sum to ~1" invariant (results/models.py) is satisfied
+    # either way, so nothing downstream would ever catch it (verified:
+    # dropping one of the fixture's four Assessor candidates still produces a
+    # `results validate`-clean file, with the remaining candidates' shares
+    # inflated to fill the gap). Every declared ballot choice the inventory
+    # names for this race must appear in the export, or this aborts.
+    missing_choice_ids = {choice.id for choice in race.choices} - set(resolved_choice_ids)
+    if missing_choice_ids:
+        raise ResultsIngestError(
+            f"{export_label} for race {race.id!r} is missing "
+            f"{len(missing_choice_ids)} declared ballot choice(s): {sorted(missing_choice_ids)}"
+        )
+    if authority_total <= 0:
+        raise ResultsIngestError(
+            f"{export_label} reports zero {authority_total_label} for race {race.id!r}"
+        )
+    if declared_votes <= 0:
+        raise ResultsIngestError(
+            f"{export_label} reports zero votes for every declared ballot choice in race "
+            f"{race.id!r}; only write-in rows carry votes"
+        )
+
+
 def rank_tallies_into_outcomes(
     tallies: list[tuple[str, int]],
     ballot_order: dict[str, int],
@@ -476,36 +527,14 @@ def _build_race_results(
             continue
         declared_votes += votes
         tallies.append((choice, votes))
-    if not tallies:
-        raise ResultsIngestError(
-            f"certified export has no resolvable ballot choices for race {race.id!r}"
-        )
-    # The loop above only ever proves that every *exported* row resolves to
-    # a known choice; a row missing entirely from a truncated or malformed
-    # export is invisible to it. Without this check a missing choice would
-    # silently renormalize `share` over the survivors -- the schema's
-    # "shares sum to ~1" invariant (results/models.py) is satisfied either
-    # way, so nothing downstream would ever catch it (verified: dropping one
-    # of the fixture's four Assessor candidates still produces a
-    # `results validate`-clean file, with the remaining candidates' shares
-    # inflated to fill the gap). Every declared ballot choice the inventory
-    # names for this race must appear in the export, or this aborts.
-    resolved_ids = {choice.id for choice, _ in tallies}
-    missing_choice_ids = {choice.id for choice in race.choices} - resolved_ids
-    if missing_choice_ids:
-        raise ResultsIngestError(
-            f"certified export for race {race.id!r} is missing "
-            f"{len(missing_choice_ids)} declared ballot choice(s): {sorted(missing_choice_ids)}"
-        )
-    if contest_rows.ballots_with_contest <= 0:
-        raise ResultsIngestError(
-            f"certified export reports zero ballots-with-contest for race {race.id!r}"
-        )
-    if declared_votes <= 0:
-        raise ResultsIngestError(
-            f"certified export reports zero votes for every declared ballot choice in race "
-            f"{race.id!r}; only write-in rows carry votes"
-        )
+    validate_resolved_tallies(
+        race,
+        [choice.id for choice, _ in tallies],
+        declared_votes,
+        contest_rows.ballots_with_contest,
+        export_label="certified export",
+        authority_total_label="ballots-with-contest",
+    )
 
     ballot_order = {choice.id: choice.ballot_order for choice in race.choices}
     top_count = 1 if race.race_type == "measure" else 2

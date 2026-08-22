@@ -43,6 +43,7 @@ from election_guide.results.ingest import (
     resolve_and_build_expected_races,
     resolve_ballot_choice,
     resolve_expected_races,
+    validate_resolved_tallies,
 )
 from election_guide.results.models import RaceResults
 
@@ -229,33 +230,20 @@ def _build_sos_race_results(
     """
     tallies: list[tuple[str, int]] = []
     declared_votes = 0
-    resolved_ids: set[str] = set()
     for option_name, vote_count, is_write_in in item.options:
         if is_write_in:
             continue
         choice = resolve_ballot_choice(option_name, race)
         declared_votes += vote_count
         tallies.append((choice.id, vote_count))
-        resolved_ids.add(choice.id)
-    if not tallies:
-        raise ResultsIngestError(
-            f"Secretary of State export has no resolvable ballot choices for race {race.id!r}"
-        )
-    missing_choice_ids = {choice.id for choice in race.choices} - resolved_ids
-    if missing_choice_ids:
-        raise ResultsIngestError(
-            f"Secretary of State export for race {race.id!r} is missing "
-            f"{len(missing_choice_ids)} declared ballot choice(s): {sorted(missing_choice_ids)}"
-        )
-    if item.vote_total <= 0:
-        raise ResultsIngestError(
-            f"Secretary of State export reports zero voteTotal for race {race.id!r}"
-        )
-    if declared_votes <= 0:
-        raise ResultsIngestError(
-            f"Secretary of State export reports zero votes for every declared ballot choice in "
-            f"race {race.id!r}; only write-in rows carry votes"
-        )
+    validate_resolved_tallies(
+        race,
+        [choice_id for choice_id, _ in tallies],
+        declared_votes,
+        item.vote_total,
+        export_label="Secretary of State export",
+        authority_total_label="voteTotal",
+    )
 
     ballot_order = {choice.id: choice.ballot_order for choice in race.choices}
     outcomes = rank_tallies_into_outcomes(tallies, ballot_order, declared_votes, top_count=2)
