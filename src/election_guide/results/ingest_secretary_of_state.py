@@ -37,8 +37,14 @@ from typing import Any, cast
 
 from election_guide.inventory.models import Inventory, Race
 from election_guide.normalization.text import normalize_match_text
-from election_guide.results.ingest import ResultsIngestError, resolve_ballot_choice
-from election_guide.results.models import RaceOutcome, RaceResults
+from election_guide.results.ingest import (
+    ResultsIngestError,
+    rank_tallies_into_outcomes,
+    resolve_and_build_expected_races,
+    resolve_ballot_choice,
+    resolve_expected_races,
+)
+from election_guide.results.models import RaceResults
 
 _LEADING_POSITION_NUMBER_WORD = "Position "
 
@@ -187,49 +193,24 @@ def build_sos_race_results(
     function's (issue #417's own "why this is not a King County ingest": the
     two adapters produce races, a shared merge step combines them).
     """
-    eligible_races = {race.id: race for race in inventory.races if race.publication_eligible}
-    unknown_expected = expected_race_ids - eligible_races.keys()
-    if unknown_expected:
-        raise ResultsIngestError(
-            f"expected race ids are not publication-eligible in the inventory: "
-            f"{sorted(unknown_expected)}"
-        )
-    if not expected_race_ids:
-        raise ResultsIngestError("no race is expected from this ingest run")
-    non_candidate = {
-        race_id for race_id in expected_race_ids if eligible_races[race_id].race_type != "candidate"
-    }
+    candidate_races = resolve_expected_races(inventory, expected_race_ids)
+    non_candidate = {race.id for race in candidate_races if race.race_type != "candidate"}
     if non_candidate:
         raise ResultsIngestError(
             f"Secretary of State adapter only resolves candidate races, not: "
             f"{sorted(non_candidate)}"
         )
-    candidate_races = [eligible_races[race_id] for race_id in expected_race_ids]
 
-    race_results: list[RaceResults] = []
-    seen_contest_by_race: dict[str, str] = {}
-    for item in parse_statewide_export(json_content):
-        race = resolve_sos_race(item.name, candidate_races)
-        if race is None:
-            continue
-        if race.id in seen_contest_by_race:
-            raise ResultsIngestError(
-                f"Secretary of State export contests {seen_contest_by_race[race.id]!r} and "
-                f"{item.name!r} both resolved to race {race.id!r}"
-            )
-        seen_contest_by_race[race.id] = item.name
-        race_results.append(
-            _build_sos_race_results(
-                race, item, authority=authority, capture_evidence=capture_evidence
-            )
-        )
-
-    missing = expected_race_ids - seen_contest_by_race.keys()
-    if missing:
-        raise ResultsIngestError(
-            f"Secretary of State export did not include {len(missing)} expected race(s): "
-            f"{sorted(missing)}"
-        )
+    race_results = resolve_and_build_expected_races(
+        [(item.name, item) for item in parse_statewide_export(json_content)],
+        candidate_races,
+        expected_race_ids,
+        resolve=resolve_sos_race,
+        build=lambda race, item: _build_sos_race_results(
+            race, item, authority=authority, capture_evidence=capture_evidence
+        ),
+        export_label="Secretary of State export",
+    )
     return sorted(race_results, key=lambda result: result.race_id)
 
 
@@ -277,17 +258,7 @@ def _build_sos_race_results(
         )
 
     ballot_order = {choice.id: choice.ballot_order for choice in race.choices}
-    ranked = sorted(tallies, key=lambda pair: (-pair[1], ballot_order[pair[0]]))
-    advancing_ids = {choice_id for choice_id, _ in ranked[:2]}
-    outcomes = [
-        RaceOutcome(
-            choice_id=choice_id,
-            votes=votes,
-            share=round(votes / declared_votes, 4),
-            advanced=choice_id in advancing_ids,
-        )
-        for choice_id, votes in sorted(tallies, key=lambda pair: ballot_order[pair[0]])
-    ]
+    outcomes = rank_tallies_into_outcomes(tallies, ballot_order, declared_votes, top_count=2)
     return RaceResults(
         race_id=race.id,
         authority=authority,
