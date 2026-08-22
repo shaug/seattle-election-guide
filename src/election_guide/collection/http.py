@@ -20,6 +20,21 @@ MAX_REDIRECTS = 10
 READ_CHUNK_SIZE = 64 * 1024
 REDIRECT_STATUSES = {301, 302, 303, 307, 308}
 
+# The failure causes this module raises by name. `fetch_http` catches its own
+# failures and re-raises them wrapped in `FAILURE_PREFIX`, so these are the
+# shapes a caller reads. They are named here, at the one place that emits them,
+# because `election_guide.sources.link_rot_alert` decides whether a link-check
+# failure is evidence of a dead page by matching them, and a copy of this prose
+# living in that module would revert its classification the day one of these is
+# reworded (issue #406). Every string below is byte-identical to the literal it
+# replaced.
+FAILURE_PREFIX = "live collection failed: "
+HTTP_STATUS_PREFIX = "live collection returned HTTP "
+REDIRECT_LIMIT_EXCEEDED = f"live collection exceeded {MAX_REDIRECTS} redirects"
+HTTPS_DOWNGRADE_REFUSED = "live collection refuses an HTTPS downgrade redirect"
+DEADLINE_EXCEEDED = "live collection exceeded its total timeout"
+TOTAL_TIMEOUT_EXCEEDED = f"{FAILURE_PREFIX}total timeout exceeded"
+
 
 @dataclass(frozen=True)
 class HttpArtifact:
@@ -82,12 +97,12 @@ def fetch_http(url: str, *, timeout_seconds: float = 30) -> HttpArtifact:
                         raise ValueError("redirect response has no Location header")
                     redirected = validated_http_url(urljoin(current_url, location))
                     if split.scheme == "https" and urlsplit(redirected).scheme != "https":
-                        raise ValueError("live collection refuses an HTTPS downgrade redirect")
+                        raise ValueError(HTTPS_DOWNGRADE_REFUSED)
                     redirects.append(redirected)
                     current_url = redirected
                     continue
                 if not 200 <= response.status < 300:
-                    raise ValueError(f"live collection returned HTTP {response.status}")
+                    raise ValueError(f"{HTTP_STATUS_PREFIX}{response.status}")
                 content = _read_response(response, peer, deadline)
                 media_type = validated_media_type(
                     response.getheader("Content-Type", "application/octet-stream")
@@ -104,11 +119,11 @@ def fetch_http(url: str, *, timeout_seconds: float = 30) -> HttpArtifact:
                 deadline_timer.cancel()
                 connection.close()
                 peer.close()
-        raise ValueError(f"live collection exceeded {MAX_REDIRECTS} redirects")
+        raise ValueError(REDIRECT_LIMIT_EXCEEDED)
     except (OSError, TimeoutError, ValueError) as error:
         if time.monotonic() >= deadline:
-            raise ValueError("live collection failed: total timeout exceeded") from error
-        raise ValueError(f"live collection failed: {error}") from error
+            raise ValueError(TOTAL_TIMEOUT_EXCEEDED) from error
+        raise ValueError(f"{FAILURE_PREFIX}{error}") from error
 
 
 def _read_response(response: HTTPResponse, peer: socket.socket, deadline: float) -> bytes:
@@ -158,7 +173,7 @@ def _validate_public_dns(host: str, port: int, *, deadline: float) -> set[str]:
     resolver.start()
     resolver.join(_remaining_seconds(deadline))
     if resolver.is_alive():
-        raise TimeoutError("live collection exceeded its total timeout during DNS resolution")
+        raise TimeoutError(f"{DEADLINE_EXCEEDED} during DNS resolution")
     resolved = result[0]
     if isinstance(resolved, BaseException):
         raise ValueError(f"live collection DNS resolution failed for {host!r}") from resolved
@@ -239,5 +254,5 @@ def _require_global_address(address: str) -> None:
 def _remaining_seconds(deadline: float) -> float:
     remaining = deadline - time.monotonic()
     if remaining <= 0:
-        raise TimeoutError("live collection exceeded its total timeout")
+        raise TimeoutError(DEADLINE_EXCEEDED)
     return remaining

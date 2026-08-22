@@ -7,6 +7,13 @@ name: Check source links
 # URL has failed across two consecutive runs -- a `sources check-links`
 # invocation apart -- so a single transient error never raises an alert.
 #
+# Repeating is necessary but not sufficient. Only a failure whose cause is
+# evidence the page is gone -- 404, 410, DNS, a socket that will not open --
+# can repeat its way into an alert. An access-control or rate-limit status, a
+# redirect loop, a refused HTTPS downgrade, or a timeout describes how the
+# site answered a robot and repeats just as reliably, so it never counts
+# (issue #406).
+#
 # The previous run's failing-URL set is the only state carried across runs.
 # It is saved to and restored from the GitHub Actions cache rather than
 # committed, so the check can never mutate source data even by accident.

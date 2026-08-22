@@ -6,10 +6,27 @@ open, and full recovery closes it. Confirmation itself -- comparing this
 run's failing URLs against the previous run's, so a single transient error
 never reaches this module -- is `confirmed_failures` below, fed by
 `election_guide.sources.link_check_state`.
+
+Repetition alone is not enough, though. A site that answers a robot with 403
+answers every run with 403, so counting consecutive failures confirmed a
+policy rather than a dead page: the check spent three days reporting 17 live
+URLs as rot (issue #399). `_cause_confirms_rot` is the second half of
+confirmation -- it asks what the failure *was*, and only a cause that is
+evidence the page is gone may repeat its way into an alert (issue #406).
 """
 
 from __future__ import annotations
 
+import errno
+import re
+
+from election_guide.collection.http import (
+    DEADLINE_EXCEEDED,
+    HTTP_STATUS_PREFIX,
+    HTTPS_DOWNGRADE_REFUSED,
+    REDIRECT_LIMIT_EXCEEDED,
+    TOTAL_TIMEOUT_EXCEEDED,
+)
 from election_guide.single_issue_alert import (
     AlertAction,
     OpenAlert,
@@ -23,6 +40,33 @@ from election_guide.sources.link_check_state import LinkCheckState
 MARKER = "link-rot-check:monitor"
 ISSUE_TITLE = "Cited source links are unreachable"
 ISSUE_LABELS: tuple[str, ...] = ("type: ops", "area: operations")
+
+# The only statuses that assert the page itself is gone. Every other non-2xx
+# answer describes the request -- who asked, how often, from where.
+_GONE_HTTP_STATUSES = frozenset({404, 410})
+
+_HTTP_STATUS = re.compile(re.escape(HTTP_STATUS_PREFIX) + r"(\d+)")
+
+# Causes that say how a site answered a robot rather than whether its page
+# still exists. Every one is imported from the module that raises it, never
+# spelled again here: a copy would keep matching its own prose after
+# `fetch_http` reworded the real message, and silently flip that cause back to
+# rot-confirming. Matched as substrings because `fetch_http` re-raises most of
+# these wrapped in its own failure prefix, and the timeout that trips the outer
+# deadline check arrives as that flat message on its own.
+_INCONCLUSIVE_CAUSES = (
+    TOTAL_TIMEOUT_EXCEEDED,
+    DEADLINE_EXCEEDED,
+    REDIRECT_LIMIT_EXCEEDED,
+    HTTPS_DOWNGRADE_REFUSED,
+    # A timeout in an `OSError`'s clothing. `EBADF` means the socket was
+    # closed underneath an in-flight operation, and the only thing that does
+    # that here is `fetch_http`'s own `threading.Timer(..., peer.close)`
+    # deadline -- no remote host can produce it. Live evidence: the
+    # 2026-08-22 run reported `sierra-club-washington` this way, a page the
+    # 2026-08-17 run had reported as HTTP 403 and which is not gone.
+    f"[Errno {errno.EBADF}]",
+)
 
 __all__ = [
     "ISSUE_LABELS",
@@ -40,20 +84,49 @@ __all__ = [
 ]
 
 
+def _cause_confirms_rot(error: str | None) -> bool:
+    """Whether one probe failure is evidence the page is gone, or only that it was guarded.
+
+    Inconclusive by exception and confirming by default. The exceptions are
+    enumerable because `fetch_http` owns every cause: an access-control or
+    rate-limit status, a redirect loop, a refused HTTPS downgrade, a timeout.
+    Everything else -- 404, 410, DNS that will not resolve, a socket that will
+    not open -- keeps the behavior O17 has always had. Defaulting the other
+    way would have to recognize a connection failure, and `_open_public_connection`
+    re-raises the operating system's own `OSError` text, which carries no
+    marker to recognize; it would also silence any cause `fetch_http` grows
+    later, turning a new kind of real rot into silence rather than an alert.
+    """
+    if error is None:
+        return False
+    status = _HTTP_STATUS.search(error)
+    if status is not None:
+        return int(status.group(1)) in _GONE_HTTP_STATUSES
+    return not any(cause in error for cause in _INCONCLUSIVE_CAUSES)
+
+
 def confirmed_failures(
     results: list[LinkCheckResult], previous: LinkCheckState
 ) -> list[LinkCheckResult]:
-    """Failures that repeated: unreachable this run and also unreachable last run."""
-    previously_failing = set(previous.failing_urls)
+    """Failures that repeated as rot: evidence the page is gone this run and last run."""
+    previously_rotting = set(previous.rot_confirming_urls)
     return [
-        result for result in results if not result.ok and result.target.url in previously_failing
+        result
+        for result in results
+        if not result.ok
+        and _cause_confirms_rot(result.error)
+        and result.target.url in previously_rotting
     ]
 
 
 def next_state(results: list[LinkCheckResult]) -> LinkCheckState:
-    """The failing-URL set this run leaves behind for the next run to confirm against."""
+    """What this run leaves behind: everything that failed, and what looked like rot."""
+    failing = [result for result in results if not result.ok]
     return LinkCheckState(
-        failing_urls=tuple(sorted(result.target.url for result in results if not result.ok))
+        failing_urls=tuple(sorted(result.target.url for result in failing)),
+        rot_confirming_urls=tuple(
+            sorted(result.target.url for result in failing if _cause_confirms_rot(result.error))
+        ),
     )
 
 
