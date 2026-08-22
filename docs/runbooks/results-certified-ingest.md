@@ -182,8 +182,8 @@ it should stay human-launched at least through the first full cycle.
   mechanics"); a real schema change there is a design conversation, not a silent adapter patch.
 - A race outside step 4's `--race-id` list (Legislative District 32, Congressional District 9,
   a Supreme Court Justice position) needs to ship: run step 4b, `results
-  ingest-secretary-of-state`, rather than ingesting King County's partial count for it. That
-  command aborts the same way step 4 does on an unmatched, ambiguous, or missing race or
+  ingest-secretary-of-state` (#417), rather than ingesting King County's partial count for it.
+  That command aborts the same way step 4 does on an unmatched, ambiguous, or missing race or
   candidate name, and additionally aborts if the target file does not yet exist (run step 4
   first) or if the named race is already present in it.
 - A race's write-in tally is large — including the unopposed races above, where a write-in is a
