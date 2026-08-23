@@ -121,7 +121,7 @@ def build_publication_bundle(
     data_as_of: datetime | None = None,
     results: ElectionResults | None = None,
     certification_date: str | None = None,
-    results_capture_url: str | None = None,
+    results_capture_urls: dict[str, str] | None = None,
     corrections: ElectionCorrections | None = None,
 ) -> PublicationBundle:
     """Compute every issue-7 artifact from canonical data and one consensus report.
@@ -137,14 +137,16 @@ def build_publication_bundle(
     `PublicationMetadata` the same way `election_date` is. Omitted or `None`,
     the post-election banner is unchanged from before this parameter existed.
 
-    `results_capture_url` (docs/RESULTS.md, Rendering § Race cards; #286) is
-    the certified-or-amended capture's own resolved `canonical_url` -- a
-    caller that has already read the evidence manifest
-    (`election_guide.results.current_results_capture`,
-    `election_guide.evidence.storage.read_capture_manifest`) passes it
-    through here so every candidate race's results strip can link its
-    provenance line's "capture" receipt. Omitted, `None`, or `results` itself
-    `None`, no race card carries a capture link.
+    `results_capture_urls` (docs/RESULTS.md, Rendering § Race cards; #286),
+    keyed by race id, is each race's own certified-or-amended capture
+    resolved to its manifest's `canonical_url` -- a caller that has already
+    read the evidence manifests
+    (`election_guide.evidence.storage.read_capture_manifest`) passes it
+    through here so every candidate race's results strip can link its own
+    provenance line's evidence receipt. A results file can hold races from
+    more than one counting authority (issue #417), so this is per-race, not
+    one value for the whole election. Omitted, `None`, or `results` itself
+    `None`, no race card carries an evidence link.
 
     `corrections` is the rendering pipeline's one hook onto per-election
     corrections (docs/RESULTS.md, "The corrections page"; issue #290): a
@@ -183,7 +185,7 @@ def build_publication_bundle(
         data_as_of or validated_consensus.computed_at,
         results,
         certification_date,
-        results_capture_url,
+        results_capture_urls,
         corrections,
     )
     checks = _validate_publication(dataset, validated_consensus, view_model)
@@ -316,7 +318,7 @@ def _build_view_model(
     data_as_of: datetime,
     results: ElectionResults | None,
     certification_date: str | None = None,
-    results_capture_url: str | None = None,
+    results_capture_urls: dict[str, str] | None = None,
     corrections: ElectionCorrections | None = None,
 ) -> PublicationViewModel:
     active_sources = [
@@ -511,7 +513,7 @@ def _build_view_model(
             election_type=dataset.inventory.election.election_type,
             state=dataset.inventory.election.state,
             certification_date=certification_date,
-            results_capture_url=results_capture_url,
+            results_capture_urls=results_capture_urls,
             generated_at=consensus.computed_at,
             data_as_of=data_as_of,
             data_version=consensus.input_hash[:12],

@@ -17,9 +17,15 @@ from election_guide.inventory.models import Inventory
 from election_guide.results.ingest import (
     ResultsIngestError,
     build_election_results,
+    merge_race_results,
     parse_certified_csv,
     resolve_choice,
     resolve_race,
+)
+from election_guide.results.ingest_secretary_of_state import (
+    build_sos_race_results,
+    parse_statewide_export,
+    resolve_sos_race,
 )
 from election_guide.results.loader import (
     load_rendering_results,
@@ -43,6 +49,18 @@ RACE_ID = "king-county-assessor"
 # official names, never to assert an election outcome.
 CERTIFIED_CSV_PATH = (
     PROJECT_ROOT / "tests" / "fixtures" / "results" / "wa-2026-primary-certified.csv"
+)
+# A trimmed excerpt of the Secretary of State's real committed statewide JSON
+# export (data/manifests/evidence/
+# capture-wa-secretary-of-state-20260819T231643Z-a17ab1addf26.json), keeping
+# the eight cross-county-line races' own `ballotItems` entries byte-identical
+# to the committed capture, plus one unrelated jurisdiction's contest
+# ("U.S. Representative - Congressional District 1") for the same realism
+# `wa-2026-primary-certified.csv` keeps an unrelated contest for -- this
+# fixture exists only to prove the adapter parses the export's real shape and
+# resolves real official names offline, never to assert an election outcome.
+SECRETARY_OF_STATE_JSON_PATH = (
+    PROJECT_ROOT / "tests" / "fixtures" / "results" / "wa-2026-primary-secretary-of-state.json"
 )
 AUTHORITY_REGISTRY_PATH = PROJECT_ROOT / "config" / "authorities" / "default.yaml"
 
@@ -109,11 +127,12 @@ def _valid_results(
         election_id="wa-2026-primary",
         status=status,  # type: ignore[arg-type]
         certified_on=datetime(2026, 8, 19).date(),
-        authority="King County Elections",
         captures=captures,
         races=[
             RaceResults(
                 race_id=RACE_ID,
+                authority="King County Elections",
+                capture_evidence=certified_reference,
                 ballots_counted=61234,
                 outcomes=[
                     RaceOutcome(choice_id=choice_ids[0], votes=20000, share=0.32, advanced=True),
@@ -135,6 +154,8 @@ def test_race_outcomes_reject_duplicate_choice_id() -> None:
     with pytest.raises(ValidationError, match="repeats a ballot choice"):
         RaceResults(
             race_id=RACE_ID,
+            authority="King County Elections",
+            capture_evidence="data/manifests/evidence/capture-example.json",
             ballots_counted=100,
             outcomes=[
                 RaceOutcome(choice_id=choice_id, votes=60, share=0.6, advanced=True),
@@ -148,6 +169,8 @@ def test_race_outcomes_reject_shares_not_summing_to_one() -> None:
     with pytest.raises(ValidationError, match="not ~1"):
         RaceResults(
             race_id=RACE_ID,
+            authority="King County Elections",
+            capture_evidence="data/manifests/evidence/capture-example.json",
             ballots_counted=100,
             outcomes=[
                 RaceOutcome(choice_id=choice_ids[0], votes=60, share=0.6, advanced=True),
@@ -1204,3 +1227,370 @@ def test_cli_results_ingest_requires_at_least_one_race_id(
     assert result.exit_code == 1
     assert "requires at least one --race-id" in result.output
     assert not (tmp_path / "data" / "results" / "wa-2026-primary.yaml").exists()
+
+
+# --- Secretary of State adapter (results/ingest_secretary_of_state.py) ------
+
+# The eight cross-county-line races' real Secretary of State statewide export
+# contest labels, observed in the committed capture
+# (data/manifests/evidence/
+# capture-wa-secretary-of-state-20260819T231643Z-a17ab1addf26.json) while
+# designing this resolver -- the same "record the capture-time observation,
+# prove the resolver reproduces it offline" split
+# `REAL_CONTEST_LABEL_BY_RACE_ID` above uses for the King County resolver.
+REAL_SOS_CONTEST_LABEL_BY_RACE_ID: dict[str, str] = {
+    "us-house-9": "U.S. Representative - Congressional District 9",
+    "ld-32-state-senator": "State Senator - Legislative District 32",
+    "ld-32-state-representative-1": "State Representative Pos. 1 - Legislative District 32",
+    "ld-32-state-representative-2": "State Representative Pos. 2 - Legislative District 32",
+    "supreme-court-justice-1": "Justice Position #01 - Supreme Court",
+    "supreme-court-justice-3": "Justice Position #03 - Supreme Court",
+    "supreme-court-justice-5": "Justice Position #05 - Supreme Court",
+    "supreme-court-justice-7": "Justice Position #07 - Supreme Court",
+}
+
+
+def test_resolve_sos_race_matches_every_target_label() -> None:
+    inventory = _inventory()
+    races = [race for race in inventory.races if race.id in REAL_SOS_CONTEST_LABEL_BY_RACE_ID]
+    assert {race.id for race in races} == set(REAL_SOS_CONTEST_LABEL_BY_RACE_ID)
+
+    for race_id, contest_label in REAL_SOS_CONTEST_LABEL_BY_RACE_ID.items():
+        race = resolve_sos_race(contest_label, races)
+        assert race is not None, f"{contest_label!r} did not resolve to any race"
+        assert race.id == race_id, f"{contest_label!r} resolved to {race.id!r}, not {race_id!r}"
+
+
+def test_resolve_sos_race_returns_none_for_a_contest_outside_the_inventory() -> None:
+    inventory = _inventory()
+    races = [race for race in inventory.races if race.id in REAL_SOS_CONTEST_LABEL_BY_RACE_ID]
+
+    assert resolve_sos_race("U.S. Representative - Congressional District 1", races) is None
+
+
+def test_parse_statewide_export_reads_every_target_contest() -> None:
+    items = parse_statewide_export(SECRETARY_OF_STATE_JSON_PATH.read_bytes())
+    by_name = {item.name: item for item in items}
+
+    assert set(REAL_SOS_CONTEST_LABEL_BY_RACE_ID.values()) <= set(by_name)
+
+    senator = by_name["State Senator - Legislative District 32"]
+    assert senator.vote_total == 40458
+    assert ("Cindy Ryu", 17876, False) in senator.options
+    assert ("Write-In", 49, True) in senator.options
+
+
+def test_parse_statewide_export_rejects_invalid_json() -> None:
+    with pytest.raises(ResultsIngestError, match="not valid JSON"):
+        parse_statewide_export(b"not json")
+
+
+def test_parse_statewide_export_rejects_a_payload_with_no_ballot_items() -> None:
+    with pytest.raises(ResultsIngestError, match="no ballotItems"):
+        parse_statewide_export(b'{"ballotItems": []}')
+
+
+def test_build_sos_race_results_from_the_fixture_json(tmp_path: Path) -> None:
+    inventory = _inventory()
+
+    races = build_sos_race_results(
+        SECRETARY_OF_STATE_JSON_PATH.read_bytes(),
+        inventory,
+        authority="Washington Secretary of State",
+        capture_evidence="data/manifests/evidence/capture-wa-secretary-of-state-example.json",
+        expected_race_ids=frozenset(REAL_SOS_CONTEST_LABEL_BY_RACE_ID),
+    )
+
+    assert {race.race_id for race in races} == set(REAL_SOS_CONTEST_LABEL_BY_RACE_ID)
+
+    us_house_9 = next(race for race in races if race.race_id == "us-house-9")
+    assert us_house_9.authority == "Washington Secretary of State"
+    assert us_house_9.ballots_counted is None
+    # `votes_counted` is the export's own `voteTotal` -- taken directly, not
+    # re-derived by summing the resolved (non-write-in) options: it includes
+    # the 209 write-in votes the outcomes below never enumerate as a choice.
+    assert us_house_9.votes_counted == 142356
+    outcomes_by_choice = {outcome.choice_id: outcome for outcome in us_house_9.outcomes}
+    assert len(outcomes_by_choice) == 5  # the write-in row is excluded
+    assert outcomes_by_choice["us-house-9--adam-smith"].votes == 67095
+    assert outcomes_by_choice["us-house-9--adam-smith"].advanced is True
+    assert outcomes_by_choice["us-house-9--doug-basler"].advanced is True
+    assert outcomes_by_choice["us-house-9--kshama-sawant"].advanced is False
+    # `share` is votes over the declared (non-write-in) total, distinct from
+    # `votes_counted` -- the same separation `_build_race_results` (King
+    # County) keeps between `share` and `ballots_counted`.
+    declared_total = 1588 + 24583 + 17811 + 31070 + 67095
+    assert outcomes_by_choice["us-house-9--adam-smith"].share == pytest.approx(
+        67095 / declared_total, abs=1e-4
+    )
+    assert sum(outcome.share for outcome in us_house_9.outcomes) == pytest.approx(1.0, abs=1e-4)
+
+    # Every race resolves the exact winners a hand count of the fixture
+    # gives: the top two of a top-two primary.
+    ld_32_rep_2 = next(race for race in races if race.race_id == "ld-32-state-representative-2")
+    rep_2_outcomes = {outcome.choice_id: outcome for outcome in ld_32_rep_2.outcomes}
+    assert rep_2_outcomes["ld-32-state-representative-2--lauren-davis"].advanced is True
+    assert rep_2_outcomes["ld-32-state-representative-2--imraan-siddiqi"].advanced is True
+
+    for race in races:
+        validate_results_inventory(
+            ElectionResults(
+                election_id="wa-2026-primary",
+                status="certified",
+                certified_on=datetime(2026, 8, 19).date(),
+                captures=[
+                    ResultsCapture(
+                        kind="certified",
+                        captured_at=datetime(2026, 8, 20, 16, 5, tzinfo=UTC),
+                        evidence=race.capture_evidence,
+                    )
+                ],
+                races=[race],
+            ),
+            inventory,
+        )
+
+
+def test_build_sos_race_results_aborts_when_an_expected_race_is_missing() -> None:
+    inventory = _inventory()
+    with pytest.raises(ResultsIngestError, match="did not include 1 expected race"):
+        build_sos_race_results(
+            b'{"ballotItems": [{"name": [{"text": "irrelevant"}], "voteTotal": 1, '
+            b'"summaryResults": {"ballotOptions": [{"name": [{"text": "X"}], "voteCount": 1, '
+            b'"isWriteIn": false}]}}]}',
+            inventory,
+            authority="Washington Secretary of State",
+            capture_evidence="data/manifests/evidence/capture-example.json",
+            expected_race_ids=frozenset({"us-house-9"}),
+        )
+
+
+def test_build_sos_race_results_rejects_a_non_candidate_expected_race() -> None:
+    inventory = _inventory()
+    with pytest.raises(ResultsIngestError, match="only resolves candidate races"):
+        build_sos_race_results(
+            SECRETARY_OF_STATE_JSON_PATH.read_bytes(),
+            inventory,
+            authority="Washington Secretary of State",
+            capture_evidence="data/manifests/evidence/capture-example.json",
+            expected_race_ids=frozenset({PROPOSITION_ID}),
+        )
+
+
+def test_merge_race_results_appends_new_races_and_capture(tmp_path: Path) -> None:
+    existing = _valid_results(tmp_path)
+    new_capture = ResultsCapture(
+        kind="certified",
+        captured_at=datetime(2026, 8, 20, 16, 5, tzinfo=UTC),
+        evidence=_evidence_reference(tmp_path, "sos-certified"),
+    )
+    new_race = RaceResults(
+        race_id="us-house-9",
+        authority="Washington Secretary of State",
+        capture_evidence=new_capture.evidence,
+        votes_counted=142356,
+        outcomes=[
+            RaceOutcome(choice_id="us-house-9--adam-smith", votes=67095, share=1.0, advanced=True),
+        ],
+    )
+
+    merged = merge_race_results(existing, [new_race], new_capture)
+
+    assert {race.race_id for race in merged.races} == {RACE_ID, "us-house-9"}
+    assert new_capture in merged.captures
+    # The existing race and its own capture are untouched.
+    original_race = next(race for race in merged.races if race.race_id == RACE_ID)
+    assert original_race == existing.races[0]
+    assert existing.captures == merged.captures[: len(existing.captures)]
+
+
+def test_merge_race_results_rejects_a_duplicate_race_id(tmp_path: Path) -> None:
+    existing = _valid_results(tmp_path)
+    duplicate_capture = ResultsCapture(
+        kind="certified",
+        captured_at=datetime(2026, 8, 20, 16, 5, tzinfo=UTC),
+        evidence=_evidence_reference(tmp_path, "duplicate"),
+    )
+    duplicate_race = RaceResults(
+        race_id=RACE_ID,
+        authority="Washington Secretary of State",
+        capture_evidence=duplicate_capture.evidence,
+        votes_counted=1,
+        outcomes=[RaceOutcome(choice_id=_choice_ids()[0], votes=1, share=1.0, advanced=True)],
+    )
+
+    with pytest.raises(ResultsIngestError, match=f"already has race\\(s\\): \\['{RACE_ID}'\\]"):
+        merge_race_results(existing, [duplicate_race], duplicate_capture)
+
+
+# --- CLI (`election-guide results ingest-secretary-of-state`) --------------
+
+
+def _capture_sos_json(root: Path) -> Path:
+    """Capture the real fixture Secretary of State JSON through the same
+    evidence pipeline a live ingest uses, and return the manifest path."""
+    staged_input = root / "wa-2026-primary-secretary-of-state.json"
+    staged_input.write_bytes(SECRETARY_OF_STATE_JSON_PATH.read_bytes())
+    request = CaptureRequest.model_validate(
+        {
+            "source_id": "wa-secretary-of-state",
+            "requested_url": "https://results.votewa.gov/results/public/api/elections/washington/20260804/data",
+            "canonical_url": "https://results.votewa.gov/results/public/api/elections/washington/20260804/data",
+            "retrieved_at": datetime(2026, 8, 20, 16, 5, tzinfo=UTC),
+            "media_type": "application/json",
+            "title": "2026 Washington August Primary certified results (Secretary of State)",
+            "capture_method": "manual_upload",
+            "redistribution": "restricted",
+            "redistribution_note": "Official results retained locally; manifest public.",
+        }
+    )
+    return record_capture(
+        request,
+        staged_input,
+        root / "snapshots",
+        root / "data/manifests/evidence",
+    )
+
+
+def test_cli_results_ingest_secretary_of_state_merges_into_an_existing_file(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.chdir(tmp_path)
+    certified_manifest_path = _capture_certified_csv(tmp_path)
+    output_dir = tmp_path / "data" / "results"
+
+    first = CliRunner().invoke(
+        app,
+        [
+            "results",
+            "ingest",
+            "--election-id",
+            "wa-2026-primary",
+            "--authority-id",
+            "king-county-elections",
+            "--certified-on",
+            "2026-08-19",
+            "--certified-capture",
+            str(certified_manifest_path),
+            "--race-id",
+            ASSESSOR_ID,
+            "--inventory-path",
+            str(INVENTORY_PATH),
+            "--authority-registry-path",
+            str(AUTHORITY_REGISTRY_PATH),
+            "--storage-root",
+            str(tmp_path / "snapshots"),
+            "--output-dir",
+            str(output_dir),
+        ],
+    )
+    assert first.exit_code == 0, first.output
+
+    sos_manifest_path = _capture_sos_json(tmp_path)
+    second = CliRunner().invoke(
+        app,
+        [
+            "results",
+            "ingest-secretary-of-state",
+            "--election-id",
+            "wa-2026-primary",
+            "--authority-id",
+            "wa-secretary-of-state",
+            "--certified-capture",
+            str(sos_manifest_path),
+            "--race-id",
+            "us-house-9",
+            "--race-id",
+            "ld-32-state-senator",
+            "--inventory-path",
+            str(INVENTORY_PATH),
+            "--authority-registry-path",
+            str(AUTHORITY_REGISTRY_PATH),
+            "--storage-root",
+            str(tmp_path / "snapshots"),
+            "--output-dir",
+            str(output_dir),
+        ],
+    )
+
+    assert second.exit_code == 0, second.output
+    results = read_results(output_dir / "wa-2026-primary.yaml")
+    validate_results_inventory(results, _inventory())
+    validate_results_evidence(results, repository_root=tmp_path)
+    assert {race.race_id for race in results.races} == {
+        ASSESSOR_ID,
+        "us-house-9",
+        "ld-32-state-senator",
+    }
+    # The King County race is completely untouched by the second command.
+    assessor = next(race for race in results.races if race.race_id == ASSESSOR_ID)
+    assert assessor.authority == "King County Elections"
+    us_house_9 = next(race for race in results.races if race.race_id == "us-house-9")
+    assert us_house_9.authority == "Washington Secretary of State"
+    assert us_house_9.votes_counted == 142356
+
+
+def test_cli_results_ingest_secretary_of_state_requires_an_existing_file(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.chdir(tmp_path)
+    sos_manifest_path = _capture_sos_json(tmp_path)
+
+    result = CliRunner().invoke(
+        app,
+        [
+            "results",
+            "ingest-secretary-of-state",
+            "--election-id",
+            "wa-2026-primary",
+            "--authority-id",
+            "wa-secretary-of-state",
+            "--certified-capture",
+            str(sos_manifest_path),
+            "--race-id",
+            "us-house-9",
+            "--inventory-path",
+            str(INVENTORY_PATH),
+            "--authority-registry-path",
+            str(AUTHORITY_REGISTRY_PATH),
+            "--storage-root",
+            str(tmp_path / "snapshots"),
+            "--output-dir",
+            str(tmp_path / "data" / "results"),
+        ],
+    )
+
+    assert result.exit_code == 1
+    assert "does not exist; run 'results ingest' first" in result.output
+
+
+def test_cli_results_ingest_secretary_of_state_requires_at_least_one_race_id(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.chdir(tmp_path)
+    sos_manifest_path = _capture_sos_json(tmp_path)
+
+    result = CliRunner().invoke(
+        app,
+        [
+            "results",
+            "ingest-secretary-of-state",
+            "--election-id",
+            "wa-2026-primary",
+            "--authority-id",
+            "wa-secretary-of-state",
+            "--certified-capture",
+            str(sos_manifest_path),
+            "--inventory-path",
+            str(INVENTORY_PATH),
+            "--authority-registry-path",
+            str(AUTHORITY_REGISTRY_PATH),
+            "--storage-root",
+            str(tmp_path / "snapshots"),
+            "--output-dir",
+            str(tmp_path / "data" / "results"),
+        ],
+    )
+
+    assert result.exit_code == 1
+    assert "requires at least one --race-id" in result.output

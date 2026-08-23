@@ -121,7 +121,12 @@ from election_guide.release import (
     verify_release_compilation,
 )
 from election_guide.rendering import build_rendered_guide
-from election_guide.results.ingest import ResultsIngestError, build_election_results
+from election_guide.results.ingest import (
+    ResultsIngestError,
+    build_election_results,
+    merge_race_results,
+)
+from election_guide.results.ingest_secretary_of_state import build_sos_race_results
 from election_guide.results.loader import (
     read_results,
     reject_committed_counting_status,
@@ -1746,6 +1751,104 @@ def results_ingest(
         _write_generated_yaml(output_path, results.model_dump(mode="json"))
     except (OSError, ValidationError, ValueError, ResultsIngestError) as error:
         typer.echo(f"results ingest failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    typer.echo(
+        f"results: {output_path} ({results.election_id}, {results.status}, "
+        f"{len(results.races)} races)"
+    )
+
+
+@results_app.command("ingest-secretary-of-state")
+def results_ingest_secretary_of_state(
+    election_id: Annotated[str, typer.Option()],
+    authority_id: Annotated[str, typer.Option(help="Id in the counting-authority registry.")],
+    certified_capture: Annotated[
+        Path,
+        typer.Option(
+            exists=True,
+            dir_okay=False,
+            readable=True,
+            help="Evidence manifest for the captured Secretary of State statewide JSON export.",
+        ),
+    ],
+    race_id: Annotated[
+        list[str] | None,
+        typer.Option(
+            "--race-id",
+            help=(
+                "Required. Restrict ingestion to exactly these publication-eligible race IDs; "
+                "every one must be found in the export. Only for races whose district crosses a "
+                "county line (docs/RESULTS.md, 'Ingestion mechanics,' County scope) -- this "
+                "command merges into an already-committed King-County-sourced results file "
+                "rather than producing one from scratch."
+            ),
+        ),
+    ] = None,
+    inventory_path: Annotated[
+        Path, typer.Option(exists=True, dir_okay=False, readable=True)
+    ] = Path("data/normalized/wa-2026-primary-inventory.json"),
+    authority_registry_path: Annotated[
+        Path, typer.Option(exists=True, dir_okay=False, readable=True)
+    ] = Path("config/authorities/default.yaml"),
+    storage_root: Annotated[Path, typer.Option(file_okay=False)] = Path("data/snapshots"),
+    output_dir: Annotated[Path, typer.Option(file_okay=False)] = Path("data/results"),
+) -> None:
+    """Merge the Secretary of State's statewide export into an already-committed
+    `data/results/<election-id>.yaml`, for races whose district crosses a county
+    line and so needs the true statewide total rather than King County's own
+    partial tally (docs/RESULTS.md, "Ingestion mechanics," County scope; issue
+    #417).
+
+    Requires `results ingest` to have already produced the target file --
+    this command merges into it rather than building one from scratch, and
+    aborts if it does not exist or if any `--race-id` is already present in
+    it.
+    """
+    try:
+        if not race_id:
+            raise ValueError("results ingest-secretary-of-state requires at least one --race-id")
+        inventory = read_inventory(inventory_path)
+        if inventory.election.id != election_id:
+            raise ValueError(f"inventory belongs to {inventory.election.id!r}, not {election_id!r}")
+        authority_registry = read_authority_registry(authority_registry_path)
+        authority = next(
+            (item for item in authority_registry.authorities if item.id == authority_id), None
+        )
+        if authority is None:
+            raise ValueError(f"unknown authority id {authority_id!r}")
+
+        output_path = output_dir / f"{election_id}.yaml"
+        if not output_path.is_file():
+            raise ValueError(
+                f"{output_path} does not exist; run 'results ingest' first to produce it"
+            )
+        existing = read_results(output_path)
+        if existing.election_id != election_id:
+            raise ValueError(
+                f"{output_path} belongs to {existing.election_id!r}, not {election_id!r}"
+            )
+
+        certified_manifest = _admit_captured_manifest(certified_capture, storage_root, "certified")
+        json_content = captured_artifact_path(certified_manifest, storage_root).read_bytes()
+
+        new_capture = ResultsCapture(
+            kind="certified",
+            captured_at=certified_manifest.retrieved_at,
+            evidence=str(certified_capture),
+        )
+        new_races = build_sos_race_results(
+            json_content,
+            inventory,
+            authority=authority.name,
+            capture_evidence=str(certified_capture),
+            expected_race_ids=frozenset(race_id),
+        )
+        results = merge_race_results(existing, new_races, new_capture)
+        validate_results_inventory(results, inventory)
+        validate_results_evidence(results)
+        _write_generated_yaml(output_path, results.model_dump(mode="json"))
+    except (OSError, ValidationError, ValueError, ResultsIngestError) as error:
+        typer.echo(f"results ingest-secretary-of-state failed: {error}", err=True)
         raise typer.Exit(code=1) from error
     typer.echo(
         f"results: {output_path} ({results.election_id}, {results.status}, "

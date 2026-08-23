@@ -496,12 +496,13 @@ def test_release_build_resolves_the_results_capture_url_into_the_view_model(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """Issue #286: the real release pipeline reads the committed results
-    file's own current capture (`results.current_results_capture`) and
-    resolves its evidence manifest's `canonical_url`, carrying it into
-    `PublicationMetadata.results_capture_url` -- so every candidate race's
-    results-strip provenance line can link a real receipt, not only a direct
-    `build_publication_bundle` call supplied one by hand."""
+    """Issue #286: the real release pipeline reads each race's own capture
+    (`RaceResults.capture_evidence`, issue #417) and resolves its evidence
+    manifest's `canonical_url`, carrying it into
+    `PublicationMetadata.results_capture_urls`, keyed by race id -- so every
+    candidate race's results-strip provenance line can link a real receipt,
+    not only a direct `build_publication_bundle` call supplied one by
+    hand."""
     ledger, dataset_path, snapshots = _compiled_release_inputs(tmp_path)
     _stub_release_render(monkeypatch)
 
@@ -520,7 +521,9 @@ def test_release_build_resolves_the_results_capture_url_into_the_view_model(
     published = json.loads(
         (release.bundle_dir / "data" / "publication_view_model.json").read_text(encoding="utf-8")
     )
-    assert published["metadata"]["results_capture_url"] == "https://example.org/results/certified"
+    assert published["metadata"]["results_capture_urls"] == {
+        "king-county-assessor": "https://example.org/results/certified"
+    }
 
     # The default `results_dir` (no committed file) leaves the release
     # exactly as it was before this parameter existed.
@@ -538,7 +541,7 @@ def test_release_build_resolves_the_results_capture_url_into_the_view_model(
             encoding="utf-8"
         )
     )
-    assert published_without_results["metadata"]["results_capture_url"] is None
+    assert published_without_results["metadata"]["results_capture_urls"] is None
 
 
 def test_release_build_succeeds_with_a_real_results_capture_and_corrections_link(
@@ -589,7 +592,7 @@ def test_release_build_succeeds_with_a_real_results_capture_and_corrections_link
     published = json.loads(
         (release.bundle_dir / "data" / "publication_view_model.json").read_text(encoding="utf-8")
     )
-    capture_url = published["metadata"]["results_capture_url"]
+    capture_url = published["metadata"]["results_capture_urls"]["king-county-assessor"]
     assert capture_url == "https://example.org/results/certified"
     guide_html = (release.bundle_dir / release.status.guide_html_artifact).read_text(
         encoding="utf-8"
