@@ -1,0 +1,288 @@
+{
+  "by_country": [
+    {
+      "key": "US",
+      "requests": 252
+    },
+    {
+      "key": "DE",
+      "requests": 31
+    },
+    {
+      "key": "FR",
+      "requests": 22
+    },
+    {
+      "key": "CN",
+      "requests": 20
+    },
+    {
+      "key": "NL",
+      "requests": 16
+    },
+    {
+      "key": "BR",
+      "requests": 13
+    },
+    {
+      "key": "HK",
+      "requests": 13
+    },
+    {
+      "key": "SG",
+      "requests": 13
+    },
+    {
+      "key": "JP",
+      "requests": 5
+    },
+    {
+      "key": "PL",
+      "requests": 4
+    },
+    {
+      "key": "KR",
+      "requests": 3
+    },
+    {
+      "key": "TR",
+      "requests": 3
+    },
+    {
+      "key": "RO",
+      "requests": 2
+    },
+    {
+      "key": "BE",
+      "requests": 1
+    },
+    {
+      "key": "CA",
+      "requests": 1
+    },
+    {
+      "key": "DK",
+      "requests": 1
+    },
+    {
+      "key": "IE",
+      "requests": 1
+    },
+    {
+      "key": "TH",
+      "requests": 1
+    }
+  ],
+  "by_device_type": [
+    {
+      "key": "desktop",
+      "requests": 277
+    },
+    {
+      "key": "mobile",
+      "requests": 193
+    }
+  ],
+  "by_edge_status_code": [
+    {
+      "key": 200,
+      "requests": 178
+    },
+    {
+      "key": 307,
+      "requests": 78
+    },
+    {
+      "key": 301,
+      "requests": 62
+    },
+    {
+      "key": 404,
+      "requests": 47
+    },
+    {
+      "key": 403,
+      "requests": 24
+    },
+    {
+      "key": 204,
+      "requests": 12
+    },
+    {
+      "key": 405,
+      "requests": 1
+    }
+  ],
+  "by_path": [
+    {
+      "key": "/",
+      "requests": 151
+    },
+    {
+      "key": "/e/wa-2026-primary/",
+      "requests": 95
+    },
+    {
+      "key": "/wp-admin/install.php",
+      "requests": 48
+    },
+    {
+      "key": "/robots.txt",
+      "requests": 19
+    },
+    {
+      "key": "/favicon.svg",
+      "requests": 18
+    },
+    {
+      "key": "/e/wa-2026-primary/comparisons/",
+      "requests": 16
+    },
+    {
+      "key": "/apple-touch-icon.png",
+      "requests": 15
+    },
+    {
+      "key": "/cdn-cgi/rum",
+      "requests": 13
+    },
+    {
+      "key": "/favicon-32.png",
+      "requests": 13
+    },
+    {
+      "key": "/sitemap.xml",
+      "requests": 12
+    },
+    {
+      "key": "/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js",
+      "requests": 10
+    },
+    {
+      "key": "/og-image.png",
+      "requests": 8
+    },
+    {
+      "key": "//blog/wp-includes/wlwmanifest.xml",
+      "requests": 4
+    },
+    {
+      "key": "/e/wa-2026-primary//media/wp-includes/wlwmanifest.xml",
+      "requests": 4
+    },
+    {
+      "key": "/favicon.ico",
+      "requests": 4
+    },
+    {
+      "key": "/apple-touch-icon-precomposed.png",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-43-state-senator/",
+      "requests": 3
+    },
+    {
+      "key": "//news/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "//test/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "//web/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "//wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "//wp/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//2019/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//shop/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//test/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//wp/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//wp1/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//wp2/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "//2019/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "//cms/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "//shop/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "//wp1/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "/Seattle_2026_Primary_Elections_Guide.pdf",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary//2018/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary//blog/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-37-state-senator/",
+      "requests": 1
+    },
+    {
+      "key": "/media/system/js/core.js",
+      "requests": 1
+    },
+    {
+      "key": "/wp-includes/js/jquery/jquery.js",
+      "requests": 1
+    },
+    {
+      "key": "/wp-login.php",
+      "requests": 1
+    },
+    {
+      "key": "/xmlrpc.php",
+      "requests": 1
+    }
+  ],
+  "date": "2026-08-29",
+  "page_views": 95,
+  "requests": 402,
+  "schema_version": "1.0",
+  "sources": [
+    "httpRequests1dGroups",
+    "httpRequestsAdaptiveGroups"
+  ],
+  "uniques": 118,
+  "visits": 48
+}
