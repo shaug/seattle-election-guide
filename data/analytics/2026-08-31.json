@@ -1,0 +1,348 @@
+{
+  "by_country": [
+    {
+      "key": "US",
+      "requests": 186
+    },
+    {
+      "key": "DE",
+      "requests": 40
+    },
+    {
+      "key": "CN",
+      "requests": 21
+    },
+    {
+      "key": "SG",
+      "requests": 15
+    },
+    {
+      "key": "JP",
+      "requests": 12
+    },
+    {
+      "key": "BR",
+      "requests": 10
+    },
+    {
+      "key": "KR",
+      "requests": 8
+    },
+    {
+      "key": "NL",
+      "requests": 8
+    },
+    {
+      "key": "SE",
+      "requests": 8
+    },
+    {
+      "key": "HK",
+      "requests": 7
+    },
+    {
+      "key": "GB",
+      "requests": 5
+    },
+    {
+      "key": "TH",
+      "requests": 5
+    },
+    {
+      "key": "KH",
+      "requests": 4
+    },
+    {
+      "key": "LU",
+      "requests": 3
+    },
+    {
+      "key": "PL",
+      "requests": 3
+    },
+    {
+      "key": "TR",
+      "requests": 3
+    },
+    {
+      "key": "AU",
+      "requests": 2
+    },
+    {
+      "key": "BE",
+      "requests": 2
+    },
+    {
+      "key": "ID",
+      "requests": 2
+    },
+    {
+      "key": "RO",
+      "requests": 2
+    },
+    {
+      "key": "AE",
+      "requests": 1
+    },
+    {
+      "key": "KE",
+      "requests": 1
+    },
+    {
+      "key": "SY",
+      "requests": 1
+    }
+  ],
+  "by_device_type": [
+    {
+      "key": "desktop",
+      "requests": 267
+    },
+    {
+      "key": "mobile",
+      "requests": 143
+    },
+    {
+      "key": "tablet",
+      "requests": 1
+    }
+  ],
+  "by_edge_status_code": [
+    {
+      "key": 200,
+      "requests": 125
+    },
+    {
+      "key": 307,
+      "requests": 77
+    },
+    {
+      "key": 301,
+      "requests": 71
+    },
+    {
+      "key": 404,
+      "requests": 62
+    },
+    {
+      "key": 403,
+      "requests": 14
+    }
+  ],
+  "by_path": [
+    {
+      "key": "/",
+      "requests": 143
+    },
+    {
+      "key": "/e/wa-2026-primary/",
+      "requests": 81
+    },
+    {
+      "key": "/wp-admin/install.php",
+      "requests": 49
+    },
+    {
+      "key": "/robots.txt",
+      "requests": 26
+    },
+    {
+      "key": "/sitemap.xml",
+      "requests": 13
+    },
+    {
+      "key": "/wp-login.php",
+      "requests": 6
+    },
+    {
+      "key": "//wp-includes/ID3/license.txt",
+      "requests": 4
+    },
+    {
+      "key": "/about/",
+      "requests": 4
+    },
+    {
+      "key": "/favicon.svg",
+      "requests": 4
+    },
+    {
+      "key": "/.git/HEAD",
+      "requests": 3
+    },
+    {
+      "key": "//cms/wp-includes/wlwmanifest.xml",
+      "requests": 3
+    },
+    {
+      "key": "//test/wp-includes/wlwmanifest.xml",
+      "requests": 3
+    },
+    {
+      "key": "//xmlrpc.php",
+      "requests": 3
+    },
+    {
+      "key": "/apple-touch-icon.png",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/comparisons/",
+      "requests": 3
+    },
+    {
+      "key": "/favicon.ico",
+      "requests": 3
+    },
+    {
+      "key": "/media/system/js/core.js",
+      "requests": 3
+    },
+    {
+      "key": "/og-image.png",
+      "requests": 3
+    },
+    {
+      "key": "/wp-includes/css/buttons.css",
+      "requests": 3
+    },
+    {
+      "key": "//2019/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "//2020/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "//2021/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "//site/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "//web/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "//wp/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js",
+      "requests": 2
+    },
+    {
+      "key": "/cdn-cgi/trace",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//blog/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//news/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//shop/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//test/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//website/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//wordpress/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//wp1/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//wp2/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//xmlrpc.php",
+      "requests": 2
+    },
+    {
+      "key": "/favicon-32.png",
+      "requests": 2
+    },
+    {
+      "key": "/xmlrpc.php",
+      "requests": 2
+    },
+    {
+      "key": "/.env",
+      "requests": 1
+    },
+    {
+      "key": "/.git/config",
+      "requests": 1
+    },
+    {
+      "key": "//blog/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "//feed/",
+      "requests": 1
+    },
+    {
+      "key": "//shop/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "//wordpress/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "//wp1/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "/apple-touch-icon-precomposed.png",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/king-county-council-8/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-11-state-representative-2/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-32-state-representative-2/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-46-state-representative-2/",
+      "requests": 1
+    },
+    {
+      "key": "/wp-json/gravitysmtp/v1/tests/mock-data",
+      "requests": 1
+    }
+  ],
+  "date": "2026-08-31",
+  "page_views": 82,
+  "requests": 349,
+  "schema_version": "1.0",
+  "sources": [
+    "httpRequests1dGroups",
+    "httpRequestsAdaptiveGroups"
+  ],
+  "uniques": 123,
+  "visits": 34
+}
