@@ -718,6 +718,24 @@ def test_bundle_drift_does_not_replace_existing_output(tmp_path: Path) -> None:
     assert not (output / "e").exists()
 
 
+def test_schema_1_1_bundle_keeps_screenshot_hash_enforced(tmp_path: Path) -> None:
+    """Issue #256 preserves the historical manifest contract: an old bundle
+    did hash screenshots, so its exact rasterized evidence remains enforced."""
+    current, older = _write_archive_bundles(tmp_path)
+    screenshot = current / "validation/rendering/screenshots/desktop.png"
+    screenshot.write_bytes(b"tampered legacy screenshot")
+
+    with pytest.raises(
+        ValueError,
+        match=r"artifact hash mismatch: validation/rendering/screenshots/desktop\.png",
+    ):
+        stage_pages_site(
+            _write_site_manifest(tmp_path, current_first=True),
+            {CURRENT_BUNDLE_ID: current, OLDER_BUNDLE_ID: older},
+            tmp_path / "site",
+        )
+
+
 def test_verify_staged_site_rejects_tamper_deletion_and_unexpected_assets(
     tmp_path: Path,
 ) -> None:

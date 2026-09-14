@@ -76,6 +76,8 @@ fetching remains the responsibility of issue #10.
 Normalized, review, and consensus records use exact rational values and canonical serialization.
 Append-only records are stored separately so concurrent reviews do not rewrite shared history.
 Build timestamps are explicit inputs. The consensus input hash covers the complete canonical
-dataset and scoring policy. Manifests hash configuration, snapshots, normalized data, and
-published outputs. Browser checks use an emulated CSS viewport so mobile validation is identical on macOS and Linux, and reject horizontal
-overflow before capturing screenshots. Tests must not depend on live websites.
+dataset and scoring policy. Release manifest schema 1.2 hashes every included artifact except its
+explicitly declared desktop and mobile rasterized screenshots; the published whole-bundle hash
+still protects those exact files. The release reproducibility guarantee applies to the Linux
+deployment environment. Browser checks use emulated CSS viewports and reject horizontal overflow
+before capturing screenshots. Tests must not depend on live websites.

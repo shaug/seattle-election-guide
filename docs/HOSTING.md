@@ -321,10 +321,11 @@ The comparison is strict: exactly seven days old still passes.
 ## Deployment gate
 
 The `deploy` job depends on the complete CI `check` job. CI builds the deterministic current release
-twice, compares the archives, validates the archive and rendered output, resolves all
-manifest-declared bundles, stages the complete site, and uploads the staged directory as a
-short-lived GitHub Actions artifact. Only then can the production job download and upload it with
-Wrangler. Concurrent production uploads are serialized.
+twice, compares the manifest-declared deterministic artifacts, separately validates an archive's
+structure, contents, and rendered output, resolves all manifest-declared bundles, stages the
+complete site, and uploads the staged directory as a short-lived GitHub Actions artifact. Only then
+can the production job download and upload it with Wrangler. Concurrent production uploads are
+serialized.
 
 Passing CI makes a commit publishable; it does not publish it. Two independent controls stand
 between a green merge and the live site.

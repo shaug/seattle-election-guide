@@ -163,9 +163,8 @@ a { color: var(--blue); text-underline-offset: .15em; }
    fractional device pixel -- 267.734375 at the 1440px capture width -- because
    every box above it is rem-derived. Which device pixel that layer's contents
    snap to is then decided per renderer process, so two builds of one unchanged
-   document photograph the control bar one pixel apart and the release
-   reproducibility gate fails on desktop.png. Declaring the promotion makes the
-   layer's rasterization the same on every launch.
+   document can photograph the control bar one pixel apart. Declaring the
+   promotion reduces that visible raster variation.
 
    Measured on the CI runner, 25 captures of one document per job, three jobs
    per arm: the shipped capture diverged 15 times in 75, and 0 times in 75 with
@@ -185,10 +184,8 @@ a { color: var(--blue); text-underline-offset: .15em; }
    family). */
 /* min-height pins this strip's box to a whole-pixel value rather than letting
    it fall out of padding + this element's own content-flow line height
-   (issue #341): the guide's render-determinism gate builds the page twice
-   and requires the two headless-Chrome screenshots to be byte-identical, and
-   a content-flow height here can resolve to a device-pixel boundary a
-   Chromium renderer process does not snap identically on every launch
+   (issue #341): a content-flow height here can resolve to a device-pixel
+   boundary a Chromium renderer process does not snap identically on every launch
    (reproduced on the real CI runner: this strip's own painted bottom edge,
    ~38.47px of content height past its top, differed by exactly one device
    pixel between two same-input builds). 2.5rem (40px) is comfortably above

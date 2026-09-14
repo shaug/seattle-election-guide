@@ -108,12 +108,10 @@ release-verify:
 # check-js and check-changelog already are (issue #367). Two builds of one
 # commit must produce one release.
 #
-# Two comparisons, because they cover different things. `diff -rq` walks the
-# unpacked bundles and names the artifact that differs -- which is the whole
-# reason this replaced a bare `cmp`, whose single offset into compressed data
-# named nothing. `cmp` then holds the archive itself to its exact bytes,
-# covering what the bundles cannot show: entry order, timestamps, permissions,
-# and compression settings.
+# `release compare` verifies both manifests, then compares every artifact in
+# the deterministic contract and names the path that differs. Rasterized
+# desktop and mobile screenshots remain in each release ZIP for review, but
+# Linux Chrome is allowed to produce different screenshot bytes between runs.
 #
 # Not part of `make check`: `release build` refuses a dirty checkout, so on the
 # tree a contributor runs `make check` against it could only fail for a reason
@@ -132,8 +130,7 @@ check-release-reproducible:
 			--generated-at "$$generated_at" \
 			--output-dir "dist/reproducibility-$$build" || exit 1; \
 	done
-	diff -rq dist/reproducibility-a/bundle dist/reproducibility-b/bundle
-	cmp dist/reproducibility-a/seattle-election-guide-2026-primary.2.zip dist/reproducibility-b/seattle-election-guide-2026-primary.2.zip
+	uv run election-guide release compare dist/reproducibility-a/bundle dist/reproducibility-b/bundle
 
 # Only the current election is built from source; every other declared election
 # resolves from the release that published it, exactly as CI stages (issue 271,
