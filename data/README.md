@@ -25,14 +25,16 @@ writes metadata beneath `manifests/evidence/` and bytes beneath `snapshots/sha25
 artifacts or `evidence/official/sha256/` for permitted official-authority ones; the manifest's
 `storage_scope` records which.
 
-The current canonical election inventory is
-`normalized/wa-2026-primary-inventory.json`. Its source manifest records the official URLs and
+The current canonical election inventories are
+`normalized/wa-2026-primary-inventory.json` and
+`normalized/wa-2026-general-inventory.json`. Their source manifests record official URLs and
 content hashes, while raw King County CSV files remain local because they contain contact and
 mailing fields that are not needed by the guide.
 
-`extracted/official/` contains deterministic, privacy-stripped build inputs. Their manifests
-retain the hashes of both the official raw artifacts and the safe extracts, allowing CI and a
-fresh checkout to reproduce the canonical inventory without publishing unused personal fields.
+`extracted/official/` contains deterministic, privacy-stripped build inputs. Their manifests bind
+the retained extracts by hash and record the official sources, allowing CI and a fresh checkout
+to reproduce the canonical inventories without publishing unused personal fields. Where one raw
+artifact feeds one extract, the manifest also retains the raw artifact hash.
 
 Normalization records use content-derived IDs and canonical JSON. Record filenames use the
 content ID except queue items and terminal decisions, whose filenames use the claim and review

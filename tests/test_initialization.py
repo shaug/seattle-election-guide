@@ -27,6 +27,11 @@ BALLOT_FIXTURE = Path("tests/fixtures/initialization/wa-2027-seattle-general-bal
 BALLOT_MANIFEST = Path("tests/fixtures/initialization/wa-2027-seattle-general-ballot-input.yaml")
 WA_2026_GENERAL_SEED = Path("config/elections/wa-2026-general.seed.yaml")
 WA_2026_GENERAL_CONFIGURATION = Path("config/elections/wa-2026-general.yaml")
+WA_2026_GENERAL_BALLOT = Path(
+    "data/extracted/official/king-county-2026-general-canonical-ballot.csv"
+)
+WA_2026_GENERAL_BALLOT_MANIFEST = Path("config/elections/wa-2026-general-ballot-input.yaml")
+WA_2026_GENERAL_INVENTORY = Path("data/normalized/wa-2026-general-inventory.json")
 runner = CliRunner()
 
 
@@ -189,6 +194,50 @@ def test_wa_2026_general_initialization_is_reproducible_and_complete(
     }
     assert all(item.publication_eligible for item in configuration.races)
     _assert_no_candidate_data(read_json(generated))
+
+
+def test_wa_2026_general_inventory_import_is_reproducible_and_complete(
+    tmp_path: Path,
+) -> None:
+    generated = tmp_path / "wa-2026-general-inventory.json"
+
+    result = runner.invoke(
+        app,
+        [
+            "inventory",
+            "import-initialized",
+            str(WA_2026_GENERAL_CONFIGURATION),
+            "--manifest",
+            str(WA_2026_GENERAL_BALLOT_MANIFEST),
+            "--ballot-choices",
+            str(WA_2026_GENERAL_BALLOT),
+            "--output",
+            str(generated),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "initialized inventory: created (52 races, 83 choices)" in result.output
+    assert generated.read_bytes() == WA_2026_GENERAL_INVENTORY.read_bytes()
+
+    inventory = read_inventory(generated)
+    assert inventory.election.id == "wa-2026-general"
+    assert len(inventory.jurisdictions) == 18
+    assert len(inventory.races) == 52
+    assert sum(len(race.choices) for race in inventory.races) == 83
+    assert inventory.coverage_checks[0].matched_races == 52
+    assert inventory.coverage_checks[1].matched_choices == 83
+
+    races = {race.id: race for race in inventory.races}
+    assert [choice.official_name for choice in races["us-house-9"].choices] == [
+        "Adam Smith",
+        "Doug Basler",
+    ]
+    assert [choice.id for choice in races["seattle-proposition-1-transit"].choices] == [
+        "seattle-proposition-1-transit--yes",
+        "seattle-proposition-1-transit--no",
+    ]
+    assert all(race.choices for race in inventory.races)
 
 
 def test_seed_order_does_not_change_canonical_identifiers_or_bytes(tmp_path: Path) -> None:
