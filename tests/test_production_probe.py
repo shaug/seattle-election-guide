@@ -10,11 +10,12 @@ from __future__ import annotations
 import socketserver
 import threading
 from collections.abc import Iterator
+from datetime import UTC, datetime
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 import pytest
 
-from election_guide.hosting.production_check import RouteCheck
+from election_guide.hosting.production_check import RouteCheck, render_summary_lines
 from election_guide.hosting.production_probe import fetch_manifest_body, probe, run_production_check
 
 COMMIT = "a" * 40
@@ -26,6 +27,12 @@ MANIFEST_BODY = (
     b'"source_panel_hash": "' + (b"b" * 64) + b'", '
     b'"release_manifest_sha256": "' + (b"c" * 64) + b'"}], '
     b'"assets": {"e/index.html": "' + (b"d" * 64) + b'"}}'
+)
+RELEASE_MANIFEST_BODY = (
+    b'{"schema_version": "1.1", "release_version": "primary.1", '
+    b'"source_panel_id": "panel", "source_panel_hash": "' + (b"b" * 64) + b'", '
+    b'"generated_at": "2026-10-20T12:00:00Z", '
+    b'"artifact_hashes": {"index.html": "' + (b"d" * 64) + b'"}}'
 )
 
 
@@ -61,6 +68,11 @@ class _Handler(BaseHTTPRequestHandler):
             self.send_header("Content-Type", "application/json")
             self.end_headers()
             self.wfile.write(MANIFEST_BODY)
+        elif self.path == "/e/wa-2026-primary/release-manifest.json":
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            self.wfile.write(RELEASE_MANIFEST_BODY)
         else:
             self.send_response(404)
             self.end_headers()
@@ -277,6 +289,66 @@ def test_run_production_check_catches_a_commit_mismatch(server: str) -> None:
     assert not report.ok
     assert report.commit is not None
     assert report.commit.observed == COMMIT
+
+
+def test_run_production_check_alerts_on_stale_published_data_inside_the_window(
+    server: str,
+) -> None:
+    report = run_production_check(
+        server,
+        expected_git_commit=COMMIT,
+        timeout=5,
+        active_window=True,
+        checked_at=datetime(2026, 11, 1, 12, tzinfo=UTC),
+    )
+
+    assert not report.ok
+    assert any(
+        line.startswith("FAIL published data freshness") for line in render_summary_lines(report)
+    )
+
+
+def test_run_production_check_ignores_the_same_stale_timestamp_outside_the_window() -> None:
+    class _NoReleaseManifestHandler(_Handler):
+        def do_GET(self) -> None:
+            if self.path == "/e/wa-2026-primary/release-manifest.json":
+                self.send_response(404)
+                self.end_headers()
+            else:
+                super().do_GET()
+
+    httpd = HTTPServer(("127.0.0.1", 0), _NoReleaseManifestHandler)
+    thread = threading.Thread(target=httpd.serve_forever, daemon=True)
+    thread.start()
+    try:
+        report = run_production_check(
+            f"http://127.0.0.1:{httpd.server_port}",
+            expected_git_commit=COMMIT,
+            timeout=5,
+            active_window=False,
+            checked_at=datetime(2026, 11, 1, 12, tzinfo=UTC),
+        )
+    finally:
+        httpd.shutdown()
+        thread.join()
+
+    assert report.ok
+    assert report.release_manifest is None
+    assert report.data_freshness is None
+
+
+def test_run_production_check_accepts_data_exactly_at_the_freshness_threshold(
+    server: str,
+) -> None:
+    report = run_production_check(
+        server,
+        expected_git_commit=COMMIT,
+        timeout=5,
+        active_window=True,
+        checked_at=datetime(2026, 10, 27, 12, tzinfo=UTC),
+    )
+
+    assert report.ok
 
 
 def test_run_production_check_catches_a_404_on_a_route(server: str) -> None:
