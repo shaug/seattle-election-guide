@@ -59,33 +59,54 @@ def verify_release_bundle_artifacts(
             f"release manifest declares artifacts absent from release status: {sorted(unexpected)}"
         )
 
+    artifact_errors: list[str] = []
     for relative, expected_hash in sorted(manifest.artifact_hashes.items()):
         path = bundle_dir / relative
         if not path.is_file():
-            raise ValueError(f"release artifact is missing: {relative}")
+            artifact_errors.append(f"release artifact is missing: {relative}")
+            continue
         actual_hash = hashlib.sha256(path.read_bytes()).hexdigest()
         if actual_hash != expected_hash:
-            raise ValueError(f"release artifact hash mismatch: {relative}")
+            artifact_errors.append(f"release artifact hash mismatch: {relative}")
     for relative in sorted(manifest.unhashed_artifacts):
         if not (bundle_dir / relative).is_file():
-            raise ValueError(f"release artifact is missing: {relative}")
+            artifact_errors.append(f"release artifact is missing: {relative}")
+    if artifact_errors:
+        raise ValueError("; ".join(artifact_errors))
 
     return VerifiedReleaseBundle(bundle_dir, status, manifest)
 
 
 def compare_release_bundles(first_dir: Path, second_dir: Path) -> None:
-    """Fail with an artifact path when deterministic release output differs."""
-    first = verify_release_bundle_artifacts(first_dir)
-    second = verify_release_bundle_artifacts(second_dir)
+    """Fail with every affected path when deterministic release output differs."""
+    verified_bundles: list[VerifiedReleaseBundle] = []
+    verification_errors: list[tuple[str, OSError | ValueError]] = []
+    for label, bundle_dir in (("first", first_dir), ("second", second_dir)):
+        try:
+            verified_bundles.append(verify_release_bundle_artifacts(bundle_dir))
+        except (OSError, ValueError) as error:
+            verification_errors.append((label, error))
+    if len(verification_errors) == 1:
+        raise verification_errors[0][1]
+    if verification_errors:
+        details = "; ".join(f"{label} bundle: {error}" for label, error in verification_errors)
+        raise ValueError(f"release bundle verification failed: {details}")
+
+    first, second = verified_bundles
 
     first_hashes = first.manifest.artifact_hashes
     second_hashes = second.manifest.artifact_hashes
     all_hashed_paths = sorted(set(first_hashes) | set(second_hashes))
-    for relative in all_hashed_paths:
-        if first_hashes.get(relative) != second_hashes.get(relative):
-            raise ValueError(f"deterministic release artifact differs: {relative}")
+    differences = [
+        relative
+        for relative in all_hashed_paths
+        if first_hashes.get(relative) != second_hashes.get(relative)
+    ]
 
     first_manifest_path = first.directory / "release-manifest.json"
     second_manifest_path = second.directory / "release-manifest.json"
     if first_manifest_path.read_bytes() != second_manifest_path.read_bytes():
-        raise ValueError("deterministic release artifact differs: release-manifest.json")
+        differences.append("release-manifest.json")
+    if differences:
+        noun = "artifact differs" if len(differences) == 1 else "artifacts differ"
+        raise ValueError(f"deterministic release {noun}: {', '.join(differences)}")

@@ -443,19 +443,25 @@ def test_release_compare_accepts_different_declared_screenshot_bytes(
     assert "deterministic release artifacts match" in result.stdout
 
 
-def test_release_compare_names_a_changed_hashed_artifact(
+def test_release_compare_names_all_changed_hashed_artifacts(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """Issue #256: two internally valid builds with different deterministic
-    output fail at the public comparison surface with the path that moved."""
+    output fail at the public comparison surface with every path that moved."""
     ledger, dataset_path, snapshots = _compiled_release_inputs(tmp_path)
     _stub_release_render(monkeypatch)
     first = _build_release(ledger, dataset_path, snapshots, tmp_path, tmp_path / "first")
     second = _build_release(ledger, dataset_path, snapshots, tmp_path, tmp_path / "second")
-    guide = second.bundle_dir / second.status.guide_html_artifact
-    guide.write_bytes(b"<!doctype html><title>Different deterministic guide</title>")
-    _rehash_manifest_artifact(second.bundle_dir, second.status.guide_html_artifact)
+    changed_artifacts = {
+        "RELEASE_NOTES.md": b"Different deterministic release notes\n",
+        second.status.guide_html_artifact: (
+            b"<!doctype html><title>Different deterministic guide</title>"
+        ),
+    }
+    for relative, contents in changed_artifacts.items():
+        (second.bundle_dir / relative).write_bytes(contents)
+        _rehash_manifest_artifact(second.bundle_dir, relative)
 
     result = CliRunner().invoke(
         app,
@@ -463,10 +469,11 @@ def test_release_compare_names_a_changed_hashed_artifact(
     )
 
     assert result.exit_code == 1
-    assert second.status.guide_html_artifact in result.output
+    for relative in changed_artifacts:
+        assert relative in result.output
 
 
-def test_release_compare_names_a_missing_hashed_artifact(
+def test_release_compare_names_all_missing_hashed_artifacts_across_bundles(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -474,8 +481,13 @@ def test_release_compare_names_a_missing_hashed_artifact(
     _stub_release_render(monkeypatch)
     first = _build_release(ledger, dataset_path, snapshots, tmp_path, tmp_path / "first")
     second = _build_release(ledger, dataset_path, snapshots, tmp_path, tmp_path / "second")
-    missing = second.bundle_dir / second.status.guide_html_artifact
-    missing.unlink()
+    missing_artifacts = {
+        "RELEASE_NOTES.md": first.bundle_dir,
+        "data/consensus.json": first.bundle_dir,
+        second.status.guide_html_artifact: second.bundle_dir,
+    }
+    for relative, bundle_dir in missing_artifacts.items():
+        (bundle_dir / relative).unlink()
 
     result = CliRunner().invoke(
         app,
@@ -483,7 +495,8 @@ def test_release_compare_names_a_missing_hashed_artifact(
     )
 
     assert result.exit_code == 1
-    assert second.status.guide_html_artifact in result.output
+    for relative in missing_artifacts:
+        assert relative in result.output
 
 
 @pytest.mark.parametrize(
