@@ -70,6 +70,7 @@ jobs:
           uv run election-guide hosting check-production
           "$PRODUCTION_ORIGIN"
           --expected-git-commit "$(git rev-parse HEAD)"
+          --calendar config/calendar/elections.yaml
           --repository "$GITHUB_REPOSITORY"
           ${DRY_RUN:+--dry-run}
         env:

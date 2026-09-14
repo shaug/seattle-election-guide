@@ -303,6 +303,21 @@ because a preview is a copy of the site rather than a separate site.
 Production is unaffected. The `pages:deploy` script defaults to `--branch=main`; only the preview
 workflow overrides it, by setting `PAGES_BRANCH`.
 
+## Production freshness check
+
+The scheduled production check reads the current election's public
+`release-manifest.json` and treats its `generated_at` value as stale when it is
+more than seven days old during the seven-day pre-election window. Outside that
+window, age alone never opens an alert. The window comes from the
+`election_day` milestone in `config/calendar/elections.yaml`; no second election
+date is configured in the monitor.
+
+Seven days matches the guide's planned weekly refresh rhythm: the calendar
+schedules refreshes at eleven and four days before election day. A release can
+therefore reach seven days old without missing that rhythm, while an age greater
+than seven days means a scheduled refresh has not produced a newer publication.
+The comparison is strict: exactly seven days old still passes.
+
 ## Deployment gate
 
 The `deploy` job depends on the complete CI `check` job. CI builds the deterministic current release

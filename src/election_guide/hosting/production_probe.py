@@ -13,17 +13,21 @@ from __future__ import annotations
 import http.client
 import urllib.error
 import urllib.request
+from datetime import UTC, datetime
 from urllib.parse import urljoin, urlsplit
 
 from election_guide.hosting.production_check import (
     MANIFEST_PATH,
     CommitCheck,
+    DataFreshnessCheck,
     Observation,
     ProductionCheckReport,
     RouteCheck,
     RouteCheckResult,
     evaluate_manifest,
+    evaluate_release_manifest,
     plan_route_checks,
+    release_manifest_check,
 )
 
 USER_AGENT = (
@@ -86,7 +90,11 @@ def probe(base_url: str, check: RouteCheck, *, timeout: float) -> Observation:
 
 def fetch_manifest_body(base_url: str, *, timeout: float) -> tuple[Observation, bytes | None]:
     """Fetch `/deployment-manifest.json`, returning its body only on a 200."""
-    url = urljoin(base_url, MANIFEST_PATH)
+    return _fetch_body(base_url, MANIFEST_PATH, timeout=timeout)
+
+
+def _fetch_body(base_url: str, path: str, *, timeout: float) -> tuple[Observation, bytes | None]:
+    url = urljoin(base_url, path)
     try:
         with _OPENER.open(_request(url), timeout=timeout) as response:
             body = response.read()
@@ -103,7 +111,12 @@ def fetch_manifest_body(base_url: str, *, timeout: float) -> tuple[Observation, 
 
 
 def run_production_check(
-    base_url: str, *, expected_git_commit: str, timeout: float
+    base_url: str,
+    *,
+    expected_git_commit: str,
+    timeout: float,
+    active_window: bool = False,
+    checked_at: datetime | None = None,
 ) -> ProductionCheckReport:
     """Fetch the deployment manifest, then check the routes and commit it implies.
 
@@ -126,6 +139,11 @@ def run_production_check(
         for election in manifest.elections
         if election.election_id == manifest.current_election_id
     )
+    release_check = release_manifest_check(manifest.current_election_id)
+    release_observation, release_body = _fetch_body(base_url, release_check.path, timeout=timeout)
+    release_result, release_manifest, release_parse_error = evaluate_release_manifest(
+        release_check, release_observation, release_body
+    )
     route_results = tuple(
         RouteCheckResult(check=check, observed=probe(base_url, check, timeout=timeout))
         for check in plan_route_checks(manifest.current_election_id)
@@ -133,6 +151,17 @@ def run_production_check(
     return ProductionCheckReport(
         manifest=manifest_result,
         current_election_id=manifest.current_election_id,
+        release_manifest=release_result,
+        release_manifest_parse_error=release_parse_error,
         route_results=route_results,
         commit=CommitCheck(expected=expected_git_commit, observed=current.git_commit),
+        data_freshness=(
+            None
+            if release_manifest is None
+            else DataFreshnessCheck(
+                published_at=release_manifest.generated_at,
+                checked_at=checked_at or datetime.now(UTC),
+                active_window=active_window,
+            )
+        ),
     )
