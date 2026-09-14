@@ -308,21 +308,33 @@ def test_run_production_check_alerts_on_stale_published_data_inside_the_window(
     )
 
 
-def test_run_production_check_ignores_the_same_stale_timestamp_outside_the_window(
-    server: str,
-) -> None:
-    report = run_production_check(
-        server,
-        expected_git_commit=COMMIT,
-        timeout=5,
-        active_window=False,
-        checked_at=datetime(2026, 11, 1, 12, tzinfo=UTC),
-    )
+def test_run_production_check_ignores_the_same_stale_timestamp_outside_the_window() -> None:
+    class _NoReleaseManifestHandler(_Handler):
+        def do_GET(self) -> None:
+            if self.path == "/e/wa-2026-primary/release-manifest.json":
+                self.send_response(404)
+                self.end_headers()
+            else:
+                super().do_GET()
+
+    httpd = HTTPServer(("127.0.0.1", 0), _NoReleaseManifestHandler)
+    thread = threading.Thread(target=httpd.serve_forever, daemon=True)
+    thread.start()
+    try:
+        report = run_production_check(
+            f"http://127.0.0.1:{httpd.server_port}",
+            expected_git_commit=COMMIT,
+            timeout=5,
+            active_window=False,
+            checked_at=datetime(2026, 11, 1, 12, tzinfo=UTC),
+        )
+    finally:
+        httpd.shutdown()
+        thread.join()
 
     assert report.ok
-    assert any(
-        "outside the active election window" in line for line in render_summary_lines(report)
-    )
+    assert report.release_manifest is None
+    assert report.data_freshness is None
 
 
 def test_run_production_check_accepts_data_exactly_at_the_freshness_threshold(

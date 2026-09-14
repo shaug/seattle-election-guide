@@ -139,11 +139,17 @@ def run_production_check(
         for election in manifest.elections
         if election.election_id == manifest.current_election_id
     )
-    release_check = release_manifest_check(manifest.current_election_id)
-    release_observation, release_body = _fetch_body(base_url, release_check.path, timeout=timeout)
-    release_result, release_manifest, release_parse_error = evaluate_release_manifest(
-        release_check, release_observation, release_body
-    )
+    release_result = None
+    release_manifest = None
+    release_parse_error = None
+    if active_window:
+        release_check = release_manifest_check(manifest.current_election_id)
+        release_observation, release_body = _fetch_body(
+            base_url, release_check.path, timeout=timeout
+        )
+        release_result, release_manifest, release_parse_error = evaluate_release_manifest(
+            release_check, release_observation, release_body
+        )
     route_results = tuple(
         RouteCheckResult(check=check, observed=probe(base_url, check, timeout=timeout))
         for check in plan_route_checks(manifest.current_election_id)
@@ -161,7 +167,6 @@ def run_production_check(
             else DataFreshnessCheck(
                 published_at=release_manifest.generated_at,
                 checked_at=checked_at or datetime.now(UTC),
-                active_window=active_window,
             )
         ),
     )

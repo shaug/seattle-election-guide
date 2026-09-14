@@ -89,7 +89,6 @@ class DataFreshnessCheck(BaseModel):
 
     published_at: AwareDatetime
     checked_at: AwareDatetime
-    active_window: bool
     threshold_days: int = Field(default=STALE_DATA_THRESHOLD_DAYS, ge=0)
 
     @property
@@ -98,7 +97,7 @@ class DataFreshnessCheck(BaseModel):
 
     @property
     def ok(self) -> bool:
-        return not self.active_window or self.age <= timedelta(days=self.threshold_days)
+        return self.age <= timedelta(days=self.threshold_days)
 
 
 class ProductionCheckReport(BaseModel):
@@ -233,16 +232,10 @@ def render_summary_lines(report: ProductionCheckReport) -> list[str]:
         )
     if report.data_freshness is not None:
         freshness = report.data_freshness
-        if not freshness.active_window:
-            lines.append(
-                "PASS published data freshness: outside the active election window; "
-                f"published {freshness.published_at.isoformat()}"
-            )
-        else:
-            status = "PASS" if freshness.ok else "FAIL"
-            age_days = freshness.age.total_seconds() / 86_400
-            lines.append(
-                f"{status} published data freshness: {age_days:.1f} days old at "
-                f"{freshness.checked_at.isoformat()} (maximum {freshness.threshold_days} days)"
-            )
+        status = "PASS" if freshness.ok else "FAIL"
+        age_days = freshness.age.total_seconds() / 86_400
+        lines.append(
+            f"{status} published data freshness: {age_days:.1f} days old at "
+            f"{freshness.checked_at.isoformat()} (maximum {freshness.threshold_days} days)"
+        )
     return lines
