@@ -1,0 +1,26 @@
+schema_version: "1.0"
+election_id: wa-2026-general
+adapter_id: canonical-ballot-csv
+adapter_version: "1.0"
+configuration_source:
+  id: wa-2026-general-configuration
+  authority: Seattle Election Guide
+  url: https://github.com/shaug/seattle-election-guide/blob/main/config/elections/wa-2026-general.yaml
+  media_type: application/json
+  retrieved_at: 2026-09-14T04:56:41Z
+  sha256: 7dab7cee110573c8d662fab4ff718fac831c660424423df24def24e3bd298617
+  description: Reviewed election identity, jurisdiction topology, and stable race declarations.
+  storage_reference: config/elections/wa-2026-general.yaml
+  redistribution_note: Repository-authored configuration.
+ballot_source:
+  id: king-county-2026-general-ballot
+  authority: King County Elections
+  url: https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55
+  media_type: text/csv
+  retrieved_at: 2026-09-14T04:56:41Z
+  sha256: 220e533019fa1d6de659fceabde149fbe74b183df4b044bd2ac4c2f13640b6cf
+  description: >-
+    Privacy-stripped canonical rows transcribed from the official 2026 general candidate list
+    and its companion official ballot-measures list.
+  storage_reference: data/extracted/official/king-county-2026-general-canonical-ballot.csv
+  redistribution_note: Contact and mailing fields are omitted; only ballot-facing fields remain.

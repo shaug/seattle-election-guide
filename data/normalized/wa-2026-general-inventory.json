@@ -1,0 +1,2515 @@
+{
+  "coverage_checks": [
+    {
+      "matched_choices": 0,
+      "matched_races": 52,
+      "rule": "race declarations in the hash-verified initialized configuration",
+      "source_id": "wa-2026-general-configuration"
+    },
+    {
+      "matched_choices": 83,
+      "matched_races": 0,
+      "rule": "canonical ballot choices joined to exact initialized race IDs",
+      "source_id": "king-county-2026-general-ballot"
+    }
+  ],
+  "election": {
+    "election_date": "2026-11-03",
+    "election_type": "general",
+    "id": "wa-2026-general",
+    "name": "2026 Washington November General Election",
+    "official_url": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55",
+    "source_ids": [
+      "wa-2026-general-configuration"
+    ],
+    "state": "WA"
+  },
+  "jurisdictions": [
+    {
+      "aliases": [
+        "Seattle"
+      ],
+      "id": "city-of-seattle",
+      "kind": "city",
+      "name": "City of Seattle",
+      "parent_id": "king-county",
+      "seattle_applicability": {
+        "explanation": "The target citywide ballot geography is the City of Seattle.",
+        "relationship": "citywide",
+        "source_ids": [
+          "wa-2026-general-configuration"
+        ]
+      },
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [
+        "CD 7",
+        "CONGRESSIONAL DISTRICT 7"
+      ],
+      "id": "congressional-district-7",
+      "kind": "congressional_district",
+      "name": "Congressional District 7",
+      "parent_id": "washington-state",
+      "seattle_applicability": {
+        "explanation": "The district includes most of Seattle.",
+        "relationship": "intersects_city",
+        "source_ids": [
+          "wa-2026-general-configuration"
+        ]
+      },
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [
+        "CD 9",
+        "CONGRESSIONAL DISTRICT 9"
+      ],
+      "id": "congressional-district-9",
+      "kind": "congressional_district",
+      "name": "Congressional District 9",
+      "parent_id": "washington-state",
+      "seattle_applicability": {
+        "explanation": "The district includes part of southeast Seattle.",
+        "relationship": "intersects_city",
+        "source_ids": [
+          "wa-2026-general-configuration"
+        ]
+      },
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [
+        "COUNTY COUNCIL DISTRICT NO. 2",
+        "KCC 2"
+      ],
+      "id": "county-council-district-2",
+      "kind": "county_council_district",
+      "name": "Metropolitan King County Council District 2",
+      "parent_id": "king-county",
+      "seattle_applicability": {
+        "explanation": "The district includes part of Seattle.",
+        "relationship": "intersects_city",
+        "source_ids": [
+          "wa-2026-general-configuration"
+        ]
+      },
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [
+        "COUNTY COUNCIL DISTRICT NO. 4",
+        "KCC 4"
+      ],
+      "id": "county-council-district-4",
+      "kind": "county_council_district",
+      "name": "Metropolitan King County Council District 4",
+      "parent_id": "king-county",
+      "seattle_applicability": {
+        "explanation": "The district includes part of Seattle.",
+        "relationship": "intersects_city",
+        "source_ids": [
+          "wa-2026-general-configuration"
+        ]
+      },
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [
+        "COUNTY COUNCIL DISTRICT NO. 8",
+        "KCC 8"
+      ],
+      "id": "county-council-district-8",
+      "kind": "county_council_district",
+      "name": "Metropolitan King County Council District 8",
+      "parent_id": "king-county",
+      "seattle_applicability": {
+        "explanation": "The district includes part of Seattle.",
+        "relationship": "intersects_city",
+        "source_ids": [
+          "wa-2026-general-configuration"
+        ]
+      },
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "court-of-appeals-division-1-district-1",
+      "kind": "judicial_district",
+      "name": "Court of Appeals, Division 1, District 1",
+      "parent_id": "washington-state",
+      "seattle_applicability": {
+        "explanation": "District 1 includes King County and Seattle.",
+        "relationship": "intersects_city",
+        "source_ids": [
+          "wa-2026-general-configuration"
+        ]
+      },
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "king-county",
+      "kind": "county",
+      "name": "King County",
+      "parent_id": "washington-state",
+      "seattle_applicability": {
+        "explanation": "The City of Seattle is within King County.",
+        "relationship": "contains_city",
+        "source_ids": [
+          "wa-2026-general-configuration"
+        ]
+      },
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "id": "king-county-district-court-west-electoral-district",
+      "kind": "judicial_district",
+      "name": "King County District Court West Electoral District",
+      "parent_id": "king-county",
+      "seattle_applicability": {
+        "explanation": "The West Electoral District includes Seattle.",
+        "relationship": "intersects_city",
+        "source_ids": [
+          "wa-2026-general-configuration"
+        ]
+      },
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [
+        "LD 11",
+        "LEGISLATIVE DISTRICT 11"
+      ],
+      "id": "legislative-district-11",
+      "kind": "legislative_district",
+      "name": "Legislative District 11",
+      "parent_id": "washington-state",
+      "seattle_applicability": {
+        "explanation": "The district includes part of southeast Seattle.",
+        "relationship": "intersects_city",
+        "source_ids": [
+          "wa-2026-general-configuration"
+        ]
+      },
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [
+        "LD 32",
+        "LEGISLATIVE DISTRICT 32"
+      ],
+      "id": "legislative-district-32",
+      "kind": "legislative_district",
+      "name": "Legislative District 32",
+      "parent_id": "washington-state",
+      "seattle_applicability": {
+        "explanation": "The district includes part of northwest Seattle.",
+        "relationship": "intersects_city",
+        "source_ids": [
+          "wa-2026-general-configuration"
+        ]
+      },
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [
+        "LD 34",
+        "LEGISLATIVE DISTRICT 34"
+      ],
+      "id": "legislative-district-34",
+      "kind": "legislative_district",
+      "name": "Legislative District 34",
+      "parent_id": "washington-state",
+      "seattle_applicability": {
+        "explanation": "The district includes part of southwest Seattle.",
+        "relationship": "intersects_city",
+        "source_ids": [
+          "wa-2026-general-configuration"
+        ]
+      },
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [
+        "LD 36",
+        "LEGISLATIVE DISTRICT 36"
+      ],
+      "id": "legislative-district-36",
+      "kind": "legislative_district",
+      "name": "Legislative District 36",
+      "parent_id": "washington-state",
+      "seattle_applicability": {
+        "explanation": "The district includes part of northwest Seattle.",
+        "relationship": "intersects_city",
+        "source_ids": [
+          "wa-2026-general-configuration"
+        ]
+      },
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [
+        "LD 37",
+        "LEGISLATIVE DISTRICT 37"
+      ],
+      "id": "legislative-district-37",
+      "kind": "legislative_district",
+      "name": "Legislative District 37",
+      "parent_id": "washington-state",
+      "seattle_applicability": {
+        "explanation": "The district includes part of south and central Seattle.",
+        "relationship": "intersects_city",
+        "source_ids": [
+          "wa-2026-general-configuration"
+        ]
+      },
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [
+        "LD 43",
+        "LEGISLATIVE DISTRICT 43"
+      ],
+      "id": "legislative-district-43",
+      "kind": "legislative_district",
+      "name": "Legislative District 43",
+      "parent_id": "washington-state",
+      "seattle_applicability": {
+        "explanation": "The district includes part of central Seattle.",
+        "relationship": "intersects_city",
+        "source_ids": [
+          "wa-2026-general-configuration"
+        ]
+      },
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [
+        "LD 46",
+        "LEGISLATIVE DISTRICT 46"
+      ],
+      "id": "legislative-district-46",
+      "kind": "legislative_district",
+      "name": "Legislative District 46",
+      "parent_id": "washington-state",
+      "seattle_applicability": {
+        "explanation": "The district includes part of north Seattle.",
+        "relationship": "intersects_city",
+        "source_ids": [
+          "wa-2026-general-configuration"
+        ]
+      },
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [
+        "SEATTLE CITY COUNCIL DISTRICT 5",
+        "Seattle Council District 5"
+      ],
+      "id": "seattle-city-council-district-5",
+      "kind": "city_council_district",
+      "name": "Seattle City Council District 5",
+      "parent_id": "city-of-seattle",
+      "seattle_applicability": {
+        "explanation": "City Council District 5 is wholly within Seattle.",
+        "relationship": "within_city",
+        "source_ids": [
+          "wa-2026-general-configuration"
+        ]
+      },
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [
+        "WA",
+        "Washington"
+      ],
+      "id": "washington-state",
+      "kind": "state",
+      "name": "State of Washington",
+      "parent_id": null,
+      "seattle_applicability": {
+        "explanation": "Seattle voters participate in statewide contests.",
+        "relationship": "contains_city",
+        "source_ids": [
+          "wa-2026-general-configuration"
+        ]
+      },
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    }
+  ],
+  "races": [
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "David S. Mann",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Court of Appeals, Division 1, District 1'; Office='Judge Position 5'; Candidate='David S. Mann'; Ballot Order='1'",
+          "id": "court-of-appeals-division-1-district-1-judge-5--david-s-mann",
+          "official_name": "David S. Mann",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "court-of-appeals-division-1-district-1-judge-5",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Court of Appeals, Division 1, District 1 — Judge Position 5",
+      "district": "Court of Appeals, Division 1, District 1",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='court-of-appeals-division-1-district-1-judge-5'",
+      "id": "court-of-appeals-division-1-district-1-judge-5",
+      "jurisdiction_id": "court-of-appeals-division-1-district-1",
+      "office": "Judge",
+      "position": "Position 5",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Bill A. Bowman",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Court of Appeals, Division 1, District 1'; Office='Judge Position 6'; Candidate='Bill A. Bowman'; Ballot Order='1'",
+          "id": "court-of-appeals-division-1-district-1-judge-6--bill-a-bowman",
+          "official_name": "Bill A. Bowman",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "court-of-appeals-division-1-district-1-judge-6",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Court of Appeals, Division 1, District 1 — Judge Position 6",
+      "district": "Court of Appeals, Division 1, District 1",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='court-of-appeals-division-1-district-1-judge-6'",
+      "id": "court-of-appeals-division-1-district-1-judge-6",
+      "jurisdiction_id": "court-of-appeals-division-1-district-1",
+      "office": "Judge",
+      "position": "Position 6",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "ballot_option",
+          "display_name": "Yes",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/ballotmeasures.aspx?eid=55: Initiative Measure No. IL26-001; response='Yes'",
+          "id": "initiative-26-001--yes",
+          "official_name": "Yes",
+          "party_preference": null,
+          "race_id": "initiative-26-001",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "ballot_option",
+          "display_name": "No",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/ballotmeasures.aspx?eid=55: Initiative Measure No. IL26-001; response='No'",
+          "id": "initiative-26-001--no",
+          "official_name": "No",
+          "party_preference": null,
+          "race_id": "initiative-26-001",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Initiative IL26-001 — Parental Rights in Public Schools",
+      "district": "Statewide",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='initiative-26-001'",
+      "id": "initiative-26-001",
+      "jurisdiction_id": "washington-state",
+      "office": "Ballot measure",
+      "position": "Initiative No. IL26-001",
+      "publication_eligible": true,
+      "race_type": "measure",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "ballot_option",
+          "display_name": "Yes",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/ballotmeasures.aspx?eid=55: Initiative Measure No. IL26-638; response='Yes'",
+          "id": "initiative-26-638--yes",
+          "official_name": "Yes",
+          "party_preference": null,
+          "race_id": "initiative-26-638",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "ballot_option",
+          "display_name": "No",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/ballotmeasures.aspx?eid=55: Initiative Measure No. IL26-638; response='No'",
+          "id": "initiative-26-638--no",
+          "official_name": "No",
+          "party_preference": null,
+          "race_id": "initiative-26-638",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Initiative IL26-638 — Participation in K-12 School Athletics",
+      "district": "Statewide",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='initiative-26-638'",
+      "id": "initiative-26-638",
+      "jurisdiction_id": "washington-state",
+      "office": "Ballot measure",
+      "position": "Initiative No. IL26-638",
+      "publication_eligible": true,
+      "race_type": "measure",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "ballot_option",
+          "display_name": "Yes",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/ballotmeasures.aspx?eid=55: Initiative Measure No. IP26-645; response='Yes'",
+          "id": "initiative-26-645--yes",
+          "official_name": "Yes",
+          "party_preference": null,
+          "race_id": "initiative-26-645",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "ballot_option",
+          "display_name": "No",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/ballotmeasures.aspx?eid=55: Initiative Measure No. IP26-645; response='No'",
+          "id": "initiative-26-645--no",
+          "official_name": "No",
+          "party_preference": null,
+          "race_id": "initiative-26-645",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Initiative IP26-645 — State and Local Taxes",
+      "district": "Statewide",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='initiative-26-645'",
+      "id": "initiative-26-645",
+      "jurisdiction_id": "washington-state",
+      "office": "Ballot measure",
+      "position": "Initiative No. IP26-645",
+      "publication_eligible": true,
+      "race_type": "measure",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Rob Foxcurran",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='King County'; Office='Assessor'; Candidate='Rob Foxcurran'; Ballot Order='1'",
+          "id": "king-county-assessor--rob-foxcurran",
+          "official_name": "Rob Foxcurran",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "king-county-assessor",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Dominique M Scarimbolo",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='King County'; Office='Assessor'; Candidate='Dominique M Scarimbolo'; Ballot Order='2'",
+          "id": "king-county-assessor--dominique-m-scarimbolo",
+          "official_name": "Dominique M Scarimbolo",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "king-county-assessor",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "King County Assessor",
+      "district": "Countywide",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='king-county-assessor'",
+      "id": "king-county-assessor",
+      "jurisdiction_id": "king-county",
+      "office": "Assessor",
+      "position": null,
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Rebecca Saldaña",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='County Council District No. 2'; Office='Metropolitan King County Council District No. 2'; Candidate='Rebecca Saldaña'; Ballot Order='1'",
+          "id": "king-county-council-2--rebecca-saldana",
+          "official_name": "Rebecca Saldaña",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "king-county-council-2",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Toshiko Grace Hasegawa",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='County Council District No. 2'; Office='Metropolitan King County Council District No. 2'; Candidate='Toshiko Grace Hasegawa'; Ballot Order='2'",
+          "id": "king-county-council-2--toshiko-grace-hasegawa",
+          "official_name": "Toshiko Grace Hasegawa",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "king-county-council-2",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Metropolitan King County Council — District 2",
+      "district": "Metropolitan King County Council District 2",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='king-county-council-2'",
+      "id": "king-county-council-2",
+      "jurisdiction_id": "county-council-district-2",
+      "office": "Metropolitan King County Councilmember",
+      "position": "District 2",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Jorge L. Barón",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='COUNTY COUNCIL DISTRICT NO. 4'; Office='Metropolitan King County Council District No. 4'; Candidate='Jorge L. Barón'; Ballot Order='1'",
+          "id": "king-county-council-4--jorge-l-baron",
+          "official_name": "Jorge L. Barón",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "king-county-council-4",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Metropolitan King County Council — District 4",
+      "district": "Metropolitan King County Council District 4",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='king-county-council-4'",
+      "id": "king-county-council-4",
+      "jurisdiction_id": "county-council-district-4",
+      "office": "Metropolitan King County Councilmember",
+      "position": "District 4",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Teresa Mosqueda",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='County Council District No. 8'; Office='Metropolitan King County Council District No. 8'; Candidate='Teresa Mosqueda'; Ballot Order='1'",
+          "id": "king-county-council-8--teresa-mosqueda",
+          "official_name": "Teresa Mosqueda",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "king-county-council-8",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Nick Duda",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='County Council District No. 8'; Office='Metropolitan King County Council District No. 8'; Candidate='Nick Duda'; Ballot Order='2'",
+          "id": "king-county-council-8--nick-duda",
+          "official_name": "Nick Duda",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "king-county-council-8",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Metropolitan King County Council — District 8",
+      "district": "Metropolitan King County Council District 8",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='king-county-council-8'",
+      "id": "king-county-council-8",
+      "jurisdiction_id": "county-council-district-8",
+      "office": "Metropolitan King County Councilmember",
+      "position": "District 8",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Julie Wise",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='King County'; Office='Director of Elections'; Candidate='Julie Wise'; Ballot Order='1'",
+          "id": "king-county-director-of-elections--julie-wise",
+          "official_name": "Julie Wise",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "king-county-director-of-elections",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "King County Director of Elections",
+      "district": "Countywide",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='king-county-director-of-elections'",
+      "id": "king-county-director-of-elections",
+      "jurisdiction_id": "king-county",
+      "office": "Director of Elections",
+      "position": null,
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Bardi Martin",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='WEST ELECTORAL DISTRICT'; Office='Judge Position No. 1'; Candidate='Bardi Martin'; Ballot Order='1'",
+          "id": "king-county-district-court-west-judge-1--bardi-martin",
+          "official_name": "Bardi Martin",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "king-county-district-court-west-judge-1",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Nyjat Rose-Akins",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='WEST ELECTORAL DISTRICT'; Office='Judge Position No. 1'; Candidate='Nyjat Rose-Akins'; Ballot Order='2'",
+          "id": "king-county-district-court-west-judge-1--nyjat-rose-akins",
+          "official_name": "Nyjat Rose-Akins",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "king-county-district-court-west-judge-1",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "King County District Court West Electoral District — Judge Position 1",
+      "district": "West Electoral District",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='king-county-district-court-west-judge-1'",
+      "id": "king-county-district-court-west-judge-1",
+      "jurisdiction_id": "king-county-district-court-west-electoral-district",
+      "office": "District Court Judge",
+      "position": "Position 1",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Kuljinder K. Dhillon",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='WEST ELECTORAL DISTRICT'; Office='Judge Position No. 2'; Candidate='Kuljinder K. Dhillon'; Ballot Order='1'",
+          "id": "king-county-district-court-west-judge-2--kuljinder-k-dhillon",
+          "official_name": "Kuljinder K. Dhillon",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "king-county-district-court-west-judge-2",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "King County District Court West Electoral District — Judge Position 2",
+      "district": "West Electoral District",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='king-county-district-court-west-judge-2'",
+      "id": "king-county-district-court-west-judge-2",
+      "jurisdiction_id": "king-county-district-court-west-electoral-district",
+      "office": "District Court Judge",
+      "position": "Position 2",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Rebecca Robertson",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='WEST ELECTORAL DISTRICT'; Office='Judge Position No. 3'; Candidate='Rebecca Robertson'; Ballot Order='1'",
+          "id": "king-county-district-court-west-judge-3--rebecca-robertson",
+          "official_name": "Rebecca Robertson",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "king-county-district-court-west-judge-3",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "King County District Court West Electoral District — Judge Position 3",
+      "district": "West Electoral District",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='king-county-district-court-west-judge-3'",
+      "id": "king-county-district-court-west-judge-3",
+      "jurisdiction_id": "king-county-district-court-west-electoral-district",
+      "office": "District Court Judge",
+      "position": "Position 3",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Yvonne Chin",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='WEST ELECTORAL DISTRICT'; Office='Judge Position No. 4'; Candidate='Yvonne Chin'; Ballot Order='1'",
+          "id": "king-county-district-court-west-judge-4--yvonne-chin",
+          "official_name": "Yvonne Chin",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "king-county-district-court-west-judge-4",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "King County District Court West Electoral District — Judge Position 4",
+      "district": "West Electoral District",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='king-county-district-court-west-judge-4'",
+      "id": "king-county-district-court-west-judge-4",
+      "jurisdiction_id": "king-county-district-court-west-electoral-district",
+      "office": "District Court Judge",
+      "position": "Position 4",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Kristin Shotwell",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='WEST ELECTORAL DISTRICT'; Office='Judge Position No. 5'; Candidate='Kristin Shotwell'; Ballot Order='1'",
+          "id": "king-county-district-court-west-judge-5--kristin-shotwell",
+          "official_name": "Kristin Shotwell",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "king-county-district-court-west-judge-5",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "King County District Court West Electoral District — Judge Position 5",
+      "district": "West Electoral District",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='king-county-district-court-west-judge-5'",
+      "id": "king-county-district-court-west-judge-5",
+      "jurisdiction_id": "king-county-district-court-west-electoral-district",
+      "office": "District Court Judge",
+      "position": "Position 5",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Leesa Manion",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='King County'; Office='Prosecuting Attorney'; Candidate='Leesa Manion'; Ballot Order='1'",
+          "id": "king-county-prosecuting-attorney--leesa-manion",
+          "official_name": "Leesa Manion",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "king-county-prosecuting-attorney",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "King County Prosecuting Attorney",
+      "district": "Countywide",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='king-county-prosecuting-attorney'",
+      "id": "king-county-prosecuting-attorney",
+      "jurisdiction_id": "king-county",
+      "office": "Prosecuting Attorney",
+      "position": null,
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "David Hackney",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 11'; Office='State Representative Pos. 1'; Candidate='David Hackney'; Ballot Order='1'",
+          "id": "ld-11-state-representative-1--david-hackney",
+          "official_name": "David Hackney",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-11-state-representative-1",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Ashley Fedan",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 11'; Office='State Representative Pos. 1'; Candidate='Ashley Fedan'; Ballot Order='2'",
+          "id": "ld-11-state-representative-1--ashley-fedan",
+          "official_name": "Ashley Fedan",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-11-state-representative-1",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 11 State Representative — Position 1",
+      "district": "Legislative District 11",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='ld-11-state-representative-1'",
+      "id": "ld-11-state-representative-1",
+      "jurisdiction_id": "legislative-district-11",
+      "office": "State Representative",
+      "position": "Position 1",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Steve Bergquist",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 11'; Office='State Representative Pos. 2'; Candidate='Steve Bergquist'; Ballot Order='1'",
+          "id": "ld-11-state-representative-2--steve-bergquist",
+          "official_name": "Steve Bergquist",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-11-state-representative-2",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 11 State Representative — Position 2",
+      "district": "Legislative District 11",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='ld-11-state-representative-2'",
+      "id": "ld-11-state-representative-2",
+      "jurisdiction_id": "legislative-district-11",
+      "office": "State Representative",
+      "position": "Position 2",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Keith Scully",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 32'; Office='State Representative Pos. 1'; Candidate='Keith Scully'; Ballot Order='1'",
+          "id": "ld-32-state-representative-1--keith-scully",
+          "official_name": "Keith Scully",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-32-state-representative-1",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Danica Noble",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 32'; Office='State Representative Pos. 1'; Candidate='Danica Noble'; Ballot Order='2'",
+          "id": "ld-32-state-representative-1--danica-noble",
+          "official_name": "Danica Noble",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-32-state-representative-1",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 32 State Representative — Position 1",
+      "district": "Legislative District 32",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='ld-32-state-representative-1'",
+      "id": "ld-32-state-representative-1",
+      "jurisdiction_id": "legislative-district-32",
+      "office": "State Representative",
+      "position": "Position 1",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Lauren Davis",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 32'; Office='State Representative Pos. 2'; Candidate='Lauren Davis'; Ballot Order='1'",
+          "id": "ld-32-state-representative-2--lauren-davis",
+          "official_name": "Lauren Davis",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-32-state-representative-2",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Imraan Siddiqi",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 32'; Office='State Representative Pos. 2'; Candidate='Imraan Siddiqi'; Ballot Order='2'",
+          "id": "ld-32-state-representative-2--imraan-siddiqi",
+          "official_name": "Imraan Siddiqi",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-32-state-representative-2",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 32 State Representative — Position 2",
+      "district": "Legislative District 32",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='ld-32-state-representative-2'",
+      "id": "ld-32-state-representative-2",
+      "jurisdiction_id": "legislative-district-32",
+      "office": "State Representative",
+      "position": "Position 2",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Cindy Ryu",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 32'; Office='State Senator'; Candidate='Cindy Ryu'; Ballot Order='1'",
+          "id": "ld-32-state-senator--cindy-ryu",
+          "official_name": "Cindy Ryu",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-32-state-senator",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Jesse Salomon",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 32'; Office='State Senator'; Candidate='Jesse Salomon'; Ballot Order='2'",
+          "id": "ld-32-state-senator--jesse-salomon",
+          "official_name": "Jesse Salomon",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-32-state-senator",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 32 State Senator",
+      "district": "Legislative District 32",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='ld-32-state-senator'",
+      "id": "ld-32-state-senator",
+      "jurisdiction_id": "legislative-district-32",
+      "office": "State Senator",
+      "position": null,
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Brianna K. Thomas",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 34'; Office='State Representative Pos. 1'; Candidate='Brianna K. Thomas'; Ballot Order='1'",
+          "id": "ld-34-state-representative-1--brianna-k-thomas",
+          "official_name": "Brianna K. Thomas",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-34-state-representative-1",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 34 State Representative — Position 1",
+      "district": "Legislative District 34",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='ld-34-state-representative-1'",
+      "id": "ld-34-state-representative-1",
+      "jurisdiction_id": "legislative-district-34",
+      "office": "State Representative",
+      "position": "Position 1",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Joe Fitzgibbon",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 34'; Office='State Representative Pos. 2'; Candidate='Joe Fitzgibbon'; Ballot Order='1'",
+          "id": "ld-34-state-representative-2--joe-fitzgibbon",
+          "official_name": "Joe Fitzgibbon",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-34-state-representative-2",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Mary Anito",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 34'; Office='State Representative Pos. 2'; Candidate='Mary Anito'; Ballot Order='2'",
+          "id": "ld-34-state-representative-2--mary-anito",
+          "official_name": "Mary Anito",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-34-state-representative-2",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 34 State Representative — Position 2",
+      "district": "Legislative District 34",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='ld-34-state-representative-2'",
+      "id": "ld-34-state-representative-2",
+      "jurisdiction_id": "legislative-district-34",
+      "office": "State Representative",
+      "position": "Position 2",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Emily Alvarado",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 34'; Office='State Senator'; Candidate='Emily Alvarado'; Ballot Order='1'",
+          "id": "ld-34-state-senator--emily-alvarado",
+          "official_name": "Emily Alvarado",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-34-state-senator",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 34 State Senator",
+      "district": "Legislative District 34",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='ld-34-state-senator'",
+      "id": "ld-34-state-senator",
+      "jurisdiction_id": "legislative-district-34",
+      "office": "State Senator",
+      "position": null,
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Julia Grant Reed",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 36'; Office='State Representative Pos. 1'; Candidate='Julia Grant Reed'; Ballot Order='1'",
+          "id": "ld-36-state-representative-1--julia-grant-reed",
+          "official_name": "Julia Grant Reed",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-36-state-representative-1",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 36 State Representative — Position 1",
+      "district": "Legislative District 36",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='ld-36-state-representative-1'",
+      "id": "ld-36-state-representative-1",
+      "jurisdiction_id": "legislative-district-36",
+      "office": "State Representative",
+      "position": "Position 1",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Liz Berry",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 36'; Office='State Representative Pos. 2'; Candidate='Liz Berry'; Ballot Order='1'",
+          "id": "ld-36-state-representative-2--liz-berry",
+          "official_name": "Liz Berry",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-36-state-representative-2",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 36 State Representative — Position 2",
+      "district": "Legislative District 36",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='ld-36-state-representative-2'",
+      "id": "ld-36-state-representative-2",
+      "jurisdiction_id": "legislative-district-36",
+      "office": "State Representative",
+      "position": "Position 2",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Noel C. Frame",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 36'; Office='State Senator'; Candidate='Noel C. Frame'; Ballot Order='1'",
+          "id": "ld-36-state-senator--noel-c-frame",
+          "official_name": "Noel C. Frame",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-36-state-senator",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Jillian England",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 36'; Office='State Senator'; Candidate='Jillian England'; Ballot Order='2'",
+          "id": "ld-36-state-senator--jillian-england",
+          "official_name": "Jillian England",
+          "party_preference": "(Prefers Republican Party)",
+          "race_id": "ld-36-state-senator",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 36 State Senator",
+      "district": "Legislative District 36",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='ld-36-state-senator'",
+      "id": "ld-36-state-senator",
+      "jurisdiction_id": "legislative-district-36",
+      "office": "State Senator",
+      "position": null,
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Kelabe Tewolde",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 37'; Office='State Representative Pos. 1'; Candidate='Kelabe Tewolde'; Ballot Order='1'",
+          "id": "ld-37-state-representative-1--kelabe-tewolde",
+          "official_name": "Kelabe Tewolde",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-37-state-representative-1",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Sharon Tomiko Santos",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 37'; Office='State Representative Pos. 1'; Candidate='Sharon Tomiko Santos'; Ballot Order='2'",
+          "id": "ld-37-state-representative-1--sharon-tomiko-santos",
+          "official_name": "Sharon Tomiko Santos",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-37-state-representative-1",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 37 State Representative — Position 1",
+      "district": "Legislative District 37",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='ld-37-state-representative-1'",
+      "id": "ld-37-state-representative-1",
+      "jurisdiction_id": "legislative-district-37",
+      "office": "State Representative",
+      "position": "Position 1",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Jaelynn Scott",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 37'; Office='State Representative Pos. 2'; Candidate='Jaelynn Scott'; Ballot Order='1'",
+          "id": "ld-37-state-representative-2--jaelynn-scott",
+          "official_name": "Jaelynn Scott",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-37-state-representative-2",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Evon McCorkle",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 37'; Office='State Representative Pos. 2'; Candidate='Evon McCorkle'; Ballot Order='2'",
+          "id": "ld-37-state-representative-2--evon-mccorkle",
+          "official_name": "Evon McCorkle",
+          "party_preference": "(Prefers Independent Party)",
+          "race_id": "ld-37-state-representative-2",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 37 State Representative — Position 2",
+      "district": "Legislative District 37",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='ld-37-state-representative-2'",
+      "id": "ld-37-state-representative-2",
+      "jurisdiction_id": "legislative-district-37",
+      "office": "State Representative",
+      "position": "Position 2",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Chipalo Street",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 37'; Office='State Senator'; Candidate='Chipalo Street'; Ballot Order='1'",
+          "id": "ld-37-state-senator--chipalo-street",
+          "official_name": "Chipalo Street",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-37-state-senator",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Tatiana Brown",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Legislative District 37'; Office='State Senator'; Candidate='Tatiana Brown'; Ballot Order='2'",
+          "id": "ld-37-state-senator--tatiana-brown",
+          "official_name": "Tatiana Brown",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-37-state-senator",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 37 State Senator",
+      "district": "Legislative District 37",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='ld-37-state-senator'",
+      "id": "ld-37-state-senator",
+      "jurisdiction_id": "legislative-district-37",
+      "office": "State Senator",
+      "position": null,
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Nicole Macri",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='LEGISLATIVE DISTRICT 43'; Office='State Representative Pos. 1'; Candidate='Nicole Macri'; Ballot Order='1'",
+          "id": "ld-43-state-representative-1--nicole-macri",
+          "official_name": "Nicole Macri",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-43-state-representative-1",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Alby Clendennin",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='LEGISLATIVE DISTRICT 43'; Office='State Representative Pos. 1'; Candidate='Alby Clendennin'; Ballot Order='2'",
+          "id": "ld-43-state-representative-1--alby-clendennin",
+          "official_name": "Alby Clendennin",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-43-state-representative-1",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 43 State Representative — Position 1",
+      "district": "Legislative District 43",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='ld-43-state-representative-1'",
+      "id": "ld-43-state-representative-1",
+      "jurisdiction_id": "legislative-district-43",
+      "office": "State Representative",
+      "position": "Position 1",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Shaun Scott",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='LEGISLATIVE DISTRICT 43'; Office='State Representative Pos. 2'; Candidate='Shaun Scott'; Ballot Order='1'",
+          "id": "ld-43-state-representative-2--shaun-scott",
+          "official_name": "Shaun Scott",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-43-state-representative-2",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 43 State Representative — Position 2",
+      "district": "Legislative District 43",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='ld-43-state-representative-2'",
+      "id": "ld-43-state-representative-2",
+      "jurisdiction_id": "legislative-district-43",
+      "office": "State Representative",
+      "position": "Position 2",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Jamie Pedersen",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='LEGISLATIVE DISTRICT 43'; Office='State Senator'; Candidate='Jamie Pedersen'; Ballot Order='1'",
+          "id": "ld-43-state-senator--jamie-pedersen",
+          "official_name": "Jamie Pedersen",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-43-state-senator",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Hannah Sabio-Howell",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='LEGISLATIVE DISTRICT 43'; Office='State Senator'; Candidate='Hannah Sabio-Howell'; Ballot Order='2'",
+          "id": "ld-43-state-senator--hannah-sabio-howell",
+          "official_name": "Hannah Sabio-Howell",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-43-state-senator",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 43 State Senator",
+      "district": "Legislative District 43",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='ld-43-state-senator'",
+      "id": "ld-43-state-senator",
+      "jurisdiction_id": "legislative-district-43",
+      "office": "State Senator",
+      "position": null,
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Gerry Pollet",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='LEGISLATIVE DISTRICT 46'; Office='State Representative Pos. 1'; Candidate='Gerry Pollet'; Ballot Order='1'",
+          "id": "ld-46-state-representative-1--gerry-pollet",
+          "official_name": "Gerry Pollet",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-46-state-representative-1",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Will Dreher",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='LEGISLATIVE DISTRICT 46'; Office='State Representative Pos. 1'; Candidate='Will Dreher'; Ballot Order='2'",
+          "id": "ld-46-state-representative-1--will-dreher",
+          "official_name": "Will Dreher",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-46-state-representative-1",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 46 State Representative — Position 1",
+      "district": "Legislative District 46",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='ld-46-state-representative-1'",
+      "id": "ld-46-state-representative-1",
+      "jurisdiction_id": "legislative-district-46",
+      "office": "State Representative",
+      "position": "Position 1",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Darya Farivar",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='LEGISLATIVE DISTRICT 46'; Office='State Representative Pos. 2'; Candidate='Darya Farivar'; Ballot Order='1'",
+          "id": "ld-46-state-representative-2--darya-farivar",
+          "official_name": "Darya Farivar",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-46-state-representative-2",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Rodney 'Star' Thornley",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='LEGISLATIVE DISTRICT 46'; Office='State Representative Pos. 2'; Candidate=\"Rodney 'Star' Thornley\"; Ballot Order='2'",
+          "id": "ld-46-state-representative-2--rodney-star-thornley",
+          "official_name": "Rodney 'Star' Thornley",
+          "party_preference": "(Prefers Independent Party)",
+          "race_id": "ld-46-state-representative-2",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 46 State Representative — Position 2",
+      "district": "Legislative District 46",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='ld-46-state-representative-2'",
+      "id": "ld-46-state-representative-2",
+      "jurisdiction_id": "legislative-district-46",
+      "office": "State Representative",
+      "position": "Position 2",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Javier Valdez",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='LEGISLATIVE DISTRICT 46'; Office='State Senator'; Candidate='Javier Valdez'; Ballot Order='1'",
+          "id": "ld-46-state-senator--javier-valdez",
+          "official_name": "Javier Valdez",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "ld-46-state-senator",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Sandra Stephens",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='LEGISLATIVE DISTRICT 46'; Office='State Senator'; Candidate='Sandra Stephens'; Ballot Order='2'",
+          "id": "ld-46-state-senator--sandra-stephens",
+          "official_name": "Sandra Stephens",
+          "party_preference": "(Prefers Republican Party)",
+          "race_id": "ld-46-state-senator",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Legislative District 46 State Senator",
+      "district": "Legislative District 46",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='ld-46-state-senator'",
+      "id": "ld-46-state-senator",
+      "jurisdiction_id": "legislative-district-46",
+      "office": "State Senator",
+      "position": null,
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Nilu Jenks",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='SEATTLE CITY COUNCIL DISTRICT 5'; Office='Council District No. 5'; Candidate='Nilu Jenks'; Ballot Order='1'",
+          "id": "seattle-city-council-5--nilu-jenks",
+          "official_name": "Nilu Jenks",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "seattle-city-council-5",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Julie Kang",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='SEATTLE CITY COUNCIL DISTRICT 5'; Office='Council District No. 5'; Candidate='Julie Kang'; Ballot Order='2'",
+          "id": "seattle-city-council-5--julie-kang",
+          "official_name": "Julie Kang",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "seattle-city-council-5",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Seattle City Council — District 5",
+      "district": "Seattle City Council District 5",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='seattle-city-council-5'",
+      "id": "seattle-city-council-5",
+      "jurisdiction_id": "seattle-city-council-district-5",
+      "office": "City Councilmember",
+      "position": "District 5 — unexpired 1-year term",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Cat McDowall",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='City of Seattle'; Office='Municipal Court Judge Position No. 1'; Candidate='Cat McDowall'; Ballot Order='1'",
+          "id": "seattle-municipal-court-judge-1--cat-mcdowall",
+          "official_name": "Cat McDowall",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "seattle-municipal-court-judge-1",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Seattle Municipal Court Judge — Position 1",
+      "district": "Citywide",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='seattle-municipal-court-judge-1'",
+      "id": "seattle-municipal-court-judge-1",
+      "jurisdiction_id": "city-of-seattle",
+      "office": "Municipal Court Judge",
+      "position": "Position 1",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Katharine Edwards",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='City of Seattle'; Office='Municipal Court Judge Position No. 2'; Candidate='Katharine Edwards'; Ballot Order='1'",
+          "id": "seattle-municipal-court-judge-2--katharine-edwards",
+          "official_name": "Katharine Edwards",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "seattle-municipal-court-judge-2",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Seattle Municipal Court Judge — Position 2",
+      "district": "Citywide",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='seattle-municipal-court-judge-2'",
+      "id": "seattle-municipal-court-judge-2",
+      "jurisdiction_id": "city-of-seattle",
+      "office": "Municipal Court Judge",
+      "position": "Position 2",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Pooja Vaddadi",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='City of Seattle'; Office='Municipal Court Judge Position No. 3'; Candidate='Pooja Vaddadi'; Ballot Order='1'",
+          "id": "seattle-municipal-court-judge-3--pooja-vaddadi",
+          "official_name": "Pooja Vaddadi",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "seattle-municipal-court-judge-3",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Seattle Municipal Court Judge — Position 3",
+      "district": "Citywide",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='seattle-municipal-court-judge-3'",
+      "id": "seattle-municipal-court-judge-3",
+      "jurisdiction_id": "city-of-seattle",
+      "office": "Municipal Court Judge",
+      "position": "Position 3",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Anita Crawford-Willis",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='City of Seattle'; Office='Municipal Court Judge Position No. 4'; Candidate='Anita Crawford-Willis'; Ballot Order='1'",
+          "id": "seattle-municipal-court-judge-4--anita-crawford-willis",
+          "official_name": "Anita Crawford-Willis",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "seattle-municipal-court-judge-4",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Seattle Municipal Court Judge — Position 4",
+      "district": "Citywide",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='seattle-municipal-court-judge-4'",
+      "id": "seattle-municipal-court-judge-4",
+      "jurisdiction_id": "city-of-seattle",
+      "office": "Municipal Court Judge",
+      "position": "Position 4",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Gabe Rothstein",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='City of Seattle'; Office='Municipal Court Judge Position No. 5'; Candidate='Gabe Rothstein'; Ballot Order='1'",
+          "id": "seattle-municipal-court-judge-5--gabe-rothstein",
+          "official_name": "Gabe Rothstein",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "seattle-municipal-court-judge-5",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Garmon Newsom",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='City of Seattle'; Office='Municipal Court Judge Position No. 5'; Candidate='Garmon Newsom'; Ballot Order='2'",
+          "id": "seattle-municipal-court-judge-5--garmon-newsom",
+          "official_name": "Garmon Newsom",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "seattle-municipal-court-judge-5",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Seattle Municipal Court Judge — Position 5",
+      "district": "Citywide",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='seattle-municipal-court-judge-5'",
+      "id": "seattle-municipal-court-judge-5",
+      "jurisdiction_id": "city-of-seattle",
+      "office": "Municipal Court Judge",
+      "position": "Position 5",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Shantrice Anderson",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='City of Seattle'; Office='Municipal Court Judge Position No. 6'; Candidate='Shantrice Anderson'; Ballot Order='1'",
+          "id": "seattle-municipal-court-judge-6--shantrice-anderson",
+          "official_name": "Shantrice Anderson",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "seattle-municipal-court-judge-6",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Seattle Municipal Court Judge — Position 6",
+      "district": "Citywide",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='seattle-municipal-court-judge-6'",
+      "id": "seattle-municipal-court-judge-6",
+      "jurisdiction_id": "city-of-seattle",
+      "office": "Municipal Court Judge",
+      "position": "Position 6",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Damon Shadid",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='City of Seattle'; Office='Municipal Court Judge Position No. 7'; Candidate='Damon Shadid'; Ballot Order='1'",
+          "id": "seattle-municipal-court-judge-7--damon-shadid",
+          "official_name": "Damon Shadid",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "seattle-municipal-court-judge-7",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Seattle Municipal Court Judge — Position 7",
+      "district": "Citywide",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='seattle-municipal-court-judge-7'",
+      "id": "seattle-municipal-court-judge-7",
+      "jurisdiction_id": "city-of-seattle",
+      "office": "Municipal Court Judge",
+      "position": "Position 7",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "ballot_option",
+          "display_name": "Yes",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/ballotmeasures.aspx?eid=55: City of Seattle Proposition No. 1; response='Yes'",
+          "id": "seattle-proposition-1-transit--yes",
+          "official_name": "Yes",
+          "party_preference": null,
+          "race_id": "seattle-proposition-1-transit",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "ballot_option",
+          "display_name": "No",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/ballotmeasures.aspx?eid=55: City of Seattle Proposition No. 1; response='No'",
+          "id": "seattle-proposition-1-transit--no",
+          "official_name": "No",
+          "party_preference": null,
+          "race_id": "seattle-proposition-1-transit",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Seattle Proposition 1 — Seattle Transit Measure",
+      "district": "Citywide",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='seattle-proposition-1-transit'",
+      "id": "seattle-proposition-1-transit",
+      "jurisdiction_id": "city-of-seattle",
+      "office": "Ballot measure",
+      "position": "Proposition No. 1",
+      "publication_eligible": true,
+      "race_type": "measure",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Colleen Melody",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Supreme Court'; Office='Justice Position #01'; Candidate='Colleen Melody'; Ballot Order='1'",
+          "id": "supreme-court-justice-1--colleen-melody",
+          "official_name": "Colleen Melody",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "supreme-court-justice-1",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Scott Edwards",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Supreme Court'; Office='Justice Position #01'; Candidate='Scott Edwards'; Ballot Order='2'",
+          "id": "supreme-court-justice-1--scott-edwards",
+          "official_name": "Scott Edwards",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "supreme-court-justice-1",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Washington Supreme Court Justice — Position 1",
+      "district": "Statewide",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='supreme-court-justice-1'",
+      "id": "supreme-court-justice-1",
+      "jurisdiction_id": "washington-state",
+      "office": "Supreme Court Justice",
+      "position": "Position 1 — unexpired 2-year term",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "David Stevens",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Supreme Court'; Office='Justice Position #03'; Candidate='David Stevens'; Ballot Order='1'",
+          "id": "supreme-court-justice-3--david-stevens",
+          "official_name": "David Stevens",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "supreme-court-justice-3",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Jaime Michelle Hawk",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Supreme Court'; Office='Justice Position #03'; Candidate='Jaime Michelle Hawk'; Ballot Order='2'",
+          "id": "supreme-court-justice-3--jaime-michelle-hawk",
+          "official_name": "Jaime Michelle Hawk",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "supreme-court-justice-3",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Washington Supreme Court Justice — Position 3",
+      "district": "Statewide",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='supreme-court-justice-3'",
+      "id": "supreme-court-justice-3",
+      "jurisdiction_id": "washington-state",
+      "office": "Supreme Court Justice",
+      "position": "Position 3",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Ian Birk",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Supreme Court'; Office='Justice Position #04'; Candidate='Ian Birk'; Ballot Order='1'",
+          "id": "supreme-court-justice-4--ian-birk",
+          "official_name": "Ian Birk",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "supreme-court-justice-4",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Sean O'Donnell",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Supreme Court'; Office='Justice Position #04'; Candidate=\"Sean O'Donnell\"; Ballot Order='2'",
+          "id": "supreme-court-justice-4--sean-odonnell",
+          "official_name": "Sean O'Donnell",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "supreme-court-justice-4",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Washington Supreme Court Justice — Position 4",
+      "district": "Statewide",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='supreme-court-justice-4'",
+      "id": "supreme-court-justice-4",
+      "jurisdiction_id": "washington-state",
+      "office": "Supreme Court Justice",
+      "position": "Position 4",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Theo Angelis",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Supreme Court'; Office='Justice Position #05'; Candidate='Theo Angelis'; Ballot Order='1'",
+          "id": "supreme-court-justice-5--theo-angelis",
+          "official_name": "Theo Angelis",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "supreme-court-justice-5",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Dave Larson",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Supreme Court'; Office='Justice Position #05'; Candidate='Dave Larson'; Ballot Order='2'",
+          "id": "supreme-court-justice-5--dave-larson",
+          "official_name": "Dave Larson",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "supreme-court-justice-5",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Washington Supreme Court Justice — Position 5",
+      "district": "Statewide",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='supreme-court-justice-5'",
+      "id": "supreme-court-justice-5",
+      "jurisdiction_id": "washington-state",
+      "office": "Supreme Court Justice",
+      "position": "Position 5 — unexpired 2-year term",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Debra L. Stephens",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Supreme Court'; Office='Justice Position #07'; Candidate='Debra L. Stephens'; Ballot Order='1'",
+          "id": "supreme-court-justice-7--debra-l-stephens",
+          "official_name": "Debra L. Stephens",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "supreme-court-justice-7",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Todd A. Bloom",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Supreme Court'; Office='Justice Position #07'; Candidate='Todd A. Bloom'; Ballot Order='2'",
+          "id": "supreme-court-justice-7--todd-a-bloom",
+          "official_name": "Todd A. Bloom",
+          "party_preference": "(States No Party Preference)",
+          "race_id": "supreme-court-justice-7",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "Washington Supreme Court Justice — Position 7",
+      "district": "Statewide",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='supreme-court-justice-7'",
+      "id": "supreme-court-justice-7",
+      "jurisdiction_id": "washington-state",
+      "office": "Supreme Court Justice",
+      "position": "Position 7",
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Pramila Jayapal",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Congressional District 7'; Office='U.S. Representative'; Candidate='Pramila Jayapal'; Ballot Order='1'",
+          "id": "us-house-7--pramila-jayapal",
+          "official_name": "Pramila Jayapal",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "us-house-7",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Nirav Sheth",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='Congressional District 7'; Office='U.S. Representative'; Candidate='Nirav Sheth'; Ballot Order='2'",
+          "id": "us-house-7--nirav-sheth",
+          "official_name": "Nirav Sheth",
+          "party_preference": "(Prefers Republican Party)",
+          "race_id": "us-house-7",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "U.S. Representative — Congressional District 7",
+      "district": "Congressional District 7",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='us-house-7'",
+      "id": "us-house-7",
+      "jurisdiction_id": "congressional-district-7",
+      "office": "U.S. Representative",
+      "position": null,
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    },
+    {
+      "aliases": [],
+      "choices": [
+        {
+          "aliases": [],
+          "ballot_order": 1,
+          "choice_type": "candidate",
+          "display_name": "Adam Smith",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='CONGRESSIONAL DISTRICT 9'; Office='U.S. Representative'; Candidate='Adam Smith'; Ballot Order='1'",
+          "id": "us-house-9--adam-smith",
+          "official_name": "Adam Smith",
+          "party_preference": "(Prefers Democratic Party)",
+          "race_id": "us-house-9",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        },
+        {
+          "aliases": [],
+          "ballot_order": 2,
+          "choice_type": "candidate",
+          "display_name": "Doug Basler",
+          "evidence_locator": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55: Jurisdiction Name='CONGRESSIONAL DISTRICT 9'; Office='U.S. Representative'; Candidate='Doug Basler'; Ballot Order='2'",
+          "id": "us-house-9--doug-basler",
+          "official_name": "Doug Basler",
+          "party_preference": "(Prefers Republican Party)",
+          "race_id": "us-house-9",
+          "source_ids": [
+            "king-county-2026-general-ballot"
+          ]
+        }
+      ],
+      "display_name": "U.S. Representative — Congressional District 9",
+      "district": "Congressional District 9",
+      "election_id": "wa-2026-general",
+      "evidence_locator": "initialized election configuration race id='us-house-9'",
+      "id": "us-house-9",
+      "jurisdiction_id": "congressional-district-9",
+      "office": "U.S. Representative",
+      "position": null,
+      "publication_eligible": true,
+      "race_type": "candidate",
+      "source_ids": [
+        "wa-2026-general-configuration"
+      ]
+    }
+  ],
+  "schema_version": "1.1",
+  "selection_method": {
+    "exclusions": [],
+    "rule": "include every initialized race with one or more hash-verified canonical ballot rows; retain the initialized publication eligibility flag",
+    "source_ids": [
+      "wa-2026-general-configuration",
+      "king-county-2026-general-ballot"
+    ],
+    "target": "mixed"
+  },
+  "sources": [
+    {
+      "authority": "Seattle Election Guide",
+      "description": "Reviewed election identity, jurisdiction topology, and stable race declarations.",
+      "id": "wa-2026-general-configuration",
+      "media_type": "application/json",
+      "redistribution_note": "Repository-authored configuration.",
+      "retrieved_at": "2026-09-14T04:56:41Z",
+      "sha256": "7dab7cee110573c8d662fab4ff718fac831c660424423df24def24e3bd298617",
+      "storage_reference": "config/elections/wa-2026-general.yaml",
+      "storage_sha256": null,
+      "url": "https://github.com/shaug/seattle-election-guide/blob/main/config/elections/wa-2026-general.yaml"
+    },
+    {
+      "authority": "King County Elections",
+      "description": "Privacy-stripped canonical rows transcribed from the official 2026 general candidate list and its companion official ballot-measures list.",
+      "id": "king-county-2026-general-ballot",
+      "media_type": "text/csv",
+      "redistribution_note": "Contact and mailing fields are omitted; only ballot-facing fields remain.",
+      "retrieved_at": "2026-09-14T04:56:41Z",
+      "sha256": "220e533019fa1d6de659fceabde149fbe74b183df4b044bd2ac4c2f13640b6cf",
+      "storage_reference": "data/extracted/official/king-county-2026-general-canonical-ballot.csv",
+      "storage_sha256": null,
+      "url": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55"
+    }
+  ]
+}
