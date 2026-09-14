@@ -69,4 +69,36 @@ def test_ci_runs_independent_lanes_in_parallel_behind_one_required_check() -> No
     assert check["name"] == "check"
     assert check["if"] == "${{ always() }}"
     assert check["needs"] == list(PARALLEL_JOBS)
+
+    gate_step = next(
+        step for step in check["steps"] if step.get("name") == "Require every CI lane to pass"
+    )
+    result_environment = {job_id: f"${{{{ needs.{job_id}.result }}}}" for job_id in PARALLEL_JOBS}
+    assert gate_step["env"] == {
+        f"{job_id.upper()}_RESULT": expression for job_id, expression in result_environment.items()
+    }
+
+    success_environment = {environment_name: "success" for environment_name in gate_step["env"]}
+    assert (
+        subprocess.run(
+            ["bash", "-euo", "pipefail", "-c", gate_step["run"]],
+            env=success_environment,
+            check=False,
+        ).returncode
+        == 0
+    )
+    for environment_name in success_environment:
+        for unsuccessful_result in ("failure", "cancelled"):
+            environment = success_environment | {
+                environment_name: unsuccessful_result,
+            }
+            assert (
+                subprocess.run(
+                    ["bash", "-euo", "pipefail", "-c", gate_step["run"]],
+                    env=environment,
+                    check=False,
+                ).returncode
+                != 0
+            )
+
     assert jobs["deploy"]["needs"] == "check"
