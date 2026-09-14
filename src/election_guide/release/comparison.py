@@ -17,13 +17,13 @@ class VerifiedReleaseBundle:
     manifest: ReleaseManifest
 
 
-def verify_release_bundle_artifacts(
+def _inspect_release_bundle_artifacts(
     bundle_dir: Path,
     *,
     status: ReleaseStatus | None = None,
     manifest: ReleaseManifest | None = None,
-) -> VerifiedReleaseBundle:
-    """Verify one bundle's manifest partition and every declared artifact."""
+) -> tuple[VerifiedReleaseBundle, tuple[str, ...]]:
+    """Load one trustworthy manifest partition and inspect its artifact files."""
     bundle_dir = bundle_dir.resolve()
     if not bundle_dir.is_dir():
         raise ValueError(f"release bundle directory does not exist: {bundle_dir}")
@@ -71,26 +71,41 @@ def verify_release_bundle_artifacts(
     for relative in sorted(manifest.unhashed_artifacts):
         if not (bundle_dir / relative).is_file():
             artifact_errors.append(f"release artifact is missing: {relative}")
+    return VerifiedReleaseBundle(bundle_dir, status, manifest), tuple(artifact_errors)
+
+
+def verify_release_bundle_artifacts(
+    bundle_dir: Path,
+    *,
+    status: ReleaseStatus | None = None,
+    manifest: ReleaseManifest | None = None,
+) -> VerifiedReleaseBundle:
+    """Verify one bundle's manifest partition and every declared artifact."""
+    verified, artifact_errors = _inspect_release_bundle_artifacts(
+        bundle_dir,
+        status=status,
+        manifest=manifest,
+    )
     if artifact_errors:
         raise ValueError("; ".join(artifact_errors))
-
-    return VerifiedReleaseBundle(bundle_dir, status, manifest)
+    return verified
 
 
 def compare_release_bundles(first_dir: Path, second_dir: Path) -> None:
     """Fail with every affected path when deterministic release output differs."""
     verified_bundles: list[VerifiedReleaseBundle] = []
-    verification_errors: list[tuple[str, OSError | ValueError]] = []
+    verification_errors: list[str] = []
     for label, bundle_dir in (("first", first_dir), ("second", second_dir)):
         try:
-            verified_bundles.append(verify_release_bundle_artifacts(bundle_dir))
+            verified, artifact_errors = _inspect_release_bundle_artifacts(bundle_dir)
         except (OSError, ValueError) as error:
-            verification_errors.append((label, error))
-    if len(verification_errors) == 1:
-        raise verification_errors[0][1]
-    if verification_errors:
-        details = "; ".join(f"{label} bundle: {error}" for label, error in verification_errors)
-        raise ValueError(f"release bundle verification failed: {details}")
+            verification_errors.append(f"{label} bundle: {error}")
+            continue
+        verified_bundles.append(verified)
+        verification_errors.extend(f"{label} bundle: {error}" for error in artifact_errors)
+
+    if len(verified_bundles) != 2:
+        raise ValueError("release bundle verification failed: " + "; ".join(verification_errors))
 
     first, second = verified_bundles
 
@@ -109,4 +124,6 @@ def compare_release_bundles(first_dir: Path, second_dir: Path) -> None:
         differences.append("release-manifest.json")
     if differences:
         noun = "artifact differs" if len(differences) == 1 else "artifacts differ"
-        raise ValueError(f"deterministic release {noun}: {', '.join(differences)}")
+        verification_errors.append(f"deterministic release {noun}: {', '.join(differences)}")
+    if verification_errors:
+        raise ValueError("release comparison failed: " + "; ".join(verification_errors))

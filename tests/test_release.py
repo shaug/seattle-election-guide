@@ -499,6 +499,32 @@ def test_release_compare_names_all_missing_hashed_artifacts_across_bundles(
         assert relative in result.output
 
 
+def test_release_compare_names_missing_and_changed_hashed_artifacts_together(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    ledger, dataset_path, snapshots = _compiled_release_inputs(tmp_path)
+    _stub_release_render(monkeypatch)
+    first = _build_release(ledger, dataset_path, snapshots, tmp_path, tmp_path / "first")
+    second = _build_release(ledger, dataset_path, snapshots, tmp_path, tmp_path / "second")
+    missing = "RELEASE_NOTES.md"
+    (first.bundle_dir / missing).unlink()
+    changed = second.status.guide_html_artifact
+    (second.bundle_dir / changed).write_bytes(
+        b"<!doctype html><title>Different deterministic guide</title>"
+    )
+    _rehash_manifest_artifact(second.bundle_dir, changed)
+
+    result = CliRunner().invoke(
+        app,
+        ["release", "compare", str(first.bundle_dir), str(second.bundle_dir)],
+    )
+
+    assert result.exit_code == 1
+    assert missing in result.output
+    assert changed in result.output
+
+
 @pytest.mark.parametrize(
     ("invalid_partition", "message"),
     [
