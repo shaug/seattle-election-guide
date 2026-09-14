@@ -518,15 +518,6 @@ def _verify_bundle(declaration: PublishedElection, bundle_dir: Path) -> _Verifie
     ):
         raise ValueError(f"bundle {declaration.bundle_id!r} release manifest hash differs")
 
-    if manifest.release_version != status.release_version:
-        raise ValueError("release manifest and release status versions differ")
-    if manifest.generated_at != status.generated_at:
-        raise ValueError("release manifest and release status timestamps differ")
-    if (
-        manifest.source_panel_id != status.source_panel_id
-        or manifest.source_panel_hash != status.source_panel_hash
-    ):
-        raise ValueError("release manifest and release status source panels differ")
     verify_release_bundle_artifacts(bundle_dir, status=status, manifest=manifest)
     if declaration.bundle_sha256 is not None:
         # Naming both digests is what makes a drifted pin actionable: the fix is
