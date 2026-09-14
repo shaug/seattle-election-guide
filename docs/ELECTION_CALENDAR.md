@@ -217,8 +217,9 @@ tried and reverted, because adding a field to `CaptureMetadata` changes what
 every already-committed manifest serializes to (`docs/EVIDENCE_CAPTURE.md`,
 "Counting authorities"). So:
 
-- the **window** supplies the election — it opens on the milestone's own date
-  and closes seven days later, far narrower than the months between elections;
+- the **window** supplies the election — it opens on the milestone's own date.
+  Fixed windows close seven days later, while `collection_opens` closes on that
+  election's `guide_publishes` date;
 - the capture's **registry** supplies whose work it was, resolved by looking
   its `source_id` up in `config/authorities/default.yaml`. A results capture
   must come from a counting authority; a sweep's capture must not — the check
