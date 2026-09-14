@@ -1,0 +1,898 @@
+{
+  "election": {
+    "election_date": "2026-11-03",
+    "election_scope": "mixed",
+    "election_type": "general",
+    "id": "wa-2026-general",
+    "name": "2026 Washington November General Election",
+    "official_url": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55",
+    "state": "WA",
+    "state_jurisdiction_id": "washington-state",
+    "target_jurisdiction_ids": [
+      "city-of-seattle",
+      "king-county",
+      "washington-state"
+    ]
+  },
+  "jurisdictions": [
+    {
+      "aliases": [
+        "Seattle"
+      ],
+      "election_id": "wa-2026-general",
+      "id": "city-of-seattle",
+      "kind": "city",
+      "name": "City of Seattle",
+      "parent_id": "king-county",
+      "seattle_explanation": "The target citywide ballot geography is the City of Seattle.",
+      "seattle_relationship": "citywide",
+      "state_code": null
+    },
+    {
+      "aliases": [
+        "CD 7",
+        "CONGRESSIONAL DISTRICT 7"
+      ],
+      "election_id": "wa-2026-general",
+      "id": "congressional-district-7",
+      "kind": "congressional_district",
+      "name": "Congressional District 7",
+      "parent_id": "washington-state",
+      "seattle_explanation": "The district includes most of Seattle.",
+      "seattle_relationship": "intersects_city",
+      "state_code": null
+    },
+    {
+      "aliases": [
+        "CD 9",
+        "CONGRESSIONAL DISTRICT 9"
+      ],
+      "election_id": "wa-2026-general",
+      "id": "congressional-district-9",
+      "kind": "congressional_district",
+      "name": "Congressional District 9",
+      "parent_id": "washington-state",
+      "seattle_explanation": "The district includes part of southeast Seattle.",
+      "seattle_relationship": "intersects_city",
+      "state_code": null
+    },
+    {
+      "aliases": [
+        "COUNTY COUNCIL DISTRICT NO. 2",
+        "KCC 2"
+      ],
+      "election_id": "wa-2026-general",
+      "id": "county-council-district-2",
+      "kind": "county_council_district",
+      "name": "Metropolitan King County Council District 2",
+      "parent_id": "king-county",
+      "seattle_explanation": "The district includes part of Seattle.",
+      "seattle_relationship": "intersects_city",
+      "state_code": null
+    },
+    {
+      "aliases": [
+        "COUNTY COUNCIL DISTRICT NO. 4",
+        "KCC 4"
+      ],
+      "election_id": "wa-2026-general",
+      "id": "county-council-district-4",
+      "kind": "county_council_district",
+      "name": "Metropolitan King County Council District 4",
+      "parent_id": "king-county",
+      "seattle_explanation": "The district includes part of Seattle.",
+      "seattle_relationship": "intersects_city",
+      "state_code": null
+    },
+    {
+      "aliases": [
+        "COUNTY COUNCIL DISTRICT NO. 8",
+        "KCC 8"
+      ],
+      "election_id": "wa-2026-general",
+      "id": "county-council-district-8",
+      "kind": "county_council_district",
+      "name": "Metropolitan King County Council District 8",
+      "parent_id": "king-county",
+      "seattle_explanation": "The district includes part of Seattle.",
+      "seattle_relationship": "intersects_city",
+      "state_code": null
+    },
+    {
+      "aliases": [],
+      "election_id": "wa-2026-general",
+      "id": "court-of-appeals-division-1-district-1",
+      "kind": "judicial_district",
+      "name": "Court of Appeals, Division 1, District 1",
+      "parent_id": "washington-state",
+      "seattle_explanation": "District 1 includes King County and Seattle.",
+      "seattle_relationship": "intersects_city",
+      "state_code": null
+    },
+    {
+      "aliases": [],
+      "election_id": "wa-2026-general",
+      "id": "king-county",
+      "kind": "county",
+      "name": "King County",
+      "parent_id": "washington-state",
+      "seattle_explanation": "The City of Seattle is within King County.",
+      "seattle_relationship": "contains_city",
+      "state_code": null
+    },
+    {
+      "aliases": [],
+      "election_id": "wa-2026-general",
+      "id": "king-county-district-court-west-electoral-district",
+      "kind": "judicial_district",
+      "name": "King County District Court West Electoral District",
+      "parent_id": "king-county",
+      "seattle_explanation": "The West Electoral District includes Seattle.",
+      "seattle_relationship": "intersects_city",
+      "state_code": null
+    },
+    {
+      "aliases": [
+        "LD 11",
+        "LEGISLATIVE DISTRICT 11"
+      ],
+      "election_id": "wa-2026-general",
+      "id": "legislative-district-11",
+      "kind": "legislative_district",
+      "name": "Legislative District 11",
+      "parent_id": "washington-state",
+      "seattle_explanation": "The district includes part of southeast Seattle.",
+      "seattle_relationship": "intersects_city",
+      "state_code": null
+    },
+    {
+      "aliases": [
+        "LD 32",
+        "LEGISLATIVE DISTRICT 32"
+      ],
+      "election_id": "wa-2026-general",
+      "id": "legislative-district-32",
+      "kind": "legislative_district",
+      "name": "Legislative District 32",
+      "parent_id": "washington-state",
+      "seattle_explanation": "The district includes part of northwest Seattle.",
+      "seattle_relationship": "intersects_city",
+      "state_code": null
+    },
+    {
+      "aliases": [
+        "LD 34",
+        "LEGISLATIVE DISTRICT 34"
+      ],
+      "election_id": "wa-2026-general",
+      "id": "legislative-district-34",
+      "kind": "legislative_district",
+      "name": "Legislative District 34",
+      "parent_id": "washington-state",
+      "seattle_explanation": "The district includes part of southwest Seattle.",
+      "seattle_relationship": "intersects_city",
+      "state_code": null
+    },
+    {
+      "aliases": [
+        "LD 36",
+        "LEGISLATIVE DISTRICT 36"
+      ],
+      "election_id": "wa-2026-general",
+      "id": "legislative-district-36",
+      "kind": "legislative_district",
+      "name": "Legislative District 36",
+      "parent_id": "washington-state",
+      "seattle_explanation": "The district includes part of northwest Seattle.",
+      "seattle_relationship": "intersects_city",
+      "state_code": null
+    },
+    {
+      "aliases": [
+        "LD 37",
+        "LEGISLATIVE DISTRICT 37"
+      ],
+      "election_id": "wa-2026-general",
+      "id": "legislative-district-37",
+      "kind": "legislative_district",
+      "name": "Legislative District 37",
+      "parent_id": "washington-state",
+      "seattle_explanation": "The district includes part of south and central Seattle.",
+      "seattle_relationship": "intersects_city",
+      "state_code": null
+    },
+    {
+      "aliases": [
+        "LD 43",
+        "LEGISLATIVE DISTRICT 43"
+      ],
+      "election_id": "wa-2026-general",
+      "id": "legislative-district-43",
+      "kind": "legislative_district",
+      "name": "Legislative District 43",
+      "parent_id": "washington-state",
+      "seattle_explanation": "The district includes part of central Seattle.",
+      "seattle_relationship": "intersects_city",
+      "state_code": null
+    },
+    {
+      "aliases": [
+        "LD 46",
+        "LEGISLATIVE DISTRICT 46"
+      ],
+      "election_id": "wa-2026-general",
+      "id": "legislative-district-46",
+      "kind": "legislative_district",
+      "name": "Legislative District 46",
+      "parent_id": "washington-state",
+      "seattle_explanation": "The district includes part of north Seattle.",
+      "seattle_relationship": "intersects_city",
+      "state_code": null
+    },
+    {
+      "aliases": [
+        "SEATTLE CITY COUNCIL DISTRICT 5",
+        "Seattle Council District 5"
+      ],
+      "election_id": "wa-2026-general",
+      "id": "seattle-city-council-district-5",
+      "kind": "city_council_district",
+      "name": "Seattle City Council District 5",
+      "parent_id": "city-of-seattle",
+      "seattle_explanation": "City Council District 5 is wholly within Seattle.",
+      "seattle_relationship": "within_city",
+      "state_code": null
+    },
+    {
+      "aliases": [
+        "WA",
+        "Washington"
+      ],
+      "election_id": "wa-2026-general",
+      "id": "washington-state",
+      "kind": "state",
+      "name": "State of Washington",
+      "parent_id": null,
+      "seattle_explanation": "Seattle voters participate in statewide contests.",
+      "seattle_relationship": "contains_city",
+      "state_code": "WA"
+    }
+  ],
+  "races": [
+    {
+      "aliases": [],
+      "display_name": "Court of Appeals, Division 1, District 1 — Judge Position 5",
+      "district": "Court of Appeals, Division 1, District 1",
+      "election_id": "wa-2026-general",
+      "id": "court-of-appeals-division-1-district-1-judge-5",
+      "jurisdiction_id": "court-of-appeals-division-1-district-1",
+      "office": "Judge",
+      "position": "Position 5",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Court of Appeals, Division 1, District 1 — Judge Position 6",
+      "district": "Court of Appeals, Division 1, District 1",
+      "election_id": "wa-2026-general",
+      "id": "court-of-appeals-division-1-district-1-judge-6",
+      "jurisdiction_id": "court-of-appeals-division-1-district-1",
+      "office": "Judge",
+      "position": "Position 6",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Initiative IL26-001 — Parental Rights in Public Schools",
+      "district": "Statewide",
+      "election_id": "wa-2026-general",
+      "id": "initiative-26-001",
+      "jurisdiction_id": "washington-state",
+      "office": "Ballot measure",
+      "position": "Initiative No. IL26-001",
+      "publication_eligible": true,
+      "race_type": "measure"
+    },
+    {
+      "aliases": [],
+      "display_name": "Initiative IL26-638 — Participation in K-12 School Athletics",
+      "district": "Statewide",
+      "election_id": "wa-2026-general",
+      "id": "initiative-26-638",
+      "jurisdiction_id": "washington-state",
+      "office": "Ballot measure",
+      "position": "Initiative No. IL26-638",
+      "publication_eligible": true,
+      "race_type": "measure"
+    },
+    {
+      "aliases": [],
+      "display_name": "Initiative IP26-645 — State and Local Taxes",
+      "district": "Statewide",
+      "election_id": "wa-2026-general",
+      "id": "initiative-26-645",
+      "jurisdiction_id": "washington-state",
+      "office": "Ballot measure",
+      "position": "Initiative No. IP26-645",
+      "publication_eligible": true,
+      "race_type": "measure"
+    },
+    {
+      "aliases": [],
+      "display_name": "King County Assessor",
+      "district": "Countywide",
+      "election_id": "wa-2026-general",
+      "id": "king-county-assessor",
+      "jurisdiction_id": "king-county",
+      "office": "Assessor",
+      "position": null,
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Metropolitan King County Council — District 2",
+      "district": "Metropolitan King County Council District 2",
+      "election_id": "wa-2026-general",
+      "id": "king-county-council-2",
+      "jurisdiction_id": "county-council-district-2",
+      "office": "Metropolitan King County Councilmember",
+      "position": "District 2",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Metropolitan King County Council — District 4",
+      "district": "Metropolitan King County Council District 4",
+      "election_id": "wa-2026-general",
+      "id": "king-county-council-4",
+      "jurisdiction_id": "county-council-district-4",
+      "office": "Metropolitan King County Councilmember",
+      "position": "District 4",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Metropolitan King County Council — District 8",
+      "district": "Metropolitan King County Council District 8",
+      "election_id": "wa-2026-general",
+      "id": "king-county-council-8",
+      "jurisdiction_id": "county-council-district-8",
+      "office": "Metropolitan King County Councilmember",
+      "position": "District 8",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "King County Director of Elections",
+      "district": "Countywide",
+      "election_id": "wa-2026-general",
+      "id": "king-county-director-of-elections",
+      "jurisdiction_id": "king-county",
+      "office": "Director of Elections",
+      "position": null,
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "King County District Court West Electoral District — Judge Position 1",
+      "district": "West Electoral District",
+      "election_id": "wa-2026-general",
+      "id": "king-county-district-court-west-judge-1",
+      "jurisdiction_id": "king-county-district-court-west-electoral-district",
+      "office": "District Court Judge",
+      "position": "Position 1",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "King County District Court West Electoral District — Judge Position 2",
+      "district": "West Electoral District",
+      "election_id": "wa-2026-general",
+      "id": "king-county-district-court-west-judge-2",
+      "jurisdiction_id": "king-county-district-court-west-electoral-district",
+      "office": "District Court Judge",
+      "position": "Position 2",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "King County District Court West Electoral District — Judge Position 3",
+      "district": "West Electoral District",
+      "election_id": "wa-2026-general",
+      "id": "king-county-district-court-west-judge-3",
+      "jurisdiction_id": "king-county-district-court-west-electoral-district",
+      "office": "District Court Judge",
+      "position": "Position 3",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "King County District Court West Electoral District — Judge Position 4",
+      "district": "West Electoral District",
+      "election_id": "wa-2026-general",
+      "id": "king-county-district-court-west-judge-4",
+      "jurisdiction_id": "king-county-district-court-west-electoral-district",
+      "office": "District Court Judge",
+      "position": "Position 4",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "King County District Court West Electoral District — Judge Position 5",
+      "district": "West Electoral District",
+      "election_id": "wa-2026-general",
+      "id": "king-county-district-court-west-judge-5",
+      "jurisdiction_id": "king-county-district-court-west-electoral-district",
+      "office": "District Court Judge",
+      "position": "Position 5",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "King County Prosecuting Attorney",
+      "district": "Countywide",
+      "election_id": "wa-2026-general",
+      "id": "king-county-prosecuting-attorney",
+      "jurisdiction_id": "king-county",
+      "office": "Prosecuting Attorney",
+      "position": null,
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Legislative District 11 State Representative — Position 1",
+      "district": "Legislative District 11",
+      "election_id": "wa-2026-general",
+      "id": "ld-11-state-representative-1",
+      "jurisdiction_id": "legislative-district-11",
+      "office": "State Representative",
+      "position": "Position 1",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Legislative District 11 State Representative — Position 2",
+      "district": "Legislative District 11",
+      "election_id": "wa-2026-general",
+      "id": "ld-11-state-representative-2",
+      "jurisdiction_id": "legislative-district-11",
+      "office": "State Representative",
+      "position": "Position 2",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Legislative District 32 State Representative — Position 1",
+      "district": "Legislative District 32",
+      "election_id": "wa-2026-general",
+      "id": "ld-32-state-representative-1",
+      "jurisdiction_id": "legislative-district-32",
+      "office": "State Representative",
+      "position": "Position 1",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Legislative District 32 State Representative — Position 2",
+      "district": "Legislative District 32",
+      "election_id": "wa-2026-general",
+      "id": "ld-32-state-representative-2",
+      "jurisdiction_id": "legislative-district-32",
+      "office": "State Representative",
+      "position": "Position 2",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Legislative District 32 State Senator",
+      "district": "Legislative District 32",
+      "election_id": "wa-2026-general",
+      "id": "ld-32-state-senator",
+      "jurisdiction_id": "legislative-district-32",
+      "office": "State Senator",
+      "position": null,
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Legislative District 34 State Representative — Position 1",
+      "district": "Legislative District 34",
+      "election_id": "wa-2026-general",
+      "id": "ld-34-state-representative-1",
+      "jurisdiction_id": "legislative-district-34",
+      "office": "State Representative",
+      "position": "Position 1",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Legislative District 34 State Representative — Position 2",
+      "district": "Legislative District 34",
+      "election_id": "wa-2026-general",
+      "id": "ld-34-state-representative-2",
+      "jurisdiction_id": "legislative-district-34",
+      "office": "State Representative",
+      "position": "Position 2",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Legislative District 34 State Senator",
+      "district": "Legislative District 34",
+      "election_id": "wa-2026-general",
+      "id": "ld-34-state-senator",
+      "jurisdiction_id": "legislative-district-34",
+      "office": "State Senator",
+      "position": null,
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Legislative District 36 State Representative — Position 1",
+      "district": "Legislative District 36",
+      "election_id": "wa-2026-general",
+      "id": "ld-36-state-representative-1",
+      "jurisdiction_id": "legislative-district-36",
+      "office": "State Representative",
+      "position": "Position 1",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Legislative District 36 State Representative — Position 2",
+      "district": "Legislative District 36",
+      "election_id": "wa-2026-general",
+      "id": "ld-36-state-representative-2",
+      "jurisdiction_id": "legislative-district-36",
+      "office": "State Representative",
+      "position": "Position 2",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Legislative District 36 State Senator",
+      "district": "Legislative District 36",
+      "election_id": "wa-2026-general",
+      "id": "ld-36-state-senator",
+      "jurisdiction_id": "legislative-district-36",
+      "office": "State Senator",
+      "position": null,
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Legislative District 37 State Representative — Position 1",
+      "district": "Legislative District 37",
+      "election_id": "wa-2026-general",
+      "id": "ld-37-state-representative-1",
+      "jurisdiction_id": "legislative-district-37",
+      "office": "State Representative",
+      "position": "Position 1",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Legislative District 37 State Representative — Position 2",
+      "district": "Legislative District 37",
+      "election_id": "wa-2026-general",
+      "id": "ld-37-state-representative-2",
+      "jurisdiction_id": "legislative-district-37",
+      "office": "State Representative",
+      "position": "Position 2",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Legislative District 37 State Senator",
+      "district": "Legislative District 37",
+      "election_id": "wa-2026-general",
+      "id": "ld-37-state-senator",
+      "jurisdiction_id": "legislative-district-37",
+      "office": "State Senator",
+      "position": null,
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Legislative District 43 State Representative — Position 1",
+      "district": "Legislative District 43",
+      "election_id": "wa-2026-general",
+      "id": "ld-43-state-representative-1",
+      "jurisdiction_id": "legislative-district-43",
+      "office": "State Representative",
+      "position": "Position 1",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Legislative District 43 State Representative — Position 2",
+      "district": "Legislative District 43",
+      "election_id": "wa-2026-general",
+      "id": "ld-43-state-representative-2",
+      "jurisdiction_id": "legislative-district-43",
+      "office": "State Representative",
+      "position": "Position 2",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Legislative District 43 State Senator",
+      "district": "Legislative District 43",
+      "election_id": "wa-2026-general",
+      "id": "ld-43-state-senator",
+      "jurisdiction_id": "legislative-district-43",
+      "office": "State Senator",
+      "position": null,
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Legislative District 46 State Representative — Position 1",
+      "district": "Legislative District 46",
+      "election_id": "wa-2026-general",
+      "id": "ld-46-state-representative-1",
+      "jurisdiction_id": "legislative-district-46",
+      "office": "State Representative",
+      "position": "Position 1",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Legislative District 46 State Representative — Position 2",
+      "district": "Legislative District 46",
+      "election_id": "wa-2026-general",
+      "id": "ld-46-state-representative-2",
+      "jurisdiction_id": "legislative-district-46",
+      "office": "State Representative",
+      "position": "Position 2",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Legislative District 46 State Senator",
+      "district": "Legislative District 46",
+      "election_id": "wa-2026-general",
+      "id": "ld-46-state-senator",
+      "jurisdiction_id": "legislative-district-46",
+      "office": "State Senator",
+      "position": null,
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Seattle City Council — District 5",
+      "district": "Seattle City Council District 5",
+      "election_id": "wa-2026-general",
+      "id": "seattle-city-council-5",
+      "jurisdiction_id": "seattle-city-council-district-5",
+      "office": "City Councilmember",
+      "position": "District 5 — unexpired 1-year term",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Seattle Municipal Court Judge — Position 1",
+      "district": "Citywide",
+      "election_id": "wa-2026-general",
+      "id": "seattle-municipal-court-judge-1",
+      "jurisdiction_id": "city-of-seattle",
+      "office": "Municipal Court Judge",
+      "position": "Position 1",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Seattle Municipal Court Judge — Position 2",
+      "district": "Citywide",
+      "election_id": "wa-2026-general",
+      "id": "seattle-municipal-court-judge-2",
+      "jurisdiction_id": "city-of-seattle",
+      "office": "Municipal Court Judge",
+      "position": "Position 2",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Seattle Municipal Court Judge — Position 3",
+      "district": "Citywide",
+      "election_id": "wa-2026-general",
+      "id": "seattle-municipal-court-judge-3",
+      "jurisdiction_id": "city-of-seattle",
+      "office": "Municipal Court Judge",
+      "position": "Position 3",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Seattle Municipal Court Judge — Position 4",
+      "district": "Citywide",
+      "election_id": "wa-2026-general",
+      "id": "seattle-municipal-court-judge-4",
+      "jurisdiction_id": "city-of-seattle",
+      "office": "Municipal Court Judge",
+      "position": "Position 4",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Seattle Municipal Court Judge — Position 5",
+      "district": "Citywide",
+      "election_id": "wa-2026-general",
+      "id": "seattle-municipal-court-judge-5",
+      "jurisdiction_id": "city-of-seattle",
+      "office": "Municipal Court Judge",
+      "position": "Position 5",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Seattle Municipal Court Judge — Position 6",
+      "district": "Citywide",
+      "election_id": "wa-2026-general",
+      "id": "seattle-municipal-court-judge-6",
+      "jurisdiction_id": "city-of-seattle",
+      "office": "Municipal Court Judge",
+      "position": "Position 6",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Seattle Municipal Court Judge — Position 7",
+      "district": "Citywide",
+      "election_id": "wa-2026-general",
+      "id": "seattle-municipal-court-judge-7",
+      "jurisdiction_id": "city-of-seattle",
+      "office": "Municipal Court Judge",
+      "position": "Position 7",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Seattle Proposition 1 — Seattle Transit Measure",
+      "district": "Citywide",
+      "election_id": "wa-2026-general",
+      "id": "seattle-proposition-1-transit",
+      "jurisdiction_id": "city-of-seattle",
+      "office": "Ballot measure",
+      "position": "Proposition No. 1",
+      "publication_eligible": true,
+      "race_type": "measure"
+    },
+    {
+      "aliases": [],
+      "display_name": "Washington Supreme Court Justice — Position 1",
+      "district": "Statewide",
+      "election_id": "wa-2026-general",
+      "id": "supreme-court-justice-1",
+      "jurisdiction_id": "washington-state",
+      "office": "Supreme Court Justice",
+      "position": "Position 1 — unexpired 2-year term",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Washington Supreme Court Justice — Position 3",
+      "district": "Statewide",
+      "election_id": "wa-2026-general",
+      "id": "supreme-court-justice-3",
+      "jurisdiction_id": "washington-state",
+      "office": "Supreme Court Justice",
+      "position": "Position 3",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Washington Supreme Court Justice — Position 4",
+      "district": "Statewide",
+      "election_id": "wa-2026-general",
+      "id": "supreme-court-justice-4",
+      "jurisdiction_id": "washington-state",
+      "office": "Supreme Court Justice",
+      "position": "Position 4",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Washington Supreme Court Justice — Position 5",
+      "district": "Statewide",
+      "election_id": "wa-2026-general",
+      "id": "supreme-court-justice-5",
+      "jurisdiction_id": "washington-state",
+      "office": "Supreme Court Justice",
+      "position": "Position 5 — unexpired 2-year term",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "Washington Supreme Court Justice — Position 7",
+      "district": "Statewide",
+      "election_id": "wa-2026-general",
+      "id": "supreme-court-justice-7",
+      "jurisdiction_id": "washington-state",
+      "office": "Supreme Court Justice",
+      "position": "Position 7",
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "U.S. Representative — Congressional District 7",
+      "district": "Congressional District 7",
+      "election_id": "wa-2026-general",
+      "id": "us-house-7",
+      "jurisdiction_id": "congressional-district-7",
+      "office": "U.S. Representative",
+      "position": null,
+      "publication_eligible": true,
+      "race_type": "candidate"
+    },
+    {
+      "aliases": [],
+      "display_name": "U.S. Representative — Congressional District 9",
+      "district": "Congressional District 9",
+      "election_id": "wa-2026-general",
+      "id": "us-house-9",
+      "jurisdiction_id": "congressional-district-9",
+      "office": "U.S. Representative",
+      "position": null,
+      "publication_eligible": true,
+      "race_type": "candidate"
+    }
+  ],
+  "schema_version": "1.0",
+  "scoring_policy": {
+    "id": "unweighted-progressive-v1",
+    "path": "config/scoring/default.yaml",
+    "version": "1.0"
+  },
+  "source_panel": {
+    "id": "wa-2026-general-sources",
+    "path": "config/sources/wa-2026-general.yaml",
+    "version": "1.0"
+  }
+}

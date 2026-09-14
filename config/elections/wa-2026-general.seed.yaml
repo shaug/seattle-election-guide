@@ -1,0 +1,654 @@
+schema_version: "1.0"
+election:
+  id: wa-2026-general
+  name: 2026 Washington November General Election
+  election_type: general
+  election_scope: mixed
+  election_date: 2026-11-03
+  state: WA
+  state_jurisdiction_id: washington-state
+  official_url: https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55
+  target_jurisdiction_ids:
+    - city-of-seattle
+    - king-county
+    - washington-state
+source_panel:
+  id: wa-2026-general-sources
+  version: "1.0"
+  path: config/sources/wa-2026-general.yaml
+scoring_policy:
+  id: unweighted-progressive-v1
+  version: "1.0"
+  path: config/scoring/default.yaml
+jurisdictions:
+  - id: washington-state
+    name: State of Washington
+    kind: state
+    state_code: WA
+    parent_id: null
+    aliases:
+      - WA
+      - Washington
+    seattle_relationship: contains_city
+    seattle_explanation: Seattle voters participate in statewide contests.
+  - id: king-county
+    name: King County
+    kind: county
+    parent_id: washington-state
+    aliases: []
+    seattle_relationship: contains_city
+    seattle_explanation: The City of Seattle is within King County.
+  - id: city-of-seattle
+    name: City of Seattle
+    kind: city
+    parent_id: king-county
+    aliases:
+      - Seattle
+    seattle_relationship: citywide
+    seattle_explanation: The target citywide ballot geography is the City of Seattle.
+  - id: congressional-district-7
+    name: Congressional District 7
+    kind: congressional_district
+    parent_id: washington-state
+    aliases:
+      - CD 7
+      - CONGRESSIONAL DISTRICT 7
+    seattle_relationship: intersects_city
+    seattle_explanation: The district includes most of Seattle.
+  - id: congressional-district-9
+    name: Congressional District 9
+    kind: congressional_district
+    parent_id: washington-state
+    aliases:
+      - CD 9
+      - CONGRESSIONAL DISTRICT 9
+    seattle_relationship: intersects_city
+    seattle_explanation: The district includes part of southeast Seattle.
+  - id: legislative-district-11
+    name: Legislative District 11
+    kind: legislative_district
+    parent_id: washington-state
+    aliases:
+      - LD 11
+      - LEGISLATIVE DISTRICT 11
+    seattle_relationship: intersects_city
+    seattle_explanation: The district includes part of southeast Seattle.
+  - id: legislative-district-32
+    name: Legislative District 32
+    kind: legislative_district
+    parent_id: washington-state
+    aliases:
+      - LD 32
+      - LEGISLATIVE DISTRICT 32
+    seattle_relationship: intersects_city
+    seattle_explanation: The district includes part of northwest Seattle.
+  - id: legislative-district-34
+    name: Legislative District 34
+    kind: legislative_district
+    parent_id: washington-state
+    aliases:
+      - LD 34
+      - LEGISLATIVE DISTRICT 34
+    seattle_relationship: intersects_city
+    seattle_explanation: The district includes part of southwest Seattle.
+  - id: legislative-district-36
+    name: Legislative District 36
+    kind: legislative_district
+    parent_id: washington-state
+    aliases:
+      - LD 36
+      - LEGISLATIVE DISTRICT 36
+    seattle_relationship: intersects_city
+    seattle_explanation: The district includes part of northwest Seattle.
+  - id: legislative-district-37
+    name: Legislative District 37
+    kind: legislative_district
+    parent_id: washington-state
+    aliases:
+      - LD 37
+      - LEGISLATIVE DISTRICT 37
+    seattle_relationship: intersects_city
+    seattle_explanation: The district includes part of south and central Seattle.
+  - id: legislative-district-43
+    name: Legislative District 43
+    kind: legislative_district
+    parent_id: washington-state
+    aliases:
+      - LD 43
+      - LEGISLATIVE DISTRICT 43
+    seattle_relationship: intersects_city
+    seattle_explanation: The district includes part of central Seattle.
+  - id: legislative-district-46
+    name: Legislative District 46
+    kind: legislative_district
+    parent_id: washington-state
+    aliases:
+      - LD 46
+      - LEGISLATIVE DISTRICT 46
+    seattle_relationship: intersects_city
+    seattle_explanation: The district includes part of north Seattle.
+  - id: county-council-district-2
+    name: Metropolitan King County Council District 2
+    kind: county_council_district
+    parent_id: king-county
+    aliases:
+      - COUNTY COUNCIL DISTRICT NO. 2
+      - KCC 2
+    seattle_relationship: intersects_city
+    seattle_explanation: The district includes part of Seattle.
+  - id: county-council-district-4
+    name: Metropolitan King County Council District 4
+    kind: county_council_district
+    parent_id: king-county
+    aliases:
+      - COUNTY COUNCIL DISTRICT NO. 4
+      - KCC 4
+    seattle_relationship: intersects_city
+    seattle_explanation: The district includes part of Seattle.
+  - id: county-council-district-8
+    name: Metropolitan King County Council District 8
+    kind: county_council_district
+    parent_id: king-county
+    aliases:
+      - COUNTY COUNCIL DISTRICT NO. 8
+      - KCC 8
+    seattle_relationship: intersects_city
+    seattle_explanation: The district includes part of Seattle.
+  - id: court-of-appeals-division-1-district-1
+    name: Court of Appeals, Division 1, District 1
+    kind: judicial_district
+    parent_id: washington-state
+    aliases: []
+    seattle_relationship: intersects_city
+    seattle_explanation: District 1 includes King County and Seattle.
+  - id: king-county-district-court-west-electoral-district
+    name: King County District Court West Electoral District
+    kind: judicial_district
+    parent_id: king-county
+    aliases: []
+    seattle_relationship: intersects_city
+    seattle_explanation: The West Electoral District includes Seattle.
+  - id: seattle-city-council-district-5
+    name: Seattle City Council District 5
+    kind: city_council_district
+    parent_id: city-of-seattle
+    aliases:
+      - SEATTLE CITY COUNCIL DISTRICT 5
+      - Seattle Council District 5
+    seattle_relationship: within_city
+    seattle_explanation: City Council District 5 is wholly within Seattle.
+# Official candidate contests:
+# https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55
+# Official statewide measures:
+# https://www.sos.wa.gov/about-office/news/2026/secretary-state-certifies-candidates-and-measures-november-general-election
+# Official Seattle measure:
+# https://info.kingcounty.gov/kcelections/Vote/contests/ballotmeasures.aspx?cid=102258&groupname=City&lang=en-US
+races:
+  - id: initiative-26-001
+    jurisdiction_id: washington-state
+    race_type: measure
+    district: Statewide
+    office: Ballot measure
+    position: Initiative No. IL26-001
+    display_name: Initiative IL26-001 — Parental Rights in Public Schools
+    aliases: []
+    publication_eligible: true
+  - id: initiative-26-638
+    jurisdiction_id: washington-state
+    race_type: measure
+    district: Statewide
+    office: Ballot measure
+    position: Initiative No. IL26-638
+    display_name: Initiative IL26-638 — Participation in K-12 School Athletics
+    aliases: []
+    publication_eligible: true
+  - id: initiative-26-645
+    jurisdiction_id: washington-state
+    race_type: measure
+    district: Statewide
+    office: Ballot measure
+    position: Initiative No. IP26-645
+    display_name: Initiative IP26-645 — State and Local Taxes
+    aliases: []
+    publication_eligible: true
+  - id: us-house-7
+    jurisdiction_id: congressional-district-7
+    race_type: candidate
+    district: Congressional District 7
+    office: U.S. Representative
+    position: null
+    display_name: U.S. Representative — Congressional District 7
+    aliases: []
+    publication_eligible: true
+  - id: us-house-9
+    jurisdiction_id: congressional-district-9
+    race_type: candidate
+    district: Congressional District 9
+    office: U.S. Representative
+    position: null
+    display_name: U.S. Representative — Congressional District 9
+    aliases: []
+    publication_eligible: true
+  - id: ld-11-state-representative-1
+    jurisdiction_id: legislative-district-11
+    race_type: candidate
+    district: Legislative District 11
+    office: State Representative
+    position: Position 1
+    display_name: Legislative District 11 State Representative — Position 1
+    aliases: []
+    publication_eligible: true
+  - id: ld-11-state-representative-2
+    jurisdiction_id: legislative-district-11
+    race_type: candidate
+    district: Legislative District 11
+    office: State Representative
+    position: Position 2
+    display_name: Legislative District 11 State Representative — Position 2
+    aliases: []
+    publication_eligible: true
+  - id: ld-32-state-senator
+    jurisdiction_id: legislative-district-32
+    race_type: candidate
+    district: Legislative District 32
+    office: State Senator
+    position: null
+    display_name: Legislative District 32 State Senator
+    aliases: []
+    publication_eligible: true
+  - id: ld-32-state-representative-1
+    jurisdiction_id: legislative-district-32
+    race_type: candidate
+    district: Legislative District 32
+    office: State Representative
+    position: Position 1
+    display_name: Legislative District 32 State Representative — Position 1
+    aliases: []
+    publication_eligible: true
+  - id: ld-32-state-representative-2
+    jurisdiction_id: legislative-district-32
+    race_type: candidate
+    district: Legislative District 32
+    office: State Representative
+    position: Position 2
+    display_name: Legislative District 32 State Representative — Position 2
+    aliases: []
+    publication_eligible: true
+  - id: ld-34-state-senator
+    jurisdiction_id: legislative-district-34
+    race_type: candidate
+    district: Legislative District 34
+    office: State Senator
+    position: null
+    display_name: Legislative District 34 State Senator
+    aliases: []
+    publication_eligible: true
+  - id: ld-34-state-representative-1
+    jurisdiction_id: legislative-district-34
+    race_type: candidate
+    district: Legislative District 34
+    office: State Representative
+    position: Position 1
+    display_name: Legislative District 34 State Representative — Position 1
+    aliases: []
+    publication_eligible: true
+  - id: ld-34-state-representative-2
+    jurisdiction_id: legislative-district-34
+    race_type: candidate
+    district: Legislative District 34
+    office: State Representative
+    position: Position 2
+    display_name: Legislative District 34 State Representative — Position 2
+    aliases: []
+    publication_eligible: true
+  - id: ld-36-state-senator
+    jurisdiction_id: legislative-district-36
+    race_type: candidate
+    district: Legislative District 36
+    office: State Senator
+    position: null
+    display_name: Legislative District 36 State Senator
+    aliases: []
+    publication_eligible: true
+  - id: ld-36-state-representative-1
+    jurisdiction_id: legislative-district-36
+    race_type: candidate
+    district: Legislative District 36
+    office: State Representative
+    position: Position 1
+    display_name: Legislative District 36 State Representative — Position 1
+    aliases: []
+    publication_eligible: true
+  - id: ld-36-state-representative-2
+    jurisdiction_id: legislative-district-36
+    race_type: candidate
+    district: Legislative District 36
+    office: State Representative
+    position: Position 2
+    display_name: Legislative District 36 State Representative — Position 2
+    aliases: []
+    publication_eligible: true
+  - id: ld-37-state-senator
+    jurisdiction_id: legislative-district-37
+    race_type: candidate
+    district: Legislative District 37
+    office: State Senator
+    position: null
+    display_name: Legislative District 37 State Senator
+    aliases: []
+    publication_eligible: true
+  - id: ld-37-state-representative-1
+    jurisdiction_id: legislative-district-37
+    race_type: candidate
+    district: Legislative District 37
+    office: State Representative
+    position: Position 1
+    display_name: Legislative District 37 State Representative — Position 1
+    aliases: []
+    publication_eligible: true
+  - id: ld-37-state-representative-2
+    jurisdiction_id: legislative-district-37
+    race_type: candidate
+    district: Legislative District 37
+    office: State Representative
+    position: Position 2
+    display_name: Legislative District 37 State Representative — Position 2
+    aliases: []
+    publication_eligible: true
+  - id: ld-43-state-senator
+    jurisdiction_id: legislative-district-43
+    race_type: candidate
+    district: Legislative District 43
+    office: State Senator
+    position: null
+    display_name: Legislative District 43 State Senator
+    aliases: []
+    publication_eligible: true
+  - id: ld-43-state-representative-1
+    jurisdiction_id: legislative-district-43
+    race_type: candidate
+    district: Legislative District 43
+    office: State Representative
+    position: Position 1
+    display_name: Legislative District 43 State Representative — Position 1
+    aliases: []
+    publication_eligible: true
+  - id: ld-43-state-representative-2
+    jurisdiction_id: legislative-district-43
+    race_type: candidate
+    district: Legislative District 43
+    office: State Representative
+    position: Position 2
+    display_name: Legislative District 43 State Representative — Position 2
+    aliases: []
+    publication_eligible: true
+  - id: ld-46-state-senator
+    jurisdiction_id: legislative-district-46
+    race_type: candidate
+    district: Legislative District 46
+    office: State Senator
+    position: null
+    display_name: Legislative District 46 State Senator
+    aliases: []
+    publication_eligible: true
+  - id: ld-46-state-representative-1
+    jurisdiction_id: legislative-district-46
+    race_type: candidate
+    district: Legislative District 46
+    office: State Representative
+    position: Position 1
+    display_name: Legislative District 46 State Representative — Position 1
+    aliases: []
+    publication_eligible: true
+  - id: ld-46-state-representative-2
+    jurisdiction_id: legislative-district-46
+    race_type: candidate
+    district: Legislative District 46
+    office: State Representative
+    position: Position 2
+    display_name: Legislative District 46 State Representative — Position 2
+    aliases: []
+    publication_eligible: true
+  - id: king-county-prosecuting-attorney
+    jurisdiction_id: king-county
+    race_type: candidate
+    district: Countywide
+    office: Prosecuting Attorney
+    position: null
+    display_name: King County Prosecuting Attorney
+    aliases: []
+    publication_eligible: true
+  - id: king-county-assessor
+    jurisdiction_id: king-county
+    race_type: candidate
+    district: Countywide
+    office: Assessor
+    position: null
+    display_name: King County Assessor
+    aliases: []
+    publication_eligible: true
+  - id: king-county-director-of-elections
+    jurisdiction_id: king-county
+    race_type: candidate
+    district: Countywide
+    office: Director of Elections
+    position: null
+    display_name: King County Director of Elections
+    aliases: []
+    publication_eligible: true
+  - id: king-county-council-2
+    jurisdiction_id: county-council-district-2
+    race_type: candidate
+    district: Metropolitan King County Council District 2
+    office: Metropolitan King County Councilmember
+    position: District 2
+    display_name: Metropolitan King County Council — District 2
+    aliases: []
+    publication_eligible: true
+  - id: king-county-council-4
+    jurisdiction_id: county-council-district-4
+    race_type: candidate
+    district: Metropolitan King County Council District 4
+    office: Metropolitan King County Councilmember
+    position: District 4
+    display_name: Metropolitan King County Council — District 4
+    aliases: []
+    publication_eligible: true
+  - id: king-county-council-8
+    jurisdiction_id: county-council-district-8
+    race_type: candidate
+    district: Metropolitan King County Council District 8
+    office: Metropolitan King County Councilmember
+    position: District 8
+    display_name: Metropolitan King County Council — District 8
+    aliases: []
+    publication_eligible: true
+  - id: supreme-court-justice-1
+    jurisdiction_id: washington-state
+    race_type: candidate
+    district: Statewide
+    office: Supreme Court Justice
+    position: Position 1 — unexpired 2-year term
+    display_name: Washington Supreme Court Justice — Position 1
+    aliases: []
+    publication_eligible: true
+  - id: supreme-court-justice-3
+    jurisdiction_id: washington-state
+    race_type: candidate
+    district: Statewide
+    office: Supreme Court Justice
+    position: Position 3
+    display_name: Washington Supreme Court Justice — Position 3
+    aliases: []
+    publication_eligible: true
+  - id: supreme-court-justice-4
+    jurisdiction_id: washington-state
+    race_type: candidate
+    district: Statewide
+    office: Supreme Court Justice
+    position: Position 4
+    display_name: Washington Supreme Court Justice — Position 4
+    aliases: []
+    publication_eligible: true
+  - id: supreme-court-justice-5
+    jurisdiction_id: washington-state
+    race_type: candidate
+    district: Statewide
+    office: Supreme Court Justice
+    position: Position 5 — unexpired 2-year term
+    display_name: Washington Supreme Court Justice — Position 5
+    aliases: []
+    publication_eligible: true
+  - id: supreme-court-justice-7
+    jurisdiction_id: washington-state
+    race_type: candidate
+    district: Statewide
+    office: Supreme Court Justice
+    position: Position 7
+    display_name: Washington Supreme Court Justice — Position 7
+    aliases: []
+    publication_eligible: true
+  - id: court-of-appeals-division-1-district-1-judge-5
+    jurisdiction_id: court-of-appeals-division-1-district-1
+    race_type: candidate
+    district: Court of Appeals, Division 1, District 1
+    office: Judge
+    position: Position 5
+    display_name: Court of Appeals, Division 1, District 1 — Judge Position 5
+    aliases: []
+    publication_eligible: true
+  - id: court-of-appeals-division-1-district-1-judge-6
+    jurisdiction_id: court-of-appeals-division-1-district-1
+    race_type: candidate
+    district: Court of Appeals, Division 1, District 1
+    office: Judge
+    position: Position 6
+    display_name: Court of Appeals, Division 1, District 1 — Judge Position 6
+    aliases: []
+    publication_eligible: true
+  - id: king-county-district-court-west-judge-1
+    jurisdiction_id: king-county-district-court-west-electoral-district
+    race_type: candidate
+    district: West Electoral District
+    office: District Court Judge
+    position: Position 1
+    display_name: King County District Court West Electoral District — Judge Position 1
+    aliases: []
+    publication_eligible: true
+  - id: king-county-district-court-west-judge-2
+    jurisdiction_id: king-county-district-court-west-electoral-district
+    race_type: candidate
+    district: West Electoral District
+    office: District Court Judge
+    position: Position 2
+    display_name: King County District Court West Electoral District — Judge Position 2
+    aliases: []
+    publication_eligible: true
+  - id: king-county-district-court-west-judge-3
+    jurisdiction_id: king-county-district-court-west-electoral-district
+    race_type: candidate
+    district: West Electoral District
+    office: District Court Judge
+    position: Position 3
+    display_name: King County District Court West Electoral District — Judge Position 3
+    aliases: []
+    publication_eligible: true
+  - id: king-county-district-court-west-judge-4
+    jurisdiction_id: king-county-district-court-west-electoral-district
+    race_type: candidate
+    district: West Electoral District
+    office: District Court Judge
+    position: Position 4
+    display_name: King County District Court West Electoral District — Judge Position 4
+    aliases: []
+    publication_eligible: true
+  - id: king-county-district-court-west-judge-5
+    jurisdiction_id: king-county-district-court-west-electoral-district
+    race_type: candidate
+    district: West Electoral District
+    office: District Court Judge
+    position: Position 5
+    display_name: King County District Court West Electoral District — Judge Position 5
+    aliases: []
+    publication_eligible: true
+  - id: seattle-city-council-5
+    jurisdiction_id: seattle-city-council-district-5
+    race_type: candidate
+    district: Seattle City Council District 5
+    office: City Councilmember
+    position: District 5 — unexpired 1-year term
+    display_name: Seattle City Council — District 5
+    aliases: []
+    publication_eligible: true
+  - id: seattle-municipal-court-judge-1
+    jurisdiction_id: city-of-seattle
+    race_type: candidate
+    district: Citywide
+    office: Municipal Court Judge
+    position: Position 1
+    display_name: Seattle Municipal Court Judge — Position 1
+    aliases: []
+    publication_eligible: true
+  - id: seattle-municipal-court-judge-2
+    jurisdiction_id: city-of-seattle
+    race_type: candidate
+    district: Citywide
+    office: Municipal Court Judge
+    position: Position 2
+    display_name: Seattle Municipal Court Judge — Position 2
+    aliases: []
+    publication_eligible: true
+  - id: seattle-municipal-court-judge-3
+    jurisdiction_id: city-of-seattle
+    race_type: candidate
+    district: Citywide
+    office: Municipal Court Judge
+    position: Position 3
+    display_name: Seattle Municipal Court Judge — Position 3
+    aliases: []
+    publication_eligible: true
+  - id: seattle-municipal-court-judge-4
+    jurisdiction_id: city-of-seattle
+    race_type: candidate
+    district: Citywide
+    office: Municipal Court Judge
+    position: Position 4
+    display_name: Seattle Municipal Court Judge — Position 4
+    aliases: []
+    publication_eligible: true
+  - id: seattle-municipal-court-judge-5
+    jurisdiction_id: city-of-seattle
+    race_type: candidate
+    district: Citywide
+    office: Municipal Court Judge
+    position: Position 5
+    display_name: Seattle Municipal Court Judge — Position 5
+    aliases: []
+    publication_eligible: true
+  - id: seattle-municipal-court-judge-6
+    jurisdiction_id: city-of-seattle
+    race_type: candidate
+    district: Citywide
+    office: Municipal Court Judge
+    position: Position 6
+    display_name: Seattle Municipal Court Judge — Position 6
+    aliases: []
+    publication_eligible: true
+  - id: seattle-municipal-court-judge-7
+    jurisdiction_id: city-of-seattle
+    race_type: candidate
+    district: Citywide
+    office: Municipal Court Judge
+    position: Position 7
+    display_name: Seattle Municipal Court Judge — Position 7
+    aliases: []
+    publication_eligible: true
+  - id: seattle-proposition-1-transit
+    jurisdiction_id: city-of-seattle
+    race_type: measure
+    district: Citywide
+    office: Ballot measure
+    position: Proposition No. 1
+    display_name: Seattle Proposition 1 — Seattle Transit Measure
+    aliases: []
+    publication_eligible: true
