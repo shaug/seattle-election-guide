@@ -15,10 +15,10 @@ The `collection_opens` calendar milestone opens the window; the `refresh` milest
 sweep inside it. For `wa-2026-general` those are 2026-09-08 (`-56`), 2026-10-23
 (`refresh-mid-ballot`, `-11`), and 2026-10-30 (`refresh-final`, `-4`).
 
-The real deadline is neither of the refreshes. `guide_publishes` is at `-18` (2026-10-16), so
-the **first complete sweep must land before that date** — the refreshes come after publication
-and correct a guide voters can already read. Plan the first pass against `-18`, not against
-election day.
+The real deadline is neither of the refreshes. `guide_publishes` is at `-18`
+(2026-10-16), so the **first complete sweep must land on or before that date** —
+the refreshes come after publication and correct a guide voters can already read.
+Plan the first pass against `-18`, not against election day.
 
 Cadence inside the window belongs to the source registry, not to this document. Each source's
 `discovery.checked_at` in `config/sources/default.yaml` records when it was last looked at, and

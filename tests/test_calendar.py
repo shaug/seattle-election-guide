@@ -321,6 +321,46 @@ def test_election_without_a_results_capture_milestone_fails_validation() -> None
         ElectionCalendar.model_validate(payload)
 
 
+def test_collection_opening_requires_one_guide_publication_deadline() -> None:
+    payload = _calendar(
+        [
+            *_required_milestones(),
+            _milestone(id="collection-opens", kind="collection_opens", offset_days=-56),
+        ]
+    )
+
+    with pytest.raises(ValidationError, match="exactly one guide-publishes milestone"):
+        ElectionCalendar.model_validate(payload)
+
+
+def test_collection_opening_rejects_multiple_guide_publication_deadlines() -> None:
+    payload = _calendar(
+        [
+            *_required_milestones(),
+            _milestone(id="collection-opens", kind="collection_opens", offset_days=-56),
+            _milestone(id="guide-publishes", kind="guide_publishes", offset_days=-18),
+            _milestone(id="guide-publishes-again", kind="guide_publishes", offset_days=-14),
+        ]
+    )
+
+    with pytest.raises(ValidationError, match="exactly one guide-publishes milestone"):
+        ElectionCalendar.model_validate(payload)
+
+
+def test_guide_publication_cannot_precede_any_collection_opening() -> None:
+    payload = _calendar(
+        [
+            *_required_milestones(),
+            _milestone(id="collection-opens", kind="collection_opens", offset_days=-56),
+            _milestone(id="collection-reopens", kind="collection_opens", offset_days=-10),
+            _milestone(id="guide-publishes", kind="guide_publishes", offset_days=-18),
+        ]
+    )
+
+    with pytest.raises(ValidationError, match="publishes its guide before collection opens"):
+        ElectionCalendar.model_validate(payload)
+
+
 def test_capturing_certified_results_before_certification_fails_validation() -> None:
     payload = _calendar(
         [

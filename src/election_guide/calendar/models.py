@@ -221,6 +221,22 @@ class ElectionCalendar(CalendarModel):
         missing = [kind for kind in REQUIRED_MILESTONE_KINDS if kind not in kinds]
         if missing:
             raise ValueError(f"election {election.id!r} declares no {', '.join(missing)} milestone")
+        collection_openings = [
+            item.offset_days for item in milestones if item.kind == "collection_opens"
+        ]
+        if collection_openings:
+            guide_publications = [
+                item.offset_days for item in milestones if item.kind == "guide_publishes"
+            ]
+            if len(guide_publications) != 1:
+                raise ValueError(
+                    f"election {election.id!r} with collection opening must declare "
+                    "exactly one guide-publishes milestone"
+                )
+            if guide_publications[0] < max(collection_openings):
+                raise ValueError(
+                    f"election {election.id!r} publishes its guide before collection opens"
+                )
         certified = [item.offset_days for item in milestones if item.kind == "certification"]
         captured = [
             item.offset_days
