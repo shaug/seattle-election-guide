@@ -54,6 +54,11 @@ ARTIFACT_WINDOW_DAYS = 7
 # that a first comment nobody read does not become the last word.
 STALE_ESCALATION_DAYS = 21
 
+# An opening sweep is allowed to keep producing captures until publication.
+# Once that deadline is missed, the second escalation follows the first by the
+# same fourteen-day interval as the fixed-window stages above.
+COLLECTION_STALE_AFTER_DEADLINE_DAYS = 14
+
 EscalationStage = Literal["overdue", "stale"]
 
 
@@ -150,6 +155,11 @@ class ArtifactExpectation:
     # capture from the right registry counts, which is all a sweep can promise:
     # its titles are the sources' own.
     title_phrase: str | None = None
+    # A milestone kind whose scheduled date closes this artifact's window.
+    # Unset keeps the ordinary fixed seven-day window.
+    deadline_kind: MilestoneKind | None = None
+    # Days beyond that deadline before the missing artifact becomes stale.
+    stale_after_deadline_days: int | None = None
 
     def describe(self) -> str:
         return " or ".join(ARTIFACT_NAMES[kind] for kind in self.kinds)
@@ -159,6 +169,12 @@ class ArtifactExpectation:
 
 
 ARTIFACT_EXPECTATIONS: dict[MilestoneKind, ArtifactExpectation] = {
+    "collection_opens": ArtifactExpectation(
+        kinds=("evidence_manifest", "refresh_event"),
+        capture_source="endorsement",
+        deadline_kind="guide_publishes",
+        stale_after_deadline_days=COLLECTION_STALE_AFTER_DEADLINE_DAYS,
+    ),
     "results_capture_election_night": ArtifactExpectation(
         kinds=("evidence_manifest",),
         capture_source="authority",
@@ -260,6 +276,23 @@ def artifact_window(scheduled: date) -> ArtifactWindow:
     return ArtifactWindow(start=scheduled, end=scheduled + timedelta(days=ARTIFACT_WINDOW_DAYS))
 
 
+def _milestone_window(
+    calendar: ElectionCalendar,
+    milestone: CalendarMilestone,
+    expectation: ArtifactExpectation,
+) -> ArtifactWindow:
+    """Resolve the window policy declared for one expected artifact."""
+    scheduled = calendar.scheduled_date(milestone)
+    if expectation.deadline_kind is None:
+        return artifact_window(scheduled)
+    deadline = next(
+        item
+        for item in calendar.election_milestones(milestone.election_id)
+        if item.kind == expectation.deadline_kind
+    )
+    return ArtifactWindow(start=scheduled, end=calendar.scheduled_date(deadline))
+
+
 def election_date(moment: datetime) -> date:
     """Place one instant on the election's own calendar.
 
@@ -288,6 +321,25 @@ def reached_stages(scheduled: date, *, as_of: date) -> tuple[EscalationStage, ..
     return tuple(
         stage for stage, spec in ESCALATION_STAGES.items() if elapsed > spec.threshold_days
     )
+
+
+def _reached_expectation_stages(
+    expectation: ArtifactExpectation,
+    *,
+    scheduled: date,
+    window: ArtifactWindow,
+    as_of: date,
+) -> tuple[EscalationStage, ...]:
+    """Resolve stage thresholds for fixed and milestone-bounded windows."""
+    if expectation.deadline_kind is None:
+        return reached_stages(scheduled, as_of=as_of)
+    assert expectation.stale_after_deadline_days is not None
+    elapsed = (as_of - window.end).days
+    thresholds = {
+        "overdue": 0,
+        "stale": expectation.stale_after_deadline_days,
+    }
+    return tuple(stage for stage in STAGE_ORDER if elapsed > thresholds[stage])
 
 
 def _capture_matches(
@@ -335,8 +387,10 @@ def missing_artifacts(
         if expectation is None or milestone.artifact_record is not None:
             continue
         scheduled = calendar.scheduled_date(milestone)
-        stages = reached_stages(scheduled, as_of=as_of)
-        window = artifact_window(scheduled)
+        window = _milestone_window(calendar, milestone, expectation)
+        stages = _reached_expectation_stages(
+            expectation, scheduled=scheduled, window=window, as_of=as_of
+        )
         if not stages or artifact_exists(expectation, window, artifacts):
             continue
         missing.append(
