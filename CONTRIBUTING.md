@@ -20,6 +20,15 @@ modules with Biome, type-checks them with `tsc --noEmit --checkJs`, and then
 runs the Node tests. `make format` fixes both languages: ruff for Python,
 `biome check --write` for JavaScript.
 
+The complete pytest suite remains available through `make test`. For a faster
+focused run, use `make test-unit` for tests that do not build full publication
+artifacts or drive Chromium, and `make test-integration` for the rendering,
+browser, hosting, and release-artifact suite. CI divides that integration suite
+again into duration-balanced comparison, rendering, and artifact partitions;
+their membership is defined once in the `Makefile` (issue #428).
+
+Neither focused target replaces `make check` before proposing a diff.
+
 `make types` regenerates the client payload declarations from the Pydantic
 models (docs/FRONTEND.md, The data contract). Run it after changing anything
 the payload publishes and commit the result; `make check` fails while the
