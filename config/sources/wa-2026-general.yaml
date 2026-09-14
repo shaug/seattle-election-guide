@@ -1,0 +1,1177 @@
+schema_version: "1.1"
+id: wa-2026-general-default-sources-v1
+election_id: wa-2026-general
+frozen_at: 2026-09-14T12:23:04Z
+research_cutoff: 2026-09-14T12:23:04Z
+notes:
+  - Version 1 freezes the primary panel as a constrained carry-forward for the 2026 general election; no source or category membership, panel role, eligibility, transport code, reporting placement, selection category, publisher relationship, or overlap metadata changed.
+  - The repository records the actual late freeze time rather than backdating the missed planning milestone.
+  - Discovery was rechecked through 2026-09-14T12:23:04Z; published records require an official current-cycle or general-election publication, while primary-only or absent material is recorded as not found and inaccessible material is explicit.
+  - Publication content established only whether an official guide or endorsement page exists. Endorsement choices and observed consensus did not influence panel membership or classification.
+  - The primary registry remains frozen separately as wa-2026-primary-default-sources-v4.
+categories:
+  - id: progressive_general
+    code: Ggen
+    label: Progressive editorial and general
+    selectable: true
+    description: Progressive editorial boards and general-purpose progressive organizations.
+  - id: democratic_party
+    code: Gdem
+    label: Democratic Party
+    selectable: true
+    description: Democratic Party organizations, including legislative-district and caucus bodies.
+  - id: transportation_urbanism
+    code: Gurb
+    label: Transportation and urbanism
+    selectable: true
+    description: Transit, housing density, and active-transportation organizations.
+  - id: environmental
+    code: Genv
+    label: Environment
+    selectable: true
+    description: Conservation and climate organizations.
+  - id: labor
+    code: Glab
+    label: Labor
+    selectable: true
+    description: Unions and labor councils.
+  - id: rights_representation
+    code: Grgt
+    label: Rights and representation
+    selectable: true
+    description: Civil-rights, reproductive-rights, immigrant, disability, and representation organizations.
+  - id: comparison
+    code: Gcmp
+    label: Centrist comparison
+    selectable: true
+    panel_role: comparison
+    description: Comparison-only placement. Comparison sources may be selected for display but never enter the progressive score.
+retired_codes: []
+sources:
+  - id: the-stranger
+    name: The Stranger Election Control Board
+    code: strn
+    reporting_category_id: progressive_general
+    selection_category_ids: [progressive_general]
+    organization_url: https://www.thestranger.com/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Named progressive editorial source with an official Seattle-wide 2026 primary guide.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: The guide states that it considered every race touching Seattle.
+    discovery:
+      status: not_found
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://www.thestranger.com/category/election-endorsements/
+      canonical_url: https://www.thestranger.com/category/election-endorsements/
+      media_type: text/html
+      evidence_locator: Official election-endorsement archive; its latest 2026 guide was still primary-specific at the research cutoff.
+      notes: No official 2026 general-election guide was located. The primary publication was not reused as general-election evidence.
+
+  - id: the-urbanist
+    name: The Urbanist Elections Committee
+    code: urbn
+    reporting_category_id: progressive_general
+    selection_category_ids: [progressive_general]
+    organization_url: https://www.theurbanist.org/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Named progressive editorial source with an official 2026 primary endorsement page.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Use only for Seattle-ballot races for which the organization publishes a decision.
+    discovery:
+      status: not_found
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://www.theurbanist.org/2026-primary-election-endorsements/
+      canonical_url: https://www.theurbanist.org/2026-primary-election-endorsements/
+      media_type: text/html
+      evidence_locator: Official 2026 endorsement page whose heading remained specific to the primary election.
+      notes: No separate or updated official 2026 general-election publication was located.
+
+  - id: progressive-voters-guide
+    name: Progressive Voters Guide
+    code: pvot
+    reporting_category_id: progressive_general
+    selection_category_ids: [progressive_general]
+    organization_url: https://www.progressivevotersguide.com/washington/
+    geographic_kind: general
+    panel_role: excluded
+    panel_reason: The guide is a Fuse Washington publication, not an independent source organization; counting it would duplicate its publisher and compiled partners.
+    eligibility:
+      kind: none
+      rationale: Retained for discovery and ownership disclosure only.
+    discovery:
+      status: published
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://www.progressivevotersguide.com/washington/2026/general/about
+      canonical_url: https://www.progressivevotersguide.com/washington/2026/general/about
+      media_type: text/html
+      evidence_locator: Official Washington 2026 general-guide About page identifying the election and its Fuse Washington ownership.
+      notes: The general guide shell was live at the research cutoff; its recommendations were not used to select or classify sources.
+
+    publisher_id: fuse-washington
+    overlap_group_ids:
+      - fuse-publications
+
+  - id: fuse-washington
+    name: Fuse Washington
+    code: fuse
+    reporting_category_id: progressive_general
+    selection_category_ids: [progressive_general]
+    organization_url: https://www.fusewashington.org/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Named general progressive organization with its own official 2026 endorsement decisions.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Use Fuse's own endorsements, not recommendations compiled from guide partners.
+    discovery:
+      status: not_found
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://www.fusewashington.org/news/blog/fuses-2026-primary-election-endorsements
+      canonical_url: https://www.fusewashington.org/news/blog/fuses-2026-primary-election-endorsements
+      media_type: text/html
+      evidence_locator: Official 2026 publication whose heading remained specific to the primary election.
+      notes: No official Fuse publication specific to the 2026 general election was located.
+
+    overlap_group_ids:
+      - fuse-publications
+
+  - id: seattle-democratic-socialists
+    name: Seattle Democratic Socialists of America
+    code: sdsa
+    reporting_category_id: progressive_general
+    selection_category_ids: [progressive_general]
+    organization_url: https://seattledsa.org/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Separately governed membership organization with a documented endorsement process and an official 2026 candidate endorsement.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Use only decisions the chapter publishes for races in the authoritative Seattle ballot inventory.
+    discovery:
+      status: not_found
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://seattledsa.org/committees/electoral/
+      canonical_url: https://seattledsa.org/committees/electoral/
+      media_type: text/html
+      evidence_locator: Official Electoral Working Group page and official-site 2026 search results.
+      notes: No official 2026 general-election voter guide or endorsement publication was located.
+
+  - id: tech-4-housing
+    name: Tech 4 Housing
+    code: t4ho
+    reporting_category_id: transportation_urbanism
+    selection_category_ids: [transportation_urbanism]
+    organization_url: https://www.tech4housing.org/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Separately governed housing advocacy organization with official 2026 candidate endorsement posts.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Use only decisions published by the organization's official account and matched to the Seattle ballot inventory.
+    discovery:
+      status: not_found
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://bsky.app/profile/tech4housing.org
+      canonical_url: https://bsky.app/profile/tech4housing.org
+      media_type: text/html
+      evidence_locator: Official organization-linked Bluesky profile reviewed for current election publications.
+      notes: No 2026 general-election publication was located on the official site or linked social profile.
+
+  - id: tech-4-taxes
+    name: Tech 4 Taxes
+    code: t4tx
+    reporting_category_id: progressive_general
+    selection_category_ids: [progressive_general]
+    organization_url: https://tech4taxes.org/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Separately governed progressive-tax advocacy organization with an official 2025-2026 candidate endorsement index.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Include the organization's 2026 primary decisions recovered from a source-specific preserved capture while the official endorsement index is temporarily unavailable.
+    discovery:
+      status: access_restricted
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://tech4taxes.org/endorsements
+      evidence_locator: Official endorsements endpoint timed out during direct revalidation after serving the 2026 primary publication earlier in the cycle.
+      notes: No clean, directly verifiable general-election publication was available at the research cutoff; the access gap is explicit.
+
+  - id: washington-for-peace-and-justice
+    name: Washington for Peace and Justice
+    code: wpaj
+    reporting_category_id: rights_representation
+    selection_category_ids: [rights_representation]
+    organization_url: https://www.wa4pj.com/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Separately governed Palestinian-led Washington advocacy organization publishing an official 2026 primary voter guide.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Include green check-mark recommendations from the official 2026 guide; gray and leave-blank entries do not contribute.
+    discovery:
+      status: not_found
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://www.wa4pj.com/
+      canonical_url: https://www.wa4pj.com/
+      media_type: text/html
+      evidence_locator: Official organization site and linked official social presence reviewed for a current publication.
+      notes: No official 2026 general-election endorsement publication was located.
+
+  - id: washington-community-action-network
+    name: Washington Community Action Network
+    code: wcan
+    reporting_category_id: progressive_general
+    selection_category_ids: [progressive_general]
+    organization_url: https://www.washingtoncan.org/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Separately governed statewide membership organization with an official 2026 endorsement page.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Use only official endorsements matched to the authoritative Seattle ballot inventory.
+    discovery:
+      status: published
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://www.washingtoncan.org/endorsements
+      canonical_url: https://www.washingtoncan.org/endorsements
+      media_type: text/html
+      evidence_locator: Official endorsements page carrying the organization's current 2026 election publication.
+      notes: The current-cycle publication was located without using its choices to select or classify sources.
+
+  - id: seattle-gay-news
+    name: Seattle Gay News Editorial Board
+    code: snws
+    reporting_category_id: rights_representation
+    selection_category_ids: [rights_representation]
+    organization_url: https://www.sgn.org/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Independent LGBTQ+ editorial publisher with official 2026 primary endorsement articles.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Use only editorial-board endorsements matched to the authoritative Seattle ballot inventory.
+    discovery:
+      status: published
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://www.sgn.org/ch/News
+      canonical_url: https://www.sgn.org/ch/News
+      media_type: text/html
+      evidence_locator: Official news index listing the editorial board's 2026 endorsement publications.
+      notes: The official 2026 publication index was located without using its choices to select or classify sources.
+
+  - id: washington-working-families-party
+    name: Washington Working Families Party
+    code: wwfp
+    reporting_category_id: progressive_general
+    selection_category_ids: [progressive_general]
+    organization_url: https://workingfamilies.org/state/washington/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Named progressive political organization with a current official Washington candidate roster.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Use only current roster entries matched to the authoritative ballot inventory.
+    discovery:
+      status: published
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://workingfamilies.org/state/washington/
+      canonical_url: https://workingfamilies.org/state/washington/
+      media_type: text/html
+      evidence_locator: Official Washington state page publishing the party's current 2026 candidates section.
+      notes: The current-cycle publication was located without using its choices to select or classify sources.
+
+  - id: washington-bus
+    name: The Washington Bus
+    code: wbus
+    reporting_category_id: progressive_general
+    selection_category_ids: [progressive_general]
+    organization_url: https://www.washingtonbus.org/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Concrete youth and general-purpose progressive publisher discovered while resolving the proposed constituency-source category.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Use only official 2026 decisions matched to Seattle-ballot races.
+    discovery:
+      status: not_found
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://www.washingtonbus.org/endorsements
+      canonical_url: https://www.washingtonbus.org/endorsements
+      media_type: text/html
+      evidence_locator: Official endorsements page whose latest 2026 section remained primary-specific.
+      notes: No official 2026 general-election endorsement section was located.
+
+  - id: sage-leaders
+    name: Sage Leaders
+    code: sldr
+    reporting_category_id: progressive_general
+    selection_category_ids: [progressive_general]
+    organization_url: https://www.sageleaders.org/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Concrete racial-justice and representation publisher discovered while resolving the proposed issue-organization categories.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Use official decisions in Seattle-ballot jurisdictions.
+    discovery:
+      status: published
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://www.sageleaders.org/2026-endorsements
+      canonical_url: https://www.sageleaders.org/2026-endorsements
+      media_type: text/html
+      evidence_locator: Official 2026 endorsements page, including its general-election endorsement window.
+      notes: The current 2026 publication was located without using its choices to select or classify sources.
+
+  - id: washington-state-democrats
+    name: Washington State Democratic Party
+    code: wsdm
+    reporting_category_id: democratic_party
+    selection_category_ids: [democratic_party]
+    organization_url: https://wadems.org/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Named party source retained conditionally where an official endorsement decision is published.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: A future claim must be an explicit party endorsement, not party preference or platform alignment.
+    discovery:
+      status: access_restricted
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://wadems.org/
+      evidence_locator: Official party site could not provide a clean, directly verifiable 2026 general-election endorsement page.
+      notes: The access gap is explicit; county and legislative-district publications are tracked as separate sources.
+
+    overlap_group_ids:
+      - democratic-party-network
+
+  - id: king-county-democrats
+    name: King County Democrats
+    code: kcdm
+    reporting_category_id: democratic_party
+    selection_category_ids: [democratic_party]
+    organization_url: https://www.kcdems.org/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Named county party organization with an official 2026 endorsement page.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: County organization may count once in any Seattle-ballot race it explicitly addresses.
+    discovery:
+      status: published
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://www.kcdems.org/our-party/e/2026-endorsements/
+      canonical_url: https://www.kcdems.org/our-party/e/2026-endorsements/
+      media_type: text/html
+      evidence_locator: Official 2026 endorsements page labeled for both the primary and general election.
+      notes: The official general-election publication was located without using its choices to select or classify sources.
+
+    overlap_group_ids:
+      - democratic-party-network
+
+  - id: 11th-district-democrats
+    name: 11th Legislative District Democrats
+    code: ld11
+    reporting_category_id: democratic_party
+    selection_category_ids: [democratic_party]
+    organization_url: https://www.11thlddems.org/
+    geographic_kind: legislative_district
+    panel_role: consensus
+    panel_reason: Seattle precinct inventory includes LD 11, so the otherwise-generic proposal for all Seattle-overlapping LD organizations resolves to this source.
+    eligibility:
+      kind: seattle_ballot_races_except_other_legislative_districts
+      jurisdiction_ids:
+        - legislative-district-11
+      rationale: Count explicit decisions in every Seattle-ballot race except legislative contests assigned to another district.
+    discovery:
+      status: not_found
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://www.11thlddems.org/2026/05/results-of-our-2026-may-endorsements-meeting/
+      canonical_url: https://www.11thlddems.org/2026/05/results-of-our-2026-may-endorsements-meeting/
+      media_type: text/html
+      evidence_locator: Official 2026 endorsement-meeting results page remained the latest located publication.
+      notes: No official post-primary or general-election update was located.
+
+    overlap_group_ids:
+      - democratic-party-network
+
+  - id: 32nd-district-democrats
+    name: 32nd Legislative District Democrats
+    code: ld32
+    reporting_category_id: democratic_party
+    selection_category_ids: [democratic_party]
+    organization_url: https://32democrats.org/
+    geographic_kind: legislative_district
+    panel_role: consensus
+    panel_reason: Named LD source and confirmed Seattle-overlapping jurisdiction in the ballot inventory.
+    eligibility:
+      kind: seattle_ballot_races_except_other_legislative_districts
+      jurisdiction_ids:
+        - legislative-district-32
+      rationale: Count explicit decisions in every Seattle-ballot race except legislative contests assigned to another district.
+    discovery:
+      status: published
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://32democrats.org/2026-endorsements/
+      canonical_url: https://32democrats.org/2026-endorsements/
+      media_type: text/html
+      evidence_locator: Official 2026 page updated September 2 and expressly covering the November general election.
+      notes: The official general-election publication was located without using its choices to select or classify sources.
+
+    overlap_group_ids:
+      - democratic-party-network
+
+  - id: 34th-district-democrats
+    name: 34th Legislative District Democrats
+    code: ld34
+    reporting_category_id: democratic_party
+    selection_category_ids: [democratic_party]
+    organization_url: https://34dems.org/
+    geographic_kind: legislative_district
+    panel_role: consensus
+    panel_reason: Named LD source and confirmed Seattle-overlapping jurisdiction in the ballot inventory.
+    eligibility:
+      kind: seattle_ballot_races_except_other_legislative_districts
+      jurisdiction_ids:
+        - legislative-district-34
+      rationale: Count explicit decisions in every Seattle-ballot race except legislative contests assigned to another district.
+    discovery:
+      status: not_found
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://34dems.org/2026-endorsements/
+      canonical_url: https://34dems.org/2026-endorsements/
+      media_type: text/html
+      evidence_locator: Official 2026 page described a planned August general-election review but showed no identified post-primary update.
+      notes: No distinct official general-election disposition was located by the research cutoff.
+
+    overlap_group_ids:
+      - democratic-party-network
+
+  - id: 36th-district-democrats
+    name: 36th Legislative District Democrats
+    code: ld36
+    reporting_category_id: democratic_party
+    selection_category_ids: [democratic_party]
+    organization_url: https://36th.org/
+    geographic_kind: legislative_district
+    panel_role: consensus
+    panel_reason: Named LD source and confirmed Seattle-overlapping jurisdiction in the ballot inventory.
+    eligibility:
+      kind: seattle_ballot_races_except_other_legislative_districts
+      jurisdiction_ids:
+        - legislative-district-36
+      rationale: Count explicit decisions in every Seattle-ballot race except legislative contests assigned to another district.
+    discovery:
+      status: published
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://36th.org/endorsements-2026/
+      canonical_url: https://36th.org/endorsements-2026/
+      media_type: text/html
+      evidence_locator: Official 2026 elections page updated after the primary and describing primary and general coverage.
+      notes: The official current-cycle publication was located without using its choices to select or classify sources.
+
+    overlap_group_ids:
+      - democratic-party-network
+
+  - id: 37th-district-democrats
+    name: 37th Legislative District Democrats
+    code: ld37
+    reporting_category_id: democratic_party
+    selection_category_ids: [democratic_party]
+    organization_url: https://37dems.org/
+    geographic_kind: legislative_district
+    panel_role: consensus
+    panel_reason: Named LD source with an official 2026 primary endorsement roster and confirmed Seattle-overlapping jurisdiction in the ballot inventory.
+    eligibility:
+      kind: seattle_ballot_races_except_other_legislative_districts
+      jurisdiction_ids:
+        - legislative-district-37
+      rationale: Count explicit decisions in every Seattle-ballot race except legislative contests assigned to another district.
+    discovery:
+      status: not_found
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://37dems.org/
+      canonical_url: https://37dems.org/
+      media_type: text/html
+      evidence_locator: Official homepage whose current 2026 endorsement section remained primary-specific.
+      notes: No official 2026 general-election update was located.
+
+    overlap_group_ids:
+      - democratic-party-network
+
+  - id: 43rd-district-democrats
+    name: 43rd Legislative District Democrats
+    code: ld43
+    reporting_category_id: democratic_party
+    selection_category_ids: [democratic_party]
+    organization_url: https://43rddemocrats.org/
+    geographic_kind: legislative_district
+    panel_role: consensus
+    panel_reason: Named LD source and confirmed Seattle-overlapping jurisdiction in the ballot inventory.
+    eligibility:
+      kind: seattle_ballot_races_except_other_legislative_districts
+      jurisdiction_ids:
+        - legislative-district-43
+      rationale: Count explicit decisions in every Seattle-ballot race except legislative contests assigned to another district.
+    discovery:
+      status: not_found
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://43rddemocrats.org/endorsements/2026
+      canonical_url: https://43rddemocrats.org/endorsements/2026
+      media_type: text/html
+      evidence_locator: Official 2026 endorsement page still documented the June primary meeting; a September meeting remained pending.
+      notes: No completed official 2026 general-election update was located by the research cutoff.
+
+    overlap_group_ids:
+      - democratic-party-network
+
+  - id: 46th-district-democrats
+    name: 46th Legislative District Democrats
+    code: ld46
+    reporting_category_id: democratic_party
+    selection_category_ids: [democratic_party]
+    organization_url: https://www.46dems.org/
+    geographic_kind: legislative_district
+    panel_role: consensus
+    panel_reason: Named LD source and confirmed Seattle-overlapping jurisdiction in the ballot inventory.
+    eligibility:
+      kind: seattle_ballot_races_except_other_legislative_districts
+      jurisdiction_ids:
+        - legislative-district-46
+      rationale: Count explicit decisions in every Seattle-ballot race except legislative contests assigned to another district.
+    discovery:
+      status: published
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://www.46dems.org/2026_46th_district_dems_endorsed_candidates_campaigns
+      canonical_url: https://www.46dems.org/2026_46th_district_dems_endorsed_candidates_campaigns
+      media_type: text/html
+      evidence_locator: Official 2026 page states that its published primary endorsements carry forward to the general election.
+      notes: The carry-forward statement established a general-election publication without using its choices to select or classify sources.
+
+    overlap_group_ids:
+      - democratic-party-network
+
+  - id: washington-stonewall-democrats
+    name: Washington State Stonewall Democrats
+    code: wsto
+    reporting_category_id: democratic_party
+    selection_category_ids: [democratic_party, rights_representation]
+    organization_url: https://www.stonewalldemocrats.us/washington
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Explicitly proposed LGBTQ and Democratic constituency source with a confirmed active official chapter page.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Count only explicit official decisions matched to Seattle-ballot races.
+    discovery:
+      status: access_restricted
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://www.facebook.com/stonewallwa/posts/1450344363801898/
+      evidence_locator: Official organization-linked Facebook publication required restricted social-platform access for revalidation.
+      notes: No clean, directly verifiable official-site general-election publication was available at the research cutoff.
+
+    overlap_group_ids:
+      - democratic-party-network
+
+  - id: transit-riders-union
+    name: Transit Riders Union
+    code: trun
+    reporting_category_id: transportation_urbanism
+    selection_category_ids: [transportation_urbanism]
+    organization_url: https://transitriders.org/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Named transportation organization with an official 2026 primary endorsement publication.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: The organization may contribute once where it publishes a decision in a Seattle-ballot race.
+    discovery:
+      status: not_found
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://transitriders.org/2026-primary-election-endorsements/
+      canonical_url: https://transitriders.org/2026-primary-election-endorsements/
+      media_type: text/html
+      evidence_locator: Official 2026 endorsement page whose heading remained specific to the primary election.
+      notes: No official 2026 general-election publication was located.
+
+  - id: washington-bikes
+    name: Washington Bikes
+    code: wbik
+    reporting_category_id: transportation_urbanism
+    selection_category_ids: [transportation_urbanism]
+    organization_url: https://wabikes.org/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Named transportation source and the affiliated 501(c)(4) expressly responsible for candidate endorsements.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Count official Washington Bikes decisions; do not separately count Cascade Bicycle Club.
+    discovery:
+      status: not_found
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://wabikes.org/index.php/advocacy/endorsements/
+      canonical_url: https://wabikes.org/index.php/advocacy/endorsements/
+      media_type: text/html
+      evidence_locator: Official endorsements index still linked the 2026 primary publication and prior-year general publications.
+      notes: No official 2026 general-election publication was located.
+
+    overlap_group_ids:
+      - cascade-washington-bikes
+
+  - id: cascade-bicycle-club
+    name: Cascade Bicycle Club
+    code: cbcl
+    reporting_category_id: transportation_urbanism
+    selection_category_ids: [transportation_urbanism]
+    organization_url: https://cascade.org/
+    geographic_kind: general
+    panel_role: excluded
+    panel_reason: The conditional source does not independently endorse; its affiliated 501(c)(4), Washington Bikes, is the named candidate-endorsement arm.
+    eligibility:
+      kind: none
+      rationale: Retained to document resolution of the conditional proposal and affiliated ownership.
+    discovery:
+      status: not_an_endorsement_publisher
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://cascade.org/who-we-are/about-us
+      canonical_url: https://cascade.org/who-we-are/about-us
+      media_type: text/html
+      evidence_locator: Official organizational materials identify Washington Bikes as the affiliated electoral publisher.
+      notes: Cascade Bicycle Club remains a non-endorsement publisher; the separate Washington Bikes source carries electoral publications.
+
+    overlap_group_ids:
+      - cascade-washington-bikes
+
+  - id: seattle-subway
+    name: Seattle Subway
+    code: ssub
+    reporting_category_id: transportation_urbanism
+    selection_category_ids: [transportation_urbanism]
+    organization_url: https://www.seattlesubway.org/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Named transportation organization with a current official 2026 endorsement roster.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Count only roster decisions matched to Seattle-ballot races.
+    discovery:
+      status: published
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://www.seattlesubway.org/election-endorsements/
+      canonical_url: https://www.seattlesubway.org/election-endorsements/
+      media_type: text/html
+      evidence_locator: Official election-endorsements page carrying the organization's current 2026 publication.
+      notes: The current-cycle publication was located without using its choices to select or classify sources.
+
+  - id: transportation-choices-coalition
+    name: Transportation Choices Coalition
+    code: tcco
+    reporting_category_id: transportation_urbanism
+    selection_category_ids: [transportation_urbanism]
+    organization_url: https://transportationchoices.org/
+    geographic_kind: general
+    panel_role: excluded
+    panel_reason: The conditional proposal applies only if the organization endorses; no official candidate endorsement publication was found.
+    eligibility:
+      kind: none
+      rationale: Excluded before scoring under the preregistered conditional rule.
+    discovery:
+      status: not_found
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://transportationchoices.org/
+      canonical_url: https://transportationchoices.org/
+      media_type: text/html
+      evidence_locator: Official organization site and official-site search reviewed for a 2026 election publication.
+      notes: No official 2026 general-election endorsement publication was located.
+
+  - id: disability-mobility-initiative
+    name: Disability Mobility Initiative at Disability Rights Washington
+    code: dmob
+    reporting_category_id: transportation_urbanism
+    selection_category_ids: [transportation_urbanism]
+    organization_url: https://disabilityrightswa.org/
+    geographic_kind: general
+    panel_role: excluded
+    panel_reason: The proposed disability-mobility source is an advocacy program, but no official election endorsement publication was found.
+    eligibility:
+      kind: none
+      rationale: Excluded before scoring rather than treating policy advocacy as candidate endorsement.
+    discovery:
+      status: not_an_endorsement_publisher
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://disabilityrightswa.org/programs/disabilitymobility/
+      canonical_url: https://disabilityrightswa.org/programs/disabilitymobility/
+      media_type: text/html
+      evidence_locator: Official program page describes research, organizing, and mobility advocacy rather than endorsement publishing.
+      notes: The initiative remains a non-endorsement publisher for the 2026 general election.
+
+  - id: washington-conservation-action
+    name: Washington Conservation Action
+    code: wcac
+    reporting_category_id: environmental
+    selection_category_ids: [environmental]
+    organization_url: https://waconservationaction.org/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Named environmental source with an official 2026 endorsement page.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Count one organization decision where it covers a Seattle-ballot race.
+    discovery:
+      status: published
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://waconservationaction.org/our-work/areas-of-work/endorsements/
+      canonical_url: https://waconservationaction.org/our-work/areas-of-work/endorsements/
+      media_type: text/html
+      evidence_locator: Official endorsements page carrying the organization's current 2026 election publication.
+      notes: The current-cycle publication was located without using its choices to select or classify sources.
+
+  - id: sierra-club-washington
+    name: Sierra Club Washington State Chapter
+    code: sicl
+    reporting_category_id: environmental
+    selection_category_ids: [environmental]
+    organization_url: https://www.sierraclub.org/washington
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Named environmental publisher with an official Washington chapter 2026 primary endorsement page.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Any claim requires a manually verifiable official chapter publication.
+    discovery:
+      status: access_restricted
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://www.sierraclub.org/washington
+      evidence_locator: Official chapter pages denied automated access during the general-election revalidation sweep.
+      notes: The primary-specific publication was not assumed to be general-election evidence; the access gap is explicit.
+
+  - id: climate-solutions
+    name: Climate Solutions
+    code: clsl
+    reporting_category_id: environmental
+    selection_category_ids: [environmental]
+    organization_url: https://www.climatesolutions.org/
+    geographic_kind: general
+    panel_role: excluded
+    panel_reason: The conditional proposal applies only if the organization endorses; no official election endorsement program or publication was found.
+    eligibility:
+      kind: none
+      rationale: Excluded before scoring under the preregistered conditional rule.
+    discovery:
+      status: not_an_endorsement_publisher
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://www.climatesolutions.org/
+      canonical_url: https://www.climatesolutions.org/
+      media_type: text/html
+      evidence_locator: Official organization site describes policy advocacy and research, with no electoral endorsement publication located.
+      notes: Climate Solutions remains a non-endorsement publisher for the 2026 general election.
+
+  - id: environmental-climate-caucus-wa-democrats
+    name: Environment and Climate Caucus of the Washington State Democratic Party
+    code: eccd
+    reporting_category_id: environmental
+    selection_category_ids: [democratic_party, environmental]
+    organization_url: https://eccwa.org/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Concrete environmental-justice and Democratic constituency publisher discovered while resolving the proposed open categories.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Count once where the caucus officially endorses in a Seattle-ballot race.
+    discovery:
+      status: not_found
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://eccwa.org/wp/endorsements/
+      canonical_url: https://eccwa.org/wp/endorsements/
+      media_type: text/html
+      evidence_locator: Official 2026 process page showed general-election voting continuing through September 15 and publication pending afterward.
+      notes: No completed official general-election endorsement publication was available by the research cutoff.
+
+    overlap_group_ids:
+      - democratic-party-network
+
+  - id: mlk-labor
+    name: MLK Labor
+    code: mlkl
+    reporting_category_id: labor
+    selection_category_ids: [labor]
+    organization_url: https://www.mlklabor.org/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Named King County labor council with an official current endorsement page.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Count the council once where it publishes a decision, while disclosing affiliate overlap.
+    discovery:
+      status: published
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://www.mlklabor.org/endorsements/
+      canonical_url: https://www.mlklabor.org/endorsements/
+      media_type: text/html
+      evidence_locator: Official 2026 endorsements page carrying the council's current election publication.
+      notes: The current-cycle publication was located without using its choices to select or classify sources.
+
+    overlap_group_ids:
+      - organized-labor-network
+
+  - id: washington-state-labor-council
+    name: Washington State Labor Council, AFL-CIO
+    code: wslc
+    reporting_category_id: labor
+    selection_category_ids: [labor]
+    organization_url: https://wslc.org/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Named statewide labor council with an official 2026 COPE publication.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Count the council once where it publishes a decision, while disclosing affiliate overlap.
+    discovery:
+      status: published
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://wslc.org/wp-content/uploads/2026/05/2026-WSLC-election-endorsements.pdf
+      canonical_url: https://wslc.org/wp-content/uploads/2026/05/2026-WSLC-election-endorsements.pdf
+      media_type: application/pdf
+      evidence_locator: Official PDF titled 2026 Election Endorsements rather than limited to the primary.
+      notes: The current-cycle publication was located without using its choices to select or classify sources.
+
+    overlap_group_ids:
+      - organized-labor-network
+
+  - id: seiu-775
+    name: SEIU 775
+    code: s775
+    reporting_category_id: labor
+    selection_category_ids: [labor]
+    organization_url: https://seiu775.org/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Concrete publishing SEIU local resolved from the proposed SEIU-locals category.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Count the local once where it publishes a Seattle-ballot decision.
+    discovery:
+      status: published
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://seiu775.org/2026endorsements/
+      canonical_url: https://seiu775.org/2026endorsements/
+      media_type: text/html
+      evidence_locator: Official page titled 2026 Election Endorsements and carrying the union's current publication.
+      notes: The current-cycle publication was located without using its choices to select or classify sources.
+
+    overlap_group_ids:
+      - organized-labor-network
+
+  - id: seiu-925
+    name: SEIU 925
+    code: s925
+    reporting_category_id: labor
+    selection_category_ids: [labor]
+    organization_url: https://www.seiu925.org/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Concrete publishing SEIU local resolved from the proposed SEIU-locals category.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Count the local once where it publishes a Seattle-ballot decision.
+    discovery:
+      status: published
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://www.seiu925.org/2026endorsements/
+      canonical_url: https://www.seiu925.org/2026endorsements/
+      media_type: text/html
+      evidence_locator: Official 2026 endorsements page carrying the union's current election publication.
+      notes: The current-cycle publication was located without using its choices to select or classify sources.
+
+    overlap_group_ids:
+      - organized-labor-network
+
+  - id: ufcw-3000
+    name: UFCW 3000
+    code: ufcw
+    reporting_category_id: labor
+    selection_category_ids: [labor]
+    organization_url: https://ufcw3000.org/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Named labor source with an official current endorsement page.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Count the union once where it publishes a Seattle-ballot decision.
+    discovery:
+      status: published
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://ufcw3000.org/endorsements
+      canonical_url: https://ufcw3000.org/endorsements
+      media_type: text/html
+      evidence_locator: Official endorsements page updated with 2026 general-election dates and current publication.
+      notes: The official general-election publication was located without using its choices to select or classify sources.
+
+    overlap_group_ids:
+      - organized-labor-network
+
+  - id: aft-washington
+    name: AFT Washington
+    code: aftw
+    reporting_category_id: labor
+    selection_category_ids: [labor]
+    organization_url: https://www.aftwa.org/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Named education-labor source with an official 2026 primary endorsement page.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Count the union once where it publishes a Seattle-ballot decision.
+    discovery:
+      status: not_found
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://www.aftwa.org/endorsements-and-elections
+      canonical_url: https://www.aftwa.org/endorsements-and-elections
+      media_type: text/html
+      evidence_locator: Official endorsements index still labeled its 2026 legislative publication as primary endorsements.
+      notes: No official 2026 general-election publication was located.
+
+    overlap_group_ids:
+      - organized-labor-network
+
+  - id: washington-education-association
+    name: Washington Education Association
+    code: weas
+    reporting_category_id: labor
+    selection_category_ids: [labor]
+    organization_url: https://www.washingtonea.org/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Named education-labor source with an official 2026 endorsement page.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Count only explicit official decisions, not candidate claims or guide partner data.
+    discovery:
+      status: published
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://www.washingtonea.org/advocacy/wea-pac/2026-endorsements/
+      canonical_url: https://www.washingtonea.org/advocacy/wea-pac/2026-endorsements/
+      media_type: text/html
+      evidence_locator: Official 2026 endorsements page carrying the association's current election publication.
+      notes: The current-cycle publication was located without using its choices to select or classify sources.
+
+    overlap_group_ids:
+      - organized-labor-network
+
+  - id: washington-state-building-trades
+    name: Washington State Building and Construction Trades Council
+    code: wsbt
+    reporting_category_id: labor
+    selection_category_ids: [labor]
+    organization_url: https://www.wabuildingtrades.org/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Concrete publishing building-trades source resolved from the proposed building-trades category.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Count the council once where it publishes a Seattle-ballot decision.
+    discovery:
+      status: published
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://www.wabuildingtrades.org/candidates.html
+      canonical_url: https://www.wabuildingtrades.org/candidates.html
+      media_type: text/html
+      evidence_locator: Official candidates page carrying the council's current 2026 election publication.
+      notes: The current-cycle publication was located without using its choices to select or classify sources.
+
+    overlap_group_ids:
+      - organized-labor-network
+
+  - id: protec17
+    name: PROTEC17
+    code: pr17
+    reporting_category_id: labor
+    selection_category_ids: [labor]
+    organization_url: https://www.protec17.org/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Concrete major public-sector union with current Seattle and King County endorsements, resolving the proposed other-major-unions category.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Count the union once where it publishes a Seattle-ballot decision.
+    discovery:
+      status: published
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://www.protec17.org/endorsements/
+      canonical_url: https://www.protec17.org/endorsements/
+      media_type: text/html
+      evidence_locator: Official endorsements page updated August 20 with 2026 endorsements and general-election dates.
+      notes: The official current-cycle publication was located without using its choices to select or classify sources.
+
+    overlap_group_ids:
+      - organized-labor-network
+
+  - id: planned-parenthood-alliance-advocates
+    name: Planned Parenthood Alliance Advocates
+    code: ppaa
+    reporting_category_id: rights_representation
+    selection_category_ids: [rights_representation]
+    organization_url: https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Named reproductive-rights publisher with an organization-authored 2026 Washington Supreme Court endorsement announcement.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Count only the regional advocacy organization's decisions; national Action Fund decisions are a different source.
+    discovery:
+      status: access_restricted
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates
+      evidence_locator: Official regional action organization page returned HTTP 403 during direct revalidation after search discovery located its 2026 Washington election section.
+      notes: The official URL replaces the primary registry's third-party discovery lead, but the direct access gap is explicit and no choices affected panel classification.
+
+  - id: oneamerica-votes
+    name: OneAmerica Votes
+    code: oamv
+    reporting_category_id: rights_representation
+    selection_category_ids: [rights_representation]
+    organization_url: https://oavotes.org/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Named immigrant-rights publisher with an official 2026 endorsement page.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Count the organization once where it publishes a Seattle-ballot decision.
+    discovery:
+      status: published
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://oavotes.org/our-work/endorsements/2026-endorsements/
+      canonical_url: https://oavotes.org/our-work/endorsements/2026-endorsements/
+      media_type: text/html
+      evidence_locator: Official 2026 endorsements page updated with general-election material.
+      notes: The official general-election publication was located without using its choices to select or classify sources.
+
+  - id: alliance-for-gun-responsibility
+    name: Alliance for Gun Responsibility Victory Fund
+    code: alrs
+    reporting_category_id: rights_representation
+    selection_category_ids: [rights_representation]
+    organization_url: https://gunresponsibility.org/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Named issue organization with an official 2026 endorsement page.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Count the organization once where it publishes a Seattle-ballot decision.
+    discovery:
+      status: published
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://gunresponsibility.org/2026-endorsements/
+      canonical_url: https://gunresponsibility.org/2026-endorsements/
+      media_type: text/html
+      evidence_locator: Official 2026 endorsements page carrying the organization's current election publication.
+      notes: The current-cycle publication was located without using its choices to select or classify sources.
+
+  - id: washington-housing-alliance
+    name: Washington Housing Alliance
+    code: whal
+    reporting_category_id: rights_representation
+    selection_category_ids: [rights_representation]
+    organization_url: https://www.wahousingalliance.org/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Current official successor branding for the proposed Washington Housing Alliance Action Fund source, with a 2026 endorsement page.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Count the organization once where it publishes a Seattle-ballot decision.
+    discovery:
+      status: published
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://www.wahousingalliance.org/endorsements
+      canonical_url: https://www.wahousingalliance.org/endorsements
+      media_type: text/html
+      evidence_locator: Official endorsements page carrying the alliance's current 2026 publication.
+      notes: The current-cycle publication was located without using its choices to select or classify sources.
+
+  - id: nwpc-washington
+    name: National Women's Political Caucus of Washington
+    code: nwpc
+    reporting_category_id: rights_representation
+    selection_category_ids: [rights_representation]
+    organization_url: https://www.nwpcwa.org/
+    geographic_kind: general
+    panel_role: consensus
+    panel_reason: Named representation and reproductive-rights organization with an official 2026 endorsement page.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Count the organization once where it publishes a Seattle-ballot decision.
+    discovery:
+      status: published
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://www.nwpcwa.org/endorsements_2026
+      canonical_url: https://www.nwpcwa.org/endorsements_2026
+      media_type: text/html
+      evidence_locator: Official 2026 endorsements page identifying its current entries as general-election candidates.
+      notes: The official general-election publication was located without using its choices to select or classify sources.
+
+  - id: seattle-times-editorial-board
+    name: The Seattle Times Editorial Board
+    code: stim
+    reporting_category_id: comparison
+    selection_category_ids: [comparison]
+    organization_url: https://www.seattletimes.com/opinion/editorials/
+    geographic_kind: general
+    panel_role: comparison
+    panel_reason: DECISIONS requires Seattle Times recommendations to remain separate from the progressive consensus.
+    eligibility:
+      kind: all_seattle_ballot_races
+      rationale: Display only as comparison where an official current endorsement is verified.
+    discovery:
+      status: access_restricted
+      checked_at: 2026-09-14T12:23:04Z
+      requested_url: https://www.seattletimes.com/opinion/editorials/
+      evidence_locator: Official editorial index was access-restricted during direct revalidation; search discovery indicated current general material without a clean article URL.
+      notes: No article URL was inferred or recorded from a restricted search result; the access gap is explicit.
+
+overlap_groups:
+  - id: fuse-publications
+    label: Fuse publication ownership
+    description: The Progressive Voters Guide is produced by Fuse Washington and compiles partner endorsements, so it is not an independent consensus vote.
+    member_ids:
+      - fuse-washington
+      - progressive-voters-guide
+
+  - id: cascade-washington-bikes
+    label: Cascade and Washington Bikes affiliation
+    description: The organizations merged in 2016; Cascade is the affiliated 501(c)(3), while Washington Bikes is the 501(c)(4) candidate-endorsement arm.
+    member_ids:
+      - washington-bikes
+      - cascade-bicycle-club
+
+  - id: democratic-party-network
+    label: Democratic Party organizational network
+    description: State, county, district, and constituency organizations share a party network. Each LD source counts independently on broader Seattle-ballot races it explicitly covers, but only its own district's legislative contests.
+    member_ids:
+      - washington-state-democrats
+      - king-county-democrats
+      - 11th-district-democrats
+      - 32nd-district-democrats
+      - 34th-district-democrats
+      - 36th-district-democrats
+      - 37th-district-democrats
+      - 43rd-district-democrats
+      - 46th-district-democrats
+      - washington-stonewall-democrats
+      - environmental-climate-caucus-wa-democrats
+
+  - id: organized-labor-network
+    label: Organized labor affiliation and membership overlap
+    description: Labor councils and unions have overlapping affiliate and member networks; each remains a separately governed source and no speculative weighting correction is applied.
+    member_ids:
+      - mlk-labor
+      - washington-state-labor-council
+      - seiu-775
+      - seiu-925
+      - ufcw-3000
+      - aft-washington
+      - washington-education-association
+      - washington-state-building-trades
+      - protec17
