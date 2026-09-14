@@ -1450,21 +1450,30 @@ def test_wrangler_and_workflow_keep_deployment_gated() -> None:
         "CLOUDFLARE_ACCOUNT_ID": "${{ secrets.CLOUDFLARE_ACCOUNT_ID }}",
         "CLOUDFLARE_API_TOKEN": "${{ secrets.CLOUDFLARE_API_TOKEN }}",
     }
-    check_steps = workflow["jobs"]["check"]["steps"]
-    # The check job runs on pull requests, including from forks, so no deployment
-    # credential may reach it. The automatic job token is not one: it is bounded by
-    # the workflow's read-only permissions, and listing published releases needs it.
-    assert not any("secrets" in json.dumps(step) for step in check_steps)
+    validation_steps = [
+        step
+        for job_id in ("python", "client", "contracts", "tests", "publication", "check")
+        for step in workflow["jobs"][job_id]["steps"]
+    ]
+    # Every validation lane runs on pull requests, including from forks, so no
+    # deployment credential may reach one. The automatic job token is not one: it
+    # is bounded by the workflow's read-only permissions, and listing published
+    # releases needs it.
+    assert not any("secrets" in json.dumps(step) for step in validation_steps)
     assert workflow["permissions"] == {"contents": "read"}
+    contract_steps = workflow["jobs"]["contracts"]["steps"]
     releases_step = next(
         step
-        for step in check_steps
+        for step in contract_steps
         if step.get("name") == "Verify declared release versions are published"
     )
     assert releases_step["env"] == {"GH_TOKEN": "${{ github.token }}"}
     assert "hosting verify-releases config/hosting/site.yaml" in releases_step["run"]
+    publication_steps = workflow["jobs"]["publication"]["steps"]
     stage_step = next(
-        step for step in check_steps if step.get("name") == "Stage verified Cloudflare Pages site"
+        step
+        for step in publication_steps
+        if step.get("name") == "Stage verified Cloudflare Pages site"
     )
     assert "config/hosting/site.yaml" in stage_step["run"]
     assert "--bundle wa-2026-primary-2026-primary.2=" in stage_step["run"]

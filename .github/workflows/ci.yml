@@ -11,7 +11,27 @@ permissions:
   contents: read
 
 jobs:
-  check:
+  python:
+    name: Python static checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Install Python
+        run: uv python install 3.12
+      - name: Install locked dependencies
+        run: uv sync --frozen
+      - name: Check formatting
+        run: uv run ruff format --check .
+      - name: Lint
+        run: uv run ruff check .
+      - name: Type check
+        run: uv run pyright
+
+  client:
+    name: Client checks
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,38 +40,33 @@ jobs:
           # release tags, so the default shallow, tagless checkout would
           # regenerate a different file (issue 216).
           fetch-depth: 0
-      - uses: astral-sh/setup-uv@v6
-        with:
-          enable-cache: true
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: npm
-      - name: Install Python
-        run: uv python install 3.12
-      - name: Install locked dependencies
-        run: uv sync --frozen
-      # Rendering bundles each page's client entry with the pinned esbuild, so
-      # the Node toolchain is a prerequisite for pytest and for the release
-      # build below, not only for `make check-js` (docs/FRONTEND.md, Modules).
       - name: Install locked Node dependencies
         run: npm ci
-      - name: Check the rendering browser
-        run: google-chrome --version
-      - name: Check formatting
-        run: uv run ruff format --check .
-      - name: Lint
-        run: uv run ruff check .
-      - name: Type check
-        run: uv run pyright
-      - name: Test
-        run: uv run pytest
       - name: Lint, type-check, and test the client modules
         run: make check-js
       - name: Verify the committed changelog matches history
         run: make check-changelog
+
+  contracts:
+    name: Repository contracts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Install Python
+        run: uv python install 3.12
+      - name: Install locked dependencies
+        run: uv sync --frozen
       - name: Validate canonical election inventory
         run: uv run election-guide inventory validate data/normalized/wa-2026-primary-inventory.json
+      - name: Validate the source registry
+        run: uv run election-guide sources validate config/sources/default.yaml
       - name: Validate the election operations calendar
         run: uv run election-guide calendar validate config/calendar/elections.yaml
       # Every election the site serves is resolved from its published release
@@ -76,6 +91,66 @@ jobs:
       # check-changelog are, so CI and a contributor cannot drift apart.
       - name: Verify captured evidence bytes are present
         run: make check-evidence
+      - name: Validate committed election results
+        run: make check-results
+
+  tests:
+    name: pytest (${{ matrix.partition }})
+    strategy:
+      # A fast failure in one partition must not hide independent failures in
+      # the other three (issue #428).
+      fail-fast: false
+      matrix:
+        partition:
+          - unit
+          - integration-comparisons
+          - integration-rendering
+          - integration-artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install Python
+        run: uv python install 3.12
+      - name: Install locked dependencies
+        run: uv sync --frozen
+      # Rendering bundles each page's client entry with pinned esbuild, so all
+      # partitions need Node even when pytest is their entry point
+      # (docs/FRONTEND.md, Modules).
+      - name: Install locked Node dependencies
+        run: npm ci
+      - name: Check the rendering browser
+        if: startsWith(matrix.partition, 'integration-')
+        run: google-chrome --version
+      - name: Run partition
+        run: make test-${{ matrix.partition }}
+
+  publication:
+    name: Publication build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install Python
+        run: uv python install 3.12
+      - name: Install locked dependencies
+        run: uv sync --frozen
+      - name: Install locked Node dependencies
+        run: npm ci
+      - name: Check the rendering browser
+        run: google-chrome --version
       # The gate itself is defined once, in the Makefile, and invoked here with
       # no arguments the same way check-js and check-changelog are (issue #367),
       # so the procedure CI runs and the one a contributor runs cannot drift
@@ -119,6 +194,27 @@ jobs:
           path: dist/cloudflare-site
           if-no-files-found: error
           retention-days: 7
+
+  # Branch protection requires the existing `check` status. Keep that one
+  # stable gate while the work behind it fans out across independent runners.
+  check:
+    name: check
+    if: ${{ always() }}
+    needs: [python, client, contracts, tests, publication]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require every CI lane to pass
+        env:
+          PYTHON_RESULT: ${{ needs.python.result }}
+          CLIENT_RESULT: ${{ needs.client.result }}
+          CONTRACTS_RESULT: ${{ needs.contracts.result }}
+          TESTS_RESULT: ${{ needs.tests.result }}
+          PUBLICATION_RESULT: ${{ needs.publication.result }}
+        run: |
+          for result in "$PYTHON_RESULT" "$CLIENT_RESULT" "$CONTRACTS_RESULT" \
+              "$TESTS_RESULT" "$PUBLICATION_RESULT"; do
+            test "$result" = success
+          done
 
   deploy:
     name: Deploy to Cloudflare Pages
