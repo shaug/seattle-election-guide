@@ -51,16 +51,16 @@ def test_ci_checks_the_changelog_against_complete_history() -> None:
         Loader=yaml.BaseLoader,
     )
 
-    check_steps = workflow["jobs"]["check"]["steps"]
+    client_steps = workflow["jobs"]["client"]["steps"]
     checkout = next(
-        step for step in check_steps if step.get("uses", "").startswith("actions/check")
+        step for step in client_steps if step.get("uses", "").startswith("actions/check")
     )
     # git-cliff renders from every commit and release tag, so a shallow, tagless
     # checkout would regenerate a different file and the comparison would be a lie.
     assert checkout["with"]["fetch-depth"] == "0"
     changelog_step = next(
         step
-        for step in check_steps
+        for step in client_steps
         if step.get("name") == "Verify the committed changelog matches history"
     )
     assert changelog_step["run"].strip() == "make check-changelog"

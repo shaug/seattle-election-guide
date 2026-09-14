@@ -1,4 +1,10 @@
-.PHONY: sync format check check-evidence check-results check-js check-changelog check-release-reproducible changelog types test release-verify hosting-stage hosting-serve hosting-deploy
+.PHONY: sync format check check-evidence check-results check-js check-changelog check-release-reproducible changelog types test test-unit test-integration test-integration-comparisons test-integration-rendering test-integration-artifacts release-verify hosting-stage hosting-serve hosting-deploy
+
+INTEGRATION_COMPARISONS_TESTS := tests/test_compare_rendering.py
+INTEGRATION_RENDERING_TESTS := tests/test_rendering.py
+INTEGRATION_ARTIFACT_TESTS := tests/test_hosting.py tests/test_hosting_releases.py tests/test_release.py
+INTEGRATION_TESTS := $(INTEGRATION_COMPARISONS_TESTS) $(INTEGRATION_RENDERING_TESTS) $(INTEGRATION_ARTIFACT_TESTS)
+UNIT_TEST_IGNORES := $(addprefix --ignore=,$(INTEGRATION_TESTS))
 
 sync:
 	uv sync --frozen
@@ -75,6 +81,25 @@ types:
 
 test:
 	uv run pytest
+
+# The integration boundary is centralized here so local commands and CI cannot
+# silently cover different files (issue #428). These partitions are balanced by
+# measured duration rather than test count: rendering, Chromium interaction, and
+# full publication artifact construction dominate the suite's wall time.
+test-unit:
+	uv run pytest $(UNIT_TEST_IGNORES)
+
+test-integration:
+	uv run pytest $(INTEGRATION_TESTS)
+
+test-integration-comparisons:
+	uv run pytest $(INTEGRATION_COMPARISONS_TESTS)
+
+test-integration-rendering:
+	uv run pytest $(INTEGRATION_RENDERING_TESTS)
+
+test-integration-artifacts:
+	uv run pytest $(INTEGRATION_ARTIFACT_TESTS)
 
 release-verify:
 	uv run election-guide release verify data/releases/wa-2026-primary/source-decisions.yaml
