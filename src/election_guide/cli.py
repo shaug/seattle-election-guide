@@ -321,6 +321,16 @@ def hosting_check_production(
         str, typer.Option(help="GitHub repository as OWNER/NAME, for the alert issue.")
     ] = "shaug/seattle-election-guide",
     timeout: Annotated[float, typer.Option(help="Per-request timeout, in seconds.")] = 15.0,
+    calendar_path: Annotated[
+        Path,
+        typer.Option(
+            "--calendar",
+            exists=True,
+            dir_okay=False,
+            readable=True,
+            help="Election calendar that defines the active stale-data window.",
+        ),
+    ] = Path("config/calendar/elections.yaml"),
     dry_run: Annotated[
         bool,
         typer.Option(
@@ -328,9 +338,21 @@ def hosting_check_production(
         ),
     ] = False,
 ) -> None:
-    """Verify the deployed site's routes and commit, alerting on failure (O14)."""
+    """Verify production routes, commit, and in-window data freshness (O14/O16)."""
+    checked_at = datetime.now(UTC)
+    try:
+        calendar = read_election_calendar(calendar_path)
+        due = due_milestones(calendar, as_of=checked_at.date(), lead_days=7)
+    except ValueError as error:
+        typer.echo(f"hosting check-production failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    active_window = any(milestone.kind == "election_day" for milestone, _ in due)
     report = run_production_check(
-        base_url, expected_git_commit=expected_git_commit, timeout=timeout
+        base_url,
+        expected_git_commit=expected_git_commit,
+        timeout=timeout,
+        active_window=active_window,
+        checked_at=checked_at,
     )
     for line in render_summary_lines(report):
         typer.echo(line)
@@ -342,7 +364,7 @@ def hosting_check_production(
                 ProductionAlertTracker(repository),
                 report,
                 base_url=base_url,
-                checked_at=datetime.now(UTC).isoformat(),
+                checked_at=checked_at.isoformat(),
             )
         except ValueError as error:
             typer.echo(f"hosting check-production failed: {error}", err=True)

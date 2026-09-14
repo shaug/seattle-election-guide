@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import date
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -21,7 +21,14 @@ from tests.test_production_check import (
 
 
 def _stub_failing_check(monkeypatch: pytest.MonkeyPatch) -> None:
-    def _check(base_url: str, *, expected_git_commit: str, timeout: float) -> ProductionCheckReport:
+    def _check(
+        base_url: str,
+        *,
+        expected_git_commit: str,
+        timeout: float,
+        active_window: bool,
+        checked_at: datetime,
+    ) -> ProductionCheckReport:
         return _failing_report()
 
     monkeypatch.setattr(cli, "run_production_check", _check)
@@ -30,7 +37,14 @@ def _stub_failing_check(monkeypatch: pytest.MonkeyPatch) -> None:
 def test_a_healthy_run_exits_zero_and_reconciles_the_alert(monkeypatch: pytest.MonkeyPatch) -> None:
     recorded: dict[str, Any] = {}
 
-    def _check(base_url: str, *, expected_git_commit: str, timeout: float) -> ProductionCheckReport:
+    def _check(
+        base_url: str,
+        *,
+        expected_git_commit: str,
+        timeout: float,
+        active_window: bool,
+        checked_at: datetime,
+    ) -> ProductionCheckReport:
         recorded["base_url"] = base_url
         recorded["expected_git_commit"] = expected_git_commit
         return _healthy_report()
@@ -186,6 +200,47 @@ def _write_calendar(path: Path, *, election_date: date) -> Path:
         encoding="utf-8",
     )
     return calendar_path
+
+
+def test_check_production_reads_the_active_window_from_the_calendar(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    recorded: dict[str, Any] = {}
+    today = datetime.now(UTC).date()
+    calendar_path = _write_calendar(tmp_path, election_date=today + timedelta(days=4))
+
+    def _check(
+        base_url: str,
+        *,
+        expected_git_commit: str,
+        timeout: float,
+        active_window: bool,
+        checked_at: datetime,
+    ) -> ProductionCheckReport:
+        recorded["active_window"] = active_window
+        return _healthy_report()
+
+    def _reconcile(*args: Any, **kwargs: Any) -> str:
+        return "healthy"
+
+    monkeypatch.setattr(cli, "run_production_check", _check)
+    monkeypatch.setattr(cli, "reconcile_alert", _reconcile)
+
+    result = CliRunner().invoke(
+        cli.app,
+        [
+            "hosting",
+            "check-production",
+            "https://seattleelections.guide",
+            "--expected-git-commit",
+            COMMIT,
+            "--calendar",
+            str(calendar_path),
+        ],
+    )
+
+    assert result.exit_code == 0
+    assert recorded["active_window"] is True
 
 
 def test_in_window_is_true_inside_the_pre_election_window(tmp_path: Path) -> None:
