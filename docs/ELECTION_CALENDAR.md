@@ -186,26 +186,23 @@ uv run election-guide calendar watch config/calendar/elections.yaml --dry-run
 It reads what the repository holds, and for each past-due milestone whose kind
 promises a checkable artifact it decides whether one exists:
 
-| Milestone kind                       | Promised artifact                                                            | Recognized by                                                                        |
-| ------------------------------------ | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `results_capture_election_night`     | an evidence manifest in `data/manifests/evidence/`                             | date in the window, a **counting authority**'s `source_id`, title carrying `election-night results` |
-| `results_capture_post_certification` | an evidence manifest in `data/manifests/evidence/`                             | date in the window, a **counting authority**'s `source_id`, title carrying `certified`            |
-| `refresh`                            | an evidence manifest, **or** a refresh event in `data/collection/refreshes/`   | date in the window, a `source_id` that is **not** a counting authority's                          |
+| Milestone kind                       | Artifact window                                      | Promised artifact                                                          | Recognized by                                                                        |
+| ------------------------------------ | ---------------------------------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `collection_opens`                   | through that election's `guide_publishes`, inclusive | an evidence manifest, **or** a refresh event in `data/collection/refreshes/` | date in the window, a `source_id` that is **not** a counting authority's             |
+| `results_capture_election_night`     | milestone date through seven days later, inclusive   | an evidence manifest in `data/manifests/evidence/`                           | date in the window, a **counting authority**'s `source_id`, title carrying `election-night results` |
+| `results_capture_post_certification` | milestone date through seven days later, inclusive   | an evidence manifest in `data/manifests/evidence/`                           | date in the window, a **counting authority**'s `source_id`, title carrying `certified` |
+| `refresh`                            | milestone date through seven days later, inclusive   | an evidence manifest, **or** a refresh event in `data/collection/refreshes/` | date in the window, a `source_id` that is **not** a counting authority's             |
 
 The check is deterministic — a scheduled job reading the calendar and the tree,
 with no agent involved — and it neither dispatches work nor closes anything.
 
 Most other kinds are a date to act on rather than work that leaves a record,
-so the check has nothing to look for. **`collection_opens` is the exception,
-and it is deliberately unchecked for now.** It carries the same
-`workflow: collect refresh` and the same runbook as the `refresh` milestones,
-and its sweep is the one with the real deadline
-(`docs/runbooks/endorsement-discovery-sweep.md`) — so an opening sweep that
-never ran still passes silently here. It is left out because a sweep's first
-captures land over the weeks after collection opens rather than inside a
-seven-day window, so checking it on those terms would escalate work that is
-under way. Giving it a window of its own is worth doing; it needs its own
-decision about how wide, which is issue #384.
+so the check has nothing to look for. `collection_opens` is different: it opens
+a sweep whose captures may land over several weeks, and the sweep runbook names
+`guide_publishes` as its real deadline. Its window therefore opens on the
+`collection_opens` date and closes on that election's `guide_publishes` date,
+inclusive. The watch leaves work in progress alone throughout that window and
+escalates an opening sweep only after publication passes with no artifact.
 
 A refresh accepts either record because a sweep leaves whichever its sources
 allowed. `collect refresh` writes a refresh event, but most of the 2026
@@ -245,9 +242,11 @@ attempt that found nothing — and only a refresh event that did not fail.
 ### Escalation stages
 
 A milestone that passes its window with nothing to show for it escalates its
-tracking issue in two stages: `overdue` after seven days, and `stale` after
-twenty-one. Each stage adds its own label and posts one comment saying what was
-looked for and where.
+tracking issue in two stages. The fixed windows become `overdue` after seven
+days and `stale` after twenty-one. A `collection_opens` sweep becomes `overdue`
+the day after `guide_publishes`; it becomes `stale` fourteen days after that
+overdue stage begins. Each stage adds its own label and posts one comment saying
+what was looked for and where.
 
 The comment's last line is its marker —
 `calendar-escalation: <election-id>/<milestone-id> <stage>` — read back exactly
