@@ -117,6 +117,7 @@ from election_guide.publication.lens_parity import (
 )
 from election_guide.release import (
     build_release,
+    compare_release_bundles,
     compile_release_dataset,
     verify_release_compilation,
 )
@@ -919,6 +920,20 @@ def release_verify(
         f"release inputs: reproducible "
         f"({len(dataset.captures)} sources, {len(dataset.endorsements)} decisions)"
     )
+
+
+@release_app.command("compare")
+def release_compare(
+    first_bundle: Annotated[Path, typer.Argument(exists=True, file_okay=False, readable=True)],
+    second_bundle: Annotated[Path, typer.Argument(exists=True, file_okay=False, readable=True)],
+) -> None:
+    """Compare the deterministic artifact contract of two release bundles."""
+    try:
+        compare_release_bundles(first_bundle, second_bundle)
+    except (OSError, UnicodeError, json.JSONDecodeError, ValidationError, ValueError) as error:
+        typer.echo(f"release comparison failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    typer.echo("deterministic release artifacts match")
 
 
 @app.command()

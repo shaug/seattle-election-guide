@@ -19,6 +19,12 @@ from pydantic import (
 
 ARCHIVE_ROOT_DIR = "seattle-election-guide"
 REQUIRED_VALIDATION_REPORTS = frozenset({"publication", "rendering"})
+UNHASHED_RASTERIZED_ARTIFACTS = frozenset(
+    {
+        "validation/rendering/screenshots/desktop.png",
+        "validation/rendering/screenshots/mobile.png",
+    }
+)
 
 
 def release_archive_name(release_version: str) -> str:
@@ -52,12 +58,13 @@ class ReleaseModel(BaseModel):
 
 
 class ReleaseManifest(ReleaseModel):
-    schema_version: Literal["1.1"] = "1.1"
+    schema_version: Literal["1.1", "1.2"] = "1.2"
     release_version: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
     source_panel_id: str
     source_panel_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
     generated_at: AwareDatetime
     artifact_hashes: dict[str, str] = Field(min_length=1)
+    unhashed_artifacts: list[str] = Field(default_factory=list)
 
     @field_serializer("generated_at")
     def serialize_generated_at(self, value: datetime) -> str:
@@ -78,6 +85,36 @@ class ReleaseManifest(ReleaseModel):
         if any(re.fullmatch(r"[0-9a-f]{64}", digest) is None for digest in value.values()):
             raise ValueError("release manifest contains an invalid artifact hash")
         return value
+
+    @field_validator("unhashed_artifacts")
+    @classmethod
+    def validate_unhashed_artifacts(cls, value: list[str]) -> list[str]:
+        if len(value) != len(set(value)):
+            raise ValueError("release manifest repeats an unhashed artifact")
+        invalid_paths = [
+            path
+            for path in value
+            if PurePosixPath(path).is_absolute()
+            or ".." in PurePosixPath(path).parts
+            or path != PurePosixPath(path).as_posix()
+        ]
+        if invalid_paths:
+            raise ValueError(
+                f"release manifest contains invalid unhashed artifact paths: {invalid_paths}"
+            )
+        return value
+
+    @model_validator(mode="after")
+    def validate_unhashed_artifact_policy(self) -> ReleaseManifest:
+        actual = frozenset(self.unhashed_artifacts)
+        if self.schema_version == "1.1" and actual:
+            raise ValueError("release manifest schema 1.1 cannot declare unhashed artifacts")
+        if self.schema_version == "1.2" and actual != UNHASHED_RASTERIZED_ARTIFACTS:
+            raise ValueError(
+                "release manifest unhashed artifacts differ from the schema 1.2 policy: "
+                f"expected {sorted(UNHASHED_RASTERIZED_ARTIFACTS)}, found {sorted(actual)}"
+            )
+        return self
 
 
 class ReleaseDecision(ReleaseModel):

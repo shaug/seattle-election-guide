@@ -21,6 +21,7 @@ from election_guide.hosting.releases import materialize_released_bundle
 from election_guide.publication.calendar_feed import build_calendar_feed
 from election_guide.publication.comparisons import ComparisonsPolicy
 from election_guide.publication.models import PublicationViewModel
+from election_guide.release.comparison import verify_release_bundle_artifacts
 from election_guide.release.models import ReleaseManifest, ReleaseStatus
 from election_guide.rendering.bundler import bundle_entry
 from election_guide.rendering.documents import (
@@ -526,10 +527,7 @@ def _verify_bundle(declaration: PublishedElection, bundle_dir: Path) -> _Verifie
         or manifest.source_panel_hash != status.source_panel_hash
     ):
         raise ValueError("release manifest and release status source panels differ")
-    expected_artifacts = set(status.included_artifacts) - {"release-manifest.json"}
-    if set(manifest.artifact_hashes) != expected_artifacts:
-        raise ValueError("release manifest does not cover the complete release artifact set")
-    _verify_artifact_hashes(bundle_dir, manifest.artifact_hashes)
+    verify_release_bundle_artifacts(bundle_dir, status=status, manifest=manifest)
     if declaration.bundle_sha256 is not None:
         # Naming both digests is what makes a drifted pin actionable: the fix is
         # to recompute it with `hosting bundle-hash` and review the difference,
@@ -943,16 +941,6 @@ export default {{
   }},
 }};
 """
-
-
-def _verify_artifact_hashes(bundle_dir: Path, artifact_hashes: dict[str, str]) -> None:
-    for relative, expected in sorted(artifact_hashes.items()):
-        path = bundle_dir / relative
-        if not path.is_file():
-            raise ValueError(f"release artifact is missing: {relative}")
-        actual = _sha256(path)
-        if actual != expected:
-            raise ValueError(f"release artifact hash mismatch: {relative}")
 
 
 def _sha256(path: Path) -> str:

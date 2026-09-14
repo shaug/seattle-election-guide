@@ -13,8 +13,10 @@ from zipfile import ZipFile
 
 import pytest
 import yaml
+from typer.testing import CliRunner
 
 import election_guide.release.builder as release_builder
+from election_guide.cli import app
 from election_guide.evidence.models import CapturedManifest
 from election_guide.normalization.models import CanonicalDataset
 from election_guide.release import (
@@ -401,6 +403,135 @@ def test_release_build_packages_complete_deterministic_public_bundle(
     assert "RELEASE_NOTES.md" in release_manifest["artifact_hashes"]
 
 
+def test_release_compare_accepts_different_declared_screenshot_bytes(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Issue #256: rasterized QA evidence may vary without changing the
+    deterministic release identity exposed by the manifest and CLI."""
+    ledger, dataset_path, snapshots = _compiled_release_inputs(tmp_path)
+    _stub_release_render(
+        monkeypatch,
+        screenshot_versions=[
+            (b"desktop from Chrome A", b"mobile from Chrome A"),
+            (b"desktop from Chrome B", b"mobile from Chrome B"),
+        ],
+    )
+    first = _build_release(ledger, dataset_path, snapshots, tmp_path, tmp_path / "first")
+    second = _build_release(ledger, dataset_path, snapshots, tmp_path, tmp_path / "second")
+
+    first_manifest_path = first.bundle_dir / "release-manifest.json"
+    second_manifest_path = second.bundle_dir / "release-manifest.json"
+    first_manifest = json.loads(first_manifest_path.read_text(encoding="utf-8"))
+    assert first_manifest["schema_version"] == "1.2"
+    assert first_manifest["unhashed_artifacts"] == [
+        "validation/rendering/screenshots/desktop.png",
+        "validation/rendering/screenshots/mobile.png",
+    ]
+    assert set(first_manifest["artifact_hashes"]) == set(first.status.included_artifacts) - {
+        "release-manifest.json",
+        *first_manifest["unhashed_artifacts"],
+    }
+    assert first_manifest_path.read_bytes() == second_manifest_path.read_bytes()
+
+    result = CliRunner().invoke(
+        app,
+        ["release", "compare", str(first.bundle_dir), str(second.bundle_dir)],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "deterministic release artifacts match" in result.stdout
+
+
+def test_release_compare_names_a_changed_hashed_artifact(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Issue #256: two internally valid builds with different deterministic
+    output fail at the public comparison surface with the path that moved."""
+    ledger, dataset_path, snapshots = _compiled_release_inputs(tmp_path)
+    _stub_release_render(monkeypatch)
+    first = _build_release(ledger, dataset_path, snapshots, tmp_path, tmp_path / "first")
+    second = _build_release(ledger, dataset_path, snapshots, tmp_path, tmp_path / "second")
+    guide = second.bundle_dir / second.status.guide_html_artifact
+    guide.write_bytes(b"<!doctype html><title>Different deterministic guide</title>")
+    _rehash_manifest_artifact(second.bundle_dir, second.status.guide_html_artifact)
+
+    result = CliRunner().invoke(
+        app,
+        ["release", "compare", str(first.bundle_dir), str(second.bundle_dir)],
+    )
+
+    assert result.exit_code == 1
+    assert second.status.guide_html_artifact in result.output
+
+
+def test_release_compare_names_a_missing_hashed_artifact(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    ledger, dataset_path, snapshots = _compiled_release_inputs(tmp_path)
+    _stub_release_render(monkeypatch)
+    first = _build_release(ledger, dataset_path, snapshots, tmp_path, tmp_path / "first")
+    second = _build_release(ledger, dataset_path, snapshots, tmp_path, tmp_path / "second")
+    missing = second.bundle_dir / second.status.guide_html_artifact
+    missing.unlink()
+
+    result = CliRunner().invoke(
+        app,
+        ["release", "compare", str(first.bundle_dir), str(second.bundle_dir)],
+    )
+
+    assert result.exit_code == 1
+    assert second.status.guide_html_artifact in result.output
+
+
+@pytest.mark.parametrize(
+    ("invalid_partition", "message"),
+    [
+        ("uncovered", "not declared"),
+        ("overlap", "both hashed and unhashed"),
+        ("unexpected-unhashed", "unhashed artifacts differ"),
+    ],
+)
+def test_release_compare_rejects_invalid_artifact_partitions(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    invalid_partition: str,
+    message: str,
+) -> None:
+    ledger, dataset_path, snapshots = _compiled_release_inputs(tmp_path)
+    _stub_release_render(monkeypatch)
+    first = _build_release(ledger, dataset_path, snapshots, tmp_path, tmp_path / "first")
+    second = _build_release(ledger, dataset_path, snapshots, tmp_path, tmp_path / "second")
+    manifest_path = second.bundle_dir / "release-manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    guide = second.status.guide_html_artifact
+    screenshot = "validation/rendering/screenshots/desktop.png"
+    if invalid_partition == "uncovered":
+        manifest["artifact_hashes"].pop(guide)
+    elif invalid_partition == "overlap":
+        manifest["artifact_hashes"][screenshot] = hashlib.sha256(
+            (second.bundle_dir / screenshot).read_bytes()
+        ).hexdigest()
+    else:
+        manifest["artifact_hashes"].pop(guide)
+        manifest.setdefault("unhashed_artifacts", [screenshot])
+        manifest["unhashed_artifacts"].append(guide)
+    manifest_path.write_text(
+        json.dumps(manifest, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+
+    result = CliRunner().invoke(
+        app,
+        ["release", "compare", str(first.bundle_dir), str(second.bundle_dir)],
+    )
+
+    assert result.exit_code == 1
+    assert message in result.output
+
+
 def test_release_build_wires_a_committed_results_file_into_the_view_model(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -745,10 +876,16 @@ def _compiled_release_inputs(tmp_path: Path) -> tuple[Path, Path, Path]:
     return ledger, dataset_path, snapshots
 
 
-def _stub_release_render(monkeypatch: pytest.MonkeyPatch) -> None:
+def _stub_release_render(
+    monkeypatch: pytest.MonkeyPatch,
+    *,
+    screenshot_versions: list[tuple[bytes, bytes]] | None = None,
+) -> None:
     """Stub the rendering and checkout-identity steps `build_release` calls,
     so a test can exercise the rest of the pipeline without a real browser or
     a real Git checkout."""
+
+    versions = iter(screenshot_versions or [])
 
     def fake_render(
         view_model_path: Path,
@@ -760,16 +897,22 @@ def _stub_release_render(monkeypatch: pytest.MonkeyPatch) -> None:
         assert config_path == RENDERING
         output_dir.mkdir(parents=True, exist_ok=True)
         html = output_dir / "seattle-2026-primary-guide.html"
-        screenshot = output_dir / "screenshots/desktop.png"
+        desktop = output_dir / "screenshots/desktop.png"
+        mobile = output_dir / "screenshots/mobile.png"
         validation = output_dir / "rendering_validation_report.json"
-        screenshot.parent.mkdir(parents=True)
+        desktop.parent.mkdir(parents=True)
         html.write_text("<!doctype html><title>Guide</title>", encoding="utf-8")
-        screenshot.write_bytes(b"desktop screenshot")
+        desktop_bytes, mobile_bytes = next(
+            versions,
+            (b"desktop screenshot", b"mobile screenshot"),
+        )
+        desktop.write_bytes(desktop_bytes)
+        mobile.write_bytes(mobile_bytes)
         validation.write_text('{"passed":true}\n', encoding="utf-8")
         return SimpleNamespace(
             html_path=html,
             validation_path=validation,
-            screenshots=[screenshot],
+            screenshots=[desktop, mobile],
             validation_report=SimpleNamespace(passed=True),
         )
 
@@ -779,6 +922,18 @@ def _stub_release_render(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr("election_guide.release.builder.build_rendered_guide", fake_render)
     monkeypatch.setattr(
         "election_guide.release.builder._verify_checkout_identity", accept_test_checkout
+    )
+
+
+def _rehash_manifest_artifact(bundle_dir: Path, relative: str) -> None:
+    manifest_path = bundle_dir / "release-manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["artifact_hashes"][relative] = hashlib.sha256(
+        (bundle_dir / relative).read_bytes()
+    ).hexdigest()
+    manifest_path.write_text(
+        json.dumps(manifest, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
     )
 
 

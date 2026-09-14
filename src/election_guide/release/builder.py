@@ -19,9 +19,11 @@ from election_guide.evidence.models import CapturedManifest
 from election_guide.evidence.storage import read_capture_manifest
 from election_guide.normalization.models import CanonicalDataset
 from election_guide.publication import build_publication_bundle, write_publication_bundle
+from election_guide.release.comparison import verify_release_bundle_artifacts
 from election_guide.release.compiler import read_release_ledger, verify_release_compilation
 from election_guide.release.models import (
     ARCHIVE_ROOT_DIR,
+    UNHASHED_RASTERIZED_ARTIFACTS,
     RaceCoverageStatus,
     ReleaseManifest,
     ReleaseStatus,
@@ -230,10 +232,12 @@ def build_release(
             source_panel_hash=source_registry_hash(dataset.source_registry),
             generated_at=generated_at,
             artifact_hashes=_artifact_hashes(stage_bundle),
+            unhashed_artifacts=sorted(UNHASHED_RASTERIZED_ARTIFACTS),
         )
         (stage_bundle / "release-manifest.json").write_bytes(
             canonical_json_bytes(manifest.model_dump(mode="json"))
         )
+        verify_release_bundle_artifacts(stage_bundle, status=status, manifest=manifest)
 
         archive_name = release_archive_name(release_version)
         archive_path = stage / archive_name
@@ -377,7 +381,9 @@ def _artifact_hashes(bundle_dir: Path) -> dict[str, str]:
     return {
         path.relative_to(bundle_dir).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
         for path in sorted(bundle_dir.rglob("*"))
-        if path.is_file() and path.name != "release-manifest.json"
+        if path.is_file()
+        and path.name != "release-manifest.json"
+        and path.relative_to(bundle_dir).as_posix() not in UNHASHED_RASTERIZED_ARTIFACTS
     }
 
 
