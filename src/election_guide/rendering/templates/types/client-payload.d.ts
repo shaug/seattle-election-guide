@@ -8,7 +8,7 @@
 // disagree, so a Python model change that breaks a client consumer fails
 // `make check` rather than the published page.
 //
-// Emitted by json-schema-to-typescript 15.0.4, with `export` stripped so the
+// Emitted by json-schema-to-typescript 16.0.0, with `export` stripped so the
 // names stay ambient.
 
 /**
