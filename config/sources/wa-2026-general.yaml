@@ -255,13 +255,13 @@ sources:
       kind: all_seattle_ballot_races
       rationale: Use only editorial-board endorsements matched to the authoritative Seattle ballot inventory.
     discovery:
-      status: published
+      status: not_found
       checked_at: 2026-09-14T12:23:04Z
       requested_url: https://www.sgn.org/ch/News
       canonical_url: https://www.sgn.org/ch/News
       media_type: text/html
-      evidence_locator: Official news index listing the editorial board's 2026 endorsement publications.
-      notes: The official 2026 publication index was located without using its choices to select or classify sources.
+      evidence_locator: Official news index reviewed after the known July 2026 primary endorsement publications.
+      notes: No official 2026 general-election publication or carry-forward statement was located. The primary publications were not reused as general-election evidence.
 
   - id: washington-working-families-party
     name: Washington Working Families Party
