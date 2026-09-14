@@ -1,5 +1,35 @@
 # Seattle ballot inventory
 
+## November 2026 general election
+
+The canonical inventory for the November 3, 2026 general election is
+`data/normalized/wa-2026-general-inventory.json`. It contains 52 races and 83 ballot choices:
+
+- 48 federal, state, county, judicial, and City of Seattle candidate contests with 75 candidates;
+- three statewide initiatives; and
+- one City of Seattle ballot measure.
+
+The retained canonical ballot CSV contains only ballot-facing names, order, party preference,
+stable local IDs, and evidence locators. Its input manifest binds that file and the initialized
+election configuration by SHA-256. The rows were transcribed from King County Elections' official
+general-election candidate CSV and official ballot-measures list; contact and mailing fields from
+the source CSV are not retained.
+
+Reproduce and validate the import with:
+
+```bash
+uv run election-guide inventory import-initialized \
+  config/elections/wa-2026-general.yaml \
+  --manifest config/elections/wa-2026-general-ballot-input.yaml \
+  --ballot-choices \
+    data/extracted/official/king-county-2026-general-canonical-ballot.csv \
+  --output data/normalized/wa-2026-general-inventory.json
+uv run election-guide inventory validate \
+  data/normalized/wa-2026-general-inventory.json
+```
+
+## August 2026 primary election
+
 The canonical inventory for the August 4, 2026 primary is
 `data/normalized/wa-2026-primary-inventory.json`. It contains 70 races and 163 ballot choices:
 

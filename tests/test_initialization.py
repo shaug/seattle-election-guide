@@ -25,6 +25,13 @@ from election_guide.serialization import canonical_json_bytes, read_json
 FIXTURE = Path("tests/fixtures/initialization/wa-2027-seattle-general.yaml")
 BALLOT_FIXTURE = Path("tests/fixtures/initialization/wa-2027-seattle-general-ballot.csv")
 BALLOT_MANIFEST = Path("tests/fixtures/initialization/wa-2027-seattle-general-ballot-input.yaml")
+WA_2026_GENERAL_SEED = Path("config/elections/wa-2026-general.seed.yaml")
+WA_2026_GENERAL_CONFIGURATION = Path("config/elections/wa-2026-general.yaml")
+WA_2026_GENERAL_BALLOT = Path(
+    "data/extracted/official/king-county-2026-general-canonical-ballot.csv"
+)
+WA_2026_GENERAL_BALLOT_MANIFEST = Path("config/elections/wa-2026-general-ballot-input.yaml")
+WA_2026_GENERAL_INVENTORY = Path("data/normalized/wa-2026-general-inventory.json")
 runner = CliRunner()
 
 
@@ -85,6 +92,152 @@ def test_cli_initializes_repeatable_scoped_configuration_without_collection(
     assert validated.exit_code == 0, validated.output
     assert "source panel wa-2027-seattle-general-sources@1.0" in validated.stdout
     assert "scoring unweighted-progressive@2.0" in validated.stdout
+
+
+def test_wa_2026_general_initialization_is_reproducible_and_complete(
+    tmp_path: Path,
+) -> None:
+    generated = tmp_path / "wa-2026-general.yaml"
+
+    configuration, created = initialize_election(WA_2026_GENERAL_SEED, generated)
+
+    assert created is True
+    assert generated.read_bytes() == WA_2026_GENERAL_CONFIGURATION.read_bytes()
+    assert configuration.election.model_dump(mode="json") == {
+        "id": "wa-2026-general",
+        "name": "2026 Washington November General Election",
+        "election_type": "general",
+        "election_scope": "mixed",
+        "election_date": "2026-11-03",
+        "state": "WA",
+        "state_jurisdiction_id": "washington-state",
+        "official_url": "https://info.kingcounty.gov/kcelections/Vote/contests/candidates.aspx?eid=55",
+        "target_jurisdiction_ids": [
+            "city-of-seattle",
+            "king-county",
+            "washington-state",
+        ],
+    }
+    assert {item.id for item in configuration.jurisdictions} == {
+        "city-of-seattle",
+        "congressional-district-7",
+        "congressional-district-9",
+        "county-council-district-2",
+        "county-council-district-4",
+        "county-council-district-8",
+        "court-of-appeals-division-1-district-1",
+        "king-county",
+        "king-county-district-court-west-electoral-district",
+        "legislative-district-11",
+        "legislative-district-32",
+        "legislative-district-34",
+        "legislative-district-36",
+        "legislative-district-37",
+        "legislative-district-43",
+        "legislative-district-46",
+        "seattle-city-council-district-5",
+        "washington-state",
+    }
+    assert {item.id for item in configuration.races} == {
+        "court-of-appeals-division-1-district-1-judge-5",
+        "court-of-appeals-division-1-district-1-judge-6",
+        "initiative-26-001",
+        "initiative-26-638",
+        "initiative-26-645",
+        "king-county-assessor",
+        "king-county-council-2",
+        "king-county-council-4",
+        "king-county-council-8",
+        "king-county-director-of-elections",
+        "king-county-district-court-west-judge-1",
+        "king-county-district-court-west-judge-2",
+        "king-county-district-court-west-judge-3",
+        "king-county-district-court-west-judge-4",
+        "king-county-district-court-west-judge-5",
+        "king-county-prosecuting-attorney",
+        "ld-11-state-representative-1",
+        "ld-11-state-representative-2",
+        "ld-32-state-representative-1",
+        "ld-32-state-representative-2",
+        "ld-32-state-senator",
+        "ld-34-state-representative-1",
+        "ld-34-state-representative-2",
+        "ld-34-state-senator",
+        "ld-36-state-representative-1",
+        "ld-36-state-representative-2",
+        "ld-36-state-senator",
+        "ld-37-state-representative-1",
+        "ld-37-state-representative-2",
+        "ld-37-state-senator",
+        "ld-43-state-representative-1",
+        "ld-43-state-representative-2",
+        "ld-43-state-senator",
+        "ld-46-state-representative-1",
+        "ld-46-state-representative-2",
+        "ld-46-state-senator",
+        "seattle-city-council-5",
+        "seattle-municipal-court-judge-1",
+        "seattle-municipal-court-judge-2",
+        "seattle-municipal-court-judge-3",
+        "seattle-municipal-court-judge-4",
+        "seattle-municipal-court-judge-5",
+        "seattle-municipal-court-judge-6",
+        "seattle-municipal-court-judge-7",
+        "seattle-proposition-1-transit",
+        "supreme-court-justice-1",
+        "supreme-court-justice-3",
+        "supreme-court-justice-4",
+        "supreme-court-justice-5",
+        "supreme-court-justice-7",
+        "us-house-7",
+        "us-house-9",
+    }
+    assert all(item.publication_eligible for item in configuration.races)
+    _assert_no_candidate_data(read_json(generated))
+
+
+def test_wa_2026_general_inventory_import_is_reproducible_and_complete(
+    tmp_path: Path,
+) -> None:
+    generated = tmp_path / "wa-2026-general-inventory.json"
+
+    result = runner.invoke(
+        app,
+        [
+            "inventory",
+            "import-initialized",
+            str(WA_2026_GENERAL_CONFIGURATION),
+            "--manifest",
+            str(WA_2026_GENERAL_BALLOT_MANIFEST),
+            "--ballot-choices",
+            str(WA_2026_GENERAL_BALLOT),
+            "--output",
+            str(generated),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "initialized inventory: created (52 races, 83 choices)" in result.output
+    assert generated.read_bytes() == WA_2026_GENERAL_INVENTORY.read_bytes()
+
+    inventory = read_inventory(generated)
+    assert inventory.election.id == "wa-2026-general"
+    assert len(inventory.jurisdictions) == 18
+    assert len(inventory.races) == 52
+    assert sum(len(race.choices) for race in inventory.races) == 83
+    assert inventory.coverage_checks[0].matched_races == 52
+    assert inventory.coverage_checks[1].matched_choices == 83
+
+    races = {race.id: race for race in inventory.races}
+    assert [choice.official_name for choice in races["us-house-9"].choices] == [
+        "Adam Smith",
+        "Doug Basler",
+    ]
+    assert [choice.id for choice in races["seattle-proposition-1-transit"].choices] == [
+        "seattle-proposition-1-transit--yes",
+        "seattle-proposition-1-transit--no",
+    ]
+    assert all(race.choices for race in inventory.races)
 
 
 def test_seed_order_does_not_change_canonical_identifiers_or_bytes(tmp_path: Path) -> None:
