@@ -237,9 +237,9 @@ deliberate `workflow_dispatch` run rather than only as a side effect of merging.
 `workflow_dispatch` with a `git_ref` input defaulting to `main`, an explicit step resolving that
 ref to a SHA, a deterministic rebuild at that SHA, `hosting verify --expected-git-commit`, deploy
 with `--branch=main`, and **a smoke test against the deployed host afterward**. Rebuild-at-promote
-rather than artifact-promote, because CI already proves byte-identical rebuilds and Actions
-artifacts expire after seven days. Reuses the `--branch` parameterization from O2. Excludes
-automatic promotion triggers.
+rather than artifact-promote, because CI proves the manifest-declared deterministic artifacts can
+be rebuilt and Actions artifacts expire after seven days. Reuses the `--branch` parameterization
+from O2. Excludes automatic promotion triggers.
 
 **Acceptance.**
 - [ ] Dispatching with a ref publishes exactly that commit's site.

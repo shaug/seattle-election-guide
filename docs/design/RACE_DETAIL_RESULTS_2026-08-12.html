@@ -171,9 +171,7 @@ a { color: var(--blue); text-underline-offset: .15em; }
    family). */
 /* min-height pins this strip's box to a whole-pixel value rather than letting
    it fall out of padding + this element's own content-flow line height
-   (issue #341): the guide's render-determinism gate builds the page twice
-   and requires the two headless-Chrome screenshots to be byte-identical, and
-   a content-flow height here can resolve to a device-pixel boundary a
+   (issue #341): a content-flow height here can resolve to a device-pixel boundary a
    Chromium renderer process does not snap identically on every launch
    (reproduced on the real CI runner: this strip's own painted bottom edge,
    ~38.47px of content height past its top, differed by exactly one device

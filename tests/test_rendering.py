@@ -2894,61 +2894,12 @@ def test_responsive_tablet_layout_renders(tmp_path: Path) -> None:
     )
 
 
-def test_capturing_one_document_twice_produces_the_same_bytes(tmp_path: Path) -> None:
-    """The property the release-reproducibility gate depends on (issue #367).
-
-    That gate builds the release twice and requires both screenshots to be
-    byte-identical. It failed roughly one CI run in seven because
-    `render_screenshot` waited a fixed interval and then photographed whichever
-    frame existed; it now waits on a readiness signal and runs Chrome with the
-    compositor and rasterization controls that keep a half-drawn frame out of a
-    capture. Measured on the CI runner, 30 same-input builds diverged 4 times
-    before that change, 2 times with the readiness signal but without those
-    flags, and 0 times with both.
-
-    Asserted here, one Chrome launch per capture, because the gate that would
-    otherwise catch a regression lives only in CI: `make check` cannot run it
-    (`release build` refuses a dirty checkout, CONTRIBUTING.md), so without this
-    the whole property is unowned locally. This function needs no clean
-    checkout, so it belongs to the suite that does run locally. Two separate
-    launches deliberately, not two captures in one session: the divergence was
-    only ever observed across renderer processes.
-    """
-    view_model = _view_model(tmp_path / "fixture")
-    html_path = tmp_path / "guide.html"
-    html_path.write_text(
-        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
-        encoding="utf-8",
-    )
-    expected_race_count = sum(len(section.races) for section in view_model.sections)
-
-    captures = [
-        render_screenshot(
-            html_path,
-            tmp_path / f"capture-{index}.png",
-            find_chrome(),
-            width=1440,
-            height=1200,
-            expected_race_count=expected_race_count,
-        ).read_bytes()
-        for index in range(2)
-    ]
-
-    assert captures[0] == captures[1], (
-        "two captures of one unchanged document must be byte-identical; the "
-        "release-reproducibility gate compares exactly these bytes "
-        f"({len(captures[0])} vs {len(captures[1])} bytes)"
-    )
-
-
 def test_the_persistent_action_strip_renders_at_a_whole_pixel_height(tmp_path: Path) -> None:
-    """Issue #341: `main`'s "Build and verify deterministic primary release" CI
-    check builds `wa-2026-primary` twice with the same `--generated-at` and
-    requires the two output zips to be byte-identical -- including the
-    headless-Chrome desktop screenshot the release archive carries
-    (docs/RENDERING.md). That check started failing nondeterministically after
-    #286 (~45% of paired builds, reproduced directly against the real CI
-    runner: https://github.com/shaug/seattle-election-guide/actions/runs/31280709477).
+    """Issue #341: repeated Linux builds once exposed a one-pixel difference
+    in the desktop screenshot after #286 (~45% of paired builds, reproduced
+    against the real CI runner). Issue #256 no longer treats rasterized PNG
+    bytes as deterministic artifacts, but the whole-pixel geometry remains a
+    stable, machine-checkable rendering QA property.
 
     Root cause, isolated by diffing the two screenshots' actual pixels: before
     this fix, `.state-action-strip` (the navy "Counting all N sources" band
@@ -2995,10 +2946,8 @@ def test_the_persistent_action_strip_renders_at_a_whole_pixel_height(tmp_path: P
 
 
 def test_the_sticky_header_declares_its_own_compositing_promotion(tmp_path: Path) -> None:
-    """Issue #341/#343/#368: the release-reproducibility gate builds
-    `wa-2026-primary` twice and requires byte-identical output, and the byte
-    that differed was always in `validation/rendering/screenshots/desktop.png`
-    -- never `mobile.png`.
+    """Issue #341/#343/#368: repeated captures once differed in
+    `validation/rendering/screenshots/desktop.png`, never `mobile.png`.
 
     Root cause, isolated by capturing one unchanged document repeatedly rather
     than by rebuilding releases: layout is not the variable. Twenty captures on
@@ -3013,11 +2962,8 @@ def test_the_sticky_header_declares_its_own_compositing_promotion(tmp_path: Path
 
     Asserted structurally, the way #343's whole-pixel assertion is: whether the
     promotion is declared is true or false on every run, so this needs no live
-    race to catch a regression. The behavioural guard remains
-    `test_capturing_one_document_twice_produces_the_same_bytes`, which samples
-    the property directly but only catches a regression when the coin lands --
-    on the CI runner the shipped capture diverged 15 times in 75, and 0 times in
-    75 with this declaration.
+    race to catch a regression. The screenshot bytes themselves are outside
+    schema 1.2's deterministic-artifact guarantee (issue #256).
     """
     view_model = _lens_enabled(_view_model(tmp_path / "fixture"))
     html_path = tmp_path / "guide.html"
@@ -3038,7 +2984,7 @@ def test_the_sticky_header_declares_its_own_compositing_promotion(tmp_path: Path
     assert measured == {"position": "sticky", "willChange": "transform"}, (
         "the desktop capture's only promoted layer must declare its promotion, or "
         "its contents snap to whichever device pixel a given renderer process "
-        f"chooses and the release-reproducibility gate flakes ({measured})"
+        f"chooses ({measured})"
     )
 
 
