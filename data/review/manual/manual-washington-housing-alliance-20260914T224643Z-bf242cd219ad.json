@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-washington-housing-alliance-20260914T221816Z-06201ac6f38a",
+  "entered_at": "2026-09-14T22:46:43Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official endorsements page, 2026 Endorsements section.",
+  "evidence_type": "web_page",
+  "id": "manual-washington-housing-alliance-20260914T224643Z-bf242cd219ad",
+  "review_note": "Human reviewer confirmed every source transcription for issue #401, including the documented current-cycle filtering and ambiguity treatments.",
+  "review_status": "verified",
+  "reviewed_at": "2026-09-15T13:03:19Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "washington-housing-alliance",
+  "transcription": "king-county-council-2: Rebecca Saldaña\nking-county-council-8: Teresa Mosqueda\nseattle-city-council-5: Nilu Jenks\nld-11-state-representative-2: Steve Bergquist\nld-32-state-senator: Cindy Ryu\nld-32-state-representative-1: Keith Scully, Danica Noble\nld-32-state-representative-2: Imraan Siddiqi, Lauren Davis\nsupreme-court-justice-1: Colleen Melody\nsupreme-court-justice-3: Jaime Michelle Hawk\nsupreme-court-justice-4: Ian Birk\nsupreme-court-justice-5: Theo Angelis\nsupreme-court-justice-7: Debra L. Stephens\nld-34-state-senator: Emily Alvarado\nld-34-state-representative-1: Brianna K. Thomas\nld-34-state-representative-2: Joe Fitzgibbon\nld-36-state-senator: Noel C. Frame\nld-36-state-representative-1: Julia Grant Reed\nld-36-state-representative-2: Liz Berry\nld-37-state-senator: Chipalo Street\nld-37-state-representative-1: Kelabe Tewolde\nld-37-state-representative-2: Jaelynn Scott\nld-43-state-senator: Jamie Pedersen\nld-43-state-representative-1: Nicole Macri\nld-43-state-representative-2: Shaun Scott\nld-46-state-senator: Javier Valdez\nld-46-state-representative-1: Gerry Pollet\nld-46-state-representative-2: Darya Farivar"
+}

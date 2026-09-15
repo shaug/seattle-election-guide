@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-washington-working-families-party-20260914T221815Z-f8477eddbde4",
+  "entered_at": "2026-09-14T22:46:43Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official Washington page, Our Candidates section.",
+  "evidence_type": "web_page",
+  "id": "manual-washington-working-families-party-20260914T224643Z-6d69ad0b1185",
+  "review_note": "Human reviewer confirmed every source transcription for issue #401, including the documented current-cycle filtering and ambiguity treatments.",
+  "review_status": "verified",
+  "reviewed_at": "2026-09-15T13:03:19Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "washington-working-families-party",
+  "transcription": "us-house-7: Pramila Jayapal\nking-county-council-4: Jorge L. Barón\nking-county-council-8: Teresa Mosqueda\nseattle-city-council-5: Nilu Jenks\nld-37-state-representative-1: Kelabe Tewolde"
+}

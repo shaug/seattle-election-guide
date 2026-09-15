@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-sage-leaders-20260914T221815Z-deca70d0e36d",
+  "entered_at": "2026-09-14T22:46:43Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official 2026 Endorsements list under King County and Snohomish County.",
+  "evidence_type": "web_page",
+  "id": "manual-sage-leaders-20260914T224643Z-adfee18e9744",
+  "review_note": "Human reviewer confirmed every source transcription for issue #401, including the documented current-cycle filtering and ambiguity treatments.",
+  "review_status": "verified",
+  "reviewed_at": "2026-09-15T13:03:19Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "sage-leaders",
+  "transcription": "ld-34-state-senator: Emily Alvarado\nld-37-state-senator: Chipalo Street, Tatiana Brown\nld-43-state-senator: Hannah Sabio-Howell\nld-36-state-representative-1: Julia Grant Reed\nld-37-state-representative-1: Kelabe Tewolde\nld-37-state-representative-2: Jaelynn Scott\nld-46-state-representative-2: Darya Farivar\nking-county-council-2: Rebecca Saldaña\nking-county-council-4: Jorge L. Barón\nking-county-council-8: Teresa Mosqueda\nseattle-city-council-5: Nilu Jenks\nld-32-state-senator: Cindy Ryu\nld-32-state-representative-2: Imraan Siddiqi"
+}

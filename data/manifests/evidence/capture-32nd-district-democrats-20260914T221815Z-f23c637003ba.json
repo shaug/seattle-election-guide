@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 159441,
+  "canonical_url": "https://32democrats.org/2026-endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "627673136603b010b22d8c80731c708c65b3f16f6df021bc93fc7a3c56140043",
+  "http_status": 200,
+  "id": "capture-32nd-district-democrats-20260914T221815Z-f23c637003ba",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party page retained locally for review only.",
+  "requested_url": "https://32democrats.org/2026-endorsements/",
+  "retrieved_at": "2026-09-14T22:18:15Z",
+  "schema_version": "1.0",
+  "source_id": "32nd-district-democrats",
+  "storage_reference": "sha256/62/627673136603b010b22d8c80731c708c65b3f16f6df021bc93fc7a3c56140043",
+  "storage_scope": "local_only",
+  "title": "32nd District Democrats 2026 general election endorsements",
+  "updated_at": null
+}

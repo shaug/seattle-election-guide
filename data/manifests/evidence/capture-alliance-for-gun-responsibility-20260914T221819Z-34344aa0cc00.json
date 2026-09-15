@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 231760,
+  "canonical_url": "https://gunresponsibility.org/2026-endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "22f157963fd3e0cb8a2451a2bd99ad3b046c3ba889fa04a03524c20876ff1cb4",
+  "http_status": 200,
+  "id": "capture-alliance-for-gun-responsibility-20260914T221819Z-34344aa0cc00",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party page retained locally for review only.",
+  "requested_url": "https://gunresponsibility.org/2026-endorsements/",
+  "retrieved_at": "2026-09-14T22:18:19Z",
+  "schema_version": "1.0",
+  "source_id": "alliance-for-gun-responsibility",
+  "storage_reference": "sha256/22/22f157963fd3e0cb8a2451a2bd99ad3b046c3ba889fa04a03524c20876ff1cb4",
+  "storage_scope": "local_only",
+  "title": "Alliance for Gun Responsibility 2026 election endorsements",
+  "updated_at": null
+}

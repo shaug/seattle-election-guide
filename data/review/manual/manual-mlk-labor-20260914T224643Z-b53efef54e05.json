@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-mlk-labor-20260914T221816Z-e6050e0b29c9",
+  "entered_at": "2026-09-14T22:46:43Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official 2026 Endorsements page, King County and Seattle sections.",
+  "evidence_type": "web_page",
+  "id": "manual-mlk-labor-20260914T224643Z-b53efef54e05",
+  "review_note": "Human reviewer confirmed every source transcription for issue #401, including the documented current-cycle filtering and ambiguity treatments.",
+  "review_status": "verified",
+  "reviewed_at": "2026-09-15T13:03:19Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "mlk-labor",
+  "transcription": "king-county-council-2: Rebecca Saldaña\nking-county-council-4: Jorge L. Barón\nking-county-council-8: Teresa Mosqueda\nseattle-city-council-5: Nilu Jenks\nseattle-proposition-1-transit: Yes"
+}

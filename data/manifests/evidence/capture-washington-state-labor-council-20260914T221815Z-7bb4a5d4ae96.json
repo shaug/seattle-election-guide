@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 242420,
+  "canonical_url": "https://wslc.org/wp-content/uploads/2026/05/2026-WSLC-election-endorsements.pdf",
+  "capture_method": "pdf",
+  "content_sha256": "ea22660064b05dc2192163b86191d53b093cfc5336fd97a056b91c57ca8090c5",
+  "http_status": 200,
+  "id": "capture-washington-state-labor-council-20260914T221815Z-7bb4a5d4ae96",
+  "media_type": "application/pdf",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party page retained locally for review only.",
+  "requested_url": "https://wslc.org/wp-content/uploads/2026/05/2026-WSLC-election-endorsements.pdf",
+  "retrieved_at": "2026-09-14T22:18:15Z",
+  "schema_version": "1.0",
+  "source_id": "washington-state-labor-council",
+  "storage_reference": "sha256/ea/ea22660064b05dc2192163b86191d53b093cfc5336fd97a056b91c57ca8090c5",
+  "storage_scope": "local_only",
+  "title": "Washington State Labor Council 2026 election endorsements",
+  "updated_at": null
+}

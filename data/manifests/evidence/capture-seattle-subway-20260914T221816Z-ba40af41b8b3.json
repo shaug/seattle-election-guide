@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 58207,
+  "canonical_url": "https://www.seattlesubway.org/election-endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "cc7871a23ad95c864654ac68253d0f68bcb8341f99ecc91d9853791d41925179",
+  "http_status": 200,
+  "id": "capture-seattle-subway-20260914T221816Z-ba40af41b8b3",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party page retained locally for review only.",
+  "requested_url": "https://www.seattlesubway.org/election-endorsements/",
+  "retrieved_at": "2026-09-14T22:18:16Z",
+  "schema_version": "1.0",
+  "source_id": "seattle-subway",
+  "storage_reference": "sha256/cc/cc7871a23ad95c864654ac68253d0f68bcb8341f99ecc91d9853791d41925179",
+  "storage_scope": "local_only",
+  "title": "Seattle Subway 2026 primary endorsements page checked for a general publication",
+  "updated_at": null
+}

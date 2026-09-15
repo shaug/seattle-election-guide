@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-32nd-district-democrats-20260914T221815Z-f23c637003ba",
+  "entered_at": "2026-09-14T22:46:43Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official Endorsed Candidates for 2026 section, endorsed as of September 2.",
+  "evidence_type": "web_page",
+  "id": "manual-32nd-district-democrats-20260914T224643Z-eca8c6df269e",
+  "review_note": "Human reviewer confirmed every source transcription for issue #401, including the documented current-cycle filtering and ambiguity treatments.",
+  "review_status": "verified",
+  "reviewed_at": "2026-09-15T13:03:19Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "32nd-district-democrats",
+  "transcription": "us-house-7: Pramila Jayapal\ninitiative-26-001: No\ninitiative-26-638: No\ninitiative-26-645: No\nsupreme-court-justice-1: Colleen Melody\nsupreme-court-justice-3: Jaime Michelle Hawk\nsupreme-court-justice-4: Ian Birk\nsupreme-court-justice-5: Theo Angelis\nsupreme-court-justice-7: Debra L. Stephens\nld-32-state-senator: Cindy Ryu\nld-32-state-representative-1: Danica Noble, Keith Scully\nld-32-state-representative-2: Lauren Davis, Imraan Siddiqi\nking-county-prosecuting-attorney: Leesa Manion\nking-county-director-of-elections: Julie Wise\nking-county-council-4: Jorge L. Barón\nking-county-district-court-west-judge-1: Bardi Martin, Nyjat Rose-Akins\nseattle-city-council-5: Nilu Jenks, Julie Kang\nseattle-municipal-court-judge-2: Katharine Edwards\nseattle-municipal-court-judge-3: Pooja Vaddadi\nseattle-municipal-court-judge-5: Garmon Newsom, Gabe Rothstein\nseattle-municipal-court-judge-6: Shantrice Anderson"
+}

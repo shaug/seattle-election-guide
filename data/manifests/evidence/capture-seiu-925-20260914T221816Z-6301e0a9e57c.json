@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 93246,
+  "canonical_url": "https://www.seiu925.org/2026endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "5018715e156c7339ee81a3e384a32a30310a403031399808debbe1d1a2d2eccb",
+  "http_status": 200,
+  "id": "capture-seiu-925-20260914T221816Z-6301e0a9e57c",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party page retained locally for review only.",
+  "requested_url": "https://www.seiu925.org/2026endorsements/",
+  "retrieved_at": "2026-09-14T22:18:16Z",
+  "schema_version": "1.0",
+  "source_id": "seiu-925",
+  "storage_reference": "sha256/50/5018715e156c7339ee81a3e384a32a30310a403031399808debbe1d1a2d2eccb",
+  "storage_scope": "local_only",
+  "title": "SEIU 925 2026 election endorsements",
+  "updated_at": null
+}

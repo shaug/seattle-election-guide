@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-washington-community-action-network-20260914T221815Z-1dd8dbc8a983",
+  "entered_at": "2026-09-14T22:46:43Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official 2026 Midterm Election image-gallery alt text in the captured HTML.",
+  "evidence_type": "web_page",
+  "id": "manual-washington-community-action-network-20260914T224643Z-67580f16a739",
+  "review_note": "Human reviewer confirmed every source transcription for issue #401, including the documented current-cycle filtering and ambiguity treatments.",
+  "review_status": "verified",
+  "reviewed_at": "2026-09-15T13:03:19Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "washington-community-action-network",
+  "transcription": "us-house-7: Pramila Jayapal\nld-11-state-representative-1: David Hackney"
+}

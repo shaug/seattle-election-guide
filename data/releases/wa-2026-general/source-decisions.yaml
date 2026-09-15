@@ -1,0 +1,1341 @@
+schema_version: '1.0'
+election_id: wa-2026-general
+data_as_of: '2026-09-15T13:03:19Z'
+reviewer: shaug
+review_note: 'Complete initial panel-wide discovery sweep for issue #401. OpenAI Codex located and captured official
+  publications and prepared the transcriptions; shaug reviewed and confirmed every source block against the captured
+  evidence. All 43 eligible sources resolve to 20 published decision blocks, 17 not-found dispositions, or 6 access-restricted
+  dispositions. Primary-only choices that did not advance were omitted. Washington Conservation Action’s unmatched
+  IL26-368 text and the Alliance for Gun Responsibility’s mismatched Steve Bergquist district label remain untranscribed.
+  The reviewer confirmed mapping NWPC-WA’s Darya Farivar claim to LD46 from its same-card biography and the frozen
+  ballot inventory.'
+sources:
+- source_id: washington-community-action-network
+  captured_at: '2026-09-14T22:18:15Z'
+  reviewed_at: '2026-09-15T13:03:19Z'
+  evidence_locator: Official 2026 Midterm Election image-gallery alt text in the captured HTML. Capture capture-washington-community-action-network-20260914T221815Z-1dd8dbc8a983.
+  decisions:
+  - race_id: us-house-7
+    candidate_ids:
+    - us-house-7--pramila-jayapal
+  - race_id: ld-11-state-representative-1
+    candidate_ids:
+    - ld-11-state-representative-1--david-hackney
+- source_id: washington-working-families-party
+  captured_at: '2026-09-14T22:18:15Z'
+  reviewed_at: '2026-09-15T13:03:19Z'
+  evidence_locator: Official Washington page, Our Candidates section. Capture capture-washington-working-families-party-20260914T221815Z-f8477eddbde4.
+  decisions:
+  - race_id: us-house-7
+    candidate_ids:
+    - us-house-7--pramila-jayapal
+  - race_id: king-county-council-4
+    candidate_ids:
+    - king-county-council-4--jorge-l-baron
+  - race_id: king-county-council-8
+    candidate_ids:
+    - king-county-council-8--teresa-mosqueda
+  - race_id: seattle-city-council-5
+    candidate_ids:
+    - seattle-city-council-5--nilu-jenks
+  - race_id: ld-37-state-representative-1
+    candidate_ids:
+    - ld-37-state-representative-1--kelabe-tewolde
+- source_id: sage-leaders
+  captured_at: '2026-09-14T22:18:15Z'
+  reviewed_at: '2026-09-15T13:03:19Z'
+  evidence_locator: Official 2026 Endorsements list under King County and Snohomish County. Capture capture-sage-leaders-20260914T221815Z-deca70d0e36d.
+  decisions:
+  - race_id: ld-34-state-senator
+    candidate_ids:
+    - ld-34-state-senator--emily-alvarado
+  - race_id: ld-37-state-senator
+    candidate_ids:
+    - ld-37-state-senator--chipalo-street
+    - ld-37-state-senator--tatiana-brown
+  - race_id: ld-43-state-senator
+    candidate_ids:
+    - ld-43-state-senator--hannah-sabio-howell
+  - race_id: ld-36-state-representative-1
+    candidate_ids:
+    - ld-36-state-representative-1--julia-grant-reed
+  - race_id: ld-37-state-representative-1
+    candidate_ids:
+    - ld-37-state-representative-1--kelabe-tewolde
+  - race_id: ld-37-state-representative-2
+    candidate_ids:
+    - ld-37-state-representative-2--jaelynn-scott
+  - race_id: ld-46-state-representative-2
+    candidate_ids:
+    - ld-46-state-representative-2--darya-farivar
+  - race_id: king-county-council-2
+    candidate_ids:
+    - king-county-council-2--rebecca-saldana
+  - race_id: king-county-council-4
+    candidate_ids:
+    - king-county-council-4--jorge-l-baron
+  - race_id: king-county-council-8
+    candidate_ids:
+    - king-county-council-8--teresa-mosqueda
+  - race_id: seattle-city-council-5
+    candidate_ids:
+    - seattle-city-council-5--nilu-jenks
+  - race_id: ld-32-state-senator
+    candidate_ids:
+    - ld-32-state-senator--cindy-ryu
+  - race_id: ld-32-state-representative-2
+    candidate_ids:
+    - ld-32-state-representative-2--imraan-siddiqi
+- source_id: king-county-democrats
+  captured_at: '2026-09-14T22:18:15Z'
+  reviewed_at: '2026-09-15T13:03:19Z'
+  evidence_locator: Official Primary & General election endorsement list by office. Capture capture-king-county-democrats-20260914T221815Z-2479b93089fa.
+  decisions:
+  - race_id: initiative-26-001
+    candidate_ids:
+    - initiative-26-001--no
+  - race_id: initiative-26-638
+    candidate_ids:
+    - initiative-26-638--no
+  - race_id: seattle-proposition-1-transit
+    candidate_ids:
+    - seattle-proposition-1-transit--yes
+  - race_id: us-house-7
+    candidate_ids:
+    - us-house-7--pramila-jayapal
+  - race_id: us-house-9
+    candidate_ids:
+    - us-house-9--adam-smith
+  - race_id: ld-11-state-representative-1
+    candidate_ids:
+    - ld-11-state-representative-1--ashley-fedan
+    - ld-11-state-representative-1--david-hackney
+  - race_id: ld-11-state-representative-2
+    candidate_ids:
+    - ld-11-state-representative-2--steve-bergquist
+  - race_id: ld-32-state-senator
+    candidate_ids:
+    - ld-32-state-senator--cindy-ryu
+  - race_id: ld-32-state-representative-2
+    candidate_ids:
+    - ld-32-state-representative-2--lauren-davis
+  - race_id: ld-34-state-senator
+    candidate_ids:
+    - ld-34-state-senator--emily-alvarado
+  - race_id: ld-34-state-representative-2
+    candidate_ids:
+    - ld-34-state-representative-2--joe-fitzgibbon
+  - race_id: ld-36-state-representative-1
+    candidate_ids:
+    - ld-36-state-representative-1--julia-grant-reed
+  - race_id: ld-37-state-senator
+    candidate_ids:
+    - ld-37-state-senator--chipalo-street
+  - race_id: ld-37-state-representative-2
+    candidate_ids:
+    - ld-37-state-representative-2--jaelynn-scott
+  - race_id: ld-43-state-senator
+    candidate_ids:
+    - ld-43-state-senator--hannah-sabio-howell
+  - race_id: ld-43-state-representative-1
+    candidate_ids:
+    - ld-43-state-representative-1--nicole-macri
+  - race_id: ld-46-state-senator
+    candidate_ids:
+    - ld-46-state-senator--javier-valdez
+  - race_id: ld-46-state-representative-2
+    candidate_ids:
+    - ld-46-state-representative-2--darya-farivar
+  - race_id: king-county-prosecuting-attorney
+    candidate_ids:
+    - king-county-prosecuting-attorney--leesa-manion
+  - race_id: king-county-assessor
+    candidate_ids:
+    - king-county-assessor--rob-foxcurran
+  - race_id: king-county-director-of-elections
+    candidate_ids:
+    - king-county-director-of-elections--julie-wise
+  - race_id: king-county-council-2
+    candidate_ids:
+    - king-county-council-2--rebecca-saldana
+  - race_id: king-county-council-4
+    candidate_ids:
+    - king-county-council-4--jorge-l-baron
+  - race_id: king-county-council-8
+    candidate_ids:
+    - king-county-council-8--teresa-mosqueda
+  - race_id: supreme-court-justice-1
+    candidate_ids:
+    - supreme-court-justice-1--colleen-melody
+  - race_id: supreme-court-justice-3
+    candidate_ids:
+    - supreme-court-justice-3--jaime-michelle-hawk
+  - race_id: supreme-court-justice-4
+    candidate_ids:
+    - supreme-court-justice-4--ian-birk
+  - race_id: supreme-court-justice-5
+    candidate_ids:
+    - supreme-court-justice-5--theo-angelis
+  - race_id: supreme-court-justice-7
+    candidate_ids:
+    - supreme-court-justice-7--debra-l-stephens
+  - race_id: king-county-district-court-west-judge-1
+    candidate_ids:
+    - king-county-district-court-west-judge-1--bardi-martin
+  - race_id: seattle-city-council-5
+    candidate_ids:
+    - seattle-city-council-5--nilu-jenks
+  - race_id: seattle-municipal-court-judge-2
+    candidate_ids:
+    - seattle-municipal-court-judge-2--katharine-edwards
+  - race_id: seattle-municipal-court-judge-5
+    candidate_ids:
+    - seattle-municipal-court-judge-5--gabe-rothstein
+  - race_id: seattle-municipal-court-judge-6
+    candidate_ids:
+    - seattle-municipal-court-judge-6--shantrice-anderson
+- source_id: 32nd-district-democrats
+  captured_at: '2026-09-14T22:18:15Z'
+  reviewed_at: '2026-09-15T13:03:19Z'
+  evidence_locator: Official Endorsed Candidates for 2026 section, endorsed as of September 2. Capture capture-32nd-district-democrats-20260914T221815Z-f23c637003ba.
+  decisions:
+  - race_id: us-house-7
+    candidate_ids:
+    - us-house-7--pramila-jayapal
+  - race_id: initiative-26-001
+    candidate_ids:
+    - initiative-26-001--no
+  - race_id: initiative-26-638
+    candidate_ids:
+    - initiative-26-638--no
+  - race_id: initiative-26-645
+    candidate_ids:
+    - initiative-26-645--no
+  - race_id: supreme-court-justice-1
+    candidate_ids:
+    - supreme-court-justice-1--colleen-melody
+  - race_id: supreme-court-justice-3
+    candidate_ids:
+    - supreme-court-justice-3--jaime-michelle-hawk
+  - race_id: supreme-court-justice-4
+    candidate_ids:
+    - supreme-court-justice-4--ian-birk
+  - race_id: supreme-court-justice-5
+    candidate_ids:
+    - supreme-court-justice-5--theo-angelis
+  - race_id: supreme-court-justice-7
+    candidate_ids:
+    - supreme-court-justice-7--debra-l-stephens
+  - race_id: ld-32-state-senator
+    candidate_ids:
+    - ld-32-state-senator--cindy-ryu
+  - race_id: ld-32-state-representative-1
+    candidate_ids:
+    - ld-32-state-representative-1--danica-noble
+    - ld-32-state-representative-1--keith-scully
+  - race_id: ld-32-state-representative-2
+    candidate_ids:
+    - ld-32-state-representative-2--lauren-davis
+    - ld-32-state-representative-2--imraan-siddiqi
+  - race_id: king-county-prosecuting-attorney
+    candidate_ids:
+    - king-county-prosecuting-attorney--leesa-manion
+  - race_id: king-county-director-of-elections
+    candidate_ids:
+    - king-county-director-of-elections--julie-wise
+  - race_id: king-county-council-4
+    candidate_ids:
+    - king-county-council-4--jorge-l-baron
+  - race_id: king-county-district-court-west-judge-1
+    candidate_ids:
+    - king-county-district-court-west-judge-1--bardi-martin
+    - king-county-district-court-west-judge-1--nyjat-rose-akins
+  - race_id: seattle-city-council-5
+    candidate_ids:
+    - seattle-city-council-5--nilu-jenks
+    - seattle-city-council-5--julie-kang
+  - race_id: seattle-municipal-court-judge-2
+    candidate_ids:
+    - seattle-municipal-court-judge-2--katharine-edwards
+  - race_id: seattle-municipal-court-judge-3
+    candidate_ids:
+    - seattle-municipal-court-judge-3--pooja-vaddadi
+  - race_id: seattle-municipal-court-judge-5
+    candidate_ids:
+    - seattle-municipal-court-judge-5--garmon-newsom
+    - seattle-municipal-court-judge-5--gabe-rothstein
+  - race_id: seattle-municipal-court-judge-6
+    candidate_ids:
+    - seattle-municipal-court-judge-6--shantrice-anderson
+- source_id: 36th-district-democrats
+  captured_at: '2026-09-14T22:18:15Z'
+  reviewed_at: '2026-09-15T13:03:19Z'
+  evidence_locator: Official 2026 elections page updated August 15, including Advanced to General labels. Capture
+    capture-36th-district-democrats-20260914T221815Z-71d2986e1954.
+  decisions:
+  - race_id: us-house-7
+    candidate_ids:
+    - us-house-7--pramila-jayapal
+  - race_id: supreme-court-justice-1
+    candidate_ids:
+    - supreme-court-justice-1--colleen-melody
+  - race_id: supreme-court-justice-3
+    candidate_ids:
+    - supreme-court-justice-3--jaime-michelle-hawk
+  - race_id: supreme-court-justice-4
+    candidate_ids:
+    - supreme-court-justice-4--ian-birk
+  - race_id: supreme-court-justice-5
+    candidate_ids:
+    - supreme-court-justice-5--theo-angelis
+  - race_id: supreme-court-justice-7
+    candidate_ids:
+    - supreme-court-justice-7--debra-l-stephens
+  - race_id: ld-36-state-senator
+    candidate_ids:
+    - ld-36-state-senator--noel-c-frame
+  - race_id: ld-36-state-representative-1
+    candidate_ids:
+    - ld-36-state-representative-1--julia-grant-reed
+  - race_id: ld-36-state-representative-2
+    candidate_ids:
+    - ld-36-state-representative-2--liz-berry
+  - race_id: king-county-assessor
+    candidate_ids:
+    - king-county-assessor--rob-foxcurran
+  - race_id: king-county-director-of-elections
+    candidate_ids:
+    - king-county-director-of-elections--julie-wise
+  - race_id: king-county-prosecuting-attorney
+    candidate_ids:
+    - king-county-prosecuting-attorney--leesa-manion
+  - race_id: king-county-council-4
+    candidate_ids:
+    - king-county-council-4--jorge-l-baron
+  - race_id: king-county-district-court-west-judge-1
+    candidate_ids:
+    - king-county-district-court-west-judge-1--bardi-martin
+    - king-county-district-court-west-judge-1--nyjat-rose-akins
+  - race_id: seattle-city-council-5
+    candidate_ids:
+    - seattle-city-council-5--nilu-jenks
+  - race_id: seattle-municipal-court-judge-2
+    candidate_ids:
+    - seattle-municipal-court-judge-2--katharine-edwards
+  - race_id: seattle-municipal-court-judge-3
+    candidate_ids:
+    - seattle-municipal-court-judge-3--pooja-vaddadi
+  - race_id: seattle-municipal-court-judge-4
+    candidate_ids:
+    - seattle-municipal-court-judge-4--anita-crawford-willis
+  - race_id: seattle-municipal-court-judge-6
+    candidate_ids:
+    - seattle-municipal-court-judge-6--shantrice-anderson
+- source_id: 46th-district-democrats
+  captured_at: '2026-09-14T22:18:15Z'
+  reviewed_at: '2026-09-15T13:03:19Z'
+  evidence_locator: Official carry-forward list for the general election. Capture capture-46th-district-democrats-20260914T221815Z-d98e10c249f2.
+  decisions:
+  - race_id: us-house-7
+    candidate_ids:
+    - us-house-7--pramila-jayapal
+  - race_id: ld-46-state-senator
+    candidate_ids:
+    - ld-46-state-senator--javier-valdez
+  - race_id: ld-46-state-representative-2
+    candidate_ids:
+    - ld-46-state-representative-2--darya-farivar
+  - race_id: seattle-city-council-5
+    candidate_ids:
+    - seattle-city-council-5--nilu-jenks
+  - race_id: king-county-council-2
+    candidate_ids:
+    - king-county-council-2--rebecca-saldana
+  - race_id: king-county-council-4
+    candidate_ids:
+    - king-county-council-4--jorge-l-baron
+  - race_id: seattle-municipal-court-judge-1
+    candidate_ids:
+    - seattle-municipal-court-judge-1--cat-mcdowall
+  - race_id: seattle-municipal-court-judge-2
+    candidate_ids:
+    - seattle-municipal-court-judge-2--katharine-edwards
+  - race_id: seattle-municipal-court-judge-3
+    candidate_ids:
+    - seattle-municipal-court-judge-3--pooja-vaddadi
+  - race_id: seattle-municipal-court-judge-5
+    candidate_ids:
+    - seattle-municipal-court-judge-5--gabe-rothstein
+  - race_id: seattle-municipal-court-judge-6
+    candidate_ids:
+    - seattle-municipal-court-judge-6--shantrice-anderson
+  - race_id: king-county-district-court-west-judge-1
+    candidate_ids:
+    - king-county-district-court-west-judge-1--nyjat-rose-akins
+  - race_id: supreme-court-justice-1
+    candidate_ids:
+    - supreme-court-justice-1--colleen-melody
+  - race_id: supreme-court-justice-3
+    candidate_ids:
+    - supreme-court-justice-3--jaime-michelle-hawk
+  - race_id: supreme-court-justice-4
+    candidate_ids:
+    - supreme-court-justice-4--ian-birk
+  - race_id: supreme-court-justice-5
+    candidate_ids:
+    - supreme-court-justice-5--theo-angelis
+  - race_id: initiative-26-001
+    candidate_ids:
+    - initiative-26-001--no
+  - race_id: initiative-26-638
+    candidate_ids:
+    - initiative-26-638--no
+  - race_id: initiative-26-645
+    candidate_ids:
+    - initiative-26-645--no
+- source_id: washington-conservation-action
+  captured_at: '2026-09-14T22:18:15Z'
+  reviewed_at: '2026-09-15T13:03:19Z'
+  evidence_locator: Official 2026 endorsements page by statewide, county, and legislative headings. Capture capture-washington-conservation-action-20260914T221815Z-ebdcfc940f41.
+  decisions:
+  - race_id: initiative-26-001
+    candidate_ids:
+    - initiative-26-001--no
+  - race_id: initiative-26-645
+    candidate_ids:
+    - initiative-26-645--no
+  - race_id: supreme-court-justice-1
+    candidate_ids:
+    - supreme-court-justice-1--colleen-melody
+  - race_id: supreme-court-justice-3
+    candidate_ids:
+    - supreme-court-justice-3--jaime-michelle-hawk
+  - race_id: supreme-court-justice-4
+    candidate_ids:
+    - supreme-court-justice-4--ian-birk
+  - race_id: supreme-court-justice-5
+    candidate_ids:
+    - supreme-court-justice-5--theo-angelis
+  - race_id: king-county-council-2
+    candidate_ids:
+    - king-county-council-2--rebecca-saldana
+  - race_id: king-county-council-4
+    candidate_ids:
+    - king-county-council-4--jorge-l-baron
+  - race_id: king-county-council-8
+    candidate_ids:
+    - king-county-council-8--teresa-mosqueda
+  - race_id: seattle-city-council-5
+    candidate_ids:
+    - seattle-city-council-5--nilu-jenks
+  - race_id: ld-34-state-senator
+    candidate_ids:
+    - ld-34-state-senator--emily-alvarado
+  - race_id: ld-34-state-representative-2
+    candidate_ids:
+    - ld-34-state-representative-2--joe-fitzgibbon
+  - race_id: ld-36-state-senator
+    candidate_ids:
+    - ld-36-state-senator--noel-c-frame
+  - race_id: ld-36-state-representative-1
+    candidate_ids:
+    - ld-36-state-representative-1--julia-grant-reed
+  - race_id: ld-36-state-representative-2
+    candidate_ids:
+    - ld-36-state-representative-2--liz-berry
+  - race_id: ld-37-state-senator
+    candidate_ids:
+    - ld-37-state-senator--chipalo-street
+  - race_id: ld-37-state-representative-2
+    candidate_ids:
+    - ld-37-state-representative-2--jaelynn-scott
+  - race_id: ld-43-state-senator
+    candidate_ids:
+    - ld-43-state-senator--jamie-pedersen
+  - race_id: ld-43-state-representative-1
+    candidate_ids:
+    - ld-43-state-representative-1--nicole-macri
+  - race_id: ld-46-state-senator
+    candidate_ids:
+    - ld-46-state-senator--javier-valdez
+  - race_id: ld-46-state-representative-1
+    candidate_ids:
+    - ld-46-state-representative-1--gerry-pollet
+  - race_id: ld-46-state-representative-2
+    candidate_ids:
+    - ld-46-state-representative-2--darya-farivar
+- source_id: mlk-labor
+  captured_at: '2026-09-14T22:18:16Z'
+  reviewed_at: '2026-09-15T13:03:19Z'
+  evidence_locator: Official 2026 Endorsements page, King County and Seattle sections. Capture capture-mlk-labor-20260914T221816Z-e6050e0b29c9.
+  decisions:
+  - race_id: king-county-council-2
+    candidate_ids:
+    - king-county-council-2--rebecca-saldana
+  - race_id: king-county-council-4
+    candidate_ids:
+    - king-county-council-4--jorge-l-baron
+  - race_id: king-county-council-8
+    candidate_ids:
+    - king-county-council-8--teresa-mosqueda
+  - race_id: seattle-city-council-5
+    candidate_ids:
+    - seattle-city-council-5--nilu-jenks
+  - race_id: seattle-proposition-1-transit
+    candidate_ids:
+    - seattle-proposition-1-transit--yes
+- source_id: washington-state-labor-council
+  captured_at: '2026-09-14T22:18:15Z'
+  reviewed_at: '2026-09-15T13:03:19Z'
+  evidence_locator: Official 2026 election endorsements PDF, King County legislative and statewide sections. Capture
+    capture-washington-state-labor-council-20260914T221815Z-7bb4a5d4ae96.
+  decisions:
+  - race_id: initiative-26-001
+    candidate_ids:
+    - initiative-26-001--no
+  - race_id: initiative-26-638
+    candidate_ids:
+    - initiative-26-638--no
+  - race_id: initiative-26-645
+    candidate_ids:
+    - initiative-26-645--no
+  - race_id: us-house-7
+    candidate_ids:
+    - us-house-7--pramila-jayapal
+  - race_id: us-house-9
+    candidate_ids:
+    - us-house-9--adam-smith
+  - race_id: supreme-court-justice-1
+    candidate_ids:
+    - supreme-court-justice-1--colleen-melody
+  - race_id: supreme-court-justice-3
+    candidate_ids:
+    - supreme-court-justice-3--jaime-michelle-hawk
+  - race_id: supreme-court-justice-4
+    candidate_ids:
+    - supreme-court-justice-4--ian-birk
+  - race_id: supreme-court-justice-5
+    candidate_ids:
+    - supreme-court-justice-5--theo-angelis
+  - race_id: supreme-court-justice-7
+    candidate_ids:
+    - supreme-court-justice-7--debra-l-stephens
+  - race_id: ld-11-state-representative-1
+    candidate_ids:
+    - ld-11-state-representative-1--david-hackney
+  - race_id: ld-11-state-representative-2
+    candidate_ids:
+    - ld-11-state-representative-2--steve-bergquist
+  - race_id: ld-32-state-senator
+    candidate_ids:
+    - ld-32-state-senator--cindy-ryu
+  - race_id: ld-32-state-representative-1
+    candidate_ids:
+    - ld-32-state-representative-1--danica-noble
+  - race_id: ld-32-state-representative-2
+    candidate_ids:
+    - ld-32-state-representative-2--lauren-davis
+  - race_id: ld-34-state-senator
+    candidate_ids:
+    - ld-34-state-senator--emily-alvarado
+  - race_id: ld-34-state-representative-1
+    candidate_ids:
+    - ld-34-state-representative-1--brianna-k-thomas
+  - race_id: ld-34-state-representative-2
+    candidate_ids:
+    - ld-34-state-representative-2--joe-fitzgibbon
+  - race_id: ld-36-state-senator
+    candidate_ids:
+    - ld-36-state-senator--noel-c-frame
+  - race_id: ld-36-state-representative-1
+    candidate_ids:
+    - ld-36-state-representative-1--julia-grant-reed
+  - race_id: ld-36-state-representative-2
+    candidate_ids:
+    - ld-36-state-representative-2--liz-berry
+  - race_id: ld-37-state-senator
+    candidate_ids:
+    - ld-37-state-senator--chipalo-street
+  - race_id: ld-37-state-representative-1
+    candidate_ids:
+    - ld-37-state-representative-1--sharon-tomiko-santos
+  - race_id: ld-37-state-representative-2
+    candidate_ids:
+    - ld-37-state-representative-2--jaelynn-scott
+  - race_id: ld-43-state-senator
+    candidate_ids:
+    - ld-43-state-senator--jamie-pedersen
+  - race_id: ld-43-state-representative-1
+    candidate_ids:
+    - ld-43-state-representative-1--nicole-macri
+  - race_id: ld-43-state-representative-2
+    candidate_ids:
+    - ld-43-state-representative-2--shaun-scott
+  - race_id: ld-46-state-senator
+    candidate_ids:
+    - ld-46-state-senator--javier-valdez
+  - race_id: ld-46-state-representative-1
+    candidate_ids:
+    - ld-46-state-representative-1--gerry-pollet
+  - race_id: ld-46-state-representative-2
+    candidate_ids:
+    - ld-46-state-representative-2--darya-farivar
+- source_id: seiu-775
+  captured_at: '2026-09-14T22:18:15Z'
+  reviewed_at: '2026-09-15T13:03:19Z'
+  evidence_locator: Official 2026 endorsements page, Washington State and King County sections. Capture capture-seiu-775-20260914T221815Z-dce11d610721.
+  decisions:
+  - race_id: initiative-26-001
+    candidate_ids:
+    - initiative-26-001--no
+  - race_id: initiative-26-638
+    candidate_ids:
+    - initiative-26-638--no
+  - race_id: initiative-26-645
+    candidate_ids:
+    - initiative-26-645--no
+  - race_id: supreme-court-justice-1
+    candidate_ids:
+    - supreme-court-justice-1--colleen-melody
+  - race_id: supreme-court-justice-3
+    candidate_ids:
+    - supreme-court-justice-3--jaime-michelle-hawk
+  - race_id: supreme-court-justice-4
+    candidate_ids:
+    - supreme-court-justice-4--ian-birk
+  - race_id: supreme-court-justice-5
+    candidate_ids:
+    - supreme-court-justice-5--theo-angelis
+  - race_id: us-house-7
+    candidate_ids:
+    - us-house-7--pramila-jayapal
+  - race_id: us-house-9
+    candidate_ids:
+    - us-house-9--adam-smith
+  - race_id: ld-11-state-representative-1
+    candidate_ids:
+    - ld-11-state-representative-1--david-hackney
+  - race_id: ld-11-state-representative-2
+    candidate_ids:
+    - ld-11-state-representative-2--steve-bergquist
+  - race_id: ld-32-state-representative-2
+    candidate_ids:
+    - ld-32-state-representative-2--lauren-davis
+  - race_id: ld-34-state-senator
+    candidate_ids:
+    - ld-34-state-senator--emily-alvarado
+  - race_id: ld-34-state-representative-1
+    candidate_ids:
+    - ld-34-state-representative-1--brianna-k-thomas
+  - race_id: ld-34-state-representative-2
+    candidate_ids:
+    - ld-34-state-representative-2--joe-fitzgibbon
+  - race_id: ld-36-state-senator
+    candidate_ids:
+    - ld-36-state-senator--noel-c-frame
+  - race_id: ld-36-state-representative-1
+    candidate_ids:
+    - ld-36-state-representative-1--julia-grant-reed
+  - race_id: ld-36-state-representative-2
+    candidate_ids:
+    - ld-36-state-representative-2--liz-berry
+  - race_id: ld-37-state-senator
+    candidate_ids:
+    - ld-37-state-senator--chipalo-street
+  - race_id: ld-37-state-representative-2
+    candidate_ids:
+    - ld-37-state-representative-2--jaelynn-scott
+  - race_id: ld-43-state-senator
+    candidate_ids:
+    - ld-43-state-senator--jamie-pedersen
+  - race_id: ld-43-state-representative-1
+    candidate_ids:
+    - ld-43-state-representative-1--nicole-macri
+  - race_id: ld-43-state-representative-2
+    candidate_ids:
+    - ld-43-state-representative-2--shaun-scott
+  - race_id: ld-46-state-senator
+    candidate_ids:
+    - ld-46-state-senator--javier-valdez
+  - race_id: ld-46-state-representative-1
+    candidate_ids:
+    - ld-46-state-representative-1--gerry-pollet
+  - race_id: ld-46-state-representative-2
+    candidate_ids:
+    - ld-46-state-representative-2--darya-farivar
+  - race_id: king-county-council-2
+    candidate_ids:
+    - king-county-council-2--rebecca-saldana
+  - race_id: king-county-council-8
+    candidate_ids:
+    - king-county-council-8--teresa-mosqueda
+  - race_id: seattle-city-council-5
+    candidate_ids:
+    - seattle-city-council-5--nilu-jenks
+- source_id: seiu-925
+  captured_at: '2026-09-14T22:18:16Z'
+  reviewed_at: '2026-09-15T13:03:19Z'
+  evidence_locator: Official 2026 endorsements page, statewide, legislative, King County, and Seattle sections.
+    Capture capture-seiu-925-20260914T221816Z-6301e0a9e57c.
+  decisions:
+  - race_id: supreme-court-justice-1
+    candidate_ids:
+    - supreme-court-justice-1--colleen-melody
+  - race_id: supreme-court-justice-3
+    candidate_ids:
+    - supreme-court-justice-3--jaime-michelle-hawk
+  - race_id: supreme-court-justice-4
+    candidate_ids:
+    - supreme-court-justice-4--ian-birk
+  - race_id: supreme-court-justice-5
+    candidate_ids:
+    - supreme-court-justice-5--theo-angelis
+  - race_id: supreme-court-justice-7
+    candidate_ids:
+    - supreme-court-justice-7--debra-l-stephens
+  - race_id: ld-11-state-representative-1
+    candidate_ids:
+    - ld-11-state-representative-1--david-hackney
+  - race_id: ld-11-state-representative-2
+    candidate_ids:
+    - ld-11-state-representative-2--steve-bergquist
+  - race_id: ld-32-state-senator
+    candidate_ids:
+    - ld-32-state-senator--jesse-salomon
+  - race_id: ld-32-state-representative-2
+    candidate_ids:
+    - ld-32-state-representative-2--lauren-davis
+  - race_id: ld-34-state-senator
+    candidate_ids:
+    - ld-34-state-senator--emily-alvarado
+  - race_id: ld-34-state-representative-1
+    candidate_ids:
+    - ld-34-state-representative-1--brianna-k-thomas
+  - race_id: ld-34-state-representative-2
+    candidate_ids:
+    - ld-34-state-representative-2--joe-fitzgibbon
+  - race_id: ld-36-state-senator
+    candidate_ids:
+    - ld-36-state-senator--noel-c-frame
+  - race_id: ld-36-state-representative-1
+    candidate_ids:
+    - ld-36-state-representative-1--julia-grant-reed
+  - race_id: ld-36-state-representative-2
+    candidate_ids:
+    - ld-36-state-representative-2--liz-berry
+  - race_id: ld-37-state-senator
+    candidate_ids:
+    - ld-37-state-senator--chipalo-street
+  - race_id: ld-37-state-representative-1
+    candidate_ids:
+    - ld-37-state-representative-1--sharon-tomiko-santos
+  - race_id: ld-37-state-representative-2
+    candidate_ids:
+    - ld-37-state-representative-2--jaelynn-scott
+  - race_id: ld-43-state-senator
+    candidate_ids:
+    - ld-43-state-senator--jamie-pedersen
+  - race_id: ld-43-state-representative-1
+    candidate_ids:
+    - ld-43-state-representative-1--nicole-macri
+  - race_id: ld-43-state-representative-2
+    candidate_ids:
+    - ld-43-state-representative-2--shaun-scott
+  - race_id: ld-46-state-senator
+    candidate_ids:
+    - ld-46-state-senator--javier-valdez
+  - race_id: ld-46-state-representative-1
+    candidate_ids:
+    - ld-46-state-representative-1--gerry-pollet
+  - race_id: ld-46-state-representative-2
+    candidate_ids:
+    - ld-46-state-representative-2--darya-farivar
+  - race_id: king-county-council-2
+    candidate_ids:
+    - king-county-council-2--rebecca-saldana
+  - race_id: king-county-council-4
+    candidate_ids:
+    - king-county-council-4--jorge-l-baron
+  - race_id: king-county-council-8
+    candidate_ids:
+    - king-county-council-8--teresa-mosqueda
+  - race_id: seattle-city-council-5
+    candidate_ids:
+    - seattle-city-council-5--nilu-jenks
+  - race_id: seattle-municipal-court-judge-5
+    candidate_ids:
+    - seattle-municipal-court-judge-5--gabe-rothstein
+- source_id: ufcw-3000
+  captured_at: '2026-09-14T22:18:16Z'
+  reviewed_at: '2026-09-15T13:03:19Z'
+  evidence_locator: Official endorsements page, 2026 General Election section. Capture capture-ufcw-3000-20260914T221816Z-e7f6562496de.
+  decisions:
+  - race_id: king-county-assessor
+    candidate_ids:
+    - king-county-assessor--rob-foxcurran
+  - race_id: king-county-prosecuting-attorney
+    candidate_ids:
+    - king-county-prosecuting-attorney--leesa-manion
+  - race_id: king-county-council-2
+    candidate_ids:
+    - king-county-council-2--rebecca-saldana
+  - race_id: king-county-council-4
+    candidate_ids:
+    - king-county-council-4--jorge-l-baron
+  - race_id: king-county-council-8
+    candidate_ids:
+    - king-county-council-8--teresa-mosqueda
+  - race_id: seattle-city-council-5
+    candidate_ids:
+    - seattle-city-council-5--nilu-jenks
+  - race_id: supreme-court-justice-1
+    candidate_ids:
+    - supreme-court-justice-1--colleen-melody
+  - race_id: supreme-court-justice-3
+    candidate_ids:
+    - supreme-court-justice-3--jaime-michelle-hawk
+  - race_id: ld-11-state-representative-1
+    candidate_ids:
+    - ld-11-state-representative-1--david-hackney
+  - race_id: ld-32-state-representative-1
+    candidate_ids:
+    - ld-32-state-representative-1--danica-noble
+  - race_id: ld-32-state-representative-2
+    candidate_ids:
+    - ld-32-state-representative-2--lauren-davis
+    - ld-32-state-representative-2--imraan-siddiqi
+  - race_id: ld-32-state-senator
+    candidate_ids:
+    - ld-32-state-senator--jesse-salomon
+  - race_id: ld-34-state-senator
+    candidate_ids:
+    - ld-34-state-senator--emily-alvarado
+  - race_id: ld-34-state-representative-1
+    candidate_ids:
+    - ld-34-state-representative-1--brianna-k-thomas
+  - race_id: ld-34-state-representative-2
+    candidate_ids:
+    - ld-34-state-representative-2--joe-fitzgibbon
+  - race_id: ld-36-state-senator
+    candidate_ids:
+    - ld-36-state-senator--noel-c-frame
+  - race_id: ld-36-state-representative-1
+    candidate_ids:
+    - ld-36-state-representative-1--julia-grant-reed
+  - race_id: ld-36-state-representative-2
+    candidate_ids:
+    - ld-36-state-representative-2--liz-berry
+  - race_id: ld-37-state-senator
+    candidate_ids:
+    - ld-37-state-senator--chipalo-street
+  - race_id: ld-37-state-representative-2
+    candidate_ids:
+    - ld-37-state-representative-2--jaelynn-scott
+  - race_id: ld-43-state-senator
+    candidate_ids:
+    - ld-43-state-senator--jamie-pedersen
+  - race_id: ld-43-state-representative-1
+    candidate_ids:
+    - ld-43-state-representative-1--nicole-macri
+  - race_id: ld-46-state-senator
+    candidate_ids:
+    - ld-46-state-senator--javier-valdez
+  - race_id: ld-46-state-representative-1
+    candidate_ids:
+    - ld-46-state-representative-1--gerry-pollet
+  - race_id: ld-46-state-representative-2
+    candidate_ids:
+    - ld-46-state-representative-2--darya-farivar
+- source_id: washington-education-association
+  captured_at: '2026-09-14T22:18:16Z'
+  reviewed_at: '2026-09-15T13:03:19Z'
+  evidence_locator: Official 2026 endorsements page, ballot initiatives and legislative endorsements. Capture capture-washington-education-association-20260914T221816Z-4a939298ad5e.
+  decisions:
+  - race_id: initiative-26-001
+    candidate_ids:
+    - initiative-26-001--no
+  - race_id: initiative-26-638
+    candidate_ids:
+    - initiative-26-638--no
+  - race_id: initiative-26-645
+    candidate_ids:
+    - initiative-26-645--no
+  - race_id: supreme-court-justice-1
+    candidate_ids:
+    - supreme-court-justice-1--colleen-melody
+  - race_id: supreme-court-justice-3
+    candidate_ids:
+    - supreme-court-justice-3--jaime-michelle-hawk
+  - race_id: supreme-court-justice-4
+    candidate_ids:
+    - supreme-court-justice-4--ian-birk
+  - race_id: supreme-court-justice-5
+    candidate_ids:
+    - supreme-court-justice-5--theo-angelis
+  - race_id: supreme-court-justice-7
+    candidate_ids:
+    - supreme-court-justice-7--debra-l-stephens
+  - race_id: us-house-7
+    candidate_ids:
+    - us-house-7--pramila-jayapal
+  - race_id: us-house-9
+    candidate_ids:
+    - us-house-9--adam-smith
+  - race_id: ld-32-state-senator
+    candidate_ids:
+    - ld-32-state-senator--cindy-ryu
+  - race_id: ld-32-state-representative-2
+    candidate_ids:
+    - ld-32-state-representative-2--lauren-davis
+  - race_id: ld-34-state-representative-2
+    candidate_ids:
+    - ld-34-state-representative-2--joe-fitzgibbon
+  - race_id: ld-43-state-senator
+    candidate_ids:
+    - ld-43-state-senator--jamie-pedersen
+  - race_id: ld-46-state-representative-1
+    candidate_ids:
+    - ld-46-state-representative-1--gerry-pollet
+- source_id: washington-state-building-trades
+  captured_at: '2026-09-14T22:18:16Z'
+  reviewed_at: '2026-09-15T13:03:19Z'
+  evidence_locator: Official candidates page, 2026 General Election section. Capture capture-washington-state-building-trades-20260914T221816Z-5b7e5f5d06e2.
+  decisions:
+  - race_id: us-house-7
+    candidate_ids:
+    - us-house-7--pramila-jayapal
+  - race_id: us-house-9
+    candidate_ids:
+    - us-house-9--adam-smith
+  - race_id: ld-32-state-senator
+    candidate_ids:
+    - ld-32-state-senator--jesse-salomon
+  - race_id: ld-32-state-representative-1
+    candidate_ids:
+    - ld-32-state-representative-1--keith-scully
+  - race_id: ld-32-state-representative-2
+    candidate_ids:
+    - ld-32-state-representative-2--lauren-davis
+  - race_id: ld-34-state-senator
+    candidate_ids:
+    - ld-34-state-senator--emily-alvarado
+  - race_id: ld-34-state-representative-2
+    candidate_ids:
+    - ld-34-state-representative-2--joe-fitzgibbon
+  - race_id: ld-36-state-representative-1
+    candidate_ids:
+    - ld-36-state-representative-1--julia-grant-reed
+  - race_id: ld-36-state-representative-2
+    candidate_ids:
+    - ld-36-state-representative-2--liz-berry
+  - race_id: ld-37-state-senator
+    candidate_ids:
+    - ld-37-state-senator--chipalo-street
+  - race_id: ld-43-state-senator
+    candidate_ids:
+    - ld-43-state-senator--jamie-pedersen
+  - race_id: ld-46-state-senator
+    candidate_ids:
+    - ld-46-state-senator--javier-valdez
+  - race_id: ld-46-state-representative-1
+    candidate_ids:
+    - ld-46-state-representative-1--gerry-pollet
+  - race_id: king-county-council-8
+    candidate_ids:
+    - king-county-council-8--teresa-mosqueda
+  - race_id: supreme-court-justice-1
+    candidate_ids:
+    - supreme-court-justice-1--colleen-melody
+  - race_id: supreme-court-justice-3
+    candidate_ids:
+    - supreme-court-justice-3--jaime-michelle-hawk
+  - race_id: supreme-court-justice-4
+    candidate_ids:
+    - supreme-court-justice-4--ian-birk
+  - race_id: supreme-court-justice-5
+    candidate_ids:
+    - supreme-court-justice-5--theo-angelis
+- source_id: protec17
+  captured_at: '2026-09-14T22:18:16Z'
+  reviewed_at: '2026-09-15T13:03:19Z'
+  evidence_locator: Official 2026 election endorsements page, Washington and Seattle/King County sections. Capture
+    capture-protec17-20260914T221816Z-2940ca08cc1a.
+  decisions:
+  - race_id: ld-32-state-senator
+    candidate_ids:
+    - ld-32-state-senator--cindy-ryu
+  - race_id: ld-32-state-representative-1
+    candidate_ids:
+    - ld-32-state-representative-1--danica-noble
+  - race_id: ld-34-state-senator
+    candidate_ids:
+    - ld-34-state-senator--emily-alvarado
+  - race_id: ld-34-state-representative-1
+    candidate_ids:
+    - ld-34-state-representative-1--brianna-k-thomas
+  - race_id: ld-34-state-representative-2
+    candidate_ids:
+    - ld-34-state-representative-2--joe-fitzgibbon
+  - race_id: ld-36-state-senator
+    candidate_ids:
+    - ld-36-state-senator--noel-c-frame
+  - race_id: ld-36-state-representative-1
+    candidate_ids:
+    - ld-36-state-representative-1--julia-grant-reed
+  - race_id: ld-36-state-representative-2
+    candidate_ids:
+    - ld-36-state-representative-2--liz-berry
+  - race_id: ld-37-state-senator
+    candidate_ids:
+    - ld-37-state-senator--chipalo-street
+  - race_id: ld-37-state-representative-1
+    candidate_ids:
+    - ld-37-state-representative-1--kelabe-tewolde
+    - ld-37-state-representative-1--sharon-tomiko-santos
+  - race_id: ld-37-state-representative-2
+    candidate_ids:
+    - ld-37-state-representative-2--jaelynn-scott
+  - race_id: ld-43-state-senator
+    candidate_ids:
+    - ld-43-state-senator--jamie-pedersen
+  - race_id: ld-43-state-representative-1
+    candidate_ids:
+    - ld-43-state-representative-1--nicole-macri
+  - race_id: ld-46-state-senator
+    candidate_ids:
+    - ld-46-state-senator--javier-valdez
+  - race_id: ld-46-state-representative-1
+    candidate_ids:
+    - ld-46-state-representative-1--will-dreher
+    - ld-46-state-representative-1--gerry-pollet
+  - race_id: king-county-assessor
+    candidate_ids:
+    - king-county-assessor--rob-foxcurran
+  - race_id: king-county-council-2
+    candidate_ids:
+    - king-county-council-2--rebecca-saldana
+  - race_id: king-county-council-4
+    candidate_ids:
+    - king-county-council-4--jorge-l-baron
+  - race_id: king-county-council-8
+    candidate_ids:
+    - king-county-council-8--teresa-mosqueda
+  - race_id: seattle-city-council-5
+    candidate_ids:
+    - seattle-city-council-5--nilu-jenks
+  - race_id: seattle-municipal-court-judge-5
+    candidate_ids:
+    - seattle-municipal-court-judge-5--gabe-rothstein
+  - race_id: initiative-26-001
+    candidate_ids:
+    - initiative-26-001--no
+  - race_id: initiative-26-638
+    candidate_ids:
+    - initiative-26-638--no
+  - race_id: initiative-26-645
+    candidate_ids:
+    - initiative-26-645--no
+  - race_id: seattle-proposition-1-transit
+    candidate_ids:
+    - seattle-proposition-1-transit--yes
+- source_id: oneamerica-votes
+  captured_at: '2026-09-14T22:18:16Z'
+  reviewed_at: '2026-09-15T13:03:19Z'
+  evidence_locator: Official 2026 endorsements page, endorsed-candidate cards. Capture capture-oneamerica-votes-20260914T221816Z-bcb2f02396dd.
+  decisions:
+  - race_id: us-house-7
+    candidate_ids:
+    - us-house-7--pramila-jayapal
+  - race_id: ld-34-state-senator
+    candidate_ids:
+    - ld-34-state-senator--emily-alvarado
+  - race_id: supreme-court-justice-5
+    candidate_ids:
+    - supreme-court-justice-5--theo-angelis
+  - race_id: king-county-council-4
+    candidate_ids:
+    - king-county-council-4--jorge-l-baron
+  - race_id: ld-46-state-representative-2
+    candidate_ids:
+    - ld-46-state-representative-2--darya-farivar
+  - race_id: seattle-city-council-5
+    candidate_ids:
+    - seattle-city-council-5--nilu-jenks
+  - race_id: supreme-court-justice-3
+    candidate_ids:
+    - supreme-court-justice-3--jaime-michelle-hawk
+  - race_id: supreme-court-justice-1
+    candidate_ids:
+    - supreme-court-justice-1--colleen-melody
+  - race_id: king-county-council-8
+    candidate_ids:
+    - king-county-council-8--teresa-mosqueda
+  - race_id: ld-36-state-representative-1
+    candidate_ids:
+    - ld-36-state-representative-1--julia-grant-reed
+  - race_id: king-county-council-2
+    candidate_ids:
+    - king-county-council-2--rebecca-saldana
+  - race_id: ld-37-state-representative-2
+    candidate_ids:
+    - ld-37-state-representative-2--jaelynn-scott
+  - race_id: ld-32-state-representative-2
+    candidate_ids:
+    - ld-32-state-representative-2--imraan-siddiqi
+  - race_id: ld-37-state-senator
+    candidate_ids:
+    - ld-37-state-senator--chipalo-street
+  - race_id: ld-46-state-senator
+    candidate_ids:
+    - ld-46-state-senator--javier-valdez
+- source_id: alliance-for-gun-responsibility
+  captured_at: '2026-09-14T22:18:19Z'
+  reviewed_at: '2026-09-15T13:03:19Z'
+  evidence_locator: Official 2026 endorsements page, federal, state legislative, judicial, and local sections. Capture
+    capture-alliance-for-gun-responsibility-20260914T221819Z-34344aa0cc00.
+  decisions:
+  - race_id: us-house-7
+    candidate_ids:
+    - us-house-7--pramila-jayapal
+  - race_id: us-house-9
+    candidate_ids:
+    - us-house-9--adam-smith
+  - race_id: ld-11-state-representative-1
+    candidate_ids:
+    - ld-11-state-representative-1--david-hackney
+  - race_id: ld-32-state-senator
+    candidate_ids:
+    - ld-32-state-senator--jesse-salomon
+    - ld-32-state-senator--cindy-ryu
+  - race_id: ld-32-state-representative-1
+    candidate_ids:
+    - ld-32-state-representative-1--danica-noble
+  - race_id: ld-32-state-representative-2
+    candidate_ids:
+    - ld-32-state-representative-2--lauren-davis
+  - race_id: ld-34-state-senator
+    candidate_ids:
+    - ld-34-state-senator--emily-alvarado
+  - race_id: ld-34-state-representative-2
+    candidate_ids:
+    - ld-34-state-representative-2--joe-fitzgibbon
+  - race_id: ld-36-state-senator
+    candidate_ids:
+    - ld-36-state-senator--noel-c-frame
+  - race_id: ld-36-state-representative-1
+    candidate_ids:
+    - ld-36-state-representative-1--julia-grant-reed
+  - race_id: ld-36-state-representative-2
+    candidate_ids:
+    - ld-36-state-representative-2--liz-berry
+  - race_id: ld-37-state-senator
+    candidate_ids:
+    - ld-37-state-senator--chipalo-street
+  - race_id: ld-37-state-representative-1
+    candidate_ids:
+    - ld-37-state-representative-1--sharon-tomiko-santos
+  - race_id: ld-37-state-representative-2
+    candidate_ids:
+    - ld-37-state-representative-2--jaelynn-scott
+  - race_id: ld-43-state-senator
+    candidate_ids:
+    - ld-43-state-senator--jamie-pedersen
+  - race_id: ld-43-state-representative-1
+    candidate_ids:
+    - ld-43-state-representative-1--nicole-macri
+  - race_id: ld-46-state-senator
+    candidate_ids:
+    - ld-46-state-senator--javier-valdez
+  - race_id: ld-46-state-representative-1
+    candidate_ids:
+    - ld-46-state-representative-1--gerry-pollet
+  - race_id: ld-46-state-representative-2
+    candidate_ids:
+    - ld-46-state-representative-2--darya-farivar
+  - race_id: king-county-council-2
+    candidate_ids:
+    - king-county-council-2--rebecca-saldana
+    - king-county-council-2--toshiko-grace-hasegawa
+  - race_id: king-county-council-8
+    candidate_ids:
+    - king-county-council-8--teresa-mosqueda
+  - race_id: seattle-city-council-5
+    candidate_ids:
+    - seattle-city-council-5--nilu-jenks
+  - race_id: king-county-prosecuting-attorney
+    candidate_ids:
+    - king-county-prosecuting-attorney--leesa-manion
+- source_id: washington-housing-alliance
+  captured_at: '2026-09-14T22:18:16Z'
+  reviewed_at: '2026-09-15T13:03:19Z'
+  evidence_locator: Official endorsements page, 2026 Endorsements section. Capture capture-washington-housing-alliance-20260914T221816Z-06201ac6f38a.
+  decisions:
+  - race_id: king-county-council-2
+    candidate_ids:
+    - king-county-council-2--rebecca-saldana
+  - race_id: king-county-council-8
+    candidate_ids:
+    - king-county-council-8--teresa-mosqueda
+  - race_id: seattle-city-council-5
+    candidate_ids:
+    - seattle-city-council-5--nilu-jenks
+  - race_id: ld-11-state-representative-2
+    candidate_ids:
+    - ld-11-state-representative-2--steve-bergquist
+  - race_id: ld-32-state-senator
+    candidate_ids:
+    - ld-32-state-senator--cindy-ryu
+  - race_id: ld-32-state-representative-1
+    candidate_ids:
+    - ld-32-state-representative-1--keith-scully
+    - ld-32-state-representative-1--danica-noble
+  - race_id: ld-32-state-representative-2
+    candidate_ids:
+    - ld-32-state-representative-2--imraan-siddiqi
+    - ld-32-state-representative-2--lauren-davis
+  - race_id: supreme-court-justice-1
+    candidate_ids:
+    - supreme-court-justice-1--colleen-melody
+  - race_id: supreme-court-justice-3
+    candidate_ids:
+    - supreme-court-justice-3--jaime-michelle-hawk
+  - race_id: supreme-court-justice-4
+    candidate_ids:
+    - supreme-court-justice-4--ian-birk
+  - race_id: supreme-court-justice-5
+    candidate_ids:
+    - supreme-court-justice-5--theo-angelis
+  - race_id: supreme-court-justice-7
+    candidate_ids:
+    - supreme-court-justice-7--debra-l-stephens
+  - race_id: ld-34-state-senator
+    candidate_ids:
+    - ld-34-state-senator--emily-alvarado
+  - race_id: ld-34-state-representative-1
+    candidate_ids:
+    - ld-34-state-representative-1--brianna-k-thomas
+  - race_id: ld-34-state-representative-2
+    candidate_ids:
+    - ld-34-state-representative-2--joe-fitzgibbon
+  - race_id: ld-36-state-senator
+    candidate_ids:
+    - ld-36-state-senator--noel-c-frame
+  - race_id: ld-36-state-representative-1
+    candidate_ids:
+    - ld-36-state-representative-1--julia-grant-reed
+  - race_id: ld-36-state-representative-2
+    candidate_ids:
+    - ld-36-state-representative-2--liz-berry
+  - race_id: ld-37-state-senator
+    candidate_ids:
+    - ld-37-state-senator--chipalo-street
+  - race_id: ld-37-state-representative-1
+    candidate_ids:
+    - ld-37-state-representative-1--kelabe-tewolde
+  - race_id: ld-37-state-representative-2
+    candidate_ids:
+    - ld-37-state-representative-2--jaelynn-scott
+  - race_id: ld-43-state-senator
+    candidate_ids:
+    - ld-43-state-senator--jamie-pedersen
+  - race_id: ld-43-state-representative-1
+    candidate_ids:
+    - ld-43-state-representative-1--nicole-macri
+  - race_id: ld-43-state-representative-2
+    candidate_ids:
+    - ld-43-state-representative-2--shaun-scott
+  - race_id: ld-46-state-senator
+    candidate_ids:
+    - ld-46-state-senator--javier-valdez
+  - race_id: ld-46-state-representative-1
+    candidate_ids:
+    - ld-46-state-representative-1--gerry-pollet
+  - race_id: ld-46-state-representative-2
+    candidate_ids:
+    - ld-46-state-representative-2--darya-farivar
+- source_id: nwpc-washington
+  captured_at: '2026-09-14T22:18:17Z'
+  reviewed_at: '2026-09-15T13:03:19Z'
+  evidence_locator: Official 2026 endorsements page, federal, statewide, legislative, judicial, King County, and
+    Seattle sections. Capture capture-nwpc-washington-20260914T221817Z-cf7862a44cf3.
+  decisions:
+  - race_id: us-house-7
+    candidate_ids:
+    - us-house-7--pramila-jayapal
+  - race_id: supreme-court-justice-1
+    candidate_ids:
+    - supreme-court-justice-1--colleen-melody
+  - race_id: supreme-court-justice-3
+    candidate_ids:
+    - supreme-court-justice-3--jaime-michelle-hawk
+  - race_id: supreme-court-justice-7
+    candidate_ids:
+    - supreme-court-justice-7--debra-l-stephens
+  - race_id: ld-11-state-representative-1
+    candidate_ids:
+    - ld-11-state-representative-1--ashley-fedan
+  - race_id: ld-32-state-senator
+    candidate_ids:
+    - ld-32-state-senator--cindy-ryu
+  - race_id: ld-32-state-representative-1
+    candidate_ids:
+    - ld-32-state-representative-1--danica-noble
+  - race_id: ld-32-state-representative-2
+    candidate_ids:
+    - ld-32-state-representative-2--lauren-davis
+  - race_id: ld-34-state-representative-2
+    candidate_ids:
+    - ld-34-state-representative-2--mary-anito
+  - race_id: ld-36-state-representative-1
+    candidate_ids:
+    - ld-36-state-representative-1--julia-grant-reed
+  - race_id: ld-36-state-representative-2
+    candidate_ids:
+    - ld-36-state-representative-2--liz-berry
+  - race_id: ld-37-state-senator
+    candidate_ids:
+    - ld-37-state-senator--tatiana-brown
+  - race_id: ld-37-state-representative-1
+    candidate_ids:
+    - ld-37-state-representative-1--sharon-tomiko-santos
+  - race_id: ld-37-state-representative-2
+    candidate_ids:
+    - ld-37-state-representative-2--jaelynn-scott
+  - race_id: ld-43-state-senator
+    candidate_ids:
+    - ld-43-state-senator--hannah-sabio-howell
+  - race_id: ld-43-state-representative-1
+    candidate_ids:
+    - ld-43-state-representative-1--nicole-macri
+  - race_id: ld-46-state-representative-2
+    candidate_ids:
+    - ld-46-state-representative-2--darya-farivar
+  - race_id: seattle-city-council-5
+    candidate_ids:
+    - seattle-city-council-5--nilu-jenks
+    - seattle-city-council-5--julie-kang
+  - race_id: king-county-council-2
+    candidate_ids:
+    - king-county-council-2--rebecca-saldana
+    - king-county-council-2--toshiko-grace-hasegawa
+  - race_id: king-county-council-8
+    candidate_ids:
+    - king-county-council-8--teresa-mosqueda
+  - race_id: king-county-director-of-elections
+    candidate_ids:
+    - king-county-director-of-elections--julie-wise
+  - race_id: king-county-prosecuting-attorney
+    candidate_ids:
+    - king-county-prosecuting-attorney--leesa-manion
+  - race_id: king-county-district-court-west-judge-1
+    candidate_ids:
+    - king-county-district-court-west-judge-1--nyjat-rose-akins
+  - race_id: seattle-municipal-court-judge-1
+    candidate_ids:
+    - seattle-municipal-court-judge-1--cat-mcdowall
+  - race_id: seattle-municipal-court-judge-2
+    candidate_ids:
+    - seattle-municipal-court-judge-2--katharine-edwards
+  - race_id: seattle-municipal-court-judge-6
+    candidate_ids:
+    - seattle-municipal-court-judge-6--shantrice-anderson

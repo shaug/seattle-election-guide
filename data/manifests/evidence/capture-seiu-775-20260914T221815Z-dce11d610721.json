@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 86374,
+  "canonical_url": "https://seiu775.org/2026endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "33aba6066bd324fde4d97bf5f6bee522a12170c4a4a871ec913fa6115f6f9564",
+  "http_status": 200,
+  "id": "capture-seiu-775-20260914T221815Z-dce11d610721",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party page retained locally for review only.",
+  "requested_url": "https://seiu775.org/2026endorsements/",
+  "retrieved_at": "2026-09-14T22:18:15Z",
+  "schema_version": "1.0",
+  "source_id": "seiu-775",
+  "storage_reference": "sha256/33/33aba6066bd324fde4d97bf5f6bee522a12170c4a4a871ec913fa6115f6f9564",
+  "storage_scope": "local_only",
+  "title": "SEIU 775 2026 election endorsements",
+  "updated_at": null
+}

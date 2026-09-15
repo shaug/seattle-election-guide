@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 7214,
+  "canonical_url": "https://wslc.org/wp-content/uploads/2026/05/2026-WSLC-election-endorsements.pdf",
+  "capture_method": "manual_upload",
+  "content_sha256": "9b5836cd020461bce4a9d47ad905f7713d1e4588f5378e4ac12620370602eca9",
+  "http_status": null,
+  "id": "capture-washington-state-labor-council-20260914T221815Z-004d4fb98d7f",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://wslc.org/wp-content/uploads/2026/05/2026-WSLC-election-endorsements.pdf",
+  "retrieved_at": "2026-09-14T22:18:15Z",
+  "schema_version": "1.0",
+  "source_id": "washington-state-labor-council",
+  "storage_reference": "sha256/9b/9b5836cd020461bce4a9d47ad905f7713d1e4588f5378e4ac12620370602eca9",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: Washington State Labor Council, AFL-CIO",
+  "updated_at": null
+}

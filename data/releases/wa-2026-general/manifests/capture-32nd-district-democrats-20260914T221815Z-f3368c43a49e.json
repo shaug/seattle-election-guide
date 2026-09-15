@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 5459,
+  "canonical_url": "https://32democrats.org/2026-endorsements/",
+  "capture_method": "manual_upload",
+  "content_sha256": "b9afa0ec854b344d4b6039dd5123653cc1ab733290d3e866526f3fd03fcc76c7",
+  "http_status": null,
+  "id": "capture-32nd-district-democrats-20260914T221815Z-f3368c43a49e",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://32democrats.org/2026-endorsements/",
+  "retrieved_at": "2026-09-14T22:18:15Z",
+  "schema_version": "1.0",
+  "source_id": "32nd-district-democrats",
+  "storage_reference": "sha256/b9/b9afa0ec854b344d4b6039dd5123653cc1ab733290d3e866526f3fd03fcc76c7",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: 32nd Legislative District Democrats",
+  "updated_at": null
+}

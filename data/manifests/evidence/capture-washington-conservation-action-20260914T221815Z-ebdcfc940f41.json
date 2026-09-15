@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 112677,
+  "canonical_url": "https://waconservationaction.org/our-work/areas-of-work/endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "b651a154e8a731dde56aa609e618c56fd1badb861144feca3987e42d2e2c7a65",
+  "http_status": 200,
+  "id": "capture-washington-conservation-action-20260914T221815Z-ebdcfc940f41",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party page retained locally for review only.",
+  "requested_url": "https://waconservationaction.org/our-work/areas-of-work/endorsements/",
+  "retrieved_at": "2026-09-14T22:18:15Z",
+  "schema_version": "1.0",
+  "source_id": "washington-conservation-action",
+  "storage_reference": "sha256/b6/b651a154e8a731dde56aa609e618c56fd1badb861144feca3987e42d2e2c7a65",
+  "storage_scope": "local_only",
+  "title": "Washington Conservation Action 2026 general election endorsements",
+  "updated_at": null
+}
