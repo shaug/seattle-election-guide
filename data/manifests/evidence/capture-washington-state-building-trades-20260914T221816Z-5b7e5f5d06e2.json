@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 70402,
+  "canonical_url": "https://www.wabuildingtrades.org/candidates.html",
+  "capture_method": "static_html",
+  "content_sha256": "0029aa98f93c0af083f2da30c7a8780c7093ec6d424aa95e27bc1fe2732defc9",
+  "http_status": 200,
+  "id": "capture-washington-state-building-trades-20260914T221816Z-5b7e5f5d06e2",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party page retained locally for review only.",
+  "requested_url": "https://www.wabuildingtrades.org/candidates.html",
+  "retrieved_at": "2026-09-14T22:18:16Z",
+  "schema_version": "1.0",
+  "source_id": "washington-state-building-trades",
+  "storage_reference": "sha256/00/0029aa98f93c0af083f2da30c7a8780c7093ec6d424aa95e27bc1fe2732defc9",
+  "storage_scope": "local_only",
+  "title": "Washington State Building and Construction Trades Council 2026 election endorsements",
+  "updated_at": null
+}

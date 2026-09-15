@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 3704,
+  "canonical_url": "https://oavotes.org/our-work/endorsements/2026-endorsements/",
+  "capture_method": "manual_upload",
+  "content_sha256": "8a12ba80f54ef111165c7a0ce0b53e1e104dc9d1b728592d5dccb47be0c2c7f3",
+  "http_status": null,
+  "id": "capture-oneamerica-votes-20260914T221816Z-bb44865d6b99",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://oavotes.org/our-work/endorsements/2026-endorsements/",
+  "retrieved_at": "2026-09-14T22:18:16Z",
+  "schema_version": "1.0",
+  "source_id": "oneamerica-votes",
+  "storage_reference": "sha256/8a/8a12ba80f54ef111165c7a0ce0b53e1e104dc9d1b728592d5dccb47be0c2c7f3",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: OneAmerica Votes",
+  "updated_at": null
+}

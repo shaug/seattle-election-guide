@@ -1,0 +1,243 @@
+{
+  "captured_at": "2026-09-14T22:18:17Z",
+  "decisions": [
+    {
+      "candidate_ids": [
+        "us-house-7--pramila-jayapal"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "us-house-7",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-1--colleen-melody"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "supreme-court-justice-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-3--jaime-michelle-hawk"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "supreme-court-justice-3",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "supreme-court-justice-7--debra-l-stephens"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "supreme-court-justice-7",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-11-state-representative-1--ashley-fedan"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "ld-11-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-32-state-senator--cindy-ryu"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "ld-32-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-32-state-representative-1--danica-noble"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "ld-32-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-32-state-representative-2--lauren-davis"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "ld-32-state-representative-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-34-state-representative-2--mary-anito"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "ld-34-state-representative-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-36-state-representative-1--julia-grant-reed"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "ld-36-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-36-state-representative-2--liz-berry"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "ld-36-state-representative-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-senator--tatiana-brown"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "ld-37-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-representative-1--sharon-tomiko-santos"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "ld-37-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-representative-2--jaelynn-scott"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "ld-37-state-representative-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-43-state-senator--hannah-sabio-howell"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "ld-43-state-senator",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-43-state-representative-1--nicole-macri"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "ld-43-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-46-state-representative-2--darya-farivar"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "ld-46-state-representative-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "seattle-city-council-5--nilu-jenks",
+        "seattle-city-council-5--julie-kang"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "seattle-city-council-5",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "king-county-council-2--rebecca-saldana",
+        "king-county-council-2--toshiko-grace-hasegawa"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "king-county-council-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "king-county-council-8--teresa-mosqueda"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "king-county-council-8",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "king-county-director-of-elections--julie-wise"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "king-county-director-of-elections",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "king-county-prosecuting-attorney--leesa-manion"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "king-county-prosecuting-attorney",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "king-county-district-court-west-judge-1--nyjat-rose-akins"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "king-county-district-court-west-judge-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "seattle-municipal-court-judge-1--cat-mcdowall"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "seattle-municipal-court-judge-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "seattle-municipal-court-judge-2--katharine-edwards"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "seattle-municipal-court-judge-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "seattle-municipal-court-judge-6--shantrice-anderson"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "seattle-municipal-court-judge-6",
+      "status": "endorsed"
+    }
+  ],
+  "evidence_locator": "Official 2026 endorsements page, federal, statewide, legislative, judicial, King County, and Seattle sections. Capture capture-nwpc-washington-20260914T221817Z-cf7862a44cf3.",
+  "source_id": "nwpc-washington"
+}

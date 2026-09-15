@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-nwpc-washington-20260914T221817Z-cf7862a44cf3",
+  "entered_at": "2026-09-14T22:46:43Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official 2026 endorsements page, federal, statewide, legislative, judicial, King County, and Seattle sections.",
+  "evidence_type": "web_page",
+  "id": "manual-nwpc-washington-20260914T224643Z-3f2235e83f32",
+  "review_note": "Human reviewer confirmed every source transcription for issue #401, including the documented current-cycle filtering and ambiguity treatments.",
+  "review_status": "verified",
+  "reviewed_at": "2026-09-15T13:03:19Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "nwpc-washington",
+  "transcription": "us-house-7: Pramila Jayapal\nsupreme-court-justice-1: Colleen Melody\nsupreme-court-justice-3: Jaime Michelle Hawk\nsupreme-court-justice-7: Debra L. Stephens\nld-11-state-representative-1: Ashley Fedan\nld-32-state-senator: Cindy Ryu\nld-32-state-representative-1: Danica Noble\nld-32-state-representative-2: Lauren Davis\nld-34-state-representative-2: Mary Anito\nld-36-state-representative-1: Julia Grant Reed\nld-36-state-representative-2: Liz Berry\nld-37-state-senator: Tatiana Brown\nld-37-state-representative-1: Sharon Tomiko Santos\nld-37-state-representative-2: Jaelynn Scott\nld-43-state-senator: Hannah Sabio-Howell\nld-43-state-representative-1: Nicole Macri\nld-46-state-representative-2: Darya Farivar\nseattle-city-council-5: Nilu Jenks, Julie Kang\nking-county-council-2: Rebecca Saldaña, Toshiko Grace Hasegawa\nking-county-council-8: Teresa Mosqueda\nking-county-director-of-elections: Julie Wise\nking-county-prosecuting-attorney: Leesa Manion\nking-county-district-court-west-judge-1: Nyjat Rose-Akins\nseattle-municipal-court-judge-1: Cat McDowall\nseattle-municipal-court-judge-2: Katharine Edwards\nseattle-municipal-court-judge-6: Shantrice Anderson"
+}

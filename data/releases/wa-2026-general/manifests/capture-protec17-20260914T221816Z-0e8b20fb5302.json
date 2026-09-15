@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 6122,
+  "canonical_url": "https://www.protec17.org/endorsements/",
+  "capture_method": "manual_upload",
+  "content_sha256": "6290fc20da566f4006e1f0069958aa9d83566e5d1266b3e18a143efa23301001",
+  "http_status": null,
+  "id": "capture-protec17-20260914T221816Z-0e8b20fb5302",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://www.protec17.org/endorsements/",
+  "retrieved_at": "2026-09-14T22:18:16Z",
+  "schema_version": "1.0",
+  "source_id": "protec17",
+  "storage_reference": "sha256/62/6290fc20da566f4006e1f0069958aa9d83566e5d1266b3e18a143efa23301001",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: PROTEC17",
+  "updated_at": null
+}

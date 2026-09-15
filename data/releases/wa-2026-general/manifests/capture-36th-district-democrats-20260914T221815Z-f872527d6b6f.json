@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 4868,
+  "canonical_url": "https://36th.org/endorsements-2026/",
+  "capture_method": "manual_upload",
+  "content_sha256": "3c7ea11e47af826426b5d90587f7639a7c8a86163350b94b1895b082b220a855",
+  "http_status": null,
+  "id": "capture-36th-district-democrats-20260914T221815Z-f872527d6b6f",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://36th.org/endorsements-2026/",
+  "retrieved_at": "2026-09-14T22:18:15Z",
+  "schema_version": "1.0",
+  "source_id": "36th-district-democrats",
+  "storage_reference": "sha256/3c/3c7ea11e47af826426b5d90587f7639a7c8a86163350b94b1895b082b220a855",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: 36th Legislative District Democrats",
+  "updated_at": null
+}

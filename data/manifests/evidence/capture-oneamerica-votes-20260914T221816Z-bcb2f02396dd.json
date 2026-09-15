@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 276155,
+  "canonical_url": "https://oavotes.org/our-work/endorsements/2026-endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "57d770d9317794b8e3a1f15a520453fa0d3c0935fc0966c711b2c14ca944772c",
+  "http_status": 200,
+  "id": "capture-oneamerica-votes-20260914T221816Z-bcb2f02396dd",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party page retained locally for review only.",
+  "requested_url": "https://oavotes.org/our-work/endorsements/2026-endorsements/",
+  "retrieved_at": "2026-09-14T22:18:16Z",
+  "schema_version": "1.0",
+  "source_id": "oneamerica-votes",
+  "storage_reference": "sha256/57/57d770d9317794b8e3a1f15a520453fa0d3c0935fc0966c711b2c14ca944772c",
+  "storage_scope": "local_only",
+  "title": "OneAmerica Votes 2026 election endorsements",
+  "updated_at": null
+}

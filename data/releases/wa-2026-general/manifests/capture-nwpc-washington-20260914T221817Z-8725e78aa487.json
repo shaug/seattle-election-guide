@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 6586,
+  "canonical_url": "https://www.nwpcwa.org/endorsements_2026",
+  "capture_method": "manual_upload",
+  "content_sha256": "7668d0290b7cd13e2324a4e88122338bc66d2b00275631c44d1b2a0dc6180f1d",
+  "http_status": null,
+  "id": "capture-nwpc-washington-20260914T221817Z-8725e78aa487",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://www.nwpcwa.org/endorsements_2026",
+  "retrieved_at": "2026-09-14T22:18:17Z",
+  "schema_version": "1.0",
+  "source_id": "nwpc-washington",
+  "storage_reference": "sha256/76/7668d0290b7cd13e2324a4e88122338bc66d2b00275631c44d1b2a0dc6180f1d",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: National Women's Political Caucus of Washington",
+  "updated_at": null
+}

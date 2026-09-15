@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-washington-education-association-20260914T221816Z-4a939298ad5e",
+  "entered_at": "2026-09-14T22:46:43Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official 2026 endorsements page, ballot initiatives and legislative endorsements.",
+  "evidence_type": "web_page",
+  "id": "manual-washington-education-association-20260914T224643Z-04f47077ec37",
+  "review_note": "Human reviewer confirmed every source transcription for issue #401, including the documented current-cycle filtering and ambiguity treatments.",
+  "review_status": "verified",
+  "reviewed_at": "2026-09-15T13:03:19Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "washington-education-association",
+  "transcription": "initiative-26-001: No\ninitiative-26-638: No\ninitiative-26-645: No\nsupreme-court-justice-1: Colleen Melody\nsupreme-court-justice-3: Jaime Michelle Hawk\nsupreme-court-justice-4: Ian Birk\nsupreme-court-justice-5: Theo Angelis\nsupreme-court-justice-7: Debra L. Stephens\nus-house-7: Pramila Jayapal\nus-house-9: Adam Smith\nld-32-state-senator: Cindy Ryu\nld-32-state-representative-2: Lauren Davis\nld-34-state-representative-2: Joe Fitzgibbon\nld-43-state-senator: Jamie Pedersen\nld-46-state-representative-1: Gerry Pollet"
+}

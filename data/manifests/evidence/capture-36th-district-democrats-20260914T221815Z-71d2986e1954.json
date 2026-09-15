@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 97476,
+  "canonical_url": "https://36th.org/endorsements-2026/",
+  "capture_method": "static_html",
+  "content_sha256": "302afcf9c605bc17093749b138cfc543de615ff17171bad82bc5ebad344c42f9",
+  "http_status": 200,
+  "id": "capture-36th-district-democrats-20260914T221815Z-71d2986e1954",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party page retained locally for review only.",
+  "requested_url": "https://36th.org/endorsements-2026/",
+  "retrieved_at": "2026-09-14T22:18:15Z",
+  "schema_version": "1.0",
+  "source_id": "36th-district-democrats",
+  "storage_reference": "sha256/30/302afcf9c605bc17093749b138cfc543de615ff17171bad82bc5ebad344c42f9",
+  "storage_scope": "local_only",
+  "title": "36th District Democrats 2026 general election endorsements",
+  "updated_at": null
+}

@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-washington-state-building-trades-20260914T221816Z-5b7e5f5d06e2",
+  "entered_at": "2026-09-14T22:46:43Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official candidates page, 2026 General Election section.",
+  "evidence_type": "web_page",
+  "id": "manual-washington-state-building-trades-20260914T224643Z-7a8724683760",
+  "review_note": "Human reviewer confirmed every source transcription for issue #401, including the documented current-cycle filtering and ambiguity treatments.",
+  "review_status": "verified",
+  "reviewed_at": "2026-09-15T13:03:19Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "washington-state-building-trades",
+  "transcription": "us-house-7: Pramila Jayapal\nus-house-9: Adam Smith\nld-32-state-senator: Jesse Salomon\nld-32-state-representative-1: Keith Scully\nld-32-state-representative-2: Lauren Davis\nld-34-state-senator: Emily Alvarado\nld-34-state-representative-2: Joe Fitzgibbon\nld-36-state-representative-1: Julia Grant Reed\nld-36-state-representative-2: Liz Berry\nld-37-state-senator: Chipalo Street\nld-43-state-senator: Jamie Pedersen\nld-46-state-senator: Javier Valdez\nld-46-state-representative-1: Gerry Pollet\nking-county-council-8: Teresa Mosqueda\nsupreme-court-justice-1: Colleen Melody\nsupreme-court-justice-3: Jaime Michelle Hawk\nsupreme-court-justice-4: Ian Birk\nsupreme-court-justice-5: Theo Angelis"
+}

@@ -1,11 +1,16 @@
 from datetime import UTC, datetime
 from pathlib import Path
 
+import pytest
 from typer.testing import CliRunner
 
 from election_guide.cli import app
-from election_guide.sources.catalog import read_panel_snapshot_catalog
-from election_guide.sources.registry import read_source_registry, source_registry_hash
+from election_guide.sources.catalog import (
+    appended_panel_snapshot,
+    read_panel_snapshot_catalog,
+)
+from election_guide.sources.panel import build_panel_snapshot
+from election_guide.sources.registry import read_source_registry
 
 PROJECT_ROOT = Path(__file__).parents[1]
 PRIMARY_REGISTRY_PATH = PROJECT_ROOT / "config/sources/default.yaml"
@@ -43,32 +48,24 @@ def test_general_source_registry_validates_through_cli() -> None:
     )
 
 
-def test_general_panel_snapshot_is_current_and_byte_idempotent(tmp_path: Path) -> None:
+def test_general_panel_snapshot_preserves_frozen_identity_contract() -> None:
     registry = read_source_registry(GENERAL_REGISTRY_PATH)
     committed_catalog = read_panel_snapshot_catalog(GENERAL_CATALOG_PATH)
-    output = tmp_path / "panel-snapshots.json"
-    arguments = [
-        "sources",
-        "snapshot",
-        str(GENERAL_REGISTRY_PATH),
-        "--catalog-path",
-        str(output),
-    ]
+    current_projection = build_panel_snapshot(registry)
 
-    first_result = CliRunner().invoke(app, arguments)
-    assert first_result.exit_code == 0, first_result.output
-    first_bytes = output.read_bytes()
+    assert committed_catalog.election_id == "wa-2026-general"
+    assert len(committed_catalog.snapshots) == 1
+    published = committed_catalog.snapshots[0]
+    assert published.panel_id == "wa-2026-general-default-sources-v1"
+    assert published.panel_hash == (
+        "b0fb2a603bd98da49d3282d2daa0cb55ff56e0bbdd46104c8b5a4a441b747a95"
+    )
+    assert published.model_copy(update={"panel_hash": current_projection.panel_hash}) == (
+        current_projection
+    )
 
-    second_result = CliRunner().invoke(app, arguments)
-    assert second_result.exit_code == 0, second_result.output
-    assert output.read_bytes() == first_bytes
-
-    generated_catalog = read_panel_snapshot_catalog(output)
-    assert committed_catalog == generated_catalog
-    assert generated_catalog.election_id == "wa-2026-general"
-    assert len(generated_catalog.snapshots) == 1
-    assert generated_catalog.snapshots[0].panel_id == "wa-2026-general-default-sources-v1"
-    assert generated_catalog.snapshots[0].panel_hash == source_registry_hash(registry)
+    with pytest.raises(ValueError, match="cannot be rewritten"):
+        appended_panel_snapshot(committed_catalog, current_projection)
 
 
 def test_general_panel_preserves_primary_selection_contract() -> None:

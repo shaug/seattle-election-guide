@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 751,
+  "canonical_url": "https://www.washingtoncan.org/endorsements",
+  "capture_method": "manual_upload",
+  "content_sha256": "e06d53b9e3dfc3f09fb5eb59c816ef6e429677825cea0914488221db0e2c6da8",
+  "http_status": null,
+  "id": "capture-washington-community-action-network-20260914T221815Z-c79740ac447b",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://www.washingtoncan.org/endorsements",
+  "retrieved_at": "2026-09-14T22:18:15Z",
+  "schema_version": "1.0",
+  "source_id": "washington-community-action-network",
+  "storage_reference": "sha256/e0/e06d53b9e3dfc3f09fb5eb59c816ef6e429677825cea0914488221db0e2c6da8",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: Washington Community Action Network",
+  "updated_at": null
+}

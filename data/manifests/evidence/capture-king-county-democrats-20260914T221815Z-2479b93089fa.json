@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 80924,
+  "canonical_url": "https://www.kcdems.org/our-party/e/2026-endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "b3ac3f4a04f06b82bd47bb23390a0f7646bb3e6c99d1a7052d43df4954ab612d",
+  "http_status": 200,
+  "id": "capture-king-county-democrats-20260914T221815Z-2479b93089fa",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party page retained locally for review only.",
+  "requested_url": "https://www.kcdems.org/our-party/e/2026-endorsements/",
+  "retrieved_at": "2026-09-14T22:18:15Z",
+  "schema_version": "1.0",
+  "source_id": "king-county-democrats",
+  "storage_reference": "sha256/b3/b3ac3f4a04f06b82bd47bb23390a0f7646bb3e6c99d1a7052d43df4954ab612d",
+  "storage_scope": "local_only",
+  "title": "King County Democrats 2026 general election endorsements",
+  "updated_at": null
+}

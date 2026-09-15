@@ -658,13 +658,13 @@ sources:
       kind: all_seattle_ballot_races
       rationale: Count only roster decisions matched to Seattle-ballot races.
     discovery:
-      status: published
+      status: not_found
       checked_at: 2026-09-14T12:23:04Z
       requested_url: https://www.seattlesubway.org/election-endorsements/
       canonical_url: https://www.seattlesubway.org/election-endorsements/
       media_type: text/html
-      evidence_locator: Official election-endorsements page carrying the organization's current 2026 publication.
-      notes: The current-cycle publication was located without using its choices to select or classify sources.
+      evidence_locator: Official election-endorsements page whose current heading remained specific to the August 2026 primary and whose summary said general-election endorsements were still prospective.
+      notes: No official 2026 general-election publication was located; the primary recommendations were not reused as general-election evidence.
 
   - id: transportation-choices-coalition
     name: Transportation Choices Coalition

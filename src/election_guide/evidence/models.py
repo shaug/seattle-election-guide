@@ -206,6 +206,7 @@ class ManualEntryDraft(EvidenceModel):
     capture_id: str = Field(pattern=CAPTURE_ID_PATTERN)
     evidence_type: Literal[
         "screenshot",
+        "web_page",
         "blocked_page",
         "paywalled_page",
         "email",
