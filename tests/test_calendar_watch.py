@@ -124,6 +124,28 @@ def _calendar() -> ElectionCalendar:
     )
 
 
+def _calendar_with_collection_window() -> ElectionCalendar:
+    """The same election with the opening sweep and its publication deadline."""
+    payload = _calendar().model_dump(mode="json")
+    payload["milestones"].extend(
+        [
+            {
+                "election_id": "wa-2027-general",
+                "id": "collection-opens",
+                "kind": "collection_opens",
+                "offset_days": -56,
+            },
+            {
+                "election_id": "wa-2027-general",
+                "id": "guide-publishes",
+                "kind": "guide_publishes",
+                "offset_days": -18,
+            },
+        ]
+    )
+    return ElectionCalendar.model_validate(payload)
+
+
 AUTHORITY_IDS = frozenset({"king-county-elections", "wa-secretary-of-state"})
 
 
@@ -212,6 +234,52 @@ def test_a_kind_that_promises_no_checkable_artifact_is_never_escalated() -> None
 
     assert "ballots-mail" not in _missing_ids(as_of)
     assert "election-day" not in _missing_ids(as_of)
+
+
+def test_a_collection_opening_without_a_sweep_escalates_after_the_guide_deadline() -> None:
+    calendar = _calendar_with_collection_window()
+
+    at_deadline = missing_artifacts(calendar, as_of=date(2027, 10, 15), artifacts=_artifacts())
+    after_deadline = missing_artifacts(calendar, as_of=date(2027, 10, 16), artifacts=_artifacts())
+
+    assert "collection-opens" not in [item.milestone.id for item in at_deadline]
+    opening = next(item for item in after_deadline if item.milestone.id == "collection-opens")
+    assert opening.window.start == date(2027, 9, 7)
+    assert opening.window.end == date(2027, 10, 15)
+    assert opening.stages == ("overdue",)
+
+
+def test_a_collection_sweep_capture_may_arrive_weeks_after_opening() -> None:
+    calendar = _calendar_with_collection_window()
+    sweep_artifacts = _artifacts(
+        captures=(
+            _capture("The Stranger endorsements", "2027-10-01T15:00:00Z", source_id="the-stranger"),
+        )
+    )
+    authority_artifacts = _artifacts(
+        captures=(_capture(ELECTION_NIGHT_TITLE, "2027-10-01T15:00:00Z"),)
+    )
+
+    swept = missing_artifacts(calendar, as_of=date(2027, 12, 31), artifacts=sweep_artifacts)
+    not_swept = missing_artifacts(calendar, as_of=date(2027, 12, 31), artifacts=authority_artifacts)
+
+    assert "collection-opens" not in [item.milestone.id for item in swept]
+    assert "collection-opens" in [item.milestone.id for item in not_swept]
+
+
+def test_a_missing_collection_sweep_becomes_stale_fourteen_days_after_publication() -> None:
+    calendar = _calendar_with_collection_window()
+
+    before_stale = missing_artifacts(calendar, as_of=date(2027, 10, 29), artifacts=_artifacts())
+    after_stale = missing_artifacts(calendar, as_of=date(2027, 10, 30), artifacts=_artifacts())
+
+    assert next(
+        item.stages for item in before_stale if item.milestone.id == "collection-opens"
+    ) == ("overdue",)
+    assert next(item.stages for item in after_stale if item.milestone.id == "collection-opens") == (
+        "overdue",
+        "stale",
+    )
 
 
 def test_a_matching_evidence_manifest_leaves_the_milestone_alone() -> None:

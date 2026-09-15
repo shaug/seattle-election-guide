@@ -85,36 +85,34 @@ unzip -t dist/primary-release/seattle-election-guide-2026-primary.2.zip
 
 ## Reproducibility
 
-Repeating a build with identical inputs produces the same release. That is checked, on every pull
-request and on demand locally, by building twice with one `--generated-at` and comparing the two
-archives:
+Repeating a build with identical inputs produces the same deterministic release artifacts on the
+Linux environment used for deployment. That is checked on every pull request and on demand locally
+by building twice with one `--generated-at` and comparing the manifest-declared contract:
 
 ```bash
 make check-release-reproducible
 ```
 
-Every artifact is held to its exact bytes, the two rendered screenshots included. What issue #367
-changed is not that contract but what a failure can say. `cmp` alone printed a single offset into
-compressed data, which named nothing: the first byte to differ belongs to whichever entry's header
-the deflate stream reached first, so a moved screenshot surfaced as an offset inside
-`release-manifest.json`. The gate now runs two comparisons, because they cover different things —
-`diff -rq` over the two unpacked bundles names the artifact that differs, and `cmp` over the two
-archives holds the container itself to its exact bytes, covering what the bundles cannot show: entry
-order, timestamps, permissions, and compression settings.
+Schema 1.2 hashes every included artifact except the two rasterized QA images,
+`validation/rendering/screenshots/desktop.png` and
+`validation/rendering/screenshots/mobile.png`. Those paths are declared explicitly in
+`unhashed_artifacts`; verification rejects any missing, overlapping, or additional unhashed path.
+`release compare` verifies both bundles and requires every hashed artifact, including
+`release-status.json`, to have identical bytes. It also requires the two release manifests to be
+byte-identical. Schema 1.1 remains supported and continues to enforce its historical contract, in
+which screenshots are hashed.
+
+The screenshots remain inside the published GitHub Release ZIP as exact review evidence. Their
+bytes, archive metadata, and compression can vary without failing the reproducibility gate. The
+published whole-bundle SHA-256 still protects the exact bundle tree selected for release, including
+both screenshots; excluding them from schema 1.2's cross-build comparison does not remove that
+published-bundle integrity check.
 
 The gate is defined once, in the `Makefile`, and CI invokes that target rather than restating it, so
 the command a contributor runs locally cannot drift from the one CI runs.
 
-That gate used to fail roughly one run in seven on same-input builds. The cause was in the capture,
-not the comparison: `rendering/browser.py` waited a fixed interval and then photographed whichever
-frame existed. It now waits on a readiness signal — fonts loaded, every animation finished, two
-frames produced — asserts the page settled rather than assuming it, and runs Chrome with the
-compositor and rasterization controls that keep a half-drawn or partially rastered frame from being
-captured. Measured on the CI runner, 30 same-input builds diverged 4 times before the change, 2
-times with the readiness signal but without those flags, and 0 times with both. The readiness signal
-alone is therefore not sufficient; the flags were not measured on their own, so neither is credited
-with the result independently. No tolerance is applied to a screenshot, because none is needed, and
-one would have hidden the defect instead of fixing it.
+The guarantee is intentionally Linux-only. The project does not spend CI compute establishing
+macOS equivalence for a release pipeline that is deployed only from Linux.
 
 ## GitHub Release
 

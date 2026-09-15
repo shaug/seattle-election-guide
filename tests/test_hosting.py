@@ -718,6 +718,24 @@ def test_bundle_drift_does_not_replace_existing_output(tmp_path: Path) -> None:
     assert not (output / "e").exists()
 
 
+def test_schema_1_1_bundle_keeps_screenshot_hash_enforced(tmp_path: Path) -> None:
+    """Issue #256 preserves the historical manifest contract: an old bundle
+    did hash screenshots, so its exact rasterized evidence remains enforced."""
+    current, older = _write_archive_bundles(tmp_path)
+    screenshot = current / "validation/rendering/screenshots/desktop.png"
+    screenshot.write_bytes(b"tampered legacy screenshot")
+
+    with pytest.raises(
+        ValueError,
+        match=r"artifact hash mismatch: validation/rendering/screenshots/desktop\.png",
+    ):
+        stage_pages_site(
+            _write_site_manifest(tmp_path, current_first=True),
+            {CURRENT_BUNDLE_ID: current, OLDER_BUNDLE_ID: older},
+            tmp_path / "site",
+        )
+
+
 def test_verify_staged_site_rejects_tamper_deletion_and_unexpected_assets(
     tmp_path: Path,
 ) -> None:
@@ -1450,21 +1468,30 @@ def test_wrangler_and_workflow_keep_deployment_gated() -> None:
         "CLOUDFLARE_ACCOUNT_ID": "${{ secrets.CLOUDFLARE_ACCOUNT_ID }}",
         "CLOUDFLARE_API_TOKEN": "${{ secrets.CLOUDFLARE_API_TOKEN }}",
     }
-    check_steps = workflow["jobs"]["check"]["steps"]
-    # The check job runs on pull requests, including from forks, so no deployment
-    # credential may reach it. The automatic job token is not one: it is bounded by
-    # the workflow's read-only permissions, and listing published releases needs it.
-    assert not any("secrets" in json.dumps(step) for step in check_steps)
+    validation_steps = [
+        step
+        for job_id in ("python", "client", "contracts", "tests", "publication", "check")
+        for step in workflow["jobs"][job_id]["steps"]
+    ]
+    # Every validation lane runs on pull requests, including from forks, so no
+    # deployment credential may reach one. The automatic job token is not one: it
+    # is bounded by the workflow's read-only permissions, and listing published
+    # releases needs it.
+    assert not any("secrets" in json.dumps(step) for step in validation_steps)
     assert workflow["permissions"] == {"contents": "read"}
+    contract_steps = workflow["jobs"]["contracts"]["steps"]
     releases_step = next(
         step
-        for step in check_steps
+        for step in contract_steps
         if step.get("name") == "Verify declared release versions are published"
     )
     assert releases_step["env"] == {"GH_TOKEN": "${{ github.token }}"}
     assert "hosting verify-releases config/hosting/site.yaml" in releases_step["run"]
+    publication_steps = workflow["jobs"]["publication"]["steps"]
     stage_step = next(
-        step for step in check_steps if step.get("name") == "Stage verified Cloudflare Pages site"
+        step
+        for step in publication_steps
+        if step.get("name") == "Stage verified Cloudflare Pages site"
     )
     assert "config/hosting/site.yaml" in stage_step["run"]
     assert "--bundle wa-2026-primary-2026-primary.2=" in stage_step["run"]

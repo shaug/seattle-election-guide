@@ -20,6 +20,15 @@ modules with Biome, type-checks them with `tsc --noEmit --checkJs`, and then
 runs the Node tests. `make format` fixes both languages: ruff for Python,
 `biome check --write` for JavaScript.
 
+The complete pytest suite remains available through `make test`. For a faster
+focused run, use `make test-unit` for tests that do not build full publication
+artifacts or drive Chromium, and `make test-integration` for the rendering,
+browser, hosting, and release-artifact suite. CI divides that integration suite
+again into duration-balanced comparison, rendering, and artifact partitions;
+their membership is defined once in the `Makefile` (issue #428).
+
+Neither focused target replaces `make check` before proposing a diff.
+
 `make types` regenerates the client payload declarations from the Pydantic
 models (docs/FRONTEND.md, The data contract). Run it after changing anything
 the payload publishes and commit the result; `make check` fails while the
@@ -41,13 +50,14 @@ make check-release-reproducible
 It commits nothing and takes about half a minute. Nothing else here needs it —
 a docs-only change cannot move the release build.
 
-**When CI fails this gate.** `diff -rq` names the artifact whose bytes differ
-between the two builds; if it passes and `cmp` still fails, the difference is in
-the archive container rather than its contents. Every artifact is held to exact
-bytes, so a difference means something in the pipeline is not a pure function of
-its inputs — an unordered iteration, a clock read, a filesystem order — or, if
-it is one of the two screenshots, that the rendered page itself moved. It
-reproduces locally with the command above, which is the same target CI runs.
+**When CI fails this gate.** `release compare` names the deterministic artifact
+whose bytes differ between the two builds. Schema 1.2 excludes only the desktop
+and mobile rasterized screenshots from that cross-build comparison; they remain
+inside the release ZIP for inspection and under the published whole-bundle hash.
+A failure therefore means a hashed part of the pipeline is not a pure function
+of its inputs — for example, an unordered iteration, clock read, or filesystem
+order. It reproduces locally with the command above, which is the same target CI
+runs.
 
 It is not a flake to re-run past. If a re-run goes green without a change,
 say so on the pull request rather than merging on the second attempt.
