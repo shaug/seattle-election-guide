@@ -199,6 +199,10 @@ and note. All public prose fields are bounded, and the tracked transcription is 
 verification excerpt limited to 4,000 characters; complete copyrighted or paywalled text remains
 only in the restricted capture.
 
+Use `web_page` for a manually transcribed `text/html` capture and `pdf` for an
+`application/pdf` capture. The adapter rejects either label when the manifest media type does not
+match.
+
 ```yaml
 schema_version: "1.0"
 entry_method: manual

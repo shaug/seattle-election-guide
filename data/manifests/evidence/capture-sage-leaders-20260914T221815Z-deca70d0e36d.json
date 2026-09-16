@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 148581,
+  "canonical_url": "https://www.sageleaders.org/2026-endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "67a0c48fe66b7861da83f17b89d7eccb0b15dc46d602abeeb6f2c107831a4257",
+  "http_status": 200,
+  "id": "capture-sage-leaders-20260914T221815Z-deca70d0e36d",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party page retained locally for review only.",
+  "requested_url": "https://www.sageleaders.org/2026-endorsements",
+  "retrieved_at": "2026-09-14T22:18:15Z",
+  "schema_version": "1.0",
+  "source_id": "sage-leaders",
+  "storage_reference": "sha256/67/67a0c48fe66b7861da83f17b89d7eccb0b15dc46d602abeeb6f2c107831a4257",
+  "storage_scope": "local_only",
+  "title": "Sage Leaders 2026 general election endorsements",
+  "updated_at": null
+}

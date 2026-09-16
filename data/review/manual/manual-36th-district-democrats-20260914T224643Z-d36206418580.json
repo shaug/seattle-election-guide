@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-36th-district-democrats-20260914T221815Z-71d2986e1954",
+  "entered_at": "2026-09-14T22:46:43Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official 2026 elections page updated August 15, including Advanced to General labels.",
+  "evidence_type": "web_page",
+  "id": "manual-36th-district-democrats-20260914T224643Z-d36206418580",
+  "review_note": "Human reviewer confirmed every source transcription for issue #401, including the documented current-cycle filtering and ambiguity treatments.",
+  "review_status": "verified",
+  "reviewed_at": "2026-09-15T13:03:19Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "36th-district-democrats",
+  "transcription": "us-house-7: Pramila Jayapal\nsupreme-court-justice-1: Colleen Melody\nsupreme-court-justice-3: Jaime Michelle Hawk\nsupreme-court-justice-4: Ian Birk\nsupreme-court-justice-5: Theo Angelis\nsupreme-court-justice-7: Debra L. Stephens\nld-36-state-senator: Noel C. Frame\nld-36-state-representative-1: Julia Grant Reed\nld-36-state-representative-2: Liz Berry\nking-county-assessor: Rob Foxcurran\nking-county-director-of-elections: Julie Wise\nking-county-prosecuting-attorney: Leesa Manion\nking-county-council-4: Jorge L. Barón\nking-county-district-court-west-judge-1: Bardi Martin, Nyjat Rose-Akins\nseattle-city-council-5: Nilu Jenks\nseattle-municipal-court-judge-2: Katharine Edwards\nseattle-municipal-court-judge-3: Pooja Vaddadi\nseattle-municipal-court-judge-4: Anita Crawford-Willis\nseattle-municipal-court-judge-6: Shantrice Anderson"
+}

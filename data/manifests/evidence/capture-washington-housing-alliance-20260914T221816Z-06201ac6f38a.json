@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 294053,
+  "canonical_url": "https://www.wahousingalliance.org/endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "3032a583ae0d8acba466d62f226f17ed5758da08eafe38130c162e7315289045",
+  "http_status": 200,
+  "id": "capture-washington-housing-alliance-20260914T221816Z-06201ac6f38a",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party page retained locally for review only.",
+  "requested_url": "https://www.wahousingalliance.org/endorsements",
+  "retrieved_at": "2026-09-14T22:18:16Z",
+  "schema_version": "1.0",
+  "source_id": "washington-housing-alliance",
+  "storage_reference": "sha256/30/3032a583ae0d8acba466d62f226f17ed5758da08eafe38130c162e7315289045",
+  "storage_scope": "local_only",
+  "title": "Washington Housing Alliance 2026 election endorsements",
+  "updated_at": null
+}

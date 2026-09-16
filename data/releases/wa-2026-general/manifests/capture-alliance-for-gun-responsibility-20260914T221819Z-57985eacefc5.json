@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 5744,
+  "canonical_url": "https://gunresponsibility.org/2026-endorsements/",
+  "capture_method": "manual_upload",
+  "content_sha256": "7644d81f4b190f170bdc055cbe4671acdbc99af9cd2f0d4851c5255d52814199",
+  "http_status": null,
+  "id": "capture-alliance-for-gun-responsibility-20260914T221819Z-57985eacefc5",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://gunresponsibility.org/2026-endorsements/",
+  "retrieved_at": "2026-09-14T22:18:19Z",
+  "schema_version": "1.0",
+  "source_id": "alliance-for-gun-responsibility",
+  "storage_reference": "sha256/76/7644d81f4b190f170bdc055cbe4671acdbc99af9cd2f0d4851c5255d52814199",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: Alliance for Gun Responsibility Victory Fund",
+  "updated_at": null
+}

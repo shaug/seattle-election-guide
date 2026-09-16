@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 4669,
+  "canonical_url": "https://www.46dems.org/2026_46th_district_dems_endorsed_candidates_campaigns",
+  "capture_method": "manual_upload",
+  "content_sha256": "434eede52b631616bec106b731435bde94b0e06579abe34b5e21f31ebf6549ae",
+  "http_status": null,
+  "id": "capture-46th-district-democrats-20260914T221815Z-775feb24d58f",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://www.46dems.org/2026_46th_district_dems_endorsed_candidates_campaigns",
+  "retrieved_at": "2026-09-14T22:18:15Z",
+  "schema_version": "1.0",
+  "source_id": "46th-district-democrats",
+  "storage_reference": "sha256/43/434eede52b631616bec106b731435bde94b0e06579abe34b5e21f31ebf6549ae",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: 46th Legislative District Democrats",
+  "updated_at": null
+}

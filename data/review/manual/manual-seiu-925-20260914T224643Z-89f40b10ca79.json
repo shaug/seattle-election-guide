@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-seiu-925-20260914T221816Z-6301e0a9e57c",
+  "entered_at": "2026-09-14T22:46:43Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official 2026 endorsements page, statewide, legislative, King County, and Seattle sections.",
+  "evidence_type": "web_page",
+  "id": "manual-seiu-925-20260914T224643Z-89f40b10ca79",
+  "review_note": "Human reviewer confirmed every source transcription for issue #401, including the documented current-cycle filtering and ambiguity treatments.",
+  "review_status": "verified",
+  "reviewed_at": "2026-09-15T13:03:19Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "seiu-925",
+  "transcription": "supreme-court-justice-1: Colleen Melody\nsupreme-court-justice-3: Jaime Michelle Hawk\nsupreme-court-justice-4: Ian Birk\nsupreme-court-justice-5: Theo Angelis\nsupreme-court-justice-7: Debra L. Stephens\nld-11-state-representative-1: David Hackney\nld-11-state-representative-2: Steve Bergquist\nld-32-state-senator: Jesse Salomon\nld-32-state-representative-2: Lauren Davis\nld-34-state-senator: Emily Alvarado\nld-34-state-representative-1: Brianna K. Thomas\nld-34-state-representative-2: Joe Fitzgibbon\nld-36-state-senator: Noel C. Frame\nld-36-state-representative-1: Julia Grant Reed\nld-36-state-representative-2: Liz Berry\nld-37-state-senator: Chipalo Street\nld-37-state-representative-1: Sharon Tomiko Santos\nld-37-state-representative-2: Jaelynn Scott\nld-43-state-senator: Jamie Pedersen\nld-43-state-representative-1: Nicole Macri\nld-43-state-representative-2: Shaun Scott\nld-46-state-senator: Javier Valdez\nld-46-state-representative-1: Gerry Pollet\nld-46-state-representative-2: Darya Farivar\nking-county-council-2: Rebecca Saldaña\nking-county-council-4: Jorge L. Barón\nking-county-council-8: Teresa Mosqueda\nseattle-city-council-5: Nilu Jenks\nseattle-municipal-court-judge-5: Gabe Rothstein"
+}

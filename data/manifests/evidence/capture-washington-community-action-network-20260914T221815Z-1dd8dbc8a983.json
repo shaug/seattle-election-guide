@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 160877,
+  "canonical_url": "https://www.washingtoncan.org/endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "9907042dd2ef8f8a1966e77dc8abae2b9dcc167d8c3f2c5925edc3d3e887c078",
+  "http_status": 200,
+  "id": "capture-washington-community-action-network-20260914T221815Z-1dd8dbc8a983",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party page retained locally for review only.",
+  "requested_url": "https://www.washingtoncan.org/endorsements",
+  "retrieved_at": "2026-09-14T22:18:15Z",
+  "schema_version": "1.0",
+  "source_id": "washington-community-action-network",
+  "storage_reference": "sha256/99/9907042dd2ef8f8a1966e77dc8abae2b9dcc167d8c3f2c5925edc3d3e887c078",
+  "storage_scope": "local_only",
+  "title": "Washington Community Action Network 2026 general election endorsements",
+  "updated_at": null
+}

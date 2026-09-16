@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 8230,
+  "canonical_url": "https://www.kcdems.org/our-party/e/2026-endorsements/",
+  "capture_method": "manual_upload",
+  "content_sha256": "45cfe5b168913c8525972f802e5c1ca06021b6d015dc1dde674cfe945e4c4c0f",
+  "http_status": null,
+  "id": "capture-king-county-democrats-20260914T221815Z-852f64800373",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://www.kcdems.org/our-party/e/2026-endorsements/",
+  "retrieved_at": "2026-09-14T22:18:15Z",
+  "schema_version": "1.0",
+  "source_id": "king-county-democrats",
+  "storage_reference": "sha256/45/45cfe5b168913c8525972f802e5c1ca06021b6d015dc1dde674cfe945e4c4c0f",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: King County Democrats",
+  "updated_at": null
+}

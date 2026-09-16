@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 87738,
+  "canonical_url": "https://www.mlklabor.org/endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "fa635798a48dc724c703537547bbfabb47daf9fcc0708354b20ac9898bdb3e84",
+  "http_status": 200,
+  "id": "capture-mlk-labor-20260914T221816Z-e6050e0b29c9",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party page retained locally for review only.",
+  "requested_url": "https://www.mlklabor.org/endorsements/",
+  "retrieved_at": "2026-09-14T22:18:16Z",
+  "schema_version": "1.0",
+  "source_id": "mlk-labor",
+  "storage_reference": "sha256/fa/fa635798a48dc724c703537547bbfabb47daf9fcc0708354b20ac9898bdb3e84",
+  "storage_scope": "local_only",
+  "title": "MLK Labor 2026 general election endorsements",
+  "updated_at": null
+}

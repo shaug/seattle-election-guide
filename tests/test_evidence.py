@@ -357,6 +357,48 @@ def test_manual_entry_rejects_evidence_type_mismatch(tmp_path: Path) -> None:
         import_manual_entry(draft_path, manifest_dir, storage_root, tmp_path / "review")
 
 
+def test_manual_entry_accepts_web_page_with_html_capture(tmp_path: Path) -> None:
+    storage_root = tmp_path / "snapshots"
+    manifest_dir = tmp_path / "manifests"
+    manifest = read_capture_manifest(
+        record_capture(_capture_request(), FIXTURES / "static.html", storage_root, manifest_dir)
+    )
+    raw: dict[str, Any] = read_yaml(FIXTURES / "manual-entry.yaml")
+    raw["capture_id"] = manifest.id
+    raw["evidence_type"] = "web_page"
+
+    entry = validate_manual_draft(
+        ManualEntryDraft.model_validate(raw),
+        manifest_dir,
+        storage_root,
+    )
+
+    assert entry.evidence_type == "web_page"
+
+
+def test_manual_entry_rejects_web_page_with_non_html_capture(tmp_path: Path) -> None:
+    storage_root = tmp_path / "snapshots"
+    manifest_dir = tmp_path / "manifests"
+    manifest = read_capture_manifest(
+        record_capture(
+            _capture_request(capture_method="pdf", media_type="application/pdf"),
+            FIXTURES / "endorsements.pdf",
+            storage_root,
+            manifest_dir,
+        )
+    )
+    raw: dict[str, Any] = read_yaml(FIXTURES / "manual-entry.yaml")
+    raw["capture_id"] = manifest.id
+    raw["evidence_type"] = "web_page"
+
+    with pytest.raises(ValueError, match="web page manual evidence requires an HTML capture"):
+        validate_manual_draft(
+            ManualEntryDraft.model_validate(raw),
+            manifest_dir,
+            storage_root,
+        )
+
+
 def test_manual_entry_rejects_unavailable_capture(tmp_path: Path) -> None:
     manifest_dir = tmp_path / "manifests"
     request = UnavailableRequest.model_validate(read_yaml(FIXTURES / "unavailable-request.yaml"))

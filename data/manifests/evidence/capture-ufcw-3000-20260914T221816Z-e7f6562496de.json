@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 200648,
+  "canonical_url": "https://ufcw3000.org/endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "4410323c829a7d1e2230f700197ec5371e12a1d46b669d826cd717ce1ce283b7",
+  "http_status": 200,
+  "id": "capture-ufcw-3000-20260914T221816Z-e7f6562496de",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party page retained locally for review only.",
+  "requested_url": "https://ufcw3000.org/endorsements",
+  "retrieved_at": "2026-09-14T22:18:16Z",
+  "schema_version": "1.0",
+  "source_id": "ufcw-3000",
+  "storage_reference": "sha256/44/4410323c829a7d1e2230f700197ec5371e12a1d46b669d826cd717ce1ce283b7",
+  "storage_scope": "local_only",
+  "title": "UFCW 3000 2026 general election endorsements",
+  "updated_at": null
+}

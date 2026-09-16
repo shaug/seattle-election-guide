@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 1382215,
+  "canonical_url": "https://www.protec17.org/endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "98dfe78078dcb68c3c1d99320ec66bb27bd7a2c1fb777f48be08245781c2315b",
+  "http_status": 200,
+  "id": "capture-protec17-20260914T221816Z-2940ca08cc1a",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party page retained locally for review only.",
+  "requested_url": "https://www.protec17.org/endorsements/",
+  "retrieved_at": "2026-09-14T22:18:16Z",
+  "schema_version": "1.0",
+  "source_id": "protec17",
+  "storage_reference": "sha256/98/98dfe78078dcb68c3c1d99320ec66bb27bd7a2c1fb777f48be08245781c2315b",
+  "storage_scope": "local_only",
+  "title": "PROTEC17 2026 election endorsements",
+  "updated_at": null
+}

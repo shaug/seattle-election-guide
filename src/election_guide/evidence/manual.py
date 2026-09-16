@@ -62,6 +62,8 @@ def validate_manual_draft(
     essence = media_type_essence(media_type)
     if draft.evidence_type in {"screenshot", "image"} and not essence.startswith("image/"):
         raise ValueError(f"{draft.evidence_type} manual evidence requires an image capture")
+    if draft.evidence_type == "web_page" and essence != "text/html":
+        raise ValueError("web page manual evidence requires an HTML capture")
     if draft.evidence_type == "pdf" and essence != "application/pdf":
         raise ValueError("pdf manual evidence requires a PDF capture")
     if draft.evidence_type == "scanned_material" and not (

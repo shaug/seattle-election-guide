@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-alliance-for-gun-responsibility-20260914T221819Z-34344aa0cc00",
+  "entered_at": "2026-09-14T22:46:43Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official 2026 endorsements page, federal, state legislative, judicial, and local sections.",
+  "evidence_type": "web_page",
+  "id": "manual-alliance-for-gun-responsibility-20260914T224643Z-d35493018a5d",
+  "review_note": "Human reviewer confirmed every source transcription for issue #401, including the documented current-cycle filtering and ambiguity treatments.",
+  "review_status": "verified",
+  "reviewed_at": "2026-09-15T13:03:19Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "alliance-for-gun-responsibility",
+  "transcription": "us-house-7: Pramila Jayapal\nus-house-9: Adam Smith\nld-11-state-representative-1: David Hackney\nld-32-state-senator: Jesse Salomon, Cindy Ryu\nld-32-state-representative-1: Danica Noble\nld-32-state-representative-2: Lauren Davis\nld-34-state-senator: Emily Alvarado\nld-34-state-representative-2: Joe Fitzgibbon\nld-36-state-senator: Noel C. Frame\nld-36-state-representative-1: Julia Grant Reed\nld-36-state-representative-2: Liz Berry\nld-37-state-senator: Chipalo Street\nld-37-state-representative-1: Sharon Tomiko Santos\nld-37-state-representative-2: Jaelynn Scott\nld-43-state-senator: Jamie Pedersen\nld-43-state-representative-1: Nicole Macri\nld-46-state-senator: Javier Valdez\nld-46-state-representative-1: Gerry Pollet\nld-46-state-representative-2: Darya Farivar\nking-county-council-2: Rebecca Saldaña, Toshiko Grace Hasegawa\nking-county-council-8: Teresa Mosqueda\nseattle-city-council-5: Nilu Jenks\nking-county-prosecuting-attorney: Leesa Manion"
+}
