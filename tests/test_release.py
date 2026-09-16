@@ -908,13 +908,16 @@ def test_release_schema_1_3_requires_source_registry_hash(
         ),
     ],
 )
-def test_legacy_release_schemas_remain_readable_without_registry_hash(
+def test_legacy_release_schemas_distinguish_omitted_from_declared_registry_hash(
     model: type[ReleaseManifest] | type[ReleaseStatus],
     payload: dict[str, object],
 ) -> None:
     artifact = model.model_validate(payload)
 
     assert artifact.source_registry_hash is None
+    assert "source_registry_hash" not in artifact.model_dump(mode="json")
+    with pytest.raises(ValueError, match="cannot declare source_registry_hash"):
+        model.model_validate(payload | {"source_registry_hash": None})
     with pytest.raises(ValueError, match="cannot declare source_registry_hash"):
         model.model_validate(payload | {"source_registry_hash": "d" * 64})
 
