@@ -86,6 +86,12 @@ and `access_restricted`. They describe publication discovery, never a source's d
 published nothing contributes no decisions and no points, and that is a *different* fact from a
 source that published "we are not endorsing in this race."
 
+Changing `discovery` evidence, official or canonical URLs, registry notes, or check timestamps is
+a discovery refresh. It changes the registry's complete `source_registry_hash`, so the next release
+records a different audit identity, but it does not change the stable `panel_hash` and does not
+require a panel version bump. `docs/COLLECTION.md` defines the exact canonical panel projection;
+classify an edit against that list before running `sources snapshot`.
+
 ### 3. Capture the artifact
 
 ```bash
@@ -291,9 +297,13 @@ Stop and ask a human when:
 - **A source publishes a decision in a race its registered eligibility excludes** — most often a
   legislative-district organization in another district's contest. The registry decides; the
   sweep does not widen eligibility to fit a decision it found.
-- **A source appears to belong on the panel and is not on it, or vice versa.** The panel is
-  frozen for the cycle. Changing it is a reviewed version bump with a documented reason
-  (`config/sources/default.yaml` notes), never an in-sweep edit.
+- **A source appears to belong on the panel and is not on it, or any structural panel field needs
+  to change.** The panel is frozen for the cycle. Membership, transport codes, selectable-category
+  membership, roles, eligibility, overlap, attribution, and retired-code migrations all change the
+  stable panel contract. Each is a reviewed version bump with a documented reason
+  (`config/sources/default.yaml` notes), never an in-sweep edit. A compatibility binding preserves
+  an already-published legacy hash only while that canonical contract still matches; never rewrite
+  a published snapshot catalog entry to make a changed contract fit the old panel ID.
 - **A previously recorded decision turns out to be wrong.** Corrections are data records with the
   prior value, new value, reason, evidence, author, and timestamp (`REVIEW_GUIDE.md`), landed as
   their own reviewed change — not a quiet overwrite.

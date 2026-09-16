@@ -16,7 +16,8 @@ primary that is `wa-2026-primary`.
 ## 1. Source panel accuracy and gaps
 
 Open `config/sources/default.yaml` and
-`data/releases/<election-id>/panel-snapshots.json`.
+`data/releases/<election-id>/panel-snapshots.json`. Also open the shipped bundle's
+`release-status.json` and `release-manifest.json`.
 
 - Which panel version shipped, and how many versions did the cycle go through?
   Each snapshot carries its `panel_id`, `panel_version`, and `panel_hash` — but
@@ -29,6 +30,13 @@ Open `config/sources/default.yaml` and
   A version can be purely structural — new identifiers or categories, with
   canonical scoring identical to the version before. **A version bump is not
   evidence of an effect.**
+- Were discovery refreshes and panel changes classified correctly? `source_panel_hash` is the
+  stable transport-facing contract; `source_registry_hash` is the complete validated registry
+  used for release audit. A discovery-only change may move the latter while leaving the former
+  unchanged and needs no panel version bump. If a registry diff changes any canonical projection
+  field listed in `docs/COLLECTION.md`, it must move `panel_hash` and ship under a new panel
+  version. Confirm that no existing entry in `panel-snapshots.json` was edited or removed: the
+  catalog is append-only, and a changed contract belongs in a newly appended version.
 - For every source with `panel_role: consensus`, did it actually publish
   endorsements this cycle? A consensus source that published nothing is a
   weight that silently did not apply.
