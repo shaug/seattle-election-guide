@@ -387,7 +387,7 @@ class SourceRegistry(SourceModel):
     @model_validator(mode="after")
     def validate_registry(self) -> SourceRegistry:
         compatibility = self.panel_hash_compatibility
-        if self.schema_version == "1.1" and compatibility is not None:
+        if self.schema_version == "1.1" and "panel_hash_compatibility" in self.model_fields_set:
             raise ValueError("schema 1.1 cannot declare panel hash compatibility")
         if compatibility is not None and compatibility.panel_id != self.id:
             raise ValueError("panel hash compatibility panel_id must match registry id")

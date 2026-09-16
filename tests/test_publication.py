@@ -476,6 +476,13 @@ def test_publication_schema_requires_registry_hash_only_for_1_14(tmp_path: Path)
     ):
         PublicationViewModel.model_validate(legacy_with_new_field)
 
+    legacy_with_new_field["metadata"]["source_registry_hash"] = None
+    with pytest.raises(
+        ValidationError,
+        match=r"schema 1\.13 cannot declare source_registry_hash",
+    ):
+        PublicationViewModel.model_validate(legacy_with_new_field)
+
 
 def test_methodology_publishes_possible_overlap_without_deduplicating(tmp_path: Path) -> None:
     candidates = _candidate_ids()

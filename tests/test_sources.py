@@ -856,6 +856,12 @@ def test_schema_1_1_rejects_panel_hash_compatibility() -> None:
     ):
         SourceRegistry.model_validate(payload)
 
+    payload["panel_hash_compatibility"] = None
+    with pytest.raises(
+        ValidationError, match=r"schema 1\.1 cannot declare panel hash compatibility"
+    ):
+        SourceRegistry.model_validate(payload)
+
 
 def test_panel_hash_compatibility_rejects_other_panel_id() -> None:
     payload = _registry_payload()

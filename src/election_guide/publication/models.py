@@ -603,7 +603,10 @@ class PublicationViewModel(PublicationModel):
         registry_hash = self.metadata.source_registry_hash
         if self.schema_version == "1.14" and registry_hash is None:
             raise ValueError("schema 1.14 requires source_registry_hash")
-        if self.schema_version == "1.13" and registry_hash is not None:
+        if (
+            self.schema_version == "1.13"
+            and "source_registry_hash" in self.metadata.model_fields_set
+        ):
             raise ValueError("schema 1.13 cannot declare source_registry_hash")
         return self
 
