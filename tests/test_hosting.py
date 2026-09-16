@@ -23,7 +23,11 @@ from election_guide.hosting.models import PublishedElection, SiteManifest
 from election_guide.hosting.pages import _about_html  # pyright: ignore[reportPrivateUsage]
 from election_guide.publication.comparisons import ComparisonsPolicy
 from election_guide.publication.models import PublicationViewModel
-from election_guide.release.models import REQUIRED_RELEASE_ARTIFACTS, ReleaseStatus
+from election_guide.release.models import (
+    REQUIRED_RELEASE_ARTIFACTS,
+    UNHASHED_RASTERIZED_ARTIFACTS,
+    ReleaseStatus,
+)
 from election_guide.rendering.documents import render_sources_document
 from election_guide.serialization import canonical_json_bytes
 from tests.test_rendering import (  # pyright: ignore[reportPrivateUsage]
@@ -48,6 +52,7 @@ def _staged_race_asset_count(site_dir: Path) -> int:
 COMMIT = "a" * 40
 OLDER_COMMIT = "c" * 40
 PANEL_HASH = "b" * 64
+REGISTRY_HASH = "d" * 64
 PROJECT_ROOT = Path(__file__).parents[1]
 CURRENT_ID = "wa-2026-primary"
 OLDER_ID = "wa-2025-general"
@@ -195,6 +200,108 @@ def test_stage_pages_site_composes_verified_election_archive(tmp_path: Path) -> 
         "apple-touch-icon.png",
         "og-image.png",
     }
+
+
+def test_stage_copies_registry_hash_and_keeps_legacy_release_readable(tmp_path: Path) -> None:
+    current, older = _write_archive_bundles(
+        tmp_path,
+        current_source_registry_hash=REGISTRY_HASH,
+    )
+    manifest = _write_site_manifest(
+        tmp_path,
+        current_first=True,
+        current_source_registry_hash=REGISTRY_HASH,
+    )
+    output = tmp_path / "site"
+
+    stage_pages_site(
+        manifest,
+        {CURRENT_BUNDLE_ID: current, OLDER_BUNDLE_ID: older},
+        output,
+    )
+    deployment = verify_staged_pages_site(output, manifest)
+
+    current_deployment, legacy_deployment = deployment.elections
+    assert current_deployment.source_panel_hash == PANEL_HASH
+    assert current_deployment.source_registry_hash == REGISTRY_HASH
+    assert legacy_deployment.source_panel_hash == PANEL_HASH
+    assert legacy_deployment.source_registry_hash is None
+
+
+def test_stage_rejects_registry_hash_different_from_release_status(tmp_path: Path) -> None:
+    current, older = _write_archive_bundles(
+        tmp_path,
+        current_source_registry_hash=REGISTRY_HASH,
+    )
+    manifest = _write_site_manifest(
+        tmp_path,
+        current_first=True,
+        current_source_registry_hash="e" * 64,
+    )
+
+    with pytest.raises(ValueError, match=r"bundle .* source registry hash differs"):
+        stage_pages_site(
+            manifest,
+            {CURRENT_BUNDLE_ID: current, OLDER_BUNDLE_ID: older},
+            tmp_path / "site",
+        )
+
+
+def test_verify_rejects_registry_hash_different_between_declaration_and_deployment(
+    tmp_path: Path,
+) -> None:
+    current, older = _write_archive_bundles(
+        tmp_path,
+        current_source_registry_hash=REGISTRY_HASH,
+    )
+    manifest = _write_site_manifest(
+        tmp_path,
+        current_first=True,
+        current_source_registry_hash=REGISTRY_HASH,
+    )
+    output = tmp_path / "site"
+    stage_pages_site(
+        manifest,
+        {CURRENT_BUNDLE_ID: current, OLDER_BUNDLE_ID: older},
+        output,
+    )
+    deployment_path = output / "deployment-manifest.json"
+    deployment = json.loads(deployment_path.read_text(encoding="utf-8"))
+    deployment["elections"][0]["source_registry_hash"] = "e" * 64
+    deployment_path.write_bytes(canonical_json_bytes(deployment))
+
+    with pytest.raises(
+        ValueError,
+        match="deployment manifest source registry hash differs from site manifest",
+    ):
+        verify_staged_pages_site(output, manifest)
+
+
+def test_verify_rejects_registry_hash_different_between_deployment_and_release_status(
+    tmp_path: Path,
+) -> None:
+    current, older = _write_archive_bundles(
+        tmp_path,
+        current_source_registry_hash=REGISTRY_HASH,
+    )
+    manifest = _write_site_manifest(
+        tmp_path,
+        current_first=True,
+        current_source_registry_hash=REGISTRY_HASH,
+    )
+    output = tmp_path / "site"
+    stage_pages_site(
+        manifest,
+        {CURRENT_BUNDLE_ID: current, OLDER_BUNDLE_ID: older},
+        output,
+    )
+    status_path = output / "e" / CURRENT_ID / "release-status.json"
+    status = json.loads(status_path.read_text(encoding="utf-8"))
+    status["source_registry_hash"] = "e" * 64
+    status_path.write_bytes(canonical_json_bytes(status))
+
+    with pytest.raises(ValueError, match="staged release status differs"):
+        verify_staged_pages_site(output, manifest)
 
 
 def test_changing_current_election_preserves_historical_election_bytes(tmp_path: Path) -> None:
@@ -1788,9 +1895,12 @@ def _write_site_manifest(
     *,
     current_first: bool,
     older_bundle_sha256: str | None = None,
+    current_source_registry_hash: str | None = None,
 ) -> Path:
     root.mkdir(parents=True, exist_ok=True)
     current = _manifest_election(CURRENT_ID, CURRENT_BUNDLE_ID, "primary.2")
+    if current_source_registry_hash is not None:
+        current["source_registry_hash"] = current_source_registry_hash
     older = _manifest_election(OLDER_ID, OLDER_BUNDLE_ID, "general.1")
     if older_bundle_sha256 is not None:
         older["bundle_sha256"] = older_bundle_sha256
@@ -1825,6 +1935,7 @@ def _write_archive_bundles(
     *,
     current_html: bytes = b"current\n",
     older_html: bytes = b"older\n",
+    current_source_registry_hash: str | None = None,
 ) -> tuple[Path, Path]:
     current = _write_release_bundle(
         root / "current",
@@ -1832,6 +1943,7 @@ def _write_archive_bundles(
         release_version="primary.2",
         git_commit=COMMIT,
         html=current_html,
+        source_registry_hash=current_source_registry_hash,
     )
     older = _write_release_bundle(
         root / "older",
@@ -1885,13 +1997,16 @@ def _write_release_bundle(
     release_version: str,
     git_commit: str,
     html: bytes,
+    source_registry_hash: str | None = None,
 ) -> Path:
     bundle = root / "bundle"
     html_relative = "guide/guide.html"
-    public_artifacts = {
-        html_relative,
-        "validation/rendering/screenshots/desktop.png",
-    }
+    rasterized_artifacts = (
+        UNHASHED_RASTERIZED_ARTIFACTS
+        if source_registry_hash is not None
+        else {"validation/rendering/screenshots/desktop.png"}
+    )
+    public_artifacts = {html_relative, *rasterized_artifacts}
     included = sorted(REQUIRED_RELEASE_ARTIFACTS | public_artifacts)
     for relative in included:
         if relative in {"release-manifest.json", "release-status.json"}:
@@ -1922,29 +2037,31 @@ def _write_release_bundle(
         else:
             path.write_text(f"fixture for {relative}\n", encoding="utf-8")
 
-    status = ReleaseStatus.model_validate(
-        {
-            "release_version": release_version,
-            "election_id": election_id,
-            "source_panel_id": "test-panel-v2",
-            "source_panel_hash": PANEL_HASH,
-            "data_as_of": "2026-07-20T12:00:00Z",
-            "generated_at": "2026-07-21T12:00:00Z",
-            "git_commit": git_commit,
-            "source_count": 1,
-            "captured_source_count": 1,
-            "displayed_endorsement_count": 1,
-            "unresolved_review_count": 0,
-            "unresolved_high_severity_count": 0,
-            "restricted_capture_count": 0,
-            "source_access_failures": [],
-            "incomplete_races": [],
-            "validation_reports": {"publication": True, "rendering": True},
-            "guide_html_artifact": html_relative,
-            "included_artifacts": included,
-            "warnings": [],
-        }
-    )
+    status_payload: dict[str, object] = {
+        "schema_version": "1.3" if source_registry_hash is not None else "1.2",
+        "release_version": release_version,
+        "election_id": election_id,
+        "source_panel_id": "test-panel-v2",
+        "source_panel_hash": PANEL_HASH,
+        "data_as_of": "2026-07-20T12:00:00Z",
+        "generated_at": "2026-07-21T12:00:00Z",
+        "git_commit": git_commit,
+        "source_count": 1,
+        "captured_source_count": 1,
+        "displayed_endorsement_count": 1,
+        "unresolved_review_count": 0,
+        "unresolved_high_severity_count": 0,
+        "restricted_capture_count": 0,
+        "source_access_failures": [],
+        "incomplete_races": [],
+        "validation_reports": {"publication": True, "rendering": True},
+        "guide_html_artifact": html_relative,
+        "included_artifacts": included,
+        "warnings": [],
+    }
+    if source_registry_hash is not None:
+        status_payload["source_registry_hash"] = source_registry_hash
+    status = ReleaseStatus.model_validate(status_payload)
     (bundle / "release-status.json").write_bytes(
         canonical_json_bytes(status.model_dump(mode="json"))
     )
@@ -1952,19 +2069,23 @@ def _write_release_bundle(
         path.relative_to(bundle).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
         for path in sorted(bundle.rglob("*"))
         if path.is_file()
-    }
-    (bundle / "release-manifest.json").write_bytes(
-        canonical_json_bytes(
-            {
-                "schema_version": "1.1",
-                "release_version": status.release_version,
-                "source_panel_id": status.source_panel_id,
-                "source_panel_hash": status.source_panel_hash,
-                "generated_at": status.generated_at.isoformat(),
-                "artifact_hashes": hashes,
-            }
+        and (
+            source_registry_hash is None
+            or path.relative_to(bundle).as_posix() not in UNHASHED_RASTERIZED_ARTIFACTS
         )
-    )
+    }
+    manifest_payload: dict[str, object] = {
+        "schema_version": "1.3" if source_registry_hash is not None else "1.1",
+        "release_version": status.release_version,
+        "source_panel_id": status.source_panel_id,
+        "source_panel_hash": status.source_panel_hash,
+        "generated_at": status.generated_at.isoformat(),
+        "artifact_hashes": hashes,
+    }
+    if source_registry_hash is not None:
+        manifest_payload["source_registry_hash"] = source_registry_hash
+        manifest_payload["unhashed_artifacts"] = sorted(UNHASHED_RASTERIZED_ARTIFACTS)
+    (bundle / "release-manifest.json").write_bytes(canonical_json_bytes(manifest_payload))
     return bundle
 
 

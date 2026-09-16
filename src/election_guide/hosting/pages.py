@@ -281,6 +281,11 @@ def stage_pages_site(
                     "git_commit": bundle.status.git_commit,
                     "source_panel_id": bundle.status.source_panel_id,
                     "source_panel_hash": bundle.status.source_panel_hash,
+                    **(
+                        {"source_registry_hash": bundle.status.source_registry_hash}
+                        if bundle.status.source_registry_hash is not None
+                        else {}
+                    ),
                     "release_manifest_sha256": _sha256(bundle.directory / "release-manifest.json"),
                 }
                 for bundle in verified
@@ -347,6 +352,10 @@ def _verify_staged_pages_site(
             "release version": (declared.release_version, deployed.release_version),
             "source panel ID": (declared.source_panel_id, deployed.source_panel_id),
             "source panel hash": (declared.source_panel_hash, deployed.source_panel_hash),
+            "source registry hash": (
+                declared.source_registry_hash,
+                deployed.source_registry_hash,
+            ),
         }
         for label, (declared_value, deployed_value) in expected_values.items():
             if declared_value != deployed_value:
@@ -367,6 +376,7 @@ def _verify_staged_pages_site(
             or status.git_commit != deployed.git_commit
             or status.source_panel_id != deployed.source_panel_id
             or status.source_panel_hash != deployed.source_panel_hash
+            or status.source_registry_hash != deployed.source_registry_hash
         ):
             raise ValueError(f"staged release status differs for election {declared.election_id!r}")
         if _sha256(election_root / "release-manifest.json") != deployed.release_manifest_sha256:
@@ -503,6 +513,10 @@ def _verify_bundle(declaration: PublishedElection, bundle_dir: Path) -> _Verifie
         "release version": (declaration.release_version, status.release_version),
         "source panel ID": (declaration.source_panel_id, status.source_panel_id),
         "source panel hash": (declaration.source_panel_hash, status.source_panel_hash),
+        "source registry hash": (
+            declaration.source_registry_hash,
+            status.source_registry_hash,
+        ),
     }
     for label, (expected, actual) in expected_values.items():
         if expected != actual:

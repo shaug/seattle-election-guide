@@ -10,6 +10,7 @@ CURRENT_ID = "wa-2026-primary"
 CURRENT_BUNDLE_ID = "wa-2026-primary-release"
 COMMIT = "a" * 40
 PANEL_HASH = "b" * 64
+REGISTRY_HASH = "c" * 64
 
 
 def _published_election() -> dict[str, str]:
@@ -32,6 +33,60 @@ def _deployed_election() -> dict[str, str]:
         "source_panel_hash": PANEL_HASH,
         "release_manifest_sha256": "d" * 64,
     }
+
+
+def test_hosting_election_models_accept_distinct_registry_hashes() -> None:
+    site = SiteManifest.model_validate(
+        {
+            "canonical_origin": "https://seattleelections.guide",
+            "current_election_id": CURRENT_ID,
+            "elections": [
+                {
+                    **_published_election(),
+                    "source_registry_hash": REGISTRY_HASH,
+                }
+            ],
+        }
+    )
+    deployment = DeploymentManifest.model_validate(
+        {
+            "canonical_origin": "https://seattleelections.guide",
+            "current_election_id": CURRENT_ID,
+            "elections": [
+                {
+                    **_deployed_election(),
+                    "source_registry_hash": REGISTRY_HASH,
+                }
+            ],
+            "assets": {"e/index.html": "e" * 64},
+        }
+    )
+
+    assert site.elections[0].source_panel_hash == PANEL_HASH
+    assert site.elections[0].source_registry_hash == REGISTRY_HASH
+    assert deployment.elections[0].source_panel_hash == PANEL_HASH
+    assert deployment.elections[0].source_registry_hash == REGISTRY_HASH
+
+
+def test_legacy_hosting_election_models_remain_readable_without_registry_hash() -> None:
+    site = SiteManifest.model_validate(
+        {
+            "canonical_origin": "https://seattleelections.guide",
+            "current_election_id": CURRENT_ID,
+            "elections": [_published_election()],
+        }
+    )
+    deployment = DeploymentManifest.model_validate(
+        {
+            "canonical_origin": "https://seattleelections.guide",
+            "current_election_id": CURRENT_ID,
+            "elections": [_deployed_election()],
+            "assets": {"e/index.html": "e" * 64},
+        }
+    )
+
+    assert site.elections[0].source_registry_hash is None
+    assert deployment.elections[0].source_registry_hash is None
 
 
 @pytest.mark.parametrize(
