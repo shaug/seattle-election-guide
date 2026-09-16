@@ -126,7 +126,7 @@ def _panel_identity_contract(registry: SourceRegistry) -> PanelIdentityContract:
                     kind=source.eligibility.kind,
                     jurisdiction_ids=source.eligibility.jurisdiction_ids,
                 ),
-                overlap_group_ids=source.overlap_group_ids,
+                overlap_group_ids=sorted(source.overlap_group_ids),
             )
             for source in registry.sources
         ],
@@ -134,9 +134,9 @@ def _panel_identity_contract(registry: SourceRegistry) -> PanelIdentityContract:
             PanelOverlapIdentity(
                 id=group.id,
                 label=group.label,
-                member_ids=group.member_ids,
+                member_ids=sorted(group.member_ids),
             )
-            for group in registry.overlap_groups
+            for group in sorted(registry.overlap_groups, key=lambda group: group.id)
         ],
         retired_codes=[
             PanelRetiredCodeIdentity(

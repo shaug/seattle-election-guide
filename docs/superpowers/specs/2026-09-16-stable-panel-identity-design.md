@@ -51,6 +51,10 @@ hash covers these fields, in their validated transport order:
 - retired transport codes: `code`, `kind`, `former_id`,
   `retired_in_panel`, and the user-visible migration `reason`.
 
+Overlap collections have no semantic order: sort source `overlap_group_ids`,
+sort overlap groups by `id`, and sort each group's `member_ids` before hashing.
+Order-only edits remain visible to the complete registry audit hash.
+
 The projection deliberately excludes registry and election identifiers,
 freeze and research timestamps, registry notes, category descriptions,
 organization and discovery URLs, geographic labels already represented by

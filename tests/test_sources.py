@@ -705,7 +705,7 @@ def test_panel_snapshot_publishes_the_downstream_identity_contract() -> None:
     assert snapshot.panel_id == registry.id
     assert snapshot.panel_version == "v4"
     assert source_panel.panel_identity_hash(registry) == (
-        "28cd877909a1b0328175ec217dc0dc3a65010579836fd7bf3743573076a601a6"
+        "a6e58223507970695ac4cf66cd8020f9f1d4ffbd2989d8fde57d4abaaf5bd596"
     )
     assert snapshot.panel_hash == (
         "389a978b149da9afdb919fdb9dfd1d4d3fbecc290d3b1cd41da3e3fd363de0b5"
@@ -738,6 +738,41 @@ def test_discovery_refresh_changes_registry_hash_without_changing_panel_identity
     assert build_panel_snapshot(after).panel_hash == build_panel_snapshot(before).panel_hash
 
 
+@pytest.mark.parametrize("registry_name", ["default.yaml", "wa-2026-general.yaml"])
+@pytest.mark.parametrize("ordering", ["groups", "members", "source_groups"])
+def test_overlap_order_preserves_panel_identity(registry_name: str, ordering: str) -> None:
+    payload = read_source_registry(REGISTRY_PATH.with_name(registry_name)).model_dump(mode="json")
+    if ordering == "source_groups":
+        # Give a source two valid memberships so reversing them exercises ordering.
+        group = payload["overlap_groups"][1]
+        source = next(item for item in payload["sources"] if item["id"] == "fuse-washington")
+        group["member_ids"].append(source["id"])
+        source["overlap_group_ids"].append(group["id"])
+        payload["panel_hash_compatibility"]["contract_hash"] = source_panel.panel_identity_hash(
+            SourceRegistry.model_validate(payload)
+        )
+    before = SourceRegistry.model_validate(payload)
+    payload = before.model_dump(mode="json")
+
+    if ordering == "groups":
+        payload["overlap_groups"].reverse()
+    elif ordering == "members":
+        for group in payload["overlap_groups"]:
+            group["member_ids"].reverse()
+    else:
+        for source in payload["sources"]:
+            source["overlap_group_ids"].reverse()
+    after = SourceRegistry.model_validate(payload)
+
+    assert source_registry_hash(after) != source_registry_hash(before)
+    assert source_panel.panel_identity_hash(after) == source_panel.panel_identity_hash(before)
+    assert build_panel_snapshot(after) == build_panel_snapshot(before)
+    assert (
+        build_panel_snapshot(after).panel_hash
+        == payload["panel_hash_compatibility"]["published_hash"]
+    )
+
+
 def test_schema_1_1_snapshot_retains_historical_full_registry_hash() -> None:
     payload = read_source_registry(REGISTRY_PATH).model_dump(mode="json")
     payload["schema_version"] = "1.1"
@@ -760,6 +795,7 @@ def test_schema_1_1_snapshot_retains_historical_full_registry_hash() -> None:
         "source_name",
         "eligibility",
         "overlap_membership",
+        "overlap_label",
         "retired_code_reason",
     ],
 )
@@ -817,6 +853,8 @@ def test_structural_change_changes_panel_identity_and_candidate_snapshot_hash(
             if group["id"] == "democratic-party-network"
         )
         group["member_ids"].remove("washington-stonewall-democrats")
+    elif mutation == "overlap_label":
+        payload["overlap_groups"][0]["label"] = "Updated visible overlap attribution"
     elif mutation == "retired_code_reason":
         payload["retired_codes"][0]["reason"] = (
             "Personalized links migrate this source to an unselected state."
@@ -835,7 +873,7 @@ def test_schema_1_2_accepts_matching_panel_hash_compatibility() -> None:
     payload["schema_version"] = "1.2"
     payload["panel_hash_compatibility"] = {
         "panel_id": payload["id"],
-        "contract_hash": "28cd877909a1b0328175ec217dc0dc3a65010579836fd7bf3743573076a601a6",
+        "contract_hash": "a6e58223507970695ac4cf66cd8020f9f1d4ffbd2989d8fde57d4abaaf5bd596",
         "published_hash": "389a978b149da9afdb919fdb9dfd1d4d3fbecc290d3b1cd41da3e3fd363de0b5",
     }
 
@@ -847,7 +885,7 @@ def test_schema_1_1_rejects_panel_hash_compatibility() -> None:
     payload["schema_version"] = "1.1"
     payload["panel_hash_compatibility"] = {
         "panel_id": payload["id"],
-        "contract_hash": "28cd877909a1b0328175ec217dc0dc3a65010579836fd7bf3743573076a601a6",
+        "contract_hash": "a6e58223507970695ac4cf66cd8020f9f1d4ffbd2989d8fde57d4abaaf5bd596",
         "published_hash": "389a978b149da9afdb919fdb9dfd1d4d3fbecc290d3b1cd41da3e3fd363de0b5",
     }
 
@@ -868,7 +906,7 @@ def test_panel_hash_compatibility_rejects_other_panel_id() -> None:
     payload["schema_version"] = "1.2"
     payload["panel_hash_compatibility"] = {
         "panel_id": "wa-2026-primary-other-panel-v1",
-        "contract_hash": "28cd877909a1b0328175ec217dc0dc3a65010579836fd7bf3743573076a601a6",
+        "contract_hash": "a6e58223507970695ac4cf66cd8020f9f1d4ffbd2989d8fde57d4abaaf5bd596",
         "published_hash": "389a978b149da9afdb919fdb9dfd1d4d3fbecc290d3b1cd41da3e3fd363de0b5",
     }
 

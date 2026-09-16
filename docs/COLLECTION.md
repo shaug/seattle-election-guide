@@ -63,6 +63,10 @@ The canonical panel projection hashes these fields, in validated transport order
 - retired transport codes: `code`, `kind`, `former_id`, `retired_in_panel`, and the user-visible
   migration `reason`.
 
+Overlap collections are set-valued: the projection sorts each source's `overlap_group_ids`,
+sorts groups by `id`, and sorts each group's `member_ids`. Reordering these collections changes
+the full registry audit hash but preserves panel identity and any matching compatibility binding.
+
 Registry and election IDs, `panel_id`, `panel_version`, freeze and research timestamps, registry
 notes, category descriptions, organization and discovery URLs, geographic labels already encoded
 by eligibility, publisher provenance, panel rationale, and every discovery field stay outside that

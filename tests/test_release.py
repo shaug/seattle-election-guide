@@ -435,7 +435,7 @@ def test_checked_in_site_manifest_stages_a_new_current_release(
         tmp_path / "release",
         release_version="2026-primary.2",
     )
-    expected_registry_hash = "f7e95a02f84cb18841c84bb9fc7caef78b700597b31d128eca495bad7e7b7537"
+    expected_registry_hash = "76f9897a764e66698f45c544b1ade09dbc77cc71c79d0302bf59def05f3c26a8"
 
     assert release.status.schema_version == "1.3"
     assert release.status.source_registry_hash == expected_registry_hash
