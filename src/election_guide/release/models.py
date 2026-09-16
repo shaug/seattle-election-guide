@@ -58,10 +58,11 @@ class ReleaseModel(BaseModel):
 
 
 class ReleaseManifest(ReleaseModel):
-    schema_version: Literal["1.1", "1.2"] = "1.2"
+    schema_version: Literal["1.1", "1.2", "1.3"] = "1.2"
     release_version: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
     source_panel_id: str
     source_panel_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    source_registry_hash: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
     generated_at: AwareDatetime
     artifact_hashes: dict[str, str] = Field(min_length=1)
     unhashed_artifacts: list[str] = Field(default_factory=list)
@@ -109,10 +110,16 @@ class ReleaseManifest(ReleaseModel):
         actual = frozenset(self.unhashed_artifacts)
         if self.schema_version == "1.1" and actual:
             raise ValueError("release manifest schema 1.1 cannot declare unhashed artifacts")
-        if self.schema_version == "1.2" and actual != UNHASHED_RASTERIZED_ARTIFACTS:
+        if self.schema_version in {"1.2", "1.3"} and actual != UNHASHED_RASTERIZED_ARTIFACTS:
             raise ValueError(
-                "release manifest unhashed artifacts differ from the schema 1.2 policy: "
+                "release manifest unhashed artifacts differ from the schema 1.2/1.3 policy: "
                 f"expected {sorted(UNHASHED_RASTERIZED_ARTIFACTS)}, found {sorted(actual)}"
+            )
+        if self.schema_version == "1.3" and self.source_registry_hash is None:
+            raise ValueError("release manifest schema 1.3 requires source_registry_hash")
+        if self.schema_version != "1.3" and self.source_registry_hash is not None:
+            raise ValueError(
+                f"release manifest schema {self.schema_version} cannot declare source_registry_hash"
             )
         return self
 
@@ -214,11 +221,12 @@ class RaceCoverageStatus(ReleaseModel):
 
 
 class ReleaseStatus(ReleaseModel):
-    schema_version: Literal["1.2"] = "1.2"
+    schema_version: Literal["1.2", "1.3"] = "1.2"
     release_version: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
     election_id: str
     source_panel_id: str
     source_panel_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    source_registry_hash: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
     data_as_of: AwareDatetime
     generated_at: AwareDatetime
     git_commit: str = Field(pattern=r"^[0-9a-f]{40}$")
@@ -234,6 +242,16 @@ class ReleaseStatus(ReleaseModel):
     guide_html_artifact: str
     included_artifacts: list[str]
     warnings: list[str]
+
+    @model_validator(mode="after")
+    def validate_source_registry_hash(self) -> ReleaseStatus:
+        if self.schema_version == "1.3" and self.source_registry_hash is None:
+            raise ValueError("release status schema 1.3 requires source_registry_hash")
+        if self.schema_version != "1.3" and self.source_registry_hash is not None:
+            raise ValueError(
+                f"release status schema {self.schema_version} cannot declare source_registry_hash"
+            )
+        return self
 
     @model_validator(mode="after")
     def validate_release_safety(self) -> ReleaseStatus:
