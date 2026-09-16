@@ -18,6 +18,7 @@ from typer.testing import CliRunner
 import election_guide.release.builder as release_builder
 from election_guide.cli import app
 from election_guide.evidence.models import CapturedManifest
+from election_guide.hosting import stage_pages_site, verify_staged_pages_site
 from election_guide.normalization.models import CanonicalDataset
 from election_guide.publication import PublicationViewModel
 from election_guide.release import (
@@ -418,6 +419,43 @@ def test_release_build_packages_complete_deterministic_public_bundle(
     assert second.status.source_registry_hash == view_model.metadata.source_registry_hash
     assert manifest.source_panel_hash == second.status.source_panel_hash
     assert manifest.source_registry_hash == second.status.source_registry_hash
+
+
+def test_checked_in_site_manifest_stages_a_new_current_release(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    ledger, dataset_path, snapshots = _compiled_release_inputs(tmp_path)
+    _stub_release_render(monkeypatch)
+    release = _build_release(
+        ledger,
+        dataset_path,
+        snapshots,
+        tmp_path,
+        tmp_path / "release",
+        release_version="2026-primary.2",
+    )
+    expected_registry_hash = "f7e95a02f84cb18841c84bb9fc7caef78b700597b31d128eca495bad7e7b7537"
+
+    assert release.status.schema_version == "1.3"
+    assert release.status.source_registry_hash == expected_registry_hash
+
+    output = tmp_path / "site"
+    site_manifest_path = PROJECT_ROOT / "config/hosting/site.yaml"
+    stage_pages_site(
+        site_manifest_path,
+        {"wa-2026-primary-2026-primary.2": release.bundle_dir},
+        output,
+        expected_current_git_commit="a" * 40,
+        calendar_path=PROJECT_ROOT / "config/calendar/elections.yaml",
+    )
+    deployment = verify_staged_pages_site(
+        output,
+        site_manifest_path,
+        expected_current_git_commit="a" * 40,
+    )
+
+    assert deployment.elections[0].source_registry_hash == expected_registry_hash
 
 
 def test_release_compare_accepts_different_declared_screenshot_bytes(
@@ -1133,6 +1171,7 @@ def _build_release(
     snapshots: Path,
     tmp_path: Path,
     output_dir: Path,
+    release_version: str = "2026-primary.1",
     **overrides: object,
 ) -> ReleaseResult:
     """One `build_release` call carrying this file's fixed test fixture
@@ -1149,7 +1188,7 @@ def _build_release(
         snapshot_root=snapshots,
         manifest_dir=tmp_path / "manifests",
         output_dir=output_dir,
-        release_version="2026-primary.1",
+        release_version=release_version,
         generated_at=GENERATED_AT,
         git_commit="a" * 40,
         **overrides,  # type: ignore[arg-type]
