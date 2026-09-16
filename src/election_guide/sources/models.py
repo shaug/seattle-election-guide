@@ -301,7 +301,10 @@ class SourceRegistry(SourceModel):
     retired_codes: list[RetiredCode] = Field(default_factory=list[RetiredCode])
     sources: list[Source] = Field(min_length=1)
     overlap_groups: list[OverlapGroup]
-    panel_hash_compatibility: PanelHashCompatibility | None = None
+    panel_hash_compatibility: PanelHashCompatibility | None = Field(
+        default=None,
+        exclude_if=lambda value: value is None,
+    )
 
     def category_by_id(self, category_id: str) -> SourceCategory:
         """Resolve a validated semantic category id to its catalog entry."""

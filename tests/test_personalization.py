@@ -30,7 +30,7 @@ from election_guide.sources.catalog import (
 )
 from election_guide.sources.models import RetiredCode
 from election_guide.sources.panel import build_panel_snapshot
-from election_guide.sources.registry import read_source_registry
+from election_guide.sources.registry import read_source_registry, source_registry_hash
 
 PROJECT_ROOT = Path(__file__).parent.parent
 DATASET_PATH = PROJECT_ROOT / "data" / "normalized" / "canonical-dataset.json"
@@ -147,6 +147,7 @@ def test_repeated_builds_serialize_the_contract_identically() -> None:
 
 def test_version_bindings_match_the_published_panel() -> None:
     view_model = _bundle().view_model
+    dataset = CanonicalDataset.model_validate(read_json(DATASET_PATH))
     registry = read_source_registry(REGISTRY_PATH)
     snapshot = build_panel_snapshot(registry)
 
@@ -154,6 +155,9 @@ def test_version_bindings_match_the_published_panel() -> None:
     assert view_model.personalization.panel_version == snapshot.panel_version
     assert view_model.personalization.panel_hash == snapshot.panel_hash
     assert view_model.personalization.panel_hash == view_model.metadata.source_panel_hash
+    assert view_model.metadata.source_registry_hash == source_registry_hash(dataset.source_registry)
+    assert dataset.source_registry.schema_version == "1.2"
+    assert view_model.metadata.source_panel_hash != view_model.metadata.source_registry_hash
 
 
 def test_publication_rejects_a_personalization_panel_that_drifts_from_metadata() -> None:

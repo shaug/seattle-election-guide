@@ -9,6 +9,7 @@ from pydantic import Field
 
 from election_guide.serialization import canonical_json_bytes
 from election_guide.sources.models import SourceModel, SourceRegistry
+from election_guide.sources.registry import source_registry_hash
 
 
 class PanelEligibilityIdentity(SourceModel):
@@ -160,11 +161,12 @@ def build_panel_snapshot(registry: SourceRegistry) -> PanelSnapshot:
     """Project the validated registry into its transport-facing identity contract."""
     contract_hash = panel_identity_hash(registry)
     compatibility = registry.panel_hash_compatibility
-    panel_hash = (
-        compatibility.published_hash
-        if compatibility is not None and compatibility.contract_hash == contract_hash
-        else contract_hash
-    )
+    if registry.schema_version == "1.1":
+        panel_hash = source_registry_hash(registry)
+    elif compatibility is not None and compatibility.contract_hash == contract_hash:
+        panel_hash = compatibility.published_hash
+    else:
+        panel_hash = contract_hash
     return PanelSnapshot(
         panel_id=registry.id,
         panel_version=panel_version(registry.id),

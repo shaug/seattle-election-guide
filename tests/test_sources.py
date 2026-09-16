@@ -726,6 +726,7 @@ def test_panel_snapshot_publishes_the_downstream_identity_contract() -> None:
 
 def test_discovery_refresh_changes_registry_hash_without_changing_panel_identity() -> None:
     before = read_source_registry(REGISTRY_PATH)
+    assert before.schema_version == "1.2"
     payload = before.model_dump(mode="json")
     source = payload["sources"][0]
     source["discovery"]["checked_at"] = payload["research_cutoff"]
@@ -735,6 +736,19 @@ def test_discovery_refresh_changes_registry_hash_without_changing_panel_identity
 
     assert source_registry_hash(after) != source_registry_hash(before)
     assert build_panel_snapshot(after).panel_hash == build_panel_snapshot(before).panel_hash
+
+
+def test_schema_1_1_snapshot_retains_historical_full_registry_hash() -> None:
+    payload = read_source_registry(REGISTRY_PATH).model_dump(mode="json")
+    payload["schema_version"] = "1.1"
+    payload.pop("panel_hash_compatibility")
+    historical = SourceRegistry.model_validate(payload)
+
+    assert source_panel.panel_identity_hash(historical) != source_registry_hash(historical)
+    assert source_registry_hash(historical) == (
+        "389a978b149da9afdb919fdb9dfd1d4d3fbecc290d3b1cd41da3e3fd363de0b5"
+    )
+    assert build_panel_snapshot(historical).panel_hash == source_registry_hash(historical)
 
 
 @pytest.mark.parametrize(

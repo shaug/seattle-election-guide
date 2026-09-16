@@ -27822,9 +27822,14 @@
         ]
       }
     ],
+    "panel_hash_compatibility": {
+      "contract_hash": "28cd877909a1b0328175ec217dc0dc3a65010579836fd7bf3743573076a601a6",
+      "panel_id": "wa-2026-primary-default-sources-v4",
+      "published_hash": "389a978b149da9afdb919fdb9dfd1d4d3fbecc290d3b1cd41da3e3fd363de0b5"
+    },
     "research_cutoff": "2026-07-23T17:10:00Z",
     "retired_codes": [],
-    "schema_version": "1.1",
+    "schema_version": "1.2",
     "sources": [
       {
         "code": "strn",

@@ -75,7 +75,7 @@ from election_guide.results.models import ElectionResults
 from election_guide.scoring.models import ConsensusReport, RaceConsensus
 from election_guide.serialization import canonical_json_bytes
 from election_guide.sources.models import Source
-from election_guide.sources.panel import build_panel_snapshot, panel_version
+from election_guide.sources.panel import PanelSnapshot, build_panel_snapshot
 from election_guide.sources.registry import source_registry_hash
 
 ARTIFACT_NAMES = (
@@ -505,6 +505,7 @@ def _build_view_model(
         for source in active_sources
     ]
     coverage_gap_count = sum(source.contribution_status == "coverage_gap" for source in sources)
+    snapshot = build_panel_snapshot(dataset.source_registry)
     return PublicationViewModel(
         metadata=PublicationMetadata(
             election_id=dataset.inventory.election.id,
@@ -517,9 +518,10 @@ def _build_view_model(
             generated_at=consensus.computed_at,
             data_as_of=data_as_of,
             data_version=consensus.input_hash[:12],
-            source_panel_id=dataset.source_registry.id,
-            source_panel_version=panel_version(dataset.source_registry.id),
-            source_panel_hash=source_registry_hash(dataset.source_registry),
+            source_panel_id=snapshot.panel_id,
+            source_panel_version=snapshot.panel_version,
+            source_panel_hash=snapshot.panel_hash,
+            source_registry_hash=source_registry_hash(dataset.source_registry),
             git_commit=git_commit,
             source_count=len(active_sources),
             captured_source_count=len(captured_source_ids),
@@ -533,7 +535,7 @@ def _build_view_model(
         sources=sources,
         sections=sections,
         methodology=_methodology(dataset, consensus),
-        personalization=_personalization(dataset, consensus, sources, sections),
+        personalization=_personalization(dataset, consensus, sources, sections, snapshot),
         comparisons=_comparisons(dataset, sections),
         results=results,
         corrections=corrections,
@@ -545,13 +547,13 @@ def _personalization(
     consensus: ConsensusReport,
     sources: list[PublicationSource],
     sections: list[PublicationSection],
+    snapshot: PanelSnapshot,
 ) -> PersonalizationContract:
     """Publish the enabled lens payload alongside the audited display model."""
     candidate_order_by_race_id = {
         race.id: [choice.id for choice in sorted(race.choices, key=lambda item: item.ballot_order)]
         for race in dataset.inventory.races
     }
-    snapshot = build_panel_snapshot(dataset.source_registry)
     snapshot_source_by_id = {item.id: item for item in snapshot.sources}
     overlap_groups_by_id = {source.id: source.overlap_group_ids for source in sources}
     scoring = consensus.scoring_configuration

@@ -3474,6 +3474,22 @@ def test_the_guide_publishes_exactly_one_payload_element(tmp_path: Path) -> None
     assert payload.personalization is not None
 
 
+def test_client_payload_keeps_registry_audit_hash_server_side(tmp_path: Path) -> None:
+    view_model = _view_model(tmp_path)
+    html = render_html_document(
+        view_model,
+        read_rendering_configuration(RENDERING_CONFIG),
+    )
+    payload = _client_payload(html)
+    serialized = canonical_json_bytes(payload).decode()
+    registry_hash = view_model.metadata.source_registry_hash
+
+    assert payload["panel_hash"] == view_model.metadata.source_panel_hash
+    assert "source_registry_hash" not in serialized
+    assert registry_hash is not None
+    assert registry_hash not in serialized
+
+
 def test_guide_head_carries_the_eyebrow_title_and_tagline(tmp_path: Path) -> None:
     """Issue 177: the live source count belongs to the persistent strip.
 

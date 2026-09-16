@@ -552,6 +552,11 @@ class PublicationMetadata(PublicationModel):
     source_panel_id: str
     source_panel_version: str
     source_panel_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    source_registry_hash: str | None = Field(
+        default=None,
+        pattern=r"^[0-9a-f]{64}$",
+        exclude_if=lambda value: value is None,
+    )
     git_commit: str = Field(min_length=1)
     source_count: int = Field(ge=0, strict=True)
     captured_source_count: int = Field(ge=0, strict=True)
@@ -572,7 +577,7 @@ class PublicationMetadata(PublicationModel):
 
 
 class PublicationViewModel(PublicationModel):
-    schema_version: Literal["1.13"] = "1.13"
+    schema_version: Literal["1.13", "1.14"] = "1.14"
     metadata: PublicationMetadata
     sources: list[PublicationSource]
     sections: list[PublicationSection]
@@ -592,6 +597,15 @@ class PublicationViewModel(PublicationModel):
     #290) -- the same "state, not option" posture `results` above follows.
     `#290`'s corrections page, and every page's nav link to it, render only
     when this is not `None` and carries at least one entry."""
+
+    @model_validator(mode="after")
+    def validate_schema_fields(self) -> PublicationViewModel:
+        registry_hash = self.metadata.source_registry_hash
+        if self.schema_version == "1.14" and registry_hash is None:
+            raise ValueError("schema 1.14 requires source_registry_hash")
+        if self.schema_version == "1.13" and registry_hash is not None:
+            raise ValueError("schema 1.13 cannot declare source_registry_hash")
+        return self
 
     @model_validator(mode="after")
     def validate_topology(self) -> PublicationViewModel:

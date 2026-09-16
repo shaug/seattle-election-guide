@@ -230,8 +230,10 @@ at the `PublicationViewModel` boundary that schema 1.14 requires it and schema
 Build one panel snapshot in `_build_view_model`, assign:
 
 ```python
-source_panel_hash=snapshot.panel_hash,
-source_registry_hash=source_registry_hash(dataset.source_registry),
+metadata = PublicationMetadata(
+    source_panel_hash=snapshot.panel_hash,
+    source_registry_hash=source_registry_hash(dataset.source_registry),
+)
 ```
 
 Pass that same `PanelSnapshot` into `_personalization` so metadata and the
@@ -285,9 +287,7 @@ Extend release-build assertions by loading the emitted manifest and publication
 view model from the real bundle:
 
 ```python
-manifest = ReleaseManifest.model_validate(
-    read_json(release.bundle_dir / "release-manifest.json")
-)
+manifest = ReleaseManifest.model_validate(read_json(release.bundle_dir / "release-manifest.json"))
 view_model = PublicationViewModel.model_validate(
     read_json(release.bundle_dir / "data/publication_view_model.json")
 )
