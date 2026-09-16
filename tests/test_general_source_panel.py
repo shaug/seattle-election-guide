@@ -1,7 +1,6 @@
 from datetime import UTC, datetime
 from pathlib import Path
 
-import pytest
 from typer.testing import CliRunner
 
 from election_guide.cli import app
@@ -60,12 +59,8 @@ def test_general_panel_snapshot_preserves_frozen_identity_contract() -> None:
     assert published.panel_hash == (
         "b0fb2a603bd98da49d3282d2daa0cb55ff56e0bbdd46104c8b5a4a441b747a95"
     )
-    assert published.model_copy(update={"panel_hash": current_projection.panel_hash}) == (
-        current_projection
-    )
-
-    with pytest.raises(ValueError, match="cannot be rewritten"):
-        appended_panel_snapshot(committed_catalog, current_projection)
+    assert current_projection == published
+    assert appended_panel_snapshot(committed_catalog, current_projection) == committed_catalog
 
 
 def test_general_panel_preserves_primary_selection_contract() -> None:

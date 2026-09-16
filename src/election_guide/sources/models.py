@@ -282,8 +282,16 @@ class OverlapGroup(SourceModel):
     member_ids: list[str] = Field(min_length=2)
 
 
+class PanelHashCompatibility(SourceModel):
+    """Bind one canonical panel contract to its already-published legacy hash."""
+
+    panel_id: str = Field(min_length=1)
+    contract_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    published_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+
 class SourceRegistry(SourceModel):
-    schema_version: Literal["1.1"] = "1.1"
+    schema_version: Literal["1.1", "1.2"] = "1.2"
     id: str
     election_id: str
     frozen_at: AwareDatetime
@@ -293,6 +301,7 @@ class SourceRegistry(SourceModel):
     retired_codes: list[RetiredCode] = Field(default_factory=list[RetiredCode])
     sources: list[Source] = Field(min_length=1)
     overlap_groups: list[OverlapGroup]
+    panel_hash_compatibility: PanelHashCompatibility | None = None
 
     def category_by_id(self, category_id: str) -> SourceCategory:
         """Resolve a validated semantic category id to its catalog entry."""
@@ -374,6 +383,11 @@ class SourceRegistry(SourceModel):
 
     @model_validator(mode="after")
     def validate_registry(self) -> SourceRegistry:
+        compatibility = self.panel_hash_compatibility
+        if self.schema_version == "1.1" and compatibility is not None:
+            raise ValueError("schema 1.1 cannot declare panel hash compatibility")
+        if compatibility is not None and compatibility.panel_id != self.id:
+            raise ValueError("panel hash compatibility panel_id must match registry id")
         if self.research_cutoff > self.frozen_at:
             raise ValueError("research cutoff cannot be after panel freeze")
 
