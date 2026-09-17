@@ -4,6 +4,7 @@ from pathlib import Path
 from typer.testing import CliRunner
 
 from election_guide.cli import app
+from election_guide.release import verify_release_compilation
 from election_guide.sources.catalog import (
     appended_panel_snapshot,
     read_panel_snapshot_catalog,
@@ -15,6 +16,10 @@ PROJECT_ROOT = Path(__file__).parents[1]
 PRIMARY_REGISTRY_PATH = PROJECT_ROOT / "config/sources/default.yaml"
 GENERAL_REGISTRY_PATH = PROJECT_ROOT / "config/sources/wa-2026-general.yaml"
 GENERAL_INVENTORY_PATH = PROJECT_ROOT / "data/normalized/wa-2026-general-inventory.json"
+GENERAL_LEDGER_PATH = PROJECT_ROOT / "data/releases/wa-2026-general/source-decisions.yaml"
+GENERAL_DATASET_PATH = PROJECT_ROOT / "data/normalized/wa-2026-general-canonical-dataset.json"
+GENERAL_SNAPSHOT_ROOT = PROJECT_ROOT / "data/releases/wa-2026-general/snapshots"
+GENERAL_MANIFEST_DIR = PROJECT_ROOT / "data/releases/wa-2026-general/manifests"
 GENERAL_CATALOG_PATH = PROJECT_ROOT / "data/releases/wa-2026-general/panel-snapshots.json"
 
 PRESERVED_SOURCE_FIELDS = (
@@ -45,6 +50,19 @@ def test_general_source_registry_validates_through_cli() -> None:
     assert result.stdout.strip() == (
         "source registry: valid (48 proposed; 42 consensus, 1 comparison, 5 excluded)"
     )
+
+
+def test_general_release_compilation_reproduces_committed_artifacts() -> None:
+    dataset = verify_release_compilation(
+        GENERAL_LEDGER_PATH,
+        GENERAL_INVENTORY_PATH,
+        GENERAL_REGISTRY_PATH,
+        GENERAL_DATASET_PATH,
+        GENERAL_SNAPSHOT_ROOT,
+        GENERAL_MANIFEST_DIR,
+    )
+
+    assert dataset.source_registry == read_source_registry(GENERAL_REGISTRY_PATH)
 
 
 def test_general_panel_snapshot_preserves_frozen_identity_contract() -> None:
