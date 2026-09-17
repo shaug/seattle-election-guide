@@ -283,11 +283,17 @@ class OverlapGroup(SourceModel):
 
 
 class PanelHashCompatibility(SourceModel):
-    """Bind one canonical panel contract to its already-published legacy hash."""
+    """Anchor one panel lineage to its initially published hash."""
 
     panel_id: str = Field(min_length=1)
     contract_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
     published_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+
+def _panel_lineage(panel_id: str) -> str:
+    """Return the identifier shared by numeric versions of one panel."""
+    lineage, separator, version = panel_id.rpartition("-v")
+    return lineage if separator and version.isdigit() else panel_id
 
 
 class SourceRegistry(SourceModel):
@@ -389,8 +395,14 @@ class SourceRegistry(SourceModel):
         compatibility = self.panel_hash_compatibility
         if self.schema_version == "1.1" and "panel_hash_compatibility" in self.model_fields_set:
             raise ValueError("schema 1.1 cannot declare panel hash compatibility")
-        if compatibility is not None and compatibility.panel_id != self.id:
-            raise ValueError("panel hash compatibility panel_id must match registry id")
+        if self.schema_version == "1.2" and compatibility is None:
+            raise ValueError("schema 1.2 requires a panel hash compatibility anchor")
+        if compatibility is not None and _panel_lineage(compatibility.panel_id) != _panel_lineage(
+            self.id
+        ):
+            raise ValueError(
+                "panel hash compatibility panel_id must belong to the registry panel lineage"
+            )
         if self.research_cutoff > self.frozen_at:
             raise ValueError("research cutoff cannot be after panel freeze")
 

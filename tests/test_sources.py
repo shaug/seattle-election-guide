@@ -12,6 +12,7 @@ from election_guide.normalization.models import CanonicalDataset
 from election_guide.normalization.records import new_normalized_endorsement
 from election_guide.serialization import read_json
 from election_guide.sources import panel as source_panel
+from election_guide.sources.catalog import appended_panel_snapshot, read_panel_snapshot_catalog
 from election_guide.sources.models import SourceRegistry
 from election_guide.sources.panel import build_panel_snapshot
 from election_guide.sources.registry import (
@@ -23,6 +24,7 @@ from election_guide.sources.report import render_discovery_report
 
 PROJECT_ROOT = Path(__file__).parent.parent
 REGISTRY_PATH = PROJECT_ROOT / "config" / "sources" / "default.yaml"
+GENERAL_REGISTRY_PATH = PROJECT_ROOT / "config" / "sources" / "wa-2026-general.yaml"
 LEDGER_PATH = PROJECT_ROOT / "data" / "releases" / "wa-2026-primary" / "source-decisions.yaml"
 
 
@@ -880,6 +882,49 @@ def test_schema_1_2_accepts_matching_panel_hash_compatibility() -> None:
     assert SourceRegistry.model_validate(payload).panel_hash_compatibility is not None
 
 
+@pytest.mark.parametrize(
+    ("registry_path", "catalog_path"),
+    [
+        (
+            REGISTRY_PATH,
+            PROJECT_ROOT / "data" / "releases" / "wa-2026-primary" / "panel-snapshots.json",
+        ),
+        (
+            GENERAL_REGISTRY_PATH,
+            PROJECT_ROOT / "data" / "releases" / "wa-2026-general" / "panel-snapshots.json",
+        ),
+    ],
+)
+def test_compatibility_anchor_rejects_an_empty_version_bump_but_allows_a_real_change(
+    registry_path: Path, catalog_path: Path
+) -> None:
+    registry = read_source_registry(registry_path)
+    catalog = read_panel_snapshot_catalog(catalog_path)
+    payload = registry.model_dump(mode="json")
+    stem, _, version = registry.id.rpartition("-v")
+    payload["id"] = f"{stem}-v{int(version) + 1}"
+
+    without_anchor = copy.deepcopy(payload)
+    without_anchor.pop("panel_hash_compatibility")
+    with pytest.raises(ValidationError, match="requires a panel hash compatibility anchor"):
+        SourceRegistry.model_validate(without_anchor)
+
+    id_only_successor = SourceRegistry.model_validate(payload)
+    assert source_panel.panel_identity_hash(id_only_successor) == source_panel.panel_identity_hash(
+        registry
+    )
+    with pytest.raises(ValueError, match="duplicates the hash"):
+        appended_panel_snapshot(catalog, build_panel_snapshot(id_only_successor))
+
+    payload["sources"][0]["name"] += " Updated"
+    structural_successor = SourceRegistry.model_validate(payload)
+    assert source_panel.panel_identity_hash(structural_successor) != (
+        source_panel.panel_identity_hash(registry)
+    )
+    appended = appended_panel_snapshot(catalog, build_panel_snapshot(structural_successor))
+    assert appended.snapshots[-1].panel_id == structural_successor.id
+
+
 def test_schema_1_1_rejects_panel_hash_compatibility() -> None:
     payload = _registry_payload()
     payload["schema_version"] = "1.1"
@@ -910,7 +955,7 @@ def test_panel_hash_compatibility_rejects_other_panel_id() -> None:
         "published_hash": "389a978b149da9afdb919fdb9dfd1d4d3fbecc290d3b1cd41da3e3fd363de0b5",
     }
 
-    with pytest.raises(ValidationError, match="panel_id must match registry id"):
+    with pytest.raises(ValidationError, match="panel_id must belong to the registry panel lineage"):
         SourceRegistry.model_validate(payload)
 
 

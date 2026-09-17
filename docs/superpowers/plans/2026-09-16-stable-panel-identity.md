@@ -84,7 +84,7 @@ projection still conflicts with the published snapshot.
 - [ ] **Step 3: Add the strict identity and compatibility models**
 
 In `sources/models.py`, keep schema 1.1 readable and add schema 1.2 plus the
-optional compatibility record:
+required compatibility anchor:
 
 ```python
 class PanelHashCompatibility(SourceModel):
@@ -98,9 +98,10 @@ class SourceRegistry(SourceModel):
     panel_hash_compatibility: PanelHashCompatibility | None = None
 ```
 
-Extend `SourceRegistry.validate_registry` so a compatibility record's
-`panel_id` must equal `registry.id`; schema 1.1 rejects the new record and
-schema 1.2 permits it.
+Extend `SourceRegistry.validate_registry` so schema 1.1 rejects the new record,
+schema 1.2 requires it, and its `panel_id` must belong to the registry's panel
+lineage. Retain the anchor across successor versions so an ID-only bump still
+emits the published hash and collides with the append-only catalog.
 
 In `sources/panel.py`, define strict projection models for eligibility,
 categories, sources, overlap groups, and retired codes, then compose:
@@ -444,9 +445,9 @@ overlap, attribution, or retired-code migration change changes panel_hash and
 must be published under a new panel version.
 ```
 
-Explain that existing compatibility bindings preserve already-published hashes
-only while their canonical projection matches, and that published snapshot
-catalog entries are never rewritten.
+Explain that existing compatibility anchors remain on successor versions and
+preserve already-published hashes only while their canonical projection
+matches, and that published snapshot catalog entries are never rewritten.
 
 - [ ] **Step 2: Run formatting and focused validation**
 

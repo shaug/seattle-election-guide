@@ -78,13 +78,16 @@ not change `panel_hash` and does not require a panel version bump. A membership,
 selectable-category, role, eligibility, overlap, attribution, or retired-code migration change
 changes `panel_hash` and must be published under a new panel version.
 
-Schema 1.2 registries for panels whose legacy full-registry hashes were already published may carry
-one `panel_hash_compatibility` binding. The binding preserves that published hash only while its
-`contract_hash` exactly matches the current canonical projection; a mismatch makes the canonical
-hash the candidate `panel_hash`. The compatibility object is itself covered by
-`source_registry_hash` but never enters the panel projection. New panel versions use their
-canonical projection hash directly and omit the binding. Schema 1.1 remains readable for immutable
-historical inputs and retains its historical full-registry `panel_hash` behavior.
+Schema 1.2 registries carry one required `panel_hash_compatibility` lineage anchor. For panels
+whose legacy full-registry hashes were already published, the anchor preserves that published hash
+only while its `contract_hash` exactly matches the current canonical projection; a mismatch makes
+the canonical hash the candidate `panel_hash`. The anchor remains on successor versions in the same
+lineage, with `panel_id` naming the initially published panel. A new lineage anchors its initial
+canonical hash to itself. The compatibility object is covered by `source_registry_hash` but never
+enters the panel projection. Retaining it ensures an empty version bump repeats the anchored hash
+and is rejected by the catalog, while a structural successor uses its new canonical hash. Schema
+1.1 remains readable for immutable historical inputs and retains its historical full-registry
+`panel_hash` behavior.
 
 Panel snapshot catalogs are append-only. Re-snapshotting an unchanged published panel is a no-op;
 a changed contract under an existing `panel_id` is rejected. Never edit or regenerate an existing

@@ -72,28 +72,35 @@ The primary and general panels already have public `panel_hash` values created
 from the old full-registry algorithm. Those exact values remain valid and the
 committed snapshot catalogs remain byte-for-byte unchanged.
 
-`SourceRegistry` schema 1.2 adds an optional
-`panel_hash_compatibility` object. Schema 1.1 remains readable for immutable
-historical inputs. Each existing published panel's current registry advances
-to schema 1.2 and receives one binding containing:
+`SourceRegistry` schema 1.2 adds a required `panel_hash_compatibility` lineage
+anchor. Schema 1.1 remains readable for immutable historical inputs. Each
+existing published panel's current registry advances to schema 1.2 and receives
+one anchor containing:
 
 - its `panel_id`;
 - the new canonical projection hash of the contract that was published; and
 - its existing public legacy `panel_hash`.
 
-When the current projection matches the binding, `build_panel_snapshot`
-continues to emit the legacy public hash. A discovery-only refresh still
-matches and therefore remains the same panel identity. If a structural field
-changes, the projection no longer matches; the compatibility binding is not
-used and the new projection hash becomes the candidate identity. Attempting to
-publish that changed contract under the old `panel_id` is rejected by the
-existing append-only catalog rule, requiring an intentional version bump.
+The anchor remains on every later registry in the same version lineage; its
+`panel_id` identifies the initially published panel rather than necessarily the
+current registry. When the current projection matches the binding,
+`build_panel_snapshot` continues to emit the legacy public hash. A
+discovery-only refresh still matches and therefore remains the same panel
+identity. If a structural field changes, the projection no longer matches; the
+compatibility binding is not used and the new projection hash becomes the
+candidate identity. Attempting to publish that changed contract under the old
+`panel_id` is rejected by the existing append-only catalog rule, requiring an
+intentional version bump.
 
 The compatibility object itself remains part of the full registry audit hash,
 but never enters the canonical panel projection. Compatibility bindings are
-validated data, not conditional branches scattered through builders. New
-panel versions use the canonical projection hash directly and omit the
-compatibility object.
+validated data, not conditional branches scattered through builders. Schema
+1.2 rejects a missing anchor, and an anchor's `panel_id` must belong to the same
+version lineage as the registry. A new lineage anchors its initial canonical
+hash to itself. Later versions retain the anchor: a structural change uses its
+canonical projection hash directly because it no longer matches, while an empty
+version bump still emits the anchored published hash and is rejected by the
+catalog as a duplicate.
 
 ### Schema evolution
 
