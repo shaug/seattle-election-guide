@@ -517,6 +517,10 @@ def _verify_bundle(declaration: PublishedElection, bundle_dir: Path) -> _Verifie
             declaration.source_registry_hash,
             status.source_registry_hash,
         ),
+        "publication source registry hash": (
+            status.source_registry_hash,
+            view_model.metadata.source_registry_hash,
+        ),
     }
     for label, (expected, actual) in expected_values.items():
         if expected != actual:

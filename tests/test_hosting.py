@@ -247,6 +247,40 @@ def test_stage_rejects_registry_hash_different_from_release_status(tmp_path: Pat
         )
 
 
+def test_stage_rejects_publication_registry_hash_different_from_release_status(
+    tmp_path: Path,
+) -> None:
+    current, older = _write_archive_bundles(
+        tmp_path,
+        current_source_registry_hash=REGISTRY_HASH,
+    )
+    manifest = _write_site_manifest(
+        tmp_path,
+        current_first=True,
+        current_source_registry_hash=REGISTRY_HASH,
+    )
+    view_model_path = current / "data" / "publication_view_model.json"
+    view_model = json.loads(view_model_path.read_text(encoding="utf-8"))
+    view_model["metadata"]["source_registry_hash"] = "e" * 64
+    view_model_path.write_bytes(canonical_json_bytes(view_model))
+    release_manifest_path = current / "release-manifest.json"
+    release_manifest = json.loads(release_manifest_path.read_text(encoding="utf-8"))
+    release_manifest["artifact_hashes"]["data/publication_view_model.json"] = hashlib.sha256(
+        view_model_path.read_bytes()
+    ).hexdigest()
+    release_manifest_path.write_bytes(canonical_json_bytes(release_manifest))
+
+    with pytest.raises(
+        ValueError,
+        match=r"bundle .* publication source registry hash differs",
+    ):
+        stage_pages_site(
+            manifest,
+            {CURRENT_BUNDLE_ID: current, OLDER_BUNDLE_ID: older},
+            tmp_path / "site",
+        )
+
+
 def test_verify_rejects_registry_hash_different_between_declaration_and_deployment(
     tmp_path: Path,
 ) -> None:
@@ -1955,7 +1989,12 @@ def _write_archive_bundles(
     return current, older
 
 
-def _bundle_view_model(root: Path, *, election_id: str) -> PublicationViewModel:
+def _bundle_view_model(
+    root: Path,
+    *,
+    election_id: str,
+    source_registry_hash: str | None = None,
+) -> PublicationViewModel:
     """A real, valid `PublicationViewModel` for one hosting-fixture bundle.
 
     The shared rendering fixture's own election identity is unrelated to this
@@ -1987,7 +2026,14 @@ def _bundle_view_model(root: Path, *, election_id: str) -> PublicationViewModel:
             ),
         }
     )
-    return PublicationViewModel.model_validate(updated.model_dump(mode="json"))
+    payload = updated.model_dump(mode="json")
+    if source_registry_hash is None:
+        payload["schema_version"] = "1.13"
+        payload["metadata"].pop("source_registry_hash")
+    else:
+        payload["schema_version"] = "1.14"
+        payload["metadata"]["source_registry_hash"] = source_registry_hash
+    return PublicationViewModel.model_validate(payload)
 
 
 def _write_release_bundle(
@@ -2017,7 +2063,9 @@ def _write_release_bundle(
             path.write_bytes(html)
         elif relative == "data/publication_view_model.json":
             view_model_payload = _bundle_view_model(
-                root / "view-model-src", election_id=election_id
+                root / "view-model-src",
+                election_id=election_id,
+                source_registry_hash=source_registry_hash,
             ).model_dump(mode="json")
             # Hosting must continue to accept already-published schema-1.8
             # bundles, which predate the optional structured naming fields.
