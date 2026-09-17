@@ -768,9 +768,6 @@ def test_overlap_order_preserves_panel_identity(registry_name: str, ordering: st
         source = next(item for item in payload["sources"] if item["id"] == "fuse-washington")
         group["member_ids"].append(source["id"])
         source["overlap_group_ids"].append(group["id"])
-        payload["panel_hash_compatibility"]["contract_hash"] = source_panel.panel_identity_hash(
-            SourceRegistry.model_validate(payload)
-        )
     before = SourceRegistry.model_validate(payload)
     payload = before.model_dump(mode="json")
 
@@ -787,9 +784,10 @@ def test_overlap_order_preserves_panel_identity(registry_name: str, ordering: st
     assert source_registry_hash(after) != source_registry_hash(before)
     assert source_panel.panel_identity_hash(after) == source_panel.panel_identity_hash(before)
     assert build_panel_snapshot(after) == build_panel_snapshot(before)
-    assert (
-        build_panel_snapshot(after).panel_hash
-        == payload["panel_hash_compatibility"]["published_hash"]
+    assert build_panel_snapshot(after).panel_hash == (
+        source_panel.panel_identity_hash(after)
+        if ordering == "source_groups"
+        else payload["panel_hash_compatibility"]["published_hash"]
     )
 
 
@@ -806,6 +804,7 @@ def test_schema_1_1_snapshot_retains_historical_full_registry_hash() -> None:
     assert build_panel_snapshot(historical).panel_hash == source_registry_hash(historical)
 
 
+@pytest.mark.parametrize("registry_path", [REGISTRY_PATH, GENERAL_REGISTRY_PATH])
 @pytest.mark.parametrize(
     "mutation",
     [
@@ -820,9 +819,10 @@ def test_schema_1_1_snapshot_retains_historical_full_registry_hash() -> None:
     ],
 )
 def test_structural_change_changes_panel_identity_and_candidate_snapshot_hash(
+    registry_path: Path,
     mutation: str,
 ) -> None:
-    payload = read_source_registry(REGISTRY_PATH).model_dump(mode="json")
+    payload = read_source_registry(registry_path).model_dump(mode="json")
 
     if mutation == "retired_code_reason":
         payload["retired_codes"] = [
@@ -886,6 +886,38 @@ def test_structural_change_changes_panel_identity_and_candidate_snapshot_hash(
 
     assert source_panel.panel_identity_hash(after) != source_panel.panel_identity_hash(before)
     assert build_panel_snapshot(after).panel_hash != build_panel_snapshot(before).panel_hash
+
+    # Rebinding the anchor must not hide structural drift, including eligibility,
+    # overlap, and migration fields absent from the snapshot's visible payload.
+    payload["panel_hash_compatibility"]["contract_hash"] = source_panel.panel_identity_hash(after)
+    with pytest.raises(ValidationError, match="must match an immutable legacy binding"):
+        SourceRegistry.model_validate(payload)
+
+
+@pytest.mark.parametrize("field", ["panel_id", "contract_hash", "published_hash"])
+def test_legacy_compatibility_requires_the_exact_published_tuple(field: str) -> None:
+    payload = _registry_payload()
+    payload["panel_hash_compatibility"][field] = (
+        "wa-2026-primary-default-sources-v5" if field == "panel_id" else "0" * 64
+    )
+
+    with pytest.raises(ValidationError, match="must match an immutable legacy binding"):
+        SourceRegistry.model_validate(payload)
+
+
+def test_new_lineage_requires_a_canonical_self_binding() -> None:
+    payload = _registry_payload()
+    payload["id"] = "new-panel-v1"
+    payload["panel_hash_compatibility"]["panel_id"] = payload["id"]
+
+    with pytest.raises(ValidationError, match="must match an immutable legacy binding"):
+        SourceRegistry.model_validate(payload)
+
+    payload["panel_hash_compatibility"]["published_hash"] = payload["panel_hash_compatibility"][
+        "contract_hash"
+    ]
+    registry = SourceRegistry.model_validate(payload)
+    assert build_panel_snapshot(registry).panel_hash == source_panel.panel_identity_hash(registry)
 
 
 def test_schema_1_2_accepts_matching_panel_hash_compatibility() -> None:

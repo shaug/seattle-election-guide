@@ -84,7 +84,11 @@ only while its `contract_hash` exactly matches the current canonical projection;
 the canonical hash the candidate `panel_hash`. The anchor remains on successor versions in the same
 lineage, with `panel_id` naming the initially published panel. A new lineage anchors its initial
 canonical hash to itself. The compatibility object is covered by `source_registry_hash` but never
-enters the panel projection. Retaining it ensures an empty version bump repeats the anchored hash
+enters the panel projection. A differing published hash is accepted only for the exact primary or
+general legacy tuple recorded in `sources/models.py`: panel ID, canonical contract hash, and public
+legacy hash. These bindings are immutable; editing the registry anchor cannot authorize a changed
+contract. All other anchors must have equal `contract_hash` and `published_hash` values.
+Retaining the anchor ensures an empty version bump repeats the anchored hash
 and is rejected by the catalog, while a structural successor uses its new canonical hash. Schema
 1.1 remains readable for immutable historical inputs and retains its historical full-registry
 `panel_hash` behavior.

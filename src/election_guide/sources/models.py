@@ -23,6 +23,24 @@ SOURCE_CODE_PATTERN = r"^[0-9A-Za-z]{4}$"
 TRANSPORT_CODE_PATTERN = r"^[0-9A-Za-z]{4}$"
 RESERVED_CATEGORY_INITIALS = frozenset({"G", "g"})
 
+# Immutable schema-1.1 publications migrated by issue #436. These exact tuples
+# authorize legacy hashes independently of editable registry compatibility data.
+# New panels use canonical hashes; never rebind these published contracts.
+LEGACY_PANEL_HASH_BINDINGS = frozenset(
+    {
+        (
+            "wa-2026-primary-default-sources-v4",
+            "a6e58223507970695ac4cf66cd8020f9f1d4ffbd2989d8fde57d4abaaf5bd596",
+            "389a978b149da9afdb919fdb9dfd1d4d3fbecc290d3b1cd41da3e3fd363de0b5",
+        ),
+        (
+            "wa-2026-general-default-sources-v1",
+            "a6e58223507970695ac4cf66cd8020f9f1d4ffbd2989d8fde57d4abaaf5bd596",
+            "b0fb2a603bd98da49d3282d2daa0cb55ff56e0bbdd46104c8b5a4a441b747a95",
+        ),
+    }
+)
+
 
 def validated_source_code(value: str) -> str:
     """Keep `G` and `g` reserved for categories anywhere in a source code."""
@@ -402,6 +420,20 @@ class SourceRegistry(SourceModel):
         ):
             raise ValueError(
                 "panel hash compatibility panel_id must belong to the registry panel lineage"
+            )
+        if (
+            compatibility is not None
+            and compatibility.published_hash != compatibility.contract_hash
+            and (
+                compatibility.panel_id,
+                compatibility.contract_hash,
+                compatibility.published_hash,
+            )
+            not in LEGACY_PANEL_HASH_BINDINGS
+        ):
+            raise ValueError(
+                "panel hash compatibility must match an immutable legacy binding "
+                "or use equal contract_hash and published_hash"
             )
         if self.research_cutoff > self.frozen_at:
             raise ValueError("research cutoff cannot be after panel freeze")
