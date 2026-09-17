@@ -151,15 +151,19 @@ def _panel_identity_contract(registry: SourceRegistry) -> PanelIdentityContract:
     )
 
 
+def _hash_panel_identity_contract(contract: PanelIdentityContract) -> str:
+    return hashlib.sha256(canonical_json_bytes(contract.model_dump(mode="json"))).hexdigest()
+
+
 def panel_identity_hash(registry: SourceRegistry) -> str:
     """Hash only the stable transport-facing source-selection contract."""
-    contract = _panel_identity_contract(registry)
-    return hashlib.sha256(canonical_json_bytes(contract.model_dump(mode="json"))).hexdigest()
+    return _hash_panel_identity_contract(_panel_identity_contract(registry))
 
 
 def build_panel_snapshot(registry: SourceRegistry) -> PanelSnapshot:
     """Project the validated registry into its transport-facing identity contract."""
-    contract_hash = panel_identity_hash(registry)
+    contract = _panel_identity_contract(registry)
+    contract_hash = _hash_panel_identity_contract(contract)
     compatibility = registry.panel_hash_compatibility
     if registry.schema_version == "1.1":
         panel_hash = source_registry_hash(registry)
@@ -172,26 +176,11 @@ def build_panel_snapshot(registry: SourceRegistry) -> PanelSnapshot:
         panel_version=panel_version(registry.id),
         panel_hash=panel_hash,
         categories=[
-            PanelCategorySnapshot(
-                id=category.id,
-                code=category.code,
-                label=category.label,
-                selectable=category.selectable,
-                panel_role=category.panel_role,
-                member_source_codes=registry.selectable_source_codes(category.id),
-            )
-            for category in registry.categories
+            PanelCategorySnapshot.model_validate(category, from_attributes=True)
+            for category in contract.categories
         ],
         sources=[
-            PanelSourceSnapshot(
-                id=source.id,
-                code=source.code,
-                name=source.name,
-                panel_role=source.panel_role,
-                selectable=source.is_selectable,
-                reporting_category_id=source.reporting_category_id,
-                selection_category_ids=source.selection_category_ids,
-            )
-            for source in registry.sources
+            PanelSourceSnapshot.model_validate(source, from_attributes=True)
+            for source in contract.sources
         ],
     )

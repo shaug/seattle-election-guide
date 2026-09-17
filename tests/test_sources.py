@@ -726,6 +726,24 @@ def test_panel_snapshot_publishes_the_downstream_identity_contract() -> None:
     assert comparison.member_source_codes == ["stim"]
 
 
+def test_panel_snapshot_projects_category_membership_once(monkeypatch: pytest.MonkeyPatch) -> None:
+    registry = read_source_registry(REGISTRY_PATH)
+    calls: list[str] = []
+    selectable_source_codes = SourceRegistry.selectable_source_codes
+
+    def tracked_selectable_source_codes(
+        tracked_registry: SourceRegistry, category_id: str
+    ) -> list[str]:
+        calls.append(category_id)
+        return selectable_source_codes(tracked_registry, category_id)
+
+    monkeypatch.setattr(SourceRegistry, "selectable_source_codes", tracked_selectable_source_codes)
+
+    build_panel_snapshot(registry)
+
+    assert calls == [category.id for category in registry.categories]
+
+
 def test_discovery_refresh_changes_registry_hash_without_changing_panel_identity() -> None:
     before = read_source_registry(REGISTRY_PATH)
     assert before.schema_version == "1.2"
