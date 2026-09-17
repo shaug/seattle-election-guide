@@ -23,6 +23,24 @@ SOURCE_CODE_PATTERN = r"^[0-9A-Za-z]{4}$"
 TRANSPORT_CODE_PATTERN = r"^[0-9A-Za-z]{4}$"
 RESERVED_CATEGORY_INITIALS = frozenset({"G", "g"})
 
+# Immutable schema-1.1 publications migrated by issue #436. These exact tuples
+# authorize legacy hashes independently of editable registry compatibility data.
+# New panels use canonical hashes; never rebind these published contracts.
+LEGACY_PANEL_HASH_BINDINGS = frozenset(
+    {
+        (
+            "wa-2026-primary-default-sources-v4",
+            "a6e58223507970695ac4cf66cd8020f9f1d4ffbd2989d8fde57d4abaaf5bd596",
+            "389a978b149da9afdb919fdb9dfd1d4d3fbecc290d3b1cd41da3e3fd363de0b5",
+        ),
+        (
+            "wa-2026-general-default-sources-v1",
+            "a6e58223507970695ac4cf66cd8020f9f1d4ffbd2989d8fde57d4abaaf5bd596",
+            "b0fb2a603bd98da49d3282d2daa0cb55ff56e0bbdd46104c8b5a4a441b747a95",
+        ),
+    }
+)
+
 
 def validated_source_code(value: str) -> str:
     """Keep `G` and `g` reserved for categories anywhere in a source code."""
@@ -282,8 +300,22 @@ class OverlapGroup(SourceModel):
     member_ids: list[str] = Field(min_length=2)
 
 
+class PanelHashCompatibility(SourceModel):
+    """Anchor one panel lineage to its initially published hash."""
+
+    panel_id: str = Field(min_length=1)
+    contract_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    published_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+
+def _panel_lineage(panel_id: str) -> str:
+    """Return the identifier shared by numeric versions of one panel."""
+    lineage, separator, version = panel_id.rpartition("-v")
+    return lineage if separator and version.isdigit() else panel_id
+
+
 class SourceRegistry(SourceModel):
-    schema_version: Literal["1.1"] = "1.1"
+    schema_version: Literal["1.1", "1.2"] = "1.2"
     id: str
     election_id: str
     frozen_at: AwareDatetime
@@ -293,6 +325,10 @@ class SourceRegistry(SourceModel):
     retired_codes: list[RetiredCode] = Field(default_factory=list[RetiredCode])
     sources: list[Source] = Field(min_length=1)
     overlap_groups: list[OverlapGroup]
+    panel_hash_compatibility: PanelHashCompatibility | None = Field(
+        default=None,
+        exclude_if=lambda value: value is None,
+    )
 
     def category_by_id(self, category_id: str) -> SourceCategory:
         """Resolve a validated semantic category id to its catalog entry."""
@@ -374,6 +410,31 @@ class SourceRegistry(SourceModel):
 
     @model_validator(mode="after")
     def validate_registry(self) -> SourceRegistry:
+        compatibility = self.panel_hash_compatibility
+        if self.schema_version == "1.1" and "panel_hash_compatibility" in self.model_fields_set:
+            raise ValueError("schema 1.1 cannot declare panel hash compatibility")
+        if self.schema_version == "1.2" and compatibility is None:
+            raise ValueError("schema 1.2 requires a panel hash compatibility anchor")
+        if compatibility is not None and _panel_lineage(compatibility.panel_id) != _panel_lineage(
+            self.id
+        ):
+            raise ValueError(
+                "panel hash compatibility panel_id must belong to the registry panel lineage"
+            )
+        if (
+            compatibility is not None
+            and compatibility.published_hash != compatibility.contract_hash
+            and (
+                compatibility.panel_id,
+                compatibility.contract_hash,
+                compatibility.published_hash,
+            )
+            not in LEGACY_PANEL_HASH_BINDINGS
+        ):
+            raise ValueError(
+                "panel hash compatibility must match an immutable legacy binding "
+                "or use equal contract_hash and published_hash"
+            )
         if self.research_cutoff > self.frozen_at:
             raise ValueError("research cutoff cannot be after panel freeze")
 

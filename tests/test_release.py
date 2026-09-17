@@ -18,14 +18,21 @@ from typer.testing import CliRunner
 import election_guide.release.builder as release_builder
 from election_guide.cli import app
 from election_guide.evidence.models import CapturedManifest
+from election_guide.hosting import stage_pages_site, verify_staged_pages_site
 from election_guide.normalization.models import CanonicalDataset
+from election_guide.publication import PublicationViewModel
 from election_guide.release import (
     ReleaseResult,
     build_release,
     compile_release_dataset,
     verify_release_compilation,
 )
-from election_guide.release.models import REQUIRED_RELEASE_ARTIFACTS, ReleaseStatus
+from election_guide.release.models import (
+    REQUIRED_RELEASE_ARTIFACTS,
+    UNHASHED_RASTERIZED_ARTIFACTS,
+    ReleaseManifest,
+    ReleaseStatus,
+)
 from election_guide.serialization import read_json
 from tests.test_corrections import _valid_corrections  # pyright: ignore[reportPrivateUsage]
 from tests.test_results import _valid_results  # pyright: ignore[reportPrivateUsage]
@@ -401,6 +408,54 @@ def test_release_build_packages_complete_deterministic_public_bundle(
     )
     assert "release-status.json" in release_manifest["artifact_hashes"]
     assert "RELEASE_NOTES.md" in release_manifest["artifact_hashes"]
+    manifest = ReleaseManifest.model_validate(
+        read_json(second.bundle_dir / "release-manifest.json")
+    )
+    view_model = PublicationViewModel.model_validate(
+        read_json(second.bundle_dir / "data/publication_view_model.json")
+    )
+    assert second.status.schema_version == manifest.schema_version == "1.3"
+    assert second.status.source_panel_hash == view_model.metadata.source_panel_hash
+    assert second.status.source_registry_hash == view_model.metadata.source_registry_hash
+    assert manifest.source_panel_hash == second.status.source_panel_hash
+    assert manifest.source_registry_hash == second.status.source_registry_hash
+
+
+def test_checked_in_site_manifest_stages_a_new_current_release(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    ledger, dataset_path, snapshots = _compiled_release_inputs(tmp_path)
+    _stub_release_render(monkeypatch)
+    release = _build_release(
+        ledger,
+        dataset_path,
+        snapshots,
+        tmp_path,
+        tmp_path / "release",
+        release_version="2026-primary.2",
+    )
+    expected_registry_hash = "76f9897a764e66698f45c544b1ade09dbc77cc71c79d0302bf59def05f3c26a8"
+
+    assert release.status.schema_version == "1.3"
+    assert release.status.source_registry_hash == expected_registry_hash
+
+    output = tmp_path / "site"
+    site_manifest_path = PROJECT_ROOT / "config/hosting/site.yaml"
+    stage_pages_site(
+        site_manifest_path,
+        {"wa-2026-primary-2026-primary.2": release.bundle_dir},
+        output,
+        expected_current_git_commit="a" * 40,
+        calendar_path=PROJECT_ROOT / "config/calendar/elections.yaml",
+    )
+    deployment = verify_staged_pages_site(
+        output,
+        site_manifest_path,
+        expected_current_git_commit="a" * 40,
+    )
+
+    assert deployment.elections[0].source_registry_hash == expected_registry_hash
 
 
 def test_release_compare_accepts_different_declared_screenshot_bytes(
@@ -423,7 +478,7 @@ def test_release_compare_accepts_different_declared_screenshot_bytes(
     first_manifest_path = first.bundle_dir / "release-manifest.json"
     second_manifest_path = second.bundle_dir / "release-manifest.json"
     first_manifest = json.loads(first_manifest_path.read_text(encoding="utf-8"))
-    assert first_manifest["schema_version"] == "1.2"
+    assert first_manifest["schema_version"] == "1.3"
     assert first_manifest["unhashed_artifacts"] == [
         "validation/rendering/screenshots/desktop.png",
         "validation/rendering/screenshots/mobile.png",
@@ -772,6 +827,140 @@ def test_release_build_succeeds_with_a_real_results_capture_and_corrections_link
 
 
 @pytest.mark.parametrize(
+    ("model", "payload"),
+    [
+        pytest.param(
+            ReleaseManifest,
+            {
+                "schema_version": "1.3",
+                "release_version": "test",
+                "source_panel_id": "test-panel-v2",
+                "source_panel_hash": "b" * 64,
+                "generated_at": GENERATED_AT,
+                "artifact_hashes": {"release-status.json": "c" * 64},
+                "unhashed_artifacts": sorted(UNHASHED_RASTERIZED_ARTIFACTS),
+            },
+            id="manifest",
+        ),
+        pytest.param(
+            ReleaseStatus,
+            {
+                "schema_version": "1.3",
+                "release_version": "test",
+                "election_id": "wa-2026-primary",
+                "source_panel_id": "test-panel-v2",
+                "source_panel_hash": "b" * 64,
+                "data_as_of": datetime(2026, 7, 20, 10, tzinfo=UTC),
+                "generated_at": GENERATED_AT,
+                "git_commit": "a" * 40,
+                "source_count": 2,
+                "captured_source_count": 2,
+                "displayed_endorsement_count": 2,
+                "unresolved_review_count": 0,
+                "unresolved_high_severity_count": 0,
+                "restricted_capture_count": 0,
+                "source_access_failures": [],
+                "incomplete_races": [],
+                "validation_reports": {"publication": True, "rendering": True},
+                "guide_html_artifact": "guide/custom-guide.html",
+                "included_artifacts": sorted(
+                    REQUIRED_RELEASE_ARTIFACTS
+                    | {
+                        "guide/custom-guide.html",
+                        "validation/rendering/screenshots/desktop.png",
+                    }
+                ),
+                "warnings": [],
+            },
+            id="status",
+        ),
+    ],
+)
+def test_release_schema_1_3_requires_source_registry_hash(
+    model: type[ReleaseManifest] | type[ReleaseStatus],
+    payload: dict[str, object],
+) -> None:
+    with pytest.raises(ValueError, match=r"schema 1.3 requires source_registry_hash"):
+        model.model_validate(payload)
+
+
+@pytest.mark.parametrize(
+    ("model", "payload"),
+    [
+        pytest.param(
+            ReleaseManifest,
+            {
+                "schema_version": "1.1",
+                "release_version": "historical",
+                "source_panel_id": "test-panel-v1",
+                "source_panel_hash": "b" * 64,
+                "generated_at": GENERATED_AT,
+                "artifact_hashes": {"release-status.json": "c" * 64},
+            },
+            id="manifest-1.1",
+        ),
+        pytest.param(
+            ReleaseManifest,
+            {
+                "schema_version": "1.2",
+                "release_version": "historical",
+                "source_panel_id": "test-panel-v2",
+                "source_panel_hash": "b" * 64,
+                "generated_at": GENERATED_AT,
+                "artifact_hashes": {"release-status.json": "c" * 64},
+                "unhashed_artifacts": sorted(UNHASHED_RASTERIZED_ARTIFACTS),
+            },
+            id="manifest-1.2",
+        ),
+        pytest.param(
+            ReleaseStatus,
+            {
+                "schema_version": "1.2",
+                "release_version": "historical",
+                "election_id": "wa-2026-primary",
+                "source_panel_id": "test-panel-v2",
+                "source_panel_hash": "b" * 64,
+                "data_as_of": datetime(2026, 7, 20, 10, tzinfo=UTC),
+                "generated_at": GENERATED_AT,
+                "git_commit": "a" * 40,
+                "source_count": 2,
+                "captured_source_count": 2,
+                "displayed_endorsement_count": 2,
+                "unresolved_review_count": 0,
+                "unresolved_high_severity_count": 0,
+                "restricted_capture_count": 0,
+                "source_access_failures": [],
+                "incomplete_races": [],
+                "validation_reports": {"publication": True, "rendering": True},
+                "guide_html_artifact": "guide/custom-guide.html",
+                "included_artifacts": sorted(
+                    REQUIRED_RELEASE_ARTIFACTS
+                    | {
+                        "guide/custom-guide.html",
+                        "validation/rendering/screenshots/desktop.png",
+                    }
+                ),
+                "warnings": [],
+            },
+            id="status-1.2",
+        ),
+    ],
+)
+def test_legacy_release_schemas_distinguish_omitted_from_declared_registry_hash(
+    model: type[ReleaseManifest] | type[ReleaseStatus],
+    payload: dict[str, object],
+) -> None:
+    artifact = model.model_validate(payload)
+
+    assert artifact.source_registry_hash is None
+    assert "source_registry_hash" not in artifact.model_dump(mode="json")
+    with pytest.raises(ValueError, match="cannot declare source_registry_hash"):
+        model.model_validate(payload | {"source_registry_hash": None})
+    with pytest.raises(ValueError, match="cannot declare source_registry_hash"):
+        model.model_validate(payload | {"source_registry_hash": "d" * 64})
+
+
+@pytest.mark.parametrize(
     ("update", "message"),
     [
         ({"source_count": 0}, "at least one active source"),
@@ -982,6 +1171,7 @@ def _build_release(
     snapshots: Path,
     tmp_path: Path,
     output_dir: Path,
+    release_version: str = "2026-primary.1",
     **overrides: object,
 ) -> ReleaseResult:
     """One `build_release` call carrying this file's fixed test fixture
@@ -998,7 +1188,7 @@ def _build_release(
         snapshot_root=snapshots,
         manifest_dir=tmp_path / "manifests",
         output_dir=output_dir,
-        release_version="2026-primary.1",
+        release_version=release_version,
         generated_at=GENERATED_AT,
         git_commit="a" * 40,
         **overrides,  # type: ignore[arg-type]

@@ -38,6 +38,7 @@ class PublishedElection(HostingModel):
     release_version: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
     source_panel_id: str = Field(min_length=1)
     source_panel_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    source_registry_hash: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
     comparison_route_preview: bool = Field(default=False, strict=True)
     git_commit: str | None = Field(default=None, pattern=r"^[0-9a-f]{40}$")
     release_manifest_sha256: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
@@ -86,6 +87,7 @@ class DeployedElection(HostingModel):
     git_commit: str = Field(pattern=r"^[0-9a-f]{40}$")
     source_panel_id: str = Field(min_length=1)
     source_panel_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    source_registry_hash: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
     release_manifest_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
 
 

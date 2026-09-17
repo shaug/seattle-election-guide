@@ -440,6 +440,8 @@ def _lens_sources(
 
 
 def _lens_fields(view_model: PublicationViewModel, *, contributing_only: bool) -> dict[str, Any]:
+    # The complete registry hash is server-side release-audit metadata. Links
+    # bind only to the stable panel contract exposed here as `panel_hash`.
     return {
         "schema_version": CLIENT_PAYLOAD_SCHEMA_VERSION,
         "data_version": view_model.metadata.data_version,

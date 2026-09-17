@@ -10,6 +10,7 @@
     "pages:deploy": "wrangler pages deploy --branch=${PAGES_BRANCH:-main}",
     "pages:dev": "wrangler pages dev",
     "pages:version": "wrangler --version",
+    "test": "node --test",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
