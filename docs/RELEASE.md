@@ -46,6 +46,25 @@ snapshot, and every capture manifest. Publication of those three areas is transa
 swap restores the complete previous generation. CI runs verification and a repeated full release
 build.
 
+## Panel and registry identity
+
+New publication view models carry two explicit identities. `source_panel_hash` is the stable
+transport-facing panel hash used by personalized links and panel-version compatibility;
+`source_registry_hash` is the SHA-256 of the complete validated registry, including mutable
+discovery evidence. The browser payload receives only the stable panel hash because the complete
+registry has no role in decoding a link or selecting sources.
+
+New `release-status.json` and `release-manifest.json` files use schema 1.3 and require both hashes.
+Release verification binds the status and manifest to the same `source_panel_id`,
+`source_panel_hash`, and complete `source_registry_hash`; this detects a discovery-input change
+even when the panel contract is unchanged. A discovery refresh therefore produces a new complete
+release-input identity without requiring a new panel version.
+
+Immutable release-manifest schemas 1.1 and 1.2 and release-status schema 1.2 remain readable. They
+predate `source_registry_hash`, must not declare it, and retain their historical meaning rather
+than being rewritten. Likewise, publication schema 1.13 remains readable without the field, while
+new schema 1.14 publication metadata requires it.
+
 ## Build and inspect
 
 Use a stable version, the commit timestamp, and the full Git revision:
@@ -150,3 +169,11 @@ The validated HTML is also resolved through the repository-owned site manifest a
 under the election-scoped `/e/<election-id>/` path for deployment from `main`. See
 [HOSTING.md](HOSTING.md) for the archive manifest, route contract, Wrangler configuration, safety
 gates, one-time credentials, local preview, and automatic deployment workflow.
+
+For a schema 1.3 release, declare its `source_registry_hash` beside `source_panel_hash` in
+`config/hosting/site.yaml`. `hosting stage` requires both declarations to match the release status,
+requires the release status and manifest to agree, and copies the complete registry hash into the
+deployment manifest. `hosting verify` then compares the site declaration, deployment manifest, and
+staged release status before recomputing asset hashes. Historical declarations and deployments
+without `source_registry_hash` remain valid only for the legacy release schemas that omitted it;
+do not add a reconstructed value to their immutable artifacts.

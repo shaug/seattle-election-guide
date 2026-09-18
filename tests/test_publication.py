@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import csv
 import hashlib
 import io
@@ -33,6 +34,8 @@ from election_guide.publication.models import (
 )
 from election_guide.scoring import score_dataset
 from election_guide.serialization import canonical_json_bytes
+from election_guide.sources.panel import build_panel_snapshot
+from election_guide.sources.registry import source_registry_hash
 from tests.test_scoring import (
     COMPARISON_SOURCE_ID,
     CONSENSUS_SOURCE_IDS,
@@ -179,6 +182,7 @@ def test_bundle_is_deterministic_reconstructable_and_complete(tmp_path: Path) ->
         assert source.endorsement_count == sum(
             cell.state in {"endorsement", "multi_endorsement"} for cell in source_cells
         )
+
         assert source.split_endorsement_count == sum(
             cell.state == "multi_endorsement" for cell in source_cells
         )
@@ -406,6 +410,80 @@ def test_comparison_has_concise_voter_presentation(
     assert comparison.voter_accessible_label == accessible_label
 
 
+def test_bundle_publishes_stable_panel_and_complete_registry_hashes(tmp_path: Path) -> None:
+    dataset = _publication_dataset(tmp_path)
+    snapshot_root = _snapshot_store(tmp_path, dataset)
+    report = score_dataset(
+        dataset,
+        _configuration(),
+        computed_at=NOW,
+        allow_unresolved=True,
+    )
+
+    bundle = build_publication_bundle(
+        dataset,
+        report,
+        git_commit="abc123",
+        snapshot_root=snapshot_root,
+    )
+
+    snapshot = build_panel_snapshot(dataset.source_registry)
+    metadata = bundle.view_model.metadata
+    assert bundle.view_model.schema_version == "1.14"
+    assert metadata.source_panel_hash == snapshot.panel_hash
+    assert metadata.source_registry_hash == source_registry_hash(dataset.source_registry)
+    assert metadata.source_panel_hash != metadata.source_registry_hash
+    assert bundle.view_model.personalization.panel_hash == metadata.source_panel_hash
+
+
+def test_publication_schema_requires_registry_hash_only_for_1_14(tmp_path: Path) -> None:
+    dataset = _publication_dataset(tmp_path)
+    snapshot_root = _snapshot_store(tmp_path, dataset)
+    report = score_dataset(
+        dataset,
+        _configuration(),
+        computed_at=NOW,
+        allow_unresolved=True,
+    )
+    bundle = build_publication_bundle(
+        dataset,
+        report,
+        git_commit="abc123",
+        snapshot_root=snapshot_root,
+    )
+    current = bundle.view_model.model_dump(mode="json")
+
+    missing = copy.deepcopy(current)
+    missing["metadata"].pop("source_registry_hash")
+    with pytest.raises(
+        ValidationError,
+        match=r"schema 1\.14 requires source_registry_hash",
+    ):
+        PublicationViewModel.model_validate(missing)
+
+    legacy = copy.deepcopy(current)
+    legacy["schema_version"] = "1.13"
+    legacy["metadata"].pop("source_registry_hash")
+    validated_legacy = PublicationViewModel.model_validate(legacy)
+    assert validated_legacy.schema_version == "1.13"
+    assert "source_registry_hash" not in validated_legacy.model_dump(mode="json")["metadata"]
+
+    legacy_with_new_field = copy.deepcopy(current)
+    legacy_with_new_field["schema_version"] = "1.13"
+    with pytest.raises(
+        ValidationError,
+        match=r"schema 1\.13 cannot declare source_registry_hash",
+    ):
+        PublicationViewModel.model_validate(legacy_with_new_field)
+
+    legacy_with_new_field["metadata"]["source_registry_hash"] = None
+    with pytest.raises(
+        ValidationError,
+        match=r"schema 1\.13 cannot declare source_registry_hash",
+    ):
+        PublicationViewModel.model_validate(legacy_with_new_field)
+
+
 def test_methodology_publishes_possible_overlap_without_deduplicating(tmp_path: Path) -> None:
     candidates = _candidate_ids()
     overlapping = (CONSENSUS_SOURCE_IDS[0], CONSENSUS_SOURCE_IDS[1])
@@ -428,7 +506,7 @@ def test_methodology_publishes_possible_overlap_without_deduplicating(tmp_path: 
     )
 
     methodology = bundle.view_model.methodology
-    assert bundle.view_model.schema_version == "1.13"
+    assert bundle.view_model.schema_version == "1.14"
     assert bundle.view_model.metadata.source_panel_id == dataset.source_registry.id
     assert len(bundle.view_model.metadata.source_panel_hash) == 64
     coverage_gaps = [

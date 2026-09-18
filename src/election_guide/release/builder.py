@@ -34,7 +34,6 @@ from election_guide.rendering import build_rendered_guide
 from election_guide.results.loader import load_rendering_results
 from election_guide.scoring import ConsensusReport, read_scoring_configuration, score_dataset
 from election_guide.serialization import canonical_json_bytes
-from election_guide.sources.registry import source_registry_hash
 
 
 @dataclass(frozen=True)
@@ -211,6 +210,9 @@ def build_release(
             consensus=consensus,
             ledger_source_count=len(ledger.sources),
             release_version=release_version,
+            source_panel_id=publication.view_model.metadata.source_panel_id,
+            source_panel_hash=publication.view_model.metadata.source_panel_hash,
+            source_registry_hash=publication.view_model.metadata.source_registry_hash,
             data_as_of=ledger.data_as_of,
             generated_at=generated_at,
             git_commit=git_commit,
@@ -227,9 +229,11 @@ def build_release(
             encoding="utf-8",
         )
         manifest = ReleaseManifest(
+            schema_version="1.3",
             release_version=release_version,
-            source_panel_id=dataset.source_registry.id,
-            source_panel_hash=source_registry_hash(dataset.source_registry),
+            source_panel_id=publication.view_model.metadata.source_panel_id,
+            source_panel_hash=publication.view_model.metadata.source_panel_hash,
+            source_registry_hash=publication.view_model.metadata.source_registry_hash,
             generated_at=generated_at,
             artifact_hashes=_artifact_hashes(stage_bundle),
             unhashed_artifacts=sorted(UNHASHED_RASTERIZED_ARTIFACTS),
@@ -262,6 +266,9 @@ def _release_status(
     consensus: ConsensusReport,
     ledger_source_count: int,
     release_version: str,
+    source_panel_id: str,
+    source_panel_hash: str,
+    source_registry_hash: str | None,
     data_as_of: datetime,
     generated_at: datetime,
     git_commit: str,
@@ -310,10 +317,12 @@ def _release_status(
     ):
         warnings.append("Some published source pages have not yet been transcribed into decisions.")
     return ReleaseStatus(
+        schema_version="1.3",
         release_version=release_version,
         election_id=dataset.inventory.election.id,
-        source_panel_id=dataset.source_registry.id,
-        source_panel_hash=source_registry_hash(dataset.source_registry),
+        source_panel_id=source_panel_id,
+        source_panel_hash=source_panel_hash,
+        source_registry_hash=source_registry_hash,
         data_as_of=data_as_of,
         generated_at=generated_at,
         git_commit=git_commit,

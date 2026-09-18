@@ -1,10 +1,10 @@
 from datetime import UTC, datetime
 from pathlib import Path
 
-import pytest
 from typer.testing import CliRunner
 
 from election_guide.cli import app
+from election_guide.release import verify_release_compilation
 from election_guide.sources.catalog import (
     appended_panel_snapshot,
     read_panel_snapshot_catalog,
@@ -16,6 +16,10 @@ PROJECT_ROOT = Path(__file__).parents[1]
 PRIMARY_REGISTRY_PATH = PROJECT_ROOT / "config/sources/default.yaml"
 GENERAL_REGISTRY_PATH = PROJECT_ROOT / "config/sources/wa-2026-general.yaml"
 GENERAL_INVENTORY_PATH = PROJECT_ROOT / "data/normalized/wa-2026-general-inventory.json"
+GENERAL_LEDGER_PATH = PROJECT_ROOT / "data/releases/wa-2026-general/source-decisions.yaml"
+GENERAL_DATASET_PATH = PROJECT_ROOT / "data/normalized/wa-2026-general-canonical-dataset.json"
+GENERAL_SNAPSHOT_ROOT = PROJECT_ROOT / "data/releases/wa-2026-general/snapshots"
+GENERAL_MANIFEST_DIR = PROJECT_ROOT / "data/releases/wa-2026-general/manifests"
 GENERAL_CATALOG_PATH = PROJECT_ROOT / "data/releases/wa-2026-general/panel-snapshots.json"
 
 PRESERVED_SOURCE_FIELDS = (
@@ -48,6 +52,19 @@ def test_general_source_registry_validates_through_cli() -> None:
     )
 
 
+def test_general_release_compilation_reproduces_committed_artifacts() -> None:
+    dataset = verify_release_compilation(
+        GENERAL_LEDGER_PATH,
+        GENERAL_INVENTORY_PATH,
+        GENERAL_REGISTRY_PATH,
+        GENERAL_DATASET_PATH,
+        GENERAL_SNAPSHOT_ROOT,
+        GENERAL_MANIFEST_DIR,
+    )
+
+    assert dataset.source_registry == read_source_registry(GENERAL_REGISTRY_PATH)
+
+
 def test_general_panel_snapshot_preserves_frozen_identity_contract() -> None:
     registry = read_source_registry(GENERAL_REGISTRY_PATH)
     committed_catalog = read_panel_snapshot_catalog(GENERAL_CATALOG_PATH)
@@ -60,12 +77,8 @@ def test_general_panel_snapshot_preserves_frozen_identity_contract() -> None:
     assert published.panel_hash == (
         "b0fb2a603bd98da49d3282d2daa0cb55ff56e0bbdd46104c8b5a4a441b747a95"
     )
-    assert published.model_copy(update={"panel_hash": current_projection.panel_hash}) == (
-        current_projection
-    )
-
-    with pytest.raises(ValueError, match="cannot be rewritten"):
-        appended_panel_snapshot(committed_catalog, current_projection)
+    assert current_projection == published
+    assert appended_panel_snapshot(committed_catalog, current_projection) == committed_catalog
 
 
 def test_general_panel_preserves_primary_selection_contract() -> None:

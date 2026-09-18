@@ -1,8 +1,12 @@
-schema_version: "1.1"
+schema_version: "1.2"
 id: wa-2026-general-default-sources-v1
 election_id: wa-2026-general
 frozen_at: 2026-09-14T12:23:04Z
 research_cutoff: 2026-09-14T12:23:04Z
+panel_hash_compatibility:
+  panel_id: wa-2026-general-default-sources-v1
+  contract_hash: a6e58223507970695ac4cf66cd8020f9f1d4ffbd2989d8fde57d4abaaf5bd596
+  published_hash: b0fb2a603bd98da49d3282d2daa0cb55ff56e0bbdd46104c8b5a4a441b747a95
 notes:
   - Version 1 freezes the primary panel as a constrained carry-forward for the 2026 general election; no source or category membership, panel role, eligibility, transport code, reporting placement, selection category, publisher relationship, or overlap metadata changed.
   - The repository records the actual late freeze time rather than backdating the missed planning milestone.

@@ -41,6 +41,12 @@ def _inspect_release_bundle_artifacts(
         or manifest.source_panel_hash != status.source_panel_hash
     ):
         raise ValueError("release manifest and release status source panels differ")
+    if (
+        manifest.schema_version == "1.3" or status.schema_version == "1.3"
+    ) and manifest.source_registry_hash != status.source_registry_hash:
+        raise ValueError(
+            "release manifest and release status complete source registry hashes differ"
+        )
 
     expected = set(status.included_artifacts) - {"release-manifest.json"}
     hashed = set(manifest.artifact_hashes)

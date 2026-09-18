@@ -11,6 +11,8 @@ from election_guide.inventory.importer import read_inventory
 from election_guide.normalization.models import CanonicalDataset
 from election_guide.normalization.records import new_normalized_endorsement
 from election_guide.serialization import read_json
+from election_guide.sources import panel as source_panel
+from election_guide.sources.catalog import appended_panel_snapshot, read_panel_snapshot_catalog
 from election_guide.sources.models import SourceRegistry
 from election_guide.sources.panel import build_panel_snapshot
 from election_guide.sources.registry import (
@@ -22,6 +24,7 @@ from election_guide.sources.report import render_discovery_report
 
 PROJECT_ROOT = Path(__file__).parent.parent
 REGISTRY_PATH = PROJECT_ROOT / "config" / "sources" / "default.yaml"
+GENERAL_REGISTRY_PATH = PROJECT_ROOT / "config" / "sources" / "wa-2026-general.yaml"
 LEDGER_PATH = PROJECT_ROOT / "data" / "releases" / "wa-2026-primary" / "source-decisions.yaml"
 
 
@@ -429,9 +432,10 @@ def test_registry_rejects_duplicate_source_overlap_group() -> None:
 
 def test_registry_file_rejects_duplicate_yaml_keys(tmp_path: Path) -> None:
     text = REGISTRY_PATH.read_text(encoding="utf-8")
+    version_line = text.splitlines()[0]
     path = tmp_path / "duplicate.yaml"
     path.write_text(
-        text.replace('schema_version: "1.1"', 'schema_version: "1.1"\nschema_version: "1.1"', 1),
+        text.replace(version_line, f"{version_line}\n{version_line}", 1),
         encoding="utf-8",
     )
 
@@ -702,7 +706,13 @@ def test_panel_snapshot_publishes_the_downstream_identity_contract() -> None:
     assert snapshot == build_panel_snapshot(registry)
     assert snapshot.panel_id == registry.id
     assert snapshot.panel_version == "v4"
-    assert snapshot.panel_hash == source_registry_hash(registry)
+    assert source_panel.panel_identity_hash(registry) == (
+        "a6e58223507970695ac4cf66cd8020f9f1d4ffbd2989d8fde57d4abaaf5bd596"
+    )
+    assert snapshot.panel_hash == (
+        "389a978b149da9afdb919fdb9dfd1d4d3fbecc290d3b1cd41da3e3fd363de0b5"
+    )
+    assert snapshot.panel_hash != source_registry_hash(registry)
     assert [item.code for item in snapshot.categories] == [
         category.code for category in registry.categories
     ]
@@ -714,6 +724,289 @@ def test_panel_snapshot_publishes_the_downstream_identity_contract() -> None:
     assert comparison.selectable is True
     assert comparison.panel_role == "comparison"
     assert comparison.member_source_codes == ["stim"]
+
+
+def test_panel_snapshot_projects_category_membership_once(monkeypatch: pytest.MonkeyPatch) -> None:
+    registry = read_source_registry(REGISTRY_PATH)
+    calls: list[str] = []
+    selectable_source_codes = SourceRegistry.selectable_source_codes
+
+    def tracked_selectable_source_codes(
+        tracked_registry: SourceRegistry, category_id: str
+    ) -> list[str]:
+        calls.append(category_id)
+        return selectable_source_codes(tracked_registry, category_id)
+
+    monkeypatch.setattr(SourceRegistry, "selectable_source_codes", tracked_selectable_source_codes)
+
+    build_panel_snapshot(registry)
+
+    assert calls == [category.id for category in registry.categories]
+
+
+def test_discovery_refresh_changes_registry_hash_without_changing_panel_identity() -> None:
+    before = read_source_registry(REGISTRY_PATH)
+    assert before.schema_version == "1.2"
+    payload = before.model_dump(mode="json")
+    source = payload["sources"][0]
+    source["discovery"]["checked_at"] = payload["research_cutoff"]
+    source["discovery"]["notes"] = "Current official publication rechecked."
+    source["organization_url"] = "https://example.org/current-source"
+    after = SourceRegistry.model_validate(payload)
+
+    assert source_registry_hash(after) != source_registry_hash(before)
+    assert build_panel_snapshot(after).panel_hash == build_panel_snapshot(before).panel_hash
+
+
+@pytest.mark.parametrize("registry_name", ["default.yaml", "wa-2026-general.yaml"])
+@pytest.mark.parametrize("ordering", ["groups", "members", "source_groups"])
+def test_overlap_order_preserves_panel_identity(registry_name: str, ordering: str) -> None:
+    payload = read_source_registry(REGISTRY_PATH.with_name(registry_name)).model_dump(mode="json")
+    if ordering == "source_groups":
+        # Give a source two valid memberships so reversing them exercises ordering.
+        group = payload["overlap_groups"][1]
+        source = next(item for item in payload["sources"] if item["id"] == "fuse-washington")
+        group["member_ids"].append(source["id"])
+        source["overlap_group_ids"].append(group["id"])
+    before = SourceRegistry.model_validate(payload)
+    payload = before.model_dump(mode="json")
+
+    if ordering == "groups":
+        payload["overlap_groups"].reverse()
+    elif ordering == "members":
+        for group in payload["overlap_groups"]:
+            group["member_ids"].reverse()
+    else:
+        for source in payload["sources"]:
+            source["overlap_group_ids"].reverse()
+    after = SourceRegistry.model_validate(payload)
+
+    assert source_registry_hash(after) != source_registry_hash(before)
+    assert source_panel.panel_identity_hash(after) == source_panel.panel_identity_hash(before)
+    assert build_panel_snapshot(after) == build_panel_snapshot(before)
+    assert build_panel_snapshot(after).panel_hash == (
+        source_panel.panel_identity_hash(after)
+        if ordering == "source_groups"
+        else payload["panel_hash_compatibility"]["published_hash"]
+    )
+
+
+def test_schema_1_1_snapshot_retains_historical_full_registry_hash() -> None:
+    payload = read_source_registry(REGISTRY_PATH).model_dump(mode="json")
+    payload["schema_version"] = "1.1"
+    payload.pop("panel_hash_compatibility")
+    historical = SourceRegistry.model_validate(payload)
+
+    assert source_panel.panel_identity_hash(historical) != source_registry_hash(historical)
+    assert source_registry_hash(historical) == (
+        "389a978b149da9afdb919fdb9dfd1d4d3fbecc290d3b1cd41da3e3fd363de0b5"
+    )
+    assert build_panel_snapshot(historical).panel_hash == source_registry_hash(historical)
+
+
+@pytest.mark.parametrize("registry_path", [REGISTRY_PATH, GENERAL_REGISTRY_PATH])
+@pytest.mark.parametrize(
+    "mutation",
+    [
+        "source_code",
+        "category_membership",
+        "panel_role",
+        "source_name",
+        "eligibility",
+        "overlap_membership",
+        "overlap_label",
+        "retired_code_reason",
+    ],
+)
+def test_structural_change_changes_panel_identity_and_candidate_snapshot_hash(
+    registry_path: Path,
+    mutation: str,
+) -> None:
+    payload = read_source_registry(registry_path).model_dump(mode="json")
+
+    if mutation == "retired_code_reason":
+        payload["retired_codes"] = [
+            {
+                "code": "old1",
+                "kind": "source",
+                "former_id": "retired-source",
+                "retired_in_panel": "wa-2026-primary-default-sources-v3",
+                "reason": "The source left the published panel.",
+            }
+        ]
+
+    before = SourceRegistry.model_validate(payload)
+    payload = before.model_dump(mode="json")
+
+    if mutation == "source_code":
+        payload["sources"][0]["code"] = "strx"
+    elif mutation == "category_membership":
+        transit = next(
+            source for source in payload["sources"] if source["id"] == "transit-riders-union"
+        )
+        transit["selection_category_ids"] = ["labor", "transportation_urbanism"]
+    elif mutation == "panel_role":
+        source = payload["sources"][0]
+        source["panel_role"] = "excluded"
+        source["eligibility"] = {
+            "kind": "none",
+            "jurisdiction_ids": [],
+            "rationale": "Excluded sources cannot contribute to the panel.",
+        }
+    elif mutation == "source_name":
+        payload["sources"][0]["name"] = "The Stranger Editorial Board"
+    elif mutation == "eligibility":
+        district = next(
+            source for source in payload["sources"] if source["id"] == "11th-district-democrats"
+        )
+        district["eligibility"]["jurisdiction_ids"] = ["legislative-district-12"]
+    elif mutation == "overlap_membership":
+        source = next(
+            source
+            for source in payload["sources"]
+            if source["id"] == "washington-stonewall-democrats"
+        )
+        source["overlap_group_ids"].remove("democratic-party-network")
+        group = next(
+            group
+            for group in payload["overlap_groups"]
+            if group["id"] == "democratic-party-network"
+        )
+        group["member_ids"].remove("washington-stonewall-democrats")
+    elif mutation == "overlap_label":
+        payload["overlap_groups"][0]["label"] = "Updated visible overlap attribution"
+    elif mutation == "retired_code_reason":
+        payload["retired_codes"][0]["reason"] = (
+            "Personalized links migrate this source to an unselected state."
+        )
+    else:  # pragma: no cover - the parameter list is exhaustive
+        raise AssertionError(f"unhandled mutation: {mutation}")
+
+    after = SourceRegistry.model_validate(payload)
+
+    assert source_panel.panel_identity_hash(after) != source_panel.panel_identity_hash(before)
+    assert build_panel_snapshot(after).panel_hash != build_panel_snapshot(before).panel_hash
+
+    # Rebinding the anchor must not hide structural drift, including eligibility,
+    # overlap, and migration fields absent from the snapshot's visible payload.
+    payload["panel_hash_compatibility"]["contract_hash"] = source_panel.panel_identity_hash(after)
+    with pytest.raises(ValidationError, match="must match an immutable legacy binding"):
+        SourceRegistry.model_validate(payload)
+
+
+@pytest.mark.parametrize("field", ["panel_id", "contract_hash", "published_hash"])
+def test_legacy_compatibility_requires_the_exact_published_tuple(field: str) -> None:
+    payload = _registry_payload()
+    payload["panel_hash_compatibility"][field] = (
+        "wa-2026-primary-default-sources-v5" if field == "panel_id" else "0" * 64
+    )
+
+    with pytest.raises(ValidationError, match="must match an immutable legacy binding"):
+        SourceRegistry.model_validate(payload)
+
+
+def test_new_lineage_requires_a_canonical_self_binding() -> None:
+    payload = _registry_payload()
+    payload["id"] = "new-panel-v1"
+    payload["panel_hash_compatibility"]["panel_id"] = payload["id"]
+
+    with pytest.raises(ValidationError, match="must match an immutable legacy binding"):
+        SourceRegistry.model_validate(payload)
+
+    payload["panel_hash_compatibility"]["published_hash"] = payload["panel_hash_compatibility"][
+        "contract_hash"
+    ]
+    registry = SourceRegistry.model_validate(payload)
+    assert build_panel_snapshot(registry).panel_hash == source_panel.panel_identity_hash(registry)
+
+
+def test_schema_1_2_accepts_matching_panel_hash_compatibility() -> None:
+    payload = _registry_payload()
+    payload["schema_version"] = "1.2"
+    payload["panel_hash_compatibility"] = {
+        "panel_id": payload["id"],
+        "contract_hash": "a6e58223507970695ac4cf66cd8020f9f1d4ffbd2989d8fde57d4abaaf5bd596",
+        "published_hash": "389a978b149da9afdb919fdb9dfd1d4d3fbecc290d3b1cd41da3e3fd363de0b5",
+    }
+
+    assert SourceRegistry.model_validate(payload).panel_hash_compatibility is not None
+
+
+@pytest.mark.parametrize(
+    ("registry_path", "catalog_path"),
+    [
+        (
+            REGISTRY_PATH,
+            PROJECT_ROOT / "data" / "releases" / "wa-2026-primary" / "panel-snapshots.json",
+        ),
+        (
+            GENERAL_REGISTRY_PATH,
+            PROJECT_ROOT / "data" / "releases" / "wa-2026-general" / "panel-snapshots.json",
+        ),
+    ],
+)
+def test_compatibility_anchor_rejects_an_empty_version_bump_but_allows_a_real_change(
+    registry_path: Path, catalog_path: Path
+) -> None:
+    registry = read_source_registry(registry_path)
+    catalog = read_panel_snapshot_catalog(catalog_path)
+    payload = registry.model_dump(mode="json")
+    stem, _, version = registry.id.rpartition("-v")
+    payload["id"] = f"{stem}-v{int(version) + 1}"
+
+    without_anchor = copy.deepcopy(payload)
+    without_anchor.pop("panel_hash_compatibility")
+    with pytest.raises(ValidationError, match="requires a panel hash compatibility anchor"):
+        SourceRegistry.model_validate(without_anchor)
+
+    id_only_successor = SourceRegistry.model_validate(payload)
+    assert source_panel.panel_identity_hash(id_only_successor) == source_panel.panel_identity_hash(
+        registry
+    )
+    with pytest.raises(ValueError, match="duplicates the hash"):
+        appended_panel_snapshot(catalog, build_panel_snapshot(id_only_successor))
+
+    payload["sources"][0]["name"] += " Updated"
+    structural_successor = SourceRegistry.model_validate(payload)
+    assert source_panel.panel_identity_hash(structural_successor) != (
+        source_panel.panel_identity_hash(registry)
+    )
+    appended = appended_panel_snapshot(catalog, build_panel_snapshot(structural_successor))
+    assert appended.snapshots[-1].panel_id == structural_successor.id
+
+
+def test_schema_1_1_rejects_panel_hash_compatibility() -> None:
+    payload = _registry_payload()
+    payload["schema_version"] = "1.1"
+    payload["panel_hash_compatibility"] = {
+        "panel_id": payload["id"],
+        "contract_hash": "a6e58223507970695ac4cf66cd8020f9f1d4ffbd2989d8fde57d4abaaf5bd596",
+        "published_hash": "389a978b149da9afdb919fdb9dfd1d4d3fbecc290d3b1cd41da3e3fd363de0b5",
+    }
+
+    with pytest.raises(
+        ValidationError, match=r"schema 1\.1 cannot declare panel hash compatibility"
+    ):
+        SourceRegistry.model_validate(payload)
+
+    payload["panel_hash_compatibility"] = None
+    with pytest.raises(
+        ValidationError, match=r"schema 1\.1 cannot declare panel hash compatibility"
+    ):
+        SourceRegistry.model_validate(payload)
+
+
+def test_panel_hash_compatibility_rejects_other_panel_id() -> None:
+    payload = _registry_payload()
+    payload["schema_version"] = "1.2"
+    payload["panel_hash_compatibility"] = {
+        "panel_id": "wa-2026-primary-other-panel-v1",
+        "contract_hash": "a6e58223507970695ac4cf66cd8020f9f1d4ffbd2989d8fde57d4abaaf5bd596",
+        "published_hash": "389a978b149da9afdb919fdb9dfd1d4d3fbecc290d3b1cd41da3e3fd363de0b5",
+    }
+
+    with pytest.raises(ValidationError, match="panel_id must belong to the registry panel lineage"):
+        SourceRegistry.model_validate(payload)
 
 
 def test_panel_snapshot_category_membership_follows_current_sources() -> None:

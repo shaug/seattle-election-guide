@@ -271,6 +271,7 @@ def test_two_election_manifest_stages_and_verifies_from_a_published_release(
     assert (output / "e" / OLDER_ID / "index.html").read_bytes() == b"older\n"
     deployment = verify_staged_pages_site(output, manifest_path, expected_current_git_commit=COMMIT)
     assert [election.election_id for election in deployment.elections] == [CURRENT_ID, OLDER_ID]
+    assert deployment.elections[1].source_registry_hash is None
 
 
 def test_a_tampered_historical_archive_fails_the_build(

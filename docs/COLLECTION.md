@@ -45,6 +45,59 @@ Dynamic HTML requires a reviewed final-DOM artifact through `--input-path`; a ra
 not accepted as rendered evidence. Raster images additionally require `--ocr-text-path` and
 `--ocr-confidence`.
 
+## Registry and panel identity
+
+The source registry has two hashes with different jobs. `source_registry_hash` covers the complete
+validated registry and is the release audit identity. `panel_hash` covers only the stable
+transport-facing selection contract used by published panel snapshots and personalized links.
+
+The canonical panel projection hashes these fields, in validated transport order:
+
+- panel identity `schema_version`;
+- categories: `id`, `code`, `label`, `selectable`, `panel_role`, and the current selectable
+  `member_source_codes`;
+- sources: `id`, `code`, `name`, `panel_role`, derived `selectable`, `reporting_category_id`, and
+  `selection_category_ids`;
+- each source's eligibility `kind` and `jurisdiction_ids`;
+- each source's `overlap_group_ids`, plus each overlap group's `id`, `label`, and `member_ids`; and
+- retired transport codes: `code`, `kind`, `former_id`, `retired_in_panel`, and the user-visible
+  migration `reason`.
+
+Overlap collections are set-valued: the projection sorts each source's `overlap_group_ids`,
+sorts groups by `id`, and sorts each group's `member_ids`. Reordering these collections changes
+the full registry audit hash but preserves panel identity and any matching compatibility binding.
+
+Registry and election IDs, `panel_id`, `panel_version`, freeze and research timestamps, registry
+notes, category descriptions, organization and discovery URLs, geographic labels already encoded
+by eligibility, publisher provenance, panel rationale, and every discovery field stay outside that
+projection. They remain covered by `source_registry_hash`. Excluding the panel ID and version means
+an empty version bump cannot manufacture a new contract hash.
+
+A discovery refresh changes `source_registry_hash` and therefore release audit identity. It does
+not change `panel_hash` and does not require a panel version bump. A membership, transport-code,
+selectable-category, role, eligibility, overlap, attribution, or retired-code migration change
+changes `panel_hash` and must be published under a new panel version.
+
+Schema 1.2 registries carry one required `panel_hash_compatibility` lineage anchor. For panels
+whose legacy full-registry hashes were already published, the anchor preserves that published hash
+only while its `contract_hash` exactly matches the current canonical projection; a mismatch makes
+the canonical hash the candidate `panel_hash`. The anchor remains on successor versions in the same
+lineage, with `panel_id` naming the initially published panel. A new lineage anchors its initial
+canonical hash to itself. The compatibility object is covered by `source_registry_hash` but never
+enters the panel projection. A differing published hash is accepted only for the exact primary or
+general legacy tuple recorded in `sources/models.py`: panel ID, canonical contract hash, and public
+legacy hash. These bindings are immutable; editing the registry anchor cannot authorize a changed
+contract. All other anchors must have equal `contract_hash` and `published_hash` values.
+Retaining the anchor ensures an empty version bump repeats the anchored hash
+and is rejected by the catalog, while a structural successor uses its new canonical hash. Schema
+1.1 remains readable for immutable historical inputs and retains its historical full-registry
+`panel_hash` behavior.
+
+Panel snapshot catalogs are append-only. Re-snapshotting an unchanged published panel is a no-op;
+a changed contract under an existing `panel_id` is rejected. Never edit or regenerate an existing
+catalog entry to resolve that rejection: review the structural change, assign a new panel version,
+and append its snapshot.
+
 ## Immutable outputs
 
 Each successful changed refresh creates three linked records:
