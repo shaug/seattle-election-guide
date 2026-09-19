@@ -795,6 +795,7 @@ def test_archive_branch_and_pull_request_use_the_github_app_token() -> None:
         "private-key": "${{ secrets.ANALYTICS_ARCHIVE_APP_PRIVATE_KEY }}",
         "permission-contents": "write",
         "permission-pull-requests": "write",
+        "permission-workflows": "write",
     }
     assert checkout["with"]["token"] == "${{ steps.app-token.outputs.token }}"
     assert checkout["with"]["persist-credentials"] == "true"
@@ -984,7 +985,9 @@ def test_hosting_doc_inventories_the_archive_github_app() -> None:
     )
 
     assert row is not None, "the credential inventory does not list the archive GitHub App"
-    assert "Contents" in row and "Pull requests" in row, "the row does not state the App scope"
+    assert all(permission in row for permission in ("Contents", "Pull requests", "Workflows")), (
+        "the row does not state the App scope"
+    )
     assert "maintainer" in row.lower(), "the row does not state the credential owner"
     assert "rotat" in row.lower(), "the row does not state a rotation expectation"
 

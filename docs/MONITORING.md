@@ -237,8 +237,10 @@ committed-tree guards — no identifying value, no gaps — have already passed 
 them. Doing it the other way round is what would hurt. If detection waited for CI, a value that
 tripped a guard would already be on `main`, and every later pull request would inherit the failure.
 
-The App is installed only on this repository with `Contents: write` and `Pull requests: write`;
-its client ID, private-key custody, and rotation procedure are inventoried in `docs/HOSTING.md`.
+The App is installed only on this repository with `Contents: write`, `Pull requests: write`, and
+`Workflows: write`. The last permission lets the continuation merge reach the archive branch when
+`main` changed a file under `.github/workflows`; it does not let the job publish its own check.
+Its client ID, private-key custody, and rotation procedure are inventoried in `docs/HOSTING.md`.
 Repository auto-merge must remain enabled, and `main` must continue to require `check`. Disabling
 either setting fails closed: the archive pull request remains open rather than bypassing CI or
 pushing directly to `main`.

@@ -54,6 +54,7 @@ jobs:
           private-key: ${{ secrets.ANALYTICS_ARCHIVE_APP_PRIVATE_KEY }}
           permission-contents: write
           permission-pull-requests: write
+          permission-workflows: write
       - uses: actions/checkout@v4
         with:
           # Persist the App token for the archive-branch fetches and push below.
