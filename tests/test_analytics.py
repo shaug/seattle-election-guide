@@ -750,7 +750,9 @@ def test_workflow_runs_on_a_schedule_and_can_commit() -> None:
     assert triggers["schedule"], "an unscheduled archive cannot outrun the retention window"
     assert all(entry["cron"] for entry in triggers["schedule"])
     assert "workflow_dispatch" in triggers, "a missed day needs a manual catch-up"
-    assert workflow["permissions"]["contents"] == "write", "the run commits what it archives"
+    assert workflow["permissions"]["contents"] == "read", (
+        "the automatic GITHUB_TOKEN must not retain the archive's write authority"
+    )
     assert workflow["concurrency"]["cancel-in-progress"] == "false", (
         "two runs archiving the same day would race on one commit"
     )
@@ -778,6 +780,44 @@ def test_workflow_passes_the_credential_by_secret() -> None:
         assert "secrets." not in step.get("run", ""), (
             f"{step.get('name')!r} interpolates a secret into its script"
         )
+
+
+def test_archive_branch_and_pull_request_use_the_github_app_token() -> None:
+    """App-authored PR events run CI without the GITHUB_TOKEN approval prompt."""
+    steps = [step for job in _workflow()["jobs"].values() for step in job["steps"]]
+    app_token = next(step for step in steps if step.get("id") == "app-token")
+    checkout = next(step for step in steps if step.get("uses", "").startswith("actions/checkout@"))
+    pull_request = next(step for step in steps if "gh pr create" in step.get("run", ""))
+
+    assert app_token["uses"] == "actions/create-github-app-token@v3"
+    assert app_token["with"] == {
+        "client-id": "${{ vars.ANALYTICS_ARCHIVE_APP_CLIENT_ID }}",
+        "private-key": "${{ secrets.ANALYTICS_ARCHIVE_APP_PRIVATE_KEY }}",
+        "permission-contents": "write",
+        "permission-pull-requests": "write",
+        "permission-workflows": "write",
+    }
+    assert checkout["with"]["token"] == "${{ steps.app-token.outputs.token }}"
+    assert checkout["with"]["persist-credentials"] == "true"
+    assert pull_request["env"]["GH_TOKEN"] == "${{ steps.app-token.outputs.token }}"
+    assert "${{ github.token }}" not in str(pull_request)
+
+
+def test_archive_pull_request_queues_squash_auto_merge_without_bypassing_check() -> None:
+    """The required check, not the archive job, remains the merge authority."""
+    steps = [step for job in _workflow()["jobs"].values() for step in job["steps"]]
+    pull_request = next(step for step in steps if "gh pr create" in step.get("run", ""))
+    script = pull_request["run"]
+
+    assert "gh pr merge" in script
+    assert "--auto" in script
+    assert "--squash" in script
+    assert "--admin" not in script
+    assert "--base main" in script
+    assert "--json number,isCrossRepository" in script
+    assert "select(.isCrossRepository == false)" in script, (
+        "a same-named fork pull request must not receive the App-authorized auto-merge request"
+    )
 
 
 def _commit_step_script() -> str:
@@ -934,6 +974,33 @@ def test_hosting_doc_inventories_the_new_credential() -> None:
     assert row is not None, "the credential inventory does not list the analytics token"
     assert "Analytics" in row and "Read" in row, "the row does not state the token's scope"
     assert "Rotat" in row or "rotat" in row, "the row does not state a rotation expectation"
+
+
+def test_hosting_doc_inventories_the_archive_github_app() -> None:
+    """The unattended merge credential has a recoverable custody record."""
+    hosting = (PROJECT_ROOT / "docs" / "HOSTING.md").read_text(encoding="utf-8")
+    row = next(
+        (line for line in hosting.splitlines() if "ANALYTICS_ARCHIVE_APP_PRIVATE_KEY" in line),
+        None,
+    )
+
+    assert row is not None, "the credential inventory does not list the archive GitHub App"
+    assert all(permission in row for permission in ("Contents", "Pull requests", "Workflows")), (
+        "the row does not state the App scope"
+    )
+    assert "maintainer" in row.lower(), "the row does not state the credential owner"
+    assert "rotat" in row.lower(), "the row does not state a rotation expectation"
+
+
+def test_monitoring_doc_describes_the_unattended_archive_merge_path() -> None:
+    """The standing runbook must not prescribe the retired manual nudge."""
+    monitoring = (PROJECT_ROOT / "docs" / "MONITORING.md").read_text(encoding="utf-8")
+    heading = "### How an archived day reaches `main`"
+    section = monitoring.split(heading, 1)[1].split("\n### ", 1)[0]
+
+    assert "GitHub App" in section
+    assert "auto-merge" in section
+    assert "close and reopen" not in section.lower()
 
 
 def test_monitoring_doc_records_the_no_data_recheck() -> None:

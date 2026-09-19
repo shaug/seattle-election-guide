@@ -224,11 +224,12 @@ describing something other than readers.
 branch, pushes there, and opens one pull request that later runs reuse — so a week of daily runs
 accumulates into one reviewable pull request rather than seven.
 
-**That pull request will not start CI on its own, and a maintainer has to nudge it.** GitHub
-deliberately starts no workflow run for an event triggered by `GITHUB_TOKEN`, and `ci.yml` fires
-only on `pull_request`, on pushes to `main`, and on manual dispatch. Closing and reopening the
-pull request — or pushing any commit to the branch — starts the required `check`. The pull
-request's own body says so.
+The workflow mints a short-lived token from the repository's analytics-archive GitHub App and uses
+it for both the branch push and the pull request. App-authored `opened` and `synchronize` events
+start `ci.yml` without an approval prompt. The same step enables squash auto-merge on that pull
+request; GitHub lands it only after the protected branch's required `check` context passes. A
+failed check leaves the pull request open and unmerged for diagnosis, while the next successful
+archive run continues the same branch and pull request.
 
 This is a required-status-check formality rather than unreviewed content: the archive workflow
 runs `tests/test_analytics.py` against the new days *before* it commits them, so the
@@ -236,10 +237,13 @@ committed-tree guards — no identifying value, no gaps — have already passed 
 them. Doing it the other way round is what would hurt. If detection waited for CI, a value that
 tripped a guard would already be on `main`, and every later pull request would inherit the failure.
 
-The upgrade, if the nudge ever becomes annoying: give the pull-request step a fine-grained
-personal access token or a GitHub App installation token instead of `GITHUB_TOKEN`, and inventory
-it in `docs/HOSTING.md` beside the other credentials. That is a second credential to rotate, which
-is why it was not taken by default.
+The App is installed only on this repository with `Contents: write`, `Pull requests: write`, and
+`Workflows: write`. The last permission lets the continuation merge reach the archive branch when
+`main` changed a file under `.github/workflows`; it does not let the job publish its own check.
+Its client ID, private-key custody, and rotation procedure are inventoried in `docs/HOSTING.md`.
+Repository auto-merge must remain enabled, and `main` must continue to require `check`. Disabling
+either setting fails closed: the archive pull request remains open rather than bypassing CI or
+pushing directly to `main`.
 
 The credential is `CLOUDFLARE_ANALYTICS_TOKEN`, scoped to **Zone / Analytics / Read**, with
 `CLOUDFLARE_ZONE_ID` naming the zone — both inventoried in `docs/HOSTING.md`. A missing or
