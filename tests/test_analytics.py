@@ -812,6 +812,11 @@ def test_archive_pull_request_queues_squash_auto_merge_without_bypassing_check()
     assert "--auto" in script
     assert "--squash" in script
     assert "--admin" not in script
+    assert "--base main" in script
+    assert "--json number,isCrossRepository" in script
+    assert "select(.isCrossRepository == false)" in script, (
+        "a same-named fork pull request must not receive the App-authorized auto-merge request"
+    )
 
 
 def _commit_step_script() -> str:

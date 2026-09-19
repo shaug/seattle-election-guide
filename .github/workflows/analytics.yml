@@ -140,14 +140,23 @@ jobs:
         # Auto-merge never bypasses branch protection: GitHub merges only after
         # the required `check` context passes and leaves a failing PR open.
         run: |
-          pr_number="$(gh pr list --head "$ARCHIVE_BRANCH" --state open --json number --jq '.[0].number')"
+          archive_pr_number() {
+            gh pr list \
+              --head "$ARCHIVE_BRANCH" \
+              --base main \
+              --state open \
+              --json number,isCrossRepository \
+              --jq '.[] | select(.isCrossRepository == false) | .number' \
+              | head -n 1
+          }
+          pr_number="$(archive_pr_number)"
           if [ -z "$pr_number" ]; then
             gh pr create \
               --head "$ARCHIVE_BRANCH" \
               --base main \
               --title "chore(analytics): archive zone rollups" \
               --body "$PR_BODY"
-            pr_number="$(gh pr list --head "$ARCHIVE_BRANCH" --state open --json number --jq '.[0].number')"
+            pr_number="$(archive_pr_number)"
           fi
           test -n "$pr_number"
           if [ "$(gh pr view "$pr_number" --json autoMergeRequest --jq '.autoMergeRequest != null')" != "true" ]; then
