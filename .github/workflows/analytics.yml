@@ -26,14 +26,12 @@ on:
         description: Archive exactly this UTC date (YYYY-MM-DD) instead of every missing day
         required: false
 
-# `contents: write` pushes the archive branch; `pull-requests: write` opens the
-# pull request that merges it. Nothing here may push to `main` — it is
-# protected and requires review (CONTRIBUTING.md, "Do not commit directly to
-# `main`"), so a direct push would fail every single day and the archive would
-# freeze while the job reported the failure to nobody.
+# The automatic `GITHUB_TOKEN` only needs to read this workflow. A short-lived
+# GitHub App installation token below owns the archive branch and pull request;
+# using that token lets the pull-request event run CI without a maintainer's
+# approval. Nothing here may push to `main` — it stays protected behind `check`.
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 concurrency:
   # Two runs archiving the same day would race on the same branch and one
@@ -48,8 +46,21 @@ jobs:
   archive:
     runs-on: ubuntu-latest
     steps:
+      - name: Mint the archive GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.ANALYTICS_ARCHIVE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.ANALYTICS_ARCHIVE_APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
       - uses: actions/checkout@v4
         with:
+          # Persist the App token for the archive-branch fetches and push below.
+          # A GITHUB_TOKEN-authored update would put the PR's CI back behind an
+          # approval prompt on every opened/synchronize event.
+          token: ${{ steps.app-token.outputs.token }}
+          persist-credentials: true
           # A full history, because this pushes a branch rather than a shallow
           # snapshot of one.
           fetch-depth: 0
@@ -89,14 +100,10 @@ jobs:
           CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
           DATE: ${{ inputs.date }}
       - name: Check what the run archived before committing it
-        # The gate has to run here, because it cannot run later. This job
-        # pushes and opens its pull request with `GITHUB_TOKEN`, and GitHub
-        # deliberately starts no workflow run for an event that token
-        # triggered — so `ci.yml`, which fires on `pull_request` and on pushes
-        # to `main`, never sees the archive branch. Without this step the
-        # committed-tree assertions in `tests/test_analytics.py` would first
-        # execute after the merge, against a file already on `main`, reddening
-        # every later pull request that inherits it.
+        # Keep the producing-run gate even though the App-authored pull request
+        # now runs CI. It catches a bad archive before it is committed or
+        # published, while `check` independently verifies the exact commit that
+        # auto-merge may land on `main`.
         #
         # The whole module rather than a `-k` subset: it runs in about a
         # second, and naming a subset here is one more thing that can drift
@@ -126,30 +133,38 @@ jobs:
           git commit -m "chore(analytics): archive zone rollups through $(date -u +%F)"
           git push origin "HEAD:refs/heads/$ARCHIVE_BRANCH"
           echo "pushed=true" >> "${GITHUB_OUTPUT:-/dev/null}"
-      - name: Open a pull request if none is open
+      - name: Open the archive pull request and queue auto-merge
         if: steps.commit.outputs.pushed == 'true'
         # Reuses the existing PR when one is already open, so a week of daily
         # runs accumulates into one reviewable pull request rather than seven.
+        # Auto-merge never bypasses branch protection: GitHub merges only after
+        # the required `check` context passes and leaves a failing PR open.
         run: |
-          if [ -z "$(gh pr list --head "$ARCHIVE_BRANCH" --state open --json number --jq '.[].number')" ]; then
+          pr_number="$(gh pr list --head "$ARCHIVE_BRANCH" --state open --json number --jq '.[0].number')"
+          if [ -z "$pr_number" ]; then
             gh pr create \
               --head "$ARCHIVE_BRANCH" \
               --base main \
               --title "chore(analytics): archive zone rollups" \
               --body "$PR_BODY"
+            pr_number="$(gh pr list --head "$ARCHIVE_BRANCH" --state open --json number --jq '.[0].number')"
+          fi
+          test -n "$pr_number"
+          if [ "$(gh pr view "$pr_number" --json autoMergeRequest --jq '.autoMergeRequest != null')" != "true" ]; then
+            gh pr merge "$pr_number" \
+              --squash \
+              --auto \
+              --match-head-commit "$(git rev-parse HEAD)"
           fi
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
           PR_BODY: |
             Automated by `.github/workflows/analytics.yml`. Adds one file per UTC day
             under `data/analytics/`; see docs/MONITORING.md, "The archive".
 
-            **CI will not start on its own.** This pull request was opened by
-            `GITHUB_TOKEN`, and GitHub starts no workflow run for an event that token
-            triggered. Close and reopen it, or push any commit to the branch, to run
-            `check`. The archived days were already checked before they were pushed —
-            the workflow runs `tests/test_analytics.py` against them in the same run
-            that wrote them — so this is about satisfying the required status check,
-            not about unreviewed content.
+            A repository-scoped GitHub App creates and updates this pull request, so
+            `check` starts without a manual approval. Auto-merge is queued with the
+            repository's only allowed merge method (squash) and lands the archive only
+            after `check` passes. A failed check leaves the pull request open.
 
-            Refs #381
+            Refs #381, #396
