@@ -1,0 +1,568 @@
+{
+  "by_country": [
+    {
+      "key": "US",
+      "requests": 112
+    },
+    {
+      "key": "FR",
+      "requests": 109
+    },
+    {
+      "key": "DE",
+      "requests": 40
+    },
+    {
+      "key": "SG",
+      "requests": 28
+    },
+    {
+      "key": "ID",
+      "requests": 26
+    },
+    {
+      "key": "CN",
+      "requests": 18
+    },
+    {
+      "key": "NL",
+      "requests": 18
+    },
+    {
+      "key": "JP",
+      "requests": 15
+    },
+    {
+      "key": "HK",
+      "requests": 10
+    },
+    {
+      "key": "BR",
+      "requests": 9
+    },
+    {
+      "key": "KR",
+      "requests": 4
+    },
+    {
+      "key": "LT",
+      "requests": 2
+    },
+    {
+      "key": "UA",
+      "requests": 2
+    },
+    {
+      "key": "VN",
+      "requests": 2
+    },
+    {
+      "key": "IE",
+      "requests": 1
+    },
+    {
+      "key": "RU",
+      "requests": 1
+    }
+  ],
+  "by_device_type": [
+    {
+      "key": "desktop",
+      "requests": 309
+    },
+    {
+      "key": "mobile",
+      "requests": 139
+    }
+  ],
+  "by_edge_status_code": [
+    {
+      "key": 301,
+      "requests": 126
+    },
+    {
+      "key": 404,
+      "requests": 108
+    },
+    {
+      "key": 200,
+      "requests": 97
+    },
+    {
+      "key": 307,
+      "requests": 62
+    },
+    {
+      "key": 308,
+      "requests": 2
+    },
+    {
+      "key": 403,
+      "requests": 2
+    }
+  ],
+  "by_path": [
+    {
+      "key": "/",
+      "requests": 114
+    },
+    {
+      "key": "/e/wa-2026-primary/",
+      "requests": 65
+    },
+    {
+      "key": "/wp-admin/install.php",
+      "requests": 41
+    },
+    {
+      "key": "/robots.txt",
+      "requests": 12
+    },
+    {
+      "key": "/media/system/js/core.js",
+      "requests": 7
+    },
+    {
+      "key": "/apple-touch-icon.png",
+      "requests": 6
+    },
+    {
+      "key": "/wp-includes/css/buttons.css",
+      "requests": 5
+    },
+    {
+      "key": "/wp-login.php",
+      "requests": 4
+    },
+    {
+      "key": "/e/wa-2026-primary/comparisons/",
+      "requests": 3
+    },
+    {
+      "key": "/favicon.ico",
+      "requests": 3
+    },
+    {
+      "key": "/og-image.png",
+      "requests": 3
+    },
+    {
+      "key": "/.git/HEAD",
+      "requests": 2
+    },
+    {
+      "key": "/.git/config",
+      "requests": 2
+    },
+    {
+      "key": "//wp-admin/css/about.php",
+      "requests": 2
+    },
+    {
+      "key": "/000.php",
+      "requests": 2
+    },
+    {
+      "key": "/2017",
+      "requests": 2
+    },
+    {
+      "key": "/2018",
+      "requests": 2
+    },
+    {
+      "key": "/2019",
+      "requests": 2
+    },
+    {
+      "key": "/2020",
+      "requests": 2
+    },
+    {
+      "key": "/2021",
+      "requests": 2
+    },
+    {
+      "key": "/2022",
+      "requests": 2
+    },
+    {
+      "key": "/2023",
+      "requests": 2
+    },
+    {
+      "key": "/2024",
+      "requests": 2
+    },
+    {
+      "key": "/2025",
+      "requests": 2
+    },
+    {
+      "key": "/2026",
+      "requests": 2
+    },
+    {
+      "key": "/BACKUP",
+      "requests": 2
+    },
+    {
+      "key": "/BLOG",
+      "requests": 2
+    },
+    {
+      "key": "/Backup",
+      "requests": 2
+    },
+    {
+      "key": "/Blog",
+      "requests": 2
+    },
+    {
+      "key": "/NEW",
+      "requests": 2
+    },
+    {
+      "key": "/New",
+      "requests": 2
+    },
+    {
+      "key": "/OLD",
+      "requests": 2
+    },
+    {
+      "key": "/Old",
+      "requests": 2
+    },
+    {
+      "key": "/SHOP",
+      "requests": 2
+    },
+    {
+      "key": "/SITE",
+      "requests": 2
+    },
+    {
+      "key": "/Shop",
+      "requests": 2
+    },
+    {
+      "key": "/Site",
+      "requests": 2
+    },
+    {
+      "key": "/TEST",
+      "requests": 2
+    },
+    {
+      "key": "/Test",
+      "requests": 2
+    },
+    {
+      "key": "/WORDPRESS",
+      "requests": 2
+    },
+    {
+      "key": "/WP",
+      "requests": 2
+    },
+    {
+      "key": "/WWW",
+      "requests": 2
+    },
+    {
+      "key": "/WordPress",
+      "requests": 2
+    },
+    {
+      "key": "/Wordpress",
+      "requests": 2
+    },
+    {
+      "key": "/Wp",
+      "requests": 2
+    },
+    {
+      "key": "/Www",
+      "requests": 2
+    },
+    {
+      "key": "/abcd.php",
+      "requests": 2
+    },
+    {
+      "key": "/api/session/properties",
+      "requests": 2
+    },
+    {
+      "key": "/archivarix.cms.php",
+      "requests": 2
+    },
+    {
+      "key": "/bac",
+      "requests": 2
+    },
+    {
+      "key": "/backup",
+      "requests": 2
+    },
+    {
+      "key": "/bak",
+      "requests": 2
+    },
+    {
+      "key": "/bc",
+      "requests": 2
+    },
+    {
+      "key": "/bk",
+      "requests": 2
+    },
+    {
+      "key": "/bless.php",
+      "requests": 2
+    },
+    {
+      "key": "/blog",
+      "requests": 2
+    },
+    {
+      "key": "/blurbs.php",
+      "requests": 2
+    },
+    {
+      "key": "/demo",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//2018/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//blog/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//media/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//sito/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//website/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//wp1/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//xmlrpc.php",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-11-state-representative-1/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/us-house-9/",
+      "requests": 2
+    },
+    {
+      "key": "/favicon-32.png",
+      "requests": 2
+    },
+    {
+      "key": "/favicon.svg",
+      "requests": 2
+    },
+    {
+      "key": "/main",
+      "requests": 2
+    },
+    {
+      "key": "/new",
+      "requests": 2
+    },
+    {
+      "key": "/old",
+      "requests": 2
+    },
+    {
+      "key": "/old-site",
+      "requests": 2
+    },
+    {
+      "key": "/oldsite",
+      "requests": 2
+    },
+    {
+      "key": "/shop",
+      "requests": 2
+    },
+    {
+      "key": "/site",
+      "requests": 2
+    },
+    {
+      "key": "/sitio",
+      "requests": 2
+    },
+    {
+      "key": "/sito",
+      "requests": 2
+    },
+    {
+      "key": "/test",
+      "requests": 2
+    },
+    {
+      "key": "/wordpress",
+      "requests": 2
+    },
+    {
+      "key": "/wp",
+      "requests": 2
+    },
+    {
+      "key": "/wp-admin/css/admin.php",
+      "requests": 2
+    },
+    {
+      "key": "/wp-admin/css/colors/wp-login.php",
+      "requests": 2
+    },
+    {
+      "key": "/wp-admin/css/goods.php",
+      "requests": 2
+    },
+    {
+      "key": "/wp-content/about.php",
+      "requests": 2
+    },
+    {
+      "key": "/wp-content/goods.php",
+      "requests": 2
+    },
+    {
+      "key": "/wp-content/plugins/elementor-pro/readme.txt",
+      "requests": 2
+    },
+    {
+      "key": "/wp-content/plugins/give/readme.txt",
+      "requests": 2
+    },
+    {
+      "key": "/wp-content/plugins/the-events-calendar/readme.txt",
+      "requests": 2
+    },
+    {
+      "key": "/wp-content/wp-setting.php",
+      "requests": 2
+    },
+    {
+      "key": "/wp-includes/hp2.php",
+      "requests": 2
+    },
+    {
+      "key": "/wp-json/",
+      "requests": 2
+    },
+    {
+      "key": "/wp-old",
+      "requests": 2
+    },
+    {
+      "key": "/www",
+      "requests": 2
+    },
+    {
+      "key": "/about",
+      "requests": 1
+    },
+    {
+      "key": "/about/",
+      "requests": 1
+    },
+    {
+      "key": "/cdn-cgi/trace",
+      "requests": 1
+    },
+    {
+      "key": "/deployment-manifest.json",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary//2019/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary//shop/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary//site/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary//web/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary//wp2/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/king-county-council-2/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-34-state-representative-2/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-36-state-senator/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-43-state-representative-2/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-46-state-representative-1/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/seattle-municipal-court-judge-5/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/sources",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/sources/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/voter-guide.pdf",
+      "requests": 1
+    },
+    {
+      "key": "/xmlrpc.php",
+      "requests": 1
+    }
+  ],
+  "date": "2026-09-13",
+  "page_views": 72,
+  "requests": 397,
+  "schema_version": "1.0",
+  "sources": [
+    "httpRequests1dGroups",
+    "httpRequestsAdaptiveGroups"
+  ],
+  "uniques": 102,
+  "visits": 19
+}

@@ -1,0 +1,1028 @@
+{
+  "by_country": [
+    {
+      "key": "FR",
+      "requests": 3169
+    },
+    {
+      "key": "US",
+      "requests": 581
+    },
+    {
+      "key": "NL",
+      "requests": 124
+    },
+    {
+      "key": "DE",
+      "requests": 30
+    },
+    {
+      "key": "SG",
+      "requests": 30
+    },
+    {
+      "key": "CN",
+      "requests": 20
+    },
+    {
+      "key": "KR",
+      "requests": 12
+    },
+    {
+      "key": "HK",
+      "requests": 10
+    },
+    {
+      "key": "SE",
+      "requests": 10
+    },
+    {
+      "key": "TR",
+      "requests": 10
+    },
+    {
+      "key": "CH",
+      "requests": 7
+    },
+    {
+      "key": "BR",
+      "requests": 6
+    },
+    {
+      "key": "TH",
+      "requests": 4
+    },
+    {
+      "key": "JP",
+      "requests": 3
+    },
+    {
+      "key": "TZ",
+      "requests": 1
+    },
+    {
+      "key": "VN",
+      "requests": 1
+    }
+  ],
+  "by_device_type": [
+    {
+      "key": "desktop",
+      "requests": 4390
+    },
+    {
+      "key": "mobile",
+      "requests": 289
+    }
+  ],
+  "by_edge_status_code": [
+    {
+      "key": 404,
+      "requests": 3141
+    },
+    {
+      "key": 200,
+      "requests": 531
+    },
+    {
+      "key": 307,
+      "requests": 145
+    },
+    {
+      "key": 301,
+      "requests": 88
+    },
+    {
+      "key": 403,
+      "requests": 59
+    },
+    {
+      "key": 204,
+      "requests": 51
+    },
+    {
+      "key": 405,
+      "requests": 2
+    },
+    {
+      "key": 308,
+      "requests": 1
+    }
+  ],
+  "by_path": [
+    {
+      "key": "/",
+      "requests": 277
+    },
+    {
+      "key": "/e/wa-2026-primary/",
+      "requests": 190
+    },
+    {
+      "key": "/favicon.svg",
+      "requests": 85
+    },
+    {
+      "key": "/api/auth",
+      "requests": 61
+    },
+    {
+      "key": "/%252egit-credentials",
+      "requests": 60
+    },
+    {
+      "key": "/%2egit/logs/refs/heads/main",
+      "requests": 60
+    },
+    {
+      "key": "/%2esvn/entries",
+      "requests": 60
+    },
+    {
+      "key": "/%2fapi%2f.environment",
+      "requests": 60
+    },
+    {
+      "key": "/%2frest%2fcredentials-for-node",
+      "requests": 60
+    },
+    {
+      "key": "/%2fs3%2fbuckets",
+      "requests": 60
+    },
+    {
+      "key": "/%2fwp-config%2ephp",
+      "requests": 60
+    },
+    {
+      "key": "/%2fwp-content%2fuploads%2f2025%2f.env",
+      "requests": 60
+    },
+    {
+      "key": "/%3a5432",
+      "requests": 60
+    },
+    {
+      "key": "/_next/data/build_id/%255b...slug%255d.json",
+      "requests": 60
+    },
+    {
+      "key": "/_vercel/functions/edge/",
+      "requests": 60
+    },
+    {
+      "key": "/admin/php%2ephp",
+      "requests": 60
+    },
+    {
+      "key": "/app/%28group%29/page",
+      "requests": 60
+    },
+    {
+      "key": "/app/%2egit/config",
+      "requests": 60
+    },
+    {
+      "key": "/app/amplify%252eyml",
+      "requests": 60
+    },
+    {
+      "key": "/app/next%252econfig%252emjs",
+      "requests": 60
+    },
+    {
+      "key": "/cart",
+      "requests": 60
+    },
+    {
+      "key": "/config%2ephp",
+      "requests": 60
+    },
+    {
+      "key": "/console/.env",
+      "requests": 60
+    },
+    {
+      "key": "/demo/phpinfo.php",
+      "requests": 60
+    },
+    {
+      "key": "/etc/apache2/apache2%2econf",
+      "requests": 60
+    },
+    {
+      "key": "/panel/.env",
+      "requests": 60
+    },
+    {
+      "key": "/phpversion.php",
+      "requests": 60
+    },
+    {
+      "key": "/rest/workflows/run",
+      "requests": 60
+    },
+    {
+      "key": "/v3/phpinfo%2ephp",
+      "requests": 60
+    },
+    {
+      "key": "/var/log/nginx/error%252elog",
+      "requests": 60
+    },
+    {
+      "key": "/%2fattacker%2fdocker-compose%2eyml",
+      "requests": 56
+    },
+    {
+      "key": "/%2frest%2flicense",
+      "requests": 56
+    },
+    {
+      "key": "/%2fsoftware%2finstall-updates%2ecgi",
+      "requests": 56
+    },
+    {
+      "key": "/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js",
+      "requests": 53
+    },
+    {
+      "key": "/%252Flaravel",
+      "requests": 52
+    },
+    {
+      "key": "/%2f.next%2fserver%2f",
+      "requests": 52
+    },
+    {
+      "key": "/%2f__nextjs_action",
+      "requests": 52
+    },
+    {
+      "key": "/%2f__rsc",
+      "requests": 52
+    },
+    {
+      "key": "/%2f_next%2finspector",
+      "requests": 52
+    },
+    {
+      "key": "/%2fdb%2f.env",
+      "requests": 52
+    },
+    {
+      "key": "/%2fenv",
+      "requests": 52
+    },
+    {
+      "key": "/cdn-cgi/rum",
+      "requests": 50
+    },
+    {
+      "key": "/apple-touch-icon.png",
+      "requests": 49
+    },
+    {
+      "key": "/%252f_vercel%252fconfig",
+      "requests": 48
+    },
+    {
+      "key": "/%252fconfig%252faws%252eyml",
+      "requests": 48
+    },
+    {
+      "key": "/%252fout%252findex.html",
+      "requests": 48
+    },
+    {
+      "key": "/%252fsites%252fdefault%252f.env",
+      "requests": 48
+    },
+    {
+      "key": "/favicon-32.png",
+      "requests": 45
+    },
+    {
+      "key": "/e/wa-2026-primary/comparisons/",
+      "requests": 44
+    },
+    {
+      "key": "/elmah%252eaxd",
+      "requests": 42
+    },
+    {
+      "key": "/etc/exim4/exim4%252econf",
+      "requests": 42
+    },
+    {
+      "key": "/out/index.html",
+      "requests": 42
+    },
+    {
+      "key": "/v2/%2eenv",
+      "requests": 42
+    },
+    {
+      "key": "/var/www/%2eenv",
+      "requests": 42
+    },
+    {
+      "key": "/%252frest%252foauth1-credential%252fauth",
+      "requests": 36
+    },
+    {
+      "key": "/%252frest%252fusers",
+      "requests": 36
+    },
+    {
+      "key": "/%252fs3%252esecret",
+      "requests": 36
+    },
+    {
+      "key": "/%252fserver_info.php",
+      "requests": 36
+    },
+    {
+      "key": "/%252fsignup",
+      "requests": 36
+    },
+    {
+      "key": "/%2f%2eenv%2etest",
+      "requests": 36
+    },
+    {
+      "key": "/%2f__nextjs_launch-editor",
+      "requests": 36
+    },
+    {
+      "key": "/wp-admin/install.php",
+      "requests": 34
+    },
+    {
+      "key": "/%252f%252es3cfg",
+      "requests": 33
+    },
+    {
+      "key": "/%252f2022%252fphpinfo.php",
+      "requests": 33
+    },
+    {
+      "key": "/%252f_next%252fdata%252fbuild_id%252f%5bslug%5d.json",
+      "requests": 33
+    },
+    {
+      "key": "/%252fbalancer-manager",
+      "requests": 33
+    },
+    {
+      "key": "/products",
+      "requests": 33
+    },
+    {
+      "key": "/s3%2esecret",
+      "requests": 33
+    },
+    {
+      "key": "/stripe%252eenv",
+      "requests": 33
+    },
+    {
+      "key": "/%252f%252egit%252flogs%252frefs%252fheads%252fmain",
+      "requests": 30
+    },
+    {
+      "key": "/%252f%252egit%252frefs%252fheads%252fmaster",
+      "requests": 30
+    },
+    {
+      "key": "/%252f%252eterraform%252fcredentials%252etfrc%252ejson",
+      "requests": 30
+    },
+    {
+      "key": "/robots.txt",
+      "requests": 24
+    },
+    {
+      "key": "/%252Faws.json",
+      "requests": 21
+    },
+    {
+      "key": "/%252f%252eboto",
+      "requests": 21
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-43-state-representative-1/$%7Bcounting.resultsHref%7D",
+      "requests": 18
+    },
+    {
+      "key": "/xampp/php-cgi%2eexe",
+      "requests": 18
+    },
+    {
+      "key": "/%252f%252edocker%252fsecrets%252ejson",
+      "requests": 16
+    },
+    {
+      "key": "/%252f_inc%252fphpinfo.php",
+      "requests": 16
+    },
+    {
+      "key": "/%252f_next%252froutes-manifest.json",
+      "requests": 16
+    },
+    {
+      "key": "/%252f_next%252fserver%252f",
+      "requests": 16
+    },
+    {
+      "key": "/sitemap.xml",
+      "requests": 16
+    },
+    {
+      "key": "/%3a6379",
+      "requests": 15
+    },
+    {
+      "key": "/admin/.env",
+      "requests": 15
+    },
+    {
+      "key": "/app/etc/local.xml",
+      "requests": 15
+    },
+    {
+      "key": "/aws/config/s3%2ejson",
+      "requests": 15
+    },
+    {
+      "key": "/config/initializers/twilio.rb",
+      "requests": 15
+    },
+    {
+      "key": "/test/phpinfo.php",
+      "requests": 15
+    },
+    {
+      "key": "/%2fapp%2fnext%2econfig%2ejs",
+      "requests": 14
+    },
+    {
+      "key": "/%2fproc%2findex%2ecgi",
+      "requests": 14
+    },
+    {
+      "key": "/%2f_next%2fstatic%2fruntime%2f",
+      "requests": 13
+    },
+    {
+      "key": "/%2fconsole%2f.env",
+      "requests": 13
+    },
+    {
+      "key": "/%252eterraform%252etfstate",
+      "requests": 12
+    },
+    {
+      "key": "/%252f_next%252fserver%252fserver-reference-manifest.json",
+      "requests": 12
+    },
+    {
+      "key": "/%252fapp%252f%28group%29%252flayout",
+      "requests": 12
+    },
+    {
+      "key": "/%252fconfig%252fdatabase.env",
+      "requests": 12
+    },
+    {
+      "key": "/%252fexported%252fphpinfo.php",
+      "requests": 12
+    },
+    {
+      "key": "/%252froot%252f%252eboto",
+      "requests": 12
+    },
+    {
+      "key": "/%252ftrace",
+      "requests": 12
+    },
+    {
+      "key": "/%252fwp-json%252fwc%252fv3%252fpayment_gateways",
+      "requests": 12
+    },
+    {
+      "key": "/og-image.png",
+      "requests": 12
+    },
+    {
+      "key": "/%252fapp%252fterraform%252etfstate",
+      "requests": 11
+    },
+    {
+      "key": "/%252fadmin%252fphp-info.php",
+      "requests": 9
+    },
+    {
+      "key": "/%252fv3%252fphpinfo.php",
+      "requests": 8
+    },
+    {
+      "key": "/%2fwp%2f.env",
+      "requests": 8
+    },
+    {
+      "key": "/api/core/%2eenv",
+      "requests": 8
+    },
+    {
+      "key": "/%252f%252egithub%252fworkflows",
+      "requests": 7
+    },
+    {
+      "key": "/api/v1/validate/code",
+      "requests": 6
+    },
+    {
+      "key": "/s3/buckets",
+      "requests": 6
+    },
+    {
+      "key": "/~/.s3cfg",
+      "requests": 6
+    },
+    {
+      "key": "/favicon.ico",
+      "requests": 5
+    },
+    {
+      "key": "/%252ftesting%252f.env",
+      "requests": 4
+    },
+    {
+      "key": "/apple-touch-icon-precomposed.png",
+      "requests": 4
+    },
+    {
+      "key": "/config/stripe%252ejson",
+      "requests": 4
+    },
+    {
+      "key": "/wp-login.php",
+      "requests": 4
+    },
+    {
+      "key": "/%252f.next%252fserver%252fapp%252f",
+      "requests": 3
+    },
+    {
+      "key": "/%252fapi%252frevalidate",
+      "requests": 3
+    },
+    {
+      "key": "/%252ftest%252ftesting.php",
+      "requests": 3
+    },
+    {
+      "key": "/.env",
+      "requests": 3
+    },
+    {
+      "key": "/.vscode/sftp.json",
+      "requests": 3
+    },
+    {
+      "key": "/api/v1/auto_login",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary//test/wp-includes/wlwmanifest.xml",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary//wp/wp-includes/wlwmanifest.xml",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary//xmlrpc.php",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-34-state-senator/",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-36-state-senator/",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-43-state-representative-1/",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-43-state-representative-2/",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/races/seattle-municipal-court-judge-5/",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/races/seattle-proposition-1-library-levy/",
+      "requests": 3
+    },
+    {
+      "key": "/sftp-config.json",
+      "requests": 3
+    },
+    {
+      "key": "/%2ftest",
+      "requests": 2
+    },
+    {
+      "key": "//2019/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "//media/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "//site/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "//sito/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "//test/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "//wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "//wp2/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/about/",
+      "requests": 2
+    },
+    {
+      "key": "/cdn-cgi/l/email-protection",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/${counting.resultsHref}",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//2019/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//website/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//wordpress/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/king-county-assessor/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/king-county-council-2/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/king-county-council-8/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-11-state-representative-1/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-11-state-representative-2/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-32-state-representative-1/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-32-state-representative-2/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-32-state-senator/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-34-state-representative-1/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-34-state-representative-2/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-36-state-representative-1/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-36-state-representative-2/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-36-state-representative-2/$%7Bcounting.resultsHref%7D",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-36-state-representative-2/$%7Brow.evidenceUrl%7D",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-36-state-senator/$%7Bcounting.resultsHref%7D",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-37-state-representative-1/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-37-state-representative-2/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-37-state-senator/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-43-state-senator/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-46-state-representative-1/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-46-state-representative-2/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-46-state-senator/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/supreme-court-justice-1/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/supreme-court-justice-3/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/supreme-court-justice-5/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/supreme-court-justice-7/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/us-house-7/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/us-house-9/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/release-manifest.json",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/sources/",
+      "requests": 2
+    },
+    {
+      "key": "/laravel/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php",
+      "requests": 2
+    },
+    {
+      "key": "/lib/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php",
+      "requests": 2
+    },
+    {
+      "key": "/media/system/js/core.js",
+      "requests": 2
+    },
+    {
+      "key": "/static/js/main%2echunk%2ejs%2emap",
+      "requests": 2
+    },
+    {
+      "key": "/vendor/phpunit/phpunit/Util/PHP/eval-stdin.php",
+      "requests": 2
+    },
+    {
+      "key": "/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php",
+      "requests": 2
+    },
+    {
+      "key": "/web/login",
+      "requests": 2
+    },
+    {
+      "key": "/wp-includes/js/jquery/jquery.js",
+      "requests": 2
+    },
+    {
+      "key": "/wp-json/",
+      "requests": 2
+    },
+    {
+      "key": "/xmlrpc.php",
+      "requests": 2
+    },
+    {
+      "key": "/yii/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php",
+      "requests": 2
+    },
+    {
+      "key": "/zend/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php",
+      "requests": 2
+    },
+    {
+      "key": "/.AWS_/credentials",
+      "requests": 1
+    },
+    {
+      "key": "/.action",
+      "requests": 1
+    },
+    {
+      "key": "/.aws/credentials",
+      "requests": 1
+    },
+    {
+      "key": "/.env.local",
+      "requests": 1
+    },
+    {
+      "key": "/.env.production",
+      "requests": 1
+    },
+    {
+      "key": "//2018/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "//wordpress/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "//wp1/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "/RSC/R/e7a6bj7ivrh8k40.txt",
+      "requests": 1
+    },
+    {
+      "key": "/RSC/qmt48vf2m5okgy6.txt",
+      "requests": 1
+    },
+    {
+      "key": "/__nextjs_action",
+      "requests": 1
+    },
+    {
+      "key": "/__rsc",
+      "requests": 1
+    },
+    {
+      "key": "/_middleware",
+      "requests": 1
+    },
+    {
+      "key": "/_next",
+      "requests": 1
+    },
+    {
+      "key": "/_next/image",
+      "requests": 1
+    },
+    {
+      "key": "/_profiler/phpinfo",
+      "requests": 1
+    },
+    {
+      "key": "/_rsc",
+      "requests": 1
+    },
+    {
+      "key": "/_vercel/insights",
+      "requests": 1
+    },
+    {
+      "key": "/api",
+      "requests": 1
+    },
+    {
+      "key": "/api/.env",
+      "requests": 1
+    },
+    {
+      "key": "/api/auth/callback",
+      "requests": 1
+    },
+    {
+      "key": "/api/auth/session",
+      "requests": 1
+    },
+    {
+      "key": "/api/shared/config/config.env",
+      "requests": 1
+    },
+    {
+      "key": "/config/.env",
+      "requests": 1
+    },
+    {
+      "key": "/contact/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary//blog/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary//shop/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/seattle-city-council-5/",
+      "requests": 1
+    },
+    {
+      "key": "/index.php",
+      "requests": 1
+    },
+    {
+      "key": "/info.php",
+      "requests": 1
+    },
+    {
+      "key": "/karma.conf.json",
+      "requests": 1
+    },
+    {
+      "key": "/php_info.php",
+      "requests": 1
+    },
+    {
+      "key": "/phpinfo",
+      "requests": 1
+    },
+    {
+      "key": "/phpinfo.php",
+      "requests": 1
+    },
+    {
+      "key": "/prisma/schema.prisma",
+      "requests": 1
+    },
+    {
+      "key": "/register/",
+      "requests": 1
+    },
+    {
+      "key": "/test.php",
+      "requests": 1
+    },
+    {
+      "key": "/wp-json/gravitysmtp/v1/tests/mock-data",
+      "requests": 1
+    }
+  ],
+  "date": "2026-08-24",
+  "page_views": 261,
+  "requests": 4018,
+  "schema_version": "1.0",
+  "sources": [
+    "httpRequests1dGroups",
+    "httpRequestsAdaptiveGroups"
+  ],
+  "uniques": 162,
+  "visits": 123
+}
