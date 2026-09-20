@@ -1,0 +1,324 @@
+{
+  "by_country": [
+    {
+      "key": "US",
+      "requests": 132
+    },
+    {
+      "key": "FR",
+      "requests": 54
+    },
+    {
+      "key": "CN",
+      "requests": 25
+    },
+    {
+      "key": "BR",
+      "requests": 18
+    },
+    {
+      "key": "HK",
+      "requests": 15
+    },
+    {
+      "key": "DE",
+      "requests": 14
+    },
+    {
+      "key": "NL",
+      "requests": 11
+    },
+    {
+      "key": "KR",
+      "requests": 10
+    },
+    {
+      "key": "SG",
+      "requests": 10
+    },
+    {
+      "key": "TH",
+      "requests": 6
+    },
+    {
+      "key": "ID",
+      "requests": 4
+    },
+    {
+      "key": "IT",
+      "requests": 3
+    },
+    {
+      "key": "JP",
+      "requests": 3
+    },
+    {
+      "key": "TR",
+      "requests": 3
+    },
+    {
+      "key": "IN",
+      "requests": 2
+    },
+    {
+      "key": "LT",
+      "requests": 2
+    },
+    {
+      "key": "TT",
+      "requests": 2
+    },
+    {
+      "key": "GB",
+      "requests": 1
+    },
+    {
+      "key": "RO",
+      "requests": 1
+    },
+    {
+      "key": "RU",
+      "requests": 1
+    },
+    {
+      "key": "VN",
+      "requests": 1
+    }
+  ],
+  "by_device_type": [
+    {
+      "key": "desktop",
+      "requests": 223
+    },
+    {
+      "key": "mobile",
+      "requests": 150
+    },
+    {
+      "key": "tablet",
+      "requests": 1
+    }
+  ],
+  "by_edge_status_code": [
+    {
+      "key": 200,
+      "requests": 96
+    },
+    {
+      "key": 404,
+      "requests": 75
+    },
+    {
+      "key": 301,
+      "requests": 63
+    },
+    {
+      "key": 307,
+      "requests": 60
+    },
+    {
+      "key": 403,
+      "requests": 24
+    }
+  ],
+  "by_path": [
+    {
+      "key": "/",
+      "requests": 116
+    },
+    {
+      "key": "/e/wa-2026-primary/",
+      "requests": 58
+    },
+    {
+      "key": "/wp-admin/install.php",
+      "requests": 43
+    },
+    {
+      "key": "/robots.txt",
+      "requests": 23
+    },
+    {
+      "key": "/sitemap.xml",
+      "requests": 12
+    },
+    {
+      "key": "/wp-login.php",
+      "requests": 12
+    },
+    {
+      "key": "/xmlrpc.php",
+      "requests": 11
+    },
+    {
+      "key": "/media/system/js/core.js",
+      "requests": 6
+    },
+    {
+      "key": "/wp-json/",
+      "requests": 5
+    },
+    {
+      "key": "//site/wp-includes/wlwmanifest.xml",
+      "requests": 4
+    },
+    {
+      "key": "//wordpress/wp-includes/wlwmanifest.xml",
+      "requests": 4
+    },
+    {
+      "key": "//wp/wp-includes/wlwmanifest.xml",
+      "requests": 4
+    },
+    {
+      "key": "/apple-touch-icon.png",
+      "requests": 4
+    },
+    {
+      "key": "/favicon-32.png",
+      "requests": 4
+    },
+    {
+      "key": "/wp-includes/css/buttons.css",
+      "requests": 4
+    },
+    {
+      "key": "/.env",
+      "requests": 3
+    },
+    {
+      "key": "//web/wp-includes/wlwmanifest.xml",
+      "requests": 3
+    },
+    {
+      "key": "//wp2/wp-includes/wlwmanifest.xml",
+      "requests": 3
+    },
+    {
+      "key": "//xmlrpc.php",
+      "requests": 3
+    },
+    {
+      "key": "/admin/wp-login.php",
+      "requests": 3
+    },
+    {
+      "key": "/blog/wp-login.php",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/races/king-county-council-8/",
+      "requests": 3
+    },
+    {
+      "key": "/index.php",
+      "requests": 3
+    },
+    {
+      "key": "/wp/wp-login.php",
+      "requests": 3
+    },
+    {
+      "key": "//blog/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "//cms/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "//shop/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "//sito/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "//wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "//wp1/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/Seattle_2026_Primary_Elections_Guide.pdf",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/comparisons/",
+      "requests": 2
+    },
+    {
+      "key": "/favicon.ico",
+      "requests": 2
+    },
+    {
+      "key": "/index.php/wp-json/batch/v1",
+      "requests": 2
+    },
+    {
+      "key": "/wordpress/wp-login.php",
+      "requests": 2
+    },
+    {
+      "key": "/wp-includes/js/jquery/jquery.js",
+      "requests": 2
+    },
+    {
+      "key": "/wp-json/batch/v1",
+      "requests": 2
+    },
+    {
+      "key": "/wp-login/wp-login.php",
+      "requests": 2
+    },
+    {
+      "key": "//news/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "//website/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "/apple-touch-icon-precomposed.png",
+      "requests": 1
+    },
+    {
+      "key": "/cdn-cgi/trace",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-34-state-senator/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/seattle-proposition-1-library-levy/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/supreme-court-justice-1/",
+      "requests": 1
+    },
+    {
+      "key": "/favicon.svg",
+      "requests": 1
+    },
+    {
+      "key": "/og-image.png",
+      "requests": 1
+    }
+  ],
+  "date": "2026-09-11",
+  "page_views": 62,
+  "requests": 318,
+  "schema_version": "1.0",
+  "sources": [
+    "httpRequests1dGroups",
+    "httpRequestsAdaptiveGroups"
+  ],
+  "uniques": 100,
+  "visits": 11
+}

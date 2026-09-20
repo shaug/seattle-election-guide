@@ -1,0 +1,224 @@
+{
+  "by_country": [
+    {
+      "key": "US",
+      "requests": 292
+    },
+    {
+      "key": "SG",
+      "requests": 27
+    },
+    {
+      "key": "DE",
+      "requests": 22
+    },
+    {
+      "key": "CN",
+      "requests": 21
+    },
+    {
+      "key": "HK",
+      "requests": 15
+    },
+    {
+      "key": "BR",
+      "requests": 13
+    },
+    {
+      "key": "NL",
+      "requests": 13
+    },
+    {
+      "key": "SE",
+      "requests": 10
+    },
+    {
+      "key": "KR",
+      "requests": 9
+    },
+    {
+      "key": "JP",
+      "requests": 8
+    },
+    {
+      "key": "TH",
+      "requests": 8
+    },
+    {
+      "key": "IT",
+      "requests": 3
+    },
+    {
+      "key": "TR",
+      "requests": 3
+    },
+    {
+      "key": "ID",
+      "requests": 2
+    },
+    {
+      "key": "LT",
+      "requests": 2
+    },
+    {
+      "key": "CA",
+      "requests": 1
+    },
+    {
+      "key": "IN",
+      "requests": 1
+    },
+    {
+      "key": "OM",
+      "requests": 1
+    },
+    {
+      "key": "TW",
+      "requests": 1
+    }
+  ],
+  "by_device_type": [
+    {
+      "key": "desktop",
+      "requests": 338
+    },
+    {
+      "key": "mobile",
+      "requests": 213
+    },
+    {
+      "key": "tablet",
+      "requests": 2
+    }
+  ],
+  "by_edge_status_code": [
+    {
+      "key": 200,
+      "requests": 233
+    },
+    {
+      "key": 307,
+      "requests": 94
+    },
+    {
+      "key": 301,
+      "requests": 62
+    },
+    {
+      "key": 404,
+      "requests": 26
+    },
+    {
+      "key": 403,
+      "requests": 21
+    },
+    {
+      "key": 204,
+      "requests": 16
+    }
+  ],
+  "by_path": [
+    {
+      "key": "/",
+      "requests": 177
+    },
+    {
+      "key": "/e/wa-2026-primary/",
+      "requests": 123
+    },
+    {
+      "key": "/wp-admin/install.php",
+      "requests": 45
+    },
+    {
+      "key": "/favicon.svg",
+      "requests": 37
+    },
+    {
+      "key": "/apple-touch-icon.png",
+      "requests": 31
+    },
+    {
+      "key": "/favicon-32.png",
+      "requests": 29
+    },
+    {
+      "key": "/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js",
+      "requests": 18
+    },
+    {
+      "key": "/robots.txt",
+      "requests": 18
+    },
+    {
+      "key": "/cdn-cgi/rum",
+      "requests": 16
+    },
+    {
+      "key": "/sitemap.xml",
+      "requests": 13
+    },
+    {
+      "key": "/e/wa-2026-primary/comparisons/",
+      "requests": 9
+    },
+    {
+      "key": "/og-image.png",
+      "requests": 9
+    },
+    {
+      "key": "/administrator/",
+      "requests": 4
+    },
+    {
+      "key": "/favicon.ico",
+      "requests": 4
+    },
+    {
+      "key": "/.git/HEAD",
+      "requests": 3
+    },
+    {
+      "key": "/media/system/js/core.js",
+      "requests": 3
+    },
+    {
+      "key": "/.git/config",
+      "requests": 2
+    },
+    {
+      "key": "/administrator/manifests/files/joomla.xml",
+      "requests": 2
+    },
+    {
+      "key": "/apple-touch-icon-precomposed.png",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-32-state-senator/",
+      "requests": 2
+    },
+    {
+      "key": "/language/en-GB/en-GB.xml",
+      "requests": 2
+    },
+    {
+      "key": "/wp-login.php",
+      "requests": 2
+    },
+    {
+      "key": "/xmlrpc.php",
+      "requests": 2
+    }
+  ],
+  "date": "2026-08-27",
+  "page_views": 98,
+  "requests": 452,
+  "schema_version": "1.0",
+  "sources": [
+    "httpRequests1dGroups",
+    "httpRequestsAdaptiveGroups"
+  ],
+  "uniques": 134,
+  "visits": 38
+}
