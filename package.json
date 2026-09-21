@@ -14,13 +14,13 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.13",
+    "@biomejs/biome": "2.5.14",
     "esbuild": "0.28.2",
     "git-cliff": "2.13.1",
     "happy-dom": "20.14.5",
     "json-schema-to-typescript": "16.0.0",
     "typescript": "7.0.2",
-    "wrangler": "4.131.2"
+    "wrangler": "4.135.0"
   },
   "dependencies": {
     "lit-html": "3.3.3"
