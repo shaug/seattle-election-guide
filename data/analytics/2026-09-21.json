@@ -1,0 +1,1916 @@
+{
+  "by_country": [
+    {
+      "key": "US",
+      "requests": 470
+    },
+    {
+      "key": "HK",
+      "requests": 357
+    },
+    {
+      "key": "NL",
+      "requests": 310
+    },
+    {
+      "key": "BE",
+      "requests": 303
+    },
+    {
+      "key": "CA",
+      "requests": 287
+    },
+    {
+      "key": "CH",
+      "requests": 286
+    },
+    {
+      "key": "DE",
+      "requests": 37
+    },
+    {
+      "key": "SG",
+      "requests": 27
+    },
+    {
+      "key": "FI",
+      "requests": 16
+    },
+    {
+      "key": "CN",
+      "requests": 14
+    },
+    {
+      "key": "LT",
+      "requests": 14
+    },
+    {
+      "key": "JP",
+      "requests": 8
+    },
+    {
+      "key": "ID",
+      "requests": 7
+    },
+    {
+      "key": "FR",
+      "requests": 4
+    },
+    {
+      "key": "GE",
+      "requests": 4
+    },
+    {
+      "key": "KR",
+      "requests": 3
+    },
+    {
+      "key": "LU",
+      "requests": 3
+    },
+    {
+      "key": "TH",
+      "requests": 3
+    },
+    {
+      "key": "ES",
+      "requests": 2
+    },
+    {
+      "key": "GB",
+      "requests": 2
+    },
+    {
+      "key": "IL",
+      "requests": 2
+    },
+    {
+      "key": "MX",
+      "requests": 2
+    },
+    {
+      "key": "PL",
+      "requests": 2
+    },
+    {
+      "key": "SE",
+      "requests": 2
+    },
+    {
+      "key": "SI",
+      "requests": 2
+    },
+    {
+      "key": "TR",
+      "requests": 2
+    },
+    {
+      "key": "IN",
+      "requests": 1
+    },
+    {
+      "key": "PH",
+      "requests": 1
+    },
+    {
+      "key": "RU",
+      "requests": 1
+    }
+  ],
+  "by_device_type": [
+    {
+      "key": "desktop",
+      "requests": 1799
+    },
+    {
+      "key": "mobile",
+      "requests": 483
+    },
+    {
+      "key": "tablet",
+      "requests": 1
+    }
+  ],
+  "by_edge_status_code": [
+    {
+      "key": 404,
+      "requests": 1644
+    },
+    {
+      "key": 200,
+      "requests": 315
+    },
+    {
+      "key": 307,
+      "requests": 119
+    },
+    {
+      "key": 301,
+      "requests": 72
+    },
+    {
+      "key": 403,
+      "requests": 16
+    },
+    {
+      "key": 204,
+      "requests": 5
+    },
+    {
+      "key": 405,
+      "requests": 1
+    }
+  ],
+  "by_path": [
+    {
+      "key": "/",
+      "requests": 199
+    },
+    {
+      "key": "/e/wa-2026-primary/",
+      "requests": 182
+    },
+    {
+      "key": "/cd/.env",
+      "requests": 102
+    },
+    {
+      "key": "/.env.backup",
+      "requests": 42
+    },
+    {
+      "key": "/wp-admin/install.php",
+      "requests": 39
+    },
+    {
+      "key": "/cdn-cgi/l/email-protection",
+      "requests": 34
+    },
+    {
+      "key": "/app/.env",
+      "requests": 31
+    },
+    {
+      "key": "/admin/.env",
+      "requests": 29
+    },
+    {
+      "key": "/robots.txt",
+      "requests": 28
+    },
+    {
+      "key": "/Dockerfile",
+      "requests": 27
+    },
+    {
+      "key": "/env.json",
+      "requests": 27
+    },
+    {
+      "key": "/v2/.env",
+      "requests": 25
+    },
+    {
+      "key": "/app/.env.local",
+      "requests": 24
+    },
+    {
+      "key": "/login",
+      "requests": 24
+    },
+    {
+      "key": "/settings.json",
+      "requests": 24
+    },
+    {
+      "key": "/.env",
+      "requests": 23
+    },
+    {
+      "key": "/.env.backup2",
+      "requests": 22
+    },
+    {
+      "key": "/.env.prod",
+      "requests": 22
+    },
+    {
+      "key": "/.env.yaml",
+      "requests": 22
+    },
+    {
+      "key": "/mail/.env",
+      "requests": 22
+    },
+    {
+      "key": "/microservice/.env",
+      "requests": 21
+    },
+    {
+      "key": "/graphql/.env",
+      "requests": 20
+    },
+    {
+      "key": "/.env.swp",
+      "requests": 19
+    },
+    {
+      "key": "/logs/.env",
+      "requests": 19
+    },
+    {
+      "key": "/.env.production",
+      "requests": 18
+    },
+    {
+      "key": "/src/.env",
+      "requests": 18
+    },
+    {
+      "key": "/.env.stage",
+      "requests": 16
+    },
+    {
+      "key": "/public_html/.env",
+      "requests": 16
+    },
+    {
+      "key": "/frontend/.env",
+      "requests": 15
+    },
+    {
+      "key": "/.git/HEAD",
+      "requests": 14
+    },
+    {
+      "key": "/en/.env",
+      "requests": 14
+    },
+    {
+      "key": "/jenkins/.env",
+      "requests": 14
+    },
+    {
+      "key": "/.env.ci",
+      "requests": 13
+    },
+    {
+      "key": "/.env.staging",
+      "requests": 13
+    },
+    {
+      "key": "/service/.env",
+      "requests": 13
+    },
+    {
+      "key": "/.env.old",
+      "requests": 12
+    },
+    {
+      "key": "/_phpinfo.php",
+      "requests": 12
+    },
+    {
+      "key": "/api/v3/.env",
+      "requests": 12
+    },
+    {
+      "key": "/saas/.env",
+      "requests": 12
+    },
+    {
+      "key": "/e/wa-2026-primary/comparisons/",
+      "requests": 11
+    },
+    {
+      "key": "/k8s/.env",
+      "requests": 11
+    },
+    {
+      "key": "/shop/.env",
+      "requests": 11
+    },
+    {
+      "key": "/.authorized_keys",
+      "requests": 10
+    },
+    {
+      "key": "/.azure/credentials",
+      "requests": 10
+    },
+    {
+      "key": "/.env.example",
+      "requests": 10
+    },
+    {
+      "key": "/.git/.env",
+      "requests": 10
+    },
+    {
+      "key": "/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js",
+      "requests": 10
+    },
+    {
+      "key": "/config/app/.env",
+      "requests": 10
+    },
+    {
+      "key": "/cpanel/phpinfo.php",
+      "requests": 10
+    },
+    {
+      "key": "/google-credentials.json",
+      "requests": 10
+    },
+    {
+      "key": "/release/.env",
+      "requests": 10
+    },
+    {
+      "key": "/.env.bak",
+      "requests": 9
+    },
+    {
+      "key": "/.env.dev",
+      "requests": 9
+    },
+    {
+      "key": "/.env.local",
+      "requests": 9
+    },
+    {
+      "key": "/.env.save",
+      "requests": 9
+    },
+    {
+      "key": "/admin/phpinfo.php",
+      "requests": 9
+    },
+    {
+      "key": "/api/.env",
+      "requests": 9
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-32-state-representative-1/",
+      "requests": 9
+    },
+    {
+      "key": "/prod/.env",
+      "requests": 9
+    },
+    {
+      "key": "/shared/.env",
+      "requests": 9
+    },
+    {
+      "key": "/sparkpost/.env",
+      "requests": 9
+    },
+    {
+      "key": "/staging/.env",
+      "requests": 9
+    },
+    {
+      "key": "/wp-login.php",
+      "requests": 9
+    },
+    {
+      "key": "/.config/gcloud/application_default_credentials.json",
+      "requests": 8
+    },
+    {
+      "key": "/.env.live",
+      "requests": 8
+    },
+    {
+      "key": "/.git",
+      "requests": 8
+    },
+    {
+      "key": "/.git/config",
+      "requests": 8
+    },
+    {
+      "key": "/.git/packed-refs",
+      "requests": 8
+    },
+    {
+      "key": "/.github/workflows/ci-push.yml",
+      "requests": 8
+    },
+    {
+      "key": "/.htaccess",
+      "requests": 8
+    },
+    {
+      "key": "/apps/.env",
+      "requests": 8
+    },
+    {
+      "key": "/debug.php",
+      "requests": 8
+    },
+    {
+      "key": "/env",
+      "requests": 8
+    },
+    {
+      "key": "/postmark/.env",
+      "requests": 8
+    },
+    {
+      "key": "/vendor/.env",
+      "requests": 8
+    },
+    {
+      "key": "/config/.env",
+      "requests": 7
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-34-state-senator/",
+      "requests": 7
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-36-state-senator/",
+      "requests": 7
+    },
+    {
+      "key": "/public_html/phpinfo.php",
+      "requests": 7
+    },
+    {
+      "key": "/.boto",
+      "requests": 6
+    },
+    {
+      "key": "/.env.development.local",
+      "requests": 6
+    },
+    {
+      "key": "/application/.env",
+      "requests": 6
+    },
+    {
+      "key": "/backend/.env",
+      "requests": 6
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-11-state-representative-1/",
+      "requests": 6
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-11-state-representative-2/",
+      "requests": 6
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-32-state-representative-2/",
+      "requests": 6
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-34-state-representative-2/",
+      "requests": 6
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-37-state-representative-1/",
+      "requests": 6
+    },
+    {
+      "key": "/functions/.env",
+      "requests": 6
+    },
+    {
+      "key": "/google-key.json",
+      "requests": 6
+    },
+    {
+      "key": "/test.php",
+      "requests": 6
+    },
+    {
+      "key": "/webroot/index.php/_environment",
+      "requests": 6
+    },
+    {
+      "key": "/.auth.json",
+      "requests": 5
+    },
+    {
+      "key": "/.docker/config.json",
+      "requests": 5
+    },
+    {
+      "key": "/about/",
+      "requests": 5
+    },
+    {
+      "key": "/cdn-cgi/rum",
+      "requests": 5
+    },
+    {
+      "key": "/dist/.env",
+      "requests": 5
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-32-state-senator/",
+      "requests": 5
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-36-state-representative-1/",
+      "requests": 5
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-37-state-representative-2/",
+      "requests": 5
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-46-state-representative-1/",
+      "requests": 5
+    },
+    {
+      "key": "/e/wa-2026-primary/races/seattle-city-council-5/",
+      "requests": 5
+    },
+    {
+      "key": "/e/wa-2026-primary/races/us-house-7/",
+      "requests": 5
+    },
+    {
+      "key": "/e/wa-2026-primary/races/us-house-9/",
+      "requests": 5
+    },
+    {
+      "key": "/info.php",
+      "requests": 5
+    },
+    {
+      "key": "/laravel5/.env",
+      "requests": 5
+    },
+    {
+      "key": "/wp-json/",
+      "requests": 5
+    },
+    {
+      "key": "/xmlrpc.php",
+      "requests": 5
+    },
+    {
+      "key": "/.env~",
+      "requests": 4
+    },
+    {
+      "key": "/.idea/dataSources.xml",
+      "requests": 4
+    },
+    {
+      "key": "/.mongorc.js",
+      "requests": 4
+    },
+    {
+      "key": "/apple-touch-icon.png",
+      "requests": 4
+    },
+    {
+      "key": "/assets/.env",
+      "requests": 4
+    },
+    {
+      "key": "/development/.env",
+      "requests": 4
+    },
+    {
+      "key": "/e/wa-2026-primary/races/king-county-assessor/",
+      "requests": 4
+    },
+    {
+      "key": "/e/wa-2026-primary/races/king-county-council-2/",
+      "requests": 4
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-34-state-representative-1/",
+      "requests": 4
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-37-state-senator/",
+      "requests": 4
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-43-state-senator/",
+      "requests": 4
+    },
+    {
+      "key": "/e/wa-2026-primary/races/seattle-municipal-court-judge-5/",
+      "requests": 4
+    },
+    {
+      "key": "/e/wa-2026-primary/races/seattle-proposition-1-library-levy/",
+      "requests": 4
+    },
+    {
+      "key": "/e/wa-2026-primary/races/supreme-court-justice-1/",
+      "requests": 4
+    },
+    {
+      "key": "/e/wa-2026-primary/races/supreme-court-justice-3/",
+      "requests": 4
+    },
+    {
+      "key": "/e/wa-2026-primary/races/supreme-court-justice-5/",
+      "requests": 4
+    },
+    {
+      "key": "/e/wa-2026-primary/sources/",
+      "requests": 4
+    },
+    {
+      "key": "/favicon.svg",
+      "requests": 4
+    },
+    {
+      "key": "/job/.env",
+      "requests": 4
+    },
+    {
+      "key": "/key.json",
+      "requests": 4
+    },
+    {
+      "key": "/media/system/js/core.js",
+      "requests": 4
+    },
+    {
+      "key": "/old/.env",
+      "requests": 4
+    },
+    {
+      "key": "/php-info.php",
+      "requests": 4
+    },
+    {
+      "key": "/phpinfo.php",
+      "requests": 4
+    },
+    {
+      "key": "/pinfo.php",
+      "requests": 4
+    },
+    {
+      "key": "/preview/phpinfo.php",
+      "requests": 4
+    },
+    {
+      "key": "/sitemaps/.env",
+      "requests": 4
+    },
+    {
+      "key": "/temp/.env",
+      "requests": 4
+    },
+    {
+      "key": "/transactional/.env",
+      "requests": 4
+    },
+    {
+      "key": "/uat/phpinfo.php",
+      "requests": 4
+    },
+    {
+      "key": "/.idea/workspace.xml",
+      "requests": 3
+    },
+    {
+      "key": "/.kube/config",
+      "requests": 3
+    },
+    {
+      "key": "/.npmrc",
+      "requests": 3
+    },
+    {
+      "key": "/apple-touch-icon-precomposed.png",
+      "requests": 3
+    },
+    {
+      "key": "/aws-ses.json",
+      "requests": 3
+    },
+    {
+      "key": "/config/module.config.php",
+      "requests": 3
+    },
+    {
+      "key": "/core/phpinfo.php",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary//2019/wp-includes/wlwmanifest.xml",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary//2020/wp-includes/wlwmanifest.xml",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary//shop/wp-includes/wlwmanifest.xml",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary//site/wp-includes/wlwmanifest.xml",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary//wordpress/wp-includes/wlwmanifest.xml",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary//wp2/wp-includes/wlwmanifest.xml",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/races/king-county-council-8/",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-36-state-representative-2/",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-43-state-representative-1/",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-43-state-representative-2/",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-46-state-representative-2/",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-46-state-senator/",
+      "requests": 3
+    },
+    {
+      "key": "/favicon-32.png",
+      "requests": 3
+    },
+    {
+      "key": "/includes/phpinfo.php",
+      "requests": 3
+    },
+    {
+      "key": "/mailer/.env",
+      "requests": 3
+    },
+    {
+      "key": "/pi.php",
+      "requests": 3
+    },
+    {
+      "key": "/tmp/.env",
+      "requests": 3
+    },
+    {
+      "key": "/wp-includes/js/jquery/jquery.js",
+      "requests": 3
+    },
+    {
+      "key": "/%2eenv",
+      "requests": 2
+    },
+    {
+      "key": "/%2f%2eaws%2fcredentials",
+      "requests": 2
+    },
+    {
+      "key": "/%2f%2eenv",
+      "requests": 2
+    },
+    {
+      "key": "/%2fbackend%2f%2eenv",
+      "requests": 2
+    },
+    {
+      "key": "/.aws/config",
+      "requests": 2
+    },
+    {
+      "key": "/.aws/credent",
+      "requests": 2
+    },
+    {
+      "key": "/.env.development",
+      "requests": 2
+    },
+    {
+      "key": "/.env.docker",
+      "requests": 2
+    },
+    {
+      "key": "/.env.yml",
+      "requests": 2
+    },
+    {
+      "key": "/.git-credentials",
+      "requests": 2
+    },
+    {
+      "key": "/.mcp.json",
+      "requests": 2
+    },
+    {
+      "key": "/.netrc",
+      "requests": 2
+    },
+    {
+      "key": "/.pypirc",
+      "requests": 2
+    },
+    {
+      "key": "/_internal/api/setup.php",
+      "requests": 2
+    },
+    {
+      "key": "/actuator/configprops",
+      "requests": 2
+    },
+    {
+      "key": "/actuator/env",
+      "requests": 2
+    },
+    {
+      "key": "/api/",
+      "requests": 2
+    },
+    {
+      "key": "/api/v2/.env",
+      "requests": 2
+    },
+    {
+      "key": "/bootstrap/.env",
+      "requests": 2
+    },
+    {
+      "key": "/cakephp/.env",
+      "requests": 2
+    },
+    {
+      "key": "/circleci/.env",
+      "requests": 2
+    },
+    {
+      "key": "/core/.env",
+      "requests": 2
+    },
+    {
+      "key": "/debug/vars",
+      "requests": 2
+    },
+    {
+      "key": "/deploy/.env",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//2018/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//blog/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//news/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//sito/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//wp/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//wp1/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary//xmlrpc.php",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/guide-card.mjs",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/meter-tooltip.mjs",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/races/supreme-court-justice-7/",
+      "requests": 2
+    },
+    {
+      "key": "/express/.env",
+      "requests": 2
+    },
+    {
+      "key": "/gitlab/.env",
+      "requests": 2
+    },
+    {
+      "key": "/i.php",
+      "requests": 2
+    },
+    {
+      "key": "/lab/.env",
+      "requests": 2
+    },
+    {
+      "key": "/lib/.env",
+      "requests": 2
+    },
+    {
+      "key": "/magento/.env",
+      "requests": 2
+    },
+    {
+      "key": "/mailgun/.env",
+      "requests": 2
+    },
+    {
+      "key": "/mailing/.env",
+      "requests": 2
+    },
+    {
+      "key": "/node/.env",
+      "requests": 2
+    },
+    {
+      "key": "/og-image.png",
+      "requests": 2
+    },
+    {
+      "key": "/php.php",
+      "requests": 2
+    },
+    {
+      "key": "/php_info.php",
+      "requests": 2
+    },
+    {
+      "key": "/prestashop/.env",
+      "requests": 2
+    },
+    {
+      "key": "/public/phpinfo.php",
+      "requests": 2
+    },
+    {
+      "key": "/qa/phpinfo.php",
+      "requests": 2
+    },
+    {
+      "key": "/queue/.env",
+      "requests": 2
+    },
+    {
+      "key": "/react/.env",
+      "requests": 2
+    },
+    {
+      "key": "/server-status",
+      "requests": 2
+    },
+    {
+      "key": "/server-status.php",
+      "requests": 2
+    },
+    {
+      "key": "/ses/.env",
+      "requests": 2
+    },
+    {
+      "key": "/shopify/.env",
+      "requests": 2
+    },
+    {
+      "key": "/smtp/.env",
+      "requests": 2
+    },
+    {
+      "key": "/smtp/phpinfo.php",
+      "requests": 2
+    },
+    {
+      "key": "/svelte/.env",
+      "requests": 2
+    },
+    {
+      "key": "/symfony/.env",
+      "requests": 2
+    },
+    {
+      "key": "/tracking.php",
+      "requests": 2
+    },
+    {
+      "key": "/uploads/.env",
+      "requests": 2
+    },
+    {
+      "key": "/v1/.env",
+      "requests": 2
+    },
+    {
+      "key": "/www/.env",
+      "requests": 2
+    },
+    {
+      "key": "/www/phpinfo.php",
+      "requests": 2
+    },
+    {
+      "key": "/.amper/challenge/fp.js",
+      "requests": 1
+    },
+    {
+      "key": "/.aws/credentials",
+      "requests": 1
+    },
+    {
+      "key": "/.bash_history",
+      "requests": 1
+    },
+    {
+      "key": "/.env.preprod",
+      "requests": 1
+    },
+    {
+      "key": "/.env.sample",
+      "requests": 1
+    },
+    {
+      "key": "/.env.test",
+      "requests": 1
+    },
+    {
+      "key": "/.env.uat",
+      "requests": 1
+    },
+    {
+      "key": "/.env1",
+      "requests": 1
+    },
+    {
+      "key": "/.env2",
+      "requests": 1
+    },
+    {
+      "key": "/.env_copy",
+      "requests": 1
+    },
+    {
+      "key": "/.gitmodules",
+      "requests": 1
+    },
+    {
+      "key": "/.m2/settings.xml",
+      "requests": 1
+    },
+    {
+      "key": "/.msmtprc",
+      "requests": 1
+    },
+    {
+      "key": "/.ssh/id_ed25519",
+      "requests": 1
+    },
+    {
+      "key": "/.ssh/id_rsa",
+      "requests": 1
+    },
+    {
+      "key": "/.svn/wc.db",
+      "requests": 1
+    },
+    {
+      "key": "/.vscode/sftp.json",
+      "requests": 1
+    },
+    {
+      "key": "/.well-known/agent-card.json",
+      "requests": 1
+    },
+    {
+      "key": "/.well-known/agent.json",
+      "requests": 1
+    },
+    {
+      "key": "/.well-known/agents.json",
+      "requests": 1
+    },
+    {
+      "key": "/.well-known/mcp",
+      "requests": 1
+    },
+    {
+      "key": "/.well-known/mcp/server-card.json",
+      "requests": 1
+    },
+    {
+      "key": "//blog/",
+      "requests": 1
+    },
+    {
+      "key": "//blog/robots.txt",
+      "requests": 1
+    },
+    {
+      "key": "//wordpress/",
+      "requests": 1
+    },
+    {
+      "key": "//wp/",
+      "requests": 1
+    },
+    {
+      "key": "//xmlrpc.php",
+      "requests": 1
+    },
+    {
+      "key": "/_profiler/phpinfo",
+      "requests": 1
+    },
+    {
+      "key": "/_vti_pvt/service.pwd",
+      "requests": 1
+    },
+    {
+      "key": "/actions/.env",
+      "requests": 1
+    },
+    {
+      "key": "/actuator/heapdump",
+      "requests": 1
+    },
+    {
+      "key": "/admin-panel/.env",
+      "requests": 1
+    },
+    {
+      "key": "/administrator/components/com_jce/",
+      "requests": 1
+    },
+    {
+      "key": "/administrator/phpinfo.php",
+      "requests": 1
+    },
+    {
+      "key": "/api/staging/.env",
+      "requests": 1
+    },
+    {
+      "key": "/api/v1/.env",
+      "requests": 1
+    },
+    {
+      "key": "/aws.env",
+      "requests": 1
+    },
+    {
+      "key": "/aws/.env",
+      "requests": 1
+    },
+    {
+      "key": "/azure/.env",
+      "requests": 1
+    },
+    {
+      "key": "/backup.sql",
+      "requests": 1
+    },
+    {
+      "key": "/backup.tar.gz",
+      "requests": 1
+    },
+    {
+      "key": "/backup.zip",
+      "requests": 1
+    },
+    {
+      "key": "/backup/.env",
+      "requests": 1
+    },
+    {
+      "key": "/beta/.env",
+      "requests": 1
+    },
+    {
+      "key": "/beta/phpinfo.php",
+      "requests": 1
+    },
+    {
+      "key": "/brevo/.env",
+      "requests": 1
+    },
+    {
+      "key": "/bulk/.env",
+      "requests": 1
+    },
+    {
+      "key": "/calendar.ics",
+      "requests": 1
+    },
+    {
+      "key": "/campaign/.env",
+      "requests": 1
+    },
+    {
+      "key": "/client/.env",
+      "requests": 1
+    },
+    {
+      "key": "/cloud/.env",
+      "requests": 1
+    },
+    {
+      "key": "/cms/.env",
+      "requests": 1
+    },
+    {
+      "key": "/codeigniter/.env",
+      "requests": 1
+    },
+    {
+      "key": "/config.php",
+      "requests": 1
+    },
+    {
+      "key": "/config.xml",
+      "requests": 1
+    },
+    {
+      "key": "/control-panel/.env",
+      "requests": 1
+    },
+    {
+      "key": "/crm/.env",
+      "requests": 1
+    },
+    {
+      "key": "/cronlab/.env",
+      "requests": 1
+    },
+    {
+      "key": "/current/.env",
+      "requests": 1
+    },
+    {
+      "key": "/database.sql",
+      "requests": 1
+    },
+    {
+      "key": "/database/.env",
+      "requests": 1
+    },
+    {
+      "key": "/database_backup.sql",
+      "requests": 1
+    },
+    {
+      "key": "/dev/phpinfo.php",
+      "requests": 1
+    },
+    {
+      "key": "/docker-compose.yml",
+      "requests": 1
+    },
+    {
+      "key": "/docker/.env",
+      "requests": 1
+    },
+    {
+      "key": "/docs/phpinfo.php",
+      "requests": 1
+    },
+    {
+      "key": "/drupal/.env",
+      "requests": 1
+    },
+    {
+      "key": "/dump.sql",
+      "requests": 1
+    },
+    {
+      "key": "/e/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary//cms/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary//media/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/king-county-assessor/guide-card.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/king-county-assessor/meter-tooltip.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/king-county-council-2/guide-card.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/king-county-council-2/meter-tooltip.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/king-county-council-8/guide-card.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/king-county-council-8/meter-tooltip.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-11-state-representative-1/guide-card.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-11-state-representative-1/meter-tooltip.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-11-state-representative-2/guide-card.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-11-state-representative-2/meter-tooltip.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-32-state-representative-1/guide-card.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-32-state-representative-1/meter-tooltip.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-32-state-representative-2/guide-card.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-32-state-representative-2/meter-tooltip.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-32-state-senator/guide-card.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-32-state-senator/meter-tooltip.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-34-state-representative-1/guide-card.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-34-state-representative-1/meter-tooltip.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-34-state-representative-2/guide-card.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-34-state-representative-2/meter-tooltip.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-34-state-senator/guide-card.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-34-state-senator/meter-tooltip.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-36-state-representative-1/guide-card.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-36-state-representative-1/meter-tooltip.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-36-state-representative-2/guide-card.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-36-state-representative-2/meter-tooltip.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-36-state-senator/guide-card.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-36-state-senator/meter-tooltip.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-37-state-representative-1/guide-card.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-37-state-representative-1/meter-tooltip.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-37-state-representative-2/guide-card.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-37-state-representative-2/meter-tooltip.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-37-state-senator/guide-card.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-37-state-senator/meter-tooltip.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-43-state-representative-1/guide-card.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-43-state-representative-1/meter-tooltip.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-43-state-representative-2/guide-card.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-43-state-representative-2/meter-tooltip.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-43-state-senator/guide-card.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-43-state-senator/meter-tooltip.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-46-state-representative-1/guide-card.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-46-state-representative-1/meter-tooltip.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-46-state-representative-2/guide-card.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-46-state-representative-2/meter-tooltip.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-46-state-senator/guide-card.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-46-state-senator/meter-tooltip.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/seattle-city-council-5/guide-card.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/seattle-city-council-5/meter-tooltip.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/seattle-municipal-court-judge-5/meter-tooltip.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/seattle-proposition-1-library-levy/guide-card.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/seattle-proposition-1-library-levy/meter-tooltip.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/supreme-court-justice-1/guide-card.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/supreme-court-justice-1/meter-tooltip.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/supreme-court-justice-3/guide-card.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/supreme-court-justice-3/meter-tooltip.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/supreme-court-justice-5/guide-card.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/supreme-court-justice-5/meter-tooltip.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/supreme-court-justice-7/guide-card.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/supreme-court-justice-7/meter-tooltip.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/us-house-7/guide-card.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/us-house-7/meter-tooltip.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/us-house-9/guide-card.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/us-house-9/meter-tooltip.mjs",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/release-manifest.json",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/release-status.json",
+      "requests": 1
+    },
+    {
+      "key": "/elasticsearch/.env",
+      "requests": 1
+    },
+    {
+      "key": "/email/.env",
+      "requests": 1
+    },
+    {
+      "key": "/erp/.env",
+      "requests": 1
+    },
+    {
+      "key": "/favicon.ico",
+      "requests": 1
+    },
+    {
+      "key": "/feed/",
+      "requests": 1
+    },
+    {
+      "key": "/firebase-adminsdk.json",
+      "requests": 1
+    },
+    {
+      "key": "/gateway/.env",
+      "requests": 1
+    },
+    {
+      "key": "/gcp/.env",
+      "requests": 1
+    },
+    {
+      "key": "/htdocs/phpinfo.php",
+      "requests": 1
+    },
+    {
+      "key": "/html/.env",
+      "requests": 1
+    },
+    {
+      "key": "/info",
+      "requests": 1
+    },
+    {
+      "key": "/infrastructure/.env",
+      "requests": 1
+    },
+    {
+      "key": "/internal/.env",
+      "requests": 1
+    },
+    {
+      "key": "/keyfile.json",
+      "requests": 1
+    },
+    {
+      "key": "/kubernetes/.env",
+      "requests": 1
+    },
+    {
+      "key": "/laravel/.env",
+      "requests": 1
+    },
+    {
+      "key": "/live/.env",
+      "requests": 1
+    },
+    {
+      "key": "/local/.env",
+      "requests": 1
+    },
+    {
+      "key": "/mailjet/.env",
+      "requests": 1
+    },
+    {
+      "key": "/mandrill/.env",
+      "requests": 1
+    },
+    {
+      "key": "/media/jui/js/bootstrap.min.js",
+      "requests": 1
+    },
+    {
+      "key": "/media/vendor/jquery/js/jquery.min.js",
+      "requests": 1
+    },
+    {
+      "key": "/mongodb/.env",
+      "requests": 1
+    },
+    {
+      "key": "/mysql/.env",
+      "requests": 1
+    },
+    {
+      "key": "/nest/.env",
+      "requests": 1
+    },
+    {
+      "key": "/newsletter/.env",
+      "requests": 1
+    },
+    {
+      "key": "/notifications/.env",
+      "requests": 1
+    },
+    {
+      "key": "/notify/.env",
+      "requests": 1
+    },
+    {
+      "key": "/nuxt/.env",
+      "requests": 1
+    },
+    {
+      "key": "/old_phpinfo.php",
+      "requests": 1
+    },
+    {
+      "key": "/p.php",
+      "requests": 1
+    },
+    {
+      "key": "/panel/.env",
+      "requests": 1
+    },
+    {
+      "key": "/phpinfo",
+      "requests": 1
+    },
+    {
+      "key": "/phpinfo.php.bak",
+      "requests": 1
+    },
+    {
+      "key": "/phpinfo.php~",
+      "requests": 1
+    },
+    {
+      "key": "/phpversion.php",
+      "requests": 1
+    },
+    {
+      "key": "/plugins/editors/jce/jce.xml",
+      "requests": 1
+    },
+    {
+      "key": "/psnlink/.env",
+      "requests": 1
+    },
+    {
+      "key": "/qa/.env",
+      "requests": 1
+    },
+    {
+      "key": "/rabbitmq/.env",
+      "requests": 1
+    },
+    {
+      "key": "/releases/.env",
+      "requests": 1
+    },
+    {
+      "key": "/resources/.env",
+      "requests": 1
+    },
+    {
+      "key": "/rest/.env",
+      "requests": 1
+    },
+    {
+      "key": "/sbin/.env",
+      "requests": 1
+    },
+    {
+      "key": "/secrets.json",
+      "requests": 1
+    },
+    {
+      "key": "/sendgrid/.env",
+      "requests": 1
+    },
+    {
+      "key": "/server-info.php",
+      "requests": 1
+    },
+    {
+      "key": "/server.key",
+      "requests": 1
+    },
+    {
+      "key": "/server/.env",
+      "requests": 1
+    },
+    {
+      "key": "/setup/",
+      "requests": 1
+    },
+    {
+      "key": "/site/.env",
+      "requests": 1
+    },
+    {
+      "key": "/site/phpinfo.php",
+      "requests": 1
+    },
+    {
+      "key": "/sitemap.xml",
+      "requests": 1
+    },
+    {
+      "key": "/stage/.env",
+      "requests": 1
+    },
+    {
+      "key": "/storage/logs/laravel.log",
+      "requests": 1
+    },
+    {
+      "key": "/terraform/.env",
+      "requests": 1
+    },
+    {
+      "key": "/test/.env",
+      "requests": 1
+    },
+    {
+      "key": "/test/phpinfo.php",
+      "requests": 1
+    },
+    {
+      "key": "/tmp/phpinfo.php",
+      "requests": 1
+    },
+    {
+      "key": "/user_secrets.yml",
+      "requests": 1
+    },
+    {
+      "key": "/var/www/html/.env",
+      "requests": 1
+    },
+    {
+      "key": "/vite/.env",
+      "requests": 1
+    },
+    {
+      "key": "/vue/.env",
+      "requests": 1
+    },
+    {
+      "key": "/web/.env",
+      "requests": 1
+    },
+    {
+      "key": "/wordpress/.env",
+      "requests": 1
+    },
+    {
+      "key": "/worker/.env",
+      "requests": 1
+    },
+    {
+      "key": "/wp-admin/phpinfo.php",
+      "requests": 1
+    },
+    {
+      "key": "/wp-admin/setup-config.php",
+      "requests": 1
+    },
+    {
+      "key": "/wp-config.php",
+      "requests": 1
+    },
+    {
+      "key": "/wp-json/gravitysmtp/v1/tests/mock-data",
+      "requests": 1
+    },
+    {
+      "key": "/wp/.env",
+      "requests": 1
+    },
+    {
+      "key": "/yii/.env",
+      "requests": 1
+    }
+  ],
+  "date": "2026-09-21",
+  "page_views": 289,
+  "requests": 2172,
+  "schema_version": "1.0",
+  "sources": [
+    "httpRequests1dGroups",
+    "httpRequestsAdaptiveGroups"
+  ],
+  "uniques": 134,
+  "visits": 229
+}
