@@ -5,13 +5,15 @@ from __future__ import annotations
 import hashlib
 import json
 import subprocess
+import zlib
 from pathlib import Path
-from zipfile import ZIP_DEFLATED, ZipFile
+from zipfile import ZIP_DEFLATED, BadZipFile, ZipFile
 
 import pytest
 from typer.testing import CliRunner
 
 from election_guide.cli import app
+from election_guide.release import lineage
 from election_guide.release.models import (
     REQUIRED_RELEASE_ARTIFACTS,
     UNHASHED_RASTERIZED_ARTIFACTS,
@@ -245,6 +247,67 @@ def test_release_verify_lineage_rejects_undeclared_archive_content(
 
     assert result.exit_code == 1
     assert "undeclared.txt" in result.stdout
+
+
+def test_release_verify_lineage_reports_a_corrupt_deflated_archive_member(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    repository, release_sha, production_sha, release_bundle, production_bundle = _lineage_fixture(
+        tmp_path
+    )
+    archive = _archive_bundle(release_bundle, tmp_path / "published.zip")
+    _corrupt_deflated_member(
+        archive,
+        "seattle-election-guide/data/publication_view_model.json",
+    )
+    monkeypatch.chdir(repository)
+
+    result = _invoke_lineage(archive, production_bundle, release_sha, production_sha)
+
+    assert result.exit_code == 1
+    report = json.loads(result.stdout)
+    assert report["result"] == "fail"
+    assert report["errors"]
+    assert "is not a readable ZIP archive" in report["errors"][0]
+    assert result.exception is not None
+    assert not isinstance(result.exception, (BadZipFile, zlib.error))
+
+
+@pytest.mark.parametrize(
+    "archive_error",
+    [
+        BadZipFile("broken central directory"),
+        zlib.error("corrupt compressed data"),
+        RuntimeError("encrypted member"),
+        NotImplementedError("unsupported compression"),
+    ],
+)
+def test_release_verify_lineage_reports_archive_reader_errors(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    archive_error: Exception,
+) -> None:
+    repository, release_sha, production_sha, release_bundle, production_bundle = _lineage_fixture(
+        tmp_path
+    )
+    archive = _archive_bundle(release_bundle, tmp_path / "published.zip")
+
+    def _raise_archive_error(*args: object, **kwargs: object) -> None:
+        del args, kwargs
+        raise archive_error
+
+    monkeypatch.setattr(lineage, "ZipFile", _raise_archive_error)
+    monkeypatch.chdir(repository)
+
+    result = _invoke_lineage(archive, production_bundle, release_sha, production_sha)
+
+    assert result.exit_code == 1
+    report = json.loads(result.stdout)
+    assert report["result"] == "fail"
+    assert report["errors"] == [
+        f"release archive 'published.zip' is not a readable ZIP archive: {archive_error}"
+    ]
 
 
 @pytest.mark.parametrize("invalid_kind", ["abbreviated", "wrong", "unrelated", "reversed"])
@@ -509,6 +572,18 @@ def _archive_bundle(bundle: Path, archive_path: Path) -> Path:
             if path.is_file():
                 archive.write(path, (Path("seattle-election-guide") / path.relative_to(bundle)))
     return archive_path
+
+
+def _corrupt_deflated_member(archive_path: Path, member: str) -> None:
+    """Damage one deflated member body while leaving the ZIP structure readable."""
+    with ZipFile(archive_path) as archive:
+        info = archive.getinfo(member)
+        assert info.compress_type == ZIP_DEFLATED
+        body_offset = info.header_offset + 30 + len(info.filename.encode()) + len(info.extra or b"")
+    raw = bytearray(archive_path.read_bytes())
+    for index in range(body_offset + 4, body_offset + 68):
+        raw[index] ^= 0xFF
+    archive_path.write_bytes(bytes(raw))
 
 
 def _invoke_lineage(

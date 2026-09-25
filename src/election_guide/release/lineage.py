@@ -8,11 +8,12 @@ import re
 import stat
 import subprocess
 import tempfile
+import zlib
 from contextlib import ExitStack
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 from typing import Any, cast
-from zipfile import ZipFile, is_zipfile
+from zipfile import BadZipFile, ZipFile, is_zipfile
 
 from election_guide.release.comparison import (
     VerifiedReleaseBundle,
@@ -188,23 +189,28 @@ def _materialize_bundle(source: Path, stack: ExitStack) -> Path:
     if not source.is_file() or not is_zipfile(source):
         raise ValueError(f"release bundle must be a directory or ZIP archive: {source}")
     temporary = Path(stack.enter_context(tempfile.TemporaryDirectory()))
-    with ZipFile(source) as archive:
-        seen: set[str] = set()
-        for info in archive.infolist():
-            relative = PurePosixPath(info.filename)
-            if info.filename in seen:
-                raise ValueError(f"release archive repeats an entry: {info.filename}")
-            seen.add(info.filename)
-            if relative.is_absolute() or ".." in relative.parts:
-                raise ValueError(f"release archive contains an unsafe path: {info.filename}")
-            if not relative.parts or relative.parts[0] != ARCHIVE_ROOT_DIR:
-                raise ValueError(
-                    f"release archive entries must be rooted under {ARCHIVE_ROOT_DIR}/"
-                )
-            entry_type = stat.S_IFMT(info.external_attr >> 16)
-            if entry_type not in {0, stat.S_IFREG, stat.S_IFDIR}:
-                raise ValueError(f"release archive contains a non-file entry: {info.filename}")
-        archive.extractall(temporary)
+    try:
+        with ZipFile(source) as archive:
+            seen: set[str] = set()
+            for info in archive.infolist():
+                relative = PurePosixPath(info.filename)
+                if info.filename in seen:
+                    raise ValueError(f"release archive repeats an entry: {info.filename}")
+                seen.add(info.filename)
+                if relative.is_absolute() or ".." in relative.parts:
+                    raise ValueError(f"release archive contains an unsafe path: {info.filename}")
+                if not relative.parts or relative.parts[0] != ARCHIVE_ROOT_DIR:
+                    raise ValueError(
+                        f"release archive entries must be rooted under {ARCHIVE_ROOT_DIR}/"
+                    )
+                entry_type = stat.S_IFMT(info.external_attr >> 16)
+                if entry_type not in {0, stat.S_IFREG, stat.S_IFDIR}:
+                    raise ValueError(f"release archive contains a non-file entry: {info.filename}")
+            archive.extractall(temporary)
+    except (BadZipFile, zlib.error, RuntimeError, NotImplementedError) as error:
+        raise ValueError(
+            f"release archive {source.name!r} is not a readable ZIP archive: {error}"
+        ) from error
     bundle = temporary / ARCHIVE_ROOT_DIR
     if not bundle.is_dir():
         raise ValueError("release archive does not contain its canonical bundle directory")
