@@ -1,10 +1,12 @@
-.PHONY: sync format check check-evidence check-results check-js check-changelog check-release-reproducible changelog types test test-unit test-integration test-integration-comparisons test-integration-rendering test-integration-artifacts release-verify hosting-stage hosting-serve hosting-deploy
+.PHONY: sync format check check-election-contracts check-evidence check-results check-js check-changelog check-release-reproducible check-release-reproducible-general changelog types test test-unit test-integration test-integration-comparisons test-integration-rendering test-integration-artifacts release-verify release-verify-general hosting-stage hosting-serve hosting-deploy
 
 INTEGRATION_COMPARISONS_TESTS := tests/test_compare_rendering.py
 INTEGRATION_RENDERING_TESTS := tests/test_rendering.py
 INTEGRATION_ARTIFACT_TESTS := tests/test_hosting.py tests/test_hosting_releases.py tests/test_release.py
 INTEGRATION_TESTS := $(INTEGRATION_COMPARISONS_TESTS) $(INTEGRATION_RENDERING_TESTS) $(INTEGRATION_ARTIFACT_TESTS)
 UNIT_TEST_IGNORES := $(addprefix --ignore=,$(INTEGRATION_TESTS))
+GENERAL_RELEASE_LEDGER := data/releases/wa-2026-general/source-decisions.yaml
+GENERAL_RELEASE_INPUTS := --inventory-path data/normalized/wa-2026-general-inventory.json --registry-path config/sources/wa-2026-general.yaml --dataset-path data/normalized/wa-2026-general-canonical-dataset.json --snapshot-root data/releases/wa-2026-general/snapshots --manifest-dir data/releases/wa-2026-general/manifests
 
 sync:
 	uv sync --frozen
@@ -20,10 +22,8 @@ check:
 	uv run ruff check .
 	uv run pyright
 	uv run pytest
-	uv run election-guide inventory validate data/normalized/wa-2026-primary-inventory.json
-	uv run election-guide sources validate config/sources/default.yaml
+	$(MAKE) check-election-contracts
 	uv run election-guide calendar validate config/calendar/elections.yaml
-	uv run election-guide release verify data/releases/wa-2026-primary/source-decisions.yaml
 	$(MAKE) check-evidence
 	$(MAKE) check-results
 	$(MAKE) check-js
@@ -104,6 +104,19 @@ test-integration-artifacts:
 release-verify:
 	uv run election-guide release verify data/releases/wa-2026-primary/source-decisions.yaml
 
+release-verify-general:
+	uv run election-guide release verify $(GENERAL_RELEASE_LEDGER) $(GENERAL_RELEASE_INPUTS)
+
+# Keep the committed elections in one contract so local checks and CI cannot
+# silently maintain different election lists.
+check-election-contracts:
+	uv run election-guide inventory validate data/normalized/wa-2026-primary-inventory.json
+	uv run election-guide inventory validate data/normalized/wa-2026-general-inventory.json
+	uv run election-guide sources validate config/sources/default.yaml
+	uv run election-guide sources validate config/sources/wa-2026-general.yaml --inventory-path data/normalized/wa-2026-general-inventory.json
+	$(MAKE) release-verify
+	$(MAKE) release-verify-general
+
 # The release-reproducibility gate, defined once here and invoked by CI, the way
 # check-js and check-changelog already are (issue #367). Two builds of one
 # commit must produce one release.
@@ -131,6 +144,20 @@ check-release-reproducible:
 			--output-dir "dist/reproducibility-$$build" || exit 1; \
 	done
 	uv run election-guide release compare dist/reproducibility-a/bundle dist/reproducibility-b/bundle
+
+# General artifacts use election-specific directories so this preparatory target
+# can run beside the primary-default target without overwriting its evidence.
+check-release-reproducible-general:
+	rm -rf dist/wa-2026-general-reproducibility-a dist/wa-2026-general-reproducibility-b
+	generated_at="$$(git show -s --format=%cI HEAD)"; \
+	for build in a b; do \
+		uv run election-guide release build $(GENERAL_RELEASE_LEDGER) \
+			--release-version 2026-general.1 \
+			--generated-at "$$generated_at" \
+			--output-dir "dist/wa-2026-general-reproducibility-$$build" \
+			$(GENERAL_RELEASE_INPUTS) || exit 1; \
+	done
+	uv run election-guide release compare dist/wa-2026-general-reproducibility-a/bundle dist/wa-2026-general-reproducibility-b/bundle
 
 # Only the current election is built from source; every other declared election
 # resolves from the release that published it, exactly as CI stages (issue 271,
