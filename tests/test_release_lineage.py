@@ -168,6 +168,41 @@ def test_release_verify_lineage_fails_closed_for_a_new_unallowlisted_normalized_
     assert "release content differs: data/build_manifest.json" in report["errors"]
 
 
+def test_release_verify_lineage_does_not_normalize_guide_tokens_outside_the_audit_footer(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    repository, release_sha, production_sha, release_bundle, production_bundle = _lineage_fixture(
+        tmp_path
+    )
+    for bundle, sha, generated_at in (
+        (release_bundle, release_sha, "2026-10-16T16:00:00Z"),
+        (production_bundle, production_sha, "2026-10-16T17:00:00Z"),
+    ):
+        guide_path = bundle / "guide/guide.html"
+        guide_path.write_text(
+            guide_path.read_text(encoding="utf-8")
+            + (
+                '<p class="copied-provenance">Site updated '
+                f"{generated_at[:10]} /commit/{sha} {sha[:12]}</p>"
+            ),
+            encoding="utf-8",
+        )
+        _rehash_release_manifest(bundle, "guide/guide.html")
+    monkeypatch.chdir(repository)
+
+    result = _invoke_lineage(
+        release_bundle,
+        production_bundle,
+        release_sha,
+        production_sha,
+    )
+
+    assert result.exit_code == 1
+    report = json.loads(result.stdout)
+    assert "release content differs: guide/guide.html" in report["errors"]
+
+
 @pytest.mark.parametrize("invalid_side", ["release", "production"])
 def test_release_verify_lineage_rejects_an_invalid_bundle_before_comparison(
     tmp_path: Path,
@@ -408,8 +443,10 @@ def _write_bundle(
         "data/unresolved_review_items.csv": b"id,severity\n",
         "data/validation_report.json": validation,
         "guide/guide.html": (
-            '<!doctype html><a href="https://github.com/shaug/seattle-election-guide/commit/'
-            f'{git_commit}">{git_commit[:12]}</a>Site updated {generated_at[:10]}'
+            '<!doctype html><span class="audit-site">Site updated '
+            f'{generated_at[:10]} (<a href="https://github.com/shaug/'
+            "seattle-election-guide/commit/"
+            f'{git_commit}">{git_commit[:12]}</a>)</span>'
         ).encode(),
         "guide/client.js": b"export const recommendation = 'same';\n",
         "guide/routes.json": b'{"routes":["/e/wa-2026-general/"]}\n',

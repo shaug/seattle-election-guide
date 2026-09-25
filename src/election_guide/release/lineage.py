@@ -408,14 +408,24 @@ def _normalized_artifacts(
 
     guide_path = bundle.verified.status.guide_html_artifact
     guide = bundle.raw[guide_path].decode("utf-8")
-    full_commit_token = f"/commit/{candidate_sha}"
     short_commit = candidate_sha[:12]
-    date_token = f"Site updated {timestamp[:10]}"
-    if full_commit_token not in guide or short_commit not in guide or date_token not in guide:
-        raise ValueError("rendered guide does not contain documented commit-bound provenance")
-    guide = guide.replace(full_commit_token, f"/commit/{_NORMALIZED_COMMIT}")
-    guide = guide.replace(short_commit, _NORMALIZED_COMMIT[:12])
-    guide = guide.replace(date_token, f"Site updated {_NORMALIZED_DATE}")
+    audit_site_pattern = re.compile(
+        rf'(<span class="audit-site">Site updated ){re.escape(timestamp[:10])}'
+        rf'( \(<a href="[^"]*/commit/){re.escape(candidate_sha)}'
+        rf'("[^>]*>){re.escape(short_commit)}(</a>\)</span>)'
+    )
+    audit_site_matches = list(audit_site_pattern.finditer(guide))
+    if len(audit_site_matches) != 1:
+        raise ValueError(
+            "rendered guide must contain exactly one documented audit-site provenance field"
+        )
+    match = audit_site_matches[0]
+    normalized_audit_site = (
+        f"{match.group(1)}{_NORMALIZED_DATE}{match.group(2)}"
+        f"{_NORMALIZED_COMMIT}{match.group(3)}"
+        f"{_NORMALIZED_COMMIT[:12]}{match.group(4)}"
+    )
+    guide = f"{guide[: match.start()]}{normalized_audit_site}{guide[match.end() :]}"
     normalized[guide_path] = guide.encode()
     fields[guide_path] = (
         "html:commit-link",
