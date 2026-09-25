@@ -299,15 +299,33 @@ def hosting_bundle_hash(
 @hosting_app.command("verify-releases")
 def hosting_verify_releases(
     site_manifest: Annotated[Path, typer.Argument(exists=True, dir_okay=False, readable=True)],
+    candidate_bundle_ids: Annotated[
+        list[str] | None,
+        typer.Option(
+            "--candidate-bundle-id",
+            help=(
+                "Prepublication only: allow this exact manifest-declared current bundle to lack "
+                "a published GitHub Release. Pass at most once; deployment must omit this option."
+            ),
+        ),
+    ] = None,
 ) -> None:
-    """Verify every declared election release is published as a GitHub Release."""
+    """Verify declared releases, with an explicit current-candidate prepublication mode."""
     try:
+        candidates = candidate_bundle_ids or []
+        if len(candidates) > 1:
+            raise ValueError("prepublication verification accepts exactly one candidate bundle ID")
         manifest = read_site_manifest(site_manifest)
-        verify_declared_releases_published(manifest, published_release_tags())
+        verify_declared_releases_published(
+            manifest,
+            published_release_tags(),
+            candidates[0] if candidates else None,
+        )
     except (OSError, UnicodeError, json.JSONDecodeError, ValidationError, ValueError) as error:
         typer.echo(f"hosting verify-releases failed: {error}", err=True)
         raise typer.Exit(code=1) from error
-    typer.echo(f"Declared releases: verified ({len(manifest.elections)} declared)")
+    detail = "; 1 current candidate unpublished" if candidates else ""
+    typer.echo(f"Declared releases: verified ({len(manifest.elections)} declared{detail})")
 
 
 @hosting_app.command("check-production")

@@ -160,7 +160,31 @@ def test_published_release_tags_reports_a_missing_cli(monkeypatch: pytest.Monkey
         published_release_tags()
 
 
-def _write_manifest(path: Path, release_version: str) -> Path:
+def _write_manifest(
+    path: Path,
+    release_version: str,
+    *,
+    older_release_version: str | None = None,
+) -> Path:
+    elections = [
+        {
+            "election_id": CURRENT_ID,
+            "bundle_id": f"{CURRENT_ID}-{release_version}",
+            "release_version": release_version,
+            "source_panel_id": "test-panel-v2",
+            "source_panel_hash": PANEL_HASH,
+        }
+    ]
+    if older_release_version is not None:
+        elections.append(
+            {
+                "election_id": OLDER_ID,
+                "bundle_id": f"{OLDER_ID}-{older_release_version}",
+                "release_version": older_release_version,
+                "source_panel_id": "test-panel-v1",
+                "source_panel_hash": PANEL_HASH,
+            }
+        )
     manifest_path = path / "site.yaml"
     manifest_path.write_text(
         yaml.safe_dump(
@@ -168,15 +192,7 @@ def _write_manifest(path: Path, release_version: str) -> Path:
                 "schema_version": "1.0",
                 "canonical_origin": "https://seattleelections.guide",
                 "current_election_id": CURRENT_ID,
-                "elections": [
-                    {
-                        "election_id": CURRENT_ID,
-                        "bundle_id": f"{CURRENT_ID}-{release_version}",
-                        "release_version": release_version,
-                        "source_panel_id": "test-panel-v2",
-                        "source_panel_hash": PANEL_HASH,
-                    }
-                ],
+                "elections": elections,
             }
         ),
         encoding="utf-8",
@@ -208,6 +224,127 @@ def test_cli_passes_when_every_declared_version_is_published(
 
     assert result.exit_code == 0
     assert "Declared releases: verified (1 declared)" in result.output
+
+
+def test_cli_prepublication_accepts_only_the_unpublished_current_bundle(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    manifest_path = _write_manifest(
+        tmp_path,
+        "2026-primary.3",
+        older_release_version="2025-general.1",
+    )
+    current_bundle_id = f"{CURRENT_ID}-2026-primary.3"
+    monkeypatch.setattr(cli, "published_release_tags", lambda: frozenset({"2025-general.1"}))
+
+    result = CliRunner().invoke(
+        cli.app,
+        [
+            "hosting",
+            "verify-releases",
+            str(manifest_path),
+            "--candidate-bundle-id",
+            current_bundle_id,
+        ],
+    )
+
+    assert result.exit_code == 0
+    assert (
+        "Declared releases: verified (2 declared; 1 current candidate unpublished)" in result.output
+    )
+
+
+def test_cli_prepublication_still_requires_the_historical_release(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    manifest_path = _write_manifest(
+        tmp_path,
+        "2026-primary.3",
+        older_release_version="2025-general.1",
+    )
+    current_bundle_id = f"{CURRENT_ID}-2026-primary.3"
+    monkeypatch.setattr(cli, "published_release_tags", lambda: frozenset[str]())
+
+    result = CliRunner().invoke(
+        cli.app,
+        [
+            "hosting",
+            "verify-releases",
+            str(manifest_path),
+            "--candidate-bundle-id",
+            current_bundle_id,
+        ],
+    )
+
+    assert result.exit_code == 1
+    assert OLDER_ID in result.output
+    assert "2025-general.1" in result.output
+    assert "no published GitHub Release" in result.output
+    assert CURRENT_ID not in result.output
+
+
+@pytest.mark.parametrize(
+    "candidate_bundle_id",
+    [
+        f"{OLDER_ID}-2025-general.1",
+        f"{CURRENT_ID}-2026-primary.2",
+        "not-declared-anywhere",
+    ],
+)
+def test_cli_prepublication_rejects_a_noncurrent_candidate(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    candidate_bundle_id: str,
+) -> None:
+    manifest_path = _write_manifest(
+        tmp_path,
+        "2026-primary.3",
+        older_release_version="2025-general.1",
+    )
+    monkeypatch.setattr(
+        cli,
+        "published_release_tags",
+        lambda: frozenset({"2026-primary.3", "2025-general.1"}),
+    )
+
+    result = CliRunner().invoke(
+        cli.app,
+        [
+            "hosting",
+            "verify-releases",
+            str(manifest_path),
+            "--candidate-bundle-id",
+            candidate_bundle_id,
+        ],
+    )
+
+    assert result.exit_code == 1
+    assert candidate_bundle_id in result.output
+    assert "manifest-declared current bundle" in result.output
+
+
+def test_cli_prepublication_rejects_multiple_candidate_options(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    manifest_path = _write_manifest(tmp_path, "2026-primary.3")
+    current_bundle_id = f"{CURRENT_ID}-2026-primary.3"
+    monkeypatch.setattr(cli, "published_release_tags", lambda: frozenset[str]())
+
+    result = CliRunner().invoke(
+        cli.app,
+        [
+            "hosting",
+            "verify-releases",
+            str(manifest_path),
+            "--candidate-bundle-id",
+            current_bundle_id,
+            "--candidate-bundle-id",
+            current_bundle_id,
+        ],
+    )
+
+    assert result.exit_code == 1
+    assert "exactly one candidate bundle ID" in result.output
 
 
 def _released_archive(bundle_dir: Path, release_version: str, destination: Path) -> Path:

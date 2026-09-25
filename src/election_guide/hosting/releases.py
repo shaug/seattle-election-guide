@@ -81,14 +81,25 @@ def _published_tags(payload: str) -> frozenset[str]:
 def verify_declared_releases_published(
     manifest: SiteManifest,
     published_tags: Iterable[str],
+    candidate_bundle_id: str | None = None,
 ) -> None:
-    """Reject a manifest declaring a release version with no published Release."""
+    """Reject unpublished releases except one explicit current prepublication bundle."""
+    current = next(
+        election
+        for election in manifest.elections
+        if election.election_id == manifest.current_election_id
+    )
+    if candidate_bundle_id is not None and candidate_bundle_id != current.bundle_id:
+        raise ValueError(
+            f"candidate bundle {candidate_bundle_id!r} is not the manifest-declared current bundle "
+            f"{current.bundle_id!r}"
+        )
     available = frozenset(published_tags)
     missing = [
         f"election {election.election_id!r} declares release version "
         f"{election.release_version!r}, but no published GitHub Release has that tag"
         for election in manifest.elections
-        if election.release_version not in available
+        if election.release_version not in available and election.bundle_id != candidate_bundle_id
     ]
     if missing:
         raise ValueError("; ".join(missing))

@@ -151,14 +151,36 @@ deployed while only `2026-primary.1` had ever been published (issue 213). CI now
 uv run election-guide hosting verify-releases config/hosting/site.yaml
 ```
 
-The command reads every declared election and fails when a `release_version` has no published
-Release, naming each election and the tag it expects. Draft releases do not count; a draft carries a
-tag name but publishes no archive. It reads release state through the GitHub CLI, so `gh` must be
-installed and authenticated — CI supplies the default `GITHUB_TOKEN`, and the check is read-only.
+By default, the command reads every declared election and fails when a `release_version` has no
+published Release, naming each election and the tag it expects. Draft releases do not count; a draft
+carries a tag name but publishes no archive. It reads release state through the GitHub CLI, so `gh`
+must be installed and authenticated — CI supplies the default `GITHUB_TOKEN`, and the check is
+read-only.
 
 Publishing a release is described in [RELEASE.md](RELEASE.md). Publish first: this check runs on
 pull requests, so a new `release_version` must already have a published Release before the pull
 request that declares it in `site.yaml` can pass CI.
+
+The one exception is prepublication staging of the manifest-declared current election. Automation
+may name that exact bundle once with `--candidate-bundle-id`; every historical election must still
+have a published, non-draft Release. A historical, undeclared, mismatched, or repeated candidate is
+rejected. Use one value for both the exception and the local bundle supplied to staging:
+
+```bash
+CANDIDATE_BUNDLE_ID=wa-2026-general-2026-general.1
+uv run election-guide hosting verify-releases config/hosting/site.yaml \
+  --candidate-bundle-id "$CANDIDATE_BUNDLE_ID"
+uv run election-guide hosting stage config/hosting/site.yaml \
+  --bundle "$CANDIDATE_BUNDLE_ID=dist/general-release/bundle" \
+  --released-bundle-dir dist/released-bundles \
+  --expected-git-commit "$(git rev-parse HEAD)"
+```
+
+That mode changes only the remote-publication check; staging still verifies bundle identity,
+release metadata, canonical assets, hashes, and the current bundle's commit. It is legal only while
+preparing or previewing the current candidate. After the `production` environment approval and
+before upload, deployment must run `hosting verify-releases` again with no candidate option, so an
+unpublished candidate can never cross the production boundary.
 
 ## Historical bundles
 
