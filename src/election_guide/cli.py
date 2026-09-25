@@ -120,6 +120,7 @@ from election_guide.release import (
     compare_release_bundles,
     compile_release_dataset,
     verify_release_compilation,
+    verify_release_lineage,
 )
 from election_guide.rendering import build_rendered_guide
 from election_guide.results.ingest import (
@@ -952,6 +953,25 @@ def release_compare(
         typer.echo(f"release comparison failed: {error}", err=True)
         raise typer.Exit(code=1) from error
     typer.echo("deterministic release artifacts match")
+
+
+@release_app.command("verify-lineage")
+def release_verify_lineage(
+    published_bundle: Annotated[Path, typer.Argument(exists=True, readable=True)],
+    production_bundle: Annotated[Path, typer.Argument(exists=True, readable=True)],
+    release_candidate_sha: Annotated[str, typer.Argument()],
+    production_candidate_sha: Annotated[str, typer.Argument()],
+) -> None:
+    """Verify release content across an intentional post-tag commit."""
+    report = verify_release_lineage(
+        published_bundle,
+        production_bundle,
+        release_candidate_sha,
+        production_candidate_sha,
+    )
+    typer.echo(canonical_json_bytes(report.model_dump()).decode(), nl=False)
+    if report.result != "pass":
+        raise typer.Exit(code=1)
 
 
 @app.command()

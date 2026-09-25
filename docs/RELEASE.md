@@ -133,6 +133,42 @@ the command a contributor runs locally cannot drift from the one CI runs.
 The guarantee is intentionally Linux-only. The project does not spend CI compute establishing
 macOS equivalence for a release pipeline that is deployed only from Linux.
 
+## Post-tag release lineage
+
+Publishing `2026-general.1` and then committing the generated changelog creates two intentional
+commit identities. The published archive remains bound to `release_candidate_sha`; the general
+bundle staged for production is rebuilt from the later `production_candidate_sha`. Verify that
+narrow boundary before handing the production bundle to `hosting stage`:
+
+```bash
+uv run election-guide release verify-lineage \
+  dist/downloaded/seattle-election-guide-2026-general.1.zip \
+  dist/general-release/bundle \
+  "$release_candidate_sha" \
+  "$production_candidate_sha" \
+  > dist/release-lineage-report.json
+```
+
+Both identities must be full Git commit IDs in the current repository, and the release candidate
+must be an ancestor of the distinct production candidate. The command independently verifies each
+bundle, including its exact declared file set and every manifest hash, before comparing anything.
+It then requires the same election, release, source panel and registry, canonical dataset,
+source-decision snapshots, scoring input, and deterministic release content.
+
+Only these schema-owned commit-bound values are normalized: the release-status commit and build
+time; consensus computation times; publication, validation, provenance, and build-manifest commit
+or time fields; the consensus and artifact hashes directly derived from those fields; the two
+corresponding release-note lines; the rendered guide's commit link, commit label, and site-updated
+date; and the release-manifest time and directly derived artifact hashes. The report lists every
+normalized path. A new field is not normalized implicitly, so adding commit-bound provenance
+requires an explicit allowlist change and review. The two declared screenshots are verified as
+present but remain outside cross-build byte comparison under the existing schema 1.2/1.3 contract.
+
+The canonical JSON report exits with status 1 and records `result: fail` for invalid identity,
+ancestry, bundle integrity, or content drift. Preserve it for #450 and the #440 closeout evidence.
+This command verifies the general release bundle only; complete two-election route and deployment-
+manifest composition remains the separate `hosting verify` gate.
+
 ## GitHub Release
 
 Create the GitHub Release only from the merged mainline revision whose hash appears in the bundle.
