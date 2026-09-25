@@ -63,10 +63,8 @@ jobs:
         run: uv python install 3.12
       - name: Install locked dependencies
         run: uv sync --frozen
-      - name: Validate canonical election inventory
-        run: uv run election-guide inventory validate data/normalized/wa-2026-primary-inventory.json
-      - name: Validate the source registry
-        run: uv run election-guide sources validate config/sources/default.yaml
+      - name: Validate committed election contracts
+        run: make check-election-contracts
       - name: Validate the election operations calendar
         run: uv run election-guide calendar validate config/calendar/elections.yaml
       # Every election the site serves is resolved from its published release
@@ -78,8 +76,6 @@ jobs:
           # The automatic job token, not a deployment secret: this job runs on
           # pull requests and is held to the workflow's read-only permissions.
           GH_TOKEN: ${{ github.token }}
-      - name: Verify reproducible primary release inputs
-        run: uv run election-guide release verify data/releases/wa-2026-primary/source-decisions.yaml
       # A manifest whose bytes nobody holds is not intact evidence, and one-at-
       # a-time verification never revealed that -- the 2026-08-04 election-night
       # capture verified at capture time and died with the worktree that wrote

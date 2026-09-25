@@ -6,6 +6,7 @@ import shlex
 import subprocess
 from pathlib import Path
 
+import pytest
 import yaml
 
 PROJECT_ROOT = Path(__file__).parents[1]
@@ -15,6 +16,24 @@ INTEGRATION_PARTITIONS = (
     "integration-artifacts",
 )
 PARALLEL_JOBS = ("python", "client", "contracts", "tests", "publication")
+SHARED_CONTRACT_COMMAND = "make check-election-contracts"
+
+
+def _assert_contracts_lane_uses_shared_target(workflow_text: str) -> None:
+    """Reject a contracts lane that reconstructs the election list itself."""
+    workflow = yaml.load(workflow_text, Loader=yaml.BaseLoader)
+    contract_steps = workflow["jobs"]["contracts"]["steps"]
+    assert SHARED_CONTRACT_COMMAND in [step.get("run") for step in contract_steps]
+
+
+def _make_dry_run(target: str) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(
+        ["make", "--no-print-directory", "-n", target],
+        cwd=PROJECT_ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
 
 
 def _pytest_arguments(make_target: str) -> list[str]:
@@ -102,3 +121,81 @@ def test_ci_runs_independent_lanes_in_parallel_behind_one_required_check() -> No
             )
 
     assert jobs["deploy"]["needs"] == "check"
+
+
+def test_ci_contracts_lane_uses_the_shared_election_contract_target() -> None:
+    """CI must discover the election set from the same target contributors run."""
+    _assert_contracts_lane_uses_shared_target(
+        (PROJECT_ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+    )
+
+
+def test_workflow_discovery_rejects_a_contracts_lane_that_bypasses_the_shared_target() -> None:
+    """A future inline election list must fail the workflow-discovery contract."""
+    workflow_text = (PROJECT_ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+    bypassing_fixture = workflow_text.replace(
+        f"run: {SHARED_CONTRACT_COMMAND}",
+        "run: uv run election-guide inventory validate "
+        "data/normalized/wa-2026-primary-inventory.json",
+    )
+
+    with pytest.raises(AssertionError):
+        _assert_contracts_lane_uses_shared_target(bypassing_fixture)
+
+
+def test_shared_election_contract_target_owns_both_committed_elections() -> None:
+    """Adding an election in only local or CI checks would leave the other path blind."""
+    result = _make_dry_run("check-election-contracts")
+
+    assert result.returncode == 0, result.stderr
+    for expected in (
+        "inventory validate data/normalized/wa-2026-primary-inventory.json",
+        "inventory validate data/normalized/wa-2026-general-inventory.json",
+        "sources validate config/sources/default.yaml",
+        "sources validate config/sources/wa-2026-general.yaml "
+        "--inventory-path data/normalized/wa-2026-general-inventory.json",
+        "release verify data/releases/wa-2026-primary/source-decisions.yaml",
+        "release verify data/releases/wa-2026-general/source-decisions.yaml",
+    ):
+        assert expected in result.stdout
+
+    assert SHARED_CONTRACT_COMMAND in _make_dry_run("check").stdout
+
+
+def test_general_release_targets_bind_all_inputs_without_colliding_with_primary() -> None:
+    """The supported target must not inherit any primary input or output directory."""
+    verify = _make_dry_run("release-verify-general")
+    reproduce = _make_dry_run("check-release-reproducible-general")
+
+    assert verify.returncode == 0, verify.stderr
+    assert reproduce.returncode == 0, reproduce.stderr
+    for expected in (
+        "data/releases/wa-2026-general/source-decisions.yaml",
+        "--inventory-path data/normalized/wa-2026-general-inventory.json",
+        "--registry-path config/sources/wa-2026-general.yaml",
+        "--dataset-path data/normalized/wa-2026-general-canonical-dataset.json",
+        "--snapshot-root data/releases/wa-2026-general/snapshots",
+        "--manifest-dir data/releases/wa-2026-general/manifests",
+    ):
+        assert expected in verify.stdout
+        assert expected in reproduce.stdout
+
+    assert "--release-version 2026-general.1" in reproduce.stdout
+    assert "dist/wa-2026-general-reproducibility-a" in reproduce.stdout
+    assert "dist/wa-2026-general-reproducibility-b" in reproduce.stdout
+    assert "dist/reproducibility-a" not in reproduce.stdout
+    assert "dist/reproducibility-b" not in reproduce.stdout
+
+
+def test_primary_release_targets_keep_the_primary_defaults() -> None:
+    """The preparatory general targets must not perform issue #447's cutover."""
+    verify = _make_dry_run("release-verify")
+    reproduce = _make_dry_run("check-release-reproducible")
+
+    assert verify.returncode == 0, verify.stderr
+    assert reproduce.returncode == 0, reproduce.stderr
+    assert "data/releases/wa-2026-primary/source-decisions.yaml" in verify.stdout
+    assert "data/releases/wa-2026-primary/source-decisions.yaml" in reproduce.stdout
+    assert "--release-version 2026-primary.2" in reproduce.stdout
+    assert "wa-2026-general" not in verify.stdout
+    assert "wa-2026-general" not in reproduce.stdout
