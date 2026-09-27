@@ -1,15 +1,14 @@
 schema_version: '1.0'
 election_id: wa-2026-general
 data_as_of: '2026-09-27T23:25:29Z'
-reviewer: shaug (initial sweep and Tech 4 Taxes confirmation); OpenAI Codex (transcription)
-review_note: 'Issue #401 initial sweep: OpenAI Codex prepared the original 20 transcriptions and shaug reviewed them
-  against captured official evidence. Issue #465 targeted update: OpenAI Codex captured the live Tech 4 Taxes
-  2025-2026 index and checked seven named candidates against the official general ballot; Ron Davis is not on that
-  ballot and is not transcribed. shaug confirmed the seven-name Tech 4 Taxes transcription against the official page
-  on 2026-09-27. All 43 eligible sources now resolve to 21 published decision blocks, 17 not-found dispositions, or 5 access-restricted
-  dispositions. Washington Conservation Action’s unmatched IL26-368 text and the Alliance for Gun Responsibility’s
-  mismatched Steve Bergquist district label remain untranscribed. The initial reviewer confirmed mapping NWPC-WA’s
-  Darya Farivar claim to LD46 from its same-card biography and the frozen ballot inventory.'
+reviewer: shaug
+review_note: 'Complete initial panel-wide discovery sweep for issue #401. OpenAI Codex located and captured official
+  publications and prepared the transcriptions; shaug reviewed and confirmed every source block against the captured
+  evidence. All 43 eligible sources resolve to 20 published decision blocks, 17 not-found dispositions, or 6 access-restricted
+  dispositions. Primary-only choices that did not advance were omitted. Washington Conservation Action’s unmatched
+  IL26-368 text and the Alliance for Gun Responsibility’s mismatched Steve Bergquist district label remain untranscribed.
+  The reviewer confirmed mapping NWPC-WA’s Darya Farivar claim to LD46 from its same-card biography and the frozen
+  ballot inventory.'
 sources:
 - source_id: washington-community-action-network
   captured_at: '2026-09-14T22:18:15Z'
@@ -198,6 +197,10 @@ sources:
 - source_id: tech-4-taxes
   captured_at: '2026-09-27T19:30:33Z'
   reviewed_at: '2026-09-27T23:25:29Z'
+  reviewer: shaug
+  review_note: 'Issue #465: OpenAI Codex transcribed the official live 2025-2026 Tech 4 Taxes index and matched seven
+    names to the November general ballot. Ron Davis is not on that ballot and is excluded. shaug confirmed the seven-name
+    transcription against the official page on 2026-09-27. This is a current-cycle endorsement, not a separate November slate.'
   evidence_locator: Official 2025-2026 Candidate Endorsements index, candidate and office headings. Capture capture-tech-4-taxes-20260927T193033Z-8e781f3ba9df.
   decisions:
   - race_id: ld-43-state-senator

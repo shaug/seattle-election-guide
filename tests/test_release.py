@@ -179,6 +179,65 @@ def test_release_compiler_preserves_review_history_when_data_cutoff_advances(
     assert second == first
 
 
+def test_release_compiler_localizes_source_review_provenance(tmp_path: Path) -> None:
+    ledger_payload = _ledger_payload()
+    ledger = tmp_path / "release-ledger.yaml"
+    ledger.write_text(yaml.safe_dump(ledger_payload, sort_keys=False), encoding="utf-8")
+    first = compile_release_dataset(
+        ledger,
+        INVENTORY,
+        REGISTRY,
+        tmp_path / "dataset.json",
+        tmp_path / "snapshots",
+        tmp_path / "manifests",
+    )
+    original_snapshots = [
+        json.loads(path.read_text(encoding="utf-8"))
+        for path in (tmp_path / "snapshots").glob("sha256/*/*")
+    ]
+    assert all("reviewer" not in snapshot for snapshot in original_snapshots)
+    assert all("review_note" not in snapshot for snapshot in original_snapshots)
+
+    second_source = ledger_payload["sources"][1]
+    second_source["reviewer"] = "second-reviewer"
+    second_source["review_note"] = "Verified this source after the initial sweep."
+    ledger.write_text(yaml.safe_dump(ledger_payload, sort_keys=False), encoding="utf-8")
+    second = compile_release_dataset(
+        ledger,
+        INVENTORY,
+        REGISTRY,
+        tmp_path / "dataset.json",
+        tmp_path / "snapshots",
+        tmp_path / "manifests",
+    )
+
+    assert [claim.id for claim in second.claims if claim.source_id == "the-stranger"] == [
+        claim.id for claim in first.claims if claim.source_id == "the-stranger"
+    ]
+    assert [
+        endorsement.id
+        for endorsement in second.endorsements
+        if endorsement.source_id == "the-stranger"
+    ] == [
+        endorsement.id
+        for endorsement in first.endorsements
+        if endorsement.source_id == "the-stranger"
+    ]
+    updated_claim = next(
+        claim for claim in second.claims if claim.source_id == "king-county-democrats"
+    )
+    updated_endorsement = next(
+        endorsement
+        for endorsement in second.endorsements
+        if endorsement.source_id == "king-county-democrats"
+    )
+    assert updated_claim.raw_notes == second_source["review_note"]
+    assert updated_endorsement.reviewer == second_source["reviewer"]
+    assert updated_endorsement.notes == second_source["review_note"]
+    assert second.review_decisions[0].author == second_source["reviewer"]
+    assert second.review_decisions[0].reason == second_source["review_note"]
+
+
 def test_release_compiler_rejects_decisions_outside_source_eligibility(tmp_path: Path) -> None:
     ledger = _ledger_payload()
     source = ledger["sources"][0]

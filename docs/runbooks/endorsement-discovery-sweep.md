@@ -228,15 +228,20 @@ Add or update the source's block in `data/releases/<election-id>/source-decision
   - source_id: <source-id>
     captured_at: <when the publication was actually checked>
     reviewed_at: <when the transcription was verified>
+    reviewer: <reviewer for this source, when different from the original sweep>
+    review_note: <source-specific review and limitations, when different from the original sweep>
     evidence_locator: Official 2026 endorsement guide, named race heading.
     decisions:
       - race_id: <race-id>
         candidate_ids: [<candidate-id>]
 ```
 
-`captured_at` is when the reviewer looked at the page, not when the file was edited. Update the
-ledger's top-level `data_as_of`, `reviewer`, and `review_note` to describe the sweep honestly —
-including what could not be verified.
+`captured_at` is when the reviewer looked at the page, not when the file was edited. Advance
+`data_as_of` for a later update. Keep the ledger's top-level `reviewer` and `review_note` as the
+original sweep's provenance; changing them would rewrite existing claim and review identities.
+For a targeted refresh, set the source block's optional `reviewer` and `review_note` to describe
+who verified that source and what could not be verified. A panel-wide new sweep may update the
+top-level fields when the change to every source's provenance is intentional.
 
 A transcription taken from a screenshot or a restricted capture goes through the manual-entry
 adapter rather than straight into the ledger (`docs/EVIDENCE_CAPTURE.md`):

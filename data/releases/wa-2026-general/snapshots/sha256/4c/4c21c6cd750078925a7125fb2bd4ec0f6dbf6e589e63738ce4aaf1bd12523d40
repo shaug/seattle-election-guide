@@ -58,5 +58,7 @@
     }
   ],
   "evidence_locator": "Official 2025-2026 Candidate Endorsements index, candidate and office headings. Capture capture-tech-4-taxes-20260927T193033Z-8e781f3ba9df.",
+  "review_note": "Issue #465: OpenAI Codex transcribed the official live 2025-2026 Tech 4 Taxes index and matched seven names to the November general ballot. Ron Davis is not on that ballot and is excluded. shaug confirmed the seven-name transcription against the official page on 2026-09-27. This is a current-cycle endorsement, not a separate November slate.",
+  "reviewer": "shaug",
   "source_id": "tech-4-taxes"
 }
