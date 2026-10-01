@@ -1,0 +1,1016 @@
+{
+  "by_country": [
+    {
+      "key": "NL",
+      "requests": 529
+    },
+    {
+      "key": "US",
+      "requests": 136
+    },
+    {
+      "key": "CA",
+      "requests": 49
+    },
+    {
+      "key": "SG",
+      "requests": 29
+    },
+    {
+      "key": "FR",
+      "requests": 25
+    },
+    {
+      "key": "CN",
+      "requests": 16
+    },
+    {
+      "key": "DE",
+      "requests": 12
+    },
+    {
+      "key": "BE",
+      "requests": 10
+    },
+    {
+      "key": "GB",
+      "requests": 10
+    },
+    {
+      "key": "JP",
+      "requests": 8
+    },
+    {
+      "key": "ES",
+      "requests": 7
+    },
+    {
+      "key": "HK",
+      "requests": 5
+    },
+    {
+      "key": "SE",
+      "requests": 5
+    },
+    {
+      "key": "KR",
+      "requests": 4
+    },
+    {
+      "key": "LV",
+      "requests": 4
+    },
+    {
+      "key": "AT",
+      "requests": 2
+    },
+    {
+      "key": "CH",
+      "requests": 2
+    },
+    {
+      "key": "FI",
+      "requests": 2
+    },
+    {
+      "key": "IL",
+      "requests": 2
+    },
+    {
+      "key": "RO",
+      "requests": 2
+    },
+    {
+      "key": "BR",
+      "requests": 1
+    },
+    {
+      "key": "GR",
+      "requests": 1
+    },
+    {
+      "key": "PK",
+      "requests": 1
+    },
+    {
+      "key": "RU",
+      "requests": 1
+    },
+    {
+      "key": "TW",
+      "requests": 1
+    },
+    {
+      "key": "ZA",
+      "requests": 1
+    }
+  ],
+  "by_device_type": [
+    {
+      "key": "desktop",
+      "requests": 830
+    },
+    {
+      "key": "mobile",
+      "requests": 90
+    },
+    {
+      "key": "tablet",
+      "requests": 24
+    }
+  ],
+  "by_edge_status_code": [
+    {
+      "key": 301,
+      "requests": 418
+    },
+    {
+      "key": 404,
+      "requests": 243
+    },
+    {
+      "key": 200,
+      "requests": 102
+    },
+    {
+      "key": 307,
+      "requests": 84
+    },
+    {
+      "key": 405,
+      "requests": 9
+    },
+    {
+      "key": 403,
+      "requests": 7
+    },
+    {
+      "key": 204,
+      "requests": 2
+    }
+  ],
+  "by_path": [
+    {
+      "key": "/",
+      "requests": 139
+    },
+    {
+      "key": "/e/wa-2026-primary/",
+      "requests": 84
+    },
+    {
+      "key": "/wp-admin/install.php",
+      "requests": 39
+    },
+    {
+      "key": "/robots.txt",
+      "requests": 19
+    },
+    {
+      "key": "/.env",
+      "requests": 12
+    },
+    {
+      "key": "/.env.production",
+      "requests": 12
+    },
+    {
+      "key": "/index.php",
+      "requests": 11
+    },
+    {
+      "key": "/wp-sitemap-posts-page-1.xml",
+      "requests": 11
+    },
+    {
+      "key": "/.env.backup",
+      "requests": 10
+    },
+    {
+      "key": "/.git/HEAD",
+      "requests": 10
+    },
+    {
+      "key": "/.env.staging",
+      "requests": 9
+    },
+    {
+      "key": "/wp-json/wp/v2/pages",
+      "requests": 8
+    },
+    {
+      "key": "/.env.old",
+      "requests": 7
+    },
+    {
+      "key": "/xmlrpc.php",
+      "requests": 7
+    },
+    {
+      "key": "/.circleci/config.yml",
+      "requests": 6
+    },
+    {
+      "key": "/.composer/auth.json",
+      "requests": 6
+    },
+    {
+      "key": "/.env.example",
+      "requests": 6
+    },
+    {
+      "key": "/.env.local",
+      "requests": 6
+    },
+    {
+      "key": "/.env.production.local",
+      "requests": 6
+    },
+    {
+      "key": "/.env.save",
+      "requests": 6
+    },
+    {
+      "key": "/.git/config",
+      "requests": 6
+    },
+    {
+      "key": "/.github/workflows/deploy.yml",
+      "requests": 6
+    },
+    {
+      "key": "/api/.env",
+      "requests": 6
+    },
+    {
+      "key": "/api/v1/.git/config",
+      "requests": 6
+    },
+    {
+      "key": "/app/.env",
+      "requests": 6
+    },
+    {
+      "key": "/app/.svn/entries",
+      "requests": 6
+    },
+    {
+      "key": "/app/config.js",
+      "requests": 6
+    },
+    {
+      "key": "/app/package-lock.json",
+      "requests": 6
+    },
+    {
+      "key": "/application/.env",
+      "requests": 6
+    },
+    {
+      "key": "/appsettings.Production.json",
+      "requests": 6
+    },
+    {
+      "key": "/backend/.git-credentials",
+      "requests": 6
+    },
+    {
+      "key": "/backend/.git/config",
+      "requests": 6
+    },
+    {
+      "key": "/backup.tbz2",
+      "requests": 6
+    },
+    {
+      "key": "/backup/site.zip",
+      "requests": 6
+    },
+    {
+      "key": "/bitbucket-pipelines.yml",
+      "requests": 6
+    },
+    {
+      "key": "/cdn-cgi/l/email-protection",
+      "requests": 6
+    },
+    {
+      "key": "/config.inc.php.bak",
+      "requests": 6
+    },
+    {
+      "key": "/config/.env",
+      "requests": 6
+    },
+    {
+      "key": "/credentials",
+      "requests": 6
+    },
+    {
+      "key": "/home/user/.git/config",
+      "requests": 6
+    },
+    {
+      "key": "/html.tar.gz",
+      "requests": 6
+    },
+    {
+      "key": "/i.php",
+      "requests": 6
+    },
+    {
+      "key": "/index.php~",
+      "requests": 6
+    },
+    {
+      "key": "/mysql.sql",
+      "requests": 6
+    },
+    {
+      "key": "/npm-shrinkwrap.json",
+      "requests": 6
+    },
+    {
+      "key": "/old/.env",
+      "requests": 6
+    },
+    {
+      "key": "/portal/.env",
+      "requests": 6
+    },
+    {
+      "key": "/root/.git/config",
+      "requests": 6
+    },
+    {
+      "key": "/seattleelections.guide.7z",
+      "requests": 6
+    },
+    {
+      "key": "/site.tar.bz2",
+      "requests": 6
+    },
+    {
+      "key": "/site/.git-credentials",
+      "requests": 6
+    },
+    {
+      "key": "/wordpress/.env",
+      "requests": 6
+    },
+    {
+      "key": "/.env.bak",
+      "requests": 5
+    },
+    {
+      "key": "/.env.dev",
+      "requests": 5
+    },
+    {
+      "key": "/.env.live",
+      "requests": 5
+    },
+    {
+      "key": "/.env.prod",
+      "requests": 5
+    },
+    {
+      "key": "/.env.stage",
+      "requests": 5
+    },
+    {
+      "key": "/.npmrc",
+      "requests": 5
+    },
+    {
+      "key": "/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js",
+      "requests": 5
+    },
+    {
+      "key": "/functions/.env",
+      "requests": 5
+    },
+    {
+      "key": "/api/.env.production",
+      "requests": 4
+    },
+    {
+      "key": "/appsettings.json",
+      "requests": 4
+    },
+    {
+      "key": "/archive.zip",
+      "requests": 4
+    },
+    {
+      "key": "/blog/.env",
+      "requests": 4
+    },
+    {
+      "key": "/config/application.yml",
+      "requests": 4
+    },
+    {
+      "key": "/crm/.env",
+      "requests": 4
+    },
+    {
+      "key": "/dist.zip",
+      "requests": 4
+    },
+    {
+      "key": "/env",
+      "requests": 4
+    },
+    {
+      "key": "/favicon.svg",
+      "requests": 4
+    },
+    {
+      "key": "/home/user/.bash_history",
+      "requests": 4
+    },
+    {
+      "key": "/info.php",
+      "requests": 4
+    },
+    {
+      "key": "/var/www/html/.git-credentials",
+      "requests": 4
+    },
+    {
+      "key": "/wp-json/gravitysmtp/v1/tests/mock-data",
+      "requests": 4
+    },
+    {
+      "key": "/.env.swp",
+      "requests": 3
+    },
+    {
+      "key": "/.git-credentials.bak",
+      "requests": 3
+    },
+    {
+      "key": "/app/.git-credentials",
+      "requests": 3
+    },
+    {
+      "key": "/appsettings.Development.json",
+      "requests": 3
+    },
+    {
+      "key": "/config.json",
+      "requests": 3
+    },
+    {
+      "key": "/config.php.bak",
+      "requests": 3
+    },
+    {
+      "key": "/deploy.sh",
+      "requests": 3
+    },
+    {
+      "key": "/e/",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-36-state-representative-1/",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-43-state-representative-2/",
+      "requests": 3
+    },
+    {
+      "key": "/favicon-32.png",
+      "requests": 3
+    },
+    {
+      "key": "/favicon.ico",
+      "requests": 3
+    },
+    {
+      "key": "/home/www/.git-credentials",
+      "requests": 3
+    },
+    {
+      "key": "/package-lock.json",
+      "requests": 3
+    },
+    {
+      "key": "/public_html/.git/config",
+      "requests": 3
+    },
+    {
+      "key": "/shop/.git/config",
+      "requests": 3
+    },
+    {
+      "key": "/staging/.env",
+      "requests": 3
+    },
+    {
+      "key": "/staging/.svn/entries",
+      "requests": 3
+    },
+    {
+      "key": "/static/env.js",
+      "requests": 3
+    },
+    {
+      "key": "/website.tar.gz",
+      "requests": 3
+    },
+    {
+      "key": "/wp-json/batch/v1",
+      "requests": 3
+    },
+    {
+      "key": "/wp-login.php",
+      "requests": 3
+    },
+    {
+      "key": "/.aws/credentials",
+      "requests": 2
+    },
+    {
+      "key": "/.drone.yml",
+      "requests": 2
+    },
+    {
+      "key": "/.github/workflows/ci.yml",
+      "requests": 2
+    },
+    {
+      "key": "/.pypirc",
+      "requests": 2
+    },
+    {
+      "key": "//2018/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "//assets/images/images/cache.php",
+      "requests": 2
+    },
+    {
+      "key": "//blogs/media/media/cache.php",
+      "requests": 2
+    },
+    {
+      "key": "//cache/cache/cache.php",
+      "requests": 2
+    },
+    {
+      "key": "//cgi-bin/cgi-bin/cgi-bin/cgi-bin/cache.php",
+      "requests": 2
+    },
+    {
+      "key": "//cms/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "//images/images/cache.php",
+      "requests": 2
+    },
+    {
+      "key": "//images/images/images/cache.php",
+      "requests": 2
+    },
+    {
+      "key": "//images/images/images/images/cache.php",
+      "requests": 2
+    },
+    {
+      "key": "//images/images/images/images/images/cache.php",
+      "requests": 2
+    },
+    {
+      "key": "//images/images/images/images/images/images/cache.php",
+      "requests": 2
+    },
+    {
+      "key": "//images/images/images/images/images/images/images/cache.php",
+      "requests": 2
+    },
+    {
+      "key": "//images/images/images/images/images/images/images/images/cache.php",
+      "requests": 2
+    },
+    {
+      "key": "//shop/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "//sito/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "//test/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "//wordpress/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "//wp-content/plugins/plugins/cache.php",
+      "requests": 2
+    },
+    {
+      "key": "//wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "//wp1/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "//wp2/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/about/",
+      "requests": 2
+    },
+    {
+      "key": "/admin/.env",
+      "requests": 2
+    },
+    {
+      "key": "/ads.txt",
+      "requests": 2
+    },
+    {
+      "key": "/api/.git/config",
+      "requests": 2
+    },
+    {
+      "key": "/api/.svn/entries",
+      "requests": 2
+    },
+    {
+      "key": "/app.tar.gz",
+      "requests": 2
+    },
+    {
+      "key": "/app/.git/config",
+      "requests": 2
+    },
+    {
+      "key": "/app/config/parameters.yml",
+      "requests": 2
+    },
+    {
+      "key": "/apple-touch-icon.png",
+      "requests": 2
+    },
+    {
+      "key": "/auth.json",
+      "requests": 2
+    },
+    {
+      "key": "/backend/.env",
+      "requests": 2
+    },
+    {
+      "key": "/backup.sql",
+      "requests": 2
+    },
+    {
+      "key": "/backup.zip",
+      "requests": 2
+    },
+    {
+      "key": "/backup/backup.zip",
+      "requests": 2
+    },
+    {
+      "key": "/backups/backup.zip",
+      "requests": 2
+    },
+    {
+      "key": "/bak/site.zip",
+      "requests": 2
+    },
+    {
+      "key": "/cdn-cgi/rum",
+      "requests": 2
+    },
+    {
+      "key": "/config.php.old",
+      "requests": 2
+    },
+    {
+      "key": "/config.php~",
+      "requests": 2
+    },
+    {
+      "key": "/config/config.js",
+      "requests": 2
+    },
+    {
+      "key": "/demo/.git/config",
+      "requests": 2
+    },
+    {
+      "key": "/docker-compose.prod.yml",
+      "requests": 2
+    },
+    {
+      "key": "/dump/db.sql",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-primary/comparisons/",
+      "requests": 2
+    },
+    {
+      "key": "/index.php.orig",
+      "requests": 2
+    },
+    {
+      "key": "/index.php.save",
+      "requests": 2
+    },
+    {
+      "key": "/root/.netrc",
+      "requests": 2
+    },
+    {
+      "key": "/seattleelections.guide.tar",
+      "requests": 2
+    },
+    {
+      "key": "/secrets.yml",
+      "requests": 2
+    },
+    {
+      "key": "/symfony/.env",
+      "requests": 2
+    },
+    {
+      "key": "/tracking.php",
+      "requests": 2
+    },
+    {
+      "key": "/v2/.git/config",
+      "requests": 2
+    },
+    {
+      "key": "/var/www/.git-credentials",
+      "requests": 2
+    },
+    {
+      "key": "/var/www/html/.env",
+      "requests": 2
+    },
+    {
+      "key": "/website.zip",
+      "requests": 2
+    },
+    {
+      "key": "/wp.tar.gz",
+      "requests": 2
+    },
+    {
+      "key": "/www.tar.gz",
+      "requests": 2
+    },
+    {
+      "key": "/.amper/challenge/fp.js",
+      "requests": 1
+    },
+    {
+      "key": "/.git-credentials",
+      "requests": 1
+    },
+    {
+      "key": "/.git/credentials",
+      "requests": 1
+    },
+    {
+      "key": "/.netrc",
+      "requests": 1
+    },
+    {
+      "key": "/.rt/verify",
+      "requests": 1
+    },
+    {
+      "key": "/.travis.yml",
+      "requests": 1
+    },
+    {
+      "key": "/.vscode/sftp.json",
+      "requests": 1
+    },
+    {
+      "key": "//blog/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "/@vite/env",
+      "requests": 1
+    },
+    {
+      "key": "/_internal/api/setup.php",
+      "requests": 1
+    },
+    {
+      "key": "/_profiler/phpinfo",
+      "requests": 1
+    },
+    {
+      "key": "/_profiler/phpinfo.php",
+      "requests": 1
+    },
+    {
+      "key": "/api.zip",
+      "requests": 1
+    },
+    {
+      "key": "/api/",
+      "requests": 1
+    },
+    {
+      "key": "/api/.aws/credentials",
+      "requests": 1
+    },
+    {
+      "key": "/api/shared/config/config.env",
+      "requests": 1
+    },
+    {
+      "key": "/apple-touch-icon-precomposed.png",
+      "requests": 1
+    },
+    {
+      "key": "/assets/js/telegram_redirect.js",
+      "requests": 1
+    },
+    {
+      "key": "/aws/credentials",
+      "requests": 1
+    },
+    {
+      "key": "/aws/credentials.yml",
+      "requests": 1
+    },
+    {
+      "key": "/backup.rar",
+      "requests": 1
+    },
+    {
+      "key": "/backup/.aws/credentials",
+      "requests": 1
+    },
+    {
+      "key": "/beta/.env",
+      "requests": 1
+    },
+    {
+      "key": "/calendar.ics",
+      "requests": 1
+    },
+    {
+      "key": "/config/.aws/credentials",
+      "requests": 1
+    },
+    {
+      "key": "/docker-compose.yml",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-34-state-senator/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-36-state-representative-2/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-37-state-senator/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/us-house-7/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/release-manifest.json",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/release-status.json",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/sources/",
+      "requests": 1
+    },
+    {
+      "key": "/export.zip",
+      "requests": 1
+    },
+    {
+      "key": "/feed/",
+      "requests": 1
+    },
+    {
+      "key": "/frontend/.git-credentials",
+      "requests": 1
+    },
+    {
+      "key": "/info",
+      "requests": 1
+    },
+    {
+      "key": "/new.zip",
+      "requests": 1
+    },
+    {
+      "key": "/og-image.png",
+      "requests": 1
+    },
+    {
+      "key": "/php_info.php",
+      "requests": 1
+    },
+    {
+      "key": "/phpinfo",
+      "requests": 1
+    },
+    {
+      "key": "/phpinfo.php",
+      "requests": 1
+    },
+    {
+      "key": "/pms",
+      "requests": 1
+    },
+    {
+      "key": "/prod/.env",
+      "requests": 1
+    },
+    {
+      "key": "/production/.env",
+      "requests": 1
+    },
+    {
+      "key": "/public.zip",
+      "requests": 1
+    },
+    {
+      "key": "/root/.npmrc",
+      "requests": 1
+    },
+    {
+      "key": "/s3/.aws/credentials",
+      "requests": 1
+    },
+    {
+      "key": "/set_captcha_validated.php",
+      "requests": 1
+    },
+    {
+      "key": "/site.tar.gz",
+      "requests": 1
+    },
+    {
+      "key": "/staging/.git-credentials",
+      "requests": 1
+    },
+    {
+      "key": "/tmp/backup.zip",
+      "requests": 1
+    },
+    {
+      "key": "/wordpress.tar.gz",
+      "requests": 1
+    },
+    {
+      "key": "/wp-json/",
+      "requests": 1
+    },
+    {
+      "key": "/www/.svn/entries",
+      "requests": 1
+    },
+    {
+      "key": "/~/.aws/credentials",
+      "requests": 1
+    }
+  ],
+  "date": "2026-09-30",
+  "page_views": 83,
+  "requests": 865,
+  "schema_version": "1.0",
+  "sources": [
+    "httpRequests1dGroups",
+    "httpRequestsAdaptiveGroups"
+  ],
+  "uniques": 125,
+  "visits": 50
+}
