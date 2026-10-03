@@ -1,4 +1,4 @@
-.PHONY: sync format check check-election-contracts check-evidence check-results check-js check-changelog check-release-reproducible check-release-reproducible-general changelog types test test-unit test-integration test-integration-comparisons test-integration-rendering test-integration-artifacts release-verify release-verify-general hosting-stage hosting-serve hosting-deploy
+.PHONY: sync format check check-election-contracts check-evidence check-results check-js check-changelog check-release-reproducible check-release-reproducible-general changelog types test test-unit test-integration test-integration-comparisons test-integration-rendering test-integration-artifacts release-verify release-verify-primary release-verify-general hosting-stage hosting-serve hosting-deploy
 
 INTEGRATION_COMPARISONS_TESTS := tests/test_compare_rendering.py
 INTEGRATION_RENDERING_TESTS := tests/test_rendering.py
@@ -7,6 +7,7 @@ INTEGRATION_TESTS := $(INTEGRATION_COMPARISONS_TESTS) $(INTEGRATION_RENDERING_TE
 UNIT_TEST_IGNORES := $(addprefix --ignore=,$(INTEGRATION_TESTS))
 GENERAL_RELEASE_LEDGER := data/releases/wa-2026-general/source-decisions.yaml
 GENERAL_RELEASE_INPUTS := --inventory-path data/normalized/wa-2026-general-inventory.json --registry-path config/sources/wa-2026-general.yaml --dataset-path data/normalized/wa-2026-general-canonical-dataset.json --snapshot-root data/releases/wa-2026-general/snapshots --manifest-dir data/releases/wa-2026-general/manifests
+CURRENT_CANDIDATE_BUNDLE_ID := wa-2026-general-2026-general.1
 
 sync:
 	uv sync --frozen
@@ -101,7 +102,9 @@ test-integration-rendering:
 test-integration-artifacts:
 	uv run pytest $(INTEGRATION_ARTIFACT_TESTS)
 
-release-verify:
+release-verify: release-verify-general
+
+release-verify-primary:
 	uv run election-guide release verify data/releases/wa-2026-primary/source-decisions.yaml
 
 release-verify-general:
@@ -114,8 +117,8 @@ check-election-contracts:
 	uv run election-guide inventory validate data/normalized/wa-2026-general-inventory.json
 	uv run election-guide sources validate config/sources/default.yaml
 	uv run election-guide sources validate config/sources/wa-2026-general.yaml --inventory-path data/normalized/wa-2026-general-inventory.json
+	$(MAKE) release-verify-primary
 	$(MAKE) release-verify
-	$(MAKE) release-verify-general
 
 # The release-reproducibility gate, defined once here and invoked by CI, the way
 # check-js and check-changelog already are (issue #367). Two builds of one
@@ -138,34 +141,24 @@ check-release-reproducible:
 	rm -rf dist/reproducibility-a dist/reproducibility-b
 	generated_at="$$(git show -s --format=%cI HEAD)"; \
 	for build in a b; do \
-		uv run election-guide release build data/releases/wa-2026-primary/source-decisions.yaml \
-			--release-version 2026-primary.2 \
-			--generated-at "$$generated_at" \
-			--output-dir "dist/reproducibility-$$build" || exit 1; \
-	done
-	uv run election-guide release compare dist/reproducibility-a/bundle dist/reproducibility-b/bundle
-
-# General artifacts use election-specific directories so this preparatory target
-# can run beside the primary-default target without overwriting its evidence.
-check-release-reproducible-general:
-	rm -rf dist/wa-2026-general-reproducibility-a dist/wa-2026-general-reproducibility-b
-	generated_at="$$(git show -s --format=%cI HEAD)"; \
-	for build in a b; do \
 		uv run election-guide release build $(GENERAL_RELEASE_LEDGER) \
 			--release-version 2026-general.1 \
 			--generated-at "$$generated_at" \
-			--output-dir "dist/wa-2026-general-reproducibility-$$build" \
+			--output-dir "dist/reproducibility-$$build" \
 			$(GENERAL_RELEASE_INPUTS) || exit 1; \
 	done
-	uv run election-guide release compare dist/wa-2026-general-reproducibility-a/bundle dist/wa-2026-general-reproducibility-b/bundle
+	uv run election-guide release compare dist/reproducibility-a/bundle dist/reproducibility-b/bundle
+
+check-release-reproducible-general: check-release-reproducible
 
 # Only the current election is built from source; every other declared election
 # resolves from the release that published it, exactly as CI stages (issue 271,
-# docs/HOSTING.md, Historical bundles). Supplying every declared bundle locally
-# downloads nothing, so this is inert while one election is declared.
+# docs/HOSTING.md, Historical bundles).
 hosting-stage:
+	uv run election-guide hosting verify-releases config/hosting/site.yaml \
+		--candidate-bundle-id $(CURRENT_CANDIDATE_BUNDLE_ID)
 	uv run election-guide hosting stage config/hosting/site.yaml \
-		--bundle wa-2026-primary-2026-primary.2=dist/primary-release/bundle \
+		--bundle $(CURRENT_CANDIDATE_BUNDLE_ID)=dist/reproducibility-a/bundle \
 		--released-bundle-dir dist/released-bundles \
 		--expected-git-commit "$$(git rev-parse HEAD)"
 
@@ -173,4 +166,5 @@ hosting-serve: hosting-stage
 	npm run pages:dev
 
 hosting-deploy: hosting-stage
+	uv run election-guide hosting verify-releases config/hosting/site.yaml
 	npm run pages:deploy -- --commit-hash="$$(git rev-parse HEAD)" --commit-dirty=false

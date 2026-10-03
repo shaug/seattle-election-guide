@@ -193,14 +193,14 @@ Pass `--released-bundle-dir` to resolve every declared bundle that was not suppl
 
 ```bash
 uv run election-guide hosting stage config/hosting/site.yaml \
-  --bundle wa-2026-primary-2026-primary.2=dist/primary-release/bundle \
+  --bundle wa-2026-general-2026-general.1=dist/general-release/bundle \
   --released-bundle-dir dist/released-bundles \
   --output-dir dist/cloudflare-site
 ```
 
 Each unresolved election's versioned ZIP is downloaded through the GitHub CLI, unpacked under that
-directory, and staged like any other bundle. Supplying every bundle locally downloads nothing, so
-the current single-election build is unaffected.
+directory, and staged like any other bundle. Supplying every bundle locally downloads nothing; the
+supported two-election composition instead supplies the general locally and resolves the primary.
 
 An election resolved this way **must** declare `bundle_sha256`, and staging rejects it otherwise. A
 downloaded archive is remote input, and the release manifest travelling inside it cannot vouch for
@@ -238,12 +238,13 @@ make hosting-stage
 ```
 
 The Make target supplies the current election's bundle as
-`wa-2026-primary-2026-primary.2=dist/primary-release/bundle` and passes
+`wa-2026-general-2026-general.1=dist/reproducibility-a/bundle` and passes
 `--released-bundle-dir dist/released-bundles`, which is the pair CI stages with. The current election
 is the only one built from source, so when another election is declared it resolves from the release
 that published it rather than from anything prepared locally — see
-[Historical bundles](#historical-bundles). That download reads GitHub, so `gh` must be installed and
-authenticated; while one election is declared there is nothing to resolve and nothing is downloaded.
+[Historical bundles](#historical-bundles). The archived primary therefore comes from its published,
+hash-pinned `2026-primary.2` release. That download reads GitHub, so `gh` must be installed and
+authenticated.
 Staging verifies all declared identities, each release status, every release-manifest artifact hash,
 and the current bundle's exact Git revision before it changes the existing output. It then
 atomically replaces `dist/cloudflare-site/` with:
@@ -279,8 +280,10 @@ make hosting-serve
 ```
 
 For an exceptional local production upload, run `make hosting-deploy` after authenticating
-Wrangler. Normal publication should go through GitHub Actions so the deployed artifact is the one
-that passed the full mainline release checks.
+Wrangler. The target stages with the narrow current-candidate exception, then requires every
+declared release to be published with no exception before it invokes the upload. Normal publication
+should go through GitHub Actions so the deployed artifact is the one that passed the full mainline
+release checks.
 
 ## Pull request previews
 

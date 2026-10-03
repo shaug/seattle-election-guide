@@ -54,6 +54,7 @@ OLDER_COMMIT = "c" * 40
 PANEL_HASH = "b" * 64
 REGISTRY_HASH = "d" * 64
 PROJECT_ROOT = Path(__file__).parents[1]
+GENERAL_BUNDLE_ID = "wa-2026-general-2026-general.1"
 CURRENT_ID = "wa-2026-primary"
 OLDER_ID = "wa-2025-general"
 CURRENT_BUNDLE_ID = "wa-2026-primary-release"
@@ -1591,12 +1592,36 @@ def test_wrangler_and_workflow_keep_deployment_gated() -> None:
     # the pin and package.json's spec cannot put a different Wrangler on a deploy.
     # An assertion on the version only duplicated the lockfile's job and failed
     # every Dependabot bump on its way to the checks that do decide (issue 226).
+    assert site_manifest["current_election_id"] == "wa-2026-general"
+    assert [election["election_id"] for election in site_manifest["elections"]] == [
+        "wa-2026-general",
+        "wa-2026-primary",
+    ]
     current_election = next(
         election
         for election in site_manifest["elections"]
         if election["election_id"] == site_manifest["current_election_id"]
     )
     assert "comparison_route_preview" not in current_election
+    assert current_election == {
+        "election_id": "wa-2026-general",
+        "bundle_id": GENERAL_BUNDLE_ID,
+        "release_version": "2026-general.1",
+        "source_panel_id": "wa-2026-general-default-sources-v1",
+        "source_panel_hash": "b0fb2a603bd98da49d3282d2daa0cb55ff56e0bbdd46104c8b5a4a441b747a95",
+        "source_registry_hash": "2ed251c35b98279f5d26570afbc1917e91f714daa9ea694346444279b86a925c",
+    }
+    historical = site_manifest["elections"][1]
+    assert historical["bundle_id"] == "wa-2026-primary-2026-primary.2"
+    assert "source_registry_hash" not in historical
+    assert historical["git_commit"] == "cf4f67fa336050fbaf6606aadcfea65f936a7007"
+    assert historical["release_manifest_sha256"] == (
+        "97d1a768de962338135115d7622da944982c171b1ed886beee72879da9c2d8b3"
+    )
+    assert historical["bundle_sha256"] == (
+        "3e63164b88e198b5f2c25d5d280b61d99694a010a8063206fef552bcff61b7da"
+    )
+    assert workflow["env"]["CANDIDATE_BUNDLE_ID"] == GENERAL_BUNDLE_ID
     deploy = workflow["jobs"]["deploy"]
     assert deploy["needs"] == "check"
     assert deploy["environment"]["name"] == "production"
@@ -1628,14 +1653,25 @@ def test_wrangler_and_workflow_keep_deployment_gated() -> None:
     )
     assert releases_step["env"] == {"GH_TOKEN": "${{ github.token }}"}
     assert "hosting verify-releases config/hosting/site.yaml" in releases_step["run"]
+    assert '--candidate-bundle-id "$CANDIDATE_BUNDLE_ID"' in releases_step["run"]
     publication_steps = workflow["jobs"]["publication"]["steps"]
+    build_step = next(
+        step
+        for step in publication_steps
+        if step.get("name") == "Build and verify deterministic general release"
+    )
+    assert "make check-release-reproducible" in build_step["run"]
+    assert "seattle-election-guide-2026-general.1.zip" in build_step["run"]
     stage_step = next(
         step
         for step in publication_steps
         if step.get("name") == "Stage verified Cloudflare Pages site"
     )
     assert "config/hosting/site.yaml" in stage_step["run"]
-    assert "--bundle wa-2026-primary-2026-primary.2=" in stage_step["run"]
+    assert '--bundle "$CANDIDATE_BUNDLE_ID=dist/reproducibility-a/bundle"' in stage_step["run"]
+    assert "e/wa-2026-general/index.html" in stage_step["run"]
+    assert "e/wa-2026-primary/index.html" in stage_step["run"]
+    assert "e/wa-2026-general/comparisons/index.html" in stage_step["run"]
     assert "hosting verify" in stage_step["run"]
     # Any election not built from source above is resolved from its published
     # release, which reads GitHub with the same read-only job token (issue 215).
@@ -1647,6 +1683,18 @@ def test_wrangler_and_workflow_keep_deployment_gated() -> None:
     )
     assert "hosting verify" in verify_step["run"]
     assert "--expected-git-commit=" in verify_step["run"]
+    strict_release_step = next(
+        step
+        for step in deploy_steps
+        if step.get("name") == "Require every declared release to be published"
+    )
+    assert strict_release_step["env"] == {"GH_TOKEN": "${{ github.token }}"}
+    assert strict_release_step["run"] == (
+        "uv run election-guide hosting verify-releases config/hosting/site.yaml"
+    )
+    assert "candidate" not in strict_release_step["run"]
+    assert deploy_steps.index(verify_step) < deploy_steps.index(strict_release_step)
+    assert deploy_steps.index(strict_release_step) < deploy_steps.index(deploy_step)
 
 
 STAGE_COMMAND = "election-guide hosting stage"
@@ -1754,7 +1802,11 @@ def test_every_staging_surface_resolves_released_bundles_the_same_way() -> None:
         assert f"{STAGE_COMMAND} config/hosting/site.yaml" in surface.command, surface.surface
         # The current election is the only one built from source, so it is the
         # only bundle any surface supplies locally.
-        assert "--bundle wa-2026-primary-2026-primary.2=" in surface.command, surface.surface
+        if surface.surface == "Makefile":
+            assert f"--bundle {GENERAL_BUNDLE_ID}=" in surface.command, surface.surface
+            assert f"--candidate-bundle-id {GENERAL_BUNDLE_ID}" in surface.command, surface.surface
+        else:
+            assert '--bundle "$CANDIDATE_BUNDLE_ID=' in surface.command, surface.surface
         assert "--released-bundle-dir dist/released-bundles" in surface.command, surface.surface
         # Resolving a historical bundle downloads a published release through
         # the GitHub CLI, so a workflow surface needs the read-only job token.
@@ -1785,6 +1837,7 @@ def test_pr_preview_workflow_is_label_gated_fork_safe_and_head_bound() -> None:
     # a live preview with no second `closed` event to retry it.
     assert "concurrency" not in workflow
     deploy = workflow["jobs"]["deploy"]
+    assert workflow["env"]["CANDIDATE_BUNDLE_ID"] == GENERAL_BUNDLE_ID
     assert deploy["concurrency"]["group"].endswith("pr-${{ github.event.pull_request.number }}")
     assert deploy["concurrency"]["cancel-in-progress"] == "true"
     # Teardown shares the deploy job's group so a close landing mid-build queues
@@ -1813,15 +1866,25 @@ def test_pr_preview_workflow_is_label_gated_fork_safe_and_head_bound() -> None:
         step for step in deploy["steps"] if step.get("uses", "").startswith("actions/checkout")
     )
     assert checkout["with"]["ref"] == head_sha
+    release_check_step = next(
+        step
+        for step in deploy["steps"]
+        if step.get("name") == "Verify declared releases for prepublication staging"
+    )
+    assert '--candidate-bundle-id "$CANDIDATE_BUNDLE_ID"' in release_check_step["run"]
+    assert release_check_step["env"] == {"GH_TOKEN": "${{ github.token }}"}
     build_step = next(
         step
         for step in deploy["steps"]
-        if step.get("name") == "Build the primary release at the pull request head"
+        if step.get("name") == "Build the general release at the pull request head"
     )
+    assert "data/releases/wa-2026-general/source-decisions.yaml" in build_step["run"]
+    assert "--release-version 2026-general.1" in build_step["run"]
     assert '--git-commit "$HEAD_SHA"' in build_step["run"]
     stage_step = next(
         step for step in deploy["steps"] if step.get("name") == "Stage and verify the Pages site"
     )
+    assert '--bundle "$CANDIDATE_BUNDLE_ID=dist/pr-release/bundle"' in stage_step["run"]
     assert '--expected-git-commit "$HEAD_SHA"' in stage_step["run"]
     # Any election not built from source above is resolved from its published
     # release, which reads GitHub with the same automatic job token CI uses
@@ -1833,6 +1896,7 @@ def test_pr_preview_workflow_is_label_gated_fork_safe_and_head_bound() -> None:
     assert stage_step["env"] == {"GH_TOKEN": "${{ github.token }}"}
     # Staging is verified before anything is uploaded, exactly as production is.
     assert "hosting verify" in stage_step["run"]
+    assert deploy["steps"].index(release_check_step) < deploy["steps"].index(stage_step)
     assert deploy["steps"].index(stage_step) < deploy["steps"].index(
         next(step for step in deploy["steps"] if step.get("name") == "Deploy the preview")
     )
@@ -2028,7 +2092,7 @@ def _bundle_view_model(
     )
     payload = updated.model_dump(mode="json")
     if source_registry_hash is None:
-        payload["schema_version"] = "1.13"
+        payload["schema_version"] = "1.9"
         payload["metadata"].pop("source_registry_hash")
     else:
         payload["schema_version"] = "1.14"
@@ -2067,8 +2131,8 @@ def _write_release_bundle(
                 election_id=election_id,
                 source_registry_hash=source_registry_hash,
             ).model_dump(mode="json")
-            # Hosting must continue to accept already-published schema-1.8
-            # bundles, which predate the optional structured naming fields.
+            # Hosting must continue to accept already-published schema-1.9
+            # bundles. Those also predate the optional structured naming fields.
             view_model_payload["metadata"].pop("election_type")
             view_model_payload["metadata"].pop("state")
             # ...and schema-1.11 bundles, which predate #286's race_type and
