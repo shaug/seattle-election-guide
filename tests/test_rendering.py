@@ -3702,6 +3702,7 @@ def _evaluate_in_chrome(
     initial_url: str | None = None,
     viewport: tuple[int, int] | None = None,
     media: str | None = None,
+    pointer: bool = False,
     touch: bool = False,
 ) -> dict[str, Any]:
     """Load one local file in headless Chrome and return one JSON object result.
@@ -3715,8 +3716,10 @@ def _evaluate_in_chrome(
     the bare file, to exercise a load-time restore rather than an in-page
     transition. Pass media="print" to evaluate against the print stylesheet
     (issue 193: the browser's own print output is the printable edition, so
-    that is the only place its rules can be measured). Pass touch=True to
-    exercise interaction media queries on a touch-primary device.
+    that is the only place its rules can be measured). Pass pointer=True to
+    make headless Chrome expose a fine, hover-capable primary pointer on every
+    host, or touch=True to exercise interaction media queries on a
+    touch-primary device.
     """
     chrome_path = find_chrome()
     profile = Path(tempfile.mkdtemp(prefix="election-guide-chrome-"))
@@ -3733,6 +3736,14 @@ def _evaluate_in_chrome(
                 "--hide-scrollbars",
                 "--no-first-run",
                 "--allow-file-access-from-files",
+                *(
+                    [
+                        "--blink-settings=primaryHoverType=2,availableHoverTypes=2,"
+                        "primaryPointerType=4,availablePointerTypes=4"
+                    ]
+                    if pointer
+                    else []
+                ),
                 f"--user-data-dir={profile}",
                 "--remote-debugging-port=0",
                 "about:blank",
@@ -3851,7 +3862,12 @@ def test_overview_meter_progressively_discloses_endorsement_segments(
       })()
     """
 
-    pointer = _evaluate_in_chrome(html_path, expression, viewport=(1440, 1000))
+    pointer = _evaluate_in_chrome(
+        html_path,
+        expression,
+        viewport=(1440, 1000),
+        pointer=True,
+    )
     assert "error" not in pointer
     assert pointer["hover"] is True
     assert pointer["label"].endswith("%")
