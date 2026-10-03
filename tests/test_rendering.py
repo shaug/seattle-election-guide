@@ -691,7 +691,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "@media print {" in html
     assert ".state-action-strip, .sticky-header, .filter-control-bar { display: none" in html
     assert "html .race-grid, html.compact-ballot-mode .race-grid" in html
-    assert 'style="--meter-fill: ' in html
+    assert 'style="--meter-label-offset: ' in html
 
 
 _ELECTION_DAY_BANNER = re.compile(r'<p class="election-day[^>]*>.*?</p>')
@@ -2281,8 +2281,8 @@ def test_round4_card_anatomy_and_data_ink_cleanup(tmp_path: Path) -> None:
         ".race-detail-category-badge { color: var(--muted); font-size: .68rem; "
         "font-weight: 600; text-align: right; }" in race_stylesheet
     )
-    # v1's per-candidate mini-meter (`.race-detail-meter`) retired with meter
-    # v2 — every candidate's own section carries a meter v2 chrome of its own
+    # The retired per-candidate mini-meter (`.race-detail-meter`) stays gone —
+    # every candidate's own section carries the endorsement-meter chrome
     # instead now (docs/METER_V2.md, Chrome geometry: "The headline meter's
     # own fate"; #325) — so its whole chrome is gone from the race page's own
     # stylesheet, not merely from the guide's.
@@ -2428,7 +2428,7 @@ def test_chromium_build_is_semantically_faithful_and_visually_safe(tmp_path: Pat
     assert view_model.metadata.source_panel_id in rendered_html
     assert view_model.metadata.source_panel_hash in rendered_html
     for percentage in (53, 64, 70, 100):
-        assert f'style="--meter-fill: {percentage}%"' in rendered_html
+        assert f'style="--meter-label-offset: {percentage}%"' in rendered_html
     for tone in ("agrees", "differs", "not_covered"):
         assert f'class="comparison comparison-{tone}"' not in rendered_html
         assert f"print-times-pick-{tone}" not in rendered_html
@@ -2606,6 +2606,30 @@ def test_chromium_build_is_semantically_faithful_and_visually_safe(tmp_path: Pat
         check for check in semantic_report.checks if check.id == "html-display-values"
     )
     assert not semantic_check.passed
+
+    # The segmented meter is the only endorsement meter. A percentage-only
+    # legacy renderer can still preserve every visible string, so release
+    # validation must reject the missing endorsement blocks as structure, not
+    # let the generic semantic-value check obscure the regression.
+    legacy_meter_html = tmp_path / "legacy-meter.html"
+    legacy_meter_html.write_text(
+        rendered.html_path.read_text(encoding="utf-8").replace(
+            "data-meter-source=", "data-retired-meter-source="
+        ),
+        encoding="utf-8",
+    )
+    legacy_meter_report = validate_rendered_guide(
+        view_model,
+        read_rendering_configuration(RENDERING_CONFIG),
+        legacy_meter_html,
+        rendered.screenshots,
+        race_documents,
+    )
+    meter_structure_check = next(
+        check for check in legacy_meter_report.checks if check.id == "html-meter-structure"
+    )
+    assert not meter_structure_check.passed
+    assert "endorsement meter structure differs" in meter_structure_check.message
 
     wrong_detail_row = canonical_row.replace(
         f"<strong>{detail_source.name}</strong>", "<strong>Wrong organization</strong>", 1
@@ -5332,8 +5356,8 @@ def test_race_page_reflects_the_active_lens_leader_not_the_audited_default(
     # section's heading renders no name of its own.
     assert result["leaderHasHeading"] is False
     # Item 4: the share is stated once too, in that headline. No candidate
-    # section renders a meter of its own — v1's per-candidate mini-meter
-    # retired with meter v2 (docs/METER_V2.md, Chrome geometry; #315 replaces
+    # section renders a meter of its own — the retired per-candidate mini-meter
+    # stays gone (docs/METER_V2.md, Chrome geometry; #315 replaces
     # its job), so this holds for a tie's sections exactly as it does here,
     # for a sole leader's.
     assert result["meters"], "expected at least one candidate section"

@@ -300,7 +300,7 @@ export function raceResultTemplate(view) {
   const { meter } = view;
   return html`${raceHeadlineTemplate(view.recommendation)}<div
     class=${meterClasses(meter)}
-    style=${meter.fillPercent === null ? nothing : `--meter-fill: ${meter.fillPercent}%`}
+    style=${meter.fillPercent === null ? nothing : `--meter-label-offset: ${meter.fillPercent}%`}
     role="img"
     data-display-role="share"
     aria-label=${meter.accessibleLabel}

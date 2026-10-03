@@ -1001,7 +1001,7 @@ def meter_candidate_colors(
     re-derived from `standings` so the meter's colors cannot disagree with the
     race's own no-majority/tie decision (I56). `has_majority` only matters when
     there is exactly one leader: the site's own teal for a majority, its own
-    amber for a sole leader short of one — v1's semantic, unchanged.
+    amber for a sole leader short of one.
     """
     colors: dict[str, str] = {}
     tie_index = 0

@@ -126,7 +126,7 @@ function lensMarkup() {
     <article id="race-mayor" data-publication-race-id="mayor">
       <div class="screen-race-result" data-lens-result>
         <h3 data-display-role="recommendation">Ada Lovelace / Blaise Pascal</h3>
-        <div class="screen-meter meter-no-majority" style="--meter-fill: 50%" role="img"
+        <div class="screen-meter meter-no-majority" style="--meter-label-offset: 50%" role="img"
           data-display-role="share"
           aria-label="No majority. Consensus among explicitly endorsing sources: 50%">
           <strong>50%</strong>
@@ -198,7 +198,7 @@ test('the meter carries the fill, the tone, and the spoken label together', asyn
   lens.render(['strn']);
   const meter = document.querySelector('[data-lens-result] .screen-meter');
 
-  assert.equal(meter.getAttribute('style'), '--meter-fill: 100%');
+  assert.equal(meter.getAttribute('style'), '--meter-label-offset: 100%');
   assert.equal(meter.classList.contains('meter-no-majority'), false);
   // docs/METER_V2.md, The discovery model's accessibility model: the meter's
   // spoken name is the full standings, not the resting percentage.
