@@ -9,6 +9,15 @@ coverage, and the audit trail for one published election live in that release's
 own `RELEASE_NOTES.md`, inside its bundle and attached to its GitHub Release.
 This file covers the software that renders and ships those bundles.
 
+## 2026-general.2 — 2026-10-03
+
+### Documentation
+
+- Add 2026-general.1 changelog (#479)
+
+### Fixed
+
+- Replace endorsement pill with visible segments (#484)
 ## 2026-general.1 — 2026-10-03
 
 ### Added
