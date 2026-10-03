@@ -7,9 +7,11 @@ redirect response is observed at its own hop rather than silently followed.
 
 from __future__ import annotations
 
+import json
 import socketserver
 import threading
 from collections.abc import Iterator
+from contextlib import suppress
 from datetime import UTC, datetime
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
@@ -17,6 +19,10 @@ import pytest
 
 from election_guide.hosting.production_check import RouteCheck, render_summary_lines
 from election_guide.hosting.production_probe import fetch_manifest_body, probe, run_production_check
+from tests.test_production_check import (
+    _deployment_manifest,  # pyright: ignore[reportPrivateUsage]
+    _site_manifest,  # pyright: ignore[reportPrivateUsage]
+)
 
 COMMIT = "a" * 40
 MANIFEST_BODY = (
@@ -87,6 +93,56 @@ class _BrokenManifestHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
 
+class _PublicationHandler(BaseHTTPRequestHandler):
+    manifest_body = json.dumps(_deployment_manifest().model_dump(mode="json")).encode("utf-8")
+    archive_body = (
+        b'<li><a href="/e/wa-2026-general/">General</a> '
+        b"<strong>(current)</strong></li>"
+        b'<li><a href="/e/wa-2026-primary/">Primary</a></li>'
+    )
+    root_status = 307
+    root_location = "/e/wa-2026-general/"
+    unknown_status = 404
+
+    def log_message(self, format: str, *args: object) -> None:
+        pass
+
+    def _absolute(self, path: str) -> str:
+        return f"http://{self.headers.get('Host')}{path}"
+
+    def do_GET(self) -> None:
+        if self.path == "/":
+            self.send_response(self.root_status)
+            self.send_header("Location", self._absolute(self.root_location))
+            self.end_headers()
+        elif self.path == "/deployment-manifest.json":
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(self.manifest_body)
+        elif self.path == "/e/":
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(self.archive_body)
+        elif self.path in {
+            "/e/wa-2026-general/",
+            "/e/wa-2026-primary/",
+            "/e/wa-2026-general/races/alpha/",
+            "/e/wa-2026-general/comparisons/",
+        }:
+            self.send_response(200)
+            self.end_headers()
+        elif self.path == "/e/wa-2026-general/voter-guide.pdf":
+            self.send_response(301)
+            self.send_header("Location", self._absolute("/e/wa-2026-general/"))
+            self.end_headers()
+        elif self.path == "/e/production-check-unknown-election/":
+            self.send_response(self.unknown_status)
+            self.end_headers()
+        else:
+            self.send_response(404)
+            self.end_headers()
+
+
 class _TruncatedManifestHandler(BaseHTTPRequestHandler):
     """Declares a body longer than it sends, then drops the connection."""
 
@@ -154,6 +210,11 @@ def malformed_status_line_server() -> Iterator[str]:
         thread.join()
 
 
+@pytest.fixture
+def publication_server() -> Iterator[str]:
+    yield from _start(_PublicationHandler)
+
+
 def test_probe_observes_a_redirect_without_following_it(server: str) -> None:
     check = RouteCheck(
         name="home redirect", path="/", expected_status=307, expected_location="/e/wa-2026-primary/"
@@ -179,6 +240,9 @@ def test_probe_normalizes_an_absolute_location_to_a_bare_path(server: str) -> No
     assert observed.location is not None
     assert not observed.location.startswith("http")
     assert observed.location == "/e/wa-2026-primary/"
+    assert observed.raw_location is not None
+    assert observed.raw_location.startswith("http://127.0.0.1:")
+    assert observed.raw_location.endswith("/e/wa-2026-primary/")
 
 
 def test_probe_observes_a_permanent_redirect(server: str) -> None:
@@ -382,3 +446,65 @@ def test_run_production_check_stops_at_a_failed_manifest_fetch() -> None:
     assert not report.ok
     assert report.route_results == ()
     assert report.commit is None
+
+
+def test_publication_check_verifies_the_manifest_archive_and_complete_route_contract(
+    publication_server: str,
+) -> None:
+    report = run_production_check(
+        publication_server,
+        expected_git_commit=COMMIT,
+        timeout=5,
+        site_manifest=_site_manifest(),
+    )
+
+    assert report.ok
+    assert report.base_url == publication_server
+    assert report.checked_at is not None
+    assert report.deployment_contract is not None
+    assert report.deployment_contract.ok
+    assert report.deployment_contract.representative_race_path == (
+        "/e/wa-2026-general/races/alpha/"
+    )
+    assert report.archive_index is not None
+    assert report.archive_index.ok
+    assert len(report.route_results) == 8
+
+
+@pytest.mark.parametrize(
+    ("handler_changes", "failing_check"),
+    [
+        ({"root_status": 301}, "home redirect"),
+        ({"root_location": "/e/wa-2026-primary/"}, "home redirect"),
+        ({"unknown_status": 200}, "unknown election"),
+        (
+            {
+                "archive_body": (
+                    b'<li><a href="/e/wa-2026-general/">General</a></li>'
+                    b'<li><a href="/e/wa-2026-primary/">Primary</a> '
+                    b"<strong>(current)</strong></li>"
+                )
+            },
+            "archive index current marker",
+        ),
+    ],
+)
+def test_publication_check_rejects_broken_public_route_contracts(
+    handler_changes: dict[str, object], failing_check: str
+) -> None:
+    handler = type("BrokenPublicationHandler", (_PublicationHandler,), handler_changes)
+    server = _start(handler)
+    base_url = next(server)
+    try:
+        report = run_production_check(
+            base_url,
+            expected_git_commit=COMMIT,
+            timeout=5,
+            site_manifest=_site_manifest(),
+        )
+    finally:
+        with suppress(StopIteration):
+            next(server)
+
+    assert not report.ok
+    assert any(failing_check in line for line in render_summary_lines(report))

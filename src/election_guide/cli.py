@@ -341,6 +341,16 @@ def hosting_check_production(
         str, typer.Option(help="GitHub repository as OWNER/NAME, for the alert issue.")
     ] = "shaug/seattle-election-guide",
     timeout: Annotated[float, typer.Option(help="Per-request timeout, in seconds.")] = 15.0,
+    site_manifest_path: Annotated[
+        Path,
+        typer.Option(
+            "--site-manifest",
+            exists=True,
+            dir_okay=False,
+            readable=True,
+            help="Trusted site declaration for production route and release expectations.",
+        ),
+    ] = Path("config/hosting/site.yaml"),
     calendar_path: Annotated[
         Path,
         typer.Option(
@@ -351,6 +361,14 @@ def hosting_check_production(
             help="Election calendar that defines the active stale-data window.",
         ),
     ] = Path("config/calendar/elections.yaml"),
+    output_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--output",
+            dir_okay=False,
+            help="Write deterministic JSON evidence suitable for the release issue.",
+        ),
+    ] = None,
     dry_run: Annotated[
         bool,
         typer.Option(
@@ -361,9 +379,17 @@ def hosting_check_production(
     """Verify production routes, commit, and in-window data freshness (O14/O16)."""
     checked_at = datetime.now(UTC)
     try:
+        site_manifest = read_site_manifest(site_manifest_path)
+        if base_url.rstrip("/") != site_manifest.canonical_origin:
+            raise ValueError(
+                "base URL must equal site manifest canonical origin: "
+                f"expected {site_manifest.canonical_origin}, found {base_url}"
+            )
+        if re.fullmatch(r"[0-9a-f]{40}", expected_git_commit) is None:
+            raise ValueError("expected Git commit must be a full 40-character lowercase SHA")
         calendar = read_election_calendar(calendar_path)
         due = due_milestones(calendar, as_of=checked_at.date(), lead_days=7)
-    except ValueError as error:
+    except (OSError, UnicodeError, ValidationError, ValueError) as error:
         typer.echo(f"hosting check-production failed: {error}", err=True)
         raise typer.Exit(code=1) from error
     active_window = any(milestone.kind == "election_day" for milestone, _ in due)
@@ -373,7 +399,14 @@ def hosting_check_production(
         timeout=timeout,
         active_window=active_window,
         checked_at=checked_at,
+        site_manifest=site_manifest,
     )
+    if output_path is not None:
+        try:
+            _write_generated_json(output_path, report.model_dump(mode="json"))
+        except OSError as error:
+            typer.echo(f"hosting check-production failed: {error}", err=True)
+            raise typer.Exit(code=1) from error
     for line in render_summary_lines(report):
         typer.echo(line)
     if dry_run:
