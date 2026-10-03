@@ -76,6 +76,9 @@ from election_guide.publication.models import (
     _percentage_whole,  # pyright: ignore[reportPrivateUsage]
 )
 from election_guide.rendering import context
+from election_guide.rendering.validation import (
+    _html_semantic_values,  # pyright: ignore[reportPrivateUsage]
+)
 from election_guide.serialization import read_json
 from tests.page_parity import race_parity_fixture_ids
 from tests.test_personalization import DATASET_PATH, _bundle  # pyright: ignore[reportPrivateUsage]
@@ -301,6 +304,16 @@ def _leader_count(race: PublicationRace) -> int:
     )
 
 
+def _meter_label(race: PublicationRace, sources: dict[str, PublicationSource]) -> str:
+    """The meter's visible text, as the rendered-HTML validator requires it.
+
+    `_html_semantic_values` is the audited page's own statement of what each
+    display role must contain, so its `share` entry is the server's answer for
+    both a race with a share and a race without one.
+    """
+    return _html_semantic_values(race, sources)["share"][0]
+
+
 def _scored(race: PublicationRace) -> dict[str, Any]:
     """The race as the client's scorer reports it, which is what the mirrors read."""
     return {
@@ -370,14 +383,17 @@ def _race_cases(
             "expected": context.race_detail_accessible_summary(race),
         },
     ]
-    # The whole-percentage formatter still serves comparison and candidate
-    # labels outside the overview meter. A race with no share uses the meter's
-    # own N/A literal instead of its publication field's em dash.
+    # The meter's visible text. `percentage_label` is that text only when there
+    # is a share: for a race without one the template writes its own `N/A` and
+    # the field's em dash is never rendered. `rendering/validation.py` already
+    # spells the whole rule as one expression, because the rendered-HTML
+    # validator has to know what the meter should say, so both branches read it
+    # from there rather than leaving the null one to a literal nobody checks.
     cases.append(
         {
             "mirror": "share-percentage-label" if share is not None else "meter-unavailable-label",
             "input": {"share": share},
-            "expected": race.percentage_label if share is not None else "N/A",
+            "expected": _meter_label(race, sources),
         }
     )
     endorsements = context.meter_endorsements(race, sources)
@@ -713,7 +729,7 @@ def _meter_layout_case(
             "source": source,
         },
         # #325's own per-candidate mirrors: one candidate's bold/recede
-        # context, spoken name, and external percentage label, for every standing
+        # context, spoken name, and resting percent, for every standing
         # candidate this shape names — the same shapes that exercise every
         # other meter mirror's edge cases (a three-way split, adjacent
         # bands, a non-adjacent split) are what exercise the per-half

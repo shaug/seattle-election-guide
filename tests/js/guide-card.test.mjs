@@ -36,10 +36,20 @@ function rendered(template) {
 
 /**
  * @param {number|null} fillPercent
+ * @param {boolean} [noMajority]
  * @returns {import('../../src/election_guide/rendering/templates/guide-card.mjs').ShareMeterView}
  */
-const meter = (fillPercent, { degraded = false } = {}) => ({
-  na: fillPercent === null,
+// `lowFill`/`degraded` are explicit arguments rather than something this
+// fixture derives. Both thresholds live in meterView (guide-card.mjs), which
+// every meter on the site shares; a fixture that recomputed them would agree
+// with whatever production chose and pin nothing. What this file checks is
+// that the template honours the decision; `guide-lens.test.mjs` checks that
+// the low-fill decision is made at 30%.
+const meter = (fillPercent, { lowFill = false, noMajority = false, degraded = false } = {}) => ({
+  label: fillPercent === null ? 'N/A' : `${fillPercent}%`,
+  fillPercent,
+  lowFill,
+  noMajority,
   degraded,
   accessibleLabel: 'Ada Lovelace 3 of 4 endorsements',
   blocks:
@@ -70,28 +80,48 @@ test('a share with no value renders the NA meter and no blocks', () => {
   assert.equal(box.querySelectorAll('.meter-block').length, 0);
 });
 
-test('a share with a value renders its blocks without the retired percentage pill', () => {
+test('a share with a value renders its blocks and the resting percent', () => {
   const host = rendered(raceResultTemplate({ recommendation: 'Ada', meter: meter(75) }));
   const box = host.querySelector('.screen-meter');
 
-  assert.equal(box.hasAttribute('style'), false);
+  assert.equal(box.getAttribute('style'), '--meter-fill: 75%');
   assert.equal(box.getAttribute('tabindex'), '0', 'the meter is its own one tab stop');
   const block = box.querySelector('.meter-block');
   assert.equal(block.getAttribute('class'), 'meter-block meter-block-solid');
   assert.equal(block.getAttribute('style'), '--meter-w:1; --meter-c:var(--teal)');
   assert.equal(block.getAttribute('data-meter-source'), 'The Stranger');
   assert.equal(block.getAttribute('data-meter-decision'), 'Endorsed Ada Lovelace');
-  // The block carries no text of its own. Its visible geometry is the meter;
-  // the complete standings remain the container's accessible name.
+  // The block carries no text of its own — the container's own text stays
+  // exactly the resting percent, which is what the rendered-HTML validator
+  // (rendering/validation.py) holds the "share" display role to.
   assert.equal(block.textContent, '');
-  assert.equal(box.querySelector('strong'), null);
-  assert.equal(box.textContent, '');
+  assert.equal(box.querySelector('strong').textContent, '75%');
 });
 
-test('fill percentage no longer changes meter markup while density still can', () => {
-  const low = rendered(raceResultTemplate({ recommendation: 'Ada', meter: meter(12) }));
-  assert.equal(low.querySelector('.screen-meter').getAttribute('class'), 'screen-meter');
-  assert.equal(low.querySelector('.screen-meter').hasAttribute('style'), false);
+test('a populated overview meter overlays its percentage at pointer rest', () => {
+  const view = meter(75);
+  const host = rendered(raceResultTemplate({ recommendation: 'Ada', meter: view }));
+  const box = host.querySelector('.screen-meter');
+
+  assert.equal(box.getAttribute('style'), '--meter-fill: 75%');
+  assert.equal(box.querySelector('strong').textContent, '75%');
+  assert.equal(box.querySelectorAll('.meter-block').length, 1);
+});
+
+// I41: below ~30% fill the label would bleed onto the trailing field, so the
+// low-fill guard moves it after the leader's run instead.
+test('a low fill and a degraded meter each carry their own class', () => {
+  const low = rendered(
+    raceResultTemplate({
+      recommendation: 'Ada',
+      meter: meter(12, { lowFill: true, noMajority: true }),
+    }),
+  );
+  assert.equal(
+    low.querySelector('.screen-meter').getAttribute('class'),
+    'screen-meter meter-no-majority meter-low-fill',
+  );
+  assert.equal(low.querySelector('.screen-meter').getAttribute('style'), '--meter-fill: 12%');
 
   const high = rendered(raceResultTemplate({ recommendation: 'Ada', meter: meter(72) }));
   assert.equal(high.querySelector('.screen-meter').getAttribute('class'), 'screen-meter');

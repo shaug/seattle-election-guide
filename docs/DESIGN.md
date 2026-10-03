@@ -314,19 +314,23 @@ then any sticky strip, then content.
   a meter beside each name than from one meter borrowed via clickable chips
   — which is what #315 tried first, shipped, and then had to retract when
   live testing showed the chips could highlight one candidate's share inside
-  a *different* candidate's own card. Every supported surface shows the
-  endorsement blocks, hairline boundaries, and split dividers at rest; no
-  percentage overlays an overview meter. Hover, focus, or tap adds only the
-  per-block tooltip. A candidate section's own count and percent ride in a
+  a *different* candidate's own card. At rest on a pointer device the seams
+  between blocks are invisible and a left-aligned percentage rides the
+  leader's fill, so a shared meter reads almost exactly like the v1 pill it
+  replaced; hover or keyboard focus trades that percentage for hairline
+  seams and per-block tooltips, and touch shows the seams always and the
+  percentage never. A candidate section's own meter states no resting
+  percentage inside the track at all — its count and percent ride in a
   label beside the meter instead, since a percentage does not fit inside a
   half-endorsement sliver of highlighted bar. The full design — color,
   seams, splits, edge states, motion, and accessibility — is
   `docs/METER_V2.md`; where this line and that document disagree, the
   document wins. Landed #314 (2026-08-04); the v1 gradient pill it replaced
   is gone from every chrome that draws a meter, the social card included
-  (#316, 2026-08-05, `rendering/og_image.py`) — static images and print render
-  the same visible block boundaries and split dividers as the interactive
-  surfaces (docs/METER_V2.md, Decision log #29).
+  (#316, 2026-08-05, `rendering/og_image.py`) — a static image has no hover
+  to trade the percentage for seams, so it renders the resting
+  pointer-device state permanently rather than the print row's static-both
+  one (docs/METER_V2.md, Decision log #23).
 - **The meter's own caption states a count, not a percentage — and never the
   recommended choice's own name.** "21½ of 23 endorsements," using the same
   formatter the meter's split blocks make honest: a co-endorsement's half is

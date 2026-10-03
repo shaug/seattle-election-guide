@@ -105,7 +105,7 @@
    computed percentage, so nothing here needs the track's total unit count. */
 .screen-meter { position: relative; display: flex; align-items: stretch; justify-content: flex-start; width: 11rem; height: 2rem; overflow: hidden; border: 1px solid var(--line-strong); border-radius: .4rem; background: var(--meter-track); }
 .screen-meter:focus-visible { outline: .2rem solid var(--focus); outline-offset: .15rem; }
-.screen-meter-na strong { position: absolute; inset: 0; display: flex; align-items: center; padding: .05rem .75rem 0; color: var(--muted); font-size: 1.08rem; font-variant-numeric: tabular-nums; font-weight: 800; line-height: 1; text-align: left; }
+.screen-meter-na strong { color: var(--muted); }
 /* One block, one endorsement. `--meter-w`, `--meter-c` (a solid block) or
    `--meter-ca`/`--meter-cb` (a split's top/bottom halves), and the seam
    variables below all come from `MeterBlockRender.style`
@@ -115,13 +115,13 @@
    between two different splits in one band shares its top half's color (the
    same leader) but not its bottom half's (a different partner each), so a
    single shared hairline color painted one half of the edge the wrong color
-   until this rule read the pair. `--meter-seam-color` is the common case
-   (both halves agree, so a flat `border-left-color` says it);
-   `--meter-seam-image` is a
+   until this rule read the pair. `--meter-seam-rest-color`/`-hover-color` is
+   the common case (both halves agree, so a flat, smoothly transitionable
+   `border-left-color` says it); `--meter-seam-rest-image`/`-hover-image` is a
    two-stop `border-image` gradient for the rarer case where they do not —
    `border-image-source: none` (its default) falls back to the flat color
    automatically, so only one of the pair need ever be set at a time. */
-.meter-block { position: relative; flex: var(--meter-w) 0 0; min-width: 0; border-left: 1px solid var(--meter-seam-color, transparent); border-image-slice: 1; border-image-source: var(--meter-seam-image, none); }
+.meter-block { position: relative; flex: var(--meter-w) 0 0; min-width: 0; border-left: 1px solid var(--meter-seam-rest-color, transparent); border-image-slice: 1; border-image-source: var(--meter-seam-rest-image, none); transition: border-left-color .15s ease; }
 .meter-block:first-child { border-left-color: transparent; border-image-source: none; }
 .meter-block-solid { background: var(--meter-c); }
 /* A split block's own background (set only where a tongue tip rounds) is what
@@ -130,7 +130,7 @@
 .meter-block-split { background: var(--meter-tongue-bg, transparent); }
 .meter-half { position: absolute; left: 0; right: 0; height: 50%; }
 .meter-half-top { top: 0; background: var(--meter-ca); }
-.meter-half-bottom { bottom: 0; background: var(--meter-cb); border-top: 1px solid var(--meter-splitline, transparent); }
+.meter-half-bottom { bottom: 0; background: var(--meter-cb); border-top: 1px solid var(--meter-splitline-rest, transparent); transition: border-top-color .15s ease; }
 /* Corner rule: a curve appears only where two candidates' colors meet. Each
    tongue tip rounds its single interior corner; a band edge that is also the
    meter's own outer edge carries neither class, so it stays square. */
@@ -141,9 +141,38 @@
    as plain candidate runs — the color change at a run boundary is still the
    boundary, without a line drawing it. */
 .screen-meter.meter-degraded .meter-block { border-left-color: transparent !important; border-image-source: none !important; }
-/* Meter v2 fully replaces the old pill: every endorsement seam and split is
-   visible before interaction. Hover and focus add source detail through the
-   shared tooltip, but never change the meter's structure. */
+/* The resting percentage: an absolutely positioned overlay rather than a
+   block's own text, so it reads as one number riding the whole bar exactly as
+   v1's did, however many blocks make up the fill beneath it. */
+.screen-meter strong { position: absolute; inset: 0; z-index: 1; display: flex; align-items: center; padding: .05rem .75rem 0; color: var(--white); font-size: 1.08rem; font-variant-numeric: tabular-nums; font-weight: 800; line-height: 1; text-align: left; pointer-events: none; transition: opacity .15s ease; }
+.screen-meter.meter-no-majority strong { color: var(--navy); }
+/* I41: below ~30% fill the white label rides past the leader's blocks onto the
+   trailing field and loses contrast; past the threshold the label renders
+   after the leader's run instead, in muted ink. The threshold itself is
+   decided once, in `guide-card.mjs`'s meterView. Its job shrank with meter
+   v2: hover and touch already remove the label entirely, so this guard now
+   only protects the desktop resting label the percentage rides
+   (docs/METER_V2.md, Implementation notes). */
+.screen-meter.meter-low-fill strong { padding-left: calc(var(--meter-fill) + .4rem); color: var(--muted); }
+/* The discovery model (docs/METER_V2.md): at rest on a pointer device the
+   seams are invisible and the percent rides the fill; hover or focus trades
+   one for the other. Touch has no hover, so the seams are always visible and
+   the percent never appears at all — `hover: none` is the touch signal, which
+   deliberately gives a hybrid touch-laptop the pointer treatment. */
+@media (hover: hover) {
+  .screen-meter:not(.screen-meter-na):hover strong,
+  .screen-meter:not(.screen-meter-na):focus-within strong { opacity: 0; }
+  .screen-meter:hover .meter-block, .screen-meter:focus-within .meter-block { border-left-color: var(--meter-seam-hover-color, transparent); border-image-source: var(--meter-seam-hover-image, none); }
+  .screen-meter:hover .meter-half-bottom, .screen-meter:focus-within .meter-half-bottom { border-top-color: var(--meter-splitline-hover, transparent); }
+}
+@media (hover: none) {
+  .screen-meter:not(.screen-meter-na) strong { display: none; }
+  .meter-block { border-left-color: var(--meter-seam-hover-color, transparent); border-image-source: var(--meter-seam-hover-image, none); }
+  .meter-half-bottom { border-top-color: var(--meter-splitline-hover, transparent); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .meter-block, .meter-half-bottom, .screen-meter strong { transition: none; }
+}
 /* The per-block tooltip (`meter-tooltip.mjs`): one shared, fixed-position
    element the whole page's meters use, never a live region — the meter's own
    `role="img"` name carries the full standings, and this only adds the one
@@ -219,4 +248,10 @@
   .screen-race-result, .screen-race-context { break-inside: avoid; }
   .support-line, .lens-comparison, .insufficient-note { font-size: 8pt; }
   .lens-banner { display: none !important; }
+  /* Print shows both the percentage and the seams, static (docs/METER_V2.md,
+     Chrome geometry) — the revealed state, permanently, with no hover to
+     leave. */
+  .screen-meter strong { display: flex !important; opacity: 1 !important; }
+  .meter-block { border-left-color: var(--meter-seam-hover-color, transparent) !important; border-image-source: var(--meter-seam-hover-image, none) !important; }
+  .meter-half-bottom { border-top-color: var(--meter-splitline-hover, transparent) !important; }
 }

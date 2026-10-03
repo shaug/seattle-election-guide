@@ -33,8 +33,8 @@ def _site_manifest() -> SiteManifest:
             "elections": [
                 {
                     "election_id": "wa-2026-general",
-                    "bundle_id": "wa-2026-general-2026-general.2",
-                    "release_version": "2026-general.2",
+                    "bundle_id": "wa-2026-general-2026-general.3",
+                    "release_version": "2026-general.3",
                     "source_panel_id": "general-panel",
                     "source_panel_hash": "1" * 64,
                     "source_registry_hash": "2" * 64,
@@ -63,8 +63,8 @@ def _deployment_manifest() -> DeploymentManifest:
             "elections": [
                 {
                     "election_id": "wa-2026-general",
-                    "bundle_id": "wa-2026-general-2026-general.2",
-                    "release_version": "2026-general.2",
+                    "bundle_id": "wa-2026-general-2026-general.3",
+                    "release_version": "2026-general.3",
                     "git_commit": COMMIT,
                     "source_panel_id": "general-panel",
                     "source_panel_hash": "1" * 64,
@@ -130,7 +130,7 @@ def test_deployment_contract_rejects_wrong_top_level_manifest_identity(
 @pytest.mark.parametrize(
     ("election_index", "field", "value", "expected_error"),
     [
-        (0, "release_version", "2026-general.3", "release version"),
+        (0, "release_version", "2026-general.2", "release version"),
         (0, "bundle_id", "wrong-general", "bundle ID"),
         (0, "source_panel_hash", "f" * 64, "source panel hash"),
         (0, "source_registry_hash", "e" * 64, "source registry hash"),

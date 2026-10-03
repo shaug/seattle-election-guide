@@ -25,12 +25,15 @@
 {% macro segmented_meter(view) -%}
 <div class="{{ 'screen-meter screen-meter-na' if view.na else
     'screen-meter'
+    ~ (' meter-no-majority' if view.no_majority else '')
+    ~ (' meter-low-fill' if view.low_fill else '')
     ~ (' meter-degraded' if view.degraded else '') }}"
+  {%- if not view.na %} style="--meter-fill: {{ view.fill_percent }}%"{% endif %}
   role="img" data-display-role="share" aria-label="{{ view.accessible_label }}" tabindex="0"
 >{% if view.na -%}
 <strong>N/A</strong>
 {%- else -%}
-{% for block in view.blocks %}{{ meter_block(block) }}{% endfor %}
+{% for block in view.blocks %}{{ meter_block(block) }}{% endfor %}<strong>{{ view.percentage_label }}</strong>
 {%- endif %}</div>
 {%- endmacro %}
 
@@ -60,9 +63,9 @@
    replacement for the single shared headline meter `segmented_meter` above
    used to draw there. `view` is one `context.CandidateMeterView`: the same
    shared, once-per-race blocks every candidate's section reuses verbatim,
-   paired index-for-index with this candidate's own `contexts`. No percentage
-   renders inside the track — the count and percent ride beside it instead
-   (Decision: "Section resting label"), which
+   paired index-for-index with this candidate's own `contexts`. No resting
+   percentage renders inside the track — the count and percent the meter no
+   longer carries ride beside it instead (Decision: "Resting label"), which
    `race.html.j2`'s own candidate-section markup writes, not this macro. #}
 {% macro candidate_meter(candidate_id, view) -%}
 <div class="screen-meter screen-meter-section" role="img" data-display-role="candidate-share"
