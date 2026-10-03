@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-seiu-925-20261003T040651Z-548babaf1872",
+  "entered_at": "2026-10-03T04:30:00Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official current 2026 endorsements; additions to prior reviewed block.",
+  "evidence_type": "web_page",
+  "id": "manual-seiu-925-20261003T043000Z-6ee4c1622114",
+  "review_note": "Human reviewer verified every listed new or changed transcription against the official evidence for issue",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-03T04:52:29Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "seiu-925",
+  "transcription": "ld-32-state-representative-1: Danica Noble\ninitiative-26-001: No\ninitiative-26-638: No\ninitiative-26-645: No"
+}

@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 623839,
+  "canonical_url": "https://www.wahousingalliance.org/endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "bc8998b01cfa6fbb4ef21528733c212fbd618d771f08fed0bbece24859e836ef",
+  "http_status": 200,
+  "id": "capture-washington-housing-alliance-20261003T040651Z-45b7f81fdf2f",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party page retained locally for review only.",
+  "requested_url": "https://www.wahousingalliance.org/endorsements",
+  "retrieved_at": "2026-10-03T04:06:51Z",
+  "schema_version": "1.0",
+  "source_id": "washington-housing-alliance",
+  "storage_reference": "sha256/bc/bc8998b01cfa6fbb4ef21528733c212fbd618d771f08fed0bbece24859e836ef",
+  "storage_scope": "local_only",
+  "title": "Washington Housing Alliance 2026 endorsements",
+  "updated_at": null
+}

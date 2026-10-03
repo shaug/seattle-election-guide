@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-tech-4-housing-20261003T040651Z-f82d2056113d",
+  "entered_at": "2026-10-03T04:30:00Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official organization-linked Bluesky endorsement post.",
+  "evidence_type": "web_page",
+  "id": "manual-tech-4-housing-20261003T043000Z-0eed4609da4a",
+  "review_note": "Human reviewer verified every listed new or changed transcription against the official evidence for issue",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-03T04:52:29Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "tech-4-housing",
+  "transcription": "king-county-council-2: Rebecca Saldaña\nld-37-state-representative-1: Kelabe Tewolde\nld-37-state-representative-2: Jaelynn Scott\nExcluded from general ballot: Ron Davis"
+}

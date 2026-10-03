@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 11368,
+  "canonical_url": "https://bsky.app/profile/tech4housing.org/post/3mpkb7wcjok2z",
+  "capture_method": "static_html",
+  "content_sha256": "0526349e7e4c91504e3d6843fbe78d7e9f2e02d8ecc1e342700be6b714e6c87e",
+  "http_status": 200,
+  "id": "capture-tech-4-housing-20261003T040651Z-f82d2056113d",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party page retained locally for review only.",
+  "requested_url": "https://bsky.app/profile/tech4housing.org/post/3mpkb7wcjok2z",
+  "retrieved_at": "2026-10-03T04:06:51Z",
+  "schema_version": "1.0",
+  "source_id": "tech-4-housing",
+  "storage_reference": "sha256/05/0526349e7e4c91504e3d6843fbe78d7e9f2e02d8ecc1e342700be6b714e6c87e",
+  "storage_scope": "local_only",
+  "title": "Tech 4 Housing 2026 candidate endorsement post",
+  "updated_at": null
+}

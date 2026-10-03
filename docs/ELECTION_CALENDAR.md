@@ -316,6 +316,16 @@ no memory of the previous one, and the same input has to produce the same bytes.
 The event's identity never changes, so a moved date corrects the existing entry
 instead of adding a second one.
 
+`ballots_mail` is the statutory domestic mailing date. An election may also
+declare the internal `overseas_service_ballots_mail` milestone when those
+ballots go out earlier. `guide_publishes` keys off the first official ballot
+issuance, not automatically off domestic mailing: for the 2026 general election
+both the overseas/service mailing and publication deadline are 2026-09-18,
+while domestic ballots mail on 2026-10-16. Keeping the first issuance internal
+avoids presenting its specialized mailing date as the date every local voter
+should expect a ballot, while still making the earlier voter deadline explicit
+in the operational calendar.
+
 ## Adding an election
 
 Append the election, then its milestones, then run the validator. Copy the
