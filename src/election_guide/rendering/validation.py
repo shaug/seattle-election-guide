@@ -63,6 +63,7 @@ def validate_rendered_guide(
     expected_race_ids = [race.id for race in expected_races]
     source_by_id = {source.id: source for source in view_model.sources}
     mismatched_html_roles: list[str] = []
+    mismatched_meter_structure: list[str] = []
     for race in expected_races:
         for role, expected_values in _html_semantic_values(race, source_by_id).items():
             observed_values = [
@@ -85,7 +86,7 @@ def validate_rendered_guide(
         # the segmented markup exists, not only the resting percentage text
         # `_html_semantic_values`'s "share" role already checks.
         if parser.meter_block_counts.get(race.id, 0) != len(meter.blocks):
-            mismatched_html_roles.append(f"{race.id}/share-block-count")
+            mismatched_meter_structure.append(f"{race.id}/share-block-count")
         # The race page's own headline no longer draws a meter at all
         # (docs/METER_V2.md, Chrome geometry: "The headline meter's own
         # fate"; #325) — every standing candidate's own section draws one
@@ -103,7 +104,7 @@ def validate_rendered_guide(
         )
         expected_candidate_block_total = per_candidate_block_count * len(candidate_meter_views)
         if race_parser.meter_block_counts.get(race.id, 0) != expected_candidate_block_total:
-            mismatched_html_roles.append(f"{race.id}/race-page-candidate-share-block-count")
+            mismatched_meter_structure.append(f"{race.id}/race-page-candidate-share-block-count")
         # Every standing candidate states their own count and share, not the
         # race's full standings the retired headline meter spoke — proving
         # each section names its own candidate rather than repeating the
@@ -256,6 +257,18 @@ def validate_rendered_guide(
                 "Responsive HTML exposes exactly one canonical value in every semantic field."
                 if not mismatched_html_roles
                 else f"HTML semantic fields differ: {', '.join(mismatched_html_roles[:5])}"
+            ),
+        ),
+        RenderCheck(
+            id="html-meter-structure",
+            passed=not mismatched_meter_structure,
+            message=(
+                "Every endorsement meter renders the canonical segmented block structure."
+                if not mismatched_meter_structure
+                else (
+                    "HTML endorsement meter structure differs: "
+                    f"{', '.join(mismatched_meter_structure[:5])}"
+                )
             ),
         ),
         RenderCheck(

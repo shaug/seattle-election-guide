@@ -56,8 +56,8 @@ import { candidateMeterTemplate } from './guide-card.mjs';
  * `meter` is this candidate's own section meter — the race's own headline
  * meter retired, and every candidate's section gained one of its own instead
  * (docs/METER_V2.md, Chrome geometry: "The headline meter's own fate"; #325).
- * v1's per-candidate mini-meter used to sit beside the tied-leader kicker;
- * meter v2 retired that chrome, and #315's shared-bar candidate-context
+ * The retired per-candidate mini-meter used to sit beside the tied-leader
+ * kicker; the endorsement meter retired that chrome, and #315's shared-bar candidate-context
  * treatment that was meant to replace its job shipped, then was found
  * information-design incoherent and unshipped — this section's own static
  * meter is what #325 settled on instead.

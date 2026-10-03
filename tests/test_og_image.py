@@ -226,14 +226,14 @@ def test_a_race_with_no_measurable_share_draws_an_empty_track_and_an_n_a_label()
     """N/A follows the site's own edge-state rule (docs/METER_V2.md, Edge
     states): an empty track under a muted "N/A", not an absent meter row —
     what this module drew before this ticket, back when the track was its own
-    private v1 color rather than `--meter-track`.
+    private legacy color rather than `--meter-track`.
     """
     na = render_race_card(_card(na=True, blocks=(), percentage_label="N/A"))
     with_meter = render_race_card(_card())
 
     assert na != with_meter
     # The track color shows only where there is no meter to fill it: unlike
-    # v1's partial fill, meter v2's blocks always cover the meter's whole
+    # Unlike the retired partial fill, the endorsement blocks always cover the meter's whole
     # width regardless of the leader's share, so a card with real blocks never
     # exposes the track underneath them.
     assert METER_TRACK in _colours(na)

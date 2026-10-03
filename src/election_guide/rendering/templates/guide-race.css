@@ -142,8 +142,8 @@
    boundary, without a line drawing it. */
 .screen-meter.meter-degraded .meter-block { border-left-color: transparent !important; border-image-source: none !important; }
 /* The resting percentage: an absolutely positioned overlay rather than a
-   block's own text, so it reads as one number riding the whole bar exactly as
-   v1's did, however many blocks make up the fill beneath it. */
+   block's own text or a second fill implementation, so it reads as one number
+   over the canonical endorsement blocks. */
 .screen-meter strong { position: absolute; inset: 0; z-index: 1; display: flex; align-items: center; padding: .05rem .75rem 0; color: var(--white); font-size: 1.08rem; font-variant-numeric: tabular-nums; font-weight: 800; line-height: 1; text-align: left; pointer-events: none; transition: opacity .15s ease; }
 .screen-meter.meter-no-majority strong { color: var(--navy); }
 /* I41: below ~30% fill the white label rides past the leader's blocks onto the
@@ -153,7 +153,7 @@
    v2: hover and touch already remove the label entirely, so this guard now
    only protects the desktop resting label the percentage rides
    (docs/METER_V2.md, Implementation notes). */
-.screen-meter.meter-low-fill strong { padding-left: calc(var(--meter-fill) + .4rem); color: var(--muted); }
+.screen-meter.meter-low-fill strong { padding-left: calc(var(--meter-label-offset) + .4rem); color: var(--muted); }
 /* The discovery model (docs/METER_V2.md): at rest on a pointer device the
    seams are invisible and the percent rides the fill; hover or focus trades
    one for the other. Touch has no hover, so the seams are always visible and
