@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-tech-4-taxes-20260927T193033Z-8e781f3ba9df",
+  "entered_at": "2026-09-27T19:30:33Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official 2025-2026 Candidate Endorsements index, candidate and office headings.",
+  "evidence_type": "web_page",
+  "id": "manual-tech-4-taxes-20260927T193033Z-cc8c8440d05c",
+  "review_note": "shaug confirmed the seven-name transcription against the official Tech 4 Taxes page on 2026-09-27. Ron Davis remained on the current-cycle source index but was excluded because he is not on the King County November ballot. The page is a current-cycle endorsement index, not a separate November slate.",
+  "review_status": "verified",
+  "reviewed_at": "2026-09-27T23:25:29Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "tech-4-taxes",
+  "transcription": "ld-43-state-senator: Hannah Sabio-Howell\nld-36-state-senator: Noel C. Frame\nking-county-council-2: Toshiko Grace Hasegawa, Rebecca Saldaña\nseattle-city-council-5: Nilu Jenks\nld-32-state-representative-1: Danica Noble\nld-37-state-representative-2: Jaelynn Scott"
+}
