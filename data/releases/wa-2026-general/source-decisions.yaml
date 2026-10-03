@@ -2,9 +2,10 @@ schema_version: '1.0'
 election_id: wa-2026-general
 data_as_of: '2026-10-03T05:06:39Z'
 reviewer: shaug
-review_note: 'Complete initial panel-wide discovery sweep for issue #401. OpenAI Codex located and captured official
-  publications and prepared the transcriptions; shaug reviewed and confirmed every source block against the captured
-  evidence. All 43 eligible sources resolve to 20 published decision blocks, 17 not-found dispositions, or 6 access-restricted
+review_note: 'Complete prepublication refresh for issue #453. OpenAI Codex rechecked all 43 eligible sources, captured
+  21 new or changed official publications in 22 evidence records, and prepared the transcriptions; shaug verified every
+  new or changed transcription and independently rechecked the 13 unchanged published source blocks against current
+  official evidence. The sources resolve to 34 published decision blocks, 5 not-found dispositions, or 4 access-restricted
   dispositions. Primary-only choices that did not advance were omitted. Washington Conservation Action’s unmatched
   IL26-368 text and the Alliance for Gun Responsibility’s mismatched Steve Bergquist district label remain untranscribed.
   The reviewer confirmed mapping NWPC-WA’s Darya Farivar claim to LD46 from its same-card biography and the frozen
