@@ -79,6 +79,11 @@ fails when the committed copy differs.
 An ordinary pull request does not touch it. The file records tagged releases only, so it changes
 once per release, as part of publishing one — see [RELEASE.md](docs/RELEASE.md).
 
+Release operators must follow the executable sequence in [RELEASE.md](docs/RELEASE.md) and the
+read-only production probe in [HOSTING.md](docs/HOSTING.md). Preserve the named full candidate SHAs,
+release digest, CI artifact, deployment ID, lineage report, and probe output; a branch name or newer
+`main` head is not a substitute for an expired exact-candidate artifact.
+
 ## Adding sources
 
 Register the organization and its eligibility before collecting results. Record discovery status

@@ -328,6 +328,47 @@ because a preview is a copy of the site rather than a separate site.
 Production is unaffected. The `pages:deploy` script defaults to `--branch=main`; only the preview
 workflow overrides it, by setting `PAGES_BRANCH`.
 
+## Publication-day production probe
+
+After an explicitly authorized deployment completes, use the existing production checker in its
+read-only mode. Supply the full deployed `production_candidate_sha`; the checker refuses a base URL
+other than the site manifest's canonical origin and uses that manifest as the trusted expectation
+for election order, current marker, release and bundle identities, panel/registry identities, and
+the historical declaration.
+
+<!-- runbook-command:production-probe -->
+```bash
+uv run election-guide hosting check-production \
+  https://seattleelections.guide \
+  --site-manifest config/hosting/site.yaml \
+  --expected-git-commit "$production_candidate_sha" \
+  --dry-run \
+  --output dist/production-probe.json
+```
+
+`--dry-run` is mandatory for publication evidence. It bypasses alert reconciliation completely, so
+the probe cannot open, update, or close the scheduled monitor's issue. Scheduled monitoring omits
+that option and keeps its existing alert behavior.
+
+The JSON output preserves the checked URL and time, the raw HTTP status and `Location` header for
+every redirect, the complete expected and observed deployment manifests, all route results, and the
+resolved representative race. That race is the lexicographically first current-election race route
+in the fetched schema-valid deployment manifest's asset inventory. The checker also requires:
+
+- a temporary `307` from `/` to the manifest-declared general guide;
+- `/e/` with the complete ordered election list and only the general marked current;
+- successful general and historical-primary guides;
+- successful representative race and comparisons pages;
+- a genuine `404` from a deterministic unknown-election path; and
+- `2026-general.1` and the exact `production_candidate_sha` in the public manifest.
+
+Attach `dist/production-probe.json` to the deployment issue with the approving actor, approval time,
+CI run and artifact, and deployment ID. Run the same command a second time after deployment
+completion and preserve that output separately (for example,
+`dist/production-probe-confirmation.json`); both probes must pass. A failure preserves evidence and
+routes the operator to [the production rollback runbook](runbooks/production-rollback.md). It never
+authorizes a rollback, kill-switch change, or approval of another SHA.
+
 ## Production freshness check
 
 The scheduled production check reads the current election's public
