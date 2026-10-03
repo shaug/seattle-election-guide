@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 5022,
+  "canonical_url": "https://tech4taxes.org/endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "eb92bc84b2cdb6283377e60d07c48d64c48d1c72aef96ad8976f3b32a579f76d",
+  "http_status": 200,
+  "id": "capture-tech-4-taxes-20260927T193033Z-8e781f3ba9df",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party page retained locally for review only.",
+  "requested_url": "https://tech4taxes.org/endorsements",
+  "retrieved_at": "2026-09-27T19:30:33Z",
+  "schema_version": "1.0",
+  "source_id": "tech-4-taxes",
+  "storage_reference": "sha256/eb/eb92bc84b2cdb6283377e60d07c48d64c48d1c72aef96ad8976f3b32a579f76d",
+  "storage_scope": "local_only",
+  "title": "Tech 4 Taxes 2025-2026 Candidate Endorsements",
+  "updated_at": null
+}

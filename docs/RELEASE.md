@@ -30,8 +30,8 @@ candidate allocation, and review provenance. It writes:
 - immutable public capture records under `data/releases/wa-2026-primary/manifests/`.
 
 Multi-candidate decisions create a high-severity review item and a linked approval from the named
-ledger reviewer. The canonical dataset therefore preserves the ambiguity boundary without leaving
-publication-blocking work unresolved.
+ledger reviewer (or the source block's reviewer when supplied). The canonical dataset therefore
+preserves the ambiguity boundary without leaving publication-blocking work unresolved.
 
 Verify exact fresh-checkout reproducibility without changing tracked files:
 

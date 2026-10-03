@@ -95,6 +95,29 @@
     {
       "availability": "captured",
       "browser_required": false,
+      "byte_length": 2091,
+      "canonical_url": "https://tech4taxes.org/endorsements",
+      "capture_method": "manual_upload",
+      "content_sha256": "4c21c6cd750078925a7125fb2bd4ec0f6dbf6e589e63738ce4aaf1bd12523d40",
+      "http_status": null,
+      "id": "capture-tech-4-taxes-20260927T193033Z-c975d7525b9b",
+      "media_type": "application/json",
+      "published_at": null,
+      "redirect_chain": [],
+      "redistribution": "permitted",
+      "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+      "requested_url": "https://tech4taxes.org/endorsements",
+      "retrieved_at": "2026-09-27T19:30:33Z",
+      "schema_version": "1.0",
+      "source_id": "tech-4-taxes",
+      "storage_reference": "sha256/4c/4c21c6cd750078925a7125fb2bd4ec0f6dbf6e589e63738ce4aaf1bd12523d40",
+      "storage_scope": "local_only",
+      "title": "Permitted 2026 endorsement decision extract: Tech 4 Taxes",
+      "updated_at": null
+    },
+    {
+      "availability": "captured",
+      "browser_required": false,
       "byte_length": 5459,
       "canonical_url": "https://32democrats.org/2026-endorsements/",
       "capture_method": "manual_upload",
@@ -1271,6 +1294,96 @@
       "raw_status_text": "endorsed",
       "requires_review": false,
       "source_id": "king-county-democrats"
+    },
+    {
+      "capture_id": "capture-tech-4-taxes-20260927T193033Z-c975d7525b9b",
+      "evidence_excerpt": null,
+      "evidence_locator": "Official 2025-2026 Candidate Endorsements index, candidate and office headings. Capture capture-tech-4-taxes-20260927T193033Z-8e781f3ba9df.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-8486f4b6e1705acd",
+      "raw_candidate_text": "Hannah Sabio-Howell",
+      "raw_notes": "Issue #465: OpenAI Codex transcribed the official live 2025-2026 Tech 4 Taxes index and matched seven names to the November general ballot. Ron Davis is not on that ballot and is excluded. shaug confirmed the seven-name transcription against the official page on 2026-09-27. This is a current-cycle endorsement, not a separate November slate.",
+      "raw_race_text": "Legislative District 43 State Senator",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "tech-4-taxes"
+    },
+    {
+      "capture_id": "capture-tech-4-taxes-20260927T193033Z-c975d7525b9b",
+      "evidence_excerpt": null,
+      "evidence_locator": "Official 2025-2026 Candidate Endorsements index, candidate and office headings. Capture capture-tech-4-taxes-20260927T193033Z-8e781f3ba9df.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-65d1fe0d1896b46e",
+      "raw_candidate_text": "Noel C. Frame",
+      "raw_notes": "Issue #465: OpenAI Codex transcribed the official live 2025-2026 Tech 4 Taxes index and matched seven names to the November general ballot. Ron Davis is not on that ballot and is excluded. shaug confirmed the seven-name transcription against the official page on 2026-09-27. This is a current-cycle endorsement, not a separate November slate.",
+      "raw_race_text": "Legislative District 36 State Senator",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "tech-4-taxes"
+    },
+    {
+      "capture_id": "capture-tech-4-taxes-20260927T193033Z-c975d7525b9b",
+      "evidence_excerpt": null,
+      "evidence_locator": "Official 2025-2026 Candidate Endorsements index, candidate and office headings. Capture capture-tech-4-taxes-20260927T193033Z-8e781f3ba9df.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-7822fb3fb378d26f",
+      "raw_candidate_text": "Toshiko Grace Hasegawa and Rebecca Saldaña",
+      "raw_notes": "Issue #465: OpenAI Codex transcribed the official live 2025-2026 Tech 4 Taxes index and matched seven names to the November general ballot. Ron Davis is not on that ballot and is excluded. shaug confirmed the seven-name transcription against the official page on 2026-09-27. This is a current-cycle endorsement, not a separate November slate.",
+      "raw_race_text": "Metropolitan King County Council — District 2",
+      "raw_status_text": "dual endorsement",
+      "requires_review": true,
+      "source_id": "tech-4-taxes"
+    },
+    {
+      "capture_id": "capture-tech-4-taxes-20260927T193033Z-c975d7525b9b",
+      "evidence_excerpt": null,
+      "evidence_locator": "Official 2025-2026 Candidate Endorsements index, candidate and office headings. Capture capture-tech-4-taxes-20260927T193033Z-8e781f3ba9df.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-e2eeb2f8e9141958",
+      "raw_candidate_text": "Nilu Jenks",
+      "raw_notes": "Issue #465: OpenAI Codex transcribed the official live 2025-2026 Tech 4 Taxes index and matched seven names to the November general ballot. Ron Davis is not on that ballot and is excluded. shaug confirmed the seven-name transcription against the official page on 2026-09-27. This is a current-cycle endorsement, not a separate November slate.",
+      "raw_race_text": "Seattle City Council — District 5",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "tech-4-taxes"
+    },
+    {
+      "capture_id": "capture-tech-4-taxes-20260927T193033Z-c975d7525b9b",
+      "evidence_excerpt": null,
+      "evidence_locator": "Official 2025-2026 Candidate Endorsements index, candidate and office headings. Capture capture-tech-4-taxes-20260927T193033Z-8e781f3ba9df.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-cd9519581954a466",
+      "raw_candidate_text": "Danica Noble",
+      "raw_notes": "Issue #465: OpenAI Codex transcribed the official live 2025-2026 Tech 4 Taxes index and matched seven names to the November general ballot. Ron Davis is not on that ballot and is excluded. shaug confirmed the seven-name transcription against the official page on 2026-09-27. This is a current-cycle endorsement, not a separate November slate.",
+      "raw_race_text": "Legislative District 32 State Representative — Position 1",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "tech-4-taxes"
+    },
+    {
+      "capture_id": "capture-tech-4-taxes-20260927T193033Z-c975d7525b9b",
+      "evidence_excerpt": null,
+      "evidence_locator": "Official 2025-2026 Candidate Endorsements index, candidate and office headings. Capture capture-tech-4-taxes-20260927T193033Z-8e781f3ba9df.",
+      "extraction_confidence": "1",
+      "extractor": "manual-release-ledger",
+      "extractor_version": "1.0",
+      "id": "claim-99de6f352c4b88d0",
+      "raw_candidate_text": "Jaelynn Scott",
+      "raw_notes": "Issue #465: OpenAI Codex transcribed the official live 2025-2026 Tech 4 Taxes index and matched seven names to the November general ballot. Ron Davis is not on that ballot and is excluded. shaug confirmed the seven-name transcription against the official page on 2026-09-27. This is a current-cycle endorsement, not a separate November slate.",
+      "raw_race_text": "Legislative District 37 State Representative — Position 2",
+      "raw_status_text": "endorsed",
+      "requires_review": false,
+      "source_id": "tech-4-taxes"
     },
     {
       "capture_id": "capture-32nd-district-democrats-20260914T221815Z-f3368c43a49e",
@@ -7684,6 +7797,140 @@
       "reviewer": "shaug",
       "source_capture_id": "capture-king-county-democrats-20260914T221815Z-852f64800373",
       "source_id": "king-county-democrats",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-43-state-senator--hannah-sabio-howell": "1"
+      },
+      "candidate_ids": [
+        "ld-43-state-senator--hannah-sabio-howell"
+      ],
+      "election_id": "wa-2026-general",
+      "extracted_claim_id": "claim-8486f4b6e1705acd",
+      "id": "endorsement-e3023589f8c32cda",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "Issue #465: OpenAI Codex transcribed the official live 2025-2026 Tech 4 Taxes index and matched seven names to the November general ballot. Ron Davis is not on that ballot and is excluded. shaug confirmed the seven-name transcription against the official page on 2026-09-27. This is a current-cycle endorsement, not a separate November slate.",
+      "published_at": null,
+      "race_id": "ld-43-state-senator",
+      "review_item_id": null,
+      "reviewed_at": "2026-09-27T23:25:29Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-tech-4-taxes-20260927T193033Z-c975d7525b9b",
+      "source_id": "tech-4-taxes",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-36-state-senator--noel-c-frame": "1"
+      },
+      "candidate_ids": [
+        "ld-36-state-senator--noel-c-frame"
+      ],
+      "election_id": "wa-2026-general",
+      "extracted_claim_id": "claim-65d1fe0d1896b46e",
+      "id": "endorsement-8977529c250fe846",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "Issue #465: OpenAI Codex transcribed the official live 2025-2026 Tech 4 Taxes index and matched seven names to the November general ballot. Ron Davis is not on that ballot and is excluded. shaug confirmed the seven-name transcription against the official page on 2026-09-27. This is a current-cycle endorsement, not a separate November slate.",
+      "published_at": null,
+      "race_id": "ld-36-state-senator",
+      "review_item_id": null,
+      "reviewed_at": "2026-09-27T23:25:29Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-tech-4-taxes-20260927T193033Z-c975d7525b9b",
+      "source_id": "tech-4-taxes",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "king-county-council-2--rebecca-saldana": "1/2",
+        "king-county-council-2--toshiko-grace-hasegawa": "1/2"
+      },
+      "candidate_ids": [
+        "king-county-council-2--toshiko-grace-hasegawa",
+        "king-county-council-2--rebecca-saldana"
+      ],
+      "election_id": "wa-2026-general",
+      "extracted_claim_id": "claim-7822fb3fb378d26f",
+      "id": "endorsement-38e121938ad91423",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "Issue #465: OpenAI Codex transcribed the official live 2025-2026 Tech 4 Taxes index and matched seven names to the November general ballot. Ron Davis is not on that ballot and is excluded. shaug confirmed the seven-name transcription against the official page on 2026-09-27. This is a current-cycle endorsement, not a separate November slate.",
+      "published_at": null,
+      "race_id": "king-county-council-2",
+      "review_item_id": "review-d9fce65be1b1a67b",
+      "reviewed_at": "2026-09-27T23:25:29Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-tech-4-taxes-20260927T193033Z-c975d7525b9b",
+      "source_id": "tech-4-taxes",
+      "status": "dual_endorsement"
+    },
+    {
+      "allocation": {
+        "seattle-city-council-5--nilu-jenks": "1"
+      },
+      "candidate_ids": [
+        "seattle-city-council-5--nilu-jenks"
+      ],
+      "election_id": "wa-2026-general",
+      "extracted_claim_id": "claim-e2eeb2f8e9141958",
+      "id": "endorsement-6a24a08a56f8795c",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "Issue #465: OpenAI Codex transcribed the official live 2025-2026 Tech 4 Taxes index and matched seven names to the November general ballot. Ron Davis is not on that ballot and is excluded. shaug confirmed the seven-name transcription against the official page on 2026-09-27. This is a current-cycle endorsement, not a separate November slate.",
+      "published_at": null,
+      "race_id": "seattle-city-council-5",
+      "review_item_id": null,
+      "reviewed_at": "2026-09-27T23:25:29Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-tech-4-taxes-20260927T193033Z-c975d7525b9b",
+      "source_id": "tech-4-taxes",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-32-state-representative-1--danica-noble": "1"
+      },
+      "candidate_ids": [
+        "ld-32-state-representative-1--danica-noble"
+      ],
+      "election_id": "wa-2026-general",
+      "extracted_claim_id": "claim-cd9519581954a466",
+      "id": "endorsement-e89a1ab41c83f0c7",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "Issue #465: OpenAI Codex transcribed the official live 2025-2026 Tech 4 Taxes index and matched seven names to the November general ballot. Ron Davis is not on that ballot and is excluded. shaug confirmed the seven-name transcription against the official page on 2026-09-27. This is a current-cycle endorsement, not a separate November slate.",
+      "published_at": null,
+      "race_id": "ld-32-state-representative-1",
+      "review_item_id": null,
+      "reviewed_at": "2026-09-27T23:25:29Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-tech-4-taxes-20260927T193033Z-c975d7525b9b",
+      "source_id": "tech-4-taxes",
+      "status": "endorsed"
+    },
+    {
+      "allocation": {
+        "ld-37-state-representative-2--jaelynn-scott": "1"
+      },
+      "candidate_ids": [
+        "ld-37-state-representative-2--jaelynn-scott"
+      ],
+      "election_id": "wa-2026-general",
+      "extracted_claim_id": "claim-99de6f352c4b88d0",
+      "id": "endorsement-288a0ddad456ee59",
+      "manually_verified": true,
+      "normalization_confidence": "1",
+      "notes": "Issue #465: OpenAI Codex transcribed the official live 2025-2026 Tech 4 Taxes index and matched seven names to the November general ballot. Ron Davis is not on that ballot and is excluded. shaug confirmed the seven-name transcription against the official page on 2026-09-27. This is a current-cycle endorsement, not a separate November slate.",
+      "published_at": null,
+      "race_id": "ld-37-state-representative-2",
+      "review_item_id": null,
+      "reviewed_at": "2026-09-27T23:25:29Z",
+      "reviewer": "shaug",
+      "source_capture_id": "capture-tech-4-taxes-20260927T193033Z-c975d7525b9b",
+      "source_id": "tech-4-taxes",
       "status": "endorsed"
     },
     {
@@ -17935,6 +18182,27 @@
     {
       "action": "approve",
       "author": "shaug",
+      "created_at": "2026-09-27T23:25:29Z",
+      "evidence": "Official 2025-2026 Candidate Endorsements index, candidate and office headings. Capture capture-tech-4-taxes-20260927T193033Z-8e781f3ba9df.",
+      "id": "decision-1b4d11c91606559c",
+      "reason": "Issue #465: OpenAI Codex transcribed the official live 2025-2026 Tech 4 Taxes index and matched seven names to the November general ballot. Ron Davis is not on that ballot and is excluded. shaug confirmed the seven-name transcription against the official page on 2026-09-27. This is a current-cycle endorsement, not a separate November slate.",
+      "resolution": {
+        "allocation": {
+          "king-county-council-2--rebecca-saldana": "1/2",
+          "king-county-council-2--toshiko-grace-hasegawa": "1/2"
+        },
+        "candidate_ids": [
+          "king-county-council-2--toshiko-grace-hasegawa",
+          "king-county-council-2--rebecca-saldana"
+        ],
+        "race_id": "king-county-council-2",
+        "status": "dual_endorsement"
+      },
+      "review_item_id": "review-d9fce65be1b1a67b"
+    },
+    {
+      "action": "approve",
+      "author": "shaug",
       "created_at": "2026-09-15T13:03:19Z",
       "evidence": "Official Endorsed Candidates for 2026 section, endorsed as of September 2. Capture capture-32nd-district-democrats-20260914T221815Z-f23c637003ba.",
       "id": "decision-670f250b727777ef",
@@ -18298,6 +18566,33 @@
       },
       "raw_candidate_text": "Ashley Fedan and David Hackney",
       "raw_race_text": "Legislative District 11 State Representative — Position 1",
+      "raw_status_text": "dual endorsement",
+      "reason": "extraction_requires_review",
+      "severity": "high",
+      "summary": "Verified multi-candidate decision from the permitted extract."
+    },
+    {
+      "candidate_match": null,
+      "capture_id": "capture-tech-4-taxes-20260927T193033Z-c975d7525b9b",
+      "claim_id": "claim-7822fb3fb378d26f",
+      "created_at": "2026-09-27T19:30:33Z",
+      "evidence_excerpt": null,
+      "evidence_locator": "Official 2025-2026 Candidate Endorsements index, candidate and office headings. Capture capture-tech-4-taxes-20260927T193033Z-8e781f3ba9df.",
+      "id": "review-d9fce65be1b1a67b",
+      "race_match": {
+        "candidates": [
+          {
+            "label": "Metropolitan King County Council — District 2",
+            "match_kind": "exact",
+            "record_id": "king-county-council-2",
+            "score": "1"
+          }
+        ],
+        "selected_id": "king-county-council-2",
+        "status": "matched"
+      },
+      "raw_candidate_text": "Toshiko Grace Hasegawa and Rebecca Saldaña",
+      "raw_race_text": "Metropolitan King County Council — District 2",
       "raw_status_text": "dual endorsement",
       "reason": "extraction_requires_review",
       "severity": "high",
@@ -18776,6 +19071,7 @@
       "Version 1 freezes the primary panel as a constrained carry-forward for the 2026 general election; no source or category membership, panel role, eligibility, transport code, reporting placement, selection category, publisher relationship, or overlap metadata changed.",
       "The repository records the actual late freeze time rather than backdating the missed planning milestone.",
       "Discovery was rechecked through 2026-09-14T12:23:04Z; published records require an official current-cycle or general-election publication, while primary-only or absent material is recorded as not found and inaccessible material is explicit.",
+      "Tech 4 Taxes alone was spot-checked on 2026-09-27; other sources retain their September 14 discovery times pending the panel-wide refresh.",
       "Publication content established only whether an official guide or endorsement page exists. Endorsement choices and observed consensus did not influence panel membership or classification.",
       "The primary registry remains frozen separately as wa-2026-primary-default-sources-v4."
     ],
@@ -19041,15 +19337,15 @@
       {
         "code": "t4tx",
         "discovery": {
-          "canonical_url": null,
-          "checked_at": "2026-09-14T12:23:04Z",
-          "evidence_locator": "Official endorsements endpoint timed out during direct revalidation after serving the 2026 primary publication earlier in the cycle.",
-          "media_type": null,
-          "notes": "No clean, directly verifiable general-election publication was available at the research cutoff; the access gap is explicit.",
+          "canonical_url": "https://tech4taxes.org/endorsements",
+          "checked_at": "2026-09-27T19:30:33Z",
+          "evidence_locator": "Official 2025-2026 Candidate Endorsements index, individual candidate and office entries; capture capture-tech-4-taxes-20260927T193033Z-8e781f3ba9df.",
+          "media_type": "text/html",
+          "notes": "Current-cycle index remained live after the primary. Seven listed candidates match the general ballot; Ron Davis does not and is excluded from general decisions. The page does not claim a separate November slate.",
           "published_at": null,
           "redirect_chain": [],
           "requested_url": "https://tech4taxes.org/endorsements",
-          "status": "access_restricted",
+          "status": "published",
           "updated_at": null
         },
         "eligibility": {
