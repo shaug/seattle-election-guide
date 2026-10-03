@@ -175,7 +175,6 @@ class MeterView:
     """
 
     na: bool
-    no_majority: bool
     degraded: bool
     accessible_label: str
     blocks: tuple[MeterBlockRender, ...]
@@ -1273,7 +1272,6 @@ def meter_view(race: PublicationRace, sources: dict[str, PublicationSource]) -> 
     if race.percentage_whole is None:
         return MeterView(
             na=True,
-            no_majority=False,
             degraded=False,
             accessible_label="No endorsements recorded",
             blocks=(),
@@ -1290,7 +1288,6 @@ def meter_view(race: PublicationRace, sources: dict[str, PublicationSource]) -> 
     blocks = meter_layout_blocks(endorsements)
     return MeterView(
         na=False,
-        no_majority=has_no_majority(race),
         degraded=len(blocks) > _METER_DEGRADE_MAX_BLOCKS,
         accessible_label=meter_accessible_label(standings, units, labels),
         blocks=tuple(meter_block_renders(blocks, colors, labels)),

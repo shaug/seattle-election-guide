@@ -48,7 +48,6 @@ const METER_DEGRADE_MAX_BLOCKS = Math.floor(120 / 3);
  *
  * @typedef {object} ShareMeterView
  * @property {boolean} na
- * @property {boolean} noMajority
  * @property {boolean} degraded
  * @property {string} accessibleLabel
  * @property {import('./meter-layout.mjs').MeterBlockRender[]} blocks
@@ -114,7 +113,6 @@ export function meterView(shareString, endorsements, leaderIds) {
   if (shareString === null) {
     return {
       na: true,
-      noMajority: false,
       degraded: false,
       accessibleLabel: 'No endorsements recorded',
       blocks: [],
@@ -128,7 +126,6 @@ export function meterView(shareString, endorsements, leaderIds) {
   const blocks = meterLayoutBlocks(endorsements);
   return {
     na: false,
-    noMajority,
     degraded: blocks.length > METER_DEGRADE_MAX_BLOCKS,
     accessibleLabel: meterAccessibleLabel(standings, units, labels),
     blocks: meterBlockRenders(blocks, colors, labels),
@@ -162,11 +159,7 @@ export function meterLeaderUnits(scored, endorsements) {
  */
 function meterClasses(meter) {
   if (meter.na) return 'screen-meter screen-meter-na';
-  return (
-    'screen-meter' +
-    (meter.noMajority ? ' meter-no-majority' : '') +
-    (meter.degraded ? ' meter-degraded' : '')
-  );
+  return 'screen-meter' + (meter.degraded ? ' meter-degraded' : '');
 }
 
 /**

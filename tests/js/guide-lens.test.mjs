@@ -126,7 +126,7 @@ function lensMarkup() {
     <article id="race-mayor" data-publication-race-id="mayor">
       <div class="screen-race-result" data-lens-result>
         <h3 data-display-role="recommendation">Ada Lovelace / Blaise Pascal</h3>
-        <div class="screen-meter meter-no-majority" role="img"
+        <div class="screen-meter" role="img"
           data-display-role="share"
           aria-label="Ada Lovelace 1 of 2 endorsements; Blaise Pascal 1 of 2 endorsements"></div>
       </div>
@@ -195,7 +195,7 @@ test('the meter carries its blocks, tone, and spoken standings together', async 
   const meter = document.querySelector('[data-lens-result] .screen-meter');
 
   assert.equal(meter.hasAttribute('style'), false);
-  assert.equal(meter.classList.contains('meter-no-majority'), false);
+  assert.equal(meter.getAttribute('class'), 'screen-meter');
   // docs/METER_V2.md, The discovery model's accessibility model: the meter's
   // spoken name is the full standings, not a percentage.
   assert.equal(meter.getAttribute('aria-label'), 'Ada Lovelace 1 of 1 endorsements');

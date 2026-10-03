@@ -36,12 +36,10 @@ function rendered(template) {
 
 /**
  * @param {number|null} fillPercent
- * @param {boolean} [noMajority]
  * @returns {import('../../src/election_guide/rendering/templates/guide-card.mjs').ShareMeterView}
  */
-const meter = (fillPercent, { noMajority = false, degraded = false } = {}) => ({
+const meter = (fillPercent, { degraded = false } = {}) => ({
   na: fillPercent === null,
-  noMajority,
   degraded,
   accessibleLabel: 'Ada Lovelace 3 of 4 endorsements',
   blocks:
@@ -91,16 +89,8 @@ test('a share with a value renders its blocks without the retired percentage pil
 });
 
 test('fill percentage no longer changes meter markup while density still can', () => {
-  const low = rendered(
-    raceResultTemplate({
-      recommendation: 'Ada',
-      meter: meter(12, { noMajority: true }),
-    }),
-  );
-  assert.equal(
-    low.querySelector('.screen-meter').getAttribute('class'),
-    'screen-meter meter-no-majority',
-  );
+  const low = rendered(raceResultTemplate({ recommendation: 'Ada', meter: meter(12) }));
+  assert.equal(low.querySelector('.screen-meter').getAttribute('class'), 'screen-meter');
   assert.equal(low.querySelector('.screen-meter').hasAttribute('style'), false);
 
   const high = rendered(raceResultTemplate({ recommendation: 'Ada', meter: meter(72) }));

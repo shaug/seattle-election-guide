@@ -1804,21 +1804,21 @@ def test_no_majority_uses_the_exact_unrounded_share_across_the_card_and_the_race
     card_end = html.index("</article>", card_start)
     card_html = html[card_start:card_end]
     assert re.search(r'<p class="no-majority-pill"[^>]*>No majority</p>', card_html)
-    assert 'class="screen-meter meter-no-majority"' in card_html
 
     # The same exact share, on the page the card links to (issue #136). The
     # qualifier is the headline's own pill there rather than a word in the
     # eyebrow, because the headline is the leading choice's heading — the
     # headline itself carries no meter of its own any more (docs/METER_V2.md,
     # Chrome geometry: "The headline meter's own fate"; #325), so the
-    # no-majority color is read from a candidate section's own meter block
-    # style instead of a single shared `.meter-no-majority` class. Matched as
+    # no-majority color is read from the meter block style rather than from a
+    # separate DOM state hook. Matched as
     # `--meter-c(a)?:var(--amber)` rather than the bare literal: the page's
     # own embedded stylesheet already references `var(--amber)` in an
     # unrelated static rule (`.race-detail-candidate`'s default border), so a
     # bare substring match would pass on every race regardless of any block's
     # actual color.
     amber_block = re.compile(r"--meter-c[a]?:var\(--amber\)")
+    assert amber_block.search(card_html)
     race_html = _race_html(view_model, target.id)
     assert re.search(r'<p class="no-majority-pill"[^>]*>No majority</p>', race_html)
     assert amber_block.search(race_html)
@@ -1830,7 +1830,7 @@ def test_no_majority_uses_the_exact_unrounded_share_across_the_card_and_the_race
     above_half_card_end = above_half_html.index("</article>", above_half_card_start)
     above_half_card = above_half_html[above_half_card_start:above_half_card_end]
     assert re.search(r'<p class="no-majority-pill" hidden[^>]*>No majority</p>', above_half_card)
-    assert 'class="screen-meter meter-no-majority"' not in above_half_card
+    assert not amber_block.search(above_half_card)
     above_half_race = _race_html(view_model, target.id)
     assert re.search(r'<p class="no-majority-pill" hidden[^>]*>No majority</p>', above_half_race)
     assert not amber_block.search(above_half_race)
@@ -2163,7 +2163,6 @@ def test_the_meter_macro_writes_the_block_style_unmodified() -> None:
     )
     view = context.MeterView(
         na=False,
-        no_majority=False,
         degraded=False,
         accessible_label="Alpha Ames 2 of 3 endorsements",
         blocks=(render,),
@@ -2201,7 +2200,6 @@ def test_the_meter_macro_renders_blocks_without_the_retired_percentage_pill() ->
     )
     view = context.MeterView(
         na=False,
-        no_majority=False,
         degraded=False,
         accessible_label="Alpha Ames 1 of 1 endorsements",
         blocks=(render,),
@@ -4061,7 +4059,9 @@ def test_no_majority_lens_state_appears_and_dissolves_with_the_selected_sources(
             const pill = card.querySelector('[data-lens-context] .no-majority-pill');
             return {{
               pillHidden: pill.hidden,
-              amberMeter: meter.classList.contains('meter-no-majority'),
+              amberBlock: [...meter.querySelectorAll('.meter-block')].some((block) =>
+                block.getAttribute('style').includes('var(--amber)')
+              ),
               accessibleName: meter.getAttribute('aria-label'),
             }};
           }};
@@ -4079,10 +4079,10 @@ def test_no_majority_lens_state_appears_and_dissolves_with_the_selected_sources(
     # spoken name is the full standings — every tied candidate's own exact
     # count — not a restatement of a percentage.
     split_accessible_name = result["split"].pop("accessibleName")
-    assert result["split"] == {"pillHidden": False, "amberMeter": True}
+    assert result["split"] == {"pillHidden": False, "amberBlock": True}
     assert re.match(r".+ ½ of 1 endorsements; .+ ½ of 1 endorsements$", split_accessible_name)
     assert result["majority"]["pillHidden"] is True
-    assert result["majority"]["amberMeter"] is False
+    assert result["majority"]["amberBlock"] is False
     assert re.search(r"of \d+.* endorsements", result["majority"]["accessibleName"])
 
 
