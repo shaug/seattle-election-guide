@@ -15,10 +15,13 @@ The `collection_opens` calendar milestone opens the window; the `refresh` milest
 sweep inside it. For `wa-2026-general` those are 2026-09-08 (`-56`), 2026-10-23
 (`refresh-mid-ballot`, `-11`), and 2026-10-30 (`refresh-final`, `-4`).
 
-The real deadline is neither of the refreshes. `guide_publishes` is at `-18`
-(2026-10-16), so the **first complete sweep must land on or before that date** —
-the refreshes come after publication and correct a guide voters can already read.
-Plan the first pass against `-18`, not against election day.
+The real deadline is neither of the refreshes. `guide_publishes` is at `-46`
+(2026-09-18), when overseas and service ballots were mailed, so the **first
+complete sweep must land on or before the first ballot issuance**. The domestic
+`ballots_mail` milestone remains `-18` (2026-10-16), but it is a later mailing
+date, not the publication trigger. For the 2026 general election this deadline
+was missed; complete the reviewed sweep and publish as soon as the release path
+is ready rather than waiting for domestic ballots.
 
 Cadence inside the window belongs to the source registry, not to this document. Each source's
 `discovery.checked_at` in `config/sources/default.yaml` records when it was last looked at, and
@@ -228,15 +231,20 @@ Add or update the source's block in `data/releases/<election-id>/source-decision
   - source_id: <source-id>
     captured_at: <when the publication was actually checked>
     reviewed_at: <when the transcription was verified>
+    reviewer: <reviewer for this source, when different from the original sweep>
+    review_note: <source-specific review and limitations, when different from the original sweep>
     evidence_locator: Official 2026 endorsement guide, named race heading.
     decisions:
       - race_id: <race-id>
         candidate_ids: [<candidate-id>]
 ```
 
-`captured_at` is when the reviewer looked at the page, not when the file was edited. Update the
-ledger's top-level `data_as_of`, `reviewer`, and `review_note` to describe the sweep honestly —
-including what could not be verified.
+`captured_at` is when the reviewer looked at the page, not when the file was edited. Advance
+`data_as_of` for a later update. Keep the ledger's top-level `reviewer` and `review_note` as the
+original sweep's provenance; changing them would rewrite existing claim and review identities.
+For a targeted refresh, set the source block's optional `reviewer` and `review_note` to describe
+who verified that source and what could not be verified. A panel-wide new sweep may update the
+top-level fields when the change to every source's provenance is intentional.
 
 A transcription taken from a screenshot or a restricted capture goes through the manual-entry
 adapter rather than straight into the ledger (`docs/EVIDENCE_CAPTURE.md`):
@@ -309,7 +317,7 @@ Stop and ask a human when:
   their own reviewed change — not a quiet overwrite.
 - **A source states an explicit non-equal allocation across co-endorsed candidates.** The frozen
   policy is an exact equal split; anything else is a methodology decision.
-- **The first complete sweep will not finish before `guide_publishes` (`-18`).** Publishing with
+- **The first complete sweep will not finish before `guide_publishes`.** Publishing with
   known-missing sources is a decision to make deliberately and disclose, not to discover.
 
 ## Postmortem notes

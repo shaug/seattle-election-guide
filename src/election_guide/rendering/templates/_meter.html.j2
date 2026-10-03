@@ -28,7 +28,7 @@
     ~ (' meter-no-majority' if view.no_majority else '')
     ~ (' meter-low-fill' if view.low_fill else '')
     ~ (' meter-degraded' if view.degraded else '') }}"
-  {%- if not view.na %} style="--meter-fill: {{ view.fill_percent }}%"{% endif %}
+  {%- if not view.na %} style="--meter-label-offset: {{ view.fill_percent }}%"{% endif %}
   role="img" data-display-role="share" aria-label="{{ view.accessible_label }}" tabindex="0"
 >{% if view.na -%}
 <strong>N/A</strong>

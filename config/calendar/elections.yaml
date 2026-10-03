@@ -100,6 +100,10 @@ milestones:
     workflow: collect refresh
     reference: docs/runbooks/endorsement-discovery-sweep.md
   - election_id: wa-2026-general
+    id: overseas-service-ballots-mail
+    kind: overseas_service_ballots_mail
+    offset_days: -46
+  - election_id: wa-2026-general
     id: ballots-mail
     kind: ballots_mail
     offset_days: -18
@@ -107,7 +111,8 @@ milestones:
   - election_id: wa-2026-general
     id: guide-publishes
     kind: guide_publishes
-    offset_days: -18
+    offset_days: -46
+    revision: 2
     workflow: release build
     reference: docs/RELEASE.md
     public: true

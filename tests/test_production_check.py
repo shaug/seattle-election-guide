@@ -4,6 +4,10 @@ from __future__ import annotations
 
 import json
 
+import pytest
+
+import election_guide.hosting.production_check as production_check
+from election_guide.hosting.models import DeploymentManifest, SiteManifest
 from election_guide.hosting.production_check import (
     MANIFEST_CHECK,
     CommitCheck,
@@ -18,6 +22,238 @@ from election_guide.hosting.production_check import (
 
 CURRENT_ID = "wa-2026-primary"
 COMMIT = "a" * 40
+
+
+def _site_manifest() -> SiteManifest:
+    return SiteManifest.model_validate(
+        {
+            "schema_version": "1.0",
+            "canonical_origin": "https://seattleelections.guide",
+            "current_election_id": "wa-2026-general",
+            "elections": [
+                {
+                    "election_id": "wa-2026-general",
+                    "bundle_id": "wa-2026-general-2026-general.3",
+                    "release_version": "2026-general.3",
+                    "source_panel_id": "general-panel",
+                    "source_panel_hash": "1" * 64,
+                    "source_registry_hash": "2" * 64,
+                },
+                {
+                    "election_id": "wa-2026-primary",
+                    "bundle_id": "wa-2026-primary-2026-primary.2",
+                    "release_version": "2026-primary.2",
+                    "source_panel_id": "primary-panel",
+                    "source_panel_hash": "3" * 64,
+                    "git_commit": "4" * 40,
+                    "release_manifest_sha256": "5" * 64,
+                    "bundle_sha256": "6" * 64,
+                },
+            ],
+        }
+    )
+
+
+def _deployment_manifest() -> DeploymentManifest:
+    return DeploymentManifest.model_validate(
+        {
+            "schema_version": "2.0",
+            "canonical_origin": "https://seattleelections.guide",
+            "current_election_id": "wa-2026-general",
+            "elections": [
+                {
+                    "election_id": "wa-2026-general",
+                    "bundle_id": "wa-2026-general-2026-general.3",
+                    "release_version": "2026-general.3",
+                    "git_commit": COMMIT,
+                    "source_panel_id": "general-panel",
+                    "source_panel_hash": "1" * 64,
+                    "source_registry_hash": "2" * 64,
+                    "release_manifest_sha256": "7" * 64,
+                },
+                {
+                    "election_id": "wa-2026-primary",
+                    "bundle_id": "wa-2026-primary-2026-primary.2",
+                    "release_version": "2026-primary.2",
+                    "git_commit": "4" * 40,
+                    "source_panel_id": "primary-panel",
+                    "source_panel_hash": "3" * 64,
+                    "release_manifest_sha256": "5" * 64,
+                },
+            ],
+            "assets": {
+                "e/index.html": "8" * 64,
+                "e/wa-2026-general/index.html": "9" * 64,
+                "e/wa-2026-general/comparisons/index.html": "a" * 64,
+                "e/wa-2026-general/races/zeta/index.html": "b" * 64,
+                "e/wa-2026-general/races/alpha/index.html": "c" * 64,
+                "e/wa-2026-primary/index.html": "d" * 64,
+            },
+        }
+    )
+
+
+def test_deployment_contract_uses_the_site_manifest_and_selects_the_first_race() -> None:
+    check = production_check.evaluate_deployment_contract(
+        _site_manifest(), _deployment_manifest(), expected_git_commit=COMMIT
+    )
+
+    assert check.ok
+    assert check.errors == ()
+    assert check.representative_race_path == "/e/wa-2026-general/races/alpha/"
+
+
+@pytest.mark.parametrize(
+    ("mutation", "expected_error"),
+    [
+        ({"canonical_origin": "https://wrong.example"}, "canonical origin"),
+        ({"current_election_id": "wa-2026-primary"}, "current election"),
+    ],
+)
+def test_deployment_contract_rejects_wrong_top_level_manifest_identity(
+    mutation: dict[str, str], expected_error: str
+) -> None:
+    payload = _deployment_manifest().model_dump(mode="json")
+    payload.update(mutation)
+    if mutation.get("current_election_id") == "wa-2026-primary":
+        payload["elections"] = list(reversed(payload["elections"]))
+    observed = DeploymentManifest.model_validate(payload)
+
+    check = production_check.evaluate_deployment_contract(
+        _site_manifest(), observed, expected_git_commit=COMMIT
+    )
+
+    assert not check.ok
+    assert any(expected_error in error for error in check.errors)
+
+
+@pytest.mark.parametrize(
+    ("election_index", "field", "value", "expected_error"),
+    [
+        (0, "release_version", "2026-general.2", "release version"),
+        (0, "bundle_id", "wrong-general", "bundle ID"),
+        (0, "source_panel_hash", "f" * 64, "source panel hash"),
+        (0, "source_registry_hash", "e" * 64, "source registry hash"),
+        (1, "release_version", "2026-primary.1", "release version"),
+        (1, "git_commit", "f" * 40, "Git commit"),
+        (1, "release_manifest_sha256", "e" * 64, "release-manifest hash"),
+    ],
+)
+def test_deployment_contract_rejects_changed_election_identity(
+    election_index: int, field: str, value: str, expected_error: str
+) -> None:
+    payload = _deployment_manifest().model_dump(mode="json")
+    payload["elections"][election_index][field] = value
+    observed = DeploymentManifest.model_validate(payload)
+
+    check = production_check.evaluate_deployment_contract(
+        _site_manifest(), observed, expected_git_commit=COMMIT
+    )
+
+    assert not check.ok
+    assert any(expected_error in error for error in check.errors)
+
+
+def test_deployment_contract_rejects_a_missing_historical_election() -> None:
+    payload = _deployment_manifest().model_dump(mode="json")
+    payload["elections"] = payload["elections"][:1]
+    observed = DeploymentManifest.model_validate(payload)
+
+    check = production_check.evaluate_deployment_contract(
+        _site_manifest(), observed, expected_git_commit=COMMIT
+    )
+
+    assert not check.ok
+    assert any("election set/order" in error for error in check.errors)
+
+
+def test_deployment_contract_requires_the_historical_bundle_pin() -> None:
+    payload = _site_manifest().model_dump(mode="json")
+    payload["elections"][1]["bundle_sha256"] = None
+    site_manifest = SiteManifest.model_validate(payload)
+
+    check = production_check.evaluate_deployment_contract(
+        site_manifest, _deployment_manifest(), expected_git_commit=COMMIT
+    )
+
+    assert not check.ok
+    assert any("historical site declaration lacks bundle hash" in error for error in check.errors)
+
+
+def test_deployment_contract_rejects_the_wrong_production_candidate() -> None:
+    check = production_check.evaluate_deployment_contract(
+        _site_manifest(), _deployment_manifest(), expected_git_commit="f" * 40
+    )
+
+    assert not check.ok
+    assert any("production candidate commit" in error for error in check.errors)
+
+
+def test_publication_route_plan_covers_the_complete_release_contract() -> None:
+    checks = production_check.plan_publication_route_checks(
+        _site_manifest(), representative_race_path="/e/wa-2026-general/races/alpha/"
+    )
+
+    assert [
+        (check.name, check.path, check.expected_status, check.expected_location) for check in checks
+    ] == [
+        ("home redirect", "/", 307, "/e/wa-2026-general/"),
+        ("election archive", "/e/", 200, None),
+        ("current election guide", "/e/wa-2026-general/", 200, None),
+        ("historical election guide: wa-2026-primary", "/e/wa-2026-primary/", 200, None),
+        (
+            "representative current-election race",
+            "/e/wa-2026-general/races/alpha/",
+            200,
+            None,
+        ),
+        ("current election comparisons", "/e/wa-2026-general/comparisons/", 200, None),
+        ("unknown election", "/e/production-check-unknown-election/", 404, None),
+        (
+            "legacy PDF redirect",
+            "/e/wa-2026-general/voter-guide.pdf",
+            301,
+            "/e/wa-2026-general/",
+        ),
+    ]
+
+
+def test_archive_index_requires_every_declared_election_and_the_current_marker() -> None:
+    body = b"""
+    <ul>
+      <li><a href="/e/wa-2026-general/">General</a> <strong>(current)</strong></li>
+      <li><a href="/e/wa-2026-primary/">Primary</a></li>
+    </ul>
+    """
+
+    check = production_check.evaluate_archive_index(_site_manifest(), Observation(status=200), body)
+
+    assert check.ok
+    assert check.observed_election_ids == ("wa-2026-general", "wa-2026-primary")
+    assert check.observed_current_election_id == "wa-2026-general"
+
+
+@pytest.mark.parametrize(
+    ("body", "expected_error"),
+    [
+        (
+            b'<li><a href="/e/wa-2026-general/">General</a> <strong>(current)</strong></li>',
+            "election set/order",
+        ),
+        (
+            b'<li><a href="/e/wa-2026-general/">General</a></li>'
+            b'<li><a href="/e/wa-2026-primary/">Primary</a> <strong>(current)</strong></li>',
+            "current marker",
+        ),
+    ],
+)
+def test_archive_index_rejects_missing_elections_or_a_wrong_current_marker(
+    body: bytes, expected_error: str
+) -> None:
+    check = production_check.evaluate_archive_index(_site_manifest(), Observation(status=200), body)
+
+    assert not check.ok
+    assert any(expected_error in error for error in check.errors)
 
 
 def _manifest_bytes(*, current_election_id: str = CURRENT_ID, git_commit: str = COMMIT) -> bytes:

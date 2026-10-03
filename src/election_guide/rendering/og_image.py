@@ -81,7 +81,7 @@ SKY = (155, 184, 209)
 # `test_og_image.py::test_the_meter_palette_mirrors_base_css` parses
 # `base.css`'s own hex values and holds every constant below to them in both
 # directions, so a token that moves on either side fails `make check` rather
-# than a reader's eye. (Before this ticket, `AMBER` above and the v1 `TRACK`
+# than a reader's eye. (Before this ticket, `AMBER` above and the retired `TRACK`
 # it replaces were never held to base.css at all -- AMBER's literal RGB above
 # predates this test and did not match `--amber` until this change corrected
 # it; that drift is exactly the failure mode the test now closes off.)

@@ -78,6 +78,11 @@ not change `panel_hash` and does not require a panel version bump. A membership,
 selectable-category, role, eligibility, overlap, attribution, or retired-code migration change
 changes `panel_hash` and must be published under a new panel version.
 
+For schema 1.2 registries, `research_cutoff` and `frozen_at` retain the original panel-freeze
+history. A later discovery refresh updates that source's `discovery.checked_at` and publication
+metadata without moving either historical timestamp. Schema 1.1 registries retain their original
+pre-freeze discovery cutoff validation.
+
 Schema 1.2 registries carry one required `panel_hash_compatibility` lineage anchor. For panels
 whose legacy full-registry hashes were already published, the anchor preserves that published hash
 only while its `contract_hash` exactly matches the current canonical projection; a mismatch makes

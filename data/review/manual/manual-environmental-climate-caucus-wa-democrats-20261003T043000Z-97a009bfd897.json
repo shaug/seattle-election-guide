@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-environmental-climate-caucus-wa-democrats-20261003T040651Z-7003b6011fb6",
+  "entered_at": "2026-10-03T04:30:00Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official 2026 endorsed-candidates page with general-election carry-forward statement.",
+  "evidence_type": "web_page",
+  "id": "manual-environmental-climate-caucus-wa-democrats-20261003T043000Z-97a009bfd897",
+  "review_note": "Human reviewer verified every listed new or changed transcription against the official evidence for issue",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-03T04:52:29Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "environmental-climate-caucus-wa-democrats",
+  "transcription": "ld-32-state-senator: Cindy Ryu\nld-32-state-representative-1: Keith Scully\nld-32-state-representative-2: Imraan Siddiqi\nld-37-state-senator: Chipalo Street\nld-37-state-representative-1: Kelabe Tewolde\nld-37-state-representative-2: Jaelynn Scott\nld-43-state-senator: Jamie Pedersen\nld-43-state-representative-1: Nicole Macri\nld-46-state-senator: Javier Valdez\nld-46-state-representative-1: Gerry Pollet\nCandidates marked not advancing excluded"
+}

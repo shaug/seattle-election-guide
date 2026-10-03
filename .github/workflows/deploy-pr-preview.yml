@@ -15,6 +15,9 @@ on:
 permissions:
   contents: read
 
+env:
+  CANDIDATE_BUNDLE_ID: wa-2026-general-2026-general.3
+
 jobs:
   deploy:
     name: Deploy PR preview
@@ -75,17 +78,28 @@ jobs:
         run: google-chrome --version
       - name: Verify Wrangler version
         run: npm run pages:version
+      - name: Verify declared releases for prepublication staging
+        run: >-
+          uv run election-guide hosting verify-releases config/hosting/site.yaml
+          --candidate-bundle-id "$CANDIDATE_BUNDLE_ID"
+        env:
+          GH_TOKEN: ${{ github.token }}
       # One build, not the deterministic double build the `check` job runs: CI
       # already proves reproducibility on this commit, and a preview only needs
       # the artifact.
-      - name: Build the primary release at the pull request head
+      - name: Build the general release at the pull request head
         run: |
           SITE_UPDATED_AT="$(git show -s --format=%cI "$HEAD_SHA")"
-          uv run election-guide release build data/releases/wa-2026-primary/source-decisions.yaml \
-              --release-version 2026-primary.2 \
+          uv run election-guide release build data/releases/wa-2026-general/source-decisions.yaml \
+              --release-version 2026-general.3 \
               --generated-at "$SITE_UPDATED_AT" \
               --git-commit "$HEAD_SHA" \
-            --output-dir dist/pr-release
+              --output-dir dist/pr-release \
+              --inventory-path data/normalized/wa-2026-general-inventory.json \
+              --registry-path config/sources/wa-2026-general.yaml \
+              --dataset-path data/normalized/wa-2026-general-canonical-dataset.json \
+              --snapshot-root data/releases/wa-2026-general/snapshots \
+              --manifest-dir data/releases/wa-2026-general/manifests
       # Only the election built from source above is supplied locally. Any other
       # declared election is resolved from the release that published it,
       # exactly as CI stages it -- a historical bundle cannot be rebuilt
@@ -93,7 +107,7 @@ jobs:
       - name: Stage and verify the Pages site
         run: |
           uv run election-guide hosting stage config/hosting/site.yaml \
-            --bundle wa-2026-primary-2026-primary.2=dist/pr-release/bundle \
+            --bundle "$CANDIDATE_BUNDLE_ID=dist/pr-release/bundle" \
             --released-bundle-dir dist/released-bundles \
             --expected-git-commit "$HEAD_SHA" \
             --output-dir dist/cloudflare-site

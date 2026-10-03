@@ -36,7 +36,7 @@ committed declarations and the models disagree.
 
 ### One gate `make check` does not run
 
-CI builds the primary release twice and checks that both builds are the same
+CI builds the general release twice and checks that both builds are the same
 release. `make check` does not, and cannot: `election-guide release build`
 refuses a dirty checkout, so on the tree you actually run `make check` against
 it would fail for a reason unrelated to your diff. Run it yourself, on a clean
@@ -78,6 +78,11 @@ fails when the committed copy differs.
 
 An ordinary pull request does not touch it. The file records tagged releases only, so it changes
 once per release, as part of publishing one — see [RELEASE.md](docs/RELEASE.md).
+
+Release operators must follow the executable sequence in [RELEASE.md](docs/RELEASE.md) and the
+read-only production probe in [HOSTING.md](docs/HOSTING.md). Preserve the named full candidate SHAs,
+release digest, CI artifact, deployment ID, lineage report, and probe output; a branch name or newer
+`main` head is not a substitute for an expired exact-candidate artifact.
 
 ## Adding sources
 

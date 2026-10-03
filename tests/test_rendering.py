@@ -6,6 +6,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from datetime import UTC, datetime
 from fractions import Fraction
 from html import escape, unescape
 from pathlib import Path
@@ -18,6 +19,7 @@ from PIL import Image, ImageDraw
 from pydantic import ValidationError
 from websocket import create_connection  # pyright: ignore[reportUnknownVariableType]
 
+from election_guide.normalization.models import CanonicalDataset
 from election_guide.publication import build_publication_bundle
 from election_guide.publication.builder import (
     reprojected_comparisons,
@@ -79,7 +81,7 @@ from election_guide.rendering.shell import (
     election_names,
 )
 from election_guide.results.models import ElectionResults, RaceOutcome, RaceResults
-from election_guide.scoring import score_dataset
+from election_guide.scoring import read_scoring_configuration, score_dataset
 from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
 from election_guide.sources.registry import read_source_registry
 from tests.compare_parity import enabled_view_model as _enabled_view_model
@@ -689,7 +691,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "@media print {" in html
     assert ".state-action-strip, .sticky-header, .filter-control-bar { display: none" in html
     assert "html .race-grid, html.compact-ballot-mode .race-grid" in html
-    assert 'style="--meter-fill: ' in html
+    assert 'style="--meter-label-offset: ' in html
 
 
 _ELECTION_DAY_BANNER = re.compile(r'<p class="election-day[^>]*>.*?</p>')
@@ -2279,8 +2281,8 @@ def test_round4_card_anatomy_and_data_ink_cleanup(tmp_path: Path) -> None:
         ".race-detail-category-badge { color: var(--muted); font-size: .68rem; "
         "font-weight: 600; text-align: right; }" in race_stylesheet
     )
-    # v1's per-candidate mini-meter (`.race-detail-meter`) retired with meter
-    # v2 — every candidate's own section carries a meter v2 chrome of its own
+    # The retired per-candidate mini-meter (`.race-detail-meter`) stays gone —
+    # every candidate's own section carries the endorsement-meter chrome
     # instead now (docs/METER_V2.md, Chrome geometry: "The headline meter's
     # own fate"; #325) — so its whole chrome is gone from the race page's own
     # stylesheet, not merely from the guide's.
@@ -2426,7 +2428,7 @@ def test_chromium_build_is_semantically_faithful_and_visually_safe(tmp_path: Pat
     assert view_model.metadata.source_panel_id in rendered_html
     assert view_model.metadata.source_panel_hash in rendered_html
     for percentage in (53, 64, 70, 100):
-        assert f'style="--meter-fill: {percentage}%"' in rendered_html
+        assert f'style="--meter-label-offset: {percentage}%"' in rendered_html
     for tone in ("agrees", "differs", "not_covered"):
         assert f'class="comparison comparison-{tone}"' not in rendered_html
         assert f"print-times-pick-{tone}" not in rendered_html
@@ -2604,6 +2606,30 @@ def test_chromium_build_is_semantically_faithful_and_visually_safe(tmp_path: Pat
         check for check in semantic_report.checks if check.id == "html-display-values"
     )
     assert not semantic_check.passed
+
+    # The segmented meter is the only endorsement meter. A percentage-only
+    # legacy renderer can still preserve every visible string, so release
+    # validation must reject the missing endorsement blocks as structure, not
+    # let the generic semantic-value check obscure the regression.
+    legacy_meter_html = tmp_path / "legacy-meter.html"
+    legacy_meter_html.write_text(
+        rendered.html_path.read_text(encoding="utf-8").replace(
+            "data-meter-source=", "data-retired-meter-source="
+        ),
+        encoding="utf-8",
+    )
+    legacy_meter_report = validate_rendered_guide(
+        view_model,
+        read_rendering_configuration(RENDERING_CONFIG),
+        legacy_meter_html,
+        rendered.screenshots,
+        race_documents,
+    )
+    meter_structure_check = next(
+        check for check in legacy_meter_report.checks if check.id == "html-meter-structure"
+    )
+    assert not meter_structure_check.passed
+    assert "endorsement meter structure differs" in meter_structure_check.message
 
     wrong_detail_row = canonical_row.replace(
         f"<strong>{detail_source.name}</strong>", "<strong>Wrong organization</strong>", 1
@@ -3700,6 +3726,8 @@ def _evaluate_in_chrome(
     initial_url: str | None = None,
     viewport: tuple[int, int] | None = None,
     media: str | None = None,
+    pointer: bool = False,
+    touch: bool = False,
 ) -> dict[str, Any]:
     """Load one local file in headless Chrome and return one JSON object result.
 
@@ -3712,7 +3740,10 @@ def _evaluate_in_chrome(
     the bare file, to exercise a load-time restore rather than an in-page
     transition. Pass media="print" to evaluate against the print stylesheet
     (issue 193: the browser's own print output is the printable edition, so
-    that is the only place its rules can be measured).
+    that is the only place its rules can be measured). Pass pointer=True to
+    make headless Chrome expose a fine, hover-capable primary pointer on every
+    host, or touch=True to exercise interaction media queries on a
+    touch-primary device.
     """
     chrome_path = find_chrome()
     profile = Path(tempfile.mkdtemp(prefix="election-guide-chrome-"))
@@ -3729,6 +3760,14 @@ def _evaluate_in_chrome(
                 "--hide-scrollbars",
                 "--no-first-run",
                 "--allow-file-access-from-files",
+                *(
+                    [
+                        "--blink-settings=primaryHoverType=2,availableHoverTypes=2,"
+                        "primaryPointerType=4,availablePointerTypes=4"
+                    ]
+                    if pointer
+                    else []
+                ),
                 f"--user-data-dir={profile}",
                 "--remote-debugging-port=0",
                 "about:blank",
@@ -3775,6 +3814,12 @@ def _evaluate_in_chrome(
                         },
                         session_id=session_id,
                     )
+                if touch:
+                    cdp.command(
+                        "Emulation.setTouchEmulationEnabled",
+                        {"enabled": True, "maxTouchPoints": 1},
+                        session_id=session_id,
+                    )
                 cdp.command(
                     "Page.navigate",
                     {"url": initial_url or html_path.resolve().as_uri()},
@@ -3802,6 +3847,149 @@ def _evaluate_in_chrome(
             _terminate_process(process)
     finally:
         shutil.rmtree(profile, ignore_errors=True)
+
+
+def test_overview_meter_progressively_discloses_endorsement_segments(
+    tmp_path: Path,
+) -> None:
+    """Pointer rest shows the percentage; focus, touch, and print show seams."""
+    view_model = _personalization_enabled_view_model(tmp_path)
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    expression = """
+      (async () => {
+        const meter = [...document.querySelectorAll('.screen-meter:not(.screen-meter-na)')]
+          .find((candidate) => candidate.querySelectorAll('.meter-block').length > 1);
+        if (!meter) return JSON.stringify({ error: 'fixture has no segmented overview meter' });
+        const blocks = [...meter.querySelectorAll('.meter-block')];
+        const label = meter.querySelector('strong');
+        const snapshot = () => ({
+          labelDisplay: getComputedStyle(label).display,
+          labelOpacity: getComputedStyle(label).opacity,
+          boundaries: blocks.slice(1).map((block) => ({
+            color: getComputedStyle(block).borderLeftColor,
+            image: getComputedStyle(block).borderImageSource,
+          })),
+        });
+        const rest = snapshot();
+        meter.focus();
+        await new Promise((resolve) => setTimeout(resolve, 220));
+        return JSON.stringify({
+          hover: matchMedia('(hover: hover)').matches,
+          label: label.textContent,
+          rest,
+          revealed: snapshot(),
+        });
+      })()
+    """
+
+    pointer = _evaluate_in_chrome(
+        html_path,
+        expression,
+        viewport=(1440, 1000),
+        pointer=True,
+    )
+    assert "error" not in pointer
+    assert pointer["hover"] is True
+    assert pointer["label"].endswith("%")
+    assert pointer["rest"]["labelOpacity"] == "1"
+    assert pointer["revealed"]["labelOpacity"] == "0"
+    assert pointer["rest"]["boundaries"] != pointer["revealed"]["boundaries"]
+
+    touch = _evaluate_in_chrome(html_path, expression, mobile_width=390, touch=True)
+    assert touch["hover"] is False
+    assert touch["rest"]["labelDisplay"] == "none"
+    assert touch["rest"]["boundaries"] == touch["revealed"]["boundaries"]
+    assert touch["rest"]["boundaries"] != pointer["rest"]["boundaries"]
+
+    printed = _evaluate_in_chrome(html_path, expression, viewport=(768, 1000), media="print")
+    assert printed["rest"]["labelOpacity"] == "1"
+    assert printed["revealed"]["labelOpacity"] == "1"
+    assert any(boundary["image"] != "none" for boundary in printed["rest"]["boundaries"])
+    assert printed["rest"]["boundaries"] != pointer["rest"]["boundaries"]
+
+    touch_printed = _evaluate_in_chrome(
+        html_path,
+        expression,
+        mobile_width=390,
+        media="print",
+        touch=True,
+    )
+    assert touch_printed["hover"] is False
+    assert touch_printed["rest"]["labelDisplay"] == "flex"
+    assert touch_printed["rest"]["labelOpacity"] == "1"
+    assert any(boundary["image"] != "none" for boundary in touch_printed["rest"]["boundaries"])
+
+
+def test_race_detail_split_meter_stays_statically_segmented(
+    tmp_path: Path,
+) -> None:
+    """The current general election keeps split structure in candidate rows."""
+    dataset = CanonicalDataset.model_validate(
+        read_json(PROJECT_ROOT / "data/normalized/wa-2026-general-canonical-dataset.json")
+    )
+    report = score_dataset(
+        dataset,
+        read_scoring_configuration(PROJECT_ROOT / "config/scoring/default.yaml"),
+        computed_at=datetime(2026, 10, 3, 6, tzinfo=UTC),
+        allow_unresolved=True,
+    )
+    view_model = build_publication_bundle(
+        dataset,
+        report,
+        git_commit="race-detail-split-regression",
+        snapshot_root=PROJECT_ROOT / "data/releases/wa-2026-general/snapshots",
+    ).view_model
+    html_path = _write_race_html(tmp_path, view_model, "ld-32-state-representative-1")
+
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          const row = [...document.querySelectorAll('.race-detail-candidate-meter')]
+            .find((candidate) => candidate.querySelector('.meter-block-split'));
+          if (!row) return JSON.stringify({ error: 'race has no split candidate meter' });
+          const meter = row.querySelector('.screen-meter-section');
+          const count = row.querySelector('.race-detail-candidate-count');
+          const percentage = row.querySelector('.race-detail-candidate-pct');
+          const splitHalf = meter.querySelector('.meter-block-split .meter-half-bottom');
+          const boundary = meter.querySelectorAll('.meter-block')[1];
+          const snapshot = () => ({
+            boundaryColor: getComputedStyle(boundary).borderLeftColor,
+            boundaryImage: getComputedStyle(boundary).borderImageSource,
+            splitBorder: getComputedStyle(splitHalf).borderTopColor,
+            splitFill: getComputedStyle(splitHalf).backgroundColor,
+          });
+          const rest = snapshot();
+          meter.focus();
+          await new Promise((resolve) => setTimeout(resolve, 220));
+          const meterBox = meter.getBoundingClientRect();
+          const countBox = count.getBoundingClientRect();
+          return JSON.stringify({
+            overlay: meter.querySelector('strong')?.textContent ?? null,
+            count: count.textContent.trim(),
+            percentage: percentage.textContent.trim(),
+            labelsBesideMeter: countBox.left >= meterBox.right,
+            rest,
+            focused: snapshot(),
+          });
+        })()
+        """,
+        viewport=(1440, 1000),
+    )
+
+    assert "error" not in result
+    assert result["overlay"] is None
+    assert re.match(r".+ of .+ endorsements.+%$", result["count"])
+    assert re.fullmatch(r"\d+%", result["percentage"])
+    assert result["labelsBesideMeter"] is True
+    assert result["rest"] == result["focused"]
+    assert result["rest"]["boundaryColor"] != "rgba(0, 0, 0, 0)"
+    assert result["rest"]["boundaryImage"] == "none"
+    assert result["rest"]["splitBorder"] != result["rest"]["splitFill"]
 
 
 def test_printing_the_guide_suppresses_chrome_and_keeps_every_race_whole(
@@ -5168,8 +5356,8 @@ def test_race_page_reflects_the_active_lens_leader_not_the_audited_default(
     # section's heading renders no name of its own.
     assert result["leaderHasHeading"] is False
     # Item 4: the share is stated once too, in that headline. No candidate
-    # section renders a meter of its own — v1's per-candidate mini-meter
-    # retired with meter v2 (docs/METER_V2.md, Chrome geometry; #315 replaces
+    # section renders a meter of its own — the retired per-candidate mini-meter
+    # stays gone (docs/METER_V2.md, Chrome geometry; #315 replaces
     # its job), so this holds for a tie's sections exactly as it does here,
     # for a sole leader's.
     assert result["meters"], "expected at least one candidate section"

@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-seattle-gay-news-20261003T040918Z-bc78ca8a1fa5",
+  "entered_at": "2026-10-03T04:30:00Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official Seattle news index listing 2026 editorial endorsements.",
+  "evidence_type": "web_page",
+  "id": "manual-seattle-gay-news-20261003T043000Z-19609404ceff",
+  "review_note": "Human reviewer verified every listed new or changed transcription against the official evidence for issue",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-03T04:52:29Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "seattle-gay-news",
+  "transcription": "us-house-7: Pramila Jayapal\nld-37-state-senator: Tatiana Brown\nld-37-state-representative-1: Kelabe Tewolde\nld-37-state-representative-2: Jaelynn Scott\nld-43-state-senator: Hannah Sabio-Howell\nking-county-council-2: Rebecca Saldaña\nseattle-city-council-5: Nilu Jenks\nExcluded: Kshama Sawant (not on general ballot); library levy (outside frozen inventory)"
+}

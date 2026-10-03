@@ -226,6 +226,35 @@ def test_cli_passes_when_every_declared_version_is_published(
     assert "Declared releases: verified (1 declared)" in result.output
 
 
+def test_production_workflow_blocks_the_unpublished_general_before_upload(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The candidate exception ends at the production environment boundary."""
+    manifest_path = Path("config/hosting/site.yaml")
+    monkeypatch.setattr(cli, "published_release_tags", lambda: frozenset({"2026-primary.2"}))
+
+    result = CliRunner().invoke(cli.app, ["hosting", "verify-releases", str(manifest_path)])
+
+    assert result.exit_code == 1
+    assert "wa-2026-general" in result.output
+    assert "2026-general.3" in result.output
+
+    workflow = yaml.load(
+        Path(".github/workflows/ci.yml").read_text(encoding="utf-8"),
+        Loader=yaml.BaseLoader,
+    )
+    steps = workflow["jobs"]["deploy"]["steps"]
+    strict = next(
+        step
+        for step in steps
+        if step.get("name") == "Require every declared release to be published"
+    )
+    upload = next(step for step in steps if step.get("name") == "Deploy production site")
+    assert strict["run"] == "uv run election-guide hosting verify-releases config/hosting/site.yaml"
+    assert "candidate" not in strict["run"]
+    assert steps.index(strict) < steps.index(upload)
+
+
 def test_cli_prepublication_accepts_only_the_unpublished_current_bundle(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:

@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-seattle-democratic-socialists-20261003T040651Z-8ebb7814a74e",
+  "entered_at": "2026-10-03T04:30:00Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official chapter event identifying Jaelynn Scott as the newly endorsed candidate.",
+  "evidence_type": "web_page",
+  "id": "manual-seattle-democratic-socialists-20261003T043000Z-f67473c93400",
+  "review_note": "Human reviewer verified every listed new or changed transcription against the official evidence for issue",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-03T04:52:29Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "seattle-democratic-socialists",
+  "transcription": "ld-37-state-representative-2: Jaelynn Scott"
+}

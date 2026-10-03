@@ -79,9 +79,12 @@ def compile_release_dataset(
 
         for source_extract in ledger.sources:
             source = source_by_id[source_extract.source_id]
-            snapshot_payload = canonical_json_bytes(
-                source_extract.model_dump(mode="json", exclude={"reviewed_at"})
-            )
+            snapshot_data = source_extract.model_dump(mode="json", exclude={"reviewed_at"})
+            if source_extract.reviewer is None:
+                snapshot_data.pop("reviewer")
+            if source_extract.review_note is None:
+                snapshot_data.pop("review_note")
+            snapshot_payload = canonical_json_bytes(snapshot_data)
             snapshot_input = stage / f"{source.id}.json"
             snapshot_input.write_bytes(snapshot_payload)
             discovery = source.discovery
@@ -113,6 +116,8 @@ def compile_release_dataset(
             capture = read_capture_manifest(manifest_path)
             captures.append(capture)
             reviewed_at = source_extract.reviewed_at
+            reviewer = source_extract.reviewer or ledger.reviewer
+            review_note = source_extract.review_note or ledger.review_note
 
             for decision in source_extract.decisions:
                 race = race_by_id[decision.race_id]
@@ -134,7 +139,7 @@ def compile_release_dataset(
                     raw_race_text=race.display_name,
                     raw_candidate_text=raw_candidate_text,
                     raw_status_text=raw_status_text,
-                    raw_notes=ledger.review_note,
+                    raw_notes=review_note,
                     evidence_excerpt=evidence_excerpt,
                     evidence_locator=evidence_locator,
                     extractor="manual-release-ledger",
@@ -176,8 +181,8 @@ def compile_release_dataset(
                     decision_record = new_review_decision(
                         review_item_id=review_item.id,
                         action="approve",
-                        author=ledger.reviewer,
-                        reason=ledger.review_note,
+                        author=reviewer,
+                        reason=review_note,
                         evidence=evidence_locator,
                         created_at=reviewed_at,
                         resolution={
@@ -204,10 +209,10 @@ def compile_release_dataset(
                         extracted_claim_id=claim.id,
                         normalization_confidence=Fraction(1),
                         manually_verified=True,
-                        reviewer=ledger.reviewer,
+                        reviewer=reviewer,
                         reviewed_at=reviewed_at,
                         review_item_id=review_item_id,
-                        notes=ledger.review_note,
+                        notes=review_note,
                     )
                 )
 

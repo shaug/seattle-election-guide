@@ -315,9 +315,8 @@ then any sticky strip, then content.
   — which is what #315 tried first, shipped, and then had to retract when
   live testing showed the chips could highlight one candidate's share inside
   a *different* candidate's own card. At rest on a pointer device the seams
-  between blocks are invisible and a left-aligned percentage rides the
-  leader's fill, so a shared meter reads almost exactly like the v1 pill it
-  replaced; hover or keyboard focus trades that percentage for hairline
+  between blocks are invisible and a left-aligned percentage overlays the
+  leader's blocks; hover or keyboard focus trades that percentage for hairline
   seams and per-block tooltips, and touch shows the seams always and the
   percentage never. A candidate section's own meter states no resting
   percentage inside the track at all — its count and percent ride in a
@@ -325,8 +324,10 @@ then any sticky strip, then content.
   half-endorsement sliver of highlighted bar. The full design — color,
   seams, splits, edge states, motion, and accessibility — is
   `docs/METER_V2.md`; where this line and that document disagree, the
-  document wins. Landed #314 (2026-08-04); the v1 gradient pill it replaced
-  is gone from every chrome that draws a meter, the social card included
+  document wins. This is the only endorsement-meter design: a standalone
+  gradient fill and permanently segmented pointer overview are both invalid.
+  The retired percentage-only pill is gone from every chrome that draws a meter,
+  the social card included
   (#316, 2026-08-05, `rendering/og_image.py`) — a static image has no hover
   to trade the percentage for seams, so it renders the resting
   pointer-device state permanently rather than the print row's static-both

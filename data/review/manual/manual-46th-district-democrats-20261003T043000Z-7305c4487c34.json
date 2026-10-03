@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-46th-district-democrats-20261003T040651Z-fa04e56b860d",
+  "entered_at": "2026-10-03T04:30:00Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official post-September 15 general endorsement list; additions to prior reviewed block.",
+  "evidence_type": "web_page",
+  "id": "manual-46th-district-democrats-20261003T043000Z-7305c4487c34",
+  "review_note": "Human reviewer verified every listed new or changed transcription against the official evidence for issue",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-03T04:52:29Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "46th-district-democrats",
+  "transcription": "ld-46-state-representative-1: Gerry Pollet\nking-county-assessor: Rob Foxcurran\nking-county-prosecuting-attorney: Leesa Manion (source spells Lessa)\nsupreme-court-justice-7: Debra L. Stephens (source spells Stephans)"
+}

@@ -1,10 +1,18 @@
 schema_version: "1.0"
 canonical_origin: https://seattleelections.guide
-current_election_id: wa-2026-primary
+current_election_id: wa-2026-general
 elections:
+  - election_id: wa-2026-general
+    bundle_id: wa-2026-general-2026-general.3
+    release_version: 2026-general.3
+    source_panel_id: wa-2026-general-default-sources-v1
+    source_panel_hash: b0fb2a603bd98da49d3282d2daa0cb55ff56e0bbdd46104c8b5a4a441b747a95
+    source_registry_hash: 2ed251c35b98279f5d26570afbc1917e91f714daa9ea694346444279b86a925c
   - election_id: wa-2026-primary
     bundle_id: wa-2026-primary-2026-primary.2
     release_version: 2026-primary.2
     source_panel_id: wa-2026-primary-default-sources-v4
     source_panel_hash: 389a978b149da9afdb919fdb9dfd1d4d3fbecc290d3b1cd41da3e3fd363de0b5
-    source_registry_hash: 76f9897a764e66698f45c544b1ade09dbc77cc71c79d0302bf59def05f3c26a8
+    git_commit: cf4f67fa336050fbaf6606aadcfea65f936a7007
+    release_manifest_sha256: 97d1a768de962338135115d7622da944982c171b1ed886beee72879da9c2d8b3
+    bundle_sha256: 3e63164b88e198b5f2c25d5d280b61d99694a010a8063206fef552bcff61b7da

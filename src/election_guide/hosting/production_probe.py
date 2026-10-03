@@ -16,6 +16,7 @@ import urllib.request
 from datetime import UTC, datetime
 from urllib.parse import urljoin, urlsplit
 
+from election_guide.hosting.models import SiteManifest
 from election_guide.hosting.production_check import (
     MANIFEST_PATH,
     CommitCheck,
@@ -24,8 +25,11 @@ from election_guide.hosting.production_check import (
     ProductionCheckReport,
     RouteCheck,
     RouteCheckResult,
+    evaluate_archive_index,
+    evaluate_deployment_contract,
     evaluate_manifest,
     evaluate_release_manifest,
+    plan_publication_route_checks,
     plan_route_checks,
     release_manifest_check,
 )
@@ -77,12 +81,18 @@ def probe(base_url: str, check: RouteCheck, *, timeout: float) -> Observation:
     url = urljoin(base_url, check.path)
     try:
         with _OPENER.open(_request(url), timeout=timeout) as response:
+            raw_location = response.headers.get("Location")
             return Observation(
-                status=response.status, location=_location_path(response.headers.get("Location"))
+                status=response.status,
+                location=_location_path(raw_location),
+                raw_location=raw_location,
             )
     except urllib.error.HTTPError as error:
+        raw_location = error.headers.get("Location")
         return Observation(
-            status=error.code, location=_location_path(error.headers.get("Location"))
+            status=error.code,
+            location=_location_path(raw_location),
+            raw_location=raw_location,
         )
     except _TRANSPORT_ERRORS as error:
         return Observation(error=str(error))
@@ -98,13 +108,19 @@ def _fetch_body(base_url: str, path: str, *, timeout: float) -> tuple[Observatio
     try:
         with _OPENER.open(_request(url), timeout=timeout) as response:
             body = response.read()
+            raw_location = response.headers.get("Location")
             observation = Observation(
-                status=response.status, location=_location_path(response.headers.get("Location"))
+                status=response.status,
+                location=_location_path(raw_location),
+                raw_location=raw_location,
             )
             return observation, body
     except urllib.error.HTTPError as error:
+        raw_location = error.headers.get("Location")
         return Observation(
-            status=error.code, location=_location_path(error.headers.get("Location"))
+            status=error.code,
+            location=_location_path(raw_location),
+            raw_location=raw_location,
         ), None
     except _TRANSPORT_ERRORS as error:
         return Observation(error=str(error)), None
@@ -117,6 +133,7 @@ def run_production_check(
     timeout: float,
     active_window: bool = False,
     checked_at: datetime | None = None,
+    site_manifest: SiteManifest | None = None,
 ) -> ProductionCheckReport:
     """Fetch the deployment manifest, then check the routes and commit it implies.
 
@@ -125,14 +142,28 @@ def run_production_check(
     check routes for otherwise, and reporting a live-and-serving-something
     site as commit-mismatched would blame the wrong check.
     """
+    observed_at = checked_at or datetime.now(UTC)
     manifest_observation, manifest_body = fetch_manifest_body(base_url, timeout=timeout)
     manifest_result, manifest, manifest_parse_error = evaluate_manifest(
         manifest_observation, manifest_body
     )
     if manifest is None:
         return ProductionCheckReport(
-            manifest=manifest_result, manifest_parse_error=manifest_parse_error
+            base_url=base_url,
+            checked_at=observed_at,
+            manifest=manifest_result,
+            manifest_parse_error=manifest_parse_error,
         )
+
+    deployment_contract = (
+        None
+        if site_manifest is None
+        else evaluate_deployment_contract(
+            site_manifest,
+            manifest,
+            expected_git_commit=expected_git_commit,
+        )
+    )
 
     current = next(
         election
@@ -150,12 +181,39 @@ def run_production_check(
         release_result, release_manifest, release_parse_error = evaluate_release_manifest(
             release_check, release_observation, release_body
         )
-    route_results = tuple(
-        RouteCheckResult(check=check, observed=probe(base_url, check, timeout=timeout))
-        for check in plan_route_checks(manifest.current_election_id)
-    )
+    archive_index = None
+    if site_manifest is None:
+        route_checks = plan_route_checks(manifest.current_election_id)
+        route_results = tuple(
+            RouteCheckResult(check=check, observed=probe(base_url, check, timeout=timeout))
+            for check in route_checks
+        )
+    elif (
+        deployment_contract is not None and deployment_contract.representative_race_path is not None
+    ):
+        route_checks = plan_publication_route_checks(
+            site_manifest,
+            representative_race_path=deployment_contract.representative_race_path,
+        )
+        archive_observation, archive_body = _fetch_body(base_url, "/e/", timeout=timeout)
+        archive_index = evaluate_archive_index(site_manifest, archive_observation, archive_body)
+        route_results = tuple(
+            archive_index.route
+            if check.path == "/e/"
+            else RouteCheckResult(
+                check=check,
+                observed=probe(base_url, check, timeout=timeout),
+            )
+            for check in route_checks
+        )
+    else:
+        route_results = ()
     return ProductionCheckReport(
+        base_url=base_url,
+        checked_at=observed_at,
         manifest=manifest_result,
+        deployment_contract=deployment_contract,
+        archive_index=archive_index,
         current_election_id=manifest.current_election_id,
         release_manifest=release_result,
         release_manifest_parse_error=release_parse_error,
@@ -166,7 +224,7 @@ def run_production_check(
             if release_manifest is None
             else DataFreshnessCheck(
                 published_at=release_manifest.generated_at,
-                checked_at=checked_at or datetime.now(UTC),
+                checked_at=observed_at,
             )
         ),
     )

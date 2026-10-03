@@ -167,7 +167,7 @@ have a published, non-draft Release. A historical, undeclared, mismatched, or re
 rejected. Use one value for both the exception and the local bundle supplied to staging:
 
 ```bash
-CANDIDATE_BUNDLE_ID=wa-2026-general-2026-general.1
+CANDIDATE_BUNDLE_ID=wa-2026-general-2026-general.3
 uv run election-guide hosting verify-releases config/hosting/site.yaml \
   --candidate-bundle-id "$CANDIDATE_BUNDLE_ID"
 uv run election-guide hosting stage config/hosting/site.yaml \
@@ -193,14 +193,14 @@ Pass `--released-bundle-dir` to resolve every declared bundle that was not suppl
 
 ```bash
 uv run election-guide hosting stage config/hosting/site.yaml \
-  --bundle wa-2026-primary-2026-primary.2=dist/primary-release/bundle \
+  --bundle wa-2026-general-2026-general.3=dist/general-release/bundle \
   --released-bundle-dir dist/released-bundles \
   --output-dir dist/cloudflare-site
 ```
 
 Each unresolved election's versioned ZIP is downloaded through the GitHub CLI, unpacked under that
-directory, and staged like any other bundle. Supplying every bundle locally downloads nothing, so
-the current single-election build is unaffected.
+directory, and staged like any other bundle. Supplying every bundle locally downloads nothing; the
+supported two-election composition instead supplies the general locally and resolves the primary.
 
 An election resolved this way **must** declare `bundle_sha256`, and staging rejects it otherwise. A
 downloaded archive is remote input, and the release manifest travelling inside it cannot vouch for
@@ -238,12 +238,13 @@ make hosting-stage
 ```
 
 The Make target supplies the current election's bundle as
-`wa-2026-primary-2026-primary.2=dist/primary-release/bundle` and passes
+`wa-2026-general-2026-general.3=dist/reproducibility-a/bundle` and passes
 `--released-bundle-dir dist/released-bundles`, which is the pair CI stages with. The current election
 is the only one built from source, so when another election is declared it resolves from the release
 that published it rather than from anything prepared locally — see
-[Historical bundles](#historical-bundles). That download reads GitHub, so `gh` must be installed and
-authenticated; while one election is declared there is nothing to resolve and nothing is downloaded.
+[Historical bundles](#historical-bundles). The archived primary therefore comes from its published,
+hash-pinned `2026-primary.2` release. That download reads GitHub, so `gh` must be installed and
+authenticated.
 Staging verifies all declared identities, each release status, every release-manifest artifact hash,
 and the current bundle's exact Git revision before it changes the existing output. It then
 atomically replaces `dist/cloudflare-site/` with:
@@ -279,8 +280,10 @@ make hosting-serve
 ```
 
 For an exceptional local production upload, run `make hosting-deploy` after authenticating
-Wrangler. Normal publication should go through GitHub Actions so the deployed artifact is the one
-that passed the full mainline release checks.
+Wrangler. The target stages with the narrow current-candidate exception, then requires every
+declared release to be published with no exception before it invokes the upload. Normal publication
+should go through GitHub Actions so the deployed artifact is the one that passed the full mainline
+release checks.
 
 ## Pull request previews
 
@@ -324,6 +327,47 @@ because a preview is a copy of the site rather than a separate site.
 
 Production is unaffected. The `pages:deploy` script defaults to `--branch=main`; only the preview
 workflow overrides it, by setting `PAGES_BRANCH`.
+
+## Publication-day production probe
+
+After an explicitly authorized deployment completes, use the existing production checker in its
+read-only mode. Supply the full deployed `production_candidate_sha`; the checker refuses a base URL
+other than the site manifest's canonical origin and uses that manifest as the trusted expectation
+for election order, current marker, release and bundle identities, panel/registry identities, and
+the historical declaration.
+
+<!-- runbook-command:production-probe -->
+```bash
+uv run election-guide hosting check-production \
+  https://seattleelections.guide \
+  --site-manifest config/hosting/site.yaml \
+  --expected-git-commit "$production_candidate_sha" \
+  --dry-run \
+  --output dist/production-probe.json
+```
+
+`--dry-run` is mandatory for publication evidence. It bypasses alert reconciliation completely, so
+the probe cannot open, update, or close the scheduled monitor's issue. Scheduled monitoring omits
+that option and keeps its existing alert behavior.
+
+The JSON output preserves the checked URL and time, the raw HTTP status and `Location` header for
+every redirect, the complete expected and observed deployment manifests, all route results, and the
+resolved representative race. That race is the lexicographically first current-election race route
+in the fetched schema-valid deployment manifest's asset inventory. The checker also requires:
+
+- a temporary `307` from `/` to the manifest-declared general guide;
+- `/e/` with the complete ordered election list and only the general marked current;
+- successful general and historical-primary guides;
+- successful representative race and comparisons pages;
+- a genuine `404` from a deterministic unknown-election path; and
+- `2026-general.3` and the exact `production_candidate_sha` in the public manifest.
+
+Attach `dist/production-probe.json` to the deployment issue with the approving actor, approval time,
+CI run and artifact, and deployment ID. Run the same command a second time after deployment
+completion and preserve that output separately (for example,
+`dist/production-probe-confirmation.json`); both probes must pass. A failure preserves evidence and
+routes the operator to [the production rollback runbook](runbooks/production-rollback.md). It never
+authorizes a rollback, kill-switch change, or approval of another SHA.
 
 ## Production freshness check
 
