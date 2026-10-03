@@ -22,12 +22,14 @@ from election_guide.rendering.og_image import (
     LINE_STRONG,
     MARGIN,
     METER_HEIGHT,
+    METER_SEAM_POLE,
     METER_TIE_DEEP,
     METER_TOP,
     METER_TRACK,
     METER_TRAIL_PLUM,
     METER_TRAIL_SLATE,
     METER_TRAIL_TAUPE,
+    METER_WIDTH,
     MUTED,
     NAVY,
     REGULAR_FONT,
@@ -118,10 +120,6 @@ def _card(**overrides: object) -> RaceCard:
         "race_label": "Metropolitan King County Council — District 2",
         "recommendation": "Rebecca Saldaña",
         "na": False,
-        "low_fill": False,
-        "no_majority": False,
-        "fill_percent": 88,
-        "percentage_label": "88%",
         "blocks": _DEFAULT_BLOCKS,
         "support": "23 of 24 endorsing sources agree",
     }
@@ -228,7 +226,7 @@ def test_a_race_with_no_measurable_share_draws_an_empty_track_and_an_n_a_label()
     what this module drew before this ticket, back when the track was its own
     private v1 color rather than `--meter-track`.
     """
-    na = render_race_card(_card(na=True, blocks=(), percentage_label="N/A"))
+    na = render_race_card(_card(na=True, blocks=()))
     with_meter = render_race_card(_card())
 
     assert na != with_meter
@@ -246,9 +244,6 @@ def test_a_leader_short_of_a_majority_takes_the_differ_family() -> None:
     majority = render_race_card(_card())
     no_majority = render_race_card(
         _card(
-            no_majority=True,
-            fill_percent=50,
-            percentage_label="50%",
             blocks=(_solid(AMBER),) * 20 + (_solid(METER_TRAIL_SLATE),) * 3,
         )
     )
@@ -264,9 +259,6 @@ def test_a_tied_field_takes_the_tie_amber_family() -> None:
     the deeper of the two tie ambers, never a hue a solo leader would draw."""
     tied = render_race_card(
         _card(
-            no_majority=True,
-            fill_percent=50,
-            percentage_label="50%",
             blocks=(_solid(AMBER),) * 10 + (_solid(METER_TIE_DEEP),) * 10,
         )
     )
@@ -287,6 +279,39 @@ def test_a_trailing_field_draws_every_muted_hue_it_names() -> None:
     colours = _colours(render_race_card(card))
 
     assert {METER_TRAIL_SLATE, METER_TRAIL_TAUPE, METER_TRAIL_PLUM} <= colours
+
+
+def test_the_social_card_draws_each_endorsement_boundary_at_rest() -> None:
+    """Two same-candidate endorsements remain visibly distinct without interaction."""
+    png = render_race_card(_card(blocks=(_solid(TEAL), _solid(TEAL))))
+    with Image.open(io.BytesIO(png)) as opened:
+        image = opened.convert("RGB")
+
+    boundary = MARGIN + METER_WIDTH // 2
+    assert image.getpixel((boundary, METER_TOP + METER_HEIGHT // 4)) == (10, 116, 107)
+
+
+def test_the_social_card_draws_the_boundary_between_split_allocations() -> None:
+    """A split endorsement stays visibly divided even when its hues are close."""
+    png = render_race_card(_card(blocks=(_split(TEAL, METER_TRAIL_SLATE),)))
+    with Image.open(io.BytesIO(png)) as opened:
+        image = opened.convert("RGB")
+
+    assert image.getpixel((MARGIN + METER_WIDTH // 2, METER_TOP + METER_HEIGHT // 2)) == (
+        60,
+        124,
+        131,
+    )
+
+
+def test_the_social_card_meter_does_not_draw_the_retired_percentage_pill() -> None:
+    """The meter interior is blocks and seams only, with no white text layer."""
+    with Image.open(io.BytesIO(render_race_card(_card()))) as opened:
+        meter = opened.convert("RGB").crop(
+            (MARGIN + 1, METER_TOP + 1, MARGIN + METER_WIDTH - 1, METER_TOP + METER_HEIGHT - 1)
+        )
+
+    assert WHITE not in {colour for _, colour in (meter.getcolors(1 << 20) or [])}
 
 
 def test_a_split_blocks_tongue_tip_rounds_toward_its_partners_colour() -> None:
@@ -340,8 +365,6 @@ def test_a_card_states_the_races_own_audited_result() -> None:
     assert card.race_label == race.race_label
     assert card.recommendation == race.recommendation_label
     assert card.na is False
-    assert card.percentage_label == race.percentage_label
-    assert card.fill_percent == race.percentage_whole
     assert len(card.blocks) > 0
 
 
@@ -399,6 +422,7 @@ def _base_css_tokens() -> dict[str, tuple[int, int, int]]:
         ("muted", MUTED),
         ("line-strong", LINE_STRONG),
         ("meter-track", METER_TRACK),
+        ("meter-seam-pole", METER_SEAM_POLE),
         ("meter-tie-deep", METER_TIE_DEEP),
         ("meter-trail-slate", METER_TRAIL_SLATE),
         ("meter-trail-taupe", METER_TRAIL_TAUPE),

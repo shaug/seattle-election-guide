@@ -530,7 +530,7 @@ def _write_bundle(
         "guide_html_artifact": "guide/guide.html",
         "included_artifacts": included_artifacts,
         "incomplete_races": [],
-        "release_version": "2026-general.1",
+        "release_version": "2026-general.2",
         "restricted_capture_count": 0,
         "schema_version": "1.3",
         "source_access_failures": [],
@@ -555,7 +555,7 @@ def _write_bundle(
             if relative not in UNHASHED_RASTERIZED_ARTIFACTS
         },
         "generated_at": generated_at,
-        "release_version": "2026-general.1",
+        "release_version": "2026-general.2",
         "schema_version": "1.3",
         "source_panel_hash": "2" * 64,
         "source_panel_id": "wa-2026-general-default-sources-v1",

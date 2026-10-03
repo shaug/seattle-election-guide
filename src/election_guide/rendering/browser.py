@@ -298,12 +298,15 @@ def _capture_emulated_viewport(
                     "'.screen-race-result,.screen-race-context,.screen-meter')]);"
                     "const meters=[...document.querySelectorAll('.screen-meter')]"
                     ".filter(meter=>getComputedStyle(meter).display!=='none');"
-                    # Every meter is left-anchored in every view (issue 115,
-                    # item D14a): the label rides the fill's left edge.
-                    "const meterAligned=(meter)=>{"
-                    "const label=meter.querySelector('strong');const style=getComputedStyle(meter);"
-                    "return style.justifyContent==='flex-start'&&"
-                    "Boolean(label&&getComputedStyle(label).textAlign==='left');};"
+                    # Meter v2 is visibly segmented in every view (#480): a
+                    # scored meter has blocks and no retired percentage label;
+                    # only the empty N/A track retains its text label.
+                    "const meterSegmented=(meter)=>{"
+                    "const label=meter.querySelector('strong');"
+                    "const blocks=meter.querySelectorAll('.meter-block');"
+                    "return meter.classList.contains('screen-meter-na')"
+                    "?Boolean(label&&label.textContent==='N/A'&&blocks.length===0)"
+                    ":Boolean(!label&&blocks.length>0);};"
                     "const compactInput=viewInputs.find(input=>input.value==='compact');"
                     "const fullInput=viewInputs.find(input=>input.value==='full');"
                     "const scopedOption=[...filter.options].find(option=>option.value!=='all');"
@@ -336,17 +339,17 @@ def _capture_emulated_viewport(
                     "urlFilter:controlQuery.get('filter')===scopedOption?.value,"
                     "denseColumns:compactColumns===expectedCompactColumns,"
                     "noOverflow:document.documentElement.scrollWidth<=window.innerWidth+1,"
-                    "compactMetersLeftAligned:compactCards.every(card=>{"
+                    "compactMetersSegmented:compactCards.every(card=>{"
                     "const meter=card.querySelector('.screen-meter');"
-                    "return Boolean(meter&&meterAligned(meter));}),"
+                    "return Boolean(meter&&meterSegmented(meter));}),"
                     "};"
                     "fullInput?.click();completeFilter?.click();"
                     "filter.value='all';filter.dispatchEvent(new Event('change',{bubbles:true}));"
                     "await pause();controls.reset="
                     "document.documentElement.dataset.ballotView==='full'&&"
                     "filter.value==='all'&&!contestedFilter?.checked&&window.location.search==='';"
-                    "controls.fullMetersLeftAligned=meters.every(meter=>"
-                    "meterAligned(meter));"
+                    "controls.fullMetersSegmented=meters.every(meter=>"
+                    "meterSegmented(meter));"
                     "controls.statusAllGrouped=status?.children.length===3&&"
                     "status.lastElementChild?.textContent===' · All Seattle ballot races'&&"
                     "getComputedStyle(status.lastElementChild).whiteSpace==='nowrap';"
@@ -421,10 +424,10 @@ def _capture_emulated_viewport(
                 "urlFilter": True,
                 "denseColumns": True,
                 "noOverflow": True,
-                "compactMetersLeftAligned": True,
+                "compactMetersSegmented": True,
                 "reset": True,
                 "statusAllGrouped": True,
-                "fullMetersLeftAligned": True,
+                "fullMetersSegmented": True,
             },
             "disclosures": [],
         }

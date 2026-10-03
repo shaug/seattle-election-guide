@@ -86,8 +86,9 @@ SKY = (155, 184, 209)
 # predates this test and did not match `--amber` until this change corrected
 # it; that drift is exactly the failure mode the test now closes off.)
 METER_TRACK = (237, 242, 244)  # --meter-track
+METER_SEAM_POLE = (26, 37, 48)  # --meter-seam-pole
 LINE_STRONG = (130, 154, 177)  # --line-strong, the frame's own border
-MUTED = (82, 96, 109)  # --muted, the N/A label and the low-fill guard's ink
+MUTED = (82, 96, 109)  # --muted, including the N/A label
 METER_TIE_DEEP = (138, 93, 18)  # --meter-tie-deep
 METER_TRAIL_SLATE = (125, 149, 173)  # --meter-trail-slate
 METER_TRAIL_TAUPE = (169, 158, 138)  # --meter-trail-taupe
@@ -163,9 +164,9 @@ class MeterBlockPaint:
     `top`/`bottom` are the same colors `_resolve_meter_color` resolves to RGB
     instead — identical for a solid block, the split's own two halves for a
     split, the same shorthand `_meter_block_facing` uses on the CSS side.
-    Carries no seam data: the resting state's seams are invisible by
-    construction on every chrome (docs/METER_V2.md, Seams), so nothing here
-    ever draws one (Decision log #23).
+    Carries no stored seam data: the image renderer derives each permanent
+    boundary directly from the adjacent blocks' facing colors, mirroring the
+    CSS renderer's contract (docs/METER_V2.md, Seams; Decision log #29).
     """
 
     type: str
@@ -192,13 +193,6 @@ class RaceCard:
     states) — the meter still draws, as an empty track under a muted "N/A",
     exactly as every other v2 chrome renders the same state; `blocks` is empty
     and `fill_percent`/`low_fill`/`no_majority` carry no meaning."""
-    low_fill: bool
-    no_majority: bool
-    fill_percent: int
-    percentage_label: str
-    """The meter's own resting text: the literal "N/A" for `na` (the
-    `meter-unavailable-label` mirror's own literal, `tests/mirrors.json`) or
-    the leader's share exactly as the page prints it otherwise."""
     blocks: tuple[MeterBlockPaint, ...]
     support: str
 
@@ -248,21 +242,12 @@ def race_card(
     from the same `rendering/context.py` functions `meter_view` composes), so
     a card and the page it unfurls cannot state the result two ways.
     """
-    percentage_whole = race.percentage_whole
-    na = percentage_whole is None
+    na = race.percentage_whole is None
     return RaceCard(
         election_name=election_name,
         race_label=race.race_label,
         recommendation=race.recommendation_label,
         na=na,
-        # I41: below 30% fill the label rides past the leader's own blocks and
-        # loses contrast against them; the guard moves it to ride after the
-        # fill instead. `meter_view`'s own field mirrors this exact threshold
-        # for every other chrome.
-        low_fill=percentage_whole is not None and percentage_whole < 30,
-        no_majority=context.has_no_majority(race),
-        fill_percent=percentage_whole or 0,
-        percentage_label="N/A" if na else race.percentage_label,
         blocks=() if na else _meter_block_paints(race, sources),
         support=context.race_detail_support_summary(race),
     )
@@ -336,14 +321,12 @@ def _draw_brand(draw: ImageDraw.ImageDraw, x: int, y: int) -> None:
 
 
 def _draw_meter(image: Image.Image, x: int, y: int, card: RaceCard) -> None:
-    """The segmented meter, resting-state only (docs/METER_V2.md).
+    """The always-visible segmented meter (docs/METER_V2.md).
 
-    Only the pointer-devices row of The discovery model applies: candidate
-    runs as stacked solid fills, split bands as divided blocks, the resting
-    percentage riding the leader's fill — a social card can never be hovered,
-    focused, or tapped, so there is no reveal to port and no seam to draw
-    (Decision log #23; `MeterBlockPaint` carries no seam data at all). Tongue-
-    tip rounding stays: it is the resting block's own shape, not a reveal.
+    Candidate runs, endorsement boundaries, split dividers, and tongue tips
+    match the other surfaces' resting state. No percentage overlays the
+    meter; a social card has no interaction, so only the tooltip is absent
+    (Decision log #29).
 
     The blocks paint onto their own layer at the meter's own origin, then
     paste onto the card through a rounded-rectangle mask — this module's
@@ -366,23 +349,14 @@ def _draw_meter(image: Image.Image, x: int, y: int, card: RaceCard) -> None:
         (x, y, x + width, y + height), radius=METER_FRAME_RADIUS, outline=LINE_STRONG, width=1
     )
 
-    font = _font(BOLD_FONT, 34)
     if card.na:
-        text_x, colour = x + 26, MUTED
-    else:
-        # The label rides the leader's own fill, and drops to the track's own
-        # muted ink past the point where white would bleed onto it (I41) —
-        # `--meter-track` is pale, exactly as it is on every other chrome, so
-        # the guard's ink is the site's own `--muted`, not an on-dark choice.
-        filled = round(width * card.fill_percent / 100)
-        text_x = x + filled + 20 if card.low_fill else x + 26
-        colour = MUTED if card.low_fill else (NAVY if card.no_majority else WHITE)
-    draw.text(
-        (text_x, y + (height - _line_height(font)) // 2),
-        card.percentage_label,
-        font=font,
-        fill=colour,
-    )
+        font = _font(BOLD_FONT, 34)
+        draw.text(
+            (x + 26, y + (height - _line_height(font)) // 2),
+            "N/A",
+            font=font,
+            fill=MUTED,
+        )
 
 
 def _draw_meter_blocks(
@@ -402,6 +376,7 @@ def _draw_meter_blocks(
     mid = height // 2
     left = 0
     cumulative = 0
+    previous: MeterBlockPaint | None = None
     for block in blocks:
         cumulative += block.width
         right = round(width * cumulative / total)
@@ -409,7 +384,18 @@ def _draw_meter_blocks(
             draw.rectangle((left, 0, right, height), fill=block.top)
         else:
             _draw_split_block(draw, left, right, mid, height, block)
+        if previous is not None:
+            draw.line((left, 0, left, mid - 1), fill=_meter_seam(previous.top, block.top))
+            draw.line((left, mid, left, height), fill=_meter_seam(previous.bottom, block.bottom))
         left = right
+        previous = block
+
+
+def _meter_seam(left: tuple[int, int, int], right: tuple[int, int, int]) -> tuple[int, int, int]:
+    """The visible 1px boundary between two facing endorsement colors."""
+    if left == right:
+        return _blend(right, METER_SEAM_POLE, 88)
+    return _blend(_blend(left, right, 50), METER_SEAM_POLE, 86)
 
 
 def _draw_split_block(
@@ -445,6 +431,9 @@ def _draw_split_block(
         fill=block.bottom,
         corners=(block.tongue_corner_start, False, False, False),
     )
+    seam_left = left + (METER_TONGUE_RADIUS if block.tongue_corner_start else 0)
+    seam_right = right - (METER_TONGUE_RADIUS if block.tongue_corner_end else 0)
+    draw.line((seam_left, mid, seam_right, mid), fill=_meter_seam(block.top, block.bottom))
 
 
 def _draw_tongue_backdrop(

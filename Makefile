@@ -7,7 +7,7 @@ INTEGRATION_TESTS := $(INTEGRATION_COMPARISONS_TESTS) $(INTEGRATION_RENDERING_TE
 UNIT_TEST_IGNORES := $(addprefix --ignore=,$(INTEGRATION_TESTS))
 GENERAL_RELEASE_LEDGER := data/releases/wa-2026-general/source-decisions.yaml
 GENERAL_RELEASE_INPUTS := --inventory-path data/normalized/wa-2026-general-inventory.json --registry-path config/sources/wa-2026-general.yaml --dataset-path data/normalized/wa-2026-general-canonical-dataset.json --snapshot-root data/releases/wa-2026-general/snapshots --manifest-dir data/releases/wa-2026-general/manifests
-CURRENT_CANDIDATE_BUNDLE_ID := wa-2026-general-2026-general.1
+CURRENT_CANDIDATE_BUNDLE_ID := wa-2026-general-2026-general.2
 
 sync:
 	uv sync --frozen
@@ -142,7 +142,7 @@ check-release-reproducible:
 	generated_at="$$(git show -s --format=%cI HEAD)"; \
 	for build in a b; do \
 		uv run election-guide release build $(GENERAL_RELEASE_LEDGER) \
-			--release-version 2026-general.1 \
+			--release-version 2026-general.2 \
 			--generated-at "$$generated_at" \
 			--output-dir "dist/reproducibility-$$build" \
 			$(GENERAL_RELEASE_INPUTS) || exit 1; \

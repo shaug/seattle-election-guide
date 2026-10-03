@@ -126,11 +126,9 @@ function lensMarkup() {
     <article id="race-mayor" data-publication-race-id="mayor">
       <div class="screen-race-result" data-lens-result>
         <h3 data-display-role="recommendation">Ada Lovelace / Blaise Pascal</h3>
-        <div class="screen-meter meter-no-majority" style="--meter-fill: 50%" role="img"
+        <div class="screen-meter meter-no-majority" role="img"
           data-display-role="share"
-          aria-label="No majority. Consensus among explicitly endorsing sources: 50%">
-          <strong>50%</strong>
-        </div>
+          aria-label="Ada Lovelace 1 of 2 endorsements; Blaise Pascal 1 of 2 endorsements"></div>
       </div>
       <div class="screen-race-context" data-lens-context>
         <p class="no-majority-pill">No majority</p>
@@ -178,10 +176,8 @@ test('a narrowed selection renders the personalized result and counts', async ()
 
   assert.equal(document.documentElement.classList.contains('lens-personalized'), true);
   assert.equal(document.querySelector('[data-lens-result] h3').textContent, 'Ada Lovelace');
-  assert.equal(
-    document.querySelector('[data-lens-result] .screen-meter strong').textContent,
-    '100%',
-  );
+  assert.equal(document.querySelector('[data-lens-result] .screen-meter strong'), null);
+  assert.equal(document.querySelectorAll('[data-lens-result] .meter-block').length, 1);
   assert.equal(
     document.querySelector('[data-lens-context] .support-full').textContent,
     '1 of 1 selected sources',
@@ -193,15 +189,15 @@ test('a narrowed selection renders the personalized result and counts', async ()
   assert.equal(document.querySelector('[data-lens-context] .no-majority-pill').hidden, true);
 });
 
-test('the meter carries the fill, the tone, and the spoken label together', async () => {
+test('the meter carries its blocks, tone, and spoken standings together', async () => {
   const { document, lens } = await build();
   lens.render(['strn']);
   const meter = document.querySelector('[data-lens-result] .screen-meter');
 
-  assert.equal(meter.getAttribute('style'), '--meter-fill: 100%');
+  assert.equal(meter.hasAttribute('style'), false);
   assert.equal(meter.classList.contains('meter-no-majority'), false);
   // docs/METER_V2.md, The discovery model's accessibility model: the meter's
-  // spoken name is the full standings, not the resting percentage.
+  // spoken name is the full standings, not a percentage.
   assert.equal(meter.getAttribute('aria-label'), 'Ada Lovelace 1 of 1 endorsements');
   assert.equal(
     meter.querySelector('.meter-block').getAttribute('data-meter-source'),
@@ -288,14 +284,7 @@ test('an insufficient race states the shortage, in the wording that applies', as
   assert.equal(note().textContent, 'Too few endorsements to measure agreement.');
 });
 
-// I41's threshold is a Python/JavaScript mirror — guide.html.j2 writes
-// `race.percentage_whole < 30`, meterView writes `fillPercent < 30` — and the
-// markup-parity fixture cannot reach it, because no race on the published
-// ballot has a sub-30% leader (docs/FRONTEND.md § Cross-language mirrors: the
-// diff "cannot reach a value the audited page does not render"). So the
-// decision is exercised here, through meterView, rather than restated in a
-// fixture that would agree with whatever production chose.
-test('a share below the I41 threshold carries the low-fill guard', async () => {
+test('a changing share never brings the retired percentage pill back', async () => {
   // Five sources, four candidates. The audited baseline gives Ada two of five
   // (40%, above the threshold); dropping her second endorser leaves a four-way
   // tie at 25%, below it.
@@ -331,16 +320,15 @@ test('a share below the I41 threshold carries the low-fill guard', async () => {
   const meter = () => document.querySelector('[data-lens-result] .screen-meter');
 
   lens.render(['strn', 'mlkl', 'urbn', 'kcdm']);
-  assert.equal(meter().querySelector('strong').textContent, '25%');
-  assert.ok(
-    meter().classList.contains('meter-low-fill'),
-    'a 25% share is below the I41 threshold and must carry the low-fill guard',
-  );
-
-  // The audited restore renders 40%, which is above it.
-  lens.render(codes);
-  assert.equal(meter().querySelector('strong').textContent, '40%');
+  assert.equal(meter().querySelector('strong'), null);
   assert.equal(meter().classList.contains('meter-low-fill'), false);
+  assert.match(meter().getAttribute('aria-label'), /1 of 4 endorsements/);
+
+  // The audited restore changes the standings but keeps the same segmented chrome.
+  lens.render(codes);
+  assert.equal(meter().querySelector('strong'), null);
+  assert.equal(meter().classList.contains('meter-low-fill'), false);
+  assert.match(meter().getAttribute('aria-label'), /2 of 5 endorsements/);
 });
 
 test('the module keeps client state out of storage', () => {
