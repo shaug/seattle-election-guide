@@ -31,6 +31,7 @@ class RouteCheck(BaseModel):
     path: str = Field(min_length=1)
     expected_status: int
     expected_location: str | None = None
+    expected_location_origin: str | None = None
 
 
 MANIFEST_CHECK = RouteCheck(name="deployment manifest", path=MANIFEST_PATH, expected_status=200)
@@ -65,9 +66,14 @@ class RouteCheckResult(BaseModel):
     def ok(self) -> bool:
         if self.observed.status != self.check.expected_status:
             return False
-        return (
-            self.check.expected_location is None
-            or self.observed.location == self.check.expected_location
+        if self.check.expected_location is None:
+            return True
+        if self.observed.location != self.check.expected_location:
+            return False
+        if self.check.expected_location_origin is None:
+            return True
+        return self.observed.raw_location == (
+            f"{self.check.expected_location_origin}{self.check.expected_location}"
         )
 
 
@@ -217,6 +223,7 @@ def plan_publication_route_checks(
             path="/",
             expected_status=307,
             expected_location=current_path,
+            expected_location_origin=site_manifest.canonical_origin,
         ),
         RouteCheck(name="election archive", path="/e/", expected_status=200),
         RouteCheck(name="current election guide", path=current_path, expected_status=200),
@@ -252,6 +259,7 @@ def plan_publication_route_checks(
                 path=f"{current_path}voter-guide.pdf",
                 expected_status=301,
                 expected_location=current_path,
+                expected_location_origin=site_manifest.canonical_origin,
             ),
         ]
     )
@@ -484,11 +492,16 @@ def _check_line(result: RouteCheckResult) -> str:
     if observed.error is not None:
         detail = f"request failed: {observed.error}"
     elif check.expected_location is not None:
+        expected_location = (
+            f"{check.expected_location_origin}{check.expected_location}"
+            if check.expected_location_origin is not None
+            else check.expected_location
+        )
         raw_location = (
             f" (raw Location: {observed.raw_location})" if observed.raw_location is not None else ""
         )
         detail = (
-            f"expected {check.expected_status} -> {check.expected_location}, "
+            f"expected {check.expected_status} -> {expected_location}, "
             f"got {observed.status} -> {observed.location}{raw_location}"
         )
     else:

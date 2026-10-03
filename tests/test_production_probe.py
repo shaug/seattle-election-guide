@@ -102,13 +102,14 @@ class _PublicationHandler(BaseHTTPRequestHandler):
     )
     root_status = 307
     root_location = "/e/wa-2026-general/"
+    redirect_origin = "https://seattleelections.guide"
     unknown_status = 404
 
     def log_message(self, format: str, *args: object) -> None:
         pass
 
     def _absolute(self, path: str) -> str:
-        return f"http://{self.headers.get('Host')}{path}"
+        return f"{self.redirect_origin}{path}"
 
     def do_GET(self) -> None:
         if self.path == "/":
@@ -476,6 +477,7 @@ def test_publication_check_verifies_the_manifest_archive_and_complete_route_cont
     [
         ({"root_status": 301}, "home redirect"),
         ({"root_location": "/e/wa-2026-primary/"}, "home redirect"),
+        ({"redirect_origin": "https://wrong.example"}, "home redirect"),
         ({"unknown_status": 200}, "unknown election"),
         (
             {
