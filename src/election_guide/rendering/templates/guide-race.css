@@ -251,7 +251,7 @@
   /* Print shows both the percentage and the seams, static (docs/METER_V2.md,
      Chrome geometry) — the revealed state, permanently, with no hover to
      leave. */
-  .screen-meter strong { opacity: 1 !important; }
+  .screen-meter strong { display: flex !important; opacity: 1 !important; }
   .meter-block { border-left-color: var(--meter-seam-hover-color, transparent) !important; border-image-source: var(--meter-seam-hover-image, none) !important; }
   .meter-half-bottom { border-top-color: var(--meter-splitline-hover, transparent) !important; }
 }

@@ -6,6 +6,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from datetime import UTC, datetime
 from fractions import Fraction
 from html import escape, unescape
 from pathlib import Path
@@ -18,6 +19,7 @@ from PIL import Image, ImageDraw
 from pydantic import ValidationError
 from websocket import create_connection  # pyright: ignore[reportUnknownVariableType]
 
+from election_guide.normalization.models import CanonicalDataset
 from election_guide.publication import build_publication_bundle
 from election_guide.publication.builder import (
     reprojected_comparisons,
@@ -79,7 +81,7 @@ from election_guide.rendering.shell import (
     election_names,
 )
 from election_guide.results.models import ElectionResults, RaceOutcome, RaceResults
-from election_guide.scoring import score_dataset
+from election_guide.scoring import read_scoring_configuration, score_dataset
 from election_guide.serialization import canonical_json_bytes, read_json, read_yaml
 from election_guide.sources.registry import read_source_registry
 from tests.compare_parity import enabled_view_model as _enabled_view_model
@@ -3868,6 +3870,86 @@ def test_overview_meter_progressively_discloses_endorsement_segments(
     assert printed["revealed"]["labelOpacity"] == "1"
     assert any(boundary["image"] != "none" for boundary in printed["rest"]["boundaries"])
     assert printed["rest"]["boundaries"] != pointer["rest"]["boundaries"]
+
+    touch_printed = _evaluate_in_chrome(
+        html_path,
+        expression,
+        mobile_width=390,
+        media="print",
+        touch=True,
+    )
+    assert touch_printed["hover"] is False
+    assert touch_printed["rest"]["labelDisplay"] == "flex"
+    assert touch_printed["rest"]["labelOpacity"] == "1"
+    assert any(boundary["image"] != "none" for boundary in touch_printed["rest"]["boundaries"])
+
+
+def test_race_detail_split_meter_stays_statically_segmented(
+    tmp_path: Path,
+) -> None:
+    """The current general election keeps split structure in candidate rows."""
+    dataset = CanonicalDataset.model_validate(
+        read_json(PROJECT_ROOT / "data/normalized/wa-2026-general-canonical-dataset.json")
+    )
+    report = score_dataset(
+        dataset,
+        read_scoring_configuration(PROJECT_ROOT / "config/scoring/default.yaml"),
+        computed_at=datetime(2026, 10, 3, 6, tzinfo=UTC),
+        allow_unresolved=True,
+    )
+    view_model = build_publication_bundle(
+        dataset,
+        report,
+        git_commit="race-detail-split-regression",
+        snapshot_root=PROJECT_ROOT / "data/releases/wa-2026-general/snapshots",
+    ).view_model
+    html_path = _write_race_html(tmp_path, view_model, "ld-32-state-representative-1")
+
+    result = _evaluate_in_chrome(
+        html_path,
+        """
+        (async () => {
+          const row = [...document.querySelectorAll('.race-detail-candidate-meter')]
+            .find((candidate) => candidate.querySelector('.meter-block-split'));
+          if (!row) return JSON.stringify({ error: 'race has no split candidate meter' });
+          const meter = row.querySelector('.screen-meter-section');
+          const count = row.querySelector('.race-detail-candidate-count');
+          const percentage = row.querySelector('.race-detail-candidate-pct');
+          const splitHalf = meter.querySelector('.meter-block-split .meter-half-bottom');
+          const boundary = meter.querySelectorAll('.meter-block')[1];
+          const snapshot = () => ({
+            boundaryColor: getComputedStyle(boundary).borderLeftColor,
+            boundaryImage: getComputedStyle(boundary).borderImageSource,
+            splitBorder: getComputedStyle(splitHalf).borderTopColor,
+            splitFill: getComputedStyle(splitHalf).backgroundColor,
+          });
+          const rest = snapshot();
+          meter.focus();
+          await new Promise((resolve) => setTimeout(resolve, 220));
+          const meterBox = meter.getBoundingClientRect();
+          const countBox = count.getBoundingClientRect();
+          return JSON.stringify({
+            overlay: meter.querySelector('strong')?.textContent ?? null,
+            count: count.textContent.trim(),
+            percentage: percentage.textContent.trim(),
+            labelsBesideMeter: countBox.left >= meterBox.right,
+            rest,
+            focused: snapshot(),
+          });
+        })()
+        """,
+        viewport=(1440, 1000),
+    )
+
+    assert "error" not in result
+    assert result["overlay"] is None
+    assert re.match(r".+ of .+ endorsements.+%$", result["count"])
+    assert re.fullmatch(r"\d+%", result["percentage"])
+    assert result["labelsBesideMeter"] is True
+    assert result["rest"] == result["focused"]
+    assert result["rest"]["boundaryColor"] != "rgba(0, 0, 0, 0)"
+    assert result["rest"]["boundaryImage"] == "none"
+    assert result["rest"]["splitBorder"] != result["rest"]["splitFill"]
 
 
 def test_printing_the_guide_suppresses_chrome_and_keeps_every_race_whole(
