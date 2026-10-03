@@ -175,11 +175,7 @@ class MeterView:
     """
 
     na: bool
-    no_majority: bool
-    low_fill: bool
     degraded: bool
-    fill_percent: int | None
-    percentage_label: str
     accessible_label: str
     blocks: tuple[MeterBlockRender, ...]
 
@@ -1104,10 +1100,7 @@ def meter_block_renders(
             bottom_color = colors[block.candidate_ids[1]]
             declarations.append(f"--meter-ca:{top_color}")
             declarations.append(f"--meter-cb:{bottom_color}")
-            declarations.append(f"--meter-splitline-rest:{bottom_color}")
-            declarations.append(
-                f"--meter-splitline-hover:{_meter_seam_bridge(top_color, bottom_color)}"
-            )
+            declarations.append(f"--meter-splitline:{_meter_seam_bridge(top_color, bottom_color)}")
             if block.tongue_corner_start and block.tongue_corner_end:
                 declarations.append(
                     f"--meter-tongue-bg:linear-gradient(90deg, {top_color} 0 50%, "
@@ -1117,34 +1110,20 @@ def meter_block_renders(
                 declarations.append(f"--meter-tongue-bg:{top_color}")
             elif block.tongue_corner_end:
                 declarations.append(f"--meter-tongue-bg:{bottom_color}")
-            # At rest a split's own two halves paint its resting border,
-            # except a band's first block, which rests flat on its own
-            # leader (top) color for both halves so the straight border
-            # never fragments against the rounded tongue corner
-            # (docs/METER_V2.md, Seams). This reads the block's own colors
-            # only — never the previous block's — which is what keeps a
-            # multi-split band's interior boundaries correctly two-toned
-            # instead of flattened to one half's color for the whole edge.
-            rest_top, rest_bottom = (
-                (top_color, top_color) if block.band_start else (top_color, bottom_color)
-            )
-            declarations.extend(_meter_seam_declarations("meter-seam-rest", rest_top, rest_bottom))
         if previous is not None:
             previous_top, previous_bottom = _meter_block_facing(previous, colors)
             current_top, current_bottom = _meter_block_facing(block, colors)
-            hover_top = (
+            seam_top = (
                 _meter_seam_tint(previous_top)
                 if previous_top == current_top
                 else _meter_seam_bridge(previous_top, current_top)
             )
-            hover_bottom = (
+            seam_bottom = (
                 _meter_seam_tint(previous_bottom)
                 if previous_bottom == current_bottom
                 else _meter_seam_bridge(previous_bottom, current_bottom)
             )
-            declarations.extend(
-                _meter_seam_declarations("meter-seam-hover", hover_top, hover_bottom)
-            )
+            declarations.extend(_meter_seam_declarations("meter-seam", seam_top, seam_bottom))
         renders.append(
             MeterBlockRender(
                 type=block.type,
@@ -1167,7 +1146,7 @@ def meter_accessible_label(
     units: dict[str, Fraction],
     labels: dict[str, str],
 ) -> str:
-    """The meter's spoken name: the full standings, not the resting percentage
+    """The meter's spoken name: the full standings, not a percentage
     (docs/METER_V2.md, The discovery model's accessibility model). Empty
     standings is the N/A state's own name."""
     if not standings:
@@ -1283,8 +1262,8 @@ def meter_view(race: PublicationRace, sources: dict[str, PublicationSource]) -> 
     this call.
 
     The N/A state (docs/METER_V2.md, Edge states) is decided by `race.
-    percentage_whole` alone — the same field the resting percentage itself
-    reads — and forces empty blocks and the N/A accessible name regardless of
+    percentage_whole` alone — the publication model's availability signal —
+    and forces empty blocks and the N/A accessible name regardless of
     what the cells would otherwise lay out: the audited template's N/A branch
     renders no blocks at all, so a `MeterView` that claimed blocks anyway
     would describe a meter no renderer draws (`rendering/validation.py`'s
@@ -1293,11 +1272,7 @@ def meter_view(race: PublicationRace, sources: dict[str, PublicationSource]) -> 
     if race.percentage_whole is None:
         return MeterView(
             na=True,
-            no_majority=False,
-            low_fill=False,
             degraded=False,
-            fill_percent=None,
-            percentage_label=race.percentage_label,
             accessible_label="No endorsements recorded",
             blocks=(),
         )
@@ -1313,11 +1288,7 @@ def meter_view(race: PublicationRace, sources: dict[str, PublicationSource]) -> 
     blocks = meter_layout_blocks(endorsements)
     return MeterView(
         na=False,
-        no_majority=has_no_majority(race),
-        low_fill=race.percentage_whole < 30,
         degraded=len(blocks) > _METER_DEGRADE_MAX_BLOCKS,
-        fill_percent=race.percentage_whole,
-        percentage_label=race.percentage_label,
         accessible_label=meter_accessible_label(standings, units, labels),
         blocks=tuple(meter_block_renders(blocks, colors, labels)),
     )

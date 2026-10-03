@@ -230,8 +230,8 @@ def _write_site_manifest(path: Path) -> Path:
                 "elections": [
                     {
                         "election_id": "wa-2026-general",
-                        "bundle_id": "wa-2026-general-2026-general.1",
-                        "release_version": "2026-general.1",
+                        "bundle_id": "wa-2026-general-2026-general.2",
+                        "release_version": "2026-general.2",
                         "source_panel_id": "general-panel",
                         "source_panel_hash": "1" * 64,
                         "source_registry_hash": "2" * 64,

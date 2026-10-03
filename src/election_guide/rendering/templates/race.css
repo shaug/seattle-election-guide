@@ -216,18 +216,9 @@
 .screen-meter-section .meter-block-split.meter-tongue-end:has(.meter-half-bottom.meter-half-recede) {
   --meter-tongue-bg: color-mix(in srgb, var(--meter-cb) 30%, var(--meter-track)) !important;
 }
-/* This meter has no rest/hover distinction of its own — no click, no
-   pointer engagement, nothing to reveal on. Its whole reason to exist is
-   showing this candidate's own endorsements as individually countable
-   blocks (docs/METER_V2.md, Chrome geometry), so it needs a seam always
-   visible where the shared meter otherwise only shows one on hover or
-   touch (guide-race.css's `@media (hover: hover)`/`(hover: none)` split) —
-   found live: without this, a `screen-meter-section` rendered in
-   "segmented mode" carrying no visible segments at all, since the
-   rest-state seam a plain `.meter-block` draws is deliberately
-   near-invisible by design (docs/METER_V2.md, Seams: "invisible by
-   construction"). The shared hover-tier seam and splitline colors aren't
-   an option here, though: both are computed once per race from each
+/* Candidate-section meters keep neutral dividers because their selected
+   candidate is bold while every competing block recedes. Shared seam and
+   splitline colors are computed once per race from each
    block's *true* full-brightness neighbor colors (`meter_block_renders`),
    with no notion of which candidate's section is asking — and unlike the
    tongue notch, a seam's color depends on the *previous* block's own
@@ -237,15 +228,8 @@
    context-blind line cutting across a muted run wherever a seam or
    splitline happened to sit between two receded candidates.
 
-   `!important` is required, not decorative: this element carries both
-   `.screen-meter` and `.screen-meter-section`, so it also matches
-   guide-race.css's own hover/focus-within and print rules, which paint
-   the same context-blind colors back on — found live, again, as the seam
-   reverting to its broken look on hover. Those rules are more specific
-   than a plain descendant selector on `:hover`/`:focus-within`, and the
-   print rule already carries its own `!important`, so only `!important`
-   (not added specificity) reliably wins against both regardless of
-   media state or source order. */
+   `!important` ensures this contextual neutral divider wins over the shared
+   block's inline custom properties in every medium. */
 .screen-meter-section .meter-block { border-left-color: var(--row-separator) !important; border-image-source: none !important; }
 .screen-meter-section .meter-half-bottom { border-top-color: var(--row-separator) !important; }
 .race-detail-outcome-unverified { border-left-color: var(--red); }

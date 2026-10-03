@@ -6,8 +6,9 @@ ambiguity. The canonical reference rendering — built from real `wa-2026-primar
 `docs/design/METER_V2_2026-08-04.html`; open it in a browser, hover the meters, and click the
 candidate chips. `docs/design/METER_V2_CANDIDATE_SECTIONS_2026-08-05.html` (landed via #326) is
 the companion reference for the race-detail page's own candidate sections specifically — the role
-`METER_V2_2026-08-04.html` played for #312–#314, now played for #325. Where either mockup and this
-prose disagree, the mockup is the spec.
+`METER_V2_2026-08-04.html` played for #312–#314, now played for #325. Those mockups preserve the
+original progressive-disclosure proposal; the corrective always-visible ruling in this document
+supersedes their resting states.
 
 Status: implemented on the guide card, the compact ballot, print, the race headline (#314,
 2026-08-04), the social card (#316, `rendering/og_image.py`, 2026-08-05), and the race-detail
@@ -51,12 +52,10 @@ Five weaknesses motivated the redesign:
 The meter is a constant-width bar of equal-width rectangular blocks, **one block per
 endorsement**, grouped into runs by candidate in standings order — leader first. A split
 endorsement is one block divided horizontally, the two candidates' colors stacked, placed at the
-boundary between their runs. At rest on a pointer device the seams between blocks are invisible
-and a left-aligned percentage rides the leader's fill, so the meter reads almost exactly like
-v1; hovering (or keyboard focus) fades the percentage out and fades hairline seams and
-per-block tooltips in, resolving the bar into individual voices. On touch there is no
-percentage and the seams are always visible; tapping a block shows its tooltip. At first
-inspection the only visible change from v1 is softer corners — inspection begets discovery.
+boundary between their runs. Hairline seams and split dividers are visible at rest on every
+surface; no percentage overlays the track. Hover, focus, and tap add only per-block source detail
+through the tooltip. The overview therefore exposes the evidence structure immediately instead
+of first presenting the retired leader-share pill.
 
 ## Anatomy and geometry
 
@@ -68,39 +67,35 @@ inspection the only visible change from v1 is softer corners — inspection bege
 | Split block | one block, halved horizontally: higher-ranked candidate on top |
 | Seam | 1px between blocks; 1px between split halves |
 | Tongue tip radius | `.25rem`, interior corner only (see below) |
-| Percentage layer | left-aligned on the fill, v1 typography (bold, tabular-nums); white on teal, navy on amber |
 
 ## The discovery model
 
 | Surface | At rest | On engagement |
 | --- | --- | --- |
-| Pointer devices | Solid stacked fill + percentage; no seams | Hover or focus: percentage fades out; seams and per-block tooltips fade in |
-| Keyboard | Same resting state; the meter is one tab stop | Focusing the meter reveals the seams |
-| Touch | No percentage; seams always visible | Tap a block for the same tooltip |
-| Print | Percentage *and* seams, both static | — |
+| Pointer devices | Segmented blocks and split dividers; no percentage | Hover or focus: show the block tooltip |
+| Keyboard | Same segmented state; the meter is one tab stop | Focus preserves the meter and enables tooltip inspection |
+| Touch | Same segmented state; no percentage | Tap a block for the same tooltip |
+| Print | Same segmented state; no percentage or interactive tooltip | — |
 
 A block's tooltip contains exactly two lines: the source's display name, and the decision
 ("Endorsed Jamie Pedersen"; "Split: Hawk + Diaz — ½ each"). Source category is deliberately
 omitted — it is race-page information, and including it would require new lens-payload
 plumbing.
 
-Reasoning: the meter is a sizzle feature — the displayed name is the steak, and what most
-readers decide on. The meter is the first confidence dive, the race page the second. The
-resting state deliberately preserves v1's aesthetic weight (a returning reader sees nothing to
-relearn), and every additional layer of information is earned by curiosity. On touch, where
-there is no hover to discover, the voices are simply always present, and the percentage — a
-summary derivable from the count — yields entirely to the core information.
+Reasoning: the displayed recommendation remains primary, while the meter is the first confidence
+dive and the race page the second. Because the meter's defining information is the endorsement
+breakdown, hiding its blocks at rest defeated the replacement. The redundant percentage yields
+entirely to the individual voices on every surface.
 
 Accessibility model: the meter is a single `role="img"` element carrying the full standings as
-its accessible name, and it is the meter's **one** tab stop — focusing it reveals the seams
-(`:focus-within`), same as hover. Blocks are presentational: they are not focusable and carry
+its accessible name, and it is the meter's **one** tab stop. Blocks are presentational: they are
+not focusable and carry
 no ARIA of their own (descendants of `role="img"` are pruned by assistive technology, so
 per-block labels there would be both invalid and inert). The tooltip is **not** a live region.
 Per-source evidence remains keyboard-reachable where it already lives — the race page's source
-lists — so no information is hover-only. Reveal transitions are short fades (~150 ms); under
-`prefers-reduced-motion` they become instant. Tooltips must satisfy WCAG 1.4.13 in
+lists — so no information is hover-only. Tooltips must satisfy WCAG 1.4.13 in
 implementation (dismissible via Escape, content hoverable, tap-away to close on touch);
-`hover: none` is the touch signal, which means hybrid touch-laptops get the pointer treatment.
+hybrid touch-laptops receive the same visible meter as every other input mode.
 
 ## Color
 
@@ -148,17 +143,15 @@ information.
   log #22, revised in #314's own review after the drafted "Nilu Jenks — 21½ of 23 endorsements"
   form shipped a name that repeated the headline on every card). The
   count is the more honest statistic — the fractional half is now *visible* as a divided block
-  — and the percent is derivable from it. The percent survives only as the resting summary on
-  the meter itself. Caption fractions are exact rationals rendered as vulgar-fraction glyphs
+  — and the percent is derivable from it. No percentage is repeated inside the meter. Caption
+  fractions are exact rationals rendered as vulgar-fraction glyphs
   (½, ⅓, ¼, …), formatted by a mirrored Python/JS pair registered in `tests/mirrors.json` like
   every other display string — never by float arithmetic (the mockup's formatter is
   illustrative only). The pair landed in #312 as `endorsement_count_label`
   (`rendering/context.py`) and `endorsementCountLabel` (`guide-format.mjs`). A fractional
   part with no single glyph — reachable the moment splits compound past Unicode's set, a
   quarter plus a third being 7/12 — renders as numerator⁄denominator with the U+2044
-  fraction slash, joined to a nonzero whole part by a no-break space: "2 1⁄12". The resting
-  percent reuses the existing `percentageLabel` mirror (exact half-up on a `Fraction`), not a
-  new rounding.
+  fraction slash, joined to a nonzero whole part by a no-break space: "2 1⁄12".
 - Block width therefore varies from race to race (constant track, varying endorsement counts).
   Decided and accepted: the meter helps a voter decide *within* a race, and meter-to-meter
   share comparability matters more than making one endorsement the same width everywhere.
@@ -216,10 +209,9 @@ fill, not a line on it:
 - Between blocks of **different candidates**, and between the halves of a split block: the
   50/50 blend of the two facing colors, mixed 86% with the same pole. The hue change itself is
   the separator, so the seam never has to shout.
-- At rest (pointer devices) seams are invisible by construction: a solid block's border shows
-  its own fill; a split block's resting border paints its own half colors, except a band's
-  first block, whose border rests on the leader's solid color so the straight border never
-  fragments against the rounded tongue corner.
+- Every block boundary and split divider is visible at rest. A two-tone boundary derives its
+  top and bottom halves independently from the colors facing one another, so adjacent split
+  bands remain honest instead of flattening either half to a single color.
 
 Reasoning: lighter-than-fill grout made the blocks read as tiles sitting on the page; the
 darker seam reads as one scored slab — a lightly segmented whole representing many individual
@@ -246,7 +238,7 @@ All ratified with the rest of the design (added in the August 4 review pass):
   (boundaries and split bands only). Countability yields before legibility does.
 - **Chrome geometry.** v2 inherits each chrome's existing footprint: card 11rem × 2rem
   (8.75rem under 720px), compact ballot 100% × 1.6rem, print 7.5rem × 1.2rem. Print renders the
-  static percent-plus-seams state. The race-detail page's own headline carries no meter at all
+  same segmented, percentage-free state. The race-detail page's own headline carries no meter at all
   (Decision log #27): every candidate's own section carries one instead, at its own fixed 16rem
   track (9rem under 720px, Decision log #24) — the race-detail page's replacement for both v1's
   leader-only mini-meter and #315's own unshipped candidate-context treatment on a shared bar.
@@ -256,10 +248,9 @@ All ratified with the rest of the design (added in the August 4 review pass):
 - This is a **replace-in-place** on the shared meter chrome, preserving the one-definition rule
   `guide-card.mjs` documents. The movers: `meterView` and its JS consumers (`guide-lens.mjs`,
   `race-client.mjs`, `race-detail.mjs`), the audited Jinja twins (`guide.html.j2`,
-  `race.html.j2` — each hard-codes the low-fill threshold), the chrome CSS (`guide-race.css`,
+  `race.html.j2`), the chrome CSS (`guide-race.css`,
   `race.css`, `guide.css` compact/print rules), **and `rendering/og_image.py`**, which drew
-  the same meter in Python for race social cards with its own copy of the fill, colors, and
-  low-fill threshold until #316. It cannot be split into add-then-retire — the
+  the same meter in Python for race social cards. It cannot be split into add-then-retire — the
   shared-presentation carving constraint proven during the #136 race-page work (landed via
   #305–#308). #316 ports `meter_layout_blocks` and `meter_candidate_colors`
   (`rendering/context.py`) verbatim rather than reimplementing layout or ranking in Python, and
@@ -271,11 +262,9 @@ All ratified with the rest of the design (added in the August 4 review pass):
   never had.
 - Sequencing: unblocked. The front-end architecture epic (#232) closed with #245; esbuild and
   lit-html are already in place.
-- The v1 low-fill guard's job shrinks to the desktop resting label (the percent must still
-  survive a short leader run); touch drops the label and hover removes it.
 - The rendered-HTML validator, `tests/mirrors.json` entries, and page-parity fixtures that
-  reference meter markup and `percentage_label` must move in the same change; the new caption
-  formatter registers as a mirror pair.
+  reference meter markup must move in the same change; the caption formatter remains a mirror
+  pair for text outside the meter.
 - No new pipeline data is needed: `source_cells` already carry candidate ids and exact
   allocations, no-endorsement rows are already named in the rendering context, and
   comparison-role sources never render a block at all.
@@ -326,15 +315,17 @@ All ratified with the rest of the design (added in the August 4 review pass):
 Meter v2 is a visual platform, not a one-off: the primitive is *a block is an endorsement*, and
 planned features extend it without redesign. Source weighting becomes variable block widths.
 Post-election annotation (docs/RESULTS.md) can mark blocks or runs in place. The social cards
-already draw the meter (in Python — see the consumer list above) and adopt the resting state
-with the implementation; the Comparisons page can render the same bar at any size because the
-resting state is a plain stacked fill. The site icon keeps the v1 pill: the pill remains the
+already draw the meter (in Python — see the consumer list above) and use the same visible
+boundaries; the Comparisons page can render the same bar at any size because its structure is
+always present. The site icon keeps the v1 pill: the pill remains the
 symbol; meter v2 is what the symbol opens into.
 
 ## Decision log
 
 Entries 1–22 ratified August 4, 2026; entry 23 confirmed August 5, 2026 during #316; entries
-24–28 ratified August 5, 2026 during #325.
+24–28 ratified August 5, 2026 during #325. Entry 29, ratified October 3, 2026 during #480,
+supersedes entries 13, 14, 23, and the overview portion of 28 where they described the old
+resting state.
 
 | # | Decision | Ruling |
 | --- | --- | --- |
@@ -350,8 +341,8 @@ Entries 1–22 ratified August 4, 2026; entry 23 confirmed August 5, 2026 during
 | 10 | Tie / no-majority | Amber variations / amber — v1's semantic, unchanged |
 | 11 | Trailing colors | Muted slate/taupe/plum; recessive by intent |
 | 12 | Selected candidate | Bold; everything else recedes |
-| 13 | Seams | 1px hairline, darker than fill, minimal contrast; invisible at rest on pointer devices |
-| 14 | Reveal | Hover/focus trades the percent for seams and tooltips; touch always shows seams, never the percent |
+| 13 | Seams (superseded by 29) | Originally invisible at rest on pointer devices |
+| 14 | Reveal (superseded by 29) | Originally traded the percent for seams on hover/focus |
 | 15 | Tongue tips | `.25rem` on the single interior corner; square at every meter edge |
 | 16 | N/A state | Empty track, muted "N/A", no blocks — v1's semantic |
 | 17 | Insufficient grade | Meter renders; the grade label and count caption carry the insufficiency |
@@ -360,9 +351,10 @@ Entries 1–22 ratified August 4, 2026; entry 23 confirmed August 5, 2026 during
 | 20 | Per-candidate mini-meter | Retired; superseded by entry 27's static per-section meter (a shared-bar candidate-context treatment shipped in #315 first, then was closed as not-planned) |
 | 21 | n-way splits | n stacked bands in one block, standings order, "1/n each" |
 | 22 | Caption matrix | The recommended choice's own count replaces the bare denominator, audited and personalized alike, but never the choice's own name — the card's headline already states it, so the caption states only the count; a tie or no single choice falls back to the pre-v2 sentence; the accessible name is a separate, unrelated string (the full standings) |
-| 23 | Social-card seams and tongue tips | Seams dropped, tongue tips kept, at the social card's own 420×56px chrome (`rendering/og_image.py`) |
+| 23 | Social-card seams and tongue tips (superseded by 29) | Originally dropped seams at the social card's own 420×56px chrome |
 | 24 | Section chrome and sizing | Full section width, but the meter itself stays a fixed 16rem track (9rem under 720px), left-adjusted — every row's bar occupies the same physical width for scannability, the job the card-width headline meter used to do; the freed space at full width goes to a flexible, right-adjusted label |
 | 25 | Zero-endorsement candidates | No section, in either model — the page is about who *should* be voted for, not who *can* be |
 | 26 | Section resting label | Retained, but moved outside the meter into the flexible label — a percentage that would need to fit inside a half-endorsement sliver of highlighted bar doesn't fit there; count stays the label's lead (Decision #6), percentage rides beside it |
 | 27 | The headline meter's own fate | Retired outright on the race-detail page: the race itself gets no meter there. Every candidate's own section gets one instead, colorized for that one candidate, same width and block layout throughout, replacing both v1's per-candidate mini-meter (entry 20) and #315's own unshipped shared-bar candidate-context treatment. The guide/ballot overview's own race-level meter is untouched — a different page, a different consumer of the same `meter_view`/`meterView`. |
-| 28 | Comparisons and social cards | No change. Both already draw the single plain resting-state meter for a race, never in candidate context; #325 only touches the race-detail page's per-candidate sections |
+| 28 | Comparisons and social cards (overview treatment superseded by 29) | Both draw one race-level meter, never in candidate context; #325 only touched the race-detail page's per-candidate sections |
+| 29 | Always-visible replacement | The segmented meter fully replaces the v1 pill: every supported surface shows endorsement blocks, boundaries, and splits at rest; no percentage overlays an overview meter; engagement adds only tooltips. Social cards render the same boundaries statically. |

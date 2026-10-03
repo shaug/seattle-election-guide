@@ -472,8 +472,7 @@ export function meterBlockRenders(blocks, colors, labels) {
       const bottomColor = /** @type {string} */ (colors.get(block.candidate_ids[1]));
       declarations.push(`--meter-ca:${topColor}`);
       declarations.push(`--meter-cb:${bottomColor}`);
-      declarations.push(`--meter-splitline-rest:${bottomColor}`);
-      declarations.push(`--meter-splitline-hover:${meterSeamBridge(topColor, bottomColor)}`);
+      declarations.push(`--meter-splitline:${meterSeamBridge(topColor, bottomColor)}`);
       if (block.tongue_corner_start && block.tongue_corner_end) {
         declarations.push(
           `--meter-tongue-bg:linear-gradient(90deg, ${topColor} 0 50%, ${bottomColor} 50% 100%)`,
@@ -483,31 +482,19 @@ export function meterBlockRenders(blocks, colors, labels) {
       } else if (block.tongue_corner_end) {
         declarations.push(`--meter-tongue-bg:${bottomColor}`);
       }
-      // At rest a split's own two halves paint its resting border, except a
-      // band's first block, which rests flat on its own leader (top) color
-      // for both halves so the straight border never fragments against the
-      // rounded tongue corner (docs/METER_V2.md, Seams). This reads the
-      // block's own colors only — never the previous block's — which is
-      // what keeps a multi-split band's interior boundaries correctly
-      // two-toned instead of flattened to one half's color for the whole
-      // edge.
-      const [restTop, restBottom] = block.band_start
-        ? [topColor, topColor]
-        : [topColor, bottomColor];
-      declarations.push(...meterSeamDeclarations('meter-seam-rest', restTop, restBottom));
     }
     if (previous !== null) {
       const [previousTop, previousBottom] = meterBlockFacing(previous, colors);
       const [currentTop, currentBottom] = meterBlockFacing(block, colors);
-      const hoverTop =
+      const seamTop =
         previousTop === currentTop
           ? meterSeamTint(previousTop)
           : meterSeamBridge(previousTop, currentTop);
-      const hoverBottom =
+      const seamBottom =
         previousBottom === currentBottom
           ? meterSeamTint(previousBottom)
           : meterSeamBridge(previousBottom, currentBottom);
-      declarations.push(...meterSeamDeclarations('meter-seam-hover', hoverTop, hoverBottom));
+      declarations.push(...meterSeamDeclarations('meter-seam', seamTop, seamBottom));
     }
     renders.push({
       type: block.type,
@@ -526,7 +513,7 @@ export function meterBlockRenders(blocks, colors, labels) {
 }
 
 /**
- * The meter's spoken name: the full standings, not the resting percentage
+ * The meter's spoken name: the full standings, not a percentage
  * (docs/METER_V2.md, The discovery model's accessibility model). Empty
  * standings is the N/A state's own name.
  *
