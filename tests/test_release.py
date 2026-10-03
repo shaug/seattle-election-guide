@@ -504,7 +504,7 @@ def test_checked_in_site_manifest_stages_a_new_current_release(
         snapshot_root=PROJECT_ROOT / "data/releases/wa-2026-general/snapshots",
         manifest_dir=PROJECT_ROOT / "data/releases/wa-2026-general/manifests",
         output_dir=tmp_path / "general-release",
-        release_version="2026-general.2",
+        release_version="2026-general.3",
         generated_at=datetime(2026, 10, 3, 6, 0, tzinfo=UTC),
         git_commit="a" * 40,
     )
@@ -529,7 +529,7 @@ def test_checked_in_site_manifest_stages_a_new_current_release(
     stage_pages_site(
         site_manifest_path,
         {
-            "wa-2026-general-2026-general.2": general_release.bundle_dir,
+            "wa-2026-general-2026-general.3": general_release.bundle_dir,
             "wa-2026-primary-2026-primary.2": primary_release.bundle_dir,
         },
         output,

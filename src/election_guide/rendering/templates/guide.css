@@ -62,7 +62,7 @@ html.compact-ballot-mode .screen-race-context { grid-template-columns: minmax(0,
 html.compact-ballot-mode .screen-race-context .support-line { grid-column: 1; }
 html.compact-ballot-mode .no-majority-pill { order: 1; }
 html.compact-ballot-mode .screen-meter { width: 100%; height: 1.6rem; }
-html.compact-ballot-mode .screen-meter-na strong { padding-right: .55rem; padding-left: .55rem; font-size: .84rem; }
+html.compact-ballot-mode .screen-meter strong { padding-right: .55rem; padding-left: .55rem; font-size: .84rem; }
 html.compact-ballot-mode .support-line { margin-top: 0; font-size: .68rem; text-align: left; }
 html.compact-ballot-mode .insufficient-note { padding: .38rem .48rem; font-size: .68rem; line-height: 1.25; }
 /* The card's core recommendation area is a link to the race's own page
@@ -111,6 +111,6 @@ html.compact-ballot-mode .insufficient-note { padding: .38rem .48rem; font-size:
   html .race-office, html.compact-ballot-mode .race-office { min-height: 0; font-size: 7.5pt; }
   html .race-card h3, html.compact-ballot-mode .race-card h3 { font-size: 12.5pt; }
   html .screen-meter, html.compact-ballot-mode .screen-meter { width: 7.5rem; height: 1.2rem; }
-  html .screen-meter-na strong, html.compact-ballot-mode .screen-meter-na strong { font-size: 9.5pt; }
+  html .screen-meter strong, html.compact-ballot-mode .screen-meter strong { font-size: 9.5pt; }
   .race-card-primary { margin: 0; padding: 0; }
 }

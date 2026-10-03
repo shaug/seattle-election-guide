@@ -689,9 +689,7 @@ def test_html_uses_one_view_model_for_screen_print_filters_and_evidence(tmp_path
     assert "@media print {" in html
     assert ".state-action-strip, .sticky-header, .filter-control-bar { display: none" in html
     assert "html .race-grid, html.compact-ballot-mode .race-grid" in html
-    assert 'style="--meter-fill: ' not in html
-    assert 'data-display-role="share"' in html
-    assert '<div class="screen-meter"' in html
+    assert 'style="--meter-fill: ' in html
 
 
 _ELECTION_DAY_BANNER = re.compile(r'<p class="election-day[^>]*>.*?</p>')
@@ -1804,21 +1802,21 @@ def test_no_majority_uses_the_exact_unrounded_share_across_the_card_and_the_race
     card_end = html.index("</article>", card_start)
     card_html = html[card_start:card_end]
     assert re.search(r'<p class="no-majority-pill"[^>]*>No majority</p>', card_html)
+    assert 'class="screen-meter meter-no-majority"' in card_html
 
     # The same exact share, on the page the card links to (issue #136). The
     # qualifier is the headline's own pill there rather than a word in the
     # eyebrow, because the headline is the leading choice's heading — the
     # headline itself carries no meter of its own any more (docs/METER_V2.md,
     # Chrome geometry: "The headline meter's own fate"; #325), so the
-    # no-majority color is read from the meter block style rather than from a
-    # separate DOM state hook. Matched as
+    # no-majority color is read from a candidate section's own meter block
+    # style instead of a single shared `.meter-no-majority` class. Matched as
     # `--meter-c(a)?:var(--amber)` rather than the bare literal: the page's
     # own embedded stylesheet already references `var(--amber)` in an
     # unrelated static rule (`.race-detail-candidate`'s default border), so a
     # bare substring match would pass on every race regardless of any block's
     # actual color.
     amber_block = re.compile(r"--meter-c[a]?:var\(--amber\)")
-    assert amber_block.search(card_html)
     race_html = _race_html(view_model, target.id)
     assert re.search(r'<p class="no-majority-pill"[^>]*>No majority</p>', race_html)
     assert amber_block.search(race_html)
@@ -1830,7 +1828,7 @@ def test_no_majority_uses_the_exact_unrounded_share_across_the_card_and_the_race
     above_half_card_end = above_half_html.index("</article>", above_half_card_start)
     above_half_card = above_half_html[above_half_card_start:above_half_card_end]
     assert re.search(r'<p class="no-majority-pill" hidden[^>]*>No majority</p>', above_half_card)
-    assert not amber_block.search(above_half_card)
+    assert 'class="screen-meter meter-no-majority"' not in above_half_card
     above_half_race = _race_html(view_model, target.id)
     assert re.search(r'<p class="no-majority-pill" hidden[^>]*>No majority</p>', above_half_race)
     assert not amber_block.search(above_half_race)
@@ -2070,27 +2068,31 @@ def test_the_support_caption_stays_inside_its_column_beside_the_name(tmp_path: P
     assert phone["allHugText"] is False
 
 
-def test_meter_seam_paints_each_facing_half_of_adjacent_split_blocks() -> None:
-    """A visible seam is two half colors when its facing colors differ.
+def test_meter_seam_rest_never_paints_a_split_blocks_own_bottom_half_wrong() -> None:
+    """A resting seam is two half colors, not one (docs/METER_V2.md, Seams).
 
     A real bug, found by clicking through a PR preview: a split block that is
     not its band's first (a candidate's second or later split in one run, or a
     band-first split whose previous block belongs to a *different* candidate's
-    own all-split run) painted its *entire* left border in one flat color.
-    Permanent seams must instead derive each half from the two colors that
-    actually face one another at that boundary.
+    own all-split run) painted its *entire* left border in one flat color —
+    either its own top (leader) half's color, or worse, the color of whatever
+    ran before it — leaving the bottom half's border visibly mismatched
+    against the block's own bottom fill at rest, on every pointer device,
+    before any hover ever should have revealed a seam at all.
 
-    `tests.mirror_parity.LAYOUT_SHAPES` carries hand-built cases the published
-    ballot does not reach. This asserts the correct values rather than only
-    that the two languages agree.
+    `tests.mirror_parity.LAYOUT_SHAPES` already carries hand-built cases the
+    published ballot does not reach; this reuses two of them precisely because
+    each reaches one of the bug's two shapes, and asserts the *correct*
+    values rather than only that the two languages agree (they agreed on the
+    wrong answer too, since both carried the same mistake).
     """
     shapes = {name: endorsements for name, endorsements, _ in LAYOUT_SHAPES}
 
     # "non-adjacent split": one leader's second split (not band-first) sits
     # after the leader's own first split. Its own colors are teal (top) and
-    # trail-slate (bottom). Its previous split has the same teal top but a
-    # taupe bottom, so the seam must tint teal on top and bridge taupe to
-    # slate on the bottom.
+    # trail-slate (bottom) — different from each other — so the fix must
+    # paint a two-stop gradient of its *own* colors, not a flat single color
+    # (the bug: a flat `var(--teal)`, matching only the top half).
     endorsements = list(shapes["non-adjacent split"])
     colors = context.meter_candidate_colors(
         context.meter_standings(endorsements), frozenset({"gap--alpha"}), has_majority=True
@@ -2102,22 +2104,21 @@ def test_meter_seam_paints_each_facing_half_of_adjacent_split_blocks() -> None:
         if block.type == "split" and not block.band_start and block.band_end
     )
     render = context.meter_block_renders(
-        blocks, colors, context.meter_candidate_labels(endorsements)
-    )[blocks.index(second_split)]
-    assert "--meter-seam-image:linear-gradient(180deg, " in render.style
-    assert "color-mix(in srgb, var(--teal) 88%, var(--meter-seam-pole)) 0 50%" in render.style
-    assert (
-        "color-mix(in srgb, var(--meter-trail-taupe) 50%, "
-        "var(--meter-trail-slate) 50%) 86%, var(--meter-seam-pole)) 50% 100%" in render.style
+        [second_split], colors, context.meter_candidate_labels(endorsements)
+    )[0]
+    assert "--meter-seam-rest-image:linear-gradient(180deg, var(--teal) 0 50%," in render.style, (
+        f"a non-band-first split's resting seam must gradient its own top/bottom colors, "
+        f"not a single flat one: {render.style}"
     )
-    assert "--meter-seam-color:" not in render.style
+    assert "--meter-seam-rest-color:" not in render.style
 
     # "run-aware band edges": two different candidates' one-split bands sit
     # side by side with no solid block between them (docs/METER_V2.md,
     # Splits: "Bridge Brooks is supported only by split halves ... the two
-    # bands sit side by side"). The second band's top boundary bridges teal
-    # to slate while its bottom boundary bridges slate to taupe; neither half
-    # may flatten to one color.
+    # bands sit side by side"). The second band's own first (and only) split
+    # is band-first, so its resting seam must be *its own* leader color
+    # (trail-slate) — not the *previous*, unrelated candidate's leader color
+    # (teal), which is what the bug painted.
     endorsements = list(shapes["run-aware band edges"])
     standings = context.meter_standings(endorsements)
     colors = context.meter_candidate_colors(
@@ -2132,18 +2133,20 @@ def test_meter_seam_paints_each_facing_half_of_adjacent_split_blocks() -> None:
     render = context.meter_block_renders(
         blocks, colors, context.meter_candidate_labels(endorsements)
     )[blocks.index(second_band_first)]
-    assert "--meter-seam-image:linear-gradient(180deg, " in render.style
-    assert "var(--teal) 50%, var(--meter-trail-slate) 50%" in render.style
-    assert "var(--meter-trail-slate) 50%, var(--meter-trail-taupe) 50%" in render.style
+    assert render.style.count("--meter-seam-rest-color:var(--meter-trail-slate)") == 1, (
+        f"a band-first split's resting seam must be its own leader color, not the previous "
+        f"(different) candidate's: {render.style}"
+    )
+    assert "--meter-seam-rest-color:var(--teal)" not in render.style
 
 
 def test_the_meter_macro_writes_the_block_style_unmodified() -> None:
     """The Jinja layer threads `MeterBlockRender.style` straight into the
     rendered `style` attribute rather than re-deriving it — the wiring half
-    of the seam regression above, which only exercises the pure Python
+    of the seam-rest regression above, which only exercises the pure Python
     function and never reaches `_meter.html.j2` at all. A hand-built
     `context.MeterView` stands in for a real page's, since the bug's shape
-    (a split block's two-tone boundary seam) is decided entirely by
+    (a split block's own two-tone resting seam) is decided entirely by
     `meter_block_renders`, not by anything the macro itself computes.
     """
     render = context.MeterBlockRender(
@@ -2151,7 +2154,7 @@ def test_the_meter_macro_writes_the_block_style_unmodified() -> None:
         width=1,
         style=(
             "--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-slate); "
-            "--meter-seam-image:linear-gradient(180deg, var(--teal) 0 50%, "
+            "--meter-seam-rest-image:linear-gradient(180deg, var(--teal) 0 50%, "
             "var(--meter-trail-slate) 50% 100%)"
         ),
         band_start=False,
@@ -2163,7 +2166,11 @@ def test_the_meter_macro_writes_the_block_style_unmodified() -> None:
     )
     view = context.MeterView(
         na=False,
+        no_majority=False,
+        low_fill=False,
         degraded=False,
+        fill_percent=65,
+        percentage_label="65%",
         accessible_label="Alpha Ames 2 of 3 endorsements",
         blocks=(render,),
     )
@@ -2176,118 +2183,58 @@ def test_the_meter_macro_writes_the_block_style_unmodified() -> None:
     )
     assert (
         'style="--meter-w:1; --meter-ca:var(--teal); --meter-cb:var(--meter-trail-slate); '
-        "--meter-seam-image:linear-gradient(180deg, var(--teal) 0 50%, "
+        "--meter-seam-rest-image:linear-gradient(180deg, var(--teal) 0 50%, "
         'var(--meter-trail-slate) 50% 100%)"' in html
     ), f"the macro did not write the block's own style attribute unmodified: {html}"
 
 
-def test_the_meter_macro_renders_blocks_without_the_retired_percentage_pill() -> None:
-    """The server baseline exposes the same segmented structure as the client.
-
-    A percentage inside the track recreates v1's pill at rest and masks the
-    endorsement blocks the replacement is meant to show.
-    """
-    render = context.MeterBlockRender(
-        type="solid",
-        width=1,
-        style="--meter-w:1; --meter-c:var(--teal)",
-        band_start=False,
-        band_end=False,
-        tongue_corner_start=False,
-        tongue_corner_end=False,
-        source_label="Delta Digest",
-        decision="Endorsed Alpha Ames",
-    )
-    view = context.MeterView(
-        na=False,
-        degraded=False,
-        accessible_label="Alpha Ames 1 of 1 endorsements",
-        blocks=(render,),
-    )
-
-    html = (
-        template_environment()
-        .from_string(
-            "{% from '_meter.html.j2' import segmented_meter %}{{ segmented_meter(view) }}"
-        )
-        .render(view=view)
-    )
-
-    assert "25%" not in html
-    assert "meter-low-fill" not in html
-    assert "--meter-fill" not in html
-    assert html.count('class="meter-block meter-block-solid"') == 1
-
-
-def test_meter_seams_are_visible_before_interaction_and_focus_does_not_reveal_them(
-    tmp_path: Path,
-) -> None:
-    """The block structure is the resting design, not progressive disclosure."""
-    view_model = _personalization_enabled_view_model(tmp_path)
-    source_code_by_id = {source.id: source.code for source in view_model.personalization.sources}
-    fragment = _lens_fragment(
-        view_model,
-        mode="s",
-        source_codes=tuple(
-            sorted(
-                (
-                    source_code_by_id["washington-working-families-party"],
-                    source_code_by_id["the-urbanist"],
-                )
-            )
-        ),
-    )
-    html_path = tmp_path / "guide.html"
-    html_path.write_text(
-        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
-        encoding="utf-8",
-    )
-
-    result = _evaluate_in_chrome(
-        html_path,
-        """
-        (async () => {
-          const pause = () => new Promise((resolve) => setTimeout(resolve, 220));
-          const meter = [...document.querySelectorAll('.screen-meter:not(.meter-degraded)')]
-            .find((candidate) => candidate.querySelector('.meter-block-split')
-              && candidate.querySelectorAll('.meter-block').length > 1);
-          if (!meter) return JSON.stringify({ error: 'fixture has no non-degraded split meter' });
-          const blocks = [...meter.querySelectorAll('.meter-block')];
-          const boundary = blocks[1];
-          const splitHalf = meter.querySelector('.meter-block-split .meter-half-bottom');
-          if (!boundary || !splitHalf) {
-            return JSON.stringify({ error: 'fixture lacks seam probes' });
-          }
-          const snapshot = () => ({
-            boundaryBorder: getComputedStyle(boundary).borderLeftColor,
-            boundaryImage: getComputedStyle(boundary).borderImageSource,
-            splitBorder: getComputedStyle(splitHalf).borderTopColor,
-            splitFill: getComputedStyle(splitHalf).backgroundColor,
-          });
-          const rest = snapshot();
-          meter.focus();
-          await pause();
-          return JSON.stringify({ rest, focused: snapshot() });
-        })()
-        """,
-        initial_url=f"{html_path.resolve().as_uri()}#{fragment}",
-    )
-
-    assert "error" not in result, result
-    assert result["rest"] == result["focused"]
-    assert (
-        result["rest"]["boundaryBorder"] != "rgba(0, 0, 0, 0)"
-        or result["rest"]["boundaryImage"] != "none"
-    )
-    assert result["rest"]["splitBorder"] != result["rest"]["splitFill"]
-
-
 def test_round4_card_anatomy_and_data_ink_cleanup(tmp_path: Path) -> None:
-    """docs/UI_POLISH.md round-4 items I39/H38/H34/H36/H37/I40/I42."""
+    """docs/UI_POLISH.md round-4 items I39/H38/H34/H36/H37/I40/I41/I42."""
     view_model = _view_model(tmp_path)
     configuration = read_rendering_configuration(RENDERING_CONFIG)
     races = [race for section in view_model.sections for race in section.races]
     source_by_id = {source.id: source for source in view_model.sources}
+
+    # I41: below ~30% fill, the card meter's label guard renders after the
+    # fill in muted ink instead of riding the (now too-narrow) colored fill.
+    # Reuse an existing race that already has a support leader (only its own
+    # share is overridden) so revalidation doesn't reject a share with no
+    # leader.
+    leading_race_id = next(race.id for race in races if race.percentage_whole is not None)
+    low_fill_model = view_model.model_copy(deep=True)
+    low_fill_race = next(
+        race
+        for section in low_fill_model.sections
+        for race in section.races
+        if race.id == leading_race_id
+    )
+    low_fill_race.winner_share = str(Fraction(25, 100))
+    low_fill_race.percentage_label = "25%"
+    low_fill_race.percentage_whole = 25
+    low_fill_model = _revalidated(low_fill_model)
+    low_fill_html = render_html_document(low_fill_model, configuration)
+    meter_start = low_fill_html.index(f'id="race-{leading_race_id}"')
+    meter_end = low_fill_html.index("</article>", meter_start)
+    assert (
+        'class="screen-meter meter-no-majority meter-low-fill"'
+        in low_fill_html[meter_start:meter_end]
+    )
+
+    high_fill_model = view_model.model_copy(deep=True)
+    high_fill_race = next(
+        race
+        for section in high_fill_model.sections
+        for race in section.races
+        if race.id == leading_race_id
+    )
+    high_fill_race.winner_share = str(Fraction(70, 100))
+    high_fill_race.percentage_label = "70%"
+    high_fill_race.percentage_whole = 70
+    high_fill_model = _revalidated(high_fill_model)
+    high_fill_html = render_html_document(high_fill_model, configuration)
+    high_meter_start = high_fill_html.index(f'id="race-{leading_race_id}"')
+    high_meter_end = high_fill_html.index("</article>", high_meter_start)
+    assert "meter-low-fill" not in high_fill_html[high_meter_start:high_meter_end]
 
     # H34/I39: the default caption always renders both its full and compact
     # forms (a pure CSS toggle, mirroring the print edition's own full/compact
@@ -2323,7 +2270,7 @@ def test_round4_card_anatomy_and_data_ink_cleanup(tmp_path: Path) -> None:
 
     # H36 and I40 moved to the race page with the rows and meters they style
     # (issue #136): the guide no longer ships either rule, and the race page's
-    # own entry does.
+    # own entry does. The card's meter keeps the low-fill guard they share.
     assert ".race-detail-category-badge" not in html
     assert ".race-detail-meter" not in html
     assert "race-detail-comparison-badge" not in html
@@ -2338,6 +2285,9 @@ def test_round4_card_anatomy_and_data_ink_cleanup(tmp_path: Path) -> None:
     # own fate"; #325) — so its whole chrome is gone from the race page's own
     # stylesheet, not merely from the guide's.
     assert ".race-detail-meter" not in race_stylesheet
+    # I41's guard now applies to the one meter chrome both pages share.
+    assert ".screen-meter.meter-low-fill strong { padding-left:" in html
+
     # I42: compact-mode race labels reserve consistent height so the
     # following name+meter block starts at the same offset in every card.
     assert "html.compact-ballot-mode .race-office { min-height: 2.3rem;" in html
@@ -2475,10 +2425,8 @@ def test_chromium_build_is_semantically_faithful_and_visually_safe(tmp_path: Pat
     rendered_html = rendered.html_path.read_text(encoding="utf-8")
     assert view_model.metadata.source_panel_id in rendered_html
     assert view_model.metadata.source_panel_hash in rendered_html
-    assert "--meter-fill" not in rendered_html
     for percentage in (53, 64, 70, 100):
-        assert f"<strong>{percentage}%</strong>" not in rendered_html
-    assert 'data-meter-source="' in rendered_html
+        assert f'style="--meter-fill: {percentage}%"' in rendered_html
     for tone in ("agrees", "differs", "not_covered"):
         assert f'class="comparison comparison-{tone}"' not in rendered_html
         assert f"print-times-pick-{tone}" not in rendered_html
@@ -3752,6 +3700,7 @@ def _evaluate_in_chrome(
     initial_url: str | None = None,
     viewport: tuple[int, int] | None = None,
     media: str | None = None,
+    touch: bool = False,
 ) -> dict[str, Any]:
     """Load one local file in headless Chrome and return one JSON object result.
 
@@ -3764,7 +3713,8 @@ def _evaluate_in_chrome(
     the bare file, to exercise a load-time restore rather than an in-page
     transition. Pass media="print" to evaluate against the print stylesheet
     (issue 193: the browser's own print output is the printable edition, so
-    that is the only place its rules can be measured).
+    that is the only place its rules can be measured). Pass touch=True to
+    exercise interaction media queries on a touch-primary device.
     """
     chrome_path = find_chrome()
     profile = Path(tempfile.mkdtemp(prefix="election-guide-chrome-"))
@@ -3827,6 +3777,12 @@ def _evaluate_in_chrome(
                         },
                         session_id=session_id,
                     )
+                if touch:
+                    cdp.command(
+                        "Emulation.setTouchEmulationEnabled",
+                        {"enabled": True, "maxTouchPoints": 1},
+                        session_id=session_id,
+                    )
                 cdp.command(
                     "Page.navigate",
                     {"url": initial_url or html_path.resolve().as_uri()},
@@ -3854,6 +3810,64 @@ def _evaluate_in_chrome(
             _terminate_process(process)
     finally:
         shutil.rmtree(profile, ignore_errors=True)
+
+
+def test_overview_meter_progressively_discloses_endorsement_segments(
+    tmp_path: Path,
+) -> None:
+    """Pointer rest shows the percentage; focus, touch, and print show seams."""
+    view_model = _personalization_enabled_view_model(tmp_path)
+    html_path = tmp_path / "guide.html"
+    html_path.write_text(
+        render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
+        encoding="utf-8",
+    )
+    expression = """
+      (async () => {
+        const meter = [...document.querySelectorAll('.screen-meter:not(.screen-meter-na)')]
+          .find((candidate) => candidate.querySelectorAll('.meter-block').length > 1);
+        if (!meter) return JSON.stringify({ error: 'fixture has no segmented overview meter' });
+        const blocks = [...meter.querySelectorAll('.meter-block')];
+        const label = meter.querySelector('strong');
+        const snapshot = () => ({
+          labelDisplay: getComputedStyle(label).display,
+          labelOpacity: getComputedStyle(label).opacity,
+          boundaries: blocks.slice(1).map((block) => ({
+            color: getComputedStyle(block).borderLeftColor,
+            image: getComputedStyle(block).borderImageSource,
+          })),
+        });
+        const rest = snapshot();
+        meter.focus();
+        await new Promise((resolve) => setTimeout(resolve, 220));
+        return JSON.stringify({
+          hover: matchMedia('(hover: hover)').matches,
+          label: label.textContent,
+          rest,
+          revealed: snapshot(),
+        });
+      })()
+    """
+
+    pointer = _evaluate_in_chrome(html_path, expression, viewport=(1440, 1000))
+    assert "error" not in pointer
+    assert pointer["hover"] is True
+    assert pointer["label"].endswith("%")
+    assert pointer["rest"]["labelOpacity"] == "1"
+    assert pointer["revealed"]["labelOpacity"] == "0"
+    assert pointer["rest"]["boundaries"] != pointer["revealed"]["boundaries"]
+
+    touch = _evaluate_in_chrome(html_path, expression, mobile_width=390, touch=True)
+    assert touch["hover"] is False
+    assert touch["rest"]["labelDisplay"] == "none"
+    assert touch["rest"]["boundaries"] == touch["revealed"]["boundaries"]
+    assert touch["rest"]["boundaries"] != pointer["rest"]["boundaries"]
+
+    printed = _evaluate_in_chrome(html_path, expression, viewport=(768, 1000), media="print")
+    assert printed["rest"]["labelOpacity"] == "1"
+    assert printed["revealed"]["labelOpacity"] == "1"
+    assert any(boundary["image"] != "none" for boundary in printed["rest"]["boundaries"])
+    assert printed["rest"]["boundaries"] != pointer["rest"]["boundaries"]
 
 
 def test_printing_the_guide_suppresses_chrome_and_keeps_every_race_whole(
@@ -4059,9 +4073,7 @@ def test_no_majority_lens_state_appears_and_dissolves_with_the_selected_sources(
             const pill = card.querySelector('[data-lens-context] .no-majority-pill');
             return {{
               pillHidden: pill.hidden,
-              amberBlock: [...meter.querySelectorAll('.meter-block')].some((block) =>
-                block.getAttribute('style').includes('var(--amber)')
-              ),
+              amberMeter: meter.classList.contains('meter-no-majority'),
               accessibleName: meter.getAttribute('aria-label'),
             }};
           }};
@@ -4077,12 +4089,12 @@ def test_no_majority_lens_state_appears_and_dissolves_with_the_selected_sources(
 
     # docs/METER_V2.md, The discovery model's accessibility model: the meter's
     # spoken name is the full standings — every tied candidate's own exact
-    # count — not a restatement of a percentage.
+    # count — not a restatement of the resting percentage.
     split_accessible_name = result["split"].pop("accessibleName")
-    assert result["split"] == {"pillHidden": False, "amberBlock": True}
+    assert result["split"] == {"pillHidden": False, "amberMeter": True}
     assert re.match(r".+ ½ of 1 endorsements; .+ ½ of 1 endorsements$", split_accessible_name)
     assert result["majority"]["pillHidden"] is True
-    assert result["majority"]["amberBlock"] is False
+    assert result["majority"]["amberMeter"] is False
     assert re.search(r"of \d+.* endorsements", result["majority"]["accessibleName"])
 
 

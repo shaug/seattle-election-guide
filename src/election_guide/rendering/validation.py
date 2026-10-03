@@ -75,15 +75,15 @@ def validate_rendered_guide(
         share_key = (race.id, "share")
         meter = context.meter_view(race, source_by_id)
         # docs/METER_V2.md, The discovery model's accessibility model: the
-        # meter's spoken name is the full standings, not a percentage —
-        # `meter_view` is the one place that decision is made.
+        # meter's spoken name is the full standings, not the resting
+        # percentage — `meter_view` is the one place that decision is made.
         if parser.display_accessible_names.get(share_key, []) != [meter.accessible_label]:
             mismatched_html_roles.append(f"{race.id}/share-accessible-name")
         if parser.display_element_roles.get(share_key, []) != ["img"]:
             mismatched_html_roles.append(f"{race.id}/share-accessible-role")
         # The card's meter renders one block per `meter_view` block — proving
-        # the segmented markup itself exists; the share role intentionally
-        # carries no visible text when the meter has data.
+        # the segmented markup exists, not only the resting percentage text
+        # `_html_semantic_values`'s "share" role already checks.
         if parser.meter_block_counts.get(race.id, 0) != len(meter.blocks):
             mismatched_html_roles.append(f"{race.id}/share-block-count")
         # The race page's own headline no longer draws a meter at all
@@ -348,7 +348,7 @@ def _html_semantic_values(
     return {
         "race-label": [race.race_label],
         "recommendation": [race.recommendation_label],
-        "share": ["N/A" if race.percentage_whole is None else ""],
+        "share": ["N/A" if race.percentage_whole is None else race.percentage_label],
         # H34: the default caption renders as two sibling elements (full
         # sentence, then the compact-mode short form), both always present in
         # the static markup and both carrying data-display-role="support".
@@ -381,7 +381,7 @@ class _GuideHTMLParser(HTMLParser):
         # One count per race: every `data-meter-source` element is one
         # segmented-meter block (docs/METER_V2.md), so this proves the
         # rendered markup carries the block count `meter_view` computed rather
-        # rather than only a summary value.
+        # than the resting percentage alone.
         self.meter_block_counts: dict[str, int] = {}
         self._text_parts: list[str] = []
         self._current_race_id: str | None = None

@@ -577,7 +577,6 @@
       "template",
       "stylesheet",
       "client",
-      "python",
       "test"
     ],
     "meter-block-context": [
@@ -622,6 +621,18 @@
       "stylesheet",
       "client",
       "python",
+      "test"
+    ],
+    "meter-low-fill": [
+      "template",
+      "stylesheet",
+      "client",
+      "test"
+    ],
+    "meter-no-majority": [
+      "template",
+      "stylesheet",
+      "client",
       "test"
     ],
     "meter-tongue-end": [
@@ -799,7 +810,6 @@
       "template",
       "stylesheet",
       "client",
-      "python",
       "test"
     ],
     "screen-meter-section": [
