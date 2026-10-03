@@ -205,6 +205,7 @@ manifest composition remains the separate `hosting verify` gate.
 Create the GitHub Release only from the merged mainline revision whose hash appears in the bundle.
 Before changing GitHub, inspect the tag, release record, and full asset list separately:
 
+<!-- runbook-command:release-preflight -->
 ```bash
 git ls-remote --tags origin refs/tags/2026-general.1 refs/tags/2026-general.1^{}
 gh release view 2026-general.1 \
@@ -224,6 +225,7 @@ remote state to force a match.
 
 For a permitted create, use the bundled notes and attach the one versioned ZIP:
 
+<!-- runbook-command:release-create -->
 ```bash
 gh release create 2026-general.1 \
   dist/reproducibility-a/seattle-election-guide-2026-general.1.zip \
@@ -231,6 +233,19 @@ gh release create 2026-general.1 \
   --notes-file dist/reproducibility-a/bundle/RELEASE_NOTES.md \
   --target "$release_candidate_sha"
 ```
+
+When the preflight instead proves that the exact published metadata already exists and the asset
+list is empty, upload the canonical ZIP without `--clobber`:
+
+<!-- runbook-command:release-upload -->
+```bash
+gh release upload 2026-general.1 \
+  dist/reproducibility-a/seattle-election-guide-2026-general.1.zip
+```
+
+The omitted `--clobber` is deliberate. If another operator creates an asset after the preflight,
+the command must fail rather than replace it; return to the restart matrix and inspect the new
+state.
 
 After upload, use `gh release view` again to prove the release is published, non-draft,
 non-prerelease, and has exactly one asset named

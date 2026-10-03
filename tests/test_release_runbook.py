@@ -42,6 +42,40 @@ def test_release_lineage_command_cannot_drift() -> None:
     )
 
 
+def test_github_release_preflight_command_cannot_drift() -> None:
+    command = _marked_bash(PROJECT_ROOT / "docs" / "RELEASE.md", "release-preflight")
+
+    assert (
+        command
+        == """git ls-remote --tags origin refs/tags/2026-general.1 refs/tags/2026-general.1^{}
+gh release view 2026-general.1 \\
+  --json url,tagName,targetCommitish,isDraft,isPrerelease,name,body,assets"""
+    )
+
+
+def test_github_release_create_command_cannot_drift() -> None:
+    command = _marked_bash(PROJECT_ROOT / "docs" / "RELEASE.md", "release-create")
+
+    assert (
+        command
+        == '''gh release create 2026-general.1 \\
+  dist/reproducibility-a/seattle-election-guide-2026-general.1.zip \\
+  --title "Seattle 2026 general election endorsement guide — 2026-general.1" \\
+  --notes-file dist/reproducibility-a/bundle/RELEASE_NOTES.md \\
+  --target "$release_candidate_sha"'''
+    )
+
+
+def test_existing_github_release_upload_command_cannot_drift() -> None:
+    command = _marked_bash(PROJECT_ROOT / "docs" / "RELEASE.md", "release-upload")
+
+    assert (
+        command
+        == """gh release upload 2026-general.1 \\
+  dist/reproducibility-a/seattle-election-guide-2026-general.1.zip"""
+    )
+
+
 def test_published_asset_verification_command_cannot_drift() -> None:
     command = _marked_bash(PROJECT_ROOT / "docs" / "RELEASE.md", "verify-published-asset")
 
