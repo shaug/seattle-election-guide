@@ -1,4 +1,4 @@
-# Primary release audit and publication
+# General release audit and publication
 
 The release workflow turns the reviewed source-decision ledger into a reproducible public bundle.
 It does not imply comprehensive source coverage. Gaps remain visible in the guide and in
@@ -6,7 +6,7 @@ It does not imply comprehensive source coverage. Gaps remain visible in the guid
 
 ## Audited inputs
 
-`data/releases/wa-2026-primary/source-decisions.yaml` contains reviewed structured transcriptions,
+`data/releases/wa-2026-general/source-decisions.yaml` contains reviewed structured transcriptions,
 official URLs inherited from the frozen source registry, and short verification locators. Its
 `captured_at` fields record when the reviewer actually checked each official publication. Optional
 `evidence_excerpt` values are source text; the compiler never invents one from normalized values.
@@ -18,16 +18,21 @@ Compile the ledger after an editorial change:
 
 ```bash
 uv run election-guide release compile \
-  data/releases/wa-2026-primary/source-decisions.yaml
+  data/releases/wa-2026-general/source-decisions.yaml \
+  --inventory-path data/normalized/wa-2026-general-inventory.json \
+  --registry-path config/sources/wa-2026-general.yaml \
+  --output-path data/normalized/wa-2026-general-canonical-dataset.json \
+  --snapshot-root data/releases/wa-2026-general/snapshots \
+  --manifest-dir data/releases/wa-2026-general/manifests
 ```
 
 The compiler validates source eligibility, races, candidates, publication state, timestamps,
 candidate allocation, and review provenance. It writes:
 
-- `data/normalized/canonical-dataset.json`;
+- `data/normalized/wa-2026-general-canonical-dataset.json`;
 - content-addressed permitted extracts under
-  `data/releases/wa-2026-primary/snapshots/`; and
-- immutable public capture records under `data/releases/wa-2026-primary/manifests/`.
+  `data/releases/wa-2026-general/snapshots/`; and
+- immutable public capture records under `data/releases/wa-2026-general/manifests/`.
 
 Multi-candidate decisions create a high-severity review item and a linked approval from the named
 ledger reviewer (or the source block's reviewer when supplied). The canonical dataset therefore
@@ -38,7 +43,12 @@ Verify exact fresh-checkout reproducibility without changing tracked files:
 ```bash
 uv sync --frozen
 uv run election-guide release verify \
-  data/releases/wa-2026-primary/source-decisions.yaml
+  data/releases/wa-2026-general/source-decisions.yaml \
+  --inventory-path data/normalized/wa-2026-general-inventory.json \
+  --registry-path config/sources/wa-2026-general.yaml \
+  --dataset-path data/normalized/wa-2026-general-canonical-dataset.json \
+  --snapshot-root data/releases/wa-2026-general/snapshots \
+  --manifest-dir data/releases/wa-2026-general/manifests
 ```
 
 Verification recompiles into temporary storage and byte-compares the dataset, every permitted
@@ -62,8 +72,8 @@ release-input identity without requiring a new panel version.
 
 Immutable release-manifest schemas 1.1 and 1.2 and release-status schema 1.2 remain readable. They
 predate `source_registry_hash`, must not declare it, and retain their historical meaning rather
-than being rewritten. Likewise, publication schema 1.13 remains readable without the field, while
-new schema 1.14 publication metadata requires it.
+than being rewritten. Likewise, the archived primary's publication schema 1.9 and later schema
+1.13 remain readable without the field, while new schema 1.14 publication metadata requires it.
 
 ## Build and inspect
 
@@ -71,10 +81,16 @@ Use a stable version, the commit timestamp, and the full Git revision:
 
 ```bash
 uv run election-guide release build \
-  data/releases/wa-2026-primary/source-decisions.yaml \
-    --release-version 2026-primary.2 \
-    --generated-at "$(git show -s --format=%cI HEAD)" \
-  --git-commit "$(git rev-parse HEAD)"
+  data/releases/wa-2026-general/source-decisions.yaml \
+  --release-version 2026-general.1 \
+  --generated-at "$(git show -s --format=%cI HEAD)" \
+  --git-commit "$(git rev-parse HEAD)" \
+  --output-dir dist/general-release \
+  --inventory-path data/normalized/wa-2026-general-inventory.json \
+  --registry-path config/sources/wa-2026-general.yaml \
+  --dataset-path data/normalized/wa-2026-general-canonical-dataset.json \
+  --snapshot-root data/releases/wa-2026-general/snapshots \
+  --manifest-dir data/releases/wa-2026-general/manifests
 ```
 
 The command requires a clean Git checkout and a full revision equal to `HEAD`, then recomputes
@@ -99,7 +115,7 @@ Inspect the desktop and mobile screenshots, all machine validation reports, and
 `RELEASE_NOTES.md`. Test the archive before publication:
 
 ```bash
-unzip -t dist/primary-release/seattle-election-guide-2026-primary.2.zip
+unzip -t dist/general-release/seattle-election-guide-2026-general.1.zip
 ```
 
 ## Reproducibility
@@ -175,10 +191,10 @@ Create the GitHub Release only from the merged mainline revision whose hash appe
 Use the bundled notes and attach the one versioned ZIP:
 
 ```bash
-gh release create 2026-primary.2 \
-  dist/primary-release/seattle-election-guide-2026-primary.2.zip \
-  --title "Seattle 2026 primary endorsement guide — 2026-primary.2" \
-  --notes-file dist/primary-release/bundle/RELEASE_NOTES.md \
+gh release create 2026-general.1 \
+  dist/general-release/seattle-election-guide-2026-general.1.zip \
+  --title "Seattle 2026 general election endorsement guide — 2026-general.1" \
+  --notes-file dist/general-release/bundle/RELEASE_NOTES.md \
   --target "$(git rev-parse HEAD)"
 ```
 

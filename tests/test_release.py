@@ -18,7 +18,7 @@ from typer.testing import CliRunner
 import election_guide.release.builder as release_builder
 from election_guide.cli import app
 from election_guide.evidence.models import CapturedManifest
-from election_guide.hosting import stage_pages_site, verify_staged_pages_site
+from election_guide.hosting import bundle_hash, stage_pages_site, verify_staged_pages_site
 from election_guide.normalization.models import CanonicalDataset
 from election_guide.publication import PublicationViewModel
 from election_guide.release import (
@@ -486,24 +486,52 @@ def test_checked_in_site_manifest_stages_a_new_current_release(
 ) -> None:
     ledger, dataset_path, snapshots = _compiled_release_inputs(tmp_path)
     _stub_release_render(monkeypatch)
-    release = _build_release(
+    primary_release = _build_release(
         ledger,
         dataset_path,
         snapshots,
         tmp_path,
-        tmp_path / "release",
+        tmp_path / "primary-release",
         release_version="2026-primary.2",
     )
-    expected_registry_hash = "76f9897a764e66698f45c544b1ade09dbc77cc71c79d0302bf59def05f3c26a8"
+    general_release = build_release(
+        ledger_path=PROJECT_ROOT / "data/releases/wa-2026-general/source-decisions.yaml",
+        inventory_path=PROJECT_ROOT / "data/normalized/wa-2026-general-inventory.json",
+        registry_path=PROJECT_ROOT / "config/sources/wa-2026-general.yaml",
+        dataset_path=PROJECT_ROOT / "data/normalized/wa-2026-general-canonical-dataset.json",
+        scoring_config_path=SCORING,
+        rendering_config_path=RENDERING,
+        snapshot_root=PROJECT_ROOT / "data/releases/wa-2026-general/snapshots",
+        manifest_dir=PROJECT_ROOT / "data/releases/wa-2026-general/manifests",
+        output_dir=tmp_path / "general-release",
+        release_version="2026-general.1",
+        generated_at=datetime(2026, 10, 3, 6, 0, tzinfo=UTC),
+        git_commit="a" * 40,
+    )
+    expected_registry_hash = "2ed251c35b98279f5d26570afbc1917e91f714daa9ea694346444279b86a925c"
 
-    assert release.status.schema_version == "1.3"
-    assert release.status.source_registry_hash == expected_registry_hash
+    assert general_release.status.schema_version == "1.3"
+    assert general_release.status.source_registry_hash == expected_registry_hash
 
     output = tmp_path / "site"
-    site_manifest_path = PROJECT_ROOT / "config/hosting/site.yaml"
+    site_manifest = yaml.safe_load(
+        (PROJECT_ROOT / "config/hosting/site.yaml").read_text(encoding="utf-8")
+    )
+    historical = site_manifest["elections"][1]
+    historical["source_registry_hash"] = primary_release.status.source_registry_hash
+    historical["git_commit"] = primary_release.status.git_commit
+    historical["release_manifest_sha256"] = hashlib.sha256(
+        (primary_release.bundle_dir / "release-manifest.json").read_bytes()
+    ).hexdigest()
+    historical["bundle_sha256"] = bundle_hash(primary_release.bundle_dir)
+    site_manifest_path = tmp_path / "site.yaml"
+    site_manifest_path.write_text(yaml.safe_dump(site_manifest), encoding="utf-8")
     stage_pages_site(
         site_manifest_path,
-        {"wa-2026-primary-2026-primary.2": release.bundle_dir},
+        {
+            "wa-2026-general-2026-general.1": general_release.bundle_dir,
+            "wa-2026-primary-2026-primary.2": primary_release.bundle_dir,
+        },
         output,
         expected_current_git_commit="a" * 40,
         calendar_path=PROJECT_ROOT / "config/calendar/elections.yaml",
@@ -515,6 +543,10 @@ def test_checked_in_site_manifest_stages_a_new_current_release(
     )
 
     assert deployment.elections[0].source_registry_hash == expected_registry_hash
+    assert [election.election_id for election in deployment.elections] == [
+        "wa-2026-general",
+        "wa-2026-primary",
+    ]
 
 
 def test_release_compare_accepts_different_declared_screenshot_bytes(

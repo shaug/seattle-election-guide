@@ -36,7 +36,7 @@ committed declarations and the models disagree.
 
 ### One gate `make check` does not run
 
-CI builds the primary release twice and checks that both builds are the same
+CI builds the general release twice and checks that both builds are the same
 release. `make check` does not, and cannot: `election-guide release build`
 refuses a dirty checkout, so on the tree you actually run `make check` against
 it would fail for a reason unrelated to your diff. Run it yourself, on a clean
