@@ -230,15 +230,20 @@ def test_calendar_schema_declares_no_presentation_fields() -> None:
     }
 
 
-def test_scheduled_date_resolves_a_milestone_offset_against_its_election() -> None:
+def test_2026_general_calendar_distinguishes_first_and_domestic_ballot_mailings() -> None:
     calendar = read_election_calendar(CALENDAR_PATH)
+    milestones = calendar.election_milestones("wa-2026-general")
 
-    ballots_mail = next(
-        item
-        for item in calendar.election_milestones("wa-2026-general")
-        if item.kind == "ballots_mail"
+    ballots_mail = next(item for item in milestones if item.kind == "ballots_mail")
+    overseas_service_ballots_mail = next(
+        item for item in milestones if item.kind == "overseas_service_ballots_mail"
     )
+    guide_publishes = next(item for item in milestones if item.kind == "guide_publishes")
+
+    assert calendar.scheduled_date(overseas_service_ballots_mail) == date(2026, 9, 18)
     assert calendar.scheduled_date(ballots_mail) == date(2026, 10, 16)
+    assert calendar.scheduled_date(guide_publishes) == date(2026, 9, 18)
+    assert guide_publishes.revision == 2
 
 
 @pytest.mark.parametrize(
@@ -246,6 +251,7 @@ def test_scheduled_date_resolves_a_milestone_offset_against_its_election() -> No
     [
         ("ballots_mail", 4, "must fall before election day"),
         ("ballots_mail", 0, "must fall before election day"),
+        ("overseas_service_ballots_mail", 0, "must fall before election day"),
         ("election_day", -1, "must fall on election day"),
         ("results_capture_election_night", 1, "must fall on election day"),
         ("certification", 0, "must fall after election day"),

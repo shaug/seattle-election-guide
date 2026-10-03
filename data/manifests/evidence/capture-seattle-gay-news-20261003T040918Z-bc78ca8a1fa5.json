@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 61075,
+  "canonical_url": "https://www.sgn.org/ch/News/Seattle?start=20",
+  "capture_method": "static_html",
+  "content_sha256": "5593dfa8db5d630c8353fa891cf4e9862d4960805d7d81c883686e34deeb9d5c",
+  "http_status": 200,
+  "id": "capture-seattle-gay-news-20261003T040918Z-bc78ca8a1fa5",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party page retained locally for review only.",
+  "requested_url": "https://www.sgn.org/ch/News/Seattle?start=20",
+  "retrieved_at": "2026-10-03T04:09:18Z",
+  "schema_version": "1.0",
+  "source_id": "seattle-gay-news",
+  "storage_reference": "sha256/55/5593dfa8db5d630c8353fa891cf4e9862d4960805d7d81c883686e34deeb9d5c",
+  "storage_scope": "local_only",
+  "title": "Seattle Gay News 2026 editorial endorsement index",
+  "updated_at": null
+}

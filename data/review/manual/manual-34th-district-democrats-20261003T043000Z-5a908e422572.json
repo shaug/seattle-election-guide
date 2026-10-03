@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-34th-district-democrats-20261003T040651Z-b3aee98c044a",
+  "entered_at": "2026-10-03T04:30:00Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official September 11 general-election decisions.",
+  "evidence_type": "web_page",
+  "id": "manual-34th-district-democrats-20261003T043000Z-5a908e422572",
+  "review_note": "Human reviewer verified every listed new or changed transcription against the official evidence for issue",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-03T04:52:29Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "34th-district-democrats",
+  "transcription": "initiative-26-001: No\ninitiative-26-638: No\ninitiative-26-645: No\nseattle-proposition-1-transit: Yes\nus-house-7: Pramila Jayapal\nld-34-state-senator: Emily Alvarado\nld-34-state-representative-1: Brianna K. Thomas\nld-34-state-representative-2: Joe Fitzgibbon\nking-county-prosecuting-attorney: Leesa Manion\nking-county-director-of-elections: Julie Wise\nking-county-assessor: Rob Foxcurran\nking-county-council-8: Teresa Mosqueda\nsupreme-court-justice-1: Colleen Melody\nsupreme-court-justice-3: Jaime Michelle Hawk\nsupreme-court-justice-4: Ian Birk\nsupreme-court-justice-5: Theo Angelis\nsupreme-court-justice-7: Debra L. Stephens\nking-county-district-court-west-judge-1: Nyjat Rose-Akins\nseattle-municipal-court-judge-1: Cat McDowall\nseattle-municipal-court-judge-2: Katharine Edwards\nseattle-municipal-court-judge-3: Pooja Vaddadi\nseattle-municipal-court-judge-5: Gabe Rothstein\nseattle-municipal-court-judge-6: Shantrice Anderson"
+}

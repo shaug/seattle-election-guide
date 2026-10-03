@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 5199,
+  "canonical_url": "https://wabikes.org/index.php/advocacy/endorsements/",
+  "capture_method": "manual_upload",
+  "content_sha256": "aa6362de786d77ad508187094cb8dfd594b17f3bdb33abbc453c7fb3d0843ce5",
+  "http_status": null,
+  "id": "capture-washington-bikes-20261003T040651Z-9928b2530ccc",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://wabikes.org/index.php/advocacy/endorsements/",
+  "retrieved_at": "2026-10-03T04:06:51Z",
+  "schema_version": "1.0",
+  "source_id": "washington-bikes",
+  "storage_reference": "sha256/aa/aa6362de786d77ad508187094cb8dfd594b17f3bdb33abbc453c7fb3d0843ce5",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: Washington Bikes",
+  "updated_at": null
+}

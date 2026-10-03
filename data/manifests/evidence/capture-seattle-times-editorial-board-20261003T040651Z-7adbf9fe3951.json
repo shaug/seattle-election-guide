@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 258285,
+  "canonical_url": "https://www.seattletimes.com/opinion/editorials/",
+  "capture_method": "static_html",
+  "content_sha256": "9bdc8015e16653e200bf948334fe509a666b1a52b397b778c93857758c95206f",
+  "http_status": 200,
+  "id": "capture-seattle-times-editorial-board-20261003T040651Z-7adbf9fe3951",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party page retained locally for review only.",
+  "requested_url": "https://www.seattletimes.com/opinion/editorials/",
+  "retrieved_at": "2026-10-03T04:06:51Z",
+  "schema_version": "1.0",
+  "source_id": "seattle-times-editorial-board",
+  "storage_reference": "sha256/9b/9bdc8015e16653e200bf948334fe509a666b1a52b397b778c93857758c95206f",
+  "storage_scope": "local_only",
+  "title": "Seattle Times Editorial Board 2026 general election recommendations",
+  "updated_at": null
+}

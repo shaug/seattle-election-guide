@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-transit-riders-union-20261003T040651Z-ee68cb3bb6ac",
+  "entered_at": "2026-10-03T04:30:00Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official September 30 general-election endorsement list.",
+  "evidence_type": "web_page",
+  "id": "manual-transit-riders-union-20261003T043000Z-092d8cdf333a",
+  "review_note": "Human reviewer verified every listed new or changed transcription against the official evidence for issue",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-03T04:52:29Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "transit-riders-union",
+  "transcription": "ld-32-state-representative-1: Danica Noble\nld-32-state-representative-2: Imraan Siddiqi\nld-37-state-representative-1: Kelabe Tewolde\nld-37-state-senator: Tatiana Brown\nld-43-state-senator: Hannah Sabio-Howell\nking-county-council-2: Toshiko Grace Hasegawa, Rebecca Saldaña\nseattle-city-council-5: Nilu Jenks\nseattle-municipal-court-judge-5: Gabe Rothstein (source omits position; candidate uniquely maps)"
+}

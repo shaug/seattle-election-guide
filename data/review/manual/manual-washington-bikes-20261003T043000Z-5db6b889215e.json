@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-washington-bikes-20261003T040651Z-e58833b40f3b",
+  "entered_at": "2026-10-03T04:30:00Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official 2026 general-election list.",
+  "evidence_type": "web_page",
+  "id": "manual-washington-bikes-20261003T043000Z-5db6b889215e",
+  "review_note": "Human reviewer verified every listed new or changed transcription against the official evidence for issue",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-03T04:52:29Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "washington-bikes",
+  "transcription": "ld-32-state-representative-1: Keith Scully\nld-32-state-representative-2: Imraan Siddiqi\nld-32-state-senator: Jesse Salomon, Cindy Ryu\nld-34-state-senator: Emily Alvarado\nld-34-state-representative-2: Joe Fitzgibbon\nld-36-state-representative-1: Julia Grant Reed\nld-36-state-representative-2: Liz Berry\nld-37-state-senator: Chipalo Street\nld-37-state-representative-1: Kelabe Tewolde\nld-37-state-representative-2: Jaelynn Scott\nld-43-state-senator: Jamie Pedersen\nld-43-state-representative-1: Nicole Macri\nld-46-state-senator: Javier Valdez\nld-46-state-representative-2: Darya Farivar\nking-county-council-2: Rebecca Saldaña\nking-county-council-4: Jorge L. Barón\nking-county-council-8: Teresa Mosqueda\nseattle-city-council-5: Nilu Jenks\nseattle-proposition-1-transit: Yes\ninitiative-26-001: No\nTypos verified: Saloman=>Salomon; Alvorado=>Alvarado; Kalebe=>Kelabe; Nicole Marci=>Nicole Macri"
+}

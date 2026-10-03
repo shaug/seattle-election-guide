@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 105902,
+  "canonical_url": "http://eepurl.com/QAju_Mt-ye",
+  "capture_method": "static_html",
+  "content_sha256": "6dc6f92a95af310716ddeb996ce8a7f4444ae98b3f4adcc865973a8b87113fe6",
+  "http_status": 200,
+  "id": "capture-11th-district-democrats-20261003T040651Z-676591d01480",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party page retained locally for review only.",
+  "requested_url": "http://eepurl.com/QAju_Mt-ye",
+  "retrieved_at": "2026-10-03T04:06:51Z",
+  "schema_version": "1.0",
+  "source_id": "11th-district-democrats",
+  "storage_reference": "sha256/6d/6dc6f92a95af310716ddeb996ce8a7f4444ae98b3f4adcc865973a8b87113fe6",
+  "storage_scope": "local_only",
+  "title": "11th Legislative District Democrats September 2026 endorsement results",
+  "updated_at": null
+}

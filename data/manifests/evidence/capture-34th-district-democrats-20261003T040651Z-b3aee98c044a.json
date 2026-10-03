@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 218760,
+  "canonical_url": "https://34dems.org/2026-endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "52238ba44fab275bde328a91836157cdc0af37df08daaa2c380065c0101ed139",
+  "http_status": 200,
+  "id": "capture-34th-district-democrats-20261003T040651Z-b3aee98c044a",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party page retained locally for review only.",
+  "requested_url": "https://34dems.org/2026-endorsements/",
+  "retrieved_at": "2026-10-03T04:06:51Z",
+  "schema_version": "1.0",
+  "source_id": "34th-district-democrats",
+  "storage_reference": "sha256/52/52238ba44fab275bde328a91836157cdc0af37df08daaa2c380065c0101ed139",
+  "storage_scope": "local_only",
+  "title": "34th Legislative District Democrats 2026 endorsements",
+  "updated_at": null
+}

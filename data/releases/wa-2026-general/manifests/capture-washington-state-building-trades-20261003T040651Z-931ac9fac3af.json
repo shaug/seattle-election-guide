@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 4846,
+  "canonical_url": "https://www.wabuildingtrades.org/candidates.html",
+  "capture_method": "manual_upload",
+  "content_sha256": "44cde6730144b943d3cc35e5fa5f5bc9ebdcbb695038559447e873a2365ce219",
+  "http_status": null,
+  "id": "capture-washington-state-building-trades-20261003T040651Z-931ac9fac3af",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://www.wabuildingtrades.org/candidates.html",
+  "retrieved_at": "2026-10-03T04:06:51Z",
+  "schema_version": "1.0",
+  "source_id": "washington-state-building-trades",
+  "storage_reference": "sha256/44/44cde6730144b943d3cc35e5fa5f5bc9ebdcbb695038559447e873a2365ce219",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: Washington State Building and Construction Trades Council",
+  "updated_at": null
+}

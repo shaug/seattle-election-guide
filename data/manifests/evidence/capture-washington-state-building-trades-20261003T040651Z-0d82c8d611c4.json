@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 70760,
+  "canonical_url": "https://www.wabuildingtrades.org/candidates.html",
+  "capture_method": "static_html",
+  "content_sha256": "47358c6e1a69fc652ae4f249bdb7f6b3b6c1d981894c541d8d97b587e7245c2b",
+  "http_status": 200,
+  "id": "capture-washington-state-building-trades-20261003T040651Z-0d82c8d611c4",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party page retained locally for review only.",
+  "requested_url": "https://www.wabuildingtrades.org/candidates.html",
+  "retrieved_at": "2026-10-03T04:06:51Z",
+  "schema_version": "1.0",
+  "source_id": "washington-state-building-trades",
+  "storage_reference": "sha256/47/47358c6e1a69fc652ae4f249bdb7f6b3b6c1d981894c541d8d97b587e7245c2b",
+  "storage_scope": "local_only",
+  "title": "Washington State Building Trades 2026 endorsements",
+  "updated_at": null
+}

@@ -161,8 +161,10 @@ Compare `config/calendar/elections.yaml` against what actually happened.
   records under `data/releases/<election-id>/manifests/` — capture records, not
   release manifests, which `docs/RELEASE.md` reserves for the artifacts inside a
   built release. These date collection rather than publication.
-- Did the guide publish on the day ballots mailed, as the `guide_publishes`
-  offset intends? If it slipped, by how long, and what was the blocking step?
+- Did the guide publish by the first official ballot issuance, as the
+  `guide_publishes` offset intends? Distinguish overseas/service ballot mailing
+  from the later domestic `ballots_mail` date. If publication slipped, by how
+  long, and what was the blocking step?
 - Were the refresh points worth their offsets — did either one actually catch a
   late endorsement?
 - Did the election-night and post-certification captures happen? These are the

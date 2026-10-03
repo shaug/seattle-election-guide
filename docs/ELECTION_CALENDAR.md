@@ -62,8 +62,10 @@ has room before the one it feeds:
 - **The official inventory import** follows initialization within a week.
 - **The source panel freezes** about two months out, and collection opens a few
   days later, so the panel is settled before any endorsement is gathered.
-- **The guide publishes** the day ballots mail. Publishing earlier serves a
-  ballot no one is holding; publishing later wastes the week voters decide.
+- **The guide publishes** when the first official ballots issue. That is often
+  the domestic mailing date, but an earlier overseas/service mailing moves the
+  deadline forward; publishing later withholds the guide from voters who can
+  already vote.
 - **Refresh points** at `-11` and `-4` catch late endorsements without
   reopening collection. Short cycles carry only the final one.
 - **The retrospective** lands thirty days out, after certification has settled
@@ -315,6 +317,16 @@ at a newer version of an event it already has. It cannot be derived: a build has
 no memory of the previous one, and the same input has to produce the same bytes.
 The event's identity never changes, so a moved date corrects the existing entry
 instead of adding a second one.
+
+`ballots_mail` is the statutory domestic mailing date. An election may also
+declare the internal `overseas_service_ballots_mail` milestone when those
+ballots go out earlier. `guide_publishes` keys off the first official ballot
+issuance, not automatically off domestic mailing: for the 2026 general election
+both the overseas/service mailing and publication deadline are 2026-09-18,
+while domestic ballots mail on 2026-10-16. Keeping the first issuance internal
+avoids presenting its specialized mailing date as the date every local voter
+should expect a ballot, while still making the earlier voter deadline explicit
+in the operational calendar.
 
 ## Adding an election
 

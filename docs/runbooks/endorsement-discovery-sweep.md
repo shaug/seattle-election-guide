@@ -15,10 +15,13 @@ The `collection_opens` calendar milestone opens the window; the `refresh` milest
 sweep inside it. For `wa-2026-general` those are 2026-09-08 (`-56`), 2026-10-23
 (`refresh-mid-ballot`, `-11`), and 2026-10-30 (`refresh-final`, `-4`).
 
-The real deadline is neither of the refreshes. `guide_publishes` is at `-18`
-(2026-10-16), so the **first complete sweep must land on or before that date** —
-the refreshes come after publication and correct a guide voters can already read.
-Plan the first pass against `-18`, not against election day.
+The real deadline is neither of the refreshes. `guide_publishes` is at `-46`
+(2026-09-18), when overseas and service ballots were mailed, so the **first
+complete sweep must land on or before the first ballot issuance**. The domestic
+`ballots_mail` milestone remains `-18` (2026-10-16), but it is a later mailing
+date, not the publication trigger. For the 2026 general election this deadline
+was missed; complete the reviewed sweep and publish as soon as the release path
+is ready rather than waiting for domestic ballots.
 
 Cadence inside the window belongs to the source registry, not to this document. Each source's
 `discovery.checked_at` in `config/sources/default.yaml` records when it was last looked at, and
@@ -314,7 +317,7 @@ Stop and ask a human when:
   their own reviewed change — not a quiet overwrite.
 - **A source states an explicit non-equal allocation across co-endorsed candidates.** The frozen
   policy is an exact equal split; anything else is a methodology decision.
-- **The first complete sweep will not finish before `guide_publishes` (`-18`).** Publishing with
+- **The first complete sweep will not finish before `guide_publishes`.** Publishing with
   known-missing sources is a decision to make deliberately and disclose, not to discover.
 
 ## Postmortem notes

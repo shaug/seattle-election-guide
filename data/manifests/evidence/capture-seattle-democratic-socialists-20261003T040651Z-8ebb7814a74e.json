@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 77455,
+  "canonical_url": "https://seattledsa.org/event/jaelynn-scott-37ld-campaign-kick-off-canvass/",
+  "capture_method": "static_html",
+  "content_sha256": "d9cbcbc94d163c13d06077eb885ee2af7c5e64e511f5db10c807b6616ddefc94",
+  "http_status": 200,
+  "id": "capture-seattle-democratic-socialists-20261003T040651Z-8ebb7814a74e",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party page retained locally for review only.",
+  "requested_url": "https://seattledsa.org/event/jaelynn-scott-37ld-campaign-kick-off-canvass/",
+  "retrieved_at": "2026-10-03T04:06:51Z",
+  "schema_version": "1.0",
+  "source_id": "seattle-democratic-socialists",
+  "storage_reference": "sha256/d9/d9cbcbc94d163c13d06077eb885ee2af7c5e64e511f5db10c807b6616ddefc94",
+  "storage_scope": "local_only",
+  "title": "Seattle DSA 2026 Jaelynn Scott endorsed campaign event",
+  "updated_at": null
+}

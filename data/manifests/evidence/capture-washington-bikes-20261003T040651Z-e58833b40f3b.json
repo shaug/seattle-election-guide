@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 56928,
+  "canonical_url": "https://wabikes.org/index.php/advocacy/endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "dc55b40ec43ba98918929616e35cefa3d6dca0af2a150859bceae01a159342a2",
+  "http_status": 200,
+  "id": "capture-washington-bikes-20261003T040651Z-e58833b40f3b",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party page retained locally for review only.",
+  "requested_url": "https://wabikes.org/index.php/advocacy/endorsements/",
+  "retrieved_at": "2026-10-03T04:06:51Z",
+  "schema_version": "1.0",
+  "source_id": "washington-bikes",
+  "storage_reference": "sha256/dc/dc55b40ec43ba98918929616e35cefa3d6dca0af2a150859bceae01a159342a2",
+  "storage_scope": "local_only",
+  "title": "Washington Bikes 2026 general election endorsements",
+  "updated_at": null
+}
