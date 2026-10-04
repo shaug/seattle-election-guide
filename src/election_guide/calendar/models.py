@@ -31,9 +31,11 @@ MilestoneKind = Literal[
     "official_inventory_import",
     "source_panel_freeze",
     "collection_opens",
+    "special_absentee_ballots_available",
     "overseas_service_ballots_mail",
     "ballots_mail",
     "guide_publishes",
+    "guide_published",
     "refresh",
     "election_day",
     "results_capture_election_night",
@@ -51,9 +53,11 @@ MILESTONE_PHASES: dict[MilestoneKind, MilestonePhase] = {
     "official_inventory_import": "before",
     "source_panel_freeze": "before",
     "collection_opens": "before",
+    "special_absentee_ballots_available": "before",
     "overseas_service_ballots_mail": "before",
     "ballots_mail": "before",
     "guide_publishes": "before",
+    "guide_published": "before",
     "refresh": "before",
     "election_day": "on",
     "results_capture_election_night": "on",
@@ -105,6 +109,10 @@ class CalendarMilestone(CalendarModel):
     offset_days: int = Field(ge=-730, le=365)
     workflow: str | None = Field(default=None, pattern=WORKFLOW_PATTERN)
     reference: str | None = Field(default=None, min_length=1)
+    # Most dates are planned commitments. A verified historical date may be
+    # marked actual so the public feed records what happened without weakening
+    # the prospective deadline enforced for future primary/general cycles.
+    date_status: Literal["planned", "actual"] = "planned"
     # Where this milestone's promised artifact is recorded, when it exists in a
     # form the artifact watch cannot check (issue #279). Set only after the
     # work is done and its record is a document rather than a manifest or a
@@ -136,6 +144,8 @@ class CalendarMilestone(CalendarModel):
 
     @model_validator(mode="after")
     def validate_offset_phase(self) -> CalendarMilestone:
+        if self.kind == "guide_published" and self.date_status != "actual":
+            raise ValueError("guide-published milestone must carry an actual date")
         phase = MILESTONE_PHASES[self.kind]
         if phase == "before" and self.offset_days >= 0:
             raise ValueError(f"milestone {self.id!r} must fall before election day")
@@ -227,17 +237,41 @@ class ElectionCalendar(CalendarModel):
             item.offset_days for item in milestones if item.kind == "collection_opens"
         ]
         if collection_openings:
-            guide_publications = [
-                item.offset_days for item in milestones if item.kind == "guide_publishes"
-            ]
+            guide_publications = [item for item in milestones if item.kind == "guide_publishes"]
             if len(guide_publications) != 1:
                 raise ValueError(
                     f"election {election.id!r} with collection opening must declare "
                     "exactly one guide-publishes milestone"
                 )
-            if guide_publications[0] < max(collection_openings):
+            guide_publication = guide_publications[0]
+            if guide_publication.offset_days < max(collection_openings):
                 raise ValueError(
                     f"election {election.id!r} publishes its guide before collection opens"
+                )
+            if election.election_type in {"primary", "general"}:
+                special_availability = [
+                    item for item in milestones if item.kind == "special_absentee_ballots_available"
+                ]
+                if len(special_availability) != 1:
+                    raise ValueError(
+                        f"election {election.id!r} with a full runway must declare exactly one "
+                        "special-absentee availability milestone"
+                    )
+            regular_issuance = [
+                item for item in milestones if item.kind == "overseas_service_ballots_mail"
+            ]
+            if len(regular_issuance) != 1:
+                raise ValueError(
+                    f"election {election.id!r} with a full runway must declare exactly one "
+                    "overseas-service issuance milestone"
+                )
+            if (
+                guide_publication.date_status == "planned"
+                and guide_publication.offset_days > regular_issuance[0].offset_days
+            ):
+                raise ValueError(
+                    f"election {election.id!r} publishes its guide after regular overseas "
+                    "and service ballot issuance"
                 )
         certified = [item.offset_days for item in milestones if item.kind == "certification"]
         captured = [

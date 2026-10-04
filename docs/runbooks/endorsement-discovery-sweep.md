@@ -12,16 +12,23 @@ notes say so and this document carries the correction.
 ## Trigger
 
 The `collection_opens` calendar milestone opens the window; the `refresh` milestones re-run the
-sweep inside it. For `wa-2026-general` those are 2026-09-08 (`-56`), 2026-10-23
-(`refresh-mid-ballot`, `-11`), and 2026-10-30 (`refresh-final`, `-4`).
+sweep inside it. For `wa-2026-general`, collection opened 2026-09-08 (`-56`). The guide's
+practical publication target was the regular overseas/service issuance on 2026-09-18 (`-46`),
+after the primary certified and the general-election field settled. That target was missed; the
+guide became live on 2026-10-03, and refresh responsibility was already active from September 18.
 
-The real deadline is neither of the refreshes. `guide_publishes` is at `-46`
-(2026-09-18), when overseas and service ballots were mailed, so the **first
-complete sweep must land on or before the first ballot issuance**. The domestic
-`ballots_mail` milestone remains `-18` (2026-10-16), but it is a later mailing
-date, not the publication trigger. For the 2026 general election this deadline
-was missed; complete the reviewed sweep and publish as soon as the release path
-is ready rather than waiting for domestic ballots.
+The 90-day special-absentee edge began 2026-08-05. It is the absolute earliest legal ballot
+availability for a qualifying voter, not a date on which an unsettled general-election guide could
+have been complete. Regular overseas/service ballots and online materials followed on 2026-09-18;
+electronic delivery means issuance day itself can be ballot-in-hand day. The domestic
+`ballots_mail` milestone remains 2026-10-16 (`-18`) and is neither the first-availability date nor
+a guide or refresh trigger.
+
+For the current rolling refresh, October 10 is not a start gate. Recheck and promptly publish any
+verified material change now, and complete the final comprehensive source-by-source pass by
+2026-10-15 (`refresh-pre-domestic`, `-19`). The 2026-10-23 (`refresh-mid-ballot`, `-11`) and
+2026-10-30 (`refresh-final`, `-4`) milestones are later checkpoints inside the already-active
+window, not the first post-publication rechecks.
 
 Cadence inside the window belongs to the source registry, not to this document. Each source's
 `discovery.checked_at` in `config/sources/default.yaml` records when it was last looked at, and
@@ -317,8 +324,9 @@ Stop and ask a human when:
   their own reviewed change — not a quiet overwrite.
 - **A source states an explicit non-equal allocation across co-endorsed candidates.** The frozen
   policy is an exact equal split; anything else is a methodology decision.
-- **The first complete sweep will not finish before `guide_publishes`.** Publishing with
-  known-missing sources is a decision to make deliberately and disclose, not to discover.
+- **A required comprehensive sweep will not finish by its declared deadline.** Publishing with
+  known-missing sources is a decision to make deliberately and disclose, not to discover; a
+  missed deadline never suspends the rolling refresh until the next calendar checkpoint.
 
 ## Postmortem notes
 

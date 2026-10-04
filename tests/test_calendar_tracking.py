@@ -138,6 +138,13 @@ def test_a_milestone_with_no_workflow_says_so_rather_than_inventing_one() -> Non
     assert "None recorded." in request.body
 
 
+def test_domestic_ballot_issue_copy_cannot_imply_this_is_first_availability() -> None:
+    request = _plan(date(2027, 10, 14), 3)[0]
+
+    assert "domestic mass-mail checkpoint" in request.body
+    assert "not the first date a voter may possess a ballot" in request.body
+
+
 def test_a_second_run_creates_nothing() -> None:
     as_of = date(2027, 11, 2)
     first = _plan(as_of, 0)
@@ -231,9 +238,9 @@ def test_the_committed_calendar_plans_only_milestones_ahead_of_the_window() -> N
     plan = plan_issues(calendar, as_of=date(2026, 8, 3), lead_days=21, existing_markers=set())
 
     # Through 2026-08-24. The two 2026-08-04 milestones tie on date and break
-    # by milestone ID; the rest fall on distinct dates -- certification
-    # 2026-08-18, its capture the day after, the general's initialization
-    # 2026-08-20.
+    # by milestone ID; the actionable remainder is certification on 2026-08-18,
+    # its capture the day after, and general initialization on 2026-08-20. The
+    # 2026-08-05 special-absentee edge is historical information, not work.
     assert [request.marker for request in plan] == [
         milestone_marker("wa-2026-primary", "election-day"),
         milestone_marker("wa-2026-primary", "results-capture-election-night"),
@@ -243,6 +250,16 @@ def test_the_committed_calendar_plans_only_milestones_ahead_of_the_window() -> N
     ]
     # The general's inventory import is 2026-08-25, one day past the window.
     assert all("official-inventory-import" not in request.marker for request in plan)
+
+
+def test_verified_actual_publication_history_is_never_planned_as_due_work() -> None:
+    calendar = read_election_calendar(CALENDAR_PATH)
+
+    plan = plan_issues(calendar, as_of=date(2026, 10, 3), lead_days=0, existing_markers=set())
+
+    assert milestone_marker("wa-2026-general", "guide-publishes") not in {
+        request.marker for request in plan
+    }
 
 
 def _completed(command: list[str], stdout: str = "", code: int = 0) -> CompletedProcess[str]:
@@ -585,7 +602,7 @@ def test_a_collision_skips_only_its_own_milestone(monkeypatch: pytest.MonkeyPatc
 
     assert result.exit_code == 1
     assert milestone_marker("wa-2026-primary", "election-day") not in created
-    # The other four due milestones were still opened.
+    # The other four due actionable milestones were still opened.
     assert len(created) == 4
     assert "4 opened" in result.output
 
