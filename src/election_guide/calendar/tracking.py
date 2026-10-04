@@ -28,14 +28,17 @@ MARKER_PREFIX = "calendar-milestone:"
 # not whether it is seen.
 ISSUE_LABELS: tuple[str, ...] = ("type: ops", "area: operations")
 
+# Historical statutory anchors can be declared after their dates have passed so
+# the calendar records the timing distinction other policy consumes. They are
+# facts, not work to schedule, and therefore never open tracking issues.
+INFORMATIONAL_MILESTONE_KINDS: frozenset[MilestoneKind] = frozenset(
+    {"special_absentee_ballots_available"}
+)
+
 # Generated issues must carry the same date semantics as the calendar contract.
 # In particular, `ballots_mail` is a domestic checkpoint rather than the first
 # possible ballot-in-hand date or a trigger for guide publication and refreshes.
 TIMING_CONTEXT: dict[MilestoneKind, str] = {
-    "special_absentee_ballots_available": (
-        "This is the earliest legal availability for a qualifying special-absentee voter, "
-        "not a general mailing date."
-    ),
     "overseas_service_ballots_mail": (
         "This is the scheduled regular issuance checkpoint for overseas and service voters; "
         "electronic delivery can make the issuance day a ballot-in-hand day."
@@ -85,7 +88,8 @@ def due_milestones(
 
     The window is inclusive at both ends and starts at `as_of`: a milestone
     whose date has already passed is not "coming due" and opening an issue for
-    it would schedule work nobody can perform.
+    it would schedule work nobody can perform. Informational statutory anchors
+    are never due because they record facts rather than work.
     """
     if lead_days < 0:
         raise ValueError("lead window cannot be negative")
@@ -93,7 +97,8 @@ def due_milestones(
     due = [
         (milestone, calendar.scheduled_date(milestone))
         for milestone in calendar.milestones
-        if as_of <= calendar.scheduled_date(milestone) <= horizon
+        if milestone.kind not in INFORMATIONAL_MILESTONE_KINDS
+        and as_of <= calendar.scheduled_date(milestone) <= horizon
     ]
     return sorted(due, key=lambda item: (item[1], item[0].election_id, item[0].id))
 

@@ -5,8 +5,9 @@ to this project has never been a bad build; it is missing a data-gathering
 window that cannot be reopened. `config/calendar/elections.yaml` makes that
 cycle a tracked artifact rather than something remembered.
 
-The calendar is a planning artifact. It is not a site feature, and nothing in
-it is rendered today.
+The calendar is primarily a planning artifact. It also carries explicitly
+informational statutory anchors when a historical date is necessary to keep
+policy truthful. It is not itself a site feature.
 
 ## The cadence
 
@@ -74,7 +75,10 @@ has room before the one it feeds:
   the 90-day date was 2026-08-05, one day after the primary and before the
   general-election field settled at primary certification. The practical
   publication target was therefore the 2026-09-18 overseas/service issuance,
-  not the 2026-10-16 domestic mailing.
+  not the 2026-10-16 domestic mailing. Because that target was missed,
+  `guide_publishes` records the verified actual publication on 2026-10-03;
+  September 18 remains the operational trigger through
+  `overseas_service_ballots_mail`.
 - **Refresh points** catch late endorsements after publication without
   reopening collection. The 2026 general adds a comprehensive pre-domestic
   deadline at `-19` (2026-10-15), followed by the existing `-11` and `-4`
@@ -347,10 +351,11 @@ issuance. `guide_publishes` does not wait for domestic mailing: for the 2026
 general election, special-absentee availability began 2026-08-05, regular
 overseas/service ballots and online materials issued 2026-09-18, and domestic
 ballots mail 2026-10-16. The guide's 2026-09-18 target was missed because the
-field first had to settle and the reviewed release path was not ready; the guide
-is now live. Keeping the specialized dates internal avoids presenting them as
-the date every local voter should expect a ballot while preserving the real
-operational deadlines.
+field first had to settle and the reviewed release path was not ready; the
+public `guide_publishes` event records the actual 2026-10-03 publication.
+Keeping the specialized dates internal avoids presenting them as the date every
+local voter should expect a ballot while preserving the real operational
+deadlines.
 
 ## Adding an election
 
@@ -365,10 +370,18 @@ full set.
 ### Adding an election whose runway has passed
 
 An election already under way is the one case where the full set is wrong.
-Declare only the milestones still ahead of it and leave the earlier ones out.
-A milestone is a commitment to do work on a date; backfilling one that has
-already come and gone schedules work nobody can perform, and the tracking
-workflow that reads this file would have to filter it back out.
+Declare only the actionable milestones still ahead of it and leave earlier
+actionable milestones out. An actionable milestone is a commitment to do work
+on a date; backfilling one that has already come and gone schedules work nobody
+can perform.
+
+The explicit exception is an informational statutory-availability anchor whose
+historical date is needed to keep policy truthful. The
+`special_absentee_ballots_available` kind is informational: it may be recorded
+after its date, stays private, and `calendar track` never opens an issue for it.
+It records the absolute legal edge; it does not imply that a complete guide
+could have published then or schedule retroactive work. The 2026 general's
+2026-08-05 entry is the worked example of this exception.
 
 The 2026 August primary is the worked example. It was added two days before its
 election and carries four milestones — election day, the election-night

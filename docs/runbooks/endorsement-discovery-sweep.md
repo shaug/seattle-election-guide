@@ -15,7 +15,7 @@ The `collection_opens` calendar milestone opens the window; the `refresh` milest
 sweep inside it. For `wa-2026-general`, collection opened 2026-09-08 (`-56`). The guide's
 practical publication target was the regular overseas/service issuance on 2026-09-18 (`-46`),
 after the primary certified and the general-election field settled. That target was missed; the
-guide is now live, and refresh responsibility is already active.
+guide became live on 2026-10-03, and refresh responsibility was already active from September 18.
 
 The 90-day special-absentee edge began 2026-08-05. It is the absolute earliest legal ballot
 availability for a qualifying voter, not a date on which an unsettled general-election guide could

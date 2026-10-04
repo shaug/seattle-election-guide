@@ -317,3 +317,17 @@ def test_the_committed_calendar_renders_a_feed_with_one_event_per_public_milesto
     assert len({line for event in _events(feed) for line in event if line.startswith("UID:")}) == (
         len(calendar.public_milestones())
     )
+
+
+def test_the_committed_2026_guide_event_records_actual_publication() -> None:
+    calendar = read_election_calendar(CALENDAR_PATH)
+
+    event = next(
+        event
+        for event in _events(_feed(calendar))
+        if "UID:wa-2026-general/guide-publishes@seattleelections.guide" in event
+    )
+
+    assert "DTSTART;VALUE=DATE:20261003" in event
+    assert "SEQUENCE:2" in event
+    assert "SUMMARY:Voter guide is published" in event

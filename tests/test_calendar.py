@@ -247,8 +247,8 @@ def test_2026_general_calendar_distinguishes_ballot_availability_and_mailings() 
     assert calendar.scheduled_date(special_absentee) == date(2026, 8, 5)
     assert calendar.scheduled_date(overseas_service_ballots_mail) == date(2026, 9, 18)
     assert calendar.scheduled_date(ballots_mail) == date(2026, 10, 16)
-    assert calendar.scheduled_date(guide_publishes) == date(2026, 9, 18)
-    assert guide_publishes.revision == 2
+    assert calendar.scheduled_date(guide_publishes) == date(2026, 10, 3)
+    assert guide_publishes.revision == 3
 
 
 def test_2026_general_declares_the_pre_domestic_refresh_deadline() -> None:
