@@ -1799,6 +1799,15 @@ def results_ingest(
     authority_registry_path: Annotated[
         Path, typer.Option(exists=True, dir_okay=False, readable=True)
     ] = Path("config/authorities/default.yaml"),
+    calendar_path: Annotated[
+        Path,
+        typer.Option(
+            exists=True,
+            dir_okay=False,
+            readable=True,
+            help="Election calendar whose certification date must match --certified-on.",
+        ),
+    ] = Path("config/calendar/elections.yaml"),
     storage_root: Annotated[Path, typer.Option(file_okay=False)] = Path("data/snapshots"),
     output_dir: Annotated[Path, typer.Option(file_okay=False)] = Path("data/results"),
 ) -> None:
@@ -1815,6 +1824,18 @@ def results_ingest(
         inventory = read_inventory(inventory_path)
         if inventory.election.id != election_id:
             raise ValueError(f"inventory belongs to {inventory.election.id!r}, not {election_id!r}")
+        certification_date = date.fromisoformat(certified_on)
+        calendar_certification_date = read_election_calendar(calendar_path).certification_date(
+            election_id
+        )
+        if (
+            calendar_certification_date is not None
+            and certification_date != calendar_certification_date
+        ):
+            raise ValueError(
+                f"election {election_id!r}: --certified-on gives {certification_date}, "
+                f"but calendar {calendar_path} gives certification {calendar_certification_date}"
+            )
         authority_registry = read_authority_registry(authority_registry_path)
         authority = next(
             (item for item in authority_registry.authorities if item.id == authority_id), None
@@ -1849,7 +1870,7 @@ def results_ingest(
             csv_content,
             inventory,
             authority=authority.name,
-            certified_on=date.fromisoformat(certified_on),
+            certified_on=certification_date,
             captures=captures,
             expected_race_ids=frozenset(race_id),
         )

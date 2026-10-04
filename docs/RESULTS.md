@@ -257,6 +257,14 @@ The adapter turning a captured certified export into `data/results/<election-id>
 `election_guide.results.ingest` (`uv run election-guide results ingest`), following
 `docs/COLLECTION.md`'s fixture-first, provenance-carrying discipline via the same evidence-capture
 layer as endorsement collection (`docs/EVIDENCE_CAPTURE.md`; `election_guide.authorities`, #281).
+
+Before reading the captured export or writing a results file, `results ingest` compares
+`--certified-on` with the election's `certification` milestone in
+`config/calendar/elections.yaml` (or `--calendar-path`). A mismatch aborts with the election
+ID, both dates, and their sources; correct the wrong value rather than bypassing the check.
+An election without a certification milestone ingests without this comparison. This is an
+offline ingest precondition; the results schema and `results validate` are unchanged (#410).
+
 Two decisions this ticket's scope named:
 
 **Parse target.** The retained 2026-08-04 election-night capture bytes this ticket's own
