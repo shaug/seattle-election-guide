@@ -17,10 +17,13 @@ dates are fixed in statute, which is why elections can be declared here years
 ahead of the ballot that fills them.
 
 The dates that matter to this project hang off election day at known distances.
-Ballots are mailed no later than eighteen days before it. County canvassing
-boards certify roughly three weeks after a general election and about two weeks
-after a primary or special. Candidate filing week falls in May, and it settles
-the field for both the August primary and the November general.
+A qualifying voter may obtain a special absentee ballot up to ninety days
+before a primary or general election; regular overseas and service ballots are
+issued earlier than the domestic mass mailing; domestic ballots are mailed no
+later than eighteen days before election day. County canvassing boards certify
+roughly three weeks after a general election and about two weeks after a primary
+or special. Candidate filing week falls in May, and it settles the field for
+both the August primary and the November general.
 
 ## What the calendar declares
 
@@ -49,9 +52,12 @@ renamed command or a moved document fails the suite rather than the cycle.
 ## How offsets are chosen
 
 Offsets are counted from election day, which is why the anchor milestone sits
-at zero. Three of them are statutory and should not drift: ballots mail at
-`-18`, certification at `+21` after a general and `+14` after a primary or
-special (RCW 29A.60.190), and the post-certification capture the day after.
+at zero. The ballot dates are distinct contracts: qualifying special-absentee
+availability can begin at `-90` for a primary or general, the regular
+overseas/service issuance follows the election's official calendar, and
+`ballots_mail` is the domestic mass-mail deadline at `-18`. Certification is
+at `+21` after a general and `+14` after a primary or special (RCW 29A.60.190),
+with the post-certification capture the day after.
 The rest are this project's working-backward conventions, chosen so each step
 has room before the one it feeds:
 
@@ -62,12 +68,17 @@ has room before the one it feeds:
 - **The official inventory import** follows initialization within a week.
 - **The source panel freezes** about two months out, and collection opens a few
   days later, so the panel is settled before any endorsement is gathered.
-- **The guide publishes** when the first official ballots issue. That is often
-  the domestic mailing date, but an earlier overseas/service mailing moves the
-  deadline forward; publishing later withholds the guide from voters who can
-  already vote.
-- **Refresh points** at `-11` and `-4` catch late endorsements without
-  reopening collection. Short cycles carry only the final one.
+- **The guide publishes** as soon as it can truthfully cover a settled ballot,
+  and no later than the first scheduled regular ballot issuance. Absolute
+  special-absentee availability may precede that target: for the 2026 general,
+  the 90-day date was 2026-08-05, one day after the primary and before the
+  general-election field settled at primary certification. The practical
+  publication target was therefore the 2026-09-18 overseas/service issuance,
+  not the 2026-10-16 domestic mailing.
+- **Refresh points** catch late endorsements after publication without
+  reopening collection. The 2026 general adds a comprehensive pre-domestic
+  deadline at `-19` (2026-10-15), followed by the existing `-11` and `-4`
+  checkpoints. Short cycles carry only the final one.
 - **The retrospective** lands thirty days out, after certification has settled
   what actually happened.
 
@@ -79,6 +90,16 @@ Statutory anchors are the calendar's best current reading of the law, not a
 substitute for it. Reconfirm each cycle's real dates against the Secretary of
 State's and King County Elections' published calendars when the election is
 initialized, and correct the offsets here if they disagree.
+
+For the underlying distinctions, [RCW 29A.40.050](https://app.leg.wa.gov/rcw/default.aspx?cite=29A.40.050)
+and King County's [How to get your ballot](https://kingcounty.gov/en/dept/elections/how-to-vote/ballots/how-to-get-your-ballot)
+page establish the qualifying 90-day special-absentee edge. King County's
+[Overseas and service voters](https://cdn.kingcounty.gov/so-so/dept/elections/how-to-vote/ballots/overseas-and-service-voters)
+page describes electronic delivery and the regular 45-day primary/general
+schedule; electronic delivery means the issuance day itself can be a
+ballot-in-hand day. The county's [2026 General Election Calendar](https://cdn.kingcounty.gov/-/media/king-county/depts/elections/for-jurisdictions/pdf/jurisdiction-manual.pdf)
+records the 2026-09-18 overseas, service, and out-of-state issuance and online
+ballot-material availability.
 
 ## Results capture
 
@@ -318,15 +339,18 @@ no memory of the previous one, and the same input has to produce the same bytes.
 The event's identity never changes, so a moved date corrects the existing entry
 instead of adding a second one.
 
-`ballots_mail` is the statutory domestic mailing date. An election may also
-declare the internal `overseas_service_ballots_mail` milestone when those
-ballots go out earlier. `guide_publishes` keys off the first official ballot
-issuance, not automatically off domestic mailing: for the 2026 general election
-both the overseas/service mailing and publication deadline are 2026-09-18,
-while domestic ballots mail on 2026-10-16. Keeping the first issuance internal
-avoids presenting its specialized mailing date as the date every local voter
-should expect a ballot, while still making the earlier voter deadline explicit
-in the operational calendar.
+`ballots_mail` is the domestic mass-mailing date, not the first date any voter
+may possess a ballot. A primary or general may declare the internal
+`special_absentee_ballots_available` milestone for the absolute qualifying
+90-day edge and `overseas_service_ballots_mail` for the scheduled regular
+issuance. `guide_publishes` does not wait for domestic mailing: for the 2026
+general election, special-absentee availability began 2026-08-05, regular
+overseas/service ballots and online materials issued 2026-09-18, and domestic
+ballots mail 2026-10-16. The guide's 2026-09-18 target was missed because the
+field first had to settle and the reviewed release path was not ready; the guide
+is now live. Keeping the specialized dates internal avoids presenting them as
+the date every local voter should expect a ballot while preserving the real
+operational deadlines.
 
 ## Adding an election
 

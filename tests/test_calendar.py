@@ -156,10 +156,10 @@ def test_every_retrospective_milestone_references_the_checklist() -> None:
 
 
 def test_the_general_endorsement_windows_reference_the_discovery_sweep_runbook() -> None:
-    """The sweep is one procedure spanning three milestones (issue 292).
+    """The sweep is one procedure spanning the declared milestones (issue 292).
 
     `collection_opens` opens the window and each `refresh` re-runs it, so all
-    three hand their work to the same runbook rather than to the CLI reference
+    four hand their work to the same runbook rather than to the CLI reference
     for `collect refresh` alone.
     """
     calendar = read_election_calendar(CALENDAR_PATH)
@@ -171,6 +171,7 @@ def test_the_general_endorsement_windows_reference_the_discovery_sweep_runbook()
     ]
     assert [item.id for item in windows] == [
         "collection-opens",
+        "refresh-pre-domestic",
         "refresh-mid-ballot",
         "refresh-final",
     ]
@@ -230,20 +231,37 @@ def test_calendar_schema_declares_no_presentation_fields() -> None:
     }
 
 
-def test_2026_general_calendar_distinguishes_first_and_domestic_ballot_mailings() -> None:
+def test_2026_general_calendar_distinguishes_ballot_availability_and_mailings() -> None:
     calendar = read_election_calendar(CALENDAR_PATH)
     milestones = calendar.election_milestones("wa-2026-general")
 
+    special_absentee = next(
+        item for item in milestones if item.kind == "special_absentee_ballots_available"
+    )
     ballots_mail = next(item for item in milestones if item.kind == "ballots_mail")
     overseas_service_ballots_mail = next(
         item for item in milestones if item.kind == "overseas_service_ballots_mail"
     )
     guide_publishes = next(item for item in milestones if item.kind == "guide_publishes")
 
+    assert calendar.scheduled_date(special_absentee) == date(2026, 8, 5)
     assert calendar.scheduled_date(overseas_service_ballots_mail) == date(2026, 9, 18)
     assert calendar.scheduled_date(ballots_mail) == date(2026, 10, 16)
     assert calendar.scheduled_date(guide_publishes) == date(2026, 9, 18)
     assert guide_publishes.revision == 2
+
+
+def test_2026_general_declares_the_pre_domestic_refresh_deadline() -> None:
+    calendar = read_election_calendar(CALENDAR_PATH)
+    milestone = next(
+        item
+        for item in calendar.election_milestones("wa-2026-general")
+        if item.id == "refresh-pre-domestic"
+    )
+
+    assert milestone.kind == "refresh"
+    assert calendar.scheduled_date(milestone) == date(2026, 10, 15)
+    assert milestone.reference == "docs/runbooks/endorsement-discovery-sweep.md"
 
 
 @pytest.mark.parametrize(
@@ -251,6 +269,7 @@ def test_2026_general_calendar_distinguishes_first_and_domestic_ballot_mailings(
     [
         ("ballots_mail", 4, "must fall before election day"),
         ("ballots_mail", 0, "must fall before election day"),
+        ("special_absentee_ballots_available", 0, "must fall before election day"),
         ("overseas_service_ballots_mail", 0, "must fall before election day"),
         ("election_day", -1, "must fall on election day"),
         ("results_capture_election_night", 1, "must fall on election day"),

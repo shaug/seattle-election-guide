@@ -109,6 +109,16 @@ def test_only_publicly_marked_milestones_appear() -> None:
     assert uids == ["UID:wa-2027-general/ballots-mail@seattleelections.guide"]
 
 
+def test_ballot_mailing_copy_identifies_the_domestic_checkpoint() -> None:
+    feed = _feed(_calendar(_milestone(public=True)))
+    event = _events(feed)[0]
+    unfolded = feed.replace("\r\n ", "")
+
+    assert "SUMMARY:Domestic ballots are mailed" in event
+    assert "DESCRIPTION:King County Elections mails domestic ballots today." in unfolded
+    assert "not the first date a voter may possess a ballot" in unfolded
+
+
 def test_the_uid_is_derived_from_identity_and_not_from_the_date() -> None:
     """A UID that moved with the date would duplicate every subscriber's event."""
     early = _calendar(_milestone(public=True))

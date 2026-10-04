@@ -75,6 +75,14 @@ milestones:
 
   # 2026 November general. The field is settled by the August primary, so the
   # front half anchors to that certification rather than to filing week.
+  # A qualifying voter can obtain a special absentee ballot up to 90 days
+  # before the general election. The general-election field was not yet settled
+  # on this date, so a complete guide could not truthfully publish here; this
+  # milestone records absolute legal availability rather than a release target.
+  - election_id: wa-2026-general
+    id: special-absentee-ballots-available
+    kind: special_absentee_ballots_available
+    offset_days: -90
   - election_id: wa-2026-general
     id: initialize-election
     kind: initialize_election
@@ -104,17 +112,24 @@ milestones:
     kind: overseas_service_ballots_mail
     offset_days: -46
   - election_id: wa-2026-general
-    id: ballots-mail
-    kind: ballots_mail
-    offset_days: -18
-    public: true
-  - election_id: wa-2026-general
     id: guide-publishes
     kind: guide_publishes
     offset_days: -46
     revision: 2
     workflow: release build
     reference: docs/RELEASE.md
+    public: true
+  - election_id: wa-2026-general
+    id: refresh-pre-domestic
+    kind: refresh
+    offset_days: -19
+    workflow: collect refresh
+    reference: docs/runbooks/endorsement-discovery-sweep.md
+  - election_id: wa-2026-general
+    id: ballots-mail
+    kind: ballots_mail
+    offset_days: -18
+    revision: 2
     public: true
   - election_id: wa-2026-general
     id: refresh-mid-ballot
@@ -185,6 +200,7 @@ milestones:
     id: ballots-mail
     kind: ballots_mail
     offset_days: -18
+    revision: 2
     public: true
   - election_id: wa-2027-february-special
     id: guide-publishes
@@ -250,6 +266,7 @@ milestones:
     id: ballots-mail
     kind: ballots_mail
     offset_days: -18
+    revision: 2
     public: true
   - election_id: wa-2027-april-special
     id: guide-publishes
@@ -320,6 +337,7 @@ milestones:
     id: ballots-mail
     kind: ballots_mail
     offset_days: -18
+    revision: 2
     public: true
   - election_id: wa-2027-primary
     id: guide-publishes
@@ -391,6 +409,7 @@ milestones:
     id: ballots-mail
     kind: ballots_mail
     offset_days: -18
+    revision: 2
     public: true
   - election_id: wa-2027-general
     id: guide-publishes
