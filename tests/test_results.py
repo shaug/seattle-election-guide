@@ -63,6 +63,7 @@ SECRETARY_OF_STATE_JSON_PATH = (
     PROJECT_ROOT / "tests" / "fixtures" / "results" / "wa-2026-primary-secretary-of-state.json"
 )
 AUTHORITY_REGISTRY_PATH = PROJECT_ROOT / "config" / "authorities" / "default.yaml"
+CALENDAR_PATH = PROJECT_ROOT / "config" / "calendar" / "elections.yaml"
 
 
 def _inventory() -> Inventory:
@@ -940,10 +941,32 @@ def test_build_election_results_advances_the_winning_choice_of_a_rejected_measur
 # --- CLI (`election-guide results ingest`) -----------------------------------
 
 
-def test_cli_results_ingest_produces_a_valid_results_file(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+@pytest.mark.parametrize(
+    ("certified_on", "without_certification", "exit_code"),
+    [
+        pytest.param("2026-08-18", False, 0, id="matching-date"),
+        pytest.param("2026-08-19", False, 1, id="mismatched-date"),
+        pytest.param("2026-08-19", True, 0, id="no-certification-milestone"),
+    ],
+)
+def test_cli_results_ingest_checks_calendar_certification_date(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    certified_on: str,
+    without_certification: bool,
+    exit_code: int,
 ) -> None:
     monkeypatch.chdir(tmp_path)
+    calendar = yaml.safe_load(CALENDAR_PATH.read_text(encoding="utf-8"))
+    if without_certification:
+        calendar["milestones"] = [
+            item
+            for item in calendar["milestones"]
+            if not (item["election_id"] == "wa-2026-primary" and item["kind"] == "certification")
+        ]
+    calendar_path = tmp_path / "config/calendar/elections.yaml"
+    calendar_path.parent.mkdir(parents=True)
+    calendar_path.write_text(yaml.safe_dump(calendar), encoding="utf-8")
     certified_manifest_path = _capture_certified_csv(tmp_path)
     output_dir = tmp_path / "data" / "results"
 
@@ -957,7 +980,7 @@ def test_cli_results_ingest_produces_a_valid_results_file(
             "--authority-id",
             "king-county-elections",
             "--certified-on",
-            "2026-08-19",
+            certified_on,
             "--certified-capture",
             str(certified_manifest_path),
             "--race-id",
@@ -975,10 +998,20 @@ def test_cli_results_ingest_produces_a_valid_results_file(
         ],
     )
 
-    assert result.exit_code == 0, result.output
+    assert result.exit_code == exit_code, result.output
     output_path = output_dir / "wa-2026-primary.yaml"
+    if exit_code:
+        assert "wa-2026-primary" in result.output
+        assert "--certified-on" in result.output
+        assert "2026-08-19" in result.output
+        assert "calendar" in result.output
+        assert "2026-08-18" in result.output
+        assert not output_path.exists()
+        return
     assert output_path.is_file()
     results = read_results(output_path)
+    assert results.certified_on is not None
+    assert results.certified_on.isoformat() == certified_on
     reject_committed_counting_status(results)
     inventory = _inventory()
     validate_results_inventory(results, inventory)
@@ -1028,7 +1061,9 @@ def test_cli_results_ingest_reads_a_repository_scope_certified_capture(
             "--authority-id",
             "king-county-elections",
             "--certified-on",
-            "2026-08-19",
+            "2026-08-18",
+            "--calendar-path",
+            str(CALENDAR_PATH),
             "--certified-capture",
             str(certified_manifest_path),
             "--race-id",
@@ -1069,7 +1104,9 @@ def test_cli_results_ingest_accepts_an_election_night_capture(
             "--authority-id",
             "king-county-elections",
             "--certified-on",
-            "2026-08-19",
+            "2026-08-18",
+            "--calendar-path",
+            str(CALENDAR_PATH),
             "--certified-capture",
             str(certified_manifest_path),
             "--election-night-capture",
@@ -1129,7 +1166,9 @@ def test_cli_results_ingest_rejects_an_unavailable_election_night_capture(
             "--authority-id",
             "king-county-elections",
             "--certified-on",
-            "2026-08-19",
+            "2026-08-18",
+            "--calendar-path",
+            str(CALENDAR_PATH),
             "--certified-capture",
             str(certified_manifest_path),
             "--election-night-capture",
@@ -1169,7 +1208,9 @@ def test_cli_results_ingest_fails_for_an_unknown_authority(
             "--authority-id",
             "not-a-real-authority",
             "--certified-on",
-            "2026-08-19",
+            "2026-08-18",
+            "--calendar-path",
+            str(CALENDAR_PATH),
             "--certified-capture",
             str(certified_manifest_path),
             "--race-id",
@@ -1210,7 +1251,9 @@ def test_cli_results_ingest_requires_at_least_one_race_id(
             "--authority-id",
             "king-county-elections",
             "--certified-on",
-            "2026-08-19",
+            "2026-08-18",
+            "--calendar-path",
+            str(CALENDAR_PATH),
             "--certified-capture",
             str(certified_manifest_path),
             "--inventory-path",
@@ -1469,7 +1512,9 @@ def test_cli_results_ingest_secretary_of_state_merges_into_an_existing_file(
             "--authority-id",
             "king-county-elections",
             "--certified-on",
-            "2026-08-19",
+            "2026-08-18",
+            "--calendar-path",
+            str(CALENDAR_PATH),
             "--certified-capture",
             str(certified_manifest_path),
             "--race-id",
