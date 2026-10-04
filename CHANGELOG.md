@@ -9,6 +9,19 @@ coverage, and the audit trail for one published election live in that release's
 own `RELEASE_NOTES.md`, inside its bundle and attached to its GitHub Release.
 This file covers the software that renders and ships those bundles.
 
+## 2026-general.3 — 2026-10-03
+
+### Documentation
+
+- Add 2026-general.2 changelog (#485)
+
+### Fixed
+
+- Make the endorsement meter rollback-proof (#488)
+
+### Other
+
+- Restore the final Meter v2 interaction (#487)
 ## 2026-general.2 — 2026-10-03
 
 ### Documentation
