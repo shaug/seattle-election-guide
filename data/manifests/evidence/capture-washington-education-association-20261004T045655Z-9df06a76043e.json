@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 41088,
+  "canonical_url": "https://www.washingtonea.org/advocacy/wea-pac/2026-endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "1e1a0233f4b0e1a51fc30f31b13b27e9e4419fb3bf8e3377f1facc6c0762d1c1",
+  "http_status": 200,
+  "id": "capture-washington-education-association-20261004T045655Z-9df06a76043e",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party artifact retained locally for review only.",
+  "requested_url": "https://www.washingtonea.org/advocacy/wea-pac/2026-endorsements/",
+  "retrieved_at": "2026-10-04T04:56:55Z",
+  "schema_version": "1.0",
+  "source_id": "washington-education-association",
+  "storage_reference": "sha256/1e/1e1a0233f4b0e1a51fc30f31b13b27e9e4419fb3bf8e3377f1facc6c0762d1c1",
+  "storage_scope": "local_only",
+  "title": "washington-education-association 2026 rolling-refresh official evidence",
+  "updated_at": null
+}

@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 110670,
+  "canonical_url": "https://www.theurbanist.org/elections-committee/",
+  "capture_method": "static_html",
+  "content_sha256": "88392263fd3fa8b88d33e82f4d7a72672ed237036e9d155c56ec956404145316",
+  "http_status": 200,
+  "id": "capture-the-urbanist-20261004T045926Z-5f0b91c9cccc",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party artifact retained locally for review only.",
+  "requested_url": "https://www.theurbanist.org/elections-committee/",
+  "retrieved_at": "2026-10-04T04:59:26Z",
+  "schema_version": "1.0",
+  "source_id": "the-urbanist",
+  "storage_reference": "sha256/88/88392263fd3fa8b88d33e82f4d7a72672ed237036e9d155c56ec956404145316",
+  "storage_scope": "local_only",
+  "title": "the-urbanist 2026 rolling-refresh official evidence",
+  "updated_at": null
+}

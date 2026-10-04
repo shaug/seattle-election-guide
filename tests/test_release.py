@@ -27,6 +27,7 @@ from election_guide.release import (
     compile_release_dataset,
     verify_release_compilation,
 )
+from election_guide.release.compiler import read_release_ledger
 from election_guide.release.models import (
     REQUIRED_RELEASE_ARTIFACTS,
     UNHASHED_RASTERIZED_ARTIFACTS,
@@ -504,11 +505,13 @@ def test_checked_in_site_manifest_stages_a_new_current_release(
         snapshot_root=PROJECT_ROOT / "data/releases/wa-2026-general/snapshots",
         manifest_dir=PROJECT_ROOT / "data/releases/wa-2026-general/manifests",
         output_dir=tmp_path / "general-release",
-        release_version="2026-general.3",
-        generated_at=datetime(2026, 10, 3, 6, 0, tzinfo=UTC),
+        release_version="2026-general.4",
+        generated_at=read_release_ledger(
+            PROJECT_ROOT / "data/releases/wa-2026-general/source-decisions.yaml"
+        ).data_as_of,
         git_commit="a" * 40,
     )
-    expected_registry_hash = "2ed251c35b98279f5d26570afbc1917e91f714daa9ea694346444279b86a925c"
+    expected_registry_hash = "2da80c88fc1a913e32aeb7ddfd5d66ffb18f9820e41579da575120e6de4c5d16"
 
     assert general_release.status.schema_version == "1.3"
     assert general_release.status.source_registry_hash == expected_registry_hash
@@ -529,7 +532,7 @@ def test_checked_in_site_manifest_stages_a_new_current_release(
     stage_pages_site(
         site_manifest_path,
         {
-            "wa-2026-general-2026-general.3": general_release.bundle_dir,
+            "wa-2026-general-2026-general.4": general_release.bundle_dir,
             "wa-2026-primary-2026-primary.2": primary_release.bundle_dir,
         },
         output,

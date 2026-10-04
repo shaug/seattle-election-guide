@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 76758,
+  "canonical_url": "https://workingfamilies.org/state/washington/",
+  "capture_method": "static_html",
+  "content_sha256": "75d5e3b236c26d0123ccdf5ec7b26258a2ed729ca6cea4a63021bed7ea6611af",
+  "http_status": 200,
+  "id": "capture-washington-working-families-party-20261004T045653Z-3bd0d468ecd5",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party artifact retained locally for review only.",
+  "requested_url": "https://workingfamilies.org/state/washington/",
+  "retrieved_at": "2026-10-04T04:56:53Z",
+  "schema_version": "1.0",
+  "source_id": "washington-working-families-party",
+  "storage_reference": "sha256/75/75d5e3b236c26d0123ccdf5ec7b26258a2ed729ca6cea4a63021bed7ea6611af",
+  "storage_scope": "local_only",
+  "title": "washington-working-families-party 2026 rolling-refresh official evidence",
+  "updated_at": null
+}

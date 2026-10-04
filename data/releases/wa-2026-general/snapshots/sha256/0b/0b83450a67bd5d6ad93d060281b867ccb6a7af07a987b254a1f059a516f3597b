@@ -1,0 +1,18 @@
+{
+  "captured_at": "2026-10-04T04:56:52Z",
+  "decisions": [
+    {
+      "candidate_ids": [
+        "ld-37-state-representative-2--jaelynn-scott"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "ld-37-state-representative-2",
+      "status": "endorsed"
+    }
+  ],
+  "evidence_locator": "Official chapter event naming Jaelynn Scott as the chapter's newly endorsed candidate. Capture capture-seattle-democratic-socialists-20261004T045652Z-fd260ad850f9.",
+  "review_note": "Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Related-event widget changed; Jaelynn Scott endorsement text unchanged. Prior review: Issue #453: OpenAI Codex transcribed the current-cycle official endorsement; shaug verified the wording, general-ballot match, and current-cycle treatment.",
+  "reviewer": "shaug",
+  "source_id": "seattle-democratic-socialists"
+}

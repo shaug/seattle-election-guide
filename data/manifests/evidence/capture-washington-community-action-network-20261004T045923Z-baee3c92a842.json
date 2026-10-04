@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 220468,
+  "canonical_url": "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1789505191999-20HFECETIFPIKHRHT3V7/No+on+648+for+website.png",
+  "capture_method": "image",
+  "content_sha256": "acb1259df0b99b45cb040c9102e6886f664d2b4710beb662ce388dc979ef3c77",
+  "http_status": 200,
+  "id": "capture-washington-community-action-network-20261004T045923Z-baee3c92a842",
+  "media_type": "image/png",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party artifact retained locally for review only.",
+  "requested_url": "https://images.squarespace-cdn.com/content/v1/58fcdc8637c5811d5b7a50a7/1789505191999-20HFECETIFPIKHRHT3V7/No+on+648+for+website.png",
+  "retrieved_at": "2026-10-04T04:59:23Z",
+  "schema_version": "1.0",
+  "source_id": "washington-community-action-network",
+  "storage_reference": "sha256/ac/acb1259df0b99b45cb040c9102e6886f664d2b4710beb662ce388dc979ef3c77",
+  "storage_scope": "local_only",
+  "title": "washington-community-action-network 2026 rolling-refresh official evidence",
+  "updated_at": null
+}

@@ -227,10 +227,13 @@ def test_a_source_that_moved_need_not_have_an_evidence_manifest() -> None:
 
 def test_a_capture_manifest_redirect_is_not_a_move() -> None:
     """The trap the checklist names by example, because a reader will hit it."""
+    data_as_of = read_release_ledger(LEDGER_PATH).data_as_of
     redirected = {
         manifest.source_id
         for manifest in _evidence_manifests()
-        if manifest.availability == "captured" and manifest.redirect_chain
+        if manifest.availability == "captured"
+        and manifest.redirect_chain
+        and manifest.retrieved_at <= data_as_of
     }
     assert redirected == {"11th-district-democrats"}
 

@@ -16,7 +16,7 @@ permissions:
   contents: read
 
 env:
-  CANDIDATE_BUNDLE_ID: wa-2026-general-2026-general.3
+  CANDIDATE_BUNDLE_ID: wa-2026-general-2026-general.4
 
 jobs:
   deploy:
@@ -91,7 +91,7 @@ jobs:
         run: |
           SITE_UPDATED_AT="$(git show -s --format=%cI "$HEAD_SHA")"
           uv run election-guide release build data/releases/wa-2026-general/source-decisions.yaml \
-              --release-version 2026-general.3 \
+              --release-version 2026-general.4 \
               --generated-at "$SITE_UPDATED_AT" \
               --git-commit "$HEAD_SHA" \
               --output-dir dist/pr-release \

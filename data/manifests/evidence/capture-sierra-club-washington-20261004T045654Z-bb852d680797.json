@@ -1,0 +1,20 @@
+{
+  "availability": "unavailable",
+  "browser_required": false,
+  "canonical_url": "https://www.sierraclub.org/washington",
+  "capture_method": "unavailable",
+  "http_status": 200,
+  "id": "capture-sierra-club-washington-20261004T045654Z-bb852d680797",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "No organization publication content was captured or redistributed.",
+  "requested_url": "https://www.sierraclub.org/washington",
+  "retrieved_at": "2026-10-04T04:56:54Z",
+  "schema_version": "1.0",
+  "source_id": "sierra-club-washington",
+  "title": null,
+  "unavailable_reason": "Official URL returned only an Incapsula access-challenge document, not the organization publication. No access control was bypassed.",
+  "updated_at": null
+}

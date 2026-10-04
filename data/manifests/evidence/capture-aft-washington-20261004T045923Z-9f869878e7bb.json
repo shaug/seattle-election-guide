@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 40155,
+  "canonical_url": "https://www.aftwa.org/endorsements-and-elections/our-2026-general-legislative-endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "c609257f5ac224468f98c4761e7ed4b3b1f6c82a1e04f5b74ff4037e2051ac0f",
+  "http_status": 200,
+  "id": "capture-aft-washington-20261004T045923Z-9f869878e7bb",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party artifact retained locally for review only.",
+  "requested_url": "https://www.aftwa.org/endorsements-and-elections/our-2026-general-legislative-endorsements",
+  "retrieved_at": "2026-10-04T04:59:23Z",
+  "schema_version": "1.0",
+  "source_id": "aft-washington",
+  "storage_reference": "sha256/c6/c609257f5ac224468f98c4761e7ed4b3b1f6c82a1e04f5b74ff4037e2051ac0f",
+  "storage_scope": "local_only",
+  "title": "aft-washington 2026 rolling-refresh official evidence",
+  "updated_at": null
+}

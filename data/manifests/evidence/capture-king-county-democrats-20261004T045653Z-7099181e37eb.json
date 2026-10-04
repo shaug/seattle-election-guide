@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 81241,
+  "canonical_url": "https://www.kcdems.org/our-party/e/2026-endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "c017428a3c66745361b8ed72188a8fd340b258dbf021341a0321553bcdb690ef",
+  "http_status": 200,
+  "id": "capture-king-county-democrats-20261004T045653Z-7099181e37eb",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party artifact retained locally for review only.",
+  "requested_url": "https://www.kcdems.org/our-party/e/2026-endorsements/",
+  "retrieved_at": "2026-10-04T04:56:53Z",
+  "schema_version": "1.0",
+  "source_id": "king-county-democrats",
+  "storage_reference": "sha256/c0/c017428a3c66745361b8ed72188a8fd340b258dbf021341a0321553bcdb690ef",
+  "storage_scope": "local_only",
+  "title": "king-county-democrats 2026 rolling-refresh official evidence",
+  "updated_at": null
+}

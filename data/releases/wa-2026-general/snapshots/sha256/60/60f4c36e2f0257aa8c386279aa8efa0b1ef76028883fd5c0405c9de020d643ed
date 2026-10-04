@@ -1,0 +1,36 @@
+{
+  "captured_at": "2026-10-04T04:56:52Z",
+  "decisions": [
+    {
+      "candidate_ids": [
+        "king-county-council-2--rebecca-saldana"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "king-county-council-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-representative-1--kelabe-tewolde"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "ld-37-state-representative-1",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "ld-37-state-representative-2--jaelynn-scott"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "ld-37-state-representative-2",
+      "status": "endorsed"
+    }
+  ],
+  "evidence_locator": "Official organization-linked Bluesky post naming four 2026 endorsed candidates. Capture capture-tech-4-housing-20261004T045652Z-6a77e1f6d5b0.",
+  "review_note": "Issue #474: shaug verified the complete source-by-source review packet, including this source and all prior review treatments. Current official capture retains the prior publication decision text. Prior review: Issue #453: OpenAI Codex transcribed the current-cycle official post; shaug verified the three general-ballot matches and confirmed Ron Davis is excluded because he is absent from that ballot.",
+  "reviewer": "shaug",
+  "source_id": "tech-4-housing"
+}

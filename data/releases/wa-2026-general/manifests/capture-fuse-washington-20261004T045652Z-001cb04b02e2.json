@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 3789,
+  "canonical_url": "https://www.fusewashington.org/news/blog/fuses-2026-general-election-endorsements",
+  "capture_method": "manual_upload",
+  "content_sha256": "e32d33756ddc4a264ac99d126ad93b858809346d6c220ad0ae983051e4722621",
+  "http_status": null,
+  "id": "capture-fuse-washington-20261004T045652Z-001cb04b02e2",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://www.fusewashington.org/news/blog/fuses-2026-general-election-endorsements",
+  "retrieved_at": "2026-10-04T04:56:52Z",
+  "schema_version": "1.0",
+  "source_id": "fuse-washington",
+  "storage_reference": "sha256/e3/e32d33756ddc4a264ac99d126ad93b858809346d6c220ad0ae983051e4722621",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: Fuse Washington",
+  "updated_at": null
+}

@@ -1,0 +1,20 @@
+{
+  "availability": "unavailable",
+  "browser_required": false,
+  "canonical_url": "https://www.facebook.com/stonewallwa/posts/1450344363801898/",
+  "capture_method": "unavailable",
+  "http_status": 200,
+  "id": "capture-washington-stonewall-democrats-20261004T045654Z-72ae3a59634c",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "No organization publication content was captured or redistributed.",
+  "requested_url": "https://www.facebook.com/stonewallwa/posts/1450344363801898/",
+  "retrieved_at": "2026-10-04T04:56:54Z",
+  "schema_version": "1.0",
+  "source_id": "washington-stonewall-democrats",
+  "title": null,
+  "unavailable_reason": "Official Facebook post response exposed only its title and no reconstructable endorsement content; retained access-restricted disposition. No login or access control was bypassed.",
+  "updated_at": null
+}

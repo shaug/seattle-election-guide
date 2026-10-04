@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 95455,
+  "canonical_url": "https://36th.org/endorsements-2026/",
+  "capture_method": "static_html",
+  "content_sha256": "870d9b94a36a0a8014ee78f754391de6335e62ecfe8417bc645157c3f2b2c658",
+  "http_status": 200,
+  "id": "capture-36th-district-democrats-20261004T045654Z-745b079c64ec",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party artifact retained locally for review only.",
+  "requested_url": "https://36th.org/endorsements-2026/",
+  "retrieved_at": "2026-10-04T04:56:54Z",
+  "schema_version": "1.0",
+  "source_id": "36th-district-democrats",
+  "storage_reference": "sha256/87/870d9b94a36a0a8014ee78f754391de6335e62ecfe8417bc645157c3f2b2c658",
+  "storage_scope": "local_only",
+  "title": "36th-district-democrats 2026 rolling-refresh official evidence",
+  "updated_at": null
+}

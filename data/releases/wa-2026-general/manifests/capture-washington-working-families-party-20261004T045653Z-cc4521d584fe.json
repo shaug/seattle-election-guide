@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 1894,
+  "canonical_url": "https://workingfamilies.org/state/washington/",
+  "capture_method": "manual_upload",
+  "content_sha256": "37b788e5368357d79f31157dbcde9b2adf252ff6ffd83b0015c7f20c141da1bb",
+  "http_status": null,
+  "id": "capture-washington-working-families-party-20261004T045653Z-cc4521d584fe",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://workingfamilies.org/state/washington/",
+  "retrieved_at": "2026-10-04T04:56:53Z",
+  "schema_version": "1.0",
+  "source_id": "washington-working-families-party",
+  "storage_reference": "sha256/37/37b788e5368357d79f31157dbcde9b2adf252ff6ffd83b0015c7f20c141da1bb",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: Washington Working Families Party",
+  "updated_at": null
+}

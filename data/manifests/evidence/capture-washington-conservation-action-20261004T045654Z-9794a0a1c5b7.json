@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 114010,
+  "canonical_url": "https://waconservationaction.org/our-work/areas-of-work/endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "fc942094d6401133bdd45824a06c9714847d955af5e327947cc6db5deb618195",
+  "http_status": 200,
+  "id": "capture-washington-conservation-action-20261004T045654Z-9794a0a1c5b7",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party artifact retained locally for review only.",
+  "requested_url": "https://waconservationaction.org/our-work/areas-of-work/endorsements/",
+  "retrieved_at": "2026-10-04T04:56:54Z",
+  "schema_version": "1.0",
+  "source_id": "washington-conservation-action",
+  "storage_reference": "sha256/fc/fc942094d6401133bdd45824a06c9714847d955af5e327947cc6db5deb618195",
+  "storage_scope": "local_only",
+  "title": "washington-conservation-action 2026 rolling-refresh official evidence",
+  "updated_at": null
+}

@@ -1,0 +1,20 @@
+{
+  "availability": "unavailable",
+  "browser_required": false,
+  "canonical_url": "https://wadems.org/",
+  "capture_method": "unavailable",
+  "http_status": 403,
+  "id": "capture-washington-state-democrats-20261004T045653Z-5b254f723baf",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "No organization publication content was captured or redistributed.",
+  "requested_url": "https://wadems.org/",
+  "retrieved_at": "2026-10-04T04:56:53Z",
+  "schema_version": "1.0",
+  "source_id": "washington-state-democrats",
+  "title": null,
+  "unavailable_reason": "Official site returned HTTP 403. No access control was bypassed.",
+  "updated_at": null
+}

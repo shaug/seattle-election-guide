@@ -1,0 +1,26 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 58174,
+  "canonical_url": "https://seattlesubway.org/election-endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "565d1ae65a522beca65ac329f9aae3838bd805a96faf4fac57cdc1f770e1552e",
+  "http_status": 200,
+  "id": "capture-seattle-subway-20261004T045654Z-b4b43955e3de",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [
+    "https://www.seattlesubway.org/election-endorsements/",
+    "https://seattlesubway.org/election-endorsements/"
+  ],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party artifact retained locally for review only.",
+  "requested_url": "https://www.seattlesubway.org/election-endorsements/",
+  "retrieved_at": "2026-10-04T04:56:54Z",
+  "schema_version": "1.0",
+  "source_id": "seattle-subway",
+  "storage_reference": "sha256/56/565d1ae65a522beca65ac329f9aae3838bd805a96faf4fac57cdc1f770e1552e",
+  "storage_scope": "local_only",
+  "title": "seattle-subway 2026 rolling-refresh official evidence",
+  "updated_at": null
+}

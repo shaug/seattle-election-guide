@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 159905,
+  "canonical_url": "https://32democrats.org/2026-endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "f035cf2ba7f512f89b9f14521e99bcb9ebd5bd505d426ddba2627f44b7dcbf0a",
+  "http_status": 200,
+  "id": "capture-32nd-district-democrats-20261004T045653Z-d66cbf40a164",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party artifact retained locally for review only.",
+  "requested_url": "https://32democrats.org/2026-endorsements/",
+  "retrieved_at": "2026-10-04T04:56:53Z",
+  "schema_version": "1.0",
+  "source_id": "32nd-district-democrats",
+  "storage_reference": "sha256/f0/f035cf2ba7f512f89b9f14521e99bcb9ebd5bd505d426ddba2627f44b7dcbf0a",
+  "storage_scope": "local_only",
+  "title": "32nd-district-democrats 2026 rolling-refresh official evidence",
+  "updated_at": null
+}

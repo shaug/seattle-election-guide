@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 413516,
+  "canonical_url": "https://www.wa4pj.com/",
+  "capture_method": "static_html",
+  "content_sha256": "5ede88fab49efa093f913df31e37b1cbcd081dddc2ce25d20e3c84001b259085",
+  "http_status": 200,
+  "id": "capture-washington-for-peace-and-justice-20261004T045652Z-5b8b4ae92d99",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party artifact retained locally for review only.",
+  "requested_url": "https://www.wa4pj.com/",
+  "retrieved_at": "2026-10-04T04:56:52Z",
+  "schema_version": "1.0",
+  "source_id": "washington-for-peace-and-justice",
+  "storage_reference": "sha256/5e/5ede88fab49efa093f913df31e37b1cbcd081dddc2ce25d20e3c84001b259085",
+  "storage_scope": "local_only",
+  "title": "washington-for-peace-and-justice 2026 rolling-refresh official evidence",
+  "updated_at": null
+}

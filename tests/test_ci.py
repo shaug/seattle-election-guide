@@ -186,7 +186,7 @@ def test_default_release_targets_build_the_general_without_primary_inputs() -> N
         assert expected in reproduce.stdout
         assert expected in general_reproduce.stdout
 
-    assert "--release-version 2026-general.3" in reproduce.stdout
+    assert "--release-version 2026-general.4" in reproduce.stdout
     assert "dist/reproducibility-a" in reproduce.stdout
     assert "dist/reproducibility-b" in reproduce.stdout
     assert "wa-2026-primary" not in verify.stdout
