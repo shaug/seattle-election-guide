@@ -237,7 +237,7 @@ def test_production_workflow_blocks_the_unpublished_general_before_upload(
 
     assert result.exit_code == 1
     assert "wa-2026-general" in result.output
-    assert "2026-general.3" in result.output
+    assert "2026-general.4" in result.output
 
     workflow = yaml.load(
         Path(".github/workflows/ci.yml").read_text(encoding="utf-8"),
