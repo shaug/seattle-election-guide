@@ -2,8 +2,8 @@ name: Check source links
 
 # O17 (docs/SITE_OPERATIONS_PLAN.md, Epic F): a cited official source URL that
 # starts returning an error is an auditability failure in a project whose
-# central claim is provenance. This requests every URL in the source
-# registry, tolerates redirects, and opens one aggregate issue only once a
+# central claim is provenance. This requests every URL in the current
+# election's source registry, tolerates redirects, and opens one aggregate issue only once a
 # URL has failed across two consecutive runs -- a `sources check-links`
 # invocation apart -- so a single transient error never raises an alert.
 #
@@ -66,10 +66,12 @@ jobs:
           restore-keys: |
             link-check-state-
       - name: Check every cited source link
+        # Match config/hosting/site.yaml's current election. The primary
+        # registry retains its historical citations, including retired URLs.
         # Inputs reach the shell through the environment, never through
         # expression interpolation into the script itself.
         run: >-
-          uv run election-guide sources check-links config/sources/default.yaml
+          uv run election-guide sources check-links config/sources/wa-2026-general.yaml
           --repository "$GITHUB_REPOSITORY"
           ${DRY_RUN:+--dry-run}
         env:

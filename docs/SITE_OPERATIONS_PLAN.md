@@ -570,6 +570,12 @@ and opening an issue listing URLs that fail across consecutive runs. Rate-limite
 Reports only; never mutates source data, never rewrites a stored URL, and never re-captures
 evidence. Consecutive-failure confirmation avoids alerting on transient errors.
 
+The scheduled check uses the source registry for `current_election_id` in
+`config/hosting/site.yaml`; update its registry argument when the site rolls to a new election.
+Historical registries retain the URLs originally captured, even when a publisher replaces a
+primary page with a general-election publication. A general-election page is evidence for that
+election, not a replacement citation for an archived primary endorsement.
+
 **Acceptance.**
 - [ ] A run against current sources completes and reports accurately.
 - [ ] A deliberately broken fixture URL is reported only after repeated failures.
