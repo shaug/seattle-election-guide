@@ -9,6 +9,23 @@ coverage, and the audit trail for one published election live in that release's
 own `RELEASE_NOTES.md`, inside its bundle and attached to its GitHub Release.
 This file covers the software that renders and ships those bundles.
 
+## 2026-general.4 — 2026-10-04
+
+### Documentation
+
+- Add 2026-general.3 changelog (#489)
+
+### Fixed
+
+- Distinguish earliest ballot availability (#490)
+- Refresh general endorsements and prepare 2026-general.4 (#493)
+- Reject ingest certification dates that disagree with calendar (#492)
+
+### Tooling
+
+- Archive zone rollups through 2026-10-04 (#494)
+- Bump the npm-dependencies group across 1 directory with 3 updates (#468)
+- Bump the python-dependencies group across 1 directory with 2 updates (#443)
 ## 2026-general.3 — 2026-10-03
 
 ### Documentation
