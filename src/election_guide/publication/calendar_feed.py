@@ -71,6 +71,12 @@ MILESTONE_COPY: dict[MilestoneKind, MilestoneCopy] = {
             "The Seattle Election Guide's endorsement consensus for this election is available."
         ),
     ),
+    "guide_published": MilestoneCopy(
+        summary="Voter guide is published",
+        description=(
+            "The Seattle Election Guide's endorsement consensus for this election is available."
+        ),
+    ),
     "election_day": MilestoneCopy(
         summary="Election day — ballots due by 8:00 p.m.",
         description=(

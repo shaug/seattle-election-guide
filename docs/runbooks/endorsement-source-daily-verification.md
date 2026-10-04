@@ -44,7 +44,7 @@ docs/runbooks/endorsement-source-daily-verification.md`, at two cadences
 - Daily, from the first scheduled regular ballot issuance through
   `election_day` (`0`). For the 2026 general, that responsibility began with
   regular overseas/service issuance on 2026-09-18. The missed target is
-  preserved separately from the actual `guide_publishes` date, 2026-10-03; the
+  preserved separately from the actual `guide_published` date, 2026-10-03; the
   cadence is active now rather than waiting for the 2026-10-16 domestic mailing.
 
 The accelerating cadence matches the logic the calendar already uses

@@ -112,13 +112,17 @@ milestones:
     kind: overseas_service_ballots_mail
     offset_days: -46
   - election_id: wa-2026-general
-    id: guide-publishes
+    id: guide-publication-deadline
     kind: guide_publishes
+    offset_days: -46
+    workflow: release build
+    reference: docs/RELEASE.md
+  - election_id: wa-2026-general
+    id: guide-publishes
+    kind: guide_published
     offset_days: -31
     date_status: actual
     revision: 3
-    workflow: release build
-    reference: docs/RELEASE.md
     public: true
   - election_id: wa-2026-general
     id: refresh-pre-domestic

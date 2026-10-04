@@ -35,6 +35,7 @@ MilestoneKind = Literal[
     "overseas_service_ballots_mail",
     "ballots_mail",
     "guide_publishes",
+    "guide_published",
     "refresh",
     "election_day",
     "results_capture_election_night",
@@ -56,6 +57,7 @@ MILESTONE_PHASES: dict[MilestoneKind, MilestonePhase] = {
     "overseas_service_ballots_mail": "before",
     "ballots_mail": "before",
     "guide_publishes": "before",
+    "guide_published": "before",
     "refresh": "before",
     "election_day": "on",
     "results_capture_election_night": "on",
@@ -142,6 +144,8 @@ class CalendarMilestone(CalendarModel):
 
     @model_validator(mode="after")
     def validate_offset_phase(self) -> CalendarMilestone:
+        if self.kind == "guide_published" and self.date_status != "actual":
+            raise ValueError("guide-published milestone must carry an actual date")
         phase = MILESTONE_PHASES[self.kind]
         if phase == "before" and self.offset_days >= 0:
             raise ValueError(f"milestone {self.id!r} must fall before election day")

@@ -98,6 +98,7 @@ def due_milestones(
         (milestone, calendar.scheduled_date(milestone))
         for milestone in calendar.milestones
         if milestone.kind not in INFORMATIONAL_MILESTONE_KINDS
+        and milestone.date_status != "actual"
         and as_of <= calendar.scheduled_date(milestone) <= horizon
     ]
     return sorted(due, key=lambda item: (item[1], item[0].election_id, item[0].id))

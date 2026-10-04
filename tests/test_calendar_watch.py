@@ -261,6 +261,17 @@ def test_a_collection_opening_without_a_sweep_escalates_after_the_guide_deadline
     assert opening.stages == ("overdue",)
 
 
+def test_2026_collection_window_keeps_the_missed_september_deadline() -> None:
+    calendar = read_election_calendar(CALENDAR_PATH)
+
+    at_deadline = missing_artifacts(calendar, as_of=date(2026, 9, 18), artifacts=_artifacts())
+    after_deadline = missing_artifacts(calendar, as_of=date(2026, 9, 19), artifacts=_artifacts())
+
+    assert "collection-opens" not in [item.milestone.id for item in at_deadline]
+    opening = next(item for item in after_deadline if item.milestone.id == "collection-opens")
+    assert opening.window.end == date(2026, 9, 18)
+
+
 def test_a_collection_sweep_capture_may_arrive_after_opening() -> None:
     calendar = _calendar_with_collection_window()
     sweep_artifacts = _artifacts(

@@ -259,13 +259,17 @@ def test_2026_general_calendar_distinguishes_ballot_availability_and_mailings() 
     overseas_service_ballots_mail = next(
         item for item in milestones if item.kind == "overseas_service_ballots_mail"
     )
-    guide_publishes = next(item for item in milestones if item.kind == "guide_publishes")
+    guide_deadline = next(item for item in milestones if item.kind == "guide_publishes")
+    guide_published = next(item for item in milestones if item.kind == "guide_published")
 
     assert calendar.scheduled_date(special_absentee) == date(2026, 8, 5)
     assert calendar.scheduled_date(overseas_service_ballots_mail) == date(2026, 9, 18)
     assert calendar.scheduled_date(ballots_mail) == date(2026, 10, 16)
-    assert calendar.scheduled_date(guide_publishes) == date(2026, 10, 3)
-    assert guide_publishes.revision == 3
+    assert calendar.scheduled_date(guide_deadline) == date(2026, 9, 18)
+    assert not guide_deadline.public
+    assert calendar.scheduled_date(guide_published) == date(2026, 10, 3)
+    assert guide_published.date_status == "actual"
+    assert guide_published.revision == 3
 
 
 def test_2026_general_declares_the_pre_domestic_refresh_deadline() -> None:

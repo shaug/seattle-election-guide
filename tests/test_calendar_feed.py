@@ -284,18 +284,25 @@ def test_the_committed_calendar_publishes_only_voter_facing_kinds() -> None:
     calendar = read_election_calendar(CALENDAR_PATH)
 
     published = {item.kind for item in calendar.public_milestones()}
-    assert published == {"ballots_mail", "guide_publishes", "election_day"}
+    assert published == {"ballots_mail", "guide_published", "guide_publishes", "election_day"}
     assert published <= set(MILESTONE_COPY)
 
 
 def test_every_voter_facing_milestone_is_marked_public() -> None:
     """A dropped marking deletes the event from every existing subscription."""
     calendar = read_election_calendar(CALENDAR_PATH)
+    elections_with_actual_publication = {
+        item.election_id for item in calendar.milestones if item.kind == "guide_published"
+    }
 
     unmarked = [
         f"{item.election_id}/{item.id}"
         for item in calendar.milestones
-        if item.kind in MILESTONE_COPY and not item.public
+        if item.kind in MILESTONE_COPY
+        and not item.public
+        and not (
+            item.kind == "guide_publishes" and item.election_id in elections_with_actual_publication
+        )
     ]
     assert unmarked == []
 

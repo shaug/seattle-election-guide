@@ -86,9 +86,9 @@ has room before the one it feeds:
   general-election field settled at primary certification. The practical
   publication target was therefore the 2026-09-18 overseas/service issuance,
   not the 2026-10-16 domestic mailing. Because that target was missed,
-  `guide_publishes` records the verified actual publication on 2026-10-03;
-  September 18 remains the operational trigger through
-  `overseas_service_ballots_mail`.
+  the internal `guide_publishes` deadline stays on 2026-09-18 while the public
+  `guide_published` occurrence records the verified actual publication on
+  2026-10-03.
 - **Refresh points** catch late endorsements after publication without
   reopening collection. The 2026 general adds a comprehensive pre-domestic
   deadline at `-19` (2026-10-15), followed by the existing `-11` and `-4`
@@ -98,7 +98,7 @@ has room before the one it feeds:
 
 Specials carry measures placed by resolution rather than candidates, so they
 have no filing week and a shorter runway: initialization at `-60` and the panel
-frozen at `-30`.
+frozen at `-42`.
 
 Statutory anchors are the calendar's best current reading of the law, not a
 substitute for it. Reconfirm each cycle's real dates against the Secretary of
@@ -337,8 +337,8 @@ want it in their own calendar, and the default is `false` — the published feed
 is opt-in, so a new milestone kind stays internal until someone decides
 otherwise rather than leaking the moment it is declared.
 
-Three kinds are public today: `ballots_mail`, `guide_publishes`, and
-`election_day`. Marking a milestone public is only half the job — the words a
+Four kinds are public today: `ballots_mail`, planned `guide_publishes`, actual
+`guide_published`, and `election_day`. Marking a milestone public is only half the job — the words a
 reader sees live in `MILESTONE_COPY` in
 `src/election_guide/publication/calendar_feed.py`, keyed by milestone kind,
 because decision D5 keeps display strings out of this file. A milestone marked
@@ -362,12 +362,13 @@ publication date.
 may possess a ballot. A primary or general may declare the internal
 `special_absentee_ballots_available` milestone for the absolute qualifying
 90-day edge and `overseas_service_ballots_mail` for the scheduled regular
-issuance. `guide_publishes` does not wait for domestic mailing: for the 2026
+issuance. A planned `guide_publishes` deadline does not wait for domestic mailing: for the 2026
 general election, special-absentee availability began 2026-08-05, regular
 overseas/service ballots and online materials issued 2026-09-18, and domestic
 ballots mail 2026-10-16. The guide's 2026-09-18 target was missed because the
 field first had to settle and the reviewed release path was not ready; the
-public `guide_publishes` event records the actual 2026-10-03 publication.
+public `guide_published` event records the actual 2026-10-03 publication while
+the internal `guide_publishes` deadline remains 2026-09-18.
 Keeping the specialized dates internal avoids presenting them as the date every
 local voter should expect a ballot while preserving the real operational
 deadlines.

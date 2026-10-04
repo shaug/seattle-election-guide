@@ -252,6 +252,16 @@ def test_the_committed_calendar_plans_only_milestones_ahead_of_the_window() -> N
     assert all("official-inventory-import" not in request.marker for request in plan)
 
 
+def test_verified_actual_publication_history_is_never_planned_as_due_work() -> None:
+    calendar = read_election_calendar(CALENDAR_PATH)
+
+    plan = plan_issues(calendar, as_of=date(2026, 10, 3), lead_days=0, existing_markers=set())
+
+    assert milestone_marker("wa-2026-general", "guide-publishes") not in {
+        request.marker for request in plan
+    }
+
+
 def _completed(command: list[str], stdout: str = "", code: int = 0) -> CompletedProcess[str]:
     return CompletedProcess(command, code, stdout=stdout, stderr="")
 
