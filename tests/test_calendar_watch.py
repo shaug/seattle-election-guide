@@ -131,15 +131,27 @@ def _calendar_with_collection_window() -> ElectionCalendar:
         [
             {
                 "election_id": "wa-2027-general",
+                "id": "special-absentee-ballots-available",
+                "kind": "special_absentee_ballots_available",
+                "offset_days": -90,
+            },
+            {
+                "election_id": "wa-2027-general",
                 "id": "collection-opens",
                 "kind": "collection_opens",
                 "offset_days": -56,
             },
             {
                 "election_id": "wa-2027-general",
+                "id": "overseas-service-ballots-mail",
+                "kind": "overseas_service_ballots_mail",
+                "offset_days": -46,
+            },
+            {
+                "election_id": "wa-2027-general",
                 "id": "guide-publishes",
                 "kind": "guide_publishes",
-                "offset_days": -18,
+                "offset_days": -46,
             },
         ]
     )
@@ -239,25 +251,25 @@ def test_a_kind_that_promises_no_checkable_artifact_is_never_escalated() -> None
 def test_a_collection_opening_without_a_sweep_escalates_after_the_guide_deadline() -> None:
     calendar = _calendar_with_collection_window()
 
-    at_deadline = missing_artifacts(calendar, as_of=date(2027, 10, 15), artifacts=_artifacts())
-    after_deadline = missing_artifacts(calendar, as_of=date(2027, 10, 16), artifacts=_artifacts())
+    at_deadline = missing_artifacts(calendar, as_of=date(2027, 9, 17), artifacts=_artifacts())
+    after_deadline = missing_artifacts(calendar, as_of=date(2027, 9, 18), artifacts=_artifacts())
 
     assert "collection-opens" not in [item.milestone.id for item in at_deadline]
     opening = next(item for item in after_deadline if item.milestone.id == "collection-opens")
     assert opening.window.start == date(2027, 9, 7)
-    assert opening.window.end == date(2027, 10, 15)
+    assert opening.window.end == date(2027, 9, 17)
     assert opening.stages == ("overdue",)
 
 
-def test_a_collection_sweep_capture_may_arrive_weeks_after_opening() -> None:
+def test_a_collection_sweep_capture_may_arrive_after_opening() -> None:
     calendar = _calendar_with_collection_window()
     sweep_artifacts = _artifacts(
         captures=(
-            _capture("The Stranger endorsements", "2027-10-01T15:00:00Z", source_id="the-stranger"),
+            _capture("The Stranger endorsements", "2027-09-15T15:00:00Z", source_id="the-stranger"),
         )
     )
     authority_artifacts = _artifacts(
-        captures=(_capture(ELECTION_NIGHT_TITLE, "2027-10-01T15:00:00Z"),)
+        captures=(_capture(ELECTION_NIGHT_TITLE, "2027-09-15T15:00:00Z"),)
     )
 
     swept = missing_artifacts(calendar, as_of=date(2027, 12, 31), artifacts=sweep_artifacts)
@@ -270,8 +282,8 @@ def test_a_collection_sweep_capture_may_arrive_weeks_after_opening() -> None:
 def test_a_missing_collection_sweep_becomes_stale_fourteen_days_after_publication() -> None:
     calendar = _calendar_with_collection_window()
 
-    before_stale = missing_artifacts(calendar, as_of=date(2027, 10, 29), artifacts=_artifacts())
-    after_stale = missing_artifacts(calendar, as_of=date(2027, 10, 30), artifacts=_artifacts())
+    before_stale = missing_artifacts(calendar, as_of=date(2027, 10, 1), artifacts=_artifacts())
+    after_stale = missing_artifacts(calendar, as_of=date(2027, 10, 2), artifacts=_artifacts())
 
     assert next(
         item.stages for item in before_stale if item.milestone.id == "collection-opens"
