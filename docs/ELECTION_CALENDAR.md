@@ -32,7 +32,9 @@ An election declares its identity — a stable ID, its type, its scope, its date
 and its state. A milestone declares which election it belongs to, a stable ID
 unique within that election, a `kind` from a closed vocabulary, and
 `offset_days` from its election's date. A milestone may also name the `workflow`
-that carries it out and a `reference` document that explains how.
+that carries it out and a `reference` document that explains how. Dates default
+to `date_status: planned`; set `date_status: actual` only when evidence verifies
+that a historical event occurred on a different date from its missed target.
 
 ```yaml
 - election_id: wa-2026-general
@@ -59,6 +61,10 @@ overseas/service issuance follows the election's official calendar, and
 `ballots_mail` is the domestic mass-mail deadline at `-18`. Certification is
 at `+21` after a general and `+14` after a primary or special (RCW 29A.60.190),
 with the post-certification capture the day after.
+Every primary or general declared with its full collection runway must carry
+both earlier ballot anchors. Its planned `guide_publishes` date cannot be later
+than regular overseas/service issuance; an `actual` date may be later only to
+record a verified missed target truthfully.
 The rest are this project's working-backward conventions, chosen so each step
 has room before the one it feeds:
 
@@ -342,6 +348,11 @@ at a newer version of an event it already has. It cannot be derived: a build has
 no memory of the previous one, and the same input has to produce the same bytes.
 The event's identity never changes, so a moved date corrects the existing entry
 instead of adding a second one.
+
+`date_status` does not change whether an event is public. It distinguishes a
+future commitment from verified history so validation can enforce the regular
+issuance deadline prospectively while the feed reports a missed target's actual
+publication date.
 
 `ballots_mail` is the domestic mass-mailing date, not the first date any voter
 may possess a ballot. A primary or general may declare the internal

@@ -46,6 +46,21 @@ def _required_milestones() -> list[dict[str, Any]]:
     ]
 
 
+def _ballot_availability_milestones() -> list[dict[str, Any]]:
+    return [
+        _milestone(
+            id="special-absentee-ballots-available",
+            kind="special_absentee_ballots_available",
+            offset_days=-90,
+        ),
+        _milestone(
+            id="overseas-service-ballots-mail",
+            kind="overseas_service_ballots_mail",
+            offset_days=-46,
+        ),
+    ]
+
+
 def _calendar(milestones: list[dict[str, Any]]) -> dict[str, Any]:
     return {
         "schema_version": "1.0",
@@ -208,15 +223,17 @@ def test_calendar_schema_declares_no_presentation_fields() -> None:
     not cross that line. `public` says *whether* a reader should see a date, not
     what they see; the words live in `MILESTONE_COPY` on the rendering side.
     `revision` is a data version a subscriber's client compares, not anything
-    displayed. `artifact_record` (issue 279) is a repository path, the same
-    shape as `reference`, saying where a milestone's provenance actually
-    landed. None of the three is a display string, banner semantic, or copy.
+    displayed. `date_status` distinguishes a planned commitment from a verified
+    historical date. `artifact_record` (issue 279) is a repository path, the
+    same shape as `reference`, saying where a milestone's provenance actually
+    landed. None of these is a display string, banner semantic, or copy.
     """
     declared = set(CalendarElection.model_fields) | set(CalendarMilestone.model_fields)
 
     assert declared == {
         "public",
         "revision",
+        "date_status",
         "id",
         "election_type",
         "election_scope",
@@ -262,6 +279,27 @@ def test_2026_general_declares_the_pre_domestic_refresh_deadline() -> None:
     assert milestone.kind == "refresh"
     assert calendar.scheduled_date(milestone) == date(2026, 10, 15)
     assert milestone.reference == "docs/runbooks/endorsement-discovery-sweep.md"
+
+
+def test_full_runway_primary_and_general_cycles_declare_all_ballot_edges() -> None:
+    calendar = read_election_calendar(CALENDAR_PATH)
+
+    for election in calendar.elections:
+        milestones = calendar.election_milestones(election.id)
+        kinds = [item.kind for item in milestones]
+        if election.election_type not in {"primary", "general"} or "collection_opens" not in kinds:
+            continue
+
+        special = next(
+            item for item in milestones if item.kind == "special_absentee_ballots_available"
+        )
+        regular = next(item for item in milestones if item.kind == "overseas_service_ballots_mail")
+        guide = next(item for item in milestones if item.kind == "guide_publishes")
+
+        assert special.offset_days == -90
+        assert regular.offset_days == -46
+        if guide.date_status == "planned":
+            assert guide.offset_days <= regular.offset_days
 
 
 @pytest.mark.parametrize(
@@ -350,6 +388,7 @@ def test_collection_opening_requires_one_guide_publication_deadline() -> None:
     payload = _calendar(
         [
             *_required_milestones(),
+            *_ballot_availability_milestones(),
             _milestone(id="collection-opens", kind="collection_opens", offset_days=-56),
         ]
     )
@@ -362,6 +401,7 @@ def test_collection_opening_rejects_multiple_guide_publication_deadlines() -> No
     payload = _calendar(
         [
             *_required_milestones(),
+            *_ballot_availability_milestones(),
             _milestone(id="collection-opens", kind="collection_opens", offset_days=-56),
             _milestone(id="guide-publishes", kind="guide_publishes", offset_days=-18),
             _milestone(id="guide-publishes-again", kind="guide_publishes", offset_days=-14),
@@ -376,6 +416,7 @@ def test_guide_publication_cannot_precede_any_collection_opening() -> None:
     payload = _calendar(
         [
             *_required_milestones(),
+            *_ballot_availability_milestones(),
             _milestone(id="collection-opens", kind="collection_opens", offset_days=-56),
             _milestone(id="collection-reopens", kind="collection_opens", offset_days=-10),
             _milestone(id="guide-publishes", kind="guide_publishes", offset_days=-18),
@@ -383,6 +424,33 @@ def test_guide_publication_cannot_precede_any_collection_opening() -> None:
     )
 
     with pytest.raises(ValidationError, match="publishes its guide before collection opens"):
+        ElectionCalendar.model_validate(payload)
+
+
+def test_full_runway_primary_or_general_requires_each_early_ballot_anchor() -> None:
+    payload = _calendar(
+        [
+            *_required_milestones(),
+            _milestone(id="collection-opens", kind="collection_opens", offset_days=-56),
+            _milestone(id="guide-publishes", kind="guide_publishes", offset_days=-46),
+        ]
+    )
+
+    with pytest.raises(ValidationError, match="must declare exactly one special-absentee"):
+        ElectionCalendar.model_validate(payload)
+
+
+def test_guide_publication_cannot_wait_past_regular_overseas_issuance() -> None:
+    payload = _calendar(
+        [
+            *_required_milestones(),
+            *_ballot_availability_milestones(),
+            _milestone(id="collection-opens", kind="collection_opens", offset_days=-56),
+            _milestone(id="guide-publishes", kind="guide_publishes", offset_days=-18),
+        ]
+    )
+
+    with pytest.raises(ValidationError, match="publishes its guide after regular overseas"):
         ElectionCalendar.model_validate(payload)
 
 
