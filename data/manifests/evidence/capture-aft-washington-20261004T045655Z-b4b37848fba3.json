@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 33920,
+  "canonical_url": "https://www.aftwa.org/endorsements-and-elections",
+  "capture_method": "static_html",
+  "content_sha256": "1bc9e13fe2fd498828f62d94e46645d4837edcea4657734d54c3a103f9e37b5a",
+  "http_status": 200,
+  "id": "capture-aft-washington-20261004T045655Z-b4b37848fba3",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party artifact retained locally for review only.",
+  "requested_url": "https://www.aftwa.org/endorsements-and-elections",
+  "retrieved_at": "2026-10-04T04:56:55Z",
+  "schema_version": "1.0",
+  "source_id": "aft-washington",
+  "storage_reference": "sha256/1b/1bc9e13fe2fd498828f62d94e46645d4837edcea4657734d54c3a103f9e37b5a",
+  "storage_scope": "local_only",
+  "title": "aft-washington 2026 rolling-refresh official evidence",
+  "updated_at": null
+}

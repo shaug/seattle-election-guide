@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 283928,
+  "canonical_url": "https://www.thestranger.com/category/election-endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "709c4fbd2f8886f2d6c1be8a2028ded1ddbda3e3ef982664bfd3cbff698513ee",
+  "http_status": 200,
+  "id": "capture-the-stranger-20261004T045652Z-05ddb946821f",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party artifact retained locally for review only.",
+  "requested_url": "https://www.thestranger.com/category/election-endorsements/",
+  "retrieved_at": "2026-10-04T04:56:52Z",
+  "schema_version": "1.0",
+  "source_id": "the-stranger",
+  "storage_reference": "sha256/70/709c4fbd2f8886f2d6c1be8a2028ded1ddbda3e3ef982664bfd3cbff698513ee",
+  "storage_scope": "local_only",
+  "title": "the-stranger 2026 rolling-refresh official evidence",
+  "updated_at": null
+}

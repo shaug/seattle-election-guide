@@ -371,3 +371,15 @@ Stop and ask a human when:
     coverage pass, and a panel expansion on 2026-07-23 added six more publishers — inside the
     last two weeks before an 2026-08-04 election. A sweep that treats its first pass as complete
     will be wrong.
+
+- **2026-10-03 — `wa-2026-general`, first rolling pass after publication (#474).**
+  All 43 eligible sources were checked immediately, without an October 10 start gate:
+  34 published blocks, five not-found dispositions, and four restricted sources. The
+  source-by-source review retained 614 decisions and added WashingtonCAN's three initiative
+  No recommendations, verified by shaug against two captured gallery images. The second
+  image's filename said 648 while the graphic said 645; the visible text and frozen ballot
+  inventory supplied the match. Gallery HTML alone missed these recommendations, so follow
+  linked images as evidence rather than treating an unchanged candidate list as a complete
+  source check. [The sweep record](../GENERAL_REFRESH_2026-10-03.md) retains all 48 capture
+  identities and the immutable-release handoff; publication and production acceptance remain
+  pending, as does the continuing rolling work.

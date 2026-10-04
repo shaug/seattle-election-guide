@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 88643,
+  "canonical_url": "https://seiu775.org/2026endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "250fce8d878655ba88aea50e33674c9decc40b7e6c4e62e55a3601a4e708aec0",
+  "http_status": 200,
+  "id": "capture-seiu-775-20261004T045655Z-024b6837ef59",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party artifact retained locally for review only.",
+  "requested_url": "https://seiu775.org/2026endorsements/",
+  "retrieved_at": "2026-10-04T04:56:55Z",
+  "schema_version": "1.0",
+  "source_id": "seiu-775",
+  "storage_reference": "sha256/25/250fce8d878655ba88aea50e33674c9decc40b7e6c4e62e55a3601a4e708aec0",
+  "storage_scope": "local_only",
+  "title": "seiu-775 2026 rolling-refresh official evidence",
+  "updated_at": null
+}

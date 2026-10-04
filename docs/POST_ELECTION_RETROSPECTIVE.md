@@ -13,6 +13,10 @@ planning.
 Substitute the election's ID for `<election-id>` throughout; for the 2026
 primary that is `wa-2026-primary`.
 
+The shared `data/manifests/evidence/` store also holds later elections' captures.
+Bound observations for the shipped election by its ledger's `data_as_of`; a
+later sweep's retrieval does not describe what the earlier release could know.
+
 ## 1. Source panel accuracy and gaps
 
 Open `config/sources/default.yaml` and

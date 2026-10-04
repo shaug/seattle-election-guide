@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 258244,
+  "canonical_url": "https://www.seattletimes.com/opinion/editorials/",
+  "capture_method": "static_html",
+  "content_sha256": "2889b3393dc2fc3c5796b6aa6c63b03ec2084d5f956decaa8ded974daba75ced",
+  "http_status": 200,
+  "id": "capture-seattle-times-editorial-board-20261004T045656Z-dd417300dcc7",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party artifact retained locally for review only.",
+  "requested_url": "https://www.seattletimes.com/opinion/editorials/",
+  "retrieved_at": "2026-10-04T04:56:56Z",
+  "schema_version": "1.0",
+  "source_id": "seattle-times-editorial-board",
+  "storage_reference": "sha256/28/2889b3393dc2fc3c5796b6aa6c63b03ec2084d5f956decaa8ded974daba75ced",
+  "storage_scope": "local_only",
+  "title": "seattle-times-editorial-board 2026 rolling-refresh official evidence",
+  "updated_at": null
+}

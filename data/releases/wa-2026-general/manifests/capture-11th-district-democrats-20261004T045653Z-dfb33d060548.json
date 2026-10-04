@@ -1,0 +1,27 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 4341,
+  "canonical_url": "https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=c0097e484d",
+  "capture_method": "manual_upload",
+  "content_sha256": "e677e93ab688e1cae6a654f7bda82a2334cc86fceb11f933422d6d9274e1eee8",
+  "http_status": null,
+  "id": "capture-11th-district-democrats-20261004T045653Z-dfb33d060548",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [
+    "http://eepurl.com/QAju_Mt-ye",
+    "https://eepurl.com/QAju_Mt-ye",
+    "https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=c0097e484d"
+  ],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "http://eepurl.com/QAju_Mt-ye",
+  "retrieved_at": "2026-10-04T04:56:53Z",
+  "schema_version": "1.0",
+  "source_id": "11th-district-democrats",
+  "storage_reference": "sha256/e6/e677e93ab688e1cae6a654f7bda82a2334cc86fceb11f933422d6d9274e1eee8",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: 11th Legislative District Democrats",
+  "updated_at": null
+}

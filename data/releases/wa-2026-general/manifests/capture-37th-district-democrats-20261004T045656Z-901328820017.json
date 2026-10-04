@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 6588,
+  "canonical_url": "https://37dems.org/",
+  "capture_method": "manual_upload",
+  "content_sha256": "eb9db77d93a2291b13731488066c001a5bb7a07817c3660bec4bf5b4a658217b",
+  "http_status": null,
+  "id": "capture-37th-district-democrats-20261004T045656Z-901328820017",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://37dems.org/",
+  "retrieved_at": "2026-10-04T04:56:56Z",
+  "schema_version": "1.0",
+  "source_id": "37th-district-democrats",
+  "storage_reference": "sha256/eb/eb9db77d93a2291b13731488066c001a5bb7a07817c3660bec4bf5b4a658217b",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: 37th Legislative District Democrats",
+  "updated_at": null
+}

@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 172346,
+  "canonical_url": "https://www.washingtoncan.org/endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "9498def7ba56d79b0b87d212cfdab4b83629e8b5765d2e04ede3188497e5102c",
+  "http_status": 200,
+  "id": "capture-washington-community-action-network-20261004T045652Z-fdad3f223455",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party artifact retained locally for review only.",
+  "requested_url": "https://www.washingtoncan.org/endorsements",
+  "retrieved_at": "2026-10-04T04:56:52Z",
+  "schema_version": "1.0",
+  "source_id": "washington-community-action-network",
+  "storage_reference": "sha256/94/9498def7ba56d79b0b87d212cfdab4b83629e8b5765d2e04ede3188497e5102c",
+  "storage_scope": "local_only",
+  "title": "washington-community-action-network 2026 rolling-refresh official evidence",
+  "updated_at": null
+}

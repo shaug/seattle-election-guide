@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 7390,
+  "canonical_url": "https://seiu775.org/2026endorsements/",
+  "capture_method": "manual_upload",
+  "content_sha256": "195351484d51496eb8d04699493f35d49d1533e03b10082d35a5fb08cc67d529",
+  "http_status": null,
+  "id": "capture-seiu-775-20261004T045655Z-be3cc34fe226",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://seiu775.org/2026endorsements/",
+  "retrieved_at": "2026-10-04T04:56:55Z",
+  "schema_version": "1.0",
+  "source_id": "seiu-775",
+  "storage_reference": "sha256/19/195351484d51496eb8d04699493f35d49d1533e03b10082d35a5fb08cc67d529",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: SEIU 775",
+  "updated_at": null
+}

@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 3806,
+  "canonical_url": "https://www.sageleaders.org/2026-endorsements",
+  "capture_method": "manual_upload",
+  "content_sha256": "798eec0a9799331b0cf2302ae3fc6308a39d4420c4ef42230f82d56d1322c20f",
+  "http_status": null,
+  "id": "capture-sage-leaders-20261004T045653Z-e510730d033a",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://www.sageleaders.org/2026-endorsements",
+  "retrieved_at": "2026-10-04T04:56:53Z",
+  "schema_version": "1.0",
+  "source_id": "sage-leaders",
+  "storage_reference": "sha256/79/798eec0a9799331b0cf2302ae3fc6308a39d4420c4ef42230f82d56d1322c20f",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: Sage Leaders",
+  "updated_at": null
+}

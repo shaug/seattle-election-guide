@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-washington-community-action-network-20261004T045923Z-baee3c92a842",
+  "entered_at": "2026-10-04T05:04:22Z",
+  "entry_method": "manual",
+  "evidence_locator": "Second image under 2026 Midterm Election on WashingtonCAN endorsement page: central badge says NO 645; filename incorrectly says 648.",
+  "evidence_type": "image",
+  "id": "manual-washington-community-action-network-20261004T050422Z-6d9f6991d34d",
+  "review_note": "Issue #474: shaug confirmed the complete 43-source review packet and these image transcriptions with \"verified\". The captured official image text supplies the initiative number and No decision; the second image says 645 despite its 648 filename.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-04T05:30:06Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "washington-community-action-network",
+  "transcription": "NO 645"
+}

@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 env:
-  CANDIDATE_BUNDLE_ID: wa-2026-general-2026-general.3
+  CANDIDATE_BUNDLE_ID: wa-2026-general-2026-general.4
 
 jobs:
   python:
@@ -159,10 +159,10 @@ jobs:
       - name: Build and verify deterministic general release
         run: |
           make check-release-reproducible
-          unzip -t dist/reproducibility-a/seattle-election-guide-2026-general.3.zip
-          unzip -Z1 dist/reproducibility-a/seattle-election-guide-2026-general.3.zip \
+          unzip -t dist/reproducibility-a/seattle-election-guide-2026-general.4.zip
+          unzip -Z1 dist/reproducibility-a/seattle-election-guide-2026-general.4.zip \
             | grep -Fx 'seattle-election-guide/validation/rendering/rendering_validation_report.json'
-          unzip -Z1 dist/reproducibility-a/seattle-election-guide-2026-general.3.zip \
+          unzip -Z1 dist/reproducibility-a/seattle-election-guide-2026-general.4.zip \
             | grep -Fx 'seattle-election-guide/validation/rendering/screenshots/desktop.png'
           test "$(stat -c '%a' dist/reproducibility-a)" = 755
       # Only the current election is built from source above. Any other declared

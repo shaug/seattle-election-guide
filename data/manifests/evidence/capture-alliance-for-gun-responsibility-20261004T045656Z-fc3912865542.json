@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 231762,
+  "canonical_url": "https://gunresponsibility.org/2026-endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "1d0ac47c65175ad44457b7084d2f4351028f9a0c172862b5a6da1f35669b77da",
+  "http_status": 200,
+  "id": "capture-alliance-for-gun-responsibility-20261004T045656Z-fc3912865542",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party artifact retained locally for review only.",
+  "requested_url": "https://gunresponsibility.org/2026-endorsements/",
+  "retrieved_at": "2026-10-04T04:56:56Z",
+  "schema_version": "1.0",
+  "source_id": "alliance-for-gun-responsibility",
+  "storage_reference": "sha256/1d/1d0ac47c65175ad44457b7084d2f4351028f9a0c172862b5a6da1f35669b77da",
+  "storage_scope": "local_only",
+  "title": "alliance-for-gun-responsibility 2026 rolling-refresh official evidence",
+  "updated_at": null
+}

@@ -10,8 +10,8 @@ panel_hash_compatibility:
 notes:
   - Version 1 freezes the primary panel as a constrained carry-forward for the 2026 general election; no source or category membership, panel role, eligibility, transport code, reporting placement, selection category, publisher relationship, or overlap metadata changed.
   - The repository records the actual late freeze time rather than backdating the missed planning milestone.
-  - Every consensus and comparison source was rechecked through 2026-10-03T04:09:18Z; published records require an official current-cycle or general-election publication, while primary-only or absent material is recorded as not found and inaccessible material is explicit.
-  - The October prepublication refresh found new or changed official publications for 21 sources in 22 captures; each source was captured for source-by-source transcription review.
+  - Every consensus and comparison source was rechecked through 2026-10-04T04:59:26Z; published records require an official current-cycle or general-election publication, while primary-only or absent material is recorded as not found and inaccessible material is explicit.
+  - The October 3 Pacific rolling refresh for issue #474 recorded all 43 eligible dispositions in 48 captures; shaug verified the whole-source review packet and three WashingtonCAN initiative No additions. Other frozen-inventory decisions are unchanged.
   - Publication content established only whether an official guide or endorsement page exists. Endorsement choices and observed consensus did not influence panel membership or classification.
   - The primary registry remains frozen separately as wa-2026-primary-default-sources-v4.
 categories:
@@ -67,12 +67,12 @@ sources:
       rationale: The guide states that it considered every race touching Seattle.
     discovery:
       status: not_found
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:52Z
       requested_url: https://www.thestranger.com/category/election-endorsements/
       canonical_url: https://www.thestranger.com/category/election-endorsements/
       media_type: text/html
-      evidence_locator: Official election-endorsement archive; its latest 2026 guide was still primary-specific at the research cutoff.
-      notes: No official 2026 general-election guide was located. The primary publication was not reused as general-election evidence.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-the-stranger-20261004T045652Z-05ddb946821f.'
+      notes: 'Archive still leads with the 2026 primary guide; no general guide found.'
 
   - id: the-urbanist
     name: The Urbanist Elections Committee
@@ -88,12 +88,12 @@ sources:
       rationale: Use only for Seattle-ballot races for which the organization publishes a decision.
     discovery:
       status: not_found
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:52Z
       requested_url: https://www.theurbanist.org/2026-primary-election-endorsements/
       canonical_url: https://www.theurbanist.org/2026-primary-election-endorsements/
       media_type: text/html
-      evidence_locator: Official 2026 endorsement page whose heading remained specific to the primary election.
-      notes: No separate or updated official 2026 general-election publication was located.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-the-urbanist-20261004T045652Z-992c9743995c. Supplemental captures capture-the-urbanist-20261004T045926Z-5f0b91c9cccc.'
+      notes: 'Primary-only guide; supplemental official elections-committee page also links only the 2026 primary.'
 
   - id: progressive-voters-guide
     name: Progressive Voters Guide
@@ -134,12 +134,12 @@ sources:
       rationale: Use Fuse's own endorsements, not recommendations compiled from guide partners.
     discovery:
       status: published
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:52Z
       requested_url: https://www.fusewashington.org/news/blog/fuses-2026-general-election-endorsements
       canonical_url: https://www.fusewashington.org/news/blog/fuses-2026-general-election-endorsements
       media_type: text/html
-      evidence_locator: Official 2026 general-election endorsement list; capture capture-fuse-washington-20261003T040651Z-d6cb9a1c5494.
-      notes: The September 29 general-election publication supplies Fuse's own decisions, independent of its Progressive Voters Guide compilation.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-fuse-washington-20261004T045652Z-565aa39a551b.'
+      notes: 'Current official capture retains the prior publication decision text.'
 
     overlap_group_ids:
       - fuse-publications
@@ -158,12 +158,12 @@ sources:
       rationale: Use only decisions the chapter publishes for races in the authoritative Seattle ballot inventory.
     discovery:
       status: published
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:52Z
       requested_url: https://seattledsa.org/event/jaelynn-scott-37ld-campaign-kick-off-canvass/
       canonical_url: https://seattledsa.org/event/jaelynn-scott-37ld-campaign-kick-off-canvass/
       media_type: text/html
-      evidence_locator: Official chapter event identifying Jaelynn Scott as the chapter's newly endorsed candidate; capture capture-seattle-democratic-socialists-20261003T040651Z-8ebb7814a74e.
-      notes: This is a current-cycle endorsement still live after the primary, not a separate November slate; only the named candidate matches the general ballot.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-seattle-democratic-socialists-20261004T045652Z-fd260ad850f9.'
+      notes: 'Related-event widget changed; Jaelynn Scott endorsement text unchanged.'
 
   - id: tech-4-housing
     name: Tech 4 Housing
@@ -179,12 +179,12 @@ sources:
       rationale: Use only decisions published by the organization's official account and matched to the Seattle ballot inventory.
     discovery:
       status: published
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:52Z
       requested_url: https://bsky.app/profile/tech4housing.org/post/3mpkb7wcjok2z
       canonical_url: https://bsky.app/profile/tech4housing.org/post/3mpkb7wcjok2z
       media_type: text/html
-      evidence_locator: Official organization-linked Bluesky post naming four 2026 endorsed candidates; capture capture-tech-4-housing-20261003T040651Z-f82d2056113d.
-      notes: Three listed candidates match the general ballot; Ron Davis does not and is excluded. This is a current-cycle endorsement, not a separate November slate.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-tech-4-housing-20261004T045652Z-6a77e1f6d5b0.'
+      notes: 'Current official capture retains the prior publication decision text.'
 
   - id: tech-4-taxes
     name: Tech 4 Taxes
@@ -200,12 +200,12 @@ sources:
       rationale: Include the organization's 2026 primary decisions recovered from a source-specific preserved capture while the official endorsement index is temporarily unavailable.
     discovery:
       status: published
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:52Z
       requested_url: https://tech4taxes.org/endorsements
       canonical_url: https://tech4taxes.org/endorsements
       media_type: text/html
-      evidence_locator: Official 2025-2026 Candidate Endorsements index, individual candidate and office entries; capture capture-tech-4-taxes-20260927T193033Z-8e781f3ba9df.
-      notes: Current-cycle index remained live after the primary. Seven listed candidates match the general ballot; Ron Davis does not and is excluded from general decisions. The page does not claim a separate November slate.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-tech-4-taxes-20261004T045652Z-1b922edfa9fa.'
+      notes: 'Current official capture retains the prior publication decision text.'
 
   - id: washington-for-peace-and-justice
     name: Washington for Peace and Justice
@@ -221,12 +221,12 @@ sources:
       rationale: Include green check-mark recommendations from the official 2026 guide; gray and leave-blank entries do not contribute.
     discovery:
       status: not_found
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:52Z
       requested_url: https://www.wa4pj.com/
       canonical_url: https://www.wa4pj.com/
       media_type: text/html
-      evidence_locator: Official organization site and linked official social presence reviewed for a current publication.
-      notes: No official 2026 general-election endorsement publication was located.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-washington-for-peace-and-justice-20261004T045652Z-5b8b4ae92d99.'
+      notes: 'Official site has no current endorsement publication located.'
 
   - id: washington-community-action-network
     name: Washington Community Action Network
@@ -242,12 +242,12 @@ sources:
       rationale: Use only official endorsements matched to the authoritative Seattle ballot inventory.
     discovery:
       status: published
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:52Z
       requested_url: https://www.washingtoncan.org/endorsements
       canonical_url: https://www.washingtoncan.org/endorsements
       media_type: text/html
-      evidence_locator: Official endorsements page carrying the organization's current 2026 election publication.
-      notes: The current-cycle publication was located without using its choices to select or classify sources.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-washington-community-action-network-20261004T045652Z-fdad3f223455. Supplemental captures capture-washington-community-action-network-20261004T045922Z-080aa37b091f, capture-washington-community-action-network-20261004T045923Z-baee3c92a842.'
+      notes: 'Verified material delta: No on IL26-001, IL26-638, IP26-645. Two existing candidate decisions preserved. Image text, rather than the erroneous 648 filename, supplies the 645 mapping.'
 
   - id: seattle-gay-news
     name: Seattle Gay News Editorial Board
@@ -263,12 +263,12 @@ sources:
       rationale: Use only editorial-board endorsements matched to the authoritative Seattle ballot inventory.
     discovery:
       status: published
-      checked_at: 2026-10-03T04:09:18Z
+      checked_at: 2026-10-04T04:56:56Z
       requested_url: https://www.sgn.org/ch/News/Seattle?start=20
       canonical_url: https://www.sgn.org/ch/News/Seattle?start=20
       media_type: text/html
-      evidence_locator: Official Seattle news index listing the editorial board's 2026 endorsement articles; capture capture-seattle-gay-news-20261003T040918Z-bc78ca8a1fa5.
-      notes: Seven endorsed candidates match the general ballot. Kshama Sawant is absent from that ballot and the library levy is outside the frozen inventory, so both are excluded.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-seattle-gay-news-20261004T045656Z-63416c1da15c.'
+      notes: 'Current official capture retains the prior publication decision text.'
 
   - id: washington-working-families-party
     name: Washington Working Families Party
@@ -284,12 +284,12 @@ sources:
       rationale: Use only current roster entries matched to the authoritative ballot inventory.
     discovery:
       status: published
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:53Z
       requested_url: https://workingfamilies.org/state/washington/
       canonical_url: https://workingfamilies.org/state/washington/
       media_type: text/html
-      evidence_locator: Official Washington state page publishing the party's current 2026 candidates section.
-      notes: The current-cycle publication was located without using its choices to select or classify sources.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-washington-working-families-party-20261004T045653Z-3bd0d468ecd5.'
+      notes: 'Current official capture retains the prior publication decision text.'
 
   - id: washington-bus
     name: The Washington Bus
@@ -305,12 +305,12 @@ sources:
       rationale: Use only official 2026 decisions matched to Seattle-ballot races.
     discovery:
       status: not_found
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:53Z
       requested_url: https://www.washingtonbus.org/endorsements
       canonical_url: https://www.washingtonbus.org/endorsements
       media_type: text/html
-      evidence_locator: Official endorsements page whose latest 2026 section remained primary-specific.
-      notes: No official 2026 general-election endorsement section was located.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-washington-bus-20261004T045653Z-30f108b8466d.'
+      notes: 'Official page still labels its 2026 endorsements PRIMARY; older 2025 general list not reused.'
 
   - id: sage-leaders
     name: Sage Leaders
@@ -326,12 +326,12 @@ sources:
       rationale: Use official decisions in Seattle-ballot jurisdictions.
     discovery:
       status: published
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:53Z
       requested_url: https://www.sageleaders.org/2026-endorsements
       canonical_url: https://www.sageleaders.org/2026-endorsements
       media_type: text/html
-      evidence_locator: Official 2026 endorsements page, including its general-election endorsement window.
-      notes: The current 2026 publication was located without using its choices to select or classify sources.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-sage-leaders-20261004T045653Z-4e2d45cd6f5e.'
+      notes: 'Current official capture retains the prior publication decision text.'
 
   - id: washington-state-democrats
     name: Washington State Democratic Party
@@ -347,10 +347,10 @@ sources:
       rationale: A future claim must be an explicit party endorsement, not party preference or platform alignment.
     discovery:
       status: access_restricted
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:53Z
       requested_url: https://wadems.org/
-      evidence_locator: Official party site could not provide a clean, directly verifiable 2026 general-election endorsement page.
-      notes: The access gap is explicit; county and legislative-district publications are tracked as separate sources.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-washington-state-democrats-20261004T045653Z-5b254f723baf.'
+      notes: 'HTTP 403; access-restricted disposition preserved.'
 
     overlap_group_ids:
       - democratic-party-network
@@ -369,12 +369,12 @@ sources:
       rationale: County organization may count once in any Seattle-ballot race it explicitly addresses.
     discovery:
       status: published
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:53Z
       requested_url: https://www.kcdems.org/our-party/e/2026-endorsements/
       canonical_url: https://www.kcdems.org/our-party/e/2026-endorsements/
       media_type: text/html
-      evidence_locator: Official 2026 endorsements page labeled for both the primary and general election.
-      notes: The official general-election publication was located without using its choices to select or classify sources.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-king-county-democrats-20261004T045653Z-7099181e37eb.'
+      notes: 'Removed Jenne Alderks in LD1 Pos2; that race is outside the frozen Seattle inventory, so no published decision changes.'
 
     overlap_group_ids:
       - democratic-party-network
@@ -395,12 +395,16 @@ sources:
       rationale: Count explicit decisions in every Seattle-ballot race except legislative contests assigned to another district.
     discovery:
       status: published
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:53Z
       requested_url: http://eepurl.com/QAju_Mt-ye
-      canonical_url: http://eepurl.com/QAju_Mt-ye
+      canonical_url: https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=c0097e484d
+      redirect_chain:
+        - http://eepurl.com/QAju_Mt-ye
+        - https://eepurl.com:443/QAju_Mt-ye
+        - https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=c0097e484d
       media_type: text/html
-      evidence_locator: Official September 12 endorsement-meeting results distributed by the district; capture capture-11th-district-democrats-20261003T040651Z-676591d01480.
-      notes: The publication includes general-election decisions. Its Debra Stephens entry says Position 6 although the frozen ballot places her in Position 7; the candidate match requires explicit human review. Sharonda Amamilo is absent from the frozen general ballot and is excluded while co-endorsed general-ballot candidate Theo Angelis remains.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-11th-district-democrats-20261004T045653Z-1c69ce0cdea5.'
+      notes: 'Current official capture retains the prior publication decision text.'
 
     overlap_group_ids:
       - democratic-party-network
@@ -421,12 +425,12 @@ sources:
       rationale: Count explicit decisions in every Seattle-ballot race except legislative contests assigned to another district.
     discovery:
       status: published
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:53Z
       requested_url: https://32democrats.org/2026-endorsements/
       canonical_url: https://32democrats.org/2026-endorsements/
       media_type: text/html
-      evidence_locator: Official 2026 page updated September 2 and expressly covering the November general election.
-      notes: The official general-election publication was located without using its choices to select or classify sources.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-32nd-district-democrats-20261004T045653Z-d66cbf40a164.'
+      notes: 'Formatting, full names, and initiative descriptions changed; candidate sets, dual endorsements, and three No decisions remain the same.'
 
     overlap_group_ids:
       - democratic-party-network
@@ -447,12 +451,12 @@ sources:
       rationale: Count explicit decisions in every Seattle-ballot race except legislative contests assigned to another district.
     discovery:
       status: published
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:53Z
       requested_url: https://34dems.org/2026-endorsements/
       canonical_url: https://34dems.org/2026-endorsements/
       media_type: text/html
-      evidence_locator: Official 2026 page updated September 11 with general-election decisions; capture capture-34th-district-democrats-20261003T040651Z-b3aee98c044a.
-      notes: The current general-election publication includes candidate, court, initiative, and Seattle transit decisions; the library levy is outside the frozen inventory.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-34th-district-democrats-20261004T045653Z-82887823c97e.'
+      notes: 'Current official capture retains the prior publication decision text.'
 
     overlap_group_ids:
       - democratic-party-network
@@ -473,12 +477,12 @@ sources:
       rationale: Count explicit decisions in every Seattle-ballot race except legislative contests assigned to another district.
     discovery:
       status: published
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:54Z
       requested_url: https://36th.org/endorsements-2026/
       canonical_url: https://36th.org/endorsements-2026/
       media_type: text/html
-      evidence_locator: Official 2026 elections page updated September 23 with general-election decisions; capture capture-36th-district-democrats-20261003T040651Z-ff42cfa83607.
-      notes: The refreshed publication adds a municipal-court decision plus initiative and Seattle transit positions to its prior general-election block.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-36th-district-democrats-20261004T045654Z-745b079c64ec.'
+      notes: 'Current official capture retains the prior publication decision text.'
 
     overlap_group_ids:
       - democratic-party-network
@@ -499,12 +503,12 @@ sources:
       rationale: Count explicit decisions in every Seattle-ballot race except legislative contests assigned to another district.
     discovery:
       status: published
-      checked_at: 2026-10-03T04:08:47Z
+      checked_at: 2026-10-04T04:56:56Z
       requested_url: https://37dems.org/
       canonical_url: https://37dems.org/
       media_type: text/html
-      evidence_locator: Official homepage's 2026 general-election endorsement section; capture capture-37th-district-democrats-20261003T040847Z-2145d45f557b.
-      notes: The current general-election section resolves federal, district, county, court, initiative, and Seattle transit decisions in the frozen inventory.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-37th-district-democrats-20261004T045656Z-7893bd8f74c4.'
+      notes: 'Same visible text as the October 3 official capture; comparison uses the latest capture, not the obsolete July primary page.'
 
     overlap_group_ids:
       - democratic-party-network
@@ -525,12 +529,12 @@ sources:
       rationale: Count explicit decisions in every Seattle-ballot race except legislative contests assigned to another district.
     discovery:
       status: published
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:54Z
       requested_url: https://43rddemocrats.org/endorsements/2026
       canonical_url: https://43rddemocrats.org/endorsements/2026
       media_type: text/html
-      evidence_locator: Official 2026 page updated with completed general-election decisions; capture capture-43rd-district-democrats-20261003T040651Z-292900ff8b81.
-      notes: The general-election publication resolves federal, district, county, court, initiative, and Seattle transit decisions in the frozen inventory.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-43rd-district-democrats-20261004T045654Z-3e84f0d75d25.'
+      notes: 'Current official capture retains the prior publication decision text.'
 
     overlap_group_ids:
       - democratic-party-network
@@ -551,12 +555,12 @@ sources:
       rationale: Count explicit decisions in every Seattle-ballot race except legislative contests assigned to another district.
     discovery:
       status: published
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:54Z
       requested_url: https://www.46dems.org/2026_46th_district_dems_endorsed_candidates_campaigns
       canonical_url: https://www.46dems.org/2026_46th_district_dems_endorsed_candidates_campaigns
       media_type: text/html
-      evidence_locator: Official 2026 page updated after the September 15 general endorsement meeting; capture capture-46th-district-democrats-20261003T040651Z-fa04e56b860d.
-      notes: The refreshed publication adds Gerry Pollet, Rob Foxcurran, Leesa Manion, and Debra Stephens. The source misspells Manion and Stephens; both mappings require explicit human review.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-46th-district-democrats-20261004T045654Z-9105db21d8ac.'
+      notes: 'Current official capture retains the prior publication decision text.'
 
     overlap_group_ids:
       - democratic-party-network
@@ -575,10 +579,10 @@ sources:
       rationale: Count only explicit official decisions matched to Seattle-ballot races.
     discovery:
       status: access_restricted
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:54Z
       requested_url: https://www.facebook.com/stonewallwa/posts/1450344363801898/
-      evidence_locator: Official organization-linked Facebook publication required restricted social-platform access for revalidation.
-      notes: No clean, directly verifiable official-site general-election publication was available at the research cutoff.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-washington-stonewall-democrats-20261004T045654Z-72ae3a59634c.'
+      notes: 'Official Facebook response exposed no reconstructable post content; access-restricted disposition preserved.'
 
     overlap_group_ids:
       - democratic-party-network
@@ -597,12 +601,12 @@ sources:
       rationale: The organization may contribute once where it publishes a decision in a Seattle-ballot race.
     discovery:
       status: published
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:54Z
       requested_url: https://transitriders.org/transit-riders-union-2026-general-election-endorsements/
       canonical_url: https://transitriders.org/transit-riders-union-2026-general-election-endorsements/
       media_type: text/html
-      evidence_locator: Official September 30 general-election endorsement list; capture capture-transit-riders-union-20261003T040651Z-ee68cb3bb6ac.
-      notes: The Gabe Rothstein entry omits the municipal-court position; the frozen inventory uniquely maps him to Position 5 and the mapping requires explicit human review.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-transit-riders-union-20261004T045654Z-a94f0424cdd3.'
+      notes: 'Current official capture retains the prior publication decision text.'
 
   - id: washington-bikes
     name: Washington Bikes
@@ -618,12 +622,12 @@ sources:
       rationale: Count official Washington Bikes decisions; do not separately count Cascade Bicycle Club.
     discovery:
       status: published
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:54Z
       requested_url: https://wabikes.org/index.php/advocacy/endorsements/
       canonical_url: https://wabikes.org/index.php/advocacy/endorsements/
       media_type: text/html
-      evidence_locator: Official endorsements index carrying the 2026 general-election list; capture capture-washington-bikes-20261003T040651Z-e58833b40f3b.
-      notes: The source misspells Jesse Salomon, Emily Alvarado, Kelabe Tewolde, and Nicole Macri; the race context and frozen inventory make each mapping unique and require explicit human review.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-washington-bikes-20261004T045654Z-592872819910.'
+      notes: 'Current official capture retains the prior publication decision text.'
 
     overlap_group_ids:
       - cascade-washington-bikes
@@ -666,12 +670,15 @@ sources:
       rationale: Count only roster decisions matched to Seattle-ballot races.
     discovery:
       status: not_found
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:54Z
       requested_url: https://www.seattlesubway.org/election-endorsements/
-      canonical_url: https://www.seattlesubway.org/election-endorsements/
+      canonical_url: https://seattlesubway.org/election-endorsements/
+      redirect_chain:
+        - https://www.seattlesubway.org/election-endorsements/
+        - https://seattlesubway.org/election-endorsements/
       media_type: text/html
-      evidence_locator: Official election-endorsements page whose current heading remained specific to the August 2026 primary and whose summary said general-election endorsements were still prospective.
-      notes: No official 2026 general-election publication was located; the primary recommendations were not reused as general-election evidence.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-seattle-subway-20261004T045654Z-b4b43955e3de.'
+      notes: 'Official publication still explicitly describes the August 2026 primary; not reused.'
 
   - id: transportation-choices-coalition
     name: Transportation Choices Coalition
@@ -729,12 +736,12 @@ sources:
       rationale: Count one organization decision where it covers a Seattle-ballot race.
     discovery:
       status: published
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:54Z
       requested_url: https://waconservationaction.org/our-work/areas-of-work/endorsements/
       canonical_url: https://waconservationaction.org/our-work/areas-of-work/endorsements/
       media_type: text/html
-      evidence_locator: Official endorsements page carrying the current 2026 decisions; capture capture-washington-conservation-action-20261003T040651Z-547739e8cab2.
-      notes: The refresh adds Debra Stephens, Keith Scully, and Jesse Salomon. The unmatched IL26-368 text remains untranscribed as ambiguous.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-washington-conservation-action-20261004T045654Z-9794a0a1c5b7.'
+      notes: 'Current official capture retains the prior publication decision text.'
 
   - id: sierra-club-washington
     name: Sierra Club Washington State Chapter
@@ -750,10 +757,10 @@ sources:
       rationale: Any claim requires a manually verifiable official chapter publication.
     discovery:
       status: access_restricted
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:54Z
       requested_url: https://www.sierraclub.org/washington
-      evidence_locator: Official chapter pages denied automated access during the general-election revalidation sweep.
-      notes: The primary-specific publication was not assumed to be general-election evidence; the access gap is explicit.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-sierra-club-washington-20261004T045654Z-bb852d680797.'
+      notes: 'HTTP 200 contains an Incapsula access challenge; access-restricted disposition preserved.'
 
   - id: climate-solutions
     name: Climate Solutions
@@ -790,12 +797,12 @@ sources:
       rationale: Count once where the caucus officially endorses in a Seattle-ballot race.
     discovery:
       status: published
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:54Z
       requested_url: https://eccwa.org/wp/endorsements/2026-endorsed-candidates/
       canonical_url: https://eccwa.org/wp/endorsements/2026-endorsed-candidates/
       media_type: text/html
-      evidence_locator: Official 2026 endorsed-candidates page stating that primary endorsements remain endorsed for the general; capture capture-environmental-climate-caucus-wa-democrats-20261003T040651Z-7003b6011fb6.
-      notes: Candidates marked as not advancing are excluded; the remaining listed candidates in Seattle-overlapping legislative districts match the frozen general ballot.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-environmental-climate-caucus-wa-democrats-20261004T045654Z-f148d9a7bf47.'
+      notes: 'Current official capture retains the prior publication decision text.'
 
     overlap_group_ids:
       - democratic-party-network
@@ -814,12 +821,12 @@ sources:
       rationale: Count the council once where it publishes a decision, while disclosing affiliate overlap.
     discovery:
       status: published
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:54Z
       requested_url: https://www.mlklabor.org/endorsements/
       canonical_url: https://www.mlklabor.org/endorsements/
       media_type: text/html
-      evidence_locator: Official 2026 endorsements page carrying the council's current decisions; capture capture-mlk-labor-20261003T040651Z-78c7d8749487.
-      notes: The refreshed publication adds Rob Foxcurran for King County Assessor to the prior general-election block.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-mlk-labor-20261004T045654Z-00ed20bad11c.'
+      notes: 'Current official capture retains the prior publication decision text.'
 
     overlap_group_ids:
       - organized-labor-network
@@ -838,12 +845,12 @@ sources:
       rationale: Count the council once where it publishes a decision, while disclosing affiliate overlap.
     discovery:
       status: published
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:55Z
       requested_url: https://wslc.org/wp-content/uploads/2026/05/2026-WSLC-election-endorsements.pdf
       canonical_url: https://wslc.org/wp-content/uploads/2026/05/2026-WSLC-election-endorsements.pdf
       media_type: application/pdf
-      evidence_locator: Official PDF titled 2026 Election Endorsements rather than limited to the primary.
-      notes: The current-cycle publication was located without using its choices to select or classify sources.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-washington-state-labor-council-20261004T045655Z-824028c6e752.'
+      notes: 'Current official capture retains the prior publication decision text.'
 
     overlap_group_ids:
       - organized-labor-network
@@ -862,12 +869,12 @@ sources:
       rationale: Count the local once where it publishes a Seattle-ballot decision.
     discovery:
       status: published
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:55Z
       requested_url: https://seiu775.org/2026endorsements/
       canonical_url: https://seiu775.org/2026endorsements/
       media_type: text/html
-      evidence_locator: Official page titled 2026 Election Endorsements and carrying the union's current publication.
-      notes: The current-cycle publication was located without using its choices to select or classify sources.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-seiu-775-20261004T045655Z-024b6837ef59.'
+      notes: 'Current official capture retains the prior publication decision text.'
 
     overlap_group_ids:
       - organized-labor-network
@@ -886,12 +893,12 @@ sources:
       rationale: Count the local once where it publishes a Seattle-ballot decision.
     discovery:
       status: published
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:55Z
       requested_url: https://www.seiu925.org/2026endorsements/
       canonical_url: https://www.seiu925.org/2026endorsements/
       media_type: text/html
-      evidence_locator: Official 2026 endorsements page carrying the union's current decisions; capture capture-seiu-925-20261003T040651Z-548babaf1872.
-      notes: The refreshed publication adds Danica Noble and opposition to initiatives 001, 638, and 645 to the prior general-election block.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-seiu-925-20261004T045655Z-6e9fed87c8e6.'
+      notes: 'Current official capture retains the prior publication decision text.'
 
     overlap_group_ids:
       - organized-labor-network
@@ -910,12 +917,12 @@ sources:
       rationale: Count the union once where it publishes a Seattle-ballot decision.
     discovery:
       status: published
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:55Z
       requested_url: https://ufcw3000.org/endorsements
       canonical_url: https://ufcw3000.org/endorsements
       media_type: text/html
-      evidence_locator: Official endorsements page updated with 2026 general-election dates and current publication.
-      notes: The official general-election publication was located without using its choices to select or classify sources.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-ufcw-3000-20261004T045655Z-ac563a1c44fe.'
+      notes: 'Member-story widget changed; endorsement list unchanged.'
 
     overlap_group_ids:
       - organized-labor-network
@@ -934,12 +941,12 @@ sources:
       rationale: Count the union once where it publishes a Seattle-ballot decision.
     discovery:
       status: published
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:55Z
       requested_url: https://www.aftwa.org/endorsements-and-elections
       canonical_url: https://www.aftwa.org/endorsements-and-elections
       media_type: text/html
-      evidence_locator: Official 2026 general legislative and Supreme Court pages; captures capture-aft-washington-20261003T040651Z-ca7ff374956a and capture-aft-washington-20261003T040651Z-57d24047547d.
-      notes: The Supreme Court page's Jaime Hawk paragraph says Position 2 under a Position 3 heading; the heading, candidate, and frozen inventory make Position 3 unique and require explicit human review.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-aft-washington-20261004T045655Z-b4b37848fba3. Supplemental captures capture-aft-washington-20261004T045923Z-9f869878e7bb, capture-aft-washington-20261004T045925Z-a2faf78f9c19.'
+      notes: 'Captured both linked official general-legislative and Supreme Court publications; both retain identical visible text to October 3 captures.'
 
     overlap_group_ids:
       - organized-labor-network
@@ -958,12 +965,12 @@ sources:
       rationale: Count only explicit official decisions, not candidate claims or guide partner data.
     discovery:
       status: published
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:55Z
       requested_url: https://www.washingtonea.org/advocacy/wea-pac/2026-endorsements/
       canonical_url: https://www.washingtonea.org/advocacy/wea-pac/2026-endorsements/
       media_type: text/html
-      evidence_locator: Official 2026 endorsements page carrying the association's current decisions; capture capture-washington-education-association-20261003T040651Z-ba15e9f9c8b3.
-      notes: The refresh adds four Seattle-ballot decisions to the prior general-election block.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-washington-education-association-20261004T045655Z-9df06a76043e.'
+      notes: 'Current official capture retains the prior publication decision text.'
 
     overlap_group_ids:
       - organized-labor-network
@@ -982,12 +989,12 @@ sources:
       rationale: Count the council once where it publishes a Seattle-ballot decision.
     discovery:
       status: published
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:55Z
       requested_url: https://www.wabuildingtrades.org/candidates.html
       canonical_url: https://www.wabuildingtrades.org/candidates.html
       media_type: text/html
-      evidence_locator: Official candidates page carrying the council's current 2026 decisions; capture capture-washington-state-building-trades-20261003T040651Z-0d82c8d611c4.
-      notes: The refresh adds Jaelynn Scott to the prior general-election block.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-washington-state-building-trades-20261004T045655Z-baaaa6209933.'
+      notes: 'Current official capture retains the prior publication decision text.'
 
     overlap_group_ids:
       - organized-labor-network
@@ -1006,12 +1013,12 @@ sources:
       rationale: Count the union once where it publishes a Seattle-ballot decision.
     discovery:
       status: published
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:55Z
       requested_url: https://www.protec17.org/endorsements/
       canonical_url: https://www.protec17.org/endorsements/
       media_type: text/html
-      evidence_locator: Official endorsements page updated August 20 with 2026 endorsements and general-election dates.
-      notes: The official current-cycle publication was located without using its choices to select or classify sources.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-protec17-20261004T045655Z-f23fa6e17be3.'
+      notes: 'Added Portland endorsements, updated page timestamp and contact widget; no frozen Seattle-inventory decision changes.'
 
     overlap_group_ids:
       - organized-labor-network
@@ -1030,10 +1037,10 @@ sources:
       rationale: Count only the regional advocacy organization's decisions; national Action Fund decisions are a different source.
     discovery:
       status: access_restricted
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:56Z
       requested_url: https://www.plannedparenthoodaction.org/planned-parenthood-alliance-advocates
-      evidence_locator: Official regional action organization page returned HTTP 403 during direct revalidation after search discovery located its 2026 Washington election section.
-      notes: The official URL replaces the primary registry's third-party discovery lead, but the direct access gap is explicit and no choices affected panel classification.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-planned-parenthood-alliance-advocates-20261004T045656Z-1b36e7fabf51.'
+      notes: 'HTTP 403; access-restricted disposition preserved.'
 
   - id: oneamerica-votes
     name: OneAmerica Votes
@@ -1049,12 +1056,12 @@ sources:
       rationale: Count the organization once where it publishes a Seattle-ballot decision.
     discovery:
       status: published
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:56Z
       requested_url: https://oavotes.org/our-work/endorsements/2026-endorsements/
       canonical_url: https://oavotes.org/our-work/endorsements/2026-endorsements/
       media_type: text/html
-      evidence_locator: Official 2026 endorsements page updated with general-election material.
-      notes: The official general-election publication was located without using its choices to select or classify sources.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-oneamerica-votes-20261004T045656Z-5a5ae1a02f34.'
+      notes: 'Current official capture retains the prior publication decision text.'
 
   - id: alliance-for-gun-responsibility
     name: Alliance for Gun Responsibility Victory Fund
@@ -1070,12 +1077,12 @@ sources:
       rationale: Count the organization once where it publishes a Seattle-ballot decision.
     discovery:
       status: published
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:56Z
       requested_url: https://gunresponsibility.org/2026-endorsements/
       canonical_url: https://gunresponsibility.org/2026-endorsements/
       media_type: text/html
-      evidence_locator: Official 2026 endorsements page carrying the organization's current election publication.
-      notes: The current-cycle publication was located without using its choices to select or classify sources.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-alliance-for-gun-responsibility-20261004T045656Z-fc3912865542.'
+      notes: 'Current official capture retains the prior publication decision text.'
 
   - id: washington-housing-alliance
     name: Washington Housing Alliance
@@ -1091,12 +1098,12 @@ sources:
       rationale: Count the organization once where it publishes a Seattle-ballot decision.
     discovery:
       status: published
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:56Z
       requested_url: https://www.wahousingalliance.org/endorsements
       canonical_url: https://www.wahousingalliance.org/endorsements
       media_type: text/html
-      evidence_locator: Official endorsements page carrying the alliance's current 2026 decisions; capture capture-washington-housing-alliance-20261003T040651Z-45b7f81fdf2f.
-      notes: The refreshed publication adds opposition to initiatives 001, 638, and 645 to the prior general-election block.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-washington-housing-alliance-20261004T045656Z-a736d43c4cd9.'
+      notes: 'Current official capture retains the prior publication decision text.'
 
   - id: nwpc-washington
     name: National Women's Political Caucus of Washington
@@ -1112,12 +1119,12 @@ sources:
       rationale: Count the organization once where it publishes a Seattle-ballot decision.
     discovery:
       status: published
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:56Z
       requested_url: https://www.nwpcwa.org/endorsements_2026
       canonical_url: https://www.nwpcwa.org/endorsements_2026
       media_type: text/html
-      evidence_locator: Official 2026 endorsements page identifying its current entries as general-election candidates.
-      notes: The official general-election publication was located without using its choices to select or classify sources.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-nwpc-washington-20261004T045656Z-8b1b6ed1f79d.'
+      notes: 'Current official capture retains the prior publication decision text.'
 
   - id: seattle-times-editorial-board
     name: The Seattle Times Editorial Board
@@ -1133,12 +1140,12 @@ sources:
       rationale: Display only as comparison where an official current endorsement is verified.
     discovery:
       status: published
-      checked_at: 2026-10-03T04:06:51Z
+      checked_at: 2026-10-04T04:56:56Z
       requested_url: https://www.seattletimes.com/opinion/editorials/
       canonical_url: https://www.seattletimes.com/opinion/editorials/
       media_type: text/html
-      evidence_locator: Official editorial index listing the 2026 general-election recommendation series; capture capture-seattle-times-editorial-board-20261003T040651Z-7adbf9fe3951.
-      notes: Five clear recommendations published September 13 through October 2 match the frozen ballot. The Supreme Court Position 4 critique is not treated as a recommendation.
+      evidence_locator: 'Official-source rolling recheck for issue #474. Capture capture-seattle-times-editorial-board-20261004T045656Z-dd417300dcc7.'
+      notes: 'Current official capture retains the prior publication decision text.'
 
 overlap_groups:
   - id: fuse-publications

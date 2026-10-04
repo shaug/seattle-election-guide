@@ -82,7 +82,7 @@ Use a stable version, the commit timestamp, and the full Git revision:
 ```bash
 uv run election-guide release build \
   data/releases/wa-2026-general/source-decisions.yaml \
-  --release-version 2026-general.3 \
+  --release-version 2026-general.4 \
   --generated-at "$(git show -s --format=%cI HEAD)" \
   --git-commit "$(git rev-parse HEAD)" \
   --output-dir dist/general-release \
@@ -120,7 +120,7 @@ commands are protected against documentation drift:
 ```bash
 make release-verify
 make check-release-reproducible
-unzip -t dist/reproducibility-a/seattle-election-guide-2026-general.3.zip
+unzip -t dist/reproducibility-a/seattle-election-guide-2026-general.4.zip
 test -f dist/reproducibility-a/bundle/RELEASE_NOTES.md
 test -f dist/reproducibility-a/bundle/validation/rendering/rendering_validation_report.json
 test -f dist/reproducibility-a/bundle/validation/rendering/screenshots/desktop.png
@@ -165,7 +165,7 @@ macOS equivalence for a release pipeline that is deployed only from Linux.
 
 ## Post-tag release lineage
 
-Publishing `2026-general.3` and then committing the generated changelog creates two intentional
+Publishing `2026-general.4` and then committing the generated changelog creates two intentional
 commit identities. The published archive remains bound to `release_candidate_sha`; the general
 bundle staged for production is rebuilt from the later `production_candidate_sha`. Verify that
 narrow boundary before handing the production bundle to `hosting stage`:
@@ -173,7 +173,7 @@ narrow boundary before handing the production bundle to `hosting stage`:
 <!-- runbook-command:verify-lineage -->
 ```bash
 uv run election-guide release verify-lineage \
-  dist/downloaded/seattle-election-guide-2026-general.3.zip \
+  dist/downloaded/seattle-election-guide-2026-general.4.zip \
   dist/reproducibility-a/bundle \
   "$release_candidate_sha" \
   "$production_candidate_sha" \
@@ -207,8 +207,8 @@ Before changing GitHub, inspect the tag, release record, and full asset list sep
 
 <!-- runbook-command:release-preflight -->
 ```bash
-git ls-remote --tags origin refs/tags/2026-general.3 refs/tags/2026-general.3^{}
-gh release view 2026-general.3 \
+git ls-remote --tags origin refs/tags/2026-general.4 refs/tags/2026-general.4^{}
+gh release view 2026-general.4 \
   --json url,tagName,targetCommitish,isDraft,isPrerelease,name,body,assets
 ```
 
@@ -227,9 +227,9 @@ For a permitted create, use the bundled notes and attach the one versioned ZIP:
 
 <!-- runbook-command:release-create -->
 ```bash
-gh release create 2026-general.3 \
-  dist/reproducibility-a/seattle-election-guide-2026-general.3.zip \
-  --title "Seattle 2026 general election endorsement guide — 2026-general.3" \
+gh release create 2026-general.4 \
+  dist/reproducibility-a/seattle-election-guide-2026-general.4.zip \
+  --title "Seattle 2026 general election endorsement guide — 2026-general.4" \
   --notes-file dist/reproducibility-a/bundle/RELEASE_NOTES.md \
   --target "$release_candidate_sha"
 ```
@@ -239,8 +239,8 @@ list is empty, upload the canonical ZIP without `--clobber`:
 
 <!-- runbook-command:release-upload -->
 ```bash
-gh release upload 2026-general.3 \
-  dist/reproducibility-a/seattle-election-guide-2026-general.3.zip
+gh release upload 2026-general.4 \
+  dist/reproducibility-a/seattle-election-guide-2026-general.4.zip
 ```
 
 The omitted `--clobber` is deliberate. If another operator creates an asset after the preflight,
@@ -249,25 +249,25 @@ state.
 
 After upload, use `gh release view` again to prove the release is published, non-draft,
 non-prerelease, and has exactly one asset named
-`seattle-election-guide-2026-general.3.zip`. Record the release URL and the asset ID, name, and size.
+`seattle-election-guide-2026-general.4.zip`. Record the release URL and the asset ID, name, and size.
 Download that exact asset through the Release API, rather than accepting a similarly named local
 file, then verify the bytes and tag with the protected command below:
 
 <!-- runbook-command:verify-published-asset -->
 ```bash
 mkdir -p dist/downloaded
-test ! -e dist/downloaded/seattle-election-guide-2026-general.3.zip
-gh release download 2026-general.3 \
-  --pattern seattle-election-guide-2026-general.3.zip \
+test ! -e dist/downloaded/seattle-election-guide-2026-general.4.zip
+gh release download 2026-general.4 \
+  --pattern seattle-election-guide-2026-general.4.zip \
   --dir dist/downloaded
 local_release_digest="$(shasum -a 256 \
-  dist/reproducibility-a/seattle-election-guide-2026-general.3.zip | awk '{print $1}')"
+  dist/reproducibility-a/seattle-election-guide-2026-general.4.zip | awk '{print $1}')"
 downloaded_release_digest="$(shasum -a 256 \
-  dist/downloaded/seattle-election-guide-2026-general.3.zip | awk '{print $1}')"
+  dist/downloaded/seattle-election-guide-2026-general.4.zip | awk '{print $1}')"
 test "$local_release_digest" = "$downloaded_release_digest"
-unzip -t dist/downloaded/seattle-election-guide-2026-general.3.zip
-git fetch origin tag 2026-general.3
-test "$(git rev-parse '2026-general.3^{commit}')" = "$release_candidate_sha"
+unzip -t dist/downloaded/seattle-election-guide-2026-general.4.zip
+git fetch origin tag 2026-general.4
+test "$(git rev-parse '2026-general.4^{commit}')" = "$release_candidate_sha"
 ```
 
 The digest comparison proves the downloaded archive is byte-for-byte the inspected local archive;

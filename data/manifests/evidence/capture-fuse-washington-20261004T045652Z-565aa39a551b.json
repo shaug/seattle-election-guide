@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 61167,
+  "canonical_url": "https://www.fusewashington.org/news/blog/fuses-2026-general-election-endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "1725388776749c72407b65e81f5b8e206ea7add7a4aa9223d246d9357bb7b590",
+  "http_status": 200,
+  "id": "capture-fuse-washington-20261004T045652Z-565aa39a551b",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party artifact retained locally for review only.",
+  "requested_url": "https://www.fusewashington.org/news/blog/fuses-2026-general-election-endorsements",
+  "retrieved_at": "2026-10-04T04:56:52Z",
+  "schema_version": "1.0",
+  "source_id": "fuse-washington",
+  "storage_reference": "sha256/17/1725388776749c72407b65e81f5b8e206ea7add7a4aa9223d246d9357bb7b590",
+  "storage_scope": "local_only",
+  "title": "fuse-washington 2026 rolling-refresh official evidence",
+  "updated_at": null
+}

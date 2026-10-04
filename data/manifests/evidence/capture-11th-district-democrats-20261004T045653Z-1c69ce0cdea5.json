@@ -1,0 +1,27 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 105902,
+  "canonical_url": "https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=c0097e484d",
+  "capture_method": "static_html",
+  "content_sha256": "6dc6f92a95af310716ddeb996ce8a7f4444ae98b3f4adcc865973a8b87113fe6",
+  "http_status": 200,
+  "id": "capture-11th-district-democrats-20261004T045653Z-1c69ce0cdea5",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [
+    "http://eepurl.com/QAju_Mt-ye",
+    "https://eepurl.com/QAju_Mt-ye",
+    "https://us17.campaign-archive.com/?u=c75f17fe2b6e715cad36922d4&id=c0097e484d"
+  ],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party artifact retained locally for review only.",
+  "requested_url": "http://eepurl.com/QAju_Mt-ye",
+  "retrieved_at": "2026-10-04T04:56:53Z",
+  "schema_version": "1.0",
+  "source_id": "11th-district-democrats",
+  "storage_reference": "sha256/6d/6dc6f92a95af310716ddeb996ce8a7f4444ae98b3f4adcc865973a8b87113fe6",
+  "storage_scope": "local_only",
+  "title": "11th-district-democrats 2026 rolling-refresh official evidence",
+  "updated_at": null
+}

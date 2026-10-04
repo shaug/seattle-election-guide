@@ -1,3 +1,4 @@
+import json
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -63,6 +64,45 @@ def test_general_release_compilation_reproduces_committed_artifacts() -> None:
     )
 
     assert dataset.source_registry == read_source_registry(GENERAL_REGISTRY_PATH)
+
+
+def test_compiled_general_guide_includes_washingtoncan_initiative_recommendations(
+    tmp_path: Path,
+) -> None:
+    output_path = tmp_path / "canonical-dataset.json"
+    result = CliRunner().invoke(
+        app,
+        [
+            "release",
+            "compile",
+            str(GENERAL_LEDGER_PATH),
+            "--inventory-path",
+            str(GENERAL_INVENTORY_PATH),
+            "--registry-path",
+            str(GENERAL_REGISTRY_PATH),
+            "--output-path",
+            str(output_path),
+            "--snapshot-root",
+            str(tmp_path / "snapshots"),
+            "--manifest-dir",
+            str(tmp_path / "manifests"),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    dataset = json.loads(output_path.read_text())
+    recommendations = {
+        endorsement["race_id"]: endorsement["candidate_ids"]
+        for endorsement in dataset["endorsements"]
+        if endorsement["source_id"] == "washington-community-action-network"
+    }
+    assert recommendations == {
+        "us-house-7": ["us-house-7--pramila-jayapal"],
+        "ld-11-state-representative-1": ["ld-11-state-representative-1--david-hackney"],
+        "initiative-26-001": ["initiative-26-001--no"],
+        "initiative-26-638": ["initiative-26-638--no"],
+        "initiative-26-645": ["initiative-26-645--no"],
+    }
 
 
 def test_general_panel_snapshot_preserves_frozen_identity_contract() -> None:

@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 218740,
+  "canonical_url": "https://34dems.org/2026-endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "7f4d0dd518eb5e4115ce6a4814975f136c040a340061bdcbdd54bb6a8d0542ab",
+  "http_status": 200,
+  "id": "capture-34th-district-democrats-20261004T045653Z-82887823c97e",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party artifact retained locally for review only.",
+  "requested_url": "https://34dems.org/2026-endorsements/",
+  "retrieved_at": "2026-10-04T04:56:53Z",
+  "schema_version": "1.0",
+  "source_id": "34th-district-democrats",
+  "storage_reference": "sha256/7f/7f4d0dd518eb5e4115ce6a4814975f136c040a340061bdcbdd54bb6a8d0542ab",
+  "storage_scope": "local_only",
+  "title": "34th-district-democrats 2026 rolling-refresh official evidence",
+  "updated_at": null
+}

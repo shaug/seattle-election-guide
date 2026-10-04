@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 1382703,
+  "canonical_url": "https://www.protec17.org/endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "6f8c8507d195c397926e17072bfdf3e950722bbd270433b456d95c363a34c06e",
+  "http_status": 200,
+  "id": "capture-protec17-20261004T045655Z-f23fa6e17be3",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party artifact retained locally for review only.",
+  "requested_url": "https://www.protec17.org/endorsements/",
+  "retrieved_at": "2026-10-04T04:56:55Z",
+  "schema_version": "1.0",
+  "source_id": "protec17",
+  "storage_reference": "sha256/6f/6f8c8507d195c397926e17072bfdf3e950722bbd270433b456d95c363a34c06e",
+  "storage_scope": "local_only",
+  "title": "protec17 2026 rolling-refresh official evidence",
+  "updated_at": null
+}

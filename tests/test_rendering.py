@@ -6,7 +6,6 @@ import shutil
 import subprocess
 import sys
 import tempfile
-from datetime import UTC, datetime
 from fractions import Fraction
 from html import escape, unescape
 from pathlib import Path
@@ -35,6 +34,7 @@ from election_guide.publication.personalization import (
     PersonalizationCategory,
     PersonalizationSource,
 )
+from election_guide.release.compiler import read_release_ledger
 from election_guide.rendering import (
     build_rendered_guide,
     context,
@@ -3934,7 +3934,9 @@ def test_race_detail_split_meter_stays_statically_segmented(
     report = score_dataset(
         dataset,
         read_scoring_configuration(PROJECT_ROOT / "config/scoring/default.yaml"),
-        computed_at=datetime(2026, 10, 3, 6, tzinfo=UTC),
+        computed_at=read_release_ledger(
+            PROJECT_ROOT / "data/releases/wa-2026-general/source-decisions.yaml"
+        ).data_as_of,
         allow_unresolved=True,
     )
     view_model = build_publication_bundle(
