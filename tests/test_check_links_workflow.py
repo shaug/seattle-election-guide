@@ -2,10 +2,14 @@
 
 from __future__ import annotations
 
+import shlex
 from pathlib import Path
 from typing import Any, cast
 
 import yaml
+
+from election_guide.hosting import read_site_manifest
+from election_guide.sources.registry import read_source_registry
 
 PROJECT_ROOT = Path(__file__).parents[1]
 WORKFLOW_PATH = PROJECT_ROOT / ".github" / "workflows" / "check-links.yml"
@@ -53,6 +57,17 @@ def test_the_check_step_invokes_sources_check_links_with_the_repository() -> Non
     assert "--repository" in check_step["run"]
     assert "GITHUB_REPOSITORY" in check_step["run"]
     assert check_step["env"]["GH_TOKEN"] == "${{ github.token }}"
+
+
+def test_the_workflow_checks_the_current_elections_source_registry() -> None:
+    steps = _steps(_workflow())
+    check_step = next(step for step in steps if "sources check-links" in step.get("run", ""))
+    command = shlex.split(check_step["run"])
+    registry_path = PROJECT_ROOT / command[command.index("check-links") + 1]
+    registry = read_source_registry(registry_path)
+    hosting = read_site_manifest(PROJECT_ROOT / "config" / "hosting" / "site.yaml")
+
+    assert registry.election_id == hosting.current_election_id
 
 
 def test_state_is_restored_before_the_check_and_saved_after() -> None:
