@@ -57,14 +57,16 @@ renamed command or a moved document fails the suite rather than the cycle.
 Offsets are counted from election day, which is why the anchor milestone sits
 at zero. The ballot dates are distinct contracts: qualifying special-absentee
 availability can begin at `-90` for a primary or general, the regular
-overseas/service issuance follows the election's official calendar, and
+overseas/service issuance follows the election's official calendar (`-46` for
+the declared primary/general cycles and `-30` for the declared specials), and
 `ballots_mail` is the domestic mass-mail deadline at `-18`. Certification is
 at `+21` after a general and `+14` after a primary or special (RCW 29A.60.190),
 with the post-certification capture the day after.
-Every primary or general declared with its full collection runway must carry
-both earlier ballot anchors. Its planned `guide_publishes` date cannot be later
-than regular overseas/service issuance; an `actual` date may be later only to
-record a verified missed target truthfully.
+Every election declared with its full collection runway must carry the regular
+overseas/service anchor; a primary or general also carries the qualifying
+special-absentee edge. Its planned `guide_publishes` date cannot be later than
+regular overseas/service issuance; an `actual` date may be later only to record
+a verified missed target truthfully.
 The rest are this project's working-backward conventions, chosen so each step
 has room before the one it feeds:
 
@@ -73,8 +75,10 @@ has room before the one it feeds:
   after the primary certifies — a general's ballot cannot be initialized before
   the primary decides who is on it.
 - **The official inventory import** follows initialization within a week.
-- **The source panel freezes** about two months out, and collection opens a few
-  days later, so the panel is settled before any endorsement is gathered.
+- **The source panel freezes** before collection, which opens with enough room
+  to finish before regular overseas/service issuance. Primary/general cycles
+  use the longer runway; the shorter special cycle freezes at `-42`, opens at
+  `-40`, and issues regular overseas/service ballots at `-30`.
 - **The guide publishes** as soon as it can truthfully cover a settled ballot,
   and no later than the first scheduled regular ballot issuance. Absolute
   special-absentee availability may precede that target: for the 2026 general,

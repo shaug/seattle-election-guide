@@ -253,22 +253,22 @@ class ElectionCalendar(CalendarModel):
                         f"election {election.id!r} with a full runway must declare exactly one "
                         "special-absentee availability milestone"
                     )
-                regular_issuance = [
-                    item for item in milestones if item.kind == "overseas_service_ballots_mail"
-                ]
-                if len(regular_issuance) != 1:
-                    raise ValueError(
-                        f"election {election.id!r} with a full runway must declare exactly one "
-                        "overseas-service issuance milestone"
-                    )
-                if (
-                    guide_publication.date_status == "planned"
-                    and guide_publication.offset_days > regular_issuance[0].offset_days
-                ):
-                    raise ValueError(
-                        f"election {election.id!r} publishes its guide after regular overseas "
-                        "and service ballot issuance"
-                    )
+            regular_issuance = [
+                item for item in milestones if item.kind == "overseas_service_ballots_mail"
+            ]
+            if len(regular_issuance) != 1:
+                raise ValueError(
+                    f"election {election.id!r} with a full runway must declare exactly one "
+                    "overseas-service issuance milestone"
+                )
+            if (
+                guide_publication.date_status == "planned"
+                and guide_publication.offset_days > regular_issuance[0].offset_days
+            ):
+                raise ValueError(
+                    f"election {election.id!r} publishes its guide after regular overseas "
+                    "and service ballot issuance"
+                )
         certified = [item.offset_days for item in milestones if item.kind == "certification"]
         captured = [
             item.offset_days

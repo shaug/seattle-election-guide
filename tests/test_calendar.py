@@ -281,23 +281,26 @@ def test_2026_general_declares_the_pre_domestic_refresh_deadline() -> None:
     assert milestone.reference == "docs/runbooks/endorsement-discovery-sweep.md"
 
 
-def test_full_runway_primary_and_general_cycles_declare_all_ballot_edges() -> None:
+def test_full_runway_cycles_declare_every_applicable_ballot_edge() -> None:
     calendar = read_election_calendar(CALENDAR_PATH)
 
     for election in calendar.elections:
         milestones = calendar.election_milestones(election.id)
         kinds = [item.kind for item in milestones]
-        if election.election_type not in {"primary", "general"} or "collection_opens" not in kinds:
+        if "collection_opens" not in kinds:
             continue
 
-        special = next(
-            item for item in milestones if item.kind == "special_absentee_ballots_available"
-        )
         regular = next(item for item in milestones if item.kind == "overseas_service_ballots_mail")
         guide = next(item for item in milestones if item.kind == "guide_publishes")
 
-        assert special.offset_days == -90
-        assert regular.offset_days == -46
+        if election.election_type in {"primary", "general"}:
+            special = next(
+                item for item in milestones if item.kind == "special_absentee_ballots_available"
+            )
+            assert special.offset_days == -90
+            assert regular.offset_days == -46
+        else:
+            assert regular.offset_days == -30
         if guide.date_status == "planned":
             assert guide.offset_days <= regular.offset_days
 
@@ -451,6 +454,20 @@ def test_guide_publication_cannot_wait_past_regular_overseas_issuance() -> None:
     )
 
     with pytest.raises(ValidationError, match="publishes its guide after regular overseas"):
+        ElectionCalendar.model_validate(payload)
+
+
+def test_full_runway_special_requires_regular_overseas_issuance() -> None:
+    payload = _calendar(
+        [
+            *_required_milestones(),
+            _milestone(id="collection-opens", kind="collection_opens", offset_days=-40),
+            _milestone(id="guide-publishes", kind="guide_publishes", offset_days=-30),
+        ]
+    )
+    payload["elections"][0]["election_type"] = "special"
+
+    with pytest.raises(ValidationError, match="must declare exactly one overseas-service"):
         ElectionCalendar.model_validate(payload)
 
 

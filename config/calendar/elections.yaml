@@ -188,27 +188,32 @@ milestones:
   - election_id: wa-2027-february-special
     id: source-panel-freeze
     kind: source_panel_freeze
-    offset_days: -30
+    offset_days: -42
     workflow: sources snapshot
     reference: SOURCE_POLICY.md
   - election_id: wa-2027-february-special
     id: collection-opens
     kind: collection_opens
-    offset_days: -28
+    offset_days: -40
     workflow: collect refresh
     reference: docs/COLLECTION.md
+  - election_id: wa-2027-february-special
+    id: overseas-service-ballots-mail
+    kind: overseas_service_ballots_mail
+    offset_days: -30
+  - election_id: wa-2027-february-special
+    id: guide-publishes
+    kind: guide_publishes
+    offset_days: -30
+    revision: 2
+    workflow: release build
+    reference: docs/RELEASE.md
+    public: true
   - election_id: wa-2027-february-special
     id: ballots-mail
     kind: ballots_mail
     offset_days: -18
     revision: 2
-    public: true
-  - election_id: wa-2027-february-special
-    id: guide-publishes
-    kind: guide_publishes
-    offset_days: -18
-    workflow: release build
-    reference: docs/RELEASE.md
     public: true
   - election_id: wa-2027-february-special
     id: refresh-final
@@ -254,27 +259,32 @@ milestones:
   - election_id: wa-2027-april-special
     id: source-panel-freeze
     kind: source_panel_freeze
-    offset_days: -30
+    offset_days: -42
     workflow: sources snapshot
     reference: SOURCE_POLICY.md
   - election_id: wa-2027-april-special
     id: collection-opens
     kind: collection_opens
-    offset_days: -28
+    offset_days: -40
     workflow: collect refresh
     reference: docs/COLLECTION.md
+  - election_id: wa-2027-april-special
+    id: overseas-service-ballots-mail
+    kind: overseas_service_ballots_mail
+    offset_days: -30
+  - election_id: wa-2027-april-special
+    id: guide-publishes
+    kind: guide_publishes
+    offset_days: -30
+    revision: 2
+    workflow: release build
+    reference: docs/RELEASE.md
+    public: true
   - election_id: wa-2027-april-special
     id: ballots-mail
     kind: ballots_mail
     offset_days: -18
     revision: 2
-    public: true
-  - election_id: wa-2027-april-special
-    id: guide-publishes
-    kind: guide_publishes
-    offset_days: -18
-    workflow: release build
-    reference: docs/RELEASE.md
     public: true
   - election_id: wa-2027-april-special
     id: refresh-final
