@@ -78,4 +78,14 @@ Supplemental official captures:
 
 ## Publication handoff
 
+The human-reviewed `2026-general.4` inputs have these file-byte SHA-256 values. The release
+operator must compare all three before publication; these raw file hashes are distinct from the
+validated registry audit identity below.
+
+| Input file | SHA-256 |
+| --- | --- |
+| `config/sources/wa-2026-general.yaml` | `00a38879d59b9a45cd3cee3b799f784eade9fd629439d2e8f57e7ccd3c50e1e6` |
+| `data/normalized/wa-2026-general-canonical-dataset.json` | `16b44e35c14a7d68203e0ed4335243221f697241f86354b8f3e153365bb129e0` |
+| `data/releases/wa-2026-general/source-decisions.yaml` | `9996691a56d809ba418c901eb9907d21ab020b5e5bf13034af0539ec47302d90` |
+
 This material delta requires a new immutable election-scoped release; the existing `2026-general.3` tag and assets must remain intact. This PR prepares reviewed inputs, evidence, and the `2026-general.4` candidate declarations across the build, CI, preview, and hosting contracts. The complete registry audit hash is `2da80c88fc1a913e32aeb7ddfd5d66ffb18f9820e41579da575120e6de4c5d16`. Release publication and the lineage, manual production approval, and public-route checks must use the supported sequence in `docs/RELEASE.md` and `docs/HOSTING.md` after landing. No release was published and no production deployment was requested in this pass. Issue #474 stays open until those acceptance items and the continuing refresh work are satisfied.

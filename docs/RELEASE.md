@@ -129,8 +129,11 @@ test -f dist/reproducibility-a/bundle/validation/rendering/screenshots/mobile.pn
 
 Read the notes and rendering report and inspect both screenshots before publication. Record the
 full `release_candidate_sha`, the ZIP SHA-256 and size, and the source-registry, canonical-dataset,
-and source-decision-ledger SHA-256 values. Compare the last three with the final refresh evidence
-recorded by #453; a mismatch stops publication rather than creating a new interpretation here.
+and source-decision-ledger SHA-256 values. For `2026-general.4`, compare the last three with the
+human-reviewed #474 input hashes recorded in
+[the October 3 refresh audit](GENERAL_REFRESH_2026-10-03.md#publication-handoff); a mismatch stops
+publication rather than creating a new interpretation here. Later releases must bind this
+comparison to their own reviewed refresh evidence before publication.
 
 ## Reproducibility
 
