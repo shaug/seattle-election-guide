@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 103736,
+  "canonical_url": "https://37dems.org/?refresh=453",
+  "capture_method": "static_html",
+  "content_sha256": "87f15b6216491d543f500058e5538c2a915e52d06f2f54e2079f817134dbdd79",
+  "http_status": 200,
+  "id": "capture-37th-district-democrats-20261003T040847Z-2145d45f557b",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party page retained locally for review only.",
+  "requested_url": "https://37dems.org/?refresh=453",
+  "retrieved_at": "2026-10-03T04:08:47Z",
+  "schema_version": "1.0",
+  "source_id": "37th-district-democrats",
+  "storage_reference": "sha256/87/87f15b6216491d543f500058e5538c2a915e52d06f2f54e2079f817134dbdd79",
+  "storage_scope": "local_only",
+  "title": "37th Legislative District Democrats 2026 general endorsements",
+  "updated_at": null
+}

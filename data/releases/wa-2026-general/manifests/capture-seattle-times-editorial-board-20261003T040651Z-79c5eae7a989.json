@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 1736,
+  "canonical_url": "https://www.seattletimes.com/opinion/editorials/",
+  "capture_method": "manual_upload",
+  "content_sha256": "c109175853f8a6defcd79b5f2188daaaea9da8a25acf3baabc43d45541a7ce0d",
+  "http_status": null,
+  "id": "capture-seattle-times-editorial-board-20261003T040651Z-79c5eae7a989",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://www.seattletimes.com/opinion/editorials/",
+  "retrieved_at": "2026-10-03T04:06:51Z",
+  "schema_version": "1.0",
+  "source_id": "seattle-times-editorial-board",
+  "storage_reference": "sha256/c1/c109175853f8a6defcd79b5f2188daaaea9da8a25acf3baabc43d45541a7ce0d",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: The Seattle Times Editorial Board",
+  "updated_at": null
+}

@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-aft-washington-20261003T040651Z-57d24047547d",
+  "entered_at": "2026-10-03T04:30:00Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official 2026 Supreme Court endorsements.",
+  "evidence_type": "web_page",
+  "id": "manual-aft-washington-20261003T043000Z-42bdae853090",
+  "review_note": "Human reviewer verified every listed new or changed transcription against the official evidence for issue",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-03T04:52:29Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "aft-washington",
+  "transcription": "supreme-court-justice-1: Colleen Melody\nsupreme-court-justice-3: Jaime Michelle Hawk (paragraph says Position 2 under Position 3 heading; uniquely maps to Position 3)\nsupreme-court-justice-4: Ian Birk\nsupreme-court-justice-5: Theo Angelis\nsupreme-court-justice-7: Debra L. Stephens"
+}

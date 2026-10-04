@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 39112,
+  "canonical_url": "https://www.aftwa.org/endorsements-and-elections/washington-state-supreme-court-endorsements",
+  "capture_method": "static_html",
+  "content_sha256": "58801b5d5a5298b8075cde30100773e31a0f284b3789c7c2cd896cdd900108a9",
+  "http_status": 200,
+  "id": "capture-aft-washington-20261003T040651Z-57d24047547d",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party page retained locally for review only.",
+  "requested_url": "https://www.aftwa.org/endorsements-and-elections/washington-state-supreme-court-endorsements",
+  "retrieved_at": "2026-10-03T04:06:51Z",
+  "schema_version": "1.0",
+  "source_id": "aft-washington",
+  "storage_reference": "sha256/58/58801b5d5a5298b8075cde30100773e31a0f284b3789c7c2cd896cdd900108a9",
+  "storage_scope": "local_only",
+  "title": "AFT Washington 2026 Supreme Court endorsements",
+  "updated_at": null
+}

@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 87039,
+  "canonical_url": "https://www.mlklabor.org/endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "0c9660b830c89a733e35e496b3140ce569dadd6250ce6a893a7aac614a53089b",
+  "http_status": 200,
+  "id": "capture-mlk-labor-20261003T040651Z-78c7d8749487",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party page retained locally for review only.",
+  "requested_url": "https://www.mlklabor.org/endorsements/",
+  "retrieved_at": "2026-10-03T04:06:51Z",
+  "schema_version": "1.0",
+  "source_id": "mlk-labor",
+  "storage_reference": "sha256/0c/0c9660b830c89a733e35e496b3140ce569dadd6250ce6a893a7aac614a53089b",
+  "storage_scope": "local_only",
+  "title": "MLK Labor 2026 endorsements",
+  "updated_at": null
+}

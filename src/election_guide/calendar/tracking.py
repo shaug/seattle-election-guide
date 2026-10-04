@@ -13,7 +13,7 @@ from datetime import date, timedelta
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from election_guide.calendar.models import CalendarMilestone, ElectionCalendar
+from election_guide.calendar.models import CalendarMilestone, ElectionCalendar, MilestoneKind
 
 # Every generated issue carries this marker so a later run recognizes its own
 # work. It is the whole idempotence mechanism: stable per milestone, and
@@ -27,6 +27,27 @@ MARKER_PREFIX = "calendar-milestone:"
 # repository, so removing a label here changes what the issue looks like and
 # not whether it is seen.
 ISSUE_LABELS: tuple[str, ...] = ("type: ops", "area: operations")
+
+# Historical statutory anchors can be declared after their dates have passed so
+# the calendar records the timing distinction other policy consumes. They are
+# facts, not work to schedule, and therefore never open tracking issues.
+INFORMATIONAL_MILESTONE_KINDS: frozenset[MilestoneKind] = frozenset(
+    {"special_absentee_ballots_available"}
+)
+
+# Generated issues must carry the same date semantics as the calendar contract.
+# In particular, `ballots_mail` is a domestic checkpoint rather than the first
+# possible ballot-in-hand date or a trigger for guide publication and refreshes.
+TIMING_CONTEXT: dict[MilestoneKind, str] = {
+    "overseas_service_ballots_mail": (
+        "This is the scheduled regular issuance checkpoint for overseas and service voters; "
+        "electronic delivery can make the issuance day a ballot-in-hand day."
+    ),
+    "ballots_mail": (
+        "This is the domestic mass-mail checkpoint, not the first date a voter may possess a "
+        "ballot and not the trigger for guide publication or endorsement refreshes."
+    ),
+}
 
 
 def milestone_marker(election_id: str, milestone_id: str) -> str:
@@ -67,7 +88,8 @@ def due_milestones(
 
     The window is inclusive at both ends and starts at `as_of`: a milestone
     whose date has already passed is not "coming due" and opening an issue for
-    it would schedule work nobody can perform.
+    it would schedule work nobody can perform. Informational statutory anchors
+    are never due because they record facts rather than work.
     """
     if lead_days < 0:
         raise ValueError("lead window cannot be negative")
@@ -75,7 +97,9 @@ def due_milestones(
     due = [
         (milestone, calendar.scheduled_date(milestone))
         for milestone in calendar.milestones
-        if as_of <= calendar.scheduled_date(milestone) <= horizon
+        if milestone.kind not in INFORMATIONAL_MILESTONE_KINDS
+        and milestone.date_status != "actual"
+        and as_of <= calendar.scheduled_date(milestone) <= horizon
     ]
     return sorted(due, key=lambda item: (item[1], item[0].election_id, item[0].id))
 
@@ -92,10 +116,13 @@ def _issue_body(
     reference = (
         f"- `{milestone.reference}`\n" if milestone.reference is not None else "- None recorded.\n"
     )
+    timing_context = TIMING_CONTEXT.get(milestone.kind)
+    timing = f"\n{timing_context}\n" if timing_context is not None else ""
     return (
         "## Outcome\n\n"
         f"The `{milestone.kind}` milestone for `{election_id}` is complete on or before "
-        f"{scheduled.isoformat()}.\n\n"
+        f"{scheduled.isoformat()}.\n"
+        f"{timing}\n"
         "## Scope\n\n"
         f"{action}\n\n"
         "This issue was opened from `config/calendar/elections.yaml` because the milestone "

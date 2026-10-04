@@ -162,13 +162,17 @@ def test_shared_election_contract_target_owns_both_committed_elections() -> None
     assert SHARED_CONTRACT_COMMAND in _make_dry_run("check").stdout
 
 
-def test_general_release_targets_bind_all_inputs_without_colliding_with_primary() -> None:
-    """The supported target must not inherit any primary input or output directory."""
-    verify = _make_dry_run("release-verify-general")
-    reproduce = _make_dry_run("check-release-reproducible-general")
+def test_default_release_targets_build_the_general_without_primary_inputs() -> None:
+    """The supported defaults must cut over atomically to the general release."""
+    verify = _make_dry_run("release-verify")
+    general_verify = _make_dry_run("release-verify-general")
+    reproduce = _make_dry_run("check-release-reproducible")
+    general_reproduce = _make_dry_run("check-release-reproducible-general")
 
     assert verify.returncode == 0, verify.stderr
+    assert general_verify.returncode == 0, general_verify.stderr
     assert reproduce.returncode == 0, reproduce.stderr
+    assert general_reproduce.returncode == 0, general_reproduce.stderr
     for expected in (
         "data/releases/wa-2026-general/source-decisions.yaml",
         "--inventory-path data/normalized/wa-2026-general-inventory.json",
@@ -178,24 +182,39 @@ def test_general_release_targets_bind_all_inputs_without_colliding_with_primary(
         "--manifest-dir data/releases/wa-2026-general/manifests",
     ):
         assert expected in verify.stdout
+        assert expected in general_verify.stdout
         assert expected in reproduce.stdout
+        assert expected in general_reproduce.stdout
 
-    assert "--release-version 2026-general.1" in reproduce.stdout
-    assert "dist/wa-2026-general-reproducibility-a" in reproduce.stdout
-    assert "dist/wa-2026-general-reproducibility-b" in reproduce.stdout
-    assert "dist/reproducibility-a" not in reproduce.stdout
-    assert "dist/reproducibility-b" not in reproduce.stdout
+    assert "--release-version 2026-general.3" in reproduce.stdout
+    assert "dist/reproducibility-a" in reproduce.stdout
+    assert "dist/reproducibility-b" in reproduce.stdout
+    assert "wa-2026-primary" not in verify.stdout
+    assert "wa-2026-primary" not in reproduce.stdout
 
 
-def test_primary_release_targets_keep_the_primary_defaults() -> None:
-    """The preparatory general targets must not perform issue #447's cutover."""
-    verify = _make_dry_run("release-verify")
-    reproduce = _make_dry_run("check-release-reproducible")
+def test_primary_release_verification_remains_an_explicit_repository_contract() -> None:
+    """Cutting over the defaults must not silently drop the historical input gate."""
+    verify = _make_dry_run("release-verify-primary")
+    contracts = _make_dry_run("check-election-contracts")
 
     assert verify.returncode == 0, verify.stderr
-    assert reproduce.returncode == 0, reproduce.stderr
     assert "data/releases/wa-2026-primary/source-decisions.yaml" in verify.stdout
-    assert "data/releases/wa-2026-primary/source-decisions.yaml" in reproduce.stdout
-    assert "--release-version 2026-primary.2" in reproduce.stdout
     assert "wa-2026-general" not in verify.stdout
-    assert "wa-2026-general" not in reproduce.stdout
+    assert "release verify data/releases/wa-2026-primary/source-decisions.yaml" in contracts.stdout
+    assert "release verify data/releases/wa-2026-general/source-decisions.yaml" in contracts.stdout
+
+
+def test_local_production_upload_requires_every_release_to_be_published() -> None:
+    """The local deploy escape hatch must end the candidate exception before upload."""
+    deploy = _make_dry_run("hosting-deploy")
+
+    assert deploy.returncode == 0, deploy.stderr
+    strict_check = "hosting verify-releases config/hosting/site.yaml"
+    upload = "npm run pages:deploy"
+    assert deploy.stdout.count(strict_check) == 2
+    strict_offset = deploy.stdout.rindex(strict_check)
+    candidate_offset = deploy.stdout.index("--candidate-bundle-id")
+    upload_offset = deploy.stdout.index(upload)
+    assert candidate_offset < strict_offset < upload_offset
+    assert "--candidate-bundle-id" not in deploy.stdout[strict_offset:upload_offset]

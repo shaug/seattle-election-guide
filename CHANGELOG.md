@@ -9,6 +9,181 @@ coverage, and the audit trail for one published election live in that release's
 own `RELEASE_NOTES.md`, inside its bundle and attached to its GitHub Release.
 This file covers the software that renders and ships those bundles.
 
+## 2026-general.3 — 2026-10-03
+
+### Documentation
+
+- Add 2026-general.2 changelog (#485)
+
+### Fixed
+
+- Make the endorsement meter rollback-proof (#488)
+
+### Other
+
+- Restore the final Meter v2 interaction (#487)
+## 2026-general.2 — 2026-10-03
+
+### Documentation
+
+- Add 2026-general.1 changelog (#479)
+
+### Fixed
+
+- Replace endorsement pill with visible segments (#484)
+## 2026-general.1 — 2026-10-03
+
+### Added
+
+- Add a supported way to compute the bundle_sha256 pin (#358)
+- Add banner counting and certified post-election states (#339)
+- Add certified result as an addable Comparisons column (#351)
+- Add meter v2 color tokens and the exact-rational count formatter (#318)
+- Add the results schema, validator, and rendering hook (#336)
+- Allow one unpublished current hosting candidate (#460)
+- Archive zone rollups before Cloudflare's window drops them
+- Assert every declared release version is published (#257)
+- Certified-results CSV ingestion adapter (#338)
+- Declare the election calendar as repository data (#262)
+- Declare the live 2026 primary's results-capture windows (#265)
+- Deploy labeled pull requests to their own Pages preview (#263)
+- Detect link rot in cited sources (O17) (#383)
+- Draw a race's social card, and vendor the font that can spell it (#307)
+- Escalate calendar milestones whose promised artifact never appeared (O12 follow-up) (#386)
+- Generate the site changelog from commit history (#267)
+- Give counting authorities their own capture lane (#281) (#337)
+- Give every candidate a meter in their own section (#335)
+- Grow a certified results strip on candidate race cards (#340)
+- Grow the endorsements dialog's certified strip and vote-share rows (#345)
+- Include Tech 4 Taxes in 2026 general endorsements (#466)
+- Index only the canonical host (#255)
+- Ingest wa-2026-primary certified results (#413)
+- Lay out the segmented meter once, in two languages (#319)
+- Migrate race detail to real race URLs with per-race social cards (#308)
+- Open tracking issues from calendar milestones (#273)
+- Publish a subscribable calendar feed of voter-facing election dates (#293)
+- Render a per-election corrections page (#350)
+- Render meter v2 on race social cards (#332)
+- Resolve historical bundles from their published releases (#261)
+- Reuse the candidate results component for measures (#352)
+- Separate stable panel identity from registry audit hash (#438)
+- State the complete certified result on a race page (#374)
+- Swap the meter chrome to meter v2 across guide, race, compact, and print (#321)
+- Verify post-tag release lineage (#462)
+- Verify production is up and serving the expected commit (O14) (#377)
+
+### Changed
+
+- Dedupe the results-chip rule into guide-race.css (#355)
+- Extract shared single-issue GitHub alert tracker (#404)
+- Give the two fragment codecs one shared vocabulary (#294)
+- Split renderer.py one concern per module (#277)
+
+### Documentation
+
+- Add the post-election retrospective checklist (#268)
+- Confirm the client-side beacon works automatically (O10) (#375)
+- Correct certified CSV filename in results ingest runbook (#414)
+- Document credential and hosting ownership (O19) (#366)
+- Document the production approval gate (#258)
+- Establish the zone-analytics baseline (O9) (#360)
+- Formalize the agentic runtime as runbooks (#272)
+- Mock up a meter in every candidate's own section (#326)
+- Name the field to trend, and why it is not requests (#412)
+- Ratify meter v2, the segmented meter (#310)
+- Ratify the measure results design pass (#349)
+- Ratify the race-detail page's complete certified result (#371)
+- Record the ratified post-election results design (#266)
+- Say why this exists, and what licenses the voice (#317)
+- Stop describing www attachment as still pending (#402)
+- Stop hardcoding the LEGACY_HOSTS count (#394)
+- Write and rehearse the production rollback procedure (#364)
+- Write the endorsement discovery sweep (#363)
+
+### Fixed
+
+- Account for the results-capture and corrections links in expected_html_links (#356)
+- Close two false negatives in the inline-script metric (#291)
+- Confirm link rot by cause, not by repetition alone (#418)
+- Correct primary certification offset and capture wa-2026-primary certified results (#407)
+- Declare the sticky header's compositing promotion (#385)
+- Fail preview teardown loudly when wrangler's projection goes stale (#389)
+- Finish www routing to the apex (#393)
+- Hold a race id to a slug, because it is about to be an address (#305)
+- Let the sources page check the receipts it renders (#306)
+- Make captured official-authority bytes outlive their session (#372)
+- Make the release capture deterministic, and name the artifact that differs (#368)
+- Notice a milestone on the day, without depending on a label (#320)
+- Pin the persistent action strip's height to a whole pixel (#343)
+- Pin the race page's lens strip like the guide's own (#369) (#376)
+- Remove the per-race-card counting note (#346)
+- Resolve released bundles in the PR preview staging step (#362)
+- Resolve released bundles in the local staging target (#359)
+- Seat the no-majority pill under the name it qualifies (#229)
+
+### Other
+
+- Alert on stale published data (#429)
+- Automate analytics archive PR checks and merges (#439)
+- Close out the front-end architecture epic: delete the grandfather lists, and make every rule say what holds it (#296)
+- Complete initial 2026 general discovery sweep (#437)
+- Declare every shared template/JS/CSS name once, and check it (#280)
+- Extract the guide and sources inline glue into real modules (#260)
+- Freeze the carried-forward 2026 general source panel (#430)
+- Give each page its own CSS entry point (#276)
+- Make release manifests reproducible without hashing rasterized screenshots (#435)
+- Move every full HTML document onto one shared Jinja layout (#275)
+- Name a race's leading choice once, and stop counting the list below it (#309)
+- Parallelize CI checks and browser integration tests (#431)
+- Recheck drifted endorsement sources; propose daily verification (#323)
+- Record the 2026-08-04 election-night results capture (#322)
+- Render the guide and sources lens regions with lit-html
+- Say what happened when a comparison link fails, and give the page one address-bar owner (#278)
+- Watch the collection opening artifact window (#434)
+- Automate dependency updates (O18) (#378)
+- Ingest Secretary of State totals for the eight cross-county races (#419)
+- Make the general release runbook executable (#478)
+- Refresh 2026 general endorsements (#475)
+
+### Tests
+
+- Fixture the surviving Python↔JS mirrors, and derive their inventory (#295)
+- Stop asserting a dependency version the lockfile already pins (#388)
+- Wait for the history re-render instead of sleeping (#390)
+
+### Tooling
+
+- Add general election release targets (#459)
+- Archive zone rollups (#415)
+- Archive zone rollups through 2026-08-16
+- Archive zone rollups through 2026-08-17
+- Archive zone rollups through 2026-08-19 (#405)
+- Archive zone rollups through 2026-09-21 (#441)
+- Archive zone rollups through 2026-09-22 (#444)
+- Archive zone rollups through 2026-09-23 (#454)
+- Archive zone rollups through 2026-09-24 (#455)
+- Archive zone rollups through 2026-09-25 (#461)
+- Archive zone rollups through 2026-09-26 (#463)
+- Archive zone rollups through 2026-09-27 (#464)
+- Archive zone rollups through 2026-09-28 (#467)
+- Archive zone rollups through 2026-09-29 (#469)
+- Archive zone rollups through 2026-09-30 (#470)
+- Archive zone rollups through 2026-10-01 (#471)
+- Archive zone rollups through 2026-10-02 (#473)
+- Archive zone rollups through 2026-10-03 (#477)
+- Bump the npm-dependencies group across 1 directory with 3 updates (#432)
+- Bump the npm-dependencies group across 1 directory with 4 updates (#423)
+- Bump the npm-dependencies group across 1 directory with 5 updates (#379)
+- Bump the python-dependencies group across 1 directory with 5 updates (#424)
+- Bump the python-dependencies group with 2 updates (#400)
+- Bump the python-dependencies group with 3 updates (#380)
+- Bump the python-dependencies group with 3 updates (#433)
+- Cut staging to the 2026 general guide (#476)
+- Format the PROJECT.md protocol snippet the way ruff 0.16 does (#391)
+- Import the 2026 general ballot inventory (#427)
+- Initialize 2026 general (#426)
+- Move one 2027 date to verify subscribed events update in place (#333)
+- Revert the temporary 2027 date used to verify subscribed updates (#334)
 ## 2026-primary.2 — 2026-08-02
 
 ### Added

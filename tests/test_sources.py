@@ -345,9 +345,24 @@ def test_registry_rejects_unrecorded_redirect() -> None:
         SourceRegistry.model_validate(payload)
 
 
-def test_registry_rejects_source_access_after_research_cutoff() -> None:
+def test_registry_allows_post_freeze_discovery_refresh_without_changing_panel_identity() -> None:
+    before = SourceRegistry.model_validate(_registry_payload())
+    payload = before.model_dump(mode="json")
+    payload["sources"][0]["discovery"]["checked_at"] = "2026-07-24T00:00:00Z"
+
+    after = SourceRegistry.model_validate(payload)
+
+    assert after.frozen_at == before.frozen_at
+    assert after.research_cutoff == before.research_cutoff
+    assert source_registry_hash(after) != source_registry_hash(before)
+    assert build_panel_snapshot(after).panel_hash == build_panel_snapshot(before).panel_hash
+
+
+def test_legacy_registry_still_rejects_source_access_after_research_cutoff() -> None:
     payload = _registry_payload()
-    payload["sources"][0]["discovery"]["checked_at"] = "2026-07-23T17:11:00Z"
+    payload["schema_version"] = "1.1"
+    payload.pop("panel_hash_compatibility")
+    payload["sources"][0]["discovery"]["checked_at"] = "2026-07-24T00:00:00Z"
 
     with pytest.raises(ValidationError, match="checked after the research cutoff"):
         SourceRegistry.model_validate(payload)

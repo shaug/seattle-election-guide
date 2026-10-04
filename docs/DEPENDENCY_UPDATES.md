@@ -49,12 +49,14 @@ automation: **before a declared election's window opens, pause both Dependabot u
 window closes**.
 
 The window reuses the calendar's own statutory anchors (`docs/ELECTION_CALENDAR.md`, "How offsets
-are chosen") rather than inventing a separate one: it runs from **ballots mailing (`-18` days)**
-through the **post-certification capture, the day after certification** (`+22` after a general,
-`+15` after a primary or special) — the same span the results-capture epic already treats as the
-period where an unplanned surprise is costliest. Outside that span, a broken dependency bump is
-an inconvenience caught by CI; inside it, an engineer's attention is better spent watching the
-election than triaging an unrelated Dependabot PR.
+are chosen") rather than inventing a separate one: it runs from the **earliest date a voter may
+possess a ballot** through the **post-certification capture, the day after certification** (`+22`
+after a general, `+15` after a primary or special). For a primary or general with a declared
+`special_absentee_ballots_available` milestone, that is the qualifying 90-day edge; otherwise use
+the earliest declared regular issuance rather than assuming the domestic `ballots_mail` date is
+first. This is the span where an unplanned surprise is costliest. Outside it, a broken dependency
+bump is an inconvenience caught by CI; inside it, an engineer's attention is better spent watching
+the election than triaging an unrelated Dependabot PR.
 
 This is a manual step because CI already prevents an update from merging unreviewed — the risk
 the exclusion manages is reviewer *attention* during the window, not an unsafe auto-merge. A

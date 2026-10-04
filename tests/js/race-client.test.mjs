@@ -163,7 +163,7 @@ const MARKUP = `
     <div class="race-headline" role="group">
       <div class="screen-race-result" data-lens-result>
         <h3 data-display-role="recommendation">Ada Lovelace / Blaise Pascal</h3>
-        <div class="screen-meter meter-no-majority" style="--meter-fill: 50%" role="img"
+        <div class="screen-meter meter-no-majority" style="--meter-label-offset: 50%" role="img"
           data-display-role="share"
           aria-label="No majority. Consensus among explicitly endorsing sources: 50%">
           <strong>50%</strong>

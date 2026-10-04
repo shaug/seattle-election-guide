@@ -1,0 +1,63 @@
+{
+  "captured_at": "2026-10-03T04:06:51Z",
+  "decisions": [
+    {
+      "candidate_ids": [
+        "king-county-council-2--rebecca-saldana"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "king-county-council-2",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "king-county-council-4--jorge-l-baron"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "king-county-council-4",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "king-county-council-8--teresa-mosqueda"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "king-county-council-8",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "seattle-city-council-5--nilu-jenks"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "seattle-city-council-5",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "seattle-proposition-1-transit--yes"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "seattle-proposition-1-transit",
+      "status": "endorsed"
+    },
+    {
+      "candidate_ids": [
+        "king-county-assessor--rob-foxcurran"
+      ],
+      "evidence_excerpt": null,
+      "evidence_locator": null,
+      "race_id": "king-county-assessor",
+      "status": "endorsed"
+    }
+  ],
+  "evidence_locator": "Official 2026 Endorsements page, King County and Seattle sections. Capture capture-mlk-labor-20261003T040651Z-78c7d8749487.",
+  "review_note": "Issue #453: OpenAI Codex transcribed the refreshed official page; shaug verified the Rob Foxcurran addition and confirmed the prior decisions remain unchanged.",
+  "reviewer": "shaug",
+  "source_id": "mlk-labor"
+}

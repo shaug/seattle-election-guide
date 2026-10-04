@@ -10,6 +10,9 @@ on:
 permissions:
   contents: read
 
+env:
+  CANDIDATE_BUNDLE_ID: wa-2026-general-2026-general.3
+
 jobs:
   python:
     name: Python static checks
@@ -71,7 +74,9 @@ jobs:
       # archive, so a declared version with no published Release is a broken
       # deployment waiting to happen (docs/HOSTING.md, Published releases).
       - name: Verify declared release versions are published
-        run: uv run election-guide hosting verify-releases config/hosting/site.yaml
+        run: >-
+          uv run election-guide hosting verify-releases config/hosting/site.yaml
+          --candidate-bundle-id "$CANDIDATE_BUNDLE_ID"
         env:
           # The automatic job token, not a deployment secret: this job runs on
           # pull requests and is held to the workflow's read-only permissions.
@@ -151,13 +156,13 @@ jobs:
       # no arguments the same way check-js and check-changelog are (issue #367),
       # so the procedure CI runs and the one a contributor runs cannot drift
       # apart. The staging step below consumes the first of its two builds.
-      - name: Build and verify deterministic primary release
+      - name: Build and verify deterministic general release
         run: |
           make check-release-reproducible
-          unzip -t dist/reproducibility-a/seattle-election-guide-2026-primary.2.zip
-          unzip -Z1 dist/reproducibility-a/seattle-election-guide-2026-primary.2.zip \
+          unzip -t dist/reproducibility-a/seattle-election-guide-2026-general.3.zip
+          unzip -Z1 dist/reproducibility-a/seattle-election-guide-2026-general.3.zip \
             | grep -Fx 'seattle-election-guide/validation/rendering/rendering_validation_report.json'
-          unzip -Z1 dist/reproducibility-a/seattle-election-guide-2026-primary.2.zip \
+          unzip -Z1 dist/reproducibility-a/seattle-election-guide-2026-general.3.zip \
             | grep -Fx 'seattle-election-guide/validation/rendering/screenshots/desktop.png'
           test "$(stat -c '%a' dist/reproducibility-a)" = 755
       # Only the current election is built from source above. Any other declared
@@ -166,13 +171,16 @@ jobs:
       - name: Stage verified Cloudflare Pages site
         run: |
           uv run election-guide hosting stage config/hosting/site.yaml \
-            --bundle wa-2026-primary-2026-primary.2=dist/reproducibility-a/bundle \
+            --bundle "$CANDIDATE_BUNDLE_ID=dist/reproducibility-a/bundle" \
             --released-bundle-dir dist/released-bundles \
             --expected-git-commit "$GITHUB_SHA" \
             --output-dir dist/cloudflare-site
           test -f dist/cloudflare-site/e/index.html
+          test -f dist/cloudflare-site/e/wa-2026-general/index.html
           test -f dist/cloudflare-site/e/wa-2026-primary/index.html
-          test -f dist/cloudflare-site/e/wa-2026-primary/comparisons/index.html
+          test -f dist/cloudflare-site/e/wa-2026-general/comparisons/index.html
+          test -f dist/cloudflare-site/e/wa-2026-general/races/us-house-7/index.html
+          test -f dist/cloudflare-site/deployment-manifest.json
           test -z "$(find dist/cloudflare-site -name '*.pdf' -print -quit)"
           uv run election-guide hosting verify \
             config/hosting/site.yaml \
@@ -258,6 +266,10 @@ jobs:
           config/hosting/site.yaml
           dist/cloudflare-site
           --expected-git-commit="$GITHUB_SHA"
+      - name: Require every declared release to be published
+        run: uv run election-guide hosting verify-releases config/hosting/site.yaml
+        env:
+          GH_TOKEN: ${{ github.token }}
       - name: Deploy production site
         run: >-
           npm run pages:deploy --

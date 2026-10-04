@@ -32,6 +32,11 @@ it should stay human-launched at least through the first full cycle.
 
 - The certification milestone has passed and King County has published certified results —
   confirm the results page states certified/final status, not an interim count.
+- Before capturing, read the counting authority's stated certification date and compare it
+  with this election's `certification` milestone in `config/calendar/elections.yaml`.
+  If they differ, correct the calendar first through a reviewed change, then capture and
+  pass that matching date as `--certified-on`. `results ingest` refuses a disagreement;
+  there is no override.
 - The election-night capture runbook ran and its manifests exist, **if** it ran for this
   election. For `wa-2026-primary` it did not: the 2026-08-04 capture's bytes are not present in
   this checkout (established investigating #281 — never re-fetched to avoid asserting a stale

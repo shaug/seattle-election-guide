@@ -577,7 +577,7 @@ class PublicationMetadata(PublicationModel):
 
 
 class PublicationViewModel(PublicationModel):
-    schema_version: Literal["1.13", "1.14"] = "1.14"
+    schema_version: Literal["1.9", "1.13", "1.14"] = "1.14"
     metadata: PublicationMetadata
     sources: list[PublicationSource]
     sections: list[PublicationSection]
@@ -604,10 +604,10 @@ class PublicationViewModel(PublicationModel):
         if self.schema_version == "1.14" and registry_hash is None:
             raise ValueError("schema 1.14 requires source_registry_hash")
         if (
-            self.schema_version == "1.13"
+            self.schema_version != "1.14"
             and "source_registry_hash" in self.metadata.model_fields_set
         ):
-            raise ValueError("schema 1.13 cannot declare source_registry_hash")
+            raise ValueError(f"schema {self.schema_version} cannot declare source_registry_hash")
         return self
 
     @model_validator(mode="after")

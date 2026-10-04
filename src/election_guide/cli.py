@@ -341,6 +341,16 @@ def hosting_check_production(
         str, typer.Option(help="GitHub repository as OWNER/NAME, for the alert issue.")
     ] = "shaug/seattle-election-guide",
     timeout: Annotated[float, typer.Option(help="Per-request timeout, in seconds.")] = 15.0,
+    site_manifest_path: Annotated[
+        Path,
+        typer.Option(
+            "--site-manifest",
+            exists=True,
+            dir_okay=False,
+            readable=True,
+            help="Trusted site declaration for production route and release expectations.",
+        ),
+    ] = Path("config/hosting/site.yaml"),
     calendar_path: Annotated[
         Path,
         typer.Option(
@@ -351,6 +361,14 @@ def hosting_check_production(
             help="Election calendar that defines the active stale-data window.",
         ),
     ] = Path("config/calendar/elections.yaml"),
+    output_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--output",
+            dir_okay=False,
+            help="Write deterministic JSON evidence suitable for the release issue.",
+        ),
+    ] = None,
     dry_run: Annotated[
         bool,
         typer.Option(
@@ -361,9 +379,17 @@ def hosting_check_production(
     """Verify production routes, commit, and in-window data freshness (O14/O16)."""
     checked_at = datetime.now(UTC)
     try:
+        site_manifest = read_site_manifest(site_manifest_path)
+        if base_url.rstrip("/") != site_manifest.canonical_origin:
+            raise ValueError(
+                "base URL must equal site manifest canonical origin: "
+                f"expected {site_manifest.canonical_origin}, found {base_url}"
+            )
+        if re.fullmatch(r"[0-9a-f]{40}", expected_git_commit) is None:
+            raise ValueError("expected Git commit must be a full 40-character lowercase SHA")
         calendar = read_election_calendar(calendar_path)
         due = due_milestones(calendar, as_of=checked_at.date(), lead_days=7)
-    except ValueError as error:
+    except (OSError, UnicodeError, ValidationError, ValueError) as error:
         typer.echo(f"hosting check-production failed: {error}", err=True)
         raise typer.Exit(code=1) from error
     active_window = any(milestone.kind == "election_day" for milestone, _ in due)
@@ -373,7 +399,14 @@ def hosting_check_production(
         timeout=timeout,
         active_window=active_window,
         checked_at=checked_at,
+        site_manifest=site_manifest,
     )
+    if output_path is not None:
+        try:
+            _write_generated_json(output_path, report.model_dump(mode="json"))
+        except OSError as error:
+            typer.echo(f"hosting check-production failed: {error}", err=True)
+            raise typer.Exit(code=1) from error
     for line in render_summary_lines(report):
         typer.echo(line)
     if dry_run:
@@ -1766,6 +1799,15 @@ def results_ingest(
     authority_registry_path: Annotated[
         Path, typer.Option(exists=True, dir_okay=False, readable=True)
     ] = Path("config/authorities/default.yaml"),
+    calendar_path: Annotated[
+        Path,
+        typer.Option(
+            exists=True,
+            dir_okay=False,
+            readable=True,
+            help="Election calendar whose certification date must match --certified-on.",
+        ),
+    ] = Path("config/calendar/elections.yaml"),
     storage_root: Annotated[Path, typer.Option(file_okay=False)] = Path("data/snapshots"),
     output_dir: Annotated[Path, typer.Option(file_okay=False)] = Path("data/results"),
 ) -> None:
@@ -1782,6 +1824,18 @@ def results_ingest(
         inventory = read_inventory(inventory_path)
         if inventory.election.id != election_id:
             raise ValueError(f"inventory belongs to {inventory.election.id!r}, not {election_id!r}")
+        certification_date = date.fromisoformat(certified_on)
+        calendar_certification_date = read_election_calendar(calendar_path).certification_date(
+            election_id
+        )
+        if (
+            calendar_certification_date is not None
+            and certification_date != calendar_certification_date
+        ):
+            raise ValueError(
+                f"election {election_id!r}: --certified-on gives {certification_date}, "
+                f"but calendar {calendar_path} gives certification {calendar_certification_date}"
+            )
         authority_registry = read_authority_registry(authority_registry_path)
         authority = next(
             (item for item in authority_registry.authorities if item.id == authority_id), None
@@ -1816,7 +1870,7 @@ def results_ingest(
             csv_content,
             inventory,
             authority=authority.name,
-            certified_on=date.fromisoformat(certified_on),
+            certified_on=certification_date,
             captures=captures,
             expected_race_ids=frozenset(race_id),
         )

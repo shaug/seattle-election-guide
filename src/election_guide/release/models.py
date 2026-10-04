@@ -160,15 +160,19 @@ class ReleaseSourceExtract(ReleaseModel):
     source_id: str = Field(pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
     captured_at: AwareDatetime
     reviewed_at: AwareDatetime
+    reviewer: str | None = Field(default=None, min_length=1, max_length=200)
+    review_note: str | None = Field(default=None, min_length=1, max_length=4_000)
     evidence_locator: str = Field(min_length=1, max_length=1_000)
     decisions: list[ReleaseDecision] = Field(min_length=1)
 
-    @field_validator("evidence_locator")
+    @field_validator("reviewer", "review_note", "evidence_locator")
     @classmethod
-    def strip_evidence_locator(cls, value: str) -> str:
+    def strip_source_text(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
         stripped = value.strip()
         if not stripped:
-            raise ValueError("source evidence locator cannot be blank")
+            raise ValueError("source review or evidence text cannot be blank")
         return stripped
 
     @model_validator(mode="after")

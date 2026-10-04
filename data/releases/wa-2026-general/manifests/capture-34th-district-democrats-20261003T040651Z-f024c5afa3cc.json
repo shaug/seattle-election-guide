@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 5903,
+  "canonical_url": "https://34dems.org/2026-endorsements/",
+  "capture_method": "manual_upload",
+  "content_sha256": "2d2ef7c1d9e5910f3956dbb6f92fec78c56102a6ac3f70fd08dc04a01c1b46ca",
+  "http_status": null,
+  "id": "capture-34th-district-democrats-20261003T040651Z-f024c5afa3cc",
+  "media_type": "application/json",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "permitted",
+  "redistribution_note": "Structured factual decisions and short verification excerpts may be redistributed; full third-party page content is excluded.",
+  "requested_url": "https://34dems.org/2026-endorsements/",
+  "retrieved_at": "2026-10-03T04:06:51Z",
+  "schema_version": "1.0",
+  "source_id": "34th-district-democrats",
+  "storage_reference": "sha256/2d/2d2ef7c1d9e5910f3956dbb6f92fec78c56102a6ac3f70fd08dc04a01c1b46ca",
+  "storage_scope": "local_only",
+  "title": "Permitted 2026 endorsement decision extract: 34th Legislative District Democrats",
+  "updated_at": null
+}

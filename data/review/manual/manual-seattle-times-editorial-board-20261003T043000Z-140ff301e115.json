@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-seattle-times-editorial-board-20261003T040651Z-7adbf9fe3951",
+  "entered_at": "2026-10-03T04:30:00Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official editorial index listing the 2026 general-election recommendation series.",
+  "evidence_type": "web_page",
+  "id": "manual-seattle-times-editorial-board-20261003T043000Z-140ff301e115",
+  "review_note": "Human reviewer verified every listed new or changed transcription against the official evidence for issue",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-03T04:52:29Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "seattle-times-editorial-board",
+  "transcription": "ld-43-state-representative-1: Nicole Macri\nld-34-state-representative-2: Mary Anito\nsupreme-court-justice-3: Jaime Michelle Hawk\nus-house-9: Adam Smith\nsupreme-court-justice-5: Theo Angelis\nSupreme Court Position 4 critique omitted because it is not a clear recommendation"
+}

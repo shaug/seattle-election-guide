@@ -75,6 +75,14 @@ milestones:
 
   # 2026 November general. The field is settled by the August primary, so the
   # front half anchors to that certification rather than to filing week.
+  # A qualifying voter can obtain a special absentee ballot up to 90 days
+  # before the general election. The general-election field was not yet settled
+  # on this date, so a complete guide could not truthfully publish here; this
+  # milestone records absolute legal availability rather than a release target.
+  - election_id: wa-2026-general
+    id: special-absentee-ballots-available
+    kind: special_absentee_ballots_available
+    offset_days: -90
   - election_id: wa-2026-general
     id: initialize-election
     kind: initialize_election
@@ -100,16 +108,33 @@ milestones:
     workflow: collect refresh
     reference: docs/runbooks/endorsement-discovery-sweep.md
   - election_id: wa-2026-general
+    id: overseas-service-ballots-mail
+    kind: overseas_service_ballots_mail
+    offset_days: -46
+  - election_id: wa-2026-general
+    id: guide-publication-deadline
+    kind: guide_publishes
+    offset_days: -46
+    workflow: release build
+    reference: docs/RELEASE.md
+  - election_id: wa-2026-general
+    id: guide-publishes
+    kind: guide_published
+    offset_days: -31
+    date_status: actual
+    revision: 3
+    public: true
+  - election_id: wa-2026-general
+    id: refresh-pre-domestic
+    kind: refresh
+    offset_days: -19
+    workflow: collect refresh
+    reference: docs/runbooks/endorsement-discovery-sweep.md
+  - election_id: wa-2026-general
     id: ballots-mail
     kind: ballots_mail
     offset_days: -18
-    public: true
-  - election_id: wa-2026-general
-    id: guide-publishes
-    kind: guide_publishes
-    offset_days: -18
-    workflow: release build
-    reference: docs/RELEASE.md
+    revision: 2
     public: true
   - election_id: wa-2026-general
     id: refresh-mid-ballot
@@ -167,26 +192,32 @@ milestones:
   - election_id: wa-2027-february-special
     id: source-panel-freeze
     kind: source_panel_freeze
-    offset_days: -30
+    offset_days: -42
     workflow: sources snapshot
     reference: SOURCE_POLICY.md
   - election_id: wa-2027-february-special
     id: collection-opens
     kind: collection_opens
-    offset_days: -28
+    offset_days: -40
     workflow: collect refresh
     reference: docs/COLLECTION.md
+  - election_id: wa-2027-february-special
+    id: overseas-service-ballots-mail
+    kind: overseas_service_ballots_mail
+    offset_days: -30
+  - election_id: wa-2027-february-special
+    id: guide-publishes
+    kind: guide_publishes
+    offset_days: -30
+    revision: 2
+    workflow: release build
+    reference: docs/RELEASE.md
+    public: true
   - election_id: wa-2027-february-special
     id: ballots-mail
     kind: ballots_mail
     offset_days: -18
-    public: true
-  - election_id: wa-2027-february-special
-    id: guide-publishes
-    kind: guide_publishes
-    offset_days: -18
-    workflow: release build
-    reference: docs/RELEASE.md
+    revision: 2
     public: true
   - election_id: wa-2027-february-special
     id: refresh-final
@@ -232,26 +263,32 @@ milestones:
   - election_id: wa-2027-april-special
     id: source-panel-freeze
     kind: source_panel_freeze
-    offset_days: -30
+    offset_days: -42
     workflow: sources snapshot
     reference: SOURCE_POLICY.md
   - election_id: wa-2027-april-special
     id: collection-opens
     kind: collection_opens
-    offset_days: -28
+    offset_days: -40
     workflow: collect refresh
     reference: docs/COLLECTION.md
+  - election_id: wa-2027-april-special
+    id: overseas-service-ballots-mail
+    kind: overseas_service_ballots_mail
+    offset_days: -30
+  - election_id: wa-2027-april-special
+    id: guide-publishes
+    kind: guide_publishes
+    offset_days: -30
+    revision: 2
+    workflow: release build
+    reference: docs/RELEASE.md
+    public: true
   - election_id: wa-2027-april-special
     id: ballots-mail
     kind: ballots_mail
     offset_days: -18
-    public: true
-  - election_id: wa-2027-april-special
-    id: guide-publishes
-    kind: guide_publishes
-    offset_days: -18
-    workflow: release build
-    reference: docs/RELEASE.md
+    revision: 2
     public: true
   - election_id: wa-2027-april-special
     id: refresh-final
@@ -290,6 +327,10 @@ milestones:
     workflow: election init
     reference: docs/ELECTION_INITIALIZATION.md
   - election_id: wa-2027-primary
+    id: special-absentee-ballots-available
+    kind: special_absentee_ballots_available
+    offset_days: -90
+  - election_id: wa-2027-primary
     id: filing-closes
     kind: filing_closes
     offset_days: -74
@@ -302,26 +343,38 @@ milestones:
   - election_id: wa-2027-primary
     id: source-panel-freeze
     kind: source_panel_freeze
-    offset_days: -45
+    offset_days: -60
     workflow: sources snapshot
     reference: SOURCE_POLICY.md
   - election_id: wa-2027-primary
     id: collection-opens
     kind: collection_opens
-    offset_days: -42
+    offset_days: -56
+    workflow: collect refresh
+    reference: docs/COLLECTION.md
+  - election_id: wa-2027-primary
+    id: overseas-service-ballots-mail
+    kind: overseas_service_ballots_mail
+    offset_days: -46
+  - election_id: wa-2027-primary
+    id: guide-publishes
+    kind: guide_publishes
+    offset_days: -46
+    revision: 2
+    workflow: release build
+    reference: docs/RELEASE.md
+    public: true
+  - election_id: wa-2027-primary
+    id: refresh-pre-domestic
+    kind: refresh
+    offset_days: -19
     workflow: collect refresh
     reference: docs/COLLECTION.md
   - election_id: wa-2027-primary
     id: ballots-mail
     kind: ballots_mail
     offset_days: -18
-    public: true
-  - election_id: wa-2027-primary
-    id: guide-publishes
-    kind: guide_publishes
-    offset_days: -18
-    workflow: release build
-    reference: docs/RELEASE.md
+    revision: 2
     public: true
   - election_id: wa-2027-primary
     id: refresh-mid-ballot
@@ -358,6 +411,12 @@ milestones:
     reference: docs/runbooks/results-certified-ingest.md
 
   # 2027 November general, anchored to the August primary's certification.
+  # The 90-day special-absentee edge precedes that settled field, so it is an
+  # informational availability fact rather than the publication target.
+  - election_id: wa-2027-general
+    id: special-absentee-ballots-available
+    kind: special_absentee_ballots_available
+    offset_days: -90
   - election_id: wa-2027-general
     id: initialize-election
     kind: initialize_election
@@ -383,17 +442,28 @@ milestones:
     workflow: collect refresh
     reference: docs/COLLECTION.md
   - election_id: wa-2027-general
-    id: ballots-mail
-    kind: ballots_mail
-    offset_days: -18
-    public: true
+    id: overseas-service-ballots-mail
+    kind: overseas_service_ballots_mail
+    offset_days: -46
   - election_id: wa-2027-general
     id: guide-publishes
     kind: guide_publishes
-    offset_days: -18
-    revision: 3
+    offset_days: -46
+    revision: 4
     workflow: release build
     reference: docs/RELEASE.md
+    public: true
+  - election_id: wa-2027-general
+    id: refresh-pre-domestic
+    kind: refresh
+    offset_days: -19
+    workflow: collect refresh
+    reference: docs/COLLECTION.md
+  - election_id: wa-2027-general
+    id: ballots-mail
+    kind: ballots_mail
+    offset_days: -18
+    revision: 2
     public: true
   - election_id: wa-2027-general
     id: refresh-mid-ballot

@@ -86,7 +86,7 @@ test('a leading choice carries its kicker and its own section meter', () => {
   const host = draw([candidate()]);
 
   assert.equal(host.querySelector('.race-detail-candidate-title p').textContent, 'Leading choice');
-  // v1's per-candidate mini-meter never comes back — meter v2's own section
+  // The retired per-candidate mini-meter never comes back — the meter's own section
   // meter (below) replaced its job (docs/METER_V2.md, Chrome geometry; #325).
   assert.equal(host.querySelector('.race-detail-meter'), null);
   assert.equal(host.querySelector('.race-detail-candidate-metrics'), null);

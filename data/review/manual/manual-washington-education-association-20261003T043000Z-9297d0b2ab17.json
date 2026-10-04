@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-washington-education-association-20261003T040651Z-ba15e9f9c8b3",
+  "entered_at": "2026-10-03T04:30:00Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official current 2026 endorsements; additions to prior reviewed block.",
+  "evidence_type": "web_page",
+  "id": "manual-washington-education-association-20261003T043000Z-9297d0b2ab17",
+  "review_note": "Human reviewer verified every listed new or changed transcription against the official evidence for issue",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-03T04:52:29Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "washington-education-association",
+  "transcription": "ld-32-state-representative-1: Danica Noble, Keith Scully\nld-37-state-senator: Chipalo Street\nld-37-state-representative-1: Kelabe Tewolde\nld-37-state-representative-2: Jaelynn Scott"
+}

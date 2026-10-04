@@ -30,7 +30,7 @@ LINE_OCTET_LIMIT = 75
 FEED_PRODUCT_ID = "-//Seattle Election Guide//Election Calendar//EN"
 FEED_NAME = "Seattle election dates"
 FEED_DESCRIPTION = (
-    "Ballot mailing, publication, and election day for elections covered by the "
+    "Domestic ballot mailing, publication, and election day for elections covered by the "
     "Seattle Election Guide."
 )
 
@@ -58,13 +58,20 @@ class MilestoneCopy:
 # subscriber's event text and an unmarked kind cannot leak untitled.
 MILESTONE_COPY: dict[MilestoneKind, MilestoneCopy] = {
     "ballots_mail": MilestoneCopy(
-        summary="Ballots are mailed",
+        summary="Domestic ballots are mailed",
         description=(
-            "King County Elections mails ballots today. Watch for yours, and "
-            "check your registration if it does not arrive within a few days."
+            "King County Elections mails domestic ballots today. This domestic mass-mail "
+            "checkpoint is not the first date a voter may possess a ballot. Watch for yours, "
+            "and check your registration if it does not arrive within a few days."
         ),
     ),
     "guide_publishes": MilestoneCopy(
+        summary="Voter guide is published",
+        description=(
+            "The Seattle Election Guide's endorsement consensus for this election is available."
+        ),
+    ),
+    "guide_published": MilestoneCopy(
         summary="Voter guide is published",
         description=(
             "The Seattle Election Guide's endorsement consensus for this election is available."

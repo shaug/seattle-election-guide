@@ -39,17 +39,23 @@ A recurring `workflow: collect refresh` trigger, `reference:
 docs/runbooks/endorsement-source-daily-verification.md`, at two cadences
 (exact schema TBD — see Preconditions):
 
-- Weekly, from `collection_opens` (`offset_days: -56`) through `ballots_mail`
-  (`offset_days: -18`, both already declared for `wa-2026-general`).
-- Daily, from `ballots_mail` (`-18`) through `election_day` (`0`).
+- Weekly, from `collection_opens` (`offset_days: -56`) through the earliest
+  practical complete-guide deadline.
+- Daily, from the first scheduled regular ballot issuance through
+  `election_day` (`0`). For the 2026 general, that responsibility began with
+  regular overseas/service issuance on 2026-09-18. The missed target is
+  preserved separately from the actual `guide_published` date, 2026-10-03; the
+  cadence is active now rather than waiting for the 2026-10-16 domestic mailing.
 
 The accelerating cadence matches the logic the calendar already uses
 elsewhere (`collection_opens` → `refresh-mid-ballot` → `refresh-final` get
 denser as the election nears) rather than asserting uniform daily coverage
-for the full 56-day window. Endorsers are most active, and a miss is most
-costly, in the eighteen days once ballots are actually in voters' hands —
-that stretch gets genuinely daily coverage; the quieter weeks before it get
-weekly, at a fraction of the fetch and review cost. If a source is known to
+for the full 56-day window. A qualifying special-absentee voter may possess a
+ballot up to 90 days before a primary or general, and regular overseas/service
+electronic delivery can make its issuance date a ballot-in-hand day. The daily
+cadence therefore follows the earliest practical complete-guide deadline, not
+domestic mass mailing. The earlier collection period gets weekly coverage at a
+fraction of the fetch and review cost. If a source is known to
 publish and revise on a tighter cycle, it can opt into the daily cadence from
 `collection_opens` instead — a per-source override, not a reason to make the
 default window daily throughout. Seattle Gay News is a concrete first

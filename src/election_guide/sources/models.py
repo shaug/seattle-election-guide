@@ -450,7 +450,7 @@ class SourceRegistry(SourceModel):
             raise ValueError("registry must contain exactly one comparison source")
 
         for source in self.sources:
-            if source.discovery.checked_at > self.research_cutoff:
+            if self.schema_version == "1.1" and source.discovery.checked_at > self.research_cutoff:
                 raise ValueError(f"source {source.id!r} was checked after the research cutoff")
             if source.publisher_id is not None:
                 if source.publisher_id not in known_sources:

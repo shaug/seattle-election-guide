@@ -11,10 +11,11 @@ from __future__ import annotations
 
 import json
 from datetime import timedelta
+from html.parser import HTMLParser
 
 from pydantic import AwareDatetime, BaseModel, ConfigDict, Field
 
-from election_guide.hosting.models import DeploymentManifest
+from election_guide.hosting.models import DeploymentManifest, SiteManifest
 from election_guide.release.models import ReleaseManifest
 
 MANIFEST_PATH = "/deployment-manifest.json"
@@ -30,6 +31,7 @@ class RouteCheck(BaseModel):
     path: str = Field(min_length=1)
     expected_status: int
     expected_location: str | None = None
+    expected_location_origin: str | None = None
 
 
 MANIFEST_CHECK = RouteCheck(name="deployment manifest", path=MANIFEST_PATH, expected_status=200)
@@ -50,6 +52,7 @@ class Observation(BaseModel):
 
     status: int | None = None
     location: str | None = None
+    raw_location: str | None = None
     error: str | None = None
 
 
@@ -63,9 +66,14 @@ class RouteCheckResult(BaseModel):
     def ok(self) -> bool:
         if self.observed.status != self.check.expected_status:
             return False
-        return (
-            self.check.expected_location is None
-            or self.observed.location == self.check.expected_location
+        if self.check.expected_location is None:
+            return True
+        if self.observed.location != self.check.expected_location:
+            return False
+        if self.check.expected_location_origin is None:
+            return True
+        return self.observed.raw_location == (
+            f"{self.check.expected_location_origin}{self.check.expected_location}"
         )
 
 
@@ -80,6 +88,45 @@ class CommitCheck(BaseModel):
     @property
     def ok(self) -> bool:
         return self.observed == self.expected
+
+
+class DeploymentContractCheck(BaseModel):
+    """Public deployment identity compared with repository-owned expectations."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    expected_site: SiteManifest
+    observed: DeploymentManifest
+    expected_git_commit: str
+    representative_race_path: str | None = None
+    errors: tuple[str, ...] = ()
+
+    @property
+    def ok(self) -> bool:
+        return not self.errors
+
+
+class ArchiveIndexCheck(BaseModel):
+    """Election links and the current marker rendered by the public archive."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    route: RouteCheckResult
+    expected_election_ids: tuple[str, ...]
+    observed_election_ids: tuple[str, ...] = ()
+    expected_current_election_id: str
+    observed_current_election_ids: tuple[str, ...] = ()
+    errors: tuple[str, ...] = ()
+
+    @property
+    def observed_current_election_id(self) -> str | None:
+        if len(self.observed_current_election_ids) == 1:
+            return self.observed_current_election_ids[0]
+        return None
+
+    @property
+    def ok(self) -> bool:
+        return self.route.ok and not self.errors
 
 
 class DataFreshnessCheck(BaseModel):
@@ -103,8 +150,12 @@ class DataFreshnessCheck(BaseModel):
 class ProductionCheckReport(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
+    base_url: str | None = None
+    checked_at: AwareDatetime | None = None
     manifest: RouteCheckResult
     manifest_parse_error: str | None = None
+    deployment_contract: DeploymentContractCheck | None = None
+    archive_index: ArchiveIndexCheck | None = None
     current_election_id: str | None = None
     release_manifest: RouteCheckResult | None = None
     release_manifest_parse_error: str | None = None
@@ -115,6 +166,10 @@ class ProductionCheckReport(BaseModel):
     @property
     def ok(self) -> bool:
         if not self.manifest.ok or self.manifest_parse_error is not None:
+            return False
+        if self.deployment_contract is not None and not self.deployment_contract.ok:
+            return False
+        if self.archive_index is not None and not self.archive_index.ok:
             return False
         if self.release_manifest is not None and not self.release_manifest.ok:
             return False
@@ -154,6 +209,61 @@ def plan_route_checks(current_election_id: str) -> list[RouteCheck]:
             expected_location=election_path,
         ),
     ]
+
+
+def plan_publication_route_checks(
+    site_manifest: SiteManifest, *, representative_race_path: str
+) -> list[RouteCheck]:
+    """Complete publication-day route contract derived from trusted expectations."""
+    current = site_manifest.current_election_id
+    current_path = f"/e/{current}/"
+    checks = [
+        RouteCheck(
+            name="home redirect",
+            path="/",
+            expected_status=307,
+            expected_location=current_path,
+            expected_location_origin=site_manifest.canonical_origin,
+        ),
+        RouteCheck(name="election archive", path="/e/", expected_status=200),
+        RouteCheck(name="current election guide", path=current_path, expected_status=200),
+    ]
+    checks.extend(
+        RouteCheck(
+            name=f"historical election guide: {election.election_id}",
+            path=f"/e/{election.election_id}/",
+            expected_status=200,
+        )
+        for election in site_manifest.elections
+        if election.election_id != current
+    )
+    checks.extend(
+        [
+            RouteCheck(
+                name="representative current-election race",
+                path=representative_race_path,
+                expected_status=200,
+            ),
+            RouteCheck(
+                name="current election comparisons",
+                path=f"{current_path}comparisons/",
+                expected_status=200,
+            ),
+            RouteCheck(
+                name="unknown election",
+                path="/e/production-check-unknown-election/",
+                expected_status=404,
+            ),
+            RouteCheck(
+                name="legacy PDF redirect",
+                path=f"{current_path}voter-guide.pdf",
+                expected_status=301,
+                expected_location=current_path,
+                expected_location_origin=site_manifest.canonical_origin,
+            ),
+        ]
+    )
+    return checks
 
 
 def evaluate_manifest(
@@ -196,6 +306,185 @@ def evaluate_release_manifest(
     return result, manifest, None
 
 
+def evaluate_deployment_contract(
+    expected: SiteManifest,
+    observed: DeploymentManifest,
+    *,
+    expected_git_commit: str,
+) -> DeploymentContractCheck:
+    """Compare production with the checked-in site declaration and selected commit."""
+    errors: list[str] = []
+    if observed.canonical_origin != expected.canonical_origin:
+        errors.append(
+            "deployment manifest canonical origin differs from site manifest: "
+            f"expected {expected.canonical_origin}, found {observed.canonical_origin}"
+        )
+    if observed.current_election_id != expected.current_election_id:
+        errors.append(
+            "deployment manifest current election differs from site manifest: "
+            f"expected {expected.current_election_id}, found {observed.current_election_id}"
+        )
+
+    expected_ids = [election.election_id for election in expected.elections]
+    observed_ids = [election.election_id for election in observed.elections]
+    if observed_ids != expected_ids:
+        errors.append(
+            "deployment manifest election set/order differs from site manifest: "
+            f"expected {expected_ids}, found {observed_ids}"
+        )
+
+    observed_by_id = {election.election_id: election for election in observed.elections}
+    for declared in expected.elections:
+        deployed = observed_by_id.get(declared.election_id)
+        if deployed is None:
+            continue
+        values = (
+            ("bundle ID", declared.bundle_id, deployed.bundle_id),
+            ("release version", declared.release_version, deployed.release_version),
+            ("source panel ID", declared.source_panel_id, deployed.source_panel_id),
+            ("source panel hash", declared.source_panel_hash, deployed.source_panel_hash),
+            (
+                "source registry hash",
+                declared.source_registry_hash,
+                deployed.source_registry_hash,
+            ),
+        )
+        for label, declared_value, deployed_value in values:
+            if deployed_value != declared_value:
+                errors.append(
+                    f"deployment manifest {label} differs for {declared.election_id}: "
+                    f"expected {declared_value}, found {deployed_value}"
+                )
+
+        is_current = declared.election_id == expected.current_election_id
+        if is_current:
+            if deployed.git_commit != expected_git_commit:
+                errors.append(
+                    "deployment manifest production candidate commit differs: "
+                    f"expected {expected_git_commit}, found {deployed.git_commit}"
+                )
+        else:
+            required_pins = (
+                ("Git commit", declared.git_commit, deployed.git_commit),
+                (
+                    "release-manifest hash",
+                    declared.release_manifest_sha256,
+                    deployed.release_manifest_sha256,
+                ),
+            )
+            for label, declared_value, deployed_value in required_pins:
+                if declared_value is None:
+                    errors.append(
+                        f"historical site declaration lacks {label} for {declared.election_id}"
+                    )
+                elif deployed_value != declared_value:
+                    errors.append(
+                        f"deployment manifest {label} differs for {declared.election_id}: "
+                        f"expected {declared_value}, found {deployed_value}"
+                    )
+            if declared.bundle_sha256 is None:
+                errors.append(
+                    f"historical site declaration lacks bundle hash for {declared.election_id}"
+                )
+
+    prefix = f"e/{expected.current_election_id}/races/"
+    race_paths = sorted(
+        f"/{path.removesuffix('index.html')}"
+        for path in observed.assets
+        if path.startswith(prefix) and path.endswith("/index.html")
+    )
+    representative_race_path = race_paths[0] if race_paths else None
+    if representative_race_path is None:
+        errors.append(
+            "deployment manifest has no current-election race route for deterministic probing"
+        )
+
+    return DeploymentContractCheck(
+        expected_site=expected,
+        observed=observed,
+        expected_git_commit=expected_git_commit,
+        representative_race_path=representative_race_path,
+        errors=tuple(errors),
+    )
+
+
+class _ArchiveIndexParser(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__()
+        self.entries: list[tuple[str, bool]] = []
+        self._entry_id: str | None = None
+        self._inside_strong = False
+        self._strong_text: list[str] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        attributes = dict(attrs)
+        if tag == "li":
+            self._entry_id = None
+            self._strong_text = []
+        elif tag == "a" and self._entry_id is None:
+            href = attributes.get("href")
+            if href is not None and href.startswith("/e/") and href.endswith("/"):
+                self._entry_id = href.removeprefix("/e/").removesuffix("/")
+        elif tag == "strong":
+            self._inside_strong = True
+
+    def handle_data(self, data: str) -> None:
+        if self._inside_strong:
+            self._strong_text.append(data)
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag == "strong":
+            self._inside_strong = False
+        elif tag == "li" and self._entry_id is not None:
+            marker = "".join(self._strong_text).strip() == "(current)"
+            self.entries.append((self._entry_id, marker))
+            self._entry_id = None
+            self._strong_text = []
+
+
+def evaluate_archive_index(
+    site_manifest: SiteManifest, observation: Observation, body: bytes | None
+) -> ArchiveIndexCheck:
+    """Verify `/e/` lists the complete archive and marks only the current guide."""
+    route = RouteCheckResult(
+        check=RouteCheck(name="election archive", path="/e/", expected_status=200),
+        observed=observation,
+    )
+    expected_ids = tuple(election.election_id for election in site_manifest.elections)
+    errors: list[str] = []
+    entries: list[tuple[str, bool]] = []
+    if route.ok and body is not None:
+        try:
+            parser = _ArchiveIndexParser()
+            parser.feed(body.decode("utf-8"))
+            entries = parser.entries
+        except (UnicodeError, ValueError) as error:
+            errors.append(f"archive index could not be parsed: {error}")
+    elif route.ok:
+        errors.append("archive index returned no body")
+
+    observed_ids = tuple(election_id for election_id, _ in entries)
+    observed_current = tuple(election_id for election_id, current in entries if current)
+    if route.ok and observed_ids != expected_ids:
+        errors.append(
+            "archive index election set/order differs from site manifest: "
+            f"expected {list(expected_ids)}, found {list(observed_ids)}"
+        )
+    if route.ok and observed_current != (site_manifest.current_election_id,):
+        errors.append(
+            "archive index current marker differs from site manifest: "
+            f"expected {site_manifest.current_election_id}, found {list(observed_current)}"
+        )
+    return ArchiveIndexCheck(
+        route=route,
+        expected_election_ids=expected_ids,
+        observed_election_ids=observed_ids,
+        expected_current_election_id=site_manifest.current_election_id,
+        observed_current_election_ids=observed_current,
+        errors=tuple(errors),
+    )
+
+
 def _check_line(result: RouteCheckResult) -> str:
     status = "PASS" if result.ok else "FAIL"
     check = result.check
@@ -203,9 +492,17 @@ def _check_line(result: RouteCheckResult) -> str:
     if observed.error is not None:
         detail = f"request failed: {observed.error}"
     elif check.expected_location is not None:
+        expected_location = (
+            f"{check.expected_location_origin}{check.expected_location}"
+            if check.expected_location_origin is not None
+            else check.expected_location
+        )
+        raw_location = (
+            f" (raw Location: {observed.raw_location})" if observed.raw_location is not None else ""
+        )
         detail = (
-            f"expected {check.expected_status} -> {check.expected_location}, "
-            f"got {observed.status} -> {observed.location}"
+            f"expected {check.expected_status} -> {expected_location}, "
+            f"got {observed.status} -> {observed.location}{raw_location}"
         )
     else:
         detail = f"expected {check.expected_status}, got {observed.status}"
@@ -217,6 +514,18 @@ def render_summary_lines(report: ProductionCheckReport) -> list[str]:
     lines = [_check_line(report.manifest)]
     if report.manifest_parse_error is not None:
         lines.append(f"FAIL deployment manifest ({MANIFEST_PATH}): {report.manifest_parse_error}")
+    if report.deployment_contract is not None:
+        contract = report.deployment_contract
+        status = "PASS" if contract.ok else "FAIL"
+        lines.append(
+            f"{status} deployment manifest contract: expected current "
+            f"{contract.expected_site.current_election_id} at {contract.expected_git_commit}"
+        )
+        lines.extend(f"FAIL deployment manifest contract: {error}" for error in contract.errors)
+        if contract.representative_race_path is not None:
+            lines.append(f"PASS representative race selection: {contract.representative_race_path}")
+    if report.archive_index is not None:
+        lines.extend(f"FAIL archive index {error}" for error in report.archive_index.errors)
     if report.release_manifest is not None:
         lines.append(_check_line(report.release_manifest))
     if report.release_manifest_parse_error is not None:

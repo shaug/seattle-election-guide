@@ -484,6 +484,63 @@ def test_publication_schema_requires_registry_hash_only_for_1_14(tmp_path: Path)
         PublicationViewModel.model_validate(legacy_with_new_field)
 
 
+def test_publication_schema_accepts_the_published_1_9_archive(tmp_path: Path) -> None:
+    """The primary archive must remain renderable after later optional schemas ship."""
+    dataset = _publication_dataset(tmp_path)
+    snapshot_root = _snapshot_store(tmp_path, dataset)
+    report = score_dataset(
+        dataset,
+        _configuration(),
+        computed_at=NOW,
+        allow_unresolved=True,
+    )
+    bundle = build_publication_bundle(
+        dataset,
+        report,
+        git_commit="abc123",
+        snapshot_root=snapshot_root,
+    )
+    archived = bundle.view_model.model_dump(mode="json")
+    archived["schema_version"] = "1.9"
+    archived["metadata"].pop("source_registry_hash")
+    archived.pop("results")
+    archived.pop("corrections")
+
+    validated = PublicationViewModel.model_validate(archived)
+
+    assert validated.schema_version == "1.9"
+    assert validated.results is None
+    assert validated.corrections is None
+
+
+def test_publication_schema_1_9_rejects_the_later_registry_hash(tmp_path: Path) -> None:
+    """Admitting the archive must not blur its schema boundary."""
+    dataset = _publication_dataset(tmp_path)
+    snapshot_root = _snapshot_store(tmp_path, dataset)
+    report = score_dataset(
+        dataset,
+        _configuration(),
+        computed_at=NOW,
+        allow_unresolved=True,
+    )
+    bundle = build_publication_bundle(
+        dataset,
+        report,
+        git_commit="abc123",
+        snapshot_root=snapshot_root,
+    )
+    archived = bundle.view_model.model_dump(mode="json")
+    archived["schema_version"] = "1.9"
+    archived.pop("results")
+    archived.pop("corrections")
+
+    with pytest.raises(
+        ValidationError,
+        match=r"schema 1\.9 cannot declare source_registry_hash",
+    ):
+        PublicationViewModel.model_validate(archived)
+
+
 def test_methodology_publishes_possible_overlap_without_deduplicating(tmp_path: Path) -> None:
     candidates = _candidate_ids()
     overlapping = (CONSENSUS_SOURCE_IDS[0], CONSENSUS_SOURCE_IDS[1])

@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-fuse-washington-20261003T040651Z-d6cb9a1c5494",
+  "entered_at": "2026-10-03T04:30:00Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official 2026 general-election endorsement list.",
+  "evidence_type": "web_page",
+  "id": "manual-fuse-washington-20261003T043000Z-542fa5efff48",
+  "review_note": "Human reviewer verified every listed new or changed transcription against the official evidence for issue",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-03T04:52:29Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "fuse-washington",
+  "transcription": "us-house-7: Pramila Jayapal\nsupreme-court-justice-1: Colleen Melody\nsupreme-court-justice-3: Jaime Michelle Hawk\nsupreme-court-justice-4: Ian Birk\nsupreme-court-justice-5: Theo Angelis\nsupreme-court-justice-7: Debra L. Stephens\ninitiative-26-001: No\ninitiative-26-638: No\ninitiative-26-645: No\nld-32-state-senator: Cindy Ryu\nld-37-state-representative-1: Kelabe Tewolde\nld-37-state-representative-2: Jaelynn Scott\nking-county-council-8: Teresa Mosqueda\nseattle-city-council-5: Nilu Jenks"
+}

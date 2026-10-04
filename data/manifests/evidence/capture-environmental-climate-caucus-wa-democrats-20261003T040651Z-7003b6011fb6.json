@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 161071,
+  "canonical_url": "https://eccwa.org/wp/endorsements/2026-endorsed-candidates/",
+  "capture_method": "static_html",
+  "content_sha256": "ecb56a0a3ace2c71bc5a706144c3227b8531c5906db29f005142ff5641dde9d7",
+  "http_status": 200,
+  "id": "capture-environmental-climate-caucus-wa-democrats-20261003T040651Z-7003b6011fb6",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party page retained locally for review only.",
+  "requested_url": "https://eccwa.org/wp/endorsements/2026-endorsed-candidates/",
+  "retrieved_at": "2026-10-03T04:06:51Z",
+  "schema_version": "1.0",
+  "source_id": "environmental-climate-caucus-wa-democrats",
+  "storage_reference": "sha256/ec/ecb56a0a3ace2c71bc5a706144c3227b8531c5906db29f005142ff5641dde9d7",
+  "storage_scope": "local_only",
+  "title": "Environment and Climate Council 2026 endorsed candidates",
+  "updated_at": null
+}

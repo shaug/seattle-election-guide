@@ -12,13 +12,23 @@ notes say so and this document carries the correction.
 ## Trigger
 
 The `collection_opens` calendar milestone opens the window; the `refresh` milestones re-run the
-sweep inside it. For `wa-2026-general` those are 2026-09-08 (`-56`), 2026-10-23
-(`refresh-mid-ballot`, `-11`), and 2026-10-30 (`refresh-final`, `-4`).
+sweep inside it. For `wa-2026-general`, collection opened 2026-09-08 (`-56`). The guide's
+practical publication target was the regular overseas/service issuance on 2026-09-18 (`-46`),
+after the primary certified and the general-election field settled. That target was missed; the
+guide became live on 2026-10-03, and refresh responsibility was already active from September 18.
 
-The real deadline is neither of the refreshes. `guide_publishes` is at `-18`
-(2026-10-16), so the **first complete sweep must land on or before that date** —
-the refreshes come after publication and correct a guide voters can already read.
-Plan the first pass against `-18`, not against election day.
+The 90-day special-absentee edge began 2026-08-05. It is the absolute earliest legal ballot
+availability for a qualifying voter, not a date on which an unsettled general-election guide could
+have been complete. Regular overseas/service ballots and online materials followed on 2026-09-18;
+electronic delivery means issuance day itself can be ballot-in-hand day. The domestic
+`ballots_mail` milestone remains 2026-10-16 (`-18`) and is neither the first-availability date nor
+a guide or refresh trigger.
+
+For the current rolling refresh, October 10 is not a start gate. Recheck and promptly publish any
+verified material change now, and complete the final comprehensive source-by-source pass by
+2026-10-15 (`refresh-pre-domestic`, `-19`). The 2026-10-23 (`refresh-mid-ballot`, `-11`) and
+2026-10-30 (`refresh-final`, `-4`) milestones are later checkpoints inside the already-active
+window, not the first post-publication rechecks.
 
 Cadence inside the window belongs to the source registry, not to this document. Each source's
 `discovery.checked_at` in `config/sources/default.yaml` records when it was last looked at, and
@@ -228,15 +238,20 @@ Add or update the source's block in `data/releases/<election-id>/source-decision
   - source_id: <source-id>
     captured_at: <when the publication was actually checked>
     reviewed_at: <when the transcription was verified>
+    reviewer: <reviewer for this source, when different from the original sweep>
+    review_note: <source-specific review and limitations, when different from the original sweep>
     evidence_locator: Official 2026 endorsement guide, named race heading.
     decisions:
       - race_id: <race-id>
         candidate_ids: [<candidate-id>]
 ```
 
-`captured_at` is when the reviewer looked at the page, not when the file was edited. Update the
-ledger's top-level `data_as_of`, `reviewer`, and `review_note` to describe the sweep honestly —
-including what could not be verified.
+`captured_at` is when the reviewer looked at the page, not when the file was edited. Advance
+`data_as_of` for a later update. Keep the ledger's top-level `reviewer` and `review_note` as the
+original sweep's provenance; changing them would rewrite existing claim and review identities.
+For a targeted refresh, set the source block's optional `reviewer` and `review_note` to describe
+who verified that source and what could not be verified. A panel-wide new sweep may update the
+top-level fields when the change to every source's provenance is intentional.
 
 A transcription taken from a screenshot or a restricted capture goes through the manual-entry
 adapter rather than straight into the ledger (`docs/EVIDENCE_CAPTURE.md`):
@@ -309,8 +324,9 @@ Stop and ask a human when:
   their own reviewed change — not a quiet overwrite.
 - **A source states an explicit non-equal allocation across co-endorsed candidates.** The frozen
   policy is an exact equal split; anything else is a methodology decision.
-- **The first complete sweep will not finish before `guide_publishes` (`-18`).** Publishing with
-  known-missing sources is a decision to make deliberately and disclose, not to discover.
+- **A required comprehensive sweep will not finish by its declared deadline.** Publishing with
+  known-missing sources is a decision to make deliberately and disclose, not to discover; a
+  missed deadline never suspends the rolling refresh until the next calendar checkpoint.
 
 ## Postmortem notes
 

@@ -5,8 +5,9 @@ to this project has never been a bad build; it is missing a data-gathering
 window that cannot be reopened. `config/calendar/elections.yaml` makes that
 cycle a tracked artifact rather than something remembered.
 
-The calendar is a planning artifact. It is not a site feature, and nothing in
-it is rendered today.
+The calendar is primarily a planning artifact. It also carries explicitly
+informational statutory anchors when a historical date is necessary to keep
+policy truthful. It is not itself a site feature.
 
 ## The cadence
 
@@ -17,10 +18,13 @@ dates are fixed in statute, which is why elections can be declared here years
 ahead of the ballot that fills them.
 
 The dates that matter to this project hang off election day at known distances.
-Ballots are mailed no later than eighteen days before it. County canvassing
-boards certify roughly three weeks after a general election and about two weeks
-after a primary or special. Candidate filing week falls in May, and it settles
-the field for both the August primary and the November general.
+A qualifying voter may obtain a special absentee ballot up to ninety days
+before a primary or general election; regular overseas and service ballots are
+issued earlier than the domestic mass mailing; domestic ballots are mailed no
+later than eighteen days before election day. County canvassing boards certify
+roughly three weeks after a general election and about two weeks after a primary
+or special. Candidate filing week falls in May, and it settles the field for
+both the August primary and the November general.
 
 ## What the calendar declares
 
@@ -28,7 +32,9 @@ An election declares its identity — a stable ID, its type, its scope, its date
 and its state. A milestone declares which election it belongs to, a stable ID
 unique within that election, a `kind` from a closed vocabulary, and
 `offset_days` from its election's date. A milestone may also name the `workflow`
-that carries it out and a `reference` document that explains how.
+that carries it out and a `reference` document that explains how. Dates default
+to `date_status: planned`; set `date_status: actual` only when evidence verifies
+that a historical event occurred on a different date from its missed target.
 
 ```yaml
 - election_id: wa-2026-general
@@ -49,9 +55,18 @@ renamed command or a moved document fails the suite rather than the cycle.
 ## How offsets are chosen
 
 Offsets are counted from election day, which is why the anchor milestone sits
-at zero. Three of them are statutory and should not drift: ballots mail at
-`-18`, certification at `+21` after a general and `+14` after a primary or
-special (RCW 29A.60.190), and the post-certification capture the day after.
+at zero. The ballot dates are distinct contracts: qualifying special-absentee
+availability can begin at `-90` for a primary or general, the regular
+overseas/service issuance follows the election's official calendar (`-46` for
+the declared primary/general cycles and `-30` for the declared specials), and
+`ballots_mail` is the domestic mass-mail deadline at `-18`. Certification is
+at `+21` after a general and `+14` after a primary or special (RCW 29A.60.190),
+with the post-certification capture the day after.
+Every election declared with its full collection runway must carry the regular
+overseas/service anchor; a primary or general also carries the qualifying
+special-absentee edge. Its planned `guide_publishes` date cannot be later than
+regular overseas/service issuance; an `actual` date may be later only to record
+a verified missed target truthfully.
 The rest are this project's working-backward conventions, chosen so each step
 has room before the one it feeds:
 
@@ -60,23 +75,45 @@ has room before the one it feeds:
   after the primary certifies — a general's ballot cannot be initialized before
   the primary decides who is on it.
 - **The official inventory import** follows initialization within a week.
-- **The source panel freezes** about two months out, and collection opens a few
-  days later, so the panel is settled before any endorsement is gathered.
-- **The guide publishes** the day ballots mail. Publishing earlier serves a
-  ballot no one is holding; publishing later wastes the week voters decide.
-- **Refresh points** at `-11` and `-4` catch late endorsements without
-  reopening collection. Short cycles carry only the final one.
+- **The source panel freezes** before collection, which opens with enough room
+  to finish before regular overseas/service issuance. Primary/general cycles
+  use the longer runway; the shorter special cycle freezes at `-42`, opens at
+  `-40`, and issues regular overseas/service ballots at `-30`.
+- **The guide publishes** as soon as it can truthfully cover a settled ballot,
+  and no later than the first scheduled regular ballot issuance. Absolute
+  special-absentee availability may precede that target: for the 2026 general,
+  the 90-day date was 2026-08-05, one day after the primary and before the
+  general-election field settled at primary certification. The practical
+  publication target was therefore the 2026-09-18 overseas/service issuance,
+  not the 2026-10-16 domestic mailing. Because that target was missed,
+  the internal `guide_publishes` deadline stays on 2026-09-18 while the public
+  `guide_published` occurrence records the verified actual publication on
+  2026-10-03.
+- **Refresh points** catch late endorsements after publication without
+  reopening collection. The 2026 general adds a comprehensive pre-domestic
+  deadline at `-19` (2026-10-15), followed by the existing `-11` and `-4`
+  checkpoints. Short cycles carry only the final one.
 - **The retrospective** lands thirty days out, after certification has settled
   what actually happened.
 
 Specials carry measures placed by resolution rather than candidates, so they
 have no filing week and a shorter runway: initialization at `-60` and the panel
-frozen at `-30`.
+frozen at `-42`.
 
 Statutory anchors are the calendar's best current reading of the law, not a
 substitute for it. Reconfirm each cycle's real dates against the Secretary of
 State's and King County Elections' published calendars when the election is
 initialized, and correct the offsets here if they disagree.
+
+For the underlying distinctions, [RCW 29A.40.050](https://app.leg.wa.gov/rcw/default.aspx?cite=29A.40.050)
+and King County's [How to get your ballot](https://kingcounty.gov/en/dept/elections/how-to-vote/ballots/how-to-get-your-ballot)
+page establish the qualifying 90-day special-absentee edge. King County's
+[Overseas and service voters](https://cdn.kingcounty.gov/so-so/dept/elections/how-to-vote/ballots/overseas-and-service-voters)
+page describes electronic delivery and the regular 45-day primary/general
+schedule; electronic delivery means the issuance day itself can be a
+ballot-in-hand day. The county's [2026 General Election Calendar](https://cdn.kingcounty.gov/-/media/king-county/depts/elections/for-jurisdictions/pdf/jurisdiction-manual.pdf)
+records the 2026-09-18 overseas, service, and out-of-state issuance and online
+ballot-material availability.
 
 ## Results capture
 
@@ -300,8 +337,8 @@ want it in their own calendar, and the default is `false` — the published feed
 is opt-in, so a new milestone kind stays internal until someone decides
 otherwise rather than leaking the moment it is declared.
 
-Three kinds are public today: `ballots_mail`, `guide_publishes`, and
-`election_day`. Marking a milestone public is only half the job — the words a
+Four kinds are public today: `ballots_mail`, planned `guide_publishes`, actual
+`guide_published`, and `election_day`. Marking a milestone public is only half the job — the words a
 reader sees live in `MILESTONE_COPY` in
 `src/election_guide/publication/calendar_feed.py`, keyed by milestone kind,
 because decision D5 keeps display strings out of this file. A milestone marked
@@ -316,6 +353,26 @@ no memory of the previous one, and the same input has to produce the same bytes.
 The event's identity never changes, so a moved date corrects the existing entry
 instead of adding a second one.
 
+`date_status` does not change whether an event is public. It distinguishes a
+future commitment from verified history so validation can enforce the regular
+issuance deadline prospectively while the feed reports a missed target's actual
+publication date.
+
+`ballots_mail` is the domestic mass-mailing date, not the first date any voter
+may possess a ballot. A primary or general may declare the internal
+`special_absentee_ballots_available` milestone for the absolute qualifying
+90-day edge and `overseas_service_ballots_mail` for the scheduled regular
+issuance. A planned `guide_publishes` deadline does not wait for domestic mailing: for the 2026
+general election, special-absentee availability began 2026-08-05, regular
+overseas/service ballots and online materials issued 2026-09-18, and domestic
+ballots mail 2026-10-16. The guide's 2026-09-18 target was missed because the
+field first had to settle and the reviewed release path was not ready; the
+public `guide_published` event records the actual 2026-10-03 publication while
+the internal `guide_publishes` deadline remains 2026-09-18.
+Keeping the specialized dates internal avoids presenting them as the date every
+local voter should expect a ballot while preserving the real operational
+deadlines.
+
 ## Adding an election
 
 Append the election, then its milestones, then run the validator. Copy the
@@ -329,10 +386,18 @@ full set.
 ### Adding an election whose runway has passed
 
 An election already under way is the one case where the full set is wrong.
-Declare only the milestones still ahead of it and leave the earlier ones out.
-A milestone is a commitment to do work on a date; backfilling one that has
-already come and gone schedules work nobody can perform, and the tracking
-workflow that reads this file would have to filter it back out.
+Declare only the actionable milestones still ahead of it and leave earlier
+actionable milestones out. An actionable milestone is a commitment to do work
+on a date; backfilling one that has already come and gone schedules work nobody
+can perform.
+
+The explicit exception is an informational statutory-availability anchor whose
+historical date is needed to keep policy truthful. The
+`special_absentee_ballots_available` kind is informational: it may be recorded
+after its date, stays private, and `calendar track` never opens an issue for it.
+It records the absolute legal edge; it does not imply that a complete guide
+could have published then or schedule retroactive work. The 2026 general's
+2026-08-05 entry is the worked example of this exception.
 
 The 2026 August primary is the worked example. It was added two days before its
 election and carries four milestones — election day, the election-night

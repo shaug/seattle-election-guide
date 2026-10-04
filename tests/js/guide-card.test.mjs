@@ -84,7 +84,7 @@ test('a share with a value renders its blocks and the resting percent', () => {
   const host = rendered(raceResultTemplate({ recommendation: 'Ada', meter: meter(75) }));
   const box = host.querySelector('.screen-meter');
 
-  assert.equal(box.getAttribute('style'), '--meter-fill: 75%');
+  assert.equal(box.getAttribute('style'), '--meter-label-offset: 75%');
   assert.equal(box.getAttribute('tabindex'), '0', 'the meter is its own one tab stop');
   const block = box.querySelector('.meter-block');
   assert.equal(block.getAttribute('class'), 'meter-block meter-block-solid');
@@ -96,6 +96,16 @@ test('a share with a value renders its blocks and the resting percent', () => {
   // (rendering/validation.py) holds the "share" display role to.
   assert.equal(block.textContent, '');
   assert.equal(box.querySelector('strong').textContent, '75%');
+});
+
+test('a populated overview meter overlays its percentage at pointer rest', () => {
+  const view = meter(75);
+  const host = rendered(raceResultTemplate({ recommendation: 'Ada', meter: view }));
+  const box = host.querySelector('.screen-meter');
+
+  assert.equal(box.getAttribute('style'), '--meter-label-offset: 75%');
+  assert.equal(box.querySelector('strong').textContent, '75%');
+  assert.equal(box.querySelectorAll('.meter-block').length, 1);
 });
 
 // I41: below ~30% fill the label would bleed onto the trailing field, so the
@@ -111,7 +121,10 @@ test('a low fill and a degraded meter each carry their own class', () => {
     low.querySelector('.screen-meter').getAttribute('class'),
     'screen-meter meter-no-majority meter-low-fill',
   );
-  assert.equal(low.querySelector('.screen-meter').getAttribute('style'), '--meter-fill: 12%');
+  assert.equal(
+    low.querySelector('.screen-meter').getAttribute('style'),
+    '--meter-label-offset: 12%',
+  );
 
   const high = rendered(raceResultTemplate({ recommendation: 'Ada', meter: meter(72) }));
   assert.equal(high.querySelector('.screen-meter').getAttribute('class'), 'screen-meter');

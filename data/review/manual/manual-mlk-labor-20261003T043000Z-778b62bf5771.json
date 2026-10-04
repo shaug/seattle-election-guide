@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-mlk-labor-20261003T040651Z-78c7d8749487",
+  "entered_at": "2026-10-03T04:30:00Z",
+  "entry_method": "manual",
+  "evidence_locator": "Official current 2026 endorsements; addition to prior reviewed block.",
+  "evidence_type": "web_page",
+  "id": "manual-mlk-labor-20261003T043000Z-778b62bf5771",
+  "review_note": "Human reviewer verified every listed new or changed transcription against the official evidence for issue",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-03T04:52:29Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "mlk-labor",
+  "transcription": "king-county-assessor: Rob Foxcurran"
+}
