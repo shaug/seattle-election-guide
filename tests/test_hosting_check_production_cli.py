@@ -211,6 +211,12 @@ def _write_calendar(path: Path, *, election_date: date) -> Path:
                         "kind": "results_capture_post_certification",
                         "offset_days": 22,
                     },
+                    {
+                        "election_id": "wa-2027-general",
+                        "id": "results-ingest",
+                        "kind": "results_ingest",
+                        "offset_days": 22,
+                    },
                 ],
             }
         ),

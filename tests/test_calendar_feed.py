@@ -57,6 +57,7 @@ def _calendar(*milestones: dict[str, Any]) -> ElectionCalendar:
                     kind="results_capture_post_certification",
                     offset_days=22,
                 ),
+                _milestone(id="results-ingest", kind="results_ingest", offset_days=22),
                 *milestones,
             ],
         }

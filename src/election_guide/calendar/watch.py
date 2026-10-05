@@ -34,6 +34,7 @@ from election_guide.calendar.tracking import TrackingModel, milestone_marker
 from election_guide.collection.refresh import read_refresh_event
 from election_guide.evidence.models import CapturedManifest
 from election_guide.evidence.storage import read_capture_manifest
+from election_guide.results.loader import RENDERED_STATUSES, read_results
 
 # Every escalation comment carries this marker so a later run recognizes its
 # own work, the same way `MARKER_PREFIX` works for the issues themselves. It is
@@ -114,17 +115,20 @@ LABEL_COLORS: dict[str, str] = {
 # cannot drift apart.
 EVIDENCE_MANIFEST_DIR = Path("data/manifests/evidence")
 REFRESH_EVENT_DIR = Path("data/collection/refreshes")
+RESULTS_DIR = Path("data/results")
 
 
-ArtifactKind = Literal["evidence_manifest", "refresh_event"]
+ArtifactKind = Literal["evidence_manifest", "refresh_event", "results_file"]
 
 ARTIFACT_NAMES: dict[ArtifactKind, str] = {
     "evidence_manifest": "an evidence manifest",
     "refresh_event": "a refresh event",
+    "results_file": "a published results file",
 }
 ARTIFACT_DIRECTORIES: dict[ArtifactKind, Path] = {
     "evidence_manifest": EVIDENCE_MANIFEST_DIR,
     "refresh_event": REFRESH_EVENT_DIR,
+    "results_file": RESULTS_DIR,
 }
 
 
@@ -145,7 +149,7 @@ class ArtifactExpectation:
     # election night. The election-night capture would then satisfy a sweep
     # that never ran, which is exactly the silent pass this check exists to
     # stop.
-    capture_source: CaptureSource
+    capture_source: CaptureSource | None = None
     # The phrase the runbooks' title convention puts in a capture's title.
     # Evidence manifests carry no election or capture-kind field — a structured
     # one was tried and reverted, because adding a field to `CaptureMetadata`
@@ -169,6 +173,7 @@ class ArtifactExpectation:
 
 
 ARTIFACT_EXPECTATIONS: dict[MilestoneKind, ArtifactExpectation] = {
+    "results_ingest": ArtifactExpectation(kinds=("results_file",)),
     "collection_opens": ArtifactExpectation(
         kinds=("evidence_manifest", "refresh_event"),
         capture_source="endorsement",
@@ -228,6 +233,7 @@ class RepositoryArtifacts:
     captures: tuple[CaptureRecord, ...] = ()
     refreshes: tuple[datetime, ...] = ()
     authority_ids: frozenset[str] = frozenset()
+    ingested_election_ids: frozenset[str] = frozenset()
 
 
 @dataclass(frozen=True)
@@ -358,9 +364,15 @@ def _capture_matches(
 
 
 def artifact_exists(
-    expectation: ArtifactExpectation, window: ArtifactWindow, artifacts: RepositoryArtifacts
+    expectation: ArtifactExpectation,
+    window: ArtifactWindow,
+    artifacts: RepositoryArtifacts,
+    *,
+    election_id: str,
 ) -> bool:
     """Whether the repository holds what this milestone promised, in its window."""
+    if "results_file" in expectation.kinds:
+        return election_id in artifacts.ingested_election_ids
     if "evidence_manifest" in expectation.kinds and any(
         _capture_matches(expectation, capture, window, artifacts.authority_ids)
         for capture in artifacts.captures
@@ -391,7 +403,9 @@ def missing_artifacts(
         stages = _reached_expectation_stages(
             expectation, scheduled=scheduled, window=window, as_of=as_of
         )
-        if not stages or artifact_exists(expectation, window, artifacts):
+        if not stages or artifact_exists(
+            expectation, window, artifacts, election_id=milestone.election_id
+        ):
             continue
         missing.append(
             MissingArtifact(
@@ -418,11 +432,17 @@ def _escalation_body(missing: MissingArtifact, stage: EscalationStage, *, as_of:
         if stage == "stale"
         else f"and {expectation.describe()} for it does not exist {elapsed} days later."
     )
-    looked_for = [
-        f"- {expectation.describe().capitalize()} under {expectation.locations()}.",
-        f"- Stamped between {missing.window.start.isoformat()} and "
-        f"{missing.window.end.isoformat()}, Pacific.",
-    ]
+    looked_for = [f"- {expectation.describe().capitalize()} under {expectation.locations()}."]
+    if "results_file" in expectation.kinds:
+        looked_for.append(
+            f"- `{RESULTS_DIR / (milestone.election_id + '.yaml')}` naming this election "
+            "with status `certified` or `amended`."
+        )
+    else:
+        looked_for.append(
+            f"- Stamped between {missing.window.start.isoformat()} and "
+            f"{missing.window.end.isoformat()}, Pacific."
+        )
     if expectation.title_phrase is not None:
         looked_for.append(f"- Titled with `{expectation.title_phrase}`.")
     references = [
@@ -508,7 +528,11 @@ def untracked_milestones(
 
 
 def read_repository_artifacts(
-    *, manifest_dir: Path, refresh_dir: Path, authority_ids: frozenset[str] = frozenset()
+    *,
+    manifest_dir: Path,
+    refresh_dir: Path,
+    results_dir: Path,
+    authority_ids: frozenset[str] = frozenset(),
 ) -> RepositoryArtifacts:
     """Read what the repository holds, reduced to what matching needs.
 
@@ -545,8 +569,16 @@ def read_repository_artifacts(
         if event.status == "failed":
             continue
         refreshes.append(event.checked_at)
+    ingested_election_ids: set[str] = set()
+    for path in _artifact_files(results_dir, "*.yaml"):
+        results = read_results(path)
+        if results.election_id == path.stem and results.status in RENDERED_STATUSES:
+            ingested_election_ids.add(results.election_id)
     return RepositoryArtifacts(
-        captures=tuple(captures), refreshes=tuple(refreshes), authority_ids=authority_ids
+        captures=tuple(captures),
+        refreshes=tuple(refreshes),
+        authority_ids=authority_ids,
+        ingested_election_ids=frozenset(ingested_election_ids),
     )
 
 

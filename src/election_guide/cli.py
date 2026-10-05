@@ -35,6 +35,7 @@ from election_guide.authorities.registry import read_authority_registry
 from election_guide.calendar import (
     EVIDENCE_MANIFEST_DIR,
     REFRESH_EVENT_DIR,
+    RESULTS_DIR,
     due_milestones,
     election_date,
     missing_artifacts,
@@ -529,6 +530,9 @@ def calendar_watch(
     refresh_dir: Annotated[
         Path, typer.Option(file_okay=False, help="Refresh events a collection refresh writes.")
     ] = REFRESH_EVENT_DIR,
+    results_dir: Annotated[
+        Path, typer.Option(file_okay=False, help="Published certified or amended results files.")
+    ] = RESULTS_DIR,
     authority_registry_path: Annotated[
         Path,
         typer.Option(
@@ -552,6 +556,7 @@ def calendar_watch(
         artifacts = read_repository_artifacts(
             manifest_dir=manifest_dir,
             refresh_dir=refresh_dir,
+            results_dir=results_dir,
             authority_ids=frozenset(
                 read_authority_registry(authority_registry_path).authority_ids()
             ),

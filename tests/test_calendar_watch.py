@@ -119,6 +119,12 @@ def _calendar() -> ElectionCalendar:
                     "kind": "results_capture_post_certification",
                     "offset_days": 22,
                 },
+                {
+                    "election_id": "wa-2027-general",
+                    "id": "results-ingest",
+                    "kind": "results_ingest",
+                    "offset_days": 22,
+                },
             ],
         }
     )
@@ -599,7 +605,9 @@ def test_repository_artifacts_read_captured_manifests_and_successful_refreshes(
             event.model_dump_json(indent=2), encoding="utf-8"
         )
 
-    artifacts = read_repository_artifacts(manifest_dir=manifest_dir, refresh_dir=refresh_dir)
+    artifacts = read_repository_artifacts(
+        manifest_dir=manifest_dir, refresh_dir=refresh_dir, results_dir=tmp_path / "results"
+    )
 
     assert [capture.title for capture in artifacts.captures] == [ELECTION_NIGHT_TITLE]
     assert artifacts.refreshes == (datetime(2027, 10, 29, 15, 0, tzinfo=UTC),)
@@ -608,7 +616,9 @@ def test_repository_artifacts_read_captured_manifests_and_successful_refreshes(
 def test_absent_artifact_directories_read_as_empty(tmp_path: Path) -> None:
     """A checkout that has captured nothing yet is a real state, not an error."""
     artifacts = read_repository_artifacts(
-        manifest_dir=tmp_path / "nope", refresh_dir=tmp_path / "also-nope"
+        manifest_dir=tmp_path / "nope",
+        refresh_dir=tmp_path / "also-nope",
+        results_dir=tmp_path / "results",
     )
 
     assert artifacts == RepositoryArtifacts(captures=(), refreshes=())
@@ -660,6 +670,8 @@ def _watch(
             str(manifests),
             "--refresh-dir",
             str(refreshes),
+            "--results-dir",
+            str(artifacts / "results"),
             *extra,
         ],
     )
@@ -717,14 +729,14 @@ def test_an_untracked_past_due_milestone_is_named_on_stderr(
 
 
 def test_the_committed_calendar_escalates_nothing_for_the_2026_primary() -> None:
-    """The committed results captures satisfy every milestone that promised one.
+    """The committed captures and results file satisfy their milestones.
 
     `wa-2026-primary`'s election-night capture ran on 2026-08-04 and produced a
     documented provenance record rather than manifests — the authority capture
     lane (#281) did not exist yet, and the bytes it would have backfilled from
     are gone. Its post-certification capture ran on 2026-08-19 (#302) and did
-    leave manifests. Both are completed work, so the check must leave them
-    alone.
+    leave manifests. The certified results file also exists (#409). All are
+    completed work, so the check must leave them alone.
 
     `as_of` is past the post-certification window's close, so the milestone has
     actually reached an escalation stage and its captures have to be matched to
@@ -741,6 +753,7 @@ def test_the_committed_calendar_escalates_nothing_for_the_2026_primary() -> None
     artifacts = read_repository_artifacts(
         manifest_dir=PROJECT_ROOT / "data" / "manifests" / "evidence",
         refresh_dir=PROJECT_ROOT / "data" / "collection" / "refreshes",
+        results_dir=PROJECT_ROOT / "data" / "results",
         authority_ids=frozenset(
             read_authority_registry(
                 PROJECT_ROOT / "config" / "authorities" / "default.yaml"
@@ -748,7 +761,7 @@ def test_the_committed_calendar_escalates_nothing_for_the_2026_primary() -> None
         ),
     )
 
-    missing = missing_artifacts(calendar, as_of=date(2026, 8, 31), artifacts=artifacts)
+    missing = missing_artifacts(calendar, as_of=date(2026, 9, 1), artifacts=artifacts)
 
     assert missing == []
 

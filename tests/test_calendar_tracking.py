@@ -98,6 +98,12 @@ def _calendar() -> ElectionCalendar:
                     "kind": "results_capture_post_certification",
                     "offset_days": 22,
                 },
+                {
+                    "election_id": "wa-2027-general",
+                    "id": "results-ingest",
+                    "kind": "results_ingest",
+                    "offset_days": 22,
+                },
             ],
         }
     )
@@ -187,7 +193,8 @@ def test_a_past_milestone_is_not_due() -> None:
     plan = _plan(date(2027, 11, 3), 60)
 
     assert [request.title for request in plan] == [
-        "wa-2027-general: results-capture-post-certification due 2027-11-24"
+        "wa-2027-general: results-capture-post-certification due 2027-11-24",
+        "wa-2027-general: results-ingest due 2027-11-24",
     ]
 
 
@@ -246,6 +253,7 @@ def test_the_committed_calendar_plans_only_milestones_ahead_of_the_window() -> N
         milestone_marker("wa-2026-primary", "results-capture-election-night"),
         milestone_marker("wa-2026-primary", "certification"),
         milestone_marker("wa-2026-primary", "results-capture-post-certification"),
+        milestone_marker("wa-2026-primary", "results-ingest"),
         milestone_marker("wa-2026-general", "initialize-election"),
     ]
     # The general's inventory import is 2026-08-25, one day past the window.
@@ -468,8 +476,8 @@ def test_dry_run_prints_the_plan_and_creates_nothing(monkeypatch: pytest.MonkeyP
     )
 
     assert result.exit_code == 0
-    assert result.stdout.count("would create: ") == 5
-    assert "calendar tracking: 5 would be opened, window 21 days from 2026-08-03" in result.stdout
+    assert result.stdout.count("would create: ") == 6
+    assert "calendar tracking: 6 would be opened, window 21 days from 2026-08-03" in result.stdout
 
 
 def test_a_real_run_creates_each_planned_issue(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -488,8 +496,8 @@ def test_a_real_run_creates_each_planned_issue(monkeypatch: pytest.MonkeyPatch) 
     )
 
     assert result.exit_code == 0
-    assert len(created) == 5
-    assert "calendar tracking: 5 opened," in result.stdout
+    assert len(created) == 6
+    assert "calendar tracking: 6 opened," in result.stdout
 
 
 def test_the_workflow_runs_every_six_hours_off_the_hour() -> None:
@@ -602,9 +610,9 @@ def test_a_collision_skips_only_its_own_milestone(monkeypatch: pytest.MonkeyPatc
 
     assert result.exit_code == 1
     assert milestone_marker("wa-2026-primary", "election-day") not in created
-    # The other four due actionable milestones were still opened.
-    assert len(created) == 4
-    assert "4 opened" in result.output
+    # The other five due actionable milestones were still opened.
+    assert len(created) == 5
+    assert "5 opened" in result.output
 
 
 def test_a_marked_milestone_never_reaches_the_collision_check(

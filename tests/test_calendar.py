@@ -43,6 +43,7 @@ def _required_milestones() -> list[dict[str, Any]]:
             kind="results_capture_post_certification",
             offset_days=22,
         ),
+        _milestone(id="results-ingest", kind="results_ingest", offset_days=22),
     ]
 
 
@@ -108,6 +109,7 @@ def test_2026_primary_declares_only_the_windows_still_ahead_of_it() -> None:
         "results_capture_election_night",
         "certification",
         "results_capture_post_certification",
+        "results_ingest",
     ]
     scheduled = {item.kind: calendar.scheduled_date(item) for item in milestones}
     assert scheduled["results_capture_election_night"] == date(2026, 8, 4)
