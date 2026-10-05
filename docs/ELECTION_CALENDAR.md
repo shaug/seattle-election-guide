@@ -120,9 +120,14 @@ ballot-material availability.
 Every declared election must schedule both results captures: one on election
 night and one after certification. These are the windows the epic exists to
 protect — unofficial election-night returns are overwritten as later drops
-land, and neither snapshot can be reconstructed afterward. Validation rejects
-any election missing either one, and rejects a post-certification capture dated
-before its own certification.
+land, and neither snapshot can be reconstructed afterward.
+
+Every election must also declare `results_ingest` to publish the certified
+results. Schedule it at the same offset as the post-certification capture,
+referencing `docs/runbooks/results-certified-ingest.md` and the `results ingest`
+workflow. Ingest remains human-launched, as that runbook requires. Validation
+rejects an election missing any of the three milestones, a post-certification
+capture before certification, or an ingest before its post-certification capture.
 
 ## What validation rejects
 
@@ -138,7 +143,7 @@ that happens afterward — and on an offset outside a two-year planning horizon.
 It fails on a milestone naming an election the calendar does not declare, on a
 repeated election ID, and on a repeated milestone ID within one election. It
 fails on an election with no election-day milestone or with two, on a missing
-results capture, and on any field the schema does not declare.
+results capture or ingest, and on any field the schema does not declare.
 
 ## Tracking milestones as issues
 
@@ -228,7 +233,14 @@ promises a checkable artifact it decides whether one exists:
 | `collection_opens`                   | through that election's `guide_publishes`, inclusive | an evidence manifest, **or** a refresh event in `data/collection/refreshes/` | date in the window, a `source_id` that is **not** a counting authority's             |
 | `results_capture_election_night`     | milestone date through seven days later, inclusive   | an evidence manifest in `data/manifests/evidence/`                           | date in the window, a **counting authority**'s `source_id`, title carrying `election-night results` |
 | `results_capture_post_certification` | milestone date through seven days later, inclusive   | an evidence manifest in `data/manifests/evidence/`                           | date in the window, a **counting authority**'s `source_id`, title carrying `certified` |
+| `results_ingest`                      | seven days after the milestone date before escalation | a results file in `data/results/` | `data/results/<election-id>.yaml` names that election and has status `certified` or `amended` |
 | `refresh`                            | milestone date through seven days later, inclusive   | an evidence manifest, **or** a refresh event in `data/collection/refreshes/` | date in the window, a `source_id` that is **not** a counting authority's             |
+
+Results ingest is matched by election identity and published status, not a capture
+timestamp. The seven-day window controls when a missing file is escalated; an
+already published file satisfies the milestone, and an amended canvass continues
+to satisfy it. `status: counting` does not. The watch reads results through their
+existing schema reader and fails visibly on a malformed file.
 
 The check is deterministic — a scheduled job reading the calendar and the tree,
 with no agent involved — and it neither dispatches work nor closes anything.

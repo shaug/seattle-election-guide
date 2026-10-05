@@ -41,6 +41,7 @@ MilestoneKind = Literal[
     "results_capture_election_night",
     "certification",
     "results_capture_post_certification",
+    "results_ingest",
     "retrospective",
 ]
 
@@ -63,14 +64,16 @@ MILESTONE_PHASES: dict[MilestoneKind, MilestonePhase] = {
     "results_capture_election_night": "on",
     "certification": "after",
     "results_capture_post_certification": "after",
+    "results_ingest": "after",
     "retrospective": "after",
 }
 
-# The two windows that cannot be reopened once missed, so every declared
-# election must schedule both (`docs/SITE_OPERATIONS_PLAN.md`, O11).
+# Every election must capture both unrecoverable windows and publish the
+# certified results those captures support (`docs/ELECTION_CALENDAR.md`).
 REQUIRED_MILESTONE_KINDS: tuple[MilestoneKind, ...] = (
     "results_capture_election_night",
     "results_capture_post_certification",
+    "results_ingest",
 )
 
 
@@ -282,4 +285,9 @@ class ElectionCalendar(CalendarModel):
         if certified and min(captured) < max(certified):
             raise ValueError(
                 f"election {election.id!r} captures certified results before certification"
+            )
+        ingested = [item.offset_days for item in milestones if item.kind == "results_ingest"]
+        if min(ingested) < max(captured):
+            raise ValueError(
+                f"election {election.id!r} ingests results before its post-certification capture"
             )

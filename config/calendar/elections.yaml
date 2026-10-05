@@ -72,6 +72,12 @@ milestones:
     offset_days: 15
     workflow: evidence capture
     reference: docs/runbooks/results-certified-ingest.md
+  - election_id: wa-2026-primary
+    id: results-ingest
+    kind: results_ingest
+    offset_days: 15
+    workflow: results ingest
+    reference: docs/runbooks/results-certified-ingest.md
 
   # 2026 November general. The field is settled by the August primary, so the
   # front half anchors to that certification rather than to filing week.
@@ -170,6 +176,12 @@ milestones:
     workflow: evidence capture
     reference: docs/runbooks/results-certified-ingest.md
   - election_id: wa-2026-general
+    id: results-ingest
+    kind: results_ingest
+    offset_days: 22
+    workflow: results ingest
+    reference: docs/runbooks/results-certified-ingest.md
+  - election_id: wa-2026-general
     id: retrospective
     kind: retrospective
     offset_days: 30
@@ -246,6 +258,12 @@ milestones:
     offset_days: 15
     workflow: evidence capture
     reference: docs/runbooks/results-certified-ingest.md
+  - election_id: wa-2027-february-special
+    id: results-ingest
+    kind: results_ingest
+    offset_days: 15
+    workflow: results ingest
+    reference: docs/runbooks/results-certified-ingest.md
 
   # 2027 April special.
   - election_id: wa-2027-april-special
@@ -316,6 +334,12 @@ milestones:
     kind: results_capture_post_certification
     offset_days: 15
     workflow: evidence capture
+    reference: docs/runbooks/results-certified-ingest.md
+  - election_id: wa-2027-april-special
+    id: results-ingest
+    kind: results_ingest
+    offset_days: 15
+    workflow: results ingest
     reference: docs/runbooks/results-certified-ingest.md
 
   # 2027 August primary. The only election in the cycle with a filing week,
@@ -409,6 +433,12 @@ milestones:
     offset_days: 15
     workflow: evidence capture
     reference: docs/runbooks/results-certified-ingest.md
+  - election_id: wa-2027-primary
+    id: results-ingest
+    kind: results_ingest
+    offset_days: 15
+    workflow: results ingest
+    reference: docs/runbooks/results-certified-ingest.md
 
   # 2027 November general, anchored to the August primary's certification.
   # The 90-day special-absentee edge precedes that settled field, so it is an
@@ -497,6 +527,12 @@ milestones:
     kind: results_capture_post_certification
     offset_days: 22
     workflow: evidence capture
+    reference: docs/runbooks/results-certified-ingest.md
+  - election_id: wa-2027-general
+    id: results-ingest
+    kind: results_ingest
+    offset_days: 22
+    workflow: results ingest
     reference: docs/runbooks/results-certified-ingest.md
   - election_id: wa-2027-general
     id: retrospective
