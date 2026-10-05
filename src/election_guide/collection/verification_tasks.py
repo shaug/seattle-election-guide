@@ -305,7 +305,7 @@ def reconcile_tasks(sections: list[dict[str, Any]], repository: str) -> list[str
             today = date.fromisoformat(section["day"])
             observed = markers | {section["marker"]}
             if all(f"{prefix}{today - timedelta(days=offset)}" in observed for offset in range(3)):
-                section = {**section, "escalated": True}
+                section["escalated"] = True
                 section["body"] = section["body"].removesuffix(section["marker"]) + (
                     "Escalation: three observed days without verification startup. "
                     f"Restore the workflow and its evidence key.\n\n{section['marker']}"
