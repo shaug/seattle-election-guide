@@ -51,6 +51,7 @@ from election_guide.calendar.github_tracker import GitHubIssueTracker
 from election_guide.collection import read_adapter_spec, refresh_source, validate_adapter
 from election_guide.collection.http import fetch_http
 from election_guide.collection.refresh import RefreshOrderError, record_refresh_failure
+from election_guide.collection.verification_cli import app as verification_app
 from election_guide.evidence.manual import (
     import_manual_draft,
     read_manual_draft,
@@ -194,6 +195,7 @@ app.add_typer(export_app, name="export")
 app.add_typer(render_app, name="render")
 app.add_typer(release_app, name="release")
 app.add_typer(collect_app, name="collect")
+app.add_typer(verification_app, name="verification")
 app.add_typer(hosting_app, name="hosting")
 app.add_typer(results_app, name="results")
 app.add_typer(analytics_app, name="analytics")

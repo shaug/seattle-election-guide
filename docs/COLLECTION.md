@@ -180,3 +180,25 @@ nothing is wrong with, which is how a mandated gate gets ignored.
 Two things are never exempt. A `repository`-scope artifact must be present, because its bytes
 travel with history: anywhere the repository is, they are. And bytes that are present but do not
 match their manifest are `corrupt` under either scope.
+
+## Recurring verification (#497)
+
+`config/verification.yaml` binds the current frozen election inputs to the six
+adapters under `config/adapters/wa-2026-general/`. Other eligible sources receive
+finite manual-review obligations. `verification plan`, `run`, `validate`, and
+`reconcile` own scheduling, encrypted Git custody, archive integrity, and daily
+review tasks. See [the runbook](runbooks/endorsement-source-daily-verification.md)
+for the implemented boundaries, actual limitations, and adoption evidence.
+
+A reviewed `section_pattern` may select exactly one visible publication section
+with one capture group. General adapters use reviewed factual passages from #474;
+they make no candidate inference. Recurring verification requires human review of
+every changed byte set, even when its known-fact semantic diff is empty. First
+live baselines require explicit human attestations, bound to their snapshots;
+fixture runs and unapproved baselines do not count as successful verification.
+
+Full third-party plaintext retains the existing private-storage restrictions.
+The new verification vault stores authenticated ciphertext in Git, with a key
+outside Git, so independent runners can restore and verify prior raw captures.
+This is the SOURCE_POLICY.md encrypted-custody exception; it does not change
+historical capture IDs, permit public raw pages, or relax live HTTP safeguards.

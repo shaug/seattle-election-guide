@@ -32,7 +32,7 @@ permissions:
 concurrency:
   # Two concurrent runs could each read an empty marker set and both create the
   # same issue. Serializing them is what makes idempotence hold in practice.
-  group: calendar-tracking
+  group: election-maintenance
   cancel-in-progress: false
 
 jobs:
@@ -40,6 +40,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: astral-sh/setup-uv@v5
       - name: Install the pipeline
         run: uv sync --frozen
@@ -54,6 +56,27 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           LEAD_DAYS: ${{ inputs.lead_days || '21' }}
+          DRY_RUN: ${{ inputs.dry_run && '1' || '' }}
+      - name: Watch for endorsement checks whose source job never recorded an event
+        if: ${{ !cancelled() }}
+        run: |
+          state_root="$RUNNER_TEMP/verification-watch"
+          revision="$(git rev-parse HEAD)"
+          archive_ref="$(git ls-remote --heads origin codex/endorsement-verification-state)"
+          if [ -n "$archive_ref" ]; then
+            git fetch origin codex/endorsement-verification-state
+            revision="$(git rev-parse FETCH_HEAD)"
+            if git cat-file -e "$revision:data/verification" 2>/dev/null; then
+              mkdir -p "$state_root"
+              git archive "$revision" data/verification | tar -x -C "$state_root" --strip-components=2
+            fi
+          fi
+          as_of="$(TZ=America/Los_Angeles date +%F)"
+          uv run election-guide verification reconcile config/verification.yaml \
+            --state-root "$state_root" --repository "$GITHUB_REPOSITORY" \
+            --revision "$revision" --as-of "$as_of" --watch ${DRY_RUN:+--dry-run}
+        env:
+          GH_TOKEN: ${{ github.token }}
           DRY_RUN: ${{ inputs.dry_run && '1' || '' }}
       # The other half of the same schedule (issue #279). Tracking makes a
       # milestone visible before it is due; this asks, after the window closed,

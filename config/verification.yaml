@@ -1,0 +1,36 @@
+schema_version: '1.0'
+calendar: config/calendar/elections.yaml
+elections:
+- election_id: wa-2026-general
+  registry: config/sources/wa-2026-general.yaml
+  inventory: data/normalized/wa-2026-general-inventory.json
+  sources:
+  - source_id: transit-riders-union
+    adapter: config/adapters/wa-2026-general/transit-riders-union.yaml
+    limitation: Conservative reviewed fact mappings; every changed publication requires human review.
+      First live baseline approval pending. Current bounded HTTP fetch exceeds the redirect limit; failed
+      checks require official-source access diagnosis, with no bypass.
+  - source_id: sage-leaders
+    adapter: config/adapters/wa-2026-general/sage-leaders.yaml
+    limitation: Conservative reviewed fact mappings; every changed publication requires human review.
+      First live baseline approval pending.
+  - source_id: seiu-775
+    adapter: config/adapters/wa-2026-general/seiu-775.yaml
+    limitation: Conservative reviewed fact mappings; every changed publication requires human review.
+      First live baseline approval pending.
+  - source_id: ufcw-3000
+    adapter: config/adapters/wa-2026-general/ufcw-3000.yaml
+    limitation: Conservative reviewed fact mappings; every changed publication requires human review.
+      First live baseline approval pending.
+  - source_id: washington-working-families-party
+    adapter: config/adapters/wa-2026-general/washington-working-families-party.yaml
+    limitation: Conservative reviewed fact mappings; every changed publication requires human review.
+      First live baseline approval pending.
+  - source_id: seattle-gay-news
+    adapter: config/adapters/wa-2026-general/seattle-gay-news.yaml
+    limitation: Conservative reviewed fact mappings; every changed publication requires human review.
+      First live baseline approval pending.
+    daily_from_collection: true
+    index_url: https://www.sgn.org/ch/News/Seattle
+    article_pattern: /story/[0-9]+/News/Seattle/SGN\s+Endorsements
+    index_boundary: https://www.sgn.org/story/168513/

@@ -18,8 +18,11 @@ request before viewing consensus results, so methodology cannot be tuned to an o
 - Easy, stable sources may receive automated adapters, but comprehensive automation is not a
   launch requirement.
 - Source organizations are preregistered before scoring begins.
-- Full captures from paywalled, copyrighted, or access-controlled pages remain outside the
+- Plaintext full captures from paywalled, copyrighted, or access-controlled pages remain outside the
   public repository unless redistribution is clearly permitted.
+- Recurring endorsement verification retains publicly accessible full source responses as
+  authenticated encrypted Git records, with a separately held key (SOURCE_POLICY.md). It uses
+  no external evidence storage. Encryption does not authorize restricted access or publication.
 
 ## Consensus eligibility
 
