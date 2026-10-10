@@ -25,6 +25,7 @@ check:
 	uv run pytest
 	$(MAKE) check-election-contracts
 	uv run election-guide calendar validate config/calendar/elections.yaml
+	uv run election-guide verification validate config/verification.yaml
 	$(MAKE) check-evidence
 	$(MAKE) check-results
 	$(MAKE) check-js

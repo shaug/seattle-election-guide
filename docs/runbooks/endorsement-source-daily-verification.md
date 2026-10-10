@@ -1,253 +1,220 @@
 # Runbook: endorsement source daily verification
 
-**Status: proposed, not adopted.** Nothing here is wired into
-`config/calendar/elections.yaml`. It is written in runbook form so adopting
-it is a matter of resolving the two items in "Preconditions" below, not
-designing a process from scratch.
+**Status: proposed, implementation awaiting adoption evidence (#497).** Keep this
+status until the first live scheduled cycle, six human baseline spot-checks, and
+independent baseline reuse have durable evidence. Fixture execution proves the
+mechanism, not live publisher access or human approval.
 
-A 2026-08-05 spot audit against a third-party aggregator found seventeen
-endorsement decisions, across six consensus sources, published after this
-project's original captures and never re-collected — one gap was not
-cosmetic, flipping a race from a reported tie to a real plurality. Full
-numbers and the before/after are in
-`data/releases/wa-2026-primary/source-decisions.yaml` (sources updated
-2026-08-05) and `data/releases/wa-2026-primary/source-panel-impact.json`.
-The pipeline was not at fault — every decision it held was correctly
-transcribed from what each source had published *at capture time*. The gap
-was cadence: a source is captured once into the ledger, and nothing checks
-it again unless a human happens to.
+## Trigger and boundaries
 
-**What this actually delivers today is narrow, and the rest of this document
-says so plainly rather than papering over it.** The project already has the
-right tool for a recurring recheck — `collect refresh`
-(`docs/COLLECTION.md`), a per-source adapter that fetches or ingests a page,
-diffs it semantically against the last known state, and records an immutable
-event — but only one source of 48 registered in `config/sources/default.yaml`
-has an adapter (`config/adapters/transit-riders-union.yaml`), and even that
-one was scheduled at only three pre-election calendar milestones, weeks
-apart. Building adapter coverage for more sources is not a detail of this
-proposal; it is the proposal. The recurring-schedule and drift-ticket
-machinery below is real and worth adopting on its own, but on the day it
-ships it protects one source. A "last verified" visibility table (Procedure
-step 4) is not a substitute for coverage — this very audit shows that
-staleness sitting quietly in a `captured_at` field, unenforced, does not get
-noticed on its own.
+`.github/workflows/endorsement-verification.yml` polls every six hours.
+`config/verification.yaml` declares election inventories, frozen registries, and
+source adapters. The scheduler expands three existing planned calendar anchors:
+`collection_opens`, `overseas_service_ballots_mail`, and `election_day`. It requires
+exactly one of each, in that order; it does not add daily calendar milestones.
 
-## Trigger
+Run weekly on the collection anchor and every seventh day thereafter, then daily
+from regular overseas/service issuance through election day. The 2026 general
+becomes daily on September 18, not domestic mailing on October 16. SGN uses
+`daily_from_collection: true`. A late activation starts with current obligations,
+then follows the original calendar cadence; it creates no historical backlog.
+Missed checks after activation remain reportable after election day.
 
-A recurring `workflow: collect refresh` trigger, `reference:
-docs/runbooks/endorsement-source-daily-verification.md`, at two cadences
-(exact schema TBD — see Preconditions):
+Every eligible source appears in the coverage record. Adding another election
+requires its own frozen registry, inventory, and reviewed adapters in the policy;
+never copy primary or previous-cycle candidate mappings into a new ballot.
+Policy validation rejects duplicate elections/sources, wrong-election inputs,
+unknown or ineligible sources, invalid adapters, and contradictory anchors.
 
-- Weekly, from `collection_opens` (`offset_days: -56`) through the earliest
-  practical complete-guide deadline.
-- Daily, from the first scheduled regular ballot issuance through
-  `election_day` (`0`). For the 2026 general, that responsibility began with
-  regular overseas/service issuance on 2026-09-18. The missed target is
-  preserved separately from the actual `guide_published` date, 2026-10-03; the
-  cadence is active now rather than waiting for the 2026-10-16 domestic mailing.
+## Autonomy and coverage
 
-The accelerating cadence matches the logic the calendar already uses
-elsewhere (`collection_opens` → `refresh-mid-ballot` → `refresh-final` get
-denser as the election nears) rather than asserting uniform daily coverage
-for the full 56-day window. A qualifying special-absentee voter may possess a
-ballot up to 90 days before a primary or general, and regular overseas/service
-electronic delivery can make its issuance date a ballot-in-hand day. The daily
-cadence therefore follows the earliest practical complete-guide deadline, not
-domestic mass mailing. The earlier collection period gets weekly coverage at a
-fraction of the fetch and review cost. If a source is known to
-publish and revise on a tighter cycle, it can opt into the daily cadence from
-`collection_opens` instead — a per-source override, not a reason to make the
-default window daily throughout. Seattle Gay News is a concrete first
-candidate for that override: this audit's own SGN capture grew from 3
-articles to 9 in about two weeks, faster than the proposed weekly cadence
-would have caught.
+Level 2 (Watched): capture, compare, preserve, and report. Human review retains
+interpretation, transcription approval, baseline approval, ledger edits, PR
+review, releases, and production approval. The detector does not modify the
+published source decisions, source panel, scoring, or historical releases.
 
-## Autonomy
+The first general-election tranche is:
 
-Level 2 (Watched), per `docs/RUNBOOKS.md`'s table, for the detection half:
-the refresh itself is deterministic and unattended (level 1 territory — "no
-agent involved"), and a missed, failed, or suspicious refresh escalates to a
-tracking issue rather than resolving itself (the level 2 addition). Folding a
-diff into the ledger — verifying it, editing `source-decisions.yaml`,
-regenerating fixtures, opening a PR — is judgment work and stays
-human-launched, per `docs/RUNBOOKS.md`'s own guidance that judgment-heavy
-work "should stay human-launched even when everything around it is
-automated." That resolution step is a plausible level 3 (Dispatched)
-candidate later — a tracking issue triggering an unattended agent run whose
-only output is a PR for human review, never an auto-merge — but it stays at
-a lower level until this runbook has real execution history, the same
-reasoning `results-capture-election-night.md` applies to itself.
+| Source | Automatic publication check | Limitation |
+|---|---|---|
+| Transit Riders Union | Current general endorsement page | A bounded live probe currently exceeds the redirect limit. Keep failed checks visible; diagnose access without bypassing the limit. |
+| Sage Leaders | Current 2026 section, excluding past-year sections | Fixed, reviewed factual mappings; changed bytes require review. |
+| SEIU 775 | Washington section | Fixed, reviewed factual mappings; changed bytes require review. |
+| UFCW 3000 | Official endorsements page | Fixed, reviewed factual mappings, including dual endorsements and publisher spelling variants. |
+| Washington Working Families Party | Our Candidates section | Fixed, reviewed factual mappings; changed bytes require review. |
+| Seattle Gay News | Current Seattle index plus known/new articles | Daily from collection opening. Traverse pagination to the reviewed oldest current-cycle article, then revisit every known article. |
 
-## Preconditions
+These checks use `config/adapters/wa-2026-general/`; the older primary TRU adapter
+remains separate. The factual fixtures preserve the current general mappings
+reviewed in #474. They contain names and offices, not full third-party pages or
+editorial prose. They do not approve the first automatic live baseline.
 
-Two items block this from running at all; everything else in "Open
-questions" below is a real but non-blocking design choice.
+The six stay in the automatic-attempt lane, including an inaccessible source;
+failures do not silently reduce coverage. TRU's access limitation prevents a
+claim that all six have successful live coverage or that this runbook is adopted.
+Resolve that limitation and verify the resulting live baseline before adoption.
 
-- **Adapter coverage.** `collect refresh` only exists for
-  `transit-riders-union`. Building `config/adapters/<source-id>.yaml` for at
-  least the sources most prone to drift is prerequisite work. Most of the
-  sources that drifted in the 2026-08-05 audit (Transit Riders Union, Sage
-  Leaders, SEIU 775, UFCW 3000, Working Families Party, Seattle Gay News)
-  publish a single static endorsements page or index — the cheapest adapter
-  kind `docs/COLLECTION.md` documents (`static_html`).
-- **Milestone generation.** `config/calendar/elections.yaml` is flat and
-  hand-authored (`docs/ELECTION_CALENDAR.md`); a literal milestone entry per
-  day is not in that spirit, and today's milestone `kind` is a closed
-  vocabulary (`src/election_guide/calendar/models.py`'s `MilestoneKind`,
-  enforced by the calendar validator) that does not include a recurring
-  cadence. Before this can be scheduled at all, whoever owns the calendar and
-  the scheduler (`#220`) needs to decide the mechanism — a cadence field on
-  one milestone, or the scheduler expanding one milestone into a recurring
-  trigger — and extend that closed vocabulary and validator accordingly. This
-  is a real design decision, not something to default silently, and it is
-  the one item in this document that is genuinely undecided rather than
-  merely unbuilt.
-- `--live` fetches remain opt-in per `docs/COLLECTION.md` and refuse
-  non-public DNS/connection peers; nothing here changes that safety
-  boundary.
-- A place to land tracking issues — reuse whatever labeling convention
-  `#220`/`#279` already established, so drift tickets are not a new
-  taxonomy.
+All other eligible panel sources use manual review, including not-found,
+restricted, social, dynamic, PDF, and image publications without an installed
+adapter. Every scheduled manual obligation receives its due date in that day's
+finite task. It does not count as successful verification until a human records
+the review time and durable evidence reference. Comprehensive sweeps (#491,
+#472, and later calendar checkpoints) retain their separate scope.
 
-## Procedure
+`verification plan` returns each lane, cadence, last successful human-verified
+check, next due date, and limitation. Unapproved captures and fixture runs do not
+populate the successful verification date.
 
-1. **Per the cadence above, for each adapter-covered source:**
-   ```bash
-   uv run election-guide collect refresh \
-     config/adapters/<source-id>.yaml \
-     --checked-at <UTC now> \
-     --live
-   ```
-2. **Read the refresh event, and batch same-day results into one ticket.**
-   A refresh event's semantic diff is computed against the *previous*
-   captured snapshot per race (`docs/COLLECTION.md`), so a page redesign
-   that breaks an adapter's parser does not hide silently — any decision the
-   parser stops finding shows up as a `removed` entry in the diff, which is
-   non-empty and already routes through the "non-empty diff" case below. The
-   one case that mechanism cannot catch is a source's very *first* live
-   refresh: with no prior snapshot, a broken adapter that extracts nothing
-   just looks like a source with no endorsements yet.
-   - Zero-diff on a refresh with a prior baseline to compare against:
-     nothing to do. The event itself is the audit trail that the check ran
-     and found no change.
-   - **A source's first live refresh**: spot-check it against the actual
-     page by hand before trusting it as the baseline every future refresh
-     diffs against — this is an adapter-correctness check, not a drift
-     check, and its fix is different in kind from the other two cases below.
-     If the spot-check finds a problem, the fault is the adapter itself:
-     fix `config/adapters/<source-id>.yaml`, open a PR for that fix, and
-     once merged re-run `collect refresh --live` to produce a clean baseline
-     before this source's next scheduled refresh runs. Note the correction
-     in that day's ticket (open or join it as below) for the record, but its
-     resolution is "fix the adapter and rebaseline," not "update
-     `source-decisions.yaml`" — Step 3 is written for the other two cases
-     only; do not run its ledger-edit checklist against a baseline-
-     correction section.
-   - Non-empty diff, or `failed` status, on a refresh that already has a
-     prior baseline: both feed the same per-day ticket.
-     If nothing has landed yet for that calendar day, open one issue titled
-     `Endorsement drift: <date>`; if one is already open for that day (a
-     second source drifted, or failed, the same day), add a section to it
-     instead of opening a new one — do not wait to see whether more sources
-     drift before creating the first issue. The 2026-08-05 audit found six
-     sources drift at once, and per-source tickets right before an election,
-     when volume peaks and capacity is thinnest, is a flooding risk worth
-     designing around. Each section: the source id, whether it's a diff or a
-     failure, the added/changed/removed decisions or the error, and a link
-     to the refresh event's record.
-   - Interpreting a `removed` entry specifically: it means either the source
-     genuinely retracted a decision, or the adapter broke and stopped
-     matching it — the diff alone cannot tell you which. Step 3's live-page
-     check resolves that ambiguity the same way it resolves any other; see
-     also Escalation for how to represent a genuine retraction once
-     confirmed as real.
-3. **Working a drift ticket** (human-launched; see Autonomy). This step is
-   for the ticket's ordinary drift and `failed`-status sections; a baseline-
-   correction section (Step 2) is resolved there, not here. A batched
-   ticket's sections are independent — work, verify, and land each source's
-   fix as its own PR rather than waiting to fix all of that day's sources
-   before shipping any of them; the ticket stays open, with each section
-   checked off, until every source it lists has landed. For each ordinary
-   section:
-   - Verify the diff against the source's live page directly — an adapter
-     parses text with a regex; confirm it did not mis-split a name or miss a
-     dual endorsement.
-   - Update `data/releases/wa-2026-primary/source-decisions.yaml`: bump the
-     source's `captured_at`/`reviewed_at`, add the new decision(s).
-   - `uv run election-guide release compile data/releases/wa-2026-primary/source-decisions.yaml`
-   - `uv run election-guide release verify data/releases/wa-2026-primary/source-decisions.yaml`
-   - Regenerate every fixture the change touches — the fixture tests name
-     their own regeneration commands in their failure messages
-     (`uv run python -m tests.compare_parity`, `tests.page_parity`,
-     `tests.mirror_parity`, `election-guide export lens-parity`); run
-     `uv run pytest` and follow whatever else it names.
-   - If the change moves a race's winner, tie state, or the leading-picks
-     that any comparison signal disagrees with, also regenerate
-     `source-panel-impact.json` (refresh `after` only, keep `before` pinned
-     — `docs/POST_ELECTION_RETROSPECTIVE.md` § 1 explains why) and the
-     hand-verified difference oracle at
-     `tests/fixtures/comparison-default-differences.json`.
-   - Open the PR; check off that source's section on merge; close the ticket
-     once every section is checked.
-4. **A source without an adapter** — the common case until the adapter-
-   coverage precondition above is addressed — falls back to this session's
-   manual method: fetch the live page, compare named decisions against the
-   ledger by hand. This is not on any enforced cadence; it is whatever a
-   human chooses to spend time on. Making that gap visible rather than
-   silent is worth doing regardless — a per-source "last verified" date,
-   surfaced in a generated table (`docs/SOURCE_DISCOVERY.md` would fit the
-   existing pattern) — but treat it as a way to *see* the gap, not as a
-   substitute for closing it. The 2026-08-05 audit is direct evidence that
-   an unenforced timestamp does not get checked on its own.
+## Git-backed evidence
 
-## Verification
+The workflow continues `codex/endorsement-verification-state`, merges current
+`main` into it, and opens/updates an ordinary evidence PR. It does not auto-merge.
+Independent runs reuse that branch while the PR awaits review, so pending data
+cannot disappear or be replaced with an older mainline baseline.
 
-Once the Trigger milestone mechanism above is decided and wired in:
+`data/verification/<election>/` contains immutable JSON records:
 
-- Every scheduled week or day produces one refresh event per adapter-covered
-  source; the event's *absence* is what would indicate the scheduled check
-  itself stopped running. A zero-diff event on a refresh with a prior
-  baseline is a pass. A source's first live refresh is never a pass on
-  diff alone, zero or not — it only passes once Step 2's hand spot-check
-  against the live page clears.
-- Every non-empty diff and every `failed` status has a section in that day's
-  tracking issue.
-- No section of a drift ticket is checked off without a merged, green-tests
-  PR — touching `source-decisions.yaml` for an ordinary drift section, or
-  the adapter under `config/adapters/` for a baseline-correction section
-  (Procedure step 2) — and the ticket itself closes only once every section
-  is checked.
+- `activation.json`: actual activation date and producing revision.
+- `checks/`: scheduled slot, actual check time, mode, result, event reference.
+- `refreshes/`, `extractions/`, `manifests/`: existing collection records.
+- `vault/sha256/<prefix>/<digest>.json`: AES-256-GCM encrypted original bytes.
+- `discovery/`: index/article capture links, known/listed articles, derived hash.
+- `approvals/`: explicit human attestations bound to a live snapshot.
 
-## Escalation
+`data/verification/runs/` records the exact producing revision, due coverage,
+actual results, policy fingerprint, and fixture/live mode. `source_tree_dirty`
+identifies a local exercise with uncommitted source; it cannot prove a deployed
+revision. Git commits preserve the whole record set;
+tasks link to the full committed SHA, not a moving branch or expiring artifact.
+Public validation checks record identities, references, and encrypted envelopes.
+The keyed runner also authenticates and hashes every restored original capture.
 
-- **Any single `failed` refresh** joins that day's tracking issue immediately
-  (Procedure step 2) — this is not itself an emergency.
-- **The same adapter fails three consecutive scheduled refreshes**: escalate
-  the severity of its section in the open ticket (or open one if none is
-  open) and flag it explicitly as a likely page redesign needing the adapter
-  rewritten, not just retried.
-- **A drift ticket's diff includes a *removed* decision that Step 3
-  confirms is a genuine retraction**, not an adapter break — flag for
-  editorial judgment about how to represent the change in the public record;
-  this is rarer and more consequential than an addition.
+The base64-encoded random 32-byte `ENDORSEMENT_EVIDENCE_KEY` is an Actions secret.
+Keep a private recoverable copy under the maintainer's credential procedures.
+Neither the key nor decrypted pages belong in Git, logs, or uploaded artifacts.
+The workflow reuses the repository's archive GitHub App credentials for branch
+and PR writes; its ordinary job token owns issue writes. No external evidence
+service is used. Full restricted content is committed only as authenticated
+ciphertext; public manifests, hashes, short factual excerpts, and review records
+remain readable alongside the rest of the data.
 
-## Open questions
+Captures are decrypted only into a private temporary directory and removed at
+transaction end. Changed bytes are sealed before their observation is published;
+unchanged originals retain the existing ciphertext. Existing manifest IDs and
+`storage_scope` semantics remain unchanged: the original raw capture is
+`local_only`, while the verification vault is its separately validated encrypted
+custody record. Restore reconstructs the same relative SHA-256 addresses.
 
-- **Adapter coverage order.** Prioritize by decision count already in the
-  ledger (`seiu-775` and `ufcw-3000` each carry 23+ decisions, where one
-  missed race is easy to overlook) rather than by which sources happened to
-  drift in this one audit, since that list is a sample of one, not a
-  ranking.
-- **Third-party cross-checks as a second signal.** Independent of adapter
-  coverage, an occasional automated comparison against a second aggregator
-  (as this session did manually) is a cheap way to catch drift in sources
-  that will never get a first-party adapter — but it inherits that
-  aggregator's own scope and errors, so a disagreement is a lead to verify
-  against the primary source, never ground truth on its own.
+SGN's comparison artifact contains article headings and original-body hashes.
+It is explicitly marked as derived/manual-upload, with no invented HTTP status.
+Every actual HTTP index and article response has its own encrypted original and
+observed HTTP manifest. Article URLs use stable story IDs; a title edit cannot
+turn one article into two identities. Missing boundary, ambiguous/looping
+pagination, inaccessible article, or exceeded bounds fails the check. Discovery
+allows at most 40 index pages, 100 articles, and 64 MiB total response bytes;
+each HTTP fetch retains the existing public-peer, redirect, time, and size limits.
 
-## Postmortem notes
+## Results and finite review tasks
 
-- Not yet executed. Not yet adopted. First execution depends on both
-  Preconditions items landing: adapter coverage beyond `transit-riders-union`
-  and a decided milestone-generation mechanism.
+The Calendar watcher reads committed archive state independently of the source
+job. Both workflows share `election-maintenance` concurrency, which serializes
+read/create/append across scheduled and manual runs. Local reconciliation must
+also be run by one operator at a time. Use the workflow for overlapping requests.
+
+One issue per election/Pacific day ends with
+`endorsement-verification: <election>/<date>`. It uses `type: ops`,
+`area: operations`, `data: endorsements`, and the election milestone. Each
+comment ends with an immutable `endorsement-observation:` marker. The tracker
+reads all open/closed issues and their comments directly, never search indexing.
+Retries append only absent observations and reopen a completed daily task when
+new work arrives. Human-authored bodies and comments are preserved.
+
+| Result | Action |
+|---|---|
+| First baseline or unapproved zero diff | Human spot-check of the entire publication and mappings. |
+| Identical bytes with approved live snapshot | Retain a successful check; no source review section. |
+| Added/changed/removed decisions | Include canonical IDs and immutable event/capture references. |
+| Changed bytes with zero recognized decision diff | Review wording, new/unrecognized decisions, article body, and parser coverage. Never silently trust it. |
+| Fetch or parser failure | Retain the prior comparison snapshot; append the failure. |
+| Missing scheduled event | Independent watcher reports the missing slot, even when the source job produced nothing. |
+| Manual obligation | Review due on the explicit date; record human evidence when complete. |
+
+Fixed mappings do not guess a newly named candidate. Byte changes always require
+review, including when the semantic extractor cannot recognize a new decision.
+An adapter correction can produce a changed canonical decision on the next
+refresh. A removal is a lead to distinguish genuine withdrawal from a parser
+break through official-source review. HTML extraction retains its review flag.
+
+After three consecutive failed/missing scheduled slots, add `priority: high`
+and an explicit diagnosis request. Multiple attempts in one slot count once;
+a successful slot breaks the streak. First startup without any committed state
+produces a current-day startup task, with no invented past checks. Three
+consecutive observed startup days also escalate using the watcher’s existing
+issue markers; a missing key cannot suppress the startup alert indefinitely.
+
+Resolve each observation through a reviewed adapter correction or endorsement
+change, linking the merged PR and applicable release/publication evidence. Close
+the finite task after every source obligation is resolved; never use #497 or a
+permanent rolling issue as the future maintenance queue.
+
+## Operator procedure and recovery
+
+Before enabling the schedule, configure the evidence key and confirm the archive
+App has contents, PR, and workflow permissions. A missing or mismatched key
+fails loudly. Do not replace the key to make a failure pass: historical ciphertext
+requires the original key. Key rotation requires a separately reviewed migration;
+never overwrite immutable captures. Losing every key copy loses recoverability.
+
+Inspect coverage without fetching:
+
+```bash
+uv run election-guide verification plan config/verification.yaml --as-of 2026-10-05
+uv run election-guide verification validate config/verification.yaml
+```
+
+Run a controlled offline exercise with the factual fixtures, a temporary test
+key, and a separate state root. Never seed production state with fixture checks.
+Run the same state again on the next scheduled date and inspect baseline reuse,
+then use `reconcile --dry-run` to inspect task sections without issue mutation.
+The CLI requires `--live` or `--fixtures` explicitly; ordinary tests never fetch.
+
+For a real run, use the scheduled workflow or dispatch it. A failed source is
+retried at the next scheduled slot. Inspect the archive PR and day's task. If a
+job stops before committing, the next run starts from the last committed state;
+the independent watcher reports the missed slot. If issue writes fail after the
+archive push, repeat reconciliation against that SHA: markers prevent duplicates.
+If the archive branch is accidentally removed, restore its latest verified commit
+from the evidence PR/mainline before resuming. Preserve pending captures and
+attestations; do not restart from an older baseline.
+
+For human baseline review, check out the current archive branch, restore its vault
+to an external private directory with `verification restore`, authenticate the
+capture, and compare the entire official publication against its extraction.
+Record the review, then commit the attestation through normal PR review:
+
+```bash
+uv run election-guide verification approve-baseline data/verification/wa-2026-general \
+  --snapshot-id <extraction-id> --reviewer <reviewer> --reviewed-at <actual-UTC-time> \
+  --evidence <durable-spot-check-reference>
+```
+
+Fixture snapshots cannot receive live approval. For manual obligations use
+`verification acknowledge-manual` with election root, `--source-id`,
+`--scheduled-for`, `--reviewer`, `--reviewed-at`, and `--evidence`, then review and
+commit that attestation. Neither command approves an endorsement ledger edit.
+
+`verification reconcile` requires `--repository`, exact `--revision`, and
+`--as-of`. Mutation verifies that local archive bytes exactly match that commit
+before publishing links. `--watch` adds missing checks; `--dry-run` prints the
+proposed sections without GitHub writes and permits an uncommitted local exercise.
+
+## Adoption evidence and postmortem notes
+
+Required before marking adopted: exact deployed workflow revision and run URL;
+current due/coverage output; all six live source outcomes and approved initial
+baselines; a second independent run proving reuse; immutable evidence/task links;
+manual queue and missing/failure reconciliation; and a green `make check`.
+The current implementation tests fixture runs, task retries, and index edits.
+Live deployment, the real encryption secret, baseline approval, and the first
+scheduled cycle remain operator/adoption work. Keep #497 open until this packet
+exists. Append dated execution lessons here after each adoption exercise.

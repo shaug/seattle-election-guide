@@ -83,8 +83,9 @@ The recurring workflows differ in profile but share the contract:
 - **Results** (per election): a bounded window with one known authority and statutory timing.
   Timing-critical, judgment-light — the calendar drives it almost entirely. Runbooks:
   `results-capture-election-night.md`, `results-certified-ingest.md`.
-- **Endorsements** (per election): an unbounded window across many sources with unknown
-  publication times. Judgment-heavy, timing-tolerant — cadence belongs to the source registry,
+- **Endorsements** (per election): many sources with unknown publication times, checked within
+  the calendar’s collection-to-election window. Judgment-heavy — recurring detection follows
+  calendar anchors and source policy,
   and the runbook's weight is in decision criteria. Runbook:
   `endorsement-discovery-sweep.md`, written from the procedures the 2026 primary's collection
   actually followed.
@@ -98,4 +99,5 @@ Each runbook's autonomy level is declared in the runbook itself — its single o
 | `runbooks/results-capture-election-night.md`  | `results_capture_election_night`     |
 | `runbooks/results-certified-ingest.md`        | `results_capture_post_certification` |
 | `runbooks/endorsement-discovery-sweep.md`     | `collection_opens` → `refresh`       |
+| `runbooks/endorsement-source-daily-verification.md` | calendar-derived weekly/daily source checks; implementation awaiting adoption evidence |
 | `runbooks/production-rollback.md`             | condition: production is serving a wrong, broken, or stale build |

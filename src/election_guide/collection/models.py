@@ -56,6 +56,7 @@ class AdapterSpec(CollectionModel):
     extractor_version: str = Field(pattern=r"^[0-9]+\.[0-9]+\.[0-9]+$")
     complete: Literal[True] = True
     decision_pattern: str = Field(min_length=1, max_length=2_000)
+    section_pattern: str | None = Field(default=None, min_length=1, max_length=2_000)
     rules: list[DecisionRule] = Field(min_length=1)
 
     @model_validator(mode="after")
@@ -65,12 +66,15 @@ class AdapterSpec(CollectionModel):
             raise ValueError("adapter repeats a race rule")
         for label, pattern in (
             ("decision pattern", self.decision_pattern),
+            *(([("section pattern", self.section_pattern)]) if self.section_pattern else []),
             *((f"rule {rule.race_id!r}", rule.pattern) for rule in self.rules),
         ):
             try:
                 re.compile(pattern, flags=re.IGNORECASE | re.MULTILINE)
             except re.error as error:
                 raise ValueError(f"adapter {label} has invalid regex: {error}") from error
+        if self.section_pattern and re.compile(self.section_pattern).groups != 1:
+            raise ValueError("adapter section pattern requires exactly one capture group")
         return self
 
 
