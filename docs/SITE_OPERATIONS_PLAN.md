@@ -506,26 +506,26 @@ at roughly T+30. Documentation only.
 The worst outcome for this project is the guide being down, stale, or wrong during the week voters
 use it. This epic makes those states detectable and recoverable.
 
-## O14 — Verify production is up and serving the expected commit
+## O14 — Check availability and verify approved deployments
 
-**Outcome.** A scheduled check confirms the live site responds correctly and is serving the commit
-currently on `main`, and raises a visible alert when it is not.
+**Policy update, October 11, 2026 (#512).** The original scheduled comparison against `main`
+and pre-election cadence are superseded. A merge can deliberately remain unpublished.
 
-**Scope.** A scheduled workflow requesting `/`, the current election's guide, its PDF, and
-`/deployment-manifest.json`, asserting expected status codes and redirect behavior against the
-documented route contract, and comparing the manifest's recorded commit against `main`. Alerts by
-opening or updating an issue. Raise the cadence inside an election window. No new infrastructure —
-`deployment-manifest.json` already publishes everything required.
+**Outcome.** One hourly availability probe raises an alert when the served manifest or core
+routes fail. Every dispatched run executes the probe, including a delayed scheduled run.
+
+**Scope.** Request `/deployment-manifest.json`, `/`, the current guide declared by the served
+manifest, and its legacy PDF redirect. Preserve the single alert issue and close it on recovery.
+Do not compare against unpublished `main` commits or pending release declarations. After an
+approved deployment, run strict release verification against the uploaded job's explicit SHA
+and preserve its evidence; a mismatch fails that deployment job without an automatic rollback.
 
 **Acceptance.**
 - [ ] A healthy site produces a passing run and no issue.
-- [ ] A simulated commit mismatch and a simulated 404 each raise an alert.
-- [ ] The alert issue is updated rather than duplicated on repeated failures, and closes on
-      recovery.
-- [ ] Cadence increases within the pre-election window.
-
-**Note.** The commit comparison also catches a silently failed deploy, which a plain uptime check
-would miss entirely.
+- [ ] A missing guide or unreachable manifest raises an alert.
+- [ ] The alert issue is updated rather than duplicated and closes on recovery.
+- [ ] Delayed scheduled runs still execute the availability probe.
+- [ ] Strict post-deploy verification uses the approved SHA rather than a newer `main` head.
 
 ## O15 — Write and rehearse the rollback procedure
 
@@ -543,22 +543,24 @@ observed timings. The rehearsal is part of the ticket, not a follow-up.
 
 **Depends on.** O4 for the second path; the dashboard path can be documented and rehearsed first.
 
-## O16 — Alert on stale published data
+## O16 — Check published data freshness during release verification
 
-**Outcome.** Published data going stale during an active election window is detected rather than
-noticed.
+**Policy update, October 11, 2026 (#512).** Data age is checked by the strict release probe,
+including after an approved upload, rather than by the scheduled availability monitor.
 
-**Scope.** Extend O14's scheduled check to read the published data timestamp already exposed in the
-release manifest and audit footer, and alert when it exceeds a threshold during an active window.
-Outside a window, no alert.
+**Outcome.** Strict verification detects stale published data inside an active election window.
+
+**Scope.** Read the published release timestamp and apply the documented seven-day threshold
+inside the calendar-derived pre-election window. Availability checks do not enforce data age.
+Recurring endorsement maintenance is a separate responsibility (#497).
 
 **Acceptance.**
-- [ ] A simulated stale timestamp inside a window alerts.
+- [ ] A simulated stale timestamp inside a window fails strict verification.
 - [ ] The same timestamp outside a window does not.
-- [ ] The threshold and its rationale are documented.
+- [ ] The threshold and its rationale are documented in `docs/HOSTING.md`.
 
-**Depends on.** O14 and O11. Per D5 the active window is read from the calendar rather than a
-separately configured date range, so that election timing has exactly one source of truth.
+**Depends on.** O14 and O11. Per D5 the window is read from the calendar, so election timing
+still has exactly one source of truth.
 
 ## O17 — Detect link rot in cited sources
 

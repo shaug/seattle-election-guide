@@ -1,91 +1,114 @@
-"""Structural tests for the scheduled production-verification workflow (O14)."""
+"""Contracts for scheduled availability and approved-deployment verification (#512)."""
 
 from __future__ import annotations
 
+import os
+import subprocess
 from pathlib import Path
 from typing import Any, cast
 
+import pytest
 import yaml
 
 PROJECT_ROOT = Path(__file__).parents[1]
 WORKFLOW_PATH = PROJECT_ROOT / ".github" / "workflows" / "verify-production.yml"
 
 
-def _workflow() -> dict[str, Any]:
-    return cast(dict[str, Any], yaml.safe_load(WORKFLOW_PATH.read_text(encoding="utf-8")))
+def _workflow(path: Path = WORKFLOW_PATH) -> dict[str, Any]:
+    return cast(dict[str, Any], yaml.load(path.read_text(encoding="utf-8"), Loader=yaml.BaseLoader))
 
 
 def _steps(workflow: dict[str, Any]) -> list[dict[str, Any]]:
     return cast(list[dict[str, Any]], workflow["jobs"]["verify"]["steps"])
 
 
-def test_the_schedule_is_fine_grained_enough_for_the_pre_election_cadence() -> None:
-    text = WORKFLOW_PATH.read_text(encoding="utf-8")
-    schedule = [line.strip() for line in text.splitlines() if "cron:" in line]
+def _run_probe_step(step: dict[str, Any], tmp_path: Path, *, dry_run: bool = False) -> list[str]:
+    executable = tmp_path / "uv"
+    executable.write_text(
+        '#!/bin/sh\nprintf \'%s\\n\' "$@" > "$RECORDED_ARGUMENTS"\n', encoding="utf-8"
+    )
+    executable.chmod(0o755)
+    recorded = tmp_path / "arguments.txt"
+    subprocess.run(
+        ["bash", "-euo", "pipefail", "-c", step["run"]],
+        cwd=PROJECT_ROOT,
+        env={
+            **os.environ,
+            "PATH": f"{tmp_path}:{os.environ['PATH']}",
+            "RECORDED_ARGUMENTS": str(recorded),
+            "PRODUCTION_ORIGIN": "https://seattleelections.guide",
+            "GITHUB_REPOSITORY": "shaug/seattle-election-guide",
+            "GITHUB_SHA": "b" * 40,
+            "DRY_RUN": "1" if dry_run else "",
+        },
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    return recorded.read_text(encoding="utf-8").splitlines()
 
-    assert len(schedule) == 1
-    cron = schedule[0].split('"')[1]
-    minute, rest = cron.split()[0], cron.split()[1:]
 
-    # Fine enough that the hourly fallback below and the always-on window
-    # both land within it; coarser and the "raise the cadence" acceptance
-    # criterion would have no room to raise into.
-    assert minute == "*/15"
+def test_availability_runs_hourly_off_the_hour() -> None:
+    schedules = _workflow()["on"]["schedule"]
+    assert len(schedules) == 1
+    minute, *rest = schedules[0]["cron"].split()
+    assert minute.isdigit() and 0 < int(minute) < 60
     assert rest == ["*", "*", "*", "*"]
 
 
-def test_the_verify_step_gates_on_cadence_only_for_scheduled_runs() -> None:
-    workflow = _workflow()
-    steps = _steps(workflow)
-    cadence_step = next(step for step in steps if step.get("id") == "cadence")
-    verify_step = next(step for step in steps if "check-production" in step.get("run", ""))
-
-    # A manual dispatch always runs the check; a scheduled tick only runs it
-    # when the cadence step (calendar in-window, or the hourly fallback) says
-    # so — never both unconditionally, or the acceptance criterion that
-    # cadence rises in the pre-election window would be a no-op.
-    assert cadence_step["if"] == "github.event_name == 'schedule'"
-    assert "steps.cadence.outputs.due" in verify_step["if"]
-    assert "github.event_name != 'schedule'" in verify_step["if"]
+def test_delayed_runs_cannot_skip_the_probe_on_an_execution_clock_gate() -> None:
+    steps = _steps(_workflow())
+    probe = next(step for step in steps if "check-production" in step.get("run", ""))
+    assert "if" not in probe
+    assert not any(step.get("id") == "cadence" for step in steps)
 
 
-def test_the_cadence_step_consults_the_pre_election_window() -> None:
-    workflow = _workflow()
-    steps = _steps(workflow)
-    cadence_step = next(step for step in steps if step.get("id") == "cadence")
-
-    assert "calendar in-window" in cadence_step["run"]
-    assert "config/calendar/elections.yaml" in cadence_step["run"]
-
-
-def test_the_hourly_fallback_avoids_the_congested_top_of_the_hour() -> None:
-    """calendar.yml documents the top of the hour as GitHub's most congested
-    cron slot — a run there once fired 45 minutes late, which would make a
-    :00 fallback silently skip its own hour by the time it finally executes."""
-    workflow = _workflow()
-    steps = _steps(workflow)
-    cadence_step = next(step for step in steps if step.get("id") == "cadence")
-
-    assert '"$(date -u +%M)" = "00"' not in cadence_step["run"]
-
-
-def test_the_verify_step_compares_against_the_current_main_commit() -> None:
-    workflow = _workflow()
-    steps = _steps(workflow)
-    verify_step = next(step for step in steps if "check-production" in step.get("run", ""))
-
-    assert "--expected-git-commit" in verify_step["run"]
-    assert "git rev-parse HEAD" in verify_step["run"]
-    assert "hosting check-production" in verify_step["run"]
+@pytest.mark.parametrize("dry_run", [False, True])
+def test_scheduled_probe_checks_availability_without_a_main_commit(
+    tmp_path: Path,
+    dry_run: bool,
+) -> None:
+    step = next(step for step in _steps(_workflow()) if "check-production" in step.get("run", ""))
+    arguments = _run_probe_step(step, tmp_path, dry_run=dry_run)
+    assert arguments == [
+        "run",
+        "election-guide",
+        "hosting",
+        "check-production",
+        "https://seattleelections.guide",
+        "--availability-only",
+        "--repository",
+        "shaug/seattle-election-guide",
+        *(["--dry-run"] if dry_run else []),
+    ]
 
 
 def test_the_workflow_can_open_and_update_alert_issues() -> None:
-    workflow = _workflow()
-
-    assert workflow["permissions"]["issues"] == "write"
+    assert _workflow()["permissions"]["issues"] == "write"
 
 
 def test_concurrent_runs_are_serialized_not_canceled() -> None:
-    workflow = _workflow()
+    assert _workflow()["concurrency"]["cancel-in-progress"] == "false"
 
-    assert workflow["concurrency"]["cancel-in-progress"] is False
+
+def test_deployment_verifies_its_approved_sha_after_upload(tmp_path: Path) -> None:
+    workflow = _workflow(PROJECT_ROOT / ".github" / "workflows" / "ci.yml")
+    steps = workflow["jobs"]["deploy"]["steps"]
+    probe = next((step for step in steps if "check-production" in step.get("run", "")), None)
+    assert probe is not None, "an approved upload needs a production verification"
+    upload = next(step for step in steps if step.get("name") == "Deploy production site")
+    assert steps.index(probe) > steps.index(upload)
+    assert "if" not in probe
+    arguments = _run_probe_step(probe, tmp_path)
+    assert arguments == [
+        "run",
+        "election-guide",
+        "hosting",
+        "check-production",
+        "https://seattleelections.guide",
+        "--expected-git-commit",
+        "b" * 40,
+        "--dry-run",
+        "--output",
+        "dist/production-probe.json",
+    ]

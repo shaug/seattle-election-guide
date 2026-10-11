@@ -78,7 +78,7 @@ class RouteCheckResult(BaseModel):
 
 
 class CommitCheck(BaseModel):
-    """The manifest's current-election commit against the commit `main` is on."""
+    """The manifest's current-election commit against an explicitly approved commit."""
 
     model_config = ConfigDict(extra="forbid", frozen=True)
 

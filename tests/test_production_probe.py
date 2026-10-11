@@ -356,6 +356,34 @@ def test_run_production_check_catches_a_commit_mismatch(server: str) -> None:
     assert report.commit.observed == COMMIT
 
 
+def test_availability_checks_the_served_routes_without_a_release_expectation(server: str) -> None:
+    report = run_production_check(server, expected_git_commit=None, timeout=5)
+
+    assert report.ok
+    assert report.commit is None
+    assert report.deployment_contract is None
+    assert report.data_freshness is None
+    assert [result.check.path for result in report.route_results] == [
+        "/",
+        "/e/wa-2026-primary/",
+        "/e/wa-2026-primary/voter-guide.pdf",
+    ]
+
+
+def test_availability_reports_an_unreachable_site() -> None:
+    report = run_production_check("http://127.0.0.1:1", expected_git_commit=None, timeout=1)
+
+    assert not report.ok
+    assert report.manifest.observed.error is not None
+
+
+def test_a_publication_contract_cannot_omit_its_expected_commit(server: str) -> None:
+    with pytest.raises(ValueError, match="expected Git commit"):
+        run_production_check(
+            server, expected_git_commit=None, timeout=5, site_manifest=_site_manifest()
+        )
+
+
 def test_run_production_check_alerts_on_stale_published_data_inside_the_window(
     server: str,
 ) -> None:
