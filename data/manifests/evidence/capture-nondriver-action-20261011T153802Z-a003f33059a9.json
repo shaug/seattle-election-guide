@@ -1,0 +1,23 @@
+{
+  "availability": "captured",
+  "browser_required": false,
+  "byte_length": 120876,
+  "canonical_url": "https://ndaction.org/2026-endorsements/",
+  "capture_method": "static_html",
+  "content_sha256": "42db01a3d95364ffa1f3e1df26cf32b259230306e70b8d25386a019cf8aa0093",
+  "http_status": 200,
+  "id": "capture-nondriver-action-20261011T153802Z-a003f33059a9",
+  "media_type": "text/html",
+  "published_at": null,
+  "redirect_chain": [],
+  "redistribution": "restricted",
+  "redistribution_note": "Full third-party artifact retained locally for evidence review; only manifest metadata and brief factual transcriptions enter Git.",
+  "requested_url": "https://ndaction.org/2026-endorsements/",
+  "retrieved_at": "2026-10-11T15:38:02.628357Z",
+  "schema_version": "1.0",
+  "source_id": "nondriver-action",
+  "storage_reference": "sha256/42/42db01a3d95364ffa1f3e1df26cf32b259230306e70b8d25386a019cf8aa0093",
+  "storage_scope": "local_only",
+  "title": "nondriver endorsements",
+  "updated_at": null
+}

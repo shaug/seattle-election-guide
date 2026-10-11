@@ -1,0 +1,79 @@
+[
+  {
+    "key": "nondriver-endorsements",
+    "source_id": "nondriver-action",
+    "capture_id": "capture-nondriver-action-20261011T153802Z-a003f33059a9",
+    "manifest": "data/manifests/evidence/capture-nondriver-action-20261011T153802Z-a003f33059a9.json",
+    "representation": "nondriver endorsements"
+  },
+  {
+    "key": "nondriver-identity",
+    "source_id": "nondriver-action",
+    "capture_id": "capture-nondriver-action-20261011T153802Z-a0d3a13d0bfd",
+    "manifest": "data/manifests/evidence/capture-nondriver-action-20261011T153802Z-a0d3a13d0bfd.json",
+    "representation": "nondriver identity"
+  },
+  {
+    "key": "caac-identity",
+    "source_id": "citizens-against-aipac-corruption",
+    "capture_id": "capture-citizens-against-aipac-corruption-20261011T153802Z-6fd2af0e7ff1",
+    "manifest": "data/manifests/evidence/capture-citizens-against-aipac-corruption-20261011T153802Z-6fd2af0e7ff1.json",
+    "representation": "caac identity"
+  },
+  {
+    "key": "yd-user-screenshot",
+    "source_id": "young-democrats-of-washington",
+    "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-87632b6e1581",
+    "manifest": "data/manifests/evidence/capture-young-democrats-of-washington-20261011T154156Z-87632b6e1581.json",
+    "representation": "Young Democrats of Washington October 8, 2026 endorsement announcement: yd-user-screenshot"
+  },
+  {
+    "key": "yd-slide-1",
+    "source_id": "young-democrats-of-washington",
+    "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-39c6bb4ff6cb",
+    "manifest": "data/manifests/evidence/capture-young-democrats-of-washington-20261011T154156Z-39c6bb4ff6cb.json",
+    "representation": "Young Democrats of Washington October 8, 2026 endorsement announcement: yd-slide-1"
+  },
+  {
+    "key": "yd-slide-2",
+    "source_id": "young-democrats-of-washington",
+    "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be",
+    "manifest": "data/manifests/evidence/capture-young-democrats-of-washington-20261011T154156Z-6be1c77e81be.json",
+    "representation": "Young Democrats of Washington October 8, 2026 endorsement announcement: yd-slide-2"
+  },
+  {
+    "key": "yd-slide-3",
+    "source_id": "young-democrats-of-washington",
+    "capture_id": "capture-young-democrats-of-washington-20261011T154156Z-e899e720f93b",
+    "manifest": "data/manifests/evidence/capture-young-democrats-of-washington-20261011T154156Z-e899e720f93b.json",
+    "representation": "Young Democrats of Washington October 8, 2026 endorsement announcement: yd-slide-3"
+  },
+  {
+    "key": "caac-endorsements-visible",
+    "source_id": "citizens-against-aipac-corruption",
+    "capture_id": "capture-citizens-against-aipac-corruption-20261011T153845Z-e9f7b9f70af8",
+    "manifest": "data/manifests/evidence/capture-citizens-against-aipac-corruption-20261011T153845Z-e9f7b9f70af8.json",
+    "representation": "CAAC public browser visible-text export"
+  },
+  {
+    "key": "gop-endorsements-visible",
+    "source_id": "king-county-republican-party",
+    "capture_id": "capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e",
+    "manifest": "data/manifests/evidence/capture-king-county-republican-party-20261011T153858Z-b4bb4477af2e.json",
+    "representation": "GOP public browser visible-text export"
+  },
+  {
+    "key": "nondrivers-affiliation",
+    "source_id": "nondriver-action",
+    "capture_id": "capture-nondriver-action-20261011T154453Z-a130527c65bf",
+    "manifest": "data/manifests/evidence/capture-nondriver-action-20261011T154453Z-a130527c65bf.json",
+    "representation": "Related organizational identity HTML published by Nondrivers Alliance"
+  },
+  {
+    "key": "nondrivers-history",
+    "source_id": "nondriver-action",
+    "capture_id": "capture-nondriver-action-20261011T154454Z-91b9574133f7",
+    "manifest": "data/manifests/evidence/capture-nondriver-action-20261011T154454Z-91b9574133f7.json",
+    "representation": "Related organizational identity HTML published by Nondrivers Alliance"
+  }
+]
