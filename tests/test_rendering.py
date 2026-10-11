@@ -16,7 +16,10 @@ from urllib.parse import urlencode
 import pytest
 from PIL import Image, ImageDraw
 from pydantic import ValidationError
-from websocket import create_connection  # pyright: ignore[reportUnknownVariableType]
+from websocket import (
+    WebSocketException,
+    create_connection,  # pyright: ignore[reportUnknownVariableType]
+)
 
 from election_guide.normalization.models import CanonicalDataset
 from election_guide.publication import build_publication_bundle
@@ -3748,109 +3751,172 @@ def _evaluate_in_chrome(
     chrome_path = find_chrome()
     profile = Path(tempfile.mkdtemp(prefix="election-guide-chrome-"))
     try:
-        process = subprocess.Popen(
-            [
-                str(chrome_path),
-                "--headless=new",
-                "--disable-gpu",
-                "--disable-dev-shm-usage",
-                "--disable-background-networking",
-                "--disable-component-update",
-                "--disable-extensions",
-                "--hide-scrollbars",
-                "--no-first-run",
-                "--allow-file-access-from-files",
-                *(
-                    [
-                        "--blink-settings=primaryHoverType=2,availableHoverTypes=2,"
-                        "primaryPointerType=4,availablePointerTypes=4"
-                    ]
-                    if pointer
-                    else []
-                ),
-                f"--user-data-dir={profile}",
-                "--remote-debugging-port=0",
-                "about:blank",
-            ],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
-        try:
-            port, browser_path = _wait_for_devtools_endpoint(process, profile)
-            websocket = create_connection(
-                f"ws://127.0.0.1:{port}{browser_path}",
-                timeout=30,
-                suppress_origin=True,
-                http_no_proxy=["127.0.0.1"],
+        with tempfile.TemporaryFile(mode="w+t", encoding="utf-8") as errors:
+            process = subprocess.Popen(
+                [
+                    str(chrome_path),
+                    "--headless=new",
+                    "--disable-gpu",
+                    "--disable-dev-shm-usage",
+                    "--disable-background-networking",
+                    "--disable-component-update",
+                    "--disable-extensions",
+                    "--hide-scrollbars",
+                    "--no-first-run",
+                    "--allow-file-access-from-files",
+                    *(
+                        [
+                            "--blink-settings=primaryHoverType=2,availableHoverTypes=2,"
+                            "primaryPointerType=4,availablePointerTypes=4"
+                        ]
+                        if pointer
+                        else []
+                    ),
+                    f"--user-data-dir={profile}",
+                    "--remote-debugging-port=0",
+                    "about:blank",
+                ],
+                stdout=subprocess.DEVNULL,
+                stderr=errors,
             )
             try:
-                cdp = _CdpSocket(websocket)
-                target = cdp.command("Target.createTarget", {"url": "about:blank"})
-                target_id = cast(str, target["targetId"])
-                attached = cdp.command(
-                    "Target.attachToTarget", {"targetId": target_id, "flatten": True}
+                port, browser_path = _wait_for_devtools_endpoint(process, profile)
+                websocket = create_connection(
+                    f"ws://127.0.0.1:{port}{browser_path}",
+                    timeout=30,
+                    suppress_origin=True,
+                    http_no_proxy=["127.0.0.1"],
                 )
-                session_id = cast(str, attached["sessionId"])
-                cdp.command("Page.enable", session_id=session_id)
-                if mobile_width is not None:
+                try:
+                    cdp = _CdpSocket(websocket)
+                    target = cdp.command("Target.createTarget", {"url": "about:blank"})
+                    target_id = cast(str, target["targetId"])
+                    attached = cdp.command(
+                        "Target.attachToTarget", {"targetId": target_id, "flatten": True}
+                    )
+                    session_id = cast(str, attached["sessionId"])
+                    cdp.command("Page.enable", session_id=session_id)
+                    if mobile_width is not None:
+                        cdp.command(
+                            "Emulation.setDeviceMetricsOverride",
+                            {
+                                "width": mobile_width,
+                                "height": 780,
+                                "deviceScaleFactor": 1,
+                                "mobile": True,
+                            },
+                            session_id=session_id,
+                        )
+                    elif viewport is not None:
+                        cdp.command(
+                            "Emulation.setDeviceMetricsOverride",
+                            {
+                                "width": viewport[0],
+                                "height": viewport[1],
+                                "deviceScaleFactor": 1,
+                                "mobile": False,
+                            },
+                            session_id=session_id,
+                        )
+                    if touch:
+                        cdp.command(
+                            "Emulation.setTouchEmulationEnabled",
+                            {"enabled": True, "maxTouchPoints": 1},
+                            session_id=session_id,
+                        )
                     cdp.command(
-                        "Emulation.setDeviceMetricsOverride",
-                        {
-                            "width": mobile_width,
-                            "height": 780,
-                            "deviceScaleFactor": 1,
-                            "mobile": True,
-                        },
+                        "Page.navigate",
+                        {"url": initial_url or html_path.resolve().as_uri()},
                         session_id=session_id,
                     )
-                elif viewport is not None:
-                    cdp.command(
-                        "Emulation.setDeviceMetricsOverride",
-                        {
-                            "width": viewport[0],
-                            "height": viewport[1],
-                            "deviceScaleFactor": 1,
-                            "mobile": False,
-                        },
+                    cdp.wait_event("Page.loadEventFired", session_id=session_id)
+                    if media is not None:
+                        cdp.command(
+                            "Emulation.setEmulatedMedia",
+                            {"media": media},
+                            session_id=session_id,
+                        )
+                    evaluated = cdp.command(
+                        "Runtime.evaluate",
+                        {"expression": expression, "returnByValue": True, "awaitPromise": True},
                         session_id=session_id,
                     )
-                if touch:
-                    cdp.command(
-                        "Emulation.setTouchEmulationEnabled",
-                        {"enabled": True, "maxTouchPoints": 1},
-                        session_id=session_id,
-                    )
-                cdp.command(
-                    "Page.navigate",
-                    {"url": initial_url or html_path.resolve().as_uri()},
-                    session_id=session_id,
-                )
-                cdp.wait_event("Page.loadEventFired", session_id=session_id)
-                if media is not None:
-                    cdp.command(
-                        "Emulation.setEmulatedMedia",
-                        {"media": media},
-                        session_id=session_id,
-                    )
-                evaluated = cdp.command(
-                    "Runtime.evaluate",
-                    {"expression": expression, "returnByValue": True, "awaitPromise": True},
-                    session_id=session_id,
-                )
-                result = cast(dict[str, object], evaluated["result"])
-                if "value" not in result:
-                    raise ValueError(f"personalization evaluation failed: {evaluated}")
-                return cast(dict[str, Any], json.loads(cast(str, result["value"])))
+                    result = cast(dict[str, object], evaluated["result"])
+                    if "value" not in result:
+                        raise ValueError(f"personalization evaluation failed: {evaluated}")
+                    return cast(dict[str, Any], json.loads(cast(str, result["value"])))
+                finally:
+                    websocket.close()
+            except (OSError, ValueError, TimeoutError, WebSocketException) as error:
+                errors.seek(0)
+                detail = errors.read().strip()
+                suffix = f": {detail}" if detail else ""
+                raise ValueError(f"Chrome evaluation failed: {error}{suffix}") from error
             finally:
-                websocket.close()
-        finally:
-            _terminate_process(process)
+                _terminate_process(process)
     finally:
         shutil.rmtree(profile, ignore_errors=True)
 
 
+def test_browser_evaluation_preserves_startup_diagnostics(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A startup failure must explain what Chrome reported before exiting."""
+    chrome = tmp_path / "failed-chrome"
+    chrome.write_text(
+        "#!/bin/sh\nprintf '%s\\n' 'fixture Chrome startup failure' >&2\nexit 1\n",
+        encoding="utf-8",
+    )
+    chrome.chmod(0o755)
+    monkeypatch.setenv("CHROME_PATH", str(chrome))
+    with pytest.raises(ValueError, match="fixture Chrome startup failure"):
+        _evaluate_in_chrome(tmp_path / "unused.html", "JSON.stringify({})")
+
+
+def test_browser_evaluation_preserves_connection_diagnostics(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A failed DevTools handshake must retain Chrome's stderr too."""
+    chrome = tmp_path / "failed-chrome-connection"
+    chrome.write_text(
+        f"#!{sys.executable}\n"
+        + """import sys
+from pathlib import Path
+from http.server import BaseHTTPRequestHandler, HTTPServer
+
+class Handler(BaseHTTPRequestHandler):
+    def log_message(self, *args):
+        pass
+
+    def do_GET(self):
+        self.send_response(403)
+        self.end_headers()
+
+profile = next(
+    argument.split('=', 1)[1] for argument in sys.argv
+    if argument.startswith('--user-data-dir=')
+)
+server = HTTPServer(('127.0.0.1', 0), Handler)
+print('fixture Chrome connection failure diagnostic', file=sys.stderr, flush=True)
+(Path(profile) / 'DevToolsActivePort').write_text(
+    f'{server.server_port}\\n/devtools/browser/fixture\\n', encoding='utf-8'
+)
+server.serve_forever()
+""",
+        encoding="utf-8",
+    )
+    chrome.chmod(0o755)
+    monkeypatch.setenv("CHROME_PATH", str(chrome))
+    with pytest.raises(ValueError, match="fixture Chrome connection failure diagnostic"):
+        _evaluate_in_chrome(tmp_path / "unused.html", "JSON.stringify({})")
+
+
+@pytest.mark.parametrize("slow_transition", [False, True])
 def test_overview_meter_progressively_discloses_endorsement_segments(
     tmp_path: Path,
+    slow_transition: bool,
 ) -> None:
     """Pointer rest shows the percentage; focus, touch, and print show seams."""
     view_model = _personalization_enabled_view_model(tmp_path)
@@ -3859,6 +3925,17 @@ def test_overview_meter_progressively_discloses_endorsement_segments(
         render_html_document(view_model, read_rendering_configuration(RENDERING_CONFIG)),
         encoding="utf-8",
     )
+    if slow_transition:
+        # Expose the fixed-sleep race without depending on runner load. The
+        # final opacity and seam assertions still have to hold exactly.
+        html_path.write_text(
+            html_path.read_text(encoding="utf-8").replace(
+                "</head>",
+                "<style>.screen-meter strong, .meter-block, .meter-half-bottom "
+                "{ transition-duration: 1s !important; }</style></head>",
+            ),
+            encoding="utf-8",
+        )
     expression = """
       (async () => {
         const meter = [...document.querySelectorAll('.screen-meter:not(.screen-meter-na)')]
@@ -3876,7 +3953,21 @@ def test_overview_meter_progressively_discloses_endorsement_segments(
         });
         const rest = snapshot();
         meter.focus();
-        await new Promise((resolve) => setTimeout(resolve, 220));
+        // Reading the style starts pending transitions before enumerating them.
+        getComputedStyle(label).opacity;
+        let deadline;
+        try {
+          await Promise.race([
+            Promise.all(meter.getAnimations({ subtree: true })
+              .map((animation) => animation.finished)),
+            new Promise((_, reject) => {
+              deadline = setTimeout(() => reject(
+                new Error('meter transitions did not finish')), 2000);
+            }),
+          ]);
+        } finally {
+          clearTimeout(deadline);
+        }
         return JSON.stringify({
           hover: matchMedia('(hover: hover)').matches,
           label: label.textContent,
