@@ -185,7 +185,9 @@ def run_production_check(
         )
     archive_index = None
     if site_manifest is None:
-        route_checks = plan_route_checks(manifest.current_election_id)
+        route_checks = plan_route_checks(
+            manifest.current_election_id, canonical_origin=base_url.rstrip("/")
+        )
         route_results = tuple(
             RouteCheckResult(check=check, observed=probe(base_url, check, timeout=timeout))
             for check in route_checks

@@ -182,7 +182,9 @@ class ProductionCheckReport(BaseModel):
         return self.data_freshness is None or self.data_freshness.ok
 
 
-def plan_route_checks(current_election_id: str) -> list[RouteCheck]:
+def plan_route_checks(
+    current_election_id: str, *, canonical_origin: str | None = None
+) -> list[RouteCheck]:
     """The route-contract checks that follow from one manifest-declared current election.
 
     Any filename satisfies the legacy-PDF rule (`docs/HOSTING.md`, "Archive
@@ -196,6 +198,7 @@ def plan_route_checks(current_election_id: str) -> list[RouteCheck]:
             path="/",
             expected_status=307,
             expected_location=election_path,
+            expected_location_origin=canonical_origin,
         ),
         RouteCheck(
             name="current election guide",
@@ -207,6 +210,7 @@ def plan_route_checks(current_election_id: str) -> list[RouteCheck]:
             path=f"{election_path}voter-guide.pdf",
             expected_status=301,
             expected_location=election_path,
+            expected_location_origin=canonical_origin,
         ),
     ]
 

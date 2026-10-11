@@ -377,7 +377,8 @@ no execution-clock gate or election-dependent cadence (#512).
 
 It uses `hosting check-production --availability-only` to fetch and parse the served deployment
 manifest, check the home redirect, request the current guide declared by that manifest, and check
-its legacy PDF redirect. A healthy run opens no issue. Failures open or update the single
+its legacy PDF redirect. Both redirects must point to the canonical production origin, not just
+the expected path. A healthy run opens no issue. Failures open or update the single
 `production-check:monitor` issue, titled **Production availability check failed**; recovery closes
 it. The existing marker also finds an older alert created under the previous title.
 
