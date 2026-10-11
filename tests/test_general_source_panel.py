@@ -102,6 +102,8 @@ def test_compiled_general_guide_includes_washingtoncan_initiative_recommendation
         "initiative-26-001": ["initiative-26-001--no"],
         "initiative-26-638": ["initiative-26-638--no"],
         "initiative-26-645": ["initiative-26-645--no"],
+        "king-county-council-2": ["king-county-council-2--rebecca-saldana"],
+        "king-county-council-8": ["king-county-council-8--teresa-mosqueda"],
     }
 
 

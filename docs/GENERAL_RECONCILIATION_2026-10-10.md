@@ -1,12 +1,12 @@
-# October 10, 2026 general endorsement reconciliation — pending human verification
+# October 10, 2026 general endorsement reconciliation — approved source reconciliation
 
 Scope: [#508](https://github.com/shaug/seattle-election-guide/issues/508). Prepared by OpenAI Codex from the electioncheatsheet.org audit, then checked against the official publications captured below. This is a targeted correction packet; the comprehensive October 15 sweep in [#491](https://github.com/shaug/seattle-election-guide/issues/491) remains open.
 
-**Review status: pending.** The 64 additions and one changed decision below have not been applied to the release ledger or canonical dataset. Human verification must cover the new transcriptions and explicit label mappings before application. If all are verified, the decision count becomes 681 (617 + 64); updating the existing Davis decision does not add another record. Two new published source blocks bring coverage from 34 to 36.
+**Review status: approved and applied.** shaug replied “approved” to this concrete packet in the Codex session. The review was recorded after that reply at 2026-10-11T01:24:53Z (October 10 Pacific). It covers all 65 proposed decisions, the five explicit label mappings, and eight discovery updates. The release ledger and canonical dataset now contain 681 decisions (617 + 64); updating the existing Davis decision adds no record. The Stranger and Washington Bus bring coverage from 34 to 36 source blocks. The original pending proposal and manual entries remain immutable; the [approval record](../data/review/approvals/wa-2026-general-2026-10-10.json) links each pending entry to its verified successor and records every correction.
 
-The proposal is [structured data](../data/review/proposals/wa-2026-general-2026-10-10.json), bound to the baseline input hashes below. It contains 15 pending manual-entry records and 19 new capture records: eight static official pages, a supplemental Stranger record with the observed October 9 publication date and identical artifact bytes, nine official images, and one manually saved browser DOM table excerpt. The WFP excerpt normalizes intertag whitespace, covers the displayed Washington table, and asserts no browser HTTP status. Restricted artifact bytes live in the primary checkout’s durable ignored data/snapshots store, outside the linked implementation worktree. All proposal evidence is hash-verified there.
+The proposal is [structured data](../data/review/proposals/wa-2026-general-2026-10-10.json), bound to the baseline input hashes below. It references 15 original pending manual-entry records, now linked to 15 verified successors, and 19 new capture records: eight static official pages, a supplemental Stranger record with the observed October 9 publication date and identical artifact bytes, nine official images, and one manually saved browser DOM table excerpt. The WFP excerpt normalizes intertag whitespace, covers the displayed Washington table, and asserts no browser HTTP status. Restricted artifact bytes live in the primary checkout’s durable ignored data/snapshots store, outside the linked implementation worktree. All proposal evidence is hash-verified there.
 
-The structured proposal also includes eight discovery updates with prior and proposed values, including the newer official Tech 4 Housing page and expanded WFP index. These updates validate against the registry model and preserve the stable panel hash `b0fb2a603bd98da49d3282d2daa0cb55ff56e0bbdd46104c8b5a4a441b747a95`; apply them together with the verified ledger changes.
+The structured proposal also includes eight discovery updates with prior and proposed values, including the newer official Tech 4 Housing page and expanded WFP index. These updates validate against the registry model and preserve the stable panel hash `b0fb2a603bd98da49d3282d2daa0cb55ff56e0bbdd46104c8b5a4a441b747a95`; they were applied together with the verified ledger changes.
 
 Source membership, eligibility, roles, weighting, official ballot inventory, and grade rules retain their existing contracts. Keep verified PROTEC17’s Ryu, Noble and Macri endorsements, SEIU 925’s Noble endorsement, and the 11th / 37th / 43rd District Democrats’ explicit US House 9 no-endorsement decisions. Their absence from the comparator is not evidence for deleting them.
 
@@ -23,21 +23,21 @@ Source membership, eligibility, roles, weighting, official ballot inventory, and
 | [OneAmerica Votes](https://oavotes.org/our-work/endorsements/2026-endorsements/) | 2 | 0 |
 | [Washington Community Action Network](https://www.washingtoncan.org/endorsements) | 2 | 0 |
 
-## Explicit source-label mappings for confirmation
+## Approved source-label mappings
 
-These proposed mappings use unique identities in the frozen official ballot. They remain pending; no corrected race has been silently published.
+shaug approved all five mappings below. Each uses a unique identity in the frozen official ballot. The approval record preserves prior and new values, reasons, evidence, author, and timestamp.
 
 | Source | Original label | Proposed ballot match | Reason |
 | --- | --- | --- | --- |
-| The Stranger Election Control Board | Jamie Michelle Hawk | Jaime Michelle Hawk | Supreme Court Position 3 and unique ballot identity resolve the source spelling. Human must confirm this explicit alias treatment. |
-| King County Democrats | Ballot Measure IL26-645 - OPPOSE | Initiative IP26-645 - No | The heading mistypes IL, but the Vote NO on IP26-645 link and Millionaires Tax description identify the measure. Human must confirm this mapping. |
-| King County Democrats | Gerry Pollet, LD 46 Representative Pos. 2 | Gerry Pollet, LD46 Representative Position 1 | The source separately lists Farivar for Position 2. Pollet appears only in Position 1 in the frozen ballot. Human must confirm the source position typo before publication. |
-| The Washington Bus | Kelabe Tewolde, Legislative District No. 37, State Representative, Pos. 2 | Kelabe Tewolde, LD37 Representative Position 1 | The two LD37 House image labels are swapped. Frozen ballot uniquely places Tewolde in Position 1. Human must confirm the corrected race match. |
-| The Washington Bus | Jaelynn Scott, Legislative District No. 37, State Representative, Pos. 1 | Jaelynn Scott, LD37 Representative Position 2 | The two LD37 House image labels are swapped. Frozen ballot uniquely places Scott in Position 2. Human must confirm the corrected race match. |
+| The Stranger Election Control Board | Jamie Michelle Hawk | Jaime Michelle Hawk | Supreme Court Position 3 and unique ballot identity resolve the source spelling. Alias approved by shaug. |
+| King County Democrats | Ballot Measure IL26-645 - OPPOSE | Initiative IP26-645 - No | The heading mistypes IL, but the Vote NO on IP26-645 link and Millionaires Tax description identify the measure. Mapping approved by shaug. |
+| King County Democrats | Gerry Pollet, LD 46 Representative Pos. 2 | Gerry Pollet, LD46 Representative Position 1 | The source separately lists Farivar for Position 2. Pollet appears only in Position 1 in the frozen ballot. Position correction approved by shaug. |
+| The Washington Bus | Kelabe Tewolde, Legislative District No. 37, State Representative, Pos. 2 | Kelabe Tewolde, LD37 Representative Position 1 | The two LD37 House image labels are swapped. Frozen ballot uniquely places Tewolde in Position 1. Race correction approved by shaug. |
+| The Washington Bus | Jaelynn Scott, Legislative District No. 37, State Representative, Pos. 1 | Jaelynn Scott, LD37 Representative Position 2 | The two LD37 House image labels are swapped. Frozen ballot uniquely places Scott in Position 2. Race correction approved by shaug. |
 
-## Every proposed decision
+## Every approved decision
 
-In each section, the capture and pending manual-entry IDs are the immutable audit references. A dual choice is one decision; the allocation column is the point assigned to each named choice.
+In each section, the capture and original pending manual-entry IDs preserve the prepared packet. The approval record maps those entries to the completed human reviews. A dual choice is one decision; the allocation column is the point assigned to each named choice.
 
 ### The Stranger Election Control Board
 
@@ -208,7 +208,7 @@ The two county council endorsement graphics were already linked in capture-washi
 
 ## Unresolved leads — excluded from this proposal
 
-If every proposed row is human-verified, the audit's organization-family comparison would have 362 matching choice sets and no conflicting choice sets. This reconciles 64 shared decisions (63 additions and the changed dual); WFP's Shaun Scott addition is outside the comparator's contested-only inventory. The remaining 87 comparator-only records comprise the 72 unresolved leads below and 15 additional PVG recommendations. Thirty records from unregistered sources remain separate eligibility work. This is a conditional comparison, not a claim that the pending rows are already published.
+After applying the approved rows, the audit's organization-family comparison has 362 matching choice sets and no conflicting choice sets. This reconciles 64 shared decisions (63 additions and the changed dual); WFP's Shaun Scott addition is outside the comparator's contested-only inventory. The remaining 87 comparator-only records comprise the 72 unresolved leads below and 15 additional PVG recommendations. Thirty records from unregistered sources remain separate eligibility work. This comparison describes the local reviewed dataset; the public site will change only through the release workflow.
 
 | Source | Outstanding evidence | Next action |
 | --- | --- | --- |
@@ -244,3 +244,19 @@ The unresolved leads retain their exact discovery URLs and complete race-level c
 Validation before human verification: baseline release verify passed at d6f186c78c286381c3c6ce45ec4223be8d6c47d5 (34 sources / 617 decisions). Every proposed candidate resolves to the stated frozen race, each allocation sums to one, and every proposal capture / pending manual record validates. Eight proposed discovery updates validate without changing the stable panel hash. The change-demonstrating-test form is `evidence_docs_config_exemption`: only documentary review data, evidence metadata, and the collection checklist have changed; no executable behavior has changed.
 
 `make check` passed after preparation: 1,301 Python tests and 684 JavaScript tests, format / lint / type checks, both election contracts and release verification, calendar, evidence, results, and changelog gates. The primary release remains 538 decisions / 41 sources and the general release remains 617 decisions / 34 sources. The separate durable-store check `evidence verify-all --require-local --storage-root <primary-checkout>/data/snapshots` also passed: all 162 capture manifests resolve to 156 present records or six intentional metadata-only records. No artifact was missing or corrupt. `git diff --check` passed.
+
+## Publication handoff
+
+The next immutable candidate is `2026-general.5`. Approval here verifies source data; it does not publish a GitHub Release or approve production deployment. The exact merged release candidate and its final ZIP must be built, inspected, and bound through `docs/RELEASE.md`. The primary release, frozen ballot, stable panel hash, and scoring policy are unchanged.
+
+| Reviewed input | File-byte SHA-256 |
+| --- | --- |
+| `config/sources/wa-2026-general.yaml` | `40f5fdfe26caf39fd45bcb713c685e529350f0b5d947e9fb609c416c4a83fd2a` |
+| `data/normalized/wa-2026-general-canonical-dataset.json` | `c1cae6d9551f7942190b50a251ab8c65ef237b9f10958457c1e971e788235c34` |
+| `data/releases/wa-2026-general/source-decisions.yaml` | `269ce6443d8457e7148ee2672824d47ec0144ae06eaa6d2634136ed2552c8972` |
+
+Validated complete registry hash: `0ffeccf149259a0c1c93a551e1d4d1a2e255e25dd3f279e787efdc4877543327`. Stable panel hash remains `b0fb2a603bd98da49d3282d2daa0cb55ff56e0bbdd46104c8b5a4a441b747a95`. The baseline preparation checks above remain historical evidence; final application checks are recorded in the pull request and delivery handoff.
+
+Application validation: general release compilation and verification pass with 681 decisions / 36 sources. The durable-store evidence check passes with 162 manifests (156 present and six metadata-only records). The existing WashingtonCAN compilation test now asserts its full seven-decision slate, including the two approved county council additions; all five general source-panel tests pass. The comparator recalculation confirms 362 matches, zero conflicts, 87 remaining comparator-only records, 30 records from unregistered sources, and seven guide-only records within its 31-race inventory. No scoring or rendering fixture changes are assumed; the full gate determines which fixtures are affected.
+
+The per-election corrections page records the Davis-to-dual change. Routine new-publication additions remain in the refresh record.

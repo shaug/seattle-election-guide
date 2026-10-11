@@ -1,0 +1,16 @@
+{
+  "capture_id": "capture-oneamerica-votes-20261011T010723Z-6badda3e27c2",
+  "entered_at": "2026-10-11T01:10:18.434680Z",
+  "entry_method": "manual",
+  "evidence_locator": "2026 endorsements, Initiatives heading; endorses No Hate in WA State Campaign and urges VOTE NO on IL26-001 / IL26-638 this November.",
+  "evidence_type": "web_page",
+  "id": "manual-oneamerica-votes-20261011T011018Z-d1bb8403fd93",
+  "review_note": "Issue #508: shaug replied \"approved\" to the concrete October 10 reconciliation packet in this Codex session, confirming its 65 proposed decisions and all five explicit source-label mappings. OpenAI Codex prepared the transcription; shaug is the human verifier. This is a targeted review, not a new whole-panel sweep.",
+  "review_status": "verified",
+  "reviewed_at": "2026-10-11T01:24:53Z",
+  "reviewed_by": "shaug",
+  "reviewer": "OpenAI Codex",
+  "schema_version": "1.0",
+  "source_id": "oneamerica-votes",
+  "transcription": "Initiative IL26-001 — Parental Rights in Public Schools: No\nInitiative IL26-638 — Participation in K-12 School Athletics: No"
+}
