@@ -369,20 +369,41 @@ completion and preserve that output separately (for example,
 routes the operator to [the production rollback runbook](runbooks/production-rollback.md). It never
 authorizes a rollback, kill-switch change, or approval of another SHA.
 
+## Scheduled production availability
+
+The `Production availability` workflow runs once an hour, off the top of the hour. Every
+scheduled or manually dispatched run executes the probe, even if GitHub starts it late. There is
+no execution-clock gate or election-dependent cadence (#512).
+
+It uses `hosting check-production --availability-only` to fetch and parse the served deployment
+manifest, check the home redirect, request the current guide declared by that manifest, and check
+its legacy PDF redirect. Both redirects must point to the canonical production origin, not just
+the expected path. A healthy run opens no issue. Failures open or update the single
+`production-check:monitor` issue, titled **Production availability check failed**; recovery closes
+it. The existing marker also finds an older alert created under the previous title.
+
+The availability probe does not compare the site with `main` or its unpublished release
+declarations, and does not check data age. Passing it means the served manifest and those routes
+respond correctly. It does not attest that the intended release or all its content is published.
+
+Release identity stays with the [publication-day production probe](#publication-day-production-probe).
+The protected `deploy` job runs that strict, read-only check immediately after its approved upload,
+using the job's full `GITHUB_SHA`, and preserves `production-probe.json` as an Actions artifact.
+A failed probe fails the deployment job; it does not roll back or authorize another deployment.
+Strict verification requires `--expected-git-commit`; combining it with `--availability-only` is
+rejected rather than silently discarding the release expectation.
+
 ## Production freshness check
 
-The scheduled production check reads the current election's public
-`release-manifest.json` and treats its `generated_at` value as stale when it is
-more than seven days old during the seven-day pre-election window. Outside that
-window, age alone never opens an alert. The window comes from the
-`election_day` milestone in `config/calendar/elections.yaml`; no second election
-date is configured in the monitor.
+Strict release verification reads the current election's public `release-manifest.json` and treats
+its `generated_at` value as stale when it is more than seven days old during the seven-day
+pre-election window. The scheduled availability probe does not run this check (#512). Outside
+that window, age alone never fails strict verification. The window comes from the `election_day`
+milestone in `config/calendar/elections.yaml`; no second election date is configured in the probe.
 
-Seven days matches the guide's planned weekly refresh rhythm: the calendar
-schedules refreshes at eleven and four days before election day. A release can
-therefore reach seven days old without missing that rhythm, while an age greater
-than seven days means a scheduled refresh has not produced a newer publication.
-The comparison is strict: exactly seven days old still passes.
+Seven days matches the guide's planned weekly refresh rhythm: the calendar schedules refreshes
+at eleven and four days before election day. The comparison is strict: exactly seven days old
+still passes. Recurring endorsement verification remains separate from availability monitoring.
 
 ## Deployment gate
 
@@ -466,20 +487,18 @@ store, never in git history.
 | Cloudflare account | Cloudflare dashboard | Owns the `seattle-elections` Pages project, the `seattleelections.guide` zone, and the API token below. | Account recovery through Cloudflare support using the maintainer's registered email. |
 | Cloudflare API token | GitHub Actions secret `CLOUDFLARE_API_TOKEN` | Scoped to **Account / Cloudflare Pages / Edit**; authorizes the `wrangler pages deploy` upload in `deploy` (production) and `deploy-pr-preview.yml` (previews). | See [Rotating the Cloudflare API token](#rotating-the-cloudflare-api-token). Until a new token is in place, set `CLOUDFLARE_PAGES_ENABLED` to anything but `true` — see [Kill switch](#kill-switch) — so a broken or revoked token fails closed instead of failing every deploy job loudly. |
 | Cloudflare account ID | GitHub Actions secret `CLOUDFLARE_ACCOUNT_ID` | Identifies which Cloudflare account the token above acts on; required by every `wrangler pages` invocation. | Stable for the account's lifetime. Re-read from the Cloudflare dashboard sidebar and update the secret if the account is ever recreated. |
-| Cloudflare analytics token | GitHub Actions secret `CLOUDFLARE_ANALYTICS_TOKEN` | Scoped to **Zone / Analytics / Read** on `seattleelections.guide`; authorizes the daily zone-analytics archive in `analytics.yml` (issue #381). Deliberately separate from `CLOUDFLARE_API_TOKEN` so the deploy credential is never widened and its rotation stays independent. | Create a replacement custom token with the same **Zone / Analytics / Read** permission, update the secret, then re-run the **Analytics archive** workflow to confirm before revoking the old one — the same order as [Rotating the Cloudflare API token](#rotating-the-cloudflare-api-token). A dead token fails the archive loudly, but restore it within **a week**, not a month: path and device-type detail ages out of Cloudflare's API after 8 days and is unrecoverable, even though totals survive about 30 (`docs/MONITORING.md`, "Correction: the API's window is not the dashboard's"). |
+| Cloudflare analytics token | GitHub Actions secret `CLOUDFLARE_ANALYTICS_TOKEN`; local environment for manual exports | Scoped to **Zone / Analytics / Read** on `seattleelections.guide`; optional manual zone-analytics export only. The daily archive workflow was retired in #512. Separate from the deployment token. | Rotate any retained token with the same **Zone / Analytics / Read** scope; validate a manual export to a separate directory before revoking the old token. There is no unattended archive to restore or retention deadline to maintain. |
 | Cloudflare zone ID | GitHub Actions secret `CLOUDFLARE_ZONE_ID` | Identifies which zone the analytics token reads; required by every GraphQL analytics query. Not secret in Cloudflare's own terms — it appears in dashboard URLs — but stored as a secret because this repository names account identifiers by purpose only and commits none of their values. | Stable for the zone's lifetime. Re-read from the Cloudflare dashboard's zone overview (right sidebar, **API → Zone ID**) and update the secret if the zone is ever recreated. |
-| Analytics archive GitHub App | GitHub App owned by the repository maintainer; client ID in Actions variable `ANALYTICS_ARCHIVE_APP_CLIENT_ID`, private key in Actions secret `ANALYTICS_ARCHIVE_APP_PRIVATE_KEY` | Installed only on this repository with **Contents / Read and write**, **Pull requests / Read and write**, and **Workflows / Read and write**. `analytics.yml` mints a short-lived installation token for its branch push, including continuation merges that carry `.github/workflows` changes, pull-request creation or update, and squash auto-merge request; unlike `GITHUB_TOKEN`, those pull-request events run `check` without a manual approval. | App private keys do not expire automatically. Rotate the maintainer-owned key annually and immediately after suspected exposure: add a new key, update `ANALYTICS_ARCHIVE_APP_PRIVATE_KEY`, confirm one **Analytics archive** run can mint a token, then delete the old key. The client ID remains stable unless the App is recreated. |
+| Analytics archive GitHub App (retired) | Maintainer-owned GitHub App; client ID in `ANALYTICS_ARCHIVE_APP_CLIENT_ID`, private key in `ANALYTICS_ARCHIVE_APP_PRIVATE_KEY` | Previously installed only on this repository with **Contents / Read and write**, **Pull requests / Read and write**, and **Workflows / Read and write**. No workflow uses it after #512. | The maintainer may revoke the App and remove its Actions credentials. Until revoked, rotate any retained active private key annually and after suspected exposure. Do not recreate the retired archive automation. |
 | Publication switch | GitHub Actions variable `CLOUDFLARE_PAGES_ENABLED` | The durable kill switch described in [Which one to use](#which-one-to-use). | Not a credential; reset to `true` once the dependency it was protecting is healthy again. |
 | Apex DNS (`seattleelections.guide`) | Cloudflare nameservers | Canonical hostname's DNS and TLS termination; required before Pages can attach a custom domain to it. | Domain registrar account controls which nameservers are authoritative. If Cloudflare nameserver delegation is ever lost, the canonical hostname stops resolving until it is restored — this is the single highest-impact entry in this table. |
 | Apex DNS (`seattle-elections.guide`, legacy) | Cloudflare nameservers | DNS and TLS termination for the hyphenated legacy hostname redirected to canonical — see [Custom domains](#custom-domains). Requires Cloudflare nameservers for the same reason the canonical apex does. | Domain registrar account controls which nameservers are authoritative. Losing this delegation breaks only this hostname's redirect; the canonical hostname is unaffected. |
 | Legacy DNS (`seattle-elections.dobravoda.dev`) | Namecheap | Publishes the CNAME to `seattle-elections.pages.dev` documented in [Custom domains](#custom-domains), keeping the retired hostname's redirect alive. | Namecheap account recovery through the maintainer's registered email. Losing this record breaks the legacy redirect only; the canonical hostname is unaffected. |
 | GitHub `production` environment | Repository Settings → Environments | Carries the required-reviewer and `main`-only branch policy described in [Deployment gate](#deployment-gate). | Repository admin access recreates it from [One-time setup](#one-time-setup) if it is ever deleted. |
 
-The archive App is a one-time repository setup. Create and install it with only the three permissions
-listed above, add its client ID and private key under **Settings / Secrets and variables / Actions**,
-and enable **Allow auto-merge** under **Settings / General / Pull Requests**. The workflow requests
-those three permissions explicitly when it mints each token, so widening the App later does not widen
-this job silently. `main`'s required `check` context remains the merge gate.
+The archive App setup is retired (#512). Its inventory above records any credentials that still
+exist; production availability uses only the automatic `GITHUB_TOKEN` for its alert issue.
+The daily archive does not need to be recreated to operate the site.
 
 ### Rotating the Cloudflare API token
 
