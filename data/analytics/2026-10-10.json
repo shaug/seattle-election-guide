@@ -1,0 +1,1372 @@
+{
+  "by_country": [
+    {
+      "key": "SG",
+      "requests": 394
+    },
+    {
+      "key": "NL",
+      "requests": 352
+    },
+    {
+      "key": "BE",
+      "requests": 249
+    },
+    {
+      "key": "US",
+      "requests": 108
+    },
+    {
+      "key": "GB",
+      "requests": 38
+    },
+    {
+      "key": "FR",
+      "requests": 30
+    },
+    {
+      "key": "BR",
+      "requests": 20
+    },
+    {
+      "key": "CN",
+      "requests": 12
+    },
+    {
+      "key": "AU",
+      "requests": 11
+    },
+    {
+      "key": "SE",
+      "requests": 10
+    },
+    {
+      "key": "CH",
+      "requests": 7
+    },
+    {
+      "key": "DE",
+      "requests": 6
+    },
+    {
+      "key": "IN",
+      "requests": 6
+    },
+    {
+      "key": "CA",
+      "requests": 5
+    },
+    {
+      "key": "HK",
+      "requests": 5
+    },
+    {
+      "key": "EC",
+      "requests": 4
+    },
+    {
+      "key": "AR",
+      "requests": 3
+    },
+    {
+      "key": "BD",
+      "requests": 3
+    },
+    {
+      "key": "ES",
+      "requests": 3
+    },
+    {
+      "key": "RO",
+      "requests": 3
+    },
+    {
+      "key": "ZA",
+      "requests": 3
+    },
+    {
+      "key": "CL",
+      "requests": 2
+    },
+    {
+      "key": "CO",
+      "requests": 2
+    },
+    {
+      "key": "FI",
+      "requests": 2
+    },
+    {
+      "key": "HN",
+      "requests": 2
+    },
+    {
+      "key": "MX",
+      "requests": 2
+    },
+    {
+      "key": "SA",
+      "requests": 2
+    },
+    {
+      "key": "BA",
+      "requests": 1
+    },
+    {
+      "key": "GH",
+      "requests": 1
+    },
+    {
+      "key": "IQ",
+      "requests": 1
+    },
+    {
+      "key": "JP",
+      "requests": 1
+    },
+    {
+      "key": "LY",
+      "requests": 1
+    },
+    {
+      "key": "NG",
+      "requests": 1
+    },
+    {
+      "key": "NP",
+      "requests": 1
+    },
+    {
+      "key": "PK",
+      "requests": 1
+    },
+    {
+      "key": "PL",
+      "requests": 1
+    },
+    {
+      "key": "RU",
+      "requests": 1
+    },
+    {
+      "key": "SY",
+      "requests": 1
+    },
+    {
+      "key": "TH",
+      "requests": 1
+    },
+    {
+      "key": "TN",
+      "requests": 1
+    },
+    {
+      "key": "TR",
+      "requests": 1
+    },
+    {
+      "key": "UA",
+      "requests": 1
+    },
+    {
+      "key": "VE",
+      "requests": 1
+    }
+  ],
+  "by_device_type": [
+    {
+      "key": "desktop",
+      "requests": 1234
+    },
+    {
+      "key": "mobile",
+      "requests": 179
+    },
+    {
+      "key": "tablet",
+      "requests": 1
+    }
+  ],
+  "by_edge_status_code": [
+    {
+      "key": 404,
+      "requests": 644
+    },
+    {
+      "key": 301,
+      "requests": 328
+    },
+    {
+      "key": 200,
+      "requests": 144
+    },
+    {
+      "key": 307,
+      "requests": 82
+    },
+    {
+      "key": 403,
+      "requests": 66
+    },
+    {
+      "key": 308,
+      "requests": 30
+    },
+    {
+      "key": 204,
+      "requests": 5
+    },
+    {
+      "key": 499,
+      "requests": 1
+    }
+  ],
+  "by_path": [
+    {
+      "key": "/",
+      "requests": 156
+    },
+    {
+      "key": "/e/wa-2026-general/",
+      "requests": 94
+    },
+    {
+      "key": "/wp-admin/install.php",
+      "requests": 44
+    },
+    {
+      "key": "/settings.json",
+      "requests": 23
+    },
+    {
+      "key": "/web/.env",
+      "requests": 18
+    },
+    {
+      "key": "/.git/config",
+      "requests": 16
+    },
+    {
+      "key": "/.s3cfg",
+      "requests": 16
+    },
+    {
+      "key": "/appsettings.Production.json",
+      "requests": 16
+    },
+    {
+      "key": "/tasks",
+      "requests": 16
+    },
+    {
+      "key": "/.env.backup",
+      "requests": 15
+    },
+    {
+      "key": "/contact",
+      "requests": 14
+    },
+    {
+      "key": "/.env.bak",
+      "requests": 13
+    },
+    {
+      "key": "/.env.swp",
+      "requests": 13
+    },
+    {
+      "key": "/blog/",
+      "requests": 13
+    },
+    {
+      "key": "/wordpress/",
+      "requests": 13
+    },
+    {
+      "key": "/wp/",
+      "requests": 12
+    },
+    {
+      "key": "/composer.json",
+      "requests": 11
+    },
+    {
+      "key": "/credentials.json",
+      "requests": 11
+    },
+    {
+      "key": "/site/",
+      "requests": 11
+    },
+    {
+      "key": "/.docker/laravel/app/.env",
+      "requests": 10
+    },
+    {
+      "key": "/.env.prod",
+      "requests": 10
+    },
+    {
+      "key": "/.env.test",
+      "requests": 10
+    },
+    {
+      "key": "/.env.testing",
+      "requests": 10
+    },
+    {
+      "key": "/auth.json",
+      "requests": 10
+    },
+    {
+      "key": "/auth/register",
+      "requests": 10
+    },
+    {
+      "key": "/backpack/dashboard",
+      "requests": 10
+    },
+    {
+      "key": "/config/.env",
+      "requests": 10
+    },
+    {
+      "key": "/email/verify",
+      "requests": 10
+    },
+    {
+      "key": "/favicon.ico",
+      "requests": 10
+    },
+    {
+      "key": "/index.js",
+      "requests": 10
+    },
+    {
+      "key": "/plans",
+      "requests": 10
+    },
+    {
+      "key": "/posts",
+      "requests": 10
+    },
+    {
+      "key": "/workspace",
+      "requests": 10
+    },
+    {
+      "key": "/favicon.svg",
+      "requests": 9
+    },
+    {
+      "key": "/robots.txt",
+      "requests": 9
+    },
+    {
+      "key": "/site/wp-login.php",
+      "requests": 9
+    },
+    {
+      "key": "/admin/.env",
+      "requests": 8
+    },
+    {
+      "key": "/app",
+      "requests": 8
+    },
+    {
+      "key": "/back/.env",
+      "requests": 8
+    },
+    {
+      "key": "/env",
+      "requests": 8
+    },
+    {
+      "key": "/frontend/.env",
+      "requests": 8
+    },
+    {
+      "key": "/news/",
+      "requests": 8
+    },
+    {
+      "key": "/user/profile",
+      "requests": 8
+    },
+    {
+      "key": "/dev/",
+      "requests": 7
+    },
+    {
+      "key": "/favicon-32.png",
+      "requests": 7
+    },
+    {
+      "key": "/wp-json/",
+      "requests": 7
+    },
+    {
+      "key": "/.env.dev",
+      "requests": 6
+    },
+    {
+      "key": "/.netrc",
+      "requests": 6
+    },
+    {
+      "key": "/apple-touch-icon.png",
+      "requests": 6
+    },
+    {
+      "key": "/cms/",
+      "requests": 6
+    },
+    {
+      "key": "/orders",
+      "requests": 6
+    },
+    {
+      "key": "/prefs/.env",
+      "requests": 6
+    },
+    {
+      "key": "/press/",
+      "requests": 6
+    },
+    {
+      "key": "/.gitlab-ci.yaml",
+      "requests": 5
+    },
+    {
+      "key": "/.terraform.tfstate",
+      "requests": 5
+    },
+    {
+      "key": "/admin/login",
+      "requests": 5
+    },
+    {
+      "key": "/cdn-cgi/l/email-protection",
+      "requests": 5
+    },
+    {
+      "key": "/cdn-cgi/rum",
+      "requests": 5
+    },
+    {
+      "key": "/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js",
+      "requests": 5
+    },
+    {
+      "key": "/database.yml.bak",
+      "requests": 5
+    },
+    {
+      "key": "/main/wp-login.php",
+      "requests": 5
+    },
+    {
+      "key": "/new/.env",
+      "requests": 5
+    },
+    {
+      "key": "/panel",
+      "requests": 5
+    },
+    {
+      "key": "/settings.py",
+      "requests": 5
+    },
+    {
+      "key": "/wp-login.php",
+      "requests": 5
+    },
+    {
+      "key": "/xmlrpc.php",
+      "requests": 5
+    },
+    {
+      "key": "/.env.example",
+      "requests": 4
+    },
+    {
+      "key": "/.env.sample",
+      "requests": 4
+    },
+    {
+      "key": "/.env.template",
+      "requests": 4
+    },
+    {
+      "key": "/.env_local",
+      "requests": 4
+    },
+    {
+      "key": "/.eslintrc.js",
+      "requests": 4
+    },
+    {
+      "key": "/.git/config.bak",
+      "requests": 4
+    },
+    {
+      "key": "/.git/config.save",
+      "requests": 4
+    },
+    {
+      "key": "/.github/workflows/deploy.yml",
+      "requests": 4
+    },
+    {
+      "key": "/.msmtprc",
+      "requests": 4
+    },
+    {
+      "key": "/.travis.yml",
+      "requests": 4
+    },
+    {
+      "key": "/.vault-token",
+      "requests": 4
+    },
+    {
+      "key": "/.yarnrc",
+      "requests": 4
+    },
+    {
+      "key": "/about-us",
+      "requests": 4
+    },
+    {
+      "key": "/application.yml",
+      "requests": 4
+    },
+    {
+      "key": "/blog/wp-login.php",
+      "requests": 4
+    },
+    {
+      "key": "/cadastro",
+      "requests": 4
+    },
+    {
+      "key": "/config.json",
+      "requests": 4
+    },
+    {
+      "key": "/config.php.bak",
+      "requests": 4
+    },
+    {
+      "key": "/config.yaml",
+      "requests": 4
+    },
+    {
+      "key": "/config/config.json",
+      "requests": 4
+    },
+    {
+      "key": "/config/environment.js",
+      "requests": 4
+    },
+    {
+      "key": "/config/master.key",
+      "requests": 4
+    },
+    {
+      "key": "/dev/wp-login.php",
+      "requests": 4
+    },
+    {
+      "key": "/e/wa-2026-general//wp2/wp-includes/wlwmanifest.xml",
+      "requests": 4
+    },
+    {
+      "key": "/e/wa-2026-general/comparisons",
+      "requests": 4
+    },
+    {
+      "key": "/e/wa-2026-general/races/ld-37-state-representative-1",
+      "requests": 4
+    },
+    {
+      "key": "/e/wa-2026-general/races/ld-43-state-senator",
+      "requests": 4
+    },
+    {
+      "key": "/e/wa-2026-general/races/supreme-court-justice-3",
+      "requests": 4
+    },
+    {
+      "key": "/e/wa-2026-primary/comparisons/",
+      "requests": 4
+    },
+    {
+      "key": "/helm-values.yaml",
+      "requests": 4
+    },
+    {
+      "key": "/inicio",
+      "requests": 4
+    },
+    {
+      "key": "/new/wp-login.php",
+      "requests": 4
+    },
+    {
+      "key": "/secrets.yaml",
+      "requests": 4
+    },
+    {
+      "key": "/secrets.yml",
+      "requests": 4
+    },
+    {
+      "key": "/serverless.yml",
+      "requests": 4
+    },
+    {
+      "key": "/settings.py.bak",
+      "requests": 4
+    },
+    {
+      "key": "/terraform.tfstate",
+      "requests": 4
+    },
+    {
+      "key": "/web.config",
+      "requests": 4
+    },
+    {
+      "key": "/webpack.config.js",
+      "requests": 4
+    },
+    {
+      "key": "/wordpress/wp-login.php",
+      "requests": 4
+    },
+    {
+      "key": "/.Dockerrun.aws.json",
+      "requests": 3
+    },
+    {
+      "key": "/.aws/credentials",
+      "requests": 3
+    },
+    {
+      "key": "/.boto",
+      "requests": 3
+    },
+    {
+      "key": "/.env",
+      "requests": 3
+    },
+    {
+      "key": "/.env-example",
+      "requests": 3
+    },
+    {
+      "key": "/.env.development",
+      "requests": 3
+    },
+    {
+      "key": "/.env.dist",
+      "requests": 3
+    },
+    {
+      "key": "/.env.js",
+      "requests": 3
+    },
+    {
+      "key": "/.env.local",
+      "requests": 3
+    },
+    {
+      "key": "/.env.old",
+      "requests": 3
+    },
+    {
+      "key": "/.env.production",
+      "requests": 3
+    },
+    {
+      "key": "/.env.staging",
+      "requests": 3
+    },
+    {
+      "key": "/.env_dev",
+      "requests": 3
+    },
+    {
+      "key": "/.git/config.old",
+      "requests": 3
+    },
+    {
+      "key": "/.git/credentials",
+      "requests": 3
+    },
+    {
+      "key": "/.github/workflows/main.yml",
+      "requests": 3
+    },
+    {
+      "key": "/.gitlab-ci.yml",
+      "requests": 3
+    },
+    {
+      "key": "/.jest.config.js",
+      "requests": 3
+    },
+    {
+      "key": "/.my.cnf",
+      "requests": 3
+    },
+    {
+      "key": "/.svn/entries",
+      "requests": 3
+    },
+    {
+      "key": "/.zsh_history",
+      "requests": 3
+    },
+    {
+      "key": "/Jenkinsfile",
+      "requests": 3
+    },
+    {
+      "key": "/actuator/configprops",
+      "requests": 3
+    },
+    {
+      "key": "/babel.config.js",
+      "requests": 3
+    },
+    {
+      "key": "/cms/wp-login.php",
+      "requests": 3
+    },
+    {
+      "key": "/composer.lock",
+      "requests": 3
+    },
+    {
+      "key": "/config.inc.php",
+      "requests": 3
+    },
+    {
+      "key": "/config/parameters.yml",
+      "requests": 3
+    },
+    {
+      "key": "/docker-compose.dev.yml",
+      "requests": 3
+    },
+    {
+      "key": "/docker-compose.override.yml",
+      "requests": 3
+    },
+    {
+      "key": "/docker-compose.prod.yml",
+      "requests": 3
+    },
+    {
+      "key": "/docker-compose.yml",
+      "requests": 3
+    },
+    {
+      "key": "/e/wa-2026-general/races/seattle-city-council-5",
+      "requests": 3
+    },
+    {
+      "key": "/firebaseServiceAccountKey.json",
+      "requests": 3
+    },
+    {
+      "key": "/id_ed25519",
+      "requests": 3
+    },
+    {
+      "key": "/keyfile.json",
+      "requests": 3
+    },
+    {
+      "key": "/kubeconfig",
+      "requests": 3
+    },
+    {
+      "key": "/login",
+      "requests": 3
+    },
+    {
+      "key": "/media/system/js/core.js",
+      "requests": 3
+    },
+    {
+      "key": "/metrics",
+      "requests": 3
+    },
+    {
+      "key": "/options/.env",
+      "requests": 3
+    },
+    {
+      "key": "/package.json",
+      "requests": 3
+    },
+    {
+      "key": "/parameters.yml",
+      "requests": 3
+    },
+    {
+      "key": "/serverless.yaml",
+      "requests": 3
+    },
+    {
+      "key": "/settings.yml",
+      "requests": 3
+    },
+    {
+      "key": "/sftp-config.json",
+      "requests": 3
+    },
+    {
+      "key": "/sites/default/settings.php",
+      "requests": 3
+    },
+    {
+      "key": "/staging/",
+      "requests": 3
+    },
+    {
+      "key": "/terraform.tfstate.backup",
+      "requests": 3
+    },
+    {
+      "key": "/terraform.tfvars",
+      "requests": 3
+    },
+    {
+      "key": "/values.yaml",
+      "requests": 3
+    },
+    {
+      "key": "/vault.json",
+      "requests": 3
+    },
+    {
+      "key": "/.bash_history",
+      "requests": 2
+    },
+    {
+      "key": "/.circleci/config.yml",
+      "requests": 2
+    },
+    {
+      "key": "/.docker/config.json",
+      "requests": 2
+    },
+    {
+      "key": "/.env.save",
+      "requests": 2
+    },
+    {
+      "key": "/.envrc",
+      "requests": 2
+    },
+    {
+      "key": "/.eslintrc.json",
+      "requests": 2
+    },
+    {
+      "key": "/.git-credentials",
+      "requests": 2
+    },
+    {
+      "key": "/.git/config~",
+      "requests": 2
+    },
+    {
+      "key": "/.htpasswd",
+      "requests": 2
+    },
+    {
+      "key": "/.kube/config",
+      "requests": 2
+    },
+    {
+      "key": "/.npmrc",
+      "requests": 2
+    },
+    {
+      "key": "/.pgpass",
+      "requests": 2
+    },
+    {
+      "key": "/.pypirc",
+      "requests": 2
+    },
+    {
+      "key": "/.s3cmd.ini",
+      "requests": 2
+    },
+    {
+      "key": "/about",
+      "requests": 2
+    },
+    {
+      "key": "/about/",
+      "requests": 2
+    },
+    {
+      "key": "/actuator/env",
+      "requests": 2
+    },
+    {
+      "key": "/admin/reports",
+      "requests": 2
+    },
+    {
+      "key": "/admin/settings",
+      "requests": 2
+    },
+    {
+      "key": "/application-prod.yml",
+      "requests": 2
+    },
+    {
+      "key": "/application.properties",
+      "requests": 2
+    },
+    {
+      "key": "/application.properties.bak",
+      "requests": 2
+    },
+    {
+      "key": "/appsettings.json",
+      "requests": 2
+    },
+    {
+      "key": "/cart",
+      "requests": 2
+    },
+    {
+      "key": "/config.js",
+      "requests": 2
+    },
+    {
+      "key": "/config.php.old",
+      "requests": 2
+    },
+    {
+      "key": "/config.yml",
+      "requests": 2
+    },
+    {
+      "key": "/config/aws.yml",
+      "requests": 2
+    },
+    {
+      "key": "/config/database.yml",
+      "requests": 2
+    },
+    {
+      "key": "/database.yml",
+      "requests": 2
+    },
+    {
+      "key": "/debug/vars",
+      "requests": 2
+    },
+    {
+      "key": "/e",
+      "requests": 2
+    },
+    {
+      "key": "/e/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general//media/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general//news/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general//site/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general//wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general//wp/wp-includes/wlwmanifest.xml",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/comparisons/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/races/court-of-appeals-division-1-district-1-judge-6",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/races/court-of-appeals-division-1-district-1-judge-6/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/races/initiative-26-638",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/races/initiative-26-638/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/races/king-county-council-4",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/races/king-county-council-4/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/races/king-county-director-of-elections",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/races/king-county-director-of-elections/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/races/king-county-district-court-west-judge-1",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/races/king-county-district-court-west-judge-1/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/races/king-county-district-court-west-judge-4",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/races/king-county-district-court-west-judge-4/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/races/ld-11-state-representative-1",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/races/ld-11-state-representative-1/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/races/ld-11-state-representative-2/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/races/ld-34-state-representative-2",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/races/ld-34-state-representative-2/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/races/ld-34-state-senator",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/races/ld-34-state-senator/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/races/ld-36-state-representative-1/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/races/ld-36-state-representative-2",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/races/ld-36-state-representative-2/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/races/ld-37-state-representative-1/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/races/ld-43-state-representative-1",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/races/ld-43-state-representative-1/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/races/ld-43-state-senator/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/races/seattle-city-council-5/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/races/seattle-municipal-court-judge-4",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/races/seattle-municipal-court-judge-5",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/races/seattle-municipal-court-judge-5/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/races/seattle-municipal-court-judge-7",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/races/seattle-municipal-court-judge-7/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/races/supreme-court-justice-3/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/races/us-house-7/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/races/us-house-9/",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/release-manifest.json",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/sources",
+      "requests": 2
+    },
+    {
+      "key": "/e/wa-2026-general/sources/",
+      "requests": 2
+    },
+    {
+      "key": "/faq",
+      "requests": 2
+    },
+    {
+      "key": "/firebase.json",
+      "requests": 2
+    },
+    {
+      "key": "/info.php",
+      "requests": 2
+    },
+    {
+      "key": "/key.json",
+      "requests": 2
+    },
+    {
+      "key": "/local_settings.py",
+      "requests": 2
+    },
+    {
+      "key": "/runtime-config.js",
+      "requests": 2
+    },
+    {
+      "key": "/secret.yaml",
+      "requests": 2
+    },
+    {
+      "key": "/secrets.json",
+      "requests": 2
+    },
+    {
+      "key": "/staging/wp-login.php",
+      "requests": 2
+    },
+    {
+      "key": "/tickets",
+      "requests": 2
+    },
+    {
+      "key": "/web.config.bak",
+      "requests": 2
+    },
+    {
+      "key": "/wp-config.bak",
+      "requests": 2
+    },
+    {
+      "key": "/wp-config.php.old",
+      "requests": 2
+    },
+    {
+      "key": "/wp-config.php.save",
+      "requests": 2
+    },
+    {
+      "key": "/wp-config.php.swp",
+      "requests": 2
+    },
+    {
+      "key": "/wp-config.php~",
+      "requests": 2
+    },
+    {
+      "key": "/wp-includes/css/buttons.css",
+      "requests": 2
+    },
+    {
+      "key": "/wp/wp-links-opml.php",
+      "requests": 2
+    },
+    {
+      "key": "/wp/wp-login.php",
+      "requests": 2
+    },
+    {
+      "key": "/.aws/config",
+      "requests": 1
+    },
+    {
+      "key": "/application.yml.bak",
+      "requests": 1
+    },
+    {
+      "key": "/appsettings.Development.json",
+      "requests": 1
+    },
+    {
+      "key": "/blog",
+      "requests": 1
+    },
+    {
+      "key": "/calendar.ics",
+      "requests": 1
+    },
+    {
+      "key": "/config.py",
+      "requests": 1
+    },
+    {
+      "key": "/database.json",
+      "requests": 1
+    },
+    {
+      "key": "/dev",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-general//cms/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-general//web/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-general//wp1/wp-includes/wlwmanifest.xml",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-general/release-status.json",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-34-state-representative-2/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-37-state-representative-2/",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-37-state-senator/og-image.png",
+      "requests": 1
+    },
+    {
+      "key": "/e/wa-2026-primary/races/ld-43-state-senator/og-image.png",
+      "requests": 1
+    },
+    {
+      "key": "/feed/",
+      "requests": 1
+    },
+    {
+      "key": "/id_rsa",
+      "requests": 1
+    },
+    {
+      "key": "/service-account.json",
+      "requests": 1
+    },
+    {
+      "key": "/setup",
+      "requests": 1
+    },
+    {
+      "key": "/staging",
+      "requests": 1
+    },
+    {
+      "key": "/staging/wp-links-opml.php",
+      "requests": 1
+    },
+    {
+      "key": "/storage/logs/laravel.log",
+      "requests": 1
+    },
+    {
+      "key": "/wordpress",
+      "requests": 1
+    },
+    {
+      "key": "/wordpress/wp-links-opml.php",
+      "requests": 1
+    },
+    {
+      "key": "/wp",
+      "requests": 1
+    },
+    {
+      "key": "/wp-admin/admin-ajax.php",
+      "requests": 1
+    },
+    {
+      "key": "/wp-config.php.bak",
+      "requests": 1
+    },
+    {
+      "key": "/wp-links-opml.php",
+      "requests": 1
+    }
+  ],
+  "date": "2026-10-10",
+  "page_views": 113,
+  "requests": 1300,
+  "schema_version": "1.0",
+  "sources": [
+    "httpRequests1dGroups",
+    "httpRequestsAdaptiveGroups"
+  ],
+  "uniques": 178,
+  "visits": 38
+}
